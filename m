@@ -1,133 +1,61 @@
-From: Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v2 00/15] pinctrl: samsung: Usability and extensibiltiy
- improvements
-Date: Thu, 11 Oct 2012 18:01:03 +0900
-Message-ID: <CAH9JG2WZciwLuWzk5Zgn06+xJdCsmSOu=z2JUz4_HpSjOwM59g@mail.gmail.com>
-References: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1349943081-27939-1-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v1 0/6] arm: exynos: add dt based support for exynos5 hdmi
+Date: Fri, 12 Oct 2012 00:27:41 +0530
+Message-ID: <1349981868-2116-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:13710 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756695Ab2JKJhH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Oct 2012 05:37:07 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBQ0047X2PTYFZ0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 18:37:05 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MBQ009N02PK5640@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 18:37:05 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com, rahul.sharma@samsung.com
 
-Hi,
+This patch set adds the DT based support for Samsung's Exynos5250. It adds
+device tree nodes for hdmi, mixer, hdmiphy and hdmiddc. The name of these
+devices are changed to the one matching with drivers. Exynos-drm and exynos
+hdmi-drm-commmon devices are removed from machine init code.
 
-On Thu, Oct 11, 2012 at 5:11 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> This patch series is a work on improving usability and extensibiltiy of
-> the pinctrl-samsung driver. It consists of three main parts:
->  - improving flexibility of SoC-specific data specification
->  - converting the driver to one GPIO chip and IRQ domain per pin bank
->  - improving wake-up IRQ setup and handling
+Exynos-drm and exynos hdmi-drm-commmon devices are removed from machine
+init code. Patch set which adds this code is "add exynos-drm platform device
+registration to driver" is posted to dri-devel mailing list.
 
-Really good job! and it solved mess GPIOs H/W configurations of Samsung SoC.
-Basically Samsung SoC GPIOs don't have generic rules. Even worse, pin
-name is mixed but offset is still increased.
+This patchset is based on linux v3.6-rc5, branch dt-samsung-new at
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-With DT support. we can solve this issue and use generic pinctrl drivers.
+Rahul Sharma (6):
+  dts: exynos: add device tree support for exynos5 hdmi
+  dts: exynos: add device tree support for exynos5 mixer
+  dts: exynos: add device tree support for exynos5 hdmiphy
+  dts: exynos: add device tree support for exynos5 hdmiddc
+  arm: exynos: add clocks for exynos5 hdmi
+  arm: exynos: removing exynos-drm device registration from non-dt
+    platforms
 
-For all series.
-Reviewed-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
->
-> 1) What the first part does, in addition to various related fixes, is
-> removing any unnecessary static data from pinctrl-exynos driver.
->
-> This is achieved mostly thanks to assigning pin numbers dynamically,
-> with help of only pin counts of particular banks. It also simplifies
-> adding next SoC variants, since much less static data needs to be
-> specified.
->
-> 2) The second part attempts to simplify usage of the driver and fix several
-> problems of current implementation, in particular:
->
->   - Simplifies GPIO pin specification in device tree by using pin
->     namespace local to pin bank instead of local to pin controller, e.g.
->
->         gpios = <&gpj0 3 0>;
->
->     instead of
->
->         gpios = <&pinctrl0 115 0>;
->
->   - Simplifies GPIO interrupt specification in device tree by using
->     namespace local to pin bank (and equal to GPIO namespace), e.g.
->
->         interrupt-parent = <&gpj0>;
->         interrupts = <3 0>;
->
->     instead of
->
->         interrupt-parent = <&pinctrl0>;
->         interrupts = <115 0>;
->
->   - Simplifies internal GPIO pin to bank translation thanks to
->     correspondence of particular GPIO chips to pin banks. This allows
->     to remove the (costly in case of GPIO bit-banging drivers) lookup
->     over all banks to find the one that the pin is from.
->
-> 3) Third part is focused on removing the hard-coded description of wake-up
-> interrupt layout.
->
-> It moves wake-up interrupt description to bank struct and device tree,
-> which allows to specify which pin banks support wake-up interrupts and
-> how they are handled (direct or multiplexed/chained).
->
-> See particular patches for more detailed descriptions and the last patch for
-> updated device tree bindings.
->
-> Changes since v1:
->  - dropped moving SoC-specific data to device tree
->    (might be added in further patches)
->  - dropped per-bank specification of configuration register offsets
->    (thus limiting scope of the driver to Exynos SoCs; will be added in
->     further patches)
->
-> Tomasz Figa (15):
->   pinctrl: samsung: Detect and handle unsupported configuration types
->   pinctrl: samsung: Do not pass gpio_chip to pin_to_reg_bank
->   pinctrl: samsung: Assing pin numbers dynamically
->   pinctrl: samsung: Remove static pin enumerations
->   pinctrl: samsung: Distinguish between pin group and bank nodes
->   ARM: dts: exynos4210-pinctrl: Add nodes for pin banks
->   pinctrl: samsung: Match pin banks with their device nodes
->   pinctrl: samsung: Hold pointer to driver data in bank struct
->   pinctrl: samsung: Include bank-specific eint offset in bank struct
->   pinctrl: exynos: Use one IRQ domain per pin bank
->   pinctrl: samsung: Use one GPIO chip per pin bank
->   pinctrl: samsung: Use per-bank IRQ domain for wake-up interrupts
->   pinctrl: exynos: Set pin function to EINT in irq_set_type of wake-up
->     EINT
->   pinctrl: samsung: Add GPIO to IRQ translation
->   Documentation: Update samsung-pinctrl device tree bindings
->     documentation
->
->  .../bindings/pinctrl/samsung-pinctrl.txt           | 118 +++++--
->  arch/arm/boot/dts/exynos4210-pinctrl.dtsi          | 278 ++++++++++++++++
->  arch/arm/boot/dts/exynos4210.dtsi                  | 241 +-------------
->  drivers/pinctrl/pinctrl-exynos.c                   | 367 ++++++++++-----------
->  drivers/pinctrl/pinctrl-exynos.h                   | 170 ++--------
->  drivers/pinctrl/pinctrl-samsung.c                  | 203 ++++++++----
->  drivers/pinctrl/pinctrl-samsung.h                  |  29 +-
->  7 files changed, 741 insertions(+), 665 deletions(-)
->
-> --
-> 1.7.12
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+ arch/arm/boot/dts/exynos5250-smdk5250.dts  |   24 ++++++++++++++++++++++-
+ arch/arm/boot/dts/exynos5250.dtsi          |   23 ++++++++++++++++++++++
+ arch/arm/mach-exynos/Makefile              |    1 -
+ arch/arm/mach-exynos/clock-exynos5.c       |   14 +++++++++++-
+ arch/arm/mach-exynos/dev-drm.c             |   29 ----------------------------
+ arch/arm/mach-exynos/include/mach/map.h    |    2 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c     |    8 +++++++
+ arch/arm/mach-exynos/mach-nuri.c           |    3 --
+ arch/arm/mach-exynos/mach-origen.c         |    3 --
+ arch/arm/mach-exynos/mach-smdk4x12.c       |    3 --
+ arch/arm/mach-exynos/mach-smdkv310.c       |    3 --
+ arch/arm/mach-exynos/mach-universal_c210.c |    3 --
+ arch/arm/plat-samsung/include/plat/devs.h  |    2 -
+ 13 files changed, 68 insertions(+), 50 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/dev-drm.c
