@@ -1,251 +1,167 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 03/15] pinctrl: samsung: Assing pin numbers dynamically
-Date: Thu, 11 Oct 2012 10:11:09 +0200
-Message-ID: <1349943081-27939-4-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 04/15] pinctrl: samsung: Remove static pin enumerations
+Date: Thu, 11 Oct 2012 10:11:10 +0200
+Message-ID: <1349943081-27939-5-git-send-email-t.figa@samsung.com>
 References: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56801 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757931Ab2JKILt (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:12460 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757931Ab2JKILx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Oct 2012 04:11:49 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
+	Thu, 11 Oct 2012 04:11:53 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBP00EIPYR2YEI0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:47 +0900 (KST)
+ 17 2011)) with ESMTP id <0MBP005P8YRAMOI0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:52 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MBP005FVYR04E50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:47 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:51 +0900 (KST)
 In-reply-to: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, tony@atomide.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-This patch modifies the pinctrl-samsung driver to assign numbers to pins
-dynamically instead of static enumerations.
-
-Thanks to this change the amount of code requried to support a SoC can
-be greatly reduced and the code made more readable.
+Since pin numbers are now assigned dynamically, those are not needed
+anymore.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- drivers/pinctrl/pinctrl-exynos.c  | 83 +++++++++++++++++----------------------
- drivers/pinctrl/pinctrl-exynos.h  | 11 ++----
- drivers/pinctrl/pinctrl-samsung.c | 22 ++++++++++-
- 3 files changed, 62 insertions(+), 54 deletions(-)
+ drivers/pinctrl/pinctrl-exynos.h | 119 ---------------------------------------
+ 1 file changed, 119 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
-index 21362f4..0ea2164 100644
---- a/drivers/pinctrl/pinctrl-exynos.c
-+++ b/drivers/pinctrl/pinctrl-exynos.c
-@@ -484,51 +484,51 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 
- /* pin banks of exynos4210 pin-controller 0 */
- static struct samsung_pin_bank exynos4210_pin_banks0[] = {
--	EXYNOS_PIN_BANK_EINTG(0x000, EXYNOS4210_GPIO_A0, "gpa0"),
--	EXYNOS_PIN_BANK_EINTG(0x020, EXYNOS4210_GPIO_A1, "gpa1"),
--	EXYNOS_PIN_BANK_EINTG(0x040, EXYNOS4210_GPIO_B, "gpb"),
--	EXYNOS_PIN_BANK_EINTG(0x060, EXYNOS4210_GPIO_C0, "gpc0"),
--	EXYNOS_PIN_BANK_EINTG(0x080, EXYNOS4210_GPIO_C1, "gpc1"),
--	EXYNOS_PIN_BANK_EINTG(0x0A0, EXYNOS4210_GPIO_D0, "gpd0"),
--	EXYNOS_PIN_BANK_EINTG(0x0C0, EXYNOS4210_GPIO_D1, "gpd1"),
--	EXYNOS_PIN_BANK_EINTG(0x0E0, EXYNOS4210_GPIO_E0, "gpe0"),
--	EXYNOS_PIN_BANK_EINTG(0x100, EXYNOS4210_GPIO_E1, "gpe1"),
--	EXYNOS_PIN_BANK_EINTG(0x120, EXYNOS4210_GPIO_E2, "gpe2"),
--	EXYNOS_PIN_BANK_EINTG(0x140, EXYNOS4210_GPIO_E3, "gpe3"),
--	EXYNOS_PIN_BANK_EINTG(0x160, EXYNOS4210_GPIO_E4, "gpe4"),
--	EXYNOS_PIN_BANK_EINTG(0x180, EXYNOS4210_GPIO_F0, "gpf0"),
--	EXYNOS_PIN_BANK_EINTG(0x1A0, EXYNOS4210_GPIO_F1, "gpf1"),
--	EXYNOS_PIN_BANK_EINTG(0x1C0, EXYNOS4210_GPIO_F2, "gpf2"),
--	EXYNOS_PIN_BANK_EINTG(0x1E0, EXYNOS4210_GPIO_F3, "gpf3"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0"),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb"),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0"),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1"),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpd0"),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpd1"),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x0E0, "gpe0"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpe1"),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x120, "gpe2"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x140, "gpe3"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x160, "gpe4"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf0"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpf1"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x1C0, "gpf2"),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x1E0, "gpf3"),
- };
- 
- /* pin banks of exynos4210 pin-controller 1 */
- static struct samsung_pin_bank exynos4210_pin_banks1[] = {
--	EXYNOS_PIN_BANK_EINTG(0x000, EXYNOS4210_GPIO_J0, "gpj0"),
--	EXYNOS_PIN_BANK_EINTG(0x020, EXYNOS4210_GPIO_J1, "gpj1"),
--	EXYNOS_PIN_BANK_EINTG(0x040, EXYNOS4210_GPIO_K0, "gpk0"),
--	EXYNOS_PIN_BANK_EINTG(0x060, EXYNOS4210_GPIO_K1, "gpk1"),
--	EXYNOS_PIN_BANK_EINTG(0x080, EXYNOS4210_GPIO_K2, "gpk2"),
--	EXYNOS_PIN_BANK_EINTG(0x0A0, EXYNOS4210_GPIO_K3, "gpk3"),
--	EXYNOS_PIN_BANK_EINTG(0x0C0, EXYNOS4210_GPIO_L0, "gpl0"),
--	EXYNOS_PIN_BANK_EINTG(0x0E0, EXYNOS4210_GPIO_L1, "gpl1"),
--	EXYNOS_PIN_BANK_EINTG(0x100, EXYNOS4210_GPIO_L2, "gpl2"),
--	EXYNOS_PIN_BANK_EINTN(0x120, EXYNOS4210_GPIO_Y0, "gpy0"),
--	EXYNOS_PIN_BANK_EINTN(0x140, EXYNOS4210_GPIO_Y1, "gpy1"),
--	EXYNOS_PIN_BANK_EINTN(0x160, EXYNOS4210_GPIO_Y2, "gpy2"),
--	EXYNOS_PIN_BANK_EINTN(0x180, EXYNOS4210_GPIO_Y3, "gpy3"),
--	EXYNOS_PIN_BANK_EINTN(0x1A0, EXYNOS4210_GPIO_Y4, "gpy4"),
--	EXYNOS_PIN_BANK_EINTN(0x1C0, EXYNOS4210_GPIO_Y5, "gpy5"),
--	EXYNOS_PIN_BANK_EINTN(0x1E0, EXYNOS4210_GPIO_Y6, "gpy6"),
--	EXYNOS_PIN_BANK_EINTN(0xC00, EXYNOS4210_GPIO_X0, "gpx0"),
--	EXYNOS_PIN_BANK_EINTN(0xC20, EXYNOS4210_GPIO_X1, "gpx1"),
--	EXYNOS_PIN_BANK_EINTN(0xC40, EXYNOS4210_GPIO_X2, "gpx2"),
--	EXYNOS_PIN_BANK_EINTN(0xC60, EXYNOS4210_GPIO_X3, "gpx3"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpj0"),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpj1"),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x040, "gpk0"),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1"),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2"),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x0A0, "gpk3"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0C0, "gpl0"),
-+	EXYNOS_PIN_BANK_EINTG(3, 0x0E0, "gpl1"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpl2"),
-+	EXYNOS_PIN_BANK_EINTN(6, 0x120, "gpy0"),
-+	EXYNOS_PIN_BANK_EINTN(4, 0x140, "gpy1"),
-+	EXYNOS_PIN_BANK_EINTN(6, 0x160, "gpy2"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x180, "gpy3"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "gpy4"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "gpy5"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "gpy6"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0xC00, "gpx0"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0xC20, "gpx1"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0xC40, "gpx2"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0xC60, "gpx3"),
- };
- 
- /* pin banks of exynos4210 pin-controller 2 */
- static struct samsung_pin_bank exynos4210_pin_banks2[] = {
--	EXYNOS_PIN_BANK_EINTN(0x000, EXYNOS4210_GPIO_Z, "gpz"),
-+	EXYNOS_PIN_BANK_EINTN(7, 0x000, "gpz"),
- };
- 
- /*
-@@ -540,9 +540,6 @@ struct samsung_pin_ctrl exynos4210_pin_ctrl[] = {
- 		/* pin-controller instance 0 data */
- 		.pin_banks	= exynos4210_pin_banks0,
- 		.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks0),
--		.base		= EXYNOS4210_GPIO_A0_START,
--		.nr_pins	= EXYNOS4210_GPIOA_NR_PINS,
--		.nr_gint	= EXYNOS4210_GPIOA_NR_GINT,
- 		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
- 		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
- 		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-@@ -553,9 +550,6 @@ struct samsung_pin_ctrl exynos4210_pin_ctrl[] = {
- 		/* pin-controller instance 1 data */
- 		.pin_banks	= exynos4210_pin_banks1,
- 		.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks1),
--		.base		= EXYNOS4210_GPIOA_NR_PINS,
--		.nr_pins	= EXYNOS4210_GPIOB_NR_PINS,
--		.nr_gint	= EXYNOS4210_GPIOB_NR_GINT,
- 		.nr_wint	= 32,
- 		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
- 		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-@@ -571,9 +565,6 @@ struct samsung_pin_ctrl exynos4210_pin_ctrl[] = {
- 		/* pin-controller instance 2 data */
- 		.pin_banks	= exynos4210_pin_banks2,
- 		.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks2),
--		.base		= EXYNOS4210_GPIOA_NR_PINS +
--					EXYNOS4210_GPIOB_NR_PINS,
--		.nr_pins	= EXYNOS4210_GPIOC_NR_PINS,
- 		.label		= "exynos4210-gpio-ctrl2",
- 	},
- };
 diff --git a/drivers/pinctrl/pinctrl-exynos.h b/drivers/pinctrl/pinctrl-exynos.h
-index 31d0a06..1788467 100644
+index 1788467..2de4a29 100644
 --- a/drivers/pinctrl/pinctrl-exynos.h
 +++ b/drivers/pinctrl/pinctrl-exynos.h
-@@ -165,11 +165,10 @@ enum exynos4210_gpio_xc_start {
- #define EXYNOS_EINT_MAX_PER_BANK	8
- #define EXYNOS_EINT_NR_WKUP_EINT
+@@ -17,125 +17,6 @@
+  * (at your option) any later version.
+  */
  
--#define EXYNOS_PIN_BANK_EINTN(reg, __gpio, id)		\
-+#define EXYNOS_PIN_BANK_EINTN(pins, reg, id)		\
- 	{						\
- 		.pctl_offset	= reg,			\
--		.pin_base	= (__gpio##_START),	\
--		.nr_pins	= (__gpio##_NR),	\
-+		.nr_pins	= pins,			\
- 		.func_width	= 4,			\
- 		.pud_width	= 2,			\
- 		.drv_width	= 2,			\
-@@ -179,18 +178,16 @@ enum exynos4210_gpio_xc_start {
- 		.name		= id			\
- 	}
- 
--#define EXYNOS_PIN_BANK_EINTG(reg, __gpio, id)		\
-+#define EXYNOS_PIN_BANK_EINTG(pins, reg, id)		\
- 	{						\
- 		.pctl_offset	= reg,			\
--		.pin_base	= (__gpio##_START),	\
--		.nr_pins	= (__gpio##_NR),	\
-+		.nr_pins	= pins,			\
- 		.func_width	= 4,			\
- 		.pud_width	= 2,			\
- 		.drv_width	= 2,			\
- 		.conpdn_width	= 2,			\
- 		.pudpdn_width	= 2,			\
- 		.eint_type	= EINT_TYPE_GPIO,	\
--		.irq_base	= (__gpio##_IRQ),	\
- 		.name		= id			\
- 	}
- 
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index aa42d54..f219bb6 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -46,6 +46,8 @@ struct pin_config {
- 	{ "samsung,pin-pud-pdn", PINCFG_TYPE_PUD_PDN },
- };
- 
-+static unsigned int pin_base = 0;
-+
- /* check if the selector is a valid pin group selector */
- static int samsung_get_group_count(struct pinctrl_dev *pctldev)
- {
-@@ -792,6 +794,9 @@ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
- 	int id;
- 	const struct of_device_id *match;
- 	const struct device_node *node = pdev->dev.of_node;
-+	struct samsung_pin_ctrl *ctrl;
-+	struct samsung_pin_bank *bank;
-+	int i;
- 
- 	id = of_alias_get_id(pdev->dev.of_node, "pinctrl");
- 	if (id < 0) {
-@@ -799,7 +804,22 @@ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
- 		return NULL;
- 	}
- 	match = of_match_node(samsung_pinctrl_dt_match, node);
--	return (struct samsung_pin_ctrl *)match->data + id;
-+	ctrl = (struct samsung_pin_ctrl *)match->data + id;
-+
-+	bank = ctrl->pin_banks;
-+	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
-+		bank->pin_base = ctrl->nr_pins;
-+		ctrl->nr_pins += bank->nr_pins;
-+		if (bank->eint_type == EINT_TYPE_GPIO) {
-+			bank->irq_base = ctrl->nr_gint;
-+			ctrl->nr_gint += bank->nr_pins;
-+		}
-+	}
-+
-+	ctrl->base = pin_base;
-+	pin_base += ctrl->nr_pins;
-+
-+	return ctrl;
- }
- 
- static int __devinit samsung_pinctrl_probe(struct platform_device *pdev)
+-#define EXYNOS_GPIO_START(__gpio)	((__gpio##_START) + (__gpio##_NR))
+-
+-#define EXYNOS4210_GPIO_A0_NR	(8)
+-#define EXYNOS4210_GPIO_A1_NR	(6)
+-#define EXYNOS4210_GPIO_B_NR	(8)
+-#define EXYNOS4210_GPIO_C0_NR	(5)
+-#define EXYNOS4210_GPIO_C1_NR	(5)
+-#define EXYNOS4210_GPIO_D0_NR	(4)
+-#define EXYNOS4210_GPIO_D1_NR	(4)
+-#define EXYNOS4210_GPIO_E0_NR	(5)
+-#define EXYNOS4210_GPIO_E1_NR	(8)
+-#define EXYNOS4210_GPIO_E2_NR	(6)
+-#define EXYNOS4210_GPIO_E3_NR	(8)
+-#define EXYNOS4210_GPIO_E4_NR	(8)
+-#define EXYNOS4210_GPIO_F0_NR	(8)
+-#define EXYNOS4210_GPIO_F1_NR	(8)
+-#define EXYNOS4210_GPIO_F2_NR	(8)
+-#define EXYNOS4210_GPIO_F3_NR	(6)
+-#define EXYNOS4210_GPIO_J0_NR	(8)
+-#define EXYNOS4210_GPIO_J1_NR	(5)
+-#define EXYNOS4210_GPIO_K0_NR	(7)
+-#define EXYNOS4210_GPIO_K1_NR	(7)
+-#define EXYNOS4210_GPIO_K2_NR	(7)
+-#define EXYNOS4210_GPIO_K3_NR	(7)
+-#define EXYNOS4210_GPIO_L0_NR	(8)
+-#define EXYNOS4210_GPIO_L1_NR	(3)
+-#define EXYNOS4210_GPIO_L2_NR	(8)
+-#define EXYNOS4210_GPIO_Y0_NR	(6)
+-#define EXYNOS4210_GPIO_Y1_NR	(4)
+-#define EXYNOS4210_GPIO_Y2_NR	(6)
+-#define EXYNOS4210_GPIO_Y3_NR	(8)
+-#define EXYNOS4210_GPIO_Y4_NR	(8)
+-#define EXYNOS4210_GPIO_Y5_NR	(8)
+-#define EXYNOS4210_GPIO_Y6_NR	(8)
+-#define EXYNOS4210_GPIO_X0_NR	(8)
+-#define EXYNOS4210_GPIO_X1_NR	(8)
+-#define EXYNOS4210_GPIO_X2_NR	(8)
+-#define EXYNOS4210_GPIO_X3_NR	(8)
+-#define EXYNOS4210_GPIO_Z_NR	(7)
+-
+-enum exynos4210_gpio_xa_start {
+-	EXYNOS4210_GPIO_A0_START	= 0,
+-	EXYNOS4210_GPIO_A1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_A0),
+-	EXYNOS4210_GPIO_B_START		= EXYNOS_GPIO_START(EXYNOS4210_GPIO_A1),
+-	EXYNOS4210_GPIO_C0_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_B),
+-	EXYNOS4210_GPIO_C1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_C0),
+-	EXYNOS4210_GPIO_D0_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_C1),
+-	EXYNOS4210_GPIO_D1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_D0),
+-	EXYNOS4210_GPIO_E0_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_D1),
+-	EXYNOS4210_GPIO_E1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_E0),
+-	EXYNOS4210_GPIO_E2_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_E1),
+-	EXYNOS4210_GPIO_E3_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_E2),
+-	EXYNOS4210_GPIO_E4_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_E3),
+-	EXYNOS4210_GPIO_F0_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_E4),
+-	EXYNOS4210_GPIO_F1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_F0),
+-	EXYNOS4210_GPIO_F2_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_F1),
+-	EXYNOS4210_GPIO_F3_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_F2),
+-};
+-
+-enum exynos4210_gpio_xb_start {
+-	EXYNOS4210_GPIO_J0_START	= 0,
+-	EXYNOS4210_GPIO_J1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_J0),
+-	EXYNOS4210_GPIO_K0_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_J1),
+-	EXYNOS4210_GPIO_K1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_K0),
+-	EXYNOS4210_GPIO_K2_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_K1),
+-	EXYNOS4210_GPIO_K3_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_K2),
+-	EXYNOS4210_GPIO_L0_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_K3),
+-	EXYNOS4210_GPIO_L1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_L0),
+-	EXYNOS4210_GPIO_L2_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_L1),
+-	EXYNOS4210_GPIO_Y0_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_L2),
+-	EXYNOS4210_GPIO_Y1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_Y0),
+-	EXYNOS4210_GPIO_Y2_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_Y1),
+-	EXYNOS4210_GPIO_Y3_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_Y2),
+-	EXYNOS4210_GPIO_Y4_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_Y3),
+-	EXYNOS4210_GPIO_Y5_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_Y4),
+-	EXYNOS4210_GPIO_Y6_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_Y5),
+-	EXYNOS4210_GPIO_X0_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_Y6),
+-	EXYNOS4210_GPIO_X1_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_X0),
+-	EXYNOS4210_GPIO_X2_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_X1),
+-	EXYNOS4210_GPIO_X3_START	= EXYNOS_GPIO_START(EXYNOS4210_GPIO_X2),
+-};
+-
+-enum exynos4210_gpio_xc_start {
+-	EXYNOS4210_GPIO_Z_START		= 0,
+-};
+-
+-#define	EXYNOS4210_GPIO_A0_IRQ		EXYNOS4210_GPIO_A0_START
+-#define	EXYNOS4210_GPIO_A1_IRQ		EXYNOS4210_GPIO_A1_START
+-#define	EXYNOS4210_GPIO_B_IRQ		EXYNOS4210_GPIO_B_START
+-#define	EXYNOS4210_GPIO_C0_IRQ		EXYNOS4210_GPIO_C0_START
+-#define	EXYNOS4210_GPIO_C1_IRQ		EXYNOS4210_GPIO_C1_START
+-#define	EXYNOS4210_GPIO_D0_IRQ		EXYNOS4210_GPIO_D0_START
+-#define	EXYNOS4210_GPIO_D1_IRQ		EXYNOS4210_GPIO_D1_START
+-#define	EXYNOS4210_GPIO_E0_IRQ		EXYNOS4210_GPIO_E0_START
+-#define	EXYNOS4210_GPIO_E1_IRQ		EXYNOS4210_GPIO_E1_START
+-#define	EXYNOS4210_GPIO_E2_IRQ		EXYNOS4210_GPIO_E2_START
+-#define	EXYNOS4210_GPIO_E3_IRQ		EXYNOS4210_GPIO_E3_START
+-#define	EXYNOS4210_GPIO_E4_IRQ		EXYNOS4210_GPIO_E4_START
+-#define	EXYNOS4210_GPIO_F0_IRQ		EXYNOS4210_GPIO_F0_START
+-#define	EXYNOS4210_GPIO_F1_IRQ		EXYNOS4210_GPIO_F1_START
+-#define	EXYNOS4210_GPIO_F2_IRQ		EXYNOS4210_GPIO_F2_START
+-#define	EXYNOS4210_GPIO_F3_IRQ		EXYNOS4210_GPIO_F3_START
+-#define	EXYNOS4210_GPIO_J0_IRQ		EXYNOS4210_GPIO_J0_START
+-#define	EXYNOS4210_GPIO_J1_IRQ		EXYNOS4210_GPIO_J1_START
+-#define	EXYNOS4210_GPIO_K0_IRQ		EXYNOS4210_GPIO_K0_START
+-#define	EXYNOS4210_GPIO_K1_IRQ		EXYNOS4210_GPIO_K1_START
+-#define	EXYNOS4210_GPIO_K2_IRQ		EXYNOS4210_GPIO_K2_START
+-#define	EXYNOS4210_GPIO_K3_IRQ		EXYNOS4210_GPIO_K3_START
+-#define	EXYNOS4210_GPIO_L0_IRQ		EXYNOS4210_GPIO_L0_START
+-#define	EXYNOS4210_GPIO_L1_IRQ		EXYNOS4210_GPIO_L1_START
+-#define	EXYNOS4210_GPIO_L2_IRQ		EXYNOS4210_GPIO_L2_START
+-#define	EXYNOS4210_GPIO_Z_IRQ		EXYNOS4210_GPIO_Z_START
+-
+-#define EXYNOS4210_GPIOA_NR_PINS	EXYNOS_GPIO_START(EXYNOS4210_GPIO_F3)
+-#define EXYNOS4210_GPIOA_NR_GINT	EXYNOS_GPIO_START(EXYNOS4210_GPIO_F3)
+-#define EXYNOS4210_GPIOB_NR_PINS	EXYNOS_GPIO_START(EXYNOS4210_GPIO_X3)
+-#define EXYNOS4210_GPIOB_NR_GINT	EXYNOS_GPIO_START(EXYNOS4210_GPIO_L2)
+-#define EXYNOS4210_GPIOC_NR_PINS	EXYNOS_GPIO_START(EXYNOS4210_GPIO_Z)
+-
+ /* External GPIO and wakeup interrupt related definitions */
+ #define EXYNOS_GPIO_ECON_OFFSET		0x700
+ #define EXYNOS_GPIO_EMASK_OFFSET	0x900
 -- 
 1.7.12
