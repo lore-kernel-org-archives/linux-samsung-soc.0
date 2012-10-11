@@ -1,295 +1,84 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 11/15] pinctrl: samsung: Use one GPIO chip per pin bank
-Date: Thu, 11 Oct 2012 10:11:17 +0200
-Message-ID: <1349943081-27939-12-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 14/15] pinctrl: samsung: Add GPIO to IRQ translation
+Date: Thu, 11 Oct 2012 10:11:20 +0200
+Message-ID: <1349943081-27939-15-git-send-email-t.figa@samsung.com>
 References: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56977 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:57048 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932486Ab2JKIMZ (ORCPT
+	with ESMTP id S932131Ab2JKIMi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Oct 2012 04:12:25 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	Thu, 11 Oct 2012 04:12:38 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBP00EJJYRJYEI0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:23 +0900 (KST)
+ 17 2011)) with ESMTP id <0MBP00EIPYR2YEI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:37 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MBP005FVYR04E50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:23 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:37 +0900 (KST)
 In-reply-to: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, tony@atomide.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-This patch modifies the pinctrl-samsung driver to register one GPIO chip
-per pin bank, instead of a single chip for all pin banks of the
-controller.
+Some drivers require a way to translate GPIO pins to their IRQ numbers.
 
-It simplifies GPIO accesses a lot (constant time instead of looping
-through the list of banks to find the right one) and should have a good
-effect on performance of any bit-banging driver.
-
-In addition it allows to reference GPIO pins by a phandle to the bank
-node and a local pin offset inside of the bank (similar to previous
-gpiolib driver), which is more clear and readable than using indices
-relative to the whole pin controller.
-
-Example:
-	device {
-		/* ... */
-		gpios = <&gpk0 4 0>;
-		/* ... */
-	};
+This patch adds the .to_irq() gpiolib callback to pinctrl-samsung
+driver, which creates (if not present yet) and returns an IRQ mapping
+for given GPIO pin.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- drivers/pinctrl/pinctrl-samsung.c | 117 ++++++++++++++++++++++++--------------
- drivers/pinctrl/pinctrl-samsung.h |  11 ++--
- 2 files changed, 79 insertions(+), 49 deletions(-)
+ drivers/pinctrl/pinctrl-samsung.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index e1ef5d2..0a38368 100644
+index 0a38368..0db88bb 100644
 --- a/drivers/pinctrl/pinctrl-samsung.c
 +++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -48,6 +48,11 @@ struct pin_config {
+@@ -26,6 +26,7 @@
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/gpio.h>
++#include <linux/irqdomain.h>
  
- static unsigned int pin_base = 0;
+ #include "core.h"
+ #include "pinctrl-samsung.h"
+@@ -528,6 +529,23 @@ static int samsung_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
+ }
  
-+static inline struct samsung_pin_bank *gc_to_pin_bank(struct gpio_chip *gc)
+ /*
++ * gpiolib gpio_to_irq callback function. Creates a mapping between a GPIO pin
++ * and a virtual IRQ, if not already present.
++ */
++static int samsung_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
 +{
-+	return container_of(gc, struct samsung_pin_bank, gpio_chip);
++	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
++	unsigned int virq;
++
++	if (!bank->irq_domain)
++		return -ENXIO;
++
++	virq = irq_create_mapping(bank->irq_domain, offset);
++
++	return (virq) ? : -ENXIO;
 +}
 +
- /* check if the selector is a valid pin group selector */
- static int samsung_get_group_count(struct pinctrl_dev *pctldev)
- {
-@@ -333,9 +338,12 @@ static int samsung_pinmux_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	void __iomem *reg;
- 	u32 data, pin_offset, mask, shift;
- 
-+	bank = gc_to_pin_bank(range->gc);
- 	drvdata = pinctrl_dev_get_drvdata(pctldev);
- 
--	pin_to_reg_bank(drvdata, offset, &reg, &pin_offset, &bank);
-+	pin_offset = offset - bank->pin_base;
-+	reg = drvdata->virt_base + bank->pctl_offset;
-+
- 	mask = (1 << bank->func_width) - 1;
- 	shift = pin_offset * bank->func_width;
- 
-@@ -469,17 +477,16 @@ static struct pinconf_ops samsung_pinconf_ops = {
- /* gpiolib gpio_set callback function */
- static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
- {
-+	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
- 	void __iomem *reg;
--	u32 pin_offset, data;
--	struct samsung_pinctrl_drv_data *drvdata;
-+	u32 data;
- 
--	drvdata = dev_get_drvdata(gc->dev);
-+	reg = bank->drvdata->virt_base + bank->pctl_offset;
- 
--	pin_to_reg_bank(drvdata, offset, &reg, &pin_offset, NULL);
- 	data = readl(reg + DAT_REG);
--	data &= ~(1 << pin_offset);
-+	data &= ~(1 << offset);
- 	if (value)
--		data |= 1 << pin_offset;
-+		data |= 1 << offset;
- 	writel(data, reg + DAT_REG);
- }
- 
-@@ -487,14 +494,13 @@ static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
- static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
- {
- 	void __iomem *reg;
--	u32 pin_offset, data;
--	struct samsung_pinctrl_drv_data *drvdata;
-+	u32 data;
-+	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
- 
--	drvdata = dev_get_drvdata(gc->dev);
-+	reg = bank->drvdata->virt_base + bank->pctl_offset;
- 
--	pin_to_reg_bank(drvdata, offset, &reg, &pin_offset, NULL);
- 	data = readl(reg + DAT_REG);
--	data >>= pin_offset;
-+	data >>= offset;
- 	data &= 1;
- 	return data;
- }
-@@ -724,12 +730,16 @@ static int __init samsung_pinctrl_register(struct platform_device *pdev,
- 		return -EINVAL;
- 	}
- 
--	drvdata->grange.name = "samsung-pctrl-gpio-range";
--	drvdata->grange.id = 0;
--	drvdata->grange.base = drvdata->ctrl->base;
--	drvdata->grange.npins = drvdata->ctrl->nr_pins;
--	drvdata->grange.gc = drvdata->gc;
--	pinctrl_add_gpio_range(drvdata->pctl_dev, &drvdata->grange);
-+	for (bank = 0; bank < drvdata->ctrl->nr_banks; ++bank) {
-+		pin_bank = &drvdata->ctrl->pin_banks[bank];
-+		pin_bank->grange.name = pin_bank->name;
-+		pin_bank->grange.id = bank;
-+		pin_bank->grange.pin_base = pin_bank->pin_base;
-+		pin_bank->grange.base = pin_bank->gpio_chip.base;
-+		pin_bank->grange.npins = pin_bank->gpio_chip.ngpio;
-+		pin_bank->grange.gc = &pin_bank->gpio_chip;
-+		pinctrl_add_gpio_range(drvdata->pctl_dev, &pin_bank->grange);
-+	}
- 
- 	ret = samsung_pinctrl_parse_dt(pdev, drvdata);
- 	if (ret) {
-@@ -740,49 +750,68 @@ static int __init samsung_pinctrl_register(struct platform_device *pdev,
- 	return 0;
- }
- 
-+static const struct gpio_chip samsung_gpiolib_chip = {
-+	.set = samsung_gpio_set,
-+	.get = samsung_gpio_get,
-+	.direction_input = samsung_gpio_direction_input,
-+	.direction_output = samsung_gpio_direction_output,
-+	.owner = THIS_MODULE,
-+};
-+
- /* register the gpiolib interface with the gpiolib subsystem */
- static int __init samsung_gpiolib_register(struct platform_device *pdev,
- 				struct samsung_pinctrl_drv_data *drvdata)
- {
-+	struct samsung_pin_ctrl *ctrl = drvdata->ctrl;
-+	struct samsung_pin_bank *bank = ctrl->pin_banks;
- 	struct gpio_chip *gc;
- 	int ret;
-+	int i;
- 
--	gc = devm_kzalloc(&pdev->dev, sizeof(*gc), GFP_KERNEL);
--	if (!gc) {
--		dev_err(&pdev->dev, "mem alloc for gpio_chip failed\n");
--		return -ENOMEM;
--	}
--
--	drvdata->gc = gc;
--	gc->base = drvdata->ctrl->base;
--	gc->ngpio = drvdata->ctrl->nr_pins;
--	gc->dev = &pdev->dev;
--	gc->set = samsung_gpio_set;
--	gc->get = samsung_gpio_get;
--	gc->direction_input = samsung_gpio_direction_input;
--	gc->direction_output = samsung_gpio_direction_output;
--	gc->label = drvdata->ctrl->label;
--	gc->owner = THIS_MODULE;
--	ret = gpiochip_add(gc);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to register gpio_chip %s, error "
--					"code: %d\n", gc->label, ret);
--		return ret;
-+	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
-+		bank->gpio_chip = samsung_gpiolib_chip;
-+
-+		gc = &bank->gpio_chip;
-+		gc->base = ctrl->base + bank->pin_base;
-+		gc->ngpio = bank->nr_pins;
-+		gc->dev = &pdev->dev;
-+		gc->of_node = bank->of_node;
-+		gc->label = bank->name;
-+
-+		ret = gpiochip_add(gc);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to register gpio_chip %s, error code: %d\n",
-+							gc->label, ret);
-+			goto fail;
-+		}
- 	}
- 
- 	return 0;
-+
-+fail:
-+	for (--i, --bank; i >= 0; --i, --bank)
-+		if (gpiochip_remove(&bank->gpio_chip))
-+			dev_err(&pdev->dev, "gpio chip %s remove failed\n",
-+							bank->gpio_chip.label);
-+	return ret;
- }
- 
- /* unregister the gpiolib interface with the gpiolib subsystem */
- static int __init samsung_gpiolib_unregister(struct platform_device *pdev,
- 				struct samsung_pinctrl_drv_data *drvdata)
- {
--	int ret = gpiochip_remove(drvdata->gc);
--	if (ret) {
-+	struct samsung_pin_ctrl *ctrl = drvdata->ctrl;
-+	struct samsung_pin_bank *bank = ctrl->pin_banks;
-+	int ret = 0;
-+	int i;
-+
-+	for (i = 0; !ret && i < ctrl->nr_banks; ++i, ++bank)
-+		ret = gpiochip_remove(&bank->gpio_chip);
-+
-+	if (ret)
- 		dev_err(&pdev->dev, "gpio chip remove failed\n");
--		return ret;
--	}
--	return 0;
-+
-+	return ret;
- }
- 
- static const struct of_device_id samsung_pinctrl_dt_match[];
-diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-index e56be22..dac40ff 100644
---- a/drivers/pinctrl/pinctrl-samsung.h
-+++ b/drivers/pinctrl/pinctrl-samsung.h
-@@ -23,6 +23,8 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/pinctrl/machine.h>
- 
-+#include <linux/gpio.h>
-+
- /* register offsets within a pin bank */
- #define DAT_REG		0x4
- #define PUD_REG		0x8
-@@ -113,6 +115,8 @@ struct samsung_pinctrl_drv_data;
-  * @of_node: OF node of the bank.
-  * @drvdata: link to controller driver data
-  * @irq_domain: IRQ domain of the bank.
-+ * @gpio_chip: GPIO chip of the bank.
-+ * @grange: linux gpio pin range supported by this bank.
++/*
+  * Parse the pin names listed in the 'samsung,pins' property and convert it
+  * into a list of gpio numbers are create a pin group from it.
   */
- struct samsung_pin_bank {
- 	u32		pctl_offset;
-@@ -129,6 +133,8 @@ struct samsung_pin_bank {
- 	struct device_node *of_node;
- 	struct samsung_pinctrl_drv_data *drvdata;
- 	struct irq_domain *irq_domain;
-+	struct gpio_chip gpio_chip;
-+	struct pinctrl_gpio_range grange;
+@@ -755,6 +773,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
+ 	.get = samsung_gpio_get,
+ 	.direction_input = samsung_gpio_direction_input,
+ 	.direction_output = samsung_gpio_direction_output,
++	.to_irq = samsung_gpio_to_irq,
+ 	.owner = THIS_MODULE,
  };
  
- /**
-@@ -186,8 +192,6 @@ struct samsung_pin_ctrl {
-  * @nr_groups: number of such pin groups.
-  * @pmx_functions: list of pin functions available to the driver.
-  * @nr_function: number of such pin functions.
-- * @gc: gpio_chip instance registered with gpiolib.
-- * @grange: linux gpio pin range supported by this controller.
-  */
- struct samsung_pinctrl_drv_data {
- 	void __iomem			*virt_base;
-@@ -204,9 +208,6 @@ struct samsung_pinctrl_drv_data {
- 	unsigned int			nr_functions;
- 
- 	struct irq_domain		*wkup_irqd;
--
--	struct gpio_chip		*gc;
--	struct pinctrl_gpio_range	grange;
- };
- 
- /**
 -- 
 1.7.12
