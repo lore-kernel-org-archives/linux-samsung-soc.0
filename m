@@ -1,213 +1,133 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 15/15] Documentation: Update samsung-pinctrl device tree
- bindings documentation
-Date: Thu, 11 Oct 2012 10:11:21 +0200
-Message-ID: <1349943081-27939-16-git-send-email-t.figa@samsung.com>
+From: Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v2 00/15] pinctrl: samsung: Usability and extensibiltiy
+ improvements
+Date: Thu, 11 Oct 2012 18:01:03 +0900
+Message-ID: <CAH9JG2WZciwLuWzk5Zgn06+xJdCsmSOu=z2JUz4_HpSjOwM59g@mail.gmail.com>
 References: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57081 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756263Ab2JKINC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Oct 2012 04:13:02 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBP00EIPYR2YEI0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:42 +0900 (KST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MBP005FVYR04E50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:41 +0900 (KST)
-In-reply-to: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1349943081-27939-1-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, tony@atomide.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- .../bindings/pinctrl/samsung-pinctrl.txt           | 118 ++++++++++++++++-----
- 1 file changed, 93 insertions(+), 25 deletions(-)
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index 03dee50..63806e2 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -13,8 +13,14 @@ Required Properties:
- - reg: Base address of the pin controller hardware module and length of
-   the address space it occupies.
- 
--- interrupts: interrupt specifier for the controller. The format and value of
--  the interrupt specifier depends on the interrupt parent for the controller.
-+- Pin banks as child nodes: Pin banks of the controller are represented by child
-+  nodes of the controller node. Bank name is taken from name of the node. Each
-+  bank node must contain following properties:
-+
-+  - gpio-controller: identifies the node as a gpio controller and pin bank.
-+  - #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-+    binding is used, the amount of cells must be specified as 2. See generic
-+    GPIO binding documentation for description of particular cells.
- 
- - Pin mux/config groups as child nodes: The pin mux (selecting pin function
-   mode) and pin config (pull up/down, driver strength) settings are represented
-@@ -72,16 +78,24 @@ used as system wakeup events.
- A. External GPIO Interrupts: For supporting external gpio interrupts, the
-    following properties should be specified in the pin-controller device node.
- 
--- interrupt-controller: identifies the controller node as interrupt-parent.
--- #interrupt-cells: the value of this property should be 2.
--  - First Cell: represents the external gpio interrupt number local to the
--    external gpio interrupt space of the controller.
--  - Second Cell: flags to identify the type of the interrupt
--    - 1 = rising edge triggered
--    - 2 = falling edge triggered
--    - 3 = rising and falling edge triggered
--    - 4 = high level triggered
--    - 8 = low level triggered
-+   - interrupt-parent: phandle of the interrupt parent to which the external
-+     GPIO interrupts are forwarded to.
-+   - interrupts: interrupt specifier for the controller. The format and value of
-+     the interrupt specifier depends on the interrupt parent for the controller.
-+
-+   In addition, following properties must be present in node of every bank
-+   of pins supporting GPIO interrupts:
-+
-+   - interrupt-controller: identifies the controller node as interrupt-parent.
-+   - #interrupt-cells: the value of this property should be 2.
-+     - First Cell: represents the external gpio interrupt number local to the
-+       external gpio interrupt space of the controller.
-+     - Second Cell: flags to identify the type of the interrupt
-+       - 1 = rising edge triggered
-+       - 2 = falling edge triggered
-+       - 3 = rising and falling edge triggered
-+       - 4 = high level triggered
-+       - 8 = low level triggered
- 
- B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
-    child node representing the external wakeup interrupt controller should be
-@@ -94,6 +108,11 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
-        found on Samsung Exynos4210 SoC.
-    - interrupt-parent: phandle of the interrupt parent to which the external
-      wakeup interrupts are forwarded to.
-+   - interrupts: interrupt used by multiplexed wakeup interrupts.
-+
-+   In addition, following properties must be present in node of every bank
-+   of pins supporting wake-up interrupts:
-+
-    - interrupt-controller: identifies the node as interrupt-parent.
-    - #interrupt-cells: the value of this property should be 2
-      - First Cell: represents the external wakeup interrupt number local to
-@@ -105,11 +124,63 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
-        - 4 = high level triggered
-        - 8 = low level triggered
- 
-+   Node of every bank of pins supporting direct wake-up interrupts (without
-+   multiplexing) must contain following properties:
-+
-+   - interrupt-parent: phandle of the interrupt parent to which the external
-+     wakeup interrupts are forwarded to.
-+   - interrupts: interrupts of the interrupt parent which are used for external
-+     wakeup interrupts from pins of the bank, must contain interrupts for all
-+     pins of the bank.
-+
- Aliases:
- 
- All the pin controller nodes should be represented in the aliases node using
- the following format 'pinctrl{n}' where n is a unique number for the alias.
- 
-+Example: A pin-controller node with pin banks:
-+
-+	pinctrl_0: pinctrl@11400000 {
-+		compatible = "samsung,pinctrl-exynos4210";
-+		reg = <0x11400000 0x1000>;
-+		interrupts = <0 47 0>;
-+
-+		/* ... */
-+
-+		/* Pin bank without external interrupts */
-+		gpy0: gpy0 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		/* ... */
-+
-+		/* Pin bank with external GPIO or muxed wake-up interrupts */
-+		gpj0: gpj0 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		/* ... */
-+
-+		/* Pin bank with external direct wake-up interrupts */
-+		gpx0: gpx0 {
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			interrupt-parent = <&gic>;
-+			interrupts = <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
-+				     <0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		/* ... */
-+	};
-+
- Example 1: A pin-controller node with pin groups.
- 
- 	pinctrl_0: pinctrl@11400000 {
-@@ -117,6 +188,8 @@ Example 1: A pin-controller node with pin groups.
- 		reg = <0x11400000 0x1000>;
- 		interrupts = <0 47 0>;
- 
-+		/* ... */
-+
- 		uart0_data: uart0-data {
- 			samsung,pins = "gpa0-0", "gpa0-1";
- 			samsung,pin-function = <2>;
-@@ -158,20 +231,14 @@ Example 2: A pin-controller node with external wakeup interrupt controller node.
- 	pinctrl_1: pinctrl@11000000 {
- 		compatible = "samsung,pinctrl-exynos4210";
- 		reg = <0x11000000 0x1000>;
--		interrupts = <0 46 0>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
-+		interrupts = <0 46 0>
- 
--		wakup_eint: wakeup-interrupt-controller {
-+		/* ... */
-+
-+		wakeup-interrupt-controller {
- 			compatible = "samsung,exynos4210-wakeup-eint";
- 			interrupt-parent = <&gic>;
--			interrupt-controller;
--			#interrupt-cells = <2>;
--			interrupts = <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
--					<0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
--					<0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
--					<0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>,
--					<0 32 0>;
-+			interrupts = <0 32 0>;
- 		};
- 	};
- 
-@@ -190,7 +257,8 @@ Example 4: Set up the default pin state for uart controller.
- 
- 	static int s3c24xx_serial_probe(struct platform_device *pdev) {
- 		struct pinctrl *pinctrl;
--		...
--		...
-+
-+		/* ... */
-+
- 		pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
- 	}
--- 
-1.7.12
+On Thu, Oct 11, 2012 at 5:11 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch series is a work on improving usability and extensibiltiy of
+> the pinctrl-samsung driver. It consists of three main parts:
+>  - improving flexibility of SoC-specific data specification
+>  - converting the driver to one GPIO chip and IRQ domain per pin bank
+>  - improving wake-up IRQ setup and handling
+
+Really good job! and it solved mess GPIOs H/W configurations of Samsung SoC.
+Basically Samsung SoC GPIOs don't have generic rules. Even worse, pin
+name is mixed but offset is still increased.
+
+With DT support. we can solve this issue and use generic pinctrl drivers.
+
+For all series.
+Reviewed-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+>
+> 1) What the first part does, in addition to various related fixes, is
+> removing any unnecessary static data from pinctrl-exynos driver.
+>
+> This is achieved mostly thanks to assigning pin numbers dynamically,
+> with help of only pin counts of particular banks. It also simplifies
+> adding next SoC variants, since much less static data needs to be
+> specified.
+>
+> 2) The second part attempts to simplify usage of the driver and fix several
+> problems of current implementation, in particular:
+>
+>   - Simplifies GPIO pin specification in device tree by using pin
+>     namespace local to pin bank instead of local to pin controller, e.g.
+>
+>         gpios = <&gpj0 3 0>;
+>
+>     instead of
+>
+>         gpios = <&pinctrl0 115 0>;
+>
+>   - Simplifies GPIO interrupt specification in device tree by using
+>     namespace local to pin bank (and equal to GPIO namespace), e.g.
+>
+>         interrupt-parent = <&gpj0>;
+>         interrupts = <3 0>;
+>
+>     instead of
+>
+>         interrupt-parent = <&pinctrl0>;
+>         interrupts = <115 0>;
+>
+>   - Simplifies internal GPIO pin to bank translation thanks to
+>     correspondence of particular GPIO chips to pin banks. This allows
+>     to remove the (costly in case of GPIO bit-banging drivers) lookup
+>     over all banks to find the one that the pin is from.
+>
+> 3) Third part is focused on removing the hard-coded description of wake-up
+> interrupt layout.
+>
+> It moves wake-up interrupt description to bank struct and device tree,
+> which allows to specify which pin banks support wake-up interrupts and
+> how they are handled (direct or multiplexed/chained).
+>
+> See particular patches for more detailed descriptions and the last patch for
+> updated device tree bindings.
+>
+> Changes since v1:
+>  - dropped moving SoC-specific data to device tree
+>    (might be added in further patches)
+>  - dropped per-bank specification of configuration register offsets
+>    (thus limiting scope of the driver to Exynos SoCs; will be added in
+>     further patches)
+>
+> Tomasz Figa (15):
+>   pinctrl: samsung: Detect and handle unsupported configuration types
+>   pinctrl: samsung: Do not pass gpio_chip to pin_to_reg_bank
+>   pinctrl: samsung: Assing pin numbers dynamically
+>   pinctrl: samsung: Remove static pin enumerations
+>   pinctrl: samsung: Distinguish between pin group and bank nodes
+>   ARM: dts: exynos4210-pinctrl: Add nodes for pin banks
+>   pinctrl: samsung: Match pin banks with their device nodes
+>   pinctrl: samsung: Hold pointer to driver data in bank struct
+>   pinctrl: samsung: Include bank-specific eint offset in bank struct
+>   pinctrl: exynos: Use one IRQ domain per pin bank
+>   pinctrl: samsung: Use one GPIO chip per pin bank
+>   pinctrl: samsung: Use per-bank IRQ domain for wake-up interrupts
+>   pinctrl: exynos: Set pin function to EINT in irq_set_type of wake-up
+>     EINT
+>   pinctrl: samsung: Add GPIO to IRQ translation
+>   Documentation: Update samsung-pinctrl device tree bindings
+>     documentation
+>
+>  .../bindings/pinctrl/samsung-pinctrl.txt           | 118 +++++--
+>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi          | 278 ++++++++++++++++
+>  arch/arm/boot/dts/exynos4210.dtsi                  | 241 +-------------
+>  drivers/pinctrl/pinctrl-exynos.c                   | 367 ++++++++++-----------
+>  drivers/pinctrl/pinctrl-exynos.h                   | 170 ++--------
+>  drivers/pinctrl/pinctrl-samsung.c                  | 203 ++++++++----
+>  drivers/pinctrl/pinctrl-samsung.h                  |  29 +-
+>  7 files changed, 741 insertions(+), 665 deletions(-)
+>
+> --
+> 1.7.12
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
