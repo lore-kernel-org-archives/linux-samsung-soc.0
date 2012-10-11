@@ -1,93 +1,120 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 01/16] ARM: dts: exynos4210: Replace legacy GPIO bank nodes with pinctrl bank nodes
-Date: Wed, 10 Oct 2012 20:26:25 +0200
-Message-ID: <1760725.iUz22fJjbN@flatron>
-References: <1349685556-23718-1-git-send-email-t.figa@samsung.com> <5075A1EF.60900@wwwdotorg.org> <20121010181253.GQ12552@atomide.com>
+From: Vasanth Ananthan <vasanthananthan@gmail.com>
+Subject: Re: [PATCH 2/6] ARM: EXYNOS5: DT Support for SATA and SATA PHY
+Date: Thu, 11 Oct 2012 12:19:04 +0530
+Message-ID: <CAK1UHiwCQZJ--+urJmn6CURAYLx3-8uKPPLcdy7ufmKHTAm1sw@mail.gmail.com>
+References: <1349783332-18467-1-git-send-email-vasanthananthan@gmail.com>
+	<1349783332-18467-3-git-send-email-vasanthananthan@gmail.com>
+	<20121009182828.GA20879@quad.lixom.net>
+	<CAK1UHiyjyp8u-nFwU-19dds1uF7T1kkFNHyYQ6pWLFtUwGtR1w@mail.gmail.com>
+	<20121010163127.GA19433@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:38116 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756871Ab2JJS0Y convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Oct 2012 14:26:24 -0400
-Received: by mail-ee0-f46.google.com with SMTP id b15so600529eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Oct 2012 11:26:23 -0700 (PDT)
-In-Reply-To: <20121010181253.GQ12552@atomide.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <20121010163127.GA19433@quad.lixom.net>
+Sender: linux-ide-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanth.a@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-Dnia =C5=9Broda, 10 pa=C5=BAdziernika 2012 11:12:53 Tony Lindgren pisze=
-:
-> * Stephen Warren <swarren@wwwdotorg.org> [121010 09:36]:
-> > On 10/10/2012 01:26 AM, Linus Walleij wrote:
-> > > On Mon, Oct 8, 2012 at 10:39 AM, Tomasz Figa <t.figa@samsung.com>=
-=20
-wrote:
-> > >> Seuqential patches from this series introduce SoC-specific data
-> > >> parsing
-> > >> from device tree.
-> > >>=20
-> > >> This patch removes legacy GPIO bank nodes from exynos4210.dtsi a=
-nd
-> > >> replaces them with nodes and properties required for these patch=
-es.
-> > >=20
-> > > So to be clear:
-> > >> +       pinctrl-bank-types {
-> > >> +               bank_off: bank-off {
-> > >> +                       samsung,reg-names =3D "func", "dat", "pu=
-d",
-> > >> +                                               "drv", "conpdn",
-> > >> "pudpdn"; +                       samsung,reg-params =3D <0x00 4=
->,
-> > >> <0x04 1>, <0x08 2>, +                                           =
-  =20
-> > >> <0x0C 2>, <0x10 2>, <0x14 2>; +               };
-> > >=20
-> > > This is starting to look like a firmware language, I have mixed
-> > > feelings about this. Shall this be read:
-> > >=20
-> > > "Poke 4 into 0x00, poke 1 into 0x04, poke 2 into 0x08" etc?
-> > >=20
-> > > We really need to discuss this, Grant has already NACK:ed
-> > > such approaches once.
-> >=20
-> > Well, I don't think he NACK'd Tony Lindgren's generic pinctrl drive=
-r,
-> > which is doing this exact same thing. I did raise the same point ab=
-out
-> > Tony's driver when he posted it, but nobody seemed inclined to NACK=
- it
-> > based on that at the time, IIRC...
->=20
-> To summarize, using reg value pairs in DT makes sense if the amount
-> of data is huge. Otherwise we'll be describing indidual hardware bits
-> as properties in DT, or have to have huge amounts of static data in
-> the kernel.
->=20
-> Where it does not make sense is if there's a sequence of reads
-> and writes with test loops in between.. But that's does not look
-> to be the case here.
->=20
-> The reg value pairs will be readable when the DT preprocessing is
-> available, and that allows the values to be orred together while
-> DT properties don't. The alternative is to describe hardware register
-> bits as DT properties, which is very bloated.
->=20
-> But considering all this.. Are the samsung,reg-names really needed
-> by the kernel?
+Hi,
 
-They are used to specify which registers are defined in reg-params prop=
-erty=20
-and in which order. Most of the registers are not mandatory and this is=
-=20
-needed to be able to specify only those that are present. At least I=20
-couldn't think of a better solution for this. Do you have some suggesti=
-ons?
-=20
-Best regards,
-Tomasz Figa
+On Wed, Oct 10, 2012 at 10:01 PM, Olof Johansson <olof@lixom.net> wrote:
+> Hi,
+>
+> On Wed, Oct 10, 2012 at 02:08:31PM +0530, Vasanth Ananthan wrote:
+>
+>> > > +
+>> > > +             sataphy@70 {
+>> >
+>> > sata-phy would be a more conventional name.
+>> >
+>> > > +                     compatible = "samsung,i2c-phy";
+>> >
+>> > i2c-phy? Seems like an odd choice of name. What is this device?
+>> >
+>>
+>> The SATA physical layer controller is both a platform device and a i2c
+>> slave device.
+>> This compatible string is for the i2c client driver. Hence I have used
+>> i2c-phy here.
+>
+> Ok, but samsung,i2c-phy is much too generic. Maybe something like
+> samsung,exynos5-sata-phy  (and rename the MMIO-controlled phy controls
+> to ...sata-phy-controller below).
+>
+
+I'll do so..
+
+>
+>> > > +        };
+>> > > +
+>> > > +        sata-phy@12170000 {
+>> > > +                compatible = "samsung,exynos-sata-phy";
+>> > > +                reg = <0x12170000 0x1ff>;
+>> > > +        };
+>> >
+>> > Should have binding too. How does this relate to the i2c device above.
+>> >
+>>
+>> As mentioned earlier SATA physical layer controller is both a platform
+>> device and also an i2c slave device.
+>> This Node is for the SATA physical layer platform device, the previous node
+>> is for i2c slave device.
+>> Certain initialization settings done directly and other settings has to be
+>> done through i2c.
+>
+> Wow, that's quite awkward. What needs to be done over i2c? I think I have
+> seen use of SATA without touching the i2c side but it might have been for
+> a simple setup.
+
+40 bit Interface setting is done through i2c. Internal setting address
+0x3A and data 0x0B.
+
+>
+>> > > +
+>> > >       i2c@12C60000 {
+>> > >               compatible = "samsung,s3c2440-i2c";
+>> > >               reg = <0x12C60000 0x100>;
+>> > > @@ -152,6 +164,13 @@
+>> > >               #size-cells = <0>;
+>> > >       };
+>> > >
+>> > > +     i2c@121D0000 {
+>> > > +                compatible = "samsung,s3c2440-sataphy-i2c";
+>> >
+>> > Is this a unique i2c controller, or is it just another one like the others
+>> > on
+>> > the chip? If it's the latter, it should use the regular compatible string.
+>> >
+>>
+>> Yes, its a unique i2c controller which lacks an interrupt line while others
+>> are interrupt driven.
+>> Hence I have used a distinct compatible string for the driver to
+>> distinguish the controller.
+>
+> It would be better to just make the i2c bus driver handle the case where there
+> is no interrupt specifier and just use polling in those cases, especially if
+> the rest of the device is identical and doesn't need special handling.
+>
+> As a matter of fact, if that had been done for the hdmi phy, then you could
+> have done this patch without modifying the driver at all, just device tree
+> contents. And the same would go for the next time down the road when
+> a "special" i2c bus is added.
+>
+
+
+Yes, It is the i2c bus driver thats handles this case. There is a
+subsequent patch
+that provides the polling support to the driver. As far as I know, the
+i2c controller for
+HDMI PHY is also interrupt driven.
+
+>
+> -Olof
+
+
+
+-- 
+Regards,
+
+Vasanth K A
