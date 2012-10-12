@@ -1,178 +1,157 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v2 6/6] arm: exynos: removing exynos-drm device registration
- from non-dt platforms
-Date: Sat, 13 Oct 2012 02:12:35 +0530
-Message-ID: <1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
-References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: [PATCH 2/2] ARM: config: make sure that platforms are ordered by
+ option string
+Date: Fri, 12 Oct 2012 14:26:40 +0100
+Message-ID: <E1TMfGC-0001Kx-9v@rmk-PC.arm.linux.org.uk>
+References: <20121012132553.GK28061@n2100.arm.linux.org.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53244 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750922Ab2JLLTs (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:51163 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754348Ab2JLN0v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Oct 2012 07:19:48 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBS00CF624YFR90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Oct 2012 20:19:46 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MBS006L91SLP040@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Oct 2012 20:19:46 +0900 (KST)
-In-reply-to: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
+	Fri, 12 Oct 2012 09:26:51 -0400
+In-Reply-To: <20121012132553.GK28061@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com, rahul.sharma@samsung.com
+To: linux-arm-kernel@lists.infradead.org, davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, spear-devel@list.st.com
 
-As exynos-drm is a software device, its registration is moved to the
-exynos drm driver. This will provide generic solution for device registration
-for dt and non-dt platforms. Corresponding patches are posted to dri-devel
-list.
+The large platform selection choice should be sorted by option string
+so it's easy to find the platform you're looking for.  Fix the few
+options which are out of this order.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- arch/arm/mach-exynos/Makefile              |    1 -
- arch/arm/mach-exynos/dev-drm.c             |   29 ----------------------------
- arch/arm/mach-exynos/mach-nuri.c           |    3 --
- arch/arm/mach-exynos/mach-origen.c         |    3 --
- arch/arm/mach-exynos/mach-smdk4x12.c       |    3 --
- arch/arm/mach-exynos/mach-smdkv310.c       |    3 --
- arch/arm/mach-exynos/mach-universal_c210.c |    3 --
- arch/arm/plat-samsung/include/plat/devs.h  |    2 -
- 8 files changed, 0 insertions(+), 47 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/dev-drm.c
+ arch/arm/Kconfig |   76 +++++++++++++++++++++++++++---------------------------
+ 1 files changed, 38 insertions(+), 38 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 9b58024..1797dee 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -53,7 +53,6 @@ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
- obj-$(CONFIG_EXYNOS4_DEV_DWMCI)		+= dev-dwmci.o
- obj-$(CONFIG_EXYNOS_DEV_DMA)		+= dma.o
- obj-$(CONFIG_EXYNOS4_DEV_USB_OHCI)	+= dev-ohci.o
--obj-$(CONFIG_EXYNOS_DEV_DRM)		+= dev-drm.o
- obj-$(CONFIG_EXYNOS_DEV_SYSMMU)		+= dev-sysmmu.o
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index bd12ddd..1bc092e 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -348,16 +348,6 @@ config ARCH_BCM2835
+ 	  This enables support for the Broadcom BCM2835 SoC. This SoC is
+ 	  use in the Raspberry Pi, and Roku 2 devices.
  
- obj-$(CONFIG_ARCH_EXYNOS)		+= setup-i2c0.o
-diff --git a/arch/arm/mach-exynos/dev-drm.c b/arch/arm/mach-exynos/dev-drm.c
-deleted file mode 100644
-index 17c9c6e..0000000
---- a/arch/arm/mach-exynos/dev-drm.c
-+++ /dev/null
-@@ -1,29 +0,0 @@
--/*
-- * linux/arch/arm/mach-exynos/dev-drm.c
-- *
-- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * EXYNOS - core DRM device
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
+-config ARCH_CLPS711X
+-	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
+-	select ARCH_USES_GETTIMEOFFSET
+-	select CLKDEV_LOOKUP
+-	select COMMON_CLK
+-	select CPU_ARM720T
+-	select NEED_MACH_MEMORY_H
+-	help
+-	  Support for Cirrus Logic 711x/721x/731x based boards.
 -
--#include <linux/kernel.h>
--#include <linux/dma-mapping.h>
--#include <linux/platform_device.h>
--
--#include <plat/devs.h>
--
--static u64 exynos_drm_dma_mask = DMA_BIT_MASK(32);
--
--struct platform_device exynos_device_drm = {
--	.name	= "exynos-drm",
--	.dev	= {
--		.dma_mask		= &exynos_drm_dma_mask,
--		.coherent_dma_mask	= DMA_BIT_MASK(32),
--	}
--};
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index ea785fc..9267caf 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -1330,9 +1330,6 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	&cam_vdda_fixed_rdev,
- 	&cam_8m_12v_fixed_rdev,
- 	&exynos4_bus_devfreq,
--#ifdef CONFIG_DRM_EXYNOS
--	&exynos_device_drm,
--#endif
- };
+ config ARCH_CNS3XXX
+ 	bool "Cavium Networks CNS3XXX family"
+ 	select ARM_GIC
+@@ -369,6 +359,16 @@ config ARCH_CNS3XXX
+ 	help
+ 	  Support for Cavium Networks CNS3XXX platform.
  
- static void __init nuri_map_io(void)
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index b45600f..be8fac7 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -709,9 +709,6 @@ static struct platform_device *origen_devices[] __initdata = {
- 	&s5p_device_mfc_l,
- 	&s5p_device_mfc_r,
- 	&s5p_device_mixer,
--#ifdef CONFIG_DRM_EXYNOS
--	&exynos_device_drm,
--#endif
- 	&exynos4_device_ohci,
- 	&origen_device_gpiokeys,
- 	&origen_lcd_hv070wsa,
-diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
-index 81bf59c..f02ee11 100644
---- a/arch/arm/mach-exynos/mach-smdk4x12.c
-+++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-@@ -317,9 +317,6 @@ static struct platform_device *smdk4x12_devices[] __initdata = {
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
- 	&s5p_device_mfc_r,
--#ifdef CONFIG_DRM_EXYNOS
--	&exynos_device_drm,
--#endif
- 	&samsung_device_keypad,
- };
++config ARCH_CLPS711X
++	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
++	select ARCH_USES_GETTIMEOFFSET
++	select CLKDEV_LOOKUP
++	select COMMON_CLK
++	select CPU_ARM720T
++	select NEED_MACH_MEMORY_H
++	help
++	  Support for Cirrus Logic 711x/721x/731x based boards.
++
+ config ARCH_GEMINI
+ 	bool "Cortina Systems Gemini"
+ 	select ARCH_REQUIRE_GPIOLIB
+@@ -549,21 +549,6 @@ config ARCH_KIRKWOOD
+ 	  Support for the following Marvell Kirkwood series SoCs:
+ 	  88F6180, 88F6192 and 88F6281.
  
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index 12a1db2..bffb1b2 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -300,9 +300,6 @@ static struct platform_device *smdkv310_devices[] __initdata = {
- 	&s5p_device_fimc_md,
- 	&s5p_device_g2d,
- 	&s5p_device_jpeg,
--#ifdef CONFIG_DRM_EXYNOS
--	&exynos_device_drm,
--#endif
- 	&exynos4_device_ac97,
- 	&exynos4_device_i2s0,
- 	&exynos4_device_ohci,
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index 4d1f40d..f7b1337 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -1084,9 +1084,6 @@ static struct platform_device *universal_devices[] __initdata = {
- 	&s5p_device_onenand,
- 	&s5p_device_fimd0,
- 	&s5p_device_jpeg,
--#ifdef CONFIG_DRM_EXYNOS
--	&exynos_device_drm,
--#endif
- 	&s3c_device_usb_hsotg,
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 5da4b4f..133e3e4 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -133,8 +133,6 @@ extern struct platform_device exynos4_device_pcm1;
- extern struct platform_device exynos4_device_pcm2;
- extern struct platform_device exynos4_device_spdif;
- 
--extern struct platform_device exynos_device_drm;
+-config ARCH_LPC32XX
+-	bool "NXP LPC32XX"
+-	select ARCH_REQUIRE_GPIOLIB
+-	select ARM_AMBA
+-	select CLKDEV_LOOKUP
+-	select CLKSRC_MMIO
+-	select CPU_ARM926T
+-	select GENERIC_CLOCKEVENTS
+-	select HAVE_IDE
+-	select HAVE_PWM
+-	select USB_ARCH_HAS_OHCI
+-	select USE_OF
+-	help
+-	  Support for the NXP LPC32XX family of processors
 -
- extern struct platform_device samsung_asoc_dma;
- extern struct platform_device samsung_asoc_idma;
- extern struct platform_device samsung_device_keypad;
+ config ARCH_MV78XX0
+ 	bool "Marvell MV78xx0"
+ 	select ARCH_REQUIRE_GPIOLIB
+@@ -630,6 +615,21 @@ config ARCH_W90X900
+ 	  <http://www.nuvoton.com/hq/enu/ProductAndSales/ProductLines/
+ 		ConsumerElectronicsIC/ARMMicrocontroller/ARMMicrocontroller>
+ 
++config ARCH_LPC32XX
++	bool "NXP LPC32XX"
++	select ARCH_REQUIRE_GPIOLIB
++	select ARM_AMBA
++	select CLKDEV_LOOKUP
++	select CLKSRC_MMIO
++	select CPU_ARM926T
++	select GENERIC_CLOCKEVENTS
++	select HAVE_IDE
++	select HAVE_PWM
++	select USB_ARCH_HAS_OHCI
++	select USE_OF
++	help
++	  Support for the NXP LPC32XX family of processors
++
+ config ARCH_TEGRA
+ 	bool "NVIDIA Tegra"
+ 	select ARCH_HAS_CPUFREQ
+@@ -823,7 +823,7 @@ config ARCH_S5PV210
+ 	  Samsung S5PV210/S5PC110 series based systems
+ 
+ config ARCH_EXYNOS
+-	bool "SAMSUNG EXYNOS"
++	bool "Samsung EXYNOS"
+ 	select ARCH_HAS_CPUFREQ
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+ 	select ARCH_SPARSEMEM_ENABLE
+@@ -899,6 +899,18 @@ config ARCH_NOMADIK
+ 	help
+ 	  Support for the Nomadik platform by ST-Ericsson
+ 
++config PLAT_SPEAR
++	bool "ST SPEAr"
++	select ARCH_REQUIRE_GPIOLIB
++	select ARM_AMBA
++	select CLKDEV_LOOKUP
++	select CLKSRC_MMIO
++	select COMMON_CLK
++	select GENERIC_CLOCKEVENTS
++	select HAVE_CLK
++	help
++	  Support for ST's SPEAr platform (SPEAr3xx, SPEAr6xx and SPEAr13xx).
++
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+@@ -926,18 +938,6 @@ config ARCH_OMAP
+ 	help
+ 	  Support for TI's OMAP platform (OMAP1/2/3/4).
+ 
+-config PLAT_SPEAR
+-	bool "ST SPEAr"
+-	select ARCH_REQUIRE_GPIOLIB
+-	select ARM_AMBA
+-	select CLKDEV_LOOKUP
+-	select CLKSRC_MMIO
+-	select COMMON_CLK
+-	select GENERIC_CLOCKEVENTS
+-	select HAVE_CLK
+-	help
+-	  Support for ST's SPEAr platform (SPEAr3xx, SPEAr6xx and SPEAr13xx).
+-
+ config ARCH_VT8500
+ 	bool "VIA/WonderMedia 85xx"
+ 	select ARCH_HAS_CPUFREQ
 -- 
-1.7.0.4
+1.7.4.4
