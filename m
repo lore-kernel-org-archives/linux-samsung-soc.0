@@ -1,72 +1,113 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v2 5/6] arm: exynos: add clocks for exynos5 hdmi
-Date: Sat, 13 Oct 2012 02:12:34 +0530
-Message-ID: <1350074555-26018-6-git-send-email-rahul.sharma@samsung.com>
-References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH V5 2/2] video: exynos_dp: device tree documentation
+Date: Sat, 13 Oct 2012 02:17:39 +0530
+Message-ID: <1350074859-23226-2-git-send-email-ajaykumar.rs@samsung.com>
+References: <1350074859-23226-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:32881 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753276Ab2JLLSj (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:25505 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751114Ab2JLLTP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Oct 2012 07:18:39 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBS00H1U22D0470@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Oct 2012 20:18:38 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MBS006L91SLP040@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Oct 2012 20:18:38 +0900 (KST)
-In-reply-to: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
+	Fri, 12 Oct 2012 07:19:15 -0400
+In-reply-to: <1350074859-23226-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com, rahul.sharma@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com, devicetree-discuss@lists.ozlabs.org
+Cc: FlorianSchandinat@gmx.de, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, thomas.ab@samsung.com
 
-This patch adds support for clocks for hdmi, hdmiphy and mixer.
+Add documentation for the DT bindings in exynos display port driver.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- arch/arm/mach-exynos/clock-exynos5.c |   14 ++++++++++++--
- 1 files changed, 12 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/video/exynos_dp.txt        |   80 ++++++++++++++++++++
+ 1 files changed, 80 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 17e6c77..ec2a4da 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -201,6 +201,11 @@ static int exynos5_clk_ip_isp1_ctrl(struct clk *clk, int enable)
- 	return s5p_gatectrl(EXYNOS5_CLKGATE_IP_ISP1, clk, enable);
- }
- 
-+static int exynos5_clk_hdmiphy_ctrl(struct clk *clk, int enable)
-+{
-+	return s5p_gatectrl(S5P_HDMI_PHY_CONTROL, clk, enable);
-+}
+diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
+new file mode 100644
+index 0000000..e19594b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+@@ -0,0 +1,80 @@
++The Exynos display port interface should be configured based on the
++based on the type of panel connected to it.
 +
- /* Core list of CMU_CPU side */
- 
- static struct clksrc_clk exynos5_clk_mout_apll = {
-@@ -612,12 +617,17 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.ctrlbit	= (1 << 0),
- 	}, {
- 		.name		= "hdmi",
--		.devname	= "exynos4-hdmi",
-+		.devname	= "exynos5-hdmi",
- 		.enable		= exynos5_clk_ip_disp1_ctrl,
- 		.ctrlbit	= (1 << 6),
- 	}, {
-+		.name		= "hdmiphy",
-+		.devname	= "exynos5-hdmi",
-+		.enable		= exynos5_clk_hdmiphy_ctrl,
-+		.ctrlbit	= (1 << 0),
-+	}, {
- 		.name		= "mixer",
--		.devname	= "s5p-mixer",
-+		.devname	= "exynos5-mixer",
- 		.enable		= exynos5_clk_ip_disp1_ctrl,
- 		.ctrlbit	= (1 << 5),
- 	}, {
++We use two nodes:
++	-display-port-controller node
++	-dptx-phy node(defined inside display-port-controller node)
++
++For the DP-PHY initialization, we use the dptx-phy node.
++Required properties for dptx-phy:
++	-reg:
++		Base address of DP PHY register.
++	-samsung,enable-mask:
++		The bit-mask used to enable/disable DP PHY.
++
++For the Panel initialization, we read data from display-port-controller node.
++Required properties for display-port-controller:
++	-compatible:
++		should be "samsung,exynos5-dp".
++	-reg:
++		physical base address of the controller and length
++		of memory mapped region.
++	-interrupts:
++		interrupt combiner values.
++	-interrupt-parent:
++		phandle to Interrupt combiner node.
++	-samsung,color-space:
++		input video data format.
++			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
++	-samsung,dynamic-range:
++		dynamic range for input video data.
++			VESA = 0, CEA = 1
++	-samsung,ycbcr-coeff:
++		YCbCr co-efficients for input video.
++			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
++	-samsung,color-depth:
++		number of bits per colour component.
++			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
++	-samsung,link-rate:
++		link rate supported by the panel.
++			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
++	-samsung,lane-count:
++		number of lanes supported by the panel.
++			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
++
++Optional properties for display-port-controller:
++	-interlaced:
++		interlace scan mode.
++			Progressive if defined, Interlaced if not defined
++	-vsync-active-high:
++		VSYNC polarity configuration.
++			High if defined, Low if not defined
++	-hsync-active-high:
++		HSYNC polarity configuration.
++			High if defined, Low if not defined
++
++Example:
++
++SOC specific portion:
++	display-port-controller {
++		compatible = "samsung,exynos5-dp";
++		reg = <0x145b0000 0x10000>;
++		interrupts = <10 3>;
++		interrupt-parent = <&combiner>;
++
++		dptx-phy {
++			reg = <0x10040720>;
++			samsung,enable-mask = <1>;
++		};
++
++        };
++
++Board Specific portion:
++	display-port-controller {
++		samsung,color-space = <0>;
++		samsung,dynamic-range = <0>;
++		samsung,ycbcr-coeff = <0>;
++		samsung,color-depth = <1>;
++		samsung,link-rate = <0x0a>;
++		samsung,lane-count = <2>;
++	};
 -- 
 1.7.0.4
