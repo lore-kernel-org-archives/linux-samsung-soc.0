@@ -1,37 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 00/15] pinctrl: samsung: Usability and extensibiltiy improvements
-Date: Thu, 11 Oct 2012 16:20:40 +0200
-Message-ID: <CACRpkdZEi85QjM9OH2zVet=E7whdc_cfCyOtdmumUio-ccrZ-g@mail.gmail.com>
-References: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH v2 0/4] DMA: PL330: Fix mem leaks and balance probe/remove
+Date: Fri, 12 Oct 2012 00:33:53 -0400
+Message-ID: <CAG17yqThXGNXruTPB2Nf=GYdN8Sa=D6D=J1hxF4nsX2XXbepGQ@mail.gmail.com>
+References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:47400 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932177Ab2JKOUm (ORCPT
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:38365 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751362Ab2JLEdy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Oct 2012 10:20:42 -0400
-Received: by mail-wg0-f44.google.com with SMTP id dr13so1522722wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Oct 2012 07:20:40 -0700 (PDT)
-In-Reply-To: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
+	Fri, 12 Oct 2012 00:33:54 -0400
+Received: by mail-vb0-f46.google.com with SMTP id ff1so2613549vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Oct 2012 21:33:53 -0700 (PDT)
+In-Reply-To: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, swarren@wwwdotorg.org, tony@atomide.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jassisinghbrar@gmail.com, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
 
-On Thu, Oct 11, 2012 at 10:11 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+Hello,
 
-> This patch series is a work on improving usability and extensibiltiy of
-> the pinctrl-samsung driver. It consists of three main parts:
->  - improving flexibility of SoC-specific data specification
->  - converting the driver to one GPIO chip and IRQ domain per pin bank
->  - improving wake-up IRQ setup and handling
+On 5 October 2012 06:17, Inderpal Singh <inderpal.singh@linaro.org> wrote:
+> The first 2 patches of this series fix memory leaks because the memory
+> allocated for peripheral channels and DMA descriptors were not getting
+> freed.
+>
+> The last 2 patches balance the module's remove function.
+>
+> This series depends on "61c6e7531d3b66b3 ........DMA: PL330: Check the
+> pointer returned by kzalloc" which is on slave-dma's "fixes" branch.
+> Hence slave-dma tree's "next" branch was merged with "fixes" and
+> applied patch at [1] to fix the build error.
+>
+> [1] http://permalink.gmane.org/gmane.linux.kernel.next/24274
+>
+> Changes since v1:
+>  - Protect only list_add_tail with spin_locks
+>  - Return EBUSY from remove if channel is in use
+>  - unregister dma_device in remove
+>
+> Inderpal Singh (4):
+>   DMA: PL330: Free memory allocated for peripheral channels
+>   DMA: PL330: Change allocation method to properly free  DMA
+>     descriptors
+>   DMA: PL330: Balance module remove function with probe
+>   DMA: PL330: unregister dma_device in module's remove function
+>
+>  drivers/dma/pl330.c |   53 ++++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 38 insertions(+), 15 deletions(-)
+>
 
-OK I managed to apply this series (I have a separate "samsung"
-branch in the pinctrl tree now) and merged into for-next for some
-testing in linux-next.
+Any comments on this v2 version of the patchset?
 
-Applied Kyungmin's reviewed-by and Thomas' acked-by on all.
+Thanks,
+Inder
 
-Thanks!
-Linus Walleij
+> --
+> 1.7.9.5
+>
