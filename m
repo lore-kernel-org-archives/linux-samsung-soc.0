@@ -1,276 +1,72 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V5 1/2] video: exynos_dp: Add device tree support to DP driver
-Date: Sat, 13 Oct 2012 02:17:38 +0530
-Message-ID: <1350074859-23226-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v2 5/6] arm: exynos: add clocks for exynos5 hdmi
+Date: Sat, 13 Oct 2012 02:12:34 +0530
+Message-ID: <1350074555-26018-6-git-send-email-rahul.sharma@samsung.com>
+References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:32867 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:32881 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750787Ab2JLLSc (ORCPT
+	with ESMTP id S1753276Ab2JLLSj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Oct 2012 07:18:32 -0400
+	Fri, 12 Oct 2012 07:18:39 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBS00H1U22D0470@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Oct 2012 20:18:38 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MBS006L91SLP040@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Oct 2012 20:18:38 +0900 (KST)
+In-reply-to: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com, devicetree-discuss@lists.ozlabs.org
-Cc: FlorianSchandinat@gmx.de, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, thomas.ab@samsung.com
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com, rahul.sharma@samsung.com
 
-This patch enables device tree based discovery support for DP driver.
-The driver is modified to handle platform data in both the cases:
-with DT and non-DT.
+This patch adds support for clocks for hdmi, hdmiphy and mixer.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
- drivers/video/exynos/exynos_dp_core.c |  161 ++++++++++++++++++++++++++++++---
- drivers/video/exynos/exynos_dp_core.h |    2 +
- 2 files changed, 149 insertions(+), 14 deletions(-)
+ arch/arm/mach-exynos/clock-exynos5.c |   14 ++++++++++++--
+ 1 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
-index d55470e..62932ba 100644
---- a/drivers/video/exynos/exynos_dp_core.c
-+++ b/drivers/video/exynos/exynos_dp_core.c
-@@ -18,6 +18,7 @@
- #include <linux/io.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-+#include <linux/of.h>
- 
- #include <video/exynos_dp.h>
- 
-@@ -856,6 +857,99 @@ static irqreturn_t exynos_dp_irq_handler(int irq, void *arg)
- 	return IRQ_HANDLED;
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index 17e6c77..ec2a4da 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -201,6 +201,11 @@ static int exynos5_clk_ip_isp1_ctrl(struct clk *clk, int enable)
+ 	return s5p_gatectrl(EXYNOS5_CLKGATE_IP_ISP1, clk, enable);
  }
  
-+#ifdef CONFIG_OF
-+struct exynos_dp_platdata *exynos_dp_dt_parse_pdata(struct device *dev)
++static int exynos5_clk_hdmiphy_ctrl(struct clk *clk, int enable)
 +{
-+	struct device_node *dp_node = dev->of_node;
-+	struct exynos_dp_platdata *pd;
-+	struct video_info *dp_video_config;
-+
-+	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-+	if (!pd) {
-+		dev_err(dev, "memory allocation for pdata failed\n");
-+		return ERR_PTR(-ENOMEM);
-+	}
-+	dp_video_config = devm_kzalloc(dev,
-+				sizeof(*dp_video_config), GFP_KERNEL);
-+
-+	if (!dp_video_config) {
-+		dev_err(dev, "memory allocation for video config failed\n");
-+		return ERR_PTR(-ENOMEM);
-+	}
-+	pd->video_info = dp_video_config;
-+
-+	if (of_get_property(dp_node, "hsync-active-high", NULL))
-+		dp_video_config->h_sync_polarity = 1;
-+
-+	if (of_get_property(dp_node, "vsync-active-high", NULL))
-+		dp_video_config->v_sync_polarity = 1;
-+
-+	if (of_get_property(dp_node, "interlaced", NULL))
-+		dp_video_config->interlaced = 1;
-+
-+	of_property_read_u32(dp_node, "samsung,color-space",
-+				&dp_video_config->color_space);
-+
-+	of_property_read_u32(dp_node, "samsung,dynamic-range",
-+				&dp_video_config->dynamic_range);
-+
-+	of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
-+				&dp_video_config->ycbcr_coeff);
-+
-+	of_property_read_u32(dp_node, "samsung,color-depth",
-+				&dp_video_config->color_depth);
-+
-+	of_property_read_u32(dp_node, "samsung,link-rate",
-+				&dp_video_config->link_rate);
-+
-+	of_property_read_u32(dp_node, "samsung,lane-count",
-+				&dp_video_config->lane_count);
-+	return pd;
++	return s5p_gatectrl(S5P_HDMI_PHY_CONTROL, clk, enable);
 +}
 +
-+void exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
-+{
-+	struct device_node *dp_phy_node;
-+	u32 phy_base;
-+	void *virt_phy_base;
-+
-+	dp_phy_node = of_find_node_by_name(dp->dev->of_node, "dptx-phy");
-+	if (!dp_phy_node) {
-+		dp->dp_phy_addr = NULL;
-+		return;
-+	}
-+
-+	of_property_read_u32(dp_phy_node, "reg", &phy_base);
-+	of_property_read_u32(dp_phy_node, "samsung,enable-mask",
-+							&dp->enable_mask);
-+	virt_phy_base = ioremap(phy_base, SZ_4);
-+	if (!virt_phy_base) {
-+		dev_err(dp->dev, "failed to ioremap dp-phy\n");
-+		dp->dp_phy_addr = NULL;
-+		return;
-+	}
-+	dp->dp_phy_addr = virt_phy_base;
-+}
-+
-+void exynos_dp_phy_init(struct exynos_dp_device *dp)
-+{
-+	u32 reg;
-+
-+	reg = __raw_readl(dp->dp_phy_addr);
-+	reg |= dp->enable_mask;
-+	__raw_writel(reg, dp->dp_phy_addr);
-+}
-+
-+void exynos_dp_phy_exit(struct exynos_dp_device *dp)
-+{
-+	u32 reg;
-+
-+	reg = __raw_readl(dp->dp_phy_addr);
-+	reg &= ~(dp->enable_mask);
-+	__raw_writel(reg, dp->dp_phy_addr);
-+}
-+#endif /* CONFIG_OF */
-+
- static int __devinit exynos_dp_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
-@@ -864,12 +958,6 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
+ /* Core list of CMU_CPU side */
  
- 	int ret = 0;
- 
--	pdata = pdev->dev.platform_data;
--	if (!pdata) {
--		dev_err(&pdev->dev, "no platform data\n");
--		return -EINVAL;
--	}
--
- 	dp = devm_kzalloc(&pdev->dev, sizeof(struct exynos_dp_device),
- 				GFP_KERNEL);
- 	if (!dp) {
-@@ -879,6 +967,21 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
- 
- 	dp->dev = &pdev->dev;
- 
-+	if (pdev->dev.of_node) {
-+		pdata = exynos_dp_dt_parse_pdata(&pdev->dev);
-+		if (IS_ERR(pdata))
-+			return PTR_ERR(pdata);
-+
-+		exynos_dp_dt_parse_phydata(dp);
-+	} else {
-+		pdata = pdev->dev.platform_data;
-+	}
-+
-+	if (!pdata) {
-+		dev_err(&pdev->dev, "no platform data\n");
-+		return -EINVAL;
-+	}
-+
- 	dp->clock = devm_clk_get(&pdev->dev, "dp");
- 	if (IS_ERR(dp->clock)) {
- 		dev_err(&pdev->dev, "failed to get clock\n");
-@@ -909,8 +1012,14 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
- 	}
- 
- 	dp->video_info = pdata->video_info;
--	if (pdata->phy_init)
--		pdata->phy_init();
-+
-+	if (pdev->dev.of_node) {
-+		if (dp->dp_phy_addr)
-+			exynos_dp_phy_init(dp);
-+	} else {
-+		if (pdata->phy_init)
-+			pdata->phy_init();
-+	}
- 
- 	exynos_dp_init_dp(dp);
- 
-@@ -953,8 +1062,13 @@ static int __devexit exynos_dp_remove(struct platform_device *pdev)
- 	struct exynos_dp_platdata *pdata = pdev->dev.platform_data;
- 	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
- 
--	if (pdata && pdata->phy_exit)
--		pdata->phy_exit();
-+	if (pdev->dev.of_node) {
-+		if (dp->dp_phy_addr)
-+			exynos_dp_phy_exit(dp);
-+	} else {
-+		if (pdata && pdata->phy_exit)
-+			pdata->phy_exit();
-+	}
- 
- 	clk_disable_unprepare(dp->clock);
- 
-@@ -968,8 +1082,13 @@ static int exynos_dp_suspend(struct device *dev)
- 	struct exynos_dp_platdata *pdata = pdev->dev.platform_data;
- 	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
- 
--	if (pdata && pdata->phy_exit)
--		pdata->phy_exit();
-+	if (dev->of_node) {
-+		if (dp->dp_phy_addr)
-+			exynos_dp_phy_exit(dp);
-+	} else {
-+		if (pdata && pdata->phy_exit)
-+			pdata->phy_exit();
-+	}
- 
- 	clk_disable_unprepare(dp->clock);
- 
-@@ -982,8 +1101,13 @@ static int exynos_dp_resume(struct device *dev)
- 	struct exynos_dp_platdata *pdata = pdev->dev.platform_data;
- 	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
- 
--	if (pdata && pdata->phy_init)
--		pdata->phy_init();
-+	if (dev->of_node) {
-+		if (dp->dp_phy_addr)
-+			exynos_dp_phy_init(dp);
-+	} else {
-+		if (pdata && pdata->phy_init)
-+			pdata->phy_init();
-+	}
- 
- 	clk_prepare_enable(dp->clock);
- 
-@@ -1013,6 +1137,14 @@ static const struct dev_pm_ops exynos_dp_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(exynos_dp_suspend, exynos_dp_resume)
- };
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id exynos_dp_match[] = {
-+	{ .compatible = "samsung,exynos5-dp" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, exynos_dp_match);
-+#endif
-+
- static struct platform_driver exynos_dp_driver = {
- 	.probe		= exynos_dp_probe,
- 	.remove		= __devexit_p(exynos_dp_remove),
-@@ -1020,6 +1152,7 @@ static struct platform_driver exynos_dp_driver = {
- 		.name	= "exynos-dp",
- 		.owner	= THIS_MODULE,
- 		.pm	= &exynos_dp_pm_ops,
-+		.of_match_table = of_match_ptr(exynos_dp_match),
- 	},
- };
- 
-diff --git a/drivers/video/exynos/exynos_dp_core.h b/drivers/video/exynos/exynos_dp_core.h
-index 57b8a65..569858b 100644
---- a/drivers/video/exynos/exynos_dp_core.h
-+++ b/drivers/video/exynos/exynos_dp_core.h
-@@ -29,6 +29,8 @@ struct exynos_dp_device {
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
-+	void __iomem		*dp_phy_addr;
-+	unsigned int		enable_mask;
- 
- 	struct video_info	*video_info;
- 	struct link_train	link_train;
+ static struct clksrc_clk exynos5_clk_mout_apll = {
+@@ -612,12 +617,17 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.ctrlbit	= (1 << 0),
+ 	}, {
+ 		.name		= "hdmi",
+-		.devname	= "exynos4-hdmi",
++		.devname	= "exynos5-hdmi",
+ 		.enable		= exynos5_clk_ip_disp1_ctrl,
+ 		.ctrlbit	= (1 << 6),
+ 	}, {
++		.name		= "hdmiphy",
++		.devname	= "exynos5-hdmi",
++		.enable		= exynos5_clk_hdmiphy_ctrl,
++		.ctrlbit	= (1 << 0),
++	}, {
+ 		.name		= "mixer",
+-		.devname	= "s5p-mixer",
++		.devname	= "exynos5-mixer",
+ 		.enable		= exynos5_clk_ip_disp1_ctrl,
+ 		.ctrlbit	= (1 << 5),
+ 	}, {
 -- 
 1.7.0.4
