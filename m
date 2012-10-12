@@ -1,113 +1,178 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V5 2/2] video: exynos_dp: device tree documentation
-Date: Sat, 13 Oct 2012 02:17:39 +0530
-Message-ID: <1350074859-23226-2-git-send-email-ajaykumar.rs@samsung.com>
-References: <1350074859-23226-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v2 6/6] arm: exynos: removing exynos-drm device registration
+ from non-dt platforms
+Date: Sat, 13 Oct 2012 02:12:35 +0530
+Message-ID: <1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
+References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:25505 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751114Ab2JLLTP (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:53244 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750922Ab2JLLTs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Oct 2012 07:19:15 -0400
-In-reply-to: <1350074859-23226-1-git-send-email-ajaykumar.rs@samsung.com>
+	Fri, 12 Oct 2012 07:19:48 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBS00CF624YFR90@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Oct 2012 20:19:46 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MBS006L91SLP040@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Oct 2012 20:19:46 +0900 (KST)
+In-reply-to: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com, devicetree-discuss@lists.ozlabs.org
-Cc: FlorianSchandinat@gmx.de, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, thomas.ab@samsung.com
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com, rahul.sharma@samsung.com
 
-Add documentation for the DT bindings in exynos display port driver.
+As exynos-drm is a software device, its registration is moved to the
+exynos drm driver. This will provide generic solution for device registration
+for dt and non-dt platforms. Corresponding patches are posted to dri-devel
+list.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
- .../devicetree/bindings/video/exynos_dp.txt        |   80 ++++++++++++++++++++
- 1 files changed, 80 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
+ arch/arm/mach-exynos/Makefile              |    1 -
+ arch/arm/mach-exynos/dev-drm.c             |   29 ----------------------------
+ arch/arm/mach-exynos/mach-nuri.c           |    3 --
+ arch/arm/mach-exynos/mach-origen.c         |    3 --
+ arch/arm/mach-exynos/mach-smdk4x12.c       |    3 --
+ arch/arm/mach-exynos/mach-smdkv310.c       |    3 --
+ arch/arm/mach-exynos/mach-universal_c210.c |    3 --
+ arch/arm/plat-samsung/include/plat/devs.h  |    2 -
+ 8 files changed, 0 insertions(+), 47 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/dev-drm.c
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-new file mode 100644
-index 0000000..e19594b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -0,0 +1,80 @@
-+The Exynos display port interface should be configured based on the
-+based on the type of panel connected to it.
-+
-+We use two nodes:
-+	-display-port-controller node
-+	-dptx-phy node(defined inside display-port-controller node)
-+
-+For the DP-PHY initialization, we use the dptx-phy node.
-+Required properties for dptx-phy:
-+	-reg:
-+		Base address of DP PHY register.
-+	-samsung,enable-mask:
-+		The bit-mask used to enable/disable DP PHY.
-+
-+For the Panel initialization, we read data from display-port-controller node.
-+Required properties for display-port-controller:
-+	-compatible:
-+		should be "samsung,exynos5-dp".
-+	-reg:
-+		physical base address of the controller and length
-+		of memory mapped region.
-+	-interrupts:
-+		interrupt combiner values.
-+	-interrupt-parent:
-+		phandle to Interrupt combiner node.
-+	-samsung,color-space:
-+		input video data format.
-+			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
-+	-samsung,dynamic-range:
-+		dynamic range for input video data.
-+			VESA = 0, CEA = 1
-+	-samsung,ycbcr-coeff:
-+		YCbCr co-efficients for input video.
-+			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
-+	-samsung,color-depth:
-+		number of bits per colour component.
-+			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
-+	-samsung,link-rate:
-+		link rate supported by the panel.
-+			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
-+	-samsung,lane-count:
-+		number of lanes supported by the panel.
-+			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
-+
-+Optional properties for display-port-controller:
-+	-interlaced:
-+		interlace scan mode.
-+			Progressive if defined, Interlaced if not defined
-+	-vsync-active-high:
-+		VSYNC polarity configuration.
-+			High if defined, Low if not defined
-+	-hsync-active-high:
-+		HSYNC polarity configuration.
-+			High if defined, Low if not defined
-+
-+Example:
-+
-+SOC specific portion:
-+	display-port-controller {
-+		compatible = "samsung,exynos5-dp";
-+		reg = <0x145b0000 0x10000>;
-+		interrupts = <10 3>;
-+		interrupt-parent = <&combiner>;
-+
-+		dptx-phy {
-+			reg = <0x10040720>;
-+			samsung,enable-mask = <1>;
-+		};
-+
-+        };
-+
-+Board Specific portion:
-+	display-port-controller {
-+		samsung,color-space = <0>;
-+		samsung,dynamic-range = <0>;
-+		samsung,ycbcr-coeff = <0>;
-+		samsung,color-depth = <1>;
-+		samsung,link-rate = <0x0a>;
-+		samsung,lane-count = <2>;
-+	};
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 9b58024..1797dee 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -53,7 +53,6 @@ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
+ obj-$(CONFIG_EXYNOS4_DEV_DWMCI)		+= dev-dwmci.o
+ obj-$(CONFIG_EXYNOS_DEV_DMA)		+= dma.o
+ obj-$(CONFIG_EXYNOS4_DEV_USB_OHCI)	+= dev-ohci.o
+-obj-$(CONFIG_EXYNOS_DEV_DRM)		+= dev-drm.o
+ obj-$(CONFIG_EXYNOS_DEV_SYSMMU)		+= dev-sysmmu.o
+ 
+ obj-$(CONFIG_ARCH_EXYNOS)		+= setup-i2c0.o
+diff --git a/arch/arm/mach-exynos/dev-drm.c b/arch/arm/mach-exynos/dev-drm.c
+deleted file mode 100644
+index 17c9c6e..0000000
+--- a/arch/arm/mach-exynos/dev-drm.c
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/*
+- * linux/arch/arm/mach-exynos/dev-drm.c
+- *
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * EXYNOS - core DRM device
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/platform_device.h>
+-
+-#include <plat/devs.h>
+-
+-static u64 exynos_drm_dma_mask = DMA_BIT_MASK(32);
+-
+-struct platform_device exynos_device_drm = {
+-	.name	= "exynos-drm",
+-	.dev	= {
+-		.dma_mask		= &exynos_drm_dma_mask,
+-		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-	}
+-};
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index ea785fc..9267caf 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -1330,9 +1330,6 @@ static struct platform_device *nuri_devices[] __initdata = {
+ 	&cam_vdda_fixed_rdev,
+ 	&cam_8m_12v_fixed_rdev,
+ 	&exynos4_bus_devfreq,
+-#ifdef CONFIG_DRM_EXYNOS
+-	&exynos_device_drm,
+-#endif
+ };
+ 
+ static void __init nuri_map_io(void)
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index b45600f..be8fac7 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -709,9 +709,6 @@ static struct platform_device *origen_devices[] __initdata = {
+ 	&s5p_device_mfc_l,
+ 	&s5p_device_mfc_r,
+ 	&s5p_device_mixer,
+-#ifdef CONFIG_DRM_EXYNOS
+-	&exynos_device_drm,
+-#endif
+ 	&exynos4_device_ohci,
+ 	&origen_device_gpiokeys,
+ 	&origen_lcd_hv070wsa,
+diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
+index 81bf59c..f02ee11 100644
+--- a/arch/arm/mach-exynos/mach-smdk4x12.c
++++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+@@ -317,9 +317,6 @@ static struct platform_device *smdk4x12_devices[] __initdata = {
+ 	&s5p_device_mfc,
+ 	&s5p_device_mfc_l,
+ 	&s5p_device_mfc_r,
+-#ifdef CONFIG_DRM_EXYNOS
+-	&exynos_device_drm,
+-#endif
+ 	&samsung_device_keypad,
+ };
+ 
+diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
+index 12a1db2..bffb1b2 100644
+--- a/arch/arm/mach-exynos/mach-smdkv310.c
++++ b/arch/arm/mach-exynos/mach-smdkv310.c
+@@ -300,9 +300,6 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&s5p_device_fimc_md,
+ 	&s5p_device_g2d,
+ 	&s5p_device_jpeg,
+-#ifdef CONFIG_DRM_EXYNOS
+-	&exynos_device_drm,
+-#endif
+ 	&exynos4_device_ac97,
+ 	&exynos4_device_i2s0,
+ 	&exynos4_device_ohci,
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 4d1f40d..f7b1337 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -1084,9 +1084,6 @@ static struct platform_device *universal_devices[] __initdata = {
+ 	&s5p_device_onenand,
+ 	&s5p_device_fimd0,
+ 	&s5p_device_jpeg,
+-#ifdef CONFIG_DRM_EXYNOS
+-	&exynos_device_drm,
+-#endif
+ 	&s3c_device_usb_hsotg,
+ 	&s5p_device_mfc,
+ 	&s5p_device_mfc_l,
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index 5da4b4f..133e3e4 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -133,8 +133,6 @@ extern struct platform_device exynos4_device_pcm1;
+ extern struct platform_device exynos4_device_pcm2;
+ extern struct platform_device exynos4_device_spdif;
+ 
+-extern struct platform_device exynos_device_drm;
+-
+ extern struct platform_device samsung_asoc_dma;
+ extern struct platform_device samsung_asoc_idma;
+ extern struct platform_device samsung_device_keypad;
 -- 
 1.7.0.4
