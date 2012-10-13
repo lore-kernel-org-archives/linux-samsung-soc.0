@@ -1,51 +1,37 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 6/6] arm: exynos: removing exynos-drm device registration from non-dt platforms
-Date: Sat, 13 Oct 2012 15:46:02 +0200
-Message-ID: <3753436.Oasjq2fFLk@flatron>
-References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com> <1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
+From: Sekhar Nori <nori.sekhar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: config: sort select statements alphanumerically
+Date: Sat, 13 Oct 2012 20:26:28 +0530
+Message-ID: <CAKG51UAdCWR7zGr4R3wUr4Lr4MauqGBr1j=VkQcpNywhqRvnMw@mail.gmail.com>
+References: <20121012132553.GK28061@n2100.arm.linux.org.uk>
+	<E1TMfFr-0001Kt-W5@rmk-PC.arm.linux.org.uk>
+	<CACRpkdba1q52bEDcWsd47QwXA-DNhq6PENf2M-tvZ6znYu+5yw@mail.gmail.com>
+	<20121012144119.GM28061@n2100.arm.linux.org.uk>
+	<20121012144832.GN28061@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:42514 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752818Ab2JMNqB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Oct 2012 09:46:01 -0400
-Received: by mail-wg0-f44.google.com with SMTP id dr13so3198254wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Oct 2012 06:46:00 -0700 (PDT)
-In-Reply-To: <1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+In-Reply-To: <20121012144832.GN28061-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Daniel Walker <dwalker-zu3NM2574RrQT0dZR+AlfA@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Srinidhi Kasagar <srinidhi.kasagar-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Alessandro Rubini <rubini-9wsNiZum9E8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shiraz Hashim <shiraz.hashim-qxv4g6HH51o@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, linux-tegra@vg
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com
 
-On Saturday 13 of October 2012 02:12:35 Rahul Sharma wrote:
-> As exynos-drm is a software device, its registration is moved to the
-> exynos drm driver. This will provide generic solution for device
-> registration for dt and non-dt platforms. Corresponding patches are
-> posted to dri-devel list.
-> 
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> ---
->  arch/arm/mach-exynos/Makefile              |    1 -
->  arch/arm/mach-exynos/dev-drm.c             |   29
-> ---------------------------- arch/arm/mach-exynos/mach-nuri.c          
-> |    3 --
->  arch/arm/mach-exynos/mach-origen.c         |    3 --
->  arch/arm/mach-exynos/mach-smdk4x12.c       |    3 --
->  arch/arm/mach-exynos/mach-smdkv310.c       |    3 --
->  arch/arm/mach-exynos/mach-universal_c210.c |    3 --
->  arch/arm/plat-samsung/include/plat/devs.h  |    2 -
->  8 files changed, 0 insertions(+), 47 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/dev-drm.c
+On Fri, Oct 12, 2012 at 8:18 PM, Russell King - ARM Linux
+<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+> Instead, here's the updated script:
 
-Hmm, shouldn't this patch belong to the series adding registration in the 
-driver?
-(http://comments.gmane.org/gmane.comp.video.dri.devel/75121)
+Tested build and boot on DA850 and DM365. For the DaVinci changes:
 
-It doesn't look to be directly related to adding dt support for exynos5 
-hdmi.
+Acked-by: Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>
 
-Best regards,
-Tomasz Figa
+Thanks,
+Sekhar
