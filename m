@@ -1,22 +1,21 @@
 From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v1 6/6] arm: exynos: removing exynos-drm device
- registration from non-dt platforms
-Date: Sat, 13 Oct 2012 08:19:30 +0530
-Message-ID: <CAPdUM4O__EKEOPN5YS8s0+pszNGz7HS8f3z0NAuFVPN7ViW_Ag@mail.gmail.com>
+Subject: Re: [PATCH v1 1/6] dts: exynos: add device tree support for exynos5 hdmi
+Date: Sat, 13 Oct 2012 08:15:46 +0530
+Message-ID: <CAPdUM4Nmyv1AeRxYxdTxL=WzFDfotz5xsNh_ADgdrnN_MJJBLw@mail.gmail.com>
 References: <1349981868-2116-1-git-send-email-rahul.sharma@samsung.com>
-	<1349981868-2116-7-git-send-email-rahul.sharma@samsung.com>
-	<1757629.b0fz3a83zj@flatron>
+	<1349981868-2116-2-git-send-email-rahul.sharma@samsung.com>
+	<2112429.s4dA1rqnG4@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gg0-f174.google.com ([209.85.161.174]:37956 "EHLO
-	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752517Ab2JMCtb (ORCPT
+Received: from mail-yh0-f66.google.com ([209.85.213.66]:48870 "EHLO
+	mail-yh0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752041Ab2JMDDS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Oct 2012 22:49:31 -0400
-Received: by mail-gg0-f174.google.com with SMTP id k5so942419ggd.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Oct 2012 19:49:30 -0700 (PDT)
-In-Reply-To: <1757629.b0fz3a83zj@flatron>
+	Fri, 12 Oct 2012 23:03:18 -0400
+Received: by mail-yh0-f66.google.com with SMTP id 3so553153yhp.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Oct 2012 20:03:17 -0700 (PDT)
+In-Reply-To: <2112429.s4dA1rqnG4@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
@@ -24,24 +23,75 @@ Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, 
 
 Hi Tomasz,
 
-On Sat, Oct 13, 2012 at 3:42 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On Sat, Oct 13, 2012 at 3:34 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 > Hi Rahul,
 >
-> On Friday 12 of October 2012 00:27:47 Rahul Sharma wrote:
->> As exynos-drm is a software device, its registration is moved to the
->> exynos drm driver. This will provide generic solution for device
->> registration for dt and non-dt platforms. Corresponding patches are
->> posted to dri-devel list.
+> On Friday 12 of October 2012 00:27:42 Rahul Sharma wrote:
+>> This patch adds support for device tree based discovery for exynos5
+>> hdmi. Hdmi node is also renamed with "exynos5-hdmi".
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |    4 ++++
+>>  arch/arm/boot/dts/exynos5250.dtsi         |    7 +++++++
+>>  arch/arm/mach-exynos/include/mach/map.h   |    1 +
+>>  arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 ++
+>>  4 files changed, 14 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index a352df4..2a478ab
+>> 100644
+>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> @@ -166,4 +166,8 @@
+>>       spi_2: spi@12d40000 {
+>>               status = "disabled";
+>>       };
+>> +
+>> +     hdmi {
+>> +             hpd-gpio = <&gpx3 7 0xf 1 3>;
+>> +     };
+>>  };
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> b/arch/arm/boot/dts/exynos5250.dtsi index f69e389..4e019b5 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -492,4 +492,11 @@
+>>                       #gpio-cells = <4>;
+>>               };
+>>       };
+>> +
+>> +     hdmi {
 >
-> In which patch is exynos drm registration being moved to exynos drm
-> driver?
+> hdmi@14530000
+>
+>> +             compatible = "samsung,exynos5-hdmi";
+>> +             reg = <0x14530000 0x100000>;
+>> +             interrupts = <0 95 0>;
+>> +             version = "1.4";
+>> +        };
+>
+> Is it just me or there is something wrong with indentation of this
+> bracket?
 >
 > Best regards,
 > Tomasz Figa
 >
+My understanding was when there are multiple hardware instances of
+same IP, addresses
+are put along with the name like i2c, uart. But when only single hw IP
+is present like
+hdmi, mixer, watchdog, rtc etc address concatenation is optional.
+Please correct me if
+I am wrong. I will do the respective change.
 
-Patch set is listed at
-http://comments.gmane.org/gmane.comp.video.dri.devel/75121.
+in V2 patchset "version", "vp-support" properties are dropped and made
+part of driver data
+inside driver. I also added DT binding documentation for new nodes.
+
+I had posted V2 yesterday but not visible on samsung-soc mailing list.
+I will forward you the
+patches.
 
 regards,
 Rahul Sharma
