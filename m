@@ -1,122 +1,54 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V7 2/2] video: exynos_dp: device tree documentation
-Date: Mon, 15 Oct 2012 18:57:51 +0900
-Message-ID: <00a301cdaabb$8a38d8c0$9eaa8a40$%han@samsung.com>
-References: <00a201cdaabb$5f6eb6f0$1e4c24d0$%han@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] [media] s5p-csis: Added RAW data format as the supported
+ format.
+Date: Mon, 15 Oct 2012 13:01:44 +0200
+Message-ID: <507BED18.3040509@samsung.com>
+References: <1350294483-7417-1-git-send-email-r.solanki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49988 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751605Ab2JOJ5w (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:34267 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750739Ab2JOLBt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Oct 2012 05:57:52 -0400
-In-reply-to: <00a201cdaabb$5f6eb6f0$1e4c24d0$%han@samsung.com>
-Content-language: ko
+	Mon, 15 Oct 2012 07:01:49 -0400
+In-reply-to: <1350294483-7417-1-git-send-email-r.solanki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Ritesh Kumar Solanki <r.solanki@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com
 
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Hi Ritesh,
 
-Add documentation for the DT bindings in exynos display port driver.
+On 10/15/2012 11:48 AM, Ritesh Kumar Solanki wrote:
+> csis can support jpeg, yuv and raw data format.
+> 
+> Signed-off-by: Ritesh Kumar Solanki <r.solanki@samsung.com>
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-No changes since v6:
+Thanks for the patch. I already have a patch adding all three
+raw Bayer formats (SGRBG8/10/12) at the driver and I plan it
+for v3.8. So I'd like to use it instead of your patch.
+I'll post it as soon as I get my development branch cleaned up.
 
- .../devicetree/bindings/video/exynos_dp.txt        |   80 ++++++++++++++++++++
- 1 files changed, 80 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
+Regards,
+Sylwester
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-new file mode 100644
-index 0000000..7cc7d9f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -0,0 +1,80 @@
-+The Exynos display port interface should be configured based on
-+the type of panel connected to it.
-+
-+We use two nodes:
-+	-display-port-controller node
-+	-dptx-phy node(defined inside display-port-controller node)
-+
-+For the DP-PHY initialization, we use the dptx-phy node.
-+Required properties for dptx-phy:
-+	-reg:
-+		Base address of DP PHY register.
-+	-samsung,enable-mask:
-+		The bit-mask used to enable/disable DP PHY.
-+
-+For the Panel initialization, we read data from display-port-controller node.
-+Required properties for display-port-controller:
-+	-compatible:
-+		should be "samsung,exynos5-dp".
-+	-reg:
-+		physical base address of the controller and length
-+		of memory mapped region.
-+	-interrupts:
-+		interrupt combiner values.
-+	-interrupt-parent:
-+		phandle to Interrupt combiner node.
-+	-samsung,color-space:
-+		input video data format.
-+			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
-+	-samsung,dynamic-range:
-+		dynamic range for input video data.
-+			VESA = 0, CEA = 1
-+	-samsung,ycbcr-coeff:
-+		YCbCr co-efficients for input video.
-+			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
-+	-samsung,color-depth:
-+		number of bits per colour component.
-+			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
-+	-samsung,link-rate:
-+		link rate supported by the panel.
-+			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
-+	-samsung,lane-count:
-+		number of lanes supported by the panel.
-+			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
-+
-+Optional properties for display-port-controller:
-+	-interlaced:
-+		interlace scan mode.
-+			Progressive if defined, Interlaced if not defined
-+	-vsync-active-high:
-+		VSYNC polarity configuration.
-+			High if defined, Low if not defined
-+	-hsync-active-high:
-+		HSYNC polarity configuration.
-+			High if defined, Low if not defined
-+
-+Example:
-+
-+SOC specific portion:
-+	display-port-controller {
-+		compatible = "samsung,exynos5-dp";
-+		reg = <0x145b0000 0x10000>;
-+		interrupts = <10 3>;
-+		interrupt-parent = <&combiner>;
-+
-+		dptx-phy {
-+			reg = <0x10040720>;
-+			samsung,enable-mask = <1>;
-+		};
-+
-+        };
-+
-+Board Specific portion:
-+	display-port-controller {
-+		samsung,color-space = <0>;
-+		samsung,dynamic-range = <0>;
-+		samsung,ycbcr-coeff = <0>;
-+		samsung,color-depth = <1>;
-+		samsung,link-rate = <0x0a>;
-+		samsung,lane-count = <4>;
-+	};
--- 
-1.7.1
+> ---
+>  drivers/media/platform/s5p-fimc/mipi-csis.c |    4 ++++
+>  1 files changed, 4 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.c b/drivers/media/platform/s5p-fimc/mipi-csis.c
+> index 2f73d9e..0205ae4 100644
+> --- a/drivers/media/platform/s5p-fimc/mipi-csis.c
+> +++ b/drivers/media/platform/s5p-fimc/mipi-csis.c
+> @@ -145,6 +145,10 @@ static const struct csis_pix_format s5pcsis_formats[] = {
+>  		.code = V4L2_MBUS_FMT_JPEG_1X8,
+>  		.fmt_reg = S5PCSIS_CFG_FMT_USER(1),
+>  		.data_alignment = 32,
+> +	}, {
+> +		.code = V4L2_MBUS_FMT_SGRBG10_1X10,
+> +		.fmt_reg = S5PCSIS_CFG_FMT_RAW10,
+> +		.data_alignment = 24,
+>  	},
+>  };
