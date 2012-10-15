@@ -1,34 +1,213 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 0/2] ARM: sort configuration files
-Date: Sat, 13 Oct 2012 17:42:57 +0100
-Message-ID: <20121013164257.GV28061@n2100.arm.linux.org.uk>
-References: <20121012132553.GK28061@n2100.arm.linux.org.uk>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: RE: [PATCH v2 6/6] arm: exynos: removing exynos-drm device
+ registration from non-dt platforms
+Date: Mon, 15 Oct 2012 13:07:39 +0900
+Message-ID: <019601cdaa8a$9e4170b0$dac45210$%dae@samsung.com>
+References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
+ <1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20121012132553.GK28061@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, spear-devel@list.st.com
-Cc: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, Daniel Walker <dwalker@fifo99.com>, Kevin Hilman <khilman@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, David Brown <davidb@codeaurora.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alessandro Rubini <rubini@unipv.it>, Stephen Warren <swarren@wwwdotorg.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Ben Dooks <ben-linux@fluff.org>, Barry Song <baohua.song@csr.com>, Andrew Victor <linux@maxim.org.za>, Eric Miao <eric.y.miao@gmail.com>, Bryan Huntsman <bryanh@codeaurora.org>, Paul Mundt <lethal@linux-sh.org>, Viresh Kumar <viresh.linux@gmail.com>, Sascha Hauer <kernel@pengutronix.de>S
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:39906 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751012Ab2JOEHm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 15 Oct 2012 00:07:42 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBX00JP224SDUI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 15 Oct 2012 13:07:40 +0900 (KST)
+Received: from NOINKIDAE02 ([10.90.51.52])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MBX00DGP24SH240@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 15 Oct 2012 13:07:40 +0900 (KST)
+In-reply-to: <1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Rahul Sharma' <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com
 
-On Fri, Oct 12, 2012 at 02:25:53PM +0100, Russell King - ARM Linux wrote:
-> Here's a version updated to the kernel as of 7am UTC today.  Two patches
-> follow, the second fixes the order of the platform choice.
+Acked-by: Inki Dae <inki.dae@samsung.com>
 
-Ok folks, that's it, I'm not taking any further acks on this because
-I've now sent the last batch of changes to Linus.  This consists of
-just these two patches, plus David Howells UAPI changes. And that will
-be it for this merge window.
-
-Thanks to all those who tested.
+> -----Original Message-----
+> From: Rahul Sharma [mailto:rahul.sharma@samsung.com]
+> Sent: Saturday, October 13, 2012 5:43 AM
+> To: linux-samsung-soc@vger.kernel.org; devicetree-discuss@lists.ozlabs.org
+> Cc: kgene.kim@samsung.com; t.stanislaws@samsung.com;
+> sw0312.kim@samsung.com; inki.dae@samsung.com; jy0922.shim@samsung.com;
+> kyungmin.park@samsung.com; thomas.ab@samsung.com; prashanth.g@samsung.com;
+> joshi@samsung.com; s.shirish@samsung.com; r.sh.open@gmail.com;
+> rahul.sharma@samsung.com
+> Subject: [PATCH v2 6/6] arm: exynos: removing exynos-drm device
+> registration from non-dt platforms
+> 
+> As exynos-drm is a software device, its registration is moved to the
+> exynos drm driver. This will provide generic solution for device
+> registration
+> for dt and non-dt platforms. Corresponding patches are posted to dri-devel
+> list.
+> 
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Makefile              |    1 -
+>  arch/arm/mach-exynos/dev-drm.c             |   29
+---------------------------
+> -
+>  arch/arm/mach-exynos/mach-nuri.c           |    3 --
+>  arch/arm/mach-exynos/mach-origen.c         |    3 --
+>  arch/arm/mach-exynos/mach-smdk4x12.c       |    3 --
+>  arch/arm/mach-exynos/mach-smdkv310.c       |    3 --
+>  arch/arm/mach-exynos/mach-universal_c210.c |    3 --
+>  arch/arm/plat-samsung/include/plat/devs.h  |    2 -
+>  8 files changed, 0 insertions(+), 47 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/dev-drm.c
+> 
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> index 9b58024..1797dee 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -53,7 +53,6 @@ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+=
+dev-ahci.o
+>  obj-$(CONFIG_EXYNOS4_DEV_DWMCI)		+= dev-dwmci.o
+>  obj-$(CONFIG_EXYNOS_DEV_DMA)		+= dma.o
+>  obj-$(CONFIG_EXYNOS4_DEV_USB_OHCI)	+= dev-ohci.o
+> -obj-$(CONFIG_EXYNOS_DEV_DRM)		+= dev-drm.o
+>  obj-$(CONFIG_EXYNOS_DEV_SYSMMU)		+= dev-sysmmu.o
+> 
+>  obj-$(CONFIG_ARCH_EXYNOS)		+= setup-i2c0.o
+> diff --git a/arch/arm/mach-exynos/dev-drm.c b/arch/arm/mach-exynos/dev-
+> drm.c
+> deleted file mode 100644
+> index 17c9c6e..0000000
+> --- a/arch/arm/mach-exynos/dev-drm.c
+> +++ /dev/null
+> @@ -1,29 +0,0 @@
+> -/*
+> - * linux/arch/arm/mach-exynos/dev-drm.c
+> - *
+> - * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+> - *		http://www.samsung.com
+> - *
+> - * EXYNOS - core DRM device
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - */
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/dma-mapping.h>
+> -#include <linux/platform_device.h>
+> -
+> -#include <plat/devs.h>
+> -
+> -static u64 exynos_drm_dma_mask = DMA_BIT_MASK(32);
+> -
+> -struct platform_device exynos_device_drm = {
+> -	.name	= "exynos-drm",
+> -	.dev	= {
+> -		.dma_mask		= &exynos_drm_dma_mask,
+> -		.coherent_dma_mask	= DMA_BIT_MASK(32),
+> -	}
+> -};
+> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
+> nuri.c
+> index ea785fc..9267caf 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -1330,9 +1330,6 @@ static struct platform_device *nuri_devices[]
+> __initdata = {
+>  	&cam_vdda_fixed_rdev,
+>  	&cam_8m_12v_fixed_rdev,
+>  	&exynos4_bus_devfreq,
+> -#ifdef CONFIG_DRM_EXYNOS
+> -	&exynos_device_drm,
+> -#endif
+>  };
+> 
+>  static void __init nuri_map_io(void)
+> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-
+> exynos/mach-origen.c
+> index b45600f..be8fac7 100644
+> --- a/arch/arm/mach-exynos/mach-origen.c
+> +++ b/arch/arm/mach-exynos/mach-origen.c
+> @@ -709,9 +709,6 @@ static struct platform_device *origen_devices[]
+> __initdata = {
+>  	&s5p_device_mfc_l,
+>  	&s5p_device_mfc_r,
+>  	&s5p_device_mixer,
+> -#ifdef CONFIG_DRM_EXYNOS
+> -	&exynos_device_drm,
+> -#endif
+>  	&exynos4_device_ohci,
+>  	&origen_device_gpiokeys,
+>  	&origen_lcd_hv070wsa,
+> diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-
+> exynos/mach-smdk4x12.c
+> index 81bf59c..f02ee11 100644
+> --- a/arch/arm/mach-exynos/mach-smdk4x12.c
+> +++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+> @@ -317,9 +317,6 @@ static struct platform_device *smdk4x12_devices[]
+> __initdata = {
+>  	&s5p_device_mfc,
+>  	&s5p_device_mfc_l,
+>  	&s5p_device_mfc_r,
+> -#ifdef CONFIG_DRM_EXYNOS
+> -	&exynos_device_drm,
+> -#endif
+>  	&samsung_device_keypad,
+>  };
+> 
+> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-
+> exynos/mach-smdkv310.c
+> index 12a1db2..bffb1b2 100644
+> --- a/arch/arm/mach-exynos/mach-smdkv310.c
+> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
+> @@ -300,9 +300,6 @@ static struct platform_device *smdkv310_devices[]
+> __initdata = {
+>  	&s5p_device_fimc_md,
+>  	&s5p_device_g2d,
+>  	&s5p_device_jpeg,
+> -#ifdef CONFIG_DRM_EXYNOS
+> -	&exynos_device_drm,
+> -#endif
+>  	&exynos4_device_ac97,
+>  	&exynos4_device_i2s0,
+>  	&exynos4_device_ohci,
+> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
+> exynos/mach-universal_c210.c
+> index 4d1f40d..f7b1337 100644
+> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+> @@ -1084,9 +1084,6 @@ static struct platform_device *universal_devices[]
+> __initdata = {
+>  	&s5p_device_onenand,
+>  	&s5p_device_fimd0,
+>  	&s5p_device_jpeg,
+> -#ifdef CONFIG_DRM_EXYNOS
+> -	&exynos_device_drm,
+> -#endif
+>  	&s3c_device_usb_hsotg,
+>  	&s5p_device_mfc,
+>  	&s5p_device_mfc_l,
+> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-
+> samsung/include/plat/devs.h
+> index 5da4b4f..133e3e4 100644
+> --- a/arch/arm/plat-samsung/include/plat/devs.h
+> +++ b/arch/arm/plat-samsung/include/plat/devs.h
+> @@ -133,8 +133,6 @@ extern struct platform_device exynos4_device_pcm1;
+>  extern struct platform_device exynos4_device_pcm2;
+>  extern struct platform_device exynos4_device_spdif;
+> 
+> -extern struct platform_device exynos_device_drm;
+> -
+>  extern struct platform_device samsung_asoc_dma;
+>  extern struct platform_device samsung_asoc_idma;
+>  extern struct platform_device samsung_device_keypad;
+> --
+> 1.7.0.4
