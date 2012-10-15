@@ -1,213 +1,210 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH v2 6/6] arm: exynos: removing exynos-drm device
- registration from non-dt platforms
-Date: Mon, 15 Oct 2012 13:07:39 +0900
-Message-ID: <019601cdaa8a$9e4170b0$dac45210$%dae@samsung.com>
-References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
- <1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
+From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 3/4 v2] USB: ehci-s5p: Add phy driver support
+Date: Mon, 15 Oct 2012 14:52:00 +0900
+Message-ID: <008f01cdaa99$32371000$96a53000$%han@samsung.com>
+References: <1349865780-7701-1-git-send-email-gautam.vivek@samsung.com>
+ <1349865780-7701-4-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:39906 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751012Ab2JOEHm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Oct 2012 00:07:42 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBX00JP224SDUI0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 15 Oct 2012 13:07:40 +0900 (KST)
-Received: from NOINKIDAE02 ([10.90.51.52])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MBX00DGP24SH240@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 15 Oct 2012 13:07:40 +0900 (KST)
-In-reply-to: <1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <1349865780-7701-4-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rahul Sharma' <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com
 
-Acked-by: Inki Dae <inki.dae@samsung.com>
+On Wednesday, October 10, 2012 7:43 PM Vivek Gautam wrote
 
-> -----Original Message-----
-> From: Rahul Sharma [mailto:rahul.sharma@samsung.com]
-> Sent: Saturday, October 13, 2012 5:43 AM
-> To: linux-samsung-soc@vger.kernel.org; devicetree-discuss@lists.ozlabs.org
-> Cc: kgene.kim@samsung.com; t.stanislaws@samsung.com;
-> sw0312.kim@samsung.com; inki.dae@samsung.com; jy0922.shim@samsung.com;
-> kyungmin.park@samsung.com; thomas.ab@samsung.com; prashanth.g@samsung.com;
-> joshi@samsung.com; s.shirish@samsung.com; r.sh.open@gmail.com;
-> rahul.sharma@samsung.com
-> Subject: [PATCH v2 6/6] arm: exynos: removing exynos-drm device
-> registration from non-dt platforms
 > 
-> As exynos-drm is a software device, its registration is moved to the
-> exynos drm driver. This will provide generic solution for device
-> registration
-> for dt and non-dt platforms. Corresponding patches are posted to dri-devel
-> list.
+> Adding the transceiver to ehci driver. Keeping the platform data
+> for continuing the smooth operation for boards which still uses it
 > 
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+
+It looks good. I have tested this patch with Exynos5250.
+
+Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+
+Best regards,
+Jingoo Han
+
+
 > ---
->  arch/arm/mach-exynos/Makefile              |    1 -
->  arch/arm/mach-exynos/dev-drm.c             |   29
----------------------------
-> -
->  arch/arm/mach-exynos/mach-nuri.c           |    3 --
->  arch/arm/mach-exynos/mach-origen.c         |    3 --
->  arch/arm/mach-exynos/mach-smdk4x12.c       |    3 --
->  arch/arm/mach-exynos/mach-smdkv310.c       |    3 --
->  arch/arm/mach-exynos/mach-universal_c210.c |    3 --
->  arch/arm/plat-samsung/include/plat/devs.h  |    2 -
->  8 files changed, 0 insertions(+), 47 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/dev-drm.c
+>  drivers/usb/host/ehci-s5p.c |   65 +++++++++++++++++++++++++++++-------------
+>  1 files changed, 45 insertions(+), 20 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-> index 9b58024..1797dee 100644
-> --- a/arch/arm/mach-exynos/Makefile
-> +++ b/arch/arm/mach-exynos/Makefile
-> @@ -53,7 +53,6 @@ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+=
-dev-ahci.o
->  obj-$(CONFIG_EXYNOS4_DEV_DWMCI)		+= dev-dwmci.o
->  obj-$(CONFIG_EXYNOS_DEV_DMA)		+= dma.o
->  obj-$(CONFIG_EXYNOS4_DEV_USB_OHCI)	+= dev-ohci.o
-> -obj-$(CONFIG_EXYNOS_DEV_DRM)		+= dev-drm.o
->  obj-$(CONFIG_EXYNOS_DEV_SYSMMU)		+= dev-sysmmu.o
+> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+> index 85b74be..6dac38f 100644
+> --- a/drivers/usb/host/ehci-s5p.c
+> +++ b/drivers/usb/host/ehci-s5p.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/platform_data/usb-ehci-s5p.h>
+> +#include <linux/usb/phy.h>
+>  #include <plat/usb-phy.h>
 > 
->  obj-$(CONFIG_ARCH_EXYNOS)		+= setup-i2c0.o
-> diff --git a/arch/arm/mach-exynos/dev-drm.c b/arch/arm/mach-exynos/dev-
-> drm.c
-> deleted file mode 100644
-> index 17c9c6e..0000000
-> --- a/arch/arm/mach-exynos/dev-drm.c
-> +++ /dev/null
-> @@ -1,29 +0,0 @@
-> -/*
-> - * linux/arch/arm/mach-exynos/dev-drm.c
-> - *
-> - * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * EXYNOS - core DRM device
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - */
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/dma-mapping.h>
-> -#include <linux/platform_device.h>
-> -
-> -#include <plat/devs.h>
-> -
-> -static u64 exynos_drm_dma_mask = DMA_BIT_MASK(32);
-> -
-> -struct platform_device exynos_device_drm = {
-> -	.name	= "exynos-drm",
-> -	.dev	= {
-> -		.dma_mask		= &exynos_drm_dma_mask,
-> -		.coherent_dma_mask	= DMA_BIT_MASK(32),
+>  #define EHCI_INSNREG00(base)			(base + 0x90)
+> @@ -32,6 +33,8 @@ struct s5p_ehci_hcd {
+>  	struct device *dev;
+>  	struct usb_hcd *hcd;
+>  	struct clk *clk;
+> +	struct usb_phy *phy;
+> +	struct s5p_ehci_platdata *pdata;
+>  };
+> 
+>  static const struct hc_driver s5p_ehci_hc_driver = {
+> @@ -65,6 +68,26 @@ static const struct hc_driver s5p_ehci_hc_driver = {
+>  	.clear_tt_buffer_complete	= ehci_clear_tt_buffer_complete,
+>  };
+> 
+> +static void s5p_ehci_phy_enable(struct s5p_ehci_hcd *s5p_ehci)
+> +{
+> +	struct platform_device *pdev = to_platform_device(s5p_ehci->dev);
+> +
+> +	if (s5p_ehci->phy)
+> +		usb_phy_init(s5p_ehci->phy);
+> +	else if (s5p_ehci->pdata->phy_init)
+> +		s5p_ehci->pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +}
+> +
+> +static void s5p_ehci_phy_disable(struct s5p_ehci_hcd *s5p_ehci)
+> +{
+> +	struct platform_device *pdev = to_platform_device(s5p_ehci->dev);
+> +
+> +	if (s5p_ehci->phy)
+> +		usb_phy_shutdown(s5p_ehci->phy);
+> +	else if (s5p_ehci->pdata->phy_exit)
+> +		s5p_ehci->pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +}
+> +
+>  static void s5p_setup_vbus_gpio(struct platform_device *pdev)
+>  {
+>  	int err;
+> @@ -92,15 +115,10 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>  	struct usb_hcd *hcd;
+>  	struct ehci_hcd *ehci;
+>  	struct resource *res;
+> +	struct usb_phy *phy;
+>  	int irq;
+>  	int err;
+> 
+> -	pdata = pdev->dev.platform_data;
+> -	if (!pdata) {
+> -		dev_err(&pdev->dev, "No platform data defined\n");
+> -		return -EINVAL;
 > -	}
-> -};
-> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
-> nuri.c
-> index ea785fc..9267caf 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -1330,9 +1330,6 @@ static struct platform_device *nuri_devices[]
-> __initdata = {
->  	&cam_vdda_fixed_rdev,
->  	&cam_8m_12v_fixed_rdev,
->  	&exynos4_bus_devfreq,
-> -#ifdef CONFIG_DRM_EXYNOS
-> -	&exynos_device_drm,
-> -#endif
->  };
-> 
->  static void __init nuri_map_io(void)
-> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-
-> exynos/mach-origen.c
-> index b45600f..be8fac7 100644
-> --- a/arch/arm/mach-exynos/mach-origen.c
-> +++ b/arch/arm/mach-exynos/mach-origen.c
-> @@ -709,9 +709,6 @@ static struct platform_device *origen_devices[]
-> __initdata = {
->  	&s5p_device_mfc_l,
->  	&s5p_device_mfc_r,
->  	&s5p_device_mixer,
-> -#ifdef CONFIG_DRM_EXYNOS
-> -	&exynos_device_drm,
-> -#endif
->  	&exynos4_device_ohci,
->  	&origen_device_gpiokeys,
->  	&origen_lcd_hv070wsa,
-> diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-
-> exynos/mach-smdk4x12.c
-> index 81bf59c..f02ee11 100644
-> --- a/arch/arm/mach-exynos/mach-smdk4x12.c
-> +++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-> @@ -317,9 +317,6 @@ static struct platform_device *smdk4x12_devices[]
-> __initdata = {
->  	&s5p_device_mfc,
->  	&s5p_device_mfc_l,
->  	&s5p_device_mfc_r,
-> -#ifdef CONFIG_DRM_EXYNOS
-> -	&exynos_device_drm,
-> -#endif
->  	&samsung_device_keypad,
->  };
-> 
-> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-
-> exynos/mach-smdkv310.c
-> index 12a1db2..bffb1b2 100644
-> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> @@ -300,9 +300,6 @@ static struct platform_device *smdkv310_devices[]
-> __initdata = {
->  	&s5p_device_fimc_md,
->  	&s5p_device_g2d,
->  	&s5p_device_jpeg,
-> -#ifdef CONFIG_DRM_EXYNOS
-> -	&exynos_device_drm,
-> -#endif
->  	&exynos4_device_ac97,
->  	&exynos4_device_i2s0,
->  	&exynos4_device_ohci,
-> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
-> exynos/mach-universal_c210.c
-> index 4d1f40d..f7b1337 100644
-> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> @@ -1084,9 +1084,6 @@ static struct platform_device *universal_devices[]
-> __initdata = {
->  	&s5p_device_onenand,
->  	&s5p_device_fimd0,
->  	&s5p_device_jpeg,
-> -#ifdef CONFIG_DRM_EXYNOS
-> -	&exynos_device_drm,
-> -#endif
->  	&s3c_device_usb_hsotg,
->  	&s5p_device_mfc,
->  	&s5p_device_mfc_l,
-> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-
-> samsung/include/plat/devs.h
-> index 5da4b4f..133e3e4 100644
-> --- a/arch/arm/plat-samsung/include/plat/devs.h
-> +++ b/arch/arm/plat-samsung/include/plat/devs.h
-> @@ -133,8 +133,6 @@ extern struct platform_device exynos4_device_pcm1;
->  extern struct platform_device exynos4_device_pcm2;
->  extern struct platform_device exynos4_device_spdif;
-> 
-> -extern struct platform_device exynos_device_drm;
 > -
->  extern struct platform_device samsung_asoc_dma;
->  extern struct platform_device samsung_asoc_idma;
->  extern struct platform_device samsung_device_keypad;
+>  	/*
+>  	 * Right now device-tree probed devices don't get dma_mask set.
+>  	 * Since shared usb code relies on it, set it here for now.
+> @@ -118,6 +136,20 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>  	if (!s5p_ehci)
+>  		return -ENOMEM;
+> 
+> +	pdata = pdev->dev.platform_data;
+> +	if (!pdata) {
+> +		/* Fallback to Phy transceiver */
+> +		phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+> +		if (IS_ERR_OR_NULL(phy)) {
+> +			dev_err(&pdev->dev, "no platform data or transceiver defined\n");
+> +			return -EPROBE_DEFER;
+> +		} else {
+> +			s5p_ehci->phy = phy;
+> +		}
+> +	} else {
+> +		s5p_ehci->pdata = pdata;
+> +	}
+> +
+>  	s5p_ehci->dev = &pdev->dev;
+> 
+>  	hcd = usb_create_hcd(&s5p_ehci_hc_driver, &pdev->dev,
+> @@ -163,8 +195,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>  		goto fail_io;
+>  	}
+> 
+> -	if (pdata->phy_init)
+> -		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +	s5p_ehci_phy_enable(s5p_ehci);
+> 
+>  	ehci = hcd_to_ehci(hcd);
+>  	ehci->caps = hcd->regs;
+> @@ -175,13 +206,15 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>  	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+>  	if (err) {
+>  		dev_err(&pdev->dev, "Failed to add USB HCD\n");
+> -		goto fail_io;
+> +		goto fail_add_hcd;
+>  	}
+> 
+>  	platform_set_drvdata(pdev, s5p_ehci);
+> 
+>  	return 0;
+> 
+> +fail_add_hcd:
+> +	s5p_ehci_phy_disable(s5p_ehci);
+>  fail_io:
+>  	clk_disable(s5p_ehci->clk);
+>  fail_clk:
+> @@ -191,14 +224,12 @@ fail_clk:
+> 
+>  static int __devexit s5p_ehci_remove(struct platform_device *pdev)
+>  {
+> -	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+>  	struct s5p_ehci_hcd *s5p_ehci = platform_get_drvdata(pdev);
+>  	struct usb_hcd *hcd = s5p_ehci->hcd;
+> 
+>  	usb_remove_hcd(hcd);
+> 
+> -	if (pdata && pdata->phy_exit)
+> -		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +	s5p_ehci_phy_disable(s5p_ehci);
+> 
+>  	clk_disable(s5p_ehci->clk);
+> 
+> @@ -222,14 +253,11 @@ static int s5p_ehci_suspend(struct device *dev)
+>  	struct s5p_ehci_hcd *s5p_ehci = dev_get_drvdata(dev);
+>  	struct usb_hcd *hcd = s5p_ehci->hcd;
+>  	bool do_wakeup = device_may_wakeup(dev);
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+>  	int rc;
+> 
+>  	rc = ehci_suspend(hcd, do_wakeup);
+> 
+> -	if (pdata && pdata->phy_exit)
+> -		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +	s5p_ehci_phy_disable(s5p_ehci);
+> 
+>  	clk_disable(s5p_ehci->clk);
+> 
+> @@ -240,13 +268,10 @@ static int s5p_ehci_resume(struct device *dev)
+>  {
+>  	struct s5p_ehci_hcd *s5p_ehci = dev_get_drvdata(dev);
+>  	struct usb_hcd *hcd = s5p_ehci->hcd;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+> 
+>  	clk_enable(s5p_ehci->clk);
+> 
+> -	if (pdata && pdata->phy_init)
+> -		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +	s5p_ehci_phy_enable(s5p_ehci);
+> 
+>  	/* DMA burst Enable */
+>  	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
 > --
-> 1.7.0.4
+> 1.7.6.5
