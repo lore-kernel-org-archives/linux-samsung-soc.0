@@ -1,68 +1,128 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v2 6/6] arm: exynos: removing exynos-drm device
- registration from non-dt platforms
-Date: Mon, 15 Oct 2012 11:34:14 +0530
-Message-ID: <CAPdUM4PhVKcHq0f2SDOBwLUqLgt-0+nro85j13Sb-GSvW3vHaA@mail.gmail.com>
-References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
-	<1350074555-26018-7-git-send-email-rahul.sharma@samsung.com>
-	<3753436.Oasjq2fFLk@flatron>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V5 2/2] video: exynos_dp: device tree documentation
+Date: Mon, 15 Oct 2012 15:13:29 +0900
+Message-ID: <009b01cdaa9c$324d9de0$96e8d9a0$%han@samsung.com>
+References: <1350074859-23226-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1350074859-23226-2-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gh0-f174.google.com ([209.85.160.174]:49835 "EHLO
-	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752861Ab2JOGEP (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:20320 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751534Ab2JOGNc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Oct 2012 02:04:15 -0400
-Received: by mail-gh0-f174.google.com with SMTP id g15so1224024ghb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Oct 2012 23:04:14 -0700 (PDT)
-In-Reply-To: <3753436.Oasjq2fFLk@flatron>
+	Mon, 15 Oct 2012 02:13:32 -0400
+In-reply-to: <1350074859-23226-2-git-send-email-ajaykumar.rs@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com
+To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, FlorianSchandinat@gmx.de, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, thomas.ab@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Sat, Oct 13, 2012 at 7:16 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Saturday 13 of October 2012 02:12:35 Rahul Sharma wrote:
->> As exynos-drm is a software device, its registration is moved to the
->> exynos drm driver. This will provide generic solution for device
->> registration for dt and non-dt platforms. Corresponding patches are
->> posted to dri-devel list.
->>
->> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->> ---
->>  arch/arm/mach-exynos/Makefile              |    1 -
->>  arch/arm/mach-exynos/dev-drm.c             |   29
->> ---------------------------- arch/arm/mach-exynos/mach-nuri.c
->> |    3 --
->>  arch/arm/mach-exynos/mach-origen.c         |    3 --
->>  arch/arm/mach-exynos/mach-smdk4x12.c       |    3 --
->>  arch/arm/mach-exynos/mach-smdkv310.c       |    3 --
->>  arch/arm/mach-exynos/mach-universal_c210.c |    3 --
->>  arch/arm/plat-samsung/include/plat/devs.h  |    2 -
->>  8 files changed, 0 insertions(+), 47 deletions(-)
->>  delete mode 100644 arch/arm/mach-exynos/dev-drm.c
->
-> Hmm, shouldn't this patch belong to the series adding registration in the
-> driver?
-> (http://comments.gmane.org/gmane.comp.video.dri.devel/75121)
->
-> It doesn't look to be directly related to adding dt support for exynos5
-> hdmi.
->
-> Best regards,
-> Tomasz Figa
->
+On Saturday, October 13, 2012 5:48 AM Ajay kumar wrote
+> 
+> Add documentation for the DT bindings in exynos display port driver.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  .../devicetree/bindings/video/exynos_dp.txt        |   80 ++++++++++++++++++++
+>  1 files changed, 80 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt
+> b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> new file mode 100644
+> index 0000000..e19594b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> @@ -0,0 +1,80 @@
+> +The Exynos display port interface should be configured based on the
+> +based on the type of panel connected to it.
 
-Hi Tomasz,
+'based on' is duplicated. So, please fix it as bellows:
 
-Actually other patch set is also about "adding platform device to drm
-driver", not a best place
-for the following patch. I added it here because these deletions are
-done as part of adding DT
-support for Exynos5. But If you still feel it is totally out of place,
-I will post it again as an
-independent patch.
++The Exynos display port interface should be configured based on
++the type of panel connected to it.
 
-regards,
-Rahul Sharma.
+
+> +
+> +We use two nodes:
+> +	-display-port-controller node
+> +	-dptx-phy node(defined inside display-port-controller node)
+> +
+> +For the DP-PHY initialization, we use the dptx-phy node.
+> +Required properties for dptx-phy:
+> +	-reg:
+> +		Base address of DP PHY register.
+> +	-samsung,enable-mask:
+> +		The bit-mask used to enable/disable DP PHY.
+> +
+> +For the Panel initialization, we read data from display-port-controller node.
+> +Required properties for display-port-controller:
+> +	-compatible:
+> +		should be "samsung,exynos5-dp".
+> +	-reg:
+> +		physical base address of the controller and length
+> +		of memory mapped region.
+> +	-interrupts:
+> +		interrupt combiner values.
+> +	-interrupt-parent:
+> +		phandle to Interrupt combiner node.
+> +	-samsung,color-space:
+> +		input video data format.
+> +			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
+> +	-samsung,dynamic-range:
+> +		dynamic range for input video data.
+> +			VESA = 0, CEA = 1
+> +	-samsung,ycbcr-coeff:
+> +		YCbCr co-efficients for input video.
+> +			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
+> +	-samsung,color-depth:
+> +		number of bits per colour component.
+> +			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+> +	-samsung,link-rate:
+> +		link rate supported by the panel.
+> +			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
+> +	-samsung,lane-count:
+> +		number of lanes supported by the panel.
+> +			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
+> +
+> +Optional properties for display-port-controller:
+> +	-interlaced:
+> +		interlace scan mode.
+> +			Progressive if defined, Interlaced if not defined
+> +	-vsync-active-high:
+> +		VSYNC polarity configuration.
+> +			High if defined, Low if not defined
+> +	-hsync-active-high:
+> +		HSYNC polarity configuration.
+> +			High if defined, Low if not defined
+> +
+> +Example:
+> +
+> +SOC specific portion:
+> +	display-port-controller {
+> +		compatible = "samsung,exynos5-dp";
+> +		reg = <0x145b0000 0x10000>;
+> +		interrupts = <10 3>;
+> +		interrupt-parent = <&combiner>;
+> +
+> +		dptx-phy {
+> +			reg = <0x10040720>;
+> +			samsung,enable-mask = <1>;
+> +		};
+> +
+> +        };
+> +
+> +Board Specific portion:
+> +	display-port-controller {
+> +		samsung,color-space = <0>;
+> +		samsung,dynamic-range = <0>;
+> +		samsung,ycbcr-coeff = <0>;
+> +		samsung,color-depth = <1>;
+> +		samsung,link-rate = <0x0a>;
+> +		samsung,lane-count = <2>;
+> +	};
+> --
+> 1.7.0.4
