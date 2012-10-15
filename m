@@ -1,202 +1,118 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH 4/4 v2] USB: ohci-exynos: Add phy driver support
-Date: Mon, 15 Oct 2012 14:52:46 +0900
-Message-ID: <009001cdaa99$4d4ad340$e7e079c0$%han@samsung.com>
-References: <1349865780-7701-1-git-send-email-gautam.vivek@samsung.com>
- <1349865780-7701-5-git-send-email-gautam.vivek@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH v2 1/6] dts: exynos: add device tree support for exynos5 hdmi
+Date: Mon, 15 Oct 2012 11:24:07 +0530
+Message-ID: <CAPdUM4M9cXau+3kfPudTb+sDResyAHTxjWtnjgTgD=CNLsRQeQ@mail.gmail.com>
+References: <1350074555-26018-1-git-send-email-rahul.sharma@samsung.com>
+	<1350074555-26018-2-git-send-email-rahul.sharma@samsung.com>
+	<10309437.yhpP5BHNDs@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:32305 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751707Ab2JOFws (ORCPT
+Received: from mail-gg0-f194.google.com ([209.85.161.194]:33036 "EHLO
+	mail-gg0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752349Ab2JOFyH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Oct 2012 01:52:48 -0400
-In-reply-to: <1349865780-7701-5-git-send-email-gautam.vivek@samsung.com>
-Content-language: ko
+	Mon, 15 Oct 2012 01:54:07 -0400
+Received: by mail-gg0-f194.google.com with SMTP id q4so896756ggn.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Oct 2012 22:54:07 -0700 (PDT)
+In-Reply-To: <10309437.yhpP5BHNDs@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, kishon@ti.com, p.paneri@samsung.com, yulgon.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com
 
-On Wednesday, October 10, 2012 7:43 PM Vivek Gautam wrote
-> 
-> Adding the transceiver to ohci driver. Keeping the platform data
-> for continuing the smooth operation for boards which still uses it
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Hi Tomasz,
 
+I will do the suggested changes.
+1) Indentation
+2) Name Change with @address.
 
-It looks good. I have tested this patch with Exynos5250.
+regards,
+Rahul Sharma
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
-
-
-Best regards,
-Jingoo Han
-
-
-> ---
->  drivers/usb/host/ohci-exynos.c |   65 +++++++++++++++++++++++++++------------
->  1 files changed, 45 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index 20a5008..a1c4eb3 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -15,14 +15,37 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/platform_data/usb-exynos.h>
-> +#include <linux/usb/phy.h>
->  #include <plat/usb-phy.h>
-> 
->  struct exynos_ohci_hcd {
->  	struct device *dev;
->  	struct usb_hcd *hcd;
->  	struct clk *clk;
-> +	struct usb_phy *phy;
-> +	struct exynos4_ohci_platdata *pdata;
->  };
-> 
-> +static void exynos_ohci_phy_enable(struct exynos_ohci_hcd *exynos_ohci)
-> +{
-> +	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
-> +
-> +	if (exynos_ohci->phy)
-> +		usb_phy_init(exynos_ohci->phy);
-> +	else if (exynos_ohci->pdata->phy_init)
-> +		exynos_ohci->pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> +}
-> +
-> +static void exynos_ohci_phy_disable(struct exynos_ohci_hcd *exynos_ohci)
-> +{
-> +	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
-> +
-> +	if (exynos_ohci->phy)
-> +		usb_phy_shutdown(exynos_ohci->phy);
-> +	else if (exynos_ohci->pdata->phy_exit)
-> +		exynos_ohci->pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> +}
-> +
->  static int ohci_exynos_start(struct usb_hcd *hcd)
->  {
->  	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
-> @@ -81,15 +104,10 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
->  	struct usb_hcd *hcd;
->  	struct ohci_hcd *ohci;
->  	struct resource *res;
-> +	struct usb_phy *phy;
->  	int irq;
->  	int err;
-> 
-> -	pdata = pdev->dev.platform_data;
-> -	if (!pdata) {
-> -		dev_err(&pdev->dev, "No platform data defined\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	/*
->  	 * Right now device-tree probed devices don't get dma_mask set.
->  	 * Since shared usb code relies on it, set it here for now.
-> @@ -105,6 +123,20 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
->  	if (!exynos_ohci)
->  		return -ENOMEM;
-> 
-> +	pdata = pdev->dev.platform_data;
-> +	if (!pdata) {
-> +		/* Fallback to Phy transceiver */
-> +		phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-> +		if (IS_ERR_OR_NULL(phy)) {
-> +			dev_err(&pdev->dev, "no platform data or transceiver defined\n");
-> +			return -EPROBE_DEFER;
-> +		} else {
-> +			exynos_ohci->phy = phy;
-> +		}
-> +	} else {
-> +		exynos_ohci->pdata = pdata;
-> +	}
-> +
->  	exynos_ohci->dev = &pdev->dev;
-> 
->  	hcd = usb_create_hcd(&exynos_ohci_hc_driver, &pdev->dev,
-> @@ -150,8 +182,7 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
->  		goto fail_io;
->  	}
-> 
-> -	if (pdata->phy_init)
-> -		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> +	exynos_ohci_phy_enable(exynos_ohci);
-> 
->  	ohci = hcd_to_ohci(hcd);
->  	ohci_hcd_init(ohci);
-> @@ -159,13 +190,15 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
->  	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
->  	if (err) {
->  		dev_err(&pdev->dev, "Failed to add USB HCD\n");
-> -		goto fail_io;
-> +		goto fail_add_hcd;
->  	}
-> 
->  	platform_set_drvdata(pdev, exynos_ohci);
-> 
->  	return 0;
-> 
-> +fail_add_hcd:
-> +	exynos_ohci_phy_disable(exynos_ohci);
->  fail_io:
->  	clk_disable(exynos_ohci->clk);
->  fail_clken:
-> @@ -177,14 +210,12 @@ fail_clk:
-> 
->  static int __devexit exynos_ohci_remove(struct platform_device *pdev)
->  {
-> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
->  	struct exynos_ohci_hcd *exynos_ohci = platform_get_drvdata(pdev);
->  	struct usb_hcd *hcd = exynos_ohci->hcd;
-> 
->  	usb_remove_hcd(hcd);
-> 
-> -	if (pdata && pdata->phy_exit)
-> -		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> +	exynos_ohci_phy_disable(exynos_ohci);
-> 
->  	clk_disable(exynos_ohci->clk);
->  	clk_put(exynos_ohci->clk);
-> @@ -209,8 +240,6 @@ static int exynos_ohci_suspend(struct device *dev)
->  	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
->  	struct usb_hcd *hcd = exynos_ohci->hcd;
->  	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
->  	unsigned long flags;
->  	int rc = 0;
-> 
-> @@ -229,8 +258,7 @@ static int exynos_ohci_suspend(struct device *dev)
-> 
->  	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-> 
-> -	if (pdata && pdata->phy_exit)
-> -		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> +	exynos_ohci_phy_disable(exynos_ohci);
-> 
->  	clk_disable(exynos_ohci->clk);
-> 
-> @@ -244,13 +272,10 @@ static int exynos_ohci_resume(struct device *dev)
->  {
->  	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
->  	struct usb_hcd *hcd = exynos_ohci->hcd;
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
-> 
->  	clk_enable(exynos_ohci->clk);
-> 
-> -	if (pdata && pdata->phy_init)
-> -		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> +	exynos_ohci_phy_enable(exynos_ohci);
-> 
->  	/* Mark hardware accessible again as we are out of D3 state by now */
->  	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-> --
-> 1.7.6.5
+On Sat, Oct 13, 2012 at 7:10 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Saturday 13 of October 2012 02:12:30 Rahul Sharma wrote:
+>> This patch adds support for device tree based discovery for exynos5
+>> hdmi. Hdmi node is also renamed with "exynos5-hdmi".
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> ---
+>>  .../devicetree/bindings/drm/exynos/hdmi.txt        |   22
+>> ++++++++++++++++++++ arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> |    4 +++ arch/arm/boot/dts/exynos5250.dtsi                  |    6
+>> +++++ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+>>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
+>>  5 files changed, 35 insertions(+), 0 deletions(-)
+>>  create mode 100644
+>> Documentation/devicetree/bindings/drm/exynos/hdmi.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/drm/exynos/hdmi.txt
+>> b/Documentation/devicetree/bindings/drm/exynos/hdmi.txt new file mode
+>> 100644
+>> index 0000000..8b0fa7c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/drm/exynos/hdmi.txt
+>> @@ -0,0 +1,22 @@
+>> +Device-Tree bindings for drm hdmi driver
+>> +
+>> +Required properties:
+>> +- compatible: value should be "samsung,exynos5-hdmi".
+>> +- reg: physical base address of the hdmi and length of memory mapped
+>> +     region.
+>> +- interrupts: interrupt number to the cpu.
+>> +- hpd-gpio: following information about the hotplug gpio pin.
+>> +     a) phandle of the gpio controller node.
+>> +     b) pin number within the gpio controller.
+>> +     c) pin function mode.
+>> +     d) optional flags and pull up/down.
+>> +     e) drive strength.
+>> +
+>> +Example:
+>> +
+>> +     hdmi {
+>> +             compatible = "samsung,exynos5-hdmi";
+>> +             reg = <0x14530000 0x100000>;
+>> +             interrupts = <0 95 0>;
+>> +             hpd-gpio = <&gpx3 7 0xf 1 3>;
+>> +     };
+>> \ No newline at end of file
+>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index a352df4..2a478ab
+>> 100644
+>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> @@ -166,4 +166,8 @@
+>>       spi_2: spi@12d40000 {
+>>               status = "disabled";
+>>       };
+>> +
+>> +     hdmi {
+>> +             hpd-gpio = <&gpx3 7 0xf 1 3>;
+>> +     };
+>>  };
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> b/arch/arm/boot/dts/exynos5250.dtsi index f69e389..eea84a3 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -492,4 +492,10 @@
+>>                       #gpio-cells = <4>;
+>>               };
+>>       };
+>> +
+>> +     hdmi {
+>
+> I guess it's discussable, but I would follow the convention of adding
+> @ADDR to every node with reg property.
+>
+>> +             compatible = "samsung,exynos5-hdmi";
+>> +             reg = <0x14530000 0x100000>;
+>> +             interrupts = <0 95 0>;
+>> +        };
+>
+> Indentation of the closing bracket looks incorrect.
+>
+> Rest of the patch looks fine.
+>
+> Best regards,
+> Tomasz Figa
+>
