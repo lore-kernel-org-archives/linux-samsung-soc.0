@@ -1,68 +1,76 @@
-From: =?UTF-8?B?Sm9zw6kgTWlndWVsIEdvbsOnYWx2ZXM=?=
-	<jose.goncalves@inov.pt>
-Subject: Re: [PATCH] ARM: SAMSUNG: Add naming of s3c64xx-spi devices
-Date: Mon, 15 Oct 2012 17:22:29 +0100
-Message-ID: <507C3845.1030003@inov.pt>
-References: <201210021443.54897.heiko@sntech.de> <507C2492.8010408@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH V5 1/2] video: exynos_dp: Add device tree support to DP
+ driver
+Date: Mon, 15 Oct 2012 23:14:06 +0200
+Message-ID: <507C7C9E.1030503@gmail.com>
+References: <1350074859-23226-1-git-send-email-ajaykumar.rs@samsung.com> <50788F25.2040003@gmail.com> <009d01cdaaad$0fa33230$2ee99690$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lmv.inov.pt ([146.193.64.2]:50556 "EHLO lmv.inov.pt"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750813Ab2JOQXe (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:39329 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752165Ab2JOVOL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Oct 2012 12:23:34 -0400
-In-Reply-To: <507C2492.8010408@samsung.com>
+	Mon, 15 Oct 2012 17:14:11 -0400
+In-Reply-To: <009d01cdaaad$0fa33230$2ee99690$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, FlorianSchandinat@gmx.de, tomasz.figa@gmail.com, thomas.ab@samsung.com
 
-On 15-10-2012 15:58, Sylwester Nawrocki wrote:
-> Hi Heiko,
->
-> On 10/02/2012 02:43 PM, Heiko St=C3=BCbner wrote:
->> Commit a5238e360b71 (spi: s3c64xx: move controller information into =
-driver
->> data) introduced separate device names for the different subtypes of=
- the
->> spi controller but forgot to set these in the relevant machines.
+On 10/15/2012 10:14 AM, Jingoo Han wrote:
+> On Saturday, October 13, 2012 6:44 AM Sylwester Nawrocki wrote
 >>
->> To fix this introduce a s3c64xx_spi_setname function and populate al=
-l
->> Samsung arches with the correct names. The function resides in a new
->> header, as the s3c64xx-spi.h contains driver platform data and shoul=
-d
->> therefore at some later point move out of the Samsung include dir.
+>> On 10/12/2012 10:47 PM, Ajay Kumar wrote:
+>>> This patch enables device tree based discovery support for DP driver.
+>>> The driver is modified to handle platform data in both the cases:
+>>> with DT and non-DT.
+>>>
+>>> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
+>>> Acked-by: Jingoo Han<jg1.han@samsung.com>
+>>> ---
+>>>    drivers/video/exynos/exynos_dp_core.c |  161 ++++++++++++++++++++++++++++++---
+>>>    drivers/video/exynos/exynos_dp_core.h |    2 +
+>>>    2 files changed, 149 insertions(+), 14 deletions(-)
+...
+>>> @@ -953,8 +1062,13 @@ static int __devexit exynos_dp_remove(struct platform_device *pdev)
+>>>    	struct exynos_dp_platdata *pdata = pdev->dev.platform_data;
+>>>    	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
 >>
->> Tested on a s3c2416-based machine.
+>> This doesn't belong to your patch, but the above 2 lines could be written as:
 >>
->> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->> Cc: stable@vger.kernel.org
-> This patch looks good to me. I've tested it on Exynos4412 SoC based
-> board. And it fixes quite serious problem - broken SPI support on
-> a all Samsung machs (non-dt) except s3c64xx in mainline v3.6 kernel.
+>>    	struct exynos_dp_device *dp = dev_get_drvdata(&pdev->dev);
+>>
+>> Same in functions exynos_dp_suspend() and exynos_dp_resume().
 >
->
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> (mach-exynos only)
->
-> Jos=C3=A9 Miguel, can you confirm it solves the problem for you ?
+> No, above 2 lines cannot be reduced to 1 line, as you mentioned.
+> This is because it makes build error.
 
-The driver initialization problem is solved by this patch on my S3C2416=
- based=20
-board. Nevertheless, I didn=E2=80=99t have the time yet to test an actu=
-al SPI device=20
-connected to the bus.
+Sorry, my bad. It looks fine in case of exynos_dp_remove().
 
-BTW, I think the two debug messages at the end of the s3c64xx_spi_probe=
-() routine=20
-should be promoted from dev_dbg to dev_info in order to be shown on a n=
-ormal=20
-kernel boot.
+But at exynos_dp_suspend/resume() there is something like:
 
-Best regards,
-Jos=C3=A9 Gon=C3=A7alves
+
+static int exynos_dp_suspend(struct device *dev)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	struct exynos_dp_platdata *pdata = pdev->dev.platform_data;
+	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
+
+
+You need only pdata and dp there. I think that simpler form would
+do as well:
+
+	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+	struct exynos_dp_platdata *pdata = dev->platform_data;
+
+
+Sorry, this is just a nitpicking.
+
+BTW, shouldn't CONFIG_EXYNOS_VIDEO depend on ARCH_EXYNOS ?
+
+
+--
+Regards,
+Sylwester
