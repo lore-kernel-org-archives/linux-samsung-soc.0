@@ -1,60 +1,97 @@
-From: Vasanth Ananthan <vasanthananthan@gmail.com>
-Subject: Re: [PATCH 6/6] ARM: EXYNOS5: SATA PHY controller driver
-Date: Tue, 16 Oct 2012 12:03:47 +0530
-Message-ID: <CAK1UHiw8+ebzGyjV53Y9efpMFPbCL9RR_o9ZSw=NTuRw_9gRwg@mail.gmail.com>
-References: <1349783332-18467-1-git-send-email-vasanthananthan@gmail.com>
-	<1349783332-18467-7-git-send-email-vasanthananthan@gmail.com>
-	<10179968.slaZyPIETn@flatron>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH V2 RESEND] gpio: samsung: use pr_* instead of printk
+Date: Tue, 16 Oct 2012 17:25:38 +0900
+Message-ID: <008901cdab77$d2538800$76fa9800$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <10179968.slaZyPIETn@flatron>
-Sender: linux-ide-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanth.a@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:60320 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752193Ab2JPIZk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Oct 2012 04:25:40 -0400
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Ryan Mallon' <rmallon@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Tomasz,
+This patch uses pr_* instead of printk. Also, gpio_dbg
+is replaced with pr_debug.
 
-On Sat, Oct 13, 2012 at 4:20 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi,
->
-> On Tuesday 09 of October 2012 17:18:52 Vasanth Ananthan wrote:
->> This patch adds a platform driver and I2C client driver for SATA PHY
->> controller
->>
->> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
->> ---
->>  drivers/ata/Makefile          |    2 +-
->>  drivers/ata/sata_exynos_phy.c |  303
->> +++++++++++++++++++++++++++++++++++++++++ 2 files changed, 304
->> insertions(+), 1 deletions(-)
->>  create mode 100644 drivers/ata/sata_exynos_phy.c
->>
-[ ... ]
->> +
->> +     phy->init = sataphy_init;
->> +     phy->shutdown = sataphy_shutdown;
->> +     phy->priv_data = (void *)sataphy;
->> +     phy->dev = &pdev->dev;
->> +
->> +     ret = sata_add_phy(phy, SATA_PHY_GENERATION3);
->> +     if (ret < 0)
->> +             goto err4;
->
-> Do you have any warranties that phy callbacks won't get called before i2c
-> device probes and sets i2c_client?
->
->> +
->> +     ret = i2c_add_driver(&sataphy_i2c_driver);
->> +     if (ret < 0)
->> +             goto err5;
->> +
->> +     platform_set_drvdata(pdev, phy);
+Signed-off-by: Ryan Mallon <rmallon@gmail.com>
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-samsung.c |   18 ++++++------------
+ 1 files changed, 6 insertions(+), 12 deletions(-)
 
-I shall register my i2c client driver before assigning the SATA PHY
-call backs. Would that guarantee the calling of phy callbacks after
-the i2c device probes?
-
---
-Vasanth Ananthan
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index a006f0d..5c5ccdf 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -42,12 +42,6 @@
+ #include <plat/gpio-fns.h>
+ #include <plat/pm.h>
+ 
+-#ifndef DEBUG_GPIO
+-#define gpio_dbg(x...) do { } while (0)
+-#else
+-#define gpio_dbg(x...) printk(KERN_DEBUG x)
+-#endif
+-
+ int samsung_gpio_setpull_updown(struct samsung_gpio_chip *chip,
+ 				unsigned int off, samsung_gpio_pull_t pull)
+ {
+@@ -599,7 +593,7 @@ static int samsung_gpiolib_4bit_input(struct gpio_chip *chip,
+ 	con &= ~(0xf << con_4bit_shift(offset));
+ 	__raw_writel(con, base + GPIOCON_OFF);
+ 
+-	gpio_dbg("%s: %p: CON now %08lx\n", __func__, base, con);
++	pr_debug("%s: %p: CON now %08lx\n", __func__, base, con);
+ 
+ 	return 0;
+ }
+@@ -627,7 +621,7 @@ static int samsung_gpiolib_4bit_output(struct gpio_chip *chip,
+ 	__raw_writel(con, base + GPIOCON_OFF);
+ 	__raw_writel(dat, base + GPIODAT_OFF);
+ 
+-	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
++	pr_debug("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
+ 
+ 	return 0;
+ }
+@@ -671,7 +665,7 @@ static int samsung_gpiolib_4bit2_input(struct gpio_chip *chip,
+ 	con &= ~(0xf << con_4bit_shift(offset));
+ 	__raw_writel(con, regcon);
+ 
+-	gpio_dbg("%s: %p: CON %08lx\n", __func__, base, con);
++	pr_debug("%s: %p: CON %08lx\n", __func__, base, con);
+ 
+ 	return 0;
+ }
+@@ -706,7 +700,7 @@ static int samsung_gpiolib_4bit2_output(struct gpio_chip *chip,
+ 	__raw_writel(con, regcon);
+ 	__raw_writel(dat, base + GPIODAT_OFF);
+ 
+-	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
++	pr_debug("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
+ 
+ 	return 0;
+ }
+@@ -926,10 +920,10 @@ static void __init samsung_gpiolib_add(struct samsung_gpio_chip *chip)
+ #ifdef CONFIG_PM
+ 	if (chip->pm != NULL) {
+ 		if (!chip->pm->save || !chip->pm->resume)
+-			printk(KERN_ERR "gpio: %s has missing PM functions\n",
++			pr_err("gpio: %s has missing PM functions\n",
+ 			       gc->label);
+ 	} else
+-		printk(KERN_ERR "gpio: %s has no PM function\n", gc->label);
++		pr_err("gpio: %s has no PM function\n", gc->label);
+ #endif
+ 
+ 	/* gpiochip_add() prints own failure message on error. */
+-- 
+1.7.1
