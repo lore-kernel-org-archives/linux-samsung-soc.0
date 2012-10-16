@@ -1,81 +1,60 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V5 1/2] video: exynos_dp: Add device tree support to DP
- driver
-Date: Tue, 16 Oct 2012 13:07:01 +0200
-Message-ID: <507D3FD5.6060309@samsung.com>
-References: <1350074859-23226-1-git-send-email-ajaykumar.rs@samsung.com>
- <50788F25.2040003@gmail.com> <009d01cdaaad$0fa33230$2ee99690$%han@samsung.com>
- <507C7C9E.1030503@gmail.com> <005a01cdab42$5a8ca390$0fa5eab0$%han@samsung.com>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH v2 0/4] DMA: PL330: Fix mem leaks and balance probe/remove
+Date: Tue, 16 Oct 2012 17:02:28 +0530
+Message-ID: <CAG17yqR_ZqRULT209N0PvhuwWfUYdA1sj6pb2sMq_4F-2Po-Pw@mail.gmail.com>
+References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
+	<CABb+yY2a_QEPvrT6yPBz1gM_avBTH2GRRD3bUKk+mCCMGgcfuQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:18649 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751094Ab2JPLHE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Oct 2012 07:07:04 -0400
-In-reply-to: <005a01cdab42$5a8ca390$0fa5eab0$%han@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABb+yY2a_QEPvrT6yPBz1gM_avBTH2GRRD3bUKk+mCCMGgcfuQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: vinod.koul@intel.com, Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Tomasz Figa' <t.figa@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>
 
-On 10/16/2012 04:02 AM, Jingoo Han wrote:
-> On Tuesday, October 16, 2012 6:14 AM Sylwester Nawrocki wrote
->> On 10/15/2012 10:14 AM, Jingoo Han wrote:
->>> On Saturday, October 13, 2012 6:44 AM Sylwester Nawrocki wrote
->>>>
->>>> On 10/12/2012 10:47 PM, Ajay Kumar wrote:
->>>>> This patch enables device tree based discovery support for DP driver.
->>>>> The driver is modified to handle platform data in both the cases:
->>>>> with DT and non-DT.
->>>>>
->>>>> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
->>>>> Acked-by: Jingoo Han<jg1.han@samsung.com>
->>>>> ---
->>>>>    drivers/video/exynos/exynos_dp_core.c |  161 ++++++++++++++++++++++++++++++---
->>>>>    drivers/video/exynos/exynos_dp_core.h |    2 +
->>>>>    2 files changed, 149 insertions(+), 14 deletions(-)
->> ...
->>>>> @@ -953,8 +1062,13 @@ static int __devexit exynos_dp_remove(struct platform_device *pdev)
->>>>>    	struct exynos_dp_platdata *pdata = pdev->dev.platform_data;
->>>>>    	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
->>>>
->>>> This doesn't belong to your patch, but the above 2 lines could be written as:
->>>>
->>>>    	struct exynos_dp_device *dp = dev_get_drvdata(&pdev->dev);
->>>>
->>>> Same in functions exynos_dp_suspend() and exynos_dp_resume().
->>>
->>> No, above 2 lines cannot be reduced to 1 line, as you mentioned.
->>> This is because it makes build error.
+On 13 October 2012 16:33, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+> On Fri, Oct 5, 2012 at 3:47 PM, Inderpal Singh
+> <inderpal.singh@linaro.org> wrote:
+>> The first 2 patches of this series fix memory leaks because the memory
+>> allocated for peripheral channels and DMA descriptors were not getting
+>> freed.
 >>
->> Sorry, my bad. It looks fine in case of exynos_dp_remove().
+>> The last 2 patches balance the module's remove function.
 >>
->> But at exynos_dp_suspend/resume() there is something like:
+>> This series depends on "61c6e7531d3b66b3 ........DMA: PL330: Check the
+>> pointer returned by kzalloc" which is on slave-dma's "fixes" branch.
+>> Hence slave-dma tree's "next" branch was merged with "fixes" and
+>> applied patch at [1] to fix the build error.
 >>
+>> [1] http://permalink.gmane.org/gmane.linux.kernel.next/24274
 >>
->> static int exynos_dp_suspend(struct device *dev)
->> {
->> 	struct platform_device *pdev = to_platform_device(dev);
->> 	struct exynos_dp_platdata *pdata = pdev->dev.platform_data;
->> 	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
+>> Changes since v1:
+>>  - Protect only list_add_tail with spin_locks
+>>  - Return EBUSY from remove if channel is in use
+>>  - unregister dma_device in remove
 >>
+>> Inderpal Singh (4):
+>>   DMA: PL330: Free memory allocated for peripheral channels
+>>   DMA: PL330: Change allocation method to properly free  DMA
+>>     descriptors
+>>   DMA: PL330: Balance module remove function with probe
+>>   DMA: PL330: unregister dma_device in module's remove function
 >>
->> You need only pdata and dp there. I think that simpler form would
->> do as well:
+>>  drivers/dma/pl330.c |   53 ++++++++++++++++++++++++++++++++++++---------------
+>>  1 file changed, 38 insertions(+), 15 deletions(-)
 >>
->> 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
->> 	struct exynos_dp_platdata *pdata = dev->platform_data;
-> 
-> OK, I see.
-> I will accept your suggestion, because it is helpful to reduce
-> lines. Then, I will send v8 patch, soon.
+> All seem fine.
+> Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+>
+Thanks Jassi.
 
-OK. I thought about it more as a candidate for a separate. But you seem
-to have already sent new version, it's probably fine this way too.
+Vinod,
+I have tested this series against your latest slave-dma ->fixes branch
+which is based on 3.7-rc1.
+The patchset applies cleanly and works fine.
 
---
-Regards,
-Sylwester
+Thanks,
+Inder
+
+> Thanks.
