@@ -1,43 +1,99 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH] usb: phy: samsung: Introducing usb phy driver for hsotg
-Date: Wed, 17 Oct 2012 20:13:01 +0100
-Message-ID: <20121017191300.GL21164@n2100.arm.linux.org.uk>
-References: <1349256393-11741-1-git-send-email-p.paneri@samsung.com> <1350036934-6051-1-git-send-email-p.paneri@samsung.com> <005801cdac56$8da0c120$a8e24360$%kim@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: IS_ERR_OR_NULL - please STOP telling people to use this on a whim
+Date: Wed, 17 Oct 2012 20:41:57 +0100
+Message-ID: <20121017194157.GM21164@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-omap-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <005801cdac56$8da0c120$a8e24360$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Praveen Paneri' <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Sender: linux-omap-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 17, 2012 at 08:00:00PM +0900, Kukjin Kim wrote:
-> > +static int samsung_usbphy_get_refclk_freq(struct samsung_usbphy *sphy)
-> > +{
-> > +	struct clk *ref_clk;
-> > +	int refclk_freq = 0;
-> > +
-> > +	ref_clk = clk_get(sphy->dev, "xusbxti");
-> > +	if (IS_ERR(ref_clk)) {
-> 
-> IS_ERR_OR_NULL(ref_clk)?
+People,
 
-For the N'th time, NO.  IS_ERR is correct here.
+This is not aimed at anyone specifically - but it is aimed at everyone
+who reviews patches to make them aware of this issue, and to modify their
+behaviour.
 
-> > +		dev_err(sphy->dev, "Failed to get reference clock\n");
-> > +		return PTR_ERR(ref_clk);
+I'm geting sick and tired of telling people about this.  I've just
+floated the idea of removing IS_ERR_OR_NULL from the kernel tree because
+it's one of the most incorrectly used and abused macros we have in the
+source tree.
 
-Look, it's the ABI.  Not only that but it's also TOTALLY AND UTTERLY WRONG
-to use IS_ERR_OR_NULL(foo) and then follow it with return PTR_ERR(foo).
-You end up returning ZERO.
+It would be one thing if this was only being done by people who are
+submitting new code, but it's far worse than that.  Reviewers who should
+know better are telling people to use it _incorrectly_.
 
-Stop telling people to use IS_ERR_OR_NULL without properly thinking about
-it first.  Virtually every single one of these done this way is a BUG.
+Reviewers really need to think about your review comments.  Looking
+through the kernel tree today, I see lots of uses of IS_ERR_OR_NULL(),
+many of them are *buggy*.
 
-Are we clear on this?
+Take a moment to think about this:
+
+int error_value(struct device *dev, void *foo)
+{
+	if (IS_ERR_OR_NULL(foo))
+		return PTR_ERR(foo);
+	return 0;
+}
+
+Consider the value this function returns for three arguments:
+
+1. an errno encoded pointer
+2. a NULL pointer.
+3. a valid pointer.
+
+If you can't see the problem, then *do* *not* tell anyone to use
+IS_ERR_OR_NULL(), because you do *not* have the understanding necessary
+to make that judgement yourself - you're probably telling people to
+create buggy code.
+
+Here's the list so far of what looks like buggy uses specific to ARM.
+There _are_ others elsewhere in the kernel.
+
+drivers/media/video/s5p-mfc/s5p_mfc.c:  if (IS_ERR_OR_NULL(dev->alloc_ctx[0])) {
+drivers/media/video/s5p-mfc/s5p_mfc.c-          ret = PTR_ERR(dev->alloc_ctx[0]);
+drivers/media/video/s5p-mfc/s5p_mfc.c-          goto err_res;
+drivers/media/video/s5p-mfc/s5p_mfc.c-  }
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+drivers/media/video/s5p-mfc/s5p_mfc.c:  if (IS_ERR_OR_NULL(dev->alloc_ctx[1])) {
+drivers/media/video/s5p-mfc/s5p_mfc.c-          ret = PTR_ERR(dev->alloc_ctx[1]);
+drivers/media/video/s5p-mfc/s5p_mfc.c-          goto err_mem_init_ctx_1;
+drivers/media/video/s5p-mfc/s5p_mfc.c-  }
+--
+drivers/staging/omapdrm/omap_dmm_tiler.c:       if (IS_ERR_OR_NULL(txn))
+drivers/staging/omapdrm/omap_dmm_tiler.c-               return PTR_ERR(txn);
+drivers/staging/omapdrm/omap_dmm_tiler.c-
+drivers/staging/omapdrm/omap_dmm_tiler.c-       tcm_for_each_slice(slice, *area, area_s) {
+--
+drivers/staging/omap-thermal/omap-bandgap.c:    if (IS_ERR_OR_NULL(bg_ptr)) {
+drivers/staging/omap-thermal/omap-bandgap.c-            dev_err(&pdev->dev, "failed to fetch platform data\n");
+drivers/staging/omap-thermal/omap-bandgap.c-            return PTR_ERR(bg_ptr);
+drivers/staging/omap-thermal/omap-bandgap.c-    }
+--
+drivers/staging/omap-thermal/omap-thermal-common.c:     if (IS_ERR_OR_NULL(data->omap_thermal)) {
+drivers/staging/omap-thermal/omap-thermal-common.c-             dev_err(bg_ptr->dev, "thermal zone device is NULL\n");
+drivers/staging/omap-thermal/omap-thermal-common.c-             return PTR_ERR(data->omap_thermal);
+drivers/staging/omap-thermal/omap-thermal-common.c-     }
+--
+drivers/staging/omap-thermal/omap-thermal-common.c:     if (IS_ERR_OR_NULL(freq_table)) {
+drivers/staging/omap-thermal/omap-thermal-common.c-             dev_err(bg_ptr->dev,
+drivers/staging/omap-thermal/omap-thermal-common.c-                     "%s: failed to get cpufreq table (%p)\n",
+drivers/staging/omap-thermal/omap-thermal-common.c-                     __func__, freq_table);
+--
+drivers/staging/omap-thermal/omap-thermal-common.c:     if (IS_ERR_OR_NULL(data->cool_dev)) {
+drivers/staging/omap-thermal/omap-thermal-common.c-             dev_err(bg_ptr->dev,
+drivers/staging/omap-thermal/omap-thermal-common.c-                     "Failed to register cpufreq cooling device\n");
+drivers/staging/omap-thermal/omap-thermal-common.c-             return PTR_ERR(data->cool_dev);
+--
+drivers/gpu/drm/exynos/exynos_drm_dmabuf.c:     if (IS_ERR_OR_NULL(sgt)) {
+drivers/gpu/drm/exynos/exynos_drm_dmabuf.c-             ret = PTR_ERR(sgt);
+drivers/gpu/drm/exynos/exynos_drm_dmabuf.c-             goto err_buf_detach;
+drivers/gpu/drm/exynos/exynos_drm_dmabuf.c-     }
+--
+drivers/gpu/drm/exynos/exynos_drm_fbdev.c:      if (IS_ERR_OR_NULL(helper->fb)) {
+drivers/gpu/drm/exynos/exynos_drm_fbdev.c-              DRM_ERROR("failed to create drm framebuffer.\n");
+drivers/gpu/drm/exynos/exynos_drm_fbdev.c-              ret = PTR_ERR(helper->fb);
+drivers/gpu/drm/exynos/exynos_drm_fbdev.c-              goto out;
+--
