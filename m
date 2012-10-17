@@ -1,92 +1,42 @@
-From: Phil Carmody <pc+lkml@asdf.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: IS_ERR_OR_NULL - please STOP telling people to use this on a
 	whim
-Date: Wed, 17 Oct 2012 23:28:48 +0300
-Message-ID: <20121017202848.GF22812@fatphil.org>
-References: <20121017194157.GM21164@n2100.arm.linux.org.uk>
+Date: Wed, 17 Oct 2012 22:33:42 +0100
+Message-ID: <20121017213342.GA28061@n2100.arm.linux.org.uk>
+References: <20121017194157.GM21164@n2100.arm.linux.org.uk> <20121017202848.GF22812@fatphil.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54370 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751003Ab2JQVdy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 17 Oct 2012 17:33:54 -0400
 Content-Disposition: inline
-In-Reply-To: <20121017194157.GM21164@n2100.arm.linux.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20121017202848.GF22812@fatphil.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Phil Carmody <pc+lkml@asdf.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 17/10/12 20:41 +0100, Russell King - ARM Linux wrote:
-> People,
-> 
-> This is not aimed at anyone specifically - but it is aimed at everyone
-> who reviews patches to make them aware of this issue, and to modify their
-> behaviour.
-> 
-> I'm geting sick and tired of telling people about this.  I've just
-> floated the idea of removing IS_ERR_OR_NULL from the kernel tree because
-> it's one of the most incorrectly used and abused macros we have in the
-> source tree.
+On Wed, Oct 17, 2012 at 11:28:48PM +0300, Phil Carmody wrote:
+> So, what to do? It can and has been used sensibly, so I don't think removing
+> it is the best option.
 
-This makes me sad. I was responsible for its introduction, and my motive
-was exactly yours in sending the above. 
+Well, the first thing that needs to be done is a full review of every user
+and fixes applied.
 
-> It would be one thing if this was only being done by people who are
-> submitting new code, but it's far worse than that.  Reviewers who should
-> know better are telling people to use it _incorrectly_.
-> 
-> Reviewers really need to think about your review comments.  Looking
-> through the kernel tree today, I see lots of uses of IS_ERR_OR_NULL(),
-> many of them are *buggy*.
-> 
-> Take a moment to think about this:
-> 
-> int error_value(struct device *dev, void *foo)
-> {
-> 	if (IS_ERR_OR_NULL(foo))
-> 		return PTR_ERR(foo);
-> 	return 0;
-> }
-> 
-> Consider the value this function returns for three arguments:
-> 
-> 1. an errno encoded pointer
-> 2. a NULL pointer.
-> 3. a valid pointer.
-> 
-> If you can't see the problem, then *do* *not* tell anyone to use
-> IS_ERR_OR_NULL(), because you do *not* have the understanding necessary
-> to make that judgement yourself - you're probably telling people to
-> create buggy code.
+The second thing is that we need eyes on code _and_ review comments, and
+educate those who are telling people to use IS_ERR_OR_NULL() whenever they
+see an IS_ERR() to think about the code a little more - that's kind of the
+purpose of my email.
 
-The problem I saw was functions returning -ERRORs or NULL. There were
-too many, and there was too much sloppy code inconsistently handling one
-or either of the two, and not always both. I did consider trying to fix
-some of the core functions that were returning -ERRORs or NULL to the
-drivers I was involved in, but it seemed like there were too many, and
-that would be too "brave". I imagined that my macro would help catch
-that undesirable situation, and permit people to map the error onto
-whatever was most appropriate to propagate on.
+Unfortunately, it's going to take time to achieve a change, and if I end
+up being the only one who's spotting these errors, I'm going to get
+incredibly pissed off at doing so (because it will feel like I'm being
+ignored when there's a constant stream of it.)
 
-The idea of them propagating the undesirable problem up further in the call
-chain is the exact antithesis of what I intended.
-
-Thank you for highlighting the issue I didn't foresee (neither did my 
-colleagues at Nokia, they made good use of it fairly quickly) and in 
-such unambiguous terms. Better to nip it in the bud, certainly.
-
-> Here's the list so far of what looks like buggy uses specific to ARM.
-> There _are_ others elsewhere in the kernel.
-> 
-> drivers/media/video/s5p-mfc/s5p_mfc.c:  if (IS_ERR_OR_NULL(dev->alloc_ctx[0])) {
-> drivers/media/video/s5p-mfc/s5p_mfc.c-          ret = PTR_ERR(dev->alloc_ctx[0]);
-> drivers/media/video/s5p-mfc/s5p_mfc.c-          goto err_res;
-> drivers/media/video/s5p-mfc/s5p_mfc.c-  }
-...
-
-:-(
-
-So, what to do? It can and has been used sensibly, so I don't think removing
-it is the best option.
-
-Phil
-
-"pcarmody@nokia.com" is no more, I'm now "pc+lkml@asdf.org"
+Another thing would be to work out whether we can get checkpatch to
+detect usage of IS_ERR_OR_NULL(p) followed by PTR_ERR(p) without any
+explicit NULL checks against p in the same block.  That's probably
+going to be interesting to code up in perl.
