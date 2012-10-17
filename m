@@ -1,85 +1,300 @@
 From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH] DMA: PL330: Add runtime pm support
-Date: Wed, 17 Oct 2012 09:42:31 +0530
-Message-ID: <1350447151-16737-1-git-send-email-inderpal.singh@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jassisinghbrar@gmail.com, vinod.koul@intel.com, boojin.kim@samsung.com, kgene.kim@samsung.com, patches@linaro.org
+Subject: [PATCH] MFD: SEC: Fix reg_offset for interrupt registers
+Date: Wed, 17 Oct 2012 11:48:55 +0530
+Message-ID: <1350454735-17697-1-git-send-email-inderpal.singh@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:61263 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755134Ab2JQGTE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 17 Oct 2012 02:19:04 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rr4so6797559pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Oct 2012 23:19:03 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: sbkim73@samsung.com, sameo@linux.intel.com, patches@linaro.org
 
-At the pl330's probe point the device is already in runtime resume state.
-Hence to manage the device with runtime, the probe should do pm_runtime_put
-and remove should do pm_runtime_get to balance with probe.
-
-And in between, the device is being get/put at alloc_chan_resources and
-free_chan_resources.
+reg_offset is offset of the status/mask registers. Now, since status_base
+and mask_base are pointing to corresponding first registers, reg_offset
+should start from 0 otheriwse regmap_add_irq_chip will fail during probe.
 
 Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
 ---
-This patch is based on slave-dma's next branch and on top
-of the clean up patches at [1].
+It is based on Samuel's for-next-merge branch of mfd-2.6 tree. 
 
-[1] https://lkml.org/lkml/2012/10/5/169
+ drivers/mfd/sec-irq.c |  102 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 51 insertions(+), 51 deletions(-)
 
- drivers/dma/pl330.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 2ee1538..5ae19ea 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -25,6 +25,7 @@
- #include <linux/amba/pl330.h>
- #include <linux/scatterlist.h>
- #include <linux/of.h>
-+#include <linux/pm_runtime.h>
+diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+index c901fa5..0dd84e9 100644
+--- a/drivers/mfd/sec-irq.c
++++ b/drivers/mfd/sec-irq.c
+@@ -24,67 +24,67 @@
  
- #include "dmaengine.h"
- #define PL330_MAX_CHAN		8
-@@ -2384,6 +2385,8 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
- 	struct dma_pl330_dmac *pdmac = pch->dmac;
- 	unsigned long flags;
+ static struct regmap_irq s2mps11_irqs[] = {
+ 	[S2MPS11_IRQ_PWRONF] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S2MPS11_IRQ_PWRONF_MASK,
+ 	},
+ 	[S2MPS11_IRQ_PWRONR] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S2MPS11_IRQ_PWRONR_MASK,
+ 	},
+ 	[S2MPS11_IRQ_JIGONBF] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S2MPS11_IRQ_JIGONBF_MASK,
+ 	},
+ 	[S2MPS11_IRQ_JIGONBR] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S2MPS11_IRQ_JIGONBR_MASK,
+ 	},
+ 	[S2MPS11_IRQ_ACOKBF] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S2MPS11_IRQ_ACOKBF_MASK,
+ 	},
+ 	[S2MPS11_IRQ_ACOKBR] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S2MPS11_IRQ_ACOKBR_MASK,
+ 	},
+ 	[S2MPS11_IRQ_PWRON1S] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S2MPS11_IRQ_PWRON1S_MASK,
+ 	},
+ 	[S2MPS11_IRQ_MRB] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S2MPS11_IRQ_MRB_MASK,
+ 	},
+ 	[S2MPS11_IRQ_RTC60S] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_RTC60S_MASK,
+ 	},
+ 	[S2MPS11_IRQ_RTCA1] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_RTCA1_MASK,
+ 	},
+ 	[S2MPS11_IRQ_RTCA2] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_RTCA2_MASK,
+ 	},
+ 	[S2MPS11_IRQ_SMPL] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_SMPL_MASK,
+ 	},
+ 	[S2MPS11_IRQ_RTC1S] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_RTC1S_MASK,
+ 	},
+ 	[S2MPS11_IRQ_WTSR] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S2MPS11_IRQ_WTSR_MASK,
+ 	},
+ 	[S2MPS11_IRQ_INT120C] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S2MPS11_IRQ_INT120C_MASK,
+ 	},
+ 	[S2MPS11_IRQ_INT140C] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S2MPS11_IRQ_INT140C_MASK,
+ 	},
+ };
+@@ -92,146 +92,146 @@ static struct regmap_irq s2mps11_irqs[] = {
  
-+	pm_runtime_get_sync(pdmac->ddma.dev);
-+
- 	spin_lock_irqsave(&pch->lock, flags);
+ static struct regmap_irq s5m8767_irqs[] = {
+ 	[S5M8767_IRQ_PWRR] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8767_IRQ_PWRR_MASK,
+ 	},
+ 	[S5M8767_IRQ_PWRF] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8767_IRQ_PWRF_MASK,
+ 	},
+ 	[S5M8767_IRQ_PWR1S] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8767_IRQ_PWR1S_MASK,
+ 	},
+ 	[S5M8767_IRQ_JIGR] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8767_IRQ_JIGR_MASK,
+ 	},
+ 	[S5M8767_IRQ_JIGF] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8767_IRQ_JIGF_MASK,
+ 	},
+ 	[S5M8767_IRQ_LOWBAT2] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8767_IRQ_LOWBAT2_MASK,
+ 	},
+ 	[S5M8767_IRQ_LOWBAT1] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8767_IRQ_LOWBAT1_MASK,
+ 	},
+ 	[S5M8767_IRQ_MRB] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S5M8767_IRQ_MRB_MASK,
+ 	},
+ 	[S5M8767_IRQ_DVSOK2] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S5M8767_IRQ_DVSOK2_MASK,
+ 	},
+ 	[S5M8767_IRQ_DVSOK3] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S5M8767_IRQ_DVSOK3_MASK,
+ 	},
+ 	[S5M8767_IRQ_DVSOK4] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S5M8767_IRQ_DVSOK4_MASK,
+ 	},
+ 	[S5M8767_IRQ_RTC60S] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8767_IRQ_RTC60S_MASK,
+ 	},
+ 	[S5M8767_IRQ_RTCA1] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8767_IRQ_RTCA1_MASK,
+ 	},
+ 	[S5M8767_IRQ_RTCA2] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8767_IRQ_RTCA2_MASK,
+ 	},
+ 	[S5M8767_IRQ_SMPL] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8767_IRQ_SMPL_MASK,
+ 	},
+ 	[S5M8767_IRQ_RTC1S] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8767_IRQ_RTC1S_MASK,
+ 	},
+ 	[S5M8767_IRQ_WTSR] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8767_IRQ_WTSR_MASK,
+ 	},
+ };
  
- 	dma_cookie_init(chan);
-@@ -2392,6 +2395,7 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
- 	pch->pl330_chid = pl330_request_channel(&pdmac->pif);
- 	if (!pch->pl330_chid) {
- 		spin_unlock_irqrestore(&pch->lock, flags);
-+		pm_runtime_put(pdmac->ddma.dev);
- 		return -ENOMEM;
- 	}
- 
-@@ -2470,6 +2474,8 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
- 		list_splice_tail_init(&pch->work_list, &pch->dmac->desc_pool);
- 
- 	spin_unlock_irqrestore(&pch->lock, flags);
-+
-+	pm_runtime_put(pch->dmac->ddma.dev);
- }
- 
- static enum dma_status
-@@ -2974,6 +2980,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 		pi->pcfg.data_bus_width / 8, pi->pcfg.num_chan,
- 		pi->pcfg.num_peri, pi->pcfg.num_events);
- 
-+	pm_runtime_put(pd->dev);
-+
- 	return 0;
- 
- probe_err5:
-@@ -3017,6 +3025,8 @@ static int __devexit pl330_remove(struct amba_device *adev)
- 			return -EBUSY;
- 	}
- 
-+	pm_runtime_get(pdmac->ddma.dev);
-+
- 	dma_async_device_unregister(&pdmac->ddma);
- 
- 	amba_set_drvdata(adev, NULL);
+ static struct regmap_irq s5m8763_irqs[] = {
+ 	[S5M8763_IRQ_DCINF] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8763_IRQ_DCINF_MASK,
+ 	},
+ 	[S5M8763_IRQ_DCINR] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8763_IRQ_DCINR_MASK,
+ 	},
+ 	[S5M8763_IRQ_JIGF] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8763_IRQ_JIGF_MASK,
+ 	},
+ 	[S5M8763_IRQ_JIGR] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8763_IRQ_JIGR_MASK,
+ 	},
+ 	[S5M8763_IRQ_PWRONF] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8763_IRQ_PWRONF_MASK,
+ 	},
+ 	[S5M8763_IRQ_PWRONR] = {
+-		.reg_offset = 1,
++		.reg_offset = 0,
+ 		.mask = S5M8763_IRQ_PWRONR_MASK,
+ 	},
+ 	[S5M8763_IRQ_WTSREVNT] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S5M8763_IRQ_WTSREVNT_MASK,
+ 	},
+ 	[S5M8763_IRQ_SMPLEVNT] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S5M8763_IRQ_SMPLEVNT_MASK,
+ 	},
+ 	[S5M8763_IRQ_ALARM1] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S5M8763_IRQ_ALARM1_MASK,
+ 	},
+ 	[S5M8763_IRQ_ALARM0] = {
+-		.reg_offset = 2,
++		.reg_offset = 1,
+ 		.mask = S5M8763_IRQ_ALARM0_MASK,
+ 	},
+ 	[S5M8763_IRQ_ONKEY1S] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8763_IRQ_ONKEY1S_MASK,
+ 	},
+ 	[S5M8763_IRQ_TOPOFFR] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8763_IRQ_TOPOFFR_MASK,
+ 	},
+ 	[S5M8763_IRQ_DCINOVPR] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8763_IRQ_DCINOVPR_MASK,
+ 	},
+ 	[S5M8763_IRQ_CHGRSTF] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8763_IRQ_CHGRSTF_MASK,
+ 	},
+ 	[S5M8763_IRQ_DONER] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8763_IRQ_DONER_MASK,
+ 	},
+ 	[S5M8763_IRQ_CHGFAULT] = {
+-		.reg_offset = 3,
++		.reg_offset = 2,
+ 		.mask = S5M8763_IRQ_CHGFAULT_MASK,
+ 	},
+ 	[S5M8763_IRQ_LOBAT1] = {
+-		.reg_offset = 4,
++		.reg_offset = 3,
+ 		.mask = S5M8763_IRQ_LOBAT1_MASK,
+ 	},
+ 	[S5M8763_IRQ_LOBAT2] = {
+-		.reg_offset = 4,
++		.reg_offset = 3,
+ 		.mask = S5M8763_IRQ_LOBAT2_MASK,
+ 	},
+ };
 -- 
 1.7.9.5
