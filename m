@@ -1,67 +1,91 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 v2 v2 8/8] spi/s3c64xx: use correct
- dma_transfer_direction type
-Date: Wed, 17 Oct 2012 17:11:39 +0900
-Message-ID: <003a01cdac3f$08fe40d0$1afac270$%kim@samsung.com>
-References: <1349813638-4617-1-git-send-email-arnd@arndb.de>
- <1349813638-4617-9-git-send-email-arnd@arndb.de>
+Subject: RE: [PATCH] ARM: SAMSUNG: Add naming of s3c64xx-spi devices
+Date: Wed, 17 Oct 2012 17:23:21 +0900
+Message-ID: <003b01cdac40$acec1590$06c440b0$%kim@samsung.com>
+References: <201210021443.54897.heiko@sntech.de> <507C2492.8010408@samsung.com>
+ <507C3845.1030003@inov.pt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23572 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751908Ab2JQILl (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:58525 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751761Ab2JQIXZ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Oct 2012 04:11:41 -0400
-In-reply-to: <1349813638-4617-9-git-send-email-arnd@arndb.de>
+	Wed, 17 Oct 2012 04:23:25 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MC1004QR3ARTU80@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 17 Oct 2012 17:23:23 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MC100ND53AW1940@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 17 Oct 2012 17:23:23 +0900 (KST)
+In-reply-to: <507C3845.1030003@inov.pt>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, arm@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
+To: =?UTF-8?Q?'Jos=C3=A9_Miguel_Gon=C3=A7alves'?= <jose.goncalves@inov.pt>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Arnd Bergmann wrote:
-> 
-> There is a subtle difference between dma_transfer_direction and
-> dma_data_direction: the former is used by the dmaengine framework,
-> while the latter is used by the dma-mapping API. Although the
-> purpose is comparable, the actual values are different and must
-> not be mixed. In this case, the driver just wants to use
-> dma_transfer_direction.
-> 
-> Without this patch, building s3c6400_defconfig results in:
-> 
-> drivers/spi/spi-s3c64xx.c: In function 's3c64xx_spi_dmacb':
-> drivers/spi/spi-s3c64xx.c:239:21: warning: comparison between
-> 	'enum dma_data_direction' and 'enum dma_transfer_direction' [-
-> Wenum-compare]
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
+Jos=C3=A9 Miguel Gon=C3=A7alves wrote:
+>=20
+> On 15-10-2012 15:58, Sylwester Nawrocki wrote:
+> > Hi Heiko,
+> >
+> > On 10/02/2012 02:43 PM, Heiko St=C3=BCbner wrote:
+> >> Commit a5238e360b71 (spi: s3c64xx: move controller information int=
+o
+> driver
+> >> data) introduced separate device names for the different subtypes =
+of
+> the
+> >> spi controller but forgot to set these in the relevant machines.
+> >>
+> >> To fix this introduce a s3c64xx_spi_setname function and populate =
+all
+> >> Samsung arches with the correct names. The function resides in a n=
+ew
+> >> header, as the s3c64xx-spi.h contains driver platform data and sho=
+uld
+> >> therefore at some later point move out of the Samsung include dir.
+> >>
+> >> Tested on a s3c2416-based machine.
+> >>
+> >> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> >> Cc: stable@vger.kernel.org
+> > This patch looks good to me. I've tested it on Exynos4412 SoC based
+> > board. And it fixes quite serious problem - broken SPI support on
+> > a all Samsung machs (non-dt) except s3c64xx in mainline v3.6 kernel=
+=2E
+> >
+> >
+> > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > (mach-exynos only)
+> >
+> > Jos=C3=A9 Miguel, can you confirm it solves the problem for you ?
+>=20
+> The driver initialization problem is solved by this patch on my S3C24=
+16
+> based
+> board. Nevertheless, I didn=E2=80=99t have the time yet to test an ac=
+tual SPI
+> device
+> connected to the bus.
+>=20
+> BTW, I think the two debug messages at the end of the s3c64xx_spi_pro=
+be()
+> routine
+> should be promoted from dev_dbg to dev_info in order to be shown on a
+> normal
+> kernel boot.
+>=20
+You guys, thanks for fixing and testing.
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-BTW, don't we need following accordingly?
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 1a81c90..a0bb55e 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1067,11 +1067,11 @@ static int __devinit s3c64xx_spi_get_dmares(
-
- 	if (tx) {
- 		dma_data = &sdd->tx_dma;
--		dma_data->direction = DMA_TO_DEVICE;
-+		dma_data->direction = DMA_MEM_TO_DEV;
- 		chan_str = "tx";
- 	} else {
- 		dma_data = &sdd->rx_dma;
--		dma_data->direction = DMA_FROM_DEVICE;
-+		dma_data->direction = DMA_DEV_TO_MEM;
- 		chan_str = "rx";
- 	}
+Looks good to me, applied.
 
 Thanks.
 
@@ -70,27 +94,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: spi-devel-general@lists.sourceforge.net
-> ---
->  drivers/spi/spi-s3c64xx.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index d1c8441f..2e44dd6 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -132,7 +132,7 @@
-> 
->  struct s3c64xx_spi_dma_data {
->  	unsigned		ch;
-> -	enum dma_data_direction direction;
-> +	enum dma_transfer_direction direction;
->  	enum dma_ch	dmach;
->  	struct property		*dma_prop;
->  };
-> --
-> 1.7.10
