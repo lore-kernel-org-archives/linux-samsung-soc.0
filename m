@@ -1,99 +1,220 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V3] gpio: samsung: use pr_* instead of printk
-Date: Wed, 17 Oct 2012 10:52:31 +0900
-Message-ID: <002801cdac0a$11e4f340$35aed9c0$%han@samsung.com>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH v3 0/6] arm: exynos: add dt based support for exynos5 hdmi
+Date: Wed, 17 Oct 2012 12:39:07 +0900
+Message-ID: <CAH9JG2Wb-xnEJDQuR6jbqrb-VZc6jq4QguU=qRJUiacmaDFZaw@mail.gmail.com>
+References: <1350343834-23992-1-git-send-email-rahul.sharma@samsung.com>
+	<5746364.jIDeNjU3ph@amdc1227>
+	<CAPdUM4OtZ3Gh3UKeop8V4n5MVPh=DazJb8-HT+3CUfb79k4r6A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:23132 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755952Ab2JQBwc (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:60900 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755690Ab2JQDjJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Oct 2012 21:52:32 -0400
-Content-language: ko
+	Tue, 16 Oct 2012 23:39:09 -0400
+Received: by mail-we0-f174.google.com with SMTP id t9so4123903wey.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Oct 2012 20:39:07 -0700 (PDT)
+In-Reply-To: <CAPdUM4OtZ3Gh3UKeop8V4n5MVPh=DazJb8-HT+3CUfb79k4r6A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Ryan Mallon' <rmallon@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Rahul Sharma <r.sh.open@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com
 
-This patch uses pr_* instead of printk. Also, gpio_dbg
-is replaced with pr_debug.
+Hi,
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
-Change since v2:
-- remove Ryan Mallon's signed-off-by
+It's common case, one topic but two different tree.
+So I suggest merge it at samsung sub-soc tree and drm parts will be
+merged after arm-soc tree is merged. since arm-soc tree collect arm
+soc-soc and merged early at merge window. then drm tree will be merged
+later.
+Until that time, drm patches are hold only at local git.
 
- drivers/gpio/gpio-samsung.c |   18 ++++++------------
- 1 files changed, 6 insertions(+), 12 deletions(-)
+How do you think?
 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index a006f0d..5c5ccdf 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -42,12 +42,6 @@
- #include <plat/gpio-fns.h>
- #include <plat/pm.h>
- 
--#ifndef DEBUG_GPIO
--#define gpio_dbg(x...) do { } while (0)
--#else
--#define gpio_dbg(x...) printk(KERN_DEBUG x)
--#endif
--
- int samsung_gpio_setpull_updown(struct samsung_gpio_chip *chip,
- 				unsigned int off, samsung_gpio_pull_t pull)
- {
-@@ -599,7 +593,7 @@ static int samsung_gpiolib_4bit_input(struct gpio_chip *chip,
- 	con &= ~(0xf << con_4bit_shift(offset));
- 	__raw_writel(con, base + GPIOCON_OFF);
- 
--	gpio_dbg("%s: %p: CON now %08lx\n", __func__, base, con);
-+	pr_debug("%s: %p: CON now %08lx\n", __func__, base, con);
- 
- 	return 0;
- }
-@@ -627,7 +621,7 @@ static int samsung_gpiolib_4bit_output(struct gpio_chip *chip,
- 	__raw_writel(con, base + GPIOCON_OFF);
- 	__raw_writel(dat, base + GPIODAT_OFF);
- 
--	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
-+	pr_debug("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
- 
- 	return 0;
- }
-@@ -671,7 +665,7 @@ static int samsung_gpiolib_4bit2_input(struct gpio_chip *chip,
- 	con &= ~(0xf << con_4bit_shift(offset));
- 	__raw_writel(con, regcon);
- 
--	gpio_dbg("%s: %p: CON %08lx\n", __func__, base, con);
-+	pr_debug("%s: %p: CON %08lx\n", __func__, base, con);
- 
- 	return 0;
- }
-@@ -706,7 +700,7 @@ static int samsung_gpiolib_4bit2_output(struct gpio_chip *chip,
- 	__raw_writel(con, regcon);
- 	__raw_writel(dat, base + GPIODAT_OFF);
- 
--	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
-+	pr_debug("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
- 
- 	return 0;
- }
-@@ -926,10 +920,10 @@ static void __init samsung_gpiolib_add(struct samsung_gpio_chip *chip)
- #ifdef CONFIG_PM
- 	if (chip->pm != NULL) {
- 		if (!chip->pm->save || !chip->pm->resume)
--			printk(KERN_ERR "gpio: %s has missing PM functions\n",
-+			pr_err("gpio: %s has missing PM functions\n",
- 			       gc->label);
- 	} else
--		printk(KERN_ERR "gpio: %s has no PM function\n", gc->label);
-+		pr_err("gpio: %s has no PM function\n", gc->label);
- #endif
- 
- 	/* gpiochip_add() prints own failure message on error. */
--- 
-1.7.1
+Thank you,
+Kyungmin Park
+
+On 10/16/12, Rahul Sharma <r.sh.open@gmail.com> wrote:
+> Hi Mr. Park, Mr. Kim,
+>
+> I had a suggestion here from Tomasz about dividing this patch-set into
+> 2 portions:
+>
+> 1) DT related (patches 1-4) for samsung-dt branch.
+> 2) Clocks, Arch data related to Exynos5. (patches 5,6) for
+> exynos-drm-fixes branch.
+>
+> Rationale behind this is kgene tree with all 6 patches applied will
+> have broken drm
+> exynos4 and incomplete drm exynos5.
+>
+> I want to know your opinion on this.
+>
+> regards,
+> Rahul Sharma
+>
+> On Tue, Oct 16, 2012 at 3:01 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Rahul,
+>>
+>>
+>>
+>> On Tuesday 16 of October 2012 05:00:28 Rahul Sharma wrote:
+>>
+>>> This patch set adds the DT based support for Samsung's Exynos5250. It
+>>
+>>> adds device tree nodes for hdmi, mixer, hdmiphy and hdmiddc. The name
+>>
+>>> of these devices are changed to the one matching with drivers.
+>>
+>>> Exynos-drm and exynos hdmi-drm-commmon devices are removed from machine
+>>
+>>> init code.
+>>
+>>>
+>>
+>>> Exynos-drm and exynos hdmi-drm-commmon devices are removed from machine
+>>
+>>> init code. Patch set which adds this code is posted to dri-devel list at
+>>
+>>> http://comments.gmane.org/gmane.comp.video.dri.devel/75121.
+>>
+>>>
+>>
+>>> This patchset is based on linux v3.6-rc6, branch v3.7-next/dt-samsung at
+>>
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>>
+>>>
+>>
+>>> v1:
+>>
+>>> - dropped patch for hpd gpio initialisation from machine init.
+>>
+>>> - dropped patch for platform device registration.
+>>
+>>> - removed platform device registration from non-dt platforms.
+>>
+>>>
+>>
+>>> v2:
+>>
+>>> - removed version information from hdmi, mixer dt nodes.
+>>
+>>> - added DT binding documentation for hdmi, mixer, hdmiphy and hdmiddc.
+>>
+>>>
+>>
+>>> v3:
+>>
+>>> - corrected indentations.
+>>
+>>> - changed dt node names to name@address format.
+>>
+>>>
+>>
+>>> Rahul Sharma (6):
+>>
+>>> dts: exynos: add device tree support for exynos5 hdmi
+>>
+>>> dts: exynos: add device tree support for exynos5 mixer
+>>
+>>> dts: exynos: add device tree support for exynos5 hdmiphy
+>>
+>>> dts: exynos: add device tree support for exynos5 hdmiddc
+>>
+>>> arm: exynos: add clocks for exynos5 hdmi
+>>
+>>> arm: exynos: removing exynos-drm device registration from non-dt
+>>
+>>> platforms
+>>
+>>>
+>>
+>>> .../devicetree/bindings/drm/exynos/hdmi.txt | 22
+>>
+>>> +++++++++++++++ .../devicetree/bindings/drm/exynos/hdmiddc.txt |
+>>
+>>> 12 ++++++++ .../devicetree/bindings/drm/exynos/hdmiphy.txt | 12
+>>
+>>> ++++++++ .../devicetree/bindings/drm/exynos/mixer.txt | 15
+>>
+>>> ++++++++++ arch/arm/boot/dts/exynos5250-smdk5250.dts | 24
+>>
+>>> +++++++++++++++- arch/arm/boot/dts/exynos5250.dtsi |
+>>
+>>> 20 +++++++++++++ arch/arm/mach-exynos/Makefile |
+>>
+>>> 1 -
+>>
+>>> arch/arm/mach-exynos/clock-exynos5.c | 14 ++++++++-
+>>
+>>> arch/arm/mach-exynos/dev-drm.c | 29
+>>
+>>> -------------------- arch/arm/mach-exynos/include/mach/map.h
+>>
+>>> | 2 +
+>>
+>>> arch/arm/mach-exynos/mach-exynos5-dt.c | 8 +++++
+>>
+>>> arch/arm/mach-exynos/mach-nuri.c | 3 --
+>>
+>>> arch/arm/mach-exynos/mach-origen.c | 3 --
+>>
+>>> arch/arm/mach-exynos/mach-smdk4x12.c | 3 --
+>>
+>>> arch/arm/mach-exynos/mach-smdkv310.c | 3 --
+>>
+>>> arch/arm/mach-exynos/mach-universal_c210.c | 3 --
+>>
+>>> arch/arm/plat-samsung/include/plat/devs.h | 2 -
+>>
+>>> 17 files changed, 126 insertions(+), 50 deletions(-)
+>>
+>>> create mode 100644
+>>
+>>> Documentation/devicetree/bindings/drm/exynos/hdmi.txt create mode
+>>
+>>> 100644 Documentation/devicetree/bindings/drm/exynos/hdmiddc.txt create
+>>
+>>> mode 100644 Documentation/devicetree/bindings/drm/exynos/hdmiphy.txt
+>>
+>>> create mode 100644
+>>
+>>> Documentation/devicetree/bindings/drm/exynos/mixer.txt delete mode
+>>
+>>> 100644 arch/arm/mach-exynos/dev-drm.c
+>>
+>>
+>>
+>> The patches look fine, but Kukjin's tree doesn't contain all the
+>>
+>> dependencies for them to be usable.
+>>
+>>
+>>
+>> Shouldn't they be based on exynos-drm-next branch of Kyungmin's tree at
+>>
+>> infradead instead:
+>>
+>>
+>>
+>> http://git.infradead.org/users/kmpark/linux-samsung/shortlog/refs/heads/exynos-drm-next
+>>
+>>
+>>
+>> Best regards,
+>>
+>> --
+>>
+>> Tomasz Figa
+>>
+>> Samsung Poland R&D Center
+>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
