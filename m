@@ -1,122 +1,51 @@
 From: Jingoo Han <jg1.han@samsung.com>
 Subject: Re: [PATCH V2 RESEND] gpio: samsung: use pr_* instead of printk
-Date: Wed, 17 Oct 2012 10:00:53 +0900
-Message-ID: <002401cdac02$db6f29e0$924d7da0$%han@samsung.com>
+Date: Wed, 17 Oct 2012 10:49:10 +0900
+Message-ID: <002701cdac09$9a3b67c0$ceb23740$%han@samsung.com>
 References: <008901cdab77$d2538800$76fa9800$%han@samsung.com>
- <507D2C3C.8050706@gmail.com>
+ <CACRpkdbBuiae=+AXfAEargz0cJEDxa0-yVETw0zpNt_pOkuF4g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21174 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755759Ab2JQBAz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Oct 2012 21:00:55 -0400
-In-reply-to: <507D2C3C.8050706@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CACRpkdbBuiae=+AXfAEargz0cJEDxa0-yVETw0zpNt_pOkuF4g@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Linus Walleij' <linus.walleij@linaro.org>
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Ryan Mallon' <rmallon@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ryan Mallon' <rmallon@gmail.com>
-Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Tuesday, October 16, 2012 6:43 PM Ryan Mallon wrote
+On Wednesday, October 17, 2012 2:33 AM Linus Walleij wrote:
 > 
-> On 16/10/12 19:25, Jingoo Han wrote:
+> On Tue, Oct 16, 2012 at 10:25 AM, Jingoo Han <jg1.han@samsung.com> wrote:
 > 
-> > This patch uses pr_* instead of printk. Also, gpio_dbg
-> > is replaced with pr_debug.
+> >  int samsung_gpio_setpull_updown(struct samsung_gpio_chip *chip,
+> >                                 unsigned int off, samsung_gpio_pull_t pull)
+> >  {
+> > @@ -599,7 +593,7 @@ static int samsung_gpiolib_4bit_input(struct gpio_chip *chip,
+> >         con &= ~(0xf << con_4bit_shift(offset));
+> >         __raw_writel(con, base + GPIOCON_OFF);
 > >
-> > Signed-off-by: Ryan Mallon <rmallon@gmail.com>
+> > -       gpio_dbg("%s: %p: CON now %08lx\n", __func__, base, con);
+> > +       pr_debug("%s: %p: CON now %08lx\n", __func__, base, con);
 > 
+> Does your struct gpio_chip provide a valid dev pointer so you can use:
 > 
-> If I recall correctly, I only offered review comments on this patch,
-> I wasn't directly involved in writing it, or in the submission
-> process, so you don't need to have my signed-off-by here.  It's also
-> generally considered impolite to add someone's signed-off-by without
-> asking for permission. I don't mind either way, but you don't need
-> my tag since you wrote the patch, I only provided feedback.
+> dev_dbg(chip->dev, "%s: %p: CON now %08lx\n", __func__, base, con);
+> 
+> In that case use the dev_* print macros everywhere instead.
+> 
 
-Sorry, it's my fault.
-I will remove your signed-off-by, and will send v3 patch.
-Thank you for letting me know.
+No, a valid dev pointer is not provided yet.
+After a valid dev pointer is available, I will change
+pr_debug to dev_dbg.
 
 Best regards,
 Jingoo Han
 
-> 
-> Thanks,
-> ~Ryan
-> 
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> >  drivers/gpio/gpio-samsung.c |   18 ++++++------------
-> >  1 files changed, 6 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-> > index a006f0d..5c5ccdf 100644
-> > --- a/drivers/gpio/gpio-samsung.c
-> > +++ b/drivers/gpio/gpio-samsung.c
-> > @@ -42,12 +42,6 @@
-> >  #include <plat/gpio-fns.h>
-> >  #include <plat/pm.h>
-> >
-> > -#ifndef DEBUG_GPIO
-> > -#define gpio_dbg(x...) do { } while (0)
-> > -#else
-> > -#define gpio_dbg(x...) printk(KERN_DEBUG x)
-> > -#endif
-> > -
-> >  int samsung_gpio_setpull_updown(struct samsung_gpio_chip *chip,
-> >  				unsigned int off, samsung_gpio_pull_t pull)
-> >  {
-> > @@ -599,7 +593,7 @@ static int samsung_gpiolib_4bit_input(struct gpio_chip *chip,
-> >  	con &= ~(0xf << con_4bit_shift(offset));
-> >  	__raw_writel(con, base + GPIOCON_OFF);
-> >
-> > -	gpio_dbg("%s: %p: CON now %08lx\n", __func__, base, con);
-> > +	pr_debug("%s: %p: CON now %08lx\n", __func__, base, con);
-> >
-> >  	return 0;
-> >  }
-> > @@ -627,7 +621,7 @@ static int samsung_gpiolib_4bit_output(struct gpio_chip *chip,
-> >  	__raw_writel(con, base + GPIOCON_OFF);
-> >  	__raw_writel(dat, base + GPIODAT_OFF);
-> >
-> > -	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
-> > +	pr_debug("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
-> >
-> >  	return 0;
-> >  }
-> > @@ -671,7 +665,7 @@ static int samsung_gpiolib_4bit2_input(struct gpio_chip *chip,
-> >  	con &= ~(0xf << con_4bit_shift(offset));
-> >  	__raw_writel(con, regcon);
-> >
-> > -	gpio_dbg("%s: %p: CON %08lx\n", __func__, base, con);
-> > +	pr_debug("%s: %p: CON %08lx\n", __func__, base, con);
-> >
-> >  	return 0;
-> >  }
-> > @@ -706,7 +700,7 @@ static int samsung_gpiolib_4bit2_output(struct gpio_chip *chip,
-> >  	__raw_writel(con, regcon);
-> >  	__raw_writel(dat, base + GPIODAT_OFF);
-> >
-> > -	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
-> > +	pr_debug("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
-> >
-> >  	return 0;
-> >  }
-> > @@ -926,10 +920,10 @@ static void __init samsung_gpiolib_add(struct samsung_gpio_chip *chip)
-> >  #ifdef CONFIG_PM
-> >  	if (chip->pm != NULL) {
-> >  		if (!chip->pm->save || !chip->pm->resume)
-> > -			printk(KERN_ERR "gpio: %s has missing PM functions\n",
-> > +			pr_err("gpio: %s has missing PM functions\n",
-> >  			       gc->label);
-> >  	} else
-> > -		printk(KERN_ERR "gpio: %s has no PM function\n", gc->label);
-> > +		pr_err("gpio: %s has no PM function\n", gc->label);
-> >  #endif
-> >
-> >  	/* gpiochip_add() prints own failure message on error. */
+> Yours,
+> Linus Walleij
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
