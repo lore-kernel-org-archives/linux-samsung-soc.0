@@ -1,61 +1,43 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/8] [media] s5p-fimc: Use clk_prepare_enable and
- clk_disable_unprepare
-Date: Wed, 17 Oct 2012 17:57:34 +0200
-Message-ID: <507ED56E.1000406@samsung.com>
-References: <1350472311-9748-1-git-send-email-sachin.kamat@linaro.org>
- <507EC1BF.6040107@samsung.com>
- <CAK9yfHymckQLOp=xavQ1sj5uJKRg7tFMXgvo68Dp8GL6N9g0JQ@mail.gmail.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH] usb: phy: samsung: Introducing usb phy driver for hsotg
+Date: Wed, 17 Oct 2012 20:13:01 +0100
+Message-ID: <20121017191300.GL21164@n2100.arm.linux.org.uk>
+References: <1349256393-11741-1-git-send-email-p.paneri@samsung.com> <1350036934-6051-1-git-send-email-p.paneri@samsung.com> <005801cdac56$8da0c120$a8e24360$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34246 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755477Ab2JQP5h (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Oct 2012 11:57:37 -0400
-In-reply-to: <CAK9yfHymckQLOp=xavQ1sj5uJKRg7tFMXgvo68Dp8GL6N9g0JQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <005801cdac56$8da0c120$a8e24360$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'Praveen Paneri' <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-media@vger.kernel.org, patches@linaro.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "Turquette, Mike" <mturquette@ti.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 
-On 10/17/2012 05:35 PM, Sachin Kamat wrote:
->> Most of the s5p-* drivers have already added support for clk_(un)prepare.
->> Thus most of your changes in this patch are not needed. I seem to have only
->> missed fimc-mdevice.c, other modules are already reworked
+On Wed, Oct 17, 2012 at 08:00:00PM +0900, Kukjin Kim wrote:
+> > +static int samsung_usbphy_get_refclk_freq(struct samsung_usbphy *sphy)
+> > +{
+> > +	struct clk *ref_clk;
+> > +	int refclk_freq = 0;
+> > +
+> > +	ref_clk = clk_get(sphy->dev, "xusbxti");
+> > +	if (IS_ERR(ref_clk)) {
 > 
-> I did not find these changes in your tree. Please let me know the
-> branch where these changes are available.
+> IS_ERR_OR_NULL(ref_clk)?
 
-Are in Linus' tree, for quite long already, commits:
+For the N'th time, NO.  IS_ERR is correct here.
 
-11a37c709797cc56f48905e68a3099b79cf08850
-[media] s5p-g2d: Added support for clk_prepare
+> > +		dev_err(sphy->dev, "Failed to get reference clock\n");
+> > +		return PTR_ERR(ref_clk);
 
-bd7d8888e99d67f778f4ee272346322c0b9cb378
-[media] s5p-fimc: convert to clk_prepare()/clk_unprepare()
+Look, it's the ABI.  Not only that but it's also TOTALLY AND UTTERLY WRONG
+to use IS_ERR_OR_NULL(foo) and then follow it with return PTR_ERR(foo).
+You end up returning ZERO.
 
-eb732518e0db585376f95256b18b2149240e3ad3
-[media] s5p-mfc: Added support for clk_prepare
+Stop telling people to use IS_ERR_OR_NULL without properly thinking about
+it first.  Virtually every single one of these done this way is a BUG.
 
-Please note there was the media drivers reorganization recently, e.g.
-drivers/media/video/s5p-* changed to drivers/media/platform/s5p-*.
-
->> $ git grep -5  clk_prepare  -- drivers/media/platform/s5p-fimc
->> drivers/media/platform/s5p-fimc/fimc-core.c-
->> drivers/media/platform/s5p-fimc/fimc-core.c-    for (i = 0; i < MAX_FIMC_CLOCKS; i++) {
->> drivers/media/platform/s5p-fimc/fimc-core.c-            fimc->clock[i] = clk_get(&fimc->pdev->dev, fimc_clocks[i]);
->> drivers/media/platform/s5p-fimc/fimc-core.c-            if (IS_ERR(fimc->clock[i]))
-> 
->>> I would prefer you have added the required changes at fimc_md_get_clocks()
->> and fimc_md_put_clocks() functions.
-> 
-> Ok. I will check this.
-
-Thanks.
-
+Are we clear on this?
 --
-Regards,
-Sylwester
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
