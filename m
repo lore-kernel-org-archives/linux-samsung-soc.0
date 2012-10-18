@@ -1,68 +1,33 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH 3/3] mmc: sdhci-s3c: Add clk_(enable/disable) in runtime
- suspend/resume
-Date: Thu, 18 Oct 2012 11:04:42 +0900
-Message-ID: <507F63BA.7040809@samsung.com>
-References: <1347613731-29428-1-git-send-email-chander.kashyap@linaro.org>
- <1347613731-29428-4-git-send-email-chander.kashyap@linaro.org>
- <201210171115.48401.heiko@sntech.de>
+From: Venkatraman S <svenkatr@ti.com>
+Subject: Re: [PATCH V4 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific
+ Code
+Date: Thu, 18 Oct 2012 12:13:58 +0530
+Message-ID: <507FA52E.9050400@ti.com>
+References: <1350474822-7315-1-git-send-email-vinholikatti@gmail.com> <1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <201210171115.48401.heiko@sntech.de>
-Sender: linux-mmc-owner@vger.kernel.org
-To: =?ISO-8859-15?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, ben@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, patches@linaro.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Heiko,
-
-Sorry, i didn't check this patch with s3c2416.
-(i didn't have the s3c2416 board.)
-If you have a problem, i think good that revert this patch for fixing y=
-our problem.
-Also, i will check and share the result.
-
-Best Regards,
-Jaehoon Chung
-
-On 10/17/2012 06:15 PM, Heiko St=FCbner wrote:
-> Hi,
->=20
-> Am Freitag, 14. September 2012, 11:08:51 schrieb Chander Kashyap:
->> Perform clock disable/enable in runtime suspend/resume.
->>
->> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->=20
-> It seems this patch breaks my S3C2416 based machine with 3.7-rc1. I'm=
- not=20
-> yet sure why, but the only response I get is loop of:
->=20
-> 	mmc0: Timeout waiting for hardware interrupt.
-> 	mmc0: Internal clock never stabilised.
-> 	mmc0: Timeout waiting for hardware interrupt.
-> 	mmc0: Internal clock never stabilised.
->=20
->=20
-> This only happens on the hsmmc channel using the gpio-based card dete=
-ct and=20
-> even prevents the card from beeing fully detected. The other hsmmc ch=
-annel=20
-> using a permanent emmc seems to be working fine.
->=20
-> And of course, when I revert this patch everything works fine again.
->=20
-> I'll investigate further, but it'd be also ok if someone has a fix fo=
-r this=20
-> before me :-) .
->=20
->=20
-> Heiko
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
-
+On Wednesday 17 October 2012 05:23 PM, Vinayak Holikatti wrote:
+> This patch seggregates the PCI specific code in ufshcd.c to make it
+> ready for splitting into core ufs driver and PCI glue driver. Also
+> copyright header modification to remove extra warranty disclaim.
+>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
+> Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
+> Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
+> ---
+>   drivers/scsi/ufs/Kconfig  |   50 +++----
+>   drivers/scsi/ufs/ufs.h    |   42 ++----
+>   drivers/scsi/ufs/ufshcd.c |  358 ++++++++++++++++++++++++++-------------------
+>   drivers/scsi/ufs/ufshci.h |   42 ++----
+>   4 files changed, 256 insertions(+), 236 deletions(-)
+>
+This doesn't apply on 3.7-rc1. Am I missing any patches in between ?
