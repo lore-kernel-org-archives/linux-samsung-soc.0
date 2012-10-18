@@ -1,43 +1,70 @@
-From: vinayak holikatti <vinholikatti@gmail.com>
-Subject: Re: [PATCH V4 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific Code
-Date: Thu, 18 Oct 2012 17:37:01 +0530
-Message-ID: <CAKVbJB_FpmbtcLr5G5sSphNOPnodZUd0sN8ha0C_RtCDtWUG=Q@mail.gmail.com>
-References: <1350474822-7315-1-git-send-email-vinholikatti@gmail.com>
-	<1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
-	<507FA52E.9050400@ti.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/8] [media] s5p-fimc: Use clk_prepare_enable and clk_disable_unprepare
+Date: Thu, 18 Oct 2012 20:14:44 +0530
+Message-ID: <CAK9yfHwovfqv=P-dMFgUNq67-NiZUC5CeD5biukk_B60boPEjQ@mail.gmail.com>
+References: <1350472311-9748-1-git-send-email-sachin.kamat@linaro.org>
+	<507EC1BF.6040107@samsung.com>
+	<CAK9yfHymckQLOp=xavQ1sj5uJKRg7tFMXgvo68Dp8GL6N9g0JQ@mail.gmail.com>
+	<507ED56E.1000406@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <507FA52E.9050400@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Venkatraman S <svenkatr@ti.com>
-Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <507ED56E.1000406@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-media@vger.kernel.org, patches@linaro.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "Turquette, Mike" <mturquette@ti.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 18, 2012 at 12:13 PM, Venkatraman S <svenkatr@ti.com> wrote:
-> On Wednesday 17 October 2012 05:23 PM, Vinayak Holikatti wrote:
+On 17 October 2012 21:27, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> On 10/17/2012 05:35 PM, Sachin Kamat wrote:
+>>> Most of the s5p-* drivers have already added support for clk_(un)prepare.
+>>> Thus most of your changes in this patch are not needed. I seem to have only
+>>> missed fimc-mdevice.c, other modules are already reworked
 >>
->> This patch seggregates the PCI specific code in ufshcd.c to make it
->> ready for splitting into core ufs driver and PCI glue driver. Also
->> copyright header modification to remove extra warranty disclaim.
->>
->> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
->> Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
->> Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
->> Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
->> ---
->>   drivers/scsi/ufs/Kconfig  |   50 +++----
->>   drivers/scsi/ufs/ufs.h    |   42 ++----
->>   drivers/scsi/ufs/ufshcd.c |  358
->> ++++++++++++++++++++++++++-------------------
->>   drivers/scsi/ufs/ufshci.h |   42 ++----
->>   4 files changed, 256 insertions(+), 236 deletions(-)
->>
-I am Vacation will look into it when i am back to work.
-> This doesn't apply on 3.7-rc1. Am I missing any patches in between ?
+>> I did not find these changes in your tree. Please let me know the
+>> branch where these changes are available.
+>
+> Are in Linus' tree, for quite long already, commits:
+>
+> 11a37c709797cc56f48905e68a3099b79cf08850
+> [media] s5p-g2d: Added support for clk_prepare
+>
+> bd7d8888e99d67f778f4ee272346322c0b9cb378
+> [media] s5p-fimc: convert to clk_prepare()/clk_unprepare()
+>
+> eb732518e0db585376f95256b18b2149240e3ad3
+> [media] s5p-mfc: Added support for clk_prepare
 
+Oh I see.. I dunno how i missed to notice this..
+
+
+>
+> Please note there was the media drivers reorganization recently, e.g.
+> drivers/media/video/s5p-* changed to drivers/media/platform/s5p-*.
+
+Right. I am aware of that.
+
+>
+>>> $ git grep -5  clk_prepare  -- drivers/media/platform/s5p-fimc
+>>> drivers/media/platform/s5p-fimc/fimc-core.c-
+>>> drivers/media/platform/s5p-fimc/fimc-core.c-    for (i = 0; i < MAX_FIMC_CLOCKS; i++) {
+>>> drivers/media/platform/s5p-fimc/fimc-core.c-            fimc->clock[i] = clk_get(&fimc->pdev->dev, fimc_clocks[i]);
+>>> drivers/media/platform/s5p-fimc/fimc-core.c-            if (IS_ERR(fimc->clock[i]))
+>>
+>>>> I would prefer you have added the required changes at fimc_md_get_clocks()
+>>> and fimc_md_put_clocks() functions.
+>>
+>> Ok. I will check this.
+>
+> Thanks.
+>
+> --
+> Regards,
+> Sylwester
+
+Thanks Sylwester.
 
 
 -- 
-Regards,
-Vinayak Holikatti
+With warm regards,
+Sachin
