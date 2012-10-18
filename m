@@ -1,33 +1,46 @@
-From: Venkatraman S <svenkatr@ti.com>
-Subject: Re: [PATCH V4 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific
- Code
-Date: Thu, 18 Oct 2012 12:13:58 +0530
-Message-ID: <507FA52E.9050400@ti.com>
-References: <1350474822-7315-1-git-send-email-vinholikatti@gmail.com> <1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: IS_ERR_OR_NULL - please STOP telling people to use this on a
+ whim
+Date: Thu, 18 Oct 2012 09:22:58 +0200
+Message-ID: <507FAE52.6060305@atmel.com>
+References: <20121017194157.GM21164@n2100.arm.linux.org.uk> <20121017202848.GF22812@fatphil.org> <20121017213342.GA28061@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinayak Holikatti <vinholikatti@gmail.com>
-Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20121017213342.GA28061@n2100.arm.linux.org.uk>
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Phil Carmody <pc+lkml@asdf.org>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday 17 October 2012 05:23 PM, Vinayak Holikatti wrote:
-> This patch seggregates the PCI specific code in ufshcd.c to make it
-> ready for splitting into core ufs driver and PCI glue driver. Also
-> copyright header modification to remove extra warranty disclaim.
->
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
-> Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
-> Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
-> ---
->   drivers/scsi/ufs/Kconfig  |   50 +++----
->   drivers/scsi/ufs/ufs.h    |   42 ++----
->   drivers/scsi/ufs/ufshcd.c |  358 ++++++++++++++++++++++++++-------------------
->   drivers/scsi/ufs/ufshci.h |   42 ++----
->   4 files changed, 256 insertions(+), 236 deletions(-)
->
-This doesn't apply on 3.7-rc1. Am I missing any patches in between ?
+On 10/17/2012 11:33 PM, Russell King - ARM Linux :
+> On Wed, Oct 17, 2012 at 11:28:48PM +0300, Phil Carmody wrote:
+>> So, what to do? It can and has been used sensibly, so I don't think removing
+>> it is the best option.
+> 
+> Well, the first thing that needs to be done is a full review of every user
+> and fixes applied.
+> 
+> The second thing is that we need eyes on code _and_ review comments, and
+> educate those who are telling people to use IS_ERR_OR_NULL() whenever they
+> see an IS_ERR() to think about the code a little more - that's kind of the
+> purpose of my email.
+> 
+> Unfortunately, it's going to take time to achieve a change, and if I end
+> up being the only one who's spotting these errors, I'm going to get
+> incredibly pissed off at doing so (because it will feel like I'm being
+> ignored when there's a constant stream of it.)
+> 
+> Another thing would be to work out whether we can get checkpatch to
+> detect usage of IS_ERR_OR_NULL(p) followed by PTR_ERR(p) without any
+> explicit NULL checks against p in the same block.  That's probably
+> going to be interesting to code up in perl.
+
+True that it would make sense to include in checkpatch to be able to
+block code beforehand.
+But for sure correction of existing code seems to be a work for Coccinelle.
+
+Best regards,
+-- 
+Nicolas Ferre
