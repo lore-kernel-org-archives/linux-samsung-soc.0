@@ -1,148 +1,91 @@
-From: Eunki Kim <eunki_kim@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: use devm_ functions for ADC driver
-Date: Thu, 18 Oct 2012 16:28:32 +0900
-Message-ID: <001701cdad02$2d511200$87f33600$@com>
+From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 3/3] mmc: sdhci-s3c: Add clk_(enable/disable) in runtime suspend/resume
+Date: Thu, 18 Oct 2012 09:41:05 +0200
+Message-ID: <201210180941.06091.heiko@sntech.de>
+References: <1347613731-29428-1-git-send-email-chander.kashyap@linaro.org> <201210171115.48401.heiko@sntech.de> <507F63BA.7040809@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:39171 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751042Ab2JRH2e (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Oct 2012 03:28:34 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MC2000VLVFCO3O0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 18 Oct 2012 16:28:32 +0900 (KST)
-Received: from DOEUNKIKIM03 ([12.23.118.132])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MC200ET0VFKCKB1@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 18 Oct 2012 16:28:32 +0900 (KST)
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain; charset=iso-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <507F63BA.7040809@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, ben@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, eunki_kim@samsung.com
 
-This patch uses devm_* functions for probe function in ADC driver.
-It reduces code size and simplifies the code.
+Hi,
 
-Signed-off-by: Eunki Kim <eunki_kim@samsung.com>
----
- arch/arm/plat-samsung/adc.c |   48 +++++++++++-------------------------------
- 1 files changed, 13 insertions(+), 35 deletions(-)
+Am Donnerstag, 18. Oktober 2012, 04:04:42 schrieb Jaehoon Chung:
+> Sorry, i didn't check this patch with s3c2416.
+> (i didn't have the s3c2416 board.)
+> If you have a problem, i think good that revert this patch for fixing=
+ your
+> problem. Also, i will check and share the result.
 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index b1e05cc..37542c2 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -344,7 +344,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	int ret;
- 	unsigned tmp;
- 
--	adc = kzalloc(sizeof(struct adc_device), GFP_KERNEL);
-+	adc = devm_kzalloc(dev, sizeof(struct adc_device), GFP_KERNEL);
- 	if (adc == NULL) {
- 		dev_err(dev, "failed to allocate adc_device\n");
- 		return -ENOMEM;
-@@ -355,50 +355,46 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	adc->pdev = pdev;
- 	adc->prescale = S3C2410_ADCCON_PRSCVL(49);
- 
--	adc->vdd = regulator_get(dev, "vdd");
-+	adc->vdd = devm_regulator_get(dev, "vdd");
- 	if (IS_ERR(adc->vdd)) {
- 		dev_err(dev, "operating without regulator \"vdd\" .\n");
--		ret = PTR_ERR(adc->vdd);
--		goto err_alloc;
-+		return PTR_ERR(adc->vdd);
- 	}
- 
- 	adc->irq = platform_get_irq(pdev, 1);
- 	if (adc->irq <= 0) {
- 		dev_err(dev, "failed to get adc irq\n");
--		ret = -ENOENT;
--		goto err_reg;
-+		return -ENOENT;
- 	}
- 
--	ret = request_irq(adc->irq, s3c_adc_irq, 0, dev_name(dev), adc);
-+	ret = devm_request_irq(dev, adc->irq, s3c_adc_irq, 0, dev_name(dev),
-+				adc);
- 	if (ret < 0) {
- 		dev_err(dev, "failed to attach adc irq\n");
--		goto err_reg;
-+		return ret;
- 	}
- 
--	adc->clk = clk_get(dev, "adc");
-+	adc->clk = devm_clk_get(dev, "adc");
- 	if (IS_ERR(adc->clk)) {
- 		dev_err(dev, "failed to get adc clock\n");
--		ret = PTR_ERR(adc->clk);
--		goto err_irq;
-+		return PTR_ERR(adc->clk);
- 	}
- 
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!regs) {
- 		dev_err(dev, "failed to find registers\n");
--		ret = -ENXIO;
--		goto err_clk;
-+		return -ENXIO;
- 	}
- 
--	adc->regs = ioremap(regs->start, resource_size(regs));
-+	adc->regs = devm_request_and_ioremap(dev, regs);
- 	if (!adc->regs) {
- 		dev_err(dev, "failed to map registers\n");
--		ret = -ENXIO;
--		goto err_clk;
-+		return -ENXIO;
- 	}
- 
- 	ret = regulator_enable(adc->vdd);
- 	if (ret)
--		goto err_ioremap;
-+		return ret;
- 
- 	clk_enable(adc->clk);
- 
-@@ -418,32 +414,14 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	adc_dev = adc;
- 
- 	return 0;
--
-- err_ioremap:
--	iounmap(adc->regs);
-- err_clk:
--	clk_put(adc->clk);
--
-- err_irq:
--	free_irq(adc->irq, adc);
-- err_reg:
--	regulator_put(adc->vdd);
-- err_alloc:
--	kfree(adc);
--	return ret;
- }
- 
- static int __devexit s3c_adc_remove(struct platform_device *pdev)
- {
- 	struct adc_device *adc = platform_get_drvdata(pdev);
- 
--	iounmap(adc->regs);
--	free_irq(adc->irq, adc);
- 	clk_disable(adc->clk);
- 	regulator_disable(adc->vdd);
--	regulator_put(adc->vdd);
--	clk_put(adc->clk);
--	kfree(adc);
- 
- 	return 0;
- }
--- 
-1.7.1
+
+After looking a bit more through the code, I don't think the problem is=
+ 2416-
+specific but seems to be caused by the gpio card-detect code.
+
+sdhci_s3c_gpio_card_detect_thread calls sdhci_s3c_notify_change which i=
+n turn=20
+runs host->card_tasklet that seems to want to read stuff from the card.=
+ But=20
+this path seems to be missing a runtime-pm wakeup.
+
+I'm not yet sure what to add, especially, as tasklet_finish (called on =
+some=20
+occasions from tasklet_card) already has a runtime_pm_put call, which w=
+ould be=20
+unpaired in this code path.
+
+As there also could be other Samsung platforms affected that use the ex=
+t-gpio=20
+code, it's probably right to revert it for now. Or you see a easy fix :=
+-) .
+
+
+Heiko
+
+
+> Best Regards,
+> Jaehoon Chung
+>=20
+> On 10/17/2012 06:15 PM, Heiko St=FCbner wrote:
+> > Hi,
+> >=20
+> > Am Freitag, 14. September 2012, 11:08:51 schrieb Chander Kashyap:
+> >> Perform clock disable/enable in runtime suspend/resume.
+> >>=20
+> >> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> >=20
+> > It seems this patch breaks my S3C2416 based machine with 3.7-rc1. I=
+'m not
+> >=20
+> > yet sure why, but the only response I get is loop of:
+> > 	mmc0: Timeout waiting for hardware interrupt.
+> > 	mmc0: Internal clock never stabilised.
+> > 	mmc0: Timeout waiting for hardware interrupt.
+> > 	mmc0: Internal clock never stabilised.
+> >=20
+> > This only happens on the hsmmc channel using the gpio-based card de=
+tect
+> > and even prevents the card from beeing fully detected. The other hs=
+mmc
+> > channel using a permanent emmc seems to be working fine.
+> >=20
+> > And of course, when I revert this patch everything works fine again=
+=2E
+> >=20
+> > I'll investigate further, but it'd be also ok if someone has a fix =
+for
+> > this before me :-) .
+> >=20
+> >=20
+> > Heiko
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-mmc=
+" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
