@@ -1,107 +1,43 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 3/3] mmc: sdhci-s3c: Add clk_(enable/disable) in runtime suspend/resume
-Date: Thu, 18 Oct 2012 11:52:18 +0200
-Message-ID: <201210181152.18686.heiko@sntech.de>
-References: <1347613731-29428-1-git-send-email-chander.kashyap@linaro.org> <201210180941.06091.heiko@sntech.de> <004601cdad13$fdb4c980$f91e5c80$%jun@samsung.com>
+From: vinayak holikatti <vinholikatti@gmail.com>
+Subject: Re: [PATCH V4 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific Code
+Date: Thu, 18 Oct 2012 17:37:01 +0530
+Message-ID: <CAKVbJB_FpmbtcLr5G5sSphNOPnodZUd0sN8ha0C_RtCDtWUG=Q@mail.gmail.com>
+References: <1350474822-7315-1-git-send-email-vinholikatti@gmail.com>
+	<1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
+	<507FA52E.9050400@ti.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <004601cdad13$fdb4c980$f91e5c80$%jun@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Chander Kashyap' <chander.kashyap@linaro.org>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, ben@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, patches@linaro.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <507FA52E.9050400@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Venkatraman S <svenkatr@ti.com>
+Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am Donnerstag, 18. Oktober 2012, 11:36:03 schrieb Seungwon Jeon:
-> On Thursday, October 18, 2012, Heiko St=FCbner <heiko@sntech.de> wrot=
-e:
-> > Hi,
-> >=20
-> > Am Donnerstag, 18. Oktober 2012, 04:04:42 schrieb Jaehoon Chung:
-> > > Sorry, i didn't check this patch with s3c2416.
-> > > (i didn't have the s3c2416 board.)
-> > > If you have a problem, i think good that revert this patch for fi=
-xing
-> > > your problem. Also, i will check and share the result.
-> >=20
-> > After looking a bit more through the code, I don't think the proble=
-m is
-> > 2416- specific but seems to be caused by the gpio card-detect code.
-> >=20
-> > sdhci_s3c_gpio_card_detect_thread calls sdhci_s3c_notify_change whi=
-ch in
-> > turn runs host->card_tasklet that seems to want to read stuff from =
-the
-> > card. But this path seems to be missing a runtime-pm wakeup.
-> >=20
-> > I'm not yet sure what to add, especially, as tasklet_finish (called=
- on
-> > some occasions from tasklet_card) already has a runtime_pm_put call=
-,
-> > which would be unpaired in this code path.
-> >=20
-> > As there also could be other Samsung platforms affected that use th=
-e
-> > ext-gpio code, it's probably right to revert it for now. Or you see=
- a
-> > easy fix :-) .
->=20
-> Hi,
->=20
-> I think clock is disabled during bus transaction.
-> I'll send a patch. Could you test it?
-
-Sure, I'll test it.
-
-Heiko
+On Thu, Oct 18, 2012 at 12:13 PM, Venkatraman S <svenkatr@ti.com> wrote:
+> On Wednesday 17 October 2012 05:23 PM, Vinayak Holikatti wrote:
+>>
+>> This patch seggregates the PCI specific code in ufshcd.c to make it
+>> ready for splitting into core ufs driver and PCI glue driver. Also
+>> copyright header modification to remove extra warranty disclaim.
+>>
+>> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+>> Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
+>> Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
+>> Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
+>> ---
+>>   drivers/scsi/ufs/Kconfig  |   50 +++----
+>>   drivers/scsi/ufs/ufs.h    |   42 ++----
+>>   drivers/scsi/ufs/ufshcd.c |  358
+>> ++++++++++++++++++++++++++-------------------
+>>   drivers/scsi/ufs/ufshci.h |   42 ++----
+>>   4 files changed, 256 insertions(+), 236 deletions(-)
+>>
+I am Vacation will look into it when i am back to work.
+> This doesn't apply on 3.7-rc1. Am I missing any patches in between ?
 
 
-> > > On 10/17/2012 06:15 PM, Heiko St=FCbner wrote:
-> > > > Hi,
-> > > >=20
-> > > > Am Freitag, 14. September 2012, 11:08:51 schrieb Chander Kashya=
-p:
-> > > >> Perform clock disable/enable in runtime suspend/resume.
-> > > >>=20
-> > > >> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> > > >=20
-> > > > It seems this patch breaks my S3C2416 based machine with 3.7-rc=
-1. I'm
-> > > > not
-> > > >=20
-> > > > yet sure why, but the only response I get is loop of:
-> > > > 	mmc0: Timeout waiting for hardware interrupt.
-> > > > 	mmc0: Internal clock never stabilised.
-> > > > 	mmc0: Timeout waiting for hardware interrupt.
-> > > > 	mmc0: Internal clock never stabilised.
-> > > >=20
-> > > > This only happens on the hsmmc channel using the gpio-based car=
-d
-> > > > detect and even prevents the card from beeing fully detected. T=
-he
-> > > > other hsmmc channel using a permanent emmc seems to be working =
-fine.
-> > > >=20
-> > > > And of course, when I revert this patch everything works fine a=
-gain.
-> > > >=20
-> > > > I'll investigate further, but it'd be also ok if someone has a =
-fix
-> > > > for this before me :-) .
-> > > >=20
-> > > >=20
-> > > > Heiko
-> > > > --
-> > > > To unsubscribe from this list: send the line "unsubscribe linux=
--mmc"
-> > > > in the body of a message to majordomo@vger.kernel.org
-> > > > More majordomo info at  http://vger.kernel.org/majordomo-info.h=
-tml
-> >=20
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-mmc=
-" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
+-- 
+Regards,
+Vinayak Holikatti
