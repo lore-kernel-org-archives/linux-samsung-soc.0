@@ -1,70 +1,29 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/8] [media] s5p-fimc: Use clk_prepare_enable and clk_disable_unprepare
-Date: Thu, 18 Oct 2012 20:14:44 +0530
-Message-ID: <CAK9yfHwovfqv=P-dMFgUNq67-NiZUC5CeD5biukk_B60boPEjQ@mail.gmail.com>
-References: <1350472311-9748-1-git-send-email-sachin.kamat@linaro.org>
-	<507EC1BF.6040107@samsung.com>
-	<CAK9yfHymckQLOp=xavQ1sj5uJKRg7tFMXgvo68Dp8GL6N9g0JQ@mail.gmail.com>
-	<507ED56E.1000406@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V3] gpio: samsung: use pr_* instead of printk
+Date: Fri, 19 Oct 2012 12:08:59 +0200
+Message-ID: <CACRpkdYx1HLF2==6DsPp+qC6Xyb7Ag8qa1K7g2Ht-Y2T-UjzMA@mail.gmail.com>
+References: <002801cdac0a$11e4f340$35aed9c0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <507ED56E.1000406@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org, patches@linaro.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "Turquette, Mike" <mturquette@ti.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <002801cdac0a$11e4f340$35aed9c0$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ryan Mallon <rmallon@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 17 October 2012 21:27, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> On 10/17/2012 05:35 PM, Sachin Kamat wrote:
->>> Most of the s5p-* drivers have already added support for clk_(un)prepare.
->>> Thus most of your changes in this patch are not needed. I seem to have only
->>> missed fimc-mdevice.c, other modules are already reworked
->>
->> I did not find these changes in your tree. Please let me know the
->> branch where these changes are available.
->
-> Are in Linus' tree, for quite long already, commits:
->
-> 11a37c709797cc56f48905e68a3099b79cf08850
-> [media] s5p-g2d: Added support for clk_prepare
->
-> bd7d8888e99d67f778f4ee272346322c0b9cb378
-> [media] s5p-fimc: convert to clk_prepare()/clk_unprepare()
->
-> eb732518e0db585376f95256b18b2149240e3ad3
-> [media] s5p-mfc: Added support for clk_prepare
+On Wed, Oct 17, 2012 at 3:52 AM, Jingoo Han <jg1.han@samsung.com> wrote:
 
-Oh I see.. I dunno how i missed to notice this..
-
-
+> This patch uses pr_* instead of printk. Also, gpio_dbg
+> is replaced with pr_debug.
 >
-> Please note there was the media drivers reorganization recently, e.g.
-> drivers/media/video/s5p-* changed to drivers/media/platform/s5p-*.
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org> <- NAK
 
-Right. I am aware of that.
+Please consult Documentation/SubmittingPatches as to the conditions that
+apply when you add Reviewed-by tags.
 
->
->>> $ git grep -5  clk_prepare  -- drivers/media/platform/s5p-fimc
->>> drivers/media/platform/s5p-fimc/fimc-core.c-
->>> drivers/media/platform/s5p-fimc/fimc-core.c-    for (i = 0; i < MAX_FIMC_CLOCKS; i++) {
->>> drivers/media/platform/s5p-fimc/fimc-core.c-            fimc->clock[i] = clk_get(&fimc->pdev->dev, fimc_clocks[i]);
->>> drivers/media/platform/s5p-fimc/fimc-core.c-            if (IS_ERR(fimc->clock[i]))
->>
->>>> I would prefer you have added the required changes at fimc_md_get_clocks()
->>> and fimc_md_put_clocks() functions.
->>
->> Ok. I will check this.
->
-> Thanks.
->
-> --
-> Regards,
-> Sylwester
+Hint: it doesn't mean "I know Linus looked at this patch".
 
-Thanks Sylwester.
-
-
--- 
-With warm regards,
-Sachin
+Yours,
+Linus Walleij
