@@ -1,35 +1,56 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt  before calling mmc_start_host
-Date: Tue, 23 Oct 2012 17:19:00 -0400
-Message-ID: <87hapkhoor.fsf@octavius.laptop.org>
-References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v5] ARM: EXYNOS: Add MFC device tree support
+Date: Fri, 19 Oct 2012 10:39:25 +0900
+Message-ID: <5080AF4D.4070402@samsung.com>
+References: <1348765784-7508-1-git-send-email-arun.kk@samsung.com>	<1348765784-7508-2-git-send-email-arun.kk@samsung.com>	<50864174.3020508@samsung.com> <CALt3h79k5XsAGM21oOOy0jDh47N8is7LF-bAGcH-PtjK6ekhUw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com>
-	(Yuvaraj CD's message of "Mon, 8 Oct 2012 14:29:51 +0530")
-Sender: linux-mmc-owner@vger.kernel.org
-To: Yuvaraj CD <yuvaraj.cd@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, will.newton@imgtec.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, thomas.abraham@linaro.org, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:34908 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754218Ab2JWVyJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Oct 2012 17:54:09 -0400
+Received: by mail-pa0-f46.google.com with SMTP id hz1so3068066pad.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Oct 2012 14:54:08 -0700 (PDT)
+In-Reply-To: <CALt3h79k5XsAGM21oOOy0jDh47N8is7LF-bAGcH-PtjK6ekhUw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arunkk.samsung@gmail.com>
+Cc: sw0312.kim@samsung.com, Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, k.lewandowsk@samsung.com, s.nawrocki@samsung.com, ch.naveen@samsung.com, joshi@samsung.com
 
-Hi,
-
-On Mon, Oct 08 2012, Yuvaraj CD wrote:
-> As mmc_start_host is getting called before enabling the dw_mmc controller
-> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
-> very first command sent by the sdio_reset.
-> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
-> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
+On 10/23/12 19:12, Arun Kumar K wrote:
+> Hi Seungwoo Kim,
 >
-> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
+> Thank you for the review.
+>
+>>> +
+>>> +     /* Reserve memory for MFC only if it's available */
+>>> +     mfc_mem.compatible = "samsung,mfc-v6";
+>>> +     if (of_scan_flat_dt(s5p_fdt_find_mfc_mem,&mfc_mem))
+>>
+>> of_scan_flat_dt() is called but it does not have __init on its
+>> definition. So this causes section mismatch.
+>>
+>
+> The function of_scan_flat_dt is having __init in its definition.
 
-Is "Yuvaraj CD" your legal name?  We should use your full name so that
-we can track copyright attribution properly.
+Yes.
 
-Thanks!
+> I hope you meant the function s5p_fdt_find_mfc_mem which is not
+> defined with __init and causing section mismatch.
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+I think so.
+
+> I will correct this and post an updated patch.
+
+I fixed when I applied.
+
+Seung-Woo, thanks for your reporting.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
