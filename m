@@ -1,29 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V3] gpio: samsung: use pr_* instead of printk
-Date: Fri, 19 Oct 2012 12:08:59 +0200
-Message-ID: <CACRpkdYx1HLF2==6DsPp+qC6Xyb7Ag8qa1K7g2Ht-Y2T-UjzMA@mail.gmail.com>
-References: <002801cdac0a$11e4f340$35aed9c0$%han@samsung.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] usb: phy: samsung: Introducing usb phy driver for hsotg
+Date: Sat, 20 Oct 2012 21:19:19 +0200
+Message-ID: <20121020191919.GA555@elf.ucw.cz>
+References: <1349256393-11741-1-git-send-email-p.paneri@samsung.com>
+ <1350036934-6051-1-git-send-email-p.paneri@samsung.com>
+ <20121015132836.GT24333@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <002801cdac0a$11e4f340$35aed9c0$%han@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ryan Mallon <rmallon@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57251 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756524Ab2JTTTY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 20 Oct 2012 15:19:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20121015132836.GT24333@arwen.pp.htv.fi>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Praveen Paneri <p.paneri@samsung.com>, l.majewski@samsung.com, linux-samsung-soc@vger.kernel.org, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org
 
-On Wed, Oct 17, 2012 at 3:52 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+Hi!
 
-> This patch uses pr_* instead of printk. Also, gpio_dbg
-> is replaced with pr_debug.
->
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org> <- NAK
+> > +#define S3C_PHYPWR				(0x00)
+...
+> > +#define S3C_PHYCLK				(0x04)
+> > +
+> > +#define S3C_PHYCLK_MODE_SERIAL			(1 << 6)
+> > +#define S3C_PHYCLK_EXT_OSC			(1 << 5)
+> > +#define S3C_PHYCLK_COMMON_ON_N			(1 << 4)
+> > +#define S3C_PHYCLK_ID_PULL			(1 << 2)
+> > +#define S3C_PHYCLK_CLKSEL_MASK			(0x3 << 0)
+> > +#define S3C_PHYCLK_CLKSEL_SHIFT			(0)
+> > +#define S3C_PHYCLK_CLKSEL_48M			(0x0 << 0)
+> > +#define S3C_PHYCLK_CLKSEL_12M			(0x2 << 0)
+> > +#define S3C_PHYCLK_CLKSEL_24M			(0x3 << 0)
 
-Please consult Documentation/SubmittingPatches as to the conditions that
-apply when you add Reviewed-by tags.
+I believe these 0x 's should be removed. Ouch and << 0 is interesting,
+too, just remove it.
 
-Hint: it doesn't mean "I know Linus looked at this patch".
-
-Yours,
-Linus Walleij
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
