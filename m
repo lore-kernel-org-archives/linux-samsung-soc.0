@@ -1,56 +1,66 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos4: Enable serial controllers on Origen and SMDKV310
-Date: Sun, 21 Oct 2012 18:25:19 +0200
-Message-ID: <16890730.oeOgcP5xf2@flatron>
-References: <1349701968-6675-1-git-send-email-t.figa@samsung.com> <1587144.mixS1B3zoJ@amdc1227> <10e401cdaae0$a17d44b0$e477ce10$%kim@samsung.com>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: exynos4-dt: Set .smp field of machine descriptor
+Date: Mon, 22 Oct 2012 08:44:47 +0900
+Message-ID: <CAH9JG2W-Tg5ZwzwuXg3-56KhiLwQS3rGktweRG8XwdVMda=HBg@mail.gmail.com>
+References: <1350035378-31989-1-git-send-email-t.figa@samsung.com>
+	<2064474.beoN9hr7Vi@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:41934 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932303Ab2JUQZQ (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:61055 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751560Ab2JUXos (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 21 Oct 2012 12:25:16 -0400
-Received: by mail-wg0-f44.google.com with SMTP id dr13so1599998wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Oct 2012 09:25:14 -0700 (PDT)
-In-Reply-To: <10e401cdaae0$a17d44b0$e477ce10$%kim@samsung.com>
+	Sun, 21 Oct 2012 19:44:48 -0400
+Received: by mail-wi0-f178.google.com with SMTP id hr7so1887475wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Oct 2012 16:44:47 -0700 (PDT)
+In-Reply-To: <2064474.beoN9hr7Vi@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com
+To: Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org
 
-Hi Kgene,
++ Arnd, Olof,
 
-On Monday 15 of October 2012 23:23:22 Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > Hi Kgene,
-> > 
-> > On Monday 08 of October 2012 15:12:48 Tomasz Figa wrote:
-> > > This patch adds status override of serial nodes to enable used
-> > > serial
-> > > ports on Origen and SMDKV310 board.
-> > > 
-> > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > > ---
-> > > 
-> > >  arch/arm/boot/dts/exynos4210-origen.dts   | 16 ++++++++++++++++
-> > >  arch/arm/boot/dts/exynos4210-smdkv310.dts | 16 ++++++++++++++++
-> > >  2 files changed, 32 insertions(+)
-> > 
-> > I think you missed this patch when applying Exynos dts reorganization
-> > patches. It is needed to enable serial ports on Origen and SMDKV310
-> 
-> boards.
-> 
-> > Could you apply it as well?
-> 
-> Oops, yeah. I will apply.
+Tomasz,
+I think it's better to add arm-soc maintainers at CC when send the patches.
+Samsung patches doesn't handled or merged with proper time.
 
-I saw that you applied this patch to your next/dt-samsung branch, thanks.
+Thank you,
+Kyungmin Park
 
-However I think this should be considered a fix, because without it serial 
-console on Origen and SMDKV310 will be broken.
-
-Best regards,
-Tomasz Figa
+On 10/22/12, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Friday 12 of October 2012 11:49:38 Tomasz Figa wrote:
+>> This patch adds missing initializer of .smp field of machine descriptor
+>> of Exynos 4 DT machine.
+>>
+>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/mach-exynos4-dt.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c
+>> b/arch/arm/mach-exynos/mach-exynos4-dt.c index 7222e3c..d6bdcfb 100644
+>> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+>> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+>> @@ -119,6 +119,7 @@ static char const *exynos4_dt_compat[] __initdata =
+>> {
+>>
+>>  DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device
+>> Tree)") /* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+>> +	.smp		= smp_ops(exynos_smp_ops),
+>>  	.init_irq	= exynos4_init_irq,
+>>  	.map_io		= exynos4_dt_map_io,
+>>  	.handle_irq	= gic_handle_irq,
+>
+> Ping. I think this should be considered a fix.
+>
+> Best regards,
+> Tomasz Figa
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
