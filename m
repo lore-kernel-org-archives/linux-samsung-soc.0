@@ -1,58 +1,49 @@
-From: Domenico Andreoli <cavokz@gmail.com>
-Subject: Re: [PATCH] usb: phy: samsung: Introducing usb phy driver for hsotg
-Date: Sun, 21 Oct 2012 09:16:19 +0200
-Message-ID: <20121021071619.GA1676@glitch>
-References: <1349256393-11741-1-git-send-email-p.paneri@samsung.com>
- <1350036934-6051-1-git-send-email-p.paneri@samsung.com>
- <005801cdac56$8da0c120$a8e24360$%kim@samsung.com>
- <20121017191300.GL21164@n2100.arm.linux.org.uk>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS: exynos4-dt: Set .smp field of machine descriptor
+Date: Sun, 21 Oct 2012 09:22:55 -0700 (PDT)
+Message-ID: <2064474.beoN9hr7Vi@flatron>
+References: <1350035378-31989-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:58794 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751466Ab2JUHQX (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:47164 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753376Ab2JUQW5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 21 Oct 2012 03:16:23 -0400
-Content-Disposition: inline
-In-Reply-To: <20121017191300.GL21164@n2100.arm.linux.org.uk>
+	Sun, 21 Oct 2012 12:22:57 -0400
+Received: by mail-wi0-f172.google.com with SMTP id hq12so1718800wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Oct 2012 09:22:56 -0700 (PDT)
+In-Reply-To: <1350035378-31989-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Praveen Paneri' <p.paneri@samsung.com>, linux-usb@vger.kernel.org, l.majewski@samsung.com, linux-samsung-soc@vger.kernel.org, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, balbi@ti.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, thomas.abraham@linaro.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org
 
-On Wed, Oct 17, 2012 at 08:13:01PM +0100, Russell King - ARM Linux wrote:
-> On Wed, Oct 17, 2012 at 08:00:00PM +0900, Kukjin Kim wrote:
-> > > +static int samsung_usbphy_get_refclk_freq(struct samsung_usbphy *sphy)
-> > > +{
-> > > +	struct clk *ref_clk;
-> > > +	int refclk_freq = 0;
-> > > +
-> > > +	ref_clk = clk_get(sphy->dev, "xusbxti");
-> > > +	if (IS_ERR(ref_clk)) {
-> > 
-> > IS_ERR_OR_NULL(ref_clk)?
+On Friday 12 of October 2012 11:49:38 Tomasz Figa wrote:
+> This patch adds missing initializer of .smp field of machine descriptor
+> of Exynos 4 DT machine.
 > 
-> For the N'th time, NO.  IS_ERR is correct here.
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/mach-exynos/mach-exynos4-dt.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> > > +		dev_err(sphy->dev, "Failed to get reference clock\n");
-> > > +		return PTR_ERR(ref_clk);
+> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> b/arch/arm/mach-exynos/mach-exynos4-dt.c index 7222e3c..d6bdcfb 100644
+> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> @@ -119,6 +119,7 @@ static char const *exynos4_dt_compat[] __initdata =
+> {
 > 
-> Look, it's the ABI.  Not only that but it's also TOTALLY AND UTTERLY WRONG
-> to use IS_ERR_OR_NULL(foo) and then follow it with return PTR_ERR(foo).
-> You end up returning ZERO.
-> 
-> Stop telling people to use IS_ERR_OR_NULL without properly thinking about
-> it first.  Virtually every single one of these done this way is a BUG.
-> 
-> Are we clear on this?
+>  DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device
+> Tree)") /* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+> +	.smp		= smp_ops(exynos_smp_ops),
+>  	.init_irq	= exynos4_init_irq,
+>  	.map_io		= exynos4_dt_map_io,
+>  	.handle_irq	= gic_handle_irq,
 
-Wouldn't be much easier to define PTR_ERR() to return -Esomething when
-its argument is NULL?
+Ping. I think this should be considered a fix.
 
-This would end the whole issue of "should I use IS_ERR*/PTR_ERR or look into
-the pointer myself?" story.  One could simply always use IS_ERR*/PTR_ERR
-and have the right thing done in whatever case.
-
-Regards,
-Domenico
+Best regards,
+Tomasz Figa
