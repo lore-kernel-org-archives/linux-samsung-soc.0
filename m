@@ -1,60 +1,38 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: exynos4-dt: Set .smp field of machine
- descriptor
-Date: Mon, 22 Oct 2012 09:29:00 +0900
-Message-ID: <000001cdafec$3ce4c260$b6ae4720$%kim@samsung.com>
-References: <1350035378-31989-1-git-send-email-t.figa@samsung.com>
- <2064474.beoN9hr7Vi@flatron>
- <CAH9JG2W-Tg5ZwzwuXg3-56KhiLwQS3rGktweRG8XwdVMda=HBg@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V3] gpio: samsung: use pr_* instead of printk
+Date: Mon, 22 Oct 2012 10:02:03 +0900
+Message-ID: <00a201cdaff0$d90a11a0$8b1e34e0$%han@samsung.com>
+References: <002801cdac0a$11e4f340$35aed9c0$%han@samsung.com>
+ <CACRpkdYx1HLF2==6DsPp+qC6Xyb7Ag8qa1K7g2Ht-Y2T-UjzMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:31166 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754654Ab2JVA3G (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 21 Oct 2012 20:29:06 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MC9006TXQO85OD0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Oct 2012 09:29:03 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MC900KFWQOFP930@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Oct 2012 09:29:03 +0900 (KST)
-In-reply-to: <CAH9JG2W-Tg5ZwzwuXg3-56KhiLwQS3rGktweRG8XwdVMda=HBg@mail.gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CACRpkdYx1HLF2==6DsPp+qC6Xyb7Ag8qa1K7g2Ht-Y2T-UjzMA@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Linus Walleij' <linus.walleij@linaro.org>
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Ryan Mallon' <rmallon@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, thomas.abraham@linaro.org
 
-Kyungmin Park wrote:
+On Friday, October 19, 2012 7:09 PM Linus Walleij wrote
 > 
-> + Arnd, Olof,
+> On Wed, Oct 17, 2012 at 3:52 AM, Jingoo Han <jg1.han@samsung.com> wrote:
 > 
-> Tomasz,
-> I think it's better to add arm-soc maintainers at CC when send the
-patches.
-> Samsung patches doesn't handled or merged with proper time.
-> 
-
-I did just now. Sorry for late.
-
-[...]
-
-> > Ping. I think this should be considered a fix.
+> > This patch uses pr_* instead of printk. Also, gpio_dbg
+> > is replaced with pr_debug.
 > >
-Tomasz, yes I applied this in my -fix. Note this will be sent to upstream
-with other Samsung fixes during 3.7-rc, probably in a couple of days.
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org> <- NAK
+> 
+> Please consult Documentation/SubmittingPatches as to the conditions that
+> apply when you add Reviewed-by tags.
 
-Thanks for your reminder.
+Um, you already gave the Reviewed-by to the same patch, a month ago.
+Anyway, I will remove Reviewed-by and send v4 patch, soon.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> Hint: it doesn't mean "I know Linus looked at this patch".
+> 
+> Yours,
+> Linus Walleij
