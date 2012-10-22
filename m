@@ -1,62 +1,86 @@
-From: Praveen Paneri <p.paneri@samsung.com>
-Subject: Re: [PATCH] usb: phy: samsung: Introducing usb phy driver for hsotg
-Date: Mon, 22 Oct 2012 11:13:42 +0530
-Message-ID: <CAD6zSYOfasOuQX=N-YuMxvB-3zW=dERqfmX7yRtGLfg5HiiZvg@mail.gmail.com>
-References: <1349256393-11741-1-git-send-email-p.paneri@samsung.com>
-	<1350036934-6051-1-git-send-email-p.paneri@samsung.com>
-	<20121015132836.GT24333@arwen.pp.htv.fi>
-	<20121020191919.GA555@elf.ucw.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v4 0/6] arm: exynos: add dt based support for exynos5 hdmi
+Date: Mon, 22 Oct 2012 17:01:01 +0530
+Message-ID: <1350905467-23832-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f174.google.com ([209.85.210.174]:36798 "EHLO
-	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753999Ab2JVFno (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:44429 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753218Ab2JVLQM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Oct 2012 01:43:44 -0400
-In-Reply-To: <20121020191919.GA555@elf.ucw.cz>
+	Mon, 22 Oct 2012 07:16:12 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MCA0050SKMQB8S0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Oct 2012 20:16:11 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MCA00260KJ6TJ50@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Oct 2012 20:16:10 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Felipe Balbi <balbi@ti.com>, l.majewski@samsung.com, linux-samsung-soc@vger.kernel.org, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: tomasz.figa@gmail.com, kgene.kim@samsung.com, t.stanislaws@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, kyungmin.park@samsung.com, thomas.ab@samsung.com, prashanth.g@samsung.com, joshi@samsung.com, s.shirish@samsung.com, r.sh.open@gmail.com, rahul.sharma@samsung.com
 
-Hi,
+This patch set adds the DT based support for Samsung's Exynos5250. It adds
+device tree nodes for hdmi, mixer, hdmiphy and hdmiddc. The name of these
+devices are changed to the one matching with drivers. Exynos-drm and exynos
+hdmi-drm-commmon devices are removed from machine init code.
 
-On Sun, Oct 21, 2012 at 12:49 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> Hi!
->
->> > +#define S3C_PHYPWR                         (0x00)
-> ...
->> > +#define S3C_PHYCLK                         (0x04)
->> > +
->> > +#define S3C_PHYCLK_MODE_SERIAL                     (1 << 6)
->> > +#define S3C_PHYCLK_EXT_OSC                 (1 << 5)
->> > +#define S3C_PHYCLK_COMMON_ON_N                     (1 << 4)
->> > +#define S3C_PHYCLK_ID_PULL                 (1 << 2)
->> > +#define S3C_PHYCLK_CLKSEL_MASK                     (0x3 << 0)
->> > +#define S3C_PHYCLK_CLKSEL_SHIFT                    (0)
->> > +#define S3C_PHYCLK_CLKSEL_48M                      (0x0 << 0)
->> > +#define S3C_PHYCLK_CLKSEL_12M                      (0x2 << 0)
->> > +#define S3C_PHYCLK_CLKSEL_24M                      (0x3 << 0)
->
-> I believe these 0x 's should be removed. Ouch and << 0 is interesting,
-> too, just remove it.
-Yes it makes sense to maintain a uniform pattern across all the
-definition. How about maintaining hex values everywhere instead of
-dropping 0x's? It will make it easier to add big values to the
-definitions tomorrow, if needed.
-About "<< 0", IMHO people must have started using it to maintain a
-parallelism with other definitions. I do not mind changing it if you
-still feel that it's very much needed
-thanks :)
+Exynos-drm and exynos hdmi-drm-commmon devices are removed from machine
+init code. Patch set which adds this code is posted to dri-devel list at
+http://comments.gmane.org/gmane.comp.video.dri.devel/75121.
 
-Praveen
->
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This patchset is based on linux v3.6-rc6, branch v3.7-next/dt-samsung at
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+
+v1:
+- dropped patch for hpd gpio initialisation from machine init.
+- dropped patch for platform device registration.
+- removed platform device registration from non-dt platforms.
+
+v2:
+- removed version information from hdmi, mixer dt nodes.
+- added DT binding documentation for hdmi, mixer, hdmiphy and hdmiddc.
+
+v3:
+- corrected indentations.
+- changed dt node names to name@address format.
+
+v4:
+- added newline at end of device-tree binding document files.
+- removes macros for mixer, hdmi physical addresses.
+- removed @address from mixer and hdmi DT nodes.
+
+Rahul Sharma (6):
+  dts: exynos: add device tree support for exynos5 hdmi
+  dts: exynos: add device tree support for exynos5 mixer
+  dts: exynos: add device tree support for exynos5 hdmiphy
+  dts: exynos: add device tree support for exynos5 hdmiddc
+  arm: exynos: add clocks for exynos5 hdmi
+  arm: exynos: removing exynos-drm device registration from non-dt
+    platforms
+
+ .../devicetree/bindings/drm/exynos/hdmi.txt        |   22 +++++++++++++++
+ .../devicetree/bindings/drm/exynos/hdmiddc.txt     |   12 ++++++++
+ .../devicetree/bindings/drm/exynos/hdmiphy.txt     |   12 ++++++++
+ .../devicetree/bindings/drm/exynos/mixer.txt       |   15 ++++++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   24 +++++++++++++++-
+ arch/arm/boot/dts/exynos5250.dtsi                  |   20 +++++++++++++
+ arch/arm/mach-exynos/Makefile                      |    1 -
+ arch/arm/mach-exynos/clock-exynos5.c               |   14 ++++++++-
+ arch/arm/mach-exynos/dev-drm.c                     |   29 --------------------
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    8 +++++
+ arch/arm/mach-exynos/mach-nuri.c                   |    3 --
+ arch/arm/mach-exynos/mach-origen.c                 |    3 --
+ arch/arm/mach-exynos/mach-smdk4x12.c               |    3 --
+ arch/arm/mach-exynos/mach-smdkv310.c               |    3 --
+ arch/arm/mach-exynos/mach-universal_c210.c         |    3 --
+ arch/arm/plat-samsung/include/plat/devs.h          |    2 -
+ 16 files changed, 124 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/drm/exynos/hdmi.txt
+ create mode 100644 Documentation/devicetree/bindings/drm/exynos/hdmiddc.txt
+ create mode 100644 Documentation/devicetree/bindings/drm/exynos/hdmiphy.txt
+ create mode 100644 Documentation/devicetree/bindings/drm/exynos/mixer.txt
+ delete mode 100644 arch/arm/mach-exynos/dev-drm.c
