@@ -1,27 +1,33 @@
 From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: sdhci-s3c: use clk_prepare_enable and clk_disable_unprepare
-Date: Tue, 23 Oct 2012 17:10:02 -0400
-Message-ID: <87txtkhp3p.fsf@octavius.laptop.org>
-References: <1349220943-2636-1-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt  before calling mmc_start_host
+Date: Tue, 23 Oct 2012 17:19:00 -0400
+Message-ID: <87hapkhoor.fsf@octavius.laptop.org>
+References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1349220943-2636-1-git-send-email-thomas.abraham@linaro.org>
-	(Thomas Abraham's message of "Wed, 3 Oct 2012 08:35:43 +0900")
+In-Reply-To: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com>
+	(Yuvaraj CD's message of "Mon, 8 Oct 2012 14:29:51 +0530")
 Sender: linux-mmc-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Yuvaraj CD <yuvaraj.cd@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, will.newton@imgtec.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, thomas.abraham@linaro.org, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On Tue, Oct 02 2012, Thomas Abraham wrote:
-> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
-> calls as required by common clock framework.
+On Mon, Oct 08 2012, Yuvaraj CD wrote:
+> As mmc_start_host is getting called before enabling the dw_mmc controller
+> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
+> very first command sent by the sdio_reset.
+> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
+> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
 >
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
 
-Thanks, pushed to mmc-next for 3.8.
+Is "Yuvaraj CD" your legal name?  We should use your full name so that
+we can track copyright attribution properly.
+
+Thanks!
 
 - Chris.
 -- 
