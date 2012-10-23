@@ -1,153 +1,207 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2] ARM: EXYNOS: Add support for secondary CPU bring-up on Exynos4412
-Date: Tue, 23 Oct 2012 20:22:04 +0200
-Message-ID: <2080548.MLAjJ6UEE5@flatron>
-References: <1393767.3tjq8gL245@amdc1227> <01d101cdb115$965b0730$c3111590$%kim@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: EXYNOS: Kconfig: Rename CPU_EXYNOS4210 to SOC_EXYNOS4210
+Date: Tue, 23 Oct 2012 20:29:49 +0200
+Message-ID: <3096826.XrVMT0Hld5@flatron>
+References: <1349701345-2681-1-git-send-email-t.figa@samsung.com> <1349701345-2681-2-git-send-email-t.figa@samsung.com> <01d301cdb119$6849acd0$38dd0670$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:55948 "EHLO
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:33842 "EHLO
 	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932144Ab2JWSV7 (ORCPT
+	with ESMTP id S1756657Ab2JWS3o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Oct 2012 14:21:59 -0400
-Received: by mail-ee0-f46.google.com with SMTP id b15so1531273eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Oct 2012 11:21:58 -0700 (PDT)
-In-Reply-To: <01d101cdb115$965b0730$c3111590$%kim@samsung.com>
+	Tue, 23 Oct 2012 14:29:44 -0400
+Received: by mail-ee0-f46.google.com with SMTP id b15so1534459eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Oct 2012 11:29:43 -0700 (PDT)
+In-Reply-To: <01d301cdb119$6849acd0$38dd0670$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Chris Ball' <cjb@laptop.org>, gregkh@linuxfoundation.org, grant.likely@secretlab.ca, 'Linus Walleij' <linus.walleij@linaro.org>, rui.zhang@intel.com
 
 Hi Kgene,
 
-On Tuesday 23 of October 2012 20:57:33 Kukjin Kim wrote:
+Thanks for your comments.
+
+On Tuesday 23 of October 2012 21:24:54 Kukjin Kim wrote:
 > Tomasz Figa wrote:
-> > Exynos4412 uses different information register for each core. This
-> > patch adjusts the bring-up code to take that into account.
+> > This patch renames CONFIG_CPU_EXYNOS4210 to CONFIG_SOC_EXYNOS4210 to
+> > match the convention used by rest of Exynos SoCs and correctly
+> > represent the reality (Exynos4210 is a SoC, not a CPU).
 > > 
 > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Chris Ball <cjb@laptop.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> 
 > > ---
 > > 
-> >  arch/arm/mach-exynos/platsmp.c | 27 +++++++++++++++++++++------
-> >  1 file changed, 21 insertions(+), 6 deletions(-)
+> >  arch/arm/mach-exynos/Kconfig             | 14 +++++++-------
+> >  arch/arm/mach-exynos/Makefile            |  2 +-
+> >  arch/arm/mach-exynos/common.h            |  2 +-
+> >  arch/arm/plat-samsung/include/plat/cpu.h |  2 +-
+> >  drivers/cpufreq/Kconfig.arm              |  2 +-
+> >  drivers/devfreq/Kconfig                  |  2 +-
+> >  drivers/mmc/host/sdhci-s3c.c             |  2 +-
+> >  drivers/tty/serial/samsung.c             |  2 +-
+> >  8 files changed, 14 insertions(+), 14 deletions(-)
 > > 
-> > diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-
-> > exynos/platsmp.c
-> > index 36c3984..816a27d 100644
-> > --- a/arch/arm/mach-exynos/platsmp.c
-> > +++ b/arch/arm/mach-exynos/platsmp.c
-> > @@ -34,8 +34,19 @@
+[snip]
+> > diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> > index f6b0a6e2..8545069 100644
+> > --- a/drivers/devfreq/Kconfig
+> > +++ b/drivers/devfreq/Kconfig
+> > @@ -67,7 +67,7 @@ comment "DEVFREQ Drivers"
 > > 
-> >  extern void exynos4_secondary_startup(void);
-> > 
-> > -#define CPU1_BOOT_REG		(samsung_rev() == EXYNOS4210_REV_1_1
-> 
-> ? \
-> 
-> > -				S5P_INFORM5 : S5P_VA_SYSRAM)
-> > +static inline void __iomem *cpu_boot_reg_base(void)
-> > +{
-> > +	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-> > +		return S5P_INFORM5;
-> > +	return S5P_VA_SYSRAM;
-> > +}
-> > +
-> > +static inline void __iomem *cpu_boot_reg(int cpu)
-> > +{
-> > +	if (soc_is_exynos4412())
-> > +		return cpu_boot_reg_base() + 4*cpu;
-> > +	return cpu_boot_reg_base();
-> > +}
-> > 
-> >  /*
+> >  config ARM_EXYNOS4_BUS_DEVFREQ
 > >  
-> >   * control for which core is the next to come out of the secondary
+> >  	bool "ARM Exynos4210/4212/4412 Memory Bus DEVFREQ Driver"
 > > 
-> > @@ -89,6 +100,7 @@ void __cpuinit platform_secondary_init(unsigned int
+> > -	depends on CPU_EXYNOS4210 || CPU_EXYNOS4212 || CPU_EXYNOS4412
+> > +	depends on SOC_EXYNOS4210 || CPU_EXYNOS4212 || CPU_EXYNOS4412
 > 
-> cpu)
+> (+ MyungJoo Ham)
 > 
-> >  int __cpuinit boot_secondary(unsigned int cpu, struct task_struct
-> >  *idle) {
+> MyungJoo, should be fixed separately with this.
+> 
+> 8<--------------------------------------
+> 
+> From: Kukjin Kim <kgene.kim@samsung.com>
+> Subject: PM / devfreq: fix the dependency for EXYNOS4212 and EXYNOS4412
+> 
+> The CPU_EXYNOS4212 and CPU_EXYNOS4412 should be fixed.
+> 
+> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> index f6b0a6e2..e73cede 100644
+> --- a/drivers/devfreq/Kconfig
+> +++ b/drivers/devfreq/Kconfig
+> @@ -67,7 +67,7 @@ comment "DEVFREQ Drivers"
+> 
+>  config ARM_EXYNOS4_BUS_DEVFREQ
+>  	bool "ARM Exynos4210/4212/4412 Memory Bus DEVFREQ Driver"
+> -	depends on CPU_EXYNOS4210 || CPU_EXYNOS4212 || CPU_EXYNOS4412
+> +	depends on CPU_EXYNOS4210 || SOC_EXYNOS4212 || SOC_EXYNOS4412
+>  	select ARCH_HAS_OPP
+>  	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+>  	help
+> 8<--------------------------------------
+
+
+Indeed, in result this would make my patch:
+
+-	depends on CPU_EXYNOS4210 || SOC_EXYNOS4212 || SOC_EXYNOS4412
++	depends on SOC_EXYNOS4210 || SOC_EXYNOS4212 || SOC_EXYNOS4412
+
+(with your patch as a dependency)
+
+> >  	select ARCH_HAS_OPP
+> >  	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+> >  	help
+> > 
+> > diff --git a/drivers/mmc/host/sdhci-s3c.c
+> > b/drivers/mmc/host/sdhci-s3c.c index a50c205..b090415 100644
+> > --- a/drivers/mmc/host/sdhci-s3c.c
+> > +++ b/drivers/mmc/host/sdhci-s3c.c
+> > @@ -716,7 +716,7 @@ static const struct dev_pm_ops sdhci_s3c_pmops = {
+> > 
+> >  #define SDHCI_S3C_PMOPS NULL
+> >  #endif
+> > 
+> > -#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212)
+> > +#if defined(CONFIG_SOC_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212)
+> > 
+> >  static struct sdhci_s3c_drv_data exynos4_sdhci_drv_data = {
 > >  
-> >  	unsigned long timeout;
+> >  	.sdhci_quirks = SDHCI_QUIRK_NONSTANDARD_CLOCK,
+> >  
+> >  };
 > > 
-> > +	unsigned long phys_cpu = cpu_logical_map(cpu);
+> > diff --git a/drivers/tty/serial/samsung.c
+> > b/drivers/tty/serial/samsung.c index 02d07bf..175ba6e 100644
+> > --- a/drivers/tty/serial/samsung.c
+> > +++ b/drivers/tty/serial/samsung.c
+> > @@ -1594,7 +1594,7 @@ static struct s3c24xx_serial_drv_data
+> > s5pv210_serial_drv_data = {
 > > 
-> >  	/*
-> >  	
-> >  	 * Set synchronisation state between this boot processor
+> >  #define S5PV210_SERIAL_DRV_DATA	(kernel_ulong_t)NULL
+> >  #endif
 > > 
-> > @@ -104,7 +116,7 @@ int __cpuinit boot_secondary(unsigned int cpu,
-> > struct task_struct *idle)
-> > 
-> >  	 * Note that "pen_release" is the hardware CPU ID, whereas
-> >  	 * "cpu" is Linux's internal ID.
-> >  	 */
-> > 
-> > -	write_pen_release(cpu_logical_map(cpu));
-> > +	write_pen_release(phys_cpu);
-> > 
-> >  	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
-> >  	
-> >  		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
-> > 
-> > @@ -138,7 +150,7 @@ int __cpuinit boot_secondary(unsigned int cpu,
-> > struct task_struct *idle)
-> > 
-> >  		smp_rmb();
-> >  		
-> >  		__raw_writel(virt_to_phys(exynos4_secondary_startup),
-> > 
-> > -			CPU1_BOOT_REG);
-> > +
-> 
-> cpu_boot_reg(phys_cpu));
-> 
-> >  		gic_raise_softirq(cpumask_of(cpu), 1);
-> >  		
-> >  		if (pen_release == -1)
-> > 
-> > @@ -186,6 +198,8 @@ void __init smp_init_cpus(void)
-> > 
-> >  void __init platform_smp_prepare_cpus(unsigned int max_cpus)
-> >  {
-> > 
-> > +	int i;
-> > +
-> > 
-> >  	if (!soc_is_exynos5250())
-> >  	
-> >  		scu_enable(scu_base_addr());
-> > 
-> > @@ -195,6 +209,7 @@ void __init platform_smp_prepare_cpus(unsigned int
-> > max_cpus)
-> > 
-> >  	 * until it receives a soft interrupt, and then the
-> >  	 * secondary CPU branches to this address.
-> >  	 */
-> > 
-> > -	__raw_writel(virt_to_phys(exynos4_secondary_startup),
-> > -			CPU1_BOOT_REG);
-> > +	for (i = 1; i < max_cpus; ++i)
-> > +		__raw_writel(virt_to_phys(exynos4_secondary_startup),
-> > +					cpu_boot_reg(cpu_logical_map(i)));
-> > 
-> >  }
+> > -#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212)
+> > || \ +#if defined(CONFIG_SOC_EXYNOS4210) ||
+> > defined(CONFIG_SOC_EXYNOS4212) || \> 
+> >  	defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
+> >  
+> >  static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
+> >  
+> >  	.info = &(struct s3c24xx_uart_info) {
 > > 
 > > --
 > > 1.7.12
 > 
-> Looks ok to me, applied.
+> Tomasz, looks ok to me but I think, accordingly, following should be
+> updated together?
 > 
-> Thanks.
+> 8<--------------------------------
+> 
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index a006f0d..3a665ff 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -2790,7 +2790,7 @@ static __init void
+> exynos_gpiolib_attach_ofnode(struct samsung_gpio_chip *chip,
+> 
+>  static __init void exynos4_gpiolib_init(void)
+>  {
+> -#ifdef CONFIG_CPU_EXYNOS4210
+> +#ifdef CONFIG_SOC_EXYNOS4210
+>  	struct samsung_gpio_chip *chip;
+>  	int i, nr_chips;
+>  	void __iomem *gpio_base1, *gpio_base2, *gpio_base3;
+> @@ -2887,7 +2887,7 @@ static __init void exynos4_gpiolib_init(void)
+>  	samsung_gpiolib_add_4bit_chips(exynos4_gpios_3,
+>  				       nr_chips, gpio_base3);
+> 
+> -#if defined(CONFIG_CPU_EXYNOS4210) && defined(CONFIG_S5P_GPIO_INT)
+> +#if defined(CONFIG_SOC_EXYNOS4210) && defined(CONFIG_S5P_GPIO_INT)
+>  	s5p_register_gpioint_bank(IRQ_GPIO_XA, 0, IRQ_GPIO1_NR_GROUPS);
+>  	s5p_register_gpioint_bank(IRQ_GPIO_XB, IRQ_GPIO1_NR_GROUPS,
+> IRQ_GPIO2_NR_GROUPS);
+>  #endif
+> @@ -2900,7 +2900,7 @@ err_ioremap2:
+>  	iounmap(gpio_base1);
+>  err_ioremap1:
+>  	return;
+> -#endif	/* CONFIG_CPU_EXYNOS4210 */
+> +#endif	/* CONFIG_SOC_EXYNOS4210 */
+>  }
+> 
+>  static __init void exynos5_gpiolib_init(void)
+> diff --git a/drivers/thermal/exynos_thermal.c
+> b/drivers/thermal/exynos_thermal.c
+> index fd03e85..8be9282 100644
+> --- a/drivers/thermal/exynos_thermal.c
+> +++ b/drivers/thermal/exynos_thermal.c
+> @@ -728,7 +728,7 @@ static struct thermal_sensor_conf exynos_sensor_conf
+> = { .read_temperature	= (int (*)(void *))exynos_tmu_read,
+>  };
+> 
+> -#if defined(CONFIG_CPU_EXYNOS4210)
+> +#if defined(CONFIG_SOC_EXYNOS4210)
+>  static struct exynos_tmu_platform_data const
+> exynos4210_default_tmu_data = {
+>  	.threshold = 80,
+>  	.trigger_levels[0] = 5,
+> 8<--------------------------------
 
-This is an old version of the patch. A new one was posted as a part of the 
-series adding support for firmware ops, with corrections for received 
-comments.
+Yes, I must have missed them somehow, will include these missing changes 
+in next version.
 
 Best regards,
 Tomasz Figa
