@@ -1,30 +1,29 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 1/5] ARM: EXYNOS: Add set_irq_affinity function for
- combiner_irq
-Date: Tue, 23 Oct 2012 22:45:32 +0900
-Message-ID: <020b01cdb124$abfebd70$03fc3850$%kim@samsung.com>
+Subject: RE: [PATCH v4 2/5] ARM: EXYNOS: Correct combined IRQs for exynos4
+Date: Tue, 23 Oct 2012 22:58:47 +0900
+Message-ID: <020c01cdb126$85c9c940$915d5bc0$%kim@samsung.com>
 References: <1349662630-11607-1-git-send-email-chanho61.park@samsung.com>
- <1349662630-11607-2-git-send-email-chanho61.park@samsung.com>
+ <1349662630-11607-3-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24928 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933070Ab2JWNpe (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56302 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932291Ab2JWN6t (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Oct 2012 09:45:34 -0400
+	Tue, 23 Oct 2012 09:58:49 -0400
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MCC00CBYM7SFJF0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Oct 2012 22:45:32 +0900 (KST)
+ 17 2011)) with ESMTP id <0MCC007RIMTSR4G0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Oct 2012 22:58:47 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MCC006O8M7WLW60@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Oct 2012 22:45:32 +0900 (KST)
-In-reply-to: <1349662630-11607-2-git-send-email-chanho61.park@samsung.com>
+ with ESMTPA id <0MCC0091LMTZLP30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Oct 2012 22:58:47 +0900 (KST)
+In-reply-to: <1349662630-11607-3-git-send-email-chanho61.park@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -33,100 +32,134 @@ Cc: linux@arm.linux.org.uk, sachin.kamat@linaro.org, will.deacon@arm.com, thomas
 
 Chanho Park wrote:
 > 
-> This patch adds set_irq_affinity function for combiner_irq. We need this
-> function to enable a arm-pmu because the pmu of exynos has combined type
-> irqs.
+> This patch corrects combined IRQs for exynos4 series platform. The
+> exynos4412
+> has four extra combined irq group and the exynos4212 has two more combined
+> irqs
+> than exynos4210. Each irq is mapped to IRQ_SPI(xx). Unfortunately, extra 4
+> combined IRQs isn't sequential. So, we need to map the irqs manually.
 > 
-> Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
 > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-exynos/common.c |   30 +++++++++++++++++++++++++-----
->  1 file changed, 25 insertions(+), 5 deletions(-)
+>  arch/arm/mach-exynos/common.c            |   42
++++++++++++++++++++++++++----
+> -
+>  arch/arm/mach-exynos/include/mach/irqs.h |    4 ++-
+>  2 files changed, 39 insertions(+), 7 deletions(-)
 > 
 > diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 715b690..709245e 100644
+> index 709245e..fdd582a 100644
 > --- a/arch/arm/mach-exynos/common.c
 > +++ b/arch/arm/mach-exynos/common.c
-> @@ -405,6 +405,7 @@ struct combiner_chip_data {
->  	unsigned int irq_offset;
->  	unsigned int irq_mask;
->  	void __iomem *base;
-> +	unsigned int parent_irq;
+> @@ -560,23 +560,50 @@ static struct irq_domain_ops combiner_irq_domain_ops
+> = {
+>  	.map	= combiner_irq_domain_map,
 >  };
 > 
->  static struct irq_domain *combiner_irq_domain;
-> @@ -461,10 +462,28 @@ static void combiner_handle_cascade_irq(unsigned int
-> irq, struct irq_desc *desc)
->  	chained_irq_exit(chip, desc);
->  }
-> 
-> +#ifdef CONFIG_SMP
-> +static int combiner_set_affinity(struct irq_data *d,
-> +				 const struct cpumask *mask_val, bool force)
+> +static unsigned int combiner_extra_irq(int group)
+
+This is only for exynos4212 and exynos4412 so how about to use
+exynos4x12_combiner_extra_irq()?
+
 > +{
-> +	struct combiner_chip_data *chip_data =
-> irq_data_get_irq_chip_data(d);
-> +	struct irq_chip *chip = irq_get_chip(chip_data->parent_irq);
-> +	struct irq_data *data = irq_get_irq_data(chip_data->parent_irq);
-> +
-> +	if (chip && chip->irq_set_affinity)
-> +		return chip->irq_set_affinity(data, mask_val, force);
-> +	else
-> +		return -EINVAL;
+> +	switch (group) {
+> +	case 16:
+> +		return IRQ_SPI(107);
+> +	case 17:
+> +		return IRQ_SPI(108);
+> +	case 18:
+> +		return IRQ_SPI(48);
+> +	case 19:
+> +		return IRQ_SPI(42);
+> +	default:
+> +		return 0;
+> +	}
 > +}
-> +#endif
 > +
->  static struct irq_chip combiner_chip = {
-> -	.name		= "COMBINER",
-> -	.irq_mask	= combiner_mask_irq,
-> -	.irq_unmask	= combiner_unmask_irq,
-> +	.name			= "COMBINER",
-> +	.irq_mask		= combiner_mask_irq,
-> +	.irq_unmask		= combiner_unmask_irq,
-> +#ifdef CONFIG_SMP
-> +	.irq_set_affinity	= combiner_set_affinity,
-> +#endif
->  };
-> 
->  static void __init combiner_cascade_irq(unsigned int combiner_nr,
-> unsigned int irq)
-> @@ -484,12 +503,13 @@ static void __init combiner_cascade_irq(unsigned int
-> combiner_nr, unsigned int i
->  }
-> 
->  static void __init combiner_init_one(unsigned int combiner_nr,
-> -				     void __iomem *base)
-> +				     void __iomem *base, unsigned int irq)
+> +static unsigned int max_combiner_nr(void)
+> +{
+> +	if (soc_is_exynos5250())
+> +		return EXYNOS5_MAX_COMBINER_NR;
+> +	else if (soc_is_exynos4412())
+> +		return EXYNOS4_MAX_COMBINER_NR;
+
+EXYNOS4412_MAX_COMBINER_NR is more clear?
+
+> +	else if (soc_is_exynos4212())
+> +		return EXYNOS4212_MAX_COMBINER_NR;
+> +	else
+> +		return EXYNOS4210_MAX_COMBINER_NR;
+> +}
+> +
+>  static void __init combiner_init(void __iomem *combiner_base,
+>  				 struct device_node *np)
 >  {
->  	combiner_data[combiner_nr].base = base;
->  	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
->  		combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
->  	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) <<
-> 3);
-> +	combiner_data[combiner_nr].parent_irq = irq;
+>  	int i, irq, irq_base;
+>  	unsigned int max_nr, nr_irq;
 > 
->  	/* Disable all interrupts */
->  	__raw_writel(combiner_data[combiner_nr].irq_mask,
-> @@ -573,12 +593,12 @@ static void __init combiner_init(void __iomem
+> +	max_nr = max_combiner_nr();
+> +
+>  	if (np) {
+>  		if (of_property_read_u32(np, "samsung,combiner-nr",
+&max_nr))
+> {
+>  			pr_warning("%s: number of combiners not specified, "
+
+Hmm...the message should be changed, because it is just defined by checking
+SoC with this changes not property of device tree...So how about just using
+pr_info() with proper message?
+
+>  				"setting default as %d.\n",
+> -				__func__, EXYNOS4_MAX_COMBINER_NR);
+> -			max_nr = EXYNOS4_MAX_COMBINER_NR;
+> +				__func__, max_nr);
+>  		}
+> -	} else {
+> -		max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
+> -						EXYNOS4_MAX_COMBINER_NR;
+>  	}
+> +
+>  	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
+> 
+>  	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
+> @@ -593,7 +620,10 @@ static void __init combiner_init(void __iomem
 > *combiner_base,
 >  	}
 > 
 >  	for (i = 0; i < max_nr; i++) {
-> -		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
->  		irq = IRQ_SPI(i);
+> -		irq = IRQ_SPI(i);
+> +		if (i < EXYNOS4210_MAX_COMBINER_NR || soc_is_exynos5250())
+> +			irq = IRQ_SPI(i);
+> +		else
+> +			irq = combiner_extra_irq(i);
 >  #ifdef CONFIG_OF
 >  		if (np)
 >  			irq = irq_of_parse_and_map(np, i);
->  #endif
-> +		combiner_init_one(i, combiner_base + (i >> 2) * 0x10, irq);
->  		combiner_cascade_irq(i, irq);
->  	}
->  }
+> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-
+> exynos/include/mach/irqs.h
+> index 35bced6..3a83546 100644
+> --- a/arch/arm/mach-exynos/include/mach/irqs.h
+> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
+> @@ -165,7 +165,9 @@
+>  #define EXYNOS4_IRQ_FIMD0_VSYNC		COMBINER_IRQ(11, 1)
+>  #define EXYNOS4_IRQ_FIMD0_SYSTEM	COMBINER_IRQ(11, 2)
+> 
+> -#define EXYNOS4_MAX_COMBINER_NR		16
+> +#define EXYNOS4210_MAX_COMBINER_NR	16
+> +#define EXYNOS4212_MAX_COMBINER_NR	18
+> +#define EXYNOS4_MAX_COMBINER_NR		20
+
+EXYNOS4412_MAX_COMBINER_NR ?
+
+> 
+>  #define EXYNOS4_IRQ_GPIO1_NR_GROUPS	16
+>  #define EXYNOS4_IRQ_GPIO2_NR_GROUPS	9
 > --
 > 1.7.9.5
 
-Looks good to me, applied.
+
+
 Thanks.
 
 Best regards,
