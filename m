@@ -1,29 +1,29 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 3/5] ARM: EXYNOS: Enable PMUs for exynos4
-Date: Tue, 23 Oct 2012 23:01:17 +0900
-Message-ID: <020d01cdb126$df6d7aa0$9e486fe0$%kim@samsung.com>
+Subject: RE: [PATCH v4 4/5] ARM: EXYNOS: Add arm-pmu DT binding for exynos5250
+Date: Tue, 23 Oct 2012 23:01:42 +0900
+Message-ID: <020e01cdb126$ee4b0560$cae11020$%kim@samsung.com>
 References: <1349662630-11607-1-git-send-email-chanho61.park@samsung.com>
- <1349662630-11607-4-git-send-email-chanho61.park@samsung.com>
+ <1349662630-11607-5-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:25914 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754951Ab2JWOBd (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56494 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756339Ab2JWOBp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Oct 2012 10:01:33 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
+	Tue, 23 Oct 2012 10:01:45 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MCC00BH1MY437H0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Oct 2012 23:01:18 +0900 (KST)
+ 17 2011)) with ESMTP id <0MCC00K9HMYQ0EO0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Oct 2012 23:01:44 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MCC0084KMY5JH10@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Oct 2012 23:01:17 +0900 (KST)
-In-reply-to: <1349662630-11607-4-git-send-email-chanho61.park@samsung.com>
+ with ESMTPA id <0MCC007O8MYUY590@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Oct 2012 23:01:42 +0900 (KST)
+In-reply-to: <1349662630-11607-5-git-send-email-chanho61.park@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -32,123 +32,39 @@ Cc: linux@arm.linux.org.uk, sachin.kamat@linaro.org, will.deacon@arm.com, thomas
 
 Chanho Park wrote:
 > 
-> This patch defines irq numbers of ARM performance monitoring unit for
-> exynos4.
-> Firs of all, we need to fix IRQ_PMU correctly and to split pmu
-> initialization
-> of exynos from plat-samsung for easily defining it.
+> This patch enables arm-pmu to bind device tree for exynos5250. The
+> exynos5250
+> has two pmus which have combiner irq type.
 > 
-> The number of CPU cores and PMU irq numbers are vary according to soc
-> types.
-> So, we need to identify each soc type using soc_is_xxx function and to
-> define
-> the pmu irqs dynamically. For example, the exynos4412 has 4 cpu cores and
-> pmus.
-> 
+> Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
 > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-exynos/common.c            |   28
-++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/include/mach/irqs.h |    8 ++++++--
->  arch/arm/plat-samsung/devs.c             |    2 +-
->  3 files changed, 35 insertions(+), 3 deletions(-)
+>  arch/arm/boot/dts/exynos5250.dtsi |    6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index fdd582a..5183426 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -35,6 +35,7 @@
->  #include <mach/regs-pmu.h>
->  #include <mach/regs-gpio.h>
->  #include <mach/pmu.h>
-> +#include <mach/irqs.h>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index dddfd6e..fab3eae 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -56,6 +56,12 @@
+>  			     <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
+>  	};
 > 
->  #include <plat/cpu.h>
->  #include <plat/clock.h>
-> @@ -1093,3 +1094,30 @@ static int __init exynos_init_irq_eint(void)
->  	return 0;
->  }
->  arch_initcall(exynos_init_irq_eint);
+> +	pmu {
+> +		compatible = "arm,cortex-a15-pmu";
+> +		interrupt-parent = <&combiner>;
+> +		interrupts = <1 2>, <22 4>;
+> +	};
 > +
-> +static struct resource exynos4_pmu_resource[] = {
-> +	DEFINE_RES_IRQ(EXYNOS4_IRQ_PMU),
-> +	DEFINE_RES_IRQ(EXYNOS4_IRQ_PMU_CPU1),
-> +#if defined(CONFIG_SOC_EXYNOS4412)
-> +	DEFINE_RES_IRQ(EXYNOS4_IRQ_PMU_CPU2),
-> +	DEFINE_RES_IRQ(EXYNOS4_IRQ_PMU_CPU3),
-> +#endif
-> +};
-> +
-> +static struct platform_device exynos4_device_pmu = {
-> +	.name		= "arm-pmu",
-> +	.num_resources	= ARRAY_SIZE(exynos4_pmu_resource),
-> +	.resource	= exynos4_pmu_resource,
-> +};
-> +
-> +static int __init exynos_armpmu_init(void)
-> +{
-> +	if (!of_have_populated_dt()) {
-> +		if (soc_is_exynos4210() || soc_is_exynos4212())
-> +			exynos4_device_pmu.num_resources = 2;
-> +		platform_device_register(&exynos4_device_pmu);
-> +	}
-> +
-> +	return 0;
-> +}
-> +arch_initcall(exynos_armpmu_init);
-> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-
-> exynos/include/mach/irqs.h
-> index 3a83546..c67a54e 100644
-> --- a/arch/arm/mach-exynos/include/mach/irqs.h
-> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
-> @@ -128,7 +128,7 @@
->  #define EXYNOS4_IRQ_ADC1		IRQ_SPI(107)
->  #define EXYNOS4_IRQ_PEN1		IRQ_SPI(108)
->  #define EXYNOS4_IRQ_KEYPAD		IRQ_SPI(109)
-> -#define EXYNOS4_IRQ_PMU			IRQ_SPI(110)
-> +#define EXYNOS4_IRQ_POWER_PMU		IRQ_SPI(110)
->  #define EXYNOS4_IRQ_GPS			IRQ_SPI(111)
->  #define EXYNOS4_IRQ_INTFEEDCTRL_SSS	IRQ_SPI(112)
->  #define EXYNOS4_IRQ_SLIMBUS		IRQ_SPI(113)
-> @@ -136,6 +136,11 @@
->  #define EXYNOS4_IRQ_TSI			IRQ_SPI(115)
->  #define EXYNOS4_IRQ_SATA		IRQ_SPI(116)
-> 
-> +#define EXYNOS4_IRQ_PMU			COMBINER_IRQ(2, 2)
-> +#define EXYNOS4_IRQ_PMU_CPU1		COMBINER_IRQ(3, 2)
-> +#define EXYNOS4_IRQ_PMU_CPU2		COMBINER_IRQ(18, 2)
-> +#define EXYNOS4_IRQ_PMU_CPU3		COMBINER_IRQ(19, 2)
-> +
->  #define EXYNOS4_IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(4, 0)
->  #define EXYNOS4_IRQ_SYSMMU_SSS_0	COMBINER_IRQ(4, 1)
->  #define EXYNOS4_IRQ_SYSMMU_FIMC0_0	COMBINER_IRQ(4, 2)
-> @@ -232,7 +237,6 @@
->  #define IRQ_TC				EXYNOS4_IRQ_PEN0
-> 
->  #define IRQ_KEYPAD			EXYNOS4_IRQ_KEYPAD
-> -#define IRQ_PMU				EXYNOS4_IRQ_PMU
-> 
->  #define IRQ_FIMD0_FIFO			EXYNOS4_IRQ_FIMD0_FIFO
->  #define IRQ_FIMD0_VSYNC			EXYNOS4_IRQ_FIMD0_VSYNC
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 03f654d..ace76b4 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -1125,7 +1125,7 @@ struct platform_device s5p_device_onenand = {
-> 
->  /* PMU */
-> 
-> -#ifdef CONFIG_PLAT_S5P
-> +#if defined(CONFIG_PLAT_S5P) && !defined(CONFIG_ARCH_EXYNOS)
->  static struct resource s5p_pmu_resource[] = {
->  	DEFINE_RES_IRQ(IRQ_PMU)
->  };
+>  	watchdog {
+>  		compatible = "samsung,s3c2410-wdt";
+>  		reg = <0x101D0000 0x100>;
 > --
 > 1.7.9.5
 
-Looks OK to me, will apply with your updated 2nd patch.
-
+OK, applied.
 Thanks.
 
 Best regards,
