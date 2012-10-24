@@ -1,53 +1,70 @@
 From: Vinod Koul <vkoul@infradead.org>
-Subject: Re: [PATCH v2 4/4] DMA: PL330: unregister dma_device in module's
- remove function
-Date: Wed, 24 Oct 2012 09:49:39 +0530
-Message-ID: <1351052379.5263.20.camel@vkoul-udesk3>
+Subject: Re: [PATCH v2 1/4] DMA: PL330: Free memory allocated for
+ peripheral channels
+Date: Wed, 24 Oct 2012 09:35:50 +0530
+Message-ID: <1351051550.5263.15.camel@vkoul-udesk3>
 References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
-	 <1349432276-22919-5-git-send-email-inderpal.singh@linaro.org>
+	 <1349432276-22919-2-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:54813 "EHLO
+Received: from casper.infradead.org ([85.118.1.10]:54964 "EHLO
 	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755909Ab2JXEdG (ORCPT
+	with ESMTP id S1750827Ab2JXFGQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Oct 2012 00:33:06 -0400
-In-Reply-To: <1349432276-22919-5-git-send-email-inderpal.singh@linaro.org>
+	Wed, 24 Oct 2012 01:06:16 -0400
+In-Reply-To: <1349432276-22919-2-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inderpal Singh <inderpal.singh@linaro.org>
 Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
 
 On Fri, 2012-10-05 at 15:47 +0530, Inderpal Singh wrote:
-> unregister dma_device in module's remove function.
+> The allocated memory for peripheral channels is not being freed upon
+> failure in probe and in module's remove funtion. It will lead to memory
+> leakage. Hence free the allocated memory.
 > 
 > Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
 > ---
->  drivers/dma/pl330.c |    2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/dma/pl330.c |    5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 4b7a34d..e7dc040 100644
+> index 2ebd4cd..10c6b6a 100644
 > --- a/drivers/dma/pl330.c
 > +++ b/drivers/dma/pl330.c
-> @@ -3017,6 +3017,8 @@ static int __devexit pl330_remove(struct amba_device *adev)
->  			return -EBUSY;
+> @@ -2962,7 +2962,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>  	ret = dma_async_device_register(pd);
+>  	if (ret) {
+>  		dev_err(&adev->dev, "unable to register DMAC\n");
+> -		goto probe_err4;
+> +		goto probe_err5;
 >  	}
 >  
-> +	dma_async_device_unregister(&pdmac->ddma);
-> +
->  	amba_set_drvdata(adev, NULL);
+>  	dev_info(&adev->dev,
+> @@ -2975,6 +2975,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
 >  
->  	list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
+>  	return 0;
+>  
+> +probe_err5:
+> +	kfree(pdmac->peripherals);
+>  probe_err4:
+>  	pl330_del(pi);
+>  probe_err3:
+> @@ -3025,6 +3027,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>  	res = &adev->res;
+>  	release_mem_region(res->start, resource_size(res));
+>  
+> +	kfree(pdmac->peripherals);
+>  	kfree(pdmac);
+>  
+>  	return 0;
 
-Ok with this one :)
+This looks fine, but if you use devm_ functions then you dont need to do
+all this.
+Can you do that conversion instead?
 
-Tried applying but didn't work out. You would need to regenerate this
-one.
-
-Thanks
 -- 
 Vinod Koul
 Intel Corp.
