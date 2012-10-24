@@ -1,106 +1,161 @@
-From: Vinod Koul <vkoul@infradead.org>
-Subject: Re: [PATCH] DMA: PL330: Add runtime pm support
-Date: Wed, 24 Oct 2012 10:24:01 +0530
-Message-ID: <1351054441.5263.52.camel@vkoul-udesk3>
-References: <1350447151-16737-1-git-send-email-inderpal.singh@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4: Add support for Exynos4x12 SoCs
+Date: Wed, 24 Oct 2012 16:35:59 +0200
+Message-ID: <1351089359-7318-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:59080 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751599Ab2JXLPV (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:33828 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934968Ab2JXOgM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Oct 2012 07:15:21 -0400
-In-Reply-To: <1350447151-16737-1-git-send-email-inderpal.singh@linaro.org>
+	Wed, 24 Oct 2012 10:36:12 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MCE0066GJ871Q80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Oct 2012 23:36:10 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MCE007UBJ82MD10@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Oct 2012 23:36:10 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, kgene.kim@samsung.com, patches@linaro.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org
 
-On Wed, 2012-10-17 at 09:42 +0530, Inderpal Singh wrote:
-> At the pl330's probe point the device is already in runtime resume state.
-> Hence to manage the device with runtime, the probe should do pm_runtime_put
-> and remove should do pm_runtime_get to balance with probe.
-> 
-> And in between, the device is being get/put at alloc_chan_resources and
-> free_chan_resources.
-> 
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
-> ---
-> This patch is based on slave-dma's next branch and on top
-> of the clean up patches at [1].
-> 
-> [1] https://lkml.org/lkml/2012/10/5/169
-> 
->  drivers/dma/pl330.c |   10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 2ee1538..5ae19ea 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -25,6 +25,7 @@
->  #include <linux/amba/pl330.h>
->  #include <linux/scatterlist.h>
->  #include <linux/of.h>
-> +#include <linux/pm_runtime.h>
->  
->  #include "dmaengine.h"
->  #define PL330_MAX_CHAN		8
-> @@ -2384,6 +2385,8 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
->  	struct dma_pl330_dmac *pdmac = pch->dmac;
->  	unsigned long flags;
->  
-> +	pm_runtime_get_sync(pdmac->ddma.dev);
-it would be really good if we move this to tx_submit. That way you
-resume the dmaengine when actual transactions happen, not when someone
-requests a channel.
-Yes thats a little more work, though initially we can have this way.
-> +
->  	spin_lock_irqsave(&pch->lock, flags);
->  
->  	dma_cookie_init(chan);
-> @@ -2392,6 +2395,7 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
->  	pch->pl330_chid = pl330_request_channel(&pdmac->pif);
->  	if (!pch->pl330_chid) {
->  		spin_unlock_irqrestore(&pch->lock, flags);
-> +		pm_runtime_put(pdmac->ddma.dev);
->  		return -ENOMEM;
->  	}
->  
-> @@ -2470,6 +2474,8 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
->  		list_splice_tail_init(&pch->work_list, &pch->dmac->desc_pool);
->  
->  	spin_unlock_irqrestore(&pch->lock, flags);
-> +
-> +	pm_runtime_put(pch->dmac->ddma.dev);
->  }
->  
->  static enum dma_status
-> @@ -2974,6 +2980,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->  		pi->pcfg.data_bus_width / 8, pi->pcfg.num_chan,
->  		pi->pcfg.num_peri, pi->pcfg.num_events);
->  
-> +	pm_runtime_put(pd->dev);
-pm_runtime_put_noidle is better. Yous should also do pm_runtime_allow
-here and pm_runtime_forbid in your remove.
+This patch adds device tree sources for Exynos4x12 SoC series (currently
+Exynos4212 and Exynos4412) and enables mach-exynos4-dt to support these
+SoCs.
 
-> +
->  	return 0;
->  
->  probe_err5:
-> @@ -3017,6 +3025,8 @@ static int __devexit pl330_remove(struct amba_device *adev)
->  			return -EBUSY;
->  	}
->  
-> +	pm_runtime_get(pdmac->ddma.dev);
-> +
->  	dma_async_device_unregister(&pdmac->ddma);
->  
->  	amba_set_drvdata(adev, NULL);
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4212.dtsi      | 28 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4412.dtsi      | 28 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi      | 31 +++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/mach-exynos4-dt.c |  2 ++
+ 4 files changed, 89 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4212.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4x12.dtsi
 
-
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+new file mode 100644
+index 0000000..c6ae200
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -0,0 +1,28 @@
++/*
++ * Samsung's Exynos4212 SoC device tree source
++ *
++ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Samsung's Exynos4212 SoC device nodes are listed in this file. Exynos4212
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * Exynos4212 SoC. As device tree coverage for Exynos4212 increases, additional
++ * nodes can be added to this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/include/ "exynos4x12.dtsi"
++
++/ {
++	compatible = "samsung,exynos4212";
++
++	gic:interrupt-controller@10490000 {
++		cpu-offset = <0x8000>;
++	};
++};
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+new file mode 100644
+index 0000000..d7dfe31
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -0,0 +1,28 @@
++/*
++ * Samsung's Exynos4412 SoC device tree source
++ *
++ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Samsung's Exynos4412 SoC device nodes are listed in this file. Exynos4412
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * Exynos4412 SoC. As device tree coverage for Exynos4412 increases, additional
++ * nodes can be added to this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/include/ "exynos4x12.dtsi"
++
++/ {
++	compatible = "samsung,exynos4412";
++
++	gic:interrupt-controller@10490000 {
++		cpu-offset = <0x4000>;
++	};
++};
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+new file mode 100644
+index 0000000..b6a66f4
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -0,0 +1,31 @@
++/*
++ * Samsung's Exynos4x12 SoCs device tree source
++ *
++ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Samsung's Exynos4x12 SoCs device nodes are listed in this file. Exynos4x12
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * Exynos4x12 SoC. As device tree coverage for Exynos4x12 increases, additional
++ * nodes can be added to this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/include/ "exynos4.dtsi"
++/include/ "exynos4x12-pinctrl.dtsi"
++
++/ {
++	combiner:interrupt-controller@10440000 {
++		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
++			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
++			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
++			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
++			     <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>;
++	};
++};
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index 977bd39..b2b9cc1 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -94,6 +94,8 @@ static void __init exynos4_dt_machine_init(void)
+ 
+ static char const *exynos4_dt_compat[] __initdata = {
+ 	"samsung,exynos4210",
++	"samsung,exynos4212",
++	"samsung,exynos4412",
+ 	NULL
+ };
+ 
 -- 
-Vinod Koul
-Intel Corp.
+1.7.12
