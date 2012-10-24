@@ -1,59 +1,106 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V3] gpio: samsung: use pr_* instead of printk
-Date: Wed, 24 Oct 2012 09:41:23 +0200
-Message-ID: <CACRpkdYKXZwFLhnw0AAcjELqUnRG+xzahtwgvQvAUQEFevPWXw@mail.gmail.com>
-References: <002801cdac0a$11e4f340$35aed9c0$%han@samsung.com>
-	<CACRpkdYx1HLF2==6DsPp+qC6Xyb7Ag8qa1K7g2Ht-Y2T-UjzMA@mail.gmail.com>
-	<00a201cdaff0$d90a11a0$8b1e34e0$%han@samsung.com>
-	<CACRpkdZCH_bxviyz5Qqx0ttFFGW-CkJT6vCT3-JcOgQ5quK0kg@mail.gmail.com>
-	<021101cdb128$1f56c1c0$5e044540$%kim@samsung.com>
+From: Vinod Koul <vkoul@infradead.org>
+Subject: Re: [PATCH] DMA: PL330: Add runtime pm support
+Date: Wed, 24 Oct 2012 10:24:01 +0530
+Message-ID: <1351054441.5263.52.camel@vkoul-udesk3>
+References: <1350447151-16737-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:50437 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934399Ab2JXHlY (ORCPT
+Received: from casper.infradead.org ([85.118.1.10]:59080 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751599Ab2JXLPV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Oct 2012 03:41:24 -0400
-Received: by mail-wi0-f178.google.com with SMTP id hr7so219894wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Oct 2012 00:41:23 -0700 (PDT)
-In-Reply-To: <021101cdb128$1f56c1c0$5e044540$%kim@samsung.com>
+	Wed, 24 Oct 2012 07:15:21 -0400
+In-Reply-To: <1350447151-16737-1-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Ryan Mallon <rmallon@gmail.com>
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, kgene.kim@samsung.com, patches@linaro.org
 
-On Tue, Oct 23, 2012 at 4:10 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Linus Walleij wrote:
->>
->> On Mon, Oct 22, 2012 at 3:02 AM, Jingoo Han <jg1.han@samsung.com> wrote:
->> > On Friday, October 19, 2012 7:09 PM Linus Walleij wrote
->> >>
->> >> On Wed, Oct 17, 2012 at 3:52 AM, Jingoo Han <jg1.han@samsung.com>
-> wrote:
->> >>
->> >> > This patch uses pr_* instead of printk. Also, gpio_dbg
->> >> > is replaced with pr_debug.
->> >> >
->> >> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
->> >> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org> <- NAK
->> >>
->> >> Please consult Documentation/SubmittingPatches as to the conditions
->> that
->> >> apply when you add Reviewed-by tags.
->> >
->> > Um, you already gave the Reviewed-by to the same patch, a month ago.
->> > Anyway, I will remove Reviewed-by and send v4 patch, soon.
->>
->> My bad. I confused this mail thread for something else, sorry
->> for this. :-(
->>
->> Please keep the Reviewed-tag if you want to!
->>
-> Linus, if you don't have any objection, let me take this into Samsung tree.
+On Wed, 2012-10-17 at 09:42 +0530, Inderpal Singh wrote:
+> At the pl330's probe point the device is already in runtime resume state.
+> Hence to manage the device with runtime, the probe should do pm_runtime_put
+> and remove should do pm_runtime_get to balance with probe.
+> 
+> And in between, the device is being get/put at alloc_chan_resources and
+> free_chan_resources.
+> 
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> ---
+> This patch is based on slave-dma's next branch and on top
+> of the clean up patches at [1].
+> 
+> [1] https://lkml.org/lkml/2012/10/5/169
+> 
+>  drivers/dma/pl330.c |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 2ee1538..5ae19ea 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/amba/pl330.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/of.h>
+> +#include <linux/pm_runtime.h>
+>  
+>  #include "dmaengine.h"
+>  #define PL330_MAX_CHAN		8
+> @@ -2384,6 +2385,8 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
+>  	struct dma_pl330_dmac *pdmac = pch->dmac;
+>  	unsigned long flags;
+>  
+> +	pm_runtime_get_sync(pdmac->ddma.dev);
+it would be really good if we move this to tx_submit. That way you
+resume the dmaengine when actual transactions happen, not when someone
+requests a channel.
+Yes thats a little more work, though initially we can have this way.
+> +
+>  	spin_lock_irqsave(&pch->lock, flags);
+>  
+>  	dma_cookie_init(chan);
+> @@ -2392,6 +2395,7 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
+>  	pch->pl330_chid = pl330_request_channel(&pdmac->pif);
+>  	if (!pch->pl330_chid) {
+>  		spin_unlock_irqrestore(&pch->lock, flags);
+> +		pm_runtime_put(pdmac->ddma.dev);
+>  		return -ENOMEM;
+>  	}
+>  
+> @@ -2470,6 +2474,8 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
+>  		list_splice_tail_init(&pch->work_list, &pch->dmac->desc_pool);
+>  
+>  	spin_unlock_irqrestore(&pch->lock, flags);
+> +
+> +	pm_runtime_put(pch->dmac->ddma.dev);
+>  }
+>  
+>  static enum dma_status
+> @@ -2974,6 +2980,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>  		pi->pcfg.data_bus_width / 8, pi->pcfg.num_chan,
+>  		pi->pcfg.num_peri, pi->pcfg.num_events);
+>  
+> +	pm_runtime_put(pd->dev);
+pm_runtime_put_noidle is better. Yous should also do pm_runtime_allow
+here and pm_runtime_forbid in your remove.
 
-Of course you should take it, sorry for the mess.
-Acked-by/Reviewed-by: <linus.walleij@linaro.org>
+> +
+>  	return 0;
+>  
+>  probe_err5:
+> @@ -3017,6 +3025,8 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>  			return -EBUSY;
+>  	}
+>  
+> +	pm_runtime_get(pdmac->ddma.dev);
+> +
+>  	dma_async_device_unregister(&pdmac->ddma);
+>  
+>  	amba_set_drvdata(adev, NULL);
 
-Yours,
-Linus Walleij
+
+-- 
+Vinod Koul
+Intel Corp.
