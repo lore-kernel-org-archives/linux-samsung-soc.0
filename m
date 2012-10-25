@@ -1,46 +1,87 @@
-From: Yuvaraj CD <yuvaraj.lkml@gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt before calling mmc_start_host
-Date: Thu, 25 Oct 2012 15:39:50 +0530
-Message-ID: <CA+NduCBvB6kx3ZGhrUTiRJ4hTY4a0NV4Q8GYeBYWGvzTM=ccEQ@mail.gmail.com>
-References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com>
-	<87hapkhoor.fsf@octavius.laptop.org>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH v2 1/4] DMA: PL330: Free memory allocated for peripheral channels
+Date: Thu, 25 Oct 2012 16:29:10 +0530
+Message-ID: <CAG17yqQ83TQZaoS7wC7vDeSenR5sLz7vzLu2rsnTXFMDHVsWbQ@mail.gmail.com>
+References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
+	<1349432276-22919-2-git-send-email-inderpal.singh@linaro.org>
+	<1351051550.5263.15.camel@vkoul-udesk3>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:55646 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932839Ab2JYKJw (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:34706 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757684Ab2JYK7L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Oct 2012 06:09:52 -0400
-In-Reply-To: <87hapkhoor.fsf@octavius.laptop.org>
+	Thu, 25 Oct 2012 06:59:11 -0400
+Received: by mail-vc0-f174.google.com with SMTP id fk26so1688454vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Oct 2012 03:59:10 -0700 (PDT)
+In-Reply-To: <1351051550.5263.15.camel@vkoul-udesk3>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Yuvaraj CD <yuvaraj.cd@gmail.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, will.newton@imgtec.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, thomas.abraham@linaro.org, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>
+To: Vinod Koul <vkoul@infradead.org>
+Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
 
-Yes,its legal name."Yuvaraj C D".
+Hi Vinod,
 
-On Wed, Oct 24, 2012 at 2:49 AM, Chris Ball <cjb@laptop.org> wrote:
-> Hi,
->
-> On Mon, Oct 08 2012, Yuvaraj CD wrote:
->> As mmc_start_host is getting called before enabling the dw_mmc controller
->> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
->> very first command sent by the sdio_reset.
->> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
->> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
+Thanks for reviewing.
+
+On 24 October 2012 09:35, Vinod Koul <vkoul@infradead.org> wrote:
+> On Fri, 2012-10-05 at 15:47 +0530, Inderpal Singh wrote:
+>> The allocated memory for peripheral channels is not being freed upon
+>> failure in probe and in module's remove funtion. It will lead to memory
+>> leakage. Hence free the allocated memory.
 >>
->> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
+>> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+>> ---
+>>  drivers/dma/pl330.c |    5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+>> index 2ebd4cd..10c6b6a 100644
+>> --- a/drivers/dma/pl330.c
+>> +++ b/drivers/dma/pl330.c
+>> @@ -2962,7 +2962,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>>       ret = dma_async_device_register(pd);
+>>       if (ret) {
+>>               dev_err(&adev->dev, "unable to register DMAC\n");
+>> -             goto probe_err4;
+>> +             goto probe_err5;
+>>       }
+>>
+>>       dev_info(&adev->dev,
+>> @@ -2975,6 +2975,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>>
+>>       return 0;
+>>
+>> +probe_err5:
+>> +     kfree(pdmac->peripherals);
+>>  probe_err4:
+>>       pl330_del(pi);
+>>  probe_err3:
+>> @@ -3025,6 +3027,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>>       res = &adev->res;
+>>       release_mem_region(res->start, resource_size(res));
+>>
+>> +     kfree(pdmac->peripherals);
+>>       kfree(pdmac);
+>>
+>>       return 0;
 >
-> Is "Yuvaraj CD" your legal name?  We should use your full name so that
-> we can track copyright attribution properly.
+> This looks fine, but if you use devm_ functions then you dont need to do
+> all this.
+> Can you do that conversion instead?
 >
-> Thanks!
->
-> - Chris.
+
+Good point.
+I will do the conversion and send it again.
+
+Regards,
+Inder
+
 > --
-> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-> One Laptop Per Child
+> Vinod Koul
+> Intel Corp.
+>
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
