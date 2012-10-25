@@ -1,71 +1,52 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v3 6/6] ARM: EXYNOS: Add secure firmware support to secondary
- CPU bring-up
-Date: Thu, 25 Oct 2012 17:22:40 +0200
-Message-ID: <1351178560-19188-7-git-send-email-t.figa@samsung.com>
-References: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] S3C24XX: add clockevent/clocksource support
+Date: Thu, 25 Oct 2012 22:39:10 +0200
+Message-ID: <6694372.nV9NvELlFJ@flatron>
+References: <50885608.1030503@openwide.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44610 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750821Ab2JYPXP (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:45926 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S2992662Ab2JYUjE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Oct 2012 11:23:15 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MCG00L3YG23WU40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Oct 2012 00:23:14 +0900 (KST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MCG008XQG1VUL00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Oct 2012 00:23:14 +0900 (KST)
-In-reply-to: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
+	Thu, 25 Oct 2012 16:39:04 -0400
+Received: by mail-wi0-f172.google.com with SMTP id hq12so6395158wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Oct 2012 13:39:02 -0700 (PDT)
+In-Reply-To: <50885608.1030503@openwide.fr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
+To: Romain Naour <romain.naour@openwide.fr>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-Boards using secure firmware must use different CPU boot registers and
-call secure firmware to boot the CPU.
+Hi Romain,
 
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/mach-exynos/platsmp.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Wednesday 24 of October 2012 22:56:40 Romain Naour wrote:
+> Hi,
+> 
+> This patch converts the s3c24xx timer driver to the
+> clocksource/clockevent API. I made some test on a mini2440 board and I
+> had to reduce timers frequency to 1MHz in order to produce a timer's
+> overflow every 64ms. Initial timer's frequency (8,45MHz) provide only
+> 7ms between each overflow. It is not enough. As timers were previously
+> used to produce an IRQ at 200Hz, some board (Osiris, Anubis board) use
+> an external 12MHz signal to clock the timers (tclk1). So, I changed
+> their configuration to select internal pclk clock instead, but I can't
+> test it. Also, I created a new file (s3c24xx_time.c) to avoid impacting
+> the s3c64xx. Kernel rev v3.7-rc1
+> 
+> Do you have any comments on this patch ?
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 4ca8ff1..9f8bdaf 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -25,6 +25,7 @@
- #include <asm/hardware/gic.h>
- #include <asm/smp_plat.h>
- #include <asm/smp_scu.h>
-+#include <asm/firmware.h>
- 
- #include <mach/hardware.h>
- #include <mach/regs-clock.h>
-@@ -47,6 +48,8 @@ static inline void __iomem *cpu_boot_reg(int cpu)
- {
- 	void __iomem *boot_reg;
- 
-+	if (!call_firmware_op(cpu_boot_reg, cpu, &boot_reg))
-+		return boot_reg;
- 	boot_reg = cpu_boot_reg_base();
- 	if (soc_is_exynos4412())
- 		boot_reg += 4*cpu;
-@@ -149,6 +152,10 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
- 
- 		__raw_writel(virt_to_phys(exynos4_secondary_startup),
- 							cpu_boot_reg(phys_cpu));
-+
-+		/* Call Exynos specific smc call */
-+		call_firmware_op(cpu_boot, phys_cpu);
-+
- 		gic_raise_softirq(cpumask_of(cpu), 0);
- 
- 		if (pen_release == -1)
--- 
-1.7.12
+Generally looks fine, but I have some doubts:
+
+- Isn't 64ms still way too little for overflow period? Someone who is more 
+into Linux time keeping should comment on this.
+
+- Much of the code is duplicated from s5p-time, maybe s5p-time could be 
+made a generic samsung-time instead? It could be also used for S3C64xx.
+
+CC'ing Heiko and Sylwester, as they might find this patch interesting.
+
+Best regards,
+Tomasz Figa
