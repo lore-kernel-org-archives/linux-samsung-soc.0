@@ -1,62 +1,76 @@
 From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH v2 4/4] DMA: PL330: unregister dma_device in module's
- remove function
-Date: Thu, 25 Oct 2012 16:35:31 +0530
-Message-ID: <CAG17yqQA01P42n-72T4GTYVo0WSaPJPAKV+N0V0kmA17UPyusA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] DMA: PL330: Balance module remove function with probe
+Date: Thu, 25 Oct 2012 16:53:49 +0530
+Message-ID: <CAG17yqQBep4Y3YOGVFr6s_apX9f0YeTC7dxDcTQM7ahxnr1B4w@mail.gmail.com>
 References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
-	<1349432276-22919-5-git-send-email-inderpal.singh@linaro.org>
-	<1351052379.5263.20.camel@vkoul-udesk3>
+	<1349432276-22919-4-git-send-email-inderpal.singh@linaro.org>
+	<1351052091.5263.19.camel@vkoul-udesk3>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:37277 "EHLO
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:41142 "EHLO
 	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934386Ab2JYLFb (ORCPT
+	with ESMTP id S934826Ab2JYLXt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Oct 2012 07:05:31 -0400
-Received: by mail-vb0-f46.google.com with SMTP id ff1so1717540vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Oct 2012 04:05:31 -0700 (PDT)
-In-Reply-To: <1351052379.5263.20.camel@vkoul-udesk3>
+	Thu, 25 Oct 2012 07:23:49 -0400
+Received: by mail-vb0-f46.google.com with SMTP id ff1so1733713vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Oct 2012 04:23:49 -0700 (PDT)
+In-Reply-To: <1351052091.5263.19.camel@vkoul-udesk3>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Vinod Koul <vkoul@infradead.org>
 Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
 
-On 24 October 2012 09:49, Vinod Koul <vkoul@infradead.org> wrote:
+Hi Vinod,
+
+On 24 October 2012 09:44, Vinod Koul <vkoul@infradead.org> wrote:
 > On Fri, 2012-10-05 at 15:47 +0530, Inderpal Singh wrote:
->> unregister dma_device in module's remove function.
+>> Since peripheral channel resources are not being allocated at probe,
+>> no need to flush the channels and free the resources in remove function.
+>> In case, the channel is in use by some client, return EBUSY.
 >>
 >> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
 >> ---
->>  drivers/dma/pl330.c |    2 ++
->>  1 file changed, 2 insertions(+)
+>>  drivers/dma/pl330.c |   13 ++++++++-----
+>>  1 file changed, 8 insertions(+), 5 deletions(-)
 >>
 >> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
->> index 4b7a34d..e7dc040 100644
+>> index bf71ff7..4b7a34d 100644
 >> --- a/drivers/dma/pl330.c
 >> +++ b/drivers/dma/pl330.c
->> @@ -3017,6 +3017,8 @@ static int __devexit pl330_remove(struct amba_device *adev)
->>                       return -EBUSY;
->>       }
+>> @@ -3009,18 +3009,21 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>>       if (!pdmac)
+>>               return 0;
 >>
->> +     dma_async_device_unregister(&pdmac->ddma);
+>> +     /* check if any client is using any channel */
+>> +     list_for_each_entry(pch, &pdmac->ddma.channels,
+>> +                     chan.device_node) {
 >> +
->>       amba_set_drvdata(adev, NULL);
->>
->>       list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
+>> +             if (pch->chan.client_count)
+>> +                     return -EBUSY;
+>> +     }
+>> +
+>>       while (!list_empty(&pdmac->desc_pool)) {
 >
-> Ok with this one :)
+> Did you get this code executed?
+> I think No.
 >
-> Tried applying but didn't work out. You would need to regenerate this
-> one.
+> The dmaengine holds the reference to channels, so if they are in use and
+> not freed by client your remove wont be called. So this check is
+> redundant
 >
 
-I will regenerate this along with other patches and resend.
+This code will get executed only in case of force removal of the
+module which was discussed in the first version of the patch at [1].
+Now, if we do not have to think about force removal then this patch
+will go back to the first version.
 
-With Regards,
+Let me know your view.
+
+[1] https://patchwork.kernel.org/patch/1503171/
+
+Regards,
 Inder
-
-> Thanks
 > --
 > Vinod Koul
 > Intel Corp.
