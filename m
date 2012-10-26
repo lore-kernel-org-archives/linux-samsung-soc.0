@@ -1,116 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 2/7] clk: exynos5440: add common clock support for Samsung EXYNOS5440
-Date: Sat, 27 Oct 2012 02:55:49 +0900
-Message-ID: <1351274153-3120-3-git-send-email-kgene.kim@samsung.com>
-References: <1351274153-3120-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:38014 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965545Ab2JZR40 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Oct 2012 13:56:26 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rr4so2930010pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Oct 2012 10:56:26 -0700 (PDT)
-In-Reply-To: <1351274153-3120-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/7] ARM: EXYNOS: add support for new EXYNOS5440 SoC
+Date: Sat, 27 Oct 2012 02:55:47 +0900
+Message-ID: <1351274153-3120-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Thomas Abraham <thomas.abraham@linaro.org>
+This is for adding support EXYNOS5440 SoC which is including Cortex-A15 Quad cores and SSDK5440 board.
 
-This patch adds clock controller configuration support based on common
-clock framework for Samsung EXYNOS5440.
+Note: this is based on Samsung common clk work and 3rd patch for uart is wip.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/clk/samsung/Makefile         |    1 +
- drivers/clk/samsung/clk-exynos5440.c |   66 ++++++++++++++++++++++++++++++++++
- 2 files changed, 67 insertions(+), 0 deletions(-)
- create mode 100644 drivers/clk/samsung/clk-exynos5440.c
+[PATCH 1/7] ARM: EXYNOS: add support for EXYNOS5440 SoC
+[PATCH 2/7] clk: exynos5440: add common clock support for Samsung EXYNOS5440
+[PATCH 3/7] ARM: EXYNOS: add support uart for EXYNOS SoCs - WIP
+[PATCH 4/7] ARM: dts: add initial dts file for EXYNOS5440, SSDK5440
+[PATCH 5/7] ARM: dts: add clock controller node for Samsung EXYNOS5440
+[PATCH 6/7] pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC
+[PATCH 7/7] ARM: dts: Add pin controller node for Samsung EXYNOS5440 SoC
 
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 69487f7..27aab2c 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -4,3 +4,4 @@
- 
- obj-$(CONFIG_PLAT_SAMSUNG)	+= clk.o
- obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
-+obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
-diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-new file mode 100644
-index 0000000..da3b918
---- /dev/null
-+++ b/drivers/clk/samsung/clk-exynos5440.c
-@@ -0,0 +1,66 @@
-+/*
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/io.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#include "clk.h"
-+
-+static void __iomem *clk_base;
-+
-+/* register a fixed factor clock type instantiated from device tree */
-+void __init samsung_of_clk_register_fixed_factor(struct device_node *np)
-+{
-+	struct clk *clk;
-+	const char *clk_name = np->name;
-+	const char *parent_name;
-+	u32 mul = 1, div = 1;
-+
-+	of_property_read_string(np, "clock-output-names", &clk_name);
-+	parent_name = of_clk_get_parent_name(np, 0);
-+	of_property_read_u32(np, "clock-fixed-factor-mul", &mul);
-+	of_property_read_u32(np, "clock-fixed-factor-div", &div);
-+
-+	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, 0,
-+					mul, div);
-+	if (clk)
-+		of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+}
-+
-+static const __initconst struct of_device_id clk_match[] = {
-+	{ .compatible = "fixed-clock",
-+		.data = of_fixed_clk_setup, },
-+	{ .compatible = "samsung,clock-gate",
-+		.data = samsung_of_clk_register_gate, },
-+	{ .compatible = "samsung,fixed-factor-clock",
-+		.data = samsung_of_clk_register_fixed_factor, },
-+	{},
-+};
-+
-+void __init exynos5440_of_clk_init(void)
-+{
-+	struct device_node *np;
-+
-+	np = of_find_compatible_node(NULL, NULL, "samsung,exynos5440-xmu");
-+	if (!np) {
-+		pr_err("%s: clock controller node not found\n", __func__);
-+		return;
-+	}
-+
-+	clk_base = of_iomap(np, 0);
-+	WARN(!clk_base, "unable to map clocks registers\n");
-+
-+	samsung_clk_set_ctrl_base(clk_base);
-+	of_clk_init(clk_match);
-+}
-+
-+arch_initcall(exynos5440_of_clk_init);
--- 
-1.7.4.4
+Kukjin Kim (3):
+      ARM: EXYNOS: add support for EXYNOS5440 SoC
+      ARM: EXYNOS: add support uart for EXYNOS SoCs - WIP
+      ARM: dts: add initial dts file for EXYNOS5440, SSDK5440
+
+Thomas Abraham (4):
+      clk: exynos5440: add common clock support for Samsung EXYNOS5440
+      ARM: dts: add clock controller node for Samsung EXYNOS5440
+      pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC
+      ARM: dts: Add pin controller node for Samsung EXYNOS5440 SoC
+
+ arch/arm/boot/dts/exynos5440-clock.dtsi      |  143 ++++
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts    |   49 ++
+ arch/arm/boot/dts/exynos5440.dtsi            |  159 +++++
+ arch/arm/mach-exynos/Kconfig                 |   20 +
+ arch/arm/mach-exynos/Makefile                |    3 +-
+ arch/arm/mach-exynos/common.c                |   85 +++-
+ arch/arm/mach-exynos/common.h                |    2 +
+ arch/arm/mach-exynos/dev-uart.c              |   14 +
+ arch/arm/mach-exynos/include/mach/irqs.h     |    5 +
+ arch/arm/mach-exynos/include/mach/map.h      |    8 +
+ arch/arm/mach-exynos/include/mach/regs-pmu.h |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c       |   34 +-
+ arch/arm/mach-exynos/mct.c                   |   15 +
+ arch/arm/mach-exynos/setup-i2c0.c            |    2 +-
+ arch/arm/plat-samsung/include/plat/cpu.h     |    8 +
+ arch/arm/plat-samsung/include/plat/devs.h    |    1 +
+ drivers/clk/samsung/Makefile                 |    1 +
+ drivers/clk/samsung/clk-exynos5440.c         |   66 ++
+ drivers/pinctrl/Kconfig                      |    5 +
+ drivers/pinctrl/Makefile                     |    1 +
+ drivers/pinctrl/pinctrl-exynos5440.c         |  919 ++++++++++++++++++++++++++
+ drivers/tty/serial/samsung.c                 |    3 +-
+ 22 files changed, 1527 insertions(+), 17 deletions(-)
