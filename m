@@ -1,101 +1,78 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH v2 2/2] ARM: exynos5: Add devicetree node for TMU driver
-Date: Fri, 26 Oct 2012 14:59:06 +0530
-Message-ID: <1351243746-4173-3-git-send-email-amit.daniel@samsung.com>
-References: <1351243746-4173-1-git-send-email-amit.daniel@samsung.com>
- <1351243746-4173-2-git-send-email-amit.daniel@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes-2 for v3.7
+Date: Fri, 26 Oct 2012 18:27:34 +0900
+Message-ID: <051a01cdb35c$21e39ae0$65aad0a0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:53765 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757908Ab2JZJHE (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:28835 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756262Ab2JZJ1g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Oct 2012 05:07:04 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
+	Fri, 26 Oct 2012 05:27:36 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MCH00GW8TB8GMT0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Oct 2012 18:07:03 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
+ 17 2011)) with ESMTP id <0MCH00J9PU9JB1U0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Oct 2012 18:27:35 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MCH00BAFT8G5T90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Oct 2012 18:07:02 +0900 (KST)
-In-reply-to: <1351243746-4173-2-git-send-email-amit.daniel@samsung.com>
+ with ESMTPA id <0MCH00CQMU9YDQ80@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Oct 2012 18:27:35 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, amit.kachhap@linaro.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Hi Arnd, Olof
 
-This patch adds necessary source definations needed for TMU driver and
-adds devicetree node for exynos5250.
+Here is Samsung fixes, 3 patches for v3.7.
 
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi       |    6 ++++++
- arch/arm/mach-exynos/clock-exynos5.c    |    5 +++++
- arch/arm/mach-exynos/include/mach/map.h |    1 +
- arch/arm/mach-exynos/mach-exynos5-dt.c  |    2 ++
- 4 files changed, 14 insertions(+), 0 deletions(-)
+One is spi stuff for fix the device names for the different subtypes of the
+spi controller. And the other is adding missing .smp field for exynos4-dt
+and fixing memory sections for exynos4210-trats board.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 49546bc..670dfdb 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -74,6 +74,12 @@
- 		interrupts = <0 43 0>, <0 44 0>;
- 	};
- 
-+	tmu@10060000 {
-+		compatible = "samsung,exynos5250-tmu";
-+		reg = <0x10060000 0x100>;
-+		interrupts = <0 65 0>;
-+	};
-+
- 	serial@12C00000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x12C00000 0x100>;
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 2ca9391..d4ae64e 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -616,6 +616,11 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.enable		= exynos5_clk_ip_peric_ctrl,
- 		.ctrlbit	= (1 << 24),
- 	}, {
-+		.name		= "tmu_apbif",
-+		.parent		= &exynos5_clk_aclk_66.clk,
-+		.enable		= exynos5_clk_ip_peris_ctrl,
-+		.ctrlbit	= (1 << 21),
-+	}, {
- 		.name		= "rtc",
- 		.parent		= &exynos5_clk_aclk_66.clk,
- 		.enable		= exynos5_clk_ip_peris_ctrl,
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 772acd3..2a28ef9 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -89,6 +89,7 @@
- #define EXYNOS4_PA_L2CC			0x10502000
- 
- #define EXYNOS4_PA_TMU			0x100C0000
-+#define EXYNOS5_PA_TMU			0x10060000
- 
- #define EXYNOS4_PA_MDMA0		0x10810000
- #define EXYNOS4_PA_MDMA1		0x12850000
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index b7f1154..f8d5a9b 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -76,6 +76,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC3,
- 				"exynos-gsc.3", NULL),
- 	OF_DEV_AUXDATA("samsung,mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos5250-tmu", EXYNOS5_PA_TMU,
-+				"exynos-tmu", NULL),
- 	{},
- };
- 
--- 
-1.7.1
+Please pull from:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.7-samsung-fixes-2
+
+If any problems, please kindly let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 6f0c0580b70c89094b3422ba81118c7b959c7556:
+
+  Linux 3.7-rc2 (2012-10-20 12:11:32 -0700)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.7-samsung-fixes-2
+
+Heiko Stuebner (1):
+      ARM: SAMSUNG: Add naming of s3c64xx-spi devices
+
+Tomasz Figa (2):
+      ARM: dts: Split memory into 4 sections for exynos4210-trats
+      ARM: EXYNOS: Set .smp field of machine descriptor for exynos4-dt
+
+ arch/arm/boot/dts/exynos4210-trats.dts        |    6 +++-
+ arch/arm/mach-exynos/common.c                 |    5 ++++
+ arch/arm/mach-exynos/mach-exynos4-dt.c        |    1 +
+ arch/arm/mach-s3c24xx/s3c2416.c               |    2 +
+ arch/arm/mach-s3c24xx/s3c2443.c               |    4 +++
+ arch/arm/mach-s5p64x0/common.c                |    3 ++
+ arch/arm/mach-s5pc100/common.c                |    3 ++
+ arch/arm/mach-s5pv210/common.c                |    3 ++
+ arch/arm/plat-samsung/include/plat/spi-core.h |   30
++++++++++++++++++++++++++
+ 9 files changed, 55 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/include/plat/spi-core.h
