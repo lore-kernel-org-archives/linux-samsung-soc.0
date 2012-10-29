@@ -1,57 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 3/4] pinctrl: samsung: Add support for Exynos4x12
-Date: Mon, 29 Oct 2012 20:27:56 +0900
-Message-ID: <508E683C.6040807@samsung.com>
-References: <1351089457-8205-1-git-send-email-t.figa@samsung.com> <CACRpkdaoQP2jat_mr2wr30M39eogKAq77Gw2VoNPWbgHjgW+zw@mail.gmail.com> <CAH9JG2V2UjuvjK2_sjLQsEt21duCqyoQuAi0KsMfB+CjRrh8KQ@mail.gmail.com> <2350814.8tYbDqrzVz@amdc1227>
+Subject: Re: [PATCH v2 0/2] ARM: exynos: Enable TMU support in exynos platforms
+Date: Mon, 29 Oct 2012 21:14:58 +0900
+Message-ID: <508E7342.2090307@samsung.com>
+References: <1351243746-4173-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:46560 "EHLO
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:32870 "EHLO
 	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752714Ab2J2Ona (ORCPT
+	with ESMTP id S1759480Ab2J2Po1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Oct 2012 10:43:30 -0400
-Received: by mail-bk0-f46.google.com with SMTP id jk13so2013622bkc.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Oct 2012 07:43:29 -0700 (PDT)
-In-Reply-To: <2350814.8tYbDqrzVz@amdc1227>
+	Mon, 29 Oct 2012 11:44:27 -0400
+Received: by mail-bk0-f46.google.com with SMTP id jk13so2049989bkc.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Oct 2012 08:44:26 -0700 (PDT)
+In-Reply-To: <1351243746-4173-1-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, kgene.kim@samsung.com, swarren@wwwdotorg.org, devicetree-discuss@lists.ozlabs.org, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, amit.kachhap@linaro.org
 
-On 10/29/12 19:28, Tomasz Figa wrote:
-> Hi Linus, Kyungmin,
+On 10/26/12 18:29, Amit Daniel Kachhap wrote:
+> From: Amit Daniel Kachhap<amit.daniel@samsung.com>
 >
-> On Monday 29 of October 2012 09:30:26 Kyungmin Park wrote:
->> On 10/29/12, Linus Walleij<linus.walleij@linaro.org>  wrote:
->>> On Wed, Oct 24, 2012 at 4:37 PM, Tomasz Figa<t.figa@samsung.com>
-> wrote:
->>>> This patch extends the driver with any necessary SoC-specific
->>>> definitions to support Exynos4x12 SoCs.
->>>>
->>>> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
->>>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->>>
->>> Acked-by: Linus Walleij<linus.walleij@linaro.org>
->>>
->>> I guess you need all of this to go into my Samsung branch?
->>> I need and ACK from the Samsung maintainer and preferably
->>> Thomas A as well.
->>
->> Hi,
->>
->> Now we're trying to send the standalone patches to avoid the conflict.
->> and hope to merge patches via proper subsystem. In this case, pinctl.
+> These TMU enablement patches are needed for exynos4 and exynos5 TMU
+> driver already merged(drivers/thermal/exynos_thermal.c).
 >
-> Since this depends on the patch adding Exynos4x12 dts files
-> ([PATCH] ARM: dts: exynos4: Add support for Exynos4x12 SoCs),
-> which will be going through Kgene's tree and this patch series contains
-> mostly SoC-specific code, maybe this should rather go through Kgene's
-> tree? Or this is not a problem?
+> This patchset is based on Samsung Maintainer's tree,
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
 >
-Yeah, I agree with Tomasz's opinion and let me pick this into Samsung 
-tree with Linus's ack.
+> Amit Daniel Kachhap (2):
+>    ARM: exynos4: Add devicetree node for TMU driver
+>    ARM: exynos5: Add devicetree node for TMU driver
+>
+>   arch/arm/boot/dts/exynos4210.dtsi        |    7 +++++++
+>   arch/arm/boot/dts/exynos5250.dtsi        |    6 ++++++
+>   arch/arm/mach-exynos/clock-exynos4.c     |    4 ++++
+>   arch/arm/mach-exynos/clock-exynos5.c     |    5 +++++
+>   arch/arm/mach-exynos/include/mach/irqs.h |    3 +++
+>   arch/arm/mach-exynos/include/mach/map.h  |    3 +++
+>   arch/arm/mach-exynos/mach-exynos4-dt.c   |    2 ++
+>   arch/arm/mach-exynos/mach-exynos5-dt.c   |    2 ++
+>   8 files changed, 32 insertions(+), 0 deletions(-)
+
+Look good to me, will apply.
 
 Thanks.
 
