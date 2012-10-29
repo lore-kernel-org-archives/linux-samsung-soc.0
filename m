@@ -1,66 +1,122 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/4] pinctrl: samsung: Add support for Exynos4x12
-Date: Mon, 29 Oct 2012 11:28:23 +0100
-Message-ID: <2350814.8tYbDqrzVz@amdc1227>
-References: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
- <CACRpkdaoQP2jat_mr2wr30M39eogKAq77Gw2VoNPWbgHjgW+zw@mail.gmail.com>
- <CAH9JG2V2UjuvjK2_sjLQsEt21duCqyoQuAi0KsMfB+CjRrh8KQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] ARM: Exynos5: Remove unused static uart resource information
+Date: Mon, 29 Oct 2012 18:44:15 +0530
+Message-ID: <1351516455-344-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:57621 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:12862 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751796Ab2J2K2b (ORCPT
+	with ESMTP id S1752313Ab2J2MvI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Oct 2012 06:28:31 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	Mon, 29 Oct 2012 08:51:08 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MCN000I1H3FF1N0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 29 Oct 2012 19:28:30 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
+ 17 2011)) with ESMTP id <0MCN002LYNP5Y6P0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 29 Oct 2012 21:51:05 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MCN00HO0H3G3J10@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 29 Oct 2012 19:28:30 +0900 (KST)
-In-reply-to: <CAH9JG2V2UjuvjK2_sjLQsEt21duCqyoQuAi0KsMfB+CjRrh8KQ@mail.gmail.com>
+ with ESMTPA id <0MCN00M4HNNIVV40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 29 Oct 2012 21:51:05 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, kgene.kim@samsung.com, swarren@wwwdotorg.org, devicetree-discuss@lists.ozlabs.org, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com
 
-Hi Linus, Kyungmin,
+All supported Exynos5 platforms are device tree enabled and hence the
+unused static uart resource information is removed.
 
-On Monday 29 of October 2012 09:30:26 Kyungmin Park wrote:
-> On 10/29/12, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Wed, Oct 24, 2012 at 4:37 PM, Tomasz Figa <t.figa@samsung.com> 
-wrote:
-> >> This patch extends the driver with any necessary SoC-specific
-> >> definitions to support Exynos4x12 SoCs.
-> >> 
-> >> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > 
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > 
-> > I guess you need all of this to go into my Samsung branch?
-> > I need and ACK from the Samsung maintainer and preferably
-> > Thomas A as well.
-> 
-> Hi,
-> 
-> Now we're trying to send the standalone patches to avoid the conflict.
-> and hope to merge patches via proper subsystem. In this case, pinctl.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/mach-exynos/common.c            |    6 +-----
+ arch/arm/mach-exynos/dev-uart.c          |   24 ------------------------
+ arch/arm/mach-exynos/include/mach/irqs.h |    5 -----
+ arch/arm/mach-exynos/include/mach/map.h  |    1 -
+ 4 files changed, 1 insertions(+), 35 deletions(-)
 
-Since this depends on the patch adding Exynos4x12 dts files
-([PATCH] ARM: dts: exynos4: Add support for Exynos4x12 SoCs),
-which will be going through Kgene's tree and this patch series contains 
-mostly SoC-specific code, maybe this should rather go through Kgene's 
-tree? Or this is not a problem?
-
-Best regards,
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 1947be8..5a305f0 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -96,7 +96,6 @@ static struct cpu_table cpu_ids[] __initdata = {
+ 		.idmask		= EXYNOS5_SOC_MASK,
+ 		.map_io		= exynos5_map_io,
+ 		.init_clocks	= exynos5_init_clocks,
+-		.init_uarts	= exynos_init_uarts,
+ 		.init		= exynos_init,
+ 		.name		= name_exynos5250,
+ 	},
+@@ -735,10 +734,7 @@ static void __init exynos_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+ 	for (ucnt = 0; ucnt < no; ucnt++, tcfg++)
+ 		tcfg->has_fracval = 1;
+ 
+-	if (soc_is_exynos5250())
+-		s3c24xx_init_uartdevs("exynos4210-uart", exynos5_uart_resources, cfg, no);
+-	else
+-		s3c24xx_init_uartdevs("exynos4210-uart", exynos4_uart_resources, cfg, no);
++	s3c24xx_init_uartdevs("exynos4210-uart", exynos4_uart_resources, cfg, no);
+ }
+ 
+ static void __iomem *exynos_eint_base;
+diff --git a/arch/arm/mach-exynos/dev-uart.c b/arch/arm/mach-exynos/dev-uart.c
+index 2e85c02..7c42f4b 100644
+--- a/arch/arm/mach-exynos/dev-uart.c
++++ b/arch/arm/mach-exynos/dev-uart.c
+@@ -52,27 +52,3 @@ struct s3c24xx_uart_resources exynos4_uart_resources[] __initdata = {
+ 		.nr_resources	= ARRAY_SIZE(exynos4_uart3_resource),
+ 	},
+ };
+-
+-EXYNOS_UART_RESOURCE(5, 0)
+-EXYNOS_UART_RESOURCE(5, 1)
+-EXYNOS_UART_RESOURCE(5, 2)
+-EXYNOS_UART_RESOURCE(5, 3)
+-
+-struct s3c24xx_uart_resources exynos5_uart_resources[] __initdata = {
+-	[0] = {
+-		.resources	= exynos5_uart0_resource,
+-		.nr_resources	= ARRAY_SIZE(exynos5_uart0_resource),
+-	},
+-	[1] = {
+-		.resources	= exynos5_uart1_resource,
+-		.nr_resources	= ARRAY_SIZE(exynos5_uart0_resource),
+-	},
+-	[2] = {
+-		.resources	= exynos5_uart2_resource,
+-		.nr_resources	= ARRAY_SIZE(exynos5_uart2_resource),
+-	},
+-	[3] = {
+-		.resources	= exynos5_uart3_resource,
+-		.nr_resources	= ARRAY_SIZE(exynos5_uart3_resource),
+-	},
+-};
+diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+index 35bced6..6da3115 100644
+--- a/arch/arm/mach-exynos/include/mach/irqs.h
++++ b/arch/arm/mach-exynos/include/mach/irqs.h
+@@ -259,11 +259,6 @@
+ #define EXYNOS5_IRQ_IEM_IEC		IRQ_SPI(48)
+ #define EXYNOS5_IRQ_IEM_APC		IRQ_SPI(49)
+ #define EXYNOS5_IRQ_GPIO_C2C		IRQ_SPI(50)
+-#define EXYNOS5_IRQ_UART0		IRQ_SPI(51)
+-#define EXYNOS5_IRQ_UART1		IRQ_SPI(52)
+-#define EXYNOS5_IRQ_UART2		IRQ_SPI(53)
+-#define EXYNOS5_IRQ_UART3		IRQ_SPI(54)
+-#define EXYNOS5_IRQ_UART4		IRQ_SPI(55)
+ #define EXYNOS5_IRQ_IIC			IRQ_SPI(56)
+ #define EXYNOS5_IRQ_IIC1		IRQ_SPI(57)
+ #define EXYNOS5_IRQ_IIC2		IRQ_SPI(58)
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 8480849..e737331 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -279,7 +279,6 @@
+ #define EXYNOS5_PA_UART1		0x12C10000
+ #define EXYNOS5_PA_UART2		0x12C20000
+ #define EXYNOS5_PA_UART3		0x12C30000
+-#define EXYNOS5_SZ_UART			SZ_256
+ 
+ #define S3C_VA_UARTx(x)			(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
+ 
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+1.6.6.rc2
