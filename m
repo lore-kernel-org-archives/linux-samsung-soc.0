@@ -1,54 +1,96 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH 3/4] pinctrl: samsung: Add support for Exynos4x12
-Date: Mon, 29 Oct 2012 09:30:26 +0900
-Message-ID: <CAH9JG2V2UjuvjK2_sjLQsEt21duCqyoQuAi0KsMfB+CjRrh8KQ@mail.gmail.com>
-References: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
-	<1351089457-8205-4-git-send-email-t.figa@samsung.com>
-	<CACRpkdaoQP2jat_mr2wr30M39eogKAq77Gw2VoNPWbgHjgW+zw@mail.gmail.com>
+From: Vinod Koul <vkoul@infradead.org>
+Subject: Re: [PATCH v2 3/4] DMA: PL330: Balance module remove function with
+ probe
+Date: Mon, 29 Oct 2012 10:15:43 +0530
+Message-ID: <1351485943.7077.30.camel@vkoul-udesk3>
+References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
+	 <1349432276-22919-4-git-send-email-inderpal.singh@linaro.org>
+	 <1351052091.5263.19.camel@vkoul-udesk3>
+	 <CAG17yqQBep4Y3YOGVFr6s_apX9f0YeTC7dxDcTQM7ahxnr1B4w@mail.gmail.com>
+	 <1351226723.7077.14.camel@vkoul-udesk3>
+	 <CAG17yqTx6MnmpYLZCxeJ9gC_ha6i3Bp3Fc+=9L7EJEJoNwCFtQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:59042 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754273Ab2J2Aa2 (ORCPT
+Received: from casper.infradead.org ([85.118.1.10]:44040 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751675Ab2J2E7G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 28 Oct 2012 20:30:28 -0400
-Received: by mail-ee0-f46.google.com with SMTP id b15so1836024eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Oct 2012 17:30:27 -0700 (PDT)
-In-Reply-To: <CACRpkdaoQP2jat_mr2wr30M39eogKAq77Gw2VoNPWbgHjgW+zw@mail.gmail.com>
+	Mon, 29 Oct 2012 00:59:06 -0400
+In-Reply-To: <CAG17yqTx6MnmpYLZCxeJ9gC_ha6i3Bp3Fc+=9L7EJEJoNwCFtQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com, swarren@wwwdotorg.org, devicetree-discuss@lists.ozlabs.org, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
 
-On 10/29/12, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Oct 24, 2012 at 4:37 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->
->> This patch extends the driver with any necessary SoC-specific
->> definitions to support Exynos4x12 SoCs.
->>
->> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> I guess you need all of this to go into my Samsung branch?
-> I need and ACK from the Samsung maintainer and preferably
-> Thomas A as well.
+On Sat, 2012-10-27 at 15:50 +0530, Inderpal Singh wrote:
+> Hi Vinod,
+> 
+> On 26 October 2012 10:15, Vinod Koul <vkoul@infradead.org> wrote:
+> > On Thu, 2012-10-25 at 16:53 +0530, Inderpal Singh wrote:
+> >>
+> >> This code will get executed only in case of force removal of the
+> >> module which was discussed in the first version of the patch at [1].
+> >> Now, if we do not have to think about force removal then this patch
+> >> will go back to the first version.
+> > But why are you doing force removal of driver even when client is
+> > holding a reference to you.
+> >
+> > What happens when client finally tries to free the channel?
+> Since we return EBUSY so forced removal won't succeed. Client can free
+> the channel eventually.
+And that is my concern. You have forcefully removed the dma module.
+What happens then? How will the free calll get executed, wont you hit a
+panic.
+> 
+> >
+> > What is the problem you are trying to solve?
+> >>
+> 
+> There was a long discussion about it in the first version of the
+> patch. Allow me to explain it to you.
+> 
+> The existing driver does DMA_TERMINATE_ALL and frees resources for all
+> the channels in the _remove function.
+Which for starters may not be right thing to do. Shouldn't you first
+make sure client has freed all references to your driver and then only
+remove. Freeing resources in .remove without keeping client in sync
+doesn't sound to be good idea to me.
 
-Hi,
+>  The first version of patch
+> removed this flushing and freeing of channel resources because they
+> are not getting allocated in the probe. Jassi pointed out that manual
+> flushing is needed if a force removal happens and some client is
+> queued. Then it was agreed that flushing is not needed, instead we
+> should return EBUSY if client is queued on some channel (this will
+> happen only in force removal case). Hence this additional check in v2
+> version so that force removal does not succeeds if any client is
+> queued.
+> 
+> If you think force removal is not a practical scenario and we should
+> not be bothering about it, this check can be removed and the patch
+> will go back to first version which just removes flushing and freeing
+> of channels beacues they are not getting allocated in probe.
+> 
+> Let me know your view.
+> 
+> Regards,
+> Inder
+> 
+> 
+> >> Let me know your view.
+> >>
+> >> [1] https://patchwork.kernel.org/patch/1503171/
+> >>
+> >
+> >
+> > --
+> > Vinod Koul
+> > Intel Corp.
+> >
 
-Now we're trying to send the standalone patches to avoid the conflict.
-and hope to merge patches via proper subsystem. In this case, pinctl.
 
-Thank you,
-Kyungmin Park
->
-> Yours,
-> Linus Walleij
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+-- 
+Vinod Koul
+Intel Corp.
