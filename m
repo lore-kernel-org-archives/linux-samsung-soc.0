@@ -1,109 +1,54 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH v2 3/4] DMA: PL330: Balance module remove function with probe
-Date: Mon, 29 Oct 2012 14:30:17 +0530
-Message-ID: <CAG17yqQPNFOYjJYdLrg4exKRbqbhPPV6zOv4oBYBuo5=gCnadw@mail.gmail.com>
-References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
-	<1349432276-22919-4-git-send-email-inderpal.singh@linaro.org>
-	<1351052091.5263.19.camel@vkoul-udesk3>
-	<CAG17yqQBep4Y3YOGVFr6s_apX9f0YeTC7dxDcTQM7ahxnr1B4w@mail.gmail.com>
-	<1351226723.7077.14.camel@vkoul-udesk3>
-	<CAG17yqTx6MnmpYLZCxeJ9gC_ha6i3Bp3Fc+=9L7EJEJoNwCFtQ@mail.gmail.com>
-	<1351485943.7077.30.camel@vkoul-udesk3>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1351485943.7077.30.camel@vkoul-udesk3>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vkoul@infradead.org>
-Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 0/4] DMA: PL330 fixes
+Date: Mon, 29 Oct 2012 10:59:52 +0100
+Message-ID: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:53668 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758154Ab2J2KA0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 29 Oct 2012 06:00:26 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: jassisinghbrar@gmail.com, vinod.koul@intel.com, kgene.kim@samsung.com, rob.herring@calxeda.com, dinguyen@altera.com, pawel.moll@arm.com, t.figa@samsung.com, kyungmin.park@samsung.com, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Vinod,
+Hi,
 
-On 29 October 2012 10:15, Vinod Koul <vkoul@infradead.org> wrote:
-> On Sat, 2012-10-27 at 15:50 +0530, Inderpal Singh wrote:
->> Hi Vinod,
->>
->> On 26 October 2012 10:15, Vinod Koul <vkoul@infradead.org> wrote:
->> > On Thu, 2012-10-25 at 16:53 +0530, Inderpal Singh wrote:
->> >>
->> >> This code will get executed only in case of force removal of the
->> >> module which was discussed in the first version of the patch at [1].
->> >> Now, if we do not have to think about force removal then this patch
->> >> will go back to the first version.
->> > But why are you doing force removal of driver even when client is
->> > holding a reference to you.
->> >
->> > What happens when client finally tries to free the channel?
->> Since we return EBUSY so forced removal won't succeed. Client can free
->> the channel eventually.
-> And that is my concern. You have forcefully removed the dma module.
-> What happens then? How will the free calll get executed, wont you hit a
-> panic.
+The first patch fixes lockup caused by pl330 driver.  It doesn't add
+any dependencies to later patches and can be applied independently.
 
-Yes, you are correct, It will hit a panic.
-The return value from remove is not being checked in
-__device_release_driver because of which dma module is forcefully
-removed even if we return EBUSY from driver's remove. Hence returning
-error from .remove is not useful at all.
+The second patch fixes PL330 regression on ARM Exynos 4210 revision 0
+SOC (used by Universal C210 board).
 
->>
->> >
->> > What is the problem you are trying to solve?
->> >>
->>
->> There was a long discussion about it in the first version of the
->> patch. Allow me to explain it to you.
->>
->> The existing driver does DMA_TERMINATE_ALL and frees resources for all
->> the channels in the _remove function.
-> Which for starters may not be right thing to do.
+The third patch adds PL330 MDMA1 controller node to device tree on
+ARM Exynos4 SOCs.
+
+The fourth patch adds device tree property for PL330 driver to be used
+by controllers that have DMA_MEMCPY capability and updates device tree
+files for ARM platforms using PL330.  Since this patch depends on
+patches #2-3 it would be probably best to also push it through Kukjin's
+tree (with the relevant ACKs added of course).
 
 
-Please consider v1 patch which removes DMA_TERMINATE_ALL and freeing
-of resources from .remove function because in normal scenario if
-remove is reached it is sure that no client is holding any reference
-to the driver hence no need to flush and free the channels.
+Bartlomiej Zolnierkiewicz (4):
+  DMA: PL330: fix locking in pl330_free_chan_resources()
+  ARM: EXYNOS: PL330 MDMA1 fix for revision 0 of Exynos4210 SOC
+  ARM: dts: exynos4: add node for PL330 MDMA1 controller
+  DMA: PL330: add device tree property for DMA_MEMCPY capability
 
-> Shouldn't you first
-> make sure client has freed all references to your driver and then only
-> remove. Freeing resources in .remove without keeping client in sync
-> doesn't sound to be good idea to me.
->
->>  The first version of patch
->> removed this flushing and freeing of channel resources because they
->> are not getting allocated in the probe. Jassi pointed out that manual
->> flushing is needed if a force removal happens and some client is
->> queued. Then it was agreed that flushing is not needed, instead we
->> should return EBUSY if client is queued on some channel (this will
->> happen only in force removal case). Hence this additional check in v2
->> version so that force removal does not succeeds if any client is
->> queued.
->>
->> If you think force removal is not a practical scenario and we should
->> not be bothering about it, this check can be removed and the patch
->> will go back to first version which just removes flushing and freeing
->> of channels beacues they are not getting allocated in probe.
->>
->> Let me know your view.
->>
->> Regards,
->> Inder
->>
->>
->> >> Let me know your view.
->> >>
->> >> [1] https://patchwork.kernel.org/patch/1503171/
->> >>
->> >
->> >
->> > --
->> > Vinod Koul
->> > Intel Corp.
->> >
->
->
-> --
-> Vinod Koul
-> Intel Corp.
->
+ Documentation/devicetree/bindings/dma/arm-pl330.txt |  1 +
+ arch/arm/boot/dts/exynos4.dtsi                      |  7 +++++++
+ arch/arm/boot/dts/exynos5250.dtsi                   |  2 ++
+ arch/arm/boot/dts/highbank.dts                      |  1 +
+ arch/arm/boot/dts/socfpga.dtsi                      |  1 +
+ arch/arm/boot/dts/vexpress-v2p-ca15-tc1.dts         |  1 +
+ arch/arm/boot/dts/vexpress-v2p-ca15_a7.dts          |  1 +
+ arch/arm/mach-exynos/dma.c                          |  5 ++++-
+ arch/arm/mach-exynos/include/mach/map.h             |  3 ++-
+ arch/arm/mach-exynos/mach-exynos4-dt.c              |  1 +
+ drivers/dma/pl330.c                                 | 15 ++++++++++-----
+ 11 files changed, 31 insertions(+), 7 deletions(-)
+
+-- 
+1.8.0
