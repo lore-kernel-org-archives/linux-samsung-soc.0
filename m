@@ -1,61 +1,85 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 0/4] pinctrl: samsung: Add support for Exynos4x12 SoCs
-Date: Tue, 30 Oct 2012 08:28:12 +0530
-Message-ID: <CAJuYYwQ=RQt=9z2jSOYWEv4YJS8jsE0y3Y5bVhhbRPt-dsDMiQ@mail.gmail.com>
-References: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:52016 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753252Ab2J3C6O (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Oct 2012 22:58:14 -0400
-Received: by mail-lb0-f174.google.com with SMTP id n3so3568250lbo.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Oct 2012 19:58:12 -0700 (PDT)
-In-Reply-To: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v7 0/5] usb: phy: samsung: Introducing usb phy driver for
+ samsung SoCs
+Date: Tue, 30 Oct 2012 10:27:32 +0530
+Message-ID: <1351573057-22249-1-git-send-email-p.paneri@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, linus.walleij@linaro.org, swarren@wwwdotorg.org
 
-On 24 October 2012 20:07, Tomasz Figa <t.figa@samsung.com> wrote:
-> This patch series adds pinctrl support for SoCs from Exynos4x12 family.
->
-> First two patches make necessary preperations to skip legacy GPIO and
-> GPIO interrupt registration in case of Exynos4x12 SoCs which are not
-> supported by legacy (non-DT) code.
->
-> Third patch adds Exynos4x12-specific definitions to pinctrl-samsung driver.
->
-> Fourth patch adds device nodes for pin controllers available on Exynos4x12
-> SoCs to Exynos4x12 device tree sources.
->
-> This series depends on:
->   - [PATCH] ARM: dts: exynos4: Add support for Exynos4x12 SoCs
->
-> Tomasz Figa (4):
->   ARM: EXYNOS: Skip wakeup-int setup if pinctrl driver is used on
->     Exynos4x12
->   gpio: samsung: Skip registration if pinctrl driver is present on
->     Exynos4x12
->   pinctrl: samsung: Add support for Exynos4x12
->   ARM: dts: exynos4x12: Add nodes for pin controllers
->
->  .../bindings/pinctrl/samsung-pinctrl.txt           |   1 +
->  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          | 965 +++++++++++++++++++++
->  arch/arm/boot/dts/exynos4x12.dtsi                  |  38 +
->  arch/arm/mach-exynos/common.c                      |   7 +-
->  drivers/gpio/gpio-samsung.c                        |  43 +-
->  drivers/pinctrl/pinctrl-exynos.c                   | 110 +++
->  drivers/pinctrl/pinctrl-samsung.c                  |   2 +
->  drivers/pinctrl/pinctrl-samsung.h                  |   1 +
->  8 files changed, 1144 insertions(+), 23 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
->
-> --
-> 1.7.12
->
+Changes from v6:
+Modified register definitions according to the existing ones.
+Changed default PHY clk selection for SoCs.
+Improved binding text and rebased to the latest usb-next.
 
-For this series:
-Acked-by: Thomas Abraham <thomas.abraham@linaro.org>
+Changes from v5:
+Moved clk_get() to driver's probe function. Now reference clock frequency
+selection value is stored in samsung_usbphy structure for later use. Used
+IS_ENABLED() instead of #ifdef in samsung_usbphy_get_driver_data().
+
+Changes from v4:
+Moved header file contents to driver's source file
+Removed unnecessary print message from driver's probe function
+Dropped the Free Software Foundation address from the header
+Changed the platform data code to use __initdata
+
+Changes from v3:
+Replaced susbsys_initcall()/module_exit() by module_platform_driver().
+Accordingly in the hsotg driver returned -EPROBE_DEFER until phy driver
+is registered
+Removed unnecessary devm_usb_put_phy() call from the hsotg driver remove.
+
+Changes from v2:
+Changed the driver filenames to samsung-usbphy
+Changed 's3c' to 'samsung' for platform device as well as platform data
+Moved platform data structure to a separate file
+Rectified coding style related errors
+
+Changes from v1:
+Rebased patches to latest usb-next branch
+Changed the name 'sec_usbphy' to 'samsung_usbphy'
+
+This patch set introduces a phy driver for samsung SoCs. It uses the existing
+transceiver infrastructure to provide phy control functions. Use of this driver
+can be extended for usb host phy as well. Over the period of time all the phy
+related code for most of the samsung SoCs can be integrated here.
+Removing the existing phy code from mach-s3c64xx. Same can be done for other SoCs
+when they start supporting this phy driver. 
+This driver is tested with smdk6410 and Exynos4210(with DT).
+
+Praveen Paneri (5):
+  usb: phy: samsung: Introducing usb phy driver for hsotg
+  usb: s3c-hsotg: Adding phy driver support
+  ARM: S3C64XX: Removing old phy setup code
+  ARM: S3C64XX: Enabling samsung-usbphy driver
+  ARM: Exynos4210: Enabling samsung-usbphy driver
+
+ .../devicetree/bindings/usb/samsung-usbphy.txt     |   11 +
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |    5 +
+ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |    8 +
+ arch/arm/mach-exynos/setup-usb-phy.c               |   13 +
+ arch/arm/mach-s3c64xx/include/mach/map.h           |    2 +
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |   10 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c                |   11 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |   11 +-
+ arch/arm/mach-s3c64xx/setup-usb-phy.c              |   79 +----
+ arch/arm/plat-samsung/devs.c                       |   28 ++
+ arch/arm/plat-samsung/include/plat/devs.h          |    1 +
+ arch/arm/plat-samsung/include/plat/usb-phy.h       |    1 +
+ drivers/usb/gadget/s3c-hsotg.c                     |   37 ++-
+ drivers/usb/phy/Kconfig                            |    8 +
+ drivers/usb/phy/Makefile                           |    1 +
+ drivers/usb/phy/samsung-usbphy.c                   |  360 ++++++++++++++++++++
+ include/linux/platform_data/samsung-usbphy.h       |   27 ++
+ 18 files changed, 523 insertions(+), 91 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+ create mode 100644 drivers/usb/phy/samsung-usbphy.c
+ create mode 100644 include/linux/platform_data/samsung-usbphy.h
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
