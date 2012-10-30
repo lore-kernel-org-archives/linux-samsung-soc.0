@@ -1,53 +1,54 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 4/4] DMA: PL330: add device tree property for DMA_MEMCPY
- capability
-Date: Tue, 30 Oct 2012 10:21:42 +0100
-Message-ID: <201210301021.42803.b.zolnierkie@samsung.com>
-References: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
- <1351504796-24788-5-git-send-email-b.zolnierkie@samsung.com>
- <CABb+yY1Ztu2n38ObXJq+shOoXw6yk0YK39QUHhDN_pJKziAFQg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Vasanth Ananthan <vasanthananthan@gmail.com>
+Subject: [PATCH v2 0/6] Adding support for SATA in EXYNO5
+Date: Tue, 30 Oct 2012 17:01:31 +0100
+Message-ID: <1351612897-14923-1-git-send-email-vasanthananthan@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42905 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756377Ab2J3JdZ (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:60403 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754082Ab2J3QBw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Oct 2012 05:33:25 -0400
-In-reply-to: <CABb+yY1Ztu2n38ObXJq+shOoXw6yk0YK39QUHhDN_pJKziAFQg@mail.gmail.com>
+	Tue, 30 Oct 2012 12:01:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, vinod.koul@intel.com, kgene.kim@samsung.com, rob.herring@calxeda.com, dinguyen@altera.com, pawel.moll@arm.com, t.figa@samsung.com, kyungmin.park@samsung.com
+To: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanthananthan@gmail.com>
 
+The following set of patches provides drivers for SATA
+and SATA PHY controller and also an interface for the
+two entity to interact.
 
-Hi,
+Vasanth Ananthan (6):
+  ARM: EXYNOS5: Clock settings for SATA and SATA PHY
+  ARM: EXYNOS5: DT Support for SATA and SATA PHY
+  DRIVERS: ATA: SATA PHY utility framework
+  DRIVERS:I2C: I2C driver polling mode support
+  DRIVERS: ATA:  SATA controller driver
+  DRIVERS: ATA: SATA PHY controller driver
 
-On Monday 29 October 2012 22:45:48 Jassi Brar wrote:
-> On Mon, Oct 29, 2012 at 10:59 AM, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
-> > * Add device tree (DT) property ("pl330,dma-memcpy") for DMA_MEMCPY
-> >   capability and instead of setting this capability unconditionally
-> >   in pl330_probe() do it only when property is present.
-> >
-> Perhaps we should pass the array of peripheral interfaces via DT, the
-> lack of which could imply MEMCPY capability ? (while it works, I doubt
-> if pl330 is supposed to have SLAVE and MEMCPY capabilities in any
-> instance)
+ .../devicetree/bindings/ata/exynos-sata-phy.txt    |   14 +
+ .../devicetree/bindings/ata/exynos-sata.txt        |   17 ++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   15 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   18 ++
+ arch/arm/mach-exynos/clock-exynos5.c               |   21 ++-
+ arch/arm/mach-exynos/include/mach/map.h            |    3 +
+ arch/arm/mach-exynos/include/mach/regs-pmu.h       |    3 +
+ arch/arm/mach-exynos/include/mach/regs-sata.h      |   29 ++
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    6 +
+ drivers/ata/Kconfig                                |   22 ++
+ drivers/ata/Makefile                               |    2 +
+ drivers/ata/sata_exynos.c                          |  268 +++++++++++++++++
+ drivers/ata/sata_exynos_phy.c                      |  300 ++++++++++++++++++++
+ drivers/ata/sata_phy.c                             |  104 +++++++
+ drivers/ata/sata_phy.h                             |   44 +++
+ drivers/i2c/busses/i2c-s3c2410.c                   |   79 ++++--
+ 16 files changed, 923 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/ata/exynos-sata-phy.txt
+ create mode 100644 Documentation/devicetree/bindings/ata/exynos-sata.txt
+ create mode 100644 arch/arm/mach-exynos/include/mach/regs-sata.h
+ create mode 100644 drivers/ata/sata_exynos.c
+ create mode 100644 drivers/ata/sata_exynos_phy.c
+ create mode 100644 drivers/ata/sata_phy.c
+ create mode 100644 drivers/ata/sata_phy.h
 
-In case of PL330 on EXYNOS4 we have two interfaces with SLAVE capability
-and one interface with MEMCPY capability.  Could you please explain more
-the idea of passing the array of peripherals through DT so we can detect
-which interface has MEMCPY capability?
-
-> That would also be a step towards discarding "struct dma_pl330_platdata".
-
-I don't know if getting rid of "struct dma_pl330_platdata" is possible
-but we still need to come up with some way to pass the needed information
-through DT.  Do you have an idea how it could be done?
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung Poland R&D Center
+-- 
+1.7.4.1
