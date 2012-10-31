@@ -1,67 +1,123 @@
 From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH] ARM: EXYNOS5: Remove wrongly placed usb2.0 PHY_CFG
- definition from PMU_REG
-Date: Wed, 31 Oct 2012 11:17:29 +0530
-Message-ID: <CAFp+6iG3389wDS8TQjLYooUTNCJjRWWuvSywOP-g8u5dJO3Zhg@mail.gmail.com>
-References: <1349443590-29901-1-git-send-email-gautam.vivek@samsung.com>
-	<003b01cda5f8$f84e35c0$e8eaa140$%han@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: Exynos5250: Enabling ohci-exynos driver
+Date: Wed, 31 Oct 2012 12:25:54 +0530
+Message-ID: <CAFp+6iG8M2UaPTZS2dbWq2pyRmnn0bkuFuLWcQGL=rQ7a9UYog@mail.gmail.com>
+References: <1349431818-15639-1-git-send-email-gautam.vivek@samsung.com>
+	<1349431818-15639-3-git-send-email-gautam.vivek@samsung.com>
+	<003901cda5f8$2a4f3980$7eedac80$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:33037 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752297Ab2JaFrb (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:41805 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752096Ab2JaGz4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 31 Oct 2012 01:47:31 -0400
-Received: by mail-lb0-f174.google.com with SMTP id n3so805731lbo.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Oct 2012 22:47:29 -0700 (PDT)
-In-Reply-To: <003b01cda5f8$f84e35c0$e8eaa140$%han@samsung.com>
+	Wed, 31 Oct 2012 02:55:56 -0400
+Received: by mail-la0-f46.google.com with SMTP id h6so817926lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Oct 2012 23:55:54 -0700 (PDT)
+In-Reply-To: <003901cda5f8$2a4f3980$7eedac80$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-arm-kernel@lists.infradead.org, Jingoo Han <jg1.han@samsung.com>, kgene.kim@samsung.com, thomas.abraham@linaro.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, kgene.kim@samsung.com, thomas.abraham@linaro.org, Jingoo Han <jg1.han@samsung.com>
 
 Hi all,
 
-On Tue, Oct 9, 2012 at 2:04 PM, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Friday, October 05, 2012 10:27 PM Vivek Gautam wrote
+On Tue, Oct 9, 2012 at 1:59 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Friday, October 05, 2012 7:10 PM Vivek Gautam wrote
 >>
->> EXYNOS5_USB_CFG macro should actually point to USB20PHY_CFG
->> system register (base addr + 0x230). It's wrongly placed in regs-pmu.
->> Actual register at offset 0x230 in PMU is SEQ_TRANSITION4.
+>> Adding OHCI device tree node for Exynos5250 along with
+>> the device base address.
 >>
 >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 >
-> As you mentioned, this definition is wrong.
-> So, it should be removed.
+> It looks good. Also I have tested this patch with Exynos5250.
 >
-> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
 >
->
+
+Any thought about this please.
+
 >> ---
->>  arch/arm/mach-exynos/include/mach/regs-pmu.h |    2 --
->>  1 files changed, 0 insertions(+), 2 deletions(-)
+>>  .../devicetree/bindings/usb/exynos-usb.txt         |   15 +++++++++++++++
+>>  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++++
+>>  arch/arm/mach-exynos/include/mach/map.h            |    1 +
+>>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 ++
+>>  4 files changed, 24 insertions(+), 0 deletions(-)
 >>
->> diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
->> index d4e392b..70b2795 100644
->> --- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
->> +++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
->> @@ -230,8 +230,6 @@
+>> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>> b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>> index 56e35c7..bff10a8 100644
+>> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>> @@ -23,3 +23,18 @@ Example:
+>>               interrupts = <0 71 0>;
+>>               samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+>>       };
+>> +
+>> +OHCI
+>> +Required properties:
+>> + - compatible: should be "samsung,exynos-ohci" for USB 2.0
+>> +   OHCI companion controller in host mode.
+>> + - reg: physical base address of the controller and length of memory mapped
+>> +   region.
+>> + - interrupts: interrupt number to the cpu.
+>> +
+>> +Example:
+>> +     ohci {
+>> +             compatible = "samsung,exynos-ohci";
+>> +             reg = <0x12120000 0x100>;
+>> +             interrupts = <0 71 0>;
+>> +     };
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 73ea844..bcdfbe2 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -224,6 +224,12 @@
+>>               interrupts = <0 71 0>;
+>>       };
 >>
->>  /* For EXYNOS5 */
+>> +     ohci {
+>> +             compatible = "samsung,exynos-ohci";
+>> +             reg = <0x12120000 0x100>;
+>> +             interrupts = <0 71 0>;
+>> +     };
+>> +
+>>       amba {
+>>               #address-cells = <1>;
+>>               #size-cells = <1>;
+>> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+>> index 825fe40..cfede1f 100644
+>> --- a/arch/arm/mach-exynos/include/mach/map.h
+>> +++ b/arch/arm/mach-exynos/include/mach/map.h
+>> @@ -196,6 +196,7 @@
+>>  #define EXYNOS4_PA_OHCI                      0x12590000
+>>  #define EXYNOS4_PA_HSPHY             0x125B0000
+>>  #define EXYNOS5_PA_EHCI                      0x12110000
+>> +#define EXYNOS5_PA_OHCI                      0x12120000
+>>  #define EXYNOS4_PA_MFC                       0x13400000
 >>
->> -#define EXYNOS5_USB_CFG                                              S5P_PMUREG(0x0230)
->> -
-
-Any thoughts about this please.
-
->>  #define EXYNOS5_AUTO_WDTRESET_DISABLE                                S5P_PMUREG(0x0408)
->>  #define EXYNOS5_MASK_WDTRESET_REQUEST                                S5P_PMUREG(0x040C)
+>>  #define EXYNOS4_PA_UART                      0x13800000
+>> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>> index 6d950d7b..e6c2144 100644
+>> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+>> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>> @@ -74,6 +74,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+>>                               "exynos-gsc.3", NULL),
+>>       OF_DEV_AUXDATA("samsung,exynos-ehci", EXYNOS5_PA_EHCI,
+>>                                       "s5p-ehci", NULL),
+>> +     OF_DEV_AUXDATA("samsung,exynos-ohci", EXYNOS5_PA_OHCI,
+>> +                                     "exynos-ohci", NULL),
+>>       {},
+>>  };
 >>
 >> --
 >> 1.7.6.5
->>
-
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
 
