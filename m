@@ -1,201 +1,70 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 1/5] clk: samsung: add common clock framework support for Samsung platforms
-Date: Wed, 31 Oct 2012 00:32:28 +0100
-Message-ID: <9262175.YChVmHd9ev@flatron>
-References: <1349629855-4962-1-git-send-email-thomas.abraham@linaro.org> <CAJuYYwQuTcu_qRyLs8JXhUg=T36iuW_bKryxSVpBXm6iMbsH4w@mail.gmail.com> <50905E60.6090005@gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS5: Remove wrongly placed usb2.0 PHY_CFG
+ definition from PMU_REG
+Date: Wed, 31 Oct 2012 11:17:29 +0530
+Message-ID: <CAFp+6iG3389wDS8TQjLYooUTNCJjRWWuvSywOP-g8u5dJO3Zhg@mail.gmail.com>
+References: <1349443590-29901-1-git-send-email-gautam.vivek@samsung.com>
+	<003b01cda5f8$f84e35c0$e8eaa140$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:57411 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752233Ab2J3Xcm (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:33037 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752297Ab2JaFrb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Oct 2012 19:32:42 -0400
-Received: by mail-ee0-f46.google.com with SMTP id b15so453771eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Oct 2012 16:32:41 -0700 (PDT)
-In-Reply-To: <50905E60.6090005@gmail.com>
+	Wed, 31 Oct 2012 01:47:31 -0400
+Received: by mail-lb0-f174.google.com with SMTP id n3so805731lbo.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Oct 2012 22:47:29 -0700 (PDT)
+In-Reply-To: <003b01cda5f8$f84e35c0$e8eaa140$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.figa@samsung.com, mturquette@ti.com, mturquette@linaro.org, Kyungmin Park <kyungmin.park@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-arm-kernel@lists.infradead.org, Jingoo Han <jg1.han@samsung.com>, kgene.kim@samsung.com, thomas.abraham@linaro.org
 
-Hi Thomas, Sylwester,
+Hi all,
 
-On Wednesday 31 of October 2012 00:10:24 Sylwester Nawrocki wrote:
-> >>> +/* register a samsung pll type clock */
-> >>> +void __init samsung_clk_register_pll(const char *name, const char
-> >>> **pnames, +                             struct device_node *np,
-> >>> +                             int (*set_rate)(unsigned long rate),
-> >>> +                             unsigned long (*get_rate)(unsigned long
-> >>> rate)) +{
-> >>> +     struct samsung_pll_clock *clk_pll;
-> >>> +     struct clk *clk;
-> >>> +     struct clk_init_data init;
-> >>> +     int ret;
-> >>> +
-> >>> +     clk_pll = kzalloc(sizeof(*clk_pll), GFP_KERNEL);
-> >>> +     if (!clk_pll) {
-> >>> +             pr_err("%s: could not allocate pll clk %s\n", __func__,
-> >>> name); +             return;
-> >>> +     }
-> >>> +
-> >>> +     init.name = name;
-> >>> +     init.ops =&samsung_pll_clock_ops;
-> >>> +     init.flags = CLK_GET_RATE_NOCACHE;
-> >>> +     init.parent_names = pnames;
-> >>> +     init.num_parents = 1;
-> >>> +
-> >>> +     clk_pll->set_rate = set_rate;
-> >>> +     clk_pll->get_rate = get_rate;
-> >>> +     clk_pll->hw.init =&init;
-> >>> +
-> >>> +     /* register the clock */
-> >>> +     clk = clk_register(NULL,&clk_pll->hw);
-> >>> +     if (IS_ERR(clk)) {
-> >>> +             pr_err("%s: failed to register pll clock %s\n",
-> >>> __func__,
-> >>> +                             name);
-> >>> +             kfree(clk_pll);
-> >>> +             return;
-> >>> +     }
-> >>> +
-> >>> +#ifdef CONFIG_OF
-> >>> +     if (np)
-> >>> +             of_clk_add_provider(np, of_clk_src_simple_get, clk);
-> >>> +#endif
-> >> 
-> >> Is it really required to do clk_register() and of_clk_add_provider()
-> >> for
-> >> each single clock ? This seems more heavy than it could be. Looking at
-> > 
-> > of_clk_add_provider call for every clock instance is not really
-> > required but it does allow platform code to lookup the clock and
-> > retrieve/display the clock speed. That was the intention to add a
-> > lookup for all the clocks.
+On Tue, Oct 9, 2012 at 2:04 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Friday, October 05, 2012 10:27 PM Vivek Gautam wrote
+>>
+>> EXYNOS5_USB_CFG macro should actually point to USB20PHY_CFG
+>> system register (base addr + 0x230). It's wrongly placed in regs-pmu.
+>> Actual register at offset 0x230 in PMU is SEQ_TRANSITION4.
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>
+> As you mentioned, this definition is wrong.
+> So, it should be removed.
+>
+> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+>
+>
+>> ---
+>>  arch/arm/mach-exynos/include/mach/regs-pmu.h |    2 --
+>>  1 files changed, 0 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+>> index d4e392b..70b2795 100644
+>> --- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
+>> +++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+>> @@ -230,8 +230,6 @@
+>>
+>>  /* For EXYNOS5 */
+>>
+>> -#define EXYNOS5_USB_CFG                                              S5P_PMUREG(0x0230)
+>> -
 
-I'm not really sure if displaying clock speed is really a good 
-justification for increasing the list of system clocks almost by a factor 
-of three. This will make clock lookup a bit heavy.
+Any thoughts about this please.
 
-You might display speed of several most important clocks directly from the 
-samsung clk driver using internal data, without the need of involving 
-generic clock lookup for this purpose.
+>>  #define EXYNOS5_AUTO_WDTRESET_DISABLE                                S5P_PMUREG(0x0408)
+>>  #define EXYNOS5_MASK_WDTRESET_REQUEST                                S5P_PMUREG(0x040C)
+>>
+>> --
+>> 1.7.6.5
+>>
 
-> 
-> Hmm, do you mean calling clk_get() with NULL 'dev' argument ?
-> It's probably not a big deal to look up the clocks root node and
-> then use of_clk_get() function to find required clock ?
 
-I believe that the intention was for it to work on non-DT platforms as 
-well. However I might have misunderstood your suggestion, could you 
-elaborate?
 
-> >> drivers/clk/mxs/clk-imx28.c, it registers only single clock provider
-> >> for
-> >> whole group of clocks. Also, couldn't we statically define most of the
-> >> clocks and still register them so they can be used with platforms
-> >> using
-> >> FDT ? Something along the lines of imx28 implementation
-> >> (arch/arm/boot/dts /imx28.dtsi), where a clock is specified at
-> >> consumer device node by a phandle to the clock controller node and a
-> >> clock index ?
-> > 
-> > We could do it that way. I was tempted to list out all the clocks in
-> > device tree and then register them so that there is no static
-> > definition of the clocks needed. You seem to prefer not to do that. I
-> > am fine with either way, static or device tree based registration.
-> 
-> Ok, it's also worth noting that clk_get() would have been more expensive
-> when there would be a need to iterate over large number of clock
-> providers. Indexed look up might be a better alternative.
 
-I'm definitely for indexed lookup. With the ability to define constants in 
-device tree sources the main drawback of this solution being less readable 
-now disappeared and everything left are advantages.
-
-> Exynos SoCs have fairly complex clock tree structure, I personally do
-> find it harder to understand from a bit bulky description in form of a
-> device tree node list. Comparing to the original Samsung clock API there
-> is now more clock objects, since, e.g. single struct clk_clksrc is now
-> represented by mux, div and gate clock group, which makes things
-> slightly more complicated, i.e. there is even more clocks to be listed.
-
-If it's about readability I tend to disagree. I find device tree much more 
-readable as a way of describing hardware than hardcoded data structures, 
-often using complex macros to keep the definitions short.
-
-> >> Besides that, what bothers me with in the current approach is the
-> >> clock consumers being defined through one big data structure together
-> >> with the actual clocks. Not all clock objects are going to have
-> >> consumers, some resources are waisted by using flat tables of those
-> >> big data structure objects. Perhaps we could use two tables, one for
-> >> the
-> >> platform clocks and one for the consumers ? These common clock driver
-> >> is intended to cover all Samsung SoC, I would expect all samsung
-> >> sub-archs getting converted to use it eventually, with as many of them
-> >> as possible then reworked to support device tree. It's a lot of work
-> >> and is going to take some time, but it would be good to have it
-> >> planned
-> >> in advance. That said I'm not sure the common samsung clock driver in
-> >> non-dt variant would be really a temporary thing.
-> > 
-> > Non-dt support in Samsung common clock driver will be maintained. But
-> > for existing Exynos4 non-dt platforms, it should be possible to
-> > convert them to completely device tree based platforms.
-> 
-> OK, let's then focus on device tree support for exynos4+ SoCs. I hope we
-> could have the clocks statically defined and still freely accessible in
-> the device tree.
-
-Using the approach with indexed clocks inside a single provider would allow 
-to reuse the same internal SoC-specific data for both DT and non-DT 
-variants, without any data duplication. This is definitely an advantage.
-
-> >>> +
-> >>> +#ifdef CONFIG_OF
-> >>> +/* register a samsung gate type clock instantiated from device tree
-> >>> */
-> >>> +void __init samsung_of_clk_register_gate(struct device_node *np)
-> >>> +{
-> >>> +     struct samsung_gate_clock clk_gate;
-> >>> +     const char *clk_name = np->name;
-> >>> +     const char *parent_name;
-> >>> +     u32 reg_info[2];
-> >>> +
-> >>> +     of_property_read_string(np, "clock-output-names",&clk_name);
-> >>> +     parent_name = of_clk_get_parent_name(np, 0);
-> >>> +     if (of_property_read_u32_array(np, "reg-info", reg_info, 2))
-> >>> +             pr_err("%s: invalid register info in node\n",
-> >>> __func__);
-> >>> +
-> >>> +     clk_gate.name = clk_name;
-> >>> +     clk_gate.parent_name = parent_name;
-> >>> +     clk_gate.reg = (void __iomem *)(reg_base + reg_info[0]);
-> >>> +     clk_gate.bit_idx = reg_info[1];
-> >>> +     clk_gate.dev_name = NULL;
-> >>> +     clk_gate.flags = 0;
-> >>> +     clk_gate.gate_flags = 0;
-> >> 
-> >> Some clocks need CLK_SET_RATE_PARENT for the drivers to work
-> >> as before. So far it is not set for any mux, div nor gate clock.
-> > 
-> > Ok. I will fix this.
-> > 
-> > So about the static vs device tree based clock registration, what
-> > would you suggest?
-> 
-> Defining the clocks statically has my preference, it would be nice to
-> hear more opinions on that though. I think on a heavily utilised SoC
-> the list of clock nodes could have grown significantly. And with
-> preprocessor support at the dt compiler (not sure if it is already
-> there) indexed clock definitions could be made more explicit.
-> 
-> These are roughly our conclusions from discussing this patch series
-> with Tomasz F.
-
-Yes, as I said, I'm definitely for the single clock provider approach (aka 
-imx-like approach).
-
-Best regards,
-Tomasz Figa
+-- 
+Thanks & Regards
+Vivek
