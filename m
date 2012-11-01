@@ -1,72 +1,109 @@
-From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v7 2/5] usb: s3c-hsotg: Adding phy driver support
-Date: Wed, 31 Oct 2012 15:44:07 +0100
-Message-ID: <20121031154407.4eb54dba@amdc308.digital.local>
-References: <1351573057-22249-1-git-send-email-p.paneri@samsung.com>
- <1351573057-22249-3-git-send-email-p.paneri@samsung.com>
- <20121031140548.GE10998@arwen.pp.htv.fi>
+From: "Yangfei (Felix)" <felix.yang@huawei.com>
+Subject: [PATCH] ARM: Fix the "WFI" instruction opcode definition.
+Date: Thu, 1 Nov 2012 01:24:38 +0000
+Message-ID: <DA41BE1DDCA941489001C7FBD7A8820E3CB5512E@szxeml549-mbx.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20121031140548.GE10998-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Language: zh-CN
+Sender: linux-sh-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Felipe,
+The current "WFI" opcode definiton causes CPU hot-plug feature fails to work
+if the kernel is built with CONFIG_THUMB2_KERNEL/CONFIG_CPU_ENDIAN_BE8 being
+defined. An invalid instruction exception will be generated.
 
-> Hi,
-> 
-> On Tue, Oct 30, 2012 at 10:27:34AM +0530, Praveen Paneri wrote:
-> > @@ -3501,20 +3511,27 @@ static int __devinit s3c_hsotg_probe(struct
-> > platform_device *pdev) int ret;
-> >  	int i;
-> >  
-> > -	plat = pdev->dev.platform_data;
-> > -	if (!plat) {
-> > -		dev_err(&pdev->dev, "no platform data defined\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> >  	hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg),
-> > GFP_KERNEL); if (!hsotg) {
-> >  		dev_err(dev, "cannot get memory\n");
-> >  		return -ENOMEM;
-> >  	}
-> >  
-> > +	plat = pdev->dev.platform_data;
-> > +	if (!plat) {
-> > +		/* Fallback for transceiver */
-> > +		phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-> > +		if (IS_ERR_OR_NULL(phy)) {
-> > +			dev_err(&pdev->dev, "no platform data or
-> > transceiver defined\n");
-> > +			return -EPROBE_DEFER;
-> > +		} else {
-> > +			hsotg->phy = phy;
-> > +		}
-> > +	} else {
-> > +		hsotg->plat = plat;
-> > +	}
-> 
-> I think this should be the other way around, meaning you try to grab
-> the phy, if you can't, then you fallback to pdata.
-> 
+Signed-off-by: yangfei.kernel@gmail.com
+---
+ arch/arm/mach-exynos/hotplug.c   |    8 +++++++-
+ arch/arm/mach-realview/hotplug.c |    8 +++++++-
+ arch/arm/mach-shmobile/hotplug.c |    8 +++++++-
+ 3 files changed, 21 insertions(+), 3 deletions(-)
 
-I agree.
-
-The new approach is to use new PHY driver. And only when failed we
-shall use legacy approach.
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung Poland R&D Center | Linux Platform Group
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+index f4d7dd2..823a0e4 100644
+--- a/arch/arm/mach-exynos/hotplug.c
++++ b/arch/arm/mach-exynos/hotplug.c
+@@ -18,11 +18,17 @@
+ #include <asm/cacheflush.h>
+ #include <asm/cp15.h>
+ #include <asm/smp_plat.h>
++#include <asm/opcodes.h>
+ 
+ #include <mach/regs-pmu.h>
+ 
+ #include "common.h"
+ 
++/*
++ * Define opcode of the WFI instruction.
++ */
++#define __WFI __inst_arm_thumb16(0xe320f003, 0xbf30)
++
+ static inline void cpu_enter_lowpower(void)
+ {
+ 	unsigned int v;
+@@ -72,7 +78,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ 		/*
+ 		 * here's the WFI
+ 		 */
+-		asm(".word	0xe320f003\n"
++		asm(__WFI
+ 		    :
+ 		    :
+ 		    : "memory", "cc");
+diff --git a/arch/arm/mach-realview/hotplug.c b/arch/arm/mach-realview/hotplug.c
+index 53818e5..5271a1a 100644
+--- a/arch/arm/mach-realview/hotplug.c
++++ b/arch/arm/mach-realview/hotplug.c
+@@ -15,6 +15,12 @@
+ #include <asm/cacheflush.h>
+ #include <asm/cp15.h>
+ #include <asm/smp_plat.h>
++#include <asm/opcodes.h>
++
++/*
++ * Define opcode of the WFI instruction.
++ */
++#define __WFI __inst_arm_thumb16(0xe320f003, 0xbf30)
+ 
+ static inline void cpu_enter_lowpower(void)
+ {
+@@ -64,7 +70,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ 		/*
+ 		 * here's the WFI
+ 		 */
+-		asm(".word	0xe320f003\n"
++		asm(__WFI
+ 		    :
+ 		    :
+ 		    : "memory", "cc");
+diff --git a/arch/arm/mach-shmobile/hotplug.c b/arch/arm/mach-shmobile/hotplug.c
+index b09a0bd..0d7b7d1 100644
+--- a/arch/arm/mach-shmobile/hotplug.c
++++ b/arch/arm/mach-shmobile/hotplug.c
+@@ -20,6 +20,12 @@
+ #include <mach/emev2.h>
+ #include <asm/cacheflush.h>
+ #include <asm/mach-types.h>
++#include <asm/opcodes.h>
++
++/*
++ * Define opcode of the WFI instruction.
++ */
+++#define __WFI __inst_arm_thumb16(0xe320f003, 0xbf30)
+ 
+ static cpumask_t dead_cpus;
+ 
+@@ -39,7 +45,7 @@ void shmobile_cpu_die(unsigned int cpu)
+ 		/*
+ 		 * here's the WFI
+ 		 */
+-		asm(".word	0xe320f003\n"
++		asm(__WFI
+ 		    :
+ 		    :
+ 		    : "memory", "cc");
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
