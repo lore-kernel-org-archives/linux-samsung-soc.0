@@ -1,13 +1,13 @@
 From: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
-Subject: [PATCH] ARM: S3C64XX: Fix up IRQ mapping for balblair on Cragganmore
-Date: Fri,  2 Nov 2012 13:01:29 +0000
-Message-ID: <1351861289-19691-1-git-send-email-dp@opensource.wolfsonmicro.com>
+Subject: [PATCH v2] ARM: S3C64XX: Fix up IRQ mapping for balblair on Cragganmore
+Date: Fri,  2 Nov 2012 13:04:14 +0000
+Message-ID: <1351861454-20032-1-git-send-email-dp@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56815 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56851 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752477Ab2KBNDP (ORCPT
+	by vger.kernel.org with ESMTP id S1755342Ab2KBNF7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Nov 2012 09:03:15 -0400
+	Fri, 2 Nov 2012 09:05:59 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
@@ -15,7 +15,6 @@ Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.inf
 
 We are using S3C_EINT(4) instead of S3C_EINT(5).
 
-Change-Id: I84e77fd75d59c6b8fecbcb11e81dc78dbf07f156
 Signed-off-by: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
 ---
  arch/arm/mach-s3c64xx/mach-crag6410-module.c | 2 +-
