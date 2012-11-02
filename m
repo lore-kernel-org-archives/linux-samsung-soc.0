@@ -1,87 +1,82 @@
-From: Fei Yang <yangfei.kernel@gmail.com>
-Subject: Re: [PATCH] ARM: Fix the "WFI" instruction opcode definition.
-Date: Thu, 1 Nov 2012 21:40:10 +0800
-Message-ID: <CAKw8HL0ymmNRB=jgGcZn1+6k0s=FKA+qBV04y_wfeu7xMpUpkw@mail.gmail.com>
-References: <DA41BE1DDCA941489001C7FBD7A8820E3CB5512E@szxeml549-mbx.china.huawei.com>
-	<5091D13B.6060106@gmail.com>
+From: Praveen Paneri <p.paneri@samsung.com>
+Subject: Re: [PATCH v7 2/5] usb: s3c-hsotg: Adding phy driver support
+Date: Fri, 2 Nov 2012 09:56:37 +0530
+Message-ID: <CAD6zSYOvGSTF18Zr1zPFduz3povs7qiiU8p=iUtAAyDX_LUy+A@mail.gmail.com>
+References: <1351573057-22249-1-git-send-email-p.paneri@samsung.com>
+	<1351573057-22249-3-git-send-email-p.paneri@samsung.com>
+	<20121031140548.GE10998@arwen.pp.htv.fi>
+	<20121031154407.4eb54dba@amdc308.digital.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:35135 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761236Ab2KANkL (ORCPT
+Received: from mail-ia0-f174.google.com ([209.85.210.174]:45863 "EHLO
+	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751216Ab2KBE0i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Nov 2012 09:40:11 -0400
-Received: by mail-oa0-f46.google.com with SMTP id h16so2532416oag.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Nov 2012 06:40:10 -0700 (PDT)
-In-Reply-To: <5091D13B.6060106@gmail.com>
+	Fri, 2 Nov 2012 00:26:38 -0400
+In-Reply-To: <20121031154407.4eb54dba@amdc308.digital.local>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: "Yangfei (Felix)" <felix.yang@huawei.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: balbi@ti.com, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de, t.figa@samsung.com, gautam.vivek@samsung.com
 
-2012/11/1 Rob Herring <robherring2@gmail.com>:
-> On 10/31/2012 08:24 PM, Yangfei (Felix) wrote:
->> The current "WFI" opcode definiton causes CPU hot-plug feature fails to
->> work
->> if the kernel is built with CONFIG_THUMB2_KERNEL/CONFIG_CPU_ENDIAN_BE8
->> being
->> defined. An invalid instruction exception will be generated.
->>
->> Signed-off-by: yangfei.kernel@gmail.com
->> ---
->>  arch/arm/mach-exynos/hotplug.c   |    8 +++++++-
->>  arch/arm/mach-realview/hotplug.c |    8 +++++++-
->>  arch/arm/mach-shmobile/hotplug.c |    8 +++++++-
->>  3 files changed, 21 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/hotplug.c
->> b/arch/arm/mach-exynos/hotplug.c
->> index f4d7dd2..823a0e4 100644
->> --- a/arch/arm/mach-exynos/hotplug.c
->> +++ b/arch/arm/mach-exynos/hotplug.c
->> @@ -18,11 +18,17 @@
->>  #include <asm/cacheflush.h>
->>  #include <asm/cp15.h>
->>  #include <asm/smp_plat.h>
->> +#include <asm/opcodes.h>
->>
->>  #include <mach/regs-pmu.h>
->>
->>  #include "common.h"
->>
->> +/*
->> + * Define opcode of the WFI instruction.
->> + */
->> +#define __WFI __inst_arm_thumb16(0xe320f003, 0xbf30)
->> +
->>  static inline void cpu_enter_lowpower(void)
->>  {
->>       unsigned int v;
->> @@ -72,7 +78,7 @@ static inline void platform_do_lowpower(unsigned int
->> cpu, int *spurious)
->>               /*
->>                * here's the WFI
->>                */
->> -             asm(".word      0xe320f003\n"
->> +             asm(__WFI
+On Wed, Oct 31, 2012 at 8:14 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Hi Felipe,
 >
-> Wouldn't using the actual wfi instruction fix this. There is a wfi()
-> macro.
->
-> Or just call cpu_do_idle() which will do any other things needed before
-> wfi like a dsb instruction.
->
-> Rob
->>                   :
->>                   :
->>                   : "memory", "cc");
+>> Hi,
+>>
+>> On Tue, Oct 30, 2012 at 10:27:34AM +0530, Praveen Paneri wrote:
+>> > @@ -3501,20 +3511,27 @@ static int __devinit s3c_hsotg_probe(struct
+>> > platform_device *pdev) int ret;
+>> >     int i;
+>> >
+>> > -   plat = pdev->dev.platform_data;
+>> > -   if (!plat) {
+>> > -           dev_err(&pdev->dev, "no platform data defined\n");
+>> > -           return -EINVAL;
+>> > -   }
+>> > -
+>> >     hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg),
+>> > GFP_KERNEL); if (!hsotg) {
+>> >             dev_err(dev, "cannot get memory\n");
+>> >             return -ENOMEM;
+>> >     }
+>> >
+>> > +   plat = pdev->dev.platform_data;
+>> > +   if (!plat) {
+>> > +           /* Fallback for transceiver */
+>> > +           phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+>> > +           if (IS_ERR_OR_NULL(phy)) {
+>> > +                   dev_err(&pdev->dev, "no platform data or
+>> > transceiver defined\n");
+>> > +                   return -EPROBE_DEFER;
+>> > +           } else {
+>> > +                   hsotg->phy = phy;
+>> > +           }
+>> > +   } else {
+>> > +           hsotg->plat = plat;
+>> > +   }
+>>
+>> I think this should be the other way around, meaning you try to grab
+>> the phy, if you can't, then you fallback to pdata.
+Agreed! Will swap it
 
-<Cut>
-
-Hi Rob,
-    Thanks for the reply. The way you suggested is more elegant. But
-here we worried about the version of the compiler toolchain used to
-build the kernel. The "WFI" assembler instruction may not be
-recognized if the toolchain is too old. Need the related ARM board
-maintainers to confirm this.
+regards,
+Praveen
+>>
+>
+> I agree.
+>
+> The new approach is to use new PHY driver. And only when failed we
+> shall use legacy approach.
+>
+> --
+> Best regards,
+>
+> Lukasz Majewski
+>
+> Samsung Poland R&D Center | Linux Platform Group
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
