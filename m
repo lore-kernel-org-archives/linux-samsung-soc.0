@@ -1,82 +1,124 @@
 From: Praveen Paneri <p.paneri@samsung.com>
-Subject: Re: [PATCH v7 2/5] usb: s3c-hsotg: Adding phy driver support
-Date: Fri, 2 Nov 2012 09:56:37 +0530
-Message-ID: <CAD6zSYOvGSTF18Zr1zPFduz3povs7qiiU8p=iUtAAyDX_LUy+A@mail.gmail.com>
-References: <1351573057-22249-1-git-send-email-p.paneri@samsung.com>
-	<1351573057-22249-3-git-send-email-p.paneri@samsung.com>
-	<20121031140548.GE10998@arwen.pp.htv.fi>
-	<20121031154407.4eb54dba@amdc308.digital.local>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH 2/5] usb: s3c-hsotg: Adding phy driver support
+Date: Fri, 02 Nov 2012 11:19:09 +0530
+Message-ID: <1351835349-30210-1-git-send-email-p.paneri@samsung.com>
+References: <CAD6zSYOvGSTF18Zr1zPFduz3povs7qiiU8p=iUtAAyDX_LUy+A@mail.gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f174.google.com ([209.85.210.174]:45863 "EHLO
-	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751216Ab2KBE0i (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:28170 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752060Ab2KBFju (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Nov 2012 00:26:38 -0400
-In-Reply-To: <20121031154407.4eb54dba@amdc308.digital.local>
+	Fri, 2 Nov 2012 01:39:50 -0400
+In-reply-to: <CAD6zSYOvGSTF18Zr1zPFduz3povs7qiiU8p=iUtAAyDX_LUy+A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: balbi@ti.com, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de, t.figa@samsung.com, gautam.vivek@samsung.com
+To: linux-usb@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de, t.figa@samsung.com, gautam.vivek@samsung.com
 
-On Wed, Oct 31, 2012 at 8:14 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> Hi Felipe,
->
->> Hi,
->>
->> On Tue, Oct 30, 2012 at 10:27:34AM +0530, Praveen Paneri wrote:
->> > @@ -3501,20 +3511,27 @@ static int __devinit s3c_hsotg_probe(struct
->> > platform_device *pdev) int ret;
->> >     int i;
->> >
->> > -   plat = pdev->dev.platform_data;
->> > -   if (!plat) {
->> > -           dev_err(&pdev->dev, "no platform data defined\n");
->> > -           return -EINVAL;
->> > -   }
->> > -
->> >     hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg),
->> > GFP_KERNEL); if (!hsotg) {
->> >             dev_err(dev, "cannot get memory\n");
->> >             return -ENOMEM;
->> >     }
->> >
->> > +   plat = pdev->dev.platform_data;
->> > +   if (!plat) {
->> > +           /* Fallback for transceiver */
->> > +           phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
->> > +           if (IS_ERR_OR_NULL(phy)) {
->> > +                   dev_err(&pdev->dev, "no platform data or
->> > transceiver defined\n");
->> > +                   return -EPROBE_DEFER;
->> > +           } else {
->> > +                   hsotg->phy = phy;
->> > +           }
->> > +   } else {
->> > +           hsotg->plat = plat;
->> > +   }
->>
->> I think this should be the other way around, meaning you try to grab
->> the phy, if you can't, then you fallback to pdata.
-Agreed! Will swap it
+Adding the phy driver support to hsotg driver. Keeping the platform data
+for continuing the smooth operation for boards which still uses it.
 
-regards,
-Praveen
->>
->
-> I agree.
->
-> The new approach is to use new PHY driver. And only when failed we
-> shall use legacy approach.
->
-> --
-> Best regards,
->
-> Lukasz Majewski
->
-> Samsung Poland R&D Center | Linux Platform Group
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
+---
+ drivers/usb/gadget/s3c-hsotg.c |   37 +++++++++++++++++++++++++++----------
+ 1 files changed, 27 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index 6f696ee..bc30a2d 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -32,6 +32,7 @@
+ 
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
++#include <linux/usb/phy.h>
+ #include <linux/platform_data/s3c-hsotg.h>
+ 
+ #include <mach/map.h>
+@@ -133,7 +134,9 @@ struct s3c_hsotg_ep {
+  * struct s3c_hsotg - driver state.
+  * @dev: The parent device supplied to the probe function
+  * @driver: USB gadget driver
+- * @plat: The platform specific configuration data.
++ * @phy: The otg phy transceiver structure for phy control.
++ * @plat: The platform specific configuration data. This can be removed once
++ * all SoCs support usb transceiver.
+  * @regs: The memory area mapped for accessing registers.
+  * @irq: The IRQ number we are using
+  * @supplies: Definition of USB power supplies
+@@ -153,6 +156,7 @@ struct s3c_hsotg_ep {
+ struct s3c_hsotg {
+ 	struct device		 *dev;
+ 	struct usb_gadget_driver *driver;
++	struct usb_phy		*phy;
+ 	struct s3c_hsotg_plat	 *plat;
+ 
+ 	spinlock_t              lock;
+@@ -2854,7 +2858,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
+ 	struct platform_device *pdev = to_platform_device(hsotg->dev);
+ 
+ 	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
+-	if (hsotg->plat->phy_init)
++
++	if (hsotg->phy)
++		usb_phy_init(hsotg->phy);
++	else if (hsotg->plat->phy_init)
+ 		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
+ }
+ 
+@@ -2869,7 +2876,9 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
+ {
+ 	struct platform_device *pdev = to_platform_device(hsotg->dev);
+ 
+-	if (hsotg->plat->phy_exit)
++	if (hsotg->phy)
++		usb_phy_shutdown(hsotg->phy);
++	else if (hsotg->plat->phy_exit)
+ 		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
+ }
+ 
+@@ -3493,6 +3502,7 @@ static void s3c_hsotg_release(struct device *dev)
+ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+ {
+ 	struct s3c_hsotg_plat *plat = pdev->dev.platform_data;
++	struct usb_phy *phy;
+ 	struct device *dev = &pdev->dev;
+ 	struct s3c_hsotg_ep *eps;
+ 	struct s3c_hsotg *hsotg;
+@@ -3501,20 +3511,27 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+ 	int ret;
+ 	int i;
+ 
+-	plat = pdev->dev.platform_data;
+-	if (!plat) {
+-		dev_err(&pdev->dev, "no platform data defined\n");
+-		return -EINVAL;
+-	}
+-
+ 	hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg), GFP_KERNEL);
+ 	if (!hsotg) {
+ 		dev_err(dev, "cannot get memory\n");
+ 		return -ENOMEM;
+ 	}
+ 
++	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
++	if (IS_ERR_OR_NULL(phy)) {
++		/* Fallback for pdata */
++		plat = pdev->dev.platform_data;
++		if (!plat) {
++			dev_err(&pdev->dev, "no platform data or transceiver defined\n");
++			return -EPROBE_DEFER;
++		} else {
++			hsotg->plat = plat;
++		}
++	} else {
++		hsotg->phy = phy;
++	}
++
+ 	hsotg->dev = dev;
+-	hsotg->plat = plat;
+ 
+ 	hsotg->clk = devm_clk_get(&pdev->dev, "otg");
+ 	if (IS_ERR(hsotg->clk)) {
+-- 
+1.7.1
