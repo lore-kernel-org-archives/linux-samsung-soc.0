@@ -1,102 +1,266 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] ARM: dts: add board dts file for Exynos4412 based SMDK board
-Date: Sat, 03 Nov 2012 20:19:32 +0530
-Message-ID: <1351954172-13645-1-git-send-email-thomas.abraham@linaro.org>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 3/5] ARM: Exynos: add device tree support for MCT controller
+ driver
+Date: Sat, 03 Nov 2012 17:50:40 +0100
+Message-ID: <50954B60.2090500@gmail.com>
+References: <1351953938-13487-1-git-send-email-thomas.abraham@linaro.org> <1351953938-13487-4-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44026 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750754Ab2KCOY3 (ORCPT
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:48962 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752664Ab2KCQun (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Nov 2012 10:24:29 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MCX009LL1CSRG70@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 03 Nov 2012 23:24:28 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MCX00FY71CKNY90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 03 Nov 2012 23:24:28 +0900 (KST)
+	Sat, 3 Nov 2012 12:50:43 -0400
+Received: by mail-ea0-f174.google.com with SMTP id c13so1735028eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 03 Nov 2012 09:50:42 -0700 (PDT)
+In-Reply-To: <1351953938-13487-4-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org
-Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, chaos.youn@samsung.com, t.figa@samsung.com
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.figa@samsung.com, Changhwan Youn <chaos.youn@samsung.com>
 
-Add a minimal board dts file for Samsung Exynos4412 based SMDK board.
+Hi Thomas,
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
-This patch depends the on the following patch posted by Tomasz Figa.
-"ARM: dts: exynos4: Add support for Exynos4x12 SoCs"
+On 11/03/2012 03:45 PM, Thomas Abraham wrote:
+> Allow the MCT controller base address and interrupts to be obtained from
+> device tree and remove unused static definitions of these. The non-dt support
+> for Exynos5250 is removed but retained for Exynos4210 based platforms.
+>
+> Cc: Changhwan Youn<chaos.youn@samsung.com>
+> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+> ---
+>   .../bindings/timer/samsung,exynos4210-mct.txt      |   70 ++++++++++++++++++++
+>   arch/arm/mach-exynos/include/mach/irqs.h           |    6 --
+>   arch/arm/mach-exynos/mct.c                         |   42 ++++++++----
+>   3 files changed, 99 insertions(+), 19 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+>
+> diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> new file mode 100644
+> index 0000000..c53fd93
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> @@ -0,0 +1,70 @@
+> +Samsung's Multi Core Timer (MCT)
+> +
+> +The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> +global timer and CPU local timers. The global timer is a 64-bit free running
+> +up-counter and can generate 4 interrupts when the counter reaches one of the
+> +four preset counter values. The CPU local timers are 32-bit free running
+> +down-counters and generates an interrupt when the counter expires. There is
 
- arch/arm/boot/dts/Makefile                |    1 +
- arch/arm/boot/dts/exynos4412-smdk4412.dts |   45 +++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos4412-smdk4412.dts
+s/generates/generate ?
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index f37cf9f..36488a5 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_DOVE) += dove-cm-a510.dtb \
- dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos4210-smdkv310.dtb \
- 	exynos4210-trats.dtb \
-+	exynos4412-smdk4412.dtb \
- 	exynos5250-smdk5250.dtb
- dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb
- dtb-$(CONFIG_ARCH_INTEGRATOR) += integratorap.dtb \
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-new file mode 100644
-index 0000000..f05bf57
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -0,0 +1,45 @@
-+/*
-+ * Samsung's Exynos4412 based SMDK board device tree source
-+ *
-+ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Device tree source file for Samsung's SMDK4412 board which is based on
-+ * Samsung's Exynos4412 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+/include/ "exynos4412.dtsi"
-+
-+/ {
-+	model = "Samsung SMDK evaluation board based on Exynos4412";
-+	compatible = "samsung,smdk4412", "samsung,exynos4412";
-+
-+	memory {
-+		reg = <0x40000000 0x40000000>;
-+	};
-+
-+	chosen {
-+		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
-+	};
-+
-+	serial@13800000 {
-+		status = "okay";
-+	};
-+
-+	serial@13810000 {
-+		status = "okay";
-+	};
-+
-+	serial@13820000 {
-+		status = "okay";
-+	};
-+
-+	serial@13830000 {
-+		status = "okay";
-+	};
-+};
--- 
-1.6.6.rc2
+> +one CPU local timer instantiated in MCT for every CPU in the system.
+> +
+> +Required properties:
+> +
+> +- compatible: should be "samsung,exynos4210-mct".
+> +- reg: base address of the mct controller and length of the address space
+> +  it occupies.
+> +- interrupts: the list of interrupts generated by the controller. The following
+> +  should be the order of the interrupts specified. The local timer interrupts
+> +  should be specified after the four global timer interrupts have been
+> +  specified.
+> +
+> +	0: Global Timer Interrupt 0
+> +	1: Global Timer Interrupt 1
+> +	2: Global Timer Interrupt 2
+> +	3: Global Timer Interrupt 3
+> +	4: Local Timer Interrupt 0
+> +	5: Local Timer Interrupt 1
+> +	6: ..
+> +	7: ..
+> +	i: Local Timer Interrupt n
+> +
+> +- samsung,mct-nr-local-irqs: The number of local timer interrupts supported
+> +  by the MCT controller.
+> +
+> +Example 1: In this example, the system uses only the first global timer
+> +	   interrupt generated by MCT and the remaining three global timer
+> +	   interrupts are unused. Two local timer interrupts have been
+> +	   specified.
+> +
+> +	mct@10050000 {
+> +		compatible = "samsung,exynos4210-mct";
+> +		reg =<0x10050000 0x800>;
+> +		interrupts =<0 57 0>,<0 0 0>,<0 0 0>,<0 0 0>,
+> +			<0 42 0>,<0 48 0>;
+> +		samsung,mct-nr-local-irqs =<4>;
+
+Then this means the MCT supports 4 local interrupts but only 2 are
+specified here ? Doesn't the code below expect
+
+	samsung,mct-nr-local-irqs = <2>;
+
+in this case ? Or should interrupts really be
+
+	interrupts =<0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
+		<0 42 0>, <0 48 0>, <0 0 0>, <0 0 0>;
+?
+> +	};
+> +
+> +Example 2: In this example, the MCT global and local timer interrupts are
+> +	   connected to two seperate interrupt controllers. Hence, an
+> +	   interrupt-map is created to map the interrupts to the respective
+> +	   interrupt controllers.
+> +
+> +	mct@101C0000 {
+> +		compatible = "samsung,exynos4210-mct";
+> +		reg =<0x101C0000 0x800>;
+> +		interrupt-controller;
+> +		#interrups-cells =<2>;
+> +		interrupt-parent =<&mct_map>;
+> +		interrupts =<0 0>,<1 0>,<2 0>,<3 0>,
+> +			<4 0>,<5 0>;
+> +		samsung,mct-nr-local-irqs =<2>;
+
+Here the samsung,mct-nr-local-irqs' value matches what's specified in 
+the interrupts property.
+
+> +
+> +		mct_map: mct-map {
+> +			compatible = "samsung,mct-map";
+
+Do we need a compatible property in sub-nodes like this one ?
+Wouldn't it be sufficient to reference this node, for example by name ?
+
+> +			#interrupt-cells =<2>;
+> +			#address-cells =<0>;
+> +			#size-cells =<0>;
+> +			interrupt-map =<0x0 0&combiner 23 3>,
+> +					<0x4 0&gic 0 120 0>,
+> +					<0x5 0&gic 0 121 0>;
+> +		};
+> +	};
+> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+> index 6da3115..03c9f04 100644
+> --- a/arch/arm/mach-exynos/include/mach/irqs.h
+> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
+> @@ -30,8 +30,6 @@
+>
+>   /* For EXYNOS4 and EXYNOS5 */
+>
+> -#define EXYNOS_IRQ_MCT_LOCALTIMER	IRQ_PPI(12)
+> -
+>   #define EXYNOS_IRQ_EINT16_31		IRQ_SPI(32)
+>
+>   /* For EXYNOS4 SoCs */
+> @@ -320,8 +318,6 @@
+>   #define EXYNOS5_IRQ_CEC			IRQ_SPI(114)
+>   #define EXYNOS5_IRQ_SATA		IRQ_SPI(115)
+>
+> -#define EXYNOS5_IRQ_MCT_L0		IRQ_SPI(120)
+> -#define EXYNOS5_IRQ_MCT_L1		IRQ_SPI(121)
+>   #define EXYNOS5_IRQ_MMC44		IRQ_SPI(123)
+>   #define EXYNOS5_IRQ_MDMA1		IRQ_SPI(124)
+>   #define EXYNOS5_IRQ_FIMC_LITE0		IRQ_SPI(125)
+> @@ -411,8 +407,6 @@
+>   #define EXYNOS5_IRQ_PMU_CPU1		COMBINER_IRQ(22, 4)
+>
+>   #define EXYNOS5_IRQ_EINT0		COMBINER_IRQ(23, 0)
+> -#define EXYNOS5_IRQ_MCT_G0		COMBINER_IRQ(23, 3)
+> -#define EXYNOS5_IRQ_MCT_G1		COMBINER_IRQ(23, 4)
+>
+>   #define EXYNOS5_IRQ_EINT1		COMBINER_IRQ(24, 0)
+>   #define EXYNOS5_IRQ_SYSMMU_LITE1_0	COMBINER_IRQ(24, 1)
+> diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+> index d65d0c7..f7792b8 100644
+> --- a/arch/arm/mach-exynos/mct.c
+> +++ b/arch/arm/mach-exynos/mct.c
+> @@ -19,6 +19,9 @@
+>   #include<linux/platform_device.h>
+>   #include<linux/delay.h>
+>   #include<linux/percpu.h>
+> +#include<linux/of.h>
+> +#include<linux/of_irq.h>
+> +#include<linux/of_address.h>
+>
+>   #include<asm/hardware/gic.h>
+>   #include<asm/localtimer.h>
+> @@ -483,14 +486,16 @@ static struct local_timer_ops exynos4_mct_tick_ops __cpuinitdata = {
+>   };
+>   #endif /* CONFIG_LOCAL_TIMERS */
+>
+> -static void __init exynos4_timer_resources(void)
+> +static void __init exynos4_timer_resources(struct device_node *np)
+>   {
+>   	struct clk *mct_clk;
+>   	mct_clk = clk_get(NULL, "xtal");
+>
+>   	clk_rate = clk_get_rate(mct_clk);
+>
+> -	reg_base = S5P_VA_SYSTIMER;
+> +	reg_base = (np) ? of_iomap(np, 0) : S5P_VA_SYSTIMER;
+
+nit: Parentheses around np look redundant.
+
+> +	if (!reg_base)
+> +		panic("%s: unable to ioremap mct address space\n", __func__);
+
+How about adding a line like:
+
+#define pr_fmt(fmt) "%s: " fmt, __func__
+
+on top of this file and dropping "%s: " and __func__ in those panic() 
+calls ? It would make the logs more consistent across whole file.
+
+>   #ifdef CONFIG_LOCAL_TIMERS
+>   	if (mct_int_type == MCT_INT_PPI) {
+> @@ -509,23 +514,34 @@ static void __init exynos4_timer_resources(void)
+>
+>   static void __init exynos4_timer_init(void)
+>   {
+> -	if (soc_is_exynos4210()) {
+> +	struct device_node *np;
+> +	u32 nr_irqs, i;
+> +
+> +	np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-mct");
+> +	if (np) {
+> +		if (of_machine_is_compatible("samsung,exynos4210") ||
+> +			of_machine_is_compatible("samsung,exynos5250"))
+> +			mct_int_type = MCT_INT_SPI;
+> +		else
+> +			mct_int_type = MCT_INT_PPI;
+
+Does it make sense to specify this mct_int_type as a property of
+the mct node ?
+
+> +
+> +		if (of_property_read_u32(np, "samsung,mct-nr-local-irqs",
+> +						&nr_irqs))
+> +			panic("%s: number of local irqs not specified\n",
+> +						__func__);
+> +
+> +		mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
+> +		for (i = 0; i<  nr_irqs; i++)
+> +			mct_irqs[MCT_L0_IRQ + i] =
+> +				irq_of_parse_and_map(np, MCT_L0_IRQ + i);
+> +	} else if (soc_is_exynos4210()) {
+>   		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
+>   		mct_irqs[MCT_L0_IRQ] = EXYNOS4_IRQ_MCT_L0;
+>   		mct_irqs[MCT_L1_IRQ] = EXYNOS4_IRQ_MCT_L1;
+>   		mct_int_type = MCT_INT_SPI;
+> -	} else if (soc_is_exynos5250()) {
+> -		mct_irqs[MCT_G0_IRQ] = EXYNOS5_IRQ_MCT_G0;
+> -		mct_irqs[MCT_L0_IRQ] = EXYNOS5_IRQ_MCT_L0;
+> -		mct_irqs[MCT_L1_IRQ] = EXYNOS5_IRQ_MCT_L1;
+> -		mct_int_type = MCT_INT_SPI;
+> -	} else {
+> -		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
+> -		mct_irqs[MCT_L0_IRQ] = EXYNOS_IRQ_MCT_LOCALTIMER;
+> -		mct_int_type = MCT_INT_PPI;
+>   	}
+>
+> -	exynos4_timer_resources();
+> +	exynos4_timer_resources(np);
+>   	exynos4_clocksource_init();
+>   	exynos4_clockevent_init();
+>   }
+
+--
+
+Regards,
+Sylwester
