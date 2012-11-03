@@ -1,69 +1,102 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 4/5] ARM: Exynos: remove static io-remapping of mct registers
- for Exynos5
-Date: Sat, 03 Nov 2012 20:15:37 +0530
-Message-ID: <1351953938-13487-5-git-send-email-thomas.abraham@linaro.org>
-References: <1351953938-13487-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH] ARM: dts: add board dts file for Exynos4412 based SMDK board
+Date: Sat, 03 Nov 2012 20:19:32 +0530
+Message-ID: <1351954172-13645-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:9279 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752543Ab2KCOVG (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:44026 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754Ab2KCOY3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Nov 2012 10:21:06 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
+	Sat, 3 Nov 2012 10:24:29 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MCX007581730O50@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 03 Nov 2012 23:21:05 +0900 (KST)
+ 17 2011)) with ESMTP id <0MCX009LL1CSRG70@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 03 Nov 2012 23:24:28 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MCX00DCN163LTA0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 03 Nov 2012 23:21:05 +0900 (KST)
-In-reply-to: <1351953938-13487-1-git-send-email-thomas.abraham@linaro.org>
+ with ESMTPA id <0MCX00FY71CKNY90@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 03 Nov 2012 23:24:28 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.figa@samsung.com, Changhwan Youn <chaos.youn@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org
+Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, chaos.youn@samsung.com, t.figa@samsung.com
 
-With device tree support enabled for MCT controller, the static io-remapping
-of the MCT controller address space is removed for Exynos5 platforms (which
-supports only device tree based boot).
+Add a minimal board dts file for Samsung Exynos4412 based SMDK board.
 
-Cc: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/common.c           |    5 -----
- arch/arm/mach-exynos/include/mach/map.h |    1 -
- 2 files changed, 0 insertions(+), 6 deletions(-)
+This patch depends the on the following patch posted by Tomasz Figa.
+"ARM: dts: exynos4: Add support for Exynos4x12 SoCs"
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 56844d1..44be55d 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -234,11 +234,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
- 		.length		= SZ_4K,
- 		.type		= MT_DEVICE,
- 	}, {
--		.virtual	= (unsigned long)S5P_VA_SYSTIMER,
--		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSTIMER),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S5P_VA_SYSRAM,
- 		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSRAM),
- 		.length		= SZ_4K,
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index e737331..9355552 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -64,7 +64,6 @@
- #define EXYNOS5_PA_CMU			0x10010000
- 
- #define EXYNOS4_PA_SYSTIMER		0x10050000
--#define EXYNOS5_PA_SYSTIMER		0x101C0000
- 
- #define EXYNOS4_PA_WATCHDOG		0x10060000
- #define EXYNOS5_PA_WATCHDOG		0x101D0000
+ arch/arm/boot/dts/Makefile                |    1 +
+ arch/arm/boot/dts/exynos4412-smdk4412.dts |   45 +++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4412-smdk4412.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index f37cf9f..36488a5 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_DOVE) += dove-cm-a510.dtb \
+ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4210-smdkv310.dtb \
+ 	exynos4210-trats.dtb \
++	exynos4412-smdk4412.dtb \
+ 	exynos5250-smdk5250.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb
+ dtb-$(CONFIG_ARCH_INTEGRATOR) += integratorap.dtb \
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+new file mode 100644
+index 0000000..f05bf57
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -0,0 +1,45 @@
++/*
++ * Samsung's Exynos4412 based SMDK board device tree source
++ *
++ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Device tree source file for Samsung's SMDK4412 board which is based on
++ * Samsung's Exynos4412 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++/include/ "exynos4412.dtsi"
++
++/ {
++	model = "Samsung SMDK evaluation board based on Exynos4412";
++	compatible = "samsung,smdk4412", "samsung,exynos4412";
++
++	memory {
++		reg = <0x40000000 0x40000000>;
++	};
++
++	chosen {
++		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
++	};
++
++	serial@13800000 {
++		status = "okay";
++	};
++
++	serial@13810000 {
++		status = "okay";
++	};
++
++	serial@13820000 {
++		status = "okay";
++	};
++
++	serial@13830000 {
++		status = "okay";
++	};
++};
 -- 
 1.6.6.rc2
