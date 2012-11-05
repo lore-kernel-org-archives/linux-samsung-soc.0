@@ -1,121 +1,50 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 2/2] i2c-s3c2410: Convert to devm_request_and_ioremap()
-Date: Mon,  5 Nov 2012 09:33:39 +0100
-Message-ID: <1352104419-31630-2-git-send-email-broonie@opensource.wolfsonmicro.com>
-References: <1352104419-31630-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54854 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751111Ab2KEIzK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Nov 2012 03:55:10 -0500
-In-Reply-To: <1352104419-31630-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: [PATCH 1/2] i2c-s3c2410: Refactor ifdefs for PM_SLEEP
+Date: Mon,  5 Nov 2012 09:33:38 +0100
+Message-ID: <1352104419-31630-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <w.sang@pengutronix.de>
-Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-A small code saving and less error handling to worry about.
+Use the PM_SLEEP ifdef for system suspend and resume. This is partly
+in preparation for adding runtime operations and partly because a user
+may in theory choose to enable runtime suspend but not system suspend.
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Reviewed-by: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
 ---
- drivers/i2c/busses/i2c-s3c2410.c |   35 +++++++----------------------------
- 1 file changed, 7 insertions(+), 28 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index f01cdf3..f82d11f 100644
+index 3e0335f..f01cdf3 100644
 --- a/drivers/i2c/busses/i2c-s3c2410.c
 +++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -78,7 +78,6 @@ struct s3c24xx_i2c {
- 	void __iomem		*regs;
- 	struct clk		*clk;
- 	struct device		*dev;
--	struct resource		*ioarea;
- 	struct i2c_adapter	adap;
+@@ -1118,7 +1118,7 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
- 	struct s3c2410_platform_i2c	*pdata;
-@@ -988,25 +987,16 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		goto err_clk;
- 	}
- 
--	i2c->ioarea = request_mem_region(res->start, resource_size(res),
--					 pdev->name);
--
--	if (i2c->ioarea == NULL) {
--		dev_err(&pdev->dev, "cannot request IO\n");
--		ret = -ENXIO;
--		goto err_clk;
--	}
--
--	i2c->regs = ioremap(res->start, resource_size(res));
-+	i2c->regs = devm_request_and_ioremap(&pdev->dev, res);
- 
- 	if (i2c->regs == NULL) {
- 		dev_err(&pdev->dev, "cannot map IO\n");
- 		ret = -ENXIO;
--		goto err_ioarea;
-+		goto err_clk;
- 	}
- 
--	dev_dbg(&pdev->dev, "registers %p (%p, %p)\n",
--		i2c->regs, i2c->ioarea, res);
-+	dev_dbg(&pdev->dev, "registers %p (%p)\n",
-+		i2c->regs, res);
- 
- 	/* setup info block for the i2c core */
- 
-@@ -1017,7 +1007,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 
- 	ret = s3c24xx_i2c_init(i2c);
- 	if (ret != 0)
--		goto err_iomap;
-+		goto err_clk;
- 
- 	/* find the IRQ for this unit (note, this relies on the init call to
- 	 * ensure no current IRQs pending
-@@ -1026,7 +1016,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	i2c->irq = ret = platform_get_irq(pdev, 0);
- 	if (ret <= 0) {
- 		dev_err(&pdev->dev, "cannot find IRQ\n");
--		goto err_iomap;
-+		goto err_clk;
- 	}
- 
- 	ret = request_irq(i2c->irq, s3c24xx_i2c_irq, 0,
-@@ -1034,7 +1024,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
--		goto err_iomap;
-+		goto err_clk;
- 	}
- 
- 	ret = s3c24xx_i2c_register_cpufreq(i2c);
-@@ -1074,13 +1064,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
-  err_irq:
- 	free_irq(i2c->irq, i2c);
- 
-- err_iomap:
--	iounmap(i2c->regs);
--
-- err_ioarea:
--	release_resource(i2c->ioarea);
--	kfree(i2c->ioarea);
--
-  err_clk:
- 	clk_disable_unprepare(i2c->clk);
- 	clk_put(i2c->clk);
-@@ -1109,11 +1092,7 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
- 	clk_disable_unprepare(i2c->clk);
- 	clk_put(i2c->clk);
- 
--	iounmap(i2c->regs);
--
--	release_resource(i2c->ioarea);
- 	s3c24xx_i2c_dt_gpio_free(i2c);
--	kfree(i2c->ioarea);
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+@@ -1141,10 +1141,14 @@ static int s3c24xx_i2c_resume(struct device *dev)
  
  	return 0;
  }
++#endif
+ 
++#ifdef CONFIG_PM
+ static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
++#ifdef CONFIG_PM_SLEEP
+ 	.suspend_noirq = s3c24xx_i2c_suspend_noirq,
+ 	.resume = s3c24xx_i2c_resume,
++#endif
+ };
+ 
+ #define S3C24XX_DEV_PM_OPS (&s3c24xx_i2c_dev_pm_ops)
 -- 
 1.7.10.4
