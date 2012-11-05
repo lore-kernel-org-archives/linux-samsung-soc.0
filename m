@@ -1,85 +1,101 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Add device tree node for DP controller for
- Samsung Exynos5250 platforms
-Date: Mon, 05 Nov 2012 18:49:38 +0900
-Message-ID: <004901cdbb3a$dec6cc00$9c546400$%han@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: S3C244X/S3C64XX SoC camera host interface driver questions
+Date: Mon, 05 Nov 2012 11:48:56 +0100
+Message-ID: <50979998.8090809@gmail.com>
+References: <CAA11ShCpH7Z8eLok=MEh4bcSb6XjtVFfLQEYh2icUtYc-j5hEQ@mail.gmail.com> <5096C561.5000108@gmail.com> <CAA11ShCKFfdmd_ydxxCYo9Sv0VhgZW9kCk_F7LAQDg3mr5prrw@mail.gmail.com> <5096E8D7.4070304@gmail.com> <CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36889 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753471Ab2KEJtj (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:45137 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753916Ab2KEKtC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Nov 2012 04:49:39 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MD000DOQDYLV150@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Nov 2012 18:49:38 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.120.99])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MD0009BFDYQ7O20@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Nov 2012 18:49:38 +0900 (KST)
-References: 
-In-reply-to: 
-Content-language: ko
+	Mon, 5 Nov 2012 05:49:02 -0500
+In-Reply-To: <CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Andrey Gusakov <dron0gus@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, In-Bae Jeong <kukyakya@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Add device tree node for DP controller in Exynos5250 and enable
-the instance for the smdk5250 board.
+Hi,
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    9 +++++++++
- arch/arm/boot/dts/exynos5250.dtsi         |   14 ++++++++++++++
- 2 files changed, 23 insertions(+), 0 deletions(-)
+On 11/05/2012 10:44 AM, Andrey Gusakov wrote:
+>>> But documentation on ov9650 is too conflicting and did not cover all
+>>> registers used in driver.
+>> Do you mean the OV9650 datasheet, version 1.3, from September 24, 2004 ?
+> Yes. Also I have datasheet version 1.91 from January 28, 2005 and
+> Application note 1.1 from 7 December 2004
+> All can be found here [1].
+> It seems there is different versions of sensor exist. With VER=0x50
+> and 0x52. I have second one.
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 405009c..a4ee49e 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -193,4 +193,13 @@
- 	hdmi {
- 		hpd-gpio = <&gpx3 7 0xf 1 3>;
- 	};
-+
-+	display-port-controller {
-+		samsung,color-space = <0>;
-+		samsung,dynamic-range = <0>;
-+		samsung,ycbcr-coeff = <0>;
-+		samsung,color-depth = <1>;
-+		samsung,link-rate = <0x0a>;
-+		samsung,lane-count = <4>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index cf6a02d..4603b72 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -552,4 +552,18 @@
- 		reg = <0x14450000 0x10000>;
- 		interrupts = <0 94 0>;
- 	};
-+
-+	display-port-controller {
-+		compatible = "samsung,exynos5-dp";
-+		reg = <0x145b0000 0x1000>;
-+		interrupts = <10 3>;
-+		interrupt-parent = <&combiner>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		dptx-phy {
-+			reg = <0x10040720>;
-+			samsung,enable-mask = <1>;
-+		};
-+	};
- };
--- 
-1.7.1
+Hmm, in my case VER was 0x50. PID, VER = 0x96, 0x50. And this a default 
+value
+after reset according to the datasheet, ver. 1.3. For ver. 1.91 it is
+PID, VER = 0x96, 0x52. Perhaps it just indicates ov9652 sensor ov9652.
+Obviously I didn't test the driver with this one. Possibly the differences
+can be resolved by comparing the documentation. Not sure if those are
+significant and how much it makes sense to have single driver for both
+sensor versions. I'll try to have a look at that.
+
+...
+>>>> Are you using media-ctl to configure resolution on the camif and sensor
+>>>> subdev ?
+>>>
+>>> I'm using GStreamer:
+>>> gst-launch -v v4l2src device=/dev/video0 \
+>>>           ! video/x-raw-yuv, width=320, height=240 \
+>>>           ! ffmpegcolorspace \
+>>>           ! fbdevsink
+>>
+>>
+>> AFAIR, in the s3c-camif-v3.5 branch there was a bug that the CAMIF input
+>> resolution was not being properly set to what was reported by the sensor
+>> driver (default s3c-camif resolution is 640 x 480). The s3c-camif driver
+>> is supposed to get format from a sensor subdev and set it on the S3C-CAMIF
+>> subdev, upon image sensor subdev registration. Please see function
+>> camif_register_sensor() for details.
+>>
+>> The above issue should be fixed in this branch:
+>> [1] http://git.linuxtv.org/snawrocki/media.git/shortlog/refs/heads/s3c-camif
+>>
+>> Also, it could be verified by setting the formats with media-ctl manually,
+>> before running gst-launch, i.e.
+>>
+>> media-ctl --set-v4l2 '"OV9650":0 [fmt: YUYV2X8/320x240]'
+>> media-ctl --set-v4l2 '"S3C-CAMIF":0 [fmt: YUYV2X8/320x240]'
+>>
+>> with your current kernel and the s3c-camif driver.
+>> media-ctl was integrated in the OSELAS mini2440 BSP and probably is also
+>> in the mini6440 version.
+> Thanks. I'll try it. media-ctl from OpenEmbedded for some reason don't
+> like this params.
+
+As you might know the development version can be found here:
+http://git.ideasonboard.org/?p=media-ctl.git;a=summary
+
+There has been some change in the command line semantics recently.
+...
+>> I suggest you to update to the s3c-camif branch as above, it includes some
+>> bug fixes. Sorry, I don't have exact patch for your issue handy right now.
+> I just try this branch. No luck. Now it fails on __ov965x_set_params
+> while writing some registers:
+> ...
+> OV9650: i2c_write: 0x40 : 0xc1. ret: 2
+> OV9650: i2c_write: 0x29 : 0x3f. ret: 2
+> OV9650: i2c_write: 0x0F : 0x43. ret: -6
+> ...
+> If I comment out exits on this errors, following writes in sensors
+> give -6 (ENXIO) or -111 (ECONNREFUSED) erros. Seems sensors hung after
+> write to some registers.
+
+Hmm, that looks bad. The driver wasn't tested with VER=0x52 and there
+must be some differences that need to get sorted out.
+
+> [1] http://roboforum.ru/forum36/topic7835.html
+
+--
+
+Regards,
+Sylwester
