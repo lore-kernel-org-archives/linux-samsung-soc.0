@@ -1,105 +1,54 @@
-From: Dave Martin <dave.martin@linaro.org>
-Subject: Re: [PATCH] ARM: Fix the "WFI" instruction opcode definition.
-Date: Mon, 5 Nov 2012 17:36:04 +0000
-Message-ID: <20121105173604.GF2005@linaro.org>
-References: <DA41BE1DDCA941489001C7FBD7A8820E3CB5512E@szxeml549-mbx.china.huawei.com>
- <5091D13B.6060106@gmail.com>
- <CAKw8HL0ymmNRB=jgGcZn1+6k0s=FKA+qBV04y_wfeu7xMpUpkw@mail.gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: S3C244X/S3C64XX SoC camera host interface driver questions
+Date: Mon, 05 Nov 2012 23:26:05 +0100
+Message-ID: <50983CFD.2030104@gmail.com>
+References: <CAA11ShCpH7Z8eLok=MEh4bcSb6XjtVFfLQEYh2icUtYc-j5hEQ@mail.gmail.com> <5096C561.5000108@gmail.com> <CAA11ShCKFfdmd_ydxxCYo9Sv0VhgZW9kCk_F7LAQDg3mr5prrw@mail.gmail.com> <5096E8D7.4070304@gmail.com> <CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com> <50979998.8090809@gmail.com> <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:53661 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753768Ab2KERgJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Nov 2012 12:36:09 -0500
-Received: by mail-bk0-f46.google.com with SMTP id jk13so2123015bkc.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Nov 2012 09:36:08 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CAKw8HL0ymmNRB=jgGcZn1+6k0s=FKA+qBV04y_wfeu7xMpUpkw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Andrey Gusakov <dron0gus@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, In-Bae Jeong <kukyakya@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Fei Yang <yangfei.kernel@gmail.com>
-Cc: Rob Herring <robherring2@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Magnus Damm <magnus.damm@gmail.com>, linux-samsung-soc@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, "Yangfei (Felix)" <felix.yang@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Nov 01, 2012 at 09:40:10PM +0800, Fei Yang wrote:
-> 2012/11/1 Rob Herring <robherring2@gmail.com>:
-> > On 10/31/2012 08:24 PM, Yangfei (Felix) wrote:
-> >> The current "WFI" opcode definiton causes CPU hot-plug feature fails to
-> >> work
-> >> if the kernel is built with CONFIG_THUMB2_KERNEL/CONFIG_CPU_ENDIAN_BE8
-> >> being
-> >> defined. An invalid instruction exception will be generated.
-> >>
-> >> Signed-off-by: yangfei.kernel@gmail.com
-> >> ---
-> >>  arch/arm/mach-exynos/hotplug.c   |    8 +++++++-
-> >>  arch/arm/mach-realview/hotplug.c |    8 +++++++-
-> >>  arch/arm/mach-shmobile/hotplug.c |    8 +++++++-
-> >>  3 files changed, 21 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-exynos/hotplug.c
-> >> b/arch/arm/mach-exynos/hotplug.c
-> >> index f4d7dd2..823a0e4 100644
-> >> --- a/arch/arm/mach-exynos/hotplug.c
-> >> +++ b/arch/arm/mach-exynos/hotplug.c
-> >> @@ -18,11 +18,17 @@
-> >>  #include <asm/cacheflush.h>
-> >>  #include <asm/cp15.h>
-> >>  #include <asm/smp_plat.h>
-> >> +#include <asm/opcodes.h>
-> >>
-> >>  #include <mach/regs-pmu.h>
-> >>
-> >>  #include "common.h"
-> >>
-> >> +/*
-> >> + * Define opcode of the WFI instruction.
-> >> + */
-> >> +#define __WFI __inst_arm_thumb16(0xe320f003, 0xbf30)
-> >> +
-> >>  static inline void cpu_enter_lowpower(void)
-> >>  {
-> >>       unsigned int v;
-> >> @@ -72,7 +78,7 @@ static inline void platform_do_lowpower(unsigned int
-> >> cpu, int *spurious)
-> >>               /*
-> >>                * here's the WFI
-> >>                */
-> >> -             asm(".word      0xe320f003\n"
-> >> +             asm(__WFI
-> >
-> > Wouldn't using the actual wfi instruction fix this. There is a wfi()
-> > macro.
-> >
-> > Or just call cpu_do_idle() which will do any other things needed before
-> > wfi like a dsb instruction.
-> >
-> > Rob
-> >>                   :
-> >>                   :
-> >>                   : "memory", "cc");
-> 
-> <Cut>
-> 
-> Hi Rob,
->     Thanks for the reply. The way you suggested is more elegant. But
-> here we worried about the version of the compiler toolchain used to
-> build the kernel. The "WFI" assembler instruction may not be
-> recognized if the toolchain is too old. Need the related ARM board
-> maintainers to confirm this.
+Hi Andrey,
 
-Maybe all the exynos platforms are new enough for this not to be a
-problem?
+On 11/05/2012 12:11 PM, Andrey Gusakov wrote:
+> Hi.
+>
+> Thanks all!
+> I make it work! Have to comment out write { REG_GRCOM, 0x3f },	/*
 
-I think mach-exynos is pretty new and v7-only anyway.  If so, then it
-may be better to put
+Great news!
 
-CFLAGS_hotplug.o	:= -march=armv7-a
+Does the sensor still hang after 0x2f is written to REG_GRCOM instead ?
 
-in arch/arm/mach-exynos/Makefile, and use the real "wfi" mnemonic
-directly.  People should _really_ not be building kernels containig
-v7 board support with tools that are too old to support this.
+> Analog BLC&  regulator */ and have to enable gate clock for fimc at
+> probe.
 
-Cheers
----Dave
+Do you have CONFIG_PM_RUNTIME enabled ? Can you try and see it works
+if you enable it, without additional changes to the clock handling ?
+
+I hope to eventually prepare the ov9650 sensor driver for mainline. Your
+help in making it ready for VER=0x52 would be very much appreciated. :-)
+
+>> Hmm, in my case VER was 0x50. PID, VER = 0x96, 0x50. And this a default
+>> value
+>> after reset according to the datasheet, ver. 1.3. For ver. 1.91 it is
+>> PID, VER = 0x96, 0x52. Perhaps it just indicates ov9652 sensor ov9652.
+>> Obviously I didn't test the driver with this one. Possibly the differences
+>> can be resolved by comparing the documentation. Not sure if those are
+>> significant and how much it makes sense to have single driver for both
+>> sensor versions. I'll try to have a look at that.
+> Ok. I also try to compate init sequenses from different sources on web.
+>
+> Next step is to make ov2460 work.
+
+For now I can only recommend you to make the ov2460 driver more similar
+to the ov9650 one.
+
+--
+Regards,
+Sylwester
