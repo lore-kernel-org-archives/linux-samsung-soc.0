@@ -1,45 +1,43 @@
-From: Andrey Gusakov <dron0gus@gmail.com>
-Subject: Re: S3C244X/S3C64XX SoC camera host interface driver questions
-Date: Mon, 5 Nov 2012 14:11:45 +0300
-Message-ID: <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com>
-References: <CAA11ShCpH7Z8eLok=MEh4bcSb6XjtVFfLQEYh2icUtYc-j5hEQ@mail.gmail.com>
-	<5096C561.5000108@gmail.com>
-	<CAA11ShCKFfdmd_ydxxCYo9Sv0VhgZW9kCk_F7LAQDg3mr5prrw@mail.gmail.com>
-	<5096E8D7.4070304@gmail.com>
-	<CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com>
-	<50979998.8090809@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 6/7] pinctrl: exynos5440: add pinctrl driver for Samsung
+ EXYNOS5440 SoC
+Date: Mon, 5 Nov 2012 12:37:32 +0100
+Message-ID: <CACRpkdZP_sTKV1Nq3FWVQJocg8C8H7J9vd9hmY4k-qAnMPJcLg@mail.gmail.com>
+References: <1351274153-3120-1-git-send-email-kgene.kim@samsung.com>
+	<1351274153-3120-6-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:62151 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750831Ab2KELLp (ORCPT
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:49248 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752642Ab2KELhe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Nov 2012 06:11:45 -0500
-In-Reply-To: <50979998.8090809@gmail.com>
+	Mon, 5 Nov 2012 06:37:34 -0500
+Received: by mail-ea0-f174.google.com with SMTP id c13so2218998eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Nov 2012 03:37:33 -0800 (PST)
+In-Reply-To: <1351274153-3120-6-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, In-Bae Jeong <kukyakya@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
 
-Hi.
+On Fri, Oct 26, 2012 at 7:55 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-Thanks all!
-I make it work! Have to comment out write { REG_GRCOM, 0x3f },	/*
-Analog BLC & regulator */ and have to enable gate clock for fimc at
-probe.
+> From: Thomas Abraham <thomas.abraham@linaro.org>
+>
+> Add a new pinctrl driver for Samsung EXYNOS5440 SoC. The pin controller
+> module in EXYNOS5440 is different from the pin controller found on other
+> Samsung SoC. Hence, the pin controller driver for EXYNOS5440 SoC is
+> independent of the Samsung pinctrl framework.
+>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
-> Hmm, in my case VER was 0x50. PID, VER = 0x96, 0x50. And this a default
-> value
-> after reset according to the datasheet, ver. 1.3. For ver. 1.91 it is
-> PID, VER = 0x96, 0x52. Perhaps it just indicates ov9652 sensor ov9652.
-> Obviously I didn't test the driver with this one. Possibly the differences
-> can be resolved by comparing the documentation. Not sure if those are
-> significant and how much it makes sense to have single driver for both
-> sensor versions. I'll try to have a look at that.
-Ok. I also try to compate init sequenses from different sources on web.
+If I haven't ACK:ed this before here's an
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Next step is to make ov2460 work.
+I expect this to go through the Samsung tree?
 
-Best regards.
-Andrey.
+Yours,
+Linus Walleij
