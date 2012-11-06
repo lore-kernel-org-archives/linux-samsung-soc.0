@@ -1,85 +1,85 @@
-From: Dave Martin <dave.martin@linaro.org>
-Subject: Re: [PATCH] ARM: Fix the "WFI" instruction opcode definition.
-Date: Tue, 6 Nov 2012 13:33:28 +0000
-Message-ID: <20121106133318.GA2038@linaro.org>
-References: <DA41BE1DDCA941489001C7FBD7A8820E3CB5512E@szxeml549-mbx.china.huawei.com>
- <5091D13B.6060106@gmail.com>
- <CAKw8HL0ymmNRB=jgGcZn1+6k0s=FKA+qBV04y_wfeu7xMpUpkw@mail.gmail.com>
- <20121105173604.GF2005@linaro.org>
- <0bee01cdbc11$4a59afb0$df0d0f10$%kim@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v3 0/4] Adding usb2.0 host-phy support for exynos5250
+Date: Tue, 6 Nov 2012 19:23:12 +0530
+Message-ID: <CAFp+6iH=hs-Rr5CkcCWXLMeFQ+Q=xYC6xtZ1tybz=yeFRUcUwg@mail.gmail.com>
+References: <1351518160-22369-1-git-send-email-gautam.vivek@samsung.com>
+	<20121106131453.GL11931@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:34401 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751903Ab2KFNdi (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:46456 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750997Ab2KFNxO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Nov 2012 08:33:38 -0500
-Received: by mail-lb0-f174.google.com with SMTP id n3so402541lbo.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Nov 2012 05:33:36 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <0bee01cdbc11$4a59afb0$df0d0f10$%kim@samsung.com>
+	Tue, 6 Nov 2012 08:53:14 -0500
+In-Reply-To: <20121106131453.GL11931@arwen.pp.htv.fi>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Fei Yang' <yangfei.kernel@gmail.com>, 'Rob Herring' <robherring2@gmail.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Magnus Damm' <magnus.damm@gmail.com>, linux-samsung-soc@vger.kernel.org, 'Paul Mundt' <lethal@linux-sh.org>, "'Yangfei (Felix)'" <felix.yang@huawei.com>, linux-arm-kernel@lists.infradead.org
+To: balbi@ti.com
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, yulgon.kim@samsung.com, thomas.abraham@linaro.org, kishon@ti.com, p.paneri@samsung.com
 
-On Tue, Nov 06, 2012 at 08:24:31PM +0900, Kukjin Kim wrote:
-> Dave Martin wrote:
-> > 
-> 
-> [...]
-> 
-> > > >> -             asm(".word      0xe320f003\n"
-> > > >> +             asm(__WFI
-> > > >
-> > > > Wouldn't using the actual wfi instruction fix this. There is a wfi()
-> > > > macro.
-> > > >
-> > > > Or just call cpu_do_idle() which will do any other things needed
-> > before
-> > > > wfi like a dsb instruction.
-> > > >
-> > > > Rob
-> > > >>                   :
-> > > >>                   :
-> > > >>                   : "memory", "cc");
-> > >
-> > > <Cut>
-> > >
-> > > Hi Rob,
-> > >     Thanks for the reply. The way you suggested is more elegant. But
-> > > here we worried about the version of the compiler toolchain used to
-> > > build the kernel. The "WFI" assembler instruction may not be
-> > > recognized if the toolchain is too old. Need the related ARM board
-> > > maintainers to confirm this.
-> > 
-> > Maybe all the exynos platforms are new enough for this not to be a
-> > problem?
-> > 
-> Yeah, I think there is no problem on exynos now.
-> 
-> > I think mach-exynos is pretty new and v7-only anyway.  If so, then it
-> 
-> Yes, right at the moment.
-> 
-> BTW, if mach-exynos includes ARMv8 later?...ARMv8 platform codes will be put
-> in the arch/arm/ or arch/arm/64/ if some platform codes share with ARMv7?
-> Just wondering...
+Hi Balbi,
 
-That's a question for Catalin, I guess.
 
-> > may be better to put
-> > 
-> > CFLAGS_hotplug.o	:= -march=armv7-a
-> > 
-> > in arch/arm/mach-exynos/Makefile, and use the real "wfi" mnemonic
-> > directly.  People should _really_ not be building kernels containig
-> > v7 board support with tools that are too old to support this.
-> > 
-> I think so...
+On Tue, Nov 6, 2012 at 6:44 PM, Felipe Balbi <balbi@ti.com> wrote:
+> Hi,
+>
+> On Mon, Oct 29, 2012 at 07:12:36PM +0530, Vivek Gautam wrote:
+>> This patchset is based on the work by Praveen Paneri for
+>> samsung-usbphy driver:
+>> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/12653
+>>
+>> Changes from v2:
+>>  - Using "EXYNOS5_PHY_" as common prefix along with exact names for
+>>    PHY SFRs for register definitions
+>>  - Using register names with bit macros to make things more clear.
+>>  - Removed parentheses around 0x230 in definition for EXYNOS5_USB_CFG
+>>    in [patch 2/4 v2].
+>>
+>> Tested on smdk5250 target with usb-next branch along with arch patches
+>> for exynos5250:
+>> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13042
+>> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13048
+>>
+>> Vivek Gautam (4):
+>>   usb: phy: samsung: Add host phy support to samsung-phy driver
+>>   ARM: Exynos5250: Enabling samsung-usbphy driver
+>>   USB: ehci-s5p: Add phy driver support
+>>   USB: ohci-exynos: Add phy driver support
+>
+> I really don't know what to do with this series. I know it depends on
+> the other PHY changes which I have in my queue, but it touches too much
+> arch specific code, plus the USB Host code which I don't maintain.
+>
 
-OK, thanks for commenting.
+True, that it has dependency on the work by Praveen Paneri for samsung-usbphy
+driver plus the arch support patches.
 
-Cheers
----Dave
+This is based on usb-next branch, so the host-code can be taken care of ?
+
+> On top of all that, I have no platform to test these patches, which
+> makes me even more worried about signing off under this series ;-)
+>
+The patches have however been tested. The two patches:
+"USB: ehci-s5p: Add phy driver support",
+"USB: ohci-exynos: Add phy driver support" have been acked by Jingoo Han
+based on the patch-series.
+
+Possibly Kukjin Kim can help on this one.
+
+Kukjin,
+Can we have a thought on this please.
+
+> Would it be ok if we delay this to v3.9 ? At least the dependency with
+> other PHY changes would be dropped by then.
+>
+This changes are almost in shape ;-) and i am updating the next patchset soon.
+If possible can we try to get this in 3.8 please. :-)
+
+> --
+> balbi
+
+
+-- 
+Thanks & Regards
+Vivek
