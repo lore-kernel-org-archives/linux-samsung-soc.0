@@ -1,75 +1,60 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V3] ASoC: Samsung: Update Kconfig for I2S,SPDIF and PCM audio
-Date: Tue, 06 Nov 2012 10:26:26 +0530
-Message-ID: <1352177786-16505-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:37361 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753344Ab2KFEyU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Nov 2012 23:54:20 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MD1003P2UXCS5B0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Nov 2012 13:53:53 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MD100GVTUW35210@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Nov 2012 13:53:53 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 2/2] i2c-s3c2410: Convert to devm_request_and_ioremap()
+Date: Tue, 6 Nov 2012 09:10:03 +0100
+Message-ID: <20121106081003.GA3283@opensource.wolfsonmicro.com>
+References: <1352104419-31630-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <1352104419-31630-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <CAM=Q2cuV5V4db8TU-mz+htqnL9MLPB0q-uwxSKFgV6BUB2866A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAM=Q2cuV5V4db8TU-mz+htqnL9MLPB0q-uwxSKFgV6BUB2866A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: padma.v@samsung.com, sbkim73@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, olofj@google.com
 
-Update Kconfig file to enable I2S,PCM audio for wm8994 and spdif on all
-samsung platforms.
 
-Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
+--NzB8fVQJ5HfG6fxh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Changes since V2:
-	- Made driver selection based on SND_SOC_SAMSUNG as suggested by Olof
-	
-Changes since V1:
-	- Made driver selection based on MACH_EXYNOS5_DT
+On Mon, Nov 05, 2012 at 05:21:03PM +0530, Shubhrajyoti Datta wrote:
+> On Mon, Nov 5, 2012 at 2:03 PM, Mark Brown
+> <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> > A small code saving and less error handling to worry about.
 
- sound/soc/samsung/Kconfig |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+> Looks good.
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index e7b8317..9b3b63e 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -63,7 +63,7 @@ config SND_SOC_SAMSUNG_SMDK_WM8580
- 
- config SND_SOC_SAMSUNG_SMDK_WM8994
- 	tristate "SoC I2S Audio support for WM8994 on SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG
- 	depends on I2C=y && GENERIC_HARDIRQS
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
-@@ -162,7 +162,7 @@ config SND_SOC_GONI_AQUILA_WM8994
- 
- config SND_SOC_SAMSUNG_SMDK_SPDIF
- 	tristate "SoC S/PDIF Audio support for SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG
- 	select SND_SAMSUNG_SPDIF
- 	help
- 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
-@@ -177,7 +177,7 @@ config SND_SOC_SMDK_WM8580_PCM
- 
- config SND_SOC_SMDK_WM8994_PCM
- 	tristate "SoC PCM Audio support for WM8994 on SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKC210 || MACH_SMDKV310 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG
- 	depends on I2C=y && GENERIC_HARDIRQS
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
--- 
-1.7.4.4
+> request irq could be devm_* also. Not an objection though.
+
+devm_ is a much worse idea for IRQs than for other resource types since
+interrupts are delivered asynchronously.  Using it safely requires that
+we do the analysis required to make sure that the hardware is totally
+idle and can't interrupt.
+
+--NzB8fVQJ5HfG6fxh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQmMXTAAoJELSic+t+oim9DKkP+gMrOSAtp+YAgJPKEFyYOEf1
+ugHZ29jlTLr5EoSPx/pi/wbm4SeVXp41AP5SMgCb+SQwppdUfugrO5AaQtV+Ty/J
+4pd3Y3qAAzRijeUMTIWeWGVtwF/t8BTHjvacRZBPty+nF5hjiJlVyy1qFOZ0b48r
+PFJoQAQWmQdG6Uk14h2ltp0CGPlnt6mhOCseJTs4AQk/KsfE+1THvaiDPh+4TnPl
+6bfnaKhhqmxLdv4BHbpekzam2JBxde2nZEi7feTbg2/LWEx73vmYrhG5XDYd4uD3
+KW05wP8EgPPjcXrYTLJLCpreqb+PCl98MUPd3l7QiMfu8iwE3BZgHLoLG0HH8q5q
+C2Z7CTYm/KOTSymf7KBAla4ObZDm4jojgJp00VrDISMMAIieDEk5xdYuAmILZuK0
+Qx+a4pKqau4ewXfUw/jeALcv4ZfLzTpo6yorZpNNuWSju/KNINDcN2cftRmivGAh
+qxIbbxrsHVOShPgWoXadIMhdc/7XnMph/5jacZHkfzcbClIQykaTIVyPp/D7KVqz
+KuKwi8hTE+J1vpoWnovRQ4fnqd/BatXmzuRr/C0AbuJ3wTm9pd37TwPuvSnwGBbX
+SeF3Stz0g4cWMaY5w98jxaEsGpl6mFqt7F/58eClEFeqY6q7dpbg8XxC+BCoKTw4
+7UFwjSl8//eZTOESjPz7
+=GLBa
+-----END PGP SIGNATURE-----
+
+--NzB8fVQJ5HfG6fxh--
