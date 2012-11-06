@@ -1,40 +1,51 @@
-From: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
-Subject: Re: [PATCH 2/2] i2c-s3c2410: Convert to devm_request_and_ioremap()
-Date: Tue, 6 Nov 2012 13:42:31 +0530
-Message-ID: <CAM=Q2cuYJ8QVcEL0G06SXORs_UFZvkzXx-y295wB5JUKfcTjWw@mail.gmail.com>
-References: <1352104419-31630-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-	<1352104419-31630-2-git-send-email-broonie@opensource.wolfsonmicro.com>
-	<CAM=Q2cuV5V4db8TU-mz+htqnL9MLPB0q-uwxSKFgV6BUB2866A@mail.gmail.com>
-	<20121106081003.GA3283@opensource.wolfsonmicro.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2] ARM: S3C64XX: Fix up IRQ mapping for balblair on
+ Cragganmore
+Date: Tue, 06 Nov 2012 19:52:06 +0900
+Message-ID: <0be501cdbc0c$c3a4a870$4aedf950$%kim@samsung.com>
+References: <1351861454-20032-1-git-send-email-dp@opensource.wolfsonmicro.com>
+ <20121102142238.GX4413@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:36737 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754002Ab2KFIMd (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:53556 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751317Ab2KFKwO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Nov 2012 03:12:33 -0500
-In-Reply-To: <20121106081003.GA3283@opensource.wolfsonmicro.com>
+	Tue, 6 Nov 2012 05:52:14 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MD200NIPBIU4010@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Nov 2012 19:52:07 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MD20084ABIUHHA0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Nov 2012 19:52:07 +0900 (KST)
+In-reply-to: <20121102142238.GX4413@opensource.wolfsonmicro.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Wolfram Sang <w.sang@pengutronix.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dimitris Papastamos' <dp@opensource.wolfsonmicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-On Tue, Nov 6, 2012 at 1:40 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Mon, Nov 05, 2012 at 05:21:03PM +0530, Shubhrajyoti Datta wrote:
->> On Mon, Nov 5, 2012 at 2:03 PM, Mark Brown
->> <broonie@opensource.wolfsonmicro.com> wrote:
->> > A small code saving and less error handling to worry about.
->
->> Looks good.
->
->> request irq could be devm_* also. Not an objection though.
->
-> devm_ is a much worse idea for IRQs than for other resource types since
-> interrupts are delivered asynchronously.  Using it safely requires that
-> we do the analysis required to make sure that the hardware is totally
-> idle and can't interrupt.
+Mark Brown wrote:
+> 
+> On Fri, Nov 02, 2012 at 01:04:14PM +0000, Dimitris Papastamos wrote:
+> > We are using S3C_EINT(4) instead of S3C_EINT(5).
+> 
+> Reviwed-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-hmm  thats true.
-thanks,
+Reviewed-by?
+
+Applied with fixing typo :-)
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
