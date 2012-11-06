@@ -1,242 +1,87 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: EXYNOS: reorder inclusions of
- <linux/platform_data/xxx.h>
-Date: Tue, 06 Nov 2012 20:54:10 +0900
-Message-ID: <0bfe01cdbc15$6f024fd0$4d06ef70$%kim@samsung.com>
-References: <000801cdbbcd$f6ac01d0$e4040570$%han@samsung.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v3 0/4] Adding usb2.0 host-phy support for exynos5250
+Date: Tue, 6 Nov 2012 15:14:54 +0200
+Message-ID: <20121106131453.GL11931@arwen.pp.htv.fi>
+References: <1351518160-22369-1-git-send-email-gautam.vivek@samsung.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:30398 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751903Ab2KFLyM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Nov 2012 06:54:12 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MD2002MEEE5UZJ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Nov 2012 20:54:10 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MD200BU4EEAFH90@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Nov 2012 20:54:10 +0900 (KST)
-In-reply-to: <000801cdbbcd$f6ac01d0$e4040570$%han@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bZ2MuwyI/0uB8yuJ"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1351518160-22369-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
 
-Jingoo Han wrote:
-> 
-> This patch reorders inclusions of <linux/platform_data/xxx.h>
-> and puts the inclusions with the same kind for readability,
-> according to alphabetical ordering.
-> 
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  arch/arm/mach-exynos/dev-audio.c           |    2 +-
->  arch/arm/mach-exynos/dev-ohci.c            |    2 +-
->  arch/arm/mach-exynos/mach-nuri.c           |    6 +++---
->  arch/arm/mach-exynos/mach-origen.c         |    6 +++---
->  arch/arm/mach-exynos/mach-smdk4x12.c       |    2 +-
->  arch/arm/mach-exynos/mach-smdkv310.c       |    6 +++---
->  arch/arm/mach-exynos/mach-universal_c210.c |    4 ++--
->  7 files changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/dev-audio.c b/arch/arm/mach-exynos/dev-
-> audio.c
-> index ae321c7..a1cb42c 100644
-> --- a/arch/arm/mach-exynos/dev-audio.c
-> +++ b/arch/arm/mach-exynos/dev-audio.c
-> @@ -14,9 +14,9 @@
->  #include <linux/platform_device.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/gpio.h>
-> +#include <linux/platform_data/asoc-s3c.h>
-> 
->  #include <plat/gpio-cfg.h>
-> -#include <linux/platform_data/asoc-s3c.h>
-> 
->  #include <mach/map.h>
->  #include <mach/dma.h>
-> diff --git a/arch/arm/mach-exynos/dev-ohci.c b/arch/arm/mach-exynos/dev-
-> ohci.c
-> index 14ed795..4244d02 100644
-> --- a/arch/arm/mach-exynos/dev-ohci.c
-> +++ b/arch/arm/mach-exynos/dev-ohci.c
-> @@ -12,10 +12,10 @@
-> 
->  #include <linux/dma-mapping.h>
->  #include <linux/platform_device.h>
-> +#include <linux/platform_data/usb-exynos.h>
-> 
->  #include <mach/irqs.h>
->  #include <mach/map.h>
-> -#include <linux/platform_data/usb-exynos.h>
-> 
->  #include <plat/devs.h>
->  #include <plat/usb-phy.h>
-> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
-> nuri.c
-> index 1e8511f..27d4ed8 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -25,7 +25,10 @@
->  #include <linux/mmc/host.h>
->  #include <linux/fb.h>
->  #include <linux/pwm_backlight.h>
-> +#include <linux/platform_data/i2c-s3c2410.h>
-> +#include <linux/platform_data/mipi-csis.h>
->  #include <linux/platform_data/s3c-hsotg.h>
-> +#include <linux/platform_data/usb-ehci-s5p.h>
->  #include <drm/exynos_drm.h>
-> 
->  #include <video/platform_lcd.h>
-> @@ -45,14 +48,11 @@
->  #include <plat/devs.h>
->  #include <plat/fb.h>
->  #include <plat/sdhci.h>
-> -#include <linux/platform_data/usb-ehci-s5p.h>
->  #include <plat/clock.h>
->  #include <plat/gpio-cfg.h>
-> -#include <linux/platform_data/i2c-s3c2410.h>
->  #include <plat/mfc.h>
->  #include <plat/fimc-core.h>
->  #include <plat/camport.h>
-> -#include <linux/platform_data/mipi-csis.h>
-> 
->  #include <mach/map.h>
-> 
-> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-
-> exynos/mach-origen.c
-> index d8dc6d7..c931ce1 100644
-> --- a/arch/arm/mach-exynos/mach-origen.c
-> +++ b/arch/arm/mach-exynos/mach-origen.c
-> @@ -23,7 +23,10 @@
->  #include <linux/mfd/max8997.h>
->  #include <linux/lcd.h>
->  #include <linux/rfkill-gpio.h>
-> +#include <linux/platform_data/i2c-s3c2410.h>
->  #include <linux/platform_data/s3c-hsotg.h>
-> +#include <linux/platform_data/usb-ehci-s5p.h>
-> +#include <linux/platform_data/usb-exynos.h>
-> 
->  #include <asm/mach/arch.h>
->  #include <asm/hardware/gic.h>
-> @@ -36,8 +39,6 @@
->  #include <plat/cpu.h>
->  #include <plat/devs.h>
->  #include <plat/sdhci.h>
-> -#include <linux/platform_data/i2c-s3c2410.h>
-> -#include <linux/platform_data/usb-ehci-s5p.h>
->  #include <plat/clock.h>
->  #include <plat/gpio-cfg.h>
->  #include <plat/backlight.h>
-> @@ -45,7 +46,6 @@
->  #include <plat/mfc.h>
->  #include <plat/hdmi.h>
-> 
-> -#include <linux/platform_data/usb-exynos.h>
->  #include <mach/map.h>
-> 
->  #include <drm/exynos_drm.h>
-> diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-
-> exynos/mach-smdk4x12.c
-> index 17b9ca4..a1555a7 100644
-> --- a/arch/arm/mach-exynos/mach-smdk4x12.c
-> +++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-> @@ -21,6 +21,7 @@
->  #include <linux/pwm_backlight.h>
->  #include <linux/regulator/machine.h>
->  #include <linux/serial_core.h>
-> +#include <linux/platform_data/i2c-s3c2410.h>
->  #include <linux/platform_data/s3c-hsotg.h>
-> 
->  #include <asm/mach/arch.h>
-> @@ -34,7 +35,6 @@
->  #include <plat/devs.h>
->  #include <plat/fb.h>
->  #include <plat/gpio-cfg.h>
-> -#include <linux/platform_data/i2c-s3c2410.h>
->  #include <plat/keypad.h>
->  #include <plat/mfc.h>
->  #include <plat/regs-serial.h>
-> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-
-> exynos/mach-smdkv310.c
-> index 4f0ac53..063cb94 100644
-> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> @@ -20,7 +20,10 @@
->  #include <linux/input.h>
->  #include <linux/pwm.h>
->  #include <linux/pwm_backlight.h>
-> +#include <linux/platform_data/i2c-s3c2410.h>
->  #include <linux/platform_data/s3c-hsotg.h>
-> +#include <linux/platform_data/usb-ehci-s5p.h>
-> +#include <linux/platform_data/usb-exynos.h>
-> 
->  #include <asm/mach/arch.h>
->  #include <asm/hardware/gic.h>
-> @@ -35,16 +38,13 @@
->  #include <plat/fb.h>
->  #include <plat/keypad.h>
->  #include <plat/sdhci.h>
-> -#include <linux/platform_data/i2c-s3c2410.h>
->  #include <plat/gpio-cfg.h>
->  #include <plat/backlight.h>
->  #include <plat/mfc.h>
-> -#include <linux/platform_data/usb-ehci-s5p.h>
->  #include <plat/clock.h>
->  #include <plat/hdmi.h>
-> 
->  #include <mach/map.h>
-> -#include <linux/platform_data/usb-exynos.h>
-> 
->  #include <drm/exynos_drm.h>
->  #include "common.h"
-> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
-> exynos/mach-universal_c210.c
-> index 34fd5c6..9e3340f 100644
-> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> @@ -23,6 +23,8 @@
->  #include <linux/i2c-gpio.h>
->  #include <linux/i2c/mcs.h>
->  #include <linux/i2c/atmel_mxt_ts.h>
-> +#include <linux/platform_data/i2c-s3c2410.h>
-> +#include <linux/platform_data/mipi-csis.h>
->  #include <linux/platform_data/s3c-hsotg.h>
->  #include <drm/exynos_drm.h>
-> 
-> @@ -35,7 +37,6 @@
->  #include <plat/clock.h>
->  #include <plat/cpu.h>
->  #include <plat/devs.h>
-> -#include <linux/platform_data/i2c-s3c2410.h>
->  #include <plat/gpio-cfg.h>
->  #include <plat/fb.h>
->  #include <plat/mfc.h>
-> @@ -43,7 +44,6 @@
->  #include <plat/fimc-core.h>
->  #include <plat/s5p-time.h>
->  #include <plat/camport.h>
-> -#include <linux/platform_data/mipi-csis.h>
-> 
->  #include <mach/map.h>
-> 
-> --
-> 1.7.1
+--bZ2MuwyI/0uB8yuJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks OK to me, will apply.
+Hi,
 
-Thanks.
+On Mon, Oct 29, 2012 at 07:12:36PM +0530, Vivek Gautam wrote:
+> This patchset is based on the work by Praveen Paneri for
+> samsung-usbphy driver:
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/12653
+>=20
+> Changes from v2:
+>  - Using "EXYNOS5_PHY_" as common prefix along with exact names for
+>    PHY SFRs for register definitions
+>  - Using register names with bit macros to make things more clear.
+>  - Removed parentheses around 0x230 in definition for EXYNOS5_USB_CFG
+>    in [patch 2/4 v2].
+>=20
+> Tested on smdk5250 target with usb-next branch along with arch patches
+> for exynos5250:
+> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13042
+> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13048
+>=20
+> Vivek Gautam (4):
+>   usb: phy: samsung: Add host phy support to samsung-phy driver
+>   ARM: Exynos5250: Enabling samsung-usbphy driver
+>   USB: ehci-s5p: Add phy driver support
+>   USB: ohci-exynos: Add phy driver support
 
-Best regards,
-Kgene.
+I really don't know what to do with this series. I know it depends on
+the other PHY changes which I have in my queue, but it touches too much
+arch specific code, plus the USB Host code which I don't maintain.
+
+On top of all that, I have no platform to test these patches, which
+makes me even more worried about signing off under this series ;-)
+
+Would it be ok if we delay this to v3.9 ? At least the dependency with
+other PHY changes would be dropped by then.
+
+--=20
+balbi
+
+--bZ2MuwyI/0uB8yuJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQmQ1NAAoJEIaOsuA1yqRE5g8P/1rwduvmHJ14dtYa4pzgb8o4
+ndcpTQBG2zcnEJlMfbuw0x8s/M9CvAh9NJ/HGatVA6VHCPbrm9rMMmbktDjF2uWB
+a4OCVctNGVJZjTrps1cYa1JlVDfTOJwjLhobM4gUJPSINAgKKhi9J3nNPh4Z0J4F
+SqSFJIXM+4qDoxAoYkx32x+L2qB60/l68R8pIGbotw6C0ycnrhKxJDntAZWdjYiV
+hyvsM1EcVxA1DrvSa68h84fId6aQmWL4uQMVs8LOv3kjkgFYmlk9tgNUDTDhWTIj
+XD8csqh/pmocrvxKNW5IcjLsNat1X3M3I59GIZz7mf1Adxyo7qwkKBf21vmfJkRb
+FwPM11ExVhg5FQaKSCIhwRYDpEyNEphARaWScbd9wvYQkuLLKFrw/BxguU2EdD6r
+/VBKiviaSlT8ujfKkrEMFHC4nd7kEel0qCo1LmCT4Z0e9eDvxojNjuTsF9i/B0W9
+rnQmErN3pw5I2NJG5JQkCUUruKQcnzVRhMUvGG40QJk+Pn41Qi6AIVRzCNSKJsD9
+H7Qk+P0ytEda1ycoTKIYOl9IGSqjejBbTCuym5seIXA1oQii6NOJYJM1cSaJ++af
+VoBelt3iskUqBenqLvVOVccrL+dL6G60e1IlW2ECJCMOzr4SdOYokPzjNstdVJNE
+umQN1lxvrWxyyVHahVw8
+=7T95
+-----END PGP SIGNATURE-----
+
+--bZ2MuwyI/0uB8yuJ--
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
