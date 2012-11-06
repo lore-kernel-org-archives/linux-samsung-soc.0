@@ -1,87 +1,85 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v3 0/4] Adding usb2.0 host-phy support for exynos5250
-Date: Tue, 6 Nov 2012 15:14:54 +0200
-Message-ID: <20121106131453.GL11931@arwen.pp.htv.fi>
-References: <1351518160-22369-1-git-send-email-gautam.vivek@samsung.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Dave Martin <dave.martin@linaro.org>
+Subject: Re: [PATCH] ARM: Fix the "WFI" instruction opcode definition.
+Date: Tue, 6 Nov 2012 13:33:28 +0000
+Message-ID: <20121106133318.GA2038@linaro.org>
+References: <DA41BE1DDCA941489001C7FBD7A8820E3CB5512E@szxeml549-mbx.china.huawei.com>
+ <5091D13B.6060106@gmail.com>
+ <CAKw8HL0ymmNRB=jgGcZn1+6k0s=FKA+qBV04y_wfeu7xMpUpkw@mail.gmail.com>
+ <20121105173604.GF2005@linaro.org>
+ <0bee01cdbc11$4a59afb0$df0d0f10$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bZ2MuwyI/0uB8yuJ"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1351518160-22369-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
---bZ2MuwyI/0uB8yuJ
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:34401 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751903Ab2KFNdi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Nov 2012 08:33:38 -0500
+Received: by mail-lb0-f174.google.com with SMTP id n3so402541lbo.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Nov 2012 05:33:36 -0800 (PST)
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0bee01cdbc11$4a59afb0$df0d0f10$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Fei Yang' <yangfei.kernel@gmail.com>, 'Rob Herring' <robherring2@gmail.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Magnus Damm' <magnus.damm@gmail.com>, linux-samsung-soc@vger.kernel.org, 'Paul Mundt' <lethal@linux-sh.org>, "'Yangfei (Felix)'" <felix.yang@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-Hi,
+On Tue, Nov 06, 2012 at 08:24:31PM +0900, Kukjin Kim wrote:
+> Dave Martin wrote:
+> > 
+> 
+> [...]
+> 
+> > > >> -             asm(".word      0xe320f003\n"
+> > > >> +             asm(__WFI
+> > > >
+> > > > Wouldn't using the actual wfi instruction fix this. There is a wfi()
+> > > > macro.
+> > > >
+> > > > Or just call cpu_do_idle() which will do any other things needed
+> > before
+> > > > wfi like a dsb instruction.
+> > > >
+> > > > Rob
+> > > >>                   :
+> > > >>                   :
+> > > >>                   : "memory", "cc");
+> > >
+> > > <Cut>
+> > >
+> > > Hi Rob,
+> > >     Thanks for the reply. The way you suggested is more elegant. But
+> > > here we worried about the version of the compiler toolchain used to
+> > > build the kernel. The "WFI" assembler instruction may not be
+> > > recognized if the toolchain is too old. Need the related ARM board
+> > > maintainers to confirm this.
+> > 
+> > Maybe all the exynos platforms are new enough for this not to be a
+> > problem?
+> > 
+> Yeah, I think there is no problem on exynos now.
+> 
+> > I think mach-exynos is pretty new and v7-only anyway.  If so, then it
+> 
+> Yes, right at the moment.
+> 
+> BTW, if mach-exynos includes ARMv8 later?...ARMv8 platform codes will be put
+> in the arch/arm/ or arch/arm/64/ if some platform codes share with ARMv7?
+> Just wondering...
 
-On Mon, Oct 29, 2012 at 07:12:36PM +0530, Vivek Gautam wrote:
-> This patchset is based on the work by Praveen Paneri for
-> samsung-usbphy driver:
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/12653
->=20
-> Changes from v2:
->  - Using "EXYNOS5_PHY_" as common prefix along with exact names for
->    PHY SFRs for register definitions
->  - Using register names with bit macros to make things more clear.
->  - Removed parentheses around 0x230 in definition for EXYNOS5_USB_CFG
->    in [patch 2/4 v2].
->=20
-> Tested on smdk5250 target with usb-next branch along with arch patches
-> for exynos5250:
-> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13042
-> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13048
->=20
-> Vivek Gautam (4):
->   usb: phy: samsung: Add host phy support to samsung-phy driver
->   ARM: Exynos5250: Enabling samsung-usbphy driver
->   USB: ehci-s5p: Add phy driver support
->   USB: ohci-exynos: Add phy driver support
+That's a question for Catalin, I guess.
 
-I really don't know what to do with this series. I know it depends on
-the other PHY changes which I have in my queue, but it touches too much
-arch specific code, plus the USB Host code which I don't maintain.
+> > may be better to put
+> > 
+> > CFLAGS_hotplug.o	:= -march=armv7-a
+> > 
+> > in arch/arm/mach-exynos/Makefile, and use the real "wfi" mnemonic
+> > directly.  People should _really_ not be building kernels containig
+> > v7 board support with tools that are too old to support this.
+> > 
+> I think so...
 
-On top of all that, I have no platform to test these patches, which
-makes me even more worried about signing off under this series ;-)
+OK, thanks for commenting.
 
-Would it be ok if we delay this to v3.9 ? At least the dependency with
-other PHY changes would be dropped by then.
-
---=20
-balbi
-
---bZ2MuwyI/0uB8yuJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQmQ1NAAoJEIaOsuA1yqRE5g8P/1rwduvmHJ14dtYa4pzgb8o4
-ndcpTQBG2zcnEJlMfbuw0x8s/M9CvAh9NJ/HGatVA6VHCPbrm9rMMmbktDjF2uWB
-a4OCVctNGVJZjTrps1cYa1JlVDfTOJwjLhobM4gUJPSINAgKKhi9J3nNPh4Z0J4F
-SqSFJIXM+4qDoxAoYkx32x+L2qB60/l68R8pIGbotw6C0ycnrhKxJDntAZWdjYiV
-hyvsM1EcVxA1DrvSa68h84fId6aQmWL4uQMVs8LOv3kjkgFYmlk9tgNUDTDhWTIj
-XD8csqh/pmocrvxKNW5IcjLsNat1X3M3I59GIZz7mf1Adxyo7qwkKBf21vmfJkRb
-FwPM11ExVhg5FQaKSCIhwRYDpEyNEphARaWScbd9wvYQkuLLKFrw/BxguU2EdD6r
-/VBKiviaSlT8ujfKkrEMFHC4nd7kEel0qCo1LmCT4Z0e9eDvxojNjuTsF9i/B0W9
-rnQmErN3pw5I2NJG5JQkCUUruKQcnzVRhMUvGG40QJk+Pn41Qi6AIVRzCNSKJsD9
-H7Qk+P0ytEda1ycoTKIYOl9IGSqjejBbTCuym5seIXA1oQii6NOJYJM1cSaJ++af
-VoBelt3iskUqBenqLvVOVccrL+dL6G60e1IlW2ECJCMOzr4SdOYokPzjNstdVJNE
-umQN1lxvrWxyyVHahVw8
-=7T95
------END PGP SIGNATURE-----
-
---bZ2MuwyI/0uB8yuJ--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Cheers
+---Dave
