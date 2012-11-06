@@ -1,54 +1,221 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: S3C244X/S3C64XX SoC camera host interface driver questions
-Date: Mon, 05 Nov 2012 23:26:05 +0100
-Message-ID: <50983CFD.2030104@gmail.com>
-References: <CAA11ShCpH7Z8eLok=MEh4bcSb6XjtVFfLQEYh2icUtYc-j5hEQ@mail.gmail.com> <5096C561.5000108@gmail.com> <CAA11ShCKFfdmd_ydxxCYo9Sv0VhgZW9kCk_F7LAQDg3mr5prrw@mail.gmail.com> <5096E8D7.4070304@gmail.com> <CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com> <50979998.8090809@gmail.com> <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS: reorder inclusions of
+ <linux/platform_data/xxx.h>
+Date: Tue, 06 Nov 2012 12:22:34 +0900
+Message-ID: <000801cdbbcd$f6ac01d0$e4040570$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Andrey Gusakov <dron0gus@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, In-Bae Jeong <kukyakya@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:36320 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751325Ab2KFDWg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 Nov 2012 22:22:36 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MD100FRSQPDW7K0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Nov 2012 12:22:34 +0900 (KST)
+Received: from DOJG1HAN02 ([12.23.120.99])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MD100B85QPMEX80@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Nov 2012 12:22:34 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Andrey,
+This patch reorders inclusions of <linux/platform_data/xxx.h>
+and puts the inclusions with the same kind for readability,
+according to alphabetical ordering.
 
-On 11/05/2012 12:11 PM, Andrey Gusakov wrote:
-> Hi.
->
-> Thanks all!
-> I make it work! Have to comment out write { REG_GRCOM, 0x3f },	/*
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ arch/arm/mach-exynos/dev-audio.c           |    2 +-
+ arch/arm/mach-exynos/dev-ohci.c            |    2 +-
+ arch/arm/mach-exynos/mach-nuri.c           |    6 +++---
+ arch/arm/mach-exynos/mach-origen.c         |    6 +++---
+ arch/arm/mach-exynos/mach-smdk4x12.c       |    2 +-
+ arch/arm/mach-exynos/mach-smdkv310.c       |    6 +++---
+ arch/arm/mach-exynos/mach-universal_c210.c |    4 ++--
+ 7 files changed, 14 insertions(+), 14 deletions(-)
 
-Great news!
-
-Does the sensor still hang after 0x2f is written to REG_GRCOM instead ?
-
-> Analog BLC&  regulator */ and have to enable gate clock for fimc at
-> probe.
-
-Do you have CONFIG_PM_RUNTIME enabled ? Can you try and see it works
-if you enable it, without additional changes to the clock handling ?
-
-I hope to eventually prepare the ov9650 sensor driver for mainline. Your
-help in making it ready for VER=0x52 would be very much appreciated. :-)
-
->> Hmm, in my case VER was 0x50. PID, VER = 0x96, 0x50. And this a default
->> value
->> after reset according to the datasheet, ver. 1.3. For ver. 1.91 it is
->> PID, VER = 0x96, 0x52. Perhaps it just indicates ov9652 sensor ov9652.
->> Obviously I didn't test the driver with this one. Possibly the differences
->> can be resolved by comparing the documentation. Not sure if those are
->> significant and how much it makes sense to have single driver for both
->> sensor versions. I'll try to have a look at that.
-> Ok. I also try to compate init sequenses from different sources on web.
->
-> Next step is to make ov2460 work.
-
-For now I can only recommend you to make the ov2460 driver more similar
-to the ov9650 one.
-
---
-Regards,
-Sylwester
+diff --git a/arch/arm/mach-exynos/dev-audio.c b/arch/arm/mach-exynos/dev-audio.c
+index ae321c7..a1cb42c 100644
+--- a/arch/arm/mach-exynos/dev-audio.c
++++ b/arch/arm/mach-exynos/dev-audio.c
+@@ -14,9 +14,9 @@
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/gpio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ 
+ #include <plat/gpio-cfg.h>
+-#include <linux/platform_data/asoc-s3c.h>
+ 
+ #include <mach/map.h>
+ #include <mach/dma.h>
+diff --git a/arch/arm/mach-exynos/dev-ohci.c b/arch/arm/mach-exynos/dev-ohci.c
+index 14ed795..4244d02 100644
+--- a/arch/arm/mach-exynos/dev-ohci.c
++++ b/arch/arm/mach-exynos/dev-ohci.c
+@@ -12,10 +12,10 @@
+ 
+ #include <linux/dma-mapping.h>
+ #include <linux/platform_device.h>
++#include <linux/platform_data/usb-exynos.h>
+ 
+ #include <mach/irqs.h>
+ #include <mach/map.h>
+-#include <linux/platform_data/usb-exynos.h>
+ 
+ #include <plat/devs.h>
+ #include <plat/usb-phy.h>
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 1e8511f..27d4ed8 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -25,7 +25,10 @@
+ #include <linux/mmc/host.h>
+ #include <linux/fb.h>
+ #include <linux/pwm_backlight.h>
++#include <linux/platform_data/i2c-s3c2410.h>
++#include <linux/platform_data/mipi-csis.h>
+ #include <linux/platform_data/s3c-hsotg.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <drm/exynos_drm.h>
+ 
+ #include <video/platform_lcd.h>
+@@ -45,14 +48,11 @@
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+ #include <plat/sdhci.h>
+-#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/clock.h>
+ #include <plat/gpio-cfg.h>
+-#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/mfc.h>
+ #include <plat/fimc-core.h>
+ #include <plat/camport.h>
+-#include <linux/platform_data/mipi-csis.h>
+ 
+ #include <mach/map.h>
+ 
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index d8dc6d7..c931ce1 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -23,7 +23,10 @@
+ #include <linux/mfd/max8997.h>
+ #include <linux/lcd.h>
+ #include <linux/rfkill-gpio.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <linux/platform_data/s3c-hsotg.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
++#include <linux/platform_data/usb-exynos.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -36,8 +39,6 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
+-#include <linux/platform_data/i2c-s3c2410.h>
+-#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/clock.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+@@ -45,7 +46,6 @@
+ #include <plat/mfc.h>
+ #include <plat/hdmi.h>
+ 
+-#include <linux/platform_data/usb-exynos.h>
+ #include <mach/map.h>
+ 
+ #include <drm/exynos_drm.h>
+diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
+index 17b9ca4..a1555a7 100644
+--- a/arch/arm/mach-exynos/mach-smdk4x12.c
++++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+@@ -21,6 +21,7 @@
+ #include <linux/pwm_backlight.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/serial_core.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <linux/platform_data/s3c-hsotg.h>
+ 
+ #include <asm/mach/arch.h>
+@@ -34,7 +35,6 @@
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+ #include <plat/gpio-cfg.h>
+-#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/keypad.h>
+ #include <plat/mfc.h>
+ #include <plat/regs-serial.h>
+diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
+index 4f0ac53..063cb94 100644
+--- a/arch/arm/mach-exynos/mach-smdkv310.c
++++ b/arch/arm/mach-exynos/mach-smdkv310.c
+@@ -20,7 +20,10 @@
+ #include <linux/input.h>
+ #include <linux/pwm.h>
+ #include <linux/pwm_backlight.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <linux/platform_data/s3c-hsotg.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
++#include <linux/platform_data/usb-exynos.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -35,16 +38,13 @@
+ #include <plat/fb.h>
+ #include <plat/keypad.h>
+ #include <plat/sdhci.h>
+-#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ #include <plat/mfc.h>
+-#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/clock.h>
+ #include <plat/hdmi.h>
+ 
+ #include <mach/map.h>
+-#include <linux/platform_data/usb-exynos.h>
+ 
+ #include <drm/exynos_drm.h>
+ #include "common.h"
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 34fd5c6..9e3340f 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -23,6 +23,8 @@
+ #include <linux/i2c-gpio.h>
+ #include <linux/i2c/mcs.h>
+ #include <linux/i2c/atmel_mxt_ts.h>
++#include <linux/platform_data/i2c-s3c2410.h>
++#include <linux/platform_data/mipi-csis.h>
+ #include <linux/platform_data/s3c-hsotg.h>
+ #include <drm/exynos_drm.h>
+ 
+@@ -35,7 +37,6 @@
+ #include <plat/clock.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+-#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/fb.h>
+ #include <plat/mfc.h>
+@@ -43,7 +44,6 @@
+ #include <plat/fimc-core.h>
+ #include <plat/s5p-time.h>
+ #include <plat/camport.h>
+-#include <linux/platform_data/mipi-csis.h>
+ 
+ #include <mach/map.h>
+ 
+-- 
+1.7.1
