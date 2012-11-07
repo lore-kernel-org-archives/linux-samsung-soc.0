@@ -1,70 +1,62 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/4] gpio: samsung: Skip registration if pinctrl driver is
- present on Exynos4x12
-Date: Wed, 07 Nov 2012 13:41:44 +0900
-Message-ID: <0c5301cdbca2$30320240$909606c0$%kim@samsung.com>
-References: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
- <1351089457-8205-3-git-send-email-t.figa@samsung.com>
- <CACRpkdYNDSp0K3wpvUem9ecsW-JQ9L6aKqaOmHNUR65DQTMNHA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] spi: s3c64xx: Add fix for crash in spi suspend/resume
+Date: Wed, 07 Nov 2012 11:40:12 +0530
+Message-ID: <1352268612-9671-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30120 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:47408 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753527Ab2KGElq (ORCPT
+	with ESMTP id S1751011Ab2KGGLW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Nov 2012 23:41:46 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	Wed, 7 Nov 2012 01:11:22 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MD300EWXP1A5E20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 07 Nov 2012 13:41:44 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MD300CM8P1K0WB0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 07 Nov 2012 13:41:44 +0900 (KST)
-In-reply-to: <CACRpkdYNDSp0K3wpvUem9ecsW-JQ9L6aKqaOmHNUR65DQTMNHA@mail.gmail.com>
-Content-language: ko
+ 17 2011)) with ESMTP id <0MD300F0GT62NO70@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 Nov 2012 15:11:20 +0900 (KST)
+Received: from naveen-linux.sisodomain.com ([107.108.83.161])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MD300H7XT51HN10@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 Nov 2012 15:11:19 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, swarren@wwwdotorg.org
+To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net
+Cc: naveenkrishna.ch@gmail.com, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org
 
-Linus Walleij wrote:
-> 
-> On Wed, Oct 24, 2012 at 4:37 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> 
-> > This patch modifies the Samsung GPIO driver to check for pinctrl driver
-> > presence earlier and use generic matching instead of a single compatible
-> > value.
-> >
-> > This allows us to fix warning about unrecognized SoC in case of
-> > Exynos4x12, which is not supported by this driver.
-> >
-> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Tell me if there is something you want merged through
-> the GPIO or pinctrl tree. I have this Samsung branch on the
-> pinctrl tree...
-> 
-Hi Linus, 
+From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-A commit 1b6056d6 ("pinctrl: samsung: Include bank-specific eint offset in
-bank struct") which is in your pinctrl tree (samsung branch) changed
-macro(EXYNOS_PIN_BANK_EINTG) to add offset. Eventually, this series(due to
-3rd patch, pinctrl: samsung: Add support for Exynos4x12) breaks compilation
-without the commit. So if you don't have a plan to rebase samsung branch of
-your pinctrl tree, I'd like to merge it in my tree. Is it ok to you?
+The SPI driver makes a gpio_request during initialization. The requested
+gpios need to be populated as part of the s3c64xx_spi_driver_data so that
+they can be released during suspend and requested again during resume.
 
-Thanks.
+Add the missing code to save the requested gpios as part of the driver
+data. This fixes a SPI driver suspend crash.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+
+This was tested on spi-next branch
+http://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git
+
+With S2R patches submitted on mailing list.
+http://www.spinics.net/lists/arm-kernel/msg205244.html
+
+ drivers/spi/spi-s3c64xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 01b2f56..57900a8 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1112,7 +1112,7 @@ static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
+ 			dev_err(dev, "invalid gpio[%d]: %d\n", idx, gpio);
+ 			goto free_gpio;
+ 		}
+-
++		sdd->gpios[idx] = gpio;
+ 		ret = gpio_request(gpio, "spi-bus");
+ 		if (ret) {
+ 			dev_err(dev, "gpio [%d] request failed: %d\n",
+-- 
+1.7.9.5
