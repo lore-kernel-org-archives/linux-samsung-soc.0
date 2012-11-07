@@ -1,123 +1,41 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: EXYNOS: Add missing static storage class specifiers in clock-exynos5.c
-Date: Wed,  7 Nov 2012 15:39:51 +0530
-Message-ID: <1352282991-19449-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:35932 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751492Ab2KGKP0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Nov 2012 05:15:26 -0500
-Received: by mail-pb0-f46.google.com with SMTP id rr4so1109254pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Nov 2012 02:15:25 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] i2c: samsung: resume race fix
+Date: Wed, 07 Nov 2012 15:58:26 +0530
+Message-ID: <1352284106-24988-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Fixes the following warnings:
-arch/arm/mach-exynos/clock-exynos5.c:300:19: warning:
-symbol 'exynos5_clk_mout_mpll' was not declared. Should it be static?
-arch/arm/mach-exynos/clock-exynos5.c:475:12: warning:
-symbol 'exynos5_clkset_aclk_top_list' was not declared. Should it be static?
-arch/arm/mach-exynos/clock-exynos5.c:480:23: warning:
-symbol 'exynos5_clkset_aclk' was not declared. Should it be static?
-arch/arm/mach-exynos/clock-exynos5.c:494:12: warning:
-symbol 'exynos5_clkset_aclk_333_166_list' was not declared. Should it be static?
-arch/arm/mach-exynos/clock-exynos5.c:499:23: warning:
-symbol 'exynos5_clkset_aclk_333_166' was not declared. Should it be static?
-arch/arm/mach-exynos/clock-exynos5.c:989:12: warning:
-symbol 'exynos5_clkset_group_list' was not declared. Should it be static?
-arch/arm/mach-exynos/clock-exynos5.c:1002:23: warning:
-symbol 'exynos5_clkset_group' was not declared. Should it be static?
-arch/arm/mach-exynos/clock-exynos5.c:1218:19: warning:
-symbol 'exynos5_clk_sclk_fimd1' was not declared. Should it be static?
-arch/arm/mach-exynos/clock-exynos5.c:1499:20: warning:
-symbol 'exynos5_clock_syscore_ops' was not declared. Should it be static?
+Don't unmark the device as suspended until after it's been re-setup.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+The main race would be w.r.t. an i2c driver that gets resumed at the same
+time (asyncronously), that is allowed to do a transfer since suspended
+is set to 0 before reinit, but really should have seen the -EIO return
+instead.
+
+Signed-off-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-exynos/clock-exynos5.c |   18 +++++++++---------
- 1 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index a88e0d9..e48d7c2 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -297,7 +297,7 @@ static struct clksrc_sources exynos5_clk_src_mpll = {
- 	.nr_sources	= ARRAY_SIZE(exynos5_clk_src_mpll_list),
- };
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 3e0335f..dbaf920 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1134,10 +1134,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
  
--struct clksrc_clk exynos5_clk_mout_mpll = {
-+static struct clksrc_clk exynos5_clk_mout_mpll = {
- 	.clk = {
- 		.name		= "mout_mpll",
- 	},
-@@ -472,12 +472,12 @@ static struct clksrc_clk exynos5_clk_pclk_acp = {
+-	i2c->suspended = 0;
+ 	clk_prepare_enable(i2c->clk);
+ 	s3c24xx_i2c_init(i2c);
+ 	clk_disable_unprepare(i2c->clk);
++	i2c->suspended = 0;
  
- /* Core list of CMU_TOP side */
- 
--struct clk *exynos5_clkset_aclk_top_list[] = {
-+static struct clk *exynos5_clkset_aclk_top_list[] = {
- 	[0] = &exynos5_clk_mout_mpll_user.clk,
- 	[1] = &exynos5_clk_mout_bpll_user.clk,
- };
- 
--struct clksrc_sources exynos5_clkset_aclk = {
-+static struct clksrc_sources exynos5_clkset_aclk = {
- 	.sources	= exynos5_clkset_aclk_top_list,
- 	.nr_sources	= ARRAY_SIZE(exynos5_clkset_aclk_top_list),
- };
-@@ -491,12 +491,12 @@ static struct clksrc_clk exynos5_clk_aclk_400 = {
- 	.reg_div = { .reg = EXYNOS5_CLKDIV_TOP0, .shift = 24, .size = 3 },
- };
- 
--struct clk *exynos5_clkset_aclk_333_166_list[] = {
-+static struct clk *exynos5_clkset_aclk_333_166_list[] = {
- 	[0] = &exynos5_clk_mout_cpll.clk,
- 	[1] = &exynos5_clk_mout_mpll_user.clk,
- };
- 
--struct clksrc_sources exynos5_clkset_aclk_333_166 = {
-+static struct clksrc_sources exynos5_clkset_aclk_333_166 = {
- 	.sources	= exynos5_clkset_aclk_333_166_list,
- 	.nr_sources	= ARRAY_SIZE(exynos5_clkset_aclk_333_166_list),
- };
-@@ -986,7 +986,7 @@ static struct clk exynos5_clk_fimd1 = {
- 	.ctrlbit	= (1 << 0),
- };
- 
--struct clk *exynos5_clkset_group_list[] = {
-+static struct clk *exynos5_clkset_group_list[] = {
- 	[0] = &clk_ext_xtal_mux,
- 	[1] = NULL,
- 	[2] = &exynos5_clk_sclk_hdmi24m,
-@@ -999,7 +999,7 @@ struct clk *exynos5_clkset_group_list[] = {
- 	[9] = &exynos5_clk_mout_cpll.clk,
- };
- 
--struct clksrc_sources exynos5_clkset_group = {
-+static struct clksrc_sources exynos5_clkset_group = {
- 	.sources	= exynos5_clkset_group_list,
- 	.nr_sources	= ARRAY_SIZE(exynos5_clkset_group_list),
- };
-@@ -1215,7 +1215,7 @@ static struct clksrc_clk exynos5_clk_sclk_spi2 = {
- 	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC2, .shift = 8, .size = 8 },
- };
- 
--struct clksrc_clk exynos5_clk_sclk_fimd1 = {
-+static struct clksrc_clk exynos5_clk_sclk_fimd1 = {
- 	.clk	= {
- 		.name		= "sclk_fimd",
- 		.devname	= "exynos5-fb.1",
-@@ -1496,7 +1496,7 @@ static void exynos5_clock_resume(void)
- #define exynos5_clock_resume NULL
- #endif
- 
--struct syscore_ops exynos5_clock_syscore_ops = {
-+static struct syscore_ops exynos5_clock_syscore_ops = {
- 	.suspend	= exynos5_clock_suspend,
- 	.resume		= exynos5_clock_resume,
- };
+ 	return 0;
+ }
 -- 
-1.7.4.1
+1.7.9.5
