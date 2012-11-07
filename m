@@ -1,62 +1,39 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] i2c: samsung: resume race fix
-Date: Wed, 7 Nov 2012 11:44:37 +0100
-Message-ID: <20121107114437.0a563c7e@endymion.delvare>
-References: <1352284106-24988-1-git-send-email-ch.naveen@samsung.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] ARM: Fix the "WFI" instruction opcode definition.
+Date: Wed, 7 Nov 2012 11:00:43 +0000
+Message-ID: <CAHkRjk5MV7DWUGEhndUbvym9we90FcmvPD+arDfWtuj6PXCy2A@mail.gmail.com>
+References: <DA41BE1DDCA941489001C7FBD7A8820E3CB5512E@szxeml549-mbx.china.huawei.com>
+ <5091D13B.6060106@gmail.com> <CAKw8HL0ymmNRB=jgGcZn1+6k0s=FKA+qBV04y_wfeu7xMpUpkw@mail.gmail.com>
+ <20121105173604.GF2005@linaro.org> <0bee01cdbc11$4a59afb0$df0d0f10$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1352284106-24988-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f46.google.com ([209.85.216.46]:50963 "EHLO
+	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754285Ab2KGLBE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Nov 2012 06:01:04 -0500
+Received: by mail-qa0-f46.google.com with SMTP id n12so360978qat.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Nov 2012 03:01:04 -0800 (PST)
+In-Reply-To: <0bee01cdbc11$4a59afb0$df0d0f10$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Dave Martin <dave.martin@linaro.org>, Fei Yang <yangfei.kernel@gmail.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Magnus Damm <magnus.damm@gmail.com>, Paul Mundt <lethal@linux-sh.org>, "Yangfei (Felix)" <felix.yang@huawei.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, 07 Nov 2012 15:58:26 +0530, Naveen Krishna Chatradhi wrote:
-> Don't unmark the device as suspended until after it's been re-setup.
-> 
-> The main race would be w.r.t. an i2c driver that gets resumed at the same
-> time (asyncronously), that is allowed to do a transfer since suspended
-> is set to 0 before reinit, but really should have seen the -EIO return
-> instead.
+On 6 November 2012 11:24, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> BTW, if mach-exynos includes ARMv8 later?...ARMv8 platform codes will be put
+> in the arch/arm/ or arch/arm/64/ if some platform codes share with ARMv7?
+> Just wondering...
 
-I thought that the suspend order was children first and the resume
-order was parent first?
+If mach-exynos would support ARMv8 at some point, I would expect most
+of the code to go under various drivers/ subsystems (mfd, power etc.).
+I don't see any point in using opcodes. For wfi just use a macro or
+cpu_do_idle() (as Rob said, it does the required dsb as well).
 
-If this can really happen then I am afraid this is an issue for more
-than just i2c-s3c2410. The proposed solution is also not really
-satisfactory, as the i2c client will certainly still fail to resume
-properly (the only improvement is that now the failure is no longer
-silent.)
-
-> 
-> Signed-off-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 3e0335f..dbaf920 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -1134,10 +1134,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
->  
-> -	i2c->suspended = 0;
->  	clk_prepare_enable(i2c->clk);
->  	s3c24xx_i2c_init(i2c);
->  	clk_disable_unprepare(i2c->clk);
-> +	i2c->suspended = 0;
->  
->  	return 0;
->  }
-
-Acked-by: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-
-(Not perfect but still better than before.)
+I'm also pushing for a standard hotplug.c implementation that is
+shared by multiple platforms and uses the power state coordination
+interface implemented by the firmware.
 
 -- 
-Jean Delvare
+Catalin
