@@ -1,74 +1,40 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: S3C244X/S3C64XX SoC camera host interface driver questions
-Date: Wed, 07 Nov 2012 22:57:43 +0100
-Message-ID: <509AD957.5070301@gmail.com>
-References: <CAA11ShCpH7Z8eLok=MEh4bcSb6XjtVFfLQEYh2icUtYc-j5hEQ@mail.gmail.com> <5096C561.5000108@gmail.com> <CAA11ShCKFfdmd_ydxxCYo9Sv0VhgZW9kCk_F7LAQDg3mr5prrw@mail.gmail.com> <5096E8D7.4070304@gmail.com> <CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com> <50979998.8090809@gmail.com> <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com> <50983CFD.2030104@gmail.com> <CAA11ShDAscm8snYzjnC3Fe1MaVXc-FJqhWM677iJwgbgu2_J1Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/2] ARM: S3C24XX: Add clkdev entry for camif-upll clock
+Date: Wed,  7 Nov 2012 23:00:56 +0100
+Message-ID: <1352325657-28885-1-git-send-email-sylvester.nawrocki@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:57352 "EHLO
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:58543 "EHLO
 	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751111Ab2KGV5t (ORCPT
+	with ESMTP id S1752793Ab2KGWBg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Nov 2012 16:57:49 -0500
-In-Reply-To: <CAA11ShDAscm8snYzjnC3Fe1MaVXc-FJqhWM677iJwgbgu2_J1Q@mail.gmail.com>
+	Wed, 7 Nov 2012 17:01:36 -0500
+Received: by mail-ee0-f46.google.com with SMTP id b15so1202502eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Nov 2012 14:01:34 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrey Gusakov <dron0gus@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, In-Bae Jeong <kukyakya@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On 11/06/2012 10:34 PM, Andrey Gusakov wrote:
-> Hi.
->
->> Does the sensor still hang after 0x2f is written to REG_GRCOM instead ?
-> Work!
-> I'm looking at drivers/media/usb/gspca/m5602/m5602_ov9650.h
-> It use significantly different init sequence. Some of settings
-> described in Application note for ov9650, some look like magic.
+The s3c-camif driver uses "camera" clock conn_id for the "camif-upll"
+(s3c244x) and "camera" (s3c64xx) platform clock. By adding this new
+clkdev entry the platform differences are isolated from the driver.
 
-I guess there are many ways the sensor can be configured initially.
-I'd like to keep this initialization sequence as thin as possible,
-and to move relevant settings to corresponding v4l2 controls.
-Then after v4l2_control_handler_setup() is called, following the initial
-register list write, the sensor would be configured into some known
-state. I realize it might be more difficult in practice than it sounds
-now. :-)
+Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+---
+ arch/arm/mach-s3c24xx/clock-s3c2440.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
->> Do you have CONFIG_PM_RUNTIME enabled ? Can you try and see it works
->> if you enable it, without additional changes to the clock handling ?
-> Work. With CONFIG_PM_RUNTIME and without enabling CLK_GATE at probe.
-
-Ok, thanks. I will add the missing CONFIG_PM_RUNTIME dependency in Kconfig.
-The driver has to have PM_RUNTIME enabled since on s3c64xx SoCs there are
-power domains and the camera power domain needs to be enabled for the CAMIF
-operation. The pm_runtime_* calls in the driver are supposed to ensure 
-that.
-I wonder why it works for you without PM_RUNTIME, i.e. how comes the power
-domain is enabled. It is supposed to be off by default.
-
->> I hope to eventually prepare the ov9650 sensor driver for mainline. Your
->> help in making it ready for VER=0x52 would be very much appreciated. :-)
-> I'll try to helpful.
->
->
->>> Next step is to make ov2460 work.
->> For now I can only recommend you to make the ov2460 driver more similar
->> to the ov9650 one.
-> Thanks, I'll try.
->
-> P.S. I add support of image effects just for fun. And found in DS that
-> s3c2450 also support effects. It's FIMC in-between of 2440 and
-> 6400/6410. Does anyone have s3c2450 hardware to test it?
-
-Patches adding image effect are welcome. I'm bit to busy to play with these
-things, other than I don't have hardware to test it.
-I wasn't really aware of CAMIF in s3c2450. I think a separate variant data
-structure would need to be defined for s3c2450. If anyone ever needs it
-it could be added easily. For now I'll pretend this version doesn't 
-exist. :-)
-
---
-
-Regards,
-Sylwester
+diff --git a/arch/arm/mach-s3c24xx/clock-s3c2440.c b/arch/arm/mach-s3c24xx/clock-s3c2440.c
+index 4407b17..04b87ec 100644
+--- a/arch/arm/mach-s3c24xx/clock-s3c2440.c
++++ b/arch/arm/mach-s3c24xx/clock-s3c2440.c
+@@ -161,6 +161,7 @@ static struct clk_lookup s3c2440_clk_lookup[] = {
+ 	CLKDEV_INIT(NULL, "clk_uart_baud1", &s3c24xx_uclk),
+ 	CLKDEV_INIT(NULL, "clk_uart_baud2", &clk_p),
+ 	CLKDEV_INIT(NULL, "clk_uart_baud3", &s3c2440_clk_fclk_n),
++	CLKDEV_INIT("s3c2440-camif", "camera", &s3c2440_clk_cam_upll),
+ };
+ 
+ static int __init_refok s3c2440_clk_add(struct device *dev, struct subsys_interface *sif)
+-- 
+1.7.4.1
