@@ -1,62 +1,59 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] spi: s3c64xx: Add fix for crash in spi suspend/resume
-Date: Wed, 07 Nov 2012 11:40:12 +0530
-Message-ID: <1352268612-9671-1-git-send-email-ch.naveen@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] spi: s3c64xx: Add fix for crash in spi suspend/resume
+Date: Wed, 7 Nov 2012 09:23:25 +0100
+Message-ID: <20121107082324.GA12323@opensource.wolfsonmicro.com>
+References: <1352268612-9671-1-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47408 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751011Ab2KGGLW (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55586 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751346Ab2KGIX2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Nov 2012 01:11:22 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MD300F0GT62NO70@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 07 Nov 2012 15:11:20 +0900 (KST)
-Received: from naveen-linux.sisodomain.com ([107.108.83.161])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MD300H7XT51HN10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 07 Nov 2012 15:11:19 +0900 (KST)
+	Wed, 7 Nov 2012 03:23:28 -0500
+Content-Disposition: inline
+In-Reply-To: <1352268612-9671-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net
-Cc: naveenkrishna.ch@gmail.com, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, naveenkrishna.ch@gmail.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org
 
-From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-The SPI driver makes a gpio_request during initialization. The requested
-gpios need to be populated as part of the s3c64xx_spi_driver_data so that
-they can be released during suspend and requested again during resume.
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add the missing code to save the requested gpios as part of the driver
-data. This fixes a SPI driver suspend crash.
+On Wed, Nov 07, 2012 at 11:40:12AM +0530, Naveen Krishna Chatradhi wrote:
+> From: Abhilash Kesavan <a.kesavan@samsung.com>
+>=20
+> The SPI driver makes a gpio_request during initialization. The requested
+> gpios need to be populated as part of the s3c64xx_spi_driver_data so that
+> they can be released during suspend and requested again during resume.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
----
+Applied, thanks.
 
-This was tested on spi-next branch
-http://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git
+--J/dobhs11T7y2rNN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-With S2R patches submitted on mailing list.
-http://www.spinics.net/lists/arm-kernel/msg205244.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
- drivers/spi/spi-s3c64xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+iQIcBAEBAgAGBQJQmhp1AAoJELSic+t+oim912cP/2QLMcOzK+yeI1jIGgJXnv88
+5SsIAXEclAW/vjNhivrJ79zWawjI5W8FoojX7DC1VAlWTSeu5zwGWLJn2Ms+MPMz
+YSoc5s/kjU6XpffAzL2dyEnKz+UMpaaBGWEjSMW2+VI8Z4eY/fgnB1ir/m1WA7OD
+LDulATBgCup48AwMF6JzkJ5igUfHmPxAcS3OCDBZEBBMflAcljX56DsvPEOPBKJ4
+EManIMVGAaWvxoJzkz6M8CvYFq1W/Mebv3VaFUCshjqeTunwPkMsMGS3eehS9Yed
+0fbHVxY7pKebqmc3tMIUFdPD+cphZ0/EJ0x5/MTAbABLPkU3tCjr8DZRfuujfiRI
+mBBpLywEcpqD+MKNkE/FLJ541gRXzuueiyBkJ/qme0vjUhC9UUCuBBsf+kHzplac
+FQBCFBCACk0/IZTq2nXHihHrweNmECMN2WPMIJrQxCtDfsuSCZmN0ITBxUcrpFva
+qos10xDTll9ypWu9R1BSi0Z/w5e3qPCNSHNjw1k/JPrnthR2B1H+YZEXOK+sfJkq
+C7AWYsGMxfRHWz1pheaLRGiqtohaJSYaG/oGch0rd5jPQSXRx+X9sggDKKqremCJ
+fEtG9y0rOfDDbNh1Ig533iFR4Rko02Uv0bsW3ifLQwAno4cllMhVZ9zqMbo+SEyH
+qaK4FEbmnLvJP3INStyb
+=31kz
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 01b2f56..57900a8 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1112,7 +1112,7 @@ static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
- 			dev_err(dev, "invalid gpio[%d]: %d\n", idx, gpio);
- 			goto free_gpio;
- 		}
--
-+		sdd->gpios[idx] = gpio;
- 		ret = gpio_request(gpio, "spi-bus");
- 		if (ret) {
- 			dev_err(dev, "gpio [%d] request failed: %d\n",
--- 
-1.7.9.5
+--J/dobhs11T7y2rNN--
