@@ -1,39 +1,52 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] ARM: Fix the "WFI" instruction opcode definition.
-Date: Wed, 7 Nov 2012 11:00:43 +0000
-Message-ID: <CAHkRjk5MV7DWUGEhndUbvym9we90FcmvPD+arDfWtuj6PXCy2A@mail.gmail.com>
-References: <DA41BE1DDCA941489001C7FBD7A8820E3CB5512E@szxeml549-mbx.china.huawei.com>
- <5091D13B.6060106@gmail.com> <CAKw8HL0ymmNRB=jgGcZn1+6k0s=FKA+qBV04y_wfeu7xMpUpkw@mail.gmail.com>
- <20121105173604.GF2005@linaro.org> <0bee01cdbc11$4a59afb0$df0d0f10$%kim@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Fix typo in definition of
+ VIDCON1_VSTATUS_FRONTPORCH value
+Date: Wed, 07 Nov 2012 13:31:21 +0100
+Message-ID: <1429686.vBaRDnu5Be@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:50963 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754285Ab2KGLBE (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:45917 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754921Ab2KGMb1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Nov 2012 06:01:04 -0500
-Received: by mail-qa0-f46.google.com with SMTP id n12so360978qat.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Nov 2012 03:01:04 -0800 (PST)
-In-Reply-To: <0bee01cdbc11$4a59afb0$df0d0f10$%kim@samsung.com>
+	Wed, 7 Nov 2012 07:31:27 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MD400FGXASCAQN0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 Nov 2012 21:31:25 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MD400B18ASB3RB0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 Nov 2012 21:31:25 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Dave Martin <dave.martin@linaro.org>, Fei Yang <yangfei.kernel@gmail.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Magnus Damm <magnus.damm@gmail.com>, Paul Mundt <lethal@linux-sh.org>, "Yangfei (Felix)" <felix.yang@huawei.com>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 6 November 2012 11:24, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> BTW, if mach-exynos includes ARMv8 later?...ARMv8 platform codes will be put
-> in the arch/arm/ or arch/arm/64/ if some platform codes share with ARMv7?
-> Just wondering...
+The correct value for VIDCON1_VSTATUS_FRONTPORCH is 3, not 0.
 
-If mach-exynos would support ARMv8 at some point, I would expect most
-of the code to go under various drivers/ subsystems (mfd, power etc.).
-I don't see any point in using opcodes. For wfi just use a macro or
-cpu_do_idle() (as Rob said, it does the required dsb as well).
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ include/video/samsung_fimd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm also pushing for a standard hotplug.c implementation that is
-shared by multiple platforms and uses the power state coordination
-interface implemented by the firmware.
-
+diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+index 7ae6c07..263ed4b 100644
+--- a/include/video/samsung_fimd.h
++++ b/include/video/samsung_fimd.h
+@@ -82,7 +82,7 @@
+ #define VIDCON1_VSTATUS_VSYNC			(0x0 << 13)
+ #define VIDCON1_VSTATUS_BACKPORCH		(0x1 << 13)
+ #define VIDCON1_VSTATUS_ACTIVE			(0x2 << 13)
+-#define VIDCON1_VSTATUS_FRONTPORCH		(0x0 << 13)
++#define VIDCON1_VSTATUS_FRONTPORCH		(0x3 << 13)
+ #define VIDCON1_VCLK_MASK			(0x3 << 9)
+ #define VIDCON1_VCLK_HOLD			(0x0 << 9)
+ #define VIDCON1_VCLK_RUN			(0x1 << 9)
 -- 
-Catalin
+1.8.0
