@@ -1,64 +1,39 @@
-From: Sasha Levin <sasha.levin@oracle.com>
-Subject: [PATCH] ARM: dma: use BUG_ON where possible
-Date: Thu,  8 Nov 2012 15:23:10 -0500
-Message-ID: <1352406191-14303-8-git-send-email-sasha.levin@oracle.com>
-References: <1352406191-14303-1-git-send-email-sasha.levin@oracle.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1352406191-14303-1-git-send-email-sasha.levin@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Sasha Levin <sasha.levin@oracle.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/4] gpio: samsung: Skip registration if pinctrl driver is
+ present on Exynos4x12
+Date: Thu, 8 Nov 2012 22:12:52 +0100
+Message-ID: <CACRpkdaOpzFvs_wqy9sdrmx1=wEs5uxqfh_rOrKxLTXV-q1K2Q@mail.gmail.com>
+References: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
+	<1351089457-8205-3-git-send-email-t.figa@samsung.com>
+	<CACRpkdYNDSp0K3wpvUem9ecsW-JQ9L6aKqaOmHNUR65DQTMNHA@mail.gmail.com>
+	<0c5301cdbca2$30320240$909606c0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:52879 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756670Ab2KHVMx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 Nov 2012 16:12:53 -0500
+Received: by mail-ea0-f174.google.com with SMTP id c13so1231950eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Nov 2012 13:12:52 -0800 (PST)
+In-Reply-To: <0c5301cdbca2$30320240$909606c0$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, swarren@wwwdotorg.org
 
-Just use BUG_ON() instead of constructions such as:
+On Wed, Nov 7, 2012 at 5:41 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-	if (...)
-		BUG()
+> A commit 1b6056d6 ("pinctrl: samsung: Include bank-specific eint offset in
+> bank struct") which is in your pinctrl tree (samsung branch) changed
+> macro(EXYNOS_PIN_BANK_EINTG) to add offset. Eventually, this series(due to
+> 3rd patch, pinctrl: samsung: Add support for Exynos4x12) breaks compilation
+> without the commit. So if you don't have a plan to rebase samsung branch of
+> your pinctrl tree, I'd like to merge it in my tree. Is it ok to you?
 
-A simplified version of the semantic patch that makes this transformation
-is as follows: (http://coccinelle.lip6.fr/)
+Sure tell me when you've merged it and I'll drop commit 1b6056d6
+from my tree.
 
-// <smpl>
-@@
-expression e;
-@@
-- if (e) BUG();
-+ BUG_ON(e);
-// </smpl>
-
-Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
----
- arch/arm/mach-rpc/dma.c     |    3 +--
- arch/arm/mach-s3c64xx/dma.c |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-rpc/dma.c b/arch/arm/mach-rpc/dma.c
-index 85883b2..92e22ba 100644
---- a/arch/arm/mach-rpc/dma.c
-+++ b/arch/arm/mach-rpc/dma.c
-@@ -265,8 +265,7 @@ static void floppy_enable_dma(unsigned int chan, dma_t *dma)
- 	unsigned int fiqhandler_length;
- 	struct pt_regs regs;
- 
--	if (fdma->dma.sg)
--		BUG();
-+	BUG_ON(fdma->dma.sg);
- 
- 	if (fdma->dma.dma_mode == DMA_MODE_READ) {
- 		extern unsigned char floppy_fiqin_start, floppy_fiqin_end;
-diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
-index f2a7a17..585c2ae 100644
---- a/arch/arm/mach-s3c64xx/dma.c
-+++ b/arch/arm/mach-s3c64xx/dma.c
-@@ -603,8 +603,7 @@ static irqreturn_t s3c64xx_dma_irq(int irq, void *pw)
- 				&& buff->next != chan->next)
- 			buff = buff->next;
- 
--		if (!buff)
--			BUG();
-+		BUG_ON(!buff);
- 
- 		if (buff == chan->next)
- 			buff = chan->end;
--- 
-1.7.10.4
+Yours,
+Linus Walleij
