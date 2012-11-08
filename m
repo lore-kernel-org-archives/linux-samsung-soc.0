@@ -1,152 +1,105 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/1] ARM: EXYNOS: Add missing static storage class
- specifiers in clock-exynos5.c
-Date: Thu, 08 Nov 2012 13:53:14 +0900
-Message-ID: <0cf001cdbd6c$f5edc350$e1c949f0$%kim@samsung.com>
-References: <1352282991-19449-1-git-send-email-sachin.kamat@linaro.org>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH] ARM: Exynos5250: Enabling dwc3-exynos driver
+Date: Thu, 8 Nov 2012 10:36:17 +0530
+Message-ID: <CAFp+6iGs6Fz78gmFMiWgUzCQ919gphOWDL4Wz7xvAXe=aqKGXg@mail.gmail.com>
+References: <1352215729-11703-1-git-send-email-gautam.vivek@samsung.com>
+	<CAFp+6iGFwTAvhamhoQszBL8QUau64XtDWGR1yX0azbuw1iWgVA@mail.gmail.com>
+	<20121107164322.GC12714@arwen.pp.htv.fi>
+	<1719536.A7tLiC5qER@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:53576 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754540Ab2KHExP (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:45969 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751489Ab2KHFGT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Nov 2012 23:53:15 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MD500HNVK8QO8L0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Nov 2012 13:53:14 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MD500ANAK8QRD60@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Nov 2012 13:53:14 +0900 (KST)
-In-reply-to: <1352282991-19449-1-git-send-email-sachin.kamat@linaro.org>
-Content-language: ko
+	Thu, 8 Nov 2012 00:06:19 -0500
+In-Reply-To: <1719536.A7tLiC5qER@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, av.tikhomirov@samsung.com, yulgon.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, Praveen Paneri <p.paneri@samsung.com>
 
-Sachin Kamat wrote:
-> 
-> Fixes the following warnings:
-> arch/arm/mach-exynos/clock-exynos5.c:300:19: warning:
-> symbol 'exynos5_clk_mout_mpll' was not declared. Should it be static?
-> arch/arm/mach-exynos/clock-exynos5.c:475:12: warning:
-> symbol 'exynos5_clkset_aclk_top_list' was not declared. Should it be
-> static?
-> arch/arm/mach-exynos/clock-exynos5.c:480:23: warning:
-> symbol 'exynos5_clkset_aclk' was not declared. Should it be static?
-> arch/arm/mach-exynos/clock-exynos5.c:494:12: warning:
-> symbol 'exynos5_clkset_aclk_333_166_list' was not declared. Should it be
-> static?
-> arch/arm/mach-exynos/clock-exynos5.c:499:23: warning:
-> symbol 'exynos5_clkset_aclk_333_166' was not declared. Should it be
-static?
-> arch/arm/mach-exynos/clock-exynos5.c:989:12: warning:
-> symbol 'exynos5_clkset_group_list' was not declared. Should it be static?
-> arch/arm/mach-exynos/clock-exynos5.c:1002:23: warning:
-> symbol 'exynos5_clkset_group' was not declared. Should it be static?
-> arch/arm/mach-exynos/clock-exynos5.c:1218:19: warning:
-> symbol 'exynos5_clk_sclk_fimd1' was not declared. Should it be static?
-> arch/arm/mach-exynos/clock-exynos5.c:1499:20: warning:
-> symbol 'exynos5_clock_syscore_ops' was not declared. Should it be static?
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/mach-exynos/clock-exynos5.c |   18 +++++++++---------
->  1 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-
-> exynos/clock-exynos5.c
-> index a88e0d9..e48d7c2 100644
-> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> @@ -297,7 +297,7 @@ static struct clksrc_sources exynos5_clk_src_mpll = {
->  	.nr_sources	= ARRAY_SIZE(exynos5_clk_src_mpll_list),
->  };
-> 
-> -struct clksrc_clk exynos5_clk_mout_mpll = {
-> +static struct clksrc_clk exynos5_clk_mout_mpll = {
->  	.clk = {
->  		.name		= "mout_mpll",
->  	},
-> @@ -472,12 +472,12 @@ static struct clksrc_clk exynos5_clk_pclk_acp = {
-> 
->  /* Core list of CMU_TOP side */
-> 
-> -struct clk *exynos5_clkset_aclk_top_list[] = {
-> +static struct clk *exynos5_clkset_aclk_top_list[] = {
->  	[0] = &exynos5_clk_mout_mpll_user.clk,
->  	[1] = &exynos5_clk_mout_bpll_user.clk,
->  };
-> 
-> -struct clksrc_sources exynos5_clkset_aclk = {
-> +static struct clksrc_sources exynos5_clkset_aclk = {
->  	.sources	= exynos5_clkset_aclk_top_list,
->  	.nr_sources	= ARRAY_SIZE(exynos5_clkset_aclk_top_list),
->  };
-> @@ -491,12 +491,12 @@ static struct clksrc_clk exynos5_clk_aclk_400 = {
->  	.reg_div = { .reg = EXYNOS5_CLKDIV_TOP0, .shift = 24, .size = 3 },
->  };
-> 
-> -struct clk *exynos5_clkset_aclk_333_166_list[] = {
-> +static struct clk *exynos5_clkset_aclk_333_166_list[] = {
->  	[0] = &exynos5_clk_mout_cpll.clk,
->  	[1] = &exynos5_clk_mout_mpll_user.clk,
->  };
-> 
-> -struct clksrc_sources exynos5_clkset_aclk_333_166 = {
-> +static struct clksrc_sources exynos5_clkset_aclk_333_166 = {
->  	.sources	= exynos5_clkset_aclk_333_166_list,
->  	.nr_sources	= ARRAY_SIZE(exynos5_clkset_aclk_333_166_list),
->  };
-> @@ -986,7 +986,7 @@ static struct clk exynos5_clk_fimd1 = {
->  	.ctrlbit	= (1 << 0),
->  };
-> 
-> -struct clk *exynos5_clkset_group_list[] = {
-> +static struct clk *exynos5_clkset_group_list[] = {
->  	[0] = &clk_ext_xtal_mux,
->  	[1] = NULL,
->  	[2] = &exynos5_clk_sclk_hdmi24m,
-> @@ -999,7 +999,7 @@ struct clk *exynos5_clkset_group_list[] = {
->  	[9] = &exynos5_clk_mout_cpll.clk,
->  };
-> 
-> -struct clksrc_sources exynos5_clkset_group = {
-> +static struct clksrc_sources exynos5_clkset_group = {
->  	.sources	= exynos5_clkset_group_list,
->  	.nr_sources	= ARRAY_SIZE(exynos5_clkset_group_list),
->  };
-> @@ -1215,7 +1215,7 @@ static struct clksrc_clk exynos5_clk_sclk_spi2 = {
->  	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC2, .shift = 8, .size = 8 },
->  };
-> 
-> -struct clksrc_clk exynos5_clk_sclk_fimd1 = {
-> +static struct clksrc_clk exynos5_clk_sclk_fimd1 = {
->  	.clk	= {
->  		.name		= "sclk_fimd",
->  		.devname	= "exynos5-fb.1",
-> @@ -1496,7 +1496,7 @@ static void exynos5_clock_resume(void)
->  #define exynos5_clock_resume NULL
->  #endif
-> 
-> -struct syscore_ops exynos5_clock_syscore_ops = {
-> +static struct syscore_ops exynos5_clock_syscore_ops = {
->  	.suspend	= exynos5_clock_suspend,
->  	.resume		= exynos5_clock_resume,
->  };
-> --
-> 1.7.4.1
+Hi,
 
-Applied, thanks.
 
-Best regards,
-Kgene.
+On Wed, Nov 7, 2012 at 10:48 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Vivek, Felipe,
+>
+> On Wednesday 07 of November 2012 18:43:22 Felipe Balbi wrote:
+>> Hi,
+>>
+>> On Wed, Nov 07, 2012 at 06:55:03PM +0530, Vivek Gautam wrote:
+>> > Hi,
+>> >
+>> > On Tue, Nov 6, 2012 at 10:13 PM, Felipe Balbi <balbi@ti.com> wrote:
+>> > > On Tue, Nov 06, 2012 at 08:58:49PM +0530, Vivek Gautam wrote:
+>> > >> Adding DWC3 device tree node for Exynos5250 along with the
+>> > >> device address and clock support needed for the controller.
+>> > >>
+>> > >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> > >> ---
+>> > >>
+>> > >>  arch/arm/boot/dts/exynos5250.dtsi       |    6 ++++++
+>> > >>  arch/arm/mach-exynos/clock-exynos5.c    |   24
+>> > >>  ++++++++++++++++++++++++
+>> > >>  arch/arm/mach-exynos/include/mach/map.h |    1 +
+>> > >>  arch/arm/mach-exynos/mach-exynos5-dt.c  |    2 ++
+>> > >>  drivers/usb/Kconfig                     |    1 +
+>> > >>  5 files changed, 34 insertions(+), 0 deletions(-)
+>> > >>
+>> > >> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> > >> b/arch/arm/boot/dts/exynos5250.dtsi index cf6a02d..52bca54 100644
+>> > >> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> > >> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> > >> @@ -68,6 +68,12 @@
+>> > >>
+>> > >>               interrupts = <0 96 0>;
+>> > >>
+>> > >>       };
+>> > >>
+>> > >> +     dwc3 {
+>> > >
+>> > > shouldn't this be usb@12000000 ??
+>> >
+>> > Kept this in accordance with controller's name, similar to the change
+>> > in following:
+>> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12800.
+>> > html
+>> >
+>> > Needs to be changed ?
+>>
+>> I'll leave it to DT experts, but I was under the impression that we
+>> should be using generic functionality names (usb, i2c, spi, uart, gpio,
+>> etc) instead of the IP name. IP name is something more for compatible
+>> flag.
+>>
+>> Don't take my word for it though :-) DT experts are the ones with final
+>> saying
+>
+> Wrt node name, as far as I am aware of, there is no strict convention of
+> naming nodes, but the way you suggested is better in terms of readability -
+> you don't have to know this particular IP to find out what it is used for.
+>
+> Similar thing is with @addr in node names. I've been always adding @addr to
+> the name whenever the node had reg property inside (with the same address
+> of course), but I'm not sure if there is a strict convention here.
+>
+
+Better to make things more readable ;-)
+It will be nice that i change this to dwc3 as well as ehci and ohci in
+the change:
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12800.
+Thanks for suggestions.
+I shall also update the Documentation/devicetree/bindings. I missed
+that here :-(
+
+> Best regards,
+> Tomasz Figa
+>
+
+
+
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thanks & Regards
+Vivek
