@@ -1,105 +1,123 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH] ARM: Exynos5250: Enabling dwc3-exynos driver
-Date: Thu, 8 Nov 2012 10:36:17 +0530
-Message-ID: <CAFp+6iGs6Fz78gmFMiWgUzCQ919gphOWDL4Wz7xvAXe=aqKGXg@mail.gmail.com>
-References: <1352215729-11703-1-git-send-email-gautam.vivek@samsung.com>
-	<CAFp+6iGFwTAvhamhoQszBL8QUau64XtDWGR1yX0azbuw1iWgVA@mail.gmail.com>
-	<20121107164322.GC12714@arwen.pp.htv.fi>
-	<1719536.A7tLiC5qER@flatron>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 2/2] ARM: EXYNOS: change the name of USB ohci header
+Date: Thu, 08 Nov 2012 14:25:07 +0900
+Message-ID: <0d0601cdbd71$6aa959d0$3ffc0d70$%kim@samsung.com>
+References: <000901cdbbcf$5d81e270$1885a750$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:45969 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751489Ab2KHFGT (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:60030 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751104Ab2KHFZK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Nov 2012 00:06:19 -0500
-In-Reply-To: <1719536.A7tLiC5qER@flatron>
+	Thu, 8 Nov 2012 00:25:10 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MD5000IELPI7AL0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 Nov 2012 14:25:08 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MD500BD9LPVUTA0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 Nov 2012 14:25:08 +0900 (KST)
+In-reply-to: <000901cdbbcf$5d81e270$1885a750$%han@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, av.tikhomirov@samsung.com, yulgon.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, Praveen Paneri <p.paneri@samsung.com>
+To: 'Jingoo Han' <jg1.han@samsung.com>, balbi@ti.com
+Cc: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Jingoo Han wrote:
+> 
+> This patch changes the name of USB ohci header from 'usb-exynos.h'
+> to 'usb-ohci-exynos.h'. This is because this header file has
+> the platdata for only Exynos ohci.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+>  arch/arm/mach-exynos/dev-ohci.c                    |    2 +-
+>  arch/arm/mach-exynos/mach-origen.c                 |    2 +-
+>  arch/arm/mach-exynos/mach-smdkv310.c               |    2 +-
+>  drivers/usb/host/ohci-exynos.c                     |    2 +-
+>  .../{usb-exynos.h => usb-ohci-exynos.h}            |    0
+>  5 files changed, 4 insertions(+), 4 deletions(-)
+>  rename include/linux/platform_data/{usb-exynos.h => usb-ohci-exynos.h}
+> (100%)
+> 
+> diff --git a/arch/arm/mach-exynos/dev-ohci.c b/arch/arm/mach-exynos/dev-
+> ohci.c
+> index 4244d02..d5bc129 100644
+> --- a/arch/arm/mach-exynos/dev-ohci.c
+> +++ b/arch/arm/mach-exynos/dev-ohci.c
+> @@ -12,7 +12,7 @@
+> 
+>  #include <linux/dma-mapping.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/platform_data/usb-exynos.h>
+> +#include <linux/platform_data/usb-ohci-exynos.h>
+> 
+>  #include <mach/irqs.h>
+>  #include <mach/map.h>
+> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-
+> exynos/mach-origen.c
+> index c931ce1..2bbfa8e 100644
+> --- a/arch/arm/mach-exynos/mach-origen.c
+> +++ b/arch/arm/mach-exynos/mach-origen.c
+> @@ -26,7 +26,7 @@
+>  #include <linux/platform_data/i2c-s3c2410.h>
+>  #include <linux/platform_data/s3c-hsotg.h>
+>  #include <linux/platform_data/usb-ehci-s5p.h>
+> -#include <linux/platform_data/usb-exynos.h>
+> +#include <linux/platform_data/usb-ohci-exynos.h>
+> 
+>  #include <asm/mach/arch.h>
+>  #include <asm/hardware/gic.h>
+> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-
+> exynos/mach-smdkv310.c
+> index 063cb94..c70eaad 100644
+> --- a/arch/arm/mach-exynos/mach-smdkv310.c
+> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
+> @@ -23,7 +23,7 @@
+>  #include <linux/platform_data/i2c-s3c2410.h>
+>  #include <linux/platform_data/s3c-hsotg.h>
+>  #include <linux/platform_data/usb-ehci-s5p.h>
+> -#include <linux/platform_data/usb-exynos.h>
+> +#include <linux/platform_data/usb-ohci-exynos.h>
+> 
+>  #include <asm/mach/arch.h>
+>  #include <asm/hardware/gic.h>
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-
+> exynos.c
+> index 20a5008..acf9a4b 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -14,7 +14,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/platform_data/usb-exynos.h>
+> +#include <linux/platform_data/usb-ohci-exynos.h>
+>  #include <plat/usb-phy.h>
+> 
+>  struct exynos_ohci_hcd {
+> diff --git a/include/linux/platform_data/usb-exynos.h
+> b/include/linux/platform_data/usb-ohci-exynos.h
+> similarity index 100%
+> rename from include/linux/platform_data/usb-exynos.h
+> rename to include/linux/platform_data/usb-ohci-exynos.h
+> --
+> 1.7.1
 
+Looks OK to me, but I need ack from Felipe Balbi?
 
-On Wed, Nov 7, 2012 at 10:48 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Vivek, Felipe,
->
-> On Wednesday 07 of November 2012 18:43:22 Felipe Balbi wrote:
->> Hi,
->>
->> On Wed, Nov 07, 2012 at 06:55:03PM +0530, Vivek Gautam wrote:
->> > Hi,
->> >
->> > On Tue, Nov 6, 2012 at 10:13 PM, Felipe Balbi <balbi@ti.com> wrote:
->> > > On Tue, Nov 06, 2012 at 08:58:49PM +0530, Vivek Gautam wrote:
->> > >> Adding DWC3 device tree node for Exynos5250 along with the
->> > >> device address and clock support needed for the controller.
->> > >>
->> > >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> > >> ---
->> > >>
->> > >>  arch/arm/boot/dts/exynos5250.dtsi       |    6 ++++++
->> > >>  arch/arm/mach-exynos/clock-exynos5.c    |   24
->> > >>  ++++++++++++++++++++++++
->> > >>  arch/arm/mach-exynos/include/mach/map.h |    1 +
->> > >>  arch/arm/mach-exynos/mach-exynos5-dt.c  |    2 ++
->> > >>  drivers/usb/Kconfig                     |    1 +
->> > >>  5 files changed, 34 insertions(+), 0 deletions(-)
->> > >>
->> > >> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->> > >> b/arch/arm/boot/dts/exynos5250.dtsi index cf6a02d..52bca54 100644
->> > >> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> > >> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> > >> @@ -68,6 +68,12 @@
->> > >>
->> > >>               interrupts = <0 96 0>;
->> > >>
->> > >>       };
->> > >>
->> > >> +     dwc3 {
->> > >
->> > > shouldn't this be usb@12000000 ??
->> >
->> > Kept this in accordance with controller's name, similar to the change
->> > in following:
->> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12800.
->> > html
->> >
->> > Needs to be changed ?
->>
->> I'll leave it to DT experts, but I was under the impression that we
->> should be using generic functionality names (usb, i2c, spi, uart, gpio,
->> etc) instead of the IP name. IP name is something more for compatible
->> flag.
->>
->> Don't take my word for it though :-) DT experts are the ones with final
->> saying
->
-> Wrt node name, as far as I am aware of, there is no strict convention of
-> naming nodes, but the way you suggested is better in terms of readability -
-> you don't have to know this particular IP to find out what it is used for.
->
-> Similar thing is with @addr in node names. I've been always adding @addr to
-> the name whenever the node had reg property inside (with the same address
-> of course), but I'm not sure if there is a strict convention here.
->
+Felipe, are you OK on this? If so, I'd like to pick this up in my tree.
 
-Better to make things more readable ;-)
-It will be nice that i change this to dwc3 as well as ehci and ohci in
-the change:
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12800.
-Thanks for suggestions.
-I shall also update the Documentation/devicetree/bindings. I missed
-that here :-(
+Thanks.
 
-> Best regards,
-> Tomasz Figa
->
-
-
-
+Best regards,
+Kgene.
 --
-Thanks & Regards
-Vivek
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
