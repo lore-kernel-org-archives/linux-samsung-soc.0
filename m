@@ -1,60 +1,64 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2] ARM: EXYNOS: origen: Add missing USB regulators
-Date: Thu, 08 Nov 2012 11:50:51 +0100
-Message-ID: <11762974.EgWP4VdH3P@amdc1227>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v4 1/5] ARM: EXYNOS: Update & move usb-phy types to
+ generic include layer
+Date: Thu, 8 Nov 2012 20:20:43 +0200
+Message-ID: <20121108182043.GC2228@arwen.pp.htv.fi>
+References: <1352213699-11112-1-git-send-email-gautam.vivek@samsung.com>
+ <1352213699-11112-2-git-send-email-gautam.vivek@samsung.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:19650 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751180Ab2KHKu4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Nov 2012 05:50:56 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MD600G2R0SRDNO0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Nov 2012 19:50:54 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MD6003GU0STO1B0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Nov 2012 19:50:54 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="f+W+jCU1fRNres8c"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1352213699-11112-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, jhkim@insignal.co.kr
 
-This patch adds missing USB OTG regulators needed for s3c-hsotg driver
-to work on Origen board.
+--f+W+jCU1fRNres8c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Confirmed with schematics of and tested on Origen board.
+On Tue, Nov 06, 2012 at 08:24:55PM +0530, Vivek Gautam wrote:
+> Updating the names of usb-phy types to more generic names:
+> USB_PHY_TYPE_DEIVCE & USB_PHY_TYPE_HOST; and further update its
+> dependencies.
+>=20
+> Signed-off-by: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/mach-exynos/mach-origen.c | 2 ++
- 1 file changed, 2 insertions(+)
+Kukjin, I need your ack on this patch. Does it look ok for you ?
 
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index d8dc6d7..bf34704 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -100,6 +100,7 @@ static struct regulator_consumer_supply __initdata ldo3_consumer[] = {
- 	REGULATOR_SUPPLY("vddcore", "s5p-mipi-csis.0"), /* MIPI */
- 	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"), /* HDMI */
- 	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"), /* HDMI */
-+	REGULATOR_SUPPLY("vusb_a", "s3c-hsotg"), /* OTG */
- };
- static struct regulator_consumer_supply __initdata ldo6_consumer[] = {
- 	REGULATOR_SUPPLY("vddio", "s5p-mipi-csis.0"), /* MIPI */
-@@ -110,6 +111,7 @@ static struct regulator_consumer_supply __initdata ldo7_consumer[] = {
- static struct regulator_consumer_supply __initdata ldo8_consumer[] = {
- 	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* ADC */
- 	REGULATOR_SUPPLY("vdd_osc", "exynos4-hdmi"), /* HDMI */
-+	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"), /* OTG */
- };
- static struct regulator_consumer_supply __initdata ldo9_consumer[] = {
- 	REGULATOR_SUPPLY("dvdd", "swb-a31"), /* AR6003 WLAN & CSR 8810 BT */
--- 
-1.8.0
+--=20
+balbi
+
+--f+W+jCU1fRNres8c
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQm/f7AAoJEIaOsuA1yqREHe8P/jWReY6M/ClbJL8sfIU60kTV
+ppBnMNBBjzY58XGKVJvrdNsP4FhT5t5F1IZkgsn/T0vKE4XDPvT/WAYLsyhTwdTl
+uAbgwVI+yOOr/mhifFlvCGwDR+WMlZALbEYqVUFMMQf0QgS7wjRiagbtUtjQpsjB
+fZexOySNRVoFr64PajVhWhHdKIjwBDpUJKdAgBWDpvMvl9jAMwU+80oTcKg/bQkJ
+kO4fGSzRn+WzE0sLQbWg45B8soMrdKa2wsPC3tuwklaVBqr7CpklZ9qUBr7yDgmR
+nvTaDMA6UndxMDmsRyMwSYq4pmUjrzoLPaf2GMlRMFI0MACPMVavyDnBf4YMlDQr
+EYRPhG117adTAGA+YqE2thVfmvWGwOWZkF71rqdYSmHkeW+slAnIKG8byQijppv9
+g77mrpGYBohRMW3BdHgWrQj053TcUI1+LGyJ7YbanNUD+EIKeavzNzG6q38mEOM+
+nOJncE6cw/BTperdCxIKiWotwSp01a5p0YS1Mh6r5UObEEHOWzt6P5SW17rnBwww
+pdgzwbx0BZpmjYtnSwMtep9C1iqzyyCItPY/YUyCpWgVfU5VpVCB4bjHtu3ZIGUV
+9iT0hhTYKwFrNJvxAgqgR0jUriFf9lW6SzEXWRZh7J7T8y/9kRO3CrDompKaM5AW
+wvkWIM7WZclwgIhEAjj1
+=K2do
+-----END PGP SIGNATURE-----
+
+--f+W+jCU1fRNres8c--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
