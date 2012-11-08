@@ -1,13 +1,13 @@
 From: Sasha Levin <sasha.levin@oracle.com>
-Subject: [PATCH] ARM: EXYNOS: use BUG_ON where possible
-Date: Thu,  8 Nov 2012 15:23:07 -0500
-Message-ID: <1352406191-14303-5-git-send-email-sasha.levin@oracle.com>
+Subject: [PATCH] ARM: dma: use BUG_ON where possible
+Date: Thu,  8 Nov 2012 15:23:10 -0500
+Message-ID: <1352406191-14303-8-git-send-email-sasha.levin@oracle.com>
 References: <1352406191-14303-1-git-send-email-sasha.levin@oracle.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1352406191-14303-1-git-send-email-sasha.levin@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Sasha Levin <sasha.levin@oracle.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Sasha Levin <sasha.levin@oracle.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Just use BUG_ON() instead of constructions such as:
@@ -28,25 +28,37 @@ expression e;
 
 Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
 ---
- arch/arm/mach-exynos/common.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/mach-rpc/dma.c     |    3 +--
+ arch/arm/mach-s3c64xx/dma.c |    3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 4e577f6..6a55a5a 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -465,10 +465,8 @@ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int i
- 	else
- 		max_nr = EXYNOS4_MAX_COMBINER_NR;
+diff --git a/arch/arm/mach-rpc/dma.c b/arch/arm/mach-rpc/dma.c
+index 85883b2..92e22ba 100644
+--- a/arch/arm/mach-rpc/dma.c
++++ b/arch/arm/mach-rpc/dma.c
+@@ -265,8 +265,7 @@ static void floppy_enable_dma(unsigned int chan, dma_t *dma)
+ 	unsigned int fiqhandler_length;
+ 	struct pt_regs regs;
  
--	if (combiner_nr >= max_nr)
+-	if (fdma->dma.sg)
 -		BUG();
--	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
--		BUG();
-+	BUG_ON(combiner_nr >= max_nr);
-+	BUG_ON(irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0);
- 	irq_set_chained_handler(irq, combiner_handle_cascade_irq);
- }
++	BUG_ON(fdma->dma.sg);
  
+ 	if (fdma->dma.dma_mode == DMA_MODE_READ) {
+ 		extern unsigned char floppy_fiqin_start, floppy_fiqin_end;
+diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+index f2a7a17..585c2ae 100644
+--- a/arch/arm/mach-s3c64xx/dma.c
++++ b/arch/arm/mach-s3c64xx/dma.c
+@@ -603,8 +603,7 @@ static irqreturn_t s3c64xx_dma_irq(int irq, void *pw)
+ 				&& buff->next != chan->next)
+ 			buff = buff->next;
+ 
+-		if (!buff)
+-			BUG();
++		BUG_ON(!buff);
+ 
+ 		if (buff == chan->next)
+ 			buff = chan->end;
 -- 
 1.7.10.4
