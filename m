@@ -1,22 +1,25 @@
-From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Kyungmin Park <kmpark@infradead.org>
 Subject: Re: [PATCH v7 0/5] usb: phy: samsung: Introducing usb phy driver for
  samsung SoCs
-Date: Fri, 9 Nov 2012 17:45:45 +0530
-Message-ID: <CAD6zSYNa1WXkUrRa-Ja_RtXMgdRwK=YXoxQRwoEfj8Jaw8oVAQ@mail.gmail.com>
+Date: Fri, 9 Nov 2012 21:36:33 +0900
+Message-ID: <CAH9JG2X1a8MqBpnk8uHRjsGnaD7uob5GBhUh_aS5iCprEvi2XQ@mail.gmail.com>
 References: <1351573057-22249-1-git-send-email-p.paneri@samsung.com>
 	<20121109115440.GC8078@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121109115440.GC8078-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:63982 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753082Ab2KIMge (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Nov 2012 07:36:34 -0500
+In-Reply-To: <20121109115440.GC8078@arwen.pp.htv.fi>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: balbi@ti.com
+Cc: Praveen Paneri <p.paneri@samsung.com>, l.majewski@samsung.com, linux-samsung-soc@vger.kernel.org, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, thomas.abraham@linaro.org, gautam.vivek@samsung.com, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Hi Kukjin,
-
-On Fri, Nov 9, 2012 at 5:24 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
+On Fri, Nov 9, 2012 at 8:54 PM, Felipe Balbi <balbi@ti.com> wrote:
 > Hi,
 >
 > On Tue, Oct 30, 2012 at 10:27:32AM +0530, Praveen Paneri wrote:
@@ -63,6 +66,9 @@ On Fri, Nov 9, 2012 at 5:24 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org
 >> Praveen Paneri (5):
 >>   usb: phy: samsung: Introducing usb phy driver for hsotg
 >>   usb: s3c-hsotg: Adding phy driver support
+For usb parts:
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+
 >>   ARM: S3C64XX: Removing old phy setup code
 >>   ARM: S3C64XX: Enabling samsung-usbphy driver
 >>   ARM: Exynos4210: Enabling samsung-usbphy driver
@@ -70,15 +76,20 @@ On Fri, Nov 9, 2012 at 5:24 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org
 > guys I can't wait any longer. If I don't get proper Acks today, I will
 > go ahead without all the PHY changes from Samsung :-s
 
-Can you please ack this patch series.
+To Praveen,
 
-Thanks,
+To remove these dependency and merge issue, please send patches for
+each subsystem. In this case, usb patches for usb tree and others are
+for arm arch.
 
-Praveen
+Thank you,
+Kyungmin Park
 >
 > --
 > balbi
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
