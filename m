@@ -1,39 +1,139 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/4] gpio: samsung: Skip registration if pinctrl driver is
- present on Exynos4x12
-Date: Thu, 8 Nov 2012 22:12:52 +0100
-Message-ID: <CACRpkdaOpzFvs_wqy9sdrmx1=wEs5uxqfh_rOrKxLTXV-q1K2Q@mail.gmail.com>
-References: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
-	<1351089457-8205-3-git-send-email-t.figa@samsung.com>
-	<CACRpkdYNDSp0K3wpvUem9ecsW-JQ9L6aKqaOmHNUR65DQTMNHA@mail.gmail.com>
-	<0c5301cdbca2$30320240$909606c0$%kim@samsung.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 1/4] thermal: Add new thermal trend type to support
+ quick cooling
+Date: Fri, 09 Nov 2012 11:51:00 +0800
+Message-ID: <1352433060.2166.3.camel@rzhang1-mobl4>
+References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
+	 <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
+	 <1352354503.2190.7.camel@rzhang1-mobl4>
+	 <CAK44p22REJpaJiahX7sTofShNB-+OHVsULqHeuxFNu5msLk6vA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:52879 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756670Ab2KHVMx (ORCPT
+Received: from mga03.intel.com ([143.182.124.21]:28076 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750967Ab2KIDvO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Nov 2012 16:12:53 -0500
-Received: by mail-ea0-f174.google.com with SMTP id c13so1231950eaa.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Nov 2012 13:12:52 -0800 (PST)
-In-Reply-To: <0c5301cdbca2$30320240$909606c0$%kim@samsung.com>
+	Thu, 8 Nov 2012 22:51:14 -0500
+In-Reply-To: <CAK44p22REJpaJiahX7sTofShNB-+OHVsULqHeuxFNu5msLk6vA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, swarren@wwwdotorg.org
+To: Amit Kachhap <amit.kachhap@linaro.org>
+Cc: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, jonghwa3.lee@samsung.com
 
-On Wed, Nov 7, 2012 at 5:41 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+On Thu, 2012-11-08 at 11:56 +0530, Amit Kachhap wrote:
+> On 8 November 2012 11:31, Zhang Rui <rui.zhang@intel.com> wrote:
+> > On Thu, 2012-11-08 at 09:56 +0530, Amit Daniel Kachhap wrote:
+> >> This modification adds 2 new thermal trend type THERMAL_TREND_RAISE_FULL
+> >> and THERMAL_TREND_DROP_FULL. This thermal trend can be used to quickly
+> >> jump to the upper or lower cooling level instead of incremental increase
+> >> or decrease.
+> >
+> > IMO, what we need is a new more aggressive cooling governor which always
+> > uses upper limit when the temperature is raising and lower limit when
+> > the temperature is dropping.
+> Yes I agree that a new aggressive governor is the best approach but
+> then i thought adding a new trend type is a simple solution to achieve
+> this and since most of the governor logic might be same as the
+> step-wise governor. I have no objection in doing it through governor.
+> >
+hmmm,
+I think a more proper way is to set the cooling state to upper limit
+when it overheats and reduce the cooling state step by step when the
+temperature drops.
+what do you think?
 
-> A commit 1b6056d6 ("pinctrl: samsung: Include bank-specific eint offset in
-> bank struct") which is in your pinctrl tree (samsung branch) changed
-> macro(EXYNOS_PIN_BANK_EINTG) to add offset. Eventually, this series(due to
-> 3rd patch, pinctrl: samsung: Add support for Exynos4x12) breaks compilation
-> without the commit. So if you don't have a plan to rebase samsung branch of
-> your pinctrl tree, I'd like to merge it in my tree. Is it ok to you?
+thanks,
+rui
 
-Sure tell me when you've merged it and I'll drop commit 1b6056d6
-from my tree.
-
-Yours,
-Linus Walleij
+> > I can write such a governor if you do not have time to.
+> ok. thanks
+> >
+> > thanks,
+> > rui
+> >>  This is needed for temperature sensors which support rising/falling
+> >> threshold interrupts and polling can be totally avoided.
+> >>
+> >
+> >
+> >> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> >> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> >> ---
+> >>  drivers/thermal/step_wise.c |   19 +++++++++++++++----
+> >>  include/linux/thermal.h     |    2 ++
+> >>  2 files changed, 17 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/drivers/thermal/step_wise.c b/drivers/thermal/step_wise.c
+> >> index 1242cff..0d2d8d6 100644
+> >> --- a/drivers/thermal/step_wise.c
+> >> +++ b/drivers/thermal/step_wise.c
+> >> @@ -35,6 +35,10 @@
+> >>   *       state for this trip point
+> >>   *    b. if the trend is THERMAL_TREND_DROPPING, use lower cooling
+> >>   *       state for this trip point
+> >> + *    c. if the trend is THERMAL_TREND_RAISE_FULL, use highest cooling
+> >> + *       state for this trip point
+> >> + *    d. if the trend is THERMAL_TREND_DROP_FULL, use lowest cooling
+> >> + *       state for this trip point
+> >>   */
+> >>  static unsigned long get_target_state(struct thermal_instance *instance,
+> >>                                       enum thermal_trend trend)
+> >> @@ -50,7 +54,10 @@ static unsigned long get_target_state(struct thermal_instance *instance,
+> >>       } else if (trend == THERMAL_TREND_DROPPING) {
+> >>               cur_state = cur_state > instance->lower ?
+> >>                           (cur_state - 1) : instance->lower;
+> >> -     }
+> >> +     } else if (trend == THERMAL_TREND_RAISE_FULL)
+> >> +             cur_state = instance->upper;
+> >> +     else if (trend == THERMAL_TREND_DROP_FULL)
+> >> +             cur_state = instance->lower;
+> >>
+> >>       return cur_state;
+> >>  }
+> >> @@ -87,7 +94,8 @@ static void update_instance_for_throttle(struct thermal_zone_device *tz,
+> >>  }
+> >>
+> >>  static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
+> >> -                             int trip, enum thermal_trip_type trip_type)
+> >> +                             int trip, enum thermal_trip_type trip_type,
+> >> +                             enum thermal_trend trend)
+> >>  {
+> >>       struct thermal_instance *instance;
+> >>       struct thermal_cooling_device *cdev;
+> >> @@ -101,7 +109,10 @@ static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
+> >>               cdev = instance->cdev;
+> >>               cdev->ops->get_cur_state(cdev, &cur_state);
+> >>
+> >> -             instance->target = cur_state > instance->lower ?
+> >> +             if (trend == THERMAL_TREND_DROP_FULL)
+> >> +                     instance->target = instance->lower;
+> >> +             else
+> >> +                     instance->target = cur_state > instance->lower ?
+> >>                           (cur_state - 1) : THERMAL_NO_TARGET;
+> >>
+> >>               /* Deactivate a passive thermal instance */
+> >> @@ -133,7 +144,7 @@ static void thermal_zone_trip_update(struct thermal_zone_device *tz, int trip)
+> >>       if (tz->temperature >= trip_temp)
+> >>               update_instance_for_throttle(tz, trip, trip_type, trend);
+> >>       else
+> >> -             update_instance_for_dethrottle(tz, trip, trip_type);
+> >> +             update_instance_for_dethrottle(tz, trip, trip_type, trend);
+> >>
+> >>       mutex_unlock(&tz->lock);
+> >>  }
+> >> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> >> index 807f214..8bce3ec 100644
+> >> --- a/include/linux/thermal.h
+> >> +++ b/include/linux/thermal.h
+> >> @@ -68,6 +68,8 @@ enum thermal_trend {
+> >>       THERMAL_TREND_STABLE, /* temperature is stable */
+> >>       THERMAL_TREND_RAISING, /* temperature is raising */
+> >>       THERMAL_TREND_DROPPING, /* temperature is dropping */
+> >> +     THERMAL_TREND_RAISE_FULL, /* Apply highest cooling action*/
+> >> +     THERMAL_TREND_DROP_FULL, /* Apply lowest cooling action*/
+> >>  };
+> >>
+> >>  /* Events supported by Thermal Netlink */
+> >
+> >
