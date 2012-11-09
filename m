@@ -1,167 +1,73 @@
-From: "R, Durgadoss" <durgadoss.r@intel.com>
-Subject: RE: [PATCH 1/4] thermal: Add new thermal trend type to support
- quick cooling
-Date: Fri, 9 Nov 2012 05:54:15 +0000
-Message-ID: <4D68720C2E767A4AA6A8796D42C8EB5920406D@BGSMSX101.gar.corp.intel.com>
-References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
-	 <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
-	 <1352354503.2190.7.camel@rzhang1-mobl4>
-	 <CAK44p22REJpaJiahX7sTofShNB-+OHVsULqHeuxFNu5msLk6vA@mail.gmail.com>
- <1352433060.2166.3.camel@rzhang1-mobl4>
+From: Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH 4/4] DMA: PL330: add device tree property for DMA_MEMCPY capability
+Date: Fri, 9 Nov 2012 11:41:30 +0530
+Message-ID: <CAJe_ZhdOt+T65FdkE0SpQ37uGsS8SkFyJ9hHM3B_8S8f7GQAcQ@mail.gmail.com>
+References: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
+	<1351504796-24788-5-git-send-email-b.zolnierkie@samsung.com>
+	<CABb+yY1Ztu2n38ObXJq+shOoXw6yk0YK39QUHhDN_pJKziAFQg@mail.gmail.com>
+	<201210301021.42803.b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:20494 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750907Ab2KIFyh (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:61013 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750890Ab2KIGLb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Nov 2012 00:54:37 -0500
-In-Reply-To: <1352433060.2166.3.camel@rzhang1-mobl4>
-Content-Language: en-US
+	Fri, 9 Nov 2012 01:11:31 -0500
+Received: by mail-vc0-f174.google.com with SMTP id fk26so3472408vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Nov 2012 22:11:30 -0800 (PST)
+In-Reply-To: <201210301021.42803.b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Zhang, Rui" <rui.zhang@intel.com>, Amit Kachhap <amit.kachhap@linaro.org>
-Cc: "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jonghwa3.lee@samsung.com" <jonghwa3.lee@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, kgene.kim@samsung.com, pawel.moll@arm.com, vinod.koul@intel.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
 
-SGkgQW1pdC9SdWksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogWmhh
-bmcsIFJ1aQ0KPiBTZW50OiBGcmlkYXksIE5vdmVtYmVyIDA5LCAyMDEyIDk6MjEgQU0NCj4gVG86
-IEFtaXQgS2FjaGhhcA0KPiBDYzogbGludXgtcG1AbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmc7
-IGxpbnV4LXNhbXN1bmctDQo+IHNvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IFIsIER1cmdhZG9zczsNCj4gbGVuYkBrZXJuZWwub3JnOyBsaW51eC1hY3Bp
-QHZnZXIua2VybmVsLm9yZzsgam9uZ2h3YTMubGVlQHNhbXN1bmcuY29tDQo+IFN1YmplY3Q6IFJl
-OiBbUEFUQ0ggMS80XSB0aGVybWFsOiBBZGQgbmV3IHRoZXJtYWwgdHJlbmQgdHlwZSB0byBzdXBw
-b3J0DQo+IHF1aWNrIGNvb2xpbmcNCj4gDQo+IE9uIFRodSwgMjAxMi0xMS0wOCBhdCAxMTo1NiAr
-MDUzMCwgQW1pdCBLYWNoaGFwIHdyb3RlOg0KPiA+IE9uIDggTm92ZW1iZXIgMjAxMiAxMTozMSwg
-WmhhbmcgUnVpIDxydWkuemhhbmdAaW50ZWwuY29tPiB3cm90ZToNCj4gPiA+IE9uIFRodSwgMjAx
-Mi0xMS0wOCBhdCAwOTo1NiArMDUzMCwgQW1pdCBEYW5pZWwgS2FjaGhhcCB3cm90ZToNCj4gPiA+
-PiBUaGlzIG1vZGlmaWNhdGlvbiBhZGRzIDIgbmV3IHRoZXJtYWwgdHJlbmQgdHlwZQ0KPiBUSEVS
-TUFMX1RSRU5EX1JBSVNFX0ZVTEwNCj4gPiA+PiBhbmQgVEhFUk1BTF9UUkVORF9EUk9QX0ZVTEwu
-IFRoaXMgdGhlcm1hbCB0cmVuZCBjYW4gYmUgdXNlZCB0bw0KPiBxdWlja2x5DQo+ID4gPj4ganVt
-cCB0byB0aGUgdXBwZXIgb3IgbG93ZXIgY29vbGluZyBsZXZlbCBpbnN0ZWFkIG9mIGluY3JlbWVu
-dGFsIGluY3JlYXNlDQo+ID4gPj4gb3IgZGVjcmVhc2UuDQo+ID4gPg0KPiA+ID4gSU1PLCB3aGF0
-IHdlIG5lZWQgaXMgYSBuZXcgbW9yZSBhZ2dyZXNzaXZlIGNvb2xpbmcgZ292ZXJub3Igd2hpY2gN
-Cj4gYWx3YXlzDQo+ID4gPiB1c2VzIHVwcGVyIGxpbWl0IHdoZW4gdGhlIHRlbXBlcmF0dXJlIGlz
-IHJhaXNpbmcgYW5kIGxvd2VyIGxpbWl0IHdoZW4NCj4gPiA+IHRoZSB0ZW1wZXJhdHVyZSBpcyBk
-cm9wcGluZy4NCj4gPiBZZXMgSSBhZ3JlZSB0aGF0IGEgbmV3IGFnZ3Jlc3NpdmUgZ292ZXJub3Ig
-aXMgdGhlIGJlc3QgYXBwcm9hY2ggYnV0DQo+ID4gdGhlbiBpIHRob3VnaHQgYWRkaW5nIGEgbmV3
-IHRyZW5kIHR5cGUgaXMgYSBzaW1wbGUgc29sdXRpb24gdG8gYWNoaWV2ZQ0KPiA+IHRoaXMgYW5k
-IHNpbmNlIG1vc3Qgb2YgdGhlIGdvdmVybm9yIGxvZ2ljIG1pZ2h0IGJlIHNhbWUgYXMgdGhlDQo+
-ID4gc3RlcC13aXNlIGdvdmVybm9yLiBJIGhhdmUgbm8gb2JqZWN0aW9uIGluIGRvaW5nIGl0IHRo
-cm91Z2ggZ292ZXJub3IuDQo+ID4gPg0KPiBobW1tLA0KPiBJIHRoaW5rIGEgbW9yZSBwcm9wZXIg
-d2F5IGlzIHRvIHNldCB0aGUgY29vbGluZyBzdGF0ZSB0byB1cHBlciBsaW1pdA0KPiB3aGVuIGl0
-IG92ZXJoZWF0cyBhbmQgcmVkdWNlIHRoZSBjb29saW5nIHN0YXRlIHN0ZXAgYnkgc3RlcCB3aGVu
-IHRoZQ0KPiB0ZW1wZXJhdHVyZSBkcm9wcy4NCj4gd2hhdCBkbyB5b3UgdGhpbms/DQoNCkkgaGF2
-ZSBvbmx5IG9uZSBjb25jZXJuIGhlcmU6IChtb3N0bHkgb24gUGFzc2l2ZSBjb29saW5nIGNhc2Vz
-KQ0KU2V0dGluZyB0aGUgY29vbGluZyBzdGF0ZSB0byB1cHBlciBsaW1pdCB3aWxsIHN1cmVseSBo
-ZWxwIGluIHJhcGlkIGNvb2xpbmcsDQpidXQgaXQgd2lsbCBhbHNvIGRpc3J1cHQgdGhlIHRoZXJt
-YWwgc3RlYWR5IHN0YXRlLCBhbmQgdGhlIHBlcmZvcm1hbmNlIG1pZ2h0DQpiZSBqaXR0ZXJ5Lg0K
-DQpMZXQgbWUgZXhwbGFpbiBhIGJpdDoNCk9uIHNtYWxsIGZvcm0gZmFjdG9ycyAobGlrZSBzbWFy
-dHBob25lcywgdGFibGV0cywgbmV0Ym9va3MpLCB3aGVuIHdlIHJ1bg0KQ1BVIGludGVuc2l2ZSBi
-ZW5jaG1hcmtzLCB3ZSBjYW4gZWFzaWx5IG9ic2VydmUgdGhpcyBqaXR0ZXJ5IHBlcmZvcm1hbmNl
-Lg0KDQpUaGUgQ1BVIHdpbGwgcnVuIGluIGEgdmVyeSBoaWdoIGZyZXEgZm9yIGZldyBzZWNvbmRz
-KHdoaWNoIG1lYW5zIHRlbXBlcmF0dXJlIGlzDQp3ZWxsIGJlbG93IHRyaXAgcG9pbnQpLCBhbmQg
-dGhlbiBzd2l0Y2ggYmFjayB0byB2ZXJ5IGxvdyBmcmVxdWVuY3kgaW4gdGhlIG5leHQNCmZldyBz
-ZWNvbmRzKHdoaWNoIG1lYW5zIHRlbXBlcmF0dXJlIGhpdCB0aGUgdHJpcCBwb2ludCkuIFRoaXMg
-c3dpdGNoIHdpbGwga2VlcA0KaGFwcGVuaW5nIGZvciBldmVyeSBmZXcgc2Vjb25kcy4gU28sIHRo
-ZSB0ZW1wZXJhdHVyZSBuZXZlciBzZXR0bGVzIChzYXkgZm9yIGV4YW1wbGUsDQpzb21ld2hlcmUg
-aW4gdGhlIG1pZGRsZSBvZiBbbG93IENQVSB0ZW1wLCBDUFUgVHJpcCB0ZW1wXS4gDQoNCkkgY291
-bGQgc2VlIHR3byByZWFzb25zIGZvciB0aGlzOg0KMS4gVGhlIHBvbGwgZGVsYXk6IEJldHdlZW4g
-dHdvIHN1Y2Nlc3NpdmUgcG9sbHMsIGhvd2V2ZXIgc21hbGwgdGhlIHBvbGwgZGVsYXkofjIwcykg
-bWF5IGJlLA0KdGhlIENQVSB0ZW1wZXJhdHVyZSBjYW4gcmFpc2UgdXAgdG8gMTVDIChKdXN0IG15
-IG9ic2VydmF0aW9uKQ0KMi4gU3VkZGVuIHBhc3NpdmUgY29vbGluZy4gVGhlIGZyZXEgc3dpdGNo
-ZXMgYmV0d2VlbiBIRk0gYW5kIExGTSBhbmQgbmV2ZXINCnNvbWV0aGluZyBpbiBiZXR3ZWVuLg0K
-DQpUaGF04oCZcyB3aHkgZm9yIHBhc3NpdmUgY29vbGluZyBjYXNlcywgdGhpcyBiZWhhdmlvciBt
-aWdodCBub3QgYmUgd2VsY29tZWQgYWx3YXlzLg0KDQpTbywgSSB3b3VsZCBwcmVmZXIgbm90IHRv
-IHNldCB0aGUgY29vbGluZyBzdGF0ZSB0byB1cHBlciBsaW1pdCBhbHdheXMuIEluc3RlYWQsIHdl
-IHdpbGwNCmtlZXAgdGhlIGV4aXN0aW5nIGJlaGF2aW9yIGJ1dCBpbnRyb2R1Y2UgbmV3IHRyZW5k
-IHR5cGVzIChzb21ldGhpbmcgbGlrZSB3aGF0IEFtaXQNCmhhcyBkb25lKS4gSW4gdGhpcyBjYXNl
-LCB0aGUgdXNlci90ZXN0ZXIgaXMgZXhwbGljaXRseSBpcyBzZXR0aW5nIHRoZSBjb29saW5nIHRy
-ZW5kIHRvDQonU1VEREVOIGNvb2xpbmcnIHdoaWNoIG1lYW5zIGhlL3NoZSBpcyAnT2snIHdpdGgg
-Sml0dGVyIGluIHBlcmZvcm1hbmNlLiBUaGluZ3MgYXJlDQpleHBsaWNpdGx5IHNhaWQgaGVyZSwg
-d2hpY2ggbWFrZXMgaXQgZWFzeSB0byBpZGVudGlmeSBwZXJmb3JtYW5jZSBpc3N1ZXMsIGlmIGFu
-eSBhcmlzZS4NCg0KSW4gZmFjdCwgdGhpcyBpcyBvbmUgb2YgdGhlIHJlYXNvbnMsIHdoeSB3ZSBo
-YXZlIHRoZSAnd2VpZ2h0JyBhbmQgdGhlICdjdXJfdHJpcF9sZXZlbCcNCnZhcmlhYmxlcyBpbiB0
-aGUgZmFpciBzaGFyZSBnb3Zlcm5vci4gVG9nZXRoZXIsIGJvdGggdGhlc2UgdmFyaWFibGVzLCBl
-bnN1cmUgdGhhdA0Kd2UgZG8gbm90IHRocm90dGxlIGEgY29vbGluZyBkZXZpY2UsIHRvIG1vcmUg
-dGhhbiB3aGF0IGlzIG5lY2Vzc2FyeS4NCg0KSSBkbyBub3QgdGhpbmsgYW55IG9mIHRoaXMgbWF0
-dGVycyBmb3IgYWN0aXZlIGNvb2xpbmcsIHdoZXJlIHdlIGRvIG5vdCBpbXBhY3QNCnBlcmZvcm1h
-bmNlIDotKQ0KDQpTb3JyeSBhZ2FpbiBmb3IgdGhlIGxhdGUgcmVzcG9uc2UuIFRoYW5rcyBib3Ro
-IG9mIHlvdSBmb3IgYnJpbmdpbmcgdGhpcyB1cC4uDQoNClRoYW5rcywNCkR1cmdhDQoNCj4gDQo+
-IHRoYW5rcywNCj4gcnVpDQo+IA0KPiA+ID4gSSBjYW4gd3JpdGUgc3VjaCBhIGdvdmVybm9yIGlm
-IHlvdSBkbyBub3QgaGF2ZSB0aW1lIHRvLg0KPiA+IG9rLiB0aGFua3MNCj4gPiA+DQo+ID4gPiB0
-aGFua3MsDQo+ID4gPiBydWkNCj4gPiA+PiAgVGhpcyBpcyBuZWVkZWQgZm9yIHRlbXBlcmF0dXJl
-IHNlbnNvcnMgd2hpY2ggc3VwcG9ydCByaXNpbmcvZmFsbGluZw0KPiA+ID4+IHRocmVzaG9sZCBp
-bnRlcnJ1cHRzIGFuZCBwb2xsaW5nIGNhbiBiZSB0b3RhbGx5IGF2b2lkZWQuDQo+ID4gPj4NCj4g
-PiA+DQo+ID4gPg0KPiA+ID4+IFNpZ25lZC1vZmYtYnk6IEFtaXQgRGFuaWVsIEthY2hoYXAgPGFt
-aXQuZGFuaWVsQHNhbXN1bmcuY29tPg0KPiA+ID4+IFNpZ25lZC1vZmYtYnk6IEFtaXQgRGFuaWVs
-IEthY2hoYXAgPGFtaXQua2FjaGhhcEBsaW5hcm8ub3JnPg0KPiA+ID4+IC0tLQ0KPiA+ID4+ICBk
-cml2ZXJzL3RoZXJtYWwvc3RlcF93aXNlLmMgfCAgIDE5ICsrKysrKysrKysrKysrKy0tLS0NCj4g
-PiA+PiAgaW5jbHVkZS9saW51eC90aGVybWFsLmggICAgIHwgICAgMiArKw0KPiA+ID4+ICAyIGZp
-bGVzIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+ID4gPj4NCj4g
-PiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy90aGVybWFsL3N0ZXBfd2lzZS5jIGIvZHJpdmVycy90
-aGVybWFsL3N0ZXBfd2lzZS5jDQo+ID4gPj4gaW5kZXggMTI0MmNmZi4uMGQyZDhkNiAxMDA2NDQN
-Cj4gPiA+PiAtLS0gYS9kcml2ZXJzL3RoZXJtYWwvc3RlcF93aXNlLmMNCj4gPiA+PiArKysgYi9k
-cml2ZXJzL3RoZXJtYWwvc3RlcF93aXNlLmMNCj4gPiA+PiBAQCAtMzUsNiArMzUsMTAgQEANCj4g
-PiA+PiAgICogICAgICAgc3RhdGUgZm9yIHRoaXMgdHJpcCBwb2ludA0KPiA+ID4+ICAgKiAgICBi
-LiBpZiB0aGUgdHJlbmQgaXMgVEhFUk1BTF9UUkVORF9EUk9QUElORywgdXNlIGxvd2VyIGNvb2xp
-bmcNCj4gPiA+PiAgICogICAgICAgc3RhdGUgZm9yIHRoaXMgdHJpcCBwb2ludA0KPiA+ID4+ICsg
-KiAgICBjLiBpZiB0aGUgdHJlbmQgaXMgVEhFUk1BTF9UUkVORF9SQUlTRV9GVUxMLCB1c2UgaGln
-aGVzdCBjb29saW5nDQo+ID4gPj4gKyAqICAgICAgIHN0YXRlIGZvciB0aGlzIHRyaXAgcG9pbnQN
-Cj4gPiA+PiArICogICAgZC4gaWYgdGhlIHRyZW5kIGlzIFRIRVJNQUxfVFJFTkRfRFJPUF9GVUxM
-LCB1c2UgbG93ZXN0IGNvb2xpbmcNCj4gPiA+PiArICogICAgICAgc3RhdGUgZm9yIHRoaXMgdHJp
-cCBwb2ludA0KPiA+ID4+ICAgKi8NCj4gPiA+PiAgc3RhdGljIHVuc2lnbmVkIGxvbmcgZ2V0X3Rh
-cmdldF9zdGF0ZShzdHJ1Y3QgdGhlcm1hbF9pbnN0YW5jZQ0KPiAqaW5zdGFuY2UsDQo+ID4gPj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbnVtIHRoZXJtYWxfdHJlbmQg
-dHJlbmQpDQo+ID4gPj4gQEAgLTUwLDcgKzU0LDEwIEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nIGdl
-dF90YXJnZXRfc3RhdGUoc3RydWN0DQo+IHRoZXJtYWxfaW5zdGFuY2UgKmluc3RhbmNlLA0KPiA+
-ID4+ICAgICAgIH0gZWxzZSBpZiAodHJlbmQgPT0gVEhFUk1BTF9UUkVORF9EUk9QUElORykgew0K
-PiA+ID4+ICAgICAgICAgICAgICAgY3VyX3N0YXRlID0gY3VyX3N0YXRlID4gaW5zdGFuY2UtPmxv
-d2VyID8NCj4gPiA+PiAgICAgICAgICAgICAgICAgICAgICAgICAgIChjdXJfc3RhdGUgLSAxKSA6
-IGluc3RhbmNlLT5sb3dlcjsNCj4gPiA+PiAtICAgICB9DQo+ID4gPj4gKyAgICAgfSBlbHNlIGlm
-ICh0cmVuZCA9PSBUSEVSTUFMX1RSRU5EX1JBSVNFX0ZVTEwpDQo+ID4gPj4gKyAgICAgICAgICAg
-ICBjdXJfc3RhdGUgPSBpbnN0YW5jZS0+dXBwZXI7DQo+ID4gPj4gKyAgICAgZWxzZSBpZiAodHJl
-bmQgPT0gVEhFUk1BTF9UUkVORF9EUk9QX0ZVTEwpDQo+ID4gPj4gKyAgICAgICAgICAgICBjdXJf
-c3RhdGUgPSBpbnN0YW5jZS0+bG93ZXI7DQo+ID4gPj4NCj4gPiA+PiAgICAgICByZXR1cm4gY3Vy
-X3N0YXRlOw0KPiA+ID4+ICB9DQo+ID4gPj4gQEAgLTg3LDcgKzk0LDggQEAgc3RhdGljIHZvaWQg
-dXBkYXRlX2luc3RhbmNlX2Zvcl90aHJvdHRsZShzdHJ1Y3QNCj4gdGhlcm1hbF96b25lX2Rldmlj
-ZSAqdHosDQo+ID4gPj4gIH0NCj4gPiA+Pg0KPiA+ID4+ICBzdGF0aWMgdm9pZCB1cGRhdGVfaW5z
-dGFuY2VfZm9yX2RldGhyb3R0bGUoc3RydWN0DQo+IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6LA0K
-PiA+ID4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIGludCB0cmlwLCBlbnVtIHRoZXJt
-YWxfdHJpcF90eXBlIHRyaXBfdHlwZSkNCj4gPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBpbnQgdHJpcCwgZW51bSB0aGVybWFsX3RyaXBfdHlwZSB0cmlwX3R5cGUsDQo+ID4gPj4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZW51bSB0aGVybWFsX3RyZW5kIHRyZW5kKQ0K
-PiA+ID4+ICB7DQo+ID4gPj4gICAgICAgc3RydWN0IHRoZXJtYWxfaW5zdGFuY2UgKmluc3RhbmNl
-Ow0KPiA+ID4+ICAgICAgIHN0cnVjdCB0aGVybWFsX2Nvb2xpbmdfZGV2aWNlICpjZGV2Ow0KPiA+
-ID4+IEBAIC0xMDEsNyArMTA5LDEwIEBAIHN0YXRpYyB2b2lkDQo+IHVwZGF0ZV9pbnN0YW5jZV9m
-b3JfZGV0aHJvdHRsZShzdHJ1Y3QgdGhlcm1hbF96b25lX2RldmljZSAqdHosDQo+ID4gPj4gICAg
-ICAgICAgICAgICBjZGV2ID0gaW5zdGFuY2UtPmNkZXY7DQo+ID4gPj4gICAgICAgICAgICAgICBj
-ZGV2LT5vcHMtPmdldF9jdXJfc3RhdGUoY2RldiwgJmN1cl9zdGF0ZSk7DQo+ID4gPj4NCj4gPiA+
-PiAtICAgICAgICAgICAgIGluc3RhbmNlLT50YXJnZXQgPSBjdXJfc3RhdGUgPiBpbnN0YW5jZS0+
-bG93ZXIgPw0KPiA+ID4+ICsgICAgICAgICAgICAgaWYgKHRyZW5kID09IFRIRVJNQUxfVFJFTkRf
-RFJPUF9GVUxMKQ0KPiA+ID4+ICsgICAgICAgICAgICAgICAgICAgICBpbnN0YW5jZS0+dGFyZ2V0
-ID0gaW5zdGFuY2UtPmxvd2VyOw0KPiA+ID4+ICsgICAgICAgICAgICAgZWxzZQ0KPiA+ID4+ICsg
-ICAgICAgICAgICAgICAgICAgICBpbnN0YW5jZS0+dGFyZ2V0ID0gY3VyX3N0YXRlID4gaW5zdGFu
-Y2UtPmxvd2VyID8NCj4gPiA+PiAgICAgICAgICAgICAgICAgICAgICAgICAgIChjdXJfc3RhdGUg
-LSAxKSA6IFRIRVJNQUxfTk9fVEFSR0VUOw0KPiA+ID4+DQo+ID4gPj4gICAgICAgICAgICAgICAv
-KiBEZWFjdGl2YXRlIGEgcGFzc2l2ZSB0aGVybWFsIGluc3RhbmNlICovDQo+ID4gPj4gQEAgLTEz
-Myw3ICsxNDQsNyBAQCBzdGF0aWMgdm9pZCB0aGVybWFsX3pvbmVfdHJpcF91cGRhdGUoc3RydWN0
-DQo+IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6LCBpbnQgdHJpcCkNCj4gPiA+PiAgICAgICBpZiAo
-dHotPnRlbXBlcmF0dXJlID49IHRyaXBfdGVtcCkNCj4gPiA+PiAgICAgICAgICAgICAgIHVwZGF0
-ZV9pbnN0YW5jZV9mb3JfdGhyb3R0bGUodHosIHRyaXAsIHRyaXBfdHlwZSwgdHJlbmQpOw0KPiA+
-ID4+ICAgICAgIGVsc2UNCj4gPiA+PiAtICAgICAgICAgICAgIHVwZGF0ZV9pbnN0YW5jZV9mb3Jf
-ZGV0aHJvdHRsZSh0eiwgdHJpcCwgdHJpcF90eXBlKTsNCj4gPiA+PiArICAgICAgICAgICAgIHVw
-ZGF0ZV9pbnN0YW5jZV9mb3JfZGV0aHJvdHRsZSh0eiwgdHJpcCwgdHJpcF90eXBlLCB0cmVuZCk7
-DQo+ID4gPj4NCj4gPiA+PiAgICAgICBtdXRleF91bmxvY2soJnR6LT5sb2NrKTsNCj4gPiA+PiAg
-fQ0KPiA+ID4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3RoZXJtYWwuaCBiL2luY2x1ZGUv
-bGludXgvdGhlcm1hbC5oDQo+ID4gPj4gaW5kZXggODA3ZjIxNC4uOGJjZTNlYyAxMDA2NDQNCj4g
-PiA+PiAtLS0gYS9pbmNsdWRlL2xpbnV4L3RoZXJtYWwuaA0KPiA+ID4+ICsrKyBiL2luY2x1ZGUv
-bGludXgvdGhlcm1hbC5oDQo+ID4gPj4gQEAgLTY4LDYgKzY4LDggQEAgZW51bSB0aGVybWFsX3Ry
-ZW5kIHsNCj4gPiA+PiAgICAgICBUSEVSTUFMX1RSRU5EX1NUQUJMRSwgLyogdGVtcGVyYXR1cmUg
-aXMgc3RhYmxlICovDQo+ID4gPj4gICAgICAgVEhFUk1BTF9UUkVORF9SQUlTSU5HLCAvKiB0ZW1w
-ZXJhdHVyZSBpcyByYWlzaW5nICovDQo+ID4gPj4gICAgICAgVEhFUk1BTF9UUkVORF9EUk9QUElO
-RywgLyogdGVtcGVyYXR1cmUgaXMgZHJvcHBpbmcgKi8NCj4gPiA+PiArICAgICBUSEVSTUFMX1RS
-RU5EX1JBSVNFX0ZVTEwsIC8qIEFwcGx5IGhpZ2hlc3QgY29vbGluZyBhY3Rpb24qLw0KPiA+ID4+
-ICsgICAgIFRIRVJNQUxfVFJFTkRfRFJPUF9GVUxMLCAvKiBBcHBseSBsb3dlc3QgY29vbGluZyBh
-Y3Rpb24qLw0KPiA+ID4+ICB9Ow0KPiA+ID4+DQo+ID4gPj4gIC8qIEV2ZW50cyBzdXBwb3J0ZWQg
-YnkgVGhlcm1hbCBOZXRsaW5rICovDQo+ID4gPg0KPiA+ID4NCj4gDQoNCg==
+On 30 October 2012 14:51, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> Hi,
+>
+> On Monday 29 October 2012 22:45:48 Jassi Brar wrote:
+>> On Mon, Oct 29, 2012 at 10:59 AM, Bartlomiej Zolnierkiewicz
+>> <b.zolnierkie@samsung.com> wrote:
+>> > * Add device tree (DT) property ("pl330,dma-memcpy") for DMA_MEMCPY
+>> >   capability and instead of setting this capability unconditionally
+>> >   in pl330_probe() do it only when property is present.
+>> >
+>> Perhaps we should pass the array of peripheral interfaces via DT, the
+>> lack of which could imply MEMCPY capability ? (while it works, I doubt
+>> if pl330 is supposed to have SLAVE and MEMCPY capabilities in any
+>> instance)
+>
+> In case of PL330 on EXYNOS4 we have two interfaces with SLAVE capability
+> and one interface with MEMCPY capability.  Could you please explain more
+> the idea of passing the array of peripherals through DT so we can detect
+> which interface has MEMCPY capability?
+>
+The DT node of a 'pdma' should have the array of indices of
+peripherals it caters to (what is currently peri_id of 'struct
+dma_pl330_platdata'). The array would be missing in the DT node of
+'mdma' since all channels are equal.
+During probe if the array, say as property 'peri_map', is missing from
+DT node of the dmac, that would imply the dmac is 'mdma' and hence the
+pl330.c sets DMA_MEMCPY in its cap_mask. Otherwise the peri_map
+implies a 'pdma' and hence SLAVE|CYCLIC is set.
+
+
+>> That would also be a step towards discarding "struct dma_pl330_platdata".
+>
+> I don't know if getting rid of "struct dma_pl330_platdata" is possible
+> but we still need to come up with some way to pass the needed information
+> through DT.  Do you have an idea how it could be done?
+>
+struct dma_pl330_platdata {
+  u8 nr_valid_peri;
+  u8 *peri_id;
+      As explain above, these two should move to DT node of the dma controller.
+
+  dma_cap_mask_t cap_mask;
+      Should be set in pl330.c : MEMCPY for mdma,  SLAVE|CYCLIC for pdma
+
+  unsigned mcbuf_sz;
+      Currently unused and already safe enough default value set in driver.
+}
