@@ -1,121 +1,74 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C64XX: Statically define parent clock of the
- "camera" clock
-Date: Fri, 09 Nov 2012 19:08:47 +0900
-Message-ID: <0e8101cdbe62$3537bc50$9fa734f0$%kim@samsung.com>
-References: <CAA11ShAo_N5iwPmVqE27NMzhpSD6NZORqf7yvjUyZ-+kGkgYog@mail.gmail.com>
- <1352449929-20168-1-git-send-email-sylvester.nawrocki@gmail.com>
- <CAA11ShABPJhLP5dvx65=HOzSNoiY+jjiiNPAvd_x_5z7K3meVg@mail.gmail.com>
+Subject: RE: [PATCH v2] ARM: EXYNOS: origen: Add missing USB regulators
+Date: Fri, 09 Nov 2012 19:09:06 +0900
+Message-ID: <0e8201cdbe62$409dfaa0$c1d9efe0$%kim@samsung.com>
+References: <11762974.EgWP4VdH3P@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17410 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751550Ab2KIKIt (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50438 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751550Ab2KIKJH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Nov 2012 05:08:49 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+	Fri, 9 Nov 2012 05:09:07 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MD700HIMTIMM310@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Nov 2012 19:08:47 +0900 (KST)
+ 17 2011)) with ESMTP id <0MD700727TINF5S0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Nov 2012 19:09:06 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MD7000METIN6U40@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Nov 2012 19:08:47 +0900 (KST)
-In-reply-to: <CAA11ShABPJhLP5dvx65=HOzSNoiY+jjiiNPAvd_x_5z7K3meVg@mail.gmail.com>
+ with ESMTPA id <0MD70001OTJ6HD90@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Nov 2012 19:09:06 +0900 (KST)
+In-reply-to: <11762974.EgWP4VdH3P@amdc1227>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Andrey Gusakov' <dron0gus@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Tomasz Figa' <t.figa@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+Cc: 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, jhkim@insignal.co.kr
 
-Andrey Gusakov wrote:
+Tomasz Figa wrote:
 > 
-> Hi.
+> This patch adds missing USB OTG regulators needed for s3c-hsotg driver
+> to work on Origen board.
 > 
-> On Fri, Nov 9, 2012 at 12:32 PM, Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com> wrote:
-> > The "camera" clock defined in arch/arm/mach-s3c64xx/clock.c has null
-> > clock source mux control register as it can have only one parent
-> > clock. In such cases there is a need to configure the parent clock
-> > statically, otherwise s3c_set_clksrc() bails out with an error message
-> > "no parent clock specified" leaving the parent clock not configured.
-> > Define statically the parent clock so it is possible to get or set
-> > rate of the "camera" clock.
-> > While at it remove the unneded null reg_src definition.
-> >
-> > Reported-by: In-Bae Jeong <kukyakya@gmail.com>
-> > Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-> > ---
-> >  arch/arm/mach-s3c64xx/clock.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-
-> s3c64xx/clock.c
-> > index 28041e8..2e6d7f9 100644
-> > --- a/arch/arm/mach-s3c64xx/clock.c
-> > +++ b/arch/arm/mach-s3c64xx/clock.c
-> > @@ -744,9 +744,9 @@ static struct clksrc_clk clksrcs[] = {
-> >                         .name           = "camera",
-> >                         .ctrlbit        = S3C_CLKCON_SCLK_CAM,
-> >                         .enable         = s3c64xx_sclk_ctrl,
-> > +                       .parent         = &clk_h2,
-> >                 },
-> >                 .reg_div        = { .reg = S3C_CLK_DIV0, .shift = 20,
-.size =
-> 4  },
-> > -               .reg_src        = { .reg = NULL, .shift = 0, .size = 0
-},
-> >                 .sources        = &clkset_camif,
-> Just figure out that .sources can be removed to. And seems
-> "clkset_camif" and "clkset_camif_list" can be removed as unused.
+> Confirmed with schematics of and tested on Origen board.
 > 
-Yeah, in this case, right. And we don't need source field as well because
-its source is fixed.
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/mach-exynos/mach-origen.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-
+> exynos/mach-origen.c
+> index d8dc6d7..bf34704 100644
+> --- a/arch/arm/mach-exynos/mach-origen.c
+> +++ b/arch/arm/mach-exynos/mach-origen.c
+> @@ -100,6 +100,7 @@ static struct regulator_consumer_supply __initdata
+> ldo3_consumer[] = {
+>  	REGULATOR_SUPPLY("vddcore", "s5p-mipi-csis.0"), /* MIPI */
+>  	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"), /* HDMI */
+>  	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"), /* HDMI */
+> +	REGULATOR_SUPPLY("vusb_a", "s3c-hsotg"), /* OTG */
+>  };
+>  static struct regulator_consumer_supply __initdata ldo6_consumer[] = {
+>  	REGULATOR_SUPPLY("vddio", "s5p-mipi-csis.0"), /* MIPI */
+> @@ -110,6 +111,7 @@ static struct regulator_consumer_supply __initdata
+> ldo7_consumer[] = {
+>  static struct regulator_consumer_supply __initdata ldo8_consumer[] = {
+>  	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* ADC */
+>  	REGULATOR_SUPPLY("vdd_osc", "exynos4-hdmi"), /* HDMI */
+> +	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"), /* OTG */
+>  };
+>  static struct regulator_consumer_supply __initdata ldo9_consumer[] = {
+>  	REGULATOR_SUPPLY("dvdd", "swb-a31"), /* AR6003 WLAN & CSR 8810 BT
+> */
+> --
+> 1.8.0
 
-See below.
-
-8<----
-diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
-index 28041e8..e963711 100644
---- a/arch/arm/mach-s3c64xx/clock.c
-+++ b/arch/arm/mach-s3c64xx/clock.c
-@@ -681,15 +681,6 @@ static struct clksrc_sources clkset_audio2 = {
- 	.nr_sources	= ARRAY_SIZE(clkset_audio2_list),
- };
- 
--static struct clk *clkset_camif_list[] = {
--	&clk_h2,
--};
--
--static struct clksrc_sources clkset_camif = {
--	.sources	= clkset_camif_list,
--	.nr_sources	= ARRAY_SIZE(clkset_camif_list),
--};
--
- static struct clksrc_clk clksrcs[] = {
- 	{
- 		.clk	= {
-@@ -742,12 +733,11 @@ static struct clksrc_clk clksrcs[] = {
- 	}, {
- 		.clk	= {
- 			.name		= "camera",
-+			.parent		= &clk_h2,
- 			.ctrlbit        = S3C_CLKCON_SCLK_CAM,
- 			.enable		= s3c64xx_sclk_ctrl,
- 		},
- 		.reg_div	= { .reg = S3C_CLK_DIV0, .shift = 20, .size
-= 4  },
--		.reg_src	= { .reg = NULL, .shift = 0, .size = 0  },
--		.sources	= &clkset_camif,
- 	},
- };
-8<----
-
-Thanks.
+Applied, thanks.
 
 Best regards,
 Kgene.
