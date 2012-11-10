@@ -1,73 +1,32 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: S3C64XX: Staticly define parent clock of "camera" clock
-Date: Sat, 10 Nov 2012 16:01:29 +0100
-Message-ID: <2352709.lKq9axvLZf@flatron>
-References: <509e6047.a766980a.0f91.14f6@mx.google.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: S3C64XX: Staticly define parent clock of "camera"
+ clock
+Date: Sat, 10 Nov 2012 22:13:53 +0100
+Message-ID: <509EC391.9090506@gmail.com>
+References: <1352556477-3700-1-git-send-email-y> <509e6047.a766980a.0f91.14f6@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:48307 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751727Ab2KJPBa (ORCPT
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:53524 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752451Ab2KJVN5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Nov 2012 10:01:30 -0500
-Received: by mail-ea0-f174.google.com with SMTP id c13so1830416eaa.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Nov 2012 07:01:29 -0800 (PST)
+	Sat, 10 Nov 2012 16:13:57 -0500
+Received: by mail-wg0-f42.google.com with SMTP id fm10so986244wgb.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Nov 2012 13:13:56 -0800 (PST)
 In-Reply-To: <509e6047.a766980a.0f91.14f6@mx.google.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dron0gus@gmail.com
 Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, sylvester.nawrocki@gmail.com, Andrey Gusakov <dron_gus@mail.ru>
 
-Hi Andrey,
-
-On Saturday 10 of November 2012 18:07:57 dron0gus@gmail.com wrote:
-> From: Andrey Gusakov <dron_gus@mail.ru>
-> 
+On 11/10/2012 03:07 PM, dron0gus@gmail.com wrote:
+> From: Andrey Gusakov<dron_gus@mail.ru>
+>
 > The "camera" clock have only one parent. Define it staticly and
 > remove unused source clock list.
-> 
-> Signed-off-by: Andrey Gusakov <dron0gus@gmail.com>
-> ---
->  arch/arm/mach-s3c64xx/clock.c |   12 +-----------
->  1 files changed, 1 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c64xx/clock.c
-> b/arch/arm/mach-s3c64xx/clock.c index b2d08fa..19228f3 100644
-> --- a/arch/arm/mach-s3c64xx/clock.c
-> +++ b/arch/arm/mach-s3c64xx/clock.c
-> @@ -677,15 +677,6 @@ static struct clksrc_sources clkset_audio2 = {
->  	.nr_sources	= ARRAY_SIZE(clkset_audio2_list),
->  };
-> 
-> -static struct clk *clkset_camif_list[] = {
-> -	&clk_h2,
-> -};
-> -
-> -static struct clksrc_sources clkset_camif = {
-> -	.sources	= clkset_camif_list,
-> -	.nr_sources	= ARRAY_SIZE(clkset_camif_list),
-> -};
-> -
->  static struct clk *clkset_mfc_list[] = {
->  	&clk_h2,
->  	&clk_mout_epll.clk,
-> @@ -750,10 +741,9 @@ static struct clksrc_clk clksrcs[] = {
->  			.name		= "camera",
->  			.ctrlbit        = S3C_CLKCON_SCLK_CAM,
->  			.enable		= s3c64xx_sclk_ctrl,
-> +			.parent		= &clk_h2,
->  		},
->  		.reg_div	= { .reg = S3C_CLK_DIV0, .shift = 20, .size 
-= 4  },
-> -		.reg_src	= { .reg = NULL, .shift = 0, .size = 0  },
-> -		.sources	= &clkset_camif,
->  	}, {
->  		.clk	= {
->  			.name		= "sclk_mfc",
+>
+> Signed-off-by: Andrey Gusakov<dron0gus@gmail.com>
 
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Best regards,
-Tomasz Figa
+Reviewed-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
