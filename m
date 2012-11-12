@@ -1,8 +1,8 @@
-From: Zhang Rui <rui.zhang@intel.com>
+From: "R, Durgadoss" <durgadoss.r@intel.com>
 Subject: RE: [PATCH 1/4] thermal: Add new thermal trend type to support
  quick cooling
-Date: Mon, 12 Nov 2012 14:33:13 +0800
-Message-ID: <1352701993.1834.26.camel@rzhang1-mobl4>
+Date: Mon, 12 Nov 2012 07:31:27 +0000
+Message-ID: <4D68720C2E767A4AA6A8796D42C8EB59206162@BGSMSX101.gar.corp.intel.com>
 References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
 	 <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
 	 <1352354503.2190.7.camel@rzhang1-mobl4>
@@ -10,87 +10,85 @@ References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
 	 <1352433060.2166.3.camel@rzhang1-mobl4>
 	 <CAK44p22hHVcL21B1iy1OnECMd5RCRF8DVh-cNj=6Bmvr5n0yyQ@mail.gmail.com>
 	 <4D68720C2E767A4AA6A8796D42C8EB59206068@BGSMSX101.gar.corp.intel.com>
+ <1352701993.1834.26.camel@rzhang1-mobl4>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <4D68720C2E767A4AA6A8796D42C8EB59206068@BGSMSX101.gar.corp.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "R, Durgadoss" <durgadoss.r@intel.com>
-Cc: Amit Kachhap <amit.kachhap@linaro.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jonghwa3.lee@samsung.com" <jonghwa3.lee@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:34212 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751245Ab2KLHbc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Nov 2012 02:31:32 -0500
+In-Reply-To: <1352701993.1834.26.camel@rzhang1-mobl4>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Zhang, Rui" <rui.zhang@intel.com>
+Cc: Amit Kachhap <amit.kachhap@linaro.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jonghwa3.lee@samsung.com" <jonghwa3.lee@samsung.com>
 
-On Sun, 2012-11-11 at 22:55 -0700, R, Durgadoss wrote:
-> Hi Amit/Rui,
-> 
-> > -----Original Message-----
-> > From: Amit Kachhap [mailto:amit.kachhap@linaro.org]
-> > Sent: Friday, November 09, 2012 11:52 AM
-> > To: Zhang, Rui
-> > Cc: linux-pm@lists.linux-foundation.org; linux-samsung-
-> > soc@vger.kernel.org; linux-kernel@vger.kernel.org; R, Durgadoss;
-> > lenb@kernel.org; linux-acpi@vger.kernel.org; jonghwa3.lee@samsung.com
-> > Subject: Re: [PATCH 1/4] thermal: Add new thermal trend type to support
-> > quick cooling
-> > 
-> > On 9 November 2012 09:21, Zhang Rui <rui.zhang@intel.com> wrote:
-> > > On Thu, 2012-11-08 at 11:56 +0530, Amit Kachhap wrote:
-> > >> On 8 November 2012 11:31, Zhang Rui <rui.zhang@intel.com> wrote:
-> > >> > On Thu, 2012-11-08 at 09:56 +0530, Amit Daniel Kachhap wrote:
-> > >> >> This modification adds 2 new thermal trend type
-> > THERMAL_TREND_RAISE_FULL
-> > >> >> and THERMAL_TREND_DROP_FULL. This thermal trend can be used to
-> > quickly
-> > >> >> jump to the upper or lower cooling level instead of incremental
-> > increase
-> > >> >> or decrease.
-> > >> >
-> > >> > IMO, what we need is a new more aggressive cooling governor which
-> > always
-> > >> > uses upper limit when the temperature is raising and lower limit when
-> > >> > the temperature is dropping.
-> > >> Yes I agree that a new aggressive governor is the best approach but
-> > >> then i thought adding a new trend type is a simple solution to achieve
-> > >> this and since most of the governor logic might be same as the
-> > >> step-wise governor. I have no objection in doing it through governor.
-> > >> >
-> > > hmmm,
-> > > I think a more proper way is to set the cooling state to upper limit
-> > > when it overheats and reduce the cooling state step by step when the
-> > > temperature drops.
-> > 
-> > No actually I was thinking of having a  simple governor with a feature
-> > like it only sets to upper level and lower level. Also since the
-> > temperature sensor is capable of interrupting for both increase in
-> > threshold(say 100C)  and fall in threshold (say 90C), so polling or
-> > step increments is not needed at all.
-> > Currently stepwise governor governor does that so we might change the
-> > macro name as,
-> > THERMAL_TREND_RAISE_STEP,
-> > THERMAL_TREND_DROP_STEP,
-> > THERMAL_TREND_RAISE_MAX,
-> > THERMAL_TREND_DROP_MAX,
-> > 
-> > and file step_wise.c can be named as state_wise.c or trend_wise.c.
-> 
-> Yes, in this particular case, we neither need to poll nor do step wise
-> operations. But, most of the other sensors need at least one of them.
-> 
-> So, I think we can try it this way:
-> 	if (sensor supports interrupt) {
-> 		'always' use RAISE_MAX and DROP_MAX;
-> 	} else {
-> 		Do Step wise operations
-> 	}
-> 
-why should the generic thermal layer be aware of this?
-
-IMO, it is the platform thermal driver that is responsible for returning
-THERMAL_TREND_RAISE_STEP or THERMAL_TREND_RAISE_MAX.
-
-and the step_wise governor just takes action based on the return value
-of .get_trend() callback.
-
-thanks,
-rui
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogWmhhbmcsIFJ1aQ0KPiBT
+ZW50OiBNb25kYXksIE5vdmVtYmVyIDEyLCAyMDEyIDEyOjAzIFBNDQo+IFRvOiBSLCBEdXJnYWRv
+c3MNCj4gQ2M6IEFtaXQgS2FjaGhhcDsgbGludXgtcG1AbGlzdHMubGludXgtZm91bmRhdGlvbi5v
+cmc7IGxpbnV4LXNhbXN1bmctDQo+IHNvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmc7IGxlbmJAa2VybmVsLm9yZzsgbGludXgtDQo+IGFjcGlAdmdlci5rZXJu
+ZWwub3JnOyBqb25naHdhMy5sZWVAc2Ftc3VuZy5jb20NCj4gU3ViamVjdDogUkU6IFtQQVRDSCAx
+LzRdIHRoZXJtYWw6IEFkZCBuZXcgdGhlcm1hbCB0cmVuZCB0eXBlIHRvIHN1cHBvcnQNCj4gcXVp
+Y2sgY29vbGluZw0KPiANCj4gT24gU3VuLCAyMDEyLTExLTExIGF0IDIyOjU1IC0wNzAwLCBSLCBE
+dXJnYWRvc3Mgd3JvdGU6DQo+ID4gSGkgQW1pdC9SdWksDQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2lu
+YWwgTWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBBbWl0IEthY2hoYXAgW21haWx0bzphbWl0Lmth
+Y2hoYXBAbGluYXJvLm9yZ10NCj4gPiA+IFNlbnQ6IEZyaWRheSwgTm92ZW1iZXIgMDksIDIwMTIg
+MTE6NTIgQU0NCj4gPiA+IFRvOiBaaGFuZywgUnVpDQo+ID4gPiBDYzogbGludXgtcG1AbGlzdHMu
+bGludXgtZm91bmRhdGlvbi5vcmc7IGxpbnV4LXNhbXN1bmctDQo+ID4gPiBzb2NAdmdlci5rZXJu
+ZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBSLCBEdXJnYWRvc3M7DQo+ID4g
+PiBsZW5iQGtlcm5lbC5vcmc7IGxpbnV4LWFjcGlAdmdlci5rZXJuZWwub3JnOw0KPiBqb25naHdh
+My5sZWVAc2Ftc3VuZy5jb20NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS80XSB0aGVybWFs
+OiBBZGQgbmV3IHRoZXJtYWwgdHJlbmQgdHlwZSB0bw0KPiBzdXBwb3J0DQo+ID4gPiBxdWljayBj
+b29saW5nDQo+ID4gPg0KPiA+ID4gT24gOSBOb3ZlbWJlciAyMDEyIDA5OjIxLCBaaGFuZyBSdWkg
+PHJ1aS56aGFuZ0BpbnRlbC5jb20+IHdyb3RlOg0KPiA+ID4gPiBPbiBUaHUsIDIwMTItMTEtMDgg
+YXQgMTE6NTYgKzA1MzAsIEFtaXQgS2FjaGhhcCB3cm90ZToNCj4gPiA+ID4+IE9uIDggTm92ZW1i
+ZXIgMjAxMiAxMTozMSwgWmhhbmcgUnVpIDxydWkuemhhbmdAaW50ZWwuY29tPiB3cm90ZToNCj4g
+PiA+ID4+ID4gT24gVGh1LCAyMDEyLTExLTA4IGF0IDA5OjU2ICswNTMwLCBBbWl0IERhbmllbCBL
+YWNoaGFwIHdyb3RlOg0KPiA+ID4gPj4gPj4gVGhpcyBtb2RpZmljYXRpb24gYWRkcyAyIG5ldyB0
+aGVybWFsIHRyZW5kIHR5cGUNCj4gPiA+IFRIRVJNQUxfVFJFTkRfUkFJU0VfRlVMTA0KPiA+ID4g
+Pj4gPj4gYW5kIFRIRVJNQUxfVFJFTkRfRFJPUF9GVUxMLiBUaGlzIHRoZXJtYWwgdHJlbmQgY2Fu
+IGJlIHVzZWQNCj4gdG8NCj4gPiA+IHF1aWNrbHkNCj4gPiA+ID4+ID4+IGp1bXAgdG8gdGhlIHVw
+cGVyIG9yIGxvd2VyIGNvb2xpbmcgbGV2ZWwgaW5zdGVhZCBvZiBpbmNyZW1lbnRhbA0KPiA+ID4g
+aW5jcmVhc2UNCj4gPiA+ID4+ID4+IG9yIGRlY3JlYXNlLg0KPiA+ID4gPj4gPg0KPiA+ID4gPj4g
+PiBJTU8sIHdoYXQgd2UgbmVlZCBpcyBhIG5ldyBtb3JlIGFnZ3Jlc3NpdmUgY29vbGluZyBnb3Zl
+cm5vcg0KPiB3aGljaA0KPiA+ID4gYWx3YXlzDQo+ID4gPiA+PiA+IHVzZXMgdXBwZXIgbGltaXQg
+d2hlbiB0aGUgdGVtcGVyYXR1cmUgaXMgcmFpc2luZyBhbmQgbG93ZXIgbGltaXQNCj4gd2hlbg0K
+PiA+ID4gPj4gPiB0aGUgdGVtcGVyYXR1cmUgaXMgZHJvcHBpbmcuDQo+ID4gPiA+PiBZZXMgSSBh
+Z3JlZSB0aGF0IGEgbmV3IGFnZ3Jlc3NpdmUgZ292ZXJub3IgaXMgdGhlIGJlc3QgYXBwcm9hY2gg
+YnV0DQo+ID4gPiA+PiB0aGVuIGkgdGhvdWdodCBhZGRpbmcgYSBuZXcgdHJlbmQgdHlwZSBpcyBh
+IHNpbXBsZSBzb2x1dGlvbiB0byBhY2hpZXZlDQo+ID4gPiA+PiB0aGlzIGFuZCBzaW5jZSBtb3N0
+IG9mIHRoZSBnb3Zlcm5vciBsb2dpYyBtaWdodCBiZSBzYW1lIGFzIHRoZQ0KPiA+ID4gPj4gc3Rl
+cC13aXNlIGdvdmVybm9yLiBJIGhhdmUgbm8gb2JqZWN0aW9uIGluIGRvaW5nIGl0IHRocm91Z2gg
+Z292ZXJub3IuDQo+ID4gPiA+PiA+DQo+ID4gPiA+IGhtbW0sDQo+ID4gPiA+IEkgdGhpbmsgYSBt
+b3JlIHByb3BlciB3YXkgaXMgdG8gc2V0IHRoZSBjb29saW5nIHN0YXRlIHRvIHVwcGVyIGxpbWl0
+DQo+ID4gPiA+IHdoZW4gaXQgb3ZlcmhlYXRzIGFuZCByZWR1Y2UgdGhlIGNvb2xpbmcgc3RhdGUg
+c3RlcCBieSBzdGVwIHdoZW4gdGhlDQo+ID4gPiA+IHRlbXBlcmF0dXJlIGRyb3BzLg0KPiA+ID4N
+Cj4gPiA+IE5vIGFjdHVhbGx5IEkgd2FzIHRoaW5raW5nIG9mIGhhdmluZyBhICBzaW1wbGUgZ292
+ZXJub3Igd2l0aCBhIGZlYXR1cmUNCj4gPiA+IGxpa2UgaXQgb25seSBzZXRzIHRvIHVwcGVyIGxl
+dmVsIGFuZCBsb3dlciBsZXZlbC4gQWxzbyBzaW5jZSB0aGUNCj4gPiA+IHRlbXBlcmF0dXJlIHNl
+bnNvciBpcyBjYXBhYmxlIG9mIGludGVycnVwdGluZyBmb3IgYm90aCBpbmNyZWFzZSBpbg0KPiA+
+ID4gdGhyZXNob2xkKHNheSAxMDBDKSAgYW5kIGZhbGwgaW4gdGhyZXNob2xkIChzYXkgOTBDKSwg
+c28gcG9sbGluZyBvcg0KPiA+ID4gc3RlcCBpbmNyZW1lbnRzIGlzIG5vdCBuZWVkZWQgYXQgYWxs
+Lg0KPiA+ID4gQ3VycmVudGx5IHN0ZXB3aXNlIGdvdmVybm9yIGdvdmVybm9yIGRvZXMgdGhhdCBz
+byB3ZSBtaWdodCBjaGFuZ2UgdGhlDQo+ID4gPiBtYWNybyBuYW1lIGFzLA0KPiA+ID4gVEhFUk1B
+TF9UUkVORF9SQUlTRV9TVEVQLA0KPiA+ID4gVEhFUk1BTF9UUkVORF9EUk9QX1NURVAsDQo+ID4g
+PiBUSEVSTUFMX1RSRU5EX1JBSVNFX01BWCwNCj4gPiA+IFRIRVJNQUxfVFJFTkRfRFJPUF9NQVgs
+DQo+ID4gPg0KPiA+ID4gYW5kIGZpbGUgc3RlcF93aXNlLmMgY2FuIGJlIG5hbWVkIGFzIHN0YXRl
+X3dpc2UuYyBvciB0cmVuZF93aXNlLmMuDQo+ID4NCj4gPiBZZXMsIGluIHRoaXMgcGFydGljdWxh
+ciBjYXNlLCB3ZSBuZWl0aGVyIG5lZWQgdG8gcG9sbCBub3IgZG8gc3RlcCB3aXNlDQo+ID4gb3Bl
+cmF0aW9ucy4gQnV0LCBtb3N0IG9mIHRoZSBvdGhlciBzZW5zb3JzIG5lZWQgYXQgbGVhc3Qgb25l
+IG9mIHRoZW0uDQo+ID4NCj4gPiBTbywgSSB0aGluayB3ZSBjYW4gdHJ5IGl0IHRoaXMgd2F5Og0K
+PiA+IAlpZiAoc2Vuc29yIHN1cHBvcnRzIGludGVycnVwdCkgew0KPiA+IAkJJ2Fsd2F5cycgdXNl
+IFJBSVNFX01BWCBhbmQgRFJPUF9NQVg7DQo+ID4gCX0gZWxzZSB7DQo+ID4gCQlEbyBTdGVwIHdp
+c2Ugb3BlcmF0aW9ucw0KPiA+IAl9DQo+ID4NCj4gd2h5IHNob3VsZCB0aGUgZ2VuZXJpYyB0aGVy
+bWFsIGxheWVyIGJlIGF3YXJlIG9mIHRoaXM/DQo+IA0KPiBJTU8sIGl0IGlzIHRoZSBwbGF0Zm9y
+bSB0aGVybWFsIGRyaXZlciB0aGF0IGlzIHJlc3BvbnNpYmxlIGZvciByZXR1cm5pbmcNCj4gVEhF
+Uk1BTF9UUkVORF9SQUlTRV9TVEVQIG9yIFRIRVJNQUxfVFJFTkRfUkFJU0VfTUFYLg0KPiANCj4g
+YW5kIHRoZSBzdGVwX3dpc2UgZ292ZXJub3IganVzdCB0YWtlcyBhY3Rpb24gYmFzZWQgb24gdGhl
+IHJldHVybiB2YWx1ZQ0KPiBvZiAuZ2V0X3RyZW5kKCkgY2FsbGJhY2suDQoNClllcywgYWdyZWUg
+d2l0aCB0aGUgZmxvdyAuLg0KDQpUaGFua3MsDQpEdXJnYQ0K
