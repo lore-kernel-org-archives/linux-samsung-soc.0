@@ -1,61 +1,55 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 6/6] ARM: EXYNOS: Add secure firmware support to
- secondary CPU bring-up
-Date: Mon, 12 Nov 2012 11:11:20 +0100
-Message-ID: <2714070.uUa63CRanW@amdc1227>
-References: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
- <1351178560-19188-7-git-send-email-t.figa@samsung.com>
- <20121112095231.GE28327@n2100.arm.linux.org.uk>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [RFC PATCH 0/4] ARM: S3C24XX: irq move to drivers and first steps to dt
+Date: Mon, 12 Nov 2012 14:46:29 +0100
+Message-ID: <201211121446.30167.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:60395 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750851Ab2KLKj1 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:40966 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751911Ab2KLNqj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 05:39:27 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDD0057KDMQ64M0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 19:11:25 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDD002MWDN07F90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 19:11:25 +0900 (KST)
-In-reply-to: <20121112095231.GE28327@n2100.arm.linux.org.uk>
+	Mon, 12 Nov 2012 08:46:39 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, arnd@arndb.de, olof@lixom.net, m.szyprowski@samsung.com, tomasz.figa@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
 
-On Monday 12 of November 2012 09:52:31 Russell King - ARM Linux wrote:
-> On Thu, Oct 25, 2012 at 05:22:40PM +0200, Tomasz Figa wrote:
-> > @@ -47,6 +48,8 @@ static inline void __iomem *cpu_boot_reg(int cpu)
-> > 
-> >  {
-> >  
-> >  	void __iomem *boot_reg;
-> > 
-> > +	if (!call_firmware_op(cpu_boot_reg, cpu, &boot_reg))
-> > +		return boot_reg;
-> > 
-> >  	boot_reg = cpu_boot_reg_base();
-> 
-> That code makes no sense.
+On the way back from Barcelona I've started the move of the common
+s3c24xx irq-code to drivers/irqchip and also modifications to enable
+using it in a devicetree context at some point.
 
-Why?
+So, as I'm also missing the now probably famous tail-lights in this, it
+would be cool to have some feedback if I'm moving in the right
+direction here or am thinking wrong somewhere.
 
-call_firmware_op returning 0 means a success, so boot_reg is filled with 
-proper boot register address, which should be used.
+The whole endeavour is of course not finished yet, but should not
+break anything in its current form.
 
-Otherwise (call_firmware_op returning an error) the legacy boot register 
-is used.
+Tested on a s3c2416 based machine.
 
-Best regards,
+Heiko Stuebner (4):
+  ARM: S3C24XX: move s3c24xx-irq to drivers/irqchip
+  irqchip: s3c24xx: add irq_domains for the interrupt registers
+  ARM: S3C24XX: irq_data conversion for s3c_irqsub_* functions
+  ARM: S3C24XX: First part converting irq code to use hwirq
+
+ arch/arm/Kconfig                                   |    1 +
+ arch/arm/mach-s3c24xx/irq-pm.c                     |    4 +-
+ arch/arm/mach-s3c24xx/irq-s3c2412.c                |    6 +-
+ arch/arm/mach-s3c24xx/irq-s3c2416.c                |   24 ++--
+ arch/arm/mach-s3c24xx/irq-s3c2440.c                |    6 +-
+ arch/arm/mach-s3c24xx/irq-s3c2443.c                |   30 ++--
+ arch/arm/mach-s3c24xx/irq-s3c244x.c                |    6 +-
+ arch/arm/plat-s3c24xx/Makefile                     |    1 -
+ arch/arm/plat-samsung/include/plat/irq.h           |   18 ++--
+ drivers/irqchip/Kconfig                            |    4 +
+ drivers/irqchip/Makefile                           |    1 +
+ .../irq.c => drivers/irqchip/irq-s3c24xx.c         |  147 ++++++++++++--------
+ 12 files changed, 144 insertions(+), 104 deletions(-)
+ rename arch/arm/plat-s3c24xx/irq.c => drivers/irqchip/irq-s3c24xx.c (84%)
+
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+1.7.2.3
