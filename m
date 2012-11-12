@@ -1,125 +1,94 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: add board dts file for Exynos4412 based SMDK
- board
-Date: Mon, 12 Nov 2012 15:07:08 +0100
-Message-ID: <1629120.eNASZVgxGi@amdc1227>
-References: <1351954172-13645-1-git-send-email-thomas.abraham@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: Build failure: OMAP4430 failed due to exynos4 pinctrl
+Date: Mon, 12 Nov 2012 14:40:13 +0000
+Message-ID: <201211121440.13980.arnd@arndb.de>
+References: <007b01cdc0bf$50c9ee70$f25dcb50$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: Text/Plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43610 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753013Ab2KLOHN (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.187]:51387 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753111Ab2KLOkd convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 09:07:13 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDD0058AOJX2D00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 23:07:12 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDD00CXGOJXT070@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 23:07:12 +0900 (KST)
-In-reply-to: <1351954172-13645-1-git-send-email-thomas.abraham@linaro.org>
+	Mon, 12 Nov 2012 09:40:33 -0500
+In-Reply-To: <007b01cdc0bf$50c9ee70$f25dcb50$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, chaos.youn@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, arm@kernel.org, 'Linus Walleij' <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
-
-On Saturday 03 of November 2012 20:19:32 Thomas Abraham wrote:
-> Add a minimal board dts file for Samsung Exynos4412 based SMDK board.
+On Monday 12 November 2012, Kukjin Kim wrote:
+> Russell King - ARM Linux wrote:
+> > 
+> > Last night's randconfig for OMAP4430 failed with:
+> > 
+> > drivers/built-in.o:(.rodata+0x1a60): undefined reference to
+> > `exynos4210_pin_ctrl'
+> > 
+> > Config and log:
+> > http://www.arm.linux.org.uk/developer/build/file.php?type=config&idx=2693
+> > http://www.arm.linux.org.uk/developer/build/result.php?type=build&idx=2693
 > 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
-> This patch depends the on the following patch posted by Tomasz Figa.
-> "ARM: dts: exynos4: Add support for Exynos4x12 SoCs"
-> 
->  arch/arm/boot/dts/Makefile                |    1 +
->  arch/arm/boot/dts/exynos4412-smdk4412.dts |   45
-> +++++++++++++++++++++++++++++ 2 files changed, 46 insertions(+), 0
-> deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos4412-smdk4412.dts
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index f37cf9f..36488a5 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_DOVE) += dove-cm-a510.dtb \
->  dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->  	exynos4210-smdkv310.dtb \
->  	exynos4210-trats.dtb \
-> +	exynos4412-smdk4412.dtb \
->  	exynos5250-smdk5250.dtb
->  dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb
->  dtb-$(CONFIG_ARCH_INTEGRATOR) += integratorap.dtb \
-> diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-> b/arch/arm/boot/dts/exynos4412-smdk4412.dts new file mode 100644
-> index 0000000..f05bf57
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-> @@ -0,0 +1,45 @@
-> +/*
-> + * Samsung's Exynos4412 based SMDK board device tree source
-> + *
-> + * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * Device tree source file for Samsung's SMDK4412 board which is based
-> on + * Samsung's Exynos4412 SoC.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as +
-> * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +/include/ "exynos4412.dtsi"
-> +
-> +/ {
-> +	model = "Samsung SMDK evaluation board based on Exynos4412";
-> +	compatible = "samsung,smdk4412", "samsung,exynos4412";
-> +
-> +	memory {
-> +		reg = <0x40000000 0x40000000>;
-> +	};
+> Oops, yeah right.
 
-This will not boot, because section size limit is set to 256 MiB.
+Hmm, I found the same thing earlier and it got lost in my backlog of unsubmitted
+patches.
 
-It might work with CONFIG_ARM_ATAG_DTB_COMPAT enabled, because the memory 
-configuration from DT is ignored and values from ATAGs are taken instead.
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index 7bf914d..18b473b 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -179,11 +179,13 @@ config PINCTRL_COH901
+>  
+>  config PINCTRL_SAMSUNG
+>  	bool "Samsung pinctrl driver"
+> +	depends on PLAT_SAMSUNG
+>  	select PINMUX
+>  	select PINCONF
+>  
+>  config PINCTRL_EXYNOS4
+>  	bool "Pinctrl driver data for Exynos4 SoC"
+> +	depends on PINCTRL_SAMSUNG && ARCH_EXYNOS4
+>  	select PINCTRL_SAMSUNG
 
-I suggest you to change it to 4 banks of 256 MiB.
+This won't work. A driver can't "select" and "depend on"
+another symbol at the same time.
 
-> +	chosen {
-> +		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M
-> console=ttySAC1,115200 init=/linuxrc"; +	};
-> +
-> +	serial@13800000 {
-> +		status = "okay";
-> +	};
-> +
-> +	serial@13810000 {
-> +		status = "okay";
-> +	};
-> +
-> +	serial@13820000 {
-> +		status = "okay";
-> +	};
-> +
-> +	serial@13830000 {
-> +		status = "okay";
-> +	};
-> +};
+This is what I came up with earlier.
 
-Otherwise looks fine.
+	Arnd
+8<----------------
+>From a15cc6277a3a43c8b5c1dd90ca71732b2ffe2b18 Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 10 Oct 2012 13:31:45 +0000
+Subject: [PATCH] pinctrl: samsung: don't allow enabling pinctrl-samsung
+ standalone
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+The main samsung pinctrl module references the specific exynos4210
+pinctrl driver, which selects the main driver in Kconfig.
+
+Making the main driver a silent "bool" option avoid this potential
+build error if CONFIG_PINCTRL_SAMSUNG=y && CONFIG_PINCTRL_EXYNOS4=n:
+
+drivers/built-in.o:(.rodata+0x4e4): undefined reference to `exynos4210_pin_ctrl'
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <t.figa@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 7bf914d..9f54bd4 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -178,7 +178,7 @@ config PINCTRL_COH901
+ 	  ports of 8 GPIO pins each.
+ 
+ config PINCTRL_SAMSUNG
+-	bool "Samsung pinctrl driver"
++	bool
+ 	select PINMUX
+ 	select PINCONF
+ 
