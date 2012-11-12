@@ -1,91 +1,113 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/4] gpio: samsung: Skip registration if pinctrl driver is
- present on Exynos4x12
-Date: Sun, 11 Nov 2012 19:35:08 +0100
-Message-ID: <CACRpkdZGu2VfP-EzAOxK3947x6Pd78bh=TWDK98iXwkJx2WiTQ@mail.gmail.com>
-References: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
-	<1351089457-8205-3-git-send-email-t.figa@samsung.com>
-	<CACRpkdYNDSp0K3wpvUem9ecsW-JQ9L6aKqaOmHNUR65DQTMNHA@mail.gmail.com>
-	<0c5301cdbca2$30320240$909606c0$%kim@samsung.com>
-	<CACRpkdaOpzFvs_wqy9sdrmx1=wEs5uxqfh_rOrKxLTXV-q1K2Q@mail.gmail.com>
-	<0e8301cdbe62$56a1d010$03e57030$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v7 0/5] usb: phy: samsung: Introducing usb phy driver for
+ samsung SoCs
+Date: Mon, 12 Nov 2012 13:41:24 +0900
+Message-ID: <004201cdc08f$fa0fd3d0$ee2f7b70$%kim@samsung.com>
+References: <1351573057-22249-1-git-send-email-p.paneri@samsung.com>
+ <20121109115440.GC8078@arwen.pp.htv.fi>
+ <CAH9JG2X1a8MqBpnk8uHRjsGnaD7uob5GBhUh_aS5iCprEvi2XQ@mail.gmail.com>
+ <CAD6zSYN6xpHt54d-w=6veb6AErTq6ERQcneo7ewC-qsBoMuThQ@mail.gmail.com>
+ <20121109135441.GC8567@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:53708 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753005Ab2KKSfJ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:61422 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752114Ab2KLEl3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 11 Nov 2012 13:35:09 -0500
-Received: by mail-ee0-f46.google.com with SMTP id b15so2988236eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Nov 2012 10:35:08 -0800 (PST)
-In-Reply-To: <0e8301cdbe62$56a1d010$03e57030$%kim@samsung.com>
+	Sun, 11 Nov 2012 23:41:29 -0500
+In-reply-to: <20121109135441.GC8567@arwen.pp.htv.fi>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Axel Lin <axel.lin@ingics.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, thomas.abraham@linaro.org
+To: balbi@ti.com, 'Praveen Paneri' <p.paneri@samsung.com>
+Cc: 'Kyungmin Park' <kmpark@infradead.org>, 'Lukasz Majewski' <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Vivek Gautam' <gautam.vivek@samsung.com>, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On Fri, Nov 9, 2012 at 11:09 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> On Wed, Nov 7, 2012 at 5:41 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->>
->> > A commit 1b6056d6 ("pinctrl: samsung: Include bank-specific eint offset
->> in
->> > bank struct") which is in your pinctrl tree (samsung branch) changed
->> > macro(EXYNOS_PIN_BANK_EINTG) to add offset. Eventually, this series(due
->> to
->> > 3rd patch, pinctrl: samsung: Add support for Exynos4x12) breaks
->> compilation
->> > without the commit. So if you don't have a plan to rebase samsung branch
->> of
->> > your pinctrl tree, I'd like to merge it in my tree. Is it ok to you?
->>
->> Sure tell me when you've merged it and I'll drop commit 1b6056d6
->> from my tree.
->>
->
-> Thanks :-)
->
-> (- some guys in Cc...)
->
-> But having a problem, the 'it' means the commit 1b6056d6? If so, I couldn't
-> cherry-pick only that because of dependency with other commits 40ba622 and
-> 3a232ba.
->
-> $ git cherry-pick -s 40ba622
-> [next/dt-exynos4x12 3b1977c] pinctrl: samsung: Assing pin numbers
-> dynamically
->  Author: Tomasz Figa <t.figa@samsung.com>
->  3 files changed, 62 insertions(+), 54 deletions(-)
->
-> $ git cherry-pick -s 3a232ba
-> [next/dt-exynos4x12 7fa08a4] pinctrl: samsung: Remove static pin
-> enumerations
->  Author: Tomasz Figa <t.figa@samsung.com>
->  1 files changed, 96 insertions(+), 215 deletions(-)
->  rewrite drivers/pinctrl/pinctrl-exynos.h (66%)
->
-> $ git cherry-pick -s 1b6056d
-> [next/dt-exynos4x12 86010aa] pinctrl: samsung: Include bank-specific eint
-> offset in bank struct
->  Author: Tomasz Figa <t.figa@samsung.com>
->  3 files changed, 30 insertions(+), 29 deletions(-)
->
-> I could cherry-pick clearly with 2 more commits.
->
-> Can you drop above 3 commits in your tree? If many conflicts happens during
-> rebasing, how about that I merge your pinctrl/samsung branch into Samsung
-> tree?...
+Felipe Balbi wrote:
+> 
+> Hi,
+> 
+Hi :-)
 
-Why not :-)
+[...]
 
-I have removed the samsung branch from my for-next to avoid
-clashes.
+> Sure, but I still need Kukjin's 'say-so' for the arch/arm/plat-samsung
+> and arch/arm/mach-exynos part.
+> 
+Basically, this approach looks OK to me.
 
-So please bring the samsung branch into you tree and fix
-everything up there.
+BTW, I have some comments and need to update...
 
-Axel Lin has sent some tree-wide cleanups but let's hope they don't
-hit samsung so much, or they will need to be postponed/dropped.
+>From 4th patch...
 
-Yours,
-Linus Walleij
+> diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-
+> s3c64xx/mach-smdk6410.c
+
+[...]
+
+> @@ -72,6 +73,8 @@
+>  #include <linux/platform_data/touchscreen-s3c2410.h>
+>  #include <plat/keypad.h>
+>  #include <plat/backlight.h>
+> +#include <plat/regs-fb-v4.h>
+
+Why? In addition, this causes build error with s3c6400_defconfig.
+
+[...]
+
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index 03f654d..9cdb666 100644
+
+[...]
+
+> @@ -1370,6 +1371,30 @@ struct platform_device s5p_device_mixer = {
+> 
+>  /* USB */
+> 
+> +#ifdef CONFIG_S3C_DEV_USB_HSOTG
+> +/* USB PHY*/
+> +static struct resource samsung_usbphy_resource[] = {
+> +	[0] = {
+> +		.start = S3C_PA_USB_PHY,
+> +		.end   = S3C_PA_USB_PHY + SZ_16 - 1,
+> +		.flags = IORESOURCE_MEM,
+> +	},
+> +};
+
++static struct resource samsung_usbphy_resource[] = {
++	[0] = DEFINED_RES_MEM(S3C_PA_USB_PHY, SZ_16),
++};
+
+[...]
+
+Happens build error with s5pv210_defconfig
+
+arch/arm/plat-samsung/devs.c:1375: error: 'S3C_PA_USB_PHY' undeclared here
+(not in a function)
+make[2]: *** [arch/arm/plat-samsung/devs.o] Error 1
+make[1]: *** [arch/arm/plat-samsung] Error 2
+make[1]: *** Waiting for unfinished jobs....
+
+And another build error with exynos_defconfig...
+
+arch/arm/mach-exynos/built-in.o: In function `.LANCHOR1':
+setup-i2c0.c:(.data+0x8080): undefined reference to
+`s5p_usb_phy_pmu_isolation'
+
+>From 5th patch....
+
+If possible, please to use 'ARM: [sub-arch dir name]: [subject]' format.
+So I preferred to use 'ARM: EXYNOS: Enabling samsung-usbphy driver for
+EXYNOS4210' on that.
+
+Please make sure your patch has no problem for kernel compilation before
+submitting...
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
