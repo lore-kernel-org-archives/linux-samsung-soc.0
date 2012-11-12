@@ -1,98 +1,61 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: Build failure: OMAP4430 failed due to exynos4 pinctrl
-Date: Mon, 12 Nov 2012 19:20:18 +0900
-Message-ID: <007b01cdc0bf$50c9ee70$f25dcb50$%kim@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v3 6/6] ARM: EXYNOS: Add secure firmware support to
+ secondary CPU bring-up
+Date: Mon, 12 Nov 2012 11:11:20 +0100
+Message-ID: <2714070.uUa63CRanW@amdc1227>
+References: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
+ <1351178560-19188-7-git-send-email-t.figa@samsung.com>
+ <20121112095231.GE28327@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:32305 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752055Ab2KLKdx (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:60395 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750851Ab2KLKj1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 05:33:53 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
+	Mon, 12 Nov 2012 05:39:27 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDD005ZTE15K6X0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 19:20:19 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ 17 2011)) with ESMTP id <0MDD0057KDMQ64M0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 19:11:25 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDD004ZHE1U3210@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 19:20:19 +0900 (KST)
-Content-language: ko
+ with ESMTPA id <0MDD002MWDN07F90@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 19:11:25 +0900 (KST)
+In-reply-to: <20121112095231.GE28327@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, arm@kernel.org, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, arnd@arndb.de, olof@lixom.net, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-Russell King - ARM Linux wrote:
+On Monday 12 of November 2012 09:52:31 Russell King - ARM Linux wrote:
+> On Thu, Oct 25, 2012 at 05:22:40PM +0200, Tomasz Figa wrote:
+> > @@ -47,6 +48,8 @@ static inline void __iomem *cpu_boot_reg(int cpu)
+> > 
+> >  {
+> >  
+> >  	void __iomem *boot_reg;
+> > 
+> > +	if (!call_firmware_op(cpu_boot_reg, cpu, &boot_reg))
+> > +		return boot_reg;
+> > 
+> >  	boot_reg = cpu_boot_reg_base();
 > 
-> Last night's randconfig for OMAP4430 failed with:
-> 
-> drivers/built-in.o:(.rodata+0x1a60): undefined reference to
-> `exynos4210_pin_ctrl'
-> 
-> Config and log:
-> http://www.arm.linux.org.uk/developer/build/file.php?type=config&idx=2693
-> http://www.arm.linux.org.uk/developer/build/result.php?type=build&idx=2693
+> That code makes no sense.
 
-Oops, yeah right.
+Why?
 
-Thanks for pointing out :-)
+call_firmware_op returning 0 means a success, so boot_reg is filled with 
+proper boot register address, which should be used.
 
-Please test again with following?...
-
-(+ Linus Walleij)
-
-8<-------------------------------------------------------------
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] pinctrl/samsung: adds dependency for pinctrl-samsung/exynos
-
-The pinctrl-exynos should be built with ARCH_EXYNOS and pinctrl-samsung
-should be built with pinctrl-exynos. If not, following error can be
-happened.
-
-drivers/built-in.o:(.rodata+0x1a60): undefined reference to
-'exynos4210_pin_ctrl'
-
-Reported-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/pinctrl/Kconfig |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 7bf914d..18b473b 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -179,11 +179,13 @@ config PINCTRL_COH901
- 
- config PINCTRL_SAMSUNG
- 	bool "Samsung pinctrl driver"
-+	depends on PLAT_SAMSUNG
- 	select PINMUX
- 	select PINCONF
- 
- config PINCTRL_EXYNOS4
- 	bool "Pinctrl driver data for Exynos4 SoC"
-+	depends on PINCTRL_SAMSUNG && ARCH_EXYNOS4
- 	select PINCTRL_SAMSUNG
- 
- config PINCTRL_MVEBU
--- 
-1.7.4.1
-
-8<-------------------------------------------------------------
-
-Note, this is a re-sending due to failure of delivery... :-(
-
-Thanks.
+Otherwise (call_firmware_op returning an error) the legacy boot register 
+is used.
 
 Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
