@@ -1,63 +1,45 @@
-From: Sasha Levin <sasha.levin@oracle.com>
-Subject: Re: [PATCH] ARM: EXYNOS: use BUG_ON where possible
-Date: Mon, 12 Nov 2012 10:52:27 -0500
-Message-ID: <50A11B3B.1080600@oracle.com>
-References: <1352406191-14303-1-git-send-email-sasha.levin@oracle.com> <1352406191-14303-5-git-send-email-sasha.levin@oracle.com> <50A111DD.6080504@gmail.com> <20121112152349.GH28327@n2100.arm.linux.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC PATCH 1/4] ARM: S3C24XX: move s3c24xx-irq to drivers/irqchip
+Date: Mon, 12 Nov 2012 10:05:39 -0700
+Message-ID: <50A12C63.2000609@wwwdotorg.org>
+References: <201211121446.30167.heiko@sntech.de> <201211121447.49977.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:30571 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751283Ab2KLPxG (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:55539 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751292Ab2KLRFm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 10:53:06 -0500
-In-Reply-To: <20121112152349.GH28327@n2100.arm.linux.org.uk>
+	Mon, 12 Nov 2012 12:05:42 -0500
+In-Reply-To: <201211121447.49977.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Maarten Lankhorst <m.b.lankhorst@gmail.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 11/12/2012 10:23 AM, Russell King - ARM Linux wrote:
-> On Mon, Nov 12, 2012 at 04:12:29PM +0100, Maarten Lankhorst wrote:
->> Op 08-11-12 21:23, Sasha Levin schreef:
->>> @@ -465,10 +465,8 @@ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int i
->>>  	else
->>>  		max_nr = EXYNOS4_MAX_COMBINER_NR;
->>>  
->>> -	if (combiner_nr >= max_nr)
->>> -		BUG();
->>> -	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
->>> -		BUG();
->>> +	BUG_ON(combiner_nr >= max_nr);
->>> +	BUG_ON(irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0);
->>
->> Is it really a good idea to put functions that perform work in a BUG_ON?
->> I don't know, but for some reason it just feels wrong. I'd expect code to
->> compile fine if BUG_ON was a noop, so doing verification calls only, not
->> actual work..
-> 
-> Well, it is currently defined as:
-> 
-> include/asm-generic/bug.h:#define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while(0)
-> include/asm-generic/bug.h:#define BUG_ON(condition) do { if (condition) ; } while(0)
-> 
-> but as these can be overridden, I don't think relying on those
-> implementations is a good idea; to do so would be fragile.  Eg, what if
-> the BUG_ON() implementation becomes just:
-> 
-> #define BUG_ON(x)
-> 
-> then the function call itself vanishes.  So, only put the actual bug test
-> inside a BUG_ON(), not the functional part which must always be executed.
+On 11/12/2012 06:47 AM, Heiko St=FCbner wrote:
+> Removes another part from plat-s3c24xx and also enables further
+> improvements happening in the correct location.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  arch/arm/Kconfig                                   |    1 +
+>  arch/arm/plat-s3c24xx/Makefile                     |    1 -
+>  drivers/irqchip/Kconfig                            |    3 +++
+>  drivers/irqchip/Makefile                           |    1 +
+>  .../irq.c =3D> drivers/irqchip/irq-s3c24xx.c         |    0
+>  5 files changed, 5 insertions(+), 1 deletions(-)
+>  rename arch/arm/plat-s3c24xx/irq.c =3D> drivers/irqchip/irq-s3c24xx.=
+c (100%)
 
-Even if we ignore that modifying the side-effects is wrong, there's already
-more than enough code in the kernel (both in kernel/ / mm/, and in arch/) to
-cause breakage if for some reason the expression is not evaluated.
+Presumably there's a header file somewhere that defines the interface t=
+o
+irq-s3c24xx.c that other code in arch/arm/plat-s3c24xx is using to
+initialize it. That header should be moved somewhere public (i.e.
+outside {mach,plat}-*/include/{mach,plat}). However, you then end up
+with a header file per IRQ driver in that public location. So, Thomas
+Petazzoni started working on a solution for that:
 
-If some arch decides to not evaluate the expression there it's going to be
-inherently broken.
-
-
-Thanks,
-Sasha
+> http://lists.arm.linux.org.uk/lurker/message/20121027.164514.11eb86db=
+=2Een.html
