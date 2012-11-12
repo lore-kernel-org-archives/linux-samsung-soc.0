@@ -1,94 +1,100 @@
-From: "R, Durgadoss" <durgadoss.r@intel.com>
-Subject: RE: [PATCH 1/4] thermal: Add new thermal trend type to support
- quick cooling
-Date: Mon, 12 Nov 2012 07:31:27 +0000
-Message-ID: <4D68720C2E767A4AA6A8796D42C8EB59206162@BGSMSX101.gar.corp.intel.com>
-References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
-	 <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
-	 <1352354503.2190.7.camel@rzhang1-mobl4>
-	 <CAK44p22REJpaJiahX7sTofShNB-+OHVsULqHeuxFNu5msLk6vA@mail.gmail.com>
-	 <1352433060.2166.3.camel@rzhang1-mobl4>
-	 <CAK44p22hHVcL21B1iy1OnECMd5RCRF8DVh-cNj=6Bmvr5n0yyQ@mail.gmail.com>
-	 <4D68720C2E767A4AA6A8796D42C8EB59206068@BGSMSX101.gar.corp.intel.com>
- <1352701993.1834.26.camel@rzhang1-mobl4>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v3 0/6] ARM: EXYNOS: Add secure firmware support
+Date: Mon, 12 Nov 2012 16:39:28 +0900
+Message-ID: <006501cdc0a8$d880c990$89825cb0$%kim@samsung.com>
+References: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:34212 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751245Ab2KLHbc (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:36514 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750918Ab2KLHja convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 02:31:32 -0500
-In-Reply-To: <1352701993.1834.26.camel@rzhang1-mobl4>
-Content-Language: en-US
+	Mon, 12 Nov 2012 02:39:30 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDD0048F6JIR4U0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 16:39:28 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDD00JOR6LSAK40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 16:39:28 +0900 (KST)
+In-reply-to: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: Amit Kachhap <amit.kachhap@linaro.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jonghwa3.lee@samsung.com" <jonghwa3.lee@samsung.com>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net, m.szyprowski@samsung.com, tomasz.figa@gmail.com, 'Russell King' <rmk+kernel@arm.linux.org.uk>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogWmhhbmcsIFJ1aQ0KPiBT
-ZW50OiBNb25kYXksIE5vdmVtYmVyIDEyLCAyMDEyIDEyOjAzIFBNDQo+IFRvOiBSLCBEdXJnYWRv
-c3MNCj4gQ2M6IEFtaXQgS2FjaGhhcDsgbGludXgtcG1AbGlzdHMubGludXgtZm91bmRhdGlvbi5v
-cmc7IGxpbnV4LXNhbXN1bmctDQo+IHNvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2
-Z2VyLmtlcm5lbC5vcmc7IGxlbmJAa2VybmVsLm9yZzsgbGludXgtDQo+IGFjcGlAdmdlci5rZXJu
-ZWwub3JnOyBqb25naHdhMy5sZWVAc2Ftc3VuZy5jb20NCj4gU3ViamVjdDogUkU6IFtQQVRDSCAx
-LzRdIHRoZXJtYWw6IEFkZCBuZXcgdGhlcm1hbCB0cmVuZCB0eXBlIHRvIHN1cHBvcnQNCj4gcXVp
-Y2sgY29vbGluZw0KPiANCj4gT24gU3VuLCAyMDEyLTExLTExIGF0IDIyOjU1IC0wNzAwLCBSLCBE
-dXJnYWRvc3Mgd3JvdGU6DQo+ID4gSGkgQW1pdC9SdWksDQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBBbWl0IEthY2hoYXAgW21haWx0bzphbWl0Lmth
-Y2hoYXBAbGluYXJvLm9yZ10NCj4gPiA+IFNlbnQ6IEZyaWRheSwgTm92ZW1iZXIgMDksIDIwMTIg
-MTE6NTIgQU0NCj4gPiA+IFRvOiBaaGFuZywgUnVpDQo+ID4gPiBDYzogbGludXgtcG1AbGlzdHMu
-bGludXgtZm91bmRhdGlvbi5vcmc7IGxpbnV4LXNhbXN1bmctDQo+ID4gPiBzb2NAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBSLCBEdXJnYWRvc3M7DQo+ID4g
-PiBsZW5iQGtlcm5lbC5vcmc7IGxpbnV4LWFjcGlAdmdlci5rZXJuZWwub3JnOw0KPiBqb25naHdh
-My5sZWVAc2Ftc3VuZy5jb20NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS80XSB0aGVybWFs
-OiBBZGQgbmV3IHRoZXJtYWwgdHJlbmQgdHlwZSB0bw0KPiBzdXBwb3J0DQo+ID4gPiBxdWljayBj
-b29saW5nDQo+ID4gPg0KPiA+ID4gT24gOSBOb3ZlbWJlciAyMDEyIDA5OjIxLCBaaGFuZyBSdWkg
-PHJ1aS56aGFuZ0BpbnRlbC5jb20+IHdyb3RlOg0KPiA+ID4gPiBPbiBUaHUsIDIwMTItMTEtMDgg
-YXQgMTE6NTYgKzA1MzAsIEFtaXQgS2FjaGhhcCB3cm90ZToNCj4gPiA+ID4+IE9uIDggTm92ZW1i
-ZXIgMjAxMiAxMTozMSwgWmhhbmcgUnVpIDxydWkuemhhbmdAaW50ZWwuY29tPiB3cm90ZToNCj4g
-PiA+ID4+ID4gT24gVGh1LCAyMDEyLTExLTA4IGF0IDA5OjU2ICswNTMwLCBBbWl0IERhbmllbCBL
-YWNoaGFwIHdyb3RlOg0KPiA+ID4gPj4gPj4gVGhpcyBtb2RpZmljYXRpb24gYWRkcyAyIG5ldyB0
-aGVybWFsIHRyZW5kIHR5cGUNCj4gPiA+IFRIRVJNQUxfVFJFTkRfUkFJU0VfRlVMTA0KPiA+ID4g
-Pj4gPj4gYW5kIFRIRVJNQUxfVFJFTkRfRFJPUF9GVUxMLiBUaGlzIHRoZXJtYWwgdHJlbmQgY2Fu
-IGJlIHVzZWQNCj4gdG8NCj4gPiA+IHF1aWNrbHkNCj4gPiA+ID4+ID4+IGp1bXAgdG8gdGhlIHVw
-cGVyIG9yIGxvd2VyIGNvb2xpbmcgbGV2ZWwgaW5zdGVhZCBvZiBpbmNyZW1lbnRhbA0KPiA+ID4g
-aW5jcmVhc2UNCj4gPiA+ID4+ID4+IG9yIGRlY3JlYXNlLg0KPiA+ID4gPj4gPg0KPiA+ID4gPj4g
-PiBJTU8sIHdoYXQgd2UgbmVlZCBpcyBhIG5ldyBtb3JlIGFnZ3Jlc3NpdmUgY29vbGluZyBnb3Zl
-cm5vcg0KPiB3aGljaA0KPiA+ID4gYWx3YXlzDQo+ID4gPiA+PiA+IHVzZXMgdXBwZXIgbGltaXQg
-d2hlbiB0aGUgdGVtcGVyYXR1cmUgaXMgcmFpc2luZyBhbmQgbG93ZXIgbGltaXQNCj4gd2hlbg0K
-PiA+ID4gPj4gPiB0aGUgdGVtcGVyYXR1cmUgaXMgZHJvcHBpbmcuDQo+ID4gPiA+PiBZZXMgSSBh
-Z3JlZSB0aGF0IGEgbmV3IGFnZ3Jlc3NpdmUgZ292ZXJub3IgaXMgdGhlIGJlc3QgYXBwcm9hY2gg
-YnV0DQo+ID4gPiA+PiB0aGVuIGkgdGhvdWdodCBhZGRpbmcgYSBuZXcgdHJlbmQgdHlwZSBpcyBh
-IHNpbXBsZSBzb2x1dGlvbiB0byBhY2hpZXZlDQo+ID4gPiA+PiB0aGlzIGFuZCBzaW5jZSBtb3N0
-IG9mIHRoZSBnb3Zlcm5vciBsb2dpYyBtaWdodCBiZSBzYW1lIGFzIHRoZQ0KPiA+ID4gPj4gc3Rl
-cC13aXNlIGdvdmVybm9yLiBJIGhhdmUgbm8gb2JqZWN0aW9uIGluIGRvaW5nIGl0IHRocm91Z2gg
-Z292ZXJub3IuDQo+ID4gPiA+PiA+DQo+ID4gPiA+IGhtbW0sDQo+ID4gPiA+IEkgdGhpbmsgYSBt
-b3JlIHByb3BlciB3YXkgaXMgdG8gc2V0IHRoZSBjb29saW5nIHN0YXRlIHRvIHVwcGVyIGxpbWl0
-DQo+ID4gPiA+IHdoZW4gaXQgb3ZlcmhlYXRzIGFuZCByZWR1Y2UgdGhlIGNvb2xpbmcgc3RhdGUg
-c3RlcCBieSBzdGVwIHdoZW4gdGhlDQo+ID4gPiA+IHRlbXBlcmF0dXJlIGRyb3BzLg0KPiA+ID4N
-Cj4gPiA+IE5vIGFjdHVhbGx5IEkgd2FzIHRoaW5raW5nIG9mIGhhdmluZyBhICBzaW1wbGUgZ292
-ZXJub3Igd2l0aCBhIGZlYXR1cmUNCj4gPiA+IGxpa2UgaXQgb25seSBzZXRzIHRvIHVwcGVyIGxl
-dmVsIGFuZCBsb3dlciBsZXZlbC4gQWxzbyBzaW5jZSB0aGUNCj4gPiA+IHRlbXBlcmF0dXJlIHNl
-bnNvciBpcyBjYXBhYmxlIG9mIGludGVycnVwdGluZyBmb3IgYm90aCBpbmNyZWFzZSBpbg0KPiA+
-ID4gdGhyZXNob2xkKHNheSAxMDBDKSAgYW5kIGZhbGwgaW4gdGhyZXNob2xkIChzYXkgOTBDKSwg
-c28gcG9sbGluZyBvcg0KPiA+ID4gc3RlcCBpbmNyZW1lbnRzIGlzIG5vdCBuZWVkZWQgYXQgYWxs
-Lg0KPiA+ID4gQ3VycmVudGx5IHN0ZXB3aXNlIGdvdmVybm9yIGdvdmVybm9yIGRvZXMgdGhhdCBz
-byB3ZSBtaWdodCBjaGFuZ2UgdGhlDQo+ID4gPiBtYWNybyBuYW1lIGFzLA0KPiA+ID4gVEhFUk1B
-TF9UUkVORF9SQUlTRV9TVEVQLA0KPiA+ID4gVEhFUk1BTF9UUkVORF9EUk9QX1NURVAsDQo+ID4g
-PiBUSEVSTUFMX1RSRU5EX1JBSVNFX01BWCwNCj4gPiA+IFRIRVJNQUxfVFJFTkRfRFJPUF9NQVgs
-DQo+ID4gPg0KPiA+ID4gYW5kIGZpbGUgc3RlcF93aXNlLmMgY2FuIGJlIG5hbWVkIGFzIHN0YXRl
-X3dpc2UuYyBvciB0cmVuZF93aXNlLmMuDQo+ID4NCj4gPiBZZXMsIGluIHRoaXMgcGFydGljdWxh
-ciBjYXNlLCB3ZSBuZWl0aGVyIG5lZWQgdG8gcG9sbCBub3IgZG8gc3RlcCB3aXNlDQo+ID4gb3Bl
-cmF0aW9ucy4gQnV0LCBtb3N0IG9mIHRoZSBvdGhlciBzZW5zb3JzIG5lZWQgYXQgbGVhc3Qgb25l
-IG9mIHRoZW0uDQo+ID4NCj4gPiBTbywgSSB0aGluayB3ZSBjYW4gdHJ5IGl0IHRoaXMgd2F5Og0K
-PiA+IAlpZiAoc2Vuc29yIHN1cHBvcnRzIGludGVycnVwdCkgew0KPiA+IAkJJ2Fsd2F5cycgdXNl
-IFJBSVNFX01BWCBhbmQgRFJPUF9NQVg7DQo+ID4gCX0gZWxzZSB7DQo+ID4gCQlEbyBTdGVwIHdp
-c2Ugb3BlcmF0aW9ucw0KPiA+IAl9DQo+ID4NCj4gd2h5IHNob3VsZCB0aGUgZ2VuZXJpYyB0aGVy
-bWFsIGxheWVyIGJlIGF3YXJlIG9mIHRoaXM/DQo+IA0KPiBJTU8sIGl0IGlzIHRoZSBwbGF0Zm9y
-bSB0aGVybWFsIGRyaXZlciB0aGF0IGlzIHJlc3BvbnNpYmxlIGZvciByZXR1cm5pbmcNCj4gVEhF
-Uk1BTF9UUkVORF9SQUlTRV9TVEVQIG9yIFRIRVJNQUxfVFJFTkRfUkFJU0VfTUFYLg0KPiANCj4g
-YW5kIHRoZSBzdGVwX3dpc2UgZ292ZXJub3IganVzdCB0YWtlcyBhY3Rpb24gYmFzZWQgb24gdGhl
-IHJldHVybiB2YWx1ZQ0KPiBvZiAuZ2V0X3RyZW5kKCkgY2FsbGJhY2suDQoNClllcywgYWdyZWUg
-d2l0aCB0aGUgZmxvdyAuLg0KDQpUaGFua3MsDQpEdXJnYQ0K
+Tomasz Figa wrote:
+> 
+> Some Exynos-based boards are running with secure firmware running in
+> TrustZone secure world, which changes the way some things have to be
+> initialized.
+> 
+> This series adds support for specifying firmware operations, implements
+> some firmware operations for Exynos secure firmware and adds a method of
+> enabling secure firmware operations on Exynos-based boards through board
+> file and device tree.
+> 
+> Changes since v2
+> ( http://thread.gmane.org/gmane.linux.kernel.samsung-soc/12848 )
+>   - Made Exynos firmware binding require address
+>   - Minor style fixes
+> 
+> Changes since v1
+> ( http://thread.gmane.org/gmane.linux.kernel.samsung-
+> soc/12583/focus=12820 )
+>   - Changed return types of all operations to int
+>   - Defined all operations to return 0 on success, -ENOSYS when not
+>     implemented or appropriate error code on error
+> 
+> Tomasz Figa (6):
+>   ARM: Add interface for registering and calling firmware-specific
+>     operations
+>   ARM: EXYNOS: Add support for secure monitor calls
+>   ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
+>   ARM: EXYNOS: Add support for Exynos secure firmware
+>   ARM: EXYNOS: Add support for secondary CPU bring-up on Exynos4412
+>   ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
+> 
+>  .../devicetree/bindings/arm/samsung-boards.txt     | 10 ++++
+>  arch/arm/common/Makefile                           |  2 +
+>  arch/arm/common/firmware.c                         | 18 ++++++
+>  arch/arm/include/asm/firmware.h                    | 31 ++++++++++
+>  arch/arm/mach-exynos/Makefile                      |  6 ++
+>  arch/arm/mach-exynos/common.c                      | 35 +++++++++++
+>  arch/arm/mach-exynos/common.h                      |  2 +
+>  arch/arm/mach-exynos/exynos-smc.S                  | 22 +++++++
+>  arch/arm/mach-exynos/firmware.c                    | 67 ++++++++++++++++++++++
+>  arch/arm/mach-exynos/include/mach/map.h            |  3 +
+>  arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
+>  arch/arm/mach-exynos/platsmp.c                     | 37 ++++++++++--
+>  arch/arm/mach-exynos/smc.h                         | 31 ++++++++++
+>  arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
+>  14 files changed, 260 insertions(+), 6 deletions(-)
+>  create mode 100644 arch/arm/common/firmware.c
+>  create mode 100644 arch/arm/include/asm/firmware.h
+>  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
+>  create mode 100644 arch/arm/mach-exynos/firmware.c
+>  create mode 100644 arch/arm/mach-exynos/smc.h
+> 
+> --
+> 1.7.12
+
+(+ Russell King)
+
+As we discussed, let me pick up this series into Samsung tree.
+
+If any objections, please kindly let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
