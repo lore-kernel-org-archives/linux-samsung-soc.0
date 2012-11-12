@@ -1,56 +1,68 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: S3C64XX: Staticly define parent clock of "camera"
- clock
-Date: Mon, 12 Nov 2012 14:02:47 +0900
-Message-ID: <004a01cdc092$f57312d0$e0593870$%kim@samsung.com>
-References: <1352556477-3700-1-git-send-email-y@samsung.com>
- <509e6047.a766980a.0f91.14f6@mx.google.com> <509EC391.9090506@gmail.com>
- <509EC83D.8010704@gmail.com>
+Subject: RE: [PATCH 2/4] gpio: samsung: Skip registration if pinctrl driver is
+ present on Exynos4x12
+Date: Mon, 12 Nov 2012 14:03:05 +0900
+Message-ID: <004b01cdc093$00424140$00c6c3c0$%kim@samsung.com>
+References: <1351089457-8205-1-git-send-email-t.figa@samsung.com>
+ <1351089457-8205-3-git-send-email-t.figa@samsung.com>
+ <CACRpkdYNDSp0K3wpvUem9ecsW-JQ9L6aKqaOmHNUR65DQTMNHA@mail.gmail.com>
+ <0c5301cdbca2$30320240$909606c0$%kim@samsung.com>
+ <CACRpkdaOpzFvs_wqy9sdrmx1=wEs5uxqfh_rOrKxLTXV-q1K2Q@mail.gmail.com>
+ <0e8301cdbe62$56a1d010$03e57030$%kim@samsung.com>
+ <CACRpkdZGu2VfP-EzAOxK3947x6Pd78bh=TWDK98iXwkJx2WiTQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41342 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725Ab2KLFCt (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:36011 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750709Ab2KLFDU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 00:02:49 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
+	Mon, 12 Nov 2012 00:03:20 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDC009Y9ZBDJ2H0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 14:02:48 +0900 (KST)
+ 17 2011)) with ESMTP id <0MDC005L6ZD1ORG0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 14:03:06 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDC00B36ZCNEIB0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 14:02:47 +0900 (KST)
-In-reply-to: <509EC83D.8010704@gmail.com>
+ with ESMTPA id <0MDC00A72ZD5ZLB0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 14:03:06 +0900 (KST)
+In-reply-to: <CACRpkdZGu2VfP-EzAOxK3947x6Pd78bh=TWDK98iXwkJx2WiTQ@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, dron0gus@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Andrey Gusakov' <dron_gus@mail.ru>
+To: 'Linus Walleij' <linus.walleij@linaro.org>, 'Axel Lin' <axel.lin@ingics.com>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, thomas.abraham@linaro.org
 
-Sylwester Nawrocki wrote:
+Linus Walleij wrote:
 > 
-> On 11/10/2012 10:13 PM, Sylwester Nawrocki wrote:
-> > On 11/10/2012 03:07 PM, dron0gus@gmail.com wrote:
-> >> From: Andrey Gusakov<dron_gus@mail.ru>
-> >>
-> >> The "camera" clock have only one parent. Define it staticly and
-> 
-> Forgot to point out a small typo here: staticly -> statically.
-> 
-Thanks for pointing out. I fixed it when I applied.
-
-> >> remove unused source clock list.
-> >>
-> >> Signed-off-by: Andrey Gusakov<dron0gus@gmail.com>
 > >
-> > Reviewed-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+> > Can you drop above 3 commits in your tree? If many conflicts happens
+> during
+> > rebasing, how about that I merge your pinctrl/samsung branch into
+> Samsung
+> > tree?...
+> 
+> Why not :-)
+> 
+> I have removed the samsung branch from my for-next to avoid
+> clashes.
+> 
+Thanks ;-)
 
-Thanks.
+> So please bring the samsung branch into you tree and fix
+> everything up there.
+> 
+I did.
+
+> Axel Lin has sent some tree-wide cleanups but let's hope they don't
+> hit samsung so much, or they will need to be postponed/dropped.
+> 
+OK, I see.
+
+Thanks again.
 
 Best regards,
 Kgene.
