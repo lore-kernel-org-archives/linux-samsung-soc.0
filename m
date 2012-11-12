@@ -1,294 +1,125 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [RFC PATCH 4/4] ARM: S3C24XX: First part converting irq code to use hwirq
-Date: Mon, 12 Nov 2012 14:50:14 +0100
-Message-ID: <201211121450.19151.heiko@sntech.de>
-References: <201211121446.30167.heiko@sntech.de>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: dts: add board dts file for Exynos4412 based SMDK
+ board
+Date: Mon, 12 Nov 2012 15:07:08 +0100
+Message-ID: <1629120.eNASZVgxGi@amdc1227>
+References: <1351954172-13645-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:41098 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752807Ab2KLNu0 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:43610 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753013Ab2KLOHN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 08:50:26 -0500
-In-Reply-To: <201211121446.30167.heiko@sntech.de>
+	Mon, 12 Nov 2012 09:07:13 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDD0058AOJX2D00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 23:07:12 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDD00CXGOJXT070@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Nov 2012 23:07:12 +0900 (KST)
+In-reply-to: <1351954172-13645-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, chaos.youn@samsung.com
 
-Use the newly introduced irq_domains to let the basic ack, mask and unmask
-functions use its hwirq field. This also includes the external irq sources
-and removes all offset calculations based on the static irq numbers from
-these parts.
+Hi Thomas,
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/irq-pm.c           |    4 +-
- arch/arm/plat-samsung/include/plat/irq.h |    8 +-
- drivers/irqchip/irq-s3c24xx.c            |  109 ++++++++++++++++++------------
- 3 files changed, 71 insertions(+), 50 deletions(-)
+On Saturday 03 of November 2012 20:19:32 Thomas Abraham wrote:
+> Add a minimal board dts file for Samsung Exynos4412 based SMDK board.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+> This patch depends the on the following patch posted by Tomasz Figa.
+> "ARM: dts: exynos4: Add support for Exynos4x12 SoCs"
+> 
+>  arch/arm/boot/dts/Makefile                |    1 +
+>  arch/arm/boot/dts/exynos4412-smdk4412.dts |   45
+> +++++++++++++++++++++++++++++ 2 files changed, 46 insertions(+), 0
+> deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos4412-smdk4412.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index f37cf9f..36488a5 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_DOVE) += dove-cm-a510.dtb \
+>  dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>  	exynos4210-smdkv310.dtb \
+>  	exynos4210-trats.dtb \
+> +	exynos4412-smdk4412.dtb \
+>  	exynos5250-smdk5250.dtb
+>  dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb
+>  dtb-$(CONFIG_ARCH_INTEGRATOR) += integratorap.dtb \
+> diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts
+> b/arch/arm/boot/dts/exynos4412-smdk4412.dts new file mode 100644
+> index 0000000..f05bf57
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+> @@ -0,0 +1,45 @@
+> +/*
+> + * Samsung's Exynos4412 based SMDK board device tree source
+> + *
+> + * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Device tree source file for Samsung's SMDK4412 board which is based
+> on + * Samsung's Exynos4412 SoC.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as +
+> * published by the Free Software Foundation.
+> +*/
+> +
+> +/dts-v1/;
+> +/include/ "exynos4412.dtsi"
+> +
+> +/ {
+> +	model = "Samsung SMDK evaluation board based on Exynos4412";
+> +	compatible = "samsung,smdk4412", "samsung,exynos4412";
+> +
+> +	memory {
+> +		reg = <0x40000000 0x40000000>;
+> +	};
 
-diff --git a/arch/arm/mach-s3c24xx/irq-pm.c b/arch/arm/mach-s3c24xx/irq-pm.c
-index 0efb2e2..5aa7e28 100644
---- a/arch/arm/mach-s3c24xx/irq-pm.c
-+++ b/arch/arm/mach-s3c24xx/irq-pm.c
-@@ -29,12 +29,12 @@
-  * set bit to 1 in allow bitfield to enable the wakeup settings on it
- */
- 
--unsigned long s3c_irqwake_intallow	= 1L << (IRQ_RTC - IRQ_EINT0) | 0xfL;
-+unsigned long s3c_irqwake_intallow	= 1L << 30 | 0xfL;
- unsigned long s3c_irqwake_eintallow	= 0x0000fff0L;
- 
- int s3c_irq_wake(struct irq_data *data, unsigned int state)
- {
--	unsigned long irqbit = 1 << (data->irq - IRQ_EINT0);
-+	unsigned long irqbit = 1 << (data->hwirq);
- 
- 	if (!(s3c_irqwake_intallow & irqbit))
- 		return -ENOENT;
-diff --git a/arch/arm/plat-samsung/include/plat/irq.h b/arch/arm/plat-samsung/include/plat/irq.h
-index 3ae54dc..d024d7a 100644
---- a/arch/arm/plat-samsung/include/plat/irq.h
-+++ b/arch/arm/plat-samsung/include/plat/irq.h
-@@ -35,7 +35,7 @@ static inline void s3c_irqsub_mask(struct irq_data *data,
- 	submask = __raw_readl(S3C2410_INTSUBMSK);
- 	mask = __raw_readl(S3C2410_INTMSK);
- 
--	submask |= (1UL << (data->irq - IRQ_S3CUART_RX0));
-+	submask |= (1UL << data->hwirq);
- 
- 	/* check to see if we need to mask the parent IRQ */
- 
-@@ -56,7 +56,7 @@ static inline void s3c_irqsub_unmask(struct irq_data *data,
- 	submask = __raw_readl(S3C2410_INTSUBMSK);
- 	mask = __raw_readl(S3C2410_INTMSK);
- 
--	submask &= ~(1UL << (data->irq - IRQ_S3CUART_RX0));
-+	submask &= ~(1UL << data->hwirq);
- 	mask &= ~parentbit;
- 
- 	/* write back masks */
-@@ -69,7 +69,7 @@ static inline void s3c_irqsub_maskack(struct irq_data *data,
- 				      unsigned int parentmask,
- 				      unsigned int group)
- {
--	unsigned int bit = 1UL << (data->irq - IRQ_S3CUART_RX0);
-+	unsigned int bit = 1UL << data->hwirq;
- 
- 	s3c_irqsub_mask(data, parentmask, group);
- 
-@@ -90,7 +90,7 @@ static inline void s3c_irqsub_ack(struct irq_data *data,
- 				  unsigned int parentmask,
- 				  unsigned int group)
- {
--	unsigned int bit = 1UL << (data->irq - IRQ_S3CUART_RX0);
-+	unsigned int bit = 1UL << data->hwirq;
- 
- 	__raw_writel(bit, S3C2410_SUBSRCPND);
- 
-diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
-index 073e614..804fda1 100644
---- a/drivers/irqchip/irq-s3c24xx.c
-+++ b/drivers/irqchip/irq-s3c24xx.c
-@@ -39,18 +39,17 @@
- static void
- s3c_irq_mask(struct irq_data *data)
- {
--	unsigned int irqno = data->irq - IRQ_EINT0;
- 	unsigned long mask;
- 
- 	mask = __raw_readl(S3C2410_INTMSK);
--	mask |= 1UL << irqno;
-+	mask |= 1UL << data->hwirq;
- 	__raw_writel(mask, S3C2410_INTMSK);
- }
- 
- static inline void
- s3c_irq_ack(struct irq_data *data)
- {
--	unsigned long bitval = 1UL << (data->irq - IRQ_EINT0);
-+	unsigned long bitval = 1UL << data->hwirq;
- 
- 	__raw_writel(bitval, S3C2410_SRCPND);
- 	__raw_writel(bitval, S3C2410_INTPND);
-@@ -59,7 +58,7 @@ s3c_irq_ack(struct irq_data *data)
- static inline void
- s3c_irq_maskack(struct irq_data *data)
- {
--	unsigned long bitval = 1UL << (data->irq - IRQ_EINT0);
-+	unsigned long bitval = 1UL << data->hwirq;
- 	unsigned long mask;
- 
- 	mask = __raw_readl(S3C2410_INTMSK);
-@@ -79,10 +78,8 @@ s3c_irq_unmask(struct irq_data *data)
- 	if (irqno != IRQ_TIMER4 && irqno != IRQ_EINT8t23)
- 		irqdbf2("s3c_irq_unmask %d\n", irqno);
- 
--	irqno -= IRQ_EINT0;
--
- 	mask = __raw_readl(S3C2410_INTMSK);
--	mask &= ~(1UL << irqno);
-+	mask &= ~(1UL << data->hwirq);
- 	__raw_writel(mask, S3C2410_INTMSK);
- }
- 
-@@ -105,11 +102,10 @@ struct irq_chip s3c_irq_chip = {
- static void
- s3c_irqext_mask(struct irq_data *data)
- {
--	unsigned int irqno = data->irq - EXTINT_OFF;
- 	unsigned long mask;
- 
- 	mask = __raw_readl(S3C24XX_EINTMASK);
--	mask |= ( 1UL << irqno);
-+	mask |= ( 1UL << data->hwirq);
- 	__raw_writel(mask, S3C24XX_EINTMASK);
- }
- 
-@@ -120,7 +116,7 @@ s3c_irqext_ack(struct irq_data *data)
- 	unsigned long bit;
- 	unsigned long mask;
- 
--	bit = 1UL << (data->irq - EXTINT_OFF);
-+	bit = 1UL << data->hwirq;
- 
- 	mask = __raw_readl(S3C24XX_EINTMASK);
- 
-@@ -132,10 +128,10 @@ s3c_irqext_ack(struct irq_data *data)
- 	/* not sure if we should be acking the parent irq... */
- 
- 	if (data->irq <= IRQ_EINT7) {
--		if ((req & 0xf0) == 0)
-+		if ((req & 0xf0) == 0) /* FIXME: use parent irq-domain */
- 			s3c_irq_ack(irq_get_irq_data(IRQ_EINT4t7));
- 	} else {
--		if ((req >> 8) == 0)
-+		if ((req >> 8) == 0) /* FIXME: use parent irq-domain */
- 			s3c_irq_ack(irq_get_irq_data(IRQ_EINT8t23));
- 	}
- }
-@@ -143,46 +139,21 @@ s3c_irqext_ack(struct irq_data *data)
- static void
- s3c_irqext_unmask(struct irq_data *data)
- {
--	unsigned int irqno = data->irq - EXTINT_OFF;
- 	unsigned long mask;
- 
- 	mask = __raw_readl(S3C24XX_EINTMASK);
--	mask &= ~(1UL << irqno);
-+	mask &= ~(1UL << data->hwirq);
- 	__raw_writel(mask, S3C24XX_EINTMASK);
- }
- 
--int
--s3c_irqext_type(struct irq_data *data, unsigned int type)
-+static int s3c_irqext_set_type(void __iomem *gpcon_reg,
-+			       void __iomem *extint_reg,
-+			       unsigned long gpcon_offset,
-+			       unsigned long extint_offset,
-+			       unsigned int type)
- {
--	void __iomem *extint_reg;
--	void __iomem *gpcon_reg;
--	unsigned long gpcon_offset, extint_offset;
- 	unsigned long newvalue = 0, value;
- 
--	if ((data->irq >= IRQ_EINT0) && (data->irq <= IRQ_EINT3)) {
--		gpcon_reg = S3C2410_GPFCON;
--		extint_reg = S3C24XX_EXTINT0;
--		gpcon_offset = (data->irq - IRQ_EINT0) * 2;
--		extint_offset = (data->irq - IRQ_EINT0) * 4;
--	} else if ((data->irq >= IRQ_EINT4) && (data->irq <= IRQ_EINT7)) {
--		gpcon_reg = S3C2410_GPFCON;
--		extint_reg = S3C24XX_EXTINT0;
--		gpcon_offset = (data->irq - (EXTINT_OFF)) * 2;
--		extint_offset = (data->irq - (EXTINT_OFF)) * 4;
--	} else if ((data->irq >= IRQ_EINT8) && (data->irq <= IRQ_EINT15)) {
--		gpcon_reg = S3C2410_GPGCON;
--		extint_reg = S3C24XX_EXTINT1;
--		gpcon_offset = (data->irq - IRQ_EINT8) * 2;
--		extint_offset = (data->irq - IRQ_EINT8) * 4;
--	} else if ((data->irq >= IRQ_EINT16) && (data->irq <= IRQ_EINT23)) {
--		gpcon_reg = S3C2410_GPGCON;
--		extint_reg = S3C24XX_EXTINT2;
--		gpcon_offset = (data->irq - IRQ_EINT8) * 2;
--		extint_offset = (data->irq - IRQ_EINT16) * 4;
--	} else {
--		return -1;
--	}
--
- 	/* Set the GPIO to external interrupt mode */
- 	value = __raw_readl(gpcon_reg);
- 	value = (value & ~(3 << gpcon_offset)) | (0x02 << gpcon_offset);
-@@ -227,6 +198,56 @@ s3c_irqext_type(struct irq_data *data, unsigned int type)
- 	return 0;
- }
- 
-+int
-+s3c_irqext_type(struct irq_data *data, unsigned int type)
-+{
-+	void __iomem *extint_reg;
-+	void __iomem *gpcon_reg;
-+	unsigned long gpcon_offset, extint_offset;
-+
-+	if ((data->hwirq >= 4) && (data->hwirq <= 7)) {
-+		gpcon_reg = S3C2410_GPFCON;
-+		extint_reg = S3C24XX_EXTINT0;
-+		gpcon_offset = (data->hwirq) * 2;
-+		extint_offset = (data->hwirq) * 4;
-+	} else if ((data->hwirq >= 8) && (data->hwirq <= 15)) {
-+		gpcon_reg = S3C2410_GPGCON;
-+		extint_reg = S3C24XX_EXTINT1;
-+		gpcon_offset = (data->hwirq - 8) * 2;
-+		extint_offset = (data->hwirq - 8) * 4;
-+	} else if ((data->hwirq >= 16) && (data->hwirq <= 23)) {
-+		gpcon_reg = S3C2410_GPGCON;
-+		extint_reg = S3C24XX_EXTINT2;
-+		gpcon_offset = (data->hwirq - 8) * 2;
-+		extint_offset = (data->hwirq - 16) * 4;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return s3c_irqext_set_type(gpcon_reg, extint_reg, gpcon_offset,
-+				   extint_offset, type);
-+}
-+
-+int
-+s3c_irqext0_type(struct irq_data *data, unsigned int type)
-+{
-+	void __iomem *extint_reg;
-+	void __iomem *gpcon_reg;
-+	unsigned long gpcon_offset, extint_offset;
-+
-+	if ((data->hwirq >= 0) && (data->hwirq <= 3)) {
-+		gpcon_reg = S3C2410_GPFCON;
-+		extint_reg = S3C24XX_EXTINT0;
-+		gpcon_offset = (data->hwirq) * 2;
-+		extint_offset = (data->hwirq) * 4;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return s3c_irqext_set_type(gpcon_reg, extint_reg, gpcon_offset,
-+				   extint_offset, type);
-+}
-+
- static struct irq_chip s3c_irqext_chip = {
- 	.name		= "s3c-ext",
- 	.irq_mask	= s3c_irqext_mask,
-@@ -242,7 +263,7 @@ static struct irq_chip s3c_irq_eint0t4 = {
- 	.irq_mask	= s3c_irq_mask,
- 	.irq_unmask	= s3c_irq_unmask,
- 	.irq_set_wake	= s3c_irq_wake,
--	.irq_set_type	= s3c_irqext_type,
-+	.irq_set_type	= s3c_irqext0_type,
- };
- 
- /* mask values for the parent registers for each of the interrupt types */
+This will not boot, because section size limit is set to 256 MiB.
+
+It might work with CONFIG_ARM_ATAG_DTB_COMPAT enabled, because the memory 
+configuration from DT is ignored and values from ATAGs are taken instead.
+
+I suggest you to change it to 4 banks of 256 MiB.
+
+> +	chosen {
+> +		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M
+> console=ttySAC1,115200 init=/linuxrc"; +	};
+> +
+> +	serial@13800000 {
+> +		status = "okay";
+> +	};
+> +
+> +	serial@13810000 {
+> +		status = "okay";
+> +	};
+> +
+> +	serial@13820000 {
+> +		status = "okay";
+> +	};
+> +
+> +	serial@13830000 {
+> +		status = "okay";
+> +	};
+> +};
+
+Otherwise looks fine.
+
+Best regards,
 -- 
-1.7.2.3
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
