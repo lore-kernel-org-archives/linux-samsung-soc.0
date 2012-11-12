@@ -1,62 +1,46 @@
-From: Maarten Lankhorst <m.b.lankhorst@gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: [PATCH] ARM: EXYNOS: use BUG_ON where possible
-Date: Mon, 12 Nov 2012 16:12:29 +0100
-Message-ID: <50A111DD.6080504@gmail.com>
-References: <1352406191-14303-1-git-send-email-sasha.levin@oracle.com> <1352406191-14303-5-git-send-email-sasha.levin@oracle.com>
+Date: Mon, 12 Nov 2012 15:23:49 +0000
+Message-ID: <20121112152349.GH28327@n2100.arm.linux.org.uk>
+References: <1352406191-14303-1-git-send-email-sasha.levin@oracle.com> <1352406191-14303-5-git-send-email-sasha.levin@oracle.com> <50A111DD.6080504@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:51599 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753620Ab2KLPMf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 10:12:35 -0500
-In-Reply-To: <1352406191-14303-5-git-send-email-sasha.levin@oracle.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <50A111DD.6080504@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maarten Lankhorst <m.b.lankhorst@gmail.com>
+Cc: Sasha Levin <sasha.levin@oracle.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sasha Levin <sasha.levin@oracle.com>
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Op 08-11-12 21:23, Sasha Levin schreef:
-> Just use BUG_ON() instead of constructions such as:
+On Mon, Nov 12, 2012 at 04:12:29PM +0100, Maarten Lankhorst wrote:
+> Op 08-11-12 21:23, Sasha Levin schreef:
+> > @@ -465,10 +465,8 @@ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int i
+> >  	else
+> >  		max_nr = EXYNOS4_MAX_COMBINER_NR;
+> >  
+> > -	if (combiner_nr >= max_nr)
+> > -		BUG();
+> > -	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
+> > -		BUG();
+> > +	BUG_ON(combiner_nr >= max_nr);
+> > +	BUG_ON(irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0);
 >
-> 	if (...)
-> 		BUG()
->
-> A simplified version of the semantic patch that makes this transformation
-> is as follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression e;
-> @@
-> - if (e) BUG();
-> + BUG_ON(e);
-> // </smpl>
->
-> Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
-> ---
->  arch/arm/mach-exynos/common.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 4e577f6..6a55a5a 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -465,10 +465,8 @@ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int i
->  	else
->  		max_nr = EXYNOS4_MAX_COMBINER_NR;
->  
-> -	if (combiner_nr >= max_nr)
-> -		BUG();
-> -	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
-> -		BUG();
-> +	BUG_ON(combiner_nr >= max_nr);
-> +	BUG_ON(irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0);
-Is it really a good idea to put functions that perform work in a BUG_ON?
-I don't know, but for some reason it just feels wrong. I'd expect code to
-compile fine if BUG_ON was a noop, so doing verification calls only, not
-actual work..
+> Is it really a good idea to put functions that perform work in a BUG_ON?
+> I don't know, but for some reason it just feels wrong. I'd expect code to
+> compile fine if BUG_ON was a noop, so doing verification calls only, not
+> actual work..
 
-~Maarten
+Well, it is currently defined as:
+
+include/asm-generic/bug.h:#define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while(0)
+include/asm-generic/bug.h:#define BUG_ON(condition) do { if (condition) ; } while(0)
+
+but as these can be overridden, I don't think relying on those
+implementations is a good idea; to do so would be fragile.  Eg, what if
+the BUG_ON() implementation becomes just:
+
+#define BUG_ON(x)
+
+then the function call itself vanishes.  So, only put the actual bug test
+inside a BUG_ON(), not the functional part which must always be executed.
