@@ -1,159 +1,474 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [oselas] Mini2440 boot failure on kernel 3.7-rc1
-Date: Tue, 13 Nov 2012 00:18:55 +0100
-Message-ID: <50A183DF.1000304@gmail.com>
-References: <5082B755.1070109@gmail.com> <201210220928.19538.jbe@pengutronix.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 1/7 v2] ARM: EXYNOS: add support for EXYNOS5440 SoC
+Date: Tue, 13 Nov 2012 13:54:43 +0900
+Message-ID: <01a101cdc15a$ff004e80$fd00eb80$%kim@samsung.com>
+References: <1351274153-3120-1-git-send-email-kgene.kim@samsung.com>
+ <1351274153-3120-2-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:43089 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752718Ab2KLXTB (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:41114 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979Ab2KMEyq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 18:19:01 -0500
-Received: by mail-ee0-f46.google.com with SMTP id b15so3672897eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Nov 2012 15:18:59 -0800 (PST)
-In-Reply-To: <201210220928.19538.jbe@pengutronix.de>
+	Mon, 12 Nov 2012 23:54:46 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDE00H0DTM6TO60@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 13 Nov 2012 13:54:44 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDE0096BTN7DR50@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 13 Nov 2012 13:54:43 +0900 (KST)
+In-reply-to: <1351274153-3120-2-git-send-email-kgene.kim@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Juergen Beisert <jbe@pengutronix.de>
-Cc: oselas@community.pengutronix.de, Brian Norris <computersforpeace@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mtd@lists.infradead.org
-
-Hi Juergen, Brian,
-
-On 10/22/2012 09:28 AM, Juergen Beisert wrote:
-> Hi Sylwester,
->
-> Sylwester Nawrocki wrote:
->> [...]
->> [    2.455000] NAND device: Manufacturer ID: 0xec, Chip ID: 0xf1 (Samsung NAND 128MiB 3,3V 8-bit), 8
->> [    2.460000] 4 cmdlinepart partitions found on MTD device nand
->> [    2.465000] Creating 4 MTD partitions on "nand":
->> [    2.470000] 0x000000000000-0x000000080000 : "barebox"
->> [    2.475000] mtd: partition "barebox" doesn't end on an erase block -- force read-only
->> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->> This "force read-only" doesn't happen with v3.6.
->
-> This looks to me the NAND database uses a wrong block size for this NAND
-> device. This device has 128 kiB block sizes. So, a 512 kiB partition
-> *is* block aligned.
->
-> Maybe you should take a look into the generic code, what block size the
-> 3.7-rc1 uses for this NAND.
-
-Thanks a lot for these pointers. I've found that the commit causing this
-regression is this one:
-
-commit e2d3a35ee427aaba99b6c68a56609ce276c51270
-Author: Brian Norris <computersforpeace@gmail.com>
-Date:   Mon Sep 24 20:40:55 2012 -0700
-
-     mtd: nand: detect Samsung K9GBG08U0A, K9GAG08U0F ID
-
-     Datasheets for the following Samsung NAND parts (both MLC and SLC) 
-describe
-     extensions to the Samsung 6-byte extended ID decoding table:
-
-     K9GBG08U0A (MLC, 6-byte ID)
-     K9GAG08U0F (MLC, 6-byte ID)
-     K9FAG08U0M (SLC, 6-byte ID)
-
-     The table found in K9GAG08U0F, p.44, contains a superset of the 
-information
-     found in other previous datasheets.
-
-     This patch adds support for all of these chips, with 512B and 640B 
-OOB sizes.
-     It also changes the detection pattern such that this table applies 
-to all
-     Samsung 6-byte ID NAND, not just MLC. This is safe, according to 
-the NAND
-     parameter data I have collected:
-
-     Note that nand_base.c does not yet support the bad block marker 
-scheme defined
-     for these chips (i.e., scan 1st and last page for BB markers).
-
-     Signed-off-by: Brian Norris <computersforpeace@gmail.com>
-     Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>
 
 
-When I revert it the crash is gone and everything works well. The Flash
-chip is K9F1G08U0C and according to the datasheet it has 5 byte ID.
-However nand_id_len() returns 6 and id_data[] is: ec, f1, 00, 95, 40, ec.
+This patch adds support for EXYNOS5440 SoC which is including
+ARM Cortex-A15 Quad cores.
 
-I've found a mail thread where similar issue has been discussed [1]. It 
-seems
-the mentioned chunk in commit
-"mtd: nand: add generic READ ID length calculation functions"
-
-is missing. Still it doesn't fix the problem for me.
-
-diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
-index ec6841d..93d6df3 100644
---- a/drivers/mtd/nand/nand_base.c
-+++ b/drivers/mtd/nand/nand_base.c
-@@ -2989,7 +2989,8 @@ static void nand_decode_ext_id(struct mtd_info 
-*mtd, struct nand_chip *chip,
-          * Check for ID length, cell type, and Hynix/Samsung ID to 
-decide what
-          * to do.
-          */
--       if (id_len == 6 && id_data[0] == NAND_MFR_SAMSUNG) {
-+       if (id_len == 6 && id_data[0] == NAND_MFR_SAMSUNG &&
-+           id_data[5] != 0x00) {
-                 /* Calc pagesize */
-                 mtd->writesize = 2048 << (extid & 0x03);
-                 extid >>= 2;
-
-With this change erasesize looks still incorrectly calculated (4 MB):
-nand_decode_ext_id:3089 mtd writesize: 4096, oobsize: 128, erasesize: 
-4194304
-
-writesize also seems wrong, according to the datasheet it is 2 KB.
-
-It looks like this Flash really needs to have id_len = 5 assigned, when 
-I forced it:
-nand_decode_ext_id:3090 mtd writesize: 2048, oobsize: 64, erasesize: 131072
-everything looks as specified in the datasheet.
-
-The following change eliminates the problem for this particular chip,
-however it will likely break others.
-
- From efab2f7d0a9049588c8b155fab21f8f8c2433b19 Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Date: Tue, 13 Nov 2012 00:10:06 +0100
-Subject: [PATCH] mtd: Change calculation of length of nand id with 
-repeated pattern
-
-Corrects ID length calculation for Samsung K9F1G08U0C NAND Flash,
-ID: [ec, f1, 00, 95, 40], ec.
-
-Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
-  drivers/mtd/nand/nand_base.c |    2 +-
-  1 files changed, 1 insertions(+), 1 deletions(-)
+Changes since v1:
+- Removed MACH_EXYNOS5440_DT because we can support it with MACH_EXYNOS5_DT
+- Removed exynos_init_uarts() calling because it is not required for DT
+- Removed GIC io-mapping entry because DT can support for runtime io-remapping
+- Removed exynos5440_dt_irq_match[] table because of exynos5_dt_irq_match[]
+- Removed UART resource because it is not required for DT
 
-diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
-index ec6841d..884e951 100644
---- a/drivers/mtd/nand/nand_base.c
-+++ b/drivers/mtd/nand/nand_base.c
-@@ -2954,7 +2954,7 @@ static int nand_id_len(u8 *id_data, int arrlen)
+Note, this is based on Samsun COMMON CLK stuff submitted by Thomas Abraham.
 
-  	/* There's a repeated pattern */
-  	if (period < arrlen)
--		return period;
-+		return period - 1;
+ arch/arm/mach-exynos/Kconfig                 |   12 ++++-
+ arch/arm/mach-exynos/Makefile                |    2 +-
+ arch/arm/mach-exynos/common.c                |   68 +++++++++++++++++++++++--
+ arch/arm/mach-exynos/include/mach/irqs.h     |    5 ++
+ arch/arm/mach-exynos/include/mach/map.h      |    5 ++
+ arch/arm/mach-exynos/include/mach/regs-pmu.h |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c       |   22 +++++---
+ arch/arm/mach-exynos/mct.c                   |   11 +++-
+ arch/arm/mach-exynos/setup-i2c0.c            |    2 +-
+ arch/arm/plat-samsung/include/plat/cpu.h     |    8 +++
+ drivers/tty/serial/samsung.c                 |    3 +-
+ 11 files changed, 118 insertions(+), 21 deletions(-)
 
-  	/* There are trailing zeros */
-  	if (last_nonzero < arrlen - 1)
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 1d0d083..418c051 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -68,6 +68,16 @@ config SOC_EXYNOS5250
+ 	help
+ 	  Enable EXYNOS5250 SoC support
+ 
++config SOC_EXYNOS5440
++	bool "SAMSUNG EXYNOS5440"
++	default y
++	depends on ARCH_EXYNOS5
++	select ARM_ARCH_TIMER
++	select AUTO_ZRELADDR
++	select COMMON_CLK
++	help
++	  Enable EXYNOS5440 SoC support
++
+ config EXYNOS4_MCT
+ 	bool
+ 	default y
+@@ -418,9 +428,9 @@ config MACH_EXYNOS4_DT
+ 
+ config MACH_EXYNOS5_DT
+ 	bool "SAMSUNG EXYNOS5 Machine using device tree"
++	default y
+ 	depends on ARCH_EXYNOS5
+ 	select ARM_AMBA
+-	select SOC_EXYNOS5250
+ 	select USE_OF
+ 	help
+ 	  Machine support for Samsung EXYNOS5 machine with device tree enabled.
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index ad66c9f4..0dcf389 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -13,7 +13,7 @@ obj-				:=
+ # Core
+ 
+ obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
+-obj-$(CONFIG_ARCH_EXYNOS5)	+= clock-exynos5.o
++obj-$(CONFIG_SOC_EXYNOS5250)	+= clock-exynos5.o
+ 
+ obj-$(CONFIG_PM)		+= pm.o
+ obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 1ca2d88..2891ff4 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -58,9 +58,11 @@ static const char name_exynos4210[] = "EXYNOS4210";
+ static const char name_exynos4212[] = "EXYNOS4212";
+ static const char name_exynos4412[] = "EXYNOS4412";
+ static const char name_exynos5250[] = "EXYNOS5250";
++static const char name_exynos5440[] = "EXYNOS5440";
+ 
+ static void exynos4_map_io(void);
+ static void exynos5_map_io(void);
++static void exynos5440_map_io(void);
+ static void exynos5_init_clocks(int xtal);
+ static void exynos_init_uarts(struct s3c2410_uartcfg *cfg, int no);
+ static int exynos_init(void);
+@@ -95,6 +97,12 @@ static struct cpu_table cpu_ids[] __initdata = {
+ 		.init_uarts	= exynos_init_uarts,
+ 		.init		= exynos_init,
+ 		.name		= name_exynos5250,
++	}, {
++		.idcode		= EXYNOS5440_SOC_ID,
++		.idmask		= EXYNOS5_SOC_MASK,
++		.map_io		= exynos5440_map_io,
++		.init		= exynos_init,
++		.name		= name_exynos5440,
+ 	},
+ };
+ 
+@@ -109,6 +117,15 @@ static struct map_desc exynos_iodesc[] __initdata = {
+ 	},
+ };
+ 
++static struct map_desc exynos5440_iodesc[] __initdata = {
++	{
++		.virtual	= (unsigned long)S5P_VA_CHIPID,
++		.pfn		= __phys_to_pfn(EXYNOS5440_PA_CHIPID),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	},
++};
++
+ static struct map_desc exynos4_iodesc[] __initdata = {
+ 	{
+ 		.virtual	= (unsigned long)S3C_VA_SYS,
+@@ -275,6 +292,15 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+ 	},
+ };
+ 
++static struct map_desc exynos5440_iodesc0[] __initdata = {
++	{
++		.virtual	= (unsigned long)S3C_VA_UART,
++		.pfn		= __phys_to_pfn(EXYNOS5440_PA_UART0),
++		.length		= SZ_512K,
++		.type		= MT_DEVICE,
++	},
++};
++
+ void exynos4_restart(char mode, const char *cmd)
+ {
+ 	__raw_writel(0x1, S5P_SWRESET);
+@@ -282,11 +308,29 @@ void exynos4_restart(char mode, const char *cmd)
+ 
+ void exynos5_restart(char mode, const char *cmd)
+ {
+-	__raw_writel(0x1, EXYNOS_SWRESET);
++	u32 val;
++	void __iomem *addr;
++
++	if (of_machine_is_compatible("samsung,exynos5250")) {
++		val = 0x1;
++		addr = EXYNOS_SWRESET;
++	} else if (of_machine_is_compatible("samsung,exynos5440")) {
++		val = (0x10 << 20) | (0x1 << 16);
++		addr = EXYNOS5440_SWRESET;
++	} else {
++		pr_err("%s: cannot support non-DT\n", __func__);
++		return;
++	}
++
++	__raw_writel(val, addr);
+ }
+ 
+ void __init exynos_init_late(void)
+ {
++	if (of_machine_is_compatible("samsung,exynos5440"))
++		/* to be supported later */
++		return;
++
+ 	exynos_pm_late_initcall();
+ }
+ 
+@@ -299,7 +343,11 @@ void __init exynos_init_late(void)
+ void __init exynos_init_io(struct map_desc *mach_desc, int size)
+ {
+ 	/* initialize the io descriptors we need for initialization */
+-	iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
++	if (of_machine_is_compatible("samsung,exynos5440"))
++		iotable_init(exynos5440_iodesc, ARRAY_SIZE(exynos5440_iodesc));
++	else
++		iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
++
+ 	if (mach_desc)
+ 		iotable_init(mach_desc, size);
+ 
+@@ -369,6 +417,11 @@ static void __init exynos5_map_io(void)
+ 	s3c64xx_spi_setname("exynos4210-spi");
+ }
+ 
++static void __init exynos5440_map_io(void)
++{
++	iotable_init(exynos5440_iodesc0, ARRAY_SIZE(exynos5440_iodesc0));
++}
++
+ static void __init exynos5_init_clocks(int xtal)
+ {
+ 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
+@@ -586,8 +639,9 @@ int __init combiner_of_init(struct device_node *np, struct device_node *parent)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id exynos4_dt_irq_match[] = {
++static const struct of_device_id exynos_dt_irq_match[] = {
+ 	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init, },
++	{ .compatible = "arm,cortex-a15-gic", .data = gic_of_init, },
+ 	{ .compatible = "samsung,exynos4210-combiner",
+ 			.data = combiner_of_init, },
+ 	{},
+@@ -604,7 +658,7 @@ void __init exynos4_init_irq(void)
+ 		gic_init_bases(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU, gic_bank_offset, NULL);
+ #ifdef CONFIG_OF
+ 	else
+-		of_irq_init(exynos4_dt_irq_match);
++		of_irq_init(exynos_dt_irq_match);
+ #endif
+ 
+ 	if (!of_have_populated_dt())
+@@ -621,7 +675,7 @@ void __init exynos4_init_irq(void)
+ void __init exynos5_init_irq(void)
+ {
+ #ifdef CONFIG_OF
+-	of_irq_init(exynos4_dt_irq_match);
++	of_irq_init(exynos_dt_irq_match);
+ #endif
+ 	/*
+ 	 * The parameters of s5p_init_irq() are for VIC init.
+@@ -651,7 +705,7 @@ static int __init exynos4_l2x0_cache_init(void)
+ {
+ 	int ret;
+ 
+-	if (soc_is_exynos5250())
++	if (soc_is_exynos5250() || soc_is_exynos5440())
+ 		return 0;
+ 
+ 	ret = l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
+@@ -992,6 +1046,8 @@ static int __init exynos_init_irq_eint(void)
+ 		}
+ 	}
+ #endif
++	if (soc_is_exynos5440())
++		return 0;
+ 
+ 	if (soc_is_exynos5250())
+ 		exynos_eint_base = ioremap(EXYNOS5_PA_GPIO1, SZ_4K);
+diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+index 35bced6..f43a96c 100644
+--- a/arch/arm/mach-exynos/include/mach/irqs.h
++++ b/arch/arm/mach-exynos/include/mach/irqs.h
+@@ -333,6 +333,11 @@
+ #define EXYNOS5_IRQ_FIMC_LITE1		IRQ_SPI(126)
+ #define EXYNOS5_IRQ_RP_TIMER		IRQ_SPI(127)
+ 
++/* EXYNOS5440 */
++
++#define EXYNOS5440_IRQ_UART0		IRQ_SPI(2)
++#define EXYNOS5440_IRQ_UART1		IRQ_SPI(3)
++
+ #define EXYNOS5_IRQ_PMU			COMBINER_IRQ(1, 2)
+ 
+ #define EXYNOS5_IRQ_SYSMMU_GSC0_0	COMBINER_IRQ(2, 0)
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 8480849..aa3760e 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -53,6 +53,7 @@
+ #define EXYNOS4_PA_ONENAND_DMA		0x0C600000
+ 
+ #define EXYNOS_PA_CHIPID		0x10000000
++#define EXYNOS5440_PA_CHIPID		0x00160000
+ 
+ #define EXYNOS4_PA_SYSCON		0x10010000
+ #define EXYNOS5_PA_SYSCON		0x10050100
+@@ -281,6 +282,10 @@
+ #define EXYNOS5_PA_UART3		0x12C30000
+ #define EXYNOS5_SZ_UART			SZ_256
+ 
++#define EXYNOS5440_PA_UART0		0x000B0000
++#define EXYNOS5440_PA_UART1		0x000C0000
++#define EXYNOS5440_SZ_UART		SZ_256
++
+ #define S3C_VA_UARTx(x)			(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
+ 
+ #endif /* __ASM_ARCH_MAP_H */
+diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+index d4e392b..c0b74f3 100644
+--- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
++++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+@@ -31,6 +31,7 @@
+ 
+ #define S5P_SWRESET				S5P_PMUREG(0x0400)
+ #define EXYNOS_SWRESET				S5P_PMUREG(0x0400)
++#define EXYNOS5440_SWRESET			S5P_PMUREG(0x00C4)
+ 
+ #define S5P_WAKEUP_STAT				S5P_PMUREG(0x0600)
+ #define S5P_EINT_WAKEUP_MASK			S5P_PMUREG(0x0604)
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index db1cd8e..3b82a1a 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -75,20 +75,24 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+ 	{},
+ };
+ 
+-static void __init exynos5250_dt_map_io(void)
++static void __init exynos5_dt_map_io(void)
+ {
+ 	exynos_init_io(NULL, 0);
+-	s3c24xx_init_clocks(24000000);
++
++	if (of_machine_is_compatible("samsung,exynos5250"))
++		s3c24xx_init_clocks(24000000);
+ }
+ 
+-static void __init exynos5250_dt_machine_init(void)
++static void __init exynos5_dt_machine_init(void)
+ {
+-	of_platform_populate(NULL, of_default_bus_match_table,
+-				exynos5250_auxdata_lookup, NULL);
++	if (of_machine_is_compatible("samsung,exynos5250"))
++		of_platform_populate(NULL, of_default_bus_match_table,
++				     exynos5250_auxdata_lookup, NULL);
+ }
+ 
+-static char const *exynos5250_dt_compat[] __initdata = {
++static char const *exynos5_dt_compat[] __initdata = {
+ 	"samsung,exynos5250",
++	"samsung,exynos5440",
+ 	NULL
+ };
+ 
+@@ -96,11 +100,11 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+ 	.init_irq	= exynos5_init_irq,
+ 	.smp		= smp_ops(exynos_smp_ops),
+-	.map_io		= exynos5250_dt_map_io,
++	.map_io		= exynos5_dt_map_io,
+ 	.handle_irq	= gic_handle_irq,
+-	.init_machine	= exynos5250_dt_machine_init,
++	.init_machine	= exynos5_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+ 	.timer		= &exynos4_timer,
+-	.dt_compat	= exynos5250_dt_compat,
++	.dt_compat	= exynos5_dt_compat,
+ 	.restart        = exynos5_restart,
+ MACHINE_END
+diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+index cc3805a..8d05cf1 100644
+--- a/arch/arm/mach-exynos/mct.c
++++ b/arch/arm/mach-exynos/mct.c
+@@ -19,7 +19,9 @@
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
+ #include <linux/percpu.h>
++#include <linux/of.h>
+ 
++#include <asm/arch_timer.h>
+ #include <asm/hardware/gic.h>
+ #include <asm/localtimer.h>
+ 
+@@ -478,7 +480,7 @@ static void __init exynos4_timer_resources(void)
+ #endif /* CONFIG_LOCAL_TIMERS */
+ }
+ 
+-static void __init exynos4_timer_init(void)
++static void __init exynos_timer_init(void)
+ {
+ #ifdef CONFIG_COMMON_CLK
+ 	if (soc_is_exynos4210())
+@@ -487,6 +489,11 @@ static void __init exynos4_timer_init(void)
+ 		exynos4x12_clk_init();
+ #endif
+ 
++	if (soc_is_exynos5440()) {
++		arch_timer_of_register();
++		return;
++	}
++
+ 	if ((soc_is_exynos4210()) || (soc_is_exynos5250()))
+ 		mct_int_type = MCT_INT_SPI;
+ 	else
+@@ -498,5 +505,5 @@ static void __init exynos4_timer_init(void)
+ }
+ 
+ struct sys_timer exynos4_timer = {
+-	.init		= exynos4_timer_init,
++	.init		= exynos_timer_init,
+ };
+diff --git a/arch/arm/mach-exynos/setup-i2c0.c b/arch/arm/mach-exynos/setup-i2c0.c
+index 5700f23..e2d9dfb 100644
+--- a/arch/arm/mach-exynos/setup-i2c0.c
++++ b/arch/arm/mach-exynos/setup-i2c0.c
+@@ -20,7 +20,7 @@ struct platform_device; /* don't need the contents */
+ 
+ void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+ {
+-	if (soc_is_exynos5250())
++	if (soc_is_exynos5250() || soc_is_exynos5440())
+ 		/* will be implemented with gpio function */
+ 		return;
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index ace4451..e0072ce 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -43,6 +43,7 @@ extern unsigned long samsung_cpu_id;
+ #define EXYNOS4_CPU_MASK	0xFFFE0000
+ 
+ #define EXYNOS5250_SOC_ID	0x43520000
++#define EXYNOS5440_SOC_ID	0x54400000
+ #define EXYNOS5_SOC_MASK	0xFFFFF000
+ 
+ #define IS_SAMSUNG_CPU(name, id, mask)		\
+@@ -62,6 +63,7 @@ IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
++IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+ 
+ #if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2412) || \
+     defined(CONFIG_CPU_S3C2416) || defined(CONFIG_CPU_S3C2440) || \
+@@ -130,6 +132,12 @@ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
+ # define soc_is_exynos5250()	0
+ #endif
+ 
++#if defined(CONFIG_SOC_EXYNOS5440)
++# define soc_is_exynos5440()	is_samsung_exynos5440()
++#else
++# define soc_is_exynos5440()	0
++#endif
++
+ #define IODESC_ENT(x) { (unsigned long)S3C24XX_VA_##x, __phys_to_pfn(S3C24XX_PA_##x), S3C24XX_SZ_##x, MT_DEVICE }
+ 
+ #ifndef KHZ
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 7f04717..0e26a16 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1646,7 +1646,8 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
+ #endif
+ 
+ #if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212) || \
+-	defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
++	defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250) || \
++	defined(CONFIG_SOC_EXYNOS5440)
+ static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
+ 	.info = &(struct s3c24xx_uart_info) {
+ 		.name		= "Samsung Exynos4 UART",
 -- 
 1.7.4.1
-
-
-[1] http://lists.infradead.org/pipermail/linux-mtd/2012-October/044358.html
-
---
-Thanks,
-Sylwester
