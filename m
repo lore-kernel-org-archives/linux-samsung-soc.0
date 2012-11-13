@@ -1,106 +1,75 @@
-From: Wang Jing <windsdaemon@gmail.com>
-Subject: [PATCH] sound: use PTR_ERR to fix the value of the return
-Date: Tue, 13 Nov 2012 20:19:00 +0800
-Message-ID: <1352809140-4214-1-git-send-email-windsdaemon@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:43168 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751828Ab2KMMTW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Nov 2012 07:19:22 -0500
-Received: by mail-pb0-f46.google.com with SMTP id rr4so5074836pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Nov 2012 04:19:21 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v3 1/4] ARM: EXYNOS: pm_domain: Detect domain state on
+ registration from DT
+Date: Tue, 13 Nov 2012 13:51:52 +0100
+Message-ID: <1352811115-1198-2-git-send-email-t.figa@samsung.com>
+References: <1352811115-1198-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1352811115-1198-1-git-send-email-t.figa@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, rjw@sisk.pl, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-From: wangjing <wangjing@wangjing.(none)>
+Initial state of power domains might vary on different boards and with
+different bootloaders.
 
-This patch use the macro PTR_ERR to modify the value of the return
+This patch adds detection of initial state of power domains when being
+registered from DT.
 
-Signed-off-by: wangjing <wangjing@wangjing.(none)>
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- sound/soc/samsung/smdk_spdif.c |   30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 4 ----
+ arch/arm/mach-exynos/pm_domains.c                             | 8 +++++---
+ 2 files changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/samsung/smdk_spdif.c b/sound/soc/samsung/smdk_spdif.c
-index beaa9c1..8f78482 100644
---- a/sound/soc/samsung/smdk_spdif.c
-+++ b/sound/soc/samsung/smdk_spdif.c
-@@ -28,32 +28,29 @@ static int set_audio_clock_heirachy(struct platform_device *pdev)
+diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+index 6528e21..843b546 100644
+--- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
++++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+@@ -9,10 +9,6 @@ Required Properties:
+ - reg: physical base address of the controller and length of memory mapped
+     region.
  
- 	fout_epll = clk_get(NULL, "fout_epll");
- 	if (IS_ERR(fout_epll)) {
--		printk(KERN_WARNING "%s: Cannot find fout_epll.\n",
--				__func__);
--		return -EINVAL;
-+		printk(KERN_ERR "%s: Cannot find fout_epll.\n", __func__);
-+		ret = PTR_ERR(fout_epll);
-+		return ret;
+-Optional Properties:
+-- samsung,exynos4210-pd-off: Specifies that the power domain is in turned-off
+-    state during boot and remains to be turned-off until explicitly turned-on.
+-
+ Example:
+ 
+ 	lcd0: power-domain-lcd0 {
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index c0bc83a..d1abc1a 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -89,6 +89,7 @@ static __init int exynos_pm_dt_parse_domains(void)
+ 
+ 	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+ 		struct exynos_pm_domain *pd;
++		int on;
+ 
+ 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+ 		if (!pd) {
+@@ -97,14 +98,15 @@ static __init int exynos_pm_dt_parse_domains(void)
+ 			return -ENOMEM;
+ 		}
+ 
+-		if (of_get_property(np, "samsung,exynos4210-pd-off", NULL))
+-			pd->is_off = true;
+ 		pd->name = np->name;
+ 		pd->base = of_iomap(np, 0);
+ 		pd->pd.power_off = exynos_pd_power_off;
+ 		pd->pd.power_on = exynos_pd_power_on;
+ 		pd->pd.of_node = np;
+-		pm_genpd_init(&pd->pd, NULL, false);
++
++		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
++
++		pm_genpd_init(&pd->pd, NULL, !on);
  	}
- 
- 	mout_epll = clk_get(NULL, "mout_epll");
- 	if (IS_ERR(mout_epll)) {
--		printk(KERN_WARNING "%s: Cannot find mout_epll.\n",
--				__func__);
--		ret = -EINVAL;
-+		printk(KERN_ERR "%s: Cannot find mout_epll.\n", __func__);
-+		ret = PTR_ERR(mout_epll);
- 		goto out1;
- 	}
- 
- 	sclk_audio0 = clk_get(&pdev->dev, "sclk_audio");
- 	if (IS_ERR(sclk_audio0)) {
--		printk(KERN_WARNING "%s: Cannot find sclk_audio.\n",
--				__func__);
--		ret = -EINVAL;
-+		printk(KERN_ERR "%s: Cannot find sclk_audio.\n", __func__);
-+		ret = PTR_ERR(sclk_audio0);
- 		goto out2;
- 	}
- 
- 	sclk_spdif = clk_get(NULL, "sclk_spdif");
- 	if (IS_ERR(sclk_spdif)) {
--		printk(KERN_WARNING "%s: Cannot find sclk_spdif.\n",
--				__func__);
--		ret = -EINVAL;
-+		printk(KERN_ERR "%s: Cannot find sclk_spdif.\n", __func__);
-+		ret = PTR_ERR(sclk_spdif);
- 		goto out3;
- 	}
- 
-@@ -81,11 +78,13 @@ static int set_audio_clock_rate(unsigned long epll_rate,
- 				unsigned long audio_rate)
- {
- 	struct clk *fout_epll, *sclk_spdif;
-+	int ret = 0;
- 
- 	fout_epll = clk_get(NULL, "fout_epll");
- 	if (IS_ERR(fout_epll)) {
- 		printk(KERN_ERR "%s: failed to get fout_epll\n", __func__);
--		return -ENOENT;
-+		ret = PTR_ERR(fout_epll);
-+		return ret;
- 	}
- 
- 	clk_set_rate(fout_epll, epll_rate);
-@@ -94,13 +93,14 @@ static int set_audio_clock_rate(unsigned long epll_rate,
- 	sclk_spdif = clk_get(NULL, "sclk_spdif");
- 	if (IS_ERR(sclk_spdif)) {
- 		printk(KERN_ERR "%s: failed to get sclk_spdif\n", __func__);
--		return -ENOENT;
-+		ret = PTR_ERR(sclk_spdif);
-+		return ret;
- 	}
- 
- 	clk_set_rate(sclk_spdif, audio_rate);
- 	clk_put(sclk_spdif);
- 
--	return 0;
-+	return ret;
+ 	return 0;
  }
- 
- static int smdk_hw_params(struct snd_pcm_substream *substream,
 -- 
-1.7.9.5
+1.8.0
+
