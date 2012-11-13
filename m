@@ -1,122 +1,106 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] i2c: i2c-s3c2410: Add support for pinctrl
-Date: Tue, 13 Nov 2012 11:33:40 +0100
-Message-ID: <14549510.veZygXpPkq@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Wang Jing <windsdaemon@gmail.com>
+Subject: [PATCH] sound: use PTR_ERR to fix the value of the return
+Date: Tue, 13 Nov 2012 20:19:00 +0800
+Message-ID: <1352809140-4214-1-git-send-email-windsdaemon@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63778 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753421Ab2KMKdr (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:43168 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751828Ab2KMMTW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Nov 2012 05:33:47 -0500
+	Tue, 13 Nov 2012 07:19:22 -0500
+Received: by mail-pb0-f46.google.com with SMTP id rr4so5074836pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Nov 2012 04:19:21 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-This patch adds support for pin configuration using pinctrl subsystem
-to the i2c-s3c2410 driver.
+From: wangjing <wangjing@wangjing.(none)>
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+This patch use the macro PTR_ERR to modify the value of the return
+
+Signed-off-by: wangjing <wangjing@wangjing.(none)>
 ---
- .../devicetree/bindings/i2c/samsung-i2c.txt          | 20 ++++++++++++++++----
- drivers/i2c/busses/i2c-s3c2410.c                     | 12 ++++++++----
- 2 files changed, 24 insertions(+), 8 deletions(-)
+ sound/soc/samsung/smdk_spdif.c |   30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-index b6cb5a1..e9611ac 100644
---- a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-+++ b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-@@ -13,11 +13,17 @@ Required properties:
-   - interrupts: interrupt number to the cpu.
-   - samsung,i2c-sda-delay: Delay (in ns) applied to data line (SDA) edges.
+diff --git a/sound/soc/samsung/smdk_spdif.c b/sound/soc/samsung/smdk_spdif.c
+index beaa9c1..8f78482 100644
+--- a/sound/soc/samsung/smdk_spdif.c
++++ b/sound/soc/samsung/smdk_spdif.c
+@@ -28,32 +28,29 @@ static int set_audio_clock_heirachy(struct platform_device *pdev)
  
-+Required for all cases except "samsung,s3c2440-hdmiphy-i2c":
-+  - Samsung GPIO variant (deprecated):
-+    - gpios: The order of the gpios should be the following: <SDA, SCL>.
-+      The gpio specifier depends on the gpio controller. Required in all
-+      cases except for "samsung,s3c2440-hdmiphy-i2c" whose input/output
-+      lines are permanently wired to the respective clienta
-+  - Pinctrl variant (preferred, if available):
-+    - pinctrl-0: Pin control group to be used for this controller.
-+    - pinctrl-names: Should contain only one value - "default".
-+
- Optional properties:
--  - gpios: The order of the gpios should be the following: <SDA, SCL>.
--    The gpio specifier depends on the gpio controller. Required in all
--    cases except for "samsung,s3c2440-hdmiphy-i2c" whose input/output
--    lines are permanently wired to the respective client
-   - samsung,i2c-slave-addr: Slave address in multi-master enviroment. If not
-     specified, default value is 0.
-   - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
-@@ -31,8 +37,14 @@ Example:
- 		interrupts = <345>;
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <100000>;
-+		/* Samsung GPIO variant begins here */
- 		gpios = <&gpd1 2 0 /* SDA */
- 			 &gpd1 3 0 /* SCL */>;
-+		/* Samsung GPIO variant ends here */
-+		/* Pinctrl variant begins here */
-+		pinctrl-0 = <&i2c3_bus>;
-+		pinctrl-names = "default";
-+		/* Pinctrl variant ends here */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ 	fout_epll = clk_get(NULL, "fout_epll");
+ 	if (IS_ERR(fout_epll)) {
+-		printk(KERN_WARNING "%s: Cannot find fout_epll.\n",
+-				__func__);
+-		return -EINVAL;
++		printk(KERN_ERR "%s: Cannot find fout_epll.\n", __func__);
++		ret = PTR_ERR(fout_epll);
++		return ret;
+ 	}
  
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 3e0335f..ae4304b 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -38,6 +38,7 @@
- #include <linux/io.h>
- #include <linux/of_i2c.h>
- #include <linux/of_gpio.h>
-+#include <linux/pinctrl/consumer.h>
+ 	mout_epll = clk_get(NULL, "mout_epll");
+ 	if (IS_ERR(mout_epll)) {
+-		printk(KERN_WARNING "%s: Cannot find mout_epll.\n",
+-				__func__);
+-		ret = -EINVAL;
++		printk(KERN_ERR "%s: Cannot find mout_epll.\n", __func__);
++		ret = PTR_ERR(mout_epll);
+ 		goto out1;
+ 	}
  
- #include <asm/irq.h>
+ 	sclk_audio0 = clk_get(&pdev->dev, "sclk_audio");
+ 	if (IS_ERR(sclk_audio0)) {
+-		printk(KERN_WARNING "%s: Cannot find sclk_audio.\n",
+-				__func__);
+-		ret = -EINVAL;
++		printk(KERN_ERR "%s: Cannot find sclk_audio.\n", __func__);
++		ret = PTR_ERR(sclk_audio0);
+ 		goto out2;
+ 	}
  
-@@ -83,6 +84,7 @@ struct s3c24xx_i2c {
+ 	sclk_spdif = clk_get(NULL, "sclk_spdif");
+ 	if (IS_ERR(sclk_spdif)) {
+-		printk(KERN_WARNING "%s: Cannot find sclk_spdif.\n",
+-				__func__);
+-		ret = -EINVAL;
++		printk(KERN_ERR "%s: Cannot find sclk_spdif.\n", __func__);
++		ret = PTR_ERR(sclk_spdif);
+ 		goto out3;
+ 	}
  
- 	struct s3c2410_platform_i2c	*pdata;
- 	int			gpios[2];
-+	struct pinctrl          *pctrl;
- #ifdef CONFIG_CPU_FREQ
- 	struct notifier_block	freq_transition;
- #endif
-@@ -861,9 +863,8 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
+@@ -81,11 +78,13 @@ static int set_audio_clock_rate(unsigned long epll_rate,
+ 				unsigned long audio_rate)
+ {
+ 	struct clk *fout_epll, *sclk_spdif;
++	int ret = 0;
  
- 	if (pdata->cfg_gpio)
- 		pdata->cfg_gpio(to_platform_device(i2c->dev));
--	else
--		if (s3c24xx_i2c_parse_dt_gpio(i2c))
--			return -EINVAL;
-+	else if (IS_ERR(i2c->pctrl) && s3c24xx_i2c_parse_dt_gpio(i2c))
-+		return -EINVAL;
+ 	fout_epll = clk_get(NULL, "fout_epll");
+ 	if (IS_ERR(fout_epll)) {
+ 		printk(KERN_ERR "%s: failed to get fout_epll\n", __func__);
+-		return -ENOENT;
++		ret = PTR_ERR(fout_epll);
++		return ret;
+ 	}
  
- 	/* write slave address */
+ 	clk_set_rate(fout_epll, epll_rate);
+@@ -94,13 +93,14 @@ static int set_audio_clock_rate(unsigned long epll_rate,
+ 	sclk_spdif = clk_get(NULL, "sclk_spdif");
+ 	if (IS_ERR(sclk_spdif)) {
+ 		printk(KERN_ERR "%s: failed to get sclk_spdif\n", __func__);
+-		return -ENOENT;
++		ret = PTR_ERR(sclk_spdif);
++		return ret;
+ 	}
  
-@@ -1013,6 +1014,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	i2c->adap.algo_data = i2c;
- 	i2c->adap.dev.parent = &pdev->dev;
+ 	clk_set_rate(sclk_spdif, audio_rate);
+ 	clk_put(sclk_spdif);
  
-+	i2c->pctrl = devm_pinctrl_get_select_default(i2c->dev);
-+
- 	/* initialise the i2c controller */
+-	return 0;
++	return ret;
+ }
  
- 	ret = s3c24xx_i2c_init(i2c);
-@@ -1112,7 +1115,8 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
- 	iounmap(i2c->regs);
- 
- 	release_resource(i2c->ioarea);
--	s3c24xx_i2c_dt_gpio_free(i2c);
-+	if (pdev->dev.of_node && IS_ERR(i2c->pctrl))
-+		s3c24xx_i2c_dt_gpio_free(i2c);
- 	kfree(i2c->ioarea);
- 
- 	return 0;
+ static int smdk_hw_params(struct snd_pcm_substream *substream,
 -- 
-1.8.0
+1.7.9.5
