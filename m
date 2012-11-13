@@ -1,151 +1,100 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/7] ARM: EXYNOS: add support for EXYNOS5440 SoC
-Date: Tue, 13 Nov 2012 13:55:03 +0900
-Message-ID: <01a201cdc15b$0b385bc0$21a91340$%kim@samsung.com>
-References: <1351274153-3120-1-git-send-email-kgene.kim@samsung.com>
- <1351274153-3120-2-git-send-email-kgene.kim@samsung.com>
- <5432090.dpMO1fymRx@flatron>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH] usb: ohci-exynos: use clk_prepare_enable and
+ clk_disable_unprepare
+Date: Tue, 13 Nov 2012 13:56:11 +0900
+Message-ID: <01a401cdc15b$33be8100$9b3b8300$%kim@samsung.com>
+References: <1349221297-2815-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:19513 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753205Ab2KMEzG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Nov 2012 23:55:06 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDE001I1TNGX8L0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Nov 2012 13:55:04 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDE009Y2TNRE950@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Nov 2012 13:55:03 +0900 (KST)
-In-reply-to: <5432090.dpMO1fymRx@flatron>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1349221297-2815-1-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Tomasz Figa wrote:
+Thomas Abraham wrote:
 > 
-> Hi Kgene,
+> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+> calls as required by common clock framework.
 > 
-Hi,
+> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-[...]
+(+ Alan Stern)
 
-
-> >  void exynos5_restart(char mode, const char *cmd)
-> >  {
-> > -	__raw_writel(0x1, EXYNOS_SWRESET);
-> > +	u32 val;
-> > +	void __iomem *addr;
-> > +
-> > +	if (of_machine_is_compatible("samsung,exynos5250")) {
-> > +		val = 0x1;
-> > +		addr = EXYNOS_SWRESET;
-> > +	} else if (of_machine_is_compatible("samsung,exynos5440")) {
-> > +		val = (0x10 << 20) | (0x1 << 16);
-> > +		addr = EXYNOS5440_SWRESET;
-> > +	} else {
-> > +		pr_err("%s: cannot support non-DT\n", __func__);
-> > +		return;
-> > +	}
-> 
-> Why soc_is_XXX isn't used here? It should be faster and more correct than
-> of_machine_is_compatible.
-> 
-Well...let me check again.
-
-> I can imagine the same board available with two different SoCs, for which
-> of_machine_is_compatible wouldn't work.
-> 
-I don't think so. Basically, the restart() depends on SoC not board in
-addition, each board is supposed to have its own SoC not different SoCs.
-
-[...]
-
-> > -static char const *exynos5250_dt_compat[] __initdata = {
-> > +static char const *exynos5_dt_compat[] __initdata = {
-> >  	"samsung,exynos5250",
-> > +	"samsung,exynos5440",
-> >  	NULL
-> >  };
-> 
-> Something doesn't seem right here. How do you distinguish between
-> MACH_EXYNOS5_DT and MACH_EXYNOS5440_DT if both have the same compatible
-> matches?
-> 
-I updated to support MACH_EXYNOS5440_DT with MACH_EXYNOS5_DT.
-
-> Those machines doesn't seem to share much definitions, so maybe a separate
-> mach-exynos5440-dt.c file would be a better approach?
-> 
-See my updated patch.
-
-> > @@ -96,11 +100,23 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5
-> > (Flattened Device Tree)") /* Maintainer: Kukjin Kim
-> > <kgene.kim@samsung.com> */
-> >  	.init_irq	= exynos5_init_irq,
-> >  	.smp		= smp_ops(exynos_smp_ops),
-> > -	.map_io		= exynos5250_dt_map_io,
-> > +	.map_io		= exynos5_dt_map_io,
-> >  	.handle_irq	= gic_handle_irq,
-> > -	.init_machine	= exynos5250_dt_machine_init,
-> > +	.init_machine	= exynos5_dt_machine_init,
-> >  	.init_late	= exynos_init_late,
-> >  	.timer		= &exynos4_timer,
-> > -	.dt_compat	= exynos5250_dt_compat,
-> > +	.dt_compat	= exynos5_dt_compat,
-> > +	.restart        = exynos5_restart,
-> > +MACHINE_END
-> > +
-> > +DT_MACHINE_START(EXYNOS5440_DT, "SAMSUNG EXYNOS5440 (Flattened Device
-> > Tree)") +	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-> > +	.init_irq	= exynos5_init_irq,
-> > +	.smp		= smp_ops(exynos_smp_ops),
-> > +	.map_io		= exynos5_dt_map_io,
-> > +	.handle_irq	= gic_handle_irq,
-> > +	.init_machine	= exynos5_dt_machine_init,
-> > +	.timer		= &exynos5_timer,
-> > +	.dt_compat	= exynos5_dt_compat,
-> >  	.restart        = exynos5_restart,
-> 
-> Since restarts for both differ, why not to add separate exynos5440 restart
-> and use it here?
-> 
-As I said above, I don't think so.
-
-[...]
-
-> > @@ -487,6 +489,9 @@ static void __init exynos4_timer_init(void)
-> >  		exynos4x12_clk_init();
-> >  #endif
-> >
-> > +	if (of_machine_is_compatible("samsung,exynos5440"))
-> > +		arch_timer_of_register();
-> > +
-> 
-> Why exynos4_timer_init is being touched here, if exynos5_timer_init is
-> being added?
-> 
-> I would rather keep exynos4_timer (which is used for all Exynos4 SoCs
-> and for Exynos5250) as is and define new exynos5250_timer if it needs
-> completely different initialization...
-> 
-See updated patch.
-
-[...]
+Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
 Thanks.
 
 Best regards,
 Kgene.
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> ---
+>  drivers/usb/host/ohci-exynos.c |   10 +++++-----
+>  1 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-
+> exynos.c
+> index 20a5008..7bca600 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -123,7 +123,7 @@ static int __devinit exynos_ohci_probe(struct
+> platform_device *pdev)
+>  		goto fail_clk;
+>  	}
+> 
+> -	err = clk_enable(exynos_ohci->clk);
+> +	err = clk_prepare_enable(exynos_ohci->clk);
+>  	if (err)
+>  		goto fail_clken;
+> 
+> @@ -167,7 +167,7 @@ static int __devinit exynos_ohci_probe(struct
+> platform_device *pdev)
+>  	return 0;
+> 
+>  fail_io:
+> -	clk_disable(exynos_ohci->clk);
+> +	clk_disable_unprepare(exynos_ohci->clk);
+>  fail_clken:
+>  	clk_put(exynos_ohci->clk);
+>  fail_clk:
+> @@ -186,7 +186,7 @@ static int __devexit exynos_ohci_remove(struct
+> platform_device *pdev)
+>  	if (pdata && pdata->phy_exit)
+>  		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> 
+> -	clk_disable(exynos_ohci->clk);
+> +	clk_disable_unprepare(exynos_ohci->clk);
+>  	clk_put(exynos_ohci->clk);
+> 
+>  	usb_put_hcd(hcd);
+> @@ -232,7 +232,7 @@ static int exynos_ohci_suspend(struct device *dev)
+>  	if (pdata && pdata->phy_exit)
+>  		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> 
+> -	clk_disable(exynos_ohci->clk);
+> +	clk_disable_unprepare(exynos_ohci->clk);
+> 
+>  fail:
+>  	spin_unlock_irqrestore(&ohci->lock, flags);
+> @@ -247,7 +247,7 @@ static int exynos_ohci_resume(struct device *dev)
+>  	struct platform_device *pdev = to_platform_device(dev);
+>  	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
+> 
+> -	clk_enable(exynos_ohci->clk);
+> +	clk_prepare_enable(exynos_ohci->clk);
+> 
+>  	if (pdata && pdata->phy_init)
+>  		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> --
+> 1.7.4.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
