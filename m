@@ -1,87 +1,67 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [oselas] Mini2440 boot failure on kernel 3.7-rc1
-Date: Wed, 14 Nov 2012 00:26:58 -0800
-Message-ID: <50A355D2.6080406@gmail.com>
-References: <5082B755.1070109@gmail.com> <201210220928.19538.jbe@pengutronix.de> <50A183DF.1000304@gmail.com> <CAN8TOE_5ra-yJwoFmy7qvA80iGYkSNe2gAW6nYnc8vtpvi5+1w@mail.gmail.com> <50A2BBAC.1030506@gmail.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/4] iommu/exynos: Fixes and Enhancements of System MMU driver
+	with DT
+Date: Wed, 14 Nov 2012 17:50:56 +0900
+Message-ID: <002001cdc245$29256160$7b702420$%cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f46.google.com ([209.85.210.46]:51821 "EHLO
-	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932730Ab2KNI1A (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Nov 2012 03:27:00 -0500
-Received: by mail-da0-f46.google.com with SMTP id n41so93125dak.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Nov 2012 00:27:00 -0800 (PST)
-In-Reply-To: <50A2BBAC.1030506@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-language: ko
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Subash Patel' <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Sanghyun Lee' <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Juergen Beisert <jbe@pengutronix.de>, oselas@community.pengutronix.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
 
+The current exynos-iommu(System MMU) driver does not work autonomously
+since it is lack of support for power management of peripheral blocks.
+For example, MFC device driver must ensure that its System MMU is disabled
+before MFC block is power-down not to invalidate IOTLB in the System MMU
+when I/O memory mapping is changed. Because A System MMU is resides in the
+same H/W block, access to control registers of System MMU while the H/W
+block is turned off must be prohibited.
 
-On 11/13/2012 01:29 PM, Sylwester Nawrocki wrote:
-> On 11/13/2012 08:54 AM, Brian Norris wrote:
->> On Mon, Nov 12, 2012 at 3:18 PM, Sylwester Nawrocki
->> Can you please list a full 8-byte string of id_data[]? This will be
->> very helpful. I know of at least one solution that will fix your
->> problem, but I need to know your full ID to help lay this issue to
->> rest for good.
-> 
-> Indeed, I wish there was good hardware documentation, still it seems
-> an exception rather than a rule for some hardware vendors...
-> 
-> Here is my id_data[] dump:
-> 
-> ec, f1, 00, 95, 40, ec, ec, f1
-> 
-> Looks a bit strange, I hope you know how to handle this. :)
+This set of changes solves the above problem with setting each System MMUs
+as the parent of the device which owns the System MMU to recieve the
+information when the device is turned off or turned on.
 
-Well, sort of. I could add yet another quirk: that some "5-byte" IDs
-have the manufacturer ID repeated twice (0xEC 0xEC). In fact, I just got
-another report of a similar (stupid) ID.
+Another big change to the driver is the support for devicetree.
+The bindings for System MMU is described in
+Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
 
-But I have a more reasonable change. It's disappointing, but I'll have to
-do a partial revert of my previous commits, dropping support for some of
-the newest SLC in favor of not breaking the old. I'll have to try to get
-in contact with Samsung if I'm ever going to support the newest stuff.
+In addition, this patchset also includes several bug fixes and enhancements
+of the current driver.
 
-Please try my diff (below), on top of the patch from:
+Patch summary:
+[PATCH 1/4] ARM: EXYNOS: remove system mmu initialization from arch/arm/ tree
+[PATCH 2/4] ARM: EXYNOS: Add clk_ops for gating clocks of System MMU
+[PATCH 3/4] ARM: EXYNOS: add System MMU definition to DT
+[PATCH 4/4] iommu/exynos: enhancements of System MMU driver with DT
 
-http://lists.infradead.org/pipermail/linux-mtd/2012-October/044356.html
-
-> OK. BTW, is this comment in drivers/mtd/nand_base.c
-> 
-> /*
->   * nand_id_has_period - Check if an ID string has a given wraparound 
-> period
->   ...
->   * specific repetition interval period (e.g., {0x20,0x01,0x7F,0x20} has a
->   * period of 2). This is a helper function for nand_id_len(). Returns 
-> non-zero
->   ...
-> 
-> correct ? Shouldn't it be "has a period of 3" ? Since there are 3 different
-> values and then it repeats starting with 0x20 ?
-
-Yes, good eye. I also noticed my typo when re-reviewing this code just now. I'll fix this for the 3.8 cycle.
-
-Brian
-
----
- drivers/mtd/nand/nand_base.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
-index d5ece6e..1a03b7f 100644
---- a/drivers/mtd/nand/nand_base.c
-+++ b/drivers/mtd/nand/nand_base.c
-@@ -2990,6 +2990,7 @@ static void nand_decode_ext_id(struct mtd_info *mtd, struct nand_chip *chip,
- 	 * ID to decide what to do.
- 	 */
- 	if (id_len == 6 && id_data[0] == NAND_MFR_SAMSUNG &&
-+			(chip->cellinfo & NAND_CI_CELLTYPE_MSK) &&
- 			id_data[5] != 0x00) {
- 		/* Calc pagesize */
- 		mtd->writesize = 2048 << (extid & 0x03);
+Diffstats:
+ .../devicetree/bindings/arm/samsung/system-mmu.txt |   42 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |   96 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |  124 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |  152 ++-
+ arch/arm/mach-exynos/Kconfig                       |    5 -
+ arch/arm/mach-exynos/Makefile                      |    1 -
+ arch/arm/mach-exynos/clock-exynos4.c               |   41 +-
+ arch/arm/mach-exynos/clock-exynos4210.c            |    9 +-
+ arch/arm/mach-exynos/clock-exynos4212.c            |   23 +-
+ arch/arm/mach-exynos/clock-exynos5.c               |   87 +-
+ arch/arm/mach-exynos/dev-sysmmu.c                  |  274 ----
+ arch/arm/mach-exynos/include/mach/sysmmu.h         |   66 -
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |   34 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |   30 +
+ drivers/iommu/Kconfig                              |   17 +-
+ drivers/iommu/Makefile                             |    2 +-
+ drivers/iommu/exynos-iommu.c                       | 1420 +++++++++++++++-----
+ 17 files changed, 1652 insertions(+), 771 deletions(-)
