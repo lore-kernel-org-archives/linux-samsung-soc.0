@@ -1,136 +1,127 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: S3C244X/S3C64XX SoC camera host interface driver questions
-Date: Tue, 13 Nov 2012 23:54:13 +0100
-Message-ID: <50A2CF95.4000202@gmail.com>
-References: <CAA11ShCpH7Z8eLok=MEh4bcSb6XjtVFfLQEYh2icUtYc-j5hEQ@mail.gmail.com> <5096C561.5000108@gmail.com> <CAA11ShCKFfdmd_ydxxCYo9Sv0VhgZW9kCk_F7LAQDg3mr5prrw@mail.gmail.com> <5096E8D7.4070304@gmail.com> <CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com> <50979998.8090809@gmail.com> <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com> <50983CFD.2030104@gmail.com> <CAA11ShDAscm8snYzjnC3Fe1MaVXc-FJqhWM677iJwgbgu2_J1Q@mail.gmail.com> <509AD957.5070301@gmail.com> <CAA11ShCn3S_nxXg5_pAsgcMsPFpER7XrHsvg71DrznAmONu7Lg@mail.gmail.com> <509CBB61.40206@gmail.com> <CAA11ShB1s6wSEEoVQ2_z4_BaGdM8f_F7ec_UrZzhcBgzoABAtQ@mail.gmail.com>
+From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v7 0/5] usb: phy: samsung: Introducing usb phy driver for
+ samsung SoCs
+Date: Wed, 14 Nov 2012 09:38:52 +0530
+Message-ID: <CAD6zSYM5-GdGHYH=W-My34oXRfH0M+rfettFa0fiit3-_V1RDA@mail.gmail.com>
+References: <1351573057-22249-1-git-send-email-p.paneri@samsung.com>
+	<20121109115440.GC8078@arwen.pp.htv.fi>
+	<CAH9JG2X1a8MqBpnk8uHRjsGnaD7uob5GBhUh_aS5iCprEvi2XQ@mail.gmail.com>
+	<CAD6zSYN6xpHt54d-w=6veb6AErTq6ERQcneo7ewC-qsBoMuThQ@mail.gmail.com>
+	<20121109135441.GC8567@arwen.pp.htv.fi>
+	<004201cdc08f$fa0fd3d0$ee2f7b70$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:48723 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754911Ab2KMWyS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Nov 2012 17:54:18 -0500
-In-Reply-To: <CAA11ShB1s6wSEEoVQ2_z4_BaGdM8f_F7ec_UrZzhcBgzoABAtQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <004201cdc08f$fa0fd3d0$ee2f7b70$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrey Gusakov <dron0gus@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, In-Bae Jeong <kukyakya@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi Andrey,
+Hi,
 
-On 11/11/2012 02:26 PM, Andrey Gusakov wrote:
-> Hi.
->
-> Patch v2 attached. Comments taken into account.
-
-Thanks, I had to rework the S3C-CAMIF subdev controls handling to avoid
-races when the control's value is modified in the control framwework and
-accessed from interrupt context in the driver.
-
-I've pushed all patches to branch s3c-camif-for-v3.8 at
-git://linuxtv.org/snawrocki/media.git
-
-I'd like to squash all the s3c-camif patches before sending upstream,
-if you don't mind. And to add your Signed-off at the final patch.
-Please let me know if you'd rather keep your patch separate.
-
-I might have introduced bugs in the image effects handling, hopefully
-there is none. I couldn't test it though. Could you test that on your
-side with s3c64xx ?
-
-I'm planning to send a pull request for the CAMIF driver this week.
-
->>> I often get "VIDIOC_QUERYCAP: failed: Inappropriate ioctl for device"
->> This is an issue in the v4l2-ctl, it is going to be fixed by adding
->> VIDIOC_SUBDEV_QUERYCAP ioctl for subdevs. It has been just discussed today.
->> I guess you get it when running v4l2-ctl on /dev/v4l-subdev* ?
-> Yes.
->>> or "system error: Inappropriate ioctl for device"
->> I think this one is caused by unimplemented VIDIOC_G/S_PARM ioctls
->> at the s3c-camif driver.
->>> Is it because of not implemented set/get framerate func? How this
->> Yes, I think so. ioctls as above.
-> Ok. I'll implement this ioctls and see what happens.
-
-They are not supposed to be implemented in the s3c-camif driver.
-Instead they should be emulated by a user-space library, based on
-the sensor subdev operations.
-
->>> should work? I mean framerate heavy depend of sensor's settings. So
->>> set/get framerate call to fimc should get/set framerate from sensor.
->>> What is mechanism of such things?
+On Mon, Nov 12, 2012 at 10:11 AM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Felipe Balbi wrote:
 >>
+>> Hi,
 >>
->> With user space subdev API one should control frame interval directly
->> on the sensor subdev device node [1]. For Gstreamer to work with
->> VIDIOC_G/S_PARM ioctls we need a dedicated v4l2 library (possibly with
->> a plugin for s3c-camif, but that shouldn't be needed since it is very
->> simple driver) that will translate those video node ioctls into the
->> subdev node ioctls [2]. Unfortunately such library is still not available.
->>
->>
->>> And same question about synchronizing format of sensor and FIMC pads.
->>> I make ov2640 work, but if did not call media-ctl for sensor, format
->>> of FIMC sink pad and format of sensor source pad different. I think I
->>> missed something, but reading other sources did not help.
->>
->>
->> As I explained previously, s3c-fimc is supposed to synchronize format
->> with the sensor subdev. Have you got pad level get_fmt callback
->> implemented in the ov2640 driver ?
-> Yes.
->> Could you post your 'media-ctl -p' output, run right after the system boot ?
+> Hi :-)
 >
-> Looks like I messed up, after starting formats are the same:
+> [...]
 >
-> Opening media device /dev/media0ov2640: ov2640_open:1381
+>> Sure, but I still need Kukjin's 'say-so' for the arch/arm/plat-samsung
+>> and arch/arm/mach-exynos part.
+>>
+> Basically, this approach looks OK to me.
 >
-> Enumerating entities
-> Found 4 entities
-> Enumerating pads and links
-> Media controller API version 0.0.0
+> BTW, I have some comments and need to update...
+Thanks! I highly appreciate your comments. It would have been even
+better if I had got these before the closing bell.
 >
-> Media device information
-> ------------------------
-> driver          s3c-camif
-> model           SAMSUNG S3C6410 CAMIF
-> serial
-> bus info        platform:%s
+> From 4th patch...
+>
+>> diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-
+>> s3c64xx/mach-smdk6410.c
+>
+> [...]
+>
+>> @@ -72,6 +73,8 @@
+>>  #include <linux/platform_data/touchscreen-s3c2410.h>
+>>  #include <plat/keypad.h>
+>>  #include <plat/backlight.h>
+>> +#include <plat/regs-fb-v4.h>
+Well it comes from an older state where without this it was giving a
+build error. Although it shouldn't have been here. Will fix it.
+>
+> Why? In addition, this causes build error with s3c6400_defconfig.
+>
+> [...]
+>
+>> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+>> index 03f654d..9cdb666 100644
+>
+> [...]
+>
+>> @@ -1370,6 +1371,30 @@ struct platform_device s5p_device_mixer = {
+>>
+>>  /* USB */
+>>
+>> +#ifdef CONFIG_S3C_DEV_USB_HSOTG
+>> +/* USB PHY*/
+>> +static struct resource samsung_usbphy_resource[] = {
+>> +     [0] = {
+>> +             .start = S3C_PA_USB_PHY,
+>> +             .end   = S3C_PA_USB_PHY + SZ_16 - 1,
+>> +             .flags = IORESOURCE_MEM,
+>> +     },
+>> +};
+>
+> +static struct resource samsung_usbphy_resource[] = {
+> +       [0] = DEFINED_RES_MEM(S3C_PA_USB_PHY, SZ_16),
+> +};
+>
+> [...]
+>
+> Happens build error with s5pv210_defconfig
+>
+> arch/arm/plat-samsung/devs.c:1375: error: 'S3C_PA_USB_PHY' undeclared here
+> (not in a function)
+> make[2]: *** [arch/arm/plat-samsung/devs.o] Error 1
+> make[1]: *** [arch/arm/plat-samsung] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+>
+> And another build error with exynos_defconfig...
+Will check for both the configs and resolve it.
 
-I've removed this stray "%s" already.
-
-> hw revision     0x32
-> driver version  0.0.0
+Thanks,
+Praveen
 >
-> Device topology
-> - entity 1: ov2640 (1 pad, 1 link)
->              type V4L2 subdev subtype Sensor
->              device node name /dev/v4l-subdev0
->          pad0: Source [YUYV2X8 176x144]
->                  ->  "S3C-CAMIF":0 [ENABLED,IMMUTABLE]
+> arch/arm/mach-exynos/built-in.o: In function `.LANCHOR1':
+> setup-i2c0.c:(.data+0x8080): undefined reference to
+> `s5p_usb_phy_pmu_isolation'
 >
-> - entity 2: S3C-CAMIF (3 pads, 3 links)
->              type V4L2 subdev subtype Unknown
->              device node name /dev/v4l-subdev1
->          pad0: Sink [YUYV2X8 176x144 (0,0)/176x144]
->                  <- "ov2640":0 [ENABLED,IMMUTABLE]
->          pad1: Source [YUYV2X8 176x144]
->                  ->  "camif-codec":0 [ENABLED,IMMUTABLE]
->          pad2: Source [YUYV2X8 176x144]
->                  ->  "camif-preview":0 [ENABLED,IMMUTABLE]
+> From 5th patch....
 >
-> - entity 3: camif-codec (1 pad, 1 link)
->              type Node subtype V4L
->              device node name /dev/video0
->          pad0: Sink
->                  <- "S3C-CAMIF":1 [ENABLED,IMMUTABLE]
+> If possible, please to use 'ARM: [sub-arch dir name]: [subject]' format.
+> So I preferred to use 'ARM: EXYNOS: Enabling samsung-usbphy driver for
+> EXYNOS4210' on that.
 >
-> - entity 4: camif-preview (1 pad, 1 link)
->              type Node subtype V4L
->              device node name /dev/video1
->          pad0: Sink
->                  <- "S3C-CAMIF":2 [ENABLED,IMMUTABLE]
-
-Looks fine, thanks.
+> Please make sure your patch has no problem for kernel compilation before
+> submitting...
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
