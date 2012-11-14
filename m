@@ -1,126 +1,324 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] sound: use PTR_ERR to fix the value of the return
-Date: Wed, 14 Nov 2012 10:28:09 +0530
-Message-ID: <50A324E1.7060003@linaro.org>
-References: <1352809140-4214-1-git-send-email-windsdaemon@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 2/5] clk: exynos4: register clocks using common clock
+ framework
+Date: Wed, 14 Nov 2012 14:14:09 +0900
+Message-ID: <03a301cdc226$e0a41d50$a1ec57f0$%kim@samsung.com>
+References: <1349629855-4962-1-git-send-email-thomas.abraham@linaro.org>
+ <1349629855-4962-3-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f46.google.com ([209.85.210.46]:63709 "EHLO
-	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932391Ab2KNE5n (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:55884 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1749667Ab2KNFOM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Nov 2012 23:57:43 -0500
-Received: by mail-da0-f46.google.com with SMTP id n41so23452dak.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Nov 2012 20:57:43 -0800 (PST)
-In-Reply-To: <1352809140-4214-1-git-send-email-windsdaemon@gmail.com>
+	Wed, 14 Nov 2012 00:14:12 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDG00BB1P65TNC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Nov 2012 14:14:10 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDG007TAP7LVX30@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Nov 2012 14:14:09 +0900 (KST)
+In-reply-to: <1349629855-4962-3-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wang Jing <windsdaemon@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com, mturquette@ti.com, mturquette@linaro.org
 
-On 11/13/2012 05:49 PM, Wang Jing wrote:
-> From: wangjing <wangjing@wangjing.(none)>
+Thomas Abraham wrote:
 > 
-> This patch use the macro PTR_ERR to modify the value of the return
+> For legacy Exynos4 platforms, the available clocks are statically
+> listed and then registered using the common clock framework. On device
+> tree enabled exynos platfotms, the device tree is searched and all
+> clock nodes found are registered. Support for Exynos4210 and
+> Exynos4x12 platforms is included.
 > 
-> Signed-off-by: wangjing <wangjing@wangjing.(none)>
+> Cc: Mike Turquette <mturquette@ti.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 > ---
->  sound/soc/samsung/smdk_spdif.c |   30 +++++++++++++++---------------
->  1 file changed, 15 insertions(+), 15 deletions(-)
-> 
-> diff --git a/sound/soc/samsung/smdk_spdif.c b/sound/soc/samsung/smdk_spdif.c
-> index beaa9c1..8f78482 100644
-> --- a/sound/soc/samsung/smdk_spdif.c
-> +++ b/sound/soc/samsung/smdk_spdif.c
-> @@ -28,32 +28,29 @@ static int set_audio_clock_heirachy(struct platform_device *pdev)
->  
->  	fout_epll = clk_get(NULL, "fout_epll");
->  	if (IS_ERR(fout_epll)) {
-> -		printk(KERN_WARNING "%s: Cannot find fout_epll.\n",
-> -				__func__);
-> -		return -EINVAL;
-> +		printk(KERN_ERR "%s: Cannot find fout_epll.\n", __func__);
-> +		ret = PTR_ERR(fout_epll);
-> +		return ret;
+>  drivers/clk/samsung/Makefile      |    1 +
+>  drivers/clk/samsung/clk-exynos4.c |  647
+> +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 648 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/clk/samsung/clk-exynos4.c
 
-We can have a single statement for the above two statements.
+[...]
 
-		return PTR_ERR(fout_epll);
+> +
+> +/* base address of io remapped clock controller register space */
+> +static	void __iomem *clk_base;
+> +
 
->  	}
->  
->  	mout_epll = clk_get(NULL, "mout_epll");
->  	if (IS_ERR(mout_epll)) {
-> -		printk(KERN_WARNING "%s: Cannot find mout_epll.\n",
-> -				__func__);
-> -		ret = -EINVAL;
-> +		printk(KERN_ERR "%s: Cannot find mout_epll.\n", __func__);
-> +		ret = PTR_ERR(mout_epll);
->  		goto out1;
->  	}
->  
->  	sclk_audio0 = clk_get(&pdev->dev, "sclk_audio");
->  	if (IS_ERR(sclk_audio0)) {
-> -		printk(KERN_WARNING "%s: Cannot find sclk_audio.\n",
-> -				__func__);
-> -		ret = -EINVAL;
-> +		printk(KERN_ERR "%s: Cannot find sclk_audio.\n", __func__);
-> +		ret = PTR_ERR(sclk_audio0);
->  		goto out2;
->  	}
->  
->  	sclk_spdif = clk_get(NULL, "sclk_spdif");
->  	if (IS_ERR(sclk_spdif)) {
-> -		printk(KERN_WARNING "%s: Cannot find sclk_spdif.\n",
-> -				__func__);
-> -		ret = -EINVAL;
-> +		printk(KERN_ERR "%s: Cannot find sclk_spdif.\n", __func__);
-> +		ret = PTR_ERR(sclk_spdif);
->  		goto out3;
->  	}
->  
-> @@ -81,11 +78,13 @@ static int set_audio_clock_rate(unsigned long epll_rate,
->  				unsigned long audio_rate)
->  {
->  	struct clk *fout_epll, *sclk_spdif;
-> +	int ret = 0;
->  
->  	fout_epll = clk_get(NULL, "fout_epll");
->  	if (IS_ERR(fout_epll)) {
->  		printk(KERN_ERR "%s: failed to get fout_epll\n", __func__);
-> -		return -ENOENT;
-> +		ret = PTR_ERR(fout_epll);
-> +		return ret;
+I didn't look at the full details. BTW, you know, clock naming is very
+important and there are some comments about that below...
 
-Same as above.
+> +static const char *pll_parent_names[] __initdata = { "fin_pll" };
 
->  	}
->  
->  	clk_set_rate(fout_epll, epll_rate);
-> @@ -94,13 +93,14 @@ static int set_audio_clock_rate(unsigned long epll_rate,
->  	sclk_spdif = clk_get(NULL, "sclk_spdif");
->  	if (IS_ERR(sclk_spdif)) {
->  		printk(KERN_ERR "%s: failed to get sclk_spdif\n", __func__);
-> -		return -ENOENT;
-> +		ret = PTR_ERR(sclk_spdif);
-> +		return ret;
+Why is this only 'xxx_parent_names'? not just 'xxx_parents' like others?
 
-Same as above.
+> +static const char *fin_pll_parents[] __initdata = { "xxti", "xusbxti" };
+> +static const char *mout_apll_parents[] __initdata = { "fin_pll",
+> "fout_apll", };
 
->  	}
->  
->  	clk_set_rate(sclk_spdif, audio_rate);
->  	clk_put(sclk_spdif);
->  
-> -	return 0;
-> +	return ret;
->  }
->  
->  static int smdk_hw_params(struct snd_pcm_substream *substream,
-> 
+According to original naming, how about clk_src_apll here?
+
++static const char *clk_src_apll[] __initdata = { "fin_pll", "fout_apll", };
+
+> +static const char *mout_mpll_parents[] __initdata = { "fin_pll",
+
+clk_src_mpll?
+
+> "fout_mpll", };
+> +static const char *mout_epll_parents[] __initdata = { "fin_pll",
+
+clk_src_epll?
+
+> "fout_epll", };
+> +
+> +static const char *sclk_ampll_parents[] __initdata = {
+
+clk_src_aclk?
+
+> +		"mout_mpll", "sclk_apll", };
+> +
+> +static const char *sclk_evpll_parents[] __initdata = {
 
 
--- 
-Tushar Behera
+
+> +		"mout_epll", "mout_vpll", };
+> +
+> +static const char *mout_core_parents[] __initdata = {
+
+clk_src_core?
+
+Hmm... most of the 'sources' is from out of MUX so mout is not required?...
+
+> +		"mout_apll", "mout_mpll", };
+> +
+> +static const char *mout_mfc_parents[] __initdata = {
+> +		"mout_mfc0", "mout_mfc1", };
+
+Should be following?
+
++static const char *clk_src_mfc0[] __initdata = {"mout_mpll", "sclk_apll",
+};
++static const char *clk_src_mfc1[] __initdata = {"mout_epll", "sclk_vpll",
+};
+
+> +
+> +static const char *mout_dac_parents[] __initdata = {
+> +		"mout_vpll", "sclk_hdmiphy", };
+
+sclk_vpll?
+
++static const char *clk_src_sclk_dac[] __initdata = {"sclk_vpll",
+"sclk_hdmiphy", };
+
+
+> +
+> +static const char *mout_hdmi_parents[] __initdata = {
+
+clk_src_sclk_hdmi?
+
+> +		"sclk_pixel", "sclk_hdmiphy", };
+> +
+> +static const char *mout_mixer_parents[] __initdata = {
+
+clk_src_sclk_mixer?
+
+> +		"sclk_dac", "sclk_hdmi", };
+> +
+> +static const char *group1_parents[] __initdata = {
+
+According to original clock-exynos4.c, just 'group_parents' not
+'group1_parents'?
+
+> +		"xxti", "xusbxti", "sclk_hdmi24m", "sclk_usbphy0",
+
+Should be 'sclk_hdmi27m' instead of 'sclk_hdmi24m'
++		"xxti", "xusbxti", "sclk_hdmi24m", "sclk_usbphy0",
+
+> +		"none", "sclk_hdmiphy", "mout_mpll", "mout_epll",
+
+Missed 'sclk_usbphy1'?
++		"sclk_usbphy1", "sclk_hdmiphy", "mout_mpll", "mout_epll",
+
+> +		"mout_vpll" };
+> +
+> +static struct samsung_fixed_rate_clock exynos4_fixed_rate_clks[] = {
+> +	FRATE_CLK(NULL, "xxti", NULL, CLK_IS_ROOT, 24000000),
+> +	FRATE_CLK(NULL, "xusbxti", NULL, CLK_IS_ROOT, 24000000),
+
+Well, above clock rate depends on board and it means it is not a fixed
+value.
+
+> +	FRATE_CLK(NULL, "sclk_hdmi24m", NULL, CLK_IS_ROOT, 24000000),
+> +	FRATE_CLK(NULL, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
+> +	FRATE_CLK(NULL, "sclk_usbphy0", NULL, CLK_IS_ROOT, 48000000),
+
+Missed sclk_hdmi27m?
++	FRATE_CLK(NULL, "sclk_hdmi27m", NULL, CLK_IS_ROOT, 27000000),
+
+> +};
+> +
+> +static struct samsung_mux_clock exynos4_mux_clks[] = {
+
+[...]
+
+> +};
+> +
+> +static struct samsung_div_clock exynos4_div_clks[] = {
+
+[...]
+
+> +};
+> +
+> +struct samsung_gate_clock exynos4_gate_clks[] = {
+
+[...]
+
+> +	clk = clk_get(NULL, "fout_apll");
+> +	samsung_pll_clk_set_cb(clk, NULL, exynos4210_get_rate_apll);
+
++	samsung_pll_clk_set_cb(clk, NULL, exynos4210_apll_get_rate);
+
+> +	clk = clk_get(NULL, "fout_mpll");
++	samsung_pll_clk_set_cb(clk, NULL, exynos4210_mpll_get_rate);
+
+> +	samsung_pll_clk_set_cb(clk, NULL, exynos4210_get_rate_mpll);
+
+
+> +	clk = clk_get(NULL, "fout_epll");
+> +	samsung_pll_clk_set_cb(clk, NULL, exynos4210_get_rate_epll);
+
++	samsung_pll_clk_set_cb(clk, NULL, exynos4210_epll_get_rate);
+
+> +	clk = clk_get(NULL, "fout_vpll");
+> +	samsung_pll_clk_set_cb(clk, exynos4210_vpll_set_rate,
+> +				exynos4210_get_rate_mpll);
+
+mpll? Should be vpll?
+
++				exynos4210_vpll_get_rate); ???
+
+[...]
+
+> +	samsung_clk_register_pll("fout_apll", pll_parent_names, NULL,
+> +		NULL, exynos4210_get_rate_apll);
+
++		NULL, exynos4210_apll_get_rate);
+
+> +	samsung_clk_register_pll("fout_mpll", pll_parent_names, NULL,
+> +		NULL, exynos4210_get_rate_mpll);
+
++		NULL, exynos4210_mpll_get_rate);
+
+> +	samsung_clk_register_pll("fout_epll", pll_parent_names, NULL,
+> +		NULL, exynos4210_get_rate_epll);
+
++		NULL, exynos4210_epll_get_rate);
+
+> +	samsung_clk_register_pll("fout_vpll", exynos4210_vpll_parent_names,
+> +		NULL, exynos4210_vpll_set_rate, exynos4210_get_rate_vpll);
+
+
++		NULL, exynos4210_vpll_set_rate, exynos4210_vpll_get_rate);
+
+[...]
+
+> +static unsigned long exynos4x12_get_rate_apll(unsigned long xtal_rate)
+
+exynos4x12_apll_get_rate()
+
+> +{
+> +	return s5p_get_pll35xx(xtal_rate, __raw_readl(EXYNOS4_APLL_CON0));
+> +}
+> +
+> +static unsigned long exynos4x12_get_rate_mpll(unsigned long xtal_rate)
+
+exynos4x12_mpll_get_rate()
+
+> +{
+> +	return s5p_get_pll35xx(xtal_rate, __raw_readl(EXYNOS4_MPLL_CON0));
+> +}
+> +
+> +static unsigned long exynos4x12_get_rate_epll(unsigned long xtal_rate)
+
+exynos4x12_epll_get_rate()
+
+> +{
+> +	return s5p_get_pll36xx(xtal_rate, __raw_readl(EXYNOS4_EPLL_CON0),
+> +		__raw_readl(EXYNOS4_EPLL_CON1));
+> +}
+> +
+> +static unsigned long exynos4x12_get_rate_vpll(unsigned long vpllsrc_rate)
+
+exynos4x12_vpll_get_rate()
+
+> +{
+> +	return s5p_get_pll36xx(vpllsrc_rate, __raw_readl(EXYNOS4_VPLL_CON0),
+> +		__raw_readl(EXYNOS4_VPLL_CON1));
+> +}
+> +
+> +/* Exynos4x12 specific clock registeration */
+> +void __init exynos4x12_clk_init(void)
+> +{
+> +	exynos4_clk_init();
+> +
+> +	samsung_clk_register_pll("fout_apll", pll_parent_names, NULL,
+> +		NULL, exynos4x12_get_rate_apll);
+
++		NULL, exynos4x12_apll_get_rate);
+
+> +	samsung_clk_register_pll("fout_mpll", pll_parent_names, NULL,
+> +		NULL, exynos4x12_get_rate_mpll);
+
++		NULL, exynos4x12_mpll_get_rate);
+
+> +	samsung_clk_register_pll("fout_epll", pll_parent_names, NULL,
+> +		NULL, exynos4x12_get_rate_epll);
+
++		NULL, exynos4x12_epll_get_rate);
+
+> +	samsung_clk_register_pll("fout_vpll", pll_parent_names, NULL,
+> +		NULL, exynos4x12_get_rate_vpll);
+
++		NULL, exynos4x12_vpll_get_rate);
+
+> +
+> +	samsung_clk_register_mux(exynos4x12_mux_clks,
+> +			ARRAY_SIZE(exynos4x12_mux_clks));
+> +
+> +	pr_info("EXYNOS4210: PLL settings: A=%ld, M=%ld, E=%ld, V=%ld\n",
+
+pr_info("EXYNOS4X12:...
+
+> +		_get_rate("fout_apll"), _get_rate("fout_mpll"),
+> +		_get_rate("fout_epll"), _get_rate("fout_vpll"));
+> +
+> +	pr_info("EXYNOS4210: ARMCLK=%ld, ACLK200=%ld, ACLK100=%ld\n"
+
+pr_info("EXYNOS4X12:...
+
+> +		"         ACLK160=%ld, ACLK133=%ld\n", _get_rate("armclk"),
+> +		_get_rate("aclk_200"), _get_rate("aclk_100"),
+> +		_get_rate("aclk_160"), _get_rate("aclk_133"));
+> +}
+> --
+> 1.7.5.4
+
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
