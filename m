@@ -1,125 +1,62 @@
 From: Praveen Paneri <p.paneri@samsung.com>
-Subject: [PATCH v8 2/2] usb: s3c-hsotg: Adding phy driver support
-Date: Wed, 14 Nov 2012 15:57:16 +0530
-Message-ID: <1352888836-17192-3-git-send-email-p.paneri@samsung.com>
-References: <1352888836-17192-1-git-send-email-p.paneri@samsung.com>
+Subject: [PATCH v8 0/3] ARM: Exynos/S3C64XX: usb phy driver support for S3C64XX
+ and EXYNOS4210
+Date: Wed, 14 Nov 2012 16:15:35 +0530
+Message-ID: <1352889938-17311-1-git-send-email-p.paneri@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51610 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161054Ab2KNKUU (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:61378 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754819Ab2KNKfx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Nov 2012 05:20:20 -0500
-In-reply-to: <1352888836-17192-1-git-send-email-p.paneri@samsung.com>
+	Wed, 14 Nov 2012 05:35:53 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDH0066E43OIQT0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Nov 2012 19:35:51 +0900 (KST)
+Received: from matrix.sisodomain.com ([107.108.73.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDH00MM040KCS50@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Nov 2012 19:35:51 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de, t.figa@samsung.com, gautam.vivek@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de, t.figa@samsung.com, gautam.vivek@samsung.com
 
-Adding the transceiver to hsotg driver. Keeping the platform data
-for continuing the smooth operation for boards which still uses it
+This patch series enables usb phy driver for S3C64XX and EXYNOS4210.
+The phy driver patches are already sent to linux-usb.
 
-Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/usb/gadget/s3c-hsotg.c |   37 +++++++++++++++++++++++++++----------
- 1 files changed, 27 insertions(+), 10 deletions(-)
+Changes From v7:
+Resolved build errors with s3c6400_defconfig, s5pv210_defconfig and
+exynos_defconfig.
+Tested with all other samsung configs as well.
+Reformed PATCH 3 (PATCH 5 of last series) with proper subject.
+Separated these arch patches from the driver patches.
 
-diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index 6f696ee..bc30a2d 100644
---- a/drivers/usb/gadget/s3c-hsotg.c
-+++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -32,6 +32,7 @@
- 
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
-+#include <linux/usb/phy.h>
- #include <linux/platform_data/s3c-hsotg.h>
- 
- #include <mach/map.h>
-@@ -133,7 +134,9 @@ struct s3c_hsotg_ep {
-  * struct s3c_hsotg - driver state.
-  * @dev: The parent device supplied to the probe function
-  * @driver: USB gadget driver
-- * @plat: The platform specific configuration data.
-+ * @phy: The otg phy transceiver structure for phy control.
-+ * @plat: The platform specific configuration data. This can be removed once
-+ * all SoCs support usb transceiver.
-  * @regs: The memory area mapped for accessing registers.
-  * @irq: The IRQ number we are using
-  * @supplies: Definition of USB power supplies
-@@ -153,6 +156,7 @@ struct s3c_hsotg_ep {
- struct s3c_hsotg {
- 	struct device		 *dev;
- 	struct usb_gadget_driver *driver;
-+	struct usb_phy		*phy;
- 	struct s3c_hsotg_plat	 *plat;
- 
- 	spinlock_t              lock;
-@@ -2854,7 +2858,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
- 	struct platform_device *pdev = to_platform_device(hsotg->dev);
- 
- 	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
--	if (hsotg->plat->phy_init)
-+
-+	if (hsotg->phy)
-+		usb_phy_init(hsotg->phy);
-+	else if (hsotg->plat->phy_init)
- 		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
- }
- 
-@@ -2869,7 +2876,9 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
- {
- 	struct platform_device *pdev = to_platform_device(hsotg->dev);
- 
--	if (hsotg->plat->phy_exit)
-+	if (hsotg->phy)
-+		usb_phy_shutdown(hsotg->phy);
-+	else if (hsotg->plat->phy_exit)
- 		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
- }
- 
-@@ -3493,6 +3502,7 @@ static void s3c_hsotg_release(struct device *dev)
- static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
- {
- 	struct s3c_hsotg_plat *plat = pdev->dev.platform_data;
-+	struct usb_phy *phy;
- 	struct device *dev = &pdev->dev;
- 	struct s3c_hsotg_ep *eps;
- 	struct s3c_hsotg *hsotg;
-@@ -3501,20 +3511,27 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
- 	int ret;
- 	int i;
- 
--	plat = pdev->dev.platform_data;
--	if (!plat) {
--		dev_err(&pdev->dev, "no platform data defined\n");
--		return -EINVAL;
--	}
--
- 	hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg), GFP_KERNEL);
- 	if (!hsotg) {
- 		dev_err(dev, "cannot get memory\n");
- 		return -ENOMEM;
- 	}
- 
-+	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-+	if (IS_ERR_OR_NULL(phy)) {
-+		/* Fallback for pdata */
-+		plat = pdev->dev.platform_data;
-+		if (!plat) {
-+			dev_err(&pdev->dev, "no platform data or transceiver defined\n");
-+			return -EPROBE_DEFER;
-+		} else {
-+			hsotg->plat = plat;
-+		}
-+	} else {
-+		hsotg->phy = phy;
-+	}
-+
- 	hsotg->dev = dev;
--	hsotg->plat = plat;
- 
- 	hsotg->clk = devm_clk_get(&pdev->dev, "otg");
- 	if (IS_ERR(hsotg->clk)) {
--- 
-1.7.1
+Changes from v4:
+Changed the platform data code to use __initdata
+
+Changes from v2:
+Changed 's3c' to 'samsung' for platform device as well as platform data
+Moved platform data structure to a separate file
+
+Praveen Paneri (3):
+  ARM: S3C64XX: Removing old phy setup code
+  ARM: S3C64XX: Enabling samsung-usbphy driver
+  ARM: EXYNOS: Enabling samsung-usbphy driver for EXYNOS4210
+
+ arch/arm/boot/dts/exynos4210-smdkv310.dts    |    5 ++
+ arch/arm/mach-exynos/Kconfig                 |    1 +
+ arch/arm/mach-exynos/include/mach/map.h      |    1 +
+ arch/arm/mach-exynos/mach-exynos4-dt.c       |    8 +++
+ arch/arm/mach-exynos/setup-usb-phy.c         |   13 ++++
+ arch/arm/mach-s3c64xx/include/mach/map.h     |    2 +
+ arch/arm/mach-s3c64xx/mach-crag6410.c        |   10 ++-
+ arch/arm/mach-s3c64xx/mach-smartq.c          |   11 +++-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c        |   10 ++-
+ arch/arm/mach-s3c64xx/setup-usb-phy.c        |   79 ++-----------------------
+ arch/arm/plat-samsung/devs.c                 |   28 +++++++++
+ arch/arm/plat-samsung/include/plat/devs.h    |    1 +
+ arch/arm/plat-samsung/include/plat/usb-phy.h |    1 +
+ 13 files changed, 89 insertions(+), 81 deletions(-)
