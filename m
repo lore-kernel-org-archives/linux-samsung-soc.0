@@ -1,84 +1,91 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 5/5] ARM: Exynos4: Migrate clock support to common clock
- framework
-Date: Wed, 14 Nov 2012 14:26:31 +0900
-Message-ID: <03a501cdc228$9ad51a70$d07f4f50$%kim@samsung.com>
-References: <1349629855-4962-1-git-send-email-thomas.abraham@linaro.org>
- <1349629855-4962-6-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Jing Wang <windsdaemon@gmail.com>
+Subject: [PATCH] SOC/SAMSUNG: use PTR_ERR to fix the value of return
+Date: Wed, 14 Nov 2012 14:52:48 +0800
+Message-ID: <1352875968-23319-1-git-send-email-windsdaemon@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:9749 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750906Ab2KNF0d (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:53889 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754221Ab2KNGxr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Nov 2012 00:26:33 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDG006U6PQDIQD0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Nov 2012 14:26:31 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDG008LGPS7OO50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Nov 2012 14:26:31 +0900 (KST)
-In-reply-to: 
-Content-language: ko
+	Wed, 14 Nov 2012 01:53:47 -0500
+Received: by mail-pa0-f46.google.com with SMTP id hz1so94919pad.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Nov 2012 22:53:46 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com, mturquette@ti.com, mturquette@linaro.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Jing Wang <windsdaemon@gmail.com>
 
-Kukjin Kim wrote:
+From: Jing Wang <windsdaemon@gmail.com>
 
-> Thomas Abraham wrote:
-> >
-> > Remove Samsung specific clock support in Exynos4 and migrate to using
-> > common clock framework.
-> >
-> > Cc: Kukjin Kim <kgene.kim@samsung.com>
-> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> > ---
-> >  arch/arm/mach-exynos/Kconfig               |    1 +
-> >  arch/arm/mach-exynos/Makefile              |    3 -
-> >  arch/arm/mach-exynos/clock-exynos4.c       | 1603
------------------------
-> --
-> > ---
-> >  arch/arm/mach-exynos/clock-exynos4.h       |   35 -
-> >  arch/arm/mach-exynos/clock-exynos4210.c    |  188 ----
-> >  arch/arm/mach-exynos/clock-exynos4212.c    |  192 ----
-> >  arch/arm/mach-exynos/common.c              |   22 +-
-> >  arch/arm/mach-exynos/common.h              |    3 +
-> >  arch/arm/mach-exynos/mach-armlex4210.c     |    1 -
-> >  arch/arm/mach-exynos/mach-exynos4-dt.c     |    1 -
-> >  arch/arm/mach-exynos/mach-nuri.c           |    1 -
-> >  arch/arm/mach-exynos/mach-origen.c         |    1 -
-> >  arch/arm/mach-exynos/mach-smdk4x12.c       |    1 -
-> >  arch/arm/mach-exynos/mach-smdkv310.c       |    1 -
-> >  arch/arm/mach-exynos/mach-universal_c210.c |    1 -
-> >  arch/arm/mach-exynos/mct.c                 |   11 +-
-> >  arch/arm/plat-samsung/Kconfig              |    4 +-
-> >  17 files changed, 18 insertions(+), 2051 deletions(-)  delete mode
-> > 100644 arch/arm/mach-exynos/clock-exynos4.c
-> >  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.h
-> >  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
-> >  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
-> 
-> I think, would be better to us if we could keep this clock stuff with
-> common clock for a moment, e.g. 3.8. In addition, the clock stuff is still
-> updating at this moment so we need some time to move on common clock
-> framework entirely. Of course, I have no objection to support common clock
-> on new SoC such as exynos5440 :-)
-> 
-Oops, I'm resending because of e-mail client problem.
+This patch use the macro PTR_ERR to fix the value of the return and change KERN_WARNING to KERN_ERR
 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer, SW Solution
-> Development Team, Samsung Electronics Co., Ltd.
+Signed-off-by: Jing Wang <windsdaemon@gmail.com>
+---
+ sound/soc/samsung/smdk_spdif.c |   24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+diff --git a/sound/soc/samsung/smdk_spdif.c b/sound/soc/samsung/smdk_spdif.c
+index beaa9c1..4000a63 100644
+--- a/sound/soc/samsung/smdk_spdif.c
++++ b/sound/soc/samsung/smdk_spdif.c
+@@ -28,32 +28,28 @@ static int set_audio_clock_heirachy(struct platform_device *pdev)
+ 
+ 	fout_epll = clk_get(NULL, "fout_epll");
+ 	if (IS_ERR(fout_epll)) {
+-		printk(KERN_WARNING "%s: Cannot find fout_epll.\n",
+-				__func__);
+-		return -EINVAL;
++		printk(KERN_ERR "%s: Cannot find fout_epll.\n", __func__);
++		return PTR_ERR(fout_epll);
+ 	}
+ 
+ 	mout_epll = clk_get(NULL, "mout_epll");
+ 	if (IS_ERR(mout_epll)) {
+-		printk(KERN_WARNING "%s: Cannot find mout_epll.\n",
+-				__func__);
+-		ret = -EINVAL;
++		printk(KERN_ERR "%s: Cannot find mout_epll.\n", __func__);
++		ret = PTR_ERR(mout_epll);
+ 		goto out1;
+ 	}
+ 
+ 	sclk_audio0 = clk_get(&pdev->dev, "sclk_audio");
+ 	if (IS_ERR(sclk_audio0)) {
+-		printk(KERN_WARNING "%s: Cannot find sclk_audio.\n",
+-				__func__);
+-		ret = -EINVAL;
++		printk(KERN_ERR "%s: Cannot find sclk_audio.\n", __func__);
++		ret = PTR_ERR(sclk_audio0);
+ 		goto out2;
+ 	}
+ 
+ 	sclk_spdif = clk_get(NULL, "sclk_spdif");
+ 	if (IS_ERR(sclk_spdif)) {
+-		printk(KERN_WARNING "%s: Cannot find sclk_spdif.\n",
+-				__func__);
+-		ret = -EINVAL;
++		printk(KERN_ERR "%s: Cannot find sclk_spdif.\n", __func__);
++		ret = PTR_ERR(sclk_spdif);
+ 		goto out3;
+ 	}
+ 
+@@ -85,7 +81,7 @@ static int set_audio_clock_rate(unsigned long epll_rate,
+ 	fout_epll = clk_get(NULL, "fout_epll");
+ 	if (IS_ERR(fout_epll)) {
+ 		printk(KERN_ERR "%s: failed to get fout_epll\n", __func__);
+-		return -ENOENT;
++		return PTR_ERR(fout_epll);
+ 	}
+ 
+ 	clk_set_rate(fout_epll, epll_rate);
+@@ -94,7 +90,7 @@ static int set_audio_clock_rate(unsigned long epll_rate,
+ 	sclk_spdif = clk_get(NULL, "sclk_spdif");
+ 	if (IS_ERR(sclk_spdif)) {
+ 		printk(KERN_ERR "%s: failed to get sclk_spdif\n", __func__);
+-		return -ENOENT;
++		return PTR_ERR(sclk_spdif);
+ 	}
+ 
+ 	clk_set_rate(sclk_spdif, audio_rate);
+-- 
+1.7.9.5
