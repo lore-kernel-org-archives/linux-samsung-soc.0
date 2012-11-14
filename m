@@ -1,486 +1,129 @@
-From: Cho KyongHo <pullip.cho@samsung.com>
-Subject: [PATCH 3/4] ARM: EXYNOS: add System MMU definition to DT
-Date: Wed, 14 Nov 2012 17:51:08 +0900
-Message-ID: <002301cdc245$307eca00$917c5e00$%cho@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] sound: use PTR_ERR to fix the value of the return
+Date: Wed, 14 Nov 2012 14:25:40 +0530
+Message-ID: <50A35C8C.1070505@linaro.org>
+References: <1352809140-4214-1-git-send-email-windsdaemon@gmail.com> <50A324E1.7060003@linaro.org> <50A340BA.2090904@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45647 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932130Ab2KNIvK (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:53598 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751458Ab2KNIzL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Nov 2012 03:51:10 -0500
-Content-language: ko
+	Wed, 14 Nov 2012 03:55:11 -0500
+Received: by mail-pb0-f46.google.com with SMTP id wy7so234740pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Nov 2012 00:55:11 -0800 (PST)
+In-Reply-To: <50A340BA.2090904@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: 'Joerg Roedel' <joro@8bytes.org>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, prathyush.k@samsung.com, rahul.sharma@samsung.com
+To: Wang Jing <windsdaemon@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-This commit adds System MMU nodes to DT of Exynos SoCs.
+On 11/14/2012 12:26 PM, Wang Jing wrote:
+> On 2012=E5=B9=B411=E6=9C=8814=E6=97=A5 12:58, Tushar Behera wrote:
+>> On 11/13/2012 05:49 PM, Wang Jing wrote:
+>>> From: wangjing <wangjing@wangjing.(none)>
+>>>
+>>> This patch use the macro PTR_ERR to modify the value of the return
+>>>
+>>> Signed-off-by: wangjing <wangjing@wangjing.(none)>
 
-Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+Also please sign off with a valid e-mail address.
+
+>>> ---
+>>>   sound/soc/samsung/smdk_spdif.c |   30 +++++++++++++++------------=
 ---
- .../devicetree/bindings/arm/samsung/system-mmu.txt |  42 ++++++
- arch/arm/boot/dts/exynos4210.dtsi                  |  96 ++++++++++++++
- arch/arm/boot/dts/exynos4x12.dtsi                  | 124 +++++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi                  | 147 ++++++++++++++++++++-
- 4 files changed, 407 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+>>>   1 file changed, 15 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/sound/soc/samsung/smdk_spdif.c
+>>> b/sound/soc/samsung/smdk_spdif.c
+>>> index beaa9c1..8f78482 100644
+>>> --- a/sound/soc/samsung/smdk_spdif.c
+>>> +++ b/sound/soc/samsung/smdk_spdif.c
+>>> @@ -28,32 +28,29 @@ static int set_audio_clock_heirachy(struct
+>>> platform_device *pdev)
+>>>         fout_epll =3D clk_get(NULL, "fout_epll");
+>>>       if (IS_ERR(fout_epll)) {
+>>> -        printk(KERN_WARNING "%s: Cannot find fout_epll.\n",
+>>> -                __func__);
+>>> -        return -EINVAL;
+>>> +        printk(KERN_ERR "%s: Cannot find fout_epll.\n", __func__);
+>>> +        ret =3D PTR_ERR(fout_epll);
+>>> +        return ret;
+>> We can have a single statement for the above two statements.
+>>
+>>         return PTR_ERR(fout_epll);
+>>
+>>>       }
+>>>         mout_epll =3D clk_get(NULL, "mout_epll");
+>>>       if (IS_ERR(mout_epll)) {
+>>> -        printk(KERN_WARNING "%s: Cannot find mout_epll.\n",
+>>> -                __func__);
+>>> -        ret =3D -EINVAL;
+>>> +        printk(KERN_ERR "%s: Cannot find mout_epll.\n", __func__);
+>>> +        ret =3D PTR_ERR(mout_epll);
+>>>           goto out1;
+>>>       }
+>>>         sclk_audio0 =3D clk_get(&pdev->dev, "sclk_audio");
+>>>       if (IS_ERR(sclk_audio0)) {
+>>> -        printk(KERN_WARNING "%s: Cannot find sclk_audio.\n",
+>>> -                __func__);
+>>> -        ret =3D -EINVAL;
+>>> +        printk(KERN_ERR "%s: Cannot find sclk_audio.\n", __func__)=
+;
+>>> +        ret =3D PTR_ERR(sclk_audio0);
+>>>           goto out2;
+>>>       }
+>>>         sclk_spdif =3D clk_get(NULL, "sclk_spdif");
+>>>       if (IS_ERR(sclk_spdif)) {
+>>> -        printk(KERN_WARNING "%s: Cannot find sclk_spdif.\n",
+>>> -                __func__);
+>>> -        ret =3D -EINVAL;
+>>> +        printk(KERN_ERR "%s: Cannot find sclk_spdif.\n", __func__)=
+;
+>>> +        ret =3D PTR_ERR(sclk_spdif);
+>>>           goto out3;
+>>>       }
+>>>   @@ -81,11 +78,13 @@ static int set_audio_clock_rate(unsigned long
+>>> epll_rate,
+>>>                   unsigned long audio_rate)
+>>>   {
+>>>       struct clk *fout_epll, *sclk_spdif;
+>>> +    int ret =3D 0;
+>>>         fout_epll =3D clk_get(NULL, "fout_epll");
+>>>       if (IS_ERR(fout_epll)) {
+>>>           printk(KERN_ERR "%s: failed to get fout_epll\n", __func__=
+);
+>>> -        return -ENOENT;
+>>> +        ret =3D PTR_ERR(fout_epll);
+>>> +        return ret;
+>> Same as above.
+>>
+>>>       }
+>>>         clk_set_rate(fout_epll, epll_rate);
+>>> @@ -94,13 +93,14 @@ static int set_audio_clock_rate(unsigned long
+>>> epll_rate,
+>>>       sclk_spdif =3D clk_get(NULL, "sclk_spdif");
+>>>       if (IS_ERR(sclk_spdif)) {
+>>>           printk(KERN_ERR "%s: failed to get sclk_spdif\n", __func_=
+_);
+>>> -        return -ENOENT;
+>>> +        ret =3D PTR_ERR(sclk_spdif);
+>>> +        return ret;
+>> Same as above.
+>>
+>>>       }
+>>>         clk_set_rate(sclk_spdif, audio_rate);
+>>>       clk_put(sclk_spdif);
+>>>   -    return 0;
+>>> +    return ret;
+>>>   }
+>>>     static int smdk_hw_params(struct snd_pcm_substream *substream,
+>>>
+>>
+> Thanks ,I'll submit it again.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
-b/Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
-new file mode 100644
-index 0000000..5115c39
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
-@@ -0,0 +1,42 @@
-+* Samsung Exynos System MMU
-+
-+Samsung's Exynos architecture includes System MMU that enables scattered
-+physical chunks to be visible as a contiguous region to DMA-capabile peripheral
-+devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
-+
-+System MMU is a sort of IOMMU and support identical translation table format to
-+ARMv7 translation tables with minimum set of page properties including access
-+permissions, shareability and security protection. In addition System MMU has
-+another capabilities like L2 TLB or block-fetch buffers to minimize translation
-+latency
-+
-+Each System MMU is included in the H/W block of a peripheral device. Thus, it is
-+important to specify that a System MMU is dedicated to which peripheral device
-+before using System MMU. System initialization must specify the relationships
-+between a System MMU and a peripheral device that owns the System MMU.
-+
-+Some device drivers may control several peripheral devices with a single device
-+descriptor like MFC. Since handling a System MMU with IOMMU API requires a
-+device descriptor that needs the System MMU, it is best to combine the System
-+MMUs of the peripheral devices and control them with a single System MMU device
-+descriptor. If it is unable to combine them into a single device descriptor,
-+they can be linked with each other by the means of device.parent relationship.
-+
-+Required properties:
-+- compatible: Should be "samsung,exynos-sysmmu".
-+- reg: Tuples of base address and size of System MMU registers. The number of
-+       tuples can be more than one if two or more System MMUs are controlled
-+       by a single device descriptor.
-+- interrupt-parent: The phandle of the interrupt controller of System MMU
-+- interrupts: Tuples of numbers that indicates the interrupt source. The
-+              number of elements in the tuple is dependent upon
-+	      'interrupt-parent' property. The number of tuples in this property
-+	      must be the same with 'reg' property.
-+
-+Optional properties:
-+- mmuname: Strings of the name of System MMU for debugging purpose. The number
-+	   of strings must be the same with the number of tuples in 'reg'
-+	   property.
-+- mmu-master: phandle to the device node that owns System MMU. Only the device
-+	   that is specified whith this property can control System MMU with
-+	   IOMMU API.
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 939f639..d7a7a06 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -71,4 +71,100 @@
- 		reg = <0x100C0000 0x100>;
- 		interrupts = <2 4>;
- 	};
-+
-+	sysmmu-mfcL {
-+		mmuname = "mfc_l";
-+		reg = <0x13620000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 5>;
-+	};
-+
-+	sysmmu-mfcR {
-+		mmuname = "mfc_r";
-+		reg = <0x13630000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 6>;
-+	};
-+
-+	sysmmu-tv {
-+		mmuname = "tv";
-+		reg = <0x13E20000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 4>;
-+	};
-+
-+	sysmmu-fimc0 {
-+		mmuname = "fimc0";
-+		reg = <0x11A20000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 2>;
-+	};
-+
-+	sysmmu-fimc1 {
-+		mmuname = "fimc1";
-+		reg = <0x11A30000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 3>;
-+	};
-+
-+	sysmmu-fimc2 {
-+		mmuname = "fimc2";
-+		reg = <0x11A40000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 4>;
-+	};
-+
-+	sysmmu-fimc3 {
-+		mmuname = "fimc3";
-+		reg = <0x11A50000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 5>;
-+	};
-+
-+	sysmmu-jpeg {
-+		mmuname = "jpeg";
-+		reg = <0x11A60000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 6>;
-+	};
-+
-+	sysmmu-g2d {
-+		mmuname = "g2d";
-+		reg = <0x12A20000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 7>;
-+	};
-+
-+	sysmmu-rotator {
-+		mmuname = "rotator";
-+		reg = <0x12A30000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 0>;
-+	};
-+
-+	sysmmu-fimd0 {
-+		mmuname = "fimd0";
-+		reg = <0x11E20000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 2>;
-+	};
-+
-+	sysmmu-fimd1 {
-+		mmuname = "fimd1";
-+		reg = <0x12220000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 3>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 179a62e..0490836 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -66,4 +66,128 @@
- 		reg = <0x106E0000 0x1000>;
- 		interrupts = <0 72 0>;
- 	};
-+
-+	sysmmu-mfcL {
-+		mmuname = "mfc_l";
-+		reg = <0x13620000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 5>;
-+	};
-+
-+	sysmmu-mfcR {
-+		mmuname = "mfc_r";
-+		reg = <0x13630000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 6>;
-+	};
-+
-+	sysmmu-tv {
-+		mmuname = "tv";
-+		reg = <0x13E20000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 4>;
-+	};
-+
-+	sysmmu-fimc0 {
-+		mmuname = "fimc0";
-+		reg = <0x11A20000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 2>;
-+	};
-+
-+	sysmmu-fimc1 {
-+		mmuname = "fimc1";
-+		reg = <0x11A30000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 3>;
-+	};
-+
-+	sysmmu-fimc2 {
-+		mmuname = "fimc2";
-+		reg = <0x11A40000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 4>;
-+	};
-+
-+	sysmmu-fimc3 {
-+		mmuname = "fimc3";
-+		reg = <0x11A50000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 5>;
-+	};
-+
-+	sysmmu-jpeg {
-+		mmuname = "jpeg";
-+		reg = <0x11A60000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 6>;
-+	};
-+
-+	sysmmu-g2d {
-+		mmuname = "g2d";
-+		reg = <0x10A40000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 7>;
-+	};
-+
-+	sysmmu-rotator {
-+		mmuname = "rotator";
-+		reg = <0x12A30000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 0>;
-+	};
-+
-+	sysmmu-fimd0 {
-+		mmuname = "fimd0";
-+		reg = <0x11E20000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <5 2>;
-+	};
-+
-+	sysmmu-is0 {
-+		mmuname = "isp", "drc", "fd";
-+		reg = <0x12260000 0x1000
-+			0x12270000 0x1000
-+			0x122A0000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <16 2
-+				16 3
-+				16 4>;
-+	};
-+
-+	sysmmu-is1 {
-+		mmuname = "ispcpu";
-+		reg = <0x122B0000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <16 5>;
-+	};
-+
-+	sysmmu-flite0 {
-+		mmuname = "fimc-lite0";
-+		reg = <0x123B0000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <16 0>;
-+	};
-+
-+	sysmmu-flite1 {
-+		mmuname = "fimc-lite1";
-+		reg = <0x123C0000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <16 1>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index cf6a02d..7d1eaa3 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -62,7 +62,7 @@
- 		interrupts = <0 42 0>;
- 	};
- 
--	codec@11000000 {
-+	mfc: codec@11000000 {
- 		compatible = "samsung,mfc-v6";
- 		reg = <0x11000000 0x10000>;
- 		interrupts = <0 96 0>;
-@@ -547,9 +547,152 @@
- 		interrupts = <0 95 0>;
- 	};
- 
--	mixer {
-+	mixer: mixer {
- 		compatible = "samsung,exynos5-mixer";
- 		reg = <0x14450000 0x10000>;
- 		interrupts = <0 94 0>;
- 	};
-+
-+	sysmmu-mfcL {
-+		mmuname = "mfc_l";
-+		reg = <0x11210000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <8 5>;
-+		mmu-master = <&mfc>;
-+	};
-+
-+	sysmmu-mfcR {
-+		mmuname = "mfc_r";
-+		reg = <0x11200000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <6 2>;
-+		mmu-master = <&mfc>;
-+	};
-+
-+	sysmmu-tv {
-+		mmuname = "tv";
-+		reg = <0x14650000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <7 4>;
-+		mmu-master = <&mixer>;
-+	};
-+
-+	sysmmu-gsc0 {
-+		mmuname = "gsc0";
-+		reg = <0x13E80000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <2 0>;
-+		mmu-master = <&gsc_0>;
-+	};
-+
-+	sysmmu-gsc1 {
-+		mmuname = "gsc1";
-+		reg = <0x13E90000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <2 2>;
-+		mmu-master = <&gsc_1>;
-+	};
-+
-+	sysmmu-gsc2 {
-+		mmuname = "gsc2";
-+		reg = <0x13EA0000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <2 4>;
-+		mmu-master = <&gsc_2>;
-+	};
-+
-+	sysmmu-gsc3 {
-+		mmuname = "gsc3";
-+		reg = <0x13EB0000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <2 6>;
-+		mmu-master = <&gsc_3>;
-+	};
-+
-+	sysmmu-fimd1 {
-+		mmuname = "fimd1";
-+		reg = <0x14640000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <3 2>;
-+	};
-+
-+	sysmmu-rotator {
-+		mmuname = "rotator";
-+		reg = <0x11D40000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 0>;
-+	};
-+
-+	sysmmu-is0 {
-+		mmuname = "isp", "drc", "scalerc", "scalerp", "fd", "mcu";
-+		reg = < 0x13260000 0x1000
-+			0x13270000 0x1000
-+			0x13280000 0x1000
-+			0x13290000 0x1000
-+			0x132A0000 0x1000
-+			0x132B0000 0x1000 >;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <10 6
-+				11 6
-+				5 2
-+				3 6
-+				5 0
-+				5 4>;
-+	};
-+
-+	sysmmu-is1 {
-+		mmuname = "odc", "dis0", "dis1", "3dnr";
-+		reg = < 0x132C0000 0x1000
-+			0x132D0000 0x1000
-+			0x132E0000 0x1000
-+			0x132F0000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <11 0
-+				10 4
-+				9 4
-+				5 6>;
-+	};
-+
-+	sysmmu-2d {
-+		mmuname = "2d";
-+		reg = <0x10A60000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <24 5>;
-+	};
-+
-+	sysmmu-jpeg {
-+		mmuname = "jpeg";
-+		reg = <0x11F20000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <4 2>;
-+	};
-+
-+	sysmmu-flite0 {
-+		mmuname = "flite0";
-+		reg = <0x13C40000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <3 4>;
-+	};
-+
-+	sysmmu-flite1 {
-+		mmuname = "flite1";
-+		reg = <0x13C50000 0x1000>;
-+		compatible = "samsung,exynos-sysmmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <24 1>;
-+	};
- };
--- 
-1.8.0
+
+--=20
+Tushar Behera
