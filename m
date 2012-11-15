@@ -1,415 +1,133 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 01/11] clk: samsung: add common clock framework helper
- functions for Samsung platforms
-Date: Thu, 15 Nov 2012 11:25:55 +0100
-Message-ID: <1419971.gveAuG3NSW@amdc1227>
+Subject: Re: [PATCH v3 04/11] ARM: Exynos4: Migrate clock support to common
+ clock framework
+Date: Thu, 15 Nov 2012 11:42:05 +0100
+Message-ID: <3127900.LhP4Lj0re4@amdc1227>
 References: <1352930853-12268-1-git-send-email-thomas.abraham@linaro.org>
- <3129811.yIGKilgVGz@flatron>
- <CAJuYYwR=9Gx5kx-JwVNUaa8Tej-3NG03U4zbYBKr36rPAOtPvw@mail.gmail.com>
+ <1496911.LC6ynRgIgc@flatron>
+ <CAJuYYwQaPXueu6aVoaNQE3BD1gVRRh2pC0LWfjVC71M7QHMYDQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:47796 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S2992493Ab2KOK0C (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:27458 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S2992441Ab2KOKmL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Nov 2012 05:26:02 -0500
+	Thu, 15 Nov 2012 05:42:11 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDI006CMYB0S620@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Nov 2012 19:26:00 +0900 (KST)
+ 17 2011)) with ESMTP id <0MDI0053LZ1SKDN0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Nov 2012 19:42:09 +0900 (KST)
 Received: from amdc1227.localnet ([106.116.147.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDI00KGJYB9QF90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Nov 2012 19:26:00 +0900 (KST)
-In-reply-to: <CAJuYYwR=9Gx5kx-JwVNUaa8Tej-3NG03U4zbYBKr36rPAOtPvw@mail.gmail.com>
+ with ESMTPA id <0MDI00J43Z27V9A0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Nov 2012 19:42:09 +0900 (KST)
+In-reply-to: <CAJuYYwQaPXueu6aVoaNQE3BD1gVRRh2pC0LWfjVC71M7QHMYDQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, mturquette@ti.com, mturquette@linaro.org, kgene.kim@samsung.com, sylvester.nawrocki@gmail.com
 
-On Thursday 15 of November 2012 14:03:12 Thomas Abraham wrote:
-> Hi Tomasz,
-> 
-> Thanks for reviewing these patches!
-> 
-> On 15 November 2012 04:42, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> > Hi Thomas,
-> > 
-> > Looks mostly good, but I have some minor comments inline.
-> > 
-> > On Thursday 15 of November 2012 03:37:23 Thomas Abraham wrote:
-> >> All Samsung platforms include different types of clock including
-> >> fixed-rate, mux, divider and gate clock types. There are typically
-> >> hundreds of such clocks on each of the Samsung platforms. To enable
-> >> Samsung platforms to register these clocks using the common clock
-> >> framework, a bunch of utility functions are introduced here which
-> >> simplify the clock registration process. The clocks are usually
-> >> statically instantiated and registered with common clock framework.
+On Thursday 15 of November 2012 14:43:21 Thomas Abraham wrote:
+> On 15 November 2012 05:01, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> > On Thursday 15 of November 2012 03:37:26 Thomas Abraham wrote:
+> >> Remove Samsung specific clock support in Exynos4 and migrate to use
+> >> common clock framework.
 > >> 
-> >> Cc: Mike Turquette <mturquette@linaro.org>
 > >> Cc: Kukjin Kim <kgene.kim@samsung.com>
 > >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 > >> ---
 > >> 
-> >>  drivers/clk/Makefile         |    1 +
-> >>  drivers/clk/samsung/Makefile |    5 +
-> >>  drivers/clk/samsung/clk.c    |  176
-> >>  ++++++++++++++++++++++++++++++++++
-> >>  drivers/clk/samsung/clk.h    |  218
+> >>  arch/arm/mach-exynos/Kconfig               |    1 +
+> >>  arch/arm/mach-exynos/Makefile              |    3 -
+> >>  arch/arm/mach-exynos/clock-exynos4.c       | 1602
 > >> 
-> >> ++++++++++++++++++++++++++++++++++++++++++ 4 files changed, 400
-> >> insertions(+), 0 deletions(-)
+> >> ---------------------------- arch/arm/mach-exynos/clock-exynos4.h
 > >> 
-> >>  create mode 100644 drivers/clk/samsung/Makefile
-> >>  create mode 100644 drivers/clk/samsung/clk.c
-> >>  create mode 100644 drivers/clk/samsung/clk.h
-> >> 
-> >> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> >> index 2701235..808f8e1 100644
-> >> --- a/drivers/clk/Makefile
-> >> +++ b/drivers/clk/Makefile
-> >> @@ -19,6 +19,7 @@ endif
-> >> 
-> >>  obj-$(CONFIG_MACH_LOONGSON1) += clk-ls1x.o
-> >>  obj-$(CONFIG_ARCH_U8500)     += ux500/
-> >>  obj-$(CONFIG_ARCH_VT8500)    += clk-vt8500.o
-> >> 
-> >> +obj-$(CONFIG_PLAT_SAMSUNG)   += samsung/
-> >> 
-> >>  # Chip specific
-> >>  obj-$(CONFIG_COMMON_CLK_WM831X) += clk-wm831x.o
-> >> 
-> >> diff --git a/drivers/clk/samsung/Makefile
-> >> b/drivers/clk/samsung/Makefile new file mode 100644
-> >> index 0000000..3f926b0
-> >> --- /dev/null
-> >> +++ b/drivers/clk/samsung/Makefile
-> >> @@ -0,0 +1,5 @@
-> >> +#
-> >> +# Samsung Clock specific Makefile
-> >> +#
-> >> +
-> >> +obj-$(CONFIG_PLAT_SAMSUNG)   += clk.o
-> >> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> >> new file mode 100644
-> >> index 0000000..ebc6fb6
-> >> --- /dev/null
-> >> +++ b/drivers/clk/samsung/clk.c
-> >> @@ -0,0 +1,176 @@
-> >> +/*
-> >> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-> >> + * Copyright (c) 2012 Linaro Ltd.
-> >> + * Author: Thomas Abraham <thomas.ab@samsung.com>
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or
-> >> modify + * it under the terms of the GNU General Public License
-> >> version 2 as + * published by the Free Software Foundation.
-> >> + *
-> >> + * This file includes utility functions to register clocks to common
-> >> + * clock framework for Samsung platforms.
-> >> +*/
-> >> +
-> >> +#include "clk.h"
-> >> +
-> >> +static DEFINE_SPINLOCK(lock);
-> >> +static struct clk **clk_table;
-> >> +static struct clk_onecell_data clk_data;
-> >> +void __iomem *reg_base;
+> >> |   35 -
+> >>  
+> >>  arch/arm/mach-exynos/clock-exynos4210.c    |  188 ----
+> >>  arch/arm/mach-exynos/clock-exynos4212.c    |  192 ----
+> >>  arch/arm/mach-exynos/common.c              |   22 +-
+> >>  arch/arm/mach-exynos/common.h              |    3 +
+> >>  arch/arm/mach-exynos/mach-armlex4210.c     |    1 -
+> >>  arch/arm/mach-exynos/mach-exynos4-dt.c     |    1 -
+> >>  arch/arm/mach-exynos/mach-nuri.c           |    1 -
+> >>  arch/arm/mach-exynos/mach-origen.c         |    1 -
+> >>  arch/arm/mach-exynos/mach-smdk4x12.c       |    1 -
+> >>  arch/arm/mach-exynos/mach-smdkv310.c       |    1 -
+> >>  arch/arm/mach-exynos/mach-universal_c210.c |    1 -
+> >>  arch/arm/mach-exynos/mct.c                 |   19 +
+> >>  arch/arm/plat-samsung/Kconfig              |    4 +-
+> >>  17 files changed, 27 insertions(+), 2049 deletions(-)
+> >>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.c
+> >>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.h
+> >>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
+> >>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
 > > 
-> > Shouldn't it be static?
-> 
-> Yes, I missed that. Will fix.
-> 
-> >> +
-> >> +/* setup the essentials required to support clock lookup using ccf
-> >> */
-> >> +void __init samsung_clk_init(struct device_node *np, void __iomem
-> >> *base, +                              unsigned long nr_clks)
-> >> +{
-> >> +     reg_base = base;
-> >> +     if (!np)
-> >> +             return;
-> >> +
-> >> +     clk_table = kzalloc(sizeof(struct clk *) * nr_clks,
-> >> GFP_KERNEL);
-> >> +     if (!clk_table)
-> >> +             panic("could not allocate clock lookup table\n");
-> >> +
-> >> +     clk_data.clks = clk_table;
-> >> +     clk_data.clk_num = nr_clks;
-> >> +     of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> >> +}
-> >> +
-> >> +/* add a clock instance to the clock lookup table used for dt based
-> >> lookup */ +void samsung_clk_add_lookup(struct clk *clk, unsigned int
-> >> id) +{
-> >> +     if (clk_table && id)
+> > [snip]
 > > 
-> > I'm not sure if we really need this kind of checks, but if we do, then
-> > shouldn't we also check id against clk_data.clk_num to prevent out of
-> > bound index?
-> 
-> The entry into the lookup table is required only for device tree based
-> platforms. And clk_table is a dynamically allocated table if booting
-> with device tree support. Since the call to samsung_clk_add_lookup is
-> made for non-dt platforms as well, the check for clk_table ensures
-> that the entry to lookup table is done only for device tree enabled
-> platforms. The check for 'id' ensures that the lookup entry index 0 is
-> not used. There is no clock which has id as 0.
-> 
-> >> +             clk_table[id] = clk;
-> >> +}
-> >> +
-> >> +/* register a list of fixed clocks */
-> >> +void __init samsung_clk_register_fixed_rate(
-> >> +             struct samsung_fixed_rate_clock *list, unsigned int
-> >> nr_clk) +{
-> >> +     struct clk *clk;
-> >> +     unsigned int idx, ret;
-> >> +
-> >> +     for (idx = 0; idx < nr_clk; idx++, list++) {
-> >> +             clk = clk_register_fixed_rate(NULL, list->name,
-> >> +                     list->parent_name, list->flags,
-> >> list->fixed_rate); +             if (IS_ERR(clk)) {
-> >> +                     pr_err("%s: failed to register clock %s\n",
-> >> __func__, +                             list->name);
-> >> +                     continue;
+> >> diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+> >> index f7792b8..c2e806c 100644
+> >> --- a/arch/arm/mach-exynos/mct.c
+> >> +++ b/arch/arm/mach-exynos/mct.c
+> >> @@ -31,6 +31,7 @@
+> >> 
+> >>  #include <mach/map.h>
+> >>  #include <mach/irqs.h>
+> >>  #include <asm/mach/time.h>
+> >> 
+> >> +#include "common.h"
+> >> 
+> >>  #define EXYNOS4_MCTREG(x)            (x)
+> >>  #define EXYNOS4_MCT_G_CNT_L          EXYNOS4_MCTREG(0x100)
+> >> 
+> >> @@ -517,6 +518,24 @@ static void __init exynos4_timer_init(void)
+> >> 
+> >>       struct device_node *np;
+> >>       u32 nr_irqs, i;
+> >> 
+> >> +#ifdef CONFIG_COMMON_CLK
+> >> +     /*
+> >> +      * Clock lookup should be functional now since the MCT
+> >> controller
+> >> driver +       * looks up clocks. So the clock initialization is
+> >> initiated here. +        */
+> >> +     if (of_have_populated_dt()) {
+> >> +             if (of_machine_is_compatible("samsung,exynos4210") ||
+> >> +                      of_machine_is_compatible("samsung,exynos4212")
+> >> || +                     
+> >> of_machine_is_compatible("samsung,exynos4412")) +                   
+> >>  exynos4_clk_init();
+> >> +     } else {
+> >> +             if (soc_is_exynos4210() || soc_is_exynos4212() ||
+> >> +                             soc_is_exynos4412()) {
+> >> +                     exynos4_clk_init();
 > >> +             }
-> >> +
-> >> +             samsung_clk_add_lookup(clk, list->id);
-> >> +
-> >> +             /*
-> >> +              * Unconditionally add a clock lookup for the fixed
-> >> rate
-> > 
-> > clocks.
-> > 
-> >> +              * There are not many of these on any of Samsung
-> >> platforms. +              */
-> >> +             ret = clk_register_clkdev(clk, list->name, NULL);
-> >> +             if (ret)
-> >> +                     pr_err("%s: failed to register clock lookup for
-> >> %s", +                             __func__, list->name);
 > >> +     }
-> >> +}
+> >> +#endif
 > >> +
-> >> +/* register a list of mux clocks */
-> >> +void __init samsung_clk_register_mux(struct samsung_mux_clock *list,
-> >> +                                     unsigned int nr_clk)
-> >> +{
-> >> +     struct clk *clk;
-> >> +     unsigned int idx, ret;
-> >> +
-> >> +     for (idx = 0; idx < nr_clk; idx++, list++) {
-> >> +             clk = clk_register_mux(NULL, list->name,
-> >> list->parent_names, +                     list->num_parents,
-> >> list->flags, reg_base + list->offset, +                    
-> >> list->shift, list->width, list->mux_flags, &lock); +             if
-> >> (IS_ERR(clk)) {
-> >> +                     pr_err("%s: failed to register clock %s\n",
-> >> __func__, +                             list->name);
-> >> +                     continue;
-> >> +             }
-> >> +
-> >> +             samsung_clk_add_lookup(clk, list->id);
-> >> +
-> >> +             /* register a clock lookup only if a clock alias is
-> >> specified> 
-> > */
 > > 
-> >> +             if (list->alias) {
-> >> +                     ret = clk_register_clkdev(clk, list->alias,
-> >> +                                             list->dev_name);
-> >> +                     if (ret)
-> >> +                             pr_err("%s: failed to register lookup
-> >> %s\n", +                                             __func__,
-> >> list->alias); +             }
-> >> +     }
-> >> +}
-> >> +
-> >> +/* register a list of div clocks */
-> >> +void __init samsung_clk_register_div(struct samsung_div_clock *list,
-> >> +                                     unsigned int nr_clk)
-> >> +{
-> >> +     struct clk *clk;
-> >> +     unsigned int idx, ret;
-> >> +
-> >> +     for (idx = 0; idx < nr_clk; idx++, list++) {
-> >> +             clk = clk_register_divider(NULL, list->name, list-
-> >>
-> >>parent_name,
-> >>
-> >> +                     list->flags, reg_base + list->offset,
-> >> list->shift, +                     list->width, list->div_flags,
-> >> &lock);
-> >> +             if (IS_ERR(clk)) {
-> >> +                     pr_err("clock: failed to register clock %s\n",
-> >> +                             list->name);
-> >> +                     continue;
-> >> +             }
-> >> +
-> >> +             samsung_clk_add_lookup(clk, list->id);
-> >> +
-> >> +             /* register a clock lookup only if a clock alias is
-> >> specified> 
-> > */
-> > 
-> >> +             if (list->alias) {
-> >> +                     ret = clk_register_clkdev(clk, list->alias,
-> >> +                                             list->dev_name);
-> >> +                     if (ret)
-> >> +                             pr_err("%s: failed to register lookup
-> >> %s\n", +                                             __func__,
-> >> list->alias); +             }
-> >> +     }
-> >> +}
-> >> +
-> >> +/* register a list of gate clocks */
-> >> +void __init samsung_clk_register_gate(struct samsung_gate_clock
-> >> *list,
-> >> +                                             unsigned int nr_clk)
-> >> +{
-> >> +     struct clk *clk;
-> >> +     unsigned int idx, ret;
-> >> +
-> >> +     for (idx = 0; idx < nr_clk; idx++, list++) {
-> >> +             clk = clk_register_gate(NULL, list->name,
-> >> list->parent_name, +                             list->flags,
-> >> reg_base + list->offset, +                            
-> >> list->bit_idx, list->gate_flags, &lock); +             if
-> >> (IS_ERR(clk)) {
-> >> +                     pr_err("clock: failed to register clock %s\n",
-> >> +                             list->name);
-> >> +                     continue;
-> >> +             }
-> >> +
-> >> +             /* register a clock lookup only if a clock alias is
-> >> specified> 
-> > */
-> > 
-> >> +             if (list->alias) {
-> >> +                     ret = clk_register_clkdev(clk, list->alias,
-> >> +                                                    
-> >> list->dev_name);
-> >> +                     if (ret)
-> >> +                             pr_err("%s: failed to register lookup
-> >> %s\n", +                                     __func__, list->alias);
-> >> +             }
-> >> +
-> >> +             samsung_clk_add_lookup(clk, list->id);
-> >> +     }
-> >> +}
-> >> +
-> >> +/* utility function to get the rate of a specified clock */
-> >> +unsigned long _get_rate(const char *clk_name)
-> >> +{
-> >> +     struct clk *clk;
-> >> +     unsigned long rate;
-> >> +
-> >> +     clk = clk_get(NULL, clk_name);
-> >> +     if (IS_ERR(clk))
-> >> +             return 0;
-> >> +     rate = clk_get_rate(clk);
-> >> +     clk_put(clk);
-> >> +     return rate;
-> >> +}
-> >> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> >> new file mode 100644
-> >> index 0000000..ab43498
-> >> --- /dev/null
-> >> +++ b/drivers/clk/samsung/clk.h
-> >> @@ -0,0 +1,218 @@
-> >> +/*
-> >> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-> >> + * Copyright (c) 2012 Linaro Ltd.
-> >> + * Author: Thomas Abraham <thomas.ab@samsung.com>
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or
-> >> modify + * it under the terms of the GNU General Public License
-> >> version 2 as + * published by the Free Software Foundation.
-> >> + *
-> >> + * Common Clock Framework support for all Samsung platforms
-> >> +*/
-> >> +
-> >> +#ifndef __SAMSUNG_CLK_H
-> >> +#define __SAMSUNG_CLK_H
-> >> +
-> >> +#include <linux/clk.h>
-> >> +#include <linux/clkdev.h>
-> >> +#include <linux/io.h>
-> >> +#include <linux/clk-provider.h>
-> >> +#include <linux/of.h>
-> >> +#include <linux/of_address.h>
-> >> +
-> >> +#include <mach/map.h>
-> >> +
-> >> +/**
-> >> + * struct samsung_fixed_rate_clock: information about fixed-rate
-> >> clock
-> >> + * @id: platform specific id of the clock.
-> >> + * @name: name of this fixed-rate clock.
-> >> + * @parent_name: optional parent clock name.
-> >> + * @flags: optional fixed-rate clock flags.
-> >> + * @fixed-rate: fixed clock rate of this clock.
-> >> + */
-> >> +struct samsung_fixed_rate_clock {
-> >> +     unsigned int            id;
-> >> +     char                    *name;
-> > 
-> > Shouldn't it be const char *name?
+> > I don't like the idea of initializing the clocks from timer
+> > initialization. What about some platforms where MCT isn't used? It is
+> > also far from being elegant.
 > 
-> Yes, I will fix this.
-> 
-> >> +     const char              *parent_name;
-> >> +     unsigned long           flags;
-> >> +     unsigned long           fixed_rate;
-> >> +};
-> >> +
-> >> +#define FRATE(_id, cname, pname, f, frate)   \
-> >> +     {                                               \
-> >> +             .id             = _id,                  \
-> >> +             .name           = cname,                \
-> >> +             .parent_name    = pname,                \
-> >> +             .flags          = f,                    \
-> >> +             .fixed_rate     = frate,                \
-> >> +     }
-> >> +
-> >> +/**
-> >> + * struct samsung_mux_clock: information about mux clock
-> >> + * @id: platform specific id of the clock.
-> >> + * @dev_name: name of the device to which this clock belongs.
-> >> + * @name: name of this mux clock.
-> >> + * @parent_names: array of pointer to parent clock names.
-> >> + * @num_parents: number of parents listed in @parent_names.
-> >> + * @flags: optional flags for basic clock.
-> >> + * @offset: offset of the register for configuring the mux.
-> >> + * @shift: starting bit location of the mux control bit-field in
-> >> @reg.
-> >> + * @width: width of the mux control bit-field in @reg.
-> >> + * @mux_flags: flags for mux-type clock.
-> >> + * @alias: optional clock alias name to be assigned to this clock.
-> >> + */
-> >> +struct samsung_mux_clock {
-> >> +     const unsigned int      id;
-> > 
-> > Is const unsigned int really correct?
-> 
-> Sorry, I did not get the problem here.
+> Very true, I did also prefer not do this. But, clock lookup should be
+> functional atleast by the time mct initialization begins. So I tried
+> few options such as adding .early_init_call callback in MACHINE_DESC
+> which then can call exynos4_clk_init, but that did not help since
+> mem_init isn't complete by then and memory allocation failed during
+> clock registration. Other methods also did not help much. If you know
+> of a solution to get around this, could you please let me know.
 
-Basically this const does not give us anything, while it could make 
-problems in future.
-
-Let's say that one would want to register a clock in runtime, dynamically 
-allocating a samsung_*_clock structure. It wouldn't be possible, because 
-he wouldn't be able to set the id field.
-
-Instead of making particular fields in the structures constant, I would 
-prefer making the arrays of these structures constant, as they are 
-statically initialized anyway.
+This is somehow similar to the problem with mapping SYSRAM_NS for Exynos 
+secure firmware. Currently it must be mapped statically using io_table, 
+because ioremap does not work early enough. I guess this kind of approach 
+might be also enough for clocks, until io mem mapping becomes accessible 
+early enough, but someone else should also comment this.
 
 Best regards,
 -- 
