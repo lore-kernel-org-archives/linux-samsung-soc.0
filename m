@@ -1,88 +1,106 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v3 05/11] ARM: dts: add exynos4 clock controller nodes
-Date: Thu, 15 Nov 2012 14:28:40 +0530
-Message-ID: <CAJuYYwRHg=NLDe1TaOtE-vigjctYRrtkU6o1-w_52tszUth80Q@mail.gmail.com>
+Subject: Re: [PATCH v3 04/11] ARM: Exynos4: Migrate clock support to common
+ clock framework
+Date: Thu, 15 Nov 2012 14:43:21 +0530
+Message-ID: <CAJuYYwQaPXueu6aVoaNQE3BD1gVRRh2pC0LWfjVC71M7QHMYDQ@mail.gmail.com>
 References: <1352930853-12268-1-git-send-email-thomas.abraham@linaro.org>
-	<1352930853-12268-6-git-send-email-thomas.abraham@linaro.org>
-	<4979279.mb3rWrdaG3@flatron>
+	<1352930853-12268-5-git-send-email-thomas.abraham@linaro.org>
+	<1496911.LC6ynRgIgc@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:49246 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S2992592Ab2KOI6l (ORCPT
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:57127 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751970Ab2KOJNW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Nov 2012 03:58:41 -0500
-Received: by mail-vc0-f174.google.com with SMTP id fk26so1386837vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Nov 2012 00:58:40 -0800 (PST)
-In-Reply-To: <4979279.mb3rWrdaG3@flatron>
+	Thu, 15 Nov 2012 04:13:22 -0500
+Received: by mail-vb0-f46.google.com with SMTP id ff1so1422126vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Nov 2012 01:13:21 -0800 (PST)
+In-Reply-To: <1496911.LC6ynRgIgc@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, mturquette@ti.com, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-On 15 November 2012 04:57, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Thursday 15 of November 2012 03:37:27 Thomas Abraham wrote:
->> Add clock controller nodes for Exynos4210 and Exynos4x12 SoC's.
+On 15 November 2012 05:01, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Thursday 15 of November 2012 03:37:26 Thomas Abraham wrote:
+>> Remove Samsung specific clock support in Exynos4 and migrate to use
+>> common clock framework.
 >>
 >> Cc: Kukjin Kim <kgene.kim@samsung.com>
 >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 >> ---
->>  arch/arm/boot/dts/exynos4210.dtsi |    6 ++++++
->>  arch/arm/boot/dts/exynos4x12.dtsi |    6 ++++++
->>  2 files changed, 12 insertions(+), 0 deletions(-)
+>>  arch/arm/mach-exynos/Kconfig               |    1 +
+>>  arch/arm/mach-exynos/Makefile              |    3 -
+>>  arch/arm/mach-exynos/clock-exynos4.c       | 1602
+>> ---------------------------- arch/arm/mach-exynos/clock-exynos4.h
+>> |   35 -
+>>  arch/arm/mach-exynos/clock-exynos4210.c    |  188 ----
+>>  arch/arm/mach-exynos/clock-exynos4212.c    |  192 ----
+>>  arch/arm/mach-exynos/common.c              |   22 +-
+>>  arch/arm/mach-exynos/common.h              |    3 +
+>>  arch/arm/mach-exynos/mach-armlex4210.c     |    1 -
+>>  arch/arm/mach-exynos/mach-exynos4-dt.c     |    1 -
+>>  arch/arm/mach-exynos/mach-nuri.c           |    1 -
+>>  arch/arm/mach-exynos/mach-origen.c         |    1 -
+>>  arch/arm/mach-exynos/mach-smdk4x12.c       |    1 -
+>>  arch/arm/mach-exynos/mach-smdkv310.c       |    1 -
+>>  arch/arm/mach-exynos/mach-universal_c210.c |    1 -
+>>  arch/arm/mach-exynos/mct.c                 |   19 +
+>>  arch/arm/plat-samsung/Kconfig              |    4 +-
+>>  17 files changed, 27 insertions(+), 2049 deletions(-)
+>>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.c
+>>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.h
+>>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
+>>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
 >>
->> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
->> b/arch/arm/boot/dts/exynos4210.dtsi index d6fc306..f7daa09 100644
->> --- a/arch/arm/boot/dts/exynos4210.dtsi
->> +++ b/arch/arm/boot/dts/exynos4210.dtsi
->> @@ -50,6 +50,12 @@
->>               samsung,mct-nr-local-irqs = <4>;
->>       };
+> [snip]
+>> diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+>> index f7792b8..c2e806c 100644
+>> --- a/arch/arm/mach-exynos/mct.c
+>> +++ b/arch/arm/mach-exynos/mct.c
+>> @@ -31,6 +31,7 @@
+>>  #include <mach/map.h>
+>>  #include <mach/irqs.h>
+>>  #include <asm/mach/time.h>
+>> +#include "common.h"
 >>
->> +     clock: clock-controller@0x10030000 {
->> +             compatible = "samsung,exynos4210-clock";
->> +             reg = <0x10030000 0x20000>;
->> +             #clock-cells = <1>;
->> +     };
+>>  #define EXYNOS4_MCTREG(x)            (x)
+>>  #define EXYNOS4_MCT_G_CNT_L          EXYNOS4_MCTREG(0x100)
+>> @@ -517,6 +518,24 @@ static void __init exynos4_timer_init(void)
+>>       struct device_node *np;
+>>       u32 nr_irqs, i;
+>>
+>> +#ifdef CONFIG_COMMON_CLK
+>> +     /*
+>> +      * Clock lookup should be functional now since the MCT controller
+>> driver +       * looks up clocks. So the clock initialization is initiated
+>> here. +        */
+>> +     if (of_have_populated_dt()) {
+>> +             if (of_machine_is_compatible("samsung,exynos4210") ||
+>> +                      of_machine_is_compatible("samsung,exynos4212") ||
+>> +                      of_machine_is_compatible("samsung,exynos4412"))
+>> +                     exynos4_clk_init();
+>> +     } else {
+>> +             if (soc_is_exynos4210() || soc_is_exynos4212() ||
+>> +                             soc_is_exynos4412()) {
+>> +                     exynos4_clk_init();
+>> +             }
+>> +     }
+>> +#endif
 >> +
->>       pinctrl_0: pinctrl@11400000 {
->>               compatible = "samsung,pinctrl-exynos4210";
->>               reg = <0x11400000 0x1000>;
->> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
->> b/arch/arm/boot/dts/exynos4x12.dtsi index 7cbbd19..bcfdaac 100644
->> --- a/arch/arm/boot/dts/exynos4x12.dtsi
->> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
->> @@ -35,6 +35,12 @@
->>                            <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>;
->>       };
->>
->> +     clock: clock-controller@0x10030000 {
->> +             compatible = "samsung,exynos4412-clock";
 >
-> nitpick: I forgot to mention about it in my comments for patch 3, but
-> wouldn't it be better to call it "samsung,exynos4x12-clock"?
+> I don't like the idea of initializing the clocks from timer
+> initialization. What about some platforms where MCT isn't used? It is also
+> far from being elegant.
 
-I prefer to use a specific version for compatible strings. I remember
-that there have been discussion in the past on this, but I belong to
-the camp which favors using fixed compatible values over wildcards in
-compatible values. It is easier to track and less problematic in case
-a new Exynos4x12 SoC comes up with altogether a different clock
-architecture. We have used this method for wdt, rtc, i2c and many
-other drivers and it has proven to be suit well. For instance, for
-i2c, we have two variants - s3c2410 and s3c2440 and we can use this
-most of all the Samsung SoCs.
-
->
->> +             reg = <0x10030000 0x20000>;
->> +             #clock-cells = <1>;
->> +     };
->> +
->>       pinctrl_0: pinctrl@11400000 {
->>               compatible = "samsung,pinctrl-exynos4x12";
->>               reg = <0x11400000 0x1000>;
->
-> Otherwise looks fine.
+Very true, I did also prefer not do this. But, clock lookup should be
+functional atleast by the time mct initialization begins. So I tried
+few options such as adding .early_init_call callback in MACHINE_DESC
+which then can call exynos4_clk_init, but that did not help since
+mem_init isn't complete by then and memory allocation failed during
+clock registration. Other methods also did not help much. If you know
+of a solution to get around this, could you please let me know.
 
 Thanks,
 Thomas.
