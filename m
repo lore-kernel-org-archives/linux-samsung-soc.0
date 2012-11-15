@@ -1,53 +1,29 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Build failure: OMAP4430 failed due to exynos4 pinctrl
-Date: Thu, 15 Nov 2012 11:59:51 +0100
-Message-ID: <CACRpkdaUN0r9tbjRXyXYqRtzgd1jS8RFsomtH64ja6GfNoeomw@mail.gmail.com>
-References: <007b01cdc0bf$50c9ee70$f25dcb50$%kim@samsung.com>
-	<201211121440.13980.arnd@arndb.de>
-	<01a601cdc15d$5a4c46c0$0ee4d440$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:47268 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S2993220Ab2KOK7w (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Nov 2012 05:59:52 -0500
-Received: by mail-ee0-f46.google.com with SMTP id b15so876384eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Nov 2012 02:59:51 -0800 (PST)
-In-Reply-To: <01a601cdc15d$5a4c46c0$0ee4d440$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/4] i2c-s3c2410: Fix a bug and optimize code
+Date: Thu, 15 Nov 2012 17:43:29 +0530
+Message-ID: <1352981613-2098-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, arm@kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 13, 2012 at 6:11 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+The following set of patches fixes a bug in i2c-s3c2410 driver
+with respect to the functioning of dedicated HDMIPHY channel.
+1. Removing unwanted spinlock
+2. Correcting the Stop sequence
+3. Optimizing the wait loop for bus idle.
+4. Removing unnecessary HDMI special cases
+Respectively.
 
->> From: Arnd Bergmann <arnd@arndb.de>
->> Date: Wed, 10 Oct 2012 13:31:45 +0000
->> Subject: [PATCH] pinctrl: samsung: don't allow enabling pinctrl-samsung
->>  standalone
->>
->> The main samsung pinctrl module references the specific exynos4210
->> pinctrl driver, which selects the main driver in Kconfig.
->>
->> Making the main driver a silent "bool" option avoid this potential
->> build error if CONFIG_PINCTRL_SAMSUNG=y && CONFIG_PINCTRL_EXYNOS4=n:
->>
->> drivers/built-in.o:(.rodata+0x4e4): undefined reference to
->> `exynos4210_pin_ctrl'
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> Cc: Tomasz Figa <t.figa@samsung.com>
->> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Kukjin Kim <kgene.kim@samsung.com>
->
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->
-> Linus, can you pick this up in your pinctrl/fixes ree?
+Daniel Kurtz (4):
+  i2c-s3c2410: grab adapter lock while changing i2c clock
+  i2c-s3c2410: do not generate STOP for QUIRK_HDMIPHY
+  i2c-s3c2410: use exponential back off while polling for bus idle
+  i2c-s3c2410: do not special case HDMIPHY stuck bus detection
 
-OK done.
+ drivers/i2c/busses/i2c-s3c2410.c |  134 ++++++++++++++++++++++++++------------
+ 1 file changed, 91 insertions(+), 43 deletions(-)
 
-Yours,
-Linus Walleij
+-- 
+1.7.9.5
