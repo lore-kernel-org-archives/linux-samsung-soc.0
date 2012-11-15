@@ -1,136 +1,53 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 04/11] ARM: Exynos4: Migrate clock support to common
- clock framework
-Date: Thu, 15 Nov 2012 11:42:05 +0100
-Message-ID: <3127900.LhP4Lj0re4@amdc1227>
-References: <1352930853-12268-1-git-send-email-thomas.abraham@linaro.org>
- <1496911.LC6ynRgIgc@flatron>
- <CAJuYYwQaPXueu6aVoaNQE3BD1gVRRh2pC0LWfjVC71M7QHMYDQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Build failure: OMAP4430 failed due to exynos4 pinctrl
+Date: Thu, 15 Nov 2012 11:59:51 +0100
+Message-ID: <CACRpkdaUN0r9tbjRXyXYqRtzgd1jS8RFsomtH64ja6GfNoeomw@mail.gmail.com>
+References: <007b01cdc0bf$50c9ee70$f25dcb50$%kim@samsung.com>
+	<201211121440.13980.arnd@arndb.de>
+	<01a601cdc15d$5a4c46c0$0ee4d440$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:27458 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S2992441Ab2KOKmL (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:47268 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S2993220Ab2KOK7w (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Nov 2012 05:42:11 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDI0053LZ1SKDN0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Nov 2012 19:42:09 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDI00J43Z27V9A0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Nov 2012 19:42:09 +0900 (KST)
-In-reply-to: <CAJuYYwQaPXueu6aVoaNQE3BD1gVRRh2pC0LWfjVC71M7QHMYDQ@mail.gmail.com>
+	Thu, 15 Nov 2012 05:59:52 -0500
+Received: by mail-ee0-f46.google.com with SMTP id b15so876384eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Nov 2012 02:59:51 -0800 (PST)
+In-Reply-To: <01a601cdc15d$5a4c46c0$0ee4d440$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, mturquette@ti.com, mturquette@linaro.org, kgene.kim@samsung.com, sylvester.nawrocki@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, arm@kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Thursday 15 of November 2012 14:43:21 Thomas Abraham wrote:
-> On 15 November 2012 05:01, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> > On Thursday 15 of November 2012 03:37:26 Thomas Abraham wrote:
-> >> Remove Samsung specific clock support in Exynos4 and migrate to use
-> >> common clock framework.
-> >> 
-> >> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> >> ---
-> >> 
-> >>  arch/arm/mach-exynos/Kconfig               |    1 +
-> >>  arch/arm/mach-exynos/Makefile              |    3 -
-> >>  arch/arm/mach-exynos/clock-exynos4.c       | 1602
-> >> 
-> >> ---------------------------- arch/arm/mach-exynos/clock-exynos4.h
-> >> 
-> >> |   35 -
-> >>  
-> >>  arch/arm/mach-exynos/clock-exynos4210.c    |  188 ----
-> >>  arch/arm/mach-exynos/clock-exynos4212.c    |  192 ----
-> >>  arch/arm/mach-exynos/common.c              |   22 +-
-> >>  arch/arm/mach-exynos/common.h              |    3 +
-> >>  arch/arm/mach-exynos/mach-armlex4210.c     |    1 -
-> >>  arch/arm/mach-exynos/mach-exynos4-dt.c     |    1 -
-> >>  arch/arm/mach-exynos/mach-nuri.c           |    1 -
-> >>  arch/arm/mach-exynos/mach-origen.c         |    1 -
-> >>  arch/arm/mach-exynos/mach-smdk4x12.c       |    1 -
-> >>  arch/arm/mach-exynos/mach-smdkv310.c       |    1 -
-> >>  arch/arm/mach-exynos/mach-universal_c210.c |    1 -
-> >>  arch/arm/mach-exynos/mct.c                 |   19 +
-> >>  arch/arm/plat-samsung/Kconfig              |    4 +-
-> >>  17 files changed, 27 insertions(+), 2049 deletions(-)
-> >>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.c
-> >>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.h
-> >>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
-> >>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
-> > 
-> > [snip]
-> > 
-> >> diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-> >> index f7792b8..c2e806c 100644
-> >> --- a/arch/arm/mach-exynos/mct.c
-> >> +++ b/arch/arm/mach-exynos/mct.c
-> >> @@ -31,6 +31,7 @@
-> >> 
-> >>  #include <mach/map.h>
-> >>  #include <mach/irqs.h>
-> >>  #include <asm/mach/time.h>
-> >> 
-> >> +#include "common.h"
-> >> 
-> >>  #define EXYNOS4_MCTREG(x)            (x)
-> >>  #define EXYNOS4_MCT_G_CNT_L          EXYNOS4_MCTREG(0x100)
-> >> 
-> >> @@ -517,6 +518,24 @@ static void __init exynos4_timer_init(void)
-> >> 
-> >>       struct device_node *np;
-> >>       u32 nr_irqs, i;
-> >> 
-> >> +#ifdef CONFIG_COMMON_CLK
-> >> +     /*
-> >> +      * Clock lookup should be functional now since the MCT
-> >> controller
-> >> driver +       * looks up clocks. So the clock initialization is
-> >> initiated here. +        */
-> >> +     if (of_have_populated_dt()) {
-> >> +             if (of_machine_is_compatible("samsung,exynos4210") ||
-> >> +                      of_machine_is_compatible("samsung,exynos4212")
-> >> || +                     
-> >> of_machine_is_compatible("samsung,exynos4412")) +                   
-> >>  exynos4_clk_init();
-> >> +     } else {
-> >> +             if (soc_is_exynos4210() || soc_is_exynos4212() ||
-> >> +                             soc_is_exynos4412()) {
-> >> +                     exynos4_clk_init();
-> >> +             }
-> >> +     }
-> >> +#endif
-> >> +
-> > 
-> > I don't like the idea of initializing the clocks from timer
-> > initialization. What about some platforms where MCT isn't used? It is
-> > also far from being elegant.
-> 
-> Very true, I did also prefer not do this. But, clock lookup should be
-> functional atleast by the time mct initialization begins. So I tried
-> few options such as adding .early_init_call callback in MACHINE_DESC
-> which then can call exynos4_clk_init, but that did not help since
-> mem_init isn't complete by then and memory allocation failed during
-> clock registration. Other methods also did not help much. If you know
-> of a solution to get around this, could you please let me know.
+On Tue, Nov 13, 2012 at 6:11 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-This is somehow similar to the problem with mapping SYSRAM_NS for Exynos 
-secure firmware. Currently it must be mapped statically using io_table, 
-because ioremap does not work early enough. I guess this kind of approach 
-might be also enough for clocks, until io mem mapping becomes accessible 
-early enough, but someone else should also comment this.
+>> From: Arnd Bergmann <arnd@arndb.de>
+>> Date: Wed, 10 Oct 2012 13:31:45 +0000
+>> Subject: [PATCH] pinctrl: samsung: don't allow enabling pinctrl-samsung
+>>  standalone
+>>
+>> The main samsung pinctrl module references the specific exynos4210
+>> pinctrl driver, which selects the main driver in Kconfig.
+>>
+>> Making the main driver a silent "bool" option avoid this potential
+>> build error if CONFIG_PINCTRL_SAMSUNG=y && CONFIG_PINCTRL_EXYNOS4=n:
+>>
+>> drivers/built-in.o:(.rodata+0x4e4): undefined reference to
+>> `exynos4210_pin_ctrl'
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Tomasz Figa <t.figa@samsung.com>
+>> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>
+> Linus, can you pick this up in your pinctrl/fixes ree?
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+OK done.
+
+Yours,
+Linus Walleij
