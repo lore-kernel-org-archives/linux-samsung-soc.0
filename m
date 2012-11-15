@@ -1,100 +1,54 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 07/11] ARM: Exynos4: allow legacy board support to specify xxti and xusbxti clock speed
-Date: Thu, 15 Nov 2012 00:36:16 +0100
-Message-ID: <7438966.1DHnOH3JLs@flatron>
-References: <1352930853-12268-1-git-send-email-thomas.abraham@linaro.org> <1352930853-12268-8-git-send-email-thomas.abraham@linaro.org>
+From: Amit Kachhap <amit.kachhap@linaro.org>
+Subject: Re: [PATCH-Resend] thermal: Exynos: Add missing dependency
+Date: Thu, 15 Nov 2012 12:31:36 +0530
+Message-ID: <CAK44p21smO8rrKoJF=47ywRCeagDudvFzZ7DhJ7TZCT7Mqv7kA@mail.gmail.com>
+References: <1352961579-13807-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:40411 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1945916Ab2KNXgS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Nov 2012 18:36:18 -0500
-Received: by mail-ee0-f46.google.com with SMTP id b15so642974eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Nov 2012 15:36:17 -0800 (PST)
-In-Reply-To: <1352930853-12268-8-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1352961579-13807-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-pm@vger.kernel.org, patches@linaro.org, akpm@linux-foundation.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, mturquette@ti.com, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-On Thursday 15 of November 2012 03:37:29 Thomas Abraham wrote:
-> The clock speed of xxti and xusbxti clocks depends on the oscillator
-> used on the board to generate these clocks. For non-dt platforms, allow
-> the board support for those platforms to set the clock frequency of
-> xxti and xusbxti clocks.
-> 
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+On 15 November 2012 12:09, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> CPU_FREQ_TABLE depends on CPU_FREQ. Selecting CPU_FREQ_TABLE without checking
+> for dependencies gives the following compilation warnings:
+> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC && UX500_SOC_DB8500 &&
+> CPU_THERMAL && EXYNOS_THERMAL) selects CPU_FREQ_TABLE which has unmet
+> direct dependencies (ARCH_HAS_CPUFREQ && CPU_FREQ)
+>
+> Cc: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
->  arch/arm/mach-exynos/common.c              |    2 ++
->  arch/arm/mach-exynos/common.h              |    1 +
->  arch/arm/mach-exynos/mach-nuri.c           |    2 ++
->  arch/arm/mach-exynos/mach-origen.c         |    2 ++
->  arch/arm/mach-exynos/mach-smdkv310.c       |    2 ++
->  arch/arm/mach-exynos/mach-universal_c210.c |    2 ++
->  arch/arm/mach-exynos/mct.c                 |    1 +
->  7 files changed, 12 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/common.c
-> b/arch/arm/mach-exynos/common.c index 138a41d..64c0012 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -65,6 +65,8 @@ static void exynos5_init_clocks(int xtal);
->  static void exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no);
->  static int exynos_init(void);
-> 
-> +unsigned long xxti_f = 0, xusbxti_f = 0;
-> +
->  static struct cpu_table cpu_ids[] __initdata = {
->  	{
->  		.idcode		= EXYNOS4210_CPU_ID,
-> diff --git a/arch/arm/mach-exynos/common.h
-> b/arch/arm/mach-exynos/common.h index 2cacd48..f947789 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -22,6 +22,7 @@ void exynos4_restart(char mode, const char *cmd);
->  void exynos5_restart(char mode, const char *cmd);
->  void exynos_init_late(void);
-> 
-> +extern unsigned long xxti_f, xusbxti_f;
->  void exynos4_clk_init(void);
->  void exynos4_clk_register_fixed_ext(unsigned long, unsigned long);
-> 
-> diff --git a/arch/arm/mach-exynos/mach-nuri.c
-> b/arch/arm/mach-exynos/mach-nuri.c index 5b5c941..e14332c 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -1332,6 +1332,8 @@ static void __init nuri_map_io(void)
->  {
->  	exynos_init_io(NULL, 0);
->  	s3c24xx_init_uarts(nuri_uartcfgs, ARRAY_SIZE(nuri_uartcfgs));
-> +	xxti_f = 0;
-> +	xusbxti_f = 24000000;
+>  drivers/thermal/Kconfig |    3 +--
+>  1 files changed, 1 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 266c15e..6124c4b 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -50,8 +50,7 @@ config RCAR_THERMAL
+>
+>  config EXYNOS_THERMAL
+>         tristate "Temperature sensor on Samsung EXYNOS"
+> -       depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5) && THERMAL
+> -       select CPU_FREQ_TABLE
+Hi Sachin/Rui,
 
-I don't like setting these variables directly from board code.
+"select CPU_FREQ_TABLE" should be there even if CONFIG_CPU_FREQ is
+enabled. Only some governors enable it. See drivers/cpufreq/Kconfig
+Also "depends THERMAL" should be there otherwise menuconfig
+parent/child relationship is broken.
 
-If you didn't remove clock initialization call from board code, you could 
-extend that function to take these two frequencies as arguments?
+Thanks,
+Amit Daniel
 
->  }
-> 
->  static void __init nuri_reserve(void)
-[snip]
-> diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-> index c2e806c..cd061b2 100644
-> --- a/arch/arm/mach-exynos/mct.c
-> +++ b/arch/arm/mach-exynos/mct.c
-> @@ -532,6 +532,7 @@ static void __init exynos4_timer_init(void)
->  		if (soc_is_exynos4210() || soc_is_exynos4212() ||
->  				soc_is_exynos4412()) {
->  			exynos4_clk_init();
-> +			exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
-
-I don't like registering clocks from unrelated code. IMHO any clock 
-registration should be done from code in drivers/clk/samsung.
-
-Best regards,
-Tomasz Figa
+> +       depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5) && CPU_THERMAL
+>         help
+>           If you say yes here you get support for TMU (Thermal Managment
+>           Unit) on SAMSUNG EXYNOS series of SoC.
+> --
+> 1.7.4.1
+>
