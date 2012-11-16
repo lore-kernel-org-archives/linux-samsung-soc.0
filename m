@@ -1,30 +1,36 @@
-From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] i2c-s3c2410: Convert to devm_request_and_ioremap()
-Date: Fri, 16 Nov 2012 12:39:10 +0100
-Message-ID: <20121116113910.GD19028@pengutronix.de>
-References: <1352104419-31630-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1352104419-31630-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: [PATCH] i2c: i2c-s3c2410: Add support for pinctrl
+Date: Fri, 16 Nov 2012 12:54:25 +0100
+Message-ID: <20121116115425.GF19028@pengutronix.de>
+References: <14549510.veZygXpPkq@amdc1227>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UoPmpPX/dBe4BELn"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="GLp9dJVi+aaipsRk"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:51017 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751297Ab2KPLy2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Nov 2012 06:54:28 -0500
 Content-Disposition: inline
-In-Reply-To: <1352104419-31630-2-git-send-email-broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <14549510.veZygXpPkq@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-i2c@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
 
---UoPmpPX/dBe4BELn
+--GLp9dJVi+aaipsRk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 05, 2012 at 09:33:39AM +0100, Mark Brown wrote:
-> A small code saving and less error handling to worry about.
+On Tue, Nov 13, 2012 at 11:33:40AM +0100, Tomasz Figa wrote:
+> This patch adds support for pin configuration using pinctrl subsystem
+> to the i2c-s3c2410 driver.
 >=20
-> Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
 Applied to for-next, thanks!
 
@@ -32,16 +38,16 @@ Applied to for-next, thanks!
 Pengutronix e.K.                           | Wolfram Sang                |
 Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
---UoPmpPX/dBe4BELn
+--GLp9dJVi+aaipsRk
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAlCmJd4ACgkQD27XaX1/VRsRpwCcC7lH6SJuLeorLYi1xCecu4d/
-ZHgAoJOjTWwOSLUScU/ghUHr3OfhobN/
-=C1pr
+iEYEARECAAYFAlCmKXEACgkQD27XaX1/VRv4kQCeNNpgJNK0pMkeQtxLxMcX5GyQ
+9UUAoLsVxIRHzb+eVLKWzdmwCTV7XKFY
+=2Y2k
 -----END PGP SIGNATURE-----
 
---UoPmpPX/dBe4BELn--
+--GLp9dJVi+aaipsRk--
