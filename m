@@ -1,53 +1,61 @@
 From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: [PATCH] i2c: i2c-s3c2410: Add support for pinctrl
-Date: Fri, 16 Nov 2012 12:54:25 +0100
-Message-ID: <20121116115425.GF19028@pengutronix.de>
-References: <14549510.veZygXpPkq@amdc1227>
+Subject: Re: [PATCH 0/4] i2c-s3c2410: Fix a bug and optimize code
+Date: Fri, 16 Nov 2012 13:05:35 +0100
+Message-ID: <20121116120535.GG19028@pengutronix.de>
+References: <1352981613-2098-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GLp9dJVi+aaipsRk"
+	protocol="application/pgp-signature"; boundary="GUPx2O/K0ibUojHx"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:51017 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:52725 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751297Ab2KPLy2 (ORCPT
+	with ESMTP id S1750957Ab2KPMFh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Nov 2012 06:54:28 -0500
+	Fri, 16 Nov 2012 07:05:37 -0500
 Content-Disposition: inline
-In-Reply-To: <14549510.veZygXpPkq@amdc1227>
+In-Reply-To: <1352981613-2098-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com, khali@linux-fr.org, naveenkrishna.ch@gmail.com, djkurtz@chromium.org
 
 
---GLp9dJVi+aaipsRk
+--GUPx2O/K0ibUojHx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 13, 2012 at 11:33:40AM +0100, Tomasz Figa wrote:
-> This patch adds support for pin configuration using pinctrl subsystem
-> to the i2c-s3c2410 driver.
+On Thu, Nov 15, 2012 at 05:43:29PM +0530, Naveen Krishna Chatradhi wrote:
+> The following set of patches fixes a bug in i2c-s3c2410 driver
+> with respect to the functioning of dedicated HDMIPHY channel.
+> 1. Removing unwanted spinlock
+> 2. Correcting the Stop sequence
+> 3. Optimizing the wait loop for bus idle.
+> 4. Removing unnecessary HDMI special cases
+> Respectively.
 >=20
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Daniel Kurtz (4):
+>   i2c-s3c2410: grab adapter lock while changing i2c clock
+>   i2c-s3c2410: do not generate STOP for QUIRK_HDMIPHY
+>   i2c-s3c2410: use exponential back off while polling for bus idle
+>   i2c-s3c2410: do not special case HDMIPHY stuck bus detection
 
-Applied to for-next, thanks!
+Applied this series to for-next, thanks!
 
 --=20
 Pengutronix e.K.                           | Wolfram Sang                |
 Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
---GLp9dJVi+aaipsRk
+--GUPx2O/K0ibUojHx
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAlCmKXEACgkQD27XaX1/VRv4kQCeNNpgJNK0pMkeQtxLxMcX5GyQ
-9UUAoLsVxIRHzb+eVLKWzdmwCTV7XKFY
-=2Y2k
+iEYEARECAAYFAlCmLA8ACgkQD27XaX1/VRuIUgCfYcINqG7AGrpf7XD7sQwXzH1V
+6qIAoMskWwnamRHTwhLCLXbDusL+dYHK
+=qJyU
 -----END PGP SIGNATURE-----
 
---GLp9dJVi+aaipsRk--
+--GUPx2O/K0ibUojHx--
