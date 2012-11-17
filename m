@@ -1,65 +1,185 @@
-From: 'Joerg Roedel' <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/4] iommu/exynos: enhancements of System MMU driver with
-	DT
-Date: Sat, 17 Nov 2012 13:49:18 +0100
-Message-ID: <20121117124918.GC11220@8bytes.org>
-References: <002401cdc245$32dbf3e0$9893dba0$%cho@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: S3C244X/S3C64XX SoC camera host interface driver questions
+Date: Sat, 17 Nov 2012 18:24:26 +0100
+Message-ID: <50A7C84A.4090804@gmail.com>
+References: <CAA11ShCpH7Z8eLok=MEh4bcSb6XjtVFfLQEYh2icUtYc-j5hEQ@mail.gmail.com> <5096C561.5000108@gmail.com> <CAA11ShCKFfdmd_ydxxCYo9Sv0VhgZW9kCk_F7LAQDg3mr5prrw@mail.gmail.com> <5096E8D7.4070304@gmail.com> <CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com> <50979998.8090809@gmail.com> <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com> <50983CFD.2030104@gmail.com> <CAA11ShDAscm8snYzjnC3Fe1MaVXc-FJqhWM677iJwgbgu2_J1Q@mail.gmail.com> <509AD957.5070301@gmail.com> <CAA11ShCn3S_nxXg5_pAsgcMsPFpER7XrHsvg71DrznAmONu7Lg@mail.gmail.com> <509CBB61.40206@gmail.com> <CAA11ShB1s6wSEEoVQ2_z4_BaGdM8f_F7ec_UrZzhcBgzoABAtQ@mail.gmail.com> <50A2CF95.4000202@gmail.com> <CAA11ShDL0xaZzr5bNW8edP9aqab8oymCYs_CrHvC646sJcM3XQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <002401cdc245$32dbf3e0$9893dba0$%cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Subash Patel' <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Sanghyun Lee' <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <CAA11ShDL0xaZzr5bNW8edP9aqab8oymCYs_CrHvC646sJcM3XQ@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Andrey Gusakov <dron0gus@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, In-Bae Jeong <kukyakya@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 14, 2012 at 05:51:12PM +0900, Cho KyongHo wrote:
-> This commit enhances power management of System MMU and its client
-> devices with the following changes:
->  - Each System MMU device becomes the parent device of its client
->    device while probe(). Thus, exynos-iommu driver must be initialized
->    before client devices.
->  - System MMU driver does not pm_runtime_get/put() by itself and runtime
->    power gating is performed by client devices.
->  - System is safe when suspend/resume without any care by client device
->    drivers.
-> 
-> In addition, System MMUs can be seperate into several groups that are
-> belongs to a single client device like FIMC-IS block. If such blocks are
-> controlled by a single device descriptor, all System MMUs in the blocks
-> must be enabled/disabled by a single device descriptor. The problem is
-> that clock gating and power gating may be not the same among all System
-> MMUs in the blocks. Thus, System MMUs are grouped by clock gating and
-> power gating and they are chained by parent-child relationships.
-> 
-> exynos-iommu driver now also supports debugfs to identify the state of
-> each System MMU.
-> 
-> The last big change is to support DT. The desription of the properties
-> of DT nodes are described in the source file.
-> 
-> Signed-off-by: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/iommu/Kconfig        |   17 +-
->  drivers/iommu/exynos-iommu.c | 1420 +++++++++++++++++++++++++++++++-----------
->  2 files changed, 1077 insertions(+), 360 deletions(-)
+Hi,
 
-This patch does multiple things and is quite large. Please split it down
-into reasonable chunks and resubmit.
+On 11/17/2012 01:07 PM, Andrey Gusakov wrote:
+> Hi.
+>
+> Just have time to test. I apologize for delay.
 
-Patches 1-3 look good to me and I do not mind taking them for 3.8.
-Please let me know if you prefer these patches standalone in 3.8 or
-together with this patch split up.
+No problem, thanks for the feedback.
 
+>> I'd like to squash all the s3c-camif patches before sending upstream,
+>> if you don't mind. And to add your Signed-off at the final patch.
+> Ok. Squash.
+>
+>> I might have introduced bugs in the image effects handling, hopefully
+>> there is none. I couldn't test it though. Could you test that on your
+>> side with s3c64xx ?
+> Got some error. Seems effect updated only when I set new CrCb value.
+> Seems it's incorrect:
+> 	case V4L2_CID_COLORFX:
+> 		if (camif->ctrl_colorfx_cbcr->is_new) {
 
-	Joerg
+Uh, copy/paste error, this should have been
+
+		if (camif->ctrl_colorfx->is_new) {
+
+> 			camif->colorfx = camif->ctrl_colorfx->val;
+> 			/* Set Cb, Cr */
+> 			switch (ctrl->val) {
+> 			case V4L2_COLORFX_SEPIA:
+> 				camif->ctrl_colorfx_cbcr->val = 0x7391;
+> 				break;
+> 			case V4L2_COLORFX_SET_CBCR: /* noop */
+> 				break;
+> 			default:
+> 				/* for V4L2_COLORFX_BW and others */
+> 				camif->ctrl_colorfx_cbcr->val = 0x8080;
+> 			}
+> 		}
+> 		camif->colorfx_cb = camif->ctrl_colorfx_cbcr->val&  0xff;
+> 		camif->colorfx_cr = camif->ctrl_colorfx_cbcr->val>>  8;
+> 		break;
+> Moving "camif->colorfx = camif->ctrl_colorfx->val;" out of condition
+> fixes the problem, but setting CrCb value control affect all effects
+> (sepia and BW), not only V4L2_COLORFX_SET_CBCR. Seems condition should
+> be removed and colorfx value should be checked set on every effect
+> change.
+>
+> diff --git a/drivers/media/platform/s3c-camif/camif-capture.c
+> b/drivers/media/platform/s3c-camif/camif-capture.c
+> index ceab03a..9c01f4f 100644
+> --- a/drivers/media/platform/s3c-camif/camif-capture.c
+> +++ b/drivers/media/platform/s3c-camif/camif-capture.c
+> @@ -1526,19 +1526,17 @@ static int s3c_camif_subdev_s_ctrl(struct
+> v4l2_ctrl *ctrl)
+>
+>   	switch (ctrl->id) {
+>   	case V4L2_CID_COLORFX:
+> -		if (camif->ctrl_colorfx_cbcr->is_new) {
+> -			camif->colorfx = camif->ctrl_colorfx->val;
+> -			/* Set Cb, Cr */
+> -			switch (ctrl->val) {
+> -			case V4L2_COLORFX_SEPIA:
+> -				camif->ctrl_colorfx_cbcr->val = 0x7391;
+> -				break;
+> -			case V4L2_COLORFX_SET_CBCR: /* noop */
+> -				break;
+> -			default:
+> -				/* for V4L2_COLORFX_BW and others */
+> -				camif->ctrl_colorfx_cbcr->val = 0x8080;
+> -			}
+> +		camif->colorfx = camif->ctrl_colorfx->val;
+> +		/* Set Cb, Cr */
+> +		switch (ctrl->val) {
+> +		case V4L2_COLORFX_SEPIA:
+> +			camif->ctrl_colorfx_cbcr->val = 0x7391;
+> +			break;
+> +		case V4L2_COLORFX_SET_CBCR: /* noop */
+> +			break;
+> +		default:
+> +			/* for V4L2_COLORFX_BW and others */
+> +			camif->ctrl_colorfx_cbcr->val = 0x8080;
+>   		}
+>   		camif->colorfx_cb = camif->ctrl_colorfx_cbcr->val&  0xff;
+>   		camif->colorfx_cr = camif->ctrl_colorfx_cbcr->val>>  8;
+>
+> With this modification got another issue: set CRCB effect, set CRCB
+> value, set BW effect, set CRCB effect back cause CRCB-value to be
+> reseted to default 0x8080. Is it correct?
+
+We could do better. The control values are already cached twice - in
+struct v4l2_ctrl and struct camif_dev.
+
+It seems more intuitive to save CB/CR coefficients for V4L2_COLORFX_SET_CBCR
+and then restore them as needed. There is probably not much use of letting
+user space know that the driver uses CBCR for V4L2_COLORFX_SEPIA and
+V4L2_COLORFX_BW internally.
+
+I propose change as below, it includes disabling the control for SoCs that
+don't support it and a fixed cbcr order, to match documentation:
+
+"V4L2_CID_COLORFX_CBCR	integer	Determines the Cb and Cr coefficients for
+V4L2_COLORFX_SET_CBCR color effect. Bits [7:0] of the supplied 32 bit 
+value are
+interpreted as Cr component, bits [15:8] as Cb component and bits 
+[31:16] must
+be zero."
+
+I have pushed it all to the testing/s3c-camif branch. Please let me know
+if you find any further issues.
+
+-----8<-------
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c 
+b/drivers/media/platform/s3c-camif/camif-capture.c
+index 6401fdb..b52cc59 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -1520,22 +1520,22 @@ static int s3c_camif_subdev_s_ctrl(struct 
+v4l2_ctrl *ctrl)
+
+  	switch (ctrl->id) {
+  	case V4L2_CID_COLORFX:
+-		if (camif->ctrl_colorfx_cbcr->is_new) {
+-			camif->colorfx = camif->ctrl_colorfx->val;
+-			/* Set Cb, Cr */
+-			switch (ctrl->val) {
+-			case V4L2_COLORFX_SEPIA:
+-				camif->ctrl_colorfx_cbcr->val = 0x7391;
+-				break;
+-			case V4L2_COLORFX_SET_CBCR: /* noop */
+-				break;
+-			default:
+-				/* for V4L2_COLORFX_BW and others */
+-				camif->ctrl_colorfx_cbcr->val = 0x8080;
+-			}
++		camif->colorfx = camif->ctrl_colorfx->val;
++		/* Set Cb, Cr */
++		switch (ctrl->val) {
++		case V4L2_COLORFX_SEPIA:
++			camif->colorfx_cb = 115;
++			camif->colorfx_cr = 145;
++			break;
++		case V4L2_COLORFX_SET_CBCR:
++			camif->colorfx_cb = camif->ctrl_colorfx_cbcr->val >> 8;
++			camif->colorfx_cr = camif->ctrl_colorfx_cbcr->val & 0xff;
++			break;
++		default:
++			/* for V4L2_COLORFX_BW and others */
++			camif->colorfx_cb = 128;
++			camif->colorfx_cr = 128;
+  		}
+-		camif->colorfx_cb = camif->ctrl_colorfx_cbcr->val & 0xff;
+-		camif->colorfx_cr = camif->ctrl_colorfx_cbcr->val >> 8;
+  		break;
+  	case V4L2_CID_TEST_PATTERN:
+  		camif->test_pattern = camif->ctrl_test_pattern->val;
+@@ -1603,6 +1603,10 @@ int s3c_camif_create_subdev(struct camif_dev *camif)
+
+  	v4l2_ctrl_auto_cluster(2, &camif->ctrl_colorfx,
+  			       V4L2_COLORFX_SET_CBCR, false);
++	if (!camif->variant->has_img_effect) {
++		camif->ctrl_colorfx->flags |= V4L2_CTRL_FLAG_DISABLED;
++		camif->ctrl_colorfx_cbcr->flags |= V4L2_CTRL_FLAG_DISABLED;
++	}
+  	sd->ctrl_handler = handler;
+  	v4l2_set_subdevdata(sd, camif);
+
+----->8-------
+
+Thanks,
+Sylwester
