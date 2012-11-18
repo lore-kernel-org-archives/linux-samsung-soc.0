@@ -1,185 +1,81 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: S3C244X/S3C64XX SoC camera host interface driver questions
-Date: Sat, 17 Nov 2012 18:24:26 +0100
-Message-ID: <50A7C84A.4090804@gmail.com>
-References: <CAA11ShCpH7Z8eLok=MEh4bcSb6XjtVFfLQEYh2icUtYc-j5hEQ@mail.gmail.com> <5096C561.5000108@gmail.com> <CAA11ShCKFfdmd_ydxxCYo9Sv0VhgZW9kCk_F7LAQDg3mr5prrw@mail.gmail.com> <5096E8D7.4070304@gmail.com> <CAA11ShDinm7oU4azQYPMrNDsqWPqw+vJNFPpBDNzV=dTeUdZzw@mail.gmail.com> <50979998.8090809@gmail.com> <CAA11ShD6Qug_=t8vGE5LwSpfXW2FsceTonxnF8aO6i2b=inibw@mail.gmail.com> <50983CFD.2030104@gmail.com> <CAA11ShDAscm8snYzjnC3Fe1MaVXc-FJqhWM677iJwgbgu2_J1Q@mail.gmail.com> <509AD957.5070301@gmail.com> <CAA11ShCn3S_nxXg5_pAsgcMsPFpER7XrHsvg71DrznAmONu7Lg@mail.gmail.com> <509CBB61.40206@gmail.com> <CAA11ShB1s6wSEEoVQ2_z4_BaGdM8f_F7ec_UrZzhcBgzoABAtQ@mail.gmail.com> <50A2CF95.4000202@gmail.com> <CAA11ShDL0xaZzr5bNW8edP9aqab8oymCYs_CrHvC646sJcM3XQ@mail.gmail.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH 00/10] ARM: S3C24XX: rework irq handling for a later dt usage
+Date: Sun, 18 Nov 2012 01:51:00 +0100
+Message-ID: <201211180151.01029.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAA11ShDL0xaZzr5bNW8edP9aqab8oymCYs_CrHvC646sJcM3XQ@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Andrey Gusakov <dron0gus@gmail.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, In-Bae Jeong <kukyakya@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:53095 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752453Ab2KRAvJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 17 Nov 2012 19:51:09 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
 
-Hi,
+All S3C24XX arches share the same interrupt registers and basic handling
+principles but the individual interrupts differ quite a lot between all
+the arches.
 
-On 11/17/2012 01:07 PM, Andrey Gusakov wrote:
-> Hi.
->
-> Just have time to test. I apologize for delay.
+This series therefore tries to unify this a bit by abstracting the irq
+handling and enabling the arches to simply provide a structure describing
+its individual interrupts.
 
-No problem, thanks for the feedback.
+With this declarative approach it should also be (hopefully) easy to
+move this to devicetree later.
 
->> I'd like to squash all the s3c-camif patches before sending upstream,
->> if you don't mind. And to add your Signed-off at the final patch.
-> Ok. Squash.
->
->> I might have introduced bugs in the image effects handling, hopefully
->> there is none. I couldn't test it though. Could you test that on your
->> side with s3c64xx ?
-> Got some error. Seems effect updated only when I set new CrCb value.
-> Seems it's incorrect:
-> 	case V4L2_CID_COLORFX:
-> 		if (camif->ctrl_colorfx_cbcr->is_new) {
+For the initial transformation (in patch 1) I gave up on trying to do
+this in individual steps, so the patch might be a bit bumpy to read,
+but the new irq code does provide the exactly same interrupts and
+handlers as the old code. This also means that the unconverted arches
+shouldn't feel any difference at all.
 
-Uh, copy/paste error, this should have been
+I've only included the s3c2416 and s3c2443 interrupts for now, as the
+s3c2416 is my main development platform and the s3c2443 is so very
+similar. But the other arches use the same mechanics so conversion
+should be quite easy later.
 
-		if (camif->ctrl_colorfx->is_new) {
+As it seems to be the policy for drivers/irqchip that drivers there
+should not contain platform-hooks or pollute the namespace with custom
+init functons, the irq code stays in plat-s3c24xx for now.
 
-> 			camif->colorfx = camif->ctrl_colorfx->val;
-> 			/* Set Cb, Cr */
-> 			switch (ctrl->val) {
-> 			case V4L2_COLORFX_SEPIA:
-> 				camif->ctrl_colorfx_cbcr->val = 0x7391;
-> 				break;
-> 			case V4L2_COLORFX_SET_CBCR: /* noop */
-> 				break;
-> 			default:
-> 				/* for V4L2_COLORFX_BW and others */
-> 				camif->ctrl_colorfx_cbcr->val = 0x8080;
-> 			}
-> 		}
-> 		camif->colorfx_cb = camif->ctrl_colorfx_cbcr->val&  0xff;
-> 		camif->colorfx_cr = camif->ctrl_colorfx_cbcr->val>>  8;
-> 		break;
-> Moving "camif->colorfx = camif->ctrl_colorfx->val;" out of condition
-> fixes the problem, but setting CrCb value control affect all effects
-> (sepia and BW), not only V4L2_COLORFX_SET_CBCR. Seems condition should
-> be removed and colorfx value should be checked set on every effect
-> change.
->
-> diff --git a/drivers/media/platform/s3c-camif/camif-capture.c
-> b/drivers/media/platform/s3c-camif/camif-capture.c
-> index ceab03a..9c01f4f 100644
-> --- a/drivers/media/platform/s3c-camif/camif-capture.c
-> +++ b/drivers/media/platform/s3c-camif/camif-capture.c
-> @@ -1526,19 +1526,17 @@ static int s3c_camif_subdev_s_ctrl(struct
-> v4l2_ctrl *ctrl)
->
->   	switch (ctrl->id) {
->   	case V4L2_CID_COLORFX:
-> -		if (camif->ctrl_colorfx_cbcr->is_new) {
-> -			camif->colorfx = camif->ctrl_colorfx->val;
-> -			/* Set Cb, Cr */
-> -			switch (ctrl->val) {
-> -			case V4L2_COLORFX_SEPIA:
-> -				camif->ctrl_colorfx_cbcr->val = 0x7391;
-> -				break;
-> -			case V4L2_COLORFX_SET_CBCR: /* noop */
-> -				break;
-> -			default:
-> -				/* for V4L2_COLORFX_BW and others */
-> -				camif->ctrl_colorfx_cbcr->val = 0x8080;
-> -			}
-> +		camif->colorfx = camif->ctrl_colorfx->val;
-> +		/* Set Cb, Cr */
-> +		switch (ctrl->val) {
-> +		case V4L2_COLORFX_SEPIA:
-> +			camif->ctrl_colorfx_cbcr->val = 0x7391;
-> +			break;
-> +		case V4L2_COLORFX_SET_CBCR: /* noop */
-> +			break;
-> +		default:
-> +			/* for V4L2_COLORFX_BW and others */
-> +			camif->ctrl_colorfx_cbcr->val = 0x8080;
->   		}
->   		camif->colorfx_cb = camif->ctrl_colorfx_cbcr->val&  0xff;
->   		camif->colorfx_cr = camif->ctrl_colorfx_cbcr->val>>  8;
->
-> With this modification got another issue: set CRCB effect, set CRCB
-> value, set BW effect, set CRCB effect back cause CRCB-value to be
-> reseted to default 0x8080. Is it correct?
+Heiko Stuebner (10):
+  ARM: S3C24XX: transform irq handling into a declarative form
+  ARM: S3C24XX: move irq-pm code into main irq file
+  ARM: S3C24XX: cleanup irq-pm integration
+  ARM: S3C24XX: move s3c2416 irq init to common irq code
+  ARM: S3C24XX: modify s3c2416 irq init to initialize all irqs
+  ARM: S3C24XX: assimilate s3c2416 subirqs into new structure
+  ARM: S3C24XX: assimilate second s3c2416 interrupt into new structure
+  ARM: S3C24XX: move s3c2443 irq code to irq.c
+  ARM: S3C24XX: modify s3c2443 irq init to initialize all irqs
+  ARM: S3C24XX: assimilate s3c2443 subirqs into new structure
 
-We could do better. The control values are already cached twice - in
-struct v4l2_ctrl and struct camif_dev.
+ arch/arm/mach-s3c24xx/Makefile               |    6 +-
+ arch/arm/mach-s3c24xx/common.h               |    2 +
+ arch/arm/mach-s3c24xx/irq-pm.c               |   95 ---
+ arch/arm/mach-s3c24xx/irq-s3c2416.c          |  348 --------
+ arch/arm/mach-s3c24xx/irq-s3c2443.c          |  281 -------
+ arch/arm/mach-s3c24xx/mach-smdk2416.c        |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c        |    2 +-
+ arch/arm/mach-s3c24xx/s3c2410.c              |    4 +-
+ arch/arm/mach-s3c24xx/s3c2412.c              |    4 +-
+ arch/arm/mach-s3c24xx/s3c2416.c              |    4 +-
+ arch/arm/mach-s3c24xx/s3c2440.c              |    4 +-
+ arch/arm/mach-s3c24xx/s3c2442.c              |    4 +-
+ arch/arm/plat-s3c24xx/Kconfig                |    1 +
+ arch/arm/plat-s3c24xx/irq.c                  | 1140 ++++++++++++++++----------
+ arch/arm/plat-samsung/include/plat/pm.h      |    6 -
+ arch/arm/plat-samsung/include/plat/s3c2416.h |    1 +
+ arch/arm/plat-samsung/include/plat/s3c2443.h |    2 +
+ 17 files changed, 737 insertions(+), 1169 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/irq-pm.c
+ delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2416.c
+ delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2443.c
 
-It seems more intuitive to save CB/CR coefficients for V4L2_COLORFX_SET_CBCR
-and then restore them as needed. There is probably not much use of letting
-user space know that the driver uses CBCR for V4L2_COLORFX_SEPIA and
-V4L2_COLORFX_BW internally.
-
-I propose change as below, it includes disabling the control for SoCs that
-don't support it and a fixed cbcr order, to match documentation:
-
-"V4L2_CID_COLORFX_CBCR	integer	Determines the Cb and Cr coefficients for
-V4L2_COLORFX_SET_CBCR color effect. Bits [7:0] of the supplied 32 bit 
-value are
-interpreted as Cr component, bits [15:8] as Cb component and bits 
-[31:16] must
-be zero."
-
-I have pushed it all to the testing/s3c-camif branch. Please let me know
-if you find any further issues.
-
------8<-------
-diff --git a/drivers/media/platform/s3c-camif/camif-capture.c 
-b/drivers/media/platform/s3c-camif/camif-capture.c
-index 6401fdb..b52cc59 100644
---- a/drivers/media/platform/s3c-camif/camif-capture.c
-+++ b/drivers/media/platform/s3c-camif/camif-capture.c
-@@ -1520,22 +1520,22 @@ static int s3c_camif_subdev_s_ctrl(struct 
-v4l2_ctrl *ctrl)
-
-  	switch (ctrl->id) {
-  	case V4L2_CID_COLORFX:
--		if (camif->ctrl_colorfx_cbcr->is_new) {
--			camif->colorfx = camif->ctrl_colorfx->val;
--			/* Set Cb, Cr */
--			switch (ctrl->val) {
--			case V4L2_COLORFX_SEPIA:
--				camif->ctrl_colorfx_cbcr->val = 0x7391;
--				break;
--			case V4L2_COLORFX_SET_CBCR: /* noop */
--				break;
--			default:
--				/* for V4L2_COLORFX_BW and others */
--				camif->ctrl_colorfx_cbcr->val = 0x8080;
--			}
-+		camif->colorfx = camif->ctrl_colorfx->val;
-+		/* Set Cb, Cr */
-+		switch (ctrl->val) {
-+		case V4L2_COLORFX_SEPIA:
-+			camif->colorfx_cb = 115;
-+			camif->colorfx_cr = 145;
-+			break;
-+		case V4L2_COLORFX_SET_CBCR:
-+			camif->colorfx_cb = camif->ctrl_colorfx_cbcr->val >> 8;
-+			camif->colorfx_cr = camif->ctrl_colorfx_cbcr->val & 0xff;
-+			break;
-+		default:
-+			/* for V4L2_COLORFX_BW and others */
-+			camif->colorfx_cb = 128;
-+			camif->colorfx_cr = 128;
-  		}
--		camif->colorfx_cb = camif->ctrl_colorfx_cbcr->val & 0xff;
--		camif->colorfx_cr = camif->ctrl_colorfx_cbcr->val >> 8;
-  		break;
-  	case V4L2_CID_TEST_PATTERN:
-  		camif->test_pattern = camif->ctrl_test_pattern->val;
-@@ -1603,6 +1603,10 @@ int s3c_camif_create_subdev(struct camif_dev *camif)
-
-  	v4l2_ctrl_auto_cluster(2, &camif->ctrl_colorfx,
-  			       V4L2_COLORFX_SET_CBCR, false);
-+	if (!camif->variant->has_img_effect) {
-+		camif->ctrl_colorfx->flags |= V4L2_CTRL_FLAG_DISABLED;
-+		camif->ctrl_colorfx_cbcr->flags |= V4L2_CTRL_FLAG_DISABLED;
-+	}
-  	sd->ctrl_handler = handler;
-  	v4l2_set_subdevdata(sd, camif);
-
------>8-------
-
-Thanks,
-Sylwester
+-- 
+1.7.2.3
