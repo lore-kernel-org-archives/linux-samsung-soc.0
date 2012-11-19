@@ -1,661 +1,799 @@
 From: Bill Pemberton <wfp5p@virginia.edu>
-Subject: [PATCH 427/493] spi: remove use of __devexit
-Date: Mon, 19 Nov 2012 13:26:16 -0500
-Message-ID: <1353349642-3677-427-git-send-email-wfp5p@virginia.edu>
+Subject: [PATCH 435/493] watchdog: remove use of __devexit
+Date: Mon, 19 Nov 2012 13:26:24 -0500
+Message-ID: <1353349642-3677-435-git-send-email-wfp5p@virginia.edu>
 References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from viridian.itc.Virginia.EDU ([128.143.12.139]:41486 "EHLO
+Received: from viridian.itc.Virginia.EDU ([128.143.12.139]:41506 "EHLO
 	viridian.itc.virginia.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754304Ab2KSSfI (ORCPT
+	with ESMTP id S1754310Ab2KSSfK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Nov 2012 13:35:08 -0500
+	Mon, 19 Nov 2012 13:35:10 -0500
 In-Reply-To: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: gregkh@linuxfoundation.org
-Cc: Grant Likely <grant.likely@secretlab.ca>, Wan ZongShun <mcuos.com@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Barry Song <baohua.song@csr.com>, spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Wim Van Sebroeck <wim@iguana.be>, Wan ZongShun <mcuos.com@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-watchdog@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
 CONFIG_HOTPLUG is going away as an option so __devexit is no
 longer needed.
 
 Signed-off-by: Bill Pemberton <wfp5p@virginia.edu>
-Cc: Grant Likely <grant.likely@secretlab.ca> 
+Cc: Wim Van Sebroeck <wim@iguana.be> 
 Cc: Wan ZongShun <mcuos.com@gmail.com> 
-Cc: Eric Miao <eric.y.miao@gmail.com> 
-Cc: Russell King <linux@arm.linux.org.uk> 
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com> 
 Cc: Ben Dooks <ben-linux@fluff.org> 
 Cc: Kukjin Kim <kgene.kim@samsung.com> 
-Cc: Barry Song <baohua.song@csr.com> 
-Cc: spi-devel-general@lists.sourceforge.net 
+Cc: linux-watchdog@vger.kernel.org 
+Cc: uclinux-dist-devel@blackfin.uclinux.org 
 Cc: linux-arm-kernel@lists.infradead.org 
 Cc: linux-samsung-soc@vger.kernel.org 
+Cc: patches@opensource.wolfsonmicro.com 
 ---
- drivers/spi/spi-altera.c         | 2 +-
- drivers/spi/spi-ath79.c          | 2 +-
- drivers/spi/spi-atmel.c          | 2 +-
- drivers/spi/spi-bcm63xx.c        | 2 +-
- drivers/spi/spi-bfin-sport.c     | 2 +-
- drivers/spi/spi-bfin5xx.c        | 2 +-
- drivers/spi/spi-coldfire-qspi.c  | 2 +-
- drivers/spi/spi-davinci.c        | 2 +-
- drivers/spi/spi-dw-mmio.c        | 2 +-
- drivers/spi/spi-dw-pci.c         | 2 +-
- drivers/spi/spi-dw.c             | 2 +-
- drivers/spi/spi-ep93xx.c         | 2 +-
- drivers/spi/spi-falcon.c         | 2 +-
- drivers/spi/spi-fsl-espi.c       | 2 +-
- drivers/spi/spi-fsl-lib.c        | 2 +-
- drivers/spi/spi-fsl-spi.c        | 4 ++--
- drivers/spi/spi-gpio.c           | 2 +-
- drivers/spi/spi-imx.c            | 2 +-
- drivers/spi/spi-mpc512x-psc.c    | 4 ++--
- drivers/spi/spi-mpc52xx-psc.c    | 2 +-
- drivers/spi/spi-mpc52xx.c        | 2 +-
- drivers/spi/spi-mxs.c            | 2 +-
- drivers/spi/spi-nuc900.c         | 2 +-
- drivers/spi/spi-oc-tiny.c        | 2 +-
- drivers/spi/spi-octeon.c         | 2 +-
- drivers/spi/spi-omap2-mcspi.c    | 2 +-
- drivers/spi/spi-pl022.c          | 2 +-
- drivers/spi/spi-pxa2xx-pci.c     | 2 +-
- drivers/spi/spi-rspi.c           | 4 ++--
- drivers/spi/spi-s3c24xx.c        | 2 +-
- drivers/spi/spi-sh-hspi.c        | 2 +-
- drivers/spi/spi-sh.c             | 2 +-
- drivers/spi/spi-sirf.c           | 2 +-
- drivers/spi/spi-stmp.c           | 2 +-
- drivers/spi/spi-tegra20-sflash.c | 2 +-
- drivers/spi/spi-tegra20-slink.c  | 2 +-
- drivers/spi/spi-ti-ssp.c         | 2 +-
- drivers/spi/spi-tle62x0.c        | 2 +-
- drivers/spi/spi-topcliff-pch.c   | 4 ++--
- drivers/spi/spi-xcomm.c          | 2 +-
- drivers/spi/spi-xilinx.c         | 2 +-
- drivers/spi/spidev.c             | 2 +-
- 42 files changed, 46 insertions(+), 46 deletions(-)
+ drivers/watchdog/acquirewdt.c     | 2 +-
+ drivers/watchdog/advantechwdt.c   | 2 +-
+ drivers/watchdog/ar7_wdt.c        | 2 +-
+ drivers/watchdog/at91rm9200_wdt.c | 2 +-
+ drivers/watchdog/ath79_wdt.c      | 2 +-
+ drivers/watchdog/bcm63xx_wdt.c    | 2 +-
+ drivers/watchdog/bfin_wdt.c       | 2 +-
+ drivers/watchdog/cpu5wdt.c        | 4 ++--
+ drivers/watchdog/cpwd.c           | 2 +-
+ drivers/watchdog/da9052_wdt.c     | 2 +-
+ drivers/watchdog/davinci_wdt.c    | 2 +-
+ drivers/watchdog/dw_wdt.c         | 2 +-
+ drivers/watchdog/ep93xx_wdt.c     | 2 +-
+ drivers/watchdog/gef_wdt.c        | 2 +-
+ drivers/watchdog/geodewdt.c       | 2 +-
+ drivers/watchdog/hpwdt.c          | 2 +-
+ drivers/watchdog/i6300esb.c       | 2 +-
+ drivers/watchdog/iTCO_wdt.c       | 4 ++--
+ drivers/watchdog/ib700wdt.c       | 2 +-
+ drivers/watchdog/ie6xx_wdt.c      | 2 +-
+ drivers/watchdog/jz4740_wdt.c     | 2 +-
+ drivers/watchdog/ks8695_wdt.c     | 2 +-
+ drivers/watchdog/lantiq_wdt.c     | 2 +-
+ drivers/watchdog/max63xx_wdt.c    | 2 +-
+ drivers/watchdog/mpc8xxx_wdt.c    | 2 +-
+ drivers/watchdog/mpcore_wdt.c     | 2 +-
+ drivers/watchdog/mtx-1_wdt.c      | 2 +-
+ drivers/watchdog/mv64x60_wdt.c    | 2 +-
+ drivers/watchdog/nuc900_wdt.c     | 2 +-
+ drivers/watchdog/nv_tco.c         | 4 ++--
+ drivers/watchdog/of_xilinx_wdt.c  | 2 +-
+ drivers/watchdog/omap_wdt.c       | 2 +-
+ drivers/watchdog/orion_wdt.c      | 2 +-
+ drivers/watchdog/pcwd.c           | 2 +-
+ drivers/watchdog/pcwd_pci.c       | 2 +-
+ drivers/watchdog/pnx4008_wdt.c    | 2 +-
+ drivers/watchdog/rc32434_wdt.c    | 2 +-
+ drivers/watchdog/rdc321x_wdt.c    | 2 +-
+ drivers/watchdog/riowd.c          | 2 +-
+ drivers/watchdog/s3c2410_wdt.c    | 2 +-
+ drivers/watchdog/sch311x_wdt.c    | 2 +-
+ drivers/watchdog/shwdt.c          | 2 +-
+ drivers/watchdog/sp5100_tco.c     | 4 ++--
+ drivers/watchdog/sp805_wdt.c      | 2 +-
+ drivers/watchdog/stmp3xxx_wdt.c   | 2 +-
+ drivers/watchdog/ts72xx_wdt.c     | 2 +-
+ drivers/watchdog/twl4030_wdt.c    | 2 +-
+ drivers/watchdog/via_wdt.c        | 2 +-
+ drivers/watchdog/wdt_pci.c        | 2 +-
+ drivers/watchdog/wm831x_wdt.c     | 2 +-
+ drivers/watchdog/wm8350_wdt.c     | 2 +-
+ drivers/watchdog/xen_wdt.c        | 2 +-
+ 52 files changed, 56 insertions(+), 56 deletions(-)
 
-diff --git a/drivers/spi/spi-altera.c b/drivers/spi/spi-altera.c
-index a369d44..5e7314a 100644
---- a/drivers/spi/spi-altera.c
-+++ b/drivers/spi/spi-altera.c
-@@ -290,7 +290,7 @@ exit:
- 	return err;
- }
- 
--static int __devexit altera_spi_remove(struct platform_device *dev)
-+static int altera_spi_remove(struct platform_device *dev)
- {
- 	struct altera_spi *hw = platform_get_drvdata(dev);
- 	struct spi_master *master = hw->bitbang.master;
-diff --git a/drivers/spi/spi-ath79.c b/drivers/spi/spi-ath79.c
-index 13e6866..9a5d779 100644
---- a/drivers/spi/spi-ath79.c
-+++ b/drivers/spi/spi-ath79.c
-@@ -251,7 +251,7 @@ err_put_master:
+diff --git a/drivers/watchdog/acquirewdt.c b/drivers/watchdog/acquirewdt.c
+index e009f93..24a5177 100644
+--- a/drivers/watchdog/acquirewdt.c
++++ b/drivers/watchdog/acquirewdt.c
+@@ -275,7 +275,7 @@ out:
  	return ret;
  }
  
--static __devexit int ath79_spi_remove(struct platform_device *pdev)
-+static int ath79_spi_remove(struct platform_device *pdev)
+-static int __devexit acq_remove(struct platform_device *dev)
++static int acq_remove(struct platform_device *dev)
  {
- 	struct ath79_spi *sp = platform_get_drvdata(pdev);
- 
-diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
-index 6b19cca..75c0c4f 100644
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -1003,7 +1003,7 @@ out_free:
- 	return ret;
+ 	misc_deregister(&acq_miscdev);
+ 	release_region(wdt_start, 1);
+diff --git a/drivers/watchdog/advantechwdt.c b/drivers/watchdog/advantechwdt.c
+index cc50c57..cc6702f 100644
+--- a/drivers/watchdog/advantechwdt.c
++++ b/drivers/watchdog/advantechwdt.c
+@@ -282,7 +282,7 @@ unreg_stop:
+ 	goto out;
  }
  
--static int __devexit atmel_spi_remove(struct platform_device *pdev)
-+static int atmel_spi_remove(struct platform_device *pdev)
+-static int __devexit advwdt_remove(struct platform_device *dev)
++static int advwdt_remove(struct platform_device *dev)
  {
- 	struct spi_master	*master = platform_get_drvdata(pdev);
- 	struct atmel_spi	*as = spi_master_get_devdata(master);
-diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
-index 73385be..f44ab55 100644
---- a/drivers/spi/spi-bcm63xx.c
-+++ b/drivers/spi/spi-bcm63xx.c
-@@ -449,7 +449,7 @@ out:
- 	return ret;
- }
- 
--static int __devexit bcm63xx_spi_remove(struct platform_device *pdev)
-+static int bcm63xx_spi_remove(struct platform_device *pdev)
- {
- 	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
- 	struct bcm63xx_spi *bs = spi_master_get_devdata(master);
-diff --git a/drivers/spi/spi-bfin-sport.c b/drivers/spi/spi-bfin-sport.c
-index 9b62c28..2a118de 100644
---- a/drivers/spi/spi-bfin-sport.c
-+++ b/drivers/spi/spi-bfin-sport.c
-@@ -863,7 +863,7 @@ bfin_sport_spi_probe(struct platform_device *pdev)
- }
- 
- /* stop hardware and remove the driver */
--static int __devexit
-+static int
- bfin_sport_spi_remove(struct platform_device *pdev)
- {
- 	struct bfin_sport_spi_master_data *drv_data = platform_get_drvdata(pdev);
-diff --git a/drivers/spi/spi-bfin5xx.c b/drivers/spi/spi-bfin5xx.c
-index 5c35826..0429d83 100644
---- a/drivers/spi/spi-bfin5xx.c
-+++ b/drivers/spi/spi-bfin5xx.c
-@@ -1387,7 +1387,7 @@ out_error_get_res:
- }
- 
- /* stop hardware and remove the driver */
--static int __devexit bfin_spi_remove(struct platform_device *pdev)
-+static int bfin_spi_remove(struct platform_device *pdev)
- {
- 	struct bfin_spi_master_data *drv_data = platform_get_drvdata(pdev);
- 	int status = 0;
-diff --git a/drivers/spi/spi-coldfire-qspi.c b/drivers/spi/spi-coldfire-qspi.c
-index f586b3b..58466b8 100644
---- a/drivers/spi/spi-coldfire-qspi.c
-+++ b/drivers/spi/spi-coldfire-qspi.c
-@@ -515,7 +515,7 @@ fail0:
- 	return status;
- }
- 
--static int __devexit mcfqspi_remove(struct platform_device *pdev)
-+static int mcfqspi_remove(struct platform_device *pdev)
- {
- 	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct mcfqspi *mcfqspi = spi_master_get_devdata(master);
-diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
-index c10be9f..13661e1 100644
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@ -952,7 +952,7 @@ err:
-  * It will also call spi_bitbang_stop to destroy the work queue which was
-  * created by spi_bitbang_start.
-  */
--static int __devexit davinci_spi_remove(struct platform_device *pdev)
-+static int davinci_spi_remove(struct platform_device *pdev)
- {
- 	struct davinci_spi *dspi;
- 	struct spi_master *master;
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index 9470c59..4a6d5c9 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -106,7 +106,7 @@ err_end:
- 	return ret;
- }
- 
--static int __devexit dw_spi_mmio_remove(struct platform_device *pdev)
-+static int dw_spi_mmio_remove(struct platform_device *pdev)
- {
- 	struct dw_spi_mmio *dwsmmio = platform_get_drvdata(pdev);
- 	struct resource *mem;
-diff --git a/drivers/spi/spi-dw-pci.c b/drivers/spi/spi-dw-pci.c
-index d61d430..6055c8d 100644
---- a/drivers/spi/spi-dw-pci.c
-+++ b/drivers/spi/spi-dw-pci.c
-@@ -105,7 +105,7 @@ err_disable:
- 	return ret;
- }
- 
--static void __devexit spi_pci_remove(struct pci_dev *pdev)
-+static void spi_pci_remove(struct pci_dev *pdev)
- {
- 	struct dw_spi_pci *dwpci = pci_get_drvdata(pdev);
- 
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index 172b8b5..c1abc06 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -877,7 +877,7 @@ exit:
- }
- EXPORT_SYMBOL_GPL(dw_spi_add_host);
- 
--void __devexit dw_spi_remove_host(struct dw_spi *dws)
-+void dw_spi_remove_host(struct dw_spi *dws)
- {
- 	int status = 0;
- 
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index bb0eaf6..acb1e19 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -1138,7 +1138,7 @@ fail_release_master:
- 	return error;
- }
- 
--static int __devexit ep93xx_spi_remove(struct platform_device *pdev)
-+static int ep93xx_spi_remove(struct platform_device *pdev)
- {
- 	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct ep93xx_spi *espi = spi_master_get_devdata(master);
-diff --git a/drivers/spi/spi-falcon.c b/drivers/spi/spi-falcon.c
-index 891e91c..6a6f62e 100644
---- a/drivers/spi/spi-falcon.c
-+++ b/drivers/spi/spi-falcon.c
-@@ -438,7 +438,7 @@ static int falcon_sflash_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int __devexit falcon_sflash_remove(struct platform_device *pdev)
-+static int falcon_sflash_remove(struct platform_device *pdev)
- {
- 	struct falcon_sflash *priv = platform_get_drvdata(pdev);
- 
-diff --git a/drivers/spi/spi-fsl-espi.c b/drivers/spi/spi-fsl-espi.c
-index 498fff2..56e1002 100644
---- a/drivers/spi/spi-fsl-espi.c
-+++ b/drivers/spi/spi-fsl-espi.c
-@@ -725,7 +725,7 @@ err:
- 	return ret;
- }
- 
--static int __devexit of_fsl_espi_remove(struct platform_device *dev)
-+static int of_fsl_espi_remove(struct platform_device *dev)
- {
- 	return mpc8xxx_spi_remove(&dev->dev);
- }
-diff --git a/drivers/spi/spi-fsl-lib.c b/drivers/spi/spi-fsl-lib.c
-index abf2a20..8ade675 100644
---- a/drivers/spi/spi-fsl-lib.c
-+++ b/drivers/spi/spi-fsl-lib.c
-@@ -169,7 +169,7 @@ err:
- 	return ret;
- }
- 
--int __devexit mpc8xxx_spi_remove(struct device *dev)
-+int mpc8xxx_spi_remove(struct device *dev)
- {
- 	struct mpc8xxx_spi *mpc8xxx_spi;
- 	struct spi_master *master;
-diff --git a/drivers/spi/spi-fsl-spi.c b/drivers/spi/spi-fsl-spi.c
-index a1e11f0..00aa65c 100644
---- a/drivers/spi/spi-fsl-spi.c
-+++ b/drivers/spi/spi-fsl-spi.c
-@@ -1081,7 +1081,7 @@ err:
- 	return ret;
- }
- 
--static int __devexit of_fsl_spi_remove(struct platform_device *ofdev)
-+static int of_fsl_spi_remove(struct platform_device *ofdev)
- {
- 	int ret;
- 
-@@ -1139,7 +1139,7 @@ static int plat_mpc8xxx_spi_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int __devexit plat_mpc8xxx_spi_remove(struct platform_device *pdev)
-+static int plat_mpc8xxx_spi_remove(struct platform_device *pdev)
- {
- 	return mpc8xxx_spi_remove(&pdev->dev);
- }
-diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
-index f4251df..995f265 100644
---- a/drivers/spi/spi-gpio.c
-+++ b/drivers/spi/spi-gpio.c
-@@ -485,7 +485,7 @@ gpio_free:
- 	return status;
- }
- 
--static int __devexit spi_gpio_remove(struct platform_device *pdev)
-+static int spi_gpio_remove(struct platform_device *pdev)
- {
- 	struct spi_gpio			*spi_gpio;
- 	struct spi_gpio_platform_data	*pdata;
-diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-index dc0f99a..9049132 100644
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -906,7 +906,7 @@ out_gpio_free:
- 	return ret;
- }
- 
--static int __devexit spi_imx_remove(struct platform_device *pdev)
-+static int spi_imx_remove(struct platform_device *pdev)
- {
- 	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-diff --git a/drivers/spi/spi-mpc512x-psc.c b/drivers/spi/spi-mpc512x-psc.c
-index 599f0e5..cb3a310 100644
---- a/drivers/spi/spi-mpc512x-psc.c
-+++ b/drivers/spi/spi-mpc512x-psc.c
-@@ -492,7 +492,7 @@ free_master:
- 	return ret;
- }
- 
--static int __devexit mpc512x_psc_spi_do_remove(struct device *dev)
-+static int mpc512x_psc_spi_do_remove(struct device *dev)
- {
- 	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
- 	struct mpc512x_psc_spi *mps = spi_master_get_devdata(master);
-@@ -539,7 +539,7 @@ static int mpc512x_psc_spi_of_probe(struct platform_device *op)
- 				irq_of_parse_and_map(op->dev.of_node, 0), id);
- }
- 
--static int __devexit mpc512x_psc_spi_of_remove(struct platform_device *op)
-+static int mpc512x_psc_spi_of_remove(struct platform_device *op)
- {
- 	return mpc512x_psc_spi_do_remove(&op->dev);
- }
-diff --git a/drivers/spi/spi-mpc52xx-psc.c b/drivers/spi/spi-mpc52xx-psc.c
-index 43c2d27..291120b 100644
---- a/drivers/spi/spi-mpc52xx-psc.c
-+++ b/drivers/spi/spi-mpc52xx-psc.c
-@@ -479,7 +479,7 @@ static int mpc52xx_psc_spi_of_probe(struct platform_device *op)
- 				irq_of_parse_and_map(op->dev.of_node, 0), id);
- }
- 
--static int __devexit mpc52xx_psc_spi_of_remove(struct platform_device *op)
-+static int mpc52xx_psc_spi_of_remove(struct platform_device *op)
- {
- 	struct spi_master *master = spi_master_get(dev_get_drvdata(&op->dev));
- 	struct mpc52xx_psc_spi *mps = spi_master_get_devdata(master);
-diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
-index 18c8865..29f7705 100644
---- a/drivers/spi/spi-mpc52xx.c
-+++ b/drivers/spi/spi-mpc52xx.c
-@@ -527,7 +527,7 @@ static int mpc52xx_spi_probe(struct platform_device *op)
+ 	misc_deregister(&advwdt_miscdev);
+ 	release_region(wdt_start, 1);
+diff --git a/drivers/watchdog/ar7_wdt.c b/drivers/watchdog/ar7_wdt.c
+index 154347e..3003e2a 100644
+--- a/drivers/watchdog/ar7_wdt.c
++++ b/drivers/watchdog/ar7_wdt.c
+@@ -314,7 +314,7 @@ out:
  	return rc;
  }
  
--static int __devexit mpc52xx_spi_remove(struct platform_device *op)
-+static int mpc52xx_spi_remove(struct platform_device *op)
+-static int __devexit ar7_wdt_remove(struct platform_device *pdev)
++static int ar7_wdt_remove(struct platform_device *pdev)
  {
- 	struct spi_master *master = spi_master_get(dev_get_drvdata(&op->dev));
- 	struct mpc52xx_spi *ms = spi_master_get_devdata(master);
-diff --git a/drivers/spi/spi-mxs.c b/drivers/spi/spi-mxs.c
-index 82b4424..a3ede24 100644
---- a/drivers/spi/spi-mxs.c
-+++ b/drivers/spi/spi-mxs.c
-@@ -636,7 +636,7 @@ out_master_free:
+ 	misc_deregister(&ar7_wdt_miscdev);
+ 	clk_put(vbus_clk);
+diff --git a/drivers/watchdog/at91rm9200_wdt.c b/drivers/watchdog/at91rm9200_wdt.c
+index cc290bb..89831ed 100644
+--- a/drivers/watchdog/at91rm9200_wdt.c
++++ b/drivers/watchdog/at91rm9200_wdt.c
+@@ -216,7 +216,7 @@ static int at91wdt_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __devexit at91wdt_remove(struct platform_device *pdev)
++static int at91wdt_remove(struct platform_device *pdev)
+ {
+ 	int res;
+ 
+diff --git a/drivers/watchdog/ath79_wdt.c b/drivers/watchdog/ath79_wdt.c
+index 5c0967d..7c8ede7 100644
+--- a/drivers/watchdog/ath79_wdt.c
++++ b/drivers/watchdog/ath79_wdt.c
+@@ -270,7 +270,7 @@ err_clk_put:
+ 	return err;
+ }
+ 
+-static int __devexit ath79_wdt_remove(struct platform_device *pdev)
++static int ath79_wdt_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&ath79_wdt_miscdev);
+ 	clk_disable(wdt_clk);
+diff --git a/drivers/watchdog/bcm63xx_wdt.c b/drivers/watchdog/bcm63xx_wdt.c
+index 5a7cff6..b2b80d4 100644
+--- a/drivers/watchdog/bcm63xx_wdt.c
++++ b/drivers/watchdog/bcm63xx_wdt.c
+@@ -286,7 +286,7 @@ unmap:
  	return ret;
  }
  
--static int __devexit mxs_spi_remove(struct platform_device *pdev)
-+static int mxs_spi_remove(struct platform_device *pdev)
+-static int __devexit bcm63xx_wdt_remove(struct platform_device *pdev)
++static int bcm63xx_wdt_remove(struct platform_device *pdev)
  {
- 	struct spi_master *master;
- 	struct mxs_spi *spi;
-diff --git a/drivers/spi/spi-nuc900.c b/drivers/spi/spi-nuc900.c
-index b477317..b3f9ec8 100644
---- a/drivers/spi/spi-nuc900.c
-+++ b/drivers/spi/spi-nuc900.c
-@@ -453,7 +453,7 @@ err_nomem:
- 	return err;
+ 	if (!nowayout)
+ 		bcm63xx_wdt_pause();
+diff --git a/drivers/watchdog/bfin_wdt.c b/drivers/watchdog/bfin_wdt.c
+index 241f8af..5d36d6f 100644
+--- a/drivers/watchdog/bfin_wdt.c
++++ b/drivers/watchdog/bfin_wdt.c
+@@ -379,7 +379,7 @@ static int bfin_wdt_probe(struct platform_device *pdev)
+  *	Unregisters the misc device.  Actual device
+  *	deinitialization is handled by bfin_wdt_close().
+  */
+-static int __devexit bfin_wdt_remove(struct platform_device *pdev)
++static int bfin_wdt_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&bfin_wdt_miscdev);
+ 	return 0;
+diff --git a/drivers/watchdog/cpu5wdt.c b/drivers/watchdog/cpu5wdt.c
+index 6eb710b..cd87758 100644
+--- a/drivers/watchdog/cpu5wdt.c
++++ b/drivers/watchdog/cpu5wdt.c
+@@ -261,7 +261,7 @@ static int cpu5wdt_init_module(void)
+ 	return cpu5wdt_init();
  }
  
--static int __devexit nuc900_spi_remove(struct platform_device *dev)
-+static int nuc900_spi_remove(struct platform_device *dev)
+-static void __devexit cpu5wdt_exit(void)
++static void cpu5wdt_exit(void)
  {
- 	struct nuc900_spi *hw = platform_get_drvdata(dev);
+ 	if (cpu5wdt_device.queue) {
+ 		cpu5wdt_device.queue = 0;
+@@ -274,7 +274,7 @@ static void __devexit cpu5wdt_exit(void)
  
-diff --git a/drivers/spi/spi-oc-tiny.c b/drivers/spi/spi-oc-tiny.c
-index a10e2af..432e66e 100644
---- a/drivers/spi/spi-oc-tiny.c
-+++ b/drivers/spi/spi-oc-tiny.c
-@@ -373,7 +373,7 @@ exit:
- 	return err;
  }
  
--static int __devexit tiny_spi_remove(struct platform_device *pdev)
-+static int tiny_spi_remove(struct platform_device *pdev)
+-static void __devexit cpu5wdt_exit_module(void)
++static void cpu5wdt_exit_module(void)
  {
- 	struct tiny_spi *hw = platform_get_drvdata(pdev);
- 	struct spi_master *master = hw->bitbang.master;
-diff --git a/drivers/spi/spi-octeon.c b/drivers/spi/spi-octeon.c
-index 44847c8..24daf96 100644
---- a/drivers/spi/spi-octeon.c
-+++ b/drivers/spi/spi-octeon.c
-@@ -326,7 +326,7 @@ fail:
- 	return err;
+ 	cpu5wdt_exit();
+ }
+diff --git a/drivers/watchdog/cpwd.c b/drivers/watchdog/cpwd.c
+index 731578b..11d55ce 100644
+--- a/drivers/watchdog/cpwd.c
++++ b/drivers/watchdog/cpwd.c
+@@ -640,7 +640,7 @@ out_free:
+ 	goto out;
  }
  
--static int __devexit octeon_spi_remove(struct platform_device *pdev)
-+static int octeon_spi_remove(struct platform_device *pdev)
+-static int __devexit cpwd_remove(struct platform_device *op)
++static int cpwd_remove(struct platform_device *op)
  {
- 	struct octeon_spi *p = platform_get_drvdata(pdev);
- 	u64 register_base = p->register_base;
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index e00c902..8f03860 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -1282,7 +1282,7 @@ free_master:
- 	return status;
+ 	struct cpwd *p = dev_get_drvdata(&op->dev);
+ 	int i;
+diff --git a/drivers/watchdog/da9052_wdt.c b/drivers/watchdog/da9052_wdt.c
+index 93a3165..8be70d8 100644
+--- a/drivers/watchdog/da9052_wdt.c
++++ b/drivers/watchdog/da9052_wdt.c
+@@ -224,7 +224,7 @@ err:
+ 	return ret;
  }
  
--static int __devexit omap2_mcspi_remove(struct platform_device *pdev)
-+static int omap2_mcspi_remove(struct platform_device *pdev)
+-static int __devexit da9052_wdt_remove(struct platform_device *pdev)
++static int da9052_wdt_remove(struct platform_device *pdev)
  {
- 	struct spi_master	*master;
- 	struct omap2_mcspi	*mcspi;
-diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
-index a797a1a..5733b28 100644
---- a/drivers/spi/spi-pl022.c
-+++ b/drivers/spi/spi-pl022.c
-@@ -2275,7 +2275,7 @@ pl022_probe(struct amba_device *adev, const struct amba_id *id)
- 	return status;
+ 	struct da9052_wdt_data *driver_data = dev_get_drvdata(&pdev->dev);
+ 
+diff --git a/drivers/watchdog/davinci_wdt.c b/drivers/watchdog/davinci_wdt.c
+index 9f371b8..6000aea 100644
+--- a/drivers/watchdog/davinci_wdt.c
++++ b/drivers/watchdog/davinci_wdt.c
+@@ -248,7 +248,7 @@ static int davinci_wdt_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int __devexit davinci_wdt_remove(struct platform_device *pdev)
++static int davinci_wdt_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&davinci_wdt_miscdev);
+ 	if (wdt_mem) {
+diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
+index 49e24e5..a0eba3c 100644
+--- a/drivers/watchdog/dw_wdt.c
++++ b/drivers/watchdog/dw_wdt.c
+@@ -333,7 +333,7 @@ out_put_clk:
+ 	return ret;
+ }
+ 
+-static int __devexit dw_wdt_drv_remove(struct platform_device *pdev)
++static int dw_wdt_drv_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&dw_wdt_miscdev);
+ 
+diff --git a/drivers/watchdog/ep93xx_wdt.c b/drivers/watchdog/ep93xx_wdt.c
+index f1bd88c..e057484 100644
+--- a/drivers/watchdog/ep93xx_wdt.c
++++ b/drivers/watchdog/ep93xx_wdt.c
+@@ -156,7 +156,7 @@ static int ep93xx_wdt_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __devexit ep93xx_wdt_remove(struct platform_device *pdev)
++static int ep93xx_wdt_remove(struct platform_device *pdev)
+ {
+ 	watchdog_unregister_device(&ep93xx_wdt_wdd);
+ 	return 0;
+diff --git a/drivers/watchdog/gef_wdt.c b/drivers/watchdog/gef_wdt.c
+index 276f009..b9c5b58 100644
+--- a/drivers/watchdog/gef_wdt.c
++++ b/drivers/watchdog/gef_wdt.c
+@@ -285,7 +285,7 @@ static int gef_wdt_probe(struct platform_device *dev)
+ 	return misc_register(&gef_wdt_miscdev);
+ }
+ 
+-static int __devexit gef_wdt_remove(struct platform_device *dev)
++static int gef_wdt_remove(struct platform_device *dev)
+ {
+ 	misc_deregister(&gef_wdt_miscdev);
+ 
+diff --git a/drivers/watchdog/geodewdt.c b/drivers/watchdog/geodewdt.c
+index 28a3a87..fcd599d 100644
+--- a/drivers/watchdog/geodewdt.c
++++ b/drivers/watchdog/geodewdt.c
+@@ -243,7 +243,7 @@ static int geodewdt_probe(struct platform_device *dev)
+ 	return ret;
+ }
+ 
+-static int __devexit geodewdt_remove(struct platform_device *dev)
++static int geodewdt_remove(struct platform_device *dev)
+ {
+ 	misc_deregister(&geodewdt_miscdev);
+ 	return 0;
+diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+index cc25ddf..8717255 100644
+--- a/drivers/watchdog/hpwdt.c
++++ b/drivers/watchdog/hpwdt.c
+@@ -848,7 +848,7 @@ error_pci_iomap:
+ 	return retval;
+ }
+ 
+-static void __devexit hpwdt_exit(struct pci_dev *dev)
++static void hpwdt_exit(struct pci_dev *dev)
+ {
+ 	if (!nowayout)
+ 		hpwdt_stop();
+diff --git a/drivers/watchdog/i6300esb.c b/drivers/watchdog/i6300esb.c
+index 31b87db..2b2ea13 100644
+--- a/drivers/watchdog/i6300esb.c
++++ b/drivers/watchdog/i6300esb.c
+@@ -465,7 +465,7 @@ err_unmap:
+ 	return ret;
+ }
+ 
+-static void __devexit esb_remove(struct pci_dev *pdev)
++static void esb_remove(struct pci_dev *pdev)
+ {
+ 	/* Stop the timer before we leave */
+ 	if (!nowayout)
+diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
+index fb341df..6130321 100644
+--- a/drivers/watchdog/iTCO_wdt.c
++++ b/drivers/watchdog/iTCO_wdt.c
+@@ -364,7 +364,7 @@ static struct watchdog_device iTCO_wdt_watchdog_dev = {
+  *	Init & exit routines
+  */
+ 
+-static void __devexit iTCO_wdt_cleanup(void)
++static void iTCO_wdt_cleanup(void)
+ {
+ 	/* Stop the timer before we leave */
+ 	if (!nowayout)
+@@ -533,7 +533,7 @@ out:
+ 	return ret;
+ }
+ 
+-static int __devexit iTCO_wdt_remove(struct platform_device *dev)
++static int iTCO_wdt_remove(struct platform_device *dev)
+ {
+ 	if (iTCO_wdt_private.tco_res || iTCO_wdt_private.smi_res)
+ 		iTCO_wdt_cleanup();
+diff --git a/drivers/watchdog/ib700wdt.c b/drivers/watchdog/ib700wdt.c
+index 5249596..eb6b5cc 100644
+--- a/drivers/watchdog/ib700wdt.c
++++ b/drivers/watchdog/ib700wdt.c
+@@ -319,7 +319,7 @@ out_nostopreg:
+ 	return res;
+ }
+ 
+-static int __devexit ibwdt_remove(struct platform_device *dev)
++static int ibwdt_remove(struct platform_device *dev)
+ {
+ 	misc_deregister(&ibwdt_miscdev);
+ 	release_region(WDT_START, 1);
+diff --git a/drivers/watchdog/ie6xx_wdt.c b/drivers/watchdog/ie6xx_wdt.c
+index 94eef6f..e24ef6a 100644
+--- a/drivers/watchdog/ie6xx_wdt.c
++++ b/drivers/watchdog/ie6xx_wdt.c
+@@ -295,7 +295,7 @@ misc_register_error:
+ 	return ret;
+ }
+ 
+-static int __devexit ie6xx_wdt_remove(struct platform_device *pdev)
++static int ie6xx_wdt_remove(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 
+diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+index eb7008a..a61408f 100644
+--- a/drivers/watchdog/jz4740_wdt.c
++++ b/drivers/watchdog/jz4740_wdt.c
+@@ -197,7 +197,7 @@ err_out:
+ 	return ret;
+ }
+ 
+-static int __devexit jz4740_wdt_remove(struct platform_device *pdev)
++static int jz4740_wdt_remove(struct platform_device *pdev)
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = platform_get_drvdata(pdev);
+ 
+diff --git a/drivers/watchdog/ks8695_wdt.c b/drivers/watchdog/ks8695_wdt.c
+index c305adb..dce9ecf 100644
+--- a/drivers/watchdog/ks8695_wdt.c
++++ b/drivers/watchdog/ks8695_wdt.c
+@@ -252,7 +252,7 @@ static int ks8695wdt_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __devexit ks8695wdt_remove(struct platform_device *pdev)
++static int ks8695wdt_remove(struct platform_device *pdev)
+ {
+ 	int res;
+ 
+diff --git a/drivers/watchdog/lantiq_wdt.c b/drivers/watchdog/lantiq_wdt.c
+index fd9f43c..79fe01b 100644
+--- a/drivers/watchdog/lantiq_wdt.c
++++ b/drivers/watchdog/lantiq_wdt.c
+@@ -220,7 +220,7 @@ ltq_wdt_probe(struct platform_device *pdev)
+ 	return misc_register(&ltq_wdt_miscdev);
  }
  
 -static int __devexit
 +static int
- pl022_remove(struct amba_device *adev)
+ ltq_wdt_remove(struct platform_device *pdev)
  {
- 	struct pl022 *pl022 = amba_get_drvdata(adev);
-diff --git a/drivers/spi/spi-pxa2xx-pci.c b/drivers/spi/spi-pxa2xx-pci.c
-index 8e64f10..cf95587 100644
---- a/drivers/spi/spi-pxa2xx-pci.c
-+++ b/drivers/spi/spi-pxa2xx-pci.c
-@@ -129,7 +129,7 @@ err_nomem:
+ 	misc_deregister(&ltq_wdt_miscdev);
+diff --git a/drivers/watchdog/max63xx_wdt.c b/drivers/watchdog/max63xx_wdt.c
+index b572c75..773c661 100644
+--- a/drivers/watchdog/max63xx_wdt.c
++++ b/drivers/watchdog/max63xx_wdt.c
+@@ -209,7 +209,7 @@ static int max63xx_wdt_probe(struct platform_device *pdev)
+ 	return watchdog_register_device(&max63xx_wdt_dev);
+ }
+ 
+-static int __devexit max63xx_wdt_remove(struct platform_device *pdev)
++static int max63xx_wdt_remove(struct platform_device *pdev)
+ {
+ 	watchdog_unregister_device(&max63xx_wdt_dev);
+ 	return 0;
+diff --git a/drivers/watchdog/mpc8xxx_wdt.c b/drivers/watchdog/mpc8xxx_wdt.c
+index 5c23a6b..da27520 100644
+--- a/drivers/watchdog/mpc8xxx_wdt.c
++++ b/drivers/watchdog/mpc8xxx_wdt.c
+@@ -245,7 +245,7 @@ err_unmap:
  	return ret;
  }
  
--static void __devexit ce4100_spi_remove(struct pci_dev *dev)
-+static void ce4100_spi_remove(struct pci_dev *dev)
+-static int __devexit mpc8xxx_wdt_remove(struct platform_device *ofdev)
++static int mpc8xxx_wdt_remove(struct platform_device *ofdev)
  {
- 	struct ce4100_info *spi_info;
- 	struct ssp_device *ssp;
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 6cdd25e..902f2fb 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -709,7 +709,7 @@ static int rspi_request_dma(struct rspi_data *rspi,
+ 	mpc8xxx_wdt_pr_warn("watchdog removed");
+ 	del_timer_sync(&wdt_timer);
+diff --git a/drivers/watchdog/mpcore_wdt.c b/drivers/watchdog/mpcore_wdt.c
+index 4f90ac5..a84eb55 100644
+--- a/drivers/watchdog/mpcore_wdt.c
++++ b/drivers/watchdog/mpcore_wdt.c
+@@ -378,7 +378,7 @@ static int mpcore_wdt_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static void __devexit rspi_release_dma(struct rspi_data *rspi)
-+static void rspi_release_dma(struct rspi_data *rspi)
+-static int __devexit mpcore_wdt_remove(struct platform_device *pdev)
++static int mpcore_wdt_remove(struct platform_device *pdev)
  {
- 	if (rspi->chan_tx)
- 		dma_release_channel(rspi->chan_tx);
-@@ -717,7 +717,7 @@ static void __devexit rspi_release_dma(struct rspi_data *rspi)
- 		dma_release_channel(rspi->chan_rx);
+ 	platform_set_drvdata(pdev, NULL);
+ 
+diff --git a/drivers/watchdog/mtx-1_wdt.c b/drivers/watchdog/mtx-1_wdt.c
+index 8c64276..14dab6f 100644
+--- a/drivers/watchdog/mtx-1_wdt.c
++++ b/drivers/watchdog/mtx-1_wdt.c
+@@ -233,7 +233,7 @@ static int mtx1_wdt_probe(struct platform_device *pdev)
+ 	return 0;
  }
  
--static int __devexit rspi_remove(struct platform_device *pdev)
-+static int rspi_remove(struct platform_device *pdev)
+-static int __devexit mtx1_wdt_remove(struct platform_device *pdev)
++static int mtx1_wdt_remove(struct platform_device *pdev)
  {
- 	struct rspi_data *rspi = dev_get_drvdata(&pdev->dev);
+ 	/* FIXME: do we need to lock this test ? */
+ 	if (mtx1_wdt_device.queue) {
+diff --git a/drivers/watchdog/mv64x60_wdt.c b/drivers/watchdog/mv64x60_wdt.c
+index 2876027..c7fb878 100644
+--- a/drivers/watchdog/mv64x60_wdt.c
++++ b/drivers/watchdog/mv64x60_wdt.c
+@@ -287,7 +287,7 @@ static int mv64x60_wdt_probe(struct platform_device *dev)
+ 	return misc_register(&mv64x60_wdt_miscdev);
+ }
  
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index 5a9da14..02d6460 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -663,7 +663,7 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
+-static int __devexit mv64x60_wdt_remove(struct platform_device *dev)
++static int mv64x60_wdt_remove(struct platform_device *dev)
+ {
+ 	misc_deregister(&mv64x60_wdt_miscdev);
+ 
+diff --git a/drivers/watchdog/nuc900_wdt.c b/drivers/watchdog/nuc900_wdt.c
+index d05daef..04c45a1 100644
+--- a/drivers/watchdog/nuc900_wdt.c
++++ b/drivers/watchdog/nuc900_wdt.c
+@@ -309,7 +309,7 @@ err_get:
+ 	return ret;
+ }
+ 
+-static int __devexit nuc900wdt_remove(struct platform_device *pdev)
++static int nuc900wdt_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&nuc900wdt_miscdev);
+ 
+diff --git a/drivers/watchdog/nv_tco.c b/drivers/watchdog/nv_tco.c
+index 45452845..59cf19e 100644
+--- a/drivers/watchdog/nv_tco.c
++++ b/drivers/watchdog/nv_tco.c
+@@ -423,7 +423,7 @@ unreg_region:
+ 	return ret;
+ }
+ 
+-static void __devexit nv_tco_cleanup(void)
++static void nv_tco_cleanup(void)
+ {
+ 	u32 val;
+ 
+@@ -445,7 +445,7 @@ static void __devexit nv_tco_cleanup(void)
+ 	release_region(tcobase, 0x10);
+ }
+ 
+-static int __devexit nv_tco_remove(struct platform_device *dev)
++static int nv_tco_remove(struct platform_device *dev)
+ {
+ 	if (tcobase)
+ 		nv_tco_cleanup();
+diff --git a/drivers/watchdog/of_xilinx_wdt.c b/drivers/watchdog/of_xilinx_wdt.c
+index 3ddc4e9..2761ddb 100644
+--- a/drivers/watchdog/of_xilinx_wdt.c
++++ b/drivers/watchdog/of_xilinx_wdt.c
+@@ -383,7 +383,7 @@ err_out:
+ 	return rc;
+ }
+ 
+-static int __devexit xwdt_remove(struct platform_device *dev)
++static int xwdt_remove(struct platform_device *dev)
+ {
+ 	misc_deregister(&xwdt_miscdev);
+ 	iounmap(xdev.base);
+diff --git a/drivers/watchdog/omap_wdt.c b/drivers/watchdog/omap_wdt.c
+index 36a7246..d8da516 100644
+--- a/drivers/watchdog/omap_wdt.c
++++ b/drivers/watchdog/omap_wdt.c
+@@ -359,7 +359,7 @@ static void omap_wdt_shutdown(struct platform_device *pdev)
+ 	}
+ }
+ 
+-static int __devexit omap_wdt_remove(struct platform_device *pdev)
++static int omap_wdt_remove(struct platform_device *pdev)
+ {
+ 	struct omap_wdt_dev *wdev = platform_get_drvdata(pdev);
+ 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+diff --git a/drivers/watchdog/orion_wdt.c b/drivers/watchdog/orion_wdt.c
+index f722635..0478b00 100644
+--- a/drivers/watchdog/orion_wdt.c
++++ b/drivers/watchdog/orion_wdt.c
+@@ -181,7 +181,7 @@ static int orion_wdt_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __devexit orion_wdt_remove(struct platform_device *pdev)
++static int orion_wdt_remove(struct platform_device *pdev)
+ {
+ 	watchdog_unregister_device(&orion_wdt);
+ 	clk_disable_unprepare(clk);
+diff --git a/drivers/watchdog/pcwd.c b/drivers/watchdog/pcwd.c
+index cef246a..33e49a7 100644
+--- a/drivers/watchdog/pcwd.c
++++ b/drivers/watchdog/pcwd.c
+@@ -949,7 +949,7 @@ error_request_region:
+ 	return ret;
+ }
+ 
+-static int __devexit pcwd_isa_remove(struct device *dev, unsigned int id)
++static int pcwd_isa_remove(struct device *dev, unsigned int id)
+ {
+ 	if (debug >= DEBUG)
+ 		pr_debug("pcwd_isa_remove id=%d\n", id);
+diff --git a/drivers/watchdog/pcwd_pci.c b/drivers/watchdog/pcwd_pci.c
+index 6ec84b5..7890f84 100644
+--- a/drivers/watchdog/pcwd_pci.c
++++ b/drivers/watchdog/pcwd_pci.c
+@@ -785,7 +785,7 @@ err_out_disable_device:
+ 	return ret;
+ }
+ 
+-static void __devexit pcipcwd_card_exit(struct pci_dev *pdev)
++static void pcipcwd_card_exit(struct pci_dev *pdev)
+ {
+ 	/* Stop the timer before we leave */
+ 	if (!nowayout)
+diff --git a/drivers/watchdog/pnx4008_wdt.c b/drivers/watchdog/pnx4008_wdt.c
+index 4f7afea..dcba5da 100644
+--- a/drivers/watchdog/pnx4008_wdt.c
++++ b/drivers/watchdog/pnx4008_wdt.c
+@@ -192,7 +192,7 @@ out:
+ 	return ret;
+ }
+ 
+-static int __devexit pnx4008_wdt_remove(struct platform_device *pdev)
++static int pnx4008_wdt_remove(struct platform_device *pdev)
+ {
+ 	watchdog_unregister_device(&pnx4008_wdd);
+ 
+diff --git a/drivers/watchdog/rc32434_wdt.c b/drivers/watchdog/rc32434_wdt.c
+index 2266280..f78bc00 100644
+--- a/drivers/watchdog/rc32434_wdt.c
++++ b/drivers/watchdog/rc32434_wdt.c
+@@ -306,7 +306,7 @@ unmap:
+ 	return ret;
+ }
+ 
+-static int __devexit rc32434_wdt_remove(struct platform_device *pdev)
++static int rc32434_wdt_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&rc32434_wdt_miscdev);
+ 	iounmap(wdt_reg);
+diff --git a/drivers/watchdog/rdc321x_wdt.c b/drivers/watchdog/rdc321x_wdt.c
+index 9466706..b0f116c 100644
+--- a/drivers/watchdog/rdc321x_wdt.c
++++ b/drivers/watchdog/rdc321x_wdt.c
+@@ -272,7 +272,7 @@ static int rdc321x_wdt_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __devexit rdc321x_wdt_remove(struct platform_device *pdev)
++static int rdc321x_wdt_remove(struct platform_device *pdev)
+ {
+ 	if (rdc321x_wdt_device.queue) {
+ 		rdc321x_wdt_device.queue = 0;
+diff --git a/drivers/watchdog/riowd.c b/drivers/watchdog/riowd.c
+index 84f5233..0040451 100644
+--- a/drivers/watchdog/riowd.c
++++ b/drivers/watchdog/riowd.c
+@@ -220,7 +220,7 @@ out:
  	return err;
  }
  
--static int __devexit s3c24xx_spi_remove(struct platform_device *dev)
-+static int s3c24xx_spi_remove(struct platform_device *dev)
+-static int __devexit riowd_remove(struct platform_device *op)
++static int riowd_remove(struct platform_device *op)
  {
- 	struct s3c24xx_spi *hw = platform_get_drvdata(dev);
+ 	struct riowd *p = dev_get_drvdata(&op->dev);
  
-diff --git a/drivers/spi/spi-sh-hspi.c b/drivers/spi/spi-sh-hspi.c
-index f536c48..5a64b0d 100644
---- a/drivers/spi/spi-sh-hspi.c
-+++ b/drivers/spi/spi-sh-hspi.c
-@@ -300,7 +300,7 @@ static int hspi_probe(struct platform_device *pdev)
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 2e28c14..b0dab10 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -437,7 +437,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
  	return ret;
  }
  
--static int __devexit hspi_remove(struct platform_device *pdev)
-+static int hspi_remove(struct platform_device *pdev)
+-static int __devexit s3c2410wdt_remove(struct platform_device *dev)
++static int s3c2410wdt_remove(struct platform_device *dev)
  {
- 	struct hspi_priv *hspi = dev_get_drvdata(&pdev->dev);
+ 	watchdog_unregister_device(&s3c2410_wdd);
  
-diff --git a/drivers/spi/spi-sh.c b/drivers/spi/spi-sh.c
-index 3a22b1f..3c3600a 100644
---- a/drivers/spi/spi-sh.c
-+++ b/drivers/spi/spi-sh.c
-@@ -432,7 +432,7 @@ static irqreturn_t spi_sh_irq(int irq, void *_ss)
- 	return IRQ_HANDLED;
- }
- 
--static int __devexit spi_sh_remove(struct platform_device *pdev)
-+static int spi_sh_remove(struct platform_device *pdev)
- {
- 	struct spi_sh_data *ss = dev_get_drvdata(&pdev->dev);
- 
-diff --git a/drivers/spi/spi-sirf.c b/drivers/spi/spi-sirf.c
-index 3b8e1d1..e0f43a5 100644
---- a/drivers/spi/spi-sirf.c
-+++ b/drivers/spi/spi-sirf.c
-@@ -604,7 +604,7 @@ err_cs:
- 	return ret;
- }
- 
--static int  __devexit spi_sirfsoc_remove(struct platform_device *pdev)
-+static int  spi_sirfsoc_remove(struct platform_device *pdev)
- {
- 	struct spi_master *master;
- 	struct sirfsoc_spi *sspi;
-diff --git a/drivers/spi/spi-stmp.c b/drivers/spi/spi-stmp.c
-index 976d236..da57473 100644
---- a/drivers/spi/spi-stmp.c
-+++ b/drivers/spi/spi-stmp.c
-@@ -589,7 +589,7 @@ out0:
+diff --git a/drivers/watchdog/sch311x_wdt.c b/drivers/watchdog/sch311x_wdt.c
+index 8ecec29..af7b136 100644
+--- a/drivers/watchdog/sch311x_wdt.c
++++ b/drivers/watchdog/sch311x_wdt.c
+@@ -429,7 +429,7 @@ exit:
  	return err;
  }
  
--static int __devexit stmp_spi_remove(struct platform_device *dev)
-+static int stmp_spi_remove(struct platform_device *dev)
+-static int __devexit sch311x_wdt_remove(struct platform_device *pdev)
++static int sch311x_wdt_remove(struct platform_device *pdev)
  {
- 	struct stmp_spi *ss;
- 	struct spi_master *master;
-diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
-index 30995bf..448a8cc 100644
---- a/drivers/spi/spi-tegra20-sflash.c
-+++ b/drivers/spi/spi-tegra20-sflash.c
-@@ -575,7 +575,7 @@ exit_free_master:
+ 	/* Stop the timer before we leave */
+ 	if (!nowayout)
+diff --git a/drivers/watchdog/shwdt.c b/drivers/watchdog/shwdt.c
+index 9c57af9..6a89e40 100644
+--- a/drivers/watchdog/shwdt.c
++++ b/drivers/watchdog/shwdt.c
+@@ -298,7 +298,7 @@ err:
+ 	return rc;
+ }
+ 
+-static int __devexit sh_wdt_remove(struct platform_device *pdev)
++static int sh_wdt_remove(struct platform_device *pdev)
+ {
+ 	struct sh_wdt *wdt = platform_get_drvdata(pdev);
+ 
+diff --git a/drivers/watchdog/sp5100_tco.c b/drivers/watchdog/sp5100_tco.c
+index 7ee39a7..b387681 100644
+--- a/drivers/watchdog/sp5100_tco.c
++++ b/drivers/watchdog/sp5100_tco.c
+@@ -412,7 +412,7 @@ exit:
  	return ret;
  }
  
--static int __devexit tegra_sflash_remove(struct platform_device *pdev)
-+static int tegra_sflash_remove(struct platform_device *pdev)
+-static void __devexit sp5100_tco_cleanup(void)
++static void sp5100_tco_cleanup(void)
  {
- 	struct spi_master *master = dev_get_drvdata(&pdev->dev);
- 	struct tegra_sflash_data	*tsd = spi_master_get_devdata(master);
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index cab1926..651167f 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1261,7 +1261,7 @@ exit_free_master:
+ 	/* Stop the timer before we leave */
+ 	if (!nowayout)
+@@ -425,7 +425,7 @@ static void __devexit sp5100_tco_cleanup(void)
+ 	release_region(pm_iobase, SP5100_PM_IOPORTS_SIZE);
+ }
+ 
+-static int __devexit sp5100_tco_remove(struct platform_device *dev)
++static int sp5100_tco_remove(struct platform_device *dev)
+ {
+ 	if (tcobase)
+ 		sp5100_tco_cleanup();
+diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+index 05bfde4..76c73cb 100644
+--- a/drivers/watchdog/sp805_wdt.c
++++ b/drivers/watchdog/sp805_wdt.c
+@@ -272,7 +272,7 @@ err:
  	return ret;
  }
  
--static int __devexit tegra_slink_remove(struct platform_device *pdev)
-+static int tegra_slink_remove(struct platform_device *pdev)
+-static int __devexit sp805_wdt_remove(struct amba_device *adev)
++static int sp805_wdt_remove(struct amba_device *adev)
  {
- 	struct spi_master *master = dev_get_drvdata(&pdev->dev);
- 	struct tegra_slink_data	*tspi = spi_master_get_devdata(master);
-diff --git a/drivers/spi/spi-ti-ssp.c b/drivers/spi/spi-ti-ssp.c
-index 295bc8f..46992ca 100644
---- a/drivers/spi/spi-ti-ssp.c
-+++ b/drivers/spi/spi-ti-ssp.c
-@@ -357,7 +357,7 @@ error_wq:
+ 	struct sp805_wdt *wdt = amba_get_drvdata(adev);
+ 
+diff --git a/drivers/watchdog/stmp3xxx_wdt.c b/drivers/watchdog/stmp3xxx_wdt.c
+index 254cce3..1f4f697 100644
+--- a/drivers/watchdog/stmp3xxx_wdt.c
++++ b/drivers/watchdog/stmp3xxx_wdt.c
+@@ -229,7 +229,7 @@ static int stmp3xxx_wdt_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int __devexit stmp3xxx_wdt_remove(struct platform_device *pdev)
++static int stmp3xxx_wdt_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&stmp3xxx_wdt_miscdev);
+ 	return 0;
+diff --git a/drivers/watchdog/ts72xx_wdt.c b/drivers/watchdog/ts72xx_wdt.c
+index d6e94b4..b8a9245 100644
+--- a/drivers/watchdog/ts72xx_wdt.c
++++ b/drivers/watchdog/ts72xx_wdt.c
+@@ -476,7 +476,7 @@ fail:
  	return error;
  }
  
--static int __devexit ti_ssp_spi_remove(struct platform_device *pdev)
-+static int ti_ssp_spi_remove(struct platform_device *pdev)
+-static __devexit int ts72xx_wdt_remove(struct platform_device *pdev)
++static int ts72xx_wdt_remove(struct platform_device *pdev)
  {
- 	struct ti_ssp_spi *hw = platform_get_drvdata(pdev);
- 	int error;
-diff --git a/drivers/spi/spi-tle62x0.c b/drivers/spi/spi-tle62x0.c
-index 22f5ed8..6b0874d 100644
---- a/drivers/spi/spi-tle62x0.c
-+++ b/drivers/spi/spi-tle62x0.c
-@@ -294,7 +294,7 @@ static int tle62x0_probe(struct spi_device *spi)
- 	return ret;
- }
- 
--static int __devexit tle62x0_remove(struct spi_device *spi)
-+static int tle62x0_remove(struct spi_device *spi)
- {
- 	struct tle62x0_state *st = spi_get_drvdata(spi);
- 	int ptr;
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 12b3977..f756481 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1498,7 +1498,7 @@ err_pci_iomap:
- 	return ret;
- }
- 
--static int __devexit pch_spi_pd_remove(struct platform_device *plat_dev)
-+static int pch_spi_pd_remove(struct platform_device *plat_dev)
- {
- 	struct pch_spi_board_data *board_dat = dev_get_platdata(&plat_dev->dev);
- 	struct pch_spi_data *data = platform_get_drvdata(plat_dev);
-@@ -1705,7 +1705,7 @@ err_no_mem:
- 	return retval;
- }
- 
--static void __devexit pch_spi_remove(struct pci_dev *pdev)
-+static void pch_spi_remove(struct pci_dev *pdev)
- {
- 	int i;
- 	struct pch_pd_dev_save *pd_dev_save = pci_get_drvdata(pdev);
-diff --git a/drivers/spi/spi-xcomm.c b/drivers/spi/spi-xcomm.c
-index d17e04d..4d3ec8b 100644
---- a/drivers/spi/spi-xcomm.c
-+++ b/drivers/spi/spi-xcomm.c
-@@ -246,7 +246,7 @@ static int spi_xcomm_probe(struct i2c_client *i2c,
- 	return ret;
- }
- 
--static int __devexit spi_xcomm_remove(struct i2c_client *i2c)
-+static int spi_xcomm_remove(struct i2c_client *i2c)
- {
- 	struct spi_master *master = i2c_get_clientdata(i2c);
- 
-diff --git a/drivers/spi/spi-xilinx.c b/drivers/spi/spi-xilinx.c
-index 7b6ff06..e1d7696 100644
---- a/drivers/spi/spi-xilinx.c
-+++ b/drivers/spi/spi-xilinx.c
-@@ -518,7 +518,7 @@ static int xilinx_spi_probe(struct platform_device *dev)
+ 	struct ts72xx_wdt *wdt = platform_get_drvdata(pdev);
+ 	struct resource *res;
+diff --git a/drivers/watchdog/twl4030_wdt.c b/drivers/watchdog/twl4030_wdt.c
+index 6dab509..9f54b1d 100644
+--- a/drivers/watchdog/twl4030_wdt.c
++++ b/drivers/watchdog/twl4030_wdt.c
+@@ -204,7 +204,7 @@ static int twl4030_wdt_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static int __devexit xilinx_spi_remove(struct platform_device *dev)
-+static int xilinx_spi_remove(struct platform_device *dev)
+-static int __devexit twl4030_wdt_remove(struct platform_device *pdev)
++static int twl4030_wdt_remove(struct platform_device *pdev)
  {
- 	xilinx_spi_deinit(platform_get_drvdata(dev));
- 	platform_set_drvdata(dev, 0);
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index e5e0214..2e0655d 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -622,7 +622,7 @@ static int spidev_probe(struct spi_device *spi)
- 	return status;
+ 	struct twl4030_wdt *wdt = platform_get_drvdata(pdev);
+ 
+diff --git a/drivers/watchdog/via_wdt.c b/drivers/watchdog/via_wdt.c
+index 098dfab..1a68f76 100644
+--- a/drivers/watchdog/via_wdt.c
++++ b/drivers/watchdog/via_wdt.c
+@@ -229,7 +229,7 @@ err_out_disable_device:
+ 	return ret;
  }
  
--static int __devexit spidev_remove(struct spi_device *spi)
-+static int spidev_remove(struct spi_device *spi)
+-static void __devexit wdt_remove(struct pci_dev *pdev)
++static void wdt_remove(struct pci_dev *pdev)
  {
- 	struct spidev_data	*spidev = spi_get_drvdata(spi);
+ 	watchdog_unregister_device(&wdt_dev);
+ 	del_timer(&timer);
+diff --git a/drivers/watchdog/wdt_pci.c b/drivers/watchdog/wdt_pci.c
+index 13d27c8..36a54c0 100644
+--- a/drivers/watchdog/wdt_pci.c
++++ b/drivers/watchdog/wdt_pci.c
+@@ -705,7 +705,7 @@ out_pci:
+ }
  
+ 
+-static void __devexit wdtpci_remove_one(struct pci_dev *pdev)
++static void wdtpci_remove_one(struct pci_dev *pdev)
+ {
+ 	/* here we assume only one device will ever have
+ 	 * been picked up and registered by probe function */
+diff --git a/drivers/watchdog/wm831x_wdt.c b/drivers/watchdog/wm831x_wdt.c
+index 170c82e..9dcb6d0 100644
+--- a/drivers/watchdog/wm831x_wdt.c
++++ b/drivers/watchdog/wm831x_wdt.c
+@@ -292,7 +292,7 @@ err:
+ 	return ret;
+ }
+ 
+-static int __devexit wm831x_wdt_remove(struct platform_device *pdev)
++static int wm831x_wdt_remove(struct platform_device *pdev)
+ {
+ 	struct wm831x_wdt_drvdata *driver_data = dev_get_drvdata(&pdev->dev);
+ 
+diff --git a/drivers/watchdog/wm8350_wdt.c b/drivers/watchdog/wm8350_wdt.c
+index 4530fa0..34d272a 100644
+--- a/drivers/watchdog/wm8350_wdt.c
++++ b/drivers/watchdog/wm8350_wdt.c
+@@ -158,7 +158,7 @@ static int wm8350_wdt_probe(struct platform_device *pdev)
+ 	return watchdog_register_device(&wm8350_wdt);
+ }
+ 
+-static int __devexit wm8350_wdt_remove(struct platform_device *pdev)
++static int wm8350_wdt_remove(struct platform_device *pdev)
+ {
+ 	watchdog_unregister_device(&wm8350_wdt);
+ 	return 0;
+diff --git a/drivers/watchdog/xen_wdt.c b/drivers/watchdog/xen_wdt.c
+index 1eb6bdc..92ad33d 100644
+--- a/drivers/watchdog/xen_wdt.c
++++ b/drivers/watchdog/xen_wdt.c
+@@ -280,7 +280,7 @@ static int xen_wdt_probe(struct platform_device *dev)
+ 	return ret;
+ }
+ 
+-static int __devexit xen_wdt_remove(struct platform_device *dev)
++static int xen_wdt_remove(struct platform_device *dev)
+ {
+ 	/* Stop the timer before we leave */
+ 	if (!nowayout)
 -- 
 1.8.0
