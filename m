@@ -1,126 +1,72 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 2/4] ARM: dts: exynos4210-origen: Update for pinctrl-samsung
- driver
-Date: Mon, 19 Nov 2012 15:46:34 +0100
-Message-ID: <1353336396-21161-3-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 4/4] ARM: dts: exynos4210-origen: Add vmmc fixed voltage
+ regulator
+Date: Mon, 19 Nov 2012 15:46:36 +0100
+Message-ID: <1353336396-21161-5-git-send-email-t.figa@samsung.com>
 References: <1353336396-21161-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38104 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:38113 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752798Ab2KSOqz (ORCPT
+	with ESMTP id S1751994Ab2KSOrC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Nov 2012 09:46:55 -0500
+	Mon, 19 Nov 2012 09:47:02 -0500
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MDQ0007LP1XFW40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Nov 2012 23:46:54 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Nov 2012 23:47:01 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MDQ009FTP1R53A0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Nov 2012 23:46:54 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Nov 2012 23:47:01 +0900 (KST)
 In-reply-to: <1353336396-21161-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, jhkim@insignal.co.kr, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-This patch updates all parts of Origen dts related to pin configuration
-to use new GPIO and pinctrl bindings, instead of (now unsupported on
-Exynos4) legacy gpio-samsung bindings.
+This patch adds fixed voltage vmmc regulator to dts file of Origen
+board.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4210-origen.dts | 30 ++++++++++--------------------
- 1 file changed, 10 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/exynos4210-origen.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 392d9de..2eb1332 100644
+index 5395875..62f278e 100644
 --- a/arch/arm/boot/dts/exynos4210-origen.dts
 +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -36,13 +36,8 @@
- 		samsung,sdhci-bus-width = <4>;
- 		linux,mmc_cap_4_bit_data;
- 		samsung,sdhci-cd-internal;
--		gpio-cd = <&gpk2 2 2 3 3>;
--		gpios = <&gpk2 0 2 0 3>,
--			<&gpk2 1 2 0 3>,
--			<&gpk2 3 2 3 3>,
--			<&gpk2 4 2 3 3>,
--			<&gpk2 5 2 3 3>,
--			<&gpk2 6 2 3 3>;
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
-+		pinctrl-names = "default";
+@@ -32,10 +32,20 @@
+ 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
+ 	};
+ 
++	mmc_reg: voltage-regulator {
++	        compatible = "regulator-fixed";
++		regulator-name = "VMEM_VDD_2.8V";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		gpio = <&gpx1 1 0>;
++		enable-active-high;
++	};
++
+ 	sdhci@12530000 {
+ 		bus-width = <4>;
+ 		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
+ 		pinctrl-names = "default";
++		vmmc-supply = <&mmc_reg>;
  		status = "okay";
  	};
  
-@@ -50,13 +45,8 @@
- 		samsung,sdhci-bus-width = <4>;
- 		linux,mmc_cap_4_bit_data;
- 		samsung,sdhci-cd-internal;
--		gpio-cd = <&gpk0 2 2 3 3>;
--		gpios = <&gpk0 0 2 0 3>,
--			<&gpk0 1 2 0 3>,
--			<&gpk0 3 2 3 3>,
--			<&gpk0 4 2 3 3>,
--			<&gpk0 5 2 3 3>,
--			<&gpk0 6 2 3 3>;
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_cd>;
-+		pinctrl-names = "default";
+@@ -43,6 +53,7 @@
+ 		bus-width = <4>;
+ 		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_cd>;
+ 		pinctrl-names = "default";
++		vmmc-supply = <&mmc_reg>;
  		status = "okay";
  	};
  
-@@ -83,35 +73,35 @@
- 
- 		up {
- 			label = "Up";
--			gpios = <&gpx2 0 0 0x10000 2>;
-+			gpios = <&gpx2 0 1>;
- 			linux,code = <103>;
- 			gpio-key,wakeup;
- 		};
- 
- 		down {
- 			label = "Down";
--			gpios = <&gpx2 1 0 0x10000 2>;
-+			gpios = <&gpx2 1 1>;
- 			linux,code = <108>;
- 			gpio-key,wakeup;
- 		};
- 
- 		back {
- 			label = "Back";
--			gpios = <&gpx1 7 0 0x10000 2>;
-+			gpios = <&gpx1 7 1>;
- 			linux,code = <158>;
- 			gpio-key,wakeup;
- 		};
- 
- 		home {
- 			label = "Home";
--			gpios = <&gpx1 6 0 0x10000 2>;
-+			gpios = <&gpx1 6 1>;
- 			linux,code = <102>;
- 			gpio-key,wakeup;
- 		};
- 
- 		menu {
- 			label = "Menu";
--			gpios = <&gpx1 5 0 0x10000 2>;
-+			gpios = <&gpx1 5 1>;
- 			linux,code = <139>;
- 			gpio-key,wakeup;
- 		};
-@@ -120,7 +110,7 @@
- 	leds {
- 		compatible = "gpio-leds";
- 		status {
--			gpios = <&gpx1 3 0 0x10000 2>;
-+			gpios = <&gpx1 3 1>;
- 			linux,default-trigger = "heartbeat";
- 		};
- 	};
 -- 
 1.8.0
