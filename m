@@ -1,300 +1,134 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 10/10] ARM: S3C24XX: assimilate s3c2443 subirqs into new structure
-Date: Sun, 18 Nov 2012 01:57:42 +0100
-Message-ID: <201211180157.42311.heiko@sntech.de>
-References: <201211180151.01029.heiko@sntech.de>
+From: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 4/4] iommu/exynos: enhancements of System MMU driver with
+	DT
+Date: Mon, 19 Nov 2012 17:12:03 +0900
+Message-ID: <CAHQjnONgB_OM-hVtf8UYLr=HexxQtAiDtf_VKZfr02mUCi4=Vw@mail.gmail.com>
+References: <002401cdc245$32dbf3e0$9893dba0$%cho@samsung.com>
+	<20121117124918.GC11220@8bytes.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:53276 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752496Ab2KRA5t (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 17 Nov 2012 19:57:49 -0500
-In-Reply-To: <201211180151.01029.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============6294557313197911486=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20121117124918.GC11220-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Subash Patel <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sanghyun Lee <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-The contents of the base irq-register are shared between the s3c2443
-and s3c2416/s3c2450.
+--===============6294557313197911486==
+Content-Type: multipart/alternative; boundary=f46d042d058c2ddc2304ced4acd8
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/plat-s3c24xx/irq.c |  252 ++++++-------------------------------------
- 1 files changed, 34 insertions(+), 218 deletions(-)
+--f46d042d058c2ddc2304ced4acd8
+Content-Type: text/plain; charset=ISO-8859-1
 
-diff --git a/arch/arm/plat-s3c24xx/irq.c b/arch/arm/plat-s3c24xx/irq.c
-index 9e559ed..bd05af9 100644
---- a/arch/arm/plat-s3c24xx/irq.c
-+++ b/arch/arm/plat-s3c24xx/irq.c
-@@ -913,230 +913,46 @@ struct syscore_ops s3c2416_irq_syscore_ops = {
- #endif
- 
- #ifdef CONFIG_CPU_S3C2443
--#define INTMSK(start, end) ((1 << ((end) + 1 - (start))) - 1)
--
--static inline void s3c2443_irq_demux(unsigned int irq, unsigned int len)
--{
--	unsigned int subsrc, submsk;
--	unsigned int end;
--
--	/* read the current pending interrupts, and the mask
--	 * for what it is available */
--
--	subsrc = __raw_readl(S3C2410_SUBSRCPND);
--	submsk = __raw_readl(S3C2410_INTSUBMSK);
--
--	subsrc  &= ~submsk;
--	subsrc >>= (irq - S3C2410_IRQSUB(0));
--	subsrc  &= (1 << len)-1;
--
--	end = len + irq;
--
--	for (; irq < end && subsrc; irq++) {
--		if (subsrc & 1)
--			generic_handle_irq(irq);
--
--		subsrc >>= 1;
--	}
--}
--
--/* WDT/AC97 sub interrupts */
--
--static void s3c2443_irq_demux_wdtac97(unsigned int irq, struct irq_desc *desc)
--{
--	s3c2443_irq_demux(IRQ_S3C2443_WDT, 4);
--}
--
--#define INTMSK_WDTAC97	(1UL << (IRQ_WDT - IRQ_EINT0))
--#define SUBMSK_WDTAC97	INTMSK(IRQ_S3C2443_WDT, IRQ_S3C2443_AC97)
--
--static void s3c2443_irq_wdtac97_mask(struct irq_data *data)
--{
--	s3c_irqsub_mask(data->irq, INTMSK_WDTAC97, SUBMSK_WDTAC97);
--}
--
--static void s3c2443_irq_wdtac97_unmask(struct irq_data *data)
--{
--	s3c_irqsub_unmask(data->irq, INTMSK_WDTAC97);
--}
--
--static void s3c2443_irq_wdtac97_ack(struct irq_data *data)
--{
--	s3c_irqsub_maskack(data->irq, INTMSK_WDTAC97, SUBMSK_WDTAC97);
--}
--
--static struct irq_chip s3c2443_irq_wdtac97 = {
--	.irq_mask	= s3c2443_irq_wdtac97_mask,
--	.irq_unmask	= s3c2443_irq_wdtac97_unmask,
--	.irq_ack	= s3c2443_irq_wdtac97_ack,
--};
--
--/* LCD sub interrupts */
--
--static void s3c2443_irq_demux_lcd(unsigned int irq, struct irq_desc *desc)
--{
--	s3c2443_irq_demux(IRQ_S3C2443_LCD1, 4);
--}
--
--#define INTMSK_LCD	(1UL << (IRQ_LCD - IRQ_EINT0))
--#define SUBMSK_LCD	INTMSK(IRQ_S3C2443_LCD1, IRQ_S3C2443_LCD4)
--
--static void s3c2443_irq_lcd_mask(struct irq_data *data)
--{
--	s3c_irqsub_mask(data->irq, INTMSK_LCD, SUBMSK_LCD);
--}
--
--static void s3c2443_irq_lcd_unmask(struct irq_data *data)
--{
--	s3c_irqsub_unmask(data->irq, INTMSK_LCD);
--}
--
--static void s3c2443_irq_lcd_ack(struct irq_data *data)
--{
--	s3c_irqsub_maskack(data->irq, INTMSK_LCD, SUBMSK_LCD);
--}
--
--static struct irq_chip s3c2443_irq_lcd = {
--	.irq_mask	= s3c2443_irq_lcd_mask,
--	.irq_unmask	= s3c2443_irq_lcd_unmask,
--	.irq_ack	= s3c2443_irq_lcd_ack,
--};
--
--/* DMA sub interrupts */
--
--static void s3c2443_irq_demux_dma(unsigned int irq, struct irq_desc *desc)
--{
--	s3c2443_irq_demux(IRQ_S3C2443_DMA0, 6);
--}
--
--#define INTMSK_DMA	(1UL << (IRQ_S3C2443_DMA - IRQ_EINT0))
--#define SUBMSK_DMA	INTMSK(IRQ_S3C2443_DMA0, IRQ_S3C2443_DMA5)
--
--static void s3c2443_irq_dma_mask(struct irq_data *data)
--{
--	s3c_irqsub_mask(data->irq, INTMSK_DMA, SUBMSK_DMA);
--}
--
--static void s3c2443_irq_dma_unmask(struct irq_data *data)
--{
--	s3c_irqsub_unmask(data->irq, INTMSK_DMA);
--}
--
--static void s3c2443_irq_dma_ack(struct irq_data *data)
--{
--	s3c_irqsub_maskack(data->irq, INTMSK_DMA, SUBMSK_DMA);
--}
--
--static struct irq_chip s3c2443_irq_dma = {
--	.irq_mask	= s3c2443_irq_dma_mask,
--	.irq_unmask	= s3c2443_irq_dma_unmask,
--	.irq_ack	= s3c2443_irq_dma_ack,
--};
--
--/* UART3 sub interrupts */
--
--static void s3c2443_irq_demux_uart3(unsigned int irq, struct irq_desc *desc)
--{
--	s3c2443_irq_demux(IRQ_S3C2443_RX3, 3);
--}
--
--#define INTMSK_UART3	(1UL << (IRQ_S3C2443_UART3 - IRQ_EINT0))
--#define SUBMSK_UART3	(0x7 << (IRQ_S3C2443_RX3 - S3C2410_IRQSUB(0)))
--
--static void s3c2443_irq_uart3_mask(struct irq_data *data)
--{
--	s3c_irqsub_mask(data->irq, INTMSK_UART3, SUBMSK_UART3);
--}
--
--static void s3c2443_irq_uart3_unmask(struct irq_data *data)
--{
--	s3c_irqsub_unmask(data->irq, INTMSK_UART3);
--}
--
--static void s3c2443_irq_uart3_ack(struct irq_data *data)
--{
--	s3c_irqsub_maskack(data->irq, INTMSK_UART3, SUBMSK_UART3);
--}
--
--static struct irq_chip s3c2443_irq_uart3 = {
--	.irq_mask	= s3c2443_irq_uart3_mask,
--	.irq_unmask	= s3c2443_irq_uart3_unmask,
--	.irq_ack	= s3c2443_irq_uart3_ack,
--};
--
--/* CAM sub interrupts */
--
--static void s3c2443_irq_demux_cam(unsigned int irq, struct irq_desc *desc)
--{
--	s3c2443_irq_demux(IRQ_S3C2440_CAM_C, 4);
--}
--
--#define INTMSK_CAM	(1UL << (IRQ_CAM - IRQ_EINT0))
--#define SUBMSK_CAM	INTMSK(IRQ_S3C2440_CAM_C, IRQ_S3C2440_CAM_P)
--
--static void s3c2443_irq_cam_mask(struct irq_data *data)
--{
--	s3c_irqsub_mask(data->irq, INTMSK_CAM, SUBMSK_CAM);
--}
--
--static void s3c2443_irq_cam_unmask(struct irq_data *data)
--{
--	s3c_irqsub_unmask(data->irq, INTMSK_CAM);
--}
--
--static void s3c2443_irq_cam_ack(struct irq_data *data)
--{
--	s3c_irqsub_maskack(data->irq, INTMSK_CAM, SUBMSK_CAM);
--}
--
--static struct irq_chip s3c2443_irq_cam = {
--	.irq_mask	= s3c2443_irq_cam_mask,
--	.irq_unmask	= s3c2443_irq_cam_unmask,
--	.irq_ack	= s3c2443_irq_cam_ack,
-+struct s3c_irq_data init_s3c2443subint[32] = {
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 28 }, /* UART0-RX */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 28 }, /* UART0-TX */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 28 }, /* UART0-ERR */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 23 }, /* UART1-RX */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 23 }, /* UART1-TX */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 23 }, /* UART1-ERR */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 15 }, /* UART2-RX */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 15 }, /* UART2-TX */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 15 }, /* UART2-ERR */
-+	{ .type = S3C_IRQTYPE_SUBEDGE, .parent_irq = 31 }, /* TC */
-+	{ .type = S3C_IRQTYPE_SUBEDGE, .parent_irq = 31 }, /* ADC */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 6 }, /* CAM_C */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 6 }, /* CAM_P */
-+	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 16 }, /* LCD1 (stn) */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 16 }, /* LCD2 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 16 }, /* LCD3 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 16 }, /* LCD4 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 17 }, /* DMA0 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 17 }, /* DMA1 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 17 }, /* DMA2 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 17 }, /* DMA3 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 17 }, /* DMA4 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 17 }, /* DMA5 */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 18 }, /* UART3-RX */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 18 }, /* UART3-TX */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 18 }, /* UART3-ERR */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 9 }, /* WDT */
-+	{ .type = S3C_IRQTYPE_SUBLEVEL, .parent_irq = 9 }, /* AC97 */
- };
- 
--/* IRQ initialisation code */
--
--static int s3c2443_add_sub(unsigned int base,
--				   void (*demux)(unsigned int,
--						 struct irq_desc *),
--				   struct irq_chip *chip,
--				   unsigned int start, unsigned int end)
--{
--	unsigned int irqno;
--
--	irq_set_chip_and_handler(base, &s3c_irq_level_chip, handle_level_irq);
--	irq_set_chained_handler(base, demux);
--
--	for (irqno = start; irqno <= end; irqno++) {
--		irq_set_chip_and_handler(irqno, chip, handle_level_irq);
--		set_irq_flags(irqno, IRQF_VALID);
--	}
--
--	return 0;
--}
--
- void __init s3c2443_init_irq(void)
- {
-+	/* override irq mapping */
-+	s3c_intc[0].irqs = &init_s3c2443base[0];
-+	s3c_intc[2].irqs = &init_s3c2443subint[0];
-+
- 	pr_info("S3C2443: IRQ Support\n");
- 
- 	s3c24xx_init_irq();
--
--	s3c2443_add_sub(IRQ_CAM, s3c2443_irq_demux_cam, &s3c2443_irq_cam,
--			IRQ_S3C2440_CAM_C, IRQ_S3C2440_CAM_P);
--
--	s3c2443_add_sub(IRQ_LCD, s3c2443_irq_demux_lcd, &s3c2443_irq_lcd,
--			IRQ_S3C2443_LCD1, IRQ_S3C2443_LCD4);
--
--	s3c2443_add_sub(IRQ_S3C2443_DMA, s3c2443_irq_demux_dma,
--			&s3c2443_irq_dma, IRQ_S3C2443_DMA0, IRQ_S3C2443_DMA5);
--
--	s3c2443_add_sub(IRQ_S3C2443_UART3, s3c2443_irq_demux_uart3,
--			&s3c2443_irq_uart3,
--			IRQ_S3C2443_RX3, IRQ_S3C2443_ERR3);
--
--	s3c2443_add_sub(IRQ_WDT, s3c2443_irq_demux_wdtac97,
--			&s3c2443_irq_wdtac97,
--			IRQ_S3C2443_WDT, IRQ_S3C2443_AC97);
- }
- #endif
--- 
-1.7.2.3
+On Saturday, November 17, 2012, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> wrote:
+> On Wed, Nov 14, 2012 at 05:51:12PM +0900, Cho KyongHo wrote:
+>> This commit enhances power management of System MMU and its client
+>> devices with the following changes:
+>>  - Each System MMU device becomes the parent device of its client
+>>    device while probe(). Thus, exynos-iommu driver must be initialized
+>>    before client devices.
+>>  - System MMU driver does not pm_runtime_get/put() by itself and runtime
+>>    power gating is performed by client devices.
+>>  - System is safe when suspend/resume without any care by client device
+>>    drivers.
+>>
+>> In addition, System MMUs can be seperate into several groups that are
+>> belongs to a single client device like FIMC-IS block. If such blocks are
+>> controlled by a single device descriptor, all System MMUs in the blocks
+>> must be enabled/disabled by a single device descriptor. The problem is
+>> that clock gating and power gating may be not the same among all System
+>> MMUs in the blocks. Thus, System MMUs are grouped by clock gating and
+>> power gating and they are chained by parent-child relationships.
+>>
+>> exynos-iommu driver now also supports debugfs to identify the state of
+>> each System MMU.
+>>
+>> The last big change is to support DT. The desription of the properties
+>> of DT nodes are described in the source file.
+>>
+>> Signed-off-by: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  drivers/iommu/Kconfig        |   17 +-
+>>  drivers/iommu/exynos-iommu.c | 1420
++++++++++++++++++++++++++++++++-----------
+>>  2 files changed, 1077 insertions(+), 360 deletions(-)
+>
+> This patch does multiple things and is quite large. Please split it down
+> into reasonable chunks and resubmit.
+>
+> Patches 1-3 look good to me and I do not mind taking them for 3.8.
+> Please let me know if you prefer these patches standalone in 3.8 or
+> together with this patch split up.
+>
+
+Thank you for review.
+I am splitting the fourth patch and will post it by tomorrow.
+
+The current driver does not be probed with the first 3 patches.
+I want them to be in 3,8 together.
+
+Cho KyongHo
+
+--f46d042d058c2ddc2304ced4acd8
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<br><br>On Saturday, November 17, 2012, Joerg Roedel &lt;<a href=3D"mailto:=
+joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org">joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org</a>&gt; wrote:<br>&gt; On Wed, Nov 14, 201=
+2 at 05:51:12PM +0900, Cho KyongHo wrote:<br>&gt;&gt; This commit enhances =
+power management of System MMU and its client<br>
+&gt;&gt; devices with the following changes:<br>&gt;&gt; =A0- Each System M=
+MU device becomes the parent device of its client<br>&gt;&gt; =A0 =A0device=
+ while probe(). Thus, exynos-iommu driver must be initialized<br>&gt;&gt; =
+=A0 =A0before client devices.<br>
+&gt;&gt; =A0- System MMU driver does not pm_runtime_get/put() by itself and=
+ runtime<br>&gt;&gt; =A0 =A0power gating is performed by client devices.<br=
+>&gt;&gt; =A0- System is safe when suspend/resume without any care by clien=
+t device<br>
+&gt;&gt; =A0 =A0drivers.<br>&gt;&gt;<br>&gt;&gt; In addition, System MMUs c=
+an be seperate into several groups that are<br>&gt;&gt; belongs to a single=
+ client device like FIMC-IS block. If such blocks are<br>&gt;&gt; controlle=
+d by a single device descriptor, all System MMUs in the blocks<br>
+&gt;&gt; must be enabled/disabled by a single device descriptor. The proble=
+m is<br>&gt;&gt; that clock gating and power gating may be not the same amo=
+ng all System<br>&gt;&gt; MMUs in the blocks. Thus, System MMUs are grouped=
+ by clock gating and<br>
+&gt;&gt; power gating and they are chained by parent-child relationships.<b=
+r>&gt;&gt;<br>&gt;&gt; exynos-iommu driver now also supports debugfs to ide=
+ntify the state of<br>&gt;&gt; each System MMU.<br>&gt;&gt;<br>&gt;&gt; The=
+ last big change is to support DT. The desription of the properties<br>
+&gt;&gt; of DT nodes are described in the source file.<br>&gt;&gt;<br>&gt;&=
+gt; Signed-off-by: KyongHo Cho &lt;<a href=3D"mailto:pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org=
+">pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;<br>&gt;&gt; ---<br>&gt;&gt; =A0drivers/iom=
+mu/Kconfig =A0 =A0 =A0 =A0| =A0 17 +-<br>
+&gt;&gt; =A0drivers/iommu/exynos-iommu.c | 1420 +++++++++++++++++++++++++++=
+++++-----------<br>&gt;&gt; =A02 files changed, 1077 insertions(+), 360 del=
+etions(-)<br>&gt;<br>&gt; This patch does multiple things and is quite larg=
+e. Please split it down<br>
+&gt; into reasonable chunks and resubmit.<br>&gt;<br>&gt; Patches 1-3 look =
+good to me and I do not mind taking them for 3.8.<br>&gt; Please let me kno=
+w if you prefer these patches standalone in 3.8 or<br>&gt; together with th=
+is patch split up.<br>
+&gt;<br><br>Thank you for review.<br>I am splitting the fourth patch and wi=
+ll post it by tomorrow.<br><br>The current driver does not be probed with t=
+he first 3 patches.<br>I want them to be in 3,8 together.<br><br>Cho KyongH=
+o
+
+--f46d042d058c2ddc2304ced4acd8--
+
+--===============6294557313197911486==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============6294557313197911486==--
