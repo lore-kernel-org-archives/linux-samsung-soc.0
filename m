@@ -1,149 +1,64 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH] ARM: SAMSUNG: Add s3c24xx/s3c64xx CAMIF GPIO setup helpers
-Date: Mon, 19 Nov 2012 21:34:22 +0100
-Message-ID: <1353357262-18935-1-git-send-email-sylvester.nawrocki@gmail.com>
+From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] ARM: S3C2443: SPI clock channel setup is fixed
+Date: Mon, 19 Nov 2012 22:32:25 +0100
+Message-ID: <201211192232.25304.heiko@sntech.de>
+References: <1353335637-29879-1-git-send-email-fenixk19@mail.ru>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:65229 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754452Ab2KSUel (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:58731 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752114Ab2KSVc2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Nov 2012 15:34:41 -0500
-Received: by mail-ea0-f174.google.com with SMTP id e13so2139706eaa.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Nov 2012 12:34:40 -0800 (PST)
+	Mon, 19 Nov 2012 16:32:28 -0500
+In-Reply-To: <1353335637-29879-1-git-send-email-fenixk19@mail.ru>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: Alexander Varnin <fenixk19@mail.ru>
+Cc: linux-samsung-soc@vger.kernel.org
 
-This patch adds default helper functions for the camera port
-pin configuration. Whenever pinctrl support for s3c24xx/s3c64xx
-SoCs is available these code should be removed and proper pinctrl
-API should be used in the CAMIF driver.
+Am Montag, 19. November 2012, 15:33:57 schrieb Alexander Varnin:
+> Actually, SPI channel 0 on 2443 is mapped to HS SPI controller,
+> and to enable s3c2410-spi controller, we should power on channel
+> 1 in PCLKCON. There is no channel 0 SPI on s3c2443, so delete its
+> clock.
+> 
+> Signed-off-by: Alexander Varnin <fenixk19@mail.ru>
 
-Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
----
- arch/arm/mach-s3c24xx/Kconfig       |    1 +
- arch/arm/plat-samsung/Kconfig       |    5 ++
- arch/arm/plat-samsung/Makefile      |    1 +
- arch/arm/plat-samsung/setup-camif.c |   70 +++++++++++++++++++++++++++++++++++
- 4 files changed, 77 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-samsung/setup-camif.c
+You're right of course. The second spi channel (pclkcon_spi1) even uses the 
+registers for the first s3c24xx-spi channel.
 
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 2b6cb5f..01f70c9 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -405,6 +405,7 @@ config MACH_MINI2440
- 	select NEW_LEDS
- 	select S3C_DEV_NAND
- 	select S3C_DEV_USB_HOST
-+	select S3C_SETUP_CAMIF
- 	help
- 	  Say Y here to select support for the MINI2440. Is a 10cm x 10cm board
- 	  available via various sources. It can come with a 3.5" or 7" touch LCD.
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 59401e1..95360e6 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -414,6 +414,11 @@ config S5P_SETUP_MIPIPHY
- 	help
- 	  Compile in common setup code for MIPI-CSIS and MIPI-DSIM devices
- 
-+config S3C_SETUP_CAMIF
-+	bool
-+	help
-+	  Compile in common setup code for S3C CAMIF devices
-+
- # DMA
- 
- config S3C_DMA
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 9e40e8d..3a7c64d 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -41,6 +41,7 @@ obj-$(CONFIG_S5P_DEV_UART)	+= s5p-dev-uart.o
- 
- obj-$(CONFIG_SAMSUNG_DEV_BACKLIGHT)	+= dev-backlight.o
- 
-+obj-$(CONFIG_S3C_SETUP_CAMIF)	+= setup-camif.o
- obj-$(CONFIG_S5P_SETUP_MIPIPHY)	+= setup-mipiphy.o
- 
- # DMA support
-diff --git a/arch/arm/plat-samsung/setup-camif.c b/arch/arm/plat-samsung/setup-camif.c
-new file mode 100644
-index 0000000..e01bf76
---- /dev/null
-+++ b/arch/arm/plat-samsung/setup-camif.c
-@@ -0,0 +1,70 @@
-+/*
-+ * Copyright (C) 2012 Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-+ *
-+ * Helper functions for S3C24XX/S3C64XX SoC series CAMIF driver
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <plat/gpio-cfg.h>
-+
-+/* Number of camera port pins, without FIELD */
-+#define S3C_CAMIF_NUM_GPIOS	13
-+
-+/* Default camera port configuration helpers. */
-+
-+static void camif_get_gpios(int *gpio_start, int *gpio_reset)
-+{
-+#ifdef CONFIG_ARCH_S3C24XX
-+	*gpio_start = S3C2410_GPJ(0);
-+	*gpio_reset = S3C2410_GPJ(12);
-+#else
-+	/* s3c64xx */
-+	*gpio_start = S3C64XX_GPF(0);
-+	*gpio_reset = S3C64XX_GPF(3);
-+#endif
-+}
-+
-+int s3c_camif_gpio_get(void)
-+{
-+	int gpio_start, gpio_reset;
-+	int ret, i;
-+
-+	camif_get_gpios(&gpio_start, &gpio_reset);
-+
-+	for (i = 0; i < S3C_CAMIF_NUM_GPIOS; i++) {
-+		int gpio = gpio_start + i;
-+
-+		if (gpio == gpio_reset)
-+			continue;
-+
-+		ret = gpio_request(gpio, "camif");
-+		if (!ret)
-+			ret = s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-+		if (ret) {
-+			pr_err("failed to configure GPIO %d\n", gpio);
-+			for (--i; i >= 0; i--)
-+				gpio_free(gpio--);
-+			return ret;
-+		}
-+		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-+	}
-+
-+	return 0;
-+}
-+
-+void s3c_camif_gpio_put(void)
-+{
-+	int i, gpio_start, gpio_reset;
-+
-+	camif_get_gpios(&gpio_start, &gpio_reset);
-+
-+	for (i = 0; i < S3C_CAMIF_NUM_GPIOS; i++) {
-+		int gpio = gpio_start + i;
-+		if (gpio != gpio_reset)
-+			gpio_free(gpio);
-+	}
-+}
--- 
-1.7.4.1
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+But you might want to resend your patch and include 
+
+	Kukjin Kim <kgene.kim@samsung.com>
+
+(the maintainer of Samsung code) as recipient, because I don't know if he'll 
+see it otherwise.
+
+
+> ---
+>  arch/arm/mach-s3c24xx/clock-s3c2443.c |    6 ------
+>  1 files changed, 0 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2443.c
+> b/arch/arm/mach-s3c24xx/clock-s3c2443.c index 7f689ce..bdaba59 100644
+> --- a/arch/arm/mach-s3c24xx/clock-s3c2443.c
+> +++ b/arch/arm/mach-s3c24xx/clock-s3c2443.c
+> @@ -158,12 +158,6 @@ static struct clk init_clocks_off[] = {
+>  		.devname	= "s3c2410-spi.0",
+>  		.parent		= &clk_p,
+>  		.enable		= s3c2443_clkcon_enable_p,
+> -		.ctrlbit	= S3C2443_PCLKCON_SPI0,
+> -	}, {
+> -		.name		= "spi",
+> -		.devname	= "s3c2410-spi.1",
+> -		.parent		= &clk_p,
+> -		.enable		= s3c2443_clkcon_enable_p,
+>  		.ctrlbit	= S3C2443_PCLKCON_SPI1,
+>  	}
+>  };
