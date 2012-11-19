@@ -1,134 +1,83 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt before calling
- mmc_start_host
-Date: Mon, 19 Nov 2012 13:20:42 +0000
-Message-ID: <50AA322A.1060604@imgtec.com>
-References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com> <CAAG0J9_ngZm7uGopaW6rdBUDQZhQWqt6gd=y1i5BifsGrZg-hg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAAG0J9_ngZm7uGopaW6rdBUDQZhQWqt6gd=y1i5BifsGrZg-hg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Yuvaraj CD <yuvaraj.cd@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: "Chris Ball (laptop.org)" <cjb@laptop.org>, Will <will.newton@imgtec.com>, kgene.kim@samsung.com, "Girish K S (Linaro)" <girish.shivananjappa@linaro.org>, "Thomas Abraham (Linaro)" <thomas.abraham@linaro.org>, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH 2/5] ARM: dts: exynos4210-trats: Add nodes for GPIO keys
+ available on Trats
+Date: Mon, 19 Nov 2012 15:45:26 +0100
+Message-ID: <1353336329-20818-3-git-send-email-t.figa@samsung.com>
+References: <1353336329-20818-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:11394 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751994Ab2KSOps (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Nov 2012 09:45:48 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDQ008X7P05ZPJ0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Nov 2012 23:45:47 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDQ009O9OZWSZ80@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Nov 2012 23:45:47 +0900 (KST)
+In-reply-to: <1353336329-20818-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-On 19/11/12 13:01, Yuvaraj CD wrote:
-> As mmc_start_host is getting called before enabling the dw_mmc controller
-> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
-> very first command sent by the sdio_reset.
-> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
-> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
-> 
-> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
+This patch extends dts file of Samsung Trats board to add support for
+available GPIO keys using gpio-keys driver.
 
-Hi Yuvaraj,
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210-trats.dts | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-I get the following errors after this patch is applied
-(2da1d7f2948900cd50d38643db39f790edb3cc96, merged in v3.7-rc5) and the
-driver doesn't work as a result. Reverting it fixes the problem.
-
-mmc0: error -110 whilst initialising SD card
-mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
-mmc0: error -110 whilst initialising SD card
-mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
-mmc0: error -110 whilst initialising SD card
-mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
-mmc0: error -110 whilst initialising SD card
-mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 400000Hz, actual 399360HZ div = 125)
-mmc0: error -110 whilst initialising SD card
-mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
-mmc0: error -110 whilst initialising SD card
-mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
-mmc0: error -110 whilst initialising SD card
-mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
-mmc0: error -110 whilst initialising SD card
-
-The interrupts are already cleared and disabled at the beginning of the
-probe function, so is the following sufficient (after reverting your
-patch) to fix the problem you've been observing?
-
-Thanks
-James
-
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index ec9b5a8..2be9899 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -2266,7 +2266,6 @@ int dw_mci_probe(struct dw_mci *host)
- 	 * Enable interrupts for command done, data over, data empty, card det,
- 	 * receive ready and error such as transmit, receive timeout, crc error
- 	 */
--	mci_writel(host, RINTSTS, 0xFFFFFFFF);
- 	mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
- 		   SDMMC_INT_TXDR | SDMMC_INT_RXDR |
- 		   DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
-
-
-> ---
->  drivers/mmc/host/dw_mmc.c |   29 +++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index a23af77..729c031 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -2233,6 +2233,21 @@ int dw_mci_probe(struct dw_mci *host)
->         else
->                 host->num_slots = ((mci_readl(host, HCON) >> 1) & 0x1F) + 1;
-> 
-> +       /*
-> +        * Enable interrupts for command done, data over, data empty, card det,
-> +        * receive ready and error such as transmit, receive timeout, crc error
-> +        */
-> +       mci_writel(host, RINTSTS, 0xFFFFFFFF);
-> +       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
-> +                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
-> +                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
-> +       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
-> interrupt */
-> +
-> +       dev_info(host->dev, "DW MMC controller at irq %d, "
-> +                "%d bit host data width, "
-> +                "%u deep fifo\n",
-> +                host->irq, width, fifo_size);
-> +
->         /* We need at least one slot to succeed */
->         for (i = 0; i < host->num_slots; i++) {
->                 ret = dw_mci_init_slot(host, i);
-> @@ -2262,20 +2277,6 @@ int dw_mci_probe(struct dw_mci *host)
->         else
->                 host->data_offset = DATA_240A_OFFSET;
-> 
-> -       /*
-> -        * Enable interrupts for command done, data over, data empty, card det,
-> -        * receive ready and error such as transmit, receive timeout, crc error
-> -        */
-> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
-> -       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
-> -                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
-> -                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
-> -       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
-> interrupt */
-> -
-> -       dev_info(host->dev, "DW MMC controller at irq %d, "
-> -                "%d bit host data width, "
-> -                "%u deep fifo\n",
-> -                host->irq, width, fifo_size);
->         if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
->                 dev_info(host->dev, "Internal DMAC interrupt fix enabled.\n");
-> 
-> --
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> --
-> James Hogan
-> 
-
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 661854b..dcfa04b 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -65,6 +65,39 @@
+ 		status = "okay";
+ 	};
+ 
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		vol-down-key {
++			gpios = <&gpx2 1 1>;
++			linux,code = <114>;
++			label = "volume down";
++			debounce-interval = <10>;
++		};
++
++		vol-up-key {
++			gpios = <&gpx2 0 1>;
++			linux,code = <115>;
++			label = "volume up";
++			debounce-interval = <10>;
++		};
++
++		power-key {
++			gpios = <&gpx2 7 1>;
++			linux,code = <116>;
++			label = "power";
++			debounce-interval = <10>;
++			gpio-key,wakeup;
++		};
++
++		ok-key {
++			gpios = <&gpx3 5 1>;
++			linux,code = <352>;
++			label = "ok";
++			debounce-interval = <10>;
++		};
++	};
++
+ 	i2c@138B0000 {
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-slave-addr = <0x10>;
+-- 
+1.8.0
