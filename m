@@ -1,134 +1,134 @@
-From: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 4/4] iommu/exynos: enhancements of System MMU driver with
-	DT
-Date: Mon, 19 Nov 2012 17:12:03 +0900
-Message-ID: <CAHQjnONgB_OM-hVtf8UYLr=HexxQtAiDtf_VKZfr02mUCi4=Vw@mail.gmail.com>
-References: <002401cdc245$32dbf3e0$9893dba0$%cho@samsung.com>
-	<20121117124918.GC11220@8bytes.org>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt before calling
+ mmc_start_host
+Date: Mon, 19 Nov 2012 13:20:42 +0000
+Message-ID: <50AA322A.1060604@imgtec.com>
+References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com> <CAAG0J9_ngZm7uGopaW6rdBUDQZhQWqt6gd=y1i5BifsGrZg-hg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6294557313197911486=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20121117124918.GC11220-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Subash Patel <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sanghyun Lee <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAAG0J9_ngZm7uGopaW6rdBUDQZhQWqt6gd=y1i5BifsGrZg-hg@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Yuvaraj CD <yuvaraj.cd@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
+Cc: "Chris Ball (laptop.org)" <cjb@laptop.org>, Will <will.newton@imgtec.com>, kgene.kim@samsung.com, "Girish K S (Linaro)" <girish.shivananjappa@linaro.org>, "Thomas Abraham (Linaro)" <thomas.abraham@linaro.org>, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============6294557313197911486==
-Content-Type: multipart/alternative; boundary=f46d042d058c2ddc2304ced4acd8
+On 19/11/12 13:01, Yuvaraj CD wrote:
+> As mmc_start_host is getting called before enabling the dw_mmc controller
+> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
+> very first command sent by the sdio_reset.
+> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
+> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
+> 
+> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
 
---f46d042d058c2ddc2304ced4acd8
-Content-Type: text/plain; charset=ISO-8859-1
+Hi Yuvaraj,
 
-On Saturday, November 17, 2012, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> wrote:
-> On Wed, Nov 14, 2012 at 05:51:12PM +0900, Cho KyongHo wrote:
->> This commit enhances power management of System MMU and its client
->> devices with the following changes:
->>  - Each System MMU device becomes the parent device of its client
->>    device while probe(). Thus, exynos-iommu driver must be initialized
->>    before client devices.
->>  - System MMU driver does not pm_runtime_get/put() by itself and runtime
->>    power gating is performed by client devices.
->>  - System is safe when suspend/resume without any care by client device
->>    drivers.
->>
->> In addition, System MMUs can be seperate into several groups that are
->> belongs to a single client device like FIMC-IS block. If such blocks are
->> controlled by a single device descriptor, all System MMUs in the blocks
->> must be enabled/disabled by a single device descriptor. The problem is
->> that clock gating and power gating may be not the same among all System
->> MMUs in the blocks. Thus, System MMUs are grouped by clock gating and
->> power gating and they are chained by parent-child relationships.
->>
->> exynos-iommu driver now also supports debugfs to identify the state of
->> each System MMU.
->>
->> The last big change is to support DT. The desription of the properties
->> of DT nodes are described in the source file.
->>
->> Signed-off-by: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  drivers/iommu/Kconfig        |   17 +-
->>  drivers/iommu/exynos-iommu.c | 1420
-+++++++++++++++++++++++++++++++-----------
->>  2 files changed, 1077 insertions(+), 360 deletions(-)
->
-> This patch does multiple things and is quite large. Please split it down
-> into reasonable chunks and resubmit.
->
-> Patches 1-3 look good to me and I do not mind taking them for 3.8.
-> Please let me know if you prefer these patches standalone in 3.8 or
-> together with this patch split up.
->
+I get the following errors after this patch is applied
+(2da1d7f2948900cd50d38643db39f790edb3cc96, merged in v3.7-rc5) and the
+driver doesn't work as a result. Reverting it fixes the problem.
 
-Thank you for review.
-I am splitting the fourth patch and will post it by tomorrow.
+mmc0: error -110 whilst initialising SD card
+mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
+mmc0: error -110 whilst initialising SD card
+mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
+mmc0: error -110 whilst initialising SD card
+mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
+mmc0: error -110 whilst initialising SD card
+mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 400000Hz, actual 399360HZ div = 125)
+mmc0: error -110 whilst initialising SD card
+mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
+mmc0: error -110 whilst initialising SD card
+mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
+mmc0: error -110 whilst initialising SD card
+mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
+mmc0: error -110 whilst initialising SD card
 
-The current driver does not be probed with the first 3 patches.
-I want them to be in 3,8 together.
+The interrupts are already cleared and disabled at the beginning of the
+probe function, so is the following sufficient (after reverting your
+patch) to fix the problem you've been observing?
 
-Cho KyongHo
+Thanks
+James
 
---f46d042d058c2ddc2304ced4acd8
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<br><br>On Saturday, November 17, 2012, Joerg Roedel &lt;<a href=3D"mailto:=
-joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org">joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org</a>&gt; wrote:<br>&gt; On Wed, Nov 14, 201=
-2 at 05:51:12PM +0900, Cho KyongHo wrote:<br>&gt;&gt; This commit enhances =
-power management of System MMU and its client<br>
-&gt;&gt; devices with the following changes:<br>&gt;&gt; =A0- Each System M=
-MU device becomes the parent device of its client<br>&gt;&gt; =A0 =A0device=
- while probe(). Thus, exynos-iommu driver must be initialized<br>&gt;&gt; =
-=A0 =A0before client devices.<br>
-&gt;&gt; =A0- System MMU driver does not pm_runtime_get/put() by itself and=
- runtime<br>&gt;&gt; =A0 =A0power gating is performed by client devices.<br=
->&gt;&gt; =A0- System is safe when suspend/resume without any care by clien=
-t device<br>
-&gt;&gt; =A0 =A0drivers.<br>&gt;&gt;<br>&gt;&gt; In addition, System MMUs c=
-an be seperate into several groups that are<br>&gt;&gt; belongs to a single=
- client device like FIMC-IS block. If such blocks are<br>&gt;&gt; controlle=
-d by a single device descriptor, all System MMUs in the blocks<br>
-&gt;&gt; must be enabled/disabled by a single device descriptor. The proble=
-m is<br>&gt;&gt; that clock gating and power gating may be not the same amo=
-ng all System<br>&gt;&gt; MMUs in the blocks. Thus, System MMUs are grouped=
- by clock gating and<br>
-&gt;&gt; power gating and they are chained by parent-child relationships.<b=
-r>&gt;&gt;<br>&gt;&gt; exynos-iommu driver now also supports debugfs to ide=
-ntify the state of<br>&gt;&gt; each System MMU.<br>&gt;&gt;<br>&gt;&gt; The=
- last big change is to support DT. The desription of the properties<br>
-&gt;&gt; of DT nodes are described in the source file.<br>&gt;&gt;<br>&gt;&=
-gt; Signed-off-by: KyongHo Cho &lt;<a href=3D"mailto:pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org=
-">pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;<br>&gt;&gt; ---<br>&gt;&gt; =A0drivers/iom=
-mu/Kconfig =A0 =A0 =A0 =A0| =A0 17 +-<br>
-&gt;&gt; =A0drivers/iommu/exynos-iommu.c | 1420 +++++++++++++++++++++++++++=
-++++-----------<br>&gt;&gt; =A02 files changed, 1077 insertions(+), 360 del=
-etions(-)<br>&gt;<br>&gt; This patch does multiple things and is quite larg=
-e. Please split it down<br>
-&gt; into reasonable chunks and resubmit.<br>&gt;<br>&gt; Patches 1-3 look =
-good to me and I do not mind taking them for 3.8.<br>&gt; Please let me kno=
-w if you prefer these patches standalone in 3.8 or<br>&gt; together with th=
-is patch split up.<br>
-&gt;<br><br>Thank you for review.<br>I am splitting the fourth patch and wi=
-ll post it by tomorrow.<br><br>The current driver does not be probed with t=
-he first 3 patches.<br>I want them to be in 3,8 together.<br><br>Cho KyongH=
-o
-
---f46d042d058c2ddc2304ced4acd8--
-
---===============6294557313197911486==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index ec9b5a8..2be9899 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -2266,7 +2266,6 @@ int dw_mci_probe(struct dw_mci *host)
+ 	 * Enable interrupts for command done, data over, data empty, card det,
+ 	 * receive ready and error such as transmit, receive timeout, crc error
+ 	 */
+-	mci_writel(host, RINTSTS, 0xFFFFFFFF);
+ 	mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
+ 		   SDMMC_INT_TXDR | SDMMC_INT_RXDR |
+ 		   DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
 
 
---===============6294557313197911486==--
+> ---
+>  drivers/mmc/host/dw_mmc.c |   29 +++++++++++++++--------------
+>  1 file changed, 15 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index a23af77..729c031 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -2233,6 +2233,21 @@ int dw_mci_probe(struct dw_mci *host)
+>         else
+>                 host->num_slots = ((mci_readl(host, HCON) >> 1) & 0x1F) + 1;
+> 
+> +       /*
+> +        * Enable interrupts for command done, data over, data empty, card det,
+> +        * receive ready and error such as transmit, receive timeout, crc error
+> +        */
+> +       mci_writel(host, RINTSTS, 0xFFFFFFFF);
+> +       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
+> +                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
+> +                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
+> +       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
+> interrupt */
+> +
+> +       dev_info(host->dev, "DW MMC controller at irq %d, "
+> +                "%d bit host data width, "
+> +                "%u deep fifo\n",
+> +                host->irq, width, fifo_size);
+> +
+>         /* We need at least one slot to succeed */
+>         for (i = 0; i < host->num_slots; i++) {
+>                 ret = dw_mci_init_slot(host, i);
+> @@ -2262,20 +2277,6 @@ int dw_mci_probe(struct dw_mci *host)
+>         else
+>                 host->data_offset = DATA_240A_OFFSET;
+> 
+> -       /*
+> -        * Enable interrupts for command done, data over, data empty, card det,
+> -        * receive ready and error such as transmit, receive timeout, crc error
+> -        */
+> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
+> -       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
+> -                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
+> -                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
+> -       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
+> interrupt */
+> -
+> -       dev_info(host->dev, "DW MMC controller at irq %d, "
+> -                "%d bit host data width, "
+> -                "%u deep fifo\n",
+> -                host->irq, width, fifo_size);
+>         if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
+>                 dev_info(host->dev, "Internal DMAC interrupt fix enabled.\n");
+> 
+> --
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> --
+> James Hogan
+> 
+
