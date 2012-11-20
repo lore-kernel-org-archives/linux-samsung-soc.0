@@ -1,76 +1,56 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: Forward: [PATCH 146/493] ASoC: remove use of __devexit_p
-Date: Tue, 20 Nov 2012 15:30:08 +0900
-Message-ID: <20121120063006.GF10560@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 123/493] watchdog: remove use of __devexit_p
+Date: Tue, 20 Nov 2012 15:37:59 +0900
+Message-ID: <20121120063756.GH10560@opensource.wolfsonmicro.com>
 References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
- <1353349642-3677-146-git-send-email-wfp5p@virginia.edu>
- <s5hehjordzj.wl%tiwai@suse.de>
+ <1353349642-3677-123-git-send-email-wfp5p@virginia.edu>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UBnjLfzoMQYIXCvq"
+	protocol="application/pgp-signature"; boundary="WIIRZ1HQ6FgrlPgb"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55614 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36016 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751198Ab2KTGaU (ORCPT
+	by vger.kernel.org with ESMTP id S1751379Ab2KTGiI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 01:30:20 -0500
+	Tue, 20 Nov 2012 01:38:08 -0500
 Content-Disposition: inline
-In-Reply-To: <s5hehjordzj.wl%tiwai@suse.de>
+In-Reply-To: <1353349642-3677-123-git-send-email-wfp5p@virginia.edu>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Bill Pemberton <wfp5p@virginia.edu>
-Cc: gregkh@linuxfoundation.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, M R Swami Reddy <mr.swami.reddy@ti.com>, Vishwas A Deshpande <vishwas.a.deshpande@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Jarkko Nikula <jarkko.nikula@bitmer.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, alsa-devel@alsa-project.org, uclinux-dist-devel@blackfin.uclinux.org, device-drivers-devel@blackfin.uclinux.org, patches@opensource.wolfsonmicro.com, linuxppc-dev@lists.ozlabs.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, Kukjin Kim <kgene.kim@samsung.com>, linux-watchdog@vger.kernel.org, Wan ZongShun <mcuos.com@gmail.com>, patches@opensource.wolfsonmicro.com, Wim Van Sebroeck <wim@iguana.be>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, uclinux-dist-devel@blackfin.uclinux.org, linux-arm-kernel@lists.infradead.org
 
 
---UBnjLfzoMQYIXCvq
+--WIIRZ1HQ6FgrlPgb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Nov 20, 2012 at 07:21:36AM +0100, Takashi Iwai wrote:
-> Yet another one for ASoC.
+On Mon, Nov 19, 2012 at 01:21:12PM -0500, Bill Pemberton wrote:
+> CONFIG_HOTPLUG is going away as an option so __devexit_p is no longer
+> needed.
 
-> Date: Mon, 19 Nov 2012 13:21:35 -0500
-> From: Bill Pemberton <wfp5p@virginia.edu>
-> To: gregkh@linuxfoundation.org
-> Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, M R
->  Swami Reddy <mr.swami.reddy@ti.com>, Vishwas A Deshpande
->  <vishwas.a.deshpande@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
->  Jarkko Nikula <jarkko.nikula@bitmer.com>, Eric Miao
->  <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian
->  Zhuang <haojian.zhuang@gmail.com>, Philipp Zabel
->  <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Ben
->  Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>,
->  alsa-devel@alsa-project.org, uclinux-dist-devel@blackfin.uclinux.org,
->  device-drivers-devel@blackfin.uclinux.org,
->  patches@opensource.wolfsonmicro.com, linuxppc-dev@lists.ozlabs.org,
->  linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
->  linux-samsung-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-This time you've got an extravagantly large CC list but not managed to
-CC the maintainers at all...  ho hum.  Anyway, this doesn't apply
-against current code due to the Atmel changes.  Please rebase against
-for-next (or ideally the topic branches) and resend.
-
---UBnjLfzoMQYIXCvq
+--WIIRZ1HQ6FgrlPgb
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQqyNYAAoJELSic+t+oim95wYP/Ao+yLcsfcAssR0XvTqaJZGz
-9uN9W0/CIqqWsKUvEgDYrCF/alZdR7ardHD4EhfOe9CGSx1xpf9rQos7U1l5XyNr
-ASbvdsa5ftnSdsXcfrotuIPHyoD/7hwdZXcgxOy7JK3gJFIV/1ciXeN8sQr0zWU/
-kA+fZ0OFAd0Uj0+bSCVS7uKj56PTr+pXACc5bhX3HEhPyjdIh5XeJNcwRupu3R1M
-R7JqpM71NHfjfIHWOLLf3puuPCVGdvIpirsaWYB9RNhP4CxR9FhMmlOvWMEvv/OS
-mde/SG7drl6khu/BPadwL15DfWTqsT/as3KslhpmnaP3CeSwQ+ChrynduQaFN/RU
-GcGQjK5BAgJjYH8zlD13seI8OWRWCsZIIORuha+foSJKGd6lhMxfURdXdkXIk4U6
-7vihjewpOupG15/42MjLZRFsNpB5d3w200wV02qxInX5iEEHX8opg7EALgEj2jEc
-ruYzm2Uc9Eih1gX68JYxsrQUHv8efxeJh2T9+1N6fSK5INcAH9uq1EG8df5bgLWO
-P4hLj1OK7qSvoE6Fyw/eqejkdNUR+NDSmjwbLFRlHm+eXpC3m89J5dY8XmTwoaAr
-86SwZt1APBFYuB3/swbL/ldgZDsrmDmbeh7m1RqphfLPRJomx7UP8gHzG/o4VJ/G
-khn8xf+Xq3uFWG/DZOUu
-=sAw6
+iQIcBAEBAgAGBQJQqyTxAAoJELSic+t+oim9hAoP/RpJZyzBgJF0tLZdiZrqY2VX
+GevbRRTh0nEU+yl3dL4guKqJji9IEqbEiXovmH4Q4ZugiGC4vcktDPIusDorFOC4
+aAbZBFgvb3LTUFS619z1OPXwOV8pzVTsE0EaOzKUA+GPOu4VdFuoaEZPD380Awgm
+1oGraOLMfHvDd368d9TnMPvKRQnB0ZnoaMb1HiKIxg7SyW8lujNgWtdIh0wrvAJb
+0L6DMmILTdIeqdcvImTWJe5VyiIy6tRVAM4P4sPq1WVJc5Fn4COWFK+GhzDpaoGl
+bnpnCJKTJWjQ5dj/QP8i1AIJEHTBQ1ixamDtlrllgKXatTjoWOfMLADCEAflSH2Q
+VzXIAVV4VnZziylpuN84gpaYODaLlXB3Vb6U/21t60OOCyYtb6YF/bzmvE9i+KM9
+M6B6PyHpvkminAAdEEP7NjhJp50/SK/vMincAUj2RD0uJSFbkvUv/d/V+F3BzJzl
+5EKoyj9DEbg1a/Wq41X17z+OatPUMQE1RPE8WkRvfbsDaTEawb/prpg6A3Yr9pPC
+cpTXyWtN87060IpE9319JujLRnmgdVcOva2U9q+ArulcjXWRrLFMlqGokzr/L+Vl
+C+JVhCHO4K0tseRVVvoGm4a2JOOWif7P4AEACS4I4xLzIx0oesUMZXLgG/sVe5ek
+AnnFyyTuwb0DXbU4G23b
+=BMYi
 -----END PGP SIGNATURE-----
 
---UBnjLfzoMQYIXCvq--
+--WIIRZ1HQ6FgrlPgb--
