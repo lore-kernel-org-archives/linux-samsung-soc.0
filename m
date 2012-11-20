@@ -1,149 +1,76 @@
-From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt before calling mmc_start_host
-Date: Tue, 20 Nov 2012 11:05:01 +0530
-Message-ID: <CAKuRcOLfaX=fNML9RYdOyD3AFRdaaAipQDXo-SHapGkNVwzH2Q@mail.gmail.com>
-References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com>
-	<CAAG0J9_ngZm7uGopaW6rdBUDQZhQWqt6gd=y1i5BifsGrZg-hg@mail.gmail.com>
-	<50AA322A.1060604@imgtec.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: Forward: [PATCH 146/493] ASoC: remove use of __devexit_p
+Date: Tue, 20 Nov 2012 15:30:08 +0900
+Message-ID: <20121120063006.GF10560@opensource.wolfsonmicro.com>
+References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
+ <1353349642-3677-146-git-send-email-wfp5p@virginia.edu>
+ <s5hehjordzj.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UBnjLfzoMQYIXCvq"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:64284 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750993Ab2KTFfG (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55614 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751198Ab2KTGaU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 00:35:06 -0500
-In-Reply-To: <50AA322A.1060604@imgtec.com>
+	Tue, 20 Nov 2012 01:30:20 -0500
+Content-Disposition: inline
+In-Reply-To: <s5hehjordzj.wl%tiwai@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "Chris Ball (laptop.org)" <cjb@laptop.org>, Will <will.newton@imgtec.com>, kgene.kim@samsung.com, "Girish K S (Linaro)" <girish.shivananjappa@linaro.org>, "Thomas Abraham (Linaro)" <thomas.abraham@linaro.org>, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+To: Bill Pemberton <wfp5p@virginia.edu>
+Cc: gregkh@linuxfoundation.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, M R Swami Reddy <mr.swami.reddy@ti.com>, Vishwas A Deshpande <vishwas.a.deshpande@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Jarkko Nikula <jarkko.nikula@bitmer.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, alsa-devel@alsa-project.org, uclinux-dist-devel@blackfin.uclinux.org, device-drivers-devel@blackfin.uclinux.org, patches@opensource.wolfsonmicro.com, linuxppc-dev@lists.ozlabs.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Dear James,
-Its not sufficient.In my case, sdio_reset command was submitted to
-dw_mmc controller before interrupts are enabled.
-By looking at your log,it seems something wrong with frequency set by
-your U-boot.
 
-Best Regards
-Yuvaraj
+--UBnjLfzoMQYIXCvq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Nov 19, 2012 at 6:50 PM, James Hogan <james.hogan@imgtec.com> wrote:
-> On 19/11/12 13:01, Yuvaraj CD wrote:
->> As mmc_start_host is getting called before enabling the dw_mmc controller
->> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
->> very first command sent by the sdio_reset.
->> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
->> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
->>
->> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
->
-> Hi Yuvaraj,
->
-> I get the following errors after this patch is applied
-> (2da1d7f2948900cd50d38643db39f790edb3cc96, merged in v3.7-rc5) and the
-> driver doesn't work as a result. Reverting it fixes the problem.
->
-> mmc0: error -110 whilst initialising SD card
-> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
-> mmc0: error -110 whilst initialising SD card
-> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
-> mmc0: error -110 whilst initialising SD card
-> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
-> mmc0: error -110 whilst initialising SD card
-> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 400000Hz, actual 399360HZ div = 125)
-> mmc0: error -110 whilst initialising SD card
-> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
-> mmc0: error -110 whilst initialising SD card
-> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
-> mmc0: error -110 whilst initialising SD card
-> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
-> mmc0: error -110 whilst initialising SD card
->
-> The interrupts are already cleared and disabled at the beginning of the
-> probe function, so is the following sufficient (after reverting your
-> patch) to fix the problem you've been observing?
->
-> Thanks
-> James
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index ec9b5a8..2be9899 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -2266,7 +2266,6 @@ int dw_mci_probe(struct dw_mci *host)
->          * Enable interrupts for command done, data over, data empty, card det,
->          * receive ready and error such as transmit, receive timeout, crc error
->          */
-> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->         mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->                    SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->                    DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->
->
->> ---
->>  drivers/mmc/host/dw_mmc.c |   29 +++++++++++++++--------------
->>  1 file changed, 15 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index a23af77..729c031 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -2233,6 +2233,21 @@ int dw_mci_probe(struct dw_mci *host)
->>         else
->>                 host->num_slots = ((mci_readl(host, HCON) >> 1) & 0x1F) + 1;
->>
->> +       /*
->> +        * Enable interrupts for command done, data over, data empty, card det,
->> +        * receive ready and error such as transmit, receive timeout, crc error
->> +        */
->> +       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->> +       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->> +                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->> +                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->> +       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
->> interrupt */
->> +
->> +       dev_info(host->dev, "DW MMC controller at irq %d, "
->> +                "%d bit host data width, "
->> +                "%u deep fifo\n",
->> +                host->irq, width, fifo_size);
->> +
->>         /* We need at least one slot to succeed */
->>         for (i = 0; i < host->num_slots; i++) {
->>                 ret = dw_mci_init_slot(host, i);
->> @@ -2262,20 +2277,6 @@ int dw_mci_probe(struct dw_mci *host)
->>         else
->>                 host->data_offset = DATA_240A_OFFSET;
->>
->> -       /*
->> -        * Enable interrupts for command done, data over, data empty, card det,
->> -        * receive ready and error such as transmit, receive timeout, crc error
->> -        */
->> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->> -       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->> -                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->> -                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->> -       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
->> interrupt */
->> -
->> -       dev_info(host->dev, "DW MMC controller at irq %d, "
->> -                "%d bit host data width, "
->> -                "%u deep fifo\n",
->> -                host->irq, width, fifo_size);
->>         if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
->>                 dev_info(host->dev, "Internal DMAC interrupt fix enabled.\n");
->>
->> --
->> 1.7.9.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->> --
->> James Hogan
->>
->
+On Tue, Nov 20, 2012 at 07:21:36AM +0100, Takashi Iwai wrote:
+> Yet another one for ASoC.
+
+> Date: Mon, 19 Nov 2012 13:21:35 -0500
+> From: Bill Pemberton <wfp5p@virginia.edu>
+> To: gregkh@linuxfoundation.org
+> Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, M R
+>  Swami Reddy <mr.swami.reddy@ti.com>, Vishwas A Deshpande
+>  <vishwas.a.deshpande@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+>  Jarkko Nikula <jarkko.nikula@bitmer.com>, Eric Miao
+>  <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian
+>  Zhuang <haojian.zhuang@gmail.com>, Philipp Zabel
+>  <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Ben
+>  Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>,
+>  alsa-devel@alsa-project.org, uclinux-dist-devel@blackfin.uclinux.org,
+>  device-drivers-devel@blackfin.uclinux.org,
+>  patches@opensource.wolfsonmicro.com, linuxppc-dev@lists.ozlabs.org,
+>  linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+>  linux-samsung-soc@vger.kernel.org
+
+This time you've got an extravagantly large CC list but not managed to
+CC the maintainers at all...  ho hum.  Anyway, this doesn't apply
+against current code due to the Atmel changes.  Please rebase against
+for-next (or ideally the topic branches) and resend.
+
+--UBnjLfzoMQYIXCvq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQqyNYAAoJELSic+t+oim95wYP/Ao+yLcsfcAssR0XvTqaJZGz
+9uN9W0/CIqqWsKUvEgDYrCF/alZdR7ardHD4EhfOe9CGSx1xpf9rQos7U1l5XyNr
+ASbvdsa5ftnSdsXcfrotuIPHyoD/7hwdZXcgxOy7JK3gJFIV/1ciXeN8sQr0zWU/
+kA+fZ0OFAd0Uj0+bSCVS7uKj56PTr+pXACc5bhX3HEhPyjdIh5XeJNcwRupu3R1M
+R7JqpM71NHfjfIHWOLLf3puuPCVGdvIpirsaWYB9RNhP4CxR9FhMmlOvWMEvv/OS
+mde/SG7drl6khu/BPadwL15DfWTqsT/as3KslhpmnaP3CeSwQ+ChrynduQaFN/RU
+GcGQjK5BAgJjYH8zlD13seI8OWRWCsZIIORuha+foSJKGd6lhMxfURdXdkXIk4U6
+7vihjewpOupG15/42MjLZRFsNpB5d3w200wV02qxInX5iEEHX8opg7EALgEj2jEc
+ruYzm2Uc9Eih1gX68JYxsrQUHv8efxeJh2T9+1N6fSK5INcAH9uq1EG8df5bgLWO
+P4hLj1OK7qSvoE6Fyw/eqejkdNUR+NDSmjwbLFRlHm+eXpC3m89J5dY8XmTwoaAr
+86SwZt1APBFYuB3/swbL/ldgZDsrmDmbeh7m1RqphfLPRJomx7UP8gHzG/o4VJ/G
+khn8xf+Xq3uFWG/DZOUu
+=sAw6
+-----END PGP SIGNATURE-----
+
+--UBnjLfzoMQYIXCvq--
