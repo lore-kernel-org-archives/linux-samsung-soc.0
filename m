@@ -1,162 +1,94 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: SAMSUNG: use devm_ functions for ADC driver
-Date: Tue, 20 Nov 2012 21:34:34 +0900
-Message-ID: <0caa01cdc71b$6583bff0$308b3fd0$@org>
-References: <001701cdad02$2d511200$87f33600$@com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 1/6] ARM: EXYNOS5: Clock settings for SATA and SATA PHY
+Date: Tue, 20 Nov 2012 21:43:14 +0900
+Message-ID: <0cab01cdc71c$9b52d0c0$d1f87240$%kim@samsung.com>
+References: <1351612897-14923-1-git-send-email-vasanthananthan@gmail.com>
+ <1351612897-14923-2-git-send-email-vasanthananthan@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:27941 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752576Ab2KTMeg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 07:34:36 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDS003WADLM1NZ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 21:34:34 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDS001ERDLMKS90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 21:34:34 +0900 (KST)
-In-reply-to: <001701cdad02$2d511200$87f33600$@com>
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-reply-to: 
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-ide-owner@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Vasanth Ananthan' <vasanthananthan@gmail.com>, jgarzik@pobox.com, linux@arm.linux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, 'Vasanth Ananthan' <vasanth.a@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Eunki Kim' <eunki_kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
 
-Eunki Kim wrote:
+Kukjin Kim wrote:
 > 
-> This patch uses devm_* functions for probe function in ADC driver.
-> It reduces code size and simplifies the code.
+> Vasanth Ananthan wrote:
+> >
+> > This patch adds neccessary clock entries for SATA, SATA PHY and
+> > I2C_SATAPHY
+> >
+> > Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/clock-exynos5.c |   21 ++++++++++++++++++---
+> >  1 files changed, 18 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-
+> > exynos/clock-exynos5.c
+> > index c44ca1e..124c54f 100644
+> > --- a/arch/arm/mach-exynos/clock-exynos5.c
+> > +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> > @@ -651,15 +651,20 @@ static struct clk exynos5_init_clocks_off[] = {
+> >  		.ctrlbit	= (1 << 15),
+> >  	}, {
+> >  		.name		= "sata",
+> > -		.devname	= "ahci",
+> > +		.devname	= "exynos5-sata",
+> > +		.parent         = &exynos5_clk_aclk_200.clk,
+> >  		.enable		= exynos5_clk_ip_fsys_ctrl,
+> >  		.ctrlbit	= (1 << 6),
+> >  	}, {
+> > -		.name		= "sata_phy",
+> > +		.name		= "sata-phy",
+> > +		.devname	= "exynos5-sata-phy",
+> > +		.parent         = &exynos5_clk_aclk_200.clk,
+> >  		.enable		= exynos5_clk_ip_fsys_ctrl,
+> >  		.ctrlbit	= (1 << 24),
+> >  	}, {
+> > -		.name		= "sata_phy_i2c",
+> > +		.name		= "i2c",
+> > +		.devname	= "exynos5-sata-phy-i2c",
+> > +		.parent         = &exynos5_clk_aclk_200.clk,
+> >  		.enable		= exynos5_clk_ip_fsys_ctrl,
+> >  		.ctrlbit	= (1 << 25),
+> >  	}, {
+> > @@ -1226,6 +1231,16 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+> >  		.reg_div = { .reg = EXYNOS5_CLKDIV_TOP0, .shift = 24, .size
+> > = 3 },
+> >  	}, {
+> >  		.clk	= {
+> > +			.name		= "sclk_sata",
+> > +			.devname	= "exynos5-sata",
+> > +			.enable		= exynos5_clksrc_mask_fsys_ctrl,
+> > +			.ctrlbit	= (1 << 24),
+> > +		},
+> > +		.sources = &exynos5_clkset_aclk,
+> > +		.reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 24, .size
+> > = 1 },
+> > +		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 20, .size
+> > = 4 },
+> > +	}, {
+> > +		.clk	= {
+> >  			.name		= "sclk_gscl_wrap",
+> >  			.devname	= "s5p-mipi-csis.0",
+> >  			.enable		= exynos5_clksrc_mask_gscl_ctrl,
+> > --
+> > 1.7.4.1
 > 
-> Signed-off-by: Eunki Kim <eunki_kim@samsung.com>
-> ---
->  arch/arm/plat-samsung/adc.c |   48
-+++++++++++----------------------------
-> ---
->  1 files changed, 13 insertions(+), 35 deletions(-)
+> Looks OK to me, need to think again about naming though?, anyway, this can
+> be handled separate from this series.
 > 
-> diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-> index b1e05cc..37542c2 100644
-> --- a/arch/arm/plat-samsung/adc.c
-> +++ b/arch/arm/plat-samsung/adc.c
-> @@ -344,7 +344,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
->  	int ret;
->  	unsigned tmp;
+> Let me take this into Samsung tree, if any problems, please let me know.
 > 
-> -	adc = kzalloc(sizeof(struct adc_device), GFP_KERNEL);
-> +	adc = devm_kzalloc(dev, sizeof(struct adc_device), GFP_KERNEL);
->  	if (adc == NULL) {
->  		dev_err(dev, "failed to allocate adc_device\n");
->  		return -ENOMEM;
-> @@ -355,50 +355,46 @@ static int s3c_adc_probe(struct platform_device
-> *pdev)
->  	adc->pdev = pdev;
->  	adc->prescale = S3C2410_ADCCON_PRSCVL(49);
-> 
-> -	adc->vdd = regulator_get(dev, "vdd");
-> +	adc->vdd = devm_regulator_get(dev, "vdd");
->  	if (IS_ERR(adc->vdd)) {
->  		dev_err(dev, "operating without regulator \"vdd\" .\n");
-> -		ret = PTR_ERR(adc->vdd);
-> -		goto err_alloc;
-> +		return PTR_ERR(adc->vdd);
->  	}
-> 
->  	adc->irq = platform_get_irq(pdev, 1);
->  	if (adc->irq <= 0) {
->  		dev_err(dev, "failed to get adc irq\n");
-> -		ret = -ENOENT;
-> -		goto err_reg;
-> +		return -ENOENT;
->  	}
-> 
-> -	ret = request_irq(adc->irq, s3c_adc_irq, 0, dev_name(dev), adc);
-> +	ret = devm_request_irq(dev, adc->irq, s3c_adc_irq, 0, dev_name(dev),
-> +				adc);
->  	if (ret < 0) {
->  		dev_err(dev, "failed to attach adc irq\n");
-> -		goto err_reg;
-> +		return ret;
->  	}
-> 
-> -	adc->clk = clk_get(dev, "adc");
-> +	adc->clk = devm_clk_get(dev, "adc");
->  	if (IS_ERR(adc->clk)) {
->  		dev_err(dev, "failed to get adc clock\n");
-> -		ret = PTR_ERR(adc->clk);
-> -		goto err_irq;
-> +		return PTR_ERR(adc->clk);
->  	}
-> 
->  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (!regs) {
->  		dev_err(dev, "failed to find registers\n");
-> -		ret = -ENXIO;
-> -		goto err_clk;
-> +		return -ENXIO;
->  	}
-> 
-> -	adc->regs = ioremap(regs->start, resource_size(regs));
-> +	adc->regs = devm_request_and_ioremap(dev, regs);
->  	if (!adc->regs) {
->  		dev_err(dev, "failed to map registers\n");
-> -		ret = -ENXIO;
-> -		goto err_clk;
-> +		return -ENXIO;
->  	}
-> 
->  	ret = regulator_enable(adc->vdd);
->  	if (ret)
-> -		goto err_ioremap;
-> +		return ret;
-> 
->  	clk_enable(adc->clk);
-> 
-> @@ -418,32 +414,14 @@ static int s3c_adc_probe(struct platform_device
-> *pdev)
->  	adc_dev = adc;
-> 
->  	return 0;
-> -
-> - err_ioremap:
-> -	iounmap(adc->regs);
-> - err_clk:
-> -	clk_put(adc->clk);
-> -
-> - err_irq:
-> -	free_irq(adc->irq, adc);
-> - err_reg:
-> -	regulator_put(adc->vdd);
-> - err_alloc:
-> -	kfree(adc);
-> -	return ret;
->  }
-> 
->  static int __devexit s3c_adc_remove(struct platform_device *pdev)
->  {
->  	struct adc_device *adc = platform_get_drvdata(pdev);
-> 
-> -	iounmap(adc->regs);
-> -	free_irq(adc->irq, adc);
->  	clk_disable(adc->clk);
->  	regulator_disable(adc->vdd);
-> -	regulator_put(adc->vdd);
-> -	clk_put(adc->clk);
-> -	kfree(adc);
-> 
->  	return 0;
->  }
-> --
-> 1.7.1
+Applied, thanks.
 
-Looks ok to me, applied.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-Thanks.
-
-K-Gene <kgene@kernel.org>
