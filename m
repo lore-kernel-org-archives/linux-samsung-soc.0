@@ -1,88 +1,162 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/4] ARM: EXYNOS: PL330 MDMA1 fix for revision 0 of
- Exynos4210 SOC
-Date: Tue, 20 Nov 2012 21:23:27 +0900
-Message-ID: <0ca001cdc719$d82e5f80$888b1e80$%kim@samsung.com>
-References: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
- <201210300956.23102.b.zolnierkie@samsung.com>
- <0cea01cdbd6c$7ace7200$706b5600$%kim@samsung.com>
- <201211081054.41649.b.zolnierkie@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH] ARM: SAMSUNG: use devm_ functions for ADC driver
+Date: Tue, 20 Nov 2012 21:34:34 +0900
+Message-ID: <0caa01cdc71b$6583bff0$308b3fd0$@org>
+References: <001701cdad02$2d511200$87f33600$@com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63569 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752576Ab2KTMX3 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:27941 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752576Ab2KTMeg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 07:23:29 -0500
-In-reply-to: <201211081054.41649.b.zolnierkie@samsung.com>
+	Tue, 20 Nov 2012 07:34:36 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDS003WADLM1NZ0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 21:34:34 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDS001ERDLMKS90@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 21:34:34 +0900 (KST)
+In-reply-to: <001701cdad02$2d511200$87f33600$@com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, vinod.koul@intel.com, rob.herring@calxeda.com, dinguyen@altera.com, pawel.moll@arm.com, t.figa@samsung.com, kyungmin.park@samsung.com
+To: 'Eunki Kim' <eunki_kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-Bartlomiej Zolnierkiewicz wrote:
+Eunki Kim wrote:
 > 
-> From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Subject: [PATCH v2] ARM: EXYNOS: PL330 MDMA1 fix for revision 0 of
-> Exynos4210 SOC
+> This patch uses devm_* functions for probe function in ADC driver.
+> It reduces code size and simplifies the code.
 > 
-> Commit 8214513 ("ARM: EXYNOS: fix address for EXYNOS4 MDMA1")
-> changed EXYNOS specific setup of PL330 DMA engine to use 'non-secure'
-> mdma1 address instead of 'secure' one (from 0x12840000 to 0x12850000)
-> to fix issue with some Exynos4212 SOCs.  Unfortunately it brakes
-> PL330 setup for revision 0 of Exynos4210 SOC (mdma1 device cannot
-> be found at 'non-secure' address):
-> 
-> [    0.566245] dma-pl330 dma-pl330.2: PERIPH_ID 0x0, PCELL_ID 0x0 !
-> [    0.566278] dma-pl330: probe of dma-pl330.2 failed with error -22
-> 
-> Fix it by using 'secure' mdma1 address on Exynos4210 revision 0 SOC.
-> 
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Eunki Kim <eunki_kim@samsung.com>
 > ---
->  arch/arm/mach-exynos/dma.c              |    3 +++
->  arch/arm/mach-exynos/include/mach/map.h |    1 +
->  2 files changed, 4 insertions(+)
+>  arch/arm/plat-samsung/adc.c |   48
++++++++++++----------------------------
+> ---
+>  1 files changed, 13 insertions(+), 35 deletions(-)
 > 
-> Index: b/arch/arm/mach-exynos/dma.c
-> ===================================================================
-> --- a/arch/arm/mach-exynos/dma.c	2012-11-07 18:20:36.561743865 +0100
-> +++ b/arch/arm/mach-exynos/dma.c	2012-11-08 10:48:23.445067606 +0100
-> @@ -275,6 +275,9 @@ static int __init exynos_dma_init(void)
->  		exynos_pdma1_pdata.nr_valid_peri =
->  			ARRAY_SIZE(exynos4210_pdma1_peri);
->  		exynos_pdma1_pdata.peri_id = exynos4210_pdma1_peri;
-> +
-> +		if (samsung_rev() == EXYNOS4210_REV_0)
-> +			exynos_mdma1_device.res.start = EXYNOS4_PA_S_MDMA1;
->  	} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
->  		exynos_pdma0_pdata.nr_valid_peri =
->  			ARRAY_SIZE(exynos4212_pdma0_peri);
-> Index: b/arch/arm/mach-exynos/include/mach/map.h
-> ===================================================================
-> --- a/arch/arm/mach-exynos/include/mach/map.h	2012-11-07
-> 18:20:44.801743862 +0100
-> +++ b/arch/arm/mach-exynos/include/mach/map.h	2012-11-08
-> 10:48:40.597067605 +0100
-> @@ -92,6 +92,7 @@
+> diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+> index b1e05cc..37542c2 100644
+> --- a/arch/arm/plat-samsung/adc.c
+> +++ b/arch/arm/plat-samsung/adc.c
+> @@ -344,7 +344,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
+>  	int ret;
+>  	unsigned tmp;
 > 
->  #define EXYNOS4_PA_MDMA0		0x10810000
->  #define EXYNOS4_PA_MDMA1		0x12850000
-> +#define EXYNOS4_PA_S_MDMA1		0x12840000
->  #define EXYNOS4_PA_PDMA0		0x12680000
->  #define EXYNOS4_PA_PDMA1		0x12690000
->  #define EXYNOS5_PA_MDMA0		0x10800000
+> -	adc = kzalloc(sizeof(struct adc_device), GFP_KERNEL);
+> +	adc = devm_kzalloc(dev, sizeof(struct adc_device), GFP_KERNEL);
+>  	if (adc == NULL) {
+>  		dev_err(dev, "failed to allocate adc_device\n");
+>  		return -ENOMEM;
+> @@ -355,50 +355,46 @@ static int s3c_adc_probe(struct platform_device
+> *pdev)
+>  	adc->pdev = pdev;
+>  	adc->prescale = S3C2410_ADCCON_PRSCVL(49);
+> 
+> -	adc->vdd = regulator_get(dev, "vdd");
+> +	adc->vdd = devm_regulator_get(dev, "vdd");
+>  	if (IS_ERR(adc->vdd)) {
+>  		dev_err(dev, "operating without regulator \"vdd\" .\n");
+> -		ret = PTR_ERR(adc->vdd);
+> -		goto err_alloc;
+> +		return PTR_ERR(adc->vdd);
+>  	}
+> 
+>  	adc->irq = platform_get_irq(pdev, 1);
+>  	if (adc->irq <= 0) {
+>  		dev_err(dev, "failed to get adc irq\n");
+> -		ret = -ENOENT;
+> -		goto err_reg;
+> +		return -ENOENT;
+>  	}
+> 
+> -	ret = request_irq(adc->irq, s3c_adc_irq, 0, dev_name(dev), adc);
+> +	ret = devm_request_irq(dev, adc->irq, s3c_adc_irq, 0, dev_name(dev),
+> +				adc);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to attach adc irq\n");
+> -		goto err_reg;
+> +		return ret;
+>  	}
+> 
+> -	adc->clk = clk_get(dev, "adc");
+> +	adc->clk = devm_clk_get(dev, "adc");
+>  	if (IS_ERR(adc->clk)) {
+>  		dev_err(dev, "failed to get adc clock\n");
+> -		ret = PTR_ERR(adc->clk);
+> -		goto err_irq;
+> +		return PTR_ERR(adc->clk);
+>  	}
+> 
+>  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (!regs) {
+>  		dev_err(dev, "failed to find registers\n");
+> -		ret = -ENXIO;
+> -		goto err_clk;
+> +		return -ENXIO;
+>  	}
+> 
+> -	adc->regs = ioremap(regs->start, resource_size(regs));
+> +	adc->regs = devm_request_and_ioremap(dev, regs);
+>  	if (!adc->regs) {
+>  		dev_err(dev, "failed to map registers\n");
+> -		ret = -ENXIO;
+> -		goto err_clk;
+> +		return -ENXIO;
+>  	}
+> 
+>  	ret = regulator_enable(adc->vdd);
+>  	if (ret)
+> -		goto err_ioremap;
+> +		return ret;
+> 
+>  	clk_enable(adc->clk);
+> 
+> @@ -418,32 +414,14 @@ static int s3c_adc_probe(struct platform_device
+> *pdev)
+>  	adc_dev = adc;
+> 
+>  	return 0;
+> -
+> - err_ioremap:
+> -	iounmap(adc->regs);
+> - err_clk:
+> -	clk_put(adc->clk);
+> -
+> - err_irq:
+> -	free_irq(adc->irq, adc);
+> - err_reg:
+> -	regulator_put(adc->vdd);
+> - err_alloc:
+> -	kfree(adc);
+> -	return ret;
+>  }
+> 
+>  static int __devexit s3c_adc_remove(struct platform_device *pdev)
+>  {
+>  	struct adc_device *adc = platform_get_drvdata(pdev);
+> 
+> -	iounmap(adc->regs);
+> -	free_irq(adc->irq, adc);
+>  	clk_disable(adc->clk);
+>  	regulator_disable(adc->vdd);
+> -	regulator_put(adc->vdd);
+> -	clk_put(adc->clk);
+> -	kfree(adc);
+> 
+>  	return 0;
+>  }
+> --
+> 1.7.1
 
-Applied, thanks.
+Looks ok to me, applied.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thanks.
+
+K-Gene <kgene@kernel.org>
