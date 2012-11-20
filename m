@@ -1,13 +1,13 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 446/493] video: remove use of __devexit
-Date: Tue, 20 Nov 2012 02:00:21 +0000 (GMT)
-Message-ID: <4955271.678781353376811686.JavaMail.weblogic@epml04>
-Reply-To: jg1.han@samsung.com
+From: Kyuho Choi <chlrbgh0@gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add support for ORIGEN4QUAD board
+Date: Tue, 20 Nov 2012 13:29:56 +0900
+Message-ID: <CAP2JTQLOGMy+S0vd1yzQR4B5B_Z7B26D=VSbEXn=85T+ekt+2A@mail.gmail.com>
+References: <1353345846-31355-1-git-send-email-kh.choi@insignal.co.kr>
+ <50AB0048.60302@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============0176327776899322187=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-MIME-version: 1.0
+In-Reply-To: <50AB0048.60302@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,144 +17,412 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bill Pemberton <wfp5p@virginia.edu>
-Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michal Januszewski <spock@gentoo.org>, Paul Mackerras <paulus@samba.org>, "linux-nvidia@lists.surfsouth.com" <linux-nvidia@lists.surfsouth.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Jingoo Han <jg1.han@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jaya Kumar <jayalk@intworks.biz>, Antonino Daplas <adaplas@gmail.com>, Thomas Winischhofer <thomas@winischhofer.net>, "linux-geode@lists.infradead.org" <linux-geode@lists.infradead.org>, In-Ki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Kyuho Choi <kh.choi@insignal.co.kr>, linux-samsung-soc@vger.kernel.org, "jhkim@insignal.co.kr" <jhkim@insignal.co.kr>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, November 20, 2012 3:27 AM, Bill Pemberton wrote
-> 
-> CONFIG_HOTPLUG is going away as an option so __devexit is no
-> longer needed.
-> 
-> Signed-off-by: Bill Pemberton <wfp5p@virginia.edu>
-> Cc: Jaya Kumar <jayalk@intworks.biz>
-> Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Jingoo Han <jg1.han@samsung.com>
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Donghwa Lee <dh09.lee@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Ferenc Bakonyi <fero@drama.obuda.kando.hu>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Maik Broemme <mbroemme@plusserver.de>
-> Cc: Antonino Daplas <adaplas@gmail.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Thomas Winischhofer <thomas@winischhofer.net>
-> Cc: Michal Januszewski <spock@gentoo.org>
-> Cc: Tony Prisk <linux@prisktech.co.nz>
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-geode@lists.infradead.org
-> Cc: linux-nvidia@lists.surfsouth.com
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> ---
->  drivers/video/arcfb.c                                   |  2 +-
->  drivers/video/arkfb.c                                   |  2 +-
->  drivers/video/asiliantfb.c                              |  2 +-
->  drivers/video/aty/aty128fb.c                            |  2 +-
->  drivers/video/aty/atyfb_base.c                          |  4 ++--
->  drivers/video/aty/radeon_base.c                         |  2 +-
->  drivers/video/au1200fb.c                                |  2 +-
->  drivers/video/auo_k1900fb.c                             |  2 +-
->  drivers/video/auo_k1901fb.c                             |  2 +-
->  drivers/video/auo_k190x.c                               |  2 +-
->  drivers/video/bf537-lq035.c                             |  4 ++--
->  drivers/video/bf54x-lq043fb.c                           |  2 +-
->  drivers/video/bfin-lq035q1-fb.c                         |  2 +-
->  drivers/video/bfin-t350mcqb-fb.c                        |  2 +-
->  drivers/video/bfin_adv7393fb.c                          |  2 +-
->  drivers/video/broadsheetfb.c                            |  2 +-
->  drivers/video/bw2.c                                     |  2 +-
->  drivers/video/carminefb.c                               |  2 +-
->  drivers/video/cg14.c                                    |  2 +-
->  drivers/video/cg3.c                                     |  2 +-
->  drivers/video/cg6.c                                     |  2 +-
->  drivers/video/chipsfb.c                                 |  2 +-
->  drivers/video/cirrusfb.c                                |  6 +++---
->  drivers/video/cobalt_lcdfb.c                            |  2 +-
->  drivers/video/console/sticore.c                         |  2 +-
->  drivers/video/cyber2000fb.c                             |  4 ++--
->  drivers/video/da8xx-fb.c                                |  2 +-
->  drivers/video/ep93xx-fb.c                               |  2 +-
->  drivers/video/exynos/exynos_dp_core.c                   |  2 +-
->  drivers/video/exynos/exynos_mipi_dsi.c                  |  2 +-
->  drivers/video/ffb.c                                     |  2 +-
->  drivers/video/gbefb.c                                   |  4 ++--
->  drivers/video/geode/gx1fb_core.c                        |  4 ++--
->  drivers/video/geode/gxfb_core.c                         |  2 +-
->  drivers/video/geode/lxfb_core.c                         |  2 +-
->  drivers/video/grvga.c                                   |  2 +-
->  drivers/video/gxt4500.c                                 |  2 +-
->  drivers/video/hecubafb.c                                |  2 +-
->  drivers/video/hgafb.c                                   |  2 +-
->  drivers/video/hitfb.c                                   |  2 +-
->  drivers/video/hpfb.c                                    |  2 +-
->  drivers/video/i740fb.c                                  |  2 +-
->  drivers/video/imsttfb.c                                 |  2 +-
->  drivers/video/imxfb.c                                   |  2 +-
->  drivers/video/intelfb/intelfbdrv.c                      |  4 ++--
->  drivers/video/jz4740_fb.c                               |  2 +-
->  drivers/video/kyro/fbdev.c                              |  2 +-
->  drivers/video/leo.c                                     |  2 +-
->  drivers/video/mb862xx/mb862xxfbdrv.c                    |  4 ++--
->  drivers/video/mbx/mbxdebugfs.c                          |  2 +-
->  drivers/video/mbx/mbxfb.c                               |  2 +-
->  drivers/video/metronomefb.c                             |  2 +-
->  drivers/video/mxsfb.c                                   |  4 ++--
->  drivers/video/neofb.c                                   |  2 +-
->  drivers/video/nvidia/nvidia.c                           |  2 +-
->  drivers/video/omap2/displays/panel-lgphilips-lb035q02.c |  2 +-
->  drivers/video/omap2/displays/panel-tpo-td043mtea1.c     |  2 +-
->  drivers/video/p9100.c                                   |  2 +-
->  drivers/video/platinumfb.c                              |  2 +-
->  drivers/video/pm2fb.c                                   |  2 +-
->  drivers/video/pm3fb.c                                   |  2 +-
->  drivers/video/pvr2fb.c                                  |  2 +-
->  drivers/video/pxa168fb.c                                |  2 +-
->  drivers/video/pxa3xx-gcu.c                              |  2 +-
->  drivers/video/pxafb.c                                   |  4 ++--
->  drivers/video/riva/fbdev.c                              |  2 +-
->  drivers/video/s3c-fb.c                                  |  2 +-
->  drivers/video/s3c2410fb.c                               |  2 +-
->  drivers/video/s3fb.c                                    |  2 +-
->  drivers/video/savage/savagefb_driver.c                  |  2 +-
->  drivers/video/sgivwfb.c                                 |  2 +-
->  drivers/video/sh7760fb.c                                |  2 +-
->  drivers/video/sh_mipi_dsi.c                             |  2 +-
->  drivers/video/sis/sis_main.c                            |  2 +-
->  drivers/video/skeletonfb.c                              |  4 ++--
->  drivers/video/sstfb.c                                   |  6 +++---
->  drivers/video/sunxvr1000.c                              |  2 +-
->  drivers/video/sunxvr2500.c                              |  2 +-
->  drivers/video/sunxvr500.c                               |  2 +-
->  drivers/video/tcx.c                                     |  2 +-
->  drivers/video/tdfxfb.c                                  |  4 ++--
->  drivers/video/tgafb.c                                   | 14 +++++++-------
->  drivers/video/tmiofb.c                                  |  2 +-
->  drivers/video/tridentfb.c                               |  2 +-
->  drivers/video/uvesafb.c                                 |  2 +-
->  drivers/video/vermilion/vermilion.c                     |  2 +-
->  drivers/video/vga16fb.c                                 |  2 +-
->  drivers/video/via/via-core.c                            |  2 +-
->  drivers/video/via/viafbdev.c                            |  2 +-
->  drivers/video/vt8500lcdfb.c                             |  2 +-
->  drivers/video/vt8623fb.c                                |  2 +-
->  drivers/video/w100fb.c                                  |  2 +-
->  drivers/video/wm8505fb.c                                |  2 +-
->  drivers/video/wmt_ge_rops.c                             |  2 +-
->  drivers/video/xilinxfb.c                                |  2 +-
->  95 files changed, 116 insertions(+), 116 deletions(-)
-> 
+--===============0176327776899322187==
+Content-Type: multipart/alternative; boundary=f46d04389415dce98504cee5b021
 
-For drivers/video/s3c-fb.c, drivers/video/exynos/exynos_dp_core.c
+--f46d04389415dce98504cee5b021
+Content-Type: text/plain; charset=UTF-8
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+Thanks for your interest. :)
+
+2012/11/20 Tushar Behera <tushar.behera@linaro.org>
+
+> On 11/19/2012 10:54 PM, chlrbgh0@gmail.com wrote:
+> > From: Kyuho Choi <kh.choi@insignal.co.kr>
+> >
+> > This patch add support for Insignal ORIGEN4QUAD board.
+> > ORIGEN4QUAD board based on Samsung Exynos4412 SoC.
+> >
+> > Signed-off-by: Kyuho Choi <kh.choi@insignal.co.kr>
+> > ---
+> >  arch/arm/mach-exynos/Kconfig       |    1 +
+> >  arch/arm/mach-exynos/mach-origen.c |   74
+> +++++++++++++++++++++++++++--------
+> >  2 files changed, 58 insertions(+), 17 deletions(-)
+> >
+>
+> Since Origen and Origen4Quad boards have different peripherals
+> (different pmic chip, touch/audio on different I2C bus etc.), how do you
+> plan to add them to mach-origen.c?
+>
+> As your mentioned, PMIC setup code will be added for Origen4Quad board.
+
+IMHO, Origen and Origen4Quad board has differential form SoC type.
+Thus I modified machine initial code from "mach-origen.c" source. It
+separate Origenboard and Origen4Quad board from SoC type.
+
+- Common initialize features(Origen and Origen4Quad shared features)
+- Origenboard dependant features
+- Origen4Quad board dependant features
+
+So, code to initialize the peripherals will be added to each area.
+
+>
+> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> > index bb3b09a..0b8ccd3 100644
+> > --- a/arch/arm/mach-exynos/Kconfig
+> > +++ b/arch/arm/mach-exynos/Kconfig
+> > @@ -324,6 +324,7 @@ config MACH_NURI
+> >  config MACH_ORIGEN
+> >       bool "ORIGEN"
+> >       select CPU_EXYNOS4210
+> > +     select SOC_EXYNOS4412
+> >       select EXYNOS4_DEV_USB_OHCI
+> >       select EXYNOS4_SETUP_FIMD0
+> >       select EXYNOS4_SETUP_SDHCI
+> > diff --git a/arch/arm/mach-exynos/mach-origen.c
+> b/arch/arm/mach-exynos/mach-origen.c
+> > index e6f4191..2839724 100644
+> > --- a/arch/arm/mach-exynos/mach-origen.c
+> > +++ b/arch/arm/mach-exynos/mach-origen.c
+> > @@ -1,6 +1,6 @@
+> >  /* linux/arch/arm/mach-exynos4/mach-origen.c
+> >   *
+> > - * Copyright (c) 2011 Insignal Co., Ltd.
+> > + * Copyright (c) 2011-2012 Insignal Co., Ltd.
+> >   *           http://www.insignal.co.kr/
+> >   *
+> >   * This program is free software; you can redistribute it and/or modify
+> > @@ -771,19 +771,36 @@ static void __init origen_reserve(void)
+> >       s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
+> >  }
+> >
+> > -static void __init origen_machine_init(void)
+> > +static int __init origen4quad_i2c_init(void)
+> >  {
+> > -     origen_power_init();
+> > +     /*
+> > +      * Origen4Quad has weaknees drive strength in i2c channel 3.
+> > +      * thus here setup i2c3's drvstr for Origen4Quad.
+> > +      */
+> > +     s5p_gpio_set_drvstr(EXYNOS4_GPA1(2), 3);
+> > +     s5p_gpio_set_drvstr(EXYNOS4_GPA1(3), 3);
+> > +     return 0;
+> > +}
+> >
+> > -     s3c_i2c0_set_platdata(NULL);
+> > -     i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_devs));
+> > +static int __init origen4quad_usb_init(void)
+> > +{
+> > +     /* USB HUB controller's hub reset pin setup for Origen4Quad. */
+> > +     gpio_request(EXYNOS4_GPX3(5), "GPX3");
+> > +     gpio_direction_output(EXYNOS4_GPX3(5), 1);
+> > +     gpio_set_value(EXYNOS4_GPX3(5), S3C_GPIO_PULL_UP);
+> > +     gpio_free(EXYNOS4_GPX3(5));
+> > +     return 0;
+> > +}
+> >
+> > +static void __init origen_machine_init(void)
+> > +{
+> >       /*
+> > -      * Since sdhci instance 2 can contain a bootable media,
+> > -      * sdhci instance 0 is registered after instance 2.
+> > +      * Common initialize code for ORIGEN and Origen4Quad.
+> >        */
+> > +     s3c_i2c0_set_platdata(NULL);
+> > +     i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_devs));
+> > +
+> >       s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
+> > -     s3c_sdhci0_set_platdata(&origen_hsmmc0_pdata);
+> >
+> >       origen_ehci_init();
+> >       origen_ohci_init();
+> > @@ -793,22 +810,45 @@ static void __init origen_machine_init(void)
+> >       s5p_i2c_hdmiphy_set_platdata(NULL);
+> >       s5p_hdmi_set_platdata(&hdmiphy_info, NULL, 0);
+> >
+> > -#ifdef CONFIG_DRM_EXYNOS
+> > -     s5p_device_fimd0.dev.platform_data = &drm_fimd_pdata;
+> > -     exynos4_fimd0_gpio_setup_24bpp();
+> > -#else
+> > -     s5p_fimd0_set_platdata(&origen_lcd_pdata);
+> > -#endif
+> > +     pwm_add_table(origen_pwm_lookup, ARRAY_SIZE(origen_pwm_lookup));
+> >
+> >       platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
+> >
+> > -     pwm_add_table(origen_pwm_lookup, ARRAY_SIZE(origen_pwm_lookup));
+> > -     samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
+> > +     if (!soc_is_exynos4210()) {
+> > +             /*
+> > +              * In case of soc_is_4210(),
+> > +              * Machine initialize for Origen.
+> > +              */
+> >
+> > -     origen_bt_setup();
+> > +             origen_power_init();
+> > +
+> > +             /*
+> > +              * Since sdhci instance 2 can contain a bootable media,
+> > +              * sdhci instance 0 is registered after instance 2.
+> > +              */
+> > +             s3c_sdhci0_set_platdata(&origen_hsmmc0_pdata);
+> > +
+> > +#ifdef CONFIG_DRM_EXYNOS
+> > +             s5p_device_fimd0.dev.platform_data = &drm_fimd_pdata;
+> > +             exynos4_fimd0_gpio_setup_24bpp();
+> > +#else
+> > +             s5p_fimd0_set_platdata(&origen_lcd_pdata);
+> > +#endif
+> > +             samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
+> > +
+> > +             origen_bt_setup();
+> > +     } else{
+> > +             /*
+> > +              * In case of soc_is_4412(),
+> > +              * Machine initialize for Origen4Quad.
+> > +              */
+> > +             origen4quad_i2c_init();
+> > +             origen4quad_usb_init();
+> > +     }
+> >  }
+> >
+> >  MACHINE_START(ORIGEN, "ORIGEN")
+> > +     /* Maintainer: Kyuho Choi <kh.choi@insignal.co.kr> */
+> >       /* Maintainer: JeongHyeon Kim <jhkim@insignal.co.kr> */
+> >       .atag_offset    = 0x100,
+> >       .smp            = smp_ops(exynos_smp_ops),
+> >
+>
+>
+> --
+> Tushar Behera
+>
+
+--f46d04389415dce98504cee5b021
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Thanks for your interest. :)<div class=3D"gmail_extra"><br><div class=3D"gm=
+ail_quote">2012/11/20 Tushar Behera <span dir=3D"ltr">&lt;<a href=3D"mailto=
+:tushar.behera@linaro.org" target=3D"_blank">tushar.behera@linaro.org</a>&g=
+t;</span><br>
+
+<blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-=
+left-width:1px;border-left-color:rgb(204,204,204);border-left-style:solid;p=
+adding-left:1ex"><div class=3D"im">On 11/19/2012 10:54 PM, <a href=3D"mailt=
+o:chlrbgh0@gmail.com">chlrbgh0@gmail.com</a> wrote:<br>
 
 
-Best regards,
-Jingoo Han
+&gt; From: Kyuho Choi &lt;<a href=3D"mailto:kh.choi@insignal.co.kr">kh.choi=
+@insignal.co.kr</a>&gt;<br>
+&gt;<br>
+&gt; This patch add support for Insignal ORIGEN4QUAD board.<br>
+&gt; ORIGEN4QUAD board based on Samsung Exynos4412 SoC.<br>
+&gt;<br>
+&gt; Signed-off-by: Kyuho Choi &lt;<a href=3D"mailto:kh.choi@insignal.co.kr=
+">kh.choi@insignal.co.kr</a>&gt;<br>
+&gt; ---<br>
+&gt; =C2=A0arch/arm/mach-exynos/Kconfig =C2=A0 =C2=A0 =C2=A0 | =C2=A0 =C2=
+=A01 +<br>
+&gt; =C2=A0arch/arm/mach-exynos/mach-origen.c | =C2=A0 74 +++++++++++++++++=
+++++++++++--------<br>
+&gt; =C2=A02 files changed, 58 insertions(+), 17 deletions(-)<br>
+&gt;<br>
+<br>
+</div>Since Origen and Origen4Quad boards have different peripherals<br>
+(different pmic chip, touch/audio on different I2C bus etc.), how do you<br=
+>
+plan to add them to mach-origen.c?<br>
+<div class=3D""><div class=3D"h5"><br></div></div></blockquote><div>As your=
+ mentioned, PMIC setup code will be added for Origen4Quad board.<br></div><=
+div><br></div><div>IMHO, Origen and Origen4Quad board has differential form=
+ SoC type.<br>
+
+</div><div>Thus I modified machine initial code from &quot;mach-origen.c&qu=
+ot; source. It separate Origenboard and Origen4Quad board from SoC type.</d=
+iv><div><br></div><div>- Common initialize features(Origen and Origen4Quad =
+shared features)</div>
+
+<div>- Origenboard dependant features</div><div>- Origen4Quad board dependa=
+nt features</div><div><br></div><div>So, code to initialize the peripherals=
+ will be added to each area.</div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(20=
+4,204,204);border-left-style:solid;padding-left:1ex">
+
+<div class=3D""><div class=3D"h5"><br>
+&gt; diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconf=
+ig<br>
+&gt; index bb3b09a..0b8ccd3 100644<br>
+&gt; --- a/arch/arm/mach-exynos/Kconfig<br>
+&gt; +++ b/arch/arm/mach-exynos/Kconfig<br>
+&gt; @@ -324,6 +324,7 @@ config MACH_NURI<br>
+&gt; =C2=A0config MACH_ORIGEN<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 bool &quot;ORIGEN&quot;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 select CPU_EXYNOS4210<br>
+&gt; + =C2=A0 =C2=A0 select SOC_EXYNOS4412<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 select EXYNOS4_DEV_USB_OHCI<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 select EXYNOS4_SETUP_FIMD0<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 select EXYNOS4_SETUP_SDHCI<br>
+&gt; diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos=
+/mach-origen.c<br>
+&gt; index e6f4191..2839724 100644<br>
+&gt; --- a/arch/arm/mach-exynos/mach-origen.c<br>
+&gt; +++ b/arch/arm/mach-exynos/mach-origen.c<br>
+&gt; @@ -1,6 +1,6 @@<br>
+&gt; =C2=A0/* linux/arch/arm/mach-exynos4/mach-origen.c<br>
+&gt; =C2=A0 *<br>
+&gt; - * Copyright (c) 2011 Insignal Co., Ltd.<br>
+&gt; + * Copyright (c) 2011-2012 Insignal Co., Ltd.<br>
+&gt; =C2=A0 * =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"http://www.insi=
+gnal.co.kr/" target=3D"_blank">http://www.insignal.co.kr/</a><br>
+&gt; =C2=A0 *<br>
+&gt; =C2=A0 * This program is free software; you can redistribute it and/or=
+ modify<br>
+&gt; @@ -771,19 +771,36 @@ static void __init origen_reserve(void)<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 s5p_mfc_reserve_mem(0x43000000, 8 &lt;&lt; 20, 0x=
+51000000, 8 &lt;&lt; 20);<br>
+&gt; =C2=A0}<br>
+&gt;<br>
+&gt; -static void __init origen_machine_init(void)<br>
+&gt; +static int __init origen4quad_i2c_init(void)<br>
+&gt; =C2=A0{<br>
+&gt; - =C2=A0 =C2=A0 origen_power_init();<br>
+&gt; + =C2=A0 =C2=A0 /*<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0* Origen4Quad has weaknees drive strength in i2c=
+ channel 3.<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0* thus here setup i2c3&#39;s drvstr for Origen4Q=
+uad.<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0*/<br>
+&gt; + =C2=A0 =C2=A0 s5p_gpio_set_drvstr(EXYNOS4_GPA1(2), 3);<br>
+&gt; + =C2=A0 =C2=A0 s5p_gpio_set_drvstr(EXYNOS4_GPA1(3), 3);<br>
+&gt; + =C2=A0 =C2=A0 return 0;<br>
+&gt; +}<br>
+&gt;<br>
+&gt; - =C2=A0 =C2=A0 s3c_i2c0_set_platdata(NULL);<br>
+&gt; - =C2=A0 =C2=A0 i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_=
+devs));<br>
+&gt; +static int __init origen4quad_usb_init(void)<br>
+&gt; +{<br>
+&gt; + =C2=A0 =C2=A0 /* USB HUB controller&#39;s hub reset pin setup for Or=
+igen4Quad. */<br>
+&gt; + =C2=A0 =C2=A0 gpio_request(EXYNOS4_GPX3(5), &quot;GPX3&quot;);<br>
+&gt; + =C2=A0 =C2=A0 gpio_direction_output(EXYNOS4_GPX3(5), 1);<br>
+&gt; + =C2=A0 =C2=A0 gpio_set_value(EXYNOS4_GPX3(5), S3C_GPIO_PULL_UP);<br>
+&gt; + =C2=A0 =C2=A0 gpio_free(EXYNOS4_GPX3(5));<br>
+&gt; + =C2=A0 =C2=A0 return 0;<br>
+&gt; +}<br>
+&gt;<br>
+&gt; +static void __init origen_machine_init(void)<br>
+&gt; +{<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 /*<br>
+&gt; - =C2=A0 =C2=A0 =C2=A0* Since sdhci instance 2 can contain a bootable =
+media,<br>
+&gt; - =C2=A0 =C2=A0 =C2=A0* sdhci instance 0 is registered after instance =
+2.<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0* Common initialize code for ORIGEN and Origen4Q=
+uad.<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0*/<br>
+&gt; + =C2=A0 =C2=A0 s3c_i2c0_set_platdata(NULL);<br>
+&gt; + =C2=A0 =C2=A0 i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_=
+devs));<br>
+&gt; +<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 s3c_sdhci2_set_platdata(&amp;origen_hsmmc2_pdata)=
+;<br>
+&gt; - =C2=A0 =C2=A0 s3c_sdhci0_set_platdata(&amp;origen_hsmmc0_pdata);<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 origen_ehci_init();<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 origen_ohci_init();<br>
+&gt; @@ -793,22 +810,45 @@ static void __init origen_machine_init(void)<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 s5p_i2c_hdmiphy_set_platdata(NULL);<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 s5p_hdmi_set_platdata(&amp;hdmiphy_info, NULL, 0)=
+;<br>
+&gt;<br>
+&gt; -#ifdef CONFIG_DRM_EXYNOS<br>
+&gt; - =C2=A0 =C2=A0 s5p_device_fimd0.dev.platform_data =3D &amp;drm_fimd_p=
+data;<br>
+&gt; - =C2=A0 =C2=A0 exynos4_fimd0_gpio_setup_24bpp();<br>
+&gt; -#else<br>
+&gt; - =C2=A0 =C2=A0 s5p_fimd0_set_platdata(&amp;origen_lcd_pdata);<br>
+&gt; -#endif<br>
+&gt; + =C2=A0 =C2=A0 pwm_add_table(origen_pwm_lookup, ARRAY_SIZE(origen_pwm=
+_lookup));<br>
+&gt;<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 platform_add_devices(origen_devices, ARRAY_SIZE(o=
+rigen_devices));<br>
+&gt;<br>
+&gt; - =C2=A0 =C2=A0 pwm_add_table(origen_pwm_lookup, ARRAY_SIZE(origen_pwm=
+_lookup));<br>
+&gt; - =C2=A0 =C2=A0 samsung_bl_set(&amp;origen_bl_gpio_info, &amp;origen_b=
+l_data);<br>
+&gt; + =C2=A0 =C2=A0 if (!soc_is_exynos4210()) {<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /*<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* In case of soc_is_=
+4210(),<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Machine initialize=
+ for Origen.<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*/<br>
+&gt;<br>
+&gt; - =C2=A0 =C2=A0 origen_bt_setup();<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 origen_power_init();<br>
+&gt; +<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /*<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Since sdhci instan=
+ce 2 can contain a bootable media,<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* sdhci instance 0 i=
+s registered after instance 2.<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*/<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c_sdhci0_set_platdata(&a=
+mp;origen_hsmmc0_pdata);<br>
+&gt; +<br>
+&gt; +#ifdef CONFIG_DRM_EXYNOS<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s5p_device_fimd0.dev.platf=
+orm_data =3D &amp;drm_fimd_pdata;<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 exynos4_fimd0_gpio_setup_2=
+4bpp();<br>
+&gt; +#else<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s5p_fimd0_set_platdata(&am=
+p;origen_lcd_pdata);<br>
+&gt; +#endif<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 samsung_bl_set(&amp;origen=
+_bl_gpio_info, &amp;origen_bl_data);<br>
+&gt; +<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 origen_bt_setup();<br>
+&gt; + =C2=A0 =C2=A0 } else{<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /*<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* In case of soc_is_=
+4412(),<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Machine initialize=
+ for Origen4Quad.<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*/<br>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 origen4quad_i2c_init();<br=
+>
+&gt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 origen4quad_usb_init();<br=
+>
+&gt; + =C2=A0 =C2=A0 }<br>
+&gt; =C2=A0}<br>
+&gt;<br>
+&gt; =C2=A0MACHINE_START(ORIGEN, &quot;ORIGEN&quot;)<br>
+&gt; + =C2=A0 =C2=A0 /* Maintainer: Kyuho Choi &lt;<a href=3D"mailto:kh.cho=
+i@insignal.co.kr">kh.choi@insignal.co.kr</a>&gt; */<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 /* Maintainer: JeongHyeon Kim &lt;<a href=3D"mail=
+to:jhkim@insignal.co.kr">jhkim@insignal.co.kr</a>&gt; */<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 .atag_offset =C2=A0 =C2=A0=3D 0x100,<br>
+&gt; =C2=A0 =C2=A0 =C2=A0 .smp =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D=
+ smp_ops(exynos_smp_ops),<br>
+&gt;<br>
+<br>
+<br>
+--<br>
+</div></div><span class=3D""><font color=3D"#888888">Tushar Behera<br>
+</font></span></blockquote></div><br></div>
+
+--f46d04389415dce98504cee5b021--
+
+
+--===============0176327776899322187==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0176327776899322187==--
