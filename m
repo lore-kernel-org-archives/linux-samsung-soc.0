@@ -1,58 +1,159 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos4: Use drive strength 3 for SD pins
-Date: Tue, 20 Nov 2012 10:35:30 +0100
-Message-ID: <1961860.xzxk1Exu2U@amdc1227>
-References: <21831256.UCkQ5RyKd5@amdc1227>
- <0c2f01cdc700$09c204d0$1d460e70$%kim@samsung.com>
+From: James Hogan <james.hogan@imgtec.com>
+Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt before calling
+ mmc_start_host
+Date: Tue, 20 Nov 2012 09:39:43 +0000
+Message-ID: <50AB4FDF.7080602@imgtec.com>
+References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com> <CAAG0J9_ngZm7uGopaW6rdBUDQZhQWqt6gd=y1i5BifsGrZg-hg@mail.gmail.com> <50AA322A.1060604@imgtec.com> <CAKuRcOLfaX=fNML9RYdOyD3AFRdaaAipQDXo-SHapGkNVwzH2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:8538 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751698Ab2KTJfg (ORCPT
+Received: from multi.imgtec.com ([194.200.65.239]:52677 "EHLO multi.imgtec.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751817Ab2KTJlK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 04:35:36 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDS00JR05A2RQW0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 18:35:35 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDS00FXT5B9I110@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 18:35:35 +0900 (KST)
-In-reply-to: <0c2f01cdc700$09c204d0$1d460e70$%kim@samsung.com>
+	Tue, 20 Nov 2012 04:41:10 -0500
+In-Reply-To: <CAKuRcOLfaX=fNML9RYdOyD3AFRdaaAipQDXo-SHapGkNVwzH2Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "Chris Ball (laptop.org)" <cjb@laptop.org>, Will <will.newton@imgtec.com>, kgene.kim@samsung.com, "Girish K S (Linaro)" <girish.shivananjappa@linaro.org>, "Thomas Abraham (Linaro)" <thomas.abraham@linaro.org>, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-Hi Kgene,
+Hi Yuvaraj,
 
-On Tuesday 20 of November 2012 18:18:44 Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > This patch modifies pin control groups of SD pins on Exynos4210 and
-> > Exynos4x12 to use drive strength 3, which corresponds to
-> > S5P_GPIO_DRVSTR_LV4 in legacy non-DT code.
+On 20/11/12 05:35, Yuvaraj Kumar wrote:
+> Its not sufficient.In my case, sdio_reset command was submitted to
+> dw_mmc controller before interrupts are enabled.
+> By looking at your log,it seems something wrong with frequency set by
+> your U-boot.
+
+I'm not using U-boot, I'm booting with JTAG. In any case it works if I
+revert your patch so I think the clocks are fine. I'll continue
+debugging it and see if I can figure out what's happening.
+
+Cheers
+James
+
 > 
-> Well, the value of drive strength depends on board not SoC. So if
-> required, it should be moved to board DT stuff.
-
-Yes, I fully agree.
-
-I've been thinking whether to change the defaults or just override them 
-for Origen, but I came to a conclusion that 3 (LV4) was the default in 
-non-DT code, so it probably should be also the default in DT variant.
-
-> BTW, we can use the value as a default...I need to think about that
-> again for exynos4210 and 4x12.
-
-I wonder which default value is more appropriate, 0 or 3?
-
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+> Best Regards
+> Yuvaraj
+> 
+> On Mon, Nov 19, 2012 at 6:50 PM, James Hogan <james.hogan@imgtec.com> wrote:
+>> On 19/11/12 13:01, Yuvaraj CD wrote:
+>>> As mmc_start_host is getting called before enabling the dw_mmc controller
+>>> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
+>>> very first command sent by the sdio_reset.
+>>> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
+>>> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
+>>>
+>>> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
+>>
+>> Hi Yuvaraj,
+>>
+>> I get the following errors after this patch is applied
+>> (2da1d7f2948900cd50d38643db39f790edb3cc96, merged in v3.7-rc5) and the
+>> driver doesn't work as a result. Reverting it fixes the problem.
+>>
+>> mmc0: error -110 whilst initialising SD card
+>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
+>> mmc0: error -110 whilst initialising SD card
+>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
+>> mmc0: error -110 whilst initialising SD card
+>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
+>> mmc0: error -110 whilst initialising SD card
+>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 400000Hz, actual 399360HZ div = 125)
+>> mmc0: error -110 whilst initialising SD card
+>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
+>> mmc0: error -110 whilst initialising SD card
+>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
+>> mmc0: error -110 whilst initialising SD card
+>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
+>> mmc0: error -110 whilst initialising SD card
+>>
+>> The interrupts are already cleared and disabled at the beginning of the
+>> probe function, so is the following sufficient (after reverting your
+>> patch) to fix the problem you've been observing?
+>>
+>> Thanks
+>> James
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index ec9b5a8..2be9899 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -2266,7 +2266,6 @@ int dw_mci_probe(struct dw_mci *host)
+>>          * Enable interrupts for command done, data over, data empty, card det,
+>>          * receive ready and error such as transmit, receive timeout, crc error
+>>          */
+>> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
+>>         mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
+>>                    SDMMC_INT_TXDR | SDMMC_INT_RXDR |
+>>                    DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
+>>
+>>
+>>> ---
+>>>  drivers/mmc/host/dw_mmc.c |   29 +++++++++++++++--------------
+>>>  1 file changed, 15 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>> index a23af77..729c031 100644
+>>> --- a/drivers/mmc/host/dw_mmc.c
+>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>> @@ -2233,6 +2233,21 @@ int dw_mci_probe(struct dw_mci *host)
+>>>         else
+>>>                 host->num_slots = ((mci_readl(host, HCON) >> 1) & 0x1F) + 1;
+>>>
+>>> +       /*
+>>> +        * Enable interrupts for command done, data over, data empty, card det,
+>>> +        * receive ready and error such as transmit, receive timeout, crc error
+>>> +        */
+>>> +       mci_writel(host, RINTSTS, 0xFFFFFFFF);
+>>> +       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
+>>> +                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
+>>> +                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
+>>> +       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
+>>> interrupt */
+>>> +
+>>> +       dev_info(host->dev, "DW MMC controller at irq %d, "
+>>> +                "%d bit host data width, "
+>>> +                "%u deep fifo\n",
+>>> +                host->irq, width, fifo_size);
+>>> +
+>>>         /* We need at least one slot to succeed */
+>>>         for (i = 0; i < host->num_slots; i++) {
+>>>                 ret = dw_mci_init_slot(host, i);
+>>> @@ -2262,20 +2277,6 @@ int dw_mci_probe(struct dw_mci *host)
+>>>         else
+>>>                 host->data_offset = DATA_240A_OFFSET;
+>>>
+>>> -       /*
+>>> -        * Enable interrupts for command done, data over, data empty, card det,
+>>> -        * receive ready and error such as transmit, receive timeout, crc error
+>>> -        */
+>>> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
+>>> -       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
+>>> -                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
+>>> -                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
+>>> -       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
+>>> interrupt */
+>>> -
+>>> -       dev_info(host->dev, "DW MMC controller at irq %d, "
+>>> -                "%d bit host data width, "
+>>> -                "%u deep fifo\n",
+>>> -                host->irq, width, fifo_size);
+>>>         if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
+>>>                 dev_info(host->dev, "Internal DMAC interrupt fix enabled.\n");
+>>>
+>>> --
+>>> 1.7.9.5
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>>> --
+>>> James Hogan
+>>>
+>>
