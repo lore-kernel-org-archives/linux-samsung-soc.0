@@ -1,59 +1,66 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 2/2] i2c: s3c2410: Get the i2c bus number from alias id
-Date: Tue, 20 Nov 2012 14:27:04 -0800
-Message-ID: <1353450428-2615-2-git-send-email-dianders@chromium.org>
-References: <1353450428-2615-1-git-send-email-dianders@chromium.org>
+Subject: [PATCH] ARM: exynos: add UART3 to DEBUG_LL ports
+Date: Tue, 20 Nov 2012 14:48:58 -0800
+Message-ID: <1353451739-6317-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f202.google.com ([209.85.212.202]:37966 "EHLO
-	mail-wi0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752257Ab2KTW2K (ORCPT
+Received: from mail-qa0-f74.google.com ([209.85.216.74]:45919 "EHLO
+	mail-qa0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751855Ab2KTWtb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 17:28:10 -0500
-Received: by mail-wi0-f202.google.com with SMTP id cb5so100582wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 14:28:09 -0800 (PST)
-In-Reply-To: <1353450428-2615-1-git-send-email-dianders@chromium.org>
+	Tue, 20 Nov 2012 17:49:31 -0500
+Received: by mail-qa0-f74.google.com with SMTP id g40so201219qab.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 14:49:31 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, Doug Anderson <dianders@chromium.org>, Ben Dooks <ben-linux@fluff.org>, Wolfram Sang <w.sang@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-From: Padmavathi Venna <padma.v@samsung.com>
+From: Olof Johansson <olof@lixom.net>
 
-Get the i2c bus number that the device is connected to using the alias
-id.  This makes debugging / grokking of kernel messages much easier.
+UART3 is used for debugging on exynos5250-snow.
 
-[dianders: slight patch cleanup from Padmavathi's original.]
+[dianders: cleaned commit message.]
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Doug Anderson <dianders@chromium.org>
----
- drivers/i2c/busses/i2c-s3c2410.c |   10 +++++++++-
- 1 files changed, 9 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 3e0335f..ca43590 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -899,11 +899,19 @@ static void
- s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
- {
- 	struct s3c2410_platform_i2c *pdata = i2c->pdata;
-+	int id;
+---
+ arch/arm/Kconfig.debug        |   11 +++++++++++
+ arch/arm/plat-samsung/Kconfig |    1 +
+ 2 files changed, 12 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 33a8930..35ba7dc 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -355,6 +355,17 @@ choice
+ 		  The uncompressor code port configuration is now handled
+ 		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
  
- 	if (!np)
- 		return;
++	config DEBUG_S3C_UART3
++		depends on PLAT_SAMSUNG
++		bool "Use S3C UART 3 for low-level debug"
++		help
++		  Say Y here if you want the debug print routines to direct
++		  their output to UART 3. The port must have been initialised
++		  by the boot-loader before use.
++
++		  The uncompressor code port configuration is now handled
++		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
++
+ 	config DEBUG_SOCFPGA_UART
+ 		depends on ARCH_SOCFPGA
+ 		bool "Use SOCFPGA UART for low-level debug"
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 59401e1..d342ed0 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -502,5 +502,6 @@ config DEBUG_S3C_UART
+ 	default "0" if DEBUG_S3C_UART0
+ 	default "1" if DEBUG_S3C_UART1
+ 	default "2" if DEBUG_S3C_UART2
++	default "3" if DEBUG_S3C_UART3
  
--	pdata->bus_num = -1; /* i2c bus number is dynamically assigned */
-+	id = of_alias_get_id(np, "i2c");
-+	if (id < 0) {
-+		dev_warn(i2c->dev, "failed to get alias id:%d\n", id);
-+		pdata->bus_num = -1;
-+	} else {
-+		/* i2c bus number is statically assigned from alias */
-+		pdata->bus_num = id;
-+	}
- 	of_property_read_u32(np, "samsung,i2c-sda-delay", &pdata->sda_delay);
- 	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
- 	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
+ endif
 -- 
 1.7.7.3
