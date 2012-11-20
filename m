@@ -1,55 +1,54 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: EXYNOS: Add support for ORIGEN4QUAD board
-Date: Tue, 20 Nov 2012 13:38:39 +0900
-Message-ID: <0b6801cdc6d8$e98c1600$bca44200$@org>
-References: <1353345846-31355-1-git-send-email-kh.choi@insignal.co.kr>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/4] i2c-s3c2410: use exponential back off while
+ polling for bus idle
+Date: Tue, 20 Nov 2012 04:49:00 +0000
+Message-ID: <20121120044859.GA10154@sirena.org.uk>
+References: <1352981613-2098-1-git-send-email-ch.naveen@samsung.com>
+ <1352981613-2098-4-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11328 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751428Ab2KTEil (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:47579 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751428Ab2KTEtI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Nov 2012 23:38:41 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDR004LSRIY84F0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 13:38:39 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDR003WHRKFK830@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 13:38:39 +0900 (KST)
-In-reply-to: <1353345846-31355-1-git-send-email-kh.choi@insignal.co.kr>
-Content-language: ko
+	Mon, 19 Nov 2012 23:49:08 -0500
+Content-Disposition: inline
+In-Reply-To: <1352981613-2098-4-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: chlrbgh0@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: jhkim@insignal.co.kr, 'Kyuho Choi' <kh.choi@insignal.co.kr>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com, khali@linux-fr.org, w.sang@pengutronix.de, naveenkrishna.ch@gmail.com, djkurtz@chromium.org
 
-chlrbgh0@gmail.com wrote:
-> 
-> From: Kyuho Choi <kh.choi@insignal.co.kr>
-> 
-> This patch add support for Insignal ORIGEN4QUAD board.
-> ORIGEN4QUAD board based on Samsung Exynos4412 SoC.
-> 
-> Signed-off-by: Kyuho Choi <kh.choi@insignal.co.kr>
-> ---
->  arch/arm/mach-exynos/Kconfig       |    1 +
->  arch/arm/mach-exynos/mach-origen.c |   74
-+++++++++++++++++++++++++++-----
-> ---
->  2 files changed, 58 insertions(+), 17 deletions(-)
-> 
-Hmm...at this moment, I don't want to update non-DT stuff for exynos,
-because I have a plan to move on supporting only DT for all of exynos next
-time.
+On Thu, Nov 15, 2012 at 05:43:32PM +0530, Naveen Krishna Chatradhi wrote:
 
-Please submit DT patches for the ORIGEN4QUAD board.
+> +	iicstat = readl(i2c->regs + S3C2410_IICSTAT);
+> +	delay = 1;
+> +	while ((iicstat & S3C2410_IICSTAT_START) &&
+> +	       ktime_us_delta(now, start) < S3C2410_IDLE_TIMEOUT) {
+> +		usleep_range(delay, 2 * delay);
+> +		if (delay < S3C2410_IDLE_TIMEOUT / 10)
+> +			delay <<= 1;
+> +		now = ktime_get();
+> +		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
+> +	}
 
-Thanks.
+> -	/* first, try busy waiting briefly */
+> -	do {
+> -		cpu_relax();
+> -		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
+> -	} while ((iicstat & S3C2410_IICSTAT_START) && --spins);
 
-K-Gene <kgene@kernel.org>
+On the hardware I was using when I wrote the original code here we were
+hitting 1-2 spins often enough to be interesting - starting off with a
+direct busy wait was definitely useful when doing large batches of I/O,
+especially compared to sleeps which might cause us to schedule.
+
+> -	/* if that timed out sleep */
+> -	if (!spins) {
+> -		msleep(1);
+> -		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
+> -	}
+
+It seems like it'd be better to do the exponential backoff bit here
+instead of removing the busy wait completely.
