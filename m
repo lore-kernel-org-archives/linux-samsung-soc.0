@@ -1,159 +1,78 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt before calling
- mmc_start_host
-Date: Tue, 20 Nov 2012 09:39:43 +0000
-Message-ID: <50AB4FDF.7080602@imgtec.com>
-References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com> <CAAG0J9_ngZm7uGopaW6rdBUDQZhQWqt6gd=y1i5BifsGrZg-hg@mail.gmail.com> <50AA322A.1060604@imgtec.com> <CAKuRcOLfaX=fNML9RYdOyD3AFRdaaAipQDXo-SHapGkNVwzH2Q@mail.gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH] ARM: Exynos5: Remove i2c0 resource information and setting
+ of device names
+Date: Tue, 20 Nov 2012 18:45:03 +0900
+Message-ID: <0c4d01cdc703$b7431ab0$25c95010$@org>
+References: <1353071486-29905-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from multi.imgtec.com ([194.200.65.239]:52677 "EHLO multi.imgtec.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751817Ab2KTJlK (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:10040 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751799Ab2KTJpM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 04:41:10 -0500
-In-Reply-To: <CAKuRcOLfaX=fNML9RYdOyD3AFRdaaAipQDXo-SHapGkNVwzH2Q@mail.gmail.com>
+	Tue, 20 Nov 2012 04:45:12 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDS003TR5R11NU0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 18:45:03 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDS00IT95R33810@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 18:45:03 +0900 (KST)
+In-reply-to: <1353071486-29905-1-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "Chris Ball (laptop.org)" <cjb@laptop.org>, Will <will.newton@imgtec.com>, kgene.kim@samsung.com, "Girish K S (Linaro)" <girish.shivananjappa@linaro.org>, "Thomas Abraham (Linaro)" <thomas.abraham@linaro.org>, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-Hi Yuvaraj,
-
-On 20/11/12 05:35, Yuvaraj Kumar wrote:
-> Its not sufficient.In my case, sdio_reset command was submitted to
-> dw_mmc controller before interrupts are enabled.
-> By looking at your log,it seems something wrong with frequency set by
-> your U-boot.
-
-I'm not using U-boot, I'm booting with JTAG. In any case it works if I
-revert your patch so I think the clocks are fine. I'll continue
-debugging it and see if I can figure out what's happening.
-
-Cheers
-James
-
+Thomas Abraham wrote:
 > 
-> Best Regards
-> Yuvaraj
+> All Exynos5 based platforms support only device tree based boot and so the
+> unused non-dt code that sets i2c0 resource information and device names
+> for
+> sdhci and i2c platform devices are removed.
 > 
-> On Mon, Nov 19, 2012 at 6:50 PM, James Hogan <james.hogan@imgtec.com> wrote:
->> On 19/11/12 13:01, Yuvaraj CD wrote:
->>> As mmc_start_host is getting called before enabling the dw_mmc controller
->>> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
->>> very first command sent by the sdio_reset.
->>> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
->>> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
->>>
->>> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
->>
->> Hi Yuvaraj,
->>
->> I get the following errors after this patch is applied
->> (2da1d7f2948900cd50d38643db39f790edb3cc96, merged in v3.7-rc5) and the
->> driver doesn't work as a result. Reverting it fixes the problem.
->>
->> mmc0: error -110 whilst initialising SD card
->> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
->> mmc0: error -110 whilst initialising SD card
->> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
->> mmc0: error -110 whilst initialising SD card
->> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
->> mmc0: error -110 whilst initialising SD card
->> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 400000Hz, actual 399360HZ div = 125)
->> mmc0: error -110 whilst initialising SD card
->> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
->> mmc0: error -110 whilst initialising SD card
->> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
->> mmc0: error -110 whilst initialising SD card
->> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
->> mmc0: error -110 whilst initialising SD card
->>
->> The interrupts are already cleared and disabled at the beginning of the
->> probe function, so is the following sufficient (after reverting your
->> patch) to fix the problem you've been observing?
->>
->> Thanks
->> James
->>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index ec9b5a8..2be9899 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -2266,7 +2266,6 @@ int dw_mci_probe(struct dw_mci *host)
->>          * Enable interrupts for command done, data over, data empty, card det,
->>          * receive ready and error such as transmit, receive timeout, crc error
->>          */
->> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->>         mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->>                    SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->>                    DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->>
->>
->>> ---
->>>  drivers/mmc/host/dw_mmc.c |   29 +++++++++++++++--------------
->>>  1 file changed, 15 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>> index a23af77..729c031 100644
->>> --- a/drivers/mmc/host/dw_mmc.c
->>> +++ b/drivers/mmc/host/dw_mmc.c
->>> @@ -2233,6 +2233,21 @@ int dw_mci_probe(struct dw_mci *host)
->>>         else
->>>                 host->num_slots = ((mci_readl(host, HCON) >> 1) & 0x1F) + 1;
->>>
->>> +       /*
->>> +        * Enable interrupts for command done, data over, data empty, card det,
->>> +        * receive ready and error such as transmit, receive timeout, crc error
->>> +        */
->>> +       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->>> +       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->>> +                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->>> +                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->>> +       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
->>> interrupt */
->>> +
->>> +       dev_info(host->dev, "DW MMC controller at irq %d, "
->>> +                "%d bit host data width, "
->>> +                "%u deep fifo\n",
->>> +                host->irq, width, fifo_size);
->>> +
->>>         /* We need at least one slot to succeed */
->>>         for (i = 0; i < host->num_slots; i++) {
->>>                 ret = dw_mci_init_slot(host, i);
->>> @@ -2262,20 +2277,6 @@ int dw_mci_probe(struct dw_mci *host)
->>>         else
->>>                 host->data_offset = DATA_240A_OFFSET;
->>>
->>> -       /*
->>> -        * Enable interrupts for command done, data over, data empty, card det,
->>> -        * receive ready and error such as transmit, receive timeout, crc error
->>> -        */
->>> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->>> -       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->>> -                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->>> -                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->>> -       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
->>> interrupt */
->>> -
->>> -       dev_info(host->dev, "DW MMC controller at irq %d, "
->>> -                "%d bit host data width, "
->>> -                "%u deep fifo\n",
->>> -                host->irq, width, fifo_size);
->>>         if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
->>>                 dev_info(host->dev, "Internal DMAC interrupt fix enabled.\n");
->>>
->>> --
->>> 1.7.9.5
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
->>> --
->>> James Hogan
->>>
->>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  arch/arm/mach-exynos/common.c |   17 -----------------
+>  1 files changed, 0 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index d067ce7..1efcc6f 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -336,23 +336,6 @@ static void __init exynos4_map_io(void)
+>  static void __init exynos5_map_io(void)
+>  {
+>  	iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
+> -
+> -	s3c_device_i2c0.resource[0].start = EXYNOS5_PA_IIC(0);
+> -	s3c_device_i2c0.resource[0].end   = EXYNOS5_PA_IIC(0) + SZ_4K - 1;
+> -	s3c_device_i2c0.resource[1].start = EXYNOS5_IRQ_IIC;
+> -	s3c_device_i2c0.resource[1].end   = EXYNOS5_IRQ_IIC;
+> -
+> -	s3c_sdhci_setname(0, "exynos4-sdhci");
+> -	s3c_sdhci_setname(1, "exynos4-sdhci");
+> -	s3c_sdhci_setname(2, "exynos4-sdhci");
+> -	s3c_sdhci_setname(3, "exynos4-sdhci");
+> -
+> -	/* The I2C bus controllers are directly compatible with s3c2440 */
+> -	s3c_i2c0_setname("s3c2440-i2c");
+> -	s3c_i2c1_setname("s3c2440-i2c");
+> -	s3c_i2c2_setname("s3c2440-i2c");
+> -
+> -	s3c64xx_spi_setname("exynos4210-spi");
+>  }
+> 
+>  static void __init exynos4_init_clocks(int xtal)
+> --
+> 1.6.6.rc2
+
+Applied, thanks.
+
+K-Gene <kgene@kernel.org>
