@@ -1,30 +1,121 @@
-From: David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH 270/493] arm: remove use of __devinit
-Date: Tue, 20 Nov 2012 09:04:18 -0800
-Message-ID: <20121120170418.GD21706@codeaurora.org>
-References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
- <1353349642-3677-270-git-send-email-wfp5p@virginia.edu>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1353349642-3677-270-git-send-email-wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bill Pemberton <wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Walker <dwalker-zu3NM2574RrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bryanh-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 1/2] ARM: dts: exynos: Move the dwmmc aliases from smdk5250 dts to exynos
+Date: Tue, 20 Nov 2012 09:22:30 -0800
+Message-ID: <1353432158-22999-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Olof Johansson <olofj@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Russell King <linux@arm.linux.org.uk>, Rahul Sharma <rahul.sharma@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 19, 2012 at 01:23:39PM -0500, Bill Pemberton wrote:
-> CONFIG_HOTPLUG is going away as an option so __devinit is no longer
-> needed.
-> 
-> Signed-off-by: Bill Pemberton <wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>
-> ---
->  arch/arm/mach-msm/proc_comm.c                |  2 +-
->  arch/arm/mach-msm/smd.c                      |  2 +-
+The aliases for dwmmc were placed in the SMDK5250 dts file but really
+should be common for all exynos5250 boards.  Move it to the common CPU
+file.
 
-Acked-by: David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
 
+---
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   12 ++++--------
+ arch/arm/boot/dts/exynos5250.dtsi         |   12 ++++++++----
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 405009c..541fe39 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -17,10 +17,6 @@
+ 	compatible = "samsung,smdk5250", "samsung,exynos5250";
+ 
+ 	aliases {
+-		mshc0 = &dwmmc_0;
+-		mshc1 = &dwmmc_1;
+-		mshc2 = &dwmmc_2;
+-		mshc3 = &dwmmc_3;
+ 	};
+ 
+ 	memory {
+@@ -97,7 +93,7 @@
+ 		};
+ 	};
+ 
+-	dwmmc_0: dwmmc0@12200000 {
++	dwmmc0@12200000 {
+ 		num-slots = <1>;
+ 		supports-highspeed;
+ 		broken-cd;
+@@ -118,11 +114,11 @@
+ 		};
+ 	};
+ 
+-	dwmmc_1: dwmmc1@12210000 {
++	dwmmc1@12210000 {
+ 		status = "disabled";
+ 	};
+ 
+-	dwmmc_2: dwmmc2@12220000 {
++	dwmmc2@12220000 {
+ 		num-slots = <1>;
+ 		supports-highspeed;
+ 		fifo-depth = <0x80>;
+@@ -143,7 +139,7 @@
+ 		};
+ 	};
+ 
+-	dwmmc_3: dwmmc3@12230000 {
++	dwmmc3@12230000 {
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index cf6a02d..7c5664b 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -31,6 +31,10 @@
+ 		gsc1 = &gsc_1;
+ 		gsc2 = &gsc_2;
+ 		gsc3 = &gsc_3;
++		mshc0 = &dwmmc_0;
++		mshc1 = &dwmmc_1;
++		mshc2 = &dwmmc_2;
++		mshc3 = &dwmmc_3;
+ 	};
+ 
+ 	gic:interrupt-controller@10481000 {
+@@ -206,7 +210,7 @@
+ 		#size-cells = <0>;
+ 	};
+ 
+-	dwmmc0@12200000 {
++	dwmmc_0: dwmmc0@12200000 {
+ 		compatible = "samsung,exynos5250-dw-mshc";
+ 		reg = <0x12200000 0x1000>;
+ 		interrupts = <0 75 0>;
+@@ -214,7 +218,7 @@
+ 		#size-cells = <0>;
+ 	};
+ 
+-	dwmmc1@12210000 {
++	dwmmc_1: dwmmc1@12210000 {
+ 		compatible = "samsung,exynos5250-dw-mshc";
+ 		reg = <0x12210000 0x1000>;
+ 		interrupts = <0 76 0>;
+@@ -222,7 +226,7 @@
+ 		#size-cells = <0>;
+ 	};
+ 
+-	dwmmc2@12220000 {
++	dwmmc_2: dwmmc2@12220000 {
+ 		compatible = "samsung,exynos5250-dw-mshc";
+ 		reg = <0x12220000 0x1000>;
+ 		interrupts = <0 77 0>;
+@@ -230,7 +234,7 @@
+ 		#size-cells = <0>;
+ 	};
+ 
+-	dwmmc3@12230000 {
++	dwmmc_3: dwmmc3@12230000 {
+ 		compatible = "samsung,exynos5250-dw-mshc";
+ 		reg = <0x12230000 0x1000>;
+ 		interrupts = <0 78 0>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
+1.7.7.3
