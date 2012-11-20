@@ -1,86 +1,59 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 2/6] ARM: EXYNOS5: DT Support for SATA and SATA PHY
-Date: Tue, 20 Nov 2012 21:46:46 +0900
-Message-ID: <0cb001cdc71d$19e59df0$4db0d9d0$%kim@samsung.com>
-References: <1351612897-14923-1-git-send-email-vasanthananthan@gmail.com>
- <1351612897-14923-3-git-send-email-vasanthananthan@gmail.com>
+From: Peter Korsgaard <jacmet@sunsite.dk>
+Subject: Re: [PATCH 119/493] usb: remove use of __devexit_p
+Date: Tue, 20 Nov 2012 15:02:04 +0100
+Message-ID: <87r4nojrtv.fsf@dell.be.48ers.dk>
+References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
+	<1353349642-3677-119-git-send-email-wfp5p@virginia.edu>
+	<50AB4D90.4080907@atmel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:65327 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753467Ab2KTMqs (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:60573 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752263Ab2KTOCJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 07:46:48 -0500
-In-reply-to: 
-Content-language: ko
+	Tue, 20 Nov 2012 09:02:09 -0500
+In-Reply-To: <50AB4D90.4080907@atmel.com> (Nicolas Ferre's message of "Tue, 20
+	Nov 2012 10:29:52 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Vasanth Ananthan' <vasanthananthan@gmail.com>, jgarzik@pobox.com, linux@arm.linux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, 'Vasanth Ananthan' <vasanth.a@samsung.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Bill Pemberton <wfp5p@virginia.edu>, gregkh@linuxfoundation.org, Kukjin Kim <kgene.kim@samsung.com>, Wan ZongShun <mcuos.com@gmail.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Ben Dooks <ben-linux@fluff.org>, Li Yang <leoli@freescale.com>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 
-Kukjin Kim wrote:
-> 
-> Vasanth Ananthan wrote:
-> >
-> > This patch adds Device Nodes for SATA and SATA PHY device.
-> >
-> 
-> [...]
-> 
-> > @@ -188,6 +188,9 @@
-> >  #define EXYNOS4_PA_SATA			0x12560000
-> >  #define EXYNOS4_PA_SATAPHY		0x125D0000
-> >  #define EXYNOS4_PA_SATAPHY_CTRL		0x126B0000
-> > +#define EXYNOS5_PA_SATA_PHY_CTRL	0x12170000
-> > +#define EXYNOS5_PA_SATA_PHY_I2C		0x121D0000
-> > +#define EXYNOS5_PA_SATA_BASE		0x122F0000
-> >
-> >  #define EXYNOS4_PA_SROMC		0x12570000
-> >  #define EXYNOS5_PA_SROMC		0x12250000
-> > diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-
-> > exynos/mach-exynos5-dt.c
-> > index db1cd8e..7dbd4cc 100644
-> > --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> > +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> > @@ -61,6 +61,12 @@ static const struct of_dev_auxdata
-> > exynos5250_auxdata_lookup[] __initconst = {
-> >  				"exynos4210-spi.1", NULL),
-> >  	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI2,
-> >  				"exynos4210-spi.2", NULL),
-> > +	OF_DEV_AUXDATA("samsung,exynos5-sata-ahci", EXYNOS5_PA_SATA_BASE,
-> > +				"exynos5-sata", NULL),
-> > +	OF_DEV_AUXDATA("samsung,exynos5-sata-phy", EXYNOS5_PA_SATA_PHY_CTRL,
-> > +				"exynos5-sata-phy", NULL),
-> > +	OF_DEV_AUXDATA("samsung,exynos5-sata-phy-i2c",
-> > EXYNOS5_PA_SATA_PHY_I2C,
-> > +				"exynos5-sata-phy-i2c", NULL),
-> >  	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
-> >  	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
-> >  	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-> > --
-> > 1.7.4.1
-> 
-> Just following is enough? Because we don't need the definitions only for
-> here...
-> 
-> 8<-------
-> +	OF_DEV_AUXDATA("samsung,exynos5-sata-ahci", 0x122F0000,
-> +				"exynos5-sata", NULL),
-> +	OF_DEV_AUXDATA("samsung,exynos5-sata-phy", 0x126B0000,
-> +				"exynos5-sata-phy", NULL),
-> +	OF_DEV_AUXDATA("samsung,exynos5-sata-phy-i2c", 0x121D0000,
-> +				"exynos5-sata-phy-i2c", NULL),
-> 8<-------
-> 
+>>>>> "Nicolas" == Nicolas Ferre <nicolas.ferre@atmel.com> writes:
 
-Applied with above changes.
+ Nicolas> On 11/19/2012 07:21 PM, Bill Pemberton :
+ >> CONFIG_HOTPLUG is going away as an option so __devexit_p is no longer
+ >> needed.
+ >> 
+ >> Signed-off-by: Bill Pemberton <wfp5p@virginia.edu>
+ >> Cc: Peter Korsgaard <jacmet@sunsite.dk> 
+ >> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com> 
+ >> Cc: Felipe Balbi <balbi@ti.com> 
+ >> Cc: Li Yang <leoli@freescale.com> 
+ >> Cc: Alan Stern <stern@rowland.harvard.edu> 
+ >> Cc: Wan ZongShun <mcuos.com@gmail.com> 
+ >> Cc: Ben Dooks <ben-linux@fluff.org> 
+ >> Cc: Kukjin Kim <kgene.kim@samsung.com> 
+ >> Cc: linux-usb@vger.kernel.org 
+ >> Cc: linux-omap@vger.kernel.org 
+ >> Cc: linuxppc-dev@lists.ozlabs.org 
+ >> Cc: linux-arm-kernel@lists.infradead.org 
+ >> Cc: linux-samsung-soc@vger.kernel.org 
 
-Thanks.
+ Nicolas> [..]
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+ >> drivers/usb/host/ehci-atmel.c        | 2 +-
+
+ >> drivers/usb/host/ohci-at91.c         | 2 +-
+
+ Nicolas> For Atmel:
+
+ Nicolas> Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+
+For c67x00 and g_hid:
+
+Acked-by: Peter Korsgaard <jacmet@sunsite.dk>
+
+-- 
+Bye, Peter Korsgaard
