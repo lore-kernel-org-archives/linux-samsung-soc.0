@@ -1,72 +1,65 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v3] ARM: S3C24XX: Add WIZnet W5300E01-ARM board support
-Date: Tue, 20 Nov 2012 13:54:01 +0900
-Message-ID: <0b6f01cdc6db$0ed72290$2c8567b0$@org>
-References: <1346653236-19728-1-git-send-email-kth3321@gmail.com>
- <1346905640.2573.14.camel@taehun-desktop>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: S3C24XX: Fix potential NULL pointer dereference error
+Date: Tue, 20 Nov 2012 10:28:25 +0530
+Message-ID: <CAK9yfHyJ1r7KeNHfUAnNhZRBaV+_grjr=pP6r3a7yHoeWywt9A@mail.gmail.com>
+References: <1352365291-32433-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:13825 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750770Ab2KTEyD (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:48646 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751428Ab2KTE60 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Nov 2012 23:54:03 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDR003HUS6I1NG0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 13:54:01 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDR002LPSA1MJ00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Nov 2012 13:54:01 +0900 (KST)
-In-reply-to: 
-Content-language: ko
+	Mon, 19 Nov 2012 23:58:26 -0500
+Received: by mail-vc0-f174.google.com with SMTP id m18so1999160vcm.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Nov 2012 20:58:26 -0800 (PST)
+In-Reply-To: <1352365291-32433-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Taehun Kim' <kth3321@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sylvester.nawrocki@gmail.com
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Kukjin Kim wrote:
-> 
-> Taehun Kim wrote:
-> >
-> > - The gpio routines are changed to use the gpio_request() functions from
-> >   comments of Vasily and Sylwester.
-> > - The mistake of adding a character by my email client automatically is
-> > fixed.
-> >
-> > Please review this patch and apply it if do not have any problems.
-> >
-> 
-> Taehun,
-> 
-> Above area is for adding comments like 'This patch adds WIZnet W5300E01
-> board' because it will be remained in its git log and nobody want to see
-> your old request in there. If any comments which are not related to
-> changes just put it after '---' around your sign. It doesn't hurt your
-> patch.
-> 
-> And you need to update this against on for-next of my tree because some
-> S3C2410 gpio APIs have been gone.(See the Sylwester's comments) Please re-
-> send this.
-> 
-Any updates on this?
+ping Kukjin.
 
-K-Gene <kgene@kernel.org>
+On 8 November 2012 14:31, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> chan->end is tested for being NULL. However in the event that it is NULL, the
+> subsequent assignment statement would lead to NULL pointer dereference.
+> Thus dereferencing it only when it is not NULL.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+> Based on Kukjin Kim's for-next branch. Compile tested.
+> ---
+>  arch/arm/plat-s3c24xx/dma.c |    9 +++++----
+>  1 files changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+> index db98e70..0abd1c4 100644
+> --- a/arch/arm/plat-s3c24xx/dma.c
+> +++ b/arch/arm/plat-s3c24xx/dma.c
+> @@ -473,12 +473,13 @@ int s3c2410_dma_enqueue(enum dma_ch channel, void *id,
+>                 pr_debug("dma%d: %s: buffer %p queued onto non-empty channel\n",
+>                          chan->number, __func__, buf);
+>
+> -               if (chan->end == NULL)
+> +               if (chan->end == NULL) {
+>                         pr_debug("dma%d: %s: %p not empty, and chan->end==NULL?\n",
+>                                  chan->number, __func__, chan);
+> -
+> -               chan->end->next = buf;
+> -               chan->end = buf;
+> +               } else {
+> +                       chan->end->next = buf;
+> +                       chan->end = buf;
+> +               }
+>         }
+>
+>         /* if necessary, update the next buffer field */
+> --
+> 1.7.4.1
+>
 
-> 
-> 
-> > Signed-off-by: Taehun Kim <kth3321@gmail.com>
-> > ---
-> >  arch/arm/mach-s3c24xx/Kconfig         |    5 +
-> >  arch/arm/mach-s3c24xx/Makefile        |    1 +
-> >  arch/arm/mach-s3c24xx/mach-w5300e01.c |  193
-> > +++++++++++++++++++++++++++++++++
-> >  3 files changed, 199 insertions(+)
-> >  create mode 100644 arch/arm/mach-s3c24xx/mach-w5300e01.c
-> >
-> [snip]
+
+
+-- 
+With warm regards,
+Sachin
