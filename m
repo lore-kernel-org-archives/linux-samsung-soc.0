@@ -1,60 +1,45 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Remove unused variables
-Date: Tue, 20 Nov 2012 10:33:32 +0530
-Message-ID: <1353387812-20001-1-git-send-email-tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Remove unused variables
+Date: Tue, 20 Nov 2012 10:58:02 +0530
+Message-ID: <50AB14E2.7060506@linaro.org>
+References: <1353387812-20001-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:50160 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750746Ab2KTFJl (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:51523 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770Ab2KTF1d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 00:09:41 -0500
-Received: by mail-pb0-f46.google.com with SMTP id wy7so3995004pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Nov 2012 21:09:40 -0800 (PST)
+	Tue, 20 Nov 2012 00:27:33 -0500
+Received: by mail-pa0-f46.google.com with SMTP id bh2so985149pad.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Nov 2012 21:27:32 -0800 (PST)
+In-Reply-To: <1353387812-20001-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, patches@linaro.org
 
-=46ixes following compilation warnings.
+On 11/20/2012 10:33 AM, Tushar Behera wrote:
+> Fixes following compilation warnings.
+>=20
+> arch/arm/mach-exynos/common.c: In function =91exynos5_init_irq=92:
+> arch/arm/mach-exynos/common.c:661:6: warning: unused variable
+> =91irq=92 [-Wunused-variable]
+> arch/arm/mach-exynos/common.c: In function =91exynos_init_irq_eint=92=
+:
+> arch/arm/mach-exynos/common.c:1046:15: warning: unused variable
+> =91paddr=92 [-Wunused-variable]
+>=20
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+>  arch/arm/mach-exynos/common.c |    2 --
+>  1 files changed, 0 insertions(+), 2 deletions(-)
+>=20
+Please ignore this patch. It was based on some other patchset which is
+not yet in mainline.
 
-arch/arm/mach-exynos/common.c: In function =E2=80=98exynos5_init_irq=E2=
-=80=99:
-arch/arm/mach-exynos/common.c:661:6: warning: unused variable
-=E2=80=98irq=E2=80=99 [-Wunused-variable]
-arch/arm/mach-exynos/common.c: In function =E2=80=98exynos_init_irq_ein=
-t=E2=80=99:
-arch/arm/mach-exynos/common.c:1046:15: warning: unused variable
-=E2=80=98paddr=E2=80=99 [-Wunused-variable]
+Apologies.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/mach-exynos/common.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/commo=
-n.c
-index 9027f55..ef4f1b0 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -658,7 +658,6 @@ void __init exynos4_init_irq(void)
-=20
- void __init exynos5_init_irq(void)
- {
--	int irq;
- 	struct device_node *np;
-=20
- #ifdef CONFIG_OF
-@@ -1043,7 +1042,6 @@ static int __init exynos_init_irq_eint(struct dev=
-ice_node *np,
- 					struct device_node *parent)
- {
- 	int irq, *src_int, irq_base, irq_eint;
--	unsigned int paddr;
-=20
- #ifdef CONFIG_PINCTRL_SAMSUNG
- 	/*
 --=20
-1.7.4.1
+Tushar Behera
