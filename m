@@ -1,26 +1,51 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH 159/493] usb: remove use of __devinit
-Date: Tue, 20 Nov 2012 16:44:13 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1211201642540.1692-100000@iolanthe.rowland.org>
-References: <1353349642-3677-159-git-send-email-wfp5p@virginia.edu>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1353349642-3677-159-git-send-email-wfp5p@virginia.edu>
-Sender: linux-omap-owner@vger.kernel.org
-To: Bill Pemberton <wfp5p@virginia.edu>
-Cc: gregkh@linuxfoundation.org, Peter Korsgaard <jacmet@sunsite.dk>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Felipe Balbi <balbi@ti.com>, Li Yang <leoli@freescale.com>, Geoff Levand <geoff@infradead.org>, Wan ZongShun <mcuos.com@gmail.com>, Olav Kongas <ok@artecdesign.ee>, Lennert Buytenhek <kernel@wantstofly.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, cbe-oss-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] ARM: exynos: dt: add all i2c busses to auxdata
+Date: Tue, 20 Nov 2012 14:22:35 -0800
+Message-ID: <1353450155-1663-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f202.google.com ([209.85.215.202]:41198 "EHLO
+	mail-ea0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752958Ab2KTWXQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Nov 2012 17:23:16 -0500
+Received: by mail-ea0-f202.google.com with SMTP id j12so107107eaa.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 14:23:15 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2012, Bill Pemberton wrote:
+From: Olof Johansson <olof@lixom.net>
 
-> CONFIG_HOTPLUG is going away as an option so __devinit is no longer
-> needed.
-> 
-> Signed-off-by: Bill Pemberton <wfp5p@virginia.edu>
+Needed to match device ids for clocks, etc.
 
-For all the __devinit* annotations and all the EHCI, OHCI, and UHCI 
-drivers:
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+---
+ arch/arm/mach-exynos/mach-exynos5-dt.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index ed37273..e1491f7 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -52,6 +52,16 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+ 				"s3c2440-i2c.1", NULL),
+ 	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(2),
+ 				"s3c2440-i2c.2", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(3),
++				"s3c2440-i2c.3", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(4),
++				"s3c2440-i2c.4", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(5),
++				"s3c2440-i2c.5", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(6),
++				"s3c2440-i2c.6", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(7),
++				"s3c2440-i2c.7", NULL),
+ 	OF_DEV_AUXDATA("samsung,s3c2440-hdmiphy-i2c", EXYNOS5_PA_IIC(8),
+ 				"s3c2440-hdmiphy-i2c", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI0,
+-- 
+1.7.7.3
