@@ -1,65 +1,103 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: dts: snow: Add board dts file for Snow board (ARM
- Chromebook)
-Date: Wed, 21 Nov 2012 07:57:11 +0900
-Message-ID: <0d5301cdc772$605a4420$210ecc60$%kim@samsung.com>
-References: <1353432158-22999-1-git-send-email-dianders@chromium.org>
- <1353432158-22999-2-git-send-email-dianders@chromium.org>
- <CAOesGMiGZHAw0zOZFZcYJ9YngbcMsTJrzhG+DQ5sP9Sq+CyzDQ@mail.gmail.com>
+From: Domenico Andreoli <cavokz@gmail.com>
+Subject: [PATCH] S3C24XX: Fix console baud rate guessing
+Date: Wed, 21 Nov 2012 01:43:09 +0100
+Message-ID: <20121121004309.GA29633@glitch>
+References: <k809hq$1q3$1@ger.gmane.org>
+ <20121114173453.GJ3290@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29005 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752883Ab2KTW5O (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:45950 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750818Ab2KUAnO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 17:57:14 -0500
-In-reply-to: <CAOesGMiGZHAw0zOZFZcYJ9YngbcMsTJrzhG+DQ5sP9Sq+CyzDQ@mail.gmail.com>
-Content-language: ko
+	Tue, 20 Nov 2012 19:43:14 -0500
+Received: by mail-ee0-f46.google.com with SMTP id e53so2020181eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 16:43:12 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20121114173453.GJ3290@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Doug Anderson' <dianders@chromium.org>
-Cc: linux-samsung-soc@vger.kernel.org, 'Olof Johansson' <olofj@chromium.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Rob Herring' <rob.herring@calxeda.com>, 'Josh Cartwright' <josh.cartwright@ni.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Arun Kumar K' <arun.kk@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: woody <narkewoody@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Olof Johansson wrote:
-> 
-> On Tue, Nov 20, 2012 at 9:22 AM, Doug Anderson <dianders@chromium.org>
-> wrote:
-> > This dts file is based on the Snow dts file in the Chromium OS kernel
-> > tree with the following changes:
-> > * Some details have been updated to match the exynos5250-smdk5250.dts
-> >   file from linux-next (as of
-> >   c11068538994430547722dc9fb515a0ceefd5cb9).
-> > * This file doesn't include references to hardware whose upstream
-> >   support isn't quite there yet.  That includes most i2c devices.
-> >   Note that most i2c busses have been included with no devices.
-> >
-> > The Snow dts file is mostly just an include of the "cros5250" dts file
-> > which describes a class of similar boards.  Support for other boards
-> > has not yet been send upstream.
-> >
-> > With this file and a change to use UART3 for serial output I can:
-> > * Boot to a command line using either SD or EMMC as a root filesystem
-> > * See the power button and lid switch using evtest.
-> >
-> > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> 
-> Acked-by: Olof Johansson <olof@lixom.net>
-> 
-> Kukjin, since your pull requests came in today, can you ack this and
-> I'll just apply it on top of your branches?
-> 
-Hi Olof, yeah, I sent pull-request but there are some patches for dt and
-exynos5440 stuff in my tree not sent yet. If you're ok, let me take this
-with your ack.
+From: Domenico Andreoli <domenico.andreoli@linux.com>
 
-Note, I will try to send out remained Samsung stuff before release -rc7 ;-)
+On Wed, Nov 14, 2012 at 05:34:53PM +0000, Russell King - ARM Linux wrote:
+> On Wed, Nov 14, 2012 at 10:23:55PM +0800, woody wrote:
+> > I just built a 3.2.x ARM kernel and tried to have it boot by a boot  
+> > loader (vivi) on my s3c2410a ARM board.  The kernel was built with  
+> > default configuration s3c2410.
+> 
+> I reported that S3C2410 is totally dead with 3.x kernels about a month
+> ago and got no response what so ever from anyone.  I guess S3C2410 is
+> just not cared for anymore.
+> 
+> When I get sufficient motivation, I'll try and track down what's going
+> wrong, but it means taking the old mailing list server (and now list
+> archive) offline for a while.
 
-Thanks.
+I found something also on my S3C2440. The board doesn't die but prints
+garbage on the console. Indeed the baud rate guessing is broken (it's ok
+if specified manually on the cmdline),
+	
+commit c3310fbbeb9db6967900ed22eb3d0bd0bb0e892c
+Author: Thomas Abraham <thomas.abraham@linaro.org>
+Date:   Mon Oct 24 11:47:57 2011 +0200
 
-Best regards,
-Kgene.
+    serial: samsung: remove all uses of get_clksrc and set_clksrc
+    
+    With clkdev based clock lookup support, the clock set and get operation
+    using clock names communicated between the samsung uart driver and the
+    SoC specific extension can be removed.
+    
+    In addition to that, for each platform specific extension, add the
+    default clock selection, number of clock options for uart baud generator,
+    clock selection bit mask and shift values which is required by the
+    clkdev support in samsung uart driver.
+    
+    The default clock selection value 'def_clk_sel' specifies the default clock
+    to be used as the source clock for baud rate generator in case the platform
+    code does not specify the same.
+    
+    Cc: Ben Dooks <ben-linux@fluff.org>
+    Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+
+To restore previous functionality I had to change the default UCON clock
+back to UCLK.
+
+Signed-off-by: Domenico Andreoli <domenico.andreoli@linux.com>
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 7f04717..316b703 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1572,7 +1572,7 @@ static struct s3c24xx_serial_drv_data s3c2440_serial_drv_data = {
+                .tx_fifofull    = S3C2440_UFSTAT_TXFULL,
+                .tx_fifomask    = S3C2440_UFSTAT_TXMASK,
+                .tx_fifoshift   = S3C2440_UFSTAT_TXSHIFT,
+-               .def_clk_sel    = S3C2410_UCON_CLKSEL2,
++               .def_clk_sel    = S3C2410_UCON_CLKSEL1,
+                .num_clks       = 4,
+                .clksel_mask    = S3C2412_UCON_CLKMASK,
+                .clksel_shift   = S3C2412_UCON_CLKSHIFT,
+
+
+
+
+
+The additional condition is that board file does not specify a 
+
+the clocks being properly configured. 
+
+ Something that doesn't happen if
+the baud rate is specified onthe command line.
+
+detection and goes unnoticed if you manually specify it on the cmdline
+(like I do).
+
+On my S3C2440 
+
+I've a few observation
