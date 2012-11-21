@@ -1,71 +1,85 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] cpufreq: exynos: Broadcast frequency change notifications
- for all cores
-Date: Wed, 21 Nov 2012 14:52:26 +0100
-Message-ID: <1758658.Qt0SyRnJmS@amdc1227>
-References: <1887364.fvxYYNb7Mm@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1887364.fvxYYNb7Mm@amdc1227>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] regulator: max8997: skip gpio dvs setup if not used
+Date: Wed, 21 Nov 2012 19:53:15 +0530
+Message-ID: <1353507795-3516-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 13 of November 2012 10:26:12 Tomasz Figa wrote:
-> On Exynos SoCs all cores share the same frequency setting, so changing
-> frequency of one core will affect rest of cores.
-> 
-> This patch modifies the exynos-cpufreq driver to inform cpufreq core
-> about this behavior and broadcast frequency change notifications for all
-> cores.
-> 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/cpufreq/exynos-cpufreq.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c
-> b/drivers/cpufreq/exynos-cpufreq.c index af2d81e..c0d54a8 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -100,7 +100,8 @@ static int exynos_target(struct cpufreq_policy
-> *policy, }
->  	arm_volt = volt_table[index];
-> 
-> -	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
-> +	for_each_cpu(freqs.cpu, policy->cpus)
-> +		cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
-> 
->  	/* When the new frequency is higher than current frequency */
->  	if ((freqs.new > freqs.old) && !safe_arm_volt) {
-> @@ -115,7 +116,8 @@ static int exynos_target(struct cpufreq_policy
-> *policy, if (freqs.new != freqs.old)
->  		exynos_info->set_freq(old_index, index);
-> 
-> -	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-> +	for_each_cpu(freqs.cpu, policy->cpus)
-> +		cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-> 
->  	/* When the new frequency is lower than current frequency */
->  	if ((freqs.new < freqs.old) ||
-> @@ -235,6 +237,7 @@ static int exynos_cpufreq_cpu_init(struct
-> cpufreq_policy *policy) cpumask_copy(policy->related_cpus,
-> cpu_possible_mask);
->  		cpumask_copy(policy->cpus, cpu_online_mask);
->  	} else {
-> +		policy->shared_type = CPUFREQ_SHARED_TYPE_ANY;
->  		cpumask_setall(policy->cpus);
->  	}
+If gpio based voltage selection for buck 1/2/5 are not used, then the execution
+of gpio dvs setup code during probe can be skipped completly.
 
-Ping.
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/regulator/max8997.c |   31 ++++++++++++++++++-------------
+ 1 files changed, 18 insertions(+), 13 deletions(-)
 
-Best regards,
+diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997.c
+index cea9ec9..e81a381 100644
+--- a/drivers/regulator/max8997.c
++++ b/drivers/regulator/max8997.c
+@@ -973,6 +973,10 @@ static int max8997_pmic_probe(struct platform_device *pdev)
+ 	memcpy(max8997->buck125_gpios, pdata->buck125_gpios, sizeof(int) * 3);
+ 	max8997->ignore_gpiodvs_side_effect = pdata->ignore_gpiodvs_side_effect;
+ 
++	if (!pdata->buck1_gpiodvs && !pdata->buck2_gpiodvs &&
++			!pdata->buck5_gpiodvs)
++		goto skip_gpiodvs;
++
+ 	for (i = 0; i < 8; i++) {
+ 		max8997->buck1_vol[i] = ret =
+ 			max8997_get_voltage_proper_val(
+@@ -1019,6 +1023,19 @@ static int max8997_pmic_probe(struct platform_device *pdev)
+ 				max_buck5, 0x3f);
+ 	}
+ 
++	/* Initialize all the DVS related BUCK registers */
++	for (i = 0; i < 8; i++) {
++		max8997_update_reg(i2c, MAX8997_REG_BUCK1DVS1 + i,
++				max8997->buck1_vol[i],
++				0x3f);
++		max8997_update_reg(i2c, MAX8997_REG_BUCK2DVS1 + i,
++				max8997->buck2_vol[i],
++				0x3f);
++		max8997_update_reg(i2c, MAX8997_REG_BUCK5DVS1 + i,
++				max8997->buck5_vol[i],
++				0x3f);
++	}
++
+ 	/*
+ 	 * If buck 1, 2, and 5 do not care DVS GPIO settings, ignore them.
+ 	 * If at least one of them cares, set gpios.
+@@ -1060,6 +1077,7 @@ static int max8997_pmic_probe(struct platform_device *pdev)
+ 				& 0x1); /* SET3 */
+ 	}
+ 
++skip_gpiodvs:
+ 	/* DVS-GPIO disabled */
+ 	max8997_update_reg(i2c, MAX8997_REG_BUCK1CTRL, (pdata->buck1_gpiodvs) ?
+ 			(1 << 1) : (0 << 1), 1 << 1);
+@@ -1068,19 +1086,6 @@ static int max8997_pmic_probe(struct platform_device *pdev)
+ 	max8997_update_reg(i2c, MAX8997_REG_BUCK5CTRL, (pdata->buck5_gpiodvs) ?
+ 			(1 << 1) : (0 << 1), 1 << 1);
+ 
+-	/* Initialize all the DVS related BUCK registers */
+-	for (i = 0; i < 8; i++) {
+-		max8997_update_reg(i2c, MAX8997_REG_BUCK1DVS1 + i,
+-				max8997->buck1_vol[i],
+-				0x3f);
+-		max8997_update_reg(i2c, MAX8997_REG_BUCK2DVS1 + i,
+-				max8997->buck2_vol[i],
+-				0x3f);
+-		max8997_update_reg(i2c, MAX8997_REG_BUCK5DVS1 + i,
+-				max8997->buck5_vol[i],
+-				0x3f);
+-	}
+-
+ 	/* Misc Settings */
+ 	max8997->ramp_delay = 10; /* set 10mV/us, which is the default */
+ 	max8997_write_reg(i2c, MAX8997_REG_BUCKRAMP, (0xf << 4) | 0x9);
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
-
+1.6.6.rc2
