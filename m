@@ -1,47 +1,36 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 2/2] i2c: pxa: Use i2c-core to get bus number now
-Date: Wed, 21 Nov 2012 10:26:02 -0800
-Message-ID: <1353522362-25519-3-git-send-email-dianders@chromium.org>
-References: <1353450428-2615-2-git-send-email-dianders@chromium.org>
- <1353522362-25519-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353522362-25519-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Haojian Zhuang <haojian.zhuang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/7] Samsung cleanup for v3.8
+Date: Wed, 21 Nov 2012 10:30:50 -0800
+Message-ID: <20121121183050.GA15213@quad.lixom.net>
+References: <50AB9C08.2080604@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:62621 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755509Ab2KUSay (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Nov 2012 13:30:54 -0500
+Received: by mail-pa0-f46.google.com with SMTP id bh2so2269806pad.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Nov 2012 10:30:54 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <50AB9C08.2080604@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The commit: "i2c-core: dt: Pick i2c bus number from i2c alias if
-present" adds support for automatically picking the bus number based
-on the alias ID.  Remove the now unnecessary code from i2c-pxa that
-did the same thing.
+On Wed, Nov 21, 2012 at 12:04:40AM +0900, Kukjin Kim wrote:
+> Hi Arnd, Olof
+> 
+> Please pull Samsung cleanup for v3.8 from:
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> next/cleanup-samsung-2
+> 
+> Most of them are just removing patches, if any problems, please let me know.
 
-Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- drivers/i2c/busses/i2c-pxa.c |    8 +-------
- 1 files changed, 1 insertions(+), 7 deletions(-)
+Pulled 1-7.
 
-diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
-index 1034d93..8ee9fa0 100644
---- a/drivers/i2c/busses/i2c-pxa.c
-+++ b/drivers/i2c/busses/i2c-pxa.c
-@@ -1053,16 +1053,10 @@ static int i2c_pxa_probe_dt(struct platform_device *pdev, struct pxa_i2c *i2c,
- 	struct device_node *np = pdev->dev.of_node;
- 	const struct of_device_id *of_id =
- 			of_match_device(i2c_pxa_dt_ids, &pdev->dev);
--	int ret;
- 
- 	if (!of_id)
- 		return 1;
--	ret = of_alias_get_id(np, "i2c");
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
--		return ret;
--	}
--	pdev->id = ret;
-+	pdev->id = -1;
- 	if (of_get_property(np, "mrvl,i2c-polling", NULL))
- 		i2c->use_pio = 1;
- 	if (of_get_property(np, "mrvl,i2c-fast-mode", NULL))
--- 
-1.7.7.3
+Thanks,
+
+-Olof
