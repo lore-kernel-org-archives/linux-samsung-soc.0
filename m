@@ -1,82 +1,62 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: exynos4: Use drive strength 3 for SD pins
-Date: Wed, 21 Nov 2012 21:10:42 +0900
-Message-ID: <0e7a01cdc7e1$3a83fd30$af8bf790$%kim@samsung.com>
-References: <21831256.UCkQ5RyKd5@amdc1227> <1961860.xzxk1Exu2U@amdc1227>
- <0c8201cdc70f$a430a260$ec91e720$%kim@samsung.com>
- <75197263.J0hoc8apCM@amdc1227>
+Subject: RE: [PATCH v3 RESEND 0/4] ARM: EXYNOS: Power domain DT support
+ extension
+Date: Wed, 21 Nov 2012 21:15:43 +0900
+Message-ID: <0e7b01cdc7e1$edbb5a60$c9320f20$%kim@samsung.com>
+References: <1352812107-8777-1-git-send-email-t.figa@samsung.com>
+ <3937720.DSR9HIu3D4@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:57593 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:58041 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754688Ab2KUMKo (ORCPT
+	with ESMTP id S1750714Ab2KUMPo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Nov 2012 07:10:44 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDU0009375SSU60@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Nov 2012 21:10:42 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDU00M5775UCB30@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Nov 2012 21:10:42 +0900 (KST)
-In-reply-to: <75197263.J0hoc8apCM@amdc1227>
+	Wed, 21 Nov 2012 07:15:44 -0500
+In-reply-to: <3937720.DSR9HIu3D4@amdc1227>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, thomas.abraham@linaro.org, rjw@sisk.pl, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
 Tomasz Figa wrote:
 > 
 > Hi Kgene,
 > 
-> On Tuesday 20 of November 2012 20:10:25 Kukjin Kim wrote:
-> > Tomasz Figa wrote:
-> > > Hi Kgene,
-> > >
-> > > On Tuesday 20 of November 2012 18:18:44 Kukjin Kim wrote:
-> > > > Tomasz Figa wrote:
-> > > > > This patch modifies pin control groups of SD pins on Exynos4210
-> > > > > and
-> > > > > Exynos4x12 to use drive strength 3, which corresponds to
-> > > > > S5P_GPIO_DRVSTR_LV4 in legacy non-DT code.
-> > > >
-> > > > Well, the value of drive strength depends on board not SoC. So if
-> > > > required, it should be moved to board DT stuff.
-> > >
-> > > Yes, I fully agree.
-> > >
-> > > I've been thinking whether to change the defaults or just override
-> > > them
-> > > for Origen, but I came to a conclusion that 3 (LV4) was the default in
-> > > non-DT code, so it probably should be also the default in DT variant.
+> On Tuesday 13 of November 2012 14:08:23 Tomasz Figa wrote:
+> > This patch series fixes two issues with existing DT support for Exynos
+> > power domains and extends it with the ability of binding devices to
+> > domains, basically making it possible to use power domains with DT.
 > >
-> > OK.
+> > Based on for-next branch of Kgene's tree.
 > >
-> > > > BTW, we can use the value as a default...I need to think about that
-> > > > again for exynos4210 and 4x12.
-> > >
-> > > I wonder which default value is more appropriate, 0 or 3?
+> > Changes since v2:
+> >  - Rebased to for-next of Kgene's tree.
+> > Changes since v1:
+> >  - Added "samsung," prefix to "power-domain" property.
+> >  - Added power domain nodes to Exynos4 device tree sources.
 > >
-> > In this case, yes, '3' is more useful...so can you re-submit this patch
-> > with editing commit?
+> > Tomasz Figa (4):
+> >   ARM: EXYNOS: pm_domain: Detect domain state on registration from DT
+> >   ARM: EXYNOS: pm_domain: Fix power domain name initialization
+> >   ARM: EXYNOS: pm_domain: Bind devices to power domains using DT
+> >   ARM: dts: exynos4: Set up power domains
+> >
+> >  .../bindings/arm/exynos/power_domain.txt           | 15 +++-
+> >  arch/arm/boot/dts/exynos4.dtsi                     | 30 +++++++
+> >  arch/arm/boot/dts/exynos4210.dtsi                  |  5 ++
+> >  arch/arm/mach-exynos/pm_domains.c                  | 93
+> > +++++++++++++++++++++- 4 files changed, 135 insertions(+), 8
+> > deletions(-)
 > 
-> I can resubmit this patch, but I'm not sure what you expect me to edit.
-> Could you explain?
+> Since this version is just a rebase to your for-next and there are no
+> remaining comments, could you still take it for 3.8?
 > 
-Hmm, I mean the commit message needs explanation is why to use '3' as a
-default value is more useful. OK, if you don't mind, I will edit it when I
-apply.
-
-> If possible, it would be nice to get this included in 3.8 as it's required
-> for Origen board to boot with device tree.
-> 
-OK, as we discussed, I agree with this.
+Well, I'm not sure 'S5P_INT_LOCAL_PWR_EN' in [1/4] patch is available on all
+of exynos and it can support multiple platform. But at this moment, looks OK
+to me. If any modification is required, we can do it later.
 
 Will apply, thanks.
 
