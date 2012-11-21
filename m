@@ -1,57 +1,69 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: exynos: add UART3 to DEBUG_LL ports
-Date: Tue, 20 Nov 2012 23:29:59 -0800
-Message-ID: <20121121072959.GK7615@quad.lixom.net>
-References: <1353451739-6317-1-git-send-email-dianders@chromium.org>
+From: "Zhang, Rui" <rui.zhang@intel.com>
+Subject: RE: [PATCH 0/4] thermal: Add support for interrupt based
+ notification to thermal layer
+Date: Wed, 21 Nov 2012 09:04:06 +0000
+Message-ID: <744357E9AAD1214791ACBA4B0B909263264C2D@SHSMSX101.ccr.corp.intel.com>
+References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:35868 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751136Ab2KUHaC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Nov 2012 02:30:02 -0500
-Received: by mail-pa0-f46.google.com with SMTP id bh2so1877785pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 23:30:02 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1353451739-6317-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "R, Durgadoss" <durgadoss.r@intel.com>, "lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jonghwa3.lee@samsung.com" <jonghwa3.lee@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2012 at 02:48:58PM -0800, Doug Anderson wrote:
-> From: Olof Johansson <olof@lixom.net>
+Hi, Amit,
+
+As THERMAL_TREND_RAISE_FULL/THERMAL_TREND_DROP_FULL
+has been introduced to thermal next tree,
+I'd like to get your plan about this patch set?
+
+Thanks,
+Rui
+
+> -----Original Message-----
+> From: linux-acpi-owner@vger.kernel.org [mailto:linux-acpi-
+> owner@vger.kernel.org] On Behalf Of Amit Daniel Kachhap
+> Sent: Thursday, November 08, 2012 12:26 PM
+> To: linux-pm@lists.linux-foundation.org
+> Cc: linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; R,
+> Durgadoss; lenb@kernel.org; Zhang, Rui; linux-acpi@vger.kernel.org;
+> amit.kachhap@linaro.org; jonghwa3.lee@samsung.com
+> Subject: [PATCH 0/4] thermal: Add support for interrupt based
+> notification to thermal layer
+> Importance: High
 > 
-> UART3 is used for debugging on exynos5250-snow.
+> The patch submitted by Jonghwa Lee
+> (https://patchwork.kernel.org/patch/1683441/)
+> adds support for interrupt based notification to thermal layer. This is
+> a good feature but the current thermal framework needs polling/regular
+> notification for invoking suitable cooling action. So adding 2 new
+> thermal trend type to implement this feature.
 > 
-> [dianders: cleaned commit message.]
+> All these patches are based on thermal maintainer next tree.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
 > 
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-
+> Amit Daniel Kachhap (3):
+>   thermal: Add new thermal trend type to support quick cooling
+>   thermal: exynos: Miscellaneous fixes to support falling threshold
+>     interrupt
+>   thermal: exynos: Use the new thermal trend type for quick cooling
+>     action.
 > 
-> ---
->  arch/arm/Kconfig.debug        |   11 +++++++++++
->  arch/arm/plat-samsung/Kconfig |    1 +
->  2 files changed, 12 insertions(+), 0 deletions(-)
+> Jonghwa Lee (1):
+>   Thermal: exynos: Add support for temperature falling interrupt.
 > 
-> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> index 33a8930..35ba7dc 100644
-> --- a/arch/arm/Kconfig.debug
-> +++ b/arch/arm/Kconfig.debug
-> @@ -355,6 +355,17 @@ choice
->  		  The uncompressor code port configuration is now handled
->  		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
->  
-> +	config DEBUG_S3C_UART3
-> +		depends on PLAT_SAMSUNG
-
-
-Sorry, the reason I hadn't re-posted this is that Kukjin had proposed
-to protect users of <= 3 UART platforms to select it. An added "Depends
-on ARCH_EXYNOS4 || ARCH_EXYNOS5" should cover that. Can you add and
-repost, please?
-
-
--Olof
+>  drivers/thermal/exynos_thermal.c             |  105 +++++++++++++++---
+> --------
+>  drivers/thermal/step_wise.c                  |   19 ++++-
+>  include/linux/platform_data/exynos_thermal.h |    3 +
+>  include/linux/thermal.h                      |    2 +
+>  4 files changed, 80 insertions(+), 49 deletions(-)
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi"
+> in the body of a message to majordomo@vger.kernel.org More majordomo
+> info at  http://vger.kernel.org/majordomo-info.html
