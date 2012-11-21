@@ -1,183 +1,75 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] mmc: dw_mmc: enable controller interrupt before calling
- mmc_start_host
-Date: Wed, 21 Nov 2012 12:21:00 +0900
-Message-ID: <50AC489C.7070002@samsung.com>
-References: <1349686791-19652-1-git-send-email-yuvaraj.cd@samsung.com>
- <CAAG0J9_ngZm7uGopaW6rdBUDQZhQWqt6gd=y1i5BifsGrZg-hg@mail.gmail.com>
- <50AA322A.1060604@imgtec.com>
- <CAKuRcOLfaX=fNML9RYdOyD3AFRdaaAipQDXo-SHapGkNVwzH2Q@mail.gmail.com>
- <50AB4FDF.7080602@imgtec.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: S3C24XX: Fix potential NULL pointer dereference error
+Date: Wed, 21 Nov 2012 09:13:45 +0530
+Message-ID: <CAK9yfHyA+kOzzX+sqBMqJ-Gmj=Vwj36kg1WbTU06cnXJO3uN2Q@mail.gmail.com>
+References: <1352365291-32433-1-git-send-email-sachin.kamat@linaro.org>
+	<CAK9yfHyJ1r7KeNHfUAnNhZRBaV+_grjr=pP6r3a7yHoeWywt9A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41955 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752312Ab2KUDVL (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:51947 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752080Ab2KUDnq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 22:21:11 -0500
-In-reply-to: <50AB4FDF.7080602@imgtec.com>
+	Tue, 20 Nov 2012 22:43:46 -0500
+Received: by mail-vc0-f174.google.com with SMTP id m18so3167849vcm.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 19:43:45 -0800 (PST)
+In-Reply-To: <CAK9yfHyJ1r7KeNHfUAnNhZRBaV+_grjr=pP6r3a7yHoeWywt9A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "Chris Ball (laptop.org)" <cjb@laptop.org>, Will <will.newton@imgtec.com>, kgene.kim@samsung.com, "Girish K S (Linaro)" <girish.shivananjappa@linaro.org>, "Thomas Abraham (Linaro)" <thomas.abraham@linaro.org>, patches@linaro.org, Yuvaraj CD <yuvaraj.cd@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi All,
+Hi Kukjin,
 
-Well, i didn't find the James's error message.
-But i confused about the clock value.
+You seem to have ignored this patch before sending out your pull request.
+Can you please check this?
 
-Bus speed : 99840000Hz
-request   : 200000Hz
-Div : 250
+Regards
+Sachin
 
-If bus_speed is divided with div, then actual value should be 399360Hz.
-But this log is produced 199680Hz. What's wrong?
-
-I think this message can be confused to debug.
-
-Best Regards,
-Jaehoon Chung
-
-On 11/20/2012 06:39 PM, James Hogan wrote:
-> Hi Yuvaraj,
-> 
-> On 20/11/12 05:35, Yuvaraj Kumar wrote:
->> Its not sufficient.In my case, sdio_reset command was submitted to
->> dw_mmc controller before interrupts are enabled.
->> By looking at your log,it seems something wrong with frequency set by
->> your U-boot.
-> 
-> I'm not using U-boot, I'm booting with JTAG. In any case it works if I
-> revert your patch so I think the clocks are fine. I'll continue
-> debugging it and see if I can figure out what's happening.
-> 
-> Cheers
-> James
-> 
+On 20 November 2012 10:28, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> ping Kukjin.
+>
+> On 8 November 2012 14:31, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+>> chan->end is tested for being NULL. However in the event that it is NULL, the
+>> subsequent assignment statement would lead to NULL pointer dereference.
+>> Thus dereferencing it only when it is not NULL.
 >>
->> Best Regards
->> Yuvaraj
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> ---
+>> Based on Kukjin Kim's for-next branch. Compile tested.
+>> ---
+>>  arch/arm/plat-s3c24xx/dma.c |    9 +++++----
+>>  1 files changed, 5 insertions(+), 4 deletions(-)
 >>
->> On Mon, Nov 19, 2012 at 6:50 PM, James Hogan <james.hogan@imgtec.com> wrote:
->>> On 19/11/12 13:01, Yuvaraj CD wrote:
->>>> As mmc_start_host is getting called before enabling the dw_mmc controller
->>>> interrupt, there is a problem of missing the SDMMC_INT_CMD_DONE for the
->>>> very first command sent by the sdio_reset.
->>>> This problem occurs only when we disable MMC debugging i.e, MMC_DEBUG [=n].
->>>> Hence this patch enables the dw_mmc controller interrupt before mmc_start_host.
->>>>
->>>> Signed-off-by: Yuvaraj CD <yuvaraj.cd@samsung.com>
->>>
->>> Hi Yuvaraj,
->>>
->>> I get the following errors after this patch is applied
->>> (2da1d7f2948900cd50d38643db39f790edb3cc96, merged in v3.7-rc5) and the
->>> driver doesn't work as a result. Reverting it fixes the problem.
->>>
->>> mmc0: error -110 whilst initialising SD card
->>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
->>> mmc0: error -110 whilst initialising SD card
->>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
->>> mmc0: error -110 whilst initialising SD card
->>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
->>> mmc0: error -110 whilst initialising SD card
->>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 400000Hz, actual 399360HZ div = 125)
->>> mmc0: error -110 whilst initialising SD card
->>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 300000Hz, actual 298922HZ div = 167)
->>> mmc0: error -110 whilst initialising SD card
->>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 200000Hz, actual 199680HZ div = 250)
->>> mmc0: error -110 whilst initialising SD card
->>> mmc_host mmc0: Bus speed (slot 0) = 99840000Hz (slot req 195765Hz, actual 195764HZ div = 255)
->>> mmc0: error -110 whilst initialising SD card
->>>
->>> The interrupts are already cleared and disabled at the beginning of the
->>> probe function, so is the following sufficient (after reverting your
->>> patch) to fix the problem you've been observing?
->>>
->>> Thanks
->>> James
->>>
->>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>> index ec9b5a8..2be9899 100644
->>> --- a/drivers/mmc/host/dw_mmc.c
->>> +++ b/drivers/mmc/host/dw_mmc.c
->>> @@ -2266,7 +2266,6 @@ int dw_mci_probe(struct dw_mci *host)
->>>          * Enable interrupts for command done, data over, data empty, card det,
->>>          * receive ready and error such as transmit, receive timeout, crc error
->>>          */
->>> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->>>         mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->>>                    SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->>>                    DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->>>
->>>
->>>> ---
->>>>  drivers/mmc/host/dw_mmc.c |   29 +++++++++++++++--------------
->>>>  1 file changed, 15 insertions(+), 14 deletions(-)
->>>>
->>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>>> index a23af77..729c031 100644
->>>> --- a/drivers/mmc/host/dw_mmc.c
->>>> +++ b/drivers/mmc/host/dw_mmc.c
->>>> @@ -2233,6 +2233,21 @@ int dw_mci_probe(struct dw_mci *host)
->>>>         else
->>>>                 host->num_slots = ((mci_readl(host, HCON) >> 1) & 0x1F) + 1;
->>>>
->>>> +       /*
->>>> +        * Enable interrupts for command done, data over, data empty, card det,
->>>> +        * receive ready and error such as transmit, receive timeout, crc error
->>>> +        */
->>>> +       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->>>> +       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->>>> +                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->>>> +                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->>>> +       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
->>>> interrupt */
->>>> +
->>>> +       dev_info(host->dev, "DW MMC controller at irq %d, "
->>>> +                "%d bit host data width, "
->>>> +                "%u deep fifo\n",
->>>> +                host->irq, width, fifo_size);
->>>> +
->>>>         /* We need at least one slot to succeed */
->>>>         for (i = 0; i < host->num_slots; i++) {
->>>>                 ret = dw_mci_init_slot(host, i);
->>>> @@ -2262,20 +2277,6 @@ int dw_mci_probe(struct dw_mci *host)
->>>>         else
->>>>                 host->data_offset = DATA_240A_OFFSET;
->>>>
->>>> -       /*
->>>> -        * Enable interrupts for command done, data over, data empty, card det,
->>>> -        * receive ready and error such as transmit, receive timeout, crc error
->>>> -        */
->>>> -       mci_writel(host, RINTSTS, 0xFFFFFFFF);
->>>> -       mci_writel(host, INTMASK, SDMMC_INT_CMD_DONE | SDMMC_INT_DATA_OVER |
->>>> -                  SDMMC_INT_TXDR | SDMMC_INT_RXDR |
->>>> -                  DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->>>> -       mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci
->>>> interrupt */
->>>> -
->>>> -       dev_info(host->dev, "DW MMC controller at irq %d, "
->>>> -                "%d bit host data width, "
->>>> -                "%u deep fifo\n",
->>>> -                host->irq, width, fifo_size);
->>>>         if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
->>>>                 dev_info(host->dev, "Internal DMAC interrupt fix enabled.\n");
->>>>
->>>> --
->>>> 1.7.9.5
->>>>
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>
->>>>
->>>> --
->>>> James Hogan
->>>>
->>>
-> 
-> 
+>> diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+>> index db98e70..0abd1c4 100644
+>> --- a/arch/arm/plat-s3c24xx/dma.c
+>> +++ b/arch/arm/plat-s3c24xx/dma.c
+>> @@ -473,12 +473,13 @@ int s3c2410_dma_enqueue(enum dma_ch channel, void *id,
+>>                 pr_debug("dma%d: %s: buffer %p queued onto non-empty channel\n",
+>>                          chan->number, __func__, buf);
+>>
+>> -               if (chan->end == NULL)
+>> +               if (chan->end == NULL) {
+>>                         pr_debug("dma%d: %s: %p not empty, and chan->end==NULL?\n",
+>>                                  chan->number, __func__, chan);
+>> -
+>> -               chan->end->next = buf;
+>> -               chan->end = buf;
+>> +               } else {
+>> +                       chan->end->next = buf;
+>> +                       chan->end = buf;
+>> +               }
+>>         }
+>>
+>>         /* if necessary, update the next buffer field */
+>> --
+>> 1.7.4.1
+>>
+>
+>
+>
+> --
+> With warm regards,
+> Sachin
