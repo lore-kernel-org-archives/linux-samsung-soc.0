@@ -1,47 +1,43 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 02/12] ARM: EXYNOS: Add clk_ops for gating clocks of
- System MMU
-Date: Thu, 22 Nov 2012 00:50:31 +0900
-Message-ID: <50ACF847.3070709@samsung.com>
-References: <002801cdc7a5$8535f6d0$8fa1e470$%cho@samsung.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: [PATCH] MFD: SEC: Fix reg_offset for interrupt registers
+Date: Wed, 21 Nov 2012 17:52:58 +0100
+Message-ID: <20121121165258.GD18738@sortiz-mobl>
+References: <1350454735-17697-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:52512 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754956Ab2KUPul (ORCPT
+Received: from mga14.intel.com ([143.182.124.37]:55159 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755330Ab2KUQxS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Nov 2012 10:50:41 -0500
-In-Reply-To: <002801cdc7a5$8535f6d0$8fa1e470$%cho@samsung.com>
+	Wed, 21 Nov 2012 11:53:18 -0500
+Content-Disposition: inline
+In-Reply-To: <1350454735-17697-1-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Cho KyongHo <pullip.cho@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Joerg Roedel' <joro@8bytes.org>, sw0312.kim@samsung.com, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, prathyush.k@samsung.com, rahul.sharma@samsung.com
+To: Inderpal Singh <inderpal.singh@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-On 11/21/12 14:03, Cho KyongHo wrote:
-> Touching some System MMU needs its master devices' clock to be enabled
-> before. This commit adds clk_ops.set_parent of gating clocks of System
-> MMU to ensure gating clocks of System MMU's mater devices are enabled
-> when enabling gating clocks of System MMU.
->
-> Change-Id: Icd58b12f599e92692c032516331a444f4703ba6b
+Hi Inderpal,
 
-Same here, we don't need this :-)
-
-> Signed-off-by: KyongHo Cho<pullip.cho@samsung.com>
+On Wed, Oct 17, 2012 at 11:48:55AM +0530, Inderpal Singh wrote:
+> reg_offset is offset of the status/mask registers. Now, since status_base
+> and mask_base are pointing to corresponding first registers, reg_offset
+> should start from 0 otheriwse regmap_add_irq_chip will fail during probe.
+> 
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
 > ---
->   arch/arm/mach-exynos/clock-exynos5.c | 25 +++++++++++++++++++++++++
->   1 file changed, 25 insertions(+)
->
+> It is based on Samuel's for-next-merge branch of mfd-2.6 tree. 
+> 
+>  drivers/mfd/sec-irq.c |  102 ++++++++++++++++++++++++-------------------------
+>  1 file changed, 51 insertions(+), 51 deletions(-)
+I queued this one to my for-linus branch since it basically prevents IRQs from
+working here. But it seems weird that such a mistake was not caught earlier.
+So I'd like to get Sangbeom's ACK before pushing this one upstream.
 
-Looks good to me, and I think, this can be applied independently from 
-this series. Will apply with removing 'Change-Id'.
+Cheers,
+Samuel.
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
