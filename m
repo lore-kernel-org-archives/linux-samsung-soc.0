@@ -1,32 +1,178 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 0/2] Add automatic bus number support for i2c busses with device tree
-Date: Wed, 21 Nov 2012 10:26:00 -0800
-Message-ID: <1353522362-25519-1-git-send-email-dianders@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 1/2] i2c-core: dt: Pick i2c bus number from i2c alias if present
+Date: Wed, 21 Nov 2012 10:26:01 -0800
+Message-ID: <1353522362-25519-2-git-send-email-dianders@chromium.org>
 References: <1353450428-2615-2-git-send-email-dianders@chromium.org>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353450428-2615-2-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Haojian Zhuang <haojian.zhuang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+ <1353522362-25519-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-gh0-f202.google.com ([209.85.160.202]:44657 "EHLO
+	mail-gh0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755511Ab2KUS2b (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Nov 2012 13:28:31 -0500
+Received: by mail-gh0-f202.google.com with SMTP id z10so585920ghb.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Nov 2012 10:28:31 -0800 (PST)
+In-Reply-To: <1353522362-25519-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-i2c@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Wolfram Sang <w.sang@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Arnd Bergmann <arnd@arndb.de>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org
 
-This was suggested by Mark Brown in response to a patch for adding
-this functionality only for the s3c2410 bus:
-  https://lkml.org/lkml/2012/11/20/681
+This allows you to get the equivalent functionality of
+i2c_add_numbered_adapter() with all data in the device tree and no
+special case code in your driver.  This is a common device tree
+technique.
 
-I have also modified the i2c-pxa driver to use this new functionality
-but have no good way to test that patch.  Hopefully someone else can
-test and ack.  The patch adding the generic functionality could go in
-even if the i2c-pxa patch needs changes.
+For quick reference, the FDT syntax for using an alias to provide an
+ID looks like:
+  aliases {
+    i2c0 = &i2c_0;
+    i2c1 = &i2c_1;
+  };
 
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Doug Anderson (2):
-  i2c-core: dt: Pick i2c bus number from i2c alias if present
-  i2c: pxa: Use i2c-core to get bus number now
+---
+ drivers/i2c/i2c-core.c |  105 +++++++++++++++++++++++++++++++++++-------------
+ 1 files changed, 77 insertions(+), 28 deletions(-)
 
- drivers/i2c/busses/i2c-pxa.c |    8 +---
- drivers/i2c/i2c-core.c       |  105 ++++++++++++++++++++++++++++++-----------
- 2 files changed, 78 insertions(+), 35 deletions(-)
-
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index a7edf98..71deb2a2 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -915,13 +915,81 @@ out_list:
+ }
+ 
+ /**
++ * i2c_get_number_from_dt - get the adapter number based on dt alias
++ * @adap: the adapter to look at
++ *
++ * Check whether there's an alias in the FDT that gives an ID for this i2c
++ * device.  Use an alias like "i2c<nr>", like:
++ *   aliases {
++ *     i2c0 = &i2c_0;
++ *     i2c1 = &i2c_1;
++ *   };
++ *
++ * Returns the ID if found.  If no alias is found returns -1.
++ */
++static int i2c_get_number_from_dt(struct i2c_adapter *adap)
++{
++	struct device *dev = &adap->dev;
++	int id;
++
++	if (!dev->of_node)
++		return -1;
++
++	id = of_alias_get_id(dev->of_node, "i2c");
++	if (id < 0)
++		return -1;
++	return id;
++}
++
++/**
++ * _i2c_add_numbered_adapter - i2c_add_numbered_adapter where nr is never -1
++ * @adap: the adapter to register (with adap->nr initialized)
++ * Context: can sleep
++ *
++ * See i2c_add_numbered_adapter() for details.
++ */
++static int _i2c_add_numbered_adapter(struct i2c_adapter *adap)
++{
++	int	id;
++	int	status;
++
++	/* Handled by wrappers */
++	BUG_ON(adap->nr == -1);
++
++	if (adap->nr & ~MAX_IDR_MASK)
++		return -EINVAL;
++
++retry:
++	if (idr_pre_get(&i2c_adapter_idr, GFP_KERNEL) == 0)
++		return -ENOMEM;
++
++	mutex_lock(&core_lock);
++	/* "above" here means "above or equal to", sigh;
++	 * we need the "equal to" result to force the result
++	 */
++	status = idr_get_new_above(&i2c_adapter_idr, adap, adap->nr, &id);
++	if (status == 0 && id != adap->nr) {
++		status = -EBUSY;
++		idr_remove(&i2c_adapter_idr, id);
++	}
++	mutex_unlock(&core_lock);
++	if (status == -EAGAIN)
++		goto retry;
++
++	if (status == 0)
++		status = i2c_register_adapter(adap);
++	return status;
++}
++
++/**
+  * i2c_add_adapter - declare i2c adapter, use dynamic bus number
+  * @adapter: the adapter to add
+  * Context: can sleep
+  *
+  * This routine is used to declare an I2C adapter when its bus number
+- * doesn't matter.  Examples: for I2C adapters dynamically added by
+- * USB links or PCI plugin cards.
++ * doesn't matter or when its bus number is specified by an dt alias.
++ * Examples of bases when the bus number doesn't matter: I2C adapters
++ * dynamically added by USB links or PCI plugin cards.
+  *
+  * When this returns zero, a new bus number was allocated and stored
+  * in adap->nr, and the specified adapter became available for clients.
+@@ -931,6 +999,12 @@ int i2c_add_adapter(struct i2c_adapter *adapter)
+ {
+ 	int	id, res = 0;
+ 
++	id = i2c_get_number_from_dt(adapter);
++	if (id >= 0) {
++		adapter->nr = id;
++		return _i2c_add_numbered_adapter(adapter);
++	}
++
+ retry:
+ 	if (idr_pre_get(&i2c_adapter_idr, GFP_KERNEL) == 0)
+ 		return -ENOMEM;
+@@ -977,34 +1051,9 @@ EXPORT_SYMBOL(i2c_add_adapter);
+  */
+ int i2c_add_numbered_adapter(struct i2c_adapter *adap)
+ {
+-	int	id;
+-	int	status;
+-
+ 	if (adap->nr == -1) /* -1 means dynamically assign bus id */
+ 		return i2c_add_adapter(adap);
+-	if (adap->nr & ~MAX_IDR_MASK)
+-		return -EINVAL;
+-
+-retry:
+-	if (idr_pre_get(&i2c_adapter_idr, GFP_KERNEL) == 0)
+-		return -ENOMEM;
+-
+-	mutex_lock(&core_lock);
+-	/* "above" here means "above or equal to", sigh;
+-	 * we need the "equal to" result to force the result
+-	 */
+-	status = idr_get_new_above(&i2c_adapter_idr, adap, adap->nr, &id);
+-	if (status == 0 && id != adap->nr) {
+-		status = -EBUSY;
+-		idr_remove(&i2c_adapter_idr, id);
+-	}
+-	mutex_unlock(&core_lock);
+-	if (status == -EAGAIN)
+-		goto retry;
+-
+-	if (status == 0)
+-		status = i2c_register_adapter(adap);
+-	return status;
++	return _i2c_add_numbered_adapter(adap);
+ }
+ EXPORT_SYMBOL_GPL(i2c_add_numbered_adapter);
+ 
 -- 
 1.7.7.3
