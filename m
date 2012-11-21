@@ -1,25 +1,83 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/2] i2c: s3c2410: Get the i2c bus number from alias id
-Date: Wed, 21 Nov 2012 04:09:13 +0000
-Message-ID: <20121121040913.GA13280@sirena.org.uk>
-References: <1353450428-2615-1-git-send-email-dianders@chromium.org>
- <1353450428-2615-2-git-send-email-dianders@chromium.org>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: [PATCH v3 00/12] iommu/exynos: Fixes and Enhancements of System MMU
+ driver with DT
+Date: Wed, 21 Nov 2012 14:02:25 +0900
+Message-ID: <002601cdc7a5$66216bd0$32644370$%cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1353450428-2615-2-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:63730 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750714Ab2KUFCh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Nov 2012 00:02:37 -0500
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: 'Joerg Roedel' <joro@8bytes.org>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, sw0312.kim@samsung.com, 'Subash Patel' <subash.ramaswamy@linaro.org>, prathyush.k@samsung.com, rahul.sharma@samsung.com
 
-On Tue, Nov 20, 2012 at 02:27:04PM -0800, Doug Anderson wrote:
-> From: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> Get the i2c bus number that the device is connected to using the alias
-> id.  This makes debugging / grokking of kernel messages much easier.
+The current exynos-iommu(System MMU) driver does not work autonomously
+since it is lack of support for power management of peripheral blocks.
+For example, MFC device driver must ensure that its System MMU is disabled
+before MFC block is power-down not to invalidate IOTLB in the System MMU
+when I/O memory mapping is changed. Because A System MMU is resides in the
+same H/W block, access to control registers of System MMU while the H/W
+block is turned off must be prohibited.
 
-This doesn't look like a s3c2410 specific change - it's a generic device
-tree issue.  This suggests that it sohuld be implemented in the
-framework so that all I2C controllers with DT can use it.
+This set of changes solves the above problem with setting each System MMUs
+as the parent of the device which owns the System MMU to recieve the
+information when the device is turned off or turned on.
+
+Another big change to the driver is the support for devicetree.
+The bindings for System MMU is described in
+Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+
+In addition, this patchset also includes several bug fixes and enhancements
+of the current driver.
+
+Change log:
+v2:
+- Split the patch to iommu/exynos into 9 patches
+- Support for System MMU 3.3
+- Some code compaction
+
+v3:
+- Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
+- Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
+   Thanks to Prathyush.
+
+Patch summary:
+[PATCH v3 01/12] ARM: EXYNOS: remove system mmu initialization from exynos tree
+[PATCH v3 02/12] ARM: EXYNOS: Add clk_ops for gating clocks of System MMU
+[PATCH v3 03/12] ARM: EXYNOS: add System MMU definition to DT
+[PATCH v3 04/12] iommu/exynos: support for device tree
+[PATCH v3 05/12] iommu/exynos: pass version information from DT
+[PATCH v3 06/12] iommu/exynos: allocate lv2 page table from own slab
+[PATCH v3 07/12] iommu/exynos: change rwlock to spinlock
+[PATCH v3 08/12] iommu/exynos: set System MMU as the parent of client device
+[PATCH v3 09/12] iommu/exynos: add supoort for runtime pm and suspend/resume
+[PATCH v3 10/12] iommu/exynos: add support for System MMU 3.2 and 3.3
+[PATCH v3 11/12] iommu/exynos: add literal name of System MMU for debugging
+[PATCH v3 12/12] iommu/exynos: add debugfs entries for System MMU
+
+
+Diffstats:
+ .../devicetree/bindings/arm/exynos/system-mmu.txt  |   86 ++
+ arch/arm/boot/dts/exynos4210.dtsi                  |   96 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |  124 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |  147 +-
+ arch/arm/mach-exynos/Kconfig                       |    5 -
+ arch/arm/mach-exynos/Makefile                      |    1 -
+ arch/arm/mach-exynos/clock-exynos4.c               |   41 +-
+ arch/arm/mach-exynos/clock-exynos4210.c            |    9 +-
+ arch/arm/mach-exynos/clock-exynos4212.c            |   23 +-
+ arch/arm/mach-exynos/clock-exynos5.c               |   87 +-
+ arch/arm/mach-exynos/dev-sysmmu.c                  |  274 ----
+ arch/arm/mach-exynos/include/mach/sysmmu.h         |   66 -
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |   34 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |   30 +
+ drivers/iommu/Kconfig                              |    2 +-
+ drivers/iommu/exynos-iommu.c                       | 1424 +++++++++++++++-----
+ 16 files changed, 1718 insertions(+), 731 deletions(-)
