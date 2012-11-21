@@ -1,66 +1,62 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: exynos: add UART3 to DEBUG_LL ports
-Date: Wed, 21 Nov 2012 18:49:40 +0900
-Message-ID: <0dff01cdc7cd$86b14500$9413cf00$%kim@samsung.com>
-References: <1353451739-6317-1-git-send-email-dianders@chromium.org>
- <20121121072959.GK7615@quad.lixom.net>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 0/4] ARM: dts: exynos4210-origen: Device tree fixes
+Date: Wed, 21 Nov 2012 11:31:51 +0100
+Message-ID: <1803002.oscJKykDTC@amdc1227>
+References: <1353336396-21161-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:42531 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751051Ab2KUJtm (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:63300 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754317Ab2KUKcX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Nov 2012 04:49:42 -0500
-In-reply-to: <20121121072959.GK7615@quad.lixom.net>
-Content-language: ko
+	Wed, 21 Nov 2012 05:32:23 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDU00AG32L6HU70@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Nov 2012 19:31:54 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDU00E4Q2L4UW70@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Nov 2012 19:31:54 +0900 (KST)
+In-reply-to: <1353336396-21161-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Doug Anderson' <dianders@chromium.org>
-Cc: linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, jhkim@insignal.co.kr, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-Olof Johansson wrote:
-> 
-> On Tue, Nov 20, 2012 at 02:48:58PM -0800, Doug Anderson wrote:
-> > From: Olof Johansson <olof@lixom.net>
-> >
-> > UART3 is used for debugging on exynos5250-snow.
-> >
-> > [dianders: cleaned commit message.]
-> >
-> > Signed-off-by: Olof Johansson <olof@lixom.net>
-> > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> 
-> >
-> > ---
-> >  arch/arm/Kconfig.debug        |   11 +++++++++++
-> >  arch/arm/plat-samsung/Kconfig |    1 +
-> >  2 files changed, 12 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> > index 33a8930..35ba7dc 100644
-> > --- a/arch/arm/Kconfig.debug
-> > +++ b/arch/arm/Kconfig.debug
-> > @@ -355,6 +355,17 @@ choice
-> >  		  The uncompressor code port configuration is now handled
-> >  		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
-> >
-> > +	config DEBUG_S3C_UART3
-> > +		depends on PLAT_SAMSUNG
-> 
-> 
-> Sorry, the reason I hadn't re-posted this is that Kukjin had proposed
-> to protect users of <= 3 UART platforms to select it. An added "Depends
-> on ARCH_EXYNOS4 || ARCH_EXYNOS5" should cover that. Can you add and
-> repost, please?
-> 
-Yes, please :-)
+Hi Kgene,
 
-Thanks.
+On Monday 19 of November 2012 15:46:32 Tomasz Figa wrote:
+> This patch series fixes device tree support for Origen board:
+>  - memory is defined using sections of maximum allowed size
+>  - any pin configuration is modified to use pinctrl
+>  - invalid properties in sdhci nodes are replaced according to current
+>    mmc bindings
+>  - a fixed vmmc voltage regulator is added
+> 
+> Tested on Origen board.
+> 
+> Depends on:
+> [PATCH v2 0/2] mmc: host: sdhci-s3c: Add support for pinctrl interface
+> 
+> Tomasz Figa (4):
+>   ARM: dts: exynos4210-origen: Split memory sections
+>   ARM: dts: exynos4210-origen: Update for pinctrl-samsung driver
+>   ARM: dts: exynos4210-origen: Update sdhci nodes for current bindings
+>   ARM: dts: exynos4210-origen: Add vmmc fixed voltage regulator
+> 
+>  arch/arm/boot/dts/exynos4210-origen.dts | 54
+> ++++++++++++++++----------------- 1 file changed, 27 insertions(+), 27
+> deletions(-)
+
+Could you still pick these patches up for 3.8?
 
 Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
