@@ -1,65 +1,58 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] ARM: exynos: add UART3 to DEBUG_LL ports
-Date: Wed, 21 Nov 2012 08:54:25 -0800
-Message-ID: <1353516865-2502-1-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH] ARM: exynos: add UART3 to DEBUG_LL ports
+Date: Wed, 21 Nov 2012 08:58:30 -0800
+Message-ID: <CAD=FV=VtkAtASOBY3sSOyN3oeOZ9=fCJusVz7r+CCqBgX2=nqQ@mail.gmail.com>
 References: <1353451739-6317-1-git-send-email-dianders@chromium.org>
+	<20121121072959.GK7615@quad.lixom.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1353451739-6317-1-git-send-email-dianders@chromium.org>
+In-Reply-To: <20121121072959.GK7615@quad.lixom.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Doug Anderson <dianders@chromium.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+On Tue, Nov 20, 2012 at 11:29 PM, Olof Johansson <olof@lixom.net> wrote:
+>
+> On Tue, Nov 20, 2012 at 02:48:58PM -0800, Doug Anderson wrote:
+> > From: Olof Johansson <olof@lixom.net>
+> >
+> > UART3 is used for debugging on exynos5250-snow.
+> >
+> > [dianders: cleaned commit message.]
+> >
+> > Signed-off-by: Olof Johansson <olof@lixom.net>
+> > Signed-off-by: Doug Anderson <dianders@chromium.org>
+>
+> >
+> > ---
+> >  arch/arm/Kconfig.debug        |   11 +++++++++++
+> >  arch/arm/plat-samsung/Kconfig |    1 +
+> >  2 files changed, 12 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> > index 33a8930..35ba7dc 100644
+> > --- a/arch/arm/Kconfig.debug
+> > +++ b/arch/arm/Kconfig.debug
+> > @@ -355,6 +355,17 @@ choice
+> >                 The uncompressor code port configuration is now handled
+> >                 by CONFIG_S3C_LOWLEVEL_UART_PORT.
+> >
+> > +     config DEBUG_S3C_UART3
+> > +             depends on PLAT_SAMSUNG
+>
+>
+> Sorry, the reason I hadn't re-posted this is that Kukjin had proposed
+> to protect users of <= 3 UART platforms to select it. An added "Depends
+> on ARCH_EXYNOS4 || ARCH_EXYNOS5" should cover that. Can you add and
+> repost, please?
 
-Add support for using UART3 for DEBUG_LL on exynos.
+Doh!  I hadn't even noticed that you'd already posted this--I got mine
+from the Chrome OS tree directly.  Sorry about that...
 
-[dianders: added depend on ARCH_EXYNOS.]
+I've added an && for ARCH_EXYNOS which seems reasonable.  I left
+PLAT_SAMSUNG as a depend though technically ARCH_EXYNOS does select
+PLAT_SAMSUNG through a convoluted series of other config options.
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-
----
-Changes in v2:
-- Matched Olof's commit message.
-- Added ARCH_EXYNOS to depend list.
-
- arch/arm/Kconfig.debug        |   11 +++++++++++
- arch/arm/plat-samsung/Kconfig |    1 +
- 2 files changed, 12 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 33a8930..f54f170 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -355,6 +355,17 @@ choice
- 		  The uncompressor code port configuration is now handled
- 		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
- 
-+	config DEBUG_S3C_UART3
-+		depends on PLAT_SAMSUNG && ARCH_EXYNOS
-+		bool "Use S3C UART 3 for low-level debug"
-+		help
-+		  Say Y here if you want the debug print routines to direct
-+		  their output to UART 3. The port must have been initialised
-+		  by the boot-loader before use.
-+
-+		  The uncompressor code port configuration is now handled
-+		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
-+
- 	config DEBUG_SOCFPGA_UART
- 		depends on ARCH_SOCFPGA
- 		bool "Use SOCFPGA UART for low-level debug"
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 59401e1..d342ed0 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -502,5 +502,6 @@ config DEBUG_S3C_UART
- 	default "0" if DEBUG_S3C_UART0
- 	default "1" if DEBUG_S3C_UART1
- 	default "2" if DEBUG_S3C_UART2
-+	default "3" if DEBUG_S3C_UART3
- 
- endif
--- 
-1.7.7.3
+-Doug
