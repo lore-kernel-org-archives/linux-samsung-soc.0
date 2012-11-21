@@ -1,58 +1,32 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: exynos: add UART3 to DEBUG_LL ports
-Date: Wed, 21 Nov 2012 08:58:30 -0800
-Message-ID: <CAD=FV=VtkAtASOBY3sSOyN3oeOZ9=fCJusVz7r+CCqBgX2=nqQ@mail.gmail.com>
-References: <1353451739-6317-1-git-send-email-dianders@chromium.org>
-	<20121121072959.GK7615@quad.lixom.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121121072959.GK7615@quad.lixom.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH 0/2] Add automatic bus number support for i2c busses with device tree
+Date: Wed, 21 Nov 2012 10:26:00 -0800
+Message-ID: <1353522362-25519-1-git-send-email-dianders@chromium.org>
+References: <1353450428-2615-2-git-send-email-dianders@chromium.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353450428-2615-2-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Haojian Zhuang <haojian.zhuang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 20, 2012 at 11:29 PM, Olof Johansson <olof@lixom.net> wrote:
->
-> On Tue, Nov 20, 2012 at 02:48:58PM -0800, Doug Anderson wrote:
-> > From: Olof Johansson <olof@lixom.net>
-> >
-> > UART3 is used for debugging on exynos5250-snow.
-> >
-> > [dianders: cleaned commit message.]
-> >
-> > Signed-off-by: Olof Johansson <olof@lixom.net>
-> > Signed-off-by: Doug Anderson <dianders@chromium.org>
->
-> >
-> > ---
-> >  arch/arm/Kconfig.debug        |   11 +++++++++++
-> >  arch/arm/plat-samsung/Kconfig |    1 +
-> >  2 files changed, 12 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> > index 33a8930..35ba7dc 100644
-> > --- a/arch/arm/Kconfig.debug
-> > +++ b/arch/arm/Kconfig.debug
-> > @@ -355,6 +355,17 @@ choice
-> >                 The uncompressor code port configuration is now handled
-> >                 by CONFIG_S3C_LOWLEVEL_UART_PORT.
-> >
-> > +     config DEBUG_S3C_UART3
-> > +             depends on PLAT_SAMSUNG
->
->
-> Sorry, the reason I hadn't re-posted this is that Kukjin had proposed
-> to protect users of <= 3 UART platforms to select it. An added "Depends
-> on ARCH_EXYNOS4 || ARCH_EXYNOS5" should cover that. Can you add and
-> repost, please?
+This was suggested by Mark Brown in response to a patch for adding
+this functionality only for the s3c2410 bus:
+  https://lkml.org/lkml/2012/11/20/681
 
-Doh!  I hadn't even noticed that you'd already posted this--I got mine
-from the Chrome OS tree directly.  Sorry about that...
+I have also modified the i2c-pxa driver to use this new functionality
+but have no good way to test that patch.  Hopefully someone else can
+test and ack.  The patch adding the generic functionality could go in
+even if the i2c-pxa patch needs changes.
 
-I've added an && for ARCH_EXYNOS which seems reasonable.  I left
-PLAT_SAMSUNG as a depend though technically ARCH_EXYNOS does select
-PLAT_SAMSUNG through a convoluted series of other config options.
 
--Doug
+Doug Anderson (2):
+  i2c-core: dt: Pick i2c bus number from i2c alias if present
+  i2c: pxa: Use i2c-core to get bus number now
+
+ drivers/i2c/busses/i2c-pxa.c |    8 +---
+ drivers/i2c/i2c-core.c       |  105 ++++++++++++++++++++++++++++++-----------
+ 2 files changed, 78 insertions(+), 35 deletions(-)
+
+-- 
+1.7.7.3
