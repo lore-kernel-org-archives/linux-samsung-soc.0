@@ -1,71 +1,87 @@
-From: vinayak holikatti <vinholikatti@gmail.com>
-Subject: Re: [PATCH V4 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific Code
-Date: Wed, 21 Nov 2012 17:34:28 +0530
-Message-ID: <CAKVbJB9i-PuEDdBr0=tcRQBP3VrB_nNh_POBb6p_aNQCVrjk5A@mail.gmail.com>
-References: <1350474822-7315-1-git-send-email-vinholikatti@gmail.com>
-	<1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
-	<507FA52E.9050400@ti.com>
-	<CAKVbJB_FpmbtcLr5G5sSphNOPnodZUd0sN8ha0C_RtCDtWUG=Q@mail.gmail.com>
-	<1352841998.8317.1.camel@dabdike>
-	<CAKVbJB8sZ4Y5QfF63wh19N61+0honqoXawnkPGY6qUkt2MCrsw@mail.gmail.com>
-	<1353495386.2432.13.camel@dabdike.int.hansenpartnership.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: dts: exynos4: Use drive strength 3 for SD pins
+Date: Wed, 21 Nov 2012 21:10:42 +0900
+Message-ID: <0e7a01cdc7e1$3a83fd30$af8bf790$%kim@samsung.com>
+References: <21831256.UCkQ5RyKd5@amdc1227> <1961860.xzxk1Exu2U@amdc1227>
+ <0c8201cdc70f$a430a260$ec91e720$%kim@samsung.com>
+ <75197263.J0hoc8apCM@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:63995 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754587Ab2KUMEa (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:57593 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754688Ab2KUMKo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Nov 2012 07:04:30 -0500
-In-Reply-To: <1353495386.2432.13.camel@dabdike.int.hansenpartnership.com>
+	Wed, 21 Nov 2012 07:10:44 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDU0009375SSU60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Nov 2012 21:10:42 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDU00M5775UCB30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Nov 2012 21:10:42 +0900 (KST)
+In-reply-to: <75197263.J0hoc8apCM@amdc1227>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Venkatraman S <svenkatr@ti.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
+To: 'Tomasz Figa' <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-On Wed, Nov 21, 2012 at 4:26 PM, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
-> On Wed, 2012-11-21 at 16:02 +0530, vinayak holikatti wrote:
->> On Wed, Nov 14, 2012 at 2:56 AM, James Bottomley
->> <James.Bottomley@hansenpartnership.com> wrote:
->> > On Thu, 2012-10-18 at 17:37 +0530, vinayak holikatti wrote:
->> >> I am Vacation will look into it when i am back to work.
->> >> > This doesn't apply on 3.7-rc1. Am I missing any patches in between ?
->> >
->> > OK, so it doesn't apply for me either:
->> >
->> > patching file drivers/scsi/ufs/ufshcd.c
->> > Hunk #11 FAILED at 902.
->> > Hunk #15 succeeded at 1157 with fuzz 1 (offset 2 lines).
->> > Hunk #16 succeeded at 1271 (offset 2 lines).
->> > Hunk #17 succeeded at 1300 (offset 2 lines).
->> > Hunk #18 succeeded at 1364 (offset 2 lines).
->> > Hunk #19 succeeded at 1499 (offset 2 lines).
->> > Hunk #20 succeeded at 1542 (offset 2 lines).
->> > Hunk #21 succeeded at 1678 (offset 2 lines).
->> > Hunk #22 succeeded at 1706 (offset 2 lines).
->> > Hunk #23 succeeded at 1727 (offset 2 lines).
->> > Hunk #24 succeeded at 1775 (offset 2 lines).
->> > Hunk #25 succeeded at 1819 (offset 2 lines).
->> > Hunk #26 succeeded at 1872 (offset 2 lines).
->> > Hunk #27 succeeded at 1898 (offset 2 lines).
->> > Hunk #28 FAILED at 2011.
->> > 2 out of 28 hunks FAILED -- saving rejects to file
->> > drivers/scsi/ufs/ufshcd.c.rej
->> >
->> I have generated patches based on linux/kernel/git/jejb/scsi.git this
->> tree, Also i have
->> confirmed that patches get applied successfully on this git tree.
->>
->> James,
->> Which tree are you refering to. Let me know, which tree i should use to
->> generate the patches.
->
-> All patches for the merge window should be against the misc branch of
-> the scsi.git tree.
->
-> James
->
-Ok, I will create the patches against misc branch and resend these patches.
-Thanks
-Vinayak Holikatti
+Tomasz Figa wrote:
+> 
+> Hi Kgene,
+> 
+> On Tuesday 20 of November 2012 20:10:25 Kukjin Kim wrote:
+> > Tomasz Figa wrote:
+> > > Hi Kgene,
+> > >
+> > > On Tuesday 20 of November 2012 18:18:44 Kukjin Kim wrote:
+> > > > Tomasz Figa wrote:
+> > > > > This patch modifies pin control groups of SD pins on Exynos4210
+> > > > > and
+> > > > > Exynos4x12 to use drive strength 3, which corresponds to
+> > > > > S5P_GPIO_DRVSTR_LV4 in legacy non-DT code.
+> > > >
+> > > > Well, the value of drive strength depends on board not SoC. So if
+> > > > required, it should be moved to board DT stuff.
+> > >
+> > > Yes, I fully agree.
+> > >
+> > > I've been thinking whether to change the defaults or just override
+> > > them
+> > > for Origen, but I came to a conclusion that 3 (LV4) was the default in
+> > > non-DT code, so it probably should be also the default in DT variant.
+> >
+> > OK.
+> >
+> > > > BTW, we can use the value as a default...I need to think about that
+> > > > again for exynos4210 and 4x12.
+> > >
+> > > I wonder which default value is more appropriate, 0 or 3?
+> >
+> > In this case, yes, '3' is more useful...so can you re-submit this patch
+> > with editing commit?
+> 
+> I can resubmit this patch, but I'm not sure what you expect me to edit.
+> Could you explain?
+> 
+Hmm, I mean the commit message needs explanation is why to use '3' as a
+default value is more useful. OK, if you don't mind, I will edit it when I
+apply.
+
+> If possible, it would be nice to get this included in 3.8 as it's required
+> for Origen board to boot with device tree.
+> 
+OK, as we discussed, I agree with this.
+
+Will apply, thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
