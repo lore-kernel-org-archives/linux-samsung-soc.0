@@ -1,46 +1,29 @@
 From: Domenico Andreoli <cavokz@gmail.com>
-Subject: [PATCH] S3C24XX: Fix console baud rate guessing
+Subject: [RESEND PATCH] S3C24XX: Fix console baud rate guessing
 Date: Wed, 21 Nov 2012 01:43:09 +0100
-Message-ID: <20121121004309.GA29633@glitch>
-References: <k809hq$1q3$1@ger.gmane.org>
- <20121114173453.GJ3290@n2100.arm.linux.org.uk>
+Message-ID: <50ac2947.4969b40a.4ccc.ffff94b6@mx.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:45950 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750818Ab2KUAnO (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:51472 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750818Ab2KUBHV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 19:43:14 -0500
-Received: by mail-ee0-f46.google.com with SMTP id e53so2020181eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 16:43:12 -0800 (PST)
+	Tue, 20 Nov 2012 20:07:21 -0500
+Received: by mail-wi0-f178.google.com with SMTP id hm6so1415722wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 17:07:20 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20121114173453.GJ3290@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: woody <narkewoody@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, woody <narkewoody@gmail.com>, linux-arm-kernel@lists.infradead.org
 
 From: Domenico Andreoli <domenico.andreoli@linux.com>
 
-On Wed, Nov 14, 2012 at 05:34:53PM +0000, Russell King - ARM Linux wrote:
-> On Wed, Nov 14, 2012 at 10:23:55PM +0800, woody wrote:
-> > I just built a 3.2.x ARM kernel and tried to have it boot by a boot  
-> > loader (vivi) on my s3c2410a ARM board.  The kernel was built with  
-> > default configuration s3c2410.
-> 
-> I reported that S3C2410 is totally dead with 3.x kernels about a month
-> ago and got no response what so ever from anyone.  I guess S3C2410 is
-> just not cared for anymore.
-> 
-> When I get sufficient motivation, I'll try and track down what's going
-> wrong, but it means taking the old mailing list server (and now list
-> archive) offline for a while.
+Between v3.2 and v3.3 my S3C2440 board started to print garbage on the
+console during boot. I nailed the problem down to the default UCON clock
+selection, which with this commit has been switched from UCLK to PCLK.
 
-I found something also on my S3C2440. The board doesn't die but prints
-garbage on the console. Indeed the baud rate guessing is broken (it's ok
-if specified manually on the cmdline),
-	
 commit c3310fbbeb9db6967900ed22eb3d0bd0bb0e892c
 Author: Thomas Abraham <thomas.abraham@linaro.org>
 Date:   Mon Oct 24 11:47:57 2011 +0200
@@ -65,39 +48,24 @@ Date:   Mon Oct 24 11:47:57 2011 +0200
     Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
 
-To restore previous functionality I had to change the default UCON clock
-back to UCLK.
+To restore previous functionality, usable console with no UCON nor baud
+rate specified, I had to change the default UCON clock back to UCLK.
 
 Signed-off-by: Domenico Andreoli <domenico.andreoli@linux.com>
---
+---
+ samsung.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
 index 7f04717..316b703 100644
 --- a/drivers/tty/serial/samsung.c
 +++ b/drivers/tty/serial/samsung.c
 @@ -1572,7 +1572,7 @@ static struct s3c24xx_serial_drv_data s3c2440_serial_drv_data = {
-                .tx_fifofull    = S3C2440_UFSTAT_TXFULL,
-                .tx_fifomask    = S3C2440_UFSTAT_TXMASK,
-                .tx_fifoshift   = S3C2440_UFSTAT_TXSHIFT,
--               .def_clk_sel    = S3C2410_UCON_CLKSEL2,
-+               .def_clk_sel    = S3C2410_UCON_CLKSEL1,
-                .num_clks       = 4,
-                .clksel_mask    = S3C2412_UCON_CLKMASK,
-                .clksel_shift   = S3C2412_UCON_CLKSHIFT,
-
-
-
-
-
-The additional condition is that board file does not specify a 
-
-the clocks being properly configured. 
-
- Something that doesn't happen if
-the baud rate is specified onthe command line.
-
-detection and goes unnoticed if you manually specify it on the cmdline
-(like I do).
-
-On my S3C2440 
-
-I've a few observation
+ 		.tx_fifofull	= S3C2440_UFSTAT_TXFULL,
+ 		.tx_fifomask	= S3C2440_UFSTAT_TXMASK,
+ 		.tx_fifoshift	= S3C2440_UFSTAT_TXSHIFT,
+-		.def_clk_sel	= S3C2410_UCON_CLKSEL2,
++		.def_clk_sel	= S3C2410_UCON_CLKSEL1,
+ 		.num_clks	= 4,
+ 		.clksel_mask	= S3C2412_UCON_CLKMASK,
+ 		.clksel_shift	= S3C2412_UCON_CLKSHIFT,
