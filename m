@@ -1,48 +1,63 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: dts: snow: Add board dts file for Snow board (ARM
- Chromebook)
-Date: Wed, 21 Nov 2012 18:43:08 +0900
-Message-ID: <0dfc01cdc7cc$9d308170$d7918450$%kim@samsung.com>
-References: <1353432158-22999-1-git-send-email-dianders@chromium.org>
- <1353432158-22999-2-git-send-email-dianders@chromium.org>
- <CAOesGMiGZHAw0zOZFZcYJ9YngbcMsTJrzhG+DQ5sP9Sq+CyzDQ@mail.gmail.com>
+Subject: RE: [PATCH] ARM: exynos: add UART3 to DEBUG_LL ports
+Date: Wed, 21 Nov 2012 18:49:40 +0900
+Message-ID: <0dff01cdc7cd$86b14500$9413cf00$%kim@samsung.com>
+References: <1353451739-6317-1-git-send-email-dianders@chromium.org>
+ <20121121072959.GK7615@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: 
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:42531 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051Ab2KUJtm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Nov 2012 04:49:42 -0500
+In-reply-to: <20121121072959.GK7615@quad.lixom.net>
 Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, 'Doug Anderson' <dianders@chromium.org>
-Cc: 'Josh Cartwright' <josh.cartwright@ni.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, 'Rob Herring' <rob.herring@calxeda.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olofj@chromium.org>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Arun Kumar K' <arun.kk@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Olof Johansson' <olof@lixom.net>, 'Doug Anderson' <dianders@chromium.org>
+Cc: linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Kukjin Kim wrote:
+Olof Johansson wrote:
 > 
-> Olof Johansson wrote:
+> On Tue, Nov 20, 2012 at 02:48:58PM -0800, Doug Anderson wrote:
+> > From: Olof Johansson <olof@lixom.net>
 > >
-
-[...]
-
+> > UART3 is used for debugging on exynos5250-snow.
 > >
-> > Acked-by: Olof Johansson <olof@lixom.net>
+> > [dianders: cleaned commit message.]
 > >
-> > Kukjin, since your pull requests came in today, can you ack this and
-> > I'll just apply it on top of your branches?
-> >
-> Hi Olof, yeah, I sent pull-request but there are some patches for dt and
-> exynos5440 stuff in my tree not sent yet. If you're ok, let me take this
-> with your ack.
+> > Signed-off-by: Olof Johansson <olof@lixom.net>
+> > Signed-off-by: Doug Anderson <dianders@chromium.org>
 > 
-Applied, thanks.
+> >
+> > ---
+> >  arch/arm/Kconfig.debug        |   11 +++++++++++
+> >  arch/arm/plat-samsung/Kconfig |    1 +
+> >  2 files changed, 12 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> > index 33a8930..35ba7dc 100644
+> > --- a/arch/arm/Kconfig.debug
+> > +++ b/arch/arm/Kconfig.debug
+> > @@ -355,6 +355,17 @@ choice
+> >  		  The uncompressor code port configuration is now handled
+> >  		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
+> >
+> > +	config DEBUG_S3C_UART3
+> > +		depends on PLAT_SAMSUNG
+> 
+> 
+> Sorry, the reason I hadn't re-posted this is that Kukjin had proposed
+> to protect users of <= 3 UART platforms to select it. An added "Depends
+> on ARCH_EXYNOS4 || ARCH_EXYNOS5" should cover that. Can you add and
+> repost, please?
+> 
+Yes, please :-)
+
+Thanks.
 
 Best regards,
 Kgene.
