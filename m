@@ -1,54 +1,50 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 RESEND 0/4] ARM: EXYNOS: Power domain DT support
- extension
-Date: Wed, 21 Nov 2012 11:38:07 +0100
-Message-ID: <3937720.DSR9HIu3D4@amdc1227>
-References: <1352812107-8777-1-git-send-email-t.figa@samsung.com>
+Subject: Re: [PATCH v2 0/2] mmc: host: sdhci-s3c: Add support for pinctrl
+ interface
+Date: Wed, 21 Nov 2012 11:40:49 +0100
+Message-ID: <1589890.sTXgh0P5QK@amdc1227>
+References: <1353076097-22498-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:63948 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752143Ab2KUKiL (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:9138 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752826Ab2KUKkx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Nov 2012 05:38:11 -0500
-In-reply-to: <1352812107-8777-1-git-send-email-t.figa@samsung.com>
+	Wed, 21 Nov 2012 05:40:53 -0500
+In-reply-to: <1353076097-22498-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, rjw@sisk.pl, m.szyprowski@samsung.com, tomasz.figa@gmail.com
+To: linux-mmc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, cjb@laptop.org, ben-linux@fluff.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-Hi Kgene,
+Hi,
 
-On Tuesday 13 of November 2012 14:08:23 Tomasz Figa wrote:
-> This patch series fixes two issues with existing DT support for Exynos
-> power domains and extends it with the ability of binding devices to
-> domains, basically making it possible to use power domains with DT.
+On Friday 16 of November 2012 15:28:15 Tomasz Figa wrote:
+> This series intends to add support for pin configuration using pin
+> control interface.
 > 
-> Based on for-next branch of Kgene's tree.
+> First patch cleans up GPIO requesting and freeing in the driver to
+> simplify adding pin control support.
 > 
-> Changes since v2:
->  - Rebased to for-next of Kgene's tree.
+> Second patch adds pin control support to the driver.
+> 
 > Changes since v1:
->  - Added "samsung," prefix to "power-domain" property.
->  - Added power domain nodes to Exynos4 device tree sources.
+>  - fixed build error because of incorrect merge
 > 
-> Tomasz Figa (4):
->   ARM: EXYNOS: pm_domain: Detect domain state on registration from DT
->   ARM: EXYNOS: pm_domain: Fix power domain name initialization
->   ARM: EXYNOS: pm_domain: Bind devices to power domains using DT
->   ARM: dts: exynos4: Set up power domains
+> Tomasz Figa (2):
+>   mmc: host: sdhci-s3c: Use devm_gpio_request to request GPIOs
+>   mmc: host: sdhci-s3c: Add support for pinctrl
 > 
->  .../bindings/arm/exynos/power_domain.txt           | 15 +++-
->  arch/arm/boot/dts/exynos4.dtsi                     | 30 +++++++
->  arch/arm/boot/dts/exynos4210.dtsi                  |  5 ++
->  arch/arm/mach-exynos/pm_domains.c                  | 93
-> +++++++++++++++++++++- 4 files changed, 135 insertions(+), 8
+>  .../devicetree/bindings/mmc/samsung-sdhci.txt      | 20 ++++++---
+>  drivers/mmc/host/sdhci-s3c.c                       | 52
+> ++++++++-------------- 2 files changed, 32 insertions(+), 40
 > deletions(-)
 
-Since this version is just a rebase to your for-next and there are no 
-remaining comments, could you still take it for 3.8?
+I know it's less than a week since I posted this series, but time is 
+running out, while it would be nice to get this included in 3.8, because 
+it's required for all Exynos4 boards using MMC.
 
 Best regards,
 -- 
