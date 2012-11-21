@@ -1,55 +1,114 @@
-From: Alexander Varnin <fenixk19@mail.ru>
-Subject: Re: [PATCH] ARM: S3C2443: SPI clock channel setup is fixed
-Date: Thu, 22 Nov 2012 12:29:42 +0400
-Message-ID: <50ADE276.3030501@mail.ru>
-References: <50AAAABE.8090607@mail.ru> <0c8901cdc714$a567f7a0$f037e6e0$@org> <50ADDACE.9090709@mail.ru> <0f6d01cdc88a$8a0c5b00$9e251100$@org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fallback1.mail.ru ([94.100.176.18]:35142 "EHLO
-	fallback1.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755817Ab2KVSuz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Nov 2012 13:50:55 -0500
-Received: from smtp29.i.mail.ru (smtp29.i.mail.ru [94.100.177.89])
-	by fallback1.mail.ru (mPOP.Fallback_MX) with ESMTP id C8F61C44606
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Nov 2012 12:30:12 +0400 (MSK)
-In-Reply-To: <0f6d01cdc88a$8a0c5b00$9e251100$@org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 2/2] mmc: dw_mmc: Handle wp-gpios from device tree
+Date: Wed, 21 Nov 2012 14:03:03 -0800
+Message-ID: <1353535387-32106-2-git-send-email-dianders@chromium.org>
+References: <1353535387-32106-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1353535387-32106-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Doug Anderson <dianders@chromium.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
 
-22.11.2012 12:22, Kukjin Kim =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> SPI1). I've solved it with board specific code, but it is not most
->> correct way, i think.
->>
-> Hmm, if provided platform_device is in plat-samsung/devs.c cannot sup=
-port, we can do as you said temporarily but we know it's wrong way beca=
-use the value depends on SoC not board.
->
-> How about following?
->
-> 8<--------------------------------
-> diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/=
-s3c2443.c
-> index 165b6a6..22eead3 100644
-> --- a/arch/arm/mach-s3c24xx/s3c2443.c
-> +++ b/arch/arm/mach-s3c24xx/s3c2443.c
-> @@ -82,6 +82,10 @@ int __init s3c2443_init(void)
->   	s3c_device_wdt.resource[1].start =3D IRQ_S3C2443_WDT;
->   	s3c_device_wdt.resource[1].end   =3D IRQ_S3C2443_WDT;
->
-> +	/* change SPI IRQ number */
-> +	s3c_device_spi0.resource[1].start =3D IRQ_SPI1;
-> +	s3c_device_spi0.resource[1].end =3D IRQ_SPI1;
-> +
->   	return device_register(&s3c2443_dev);
->   }
-> 8<--------------------------------
->
-> K-Gene <kgene@kernel.org>
->
-Yes, that is a fix. Thanks.
+On some SoCs (like exynos5250) you need to use an external GPIO for
+write protect.  Add support for wp-gpios to the core dw_mmc driver
+since it could be useful across multiple SoCs.
+
+With this change I am able to make use of the write protect for the
+external SD slot on exynos5250-snow.
+
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+ drivers/mmc/host/dw_mmc.c |   35 +++++++++++++++++++++++++++++++++++
+ 1 files changed, 35 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 5b41348..9c79870 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -34,6 +34,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/workqueue.h>
+ #include <linux/of.h>
++#include <linux/of_gpio.h>
+ 
+ #include "dw_mmc.h"
+ 
+@@ -74,6 +75,7 @@ struct idmac_desc {
+  * struct dw_mci_slot - MMC slot state
+  * @mmc: The mmc_host representing this slot.
+  * @host: The MMC controller this slot is using.
++ * @wp_gpio: If gpio_is_valid() we'll use this to read write protect.
+  * @ctype: Card type for this slot.
+  * @mrq: mmc_request currently being processed or waiting to be
+  *	processed, or NULL when the slot is idle.
+@@ -88,6 +90,8 @@ struct dw_mci_slot {
+ 	struct mmc_host		*mmc;
+ 	struct dw_mci		*host;
+ 
++	int			wp_gpio;
++
+ 	u32			ctype;
+ 
+ 	struct mmc_request	*mrq;
+@@ -832,6 +836,8 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
+ 		read_only = 0;
+ 	else if (brd->get_ro)
+ 		read_only = brd->get_ro(slot->id);
++	else if (gpio_is_valid(slot->wp_gpio))
++		read_only = gpio_get_value(slot->wp_gpio);
+ 	else
+ 		read_only =
+ 			mci_readl(slot->host, WRTPRT) & (1 << slot->id) ? 1 : 0;
+@@ -1802,6 +1808,29 @@ static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
+ 			       " as 1\n");
+ 	return bus_wd;
+ }
++
++/* find the write protect gpio for a given slot; or -1 if none specified */
++static u32 dw_mci_of_get_wp_gpio(struct device *dev, u8 slot)
++{
++	struct device_node *np = dw_mci_of_find_slot_node(dev, slot);
++	int gpio;
++
++	if (!np)
++		return -1;
++
++	gpio = of_get_named_gpio(np, "wp-gpios", 0);
++
++	/* Having a missing entry is valid; return silently */
++	if (!gpio_is_valid(gpio))
++		return -1;
++
++	if (devm_gpio_request(dev, gpio, "dw-mci-wp")) {
++		dev_warn(dev, "gpio [%d] request failed\n", gpio);
++		return -1;
++	}
++
++	return gpio;
++}
+ #else /* CONFIG_OF */
+ static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
+ {
+@@ -1811,6 +1840,10 @@ static struct device_node *dw_mci_of_find_slot_node(struct device *dev, u8 slot)
+ {
+ 	return NULL;
+ }
++static u32 dw_mci_of_get_wp_gpio(struct device *dev, u8 slot)
++{
++	return -1;
++}
+ #endif /* CONFIG_OF */
+ 
+ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+@@ -1923,6 +1956,8 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 	else
+ 		clear_bit(DW_MMC_CARD_PRESENT, &slot->flags);
+ 
++	slot->wp_gpio = dw_mci_of_get_wp_gpio(host->dev, slot->id);
++
+ 	mmc_add_host(mmc);
+ 
+ #if defined(CONFIG_DEBUG_FS)
+-- 
+1.7.7.3
