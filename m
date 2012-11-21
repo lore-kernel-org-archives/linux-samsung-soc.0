@@ -1,24 +1,50 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 132/493] Input: remove use of __devexit_p
-Date: Wed, 21 Nov 2012 11:48:58 +0000
-Message-ID: <20121121114858.GE3290@n2100.arm.linux.org.uk>
-References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu> <1353349642-3677-132-git-send-email-wfp5p@virginia.edu>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 032/493] arm: remove use of __devexit_p
+Date: Wed, 21 Nov 2012 20:58:28 +0900
+Message-ID: <0e5701cdc7df$84fdea80$8ef9bf80$%kim@samsung.com>
+References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
+ <1353349642-3677-32-git-send-email-wfp5p@virginia.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1353349642-3677-132-git-send-email-wfp5p@virginia.edu>
-Sender: linux-input-owner@vger.kernel.org
-To: Bill Pemberton <wfp5p@virginia.edu>
-Cc: gregkh@linuxfoundation.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wan ZongShun <mcuos.com@gmail.com>, Miloslav Trmac <mitr@volny.cz>, Javier Martinez Canillas <javier@dowhile0.org>, Pau Oliva Fora <pof@eslack.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-input@vger.kernel.org, device-drivers-devel@blackfin.uclinux.org, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com, linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-reply-to: <1353349642-3677-32-git-send-email-wfp5p@virginia.edu>
+Content-language: ko
+Sender: linux-omap-owner@vger.kernel.org
+To: 'Bill Pemberton' <wfp5p@virginia.edu>, gregkh@linuxfoundation.org
+Cc: 'Russell King' <linux@arm.linux.org.uk>, 'Tony Lindgren' <tony@atomide.com>, 'Eric Miao' <eric.y.miao@gmail.com>, 'Haojian Zhuang' <haojian.zhuang@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, davinci-linux-open-source@linux.davincidsp.com, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 19, 2012 at 01:21:21PM -0500, Bill Pemberton wrote:
->  drivers/input/serio/ambakmi.c               | 2 +-
->  drivers/input/serio/pcips2.c                | 2 +-
->  drivers/input/serio/rpckbd.c                | 2 +-
->  drivers/input/serio/sa1111ps2.c             | 2 +-
+Bill Pemberton wrote:
+> 
+> CONFIG_HOTPLUG is going away as an option so __devexit_p is no longer
+> needed.
+> 
+> Signed-off-by: Bill Pemberton <wfp5p@virginia.edu>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Eric Miao <eric.y.miao@gmail.com>
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: davinci-linux-open-source@linux.davincidsp.com
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> ---
 
-For these four,
+>  arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 2 +-
+>  arch/arm/plat-samsung/adc.c             | 2 +-
 
-Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
+For above s3c24xx and samsung,
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
