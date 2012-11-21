@@ -1,69 +1,133 @@
-From: "Zhang, Rui" <rui.zhang@intel.com>
-Subject: RE: [PATCH 0/4] thermal: Add support for interrupt based
- notification to thermal layer
-Date: Wed, 21 Nov 2012 09:04:06 +0000
-Message-ID: <744357E9AAD1214791ACBA4B0B909263264C2D@SHSMSX101.ccr.corp.intel.com>
-References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: EXYNOS: Add aliases for i2c controller for exynos4
+Date: Wed, 21 Nov 2012 18:43:04 +0900
+Message-ID: <0dfb01cdc7cc$9aa39500$cfeabf00$%kim@samsung.com>
+References: <1353450428-2615-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "R, Durgadoss" <durgadoss.r@intel.com>, "lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jonghwa3.lee@samsung.com" <jonghwa3.lee@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1353450428-2615-1-git-send-email-dianders@chromium.org>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Doug Anderson' <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, 'Olof Johansson' <olof@lixom.net>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Tomasz Figa' <t.figa@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi, Amit,
-
-As THERMAL_TREND_RAISE_FULL/THERMAL_TREND_DROP_FULL
-has been introduced to thermal next tree,
-I'd like to get your plan about this patch set?
-
-Thanks,
-Rui
-
-> -----Original Message-----
-> From: linux-acpi-owner@vger.kernel.org [mailto:linux-acpi-
-> owner@vger.kernel.org] On Behalf Of Amit Daniel Kachhap
-> Sent: Thursday, November 08, 2012 12:26 PM
-> To: linux-pm@lists.linux-foundation.org
-> Cc: linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; R,
-> Durgadoss; lenb@kernel.org; Zhang, Rui; linux-acpi@vger.kernel.org;
-> amit.kachhap@linaro.org; jonghwa3.lee@samsung.com
-> Subject: [PATCH 0/4] thermal: Add support for interrupt based
-> notification to thermal layer
-> Importance: High
+Doug Anderson wrote:
 > 
-> The patch submitted by Jonghwa Lee
-> (https://patchwork.kernel.org/patch/1683441/)
-> adds support for interrupt based notification to thermal layer. This is
-> a good feature but the current thermal framework needs polling/regular
-> notification for invoking suitable cooling action. So adding 2 new
-> thermal trend type to implement this feature.
+> This is similar to a recent commit for exynos5250 titled:
+>   ARM: EXYNOS: Add aliases for i2c controller
 > 
-> All these patches are based on thermal maintainer next tree.
-> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
+> Adding aliases will be useful to prevent warnings in a future
+> change.  See:
+>   i2c: s3c2410: Get the i2c bus number from alias id
 > 
-> Amit Daniel Kachhap (3):
->   thermal: Add new thermal trend type to support quick cooling
->   thermal: exynos: Miscellaneous fixes to support falling threshold
->     interrupt
->   thermal: exynos: Use the new thermal trend type for quick cooling
->     action.
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
 > 
-> Jonghwa Lee (1):
->   Thermal: exynos: Add support for temperature falling interrupt.
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi |   24 ++++++++++++++++--------
+>  1 files changed, 16 insertions(+), 8 deletions(-)
 > 
->  drivers/thermal/exynos_thermal.c             |  105 +++++++++++++++---
-> --------
->  drivers/thermal/step_wise.c                  |   19 ++++-
->  include/linux/platform_data/exynos_thermal.h |    3 +
->  include/linux/thermal.h                      |    2 +
->  4 files changed, 80 insertions(+), 49 deletions(-)
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi
+> b/arch/arm/boot/dts/exynos4.dtsi
+> index a26c3dd..824d362 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -28,6 +28,14 @@
+>  		spi0 = &spi_0;
+>  		spi1 = &spi_1;
+>  		spi2 = &spi_2;
+> +		i2c0 = &i2c_0;
+> +		i2c1 = &i2c_1;
+> +		i2c2 = &i2c_2;
+> +		i2c3 = &i2c_3;
+> +		i2c4 = &i2c_4;
+> +		i2c5 = &i2c_5;
+> +		i2c6 = &i2c_6;
+> +		i2c7 = &i2c_7;
+>  	};
 > 
+>  	gic:interrupt-controller@10490000 {
+> @@ -121,7 +129,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	i2c@13860000 {
+> +	i2c_0: i2c@13860000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		compatible = "samsung,s3c2440-i2c";
+> @@ -130,7 +138,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	i2c@13870000 {
+> +	i2c_1: i2c@13870000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		compatible = "samsung,s3c2440-i2c";
+> @@ -139,7 +147,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	i2c@13880000 {
+> +	i2c_2: i2c@13880000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		compatible = "samsung,s3c2440-i2c";
+> @@ -148,7 +156,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	i2c@13890000 {
+> +	i2c_3: i2c@13890000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		compatible = "samsung,s3c2440-i2c";
+> @@ -157,7 +165,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	i2c@138A0000 {
+> +	i2c_4: i2c@138A0000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		compatible = "samsung,s3c2440-i2c";
+> @@ -166,7 +174,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	i2c@138B0000 {
+> +	i2c_5: i2c@138B0000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		compatible = "samsung,s3c2440-i2c";
+> @@ -175,7 +183,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	i2c@138C0000 {
+> +	i2c_6: i2c@138C0000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		compatible = "samsung,s3c2440-i2c";
+> @@ -184,7 +192,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	i2c@138D0000 {
+> +	i2c_7: i2c@138D0000 {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		compatible = "samsung,s3c2440-i2c";
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi"
-> in the body of a message to majordomo@vger.kernel.org More majordomo
-> info at  http://vger.kernel.org/majordomo-info.html
+> 1.7.7.3
+
+Applied, thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
