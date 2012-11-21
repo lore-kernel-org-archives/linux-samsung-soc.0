@@ -1,62 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 RESEND 0/4] ARM: EXYNOS: Power domain DT support
- extension
-Date: Wed, 21 Nov 2012 21:15:43 +0900
-Message-ID: <0e7b01cdc7e1$edbb5a60$c9320f20$%kim@samsung.com>
-References: <1352812107-8777-1-git-send-email-t.figa@samsung.com>
- <3937720.DSR9HIu3D4@amdc1227>
+Subject: RE: [PATCH 0/4] ARM: dts: exynos4210-origen: Device tree fixes
+Date: Wed, 21 Nov 2012 21:18:00 +0900
+Message-ID: <0e7c01cdc7e2$3fc71380$bf553a80$%kim@samsung.com>
+References: <1353336396-21161-1-git-send-email-t.figa@samsung.com>
+ <1803002.oscJKykDTC@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58041 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750714Ab2KUMPo (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:15569 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750958Ab2KUMSC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Nov 2012 07:15:44 -0500
-In-reply-to: <3937720.DSR9HIu3D4@amdc1227>
+	Wed, 21 Nov 2012 07:18:02 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDU0059F7I1BUD0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Nov 2012 21:18:01 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDU00LY57I0XA80@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Nov 2012 21:18:01 +0900 (KST)
+In-reply-to: <1803002.oscJKykDTC@amdc1227>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, thomas.abraham@linaro.org, rjw@sisk.pl, m.szyprowski@samsung.com, tomasz.figa@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, thomas.abraham@linaro.org, jhkim@insignal.co.kr, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
 Tomasz Figa wrote:
 > 
 > Hi Kgene,
 > 
-> On Tuesday 13 of November 2012 14:08:23 Tomasz Figa wrote:
-> > This patch series fixes two issues with existing DT support for Exynos
-> > power domains and extends it with the ability of binding devices to
-> > domains, basically making it possible to use power domains with DT.
+> On Monday 19 of November 2012 15:46:32 Tomasz Figa wrote:
+> > This patch series fixes device tree support for Origen board:
+> >  - memory is defined using sections of maximum allowed size
+> >  - any pin configuration is modified to use pinctrl
+> >  - invalid properties in sdhci nodes are replaced according to current
+> >    mmc bindings
+> >  - a fixed vmmc voltage regulator is added
 > >
-> > Based on for-next branch of Kgene's tree.
+> > Tested on Origen board.
 > >
-> > Changes since v2:
-> >  - Rebased to for-next of Kgene's tree.
-> > Changes since v1:
-> >  - Added "samsung," prefix to "power-domain" property.
-> >  - Added power domain nodes to Exynos4 device tree sources.
+> > Depends on:
+> > [PATCH v2 0/2] mmc: host: sdhci-s3c: Add support for pinctrl interface
 > >
 > > Tomasz Figa (4):
-> >   ARM: EXYNOS: pm_domain: Detect domain state on registration from DT
-> >   ARM: EXYNOS: pm_domain: Fix power domain name initialization
-> >   ARM: EXYNOS: pm_domain: Bind devices to power domains using DT
-> >   ARM: dts: exynos4: Set up power domains
+> >   ARM: dts: exynos4210-origen: Split memory sections
+> >   ARM: dts: exynos4210-origen: Update for pinctrl-samsung driver
+> >   ARM: dts: exynos4210-origen: Update sdhci nodes for current bindings
+> >   ARM: dts: exynos4210-origen: Add vmmc fixed voltage regulator
 > >
-> >  .../bindings/arm/exynos/power_domain.txt           | 15 +++-
-> >  arch/arm/boot/dts/exynos4.dtsi                     | 30 +++++++
-> >  arch/arm/boot/dts/exynos4210.dtsi                  |  5 ++
-> >  arch/arm/mach-exynos/pm_domains.c                  | 93
-> > +++++++++++++++++++++- 4 files changed, 135 insertions(+), 8
+> >  arch/arm/boot/dts/exynos4210-origen.dts | 54
+> > ++++++++++++++++----------------- 1 file changed, 27 insertions(+), 27
 > > deletions(-)
 > 
-> Since this version is just a rebase to your for-next and there are no
-> remaining comments, could you still take it for 3.8?
+> Could you still pick these patches up for 3.8?
 > 
-Well, I'm not sure 'S5P_INT_LOCAL_PWR_EN' in [1/4] patch is available on all
-of exynos and it can support multiple platform. But at this moment, looks OK
-to me. If any modification is required, we can do it later.
+Looks OK to me, I want to test 1st patch on origen board with current my
+u-boot though.
 
 Will apply, thanks.
 
