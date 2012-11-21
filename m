@@ -1,61 +1,140 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: [PATCH V4 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific
- Code
-Date: Wed, 21 Nov 2012 10:56:26 +0000
-Message-ID: <1353495386.2432.13.camel@dabdike.int.hansenpartnership.com>
-References: <1350474822-7315-1-git-send-email-vinholikatti@gmail.com>
-	 <1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
-	 <507FA52E.9050400@ti.com>
-	 <CAKVbJB_FpmbtcLr5G5sSphNOPnodZUd0sN8ha0C_RtCDtWUG=Q@mail.gmail.com>
-	 <1352841998.8317.1.camel@dabdike>
-	 <CAKVbJB8sZ4Y5QfF63wh19N61+0honqoXawnkPGY6qUkt2MCrsw@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v2 2/2] mmc: host: sdhci-s3c: Add support for pinctrl
+Date: Wed, 21 Nov 2012 16:28:38 +0530
+Message-ID: <CAJuYYwSt9pGuFz7iqWJvrmx0cVW+wgqhtJdnx0hnxdATPRGpbA@mail.gmail.com>
+References: <1353076097-22498-1-git-send-email-t.figa@samsung.com>
+	<1353076097-22498-3-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKVbJB8sZ4Y5QfF63wh19N61+0honqoXawnkPGY6qUkt2MCrsw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: vinayak holikatti <vinholikatti@gmail.com>
-Cc: Venkatraman S <svenkatr@ti.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1353076097-22498-3-git-send-email-t.figa@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, cjb@laptop.org, ben-linux@fluff.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 2012-11-21 at 16:02 +0530, vinayak holikatti wrote:
-> On Wed, Nov 14, 2012 at 2:56 AM, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > On Thu, 2012-10-18 at 17:37 +0530, vinayak holikatti wrote:
-> >> I am Vacation will look into it when i am back to work.
-> >> > This doesn't apply on 3.7-rc1. Am I missing any patches in between ?
-> >
-> > OK, so it doesn't apply for me either:
-> >
-> > patching file drivers/scsi/ufs/ufshcd.c
-> > Hunk #11 FAILED at 902.
-> > Hunk #15 succeeded at 1157 with fuzz 1 (offset 2 lines).
-> > Hunk #16 succeeded at 1271 (offset 2 lines).
-> > Hunk #17 succeeded at 1300 (offset 2 lines).
-> > Hunk #18 succeeded at 1364 (offset 2 lines).
-> > Hunk #19 succeeded at 1499 (offset 2 lines).
-> > Hunk #20 succeeded at 1542 (offset 2 lines).
-> > Hunk #21 succeeded at 1678 (offset 2 lines).
-> > Hunk #22 succeeded at 1706 (offset 2 lines).
-> > Hunk #23 succeeded at 1727 (offset 2 lines).
-> > Hunk #24 succeeded at 1775 (offset 2 lines).
-> > Hunk #25 succeeded at 1819 (offset 2 lines).
-> > Hunk #26 succeeded at 1872 (offset 2 lines).
-> > Hunk #27 succeeded at 1898 (offset 2 lines).
-> > Hunk #28 FAILED at 2011.
-> > 2 out of 28 hunks FAILED -- saving rejects to file
-> > drivers/scsi/ufs/ufshcd.c.rej
-> >
-> I have generated patches based on linux/kernel/git/jejb/scsi.git this
-> tree, Also i have
-> confirmed that patches get applied successfully on this git tree.
-> 
-> James,
-> Which tree are you refering to. Let me know, which tree i should use to
-> generate the patches.
+On 16 November 2012 19:58, Tomasz Figa <t.figa@samsung.com> wrote:
+> This patch adds support for pin configuration using pinctrl subsystem
+> to the sdhci-s3c driver.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  .../devicetree/bindings/mmc/samsung-sdhci.txt        | 20 +++++++++++++-------
+>  drivers/mmc/host/sdhci-s3c.c                         | 12 ++++++++++--
+>  2 files changed, 23 insertions(+), 9 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> index 630a7d7..97e9e31 100644
+> --- a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> @@ -12,10 +12,6 @@ is used. The Samsung's SDHCI controller bindings extends this as listed below.
+>  [A] The property "samsung,cd-pinmux-gpio" can be used as stated in the
+>      "Optional Board Specific Properties" section below.
+>
+> -[B] If core card-detect bindings and "samsung,cd-pinmux-gpio" property
+> -    is not specified, it is assumed that there is no card detection
+> -    mechanism used.
+> -
+>  Required SoC Specific Properties:
+>  - compatible: should be one of the following
+>    - "samsung,s3c6410-sdhci": For controllers compatible with s3c6410 sdhci
+> @@ -24,14 +20,18 @@ Required SoC Specific Properties:
+>      controller.
+>
+>  Required Board Specific Properties:
+> -- gpios: Should specify the gpios used for clock, command and data lines. The
+> -  gpio specifier format depends on the gpio controller.
+> +- Samsung GPIO variant (will be completely replaced by pinctrl):
+> +  - gpios: Should specify the gpios used for clock, command and data lines. The
+> +    gpio specifier format depends on the gpio controller.
+> +- Pinctrl variant (preferred if available):
+> +  - pinctrl-0: Should specify pin control groups used for this controller.
+> +  - pinctrl-names: Should contain only one value - "default".
+>
+>  Optional Board Specific Properties:
+>  - samsung,cd-pinmux-gpio: Specifies the card detect line that is routed
+>    through a pinmux to the card-detect pin of the card slot. This property
+>    should be used only if none of the mmc core card-detect properties are
+> -  used.
+> +  used. Only for Samsung GPIO variant.
+>
+>  Example:
+>         sdhci@12530000 {
+> @@ -40,12 +40,18 @@ Example:
+>                 interrupts = <0 75 0>;
+>                 bus-width = <4>;
+>                 cd-gpios = <&gpk2 2 2 3 3>;
+> +
+> +               /* Samsung GPIO variant */
+>                 gpios = <&gpk2 0 2 0 3>,  /* clock line */
+>                         <&gpk2 1 2 0 3>,  /* command line */
+>                         <&gpk2 3 2 3 3>,  /* data line 0 */
+>                         <&gpk2 4 2 3 3>,  /* data line 1 */
+>                         <&gpk2 5 2 3 3>,  /* data line 2 */
+>                         <&gpk2 6 2 3 3>;  /* data line 3 */
+> +
+> +               /* Pinctrl variant */
+> +               pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
+> +               pinctrl-names = "default";
+>         };
 
-All patches for the merge window should be against the misc branch of
-the scsi.git tree.
+nit: there could have been one example each for gpio and pinctrl
+variant instead of putting both into one example node.
 
-James
+>
+>         Note: This example shows both SoC specific and board specific properties
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 75f85fd..6161162 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/pm.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/pinctrl/consumer.h>
+>
+>  #include <linux/mmc/host.h>
+>
+> @@ -57,6 +58,7 @@ struct sdhci_s3c {
+>         int                     ext_cd_irq;
+>         int                     ext_cd_gpio;
+>         int                     *gpios;
+> +       struct pinctrl          *pctrl;
+>
+>         struct clk              *clk_io;
+>         struct clk              *clk_bus[MAX_BUS_CLK];
+> @@ -477,8 +479,9 @@ static int __devinit sdhci_s3c_parse_dt(struct device *dev,
+>                 return -EINVAL;
+>         }
+>
+> -       dev_info(dev, "assuming no card detect line available\n");
+> -       pdata->cd_type = S3C_SDHCI_CD_NONE;
+> +       /* assuming internal card detect that will be configured by pinctrl */
+> +       pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
+> +       goto setup_bus;
+>
+>   found_cd:
+>         if (pdata->cd_type == S3C_SDHCI_CD_GPIO) {
+> @@ -496,6 +499,9 @@ static int __devinit sdhci_s3c_parse_dt(struct device *dev,
+>         }
+>
+>   setup_bus:
+> +       if (!IS_ERR(ourhost->pctrl))
+> +               return 0;
+> +
+>         /* get the gpios for command, clock and data lines */
+>         for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
+>                 gpio = of_get_gpio(node, cnt);
+> @@ -574,6 +580,8 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+>                 goto err_pdata_io_clk;
+>         }
+>
+> +       sc->pctrl = devm_pinctrl_get_select_default(&pdev->dev);
+> +
+>         if (pdev->dev.of_node) {
+>                 ret = sdhci_s3c_parse_dt(&pdev->dev, host, pdata);
+>                 if (ret)
+> --
+> 1.8.0
+
+Acked-by: Thomas Abraham <thomas.abraham@linaro.org>
