@@ -1,48 +1,61 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH 270/493] arm: remove use of __devinit
-Date: Wed, 21 Nov 2012 18:53:50 +0800
-Message-ID: <CAGsJ_4y2+o7HBH-TQWaanUs9ZgZHhXg3YpEUzd5-VoeZ9+wiMw@mail.gmail.com>
-References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu> <1353349642-3677-270-git-send-email-wfp5p@virginia.edu>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: [PATCH V4 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific
+ Code
+Date: Wed, 21 Nov 2012 10:56:26 +0000
+Message-ID: <1353495386.2432.13.camel@dabdike.int.hansenpartnership.com>
+References: <1350474822-7315-1-git-send-email-vinholikatti@gmail.com>
+	 <1350474822-7315-2-git-send-email-vinholikatti@gmail.com>
+	 <507FA52E.9050400@ti.com>
+	 <CAKVbJB_FpmbtcLr5G5sSphNOPnodZUd0sN8ha0C_RtCDtWUG=Q@mail.gmail.com>
+	 <1352841998.8317.1.camel@dabdike>
+	 <CAKVbJB8sZ4Y5QfF63wh19N61+0honqoXawnkPGY6qUkt2MCrsw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:59104 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754019Ab2KUKyM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Nov 2012 05:54:12 -0500
-In-Reply-To: <1353349642-3677-270-git-send-email-wfp5p@virginia.edu>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAKVbJB8sZ4Y5QfF63wh19N61+0honqoXawnkPGY6qUkt2MCrsw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: vinayak holikatti <vinholikatti@gmail.com>
+Cc: Venkatraman S <svenkatr@ti.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bill Pemberton <wfp5p@virginia.edu>
-Cc: gregkh@linuxfoundation.org, Russell King <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sascha Hauer <kernel@pengutronix.de>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@ti.com>, Barry Song <baohua.song@csr.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-tegra@vger.kernel.org, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
 
-2012/11/20 Bill Pemberton <wfp5p@virginia.edu>:
-> CONFIG_HOTPLUG is going away as an option so __devinit is no longer
-> needed.
->
-> Signed-off-by: Bill Pemberton <wfp5p@virginia.edu>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Eric Miao <eric.y.miao@gmail.com>
-> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-> Cc: David Brown <davidb@codeaurora.org>
-> Cc: Daniel Walker <dwalker@fifo99.com>
-> Cc: Bryan Huntsman <bryanh@codeaurora.org>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Kevin Hilman <khilman@ti.com>
-> Cc: Barry Song <baohua.song@csr.com>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: patches@opensource.wolfsonmicro.com
-> Cc: linux-tegra@vger.kernel.org
-> ---
+On Wed, 2012-11-21 at 16:02 +0530, vinayak holikatti wrote:
+> On Wed, Nov 14, 2012 at 2:56 AM, James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > On Thu, 2012-10-18 at 17:37 +0530, vinayak holikatti wrote:
+> >> I am Vacation will look into it when i am back to work.
+> >> > This doesn't apply on 3.7-rc1. Am I missing any patches in between ?
+> >
+> > OK, so it doesn't apply for me either:
+> >
+> > patching file drivers/scsi/ufs/ufshcd.c
+> > Hunk #11 FAILED at 902.
+> > Hunk #15 succeeded at 1157 with fuzz 1 (offset 2 lines).
+> > Hunk #16 succeeded at 1271 (offset 2 lines).
+> > Hunk #17 succeeded at 1300 (offset 2 lines).
+> > Hunk #18 succeeded at 1364 (offset 2 lines).
+> > Hunk #19 succeeded at 1499 (offset 2 lines).
+> > Hunk #20 succeeded at 1542 (offset 2 lines).
+> > Hunk #21 succeeded at 1678 (offset 2 lines).
+> > Hunk #22 succeeded at 1706 (offset 2 lines).
+> > Hunk #23 succeeded at 1727 (offset 2 lines).
+> > Hunk #24 succeeded at 1775 (offset 2 lines).
+> > Hunk #25 succeeded at 1819 (offset 2 lines).
+> > Hunk #26 succeeded at 1872 (offset 2 lines).
+> > Hunk #27 succeeded at 1898 (offset 2 lines).
+> > Hunk #28 FAILED at 2011.
+> > 2 out of 28 hunks FAILED -- saving rejects to file
+> > drivers/scsi/ufs/ufshcd.c.rej
+> >
+> I have generated patches based on linux/kernel/git/jejb/scsi.git this
+> tree, Also i have
+> confirmed that patches get applied successfully on this git tree.
+> 
+> James,
+> Which tree are you refering to. Let me know, which tree i should use to
+> generate the patches.
 
-Acked-by: Barry Song <baohua.song@csr.com>
+All patches for the merge window should be against the misc branch of
+the scsi.git tree.
+
+James
