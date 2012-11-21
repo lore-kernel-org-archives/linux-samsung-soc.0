@@ -1,75 +1,25 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: S3C24XX: Fix potential NULL pointer dereference error
-Date: Wed, 21 Nov 2012 09:13:45 +0530
-Message-ID: <CAK9yfHyA+kOzzX+sqBMqJ-Gmj=Vwj36kg1WbTU06cnXJO3uN2Q@mail.gmail.com>
-References: <1352365291-32433-1-git-send-email-sachin.kamat@linaro.org>
-	<CAK9yfHyJ1r7KeNHfUAnNhZRBaV+_grjr=pP6r3a7yHoeWywt9A@mail.gmail.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 2/2] i2c: s3c2410: Get the i2c bus number from alias id
+Date: Wed, 21 Nov 2012 04:09:13 +0000
+Message-ID: <20121121040913.GA13280@sirena.org.uk>
+References: <1353450428-2615-1-git-send-email-dianders@chromium.org>
+ <1353450428-2615-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:51947 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752080Ab2KUDnq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Nov 2012 22:43:46 -0500
-Received: by mail-vc0-f174.google.com with SMTP id m18so3167849vcm.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Nov 2012 19:43:45 -0800 (PST)
-In-Reply-To: <CAK9yfHyJ1r7KeNHfUAnNhZRBaV+_grjr=pP6r3a7yHoeWywt9A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1353450428-2615-2-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Kukjin,
+On Tue, Nov 20, 2012 at 02:27:04PM -0800, Doug Anderson wrote:
+> From: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> Get the i2c bus number that the device is connected to using the alias
+> id.  This makes debugging / grokking of kernel messages much easier.
 
-You seem to have ignored this patch before sending out your pull request.
-Can you please check this?
-
-Regards
-Sachin
-
-On 20 November 2012 10:28, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> ping Kukjin.
->
-> On 8 November 2012 14:31, Sachin Kamat <sachin.kamat@linaro.org> wrote:
->> chan->end is tested for being NULL. However in the event that it is NULL, the
->> subsequent assignment statement would lead to NULL pointer dereference.
->> Thus dereferencing it only when it is not NULL.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> ---
->> Based on Kukjin Kim's for-next branch. Compile tested.
->> ---
->>  arch/arm/plat-s3c24xx/dma.c |    9 +++++----
->>  1 files changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
->> index db98e70..0abd1c4 100644
->> --- a/arch/arm/plat-s3c24xx/dma.c
->> +++ b/arch/arm/plat-s3c24xx/dma.c
->> @@ -473,12 +473,13 @@ int s3c2410_dma_enqueue(enum dma_ch channel, void *id,
->>                 pr_debug("dma%d: %s: buffer %p queued onto non-empty channel\n",
->>                          chan->number, __func__, buf);
->>
->> -               if (chan->end == NULL)
->> +               if (chan->end == NULL) {
->>                         pr_debug("dma%d: %s: %p not empty, and chan->end==NULL?\n",
->>                                  chan->number, __func__, chan);
->> -
->> -               chan->end->next = buf;
->> -               chan->end = buf;
->> +               } else {
->> +                       chan->end->next = buf;
->> +                       chan->end = buf;
->> +               }
->>         }
->>
->>         /* if necessary, update the next buffer field */
->> --
->> 1.7.4.1
->>
->
->
->
-> --
-> With warm regards,
-> Sachin
+This doesn't look like a s3c2410 specific change - it's a generic device
+tree issue.  This suggests that it sohuld be implemented in the
+framework so that all I2C controllers with DT can use it.
