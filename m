@@ -1,15 +1,14 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 0/6] ARM: EXYNOS: Add secure firmware support
-Date: Thu, 22 Nov 2012 10:33:35 +0100
-Message-ID: <4854667.0jktSvOtLR@amdc1227>
-References: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
- <3879194.hz9mrTmL6z@amdc1227>
- <0f5d01cdc87d$e7c81890$b75849b0$%kim@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 3/4] ARM: dts: exynos4: add node for PL330 MDMA1 controller
+Date: Thu, 22 Nov 2012 11:57:26 +0100
+Message-ID: <201211221157.26615.b.zolnierkie@samsung.com>
+References: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
+ <1351504796-24788-4-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <0f5d01cdc87d$e7c81890$b75849b0$%kim@samsung.com>
+In-reply-to: <1351504796-24788-4-git-send-email-b.zolnierkie@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,52 +18,66 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, arnd@arndb.de, tomasz.figa@gmail.com, kyungmin.park@samsung.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, vinod.koul@intel.com, t.figa@samsung.com, jassisinghbrar@gmail.com, rob.herring@calxeda.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kgene,
 
-On Thursday 22 of November 2012 15:52:14 Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > On Monday 12 of November 2012 09:55:30 Russell King - ARM Linux wrote:
-> > > On Mon, Nov 12, 2012 at 04:39:28PM +0900, Kukjin Kim wrote:
-> > > > (+ Russell King)
-> > > 
-> > > I think there's still an amount of work to do here; it's not a
-> > > generic
-> > > interface at the moment because it makes some assumptions about how
-> > > things are done (eg, it assumes that there _will_ be a CPU boot
-> > > register; that is not always true.
-> > > 
-> > > Moreover, the 'cpu' arguments given seem to be uncertain whether
-> > > they're logical CPU numbers or physical CPU numbers.
-> > > 
-> > > Lastly, where is this interface actually documented?  It's just a
-> > > bunch
-> > > of code _without_ _any_ documentation.  That means people will
-> > > interpret it differently, and it'll get used differently from
-> > > platform to platform.
-> > > 
-> > > Let's have some documentation on this.
-> > 
-> > Right, I will include documentation in next version of this patchset.
-> 
-> Any updates on this?
-> 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
+Hi Kukjin,
 
-I was waiting for some comments about my proposals, but since there is no 
-new input I will prepare and post next version today.
+Could you also apply this patch?
 
-Best regards.
--- 
-Tomasz Figa
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
 Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+
+
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos4: add node for PL330 MDMA1 controller
+
+Add missing PL330 MDMA1 controller node to the device tree (DT).
+
+[ Currently there is no problem with using 'non-secure' mdma1 address
+  instead of 'secure' one on revision 0 of Exynos4210 SOC (as used by
+  Universal C210 board) as this SOC revision is unsupported by DT. ]
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+v2: refreshed againt next-20121115 and added Reviewed-by tag
+
+ arch/arm/boot/dts/exynos4.dtsi         |    6 ++++++
+ arch/arm/mach-exynos/mach-exynos4-dt.c |    1 +
+ 2 files changed, 7 insertions(+)
+
+Index: b/arch/arm/boot/dts/exynos4.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos4.dtsi	2012-11-22 11:40:51.000000000 +0100
++++ b/arch/arm/boot/dts/exynos4.dtsi	2012-11-22 11:53:29.520815274 +0100
+@@ -244,5 +244,11 @@
+ 			reg = <0x12690000 0x1000>;
+ 			interrupts = <0 36 0>;
+ 		};
++
++		mdma1: mdma@12850000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x12850000 0x1000>;
++			interrupts = <0 34 0>;
++		};
+ 	};
+ };
+Index: b/arch/arm/mach-exynos/mach-exynos4-dt.c
+===================================================================
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c	2012-11-22 11:40:51.000000000 +0100
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c	2012-11-22 11:53:55.248815271 +0100
+@@ -77,6 +77,7 @@ static const struct of_dev_auxdata exyno
+ 				"exynos4210-spi.2", NULL),
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
++	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
+ 				"exynos-tmu", NULL),
+ 	{},
