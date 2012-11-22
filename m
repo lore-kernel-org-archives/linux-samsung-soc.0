@@ -1,12 +1,11 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v4 1/5] ARM: Add interface for registering and calling
- firmware-specific operations
-Date: Thu, 22 Nov 2012 16:51:14 +0100
-Message-ID: <1353599478-24617-2-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v4 2/5] ARM: EXYNOS: Add support for secure monitor calls
+Date: Thu, 22 Nov 2012 16:51:15 +0100
+Message-ID: <1353599478-24617-3-git-send-email-t.figa@samsung.com>
 References: <1353599478-24617-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1353599478-24617-1-git-send-email-t.figa@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
@@ -22,134 +21,102 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, t.figa@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-U29tZSBib2FyZHMgYXJlIHJ1bm5pbmcgd2l0aCBzZWN1cmUgZmlybXdhcmUgcnVubmluZyBpbiBU
-cnVzdFpvbmUgc2VjdXJlCndvcmxkLCB3aGljaCBjaGFuZ2VzIHRoZSB3YXkgc29tZSB0aGluZ3Mg
-aGF2ZSB0byBiZSBpbml0aWFsaXplZC4KClRoaXMgcGF0Y2ggYWRkcyBhbiBpbnRlcmZhY2UgZm9y
-IHBsYXRmb3JtcyB0byBzcGVjaWZ5IGF2YWlsYWJsZSBmaXJtd2FyZQpvcGVyYXRpb25zIGFuZCBj
-YWxsIHRoZW0uCgpBIHdyYXBwZXIgbWFjcm8sIGNhbGxfZmlybXdhcmVfb3AoKSwgY2hlY2tzIGlm
-IHRoZSBvcGVyYXRpb24gaXMgcHJvdmlkZWQKYW5kIGNhbGxzIGl0IGlmIHNvLCBvdGhlcndpc2Ug
-cmV0dXJucyAtRU5PU1lTIHRvIGFsbG93IGZhbGxiYWNrIHRvCmxlZ2FjeSBvcGVyYXRpb24uLgoK
-QnkgZGVmYXVsdCBubyBvcGVyYXRpb25zIGFyZSBwcm92aWRlZC4KCkV4YW1wbGUgb2YgdXNlOgoK
-SW4gY29kZSB1c2luZyBmaXJtd2FyZSBvcHM6CgoJX19yYXdfd3JpdGVsKHZpcnRfdG9fcGh5cyhl
-eHlub3M0X3NlY29uZGFyeV9zdGFydHVwKSwKCQlDUFUxX0JPT1RfUkVHKTsKCgkvKiBDYWxsIEV4
-eW5vcyBzcGVjaWZpYyBzbWMgY2FsbCAqLwoJaWYgKGNhbGxfZmlybXdhcmVfb3AoY3B1X2Jvb3Qs
-IGNwdSkgPT0gLUVOT1NZUykKCQljcHVfYm9vdF9sZWdhY3koLi4uKTsgLyogVHJ5IGxlZ2FjeSB3
-YXkgKi8KCglnaWNfcmFpc2Vfc29mdGlycShjcHVtYXNrX29mKGNwdSksIDEpOwoKSW4gYm9hcmQt
-L3BsYXRmb3JtLXNwZWNpZmljIGNvZGU6CgoJc3RhdGljIGludCBwbGF0Zm9ybVhfZG9faWRsZSh2
-b2lkKQoJewoJCS8qIHRlbGwgcGxhdGZvcm1YIGZpcm13YXJlIHRvIGVudGVyIGlkbGUgKi8KCSAg
-ICAgICAgcmV0dXJuIDA7Cgl9CgoJc3RhdGljIGludCBwbGF0Zm9ybVhfY3B1X2Jvb3QoaW50IGkp
-Cgl7CgkJLyogdGVsbCBwbGF0Zm9ybVggZmlybXdhcmUgdG8gYm9vdCBDUFUgaSAqLwoJCXJldHVy
-biAwOwoJfQoKCXN0YXRpYyBjb25zdCBzdHJ1Y3QgZmlybXdhcmVfb3BzIHBsYXRmb3JtWF9maXJt
-d2FyZV9vcHMgPSB7CgkJLmRvX2lkbGUJPSBleHlub3NfZG9faWRsZSwKCQkuY3B1X2Jvb3QJPSBl
-eHlub3NfY3B1X2Jvb3QsCgkJLyogb3RoZXIgb3BlcmF0aW9ucyBub3QgYXZhaWxhYmxlIG9uIHBs
-YXRmb3JtWCAqLwoJfTsKCglzdGF0aWMgdm9pZCBfX2luaXQgYm9hcmRfaW5pdF9lYXJseSh2b2lk
-KQoJewoJwqDCoMKgwqDCoMKgwqDCoHJlZ2lzdGVyX2Zpcm13YXJlX29wcygmcGxhdGZvcm1YX2Zp
-cm13YXJlX29wcyk7Cgl9CgpTaWduZWQtb2ZmLWJ5OiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5w
-YXJrQHNhbXN1bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBUb21hc3ogRmlnYSA8dC5maWdhQHNhbXN1
-bmcuY29tPgotLS0KIERvY3VtZW50YXRpb24vYXJtL2Zpcm13YXJlLnR4dCAgfCA4OCArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogYXJjaC9hcm0vY29tbW9uL01ha2Vm
-aWxlICAgICAgICB8ICAyICsKIGFyY2gvYXJtL2NvbW1vbi9maXJtd2FyZS5jICAgICAgfCAxOCAr
-KysrKysrKysKIGFyY2gvYXJtL2luY2x1ZGUvYXNtL2Zpcm13YXJlLmggfCA2NiArKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrCiA0IGZpbGVzIGNoYW5nZWQsIDE3NCBpbnNlcnRpb25zKCsp
-CiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9hcm0vZmlybXdhcmUudHh0CiBjcmVh
-dGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vY29tbW9uL2Zpcm13YXJlLmMKIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBhcmNoL2FybS9pbmNsdWRlL2FzbS9maXJtd2FyZS5oCgpkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi9hcm0vZmlybXdhcmUudHh0IGIvRG9jdW1lbnRhdGlvbi9hcm0vZmlybXdhcmUudHh0
-Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAuLmMyZTQ2OGYKLS0tIC9kZXYvbnVs
-bAorKysgYi9Eb2N1bWVudGF0aW9uL2FybS9maXJtd2FyZS50eHQKQEAgLTAsMCArMSw4OCBAQAor
-SW50ZXJmYWNlIGZvciByZWdpc3RlcmluZyBhbmQgY2FsbGluZyBmaXJtd2FyZS1zcGVjaWZpYyBv
-cGVyYXRpb25zIGZvciBBUk0uCistLS0tCitXcml0dGVuIGJ5IFRvbWFzeiBGaWdhIDx0LmZpZ2FA
-c2Ftc3VuZy5jb20+CisKK1NvbWUgYm9hcmRzIGFyZSBydW5uaW5nIHdpdGggc2VjdXJlIGZpcm13
-YXJlIHJ1bm5pbmcgaW4gVHJ1c3Rab25lIHNlY3VyZQord29ybGQsIHdoaWNoIGNoYW5nZXMgdGhl
-IHdheSBzb21lIHRoaW5ncyBoYXZlIHRvIGJlIGluaXRpYWxpemVkLiBUaGlzIG1ha2VzCithIG5l
-ZWQgdG8gcHJvdmlkZSBhbiBpbnRlcmZhY2UgZm9yIHN1Y2ggcGxhdGZvcm1zIHRvIHNwZWNpZnkg
-YXZhaWxhYmxlIGZpcm13YXJlCitvcGVyYXRpb25zIGFuZCBjYWxsIHRoZW0gd2hlbiBuZWVkZWQu
-CisKK0Zpcm13YXJlIG9wZXJhdGlvbnMgY2FuIGJlIHNwZWNpZmllZCB1c2luZyBzdHJ1Y3QgZmly
-bXdhcmVfb3BzCisKKwlzdHJ1Y3QgZmlybXdhcmVfb3BzIHsKKwkJLyoKKwkJKiBFbnRlcnMgQ1BV
-IGlkbGUgbW9kZQorCQkqLworCQlpbnQgKCpkb19pZGxlKSh2b2lkKTsKKwkJLyoKKwkJKiBTZXRz
-IGJvb3QgYWRkcmVzcyBvZiBzcGVjaWZpZWQgcGh5c2ljYWwgQ1BVCisJCSovCisJCWludCAoKnNl
-dF9jcHVfYm9vdF9hZGRyKShpbnQgY3B1LCB1bnNpZ25lZCBsb25nIGJvb3RfYWRkcik7CisJCS8q
-CisJCSogQm9vdHMgc3BlY2lmaWVkIHBoeXNpY2FsIENQVQorCQkqLworCQlpbnQgKCpjcHVfYm9v
-dCkoaW50IGNwdSk7CisJCS8qCisJCSogSW5pdGlhbGl6ZXMgTDIgY2FjaGUKKwkJKi8KKwkJaW50
-ICgqbDJ4MF9pbml0KSh2b2lkKTsKKwl9OworCithbmQgdGhlbiByZWdpc3RlcmVkIHdpdGggcmVn
-aXN0ZXJfZmlybXdhcmVfb3BzIGZ1bmN0aW9uCisKKwl2b2lkIHJlZ2lzdGVyX2Zpcm13YXJlX29w
-cyhjb25zdCBzdHJ1Y3QgZmlybXdhcmVfb3BzICpvcHMpCisKK3RoZSBvcHMgcG9pbnRlciBtdXN0
-IGJlIG5vbi1OVUxMLgorCitUaGVyZSBpcyBhIGRlZmF1bHQsIGVtcHR5IHNldCBvZiBvcGVyYXRp
-b25zIHByb3ZpZGVkLCBzbyB0aGVyZSBpcyBubyBuZWVkIHRvCitzZXQgYW55dGhpbmcgaWYgcGxh
-dGZvcm0gZG9lcyBub3QgcmVxdWlyZSBmaXJtd2FyZSBvcGVyYXRpb25zLgorCitUbyBjYWxsIGEg
-ZmlybXdhcmUgb3BlcmF0aW9uLCBhIGhlbHBlciBtYWNybyBpcyBwcm92aWRlZAorCisJI2RlZmlu
-ZSBjYWxsX2Zpcm13YXJlX29wKG9wLCAuLi4pCQkJCVwKKwkJKChmaXJtd2FyZV9vcHMtPm9wKSA/
-IGZpcm13YXJlX29wcy0+b3AoX19WQV9BUkdTX18pIDogKC1FTk9TWVMpKQorCit0aGUgbWFjcm8g
-Y2hlY2tzIGlmIHRoZSBvcGVyYXRpb24gaXMgcHJvdmlkZWQgYW5kIGNhbGxzIGl0IG9yIG90aGVy
-d2lzZSByZXR1cm5zCistRU5PU1lTIHRvIHNpZ25hbCB0aGF0IGdpdmVuIG9wZXJhdGlvbiBpcyBu
-b3QgYXZhaWxhYmxlIChmb3IgZXhhbXBsZSwgdG8gYWxsb3cKK2ZhbGxiYWNrIHRvIGxlZ2FjeSBv
-cGVyYXRpb24pLgorCitFeGFtcGxlIG9mIHJlZ2lzdGVyaW5nIGZpcm13YXJlIG9wZXJhdGlvbnM6
-CisKKwkvKiBib2FyZCBmaWxlICovCisKKwlzdGF0aWMgaW50IHBsYXRmb3JtWF9kb19pZGxlKHZv
-aWQpCisJeworCQkvKiB0ZWxsIHBsYXRmb3JtWCBmaXJtd2FyZSB0byBlbnRlciBpZGxlICovCisJ
-CXJldHVybiAwOworCX0KKworCXN0YXRpYyBpbnQgcGxhdGZvcm1YX2NwdV9ib290KGludCBpKQor
-CXsKKwkJLyogdGVsbCBwbGF0Zm9ybVggZmlybXdhcmUgdG8gYm9vdCBDUFUgaSAqLworCQlyZXR1
-cm4gMDsKKwl9CisKKwlzdGF0aWMgY29uc3Qgc3RydWN0IGZpcm13YXJlX29wcyBwbGF0Zm9ybVhf
-ZmlybXdhcmVfb3BzID0geworCQkuZG9faWRsZSAgICAgICAgPSBleHlub3NfZG9faWRsZSwKKwkJ
-LmNwdV9ib290ICAgICAgID0gZXh5bm9zX2NwdV9ib290LAorCQkvKiBvdGhlciBvcGVyYXRpb25z
-IG5vdCBhdmFpbGFibGUgb24gcGxhdGZvcm1YICovCisJfTsKKworCS8qIGluaXRfZWFybHkgY2Fs
-bGJhY2sgb2YgbWFjaGluZSBkZXNjcmlwdG9yICovCisJc3RhdGljIHZvaWQgX19pbml0IGJvYXJk
-X2luaXRfZWFybHkodm9pZCkKKwl7CisJCXJlZ2lzdGVyX2Zpcm13YXJlX29wcygmcGxhdGZvcm1Y
-X2Zpcm13YXJlX29wcyk7CisJfQorCitFeGFtcGxlIG9mIHVzaW5nIGEgZmlybXdhcmUgb3BlcmF0
-aW9uOgorCisJLyogc29tZSBwbGF0Zm9ybSBjb2RlLCBlLmcuIFNNUCBpbml0aWFsaXphdGlvbiAq
-LworCisJX19yYXdfd3JpdGVsKHZpcnRfdG9fcGh5cyhleHlub3M0X3NlY29uZGFyeV9zdGFydHVw
-KSwKKwkJQ1BVMV9CT09UX1JFRyk7CisKKwkvKiBDYWxsIEV4eW5vcyBzcGVjaWZpYyBzbWMgY2Fs
-bCAqLworCWlmIChjYWxsX2Zpcm13YXJlX29wKGNwdV9ib290LCBjcHUpID09IC1FTk9TWVMpCisJ
-CWNwdV9ib290X2xlZ2FjeSguLi4pOyAvKiBUcnkgbGVnYWN5IHdheSAqLworCisJZ2ljX3JhaXNl
-X3NvZnRpcnEoY3B1bWFza19vZihjcHUpLCAxKTsKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2NvbW1v
-bi9NYWtlZmlsZSBiL2FyY2gvYXJtL2NvbW1vbi9NYWtlZmlsZQppbmRleCBlOGE0ZTU4Li41NWQ0
-MTgyIDEwMDY0NAotLS0gYS9hcmNoL2FybS9jb21tb24vTWFrZWZpbGUKKysrIGIvYXJjaC9hcm0v
-Y29tbW9uL01ha2VmaWxlCkBAIC0yLDYgKzIsOCBAQAogIyBNYWtlZmlsZSBmb3IgdGhlIGxpbnV4
-IGtlcm5lbC4KICMKIAorb2JqLXkgKz0gZmlybXdhcmUubworCiBvYmotJChDT05GSUdfQVJNX0dJ
-QykJCSs9IGdpYy5vCiBvYmotJChDT05GSUdfQVJNX1ZJQykJCSs9IHZpYy5vCiBvYmotJChDT05G
-SUdfSUNTVCkJCSs9IGljc3QubwpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vY29tbW9uL2Zpcm13YXJl
-LmMgYi9hcmNoL2FybS9jb21tb24vZmlybXdhcmUuYwpuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRl
-eCAwMDAwMDAwLi4yN2RkY2NiCi0tLSAvZGV2L251bGwKKysrIGIvYXJjaC9hcm0vY29tbW9uL2Zp
-cm13YXJlLmMKQEAgLTAsMCArMSwxOCBAQAorLyoKKyAqIENvcHlyaWdodCAoQykgMjAxMiBTYW1z
-dW5nIEVsZWN0cm9uaWNzLgorICogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5n
-LmNvbT4KKyAqIFRvbWFzeiBGaWdhIDx0LmZpZ2FAc2Ftc3VuZy5jb20+CisgKgorICogVGhpcyBw
-cm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBt
-b2RpZnkKKyAqIGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExp
-Y2Vuc2UgdmVyc2lvbiAyIGFzCisgKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUgRm91
-bmRhdGlvbi4KKyAqLworCisjaW5jbHVkZSA8bGludXgva2VybmVsLmg+CisjaW5jbHVkZSA8bGlu
-dXgvc3VzcGVuZC5oPgorCisjaW5jbHVkZSA8YXNtL2Zpcm13YXJlLmg+CisKK3N0YXRpYyBjb25z
-dCBzdHJ1Y3QgZmlybXdhcmVfb3BzIGRlZmF1bHRfZmlybXdhcmVfb3BzOworCitjb25zdCBzdHJ1
-Y3QgZmlybXdhcmVfb3BzICpmaXJtd2FyZV9vcHMgPSAmZGVmYXVsdF9maXJtd2FyZV9vcHM7CmRp
-ZmYgLS1naXQgYS9hcmNoL2FybS9pbmNsdWRlL2FzbS9maXJtd2FyZS5oIGIvYXJjaC9hcm0vaW5j
-bHVkZS9hc20vZmlybXdhcmUuaApuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwLi4x
-NTYzMTMwCi0tLSAvZGV2L251bGwKKysrIGIvYXJjaC9hcm0vaW5jbHVkZS9hc20vZmlybXdhcmUu
-aApAQCAtMCwwICsxLDY2IEBACisvKgorICogQ29weXJpZ2h0IChDKSAyMDEyIFNhbXN1bmcgRWxl
-Y3Ryb25pY3MuCisgKiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPgor
-ICogVG9tYXN6IEZpZ2EgPHQuZmlnYUBzYW1zdW5nLmNvbT4KKyAqCisgKiBUaGlzIHByb2dyYW0g
-aXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1vZGlmeQor
-ICogaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSB2
-ZXJzaW9uIDIgYXMKKyAqIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9u
-LgorICovCisKKyNpZm5kZWYgX19BU01fQVJNX0ZJUk1XQVJFX0gKKyNkZWZpbmUgX19BU01fQVJN
-X0ZJUk1XQVJFX0gKKworI2luY2x1ZGUgPGxpbnV4L2J1Zy5oPgorCisvKgorICogc3RydWN0IGZp
-cm13YXJlX29wcworICoKKyAqIEEgc3RydWN0dXJlIHRvIHNwZWNpZnkgYXZhaWxhYmxlIGZpcm13
-YXJlIG9wZXJhdGlvbnMuCisgKgorICogQSBmaWxsZWQgdXAgc3RydWN0dXJlIGNhbiBiZSByZWdp
-c3RlcmVkIHdpdGggcmVnaXN0ZXJfZmlybXdhcmVfb3BzKCkuCisgKi8KK3N0cnVjdCBmaXJtd2Fy
-ZV9vcHMgeworCS8qCisJICogRW50ZXJzIENQVSBpZGxlIG1vZGUKKwkgKi8KKwlpbnQgKCpkb19p
-ZGxlKSh2b2lkKTsKKwkvKgorCSAqIFNldHMgYm9vdCBhZGRyZXNzIG9mIHNwZWNpZmllZCBwaHlz
-aWNhbCBDUFUKKwkgKi8KKwlpbnQgKCpzZXRfY3B1X2Jvb3RfYWRkcikoaW50IGNwdSwgdW5zaWdu
-ZWQgbG9uZyBib290X2FkZHIpOworCS8qCisJICogQm9vdHMgc3BlY2lmaWVkIHBoeXNpY2FsIENQ
-VQorCSAqLworCWludCAoKmNwdV9ib290KShpbnQgY3B1KTsKKwkvKgorCSAqIEluaXRpYWxpemVz
-IEwyIGNhY2hlCisJICovCisJaW50ICgqbDJ4MF9pbml0KSh2b2lkKTsKK307CisKKy8qIEdsb2Jh
-bCBwb2ludGVyIGZvciBjdXJyZW50IGZpcm13YXJlX29wcyBzdHJ1Y3R1cmUsIGNhbid0IGJlIE5V
-TEwuICovCitleHRlcm4gY29uc3Qgc3RydWN0IGZpcm13YXJlX29wcyAqZmlybXdhcmVfb3BzOwor
-CisvKgorICogY2FsbF9maXJtd2FyZV9vcChvcCwgLi4uKQorICoKKyAqIENoZWNrcyBpZiBmaXJt
-d2FyZSBvcGVyYXRpb24gaXMgcHJlc2VudCBhbmQgY2FsbHMgaXQsCisgKiBvdGhlcndpc2UgcmV0
-dXJucyAtRU5PU1lTCisgKi8KKyNkZWZpbmUgY2FsbF9maXJtd2FyZV9vcChvcCwgLi4uKQkJCQkJ
-XAorCSgoZmlybXdhcmVfb3BzLT5vcCkgPyBmaXJtd2FyZV9vcHMtPm9wKF9fVkFfQVJHU19fKSA6
-ICgtRU5PU1lTKSkKKworLyoKKyAqIHJlZ2lzdGVyX2Zpcm13YXJlX29wcyhvcHMpCisgKgorICog
-QSBmdW5jdGlvbiB0byByZWdpc3RlciBwbGF0Zm9ybSBmaXJtd2FyZV9vcHMgc3RydWN0LgorICov
-CitzdGF0aWMgaW5saW5lIHZvaWQgcmVnaXN0ZXJfZmlybXdhcmVfb3BzKGNvbnN0IHN0cnVjdCBm
-aXJtd2FyZV9vcHMgKm9wcykKK3sKKwlCVUdfT04oIW9wcyk7CisKKwlmaXJtd2FyZV9vcHMgPSBv
-cHM7Cit9CisKKyNlbmRpZgotLSAKMS44LjAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
-cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Some boards use secure monitor calls to communicate with secure
+firmware.
+
+This patch adds exynos_smc function which uses smc assembly instruction
+to do secure monitor calls.
+
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/mach-exynos/Makefile     |  5 +++++
+ arch/arm/mach-exynos/exynos-smc.S | 22 ++++++++++++++++++++++
+ arch/arm/mach-exynos/smc.h        | 31 +++++++++++++++++++++++++++++++
+ 3 files changed, 58 insertions(+)
+ create mode 100644 arch/arm/mach-exynos/exynos-smc.S
+ create mode 100644 arch/arm/mach-exynos/smc.h
+
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index c12ed6a..a031012 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -30,6 +30,11 @@ obj-$(CONFIG_EXYNOS4_MCT)	+= mct.o
+ 
+ obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
+ 
++obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-smc.o
++
++plus_sec := $(call as-instr,.arch_extension sec,+sec)
++AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
++
+ # machine support
+ 
+ obj-$(CONFIG_MACH_SMDKC210)		+= mach-smdkv310.o
+diff --git a/arch/arm/mach-exynos/exynos-smc.S b/arch/arm/mach-exynos/exynos-smc.S
+new file mode 100644
+index 0000000..2e27aa3
+--- /dev/null
++++ b/arch/arm/mach-exynos/exynos-smc.S
+@@ -0,0 +1,22 @@
++/*
++ * Copyright (C) 2012 Samsung Electronics.
++ *
++ * Copied from omap-smc.S Copyright (C) 2010 Texas Instruments, Inc.
++ *
++ * This program is free software,you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/linkage.h>
++
++/*
++ * Function signature: void exynos_smc(u32 cmd, u32 arg1, u32 arg2, u32 arg3)
++ */
++
++ENTRY(exynos_smc)
++	stmfd	sp!, {r4-r11, lr}
++	dsb
++	smc	#0
++	ldmfd	sp!, {r4-r11, pc}
++ENDPROC(exynos_smc)
+diff --git a/arch/arm/mach-exynos/smc.h b/arch/arm/mach-exynos/smc.h
+new file mode 100644
+index 0000000..e972390
+--- /dev/null
++++ b/arch/arm/mach-exynos/smc.h
+@@ -0,0 +1,31 @@
++/*
++ *  Copyright (c) 2012 Samsung Electronics.
++ *
++ * EXYNOS - SMC Call
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __ASM_ARCH_EXYNOS_SMC_H
++#define __ASM_ARCH_EXYNOS_SMC_H
++
++#define SMC_CMD_INIT            (-1)
++#define SMC_CMD_INFO            (-2)
++/* For Power Management */
++#define SMC_CMD_SLEEP           (-3)
++#define SMC_CMD_CPU1BOOT        (-4)
++#define SMC_CMD_CPU0AFTR        (-5)
++/* For CP15 Access */
++#define SMC_CMD_C15RESUME       (-11)
++/* For L2 Cache Access */
++#define SMC_CMD_L2X0CTRL        (-21)
++#define SMC_CMD_L2X0SETUP1      (-22)
++#define SMC_CMD_L2X0SETUP2      (-23)
++#define SMC_CMD_L2X0INVALL      (-24)
++#define SMC_CMD_L2X0DEBUG       (-25)
++
++extern void exynos_smc(u32 cmd, u32 arg1, u32 arg2, u32 arg3);
++
++#endif
+-- 
+1.8.0
