@@ -1,95 +1,72 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v4 5/5] ARM: EXYNOS: Add secure firmware support to secondary
- CPU bring-up
-Date: Thu, 22 Nov 2012 16:51:18 +0100
-Message-ID: <1353599478-24617-6-git-send-email-t.figa@samsung.com>
-References: <1353599478-24617-1-git-send-email-t.figa@samsung.com>
+From: Alexander Varnin <fenixk19@mail.ru>
+Subject: Re: [PATCH] ARM: S3C2443: SPI clock channel setup is fixed
+Date: Thu, 22 Nov 2012 11:57:02 +0400
+Message-ID: <50ADDACE.9090709@mail.ru>
+References: <50AAAABE.8090607@mail.ru> <0c8901cdc714$a567f7a0$f037e6e0$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1353599478-24617-1-git-send-email-t.figa@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, t.figa@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from fallback2.mail.ru ([94.100.176.87]:57153 "EHLO
+	fallback2.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753915Ab2KVSex (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Nov 2012 13:34:53 -0500
+Received: from smtp21.mail.ru (smtp21.mail.ru [94.100.176.174])
+	by fallback2.mail.ru (mPOP.Fallback_MX) with ESMTP id 29D02BCFFB33
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Nov 2012 11:57:34 +0400 (MSK)
+In-Reply-To: <0c8901cdc714$a567f7a0$f037e6e0$@org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Boards using secure firmware must use different CPU boot registers and
-call secure firmware to boot the CPU.
+I also want to point, that irq resource in arch/arm/plat-samsung/devs.c=
+=20
+for s3c2410-spi driver on S3C2443 points to wrong IRQ (SPI0 instead of=20
+SPI1). I've solved it with board specific code, but it is not most=20
+correct way, i think.
 
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/mach-exynos/platsmp.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 4ca8ff1..7dc2f88 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -25,6 +25,7 @@
- #include <asm/hardware/gic.h>
- #include <asm/smp_plat.h>
- #include <asm/smp_scu.h>
-+#include <asm/firmware.h>
- 
- #include <mach/hardware.h>
- #include <mach/regs-clock.h>
-@@ -145,10 +146,21 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
- 
- 	timeout = jiffies + (1 * HZ);
- 	while (time_before(jiffies, timeout)) {
-+		unsigned long boot_addr;
-+
- 		smp_rmb();
- 
--		__raw_writel(virt_to_phys(exynos4_secondary_startup),
--							cpu_boot_reg(phys_cpu));
-+		boot_addr = virt_to_phys(exynos4_secondary_startup);
-+
-+		/*
-+		 * Try to set boot address using firmware first
-+		 * and fall back to boot register if it fails.
-+		 */
-+		if (call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr))
-+			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
-+
-+		call_firmware_op(cpu_boot, phys_cpu);
-+
- 		gic_raise_softirq(cpumask_of(cpu), 0);
- 
- 		if (pen_release == -1)
-@@ -206,10 +218,20 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
- 	 * system-wide flags register. The boot monitor waits
- 	 * until it receives a soft interrupt, and then the
- 	 * secondary CPU branches to this address.
-+	 *
-+	 * Try using firmware operation first and fall back to
-+	 * boot register if it fails.
- 	 */
--	for (i = 1; i < max_cpus; ++i)
--		__raw_writel(virt_to_phys(exynos4_secondary_startup),
--					cpu_boot_reg(cpu_logical_map(i)));
-+	for (i = 1; i < max_cpus; ++i) {
-+		unsigned long phys_cpu;
-+		unsigned long boot_addr;
-+
-+		phys_cpu = cpu_logical_map(i);
-+		boot_addr = virt_to_phys(exynos4_secondary_startup);
-+
-+		if (call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr))
-+			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
-+	}
- }
- 
- struct smp_operations exynos_smp_ops __initdata = {
--- 
-1.8.0
+20.11.2012 15:46, Kukjin Kim =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> Alexander Varnin wrote:
+>> Actually, SPI channel 0 on 2443 is mapped to HS SPI controller,
+>> and to enable s3c2410-spi controller, we should power on channel
+>> 1 in PCLKCON. There is no channel 0 SPI on s3c2443, so delete its
+>> clock.
+>>
+>> Signed-off-by: Alexander Varnin <fenixk19@mail.ru>
+>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>> ---
+>>   arch/arm/mach-s3c24xx/clock-s3c2443.c |    6 ------
+>>   1 files changed, 0 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2443.c
+>> b/arch/arm/mach-s3c24xx/clock-s3c2443.c
+>> index 7f689ce..bdaba59 100644
+>> --- a/arch/arm/mach-s3c24xx/clock-s3c2443.c
+>> +++ b/arch/arm/mach-s3c24xx/clock-s3c2443.c
+>> @@ -158,12 +158,6 @@ static struct clk init_clocks_off[] =3D {
+>>   		.devname	=3D "s3c2410-spi.0",
+>>   		.parent		=3D &clk_p,
+>>   		.enable		=3D s3c2443_clkcon_enable_p,
+>> -		.ctrlbit	=3D S3C2443_PCLKCON_SPI0,
+>> -	}, {
+>> -		.name		=3D "spi",
+>> -		.devname	=3D "s3c2410-spi.1",
+>> -		.parent		=3D &clk_p,
+>> -		.enable		=3D s3c2443_clkcon_enable_p,
+>>   		.ctrlbit	=3D S3C2443_PCLKCON_SPI1,
+>>   	}
+>>   };
+>> --
+>> 1.7.2.5
+> Applied, thanks.
+>
+> K-Gene <kgene@kernel.org>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
