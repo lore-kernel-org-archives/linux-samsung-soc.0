@@ -1,72 +1,106 @@
-From: Alexander Varnin <fenixk19@mail.ru>
-Subject: Re: [PATCH] ARM: S3C2443: SPI clock channel setup is fixed
-Date: Thu, 22 Nov 2012 11:57:02 +0400
-Message-ID: <50ADDACE.9090709@mail.ru>
-References: <50AAAABE.8090607@mail.ru> <0c8901cdc714$a567f7a0$f037e6e0$@org>
+From: Amit Kachhap <amit.kachhap@linaro.org>
+Subject: Re: [PATCH 1/4] thermal: Add new thermal trend type to support quick cooling
+Date: Thu, 22 Nov 2012 10:11:28 +0530
+Message-ID: <CAK44p21mnUpWpHWui6yFqaE5mrjTHhx48j3Mgm0K-KL3EskaGA@mail.gmail.com>
+References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
+	<1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
+	<1353547324.2172.1.camel@rzhang1-mobl4>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fallback2.mail.ru ([94.100.176.87]:57153 "EHLO
-	fallback2.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753915Ab2KVSex (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:46242 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753915Ab2KVSf1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Nov 2012 13:34:53 -0500
-Received: from smtp21.mail.ru (smtp21.mail.ru [94.100.176.174])
-	by fallback2.mail.ru (mPOP.Fallback_MX) with ESMTP id 29D02BCFFB33
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Nov 2012 11:57:34 +0400 (MSK)
-In-Reply-To: <0c8901cdc714$a567f7a0$f037e6e0$@org>
+	Thu, 22 Nov 2012 13:35:27 -0500
+Received: by mail-ob0-f174.google.com with SMTP id wc20so8328800obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Nov 2012 10:35:26 -0800 (PST)
+In-Reply-To: <1353547324.2172.1.camel@rzhang1-mobl4>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, jonghwa3.lee@samsung.com
 
-I also want to point, that irq resource in arch/arm/plat-samsung/devs.c=
-=20
-for s3c2410-spi driver on S3C2443 points to wrong IRQ (SPI0 instead of=20
-SPI1). I've solved it with board specific code, but it is not most=20
-correct way, i think.
-
-20.11.2012 15:46, Kukjin Kim =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> Alexander Varnin wrote:
->> Actually, SPI channel 0 on 2443 is mapped to HS SPI controller,
->> and to enable s3c2410-spi controller, we should power on channel
->> 1 in PCLKCON. There is no channel 0 SPI on s3c2443, so delete its
->> clock.
+On 22 November 2012 06:52, Zhang Rui <rui.zhang@intel.com> wrote:
+> On Thu, 2012-11-08 at 09:56 +0530, Amit Daniel Kachhap wrote:
+>> This modification adds 2 new thermal trend type THERMAL_TREND_RAISE_FULL
+>> and THERMAL_TREND_DROP_FULL. This thermal trend can be used to quickly
+>> jump to the upper or lower cooling level instead of incremental increase
+>> or decrease. This is needed for temperature sensors which support rising/falling
+>> threshold interrupts and polling can be totally avoided.
 >>
->> Signed-off-by: Alexander Varnin <fenixk19@mail.ru>
->> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
 >> ---
->>   arch/arm/mach-s3c24xx/clock-s3c2443.c |    6 ------
->>   1 files changed, 0 insertions(+), 6 deletions(-)
+>>  drivers/thermal/step_wise.c |   19 +++++++++++++++----
+>>  include/linux/thermal.h     |    2 ++
+>>  2 files changed, 17 insertions(+), 4 deletions(-)
 >>
->> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2443.c
->> b/arch/arm/mach-s3c24xx/clock-s3c2443.c
->> index 7f689ce..bdaba59 100644
->> --- a/arch/arm/mach-s3c24xx/clock-s3c2443.c
->> +++ b/arch/arm/mach-s3c24xx/clock-s3c2443.c
->> @@ -158,12 +158,6 @@ static struct clk init_clocks_off[] =3D {
->>   		.devname	=3D "s3c2410-spi.0",
->>   		.parent		=3D &clk_p,
->>   		.enable		=3D s3c2443_clkcon_enable_p,
->> -		.ctrlbit	=3D S3C2443_PCLKCON_SPI0,
->> -	}, {
->> -		.name		=3D "spi",
->> -		.devname	=3D "s3c2410-spi.1",
->> -		.parent		=3D &clk_p,
->> -		.enable		=3D s3c2443_clkcon_enable_p,
->>   		.ctrlbit	=3D S3C2443_PCLKCON_SPI1,
->>   	}
->>   };
->> --
->> 1.7.2.5
-> Applied, thanks.
+>> diff --git a/drivers/thermal/step_wise.c b/drivers/thermal/step_wise.c
+>> index 1242cff..0d2d8d6 100644
+>> --- a/drivers/thermal/step_wise.c
+>> +++ b/drivers/thermal/step_wise.c
+>> @@ -35,6 +35,10 @@
+>>   *       state for this trip point
+>>   *    b. if the trend is THERMAL_TREND_DROPPING, use lower cooling
+>>   *       state for this trip point
+>> + *    c. if the trend is THERMAL_TREND_RAISE_FULL, use highest cooling
+>> + *       state for this trip point
+>> + *    d. if the trend is THERMAL_TREND_DROP_FULL, use lowest cooling
+>> + *       state for this trip point
+>>   */
+>>  static unsigned long get_target_state(struct thermal_instance *instance,
+>>                                       enum thermal_trend trend)
+>> @@ -50,7 +54,10 @@ static unsigned long get_target_state(struct thermal_instance *instance,
+>>       } else if (trend == THERMAL_TREND_DROPPING) {
+>>               cur_state = cur_state > instance->lower ?
+>>                           (cur_state - 1) : instance->lower;
+>> -     }
+>> +     } else if (trend == THERMAL_TREND_RAISE_FULL)
+>> +             cur_state = instance->upper;
+>> +     else if (trend == THERMAL_TREND_DROP_FULL)
+>> +             cur_state = instance->lower;
+>>
+>>       return cur_state;
+>>  }
+>> @@ -87,7 +94,8 @@ static void update_instance_for_throttle(struct thermal_zone_device *tz,
+>>  }
+>>
+>>  static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
+>> -                             int trip, enum thermal_trip_type trip_type)
+>> +                             int trip, enum thermal_trip_type trip_type,
+>> +                             enum thermal_trend trend)
+>>  {
+>>       struct thermal_instance *instance;
+>>       struct thermal_cooling_device *cdev;
+>> @@ -101,7 +109,10 @@ static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
+>>               cdev = instance->cdev;
+>>               cdev->ops->get_cur_state(cdev, &cur_state);
+>>
+>> -             instance->target = cur_state > instance->lower ?
+>> +             if (trend == THERMAL_TREND_DROP_FULL)
+>> +                     instance->target = instance->lower;
+>> +             else
+>> +                     instance->target = cur_state > instance->lower ?
+>>                           (cur_state - 1) : THERMAL_NO_TARGET;
+>>
+> what do you expect to happen if the trend is THERMAL_TREND_RAISE_FULL at
+> this time?
 >
-> K-Gene <kgene@kernel.org>
+Hi Rui,
+
+I suppose this is dethrotle routine and hence this will be called when
+only drop in temperature happens. Also I did not used get_target_state
+here because I thought it might cause regression in the other existing
+thermal drivers(I am not sure) But I guess calling get_target_state is
+the good way to know next target state and is fine if you agree.
+Also one suggestion, 2 functions for throttle/dethrottle can be merged
+as both look same and just get_target_state can be used in that
+function
+
+Thanks,
+Amit Daniel
+
+> thanks,
+> rui
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
