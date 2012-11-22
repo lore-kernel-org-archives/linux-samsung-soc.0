@@ -1,159 +1,84 @@
-From: Alexander Varnin <fenixk19@mail.ru>
-Subject: [PATCH] ARM: S3C2443: Workaround for 2443 EXTINT error
-Date: Thu, 22 Nov 2012 17:00:01 +0400
-Message-ID: <1353589201-31445-1-git-send-email-fenixk19@mail.ru>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fallback1.mail.ru ([94.100.176.18]:59296 "EHLO
-	fallback1.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753963Ab2KVSjO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Nov 2012 13:39:14 -0500
-Received: from smtp34.i.mail.ru (smtp34.i.mail.ru [94.100.177.94])
-	by fallback1.mail.ru (mPOP.Fallback_MX) with ESMTP id 51393C4A0A4
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Nov 2012 17:00:14 +0400 (MSK)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 1/4] thermal: Add new thermal trend type to support
+ quick cooling
+Date: Thu, 22 Nov 2012 09:22:04 +0800
+Message-ID: <1353547324.2172.1.camel@rzhang1-mobl4>
+References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
+	 <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Alexander Varnin <fenixk19@mail.ru>
 
-S3C2443 CPU has a problem with incorrect reading from EXTINTn
-registers. So s3c_irqext_type function wrongly modifies them.
-So add special function for s3c2443, to handle this case.
+On Thu, 2012-11-08 at 09:56 +0530, Amit Daniel Kachhap wrote:
+> This modification adds 2 new thermal trend type THERMAL_TREND_RAISE_FULL
+> and THERMAL_TREND_DROP_FULL. This thermal trend can be used to quickly
+> jump to the upper or lower cooling level instead of incremental increase
+> or decrease. This is needed for temperature sensors which support rising/falling
+> threshold interrupts and polling can be totally avoided.
+> 
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> ---
+>  drivers/thermal/step_wise.c |   19 +++++++++++++++----
+>  include/linux/thermal.h     |    2 ++
+>  2 files changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/thermal/step_wise.c b/drivers/thermal/step_wise.c
+> index 1242cff..0d2d8d6 100644
+> --- a/drivers/thermal/step_wise.c
+> +++ b/drivers/thermal/step_wise.c
+> @@ -35,6 +35,10 @@
+>   *       state for this trip point
+>   *    b. if the trend is THERMAL_TREND_DROPPING, use lower cooling
+>   *       state for this trip point
+> + *    c. if the trend is THERMAL_TREND_RAISE_FULL, use highest cooling
+> + *       state for this trip point
+> + *    d. if the trend is THERMAL_TREND_DROP_FULL, use lowest cooling
+> + *       state for this trip point
+>   */
+>  static unsigned long get_target_state(struct thermal_instance *instance,
+>  					enum thermal_trend trend)
+> @@ -50,7 +54,10 @@ static unsigned long get_target_state(struct thermal_instance *instance,
+>  	} else if (trend == THERMAL_TREND_DROPPING) {
+>  		cur_state = cur_state > instance->lower ?
+>  			    (cur_state - 1) : instance->lower;
+> -	}
+> +	} else if (trend == THERMAL_TREND_RAISE_FULL)
+> +		cur_state = instance->upper;
+> +	else if (trend == THERMAL_TREND_DROP_FULL)
+> +		cur_state = instance->lower;
+>  
+>  	return cur_state;
+>  }
+> @@ -87,7 +94,8 @@ static void update_instance_for_throttle(struct thermal_zone_device *tz,
+>  }
+>  
+>  static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
+> -				int trip, enum thermal_trip_type trip_type)
+> +				int trip, enum thermal_trip_type trip_type,
+> +				enum thermal_trend trend)
+>  {
+>  	struct thermal_instance *instance;
+>  	struct thermal_cooling_device *cdev;
+> @@ -101,7 +109,10 @@ static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
+>  		cdev = instance->cdev;
+>  		cdev->ops->get_cur_state(cdev, &cur_state);
+>  
+> -		instance->target = cur_state > instance->lower ?
+> +		if (trend == THERMAL_TREND_DROP_FULL)
+> +			instance->target = instance->lower;
+> +		else
+> +			instance->target = cur_state > instance->lower ?
+>  			    (cur_state - 1) : THERMAL_NO_TARGET;
+>  
+what do you expect to happen if the trend is THERMAL_TREND_RAISE_FULL at
+this time?
 
-Signed-off-by: Alexander Varnin <fenixk19@mail.ru>
----
- arch/arm/mach-s3c24xx/s3c2443.c |    8 ++++
- arch/arm/plat-s3c24xx/irq.c     |   89 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
-index ab648ad..99eef31 100644
---- a/arch/arm/mach-s3c24xx/s3c2443.c
-+++ b/arch/arm/mach-s3c24xx/s3c2443.c
-@@ -67,8 +67,11 @@ void s3c2443_restart(char mode, const char *cmd)
- 	__raw_writel(S3C2443_SWRST_RESET, S3C2443_SWRST);
- }
- 
-+extern int s3c2443_irqext_type(struct irq_data *data, unsigned int type);
-+
- int __init s3c2443_init(void)
- {
-+	struct irq_chip * chip;
- 	printk("S3C2443: Initialising architecture\n");
- 
- 	s3c_nand_setname("s3c2412-nand");
-@@ -81,6 +84,11 @@ int __init s3c2443_init(void)
- 	s3c_device_wdt.resource[1].start = IRQ_S3C2443_WDT;
- 	s3c_device_wdt.resource[1].end   = IRQ_S3C2443_WDT;
- 
-+	chip = irq_get_chip(IRQ_EINT0);
-+	chip->irq_set_type=s3c2443_irqext_type;
-+	chip = irq_get_chip(IRQ_EINT4);
-+	chip->irq_set_type=s3c2443_irqext_type;
-+
- 	return device_register(&s3c2443_dev);
- }
- 
-diff --git a/arch/arm/plat-s3c24xx/irq.c b/arch/arm/plat-s3c24xx/irq.c
-index fe57bbb..9c815f3 100644
---- a/arch/arm/plat-s3c24xx/irq.c
-+++ b/arch/arm/plat-s3c24xx/irq.c
-@@ -224,7 +224,96 @@ s3c_irqext_type(struct irq_data *data, unsigned int type)
- 
- 	return 0;
- }
-+#if defined(CONFIG_CPU_S3C2443)
-+int
-+s3c2443_irqext_type(struct irq_data *data, unsigned int type)
-+{
-+	int i;
-+	int fixed;
-+	void __iomem *extint_reg;
-+	void __iomem *gpcon_reg;
-+	unsigned long gpcon_offset, extint_offset;
-+	unsigned long newvalue = 0, value;
-+
-+	if ((data->irq >= IRQ_EINT0) && (data->irq <= IRQ_EINT3)) {
-+		gpcon_reg = S3C2410_GPFCON;
-+		extint_reg = S3C24XX_EXTINT0;
-+		gpcon_offset = (data->irq - IRQ_EINT0) * 2;
-+		extint_offset = (data->irq - IRQ_EINT0) * 4;
-+	} else if ((data->irq >= IRQ_EINT4) && (data->irq <= IRQ_EINT7)) {
-+		gpcon_reg = S3C2410_GPFCON;
-+		extint_reg = S3C24XX_EXTINT0;
-+		gpcon_offset = (data->irq - (EXTINT_OFF)) * 2;
-+		extint_offset = (data->irq - (EXTINT_OFF)) * 4;
-+	} else if ((data->irq >= IRQ_EINT8) && (data->irq <= IRQ_EINT15)) {
-+		gpcon_reg = S3C2410_GPGCON;
-+		extint_reg = S3C24XX_EXTINT1;
-+		gpcon_offset = (data->irq - IRQ_EINT8) * 2;
-+		extint_offset = (data->irq - IRQ_EINT8) * 4;
-+	} else if ((data->irq >= IRQ_EINT16) && (data->irq <= IRQ_EINT23)) {
-+		gpcon_reg = S3C2410_GPGCON;
-+		extint_reg = S3C24XX_EXTINT2;
-+		gpcon_offset = (data->irq - IRQ_EINT8) * 2;
-+		extint_offset = (data->irq - IRQ_EINT16) * 4;
-+	} else {
-+		return -1;
-+	}
- 
-+	/* Set the GPIO to external interrupt mode */
-+	value = __raw_readl(gpcon_reg);
-+	value = (value & ~(3 << gpcon_offset)) | (0x02 << gpcon_offset);
-+	__raw_writel(value, gpcon_reg);
-+
-+	/* Set the external interrupt to pointed trigger type */
-+	switch (type)
-+	{
-+		case IRQ_TYPE_NONE:
-+			printk(KERN_WARNING "No edge setting!\n");
-+			break;
-+
-+		case IRQ_TYPE_EDGE_RISING:
-+			newvalue = S3C2410_EXTINT_RISEEDGE;
-+			break;
-+
-+		case IRQ_TYPE_EDGE_FALLING:
-+			newvalue = S3C2410_EXTINT_FALLEDGE;
-+			break;
-+
-+		case IRQ_TYPE_EDGE_BOTH:
-+			newvalue = S3C2410_EXTINT_BOTHEDGE;
-+			break;
-+
-+		case IRQ_TYPE_LEVEL_LOW:
-+			newvalue = S3C2410_EXTINT_LOWLEV;
-+			break;
-+
-+		case IRQ_TYPE_LEVEL_HIGH:
-+			newvalue = S3C2410_EXTINT_HILEV;
-+			break;
-+
-+		default:
-+			printk(KERN_ERR "No such irq type %d", type);
-+			return -1;
-+	}
-+
-+	value = __raw_readl(extint_reg);
-+	//Hack for 2443 error workaround
-+	fixed = 0;
-+	if(extint_reg == S3C24XX_EXTINT1 || extint_reg == S3C24XX_EXTINT2)
-+		for(i=0; i<7;i++)
-+		    	fixed |= (((value >> ((7-i)*4+1)) & 7) | ((value >> ((7-i)*4-3)) & 8)) << i*4;
-+	else
-+		for(i=0; i<7;i++)
-+		    	fixed |= ( (value >> (7-i)*4) & 0xf )  << i*4;
-+        fixed |= (((value>>1) & 7) | ((value<<3) & 8)) << 27;
-+	value = fixed;
-+
-+	value = (value & ~(7 << extint_offset)) | (newvalue << extint_offset);
-+	__raw_writel(value, extint_reg);
-+
-+	return 0;
-+}
-+#endif //defined(CONFIG_CPU_S3C2443)
- static struct irq_chip s3c_irqext_chip = {
- 	.name		= "s3c-ext",
- 	.irq_mask	= s3c_irqext_mask,
--- 
-1.7.2.5
+thanks,
+rui
