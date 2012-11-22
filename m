@@ -1,105 +1,93 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] cpufreq: exynos: Broadcast frequency change notifications
- for all cores
-Date: Thu, 22 Nov 2012 00:41:21 +0100
-Message-ID: <1516506.6Tpvy1mpz1@vostro.rjw.lan>
-References: <1887364.fvxYYNb7Mm@amdc1227> <4440154.l7bQzsqNex@vostro.rjw.lan>
- <3562672.u4N3XIHFEC@flatron>
+From: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 02/12] ARM: EXYNOS: Add clk_ops for gating clocks of System
+	MMU
+Date: Thu, 22 Nov 2012 13:51:51 +0900
+Message-ID: <CAHQjnOMSB+0SrNAfrJdXo_MWCHjEULWVzyEejcOWxWeT73sZfg@mail.gmail.com>
+References: <002801cdc7a5$8535f6d0$8fa1e470$%cho@samsung.com>
+	<50ACF847.3070709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <3562672.u4N3XIHFEC@flatron>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: multipart/mixed; boundary="===============0391926391929517344=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <50ACF847.3070709-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Subash Patel <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Sanghyun Lee <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, November 21, 2012 10:23:02 PM Tomasz Figa wrote:
-> Hi Rafael,
-> 
-> On Wednesday 21 of November 2012 21:47:42 Rafael J. Wysocki wrote:
-> > On Wednesday, November 21, 2012 02:52:26 PM Tomasz Figa wrote:
-> > > On Tuesday 13 of November 2012 10:26:12 Tomasz Figa wrote:
-> > > > On Exynos SoCs all cores share the same frequency setting, so
-> > > > changing
-> > > > frequency of one core will affect rest of cores.
-> > > > 
-> > > > This patch modifies the exynos-cpufreq driver to inform cpufreq core
-> > > > about this behavior and broadcast frequency change notifications for
-> > > > all cores.
-> > > > 
-> > > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > > ---
-> > > > 
-> > > >  drivers/cpufreq/exynos-cpufreq.c | 7 +++++--
-> > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/cpufreq/exynos-cpufreq.c
-> > > > b/drivers/cpufreq/exynos-cpufreq.c index af2d81e..c0d54a8 100644
-> > > > --- a/drivers/cpufreq/exynos-cpufreq.c
-> > > > +++ b/drivers/cpufreq/exynos-cpufreq.c
-> > > > @@ -100,7 +100,8 @@ static int exynos_target(struct cpufreq_policy
-> > > > *policy, }
-> > > > 
-> > > >  	arm_volt = volt_table[index];
-> > > > 
-> > > > -	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
-> > > > +	for_each_cpu(freqs.cpu, policy->cpus)
-> > > > +		cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
-> > > > 
-> > > >  	/* When the new frequency is higher than current frequency */
-> > > >  	if ((freqs.new > freqs.old) && !safe_arm_volt) {
-> > > > 
-> > > > @@ -115,7 +116,8 @@ static int exynos_target(struct cpufreq_policy
-> > > > *policy, if (freqs.new != freqs.old)
-> > > > 
-> > > >  		exynos_info->set_freq(old_index, index);
-> > > > 
-> > > > -	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-> > > > +	for_each_cpu(freqs.cpu, policy->cpus)
-> > > > +		cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-> > > > 
-> > > >  	/* When the new frequency is lower than current frequency */
-> > > >  	if ((freqs.new < freqs.old) ||
-> > > > 
-> > > > @@ -235,6 +237,7 @@ static int exynos_cpufreq_cpu_init(struct
-> > > > cpufreq_policy *policy) cpumask_copy(policy->related_cpus,
-> > > > cpu_possible_mask);
-> > > > 
-> > > >  		cpumask_copy(policy->cpus, cpu_online_mask);
-> > > >  	
-> > > >  	} else {
-> > > > 
-> > > > +		policy->shared_type = CPUFREQ_SHARED_TYPE_ANY;
-> > > > 
-> > > >  		cpumask_setall(policy->cpus);
-> > > >  	
-> > > >  	}
-> > > 
-> > > Ping.
-> > 
-> > Am I supposed to handle this?
-> 
-> I guess. Would be really nice if you could apply this patch for 3.8.
+--===============0391926391929517344==
+Content-Type: multipart/alternative; boundary=e0cb4efe2dccb725c404cf0e39aa
 
-OK
+--e0cb4efe2dccb725c404cf0e39aa
+Content-Type: text/plain; charset=ISO-8859-1
 
-Applied to linux-pm.git/linux-next as v3.8 material.
+On Thu, Nov 22, 2012 at 12:50 AM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> On 11/21/12 14:03, Cho KyongHo wrote:
+>>
+>> Touching some System MMU needs its master devices' clock to be enabled
+>> before. This commit adds clk_ops.set_parent of gating clocks of System
+>> MMU to ensure gating clocks of System MMU's mater devices are enabled
+>> when enabling gating clocks of System MMU.
+>>
+>> Change-Id: Icd58b12f599e92692c032516331a444f4703ba6b
+>
+>
+> Same here, we don't need this :-)
+>
+>
+>> Signed-off-by: KyongHo Cho<pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>   arch/arm/mach-exynos/clock-exynos5.c | 25 +++++++++++++++++++++++++
+>>   1 file changed, 25 insertions(+)
+>>
+>
+> Looks good to me, and I think, this can be applied independently from this
+> series. Will apply with removing 'Change-Id'.
+>
+Yes. I missed that.
+It will be removed.
 
-Thanks,
-Rafael
+Thank you.
+
+Cho KyongHo
+
+--e0cb4efe2dccb725c404cf0e39aa
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 22, 2012 at 12:50 AM, Kukjin Kim &lt;<a href=3D"mailto:kgene.ki=
+m@samsung.com">kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt; wrote:<br>&gt; On 11/21/12 14:=
+03, Cho KyongHo wrote:<br>&gt;&gt;<br>&gt;&gt; Touching some System MMU nee=
+ds its master devices&#39; clock to be enabled<br>
+&gt;&gt; before. This commit adds clk_ops.set_parent of gating clocks of Sy=
+stem<br>&gt;&gt; MMU to ensure gating clocks of System MMU&#39;s mater devi=
+ces are enabled<br>&gt;&gt; when enabling gating clocks of System MMU.<br>
+&gt;&gt;<br>&gt;&gt; Change-Id: Icd58b12f599e92692c032516331a444f4703ba6b<b=
+r>&gt;<br>&gt;<br>&gt; Same here, we don&#39;t need this :-)<br>&gt;<br>&gt=
+;<br>&gt;&gt; Signed-off-by: KyongHo Cho&lt;<a href=3D"mailto:pullip.cho@sa=
+msung.com">pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;<br>
+&gt;&gt; ---<br>&gt;&gt; =A0 arch/arm/mach-exynos/clock-exynos5.c | 25 ++++=
++++++++++++++++++++++<br>&gt;&gt; =A0 1 file changed, 25 insertions(+)<br>&=
+gt;&gt;<br>&gt;<br>&gt; Looks good to me, and I think, this can be applied =
+independently from this<br>
+&gt; series. Will apply with removing &#39;Change-Id&#39;.<br>&gt;<br>Yes. =
+I missed that.<br>It will be removed.<br><br>Thank you.<br><br>Cho KyongHo<=
+br>
+
+--e0cb4efe2dccb725c404cf0e39aa--
+
+--===============0391926391929517344==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+--===============0391926391929517344==--
