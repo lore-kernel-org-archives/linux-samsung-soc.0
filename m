@@ -1,15 +1,16 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 0/6] ARM: EXYNOS: Add secure firmware support
-Date: Thu, 22 Nov 2012 15:52:14 +0900
-Message-ID: <0f5d01cdc87d$e7c81890$b75849b0$%kim@samsung.com>
-References: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
- <006501cdc0a8$d880c990$89825cb0$%kim@samsung.com>
- <20121112095530.GF28327@n2100.arm.linux.org.uk> <3879194.hz9mrTmL6z@amdc1227>
+Subject: RE: [PATCH 2/2] i2c: s3c2410: Get the i2c bus number from alias id
+Date: Thu, 22 Nov 2012 15:56:38 +0900
+Message-ID: <0f5f01cdc87e$84cacc50$8e6064f0$%kim@samsung.com>
+References: <1353450428-2615-1-git-send-email-dianders@chromium.org>
+ <1353450428-2615-2-git-send-email-dianders@chromium.org>
+ <20121121040913.GA13280@sirena.org.uk>
+ <CAD=FV=V-59u-J40G3x9oK5phUX-5pa9xJLN9QnGJCRqGfc_2ow@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <3879194.hz9mrTmL6z@amdc1227>
+In-reply-to: <CAD=FV=V-59u-J40G3x9oK5phUX-5pa9xJLN9QnGJCRqGfc_2ow@mail.gmail.com>
 Content-language: ko
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -20,34 +21,34 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, arnd@arndb.de, tomasz.figa@gmail.com, kyungmin.park@samsung.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: 'Doug Anderson' <dianders@chromium.org>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Padmavathi Venna' <padma.v@samsung.com>, 'Wolfram Sang' <w.sang@pengutronix.de>, linux-kernel@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-i2c@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Tomasz Figa wrote:
+Doug Anderson wrote:
 > 
-> On Monday 12 of November 2012 09:55:30 Russell King - ARM Linux wrote:
-> > On Mon, Nov 12, 2012 at 04:39:28PM +0900, Kukjin Kim wrote:
-> > > (+ Russell King)
+> On Tue, Nov 20, 2012 at 8:09 PM, Mark Brown
+> <broonie@opensource.wolfsonmicro.com> wrote:
+> > On Tue, Nov 20, 2012 at 02:27:04PM -0800, Doug Anderson wrote:
+> >> From: Padmavathi Venna <padma.v@samsung.com>
+> >>
+> >> Get the i2c bus number that the device is connected to using the alias
+> >> id.  This makes debugging / grokking of kernel messages much easier.
 > >
-> > I think there's still an amount of work to do here; it's not a generic
-> > interface at the moment because it makes some assumptions about how
-> > things are done (eg, it assumes that there _will_ be a CPU boot
-> > register; that is not always true.
-> >
-> > Moreover, the 'cpu' arguments given seem to be uncertain whether they're
-> > logical CPU numbers or physical CPU numbers.
-> >
-> > Lastly, where is this interface actually documented?  It's just a bunch
-> > of code _without_ _any_ documentation.  That means people will interpret
-> > it differently, and it'll get used differently from platform to
-> > platform.
-> >
-> > Let's have some documentation on this.
+> > This doesn't look like a s3c2410 specific change - it's a generic device
+> > tree issue.  This suggests that it sohuld be implemented in the
+> > framework so that all I2C controllers with DT can use it.
 > 
-> Right, I will include documentation in next version of this patchset.
+> Good suggestion.  I have posted a series with the title "Add automatic
+> bus number support for i2c busses with device tree".  It contains the
+> i2c-core patch as well as a patch removing similar code from the pxa
+> i2c driver.
 > 
-Any updates on this?
+> Kukjin: please consider this patch abandoned and superseded by the new
+> i2c-core patch.  As Olof said, the patch for adding aliases for
+> exynos4 should still be fine to apply.
+> 
+OK, I see.
 
 Thanks.
 
