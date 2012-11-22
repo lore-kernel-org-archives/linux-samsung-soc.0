@@ -1,85 +1,89 @@
-From: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 01/12] ARM: EXYNOS: remove system mmu initialization from
-	exynos tree
-Date: Thu, 22 Nov 2012 13:52:03 +0900
-Message-ID: <CAHQjnONNpk_jKtN3J38-t6hRwfq6LCyqwr=U8dwSKoQ+KcpZvA@mail.gmail.com>
-References: <002701cdc7a5$756dbdf0$604939d0$%cho@samsung.com>
-	<50ACF755.9000706@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2] ARM: exynos: add UART3 to DEBUG_LL ports
+Date: Thu, 22 Nov 2012 15:50:26 +0900
+Message-ID: <0f5a01cdc87d$a7326f60$f5974e20$%kim@samsung.com>
+References: <1353451739-6317-1-git-send-email-dianders@chromium.org>
+ <1353516865-2502-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2363609560631899472=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <50ACF755.9000706-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Subash Patel <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sanghyun Lee <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1353516865-2502-1-git-send-email-dianders@chromium.org>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Doug Anderson' <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, 'Olof Johansson' <olof@lixom.net>
+Cc: 'Russell King' <linux@arm.linux.org.uk>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============2363609560631899472==
-Content-Type: multipart/alternative; boundary=e0cb4efe351c7353b304cf0e3ac9
+Doug Anderson wrote:
+> 
+> From: Olof Johansson <olof@lixom.net>
+> 
+> Add support for using UART3 for DEBUG_LL on exynos.
+> 
+> [dianders: added depend on ARCH_EXYNOS.]
+> 
+> Signed-off-by: Olof Johansson <olof@lixom.net>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> 
+> ---
+> Changes in v2:
+> - Matched Olof's commit message.
+> - Added ARCH_EXYNOS to depend list.
+> 
+>  arch/arm/Kconfig.debug        |   11 +++++++++++
+>  arch/arm/plat-samsung/Kconfig |    1 +
+>  2 files changed, 12 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> index 33a8930..f54f170 100644
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@ -355,6 +355,17 @@ choice
+>  		  The uncompressor code port configuration is now handled
+>  		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
+> 
+> +	config DEBUG_S3C_UART3
+> +		depends on PLAT_SAMSUNG && ARCH_EXYNOS
+> +		bool "Use S3C UART 3 for low-level debug"
+> +		help
+> +		  Say Y here if you want the debug print routines to direct
+> +		  their output to UART 3. The port must have been
+initialised
+> +		  by the boot-loader before use.
+> +
+> +		  The uncompressor code port configuration is now handled
+> +		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
+> +
+>  	config DEBUG_SOCFPGA_UART
+>  		depends on ARCH_SOCFPGA
+>  		bool "Use SOCFPGA UART for low-level debug"
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index 59401e1..d342ed0 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -502,5 +502,6 @@ config DEBUG_S3C_UART
+>  	default "0" if DEBUG_S3C_UART0
+>  	default "1" if DEBUG_S3C_UART1
+>  	default "2" if DEBUG_S3C_UART2
+> +	default "3" if DEBUG_S3C_UART3
+> 
+>  endif
+> --
+> 1.7.7.3
 
---e0cb4efe351c7353b304cf0e3ac9
-Content-Type: text/plain; charset=ISO-8859-1
+Applied, thanks.
 
-On Thu, Nov 22, 2012 at 12:46 AM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 11/21/12 14:02, Cho KyongHo wrote:
->>
->> This removes System MMU initialization from arch/arm/mach-exynos/
->
->
-> Basically, looks OK to me, but I think, this removing change should be
-done
-> after 03/12 patch :-)
->
-Thank you. I agree.
-It will be moved to 03/12 patch as you mentioned.
-
->> to move them to DT and the exynos-iommu driver except gating clock
->> definitions.
->>
->> Change-Id: Ie29f587c01c645f28fc0e0b94eb3631a0170ebf5
->
->
-> No need 'Change-Id' here.
->
-That is my fault. It will be removed.
-
-Thank you.
-
-Cho KyongHo.
-
---e0cb4efe351c7353b304cf0e3ac9
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<br>On Thu, Nov 22, 2012 at 12:46 AM, Kukjin Kim &lt;<a href=3D"mailto:kgen=
-e.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org">kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt; wrote:<br>&gt; On 11/21/12=
- 14:02, Cho KyongHo wrote:<br>&gt;&gt;<br>&gt;&gt; This removes System MMU =
-initialization from arch/arm/mach-exynos/<br>
-&gt;<br>&gt;<br>&gt; Basically, looks OK to me, but I think, this removing =
-change should be done<br>&gt; after 03/12 patch :-)<br>&gt;<br>Thank you. I=
- agree.<br>It will be moved to 03/12 patch as you mentioned.<br><br>&gt;&gt=
-; to move them to DT and the exynos-iommu driver except gating clock<br>
-&gt;&gt; definitions.<br>&gt;&gt;<br>&gt;&gt; Change-Id: Ie29f587c01c645f28=
-fc0e0b94eb3631a0170ebf5<br>&gt;<br>&gt;<br>&gt; No need &#39;Change-Id&#39;=
- here.<br>&gt;<br>That is my fault. It will be removed.<br><br>Thank you.<b=
-r>
-<br>Cho KyongHo.<br>
-
---e0cb4efe351c7353b304cf0e3ac9--
-
---===============2363609560631899472==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============2363609560631899472==--
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
