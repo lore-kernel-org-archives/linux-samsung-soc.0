@@ -1,144 +1,64 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 2/2] mmc: dw_mmc: Handle wp-gpios from device tree
-Date: Wed, 21 Nov 2012 20:43:57 -0800
-Message-ID: <CAD=FV=W9injFAP+Qx9Ge9zK8DxwuWBCPHc4w4Jyn3PKuX_3vkg@mail.gmail.com>
-References: <1353535387-32106-1-git-send-email-dianders@chromium.org>
-	<1353535387-32106-2-git-send-email-dianders@chromium.org>
-	<50AD862D.40302@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH] ARM: S3C2443: SPI clock channel setup is fixed
+Date: Thu, 22 Nov 2012 17:22:41 +0900
+Message-ID: <0f6d01cdc88a$8a0c5b00$9e251100$@org>
+References: <50AAAABE.8090607@mail.ru> <0c8901cdc714$a567f7a0$f037e6e0$@org>
+ <50ADDACE.9090709@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <50AD862D.40302@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57355 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753668Ab2KVSdy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Nov 2012 13:33:54 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDV00BSZR8GU7M0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 Nov 2012 17:22:41 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDV007GCR9SL120@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 Nov 2012 17:22:41 +0900 (KST)
+In-reply-to: <50ADDACE.9090709@mail.ru>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Alexander Varnin' <fenixk19@mail.ru>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Jaehoon,
+Alexander Varnin
+> 
+> I also want to point, that irq resource in arch/arm/plat-samsung/devs.c
+> for s3c2410-spi driver on S3C2443 points to wrong IRQ (SPI0 instead of
 
-Thanks for the review.  See below for comments.  I'll plan on a new
-patch either Monday or Tuesday when I have a chance to spin and
-re-test.
+Sounds that you cannot use platform_device in plat-samsung/devs.c for SPI on S3C2443. Yes, could be...
 
+> SPI1). I've solved it with board specific code, but it is not most
+> correct way, i think.
+> 
+Hmm, if provided platform_device is in plat-samsung/devs.c cannot support, we can do as you said temporarily but we know it's wrong way because the value depends on SoC not board. 
 
-On Wed, Nov 21, 2012 at 5:55 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> On 11/22/2012 07:03 AM, Doug Anderson wrote:
->> On some SoCs (like exynos5250) you need to use an external GPIO for
->> write protect.  Add support for wp-gpios to the core dw_mmc driver
->> since it could be useful across multiple SoCs.
->>
->> With this change I am able to make use of the write protect for the
->> external SD slot on exynos5250-snow.
->>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> ---
->>  drivers/mmc/host/dw_mmc.c |   35 +++++++++++++++++++++++++++++++++++
->>  1 files changed, 35 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 5b41348..9c79870 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -34,6 +34,7 @@
->>  #include <linux/regulator/consumer.h>
->>  #include <linux/workqueue.h>
->>  #include <linux/of.h>
->> +#include <linux/of_gpio.h>
->>
->>  #include "dw_mmc.h"
->>
->> @@ -74,6 +75,7 @@ struct idmac_desc {
->>   * struct dw_mci_slot - MMC slot state
->>   * @mmc: The mmc_host representing this slot.
->>   * @host: The MMC controller this slot is using.
->> + * @wp_gpio: If gpio_is_valid() we'll use this to read write protect.
->>   * @ctype: Card type for this slot.
->>   * @mrq: mmc_request currently being processed or waiting to be
->>   *   processed, or NULL when the slot is idle.
->> @@ -88,6 +90,8 @@ struct dw_mci_slot {
->>       struct mmc_host         *mmc;
->>       struct dw_mci           *host;
->>
->> +     int                     wp_gpio;
->> +
->>       u32                     ctype;
->>
->>       struct mmc_request      *mrq;
->> @@ -832,6 +836,8 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
->>               read_only = 0;
->>       else if (brd->get_ro)
->>               read_only = brd->get_ro(slot->id);
->> +     else if (gpio_is_valid(slot->wp_gpio))
->> +             read_only = gpio_get_value(slot->wp_gpio);
->>       else
->>               read_only =
->>                       mci_readl(slot->host, WRTPRT) & (1 << slot->id) ? 1 : 0;
->> @@ -1802,6 +1808,29 @@ static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
->>                              " as 1\n");
->>       return bus_wd;
->>  }
->> +
->> +/* find the write protect gpio for a given slot; or -1 if none specified */
->> +static u32 dw_mci_of_get_wp_gpio(struct device *dev, u8 slot)
->> +{
->> +     struct device_node *np = dw_mci_of_find_slot_node(dev, slot);
->> +     int gpio;
->> +
->> +     if (!np)
->> +             return -1;
-> I think good that use the error number instead of -1. Also the below code.
+How about following?
 
-In this case it's not really returning an error code which is why I
-chose -1.  It's returning a gpio number or anything that is a sentinel
-value indicating that the GPIO is not valid.
+8<--------------------------------
+diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
+index 165b6a6..22eead3 100644
+--- a/arch/arm/mach-s3c24xx/s3c2443.c
++++ b/arch/arm/mach-s3c24xx/s3c2443.c
+@@ -82,6 +82,10 @@ int __init s3c2443_init(void)
+ 	s3c_device_wdt.resource[1].start = IRQ_S3C2443_WDT;
+ 	s3c_device_wdt.resource[1].end   = IRQ_S3C2443_WDT;
 
-...but you're right, an error code would work.  I'll replace with
-"-EINVAL" in my next patch.
++	/* change SPI IRQ number */
++	s3c_device_spi0.resource[1].start = IRQ_SPI1;
++	s3c_device_spi0.resource[1].end = IRQ_SPI1;
++
+ 	return device_register(&s3c2443_dev);
+ }
+8<--------------------------------
 
->
->> +
->> +     gpio = of_get_named_gpio(np, "wp-gpios", 0);
->> +
->> +     /* Having a missing entry is valid; return silently */
->> +     if (!gpio_is_valid(gpio))
->> +             return -1;
->> +
->> +     if (devm_gpio_request(dev, gpio, "dw-mci-wp")) {
->> +             dev_warn(dev, "gpio [%d] request failed\n", gpio);
->> +             return -1;
->> +     }
->> +
->> +     return gpio;
-> gpio is int type, but return type is u32?
-
-Good catch.  Will fix.
-
->
-> Best Regards,
-> Jaehoon Chung
->> +}
->>  #else /* CONFIG_OF */
->>  static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
->>  {
->> @@ -1811,6 +1840,10 @@ static struct device_node *dw_mci_of_find_slot_node(struct device *dev, u8 slot)
->>  {
->>       return NULL;
->>  }
->> +static u32 dw_mci_of_get_wp_gpio(struct device *dev, u8 slot)
->> +{
->> +     return -1;
->> +}
->>  #endif /* CONFIG_OF */
->>
->>  static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
->> @@ -1923,6 +1956,8 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
->>       else
->>               clear_bit(DW_MMC_CARD_PRESENT, &slot->flags);
->>
->> +     slot->wp_gpio = dw_mci_of_get_wp_gpio(host->dev, slot->id);
->> +
->>       mmc_add_host(mmc);
->>
->>  #if defined(CONFIG_DEBUG_FS)
->>
->
+K-Gene <kgene@kernel.org>
