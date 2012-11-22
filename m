@@ -1,83 +1,141 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 3/4] ARM: dts: exynos4: add node for PL330 MDMA1 controller
-Date: Thu, 22 Nov 2012 11:57:26 +0100
-Message-ID: <201211221157.26615.b.zolnierkie@samsung.com>
-References: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
- <1351504796-24788-4-git-send-email-b.zolnierkie@samsung.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 01/12] ARM: EXYNOS: Add clk_ops for gating clocks of System
+	MMU
+Date: Thu, 22 Nov 2012 20:32:30 +0900
+Message-ID: <002201cdc8a5$0e9fb8c0$2bdf2a40$%cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1351504796-24788-4-git-send-email-b.zolnierkie@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, vinod.koul@intel.com, t.figa@samsung.com, jassisinghbrar@gmail.com, rob.herring@calxeda.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-language: ko
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Touching some System MMU needs its master devices' clock to be enabled
+before. This commit adds clk_ops.set_parent of gating clocks of System
+MMU to ensure gating clocks of System MMU's mater devices are enabled
+when enabling gating clocks of System MMU.
 
-Hi Kukjin,
-
-Could you also apply this patch?
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung Poland R&D Center
-
-
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2] ARM: dts: exynos4: add node for PL330 MDMA1 controller
-
-Add missing PL330 MDMA1 controller node to the device tree (DT).
-
-[ Currently there is no problem with using 'non-secure' mdma1 address
-  instead of 'secure' one on revision 0 of Exynos4210 SOC (as used by
-  Universal C210 board) as this SOC revision is unsupported by DT. ]
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
-v2: refreshed againt next-20121115 and added Reviewed-by tag
+ arch/arm/mach-exynos/clock-exynos5.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
- arch/arm/boot/dts/exynos4.dtsi         |    6 ++++++
- arch/arm/mach-exynos/mach-exynos4-dt.c |    1 +
- 2 files changed, 7 insertions(+)
-
-Index: b/arch/arm/boot/dts/exynos4.dtsi
-===================================================================
---- a/arch/arm/boot/dts/exynos4.dtsi	2012-11-22 11:40:51.000000000 +0100
-+++ b/arch/arm/boot/dts/exynos4.dtsi	2012-11-22 11:53:29.520815274 +0100
-@@ -244,5 +244,11 @@
- 			reg = <0x12690000 0x1000>;
- 			interrupts = <0 36 0>;
- 		};
-+
-+		mdma1: mdma@12850000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x12850000 0x1000>;
-+			interrupts = <0 34 0>;
-+		};
- 	};
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index e48d7c2..a86e88e 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -614,6 +614,16 @@ static struct clksrc_clk exynos5_clk_aclk_300_gscl = {
+ 	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP3, .shift = 10, .size = 1 },
  };
-Index: b/arch/arm/mach-exynos/mach-exynos4-dt.c
-===================================================================
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c	2012-11-22 11:40:51.000000000 +0100
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c	2012-11-22 11:53:55.248815271 +0100
-@@ -77,6 +77,7 @@ static const struct of_dev_auxdata exyno
- 				"exynos4210-spi.2", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
-+	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
- 				"exynos-tmu", NULL),
- 	{},
+ 
++static int exynos5_gate_clk_set_parent(struct clk *clk, struct clk *parent)
++{
++	clk->parent = parent;
++	return 0;
++}
++
++static struct clk_ops exynos5_gate_clk_ops = {
++	.set_parent = exynos5_gate_clk_set_parent
++};
++
+ static struct clk exynos5_init_clocks_off[] = {
+ 	{
+ 		.name		= "timers",
+@@ -855,71 +865,85 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(mfc_l, 0),
+ 		.enable		= &exynos5_clk_ip_mfc_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 1),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(mfc_r, 1),
+ 		.enable		= &exynos5_clk_ip_mfc_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 2),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(tv, 2),
+ 		.enable		= &exynos5_clk_ip_disp1_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 9)
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(jpeg, 3),
+ 		.enable		= &exynos5_clk_ip_gen_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 7),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(rot, 4),
+ 		.enable		= &exynos5_clk_ip_gen_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 6)
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(gsc0, 5),
+ 		.enable		= &exynos5_clk_ip_gscl_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 7),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(gsc1, 6),
+ 		.enable		= &exynos5_clk_ip_gscl_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 8),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(gsc2, 7),
+ 		.enable		= &exynos5_clk_ip_gscl_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 9),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(gsc3, 8),
+ 		.enable		= &exynos5_clk_ip_gscl_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 10),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(isp, 9),
+ 		.enable		= &exynos5_clk_ip_isp0_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (0x3F << 8),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME2,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(isp, 9),
+ 		.enable		= &exynos5_clk_ip_isp1_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (0xF << 4),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(camif0, 12),
+ 		.enable		= &exynos5_clk_ip_gscl_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 11),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(camif1, 13),
+ 		.enable		= &exynos5_clk_ip_gscl_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 12),
+ 	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(2d, 14),
+ 		.enable		= &exynos5_clk_ip_acp_ctrl,
++		.ops		= &exynos5_gate_clk_ops,
+ 		.ctrlbit	= (1 << 7)
+ 	}
+ };
+-- 
+1.8.0
