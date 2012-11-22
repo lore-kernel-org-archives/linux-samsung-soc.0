@@ -1,84 +1,55 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 1/4] thermal: Add new thermal trend type to support
- quick cooling
-Date: Thu, 22 Nov 2012 09:22:04 +0800
-Message-ID: <1353547324.2172.1.camel@rzhang1-mobl4>
-References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
-	 <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
+From: Alexander Varnin <fenixk19@mail.ru>
+Subject: Re: [PATCH] ARM: S3C2443: SPI clock channel setup is fixed
+Date: Thu, 22 Nov 2012 12:29:42 +0400
+Message-ID: <50ADE276.3030501@mail.ru>
+References: <50AAAABE.8090607@mail.ru> <0c8901cdc714$a567f7a0$f037e6e0$@org> <50ADDACE.9090709@mail.ru> <0f6d01cdc88a$8a0c5b00$9e251100$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, jonghwa3.lee@samsung.com
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from fallback1.mail.ru ([94.100.176.18]:35142 "EHLO
+	fallback1.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755817Ab2KVSuz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Nov 2012 13:50:55 -0500
+Received: from smtp29.i.mail.ru (smtp29.i.mail.ru [94.100.177.89])
+	by fallback1.mail.ru (mPOP.Fallback_MX) with ESMTP id C8F61C44606
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Nov 2012 12:30:12 +0400 (MSK)
+In-Reply-To: <0f6d01cdc88a$8a0c5b00$9e251100$@org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-On Thu, 2012-11-08 at 09:56 +0530, Amit Daniel Kachhap wrote:
-> This modification adds 2 new thermal trend type THERMAL_TREND_RAISE_FULL
-> and THERMAL_TREND_DROP_FULL. This thermal trend can be used to quickly
-> jump to the upper or lower cooling level instead of incremental increase
-> or decrease. This is needed for temperature sensors which support rising/falling
-> threshold interrupts and polling can be totally avoided.
-> 
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> ---
->  drivers/thermal/step_wise.c |   19 +++++++++++++++----
->  include/linux/thermal.h     |    2 ++
->  2 files changed, 17 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/thermal/step_wise.c b/drivers/thermal/step_wise.c
-> index 1242cff..0d2d8d6 100644
-> --- a/drivers/thermal/step_wise.c
-> +++ b/drivers/thermal/step_wise.c
-> @@ -35,6 +35,10 @@
->   *       state for this trip point
->   *    b. if the trend is THERMAL_TREND_DROPPING, use lower cooling
->   *       state for this trip point
-> + *    c. if the trend is THERMAL_TREND_RAISE_FULL, use highest cooling
-> + *       state for this trip point
-> + *    d. if the trend is THERMAL_TREND_DROP_FULL, use lowest cooling
-> + *       state for this trip point
->   */
->  static unsigned long get_target_state(struct thermal_instance *instance,
->  					enum thermal_trend trend)
-> @@ -50,7 +54,10 @@ static unsigned long get_target_state(struct thermal_instance *instance,
->  	} else if (trend == THERMAL_TREND_DROPPING) {
->  		cur_state = cur_state > instance->lower ?
->  			    (cur_state - 1) : instance->lower;
-> -	}
-> +	} else if (trend == THERMAL_TREND_RAISE_FULL)
-> +		cur_state = instance->upper;
-> +	else if (trend == THERMAL_TREND_DROP_FULL)
-> +		cur_state = instance->lower;
->  
->  	return cur_state;
->  }
-> @@ -87,7 +94,8 @@ static void update_instance_for_throttle(struct thermal_zone_device *tz,
->  }
->  
->  static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
-> -				int trip, enum thermal_trip_type trip_type)
-> +				int trip, enum thermal_trip_type trip_type,
-> +				enum thermal_trend trend)
->  {
->  	struct thermal_instance *instance;
->  	struct thermal_cooling_device *cdev;
-> @@ -101,7 +109,10 @@ static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
->  		cdev = instance->cdev;
->  		cdev->ops->get_cur_state(cdev, &cur_state);
->  
-> -		instance->target = cur_state > instance->lower ?
-> +		if (trend == THERMAL_TREND_DROP_FULL)
-> +			instance->target = instance->lower;
-> +		else
-> +			instance->target = cur_state > instance->lower ?
->  			    (cur_state - 1) : THERMAL_NO_TARGET;
->  
-what do you expect to happen if the trend is THERMAL_TREND_RAISE_FULL at
-this time?
-
-thanks,
-rui
+22.11.2012 12:22, Kukjin Kim =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> SPI1). I've solved it with board specific code, but it is not most
+>> correct way, i think.
+>>
+> Hmm, if provided platform_device is in plat-samsung/devs.c cannot sup=
+port, we can do as you said temporarily but we know it's wrong way beca=
+use the value depends on SoC not board.
+>
+> How about following?
+>
+> 8<--------------------------------
+> diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/=
+s3c2443.c
+> index 165b6a6..22eead3 100644
+> --- a/arch/arm/mach-s3c24xx/s3c2443.c
+> +++ b/arch/arm/mach-s3c24xx/s3c2443.c
+> @@ -82,6 +82,10 @@ int __init s3c2443_init(void)
+>   	s3c_device_wdt.resource[1].start =3D IRQ_S3C2443_WDT;
+>   	s3c_device_wdt.resource[1].end   =3D IRQ_S3C2443_WDT;
+>
+> +	/* change SPI IRQ number */
+> +	s3c_device_spi0.resource[1].start =3D IRQ_SPI1;
+> +	s3c_device_spi0.resource[1].end =3D IRQ_SPI1;
+> +
+>   	return device_register(&s3c2443_dev);
+>   }
+> 8<--------------------------------
+>
+> K-Gene <kgene@kernel.org>
+>
+Yes, that is a fix. Thanks.
