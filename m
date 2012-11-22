@@ -1,42 +1,105 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 2/2] mmc: dw_mmc: Handle wp-gpios from device tree
-Date: Wed, 21 Nov 2012 20:33:55 -0800
-Message-ID: <CAD=FV=Xz_nQSLqoR7TSd8vn5No9+TVa9q-hp1i0BpgUK=G3EoQ@mail.gmail.com>
-References: <1353535387-32106-1-git-send-email-dianders@chromium.org>
-	<1353535387-32106-2-git-send-email-dianders@chromium.org>
-	<000701cdc852$a5e4a130$f1ade390$%jun@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000701cdc852$a5e4a130$f1ade390$%jun@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] serial: samsung: fix potential soft lockup during uart write
+Date: Thu, 22 Nov 2012 18:06:28 +0530
+Message-ID: <1353587788-21538-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-serial-owner@vger.kernel.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: linux-serial@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, kyungmin.park@samsung.com, hk619.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 21, 2012 at 5:42 PM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> Hi,
->
-> wp-gpios has been implemented in dw_mmc-exynos.c
-> It can be reused for EXYNOS platform? We need to modify some though.
+Certain tty line discipline implementations such slip and bluetooth hci invoke
+the serial core uart_write() api in their write_wakeup callback. This leads to
+a soft lockup with samsung serial driver since the uart port lock is taken in
+the driver's interrupt handler and uart_write() attempts to take the same lock
+again.
 
-Yup, I've seen that.  Patch 1/2 ("mmc: dw_mmc: exynos: Stop claiming
-wp-gpio") addressed that.  For some reason I can't find that on
-LKML.org yet.  Strange.  :-/  I'll forward it on to you shortly.
+Fix this issue by releasing the uart port lock before the call to
+uart_write_wakeup() in the tx handler. Also move the spin-lock/unlock sequence
+from s3c64xx_serial_handle_irq() function into the tx and rx irq handlers so
+that this change is applicable to s3c24xx platforms as well.
 
-In any case: I found that the exynos code didn't actually work.  It
-claimed the GPIO but didn't ever look at it.
+Reported-by: Kyungmin Park <kyungmin.park@samsung.com>
+Reported-by: Hyeonkook Kim <hk619.kim@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/tty/serial/samsung.c |   16 ++++++++++++----
+ 1 files changed, 12 insertions(+), 4 deletions(-)
 
-I have the beginnings of the code to implement this properly in the
-exynos code but I stopped working on it when I decided that other SoCs
-could also benefit from the code and it fit better in the general
-dw_mmc driver.
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 7f04717..97bac4c 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -223,8 +223,11 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
+ 	struct uart_port *port = &ourport->port;
+ 	struct tty_struct *tty = port->state->port.tty;
+ 	unsigned int ufcon, ch, flag, ufstat, uerstat;
++	unsigned long flags;
+ 	int max_count = 64;
+ 
++	spin_lock_irqsave(&port->lock, flags);
++
+ 	while (max_count-- > 0) {
+ 		ufcon = rd_regl(port, S3C2410_UFCON);
+ 		ufstat = rd_regl(port, S3C2410_UFSTAT);
+@@ -299,6 +302,7 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
+ 	tty_flip_buffer_push(tty);
+ 
+  out:
++	spin_unlock_irqrestore(&port->lock, flags);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -307,8 +311,11 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
+ 	struct s3c24xx_uart_port *ourport = id;
+ 	struct uart_port *port = &ourport->port;
+ 	struct circ_buf *xmit = &port->state->xmit;
++	unsigned long flags;
+ 	int count = 256;
+ 
++	spin_lock_irqsave(&port->lock, flags);
++
+ 	if (port->x_char) {
+ 		wr_regb(port, S3C2410_UTXH, port->x_char);
+ 		port->icount.tx++;
+@@ -336,13 +343,17 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
+ 		port->icount.tx++;
+ 	}
+ 
+-	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
++	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS) {
++		spin_unlock(&port->lock);
+ 		uart_write_wakeup(port);
++		spin_lock(&port->lock);
++	}
+ 
+ 	if (uart_circ_empty(xmit))
+ 		s3c24xx_serial_stop_tx(port);
+ 
+  out:
++	spin_unlock_irqrestore(&port->lock, flags);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -352,10 +363,8 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
+ 	struct s3c24xx_uart_port *ourport = id;
+ 	struct uart_port *port = &ourport->port;
+ 	unsigned int pend = rd_regl(port, S3C64XX_UINTP);
+-	unsigned long flags;
+ 	irqreturn_t ret = IRQ_HANDLED;
+ 
+-	spin_lock_irqsave(&port->lock, flags);
+ 	if (pend & S3C64XX_UINTM_RXD_MSK) {
+ 		ret = s3c24xx_serial_rx_chars(irq, id);
+ 		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
+@@ -364,7 +373,6 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
+ 		ret = s3c24xx_serial_tx_chars(irq, id);
+ 		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
+ 	}
+-	spin_unlock_irqrestore(&port->lock, flags);
+ 	return ret;
+ }
+ 
+-- 
+1.6.6.rc2
 
-If you disagree and would like me to cleanup the version of this patch
-that's just in the exynos driver and post that, I will.  Just let me
-know.
-
-
-Thanks for the review!
-
--Doug
