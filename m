@@ -1,105 +1,144 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] serial: samsung: fix potential soft lockup during uart write
-Date: Thu, 22 Nov 2012 18:06:28 +0530
-Message-ID: <1353587788-21538-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-serial-owner@vger.kernel.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: linux-serial@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, kyungmin.park@samsung.com, hk619.kim@samsung.com
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 2/2] mmc: dw_mmc: Handle wp-gpios from device tree
+Date: Wed, 21 Nov 2012 20:43:57 -0800
+Message-ID: <CAD=FV=W9injFAP+Qx9Ge9zK8DxwuWBCPHc4w4Jyn3PKuX_3vkg@mail.gmail.com>
+References: <1353535387-32106-1-git-send-email-dianders@chromium.org>
+	<1353535387-32106-2-git-send-email-dianders@chromium.org>
+	<50AD862D.40302@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <50AD862D.40302@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Certain tty line discipline implementations such slip and bluetooth hci invoke
-the serial core uart_write() api in their write_wakeup callback. This leads to
-a soft lockup with samsung serial driver since the uart port lock is taken in
-the driver's interrupt handler and uart_write() attempts to take the same lock
-again.
+Jaehoon,
 
-Fix this issue by releasing the uart port lock before the call to
-uart_write_wakeup() in the tx handler. Also move the spin-lock/unlock sequence
-from s3c64xx_serial_handle_irq() function into the tx and rx irq handlers so
-that this change is applicable to s3c24xx platforms as well.
+Thanks for the review.  See below for comments.  I'll plan on a new
+patch either Monday or Tuesday when I have a chance to spin and
+re-test.
 
-Reported-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reported-by: Hyeonkook Kim <hk619.kim@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- drivers/tty/serial/samsung.c |   16 ++++++++++++----
- 1 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 7f04717..97bac4c 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -223,8 +223,11 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
- 	struct uart_port *port = &ourport->port;
- 	struct tty_struct *tty = port->state->port.tty;
- 	unsigned int ufcon, ch, flag, ufstat, uerstat;
-+	unsigned long flags;
- 	int max_count = 64;
- 
-+	spin_lock_irqsave(&port->lock, flags);
-+
- 	while (max_count-- > 0) {
- 		ufcon = rd_regl(port, S3C2410_UFCON);
- 		ufstat = rd_regl(port, S3C2410_UFSTAT);
-@@ -299,6 +302,7 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
- 	tty_flip_buffer_push(tty);
- 
-  out:
-+	spin_unlock_irqrestore(&port->lock, flags);
- 	return IRQ_HANDLED;
- }
- 
-@@ -307,8 +311,11 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
- 	struct s3c24xx_uart_port *ourport = id;
- 	struct uart_port *port = &ourport->port;
- 	struct circ_buf *xmit = &port->state->xmit;
-+	unsigned long flags;
- 	int count = 256;
- 
-+	spin_lock_irqsave(&port->lock, flags);
-+
- 	if (port->x_char) {
- 		wr_regb(port, S3C2410_UTXH, port->x_char);
- 		port->icount.tx++;
-@@ -336,13 +343,17 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
- 		port->icount.tx++;
- 	}
- 
--	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
-+	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS) {
-+		spin_unlock(&port->lock);
- 		uart_write_wakeup(port);
-+		spin_lock(&port->lock);
-+	}
- 
- 	if (uart_circ_empty(xmit))
- 		s3c24xx_serial_stop_tx(port);
- 
-  out:
-+	spin_unlock_irqrestore(&port->lock, flags);
- 	return IRQ_HANDLED;
- }
- 
-@@ -352,10 +363,8 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
- 	struct s3c24xx_uart_port *ourport = id;
- 	struct uart_port *port = &ourport->port;
- 	unsigned int pend = rd_regl(port, S3C64XX_UINTP);
--	unsigned long flags;
- 	irqreturn_t ret = IRQ_HANDLED;
- 
--	spin_lock_irqsave(&port->lock, flags);
- 	if (pend & S3C64XX_UINTM_RXD_MSK) {
- 		ret = s3c24xx_serial_rx_chars(irq, id);
- 		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
-@@ -364,7 +373,6 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
- 		ret = s3c24xx_serial_tx_chars(irq, id);
- 		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
- 	}
--	spin_unlock_irqrestore(&port->lock, flags);
- 	return ret;
- }
- 
--- 
-1.6.6.rc2
+On Wed, Nov 21, 2012 at 5:55 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> On 11/22/2012 07:03 AM, Doug Anderson wrote:
+>> On some SoCs (like exynos5250) you need to use an external GPIO for
+>> write protect.  Add support for wp-gpios to the core dw_mmc driver
+>> since it could be useful across multiple SoCs.
+>>
+>> With this change I am able to make use of the write protect for the
+>> external SD slot on exynos5250-snow.
+>>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> ---
+>>  drivers/mmc/host/dw_mmc.c |   35 +++++++++++++++++++++++++++++++++++
+>>  1 files changed, 35 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 5b41348..9c79870 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -34,6 +34,7 @@
+>>  #include <linux/regulator/consumer.h>
+>>  #include <linux/workqueue.h>
+>>  #include <linux/of.h>
+>> +#include <linux/of_gpio.h>
+>>
+>>  #include "dw_mmc.h"
+>>
+>> @@ -74,6 +75,7 @@ struct idmac_desc {
+>>   * struct dw_mci_slot - MMC slot state
+>>   * @mmc: The mmc_host representing this slot.
+>>   * @host: The MMC controller this slot is using.
+>> + * @wp_gpio: If gpio_is_valid() we'll use this to read write protect.
+>>   * @ctype: Card type for this slot.
+>>   * @mrq: mmc_request currently being processed or waiting to be
+>>   *   processed, or NULL when the slot is idle.
+>> @@ -88,6 +90,8 @@ struct dw_mci_slot {
+>>       struct mmc_host         *mmc;
+>>       struct dw_mci           *host;
+>>
+>> +     int                     wp_gpio;
+>> +
+>>       u32                     ctype;
+>>
+>>       struct mmc_request      *mrq;
+>> @@ -832,6 +836,8 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
+>>               read_only = 0;
+>>       else if (brd->get_ro)
+>>               read_only = brd->get_ro(slot->id);
+>> +     else if (gpio_is_valid(slot->wp_gpio))
+>> +             read_only = gpio_get_value(slot->wp_gpio);
+>>       else
+>>               read_only =
+>>                       mci_readl(slot->host, WRTPRT) & (1 << slot->id) ? 1 : 0;
+>> @@ -1802,6 +1808,29 @@ static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
+>>                              " as 1\n");
+>>       return bus_wd;
+>>  }
+>> +
+>> +/* find the write protect gpio for a given slot; or -1 if none specified */
+>> +static u32 dw_mci_of_get_wp_gpio(struct device *dev, u8 slot)
+>> +{
+>> +     struct device_node *np = dw_mci_of_find_slot_node(dev, slot);
+>> +     int gpio;
+>> +
+>> +     if (!np)
+>> +             return -1;
+> I think good that use the error number instead of -1. Also the below code.
 
+In this case it's not really returning an error code which is why I
+chose -1.  It's returning a gpio number or anything that is a sentinel
+value indicating that the GPIO is not valid.
+
+...but you're right, an error code would work.  I'll replace with
+"-EINVAL" in my next patch.
+
+>
+>> +
+>> +     gpio = of_get_named_gpio(np, "wp-gpios", 0);
+>> +
+>> +     /* Having a missing entry is valid; return silently */
+>> +     if (!gpio_is_valid(gpio))
+>> +             return -1;
+>> +
+>> +     if (devm_gpio_request(dev, gpio, "dw-mci-wp")) {
+>> +             dev_warn(dev, "gpio [%d] request failed\n", gpio);
+>> +             return -1;
+>> +     }
+>> +
+>> +     return gpio;
+> gpio is int type, but return type is u32?
+
+Good catch.  Will fix.
+
+>
+> Best Regards,
+> Jaehoon Chung
+>> +}
+>>  #else /* CONFIG_OF */
+>>  static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
+>>  {
+>> @@ -1811,6 +1840,10 @@ static struct device_node *dw_mci_of_find_slot_node(struct device *dev, u8 slot)
+>>  {
+>>       return NULL;
+>>  }
+>> +static u32 dw_mci_of_get_wp_gpio(struct device *dev, u8 slot)
+>> +{
+>> +     return -1;
+>> +}
+>>  #endif /* CONFIG_OF */
+>>
+>>  static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>> @@ -1923,6 +1956,8 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>>       else
+>>               clear_bit(DW_MMC_CARD_PRESENT, &slot->flags);
+>>
+>> +     slot->wp_gpio = dw_mci_of_get_wp_gpio(host->dev, slot->id);
+>> +
+>>       mmc_add_host(mmc);
+>>
+>>  #if defined(CONFIG_DEBUG_FS)
+>>
+>
