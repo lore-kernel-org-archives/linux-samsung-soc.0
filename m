@@ -1,47 +1,103 @@
-From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 7/7] i2c: s3c2410: Remove err_cpufreq label
-Date: Fri, 23 Nov 2012 11:29:13 +0530
-Message-ID: <1353650353-17576-8-git-send-email-tushar.behera@linaro.org>
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 4/7] i2c: s3c2410: Convert to use devm_ioremap()
+Date: Fri, 23 Nov 2012 11:44:48 +0530
+Message-ID: <CAK9yfHyAWtuRFuygK2L53GrAaZ3k7rasTRt+N6TtU2+N-UHVTw@mail.gmail.com>
 References: <1353650353-17576-1-git-send-email-tushar.behera@linaro.org>
+	<1353650353-17576-5-git-send-email-tushar.behera@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353650353-17576-1-git-send-email-tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <1353650353-17576-5-git-send-email-tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+To: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-err_cpufreq label is now used only once. It can be removed and related
-code can be moved to the caller location.
+Hi Tushar,
 
-Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- drivers/i2c/busses/i2c-s3c2410.c |    7 ++-----
- 1 files changed, 2 insertions(+), 5 deletions(-)
+On 23 November 2012 11:29, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c |   13 ++++---------
+>  1 files changed, 4 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index a274ef7..3446af2 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -996,7 +996,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>                 goto err_clk;
+>         }
+>
+> -       i2c->regs = ioremap(res->start, resource_size(res));
+> +       i2c->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+>
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 707efaf..c934ec8 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1053,7 +1053,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	ret = i2c_add_numbered_adapter(&i2c->adap);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
--		goto err_cpufreq;
-+		s3c24xx_i2c_deregister_cpufreq(i2c);
-+		return ret;
- 	}
- 
- 	of_i2c_register_devices(&i2c->adap);
-@@ -1064,10 +1065,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 
- 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
- 	return 0;
--
-- err_cpufreq:
--	s3c24xx_i2c_deregister_cpufreq(i2c);
--	return ret;
- }
- 
- /* s3c24xx_i2c_remove
+request_mem_region and ioremap and be replaced using a single
+devm_request_and_ioremap() call.
+
+Also you may squash patches 2-5 into single convert to devm_* functions patch.
+
+
+>         if (i2c->regs == NULL) {
+>                 dev_err(&pdev->dev, "cannot map IO\n");
+> @@ -1016,7 +1016,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>
+>         ret = s3c24xx_i2c_init(i2c);
+>         if (ret != 0)
+> -               goto err_iomap;
+> +               goto err_clk;
+>
+>         /* find the IRQ for this unit (note, this relies on the init call to
+>          * ensure no current IRQs pending
+> @@ -1025,7 +1025,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>         i2c->irq = ret = platform_get_irq(pdev, 0);
+>         if (ret <= 0) {
+>                 dev_err(&pdev->dev, "cannot find IRQ\n");
+> -               goto err_iomap;
+> +               goto err_clk;
+>         }
+>
+>         ret = request_irq(i2c->irq, s3c24xx_i2c_irq, 0,
+> @@ -1033,7 +1033,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>
+>         if (ret != 0) {
+>                 dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+> -               goto err_iomap;
+> +               goto err_clk;
+>         }
+>
+>         ret = s3c24xx_i2c_register_cpufreq(i2c);
+> @@ -1073,9 +1073,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>   err_irq:
+>         free_irq(i2c->irq, i2c);
+>
+> - err_iomap:
+> -       iounmap(i2c->regs);
+> -
+>   err_clk:
+>         clk_disable_unprepare(i2c->clk);
+>         return ret;
+> @@ -1100,8 +1097,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+>
+>         clk_disable_unprepare(i2c->clk);
+>
+> -       iounmap(i2c->regs);
+> -
+>         s3c24xx_i2c_dt_gpio_free(i2c);
+>
+>         return 0;
+> --
+> 1.7.4.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+
+
+
 -- 
-1.7.4.1
+With warm regards,
+Sachin
