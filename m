@@ -1,103 +1,189 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v2 1/6] ARM: EXYNOS5: Clock settings for SATA and SATA PHY
-Date: Fri, 23 Nov 2012 18:19:09 +0900
-Message-ID: <113401cdc95b$98767780$c9636680$%kim@samsung.com>
-References: <1351612897-14923-1-git-send-email-vasanthananthan@gmail.com>
- <1351612897-14923-2-git-send-email-vasanthananthan@gmail.com>
- <CAK1UHixL5c5ybWmUH0zU5cs=stx8eH2r-rXuuZMSMcJj=ThDng@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAK1UHixL5c5ybWmUH0zU5cs=stx8eH2r-rXuuZMSMcJj=ThDng-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-language: ko
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Vasanth Ananthan' <vasanthananthan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, jgarzik-e+AXbWqSrlAAvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] ARM: dts: add max8997 device node for exynos4210-origen board
+Date: Fri, 23 Nov 2012 15:23:32 +0530
+Message-ID: <1353664412-17678-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:28237 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758644Ab2KWJZT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Nov 2012 04:25:19 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDX00KU4OTNYZW0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Nov 2012 18:25:17 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDX00A9ZOSEGV50@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Nov 2012 18:25:17 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com
 
-Vasanth Ananthan wrote:
-> 
-> Hi,
-> 
-> Missed to include Ben, for I2C patch, including him and copying others.
-> 
-Vasanth, you didn't my reply? I already applied this 1st and 2nd patches.
+Add max8997 regulator device node for exynos4210-origen board and list
+all the supported regulators.
 
-Thanks.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/boot/dts/exynos4210-origen.dts |  143 +++++++++++++++++++++++++++++++
+ 1 files changed, 143 insertions(+), 0 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> 
-> On Tue, Oct 30, 2012 at 9:31 PM, Vasanth Ananthan
-> <vasanthananthan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > This patch adds neccessary clock entries for SATA, SATA PHY and
-> > I2C_SATAPHY
-> >
-> > Signed-off-by: Vasanth Ananthan <vasanth.a-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  arch/arm/mach-exynos/clock-exynos5.c |   21 ++++++++++++++++++---
-> >  1 files changed, 18 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-
-> exynos/clock-exynos5.c
-> > index c44ca1e..124c54f 100644
-> > --- a/arch/arm/mach-exynos/clock-exynos5.c
-> > +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> > @@ -651,15 +651,20 @@ static struct clk exynos5_init_clocks_off[] = {
-> >                 .ctrlbit        = (1 << 15),
-> >         }, {
-> >                 .name           = "sata",
-> > -               .devname        = "ahci",
-> > +               .devname        = "exynos5-sata",
-> > +               .parent         = &exynos5_clk_aclk_200.clk,
-> >                 .enable         = exynos5_clk_ip_fsys_ctrl,
-> >                 .ctrlbit        = (1 << 6),
-> >         }, {
-> > -               .name           = "sata_phy",
-> > +               .name           = "sata-phy",
-> > +               .devname        = "exynos5-sata-phy",
-> > +               .parent         = &exynos5_clk_aclk_200.clk,
-> >                 .enable         = exynos5_clk_ip_fsys_ctrl,
-> >                 .ctrlbit        = (1 << 24),
-> >         }, {
-> > -               .name           = "sata_phy_i2c",
-> > +               .name           = "i2c",
-> > +               .devname        = "exynos5-sata-phy-i2c",
-> > +               .parent         = &exynos5_clk_aclk_200.clk,
-> >                 .enable         = exynos5_clk_ip_fsys_ctrl,
-> >                 .ctrlbit        = (1 << 25),
-> >         }, {
-> > @@ -1226,6 +1231,16 @@ static struct clksrc_clk exynos5_clksrcs[] = {
-> >                 .reg_div = { .reg = EXYNOS5_CLKDIV_TOP0, .shift = 24,
-.size
-> = 3 },
-> >         }, {
-> >                 .clk    = {
-> > +                       .name           = "sclk_sata",
-> > +                       .devname        = "exynos5-sata",
-> > +                       .enable         = exynos5_clksrc_mask_fsys_ctrl,
-> > +                       .ctrlbit        = (1 << 24),
-> > +               },
-> > +               .sources = &exynos5_clkset_aclk,
-> > +               .reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 24,
-.size
-> = 1 },
-> > +               .reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift =
-> 20, .size = 4 },
-> > +       }, {
-> > +               .clk    = {
-> >                         .name           = "sclk_gscl_wrap",
-> >                         .devname        = "s5p-mipi-csis.0",
-> >                         .enable         = exynos5_clksrc_mask_gscl_ctrl,
-> > --
-> > 1.7.4.1
-> >
-> 
-> 
-> 
-> --
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index f271001..3bdd23d 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -73,6 +73,149 @@
+ 		status = "okay";
+ 	};
+ 
++	i2c@13860000 {
++		status = "okay";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <20000>;
++		pinctrl-0 = <&i2c0_bus>;
++		pinctrl-names = "default";
++
++		max8997_pmic@66 {
++			compatible = "maxim,max8997-pmic";
++			reg = <0x66>;
++			interrupt-parent = <&gpx0>;
++			interrupts = <4 0>, <3 0>;
++
++			max8997,pmic-buck1-dvs-voltage = <1350000>;
++			max8997,pmic-buck2-dvs-voltage = <1100000>;
++			max8997,pmic-buck5-dvs-voltage = <1200000>;
++
++			regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "VDD_ABB_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldo2_reg: LDO2 {
++					regulator-name = "VDD_ALIVE_1.1V";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "VMIPI_1.1V";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++				};
++
++				ldo4_reg: LDO4 {
++					regulator-name = "VDD_RTC_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt	= <1800000>;
++					regulator-always-on;
++				};
++
++				ldo6_reg: LDO6 {
++					regulator-name = "VMIPI_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt	= <1800000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "VDD_AUD_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt	= <1800000>;
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "VADC_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt	= <3300000>;
++				};
++
++				ldo9_reg: LDO9 {
++					regulator-name = "DVDD_SWB_2.8V";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt	= <2800000>;
++					regulator-always-on;
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "VDD_PLL_1.1V";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt	= <1100000>;
++					regulator-always-on;
++				};
++
++				ldo11_reg: LDO11 {
++					regulator-name = "VDD_AUD_3V";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt	= <3000000>;
++				};
++
++				ldo14_reg: LDO14 {
++					regulator-name = "AVDD18_SWB_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt	= <1800000>;
++					regulator-always-on;
++				};
++
++				ldo17_reg: LDO17 {
++					regulator-name = "VDD_SWB_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt	= <3300000>;
++					regulator-always-on;
++				};
++
++				ldo21_reg: LDO21 {
++					regulator-name = "VDD_MIF_1.2V";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt	= <1200000>;
++					regulator-always-on;
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "VDD_ARM_1.2V";
++					regulator-min-microvolt = <950000>;
++					regulator-max-microvolt	= <1350000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "VDD_INT_1.1V";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt	= <1100000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck3_reg: BUCK3 {
++					regulator-name = "VDD_G3D_1.1V";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt = <1100000>;
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "VDDQ_M1M2_1.2V";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++				};
++
++				buck7_reg: BUCK7 {
++					regulator-name = "VDD_LCD_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-boot-on;
++				};
++			};
++		};
++	};
++
+ 	gpio_keys {
+ 		compatible = "gpio-keys";
+ 		#address-cells = <1>;
+-- 
+1.6.6.rc2
