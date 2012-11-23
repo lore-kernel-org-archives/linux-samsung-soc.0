@@ -1,75 +1,85 @@
 From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V3] ASoC: Samsung: Update Kconfig for I2S,SPDIF and PCM audio
-Date: Fri, 23 Nov 2012 16:55:05 +0530
-Message-ID: <CAAgF-BdyK_z3WxG3_xxHfT9h_iSh252RbHPdPwkgghe3q+8UrA@mail.gmail.com>
-References: <1352177786-16505-1-git-send-email-padma.v@samsung.com>
+Subject: Re: [RFC PATCH] ASoC: Samsung: Register the audio dma platform device
+Date: Fri, 23 Nov 2012 17:01:01 +0530
+Message-ID: <CAAgF-Bed1=kGHjWYzYvKXY6GhiYFr4kRqeJp2iJmL-GwGscMCg@mail.gmail.com>
+References: <1352894960-17434-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:63427 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756120Ab2KWLZG (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:51021 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751135Ab2KWLbD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Nov 2012 06:25:06 -0500
-Received: by mail-la0-f46.google.com with SMTP id p5so4251918lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Nov 2012 03:25:05 -0800 (PST)
-In-Reply-To: <1352177786-16505-1-git-send-email-padma.v@samsung.com>
+	Fri, 23 Nov 2012 06:31:03 -0500
+Received: by mail-lb0-f174.google.com with SMTP id gi11so4136325lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Nov 2012 03:31:02 -0800 (PST)
+In-Reply-To: <1352894960-17434-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, olofj@google.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-cc'ing Mark Brown.
+cc'ing Mark Brown
 
-On Tue, Nov 6, 2012 at 10:26 AM, Padmavathi Venna <padma.v@samsung.com> wrote:
-> Update Kconfig file to enable I2S,PCM audio for wm8994 and spdif on all
-> samsung platforms.
+On Wed, Nov 14, 2012 at 5:39 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
+> Audio dma device is not a hardware peripherial.
+> So this device can't be added in the dt devices list.
+> So expanded the module_platform_driver and registered
+> this device using "platform_device_register_simple".
 >
-> Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
-> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 > Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 > ---
+>  sound/soc/samsung/dma.c |   30 +++++++++++++++++++++++++++++-
+>  1 files changed, 29 insertions(+), 1 deletions(-)
 >
-> Changes since V2:
->         - Made driver selection based on SND_SOC_SAMSUNG as suggested by Olof
+> diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+> index 359708c..17ae9c0 100644
+> --- a/sound/soc/samsung/dma.c
+> +++ b/sound/soc/samsung/dma.c
+> @@ -444,6 +444,8 @@ static int __devexit samsung_asoc_platform_remove(struct platform_device *pdev)
+>         return 0;
+>  }
 >
-> Changes since V1:
->         - Made driver selection based on MACH_EXYNOS5_DT
+> +static struct platform_device *asoc_dma_device;
+> +
+>  static struct platform_driver asoc_dma_driver = {
+>         .driver = {
+>                 .name = "samsung-audio",
+> @@ -454,7 +456,33 @@ static struct platform_driver asoc_dma_driver = {
+>         .remove = __devexit_p(samsung_asoc_platform_remove),
+>  };
 >
->  sound/soc/samsung/Kconfig |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
+> -module_platform_driver(asoc_dma_driver);
+> +static int __init asoc_dma_init(void)
+> +{
+> +       int ret;
+> +
+> +       ret = platform_driver_register(&asoc_dma_driver);
+> +       if (ret) {
+> +               pr_err("unable to register driver\n");
+> +               return ret;
+> +       }
+> +
+> +       asoc_dma_device = platform_device_register_simple("samsung-audio", -1, NULL, 0);
+> +       if (IS_ERR(asoc_dma_device)) {
+> +               platform_driver_unregister(&asoc_dma_driver);
+> +               return PTR_ERR(asoc_dma_device);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void __exit asoc_dma_exit(void)
+> +{
+> +       platform_device_unregister(asoc_dma_device);
+> +       platform_driver_unregister(&asoc_dma_driver);
+> +}
+> +
+> +module_init(asoc_dma_init);
+> +module_exit(asoc_dma_exit);
 >
-> diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-> index e7b8317..9b3b63e 100644
-> --- a/sound/soc/samsung/Kconfig
-> +++ b/sound/soc/samsung/Kconfig
-> @@ -63,7 +63,7 @@ config SND_SOC_SAMSUNG_SMDK_WM8580
->
->  config SND_SOC_SAMSUNG_SMDK_WM8994
->         tristate "SoC I2S Audio support for WM8994 on SMDK"
-> -       depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210 || MACH_SMDK4212)
-> +       depends on SND_SOC_SAMSUNG
->         depends on I2C=y && GENERIC_HARDIRQS
->         select MFD_WM8994
->         select SND_SOC_WM8994
-> @@ -162,7 +162,7 @@ config SND_SOC_GONI_AQUILA_WM8994
->
->  config SND_SOC_SAMSUNG_SMDK_SPDIF
->         tristate "SoC S/PDIF Audio support for SMDK"
-> -       depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212)
-> +       depends on SND_SOC_SAMSUNG
->         select SND_SAMSUNG_SPDIF
->         help
->           Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
-> @@ -177,7 +177,7 @@ config SND_SOC_SMDK_WM8580_PCM
->
->  config SND_SOC_SMDK_WM8994_PCM
->         tristate "SoC PCM Audio support for WM8994 on SMDK"
-> -       depends on SND_SOC_SAMSUNG && (MACH_SMDKC210 || MACH_SMDKV310 || MACH_SMDK4212)
-> +       depends on SND_SOC_SAMSUNG
->         depends on I2C=y && GENERIC_HARDIRQS
->         select MFD_WM8994
->         select SND_SOC_WM8994
+>  MODULE_AUTHOR("Ben Dooks, <ben@simtec.co.uk>");
+>  MODULE_DESCRIPTION("Samsung ASoC DMA Driver");
 > --
 > 1.7.4.4
 >
