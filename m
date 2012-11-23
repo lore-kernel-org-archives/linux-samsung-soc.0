@@ -1,7 +1,7 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 1/7] i2c: s3c2410: Remove unnecessary label err_noclk
-Date: Fri, 23 Nov 2012 11:29:07 +0530
-Message-ID: <1353650353-17576-2-git-send-email-tushar.behera@linaro.org>
+Subject: [PATCH 2/7] i2c: s3c2410: Convert to use devm_clk_get()
+Date: Fri, 23 Nov 2012 11:29:08 +0530
+Message-ID: <1353650353-17576-3-git-send-email-tushar.behera@linaro.org>
 References: <1353650353-17576-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1353650353-17576-1-git-send-email-tushar.behera@linaro.org>
@@ -10,47 +10,39 @@ To: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-samsung-soc@v
 Cc: w.sang@pengutronix.de, kgene.kim@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-err_noclk label redirects to a simple return statement. Move the
-return statement to the caller location and remove the label.
-
 Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- drivers/i2c/busses/i2c-s3c2410.c |    9 +++------
- 1 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 3e0335f..7522f40 100644
+index 7522f40..019c3d7 100644
 --- a/drivers/i2c/busses/i2c-s3c2410.c
 +++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -945,8 +945,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+@@ -968,7 +968,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	/* find the clock and enable it */
  
- 	i2c->pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!i2c->pdata) {
--		ret = -ENOMEM;
--		goto err_noclk;
-+		dev_err(&pdev->dev, "no memory for platform data\n");
-+		return -ENOMEM;
- 	}
- 
- 	i2c->quirks = s3c24xx_get_device_quirks(pdev);
-@@ -971,8 +971,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	i2c->clk = clk_get(&pdev->dev, "i2c");
+ 	i2c->dev = &pdev->dev;
+-	i2c->clk = clk_get(&pdev->dev, "i2c");
++	i2c->clk = devm_clk_get(&pdev->dev, "i2c");
  	if (IS_ERR(i2c->clk)) {
  		dev_err(&pdev->dev, "cannot get clock\n");
--		ret = -ENOENT;
--		goto err_noclk;
-+		return -ENOENT;
- 	}
+ 		return -ENOENT;
+@@ -1082,7 +1082,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
  
- 	dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
-@@ -1084,8 +1083,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
   err_clk:
  	clk_disable_unprepare(i2c->clk);
- 	clk_put(i2c->clk);
--
-- err_noclk:
+-	clk_put(i2c->clk);
  	return ret;
  }
+ 
+@@ -1104,7 +1103,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+ 	free_irq(i2c->irq, i2c);
+ 
+ 	clk_disable_unprepare(i2c->clk);
+-	clk_put(i2c->clk);
+ 
+ 	iounmap(i2c->regs);
  
 -- 
 1.7.4.1
