@@ -1,61 +1,130 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: dts: Add node for GMAC for exynos5440
-Date: Fri, 23 Nov 2012 11:11:23 +0900
-Message-ID: <110101cdc91f$d658b7c0$830a2740$%kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS: Add support for secondary CPU bring-up on
+ Exynos4412
+Date: Fri, 23 Nov 2012 11:14:26 +0900
+Message-ID: <110a01cdc920$436c4d40$ca44e7c0$%kim@samsung.com>
+References: <1353599419-24218-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:15012 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758889Ab2KWCLZ (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:53566 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752382Ab2KWCO2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Nov 2012 21:11:25 -0500
+	Thu, 22 Nov 2012 21:14:28 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDX000BV4QLL3N0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Nov 2012 11:11:24 +0900 (KST)
+ 17 2011)) with ESMTP id <0MDX006Q14UPJ9B0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Nov 2012 11:14:27 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDX00DBY4QZUI00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Nov 2012 11:11:24 +0900 (KST)
+ with ESMTPA id <0MDX00D434W2T220@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Nov 2012 11:14:27 +0900 (KST)
+In-reply-to: <1353599419-24218-1-git-send-email-t.figa@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Byungho An' <bh74.an@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-From: Byungho An <bh74.an@samsung.com>
+Tomasz Figa wrote:
+> 
+> Exynos4412 uses different information register for each core. This patch
+> adjusts the bring-up code to take that into account.
+> 
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Reviewed-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/platsmp.c | 30 ++++++++++++++++++++++++------
+>  1 file changed, 24 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index f93d820..4ca8ff1 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -36,8 +36,22 @@
+> 
+>  extern void exynos4_secondary_startup(void);
+> 
+> -#define CPU1_BOOT_REG		(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+> -				S5P_INFORM5 : S5P_VA_SYSRAM)
+> +static inline void __iomem *cpu_boot_reg_base(void)
+> +{
+> +	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+> +		return S5P_INFORM5;
+> +	return S5P_VA_SYSRAM;
+> +}
+> +
+> +static inline void __iomem *cpu_boot_reg(int cpu)
+> +{
+> +	void __iomem *boot_reg;
+> +
+> +	boot_reg = cpu_boot_reg_base();
+> +	if (soc_is_exynos4412())
+> +		boot_reg += 4*cpu;
+> +	return boot_reg;
+> +}
+> 
+>  /*
+>   * Write pen_release in a way that is guaranteed to be visible to all
+> @@ -84,6 +98,7 @@ static void __cpuinit exynos_secondary_init(unsigned int cpu)
+>  static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+>  {
+>  	unsigned long timeout;
+> +	unsigned long phys_cpu = cpu_logical_map(cpu);
+> 
+>  	/*
+>  	 * Set synchronisation state between this boot processor
+> @@ -99,7 +114,7 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
+>  	 * Note that "pen_release" is the hardware CPU ID, whereas
+>  	 * "cpu" is Linux's internal ID.
+>  	 */
+> -	write_pen_release(cpu_logical_map(cpu));
+> +	write_pen_release(phys_cpu);
+> 
+>  	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
+>  		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+> @@ -133,7 +148,7 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
+>  		smp_rmb();
+> 
+>  		__raw_writel(virt_to_phys(exynos4_secondary_startup),
+> -			CPU1_BOOT_REG);
+> +							cpu_boot_reg(phys_cpu));
+>  		gic_raise_softirq(cpumask_of(cpu), 0);
+> 
+>  		if (pen_release == -1)
+> @@ -181,6 +196,8 @@ static void __init exynos_smp_init_cpus(void)
+> 
+>  static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>  {
+> +	int i;
+> +
+>  	if (!soc_is_exynos5250())
+>  		scu_enable(scu_base_addr());
+> 
+> @@ -190,8 +207,9 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>  	 * until it receives a soft interrupt, and then the
+>  	 * secondary CPU branches to this address.
+>  	 */
+> -	__raw_writel(virt_to_phys(exynos4_secondary_startup),
+> -			CPU1_BOOT_REG);
+> +	for (i = 1; i < max_cpus; ++i)
+> +		__raw_writel(virt_to_phys(exynos4_secondary_startup),
+> +					cpu_boot_reg(cpu_logical_map(i)));
+>  }
+> 
+>  struct smp_operations exynos_smp_ops __initdata = {
+> --
+> 1.8.0
 
-This patch adds node for GMAC for exynos5440.
+Looks OK to me, will apply.
+Thanks.
 
-Signed-off-by: Byungho An <bh74.an@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/boot/dts/exynos5440.dtsi |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index 024269d..b8de8e3 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -131,6 +131,15 @@
- 		interrupts = <0 1 0>;
- 	};
- 
-+	gmac: ethernet@00230000 {
-+		compatible = "snps,dwmac-3.70a";
-+		reg = <0x00230000 0x8000>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <0 31 4>;
-+		interrupt-name = "macirq";
-+		phy-mode = "sgmii";
-+	};
-+
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--- 
-1.7.9.5
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
