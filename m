@@ -1,122 +1,87 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 00/12] iommu/exynos: Fixes and Enhancements of System
- MMU driver with DT
-Date: Fri, 23 Nov 2012 17:07:33 +0900
-Message-ID: <112e01cdc951$976699b0$c633cd10$%kim@samsung.com>
-References: <002101cdc8a4$fc375990$f4a60cb0$%cho@samsung.com>
+From: Vasanth Ananthan <vasanthananthan@gmail.com>
+Subject: Re: [PATCH v2 1/6] ARM: EXYNOS5: Clock settings for SATA and SATA PHY
+Date: Fri, 23 Nov 2012 14:15:27 +0530
+Message-ID: <CAK1UHixL5c5ybWmUH0zU5cs=stx8eH2r-rXuuZMSMcJj=ThDng@mail.gmail.com>
+References: <1351612897-14923-1-git-send-email-vasanthananthan@gmail.com>
+	<1351612897-14923-2-git-send-email-vasanthananthan@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:54295 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754396Ab2KWIHg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Nov 2012 03:07:36 -0500
-In-reply-to: <002101cdc8a4$fc375990$f4a60cb0$%cho@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <1351612897-14923-2-git-send-email-vasanthananthan@gmail.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: ben-linux@fluff.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-i2c@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Cho KyongHo' <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: 'Joerg Roedel' <joro@8bytes.org>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, sw0312.kim@samsung.com, 'Subash Patel' <subash.ramaswamy@linaro.org>, prathyush.k@samsung.com, rahul.sharma@samsung.com
 
-Cho KyongHo wrote:
-> 
-> The current exynos-iommu(System MMU) driver does not work autonomously
-> since it is lack of support for power management of peripheral blocks.
-> For example, MFC device driver must ensure that its System MMU is disabled
-> before MFC block is power-down not to invalidate IOTLB in the System MMU
-> when I/O memory mapping is changed. Because A System MMU is resides in the
-> same H/W block, access to control registers of System MMU while the H/W
-> block is turned off must be prohibited.
-> 
-> This set of changes solves the above problem with setting each System MMUs
-> as the parent of the device which owns the System MMU to recieve the
-> information when the device is turned off or turned on.
-> 
-> Another big change to the driver is the support for devicetree.
-> The bindings for System MMU is described in
-> Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
-> 
-> In addition, this patchset also includes several bug fixes and
-> enhancements
-> of the current driver.
-> 
-> Change log:
-> v4:
-> - Remove Change-Id from v3 patches
-> - Change the order of the third and the first patch
->   Thanks to Kukjin Kim.
-> - Fix memory leak when allocating and assigning exynos_iommu_owner to
-> client
->   device if the client device has multiple System MMUs.
->   Thanks to Rahul Sharma.
-> 
-> v3:
-> - Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
-> - Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
->   Thanks to Prathyush.
-> 
-> v2:
-> - Split the patch to iommu/exynos into 9 patches
-> - Support for System MMU 3.3
-> - Some code compaction
-> 
-> Patch summary:
-> [PATCH v4 01/12] ARM: EXYNOS: Add clk_ops for gating clocks of System MMU
-> [PATCH v4 02/12] ARM: EXYNOS: add System MMU definition to DT
-> [PATCH v4 03/12] ARM: EXYNOS: remove system mmu initialization from exynos
-> tree
-> [PATCH v4 04/12] iommu/exynos: support for device tree
-> [PATCH v4 05/12] iommu/exynos: pass version information from DT
-> [PATCH v4 06/12] iommu/exynos: allocate lv2 page table from own slab
-> [PATCH v4 07/12] iommu/exynos: change rwlock to spinlock
-> [PATCH v4 08/12] iommu/exynos: set System MMU as the parent of client
-> device
-> [PATCH v4 09/12] iommu/exynos: add support for runtime pm and
-> suspend/resume
-> [PATCH v4 10/12] iommu/exynos: add support for System MMU 3.2 and 3.3
-> [PATCH v4 11/12] iommu/exynos: add literal name of System MMU for
-> debugging
-> [PATCH v4 12/12] iommu/exynos: add debugfs entries for System MMU
-> 
-> Diffstats:
->  .../devicetree/bindings/arm/exynos/system-mmu.txt  |   86 ++
->  arch/arm/boot/dts/exynos4210.dtsi                  |   96 ++
->  arch/arm/boot/dts/exynos4x12.dtsi                  |  124 ++
->  arch/arm/boot/dts/exynos5250.dtsi                  |  147 +-
->  arch/arm/mach-exynos/Kconfig                       |    5 -
->  arch/arm/mach-exynos/Makefile                      |    1 -
->  arch/arm/mach-exynos/clock-exynos4.c               |   41 +-
->  arch/arm/mach-exynos/clock-exynos4210.c            |    9 +-
->  arch/arm/mach-exynos/clock-exynos4212.c            |   23 +-
->  arch/arm/mach-exynos/clock-exynos5.c               |   86 +-
->  arch/arm/mach-exynos/dev-sysmmu.c                  |  274 ----
->  arch/arm/mach-exynos/include/mach/sysmmu.h         |   66 -
->  arch/arm/mach-exynos/mach-exynos4-dt.c             |   34 +
->  arch/arm/mach-exynos/mach-exynos5-dt.c             |   30 +
->  drivers/iommu/Kconfig                              |    2 +-
->  drivers/iommu/exynos-iommu.c                       | 1428
-+++++++++++++++-----
->  16 files changed, 1720 insertions(+), 732 deletions(-)
+Hi,
 
-Looks good to me 1st~3rd patches. After quick review, I think, 1st and 2nd
-patches can go to upstream for v3.8 without any dependency. So I will.
+Missed to include Ben, for I2C patch, including him and copying others.
 
-The 3rd patch has a dependency with other driver changes (4th ~ 12th), so it
-should be sent to upstream with others.
+Thanks,
+Vasanth.
 
-BTW since the 3rd patch touches many Samsung stuff in arch/arm/ so I'd
-prefer to take it in Samsung tree. If Joerg is ok on iommu/exynos driver
-changes for v3.8...
+On Tue, Oct 30, 2012 at 9:31 PM, Vasanth Ananthan
+<vasanthananthan@gmail.com> wrote:
+> This patch adds neccessary clock entries for SATA, SATA PHY and
+> I2C_SATAPHY
+>
+> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
+> ---
+>  arch/arm/mach-exynos/clock-exynos5.c |   21 ++++++++++++++++++---
+>  1 files changed, 18 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+> index c44ca1e..124c54f 100644
+> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> @@ -651,15 +651,20 @@ static struct clk exynos5_init_clocks_off[] = {
+>                 .ctrlbit        = (1 << 15),
+>         }, {
+>                 .name           = "sata",
+> -               .devname        = "ahci",
+> +               .devname        = "exynos5-sata",
+> +               .parent         = &exynos5_clk_aclk_200.clk,
+>                 .enable         = exynos5_clk_ip_fsys_ctrl,
+>                 .ctrlbit        = (1 << 6),
+>         }, {
+> -               .name           = "sata_phy",
+> +               .name           = "sata-phy",
+> +               .devname        = "exynos5-sata-phy",
+> +               .parent         = &exynos5_clk_aclk_200.clk,
+>                 .enable         = exynos5_clk_ip_fsys_ctrl,
+>                 .ctrlbit        = (1 << 24),
+>         }, {
+> -               .name           = "sata_phy_i2c",
+> +               .name           = "i2c",
+> +               .devname        = "exynos5-sata-phy-i2c",
+> +               .parent         = &exynos5_clk_aclk_200.clk,
+>                 .enable         = exynos5_clk_ip_fsys_ctrl,
+>                 .ctrlbit        = (1 << 25),
+>         }, {
+> @@ -1226,6 +1231,16 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+>                 .reg_div = { .reg = EXYNOS5_CLKDIV_TOP0, .shift = 24, .size = 3 },
+>         }, {
+>                 .clk    = {
+> +                       .name           = "sclk_sata",
+> +                       .devname        = "exynos5-sata",
+> +                       .enable         = exynos5_clksrc_mask_fsys_ctrl,
+> +                       .ctrlbit        = (1 << 24),
+> +               },
+> +               .sources = &exynos5_clkset_aclk,
+> +               .reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 24, .size = 1 },
+> +               .reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 20, .size = 4 },
+> +       }, {
+> +               .clk    = {
+>                         .name           = "sclk_gscl_wrap",
+>                         .devname        = "s5p-mipi-csis.0",
+>                         .enable         = exynos5_clksrc_mask_gscl_ctrl,
+> --
+> 1.7.4.1
+>
 
-Joerg, please let me know about iommu/exynos stuff so that I can decide to
-take 3rd patch or not for v3.8.
 
-Thanks.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+Regards,
+
+Vasanth K A
