@@ -1,90 +1,61 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/4] ARM: dts: exynos4: add node for PL330 MDMA1 controller
-Date: Fri, 23 Nov 2012 10:56:02 +0900
-Message-ID: <10f601cdc91d$b10e4770$132ad650$%kim@samsung.com>
-References: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
- <1351504796-24788-4-git-send-email-b.zolnierkie@samsung.com>
- <201211221157.26615.b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: dts: Add node for GMAC for exynos5440
+Date: Fri, 23 Nov 2012 11:11:23 +0900
+Message-ID: <110101cdc91f$d658b7c0$830a2740$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <201211221157.26615.b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:15012 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758889Ab2KWCLZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Nov 2012 21:11:25 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MDX000BV4QLL3N0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Nov 2012 11:11:24 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MDX00DBY4QZUI00@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Nov 2012 11:11:24 +0900 (KST)
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, vinod.koul@intel.com, rob.herring@calxeda.com, dinguyen@altera.com, pawel.moll@arm.com, t.figa@samsung.com, kyungmin.park@samsung.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Byungho An' <bh74.an@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Bartlomiej Zolnierkiewicz wrote:
-> 
-> 
-> Hi Kukjin,
-> 
-Hi Bart,
+From: Byungho An <bh74.an@samsung.com>
 
-> Could you also apply this patch?
-> 
-Yeah, looks good to me :-)
+This patch adds node for GMAC for exynos5440.
 
-Will apply, thanks.
+Signed-off-by: Byungho An <bh74.an@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/boot/dts/exynos5440.dtsi |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> 
-> From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Subject: [PATCH v2] ARM: dts: exynos4: add node for PL330 MDMA1 controller
-> 
-> Add missing PL330 MDMA1 controller node to the device tree (DT).
-> 
-> [ Currently there is no problem with using 'non-secure' mdma1 address
->   instead of 'secure' one on revision 0 of Exynos4210 SOC (as used by
->   Universal C210 board) as this SOC revision is unsupported by DT. ]
-> 
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> v2: refreshed againt next-20121115 and added Reviewed-by tag
-> 
->  arch/arm/boot/dts/exynos4.dtsi         |    6 ++++++
->  arch/arm/mach-exynos/mach-exynos4-dt.c |    1 +
->  2 files changed, 7 insertions(+)
-> 
-> Index: b/arch/arm/boot/dts/exynos4.dtsi
-> ===================================================================
-> --- a/arch/arm/boot/dts/exynos4.dtsi	2012-11-22 11:40:51.000000000
-> +0100
-> +++ b/arch/arm/boot/dts/exynos4.dtsi	2012-11-22 11:53:29.520815274
-> +0100
-> @@ -244,5 +244,11 @@
->  			reg = <0x12690000 0x1000>;
->  			interrupts = <0 36 0>;
->  		};
-> +
-> +		mdma1: mdma@12850000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x12850000 0x1000>;
-> +			interrupts = <0 34 0>;
-> +		};
->  	};
->  };
-> Index: b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> ===================================================================
-> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c	2012-11-22
-> 11:40:51.000000000 +0100
-> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c	2012-11-22
-> 11:53:55.248815271 +0100
-> @@ -77,6 +77,7 @@ static const struct of_dev_auxdata exyno
->  				"exynos4210-spi.2", NULL),
->  	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
->  	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
-> +	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
->  	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
->  				"exynos-tmu", NULL),
->  	{},
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index 024269d..b8de8e3 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -131,6 +131,15 @@
+ 		interrupts = <0 1 0>;
+ 	};
+ 
++	gmac: ethernet@00230000 {
++		compatible = "snps,dwmac-3.70a";
++		reg = <0x00230000 0x8000>;
++		interrupt-parent = <&gic>;
++		interrupts = <0 31 4>;
++		interrupt-name = "macirq";
++		phy-mode = "sgmii";
++	};
++
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-- 
+1.7.9.5
