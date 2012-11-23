@@ -1,53 +1,269 @@
 From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V3 2/2] ARM: EXYNOS: Enable platform support for I2S controllers
-Date: Fri, 23 Nov 2012 16:44:53 +0530
-Message-ID: <CAAgF-Bdu7BWM8PeyfoPnMkeR4Ju=p4y9Lr5AP-JLiRcNm1E5XQ@mail.gmail.com>
-References: <1352177084-16339-1-git-send-email-padma.v@samsung.com>
-	<1352177084-16339-3-git-send-email-padma.v@samsung.com>
+Subject: Re: [PATCH V3 1/5] ARM: S3C64XX: Add I2S clkdev support
+Date: Fri, 23 Nov 2012 16:45:24 +0530
+Message-ID: <CAAgF-Beag1y4nKHFHycjW-rPj-UQ+Rt5yux6+aTwqxXNCSw3RQ@mail.gmail.com>
+References: <1352177317-16395-1-git-send-email-padma.v@samsung.com>
+	<1352177317-16395-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:33951 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755407Ab2KWLOy (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:33445 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753854Ab2KWLP0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Nov 2012 06:14:54 -0500
-Received: by mail-lb0-f174.google.com with SMTP id gi11so4127007lbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Nov 2012 03:14:53 -0800 (PST)
-In-Reply-To: <1352177084-16339-3-git-send-email-padma.v@samsung.com>
+	Fri, 23 Nov 2012 06:15:26 -0500
+Received: by mail-la0-f46.google.com with SMTP id p5so4246092lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Nov 2012 03:15:24 -0800 (PST)
+In-Reply-To: <1352177317-16395-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, olofj@google.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-cc'ing Mark Brown
+cc'ing Mark Brown.
 
-On Tue, Nov 6, 2012 at 10:14 AM, Padmavathi Venna <padma.v@samsung.com> wrote:
-> Add AUXDATA entries for i2s controller driver so as to set the device
-> name for clock lookups
+On Tue, Nov 6, 2012 at 10:18 AM, Padmavathi Venna <padma.v@samsung.com> wrote:
+> I2S controller has an internal mux for RCLK source clks. The list
+> of source clk names were passed through platform data in non-dt case.
+> Register the existing RCLK source clocks with clkdev using generic
+> connection id. This is required as part of adding DT support
+> for I2S controller driver.
 >
 > Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 > ---
->  arch/arm/mach-exynos/mach-exynos5-dt.c |    6 ++++++
->  1 files changed, 6 insertions(+), 0 deletions(-)
+>  arch/arm/mach-s3c64xx/clock.c     |  126 ++++++++++++++++++++++--------------
+>  arch/arm/mach-s3c64xx/dev-audio.c |   11 ---
+>  2 files changed, 77 insertions(+), 60 deletions(-)
 >
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index ed37273..93e63ec 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -86,6 +86,12 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->                                 "exynos5-hdmi", NULL),
->         OF_DEV_AUXDATA("samsung,exynos5-mixer", 0x14450000,
->                                 "exynos5-mixer", NULL),
-> +       OF_DEV_AUXDATA("samsung,samsung-i2s", EXYNOS5_PA_I2S0,
-> +                               "samsung-i2s.0", NULL),
-> +       OF_DEV_AUXDATA("samsung,samsung-i2s", EXYNOS5_PA_I2S1,
-> +                               "samsung-i2s.1", NULL),
-> +       OF_DEV_AUXDATA("samsung,samsung-i2s", EXYNOS5_PA_I2S2,
-> +                               "samsung-i2s.2", NULL),
->         {},
+> diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
+> index 28041e8..087183d 100644
+> --- a/arch/arm/mach-s3c64xx/clock.c
+> +++ b/arch/arm/mach-s3c64xx/clock.c
+> @@ -153,25 +153,6 @@ static struct clk init_clocks_off[] = {
+>                 .enable         = s3c64xx_pclk_ctrl,
+>                 .ctrlbit        = S3C6410_CLKCON_PCLK_I2C1,
+>         }, {
+> -               .name           = "iis",
+> -               .devname        = "samsung-i2s.0",
+> -               .parent         = &clk_p,
+> -               .enable         = s3c64xx_pclk_ctrl,
+> -               .ctrlbit        = S3C_CLKCON_PCLK_IIS0,
+> -       }, {
+> -               .name           = "iis",
+> -               .devname        = "samsung-i2s.1",
+> -               .parent         = &clk_p,
+> -               .enable         = s3c64xx_pclk_ctrl,
+> -               .ctrlbit        = S3C_CLKCON_PCLK_IIS1,
+> -       }, {
+> -#ifdef CONFIG_CPU_S3C6410
+> -               .name           = "iis",
+> -               .parent         = &clk_p,
+> -               .enable         = s3c64xx_pclk_ctrl,
+> -               .ctrlbit        = S3C6410_CLKCON_PCLK_IIS2,
+> -       }, {
+> -#endif
+>                 .name           = "keypad",
+>                 .parent         = &clk_p,
+>                 .enable         = s3c64xx_pclk_ctrl,
+> @@ -345,6 +326,32 @@ static struct clk clk_48m_spi1 = {
+>         .ctrlbit        = S3C_CLKCON_SCLK_SPI1_48,
 >  };
 >
+> +static struct clk clk_i2s0 = {
+> +       .name           = "iis",
+> +       .devname        = "samsung-i2s.0",
+> +       .parent         = &clk_p,
+> +       .enable         = s3c64xx_pclk_ctrl,
+> +       .ctrlbit        = S3C_CLKCON_PCLK_IIS0,
+> +};
+> +
+> +static struct clk clk_i2s1 = {
+> +       .name           = "iis",
+> +       .devname        = "samsung-i2s.1",
+> +       .parent         = &clk_p,
+> +       .enable         = s3c64xx_pclk_ctrl,
+> +       .ctrlbit        = S3C_CLKCON_PCLK_IIS1,
+> +};
+> +
+> +#ifdef CONFIG_CPU_S3C6410
+> +static struct clk clk_i2s2 = {
+> +       .name           = "iis",
+> +       .devname        = "samsung-i2s.2",
+> +       .parent         = &clk_p,
+> +       .enable         = s3c64xx_pclk_ctrl,
+> +       .ctrlbit        = S3C6410_CLKCON_PCLK_IIS2,
+> +};
+> +#endif
+> +
+>  static struct clk init_clocks[] = {
+>         {
+>                 .name           = "lcd",
+> @@ -668,6 +675,7 @@ static struct clksrc_sources clkset_audio1 = {
+>         .nr_sources     = ARRAY_SIZE(clkset_audio1_list),
+>  };
+>
+> +#ifdef CONFIG_CPU_S3C6410
+>  static struct clk *clkset_audio2_list[] = {
+>         [0] = &clk_mout_epll.clk,
+>         [1] = &clk_dout_mpll,
+> @@ -680,6 +688,7 @@ static struct clksrc_sources clkset_audio2 = {
+>         .sources        = clkset_audio2_list,
+>         .nr_sources     = ARRAY_SIZE(clkset_audio2_list),
+>  };
+> +#endif
+>
+>  static struct clk *clkset_camif_list[] = {
+>         &clk_h2,
+> @@ -702,36 +711,6 @@ static struct clksrc_clk clksrcs[] = {
+>                 .sources        = &clkset_uhost,
+>         }, {
+>                 .clk    = {
+> -                       .name           = "audio-bus",
+> -                       .devname        = "samsung-i2s.0",
+> -                       .ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
+> -                       .enable         = s3c64xx_sclk_ctrl,
+> -               },
+> -               .reg_src        = { .reg = S3C_CLK_SRC, .shift = 7, .size = 3  },
+> -               .reg_div        = { .reg = S3C_CLK_DIV2, .shift = 8, .size = 4  },
+> -               .sources        = &clkset_audio0,
+> -       }, {
+> -               .clk    = {
+> -                       .name           = "audio-bus",
+> -                       .devname        = "samsung-i2s.1",
+> -                       .ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
+> -                       .enable         = s3c64xx_sclk_ctrl,
+> -               },
+> -               .reg_src        = { .reg = S3C_CLK_SRC, .shift = 10, .size = 3  },
+> -               .reg_div        = { .reg = S3C_CLK_DIV2, .shift = 12, .size = 4  },
+> -               .sources        = &clkset_audio1,
+> -       }, {
+> -               .clk    = {
+> -                       .name           = "audio-bus",
+> -                       .devname        = "samsung-i2s.2",
+> -                       .ctrlbit        = S3C6410_CLKCON_SCLK_AUDIO2,
+> -                       .enable         = s3c64xx_sclk_ctrl,
+> -               },
+> -               .reg_src        = { .reg = S3C6410_CLK_SRC2, .shift = 0, .size = 3  },
+> -               .reg_div        = { .reg = S3C_CLK_DIV2, .shift = 24, .size = 4  },
+> -               .sources        = &clkset_audio2,
+> -       }, {
+> -               .clk    = {
+>                         .name           = "irda-bus",
+>                         .ctrlbit        = S3C_CLKCON_SCLK_IRDA,
+>                         .enable         = s3c64xx_sclk_ctrl,
+> @@ -823,6 +802,43 @@ static struct clksrc_clk clk_sclk_spi1 = {
+>         .sources = &clkset_spi_mmc,
+>  };
+>
+> +static struct clksrc_clk clk_audio_bus0 = {
+> +       .clk    = {
+> +               .name           = "audio-bus",
+> +               .devname        = "samsung-i2s.0",
+> +               .ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
+> +               .enable         = s3c64xx_sclk_ctrl,
+> +       },
+> +       .reg_src        = { .reg = S3C_CLK_SRC, .shift = 7, .size = 3  },
+> +       .reg_div        = { .reg = S3C_CLK_DIV2, .shift = 8, .size = 4  },
+> +       .sources        = &clkset_audio0,
+> +};
+> +
+> +static struct clksrc_clk clk_audio_bus1 = {
+> +       .clk    = {
+> +               .name           = "audio-bus",
+> +               .devname        = "samsung-i2s.1",
+> +               .ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
+> +               .enable         = s3c64xx_sclk_ctrl,
+> +       },
+> +       .reg_src        = { .reg = S3C_CLK_SRC, .shift = 10, .size = 3  },
+> +       .reg_div        = { .reg = S3C_CLK_DIV2, .shift = 12, .size = 4  },
+> +       .sources        = &clkset_audio1,
+> +};
+> +
+> +#ifdef CONFIG_CPU_S3C6410
+> +static struct clksrc_clk clk_audio_bus2 = {
+> +       .clk    = {
+> +               .name           = "audio-bus",
+> +               .devname        = "samsung-i2s.2",
+> +               .ctrlbit        = S3C6410_CLKCON_SCLK_AUDIO2,
+> +               .enable         = s3c64xx_sclk_ctrl,
+> +       },
+> +       .reg_src        = { .reg = S3C6410_CLK_SRC2, .shift = 0, .size = 3  },
+> +       .reg_div        = { .reg = S3C_CLK_DIV2, .shift = 24, .size = 4  },
+> +       .sources        = &clkset_audio2,
+> +};
+> +#endif
+>  /* Clock initialisation code */
+>
+>  static struct clksrc_clk *init_parents[] = {
+> @@ -838,6 +854,8 @@ static struct clksrc_clk *clksrc_cdev[] = {
+>         &clk_sclk_mmc2,
+>         &clk_sclk_spi0,
+>         &clk_sclk_spi1,
+> +       &clk_audio_bus0,
+> +       &clk_audio_bus1,
+>  };
+>
+>  static struct clk *clk_cdev[] = {
+> @@ -846,6 +864,8 @@ static struct clk *clk_cdev[] = {
+>         &clk_hsmmc2,
+>         &clk_48m_spi0,
+>         &clk_48m_spi1,
+> +       &clk_i2s0,
+> +       &clk_i2s1,
+>  };
+>
+>  static struct clk_lookup s3c64xx_clk_lookup[] = {
+> @@ -862,6 +882,14 @@ static struct clk_lookup s3c64xx_clk_lookup[] = {
+>         CLKDEV_INIT("s3c6410-spi.0", "spi_busclk2", &clk_48m_spi0),
+>         CLKDEV_INIT("s3c6410-spi.1", "spi_busclk1", &clk_sclk_spi1.clk),
+>         CLKDEV_INIT("s3c6410-spi.1", "spi_busclk2", &clk_48m_spi1),
+> +       CLKDEV_INIT("samsung-i2s.0", "i2s_opclk0", &clk_i2s0),
+> +       CLKDEV_INIT("samsung-i2s.0", "i2s_opclk1", &clk_audio_bus0.clk),
+> +       CLKDEV_INIT("samsung-i2s.1", "i2s_opclk0", &clk_i2s1),
+> +       CLKDEV_INIT("samsung-i2s.1", "i2s_opclk1", &clk_audio_bus1.clk),
+> +#ifdef CONFIG_CPU_S3C6410
+> +       CLKDEV_INIT("samsung-i2s.2", "i2s_opclk0", &clk_i2s2),
+> +       CLKDEV_INIT("samsung-i2s.2", "i2s_opclk1", &clk_audio_bus2.clk),
+> +#endif
+>  };
+>
+>  #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+> diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+> index 35f3e07..e367e87 100644
+> --- a/arch/arm/mach-s3c64xx/dev-audio.c
+> +++ b/arch/arm/mach-s3c64xx/dev-audio.c
+> @@ -23,11 +23,6 @@
+>  #include <linux/platform_data/asoc-s3c.h>
+>  #include <plat/gpio-cfg.h>
+>
+> -static const char *rclksrc[] = {
+> -       [0] = "iis",
+> -       [1] = "audio-bus",
+> -};
+> -
+>  static int s3c64xx_i2s_cfg_gpio(struct platform_device *pdev)
+>  {
+>         unsigned int base;
+> @@ -64,11 +59,6 @@ static struct resource s3c64xx_iis0_resource[] = {
+>
+>  static struct s3c_audio_pdata i2sv3_pdata = {
+>         .cfg_gpio = s3c64xx_i2s_cfg_gpio,
+> -       .type = {
+> -               .i2s = {
+> -                       .src_clk = rclksrc,
+> -               },
+> -       },
+>  };
+>
+>  struct platform_device s3c64xx_device_iis0 = {
+> @@ -110,7 +100,6 @@ static struct s3c_audio_pdata i2sv4_pdata = {
+>         .type = {
+>                 .i2s = {
+>                         .quirks = QUIRK_PRI_6CHAN,
+> -                       .src_clk = rclksrc,
+>                 },
+>         },
+>  };
 > --
 > 1.7.4.4
 >
