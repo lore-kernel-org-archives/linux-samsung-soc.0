@@ -1,35 +1,56 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 0/7] i2c: s3c2410: Add devm_* apis and cleanup
-Date: Fri, 23 Nov 2012 11:29:06 +0530
-Message-ID: <1353650353-17576-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:48008 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752597Ab2KWGFc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Nov 2012 01:05:32 -0500
-Received: by mail-pb0-f46.google.com with SMTP id wy7so6301943pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Nov 2012 22:05:32 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/7] i2c: s3c2410: Remove unnecessary label err_noclk
+Date: Fri, 23 Nov 2012 11:29:07 +0530
+Message-ID: <1353650353-17576-2-git-send-email-tushar.behera@linaro.org>
+References: <1353650353-17576-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1353650353-17576-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: w.sang@pengutronix.de, kgene.kim@samsung.com, patches@linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patchset cleans up the probe function of i2c-s3c2410 driver.
-These have been tested on Exynos4210 based Origen board.
+err_noclk label redirects to a simple return statement. Move the
+return statement to the caller location and remove the label.
 
-Tushar Behera (7):
-  i2c: s3c2410: Remove unnecessary label err_noclk
-  i2c: s3c2410: Convert to use devm_clk_get()
-  i2c: s3c2410: Convert to use devm_request_mem_region()
-  i2c: s3c2410: Convert to use devm_ioremap()
-  i2c: s3c2410: Convert to use devm_request_irq()
-  i2c: s3c2410: Move location of clk_prepare_enable() call in probe
-    function
-  i2c: s3c2410: Remove err_cpufreq label
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ drivers/i2c/busses/i2c-s3c2410.c |    9 +++------
+ 1 files changed, 3 insertions(+), 6 deletions(-)
 
- drivers/i2c/busses/i2c-s3c2410.c |   74 ++++++++++++--------------------------
- 1 files changed, 23 insertions(+), 51 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 3e0335f..7522f40 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -945,8 +945,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	i2c->pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!i2c->pdata) {
+-		ret = -ENOMEM;
+-		goto err_noclk;
++		dev_err(&pdev->dev, "no memory for platform data\n");
++		return -ENOMEM;
+ 	}
+ 
+ 	i2c->quirks = s3c24xx_get_device_quirks(pdev);
+@@ -971,8 +971,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	i2c->clk = clk_get(&pdev->dev, "i2c");
+ 	if (IS_ERR(i2c->clk)) {
+ 		dev_err(&pdev->dev, "cannot get clock\n");
+-		ret = -ENOENT;
+-		goto err_noclk;
++		return -ENOENT;
+ 	}
+ 
+ 	dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
+@@ -1084,8 +1083,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+  err_clk:
+ 	clk_disable_unprepare(i2c->clk);
+ 	clk_put(i2c->clk);
+-
+- err_noclk:
+ 	return ret;
+ }
+ 
 -- 
 1.7.4.1
