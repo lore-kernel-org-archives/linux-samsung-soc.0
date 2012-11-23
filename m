@@ -1,189 +1,113 @@
-From: Vasanth Ananthan <vasanthananthan@gmail.com>
-Subject: Re: [PATCH v2 2/6] ARM: EXYNOS5: DT Support for SATA and SATA PHY
-Date: Fri, 23 Nov 2012 14:18:40 +0530
-Message-ID: <CAK1UHixAjv_zrQyUqpDc75+36-s+3JuVqMPBgw5+ejpH_Z5gvg@mail.gmail.com>
-References: <1351612897-14923-1-git-send-email-vasanthananthan@gmail.com>
-	<1351612897-14923-3-git-send-email-vasanthananthan@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:61841 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756721Ab2KWIsl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Nov 2012 03:48:41 -0500
-In-Reply-To: <1351612897-14923-3-git-send-email-vasanthananthan@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH V2 3/4] i2c: s3c2410: Move location of clk_prepare_enable() call in probe function
+Date: Fri, 23 Nov 2012 14:11:54 +0530
+Message-ID: <1353660115-9710-4-git-send-email-tushar.behera@linaro.org>
+References: <1353660115-9710-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1353660115-9710-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: w.sang@pengutronix.de, kgene.kim@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanthananthan@gmail.com>, Vasanth Ananthan <vasanth.a@samsung.com>, kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-i2c@vger.kernel.org
 
-Hi,
+In i2c-s3c2410 driver probe, only s3c24xx_i2c_init() needs the I2C clock
+to be enabled. Moving clk_prepare_enable() and clk_disable_unprepare()
+calls to around this function simplifies the return path of probe call.
 
-Missed to include Ben, for I2C patch, including him and copying others.
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+Changes since V1:
+  * Rebased as per the V2 patch series.
 
-Thanks,
-Vasanth.
+ drivers/i2c/busses/i2c-s3c2410.c |   26 +++++++++++---------------
+ 1 files changed, 11 insertions(+), 15 deletions(-)
 
-On Tue, Oct 30, 2012 at 9:31 PM, Vasanth Ananthan
-<vasanthananthan@gmail.com> wrote:
-> This patch adds Device Nodes for SATA and SATA PHY device.
->
-> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
-> ---
->  .../devicetree/bindings/ata/exynos-sata-phy.txt    |   14 ++++++++++++++
->  .../devicetree/bindings/ata/exynos-sata.txt        |   17 +++++++++++++++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   15 +++++++++++++++
->  arch/arm/boot/dts/exynos5250.dtsi                  |   18 ++++++++++++++++++
->  arch/arm/mach-exynos/include/mach/map.h            |    3 +++
->  arch/arm/mach-exynos/mach-exynos5-dt.c             |    6 ++++++
->  6 files changed, 73 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/ata/exynos-sata-phy.txt
->  create mode 100644 Documentation/devicetree/bindings/ata/exynos-sata.txt
->
-> diff --git a/Documentation/devicetree/bindings/ata/exynos-sata-phy.txt b/Documentation/devicetree/bindings/ata/exynos-sata-phy.txt
-> new file mode 100644
-> index 0000000..37824fa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ata/exynos-sata-phy.txt
-> @@ -0,0 +1,14 @@
-> +* Samsung SATA PHY Controller
-> +
-> +SATA PHY nodes are defined to describe on-chip SATA Physical layer controllers.
-> +Each SATA PHY controller should have its own node.
-> +
-> +Required properties:
-> +- compatible        : compatible list, contains "samsung,exynos5-sata-phy"
-> +- reg               : <registers mapping>
-> +
-> +Example:
-> +        sata@ffe07000 {
-> +                compatible = "samsung,exynos5-sata-phy";
-> +                reg = <0xffe07000 0x1000>;
-> +        };
-> diff --git a/Documentation/devicetree/bindings/ata/exynos-sata.txt b/Documentation/devicetree/bindings/ata/exynos-sata.txt
-> new file mode 100644
-> index 0000000..0849f10
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ata/exynos-sata.txt
-> @@ -0,0 +1,17 @@
-> +* Samsung AHCI SATA Controller
-> +
-> +SATA nodes are defined to describe on-chip Serial ATA controllers.
-> +Each SATA controller should have its own node.
-> +
-> +Required properties:
-> +- compatible        : compatible list, contains "samsung,exynos5-sata"
-> +- interrupts        : <interrupt mapping for SATA IRQ>
-> +- reg               : <registers mapping>
-> +- samsung,sata-freq : <frequency in MHz>
-> +
-> +Example:
-> +        sata@ffe08000 {
-> +                compatible = "samsung,exynos5-sata";
-> +                reg = <0xffe08000 0x1000>;
-> +                interrupts = <115>;
-> +        };
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index a352df4..6910deb 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -55,6 +55,21 @@
->                 };
->         };
->
-> +       i2c@121D0000 {
-> +               samsung,i2c-sda-delay = <100>;
-> +               samsung,i2c-max-bus-freq = <40000>;
-> +               samsung,i2c-slave-addr = <0x38>;
-> +
-> +               sata-phy {
-> +                       compatible = "samsung,sata-phy";
-> +                       reg = <0x38>;
-> +               };
-> +       };
-> +
-> +       sata@122F0000 {
-> +               samsung,sata-freq = <66>;
-> +       };
-> +
->         i2c@12C80000 {
->                 status = "disabled";
->         };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index dddfd6e..e41520f 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -92,6 +92,17 @@
->                 interrupts = <0 54 0>;
->         };
->
-> +       sata@122F0000 {
-> +               compatible = "samsung,exynos5-sata-ahci";
-> +               reg = <0x122F0000 0x1ff>;
-> +               interrupts = <0 115 0>;
-> +       };
-> +
-> +       sata-phy@12170000 {
-> +               compatible = "samsung,exynos5-sata-phy";
-> +               reg = <0x12170000 0x1ff>;
-> +       };
-> +
->         i2c@12C60000 {
->                 compatible = "samsung,s3c2440-i2c";
->                 reg = <0x12C60000 0x100>;
-> @@ -156,6 +167,13 @@
->                 #size-cells = <0>;
->         };
->
-> +       i2c@121D0000 {
-> +                compatible = "samsung,exynos5-sata-phy-i2c";
-> +                reg = <0x121D0000 0x100>;
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +       };
-> +
->         spi_0: spi@12d20000 {
->                 compatible = "samsung,exynos4210-spi";
->                 reg = <0x12d20000 0x100>;
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index 8480849..ffeb761 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -188,6 +188,9 @@
->  #define EXYNOS4_PA_SATA                        0x12560000
->  #define EXYNOS4_PA_SATAPHY             0x125D0000
->  #define EXYNOS4_PA_SATAPHY_CTRL                0x126B0000
-> +#define EXYNOS5_PA_SATA_PHY_CTRL       0x12170000
-> +#define EXYNOS5_PA_SATA_PHY_I2C                0x121D0000
-> +#define EXYNOS5_PA_SATA_BASE           0x122F0000
->
->  #define EXYNOS4_PA_SROMC               0x12570000
->  #define EXYNOS5_PA_SROMC               0x12250000
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index db1cd8e..7dbd4cc 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -61,6 +61,12 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->                                 "exynos4210-spi.1", NULL),
->         OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI2,
->                                 "exynos4210-spi.2", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos5-sata-ahci", EXYNOS5_PA_SATA_BASE,
-> +                               "exynos5-sata", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos5-sata-phy", EXYNOS5_PA_SATA_PHY_CTRL,
-> +                               "exynos5-sata-phy", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos5-sata-phy-i2c", EXYNOS5_PA_SATA_PHY_I2C,
-> +                               "exynos5-sata-phy-i2c", NULL),
->         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
->         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
->         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-> --
-> 1.7.4.1
->
-
-
-
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index a203917..3f2d632 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -975,23 +975,20 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	dev_dbg(&pdev->dev, "clock source %p\n", i2c->clk);
+ 
+-	clk_prepare_enable(i2c->clk);
+ 
+ 	/* map the registers */
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (res == NULL) {
+ 		dev_err(&pdev->dev, "cannot find IO resource\n");
+-		ret = -ENOENT;
+-		goto err_clk;
++		return -ENOENT;
+ 	}
+ 
+ 	i2c->regs = devm_request_and_ioremap(&pdev->dev, res);
+ 
+ 	if (i2c->regs == NULL) {
+ 		dev_err(&pdev->dev, "cannot request and map IO\n");
+-		ret = -ENXIO;
+-		goto err_clk;
++		return -ENXIO;
+ 	}
+ 
+ 	dev_dbg(&pdev->dev, "registers %p (%p)\n",
+@@ -1004,10 +1001,13 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	/* initialise the i2c controller */
+ 
++	clk_prepare_enable(i2c->clk);
+ 	ret = s3c24xx_i2c_init(i2c);
+-	if (ret != 0)
+-		goto err_clk;
+-
++	clk_disable_unprepare(i2c->clk);
++	if (ret != 0) {
++		dev_err(&pdev->dev, "I2C controller init failed\n");
++		return ret;
++	}
+ 	/* find the IRQ for this unit (note, this relies on the init call to
+ 	 * ensure no current IRQs pending
+ 	 */
+@@ -1015,7 +1015,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	i2c->irq = ret = platform_get_irq(pdev, 0);
+ 	if (ret <= 0) {
+ 		dev_err(&pdev->dev, "cannot find IRQ\n");
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
+@@ -1023,13 +1023,13 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	ret = s3c24xx_i2c_register_cpufreq(i2c);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to register cpufreq notifier\n");
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	/* Note, previous versions of the driver used i2c_add_adapter()
+@@ -1054,14 +1054,10 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&i2c->adap.dev);
+ 
+ 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
+-	clk_disable_unprepare(i2c->clk);
+ 	return 0;
+ 
+  err_cpufreq:
+ 	s3c24xx_i2c_deregister_cpufreq(i2c);
+-
+- err_clk:
+-	clk_disable_unprepare(i2c->clk);
+ 	return ret;
+ }
+ 
 -- 
-Regards,
-
-Vasanth K A
+1.7.4.1
