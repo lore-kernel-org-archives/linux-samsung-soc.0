@@ -1,52 +1,30 @@
-From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/7] i2c: s3c2410: Add devm_* apis and cleanup
-Date: Fri, 23 Nov 2012 12:14:50 +0530
-Message-ID: <50AF1B62.1000209@linaro.org>
-References: <1353650353-17576-1-git-send-email-tushar.behera@linaro.org> <CAM=Q2cs=oYq4e17LXxUEhATiYLAjnzoTH-+nsO5KNQwGj2qSBA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAM=Q2cs=oYq4e17LXxUEhATiYLAjnzoTH-+nsO5KNQwGj2qSBA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/3] regulator: max8997: minor updates and device tree support
+Date: Fri, 23 Nov 2012 13:33:12 +0530
+Message-ID: <1353657795-1725-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:47995 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964780Ab2KWHfB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Nov 2012 02:35:01 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com
 
-On 11/23/2012 11:45 AM, Shubhrajyoti Datta wrote:
-> On Fri, Nov 23, 2012 at 11:29 AM, Tushar Behera
-> <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> This patchset cleans up the probe function of i2c-s3c2410 driver.
->> These have been tested on Exynos4210 based Origen board.
->>
->> Tushar Behera (7):
->>   i2c: s3c2410: Remove unnecessary label err_noclk
->>   i2c: s3c2410: Convert to use devm_clk_get()
->>   i2c: s3c2410: Convert to use devm_request_mem_region()
->>   i2c: s3c2410: Convert to use devm_ioremap()
->>   i2c: s3c2410: Convert to use devm_request_irq()
-> 
-> You may want to consider request_and_ioremap.
-> 
+This patch series includes two minor updates to the gpio dvs code in max8997
+regulator driver and adds device tree support for the same driver.
 
-Thanks. I will redo the patchset and submit again.
+Thomas Abraham (3):
+  regulator: max8997: reorder buck1/2/5 dvs setup code
+  regulator: max8997: limit the number of dvs registers programmed in non-dvs mode
+  regulator: add device tree support for max8997
 
-> 
->>   i2c: s3c2410: Move location of clk_prepare_enable() call in probe
->>     function
->>   i2c: s3c2410: Remove err_cpufreq label
->>
->>  drivers/i2c/busses/i2c-s3c2410.c |   74 ++++++++++++--------------------------
->>  1 files changed, 23 insertions(+), 51 deletions(-)
->>
->> --
->> 1.7.4.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-i2c" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
--- 
-Tushar Behera
+ .../bindings/regulator/max8997-regulator.txt       |  146 ++++++++++++++++
+ drivers/mfd/max8997.c                              |   73 ++++++++-
+ drivers/regulator/max8997.c                        |  181 ++++++++++++++++++--
+ include/linux/mfd/max8997-private.h                |    1 +
+ include/linux/mfd/max8997.h                        |    1 +
+ 5 files changed, 384 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/max8997-regulator.txt
