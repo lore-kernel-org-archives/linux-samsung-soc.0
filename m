@@ -1,112 +1,118 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 1/4] thermal: Add new thermal trend type to support
- quick cooling
-Date: Fri, 23 Nov 2012 14:21:56 +0800
-Message-ID: <1353651716.2111.3.camel@rzhang1-mobl4>
-References: <1352348786-24255-1-git-send-email-amit.kachhap@linaro.org>
-	 <1352348786-24255-2-git-send-email-amit.kachhap@linaro.org>
-	 <1353547324.2172.1.camel@rzhang1-mobl4>
-	 <CAK44p21mnUpWpHWui6yFqaE5mrjTHhx48j3Mgm0K-KL3EskaGA@mail.gmail.com>
-	 <1353571951.2297.7.camel@rzhang1-mobl4>
-	 <CAK44p22S6j43YnYWs-jgT2e0PCjtdX6ttV3aV5oKN8S+JvygrA@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 4/7] i2c: s3c2410: Convert to use devm_ioremap()
+Date: Fri, 23 Nov 2012 12:13:38 +0530
+Message-ID: <50AF1B1A.4080009@linaro.org>
+References: <1353650353-17576-1-git-send-email-tushar.behera@linaro.org> <1353650353-17576-5-git-send-email-tushar.behera@linaro.org> <CAK9yfHyAWtuRFuygK2L53GrAaZ3k7rasTRt+N6TtU2+N-UHVTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAK44p22S6j43YnYWs-jgT2e0PCjtdX6ttV3aV5oKN8S+JvygrA@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Amit Kachhap <amit.kachhap@linaro.org>
-Cc: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, jonghwa3.lee@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:38975 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755139Ab2KWGnK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Nov 2012 01:43:10 -0500
+Received: by mail-pb0-f46.google.com with SMTP id wy7so6321058pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Nov 2012 22:43:10 -0800 (PST)
+In-Reply-To: <CAK9yfHyAWtuRFuygK2L53GrAaZ3k7rasTRt+N6TtU2+N-UHVTw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, w.sang@pengutronix.de, kgene.kim@samsung.com, patches@linaro.org
 
-On Fri, 2012-11-23 at 09:35 +0530, Amit Kachhap wrote:
-> On 22 November 2012 13:42, Zhang Rui <rui.zhang@intel.com> wrote:
-> > On Thu, 2012-11-22 at 10:11 +0530, Amit Kachhap wrote:
-> >> On 22 November 2012 06:52, Zhang Rui <rui.zhang@intel.com> wrote:
-> >> > On Thu, 2012-11-08 at 09:56 +0530, Amit Daniel Kachhap wrote:
-> >> >> This modification adds 2 new thermal trend type THERMAL_TREND_RAISE_FULL
-> >> >> and THERMAL_TREND_DROP_FULL. This thermal trend can be used to quickly
-> >> >> jump to the upper or lower cooling level instead of incremental increase
-> >> >> or decrease. This is needed for temperature sensors which support rising/falling
-> >> >> threshold interrupts and polling can be totally avoided.
-> >> >>
-> >> >> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> >> >> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> >> >> ---
-> >> >>  drivers/thermal/step_wise.c |   19 +++++++++++++++----
-> >> >>  include/linux/thermal.h     |    2 ++
-> >> >>  2 files changed, 17 insertions(+), 4 deletions(-)
-> >> >>
-> >> >> diff --git a/drivers/thermal/step_wise.c b/drivers/thermal/step_wise.c
-> >> >> index 1242cff..0d2d8d6 100644
-> >> >> --- a/drivers/thermal/step_wise.c
-> >> >> +++ b/drivers/thermal/step_wise.c
-> >> >> @@ -35,6 +35,10 @@
-> >> >>   *       state for this trip point
-> >> >>   *    b. if the trend is THERMAL_TREND_DROPPING, use lower cooling
-> >> >>   *       state for this trip point
-> >> >> + *    c. if the trend is THERMAL_TREND_RAISE_FULL, use highest cooling
-> >> >> + *       state for this trip point
-> >> >> + *    d. if the trend is THERMAL_TREND_DROP_FULL, use lowest cooling
-> >> >> + *       state for this trip point
-> >> >>   */
-> >> >>  static unsigned long get_target_state(struct thermal_instance *instance,
-> >> >>                                       enum thermal_trend trend)
-> >> >> @@ -50,7 +54,10 @@ static unsigned long get_target_state(struct thermal_instance *instance,
-> >> >>       } else if (trend == THERMAL_TREND_DROPPING) {
-> >> >>               cur_state = cur_state > instance->lower ?
-> >> >>                           (cur_state - 1) : instance->lower;
-> >> >> -     }
-> >> >> +     } else if (trend == THERMAL_TREND_RAISE_FULL)
-> >> >> +             cur_state = instance->upper;
-> >> >> +     else if (trend == THERMAL_TREND_DROP_FULL)
-> >> >> +             cur_state = instance->lower;
-> >> >>
-> >> >>       return cur_state;
-> >> >>  }
-> >> >> @@ -87,7 +94,8 @@ static void update_instance_for_throttle(struct thermal_zone_device *tz,
-> >> >>  }
-> >> >>
-> >> >>  static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
-> >> >> -                             int trip, enum thermal_trip_type trip_type)
-> >> >> +                             int trip, enum thermal_trip_type trip_type,
-> >> >> +                             enum thermal_trend trend)
-> >> >>  {
-> >> >>       struct thermal_instance *instance;
-> >> >>       struct thermal_cooling_device *cdev;
-> >> >> @@ -101,7 +109,10 @@ static void update_instance_for_dethrottle(struct thermal_zone_device *tz,
-> >> >>               cdev = instance->cdev;
-> >> >>               cdev->ops->get_cur_state(cdev, &cur_state);
-> >> >>
-> >> >> -             instance->target = cur_state > instance->lower ?
-> >> >> +             if (trend == THERMAL_TREND_DROP_FULL)
-> >> >> +                     instance->target = instance->lower;
-> >> >> +             else
-> >> >> +                     instance->target = cur_state > instance->lower ?
-> >> >>                           (cur_state - 1) : THERMAL_NO_TARGET;
-> >> >>
-> >> > what do you expect to happen if the trend is THERMAL_TREND_RAISE_FULL at
-> >> > this time?
-> >> >
-> >> Hi Rui,
-> >>
-> >> I suppose this is dethrotle routine and hence this will be called when
-> >> only drop in temperature happens. Also I did not used get_target_state
-> >> here because I thought it might cause regression in the other existing
-> >> thermal drivers(I am not sure) But I guess calling get_target_state is
-> >> the good way to know next target state and is fine if you agree.
-> >> Also one suggestion, 2 functions for throttle/dethrottle can be merged
-> >> as both look same and just get_target_state can be used in that
-> >> function
-> >>
-> > agree.
-> > patches have been refreshed, please review.
+On 11/23/2012 11:44 AM, Sachin Kamat wrote:
+> Hi Tushar,
 > 
-> Thanks Rui, Your patches looks nice. I will re-base my patches against
-> your implementation and submit them shortly.
+> On 23 November 2012 11:29, Tushar Behera <tushar.behera@linaro.org> wrote:
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> ---
+>>  drivers/i2c/busses/i2c-s3c2410.c |   13 ++++---------
+>>  1 files changed, 4 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+>> index a274ef7..3446af2 100644
+>> --- a/drivers/i2c/busses/i2c-s3c2410.c
+>> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+>> @@ -996,7 +996,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>>                 goto err_clk;
+>>         }
+>>
+>> -       i2c->regs = ioremap(res->start, resource_size(res));
+>> +       i2c->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+>>
 > 
-great. please rebase your patch on top of thermal-thermal tree.
+> request_mem_region and ioremap and be replaced using a single
+> devm_request_and_ioremap() call.
+> 
 
-thanks,
-rui
+Thanks. I will redo the patch.
 
+> Also you may squash patches 2-5 into single convert to devm_* functions patch.
+> 
+
+Ok. In that case, I will squash these patches to a single patch.
+
+> 
+>>         if (i2c->regs == NULL) {
+>>                 dev_err(&pdev->dev, "cannot map IO\n");
+>> @@ -1016,7 +1016,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>>
+>>         ret = s3c24xx_i2c_init(i2c);
+>>         if (ret != 0)
+>> -               goto err_iomap;
+>> +               goto err_clk;
+>>
+>>         /* find the IRQ for this unit (note, this relies on the init call to
+>>          * ensure no current IRQs pending
+>> @@ -1025,7 +1025,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>>         i2c->irq = ret = platform_get_irq(pdev, 0);
+>>         if (ret <= 0) {
+>>                 dev_err(&pdev->dev, "cannot find IRQ\n");
+>> -               goto err_iomap;
+>> +               goto err_clk;
+>>         }
+>>
+>>         ret = request_irq(i2c->irq, s3c24xx_i2c_irq, 0,
+>> @@ -1033,7 +1033,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>>
+>>         if (ret != 0) {
+>>                 dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+>> -               goto err_iomap;
+>> +               goto err_clk;
+>>         }
+>>
+>>         ret = s3c24xx_i2c_register_cpufreq(i2c);
+>> @@ -1073,9 +1073,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>>   err_irq:
+>>         free_irq(i2c->irq, i2c);
+>>
+>> - err_iomap:
+>> -       iounmap(i2c->regs);
+>> -
+>>   err_clk:
+>>         clk_disable_unprepare(i2c->clk);
+>>         return ret;
+>> @@ -1100,8 +1097,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+>>
+>>         clk_disable_unprepare(i2c->clk);
+>>
+>> -       iounmap(i2c->regs);
+>> -
+>>         s3c24xx_i2c_dt_gpio_free(i2c);
+>>
+>>         return 0;
+>> --
+>> 1.7.4.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
+> 
+> 
+> 
+
+
+-- 
+Tushar Behera
