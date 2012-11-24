@@ -1,103 +1,65 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: dts: Add device tree node for DP controller for
- Samsung Exynos5250 platforms
-Date: Sat, 24 Nov 2012 12:30:03 +0900
-Message-ID: <123001cdc9f3$fe1d6e70$fa584b50$%kim@samsung.com>
-References: <004901cdbb3a$dec6cc00$9c546400$%han@samsung.com>
+From: Alexander Varnin <fenixk19@mail.ru>
+Subject: Re: [PATCH] ARM: S3C2443: Workaround for 2443 EXTINT error
+Date: Sat, 24 Nov 2012 13:01:31 +0400
+Message-ID: <50B08CEB.70308@mail.ru>
+References: <201211240116.44494.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24340 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755591Ab2KXDaG (ORCPT
+Received: from smtp42.i.mail.ru ([94.100.177.102]:34095 "EHLO smtp42.i.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932788Ab2KXJBg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Nov 2012 22:30:06 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDZ007P1324XBB0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 24 Nov 2012 12:30:04 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDZ00C03323Z580@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 24 Nov 2012 12:30:04 +0900 (KST)
-In-reply-to: <004901cdbb3a$dec6cc00$9c546400$%han@samsung.com>
-Content-language: ko
+	Sat, 24 Nov 2012 04:01:36 -0500
+In-Reply-To: <201211240116.44494.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Ajay Kumar' <ajaykumar.rs@samsung.com>
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 
-Jingoo Han wrote:
-> 
-> Add device tree node for DP controller in Exynos5250 and enable
-> the instance for the smdk5250 board.
-> 
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250-smdk5250.dts |    9 +++++++++
->  arch/arm/boot/dts/exynos5250.dtsi         |   14 ++++++++++++++
->  2 files changed, 23 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 405009c..a4ee49e 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -193,4 +193,13 @@
->  	hdmi {
->  		hpd-gpio = <&gpx3 7 0xf 1 3>;
->  	};
-> +
-> +	display-port-controller {
+I've done it within another function, because otherwise users of other
+chips would pay for a one more runtime check, which they don't need. On
+the other hand, this function get called not so frequently, to make it
+valueable. The first version of my patch i've used internally worked as
+you said, so i can resend it.
 
-how about just 'dp-controller'?
+I want to ask more experienced users of s3c2443. If this problem occure=
+s
+on all s3c2443 chips, or only with some series of it? Maybe we need som=
+e
+more checks, not to break working cases.
 
-> +		samsung,color-space = <0>;
-> +		samsung,dynamic-range = <0>;
-> +		samsung,ycbcr-coeff = <0>;
-> +		samsung,color-depth = <1>;
-> +		samsung,link-rate = <0x0a>;
-> +		samsung,lane-count = <4>;
-> +	};
->  };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> index cf6a02d..4603b72 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -552,4 +552,18 @@
->  		reg = <0x14450000 0x10000>;
->  		interrupts = <0 94 0>;
->  	};
-> +
-> +	display-port-controller {
-
-Same here.
-
-> +		compatible = "samsung,exynos5-dp";
-> +		reg = <0x145b0000 0x1000>;
-> +		interrupts = <10 3>;
-> +		interrupt-parent = <&combiner>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		dptx-phy {
-> +			reg = <0x10040720>;
-> +			samsung,enable-mask = <1>;
-> +		};
-> +	};
->  };
-> --
-> 1.7.1
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+24.11.2012 04:16, Heiko St=C3=BCbner =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> What does this do or what should it do? Also it gets calculated but
+>>> never used?
+>>>
+>>> And please use scripts/checkpatch.pl to verify your patch follows
+>>> coding guidelines, as this block is especially hard to read.
+> So essentially register-reads somehow returned transformed data, but =
+the write=20
+> is done according to the datasheet.
+>
+>
+> It would definitely be better to integrate it into the existing _irqe=
+xt_type=20
+> function instead of introducing a second one.
+>
+> The cpu_id is present in the samsung_cpu_id var and the list of cpus =
+including=20
+> the s3c2443 can be found in common.c. With this it would be possible =
+to=20
+> identify when the irq code is run on a s3c2443 machine and the origin=
+al=20
+> _irqext_type function could change the behaviour accordingly.
+>
+> Not sure if it would make sense to introduce soc_is_s3c2443() etc mac=
+ros for=20
+> this.
+>
+> And of course the actual block doing the transformation on read would=
+ need a=20
+> more elaborate comment on the why and how, because in 3 years someone=
+ might=20
+> not directly see what this does and why it was necessary.
+>
