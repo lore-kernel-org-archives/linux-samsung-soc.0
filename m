@@ -1,28 +1,29 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: EXYNOS: Add AUXDATA for DP controller
-Date: Sat, 24 Nov 2012 12:28:08 +0900
-Message-ID: <122f01cdc9f3$b9106df0$2b3149d0$%kim@samsung.com>
-References: <004801cdbb3a$c74b98d0$55e2ca70$%han@samsung.com>
+Subject: RE: [PATCH 2/2] ARM: dts: Add device tree node for DP controller for
+ Samsung Exynos5250 platforms
+Date: Sat, 24 Nov 2012 12:30:03 +0900
+Message-ID: <123001cdc9f3$fe1d6e70$fa584b50$%kim@samsung.com>
+References: <004901cdbb3a$dec6cc00$9c546400$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63958 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755857Ab2KXD2K (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:24340 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755591Ab2KXDaG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Nov 2012 22:28:10 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
+	Fri, 23 Nov 2012 22:30:06 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MDZ00HN12YWJMC0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 24 Nov 2012 12:28:08 +0900 (KST)
+ 17 2011)) with ESMTP id <0MDZ007P1324XBB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 24 Nov 2012 12:30:04 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MDZ00AUH2YWYS50@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 24 Nov 2012 12:28:08 +0900 (KST)
-In-reply-to: <004801cdbb3a$c74b98d0$55e2ca70$%han@samsung.com>
+ with ESMTPA id <0MDZ00C03323Z580@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 24 Nov 2012 12:30:04 +0900 (KST)
+In-reply-to: <004901cdbb3a$dec6cc00$9c546400$%han@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -31,49 +32,67 @@ Cc: linux-samsung-soc@vger.kernel.org, 'Ajay Kumar' <ajaykumar.rs@samsung.com>
 
 Jingoo Han wrote:
 > 
-> Use AUXDATA to set the device names for DP controller instance
-> discovered from device tree.
+> Add device tree node for DP controller in Exynos5250 and enable
+> the instance for the smdk5250 board.
 > 
 > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 > ---
->  arch/arm/mach-exynos/include/mach/map.h |    2 ++
->  arch/arm/mach-exynos/mach-exynos5-dt.c  |    1 +
->  2 files changed, 3 insertions(+), 0 deletions(-)
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |    9 +++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi         |   14 ++++++++++++++
+>  2 files changed, 23 insertions(+), 0 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-
-> exynos/include/mach/map.h
-> index ef4958b..c00a72e 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -221,6 +221,8 @@
->  #define EXYNOS4_PA_TIMER		0x139D0000
->  #define EXYNOS5_PA_TIMER		0x12DD0000
-> 
-> +#define EXYNOS5_PA_DP			0x145B0000
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index 405009c..a4ee49e 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -193,4 +193,13 @@
+>  	hdmi {
+>  		hpd-gpio = <&gpx3 7 0xf 1 3>;
+>  	};
 > +
->  #define EXYNOS4_PA_SDRAM		0x40000000
->  #define EXYNOS5_PA_SDRAM		0x40000000
-> 
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-
-> exynos/mach-exynos5-dt.c
-> index ed37273..8cebe12 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -86,6 +86,7 @@ static const struct of_dev_auxdata
-> exynos5250_auxdata_lookup[] __initconst = {
->  				"exynos5-hdmi", NULL),
->  	OF_DEV_AUXDATA("samsung,exynos5-mixer", 0x14450000,
->  				"exynos5-mixer", NULL),
-> +	OF_DEV_AUXDATA("samsung,exynos5-dp", EXYNOS5_PA_DP, "exynos-dp",
-> NULL),
+> +	display-port-controller {
 
-Just following is enough because the EXYNOS5_PA_DP is not used other places,
-auxdata will be gone away with common clock later though.
+how about just 'dp-controller'?
 
-+	OF_DEV_AUXDATA("samsung,exynos5-dp", 0x145B0000, "exynos-dp", NULL),
+> +		samsung,color-space = <0>;
+> +		samsung,dynamic-range = <0>;
+> +		samsung,ycbcr-coeff = <0>;
+> +		samsung,color-depth = <1>;
+> +		samsung,link-rate = <0x0a>;
+> +		samsung,lane-count = <4>;
+> +	};
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index cf6a02d..4603b72 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -552,4 +552,18 @@
+>  		reg = <0x14450000 0x10000>;
+>  		interrupts = <0 94 0>;
+>  	};
+> +
+> +	display-port-controller {
 
-Applied with above modification.
+Same here.
+
+> +		compatible = "samsung,exynos5-dp";
+> +		reg = <0x145b0000 0x1000>;
+> +		interrupts = <10 3>;
+> +		interrupt-parent = <&combiner>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		dptx-phy {
+> +			reg = <0x10040720>;
+> +			samsung,enable-mask = <1>;
+> +		};
+> +	};
+>  };
+> --
+> 1.7.1
 
 Thanks.
 
