@@ -1,123 +1,58 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] ARM: S3C2443: Workaround for 2443 EXTINT error
-Date: Sat, 24 Nov 2012 13:32:03 +0100
-Message-ID: <201211241332.04142.heiko@sntech.de>
-References: <201211240116.44494.heiko@sntech.de> <50B08CEB.70308@mail.ru> <201211241224.50845.heiko@sntech.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/3] regulator: max8997: reorder buck1/2/5 dvs setup code
+Date: Sat, 24 Nov 2012 18:56:36 +0100
+Message-ID: <20121124175635.GG4719@opensource.wolfsonmicro.com>
+References: <1353657795-1725-1-git-send-email-thomas.abraham@linaro.org>
+ <1353657795-1725-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="eMnpOGXCMazMAbfp"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:39933 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751197Ab2KXMcL (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34333 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751864Ab2KXR4i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Nov 2012 07:32:11 -0500
-In-Reply-To: <201211241224.50845.heiko@sntech.de>
+	Sat, 24 Nov 2012 12:56:38 -0500
+Content-Disposition: inline
+In-Reply-To: <1353657795-1725-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Varnin <fenixk19@mail.ru>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
-
-Am Samstag, 24. November 2012, 12:24:49 schrieb Heiko St=C3=BCbner:
-> Am Samstag, 24. November 2012, 10:01:31 schrieb Alexander Varnin:
-> > I've done it within another function, because otherwise users of ot=
-her
-> > chips would pay for a one more runtime check, which they don't need=
-=2E On
-> > the other hand, this function get called not so frequently, to make=
- it
-> > valueable. The first version of my patch i've used internally worke=
-d as
-> > you said, so i can resend it.
->=20
-> that would be cool, because as you said, this function isn't called t=
-his
-> often and adding another function here seems kinda counter-productive=
- to
-> all the consolidation effort.
->=20
-> Your could even do a
->=20
-> #ifdef CONFIG_CPU_S3C2443
-> if (samsung_cpu_id =3D=3D ...)
-> 	the fix
-> #endif
-
-or alternatively introduce a soc_is_s3c2443 macro (plat-
-samsung/include/plat/cpu.h) for the conditional, like the other Samsung=
- SoCs=20
-have.
-
-if (soc_is_s3c2443())
- 	the fix
-
-If done like the other SoCs, it would evaluate to 0, when CONFIG_CPU_S3=
-C2443=20
-is not set and otherwise check the cpu_id.
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com
 
 
-> so only people building multi-platform kernels will be affected.
->=20
-> > I want to ask more experienced users of s3c2443. If this problem oc=
-cures
-> > on all s3c2443 chips, or only with some series of it? Maybe we need=
- some
-> > more checks, not to break working cases.
->=20
-> Finding other s3c2443 mainline-users seems kinda hard - you're the fi=
-rst
-> one I see :-) . In all the things I did to the s3c2416 I tried to pul=
-l the
-> s3c2443 along (blindly) most of the time, because both SoCs are so si=
-milar
-> [0]. And during all the changes no-one ever complained or spoke up.
->=20
->=20
-> @Kgene do you have anybody near you, who can tell us if the problem o=
-f the
-> swapped EXTINT bits is common to all s3c2443 SoCs or how to identify
-> affected ones?
->=20
->=20
-> Heiko
->=20
-> [0] for example, you should be able to use the s3c2416 cpufreq driver=
- also
-> on the s3c2443, as the armdiv etc structure is the same.
->=20
-> > 24.11.2012 04:16, Heiko St=C3=BCbner =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
-> > >>> What does this do or what should it do? Also it gets calculated=
- but
-> > >>> never used?
-> > >>>=20
-> > >>> And please use scripts/checkpatch.pl to verify your patch follo=
-ws
-> > >>> coding guidelines, as this block is especially hard to read.
-> > >=20
-> > > So essentially register-reads somehow returned transformed data, =
-but
-> > > the write is done according to the datasheet.
-> > >=20
-> > >=20
-> > > It would definitely be better to integrate it into the existing
-> > > _irqext_type function instead of introducing a second one.
-> > >=20
-> > > The cpu_id is present in the samsung_cpu_id var and the list of c=
-pus
-> > > including the s3c2443 can be found in common.c. With this it woul=
-d be
-> > > possible to identify when the irq code is run on a s3c2443 machin=
-e and
-> > > the original _irqext_type function could change the behaviour
-> > > accordingly.
-> > >=20
-> > > Not sure if it would make sense to introduce soc_is_s3c2443() etc
-> > > macros for this.
-> > >=20
-> > > And of course the actual block doing the transformation on read w=
-ould
-> > > need a more elaborate comment on the why and how, because in 3 ye=
-ars
-> > > someone might not directly see what this does and why it was nece=
-ssary.
+--eMnpOGXCMazMAbfp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Nov 23, 2012 at 01:33:13PM +0530, Thomas Abraham wrote:
+> The BUCKxDVSx register programming is now moved prior to setting up of the
+> gpio based dvs mode. This will ensure that all the BUCKxDVSx registers
+> are programmed with appropriate voltage values before the gpio based dvs
+> mode is selected for buck1/2/5.
+
+Applied, thanks.
+
+--eMnpOGXCMazMAbfp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQsQpHAAoJELSic+t+oim9Nl4P/1HISLgVpKVm30nI5UNf7yoR
+JF05xKoTs8Kw1iARS+MA6bR06p5GXJ9NA1X22jQHscm0J/QdxO9HzJxvEJYAJ/Py
+0NwMuuoOepQNfY+6o5oPmcWbVClhi1888uBVo3UTHw1oLQaxj2tDM6812+l6mp5h
+fr4cA2E85INozMPfoTaNZGDRAV8RE/+Q0lws+9+nIcypIw+gcYWKu7iM+cL4NWuu
+eQPrEN3NVKmCmKbWOZWr7BBuhHxqSE4a8ddcozRY9mUy+/pniCmjbpqBkDcXE7TT
+8bnsZcoC/gCFiDVtocOm0OZydpmGH71GwV8BWNXrv5XwM/5fF+i7Bia1LUyMWJi7
+N9Dt2iYf4iyTNNpNClcV31qvQ6ae0ImkfOyPR82TW4kqFI2WOdG/xBhOEyMXIbBu
+NEgBTY0bIT7WOSZym9i8LBMa60Q6XsH48zrRc0qkqHkppDYIvNxs+1sR4/NnS8z6
+hHhAJG03RIqSc46pFwujX+3UR+xE7wDg6PaEZ2kaI4ZbNuZK5/ytcWX8zynxmlQD
+9ha58aW6euUDK1yDOvROaSPkWEZ9m3nttOCX/8qzFermwDXIL9A0/igufJmzyH1C
+7dkZnK1xalKXkhgHbEgSxmc7e6wzqANFH08VKq5rUTL6hzhkc4NoCGuhtF2d31Dd
+QAn93ULCxvPVcEyShRVG
+=EZXe
+-----END PGP SIGNATURE-----
+
+--eMnpOGXCMazMAbfp--
