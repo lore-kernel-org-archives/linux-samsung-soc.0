@@ -1,330 +1,223 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 1/5] ARM: Exynos: add a register base address variable in mct controller driver
-Date: Sun, 25 Nov 2012 02:14:49 +0530
-Message-ID: <1353789893-2460-2-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v2 3/5] ARM: Exynos: add device tree support for MCT controller driver
+Date: Sun, 25 Nov 2012 02:14:51 +0530
+Message-ID: <1353789893-2460-4-git-send-email-thomas.abraham@linaro.org>
 References: <1353789893-2460-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:37569 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752254Ab2KXUpY (ORCPT
+Received: from mail-da0-f46.google.com ([209.85.210.46]:49650 "EHLO
+	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752267Ab2KXUpg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Nov 2012 15:45:24 -0500
-Received: by mail-pa0-f46.google.com with SMTP id bh2so4179500pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Nov 2012 12:45:24 -0800 (PST)
+	Sat, 24 Nov 2012 15:45:36 -0500
+Received: by mail-da0-f46.google.com with SMTP id p5so3111543dak.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Nov 2012 12:45:36 -0800 (PST)
 In-Reply-To: <1353789893-2460-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com, chaos.youn@samsung.com, sylvester.nawrocki@gmail.com, Thomas Abraham <thomas.abraham@linaro.org>
 
-All the MCT register read/writes use a fixed remapped address S5P_VA_SYSTIMER.
-With device tree support for MCT controller, it is possible to remove the
-static remap of the MCT controller address space and do the remap during the
-initialization of the MCT controller with the physical address obtained from
-the device tree.
-
-So in preparation of adding device tree support for MCT controller, add a new
-register base address variable that will hold the remapped MCT controller base
-address and convert all MCT register read/writes to use this new variable as
-the base address instead of the fixed S5P_VA_SYSTIMER.
-
-While at it, the MCT register offset and bit mask definitions are moved into
-the MCT controller driver file since there are no other consumers of these
-definitions.
+Allow the MCT controller base address and interrupts to be obtained from
+device tree and remove unused static definitions of these. The non-dt support
+for Exynos5250 is removed but retained for Exynos4210 based platforms.
 
 Cc: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/include/mach/regs-mct.h |   53 --------------
- arch/arm/mach-exynos/mct.c                   |   97 ++++++++++++++++---------
- 2 files changed, 62 insertions(+), 88 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-mct.h
+ .../bindings/timer/samsung,exynos4210-mct.txt      |   69 ++++++++++++++++++++
+ arch/arm/mach-exynos/include/mach/irqs.h           |    6 --
+ arch/arm/mach-exynos/mct.c                         |   41 ++++++++----
+ 3 files changed, 97 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-mct.h b/arch/arm/mach-exynos/include/mach/regs-mct.h
-deleted file mode 100644
-index 80dd02a..0000000
---- a/arch/arm/mach-exynos/include/mach/regs-mct.h
-+++ /dev/null
-@@ -1,53 +0,0 @@
--/* arch/arm/mach-exynos4/include/mach/regs-mct.h
-- *
-- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * EXYNOS4 MCT configutation
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+new file mode 100644
+index 0000000..c1b0a3e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+@@ -0,0 +1,69 @@
++Samsung's Multi Core Timer (MCT)
++
++The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
++global timer and CPU local timers. The global timer is a 64-bit free running
++up-counter and can generate 4 interrupts when the counter reaches one of the
++four preset counter values. The CPU local timers are 32-bit free running
++down-counters and generate an interrupt when the counter expires. There is
++one CPU local timer instantiated in MCT for every CPU in the system.
++
++Required properties:
++
++- compatible: should be "samsung,exynos4210-mct".
++- reg: base address of the mct controller and length of the address space
++  it occupies.
++- interrupts: the list of interrupts generated by the controller. The following
++  should be the order of the interrupts specified. The local timer interrupts
++  should be specified after the four global timer interrupts have been
++  specified.
++
++	0: Global Timer Interrupt 0
++	1: Global Timer Interrupt 1
++	2: Global Timer Interrupt 2
++	3: Global Timer Interrupt 3
++	4: Local Timer Interrupt 0
++	5: Local Timer Interrupt 1
++	6: ..
++	7: ..
++	i: Local Timer Interrupt n
++
++- samsung,mct-nr-local-irqs: The number of local timer interrupts supported
++  by the MCT controller.
++
++Example 1: In this example, the system uses only the first global timer
++	   interrupt generated by MCT and the remaining three global timer
++	   interrupts are unused. Two local timer interrupts have been
++	   specified.
++
++	mct@10050000 {
++		compatible = "samsung,exynos4210-mct";
++		reg = <0x10050000 0x800>;
++		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
++			     <0 42 0>, <0 48 0>;
++		samsung,mct-nr-local-irqs = <2>;
++	};
++
++Example 2: In this example, the MCT global and local timer interrupts are
++	   connected to two seperate interrupt controllers. Hence, an
++	   interrupt-map is created to map the interrupts to the respective
++	   interrupt controllers.
++
++	mct@101C0000 {
++		compatible = "samsung,exynos4210-mct";
++		reg = <0x101C0000 0x800>;
++		interrupt-controller;
++		#interrups-cells = <2>;
++		interrupt-parent = <&mct_map>;
++		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
++			     <4 0>, <5 0>;
++		samsung,mct-nr-local-irqs = <2>;
++
++		mct_map: mct-map {
++			#interrupt-cells = <2>;
++			#address-cells = <0>;
++			#size-cells = <0>;
++			interrupt-map = <0x0 0 &combiner 23 3>,
++					<0x4 0 &gic 0 120 0>,
++					<0x5 0 &gic 0 121 0>;
++		};
++	};
+diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+index 1f4dc35..c0e75d8 100644
+--- a/arch/arm/mach-exynos/include/mach/irqs.h
++++ b/arch/arm/mach-exynos/include/mach/irqs.h
+@@ -30,8 +30,6 @@
+ 
+ /* For EXYNOS4 and EXYNOS5 */
+ 
+-#define EXYNOS_IRQ_MCT_LOCALTIMER	IRQ_PPI(12)
 -
--#ifndef __ASM_ARCH_REGS_MCT_H
--#define __ASM_ARCH_REGS_MCT_H __FILE__
--
--#include <mach/map.h>
--
--#define EXYNOS4_MCTREG(x)		(S5P_VA_SYSTIMER + (x))
--
--#define EXYNOS4_MCT_G_CNT_L		EXYNOS4_MCTREG(0x100)
--#define EXYNOS4_MCT_G_CNT_U		EXYNOS4_MCTREG(0x104)
--#define EXYNOS4_MCT_G_CNT_WSTAT		EXYNOS4_MCTREG(0x110)
--
--#define EXYNOS4_MCT_G_COMP0_L		EXYNOS4_MCTREG(0x200)
--#define EXYNOS4_MCT_G_COMP0_U		EXYNOS4_MCTREG(0x204)
--#define EXYNOS4_MCT_G_COMP0_ADD_INCR	EXYNOS4_MCTREG(0x208)
--
--#define EXYNOS4_MCT_G_TCON		EXYNOS4_MCTREG(0x240)
--
--#define EXYNOS4_MCT_G_INT_CSTAT		EXYNOS4_MCTREG(0x244)
--#define EXYNOS4_MCT_G_INT_ENB		EXYNOS4_MCTREG(0x248)
--#define EXYNOS4_MCT_G_WSTAT		EXYNOS4_MCTREG(0x24C)
--
--#define _EXYNOS4_MCT_L_BASE		EXYNOS4_MCTREG(0x300)
--#define EXYNOS4_MCT_L_BASE(x)		(_EXYNOS4_MCT_L_BASE + (0x100 * x))
--#define EXYNOS4_MCT_L_MASK		(0xffffff00)
--
--#define MCT_L_TCNTB_OFFSET		(0x00)
--#define MCT_L_ICNTB_OFFSET		(0x08)
--#define MCT_L_TCON_OFFSET		(0x20)
--#define MCT_L_INT_CSTAT_OFFSET		(0x30)
--#define MCT_L_INT_ENB_OFFSET		(0x34)
--#define MCT_L_WSTAT_OFFSET		(0x40)
--
--#define MCT_G_TCON_START		(1 << 8)
--#define MCT_G_TCON_COMP0_AUTO_INC	(1 << 1)
--#define MCT_G_TCON_COMP0_ENABLE		(1 << 0)
--
--#define MCT_L_TCON_INTERVAL_MODE	(1 << 2)
--#define MCT_L_TCON_INT_START		(1 << 1)
--#define MCT_L_TCON_TIMER_START		(1 << 0)
--
--#endif /* __ASM_ARCH_REGS_MCT_H */
+ #define EXYNOS_IRQ_EINT16_31		IRQ_SPI(32)
+ 
+ /* For EXYNOS4 SoCs */
+@@ -323,8 +321,6 @@
+ #define EXYNOS5_IRQ_CEC			IRQ_SPI(114)
+ #define EXYNOS5_IRQ_SATA		IRQ_SPI(115)
+ 
+-#define EXYNOS5_IRQ_MCT_L0		IRQ_SPI(120)
+-#define EXYNOS5_IRQ_MCT_L1		IRQ_SPI(121)
+ #define EXYNOS5_IRQ_MMC44		IRQ_SPI(123)
+ #define EXYNOS5_IRQ_MDMA1		IRQ_SPI(124)
+ #define EXYNOS5_IRQ_FIMC_LITE0		IRQ_SPI(125)
+@@ -419,8 +415,6 @@
+ #define EXYNOS5_IRQ_PMU_CPU1		COMBINER_IRQ(22, 4)
+ 
+ #define EXYNOS5_IRQ_EINT0		COMBINER_IRQ(23, 0)
+-#define EXYNOS5_IRQ_MCT_G0		COMBINER_IRQ(23, 3)
+-#define EXYNOS5_IRQ_MCT_G1		COMBINER_IRQ(23, 4)
+ 
+ #define EXYNOS5_IRQ_EINT1		COMBINER_IRQ(24, 0)
+ #define EXYNOS5_IRQ_SYSMMU_LITE1_0	COMBINER_IRQ(24, 1)
 diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-index 57668eb..a9fd001 100644
+index 2f4ea16..bf359f6 100644
 --- a/arch/arm/mach-exynos/mct.c
 +++ b/arch/arm/mach-exynos/mct.c
-@@ -29,9 +29,36 @@
+@@ -20,6 +20,8 @@
+ #include <linux/delay.h>
+ #include <linux/percpu.h>
+ #include <linux/of.h>
++#include <linux/of_irq.h>
++#include <linux/of_address.h>
  
- #include <mach/map.h>
- #include <mach/irqs.h>
--#include <mach/regs-mct.h>
- #include <asm/mach/time.h>
- 
-+#define EXYNOS4_MCTREG(x)		(x)
-+#define EXYNOS4_MCT_G_CNT_L		EXYNOS4_MCTREG(0x100)
-+#define EXYNOS4_MCT_G_CNT_U		EXYNOS4_MCTREG(0x104)
-+#define EXYNOS4_MCT_G_CNT_WSTAT		EXYNOS4_MCTREG(0x110)
-+#define EXYNOS4_MCT_G_COMP0_L		EXYNOS4_MCTREG(0x200)
-+#define EXYNOS4_MCT_G_COMP0_U		EXYNOS4_MCTREG(0x204)
-+#define EXYNOS4_MCT_G_COMP0_ADD_INCR	EXYNOS4_MCTREG(0x208)
-+#define EXYNOS4_MCT_G_TCON		EXYNOS4_MCTREG(0x240)
-+#define EXYNOS4_MCT_G_INT_CSTAT		EXYNOS4_MCTREG(0x244)
-+#define EXYNOS4_MCT_G_INT_ENB		EXYNOS4_MCTREG(0x248)
-+#define EXYNOS4_MCT_G_WSTAT		EXYNOS4_MCTREG(0x24C)
-+#define _EXYNOS4_MCT_L_BASE		EXYNOS4_MCTREG(0x300)
-+#define EXYNOS4_MCT_L_BASE(x)		(_EXYNOS4_MCT_L_BASE + (0x100 * x))
-+#define EXYNOS4_MCT_L_MASK		(0xffffff00)
-+
-+#define MCT_L_TCNTB_OFFSET		(0x00)
-+#define MCT_L_ICNTB_OFFSET		(0x08)
-+#define MCT_L_TCON_OFFSET		(0x20)
-+#define MCT_L_INT_CSTAT_OFFSET		(0x30)
-+#define MCT_L_INT_ENB_OFFSET		(0x34)
-+#define MCT_L_WSTAT_OFFSET		(0x40)
-+#define MCT_G_TCON_START		(1 << 8)
-+#define MCT_G_TCON_COMP0_AUTO_INC	(1 << 1)
-+#define MCT_G_TCON_COMP0_ENABLE		(1 << 0)
-+#define MCT_L_TCON_INTERVAL_MODE	(1 << 2)
-+#define MCT_L_TCON_INT_START		(1 << 1)
-+#define MCT_L_TCON_TIMER_START		(1 << 0)
-+
- #define TICK_BASE_CNT	1
- 
- enum {
-@@ -39,64 +66,62 @@ enum {
- 	MCT_INT_PPI
+ #include <asm/arch_timer.h>
+ #include <asm/hardware/gic.h>
+@@ -485,14 +487,16 @@ static struct local_timer_ops exynos4_mct_tick_ops __cpuinitdata = {
  };
+ #endif /* CONFIG_LOCAL_TIMERS */
  
-+static void __iomem *reg_base;
- static unsigned long clk_rate;
- static unsigned int mct_int_type;
- 
- struct mct_clock_event_device {
- 	struct clock_event_device *evt;
--	void __iomem *base;
-+	unsigned long base;
- 	char name[10];
- };
- 
--static void exynos4_mct_write(unsigned int value, void *addr)
-+static void exynos4_mct_write(unsigned int value, unsigned long offset)
+-static void __init exynos4_timer_resources(void)
++static void __init exynos4_timer_resources(struct device_node *np)
  {
--	void __iomem *stat_addr;
-+	unsigned long stat_addr;
- 	u32 mask;
- 	u32 i;
- 
--	__raw_writel(value, addr);
-+	__raw_writel(value, reg_base + offset);
- 
--	if (likely(addr >= EXYNOS4_MCT_L_BASE(0))) {
--		u32 base = (u32) addr & EXYNOS4_MCT_L_MASK;
--		switch ((u32) addr & ~EXYNOS4_MCT_L_MASK) {
--		case (u32) MCT_L_TCON_OFFSET:
--			stat_addr = (void __iomem *) base + MCT_L_WSTAT_OFFSET;
-+	if (likely(offset >= EXYNOS4_MCT_L_BASE(0))) {
-+		stat_addr = (offset & ~EXYNOS4_MCT_L_MASK) + MCT_L_WSTAT_OFFSET;
-+		switch (offset & EXYNOS4_MCT_L_MASK) {
-+		case MCT_L_TCON_OFFSET:
- 			mask = 1 << 3;		/* L_TCON write status */
- 			break;
--		case (u32) MCT_L_ICNTB_OFFSET:
--			stat_addr = (void __iomem *) base + MCT_L_WSTAT_OFFSET;
-+		case MCT_L_ICNTB_OFFSET:
- 			mask = 1 << 1;		/* L_ICNTB write status */
- 			break;
--		case (u32) MCT_L_TCNTB_OFFSET:
--			stat_addr = (void __iomem *) base + MCT_L_WSTAT_OFFSET;
-+		case MCT_L_TCNTB_OFFSET:
- 			mask = 1 << 0;		/* L_TCNTB write status */
- 			break;
- 		default:
- 			return;
- 		}
- 	} else {
--		switch ((u32) addr) {
--		case (u32) EXYNOS4_MCT_G_TCON:
-+		switch (offset) {
-+		case EXYNOS4_MCT_G_TCON:
- 			stat_addr = EXYNOS4_MCT_G_WSTAT;
- 			mask = 1 << 16;		/* G_TCON write status */
- 			break;
--		case (u32) EXYNOS4_MCT_G_COMP0_L:
-+		case EXYNOS4_MCT_G_COMP0_L:
- 			stat_addr = EXYNOS4_MCT_G_WSTAT;
- 			mask = 1 << 0;		/* G_COMP0_L write status */
- 			break;
--		case (u32) EXYNOS4_MCT_G_COMP0_U:
-+		case EXYNOS4_MCT_G_COMP0_U:
- 			stat_addr = EXYNOS4_MCT_G_WSTAT;
- 			mask = 1 << 1;		/* G_COMP0_U write status */
- 			break;
--		case (u32) EXYNOS4_MCT_G_COMP0_ADD_INCR:
-+		case EXYNOS4_MCT_G_COMP0_ADD_INCR:
- 			stat_addr = EXYNOS4_MCT_G_WSTAT;
- 			mask = 1 << 2;		/* G_COMP0_ADD_INCR w status */
- 			break;
--		case (u32) EXYNOS4_MCT_G_CNT_L:
-+		case EXYNOS4_MCT_G_CNT_L:
- 			stat_addr = EXYNOS4_MCT_G_CNT_WSTAT;
- 			mask = 1 << 0;		/* G_CNT_L write status */
- 			break;
--		case (u32) EXYNOS4_MCT_G_CNT_U:
-+		case EXYNOS4_MCT_G_CNT_U:
- 			stat_addr = EXYNOS4_MCT_G_CNT_WSTAT;
- 			mask = 1 << 1;		/* G_CNT_U write status */
- 			break;
-@@ -107,12 +132,12 @@ static void exynos4_mct_write(unsigned int value, void *addr)
- 
- 	/* Wait maximum 1 ms until written values are applied */
- 	for (i = 0; i < loops_per_jiffy / 1000 * HZ; i++)
--		if (__raw_readl(stat_addr) & mask) {
--			__raw_writel(mask, stat_addr);
-+		if (__raw_readl(reg_base + stat_addr) & mask) {
-+			__raw_writel(mask, reg_base + stat_addr);
- 			return;
- 		}
- 
--	panic("MCT hangs after writing %d (addr:0x%08x)\n", value, (u32)addr);
-+	panic("MCT hangs after writing %d (offset:0x%lx)\n", value, offset);
- }
- 
- /* Clocksource handling */
-@@ -123,7 +148,7 @@ static void exynos4_mct_frc_start(u32 hi, u32 lo)
- 	exynos4_mct_write(lo, EXYNOS4_MCT_G_CNT_L);
- 	exynos4_mct_write(hi, EXYNOS4_MCT_G_CNT_U);
- 
--	reg = __raw_readl(EXYNOS4_MCT_G_TCON);
-+	reg = __raw_readl(reg_base + EXYNOS4_MCT_G_TCON);
- 	reg |= MCT_G_TCON_START;
- 	exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
- }
-@@ -131,12 +156,12 @@ static void exynos4_mct_frc_start(u32 hi, u32 lo)
- static cycle_t exynos4_frc_read(struct clocksource *cs)
- {
- 	unsigned int lo, hi;
--	u32 hi2 = __raw_readl(EXYNOS4_MCT_G_CNT_U);
-+	u32 hi2 = __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_U);
- 
- 	do {
- 		hi = hi2;
--		lo = __raw_readl(EXYNOS4_MCT_G_CNT_L);
--		hi2 = __raw_readl(EXYNOS4_MCT_G_CNT_U);
-+		lo = __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
-+		hi2 = __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_U);
- 	} while (hi != hi2);
- 
- 	return ((cycle_t)hi << 32) | lo;
-@@ -168,7 +193,7 @@ static void exynos4_mct_comp0_stop(void)
- {
- 	unsigned int tcon;
- 
--	tcon = __raw_readl(EXYNOS4_MCT_G_TCON);
-+	tcon = __raw_readl(reg_base + EXYNOS4_MCT_G_TCON);
- 	tcon &= ~(MCT_G_TCON_COMP0_ENABLE | MCT_G_TCON_COMP0_AUTO_INC);
- 
- 	exynos4_mct_write(tcon, EXYNOS4_MCT_G_TCON);
-@@ -181,7 +206,7 @@ static void exynos4_mct_comp0_start(enum clock_event_mode mode,
- 	unsigned int tcon;
- 	cycle_t comp_cycle;
- 
--	tcon = __raw_readl(EXYNOS4_MCT_G_TCON);
-+	tcon = __raw_readl(reg_base + EXYNOS4_MCT_G_TCON);
- 
- 	if (mode == CLOCK_EVT_MODE_PERIODIC) {
- 		tcon |= MCT_G_TCON_COMP0_AUTO_INC;
-@@ -278,12 +303,12 @@ static void exynos4_mct_tick_stop(struct mct_clock_event_device *mevt)
- {
- 	unsigned long tmp;
- 	unsigned long mask = MCT_L_TCON_INT_START | MCT_L_TCON_TIMER_START;
--	void __iomem *addr = mevt->base + MCT_L_TCON_OFFSET;
-+	unsigned long offset = mevt->base + MCT_L_TCON_OFFSET;
- 
--	tmp = __raw_readl(addr);
-+	tmp = __raw_readl(reg_base + offset);
- 	if (tmp & mask) {
- 		tmp &= ~mask;
--		exynos4_mct_write(tmp, addr);
-+		exynos4_mct_write(tmp, offset);
- 	}
- }
- 
-@@ -302,7 +327,7 @@ static void exynos4_mct_tick_start(unsigned long cycles,
- 	/* enable MCT tick interrupt */
- 	exynos4_mct_write(0x1, mevt->base + MCT_L_INT_ENB_OFFSET);
- 
--	tmp = __raw_readl(mevt->base + MCT_L_TCON_OFFSET);
-+	tmp = __raw_readl(reg_base + mevt->base + MCT_L_TCON_OFFSET);
- 	tmp |= MCT_L_TCON_INT_START | MCT_L_TCON_TIMER_START |
- 	       MCT_L_TCON_INTERVAL_MODE;
- 	exynos4_mct_write(tmp, mevt->base + MCT_L_TCON_OFFSET);
-@@ -354,7 +379,7 @@ static int exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
- 		exynos4_mct_tick_stop(mevt);
- 
- 	/* Clear the MCT tick interrupt */
--	if (__raw_readl(mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1) {
-+	if (__raw_readl(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1) {
- 		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
- 		return 1;
- 	} else {
-@@ -463,6 +488,8 @@ static void __init exynos4_timer_resources(void)
+ 	struct clk *mct_clk;
+ 	mct_clk = clk_get(NULL, "xtal");
  
  	clk_rate = clk_get_rate(mct_clk);
  
-+	reg_base = S5P_VA_SYSTIMER;
-+
+-	reg_base = S5P_VA_SYSTIMER;
++	reg_base = np ? of_iomap(np, 0) : S5P_VA_SYSTIMER;
++	if (!reg_base)
++		panic("%s: unable to ioremap mct address space\n", __func__);
+ 
  #ifdef CONFIG_LOCAL_TIMERS
  	if (mct_int_type == MCT_INT_PPI) {
- 		int err;
+@@ -511,28 +515,39 @@ static void __init exynos4_timer_resources(void)
+ 
+ static void __init exynos_timer_init(void)
+ {
++	struct device_node *np;
++	u32 nr_irqs, i;
++
+ 	if (soc_is_exynos5440()) {
+ 		arch_timer_of_register();
+ 		return;
+ 	}
+ 
+-	if (soc_is_exynos4210()) {
++	np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-mct");
++	if (np) {
++		if (of_machine_is_compatible("samsung,exynos4210") ||
++			of_machine_is_compatible("samsung,exynos5250"))
++			mct_int_type = MCT_INT_SPI;
++		else
++			mct_int_type = MCT_INT_PPI;
++
++		if (of_property_read_u32(np, "samsung,mct-nr-local-irqs",
++						&nr_irqs))
++			panic("%s: number of local irqs not specified\n",
++						__func__);
++
++		mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
++		for (i = 0; i < nr_irqs; i++)
++			mct_irqs[MCT_L0_IRQ + i] =
++				irq_of_parse_and_map(np, MCT_L0_IRQ + i);
++	} else if (soc_is_exynos4210()) {
+ 		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
+ 		mct_irqs[MCT_L0_IRQ] = EXYNOS4_IRQ_MCT_L0;
+ 		mct_irqs[MCT_L1_IRQ] = EXYNOS4_IRQ_MCT_L1;
+ 		mct_int_type = MCT_INT_SPI;
+-	} else if (soc_is_exynos5250()) {
+-		mct_irqs[MCT_G0_IRQ] = EXYNOS5_IRQ_MCT_G0;
+-		mct_irqs[MCT_L0_IRQ] = EXYNOS5_IRQ_MCT_L0;
+-		mct_irqs[MCT_L1_IRQ] = EXYNOS5_IRQ_MCT_L1;
+-		mct_int_type = MCT_INT_SPI;
+-	} else {
+-		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
+-		mct_irqs[MCT_L0_IRQ] = EXYNOS_IRQ_MCT_LOCALTIMER;
+-		mct_int_type = MCT_INT_PPI;
+ 	}
+ 
+-	exynos4_timer_resources();
++	exynos4_timer_resources(np);
+ 	exynos4_clocksource_init();
+ 	exynos4_clockevent_init();
+ }
 -- 
 1.7.4.4
