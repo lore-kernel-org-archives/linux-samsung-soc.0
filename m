@@ -1,249 +1,123 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v4 09/12] ARM: dts: add clock provider information for all controllers in Exynos4 SoC
-Date: Sun, 25 Nov 2012 02:48:02 +0530
-Message-ID: <1353791885-2566-10-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v4 10/12] ARM: Exynos4: remove auxdata table from machine file
+Date: Sun, 25 Nov 2012 02:48:03 +0530
+Message-ID: <1353791885-2566-11-git-send-email-thomas.abraham@linaro.org>
 References: <1353791885-2566-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-da0-f46.google.com ([209.85.210.46]:49385 "EHLO
 	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752249Ab2KXVTV (ORCPT
+	with ESMTP id S1752276Ab2KXVT1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Nov 2012 16:19:21 -0500
+	Sat, 24 Nov 2012 16:19:27 -0500
 Received: by mail-da0-f46.google.com with SMTP id p5so3117828dak.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Nov 2012 13:19:21 -0800 (PST)
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Nov 2012 13:19:26 -0800 (PST)
 In-Reply-To: <1353791885-2566-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: devicetree-discuss@lists.ozlabs.org, mturquette@ti.com, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com, Thomas Abraham <thomas.abraham@linaro.org>
 
-For all supported peripheral controllers on Exynos4, add clock lookup
-information.
+With support for device tree based clock lookup now available, remove the
+auxdata table from exynos4 dt-enabled machine file.
 
 Cc: Kukjin Kim <kgene.kim@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/boot/dts/exynos4.dtsi |   48 ++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 48 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos/mach-exynos4-dt.c |   68 +-------------------------------
+ 1 files changed, 2 insertions(+), 66 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 3428f1a..7486462 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -86,6 +86,8 @@
- 		compatible = "samsung,s3c2410-wdt";
- 		reg = <0x10060000 0x100>;
- 		interrupts = <0 43 0>;
-+		clocks = <&clock 345>;
-+		clock-names = "watchdog";
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index c645992..473cb0a 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -11,77 +11,14 @@
+  * published by the Free Software Foundation.
+ */
  
-@@ -93,6 +95,8 @@
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x10070000 0x100>;
- 		interrupts = <0 44 0>, <0 45 0>;
-+		clocks = <&clock 346>;
-+		clock-names = "rtc";
- 		status = "disabled";
- 	};
++#include <linux/kernel.h>
+ #include <linux/of_platform.h>
+-#include <linux/serial_core.h>
  
-@@ -100,6 +104,8 @@
- 		compatible = "samsung,s5pv210-keypad";
- 		reg = <0x100A0000 0x100>;
- 		interrupts = <0 109 0>;
-+		clocks = <&clock 347>;
-+		clock-names = "keypad";
- 		status = "disabled";
- 	};
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+-#include <mach/map.h>
+-
+-#include <plat/cpu.h>
+-#include <plat/regs-serial.h>
  
-@@ -107,6 +113,8 @@
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12510000 0x100>;
- 		interrupts = <0 73 0>;
-+		clocks = <&clock 297>, <&clock 145>;
-+		clock-names = "hsmmc", "mmc_busclk.2";
- 		status = "disabled";
- 	};
+ #include "common.h"
  
-@@ -114,6 +122,8 @@
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12520000 0x100>;
- 		interrupts = <0 74 0>;
-+		clocks = <&clock 298>, <&clock 146>;
-+		clock-names = "hsmmc", "mmc_busclk.2";
- 		status = "disabled";
- 	};
+-/*
+- * The following lookup table is used to override device names when devices
+- * are registered from device tree. This is temporarily added to enable
+- * device tree support addition for the Exynos4 architecture.
+- *
+- * For drivers that require platform data to be provided from the machine
+- * file, a platform data pointer can also be supplied along with the
+- * devices names. Usually, the platform data elements that cannot be parsed
+- * from the device tree by the drivers (example: function pointers) are
+- * supplied. But it should be noted that this is a temporary mechanism and
+- * at some point, the drivers should be capable of parsing all the platform
+- * data from the device tree.
+- */
+-static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART0,
+-				"exynos4210-uart.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART1,
+-				"exynos4210-uart.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART2,
+-				"exynos4210-uart.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART3,
+-				"exynos4210-uart.3", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(0),
+-				"exynos4-sdhci.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(1),
+-				"exynos4-sdhci.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(2),
+-				"exynos4-sdhci.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(3),
+-				"exynos4-sdhci.3", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(0),
+-				"s3c2440-i2c.0", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(1),
+-				"s3c2440-i2c.1", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(2),
+-				"s3c2440-i2c.2", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(3),
+-				"s3c2440-i2c.3", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(4),
+-				"s3c2440-i2c.4", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(5),
+-				"s3c2440-i2c.5", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(6),
+-				"s3c2440-i2c.6", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(7),
+-				"s3c2440-i2c.7", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS4_PA_SPI0,
+-				"exynos4210-spi.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS4_PA_SPI1,
+-				"exynos4210-spi.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS4_PA_SPI2,
+-				"exynos4210-spi.2", NULL),
+-	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
+-	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
+-				"exynos-tmu", NULL),
+-	{},
+-};
+-
+ static void __init exynos4_dt_map_io(void)
+ {
+ 	exynos_init_io(NULL, 0);
+@@ -89,8 +26,7 @@ static void __init exynos4_dt_map_io(void)
  
-@@ -121,6 +131,8 @@
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12530000 0x100>;
- 		interrupts = <0 75 0>;
-+		clocks = <&clock 299>, <&clock 147>;
-+		clock-names = "hsmmc", "mmc_busclk.2";
- 		status = "disabled";
- 	};
+ static void __init exynos4_dt_machine_init(void)
+ {
+-	of_platform_populate(NULL, of_default_bus_match_table,
+-				exynos4_auxdata_lookup, NULL);
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
  
-@@ -128,6 +140,8 @@
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12540000 0x100>;
- 		interrupts = <0 76 0>;
-+		clocks = <&clock 300>, <&clock 148>;
-+		clock-names = "hsmmc", "mmc_busclk.2";
- 		status = "disabled";
- 	};
- 
-@@ -135,6 +149,8 @@
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13800000 0x100>;
- 		interrupts = <0 52 0>;
-+		clocks = <&clock 312>, <&clock 151>;
-+		clock-names = "uart", "clk_uart_baud0";
- 		status = "disabled";
- 	};
- 
-@@ -142,6 +158,8 @@
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13810000 0x100>;
- 		interrupts = <0 53 0>;
-+		clocks = <&clock 313>, <&clock 152>;
-+		clock-names = "uart", "clk_uart_baud0";
- 		status = "disabled";
- 	};
- 
-@@ -149,6 +167,8 @@
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13820000 0x100>;
- 		interrupts = <0 54 0>;
-+		clocks = <&clock 314>, <&clock 153>;
-+		clock-names = "uart", "clk_uart_baud0";
- 		status = "disabled";
- 	};
- 
-@@ -156,6 +176,8 @@
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13830000 0x100>;
- 		interrupts = <0 55 0>;
-+		clocks = <&clock 315>, <&clock 154>;
-+		clock-names = "uart", "clk_uart_baud0";
- 		status = "disabled";
- 	};
- 
-@@ -165,6 +187,8 @@
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13860000 0x100>;
- 		interrupts = <0 58 0>;
-+		clocks = <&clock 317>;
-+		clock-names = "i2c";
- 		status = "disabled";
- 	};
- 
-@@ -174,6 +198,8 @@
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13870000 0x100>;
- 		interrupts = <0 59 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "i2c";
- 		status = "disabled";
- 	};
- 
-@@ -183,6 +209,8 @@
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13880000 0x100>;
- 		interrupts = <0 60 0>;
-+		clocks = <&clock 319>;
-+		clock-names = "i2c";
- 		status = "disabled";
- 	};
- 
-@@ -192,6 +220,8 @@
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13890000 0x100>;
- 		interrupts = <0 61 0>;
-+		clocks = <&clock 320>;
-+		clock-names = "i2c";
- 		status = "disabled";
- 	};
- 
-@@ -201,6 +231,8 @@
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138A0000 0x100>;
- 		interrupts = <0 62 0>;
-+		clocks = <&clock 321>;
-+		clock-names = "i2c";
- 		status = "disabled";
- 	};
- 
-@@ -210,6 +242,8 @@
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138B0000 0x100>;
- 		interrupts = <0 63 0>;
-+		clocks = <&clock 322>;
-+		clock-names = "i2c";
- 		status = "disabled";
- 	};
- 
-@@ -219,6 +253,8 @@
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138C0000 0x100>;
- 		interrupts = <0 64 0>;
-+		clocks = <&clock 323>;
-+		clock-names = "i2c";
- 		status = "disabled";
- 	};
- 
-@@ -228,6 +264,8 @@
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138D0000 0x100>;
- 		interrupts = <0 65 0>;
-+		clocks = <&clock 324>;
-+		clock-names = "i2c";
- 		status = "disabled";
- 	};
- 
-@@ -239,6 +277,8 @@
- 		rx-dma-channel = <&pdma0 6>; /* preliminary */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		clocks = <&clock 327>, <&clock 159>;
-+		clock-names = "spi", "spi_busclk0";
- 		status = "disabled";
- 	};
- 
-@@ -250,6 +290,8 @@
- 		rx-dma-channel = <&pdma1 6>; /* preliminary */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		clocks = <&clock 328>, <&clock 160>;
-+		clock-names = "spi", "spi_busclk0";
- 		status = "disabled";
- 	};
- 
-@@ -261,6 +303,8 @@
- 		rx-dma-channel = <&pdma0 8>; /* preliminary */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		clocks = <&clock 329>, <&clock 161>;
-+		clock-names = "spi", "spi_busclk0";
- 		status = "disabled";
- 	};
- 
-@@ -275,12 +319,16 @@
- 			compatible = "arm,pl330", "arm,primecell";
- 			reg = <0x12680000 0x1000>;
- 			interrupts = <0 35 0>;
-+			clocks = <&clock 292>;
-+			clock-names = "apb_pclk";
- 		};
- 
- 		pdma1: pdma@12690000 {
- 			compatible = "arm,pl330", "arm,primecell";
- 			reg = <0x12690000 0x1000>;
- 			interrupts = <0 36 0>;
-+			clocks = <&clock 293>;
-+			clock-names = "apb_pclk";
- 		};
- 	};
- };
+ static char const *exynos4_dt_compat[] __initdata = {
 -- 
 1.7.4.4
