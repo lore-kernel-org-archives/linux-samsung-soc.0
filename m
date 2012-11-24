@@ -1,119 +1,92 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 5/5] ARM: dts: add mct device tree node for all supported Exynos SoC's
-Date: Sun, 25 Nov 2012 02:14:53 +0530
-Message-ID: <1353789893-2460-6-git-send-email-thomas.abraham@linaro.org>
-References: <1353789893-2460-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v4 00/12] clk: exynos4: migrate to common clock framework
+Date: Sun, 25 Nov 2012 02:47:53 +0530
+Message-ID: <1353791885-2566-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:37569 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752308Ab2KXUpq (ORCPT
+Received: from mail-da0-f46.google.com ([209.85.210.46]:37092 "EHLO
+	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752285Ab2KXVS3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Nov 2012 15:45:46 -0500
-Received: by mail-pa0-f46.google.com with SMTP id bh2so4179500pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Nov 2012 12:45:46 -0800 (PST)
-In-Reply-To: <1353789893-2460-1-git-send-email-thomas.abraham@linaro.org>
+	Sat, 24 Nov 2012 16:18:29 -0500
+Received: by mail-da0-f46.google.com with SMTP id p5so3117661dak.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Nov 2012 13:18:28 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com, chaos.youn@samsung.com, sylvester.nawrocki@gmail.com, Thomas Abraham <thomas.abraham@linaro.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: devicetree-discuss@lists.ozlabs.org, mturquette@ti.com, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-Add MCT device tree node for Exynos4210, Exynos4212, Exynos4412 and Exynos5250.
+Changes since v3:
+- Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
 
-Cc: Changhwan Youn <chaos.youn@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/boot/dts/exynos4210.dtsi |    8 ++++++++
- arch/arm/boot/dts/exynos4212.dtsi |   10 ++++++++++
- arch/arm/boot/dts/exynos4412.dtsi |    8 ++++++++
- arch/arm/boot/dts/exynos5250.dtsi |   21 +++++++++++++++++++++
- 4 files changed, 47 insertions(+), 0 deletions(-)
+This patch series migrates the Samsung Exynos4 SoC clock code to adopt the
+common clock framework. The use of Samsung specific clock structures has
+been removed and all board support code has been updated. imx-style of
+clock registration and lookup has been adopted for device tree based
+exynos4 platforms.
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index e31bfc4..cca1546 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -47,6 +47,14 @@
- 			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
- 	};
- 
-+	mct@10050000 {
-+		compatible = "samsung,exynos4210-mct";
-+		reg = <0x10050000 0x800>;
-+		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
-+			     <0 42 0>, <0 48 0>;
-+		samsung,mct-nr-local-irqs = <4>;
-+	};
-+
- 	pinctrl_0: pinctrl@11400000 {
- 		compatible = "samsung,pinctrl-exynos4210";
- 		reg = <0x11400000 0x1000>;
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index c6ae200..87c6da4 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -25,4 +25,14 @@
- 	gic:interrupt-controller@10490000 {
- 		cpu-offset = <0x8000>;
- 	};
-+
-+	mct@10050000 {
-+		compatible = "samsung,exynos4210-mct";
-+		reg = <0x10050000 0x800>;
-+		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
-+			     <1 12 0>, <1 12 0>;
-+		samsung,mct-nr-local-irqs = <2>;
-+	};
-+
-+
- };
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index d7dfe31..ccf020a 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -25,4 +25,12 @@
- 	gic:interrupt-controller@10490000 {
- 		cpu-offset = <0x4000>;
- 	};
-+
-+	mct@10050000 {
-+		compatible = "samsung,exynos4210-mct";
-+		reg = <0x10050000 0x800>;
-+		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
-+			     <1 12 0>, <1 12 0>, <1 12 0>, <1 12 0>;
-+		samsung,mct-nr-local-irqs = <4>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 39fc4bd..959aa1a 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -70,6 +70,27 @@
- 			     <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
- 	};
- 
-+	mct@101C0000 {
-+		compatible = "samsung,exynos4210-mct";
-+		reg = <0x101C0000 0x800>;
-+		interrupt-controller;
-+		#interrups-cells = <2>;
-+		interrupt-parent = <&mct_map>;
-+		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-+			     <4 0>, <5 0>;
-+		samsung,mct-nr-local-irqs = <2>;
-+
-+		mct_map: mct-map {
-+			compatible = "samsung,mct-map";
-+			#interrupt-cells = <2>;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			interrupt-map = <0x0 0 &combiner 23 3>,
-+					<0x4 0 &gic 0 120 0>,
-+					<0x5 0 &gic 0 121 0>;
-+		};
-+	};
-+
- 	watchdog {
- 		compatible = "samsung,s3c2410-wdt";
- 		reg = <0x101D0000 0x100>;
+This patch series is based on the for-next branch of Samsung maintainer's
+tree with all patches merged from clk-next branch of Mike's tree. This
+series has been tested on Exynos4210 based Origen board and Exynos4412
+based smdk board.
+
+Thomas Abraham (12):
+  clk: samsung: add common clock framework helper functions for Samsung platforms
+  clk: samsung: add pll clock registration helper functions
+  clk: exynos4: register clocks using common clock framework
+  ARM: Exynos: Rework timer initialization sequence
+  ARM: Exynos4: Migrate clock support to common clock framework
+  ARM: dts: add exynos4 clock controller nodes
+  ARM: dts: add xxti and xusbxti fixed rate clock nodes for exynos4 based platforms
+  ARM: Exynos4: allow legacy board support to specify xxti and xusbxti clock speed
+  ARM: dts: add clock provider information for all controllers in Exynos4 SoC
+  ARM: Exynos4: remove auxdata table from machine file
+  ARM: Exynos: use fin_pll clock as the tick clock source for mct
+  ARM: Exynos: add support for mct clock setup
+
+ .../devicetree/bindings/clock/exynos4-clock.txt    |  215 +++
+ arch/arm/boot/dts/exynos4.dtsi                     |   48 +
+ arch/arm/boot/dts/exynos4210-origen.dts            |   12 +
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |   12 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |    6 +
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |   12 +
+ arch/arm/boot/dts/exynos4x12.dtsi                  |    6 +
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ arch/arm/mach-exynos/Makefile                      |    3 -
+ arch/arm/mach-exynos/clock-exynos4.c               | 1602 --------------------
+ arch/arm/mach-exynos/clock-exynos4.h               |   35 -
+ arch/arm/mach-exynos/clock-exynos4210.c            |  188 ---
+ arch/arm/mach-exynos/clock-exynos4212.c            |  192 ---
+ arch/arm/mach-exynos/common.c                      |   57 +-
+ arch/arm/mach-exynos/common.h                      |   21 +-
+ arch/arm/mach-exynos/mach-armlex4210.c             |    3 +-
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |   71 +-
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +-
+ arch/arm/mach-exynos/mach-nuri.c                   |    5 +-
+ arch/arm/mach-exynos/mach-origen.c                 |    5 +-
+ arch/arm/mach-exynos/mach-smdk4x12.c               |    5 +-
+ arch/arm/mach-exynos/mach-smdkv310.c               |    7 +-
+ arch/arm/mach-exynos/mach-universal_c210.c         |    3 +-
+ arch/arm/mach-exynos/mct.c                         |   32 +-
+ arch/arm/plat-samsung/Kconfig                      |    4 +-
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/samsung/Makefile                       |    6 +
+ drivers/clk/samsung/clk-exynos4.c                  |  655 ++++++++
+ drivers/clk/samsung/clk-pll.c                      |  400 +++++
+ drivers/clk/samsung/clk-pll.h                      |   38 +
+ drivers/clk/samsung/clk.c                          |  180 +++
+ drivers/clk/samsung/clk.h                          |  216 +++
+ 32 files changed, 1905 insertions(+), 2138 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos4-clock.txt
+ delete mode 100644 arch/arm/mach-exynos/clock-exynos4.c
+ delete mode 100644 arch/arm/mach-exynos/clock-exynos4.h
+ delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
+ delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
+ create mode 100644 drivers/clk/samsung/Makefile
+ create mode 100644 drivers/clk/samsung/clk-exynos4.c
+ create mode 100644 drivers/clk/samsung/clk-pll.c
+ create mode 100644 drivers/clk/samsung/clk-pll.h
+ create mode 100644 drivers/clk/samsung/clk.c
+ create mode 100644 drivers/clk/samsung/clk.h
+
 -- 
 1.7.4.4
