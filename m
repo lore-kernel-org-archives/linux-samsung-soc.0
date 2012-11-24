@@ -1,23 +1,23 @@
 From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
 Subject: Re: [PATCH] ARM: S3C2443: Workaround for 2443 EXTINT error
-Date: Sat, 24 Nov 2012 01:04:59 +0100
-Message-ID: <201211240105.00184.heiko@sntech.de>
-References: <1353589201-31445-1-git-send-email-fenixk19@mail.ru> <201211230011.57846.heiko@sntech.de> <50AF2157.5050508@mail.ru>
+Date: Sat, 24 Nov 2012 01:16:44 +0100
+Message-ID: <201211240116.44494.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:33081 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:33261 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932340Ab2KXAFH (ORCPT
+	id S932296Ab2KXAQu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Nov 2012 19:05:07 -0500
-In-Reply-To: <50AF2157.5050508@mail.ru>
+	Fri, 23 Nov 2012 19:16:50 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Alexander Varnin <fenixk19@mail.ru>
 Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+
+sorry, forgot half of it [inline]
 
 Am Freitag, 23. November 2012, 08:10:15 schrieb Alexander Varnin:
 > Please take a look at this document. It describes the problem with
@@ -62,6 +62,24 @@ i)*4-3))
 > > And please use scripts/checkpatch.pl to verify your patch follows
 > > coding guidelines, as this block is especially hard to read.
 
+So essentially register-reads somehow returned transformed data, but the write 
+is done according to the datasheet.
+
+
+It would definitely be better to integrate it into the existing _irqext_type 
+function instead of introducing a second one.
+
+The cpu_id is present in the samsung_cpu_id var and the list of cpus including 
+the s3c2443 can be found in common.c. With this it would be possible to 
+identify when the irq code is run on a s3c2443 machine and the original 
+_irqext_type function could change the behaviour accordingly.
+
+Not sure if it would make sense to introduce soc_is_s3c2443() etc macros for 
+this.
+
+And of course the actual block doing the transformation on read would need a 
+more elaborate comment on the why and how, because in 3 years someone might 
+not directly see what this does and why it was necessary.
 
 
 > >> +	value = (value & ~(7 << extint_offset)) | (newvalue << 
