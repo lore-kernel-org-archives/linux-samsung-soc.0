@@ -1,48 +1,61 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v4 12/12] ARM: Exynos: add support for mct clock setup
-Date: Sun, 25 Nov 2012 02:48:05 +0530
-Message-ID: <1353791885-2566-13-git-send-email-thomas.abraham@linaro.org>
-References: <1353791885-2566-1-git-send-email-thomas.abraham@linaro.org>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [RFC 0/2] ARM: S3C24XX: Add devicetree support
+Date: Sun, 25 Nov 2012 01:45:20 +0100
+Message-ID: <201211250145.21226.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f46.google.com ([209.85.210.46]:49385 "EHLO
-	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752257Ab2KXVTi (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:48611 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752697Ab2KYApa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Nov 2012 16:19:38 -0500
-Received: by mail-da0-f46.google.com with SMTP id p5so3117828dak.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Nov 2012 13:19:38 -0800 (PST)
-In-Reply-To: <1353791885-2566-1-git-send-email-thomas.abraham@linaro.org>
+	Sat, 24 Nov 2012 19:45:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: devicetree-discuss@lists.ozlabs.org, mturquette@ti.com, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com, Thomas Abraham <thomas.abraham@linaro.org>
+To: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
 
-Add support for mct clock lookup and setup to ensure that the mct clock
-is has been turned on.
+This series builts on my not-yet-accepted irq rework and provides the
+last bits to use devicetree on s3c2416 boards. It also requires the
+patch "serial: samsung: add devicetree properties for non-Exynos SoCs"
+which adds the missing device names to the mapping table.
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/mach-exynos/mct.c |    7 ++++++-
- 1 files changed, 6 insertions(+), 1 deletions(-)
+Thanks to the work of other developers all the drivers used already
+support dt, so only the interrupt controllers and board support was
+missing.
 
-diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-index 71e1502..843856f 100644
---- a/arch/arm/mach-exynos/mct.c
-+++ b/arch/arm/mach-exynos/mct.c
-@@ -488,7 +488,12 @@ static struct local_timer_ops exynos4_mct_tick_ops __cpuinitdata = {
- static void __init exynos4_timer_resources(struct device_node *np)
- {
- #ifdef CONFIG_COMMON_CLK
--	struct clk *tick_clk;
-+	struct clk *mct_clk, *tick_clk;
-+
-+	mct_clk = clk_get(NULL, "mct");
-+	if (IS_ERR(mct_clk))
-+		panic("%s: unable to retrieve mct clock instance\n", __func__);
-+	clk_prepare_enable(mct_clk);
- 
- 	tick_clk = clk_get(NULL, "fin_pll");
- 	if (IS_ERR(tick_clk))
+This of course easily expandable to the other s3c24xx SoCs in the
+future.
+
+So, while the underlying irq rework might still need changes, I'd really
+like to get feedback, especially on the irq controller bindings.
+
+The whole thing boots and runs sucessfully on my s3c2416 based board,
+which shares most caracteristics and all the used gpio with the smdk2416.
+
+
+Heiko Stuebner (2):
+  ARM: S3C24XX: add devicetree support for interrupts
+  ARM: S3C24XX: Add devicetree support and dt-board file for s3c2416 SoCs
+
+ .../interrupt-controller/samsung,s3c24xx-irq.txt   |   57 ++++++
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/s3c2416-smdk2416.dts             |   79 ++++++++
+ arch/arm/boot/dts/s3c2416.dtsi                     |  193 +++++++++++++++++++
+ arch/arm/boot/dts/s3c24xx.dtsi                     |  158 ++++++++++++++++
+ arch/arm/mach-s3c24xx/Kconfig                      |    9 +
+ arch/arm/mach-s3c24xx/Makefile                     |    1 +
+ arch/arm/mach-s3c24xx/common.h                     |    1 +
+ arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   91 +++++++++
+ arch/arm/plat-s3c24xx/irq.c                        |  197 ++++++++++++++++++++
+ 10 files changed, 787 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/samsung,s3c24xx-irq.txt
+ create mode 100644 arch/arm/boot/dts/s3c2416-smdk2416.dts
+ create mode 100644 arch/arm/boot/dts/s3c2416.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c24xx.dtsi
+ create mode 100644 arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+
 -- 
-1.7.4.4
+1.7.2.3
