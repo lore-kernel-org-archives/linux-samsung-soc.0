@@ -1,64 +1,42 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] ARM: Exynos: Remove unused regs-mem.h file
-Date: Mon, 26 Nov 2012 13:21:53 +0530
-Message-ID: <1353916313-14343-1-git-send-email-thomas.abraham@linaro.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/3] Samsung devel-2 for v3.8
+Date: Sun, 25 Nov 2012 23:53:23 -0800
+Message-ID: <20121126075323.GF9580@quad.lixom.net>
+References: <10d601cdc91b$1a5e73b0$4f1b5b10$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:11578 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751622Ab2KZHWG (ORCPT
+Received: from mail-da0-f46.google.com ([209.85.210.46]:42840 "EHLO
+	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753908Ab2KZHx0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Nov 2012 02:22:06 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0ME3007DR34SMDQ0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Nov 2012 16:22:04 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0ME3003AU34NPYB0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Nov 2012 16:22:04 +0900 (KST)
+	Mon, 26 Nov 2012 02:53:26 -0500
+Received: by mail-da0-f46.google.com with SMTP id p5so3600495dak.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Nov 2012 23:53:26 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <10d601cdc91b$1a5e73b0$4f1b5b10$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Remove the unused regs-mem.h file
+Hi Kgene,
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/mach-exynos/include/mach/regs-mem.h |   23 -----------------------
- 1 files changed, 0 insertions(+), 23 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-mem.h
+On Fri, Nov 23, 2012 at 10:37:30AM +0900, Kukjin Kim wrote:
+> Hi Arnd, Olof
+> 
+> Here is second Samsung development patches for v3.8.
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-mem.h b/arch/arm/mach-exynos/include/mach/regs-mem.h
-deleted file mode 100644
-index 0368b5a..0000000
---- a/arch/arm/mach-exynos/include/mach/regs-mem.h
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/* linux/arch/arm/mach-exynos4/include/mach/regs-mem.h
-- *
-- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * EXYNOS4 - SROMC and DMC register definitions
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_REGS_MEM_H
--#define __ASM_ARCH_REGS_MEM_H __FILE__
--
--#include <mach/map.h>
--
--#define S5P_DMC0_MEMCON_OFFSET		0x04
--
--#define S5P_DMC0_MEMTYPE_SHIFT		8
--#define S5P_DMC0_MEMTYPE_MASK		0xF
--
--#endif /* __ASM_ARCH_REGS_MEM_H */
--- 
-1.6.6.rc2
+Please start sorting your branches more. When someone sends in a large
+"devel" branch, it doesn't fit our tree organization very well. The
+branch below contains fixes, new features and cleanups all in one branch.
+
+> This includes properly enabling PM support and UART3 DEBUG_LL for exynos5
+> and CAMIF for s3c24xx/s3c64xx.
+
+"Properly enabling PM support" sounds like worthy of a branch on its own,
+for example.
+
+
+
+-Olof
