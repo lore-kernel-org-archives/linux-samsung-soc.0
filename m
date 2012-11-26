@@ -1,264 +1,111 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [RFC 1/2] ARM: S3C24XX: add devicetree support for interrupts
-Date: Mon, 26 Nov 2012 17:04:08 +0100
-Message-ID: <201211261704.09273.heiko@sntech.de>
-References: <201211250145.21226.heiko@sntech.de> <201211261313.28307.heiko@sntech.de> <CAJuYYwSi=5rbARhmrL5J-58LwraERHRmLs9B9X+110ZGBb9iBA@mail.gmail.com>
+From: Mike Turquette <mturquette@ti.com>
+Subject: Re: [PATCH v4 00/12] clk: exynos4: migrate to common clock framework
+Date: Mon, 26 Nov 2012 11:31:16 -0800
+Message-ID: <20121126193116.21126.66261@nucleus>
+References: <1353791885-2566-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:34341 "EHLO gloria.sntech.de"
+Received: from comal.ext.ti.com ([198.47.26.152]:51920 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754027Ab2KZQES (ORCPT
+	id S1755532Ab2KZTbk convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Nov 2012 11:04:18 -0500
-In-Reply-To: <CAJuYYwSi=5rbARhmrL5J-58LwraERHRmLs9B9X+110ZGBb9iBA@mail.gmail.com>
+	Mon, 26 Nov 2012 14:31:40 -0500
+In-Reply-To: <1353791885-2566-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
+
+Quoting Thomas Abraham (2012-11-24 13:17:53)
+> Changes since v3:
+> - Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
+> 
 
 Hi Thomas,
 
-Am Montag, 26. November 2012, 16:23:00 schrieb Thomas Abraham:
-> On 26 November 2012 17:43, Heiko St=FCbner <heiko@sntech.de> wrote:
-> > Hi Thomas,
-> >=20
-> > Am Montag, 26. November 2012, 12:03:22 schrieb Thomas Abraham:
-> >> Hi Heiko,
-> >>=20
-> >> On 25 November 2012 06:17, Heiko St=FCbner <heiko@sntech.de> wrote=
-:
-> >> > This adds devicetree parsing of the controller-data for the
-> >> > interrupt controllers on S3C24XX architectures.
-> >> >=20
-> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> >> > ---
-> >> >=20
-> >> >  .../interrupt-controller/samsung,s3c24xx-irq.txt   |   57 +++++=
-+
-> >> >  arch/arm/mach-s3c24xx/common.h                     |    1 +
-> >> >  arch/arm/plat-s3c24xx/irq.c                        |  197
-> >> >  ++++++++++++++++++++ 3 files changed, 255 insertions(+), 0
-> >> >  deletions(-) create mode 100644
-> >> >  Documentation/devicetree/bindings/interrupt-controller/samsung,=
-s3c24x
-> >> >  x- irq.txt
-> >> >=20
-> >> > diff --git
-> >> > a/Documentation/devicetree/bindings/interrupt-controller/samsung=
-,s3c24
-> >> > xx -irq.txt
-> >> > b/Documentation/devicetree/bindings/interrupt-controller/samsung=
-,s3c24
-> >> > xx -irq.txt new file mode 100644
-> >> > index 0000000..c637637
-> >> > --- /dev/null
-> >> > +++
-> >> > b/Documentation/devicetree/bindings/interrupt-controller/samsung=
-,s3c24
-> >> > xx -irq.txt @@ -0,0 +1,57 @@
-> >> > +Samsung S3C24XX Interrupt Controllers
-> >> > +
-> >> > +The S3C24XX SoCs contain custom set of interrupt controllers
-> >> > providing a +varying number of interrupt sources.
-> >> > +
-> >> > +The set consists of a main- and a sub-controller as well as a
-> >> > controller +for the external interrupts and on newer SoCs even a
-> >> > second main controller. +
-> >> > +The bit-to-interrupt and parent mapping of the controllers is n=
-ot
-> >> > fixed +over all SoCs and therefore must be defined in the contro=
-ller
-> >> > description. +
-> >> > +Required properties:
-> >> > +- compatible: Compatible property value should be
-> >> > "samsung,s3c24xx-irq". +
-> >> > +- reg: Physical base address of the controller and length of me=
-mory
-> >> > mapped +  region.
-> >> > +
-> >> > +- interrupt-controller : Identifies the node as an interrupt
-> >> > controller +- #interrupt-cells : Specifies the number of cells n=
-eeded
-> >> > to encode an +  interrupt source. The value shall be 2.
-> >> > +
-> >> > +- s3c24xx,irqlist : List of irqtypes found on this controller a=
-s
-> >> > +  two-value pairs consisting of irqtype and parent-irq
-> >> > +
-> >> > +  parent-irq is always the list position of the irq in the irql=
-ist
-> >> > +  of the parent controller (0..31)
-> >> > +
-> >> > +  irqtypes are:
-> >> > +  - 0 .. none
-> >> > +  - 1 .. external interrupts in the main register (GPF0 .. GPF3=
-)
-> >> > +  - 2 .. edge irq in the main register
-> >> > +  - 3 .. for parent-irqs, that have sub-irqs in child controlle=
-rs
-> >> > +  - 4 .. level irqs in the sub-register
-> >> > +  - 5 .. edge irqs in the sub-register
-> >> > +  - 6 .. external irqs in the external irq register (starting w=
-ith
-> >> > GPF4) +  - 7 .. irq in the second base irq controller of
-> >> > S3C2416/S3C2450 SoCs
-> >>=20
-> >> Instead of defining the type of interrupt controller as above, is =
-it
-> >> possible to create multiple device nodes, with each node represent=
-ing
-> >> a type of interrupt controller with a unique compatible string and
-> >> corresponding properties. There will be a init function for each t=
-ype
-> >> of interrupt controller. There should be a irq-domain for each of
-> >> these different types of interrupt controller. And then, in the de=
-vice
-> >> tree source file, a proper tree like hierarchy of interrupt
-> >> controllers can defined (using the interrupt-parent property for e=
-ach
-> >> controller node). The client nodes that generate the interrupt can
-> >> specify the parent node and the interrupt number within the parent=
- to
-> >> which they generate the interrupt.
-> >=20
-> > I'm not sure I understand yet :-). The list describes the types of
-> > interrupts inside the individual controllers.
-> >=20
-> > On all the s3c24xx we have three register sets denoting the main (S=
-RCPND,
-> > INTPND, INTMSK), sub (SUBSRCPEND, INTSUBMASK) and extint (EINTPEND,
-> > EINTMASK) controllers. The bits of these registers are used for qui=
-te
-> > different irqs.
->=20
-> We could consider main, sub and extint as three separate interrupt
-> controllers and thus three different nodes in device tree. So the
-> interrupt nodes could be something like (referring to 2416 manual).
->=20
->      main@0x4a000000 {
->             compatible =3D "samsung,s3c2410-main";
->             reg =3D <0x4a000000 0x100>;
->             interrupt-controller;
->             #interrupt-cells =3D <2>;
->      };
->=20
->      sub@0x4a001000 {
->             compatible =3D "samsung,s3c2410-sub";
->             reg =3D <0x4a001000 0x100>;
->             interrupt-controller;
->             #interrupt-cells =3D <2>;
->             interrupt-parent =3D <&main>;
->             interrupts =3D <28 0>, <23 0>, <.....  /*uart0/uart1/..*/
->      };
->=20
->      eint@0x4a002000 {
->             compatible =3D "samsung,s3c2410-eint";
->             reg =3D <0x4a002000 0x100>;
->             interrupt-controller;
->             #interrupt-cells =3D <2>;
->             interrupt-parent =3D <&main>;
->             interrupts =3D <0 0>, <1 0>,
->                               <2 0>, <3 0>,
->                               <4 0>, <5 0>;
->      };
->=20
-> There should be a corresponding irqchip driver code to handle each of
-> these types of controllers. They should have their own irq-domain
-> supported.
->=20
-> Then the client nodes can specify the interrupt parent and interrupt
-> number. For example, the uart node would be
->=20
->        uart@50000000 {
->             compatible =3D "samsung,s3c2410-uart";
->             reg =3D <0x50000000 0x100>;
->             interrupt-parent =3D <&sub>;
->             interrupts =3D <0 0>, <1 0>, <2 0>; /*tx/rx/err*/
->        };
->=20
-> > For example is bit 17 of the main register set used as DMA0 on earl=
-ier
-> > socs while the dma interrupts moved to the subint registers for s3c=
-2443
-> > and later.
->=20
-> Writing the nodes with the correct interrupt parent and the interrupt
-> number should take care of this.
->=20
-> > So the entries in the irqlist describe the needed handlers for the =
-hwirq
-> > bits of the indidual controllers. So in this scheme you set for
-> > dt-devices the interrupt parent to the correct register set and the
-> > interrupts field then matches the bit of the register, according to=
- the
-> > datasheet.
-> >=20
-> > When I changed the basic interrupt handling in the previous set, th=
-e
-> > changed irq.c can for exmaple be found on [0], I created these list=
-s in
-> > the code and soc specific routines to init them for the still valid
-> > non-dt case.
-> >=20
-> > But as dt is about describing the hardware, I found the current sol=
-ution
-> > nice, because will I only need exactly one dt-init-function for all
-> > s3c24xx-socs, instead of representing all the slight variances in c=
-ode.
-> >=20
-> > I'm definitly not sure if all the different types of individual irq
-> > handlers are strictly necessary yet, but they represent all the var=
-iants
-> > that were in use in the original code.
->=20
-> I have brought up this point just for discussion. You could choose th=
-e
-> implementation that you prefer. I understand that implementing with
-> different interrupt controller nodes might require lot of code
-> changes.
+3.7-rc7 is out and I do not wish to take any large changes this close to
+the merge window opening up.  I will review these patches and give any
+feedback now on the common clk bits, but merging in the
+drivers/clk/samsung parts would have to wait until after clk-next is
+rebased onto 3.8-rc.
 
-first of all, thanks for the feedback. Working on this is like moving i=
-n a fog=20
-where I don't really see where I'm going - so I don't claim to be right=
-=2E
+Which tree do you want to merge this through?  Samsung or clk-next?
+Will you split the patches or take it all once you have gathered ACKs?
 
+Thanks,
+Mike
 
-But somehow I have the feeling we're talking about similar things here =
-:-)
-
-If you look in the second patch, you'll see that there are already the =
-three=20
-(or 4 in the case of the s3c2416) interrupt controllers defined [intc,=20
-subintc, extintc]. But as they contain the data of their individual int=
-errupts=20
-inside the devicetree definitions, they don't need individual init func=
-tions=20
-but only one which constructs the interrupt data out of the list provid=
-ed.
-
-The real list for a platform in the second patch might also help in sho=
-wing=20
-why this list was necessary.
-
-The basic problem is, that each individual interrupt inside one of the=20
-controllers might need a different handler and access a specific parent=
-=20
-interrupt. For example the uart0-rx,tx,err interrupts in the subintc mu=
-st=20
-ack/mask the uart0 interrupt in the main intc; similar for a lot of oth=
-er=20
-interrupts. And the s3c24xx,irqlist provides this mapping to handler an=
-d=20
-parent, so it does not need to be codified.
-
-And of course the second problem this approach should solve is, that th=
-e=20
-interrupts in the controllers differ and also move between most of the =
-s3c24xx=20
-sub-architectures.
-
-
-Thanks
-Heiko
+> This patch series migrates the Samsung Exynos4 SoC clock code to adopt the
+> common clock framework. The use of Samsung specific clock structures has
+> been removed and all board support code has been updated. imx-style of
+> clock registration and lookup has been adopted for device tree based
+> exynos4 platforms.
+> 
+> This patch series is based on the for-next branch of Samsung maintainer's
+> tree with all patches merged from clk-next branch of Mike's tree. This
+> series has been tested on Exynos4210 based Origen board and Exynos4412
+> based smdk board.
+> 
+> Thomas Abraham (12):
+>   clk: samsung: add common clock framework helper functions for Samsung platforms
+>   clk: samsung: add pll clock registration helper functions
+>   clk: exynos4: register clocks using common clock framework
+>   ARM: Exynos: Rework timer initialization sequence
+>   ARM: Exynos4: Migrate clock support to common clock framework
+>   ARM: dts: add exynos4 clock controller nodes
+>   ARM: dts: add xxti and xusbxti fixed rate clock nodes for exynos4 based platforms
+>   ARM: Exynos4: allow legacy board support to specify xxti and xusbxti clock speed
+>   ARM: dts: add clock provider information for all controllers in Exynos4 SoC
+>   ARM: Exynos4: remove auxdata table from machine file
+>   ARM: Exynos: use fin_pll clock as the tick clock source for mct
+>   ARM: Exynos: add support for mct clock setup
+> 
+>  .../devicetree/bindings/clock/exynos4-clock.txt    |  215 +++
+>  arch/arm/boot/dts/exynos4.dtsi                     |   48 +
+>  arch/arm/boot/dts/exynos4210-origen.dts            |   12 +
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts          |   12 +
+>  arch/arm/boot/dts/exynos4210.dtsi                  |    6 +
+>  arch/arm/boot/dts/exynos4412-smdk4412.dts          |   12 +
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |    6 +
+>  arch/arm/mach-exynos/Kconfig                       |    1 +
+>  arch/arm/mach-exynos/Makefile                      |    3 -
+>  arch/arm/mach-exynos/clock-exynos4.c               | 1602 --------------------
+>  arch/arm/mach-exynos/clock-exynos4.h               |   35 -
+>  arch/arm/mach-exynos/clock-exynos4210.c            |  188 ---
+>  arch/arm/mach-exynos/clock-exynos4212.c            |  192 ---
+>  arch/arm/mach-exynos/common.c                      |   57 +-
+>  arch/arm/mach-exynos/common.h                      |   21 +-
+>  arch/arm/mach-exynos/mach-armlex4210.c             |    3 +-
+>  arch/arm/mach-exynos/mach-exynos4-dt.c             |   71 +-
+>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +-
+>  arch/arm/mach-exynos/mach-nuri.c                   |    5 +-
+>  arch/arm/mach-exynos/mach-origen.c                 |    5 +-
+>  arch/arm/mach-exynos/mach-smdk4x12.c               |    5 +-
+>  arch/arm/mach-exynos/mach-smdkv310.c               |    7 +-
+>  arch/arm/mach-exynos/mach-universal_c210.c         |    3 +-
+>  arch/arm/mach-exynos/mct.c                         |   32 +-
+>  arch/arm/plat-samsung/Kconfig                      |    4 +-
+>  drivers/clk/Makefile                               |    1 +
+>  drivers/clk/samsung/Makefile                       |    6 +
+>  drivers/clk/samsung/clk-exynos4.c                  |  655 ++++++++
+>  drivers/clk/samsung/clk-pll.c                      |  400 +++++
+>  drivers/clk/samsung/clk-pll.h                      |   38 +
+>  drivers/clk/samsung/clk.c                          |  180 +++
+>  drivers/clk/samsung/clk.h                          |  216 +++
+>  32 files changed, 1905 insertions(+), 2138 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/exynos4-clock.txt
+>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.c
+>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.h
+>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
+>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
+>  create mode 100644 drivers/clk/samsung/Makefile
+>  create mode 100644 drivers/clk/samsung/clk-exynos4.c
+>  create mode 100644 drivers/clk/samsung/clk-pll.c
+>  create mode 100644 drivers/clk/samsung/clk-pll.h
+>  create mode 100644 drivers/clk/samsung/clk.c
+>  create mode 100644 drivers/clk/samsung/clk.h
+> 
+> -- 
+> 1.7.4.4
