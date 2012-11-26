@@ -1,43 +1,37 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 3/3] regulator: add device tree support for max8997
-Date: Mon, 26 Nov 2012 19:16:04 +0530
-Message-ID: <CAJuYYwTt+1-zU3092GmrK2GHR=5QDGT-diVcm_0pe3=oqhuQdA@mail.gmail.com>
-References: <1353657795-1725-1-git-send-email-thomas.abraham@linaro.org>
-	<1353657795-1725-4-git-send-email-thomas.abraham@linaro.org>
-	<20121124175954.GI4719@opensource.wolfsonmicro.com>
-	<CAJuYYwThsFutYnYg2scmfqUAGxBM2pWmRmoTww+OyZgUuA-7vg@mail.gmail.com>
-	<20121126095141.GC9411@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121126095141.GC9411@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Rajendra Nayak <rnayak@ti.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
+From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Subject: [PATCH V2 0/3] thermal: Add support for interrupt based notification to thermal layer
+Date: Mon, 26 Nov 2012 19:17:17 +0530
+Message-ID: <1353937640-9939-1-git-send-email-amit.kachhap@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:58370 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753018Ab2KZNrh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Nov 2012 08:47:37 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-pm@lists.linux-foundation.org, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@linaro.org, jonghwa3.lee@samsung.com
 
-On 26 November 2012 15:21, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Sat, Nov 24, 2012 at 11:46:51PM +0530, Thomas Abraham wrote:
->
->> The max8997 driver is mainlined. I actually meant to say that, this v6
->> version of dt support patch for max8997, is similar in functionality
->> to the v5 version of this patch. I did prepare this patch based on
->> your latest for-next branch.
->
-> I find it hard to believe that this was generated against for-next, this
-> was where I tried to apply it...
+Changes since V1: Used the new thermal trend type macro
 
-I tried again to apply this patch on 'for-next' branch of your
-regulator tree (git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git)
+The patch submitted by Jonghwa Lee (https://patchwork.kernel.org/patch/1683441/)
+adds support for interrupt based notification to thermal layer. This is a good
+feature but the current code need more fixes to support that feature so using 2 new thermal
+trend type to implement this feature and some falling interrupt fixes.
 
-on top of commit 6aa588f43d4a (Merge remote-tracking branches
-'regulator/fix/wm831x', 'regulator/topic/as3711',
-'regulator/topic/da9055', 'regulator/topic/hotplug',
-'regulator/topic/lp8788'.....)
+All these patches are based on thermal maintainer thermal branch.
+git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git thermal
 
-and this patch applied cleanly. Could you please let me know if there
-is anything I need to be doing differently for this.
+Amit Daniel Kachhap (2):
+  thermal: exynos: Miscellaneous fixes to support falling threshold
+    interrupt
+  thermal: exynos: Use the new thermal trend type for quick cooling
+    action.
 
-Thanks,
-Thomas.
+Jonghwa Lee (1):
+  Thermal: exynos: Add support for temperature falling interrupt.
+
+ drivers/thermal/exynos_thermal.c             |  108 +++++++++++++++-----------
+ include/linux/platform_data/exynos_thermal.h |    3 +
+ 2 files changed, 67 insertions(+), 44 deletions(-)
