@@ -1,65 +1,85 @@
-From: Alexander Varnin <fenixk19@mail.ru>
-Subject: [PATCH 2/2] ARM: S3C2443: Workaround for 2443 EXTINT error
-Date: Mon, 26 Nov 2012 12:44:41 +0400
-Message-ID: <1353919481-26074-2-git-send-email-fenixk19@mail.ru>
-References: <1353919481-26074-1-git-send-email-fenixk19@mail.ru>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: DMABUF V4L2 patches got merged
+Date: Mon, 26 Nov 2012 14:23:13 +0530
+Message-ID: <CAJuYYwTtczvRHHQenOmvXzERuEHrmTZs8jjWFpme2ONvYyyTrg@mail.gmail.com>
+References: <20121125180245.658e68a7@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp36.i.mail.ru ([94.100.177.96]:36261 "EHLO smtp36.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753747Ab2KZIpn (ORCPT
+Received: from mail-ia0-f174.google.com ([209.85.210.174]:34559 "EHLO
+	mail-ia0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754037Ab2KZIxO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Nov 2012 03:45:43 -0500
-In-Reply-To: <1353919481-26074-1-git-send-email-fenixk19@mail.ru>
+	Mon, 26 Nov 2012 03:53:14 -0500
+Received: by mail-ia0-f174.google.com with SMTP id y25so7842754iay.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Nov 2012 00:53:13 -0800 (PST)
+In-Reply-To: <20121125180245.658e68a7@redhat.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene@kernel.org, heiko@sntech.de
-Cc: Alexander Varnin <fenixk19@mail.ru>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, arm-linux <linux-arm-kernel@lists.infradead.org>, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org, Christian Robottom Reis <kiko@linaro.org>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, k.debski@samsung.com, pawel@osciak.com, sumit.semwal@ti.com, Anmar Oueja <anmar.oueja@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 
-S3C2443 CPU has a problem with incorrect reading from EXTINTn
-registers. So s3c_irqext_type function wrongly modifies them.
-So add special check to s3c_irqext_type, to handle this case.
+Hi Aditya.
 
-Signed-off-by: Alexander Varnin <fenixk19@mail.ru>
----
- arch/arm/plat-s3c24xx/irq.c |   26 ++++++++++++++++++++++++++
- 1 files changed, 26 insertions(+), 0 deletions(-)
+FYI, just in case you have not seen this email.
 
-diff --git a/arch/arm/plat-s3c24xx/irq.c b/arch/arm/plat-s3c24xx/irq.c
-index fe57bbb..ed19996 100644
---- a/arch/arm/plat-s3c24xx/irq.c
-+++ b/arch/arm/plat-s3c24xx/irq.c
-@@ -219,6 +219,32 @@ s3c_irqext_type(struct irq_data *data, unsigned int type)
- 	}
- 
- 	value = __raw_readl(extint_reg);
-+
-+	/*
-+	* S3C2443 CPU has a problem with EXTINTn registers.
-+	* Essentially register-reads returned transformed data, but the write 
-+	* is done according to the datasheet.
-+	*
-+	* There is hack introduced for 2443 error workaround.
-+	*
-+	* For detais refer to the document "S3C2443 GUIDE TO EXTRA GPIO" found on the web.
-+	*
-+	* A. Varnin <fenixk19@mail.ru>
-+	*/
-+	if(soc_is_s3c2443()) 
-+	{
-+	    	int i;
-+		int fixed = 0;
-+		if(extint_reg == S3C24XX_EXTINT1 || extint_reg == S3C24XX_EXTINT2)
-+			for(i=0; i<7;i++)
-+		    		fixed |= (((value >> ((7-i)*4+1)) & 7) | ((value >> ((7-i)*4-3)) & 8)) << i*4;
-+		else
-+			for(i=0; i<7;i++)
-+		    		fixed |= ( (value >> (7-i)*4) & 0xf )  << i*4;
-+		fixed |= (((value>>1) & 7) | ((value<<3) & 8)) << 27;
-+		value = fixed;
-+	}
-+
- 	value = (value & ~(7 << extint_offset)) | (newvalue << extint_offset);
- 	__raw_writel(value, extint_reg);
- 
--- 
-1.7.2.5
+Thanks,
+Thomas.
+
+
+On 26 November 2012 01:32, Mauro Carvalho Chehab <mchehab@redhat.com> wrote:
+> Hi all,
+>
+> Today, I finally merged the DMABUF V4L2 patches from Tomasz.
+>
+> The DMABUF allows replacing the old V4L2 Overlay method by something more
+> robust and safer.
+>
+> It was a long road to get them ready for their upstream inclusion, and to
+> be able to test on both embedded and personal computers.
+>
+> Along this weekend, I was able to test it using 4 different test scenarios:
+>
+>         - vivi + s5p-tv;
+>         - uvcvideo + fimc (m2m) + s5p-tv;
+>         - s5k4ecgx + fimc (m2m) + s5p-tv;
+>         - uvcvideo + i915.
+>
+> The first 3 tests ran on a Samsung Origen Rev. A board; the 4th one on a
+> notebook, with a Sandy Bridge i5core processor with GPU, and an embedded
+> UVC camera.
+>
+> While testing the s5k4ecgx sensor driver, I also added support for multiplane
+> at libv4l, via its plugin interface:
+>
+>         http://git.linuxtv.org/v4l-utils.git/commit/ced1be346fe4f61c864cba9d81f66089d4e32a56
+>
+> Such tests wouldn't be possible without the help of Linaro and Samsung,
+> with donated me some hardware for the tests, and Ideas on Board for making
+> uvcvideo + i915 driver to work especially for this test.
+>
+> Thank you all for your support!
+>
+> In particular, Sylwester helped me a lot to fix several non-related issues with
+> the Origen board, that was not running with an upstream Kernel.
+>
+> There are a number of patches required to make the Origen board to work with an
+> Upstream Kernel. Also, its sensor driver (s5k4ecgx) was not submitted upstream
+> yet. In order to help others that may need to do similar tests, I added the
+> needed patches on my experimental tree, at branch origen+dmabuf:
+>
+>         http://git.linuxtv.org/mchehab/experimental.git/shortlog/refs/heads/origen%2Bdmabuf
+>
+> Still missing there are the wireless/bluetooth support. It seems that there are
+> some patches for it already, but they aren't submitted upstream, nor I didn't
+> test they.
+>
+> I expect that Linaro and Samsung will be able to submit real soon the pending
+> patches needed by Origen in time for its addition on 3.8.
+>
+> Thank you all!
+> Mauro
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
