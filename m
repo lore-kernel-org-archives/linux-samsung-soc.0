@@ -1,63 +1,62 @@
-From: Alexander Varnin <fenixk19@mail.ru>
-Subject: [PATCH v2 2/2] ARM: S3C2443: Workaround for 2443 EXTINT error
-Date: Mon, 26 Nov 2012 13:43:21 +0400
-Message-ID: <1353923001-28017-1-git-send-email-fenixk19@mail.ru>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/3] regulator: add device tree support for max8997
+Date: Mon, 26 Nov 2012 10:51:42 +0100
+Message-ID: <20121126095141.GC9411@opensource.wolfsonmicro.com>
+References: <1353657795-1725-1-git-send-email-thomas.abraham@linaro.org>
+ <1353657795-1725-4-git-send-email-thomas.abraham@linaro.org>
+ <20121124175954.GI4719@opensource.wolfsonmicro.com>
+ <CAJuYYwThsFutYnYg2scmfqUAGxBM2pWmRmoTww+OyZgUuA-7vg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="i7F3eY7HS/tUJxUd"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp21.mail.ru ([94.100.176.174]:52805 "EHLO smtp21.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754725Ab2KZJoU (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:49636 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753175Ab2KZJvo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Nov 2012 04:44:20 -0500
+	Mon, 26 Nov 2012 04:51:44 -0500
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwThsFutYnYg2scmfqUAGxBM2pWmRmoTww+OyZgUuA-7vg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, heiko@sntech.de, kgene@kernel.org
-Cc: Alexander Varnin <fenixk19@mail.ru>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Rajendra Nayak <rnayak@ti.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
 
-S3C2443 CPU has a problem with incorrect reading from EXTINTn
-registers. So s3c_irqext_type function wrongly modifies them.
-So add special check to s3c_irqext_type, to handle this case.
 
-Signed-off-by: Alexander Varnin <fenixk19@mail.ru>
----
-styling and comment fixes
- arch/arm/plat-s3c24xx/irq.c |   25 +++++++++++++++++++++++++
- 1 files changed, 25 insertions(+), 0 deletions(-)
+--i7F3eY7HS/tUJxUd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/plat-s3c24xx/irq.c b/arch/arm/plat-s3c24xx/irq.c
-index fe57bbb..b05c573 100644
---- a/arch/arm/plat-s3c24xx/irq.c
-+++ b/arch/arm/plat-s3c24xx/irq.c
-@@ -219,6 +219,31 @@ s3c_irqext_type(struct irq_data *data, unsigned int type)
- 	}
- 
- 	value = __raw_readl(extint_reg);
-+
-+	/*
-+	 * S3C2443 CPU has a problem with EXTINTn registers.
-+	 * Essentially register-reads return transformed data, but the write
-+	 * is done according to the datasheet.
-+	 *
-+	 * Fix this by transforming the read data to the correct format.
-+	 *
-+	 * For details refer to the document "S3C2443 GUIDE TO EXTRA GPIO"
-+	 */
-+	if (soc_is_s3c2443()) {
-+		int i;
-+		int fixed = 0;
-+		if (extint_reg == S3C24XX_EXTINT1
-+			|| extint_reg == S3C24XX_EXTINT2)
-+			for (i = 0; i < 7; i++)
-+				fixed |= (((value >> ((7-i)*4+1)) & 7)
-+					| ((value >> ((7-i)*4-3)) & 8)) << i*4;
-+		else
-+			for (i = 0; i < 7; i++)
-+				fixed |= ((value >> (7-i)*4) & 0xf)  << i*4;
-+		fixed |= (((value>>1) & 7) | ((value<<3) & 8)) << 27;
-+		value = fixed;
-+	}
-+
- 	value = (value & ~(7 << extint_offset)) | (newvalue << extint_offset);
- 	__raw_writel(value, extint_reg);
- 
--- 
-1.7.2.5
+On Sat, Nov 24, 2012 at 11:46:51PM +0530, Thomas Abraham wrote:
+
+> The max8997 driver is mainlined. I actually meant to say that, this v6
+> version of dt support patch for max8997, is similar in functionality
+> to the v5 version of this patch. I did prepare this patch based on
+> your latest for-next branch.
+
+I find it hard to believe that this was generated against for-next, this
+was where I tried to apply it...
+
+--i7F3eY7HS/tUJxUd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQszumAAoJELSic+t+oim97eUP/1vobgggSsowIJv4iToOA0+g
+kQ2gOnvsUBWrgJI/WBiNeQMKNBigMK4/IBn0Rlrct089lifZqLt2flSHLDQk5dKc
+U5qOqRGwg/qEnN0hQcolBC9KZiGHh3nkbMo3H0Xn+ZZj1p6j3cbVAISUJP9WiJGf
+Z1weZ6C7B3Gbu4Nobo3/nNZ43U5oTiuJqW9yUSkyanHE5ObPIN+SvzworOzqRX4B
+wYhUSrsEKH07q67ZS3Rbikj+roTX+/GikQt+3YpbVhsw7XJ97msd7OeokMBLNhhG
+iKSRO5SlEOpvZD1meZ9sVn4MpqTKw85YUp8eO5KnhDhRz+XCMLC4bWfvspdalYUC
+kxJIKJ6fgQ0xhRJoHIvVPBlXDCBSCfYspDNz9K55UZ+N6IUygkLLul/cSMUTDc8+
+mWdgLAGAqiO6MH8jrU9MqvD5l1QDtRJVdQPv3oG1cNoGdycrJ91SKosgSSt4t6PS
+raSw8gxM4MNiITO2a8Fv41UAJkhzh0A7yUVC1Mh6mq9yQop/1a7hSlVQ0/1otqmh
+A7X/MhFZ7ecQE7648Il05NqEO7y2Z/weeetcrU5IZBOpO0lV2stZ472+FUQE3B2v
+Y6G0WNkzPeTXRkyhMpynD9dhAuu5SVXgrLjROZb9lruP3J2FcKd3UuUvaoWXmk+x
+IYNkbsFAvhbk/0awrQnJ
+=5QOm
+-----END PGP SIGNATURE-----
+
+--i7F3eY7HS/tUJxUd--
