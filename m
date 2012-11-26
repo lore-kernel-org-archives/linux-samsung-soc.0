@@ -1,65 +1,93 @@
 From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 1/2] ARM: S3C2443: introduce soc_is_s3c2443 macro
-Date: Mon, 26 Nov 2012 10:02:31 +0100
-Message-ID: <201211261002.32043.heiko@sntech.de>
-References: <1353919203-24798-1-git-send-email-fenixk19@mail.ru>
+Subject: Re: [PATCH 2/2] ARM: S3C2443: Workaround for 2443 EXTINT error
+Date: Mon, 26 Nov 2012 10:12:58 +0100
+Message-ID: <201211261012.58938.heiko@sntech.de>
+References: <1353919481-26074-1-git-send-email-fenixk19@mail.ru> <1353919481-26074-2-git-send-email-fenixk19@mail.ru>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:58646 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:58807 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753713Ab2KZJCf (ORCPT
+	id S1754587Ab2KZJNC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Nov 2012 04:02:35 -0500
-In-Reply-To: <1353919203-24798-1-git-send-email-fenixk19@mail.ru>
+	Mon, 26 Nov 2012 04:13:02 -0500
+In-Reply-To: <1353919481-26074-2-git-send-email-fenixk19@mail.ru>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Alexander Varnin <fenixk19@mail.ru>
 Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org
 
-Am Montag, 26. November 2012, 09:40:02 schrieb Alexander Varnin:
+Hi Alexander,
+
+I think this patch needs a bit more love :-) .
+
+Please run scripts/checkpatch.pl on it and fix all the reported problems.
+
+And I'd change the comment to something like:
+
+/*
+ * S3C2443 CPU has a problem with EXTINTn registers.
+ * Essentially register-reads return transformed data, but the write
+ * is done according to the datasheet.
+ *
+ * Fix this by transforming the read data to the correct format.
+ *
+ * For details refer to the document "S3C2443 GUIDE TO EXTRA GPIO"
+ */
+
+Especially the mail address does not need to be in the code - the git history 
+preserves the committer identity quite well.
+
+
+Heiko 
+
+Am Montag, 26. November 2012, 09:44:41 schrieb Alexander Varnin:
+> S3C2443 CPU has a problem with incorrect reading from EXTINTn
+> registers. So s3c_irqext_type function wrongly modifies them.
+> So add special check to s3c_irqext_type, to handle this case.
+> 
 > Signed-off-by: Alexander Varnin <fenixk19@mail.ru>
-
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-
 > ---
->  arch/arm/plat-samsung/include/plat/cpu.h |   10 ++++++++++
->  1 files changed, 10 insertions(+), 0 deletions(-)
+>  arch/arm/plat-s3c24xx/irq.c |   26 ++++++++++++++++++++++++++
+>  1 files changed, 26 insertions(+), 0 deletions(-)
 > 
-> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h
-> b/arch/arm/plat-samsung/include/plat/cpu.h index ace4451..613f492 100644
-> --- a/arch/arm/plat-samsung/include/plat/cpu.h
-> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
-> @@ -23,6 +23,9 @@ extern unsigned long samsung_cpu_id;
->  #define S3C24XX_CPU_ID		0x32400000
->  #define S3C24XX_CPU_MASK	0xFFF00000
+> diff --git a/arch/arm/plat-s3c24xx/irq.c b/arch/arm/plat-s3c24xx/irq.c
+> index fe57bbb..ed19996 100644
+> --- a/arch/arm/plat-s3c24xx/irq.c
+> +++ b/arch/arm/plat-s3c24xx/irq.c
+> @@ -219,6 +219,32 @@ s3c_irqext_type(struct irq_data *data, unsigned int
+> type) }
 > 
-> +#define S3C2443_CPU_ID		0x32443001
-> +#define S3C2443_CPU_MASK	0xFFFFFFFF
+>  	value = __raw_readl(extint_reg);
 > +
->  #define S3C6400_CPU_ID		0x36400000
->  #define S3C6410_CPU_ID		0x36410000
->  #define S3C64XX_CPU_MASK	0xFFFFF000
-> @@ -52,6 +55,7 @@ static inline int is_samsung_##name(void)	\
->  }
-> 
->  IS_SAMSUNG_CPU(s3c24xx, S3C24XX_CPU_ID, S3C24XX_CPU_MASK)
-> +IS_SAMSUNG_CPU(s3c2443, S3C2443_CPU_ID, S3C2443_CPU_MASK)
->  IS_SAMSUNG_CPU(s3c6400, S3C6400_CPU_ID, S3C64XX_CPU_MASK)
->  IS_SAMSUNG_CPU(s3c6410, S3C6410_CPU_ID, S3C64XX_CPU_MASK)
->  IS_SAMSUNG_CPU(s5p6440, S5P6440_CPU_ID, S5P64XX_CPU_MASK)
-> @@ -72,6 +76,12 @@ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID,
-> EXYNOS5_SOC_MASK) # define soc_is_s3c24xx()	0
->  #endif
-> 
-> +#if defined(CONFIG_CPU_S3C2443)
-> +# define soc_is_s3c2443()	is_samsung_s3c2443()
-> +#else
-> +# define soc_is_s3c2443()	0
-> +#endif
+> +	/*
+> +	* S3C2443 CPU has a problem with EXTINTn registers.
+> +	* Essentially register-reads returned transformed data, but the write
+> +	* is done according to the datasheet.
+> +	*
+> +	* There is hack introduced for 2443 error workaround.
+> +	*
+> +	* For detais refer to the document "S3C2443 GUIDE TO EXTRA GPIO" found on
+> the web. +	*
+> +	* A. Varnin <fenixk19@mail.ru>
+> +	*/
+
+> +	if(soc_is_s3c2443())
+> +	{
+> +	    	int i;
+> +		int fixed = 0;
+> +		if(extint_reg == S3C24XX_EXTINT1 || extint_reg == S3C24XX_EXTINT2)
+> +			for(i=0; i<7;i++)
+> +		    		fixed |= (((value >> ((7-i)*4+1)) & 7) | ((value >> ((7-
+i)*4-3)) &
+> 8)) << i*4; +		else
+> +			for(i=0; i<7;i++)
+> +		    		fixed |= ( (value >> (7-i)*4) & 0xf )  << i*4;
+> +		fixed |= (((value>>1) & 7) | ((value<<3) & 8)) << 27;
+> +		value = fixed;
+> +	}
 > +
->  #if defined(CONFIG_CPU_S3C6400) || defined(CONFIG_CPU_S3C6410)
->  # define soc_is_s3c64xx()	(is_samsung_s3c6400() || is_samsung_s3c6410())
->  #else
+>  	value = (value & ~(7 << extint_offset)) | (newvalue << extint_offset);
+>  	__raw_writel(value, extint_reg);
