@@ -1,49 +1,63 @@
-From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Subject: [PATCH V2 3/3] thermal: exynos: Use the new thermal trend type for quick cooling action.
-Date: Mon, 26 Nov 2012 19:17:20 +0530
-Message-ID: <1353937640-9939-4-git-send-email-amit.kachhap@linaro.org>
-References: <1353937640-9939-1-git-send-email-amit.kachhap@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1353937640-9939-1-git-send-email-amit.kachhap@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@lists.linux-foundation.org, Zhang Rui <rui.zhang@intel.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@linaro.org, jonghwa3.lee@samsung.com
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/3] regulator: add device tree support for max8997
+Date: Mon, 26 Nov 2012 14:11:08 +0000
+Message-ID: <20121126141108.GK9411@opensource.wolfsonmicro.com>
+References: <1353657795-1725-1-git-send-email-thomas.abraham@linaro.org>
+ <1353657795-1725-4-git-send-email-thomas.abraham@linaro.org>
+ <20121124175954.GI4719@opensource.wolfsonmicro.com>
+ <CAJuYYwThsFutYnYg2scmfqUAGxBM2pWmRmoTww+OyZgUuA-7vg@mail.gmail.com>
+ <20121126095141.GC9411@opensource.wolfsonmicro.com>
+ <CAJuYYwTt+1-zU3092GmrK2GHR=5QDGT-diVcm_0pe3=oqhuQdA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rwbb4r/vLufKlfJs"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43392 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752996Ab2KZOLK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Nov 2012 09:11:10 -0500
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwTt+1-zU3092GmrK2GHR=5QDGT-diVcm_0pe3=oqhuQdA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Rajendra Nayak <rnayak@ti.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
 
-This patch uses the quick thermal cooling trend type macros. This is needed
-as exynos5 and other thermal sensors now supports only interrupt method for
-thresold temperature check.
 
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
----
- drivers/thermal/exynos_thermal.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+--rwbb4r/vLufKlfJs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-index 54b3fea..2490901 100644
---- a/drivers/thermal/exynos_thermal.c
-+++ b/drivers/thermal/exynos_thermal.c
-@@ -295,7 +295,7 @@ static int exynos_bind(struct thermal_zone_device *thermal,
- 		case MONITOR_ZONE:
- 		case WARN_ZONE:
- 			if (thermal_zone_bind_cooling_device(thermal, i, cdev,
--								level, level)) {
-+								level, 0)) {
- 				pr_err("error binding cdev inst %d\n", i);
- 				ret = -EINVAL;
- 			}
-@@ -381,9 +381,9 @@ static int exynos_get_trend(struct thermal_zone_device *thermal,
- 		return ret;
- 
- 	if (thermal->temperature >= trip_temp)
--		*trend = THERMAL_TREND_RAISING;
-+		*trend = THERMAL_TREND_RAISE_FULL;
- 	else
--		*trend = THERMAL_TREND_DROPPING;
-+		*trend = THERMAL_TREND_DROP_FULL;
- 
- 	return ret;
- }
--- 
-1.7.1
+On Mon, Nov 26, 2012 at 07:16:04PM +0530, Thomas Abraham wrote:
+
+> and this patch applied cleanly. Could you please let me know if there
+> is anything I need to be doing differently for this.
+
+Hrm, try applying it on the relevant topic branch.  Your comments about
+rebasing on top of MFD changes did suggest that there's something in the
+MFD tree so I didn't check terribly closely.
+
+--rwbb4r/vLufKlfJs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQs3h2AAoJELSic+t+oim9AtgP/10VI9DIlzQbgxCP+Z9lhDAA
+d/yaGwkRUiuwFPZiz/skVJ1kE2FBPiTi/KoMfK5pSjC12cpF/D9HmBF+YdhsUo60
+ykIbJyP5RfB3vuLzXITjPPAxIZ0IUr2AjXXY4ILezVXRxeYyPv3t1uQC0vZ9vJW9
+L528wCgD6ZkwUKjE6ISkKWHhdRjRyhNVBCI4ct9SSqKHWIeAQ4sVAWsLu8U75RZm
+ZtkManT/UcSL7XzDh/G1tg1jsNvTkbtitGHEw26GqBMVW62FcEsJ4WcgOnE8MqID
+zqFdrUoQKGZMbDJjnQAhZw+uXW5WYgj0zAEPnSmkLkOuiqfJB+5UiHrNahyr2gYx
++avRMM/PfF+HWMSS/VKCYd28/0S34ICUDdLLyWc0WqwlnyAkLgOn6NI9ODPjiAG3
+8RlZiNLxQq9og9S8uO/9+lhSr8qvv2X6xWNZtsCWCle+dqT8XQyfsGi//xka80eB
+nWacTF+hNPx2fNuxv2Lecu5CerIq2ZiSw5iGYFvUG1cxG/uVl6voWDmSraYobF4T
+bEzONtpyoStNzf1v1YrEr7XNnkzszCToGPcGmER0vr2qUEfBwHq03FQL67xeM3WI
+y8go8saV6RdjxAxxFTk6hhZAnm1WBO4DTCyq3EbRAmnQIROxoxEG6utgas+yGY/A
+rYPnSUhjLYXgKjwO04cs
+=bmIr
+-----END PGP SIGNATURE-----
+
+--rwbb4r/vLufKlfJs--
