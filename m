@@ -1,71 +1,64 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 3/3] regulator: add device tree support for max8997
-Date: Mon, 26 Nov 2012 14:46:04 +0000
-Message-ID: <20121126144603.GL9411@opensource.wolfsonmicro.com>
-References: <1353657795-1725-1-git-send-email-thomas.abraham@linaro.org>
- <1353657795-1725-4-git-send-email-thomas.abraham@linaro.org>
- <20121124175954.GI4719@opensource.wolfsonmicro.com>
- <CAJuYYwThsFutYnYg2scmfqUAGxBM2pWmRmoTww+OyZgUuA-7vg@mail.gmail.com>
- <20121126095141.GC9411@opensource.wolfsonmicro.com>
- <CAJuYYwTt+1-zU3092GmrK2GHR=5QDGT-diVcm_0pe3=oqhuQdA@mail.gmail.com>
- <20121126141108.GK9411@opensource.wolfsonmicro.com>
- <CAJuYYwRRauS54nt3QxyofqSyKGcJ+T_9tnjGSt60LtGOnP+ccA@mail.gmail.com>
+Subject: Re: [RFC PATCH] ASoC: Samsung: Register the audio platform device
+Date: Mon, 26 Nov 2012 14:49:44 +0000
+Message-ID: <20121126144943.GM9411@opensource.wolfsonmicro.com>
+References: <1352894960-17434-1-git-send-email-padma.v@samsung.com>
+ <1352894960-17434-2-git-send-email-padma.v@samsung.com>
+ <CAAgF-BdHm_VFB-xsZ6kpAu5+9+1yMNVVGM_og+H3QghWQuf8+w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3xQkynibq3FKlJyM"
+	protocol="application/pgp-signature"; boundary="GeONROBiaq1zPAtT"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:58461 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59636 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753440Ab2KZOqH (ORCPT
+	by vger.kernel.org with ESMTP id S1754526Ab2KZOtq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Nov 2012 09:46:07 -0500
+	Mon, 26 Nov 2012 09:49:46 -0500
 Content-Disposition: inline
-In-Reply-To: <CAJuYYwRRauS54nt3QxyofqSyKGcJ+T_9tnjGSt60LtGOnP+ccA@mail.gmail.com>
+In-Reply-To: <CAAgF-BdHm_VFB-xsZ6kpAu5+9+1yMNVVGM_og+H3QghWQuf8+w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Rajendra Nayak <rnayak@ti.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
 
---3xQkynibq3FKlJyM
+--GeONROBiaq1zPAtT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Nov 26, 2012 at 08:13:23PM +0530, Thomas Abraham wrote:
+On Mon, Nov 26, 2012 at 08:15:12PM +0530, Padma Venkat wrote:
+> On Wed, Nov 14, 2012 at 5:39 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
 
-> I tried applying this patch on the max8997 branch in your regulator
-> tree. But this patch does not apply cleanly on that branch because
-> commits "5eb9f2b96381" (regulator: remove use of __devexit_p),
-> "a5023574d120" (regulator: remove use of __devinit) and "8dc995f56ef7"
-> (regulator: remove use of __devexit) are not available on this branch
-> but these commits are already in your for-next branch.
+> > +module_init(smdk_audio_init);
+> > +module_exit(smdk_audio_exit);
 
-> I am not sure if it is of any help in rebasing this patch to the
-> existing max8997 branch. If you could suggest on how I could prepare
-> this patch so that applies cleanly for you, I could do that.
+> Ping. Any comments on this patch?
 
-Send something against the topic branch.
+Don't send contentless pings and delete irrelevant context from replies.
+Please refer to the feedback I sent in response to Sangbeom's pull
+request - in short, this isn't the way to do this - do what the other
+platforms do.
 
---3xQkynibq3FKlJyM
+--GeONROBiaq1zPAtT
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQs4A5AAoJELSic+t+oim9eJUP/02sHdz6EVF5ATwoaPNfHTTi
-OGAq3Aj3cJxHtIEaKEKPs3mlh+eZrs6PsTdz98Sq6h8RgeRiC+grW5gwieLBDFOQ
-jnKte1OnnufLsDZ3FUHM+LQnPTOvarS7SEXDwfty1kZlOGaBEYcFzArLHf7x4ZqB
-n9STQ45DProcWlPOkspTTL752Y3C71drYGHT6MaYjkE7nMed2sIMaFMYp1dF+GC3
-hFcWQb+ztXvR/KAenowhECehDQFIwd09bJmrVljCylTdoCXmvviO/Yr5RCQ7wy0d
-Q+BVsTBIpQpJilRXyk5zZfb1ptTM5nik9Hv8+Qc5i/bGV67aGW2iU51q6SvC7umi
-ns+TDYGRY5pmocRzAZv6LLZXFYEPsuqhJfyg/iaqNM4rNiiuMqQZ3UH/624ISKKJ
-9Gf1ugGdITfNbZoEVwWdm1Eb5jiXbDkQYGKLhOrn/EwVJAIQIWhKAGThu093nuXX
-kr0W9nAm3b7+0W4Zx2MQccMq+RxHXHAm8V9541ziUOAG8BjNj/KuIRvAAfzenw4O
-vd5C2uahpzzC85In5BxdRkzern6UCZVqJr3nat0E3AlMcmil+6jCPCw8eLId+zWC
-2ANtwfUbeepTzOons15fhQohlbmOXKi456p0Wh/4dcsjcbJolWNW7zzeyPRJS4Sn
-MYIXPBQ4qPMOB2Jua1R9
-=KUAP
+iQIcBAEBAgAGBQJQs4F/AAoJELSic+t+oim9sRUP/iajPpRYrQUgv8CWJ+fYKzXi
+FHOHuSlXV1aN/DfSWtREGZVTPPlHo5wN4G67miqJf2vWmdakdMlUOi4sYdIKDmug
+dNP/euAcbosYNS3n7C8GLueI2VAYxmgB1jkEEw+7k/d7lmu5riMpQfupISpxHlbr
+wp4VygWWcVtLmqRAzVqOYucpzV67rpU/fwqKtFZvQ6Icl4nZZwAy55aIGOzaqekc
+ARMdc1MY8r/EqtuoK1za/FKagdVX3kwbiRVOvE1LzCohohCg8RUkmahaDzDmrOjF
+dzO/Y2+2xvNvkrDIRqfzDylKDKJ174f3/liJJPJ84qYK7Qi/VcF1aKBVQH6Wy7cO
+8bUigFrZJri34cNZdfKYZSIEEBmnmnGr06PnuII9QX4MPCmEIZBSdEhLf/6uBbh2
+TKjw050j11Ffgxe9I83mr3BOy0a76PCItGI4/p75gsha+ST2lxEuq1LZKqO1HxXv
+pqZEucfs/ULA3RgNAtJykZBfD2lK8Bx+eYWDpHzoQR7hXIFQnG++SBFwKFpFcv0b
+1DRtpXHFUXzkFEjvihdlKmhCr3DE6YaYf/9q9H9Kvv0AIxISYfjruYmScU6V2CE5
+3aZJ4xKjRSiOTg+ftZijVgexd3H/dIF/ECKcn7VRHnOxJy8vzGmZDBPfI2pwaCRx
+bOmssElZ246BJLHNoeE4
+=jBzo
 -----END PGP SIGNATURE-----
 
---3xQkynibq3FKlJyM--
+--GeONROBiaq1zPAtT--
