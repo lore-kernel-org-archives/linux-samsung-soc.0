@@ -1,144 +1,158 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v4 00/12] iommu/exynos: Fixes and Enhancements of System
-	MMU driver with DT
-Date: Mon, 26 Nov 2012 10:54:17 +0900
-Message-ID: <001b01cdcb78$f2079670$d616c350$%cho@samsung.com>
-References: <002101cdc8a4$fc375990$f4a60cb0$%cho@samsung.com>
-	<112e01cdc951$976699b0$c633cd10$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: 
-Content-language: ko
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: 'Cho KyongHo' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Subash Patel' <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Sanghyun Lee' <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] ARM: Exynos: Remove unused non-dt support for dwmci controller
+Date: Mon, 26 Nov 2012 12:45:55 +0530
+Message-ID: <1353914155-1716-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:39754 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754149Ab2KZGqL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Nov 2012 01:46:11 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0ME300BV21GNM3P0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Nov 2012 15:46:10 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0ME3002IA1GQSS50@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Nov 2012 15:46:10 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, yuvaraj.cd@gmail.com
 
-> -----Original Message-----
-> From: Cho KyongHo [mailto:pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
-> Sent: Monday, November 26, 2012 10:28 AM
-> 
-> > -----Original Message-----
-> > From: Kukjin Kim [mailto:kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
-> > Sent: Friday, November 23, 2012 5:08 PM
-> > Subject: RE: [PATCH v4 00/12] iommu/exynos: Fixes and Enhancements of System MMU driver with DT
-> >
-> > Cho KyongHo wrote:
-> > >
-> > > The current exynos-iommu(System MMU) driver does not work autonomously
-> > > since it is lack of support for power management of peripheral blocks.
-> > > For example, MFC device driver must ensure that its System MMU is disabled
-> > > before MFC block is power-down not to invalidate IOTLB in the System MMU
-> > > when I/O memory mapping is changed. Because A System MMU is resides in the
-> > > same H/W block, access to control registers of System MMU while the H/W
-> > > block is turned off must be prohibited.
-> > >
-> > > This set of changes solves the above problem with setting each System MMUs
-> > > as the parent of the device which owns the System MMU to recieve the
-> > > information when the device is turned off or turned on.
-> > >
-> > > Another big change to the driver is the support for devicetree.
-> > > The bindings for System MMU is described in
-> > > Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
-> > >
-> > > In addition, this patchset also includes several bug fixes and
-> > > enhancements
-> > > of the current driver.
-> > >
-> > > Change log:
-> > > v4:
-> > > - Remove Change-Id from v3 patches
-> > > - Change the order of the third and the first patch
-> > >   Thanks to Kukjin Kim.
-> > > - Fix memory leak when allocating and assigning exynos_iommu_owner to
-> > > client
-> > >   device if the client device has multiple System MMUs.
-> > >   Thanks to Rahul Sharma.
-> > >
-> > > v3:
-> > > - Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
-> > > - Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
-> > >   Thanks to Prathyush.
-> > >
-> > > v2:
-> > > - Split the patch to iommu/exynos into 9 patches
-> > > - Support for System MMU 3.3
-> > > - Some code compaction
-> > >
-> > > Patch summary:
-> > > [PATCH v4 01/12] ARM: EXYNOS: Add clk_ops for gating clocks of System MMU
-> > > [PATCH v4 02/12] ARM: EXYNOS: add System MMU definition to DT
-> > > [PATCH v4 03/12] ARM: EXYNOS: remove system mmu initialization from exynos
-> > > tree
-> > > [PATCH v4 04/12] iommu/exynos: support for device tree
-> > > [PATCH v4 05/12] iommu/exynos: pass version information from DT
-> > > [PATCH v4 06/12] iommu/exynos: allocate lv2 page table from own slab
-> > > [PATCH v4 07/12] iommu/exynos: change rwlock to spinlock
-> > > [PATCH v4 08/12] iommu/exynos: set System MMU as the parent of client
-> > > device
-> > > [PATCH v4 09/12] iommu/exynos: add support for runtime pm and
-> > > suspend/resume
-> > > [PATCH v4 10/12] iommu/exynos: add support for System MMU 3.2 and 3.3
-> > > [PATCH v4 11/12] iommu/exynos: add literal name of System MMU for
-> > > debugging
-> > > [PATCH v4 12/12] iommu/exynos: add debugfs entries for System MMU
-> > >
-> > > Diffstats:
-> > >  .../devicetree/bindings/arm/exynos/system-mmu.txt  |   86 ++
-> > >  arch/arm/boot/dts/exynos4210.dtsi                  |   96 ++
-> > >  arch/arm/boot/dts/exynos4x12.dtsi                  |  124 ++
-> > >  arch/arm/boot/dts/exynos5250.dtsi                  |  147 +-
-> > >  arch/arm/mach-exynos/Kconfig                       |    5 -
-> > >  arch/arm/mach-exynos/Makefile                      |    1 -
-> > >  arch/arm/mach-exynos/clock-exynos4.c               |   41 +-
-> > >  arch/arm/mach-exynos/clock-exynos4210.c            |    9 +-
-> > >  arch/arm/mach-exynos/clock-exynos4212.c            |   23 +-
-> > >  arch/arm/mach-exynos/clock-exynos5.c               |   86 +-
-> > >  arch/arm/mach-exynos/dev-sysmmu.c                  |  274 ----
-> > >  arch/arm/mach-exynos/include/mach/sysmmu.h         |   66 -
-> > >  arch/arm/mach-exynos/mach-exynos4-dt.c             |   34 +
-> > >  arch/arm/mach-exynos/mach-exynos5-dt.c             |   30 +
-> > >  drivers/iommu/Kconfig                              |    2 +-
-> > >  drivers/iommu/exynos-iommu.c                       | 1428
-> > +++++++++++++++-----
-> > >  16 files changed, 1720 insertions(+), 732 deletions(-)
-> >
-> > Looks good to me 1st~3rd patches. After quick review, I think, 1st and 2nd
-> > patches can go to upstream for v3.8 without any dependency. So I will.
-> >
-> > The 3rd patch has a dependency with other driver changes (4th ~ 12th), so it
-> > should be sent to upstream with others.
-> >
-> > BTW since the 3rd patch touches many Samsung stuff in arch/arm/ so I'd
-> > prefer to take it in Samsung tree. If Joerg is ok on iommu/exynos driver
-> > changes for v3.8...
-> >
-> > Joerg, please let me know about iommu/exynos stuff so that I can decide to
-> > take 3rd patch or not for v3.8.
-> >
-> 
-> Hi, Kukjin Kim.
-> 
-> I found that control bit fields of clock gating of System MMU of MFC L/R is inversed.
-> That is reported by Prathyush Kalashwaram.
-> 
-> I will post v5 patchset that solves this.
-> 
+With device tree support enabled for dwmci controller, the unused non-dt support
+for dwmci controller can be removed.
 
-I did not posted v5 patchset.
-Instead, I posted just the fix for the 03/12 patch mentioned above
-as the reply to the 03/12 patch.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/mach-exynos/Makefile             |    1 -
+ arch/arm/mach-exynos/dev-dwmci.c          |   75 -----------------------------
+ arch/arm/mach-exynos/include/mach/dwmci.h |   20 --------
+ 3 files changed, 0 insertions(+), 96 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/dev-dwmci.c
+ delete mode 100644 arch/arm/mach-exynos/include/mach/dwmci.h
 
-Thank you.
-
-Cho KyongHo.
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index c12ed6a..b189881 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -50,7 +50,6 @@ obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
+ obj-y					+= dev-uart.o
+ obj-$(CONFIG_ARCH_EXYNOS4)		+= dev-audio.o
+ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
+-obj-$(CONFIG_EXYNOS4_DEV_DWMCI)		+= dev-dwmci.o
+ obj-$(CONFIG_EXYNOS_DEV_DMA)		+= dma.o
+ obj-$(CONFIG_EXYNOS4_DEV_USB_OHCI)	+= dev-ohci.o
+ obj-$(CONFIG_EXYNOS_DEV_SYSMMU)		+= dev-sysmmu.o
+diff --git a/arch/arm/mach-exynos/dev-dwmci.c b/arch/arm/mach-exynos/dev-dwmci.c
+deleted file mode 100644
+index 7903501..0000000
+--- a/arch/arm/mach-exynos/dev-dwmci.c
++++ /dev/null
+@@ -1,75 +0,0 @@
+-/*
+- * linux/arch/arm/mach-exynos4/dev-dwmci.c
+- *
+- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * Platform device for Synopsys DesignWare Mobile Storage IP
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/platform_device.h>
+-#include <linux/interrupt.h>
+-#include <linux/ioport.h>
+-#include <linux/mmc/dw_mmc.h>
+-
+-#include <plat/devs.h>
+-
+-#include <mach/map.h>
+-
+-static int exynos4_dwmci_get_bus_wd(u32 slot_id)
+-{
+-	return 4;
+-}
+-
+-static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, void *data)
+-{
+-	return 0;
+-}
+-
+-static struct resource exynos4_dwmci_resource[] = {
+-	[0] = DEFINE_RES_MEM(EXYNOS4_PA_DWMCI, SZ_4K),
+-	[1] = DEFINE_RES_IRQ(EXYNOS4_IRQ_DWMCI),
+-};
+-
+-static struct dw_mci_board exynos4_dwci_pdata = {
+-	.num_slots			= 1,
+-	.quirks				= DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
+-	.bus_hz				= 80 * 1000 * 1000,
+-	.detect_delay_ms	= 200,
+-	.init				= exynos4_dwmci_init,
+-	.get_bus_wd			= exynos4_dwmci_get_bus_wd,
+-};
+-
+-static u64 exynos4_dwmci_dmamask = DMA_BIT_MASK(32);
+-
+-struct platform_device exynos4_device_dwmci = {
+-	.name		= "dw_mmc",
+-	.id		= -1,
+-	.num_resources	= ARRAY_SIZE(exynos4_dwmci_resource),
+-	.resource	= exynos4_dwmci_resource,
+-	.dev		= {
+-		.dma_mask		= &exynos4_dwmci_dmamask,
+-		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-		.platform_data	= &exynos4_dwci_pdata,
+-	},
+-};
+-
+-void __init exynos4_dwmci_set_platdata(struct dw_mci_board *pd)
+-{
+-	struct dw_mci_board *npd;
+-
+-	npd = s3c_set_platdata(pd, sizeof(struct dw_mci_board),
+-			&exynos4_device_dwmci);
+-
+-	if (!npd->init)
+-		npd->init = exynos4_dwmci_init;
+-	if (!npd->get_bus_wd)
+-		npd->get_bus_wd = exynos4_dwmci_get_bus_wd;
+-}
+diff --git a/arch/arm/mach-exynos/include/mach/dwmci.h b/arch/arm/mach-exynos/include/mach/dwmci.h
+deleted file mode 100644
+index 7ce6574..0000000
+--- a/arch/arm/mach-exynos/include/mach/dwmci.h
++++ /dev/null
+@@ -1,20 +0,0 @@
+-/* linux/arch/arm/mach-exynos4/include/mach/dwmci.h
+- *
+- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com/
+- *
+- * Synopsys DesignWare Mobile Storage for EXYNOS4210
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#ifndef __ASM_ARM_ARCH_DWMCI_H
+-#define __ASM_ARM_ARCH_DWMCI_H __FILE__
+-
+-#include <linux/mmc/dw_mmc.h>
+-
+-extern void exynos4_dwmci_set_platdata(struct dw_mci_board *pd);
+-
+-#endif /* __ASM_ARM_ARCH_DWMCI_H */
+-- 
+1.7.5.4
