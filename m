@@ -1,223 +1,50 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [RFC 1/2] ARM: S3C24XX: add devicetree support for interrupts
-Date: Mon, 26 Nov 2012 20:53:00 +0530
-Message-ID: <CAJuYYwSi=5rbARhmrL5J-58LwraERHRmLs9B9X+110ZGBb9iBA@mail.gmail.com>
-References: <201211250145.21226.heiko@sntech.de>
-	<201211250147.42164.heiko@sntech.de>
-	<CAJuYYwR=4_bRvXqFxT56Bsv27A09xLR3Ps3D5kTdHf0G=Jj_Rg@mail.gmail.com>
-	<201211261313.28307.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH] ARM: SAMSUNG: Fix build of I2S driver
+Date: Mon, 26 Nov 2012 15:40:20 +0000
+Message-ID: <1353944420-3972-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:33365 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755058Ab2KZPXB convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:57625 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755295Ab2KZPka (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Nov 2012 10:23:01 -0500
-Received: by mail-ie0-f174.google.com with SMTP id k11so6465443iea.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Nov 2012 07:23:00 -0800 (PST)
-In-Reply-To: <201211261313.28307.heiko@sntech.de>
+	Mon, 26 Nov 2012 10:40:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On 26 November 2012 17:43, Heiko St=FCbner <heiko@sntech.de> wrote:
-> Hi Thomas,
->
-> Am Montag, 26. November 2012, 12:03:22 schrieb Thomas Abraham:
->> Hi Heiko,
->>
->> On 25 November 2012 06:17, Heiko St=FCbner <heiko@sntech.de> wrote:
->> > This adds devicetree parsing of the controller-data for the
->> > interrupt controllers on S3C24XX architectures.
->> >
->> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->> > ---
->> >
->> >  .../interrupt-controller/samsung,s3c24xx-irq.txt   |   57 ++++++
->> >  arch/arm/mach-s3c24xx/common.h                     |    1 +
->> >  arch/arm/plat-s3c24xx/irq.c                        |  197
->> >  ++++++++++++++++++++ 3 files changed, 255 insertions(+), 0 deleti=
-ons(-)
->> >  create mode 100644
->> >  Documentation/devicetree/bindings/interrupt-controller/samsung,s3=
-c24xx-
->> >  irq.txt
->> >
->> > diff --git
->> > a/Documentation/devicetree/bindings/interrupt-controller/samsung,s=
-3c24xx
->> > -irq.txt
->> > b/Documentation/devicetree/bindings/interrupt-controller/samsung,s=
-3c24xx
->> > -irq.txt new file mode 100644
->> > index 0000000..c637637
->> > --- /dev/null
->> > +++
->> > b/Documentation/devicetree/bindings/interrupt-controller/samsung,s=
-3c24xx
->> > -irq.txt @@ -0,0 +1,57 @@
->> > +Samsung S3C24XX Interrupt Controllers
->> > +
->> > +The S3C24XX SoCs contain custom set of interrupt controllers prov=
-iding a
->> > +varying number of interrupt sources.
->> > +
->> > +The set consists of a main- and a sub-controller as well as a con=
-troller
->> > +for the external interrupts and on newer SoCs even a second main
->> > controller. +
->> > +The bit-to-interrupt and parent mapping of the controllers is not=
- fixed
->> > +over all SoCs and therefore must be defined in the controller
->> > description. +
->> > +Required properties:
->> > +- compatible: Compatible property value should be "samsung,s3c24x=
-x-irq".
->> > +
->> > +- reg: Physical base address of the controller and length of memo=
-ry
->> > mapped +  region.
->> > +
->> > +- interrupt-controller : Identifies the node as an interrupt cont=
-roller
->> > +- #interrupt-cells : Specifies the number of cells needed to enco=
-de an
->> > +  interrupt source. The value shall be 2.
->> > +
->> > +- s3c24xx,irqlist : List of irqtypes found on this controller as
->> > +  two-value pairs consisting of irqtype and parent-irq
->> > +
->> > +  parent-irq is always the list position of the irq in the irqlis=
-t
->> > +  of the parent controller (0..31)
->> > +
->> > +  irqtypes are:
->> > +  - 0 .. none
->> > +  - 1 .. external interrupts in the main register (GPF0 .. GPF3)
->> > +  - 2 .. edge irq in the main register
->> > +  - 3 .. for parent-irqs, that have sub-irqs in child controllers
->> > +  - 4 .. level irqs in the sub-register
->> > +  - 5 .. edge irqs in the sub-register
->> > +  - 6 .. external irqs in the external irq register (starting wit=
-h GPF4)
->> > +  - 7 .. irq in the second base irq controller of S3C2416/S3C2450=
- SoCs
->>
->> Instead of defining the type of interrupt controller as above, is it
->> possible to create multiple device nodes, with each node representin=
-g
->> a type of interrupt controller with a unique compatible string and
->> corresponding properties. There will be a init function for each typ=
-e
->> of interrupt controller. There should be a irq-domain for each of
->> these different types of interrupt controller. And then, in the devi=
-ce
->> tree source file, a proper tree like hierarchy of interrupt
->> controllers can defined (using the interrupt-parent property for eac=
-h
->> controller node). The client nodes that generate the interrupt can
->> specify the parent node and the interrupt number within the parent t=
-o
->> which they generate the interrupt.
->
-> I'm not sure I understand yet :-). The list describes the types of in=
-terrupts
-> inside the individual controllers.
->
-> On all the s3c24xx we have three register sets denoting the main (SRC=
-PND,
-> INTPND, INTMSK), sub (SUBSRCPEND, INTSUBMASK) and extint (EINTPEND, E=
-INTMASK)
-> controllers. The bits of these registers are used for quite different=
- irqs.
+Commit 48a2050d36f0da5a7d22e3bd7dbf3bf8a5a538bc (ARM: SAMSUNG: Delete
+the unnecessary variable) removed the src_clk field from the platform
+data header for the I2S driver without a corresponding change having
+been made in the I2S driver to stop using the field, causing build
+breaks.
 
-We could consider main, sub and extint as three separate interrupt
-controllers and thus three different nodes in device tree. So the
-interrupt nodes could be something like (referring to 2416 manual).
+This change should not be being made independently of removal of the
+uses of the field since it will cause build failures in any tree where
+it has been merged but the removals have not been merged.  Currently
+the removal of the users in the ASoC driver has not been merged.
 
-     main@0x4a000000 {
-            compatible =3D "samsung,s3c2410-main";
-            reg =3D <0x4a000000 0x100>;
-            interrupt-controller;
-            #interrupt-cells =3D <2>;
-     };
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ include/linux/platform_data/asoc-s3c.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-     sub@0x4a001000 {
-            compatible =3D "samsung,s3c2410-sub";
-            reg =3D <0x4a001000 0x100>;
-            interrupt-controller;
-            #interrupt-cells =3D <2>;
-            interrupt-parent =3D <&main>;
-            interrupts =3D <28 0>, <23 0>, <.....  /*uart0/uart1/..*/
-     };
-
-     eint@0x4a002000 {
-            compatible =3D "samsung,s3c2410-eint";
-            reg =3D <0x4a002000 0x100>;
-            interrupt-controller;
-            #interrupt-cells =3D <2>;
-            interrupt-parent =3D <&main>;
-            interrupts =3D <0 0>, <1 0>,
-                              <2 0>, <3 0>,
-                              <4 0>, <5 0>;
-     };
-
-There should be a corresponding irqchip driver code to handle each of
-these types of controllers. They should have their own irq-domain
-supported.
-
-Then the client nodes can specify the interrupt parent and interrupt
-number. For example, the uart node would be
-
-       uart@50000000 {
-            compatible =3D "samsung,s3c2410-uart";
-            reg =3D <0x50000000 0x100>;
-            interrupt-parent =3D <&sub>;
-            interrupts =3D <0 0>, <1 0>, <2 0>; /*tx/rx/err*/
-       };
-
-> For example is bit 17 of the main register set used as DMA0 on earlie=
-r socs
-> while the dma interrupts moved to the subint registers for s3c2443 an=
-d later.
-
-Writing the nodes with the correct interrupt parent and the interrupt
-number should take care of this.
-
->
-> So the entries in the irqlist describe the needed handlers for the hw=
-irq bits
-> of the indidual controllers. So in this scheme you set for dt-devices=
- the
-> interrupt parent to the correct register set and the interrupts field=
- then
-> matches the bit of the register, according to the datasheet.
->
-> When I changed the basic interrupt handling in the previous set, the =
-changed
-> irq.c can for exmaple be found on [0], I created these lists in the c=
-ode and
-> soc specific routines to init them for the still valid non-dt case.
->
-> But as dt is about describing the hardware, I found the current solut=
-ion nice,
-> because will I only need exactly one dt-init-function for all s3c24xx=
--socs,
-> instead of representing all the slight variances in code.
->
-> I'm definitly not sure if all the different types of individual irq h=
-andlers
-> are strictly necessary yet, but they represent all the variants that =
-were in
-> use in the original code.
-
-I have brought up this point just for discussion. You could choose the
-implementation that you prefer. I understand that implementing with
-different interrupt controller nodes might require lot of code
-changes.
-
-Thanks,
-Thomas.
+diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
+index 8827259..aa9875f 100644
+--- a/include/linux/platform_data/asoc-s3c.h
++++ b/include/linux/platform_data/asoc-s3c.h
+@@ -38,6 +38,12 @@ struct samsung_i2s {
+ #define QUIRK_NEED_RSTCLR	(1 << 3)
+ 	/* Quirks of the I2S controller */
+ 	u32 quirks;
++
++	/*
++	 * Array of clock names that can be used to generate I2S signals.
++	 * Also corresponds to clocks of I2SMOD[10]
++	 */
++	const char **src_clk;
+ 	dma_addr_t idma_addr;
+ };
+ 
+-- 
+1.7.10.4
