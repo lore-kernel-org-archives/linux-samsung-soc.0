@@ -1,7 +1,7 @@
 From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/3] ARM: exynos5: Add gate clocks for HS-I2C
-Date: Tue, 27 Nov 2012 18:30:35 +0530
-Message-ID: <1354021236-28596-3-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 3/3] arm: exynos5: Add HS-I2C device tree platform information
+Date: Tue, 27 Nov 2012 18:30:36 +0530
+Message-ID: <1354021236-28596-4-git-send-email-ch.naveen@samsung.com>
 References: <1354021236-28596-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1354021236-28596-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -10,43 +10,84 @@ To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sa
 Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adds clock gating bits for High Speed I2C channels 0, 1, 2 and 3.
+This patch adds HS-I2C device tree platform information in
+exynos5.dtsi and exynos5-smdk5250.
 
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-exynos/clock-exynos5.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 +++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi         |   32 +++++++++++++++++++++++++++++
+ 2 files changed, 48 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 2d3057b..37c6104 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -781,6 +781,26 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.enable		= exynos5_clk_ip_peric_ctrl,
- 		.ctrlbit	= (1 << 26),
- 	}, {
-+		.name		= "hsi2c",
-+		.devname	= "exynos5-hs-i2c.0",
-+		.enable		= exynos5_clk_ip_peric_ctrl,
-+		.ctrlbit	= (1 << 28),
-+	}, {
-+		.name		= "hsi2c",
-+		.devname	= "exynos5-hs-i2c.1",
-+		.enable		= exynos5_clk_ip_peric_ctrl,
-+		.ctrlbit	= (1 << 29),
-+	}, {
-+		.name		= "hsi2c",
-+		.devname	= "exynos5-hs-i2c.2",
-+		.enable		= exynos5_clk_ip_peric_ctrl,
-+		.ctrlbit	= (1 << 30),
-+	}, {
-+		.name		= "hsi2c",
-+		.devname	= "exynos5-hs-i2c.3",
-+		.enable		= exynos5_clk_ip_peric_ctrl,
-+		.ctrlbit	= (1 << 31),
-+	}, {
- 		.name		= "ac97",
- 		.devname	= "samsung-ac97",
- 		.enable		= exynos5_clk_ip_peric_ctrl,
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index fc37e19..4e22b84 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -161,6 +161,22 @@
+ 		};
+ 	};
+ 
++	hsi2c@12C50000 {
++		status = "disabled";
++	};
++
++	hsi2c@12D00000 {
++		status = "disabled";
++	};
++
++	hsi2c@12D50000 {
++		status = "disabled";
++	};
++
++	hsi2c@12DE0000 {
++		status = "disabled";
++	};
++
+ 	dwmmc_0: dwmmc0@12200000 {
+ 		num-slots = <1>;
+ 		supports-highspeed;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index a42b02b0..276ecb3 100755
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -182,6 +182,38 @@
+ 		#size-cells = <0>;
+ 	};
+ 
++	hsi2c@12C50000 {
++		compatible = "samsung,exynos5-hs-i2c";
++		reg = <0x12C50000 0x1000>;
++		interrupts = <0 56 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++
++	hsi2c@12D00000 {
++		compatible = "samsung,exynos5-hs-i2c";
++		reg = <0x12D00000 0x1000>;
++		interrupts = <0 57 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++
++	hsi2c@12D50000 {
++		compatible = "samsung,exynos5-hs-i2c";
++		reg = <0x12D50000 0x1000>;
++		interrupts = <0 58 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++
++	hsi2c@12DE0000 {
++		compatible = "samsung,exynos5-hs-i2c";
++		reg = <0x12DE0000 0x1000>;
++		interrupts = <0 59 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++
+ 	spi_0: spi@12d20000 {
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x12d20000 0x100>;
 -- 
 1.7.9.5
