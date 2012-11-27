@@ -1,192 +1,309 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] ARM: Exynos: Remove unused non-dt support for dwmci controller
-Date: Tue, 27 Nov 2012 10:37:53 +0530
-Message-ID: <CAJuYYwQqgVbDYEDGwgu0FXe46j4CrxpiDPhWzdjNgfo+3rU1rQ@mail.gmail.com>
-References: <1353914155-1716-1-git-send-email-thomas.abraham@linaro.org>
-	<CAH9JG2X_=Vr=52BY=vjZVtf9fzSox2KMjXGr0U4uAJu6MHjwQw@mail.gmail.com>
+Subject: Re: [RFC 1/2] ARM: S3C24XX: add devicetree support for interrupts
+Date: Tue, 27 Nov 2012 11:42:52 +0530
+Message-ID: <CAJuYYwTre+cU0mgJExON2-+1fREyL3LgdqJ4NbC8zG+03yxptA@mail.gmail.com>
+References: <201211250145.21226.heiko@sntech.de>
+	<201211261313.28307.heiko@sntech.de>
+	<CAJuYYwSi=5rbARhmrL5J-58LwraERHRmLs9B9X+110ZGBb9iBA@mail.gmail.com>
+	<201211261704.09273.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:60637 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750771Ab2K0FHy (ORCPT
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:58203 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753497Ab2K0GMx convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Nov 2012 00:07:54 -0500
-Received: by mail-vb0-f46.google.com with SMTP id ff1so6473413vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Nov 2012 21:07:54 -0800 (PST)
-In-Reply-To: <CAH9JG2X_=Vr=52BY=vjZVtf9fzSox2KMjXGr0U4uAJu6MHjwQw@mail.gmail.com>
+	Tue, 27 Nov 2012 01:12:53 -0500
+Received: by mail-ie0-f174.google.com with SMTP id k11so7687723iea.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Nov 2012 22:12:52 -0800 (PST)
+In-Reply-To: <201211261704.09273.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tgih.jun@samsung.com, jh80.chung@samsung.com, yuvaraj.cd@gmail.com, girish.shivananjappa@linaro.org, linux-arm-kernel@lists.infradead.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Mr. Park,
-
-On 26 November 2012 16:57, Kyungmin Park <kmpark@infradead.org> wrote:
-> On 11/26/12, Thomas Abraham <thomas.abraham@linaro.org> wrote:
->> With device tree support enabled for dwmci controller, the unused non-dt
->> support
->> for dwmci controller can be removed.
+On 26 November 2012 21:34, Heiko St=FCbner <heiko@sntech.de> wrote:
+> Hi Thomas,
 >
-> Are there no problem to use legacy board? e.g., universal_c210.
-
-The objective of this patch was to reduce the gap that mach-exynos has
-to participate in multi-platform kernel builds. It is difficult to
-reduce this gap if we continue to add further non-dt support to
-existing not-dt (legacy) board files. Exynos5 is fully dt-enabled now
-and all further additions to mach-exynos will be/should be dt-only
+> Am Montag, 26. November 2012, 16:23:00 schrieb Thomas Abraham:
+>> On 26 November 2012 17:43, Heiko St=FCbner <heiko@sntech.de> wrote:
+>> > Hi Thomas,
+>> >
+>> > Am Montag, 26. November 2012, 12:03:22 schrieb Thomas Abraham:
+>> >> Hi Heiko,
+>> >>
+>> >> On 25 November 2012 06:17, Heiko St=FCbner <heiko@sntech.de> wrot=
+e:
+>> >> > This adds devicetree parsing of the controller-data for the
+>> >> > interrupt controllers on S3C24XX architectures.
+>> >> >
+>> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>> >> > ---
+>> >> >
+>> >> >  .../interrupt-controller/samsung,s3c24xx-irq.txt   |   57 ++++=
+++
+>> >> >  arch/arm/mach-s3c24xx/common.h                     |    1 +
+>> >> >  arch/arm/plat-s3c24xx/irq.c                        |  197
+>> >> >  ++++++++++++++++++++ 3 files changed, 255 insertions(+), 0
+>> >> >  deletions(-) create mode 100644
+>> >> >  Documentation/devicetree/bindings/interrupt-controller/samsung=
+,s3c24x
+>> >> >  x- irq.txt
+>> >> >
+>> >> > diff --git
+>> >> > a/Documentation/devicetree/bindings/interrupt-controller/samsun=
+g,s3c24
+>> >> > xx -irq.txt
+>> >> > b/Documentation/devicetree/bindings/interrupt-controller/samsun=
+g,s3c24
+>> >> > xx -irq.txt new file mode 100644
+>> >> > index 0000000..c637637
+>> >> > --- /dev/null
+>> >> > +++
+>> >> > b/Documentation/devicetree/bindings/interrupt-controller/samsun=
+g,s3c24
+>> >> > xx -irq.txt @@ -0,0 +1,57 @@
+>> >> > +Samsung S3C24XX Interrupt Controllers
+>> >> > +
+>> >> > +The S3C24XX SoCs contain custom set of interrupt controllers
+>> >> > providing a +varying number of interrupt sources.
+>> >> > +
+>> >> > +The set consists of a main- and a sub-controller as well as a
+>> >> > controller +for the external interrupts and on newer SoCs even =
+a
+>> >> > second main controller. +
+>> >> > +The bit-to-interrupt and parent mapping of the controllers is =
+not
+>> >> > fixed +over all SoCs and therefore must be defined in the contr=
+oller
+>> >> > description. +
+>> >> > +Required properties:
+>> >> > +- compatible: Compatible property value should be
+>> >> > "samsung,s3c24xx-irq". +
+>> >> > +- reg: Physical base address of the controller and length of m=
+emory
+>> >> > mapped +  region.
+>> >> > +
+>> >> > +- interrupt-controller : Identifies the node as an interrupt
+>> >> > controller +- #interrupt-cells : Specifies the number of cells =
+needed
+>> >> > to encode an +  interrupt source. The value shall be 2.
+>> >> > +
+>> >> > +- s3c24xx,irqlist : List of irqtypes found on this controller =
+as
+>> >> > +  two-value pairs consisting of irqtype and parent-irq
+>> >> > +
+>> >> > +  parent-irq is always the list position of the irq in the irq=
+list
+>> >> > +  of the parent controller (0..31)
+>> >> > +
+>> >> > +  irqtypes are:
+>> >> > +  - 0 .. none
+>> >> > +  - 1 .. external interrupts in the main register (GPF0 .. GPF=
+3)
+>> >> > +  - 2 .. edge irq in the main register
+>> >> > +  - 3 .. for parent-irqs, that have sub-irqs in child controll=
+ers
+>> >> > +  - 4 .. level irqs in the sub-register
+>> >> > +  - 5 .. edge irqs in the sub-register
+>> >> > +  - 6 .. external irqs in the external irq register (starting =
+with
+>> >> > GPF4) +  - 7 .. irq in the second base irq controller of
+>> >> > S3C2416/S3C2450 SoCs
+>> >>
+>> >> Instead of defining the type of interrupt controller as above, is=
+ it
+>> >> possible to create multiple device nodes, with each node represen=
+ting
+>> >> a type of interrupt controller with a unique compatible string an=
+d
+>> >> corresponding properties. There will be a init function for each =
+type
+>> >> of interrupt controller. There should be a irq-domain for each of
+>> >> these different types of interrupt controller. And then, in the d=
+evice
+>> >> tree source file, a proper tree like hierarchy of interrupt
+>> >> controllers can defined (using the interrupt-parent property for =
+each
+>> >> controller node). The client nodes that generate the interrupt ca=
+n
+>> >> specify the parent node and the interrupt number within the paren=
+t to
+>> >> which they generate the interrupt.
+>> >
+>> > I'm not sure I understand yet :-). The list describes the types of
+>> > interrupts inside the individual controllers.
+>> >
+>> > On all the s3c24xx we have three register sets denoting the main (=
+SRCPND,
+>> > INTPND, INTMSK), sub (SUBSRCPEND, INTSUBMASK) and extint (EINTPEND=
+,
+>> > EINTMASK) controllers. The bits of these registers are used for qu=
+ite
+>> > different irqs.
+>>
+>> We could consider main, sub and extint as three separate interrupt
+>> controllers and thus three different nodes in device tree. So the
+>> interrupt nodes could be something like (referring to 2416 manual).
+>>
+>>      main@0x4a000000 {
+>>             compatible =3D "samsung,s3c2410-main";
+>>             reg =3D <0x4a000000 0x100>;
+>>             interrupt-controller;
+>>             #interrupt-cells =3D <2>;
+>>      };
+>>
+>>      sub@0x4a001000 {
+>>             compatible =3D "samsung,s3c2410-sub";
+>>             reg =3D <0x4a001000 0x100>;
+>>             interrupt-controller;
+>>             #interrupt-cells =3D <2>;
+>>             interrupt-parent =3D <&main>;
+>>             interrupts =3D <28 0>, <23 0>, <.....  /*uart0/uart1/..*=
+/
+>>      };
+>>
+>>      eint@0x4a002000 {
+>>             compatible =3D "samsung,s3c2410-eint";
+>>             reg =3D <0x4a002000 0x100>;
+>>             interrupt-controller;
+>>             #interrupt-cells =3D <2>;
+>>             interrupt-parent =3D <&main>;
+>>             interrupts =3D <0 0>, <1 0>,
+>>                               <2 0>, <3 0>,
+>>                               <4 0>, <5 0>;
+>>      };
+>>
+>> There should be a corresponding irqchip driver code to handle each o=
+f
+>> these types of controllers. They should have their own irq-domain
+>> supported.
+>>
+>> Then the client nodes can specify the interrupt parent and interrupt
+>> number. For example, the uart node would be
+>>
+>>        uart@50000000 {
+>>             compatible =3D "samsung,s3c2410-uart";
+>>             reg =3D <0x50000000 0x100>;
+>>             interrupt-parent =3D <&sub>;
+>>             interrupts =3D <0 0>, <1 0>, <2 0>; /*tx/rx/err*/
+>>        };
+>>
+>> > For example is bit 17 of the main register set used as DMA0 on ear=
+lier
+>> > socs while the dma interrupts moved to the subint registers for s3=
+c2443
+>> > and later.
+>>
+>> Writing the nodes with the correct interrupt parent and the interrup=
+t
+>> number should take care of this.
+>>
+>> > So the entries in the irqlist describe the needed handlers for the=
+ hwirq
+>> > bits of the indidual controllers. So in this scheme you set for
+>> > dt-devices the interrupt parent to the correct register set and th=
+e
+>> > interrupts field then matches the bit of the register, according t=
+o the
+>> > datasheet.
+>> >
+>> > When I changed the basic interrupt handling in the previous set, t=
+he
+>> > changed irq.c can for exmaple be found on [0], I created these lis=
+ts in
+>> > the code and soc specific routines to init them for the still vali=
+d
+>> > non-dt case.
+>> >
+>> > But as dt is about describing the hardware, I found the current so=
+lution
+>> > nice, because will I only need exactly one dt-init-function for al=
+l
+>> > s3c24xx-socs, instead of representing all the slight variances in =
 code.
+>> >
+>> > I'm definitly not sure if all the different types of individual ir=
+q
+>> > handlers are strictly necessary yet, but they represent all the va=
+riants
+>> > that were in use in the original code.
+>>
+>> I have brought up this point just for discussion. You could choose t=
+he
+>> implementation that you prefer. I understand that implementing with
+>> different interrupt controller nodes might require lot of code
+>> changes.
+>
+> first of all, thanks for the feedback. Working on this is like moving=
+ in a fog
+> where I don't really see where I'm going - so I don't claim to be rig=
+ht.
 
-So what is currently holding us back in letting mach-exynos
-participate in multi-platform kernel builds is the mainly the four
-legacy board files (origen, smdkv310, nuri and universal) and
-hopefully there will be some efforts towards getting them dt-enabled.
-I understand that there is lot of work here to do but we have to start
-somewhere.
+>
+>
+> But somehow I have the feeling we're talking about similar things her=
+e :-)
+>
+> If you look in the second patch, you'll see that there are already th=
+e three
+> (or 4 in the case of the s3c2416) interrupt controllers defined [intc=
+,
+> subintc, extintc]. But as they contain the data of their individual i=
+nterrupts
+> inside the devicetree definitions, they don't need individual init fu=
+nctions
+> but only one which constructs the interrupt data out of the list prov=
+ided.
+>
+> The real list for a platform in the second patch might also help in s=
+howing
+> why this list was necessary.
+
+Ok, I had not looked at the second patch carefully enough. There are
+four interrupt controller nodes but I am still not sure if the
+bindings for those nodes are correct. The question here is, did we
+design the binding to suit a specific linux implementation of the
+interrupt controller. Ideally, the bindings should just be enough to
+explain the interconnection between the interrupt controller and the
+client devices. And should be OS agnostic as much as possible. The
+seven irqtypes in the binding definition seems to suggest that we are
+encoding a software defined abstraction into the binding, which does
+not seem right.
+
+>
+> The basic problem is, that each individual interrupt inside one of th=
+e
+> controllers might need a different handler and access a specific pare=
+nt
+> interrupt. For example the uart0-rx,tx,err interrupts in the subintc =
+must
+> ack/mask the uart0 interrupt in the main intc; similar for a lot of o=
+ther
+> interrupts. And the s3c24xx,irqlist provides this mapping to handler =
+and
+> parent, so it does not need to be codified.
+
+I believe the three node example that I listed above should be able to
+handle this, but yes, it might require additional code to support it.
+=46or example, the uart device node has listed three interrupts. The
+uart controller drivers can register three separate interrupt handlers
+for these interrupts. As far as the interrupt handling for 'main'
+controller, I see that this is very similar to the way interrupt
+combiner module has been coded for exynos soc's. So the combiner
+interrupt controller code in mach-exynos/common.c file can be used a
+reference on how this can be handled.
+
+>
+> And of course the second problem this approach should solve is, that =
+the
+> interrupts in the controllers differ and also move between most of th=
+e s3c24xx
+> sub-architectures.
+
+Yes, I understand how difficult it can get while writing a generalized
+code for all soc's in s3c24xx family.
 
 Thanks,
 Thomas.
-
->
->>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->>  arch/arm/mach-exynos/Makefile             |    1 -
->>  arch/arm/mach-exynos/dev-dwmci.c          |   75
->> -----------------------------
->>  arch/arm/mach-exynos/include/mach/dwmci.h |   20 --------
->>  3 files changed, 0 insertions(+), 96 deletions(-)
->>  delete mode 100644 arch/arm/mach-exynos/dev-dwmci.c
->>  delete mode 100644 arch/arm/mach-exynos/include/mach/dwmci.h
->>
->> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
->> index c12ed6a..b189881 100644
->> --- a/arch/arm/mach-exynos/Makefile
->> +++ b/arch/arm/mach-exynos/Makefile
->> @@ -50,7 +50,6 @@ obj-$(CONFIG_MACH_EXYNOS5_DT)               += mach-exynos5-dt.o
->>  obj-y                                        += dev-uart.o
->>  obj-$(CONFIG_ARCH_EXYNOS4)           += dev-audio.o
->>  obj-$(CONFIG_EXYNOS4_DEV_AHCI)               += dev-ahci.o
->> -obj-$(CONFIG_EXYNOS4_DEV_DWMCI)              += dev-dwmci.o
->>  obj-$(CONFIG_EXYNOS_DEV_DMA)         += dma.o
->>  obj-$(CONFIG_EXYNOS4_DEV_USB_OHCI)   += dev-ohci.o
->>  obj-$(CONFIG_EXYNOS_DEV_SYSMMU)              += dev-sysmmu.o
->> diff --git a/arch/arm/mach-exynos/dev-dwmci.c
->> b/arch/arm/mach-exynos/dev-dwmci.c
->> deleted file mode 100644
->> index 7903501..0000000
->> --- a/arch/arm/mach-exynos/dev-dwmci.c
->> +++ /dev/null
->> @@ -1,75 +0,0 @@
->> -/*
->> - * linux/arch/arm/mach-exynos4/dev-dwmci.c
->> - *
->> - * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->> - *           http://www.samsung.com
->> - *
->> - * Platform device for Synopsys DesignWare Mobile Storage IP
->> - *
->> - * This program is free software; you can redistribute it and/or modify
->> - * it under the terms of the GNU General Public License as published by
->> - * the Free Software Foundation; either version 2 of the License, or
->> - * (at your option) any later version.
->> - */
->> -
->> -#include <linux/kernel.h>
->> -#include <linux/dma-mapping.h>
->> -#include <linux/platform_device.h>
->> -#include <linux/interrupt.h>
->> -#include <linux/ioport.h>
->> -#include <linux/mmc/dw_mmc.h>
->> -
->> -#include <plat/devs.h>
->> -
->> -#include <mach/map.h>
->> -
->> -static int exynos4_dwmci_get_bus_wd(u32 slot_id)
->> -{
->> -     return 4;
->> -}
->> -
->> -static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, void
->> *data)
->> -{
->> -     return 0;
->> -}
->> -
->> -static struct resource exynos4_dwmci_resource[] = {
->> -     [0] = DEFINE_RES_MEM(EXYNOS4_PA_DWMCI, SZ_4K),
->> -     [1] = DEFINE_RES_IRQ(EXYNOS4_IRQ_DWMCI),
->> -};
->> -
->> -static struct dw_mci_board exynos4_dwci_pdata = {
->> -     .num_slots                      = 1,
->> -     .quirks                         = DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
->> -     .bus_hz                         = 80 * 1000 * 1000,
->> -     .detect_delay_ms        = 200,
->> -     .init                           = exynos4_dwmci_init,
->> -     .get_bus_wd                     = exynos4_dwmci_get_bus_wd,
->> -};
->> -
->> -static u64 exynos4_dwmci_dmamask = DMA_BIT_MASK(32);
->> -
->> -struct platform_device exynos4_device_dwmci = {
->> -     .name           = "dw_mmc",
->> -     .id             = -1,
->> -     .num_resources  = ARRAY_SIZE(exynos4_dwmci_resource),
->> -     .resource       = exynos4_dwmci_resource,
->> -     .dev            = {
->> -             .dma_mask               = &exynos4_dwmci_dmamask,
->> -             .coherent_dma_mask      = DMA_BIT_MASK(32),
->> -             .platform_data  = &exynos4_dwci_pdata,
->> -     },
->> -};
->> -
->> -void __init exynos4_dwmci_set_platdata(struct dw_mci_board *pd)
->> -{
->> -     struct dw_mci_board *npd;
->> -
->> -     npd = s3c_set_platdata(pd, sizeof(struct dw_mci_board),
->> -                     &exynos4_device_dwmci);
->> -
->> -     if (!npd->init)
->> -             npd->init = exynos4_dwmci_init;
->> -     if (!npd->get_bus_wd)
->> -             npd->get_bus_wd = exynos4_dwmci_get_bus_wd;
->> -}
->> diff --git a/arch/arm/mach-exynos/include/mach/dwmci.h
->> b/arch/arm/mach-exynos/include/mach/dwmci.h
->> deleted file mode 100644
->> index 7ce6574..0000000
->> --- a/arch/arm/mach-exynos/include/mach/dwmci.h
->> +++ /dev/null
->> @@ -1,20 +0,0 @@
->> -/* linux/arch/arm/mach-exynos4/include/mach/dwmci.h
->> - *
->> - * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->> - *           http://www.samsung.com/
->> - *
->> - * Synopsys DesignWare Mobile Storage for EXYNOS4210
->> - *
->> - * This program is free software; you can redistribute it and/or modify
->> - * it under the terms of the GNU General Public License version 2 as
->> - * published by the Free Software Foundation.
->> - */
->> -
->> -#ifndef __ASM_ARM_ARCH_DWMCI_H
->> -#define __ASM_ARM_ARCH_DWMCI_H __FILE__
->> -
->> -#include <linux/mmc/dw_mmc.h>
->> -
->> -extern void exynos4_dwmci_set_platdata(struct dw_mci_board *pd);
->> -
->> -#endif /* __ASM_ARM_ARCH_DWMCI_H */
->> --
->> 1.7.5.4
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
