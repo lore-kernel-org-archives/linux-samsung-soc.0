@@ -1,85 +1,50 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH] ARM: EXYNOS: Avoid early use of of_machine_is_compatible()
-Date: Tue, 27 Nov 2012 11:53:14 -0800
-Message-ID: <1354045994-8977-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ye0-f202.google.com ([209.85.213.202]:43674 "EHLO
-	mail-ye0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754474Ab2K0Ty1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Nov 2012 14:54:27 -0500
-Received: by mail-ye0-f202.google.com with SMTP id m11so866175yen.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Nov 2012 11:54:26 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] regulator: add device tree support for max8997
+Date: Tue, 27 Nov 2012 20:05:44 +0000
+Message-ID: <20121127200543.GK4468@opensource.wolfsonmicro.com>
+References: <20121126144603.GL9411@opensource.wolfsonmicro.com>
+ <1354005272-24214-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9JSHP372f+2dzJ8X"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1354005272-24214-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Rajendra Nayak <rnayak@ti.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 
-The recent commit "ARM: EXYNOS: add support for EXYNOS5440 SoC" broke
-support for exynos5250 because of_machine_is_compatible() was used too
-early in the boot process.  It also probably meant that the exynos5440
-failed to use the proper iotable.  Switch to use
-of_flat_dt_is_compatible() in both of these cases.
 
-The failure I was seeing in exynos5250 because of this was:
-  Division by zero in kernel.
-  [<80015ed4>] (unwind_backtrace+0x0/0xec) from [<8045c7a4>] (dump_stack+0x20/0x24)
-  [<8045c7a4>] (dump_stack+0x20/0x24) from [<80012990>] (__div0+0x20/0x28)
-  [<80012990>] (__div0+0x20/0x28) from [<8021ab04>] (Ldiv0_64+0x8/0x18)
-  [<8021ab04>] (Ldiv0_64+0x8/0x18) from [<80068560>] (__clocksource_updatefreq_scale+0x54/0x134)
-  [<80068560>] (__clocksource_updatefreq_scale+0x54/0x134) from [<8006865c>] (__clocksource_register_scale+0x1c/0x54)
-  [<8006865c>] (__clocksource_register_scale+0x1c/0x54) from [<80612a18>] (exynos_timer_init+0x100/0x1e8)
-  [<80612a18>] (exynos_timer_init+0x100/0x1e8) from [<8060d184>] (time_init+0x28/0x38)
-  [<8060d184>] (time_init+0x28/0x38) from [<8060a754>] (start_kernel+0x1e0/0x3c8)
-  [<8060a754>] (start_kernel+0x1e0/0x3c8) from [<40008078>] (0x40008078)
+--9JSHP372f+2dzJ8X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
+On Tue, Nov 27, 2012 at 02:04:32PM +0530, Thomas Abraham wrote:
+> Add device tree based discovery support for max8997.
 
----
- arch/arm/mach-exynos/common.c          |    5 ++++-
- arch/arm/mach-exynos/mach-exynos5-dt.c |    4 +++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Applied, thanks.
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 73b940f..b919f5f 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -18,6 +18,7 @@
- #include <linux/sched.h>
- #include <linux/serial_core.h>
- #include <linux/of.h>
-+#include <linux/of_fdt.h>
- #include <linux/of_irq.h>
- #include <linux/export.h>
- #include <linux/irqdomain.h>
-@@ -335,8 +336,10 @@ void __init exynos_init_late(void)
- 
- void __init exynos_init_io(struct map_desc *mach_desc, int size)
- {
-+	unsigned long root = of_get_flat_dt_root();
-+
- 	/* initialize the io descriptors we need for initialization */
--	if (of_machine_is_compatible("samsung,exynos5440"))
-+	if (of_flat_dt_is_compatible(root, "samsung,exynos5440"))
- 		iotable_init(exynos5440_iodesc, ARRAY_SIZE(exynos5440_iodesc));
- 	else
- 		iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 67fa3c2..7b76c3f 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -122,9 +122,11 @@ static const struct of_dev_auxdata exynos5440_auxdata_lookup[] __initconst = {
- 
- static void __init exynos5_dt_map_io(void)
- {
-+	unsigned long root = of_get_flat_dt_root();
-+
- 	exynos_init_io(NULL, 0);
- 
--	if (of_machine_is_compatible("samsung,exynos5250"))
-+	if (of_flat_dt_is_compatible(root, "samsung,exynos5250"))
- 		s3c24xx_init_clocks(24000000);
- }
- 
--- 
-1.7.7.3
+--9JSHP372f+2dzJ8X
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQtR0KAAoJELSic+t+oim93cQQAIpnzu0M/qWHEWArjWsNOJAd
+ji97Q2kuF0vSDt/dKrSOsrYa1keufsiALl5RjLS4j2DTJy7opPDr6C5vcwuQtz/B
+m6gtXWIhpvlnB4f6rXUaCSS5tO5b7Rkv32M211jlH4N+IqUmhMTWBT/dhy703F7Z
+EBXj5+2VbCtLvnhOZ7unwCEAAIgrp9GuCamv3ARYsjGu8cv38Nqbzf7uoX71ZU0r
+WEiB5l1TAnk+1RFiJ+8+j+3Hf5wVH44aOXW0/SX5qa4gD1tS93e3LZfZGZwK+GFy
+PujIOs2xPrn1SqWKWtIMdTzYASMKC/hMBvh+FW3yw2/naKhVZX0EQCTD0UVTUeum
+E4cvL2FRw2e80gvFV1dcsjkcwaTjHK6wygcxo9RJ2zU3yO2ziXLhYo0cutlHgzpx
+7+M+N5EefXNIXbV7v6+z7zC/rC4vOtuKd1zOIPcDMPYsgERDjLgDS4F5+YM6us+s
+1B9+RmiUdsZgFR0zgZA1KwOmpgpBAouxwzJgGtOHUmwzYnrp/QzWBS6ZoatCpDYd
+XtAEkk+oQ1t8TPHfw8pHmeJIcfUlr+at2uWX8SeMpELtovRRibyZHEekEfvwS+4t
+FdA/lcCqFBdwkXiC1b6WJ9QUfaiTfcxweTx0T+sh63co/jK5cZ6aWiC2DdiTk+LO
+8/8+woDVEQ1RT7Axcz7d
+=GacC
+-----END PGP SIGNATURE-----
+
+--9JSHP372f+2dzJ8X--
