@@ -1,106 +1,32 @@
-From: Prasanna Kumar <prasanna.ps@samsung.com>
-Subject: [PATCH 3/3] ARM: EXYNOS5: save CLK_TOP_SRC3 register before powergating
-Date: Tue, 27 Nov 2012 17:52:37 +0530
-Message-ID: <1354018957-17752-4-git-send-email-prasanna.ps@samsung.com>
-References: <1354018957-17752-1-git-send-email-prasanna.ps@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:22727 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752164Ab2K0MBP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Nov 2012 07:01:15 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0ME500J4UAO2LIL0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Nov 2012 21:01:14 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0ME500EEJAMW32A0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Nov 2012 21:01:13 +0900 (KST)
-In-reply-to: <1354018957-17752-1-git-send-email-prasanna.ps@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 0/3] i2c: Add High speed I2C controller driver for Exynos5
+Date: Tue, 27 Nov 2012 18:30:33 +0530
+Message-ID: <1354021236-28596-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-i2c@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, kgene.kim@samsung.com, grant.likely@secretlab.ca, w.sang@pengutronix.de, linux-kernel@vger.kernel.org, taeggyun.ko@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-From: Prasanna Kumar <prasanna.ps@samsung.com>
+Exynos5 and latter SoCs from Samsung supports High Speed I2C controller.
+This patch set adds the controller driver, device tree information for Exynos5
+platform and defines gating clocks.
 
-This patch adds a software workaround to the hardware
-problem found in exynos5 while powergating.
+Naveen Krishna Chatradhi (3):
+  i2c: exynos5: add High Speed I2C controller driver
+  ARM: exynos5: Add gate clocks for HS-I2C
+  arm: exynos5: Add HS-I2C device tree platform information
 
-It is observed that CLK_TOP_SRC3 register gets modified if
-the G-Scaler/MFC devices are power gated. The clock for G-Scaler gets
-set to XXTI which results in the device running very slow .
-A big drop in performance is noticed whilerunning the video.
-This issue also occurs while powergating MFC.
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 +
+ arch/arm/boot/dts/exynos5250.dtsi         |   32 ++
+ arch/arm/mach-exynos/clock-exynos5.c      |   20 +
+ drivers/i2c/busses/Kconfig                |    6 +
+ drivers/i2c/busses/Makefile               |    1 +
+ drivers/i2c/busses/i2c-exynos5.c          |  758 +++++++++++++++++++++++++++++
+ drivers/i2c/busses/i2c-exynos5.h          |   80 +++
+ 7 files changed, 913 insertions(+)
+ create mode 100644 drivers/i2c/busses/i2c-exynos5.c
+ create mode 100644 drivers/i2c/busses/i2c-exynos5.h
 
-The value of clock source register is restored once the powergating
-operation is completed.
-
-Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
----
- arch/arm/mach-exynos/pm_domains.c |   27 +++++++++++++++++++++++++++
- 1 files changed, 27 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 9f1351d..955cbe3 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -24,6 +24,8 @@
- 
- #include <mach/regs-pmu.h>
- #include <plat/devs.h>
-+#include <mach/regs-clock.h>
-+#include <plat/cpu.h>
- 
- /*
-  * Exynos specific wrapper around the generic power domain
-@@ -41,6 +43,7 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	void __iomem *base;
- 	u32 timeout, pwr;
- 	char *op;
-+	u32 tmp = 0;
- 
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	base = pd->base;
-@@ -48,6 +51,23 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
- 	__raw_writel(pwr, base);
- 
-+	/*
-+	 *It is found that the CLK SRC register in exynos5
-+	 *gets modified when power domain of gsc/mfc/isp/disp1
-+	 *is powered off.This happens only after the system is
-+	 *suspended and resumed and not before that.
-+	 *The following fix adresses this hardware issue.
-+	 *It saves the value of clock source register and
-+	 *resores it later
-+	 */
-+
-+	if (soc_is_exynos5250()) {
-+		if (!power_on) {
-+			/* save clock source register */
-+			tmp = __raw_readl(EXYNOS5_CLKSRC_TOP3);
-+		}
-+	}
-+
- 	/* Wait max 1ms */
- 	timeout = 10;
- 
-@@ -61,6 +81,13 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		cpu_relax();
- 		usleep_range(80, 100);
- 	}
-+
-+	if (soc_is_exynos5250()) {
-+		if (!power_on) {
-+			/* restore clock source register */
-+			__raw_writel(tmp, EXYNOS5_CLKSRC_TOP3);
-+		}
-+	}
- 	return 0;
- }
- 
 -- 
-1.7.0.4
+1.7.9.5
