@@ -1,49 +1,74 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v4 00/12] clk: exynos4: migrate to common clock framework
-Date: Tue, 27 Nov 2012 14:24:00 +0530
-Message-ID: <CAJuYYwRMRUzijeTKiMcy5P3qV-OHW1wwGq3FiZ_fpf+Tcs+pKg@mail.gmail.com>
-References: <1353791885-2566-1-git-send-email-thomas.abraham@linaro.org>
-	<20121126193116.21126.66261@nucleus>
+From: "kh.choi" <kh.choi@insignal.co.kr>
+Subject: Re: [PATCH] ARM: dts: add initial dts file for ORIGEN4QUAD
+Date: Tue, 27 Nov 2012 19:23:50 +0900
+Message-ID: <50B494B6.7060405@insignal.co.kr>
+References: <1353929538-24173-1-git-send-email-kh.choi@insignal.co.kr>
+ <CAH9JG2VSnA3zJCP9OiBbrdaV1GqVKL0x4fn331D7YJxQs8VwMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:55942 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758437Ab2K0IyB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Nov 2012 03:54:01 -0500
-Received: by mail-vb0-f46.google.com with SMTP id ff1so6593796vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Nov 2012 00:54:00 -0800 (PST)
-In-Reply-To: <20121126193116.21126.66261@nucleus>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAH9JG2VSnA3zJCP9OiBbrdaV1GqVKL0x4fn331D7YJxQs8VwMg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, chlrbgh0@gmail.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@ti.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-On 27 November 2012 01:01, Mike Turquette <mturquette@ti.com> wrote:
-> Quoting Thomas Abraham (2012-11-24 13:17:53)
->> Changes since v3:
->> - Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
->>
->
-> Hi Thomas,
->
-> 3.7-rc7 is out and I do not wish to take any large changes this close to
-> the merge window opening up.  I will review these patches and give any
-> feedback now on the common clk bits, but merging in the
-> drivers/clk/samsung parts would have to wait until after clk-next is
-> rebased onto 3.8-rc.
->
-> Which tree do you want to merge this through?  Samsung or clk-next?
-> Will you split the patches or take it all once you have gathered ACKs?
-
-Hi Mike,
-
-Ok. 3.8-rc should be fine. Since there are other Samsung platforms
-being also converted over to common clock, I feel this could go
-through the Samsung tree your ack. And there are lot of platform
-specific bits that are touched, so it is easier to get it merged into
-Samsung tree.
-
-Thanks,
-Thomas.
+SGksCgoyMDEyLTExLTI2IOyYpO2bhCA4OjUyLCBLeXVuZ21pbiBQYXJrIOyTtCDquIA6Cj4gSGks
+Cj4KPiBPbiAxMS8yNi8xMiwgY2hscmJnaDBAZ21haWwuY29tIDxjaGxyYmdoMEBnbWFpbC5jb20+
+IHdyb3RlOgo+PiBGcm9tOiBLeXVobyBDaG9pIDxraC5jaG9pQGluc2lnbmFsLmNvLmtyPgo+Pgo+
+PiBUaGlzIHBhdGNoIGFkZHMgaW5pdGlhbCBkdHMgZmlsZSBmb3IgT1JJR0VONFFVQUQgYm9hcmQu
+Cj4+IE9SSUdFTjRRVUFEIGJvYXJkIGJhc2VkIG9uIFNhbXN1bmcgRVhZTk9TNDQxMiBTb0MuCj4+
+IE1vcmUgcHJvcGVydGllcyB3aWxsIGJlIGFkZGVkIGxhdGVyLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5
+OiBLeXVobyBDaG9pIDxraC5jaG9pQGluc2lnbmFsLmNvLmtyPgo+PiAtLS0KPj4gICBhcmNoL2Fy
+bS9ib290L2R0cy9leHlub3M0NDEyLW9yaWdlbjRxdWFkLmR0cyB8ICAgNDUKPj4gKysrKysrKysr
+KysrKysrKysrKysrKysrKysKPj4gICAxIGZpbGVzIGNoYW5nZWQsIDQ1IGluc2VydGlvbnMoKyks
+IDAgZGVsZXRpb25zKC0pCj4+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtL2Jvb3QvZHRz
+L2V4eW5vczQ0MTItb3JpZ2VuNHF1YWQuZHRzCj4+Cj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9i
+b290L2R0cy9leHlub3M0NDEyLW9yaWdlbjRxdWFkLmR0cwo+PiBiL2FyY2gvYXJtL2Jvb3QvZHRz
+L2V4eW5vczQ0MTItb3JpZ2VuNHF1YWQuZHRzCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGlu
+ZGV4IDAwMDAwMDAuLjM5MGEyYWIKPj4gLS0tIC9kZXYvbnVsbAo+PiArKysgYi9hcmNoL2FybS9i
+b290L2R0cy9leHlub3M0NDEyLW9yaWdlbjRxdWFkLmR0cwo+PiBAQCAtMCwwICsxLDQ1IEBACj4+
+ICsvKgo+PiArICogU2Ftc3VuZydzIEV4eW5vczQ0MTIgYmFzZWQgT3JpZ2VuNFF1YWQgYm9hcmQg
+ZGV2aWNlIHRyZWUgc291cmNlCj4+ICsgKgo+PiArICogQ29weXJpZ2h0IChjKSAyMDEyLTIwMTMg
+SXNuaWduYWwgQ28uLCBMdGQuCj4+ICsgKgkJaHR0cDovL3d3dy5pbnNpZ25hbC5jby5rcgo+PiAr
+ICoKPj4gKyAqIERldmljZSB0cmVlIHNvdXJjZSBmaWxlIGZvciBJbnNpZ25hbCdzIE9yaWdlbjRR
+dWFkIGJvYXJkIHdoaWNoIGlzIGJhc2VkCj4+IG9uCj4+ICsgKiBTYW1zdW5nJ3MgRXh5bm9zNDQx
+MiBTb0MuCj4+ICsgKgo+PiArICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBj
+YW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkKPj4gKyAqIGl0IHVuZGVyIHRoZSB0ZXJt
+cyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgdmVyc2lvbiAyIGFzCj4+ICsgKiBw
+dWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbi4KPj4gKyovCj4+ICsKPj4g
+Ky9kdHMtdjEvOwo+PiArL2luY2x1ZGUvICJleHlub3M0NDEyLmR0c2kiCj4+ICsKPj4gKy8gewo+
+PiArCW1vZGVsID0gIkluc2lnbmFsIE9yaWdlbjRRdWFkIGJvYXJkIGJhc2VkIG9uIEV4eW5vczQ0
+MTIiOwo+PiArCWNvbXBhdGlibGUgPSAiaW5zaWduYWwsb3JpZ2VuNHF1YWQiLCAic2Ftc3VuZyxl
+eHlub3M0NDEyIjsKPj4gKwo+PiArCW1lbW9yeSB7Cj4+ICsJCXJlZyA9IDwweDQwMDAwMDAwIDB4
+NDAwMDAwMDA+Owo+PiArCX07Cj4gZG9lcyBpdCB0ZXN0IHRvIGJvb3Qgd2l0aCB0aGlzIGR0cyBm
+aWxlPwo+IGRvZXMgaXQgc3VwcG9ydCAxR2lCIG1lbW9yeSBzZWN0aW9uPwpZZXMsIEkgdGVzdGVk
+IHRoaXMgZHRzLgpPUklHRU40UVVBRCBib2FyZCBzdXBwb3J0IDFHaUIgbWVtb3J5LgpCdXQgaW4g
+Y3VycmVudCBwYXRjaCBzdGF0ZSwgb25seSBzdXBwb3J0IDc2ME1pQiBvbiBib290Lgo+Cj4gVGhh
+bmsgeW91LAo+IEt5dW5nbWluIFBhcmsKPj4gKwo+PiArCWNob3NlbiB7Cj4+ICsJCWJvb3Rhcmdz
+ID0icm9vdD0vZGV2L3JhbTAgcncgcmFtZGlzaz0zMjc2OCBpbml0cmQ9MHg0MTAwMDAwMCwzMk0K
+Pj4gY29uc29sZT10dHlTQUMyLDExNTIwMCBpbml0PS9saW51eHJjIjsKPj4gKwl9Owo+PiArCj4+
+ICsJc2VyaWFsQDEzODAwMDAwIHsKPj4gKwkJc3RhdHVzID0gIm9rYXkiOwo+PiArCX07Cj4+ICsK
+Pj4gKwlzZXJpYWxAMTM4MTAwMDAgewo+PiArCQlzdGF0dXMgPSAib2theSI7Cj4+ICsJfTsKPj4g
+Kwo+PiArCXNlcmlhbEAxMzgyMDAwMCB7Cj4+ICsJCXN0YXR1cyA9ICJva2F5IjsKPj4gKwl9Owo+
+PiArCj4+ICsJc2VyaWFsQDEzODMwMDAwIHsKPj4gKwkJc3RhdHVzID0gIm9rYXkiOwo+PiArCX07
+Cj4+ICt9Owo+PiAtLQo+PiAxLjcuNS40Cj4+Cj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCj4+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0
+Cj4+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+PiBodHRwOi8vbGlzdHMu
+aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwKPj4KPiAtLQo+
+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmli
+ZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jk
+b21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2Vy
+Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+CgoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
+bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
+YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
