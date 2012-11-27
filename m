@@ -1,24 +1,24 @@
 From: Prasanna Kumar <prasanna.ps@samsung.com>
-Subject: [PATCH 1/3] ARM: dts: exynos5: Set up power domain for MFC and G-scaler
-Date: Tue, 27 Nov 2012 17:52:35 +0530
-Message-ID: <1354018957-17752-2-git-send-email-prasanna.ps@samsung.com>
+Subject: [PATCH 2/3] arm: exynos5: Enable PM generic domain support in Kconfig
+Date: Tue, 27 Nov 2012 17:52:36 +0530
+Message-ID: <1354018957-17752-3-git-send-email-prasanna.ps@samsung.com>
 References: <1354018957-17752-1-git-send-email-prasanna.ps@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:22515 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751112Ab2K0MAc (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:30472 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752728Ab2K0MAv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Nov 2012 07:00:32 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
+	Tue, 27 Nov 2012 07:00:51 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0ME500J4UAO2LIL0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Nov 2012 21:00:26 +0900 (KST)
+ 17 2011)) with ESMTP id <0ME500G8MAO2XQK0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Nov 2012 21:00:49 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0ME500EEJAMW32A0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Nov 2012 21:00:26 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Nov 2012 21:00:49 +0900 (KST)
 In-reply-to: <1354018957-17752-1-git-send-email-prasanna.ps@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -26,68 +26,25 @@ To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kge
 
 From: Prasanna Kumar <prasanna.ps@samsung.com>
 
-This patch adds device tree nodes for MFC and G-scaler power domains of exynos5.
-It binds these power-domain nodes to repsective device tree nodes.
+This patch adds support to enable PM generic domains
+under Exynos5 family
 
 Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250.dtsi |   15 +++++++++++++++
- 1 files changed, 15 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 8f46227..23f9bf1 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -83,6 +83,7 @@
- 		compatible = "samsung,mfc-v6";
- 		reg = <0x11000000 0x10000>;
- 		interrupts = <0 96 0>;
-+		samsung,power-domain = <&pd_mfc>;
- 	};
- 
- 	rtc {
-@@ -578,28 +579,42 @@
- 		};
- 	};
- 
-+	pd_gsc: gsc-power-domain@0x10044000 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044000 0x20>;
-+	};
-+
-+	pd_mfc: mfc-power-domain@0x10044040 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044040 0x20>;
-+	};
-+
- 	gsc_0:  gsc@0x13e00000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e00000 0x1000>;
- 		interrupts = <0 85 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_1:  gsc@0x13e10000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e10000 0x1000>;
- 		interrupts = <0 86 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_2:  gsc@0x13e20000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e20000 0x1000>;
- 		interrupts = <0 87 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_3:  gsc@0x13e30000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e30000 0x1000>;
- 		interrupts = <0 88 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	hdmi {
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 945ce49..c07a29c 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -63,6 +63,7 @@ config SOC_EXYNOS5250
+ 	depends on ARCH_EXYNOS5
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
++	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_DEV_MFC
+ 	select SAMSUNG_DMADEV
+ 	help
 -- 
 1.7.0.4
