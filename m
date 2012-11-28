@@ -1,116 +1,59 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 1/2] mmc: dw_mmc: exynos: Stop claiming wp-gpio
-Date: Wed, 28 Nov 2012 10:20:03 -0800
-Message-ID: <CAD=FV=Xdb5W_WrDPgxaTzMOYNP7DpD6Gztq9k2B85z1boUV+3w@mail.gmail.com>
-References: <1353535387-32106-1-git-send-email-dianders@chromium.org>
-	<1353624835-19137-1-git-send-email-dianders@chromium.org>
-	<001a01cdcd4a$cf01ad40$6d0507c0$%jun@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V4 1/2] ASoC: Samsung: Get I2S src_clk from clock alias
+ id.
+Date: Wed, 28 Nov 2012 19:18:22 +0000
+Message-ID: <20121128191822.GB32691@opensource.wolfsonmicro.com>
+References: <1354099669-1735-1-git-send-email-padma.v@samsung.com>
+ <1354099669-1735-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="JoJCGVnM/36AiBh+"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:42527 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754919Ab2K1SUF (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38012 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751807Ab2K1TSZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Nov 2012 13:20:05 -0500
-Received: by mail-la0-f46.google.com with SMTP id p5so7964047lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Nov 2012 10:20:03 -0800 (PST)
-In-Reply-To: <001a01cdcd4a$cf01ad40$6d0507c0$%jun@samsung.com>
+	Wed, 28 Nov 2012 14:18:25 -0500
+Content-Disposition: inline
+In-Reply-To: <1354099669-1735-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-
-Seungwon,
-
-Thanks for the review.  See below for comments.  If you'd like me to
-respin then please let me know.  Otherwise I look forward to your ack.
-
-On Wed, Nov 28, 2012 at 1:29 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> Yes. pin of write protection is common property.
-> This change is good. I have some suggestion below.
-> Could you check it?
->
-> On Friday, November 23, 2012, Doug Anderson wrote:
->> The exynos code claimed wp-gpio with devm_gpio_request() but never did
->> anything with it.  That meant that anyone using a write protect GPIO
->> would effectively be write protected all the time.
->>
->> A future change will move the wp-gpio support to the core dw_mmc.c
->> file.  Now the exynos-specific code won't claim the GPIO but will
->> just set the DW_MCI_QUIRK_NO_WRITE_PROTECT quirk if write protect
->> won't be used.
->>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>
->> ---
->> Changes in v2:
->> - Nothing new in this patch
->>
->>  drivers/mmc/host/dw_mmc-exynos.c |   12 ++++++------
->>  1 files changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
->> index 4d50da6..58cc03e 100644
->> --- a/drivers/mmc/host/dw_mmc-exynos.c
->> +++ b/drivers/mmc/host/dw_mmc-exynos.c
->> @@ -175,12 +175,12 @@ static int dw_mci_exynos_setup_bus(struct dw_mci *host,
->>               }
->>       }
->>
->> -     gpio = of_get_named_gpio(slot_np, "wp-gpios", 0);
->> -     if (gpio_is_valid(gpio)) {
->> -             if (devm_gpio_request(host->dev, gpio, "dw-mci-wp"))
->> -                     dev_info(host->dev, "gpio [%d] request failed\n",
->> -                                             gpio);
->> -     } else {
->> +     /*
->> +      * If there are no write-protect GPIOs present then we assume no write
->> +      * protect.  The mci_readl() in dw_mmc.c won't work since it's not
->> +      * hooked up on exynos.
->> +      */
->> +     if (!of_find_property(slot_np, "wp-gpios", NULL)) {
->>               dev_info(host->dev, "wp gpio not available");
->>               host->pdata->quirks |= DW_MCI_QUIRK_NO_WRITE_PROTECT;
->>       }
-> All card types need this quirk in case wp-gpio property is empty?
-> I think wp-pin is valid for SD card, not eMMC/SDIO.
-
-Right.  It is only checked right now by the SD code (mmc/core/sd.c).
-It doesn't particularly hurt to set it the quirk in other cases though
-and it seems nice not to add special cases.  I could imagine someone
-extending the MMC code at some point to support write protect (via
-GPIO) for eMMC, so there's even a slight justification for avoiding
-the special case.
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: padma.kvr@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, lrg@ti.com, jassisinghbrar@gmail.com
 
 
-> Of course, I know origin code did it.
-> How about removing whole checking routine?
-> Instead, new definition for this quirk can be added into 'dw_mci_of_quirks'(dw_mmc.c) and dts file.
+--JoJCGVnM/36AiBh+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On _exynos_ all SD cards need this quirk if there is no wp-gpio
-property.  However this is not generally true for all users of dw_mmc.
- The DesignWare IP Block actually has a write protect input that can
-be read with "mci_readl(slot->host, WRTPRT)" but on exynos the
-DesignWare write protect line isn't exposed on any physical pins.
-That means that the only possible way to do write protect on exynos is
-using a GPIO.
+On Wed, Nov 28, 2012 at 04:17:48PM +0530, Padmavathi Venna wrote:
+> As the I2S src clks are registered with clkdev using generic
+> connection id, driver can get the clk name using generic id.
+> So the variable representing the array of rclk src clks is
+> deleted.
 
-The above means that on exynos if the GPIO isn't defined we will
-assume no write protect.  On other platforms if the GPIO isn't defined
-we'll assume that the "mci_readl" will work and we'll use that.
+Applied, thanks.
 
-If people would prefer it I can code up an alternate solution that
-doesn't touch any exynos code but that would introduce a new device
-tree binding.  We could accomplish what's needed for exynos using a
-property like "broken-internal-wp".
+--JoJCGVnM/36AiBh+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Please let me know if you'd like me to submit a new patch with this
-solution or if you like the existing solution.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
+iQIcBAEBAgAGBQJQtmNvAAoJELSic+t+oim9fZYP/2/WkyyEDQZlnVSgGeYsIz0+
+r5R8r5ZsCFIbdmtZQPjHJkTDzt0gc6W2jDjv7CzCmcH1tjtXGc0Pe3lrOX9YQrKk
+GKQ8X520v5j7vaeJF9Dp6SqSwtfY50ZE1ti9V1/pDg77wobzyFMAA0KeflECiNFH
+bfBVWH/iIoT29spS7c7gytJV2cmAILxF/RcUlhQvzjo8RLc1nAiXvAo22qgNnNRe
++SAc9sVcLH7xsamPBYbpGt67jxAi7ZjL9A1174w+da2liKGPY0PIhebBQSWyOmYi
+XlBPy0XtcaKm0QtLFWvHrMTcaWxVV4soVBLkH1yNBWoeUg/Q83HGIxTaTbeQmRG4
+RrECriLm9zstuSldP+AOWK7ozKCbu8wgHSKaxO0gE1pl+QfKjybWUInRE9zYmHdr
+t9pQe+P+D9GBUnKe0hjKj6Cwhm7W522m0lzF6SYeiGtwhIoRR1toPxEJQXpG+Jn3
+rFlIYNY+SA4cDowy5JMoYyQzOQ2KOJCOCRQrE1Tr33c+hze98t0cMd2m+tgLB2MQ
+PJ3UXjy6bc0VWR5T6quWzfheJuxU0kq4bWc/7TwZAFPhPRUJwsWvEb3j8cNrb06U
+cgQldJM2SiQXbldYbZeSTOJYtQQunpqQ5WvA4vteEqL/9NaQAdqurlgX2jsB0phd
+wLdC2/Hj7LDmw/NBAf6x
+=2kM8
+-----END PGP SIGNATURE-----
 
-> Thanks,
-> Seungwon Jeon
->> --
->> 1.7.7.3
->
+--JoJCGVnM/36AiBh+--
