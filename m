@@ -1,121 +1,217 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 0/5] ARM: EXYNOS: Add secure firmware support
-Date: Wed, 28 Nov 2012 16:44:20 +0100
-Message-ID: <3839370.Os5KVhzhEZ@amdc1227>
-References: <1353599478-24617-1-git-send-email-t.figa@samsung.com>
- <122d01cdc9ea$5a0d6550$0e282ff0$%kim@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Avoid early use of of_machine_is_compatible()
+Date: Wed, 28 Nov 2012 08:16:38 -0800
+Message-ID: <CAD=FV=WvDWrT_vCT8W48mKFU4O2n-_yDz+SpFpqx3B25tvmRKA@mail.gmail.com>
+References: <1354045994-8977-1-git-send-email-dianders@chromium.org>
+	<CAOesGMjyXZwKjycyVcEV0ty0LCM_i61QxykYPhAvXxx2rhgP+A@mail.gmail.com>
+	<50B53E37.40303@samsung.com>
+	<CAOesGMivs=NA6hcTYWO-MWUeUjVGZ0h258z1MpeexXGtVf9h-g@mail.gmail.com>
+	<18d701cdcd28$74198d70$5c4ca850$%kim@samsung.com>
+	<20121128060553.GA18166@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36596 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753270Ab2K1Po0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Nov 2012 10:44:26 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0ME700L4QFPWX220@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Nov 2012 00:44:24 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0ME7002T1FPY7Y10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Nov 2012 00:44:24 +0900 (KST)
-In-reply-to: <122d01cdc9ea$5a0d6550$0e282ff0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121128060553.GA18166@quad.lixom.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, arnd@arndb.de, olof@lixom.net
-Cc: linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux@arm.linux.org.uk, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-Hi,
+Olof / Kukjin,
 
-On Saturday 24 of November 2012 11:21:03 Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > Some Exynos-based boards are running with secure firmware running in
-> > TrustZone secure world, which changes the way some things have to be
-> > initialized.
-> > 
-> > This series adds support for specifying firmware operations,
-> > implements
-> > some firmware operations for Exynos secure firmware and adds a method
-> > of enabling secure firmware operations on Exynos-based boards through
-> > board file and device tree.
-> > 
-> > Depends on:
-> >   - ARM: EXYNOS: Add support for secondary CPU bring-up on Exynos4412
-> > 
-> > Changes since v3
-> > ( http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13442 )
-> > 
-> >   - Replaced cpu_boot_reg call with cpu_set_boot_addr
-> >   - Added interface documentation
-> >   - Separated from Exynos4x12 secondary CPU bring-up patch
-> > 
-> > Changes since v2
-> > ( http://thread.gmane.org/gmane.linux.kernel.samsung-soc/12848 )
-> > 
-> >   - Made Exynos firmware binding require address
-> >   - Minor style fixes
-> > 
-> > Changes since v1
-> > ( http://thread.gmane.org/gmane.linux.kernel.samsung-
-> > soc/12583/focus=12820 )
-> > 
-> >   - Changed return types of all operations to int
-> >   - Defined all operations to return 0 on success, -ENOSYS when not
-> >   
-> >     implemented or appropriate error code on error
-> > 
-> > Tomasz Figa (5):
-> >   ARM: Add interface for registering and calling firmware-specific
-> >   
-> >     operations
-> >   
-> >   ARM: EXYNOS: Add support for secure monitor calls
-> >   ARM: EXYNOS: Add support for Exynos secure firmware
-> >   ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
-> >   ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
-> >  
-> >  Documentation/arm/firmware.txt                     | 88
-> >  ++++++++++++++++++++++
-> >  .../devicetree/bindings/arm/samsung-boards.txt     | 10 +++
-> >  arch/arm/common/Makefile                           |  2 +
-> >  arch/arm/common/firmware.c                         | 18 +++++
-> >  arch/arm/include/asm/firmware.h                    | 66
-> >  ++++++++++++++++ arch/arm/mach-exynos/Makefile                     
-> >  |  6 ++
-> >  arch/arm/mach-exynos/common.c                      | 35 +++++++++
-> >  arch/arm/mach-exynos/common.h                      |  2 +
-> >  arch/arm/mach-exynos/exynos-smc.S                  | 22 ++++++
-> >  arch/arm/mach-exynos/firmware.c                    | 70
-> >  +++++++++++++++++ arch/arm/mach-exynos/include/mach/map.h           
-> >  |  3 +
-> >  arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
-> >  arch/arm/mach-exynos/platsmp.c                     | 32 ++++++--
-> >  arch/arm/mach-exynos/smc.h                         | 31 ++++++++
-> >  arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
-> >  15 files changed, 382 insertions(+), 5 deletions(-)
-> >  create mode 100644 Documentation/arm/firmware.txt
-> >  create mode 100644 arch/arm/common/firmware.c
-> >  create mode 100644 arch/arm/include/asm/firmware.h
-> >  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
-> >  create mode 100644 arch/arm/mach-exynos/firmware.c
-> >  create mode 100644 arch/arm/mach-exynos/smc.h
-> > 
-> > --
-> > 1.8.0
-> 
-> Russell, I think, Tomasz addressed comments from you.
-> 
-> If you're ok on this, please ack so that I can pick this up in my tree
-> for v3.8...
+On Tue, Nov 27, 2012 at 10:05 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Wed, Nov 28, 2012 at 02:23:09PM +0900, Kukjin Kim wrote:
+>> Olof Johansson wrote:
+>> >
+>> > On Tue, Nov 27, 2012 at 2:27 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> > > On 11/28/12 07:11, Olof Johansson wrote:
+>> > >>
+>> > >> On Tue, Nov 27, 2012 at 11:53 AM, Doug Anderson<dianders@chromium.org>
+>> > >> wrote:
+>> > >>>
+>> > >>> The recent commit "ARM: EXYNOS: add support for EXYNOS5440 SoC" broke
+>> > >>> support for exynos5250 because of_machine_is_compatible() was used too
+>> > >>> early in the boot process.  It also probably meant that the exynos5440
+>> > >>> failed to use the proper iotable.  Switch to use
+>> > >>> of_flat_dt_is_compatible() in both of these cases.
+>> > >>>
+>> > >>> The failure I was seeing in exynos5250 because of this was:
+>> > >>>    Division by zero in kernel.
+>> > >>>    [<80015ed4>] (unwind_backtrace+0x0/0xec) from [<8045c7a4>]
+>> > >>> (dump_stack+0x20/0x24)
+>> > >>>    [<8045c7a4>] (dump_stack+0x20/0x24) from [<80012990>]
+>> > >>> (__div0+0x20/0x28)
+>> > >>>    [<80012990>] (__div0+0x20/0x28) from [<8021ab04>]
+>> (Ldiv0_64+0x8/0x18)
+>> > >>>    [<8021ab04>] (Ldiv0_64+0x8/0x18) from [<80068560>]
+>> > >>> (__clocksource_updatefreq_scale+0x54/0x134)
+>> > >>>    [<80068560>] (__clocksource_updatefreq_scale+0x54/0x134) from
+>> > >>> [<8006865c>] (__clocksource_register_scale+0x1c/0x54)
+>> > >>>    [<8006865c>] (__clocksource_register_scale+0x1c/0x54) from
+>> > >>> [<80612a18>] (exynos_timer_init+0x100/0x1e8)
+>> > >>>    [<80612a18>] (exynos_timer_init+0x100/0x1e8) from [<8060d184>]
+>> > >>> (time_init+0x28/0x38)
+>> > >>>    [<8060d184>] (time_init+0x28/0x38) from [<8060a754>]
+>> > >>> (start_kernel+0x1e0/0x3c8)
+>> > >>>    [<8060a754>] (start_kernel+0x1e0/0x3c8) from [<40008078>]
+>> > (0x40008078)
+>> > >>>
+>> > >>> Signed-off-by: Doug Anderson<dianders@chromium.org>
+>> > >>
+>> > >>
+>> > >> Thanks Doug.
+>> > >>
+>> > >> Kukjin, I'll apply this directly on top of the previous branch in
+>> > >> arm-soc, if that's OK with you.
+>> > >>
+>> > > Sure, go ahead with my ack if you want,
+>> > >
+>> > > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>> > >
+>> > > Note, actually there was a fix which uses soc_is_exynos5440() in my
+>> > local
+>> > > :-) I'm not sure which one is better at this moment, but I'm OK on this.
+>> >
+>> > Ok, applied. Thanks all.
+>> >
+>> Olof, just note, happens build error with exynos4_defconfig because of
+>> non-DT.
+>
+> Ick, thanks for catching that.
 
-Arnd, Olof, what do you think?
+Sorry for this!  I will try to be more diligent about trying
+exynos4_defconfig before submitting future patches to these files.
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+>>
+>> Following can resolve it or we should create null function for
+>> of_get_flat_dt_root() and of_flat_dt_is_compatible()...
+>>
+>> 8<---------------------------------------
+>> From: Kukjin Kim <kgene.kim@samsung.com>
+>> Subject: ARM: EXYNOS: fix a build error with non-DT for exynos4
+>>
+>> This fixes following in case of non-DT:
+>> arch/arm/mach-exynos/common.c: In function 'exynos_init_io':
+>> arch/arm/mach-exynos/common.c:339: error: implicit declaration of function
+>> 'of_get_flat_dt_root'
+>> arch/arm/mach-exynos/common.c:342: error: implicit declaration of function
+>> 'of_flat_dt_is_compatible'
+>> make[1]: *** [arch/arm/mach-exynos/common.o] Error 1
+>>
+>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> ---
+>> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+>> index b919f5f..2110091 100644
+>> --- a/arch/arm/mach-exynos/common.c
+>> +++ b/arch/arm/mach-exynos/common.c
+>> @@ -336,12 +336,14 @@ void __init exynos_init_late(void)
+>>
+>>  void __init exynos_init_io(struct map_desc *mach_desc, int size)
+>>  {
+>> +#ifdef CONFIG_OF
+>>       unsigned long root = of_get_flat_dt_root();
+>>
+>>       /* initialize the io descriptors we need for initialization */
+>>       if (of_flat_dt_is_compatible(root, "samsung,exynos5440"))
+>>               iotable_init(exynos5440_iodesc,
+>> ARRAY_SIZE(exynos5440_iodesc));
+>>       else
+>> +#endif
+>>               iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
+>
+> I really don't like splitting an if/else with an ifdef like this, it's fragile
+> code and can be hard to follow.
+
+Agree.
+
+> There's also a second build error with exynos_defconfig in the
+> exynos5-dt.c board file due to a missing include. Teaches me to just apply
+> patches without trying to build. :(
+
+In the tree I was testing against (the arm-soc/for-next branch at
+659b19ca3a77e2ac32fe84d95242653c75dd07c7) I see the include file in
+the exynos5-dt.c file already.  In my tree it was added by "2eae613b:
+ARM: EXYNOS: Add MFC device tree support".
+
+Your patch applies cleanly on mine but I end up with:
+
+  #include <linux/of_platform.h>
+  #include <linux/of_fdt.h>
+  #include <linux/serial_core.h>
+  #include <linux/io.h>
+  #include <linux/memblock.h>
+  #include <linux/of_fdt.h>
+
+>
+> I'll squash this into Doug's original patch, if that's OK?
+
+No objection to squashing a fix and your CL is better than what I
+have, but see below for an issue.
+
+
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 796e0c9..77e7c5b 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -122,6 +122,7 @@ static struct map_desc exynos_iodesc[] __initdata = {
+>         },
+>  };
+>
+> +#ifdef CONFIG_ARCH_EXYNOS5
+
+Are you sure you want this #ifdef?  If so it should match the ifdef
+used below.  With your patch applied I can get a compile error with:
+
+make exynos_defconfig
+echo '# CONFIG_ARCH_EXYNOS5 is not set' >> .config
+
+In other words your code will fail if someone wants a FDT-enabled exynos4 build.
+
+>  static struct map_desc exynos5440_iodesc[] __initdata = {
+>         {
+>                 .virtual        = (unsigned long)S5P_VA_CHIPID,
+> @@ -130,6 +131,7 @@ static struct map_desc exynos5440_iodesc[] __initdata = {
+>                 .type           = MT_DEVICE,
+>         },
+>  };
+> +#endif
+>
+>  static struct map_desc exynos4_iodesc[] __initdata = {
+>         {
+> @@ -347,13 +349,19 @@ void __init exynos_init_late(void)
+>
+>  void __init exynos_init_io(struct map_desc *mach_desc, int size)
+>  {
+> +       struct map_desc *iodesc = exynos_iodesc;
+> +       int iodesc_sz = ARRAY_SIZE(exynos_iodesc);
+> +#ifdef CONFIG_OF
+>         unsigned long root = of_get_flat_dt_root();
+>
+>         /* initialize the io descriptors we need for initialization */
+> -       if (of_flat_dt_is_compatible(root, "samsung,exynos5440"))
+> -               iotable_init(exynos5440_iodesc, ARRAY_SIZE(exynos5440_iodesc));
+> -       else
+> -               iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
+> +       if (of_flat_dt_is_compatible(root, "samsung,exynos5440")) {
+> +               iodesc = exynos5440_iodesc;
+> +               iodesc_sz = ARRAY_SIZE(exynos5440_iodesc);
+> +       }
+> +#endif
+> +
+> +       iotable_init(iodesc, iodesc_sz);
+>
+>         if (mach_desc)
+>                 iotable_init(mach_desc, size);
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> index 2a75624..f1326be 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> @@ -10,6 +10,7 @@
+>  */
+>
+>  #include <linux/of_platform.h>
+> +#include <linux/of_fdt.h>
+>  #include <linux/serial_core.h>
+>
+>  #include <asm/mach/arch.h>
+>
