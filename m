@@ -1,78 +1,98 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH v2 1/2] mmc: dw_mmc: exynos: Stop claiming wp-gpio
-Date: Wed, 28 Nov 2012 18:29:04 +0900
-Message-ID: <001a01cdcd4a$cf01ad40$6d0507c0$%jun@samsung.com>
-References: <1353535387-32106-1-git-send-email-dianders@chromium.org>
- <1353624835-19137-1-git-send-email-dianders@chromium.org>
+From: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH V4 1/2] ASoC: Samsung: Get I2S src_clk from clock alias id.
+Date: Wed, 28 Nov 2012 16:17:48 +0530
+Message-ID: <1354099669-1735-2-git-send-email-padma.v@samsung.com>
+References: <1354099669-1735-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:8534 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753619Ab2K1J3H (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Nov 2012 04:29:07 -0500
-In-reply-to: <1353624835-19137-1-git-send-email-dianders@chromium.org>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <1354099669-1735-1-git-send-email-padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, 'Will Newton' <will.newton@imgtec.com>, 'Chris Ball' <cjb@laptop.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Yes. pin of write protection is common property.
-This change is good. I have some suggestion below.
-Could you check it?
+As the I2S src clks are registered with clkdev using generic
+connection id, driver can get the clk name using generic id.
+So the variable representing the array of rclk src clks is
+deleted.
 
-On Friday, November 23, 2012, Doug Anderson wrote:
-> The exynos code claimed wp-gpio with devm_gpio_request() but never did
-> anything with it.  That meant that anyone using a write protect GPIO
-> would effectively be write protected all the time.
-> 
-> A future change will move the wp-gpio support to the core dw_mmc.c
-> file.  Now the exynos-specific code won't claim the GPIO but will
-> just set the DW_MCI_QUIRK_NO_WRITE_PROTECT quirk if write protect
-> won't be used.
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> 
-> ---
-> Changes in v2:
-> - Nothing new in this patch
-> 
->  drivers/mmc/host/dw_mmc-exynos.c |   12 ++++++------
->  1 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index 4d50da6..58cc03e 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -175,12 +175,12 @@ static int dw_mci_exynos_setup_bus(struct dw_mci *host,
->  		}
->  	}
-> 
-> -	gpio = of_get_named_gpio(slot_np, "wp-gpios", 0);
-> -	if (gpio_is_valid(gpio)) {
-> -		if (devm_gpio_request(host->dev, gpio, "dw-mci-wp"))
-> -			dev_info(host->dev, "gpio [%d] request failed\n",
-> -						gpio);
-> -	} else {
-> +	/*
-> +	 * If there are no write-protect GPIOs present then we assume no write
-> +	 * protect.  The mci_readl() in dw_mmc.c won't work since it's not
-> +	 * hooked up on exynos.
-> +	 */
-> +	if (!of_find_property(slot_np, "wp-gpios", NULL)) {
->  		dev_info(host->dev, "wp gpio not available");
->  		host->pdata->quirks |= DW_MCI_QUIRK_NO_WRITE_PROTECT;
->  	}
-All card types need this quirk in case wp-gpio property is empty?
-I think wp-pin is valid for SD card, not eMMC/SDIO.
-Of course, I know origin code did it.
-How about removing whole checking routine?
-Instead, new definition for this quirk can be added into 'dw_mci_of_quirks'(dw_mmc.c) and dts file.
+Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ include/linux/platform_data/asoc-s3c.h |    6 ------
+ sound/soc/samsung/i2s.c                |   12 ++++++------
+ 2 files changed, 6 insertions(+), 12 deletions(-)
 
-Thanks,
-Seungwon Jeon
-> --
-> 1.7.7.3
+diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
+index aa9875f..8827259 100644
+--- a/include/linux/platform_data/asoc-s3c.h
++++ b/include/linux/platform_data/asoc-s3c.h
+@@ -38,12 +38,6 @@ struct samsung_i2s {
+ #define QUIRK_NEED_RSTCLR	(1 << 3)
+ 	/* Quirks of the I2S controller */
+ 	u32 quirks;
+-
+-	/*
+-	 * Array of clock names that can be used to generate I2S signals.
+-	 * Also corresponds to clocks of I2SMOD[10]
+-	 */
+-	const char **src_clk;
+ 	dma_addr_t idma_addr;
+ };
+ 
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 547b919..aaf57b7 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -49,8 +49,6 @@ struct i2s_dai {
+ 	struct clk *clk;
+ 	/* Clock for generating I2S signals */
+ 	struct clk *op_clk;
+-	/* Array of clock names for op_clk */
+-	const char **src_clk;
+ 	/* Pointer to the Primary_Fifo if this is Sec_Fifo, NULL otherwise */
+ 	struct i2s_dai *pri_dai;
+ 	/* Pointer to the Secondary_Fifo if it has one, NULL otherwise */
+@@ -432,8 +430,12 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 				}
+ 			}
+ 
+-			i2s->op_clk = clk_get(&i2s->pdev->dev,
+-						i2s->src_clk[clk_id]);
++			if (clk_id)
++				i2s->op_clk = clk_get(&i2s->pdev->dev,
++						"i2s_opclk1");
++			else
++				i2s->op_clk = clk_get(&i2s->pdev->dev,
++						"i2s_opclk0");
+ 			clk_prepare_enable(i2s->op_clk);
+ 			i2s->rclk_srcrate = clk_get_rate(i2s->op_clk);
+ 
+@@ -1067,7 +1069,6 @@ static __devinit int samsung_i2s_probe(struct platform_device *pdev)
+ 		(struct s3c2410_dma_client *)&pri_dai->dma_capture;
+ 	pri_dai->dma_playback.channel = dma_pl_chan;
+ 	pri_dai->dma_capture.channel = dma_cp_chan;
+-	pri_dai->src_clk = i2s_cfg->src_clk;
+ 	pri_dai->dma_playback.dma_size = 4;
+ 	pri_dai->dma_capture.dma_size = 4;
+ 	pri_dai->base = regs_base;
+@@ -1088,7 +1089,6 @@ static __devinit int samsung_i2s_probe(struct platform_device *pdev)
+ 			(struct s3c2410_dma_client *)&sec_dai->dma_playback;
+ 		/* Use iDMA always if SysDMA not provided */
+ 		sec_dai->dma_playback.channel = dma_pl_sec_chan ? : -1;
+-		sec_dai->src_clk = i2s_cfg->src_clk;
+ 		sec_dai->dma_playback.dma_size = 4;
+ 		sec_dai->base = regs_base;
+ 		sec_dai->quirks = quirks;
+-- 
+1.7.4.4
