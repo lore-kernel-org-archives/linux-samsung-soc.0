@@ -1,189 +1,69 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: EXYNOS: Avoid early use of
- of_machine_is_compatible()
-Date: Tue, 27 Nov 2012 22:05:53 -0800
-Message-ID: <20121128060553.GA18166@quad.lixom.net>
-References: <1354045994-8977-1-git-send-email-dianders@chromium.org>
- <CAOesGMjyXZwKjycyVcEV0ty0LCM_i61QxykYPhAvXxx2rhgP+A@mail.gmail.com>
- <50B53E37.40303@samsung.com>
- <CAOesGMivs=NA6hcTYWO-MWUeUjVGZ0h258z1MpeexXGtVf9h-g@mail.gmail.com>
- <18d701cdcd28$74198d70$5c4ca850$%kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [GIT PULL] ASoC: Samsung: Updates for v3.8
+Date: Wed, 28 Nov 2012 09:08:40 +0000
+Message-ID: <20121128090840.GH32691@opensource.wolfsonmicro.com>
+References: <001601cdcd28$ce5204c0$6af60e40$@com>
+ <CAAgF-Bfv46Xt0hFdPmviCdZbpje1M4MBnmCsHGgdOjcq4SnuJw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="G44BJl3Aq1QbV/QL"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f46.google.com ([209.85.210.46]:42905 "EHLO
-	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751110Ab2K1GFz (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56528 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752357Ab2K1JIn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Nov 2012 01:05:55 -0500
-Received: by mail-da0-f46.google.com with SMTP id p5so4600776dak.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Nov 2012 22:05:54 -0800 (PST)
+	Wed, 28 Nov 2012 04:08:43 -0500
 Content-Disposition: inline
-In-Reply-To: <18d701cdcd28$74198d70$5c4ca850$%kim@samsung.com>
+In-Reply-To: <CAAgF-Bfv46Xt0hFdPmviCdZbpje1M4MBnmCsHGgdOjcq4SnuJw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Doug Anderson' <dianders@chromium.org>, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
-
-On Wed, Nov 28, 2012 at 02:23:09PM +0900, Kukjin Kim wrote:
-> Olof Johansson wrote:
-> > 
-> > On Tue, Nov 27, 2012 at 2:27 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > > On 11/28/12 07:11, Olof Johansson wrote:
-> > >>
-> > >> On Tue, Nov 27, 2012 at 11:53 AM, Doug Anderson<dianders@chromium.org>
-> > >> wrote:
-> > >>>
-> > >>> The recent commit "ARM: EXYNOS: add support for EXYNOS5440 SoC" broke
-> > >>> support for exynos5250 because of_machine_is_compatible() was used too
-> > >>> early in the boot process.  It also probably meant that the exynos5440
-> > >>> failed to use the proper iotable.  Switch to use
-> > >>> of_flat_dt_is_compatible() in both of these cases.
-> > >>>
-> > >>> The failure I was seeing in exynos5250 because of this was:
-> > >>>    Division by zero in kernel.
-> > >>>    [<80015ed4>] (unwind_backtrace+0x0/0xec) from [<8045c7a4>]
-> > >>> (dump_stack+0x20/0x24)
-> > >>>    [<8045c7a4>] (dump_stack+0x20/0x24) from [<80012990>]
-> > >>> (__div0+0x20/0x28)
-> > >>>    [<80012990>] (__div0+0x20/0x28) from [<8021ab04>]
-> (Ldiv0_64+0x8/0x18)
-> > >>>    [<8021ab04>] (Ldiv0_64+0x8/0x18) from [<80068560>]
-> > >>> (__clocksource_updatefreq_scale+0x54/0x134)
-> > >>>    [<80068560>] (__clocksource_updatefreq_scale+0x54/0x134) from
-> > >>> [<8006865c>] (__clocksource_register_scale+0x1c/0x54)
-> > >>>    [<8006865c>] (__clocksource_register_scale+0x1c/0x54) from
-> > >>> [<80612a18>] (exynos_timer_init+0x100/0x1e8)
-> > >>>    [<80612a18>] (exynos_timer_init+0x100/0x1e8) from [<8060d184>]
-> > >>> (time_init+0x28/0x38)
-> > >>>    [<8060d184>] (time_init+0x28/0x38) from [<8060a754>]
-> > >>> (start_kernel+0x1e0/0x3c8)
-> > >>>    [<8060a754>] (start_kernel+0x1e0/0x3c8) from [<40008078>]
-> > (0x40008078)
-> > >>>
-> > >>> Signed-off-by: Doug Anderson<dianders@chromium.org>
-> > >>
-> > >>
-> > >> Thanks Doug.
-> > >>
-> > >> Kukjin, I'll apply this directly on top of the previous branch in
-> > >> arm-soc, if that's OK with you.
-> > >>
-> > > Sure, go ahead with my ack if you want,
-> > >
-> > > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> > >
-> > > Note, actually there was a fix which uses soc_is_exynos5440() in my
-> > local
-> > > :-) I'm not sure which one is better at this moment, but I'm OK on this.
-> > 
-> > Ok, applied. Thanks all.
-> > 
-> Olof, just note, happens build error with exynos4_defconfig because of
-> non-DT.
-
-Ick, thanks for catching that.
-
-> 
-> Following can resolve it or we should create null function for
-> of_get_flat_dt_root() and of_flat_dt_is_compatible()...
-> 
-> 8<---------------------------------------
-> From: Kukjin Kim <kgene.kim@samsung.com>
-> Subject: ARM: EXYNOS: fix a build error with non-DT for exynos4
-> 
-> This fixes following in case of non-DT:
-> arch/arm/mach-exynos/common.c: In function 'exynos_init_io':
-> arch/arm/mach-exynos/common.c:339: error: implicit declaration of function
-> 'of_get_flat_dt_root'
-> arch/arm/mach-exynos/common.c:342: error: implicit declaration of function
-> 'of_flat_dt_is_compatible'
-> make[1]: *** [arch/arm/mach-exynos/common.o] Error 1
-> 
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index b919f5f..2110091 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -336,12 +336,14 @@ void __init exynos_init_late(void)
-> 
->  void __init exynos_init_io(struct map_desc *mach_desc, int size)
->  {
-> +#ifdef CONFIG_OF
->  	unsigned long root = of_get_flat_dt_root();
-> 
->  	/* initialize the io descriptors we need for initialization */
->  	if (of_flat_dt_is_compatible(root, "samsung,exynos5440"))
->  		iotable_init(exynos5440_iodesc,
-> ARRAY_SIZE(exynos5440_iodesc));
->  	else
-> +#endif
->  		iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
-
-I really don't like splitting an if/else with an ifdef like this, it's fragile
-code and can be hard to follow.
-
-There's also a second build error with exynos_defconfig in the
-exynos5-dt.c board file due to a missing include. Teaches me to just apply
-patches without trying to build. :(
-
-I'll squash this into Doug's original patch, if that's OK?
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org
 
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 796e0c9..77e7c5b 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -122,6 +122,7 @@ static struct map_desc exynos_iodesc[] __initdata = {
- 	},
- };
- 
-+#ifdef CONFIG_ARCH_EXYNOS5
- static struct map_desc exynos5440_iodesc[] __initdata = {
- 	{
- 		.virtual	= (unsigned long)S5P_VA_CHIPID,
-@@ -130,6 +131,7 @@ static struct map_desc exynos5440_iodesc[] __initdata = {
- 		.type		= MT_DEVICE,
- 	},
- };
-+#endif
- 
- static struct map_desc exynos4_iodesc[] __initdata = {
- 	{
-@@ -347,13 +349,19 @@ void __init exynos_init_late(void)
- 
- void __init exynos_init_io(struct map_desc *mach_desc, int size)
- {
-+	struct map_desc *iodesc = exynos_iodesc;
-+	int iodesc_sz = ARRAY_SIZE(exynos_iodesc);
-+#ifdef CONFIG_OF
- 	unsigned long root = of_get_flat_dt_root();
- 
- 	/* initialize the io descriptors we need for initialization */
--	if (of_flat_dt_is_compatible(root, "samsung,exynos5440"))
--		iotable_init(exynos5440_iodesc, ARRAY_SIZE(exynos5440_iodesc));
--	else
--		iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
-+	if (of_flat_dt_is_compatible(root, "samsung,exynos5440")) {
-+		iodesc = exynos5440_iodesc;
-+		iodesc_sz = ARRAY_SIZE(exynos5440_iodesc);
-+	}
-+#endif
-+
-+	iotable_init(iodesc, iodesc_sz);
- 
- 	if (mach_desc)
- 		iotable_init(mach_desc, size);
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 2a75624..f1326be 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -10,6 +10,7 @@
- */
- 
- #include <linux/of_platform.h>
-+#include <linux/of_fdt.h>
- #include <linux/serial_core.h>
- 
- #include <asm/mach/arch.h>
+--G44BJl3Aq1QbV/QL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Nov 28, 2012 at 11:21:31AM +0530, Padma Venkat wrote:
+> On Wed, Nov 28, 2012 at 10:55 AM, Sangbeom Kim <sbkim73@samsung.com> wrote:
+
+> >> > The requirement for an alias is also very odd, where does that come from?
+
+> >> I don't know that Which one is odd. Please let me know.
+
+> > Having them at all is odd - it's not something other DT bindings have needed and there was nothing
+> > saying what it was for.
+
+> What is the exact requirement here? Should I remove the alias ids or
+> I2S1 and I2S2 nodes as they are in disabled state? This is done same
+> way as SPI and I2C. Please explain me.
+
+If you need those aliases you need to explain why.  They're listed as
+mandatory so presumably they must be needed for something?  It might be
+that this is a good idea we didn't think of before so the answer is just
+to document that rather than remove them.
+
+--G44BJl3Aq1QbV/QL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQtdSRAAoJELSic+t+oim9hW4P/iB9/Ver6dz1OkExAxgZhjBi
+RsiZwCfP9WJpy53G5JuutnRFqvrAzjEbOaWI9JiVieg5D+Gl8RCpYt78RkOhaOSa
+PIcXrtkac9NMkfgx8YjH2wqR2o/aebfFan5y8SAIQNHWE9GRe6BjLb0+FLezFTPY
+k2PRsQVExCOeDmv1HvHREmrVBW1OMA2PYQCKH0MfX6nR1CEsOxgu/qgONFUHVlgb
+rPpCVHfXcSXxCmidlEwDax7BcXOsJk337CAE/rjS+86WZxWIipwTmpOIsao3Y/HF
+l9ywAqA0eXFb++FtgAd/0HolORcxV7UewxYCZr6fJO6o4ZVI/0BpMHOfM/Iasw06
+vOwiS99Lf8pkiwuSLEx7B6zNbbERRhP1XBZnOtZoKSoFx2pzTes/yYY5bbKwtwCE
+KH9wAHc0vVMpjkwKXZa9TeaebbqQjZN8lGzrGuHfIjZEAOiiWIehjUB09viB4Ic3
+Kd08qeia1yQqjxp7TetyjMPGYuMOlLzavKB95+CIioGQ7NhYV/VRK4Tqw0IqhXIg
+fko4fZOeVZYLzKeb0ToJkVMr3v1ox4WGhhbyCB9xLFm7rqoEgfkT2bHQ6DsD0Q+p
+9aUGm+Ko0RY33/uZPUrDoYufNahH5Fn3yiQZ9mLq3p2PLzyd/gsDCMqPxpe8+o72
+Q5O/q8xU/OiWt/S3lCdV
+=y6Du
+-----END PGP SIGNATURE-----
+
+--G44BJl3Aq1QbV/QL--
