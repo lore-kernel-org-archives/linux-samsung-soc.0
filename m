@@ -1,110 +1,121 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [RFC 1/2] ARM: S3C24XX: add devicetree support for interrupts
-Date: Wed, 28 Nov 2012 19:40:59 +0530
-Message-ID: <CAJuYYwSJ+mz0FHZ+DPO-mLjretKiwojn2B1o3tDF-rt5-yVQkw@mail.gmail.com>
-References: <201211250145.21226.heiko@sntech.de>
-	<201211261704.09273.heiko@sntech.de>
-	<CAJuYYwTre+cU0mgJExON2-+1fREyL3LgdqJ4NbC8zG+03yxptA@mail.gmail.com>
-	<201211271724.55938.heiko@sntech.de>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v4 0/5] ARM: EXYNOS: Add secure firmware support
+Date: Wed, 28 Nov 2012 16:44:20 +0100
+Message-ID: <3839370.Os5KVhzhEZ@amdc1227>
+References: <1353599478-24617-1-git-send-email-t.figa@samsung.com>
+ <122d01cdc9ea$5a0d6550$0e282ff0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:60463 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755091Ab2K1OLA convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:36596 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753270Ab2K1Po0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Nov 2012 09:11:00 -0500
-Received: by mail-ie0-f174.google.com with SMTP id k11so10099589iea.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Nov 2012 06:10:59 -0800 (PST)
-In-Reply-To: <201211271724.55938.heiko@sntech.de>
+	Wed, 28 Nov 2012 10:44:26 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0ME700L4QFPWX220@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Nov 2012 00:44:24 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0ME7002T1FPY7Y10@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Nov 2012 00:44:24 +0900 (KST)
+In-reply-to: <122d01cdc9ea$5a0d6550$0e282ff0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>, arnd@arndb.de, olof@lixom.net
+Cc: linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux@arm.linux.org.uk, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-Hi Heiko,
+Hi,
 
-On 27 November 2012 21:54, Heiko St=FCbner <heiko@sntech.de> wrote:
+On Saturday 24 of November 2012 11:21:03 Kukjin Kim wrote:
+> Tomasz Figa wrote:
+> > Some Exynos-based boards are running with secure firmware running in
+> > TrustZone secure world, which changes the way some things have to be
+> > initialized.
+> > 
+> > This series adds support for specifying firmware operations,
+> > implements
+> > some firmware operations for Exynos secure firmware and adds a method
+> > of enabling secure firmware operations on Exynos-based boards through
+> > board file and device tree.
+> > 
+> > Depends on:
+> >   - ARM: EXYNOS: Add support for secondary CPU bring-up on Exynos4412
+> > 
+> > Changes since v3
+> > ( http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13442 )
+> > 
+> >   - Replaced cpu_boot_reg call with cpu_set_boot_addr
+> >   - Added interface documentation
+> >   - Separated from Exynos4x12 secondary CPU bring-up patch
+> > 
+> > Changes since v2
+> > ( http://thread.gmane.org/gmane.linux.kernel.samsung-soc/12848 )
+> > 
+> >   - Made Exynos firmware binding require address
+> >   - Minor style fixes
+> > 
+> > Changes since v1
+> > ( http://thread.gmane.org/gmane.linux.kernel.samsung-
+> > soc/12583/focus=12820 )
+> > 
+> >   - Changed return types of all operations to int
+> >   - Defined all operations to return 0 on success, -ENOSYS when not
+> >   
+> >     implemented or appropriate error code on error
+> > 
+> > Tomasz Figa (5):
+> >   ARM: Add interface for registering and calling firmware-specific
+> >   
+> >     operations
+> >   
+> >   ARM: EXYNOS: Add support for secure monitor calls
+> >   ARM: EXYNOS: Add support for Exynos secure firmware
+> >   ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
+> >   ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
+> >  
+> >  Documentation/arm/firmware.txt                     | 88
+> >  ++++++++++++++++++++++
+> >  .../devicetree/bindings/arm/samsung-boards.txt     | 10 +++
+> >  arch/arm/common/Makefile                           |  2 +
+> >  arch/arm/common/firmware.c                         | 18 +++++
+> >  arch/arm/include/asm/firmware.h                    | 66
+> >  ++++++++++++++++ arch/arm/mach-exynos/Makefile                     
+> >  |  6 ++
+> >  arch/arm/mach-exynos/common.c                      | 35 +++++++++
+> >  arch/arm/mach-exynos/common.h                      |  2 +
+> >  arch/arm/mach-exynos/exynos-smc.S                  | 22 ++++++
+> >  arch/arm/mach-exynos/firmware.c                    | 70
+> >  +++++++++++++++++ arch/arm/mach-exynos/include/mach/map.h           
+> >  |  3 +
+> >  arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
+> >  arch/arm/mach-exynos/platsmp.c                     | 32 ++++++--
+> >  arch/arm/mach-exynos/smc.h                         | 31 ++++++++
+> >  arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
+> >  15 files changed, 382 insertions(+), 5 deletions(-)
+> >  create mode 100644 Documentation/arm/firmware.txt
+> >  create mode 100644 arch/arm/common/firmware.c
+> >  create mode 100644 arch/arm/include/asm/firmware.h
+> >  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
+> >  create mode 100644 arch/arm/mach-exynos/firmware.c
+> >  create mode 100644 arch/arm/mach-exynos/smc.h
+> > 
+> > --
+> > 1.8.0
+> 
+> Russell, I think, Tomasz addressed comments from you.
+> 
+> If you're ok on this, please ack so that I can pick this up in my tree
+> for v3.8...
 
-[...]
+Arnd, Olof, what do you think?
 
->
->
-> Because of the mails from yesterday I took another look at my code, a=
-fter
-> letting it sit for the previous days and I found more optimization
-> possiblities.
->
-> It should be possible to trim the irqtypes down to level,edge and ein=
-t types
-> and do the gathering of the other informations in the code. This woul=
-d make
-> the list more os-agnostic.
-> The list itself does describe the interconnections between the contro=
-llers, so
-> I think it's not false per se, just the multitude of probably redunda=
-nt types
-> used should probably go down.
-
-Ok.
-
->
-> The other option could be to really change to individual initializers=
- for the
-> different implementations and have all the data in the code instead o=
-f the dt.
-> For this I've compared all the different implementations and it seems=
- this
-> would lead to at least handlers for s3c2410, s3c2440, s3c2442, s3c241=
-2 and
-> s3c2443. For the time being they will be in the code in any case, bec=
-ause of
-> all the non-dt boards
-
-I did feel that it this could have been handled with dt + some kernel
-code for all s3c24xx soc's but probably I am under estimating the
-effort here. If it helps, the dt code need not be intermixed with
-non-dt code and there can be runtime check on whether to take dt and
-non-dt path.
-
->
-> If anyone is interested, the comparison can be found on [0].
->
->
-> Btw. do you know if it would have bad effects to register (but not us=
-e) for
-> example the cam interrupt-handler on a machine that does not have it.=
- (The
-> additional cam, cf and spi1 interrupts are the only things differing =
-between
-> the s3c2443 and s3c2416 SoCs).
-
-I am not aware of any bad effects of this (if those interrupts are
-never enabled). But logically, it might be better not to do this. Is
-this something that cannot be handled by checking the machine
-compatible value.
-
->
->
-
-[...]
-
->
-> I'v seen the combiner code as well, but from the code itself I've not=
- managed
-> to understand the combiner this well yet. And Exynos datasheets, to g=
-et a
-> textual description of the combiner, are not this easy to come by ;-)=
- .
-
-Yes, I understand. Basically interrupt combiner combines upto 8
-interrupts into one interrupt that is delivered to combiner's
-interrupt parent, which is the gic interrupt controller in case of
-exynos. There are 16 to 32 interrupt combiners in a soc. Combiner has
-the basic mask, pend and unmask registers.
-
-Thanks,
-Thomas.
-
-[...]
+Best regards,
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
