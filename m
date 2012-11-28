@@ -1,33 +1,30 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 1/7] Samsung fixes for v3.7
-Date: Wed, 28 Nov 2012 09:14:59 +0900
-Message-ID: <50B55783.3020509@samsung.com>
+Subject: [GIT PULL 2/7] Samsung cleanup-3 for v3.8
+Date: Wed, 28 Nov 2012 09:15:16 +0900
+Message-ID: <50B55794.2050902@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:58959 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751299Ab2K1APH (ORCPT
+Received: from mail-da0-f46.google.com ([209.85.210.46]:42716 "EHLO
+	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751299Ab2K1APY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Nov 2012 19:15:07 -0500
-Received: by mail-pb0-f46.google.com with SMTP id wy7so9280690pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Nov 2012 16:15:05 -0800 (PST)
+	Tue, 27 Nov 2012 19:15:24 -0500
+Received: by mail-da0-f46.google.com with SMTP id p5so4478992dak.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Nov 2012 16:15:24 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Arnd, Olof,
+Arnd, Olof
 
-I sorted out my branches as per Olof's suggestion
-
-It includes a fix for v3.7 but I think this is not a critical so it's ok 
-to me for v3.8.
+This is for Samsung cleanup for unused codes now.
 
 Please pull from:
 git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-v3.7-samsung-fixes-4
+next/cleanup-samsung-3
 
 Thanks.
 
@@ -43,10 +40,20 @@ The following changes since commit f4a75d2eb7b1e2206094b901be09adb31ba63681:
 
 are available in the git repository at:
    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-v3.7-samsung-fixes-4
+next/cleanup-samsung-3
 
-Sachin Kamat (1):
-       ARM: S3C24XX: Fix potential NULL pointer dereference error
+Thomas Abraham (2):
+       ARM: EXYNOS: Remove unused non-dt support for dwmci controller
+       ARM: EXYNOS: Remove unused regs-mem.h file
 
-  arch/arm/plat-s3c24xx/dma.c |    9 +++++----
-  1 files changed, 5 insertions(+), 4 deletions(-)
+  arch/arm/mach-exynos/Kconfig                 |    5 --
+  arch/arm/mach-exynos/Makefile                |    1 -
+  arch/arm/mach-exynos/dev-dwmci.c             |   75 
+--------------------------
+  arch/arm/mach-exynos/include/mach/dwmci.h    |   20 -------
+  arch/arm/mach-exynos/include/mach/regs-mem.h |   23 --------
+  arch/arm/plat-samsung/include/plat/devs.h    |    1 -
+  6 files changed, 0 insertions(+), 125 deletions(-)
+  delete mode 100644 arch/arm/mach-exynos/dev-dwmci.c
+  delete mode 100644 arch/arm/mach-exynos/include/mach/dwmci.h
+  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-mem.h
