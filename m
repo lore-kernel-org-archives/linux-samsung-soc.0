@@ -1,175 +1,142 @@
-From: Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 00/12] iommu/exynos: Fixes and Enhancements of System
-	MMU driver with DT
-Date: Thu, 29 Nov 2012 16:51:32 +0530
-Message-ID: <CAPdUM4M77LGQn+FcxmsA38H9wrJX6to_OgmtkSgUYkXVuD-m2w@mail.gmail.com>
-References: <002101cdc8a4$fc375990$f4a60cb0$%cho@samsung.com>
-	<112e01cdc951$976699b0$c633cd10$%kim@samsung.com>
-	<008601cdce20$1ccffb00$566ff100$%cho@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH 1/2] i2c-s3c2410: Leave the bus disabled unless it is in use
+Date: Thu, 29 Nov 2012 23:44:32 +0900
+Message-ID: <CAH9JG2VZAZfpfCjtxgMDsJPNf10FOO_PNV4poVkTgX=2XCoEpQ@mail.gmail.com>
+References: <1354165536-18529-1-git-send-email-ch.naveen@samsung.com>
+	<1354165536-18529-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <008601cdce20$1ccffb00$566ff100$%cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Subash Patel <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sanghyun Lee <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1354165536-18529-2-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, grundler@chromium.org, sjg@chromium.org, naveen@chromium.org, w.sang@pengutronix.de, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mr. Cho,
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-We have verified the above patchset for following usecases on exynos5.
-
-1) MFC decoding using Sysmmu_L and R. (with the bit Inversion fix)
-2) GSC operations.
-3) FIMD and MIXER (HDMI) as displays.
-
-Thanks for your effort.
-
-regards,
-Rahul Sharma.
-
-On Thu, Nov 29, 2012 at 4:25 PM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> -----Original Message-----
->> From: Cho KyongHo [mailto:pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
->> Sent: Monday, November 26, 2012 10:54 AM
->> > -----Original Message-----
->> > From: Cho KyongHo [mailto:pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
->> > Sent: Monday, November 26, 2012 10:28 AM
->> >
->> > > -----Original Message-----
->> > > From: Kukjin Kim [mailto:kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
->> > > Sent: Friday, November 23, 2012 5:08 PM
->> > > Subject: RE: [PATCH v4 00/12] iommu/exynos: Fixes and Enhancements of System MMU driver with DT
->> > >
->> > > Cho KyongHo wrote:
->> > > >
->> > > > The current exynos-iommu(System MMU) driver does not work autonomously
->> > > > since it is lack of support for power management of peripheral blocks.
->> > > > For example, MFC device driver must ensure that its System MMU is disabled
->> > > > before MFC block is power-down not to invalidate IOTLB in the System MMU
->> > > > when I/O memory mapping is changed. Because A System MMU is resides in the
->> > > > same H/W block, access to control registers of System MMU while the H/W
->> > > > block is turned off must be prohibited.
->> > > >
->> > > > This set of changes solves the above problem with setting each System MMUs
->> > > > as the parent of the device which owns the System MMU to recieve the
->> > > > information when the device is turned off or turned on.
->> > > >
->> > > > Another big change to the driver is the support for devicetree.
->> > > > The bindings for System MMU is described in
->> > > > Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
->> > > >
->> > > > In addition, this patchset also includes several bug fixes and
->> > > > enhancements
->> > > > of the current driver.
->> > > >
->> > > > Change log:
->> > > > v4:
->> > > > - Remove Change-Id from v3 patches
->> > > > - Change the order of the third and the first patch
->> > > >   Thanks to Kukjin Kim.
->> > > > - Fix memory leak when allocating and assigning exynos_iommu_owner to
->> > > > client
->> > > >   device if the client device has multiple System MMUs.
->> > > >   Thanks to Rahul Sharma.
->> > > >
->> > > > v3:
->> > > > - Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
->> > > > - Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
->> > > >   Thanks to Prathyush.
->> > > >
->> > > > v2:
->> > > > - Split the patch to iommu/exynos into 9 patches
->> > > > - Support for System MMU 3.3
->> > > > - Some code compaction
->> > > >
->> > > > Patch summary:
->> > > > [PATCH v4 01/12] ARM: EXYNOS: Add clk_ops for gating clocks of System MMU
->> > > > [PATCH v4 02/12] ARM: EXYNOS: add System MMU definition to DT
->> > > > [PATCH v4 03/12] ARM: EXYNOS: remove system mmu initialization from exynos
->> > > > tree
->> > > > [PATCH v4 04/12] iommu/exynos: support for device tree
->> > > > [PATCH v4 05/12] iommu/exynos: pass version information from DT
->> > > > [PATCH v4 06/12] iommu/exynos: allocate lv2 page table from own slab
->> > > > [PATCH v4 07/12] iommu/exynos: change rwlock to spinlock
->> > > > [PATCH v4 08/12] iommu/exynos: set System MMU as the parent of client
->> > > > device
->> > > > [PATCH v4 09/12] iommu/exynos: add support for runtime pm and
->> > > > suspend/resume
->> > > > [PATCH v4 10/12] iommu/exynos: add support for System MMU 3.2 and 3.3
->> > > > [PATCH v4 11/12] iommu/exynos: add literal name of System MMU for
->> > > > debugging
->> > > > [PATCH v4 12/12] iommu/exynos: add debugfs entries for System MMU
->> > > >
->> > > > Diffstats:
->> > > >  .../devicetree/bindings/arm/exynos/system-mmu.txt  |   86 ++
->> > > >  arch/arm/boot/dts/exynos4210.dtsi                  |   96 ++
->> > > >  arch/arm/boot/dts/exynos4x12.dtsi                  |  124 ++
->> > > >  arch/arm/boot/dts/exynos5250.dtsi                  |  147 +-
->> > > >  arch/arm/mach-exynos/Kconfig                       |    5 -
->> > > >  arch/arm/mach-exynos/Makefile                      |    1 -
->> > > >  arch/arm/mach-exynos/clock-exynos4.c               |   41 +-
->> > > >  arch/arm/mach-exynos/clock-exynos4210.c            |    9 +-
->> > > >  arch/arm/mach-exynos/clock-exynos4212.c            |   23 +-
->> > > >  arch/arm/mach-exynos/clock-exynos5.c               |   86 +-
->> > > >  arch/arm/mach-exynos/dev-sysmmu.c                  |  274 ----
->> > > >  arch/arm/mach-exynos/include/mach/sysmmu.h         |   66 -
->> > > >  arch/arm/mach-exynos/mach-exynos4-dt.c             |   34 +
->> > > >  arch/arm/mach-exynos/mach-exynos5-dt.c             |   30 +
->> > > >  drivers/iommu/Kconfig                              |    2 +-
->> > > >  drivers/iommu/exynos-iommu.c                       | 1428
->> > > +++++++++++++++-----
->> > > >  16 files changed, 1720 insertions(+), 732 deletions(-)
->> > >
->> > > Looks good to me 1st~3rd patches. After quick review, I think, 1st and 2nd
->> > > patches can go to upstream for v3.8 without any dependency. So I will.
->> > >
->> > > The 3rd patch has a dependency with other driver changes (4th ~ 12th), so it
->> > > should be sent to upstream with others.
->> > >
->> > > BTW since the 3rd patch touches many Samsung stuff in arch/arm/ so I'd
->> > > prefer to take it in Samsung tree. If Joerg is ok on iommu/exynos driver
->> > > changes for v3.8...
->> > >
->> > > Joerg, please let me know about iommu/exynos stuff so that I can decide to
->> > > take 3rd patch or not for v3.8.
->> > >
->> >
->> > Hi, Kukjin Kim.
->> >
->> > I found that control bit fields of clock gating of System MMU of MFC L/R is inversed.
->> > That is reported by Prathyush Kalashwaram.
->> >
->> > I will post v5 patchset that solves this.
->> >
->>
->> I did not posted v5 patchset.
->> Instead, I posted just the fix for the 03/12 patch mentioned above
->> as the reply to the 03/12 patch.
->>
+On Thu, Nov 29, 2012 at 2:05 PM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> From: Simon Glass <sjg@chromium.org>
 >
-> Hi, Joerg.
+> There is a rather odd feature of the exynos i2c controller that if it
+> is left enabled, it can lock itself up with the clk line held low.
+> This makes the bus unusable.
 >
-> I am waiting for your comment about the patchset.
-> The latest version is v4.
-> And a fix of [patch v4 03/12] mentioned above is posted as a reply.
+> Unfortunately, the s3c24xx_i2c_set_master() function does not notice
+> this, and reports a timeout. From then on the bus cannot be used until
+> the AP is rebooted.
 >
-> If you have any concern about the patches, please let me know
+> The problem happens when any sort of interrupt occurs (e.g. due to a
+> bus transition) when we are not in the middle of a transaction. We
+> have seen many instances of this when U-Boot leaves the bus apparently
+> happy, but Linux cannot access it.
 >
-> Thank you.
+> The current code is therefore pretty fragile.
 >
-> Cho KyongHo.
+> This fixes things by leaving the bus disabled unless we are actually
+> in a transaction. We enable the bus at the start of the transaction and
+> disable it at the end. That way we won't get interrupts and will not
+> lock up the bus.
+>
+> It might be possible to clear pending interrupts on start-up, but this
+> seems to be a more robust solution. We can't service interrupts when
+> we are not in a transaction, and anyway would rather not lock up the
+> bus while we try.
+>
+> Signed-off-by: Simon Glass <sjg@chromium.org>
+> Cc: Grant Grundler <grundler@chromium.org>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c |   37 +++++++++++++++++++++++++++++++++----
+>  1 file changed, 33 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index e93e7d6..2fd346d 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -186,6 +186,31 @@ static inline void s3c24xx_i2c_enable_irq(struct s3c24xx_i2c *i2c)
+>         writel(tmp | S3C2410_IICCON_IRQEN, i2c->regs + S3C2410_IICCON);
+>  }
+>
+> +/*
+> + * Disable the bus so that we won't get any interrupts from now on, or try
+> + * to drive any lines. This is the default state when we don't have
+> + * anything to send/receive.
+> + *
+> + * If there is an event on the bus, or we have a pre-existing event at
+> + * kernel boot time, we may not notice the event and the I2C controller
+> + * will lock the bus with the I2C clock line low indefinitely.
+> + */
+> +static inline void s3c24xx_i2c_disable_bus(struct s3c24xx_i2c *i2c)
+> +{
+> +       unsigned long tmp;
+> +
+> +       /* Stop driving the I2C pins */
+> +       tmp = readl(i2c->regs + S3C2410_IICSTAT);
+> +       tmp &= ~S3C2410_IICSTAT_TXRXEN;
+> +       writel(tmp, i2c->regs + S3C2410_IICSTAT);
+> +
+> +       /* We don't expect any interrupts now, and don't want send acks */
+> +       tmp = readl(i2c->regs + S3C2410_IICCON);
+> +       tmp &= ~(S3C2410_IICCON_IRQEN | S3C2410_IICCON_IRQPEND |
+> +               S3C2410_IICCON_ACKEN);
+> +       writel(tmp, i2c->regs + S3C2410_IICCON);
+> +}
+> +
+>
+>  /* s3c24xx_i2c_message_start
+>   *
+> @@ -646,7 +671,11 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+>
+>         s3c24xx_i2c_wait_idle(i2c);
+>
+> +       s3c24xx_i2c_disable_bus(i2c);
+> +
+>   out:
+> +       i2c->state = STATE_IDLE;
+> +
+>         return ret;
+>  }
+>
+> @@ -912,7 +941,6 @@ static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
+>
+>  static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
+>  {
+> -       unsigned long iicon = S3C2410_IICCON_IRQEN | S3C2410_IICCON_ACKEN;
+>         struct s3c2410_platform_i2c *pdata;
+>         unsigned int freq;
+>
+> @@ -926,12 +954,12 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
+>
+>         dev_info(i2c->dev, "slave address 0x%02x\n", pdata->slave_addr);
+>
+> -       writel(iicon, i2c->regs + S3C2410_IICCON);
+> +       writel(0, i2c->regs + S3C2410_IICCON);
+> +       writel(0, i2c->regs + S3C2410_IICSTAT);
+>
+>         /* we need to work out the divisors for the clock... */
+>
+>         if (s3c24xx_i2c_clockrate(i2c, &freq) != 0) {
+> -               writel(0, i2c->regs + S3C2410_IICCON);
+>                 dev_err(i2c->dev, "cannot meet bus frequency required\n");
+>                 return -EINVAL;
+>         }
+> @@ -939,7 +967,8 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
+>         /* todo - check that the i2c lines aren't being dragged anywhere */
+>
+>         dev_info(i2c->dev, "bus frequency set to %d KHz\n", freq);
+> -       dev_dbg(i2c->dev, "S3C2410_IICCON=0x%02lx\n", iicon);
+> +       dev_dbg(i2c->dev, "S3C2410_IICCON=0x%02x\n",
+> +               readl(i2c->regs + S3C2410_IICCON));
+>
+>         return 0;
+>  }
+> --
+> 1.7.9.5
+>
 >
 > _______________________________________________
-> iommu mailing list
-> iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
