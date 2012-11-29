@@ -1,335 +1,132 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 2/2] i2c-s3c2410: Add bus arbitration implementation
-Date: Thu, 29 Nov 2012 10:35:35 +0530
-Message-ID: <1354165536-18529-3-git-send-email-ch.naveen@samsung.com>
-References: <1354165536-18529-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1354165536-18529-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: naveen@chromium.org, sjg@chromium.org, grundler@chromium.org, w.sang@pengutronix.de, linux-kernel@vger.kernel.org
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v2 1/2] mmc: dw_mmc: exynos: Stop claiming wp-gpio
+Date: Thu, 29 Nov 2012 16:46:24 +0900
+Message-ID: <001301cdce05$a1ab0330$e5010990$%jun@samsung.com>
+References: <1353535387-32106-1-git-send-email-dianders@chromium.org>
+ <1353624835-19137-1-git-send-email-dianders@chromium.org>
+ <001a01cdcd4a$cf01ad40$6d0507c0$%jun@samsung.com>
+ <CAD=FV=Xdb5W_WrDPgxaTzMOYNP7DpD6Gztq9k2B85z1boUV+3w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAD=FV=Xdb5W_WrDPgxaTzMOYNP7DpD6Gztq9k2B85z1boUV+3w@mail.gmail.com>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Doug Anderson' <dianders@chromium.org>
+Cc: linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, 'Will Newton' <will.newton@imgtec.com>, 'Chris Ball' <cjb@laptop.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Simon Glass <sjg@chromium.org>
+Hi Doug,
 
-The arbitrator is a general purpose function which uses two GPIOs to
-communicate with another device to claim/release a bus. We use it to
-arbitrate an i2c port between the AP and the EC.
+On Thursday, November 29, 2012, Doug Anderson wrote:
+> Seungwon,
+> 
+> Thanks for the review.  See below for comments.  If you'd like me to
+> respin then please let me know.  Otherwise I look forward to your ack.
+> 
+> On Wed, Nov 28, 2012 at 1:29 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > Yes. pin of write protection is common property.
+> > This change is good. I have some suggestion below.
+> > Could you check it?
+> >
+> > On Friday, November 23, 2012, Doug Anderson wrote:
+> >> The exynos code claimed wp-gpio with devm_gpio_request() but never did
+> >> anything with it.  That meant that anyone using a write protect GPIO
+> >> would effectively be write protected all the time.
+> >>
+> >> A future change will move the wp-gpio support to the core dw_mmc.c
+> >> file.  Now the exynos-specific code won't claim the GPIO but will
+> >> just set the DW_MCI_QUIRK_NO_WRITE_PROTECT quirk if write protect
+> >> won't be used.
+> >>
+> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> >>
+> >> ---
+> >> Changes in v2:
+> >> - Nothing new in this patch
+> >>
+> >>  drivers/mmc/host/dw_mmc-exynos.c |   12 ++++++------
+> >>  1 files changed, 6 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> >> index 4d50da6..58cc03e 100644
+> >> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> >> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> >> @@ -175,12 +175,12 @@ static int dw_mci_exynos_setup_bus(struct dw_mci *host,
+> >>               }
+> >>       }
+> >>
+> >> -     gpio = of_get_named_gpio(slot_np, "wp-gpios", 0);
+> >> -     if (gpio_is_valid(gpio)) {
+> >> -             if (devm_gpio_request(host->dev, gpio, "dw-mci-wp"))
+> >> -                     dev_info(host->dev, "gpio [%d] request failed\n",
+> >> -                                             gpio);
+> >> -     } else {
+> >> +     /*
+> >> +      * If there are no write-protect GPIOs present then we assume no write
+> >> +      * protect.  The mci_readl() in dw_mmc.c won't work since it's not
+> >> +      * hooked up on exynos.
+> >> +      */
+> >> +     if (!of_find_property(slot_np, "wp-gpios", NULL)) {
+> >>               dev_info(host->dev, "wp gpio not available");
+> >>               host->pdata->quirks |= DW_MCI_QUIRK_NO_WRITE_PROTECT;
+> >>       }
+> > All card types need this quirk in case wp-gpio property is empty?
+> > I think wp-pin is valid for SD card, not eMMC/SDIO.
+> 
+> Right.  It is only checked right now by the SD code (mmc/core/sd.c).
+> It doesn't particularly hurt to set it the quirk in other cases though
+> and it seems nice not to add special cases.  I could imagine someone
+> extending the MMC code at some point to support write protect (via
+> GPIO) for eMMC, so there's even a slight justification for avoiding
+> the special case.
+> 
+> 
+> > Of course, I know origin code did it.
+> > How about removing whole checking routine?
+> > Instead, new definition for this quirk can be added into 'dw_mci_of_quirks'(dw_mmc.c) and dts file.
+> 
+> On _exynos_ all SD cards need this quirk if there is no wp-gpio
+> property.  However this is not generally true for all users of dw_mmc.
+>  The DesignWare IP Block actually has a write protect input that can
+> be read with "mci_readl(slot->host, WRTPRT)" but on exynos the
+> DesignWare write protect line isn't exposed on any physical pins.
+> That means that the only possible way to do write protect on exynos is
+> using a GPIO.
+> 
+> The above means that on exynos if the GPIO isn't defined we will
+> assume no write protect.  On other platforms if the GPIO isn't defined
+> we'll assume that the "mci_readl" will work and we'll use that.
+> 
+> If people would prefer it I can code up an alternate solution that
+> doesn't touch any exynos code but that would introduce a new device
+> tree binding.  We could accomplish what's needed for exynos using a
+> property like "broken-internal-wp".
+> 
+> Please let me know if you'd like me to submit a new patch with this
+> solution or if you like the existing solution.
+> 
+Write protect is additional interface related with SD socket. 
+WP switch appears in SD standard size card. 
+In case EMMC/SDIO spec, there is no mentions about this WP pin.
+As you mentioned above, that's why 'ger_ro' is called only in sd path(mmc/core/sd.c).
+So, I meant that we don't need to consider WP pin status about non-SD type.
 
-Signed-off-by: Simon Glass <sjg@chromium.org>
-Cc: Grant Grundler <grundler@chromium.org>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
----
- .../devicetree/bindings/i2c/samsung-i2c.txt        |   46 ++++++
- drivers/i2c/busses/i2c-s3c2410.c                   |  167 ++++++++++++++++++--
- 2 files changed, 200 insertions(+), 13 deletions(-)
+Such as exynos5250, there is no exposed interface from host controller for write protection pin.
+In that case, if general gpio pin is connected like your board environment, we can define wp-gpio.
+Otherwise, 'broken-internal-wp' property will be good solution.
 
-diff --git a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-index e9611ac..4bed49f 100644
---- a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-+++ b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-@@ -28,6 +28,11 @@ Optional properties:
-     specified, default value is 0.
-   - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
-     specified, the default value in Hz is 100000.
-+  - samsung,arbitration-gpios : Two GPIOs to use with the GPIO-based bus
-+    arbitration protocol (see below). The first should be an output, and is
-+    used to claim the I2C bus, the second should be an input, and signals that
-+    the other side wants to claim the bus. This allows two masters to share
-+    the same I2C bus.
- 
- Example:
- 
-@@ -52,4 +57,45 @@ Example:
- 			compatible = "wlf,wm8994";
- 			reg = <0x1a>;
- 		};
-+
-+		/* If you want GPIO-based bus arbitration */
-+		samsung,arbitration-gpios = <&gpf0 3 1 0 0>,	/* AP_CLAIM */
-+			<&gpe0 4 0 3 0>;			/* EC_CLAIM */
- 	};
-+
-+
-+GPIO-based Arbitration
-+======================
-+(documented here for want of a better place - an implementation is in the
-+i2c-s3c2410 driver)
-+
-+This uses GPIO lines between the AP (Exynos) and an attached EC (embedded
-+controller) which both want to talk on the same I2C bus as master.
-+
-+The AP and EC each have a 'bus claim' line, which is an output that the
-+other can see. These are both active low, with pull-ups enabled.
-+
-+- AP_CLAIM: output from AP, signalling to the EC that the AP wants the bus
-+- EC_CLAIM: output from EC, signalling to the AP that the EC wants the bus
-+
-+
-+Algorithm
-+---------
-+The basic algorithm is to assert your line when you want the bus, then make
-+sure that the other side doesn't want it also. A detailed explanation is best
-+done with an example.
-+
-+Let's say the AP wants to claim the bus. It:
-+1. Asserts AP_CLAIM
-+2. Waits a little bit for the other side to notice (slew time, say 10
-+microseconds)
-+3. Checks EC_CLAIM. If this is not asserted, then the AP has the bus, and
-+we are done
-+4. Otherwise, wait for a few milliseconds and see if EC_CLAIM is released
-+5. If not, back off, release the claim and wait for a few more milliseconds
-+6. Go back to 1 (until retry time has expired)
-+
-+To release the bus, just de-assert the claim line. If the other wants the bus
-+it will notice soon enough.
-+
-+The same algorithm applies on the EC side.
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 2fd346d..87a6928 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -62,6 +62,13 @@ enum s3c24xx_i2c_state {
- 	STATE_STOP
- };
- 
-+enum {
-+	I2C_ARB_GPIO_AP,		/* AP claims i2c bus */
-+	I2C_ARB_GPIO_EC,		/* EC claims i2c bus */
-+
-+	I2C_ARB_GPIO_COUNT,
-+};
-+
- struct s3c24xx_i2c {
- 	wait_queue_head_t	wait;
- 	unsigned int            quirks;
-@@ -85,10 +92,16 @@ struct s3c24xx_i2c {
- 
- 	struct s3c2410_platform_i2c	*pdata;
- 	int			gpios[2];
-+	int			arb_gpios[I2C_ARB_GPIO_COUNT];
- 	struct pinctrl          *pctrl;
- #ifdef CONFIG_CPU_FREQ
- 	struct notifier_block	freq_transition;
- #endif
-+	/* Arbitration parameters */
-+	bool			arbitrate;
-+	unsigned int		slew_delay_us;
-+	unsigned int		wait_retry_us;
-+	unsigned int		wait_free_us;
- };
- 
- static struct platform_device_id s3c24xx_driver_ids[] = {
-@@ -116,6 +129,61 @@ static const struct of_device_id s3c24xx_i2c_match[] = {
- MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
- #endif
- 
-+/*
-+ * If we have enabled arbitration on this bus, claim the i2c bus, using
-+ * the GPIO-based signalling protocol.
-+ */
-+int s3c24xx_i2c_claim(struct s3c24xx_i2c *i2c)
-+{
-+	unsigned long stop_retry, stop_time;
-+
-+	if (!i2c->arbitrate)
-+		return 0;
-+
-+	/* Start a round of trying to claim the bus */
-+	stop_time = jiffies + usecs_to_jiffies(i2c->wait_free_us) + 1;
-+	do {
-+		/* Indicate that we want to claim the bus */
-+		gpio_set_value(i2c->arb_gpios[I2C_ARB_GPIO_AP], 0);
-+		udelay(i2c->slew_delay_us);
-+
-+		/* Wait for the EC to release it */
-+		stop_retry = jiffies + usecs_to_jiffies(i2c->wait_retry_us) + 1;
-+		while (time_before(jiffies, stop_retry)) {
-+			if (gpio_get_value(i2c->arb_gpios[I2C_ARB_GPIO_EC])) {
-+				/* We got it, so return */
-+				return 0;
-+			}
-+
-+			usleep_range(50, 200);
-+		}
-+
-+		/* It didn't release, so give up, wait, and try again */
-+		gpio_set_value(i2c->arb_gpios[I2C_ARB_GPIO_AP], 1);
-+
-+		usleep_range(i2c->wait_retry_us, i2c->wait_retry_us * 2);
-+	} while (time_before(jiffies, stop_time));
-+
-+	/* Give up, release our claim */
-+	gpio_set_value(i2c->arb_gpios[I2C_ARB_GPIO_AP], 1);
-+	udelay(i2c->slew_delay_us);
-+	dev_err(i2c->dev, "I2C: Could not claim bus, timeout\n");
-+	return -EBUSY;
-+}
-+
-+/*
-+ * If we have enabled arbitration on this bus, release the i2c bus, using
-+ * the GPIO-based signalling protocol.
-+ */
-+void s3c24xx_i2c_release(struct s3c24xx_i2c *i2c)
-+{
-+	if (i2c->arbitrate) {
-+		/* Release the bus and wait for the EC to notice */
-+		gpio_set_value(i2c->arb_gpios[I2C_ARB_GPIO_AP], 1);
-+		udelay(i2c->slew_delay_us);
-+	}
-+}
-+
- /* s3c24xx_get_device_quirks
-  *
-  * Get controller type either from device tree or platform device variant.
-@@ -637,6 +705,15 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 	if (i2c->suspended)
- 		return -EIO;
- 
-+	/*
-+	 * Claim the bus if needed.
-+	 *
-+	 * Note, this needs a lock. How come s3c24xx_i2c_set_master() below
-+	 * is outside the lock?
-+	 */
-+	if (s3c24xx_i2c_claim(i2c))
-+		return -EBUSY;
-+
- 	ret = s3c24xx_i2c_set_master(i2c);
- 	if (ret != 0) {
- 		dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
-@@ -676,6 +753,9 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
-  out:
- 	i2c->state = STATE_IDLE;
- 
-+	/* Release the bus if needed */
-+	s3c24xx_i2c_release(i2c);
-+
- 	return ret;
- }
- 
-@@ -884,20 +964,42 @@ static inline void s3c24xx_i2c_deregister_cpufreq(struct s3c24xx_i2c *i2c)
- #endif
- 
- #ifdef CONFIG_OF
--static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
-+/*
-+ * Parse a list of GPIOs from a node property and request each one
-+ *
-+ * This might be better as of_gpio_get_array() one day.
-+ *
-+ * @param i2c		i2c driver data
-+ * @param name		name of property to read from
-+ * @param gpios		returns an array of GPIOs
-+ * @param count		number of GPIOs to read
-+ * @param required	true if the property is required, false if it is
-+ *			optional so no warning is printed (avoids a separate
-+ *			check in caller)
-+ * @return 0 on success, -ve on error, in which case no GPIOs remain
-+ * requested
-+ */
-+static int s3c24xx_i2c_parse_gpio(struct s3c24xx_i2c *i2c, const char *name,
-+		int gpios[], size_t count, bool required)
- {
--	int idx, gpio, ret;
--
--	if (i2c->quirks & QUIRK_NO_GPIO)
--		return 0;
-+	struct device_node *dn = i2c->dev->of_node;
-+	unsigned int idx;
-+	int gpio, ret;
- 
--	for (idx = 0; idx < 2; idx++) {
--		gpio = of_get_gpio(i2c->dev->of_node, idx);
-+	/*
-+	 * It would be nice if there were an of function to return a list
-+	 * of GPIOs
-+	 */
-+	for (idx = 0; idx < count; idx++) {
-+		gpio = of_get_named_gpio(dn, name, idx);
- 		if (!gpio_is_valid(gpio)) {
--			dev_err(i2c->dev, "invalid gpio[%d]: %d\n", idx, gpio);
-+			if (idx || required) {
-+				dev_err(i2c->dev, "invalid gpio[%d]: %d\n",
-+					idx, gpio);
-+			}
- 			goto free_gpio;
- 		}
--		i2c->gpios[idx] = gpio;
-+		gpios[idx] = gpio;
- 
- 		ret = gpio_request(gpio, "i2c-bus");
- 		if (ret) {
-@@ -909,19 +1011,47 @@ static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
- 
- free_gpio:
- 	while (--idx >= 0)
--		gpio_free(i2c->gpios[idx]);
-+		gpio_free(gpios[idx]);
- 	return -EINVAL;
- }
- 
--static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
-+/* Free a list of GPIOs */
-+static void s3c24xx_i2c_free_gpios(int gpios[], int count)
- {
- 	unsigned int idx;
- 
-+	for (idx = 0; idx < count; idx++) {
-+		if (gpio_is_valid(gpios[idx]))
-+			gpio_free(gpios[idx]);
-+	}
-+}
-+
-+static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
-+{
-+	if (i2c->quirks & QUIRK_NO_GPIO)
-+		return 0;
-+
-+	if (s3c24xx_i2c_parse_gpio(i2c, "gpios", i2c->gpios, 2, true))
-+		return -EINVAL;
-+
-+	if (!s3c24xx_i2c_parse_gpio(i2c, "samsung,arbitration-gpios",
-+			i2c->arb_gpios, I2C_ARB_GPIO_COUNT, false)) {
-+		i2c->arbitrate = 1;
-+		dev_warn(i2c->dev, "GPIO-based arbitration enabled");
-+	}
-+
-+	return 0;
-+
-+}
-+
-+static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
-+{
- 	if (i2c->quirks & QUIRK_NO_GPIO)
- 		return;
- 
--	for (idx = 0; idx < 2; idx++)
--		gpio_free(i2c->gpios[idx]);
-+	s3c24xx_i2c_free_gpios(i2c->gpios, 2);
-+	if (i2c->arbitrate)
-+		s3c24xx_i2c_free_gpios(i2c->arb_gpios, I2C_ARB_GPIO_COUNT);
- }
- #else
- static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
-@@ -992,6 +1122,17 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
- 	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
- 	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
- 				(u32 *)&pdata->frequency);
-+
-+	/* Arbitration parameters */
-+	if (of_property_read_u32(np, "samsung,slew-delay-us",
-+				 &i2c->slew_delay_us))
-+		i2c->slew_delay_us = 10;
-+	if (of_property_read_u32(np, "samsung,wait-retry-us",
-+				 &i2c->wait_retry_us))
-+		i2c->wait_retry_us = 2000;
-+	if (of_property_read_u32(np, "samsung,wait-free-us",
-+				 &i2c->wait_free_us))
-+		i2c->wait_free_us = 50000;
- }
- #else
- static void
--- 
-1.7.9.5
+Please feel free to modify.
+If you will do, I'll be happy.
+
+Thanks,
+Seungwon Jeon
+> >> --
+> >> 1.7.7.3
+> >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
