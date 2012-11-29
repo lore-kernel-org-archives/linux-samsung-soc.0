@@ -1,88 +1,156 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V2 2/2] ARM: dts: Add device tree node for DP controller for
- exynos5250
-Date: Thu, 29 Nov 2012 18:43:06 +0900
-Message-ID: <004c01cdce15$ef5df640$ce19e2c0$%han@samsung.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v4 00/12] iommu/exynos: Fixes and Enhancements of System
+	MMU driver with DT
+Date: Thu, 29 Nov 2012 19:55:57 +0900
+Message-ID: <008601cdce20$1ccffb00$566ff100$%cho@samsung.com>
+References: <002101cdc8a4$fc375990$f4a60cb0$%cho@samsung.com>
+	<112e01cdc951$976699b0$c633cd10$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63117 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752897Ab2K2Jnk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Nov 2012 04:43:40 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0ME80013ATNVXJ40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Nov 2012 18:43:08 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.120.99])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0ME8006EGTNU9130@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Nov 2012 18:43:06 +0900 (KST)
-References: 
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 In-reply-to: 
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'Cho KyongHo' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Subash Patel' <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Sanghyun Lee' <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Add device tree node for DP controller in EXYNOS5250 and
-enable the instance for the SMDK5250 board.
+> -----Original Message-----
+> From: Cho KyongHo [mailto:pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+> Sent: Monday, November 26, 2012 10:54 AM
+> > -----Original Message-----
+> > From: Cho KyongHo [mailto:pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+> > Sent: Monday, November 26, 2012 10:28 AM
+> >
+> > > -----Original Message-----
+> > > From: Kukjin Kim [mailto:kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+> > > Sent: Friday, November 23, 2012 5:08 PM
+> > > Subject: RE: [PATCH v4 00/12] iommu/exynos: Fixes and Enhancements of System MMU driver with DT
+> > >
+> > > Cho KyongHo wrote:
+> > > >
+> > > > The current exynos-iommu(System MMU) driver does not work autonomously
+> > > > since it is lack of support for power management of peripheral blocks.
+> > > > For example, MFC device driver must ensure that its System MMU is disabled
+> > > > before MFC block is power-down not to invalidate IOTLB in the System MMU
+> > > > when I/O memory mapping is changed. Because A System MMU is resides in the
+> > > > same H/W block, access to control registers of System MMU while the H/W
+> > > > block is turned off must be prohibited.
+> > > >
+> > > > This set of changes solves the above problem with setting each System MMUs
+> > > > as the parent of the device which owns the System MMU to recieve the
+> > > > information when the device is turned off or turned on.
+> > > >
+> > > > Another big change to the driver is the support for devicetree.
+> > > > The bindings for System MMU is described in
+> > > > Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+> > > >
+> > > > In addition, this patchset also includes several bug fixes and
+> > > > enhancements
+> > > > of the current driver.
+> > > >
+> > > > Change log:
+> > > > v4:
+> > > > - Remove Change-Id from v3 patches
+> > > > - Change the order of the third and the first patch
+> > > >   Thanks to Kukjin Kim.
+> > > > - Fix memory leak when allocating and assigning exynos_iommu_owner to
+> > > > client
+> > > >   device if the client device has multiple System MMUs.
+> > > >   Thanks to Rahul Sharma.
+> > > >
+> > > > v3:
+> > > > - Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
+> > > > - Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
+> > > >   Thanks to Prathyush.
+> > > >
+> > > > v2:
+> > > > - Split the patch to iommu/exynos into 9 patches
+> > > > - Support for System MMU 3.3
+> > > > - Some code compaction
+> > > >
+> > > > Patch summary:
+> > > > [PATCH v4 01/12] ARM: EXYNOS: Add clk_ops for gating clocks of System MMU
+> > > > [PATCH v4 02/12] ARM: EXYNOS: add System MMU definition to DT
+> > > > [PATCH v4 03/12] ARM: EXYNOS: remove system mmu initialization from exynos
+> > > > tree
+> > > > [PATCH v4 04/12] iommu/exynos: support for device tree
+> > > > [PATCH v4 05/12] iommu/exynos: pass version information from DT
+> > > > [PATCH v4 06/12] iommu/exynos: allocate lv2 page table from own slab
+> > > > [PATCH v4 07/12] iommu/exynos: change rwlock to spinlock
+> > > > [PATCH v4 08/12] iommu/exynos: set System MMU as the parent of client
+> > > > device
+> > > > [PATCH v4 09/12] iommu/exynos: add support for runtime pm and
+> > > > suspend/resume
+> > > > [PATCH v4 10/12] iommu/exynos: add support for System MMU 3.2 and 3.3
+> > > > [PATCH v4 11/12] iommu/exynos: add literal name of System MMU for
+> > > > debugging
+> > > > [PATCH v4 12/12] iommu/exynos: add debugfs entries for System MMU
+> > > >
+> > > > Diffstats:
+> > > >  .../devicetree/bindings/arm/exynos/system-mmu.txt  |   86 ++
+> > > >  arch/arm/boot/dts/exynos4210.dtsi                  |   96 ++
+> > > >  arch/arm/boot/dts/exynos4x12.dtsi                  |  124 ++
+> > > >  arch/arm/boot/dts/exynos5250.dtsi                  |  147 +-
+> > > >  arch/arm/mach-exynos/Kconfig                       |    5 -
+> > > >  arch/arm/mach-exynos/Makefile                      |    1 -
+> > > >  arch/arm/mach-exynos/clock-exynos4.c               |   41 +-
+> > > >  arch/arm/mach-exynos/clock-exynos4210.c            |    9 +-
+> > > >  arch/arm/mach-exynos/clock-exynos4212.c            |   23 +-
+> > > >  arch/arm/mach-exynos/clock-exynos5.c               |   86 +-
+> > > >  arch/arm/mach-exynos/dev-sysmmu.c                  |  274 ----
+> > > >  arch/arm/mach-exynos/include/mach/sysmmu.h         |   66 -
+> > > >  arch/arm/mach-exynos/mach-exynos4-dt.c             |   34 +
+> > > >  arch/arm/mach-exynos/mach-exynos5-dt.c             |   30 +
+> > > >  drivers/iommu/Kconfig                              |    2 +-
+> > > >  drivers/iommu/exynos-iommu.c                       | 1428
+> > > +++++++++++++++-----
+> > > >  16 files changed, 1720 insertions(+), 732 deletions(-)
+> > >
+> > > Looks good to me 1st~3rd patches. After quick review, I think, 1st and 2nd
+> > > patches can go to upstream for v3.8 without any dependency. So I will.
+> > >
+> > > The 3rd patch has a dependency with other driver changes (4th ~ 12th), so it
+> > > should be sent to upstream with others.
+> > >
+> > > BTW since the 3rd patch touches many Samsung stuff in arch/arm/ so I'd
+> > > prefer to take it in Samsung tree. If Joerg is ok on iommu/exynos driver
+> > > changes for v3.8...
+> > >
+> > > Joerg, please let me know about iommu/exynos stuff so that I can decide to
+> > > take 3rd patch or not for v3.8.
+> > >
+> >
+> > Hi, Kukjin Kim.
+> >
+> > I found that control bit fields of clock gating of System MMU of MFC L/R is inversed.
+> > That is reported by Prathyush Kalashwaram.
+> >
+> > I will post v5 patchset that solves this.
+> >
+> 
+> I did not posted v5 patchset.
+> Instead, I posted just the fix for the 03/12 patch mentioned above
+> as the reply to the 03/12 patch.
+> 
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-Changes since v1:
-- change the property name from 'display-port-controller' to 'dp-controller'
+Hi, Joerg.
 
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    9 +++++++++
- arch/arm/boot/dts/exynos5250.dtsi         |   14 ++++++++++++++
- 2 files changed, 23 insertions(+), 0 deletions(-)
+I am waiting for your comment about the patchset.
+The latest version is v4.
+And a fix of [patch v4 03/12] mentioned above is posted as a reply.
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 711b55f..cdeb4f2 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -218,4 +218,13 @@
- 	i2s_2: i2s@12D70000 {
- 		status = "disabled";
- 	};
-+
-+	dp-controller {
-+		samsung,color-space = <0>;
-+		samsung,dynamic-range = <0>;
-+		samsung,ycbcr-coeff = <0>;
-+		samsung,color-depth = <1>;
-+		samsung,link-rate = <0x0a>;
-+		samsung,lane-count = <4>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 581e57a..8f46227 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -613,4 +613,18 @@
- 		reg = <0x14450000 0x10000>;
- 		interrupts = <0 94 0>;
- 	};
-+
-+	dp-controller {
-+		compatible = "samsung,exynos5-dp";
-+		reg = <0x145b0000 0x1000>;
-+		interrupts = <10 3>;
-+		interrupt-parent = <&combiner>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		dptx-phy {
-+			reg = <0x10040720>;
-+			samsung,enable-mask = <1>;
-+		};
-+	};
- };
--- 
-1.7.2.5
+If you have any concern about the patches, please let me know
+
+Thank you.
+
+Cho KyongHo.
