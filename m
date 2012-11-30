@@ -1,176 +1,62 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH v3 1/4] mmc: dw_mmc: Add "disable-wp" device tree property
-Date: Fri, 30 Nov 2012 20:57:04 +0900
-Message-ID: <001601cdcef1$d0c9d1e0$725d75a0$%jun@samsung.com>
-References: <1353624835-19137-1-git-send-email-dianders@chromium.org>
- <1354251857-21587-1-git-send-email-dianders@chromium.org>
+From: Praveen Paneri <p.paneri@samsung.com>
+Subject: Re: [PATCH v8 2/2] usb: s3c-hsotg: Adding phy driver support
+Date: Fri, 30 Nov 2012 17:54:33 +0530
+Message-ID: <CAD6zSYO+DiDaKJ=a3V97yDLeNFmyfFFiNp9ba8iA-pgcF5fj=Q@mail.gmail.com>
+References: <1352888836-17192-1-git-send-email-p.paneri@samsung.com>
+	<1433031.3ftjAfsj34@flatron>
+	<CAD6zSYMNSX8ASPBLpft-0riBi-xeD_b=BjCjSrftX_5_F2+TDA@mail.gmail.com>
+	<4963449.bQgUShLPPx@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1354251857-21587-1-git-send-email-dianders@chromium.org>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, linux-mmc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, 'Will Newton' <will.newton@imgtec.com>, 'Chris Ball' <cjb@laptop.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Rob Herring' <rob.herring@calxeda.com>, 'Rob Landley' <rob@landley.net>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:63128 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751797Ab2K3MYd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Nov 2012 07:24:33 -0500
+In-Reply-To: <4963449.bQgUShLPPx@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, gregkh@linuxfoundation.org, Thomas Abraham <thomas.abraham@linaro.org>, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Doug, Thanks to work.
-Looks good to me with other patches.
+On Wed, Nov 28, 2012 at 6:50 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Praveen,
+>
+> On Friday 23 of November 2012 09:54:51 Praveen Paneri wrote:
+>> We will anyway remove the platform data part soon. If you say I can
+>> resend it again.
+>
+> I think that the requirement for platform data on DT-enabled systems
+> should be removed before this series get merged, because there are already
+> patches being worked on to remove auxdata tables (common clock framework
+> support by Thomas Abraham).
+Next is to add support for 4210, 4x12 and Exynos5 (patches were sent
+by vivek Gautam already). Not only s3c-hsotg but ehci, ohci and dwc
+will start using phy driver.
+This will remove phy related platform data passed to these drivers and...
+>
+> Adding next auxdata entry (containing platform data that must be provided)
+> would make them depend on phy platform data removal patch, which would
+> complicate things.
+s3c-hsotg platform data is also passing "is_osc" (Clock source info)
+and "dma" (dma mode info) from platform_data. IT seems they both are
+not used as on now. May be Lukasz can tell if we can move that to
+config option and get rid of s3c-hsotg_plat completely.
 
-Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+Once that is done only AUXDATA entry, which will be remaining, will be
+that of phy driver and I understand that we have to work towards
+removal of that as well but I guess this is a good first step towards
+the goal.
 
-On Friday, November 30, 2012, Doug Anderson wrote:
-> The "disable-wp" property is used to specify that a given SD card slot
-> doesn't have a concept of write protect.  This eliminates the need for
-> special case code for SD slots that should never be write protected
-> (like a micro SD slot or a dev board).
-> 
-> The dw_mmc driver is special in needing to specify "disable-wp"
-> because the lack of a "wp-gpios" property means to use the special
-> purpose write protect line.  On some other mmc devices the lack of
-> "wp-gpios" means that write protect should be disabled.
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes in v3:
-> - New for this version of the patch series.  Chose "disable-wp" rather
->   than the discussed "broken-internal-wp" since it mapped more cleanly
->   to an existing quirk (and the only reason to specify that the
->   internal wp is broken is if you're disabling the write protect
->   anyway).
-> 
->  .../devicetree/bindings/mmc/synopsis-dw-mshc.txt   |   12 +++++-
->  drivers/mmc/host/dw_mmc.c                          |   36 +++++++++++++++++++-
->  include/linux/mmc/dw_mmc.h                         |    4 ++
->  3 files changed, 49 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsis-dw-mshc.txt
-> b/Documentation/devicetree/bindings/mmc/synopsis-dw-mshc.txt
-> index 06cd32d08..726fd21 100644
-> --- a/Documentation/devicetree/bindings/mmc/synopsis-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/synopsis-dw-mshc.txt
-> @@ -26,8 +26,16 @@ Required Properties:
->  	* bus-width: as documented in mmc core bindings.
-> 
->  	* wp-gpios: specifies the write protect gpio line. The format of the
-> -	  gpio specifier depends on the gpio controller. If the write-protect
-> -	  line is not available, this property is optional.
-> +	  gpio specifier depends on the gpio controller. If a GPIO is not used
-> +	  for write-protect, this property is optional.
-> +
-> +	* disable-wp: If the wp-gpios property isn't present then (by default)
-> +	  we'd assume that the write protect is hooked up directly to the
-> +	  controller's special purpose write protect line (accessible via
-> +	  the WRTPRT register).  However, it's possible that we simply don't
-> +	  want write protect.  In that case specify 'disable-wp'.
-> +	  NOTE: This property is not required for slots known to always
-> +	  connect to eMMC or SDIO cards.
-> 
->  Optional properties:
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 7342029..b47b1e9 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -74,6 +74,7 @@ struct idmac_desc {
->   * struct dw_mci_slot - MMC slot state
->   * @mmc: The mmc_host representing this slot.
->   * @host: The MMC controller this slot is using.
-> + * @quirks: Slot-level quirks (DW_MCI_SLOT_QUIRK_XXX)
->   * @ctype: Card type for this slot.
->   * @mrq: mmc_request currently being processed or waiting to be
->   *	processed, or NULL when the slot is idle.
-> @@ -88,6 +89,8 @@ struct dw_mci_slot {
->  	struct mmc_host		*mmc;
->  	struct dw_mci		*host;
-> 
-> +	int			quirks;
-> +
->  	u32			ctype;
-> 
->  	struct mmc_request	*mrq;
-> @@ -828,7 +831,8 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
->  	struct dw_mci_board *brd = slot->host->pdata;
-> 
->  	/* Use platform get_ro function, else try on board write protect */
-> -	if (brd->quirks & DW_MCI_QUIRK_NO_WRITE_PROTECT)
-> +	if ((brd->quirks & DW_MCI_QUIRK_NO_WRITE_PROTECT) ||
-> +	    (slot->quirks & DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT))
->  		read_only = 0;
->  	else if (brd->get_ro)
->  		read_only = brd->get_ro(slot->id);
-> @@ -1788,6 +1792,30 @@ static struct device_node *dw_mci_of_find_slot_node(struct device *dev, u8 slot)
->  	return NULL;
->  }
-> 
-> +static struct dw_mci_of_slot_quirks {
-> +	char *quirk;
-> +	int id;
-> +} of_slot_quirks[] = {
-> +	{
-> +		.quirk	= "disable-wp",
-> +		.id	= DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT,
-> +	},
-> +};
-> +
-> +static int dw_mci_of_get_slot_quirks(struct device *dev, u8 slot)
-> +{
-> +	struct device_node *np = dw_mci_of_find_slot_node(dev, slot);
-> +	int quirks = 0;
-> +	int idx;
-> +
-> +	/* get quirks */
-> +	for (idx = 0; idx < ARRAY_SIZE(of_slot_quirks); idx++)
-> +		if (of_get_property(np, of_slot_quirks[idx].quirk, NULL))
-> +			quirks |= of_slot_quirks[idx].id;
-> +
-> +	return quirks;
-> +}
-> +
->  /* find out bus-width for a given slot */
->  static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
->  {
-> @@ -1803,6 +1831,10 @@ static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
->  	return bus_wd;
->  }
->  #else /* CONFIG_OF */
-> +static int dw_mci_of_get_slot_quirks(struct device *dev, u8 slot)
-> +{
-> +	return 0;
-> +}
->  static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
->  {
->  	return 1;
-> @@ -1831,6 +1863,8 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
->  	slot->host = host;
->  	host->slot[id] = slot;
-> 
-> +	slot->quirks = dw_mci_of_get_slot_quirks(host->dev, slot->id);
-> +
->  	mmc->ops = &dw_mci_ops;
->  	mmc->f_min = DIV_ROUND_UP(host->bus_hz, 510);
->  	mmc->f_max = host->bus_hz;
-> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> index 34be4f4..24dc3a8 100644
-> --- a/include/linux/mmc/dw_mmc.h
-> +++ b/include/linux/mmc/dw_mmc.h
-> @@ -212,6 +212,10 @@ struct dw_mci_dma_ops {
->  /* Write Protect detection not available */
->  #define DW_MCI_QUIRK_NO_WRITE_PROTECT		BIT(4)
-> 
-> +/* Slot level quirks */
-> +/* This slot has no write protect */
-> +#define DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT	BIT(0)
-> +
->  struct dma_pdata;
-> 
->  struct block_settings {
+>
+> Best regards,
 > --
-> 1.7.7.3
-> 
+> Tomasz Figa
+> Samsung Poland R&D Center
+> SW Solution Development, Linux Platform
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
