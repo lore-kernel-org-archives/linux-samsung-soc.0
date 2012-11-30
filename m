@@ -1,40 +1,32 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/7] Samsung fixes for v3.7
-Date: Fri, 30 Nov 2012 09:36:48 -0800
-Message-ID: <20121130173648.GF697@quad.lixom.net>
-References: <50B55783.3020509@samsung.com>
- <1d7601cdceea$b96d7580$2c486080$%kim@samsung.com>
+From: Vinod Koul <vinod.koul@linux.intel.com>
+Subject: Re: [PATCH 1/4] DMA: PL330: fix locking in
+ pl330_free_chan_resources()
+Date: Fri, 30 Nov 2012 23:37:53 +0530
+Message-ID: <1354298873.7077.76.camel@vkoul-udesk3>
+References: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
+	 <1351504796-24788-2-git-send-email-b.zolnierkie@samsung.com>
+	 <CABb+yY3DJ8saXGmXO31nQjtmqObpJxf5-Zwv4YhkJLv6EA=Tfw@mail.gmail.com>
+	 <201211301159.31098.b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:63683 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755774Ab2K3Rgt (ORCPT
+Received: from mga09.intel.com ([134.134.136.24]:48017 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751030Ab2K3S06 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Nov 2012 12:36:49 -0500
-Received: by mail-pb0-f46.google.com with SMTP id wy7so581649pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Nov 2012 09:36:49 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1d7601cdceea$b96d7580$2c486080$%kim@samsung.com>
+	Fri, 30 Nov 2012 13:26:58 -0500
+In-Reply-To: <201211301159.31098.b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, rob.herring@calxeda.com, dinguyen@altera.com, pawel.moll@arm.com, t.figa@samsung.com, kyungmin.park@samsung.com, Dan Williams <djbw@fb.com>
 
-On Fri, Nov 30, 2012 at 08:06:19PM +0900, Kukjin Kim wrote:
-> Kukjin Kim wrote:
-> > 
-> > Hi Arnd, Olof,
-> > 
-> Hi,
+On Fri, 2012-11-30 at 11:59 +0100, Bartlomiej Zolnierkiewicz wrote:
+> > Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
 > 
-> > I sorted out my branches as per Olof's suggestion
-> > 
-> I checked only merged this into arm-soc tree.
-> 
-> Any problems on 2nd ~ 7th pull request? Or missed? ;-)
+> Vinod/Dan could you please pick this patch for 3.8?  Thanks!
+I will check and queue it up today
 
-Pulled 2-7.
-
-
--Olof
+-- 
+~Vinod
