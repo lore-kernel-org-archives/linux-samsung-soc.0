@@ -1,77 +1,89 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Avoid early use of of_machine_is_compatible()
-Date: Fri, 30 Nov 2012 20:08:38 +0900
-Message-ID: <1d7701cdceeb$0c441fc0$24cc5f40$%kim@samsung.com>
-References: <1354045994-8977-1-git-send-email-dianders@chromium.org>
- <CAOesGMjyXZwKjycyVcEV0ty0LCM_i61QxykYPhAvXxx2rhgP+A@mail.gmail.com>
- <50B53E37.40303@samsung.com>
- <CAOesGMivs=NA6hcTYWO-MWUeUjVGZ0h258z1MpeexXGtVf9h-g@mail.gmail.com>
- <18d701cdcd28$74198d70$5c4ca850$%kim@samsung.com>
- <20121128060553.GA18166@quad.lixom.net>
- <CAD=FV=WvDWrT_vCT8W48mKFU4O2n-_yDz+SpFpqx3B25tvmRKA@mail.gmail.com>
- <CAOesGMj9nw4230jBMyWR8L6c21iKvH-YHAQf8=MdTE-ANrZpgA@mail.gmail.com>
+Subject: RE: [PATCH v4 00/12] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Fri, 30 Nov 2012 19:55:30 +0900
+Message-ID: <1d6601cdcee9$36ebd760$a4c38620$%kim@samsung.com>
+References: <002101cdc8a4$fc375990$f4a60cb0$%cho@samsung.com>
+ <112e01cdc951$976699b0$c633cd10$%kim@samsung.com>
+ <008601cdce20$1ccffb00$566ff100$%cho@samsung.com>
+ <CAPdUM4M77LGQn+FcxmsA38H9wrJX6to_OgmtkSgUYkXVuD-m2w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAOesGMj9nw4230jBMyWR8L6c21iKvH-YHAQf8=MdTE-ANrZpgA@mail.gmail.com>
+In-reply-to: <CAPdUM4M77LGQn+FcxmsA38H9wrJX6to_OgmtkSgUYkXVuD-m2w@mail.gmail.com>
 Content-language: ko
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Doug Anderson' <dianders@chromium.org>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+To: 'Rahul Sharma' <r.sh.open@gmail.com>, 'Cho KyongHo' <pullip.cho@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, prathyush.k@samsung.com, sw0312.kim@samsung.com, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, rahul.sharma@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Olof Johansson wrote:
+Rahul Sharma wrote:
+>
+> Hi Mr. Cho,
 > 
-> On Wed, Nov 28, 2012 at 8:16 AM, Doug Anderson <dianders@chromium.org>
-> wrote:
-> > Olof / Kukjin,
-> >
+> We have verified the above patchset for following usecases on exynos5.
+> 
+> 1) MFC decoding using Sysmmu_L and R. (with the bit Inversion fix)
+> 2) GSC operations.
+> 3) FIMD and MIXER (HDMI) as displays.
+> 
+> Thanks for your effort.
+> 
+Thanks for your test on board.
 
 [...]
 
+> >> > >
+> >> > > Looks good to me 1st~3rd patches. After quick review, I think, 1st
+> and 2nd
+> >> > > patches can go to upstream for v3.8 without any dependency. So I
+> will.
+> >> > >
+> >> > > The 3rd patch has a dependency with other driver changes (4th ~
+> 12th), so it
+> >> > > should be sent to upstream with others.
+> >> > >
+> >> > > BTW since the 3rd patch touches many Samsung stuff in arch/arm/ so
+> I'd
+> >> > > prefer to take it in Samsung tree. If Joerg is ok on iommu/exynos
+> driver
+> >> > > changes for v3.8...
+> >> > >
+> >> > > Joerg, please let me know about iommu/exynos stuff so that I can
+> decide to
+> >> > > take 3rd patch or not for v3.8.
+> >> > >
+> >> >
+> >> > Hi, Kukjin Kim.
+> >> >
+> >> > I found that control bit fields of clock gating of System MMU of MFC
+> L/R is inversed.
+> >> > That is reported by Prathyush Kalashwaram.
+> >> >
+> >> > I will post v5 patchset that solves this.
+> >> >
 > >>
-> >> I really don't like splitting an if/else with an ifdef like this, it's
-> fragile
-> >> code and can be hard to follow.
+> >> I did not posted v5 patchset.
+> >> Instead, I posted just the fix for the 03/12 patch mentioned above
+> >> as the reply to the 03/12 patch.
+> >>
 > >
-> > Agree.
-
-Definitely, same here ;-)
-
-> >> There's also a second build error with exynos_defconfig in the
-> >> exynos5-dt.c board file due to a missing include. Teaches me to just
-> apply
-> >> patches without trying to build. :(
+> > Hi, Joerg.
 > >
-> > In the tree I was testing against (the arm-soc/for-next branch at
-> > 659b19ca3a77e2ac32fe84d95242653c75dd07c7) I see the include file in
-> > the exynos5-dt.c file already.  In my tree it was added by "2eae613b:
-> > ARM: EXYNOS: Add MFC device tree support".
+> > I am waiting for your comment about the patchset.
+
+Same here.
+
+> > The latest version is v4.
+> > And a fix of [patch v4 03/12] mentioned above is posted as a reply.
 > >
-> > Your patch applies cleanly on mine but I end up with:
+> > If you have any concern about the patches, please let me know
 > >
-> >   #include <linux/of_platform.h>
-> >   #include <linux/of_fdt.h>
-> >   #include <linux/serial_core.h>
-> >   #include <linux/io.h>
-> >   #include <linux/memblock.h>
-> >   #include <linux/of_fdt.h>
-> 
-> Sigh, this is because people add includes out of alphabetical order.
 
-Yeah.
+If there is no reply, as I said, I will apply 1st and 2nd patches...
 
-> We'll just have to fix it up later, 
-
-Sure, I will after release 3.8-rc1.
-
-[...]
-> 
-> I've pushed out the branch with the patch applied (with the above
-changed).
-> 
-Thanks for your fix.
+Thanks.
 
 Best regards,
 Kgene.
