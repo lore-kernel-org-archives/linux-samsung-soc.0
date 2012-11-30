@@ -1,80 +1,120 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 1/7] Samsung fixes for v3.7
-Date: Fri, 30 Nov 2012 20:06:19 +0900
-Message-ID: <1d7601cdceea$b96d7580$2c486080$%kim@samsung.com>
-References: <50B55783.3020509@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56544 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755918Ab2K3LGW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Nov 2012 06:06:22 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MEA00HJES6JBW30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Nov 2012 20:06:21 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MEA008I4S6JEG10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Nov 2012 20:06:19 +0900 (KST)
-In-reply-to: <50B55783.3020509@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v3 4/4] mmc: dw_mmc: Handle wp-gpios from device tree
+Date: Thu, 29 Nov 2012 21:04:17 -0800
+Message-ID: <1354251857-21587-4-git-send-email-dianders@chromium.org>
+References: <1353624835-19137-1-git-send-email-dianders@chromium.org>
+ <1354251857-21587-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1354251857-21587-1-git-send-email-dianders@chromium.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Kukjin Kim wrote:
-> 
-> Hi Arnd, Olof,
-> 
-Hi,
+On some SoCs (like exynos5250) you need to use an external GPIO for
+write protect.  Add support for wp-gpios to the core dw_mmc driver
+since it could be useful across multiple SoCs.
 
-> I sorted out my branches as per Olof's suggestion
-> 
-I checked only merged this into arm-soc tree.
+With this change I am able to make use of the write protect for the
+external SD slot on exynos5250-snow.
 
-Any problems on 2nd ~ 7th pull request? Or missed? ;-)
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Changes in v3: None
+Changes in v2:
+- Fixed return type from u32 to int
+- Return -EINVAL instead of -1
 
-Thanks.
+ drivers/mmc/host/dw_mmc.c |   34 ++++++++++++++++++++++++++++++++++
+ 1 files changed, 34 insertions(+), 0 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index b47b1e9..8f8bac5 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -34,6 +34,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/workqueue.h>
+ #include <linux/of.h>
++#include <linux/of_gpio.h>
+ 
+ #include "dw_mmc.h"
+ 
+@@ -75,6 +76,7 @@ struct idmac_desc {
+  * @mmc: The mmc_host representing this slot.
+  * @host: The MMC controller this slot is using.
+  * @quirks: Slot-level quirks (DW_MCI_SLOT_QUIRK_XXX)
++ * @wp_gpio: If gpio_is_valid() we'll use this to read write protect.
+  * @ctype: Card type for this slot.
+  * @mrq: mmc_request currently being processed or waiting to be
+  *	processed, or NULL when the slot is idle.
+@@ -90,6 +92,7 @@ struct dw_mci_slot {
+ 	struct dw_mci		*host;
+ 
+ 	int			quirks;
++	int			wp_gpio;
+ 
+ 	u32			ctype;
+ 
+@@ -836,6 +839,8 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
+ 		read_only = 0;
+ 	else if (brd->get_ro)
+ 		read_only = brd->get_ro(slot->id);
++	else if (gpio_is_valid(slot->wp_gpio))
++		read_only = gpio_get_value(slot->wp_gpio);
+ 	else
+ 		read_only =
+ 			mci_readl(slot->host, WRTPRT) & (1 << slot->id) ? 1 : 0;
+@@ -1830,6 +1835,29 @@ static u32 dw_mci_of_get_bus_wd(struct device *dev, u8 slot)
+ 			       " as 1\n");
+ 	return bus_wd;
+ }
++
++/* find the write protect gpio for a given slot; or -1 if none specified */
++static int dw_mci_of_get_wp_gpio(struct device *dev, u8 slot)
++{
++	struct device_node *np = dw_mci_of_find_slot_node(dev, slot);
++	int gpio;
++
++	if (!np)
++		return -EINVAL;
++
++	gpio = of_get_named_gpio(np, "wp-gpios", 0);
++
++	/* Having a missing entry is valid; return silently */
++	if (!gpio_is_valid(gpio))
++		return -EINVAL;
++
++	if (devm_gpio_request(dev, gpio, "dw-mci-wp")) {
++		dev_warn(dev, "gpio [%d] request failed\n", gpio);
++		return -EINVAL;
++	}
++
++	return gpio;
++}
+ #else /* CONFIG_OF */
+ static int dw_mci_of_get_slot_quirks(struct device *dev, u8 slot)
+ {
+@@ -1843,6 +1871,10 @@ static struct device_node *dw_mci_of_find_slot_node(struct device *dev, u8 slot)
+ {
+ 	return NULL;
+ }
++static int dw_mci_of_get_wp_gpio(struct device *dev, u8 slot)
++{
++	return -EINVAL;
++}
+ #endif /* CONFIG_OF */
+ 
+ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+@@ -1960,6 +1992,8 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 	else
+ 		clear_bit(DW_MMC_CARD_PRESENT, &slot->flags);
+ 
++	slot->wp_gpio = dw_mci_of_get_wp_gpio(host->dev, slot->id);
++
+ 	mmc_add_host(mmc);
+ 
+ #if defined(CONFIG_DEBUG_FS)
+-- 
+1.7.7.3
 
-> It includes a fix for v3.7 but I think this is not a critical so it's ok
-> to me for v3.8.
-> 
-> Please pull from:
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.7-samsung-fixes-4
-> 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> The following changes since commit
-> f4a75d2eb7b1e2206094b901be09adb31ba63681:
-> 
->    Linux 3.7-rc6 (2012-11-16 17:42:40 -0800)
-> 
-> are available in the git repository at:
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.7-samsung-fixes-4
-> 
-> Sachin Kamat (1):
->        ARM: S3C24XX: Fix potential NULL pointer dereference error
-> 
->   arch/arm/plat-s3c24xx/dma.c |    9 +++++----
->   1 files changed, 5 insertions(+), 4 deletions(-)
