@@ -1,73 +1,65 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] i2c-s3c2410: Add bus arbitration implementation
-Date: Sat, 1 Dec 2012 13:26:34 +0000
-Message-ID: <20121201132632.GA17981@opensource.wolfsonmicro.com>
-References: <1354165536-18529-1-git-send-email-ch.naveen@samsung.com>
- <1354165536-18529-3-git-send-email-ch.naveen@samsung.com>
- <20121129163448.GA3761@sirena.org.uk>
- <CAPnjgZ0atD3k=gT0vjgkLO_SA8DMak6SiT6nZ_2T6WFqtK0szQ@mail.gmail.com>
- <CAOesGMgE0JEHsdySpua34_kbWi1+z4n4UdW0kumiJEROi7O2pQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ASoC: Samsung: WM8994: Add basic device tree support
+ for machine file
+Date: Sat, 1 Dec 2012 22:49:38 +0900
+Message-ID: <20121201134937.GD17981@opensource.wolfsonmicro.com>
+References: <1354356447-16784-1-git-send-email-padma.v@samsung.com>
+ <1354356447-16784-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+	protocol="application/pgp-signature"; boundary="VV4b6MQE+OnNyhkM"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54060 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59789 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751796Ab2LAN0l (ORCPT
+	by vger.kernel.org with ESMTP id S1751796Ab2LANtn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Dec 2012 08:26:41 -0500
+	Sat, 1 Dec 2012 08:49:43 -0500
 Content-Disposition: inline
-In-Reply-To: <CAOesGMgE0JEHsdySpua34_kbWi1+z4n4UdW0kumiJEROi7O2pQ@mail.gmail.com>
+In-Reply-To: <1354356447-16784-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Simon Glass <sjg@chromium.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, grundler@chromium.org, naveen@chromium.org, w.sang@pengutronix.de, linux-kernel@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, padma.kvr@gmail.com, sbkim73@samsung.com, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org, kgene.kim@samsung.com
 
 
---oyUTqETQ0mS9luUI
+--VV4b6MQE+OnNyhkM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 29, 2012 at 10:14:58PM -0800, Olof Johansson wrote:
-> On Thu, Nov 29, 2012 at 6:13 PM, Simon Glass <sjg@chromium.org> wrote:
+On Sat, Dec 01, 2012 at 03:37:26PM +0530, Padmavathi Venna wrote:
+> Add the basic device tree based lookup.
+>=20
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> ---
+>  sound/soc/samsung/smdk_wm8994.c |   23 +++++++++++++++++++++++
 
-> > It was originally done separately but I think it was felt that this
-> > was overly complex. Olof can you please comment on this?
+Any new device tree bindings need binding documentation.
 
-> it is indeed not controller specific per se, but we are unaware of any
-> other platform/driver using it. So, it seemed reasonable to implement
-> it in the driver as long as we have only one user; if another one
-> comes along it's of course better to move it to the common i2c code.
+Your subject line is also very misleading here...  it should say that
+it's talking about the SMDK.  There's at least two other WM8994 based
+Samsung boards in mainline.
 
-> At least that was my opinion at the time. I could be convinced
-> otherwise if someone else has strong opinions on the matter.
-
-This sort of approach is half the reason SPI ended up being so fun...  I
-suspect if you look hard enough you'll find that this is just the first
-time someone tried to upstream such a scheme.  This is all especially
-true for the DT bindings, even if the implementation is driver local for
-now it'd be better to define generic bindings.
-
---oyUTqETQ0mS9luUI
+--VV4b6MQE+OnNyhkM
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQugVFAAoJELSic+t+oim9ehkP/R2mcq/f9+07jA+ZiI7JdiDA
-FCWvfBFkb0zwCncKCC4qZhnIE9Iz/wBMxghCoJRuXM162Bpom+tswp5Uqu0jxQDD
-XF5HUwPdSEd3iFJUv/s+VXGJ2jLLU9Y15SfOT+NJhxTUtp7rUc63boJA4tzVNVoa
-xTmVKlPqH7CiBiFSkyvmAp9Be2La5S+9k9bPoRMKjFk9rnfDTIgdOV9WPdWltCD/
-mAwmsjBdFK47l+t5xOmAMA207xc9TkIzMuaNuFAj67D3rcJ05RDfkzSjhPBScGxN
-52/dV47fqhOdATB2oAbiCJ0dnMkPxKuYVpRdWpM3TInyNu+Ehl1lKG0T0QYMXXUE
-xiDITevkhxF7SWyMZK6E6M9mUwJi9axSyDYQDmC4y8NegsTO9QQVkhSn3RWU9ZKa
-94cTONEvRiAOHd1wuQORmEqvS8mDM7YyMNThKxhVYe/4D+D001Yl2ZPHu7Ldw0rW
-ADIFyonv4IyCiq92YiymMJBRRCRJHXu9nXWChocJOKSe0gz9AFGSodsrzX8obpvz
-fxKi3hN6Z0tdEzJUA0nG4EICAUct9Z2mZ0mcFJtvlw7JRcaP16PA3nHZ3hFDW/Lq
-/yptAQDCxeM1B8bqiUg6xraXexmb+ke30fjsig89TMMw3yl44obAAyFTh0VAlcaY
-7JFoUyqMtz+nxldhmh6N
-=83z5
+iQIcBAEBAgAGBQJQugrPAAoJELSic+t+oim9Ee8P/iKFTT8W+i1DyObTrPh+EVZP
+Eq18+acCJycFyBm/Y4J0bKoVxhInwNKzryje8PecIctQ9bVFvKdEL4us/JGiPiNS
+akbHEOY7edOnL5KkG7bSdpHrXibLDZP+OgJyVPGiJFb7fZJZTNVJyk7TLX6cfKeF
+Hd/qY6WiKt9+o2Lr2ZnzoPOX2eRbRXU4O57dsQyYM0qmXO8Edfiqt0+/0NKNbJT+
+NDH0ltYzgjbaQd0ZLIiLbHevc8On3EX5zjI/1W1gPsGR2SCoOFJjCAuBzkn3fC5+
+bIuBrcPPrSqE6fwtNX6APkH90TJIrICPjIYSGBeVaZsDtpBPg+ew0wL9uqjAdWDD
+HEc6JarC5lx3/M/nDoA+4Hju+4lsHhnkAk8V6Xdb4vqvanHZ4ZVCoXRVrseOajfr
+vyEG9s4YRVEUtg5IF3eoLuh2DpoLAD8mXhc3ywruzpEMPPzCIcXR3bbMc18RdWBT
+QpSA7rjapA3aQYj7Nh0WbBpr1YYWM3co98UEJ6z1FP25txy6ZmJnxq8npUnSf0tY
++AbQoD6b1AvIJo/LavDPvaUUBYqYgX99wTe/Csw0w6J87L6Edq1jlZEuOfjuPrym
+UXh79THk6KXfIVt8oMPNLEYtvtiOWMCOCbAyEE2fHLb7LULoyGBLMhjw5sLzZCD4
+6eIdrNG+u8owrNFeYTC9
+=B3tt
 -----END PGP SIGNATURE-----
 
---oyUTqETQ0mS9luUI--
+--VV4b6MQE+OnNyhkM--
