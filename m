@@ -1,65 +1,64 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] ASoC: Samsung: WM8994: Add basic device tree support
- for machine file
-Date: Sat, 1 Dec 2012 22:49:38 +0900
-Message-ID: <20121201134937.GD17981@opensource.wolfsonmicro.com>
-References: <1354356447-16784-1-git-send-email-padma.v@samsung.com>
- <1354356447-16784-2-git-send-email-padma.v@samsung.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: Fix build of I2S driver
+Date: Sat, 1 Dec 2012 23:05:13 +0900
+Message-ID: <20121201140512.GF17981@opensource.wolfsonmicro.com>
+References: <1353944420-3972-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <15c501cdcc36$db54cb00$91fe6100$%kim@samsung.com>
+ <20121127064313.GV9411@opensource.wolfsonmicro.com>
+ <1d7501cdcee9$ddefbb30$99cf3190$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VV4b6MQE+OnNyhkM"
+	protocol="application/pgp-signature"; boundary="EgVrEAR5UttbsTXg"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59789 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42390 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751796Ab2LANtn (ORCPT
+	by vger.kernel.org with ESMTP id S1751427Ab2LAOFU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Dec 2012 08:49:43 -0500
+	Sat, 1 Dec 2012 09:05:20 -0500
 Content-Disposition: inline
-In-Reply-To: <1354356447-16784-2-git-send-email-padma.v@samsung.com>
+In-Reply-To: <1d7501cdcee9$ddefbb30$99cf3190$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, padma.kvr@gmail.com, sbkim73@samsung.com, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org, kgene.kim@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Sangbeom Kim' <sbkim73@samsung.com>, 'Padmavathi Venna' <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
---VV4b6MQE+OnNyhkM
+--EgVrEAR5UttbsTXg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 01, 2012 at 03:37:26PM +0530, Padmavathi Venna wrote:
-> Add the basic device tree based lookup.
->=20
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
->  sound/soc/samsung/smdk_wm8994.c |   23 +++++++++++++++++++++++
+On Fri, Nov 30, 2012 at 08:00:10PM +0900, Kukjin Kim wrote:
 
-Any new device tree bindings need binding documentation.
+> Mark, I'm holding on Padma's changes for Samsung audio.
 
-Your subject line is also very misleading here...  it should say that
-it's talking about the SMDK.  There's at least two other WM8994 based
-Samsung boards in mainline.
+> If any updates about this from your side?
 
---VV4b6MQE+OnNyhkM
+> Is it ok to send current next/audio-samsung in my tree to upstream for v3.8?
+
+They didn't seem to have broken anything in -next for me, though I
+suspect you'll have bisection breakage for Exynos as the platform data
+is being removed separately to the driver update to not look for it.
+
+--EgVrEAR5UttbsTXg
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQugrPAAoJELSic+t+oim9Ee8P/iKFTT8W+i1DyObTrPh+EVZP
-Eq18+acCJycFyBm/Y4J0bKoVxhInwNKzryje8PecIctQ9bVFvKdEL4us/JGiPiNS
-akbHEOY7edOnL5KkG7bSdpHrXibLDZP+OgJyVPGiJFb7fZJZTNVJyk7TLX6cfKeF
-Hd/qY6WiKt9+o2Lr2ZnzoPOX2eRbRXU4O57dsQyYM0qmXO8Edfiqt0+/0NKNbJT+
-NDH0ltYzgjbaQd0ZLIiLbHevc8On3EX5zjI/1W1gPsGR2SCoOFJjCAuBzkn3fC5+
-bIuBrcPPrSqE6fwtNX6APkH90TJIrICPjIYSGBeVaZsDtpBPg+ew0wL9uqjAdWDD
-HEc6JarC5lx3/M/nDoA+4Hju+4lsHhnkAk8V6Xdb4vqvanHZ4ZVCoXRVrseOajfr
-vyEG9s4YRVEUtg5IF3eoLuh2DpoLAD8mXhc3ywruzpEMPPzCIcXR3bbMc18RdWBT
-QpSA7rjapA3aQYj7Nh0WbBpr1YYWM3co98UEJ6z1FP25txy6ZmJnxq8npUnSf0tY
-+AbQoD6b1AvIJo/LavDPvaUUBYqYgX99wTe/Csw0w6J87L6Edq1jlZEuOfjuPrym
-UXh79THk6KXfIVt8oMPNLEYtvtiOWMCOCbAyEE2fHLb7LULoyGBLMhjw5sLzZCD4
-6eIdrNG+u8owrNFeYTC9
-=B3tt
+iQIcBAEBAgAGBQJQug6PAAoJELSic+t+oim91FgP/Rh8MNJIWBxiU33ztXc+9dyx
+htKMDOaFCe1hWPsg5lO4p5rREozhlSFFK2c2HaNFRprWMBw6zjIwqhz7tN7UvkqR
+RFbeDZ9/csC4D5tra9oaHjw1Moa+eAPWxBPh5nAWqYGix14vFmcyOTDOaJCct7fA
+4ZFqjlEqENSQTeia/RAqgQlUYolIHGyJ8xtHSqzTHYcgDla5T+VN6MUO3O4YkerV
+okvmE0tZnGaxbKpvntY+FmDwuMQKFYWtl4iV9E3TSctoyGSP7Up6MYKHINfdqxzV
+A+21AnYPfHfM0m8JgloQDX6QKGOrhwAS7zqPRLb4EcastiixF2OUq4txBeQPfN3Q
+LVOhILfUK9VhA9Yf7RvRuzxSOHPmDVxJGARedA+oyoSYt+xPlzkNNYFVLz5EVO0s
+RsuJpIIufVC0jvei6RJzRKXxM71olgvnwWUa+jLADkxMnxUYrKQYzEpXGBwF0h2J
+0qOrMds+TDtVyYmrokcH2SwzTeRKx2w00/8ByguPeA4XTDwGliPTm3Q2FvuNgpxt
+QOAuFYJZ4Hf4O2DpPIqEXRkEGtTUovqpoMfFqR7XAssTx906GK87nxUCQrPK9PIR
+zOd/FHZgdgazippJ+k3yJPP416aa8l//wMFAcME8vWQyg1SgZYpx0UyYH75GOVIt
+IjJ6/bES+NVtFfwCl9yx
+=Oaw+
 -----END PGP SIGNATURE-----
 
---VV4b6MQE+OnNyhkM--
+--EgVrEAR5UttbsTXg--
