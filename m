@@ -1,65 +1,104 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] ASoC: Samsung: Do not register samsung audio dma
- device as pdev
-Date: Sun, 2 Dec 2012 13:33:50 +0900
-Message-ID: <20121202043349.GX17981@opensource.wolfsonmicro.com>
-References: <1354356447-16784-1-git-send-email-padma.v@samsung.com>
- <1354356447-16784-3-git-send-email-padma.v@samsung.com>
+From: Romain Naour <romain.naour@openwide.fr>
+Subject: [PATCH 0/5 v2] S3C / S5PC100: add clockevent/clocksource support
+Date: Sun, 02 Dec 2012 20:43:56 +0100
+Message-ID: <50BBAF7C.5030909@openwide.fr>
+References: <50885608.1030503@openwide.fr> <201211280057.16345.heiko@sntech.de> <50B7ED30.3020106@openwide.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+rRWuC8ZLvVekNoN"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43439 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751722Ab2LBEdz (ORCPT
+Received: from zimbra3.corp.accelance.fr ([213.162.49.233]:42805 "EHLO
+	zimbra3.corp.accelance.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753555Ab2LBToA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Dec 2012 23:33:55 -0500
-Content-Disposition: inline
-In-Reply-To: <1354356447-16784-3-git-send-email-padma.v@samsung.com>
+	Sun, 2 Dec 2012 14:44:00 -0500
+In-Reply-To: <50B7ED30.3020106@openwide.fr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, padma.kvr@gmail.com, sbkim73@samsung.com, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org, kgene.kim@samsung.com
+To: heiko@sntech.de
+Cc: tomasz.figa@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
 
+This series of patches converts the s3c and s5pc100 timer driver to the clocksource/clockevent API.
+I made some test on a mini2440 board and I had to reduce timers frequency to 1MHz in order to produce a timer's overflow every 64ms.
+Initial timer's frequency (8,45MHz) provide only 7ms between each overflow. It is not enough.
+As timers were previously used to produce an IRQ at 200Hz, some board (Osiris, Anubis board) use an external 12MHz signal to clock the timers (tclk1).
+So, I changed their configuration to select internal pclk clock instead, but I can't test it.
 
---+rRWuC8ZLvVekNoN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Since clockevent/clocksource API becomes available, we can use High Resolution Timer and Tickless mode.
 
-On Sat, Dec 01, 2012 at 03:37:27PM +0530, Padmavathi Venna wrote:
+Most of the work is already done in s5p-time.c (renamed samsung-time.c).
+I added some #define for s3c24xx and s5pc100 case.
 
->  sound/soc/samsung/dma.c         |   24 ++++++------------------
->  sound/soc/samsung/dma.h         |    3 +++
->  sound/soc/samsung/i2s.c         |    3 +++
->  sound/soc/samsung/smdk_wm8994.c |    7 +++++--
->  4 files changed, 17 insertions(+), 20 deletions(-)
+Kernel rev v3.7-rc6
 
-This is fine in principle but it's going to break every Samsung based
-platform except the SMDK with WM8994 as only machine driver updated to
-reflect the changed DAI name is that one, the others need updating too.
+Naour Romain (5):
+  Rename s5p-time to samsung-time
+  Add samsung-time support for s3c24xx
+  Add samsung-time support for s3c64xx
+  Add samsung-time support for s5pc100
+  Remove unused plat-samsung/time.c
 
-This includes pretty much all the platforms I actively work on...
+ arch/arm/Kconfig                                   |   9 +-
+ arch/arm/mach-exynos/Kconfig                       |   2 +-
+ arch/arm/mach-exynos/mach-universal_c210.c         |   6 +-
+ arch/arm/mach-s3c24xx/Kconfig                      |   6 +
+ arch/arm/mach-s3c24xx/mach-amlm5900.c              |   5 +-
+ arch/arm/mach-s3c24xx/mach-anubis.c                |   4 +-
+ arch/arm/mach-s3c24xx/mach-at2440evb.c             |   4 +-
+ arch/arm/mach-s3c24xx/mach-bast.c                  |   4 +-
+ arch/arm/mach-s3c24xx/mach-gta02.c                 |   4 +-
+ arch/arm/mach-s3c24xx/mach-h1940.c                 |   4 +-
+ arch/arm/mach-s3c24xx/mach-jive.c                  |   4 +-
+ arch/arm/mach-s3c24xx/mach-mini2440.c              |   4 +-
+ arch/arm/mach-s3c24xx/mach-n30.c                   |   6 +-
+ arch/arm/mach-s3c24xx/mach-nexcoder.c              |   4 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c                |   4 +-
+ arch/arm/mach-s3c24xx/mach-otom.c                  |   4 +-
+ arch/arm/mach-s3c24xx/mach-qt2410.c                |   4 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c                |   4 +-
+ arch/arm/mach-s3c24xx/mach-rx3715.c                |   4 +-
+ arch/arm/mach-s3c24xx/mach-smdk2410.c              |   4 +-
+ arch/arm/mach-s3c24xx/mach-smdk2413.c              |   8 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c              |   4 +-
+ arch/arm/mach-s3c24xx/mach-smdk2440.c              |   4 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c              |   4 +-
+ arch/arm/mach-s3c24xx/mach-tct_hammer.c            |   4 +-
+ arch/arm/mach-s3c24xx/mach-vr1000.c                |   4 +-
+ arch/arm/mach-s3c24xx/mach-vstms.c                 |   5 +-
+ arch/arm/mach-s3c64xx/Kconfig                      |   2 +
+ arch/arm/mach-s3c64xx/mach-anw6410.c               |   4 +-
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |   4 +-
+ arch/arm/mach-s3c64xx/mach-hmt.c                   |   4 +-
+ arch/arm/mach-s3c64xx/mach-mini6410.c              |   4 +-
+ arch/arm/mach-s3c64xx/mach-ncp.c                   |   4 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c              |   4 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c                |   2 +
+ arch/arm/mach-s3c64xx/mach-smartq5.c               |   3 +-
+ arch/arm/mach-s3c64xx/mach-smartq7.c               |   3 +-
+ arch/arm/mach-s3c64xx/mach-smdk6400.c              |   4 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |   4 +-
+ arch/arm/mach-s5p64x0/Kconfig                      |   4 +-
+ arch/arm/mach-s5p64x0/mach-smdk6440.c              |   6 +-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c              |   6 +-
+ arch/arm/mach-s5pc100/Kconfig                      |   1 +
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |   4 +-
+ arch/arm/mach-s5pv210/Kconfig                      |   2 +-
+ arch/arm/mach-s5pv210/mach-aquila.c                |   6 +-
+ arch/arm/mach-s5pv210/mach-goni.c                  |   6 +-
+ arch/arm/mach-s5pv210/mach-smdkc110.c              |   6 +-
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |   6 +-
+ arch/arm/mach-s5pv210/mach-torbreck.c              |   6 +-
+ arch/arm/plat-samsung/Kconfig                      |   2 +-
+ arch/arm/plat-samsung/Makefile                     |   3 +-
+ arch/arm/plat-samsung/include/plat/cpu.h           |   5 -
+ arch/arm/plat-samsung/include/plat/s5p-time.h      |  40 ---
+ arch/arm/plat-samsung/include/plat/samsung-time.h  |  51 ++++
+ .../plat-samsung/{s5p-time.c => samsung-time.c}    | 144 +++++------
+ arch/arm/plat-samsung/time.c                       | 285 ---------------------
+ 57 files changed, 274 insertions(+), 474 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s5p-time.h
+ create mode 100644 arch/arm/plat-samsung/include/plat/samsung-time.h
+ rename arch/arm/plat-samsung/{s5p-time.c => samsung-time.c} (68%)
+ delete mode 100644 arch/arm/plat-samsung/time.c
 
---+rRWuC8ZLvVekNoN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQutomAAoJELSic+t+oim93mMP/AlxtiZUA0Kz1t/E8Tpj8b0M
-KTFP6uTk/uO/CWohCJ72Ju7uJkB21Ui88RIL54DxZ9Gdupm1R0iNYW1599JqhY+p
-lf0j/Pm74V8DUuDK1wBKqt+bW33eFC+K+TkVMOoYJQ+FSU+kb34G5+YBEJPFyDJE
-zY0NM+RESCRccKw1xGKV0ledlAXT5wiVCRhStOMXOFthEf8+mG2dClCF6pGlhLXy
-BHetzWtk3ZSRcv94d24L6+xLulWaBY2C0q0rm3usaqRfbNdCAcTIiW6qNbKiWgnb
-6y7dkyqL41KV2ZjF7kQoAYGLtyRfdy1D9BYVCeCjeMJ74XS5vGG2nqCYCaU8vx3A
-IrK/lLGhNr7SoBqTJ2m8Fcdr8uo+WgDlVvhBDAnSxvWjKSTaiBqsuTDHdYB4fBq4
-oEv1Sj9MRzOE7DmoP8LL9avWBxvyqbBpXWJGXToz0VfudzMGrw3oTGNhDjFcIsCQ
-HxsDn7rJddzuSkWRft7x+rvj/ma+5V1XBPWdiw9n5EiYTKE52nl60jV/19pJ+u5F
-8IvTRCl7uG1XcCwiOMpwBftscWTAq8Nx9aqDJw/4nT3qGkEubMvY1QeSNhLfJMCN
-5wh5qfPxVBtyBhfOaEOkkpVEI3bL8uJGsU0zB+KCWGLN28pOBOzxIsoPyvfGKjex
-W3b8tmyMv5bycbJjVkeR
-=aXqc
------END PGP SIGNATURE-----
-
---+rRWuC8ZLvVekNoN--
+-- 
