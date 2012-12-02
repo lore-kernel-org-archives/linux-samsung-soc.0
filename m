@@ -1,64 +1,65 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Fix build of I2S driver
-Date: Sat, 1 Dec 2012 23:05:13 +0900
-Message-ID: <20121201140512.GF17981@opensource.wolfsonmicro.com>
-References: <1353944420-3972-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <15c501cdcc36$db54cb00$91fe6100$%kim@samsung.com>
- <20121127064313.GV9411@opensource.wolfsonmicro.com>
- <1d7501cdcee9$ddefbb30$99cf3190$%kim@samsung.com>
+Subject: Re: [PATCH 2/2] ASoC: Samsung: Do not register samsung audio dma
+ device as pdev
+Date: Sun, 2 Dec 2012 13:33:50 +0900
+Message-ID: <20121202043349.GX17981@opensource.wolfsonmicro.com>
+References: <1354356447-16784-1-git-send-email-padma.v@samsung.com>
+ <1354356447-16784-3-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EgVrEAR5UttbsTXg"
+	protocol="application/pgp-signature"; boundary="+rRWuC8ZLvVekNoN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42390 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43439 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751427Ab2LAOFU (ORCPT
+	by vger.kernel.org with ESMTP id S1751722Ab2LBEdz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Dec 2012 09:05:20 -0500
+	Sat, 1 Dec 2012 23:33:55 -0500
 Content-Disposition: inline
-In-Reply-To: <1d7501cdcee9$ddefbb30$99cf3190$%kim@samsung.com>
+In-Reply-To: <1354356447-16784-3-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Sangbeom Kim' <sbkim73@samsung.com>, 'Padmavathi Venna' <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, padma.kvr@gmail.com, sbkim73@samsung.com, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org, kgene.kim@samsung.com
 
 
---EgVrEAR5UttbsTXg
+--+rRWuC8ZLvVekNoN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Nov 30, 2012 at 08:00:10PM +0900, Kukjin Kim wrote:
+On Sat, Dec 01, 2012 at 03:37:27PM +0530, Padmavathi Venna wrote:
 
-> Mark, I'm holding on Padma's changes for Samsung audio.
+>  sound/soc/samsung/dma.c         |   24 ++++++------------------
+>  sound/soc/samsung/dma.h         |    3 +++
+>  sound/soc/samsung/i2s.c         |    3 +++
+>  sound/soc/samsung/smdk_wm8994.c |    7 +++++--
+>  4 files changed, 17 insertions(+), 20 deletions(-)
 
-> If any updates about this from your side?
+This is fine in principle but it's going to break every Samsung based
+platform except the SMDK with WM8994 as only machine driver updated to
+reflect the changed DAI name is that one, the others need updating too.
 
-> Is it ok to send current next/audio-samsung in my tree to upstream for v3.8?
+This includes pretty much all the platforms I actively work on...
 
-They didn't seem to have broken anything in -next for me, though I
-suspect you'll have bisection breakage for Exynos as the platform data
-is being removed separately to the driver update to not look for it.
-
---EgVrEAR5UttbsTXg
+--+rRWuC8ZLvVekNoN
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQug6PAAoJELSic+t+oim91FgP/Rh8MNJIWBxiU33ztXc+9dyx
-htKMDOaFCe1hWPsg5lO4p5rREozhlSFFK2c2HaNFRprWMBw6zjIwqhz7tN7UvkqR
-RFbeDZ9/csC4D5tra9oaHjw1Moa+eAPWxBPh5nAWqYGix14vFmcyOTDOaJCct7fA
-4ZFqjlEqENSQTeia/RAqgQlUYolIHGyJ8xtHSqzTHYcgDla5T+VN6MUO3O4YkerV
-okvmE0tZnGaxbKpvntY+FmDwuMQKFYWtl4iV9E3TSctoyGSP7Up6MYKHINfdqxzV
-A+21AnYPfHfM0m8JgloQDX6QKGOrhwAS7zqPRLb4EcastiixF2OUq4txBeQPfN3Q
-LVOhILfUK9VhA9Yf7RvRuzxSOHPmDVxJGARedA+oyoSYt+xPlzkNNYFVLz5EVO0s
-RsuJpIIufVC0jvei6RJzRKXxM71olgvnwWUa+jLADkxMnxUYrKQYzEpXGBwF0h2J
-0qOrMds+TDtVyYmrokcH2SwzTeRKx2w00/8ByguPeA4XTDwGliPTm3Q2FvuNgpxt
-QOAuFYJZ4Hf4O2DpPIqEXRkEGtTUovqpoMfFqR7XAssTx906GK87nxUCQrPK9PIR
-zOd/FHZgdgazippJ+k3yJPP416aa8l//wMFAcME8vWQyg1SgZYpx0UyYH75GOVIt
-IjJ6/bES+NVtFfwCl9yx
-=Oaw+
+iQIcBAEBAgAGBQJQutomAAoJELSic+t+oim93mMP/AlxtiZUA0Kz1t/E8Tpj8b0M
+KTFP6uTk/uO/CWohCJ72Ju7uJkB21Ui88RIL54DxZ9Gdupm1R0iNYW1599JqhY+p
+lf0j/Pm74V8DUuDK1wBKqt+bW33eFC+K+TkVMOoYJQ+FSU+kb34G5+YBEJPFyDJE
+zY0NM+RESCRccKw1xGKV0ledlAXT5wiVCRhStOMXOFthEf8+mG2dClCF6pGlhLXy
+BHetzWtk3ZSRcv94d24L6+xLulWaBY2C0q0rm3usaqRfbNdCAcTIiW6qNbKiWgnb
+6y7dkyqL41KV2ZjF7kQoAYGLtyRfdy1D9BYVCeCjeMJ74XS5vGG2nqCYCaU8vx3A
+IrK/lLGhNr7SoBqTJ2m8Fcdr8uo+WgDlVvhBDAnSxvWjKSTaiBqsuTDHdYB4fBq4
+oEv1Sj9MRzOE7DmoP8LL9avWBxvyqbBpXWJGXToz0VfudzMGrw3oTGNhDjFcIsCQ
+HxsDn7rJddzuSkWRft7x+rvj/ma+5V1XBPWdiw9n5EiYTKE52nl60jV/19pJ+u5F
+8IvTRCl7uG1XcCwiOMpwBftscWTAq8Nx9aqDJw/4nT3qGkEubMvY1QeSNhLfJMCN
+5wh5qfPxVBtyBhfOaEOkkpVEI3bL8uJGsU0zB+KCWGLN28pOBOzxIsoPyvfGKjex
+W3b8tmyMv5bycbJjVkeR
+=aXqc
 -----END PGP SIGNATURE-----
 
---EgVrEAR5UttbsTXg--
+--+rRWuC8ZLvVekNoN--
