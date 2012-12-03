@@ -1,178 +1,281 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
-Date: Mon, 3 Dec 2012 19:13:15 +0530
-Message-ID: <CAFp+6iHO9P=QNCpa23JJQJUmdeoSY+39LDe-q3A8whQmo+=ZfQ@mail.gmail.com>
-References: <1352363533-14970-1-git-send-email-gautam.vivek@samsung.com>
-	<1352363533-14970-2-git-send-email-gautam.vivek@samsung.com>
+From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Subject: Re: [PATCH] I2C: EXYNOS: Add slave support to i2c
+Date: Tue, 4 Dec 2012 07:53:57 +0900
+Message-ID: <CAHuqX+GjysHvd7b8n5vjBHA+HNOY6aeRaKSnH0Jq-0z_vni9Hg@mail.gmail.com>
+References: <1354354961-28833-1-git-send-email-giridhar.maruthy@linaro.org>
+	<CAHuqX+EQ0pZnm27yAVqC=NRX8huQ5EvbC8PGn2G3xYw4D71gQA@mail.gmail.com>
+	<CAH9JG2VU7gLU-tdhUcGYtkn3aE5+CePKZD7U0OhpDMgJjARWyw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:47151 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754382Ab2LCNnR (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:33649 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751142Ab2LCWx6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Dec 2012 08:43:17 -0500
-In-Reply-To: <1352363533-14970-2-git-send-email-gautam.vivek@samsung.com>
+	Mon, 3 Dec 2012 17:53:58 -0500
+Received: by mail-ee0-f46.google.com with SMTP id e53so1908084eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Dec 2012 14:53:57 -0800 (PST)
+In-Reply-To: <CAH9JG2VU7gLU-tdhUcGYtkn3aE5+CePKZD7U0OhpDMgJjARWyw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, balbi@ti.com, tomasz.figa@gmail.com, av.tikhomirov@samsung.com, yulgon.kim@samsung.com, thomas.abraham@linaro.org, p.paneri@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kukjin,
+Thank you Kyungmin Park for the review.
 
-On Thu, Nov 8, 2012 at 2:02 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Adding DWC3 device tree node for Exynos5250 along with the
-> device address and clock support needed for the controller.
+On 3 December 2012 22:28, Kyungmin Park <kmpark@infradead.org> wrote:
 >
-
-Does this change needs looks fine?
-Any thoughts about this please ?
-
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> ---
->  .../devicetree/bindings/usb/exynos-usb.txt         |   14 +++++++++++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    6 +++++
->  arch/arm/mach-exynos/Kconfig                       |    1 +
->  arch/arm/mach-exynos/clock-exynos5.c               |   24 ++++++++++++++++++++
->  arch/arm/mach-exynos/include/mach/map.h            |    1 +
->  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
->  6 files changed, 48 insertions(+), 0 deletions(-)
+> Hi,
 >
-> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> index 5ff3def1..a7e3eaa 100644
-> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> @@ -38,3 +38,17 @@ Example:
->                 reg = <0x12120000 0x100>;
->                 interrupts = <0 71 0>;
->         };
-> +
-> +DWC3
-> +Required properties:
-> + - compatible: should be "samsung,exynos-dwc3" for USB 3.0 DWC3 controller.
-> + - reg: physical base address of the controller and length of memory mapped
-> +   region.
-> + - interrupts: interrupt number to the cpu.
-> +
-> +Example:
-> +       usb@12000000 {
-> +               compatible = "samsung,exynos-dwc3";
-> +               reg = <0x12000000 0x10000>;
-> +               interrupts = <0 72 0>;
-> +       };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index f18abe0..d349636 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -68,6 +68,12 @@
->                 interrupts = <0 96 0>;
->         };
->
-> +       usb@12000000 {
-> +               compatible = "samsung,exynos-dwc3";
-> +               reg = <0x12000000 0x10000>;
-> +               interrupts = <0 72 0>;
-> +       };
-> +
->         rtc {
->                 compatible = "samsung,s3c6410-rtc";
->                 reg = <0x101E0000 0x100>;
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index bb3b09a..588814a 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -422,6 +422,7 @@ config MACH_EXYNOS5_DT
->         select ARM_AMBA
->         select SOC_EXYNOS5250
->         select USE_OF
-> +       select USB_ARCH_HAS_XHCI
->         help
->           Machine support for Samsung EXYNOS5 machine with device tree enabled.
->           Select this if a fdt blob is available for the EXYNOS5 SoC based board.
-> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-> index a88e0d9..ee094ee 100644
-> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> @@ -740,6 +740,11 @@ static struct clk exynos5_init_clocks_off[] = {
->                 .enable         = exynos5_clk_ip_fsys_ctrl ,
->                 .ctrlbit        = (1 << 18),
->         }, {
-> +               .name           = "usbdrd30",
-> +               .parent         = &exynos5_clk_aclk_200.clk,
-> +               .enable         = exynos5_clk_ip_fsys_ctrl,
-> +               .ctrlbit        = (1 << 19),
-> +       }, {
->                 .name           = "usbotg",
->                 .enable         = exynos5_clk_ip_fsys_ctrl,
->                 .ctrlbit        = (1 << 7),
-> @@ -1004,6 +1009,16 @@ struct clksrc_sources exynos5_clkset_group = {
->         .nr_sources     = ARRAY_SIZE(exynos5_clkset_group_list),
->  };
->
-> +struct clk *exynos5_clkset_usbdrd30_list[] = {
-> +       [0] = &exynos5_clk_mout_mpll.clk,
-> +       [1] = &exynos5_clk_mout_cpll.clk,
-> +};
-> +
-> +struct clksrc_sources exynos5_clkset_usbdrd30 = {
-> +       .sources        = exynos5_clkset_usbdrd30_list,
-> +       .nr_sources     = ARRAY_SIZE(exynos5_clkset_usbdrd30_list),
-> +};
-> +
->  /* Possible clock sources for aclk_266_gscl_sub Mux */
->  static struct clk *clk_src_gscl_266_list[] = {
->         [0] = &clk_ext_xtal_mux,
-> @@ -1288,6 +1303,15 @@ static struct clksrc_clk exynos5_clksrcs[] = {
->                         .parent         = &exynos5_clk_mout_cpll.clk,
->                 },
->                 .reg_div = { .reg = EXYNOS5_CLKDIV_GEN, .shift = 4, .size = 3 },
-> +       }, {
-> +               .clk    = {
-> +                       .name           = "sclk_usbdrd30",
-> +                       .enable         = exynos5_clksrc_mask_fsys_ctrl,
-> +                       .ctrlbit        = (1 << 28),
-> +               },
-> +               .sources = &exynos5_clkset_usbdrd30,
-> +               .reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 28, .size = 1 },
-> +               .reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 24, .size = 4 },
->         },
->  };
->
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index 471ffaf..064ca1c 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -197,6 +197,7 @@
->  #define EXYNOS4_PA_EHCI                        0x12580000
->  #define EXYNOS4_PA_OHCI                        0x12590000
->  #define EXYNOS4_PA_HSPHY               0x125B0000
-> +#define EXYNOS5_PA_DRD                 0x12000000
->  #define EXYNOS5_PA_EHCI                        0x12110000
->  #define EXYNOS5_PA_OHCI                        0x12120000
->  #define EXYNOS4_PA_MFC                 0x13400000
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index c03f3dd..3032222 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -90,6 +90,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->                                 "s5p-ehci", NULL),
->         OF_DEV_AUXDATA("samsung,exynos-ohci", EXYNOS5_PA_OHCI,
->                                 "exynos-ohci", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos-dwc3", EXYNOS5_PA_DRD,
-> +                               "exynos-dwc3", NULL),
->         {},
->  };
->
-> --
-> 1.7.6.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> On Mon, Dec 3, 2012 at 9:16 PM, Giridhar Maruthy
+> <giridhar.maruthy@linaro.org> wrote:
+> > This patch adds slave support to i2c. The dt entry i2c-mode
+> > decides at probe time if the controller needs to work in
+> > slave mode and the controller is accordingly programmed.
+> >
+> > Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+> > ---
+> >  drivers/i2c/busses/i2c-s3c2410.c |  100
+> > ++++++++++++++++++++++++++------------
+> >  1 file changed, 68 insertions(+), 32 deletions(-)
+> >
+> > diff --git a/drivers/i2c/busses/i2c-s3c2410.c
+> > b/drivers/i2c/busses/i2c-s3c2410.c
+> > index e93e7d6..d83a6d7 100644
+> > --- a/drivers/i2c/busses/i2c-s3c2410.c
+> > +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> > @@ -53,6 +53,9 @@
+> >  /* Max time to wait for bus to become idle after a xfer (in us) */
+> >  #define S3C2410_IDLE_TIMEOUT   5000
+> >
+> > +/* To find the master/slave mode of current controller */
+> > +#define is_master(i2c) (!i2c->i2c_mode)
+> > +
+> >  /* i2c controller state */
+> >  enum s3c24xx_i2c_state {
+> >         STATE_IDLE,
+> > @@ -89,6 +92,8 @@ struct s3c24xx_i2c {
+> >  #ifdef CONFIG_CPU_FREQ
+> >         struct notifier_block   freq_transition;
+> >  #endif
+> > +       /* i2c_mode: 0 is for master; and 1 is for slave */
+> > +       unsigned int            i2c_mode;
+> If it's used for master or not, doesn't better to use 'is_master' or
+> 'is_slave'? what's the meaning of 'i2c_mode'?
+> and
+> #define is_master(i2c) (i2c->is_master)
 
 
+I thought mode indicates master mode or slave mode, but I agree
+'is_master' name is better. Will change that.
 
--- 
-Thanks & Regards
-Vivek
+>
+> Thank you,
+> Kyungmin Park
+> >  };
+> >
+> >  static struct platform_device_id s3c24xx_driver_ids[] = {
+> > @@ -202,11 +207,21 @@ static void s3c24xx_i2c_message_start(struct
+> > s3c24xx_i2c *i2c,
+> >         stat = 0;
+> >         stat |=  S3C2410_IICSTAT_TXRXEN;
+> >
+> > -       if (msg->flags & I2C_M_RD) {
+> > -               stat |= S3C2410_IICSTAT_MASTER_RX;
+> > -               addr |= 1;
+> > -       } else
+> > -               stat |= S3C2410_IICSTAT_MASTER_TX;
+> > +       if (is_master(i2c)) {
+> > +               /* Master mode */
+> > +               if (msg->flags & I2C_M_RD) {
+> > +                       stat |= S3C2410_IICSTAT_MASTER_RX;
+> > +                       addr |= 1;
+> > +               } else
+> > +                       stat |= S3C2410_IICSTAT_MASTER_TX;
+> > +       } else {
+> > +               /* Slave mode */
+> > +               if (msg->flags & I2C_M_RD) {
+> > +                       stat |= S3C2410_IICSTAT_SLAVE_RX;
+> > +                       addr |= 1;
+> > +               } else
+> > +                       stat |= S3C2410_IICSTAT_SLAVE_TX;
+> > +       }
+> >
+> >         if (msg->flags & I2C_M_REV_DIR_ADDR)
+> >                 addr ^= 1;
+> > @@ -228,8 +243,10 @@ static void s3c24xx_i2c_message_start(struct
+> > s3c24xx_i2c *i2c,
+> >         dev_dbg(i2c->dev, "iiccon, %08lx\n", iiccon);
+> >         writel(iiccon, i2c->regs + S3C2410_IICCON);
+> >
+> > -       stat |= S3C2410_IICSTAT_START;
+> > -       writel(stat, i2c->regs + S3C2410_IICSTAT);
+> > +       if (is_master(i2c)) {
+> > +               stat |= S3C2410_IICSTAT_START;
+> > +               writel(stat, i2c->regs + S3C2410_IICSTAT);
+> > +       }
+> >  }
+> >
+> >  static inline void s3c24xx_i2c_stop(struct s3c24xx_i2c *i2c, int ret)
+> > @@ -272,14 +289,19 @@ static inline void s3c24xx_i2c_stop(struct s3c24xx_i2c
+> > *i2c, int ret)
+> >          * devices, the host as Master and the HDMIPHY device as the slave.
+> >          * Skipping the STOP condition has been tested on this bus and
+> > works.
+> >          */
+> > -       if (i2c->quirks & QUIRK_HDMIPHY) {
+> > -               /* Stop driving the I2C pins */
+> > -               iicstat &= ~S3C2410_IICSTAT_TXRXEN;
+> > -       } else {
+> > -               /* stop the transfer */
+> > -               iicstat &= ~S3C2410_IICSTAT_START;
+> > +       if (is_master(i2c)) {
+> > +               if (i2c->quirks & QUIRK_HDMIPHY) {
+> > +                       /* Stop driving the I2C pins */
+> > +                       iicstat &= ~S3C2410_IICSTAT_TXRXEN;
+> > +               } else {
+> > +                       /* stop the transfer */
+> > +                       if (is_master(i2c)) {
+> > +                               /* Start/Stop required only for master */
+> > +                               iicstat &= ~S3C2410_IICSTAT_START;
+> > +                       }
+> > +               }
+> > +               writel(iicstat, i2c->regs + S3C2410_IICSTAT);
+> >         }
+> > -       writel(iicstat, i2c->regs + S3C2410_IICSTAT);
+> >
+> >         i2c->state = STATE_STOP;
+> >
+> > @@ -348,7 +370,8 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c,
+> > unsigned long iicstat)
+> >                  */
+> >
+> >                 if (iicstat & S3C2410_IICSTAT_LASTBIT &&
+> > -                   !(i2c->msg->flags & I2C_M_IGNORE_NAK)) {
+> > +                   !(i2c->msg->flags & I2C_M_IGNORE_NAK) &&
+> > +                   is_master(i2c)) {
+> >                         /* ack was not received... */
+> >
+> >                         dev_dbg(i2c->dev, "ack was not received\n");
+> > @@ -380,7 +403,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c,
+> > unsigned long iicstat)
+> >                  * end of the message, and if so, work out what to do
+> >                  */
+> >
+> > -               if (!(i2c->msg->flags & I2C_M_IGNORE_NAK)) {
+> > +               if (!(i2c->msg->flags & I2C_M_IGNORE_NAK) && is_master(i2c))
+> > {
+> >                         if (iicstat & S3C2410_IICSTAT_LASTBIT) {
+> >                                 dev_dbg(i2c->dev, "WRITE: No Ack\n");
+> >
+> > @@ -432,7 +455,6 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c,
+> > unsigned long iicstat)
+> >
+> >                 } else {
+> >                         /* send stop */
+> > -
+> >                         s3c24xx_i2c_stop(i2c, 0);
+> >                 }
+> >                 break;
+> > @@ -447,7 +469,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c,
+> > unsigned long iicstat)
+> >                 i2c->msg->buf[i2c->msg_ptr++] = byte;
+> >
+> >   prepare_read:
+> > -               if (is_msglast(i2c)) {
+> > +               if (is_msglast(i2c) && is_master(i2c)) {
+> >                         /* last byte of buffer */
+> >
+> >                         if (is_lastmsg(i2c))
+> > @@ -612,11 +634,13 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+> >         if (i2c->suspended)
+> >                 return -EIO;
+> >
+> > -       ret = s3c24xx_i2c_set_master(i2c);
+> > -       if (ret != 0) {
+> > -               dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
+> > -               ret = -EAGAIN;
+> > -               goto out;
+> > +       if (is_master(i2c)) {
+> > +               ret = s3c24xx_i2c_set_master(i2c);
+> > +               if (ret != 0) {
+> > +                       dev_err(i2c->dev, "cannot get bus (error %d)\n",
+> > ret);
+> > +                       ret = -EAGAIN;
+> > +                       goto out;
+> > +               }
+> >         }
+> >
+> >         i2c->msg     = msgs;
+> > @@ -628,23 +652,29 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+> >         s3c24xx_i2c_enable_irq(i2c);
+> >         s3c24xx_i2c_message_start(i2c, msgs);
+> >
+> > -       timeout = wait_event_timeout(i2c->wait, i2c->msg_num == 0, HZ * 5);
+> > +       if (is_master(i2c))
+> > +               timeout = wait_event_timeout(i2c->wait,\
+> > +                               i2c->msg_num == 0, HZ * 5);
+> > +       else
+> > +               wait_event_interruptible(i2c->wait, i2c->msg_num == 0);
+> >
+> >         ret = i2c->msg_idx;
+> >
+> >         /* having these next two as dev_err() makes life very
+> >          * noisy when doing an i2cdetect */
+> >
+> > -       if (timeout == 0)
+> > -               dev_dbg(i2c->dev, "timeout\n");
+> > -       else if (ret != num)
+> > -               dev_dbg(i2c->dev, "incomplete xfer (%d)\n", ret);
+> > +       if (is_master(i2c)) {
+> > +               if (timeout == 0)
+> > +                       dev_dbg(i2c->dev, "timeout\n");
+> > +               else if (ret != num)
+> > +                       dev_dbg(i2c->dev, "incomplete xfer (%d)\n", ret);
+> >
+> > -       /* For QUIRK_HDMIPHY, bus is already disabled */
+> > -       if (i2c->quirks & QUIRK_HDMIPHY)
+> > -               goto out;
+> > +               /* For QUIRK_HDMIPHY, bus is already disabled */
+> > +               if (i2c->quirks & QUIRK_HDMIPHY)
+> > +                       goto out;
+> >
+> > -       s3c24xx_i2c_wait_idle(i2c);
+> > +               s3c24xx_i2c_wait_idle(i2c);
+> > +       }
+> >
+> >   out:
+> >         return ret;
+> > @@ -963,6 +993,7 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct
+> > s3c24xx_i2c *i2c)
+> >         of_property_read_u32(np, "samsung,i2c-slave-addr",
+> > &pdata->slave_addr);
+> >         of_property_read_u32(np, "samsung,i2c-max-bus-freq",
+> >                                 (u32 *)&pdata->frequency);
+> > +       of_property_read_u32(np, "samsung,i2c-mode", &i2c->i2c_mode);
+> >  }
+> >  #else
+> >  static void
+> > @@ -1004,6 +1035,10 @@ static int s3c24xx_i2c_probe(struct platform_device
+> > *pdev)
+> >                 goto err_noclk;
+> >         }
+> >
+> > +       /* By default, i2c works in master mode */
+> > +       /* This currently will be updated using DT */
+> > +       i2c->i2c_mode   = 0;
+> > +
+> >         i2c->quirks = s3c24xx_get_device_quirks(pdev);
+> >         if (pdata)
+> >                 memcpy(i2c->pdata, pdata, sizeof(*pdata));
+> > @@ -1017,6 +1052,7 @@ static int s3c24xx_i2c_probe(struct platform_device
+> > *pdev)
+> >         i2c->adap.class   = I2C_CLASS_HWMON | I2C_CLASS_SPD;
+> >         i2c->tx_setup     = 50;
+> >
+> > +
+> >         init_waitqueue_head(&i2c->wait);
+> >
+> >         /* find the clock and enable it */
+> > --
+> > 1.7.9.5
