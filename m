@@ -1,103 +1,165 @@
 From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v2 2/2] ARM: Exynos5250: Enabling ohci-exynos driver
-Date: Mon, 3 Dec 2012 19:04:27 +0530
-Message-ID: <CAFp+6iEtGuPR5yKKEMeiiPHYVTa4Zv5P015uzccLMJDow8=B0A@mail.gmail.com>
-References: <CAFp+6iH20vwDit-=wk=HfPDArjr_Kuoj5AaVgTv_drjjz+23zQ@mail.gmail.com>
-	<1352362881-14653-1-git-send-email-gautam.vivek@samsung.com>
+Subject: Re: [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
+Date: Mon, 3 Dec 2012 19:13:15 +0530
+Message-ID: <CAFp+6iHO9P=QNCpa23JJQJUmdeoSY+39LDe-q3A8whQmo+=ZfQ@mail.gmail.com>
+References: <1352363533-14970-1-git-send-email-gautam.vivek@samsung.com>
+	<1352363533-14970-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:61197 "EHLO
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:47151 "EHLO
 	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751758Ab2LCNe3 (ORCPT
+	with ESMTP id S1754382Ab2LCNnR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Dec 2012 08:34:29 -0500
-In-Reply-To: <1352362881-14653-1-git-send-email-gautam.vivek@samsung.com>
+	Mon, 3 Dec 2012 08:43:17 -0500
+In-Reply-To: <1352363533-14970-2-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, kyungmin.park@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org, gautam.vivek@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, balbi@ti.com, tomasz.figa@gmail.com, av.tikhomirov@samsung.com, yulgon.kim@samsung.com, thomas.abraham@linaro.org, p.paneri@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
 Hi Kukjin,
 
-
-On Thu, Nov 8, 2012 at 1:51 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Adding OHCI device tree node for Exynos5250 along with
-> the device base address.
+On Thu, Nov 8, 2012 at 2:02 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> Adding DWC3 device tree node for Exynos5250 along with the
+> device address and clock support needed for the controller.
 >
+
+Does this change needs looks fine?
 Any thoughts about this please ?
 
 > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
 > ---
->  .../devicetree/bindings/usb/exynos-usb.txt         |   15 +++++++++++++++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++++
+>  .../devicetree/bindings/usb/exynos-usb.txt         |   14 +++++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    6 +++++
+>  arch/arm/mach-exynos/Kconfig                       |    1 +
+>  arch/arm/mach-exynos/clock-exynos5.c               |   24 ++++++++++++++++++++
 >  arch/arm/mach-exynos/include/mach/map.h            |    1 +
->  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 ++
->  4 files changed, 24 insertions(+), 0 deletions(-)
+>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
+>  6 files changed, 48 insertions(+), 0 deletions(-)
 >
 > diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> index 833f5cf..5ff3def1 100644
+> index 5ff3def1..a7e3eaa 100644
 > --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
 > +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> @@ -23,3 +23,18 @@ Example:
+> @@ -38,3 +38,17 @@ Example:
+>                 reg = <0x12120000 0x100>;
 >                 interrupts = <0 71 0>;
->                 samsung,vbus-gpio = <&gpx2 6 1 3 3>;
 >         };
 > +
-> +OHCI
+> +DWC3
 > +Required properties:
-> + - compatible: should be "samsung,exynos-ohci" for USB 2.0
-> +   OHCI companion controller in host mode.
+> + - compatible: should be "samsung,exynos-dwc3" for USB 3.0 DWC3 controller.
 > + - reg: physical base address of the controller and length of memory mapped
 > +   region.
 > + - interrupts: interrupt number to the cpu.
 > +
 > +Example:
-> +       usb@12120000 {
-> +               compatible = "samsung,exynos-ohci";
-> +               reg = <0x12120000 0x100>;
-> +               interrupts = <0 71 0>;
+> +       usb@12000000 {
+> +               compatible = "samsung,exynos-dwc3";
+> +               reg = <0x12000000 0x10000>;
+> +               interrupts = <0 72 0>;
 > +       };
 > diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 2995445..f18abe0 100644
+> index f18abe0..d349636 100644
 > --- a/arch/arm/boot/dts/exynos5250.dtsi
 > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -244,6 +244,12 @@
->                 interrupts = <0 71 0>;
+> @@ -68,6 +68,12 @@
+>                 interrupts = <0 96 0>;
 >         };
 >
-> +       usb@12120000 {
-> +               compatible = "samsung,exynos-ohci";
-> +               reg = <0x12120000 0x100>;
-> +               interrupts = <0 71 0>;
+> +       usb@12000000 {
+> +               compatible = "samsung,exynos-dwc3";
+> +               reg = <0x12000000 0x10000>;
+> +               interrupts = <0 72 0>;
 > +       };
 > +
->         amba {
->                 #address-cells = <1>;
->                 #size-cells = <1>;
+>         rtc {
+>                 compatible = "samsung,s3c6410-rtc";
+>                 reg = <0x101E0000 0x100>;
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index bb3b09a..588814a 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -422,6 +422,7 @@ config MACH_EXYNOS5_DT
+>         select ARM_AMBA
+>         select SOC_EXYNOS5250
+>         select USE_OF
+> +       select USB_ARCH_HAS_XHCI
+>         help
+>           Machine support for Samsung EXYNOS5 machine with device tree enabled.
+>           Select this if a fdt blob is available for the EXYNOS5 SoC based board.
+> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+> index a88e0d9..ee094ee 100644
+> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> @@ -740,6 +740,11 @@ static struct clk exynos5_init_clocks_off[] = {
+>                 .enable         = exynos5_clk_ip_fsys_ctrl ,
+>                 .ctrlbit        = (1 << 18),
+>         }, {
+> +               .name           = "usbdrd30",
+> +               .parent         = &exynos5_clk_aclk_200.clk,
+> +               .enable         = exynos5_clk_ip_fsys_ctrl,
+> +               .ctrlbit        = (1 << 19),
+> +       }, {
+>                 .name           = "usbotg",
+>                 .enable         = exynos5_clk_ip_fsys_ctrl,
+>                 .ctrlbit        = (1 << 7),
+> @@ -1004,6 +1009,16 @@ struct clksrc_sources exynos5_clkset_group = {
+>         .nr_sources     = ARRAY_SIZE(exynos5_clkset_group_list),
+>  };
+>
+> +struct clk *exynos5_clkset_usbdrd30_list[] = {
+> +       [0] = &exynos5_clk_mout_mpll.clk,
+> +       [1] = &exynos5_clk_mout_cpll.clk,
+> +};
+> +
+> +struct clksrc_sources exynos5_clkset_usbdrd30 = {
+> +       .sources        = exynos5_clkset_usbdrd30_list,
+> +       .nr_sources     = ARRAY_SIZE(exynos5_clkset_usbdrd30_list),
+> +};
+> +
+>  /* Possible clock sources for aclk_266_gscl_sub Mux */
+>  static struct clk *clk_src_gscl_266_list[] = {
+>         [0] = &clk_ext_xtal_mux,
+> @@ -1288,6 +1303,15 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+>                         .parent         = &exynos5_clk_mout_cpll.clk,
+>                 },
+>                 .reg_div = { .reg = EXYNOS5_CLKDIV_GEN, .shift = 4, .size = 3 },
+> +       }, {
+> +               .clk    = {
+> +                       .name           = "sclk_usbdrd30",
+> +                       .enable         = exynos5_clksrc_mask_fsys_ctrl,
+> +                       .ctrlbit        = (1 << 28),
+> +               },
+> +               .sources = &exynos5_clkset_usbdrd30,
+> +               .reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 28, .size = 1 },
+> +               .reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 24, .size = 4 },
+>         },
+>  };
+>
 > diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index 9a86b99..471ffaf 100644
+> index 471ffaf..064ca1c 100644
 > --- a/arch/arm/mach-exynos/include/mach/map.h
 > +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -198,6 +198,7 @@
+> @@ -197,6 +197,7 @@
+>  #define EXYNOS4_PA_EHCI                        0x12580000
 >  #define EXYNOS4_PA_OHCI                        0x12590000
 >  #define EXYNOS4_PA_HSPHY               0x125B0000
+> +#define EXYNOS5_PA_DRD                 0x12000000
 >  #define EXYNOS5_PA_EHCI                        0x12110000
-> +#define EXYNOS5_PA_OHCI                        0x12120000
+>  #define EXYNOS5_PA_OHCI                        0x12120000
 >  #define EXYNOS4_PA_MFC                 0x13400000
->
->  #define EXYNOS4_PA_UART                        0x13800000
 > diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index 89fa624..c03f3dd 100644
+> index c03f3dd..3032222 100644
 > --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
 > +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -88,6 +88,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->                                 "exynos5-mixer", NULL),
->         OF_DEV_AUXDATA("samsung,exynos-ehci", EXYNOS5_PA_EHCI,
+> @@ -90,6 +90,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
 >                                 "s5p-ehci", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos-ohci", EXYNOS5_PA_OHCI,
-> +                               "exynos-ohci", NULL),
+>         OF_DEV_AUXDATA("samsung,exynos-ohci", EXYNOS5_PA_OHCI,
+>                                 "exynos-ohci", NULL),
+> +       OF_DEV_AUXDATA("samsung,exynos-dwc3", EXYNOS5_PA_DRD,
+> +                               "exynos-dwc3", NULL),
 >         {},
 >  };
 >
