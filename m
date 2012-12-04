@@ -1,58 +1,191 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 2/3] arm: exynos5: Enable PM generic domain support in
- Kconfig
-Date: Tue, 4 Dec 2012 14:37:42 +0530
-Message-ID: <CAJuYYwTJGQW3QhubqkmURmA0TedxHeFdo8+rB0Q=eHGvGQ_jTw@mail.gmail.com>
-References: <1354018957-17752-1-git-send-email-prasanna.ps@samsung.com>
- <1354018957-17752-3-git-send-email-prasanna.ps@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1354018957-17752-3-git-send-email-prasanna.ps@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Prasanna Kumar <prasanna.ps@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH v2] ARM: DTS: CROS5250: Add max77686 device tree support
+Date: Tue, 04 Dec 2012 18:48:16 +0530
+Message-ID: <1354627096-9433-1-git-send-email-a.kesavan@samsung.com>
+References: <1354099900-24779-1-git-send-email-a.kesavan@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:10320 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751757Ab2LDNNw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 4 Dec 2012 08:13:52 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MEI007LRCR2R9M0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 04 Dec 2012 22:13:50 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.92])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MEI00CCVCPJ0XA0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 04 Dec 2012 22:13:50 +0900 (KST)
+In-reply-to: <1354099900-24779-1-git-send-email-a.kesavan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org
+Cc: olof@lixom.net, rahul.sharma@samsung.com, thomas.abraham@linaro.org, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On 27 November 2012 17:52, Prasanna Kumar <prasanna.ps@samsung.com> wrote:
-> From: Prasanna Kumar <prasanna.ps@samsung.com>
->
-> This patch adds support to enable PM generic domains
-> under Exynos5 family
->
-> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+The exynos5250 based chromebooks have a max77686 pmic on i2c channel 0.
+Add support for the pmic in the common cros5250 dts file.
+Tested after enabling cpufreq support for exynos5250 SoC and varying the
+arm frequency/voltage using the userspace governer.
 
-Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+---
+Changes since v1:
+* Used generic names for the regulators
+* Changed BUCK5 as being default "ON"
+ arch/arm/boot/dts/cros5250-common.dtsi |  138 ++++++++++++++++++++++++++++++++
+ 1 files changed, 138 insertions(+), 0 deletions(-)
 
-> ---
->  arch/arm/mach-exynos/Kconfig |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 945ce49..c07a29c 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -63,6 +63,7 @@ config SOC_EXYNOS5250
->         depends on ARCH_EXYNOS5
->         select S5P_PM if PM
->         select S5P_SLEEP if PM
-> +       select PM_GENERIC_DOMAINS if PM
->         select S5P_DEV_MFC
->         select SAMSUNG_DMADEV
->         help
-> --
-> 1.7.0.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
+index fddd174..8ab8394 100644
+--- a/arch/arm/boot/dts/cros5250-common.dtsi
++++ b/arch/arm/boot/dts/cros5250-common.dtsi
+@@ -24,6 +24,144 @@
+ 		samsung,i2c-max-bus-freq = <378000>;
+ 		gpios = <&gpb3 0 2 3 0>,
+ 			<&gpb3 1 2 3 0>;
++
++		max77686@09 {
++			compatible = "maxim,max77686";
++			reg = <0x09>;
++
++			voltage-regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "P1.0V_LDO_OUT1";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo2_reg: LDO2 {
++					regulator-name = "P1.8V_LDO_OUT2";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "P1.8V_LDO_OUT3";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "P1.0V_LDO_OUT7";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "P1.0V_LDO_OUT8";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "P1.8V_LDO_OUT10";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo12_reg: LDO12 {
++					regulator-name = "P3.0V_LDO_OUT12";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++					regulator-always-on;
++				};
++
++				ldo14_reg: LDO14 {
++					regulator-name = "P1.8V_LDO_OUT14";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo15_reg: LDO15 {
++					regulator-name = "P1.0V_LDO_OUT15";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo16_reg: LDO16 {
++					regulator-name = "P1.8V_LDO_OUT16";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "vdd_mif";
++					regulator-min-microvolt = <950000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck3_reg: BUCK3 {
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck4_reg: BUCK4 {
++					regulator-name = "vdd_g3d";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "P1.8V_BUCK_OUT5";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck6_reg: BUCK6 {
++					regulator-name = "P1.35V_BUCK_OUT6";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++				};
++
++				buck7_reg: BUCK7 {
++					regulator-name = "P2.0V_BUCK_OUT7";
++					regulator-min-microvolt = <2000000>;
++					regulator-max-microvolt = <2000000>;
++					regulator-always-on;
++				};
++
++				buck8_reg: BUCK8 {
++					regulator-name = "P2.85V_BUCK_OUT8";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++					regulator-always-on;
++				};
++			};
++		};
+ 	};
+ 
+ 	i2c@12C70000 {
+-- 
+1.6.6.1
