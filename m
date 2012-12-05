@@ -1,195 +1,44 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v3] ARM: DTS: CROS5250: Add max77686 device tree support
-Date: Wed, 05 Dec 2012 08:51:42 +0530
-Message-ID: <1354677702-22669-1-git-send-email-a.kesavan@samsung.com>
-References: <1354099900-24779-1-git-send-email-a.kesavan@samsung.com>
+From: Michael Spang <spang@chromium.org>
+Subject: [PATCH] samsung: Add missing include guard to gpio-core.h
+Date: Wed,  5 Dec 2012 18:17:12 -0500
+Message-ID: <1354749432-6028-1-git-send-email-spang@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47425 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751978Ab2LEDQb (ORCPT
+Received: from mail-gh0-f202.google.com ([209.85.160.202]:38810 "EHLO
+	mail-gh0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539Ab2LEXRy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Dec 2012 22:16:31 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MEJ00KX1FQPRMF0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Dec 2012 12:16:29 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.92])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MEJ0052XFRAL990@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Dec 2012 12:16:28 +0900 (KST)
-In-reply-to: <1354099900-24779-1-git-send-email-a.kesavan@samsung.com>
+	Wed, 5 Dec 2012 18:17:54 -0500
+Received: by mail-gh0-f202.google.com with SMTP id z10so688118ghb.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Dec 2012 15:17:53 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org
-Cc: olof@lixom.net, rahul.sharma@samsung.com, thomas.abraham@linaro.org, Abhilash Kesavan <a.kesavan@samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Michael Spang <spang@chromium.org>
 
-The exynos5250 based chromebooks have a max77686 pmic on i2c channel 0.
-Add support for the pmic in the common cros5250 dts file.
-Tested after enabling cpufreq support for exynos5250 SoC and varying the
-arm frequency/voltage using the userspace governer.
-
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Acked-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Michael Spang <spang@chromium.org>
 ---
-Changes since v1:
-* Used generic names for the regulators
-* Changed BUCK5 as being default "ON"
-Changes since v2:
-* Fixed the LDO7 name from "P1.0V_LDO_OUT7" to "P1.1V_LDO_OUT7"
+ arch/arm/plat-samsung/include/plat/gpio-core.h |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
- arch/arm/boot/dts/cros5250-common.dtsi |  138 ++++++++++++++++++++++++++++++++
- 1 files changed, 138 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
-index fddd174..8ab8394 100644
---- a/arch/arm/boot/dts/cros5250-common.dtsi
-+++ b/arch/arm/boot/dts/cros5250-common.dtsi
-@@ -24,6 +24,144 @@
- 		samsung,i2c-max-bus-freq = <378000>;
- 		gpios = <&gpb3 0 2 3 0>,
- 			<&gpb3 1 2 3 0>;
-+
-+		max77686@09 {
-+			compatible = "maxim,max77686";
-+			reg = <0x09>;
-+
-+			voltage-regulators {
-+				ldo1_reg: LDO1 {
-+					regulator-name = "P1.0V_LDO_OUT1";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo2_reg: LDO2 {
-+					regulator-name = "P1.8V_LDO_OUT2";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo3_reg: LDO3 {
-+					regulator-name = "P1.8V_LDO_OUT3";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo7_reg: LDO7 {
-+					regulator-name = "P1.1V_LDO_OUT7";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo8_reg: LDO8 {
-+					regulator-name = "P1.0V_LDO_OUT8";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo10_reg: LDO10 {
-+					regulator-name = "P1.8V_LDO_OUT10";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo12_reg: LDO12 {
-+					regulator-name = "P3.0V_LDO_OUT12";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo14_reg: LDO14 {
-+					regulator-name = "P1.8V_LDO_OUT14";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo15_reg: LDO15 {
-+					regulator-name = "P1.0V_LDO_OUT15";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo16_reg: LDO16 {
-+					regulator-name = "P1.8V_LDO_OUT16";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				buck1_reg: BUCK1 {
-+					regulator-name = "vdd_mif";
-+					regulator-min-microvolt = <950000>;
-+					regulator-max-microvolt = <1300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck2_reg: BUCK2 {
-+					regulator-name = "vdd_arm";
-+					regulator-min-microvolt = <850000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck3_reg: BUCK3 {
-+					regulator-name = "vdd_int";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck4_reg: BUCK4 {
-+					regulator-name = "vdd_g3d";
-+					regulator-min-microvolt = <850000>;
-+					regulator-max-microvolt = <1300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck5_reg: BUCK5 {
-+					regulator-name = "P1.8V_BUCK_OUT5";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck6_reg: BUCK6 {
-+					regulator-name = "P1.35V_BUCK_OUT6";
-+					regulator-min-microvolt = <1350000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-always-on;
-+				};
-+
-+				buck7_reg: BUCK7 {
-+					regulator-name = "P2.0V_BUCK_OUT7";
-+					regulator-min-microvolt = <2000000>;
-+					regulator-max-microvolt = <2000000>;
-+					regulator-always-on;
-+				};
-+
-+				buck8_reg: BUCK8 {
-+					regulator-name = "P2.85V_BUCK_OUT8";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-always-on;
-+				};
-+			};
-+		};
- 	};
+diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h b/arch/arm/plat-samsung/include/plat/gpio-core.h
+index 1fe6917..8622c9a 100644
+--- a/arch/arm/plat-samsung/include/plat/gpio-core.h
++++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
+@@ -11,6 +11,9 @@
+  * published by the Free Software Foundation.
+ */
  
- 	i2c@12C70000 {
++#ifndef __PLAT_SAMSUNG_GPIO_CORE_H
++#define __PLAT_SAMSUNG_GPIO_CORE_H
++
+ #define GPIOCON_OFF	(0x00)
+ #define GPIODAT_OFF	(0x04)
+ 
+@@ -122,3 +125,5 @@ extern struct samsung_gpio_pm samsung_gpio_pm_4bit;
+ /* locking wrappers to deal with multiple access to the same gpio bank */
+ #define samsung_gpio_lock(_oc, _fl) spin_lock_irqsave(&(_oc)->lock, _fl)
+ #define samsung_gpio_unlock(_oc, _fl) spin_unlock_irqrestore(&(_oc)->lock, _fl)
++
++#endif /* __PLAT_SAMSUNG_GPIO_CORE_H */
 -- 
-1.6.6.1
+1.7.7.3
