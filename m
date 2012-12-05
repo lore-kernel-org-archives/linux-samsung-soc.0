@@ -1,201 +1,43 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2] ARM: DTS: CROS5250: Add max77686 device tree support
-Date: Tue, 4 Dec 2012 09:02:12 -0800
-Message-ID: <CAD=FV=VRPwuaOJrjGvtWzRQfb=NYsmP9Vfyk8jsxTMTv=6Pa7A@mail.gmail.com>
-References: <1354099900-24779-1-git-send-email-a.kesavan@samsung.com>
-	<1354627096-9433-1-git-send-email-a.kesavan@samsung.com>
+From: Haojian Zhuang <haojian.zhuang@gmail.com>
+Subject: Re: [PATCH 1/2] i2c-core: dt: Pick i2c bus number from i2c alias if present
+Date: Wed, 5 Dec 2012 09:45:03 +0800
+Message-ID: <CAN1soZyqWk07dqWUmdoknTjw7co8KJLgkO3RT+YY-4QxPg5zdQ@mail.gmail.com>
+References: <1353450428-2615-2-git-send-email-dianders@chromium.org>
+	<1353522362-25519-1-git-send-email-dianders@chromium.org>
+	<1353522362-25519-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:33457 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751795Ab2LDRCO (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:42896 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752000Ab2LEBpF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Dec 2012 12:02:14 -0500
-Received: by mail-la0-f46.google.com with SMTP id p5so3483759lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Dec 2012 09:02:13 -0800 (PST)
-In-Reply-To: <1354627096-9433-1-git-send-email-a.kesavan@samsung.com>
+	Tue, 4 Dec 2012 20:45:05 -0500
+In-Reply-To: <1353522362-25519-2-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, olof@lixom.net, rahul.sharma@samsung.com, thomas.abraham@linaro.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-i2c@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Wolfram Sang <w.sang@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Abhilash,
-
-On Tue, Dec 4, 2012 at 5:18 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
-> The exynos5250 based chromebooks have a max77686 pmic on i2c channel 0.
-> Add support for the pmic in the common cros5250 dts file.
-> Tested after enabling cpufreq support for exynos5250 SoC and varying the
-> arm frequency/voltage using the userspace governer.
+On Thu, Nov 22, 2012 at 2:26 AM, Doug Anderson <dianders@chromium.org> wrote:
+> This allows you to get the equivalent functionality of
+> i2c_add_numbered_adapter() with all data in the device tree and no
+> special case code in your driver.  This is a common device tree
+> technique.
 >
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> For quick reference, the FDT syntax for using an alias to provide an
+> ID looks like:
+>   aliases {
+>     i2c0 = &i2c_0;
+>     i2c1 = &i2c_1;
+>   };
+>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
+>
 > ---
-> Changes since v1:
-> * Used generic names for the regulators
-> * Changed BUCK5 as being default "ON"
->  arch/arm/boot/dts/cros5250-common.dtsi |  138 ++++++++++++++++++++++++++++++++
->  1 files changed, 138 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
-> index fddd174..8ab8394 100644
-> --- a/arch/arm/boot/dts/cros5250-common.dtsi
-> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
-> @@ -24,6 +24,144 @@
->                 samsung,i2c-max-bus-freq = <378000>;
->                 gpios = <&gpb3 0 2 3 0>,
->                         <&gpb3 1 2 3 0>;
-> +
-> +               max77686@09 {
-> +                       compatible = "maxim,max77686";
-> +                       reg = <0x09>;
-> +
-> +                       voltage-regulators {
-> +                               ldo1_reg: LDO1 {
-> +                                       regulator-name = "P1.0V_LDO_OUT1";
-> +                                       regulator-min-microvolt = <1000000>;
-> +                                       regulator-max-microvolt = <1000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo2_reg: LDO2 {
-> +                                       regulator-name = "P1.8V_LDO_OUT2";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo3_reg: LDO3 {
-> +                                       regulator-name = "P1.8V_LDO_OUT3";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo7_reg: LDO7 {
-> +                                       regulator-name = "P1.0V_LDO_OUT7";
-> +                                       regulator-min-microvolt = <1100000>;
-> +                                       regulator-max-microvolt = <1100000>;
-> +                                       regulator-always-on;
-> +                               };
-
-This matches the signal name on the most recent schematics, which is
-good, but I'd be slightly happier if it said "1.1V" in instead of
-1.0V.  I'd imagine that if we ever rev the schematics that we'd fix
-that.
-
-> +
-> +                               ldo8_reg: LDO8 {
-> +                                       regulator-name = "P1.0V_LDO_OUT8";
-> +                                       regulator-min-microvolt = <1000000>;
-> +                                       regulator-max-microvolt = <1000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo10_reg: LDO10 {
-> +                                       regulator-name = "P1.8V_LDO_OUT10";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo12_reg: LDO12 {
-> +                                       regulator-name = "P3.0V_LDO_OUT12";
-> +                                       regulator-min-microvolt = <3000000>;
-> +                                       regulator-max-microvolt = <3000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo14_reg: LDO14 {
-> +                                       regulator-name = "P1.8V_LDO_OUT14";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo15_reg: LDO15 {
-> +                                       regulator-name = "P1.0V_LDO_OUT15";
-> +                                       regulator-min-microvolt = <1000000>;
-> +                                       regulator-max-microvolt = <1000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo16_reg: LDO16 {
-> +                                       regulator-name = "P1.8V_LDO_OUT16";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               buck1_reg: BUCK1 {
-> +                                       regulator-name = "vdd_mif";
-> +                                       regulator-min-microvolt = <950000>;
-> +                                       regulator-max-microvolt = <1300000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck2_reg: BUCK2 {
-> +                                       regulator-name = "vdd_arm";
-> +                                       regulator-min-microvolt = <850000>;
-> +                                       regulator-max-microvolt = <1350000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck3_reg: BUCK3 {
-> +                                       regulator-name = "vdd_int";
-> +                                       regulator-min-microvolt = <900000>;
-> +                                       regulator-max-microvolt = <1200000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck4_reg: BUCK4 {
-> +                                       regulator-name = "vdd_g3d";
-> +                                       regulator-min-microvolt = <850000>;
-> +                                       regulator-max-microvolt = <1300000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck5_reg: BUCK5 {
-> +                                       regulator-name = "P1.8V_BUCK_OUT5";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck6_reg: BUCK6 {
-> +                                       regulator-name = "P1.35V_BUCK_OUT6";
-> +                                       regulator-min-microvolt = <1350000>;
-> +                                       regulator-max-microvolt = <1350000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               buck7_reg: BUCK7 {
-> +                                       regulator-name = "P2.0V_BUCK_OUT7";
-> +                                       regulator-min-microvolt = <2000000>;
-> +                                       regulator-max-microvolt = <2000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               buck8_reg: BUCK8 {
-> +                                       regulator-name = "P2.85V_BUCK_OUT8";
-> +                                       regulator-min-microvolt = <2850000>;
-> +                                       regulator-max-microvolt = <2850000>;
-> +                                       regulator-always-on;
-> +                               };
-> +                       };
-> +               };
->         };
->
->         i2c@12C70000 {
-> --
-> 1.6.6.1
+>  drivers/i2c/i2c-core.c |  105 +++++++++++++++++++++++++++++++++++-------------
+>  1 files changed, 77 insertions(+), 28 deletions(-)
 >
 
-...would love to see LDO7 name fixed up, but otherwise looks good to
-me.  Thanks!
-
-Acked-by: Doug Anderson <dianders@chromium.org>
+Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
