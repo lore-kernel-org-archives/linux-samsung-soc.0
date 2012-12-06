@@ -1,52 +1,96 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] ARM: Exynos5250: Enabling ehci-s5p driver
-Date: Thu, 06 Dec 2012 10:16:45 +0000
-Message-ID: <20121206101645.4C28E3E05A4@localhost>
-References: <1352357665-7435-1-git-send-email-gautam.vivek@samsung.com> <1352357665-7435-2-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1352357665-7435-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/2] ARM: dts: Fix gpio pin names of keypad columns in exynos4x12-pinctrl
+Date: Thu,  6 Dec 2012 15:43:34 +0530
+Message-ID: <1354788815-21579-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:65171 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754149Ab2LFKUd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Dec 2012 05:20:33 -0500
+Received: by mail-pa0-f46.google.com with SMTP id bh2so4335222pad.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Dec 2012 02:20:32 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-On Thu, 08 Nov 2012 12:24:24 +0530, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Adding EHCI device tree node for Exynos5250 along with
-> the device base adress and gpio line for vbus.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  .../devicetree/bindings/usb/exynos-usb.txt         |   25 ++++++++++++++++++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 +++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++
->  arch/arm/mach-exynos/include/mach/map.h            |    1 +
->  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
->  5 files changed, 38 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/usb/exynos-usb.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> new file mode 100644
-> index 0000000..833f5cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> @@ -0,0 +1,25 @@
-> +Samsung Exynos SoC USB controller
-> +
-> +The USB devices interface with USB controllers on Exynos SOCs.
-> +The device node has following properties.
-> +
-> +EHCI
-> +Required properties:
-> + - compatible: should be "samsung,exynos-ehci" for USB 2.0
+Keypad columns are connected to gpx1 pins on 4x12.
 
-Ditto here. Please be specific in compatible strings.  "samsung,exynos5250-ehci"
+Cc: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
 
-Otherwise the binding looks fine to me.
-
-g.
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+index 8e6115a..0b293fb 100644
+--- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+@@ -779,56 +779,56 @@
+ 		};
+ 
+ 		keypad_col0: keypad-col0 {
+-			samsung,pins = "gpl2-0";
++			samsung,pins = "gpx1-0";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		keypad_col1: keypad-col1 {
+-			samsung,pins = "gpl2-1";
++			samsung,pins = "gpx1-1";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		keypad_col2: keypad-col2 {
+-			samsung,pins = "gpl2-2";
++			samsung,pins = "gpx1-2";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		keypad_col3: keypad-col3 {
+-			samsung,pins = "gpl2-3";
++			samsung,pins = "gpx1-3";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		keypad_col4: keypad-col4 {
+-			samsung,pins = "gpl2-4";
++			samsung,pins = "gpx1-4";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		keypad_col5: keypad-col5 {
+-			samsung,pins = "gpl2-5";
++			samsung,pins = "gpx1-5";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		keypad_col6: keypad-col6 {
+-			samsung,pins = "gpl2-6";
++			samsung,pins = "gpx1-6";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		keypad_col7: keypad-col7 {
+-			samsung,pins = "gpl2-7";
++			samsung,pins = "gpx1-7";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+-- 
+1.7.4.1
