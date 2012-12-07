@@ -1,146 +1,33 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH RESEND V2 2/2] ASoC: SMDK: WM8994: Add device tree support for
- machine file
-Date: Fri, 07 Dec 2012 13:59:22 +0530
-Message-ID: <1354868962-7862-3-git-send-email-padma.v@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH RESEND V2 1/2] ASoC: Samsung: Do not
+ register samsung audio dma device as pdev
+Date: Fri, 7 Dec 2012 19:37:46 +0900
+Message-ID: <20121207103745.GK26070@opensource.wolfsonmicro.com>
 References: <1354868962-7862-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:17304 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754248Ab2LGI0l (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Dec 2012 03:26:41 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MEN0075LJGGL3T0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 17:26:40 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MEN00FSFJG1WS20@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 17:26:40 +0900 (KST)
-In-reply-to: <1354868962-7862-1-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+ <1354868962-7862-2-git-send-email-padma.v@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <1354868962-7862-2-git-send-email-padma.v@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, philipp.zabel@gmail.com, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, mcuelenaere@gmail.com, anarsoul@gmail.com, tiwai@suse.de, kgene.kim@samsung.com, ben-linux@fluff.org, padma.kvr@gmail.com, dgreenday@gmail.com, chripell@evolware.org, graeme.gregory@wolfsonmicro.com, lrg@ti.com, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org, kgene.kim@samsung.com, lrg@slimlogic.co.uk, jassisinghbrar@gmail.com, anarsoul@gmail.com, graeme.gregory@wolfsonmicro.com, philipp.zabel@gmail.com, dgreenday@gmail.com, chripell@evolware.org, mcuelenaere@gmail.com
 
-Add the basic device tree based lookup.
+On Fri, Dec 07, 2012 at 01:59:21PM +0530, Padmavathi Venna wrote:
+> Previously, the ASoC 'platform' (PCM/DMA) object was instantiated via a
+> platform_device. This didn't represent the hardware well, since there
+> was no separate hardware associated with this platform_device; it was a
+> virtual device with sole purpose to call snd_soc_register_platform().
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- .../bindings/sound/samsung,smdk-wm8994.txt         |   14 ++++++++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |   12 +++++++++
- sound/soc/samsung/smdk_wm8994.c                    |   26 ++++++++++++++++++++
- 3 files changed, 52 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/samsung,smdk-wm8994.txt
-
-diff --git a/Documentation/devicetree/bindings/sound/samsung,smdk-wm8994.txt b/Documentation/devicetree/bindings/sound/samsung,smdk-wm8994.txt
-new file mode 100644
-index 0000000..13cb189
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/samsung,smdk-wm8994.txt
-@@ -0,0 +1,14 @@
-+Samsung SMDK audio complex
-+
-+Required properties:
-+- compatible : "samsung,smdk-wm8994"
-+- samsung,i2s-controller: The phandle of the Samsung I2S0 controller
-+- samsung,audio-codec: The phandle of the WM8994 audio codec
-+Example:
-+
-+sound {
-+		compatible = "samsung,smdk-wm8994";
-+
-+		samsung,i2s-controller = <&i2s_0>;
-+		samsung,audio-codec = <&wm8994>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a352df4..5cbb08d 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -53,6 +53,11 @@
- 			compatible = "samsung,s524ad0xd1";
- 			reg = <0x51>;
- 		};
-+
-+		wm8994: wm8994@1a {
-+			 compatible = "wlf,wm8994";
-+			 reg = <0x1a>;
-+		};
- 	};
- 
- 	i2c@12C80000 {
-@@ -166,4 +171,11 @@
- 	spi_2: spi@12d40000 {
- 		status = "disabled";
- 	};
-+
-+	sound {
-+		compatible = "samsung,smdk-wm8994";
-+
-+		samsung,i2s-controller = <&i2s_0>;
-+		samsung,audio-codec = <&wm8994>;
-+	};
- };
-diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
-index dd0aa8c..2f3e2b8 100644
---- a/sound/soc/samsung/smdk_wm8994.c
-+++ b/sound/soc/samsung/smdk_wm8994.c
-@@ -10,6 +10,7 @@
- #include "../codecs/wm8994.h"
- #include <sound/pcm_params.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- 
-  /*
-   * Default CFG switch settings to use this driver:
-@@ -153,9 +154,25 @@ static struct snd_soc_card smdk = {
- static int __devinit smdk_audio_probe(struct platform_device *pdev)
- {
- 	int ret;
-+	struct device_node *np = pdev->dev.of_node;
- 	struct snd_soc_card *card = &smdk;
- 
- 	card->dev = &pdev->dev;
-+
-+	if (np) {
-+		smdk_dai[0].cpu_dai_name = NULL;
-+		smdk_dai[0].cpu_of_node = of_parse_phandle(np,
-+				"samsung,i2s-controller", 0);
-+		if (!smdk_dai[0].cpu_of_node) {
-+			dev_err(&pdev->dev,
-+			   "Property 'samsung,i2s-controller' missing or invalid\n");
-+			ret = -EINVAL;
-+		}
-+
-+		smdk_dai[0].platform_name = NULL;
-+		smdk_dai[0].platform_of_node = smdk_dai[0].cpu_of_node;
-+	}
-+
- 	ret = snd_soc_register_card(card);
- 
- 	if (ret)
-@@ -173,10 +190,19 @@ static int __devexit smdk_audio_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id samsung_wm8994_of_match[] = {
-+	{ .compatible = "samsung,smdk-wm8994", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, samsung_wm8994_of_match);
-+#endif /* CONFIG_OF */
-+
- static struct platform_driver smdk_audio_driver = {
- 	.driver		= {
- 		.name	= "smdk-audio",
- 		.owner	= THIS_MODULE,
-+		.of_match_table = of_match_ptr(samsung_wm8994_of_match),
- 	},
- 	.probe		= smdk_audio_probe,
- 	.remove		= __devexit_p(smdk_audio_remove),
--- 
-1.7.4.4
+Applied, thanks.
