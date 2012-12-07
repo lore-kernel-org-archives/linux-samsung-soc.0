@@ -1,107 +1,92 @@
-From: Jonghwan Choi <jhbird.choi@samsung.com>
-Subject: [PATCH 5/5] cpufreq: exynos: Add missing static
-Date: Fri, 07 Dec 2012 17:20:20 +0900
-Message-ID: <009201cdd453$b2510280$16f30780$%choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH RESEND V2 0/2] ASoC: Samsung: Remove platform device support
+Date: Fri, 07 Dec 2012 13:59:20 +0530
+Message-ID: <1354868962-7862-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:18379 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:19600 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753793Ab2LGIUW (ORCPT
+	with ESMTP id S1752867Ab2LGI0i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Dec 2012 03:20:22 -0500
+	Fri, 7 Dec 2012 03:26:38 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MEN00AFUJ5B8QQ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 17:20:20 +0900 (KST)
-Received: from DOJHBIRDCHO03 ([12.23.118.55])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MEN00F1SJ5S2960@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 17:20:20 +0900 (KST)
-Content-language: ko
+ 17 2011)) with ESMTP id <0MEN00A01JF6Q1R0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 17:26:33 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MEN00FSFJG1WS20@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 17:26:32 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King' <linux@arm.linux.org.uk>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org, kgene.kim@samsung.com, lrg@slimlogic.co.uk, jassisinghbrar@gmail.com, anarsoul@gmail.com, graeme.gregory@wolfsonmicro.com, philipp.zabel@gmail.com, dgreenday@gmail.com, chripell@evolware.org, mcuelenaere@gmail.com
 
-Add missing 'static' qualifiers.
+Changes since V1:
+	- Renamed all samsung based audio platform names with the corresponding
+	  cpu dai name
+	- Register the dma device in the corresponding samsung cpu dai driver
+	- Deleted "samsung_asoc_dma" platform device from devs.c
+	- Deleted the "samsung_asoc_dma" platfrom device entry from the list of
+	  registered platform devices in the legacy platforms.
+	- Renamed the function name from samsung_dma_platform_register to
+	  asoc_dma_platform_register
+	- Added binding documentation for new device tree binding
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
----
- drivers/cpufreq/exynos-cpufreq.c     |    4 ++--
- drivers/cpufreq/exynos4210-cpufreq.c |    2 +-
- drivers/cpufreq/exynos4x12-cpufreq.c |    2 +-
- drivers/cpufreq/exynos5250-cpufreq.c |    2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Padmavathi Venna (2):
+  ASoC: Samsung: Do not register samsung audio dma device as pdev
+  ASoC: SMDK: WM8994: Add device tree support for machine file
 
-diff --git a/drivers/cpufreq/exynos-cpufreq.c
-b/drivers/cpufreq/exynos-cpufreq.c
-index b0338e1..1bd3e3a 100644
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -31,13 +31,13 @@ static unsigned int locking_frequency;
- static bool frequency_locked;
- static DEFINE_MUTEX(cpufreq_lock);
+ .../bindings/sound/samsung,smdk-wm8994.txt         |   14 +++++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   12 ++++++++
+ arch/arm/mach-exynos/mach-armlex4210.c             |    1 -
+ arch/arm/mach-exynos/mach-smdkv310.c               |    1 -
+ arch/arm/mach-s3c24xx/mach-gta02.c                 |    1 -
+ arch/arm/mach-s3c24xx/mach-h1940.c                 |    1 -
+ arch/arm/mach-s3c24xx/mach-mini2440.c              |    1 -
+ arch/arm/mach-s3c24xx/mach-rx1950.c                |    1 -
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |    1 -
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |    1 -
+ arch/arm/mach-s5p64x0/mach-smdk6440.c              |    1 -
+ arch/arm/mach-s5p64x0/mach-smdk6450.c              |    1 -
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |    1 -
+ arch/arm/mach-s5pv210/mach-smdkc110.c              |    1 -
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |    1 -
+ arch/arm/plat-samsung/devs.c                       |    9 ------
+ arch/arm/plat-samsung/include/plat/devs.h          |    1 -
+ sound/soc/samsung/ac97.c                           |   10 ++++++-
+ sound/soc/samsung/bells.c                          |    6 ++--
+ sound/soc/samsung/dma.c                            |   24 ++++------------
+ sound/soc/samsung/dma.h                            |    3 ++
+ sound/soc/samsung/goni_wm8994.c                    |    2 +-
+ sound/soc/samsung/h1940_uda1380.c                  |    2 +-
+ sound/soc/samsung/i2s.c                            |    4 ++
+ sound/soc/samsung/jive_wm8750.c                    |    2 +-
+ sound/soc/samsung/littlemill.c                     |    2 +-
+ sound/soc/samsung/ln2440sbc_alc650.c               |    2 +-
+ sound/soc/samsung/lowland.c                        |    2 +-
+ sound/soc/samsung/neo1973_wm8753.c                 |    2 +-
+ sound/soc/samsung/pcm.c                            |    9 ++++++
+ sound/soc/samsung/rx1950_uda1380.c                 |    2 +-
+ sound/soc/samsung/s3c2412-i2s.c                    |   20 ++++++++++++-
+ sound/soc/samsung/s3c24xx-i2s.c                    |   20 ++++++++++++-
+ sound/soc/samsung/s3c24xx_simtec_hermes.c          |    2 +-
+ sound/soc/samsung/s3c24xx_simtec_tlv320aic23.c     |    2 +-
+ sound/soc/samsung/s3c24xx_uda134x.c                |    2 +-
+ sound/soc/samsung/smartq_wm8987.c                  |    2 +-
+ sound/soc/samsung/smdk2443_wm9710.c                |    2 +-
+ sound/soc/samsung/smdk_spdif.c                     |    2 +-
+ sound/soc/samsung/smdk_wm8580.c                    |    6 ++--
+ sound/soc/samsung/smdk_wm8580pcm.c                 |    2 +-
+ sound/soc/samsung/smdk_wm8994.c                    |   30 ++++++++++++++++++-
+ sound/soc/samsung/smdk_wm8994pcm.c                 |    2 +-
+ sound/soc/samsung/smdk_wm9713.c                    |    2 +-
+ sound/soc/samsung/spdif.c                          |   10 ++++++-
+ sound/soc/samsung/speyside.c                       |    2 +-
+ sound/soc/samsung/tobermory.c                      |    2 +-
+ 47 files changed, 157 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,smdk-wm8994.txt
 
--int exynos_verify_speed(struct cpufreq_policy *policy)
-+static int exynos_verify_speed(struct cpufreq_policy *policy)
- {
-        return cpufreq_frequency_table_verify(policy,
-                                              exynos_info->freq_table);
- }
-
--unsigned int exynos_getspeed(unsigned int cpu)
-+static unsigned int exynos_getspeed(unsigned int cpu)
- {
-        return clk_get_rate(exynos_info->cpu_clk) / 1000;
- }
-diff --git a/drivers/cpufreq/exynos4210-cpufreq.c
-b/drivers/cpufreq/exynos4210-cpufreq.c
-index 250dcf0..de91755 100644
---- a/drivers/cpufreq/exynos4210-cpufreq.c
-+++ b/drivers/cpufreq/exynos4210-cpufreq.c
-@@ -114,7 +114,7 @@ static void exynos4210_set_apll(unsigned int index)
-        } while (tmp != (0x1 << EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT));
- }
-
--bool exynos4210_pms_change(unsigned int old_index, unsigned int new_index)
-+static bool exynos4210_pms_change(unsigned int old_index, unsigned int
-new_index)
- {
-        unsigned int old_pm = apll_freq_4210[old_index].mps >> 8;
-        unsigned int new_pm = apll_freq_4210[new_index].mps >> 8;
-diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c
-b/drivers/cpufreq/exynos4x12-cpufreq.c
-index 224445d..0661039 100644
---- a/drivers/cpufreq/exynos4x12-cpufreq.c
-+++ b/drivers/cpufreq/exynos4x12-cpufreq.c
-@@ -166,7 +166,7 @@ static void exynos4x12_set_apll(unsigned int index)
-        } while (tmp != (0x1 << EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT));
- }
-
--bool exynos4x12_pms_change(unsigned int old_index, unsigned int new_index)
-+static bool exynos4x12_pms_change(unsigned int old_index, unsigned int
-new_index)
- {
-        unsigned int old_pm = apll_freq_4x12[old_index].mps >> 8;
-        unsigned int new_pm = apll_freq_4x12[new_index].mps >> 8;
-diff --git a/drivers/cpufreq/exynos5250-cpufreq.c
-b/drivers/cpufreq/exynos5250-cpufreq.c
-index 736a5cf..b934486 100644
---- a/drivers/cpufreq/exynos5250-cpufreq.c
-+++ b/drivers/cpufreq/exynos5250-cpufreq.c
-@@ -143,7 +143,7 @@ static void set_apll(unsigned int new_index,
-
- }
-
--bool exynos5250_pms_change(unsigned int old_index, unsigned int new_index)
-+static bool exynos5250_pms_change(unsigned int old_index, unsigned int
-new_index)
- {
-        unsigned int old_pm = apll_freq_5250[old_index].mps >> 8;
-        unsigned int new_pm = apll_freq_5250[new_index].mps >> 8;
---
-1.7.4.1
+-- 
+1.7.4.4
