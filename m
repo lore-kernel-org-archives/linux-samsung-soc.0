@@ -1,43 +1,65 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V2 1/2] ASoC: Samsung: Do not register samsung audio dma
- device as pdev
-Date: Fri, 7 Dec 2012 13:47:30 +0530
-Message-ID: <CAAgF-BdWSNpeh6nKeUsPwP-R19kZF9cbRm9akumjDFs74phyTA@mail.gmail.com>
-References: <1354765837-3469-1-git-send-email-padma.v@samsung.com>
-	<1354765837-3469-2-git-send-email-padma.v@samsung.com>
-	<20121207064644.GI26070@opensource.wolfsonmicro.com>
+From: Jonghwan Choi <jhbird.choi@samsung.com>
+Subject: [PATCH 2/5] cpufreq: exynos: Check old & new frequency early
+Date: Fri, 07 Dec 2012 17:20:17 +0900
+Message-ID: <008f01cdd453$b0ad8bb0$1208a310$%choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:56627 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753018Ab2LGIRc (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:18379 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753787Ab2LGIUT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Dec 2012 03:17:32 -0500
-Received: by mail-lb0-f174.google.com with SMTP id gi11so200749lbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Dec 2012 00:17:30 -0800 (PST)
-In-Reply-To: <20121207064644.GI26070@opensource.wolfsonmicro.com>
+	Fri, 7 Dec 2012 03:20:19 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MEN00AFUJ5B8QQ0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 17:20:17 +0900 (KST)
+Received: from DOJHBIRDCHO03 ([12.23.118.55])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MEN00F1SJ5S2960@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 17:20:17 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org, kgene.kim@samsung.com, ben@simtec.co.uk, lrg@slimlogic.co.uk, jassisinghbrar@gmail.com, anarsoul@gmail.com, graeme.gregory@wolfsonmicro.com, philipp.zabel@gmail.com, dgreenday@gmail.com, chripell@evolware.org, mcuelenaere@gmail.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King' <linux@arm.linux.org.uk>
 
-Hi Mark,
+If old & new freq have the same frequency, no need to call
+cpufreq notifier & regulator function.
 
-On Fri, Dec 7, 2012 at 12:16 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Thu, Dec 06, 2012 at 09:20:36AM +0530, Padmavathi Venna wrote:
->> Previously, the ASoC 'platform' (PCM/DMA) object was instantiated via a
->> platform_device. This didn't represent the hardware well, since there
->> was no separate hardware associated with this platform_device; it was a
->> virtual device with sole purpose to call snd_soc_register_platform().
->
-> Looks good however this doesn't apply against my topic/samsung branch -
-> can you please check if I need anything from Kukjin's tree?  Though I
-> guess the easiest thing is just to wait until the merge window is over,
-> we're near to the next release.
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+---
+ drivers/cpufreq/exynos-cpufreq.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-I will resend the patches re-based on your topic/samsung branch.
+diff --git a/drivers/cpufreq/exynos-cpufreq.c
+b/drivers/cpufreq/exynos-cpufreq.c
+index 5888aee..82963a3 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -87,6 +87,9 @@ static int exynos_target(struct cpufreq_policy *policy,
+        freqs.new = freq_table[index].frequency;
+        freqs.cpu = policy->cpu;
 
-Thanks
-Padma
++       if (freqs.new == freqs.old)
++               goto out;
++
+        /*
+         * ARM clock source will be changed APLL to MPLL temporary
+         * To support this level, need to control regulator for
+@@ -112,8 +115,8 @@ static int exynos_target(struct cpufreq_policy *policy,
+        if (safe_arm_volt)
+                regulator_set_voltage(arm_regulator, safe_arm_volt,
+                                      safe_arm_volt);
+-       if (freqs.new != freqs.old)
+-               exynos_info->set_freq(old_index, index);
++
++       exynos_info->set_freq(old_index, index);
+
+        cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+
+--
+1.7.4.1
