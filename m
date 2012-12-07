@@ -1,49 +1,32 @@
-From: Woody Wu <narkewoody@gmail.com>
-Subject: S3C2410 LCD Resolution
-Date: Fri, 7 Dec 2012 03:24:50 +0000 (UTC)
-Message-ID: <slrnkc2oa6.2ck.narkewoody@zuhnb712.local.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V2 1/2] ASoC: Samsung: Do not register samsung audio dma
+ device as pdev
+Date: Fri, 7 Dec 2012 15:46:46 +0900
+Message-ID: <20121207064644.GI26070@opensource.wolfsonmicro.com>
+References: <1354765837-3469-1-git-send-email-padma.v@samsung.com>
+ <1354765837-3469-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:46513 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752722Ab2LGD3y (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41953 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754602Ab2LGGqy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Dec 2012 22:29:54 -0500
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1TgodX-0003WQ-RW
-	for linux-samsung-soc@vger.kernel.org; Fri, 07 Dec 2012 04:30:03 +0100
-Received: from 59.37.26.98 ([59.37.26.98])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Dec 2012 04:30:03 +0100
-Received: from narkewoody by 59.37.26.98 with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Dec 2012 04:30:03 +0100
+	Fri, 7 Dec 2012 01:46:54 -0500
+Content-Disposition: inline
+In-Reply-To: <1354765837-3469-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, padma.kvr@gmail.com, sbkim73@samsung.com, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org, kgene.kim@samsung.com, ben@simtec.co.uk, lrg@slimlogic.co.uk, jassisinghbrar@gmail.com, anarsoul@gmail.com, graeme.gregory@wolfsonmicro.com, philipp.zabel@gmail.com, dgreenday@gmail.com, chripell@evolware.org, mcuelenaere@gmail.com
 
-Hi, list
+On Thu, Dec 06, 2012 at 09:20:36AM +0530, Padmavathi Venna wrote:
+> Previously, the ASoC 'platform' (PCM/DMA) object was instantiated via a
+> platform_device. This didn't represent the hardware well, since there
+> was no separate hardware associated with this platform_device; it was a
+> virtual device with sole purpose to call snd_soc_register_platform().
 
-Does anyone know what's the maximum display resolution I can expect for
-the s3c2410-lcd frame buffer driver (s3c2410fb.c)? I am about to use
-8bpp color mode only.
-
-Is there any other requirements for the LCD module to ensure it
-compatiable with s3c2410+Linux? One thing I am thinking is, that since
-the s3c2410 already has a buid in LCD controller, so there is no
-controller needed in the LCD module side, this should give me a chance
-to use a low price LCD other than those kind of expensive LCD which
-embedded a processor.  Do I understand right?
-
-
-Thanks in advance.
-
-
-
--- 
-woody
-I can't go back to yesterday - because I was a different person then.
+Looks good however this doesn't apply against my topic/samsung branch -
+can you please check if I need anything from Kukjin's tree?  Though I
+guess the easiest thing is just to wait until the merge window is over,
+we're near to the next release.
