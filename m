@@ -1,122 +1,109 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/5] cpufreq: exynos: Remove unused variable & IS_ERR
-Date: Mon, 10 Dec 2012 11:23:50 +0900
-Message-ID: <033001cdd67d$64635560$2d2a0020$%kim@samsung.com>
-References: <008e01cdd453$afeaff00$0fc0fd00$%choi@samsung.com>
+From: Jonghwan Choi <jhbird.choi@samsung.com>
+Subject: [PATCH 5/5 RESEND] cpufreq: exynos: Add missing static
+Date: Mon, 10 Dec 2012 16:22:12 +0900
+Message-ID: <002301cdd6a7$131f3ff0$395dbfd0$%choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40725 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:33392 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750826Ab2LJCXw (ORCPT
+	with ESMTP id S1751910Ab2LJHWO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Dec 2012 21:23:52 -0500
+	Mon, 10 Dec 2012 02:22:14 -0500
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MES00IBVMNQ1XG0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 11:23:50 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
+ 17 2011)) with ESMTP id <0MET0043O0GP4BU0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 16:22:13 +0900 (KST)
+Received: from DOJHBIRDCHO03 ([12.23.118.55])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MES00132MNQ59C0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 11:23:50 +0900 (KST)
-In-reply-to: <008e01cdd453$afeaff00$0fc0fd00$%choi@samsung.com>
+ with ESMTPA id <0MET00HVL0H1BT00@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 16:22:13 +0900 (KST)
+References: 
+In-reply-to: 
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Jaecheol Lee' <jc.lee@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King' <linux@arm.linux.org.uk>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King' <linux@arm.linux.org.uk>
 
-Jonghwan Choi wrote:
-> 
-> The variable 'max_support_idx, min_support_idx, pm_lock_idx"
-> are never used, so remove the unused variable.
-> 
-> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> ---
->  arch/arm/mach-exynos/include/mach/cpufreq.h |    3 ---
->  drivers/cpufreq/exynos-cpufreq.c            |    3 +--
->  drivers/cpufreq/exynos4210-cpufreq.c        |   15 +++------------
->  drivers/cpufreq/exynos4x12-cpufreq.c        |    8 --------
->  drivers/cpufreq/exynos5250-cpufreq.c        |    8 --------
->  5 files changed, 4 insertions(+), 33 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/include/mach/cpufreq.h
-> b/arch/arm/mach-exynos/include/mach/cpufreq.h
-> index 7517c3f..39f0dc6 100644
-> --- a/arch/arm/mach-exynos/include/mach/cpufreq.h
-> +++ b/arch/arm/mach-exynos/include/mach/cpufreq.h
-> @@ -21,9 +21,6 @@ enum cpufreq_level_index {
->  struct exynos_dvfs_info {
->         unsigned long   mpll_freq_khz;
-  ^^^^^^^^ ???
+Add missing 'static' qualifiers.
 
-Should be tab.
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+---
+ drivers/cpufreq/exynos-cpufreq.c     |    4 ++--
+ drivers/cpufreq/exynos4210-cpufreq.c |    2 +-
+ drivers/cpufreq/exynos4x12-cpufreq.c |    2 +-
+ drivers/cpufreq/exynos5250-cpufreq.c |    2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
->         unsigned int    pll_safe_idx;
-  ^^^^^^^^ ???
-
-Same.
-
-> -       unsigned int    pm_lock_idx;
-
-Same.
-
-> -       unsigned int    max_support_idx;
-
-Same.
-
-> -       unsigned int    min_support_idx;
-
-Same.
-
-Hmm...many white spaces are used at places that tab should be used...it
-seems that e-mail client had some problems when you're sending...
-
-Note, you can see following with checkpatch.
-
-WARNING: please, no spaces at the start of a line
-
-[...]
-
-> @@ -289,14 +283,11 @@ int exynos4210_cpufreq_init(struct exynos_dvfs_info
-> *info)
->         return 0;
-> 
->  err_mout_apll:
-> -       if (!IS_ERR(mout_mpll))
-> -               clk_put(mout_mpll);
-> +       clk_put(mout_mpll);
-> "0001-cpufreq-exynos-Remove-unused-variable-IS_ERR.patch" 160L, 5092C
-> 1,1           Top
-
-What's this?
-
-> -               clk_put(mout_mpll);
-> +       clk_put(mout_mpll);
->  err_mout_mpll:
-> -       if (!IS_ERR(moutcore))
-> -               clk_put(moutcore);
-> +       clk_put(moutcore);
->  err_moutcore:
-> -       if (!IS_ERR(cpu_clk))
-> -               clk_put(cpu_clk);
-> +       clk_put(cpu_clk);
-> 
->         pr_debug("%s: failed initialization\n", __func__);
->         return -EINVAL;
-
-[...]
-
-Basically, this whole series' contents look good to me, but need to re-send
-:-)
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/cpufreq/exynos-cpufreq.c
+b/drivers/cpufreq/exynos-cpufreq.c
+index b0338e1..1bd3e3a 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -31,13 +31,13 @@ static unsigned int locking_frequency;
+ static bool frequency_locked;
+ static DEFINE_MUTEX(cpufreq_lock);
+ 
+-int exynos_verify_speed(struct cpufreq_policy *policy)
++static int exynos_verify_speed(struct cpufreq_policy *policy)
+ {
+ 	return cpufreq_frequency_table_verify(policy,
+ 					      exynos_info->freq_table);
+ }
+ 
+-unsigned int exynos_getspeed(unsigned int cpu)
++static unsigned int exynos_getspeed(unsigned int cpu)
+ {
+ 	return clk_get_rate(exynos_info->cpu_clk) / 1000;
+ }
+diff --git a/drivers/cpufreq/exynos4210-cpufreq.c
+b/drivers/cpufreq/exynos4210-cpufreq.c
+index 250dcf0..de91755 100644
+--- a/drivers/cpufreq/exynos4210-cpufreq.c
++++ b/drivers/cpufreq/exynos4210-cpufreq.c
+@@ -114,7 +114,7 @@ static void exynos4210_set_apll(unsigned int index)
+ 	} while (tmp != (0x1 << EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT));
+ }
+ 
+-bool exynos4210_pms_change(unsigned int old_index, unsigned int new_index)
++static bool exynos4210_pms_change(unsigned int old_index, unsigned int
+new_index)
+ {
+ 	unsigned int old_pm = apll_freq_4210[old_index].mps >> 8;
+ 	unsigned int new_pm = apll_freq_4210[new_index].mps >> 8;
+diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c
+b/drivers/cpufreq/exynos4x12-cpufreq.c
+index 224445d..0661039 100644
+--- a/drivers/cpufreq/exynos4x12-cpufreq.c
++++ b/drivers/cpufreq/exynos4x12-cpufreq.c
+@@ -166,7 +166,7 @@ static void exynos4x12_set_apll(unsigned int index)
+ 	} while (tmp != (0x1 << EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT));
+ }
+ 
+-bool exynos4x12_pms_change(unsigned int old_index, unsigned int new_index)
++static bool exynos4x12_pms_change(unsigned int old_index, unsigned int
+new_index)
+ {
+ 	unsigned int old_pm = apll_freq_4x12[old_index].mps >> 8;
+ 	unsigned int new_pm = apll_freq_4x12[new_index].mps >> 8;
+diff --git a/drivers/cpufreq/exynos5250-cpufreq.c
+b/drivers/cpufreq/exynos5250-cpufreq.c
+index 736a5cf..b934486 100644
+--- a/drivers/cpufreq/exynos5250-cpufreq.c
++++ b/drivers/cpufreq/exynos5250-cpufreq.c
+@@ -143,7 +143,7 @@ static void set_apll(unsigned int new_index,
+ 
+ }
+ 
+-bool exynos5250_pms_change(unsigned int old_index, unsigned int new_index)
++static bool exynos5250_pms_change(unsigned int old_index, unsigned int
+new_index)
+ {
+ 	unsigned int old_pm = apll_freq_5250[old_index].mps >> 8;
+ 	unsigned int new_pm = apll_freq_5250[new_index].mps >> 8;
+-- 
+1.7.4.1
