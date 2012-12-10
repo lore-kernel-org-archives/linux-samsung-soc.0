@@ -1,216 +1,89 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH RFC 03/12] s5p-fimc: Add device tree support for FIMC-LITE
-Date: Mon, 10 Dec 2012 20:45:57 +0100
-Message-ID: <1355168766-6068-4-git-send-email-s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH RFC 11/12] ARM: dts: Add camera pinctrl nodes for Exynos4x12
+ SoCs
+Date: Mon, 10 Dec 2012 20:46:05 +0100
+Message-ID: <1355168766-6068-12-git-send-email-s.nawrocki@samsung.com>
 References: <1355168766-6068-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1355168766-6068-1-git-send-email-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, g.liakhovetski-Mmb7MZpHnFY@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:17382 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752230Ab2LJTrF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 10 Dec 2012 14:47:05 -0500
+In-reply-to: <1355168766-6068-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: g.liakhovetski@gmx.de, grant.likely@secretlab.ca, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch add support for instantiation FIMC-LITE platform
-devices from device tree. Device tree aliases are used to specify
-the IP hardware instance.
+Add separate nodes for the CAMCLK pin and turn off pull-up on camera
+port A. Default driver strength for CAMCLK pin is increased to maximum.
+The driver strength change can be moved to board specific part if it
+is considered more appropriate.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/media/soc/samsung-fimc.txt |   16 +++++
- drivers/media/platform/s5p-fimc/fimc-lite.c        |   65 ++++++++++++++------
- 2 files changed, 62 insertions(+), 19 deletions(-)
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   33 +++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-index fab7e61..5bbda07 100644
---- a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-+++ b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-@@ -57,6 +57,22 @@ Optional properties
- 			   0 - CAM_A_CLKOUT, 1 - CAM_B_CLKOUT;
+diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+index 56f4669..e3225d0 100644
+--- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+@@ -401,15 +401,28 @@
+ 			samsung,pin-drv = <0>;
+ 		};
  
- 
-+'fimc-lite' device nodes
-+-----------------------
+-		cam_port_a: cam-port-a {
++		cam_port_a_io: cam-port-a-io {
+ 			samsung,pins = "gpj0-0", "gpj0-1", "gpj0-2", "gpj0-3",
+ 					"gpj0-4", "gpj0-5", "gpj0-6", "gpj0-7",
+-					"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-3",
+-					"gpj1-4";
++					"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-4";
+ 			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
++			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
 +
-+Required properties:
++		cam_port_a_clk_active: cam-port-a-clk-active {
++			samsung,pins = "gpj1-3";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
 +
-+- compatible : should be "samsung,exynos4212-fimc" for Exynos4212 and
-+	       Exynos4412 SoCs;
-+- reg	     : physical base address and size of the device memory mapped
-+	       registers;
-+- interrupts : should contain FIMC-LITE interrupt;
++		cam_port_a_clk_idle: cam-port-a-clk-idle {
++			samsung,pins = "gpj1-3";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
+ 	};
+ 
+ 	pinctrl@11000000 {
+@@ -834,11 +847,17 @@
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+-		cam_port_b: cam-port-b {
++		cam_port_b_io: cam-port-b-io {
+ 			samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
+ 					"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
+-					"gpm1-0", "gpm1-1", "gpm2-0", "gpm2-1",
+-					"gpm2-2";
++					"gpm1-0", "gpm1-1", "gpm2-0", "gpm2-1";
++			samsung,pin-function = <3>;
++			samsung,pin-pud = <3>;
++			samsung,pin-drv = <0>;
++		};
 +
-+For every fimc-lite node a numbered alias should be present in the aliases
-+node. Aliases are in form of fimc-lite<n>, where <n> is an integer (0...N)
-+specifying the IP's instance index.
-+
-+
- Example:
- 
- 	aliases {
-diff --git a/drivers/media/platform/s5p-fimc/fimc-lite.c b/drivers/media/platform/s5p-fimc/fimc-lite.c
-index ef31c39..cfa3952 100644
---- a/drivers/media/platform/s5p-fimc/fimc-lite.c
-+++ b/drivers/media/platform/s5p-fimc/fimc-lite.c
-@@ -17,6 +17,7 @@
- #include <linux/kernel.h>
- #include <linux/list.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/types.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -1490,18 +1491,34 @@ static int fimc_lite_clk_get(struct fimc_lite *fimc)
- 	return ret;
- }
- 
-+static const struct of_device_id flite_of_match[];
-+
- static int __devinit fimc_lite_probe(struct platform_device *pdev)
- {
--	struct flite_drvdata *drv_data = fimc_lite_get_drvdata(pdev);
-+	struct flite_drvdata *drv_data = NULL;
-+	struct device *dev = &pdev->dev;
-+	const struct of_device_id *of_id;
- 	struct fimc_lite *fimc;
- 	struct resource *res;
- 	int ret;
- 
--	fimc = devm_kzalloc(&pdev->dev, sizeof(*fimc), GFP_KERNEL);
-+	fimc = devm_kzalloc(dev, sizeof(*fimc), GFP_KERNEL);
- 	if (!fimc)
- 		return -ENOMEM;
- 
--	fimc->index = pdev->id;
-+	if (dev->of_node) {
-+		of_id = of_match_node(flite_of_match, dev->of_node);
-+		if (of_id)
-+			drv_data = (struct flite_drvdata *)of_id->data;
-+		fimc->index = of_alias_get_id(dev->of_node, "fimc-lite");
-+	} else {
-+		drv_data = fimc_lite_get_drvdata(pdev);
-+		fimc->index = pdev->id;
-+	}
-+
-+	if (!drv_data || fimc->index < 0 || fimc->index >= FIMC_LITE_MAX_DEVS)
-+		return -EINVAL;
-+
- 	fimc->variant = drv_data->variant[fimc->index];
- 	fimc->pdev = pdev;
- 
-@@ -1510,15 +1527,15 @@ static int __devinit fimc_lite_probe(struct platform_device *pdev)
- 	mutex_init(&fimc->lock);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	fimc->regs = devm_request_and_ioremap(&pdev->dev, res);
-+	fimc->regs = devm_request_and_ioremap(dev, res);
- 	if (fimc->regs == NULL) {
--		dev_err(&pdev->dev, "Failed to obtain io memory\n");
-+		dev_err(dev, "Failed to obtain io memory\n");
- 		return -ENOENT;
- 	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (res == NULL) {
--		dev_err(&pdev->dev, "Failed to get IRQ resource\n");
-+		dev_err(dev, "Failed to get IRQ resource\n");
- 		return -ENXIO;
- 	}
- 
-@@ -1526,10 +1543,10 @@ static int __devinit fimc_lite_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = devm_request_irq(&pdev->dev, res->start, flite_irq_handler,
--			       0, dev_name(&pdev->dev), fimc);
-+	ret = devm_request_irq(dev, res->start, flite_irq_handler,
-+			       0, dev_name(dev), fimc);
- 	if (ret) {
--		dev_err(&pdev->dev, "Failed to install irq (%d)\n", ret);
-+		dev_err(dev, "Failed to install irq (%d)\n", ret);
- 		goto err_clk;
- 	}
- 
-@@ -1539,23 +1556,23 @@ static int __devinit fimc_lite_probe(struct platform_device *pdev)
- 		goto err_clk;
- 
- 	platform_set_drvdata(pdev, fimc);
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_runtime_get_sync(&pdev->dev);
-+	pm_runtime_enable(dev);
-+	ret = pm_runtime_get_sync(dev);
- 	if (ret < 0)
- 		goto err_sd;
- 
--	fimc->alloc_ctx = vb2_dma_contig_init_ctx(&pdev->dev);
-+	fimc->alloc_ctx = vb2_dma_contig_init_ctx(dev);
- 	if (IS_ERR(fimc->alloc_ctx)) {
- 		ret = PTR_ERR(fimc->alloc_ctx);
- 		goto err_pm;
- 	}
--	pm_runtime_put(&pdev->dev);
-+	pm_runtime_put(dev);
- 
--	dev_dbg(&pdev->dev, "FIMC-LITE.%d registered successfully\n",
-+	dev_dbg(dev, "FIMC-LITE.%d registered successfully\n",
- 		fimc->index);
- 	return 0;
- err_pm:
--	pm_runtime_put(&pdev->dev);
-+	pm_runtime_put(dev);
- err_sd:
- 	fimc_lite_unregister_capture_subdev(fimc);
- err_clk:
-@@ -1646,6 +1663,12 @@ static int __devexit fimc_lite_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct dev_pm_ops fimc_lite_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(fimc_lite_suspend, fimc_lite_resume)
-+	SET_RUNTIME_PM_OPS(fimc_lite_runtime_suspend, fimc_lite_runtime_resume,
-+			   NULL)
-+};
-+
- static struct flite_variant fimc_lite0_variant_exynos4 = {
- 	.max_width		= 8192,
- 	.max_height		= 8192,
-@@ -1671,17 +1694,21 @@ static struct platform_device_id fimc_lite_driver_ids[] = {
- };
- MODULE_DEVICE_TABLE(platform, fimc_lite_driver_ids);
- 
--static const struct dev_pm_ops fimc_lite_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(fimc_lite_suspend, fimc_lite_resume)
--	SET_RUNTIME_PM_OPS(fimc_lite_runtime_suspend, fimc_lite_runtime_resume,
--			   NULL)
-+static const struct of_device_id flite_of_match[] __devinitconst = {
-+	{
-+		.compatible = "samsung,exynos4212-fimc-lite",
-+		.data = &fimc_lite_drvdata_exynos4,
-+	},
-+	{ /* sentinel */ },
- };
-+MODULE_DEVICE_TABLE(of, flite_of_match);
- 
- static struct platform_driver fimc_lite_driver = {
- 	.probe		= fimc_lite_probe,
- 	.remove		= __devexit_p(fimc_lite_remove),
- 	.id_table	= fimc_lite_driver_ids,
- 	.driver = {
-+		.of_match_table = of_match_ptr(flite_of_match),
- 		.name		= FIMC_LITE_DRV_NAME,
- 		.owner		= THIS_MODULE,
- 		.pm		= &fimc_lite_pm_ops,
++		cam_port_b_clk: cam-port-b-clk {
++			samsung,pins = "gpm2-2";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <3>;
+ 			samsung,pin-drv = <0>;
 -- 
 1.7.9.5
