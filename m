@@ -1,109 +1,283 @@
-From: =?ISO-8859-1?Q?St=E9phane_Marchesin?=
-	<stephane.marchesin@gmail.com>
-Subject: Re: [PATCH 0/3] add mie driver for exynos
-Date: Sun, 9 Dec 2012 23:45:47 -0800
-Message-ID: <CACP_E+JdiVxD05k0F57bmXWw1WKiS_NNviXOXYUVegwi5MnrsQ@mail.gmail.com>
-References: <1354795695-28009-1-git-send-email-rcsekar@samsung.com> <CAAQKjZM278TfT=dcVJoKRPqWpdChaJv2N6v4O_D-xsxJOLKeRQ@mail.gmail.com>
+From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Subject: Re: [PATCH] I2C: EXYNOS: Add slave support to i2c
+Date: Mon, 10 Dec 2012 13:40:18 +0530
+Message-ID: <CAHuqX+GqMCFSYszrQEb6ouD3ebgDEVdLwh_bnsJemOpm45T-ag@mail.gmail.com>
+References: <1354354961-28833-1-git-send-email-giridhar.maruthy@linaro.org>
+	<CAHuqX+EQ0pZnm27yAVqC=NRX8huQ5EvbC8PGn2G3xYw4D71gQA@mail.gmail.com>
+	<50C1DB05.7090500@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f53.google.com ([209.85.216.53]:34388 "EHLO
-	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752176Ab2LJHq2 convert rfc822-to-8bit (ORCPT
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:48406 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751936Ab2LJIKU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Dec 2012 02:46:28 -0500
-Received: by mail-qa0-f53.google.com with SMTP id a19so1196806qad.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Dec 2012 23:46:27 -0800 (PST)
-In-Reply-To: <CAAQKjZM278TfT=dcVJoKRPqWpdChaJv2N6v4O_D-xsxJOLKeRQ@mail.gmail.com>
+	Mon, 10 Dec 2012 03:10:20 -0500
+Received: by mail-ea0-f174.google.com with SMTP id e13so984922eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Dec 2012 00:10:18 -0800 (PST)
+In-Reply-To: <50C1DB05.7090500@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: "R. Chandrasekar" <rcsekar@samsung.com>, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, rcsekar.samsung@gmail.com
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, khali@linux-fr.org, w.sang@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Dec 9, 2012 at 10:26 PM, Inki Dae <inki.dae@samsung.com> wrote:
->
->
-> 2012/12/6 R. Chandrasekar <rcsekar@samsung.com>
->
->> From: "R. Chandrasekar" <rcsekar@samsung.com>
->>
->> this patch set adds the driver support for the dithering functionali=
-ty of
->> the
->> mobile image enhancement (mie) module.
->>
->> device tree support is added for mie.
->>
->> fimd adds the mie module as plugin and calls the dithering function.
->> dithere is
->> required when the panels bpp is less then fimd output.
->>
->> though mie mie has other functionalities, current system uses only
->> dithereing.
->>
->
-> Please, move mie module into drivers/video/exynos. The mie is a inter=
-face
-> between fimd and lcd panel(or mipi-dsi, eDP) to enhance image to be
-> displayed. And it seems like that this doesn't need drm framework-rel=
-evant
-> interfaces, such as gem.
+Thanks Tushar,
 
-Well, if you want to support it from the DRM, it should live in
-drivers/gpu/drm, and I don't think you should add another platform
-driver in the first place. The profusion of platform drivers in exynos
-makes it really difficult to support suspend/resume and initialization
-properly as many devices which operate separately need to sync through
-global variables.
-
-St=E9phane
-
-
->
-> And also, please refer to the below link, Common Display Framework, f=
-or more
-> generic way.
->
-> http://lists.freedesktop.org/archives/dri-devel/2012-November/030888.=
-html
->
-> Thanks,
-> Inki Dae
->
+On 7 December 2012 17:33, Tushar Behera <tushar.behera@linaro.org> wrote:
+> On 12/03/2012 05:46 PM, Giridhar Maruthy wrote:
+>> This patch adds slave support to i2c. The dt entry i2c-mode
+>> decides at probe time if the controller needs to work in
+>> slave mode and the controller is accordingly programmed.
 >>
->> R. Chandrasekar (3):
->>   DTS: exynos: add device tree support for exynos mie
->>   drm: fimd: add mie plugin support for dithering
->>   drm: mie: add mie driver for exynos
+>> Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+>> ---
+>>  drivers/i2c/busses/i2c-s3c2410.c |  100
+>> ++++++++++++++++++++++++++------------
+>>  1 file changed, 68 insertions(+), 32 deletions(-)
 >>
->>  arch/arm/boot/dts/exynos5250.dtsi               |    7 +-
->>  drivers/gpu/drm/exynos/Kconfig                  |    7 +
->>  drivers/gpu/drm/exynos/Makefile                 |    1 +
->>  drivers/gpu/drm/exynos/exynos_drm_fimd.c        |   58 +++++-
->>  drivers/gpu/drm/exynos/exynos_drm_fimd_common.h |   20 ++
->>  drivers/gpu/drm/exynos/exynos_drm_mie.c         |  250
->> +++++++++++++++++++++++
->>  drivers/gpu/drm/exynos/exynos_drm_mie.h         |   50 +++++
->>  drivers/gpu/drm/exynos/exynos_regs-mie.h        |   75 +++++++
->>  8 files changed, 465 insertions(+), 3 deletions(-)
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_fimd_common.h
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_mie.c
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_mie.h
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_regs-mie.h
+>> diff --git a/drivers/i2c/busses/i2c-s3c2410.c
+>> b/drivers/i2c/busses/i2c-s3c2410.c
+>> index e93e7d6..d83a6d7 100644
+>> --- a/drivers/i2c/busses/i2c-s3c2410.c
+>> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+>> @@ -53,6 +53,9 @@
+>>  /* Max time to wait for bus to become idle after a xfer (in us) */
+>>  #define S3C2410_IDLE_TIMEOUT   5000
 >>
+>> +/* To find the master/slave mode of current controller */
+>> +#define is_master(i2c) (!i2c->i2c_mode)
+>> +
+>>  /* i2c controller state */
+>>  enum s3c24xx_i2c_state {
+>>         STATE_IDLE,
+>> @@ -89,6 +92,8 @@ struct s3c24xx_i2c {
+>>  #ifdef CONFIG_CPU_FREQ
+>>         struct notifier_block   freq_transition;
+>>  #endif
+>> +       /* i2c_mode: 0 is for master; and 1 is for slave */
+>> +       unsigned int            i2c_mode;
+>>  };
+>>
+>>  static struct platform_device_id s3c24xx_driver_ids[] = {
+>> @@ -202,11 +207,21 @@ static void s3c24xx_i2c_message_start(struct
+>> s3c24xx_i2c *i2c,
+>>         stat = 0;
+>>         stat |=  S3C2410_IICSTAT_TXRXEN;
+>>
+>> -       if (msg->flags & I2C_M_RD) {
+>> -               stat |= S3C2410_IICSTAT_MASTER_RX;
+>> -               addr |= 1;
+>> -       } else
+>> -               stat |= S3C2410_IICSTAT_MASTER_TX;
+>> +       if (is_master(i2c)) {
+>> +               /* Master mode */
+>> +               if (msg->flags & I2C_M_RD) {
+>> +                       stat |= S3C2410_IICSTAT_MASTER_RX;
+>> +                       addr |= 1;
+>> +               } else
+>> +                       stat |= S3C2410_IICSTAT_MASTER_TX;
+>> +       } else {
+>> +               /* Slave mode */
+>> +               if (msg->flags & I2C_M_RD) {
+>> +                       stat |= S3C2410_IICSTAT_SLAVE_RX;
+>> +                       addr |= 1;
+>> +               } else
+>> +                       stat |= S3C2410_IICSTAT_SLAVE_TX;
+>> +       }
+>>
+>>         if (msg->flags & I2C_M_REV_DIR_ADDR)
+>>                 addr ^= 1;
+>> @@ -228,8 +243,10 @@ static void s3c24xx_i2c_message_start(struct
+>> s3c24xx_i2c *i2c,
+>>         dev_dbg(i2c->dev, "iiccon, %08lx\n", iiccon);
+>>         writel(iiccon, i2c->regs + S3C2410_IICCON);
+>>
+>> -       stat |= S3C2410_IICSTAT_START;
+>> -       writel(stat, i2c->regs + S3C2410_IICSTAT);
+>> +       if (is_master(i2c)) {
+>> +               stat |= S3C2410_IICSTAT_START;
+>> +               writel(stat, i2c->regs + S3C2410_IICSTAT);
+>> +       }
+>>  }
+>>
+>>  static inline void s3c24xx_i2c_stop(struct s3c24xx_i2c *i2c, int ret)
+>> @@ -272,14 +289,19 @@ static inline void s3c24xx_i2c_stop(struct
+>> s3c24xx_i2c *i2c, int ret)
+>>          * devices, the host as Master and the HDMIPHY device as the slave.
+>>          * Skipping the STOP condition has been tested on this bus and
+>> works.
+>>          */
+>> -       if (i2c->quirks & QUIRK_HDMIPHY) {
+>> -               /* Stop driving the I2C pins */
+>> -               iicstat &= ~S3C2410_IICSTAT_TXRXEN;
+>> -       } else {
+>> -               /* stop the transfer */
+>> -               iicstat &= ~S3C2410_IICSTAT_START;
+>> +       if (is_master(i2c)) {
+>> +               if (i2c->quirks & QUIRK_HDMIPHY) {
+>> +                       /* Stop driving the I2C pins */
+>> +                       iicstat &= ~S3C2410_IICSTAT_TXRXEN;
+>> +               } else {
+>> +                       /* stop the transfer */
+>> +                       if (is_master(i2c)) {
+>
+> This is executed only if is_master(i2c) is true, so there seems no need
+> to checking it again.
+>
+
+Agreed, I will correct this.
+>> +                               /* Start/Stop required only for master */
+>> +                               iicstat &= ~S3C2410_IICSTAT_START;
+>> +                       }
+>> +               }
+>> +               writel(iicstat, i2c->regs + S3C2410_IICSTAT);
+>>         }
+>> -       writel(iicstat, i2c->regs + S3C2410_IICSTAT);
+>>
+>>         i2c->state = STATE_STOP;
+>>
+>> @@ -348,7 +370,8 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c
+>> *i2c, unsigned long iicstat)
+>>                  */
+>>
+>>                 if (iicstat & S3C2410_IICSTAT_LASTBIT &&
+>> -                   !(i2c->msg->flags & I2C_M_IGNORE_NAK)) {
+>> +                   !(i2c->msg->flags & I2C_M_IGNORE_NAK) &&
+>> +                   is_master(i2c)) {
+>>                         /* ack was not received... */
+>>
+>>                         dev_dbg(i2c->dev, "ack was not received\n");
+>> @@ -380,7 +403,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c
+>> *i2c, unsigned long iicstat)
+>>                  * end of the message, and if so, work out what to do
+>>                  */
+>>
+>> -               if (!(i2c->msg->flags & I2C_M_IGNORE_NAK)) {
+>> +               if (!(i2c->msg->flags & I2C_M_IGNORE_NAK) &&
+>> is_master(i2c)) {
+>>                         if (iicstat & S3C2410_IICSTAT_LASTBIT) {
+>>                                 dev_dbg(i2c->dev, "WRITE: No Ack\n");
+>>
+>> @@ -432,7 +455,6 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c
+>> *i2c, unsigned long iicstat)
+>>
+>>                 } else {
+>>                         /* send stop */
+>> -
+>>                         s3c24xx_i2c_stop(i2c, 0);
+>>                 }
+>>                 break;
+>> @@ -447,7 +469,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c
+>> *i2c, unsigned long iicstat)
+>>                 i2c->msg->buf[i2c->msg_ptr++] = byte;
+>>
+>>   prepare_read:
+>> -               if (is_msglast(i2c)) {
+>> +               if (is_msglast(i2c) && is_master(i2c)) {
+>>                         /* last byte of buffer */
+>>
+>>                         if (is_lastmsg(i2c))
+>> @@ -612,11 +634,13 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+>>         if (i2c->suspended)
+>>                 return -EIO;
+>>
+>> -       ret = s3c24xx_i2c_set_master(i2c);
+>> -       if (ret != 0) {
+>> -               dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
+>> -               ret = -EAGAIN;
+>> -               goto out;
+>> +       if (is_master(i2c)) {
+>> +               ret = s3c24xx_i2c_set_master(i2c);
+>> +               if (ret != 0) {
+>> +                       dev_err(i2c->dev, "cannot get bus (error %d)\n",
+>> ret);
+>> +                       ret = -EAGAIN;
+>> +                       goto out;
+>> +               }
+>>         }
+>>
+>>         i2c->msg     = msgs;
+>> @@ -628,23 +652,29 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+>>         s3c24xx_i2c_enable_irq(i2c);
+>>         s3c24xx_i2c_message_start(i2c, msgs);
+>>
+>> -       timeout = wait_event_timeout(i2c->wait, i2c->msg_num == 0, HZ * 5);
+>> +       if (is_master(i2c))
+>> +               timeout = wait_event_timeout(i2c->wait,\
+>> +                               i2c->msg_num == 0, HZ * 5);
+>> +       else
+>> +               wait_event_interruptible(i2c->wait, i2c->msg_num == 0);
+>>
+>>         ret = i2c->msg_idx;
+>>
+>>         /* having these next two as dev_err() makes life very
+>>          * noisy when doing an i2cdetect */
+>>
+>> -       if (timeout == 0)
+>> -               dev_dbg(i2c->dev, "timeout\n");
+>> -       else if (ret != num)
+>> -               dev_dbg(i2c->dev, "incomplete xfer (%d)\n", ret);
+>> +       if (is_master(i2c)) {
+>> +               if (timeout == 0)
+>> +                       dev_dbg(i2c->dev, "timeout\n");
+>> +               else if (ret != num)
+>> +                       dev_dbg(i2c->dev, "incomplete xfer (%d)\n", ret);
+>>
+>> -       /* For QUIRK_HDMIPHY, bus is already disabled */
+>> -       if (i2c->quirks & QUIRK_HDMIPHY)
+>> -               goto out;
+>> +               /* For QUIRK_HDMIPHY, bus is already disabled */
+>> +               if (i2c->quirks & QUIRK_HDMIPHY)
+>> +                       goto out;
+>>
+>> -       s3c24xx_i2c_wait_idle(i2c);
+>> +               s3c24xx_i2c_wait_idle(i2c);
+>> +       }
+>>
+>>   out:
+>>         return ret;
+>> @@ -963,6 +993,7 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct
+>> s3c24xx_i2c *i2c)
+>>         of_property_read_u32(np, "samsung,i2c-slave-addr",
+>> &pdata->slave_addr);
+>>         of_property_read_u32(np, "samsung,i2c-max-bus-freq",
+>>                                 (u32 *)&pdata->frequency);
+>> +       of_property_read_u32(np, "samsung,i2c-mode", &i2c->i2c_mode);
+>>  }
+>>  #else
+>>  static void
+>> @@ -1004,6 +1035,10 @@ static int s3c24xx_i2c_probe(struct platform_device
+>> *pdev)
+>>                 goto err_noclk;
+>>         }
+>>
+>> +       /* By default, i2c works in master mode */
+>> +       /* This currently will be updated using DT */
+>> +       i2c->i2c_mode   = 0;
+>> +
+>>         i2c->quirks = s3c24xx_get_device_quirks(pdev);
+>>         if (pdata)
+>>                 memcpy(i2c->pdata, pdata, sizeof(*pdata));
+>> @@ -1017,6 +1052,7 @@ static int s3c24xx_i2c_probe(struct platform_device
+>> *pdev)
+>>         i2c->adap.class   = I2C_CLASS_HWMON | I2C_CLASS_SPD;
+>>         i2c->tx_setup     = 50;
+>>
+>> +
+>>         init_waitqueue_head(&i2c->wait);
+>>
+>>         /* find the clock and enable it */
 >> --
 >> 1.7.9.5
 >>
+>>
+>>
 >> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
 >
 >
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+> --
+> Tushar Behera
