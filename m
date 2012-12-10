@@ -1,61 +1,55 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] samsung: Add missing include guard to gpio-core.h
-Date: Mon, 10 Dec 2012 10:53:09 +0900
-Message-ID: <032201cdd679$1afe4230$50fac690$%kim@samsung.com>
-References: <1354749432-6028-1-git-send-email-spang@chromium.org>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: fix GIC using for EXYNOS5440
+Date: Mon, 10 Dec 2012 11:16:08 +0900
+Message-ID: <50C545E8.8050301@samsung.com>
+References: <030c01cdd672$cb1b6b40$615241c0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14884 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:20369 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750818Ab2LJBxR (ORCPT
+	with ESMTP id S1750930Ab2LJCQF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Dec 2012 20:53:17 -0500
-In-reply-to: <1354749432-6028-1-git-send-email-spang@chromium.org>
-Content-language: ko
+	Sun, 9 Dec 2012 21:16:05 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MES00D2UMAQUXI0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 11:16:02 +0900 (KST)
+Received: from [10.90.51.60] by mmp2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MES00M3PMAQVR80@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 11:16:02 +0900 (KST)
+In-reply-to: <030c01cdd672$cb1b6b40$615241c0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Michael Spang' <spang@chromium.org>, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Michael Spang wrote:
-> 
-> Signed-off-by: Michael Spang <spang@chromium.org>
+Hi,
+
+On 12/10/2012 10:07 AM, Kukjin Kim wrote:
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/plat-samsung/include/plat/gpio-core.h |    5 +++++
->  1 files changed, 5 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h
-> b/arch/arm/plat-samsung/include/plat/gpio-core.h
-> index 1fe6917..8622c9a 100644
-> --- a/arch/arm/plat-samsung/include/plat/gpio-core.h
-> +++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
-> @@ -11,6 +11,9 @@
->   * published by the Free Software Foundation.
->  */
-> 
-> +#ifndef __PLAT_SAMSUNG_GPIO_CORE_H
-> +#define __PLAT_SAMSUNG_GPIO_CORE_H
-> +
->  #define GPIOCON_OFF	(0x00)
->  #define GPIODAT_OFF	(0x04)
-> 
-> @@ -122,3 +125,5 @@ extern struct samsung_gpio_pm samsung_gpio_pm_4bit;
->  /* locking wrappers to deal with multiple access to the same gpio bank */
->  #define samsung_gpio_lock(_oc, _fl) spin_lock_irqsave(&(_oc)->lock, _fl)
->  #define samsung_gpio_unlock(_oc, _fl)
-spin_unlock_irqrestore(&(_oc)->lock,
-> _fl)
-> +
-> +#endif /* __PLAT_SAMSUNG_GPIO_CORE_H */
-> --
-> 1.7.7.3
+>   arch/arm/mach-exynos/common.c |    3 ++-
+>   1 files changed, 2 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 0eb3b9a..9ecda37 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -684,7 +684,8 @@ void __init exynos5_init_irq(void)
+>   	 * Theses parameters should be NULL and 0 because EXYNOS4
+>   	 * uses GIC instead of VIC.
+>   	 */
+> -	s5p_init_irq(NULL, 0);
+> +	if (!of_machine_is_compatible("samsung,exynos5440"))
+> +		s5p_init_irq(NULL, 0);
 
-Applied, thanks.
+How about remove to call s5p_init_irq() here because All exynos SoCs use
+GIC instead of VIC?
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+>   
+>   	gic_arch_extn.irq_set_wake = s3c_irq_wake;
+>   }
