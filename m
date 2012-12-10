@@ -1,35 +1,52 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V4 0/2] Add DT support for i2s
-Date: Mon, 10 Dec 2012 23:03:09 +0900
-Message-ID: <20121210140306.GA6103@opensource.wolfsonmicro.com>
-References: <1354099669-1735-1-git-send-email-padma.v@samsung.com>
- <CAAgF-Bc4t6WL4vswP6CFeSQrPZBmOuYfVt6_JoB1Za9TBX7mvA@mail.gmail.com>
- <20121206041141.GA10867@opensource.wolfsonmicro.com>
- <20121207135131.A53643E0B87@localhost>
- <CAAgF-BenOdFJK2LMot73_B=wHOFgD2sq8x-Ou=1CvpkiJpmeQQ@mail.gmail.com>
- <20121209072607.GD6511@opensource.wolfsonmicro.com>
- <CAAgF-Bd3=W7+kd-uDASva_ofLySvVm1skpLij9WvSyhbfiP5-w@mail.gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] OF: update coherent_dma_mask
+Date: Mon, 10 Dec 2012 10:30:01 -0600
+Message-ID: <50C60E09.8050805@gmail.com>
+References: <1355141369-30030-1-git-send-email-subash.rp@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34135 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753244Ab2LJODP (ORCPT
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:54899 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752174Ab2LJQaH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Dec 2012 09:03:15 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAgF-Bd3=W7+kd-uDASva_ofLySvVm1skpLij9WvSyhbfiP5-w@mail.gmail.com>
+	Mon, 10 Dec 2012 11:30:07 -0500
+Received: by mail-qc0-f174.google.com with SMTP id o22so1607650qcr.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Dec 2012 08:30:06 -0800 (PST)
+In-Reply-To: <1355141369-30030-1-git-send-email-subash.rp@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@ti.com, linux-arm-kernel@lists.infradead.org
+To: Subash Patel <subashrp@gmail.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, subash.rp@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org
 
-On Mon, Dec 10, 2012 at 04:30:50PM +0530, Padma Venkat wrote:
+On 12/10/2012 06:09 AM, Subash Patel wrote:
+> This patch is tested in ARM:exynos5250 with LPAE enabled. The coherent_dma_mask
+> needs to be defined to DMA_BIT_MASK(64) as dma-mapping API's check it against
+> 64-bit mask.
+> 
+> Signed-off-by: Subash Patel <subash.rp@samsung.com>
+> ---
+>  drivers/of/platform.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> index 9bdeaf30..3c5417b 100644
+> --- a/drivers/of/platform.c
+> +++ b/drivers/of/platform.c
+> @@ -214,7 +214,7 @@ struct platform_device *of_platform_device_create_pdata(
+>  #if defined(CONFIG_MICROBLAZE)
+>  	dev->archdata.dma_mask = 0xffffffffUL;
+>  #endif
+> -	dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+> +	dev->dev.coherent_dma_mask = DMA_BIT_MASK(64);
+>  	dev->dev.bus = &platform_bus_type;
+>  	dev->dev.platform_data = platform_data;
 
-> Could you please explain me in more detail about "single DT link
-> automatically expanded into two DAI links".
-> How this can be done?
+This is assuming all masters support 64-bit addressing which is probably
+not universally valid. This really needs to be determined from the DT
+and there's been recent patches to do this[1] although they need more work.
 
-The device tree should only represent the single physical link that
-exists and the handling of the DAIs should be done at runtime by some
-piece of software.
+[1] - https://lkml.org/lkml/2012/12/4/54
+
+Rob
