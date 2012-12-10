@@ -1,27 +1,26 @@
 From: Jonghwan Choi <jhbird.choi@samsung.com>
-Subject: [PATCH 4/5 RESEND] cpufreq: exynos: Split exynos_target function into
- two functions
-Date: Mon, 10 Dec 2012 16:22:23 +0900
-Message-ID: <002401cdd6a7$1994b130$4cbe1390$%choi@samsung.com>
+Subject: [PATCH 1/5 RESEND] cpufreq: exynos: Remove unused variable & IS_ERR
+Date: Mon, 10 Dec 2012 16:22:44 +0900
+Message-ID: <002701cdd6a7$25fd9270$71f8b750$%choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14215 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:14282 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751910Ab2LJHWj (ORCPT
+	with ESMTP id S1752054Ab2LJHWq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Dec 2012 02:22:39 -0500
+	Mon, 10 Dec 2012 02:22:46 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MET002BA0G0ZD80@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 16:22:24 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 16:22:45 +0900 (KST)
 Received: from DOJHBIRDCHO03 ([12.23.118.55])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MET00HY70HBBT00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 16:22:24 +0900 (KST)
+ with ESMTPA id <0MET00EPF0HW5790@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 16:22:44 +0900 (KST)
 References: 
 In-reply-to: 
 Content-language: ko
@@ -30,241 +29,166 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org
 Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King' <linux@arm.linux.org.uk>
 
-Split exynos_target function into exynos_target & exynos_cpufreq_scale.
-Exynos_cpufreq_scale changes the voltage & frequency.
+The variable 'max_support_idx, min_support_idx, pm_lock_idx"
+are never used, so remove the unused variable.
 
 Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 ---
- drivers/cpufreq/exynos-cpufreq.c |  151
-+++++++++++++++++++++----------------
- 1 files changed, 86 insertions(+), 65 deletions(-)
+ arch/arm/mach-exynos/include/mach/cpufreq.h |    3 ---
+ drivers/cpufreq/exynos-cpufreq.c            |    3 +--
+ drivers/cpufreq/exynos4210-cpufreq.c        |   15 +++------------
+ drivers/cpufreq/exynos4x12-cpufreq.c        |    8 --------
+ drivers/cpufreq/exynos5250-cpufreq.c        |    8 --------
+ 5 files changed, 4 insertions(+), 33 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/include/mach/cpufreq.h
+b/arch/arm/mach-exynos/include/mach/cpufreq.h
+index 7517c3f..39f0dc6 100644
+--- a/arch/arm/mach-exynos/include/mach/cpufreq.h
++++ b/arch/arm/mach-exynos/include/mach/cpufreq.h
+@@ -21,9 +21,6 @@ enum cpufreq_level_index {
+ struct exynos_dvfs_info {
+ 	unsigned long	mpll_freq_khz;
+ 	unsigned int	pll_safe_idx;
+-	unsigned int	pm_lock_idx;
+-	unsigned int	max_support_idx;
+-	unsigned int	min_support_idx;
+ 	struct clk	*cpu_clk;
+ 	unsigned int	*volt_table;
+ 	struct cpufreq_frequency_table	*freq_table;
 diff --git a/drivers/cpufreq/exynos-cpufreq.c
 b/drivers/cpufreq/exynos-cpufreq.c
-index 82963a3..b0338e1 100644
+index af2d81e..5888aee 100644
 --- a/drivers/cpufreq/exynos-cpufreq.c
 +++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -42,54 +42,55 @@ unsigned int exynos_getspeed(unsigned int cpu)
- 	return clk_get_rate(exynos_info->cpu_clk) / 1000;
- }
+@@ -296,8 +296,7 @@ static int __init exynos_cpufreq_init(void)
+ err_cpufreq:
+ 	unregister_pm_notifier(&exynos_cpufreq_nb);
  
--static int exynos_target(struct cpufreq_policy *policy,
--			  unsigned int target_freq,
--			  unsigned int relation)
-+static int exynos_cpufreq_get_index(unsigned int freq)
-+{
-+	struct cpufreq_frequency_table *freq_table =
-exynos_info->freq_table;
-+	int index;
-+
-+	for (index = 0;
-+		freq_table[index].frequency != CPUFREQ_TABLE_END; index++)
-+		if (freq_table[index].frequency == freq)
-+			break;
-+
-+	if (freq_table[index].frequency == CPUFREQ_TABLE_END)
-+		return -EINVAL;
-+
-+	return index;
-+}
-+
-+static int exynos_cpufreq_scale(unsigned int target_freq)
+-	if (!IS_ERR(arm_regulator))
+-		regulator_put(arm_regulator);
++	regulator_put(arm_regulator);
+ err_vdd_arm:
+ 	kfree(exynos_info);
+ 	pr_debug("%s: failed initialization\n", __func__);
+diff --git a/drivers/cpufreq/exynos4210-cpufreq.c
+b/drivers/cpufreq/exynos4210-cpufreq.c
+index fb148fa..5ae5c52 100644
+--- a/drivers/cpufreq/exynos4210-cpufreq.c
++++ b/drivers/cpufreq/exynos4210-cpufreq.c
+@@ -22,9 +22,6 @@
+ 
+ #define CPUFREQ_LEVEL_END	L5
+ 
+-static int max_support_idx = L0;
+-static int min_support_idx = (CPUFREQ_LEVEL_END - 1);
+-
+ static struct clk *cpu_clk;
+ static struct clk *moutcore;
+ static struct clk *mout_mpll;
+@@ -276,10 +273,7 @@ int exynos4210_cpufreq_init(struct exynos_dvfs_info
+*info)
+ 	}
+ 
+ 	info->mpll_freq_khz = rate;
+-	info->pm_lock_idx = L2;
+ 	info->pll_safe_idx = L2;
+-	info->max_support_idx = max_support_idx;
+-	info->min_support_idx = min_support_idx;
+ 	info->cpu_clk = cpu_clk;
+ 	info->volt_table = exynos4210_volt_table;
+ 	info->freq_table = exynos4210_freq_table;
+@@ -289,14 +283,11 @@ int exynos4210_cpufreq_init(struct exynos_dvfs_info
+*info)
+ 	return 0;
+ 
+ err_mout_apll:
+-	if (!IS_ERR(mout_mpll))
+-		clk_put(mout_mpll);
++	clk_put(mout_mpll);
+ err_mout_mpll:
+-	if (!IS_ERR(moutcore))
+-		clk_put(moutcore);
++	clk_put(moutcore);
+ err_moutcore:
+-	if (!IS_ERR(cpu_clk))
+-		clk_put(cpu_clk);
++	clk_put(cpu_clk);
+ 
+ 	pr_debug("%s: failed initialization\n", __func__);
+ 	return -EINVAL;
+diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c
+b/drivers/cpufreq/exynos4x12-cpufreq.c
+index 8c5a7af..29b41ab 100644
+--- a/drivers/cpufreq/exynos4x12-cpufreq.c
++++ b/drivers/cpufreq/exynos4x12-cpufreq.c
+@@ -22,9 +22,6 @@
+ 
+ #define CPUFREQ_LEVEL_END	(L13 + 1)
+ 
+-static int max_support_idx;
+-static int min_support_idx = (CPUFREQ_LEVEL_END - 1);
+-
+ static struct clk *cpu_clk;
+ static struct clk *moutcore;
+ static struct clk *mout_mpll;
+@@ -420,8 +417,6 @@ static void __init set_volt_table(void)
  {
--	unsigned int index, old_index;
--	unsigned int arm_volt, safe_arm_volt = 0;
--	int ret = 0;
- 	struct cpufreq_frequency_table *freq_table =
-exynos_info->freq_table;
- 	unsigned int *volt_table = exynos_info->volt_table;
-+	struct cpufreq_policy *policy = cpufreq_cpu_get(0);
-+	unsigned int arm_volt, safe_arm_volt = 0;
- 	unsigned int mpll_freq_khz = exynos_info->mpll_freq_khz;
+ 	unsigned int i;
+ 
+-	max_support_idx = L1;
 -
--	mutex_lock(&cpufreq_lock);
-+	unsigned int index, old_index;
-+	int ret = 0;
+ 	/* Not supported */
+ 	exynos4x12_freq_table[L0].frequency = CPUFREQ_ENTRY_INVALID;
  
- 	freqs.old = policy->cur;
-+	freqs.cpu = policy->cpu;
- 
--	if (frequency_locked && target_freq != locking_frequency) {
--		ret = -EAGAIN;
-+	if (target_freq == freqs.old)
- 		goto out;
--	}
- 
- 	/*
- 	 * The policy max have been changed so that we cannot get proper
- 	 * old_index with cpufreq_frequency_table_target(). Thus, ignore
- 	 * policy and get the index from the raw freqeuncy table.
- 	 */
--	for (old_index = 0;
--		freq_table[old_index].frequency != CPUFREQ_TABLE_END;
--		old_index++)
--		if (freq_table[old_index].frequency == freqs.old)
--			break;
--
--	if (freq_table[old_index].frequency == CPUFREQ_TABLE_END) {
--		ret = -EINVAL;
-+	old_index = exynos_cpufreq_get_index(freqs.old);
-+	if (old_index < 0) {
-+		ret = old_index;
- 		goto out;
+@@ -511,10 +506,7 @@ int exynos4x12_cpufreq_init(struct exynos_dvfs_info
+*info)
  	}
  
--	if (cpufreq_frequency_table_target(policy, freq_table,
--					   target_freq, relation, &index)) {
--		ret = -EINVAL;
-+	index = exynos_cpufreq_get_index(target_freq);
-+	if (index < 0) {
-+		ret = index;
- 		goto out;
- 	}
+ 	info->mpll_freq_khz = rate;
+-	info->pm_lock_idx = L5;
+ 	info->pll_safe_idx = L7;
+-	info->max_support_idx = max_support_idx;
+-	info->min_support_idx = min_support_idx;
+ 	info->cpu_clk = cpu_clk;
+ 	info->volt_table = exynos4x12_volt_table;
+ 	info->freq_table = exynos4x12_freq_table;
+diff --git a/drivers/cpufreq/exynos5250-cpufreq.c
+b/drivers/cpufreq/exynos5250-cpufreq.c
+index e64c253..8a5d733 100644
+--- a/drivers/cpufreq/exynos5250-cpufreq.c
++++ b/drivers/cpufreq/exynos5250-cpufreq.c
+@@ -23,8 +23,6 @@
  
--	freqs.new = freq_table[index].frequency;
--	freqs.cpu = policy->cpu;
--
--	if (freqs.new == freqs.old)
--		goto out;
--
- 	/*
- 	 * ARM clock source will be changed APLL to MPLL temporary
- 	 * To support this level, need to control regulator for
-@@ -108,13 +109,23 @@ static int exynos_target(struct cpufreq_policy
-*policy,
- 	/* When the new frequency is higher than current frequency */
- 	if ((freqs.new > freqs.old) && !safe_arm_volt) {
- 		/* Firstly, voltage up to increase frequency */
--		regulator_set_voltage(arm_regulator, arm_volt,
--				arm_volt);
-+		ret = regulator_set_voltage(arm_regulator, arm_volt,
-arm_volt);
-+		if (ret) {
-+			pr_err("%s: failed to set cpu voltage to %d\n",
-+				__func__, arm_volt);
-+			goto out;
-+		}
- 	}
+ #define CPUFREQ_LEVEL_END	(L15 + 1)
  
--	if (safe_arm_volt)
--		regulator_set_voltage(arm_regulator, safe_arm_volt,
-+	if (safe_arm_volt) {
-+		ret = regulator_set_voltage(arm_regulator, safe_arm_volt,
- 				      safe_arm_volt);
-+		if (ret) {
-+			pr_err("%s: failed to set cpu voltage to %d\n",
-+				__func__, safe_arm_volt);
-+			goto out;
-+		}
-+	}
- 
- 	exynos_info->set_freq(old_index, index);
- 
-@@ -126,8 +137,43 @@ static int exynos_target(struct cpufreq_policy *policy,
- 		/* down the voltage after frequency change */
- 		regulator_set_voltage(arm_regulator, arm_volt,
- 				arm_volt);
-+		if (ret) {
-+			pr_err("%s: failed to set cpu voltage to %d\n",
-+				__func__, arm_volt);
-+			goto out;
-+		}
-+	}
-+
-+out:
-+
-+	cpufreq_cpu_put(policy);
-+
-+	return ret;
-+}
-+
-+static int exynos_target(struct cpufreq_policy *policy,
-+			  unsigned int target_freq,
-+			  unsigned int relation)
-+{
-+	struct cpufreq_frequency_table *freq_table =
-exynos_info->freq_table;
-+	unsigned int index;
-+	int ret;
-+
-+	mutex_lock(&cpufreq_lock);
-+
-+	if (frequency_locked)
-+		goto out;
-+
-+	if (cpufreq_frequency_table_target(policy, freq_table,
-+					   target_freq, relation, &index)) {
-+		ret = -EINVAL;
-+		goto out;
- 	}
- 
-+	freqs.new = freq_table[index].frequency;
-+
-+	ret = exynos_cpufreq_scale(freqs.new);
-+
- out:
- 	mutex_unlock(&cpufreq_lock);
- 
-@@ -164,51 +210,26 @@ static int exynos_cpufreq_resume(struct cpufreq_policy
-*policy)
- static int exynos_cpufreq_pm_notifier(struct notifier_block *notifier,
- 				       unsigned long pm_event, void *v)
+-static int max_support_idx;
+-static int min_support_idx = (CPUFREQ_LEVEL_END - 1);
+ static struct clk *cpu_clk;
+ static struct clk *moutcore;
+ static struct clk *mout_mpll;
+@@ -249,8 +247,6 @@ static void __init set_volt_table(void)
  {
--	struct cpufreq_policy *policy = cpufreq_cpu_get(0); /* boot CPU */
--	static unsigned int saved_frequency;
--	unsigned int temp;
-+	int ret;
+ 	unsigned int i;
  
--	mutex_lock(&cpufreq_lock);
- 	switch (pm_event) {
- 	case PM_SUSPEND_PREPARE:
--		if (frequency_locked)
--			goto out;
+-	max_support_idx = L0;
 -
-+		mutex_lock(&cpufreq_lock);
- 		frequency_locked = true;
-+		mutex_unlock(&cpufreq_lock);
- 
--		if (locking_frequency) {
--			saved_frequency = exynos_getspeed(0);
-+		ret = exynos_cpufreq_scale(locking_frequency);
-+		if (ret < 0)
-+			return NOTIFY_BAD;
- 
--			mutex_unlock(&cpufreq_lock);
--			exynos_target(policy, locking_frequency,
--				      CPUFREQ_RELATION_H);
--			mutex_lock(&cpufreq_lock);
--		}
- 		break;
- 
- 	case PM_POST_SUSPEND:
--		if (saved_frequency) {
--			/*
--			 * While frequency_locked, only locking_frequency
--			 * is valid for target(). In order to use
--			 * saved_frequency while keeping frequency_locked,
--			 * we temporarly overwrite locking_frequency.
--			 */
--			temp = locking_frequency;
--			locking_frequency = saved_frequency;
--
--			mutex_unlock(&cpufreq_lock);
--			exynos_target(policy, locking_frequency,
--				      CPUFREQ_RELATION_H);
--			mutex_lock(&cpufreq_lock);
--
--			locking_frequency = temp;
--		}
-+		mutex_lock(&cpufreq_lock);
- 		frequency_locked = false;
-+		mutex_unlock(&cpufreq_lock);
- 		break;
- 	}
--out:
--	mutex_unlock(&cpufreq_lock);
- 
- 	return NOTIFY_OK;
+ 	for (i = 0 ; i < CPUFREQ_LEVEL_END ; i++)
+ 		exynos5250_volt_table[i] = asv_voltage_5250[i];
  }
+@@ -313,12 +309,8 @@ int exynos5250_cpufreq_init(struct exynos_dvfs_info
+*info)
+ 	}
+ 
+ 	info->mpll_freq_khz = rate;
+-	/* 1000Mhz */
+-	info->pm_lock_idx = L7;
+ 	/* 800Mhz */
+ 	info->pll_safe_idx = L9;
+-	info->max_support_idx = max_support_idx;
+-	info->min_support_idx = min_support_idx;
+ 	info->cpu_clk = cpu_clk;
+ 	info->volt_table = exynos5250_volt_table;
+ 	info->freq_table = exynos5250_freq_table;
 -- 
-1.7.4.1
+1.7.4.4
