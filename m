@@ -1,41 +1,85 @@
-From: Subash Patel <subashrp@gmail.com>
-Subject: [PATCH] OF: update coherent_dma_mask
-Date: Mon, 10 Dec 2012 17:39:29 +0530
-Message-ID: <1355141369-30030-1-git-send-email-subash.rp@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] I2C: EXYNOS: Add slave support to i2c
+Date: Mon, 10 Dec 2012 12:44:27 +0000
+Message-ID: <20121210124427.GI14363@n2100.arm.linux.org.uk>
+References: <1354354961-28833-1-git-send-email-giridhar.maruthy@linaro.org> <CAHuqX+EQ0pZnm27yAVqC=NRX8huQ5EvbC8PGn2G3xYw4D71gQA@mail.gmail.com> <50C1DB05.7090500@linaro.org> <20121207123343.GU14363@n2100.arm.linux.org.uk> <CAHuqX+G7e4bR_xK2BAEdm4dedaBHE=CG3sHmzHamgCiOtivNwQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f46.google.com ([209.85.210.46]:48378 "EHLO
-	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751219Ab2LJMJw (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:57555 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751437Ab2LJMoh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Dec 2012 07:09:52 -0500
-Received: by mail-da0-f46.google.com with SMTP id p5so1212142dak.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Dec 2012 04:09:52 -0800 (PST)
+	Mon, 10 Dec 2012 07:44:37 -0500
+Content-Disposition: inline
+In-Reply-To: <CAHuqX+G7e4bR_xK2BAEdm4dedaBHE=CG3sHmzHamgCiOtivNwQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: subash.rp@samsung.com, thomas.abraham@linaro.org, kgene.kim@samsung.com
+To: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Cc: Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, w.sang@pengutronix.de, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux-i2c@vger.kernel.org, ben-linux@fluff.org, khali@linux-fr.org, linux-arm-kernel@lists.infradead.org
 
-This patch is tested in ARM:exynos5250 with LPAE enabled. The coherent_dma_mask
-needs to be defined to DMA_BIT_MASK(64) as dma-mapping API's check it against
-64-bit mask.
+On Mon, Dec 10, 2012 at 03:02:28PM +0530, Giridhar Maruthy wrote:
+> Hi Russel,
+> 
+> Thanks for review and please find my replies below.
+> 
+> On 7 December 2012 18:03, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > On Fri, Dec 07, 2012 at 05:33:17PM +0530, Tushar Behera wrote:
+> >> On 12/03/2012 05:46 PM, Giridhar Maruthy wrote:
+> >> > This patch adds slave support to i2c. The dt entry i2c-mode
+> >> > decides at probe time if the controller needs to work in
+> >> > slave mode and the controller is accordingly programmed.
+> >
+> > (I don't have the original patches.)
+> >
+> > Hmm.  How has slave-mode support been tested?
+> 
+> I have taken two I2C controllers in exynos5250.
+> I configured one as slave and the other as master port.
+> Then physically connected the pins of the two ports.
+> >
+> > Remembering that I2C slave devices do not initiate bus accesses, all
+> > accesses will be started by some other master.  How are you dealing
+> > with the bytes received from the master,
+> 
+> I run the slave read application in background.
+> The resulting slave read will sleep till all bytes are received
+> (wait_event_interruptible)
 
-Signed-off-by: Subash Patel <subash.rp@samsung.com>
----
- drivers/of/platform.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Oh god no, not more broken interruptible waits in I2C code.  I've seen
+already the results of crap like this with a kernel I2C peripheral driver
+falling over because the I2C layer returns -ERESTARTcrap with the Marvell
+I2C bus adapter.
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 9bdeaf30..3c5417b 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -214,7 +214,7 @@ struct platform_device *of_platform_device_create_pdata(
- #if defined(CONFIG_MICROBLAZE)
- 	dev->archdata.dma_mask = 0xffffffffUL;
- #endif
--	dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-+	dev->dev.coherent_dma_mask = DMA_BIT_MASK(64);
- 	dev->dev.bus = &platform_bus_type;
- 	dev->dev.platform_data = platform_data;
- 
--- 
-1.7.5.4
+> once the master sends the data, an ack is given out by the slave controller
+> in the ISR and the data is cached in the buffer(
+> buffer sent by slave receive application).
+> After all data is received, the read wakes up and the
+> slave receive program gets the data.
+> 
+> > and how are you returning a response to the master in reply to a read request?
+> 
+> Similarl logic works in slave transmit mode (read request). Slave
+> sleeps till the master initiates the transfer.
+> >
+> > We had support for this on PXA I2C through a callback from the driver
+> > into PXA code (used for the Psion Teklogix Netbook device) and it worked
+> > really well, but what you can't do is use the standard I2C interfaces
+> > for slave mode.
+> 
+> I have a question here. Since the same framework can work for both
+> master and slave, is there any technical limitations I have overseen
+> which prevents the slave mode to work?
+
+I don't really call your description above as "working" - it sounds like
+a bodge - it sounds like trying to bend a layer designed for master mode
+to sort-of-maybe-if-the-wind-is-in-the-right-direction-and-the-cows-are-
+all-standing-up-work.  What if the application is trying to read in slave
+mode while the master is also trying to read?  How do you deal with that?
+What about the converse?  What if the application is trying to write data
+and the master also issues a write request?
+
+Finally, what about a multi-master situation?  I can see no way for your
+implementation to have any hope of working there because there is no
+distinction between operating the interface in master mode and slave mode.
