@@ -1,76 +1,62 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V4 0/2] Add DT support for i2s
-Date: Sun, 9 Dec 2012 16:26:08 +0900
-Message-ID: <20121209072607.GD6511@opensource.wolfsonmicro.com>
-References: <1354099669-1735-1-git-send-email-padma.v@samsung.com>
- <CAAgF-Bc4t6WL4vswP6CFeSQrPZBmOuYfVt6_JoB1Za9TBX7mvA@mail.gmail.com>
- <20121206041141.GA10867@opensource.wolfsonmicro.com>
- <20121207135131.A53643E0B87@localhost>
- <CAAgF-BenOdFJK2LMot73_B=wHOFgD2sq8x-Ou=1CvpkiJpmeQQ@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: fix build error when MFC is not selected
+Date: Mon, 10 Dec 2012 10:06:05 +0900
+Message-ID: <030b01cdd672$89b21e60$9d165b20$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41103 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S964852Ab2LIH0U (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:62275 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753802Ab2LJBGK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Dec 2012 02:26:20 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAgF-BenOdFJK2LMot73_B=wHOFgD2sq8x-Ou=1CvpkiJpmeQQ@mail.gmail.com>
+	Sun, 9 Dec 2012 20:06:10 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MES00HD4J26W4D0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 10:06:09 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MES00JIHJ2857A0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Dec 2012 10:06:08 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@ti.com, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
---jI8keyz6grp/JLjh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This fixes following:
+arch/arm/mach-exynos/built-in.o: In function `exynos5_reserve':
+arch/arm/mach-exynos/mach-exynos5-dt.c:177: undefined reference to `s5p_fdt_find_mfc_mem'
+arch/arm/mach-exynos/mach-exynos5-dt.c:177: undefined reference to `s5p_fdt_find_mfc_mem'
+arch/arm/mach-exynos/mach-exynos5-dt.c:178: undefined reference to `s5p_mfc_reserve_mem'
 
-On Sat, Dec 08, 2012 at 10:07:54AM +0530, Padma Venkat wrote:
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/mach-exynos5-dt.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-> Samsung i2s driver registers the platform device twice one for the
-> samsung-i2s.0,1 or 2 and two for samsung-i2s.4(which actually doesn't
-> represent any H/W peripheral). The max number of I2S blocks on any
-> Samsung SoC are 3, the secondary device registration starts with
-> device number 4.The second time registration is for the secondary fifo
-> interface of a CPU dai if any exists.
-
-> With DT support the device number in the driver is always -1, I used
-> alias id for the above purpose.
-
-So, the thing here is that while the numbers were totally OK for
-platform device use they really don't fit into DT at all well.  I think
-the thing here is to either have a node for the second CPU side DAI or
-to have a single DT link automatically expanded into two DAI links.  I
-think the second option is much better - there's only one link on the
-board, it just happens to get expanded into two the way things are
-currently implemented in ASoC.
-
-This stuff probably also ought to be moved over to soc-pcm as well by
-the way.
-
---jI8keyz6grp/JLjh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQxD0EAAoJELSic+t+oim9FbIP/2a499cFEMc5Hke+hup0iFc1
-wqb6G8JDRnKOFBh++Dddz6E64XIdOdcptqZqhpXGBe++4fQCCIFHuw74W76tH8ea
-4QnJBNPBPNKzp+t/ODq887eWg/ZrPccJx9COB33kMREEljsACGGQkMb3FT211sgV
-3jxLfP57AU2YrKSbLHyoaZm+Gmhz0lXdBDhoyX4ocCXUsGf7+oG9kK+Yjd703zbU
-q6X3mOyHZ0Nbmb5TtVvdvpkOSf7zLz+f6hDE1+pD2MVaoyfPufgwnelmw/rg9ppc
-NkpgjW5PyaX91+Crl2I30CoNVKUNSC7/5FVwQooIa85W0O6X6sQqCLkJFoegAujs
-YU7CtCJrcFnfD3ospJR66c/tu8AP0yLKgSgnQvUIGb/YuibgrqzPexT3vTSDtlSC
-J+W0d8ASAK1L81s82PJnSz8PNXV0P90cVguGkZ/XnTBzxY9yGpq+0LvKQX72mHB7
-N8/PpoSVKmfW6HU+KAdCvKBpx+1JIdt8wRpyCs19Ih/pN+mUe07CgkSTyVOTz/yp
-LBFJu+fSR/YWCk1sFo2JbX5OgY9tlG6hhggXre1RdMZtTYCG26n9OY57gNe29232
-t5f6swQ+L3dgnP9n9WIg4ZdOvKiVJFWAg/qGvHblb2tZcGgqu1Okv9/JQI3Gv4u9
-9aiZXZpADJbtOOaEpBLF
-=o6Bf
------END PGP SIGNATURE-----
-
---jI8keyz6grp/JLjh--
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index f5c6976..133abfd 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -169,6 +169,7 @@ static char const *exynos5_dt_compat[] __initdata = {
+ 
+ static void __init exynos5_reserve(void)
+ {
++#ifdef CONFIG_S5P_DEV_MFC
+ 	struct s5p_mfc_dt_meminfo mfc_mem;
+ 
+ 	/* Reserve memory for MFC only if it's available */
+@@ -176,6 +177,7 @@ static void __init exynos5_reserve(void)
+ 	if (of_scan_flat_dt(s5p_fdt_find_mfc_mem, &mfc_mem))
+ 		s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize, mfc_mem.loff,
+ 				mfc_mem.lsize);
++#endif
+ }
+ 
+ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+-- 
+1.7.4.1
