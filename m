@@ -1,63 +1,106 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH RFC 07/12] ARM: EXYNOS4: Add OF_DEV_AUXDATA for FIMC,
- FIMC-LITE and CSIS
-Date: Mon, 10 Dec 2012 20:46:01 +0100
-Message-ID: <1355168766-6068-8-git-send-email-s.nawrocki@samsung.com>
-References: <1355168766-6068-1-git-send-email-s.nawrocki@samsung.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: Serial8250 doesn't populate in /proc/iomem?
+Date: Mon, 10 Dec 2012 19:54:03 -0700
+Message-ID: <CAErSpo6uWigsw160BfD1ei0M4hQ+wbK1K4Q37+6+_-+iAV3frg@mail.gmail.com>
+References: <slrnkcb00b.77o.narkewoody@zuhnb712.local.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1355168766-6068-1-git-send-email-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, g.liakhovetski-Mmb7MZpHnFY@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f46.google.com ([209.85.215.46]:45756 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751660Ab2LKCyZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 10 Dec 2012 21:54:25 -0500
+Received: by mail-la0-f46.google.com with SMTP id p5so2522380lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Dec 2012 18:54:24 -0800 (PST)
+In-Reply-To: <slrnkcb00b.77o.narkewoody@zuhnb712.local.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Woody Wu <narkewoody@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
 
-Add these temporary OF_DEV_AUXDATA entries so we can use clocks
-before common clock framework support for Exynos4 is available.
+[+cc linux-arm, linux-samsung-soc, linux-serial]
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/mach-exynos/mach-exynos4-dt.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On Sun, Dec 9, 2012 at 11:25 PM, Woody Wu <narkewoody@gmail.com> wrote:
+> Hi, list
+>
+> I found some io memory information is lost from /dev/iomem and want to
+> find out why.
+>
+> I have a 2.6.16 kernel running on a ARM board (Samsung S3C2410). From
+> the kernel log, I see 16 8250 serial ports were detected, and each of
+> thoese ports has a memory address:
+>
+> Serial: 8250/16550 driver $Revision: 1.90 $ 16 ports, IRQ sharing enabled
+> serial8250: tts0 at MMIO 0xe1400000 (irq = 16) is a 16550A
+> serial8250: tts1 at MMIO 0xe1400008 (irq = 16) is a 16550A
+> serial8250: tts2 at MMIO 0xe1400010 (irq = 17) is a 16550A
+> serial8250: tts3 at MMIO 0xe1400018 (irq = 17) is a 16550A
+> serial8250: tts4 at MMIO 0xe1400020 (irq = 18) is a 16550A
+> serial8250: tts5 at MMIO 0xe1400028 (irq = 18) is a 16550A
+> serial8250: tts6 at MMIO 0xe1400030 (irq = 19) is a 16550A
+> serial8250: tts7 at MMIO 0xe1400038 (irq = 19) is a 16550A
+> serial8250: tts8 at MMIO 0xe1400040 (irq = 48) is a 16550A
+> serial8250: tts9 at MMIO 0xe1400048 (irq = 48) is a 16550A
+> serial8250: tts10 at MMIO 0xe1400050 (irq = 49) is a 16550A
+> serial8250: tts11 at MMIO 0xe1400058 (irq = 49) is a 16550A
+> serial8250: tts12 at MMIO 0xe1400060 (irq = 60) is a 16550A
+> serial8250: tts13 at MMIO 0xe1400068 (irq = 60) is a 16550A
+> serial8250: tts14 at MMIO 0xe1400070 (irq = 61) is a 16550A
+> serial8250: tts15 at MMIO 0xe1400078 (irq = 61) is a 16550A
+>
+> I can read/write these serial ports from /dev/ttys*, in other words,
+> they do exist.  I also can find the driver info from /proc/devices:
+>
+> Character devices:
+>
+>   ...
+>   4 /dev/vc/0
+>   4 tty
+>   4 tts
+>   5 /dev/tty
+>   5 /dev/console
+>   5 /dev/ptmx
+>   7 vcs
+>   ...
+>
+> The problem is, I don't understand why there is no information about
+> these ports in /proc/iomem file. The 'iomem' file now contains:
+>
+> 11000000-11000ffe : AX88796B
+> 19000000-19000ffe : AX88796B
+> 30000000-33ffffff : System RAM
+>   3001c000-301e826b : Kernel text
+>   301ea000-302234a3 : Kernel data
+> 49000000-490fffff : s3c2410-ohci
+>   49000000-490fffff : ohci_hcd
+> 4e000000-4e0fffff : s3c2410-nand
+>   4e000000-4e0fffff : s3c2410-nand
+> 50000000-50003fff : s3c2410-uart.0
+>   50000000-500000ff : s3c2410-uart
+> 50004000-50007fff : s3c2410-uart.1
+>   50004000-500040ff : s3c2410-uart
+> 50008000-5000bfff : s3c2410-uart.2
+>   50008000-500080ff : s3c2410-uart
+> 53000000-530fffff : s3c2410-wdt
+> 54000000-540fffff : s3c2410-i2c
+> 5a000000-5a0fffff : s3c2410-sdi
+>   5a000000-5a0fffff : mmci-s3c2410
+>
+> You see, there is no serial8250 informations.
+>
+> Can anyone here please tell me how this can happen?  Does it mean the
+> serial8250 driver don't populate or register in the /proc/iomem?
 
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index d6bdcfb..6d2eaf8 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -89,6 +89,22 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos4-fb", EXYNOS4_PA_FIMD0,
- 				"exynos4-fb.0", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4210-csis", EXYNOS4_PA_MIPI_CSIS0,
-+				"s5p-mipi-csis.0", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4210-csis", EXYNOS4_PA_MIPI_CSIS1,
-+				"s5p-mipi-csis.1", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4212-fimc", EXYNOS4_PA_FIMC0,
-+				"exynos4-fimc.0", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4212-fimc", EXYNOS4_PA_FIMC1,
-+				"exynos4-fimc.1", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4212-fimc", EXYNOS4_PA_FIMC2,
-+				"exynos4-fimc.2", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4212-fimc", EXYNOS4_PA_FIMC3,
-+				"exynos4-fimc.3", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4212-fimc-lite", EXYNOS4_PA_FIMC_LITE(0),
-+				"exynos-fimc-lite.0", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4212-fimc-lite", EXYNOS4_PA_FIMC_LITE(1),
-+				"exynos-fimc-lite.1", NULL),
- 	{},
- };
- 
--- 
-1.7.9.5
+That looks like a bug to me.  There should be entries in /proc/iomem
+for the hardware device (showing that something responds at that
+address) and for the driver that claims the device.
+
+I think the 8250 core does the reservation in
+serial8250_request_std_resource().  You could try putting some printks
+in that path to see whether it's exercised.
+
+You're running a fairly old kernel, so it's possible the bug has
+already been fixed.
+
+Bjorn
