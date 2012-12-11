@@ -1,86 +1,105 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH RFC 01/12] s5p-csis: Add device tree support
-Date: Tue, 11 Dec 2012 08:36:58 +0000
-Message-ID: <20121211083658.8AEA23E076D@localhost>
-References: <1355168766-6068-1-git-send-email-s.nawrocki@samsung.com> <1355168766-6068-2-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:49042 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751821Ab2LKIhv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Dec 2012 03:37:51 -0500
-Received: by mail-we0-f174.google.com with SMTP id x10so1545701wey.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Dec 2012 00:37:50 -0800 (PST)
-In-Reply-To: <1355168766-6068-2-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v5 00/12] iommu/exynos: Fixes and Enhancements of System MMU
+	driver with DT
+Date: Tue, 11 Dec 2012 20:07:09 +0900
+Message-ID: <003001cdd78f$a9bb1e00$fd315a00$%cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-language: ko
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'SWKim' <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Dae Inki' <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Sanghyun Lee' <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Rahun Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: g.liakhovetski@gmx.de, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Mon, 10 Dec 2012 20:45:55 +0100, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> s5p-csis is platform device driver for MIPI-CSI frontend to the FIMC
-> (camera host interface DMA engine and image processor). This patch
-> adds support for instantiating the MIPI-CSIS devices from DT and
-> parsing all SoC and board specific properties from device tree.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../bindings/media/soc/samsung-mipi-csis.txt       |   82 +++++++++++
->  drivers/media/platform/s5p-fimc/mipi-csis.c        |  155 +++++++++++++++-----
->  drivers/media/platform/s5p-fimc/mipi-csis.h        |    1 +
->  3 files changed, 202 insertions(+), 36 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt b/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
-> new file mode 100644
-> index 0000000..f57cbdc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
-> @@ -0,0 +1,82 @@
-> +Samsung S5P/EXYNOS SoC MIPI-CSI2 receiver (MIPI CSIS)
-> +-----------------------------------------------------
-> +
-> +Required properties:
-> +
-> +- compatible	  : "samsung,s5pv210-csis" for S5PV210 SoCs,
-> +		    "samsung,exynos4210-csis" for Exynos4210 and later SoCs;
-> +- reg		  : physical base address and size of the device memory mapped
-> +		    registers;
-> +- interrupts      : should contain MIPI CSIS interrupt; the format of the
-> +		    interrupt specifier depends on the interrupt controller;
-> +- max-data-lanes  : maximum number of data lanes supported (SoC specific);
-> +- vddio-supply    : MIPI CSIS I/O and PLL voltage supply (e.g. 1.8V);
-> +- vddcore-supply  : MIPI CSIS Core voltage supply (e.g. 1.1V).
-> +
-> +Optional properties:
-> +
-> +- clock-frequency : The IP's main (system bus) clock frequency in Hz, default
-> +		    value when this property is not specified is 166 MHz;
-> +- samsung,csis,wclk : CSI-2 wrapper clock selection. If this property is present
-> +		    external clock from CMU will be used, if not bus clock will
-> +		    be selected.
-> +
-> +The device node should contain one 'port' child node with one child 'endpoint'
-> +node, as outlined in the common media bindings specification. See
-> +Documentation/devicetree/bindings/media/v4l2.txt for details. The following are
-> +properties specific to those nodes. (TODO: update the file path)
-> +
-> +port node
-> +---------
-> +
-> +- reg		  : (required) must be 2 for camera C input (CSIS0) or 3 for
-> +		    camera D input (CSIS1);
+The current exynos-iommu(System MMU) driver does not work autonomously
+since it is lack of support for power management of peripheral blocks.
+For example, MFC device driver must ensure that its System MMU is disabled
+before MFC block is power-down not to invalidate IOTLB in the System MMU
+when I/O memory mapping is changed. Because A System MMU is resides in the
+same H/W block, access to control registers of System MMU while the H/W
+block is turned off must be prohibited.
 
-'reg' has a very specific definition. If you're going to use a reg
-property here, then the parent nodes need to have
-#address-cells=<1>;#size-cells=<0>; properties to define the address
-specifier format.
+This set of changes solves the above problem with setting each System MMUs
+as the parent of the device which owns the System MMU to receive the
+information when the device is turned off or turned on.
 
-However since you're identifying port numbers that aren't really
-addresses I would suggest simply changing this property to something
-like 'port-num'.
+Another big change to the driver is the support for devicetree.
+The bindings for System MMU is described in
+Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
 
-Otherwise the binding looks good.
+In addition, this patchset also includes several bug fixes and enhancements
+of the current driver.
 
-g.
+Change log:
+v5:
+- new bugfix: patch 01
+- Reordered patches
+  * patch 01 ~ 05: Bugfix and enhancements of the existing driver
+  * patch 06 ~ 10: Device Tree support and callbacks for power management
+  * patch 11     : System MMU 3.2 and 3.3 support
+  * patch 12 ~ 14: Debugging features
+- Additional code compaction
+
+v4:
+- Remove Change-Id from v3 patches
+- Change the order of the third and the first patch
+  Thanks to Kukjin Kim.
+- Fix memory leak when allocating and assigning exynos_iommu_owner to client
+  device if the client device has multiple System MMUs.
+  Thanks to Rahul Sharma.
+
+v3:
+- Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
+- Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
+  Thanks to Prathyush.
+
+v2:
+- Split the patch to iommu/exynos into 9 patches
+- Support for System MMU 3.3
+- Some code compaction
+
+Patch summary:
+[PATCH v5 01/14] iommu/exynos: add missing cache flush for removed pagetable entries
+[PATCH v5 02/14] iommu/exynos: always use iommu fault handler
+[PATCH v5 03/14] iommu/exynos: allocate lv2 page table from own slab
+[PATCH v5 04/14] iommu/exynos: change rwlock to spinlock
+[PATCH v5 05/14] ARM: EXYNOS: Add clk_ops for gating clocks of System MMU
+[PATCH v5 06/14] ARM: EXYNOS: add System MMU definition to DT
+[PATCH v5 07/14] iommu/exynos: support for device tree
+[PATCH v5 08/14] iommu/exynos: set System MMU as the parent of client device
+[PATCH v5 09/14] ARM: EXYNOS: remove system mmu initialization from exynos tree
+[PATCH v5 10/14] iommu/exynos: add support for runtime pm and suspend/resume
+[PATCH v5 11/14] iommu/exynos: add support for System MMU 3.2 and 3.3
+[PATCH v5 12/14] iommu/exynos: pass version information from DT
+[PATCH v5 13/14] iommu/exynos: add literal name of System MMU for debugging
+[PATCH v5 14/14] iommu/exynos: add debugfs entries for System MMU
+
+Diffstats:
+ .../devicetree/bindings/arm/exynos/system-mmu.txt  |   86 ++
+ arch/arm/boot/dts/exynos4210.dtsi                  |   96 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |  124 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |  154 +-
+ arch/arm/mach-exynos/Kconfig                       |    5 -
+ arch/arm/mach-exynos/Makefile                      |    1 -
+ arch/arm/mach-exynos/clock-exynos4.c               |   41 +-
+ arch/arm/mach-exynos/clock-exynos4210.c            |    9 +-
+ arch/arm/mach-exynos/clock-exynos4212.c            |   23 +-
+ arch/arm/mach-exynos/clock-exynos5.c               |   86 +-
+ arch/arm/mach-exynos/dev-sysmmu.c                  |  274 ----
+ arch/arm/mach-exynos/include/mach/sysmmu.h         |   66 -
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |   34 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |   30 +
+ drivers/iommu/Kconfig                              |    2 +-
+ drivers/iommu/Makefile                             |    2 +-
+ drivers/iommu/exynos-iommu.c                       | 1477 +++++++++++++++-----
+ 17 files changed, 1745 insertions(+), 765 deletions(-)
