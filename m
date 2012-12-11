@@ -1,106 +1,21 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: Serial8250 doesn't populate in /proc/iomem?
-Date: Mon, 10 Dec 2012 19:54:03 -0700
-Message-ID: <CAErSpo6uWigsw160BfD1ei0M4hQ+wbK1K4Q37+6+_-+iAV3frg@mail.gmail.com>
-References: <slrnkcb00b.77o.narkewoody@zuhnb712.local.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/4] regulator: s5m8767: Fix to work when platform
+ registers less regulators
+Date: Tue, 11 Dec 2012 12:44:17 +0900
+Message-ID: <20121211034416.GB9097@opensource.wolfsonmicro.com>
+References: <1355143782-15133-1-git-send-email-amit.daniel@samsung.com>
+ <1355143782-15133-2-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:45756 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660Ab2LKCyZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Dec 2012 21:54:25 -0500
-Received: by mail-la0-f46.google.com with SMTP id p5so2522380lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Dec 2012 18:54:24 -0800 (PST)
-In-Reply-To: <slrnkcb00b.77o.narkewoody@zuhnb712.local.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1355143782-15133-2-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lrg@ti.com>, amit.kachhap@gmail.com, Thomas Abraham <thomas.abraham@linaro.org>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Woody Wu <narkewoody@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
 
-[+cc linux-arm, linux-samsung-soc, linux-serial]
+On Mon, Dec 10, 2012 at 06:19:39PM +0530, Amit Daniel Kachhap wrote:
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-On Sun, Dec 9, 2012 at 11:25 PM, Woody Wu <narkewoody@gmail.com> wrote:
-> Hi, list
->
-> I found some io memory information is lost from /dev/iomem and want to
-> find out why.
->
-> I have a 2.6.16 kernel running on a ARM board (Samsung S3C2410). From
-> the kernel log, I see 16 8250 serial ports were detected, and each of
-> thoese ports has a memory address:
->
-> Serial: 8250/16550 driver $Revision: 1.90 $ 16 ports, IRQ sharing enabled
-> serial8250: tts0 at MMIO 0xe1400000 (irq = 16) is a 16550A
-> serial8250: tts1 at MMIO 0xe1400008 (irq = 16) is a 16550A
-> serial8250: tts2 at MMIO 0xe1400010 (irq = 17) is a 16550A
-> serial8250: tts3 at MMIO 0xe1400018 (irq = 17) is a 16550A
-> serial8250: tts4 at MMIO 0xe1400020 (irq = 18) is a 16550A
-> serial8250: tts5 at MMIO 0xe1400028 (irq = 18) is a 16550A
-> serial8250: tts6 at MMIO 0xe1400030 (irq = 19) is a 16550A
-> serial8250: tts7 at MMIO 0xe1400038 (irq = 19) is a 16550A
-> serial8250: tts8 at MMIO 0xe1400040 (irq = 48) is a 16550A
-> serial8250: tts9 at MMIO 0xe1400048 (irq = 48) is a 16550A
-> serial8250: tts10 at MMIO 0xe1400050 (irq = 49) is a 16550A
-> serial8250: tts11 at MMIO 0xe1400058 (irq = 49) is a 16550A
-> serial8250: tts12 at MMIO 0xe1400060 (irq = 60) is a 16550A
-> serial8250: tts13 at MMIO 0xe1400068 (irq = 60) is a 16550A
-> serial8250: tts14 at MMIO 0xe1400070 (irq = 61) is a 16550A
-> serial8250: tts15 at MMIO 0xe1400078 (irq = 61) is a 16550A
->
-> I can read/write these serial ports from /dev/ttys*, in other words,
-> they do exist.  I also can find the driver info from /proc/devices:
->
-> Character devices:
->
->   ...
->   4 /dev/vc/0
->   4 tty
->   4 tts
->   5 /dev/tty
->   5 /dev/console
->   5 /dev/ptmx
->   7 vcs
->   ...
->
-> The problem is, I don't understand why there is no information about
-> these ports in /proc/iomem file. The 'iomem' file now contains:
->
-> 11000000-11000ffe : AX88796B
-> 19000000-19000ffe : AX88796B
-> 30000000-33ffffff : System RAM
->   3001c000-301e826b : Kernel text
->   301ea000-302234a3 : Kernel data
-> 49000000-490fffff : s3c2410-ohci
->   49000000-490fffff : ohci_hcd
-> 4e000000-4e0fffff : s3c2410-nand
->   4e000000-4e0fffff : s3c2410-nand
-> 50000000-50003fff : s3c2410-uart.0
->   50000000-500000ff : s3c2410-uart
-> 50004000-50007fff : s3c2410-uart.1
->   50004000-500040ff : s3c2410-uart
-> 50008000-5000bfff : s3c2410-uart.2
->   50008000-500080ff : s3c2410-uart
-> 53000000-530fffff : s3c2410-wdt
-> 54000000-540fffff : s3c2410-i2c
-> 5a000000-5a0fffff : s3c2410-sdi
->   5a000000-5a0fffff : mmci-s3c2410
->
-> You see, there is no serial8250 informations.
->
-> Can anyone here please tell me how this can happen?  Does it mean the
-> serial8250 driver don't populate or register in the /proc/iomem?
-
-That looks like a bug to me.  There should be entries in /proc/iomem
-for the hardware device (showing that something responds at that
-address) and for the driver that claims the device.
-
-I think the 8250 core does the reservation in
-serial8250_request_std_resource().  You could try putting some printks
-in that path to see whether it's exercised.
-
-You're running a fairly old kernel, so it's possible the bug has
-already been fixed.
-
-Bjorn
+Applied, thanks.
