@@ -1,65 +1,174 @@
-From: Cesar Eduardo Barros <cesarb@cesarb.net>
-Subject: [PATCH 03/19] MAINTAINERS: remove arch/arm/plat-s5p/
-Date: Tue, 11 Dec 2012 19:49:45 -0200
-Message-ID: <1355262601-4263-4-git-send-email-cesarb@cesarb.net>
-References: <1355262601-4263-1-git-send-email-cesarb@cesarb.net>
+From: =?ISO-8859-1?Q?St=E9phane_Marchesin?=
+	<stephane.marchesin@gmail.com>
+Subject: Re: [PATCH 0/3] add mie driver for exynos
+Date: Tue, 11 Dec 2012 15:08:34 -0800
+Message-ID: <CACP_E++D=_akHO5tLw-XQKj8BPbhoy3SE9AUJGd5i-pvA2qsfw@mail.gmail.com>
+References: <1354795695-28009-1-git-send-email-rcsekar@samsung.com>
+ <CAAQKjZM278TfT=dcVJoKRPqWpdChaJv2N6v4O_D-xsxJOLKeRQ@mail.gmail.com>
+ <CACP_E+JdiVxD05k0F57bmXWw1WKiS_NNviXOXYUVegwi5MnrsQ@mail.gmail.com> <CAAQKjZOVVU0fjj5VruQ-m8pgPoBATpXuzKsZv2F+Ux-aLtcLHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1355262601-4263-1-git-send-email-cesarb@cesarb.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Joe Perches <joe@perches.com>, Cesar Eduardo Barros <cesarb@cesarb.net>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:58704 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753496Ab2LKXJP convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 11 Dec 2012 18:09:15 -0500
+Received: by mail-qc0-f174.google.com with SMTP id o22so9103qcr.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Dec 2012 15:09:14 -0800 (PST)
+In-Reply-To: <CAAQKjZOVVU0fjj5VruQ-m8pgPoBATpXuzKsZv2F+Ux-aLtcLHw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: kgene.kim@samsung.com, "R. Chandrasekar" <rcsekar@samsung.com>, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, rcsekar.samsung@gmail.com
 
-These files were merged into plat-samsung.
+On Mon, Dec 10, 2012 at 1:27 AM, Inki Dae <inki.dae@samsung.com> wrote:
+>
+>
+> 2012/12/10 St=E9phane Marchesin <stephane.marchesin@gmail.com>
+>>
+>> On Sun, Dec 9, 2012 at 10:26 PM, Inki Dae <inki.dae@samsung.com> wro=
+te:
+>> >
+>> >
+>> > 2012/12/6 R. Chandrasekar <rcsekar@samsung.com>
+>> >
+>> >> From: "R. Chandrasekar" <rcsekar@samsung.com>
+>> >>
+>> >> this patch set adds the driver support for the dithering function=
+ality
+>> >> of
+>> >> the
+>> >> mobile image enhancement (mie) module.
+>> >>
+>> >> device tree support is added for mie.
+>> >>
+>> >> fimd adds the mie module as plugin and calls the dithering functi=
+on.
+>> >> dithere is
+>> >> required when the panels bpp is less then fimd output.
+>> >>
+>> >> though mie mie has other functionalities, current system uses onl=
+y
+>> >> dithereing.
+>> >>
+>> >
+>> > Please, move mie module into drivers/video/exynos. The mie is a
+>> > interface
+>> > between fimd and lcd panel(or mipi-dsi, eDP) to enhance image to b=
+e
+>> > displayed. And it seems like that this doesn't need drm
+>> > framework-relevant
+>> > interfaces, such as gem.
+>>
+>> Well, if you want to support it from the DRM, it should live in
+>> drivers/gpu/drm, and I don't think you should add another platform
+>> driver in the first place. The profusion of platform drivers in exyn=
+os
+>> makes it really difficult to support suspend/resume and initializati=
+on
+>> properly as many devices which operate separately need to sync throu=
+gh
+>> global variables.
+>>
+>
+> MIE could be used by linux framebuffer-based specific driver(s3c-fb) =
+also.
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Cesar Eduardo Barros <cesarb@cesarb.net>
----
- MAINTAINERS | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Yes, but it is a DRM driver we're talking about here. Again it is
+really difficult to work with it across suspend-resume. I don't think
+the DRM was ever meant to be a collection of independent platform
+drivers.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f4890a3..e013f00 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1074,7 +1074,6 @@ W:	http://www.fluff.org/ben/linux/
- S:	Maintained
- F:	arch/arm/plat-samsung/
- F:	arch/arm/plat-s3c24xx/
--F:	arch/arm/plat-s5p/
- F:	arch/arm/mach-s3c24*/
- F:	arch/arm/mach-s3c64xx/
- F:	drivers/*/*s3c2410*
-@@ -1105,7 +1104,6 @@ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- L:	linux-arm-kernel@lists.infradead.org
- L:	linux-media@vger.kernel.org
- S:	Maintained
--F:	arch/arm/plat-s5p/dev-fimc*
- F:	arch/arm/plat-samsung/include/plat/*fimc*
- F:	drivers/media/platform/s5p-fimc/
- 
-@@ -1116,7 +1114,7 @@ M:	Jeongtae Park <jtp.park@samsung.com>
- L:	linux-arm-kernel@lists.infradead.org
- L:	linux-media@vger.kernel.org
- S:	Maintained
--F:	arch/arm/plat-s5p/dev-mfc.c
-+F:	arch/arm/plat-samsung/s5p-dev-mfc.c
- F:	drivers/media/platform/s5p-mfc/
- 
- ARM/SAMSUNG S5P SERIES TV SUBSYSTEM SUPPORT
--- 
-1.7.11.7
+> If linux framebuffer-based driver want to use this mie module, should=
+ the
+> mie module be placed in drivers/video coping it? I think it's not goo=
+d so
+> it's better way to use this mie module commonly without duplicated co=
+des.
+> And mipi-dsi and eDP drivers also have their own platform device/driv=
+er and
+> are being used by exynos drm driver or s3c-fb driver. Of course, for =
+some
+> IPs such as mie between display controller and lcd panel, It seems li=
+ke that
+> there should be proper framework or interfaces in drivers/video/exyno=
+s or
+> somewhere so that other frameworks can use it commonly. And drm and l=
+inux
+> framebuffer drivers should call the interfaces.
+
+=46or the short term, I think it's fine to duplicate the code.
+
+=46or the longer term, I think framebuffer support should be provided b=
+y
+the drm framebuffer compat layer, and s3c-fb should disappear. This is
+what has been done with all the other DRM drivers.
+
+St=E9phane
+
+
+>
+> Thanks,
+> Inki Dae
+>
+>> St=E9phane
+>>
+>>
+>> >
+>> > And also, please refer to the below link, Common Display Framework=
+, for
+>> > more
+>> > generic way.
+>> >
+>> >
+>> > http://lists.freedesktop.org/archives/dri-devel/2012-November/0308=
+88.html
+>> >
+>> > Thanks,
+>> > Inki Dae
+>> >
+>> >>
+>> >> R. Chandrasekar (3):
+>> >>   DTS: exynos: add device tree support for exynos mie
+>> >>   drm: fimd: add mie plugin support for dithering
+>> >>   drm: mie: add mie driver for exynos
+>> >>
+>> >>  arch/arm/boot/dts/exynos5250.dtsi               |    7 +-
+>> >>  drivers/gpu/drm/exynos/Kconfig                  |    7 +
+>> >>  drivers/gpu/drm/exynos/Makefile                 |    1 +
+>> >>  drivers/gpu/drm/exynos/exynos_drm_fimd.c        |   58 +++++-
+>> >>  drivers/gpu/drm/exynos/exynos_drm_fimd_common.h |   20 ++
+>> >>  drivers/gpu/drm/exynos/exynos_drm_mie.c         |  250
+>> >> +++++++++++++++++++++++
+>> >>  drivers/gpu/drm/exynos/exynos_drm_mie.h         |   50 +++++
+>> >>  drivers/gpu/drm/exynos/exynos_regs-mie.h        |   75 +++++++
+>> >>  8 files changed, 465 insertions(+), 3 deletions(-)
+>> >>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_fimd_common=
+=2Eh
+>> >>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_mie.c
+>> >>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_mie.h
+>> >>  create mode 100644 drivers/gpu/drm/exynos/exynos_regs-mie.h
+>> >>
+>> >> --
+>> >> 1.7.9.5
+>> >>
+>> >> _______________________________________________
+>> >> dri-devel mailing list
+>> >> dri-devel@lists.freedesktop.org
+>> >> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> >
+>> >
+>> >
+>> > _______________________________________________
+>> > dri-devel mailing list
+>> > dri-devel@lists.freedesktop.org
+>> > http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> >
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+>
