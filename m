@@ -1,44 +1,35 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 4/4] DMA: PL330: add device tree property for DMA_MEMCPY capability
-Date: Wed, 12 Dec 2012 13:06:14 +0530
-Message-ID: <CABb+yY0FxsZyBy=scTF31+QMWgHzKf7bNz8vsPowtiMkve7igg@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/4] DMA: PL330: fix locking in pl330_free_chan_resources()
+Date: Wed, 12 Dec 2012 16:08:53 +0100
+Message-ID: <201212121608.53648.b.zolnierkie@samsung.com>
 References: <1351504796-24788-1-git-send-email-b.zolnierkie@samsung.com>
-	<201210301021.42803.b.zolnierkie@samsung.com>
-	<CAJe_ZhdOt+T65FdkE0SpQ37uGsS8SkFyJ9hHM3B_8S8f7GQAcQ@mail.gmail.com>
-	<201211301156.08060.b.zolnierkie@samsung.com>
+ <201211301159.31098.b.zolnierkie@samsung.com>
+ <1354298873.7077.76.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:43785 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750716Ab2LLHgP (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:37646 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752872Ab2LLPJu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Dec 2012 02:36:15 -0500
-In-Reply-To: <201211301156.08060.b.zolnierkie@samsung.com>
+	Wed, 12 Dec 2012 10:09:50 -0500
+In-reply-to: <1354298873.7077.76.camel@vkoul-udesk3>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Jassi Brar <jaswinder.singh@linaro.org>, kgene.kim@samsung.com, pawel.moll@arm.com, vinod.koul@intel.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
+To: Vinod Koul <vinod.koul@linux.intel.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, rob.herring@calxeda.com, dinguyen@altera.com, pawel.moll@arm.com, t.figa@samsung.com, kyungmin.park@samsung.com, Dan Williams <djbw@fb.com>
 
-On Fri, Nov 30, 2012 at 4:26 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
+On Friday 30 November 2012 19:07:53 Vinod Koul wrote:
+> On Fri, 2012-11-30 at 11:59 +0100, Bartlomiej Zolnierkiewicz wrote:
+> > > Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+> > 
+> > Vinod/Dan could you please pick this patch for 3.8?  Thanks!
+> I will check and queue it up today
 
-> Thank you for explaining it.  Here is a patch implementing the idea:
->
-> From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Subject: [PATCH] DMA: PL330: add peripherals map to the device tree
->
-> Add device tree (DT) property ("peri-map") for storing indices
-> of peripherals connected to DMAC and fix DT nodes of client
-> drivers to use 'dma peripheral id' instead of 'dma request id'.
-> Also instead of setting DMA_MEMCPY capability unconditionally in
-> pl330_probe() do it only when "peri-map" DT property is present
-> (idea from Jassi Brar).  It fixes the issue on ARM EXYNOS
-> platforms using DT where pdma controller erroneously was used
-> for DMA_MEMCPY operations instead of mdma one (it seems to work
-> correctly but at the cost of worse performance).
->
-Sorry, we need to change it as per new generic dma DT bindings
-  http://git.infradead.org/users/vkoul/slave-dma.git/blob/refs/heads/next:/Documentation/devicetree/bindings/dma/dma.txt
+ping?  [ I can't find the patch in slave-dma.git tree. ]
 
-Thanks.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung Poland R&D Center
