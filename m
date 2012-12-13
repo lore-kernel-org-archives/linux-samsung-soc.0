@@ -1,52 +1,36 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH 2/2] usb: dwc3-exynos: Fix compatible strings for the device
-Date: Thu, 13 Dec 2012 21:40:41 +0530
-Message-ID: <CAFp+6iGwEYTLZrC74LVNn+R2wNo68Nvu1RWvNeeCi5LESeCo1w@mail.gmail.com>
-References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
-	<1355410348-5129-3-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v3 0/2] Enable ehci and ohci devices for exynos5250
+Date: Thu, 13 Dec 2012 22:06:00 +0530
+Message-ID: <1355416562-25539-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1355410348-5129-3-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org, Vivek Gautam <gautam.vivek@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CC: LKML
+Changes from v2:
+ - Changed the compatible string to chip specific(samsung,exynos4210),
+   since ehci-s5p and ohci-exynos are being used from exynso4210 onwards.
+ - Based on changes for drivers available at:
+   http://www.mail-archive.com/devicetree-discuss@lists.ozlabs.org/msg23218.html
 
-On Thu, Dec 13, 2012 at 8:22 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Using specific chip in compatible strings. Newer SOCs can claim
-> device by using older string in the compatible list.
->
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> ---
->  drivers/usb/dwc3/dwc3-exynos.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-> index aae5328..9dce99a 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -188,7 +188,7 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
->
->  #ifdef CONFIG_OF
->  static const struct of_device_id exynos_dwc3_match[] = {
-> -       { .compatible = "samsung,exynos-dwc3" },
-> +       { .compatible = "samsung,exynos5250-dwc3" },
->         {},
->  };
->  MODULE_DEVICE_TABLE(of, exynos_dwc3_match);
-> --
-> 1.7.6.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes from v1:
+ - Changed the device node names from 'ehci' and 'ohci' to
+   'usb@12110000' and 'usb@12120000' as per discussion for the
+   change 'http://www.spinics.net/lists/linux-usb/msg73993.html'
+ - Rebased on for-next branch of linux-samsung.
 
+Vivek Gautam (2):
+  ARM: Exynos5250: Enabling ehci-s5p driver
+  ARM: Exynos5250: Enabling ohci-exynos driver
 
+ .../devicetree/bindings/usb/exynos-usb.txt         |   40 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   12 ++++++
+ arch/arm/mach-exynos/include/mach/map.h            |    2 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    4 ++
+ 5 files changed, 62 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/exynos-usb.txt
 
 -- 
-Thanks & Regards
-Vivek
+1.7.6.5
