@@ -1,38 +1,60 @@
 From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Thu, 13 Dec 2012 21:37:16 +0530
-Message-ID: <CAFp+6iEqaV7osuo_4pQKEmWMoGuqY-O03k-9n23wbJBMKa0kwg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] usb: ehci-s5p/ohci-exynos: Fix compatible strings for
+ the device
+Date: Thu, 13 Dec 2012 21:39:39 +0530
+Message-ID: <CAFp+6iEUrP5by8+HHFBMYJcu1v9QB1=RGp675e-VfOoYR9dRjQ@mail.gmail.com>
 References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
+	<1355410348-5129-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f46.google.com ([209.85.215.46]:48781 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755610Ab2LMQJl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Dec 2012 11:09:41 -0500
+In-Reply-To: <1355410348-5129-2-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-CC: LKML
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org, Vivek Gautam <gautam.vivek@samsung.com>
 
 On Thu, Dec 13, 2012 at 8:22 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Using chip specific compatible string as it should be.
-> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
-> which till now used a generic 'exynos' in their compatible strings.
+> Using specific chip in compatible strings. Newer SOCs can claim
+> device by using older string in the compatible list.
 >
-> This goes as per the discussion happened in the thread for
-> [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
-> available at:
-> http://www.spinics.net/lists/linux-usb/msg74145.html
->
-> Vivek Gautam (2):
->   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
->   usb: dwc3-exynos: Fix compatible strings for the device
->
->  drivers/usb/dwc3/dwc3-exynos.c |    2 +-
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
 >  drivers/usb/host/ehci-s5p.c    |    2 +-
 >  drivers/usb/host/ohci-exynos.c |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 >
+> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+> index 319dcfa..f18e6ac 100644
+> --- a/drivers/usb/host/ehci-s5p.c
+> +++ b/drivers/usb/host/ehci-s5p.c
+> @@ -266,7 +266,7 @@ static const struct dev_pm_ops s5p_ehci_pm_ops = {
+>
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id exynos_ehci_match[] = {
+> -       { .compatible = "samsung,exynos-ehci" },
+> +       { .compatible = "samsung,exynos4210-ehci" },
+>         {},
+>  };
+>  MODULE_DEVICE_TABLE(of, exynos_ehci_match);
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index aa3b884..77f2017 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -267,7 +267,7 @@ static const struct dev_pm_ops exynos_ohci_pm_ops = {
+>
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id exynos_ohci_match[] = {
+> -       { .compatible = "samsung,exynos-ohci" },
+> +       { .compatible = "samsung,exynos4210-ohci" },
+>         {},
+>  };
+>  MODULE_DEVICE_TABLE(of, exynos_ohci_match);
 > --
 > 1.7.6.5
 >
