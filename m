@@ -1,307 +1,71 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH] pwm: add Exynos PWM driver
-Date: Thu, 13 Dec 2012 19:16:36 +0900
-Message-ID: <1355393796-15436-1-git-send-email-jy0922.shim@samsung.com>
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH V5 0/2]  Add DT support for i2s
+Date: Thu, 13 Dec 2012 16:12:51 +0530
+Message-ID: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:21898 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753235Ab2LMKQf (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:17613 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752811Ab2LMKmC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Dec 2012 05:16:35 -0500
+	Thu, 13 Dec 2012 05:42:02 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MEY00BJ7TPZNVU0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Dec 2012 19:42:00 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MEY00FYNTPOTH90@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Dec 2012 19:41:59 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: thierry.reding@avionic-design.de
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
+To: padma.v@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org
+Cc: sbkim73@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, lrg@ti.com, tiwai@suse.de, jassisinghbrar@gmail.com
 
-This is PWM driver to support 4 pwm for Exynos SoCs. Also this supports
-device tree node.
+V5 patches are based on Mark Brown's for-next branch of
+"git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git"
 
-The existing s3c24xx-pwm driver has many dependence with arch specific
-codes and it is difficult to support device tree by static mapping of
-PMW memory area. Also it can't support multi pwm to one device and can't
-make to module.
+Changes since V4:
+	- Add a new patch for renaming the samsung i2s secondary fifo interface
+	  device name from "samsung-i2s.4" to "samsung-i2s-sec"
+	- Add platform_device_id table for the primary and secondary DAIs
+	- Avoid using of alias ids in the i2s driver by adding of_device_id
+	  table. Primary device can get registered via dt or non-dt but secondary
+	  device can get registered only at runtime because the secondary is not
+	  physically present on the board.
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
----
-This is based on for-next branch of git://gitorious.org/linux-pwm/linux-pwm.git
+Changes since V3:
+        - Added syntex of gpio specifier as suggested by Mark Brown in
+          DT document file
+        - Added the requirement for having I2S alias ids
+        - Explained about gpio lines
+        - Made a seperate patch to get the I2S rclk src clk from alias ID
 
- drivers/pwm/Kconfig      |    9 ++
- drivers/pwm/Makefile     |    1 +
- drivers/pwm/pwm-exynos.c |  234 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 244 insertions(+)
- create mode 100644 drivers/pwm/pwm-exynos.c
+Changes since V2:
+        - Rebased on 3.7-rc3
+        - Custom DT bindings are prefixed with samsung
+        - As generic device tree DMA helpers not yet mainlined
+          I am still using custom dma bindings. So added a
+          priliminary statement regarding the same. I will rework
+          on my patch once generic DMA helpers are mainlined.
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index ed81720..1632ace 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -46,6 +46,15 @@ config PWM_BFIN
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pwm-bfin.
- 
-+config PWM_EXYNOS
-+	tristate "Exynos pwm support"
-+	depends on ARCH_EXYNOS
-+	help
-+	  Generic PWM framework driver for Exynos.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called pwm-exynos.
-+
- config PWM_IMX
- 	tristate "i.MX pwm support"
- 	depends on ARCH_MXC
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index acfe482..423a251 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -1,6 +1,7 @@
- obj-$(CONFIG_PWM)		+= core.o
- obj-$(CONFIG_PWM_AB8500)	+= pwm-ab8500.o
- obj-$(CONFIG_PWM_BFIN)		+= pwm-bfin.o
-+obj-$(CONFIG_PWM_EXYNOS)	+= pwm-exynos.o
- obj-$(CONFIG_PWM_IMX)		+= pwm-imx.o
- obj-$(CONFIG_PWM_JZ4740)	+= pwm-jz4740.o
- obj-$(CONFIG_PWM_LPC32XX)	+= pwm-lpc32xx.o
-diff --git a/drivers/pwm/pwm-exynos.c b/drivers/pwm/pwm-exynos.c
-new file mode 100644
-index 0000000..5a411b6
---- /dev/null
-+++ b/drivers/pwm/pwm-exynos.c
-@@ -0,0 +1,234 @@
-+/*
-+ * Copyright (C) 2012 Samsung Electronics Co.Ltd
-+ * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pwm.h>
-+
-+#define PWM_NUM			4
-+
-+#define PWM_TCFG0		0x00
-+#define PWM_TCFG1		0x04
-+#define PWM_TCON		0x08
-+#define PWM_TCNTB(hw)		(0x0c + (hw) * 0x0c)
-+#define PWM_TCMPB(hw)		(0x10 + (hw) * 0x0c)
-+#define PWM_TCNTO(hw)		(0x14 + (hw) * 0x0c)
-+
-+#define PWM_TCFG0_RST_VAL	0x101
-+#define PWM_TCFG1_RST_VAL	0x0
-+#define PWM_TCON_RST_VAL	0x44404		/* inverter on */
-+
-+#define PWM_TCFG0_PRESCALER0_MASK	0xff
-+#define PWM_TCFG0_PRESCALER1_MASK	0xff00
-+#define PWM_TCFG0_PRESCALER1_SHIFT	8
-+
-+#define PWM_TCFG1_MUX_MASK		0xf
-+#define PWM_TCFG1_MUX_SHIFT		4
-+
-+#define PWM_TCON_BASE(hw)		((hw) ? ((hw) + 1) * 4 : 0)
-+#define PWM_TCON_START(hw)		(1 << (PWM_TCON_BASE(hw) + 0))
-+#define PWM_TCON_MANUALUPDATE(hw)	(1 << (PWM_TCON_BASE(hw) + 1))
-+#define PWM_TCON_INVERTER(hw)		(1 << (PWM_TCON_BASE(hw) + 2))
-+#define PWM_TCON_AUTORELOAD(hw)		(1 << (PWM_TCON_BASE(hw) + 3))
-+
-+struct exynos_pwm {
-+	struct pwm_chip		chip;
-+	struct device		*dev;
-+	struct clk		*clk;
-+	struct mutex		mutex;
-+	void __iomem		*base;
-+};
-+
-+static int exynos_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
-+			     int duty_ns, int period_ns)
-+{
-+	struct exynos_pwm *exynos = container_of(chip, struct exynos_pwm, chip);
-+	unsigned long long c;
-+	unsigned long period_cycles, duty_cycles;
-+	unsigned long clk_rate;
-+	unsigned int prescaler;
-+	unsigned int divider;
-+	unsigned int hw = pwm->hwpwm;
-+	u32 val;
-+
-+	if (period_ns > NSEC_PER_SEC)
-+		return -ERANGE;
-+
-+	val = readl(exynos->base + PWM_TCFG0);
-+	if (hw == 0 || hw == 1)
-+		prescaler = val & PWM_TCFG0_PRESCALER0_MASK;
-+	else
-+		prescaler = (val & PWM_TCFG0_PRESCALER1_MASK) >>
-+						PWM_TCFG0_PRESCALER1_SHIFT;
-+
-+	val = readl(exynos->base + PWM_TCFG1);
-+	divider = val & (PWM_TCFG1_MUX_MASK << (hw * PWM_TCFG1_MUX_SHIFT));
-+	divider = 1 << divider;
-+
-+	/* Clock Frequency = PCLK / (prescaler + 1) / divider */
-+	clk_rate = clk_get_rate(exynos->clk);
-+	clk_rate = clk_rate / (prescaler + 1) / divider;
-+
-+	c = (unsigned long long)clk_rate * period_ns;
-+	do_div(c, NSEC_PER_SEC);
-+	period_cycles = (unsigned long)c;
-+
-+	c = (unsigned long long)period_cycles * duty_ns;
-+	do_div(c, period_ns);
-+	duty_cycles = (unsigned long)c;
-+
-+	/* because inverter is on and count down */
-+	duty_cycles = period_cycles - duty_cycles;
-+
-+	writel(period_cycles, exynos->base + PWM_TCNTB(hw));
-+	writel(duty_cycles, exynos->base + PWM_TCMPB(hw));
-+
-+	mutex_lock(&exynos->mutex);
-+	val = readl(exynos->base + PWM_TCON);
-+	val |= PWM_TCON_MANUALUPDATE(hw);
-+	val |= PWM_TCON_AUTORELOAD(hw);
-+	writel(val, exynos->base + PWM_TCON);
-+
-+	val &= ~PWM_TCON_MANUALUPDATE(hw);
-+	writel(val, exynos->base + PWM_TCON);
-+	mutex_unlock(&exynos->mutex);
-+
-+	return 0;
-+}
-+
-+static int exynos_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
-+{
-+	struct exynos_pwm *exynos = container_of(chip, struct exynos_pwm, chip);
-+	unsigned int hw = pwm->hwpwm;
-+	u32 val;
-+
-+	mutex_lock(&exynos->mutex);
-+	val = readl(exynos->base + PWM_TCON);
-+	val |= PWM_TCON_START(hw);
-+	writel(val, exynos->base + PWM_TCON);
-+	mutex_unlock(&exynos->mutex);
-+
-+	return 0;
-+}
-+
-+static void exynos_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
-+{
-+	struct exynos_pwm *exynos = container_of(chip, struct exynos_pwm, chip);
-+	unsigned int hw = pwm->hwpwm;
-+	u32 val;
-+
-+	mutex_lock(&exynos->mutex);
-+	val = readl(exynos->base + PWM_TCON);
-+	val |= PWM_TCON_START(hw);
-+	writel(val, exynos->base + PWM_TCON);
-+	mutex_unlock(&exynos->mutex);
-+}
-+
-+static const struct pwm_ops exynos_pwm_ops = {
-+	.config = exynos_pwm_config,
-+	.enable = exynos_pwm_enable,
-+	.disable = exynos_pwm_disable,
-+	.owner = THIS_MODULE,
-+};
-+
-+static int exynos_pwm_probe(struct platform_device *pdev)
-+{
-+	struct exynos_pwm *exynos;
-+	struct resource *res;
-+	int ret;
-+
-+	exynos = devm_kzalloc(&pdev->dev, sizeof(*exynos), GFP_KERNEL);
-+	if (!exynos) {
-+		dev_err(&pdev->dev, "failed to allocate memory\n");
-+		return -ENOMEM;
-+	}
-+
-+	exynos->dev = &pdev->dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		dev_err(&pdev->dev, "no memory resources defined\n");
-+		return -ENODEV;
-+	}
-+
-+	exynos->base = devm_request_and_ioremap(&pdev->dev, res);
-+	if (!exynos->base)
-+		return -EADDRNOTAVAIL;
-+
-+	exynos->clk = devm_clk_get(&pdev->dev, "timers");
-+	if (IS_ERR(exynos->clk)) {
-+		dev_err(&pdev->dev, "failed to get timer clock with %ld\n",
-+				PTR_ERR(exynos->clk));
-+		return PTR_ERR(exynos->clk);
-+	}
-+
-+	mutex_init(&exynos->mutex);
-+
-+	exynos->chip.dev = &pdev->dev;
-+	exynos->chip.ops = &exynos_pwm_ops;
-+	exynos->chip.base = -1;
-+	exynos->chip.npwm = PWM_NUM;
-+
-+	ret = clk_prepare_enable(exynos->clk);
-+	if (ret)
-+		return ret;
-+
-+	/* Reset registers related with PWM clock and control */
-+	writel(PWM_TCFG0_RST_VAL, exynos->base + PWM_TCFG0);
-+	writel(PWM_TCFG1_RST_VAL, exynos->base + PWM_TCFG1);
-+	writel(PWM_TCON_RST_VAL, exynos->base + PWM_TCON);
-+
-+	ret = pwmchip_add(&exynos->chip);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
-+		clk_disable_unprepare(exynos->clk);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, exynos);
-+
-+	return 0;
-+}
-+
-+static int __devexit exynos_pwm_remove(struct platform_device *pdev)
-+{
-+	struct exynos_pwm *exynos = platform_get_drvdata(pdev);
-+	if (!exynos)
-+		return -ENODEV;
-+
-+	clk_disable_unprepare(exynos->clk);
-+
-+	return pwmchip_remove(&exynos->chip);
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id exynos_pwm_dt_match[] = {
-+	{ .compatible = "samsung,exynos-pwm" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, exynos_pwm_dt_match);
-+#endif
-+
-+static struct platform_driver exynos_pwm_driver = {
-+	.probe		= exynos_pwm_probe,
-+	.remove		= __devexit_p(exynos_pwm_remove),
-+	.driver		= {
-+		.name	= "exynos-pwm",
-+		.owner	= THIS_MODULE,
-+		.of_match_table	= of_match_ptr(exynos_pwm_dt_match),
-+	},
-+};
-+module_platform_driver(exynos_pwm_driver);
-+
-+MODULE_DESCRIPTION("Exynos PWM driver");
-+MODULE_AUTHOR("Joonyoung Shim <jy0922.shim@samsung.com>");
-+MODULE_LICENSE("GPL");
+Chnages since V1:
+        - Rebased on 3.6-rc6
+
+Padmavathi Venna (2):
+  ASoC: Samsung: Rename samsung i2s secondary device name
+  ASoC: SAMSUNG: Add DT support for i2s
+
+ .../devicetree/bindings/sound/samsung-i2s.txt      |   75 ++++++
+ sound/soc/samsung/dma.c                            |    1 +
+ sound/soc/samsung/dma.h                            |    1 +
+ sound/soc/samsung/i2s.c                            |  262 ++++++++++++++++----
+ sound/soc/samsung/i2s.h                            |    7 -
+ sound/soc/samsung/smdk_wm8580.c                    |    7 +-
+ sound/soc/samsung/smdk_wm8994.c                    |    4 +-
+ 7 files changed, 300 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
+
 -- 
-1.7.9.5
+1.7.4.4
