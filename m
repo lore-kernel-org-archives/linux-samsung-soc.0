@@ -1,173 +1,307 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: remove static mapping of PWM memory
-Date: Thu, 13 Dec 2012 19:11:23 +0900
-Message-ID: <1355393483-15113-1-git-send-email-jy0922.shim@samsung.com>
+Subject: [PATCH] pwm: add Exynos PWM driver
+Date: Thu, 13 Dec 2012 19:16:36 +0900
+Message-ID: <1355393796-15436-1-git-send-email-jy0922.shim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:59716 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752802Ab2LMKLQ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:21898 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753235Ab2LMKQf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Dec 2012 05:11:16 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MEY00KJZSA8HVP0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Dec 2012 19:11:14 +0900 (KST)
-Received: from localhost.localdomain ([10.90.51.60])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MEY00EA2SAPP390@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Dec 2012 19:11:13 +0900 (KST)
+	Thu, 13 Dec 2012 05:16:35 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
+To: thierry.reding@avionic-design.de
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-The exynos SoCs uses MCT(Multi-Core Timer) so it doesn't need to map PWM
-memory area to virtual memory(S3C_VA_TIMER) statically for timer.
+This is PWM driver to support 4 pwm for Exynos SoCs. Also this supports
+device tree node.
 
-This patch also remove functions call dependent to S3C_VA_TIMER.
-- s3c_pwmclk_init()
-- s5p_init_irq()
-
-They access PWM registers via S3C_VA_TIMER but exynos will not use them
-any more. There is a exception case about the universal_c210 board. The
-universal_c210 board can't use MCT because of low SoC version.
+The existing s3c24xx-pwm driver has many dependence with arch specific
+codes and it is difficult to support device tree by static mapping of
+PMW memory area. Also it can't support multi pwm to one device and can't
+make to module.
 
 Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
 ---
-This is based on for-next branch of git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+This is based on for-next branch of git://gitorious.org/linux-pwm/linux-pwm.git
 
- arch/arm/mach-exynos/clock-exynos4.c       |    2 --
- arch/arm/mach-exynos/clock-exynos5.c       |    1 -
- arch/arm/mach-exynos/common.c              |   23 -----------------------
- arch/arm/mach-exynos/mach-universal_c210.c |   21 +++++++++++++++++++--
- 4 files changed, 19 insertions(+), 28 deletions(-)
+ drivers/pwm/Kconfig      |    9 ++
+ drivers/pwm/Makefile     |    1 +
+ drivers/pwm/pwm-exynos.c |  234 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 244 insertions(+)
+ create mode 100644 drivers/pwm/pwm-exynos.c
 
-diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-exynos/clock-exynos4.c
-index efead60..8e5a0aa 100644
---- a/arch/arm/mach-exynos/clock-exynos4.c
-+++ b/arch/arm/mach-exynos/clock-exynos4.c
-@@ -1597,6 +1597,4 @@ void __init exynos4_register_clocks(void)
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index ed81720..1632ace 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -46,6 +46,15 @@ config PWM_BFIN
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called pwm-bfin.
  
- 	register_syscore_ops(&exynos4_clock_syscore_ops);
- 	s3c24xx_register_clock(&dummy_apb_pclk);
--
--	s3c_pwmclk_init();
- }
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 5c63bc7..cf96990 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -1754,5 +1754,4 @@ void __init exynos5_register_clocks(void)
- 	clkdev_add_table(exynos5_clk_lookup, ARRAY_SIZE(exynos5_clk_lookup));
- 
- 	register_syscore_ops(&exynos5_clock_syscore_ops);
--	s3c_pwmclk_init();
- }
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 73b940f..79dcb4a 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -141,11 +141,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
- 		.length		= SZ_64K,
- 		.type		= MT_DEVICE,
- 	}, {
--		.virtual	= (unsigned long)S3C_VA_TIMER,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_TIMER),
--		.length		= SZ_16K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_WATCHDOG),
- 		.length		= SZ_4K,
-@@ -243,11 +238,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
- 		.length		= SZ_64K,
- 		.type		= MT_DEVICE,
- 	}, {
--		.virtual	= (unsigned long)S3C_VA_TIMER,
--		.pfn		= __phys_to_pfn(EXYNOS5_PA_TIMER),
--		.length		= SZ_16K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
- 		.pfn		= __phys_to_pfn(EXYNOS5_PA_WATCHDOG),
- 		.length		= SZ_4K,
-@@ -654,13 +644,6 @@ void __init exynos4_init_irq(void)
- 
- 	if (!of_have_populated_dt())
- 		combiner_init(S5P_VA_COMBINER_BASE, NULL);
--
--	/*
--	 * The parameters of s5p_init_irq() are for VIC init.
--	 * Theses parameters should be NULL and 0 because EXYNOS4
--	 * uses GIC instead of VIC.
--	 */
--	s5p_init_irq(NULL, 0);
- }
- 
- void __init exynos5_init_irq(void)
-@@ -668,12 +651,6 @@ void __init exynos5_init_irq(void)
- #ifdef CONFIG_OF
- 	of_irq_init(exynos_dt_irq_match);
- #endif
--	/*
--	 * The parameters of s5p_init_irq() are for VIC init.
--	 * Theses parameters should be NULL and 0 because EXYNOS4
--	 * uses GIC instead of VIC.
--	 */
--	s5p_init_irq(NULL, 0);
- 
- 	gic_arch_extn.irq_set_wake = s3c_irq_wake;
- }
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index 9e3340f..6eee378 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -29,6 +29,7 @@
- #include <drm/exynos_drm.h>
- 
- #include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
- #include <asm/hardware/gic.h>
- #include <asm/mach-types.h>
- 
-@@ -1090,10 +1091,26 @@ static struct platform_device *universal_devices[] __initdata = {
- 	&s5p_device_fimc_md,
- };
- 
-+static struct map_desc universal_iodesc[] __initdata = {
-+	{
-+		.virtual	= (unsigned long)S3C_VA_TIMER,
-+		.pfn		= __phys_to_pfn(EXYNOS4_PA_TIMER),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	},
++config PWM_EXYNOS
++	tristate "Exynos pwm support"
++	depends on ARCH_EXYNOS
++	help
++	  Generic PWM framework driver for Exynos.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called pwm-exynos.
++
+ config PWM_IMX
+ 	tristate "i.MX pwm support"
+ 	depends on ARCH_MXC
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index acfe482..423a251 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -1,6 +1,7 @@
+ obj-$(CONFIG_PWM)		+= core.o
+ obj-$(CONFIG_PWM_AB8500)	+= pwm-ab8500.o
+ obj-$(CONFIG_PWM_BFIN)		+= pwm-bfin.o
++obj-$(CONFIG_PWM_EXYNOS)	+= pwm-exynos.o
+ obj-$(CONFIG_PWM_IMX)		+= pwm-imx.o
+ obj-$(CONFIG_PWM_JZ4740)	+= pwm-jz4740.o
+ obj-$(CONFIG_PWM_LPC32XX)	+= pwm-lpc32xx.o
+diff --git a/drivers/pwm/pwm-exynos.c b/drivers/pwm/pwm-exynos.c
+new file mode 100644
+index 0000000..5a411b6
+--- /dev/null
++++ b/drivers/pwm/pwm-exynos.c
+@@ -0,0 +1,234 @@
++/*
++ * Copyright (C) 2012 Samsung Electronics Co.Ltd
++ * Author: Joonyoung Shim <jy0922.shim@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/clk.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pwm.h>
++
++#define PWM_NUM			4
++
++#define PWM_TCFG0		0x00
++#define PWM_TCFG1		0x04
++#define PWM_TCON		0x08
++#define PWM_TCNTB(hw)		(0x0c + (hw) * 0x0c)
++#define PWM_TCMPB(hw)		(0x10 + (hw) * 0x0c)
++#define PWM_TCNTO(hw)		(0x14 + (hw) * 0x0c)
++
++#define PWM_TCFG0_RST_VAL	0x101
++#define PWM_TCFG1_RST_VAL	0x0
++#define PWM_TCON_RST_VAL	0x44404		/* inverter on */
++
++#define PWM_TCFG0_PRESCALER0_MASK	0xff
++#define PWM_TCFG0_PRESCALER1_MASK	0xff00
++#define PWM_TCFG0_PRESCALER1_SHIFT	8
++
++#define PWM_TCFG1_MUX_MASK		0xf
++#define PWM_TCFG1_MUX_SHIFT		4
++
++#define PWM_TCON_BASE(hw)		((hw) ? ((hw) + 1) * 4 : 0)
++#define PWM_TCON_START(hw)		(1 << (PWM_TCON_BASE(hw) + 0))
++#define PWM_TCON_MANUALUPDATE(hw)	(1 << (PWM_TCON_BASE(hw) + 1))
++#define PWM_TCON_INVERTER(hw)		(1 << (PWM_TCON_BASE(hw) + 2))
++#define PWM_TCON_AUTORELOAD(hw)		(1 << (PWM_TCON_BASE(hw) + 3))
++
++struct exynos_pwm {
++	struct pwm_chip		chip;
++	struct device		*dev;
++	struct clk		*clk;
++	struct mutex		mutex;
++	void __iomem		*base;
 +};
 +
-+static void __init universal_init_irq(void)
++static int exynos_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
++			     int duty_ns, int period_ns)
 +{
-+	exynos4_init_irq();
-+	s5p_init_irq(NULL, 0);
++	struct exynos_pwm *exynos = container_of(chip, struct exynos_pwm, chip);
++	unsigned long long c;
++	unsigned long period_cycles, duty_cycles;
++	unsigned long clk_rate;
++	unsigned int prescaler;
++	unsigned int divider;
++	unsigned int hw = pwm->hwpwm;
++	u32 val;
++
++	if (period_ns > NSEC_PER_SEC)
++		return -ERANGE;
++
++	val = readl(exynos->base + PWM_TCFG0);
++	if (hw == 0 || hw == 1)
++		prescaler = val & PWM_TCFG0_PRESCALER0_MASK;
++	else
++		prescaler = (val & PWM_TCFG0_PRESCALER1_MASK) >>
++						PWM_TCFG0_PRESCALER1_SHIFT;
++
++	val = readl(exynos->base + PWM_TCFG1);
++	divider = val & (PWM_TCFG1_MUX_MASK << (hw * PWM_TCFG1_MUX_SHIFT));
++	divider = 1 << divider;
++
++	/* Clock Frequency = PCLK / (prescaler + 1) / divider */
++	clk_rate = clk_get_rate(exynos->clk);
++	clk_rate = clk_rate / (prescaler + 1) / divider;
++
++	c = (unsigned long long)clk_rate * period_ns;
++	do_div(c, NSEC_PER_SEC);
++	period_cycles = (unsigned long)c;
++
++	c = (unsigned long long)period_cycles * duty_ns;
++	do_div(c, period_ns);
++	duty_cycles = (unsigned long)c;
++
++	/* because inverter is on and count down */
++	duty_cycles = period_cycles - duty_cycles;
++
++	writel(period_cycles, exynos->base + PWM_TCNTB(hw));
++	writel(duty_cycles, exynos->base + PWM_TCMPB(hw));
++
++	mutex_lock(&exynos->mutex);
++	val = readl(exynos->base + PWM_TCON);
++	val |= PWM_TCON_MANUALUPDATE(hw);
++	val |= PWM_TCON_AUTORELOAD(hw);
++	writel(val, exynos->base + PWM_TCON);
++
++	val &= ~PWM_TCON_MANUALUPDATE(hw);
++	writel(val, exynos->base + PWM_TCON);
++	mutex_unlock(&exynos->mutex);
++
++	return 0;
 +}
 +
- static void __init universal_map_io(void)
- {
--	exynos_init_io(NULL, 0);
-+	exynos_init_io(universal_iodesc, ARRAY_SIZE(universal_iodesc));
- 	s3c24xx_init_clocks(clk_xusbxti.rate);
-+	s3c_pwmclk_init();
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
- 	s5p_set_timer_source(S5P_PWM2, S5P_PWM4);
- }
-@@ -1149,7 +1166,7 @@ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
- 	/* Maintainer: Kyungmin Park <kyungmin.park@samsung.com> */
- 	.atag_offset	= 0x100,
- 	.smp		= smp_ops(exynos_smp_ops),
--	.init_irq	= exynos4_init_irq,
-+	.init_irq	= universal_init_irq,
- 	.map_io		= universal_map_io,
- 	.handle_irq	= gic_handle_irq,
- 	.init_machine	= universal_machine_init,
++static int exynos_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
++{
++	struct exynos_pwm *exynos = container_of(chip, struct exynos_pwm, chip);
++	unsigned int hw = pwm->hwpwm;
++	u32 val;
++
++	mutex_lock(&exynos->mutex);
++	val = readl(exynos->base + PWM_TCON);
++	val |= PWM_TCON_START(hw);
++	writel(val, exynos->base + PWM_TCON);
++	mutex_unlock(&exynos->mutex);
++
++	return 0;
++}
++
++static void exynos_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
++{
++	struct exynos_pwm *exynos = container_of(chip, struct exynos_pwm, chip);
++	unsigned int hw = pwm->hwpwm;
++	u32 val;
++
++	mutex_lock(&exynos->mutex);
++	val = readl(exynos->base + PWM_TCON);
++	val |= PWM_TCON_START(hw);
++	writel(val, exynos->base + PWM_TCON);
++	mutex_unlock(&exynos->mutex);
++}
++
++static const struct pwm_ops exynos_pwm_ops = {
++	.config = exynos_pwm_config,
++	.enable = exynos_pwm_enable,
++	.disable = exynos_pwm_disable,
++	.owner = THIS_MODULE,
++};
++
++static int exynos_pwm_probe(struct platform_device *pdev)
++{
++	struct exynos_pwm *exynos;
++	struct resource *res;
++	int ret;
++
++	exynos = devm_kzalloc(&pdev->dev, sizeof(*exynos), GFP_KERNEL);
++	if (!exynos) {
++		dev_err(&pdev->dev, "failed to allocate memory\n");
++		return -ENOMEM;
++	}
++
++	exynos->dev = &pdev->dev;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		dev_err(&pdev->dev, "no memory resources defined\n");
++		return -ENODEV;
++	}
++
++	exynos->base = devm_request_and_ioremap(&pdev->dev, res);
++	if (!exynos->base)
++		return -EADDRNOTAVAIL;
++
++	exynos->clk = devm_clk_get(&pdev->dev, "timers");
++	if (IS_ERR(exynos->clk)) {
++		dev_err(&pdev->dev, "failed to get timer clock with %ld\n",
++				PTR_ERR(exynos->clk));
++		return PTR_ERR(exynos->clk);
++	}
++
++	mutex_init(&exynos->mutex);
++
++	exynos->chip.dev = &pdev->dev;
++	exynos->chip.ops = &exynos_pwm_ops;
++	exynos->chip.base = -1;
++	exynos->chip.npwm = PWM_NUM;
++
++	ret = clk_prepare_enable(exynos->clk);
++	if (ret)
++		return ret;
++
++	/* Reset registers related with PWM clock and control */
++	writel(PWM_TCFG0_RST_VAL, exynos->base + PWM_TCFG0);
++	writel(PWM_TCFG1_RST_VAL, exynos->base + PWM_TCFG1);
++	writel(PWM_TCON_RST_VAL, exynos->base + PWM_TCON);
++
++	ret = pwmchip_add(&exynos->chip);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
++		clk_disable_unprepare(exynos->clk);
++		return ret;
++	}
++
++	platform_set_drvdata(pdev, exynos);
++
++	return 0;
++}
++
++static int __devexit exynos_pwm_remove(struct platform_device *pdev)
++{
++	struct exynos_pwm *exynos = platform_get_drvdata(pdev);
++	if (!exynos)
++		return -ENODEV;
++
++	clk_disable_unprepare(exynos->clk);
++
++	return pwmchip_remove(&exynos->chip);
++}
++
++#ifdef CONFIG_OF
++static const struct of_device_id exynos_pwm_dt_match[] = {
++	{ .compatible = "samsung,exynos-pwm" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, exynos_pwm_dt_match);
++#endif
++
++static struct platform_driver exynos_pwm_driver = {
++	.probe		= exynos_pwm_probe,
++	.remove		= __devexit_p(exynos_pwm_remove),
++	.driver		= {
++		.name	= "exynos-pwm",
++		.owner	= THIS_MODULE,
++		.of_match_table	= of_match_ptr(exynos_pwm_dt_match),
++	},
++};
++module_platform_driver(exynos_pwm_driver);
++
++MODULE_DESCRIPTION("Exynos PWM driver");
++MODULE_AUTHOR("Joonyoung Shim <jy0922.shim@samsung.com>");
++MODULE_LICENSE("GPL");
 -- 
 1.7.9.5
