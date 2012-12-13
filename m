@@ -1,40 +1,48 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/2] usb: dwc3-exynos: Fix compatible strings for the device
-Date: Thu, 13 Dec 2012 20:22:28 +0530
-Message-ID: <1355410348-5129-3-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
+Date: Thu, 13 Dec 2012 21:37:16 +0530
+Message-ID: <CAFp+6iEqaV7osuo_4pQKEmWMoGuqY-O03k-9n23wbJBMKa0kwg@mail.gmail.com>
 References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1355410348-5129-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Using specific chip in compatible strings. Newer SOCs can claim
-device by using older string in the compatible list.
+CC: LKML
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/usb/dwc3/dwc3-exynos.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+On Thu, Dec 13, 2012 at 8:22 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> Using chip specific compatible string as it should be.
+> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
+> which till now used a generic 'exynos' in their compatible strings.
+>
+> This goes as per the discussion happened in the thread for
+> [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
+> available at:
+> http://www.spinics.net/lists/linux-usb/msg74145.html
+>
+> Vivek Gautam (2):
+>   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
+>   usb: dwc3-exynos: Fix compatible strings for the device
+>
+>  drivers/usb/dwc3/dwc3-exynos.c |    2 +-
+>  drivers/usb/host/ehci-s5p.c    |    2 +-
+>  drivers/usb/host/ohci-exynos.c |    2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> --
+> 1.7.6.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index aae5328..9dce99a 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -188,7 +188,7 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
- 
- #ifdef CONFIG_OF
- static const struct of_device_id exynos_dwc3_match[] = {
--	{ .compatible = "samsung,exynos-dwc3" },
-+	{ .compatible = "samsung,exynos5250-dwc3" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, exynos_dwc3_match);
+
+
 -- 
-1.7.6.5
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks & Regards
+Vivek
