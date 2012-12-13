@@ -1,84 +1,73 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v3 1/2] ARM: Exynos5250: Enabling ehci-s5p driver
-Date: Thu, 13 Dec 2012 22:06:01 +0530
-Message-ID: <1355416562-25539-2-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 2/2] ARM: Exynos5250: Enabling ohci-exynos driver
+Date: Thu, 13 Dec 2012 22:06:02 +0530
+Message-ID: <1355416562-25539-3-git-send-email-gautam.vivek@samsung.com>
 References: <1355416562-25539-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1355416562-25539-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <1355416562-25539-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adding EHCI device tree node for Exynos5250 along with
-the device base adress and gpio line for vbus.
+Adding OHCI device tree node for Exynos5250 along with
+the device base address.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- .../devicetree/bindings/usb/exynos-usb.txt         |   25 ++++++++++++++++++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 +++
- arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++
+ .../devicetree/bindings/usb/exynos-usb.txt         |   15 +++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++++
  arch/arm/mach-exynos/include/mach/map.h            |    1 +
- arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
- 5 files changed, 38 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/usb/exynos-usb.txt
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 ++
+ 4 files changed, 24 insertions(+), 0 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-new file mode 100644
-index 0000000..e8bbb47
---- /dev/null
+index e8bbb47..f66fcdd 100644
+--- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
 +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -0,0 +1,25 @@
-+Samsung Exynos SoC USB controller
+@@ -23,3 +23,18 @@ Example:
+ 		interrupts = <0 71 0>;
+ 		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+ 	};
 +
-+The USB devices interface with USB controllers on Exynos SOCs.
-+The device node has following properties.
-+
-+EHCI
++OHCI
 +Required properties:
-+ - compatible: should be "samsung,exynos4210-ehci" for USB 2.0
-+   EHCI controller in host mode.
++ - compatible: should be "samsung,exynos4210-ohci" for USB 2.0
++   OHCI companion controller in host mode.
 + - reg: physical base address of the controller and length of memory mapped
 +   region.
 + - interrupts: interrupt number to the cpu.
 +
-+Optional properties:
-+ - samsung,vbus-gpio:  if present, specifies the GPIO that
-+   needs to be pulled up for the bus to be powered.
-+
 +Example:
-+
-+	usb@12110000 {
-+		compatible = "samsung,exynos4210-ehci";
-+		reg = <0x12110000 0x100>;
++	usb@12120000 {
++		compatible = "samsung,exynos4210-ohci";
++		reg = <0x12120000 0x100>;
 +		interrupts = <0 71 0>;
-+		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
 +	};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 711b55f..f990086 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -218,4 +218,8 @@
- 	i2s_2: i2s@12D70000 {
- 		status = "disabled";
- 	};
-+
-+	usb@12110000 {
-+		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
-+	};
- };
 diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 581e57a..584bb9a 100644
+index 584bb9a..75510d1 100644
 --- a/arch/arm/boot/dts/exynos5250.dtsi
 +++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -299,6 +299,12 @@
- 		rx-dma-channel = <&pdma0 11>; /* preliminary */
+@@ -305,6 +305,12 @@
+ 		interrupts = <0 71 0>;
  	};
  
-+	usb@12110000 {
-+		compatible = "samsung,exynos4210-ehci";
-+		reg = <0x12110000 0x100>;
++	usb@12120000 {
++		compatible = "samsung,exynos4210-ohci";
++		reg = <0x12120000 0x100>;
 +		interrupts = <0 71 0>;
 +	};
 +
@@ -86,27 +75,27 @@ index 581e57a..584bb9a 100644
  		#address-cells = <1>;
  		#size-cells = <1>;
 diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index cbb2852..b2c662f 100644
+index b2c662f..4bf6fd9 100644
 --- a/arch/arm/mach-exynos/include/mach/map.h
 +++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -201,6 +201,7 @@
- #define EXYNOS4_PA_EHCI			0x12580000
+@@ -202,6 +202,7 @@
  #define EXYNOS4_PA_OHCI			0x12590000
  #define EXYNOS4_PA_HSPHY		0x125B0000
-+#define EXYNOS5_PA_EHCI			0x12110000
+ #define EXYNOS5_PA_EHCI			0x12110000
++#define EXYNOS5_PA_OHCI			0x12120000
  #define EXYNOS4_PA_MFC			0x13400000
  
  #define EXYNOS4_PA_UART			0x13800000
 diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 462e5ac..b3b9af1 100644
+index b3b9af1..07aa586 100644
 --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
 +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -110,6 +110,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"samsung-i2s.1", NULL),
- 	OF_DEV_AUXDATA("samsung,samsung-i2s", 0x12D70000,
+@@ -112,6 +112,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
  				"samsung-i2s.2", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4210-ehci", EXYNOS5_PA_EHCI,
-+				"s5p-ehci", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-ehci", EXYNOS5_PA_EHCI,
+ 				"s5p-ehci", NULL),
++	OF_DEV_AUXDATA("samsung,exynos4210-ohci", EXYNOS5_PA_OHCI,
++				"exynos-ohci", NULL),
  	{},
  };
  
