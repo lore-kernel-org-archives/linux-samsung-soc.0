@@ -1,104 +1,86 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH] gpio: samsung: add GPIO interrupt registration for exynos5
-Date: Fri, 14 Dec 2012 19:44:02 +0900
-Message-ID: <1355481842-17952-2-git-send-email-jy0922.shim@samsung.com>
-References: <1355481842-17952-1-git-send-email-jy0922.shim@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1355481842-17952-1-git-send-email-jy0922.shim@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: grant.likely@secretlab.ca, linus.walleij@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
+From: Sekhar Nori <nori.sekhar@gmail.com>
+Subject: Re: [PATCH v5] ARM: EXYNOS: Add MFC device tree support
+Date: Fri, 14 Dec 2012 11:20:26 +0000 (UTC)
+Message-ID: <loom.20121214T121839-194@post.gmane.org>
+References: <1348765784-7508-1-git-send-email-arun.kk@samsung.com> <1348765784-7508-2-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from plane.gmane.org ([80.91.229.3]:48485 "EHLO plane.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753501Ab2LNLY6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Dec 2012 06:24:58 -0500
+Received: from list by plane.gmane.org with local (Exim 4.69)
+	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
+	id 1TjTO3-0004NK-Va
+	for linux-samsung-soc@vger.kernel.org; Fri, 14 Dec 2012 12:25:04 +0100
+Received: from dsl-KK-static-231.193.95.61.airtelbroadband.in ([dsl-KK-static-231.193.95.61.airtelbroadband.in])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Dec 2012 12:25:03 +0100
+Received: from nori.sekhar by dsl-KK-static-231.193.95.61.airtelbroadband.in with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Dec 2012 12:25:03 +0100
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-This adds GPIO interrupt registration and modification needs to register
-GPIO interrupt rightly for exynos5 SoCs. EXYNOS5_GPYx gpios shouldn't be
-counted to GPIO interrupt group register number because they doesn't
-support GPIO interrupt, so their struct samsung_gpio_cfg should be
-initialized to &samsung_gpio_cfgs[8] in declaration ahead.
+Arun Kumar K <arun.kk <at> samsung.com> writes:
+> 
+> This patch adds device tree entry for MFC v6 in the Exynos5
+> SoC. Makes the required changes in the clock files and adds
+> MFC to the DT device list.
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen <at> samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk <at> samsung.com>
+> ---
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
----
- drivers/gpio/gpio-samsung.c |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt
+b/Documentation/devicetree/bindings/media/s5p-mfc.txt
 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index e30cd60..a462f2c 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -2519,42 +2519,49 @@ static struct samsung_gpio_chip exynos5_gpios_1[] = {
- 			.label	= "GPD1",
- 		},
- 	}, {
-+		.config	= &samsung_gpio_cfgs[8],
- 		.chip	= {
- 			.base	= EXYNOS5_GPY0(0),
- 			.ngpio	= EXYNOS5_GPIO_Y0_NR,
- 			.label	= "GPY0",
- 		},
- 	}, {
-+		.config	= &samsung_gpio_cfgs[8],
- 		.chip	= {
- 			.base	= EXYNOS5_GPY1(0),
- 			.ngpio	= EXYNOS5_GPIO_Y1_NR,
- 			.label	= "GPY1",
- 		},
- 	}, {
-+		.config	= &samsung_gpio_cfgs[8],
- 		.chip	= {
- 			.base	= EXYNOS5_GPY2(0),
- 			.ngpio	= EXYNOS5_GPIO_Y2_NR,
- 			.label	= "GPY2",
- 		},
- 	}, {
-+		.config	= &samsung_gpio_cfgs[8],
- 		.chip	= {
- 			.base	= EXYNOS5_GPY3(0),
- 			.ngpio	= EXYNOS5_GPIO_Y3_NR,
- 			.label	= "GPY3",
- 		},
- 	}, {
-+		.config	= &samsung_gpio_cfgs[8],
- 		.chip	= {
- 			.base	= EXYNOS5_GPY4(0),
- 			.ngpio	= EXYNOS5_GPIO_Y4_NR,
- 			.label	= "GPY4",
- 		},
- 	}, {
-+		.config	= &samsung_gpio_cfgs[8],
- 		.chip	= {
- 			.base	= EXYNOS5_GPY5(0),
- 			.ngpio	= EXYNOS5_GPIO_Y5_NR,
- 			.label	= "GPY5",
- 		},
- 	}, {
-+		.config	= &samsung_gpio_cfgs[8],
- 		.chip	= {
- 			.base	= EXYNOS5_GPY6(0),
- 			.ngpio	= EXYNOS5_GPIO_Y6_NR,
-@@ -3002,6 +3009,24 @@ static __init void exynos5_gpiolib_init(void)
- 	}
- 	samsung_gpiolib_add_4bit_chips(exynos5_gpios_4,
- 				       nr_chips, gpio_base4);
-+
-+#ifdef CONFIG_S5P_GPIO_INT
-+	s5p_register_gpioint_bank(EXYNOS5_IRQ_GPIO_XA, 0,
-+			EXYNOS5_IRQ_GPIO1_NR_GROUPS);
-+	s5p_register_gpioint_bank(EXYNOS5_IRQ_GPIO_XB,
-+			EXYNOS5_IRQ_GPIO1_NR_GROUPS,
-+			EXYNOS5_IRQ_GPIO2_NR_GROUPS);
-+	s5p_register_gpioint_bank(EXYNOS5_IRQ_GPIO_C2C,
-+			EXYNOS5_IRQ_GPIO1_NR_GROUPS +
-+			EXYNOS5_IRQ_GPIO2_NR_GROUPS,
-+			EXYNOS5_IRQ_GPIO3_NR_GROUPS);
-+	s5p_register_gpioint_bank(EXYNOS5_IRQ_GPIO,
-+			EXYNOS5_IRQ_GPIO1_NR_GROUPS +
-+			EXYNOS5_IRQ_GPIO2_NR_GROUPS +
-+			EXYNOS5_IRQ_GPIO3_NR_GROUPS,
-+			EXYNOS5_IRQ_GPIO4_NR_GROUPS);
-+#endif
-+
- 	return;
- 
- err_ioremap4:
--- 
-1.7.9.5
+> +Required properties:
+> +  - compatible : value should be either one among the following
+> +	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
+> +	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
+
+Sorry for replying on this patch so late, but this thread came
+to my attention only recently.
+
+I thought generic comaptibles like this are discouraged and instead
+you are supposed to ground the compatible property to a real silicon name.
+So you would use something like "samsung,exynos4212-mfc" and so on.
+
+> +  - samsung,mfc-r : Base address of the first memory bank used by MFC
+> +		    for DMA contiguous memory allocation and its size.
+> +
+> +  - samsung,mfc-l : Base address of the second memory bank used by MFC
+> +		    for DMA contiguous memory allocation and its size.
+
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+
+> +
+> +	codec <at> 11000000 {
+> +		samsung,mfc-r = <0x43000000 0x800000>;
+> +		samsung,mfc-l = <0x51000000 0x800000>;
+> +	};
+
+How are these addresses determined? Are they defined by hardware (so they are
+not user configurable) or is the user free to choose them depending on where
+he intends the contiguous memory to lie? If it is the later, I wonder if it
+is considered okay to define this in device tree since it is supposed to be
+a description of the hardware.
+
+We have a similar situation on DaVinci and we are wondering how this should
+be handled. The ideal choice seems to be module parameters, but there are
+some challenges there. See:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2012-December/136996.html
+
+I understand I am speaking too late on this patch (seems like it is already 
+merged into linux-next at the least), but I still wanted to start the 
+conversation here for future sake.
+
+Thanks,
+Sekhar
