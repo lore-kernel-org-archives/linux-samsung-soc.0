@@ -1,165 +1,75 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 2/2] i2c-s3c2410: Add GPIO based bus arbitration functionality
-Date: Fri, 14 Dec 2012 11:20:54 +0530
-Message-ID: <1355464254-12768-3-git-send-email-ch.naveen@samsung.com>
-References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH] pwm: samsung: add missing s3c->pwm_id
+Date: Fri, 14 Dec 2012 07:52:01 +0100
+Message-ID: <20121214065200.GB24094@avionic-0098.adnet.avionic-design.de>
+References: <1355458809-12290-1-git-send-email-jy0922.shim@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63188 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753959Ab2LNFvW (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.10]:56647 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751107Ab2LNGwJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Dec 2012 00:51:22 -0500
-In-reply-to: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
+	Fri, 14 Dec 2012 01:52:09 -0500
+Content-Disposition: inline
+In-Reply-To: <1355458809-12290-1-git-send-email-jy0922.shim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: w.sang@pengutronix.de, khali@linux-fr.org, ben-linux@fluff.org, grant.likely@secretlab.ca, devicetree-discuss@lists.ozlabs.org, sjg@chromium.org, grundler@chromium.org, naveen@chromium.org, broonie@opensource.wolfsonmicro.com
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-Makes use of the generic fucntions in of_i2c.c to parse arbitration
-timing information and GPIOs for arbitration.
 
-Also uses devm_gpio_request() instead of gpio_request() and
-removes the gpio_free() calls
+--lEGEL1/lMxI0MVQ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
----
- drivers/i2c/busses/i2c-s3c2410.c |   79 +++++++++++++++++++++++---------------
- 1 file changed, 47 insertions(+), 32 deletions(-)
+On Fri, Dec 14, 2012 at 01:20:09PM +0900, Joonyoung Shim wrote:
+> The s3c->pwm_id is used to calculate offset of related register.
+>=20
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> ---
+>  drivers/pwm/pwm-samsung.c |    2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index 023a3be..b415102 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -220,6 +220,8 @@ static int s3c_pwm_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	}
+> =20
+> +	s3c->pwm_id =3D id;
+> +
+>  	/* calculate base of control bits in TCON */
+>  	s3c->tcon_base =3D id =3D=3D 0 ? 0 : (id * 4) + 4;
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index e93e7d6..d055cf8 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -855,54 +855,61 @@ static inline void s3c24xx_i2c_deregister_cpufreq(struct s3c24xx_i2c *i2c)
- #endif
- 
- #ifdef CONFIG_OF
--static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
-+static int of_i2c_parse_gpio(struct device *dev, const char *name,
-+		int gpios[], size_t count, bool required)
- {
--	int idx, gpio, ret;
--
--	if (i2c->quirks & QUIRK_NO_GPIO)
--		return 0;
-+	struct device_node *dn = dev->of_node;
-+	int idx, gpio;
- 
--	for (idx = 0; idx < 2; idx++) {
--		gpio = of_get_gpio(i2c->dev->of_node, idx);
-+	for (idx = 0; idx < count; idx++) {
-+		gpio = of_get_named_gpio(dn, name, idx);
- 		if (!gpio_is_valid(gpio)) {
--			dev_err(i2c->dev, "invalid gpio[%d]: %d\n", idx, gpio);
--			goto free_gpio;
-+			dev_dbg(dev, "invalid gpio[%d]: %d\n", idx, gpio);
-+			if (idx || required) {
-+				dev_err(dev, "invalid gpio[%d]: %d\n",
-+					idx, gpio);
-+			}
-+			return -EINVAL;
- 		}
--		i2c->gpios[idx] = gpio;
-+		gpios[idx] = gpio;
- 
--		ret = gpio_request(gpio, "i2c-bus");
--		if (ret) {
--			dev_err(i2c->dev, "gpio [%d] request failed\n", gpio);
--			goto free_gpio;
-+		if (devm_gpio_request(dev, gpio, "i2c-bus")) {
-+			dev_err(dev, "gpio [%d] request failed\n", gpio);
-+			return -EINVAL;
- 		}
- 	}
- 	return 0;
--
--free_gpio:
--	while (--idx >= 0)
--		gpio_free(i2c->gpios[idx]);
--	return -EINVAL;
- }
- 
--static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
-+static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
- {
--	unsigned int idx;
-+	int ret = 0;
- 
- 	if (i2c->quirks & QUIRK_NO_GPIO)
--		return;
-+		goto out;
-+
-+	if (of_i2c_parse_gpio(i2c->dev, "gpios", i2c->gpios, 2, true)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
--	for (idx = 0; idx < 2; idx++)
--		gpio_free(i2c->gpios[idx]);
-+	if (i2c->adap.gpio_arbit) {
-+		if (!of_i2c_parse_gpio(i2c->dev, "bus-arbitration-gpios",
-+			i2c->adap.gpio_arbit->arb_gpios, I2C_ARB_GPIO_COUNT,
-+			false)) {
-+			dev_warn(i2c->dev, "GPIO-based arbitration enabled");
-+		} else
-+			ret = -EINVAL;
-+	}
-+
-+ out:
-+	return ret;
- }
- #else
- static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
- {
- 	return 0;
- }
--
--static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
--{
--}
- #endif
- 
- /* s3c24xx_i2c_init
-@@ -981,6 +988,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- {
- 	struct s3c24xx_i2c *i2c;
- 	struct s3c2410_platform_i2c *pdata = NULL;
-+	struct i2c_gpio_arbit *arbit = NULL;
- 	struct resource *res;
- 	int ret;
- 
-@@ -1004,11 +1012,21 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		goto err_noclk;
- 	}
- 
-+	arbit = devm_kzalloc(&pdev->dev, sizeof(*arbit), GFP_KERNEL);
-+	if (!arbit) {
-+		ret = -ENOMEM;
-+		goto err_noclk;
-+	}
-+
- 	i2c->quirks = s3c24xx_get_device_quirks(pdev);
- 	if (pdata)
- 		memcpy(i2c->pdata, pdata, sizeof(*pdata));
--	else
-+	else {
- 		s3c24xx_i2c_parse_dt(pdev->dev.of_node, i2c);
-+		/* Arbitration parameters */
-+		i2c->adap.gpio_arbit = of_get_arbitrator_info(
-+					pdev->dev.of_node, arbit);
-+	}
- 
- 	strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
- 	i2c->adap.owner   = THIS_MODULE;
-@@ -1158,9 +1176,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
- 	clk_disable_unprepare(i2c->clk);
- 	clk_put(i2c->clk);
- 
--	if (pdev->dev.of_node && IS_ERR(i2c->pctrl))
--		s3c24xx_i2c_dt_gpio_free(i2c);
--
- 	return 0;
- }
- 
--- 
-1.7.9.5
+Can you please move the assignment to below the above line? That way s3c
+initialization is more localized.
+
+Thierry
+
+--lEGEL1/lMxI0MVQ2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQysyQAAoJEN0jrNd/PrOhKZgP/2anWUPa6W6NZ+MfAsUMzzJc
+ANqgRhogft4P6xWRe0mvPRQAFE0o0v2T2wfZJaETIuuPL2UNxgF6FBdgkewKtc+t
+ZJdEGkhCCmEdyfjKhiWuJn1x+S+piPWeCoR3sHBXLFysTLiSLH4dYhJBnMu+/m/f
+WUTjMPTyzHnA282VdrYYMCS1CDYu0e/Ly2W7W3206ijglEac4F10SIAGQZ5dAfy6
+PaydVLsJXKM8kf4A66xP8ZyoK8iYqGnTZ34AS7nbjAuSlndF5Oc+gyshJw7BqYuT
+adfR1veCr4Jj3tVn6q6DQakv3qyuoZhiWR9juzeJApbPVa1dGTxBLNF583/rEXvz
+xIlol0Gc9gpSblaKx+iXMJEEgSMxco4o7JAjN/vmNP7B/Acs1k7eAaWrV7+d8LTl
+szMGxesuVexHVBZKrhZccADisx9s2AxjRCCi1u3Fl3mVE0ikCBmMlPQIWP46aeqU
+JtyQXaOc+0IRAX45Slirnp2Ce+zcVpIPRVGJG9hSjDvqyycXkpQq8NFQUUtYcqMS
+z96bbBfhG5xkmyfTGC/SVLvEMhQunvQrmbJAPOJs0jpLshKBJMby2IdcWRXnxKDD
+xkS77whhjIKZuTfXbL5RDrG6shChJfg71TeCZFTzzgXoNovyrTa1MZn79TU7alLE
+rs+2T1x/n5IwHHY5/NPu
+=5yZ+
+-----END PGP SIGNATURE-----
+
+--lEGEL1/lMxI0MVQ2--
