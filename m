@@ -1,94 +1,116 @@
-From: Jonghwan Choi <jhbird.choi@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Fix compile error in dev-audio.c
-Date: Fri, 14 Dec 2012 17:15:52 +0900
-Message-ID: <000701cdd9d3$3b6a6e10$b23f4a30$%choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH] gpio: samsung: remove exynos_gpio_cfg
+Date: Fri, 14 Dec 2012 19:44:01 +0900
+Message-ID: <1355481842-17952-1-git-send-email-jy0922.shim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50503 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750986Ab2LNIPy (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:9217 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751439Ab2LNKpI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Dec 2012 03:15:54 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MF00036BHLXI2S0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Dec 2012 17:15:52 +0900 (KST)
-Received: from DOJHBIRDCHO03 ([12.23.118.55])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MF0004TLHMGO4O0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Dec 2012 17:15:52 +0900 (KST)
-References: 
-In-reply-to: 
-Content-language: ko
+	Fri, 14 Dec 2012 05:45:08 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>
+To: grant.likely@secretlab.ca, linus.walleij@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-arch/arm/mach-exynos/dev-audio.c:58:4: error: unknown field 'src_clk'
-specified in initializer
-arch/arm/mach-exynos/dev-audio.c:58:4: warning: initialization makes integer
-from pointer without a cast [enabled by default]
-arch/arm/mach-exynos/dev-audio.c:58:4: warning: (near initialization for
-'i2sv5_pdata.type.i2s.idma_addr') [enabled by default]
-arch/arm/mach-exynos/dev-audio.c:91:4: error: unknown field 'src_clk'
-specified in initializer
-arch/arm/mach-exynos/dev-audio.c:91:4: warning: initialization makes integer
-from pointer without a cast [enabled by default]
-arch/arm/mach-exynos/dev-audio.c:91:4: warning: (near initialization for
-'i2sv3_pdata.type.i2s.idma_addr') [enabled by default]
+The exynos_gpio_cfg can be substituted to samsung_gpio_cfgs[8].
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
 ---
- arch/arm/mach-exynos/dev-audio.c |   12 ------------
- 1 files changed, 0 insertions(+), 12 deletions(-)
+ drivers/gpio/gpio-samsung.c |   25 ++++++++-----------------
+ 1 file changed, 8 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/dev-audio.c
-b/arch/arm/mach-exynos/dev-audio.c
-index a1cb42c..9d1a609 100644
---- a/arch/arm/mach-exynos/dev-audio.c
-+++ b/arch/arm/mach-exynos/dev-audio.c
-@@ -23,11 +23,6 @@
- #include <mach/irqs.h>
- #include <mach/regs-audss.h>
- 
--static const char *rclksrc[] = {
--	[0] = "busclk",
--	[1] = "i2sclk",
--};
--
- static int exynos4_cfg_i2s(struct platform_device *pdev)
- {
- 	/* configure GPIO for i2s port */
-@@ -55,7 +50,6 @@ static struct s3c_audio_pdata i2sv5_pdata = {
- 		.i2s = {
- 			.quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI
- 					 | QUIRK_NEED_RSTCLR,
--			.src_clk = rclksrc,
- 			.idma_addr = EXYNOS4_AUDSS_INT_MEM,
- 		},
- 	},
-@@ -78,17 +72,11 @@ struct platform_device exynos4_device_i2s0 = {
- 	},
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index 6f93d36..a462f2c 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -452,15 +452,6 @@ static struct samsung_gpio_cfg s3c24xx_gpiocfg_banka = {
  };
+ #endif
  
--static const char *rclksrc_v3[] = {
--	[0] = "sclk_i2s",
--	[1] = "no_such_clock",
+-#if defined(CONFIG_ARCH_EXYNOS4) || defined(CONFIG_ARCH_EXYNOS5)
+-static struct samsung_gpio_cfg exynos_gpio_cfg = {
+-	.set_pull	= exynos_gpio_setpull,
+-	.get_pull	= exynos_gpio_getpull,
+-	.set_config	= samsung_gpio_setcfg_4bit,
+-	.get_config	= samsung_gpio_getcfg_4bit,
 -};
+-#endif
 -
- static struct s3c_audio_pdata i2sv3_pdata = {
- 	.cfg_gpio = exynos4_cfg_i2s,
- 	.type = {
- 		.i2s = {
- 			.quirks = QUIRK_NO_MUXPSR,
--			.src_clk = rclksrc_v3,
- 		},
- 	},
- };
+ #if defined(CONFIG_CPU_S5P6440) || defined(CONFIG_CPU_S5P6450)
+ static struct samsung_gpio_cfg s5p64x0_gpio_cfg_rbank = {
+ 	.cfg_eint	= 0x3,
+@@ -2181,7 +2172,7 @@ static struct samsung_gpio_chip s5pv210_gpios_4bit[] = {
+  * Followings are the gpio banks in EXYNOS SoCs
+  *
+  * The 'config' member when left to NULL, is initialized to the default
+- * structure exynos_gpio_cfg in the init function below.
++ * structure samsung_gpio_cfgs[8] in the init function below.
+  *
+  * The 'base' member is also initialized in the init function below.
+  * Note: The initialization of 'base' member of samsung_gpio_chip structure
+@@ -2837,7 +2828,7 @@ static __init void exynos4_gpiolib_init(void)
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+ 		if (!chip->config) {
+-			chip->config = &exynos_gpio_cfg;
++			chip->config = &samsung_gpio_cfgs[8];
+ 			chip->group = group++;
+ 		}
+ 		exynos_gpiolib_attach_ofnode(chip,
+@@ -2864,7 +2855,7 @@ static __init void exynos4_gpiolib_init(void)
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+ 		if (!chip->config) {
+-			chip->config = &exynos_gpio_cfg;
++			chip->config = &samsung_gpio_cfgs[8];
+ 			chip->group = group++;
+ 		}
+ 		exynos_gpiolib_attach_ofnode(chip,
+@@ -2885,7 +2876,7 @@ static __init void exynos4_gpiolib_init(void)
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+ 		if (!chip->config) {
+-			chip->config = &exynos_gpio_cfg;
++			chip->config = &samsung_gpio_cfgs[8];
+ 			chip->group = group++;
+ 		}
+ 		exynos_gpiolib_attach_ofnode(chip,
+@@ -2940,7 +2931,7 @@ static __init void exynos5_gpiolib_init(void)
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+ 		if (!chip->config) {
+-			chip->config = &exynos_gpio_cfg;
++			chip->config = &samsung_gpio_cfgs[8];
+ 			chip->group = group++;
+ 		}
+ 		exynos_gpiolib_attach_ofnode(chip,
+@@ -2961,7 +2952,7 @@ static __init void exynos5_gpiolib_init(void)
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+ 		if (!chip->config) {
+-			chip->config = &exynos_gpio_cfg;
++			chip->config = &samsung_gpio_cfgs[8];
+ 			chip->group = group++;
+ 		}
+ 		exynos_gpiolib_attach_ofnode(chip,
+@@ -2989,7 +2980,7 @@ static __init void exynos5_gpiolib_init(void)
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+ 		if (!chip->config) {
+-			chip->config = &exynos_gpio_cfg;
++			chip->config = &samsung_gpio_cfgs[8];
+ 			chip->group = group++;
+ 		}
+ 		exynos_gpiolib_attach_ofnode(chip,
+@@ -3010,7 +3001,7 @@ static __init void exynos5_gpiolib_init(void)
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+ 		if (!chip->config) {
+-			chip->config = &exynos_gpio_cfg;
++			chip->config = &samsung_gpio_cfgs[8];
+ 			chip->group = group++;
+ 		}
+ 		exynos_gpiolib_attach_ofnode(chip,
 -- 
-1.7.4.1
+1.7.9.5
