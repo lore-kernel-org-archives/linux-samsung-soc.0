@@ -1,98 +1,41 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix MSHC clocks instance names
-Date: Fri, 14 Dec 2012 21:30:36 +0530
-Message-ID: <CAJuYYwRC11EmeEJigYOwAPQqdpBKDr2O1ZSvQdQ1jSnivhH3cw@mail.gmail.com>
-References: <1355497184-26825-1-git-send-email-tobetter@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] i2c-core: Add gpio based bus arbitration implementation
+Date: Fri, 14 Dec 2012 09:06:49 -0700
+Message-ID: <50CB4E99.9060506@wwwdotorg.org>
+References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com> <1355464254-12768-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:50132 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756460Ab2LNQAg (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:33929 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756417Ab2LNQGx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Dec 2012 11:00:36 -0500
-Received: by mail-ie0-f174.google.com with SMTP id c11so6104524ieb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Dec 2012 08:00:36 -0800 (PST)
-In-Reply-To: <1355497184-26825-1-git-send-email-tobetter@gmail.com>
+	Fri, 14 Dec 2012 11:06:53 -0500
+In-Reply-To: <1355464254-12768-2-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dongjin Kim <tobetter@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, grundler@chromium.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, w.sang@pengutronix.de, ben-linux@fluff.org, khali@linux-fr.org, naveen@chromium.org
 
-Hi Dongjin,
+On 12/13/2012 10:50 PM, Naveen Krishna Chatradhi wrote:
+> The arbitrator is a general purpose function which uses two GPIOs to
+> communicate with another device to claim/release a bus.
 
-On 14 December 2012 20:29, Dongjin Kim <tobetter@gmail.com> wrote:
-> Replace clock instance name of MSHC controller for BIC and CIU of Exynos4412.
->
-> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
-> ---
->  arch/arm/mach-exynos/clock-exynos4.c |   25 ++++++++++++++-----------
->  1 file changed, 14 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-exynos/clock-exynos4.c
-> index efead60..ae83011 100644
-> --- a/arch/arm/mach-exynos/clock-exynos4.c
-> +++ b/arch/arm/mach-exynos/clock-exynos4.c
-> @@ -529,8 +529,8 @@ static struct clk exynos4_init_clocks_off[] = {
->                 .enable         = exynos4_clk_ip_fsys_ctrl,
->                 .ctrlbit        = (1 << 8),
->         }, {
-> -               .name           = "dwmmc",
-> -               .parent         = &exynos4_clk_aclk_133.clk,
-> +               .name           = "biu",
-> +               .parent         = &exynos4_clk_aclk_200.clk,
->                 .enable         = exynos4_clk_ip_fsys_ctrl,
->                 .ctrlbit        = (1 << 9),
->         }, {
-> @@ -1132,15 +1132,7 @@ static struct clksrc_clk exynos4_clksrcs[] = {
->                 .sources = &exynos4_clkset_mout_mfc,
->                 .reg_src = { .reg = EXYNOS4_CLKSRC_MFC, .shift = 8, .size = 1 },
->                 .reg_div = { .reg = EXYNOS4_CLKDIV_MFC, .shift = 0, .size = 4 },
-> -       }, {
-> -               .clk    = {
-> -                       .name           = "sclk_dwmmc",
-> -                       .parent         = &exynos4_clk_dout_mmc4.clk,
-> -                       .enable         = exynos4_clksrc_mask_fsys_ctrl,
-> -                       .ctrlbit        = (1 << 16),
-> -               },
-> -               .reg_div = { .reg = EXYNOS4_CLKDIV_FSYS3, .shift = 8, .size = 8 },
-> -       }
-> +       },
->  };
->
->  static struct clksrc_clk exynos4_clk_sclk_uart0 = {
-> @@ -1235,6 +1227,16 @@ static struct clksrc_clk exynos4_clk_sclk_mmc3 = {
->         .reg_div = { .reg = EXYNOS4_CLKDIV_FSYS2, .shift = 24, .size = 8 },
->  };
->
-> +static struct clksrc_clk exynos4_clk_sclk_dwmci = {
-> +       .clk    = {
-> +               .name           = "ciu",
-> +               .parent         = &exynos4_clk_dout_mmc4.clk,
-> +               .enable         = exynos4_clksrc_mask_fsys_ctrl,
-> +               .ctrlbit        = (1 << 16),
-> +       },
-> +       .reg_div = { .reg = EXYNOS4_CLKDIV_FSYS3, .shift = 8, .size = 8 },
-> +};
+> diff --git a/Documentation/devicetree/bindings/i2c/arbitrator-i2c.txt b/Documentation/devicetree/bindings/i2c/arbitrator-i2c.txt
+> new file mode 100644
+> index 0000000..cb91ea8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i2c/arbitrator-i2c.txt
+> @@ -0,0 +1,56 @@
+> +Device-Tree bindings for i2c gpio based bus arbitrator
 > +
+> +bus-arbitration-gpios :
+> +	Two GPIOs to use with the GPIO-based bus arbitration protocol
+> +(see below).
+> +The first should be an output, and is used to claim the I2C bus,
+> +the second should be an input, and signals that the other side (Client)
+> +wants to claim the bus. This allows two masters to share the same I2C bus.
 
-It is not required to move the above clock instance out of the
-exynos4_clksrcs[] array. Just changing the clock name to 'ciu' is
-sufficient. And this will avoid the below change as well.
-
->  static struct clksrc_clk exynos4_clk_mdout_spi0 = {
->         .clk    = {
->                 .name           = "mdout_spi",
-> @@ -1348,6 +1350,7 @@ static struct clksrc_clk *exynos4_clksrc_cdev[] = {
->         &exynos4_clk_sclk_mmc1,
->         &exynos4_clk_sclk_mmc2,
->         &exynos4_clk_sclk_mmc3,
-> +       &exynos4_clk_sclk_dwmci,
->         &exynos4_clk_sclk_spi0,
->         &exynos4_clk_sclk_spi1,
->         &exynos4_clk_sclk_spi2,
-> --
-> 1.7.9.5
-
-Thanks,
-Thomas.
+I'm confused why this is even needed; the I2C protocol itself defines
+how multi-master is supposed to work, just using the regular SCL/SDA lines.
