@@ -1,75 +1,36 @@
-From: Dongjin Kim <tobetter@gmail.com>
-Subject: [PATCH] ARM: EXYNOS: Fix MSHC clocks instance names
-Date: Fri, 14 Dec 2012 23:59:44 +0900
-Message-ID: <1355497184-26825-1-git-send-email-tobetter@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] pinctrl: exynos: add exynos5250 SoC specific data
+Date: Fri, 14 Dec 2012 16:51:50 +0100
+Message-ID: <CACRpkdaQ10CgoFXtk4EyqL4LWVpsdEAdrmy5R-_Rqm5fJdqS4A@mail.gmail.com>
+References: <1355399644-29417-1-git-send-email-thomas.abraham@linaro.org>
+	<1355399644-29417-2-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:50460 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756309Ab2LNPvv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Dec 2012 10:51:51 -0500
+Received: by mail-ee0-f46.google.com with SMTP id e53so2027592eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Dec 2012 07:51:50 -0800 (PST)
+In-Reply-To: <1355399644-29417-2-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, patches@linaro.org
 
-Replace clock instance name of MSHC controller for BIC and CIU of Exynos4412.
+On Thu, Dec 13, 2012 at 12:54 PM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
 
-Signed-off-by: Dongjin Kim <tobetter@gmail.com>
----
- arch/arm/mach-exynos/clock-exynos4.c |   25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+> Add Samsung Exynos5250 SoC specific data to enable pinctrl support for
+> all platforms based on Exynos5250.
+>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-exynos/clock-exynos4.c
-index efead60..ae83011 100644
---- a/arch/arm/mach-exynos/clock-exynos4.c
-+++ b/arch/arm/mach-exynos/clock-exynos4.c
-@@ -529,8 +529,8 @@ static struct clk exynos4_init_clocks_off[] = {
- 		.enable		= exynos4_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 8),
- 	}, {
--		.name		= "dwmmc",
--		.parent		= &exynos4_clk_aclk_133.clk,
-+		.name		= "biu",
-+		.parent		= &exynos4_clk_aclk_200.clk,
- 		.enable		= exynos4_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 9),
- 	}, {
-@@ -1132,15 +1132,7 @@ static struct clksrc_clk exynos4_clksrcs[] = {
- 		.sources = &exynos4_clkset_mout_mfc,
- 		.reg_src = { .reg = EXYNOS4_CLKSRC_MFC, .shift = 8, .size = 1 },
- 		.reg_div = { .reg = EXYNOS4_CLKDIV_MFC, .shift = 0, .size = 4 },
--	}, {
--		.clk	= {
--			.name		= "sclk_dwmmc",
--			.parent		= &exynos4_clk_dout_mmc4.clk,
--			.enable		= exynos4_clksrc_mask_fsys_ctrl,
--			.ctrlbit	= (1 << 16),
--		},
--		.reg_div = { .reg = EXYNOS4_CLKDIV_FSYS3, .shift = 8, .size = 8 },
--	}
-+	},
- };
- 
- static struct clksrc_clk exynos4_clk_sclk_uart0 = {
-@@ -1235,6 +1227,16 @@ static struct clksrc_clk exynos4_clk_sclk_mmc3 = {
- 	.reg_div = { .reg = EXYNOS4_CLKDIV_FSYS2, .shift = 24, .size = 8 },
- };
- 
-+static struct clksrc_clk exynos4_clk_sclk_dwmci = {
-+	.clk    = {
-+		.name           = "ciu",
-+		.parent         = &exynos4_clk_dout_mmc4.clk,
-+		.enable         = exynos4_clksrc_mask_fsys_ctrl,
-+		.ctrlbit        = (1 << 16),
-+	},
-+	.reg_div = { .reg = EXYNOS4_CLKDIV_FSYS3, .shift = 8, .size = 8 },
-+};
-+
- static struct clksrc_clk exynos4_clk_mdout_spi0 = {
- 	.clk	= {
- 		.name		= "mdout_spi",
-@@ -1348,6 +1350,7 @@ static struct clksrc_clk *exynos4_clksrc_cdev[] = {
- 	&exynos4_clk_sclk_mmc1,
- 	&exynos4_clk_sclk_mmc2,
- 	&exynos4_clk_sclk_mmc3,
-+	&exynos4_clk_sclk_dwmci,
- 	&exynos4_clk_sclk_spi0,
- 	&exynos4_clk_sclk_spi1,
- 	&exynos4_clk_sclk_spi2,
--- 
-1.7.9.5
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+For this series, I guess you'll fix it through the Samsung tree?
+
+Yours,
+Linus Walleij
