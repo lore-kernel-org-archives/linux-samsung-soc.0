@@ -1,51 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] ARM: dts: add pinctrl nodes for Exynos5250 SoC
-Date: Fri, 14 Dec 2012 21:34:47 +0100
-Message-ID: <CACRpkdZgSpkHW3mW_2ZhvUWVTX7Qppb5G8d+MdD3zUDOYCY-pw@mail.gmail.com>
-References: <1355403978-388-1-git-send-email-thomas.abraham@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/2] i2c-core: Add gpio based bus arbitration
+ implementation
+Date: Sat, 15 Dec 2012 23:21:36 +0900
+Message-ID: <20121215142135.GB22033@opensource.wolfsonmicro.com>
+References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
+ <1355464254-12768-2-git-send-email-ch.naveen@samsung.com>
+ <50CB4E99.9060506@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:53822 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932289Ab2LNUes (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36280 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756314Ab2LOOVl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Dec 2012 15:34:48 -0500
-Received: by mail-ee0-f46.google.com with SMTP id e53so2183819eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Dec 2012 12:34:47 -0800 (PST)
-In-Reply-To: <1355403978-388-1-git-send-email-thomas.abraham@linaro.org>
+	Sat, 15 Dec 2012 09:21:41 -0500
+Content-Disposition: inline
+In-Reply-To: <50CB4E99.9060506@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, patches@linaro.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, grundler@chromium.org, devicetree-discuss@lists.ozlabs.org, w.sang@pengutronix.de, ben-linux@fluff.org, khali@linux-fr.org, naveen@chromium.org
 
-On Thu, Dec 13, 2012 at 2:06 PM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
 
-> Add pinctrl device nodes for Exynos5250 SoC.
->
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+--neYutvxvOLaeuPCA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On Fri, Dec 14, 2012 at 09:06:49AM -0700, Stephen Warren wrote:
+> On 12/13/2012 10:50 PM, Naveen Krishna Chatradhi wrote:
 
-> - The individual device nodes which are using the old style Samsung gpio
->   bindings have not been converted over to pinctrl bindings yet. It might
->   also be important to know if Linus's pinctrl grab in device core patch
->   (http://comments.gmane.org/gmane.linux.kernel/1409263) gets accepted.
+> > +The first should be an output, and is used to claim the I2C bus,
+> > +the second should be an input, and signals that the other side (Client)
+> > +wants to claim the bus. This allows two masters to share the same I2C bus.
 
-Greg seems happy with it and the plan is to have it merged for kernel
-v3.9.
+> I'm confused why this is even needed; the I2C protocol itself defines
+> how multi-master is supposed to work, just using the regular SCL/SDA lines.
 
-I intend to push Greg for an ACK and queue it for linux-next right after the
-merge window.
+Practically speaking essentially no systems actually do that - mostly
+Linux will treat failure to get the bus as an error for example.  You
+also get things like read operations which appear as multiple
+transactions on the I2C bus so require something higher level than what
+multi-master provides.
 
-> - This patch should not be merged for now which otherwise would break existing
->   platforms which are using the old samsung gpio driver bindings. This patch
->   is intended to get started with the migration to pinctrl framework.
->   It is probably better to first prepare all the migration patches and
->   merge them as a bunch.
+--neYutvxvOLaeuPCA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Sure. I guess it'll be taken through the Samsung tree anyway, right?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Yours,
-Linus Walleij
+iQIcBAEBAgAGBQJQzIdaAAoJELSic+t+oim9ziYP/3Xec5OTpdhalJ/3xknDDvHI
+FhaH4Lk8Fdl3pRAuqJFUdR+4feutuVv+Gii95Wde76uw9Kp4/q6PlKCjrBZ+m4Cb
+GXFpODwvHwOdk8f0MqxaL88KBbUBgq6Psl1lOW8xww898r7M/+2auq+QvLM0IpZt
+sgVOD5qUwfpl5jgyNjEdsTtU2XinhputoGj0IFa4Fc3GPmsmC35F/ttiB+QMnHlC
+vO8ucntVom7Y5UecCD4+eh4iR5Xs6s7x7BH7FxeaLCSsEYH1B8EKrn5v3q4hMmjk
+2tKrhXeHtkxO2+Am1WAC95lrutHxYNPnaNJxE114/eba2d2YKqqHd40028V2twsy
+BT9VlaV0IG9bZTPmXnl2dqFSHj7NYZ8s9LcWkS4AEmo7K+wzQRo7SYdfCOZJed80
+8qWRo3zA5umUn0zW6Jy6aWqFH8EhUZWSXOTTDuAAxgpIS/QjQO/evVtHqg4UQy4V
+4jIpK48FWEC411pPVRTKEKo6d0micOv0GoWv8nvRInBGFxB0wXBrJHSLA7TbnT+t
+oiloBdi3uXvmweLRpg8n+4vbsQHgpdHucpai9u3eUQKU6HuRiJREypphUa3o3/uM
+V8XafhCb5RasXaDKkHCYCeolTzWlVMKnV0bgEYMfifbjvnroQTmYHitQsZf4t95f
+fFQiq2aSuoSJdL8oal5/
+=cduo
+-----END PGP SIGNATURE-----
+
+--neYutvxvOLaeuPCA--
