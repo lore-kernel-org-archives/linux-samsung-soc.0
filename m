@@ -1,19 +1,16 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
 Subject: [PATCH] spi: remove check for bits_per_word on transfer
-Date: Mon, 17 Dec 2012 23:21:57 +0530
-Message-ID: <1355766718-2040-1-git-send-email-ldewangan@nvidia.com>
+Date: Mon, 17 Dec 2012 23:21:58 +0530
+Message-ID: <1355766718-2040-2-git-send-email-ldewangan@nvidia.com>
+References: <1355766718-2040-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate03.nvidia.com ([216.228.121.140]:4042 "EHLO
-	hqemgate03.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752091Ab2LQRwi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Dec 2012 12:52:38 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1355766718-2040-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com
 Cc: ben-linux@fluff.org, kgene.kim@samsung.com, baohua.song@csr.com, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jonas.gorski@gmail.com, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 When spi client does the spi transfer and does not sets
 the bits_per_word for each transfer then set it as default
