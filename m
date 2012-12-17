@@ -1,117 +1,116 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH v3 1/2] ARM: Exynos5250: Enabling ehci-s5p driver
-Date: Sat, 15 Dec 2012 07:23:12 +0000
-Message-ID: <20121215072312.EBCAA3E0C06@localhost>
-References: <1355416562-25539-1-git-send-email-gautam.vivek@samsung.com> <1355416562-25539-2-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1355416562-25539-2-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix compile error in dev-audio.c
+Date: Sun, 16 Dec 2012 16:42:05 -0800
+Message-ID: <CAOesGMhgvsM7Fk-YpihjYM6h+xqK-ejBzPKEDypfdKEmHp6ZJg@mail.gmail.com>
+References: <000701cdd9d3$3b6a6e10$b23f4a30$%choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:35588 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750738Ab2LQAmH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 16 Dec 2012 19:42:07 -0500
+Received: by mail-ie0-f174.google.com with SMTP id c11so8484473ieb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Dec 2012 16:42:06 -0800 (PST)
+In-Reply-To: <000701cdd9d3$3b6a6e10$b23f4a30$%choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jonghwan Choi <jhbird.choi@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org
 
-On Thu, 13 Dec 2012 22:06:01 +0530, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Adding EHCI device tree node for Exynos5250 along with
-> the device base adress and gpio line for vbus.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  .../devicetree/bindings/usb/exynos-usb.txt         |   25 ++++++++++++++++++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 +++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++
->  arch/arm/mach-exynos/include/mach/map.h            |    1 +
->  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
->  5 files changed, 38 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/usb/exynos-usb.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> new file mode 100644
-> index 0000000..e8bbb47
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> @@ -0,0 +1,25 @@
-> +Samsung Exynos SoC USB controller
-> +
-> +The USB devices interface with USB controllers on Exynos SOCs.
-> +The device node has following properties.
-> +
-> +EHCI
-> +Required properties:
-> + - compatible: should be "samsung,exynos4210-ehci" for USB 2.0
-> +   EHCI controller in host mode.
-> + - reg: physical base address of the controller and length of memory mapped
-> +   region.
-> + - interrupts: interrupt number to the cpu.
-> +
-> +Optional properties:
-> + - samsung,vbus-gpio:  if present, specifies the GPIO that
-> +   needs to be pulled up for the bus to be powered.
-> +
-> +Example:
-> +
-> +	usb@12110000 {
-> +		compatible = "samsung,exynos4210-ehci";
-> +		reg = <0x12110000 0x100>;
-> +		interrupts = <0 71 0>;
-> +		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
-> +	};
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 711b55f..f990086 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -218,4 +218,8 @@
->  	i2s_2: i2s@12D70000 {
->  		status = "disabled";
->  	};
-> +
-> +	usb@12110000 {
-> +		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
-> +	};
->  };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 581e57a..584bb9a 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -299,6 +299,12 @@
->  		rx-dma-channel = <&pdma0 11>; /* preliminary */
->  	};
->  
-> +	usb@12110000 {
-> +		compatible = "samsung,exynos4210-ehci";
-> +		reg = <0x12110000 0x100>;
-> +		interrupts = <0 71 0>;
-> +	};
-> +
->  	amba {
->  		#address-cells = <1>;
->  		#size-cells = <1>;
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index cbb2852..b2c662f 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -201,6 +201,7 @@
->  #define EXYNOS4_PA_EHCI			0x12580000
->  #define EXYNOS4_PA_OHCI			0x12590000
->  #define EXYNOS4_PA_HSPHY		0x125B0000
-> +#define EXYNOS5_PA_EHCI			0x12110000
->  #define EXYNOS4_PA_MFC			0x13400000
->  
->  #define EXYNOS4_PA_UART			0x13800000
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index 462e5ac..b3b9af1 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -110,6 +110,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->  				"samsung-i2s.1", NULL),
->  	OF_DEV_AUXDATA("samsung,samsung-i2s", 0x12D70000,
->  				"samsung-i2s.2", NULL),
-> +	OF_DEV_AUXDATA("samsung,exynos4210-ehci", EXYNOS5_PA_EHCI,
-> +				"s5p-ehci", NULL),
+On Fri, Dec 14, 2012 at 12:15 AM, Jonghwan Choi <jhbird.choi@samsung.com> wrote:
+> arch/arm/mach-exynos/dev-audio.c:58:4: error: unknown field 'src_clk'
+> specified in initializer
+> arch/arm/mach-exynos/dev-audio.c:58:4: warning: initialization makes integer
+> from pointer without a cast [enabled by default]
+> arch/arm/mach-exynos/dev-audio.c:58:4: warning: (near initialization for
+> 'i2sv5_pdata.type.i2s.idma_addr') [enabled by default]
+> arch/arm/mach-exynos/dev-audio.c:91:4: error: unknown field 'src_clk'
+> specified in initializer
+> arch/arm/mach-exynos/dev-audio.c:91:4: warning: initialization makes integer
+> from pointer without a cast [enabled by default]
+> arch/arm/mach-exynos/dev-audio.c:91:4: warning: (near initialization for
+> 'i2sv3_pdata.type.i2s.idma_addr') [enabled by default]
+>
+> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 
-I'm assuming the above change is temporary. What is left to be done to
-drop the auxdata in theses two patches?
+This only fixes one of many build errors caused by the i2s change:
 
-Otherwise the patch looks fine.
+      1 arch/arm/mach-s3c64xx/dev-audio.c:113:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s3c64xx/dev-audio.c:113:4: warning: (near
+initialization for 'i2sv4_pdata.type.i2s.idma_addr') [enabled by
+default]
+      1 arch/arm/mach-s3c64xx/dev-audio.c:69:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s3c64xx/dev-audio.c:69:4: warning: (near
+initialization for 'i2sv3_pdata.type.i2s.quirks') [enabled by default]
+      1 arch/arm/mach-s5p64x0/dev-audio.c:115:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s5p64x0/dev-audio.c:115:4: warning: (near
+initialization for 's5p6450_i2s_pdata.type.i2s.quirks') [enabled by
+default]
+      1 arch/arm/mach-s5p64x0/dev-audio.c:48:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s5p64x0/dev-audio.c:48:4: warning: (near
+initialization for 's5p6440_i2s_pdata.type.i2s.idma_addr') [enabled by
+default]
+      1 arch/arm/mach-s5p64x0/dev-audio.c:96:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s5p64x0/dev-audio.c:96:4: warning: (near
+initialization for 's5p6450_i2s0_pdata.type.i2s.idma_addr') [enabled
+by default]
+      1 arch/arm/mach-s5pc100/dev-audio.c:53:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s5pc100/dev-audio.c:53:4: warning: (near
+initialization for 'i2sv5_pdata.type.i2s.idma_addr') [enabled by
+default]
+      1 arch/arm/mach-s5pc100/dev-audio.c:84:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s5pc100/dev-audio.c:84:4: warning: (near
+initialization for 'i2sv3_pdata.type.i2s.quirks') [enabled by default]
+      1 arch/arm/mach-s5pv210/dev-audio.c:55:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s5pv210/dev-audio.c:55:4: warning: (near
+initialization for 'i2sv5_pdata.type.i2s.idma_addr') [enabled by
+default]
+      1 arch/arm/mach-s5pv210/dev-audio.c:87:4: warning:
+initialization makes integer from pointer without a cast [enabled by
+default]
+      1 arch/arm/mach-s5pv210/dev-audio.c:87:4: warning: (near
+initialization for 'i2sv3_pdata.type.i2s.quirks') [enabled by default]
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+
+Looks like the breakage was caused by the following commit:
+
+commit 1974a042dd15f1f007a3a1a2dd7a23ca0e42c01d
+Author:     Padmavathi Venna <padma.v@samsung.com>
+AuthorDate: Wed Nov 28 16:17:48 2012 +0530
+Commit:     Mark Brown <broonie@opensource.wolfsonmicro.com>
+CommitDate: Wed Nov 28 19:18:00 2012 +0000
+
+    ASoC: Samsung: Get I2S src_clk from clock alias id.
+
+Padmavathi, you can't send out code that breaks all Samsung platforms
+like this, even if there are patches out there that fixes it. Changes
+have to be bisectable, which means that you can't break and unbreak
+the build, least of all if you merge through different maintainers.
+And you need to tell the other maintainer that there are dependent
+patches, you just sent the above patch to Mark without any such
+information.
+
+Kukjin, I see that Padmavathi has posted a V3 series of patches to
+remove all this from the dev-audio files on November 23. Are you ok
+with us picking them up and sending ASAP?
+
+
+-Olof
