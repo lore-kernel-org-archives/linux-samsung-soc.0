@@ -1,50 +1,66 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 0/3] add mie driver for exynos
-Date: Mon, 17 Dec 2012 21:07:31 +0100
-Message-ID: <CAKMK7uE=fr3fNwzUiW056EPq9K=N9wgvU2n9xigRqfLw2i0yVQ@mail.gmail.com>
-References: <1354795695-28009-1-git-send-email-rcsekar@samsung.com>
-	<CAAQKjZM278TfT=dcVJoKRPqWpdChaJv2N6v4O_D-xsxJOLKeRQ@mail.gmail.com>
-	<CACP_E+JdiVxD05k0F57bmXWw1WKiS_NNviXOXYUVegwi5MnrsQ@mail.gmail.com>
-	<CAAQKjZOVVU0fjj5VruQ-m8pgPoBATpXuzKsZv2F+Ux-aLtcLHw@mail.gmail.com>
-	<CACP_E++D=_akHO5tLw-XQKj8BPbhoy3SE9AUJGd5i-pvA2qsfw@mail.gmail.com>
-	<CAAQKjZPkfAs9Ff6_odxY95zT0Obw0x8SvkuMjB41O+HG2cVefA@mail.gmail.com>
-	<CACP_E++aObqEoO7wYDd=5xUkZ9Fo=hz5V5nQpNk_dVeOHmeizQ@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 4/4] ODROID-X: dts: Add mshc node for ODROID-X board
+Date: Mon, 17 Dec 2012 22:40:35 +0100
+Message-ID: <2216925.ElgEB0zitR@flatron>
+References: <1355774107-364-1-git-send-email-tobetter@gmail.com> <1355774107-364-5-git-send-email-tobetter@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:62974 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752714Ab2LQUHd convert rfc822-to-8bit (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:36130 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752143Ab2LQVki (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Dec 2012 15:07:33 -0500
-Received: by mail-we0-f174.google.com with SMTP id x10so2948211wey.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Dec 2012 12:07:32 -0800 (PST)
-In-Reply-To: <CACP_E++aObqEoO7wYDd=5xUkZ9Fo=hz5V5nQpNk_dVeOHmeizQ@mail.gmail.com>
+	Mon, 17 Dec 2012 16:40:38 -0500
+In-Reply-To: <1355774107-364-5-git-send-email-tobetter@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?St=E9phane_Marchesin?= <stephane.marchesin@gmail.com>
-Cc: Inki Dae <inki.dae@samsung.com>, kgene.kim@samsung.com, "R. Chandrasekar" <rcsekar@samsung.com>, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, rcsekar.samsung@gmail.com
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2012 at 7:59 PM, St=E9phane Marchesin
-<stephane.marchesin@gmail.com> wrote:
->
->> And
->> fimd, as display controller, could be controlled by linux framebuffe=
-r or drm
->> framework.
->>
->
-> I don't think it's a valid point. If the framebuffer is properly done
-> on top of the DRM, you don't need all of that at all.
+Hi Dongjin,
 
-Imo for hw with full-fledge drm kms drivers the sanest option for
-traditional fbdev support is to pimp the fb helpers a bit. Pretty much
-the only thing left that a real fbdev driver can do afaics is fb
-reallocation - it shouldn't be too hard to (optionally) implement this
-in the helpers ...
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+On Tuesday 18 of December 2012 04:55:07 Dongjin Kim wrote:
+> Adding the device node to support eMMC storage on SDCARD4 ports,
+> controlled by Mobile Storage Host Controller.
+> 
+> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroidx.dts |   21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts
+> b/arch/arm/boot/dts/exynos4412-odroidx.dts index 3943011..fbd0b51
+> 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroidx.dts
+> +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+> @@ -73,4 +73,25 @@
+>  			linux,default-trigger = "mmc0";
+>  		};
+>  	};
+> +
+> +	mshc@12550000 {
+> +		num-slots = <1>;
+> +		supports-highspeed;
+> +		broken-cd;
+> +		fifo-depth = <0x80>;
+> +		card-detect-delay = <200>;
+> +		samsung,dw-mshc-ciu-div = <3>;
+> +		samsung,dw-mshc-sdr-timing = <2 3 3>;
+> +		samsung,dw-mshc-ddr-timing = <1 2 3>;
+> +
+> +		slot@0 {
+> +			reg = <0>;
+> +			bus-width = <8>;
+> +			gpios = <&gpk0 0 3>, <&gpk0 1 3>,
+> +				<&gpk0 3 3>, <&gpk0 4 3>,
+> +				<&gpk0 5 3>, <&gpk0 6 3>,
+> +				<&gpk1 3 4>, <&gpk1 4 4>,
+> +				<&gpk1 5 4>, <&gpk1 6 4>;
+
+What is the gpios property for in this node? Pin configuration using 
+legacy GPIO bindings is not supported anymore on Exynos4. Pin control 
+bindings must be used.
+
+Best regards,
+Tomasz Figa
