@@ -1,135 +1,66 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix compile error in dev-audio.c
-Date: Mon, 17 Dec 2012 09:48:46 +0530
-Message-ID: <CAAgF-BdPMYSzewSoZz6AXjdLktWyiyGV_NZ=T+vDgQSF_XdKiw@mail.gmail.com>
-References: <000701cdd9d3$3b6a6e10$b23f4a30$%choi@samsung.com>
-	<CAOesGMhgvsM7Fk-YpihjYM6h+xqK-ejBzPKEDypfdKEmHp6ZJg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/3] ARM: EXYNOS: Fix NULL pointer dereference bug in Origen
+Date: Mon, 17 Dec 2012 16:54:19 +0530
+Message-ID: <1355743461-21535-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:44377 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751026Ab2LQESs (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:44469 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751958Ab2LQLbq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Dec 2012 23:18:48 -0500
-Received: by mail-la0-f46.google.com with SMTP id p5so4322005lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Dec 2012 20:18:46 -0800 (PST)
-In-Reply-To: <CAOesGMhgvsM7Fk-YpihjYM6h+xqK-ejBzPKEDypfdKEmHp6ZJg@mail.gmail.com>
+	Mon, 17 Dec 2012 06:31:46 -0500
+Received: by mail-pb0-f46.google.com with SMTP id wy7so3935652pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Dec 2012 03:31:46 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Jonghwan Choi <jhbird.choi@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, patches@linaro.org, sachin.kamat@linaro.org
 
-Hi,
+When DRM support for Samsung SoC and Samsung S3C framebuffer support
+are selected, the kernel crashes as it does not get the required
+platform data. Change the compile macro to CONFIG_DRM_EXYNOS_FIMD
+to fix this.
 
-On Mon, Dec 17, 2012 at 6:12 AM, Olof Johansson <olof@lixom.net> wrote:
-> On Fri, Dec 14, 2012 at 12:15 AM, Jonghwan Choi <jhbird.choi@samsung.com> wrote:
->> arch/arm/mach-exynos/dev-audio.c:58:4: error: unknown field 'src_clk'
->> specified in initializer
->> arch/arm/mach-exynos/dev-audio.c:58:4: warning: initialization makes integer
->> from pointer without a cast [enabled by default]
->> arch/arm/mach-exynos/dev-audio.c:58:4: warning: (near initialization for
->> 'i2sv5_pdata.type.i2s.idma_addr') [enabled by default]
->> arch/arm/mach-exynos/dev-audio.c:91:4: error: unknown field 'src_clk'
->> specified in initializer
->> arch/arm/mach-exynos/dev-audio.c:91:4: warning: initialization makes integer
->> from pointer without a cast [enabled by default]
->> arch/arm/mach-exynos/dev-audio.c:91:4: warning: (near initialization for
->> 'i2sv3_pdata.type.i2s.idma_addr') [enabled by default]
->>
->> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
->
-> This only fixes one of many build errors caused by the i2s change:
->
->       1 arch/arm/mach-s3c64xx/dev-audio.c:113:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s3c64xx/dev-audio.c:113:4: warning: (near
-> initialization for 'i2sv4_pdata.type.i2s.idma_addr') [enabled by
-> default]
->       1 arch/arm/mach-s3c64xx/dev-audio.c:69:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s3c64xx/dev-audio.c:69:4: warning: (near
-> initialization for 'i2sv3_pdata.type.i2s.quirks') [enabled by default]
->       1 arch/arm/mach-s5p64x0/dev-audio.c:115:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s5p64x0/dev-audio.c:115:4: warning: (near
-> initialization for 's5p6450_i2s_pdata.type.i2s.quirks') [enabled by
-> default]
->       1 arch/arm/mach-s5p64x0/dev-audio.c:48:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s5p64x0/dev-audio.c:48:4: warning: (near
-> initialization for 's5p6440_i2s_pdata.type.i2s.idma_addr') [enabled by
-> default]
->       1 arch/arm/mach-s5p64x0/dev-audio.c:96:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s5p64x0/dev-audio.c:96:4: warning: (near
-> initialization for 's5p6450_i2s0_pdata.type.i2s.idma_addr') [enabled
-> by default]
->       1 arch/arm/mach-s5pc100/dev-audio.c:53:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s5pc100/dev-audio.c:53:4: warning: (near
-> initialization for 'i2sv5_pdata.type.i2s.idma_addr') [enabled by
-> default]
->       1 arch/arm/mach-s5pc100/dev-audio.c:84:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s5pc100/dev-audio.c:84:4: warning: (near
-> initialization for 'i2sv3_pdata.type.i2s.quirks') [enabled by default]
->       1 arch/arm/mach-s5pv210/dev-audio.c:55:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s5pv210/dev-audio.c:55:4: warning: (near
-> initialization for 'i2sv5_pdata.type.i2s.idma_addr') [enabled by
-> default]
->       1 arch/arm/mach-s5pv210/dev-audio.c:87:4: warning:
-> initialization makes integer from pointer without a cast [enabled by
-> default]
->       1 arch/arm/mach-s5pv210/dev-audio.c:87:4: warning: (near
-> initialization for 'i2sv3_pdata.type.i2s.quirks') [enabled by default]
->
->
-> Looks like the breakage was caused by the following commit:
->
-> commit 1974a042dd15f1f007a3a1a2dd7a23ca0e42c01d
-> Author:     Padmavathi Venna <padma.v@samsung.com>
-> AuthorDate: Wed Nov 28 16:17:48 2012 +0530
-> Commit:     Mark Brown <broonie@opensource.wolfsonmicro.com>
-> CommitDate: Wed Nov 28 19:18:00 2012 +0000
->
->     ASoC: Samsung: Get I2S src_clk from clock alias id.
->
-> Padmavathi, you can't send out code that breaks all Samsung platforms
-> like this, even if there are patches out there that fixes it. Changes
-> have to be bisectable, which means that you can't break and unbreak
-> the build, least of all if you merge through different maintainers.
-> And you need to tell the other maintainer that there are dependent
-> patches, you just sent the above patch to Mark without any such
-> information.
+Without this patch the following crash occurs during bootup:
 
-In V3, as I posted all the patches together I didn't mention about the
-dependency. But I could have mentioned about it in V4. I apologize for
-the build break.
+Unable to handle kernel NULL pointer dereference at virtual address 00000000
+PC is at 0x0
+LR is at s3c_fb_probe+0x198/0x788
+[<c01520e8>] (s3c_fb_probe+0x198/0x788) from [<c01a3dd4>] (platform_drv_probe+0x18/0x1c)
+[<c01a3dd4>] (platform_drv_probe+0x18/0x1c) from [<c01a2b8c>] (driver_probe_device+0x70/0x1f0)
+[<c01a2b8c>] (driver_probe_device+0x70/0x1f0) from [<c01a2d98>] (__driver_attach+0x8c/0x90)
+[<c01a2d98>] (__driver_attach+0x8c/0x90) from [<c01a14e4>] (bus_for_each_dev+0x50/0x7c)
+[<c01a14e4>] (bus_for_each_dev+0x50/0x7c) from [<c01a23f4>] (bus_add_driver+0x170/0x23c)
+[<c01a23f4>] (bus_add_driver+0x170/0x23c) from [<c01a324c>] (driver_register+0x78/0x144)
+[<c01a324c>] (driver_register+0x78/0x144) from [<c000862c>] (do_one_initcall+0x34/0x174)
+[<c000862c>] (do_one_initcall+0x34/0x174) from [<c01de210>] (kernel_init+0x100/0x2a0)
+[<c01de210>] (kernel_init+0x100/0x2a0) from [<c000e118>] (ret_from_fork+0x14/0x3c)
 
->
-> Kukjin, I see that Padmavathi has posted a V3 series of patches to
-> remove all this from the dev-audio files on November 23. Are you ok
-> with us picking them up and sending ASAP?
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/mach-origen.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Kukjin, Could you please give your conformation for the above patches?
-
->
->
-> -Olof
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-Thanks
-Padma
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index e6f4191..5e34b9c 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -621,7 +621,7 @@ static struct pwm_lookup origen_pwm_lookup[] = {
+ 	PWM_LOOKUP("s3c24xx-pwm.0", 0, "pwm-backlight.0", NULL),
+ };
+ 
+-#ifdef CONFIG_DRM_EXYNOS
++#ifdef CONFIG_DRM_EXYNOS_FIMD
+ static struct exynos_drm_fimd_pdata drm_fimd_pdata = {
+ 	.panel	= {
+ 		.timing	= {
+@@ -793,7 +793,7 @@ static void __init origen_machine_init(void)
+ 	s5p_i2c_hdmiphy_set_platdata(NULL);
+ 	s5p_hdmi_set_platdata(&hdmiphy_info, NULL, 0);
+ 
+-#ifdef CONFIG_DRM_EXYNOS
++#ifdef CONFIG_DRM_EXYNOS_FIMD
+ 	s5p_device_fimd0.dev.platform_data = &drm_fimd_pdata;
+ 	exynos4_fimd0_gpio_setup_24bpp();
+ #else
+-- 
+1.7.4.1
