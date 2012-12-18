@@ -1,182 +1,93 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] usb: phy: samsung: Add support to set pmu isolation
-Date: Tue, 18 Dec 2012 11:26:07 +0530
-Message-ID: <1355810167-18425-2-git-send-email-gautam.vivek@samsung.com>
-References: <1355810167-18425-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1355810167-18425-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH 1/4] ODROID-X: dts: Add board dts file for ODROID-X
+Date: Tue, 18 Dec 2012 07:00:09 +0100
+Message-ID: <20121218060009.GK23971@game.jcrosoft.org>
+References: <1355774107-364-1-git-send-email-tobetter@gmail.com>
+ <1355774107-364-2-git-send-email-tobetter@gmail.com>
+ <CAOesGMgZWNiCmTFGvr--zKf+vS51hX5jPnD+NZq8OvGFLS9rJA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAOesGMgZWNiCmTFGvr--zKf+vS51hX5jPnD+NZq8OvGFLS9rJA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Dongjin Kim <tobetter@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Shawn Guo <shawn.guo@linaro.org>, Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adding support to parse device node data in order to get
-required properties to set pmu isolation for usb-phy.
+On 17:56 Mon 17 Dec     , Olof Johansson wrote:
+> On Mon, Dec 17, 2012 at 11:55 AM, Dongjin Kim <tobetter@gmail.com> wrote:
+> > Add initial dtb file for Hardkernel's ODROID-X board based on EXYNOS4412 SoC.
+> >
+> > Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/Makefile               |    1 +
+> >  arch/arm/boot/dts/exynos4412-odroidx.dts |   52 ++++++++++++++++++++++++++++++
+> >  2 files changed, 53 insertions(+)
+> >  create mode 100644 arch/arm/boot/dts/exynos4412-odroidx.dts
+> >
+> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> > index ca6fb8e..3355af9 100644
+> > --- a/arch/arm/boot/dts/Makefile
+> > +++ b/arch/arm/boot/dts/Makefile
+> > @@ -45,6 +45,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+> >         exynos5250-smdk5250.dtb \
+> >         exynos5440-ssdk5440.dtb \
+> >         exynos4412-smdk4412.dtb \
+> > +       exynos4412-odroidx.dtb \
+> 
+> Please add them alphabetically, so before smdk.
+we need to drop the \ \ stuff it will end with merge conflict
+as if you add 2 dtb at the end you will end with 2 patch that touch the same
+previous line
+> 
+> > diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+> > new file mode 100644
+> > index 0000000..786ddd7
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+> > @@ -0,0 +1,52 @@
+> > +/*
+> > + * Hardkernel's Exynos4412 based ODROID-X board device tree source
+> > + *
+> > + * Copyright (c) 2012-2013 Dongjin Kim <tobetter@gmail.com>
+> 
+> Are you from the future?
+> 
+> > + *
+> > + * Device tree source file for Hardkernel's ODROID-X board which is based on
+> > + * Samsung's Exynos4412 SoC.
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > +*/
+> > +
+> > +/dts-v1/;
+> > +/include/ "exynos4412.dtsi"
+> > +
+> > +/ {
+> > +       model = "Hardkernel ODROID-X board based on Exynos4412";
+> > +       compatible = "samsung,exynos4412";
+> 
+> It should have a more specific compatible value first, i.e.
+> "hardkernel,odroid-x" or similar.
+> 
+> 
+> > +       memory {
+> > +               reg = <0x40000000 0x40000000>;
+> > +       };
+> > +
+> > +       chosen {
+> > +               bootargs ="root=/dev/mmcblk0p3 rw console=ttySAC1,115200 init=/sbin/init delay=2";
+> 
+> Bootargs should be passed in from u-boot, don't specify them in the
+> static device tree.
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- .../devicetree/bindings/usb/samsung-usbphy.txt     |   10 +++
- drivers/usb/phy/samsung-usbphy.c                   |   80 ++++++++++++++++++--
- 2 files changed, 82 insertions(+), 8 deletions(-)
+why not we can choose to have a default cmdline and even usit as a complement
+of the bootloader one
 
-diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-index 7b26e2d..112eaa6 100644
---- a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-+++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-@@ -9,3 +9,13 @@ Required properties:
- - compatible : should be "samsung,exynos4210-usbphy"
- - reg : base physical address of the phy registers and length of memory mapped
- 	region.
-+- samsung,usb-phyctrl : should point to usb-phyctrl sub-node which provides
-+			binding data to enable/disable device PHY handled by
-+			PMU register.
-+
-+			Required properties:
-+			- compatible : should be "samsung,usbdev-phyctrl" for
-+					DEVICE type phy.
-+			- samsung,phyctrl-reg: base physical address of
-+						PHY_CONTROL register in PMU.
-+- samsung,enable-mask : should be '1'
-diff --git a/drivers/usb/phy/samsung-usbphy.c b/drivers/usb/phy/samsung-usbphy.c
-index 5c5e1bb5..ef394c3 100644
---- a/drivers/usb/phy/samsung-usbphy.c
-+++ b/drivers/usb/phy/samsung-usbphy.c
-@@ -72,6 +72,8 @@ enum samsung_cpu_type {
-  * @dev: The parent device supplied to the probe function
-  * @clk: usb phy clock
-  * @regs: usb phy register memory base
-+ * @devctrl_reg: usb phy-control pmu register memory base
-+ * @en_mask: enable mask
-  * @ref_clk_freq: reference clock frequency selection
-  * @cpu_type: machine identifier
-  */
-@@ -81,12 +83,62 @@ struct samsung_usbphy {
- 	struct device	*dev;
- 	struct clk	*clk;
- 	void __iomem	*regs;
-+	void __iomem	*devctrl_reg;
-+	u32		en_mask;
- 	int		ref_clk_freq;
- 	int		cpu_type;
- };
- 
- #define phy_to_sphy(x)		container_of((x), struct samsung_usbphy, phy)
- 
-+static int samsung_usbphy_parse_dt_param(struct samsung_usbphy *sphy)
-+{
-+	struct device_node *usb_phyctrl;
-+	u32 reg;
-+
-+	if (!sphy->dev->of_node) {
-+		sphy->devctrl_reg = NULL;
-+		return -ENODEV;
-+	}
-+
-+	usb_phyctrl = of_parse_phandle(sphy->dev->of_node,
-+					"samsung,usb-phyctrl", 0);
-+	if (!usb_phyctrl) {
-+		dev_dbg(sphy->dev, "Can't get usb-phy control node\n");
-+		sphy->devctrl_reg = NULL;
-+		return -ENODEV;
-+	}
-+
-+	of_property_read_u32(usb_phyctrl, "samsung,phyctrl-reg", &reg);
-+
-+	sphy->devctrl_reg = ioremap(reg, SZ_4);
-+
-+	of_property_read_u32(sphy->dev->of_node, "samsung,enable-mask",
-+							&sphy->en_mask);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Set isolation here for phy.
-+ * SOCs control this by controlling corresponding PMU registers
-+ */
-+static void samsung_usbphy_set_isolation(struct samsung_usbphy *sphy, int on)
-+{
-+	void __iomem *usb_phyctrl_reg;
-+	u32 en_mask = sphy->en_mask;
-+	u32 reg;
-+
-+	usb_phyctrl_reg = sphy->devctrl_reg;
-+
-+	reg = readl(usb_phyctrl_reg);
-+
-+	if (on)
-+		writel(reg & ~en_mask, usb_phyctrl_reg);
-+	else
-+		writel(reg | en_mask, usb_phyctrl_reg);
-+}
-+
- /*
-  * Returns reference clock frequency selection value
-  */
-@@ -199,6 +251,8 @@ static int samsung_usbphy_init(struct usb_phy *phy)
- 	/* Disable phy isolation */
- 	if (sphy->plat && sphy->plat->pmu_isolation)
- 		sphy->plat->pmu_isolation(false);
-+	else
-+		samsung_usbphy_set_isolation(sphy, false);
- 
- 	/* Initialize usb phy registers */
- 	samsung_usbphy_enable(sphy);
-@@ -228,6 +282,8 @@ static void samsung_usbphy_shutdown(struct usb_phy *phy)
- 	/* Enable phy isolation */
- 	if (sphy->plat && sphy->plat->pmu_isolation)
- 		sphy->plat->pmu_isolation(true);
-+	else
-+		samsung_usbphy_set_isolation(sphy, true);
- 
- 	clk_disable_unprepare(sphy->clk);
- }
-@@ -249,17 +305,12 @@ static inline int samsung_usbphy_get_driver_data(struct platform_device *pdev)
- static int __devinit samsung_usbphy_probe(struct platform_device *pdev)
- {
- 	struct samsung_usbphy *sphy;
--	struct samsung_usbphy_data *pdata;
-+	struct samsung_usbphy_data *pdata = pdev->dev.platform_data;
- 	struct device *dev = &pdev->dev;
- 	struct resource *phy_mem;
- 	void __iomem	*phy_base;
- 	struct clk *clk;
--
--	pdata = pdev->dev.platform_data;
--	if (!pdata) {
--		dev_err(&pdev->dev, "%s: no platform data defined\n", __func__);
--		return -EINVAL;
--	}
-+	int ret;
- 
- 	phy_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!phy_mem) {
-@@ -283,7 +334,20 @@ static int __devinit samsung_usbphy_probe(struct platform_device *pdev)
- 		return PTR_ERR(clk);
- 	}
- 
--	sphy->dev		= &pdev->dev;
-+	sphy->dev = &pdev->dev;
-+
-+	ret = samsung_usbphy_parse_dt_param(sphy);
-+	if (ret) {
-+		/* fallback to pdata */
-+		if (!pdata) {
-+			dev_err(&pdev->dev,
-+				"%s: no device data found\n", __func__);
-+			return -ENODEV;
-+		} else {
-+			sphy->plat = pdata;
-+		}
-+	}
-+
- 	sphy->plat		= pdata;
- 	sphy->regs		= phy_base;
- 	sphy->clk		= clk;
--- 
-1.7.6.5
+it's up to the dts maintainer to choose
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best Regards,
+J.
