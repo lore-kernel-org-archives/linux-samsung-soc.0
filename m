@@ -1,250 +1,48 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2] spi: remove check for bits_per_word on transfer from low level driver
-Date: Tue, 18 Dec 2012 14:25:43 +0530
-Message-ID: <1355820943-25228-1-git-send-email-ldewangan@nvidia.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH v5] ARM: EXYNOS: Add MFC device tree support
+Date: Tue, 18 Dec 2012 17:42:40 +0530
+Message-ID: <CALt3h7-+RtYt5xxyB7KKs5XUQWrW1bU9=jXc6KX1O54iMs=AsQ@mail.gmail.com>
+References: <1348765784-7508-1-git-send-email-arun.kk@samsung.com>
+	<1348765784-7508-2-git-send-email-arun.kk@samsung.com>
+	<loom.20121214T121839-194@post.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate03.nvidia.com ([216.228.121.140]:12678 "EHLO
-	hqemgate03.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753947Ab2LRI4y (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:52632 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754352Ab2LRMMl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Dec 2012 03:56:54 -0500
+	Tue, 18 Dec 2012 07:12:41 -0500
+Received: by mail-vc0-f174.google.com with SMTP id d16so710069vcd.33
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Dec 2012 04:12:40 -0800 (PST)
+In-Reply-To: <loom.20121214T121839-194@post.gmane.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, baohua.song@csr.com, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jonas.gorski@gmail.com, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: Sekhar Nori <nori.sekhar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-The spi core make sure that each transfer structure have the proper
-setting for bits_per_word before calling low level transfer APIs.
+Hi Sekhar,
 
-Hence it is no more require to check again in low level driver for
-this field whether this is set correct or not. Removing such code
-from low level driver.
+>
+>> +
+>> +     codec <at> 11000000 {
+>> +             samsung,mfc-r = <0x43000000 0x800000>;
+>> +             samsung,mfc-l = <0x51000000 0x800000>;
+>> +     };
+>
+> How are these addresses determined? Are they defined by hardware (so they are
+> not user configurable) or is the user free to choose them depending on where
+> he intends the contiguous memory to lie? If it is the later, I wonder if it
+> is considered okay to define this in device tree since it is supposed to be
+> a description of the hardware.
+>
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-This is the continuation of feedback got from Jonas on
-change
-spi: make sure all transfer has bits_per_word set
-where I made the change in only tegra slink driver.
-This patch remove the similar code form all drivers.
+These addresses are not really user defined but board specific.
+So these properties are separated out from exynos5250.dtsi and put
+inside exynos5250-smdk5250.dts file where the board specific parameters
+are defined. The addresses signifies different memory bank areas as per
+the board configuration. So its still a hardware description and hence included
+in the dt file.
 
-Changes from V1:
-- No change in code.
-- Description is rewritten to match with the change.
-
- drivers/spi/spi-altera.c        |    2 +-
- drivers/spi/spi-bfin-sport.c    |    3 +--
- drivers/spi/spi-bfin5xx.c       |    3 +--
- drivers/spi/spi-bitbang.c       |    6 +++---
- drivers/spi/spi-clps711x.c      |    2 +-
- drivers/spi/spi-coldfire-qspi.c |    3 +--
- drivers/spi/spi-ep93xx.c        |    2 +-
- drivers/spi/spi-s3c64xx.c       |    2 +-
- drivers/spi/spi-sirf.c          |    3 +--
- drivers/spi/spi-tegra20-slink.c |    9 +++------
- drivers/spi/spi-txx9.c          |    6 ++----
- 11 files changed, 16 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/spi/spi-altera.c b/drivers/spi/spi-altera.c
-index 5e7314a..a537f8d 100644
---- a/drivers/spi/spi-altera.c
-+++ b/drivers/spi/spi-altera.c
-@@ -134,7 +134,7 @@ static int altera_spi_txrx(struct spi_device *spi, struct spi_transfer *t)
- 	hw->tx = t->tx_buf;
- 	hw->rx = t->rx_buf;
- 	hw->count = 0;
--	hw->bytes_per_word = (t->bits_per_word ? : spi->bits_per_word) / 8;
-+	hw->bytes_per_word = t->bits_per_word / 8;
- 	hw->len = t->len / hw->bytes_per_word;
- 
- 	if (hw->irq >= 0) {
-diff --git a/drivers/spi/spi-bfin-sport.c b/drivers/spi/spi-bfin-sport.c
-index ac7ffca..39b0d17 100644
---- a/drivers/spi/spi-bfin-sport.c
-+++ b/drivers/spi/spi-bfin-sport.c
-@@ -416,8 +416,7 @@ bfin_sport_spi_pump_transfers(unsigned long data)
- 	drv_data->cs_change = transfer->cs_change;
- 
- 	/* Bits per word setup */
--	bits_per_word = transfer->bits_per_word ? :
--		message->spi->bits_per_word ? : 8;
-+	bits_per_word = transfer->bits_per_word;
- 	if (bits_per_word % 16 == 0)
- 		drv_data->ops = &bfin_sport_transfer_ops_u16;
- 	else
-diff --git a/drivers/spi/spi-bfin5xx.c b/drivers/spi/spi-bfin5xx.c
-index 0429d83..7d7c991 100644
---- a/drivers/spi/spi-bfin5xx.c
-+++ b/drivers/spi/spi-bfin5xx.c
-@@ -642,8 +642,7 @@ static void bfin_spi_pump_transfers(unsigned long data)
- 	drv_data->cs_change = transfer->cs_change;
- 
- 	/* Bits per word setup */
--	bits_per_word = transfer->bits_per_word ? :
--		message->spi->bits_per_word ? : 8;
-+	bits_per_word = transfer->bits_per_word;
- 	if (bits_per_word % 16 == 0) {
- 		drv_data->n_bytes = bits_per_word/8;
- 		drv_data->len = (transfer->len) >> 1;
-diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
-index 8b3d8ef..61beaec 100644
---- a/drivers/spi/spi-bitbang.c
-+++ b/drivers/spi/spi-bitbang.c
-@@ -69,7 +69,7 @@ static unsigned bitbang_txrx_8(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u8		*tx = t->tx_buf;
- 	u8			*rx = t->rx_buf;
-@@ -95,7 +95,7 @@ static unsigned bitbang_txrx_16(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u16		*tx = t->tx_buf;
- 	u16			*rx = t->rx_buf;
-@@ -121,7 +121,7 @@ static unsigned bitbang_txrx_32(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u32		*tx = t->tx_buf;
- 	u32			*rx = t->rx_buf;
-diff --git a/drivers/spi/spi-clps711x.c b/drivers/spi/spi-clps711x.c
-index 1366c46..a11cbf0 100644
---- a/drivers/spi/spi-clps711x.c
-+++ b/drivers/spi/spi-clps711x.c
-@@ -68,7 +68,7 @@ static int spi_clps711x_setup_xfer(struct spi_device *spi,
- 				   struct spi_transfer *xfer)
- {
- 	u32 speed = xfer->speed_hz ? : spi->max_speed_hz;
--	u8 bpw = xfer->bits_per_word ? : spi->bits_per_word;
-+	u8 bpw = xfer->bits_per_word;
- 	struct spi_clps711x_data *hw = spi_master_get_devdata(spi->master);
- 
- 	if (bpw != 8) {
-diff --git a/drivers/spi/spi-coldfire-qspi.c b/drivers/spi/spi-coldfire-qspi.c
-index 58466b8..7b5cc9e 100644
---- a/drivers/spi/spi-coldfire-qspi.c
-+++ b/drivers/spi/spi-coldfire-qspi.c
-@@ -329,8 +329,7 @@ static int mcfqspi_transfer_one_message(struct spi_master *master,
- 		mcfqspi_cs_select(mcfqspi, spi->chip_select, cs_high);
- 
- 		mcfqspi_wr_qir(mcfqspi, MCFQSPI_QIR_SPIFE);
--		if ((t->bits_per_word ? t->bits_per_word :
--					spi->bits_per_word) == 8)
-+		if (t->bits_per_word == 8)
- 			mcfqspi_transfer_msg8(mcfqspi, t->len, t->tx_buf,
- 					t->rx_buf);
- 		else
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index acb1e19..aecbff1 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -446,7 +446,7 @@ static inline int bits_per_word(const struct ep93xx_spi *espi)
- 	struct spi_message *msg = espi->current_msg;
- 	struct spi_transfer *t = msg->state;
- 
--	return t->bits_per_word ? t->bits_per_word : msg->spi->bits_per_word;
-+	return t->bits_per_word;
- }
- 
- static void ep93xx_do_write(struct ep93xx_spi *espi, struct spi_transfer *t)
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 4dd7b7c..ab0c0e4 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -697,7 +697,7 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
- 		INIT_COMPLETION(sdd->xfer_completion);
- 
- 		/* Only BPW and Speed may change across transfers */
--		bpw = xfer->bits_per_word ? : spi->bits_per_word;
-+		bpw = xfer->bits_per_word;
- 		speed = xfer->speed_hz ? : spi->max_speed_hz;
- 
- 		if (xfer->len % (bpw / 8)) {
-diff --git a/drivers/spi/spi-sirf.c b/drivers/spi/spi-sirf.c
-index e0f43a5..7506667 100644
---- a/drivers/spi/spi-sirf.c
-+++ b/drivers/spi/spi-sirf.c
-@@ -382,8 +382,7 @@ spi_sirfsoc_setup_transfer(struct spi_device *spi, struct spi_transfer *t)
- 
- 	sspi = spi_master_get_devdata(spi->master);
- 
--	bits_per_word = t && t->bits_per_word ? t->bits_per_word :
--		spi->bits_per_word;
-+	bits_per_word = (t) ? t->bits_per_word : spi->bits_per_word;
- 	hz = t && t->speed_hz ? t->speed_hz : spi->max_speed_hz;
- 
- 	/* Enable IO mode for RX, TX */
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 651167f..7a95bdd 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -284,8 +284,7 @@ static unsigned tegra_slink_calculate_curr_xfer_param(
- 	unsigned max_len;
- 	unsigned total_fifo_words;
- 
--	bits_per_word = t->bits_per_word ? t->bits_per_word :
--						spi->bits_per_word;
-+	bits_per_word = t->bits_per_word;
- 	tspi->bytes_per_word = (bits_per_word - 1) / 8 + 1;
- 
- 	if (bits_per_word == 8 || bits_per_word == 16) {
-@@ -378,8 +377,7 @@ static unsigned int tegra_slink_read_rx_fifo_to_client_rxbuf(
- 	} else {
- 		unsigned int bits_per_word;
- 
--		bits_per_word = t->bits_per_word ? t->bits_per_word :
--						tspi->cur_spi->bits_per_word;
-+		bits_per_word = t->bits_per_word;
- 		for (count = 0; count < rx_full_count; count++) {
- 			x = tegra_slink_readl(tspi, SLINK_RX_FIFO);
- 			for (i = 0; (i < tspi->bytes_per_word); i++)
-@@ -444,8 +442,7 @@ static void tegra_slink_copy_spi_rxbuf_to_client_rxbuf(
- 		unsigned int x;
- 		unsigned int rx_mask, bits_per_word;
- 
--		bits_per_word = t->bits_per_word ? t->bits_per_word :
--						tspi->cur_spi->bits_per_word;
-+		bits_per_word = t->bits_per_word;
- 		rx_mask = (1 << bits_per_word) - 1;
- 		for (count = 0; count < tspi->curr_dma_words; count++) {
- 			x = tspi->rx_dma_buf[count];
-diff --git a/drivers/spi/spi-txx9.c b/drivers/spi/spi-txx9.c
-index d5a3cbb..550b5f4 100644
---- a/drivers/spi/spi-txx9.c
-+++ b/drivers/spi/spi-txx9.c
-@@ -189,9 +189,8 @@ static void txx9spi_work_one(struct txx9spi *c, struct spi_message *m)
- 		unsigned int len = t->len;
- 		unsigned int wsize;
- 		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
--		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-+		u8 bits_per_word = t->bits_per_word;
- 
--		bits_per_word = bits_per_word ? : 8;
- 		wsize = bits_per_word >> 3; /* in bytes */
- 
- 		if (prev_speed_hz != speed_hz
-@@ -316,9 +315,8 @@ static int txx9spi_transfer(struct spi_device *spi, struct spi_message *m)
- 	/* check each transfer's parameters */
- 	list_for_each_entry (t, &m->transfers, transfer_list) {
- 		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
--		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-+		u8 bits_per_word = t->bits_per_word;
- 
--		bits_per_word = bits_per_word ? : 8;
- 		if (!t->tx_buf && !t->rx_buf && t->len)
- 			return -EINVAL;
- 		if (bits_per_word != 8 && bits_per_word != 16)
--- 
-1.7.1.1
+Regards
+Arun
