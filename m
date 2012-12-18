@@ -1,66 +1,113 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 4/4] ODROID-X: dts: Add mshc node for ODROID-X board
-Date: Mon, 17 Dec 2012 22:40:35 +0100
-Message-ID: <2216925.ElgEB0zitR@flatron>
-References: <1355774107-364-1-git-send-email-tobetter@gmail.com> <1355774107-364-5-git-send-email-tobetter@gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 1/4] ODROID-X: dts: Add board dts file for ODROID-X
+Date: Mon, 17 Dec 2012 19:22:16 -0600
+Message-ID: <CAJuYYwSOznu772g9h-5JMQ8DwWR-Oohx=ugLsX0DHxDhS8icKA@mail.gmail.com>
+References: <1355774107-364-1-git-send-email-tobetter@gmail.com>
+	<1355774107-364-2-git-send-email-tobetter@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:36130 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752143Ab2LQVki (ORCPT
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:34131 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752817Ab2LRBWR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Dec 2012 16:40:38 -0500
-In-Reply-To: <1355774107-364-5-git-send-email-tobetter@gmail.com>
+	Mon, 17 Dec 2012 20:22:17 -0500
+Received: by mail-ie0-f169.google.com with SMTP id c14so69609ieb.28
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Dec 2012 17:22:17 -0800 (PST)
+In-Reply-To: <1355774107-364-2-git-send-email-tobetter@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Dongjin Kim <tobetter@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Jason Cooper <jason@lakedaemon.net>, Shawn Guo <shawn.guo@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org
 
 Hi Dongjin,
 
-On Tuesday 18 of December 2012 04:55:07 Dongjin Kim wrote:
-> Adding the device node to support eMMC storage on SDCARD4 ports,
-> controlled by Mobile Storage Host Controller.
-> 
+On 17 December 2012 13:55, Dongjin Kim <tobetter@gmail.com> wrote:
+> Add initial dtb file for Hardkernel's ODROID-X board based on EXYNOS4412 SoC.
+>
 > Signed-off-by: Dongjin Kim <tobetter@gmail.com>
 > ---
->  arch/arm/boot/dts/exynos4412-odroidx.dts |   21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts
-> b/arch/arm/boot/dts/exynos4412-odroidx.dts index 3943011..fbd0b51
-> 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidx.dts
+>  arch/arm/boot/dts/Makefile               |    1 +
+>  arch/arm/boot/dts/exynos4412-odroidx.dts |   52 ++++++++++++++++++++++++++++++
+>  2 files changed, 53 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/exynos4412-odroidx.dts
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index ca6fb8e..3355af9 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -45,6 +45,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>         exynos5250-smdk5250.dtb \
+>         exynos5440-ssdk5440.dtb \
+>         exynos4412-smdk4412.dtb \
+> +       exynos4412-odroidx.dtb \
+>         exynos5250-smdk5250.dtb \
+>         exynos5250-snow.dtb
+>  dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb \
+> diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+> new file mode 100644
+> index 0000000..786ddd7
+> --- /dev/null
 > +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-> @@ -73,4 +73,25 @@
->  			linux,default-trigger = "mmc0";
->  		};
->  	};
+> @@ -0,0 +1,52 @@
+> +/*
+> + * Hardkernel's Exynos4412 based ODROID-X board device tree source
+> + *
+> + * Copyright (c) 2012-2013 Dongjin Kim <tobetter@gmail.com>
+> + *
+> + * Device tree source file for Hardkernel's ODROID-X board which is based on
+> + * Samsung's Exynos4412 SoC.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
 > +
-> +	mshc@12550000 {
-> +		num-slots = <1>;
-> +		supports-highspeed;
-> +		broken-cd;
-> +		fifo-depth = <0x80>;
-> +		card-detect-delay = <200>;
-> +		samsung,dw-mshc-ciu-div = <3>;
-> +		samsung,dw-mshc-sdr-timing = <2 3 3>;
-> +		samsung,dw-mshc-ddr-timing = <1 2 3>;
+> +/dts-v1/;
+> +/include/ "exynos4412.dtsi"
 > +
-> +		slot@0 {
-> +			reg = <0>;
-> +			bus-width = <8>;
-> +			gpios = <&gpk0 0 3>, <&gpk0 1 3>,
-> +				<&gpk0 3 3>, <&gpk0 4 3>,
-> +				<&gpk0 5 3>, <&gpk0 6 3>,
-> +				<&gpk1 3 4>, <&gpk1 4 4>,
-> +				<&gpk1 5 4>, <&gpk1 6 4>;
+> +/ {
+> +       model = "Hardkernel ODROID-X board based on Exynos4412";
+> +       compatible = "samsung,exynos4412";
+> +
+> +       memory {
+> +               reg = <0x40000000 0x40000000>;
+> +       };
+> +
+> +       chosen {
+> +               bootargs ="root=/dev/mmcblk0p3 rw console=ttySAC1,115200 init=/sbin/init delay=2";
+> +       };
+> +
+> +       serial@13800000 {
+> +               status = "okay";
+> +       };
+> +
+> +       serial@13810000 {
+> +               status = "okay";
+> +       };
+> +
+> +       serial@13820000 {
+> +               status = "okay";
+> +       };
+> +
+> +       serial@13830000 {
+> +               status = "okay";
+> +       };
+> +
+> +       sdhci@12530000 {
+> +               bus-width = <4>;
+> +               samsung,cd-pinmux-gpio = <&gpk2 2 2 3 3>;
 
-What is the gpios property for in this node? Pin configuration using 
-legacy GPIO bindings is not supported anymore on Exynos4. Pin control 
-bindings must be used.
+The card detect line should also be configured using pinctrl
+interface. When pinctrl is enabled on Exynos, the old-style gpio
+bindings is not supported. So a pinctrl node for sd2_cmd should be
+defined which then can be listed in pinctrl-0.
 
-Best regards,
-Tomasz Figa
+> +               pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
+> +               pinctrl-names = "default";
+> +               status = "okay";
+> +       };
+> +};
+> --
+> 1.7.9.5
+>
