@@ -1,28 +1,28 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: [PATCH 1/4] ODROID-X: dts: Add board dts file for ODROID-X
-Date: Mon, 17 Dec 2012 19:22:16 -0600
-Message-ID: <CAJuYYwSOznu772g9h-5JMQ8DwWR-Oohx=ugLsX0DHxDhS8icKA@mail.gmail.com>
+Date: Mon, 17 Dec 2012 17:56:39 -0800
+Message-ID: <CAOesGMgZWNiCmTFGvr--zKf+vS51hX5jPnD+NZq8OvGFLS9rJA@mail.gmail.com>
 References: <1355774107-364-1-git-send-email-tobetter@gmail.com>
-	<1355774107-364-2-git-send-email-tobetter@gmail.com>
+ <1355774107-364-2-git-send-email-tobetter@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f169.google.com ([209.85.223.169]:34131 "EHLO
-	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752817Ab2LRBWR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Dec 2012 20:22:17 -0500
-Received: by mail-ie0-f169.google.com with SMTP id c14so69609ieb.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Dec 2012 17:22:17 -0800 (PST)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1355774107-364-2-git-send-email-tobetter@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Dongjin Kim <tobetter@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Jason Cooper <jason@lakedaemon.net>, Shawn Guo <shawn.guo@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, kgene.kim@samsung.com, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, Shawn Guo <shawn.guo@linaro.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Dongjin,
-
-On 17 December 2012 13:55, Dongjin Kim <tobetter@gmail.com> wrote:
+On Mon, Dec 17, 2012 at 11:55 AM, Dongjin Kim <tobetter@gmail.com> wrote:
 > Add initial dtb file for Hardkernel's ODROID-X board based on EXYNOS4412 SoC.
 >
 > Signed-off-by: Dongjin Kim <tobetter@gmail.com>
@@ -41,9 +41,9 @@ On 17 December 2012 13:55, Dongjin Kim <tobetter@gmail.com> wrote:
 >         exynos5440-ssdk5440.dtb \
 >         exynos4412-smdk4412.dtb \
 > +       exynos4412-odroidx.dtb \
->         exynos5250-smdk5250.dtb \
->         exynos5250-snow.dtb
->  dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb \
+
+Please add them alphabetically, so before smdk.
+
 > diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
 > new file mode 100644
 > index 0000000..786ddd7
@@ -54,6 +54,9 @@ On 17 December 2012 13:55, Dongjin Kim <tobetter@gmail.com> wrote:
 > + * Hardkernel's Exynos4412 based ODROID-X board device tree source
 > + *
 > + * Copyright (c) 2012-2013 Dongjin Kim <tobetter@gmail.com>
+
+Are you from the future?
+
 > + *
 > + * Device tree source file for Hardkernel's ODROID-X board which is based on
 > + * Samsung's Exynos4412 SoC.
@@ -69,45 +72,21 @@ On 17 December 2012 13:55, Dongjin Kim <tobetter@gmail.com> wrote:
 > +/ {
 > +       model = "Hardkernel ODROID-X board based on Exynos4412";
 > +       compatible = "samsung,exynos4412";
-> +
+
+It should have a more specific compatible value first, i.e.
+"hardkernel,odroid-x" or similar.
+
+
 > +       memory {
 > +               reg = <0x40000000 0x40000000>;
 > +       };
 > +
 > +       chosen {
 > +               bootargs ="root=/dev/mmcblk0p3 rw console=ttySAC1,115200 init=/sbin/init delay=2";
-> +       };
-> +
-> +       serial@13800000 {
-> +               status = "okay";
-> +       };
-> +
-> +       serial@13810000 {
-> +               status = "okay";
-> +       };
-> +
-> +       serial@13820000 {
-> +               status = "okay";
-> +       };
-> +
-> +       serial@13830000 {
-> +               status = "okay";
-> +       };
-> +
-> +       sdhci@12530000 {
-> +               bus-width = <4>;
-> +               samsung,cd-pinmux-gpio = <&gpk2 2 2 3 3>;
 
-The card detect line should also be configured using pinctrl
-interface. When pinctrl is enabled on Exynos, the old-style gpio
-bindings is not supported. So a pinctrl node for sd2_cmd should be
-defined which then can be listed in pinctrl-0.
+Bootargs should be passed in from u-boot, don't specify them in the
+static device tree.
 
-> +               pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
-> +               pinctrl-names = "default";
-> +               status = "okay";
-> +       };
-> +};
-> --
-> 1.7.9.5
->
+
+
+-Olof
