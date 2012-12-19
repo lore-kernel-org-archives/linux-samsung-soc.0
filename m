@@ -1,13 +1,15 @@
 From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 0/4] Adding usb2.0 host-phy support for exynos5250
-Date: Wed, 19 Dec 2012 11:07:37 +0530
-Message-ID: <CAFp+6iEWPQH2f8zeR734U8Sy_tA3gguROYpvQa2nudNwxXyuRQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] ARM: EXYNOS: Update & move usb-phy types to
+ generic include layer
+Date: Wed, 19 Dec 2012 11:08:36 +0530
+Message-ID: <CAFp+6iFsJ6w3M6VzsDgX3buwXVk+ambbTkntDwjC8rRJ0JEsTA@mail.gmail.com>
 References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
+ <1355841786-13307-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1355841786-13307-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1355841786-13307-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
@@ -22,58 +24,146 @@ To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CC: Doug Anderson
+CC: Doug Anderson.
 
 
 On Tue, Dec 18, 2012 at 8:13 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Changes from v4:
->  - Moved architecture side changes out of this patch-set.
->  - Added support for multiple usbphy phandle parsing and
->    doing all pmu_isolation() and phy_cfg_sel() related changes
->    in samsung-usbphy driver only instead of architecture
->    as in v4 patch-set.
->  - Removed unnecessary multi line definitions for macros.
+> Updating the names of usb-phy types to more generic names:
+> USB_PHY_TYPE_DEIVCE & USB_PHY_TYPE_HOST; and further update
+> its dependencies.
 >
-> Changes from v3:
->  - Moved enums S5P_USB_PHY_DEVICE, S5P_USB_PHY_HOST from machine to file
->    include/linux/usb/samsung_usb_phy.h as USB_PHY_TYPE_DEVICE and
->    USB_PHY_TYPE_HOST to make it more generic. Further resolve its
->    dependencies.
->  - Introduced a function 'samsung_usbphy_set_type()' which takes
->    care of setting up the phy_type: HOST/DEVICE. This function
->    can be called by host/otg drivers to setup phy_type prior to
->    handling the respective PHYs.
->  - Added an error-path for HOST type phy in s5p_usb_phy_pmu_isolation()
->    for 'mach-s3c64xx'.
->  - Moving to PHY driver as default for ehci-s5p and ohci-exynos, and only
->    when failed fall back to plat-data.
->  - Added samsung_usbphy_set_type() prior to doing usb_phy_init() or
->    usb_phy_shutdown() so that appropriate PHY gets init or shutdown.
->
-> Based on patches for samsung-usbphy driver:
->  1)http://lists.infradead.org/pipermail/linux-arm-kernel/2012-November/134476.html
->  2)https://lkml.org/lkml/2012/12/18/187
->
-> Vivek Gautam (4):
->   ARM: EXYNOS: Update & move usb-phy types to generic include layer
->   usb: phy: samsung: Add host phy support to samsung-phy driver
->   USB: ehci-s5p: Add phy driver support
->   USB: ohci-exynos: Add phy driver support
->
->  .../devicetree/bindings/usb/samsung-usbphy.txt     |   25 +-
->  drivers/usb/host/ehci-s5p.c                        |   71 +++-
->  drivers/usb/host/ohci-exynos.c                     |   71 +++-
->  drivers/usb/phy/Kconfig                            |    2 +-
->  drivers/usb/phy/samsung-usbphy.c                   |  465 ++++++++++++++++++--
->  include/linux/usb/samsung_usb_phy.h                |   29 ++
->  6 files changed, 570 insertions(+), 93 deletions(-)
+> Signed-off-by: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/usb/host/ehci-s5p.c         |    9 +++++----
+>  drivers/usb/host/ohci-exynos.c      |    9 +++++----
+>  include/linux/usb/samsung_usb_phy.h |   16 ++++++++++++++++
+>  3 files changed, 26 insertions(+), 8 deletions(-)
 >  create mode 100644 include/linux/usb/samsung_usb_phy.h
 >
+> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+> index 319dcfa..46ca5ef 100644
+> --- a/drivers/usb/host/ehci-s5p.c
+> +++ b/drivers/usb/host/ehci-s5p.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/platform_data/usb-ehci-s5p.h>
+> +#include <linux/usb/samsung_usb_phy.h>
+>  #include <plat/usb-phy.h>
+>
+>  #define EHCI_INSNREG00(base)                   (base + 0x90)
+> @@ -164,7 +165,7 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+>         }
+>
+>         if (pdata->phy_init)
+> -               pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+>         ehci = hcd_to_ehci(hcd);
+>         ehci->caps = hcd->regs;
+> @@ -198,7 +199,7 @@ static int s5p_ehci_remove(struct platform_device *pdev)
+>         usb_remove_hcd(hcd);
+>
+>         if (pdata && pdata->phy_exit)
+> -               pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+>         clk_disable_unprepare(s5p_ehci->clk);
+>
+> @@ -229,7 +230,7 @@ static int s5p_ehci_suspend(struct device *dev)
+>         rc = ehci_suspend(hcd, do_wakeup);
+>
+>         if (pdata && pdata->phy_exit)
+> -               pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+>         clk_disable_unprepare(s5p_ehci->clk);
+>
+> @@ -246,7 +247,7 @@ static int s5p_ehci_resume(struct device *dev)
+>         clk_prepare_enable(s5p_ehci->clk);
+>
+>         if (pdata && pdata->phy_init)
+> -               pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+>         /* DMA burst Enable */
+>         writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index aa3b884..804fb62 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/platform_data/usb-exynos.h>
+> +#include <linux/usb/samsung_usb_phy.h>
+>  #include <plat/usb-phy.h>
+>
+>  struct exynos_ohci_hcd {
+> @@ -153,7 +154,7 @@ static int exynos_ohci_probe(struct platform_device *pdev)
+>         }
+>
+>         if (pdata->phy_init)
+> -               pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+>         ohci = hcd_to_ohci(hcd);
+>         ohci_hcd_init(ohci);
+> @@ -184,7 +185,7 @@ static int exynos_ohci_remove(struct platform_device *pdev)
+>         usb_remove_hcd(hcd);
+>
+>         if (pdata && pdata->phy_exit)
+> -               pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+>         clk_disable_unprepare(exynos_ohci->clk);
+>
+> @@ -229,7 +230,7 @@ static int exynos_ohci_suspend(struct device *dev)
+>         clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+>
+>         if (pdata && pdata->phy_exit)
+> -               pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+>         clk_disable_unprepare(exynos_ohci->clk);
+>
+> @@ -249,7 +250,7 @@ static int exynos_ohci_resume(struct device *dev)
+>         clk_prepare_enable(exynos_ohci->clk);
+>
+>         if (pdata && pdata->phy_init)
+> -               pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+>         ohci_resume(hcd, false);
+>
+> diff --git a/include/linux/usb/samsung_usb_phy.h b/include/linux/usb/samsung_usb_phy.h
+> new file mode 100644
+> index 0000000..9167826
+> --- /dev/null
+> +++ b/include/linux/usb/samsung_usb_phy.h
+> @@ -0,0 +1,16 @@
+> +/*
+> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> + *             http://www.samsung.com/
+> + *
+> + * Defines phy types for samsung usb phy controllers - HOST or DEIVCE.
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General  Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + */
+> +
+> +enum samsung_usb_phy_type {
+> +       USB_PHY_TYPE_DEVICE,
+> +       USB_PHY_TYPE_HOST,
+> +};
 > --
 > 1.7.6.5
 >
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
