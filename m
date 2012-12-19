@@ -1,60 +1,94 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
-Date: Wed, 19 Dec 2012 09:37:28 -0800
-Message-ID: <007401cdde0f$86096210$921c2630$@samsung.com>
-References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
- <1355395373-22058-3-git-send-email-padma.v@samsung.com>
- <20121219132414.2CF653E0AD7@localhost>
- <20121219170937.GV4985@opensource.wolfsonmicro.com>
+Subject: [GIT PULL 1/2] Samsung fixes-1 for v3.8-rc1
+Date: Wed, 19 Dec 2012 10:27:20 -0800
+Message-ID: <008401cdde16$7cfe2690$76fa73b0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: 
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:30211 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750859Ab2LSS10 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Dec 2012 13:27:26 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MFA00EFCJ9LYUF0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Dec 2012 03:27:24 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MFA0054FJ9MMPB0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Dec 2012 03:27:24 +0900 (KST)
 Content-language: en-us
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Grant Likely' <grant.likely@secretlab.ca>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, 'Padmavathi Venna' <padma.v@samsung.com>, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, tiwai@suse.de, ben-linux@fluff.org, lrg@ti.com, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Kukjin Kim wrote:
-> 
-> Mark Brown wrote:
-> >
-> > On Wed, Dec 19, 2012 at 01:24:14PM +0000, Grant Likely wrote:
-> > > On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna
-> > <padma.v@samsung.com> wrote:
-> >
-> > > > +- compatible : "samsung,samsung-i2s"
-> >
-> > > Isn't that kind of redundant?  :-)
-> >
-> > > The format of the compatible strings should be "<vendor>,<part-
-> number>-
-> > i2s".
-> > > Please be specific about the part number that you're doing the binding
-> > > for. For example; use "samsung,exynos4210-i2s" instead of
-> > "samsung,exynos-i2s".
-> >
-> > There are actually versioned IPs here (where the versions are used
-> > publically in a few places) but it's not clearly documented which is
-> > which.  It would be reasonable to use the IP versions here I think.
-> 
-Oops, I'm resending due to problem of my e-mail client.
+Hi Arnd, Olof
 
-> I agree with Mark Brown. That makes sense, for example, see mfc.
-> 	compatible = "samsung,mfc-v6"
-> Same versioned IPs can be used on different SoCs, so in my opinion, in
-this
-> case, to use version is more clear.
-> 
+Here is Samsung fixes-1 for v3.8-rc1.
+Most of them are trivial fixes which are for NULL pointer dereference, MSHC
+clocks instance names and exynos5440 stuff.
 
-- Kukjin
+Please pull from:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.8-samsung-fixes-1
+
+If any problems, please kindly let me know.
+
+Thanks.
+
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 752451f01c4567b506bf4343082682dbb8fb30dd:
+
+  Merge branch 'i2c-embedded/for-next' of
+git://git.pengutronix.de/git/wsa/linux (2012-12-18 16:51:10 -0800)
+
+are available in the git repository at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.8-samsung-fixes-1
+
+for you to fetch changes up to 454696fdc864aacaab978755d44d73d418c59788:
+
+  ARM: EXYNOS: Fix MSHC clocks instance names (2012-12-19 09:25:27 -0800)
+
+----------------------------------------------------------------
+Axel Lin (1):
+      pinctrl: exynos5440/samsung: Staticize pcfgs
+
+Dongjin Kim (1):
+      ARM: EXYNOS: Fix MSHC clocks instance names
+
+Kukjin Kim (3):
+      ARM: EXYNOS: fix build error when MFC is not selected
+      ARM: EXYNOS: fix GIC using for EXYNOS5440
+      ARM: EXYNOS: fix skip scu_enable() for EXYNOS5440
+
+Michael Spang (1):
+      ARM: SAMSUNG: Add missing include guard to gpio-core.h
+
+Sachin Kamat (4):
+      pinctrl: samsung: Fix a typo in pinctrl-samsung.h
+      ARM: EXYNOS: Fix NULL pointer dereference bug in Origen
+      ARM: EXYNOS: Fix NULL pointer dereference bug in SMDK4X12
+      ARM: EXYNOS: Fix NULL pointer dereference bug in SMDKV310
+
+ arch/arm/mach-exynos/clock-exynos4.c           |    4 ++--
+ arch/arm/mach-exynos/common.c                  |    3 ++-
+ arch/arm/mach-exynos/mach-exynos5-dt.c         |    2 ++
+ arch/arm/mach-exynos/mach-origen.c             |    4 ++--
+ arch/arm/mach-exynos/mach-smdk4x12.c           |    4 ++--
+ arch/arm/mach-exynos/mach-smdkv310.c           |    4 ++--
+ arch/arm/mach-exynos/platsmp.c                 |    2 +-
+ arch/arm/plat-samsung/include/plat/gpio-core.h |    5 +++++
+ drivers/pinctrl/pinctrl-exynos5440.c           |    2 +-
+ drivers/pinctrl/pinctrl-samsung.c              |    2 +-
+ drivers/pinctrl/pinctrl-samsung.h              |    2 +-
+ 11 files changed, 21 insertions(+), 13 deletions(-)
