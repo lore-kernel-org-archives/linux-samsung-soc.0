@@ -1,186 +1,70 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3] ARM: Exynos5250: Enabling dwc3-exynos driver
-Date: Wed, 19 Dec 2012 19:22:02 +0530
-Message-ID: <CAFp+6iHt6rH-h=1M6ShasypeRUbuFi4H59+tAYFZ73WorgVZww@mail.gmail.com>
-References: <CAFp+6iFjY9gp1x6eDCLP-WJvv++wO7fw+U_9U+0OnNb99baeEA@mail.gmail.com>
-	<1355417263-27369-1-git-send-email-gautam.vivek@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Wed, 19 Dec 2012 17:09:37 +0000
+Message-ID: <20121219170937.GV4985@opensource.wolfsonmicro.com>
+References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
+ <1355395373-22058-3-git-send-email-padma.v@samsung.com>
+ <20121219132414.2CF653E0AD7@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+Yg8W10oK6rlW0RR"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:61932 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753379Ab2LSNwG (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:57749 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755671Ab2LSRJl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Dec 2012 08:52:06 -0500
-In-Reply-To: <1355417263-27369-1-git-send-email-gautam.vivek@samsung.com>
+	Wed, 19 Dec 2012 12:09:41 -0500
+Content-Disposition: inline
+In-Reply-To: <20121219132414.2CF653E0AD7@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dianders@chromium.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, tomasz.figa@gmail.com, balbi@ti.com, thomas.abraham@linaro.org, av.tikhomirov@samsung.com, p.paneri@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
-
-CC: Doug Anderson
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, sbkim73@samsung.com, tiwai@suse.de, ben-linux@fluff.org, lrg@ti.com
 
 
-On Thu, Dec 13, 2012 at 10:17 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Adding DWC3 device tree node for Exynos5250 along with the
-> device address and clock support needed for the controller.
->
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> ---
-> Changes from v2:
->  - Changed the compatible string to chip specific(samsung,exynos5250),
->    since dwc3-exynos is being used from exynso5250 onwards.
->  - Based on changes for USB 2.0:
->    https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-December/024413.html
->
-> Changes from v1:
->  - Changed the device node name from 'dwc3' to 'usb@12000000'.
->  - Added the documentation for device tree bindings for dwc3 controller.
->
->
->  .../devicetree/bindings/usb/exynos-usb.txt         |   14 +++++++++++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    6 +++++
->  arch/arm/mach-exynos/Kconfig                       |    1 +
->  arch/arm/mach-exynos/clock-exynos5.c               |   24 ++++++++++++++++++++
->  arch/arm/mach-exynos/include/mach/map.h            |    1 +
->  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
->  6 files changed, 48 insertions(+), 0 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> index f66fcdd..d660410 100644
-> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> @@ -38,3 +38,17 @@ Example:
->                 reg = <0x12120000 0x100>;
->                 interrupts = <0 71 0>;
->         };
-> +
-> +DWC3
-> +Required properties:
-> + - compatible: should be "samsung,exynos5250-dwc3" for USB 3.0 DWC3 controller.
-> + - reg: physical base address of the controller and length of memory mapped
-> +   region.
-> + - interrupts: interrupt number to the cpu.
-> +
-> +Example:
-> +       usb@12000000 {
-> +               compatible = "samsung,exynos5250-dwc3";
-> +               reg = <0x12000000 0x10000>;
-> +               interrupts = <0 72 0>;
-> +       };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 75510d1..001a31b 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -299,6 +299,12 @@
->                 rx-dma-channel = <&pdma0 11>; /* preliminary */
->         };
->
-> +       usb@12000000 {
-> +               compatible = "samsung,exynos5250-dwc3";
-> +               reg = <0x12000000 0x10000>;
-> +               interrupts = <0 72 0>;
-> +       };
-> +
->         usb@12110000 {
->                 compatible = "samsung,exynos4210-ehci";
->                 reg = <0x12110000 0x100>;
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 91d5b6f..09f9587 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -426,6 +426,7 @@ config MACH_EXYNOS5_DT
->         depends on ARCH_EXYNOS5
->         select ARM_AMBA
->         select USE_OF
-> +       select USB_ARCH_HAS_XHCI
->         help
->           Machine support for Samsung EXYNOS5 machine with device tree enabled.
->           Select this if a fdt blob is available for the EXYNOS5 SoC based board.
-> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-> index 5c63bc7..f2214a0 100644
-> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> @@ -768,6 +768,11 @@ static struct clk exynos5_init_clocks_off[] = {
->                 .enable         = exynos5_clk_ip_fsys_ctrl ,
->                 .ctrlbit        = (1 << 18),
->         }, {
-> +               .name           = "usbdrd30",
-> +               .parent         = &exynos5_clk_aclk_200.clk,
-> +               .enable         = exynos5_clk_ip_fsys_ctrl,
-> +               .ctrlbit        = (1 << 19),
-> +       }, {
->                 .name           = "usbotg",
->                 .enable         = exynos5_clk_ip_fsys_ctrl,
->                 .ctrlbit        = (1 << 7),
-> @@ -1121,6 +1126,16 @@ static struct clksrc_sources exynos5_clkset_group = {
->         .nr_sources     = ARRAY_SIZE(exynos5_clkset_group_list),
->  };
->
-> +struct clk *exynos5_clkset_usbdrd30_list[] = {
-> +       [0] = &exynos5_clk_mout_mpll.clk,
-> +       [1] = &exynos5_clk_mout_cpll.clk,
-> +};
-> +
-> +struct clksrc_sources exynos5_clkset_usbdrd30 = {
-> +       .sources        = exynos5_clkset_usbdrd30_list,
-> +       .nr_sources     = ARRAY_SIZE(exynos5_clkset_usbdrd30_list),
-> +};
-> +
->  /* Possible clock sources for aclk_266_gscl_sub Mux */
->  static struct clk *clk_src_gscl_266_list[] = {
->         [0] = &clk_ext_xtal_mux,
-> @@ -1415,6 +1430,15 @@ static struct clksrc_clk exynos5_clksrcs[] = {
->                         .parent         = &exynos5_clk_mout_cpll.clk,
->                 },
->                 .reg_div = { .reg = EXYNOS5_CLKDIV_GEN, .shift = 4, .size = 3 },
-> +       }, {
-> +               .clk    = {
-> +                       .name           = "sclk_usbdrd30",
-> +                       .enable         = exynos5_clksrc_mask_fsys_ctrl,
-> +                       .ctrlbit        = (1 << 28),
-> +               },
-> +               .sources = &exynos5_clkset_usbdrd30,
-> +               .reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 28, .size = 1 },
-> +               .reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 24, .size = 4 },
->         },
->  };
->
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index 4bf6fd9..74470ca 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -201,6 +201,7 @@
->  #define EXYNOS4_PA_EHCI                        0x12580000
->  #define EXYNOS4_PA_OHCI                        0x12590000
->  #define EXYNOS4_PA_HSPHY               0x125B0000
-> +#define EXYNOS5_PA_DRD                 0x12000000
->  #define EXYNOS5_PA_EHCI                        0x12110000
->  #define EXYNOS5_PA_OHCI                        0x12120000
->  #define EXYNOS4_PA_MFC                 0x13400000
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index 07aa586..26dd6c8 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -114,6 +114,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->                                 "s5p-ehci", NULL),
->         OF_DEV_AUXDATA("samsung,exynos4210-ohci", EXYNOS5_PA_OHCI,
->                                 "exynos-ohci", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos5250-dwc3", EXYNOS5_PA_DRD,
-> +                               "exynos-dwc3", NULL),
->         {},
->  };
->
-> --
-> 1.7.6.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--+Yg8W10oK6rlW0RR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 19, 2012 at 01:24:14PM +0000, Grant Likely wrote:
+> On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna <padma.v@samsung.com=
+> wrote:
 
+> > +- compatible : "samsung,samsung-i2s"
 
--- 
-Thanks & Regards
-Vivek
+> Isn't that kind of redundant?  :-)
+
+> The format of the compatible strings should be "<vendor>,<part-number>-i2=
+s".=20
+> Please be specific about the part number that you're doing the binding
+> for. For example; use "samsung,exynos4210-i2s" instead of "samsung,exynos=
+-i2s".
+
+There are actually versioned IPs here (where the versions are used
+publically in a few places) but it's not clearly documented which is
+which.  It would be reasonable to use the IP versions here I think.
+
+--+Yg8W10oK6rlW0RR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ0fS+AAoJELSic+t+oim99iQQAJKF9qTp0/p73XtK6TJwvXVM
+xYY0ZzmZzFv8q6HG7Nx+gw+SE1DAp+GmQefCIAahsEIEnRf/9MHhiz9uuMtP3jLL
+rYCqy5uiYgXDAOhW3dVB7r4l+XFotslkkigm0dDA2GTrLQrWdP2CXqmN2j8fix3G
+MARX79RwNoRLTWHz4LvOgB2tdqjLUfhNEbBSrwnTGLNR3TMa32+26zABO+bgASx9
+dx8A1O9m6Y+ZBuDfVNAVixnMZ90P0+iaM0TKmaEzKMnCsg9779V85PkkhYKMdewc
+NQiwhfsHs26bF/Fub2SJpCYAvMW7YfTU1go3H5UuXOPY2KvgFhZmREx0zBkoGyT9
+jDOUJJPtxYaCNfi+qM2gOxdfSYl0jcbCQ82U+wlWB8GhdZyWzxirk3sE4o78FXZL
+hDKY0dWEtHOY1uKuHQPmQ4eo6ORYaECEBTexHDe+lBmT0DxELeE9b83FCwEItcSC
+Dl316A6Ojo8KJi7Fxwl/xLHFoi6vMNU8lCT/fvdn81z5U5YshxRuJIHy7VJFWccO
+iD2Gt9tPU60Y0YarAnEhK+JhSeabvsWBco7fAQYkk89GSAz8T8BWmmtl2phPtfRd
++fiUK5wb1jYaSztOwZUvCPTBcbLH5owFf/byn2VXZ7be5xRsNGp1u0XMMx0aeRtF
+XvnudmpfXR6Z3+OXztDr
+=tTsm
+-----END PGP SIGNATURE-----
+
+--+Yg8W10oK6rlW0RR--
