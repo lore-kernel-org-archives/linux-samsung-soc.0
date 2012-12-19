@@ -1,94 +1,98 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] i2c-core: Add gpio based bus arbitration
- implementation
-Date: Wed, 19 Dec 2012 12:32:01 +0000
-Message-ID: <20121219123201.B636A3E0AD7@localhost>
-References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
- <1355464254-12768-2-git-send-email-ch.naveen@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1355464254-12768-2-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, naveen-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Wed, 19 Dec 2012 13:24:14 +0000
+Message-ID: <20121219132414.2CF653E0AD7@localhost>
+References: <1355395373-22058-1-git-send-email-padma.v@samsung.com> <1355395373-22058-3-git-send-email-padma.v@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:56324 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752489Ab2LSNYS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Dec 2012 08:24:18 -0500
+Received: by mail-wi0-f180.google.com with SMTP id hj13so1205160wib.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Dec 2012 05:24:17 -0800 (PST)
+In-Reply-To: <1355395373-22058-3-git-send-email-padma.v@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>padma.v@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org
+Cc: jassisinghbrar@gmail.com, kgene.kim@samsung.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, tiwai@suse.de, ben-linux@fluff.org, lrg@ti.com
 
-On Fri, 14 Dec 2012 11:20:53 +0530, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> The arbitrator is a general purpose function which uses two GPIOs to
-> communicate with another device to claim/release a bus.
+On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna <padma.v@samsung.com> wrote:
+> Add support for device based discovery.
 > 
-> i2c_transfer()
-> 	if adapter->gpio_arbit
-> 		i2c_bus_claim();
-> 			__i2c_transfer();
-> 		i2c_bus_release();
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> ---
+>  .../devicetree/bindings/sound/samsung-i2s.txt      |   75 +++++++
+>  sound/soc/samsung/dma.c                            |    1 +
+>  sound/soc/samsung/dma.h                            |    1 +
+>  sound/soc/samsung/i2s.c                            |  233 ++++++++++++++++----
+>  4 files changed, 269 insertions(+), 41 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
 > 
-> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Cc: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+> new file mode 100644
+> index 0000000..bff47b4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+> @@ -0,0 +1,75 @@
+> +* Samsung I2S controller
+> +
+> +Required SoC Specific Properties:
+> +
+> +- compatible : "samsung,samsung-i2s"
 
-Hi Naveen,
+Isn't that kind of redundant?  :-)
 
-I'm not convinced on the design of this protocol. It won't scale beyond
-2 bus masters and it seems very specific to the design of a specific
-piece of hardware. I don't think it is mature enough to bake into the
-core i2c infrastructure or bindings. Nor do I think it will handle other
-busses properly.
+The format of the compatible strings should be "<vendor>,<part-number>-i2s". 
+Please be specific about the part number that you're doing the binding
+for. For example; use "samsung,exynos4210-i2s" instead of "samsung,exynos-i2s".
 
-I can see two alternatives here.
-1) build in hooks for doing i2c bus claim/release, but don't put this
-specific implementation into the core infrastructure
-2) Create an i2c bridge driver. This would kind of be like an i2c
-multiplexer, but it would only have one bus and it would include the
-knowledge of how to use the GPIO lines for bus arbitration.
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +
+> +[PRELIMINARY: the dma channel allocation will change once there are
+> +official DMA bindings]
+> +
+> +- tx-dma-channel-secondary: The dma channel specifier for secondary tx
+> +  operations. The format of the dma specifier depends on the dma
+> +  controller.
+> +- tx-dma-channel: The dma channel specifier for tx operations. The format of
+> +  the dma specifier depends on the dma controller.
+> +- rx-dma-channel: The dma channel specifier for rx operations. The format of
+> +  the dma specifier depends on the dma controller.
+> +
+> +Optional SoC Specific Properties:
+> +
+> +- samsung,supports-6ch: If the I2S Primary sound source has 5.1 Channel
+> +  support, this flag is enabled.
+> +- samsung,supports-rstclr: This flag should be set if I2S software reset bit
+> +  control is required. When this flag is set I2S software reset bit will be
+> +  enabled or disabled based on need.
+> +- samsung,supports-secdai:If I2S block has a secondary FIFO and internal DMA,
+> +  then this flag is enabled.
+> +- samsung,idma-addr: Internal DMA register base address of the audio
+> +  sub system(used in secondary sound source).
+> +
+> +Required Board Specific Properties:
+> +
+> +- gpios: The gpio specifier for data out,data in, LRCLK, CDCLK and SCLK
+> +  interface lines. The format of the gpio specifier depends on the gpio
+> +  controller.
+> +  The syntax of samsung gpio specifier is
+> +	<[phandle of the gpio controller node]
+> +	 [pin number within the gpio controller]
+> +	 [mux function]
+> +	 [flags and pull up/down]
+> +	 [drive strength]>
+> +
+> +Aliases:
+> +
+> +- All the I2S controller nodes are represented in the aliases node using
+> +  the following format 'i2s{n}' where n is a unique number for the alias.
 
-I think option 2 would be the cleanest option. It would be straight
-forward to design a binding for it by placing a node between the i2c
-bus and all the i2c clients. For example:
+Are the aliases actually being used now? If not, then drop this section.
+I don't see any references in this patch.
 
-i2c@60000000 {
-	compatible = "acme,some-i2c-device";
-	#address-cells = <1>;
-	#size-cells = <0>;
-
-	i2c-bridge {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		compatible = "samaung,i2c-gpio-arbitrate";
-
-		bus-arbitration-gpios = <&gpf0 3 1 0 0>, /* AP_CLAIM */
-			<&gpe0 4 0 3 0>; /* EC_CLAIM */
-	
-		bus-arbitration-slew-delay-us = <10>;
-		bus-arbitration-wait-retry-us = <2000>;
-		bus-arbitration-wait-free-us = <50000>;
-
-		i2c@52 {
-			// Normal i2c device
-		};
-	};
-};
-
-I don't know what the state of the i2c subsystem is with regard to
-supporting i2c multiplexer devices, so there might be some changes
-needed there, but I can't see it being particularly complex. It should
-just be a device in the middle. Any i2c device that is a child of the
-bridge would send transfers to the bridge, and the bridge would be
-responsible to claim the bus and then pass the transfer through
-unchanged.
-
-That eliminates the problem of trying to design an arbitration scheme
-that works for all.
+Otherwise the binding looks good to me.
 
 g.
