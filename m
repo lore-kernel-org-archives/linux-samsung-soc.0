@@ -1,64 +1,84 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: add pinctrl nodes for Exynos5250 SoC
-Date: Tue, 18 Dec 2012 09:08:59 -0800
-Message-ID: <50D0A32B.9050400@samsung.com>
-References: <1355403978-388-1-git-send-email-thomas.abraham@linaro.org>
- <CACRpkdZgSpkHW3mW_2ZhvUWVTX7Qppb5G8d+MdD3zUDOYCY-pw@mail.gmail.com>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 0/4] Adding usb2.0 host-phy support for exynos5250
+Date: Wed, 19 Dec 2012 11:07:37 +0530
+Message-ID: <CAFp+6iEWPQH2f8zeR734U8Sy_tA3gguROYpvQa2nudNwxXyuRQ@mail.gmail.com>
+References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdZgSpkHW3mW_2ZhvUWVTX7Qppb5G8d+MdD3zUDOYCY-pw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kgene.kim@samsung.com, patches@linaro.org, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1355841786-13307-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/14/12 12:34, Linus Walleij wrote:
-> On Thu, Dec 13, 2012 at 2:06 PM, Thomas Abraham
-> <thomas.abraham@linaro.org>  wrote:
->
->> Add pinctrl device nodes for Exynos5250 SoC.
->>
->> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
->
-> Acked-by: Linus Walleij<linus.walleij@linaro.org>
->
->> - The individual device nodes which are using the old style Samsung gpio
->>    bindings have not been converted over to pinctrl bindings yet. It might
->>    also be important to know if Linus's pinctrl grab in device core patch
->>    (http://comments.gmane.org/gmane.linux.kernel/1409263) gets accepted.
->
-> Greg seems happy with it and the plan is to have it merged for kernel
-> v3.9.
->
-> I intend to push Greg for an ACK and queue it for linux-next right after the
-> merge window.
->
-Same here ;-)
+CC: Doug Anderson
 
->> - This patch should not be merged for now which otherwise would break existing
->>    platforms which are using the old samsung gpio driver bindings. This patch
->>    is intended to get started with the migration to pinctrl framework.
->>    It is probably better to first prepare all the migration patches and
->>    merge them as a bunch.
->
-> Sure. I guess it'll be taken through the Samsung tree anyway, right?
->
-I'm OK on this, if Greg is OK, then let me pick this up in Samsung tree.
 
-Thanks.
+On Tue, Dec 18, 2012 at 8:13 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Changes from v4:
+>  - Moved architecture side changes out of this patch-set.
+>  - Added support for multiple usbphy phandle parsing and
+>    doing all pmu_isolation() and phy_cfg_sel() related changes
+>    in samsung-usbphy driver only instead of architecture
+>    as in v4 patch-set.
+>  - Removed unnecessary multi line definitions for macros.
+>
+> Changes from v3:
+>  - Moved enums S5P_USB_PHY_DEVICE, S5P_USB_PHY_HOST from machine to file
+>    include/linux/usb/samsung_usb_phy.h as USB_PHY_TYPE_DEVICE and
+>    USB_PHY_TYPE_HOST to make it more generic. Further resolve its
+>    dependencies.
+>  - Introduced a function 'samsung_usbphy_set_type()' which takes
+>    care of setting up the phy_type: HOST/DEVICE. This function
+>    can be called by host/otg drivers to setup phy_type prior to
+>    handling the respective PHYs.
+>  - Added an error-path for HOST type phy in s5p_usb_phy_pmu_isolation()
+>    for 'mach-s3c64xx'.
+>  - Moving to PHY driver as default for ehci-s5p and ohci-exynos, and only
+>    when failed fall back to plat-data.
+>  - Added samsung_usbphy_set_type() prior to doing usb_phy_init() or
+>    usb_phy_shutdown() so that appropriate PHY gets init or shutdown.
+>
+> Based on patches for samsung-usbphy driver:
+>  1)http://lists.infradead.org/pipermail/linux-arm-kernel/2012-November/134476.html
+>  2)https://lkml.org/lkml/2012/12/18/187
+>
+> Vivek Gautam (4):
+>   ARM: EXYNOS: Update & move usb-phy types to generic include layer
+>   usb: phy: samsung: Add host phy support to samsung-phy driver
+>   USB: ehci-s5p: Add phy driver support
+>   USB: ohci-exynos: Add phy driver support
+>
+>  .../devicetree/bindings/usb/samsung-usbphy.txt     |   25 +-
+>  drivers/usb/host/ehci-s5p.c                        |   71 +++-
+>  drivers/usb/host/ohci-exynos.c                     |   71 +++-
+>  drivers/usb/phy/Kconfig                            |    2 +-
+>  drivers/usb/phy/samsung-usbphy.c                   |  465 ++++++++++++++++++--
+>  include/linux/usb/samsung_usb_phy.h                |   29 ++
+>  6 files changed, 570 insertions(+), 93 deletions(-)
+>  create mode 100644 include/linux/usb/samsung_usb_phy.h
+>
+> --
+> 1.7.6.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+-- 
+Thanks & Regards
+Vivek
