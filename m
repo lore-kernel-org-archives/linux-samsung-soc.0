@@ -1,79 +1,119 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Fix compile error in dev-audio.c
-Date: Wed, 19 Dec 2012 10:30:15 -0800
-Message-ID: <008701cdde16$e58b2280$b0a16780$@samsung.com>
-References: <000701cdd9d3$3b6a6e10$b23f4a30$%choi@samsung.com>
- <CAOesGMhgvsM7Fk-YpihjYM6h+xqK-ejBzPKEDypfdKEmHp6ZJg@mail.gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v2] usb: phy: samsung: Add support to set pmu isolation
+Date: Wed, 19 Dec 2012 21:28:41 +0100
+Message-ID: <50D22379.9090909@gmail.com>
+References: <1355810167-18425-2-git-send-email-gautam.vivek@samsung.com> <1355838966-11269-1-git-send-email-gautam.vivek@samsung.com> <50D0F9EA.9090002@gmail.com> <CAFp+6iGTRpDRcES862hcXL59DcG=GPEZ6B6r2jtw575P-8kCPw@mail.gmail.com> <CAFp+6iFHzARtKD6Off7h7_0fcxx52rFoT2V8ucy_a2kTd4bf1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:49671 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751303Ab2LSSaU (ORCPT
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:43105 "EHLO
+	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751303Ab2LSU2s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Dec 2012 13:30:20 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MFA008P2JEF6P20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Dec 2012 03:30:20 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MFA0074EJEHOH30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Dec 2012 03:30:19 +0900 (KST)
-In-reply-to: 
-Content-language: en-us
+	Wed, 19 Dec 2012 15:28:48 -0500
+In-Reply-To: <CAFp+6iFHzARtKD6Off7h7_0fcxx52rFoT2V8ucy_a2kTd4bf1w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Jonghwan Choi' <jhbird.choi@samsung.com>, 'Padmavathi Venna' <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: linux-usb@vger.kernel.org, dianders@chromium.org, l.majewski@samsung.com, linux-samsung-soc@vger.kernel.org, p.paneri@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Kukjin Kim wrote:
-> 
-> Olof Johansson wrote:
-> 
-> [...]
-> 
-> > Looks like the breakage was caused by the following commit:
-> >
-> > commit 1974a042dd15f1f007a3a1a2dd7a23ca0e42c01d
-> > Author:     Padmavathi Venna <padma.v@samsung.com>
-> > AuthorDate: Wed Nov 28 16:17:48 2012 +0530
-> > Commit:     Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > CommitDate: Wed Nov 28 19:18:00 2012 +0000
-> >
-> >     ASoC: Samsung: Get I2S src_clk from clock alias id.
-> >
-> > Padmavathi, you can't send out code that breaks all Samsung platforms
-> > like this, even if there are patches out there that fixes it. Changes
-> > have to be bisectable, which means that you can't break and unbreak
-> > the build, least of all if you merge through different maintainers.
-> > And you need to tell the other maintainer that there are dependent
-> > patches, you just sent the above patch to Mark without any such
-> > information.
-> >
-> Oops, I thought the 'src_clk'  should be restored with my drop the commit
-> 48a2050d ("ARM: SAMSUNG: Delete the unnecessary variable"), however,
-> seems other patch has same changes...What's happening?
-> 
-> See below,
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-
-> November/134979.html
-> 
-> > Kukjin, I see that Padmavathi has posted a V3 series of patches to
-> > remove all this from the dev-audio files on November 23. Are you ok
-> > with us picking them up and sending ASAP?
-> >
-> Hmm, just Mark's following can fix it but I didn't look at it yet.
-> 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-
-> November/134911.html
-> 
-Olof, I sent 'git pull request' for fix the problems just now, please check
-it.
+Hi,
 
-Thanks.
+On 12/19/2012 02:44 PM, Vivek Gautam wrote:
+>>>> --- a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>>>> +++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>>>> @@ -9,3 +9,15 @@ Required properties:
+>>>>    - compatible : should be "samsung,exynos4210-usbphy"
+>>>>    - reg : base physical address of the phy registers and length of memory
+>>>> mapped
+>>>>          region.
+>>>> +
+>>>> +Optional properties:
+>>>> +- samsung,usb-phyhandle : should point to usb-phyhandle sub-node which
+>>>> provides
+>>>> +                       binding data to enable/disable device PHY handled
+>>>> by
+>>>> +                       PMU register.
+>>>> +
+>>>> +                       Required properties:
+>>>> +                       - compatible : should be "samsung,usbdev-phyctrl"
+>>>> for
+>>>> +                                       DEVICE type phy.
+>>>> +                       - samsung,phyhandle-reg: base physical address of
+>>>> +                                               PHY_CONTROL register in
+>>>> PMU.
+>>>> +- samsung,enable-mask : should be '1'
+>>>
+>>>
+>>> This should only be 1 for Exynos4210+ SoCs, right ?
+>
+> Yes that's true Exynso4210+ SoCs have only single PHY for both host and device
+> which gets enabled by single bit.
+>
+>>> S5PV210 uses bit 0 for OTG and bit1 for USB host, doesn't it ? And for
+>>> s3c64xx
+>>> it seems to be bit 16.
+>>>
+> True, S5PV210 uses two bits separately for OTG and HOST, so in that
+> case we would
+> require to set both these bits. Thanks for pointing out !!
+>
+> I couldn't see device tree support for S5PV210 and S3C64xx so thought
+> of going for
+> 4210+ SoCs. Better we make this more generic so that once these SoCs
+> are moved to
+> device tree we don't face any issue. Right ??
 
-- Kukjin
+Fair enough. Yes, let's not make any future addition of the device tree
+support for the older Samsung platforms unnecessarily difficult. It doesn't
+take much effort, and there is many drivers that are shared by multiple 
+SoCs
+already, starting from s3c64xx to exynos4 series.
+
+>>> How about deriving this information from 'compatible' property instead ?
+>
+> It will definitely be good to use the compatible property to derive
+> such information,
+> Need to amend the current approach.
+>
+>>> Maybe you could just encode the USB PMU registers (I assume those aren't
+>>> touched by anything but the usb drivers) in a regular 'reg' property in
+>>> an usbphy subnode. Then the driver could interpret it also with help
+>>> of 'compatible' property. And you could just use of_iomap(). E.g.
+>>>
+>>>   usbphy@12130000 {
+>>>          compatible = "samsung,exynos5250-usbphy";
+>>>          reg =<0x12130000 0x100>,<0x12100000 0x100>;
+>>>          usbphy-pmu {
+>>>                  /* USB device and host PHY_CONTROL registers */
+>>>                  reg =<0x10040704 8>;
+>>>          };
+>>>   };
+>>>
+>
+> This approach seems nice.
+>
+>>> Your "samsung,usb-phyhandle" approach seems over-engineered to me.
+>>> I might be missing something though.
+>>>
+>
+> The idea behind using phandles for usb-phy was to get the multiple
+> registers (2 in PMU
+> and 1 in SYSREG) and program them separately as required.
+
+You could still specify multiple <address, size> pairs in 'reg' property
+or perhaps use separate node for SYSREG. And if on some SoCs PHY_CONTROL
+registers do not immediately follow each other in memory it might make
+sense to define the bindings so that each register is specified separately,
+e.g.
+
+reg = <0x10040704 4>, <0x10040708 4>, <0x10050230 4>;
+
+However AFAICS single region for the PHY_CONTROL registers should be
+sufficient for all existing SoCs.
+
+--
+
+Thanks,
+Sylwester
