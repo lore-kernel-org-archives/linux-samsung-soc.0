@@ -1,312 +1,350 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 3/5] ARM: S5P64X0: Add I2S clkdev support
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] usb: phy: samsung: Add support to set pmu isolation
 Date: Wed, 19 Dec 2012 11:05:51 +0530
-Message-ID: <1355895353-10316-4-git-send-email-padma.v@samsung.com>
-References: <1355895353-10316-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:32087 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859Ab2LSFfL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Dec 2012 00:35:11 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MF900L5WJIF5EG0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Dec 2012 14:35:09 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MF900KQQJI8CS20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Dec 2012 14:35:09 +0900 (KST)
-In-reply-to: <1355895353-10316-1-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Message-ID: <CAFp+6iGTRpDRcES862hcXL59DcG=GPEZ6B6r2jtw575P-8kCPw@mail.gmail.com>
+References: <1355810167-18425-2-git-send-email-gautam.vivek@samsung.com>
+ <1355838966-11269-1-git-send-email-gautam.vivek@samsung.com>
+ <50D0F9EA.9090002@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <50D0F9EA.9090002-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, olof@lixom.net, jhbird.choi@samsung.com
 
-I2S controller has an internal mux for RCLK source clk. The list
-of source clk names were passed through platform data in non-dt case.
-Register the existing RCLK source clocks with clkdev using generic
-connection id. This is required as part of adding DT support
-for I2S controller driver.
+CC: Doug Anderson
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-Acked-by: Sangbeom Kim <sbkim73@samsung.com>
----
- arch/arm/mach-s5p64x0/clock-s5p6440.c |   49 ++++++++++++++++++---------
- arch/arm/mach-s5p64x0/clock-s5p6450.c |   61 ++++++++++++++++++++++----------
- arch/arm/mach-s5p64x0/dev-audio.c     |   12 ------
- 3 files changed, 75 insertions(+), 47 deletions(-)
 
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-index 0004455..5112371 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-@@ -243,12 +243,6 @@ static struct clk init_clocks_off[] = {
- 		.enable		= s5p64x0_pclk_ctrl,
- 		.ctrlbit	= (1 << 25),
- 	}, {
--		.name		= "iis",
--		.devname	= "samsung-i2s.0",
--		.parent		= &clk_pclk_low.clk,
--		.enable		= s5p64x0_pclk_ctrl,
--		.ctrlbit	= (1 << 26),
--	}, {
- 		.name		= "dsim",
- 		.parent		= &clk_pclk_low.clk,
- 		.enable		= s5p64x0_pclk_ctrl,
-@@ -405,15 +399,6 @@ static struct clksrc_clk clksrcs[] = {
- 		.sources = &clkset_group1,
- 		.reg_src = { .reg = S5P64X0_CLK_SRC1, .shift = 8, .size = 2 },
- 		.reg_div = { .reg = S5P64X0_CLK_DIV3, .shift = 4, .size = 4 },
--	}, {
--		.clk	= {
--			.name		= "sclk_audio2",
--			.ctrlbit	= (1 << 11),
--			.enable		= s5p64x0_sclk_ctrl,
--		},
--		.sources = &clkset_audio,
--		.reg_src = { .reg = S5P64X0_CLK_SRC1, .shift = 0, .size = 3 },
--		.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 24, .size = 4 },
- 	},
- };
- 
-@@ -464,6 +449,26 @@ static struct clksrc_clk clk_sclk_uclk = {
- 	.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 16, .size = 4 },
- };
- 
-+static struct clk clk_i2s0 = {
-+	.name		= "iis",
-+	.devname	= "samsung-i2s.0",
-+	.parent		= &clk_pclk_low.clk,
-+	.enable		= s5p64x0_pclk_ctrl,
-+	.ctrlbit	= (1 << 26),
-+};
-+
-+static struct clksrc_clk clk_audio_bus2 = {
-+	.clk	= {
-+		.name		= "sclk_audio2",
-+		.devname	= "samsung-i2s.0",
-+		.ctrlbit	= (1 << 11),
-+		.enable		= s5p64x0_sclk_ctrl,
-+	},
-+	.sources = &clkset_audio,
-+	.reg_src = { .reg = S5P64X0_CLK_SRC1, .shift = 0, .size = 3 },
-+	.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 24, .size = 4 },
-+};
-+
- static struct clksrc_clk clk_sclk_spi0 = {
- 	.clk	= {
- 		.name		= "sclk_spi",
-@@ -506,13 +511,18 @@ static struct clk dummy_apb_pclk = {
- 	.id		= -1,
- };
- 
-+static struct clk *clk_cdev[] = {
-+	&clk_i2s0,
-+};
-+
- static struct clksrc_clk *clksrc_cdev[] = {
- 	&clk_sclk_uclk,
- 	&clk_sclk_spi0,
- 	&clk_sclk_spi1,
- 	&clk_sclk_mmc0,
- 	&clk_sclk_mmc1,
--	&clk_sclk_mmc2
-+	&clk_sclk_mmc2,
-+	&clk_audio_bus2,
- };
- 
- static struct clk_lookup s5p6440_clk_lookup[] = {
-@@ -524,6 +534,8 @@ static struct clk_lookup s5p6440_clk_lookup[] = {
- 	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0.clk),
- 	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1.clk),
- 	CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
-+	CLKDEV_INIT("samsung-i2s.0", "i2s_opclk0", &clk_i2s0),
-+	CLKDEV_INIT("samsung-i2s.0", "i2s_opclk1", &clk_audio_bus2.clk),
- };
- 
- void __init_or_cpufreq s5p6440_setup_clocks(void)
-@@ -596,12 +608,17 @@ static struct clk *clks[] __initdata = {
- void __init s5p6440_register_clocks(void)
- {
- 	int ptr;
-+	unsigned int cnt;
- 
- 	s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
- 
- 	for (ptr = 0; ptr < ARRAY_SIZE(sysclks); ptr++)
- 		s3c_register_clksrc(sysclks[ptr], 1);
- 
-+	s3c24xx_register_clocks(clk_cdev, ARRAY_SIZE(clk_cdev));
-+	for (cnt = 0; cnt < ARRAY_SIZE(clk_cdev); cnt++)
-+		s3c_disable_clocks(clk_cdev[cnt], 1);
-+
- 	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
- 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
- 	for (ptr = 0; ptr < ARRAY_SIZE(clksrc_cdev); ptr++)
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-index f3e0ef3..154dea7 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-@@ -247,24 +247,6 @@ static struct clk init_clocks_off[] = {
- 		.enable		= s5p64x0_pclk_ctrl,
- 		.ctrlbit	= (1 << 22),
- 	}, {
--		.name		= "iis",
--		.devname	= "samsung-i2s.0",
--		.parent		= &clk_pclk_low.clk,
--		.enable		= s5p64x0_pclk_ctrl,
--		.ctrlbit	= (1 << 26),
--	}, {
--		.name		= "iis",
--		.devname	= "samsung-i2s.1",
--		.parent		= &clk_pclk_low.clk,
--		.enable		= s5p64x0_pclk_ctrl,
--		.ctrlbit	= (1 << 15),
--	}, {
--		.name		= "iis",
--		.devname	= "samsung-i2s.2",
--		.parent		= &clk_pclk_low.clk,
--		.enable		= s5p64x0_pclk_ctrl,
--		.ctrlbit	= (1 << 16),
--	}, {
- 		.name		= "i2c",
- 		.devname	= "s3c2440-i2c.1",
- 		.parent		= &clk_pclk_low.clk,
-@@ -402,6 +384,7 @@ static struct clksrc_sources clkset_sclk_audio0 = {
- static struct clksrc_clk clk_sclk_audio0 = {
- 	.clk		= {
- 		.name		= "audio-bus",
-+		.devname	= "samsung-i2s.0",
- 		.enable		= s5p64x0_sclk_ctrl,
- 		.ctrlbit	= (1 << 8),
- 		.parent		= &clk_dout_epll.clk,
-@@ -549,6 +532,36 @@ static struct clksrc_clk clk_sclk_spi1 = {
- 	.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 4, .size = 4 },
- };
- 
-+static struct clk clk_i2s0 = {
-+	.name		= "iis",
-+	.devname	= "samsung-i2s.0",
-+	.parent		= &clk_pclk_low.clk,
-+	.enable		= s5p64x0_pclk_ctrl,
-+	.ctrlbit	= (1 << 26),
-+};
-+
-+static struct clk clk_i2s1 = {
-+	.name		= "iis",
-+	.devname	= "samsung-i2s.1",
-+	.parent		= &clk_pclk_low.clk,
-+	.enable		= s5p64x0_pclk_ctrl,
-+	.ctrlbit	= (1 << 15),
-+};
-+
-+static struct clk clk_i2s2 = {
-+	.name		= "iis",
-+	.devname	= "samsung-i2s.2",
-+	.parent		= &clk_pclk_low.clk,
-+	.enable		= s5p64x0_pclk_ctrl,
-+	.ctrlbit	= (1 << 16),
-+};
-+
-+static struct clk *clk_cdev[] = {
-+	&clk_i2s0,
-+	&clk_i2s1,
-+	&clk_i2s2,
-+};
-+
- static struct clksrc_clk *clksrc_cdev[] = {
- 	&clk_sclk_uclk,
- 	&clk_sclk_spi0,
-@@ -556,6 +569,7 @@ static struct clksrc_clk *clksrc_cdev[] = {
- 	&clk_sclk_mmc0,
- 	&clk_sclk_mmc1,
- 	&clk_sclk_mmc2,
-+	&clk_sclk_audio0,
- };
- 
- static struct clk_lookup s5p6450_clk_lookup[] = {
-@@ -567,6 +581,10 @@ static struct clk_lookup s5p6450_clk_lookup[] = {
- 	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0.clk),
- 	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1.clk),
- 	CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
-+	CLKDEV_INIT("samsung-i2s.0", "i2s_opclk0", &clk_i2s0),
-+	CLKDEV_INIT("samsung-i2s.0", "i2s_opclk1", &clk_sclk_audio0.clk),
-+	CLKDEV_INIT("samsung-i2s.1", "i2s_opclk0", &clk_i2s1),
-+	CLKDEV_INIT("samsung-i2s.2", "i2s_opclk0", &clk_i2s2),
- };
- 
- /* Clock initialization code */
-@@ -584,7 +602,6 @@ static struct clksrc_clk *sysclks[] = {
- 	&clk_pclk,
- 	&clk_hclk_low,
- 	&clk_pclk_low,
--	&clk_sclk_audio0,
- };
- 
- static struct clk dummy_apb_pclk = {
-@@ -661,10 +678,16 @@ void __init_or_cpufreq s5p6450_setup_clocks(void)
- void __init s5p6450_register_clocks(void)
- {
- 	int ptr;
-+	unsigned int cnt;
- 
- 	for (ptr = 0; ptr < ARRAY_SIZE(sysclks); ptr++)
- 		s3c_register_clksrc(sysclks[ptr], 1);
- 
-+
-+	s3c24xx_register_clocks(clk_cdev, ARRAY_SIZE(clk_cdev));
-+	for (cnt = 0; cnt < ARRAY_SIZE(clk_cdev); cnt++)
-+		s3c_disable_clocks(clk_cdev[cnt], 1);
-+
- 	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
- 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
- 	for (ptr = 0; ptr < ARRAY_SIZE(clksrc_cdev); ptr++)
-diff --git a/arch/arm/mach-s5p64x0/dev-audio.c b/arch/arm/mach-s5p64x0/dev-audio.c
-index a0d6edf..723d477 100644
---- a/arch/arm/mach-s5p64x0/dev-audio.c
-+++ b/arch/arm/mach-s5p64x0/dev-audio.c
-@@ -19,11 +19,6 @@
- #include <mach/dma.h>
- #include <mach/irqs.h>
- 
--static const char *rclksrc[] = {
--	[0] = "iis",
--	[1] = "sclk_audio2",
--};
--
- static int s5p6440_cfg_i2s(struct platform_device *pdev)
- {
- 	switch (pdev->id) {
-@@ -45,7 +40,6 @@ static struct s3c_audio_pdata s5p6440_i2s_pdata = {
- 	.type = {
- 		.i2s = {
- 			.quirks = QUIRK_PRI_6CHAN,
--			.src_clk = rclksrc,
- 		},
- 	},
- };
-@@ -93,7 +87,6 @@ static struct s3c_audio_pdata s5p6450_i2s0_pdata = {
- 	.type = {
- 		.i2s = {
- 			.quirks = QUIRK_PRI_6CHAN,
--			.src_clk = rclksrc,
- 		},
- 	},
- };
-@@ -110,11 +103,6 @@ struct platform_device s5p6450_device_iis0 = {
- 
- static struct s3c_audio_pdata s5p6450_i2s_pdata = {
- 	.cfg_gpio = s5p6450_cfg_i2s,
--	.type = {
--		.i2s = {
--			.src_clk = rclksrc,
--		},
--	},
- };
- 
- static struct resource s5p6450_i2s1_resource[] = {
+On Wed, Dec 19, 2012 at 4:49 AM, Sylwester Nawrocki
+<sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Hi Vivek,
+>
+>
+> On 12/18/2012 02:56 PM, Vivek Gautam wrote:
+>>
+>> Adding support to parse device node data in order to get
+>> required properties to set pmu isolation for usb-phy.
+>>
+>> Signed-off-by: Vivek Gautam<gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>
+>> Changes from v1:
+>>   - Changed the name of property for phy handler from'samsung,usb-phyctrl'
+>>     to 'samsung,usb-phyhandle' to make it look more generic.
+>>   - Similarly 'samsung,phyctrl-reg' is changed to 'samsung,phyhandle-reg'
+>>   - Added a check for 'samsung,usb-phyhandle' before getting node from
+>>     phandle.
+>>   - Putting the node using 'of_node_put()' which had been missed.
+>>   - Adding necessary check for the pointer in
+>> 'samsung_usbphy_set_isolation()'
+>>     to avoid any NULL pointer dereferencing.
+>>   - Unmapping the register ioremapped in
+>> 'samsung_usbphy_parse_dt_param()'.
+>>
+>>
+>>   .../devicetree/bindings/usb/samsung-usbphy.txt     |   12 +++
+>>   drivers/usb/phy/samsung-usbphy.c                   |   94
+>> ++++++++++++++++++--
+>>   2 files changed, 98 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>> b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>> index 7b26e2d..a7b28b2 100644
+>> --- a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>> +++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>> @@ -9,3 +9,15 @@ Required properties:
+>>   - compatible : should be "samsung,exynos4210-usbphy"
+>>   - reg : base physical address of the phy registers and length of memory
+>> mapped
+>>         region.
+>> +
+>> +Optional properties:
+>> +- samsung,usb-phyhandle : should point to usb-phyhandle sub-node which
+>> provides
+>> +                       binding data to enable/disable device PHY handled
+>> by
+>> +                       PMU register.
+>> +
+>> +                       Required properties:
+>> +                       - compatible : should be "samsung,usbdev-phyctrl"
+>> for
+>> +                                       DEVICE type phy.
+>> +                       - samsung,phyhandle-reg: base physical address of
+>> +                                               PHY_CONTROL register in
+>> PMU.
+>> +- samsung,enable-mask : should be '1'
+>
+>
+> This should only be 1 for Exynos4210+ SoCs, right ?
+> S5PV210 uses bit 0 for OTG and bit1 for USB host, doesn't it ? And for
+> s3c64xx
+> it seems to be bit 16.
+>
+> How about deriving this information from 'compatible' property instead ?
+>
+> Maybe you could just encode the USB PMU registers (I assume those aren't
+> touched by anything but the usb drivers) in a regular 'reg' property in
+> an usbphy subnode. Then the driver could interpret it also with help
+> of 'compatible' property. And you could just use of_iomap(). E.g.
+>
+>  usbphy@12130000 {
+>         compatible = "samsung,exynos5250-usbphy";
+>         reg = <0x12130000 0x100>, <0x12100000 0x100>;
+>         usbphy-pmu {
+>                 /* USB device and host PHY_CONTROL registers */
+>                 reg = <0x10040704 8>;
+>         };
+>  };
+>
+> Your "samsung,usb-phyhandle" approach seems over-engineered to me.
+> I might be missing something though.
+>
+>
+>> diff --git a/drivers/usb/phy/samsung-usbphy.c
+>> b/drivers/usb/phy/samsung-usbphy.c
+>> index 5c5e1bb5..4ceabe3 100644
+>> --- a/drivers/usb/phy/samsung-usbphy.c
+>> +++ b/drivers/usb/phy/samsung-usbphy.c
+>> @@ -72,6 +72,8 @@ enum samsung_cpu_type {
+>>    * @dev: The parent device supplied to the probe function
+>>    * @clk: usb phy clock
+>>    * @regs: usb phy register memory base
+>> + * @devctrl_reg: usb device phy-control pmu register memory base
+>
+>
+> hum, this name is not really helpful in understanding what's going
+> on here.
+>
+> Looking at arch/arm/mach-s5pv210/setup-usb-phy.c, there is only one
+> PHY_CONTROL (Power Management Unit) register for both OTG and USB host
+> PHYs. So are you really taking care of that case as well ?
+>
+>
+>> + * @en_mask: enable mask
+>>    * @ref_clk_freq: reference clock frequency selection
+>>    * @cpu_type: machine identifier
+>>    */
+>> @@ -81,12 +83,73 @@ struct samsung_usbphy {
+>>         struct device   *dev;
+>>         struct clk      *clk;
+>>         void __iomem    *regs;
+>> +       void __iomem    *devctrl_reg;
+>> +       u32             en_mask;
+>>         int             ref_clk_freq;
+>>         int             cpu_type;
+>>   };
+>>
+>>   #define phy_to_sphy(x)                container_of((x), struct
+>> samsung_usbphy, phy)
+>>
+>> +static int samsung_usbphy_parse_dt_param(struct samsung_usbphy *sphy)
+>> +{
+>> +       struct device_node *usb_phyctrl;
+>> +       u32 reg;
+>> +       int lenp;
+>> +
+>> +       if (!sphy->dev->of_node) {
+>> +               sphy->devctrl_reg = NULL;
+>> +               return -ENODEV;
+>> +       }
+>> +
+>> +       if (of_get_property(sphy->dev->of_node,
+>> "samsung,usb-phyhandle",&lenp)) {
+>> +               usb_phyctrl = of_parse_phandle(sphy->dev->of_node,
+>> +                                               "samsung,usb-phyhandle",
+>> 0);
+>> +               if (!usb_phyctrl) {
+>> +                       dev_warn(sphy->dev, "Can't get usb-phy handle\n");
+>> +                       sphy->devctrl_reg = NULL;
+>> +               }
+>> +
+>> +               of_property_read_u32(usb_phyctrl,
+>> "samsung,phyhandle-reg",&reg);
+>> +
+>> +               sphy->devctrl_reg = ioremap(reg, SZ_4);
+>
+>
+> What happens if invalid address value is assigned to 'samsung,phyhandle-reg'
+> ?
+>
+>> +               of_property_read_u32(sphy->dev->of_node,
+>> "samsung,enable-mask",
+>> +                                                       &sphy->en_mask);
+>> +               of_node_put(usb_phyctrl);
+>> +       } else {
+>> +               dev_warn(sphy->dev, "Can't get usb-phy handle\n");
+>> +               sphy->devctrl_reg = NULL;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +/*
+>> + * Set isolation here for phy.
+>> + * SOCs control this by controlling corresponding PMU registers
+>> + */
+>> +static void samsung_usbphy_set_isolation(struct samsung_usbphy *sphy, int
+>> on)
+>> +{
+>> +       void __iomem *usb_phyctrl_reg;
+>> +       u32 en_mask = sphy->en_mask;
+>> +       u32 reg;
+>> +
+>> +       usb_phyctrl_reg = sphy->devctrl_reg;
+>> +
+>> +       if (!usb_phyctrl_reg) {
+>> +               dev_warn(sphy->dev, "Can't set pmu isolation\n");
+>> +               return;
+>> +       }
+>> +
+>> +       reg = readl(usb_phyctrl_reg);
+>> +
+>> +       if (on)
+>> +               writel(reg&  ~en_mask, usb_phyctrl_reg);
+>>
+>> +       else
+>> +               writel(reg | en_mask, usb_phyctrl_reg);
+>> +}
+>> +
+>>   /*
+>>    * Returns reference clock frequency selection value
+>>    */
+>> @@ -199,6 +262,8 @@ static int samsung_usbphy_init(struct usb_phy *phy)
+>>         /* Disable phy isolation */
+>>         if (sphy->plat&&  sphy->plat->pmu_isolation)
+>>
+>>                 sphy->plat->pmu_isolation(false);
+>> +       else
+>> +               samsung_usbphy_set_isolation(sphy, false);
+>>
+>>         /* Initialize usb phy registers */
+>>         samsung_usbphy_enable(sphy);
+>> @@ -228,6 +293,8 @@ static void samsung_usbphy_shutdown(struct usb_phy
+>> *phy)
+>>         /* Enable phy isolation */
+>>         if (sphy->plat&&  sphy->plat->pmu_isolation)
+>>
+>>                 sphy->plat->pmu_isolation(true);
+>> +       else
+>> +               samsung_usbphy_set_isolation(sphy, true);
+>>
+>>         clk_disable_unprepare(sphy->clk);
+>>   }
+>> @@ -249,17 +316,12 @@ static inline int
+>> samsung_usbphy_get_driver_data(struct platform_device *pdev)
+>>   static int __devinit samsung_usbphy_probe(struct platform_device *pdev)
+>>   {
+>>         struct samsung_usbphy *sphy;
+>> -       struct samsung_usbphy_data *pdata;
+>> +       struct samsung_usbphy_data *pdata = pdev->dev.platform_data;
+>>         struct device *dev =&pdev->dev;
+>>
+>>         struct resource *phy_mem;
+>>         void __iomem    *phy_base;
+>>         struct clk *clk;
+>> -
+>> -       pdata = pdev->dev.platform_data;
+>> -       if (!pdata) {
+>> -               dev_err(&pdev->dev, "%s: no platform data defined\n",
+>> __func__);
+>> -               return -EINVAL;
+>> -       }
+>> +       int ret;
+>>
+>>         phy_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>         if (!phy_mem) {
+>> @@ -283,7 +345,20 @@ static int __devinit samsung_usbphy_probe(struct
+>> platform_device *pdev)
+>>                 return PTR_ERR(clk);
+>>         }
+>>
+>> -       sphy->dev               =&pdev->dev;
+>> +       sphy->dev =&pdev->dev;
+>
+>
+>         sphy->dev = dev;
+>
+>
+>> +
+>> +       ret = samsung_usbphy_parse_dt_param(sphy);
+>> +       if (ret) {
+>> +               /* fallback to pdata */
+>> +               if (!pdata) {
+>> +                       dev_err(&pdev->dev,
+>> +                               "%s: no device data found\n", __func__);
+>
+>
+> I find term "device data" a bit confusing here.
+>
+>> +                       return -ENODEV;
+>
+>
+> In the original code -EINVAL was returned when platform_data was not set.
+>
+>
+>> +               } else {
+>> +                       sphy->plat = pdata;
+>> +               }
+>> +       }
+>> +
+>
+>
+> How about rewriting this to:
+>
+>         if (dev->of_node) {
+>                 ret = samsung_usbphy_parse_dt_param(sphy);
+>                 if (ret < 0)
+>                         return ret;
+>         } else {
+>                 if (!pdata) {
+>                         dev_err(dev, "no platform data specified\n");
+>                         return -EINVAL;
+>                 }
+>         }
+>
+> This way we won't be obfuscating any error code returned from the
+> OF parsing function.
+>
+>
+>>         sphy->plat              = pdata;
+>>         sphy->regs              = phy_base;
+>>         sphy->clk               = clk;
+>> @@ -305,6 +380,9 @@ static int __exit samsung_usbphy_remove(struct
+>> platform_device *pdev)
+>>
+>>         usb_remove_phy(&sphy->phy);
+>>
+>> +       if (sphy->devctrl_reg)
+>> +               iounmap(sphy->devctrl_reg);
+>> +
+>>         return 0;
+>>   }
+>
+>
+> --
+>
+> Regards,
+> Sylwester
+>
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+
+
 -- 
-1.7.4.4
+Thanks & Regards
+Vivek
