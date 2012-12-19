@@ -1,70 +1,63 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
-Date: Wed, 19 Dec 2012 17:09:37 +0000
-Message-ID: <20121219170937.GV4985@opensource.wolfsonmicro.com>
-References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
- <1355395373-22058-3-git-send-email-padma.v@samsung.com>
- <20121219132414.2CF653E0AD7@localhost>
+Subject: Re: [PATCH 1/2] i2c-core: Add gpio based bus arbitration
+ implementation
+Date: Wed, 19 Dec 2012 17:14:23 +0000
+Message-ID: <20121219171423.GW4985@opensource.wolfsonmicro.com>
+References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
+ <1355464254-12768-2-git-send-email-ch.naveen@samsung.com>
+ <20121219123201.B636A3E0AD7@localhost>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+Yg8W10oK6rlW0RR"
+	protocol="application/pgp-signature"; boundary="NHfequSh1hmJPP0s"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:57749 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46451 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755671Ab2LSRJl (ORCPT
+	by vger.kernel.org with ESMTP id S1755667Ab2LSRO0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Dec 2012 12:09:41 -0500
+	Wed, 19 Dec 2012 12:14:26 -0500
 Content-Disposition: inline
-In-Reply-To: <20121219132414.2CF653E0AD7@localhost>
+In-Reply-To: <20121219123201.B636A3E0AD7@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, sbkim73@samsung.com, tiwai@suse.de, ben-linux@fluff.org, lrg@ti.com
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, w.sang@pengutronix.de, khali@linux-fr.org, ben-linux@fluff.org, devicetree-discuss@lists.ozlabs.org, sjg@chromium.org, grundler@chromium.org, naveen@chromium.org
 
 
---+Yg8W10oK6rlW0RR
+--NHfequSh1hmJPP0s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 19, 2012 at 01:24:14PM +0000, Grant Likely wrote:
-> On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna <padma.v@samsung.com=
-> wrote:
+On Wed, Dec 19, 2012 at 12:32:01PM +0000, Grant Likely wrote:
 
-> > +- compatible : "samsung,samsung-i2s"
+> I'm not convinced on the design of this protocol. It won't scale beyond
+> 2 bus masters and it seems very specific to the design of a specific
+> piece of hardware. I don't think it is mature enough to bake into the
 
-> Isn't that kind of redundant?  :-)
+I ought to point out that the original patch would've baked this into
+the Samsung I2C driver but I asked for it to be split out as it's
+nothing to do with the controller really and I'm sure I've seen it
+before.
 
-> The format of the compatible strings should be "<vendor>,<part-number>-i2=
-s".=20
-> Please be specific about the part number that you're doing the binding
-> for. For example; use "samsung,exynos4210-i2s" instead of "samsung,exynos=
--i2s".
-
-There are actually versioned IPs here (where the versions are used
-publically in a few places) but it's not clearly documented which is
-which.  It would be reasonable to use the IP versions here I think.
-
---+Yg8W10oK6rlW0RR
+--NHfequSh1hmJPP0s
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ0fS+AAoJELSic+t+oim99iQQAJKF9qTp0/p73XtK6TJwvXVM
-xYY0ZzmZzFv8q6HG7Nx+gw+SE1DAp+GmQefCIAahsEIEnRf/9MHhiz9uuMtP3jLL
-rYCqy5uiYgXDAOhW3dVB7r4l+XFotslkkigm0dDA2GTrLQrWdP2CXqmN2j8fix3G
-MARX79RwNoRLTWHz4LvOgB2tdqjLUfhNEbBSrwnTGLNR3TMa32+26zABO+bgASx9
-dx8A1O9m6Y+ZBuDfVNAVixnMZ90P0+iaM0TKmaEzKMnCsg9779V85PkkhYKMdewc
-NQiwhfsHs26bF/Fub2SJpCYAvMW7YfTU1go3H5UuXOPY2KvgFhZmREx0zBkoGyT9
-jDOUJJPtxYaCNfi+qM2gOxdfSYl0jcbCQ82U+wlWB8GhdZyWzxirk3sE4o78FXZL
-hDKY0dWEtHOY1uKuHQPmQ4eo6ORYaECEBTexHDe+lBmT0DxELeE9b83FCwEItcSC
-Dl316A6Ojo8KJi7Fxwl/xLHFoi6vMNU8lCT/fvdn81z5U5YshxRuJIHy7VJFWccO
-iD2Gt9tPU60Y0YarAnEhK+JhSeabvsWBco7fAQYkk89GSAz8T8BWmmtl2phPtfRd
-+fiUK5wb1jYaSztOwZUvCPTBcbLH5owFf/byn2VXZ7be5xRsNGp1u0XMMx0aeRtF
-XvnudmpfXR6Z3+OXztDr
-=tTsm
+iQIcBAEBAgAGBQJQ0fXoAAoJELSic+t+oim9uekP/1gKDaELx3ooIe4UOtlMYrZC
+54DUlf2wnOTNzOnBRWjTk5wmNa+gxQdeCBWWeCVTB7Gbk1SDFU6KkSSl5eek1OXe
+D4wvHV5CQSvJy6A3l+26GPhNWE/fCq6FgMrEYDJqqZKT9q+F5ls4sBD0GLT5a6kA
+DI8q2eByPt/BctDmoGgtYlFtSgwndG0tUND7/wm7BG4B9KpSPmAOsGQA46Pludh2
+EQI89v0gcOdEIGvc+bo0RsZ1ROKYVlXVG1G28zZIt7r80PiVwvqkLtMLR2Yo88Wb
+Z+W0nWPQZ6qKt3eRkTRJUEjKHKsGdrlOokCxZmsZmRVP2o44vOHvlolA5NaaYJGJ
+b64FWDdmIy8YKWD2LkFNwj14YspWPUu982AMJUu5jBIF6MCifaK3oeG30/zIySsT
+dheu+To2FysILsGIx7Rdooo3uZkfiT+TB+11JRFBqblnELNF7XM3vg3NXx1WYpQO
+lPJfRGzsaQY3665WHdvmOzL78f1DUs7LaeTXv8wxpKrZkX+r90jH295/lDZyrtSd
+r+wLoSkrn9Z3pmraQYra6e4A6oRUD07/AnZm+NwkMeY4rHT6cY2NyQV0wbhg6qH5
+pQWugWsRBZBNr5kYEy09y6sbb8gA6FIOfxgPuTvunndZ9m7LPl/yds73Y/h5She7
+FUbvxQYUr7twQthN5kdR
+=cKLv
 -----END PGP SIGNATURE-----
 
---+Yg8W10oK6rlW0RR--
+--NHfequSh1hmJPP0s--
