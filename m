@@ -1,63 +1,60 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] i2c-core: Add gpio based bus arbitration
- implementation
-Date: Wed, 19 Dec 2012 17:14:23 +0000
-Message-ID: <20121219171423.GW4985@opensource.wolfsonmicro.com>
-References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
- <1355464254-12768-2-git-send-email-ch.naveen@samsung.com>
- <20121219123201.B636A3E0AD7@localhost>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Wed, 19 Dec 2012 09:37:28 -0800
+Message-ID: <007401cdde0f$86096210$921c2630$@samsung.com>
+References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
+ <1355395373-22058-3-git-send-email-padma.v@samsung.com>
+ <20121219132414.2CF653E0AD7@localhost>
+ <20121219170937.GV4985@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NHfequSh1hmJPP0s"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46451 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755667Ab2LSRO0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Dec 2012 12:14:26 -0500
-Content-Disposition: inline
-In-Reply-To: <20121219123201.B636A3E0AD7@localhost>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: 
+Content-language: en-us
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Grant Likely' <grant.likely@secretlab.ca>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, 'Padmavathi Venna' <padma.v@samsung.com>, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, tiwai@suse.de, ben-linux@fluff.org, lrg@ti.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, w.sang@pengutronix.de, khali@linux-fr.org, ben-linux@fluff.org, devicetree-discuss@lists.ozlabs.org, sjg@chromium.org, grundler@chromium.org, naveen@chromium.org
 
+Kukjin Kim wrote:
+> 
+> Mark Brown wrote:
+> >
+> > On Wed, Dec 19, 2012 at 01:24:14PM +0000, Grant Likely wrote:
+> > > On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna
+> > <padma.v@samsung.com> wrote:
+> >
+> > > > +- compatible : "samsung,samsung-i2s"
+> >
+> > > Isn't that kind of redundant?  :-)
+> >
+> > > The format of the compatible strings should be "<vendor>,<part-
+> number>-
+> > i2s".
+> > > Please be specific about the part number that you're doing the binding
+> > > for. For example; use "samsung,exynos4210-i2s" instead of
+> > "samsung,exynos-i2s".
+> >
+> > There are actually versioned IPs here (where the versions are used
+> > publically in a few places) but it's not clearly documented which is
+> > which.  It would be reasonable to use the IP versions here I think.
+> 
+Oops, I'm resending due to problem of my e-mail client.
 
---NHfequSh1hmJPP0s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> I agree with Mark Brown. That makes sense, for example, see mfc.
+> 	compatible = "samsung,mfc-v6"
+> Same versioned IPs can be used on different SoCs, so in my opinion, in
+this
+> case, to use version is more clear.
+> 
 
-On Wed, Dec 19, 2012 at 12:32:01PM +0000, Grant Likely wrote:
-
-> I'm not convinced on the design of this protocol. It won't scale beyond
-> 2 bus masters and it seems very specific to the design of a specific
-> piece of hardware. I don't think it is mature enough to bake into the
-
-I ought to point out that the original patch would've baked this into
-the Samsung I2C driver but I asked for it to be split out as it's
-nothing to do with the controller really and I'm sure I've seen it
-before.
-
---NHfequSh1hmJPP0s
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ0fXoAAoJELSic+t+oim9uekP/1gKDaELx3ooIe4UOtlMYrZC
-54DUlf2wnOTNzOnBRWjTk5wmNa+gxQdeCBWWeCVTB7Gbk1SDFU6KkSSl5eek1OXe
-D4wvHV5CQSvJy6A3l+26GPhNWE/fCq6FgMrEYDJqqZKT9q+F5ls4sBD0GLT5a6kA
-DI8q2eByPt/BctDmoGgtYlFtSgwndG0tUND7/wm7BG4B9KpSPmAOsGQA46Pludh2
-EQI89v0gcOdEIGvc+bo0RsZ1ROKYVlXVG1G28zZIt7r80PiVwvqkLtMLR2Yo88Wb
-Z+W0nWPQZ6qKt3eRkTRJUEjKHKsGdrlOokCxZmsZmRVP2o44vOHvlolA5NaaYJGJ
-b64FWDdmIy8YKWD2LkFNwj14YspWPUu982AMJUu5jBIF6MCifaK3oeG30/zIySsT
-dheu+To2FysILsGIx7Rdooo3uZkfiT+TB+11JRFBqblnELNF7XM3vg3NXx1WYpQO
-lPJfRGzsaQY3665WHdvmOzL78f1DUs7LaeTXv8wxpKrZkX+r90jH295/lDZyrtSd
-r+wLoSkrn9Z3pmraQYra6e4A6oRUD07/AnZm+NwkMeY4rHT6cY2NyQV0wbhg6qH5
-pQWugWsRBZBNr5kYEy09y6sbb8gA6FIOfxgPuTvunndZ9m7LPl/yds73Y/h5She7
-FUbvxQYUr7twQthN5kdR
-=cKLv
------END PGP SIGNATURE-----
-
---NHfequSh1hmJPP0s--
+- Kukjin
