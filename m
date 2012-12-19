@@ -1,68 +1,78 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] ARM: EXYNOS: Fix NULL pointer dereference bug in Origen
-Date: Tue, 18 Dec 2012 20:12:52 -0800
-Message-ID: <002401cddd9f$1e3c9dc0$5ab5d940$@samsung.com>
-References: <1355743461-21535-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH V3 0/5 RESEND] Avoid passing clks through platform data
+Date: Wed, 19 Dec 2012 11:05:48 +0530
+Message-ID: <1355895353-10316-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44097 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754265Ab2LSEMz (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:32075 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750779Ab2LSFfG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Dec 2012 23:12:55 -0500
+	Wed, 19 Dec 2012 00:35:06 -0500
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MF900CRDFPI8WB0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Dec 2012 13:12:54 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MF900EI2FPGTWA0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Dec 2012 13:12:54 +0900 (KST)
-In-reply-to: <1355743461-21535-1-git-send-email-sachin.kamat@linaro.org>
-Content-language: en-us
+ 17 2011)) with ESMTP id <0MF900LXEJI7PBJ0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Dec 2012 14:35:04 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MF900KQQJI8CS20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Dec 2012 14:35:03 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, olof@lixom.net, jhbird.choi@samsung.com
 
-Sachin Kamat wrote:
-> 
-> When DRM support for Samsung SoC and Samsung S3C framebuffer support
-> are selected, the kernel crashes as it does not get the required
-> platform data. Change the compile macro to CONFIG_DRM_EXYNOS_FIMD
-> to fix this.
-> 
-> Without this patch the following crash occurs during bootup:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 00000000
-> PC is at 0x0
-> LR is at s3c_fb_probe+0x198/0x788
-> [<c01520e8>] (s3c_fb_probe+0x198/0x788) from [<c01a3dd4>]
-> (platform_drv_probe+0x18/0x1c)
-> [<c01a3dd4>] (platform_drv_probe+0x18/0x1c) from [<c01a2b8c>]
-> (driver_probe_device+0x70/0x1f0)
-> [<c01a2b8c>] (driver_probe_device+0x70/0x1f0) from [<c01a2d98>]
-> (__driver_attach+0x8c/0x90)
-> [<c01a2d98>] (__driver_attach+0x8c/0x90) from [<c01a14e4>]
-> (bus_for_each_dev+0x50/0x7c)
-> [<c01a14e4>] (bus_for_each_dev+0x50/0x7c) from [<c01a23f4>]
-> (bus_add_driver+0x170/0x23c)
-> [<c01a23f4>] (bus_add_driver+0x170/0x23c) from [<c01a324c>]
-> (driver_register+0x78/0x144)
-> [<c01a324c>] (driver_register+0x78/0x144) from [<c000862c>]
-> (do_one_initcall+0x34/0x174)
-> [<c000862c>] (do_one_initcall+0x34/0x174) from [<c01de210>]
-> (kernel_init+0x100/0x2a0)
-> [<c01de210>] (kernel_init+0x100/0x2a0) from [<c000e118>]
-> (ret_from_fork+0x14/0x3c)
-> 
-Look OK on this whole series. Will apply.
+These are the set of patches required to fix the following build error
+in dev-audio.c on all samsung platforms.
 
-Thanks.
+arch/arm/mach-exynos/dev-audio.c:58:4: error: unknown field 'src_clk'
+specified in initializer
+arch/arm/mach-exynos/dev-audio.c:58:4: warning: initialization makes integer
+from pointer without a cast [enabled by default]
+arch/arm/mach-exynos/dev-audio.c:58:4: warning: (near initialization for
+'i2sv5_pdata.type.i2s.idma_addr') [enabled by default]
+arch/arm/mach-exynos/dev-audio.c:91:4: error: unknown field 'src_clk'
+specified in initializer
+arch/arm/mach-exynos/dev-audio.c:91:4: warning: initialization makes integer
+from pointer without a cast [enabled by default]
+arch/arm/mach-exynos/dev-audio.c:91:4: warning: (near initialization for
+'i2sv3_pdata.type.i2s.idma_addr') [enabled by default]
 
-- Kukjin
+Changes since v2:
+        - Rebased on 3.7-rc3
+
+I2S controller has an internal mux for RCLK source clks. The list
+of source clk names were passed through platform data in non-dt case.
+The variable holding the list of RCLK source clk names is not
+required, as the list of clks need to be registered with clkdev
+using generic connection id. This is required as part of adding DT
+support for I2S controller driver.
+
+In the below series of patches, registered the existed clks with
+clkdev using generic connection id and removed the variable which
+holds those clk names. This is done for s3c64xx,s5pc100,s5p64x0,
+s5pv210 and exynos4 series. But tested the sound card detection
+only on smdk6410 board. On remaining all platforms it was just
+build tested.
+
+Padmavathi Venna (5):
+  ARM: S3C64XX: Add I2S clkdev support
+  ARM: S5PC100: Add I2S clkdev support
+  ARM: S5P64X0: Add I2S clkdev support
+  ARM: S5PV210: Avoid passing the clks through platform data
+  ARM: EXYNOS: Avoid passing the clks through platform data
+
+ arch/arm/mach-exynos/dev-audio.c      |   12 ---
+ arch/arm/mach-s3c64xx/clock.c         |  126 ++++++++++++++++++++-------------
+ arch/arm/mach-s3c64xx/dev-audio.c     |   11 ---
+ arch/arm/mach-s5p64x0/clock-s5p6440.c |   49 +++++++++----
+ arch/arm/mach-s5p64x0/clock-s5p6450.c |   61 +++++++++++-----
+ arch/arm/mach-s5p64x0/dev-audio.c     |   12 ---
+ arch/arm/mach-s5pc100/clock.c         |   48 ++++++++-----
+ arch/arm/mach-s5pc100/dev-audio.c     |   16 ----
+ arch/arm/mach-s5pv210/dev-audio.c     |   16 ----
+ 9 files changed, 182 insertions(+), 169 deletions(-)
+
+-- 
+1.7.4.4
