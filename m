@@ -1,72 +1,180 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH V2] spi: remove check for bits_per_word on transfer from
-	low level driver
-Date: Wed, 19 Dec 2012 16:24:33 +0000
-Message-ID: <20121219162433.1E1E43E0BCF@localhost>
-References: <1355820943-25228-1-git-send-email-ldewangan@nvidia.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 1/4] ARM: EXYNOS: Update & move usb-phy types to
+ generic include layer
+Date: Wed, 19 Dec 2012 13:48:39 -0800
+Message-ID: <CAD=FV=Ved4TSr7v413u5_o2cBrfegGrpKe1V2qKwQ36v-MQTHA@mail.gmail.com>
+References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
+ <1355841786-13307-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <1355820943-25228-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonas.gorski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, baohua.song-kQvG35nSl+M@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1355841786-13307-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 18 Dec 2012 14:25:43 +0530, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> The spi core make sure that each transfer structure have the proper
-> setting for bits_per_word before calling low level transfer APIs.
-> 
-> Hence it is no more require to check again in low level driver for
-> this field whether this is set correct or not. Removing such code
-> from low level driver.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[...]
-> diff --git a/drivers/spi/spi-txx9.c b/drivers/spi/spi-txx9.c
-> index d5a3cbb..550b5f4 100644
-> --- a/drivers/spi/spi-txx9.c
-> +++ b/drivers/spi/spi-txx9.c
-> @@ -189,9 +189,8 @@ static void txx9spi_work_one(struct txx9spi *c, struct spi_message *m)
->  		unsigned int len = t->len;
->  		unsigned int wsize;
->  		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
-> -		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-> +		u8 bits_per_word = t->bits_per_word;
->  
-> -		bits_per_word = bits_per_word ? : 8;
->  		wsize = bits_per_word >> 3; /* in bytes */
->  
->  		if (prev_speed_hz != speed_hz
-> @@ -316,9 +315,8 @@ static int txx9spi_transfer(struct spi_device *spi, struct spi_message *m)
->  	/* check each transfer's parameters */
->  	list_for_each_entry (t, &m->transfers, transfer_list) {
->  		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
-> -		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-> +		u8 bits_per_word = t->bits_per_word;
->  
-> -		bits_per_word = bits_per_word ? : 8;
+Vivek,
 
-Have you verified here that bits_per_word can never be '0' here? What is
-the path that ensures spi->bits_per_word (and hence t->bits_per_word) is
-set to 8 here?
+On Tue, Dec 18, 2012 at 6:43 AM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Updating the names of usb-phy types to more generic names:
+> USB_PHY_TYPE_DEIVCE & USB_PHY_TYPE_HOST; and further update
+> its dependencies.
 
-Otherwise the patch looks good. Thanks for doing this work.
+Since you're changing the name, I would have expected to see a removal
+of the old enum type in this patch.  I don't see it.  After applying
+all of your patches I find that S5P_USB_PHY_HOST and
+S5P_USB_PHY_DEVICE are still defined and used.
 
-g.
+$ git grep S5P_USB_PHY_HOST
+arch/arm/mach-exynos/setup-usb-phy.c:   else if (type == S5P_USB_PHY_HOST)
+arch/arm/mach-exynos/setup-usb-phy.c:   else if (type == S5P_USB_PHY_HOST)
+arch/arm/plat-samsung/include/plat/usb-phy.h:   S5P_USB_PHY_HOST,
 
+I believe that those usages of the old enum should also be switched
+over and the old enum removed.
 
-------------------------------------------------------------------------------
-LogMeIn Rescue: Anywhere, Anytime Remote support for IT. Free Trial
-Remotely access PCs and mobile devices and provide instant support
-Improve your efficiency, and focus on delivering more value-add services
-Discover what IT Professionals Know. Rescue delivers
-http://p.sf.net/sfu/logmein_12329d2d
+> Signed-off-by: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/usb/host/ehci-s5p.c         |    9 +++++----
+>  drivers/usb/host/ohci-exynos.c      |    9 +++++----
+>  include/linux/usb/samsung_usb_phy.h |   16 ++++++++++++++++
+>  3 files changed, 26 insertions(+), 8 deletions(-)
+>  create mode 100644 include/linux/usb/samsung_usb_phy.h
+>
+> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+> index 319dcfa..46ca5ef 100644
+> --- a/drivers/usb/host/ehci-s5p.c
+> +++ b/drivers/usb/host/ehci-s5p.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/platform_data/usb-ehci-s5p.h>
+> +#include <linux/usb/samsung_usb_phy.h>
+>  #include <plat/usb-phy.h>
+>
+>  #define EHCI_INSNREG00(base)                   (base + 0x90)
+> @@ -164,7 +165,7 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+>         }
+>
+>         if (pdata->phy_init)
+> -               pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+>         ehci = hcd_to_ehci(hcd);
+>         ehci->caps = hcd->regs;
+> @@ -198,7 +199,7 @@ static int s5p_ehci_remove(struct platform_device *pdev)
+>         usb_remove_hcd(hcd);
+>
+>         if (pdata && pdata->phy_exit)
+> -               pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+>         clk_disable_unprepare(s5p_ehci->clk);
+>
+> @@ -229,7 +230,7 @@ static int s5p_ehci_suspend(struct device *dev)
+>         rc = ehci_suspend(hcd, do_wakeup);
+>
+>         if (pdata && pdata->phy_exit)
+> -               pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+>         clk_disable_unprepare(s5p_ehci->clk);
+>
+> @@ -246,7 +247,7 @@ static int s5p_ehci_resume(struct device *dev)
+>         clk_prepare_enable(s5p_ehci->clk);
+>
+>         if (pdata && pdata->phy_init)
+> -               pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+>         /* DMA burst Enable */
+>         writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index aa3b884..804fb62 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/platform_data/usb-exynos.h>
+> +#include <linux/usb/samsung_usb_phy.h>
+>  #include <plat/usb-phy.h>
+>
+>  struct exynos_ohci_hcd {
+> @@ -153,7 +154,7 @@ static int exynos_ohci_probe(struct platform_device *pdev)
+>         }
+>
+>         if (pdata->phy_init)
+> -               pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+>         ohci = hcd_to_ohci(hcd);
+>         ohci_hcd_init(ohci);
+> @@ -184,7 +185,7 @@ static int exynos_ohci_remove(struct platform_device *pdev)
+>         usb_remove_hcd(hcd);
+>
+>         if (pdata && pdata->phy_exit)
+> -               pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+>         clk_disable_unprepare(exynos_ohci->clk);
+>
+> @@ -229,7 +230,7 @@ static int exynos_ohci_suspend(struct device *dev)
+>         clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+>
+>         if (pdata && pdata->phy_exit)
+> -               pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+>         clk_disable_unprepare(exynos_ohci->clk);
+>
+> @@ -249,7 +250,7 @@ static int exynos_ohci_resume(struct device *dev)
+>         clk_prepare_enable(exynos_ohci->clk);
+>
+>         if (pdata && pdata->phy_init)
+> -               pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +               pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+>         ohci_resume(hcd, false);
+>
+> diff --git a/include/linux/usb/samsung_usb_phy.h b/include/linux/usb/samsung_usb_phy.h
+> new file mode 100644
+> index 0000000..9167826
+> --- /dev/null
+> +++ b/include/linux/usb/samsung_usb_phy.h
+> @@ -0,0 +1,16 @@
+> +/*
+> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> + *             http://www.samsung.com/
+> + *
+> + * Defines phy types for samsung usb phy controllers - HOST or DEIVCE.
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General  Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + */
+> +
+> +enum samsung_usb_phy_type {
+> +       USB_PHY_TYPE_DEVICE,
+> +       USB_PHY_TYPE_HOST,
+> +};
+> --
+> 1.7.6.5
+>
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
