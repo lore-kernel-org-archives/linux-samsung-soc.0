@@ -1,64 +1,81 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Wed, 19 Dec 2012 19:16:39 +0530
-Message-ID: <CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH 1/2] usb: ehci-s5p/ohci-exynos: Fix compatible strings for
+ the device
+Date: Wed, 19 Dec 2012 19:17:59 +0530
+Message-ID: <CAFp+6iGK=EW7=ZYJwrBfqLxHitPU=tePrw9t69g_EDCo4EYegA@mail.gmail.com>
 References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
-	<20121215072014.2E05E3E0AE3@localhost>
+	<1355410348-5129-2-git-send-email-gautam.vivek@samsung.com>
+	<CAFp+6iEUrP5by8+HHFBMYJcu1v9QB1=RGp675e-VfOoYR9dRjQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121215072014.2E05E3E0AE3@localhost>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:52493 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751818Ab2LSNsB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Dec 2012 08:48:01 -0500
+In-Reply-To: <CAFp+6iEUrP5by8+HHFBMYJcu1v9QB1=RGp675e-VfOoYR9dRjQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: dianders@chromium.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org, Vivek Gautam <gautam.vivek@samsung.com>
 
 CC: Doug Anderson
 
 
-On Sat, Dec 15, 2012 at 12:50 PM, Grant Likely
-<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
-> On Thu, 13 Dec 2012 20:22:26 +0530, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> Using chip specific compatible string as it should be.
->> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
->> which till now used a generic 'exynos' in their compatible strings.
+On Thu, Dec 13, 2012 at 9:39 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+> On Thu, Dec 13, 2012 at 8:22 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>> Using specific chip in compatible strings. Newer SOCs can claim
+>> device by using older string in the compatible list.
 >>
->> This goes as per the discussion happened in the thread for
->> [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
->> available at:
->> http://www.spinics.net/lists/linux-usb/msg74145.html
->>
->> Vivek Gautam (2):
->>   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
->>   usb: dwc3-exynos: Fix compatible strings for the device
->
-> for both patches:
-> Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
->
->>
->>  drivers/usb/dwc3/dwc3-exynos.c |    2 +-
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> ---
 >>  drivers/usb/host/ehci-s5p.c    |    2 +-
 >>  drivers/usb/host/ohci-exynos.c |    2 +-
->>  3 files changed, 3 insertions(+), 3 deletions(-)
+>>  2 files changed, 2 insertions(+), 2 deletions(-)
 >>
+>> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+>> index 319dcfa..f18e6ac 100644
+>> --- a/drivers/usb/host/ehci-s5p.c
+>> +++ b/drivers/usb/host/ehci-s5p.c
+>> @@ -266,7 +266,7 @@ static const struct dev_pm_ops s5p_ehci_pm_ops = {
+>>
+>>  #ifdef CONFIG_OF
+>>  static const struct of_device_id exynos_ehci_match[] = {
+>> -       { .compatible = "samsung,exynos-ehci" },
+>> +       { .compatible = "samsung,exynos4210-ehci" },
+>>         {},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, exynos_ehci_match);
+>> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+>> index aa3b884..77f2017 100644
+>> --- a/drivers/usb/host/ohci-exynos.c
+>> +++ b/drivers/usb/host/ohci-exynos.c
+>> @@ -267,7 +267,7 @@ static const struct dev_pm_ops exynos_ohci_pm_ops = {
+>>
+>>  #ifdef CONFIG_OF
+>>  static const struct of_device_id exynos_ohci_match[] = {
+>> -       { .compatible = "samsung,exynos-ohci" },
+>> +       { .compatible = "samsung,exynos4210-ohci" },
+>>         {},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, exynos_ohci_match);
 >> --
 >> 1.7.6.5
 >>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
 >
 > --
-> Grant Likely, B.Sc, P.Eng.
-> Secret Lab Technologies, Ltd.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Thanks & Regards
+> Vivek
 
 
 
 -- 
 Thanks & Regards
 Vivek
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
