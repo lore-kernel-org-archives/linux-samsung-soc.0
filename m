@@ -1,22 +1,21 @@
-From: Simon Glass <sjg@chromium.org>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 Subject: Re: [PATCH 1/2] i2c-core: Add gpio based bus arbitration implementation
-Date: Wed, 19 Dec 2012 16:17:03 -0800
-Message-ID: <CAPnjgZ30MQS1OT3GOFLG9HntoD8NrzNw6bB_d1fiJEgHcMDGUA@mail.gmail.com>
+Date: Thu, 20 Dec 2012 00:53:43 +0000
+Message-ID: <CACxGe6uoWSD4EK+jb4Hrh0-nF+waWNh8MyBH5M7oxrwA7uGLrg@mail.gmail.com>
 References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
-	<1355464254-12768-2-git-send-email-ch.naveen@samsung.com>
-	<20121219123201.B636A3E0AD7@localhost>
-	<20121219171423.GW4985@opensource.wolfsonmicro.com>
+ <1355464254-12768-2-git-send-email-ch.naveen@samsung.com> <20121219123201.B636A3E0AD7@localhost>
+ <20121219171423.GW4985@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121219171423.GW4985@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, khali@linux-fr.org, Ben Dooks <ben-linux@fluff.org>, Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, Grant Grundler <grundler@chromium.org>, Naveen Krishna <naveen@chromium.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20121219171423.GW4985-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux I2C <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, devicetree-discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, naveen-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 19, 2012 at 9:14 AM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
+On Wed, Dec 19, 2012 at 5:14 PM, Mark Brown
+<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
 > On Wed, Dec 19, 2012 at 12:32:01PM +0000, Grant Likely wrote:
 >
 >> I'm not convinced on the design of this protocol. It won't scale beyond
@@ -28,13 +27,10 @@ On Wed, Dec 19, 2012 at 9:14 AM, Mark Brown
 > nothing to do with the controller really and I'm sure I've seen it
 > before.
 
-Grant your idea looks nice to me. I only worry if we should wait until
-we have a second user before going so far with it. But it is certainly
-a nice general solution.
+Indeed, baking it into the driver is also the wrong abstraction.
 
-The scaling beyond two bus masters would require the code to be
-changed to check more input lines from other masters. Best avoided for
-now I think until we have a use for it.
+g.
 
-Regards,
-Simon
+--
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
