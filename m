@@ -1,48 +1,65 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] gpio: samsung: remove exynos_gpio_cfg
-Date: Thu, 20 Dec 2012 10:13:54 +0900
-Message-ID: <50D26652.1020205@samsung.com>
-References: <1355481842-17952-1-git-send-email-jy0922.shim@samsung.com>
- <20121219222255.49E263E0AD6@localhost>
+Subject: Re: [PATCH] ARM: EXYNOS: fix GIC using for EXYNOS5440
+Date: Thu, 20 Dec 2012 11:04:03 +0900
+Message-ID: <50D27213.9050403@samsung.com>
+References: <030c01cdd672$cb1b6b40$615241c0$%kim@samsung.com>
+ <50C545E8.8050301@samsung.com> <001501cddd98$9698dba0$c3ca92e0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21442 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752207Ab2LTBNj (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:34128 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751851Ab2LTCEK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Dec 2012 20:13:39 -0500
-In-reply-to: <20121219222255.49E263E0AD6@localhost>
+	Wed, 19 Dec 2012 21:04:10 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MFB008QF4DN6PE0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Dec 2012 11:03:46 +0900 (KST)
+Received: from [10.90.51.60] by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MFB008894EAC300@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Dec 2012 11:03:46 +0900 (KST)
+In-reply-to: <001501cddd98$9698dba0$c3ca92e0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linus.walleij@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Grant,
-
-On 12/20/2012 07:22 AM, Grant Likely wrote:
-> On Fri, 14 Dec 2012 19:44:01 +0900, Joonyoung Shim <jy0922.shim@samsung.com> wrote:
->> The exynos_gpio_cfg can be substituted to samsung_gpio_cfgs[8].
+On 12/19/2012 12:26 PM, Kukjin Kim wrote:
+> Joonyoung Shim wrote:
+>> Hi,
 >>
->> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Hi Joonyoung,
->
-> I need some help here. I don't understand what this patch is for or how
-> it works. The commit text above doesn't give me enough information to
-> evaluate the patch. What is the intent here? Why is samsung_gpio_cfgs[8]
-> more correct than exynos_gpio_cfg?
+>> On 12/10/2012 10:07 AM, Kukjin Kim wrote:
+>>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>>> ---
+>>>    arch/arm/mach-exynos/common.c |    3 ++-
+>>>    1 files changed, 2 insertions(+), 1 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-
+>> exynos/common.c
+>>> index 0eb3b9a..9ecda37 100644
+>>> --- a/arch/arm/mach-exynos/common.c
+>>> +++ b/arch/arm/mach-exynos/common.c
+>>> @@ -684,7 +684,8 @@ void __init exynos5_init_irq(void)
+>>>    	 * Theses parameters should be NULL and 0 because EXYNOS4
+>>>    	 * uses GIC instead of VIC.
+>>>    	 */
+>>> -	s5p_init_irq(NULL, 0);
+>>> +	if (!of_machine_is_compatible("samsung,exynos5440"))
+>>> +		s5p_init_irq(NULL, 0);
+>> How about remove to call s5p_init_irq() here because All exynos SoCs use
+>> GIC instead of VIC?
+>>
+> NO, the current s5p_init_irq() is not only for VIC but also Timer which is
+> used on EXYNOS SoCs, I know the name is strange...
 
-First, i just wondered why samsung_gpio_cfgs[8] is used in the
-exynos4_gpios_2[] even if exynos_gpio_cfg is exist and found
-samsung_gpio_cfgs[8] does same thing with exynos_gpio_cfg. The
-exynos_gpio_cfg is used only for Exynos SoCs so it is compiled by #if
-defined(CONFIG_ARCH_EXYNOS4) || defined(CONFIG_ARCH_EXYNOS5).
-I think one can be removed because they are duplicated codes and it is
-better to decrease use of #if defined.
+I think timer can be selective by MCT on Exynos SoCs.
 
-Thanks.
+The patch(ARM: EXYNOS: remove static mapping of PWM memory) is for it.
 
-> g.
->
+>>>    	gic_arch_extn.irq_set_wake = s3c_irq_wake;
+>>>    }
 >
