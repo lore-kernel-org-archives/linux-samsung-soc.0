@@ -1,52 +1,48 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] i2c-core: Add gpio based bus arbitration implementation
-Date: Thu, 20 Dec 2012 00:58:05 +0000
-Message-ID: <CACxGe6vyK80pvV1CE=zu7LNEmeKDZg3cpQ5PKZjaVjvL+gc2yg@mail.gmail.com>
-References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
- <1355464254-12768-2-git-send-email-ch.naveen@samsung.com> <20121219123201.B636A3E0AD7@localhost>
- <20121219171423.GW4985@opensource.wolfsonmicro.com> <CAPnjgZ30MQS1OT3GOFLG9HntoD8NrzNw6bB_d1fiJEgHcMDGUA@mail.gmail.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] gpio: samsung: remove exynos_gpio_cfg
+Date: Thu, 20 Dec 2012 10:13:54 +0900
+Message-ID: <50D26652.1020205@samsung.com>
+References: <1355481842-17952-1-git-send-email-jy0922.shim@samsung.com>
+ <20121219222255.49E263E0AD6@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPnjgZ30MQS1OT3GOFLG9HntoD8NrzNw6bB_d1fiJEgHcMDGUA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lk <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Naveen Krishna <naveen-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:21442 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752207Ab2LTBNj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Dec 2012 20:13:39 -0500
+In-reply-to: <20121219222255.49E263E0AD6@localhost>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linus.walleij@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-On Thu, Dec 20, 2012 at 12:17 AM, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> On Wed, Dec 19, 2012 at 9:14 AM, Mark Brown
-> <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
->> On Wed, Dec 19, 2012 at 12:32:01PM +0000, Grant Likely wrote:
+Hi Grant,
+
+On 12/20/2012 07:22 AM, Grant Likely wrote:
+> On Fri, 14 Dec 2012 19:44:01 +0900, Joonyoung Shim <jy0922.shim@samsung.com> wrote:
+>> The exynos_gpio_cfg can be substituted to samsung_gpio_cfgs[8].
 >>
->>> I'm not convinced on the design of this protocol. It won't scale beyond
->>> 2 bus masters and it seems very specific to the design of a specific
->>> piece of hardware. I don't think it is mature enough to bake into the
->>
->> I ought to point out that the original patch would've baked this into
->> the Samsung I2C driver but I asked for it to be split out as it's
->> nothing to do with the controller really and I'm sure I've seen it
->> before.
+>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> Hi Joonyoung,
 >
-> Grant your idea looks nice to me. I only worry if we should wait until
-> we have a second user before going so far with it. But it is certainly
-> a nice general solution.
+> I need some help here. I don't understand what this patch is for or how
+> it works. The commit text above doesn't give me enough information to
+> evaluate the patch. What is the intent here? Why is samsung_gpio_cfgs[8]
+> more correct than exynos_gpio_cfg?
+
+First, i just wondered why samsung_gpio_cfgs[8] is used in the
+exynos4_gpios_2[] even if exynos_gpio_cfg is exist and found
+samsung_gpio_cfgs[8] does same thing with exynos_gpio_cfg. The
+exynos_gpio_cfg is used only for Exynos SoCs so it is compiled by #if
+defined(CONFIG_ARCH_EXYNOS4) || defined(CONFIG_ARCH_EXYNOS5).
+I think one can be removed because they are duplicated codes and it is
+better to decrease use of #if defined.
+
+Thanks.
+
+> g.
 >
-> The scaling beyond two bus masters would require the code to be
-> changed to check more input lines from other masters. Best avoided for
-> now I think until we have a use for it.
-
-There is two parts to this; the design of the binding, and the
-implementation. Of the two, the binding is the most difficult to
-change, so it is important to get something we can live with long term
-sorted out now. The implementation can start somewhat naive, with a
-plan for how to extend it.
-
-Regarding the scaling to multiple devices, it is a much smaller issue
-(if an issue at all) if the arbitration back end is pluggable. Then it
-becomes easy to support hardware with a different arbitration
-protocol. If it gets baked into the core i2c code, then we've got a
-problem and a lot more scrutiny needs to be put into this specific
-protocol.
-
-g.
+>
