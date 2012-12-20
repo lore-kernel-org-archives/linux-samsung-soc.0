@@ -1,98 +1,51 @@
-From: Prasanna Kumar <prasanna.ps@samsung.com>
-Subject: [PATCH v2 3/3] ARM: EXYNOS5: save CLK_TOP_SRC3 register before
- powergating
-Date: Thu, 20 Dec 2012 17:56:18 +0530
-Message-ID: <1356006378-17441-4-git-send-email-prasanna.ps@samsung.com>
-References: <CAPmaG0uqkRcoUBR8Gjv_+BSJ3hwxUCz0G-YKNQX=qvx83i6QOQ@mail.gmail.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: Add device tree node for G2D controller on Exynos5
+Date: Thu, 20 Dec 2012 18:19:43 +0530
+Message-ID: <CAEC9eQPV9U73+O6uW9=fkzWcr-4djriL5aTk-kF9smvcqvRKCA@mail.gmail.com>
+References: <1354112989-3161-1-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:10772 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751623Ab2LTMGe (ORCPT
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:47237 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751386Ab2LTMto (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Dec 2012 07:06:34 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MFB00DMYWAMZ2P0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Dec 2012 21:06:32 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MFB00BM9W63ML00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Dec 2012 21:06:32 +0900 (KST)
-In-reply-to: <CAPmaG0uqkRcoUBR8Gjv_+BSJ3hwxUCz0G-YKNQX=qvx83i6QOQ@mail.gmail.com>
+	Thu, 20 Dec 2012 07:49:44 -0500
+Received: by mail-ie0-f177.google.com with SMTP id k13so4470417iea.22
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Dec 2012 04:49:43 -0800 (PST)
+In-Reply-To: <1354112989-3161-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, thomas.abraham@linaro.org
 
-This patch adds a software workaround to the hardware
-problem found in exynos5 while powergating.
+ping.
 
-It is observed that CLK_TOP_SRC3 register gets modified if
-the G-Scaler/MFC devices are power gated. The clock for G-Scaler gets
-set to XXTI which results in the device running very slow .
-A big drop in performance is noticed whilerunning the video.
-This issue also occurs while powergating MFC.
-
-The value of clock source register is restored once the powergating
-operation is completed.
-
-Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
----
- arch/arm/mach-exynos/pm_domains.c |   27 +++++++++++++++++++++++++++
- 1 files changed, 27 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 9f1351d..bd8a41e 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -24,6 +24,8 @@
- 
- #include <mach/regs-pmu.h>
- #include <plat/devs.h>
-+#include <mach/regs-clock.h>
-+#include <plat/cpu.h>
- 
- /*
-  * Exynos specific wrapper around the generic power domain
-@@ -41,6 +43,24 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	void __iomem *base;
- 	u32 timeout, pwr;
- 	char *op;
-+	u32 tmp = 0;
-+
-+	/*
-+	 *It is found that the CLK SRC register in exynos5
-+	 *gets modified when power domain of gsc/mfc/isp/disp1
-+	 *is powered off.This happens only after the system is
-+	 *suspended and resumed and not before that.
-+	 *The following fix adresses this hardware issue.
-+	 *It saves the value of clock source register and
-+	 *resores it later
-+	 */
-+
-+	if (of_machine_is_compatible("samsung,exynos5250")) {
-+		if (!power_on) {
-+			/* save clock source register */
-+			tmp = __raw_readl(EXYNOS5_CLKSRC_TOP3);
-+		}
-+	}
- 
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	base = pd->base;
-@@ -61,6 +81,13 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		cpu_relax();
- 		usleep_range(80, 100);
- 	}
-+
-+	if (of_machine_is_compatible("samsung,exynos5250")) {
-+		if (!power_on) {
-+			/* restore clock source register */
-+			__raw_writel(tmp, EXYNOS5_CLKSRC_TOP3);
-+		}
-+	}
- 	return 0;
- }
- 
--- 
-1.7.0.4
+On Wed, Nov 28, 2012 at 7:59 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |    6 ++++++
+>  1 files changed, 6 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 581e57a..6d50c15 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -613,4 +613,10 @@
+>                 reg = <0x14450000 0x10000>;
+>                 interrupts = <0 94 0>;
+>         };
+> +
+> +       g2d: g2d {
+> +               compatible = "samsung,exynos-g2d-41";
+> +               reg = <0x10850000 0x1000>;
+> +               interrupts = <0 91 0>;
+> +       };
+>  };
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
