@@ -1,70 +1,67 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/2] Samsung fixes-audio part for v3.8-rc1
-Date: Thu, 20 Dec 2012 08:09:21 -0800
-Message-ID: <20121220160921.GE1034@quad.lixom.net>
-References: <008501cdde16$8081a800$8184f800$@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v5 1/4] ARM: EXYNOS: Update & move usb-phy types to
+ generic include layer
+Date: Thu, 20 Dec 2012 08:53:53 -0800
+Message-ID: <CAD=FV=UeAN103KVLb_z-oF8AXu7m00uZs6jw_BOHTz9RExK4SA@mail.gmail.com>
+References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
+	<1355841786-13307-2-git-send-email-gautam.vivek@samsung.com>
+	<CAD=FV=Ved4TSr7v413u5_o2cBrfegGrpKe1V2qKwQ36v-MQTHA@mail.gmail.com>
+	<CAFp+6iEGhrSh+oFnv1s_Tqdzxh_nhy=NEhCetVF20KVehy3PLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <008501cdde16$8081a800$8184f800$@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f49.google.com ([209.85.215.49]:32823 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751993Ab2LTQx6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Dec 2012 11:53:58 -0500
+Received: by mail-la0-f49.google.com with SMTP id r15so3294381lag.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Dec 2012 08:53:57 -0800 (PST)
+Received: by mail-la0-f43.google.com with SMTP id z14so3392875lag.30
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Dec 2012 08:53:54 -0800 (PST)
+In-Reply-To: <CAFp+6iEGhrSh+oFnv1s_Tqdzxh_nhy=NEhCetVF20KVehy3PLw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, jg1.han@samsung.com, yulgon.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Praveen Paneri <p.paneri@samsung.com>, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, balbi@ti.com, kishon@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Rob Herring <rob.herring@calxeda.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On Wed, Dec 19, 2012 at 10:27:26AM -0800, Kukjin Kim wrote:
-> Arnd, Olof
-> 
-> This is for fix the following build error in dev-audio.c on current Samsung
-> platforms :-(
-> 
-> arch/arm/mach-exynos/dev-audio.c:58:4: error: unknown field 'src_clk'
-> specified in initializer
-> arch/arm/mach-exynos/dev-audio.c:58:4: warning: initialization makes integer
-> from pointer without a cast [enabled by default]
-> arch/arm/mach-exynos/dev-audio.c:58:4: warning: (near initialization for
-> 'i2sv5_pdata.type.i2s.idma_addr') [enabled by default]
-> arch/arm/mach-exynos/dev-audio.c:91:4: error: unknown field 'src_clk'
-> specified in initializer
-> arch/arm/mach-exynos/dev-audio.c:91:4: warning: initialization makes integer
-> from pointer without a cast [enabled by default]
-> arch/arm/mach-exynos/dev-audio.c:91:4: warning: (near initialization for
-> 'i2sv3_pdata.type.i2s.idma_addr') [enabled by default]
-> 
-> Actually, Pdma's patches were in my tree before release v3.7 but I was
-> holding on because I needed to check about regarding audio driver part.
-> Anyway, this is required to fix the problem.
-> 
-> If any problems, please kindly let me know.
-> 
-> Thanks.
-> 
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> The following changes since commit 74779e22261172ea728b989310f6ecc991b57d62:
-> 
->   Merge tag 'for-3.8-rc1' of git://gitorious.org/linux-pwm/linux-pwm
-> (2012-12-19 08:19:07 -0800)
-> 
-> are available in the git repository at:
-> 
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.8-samsung-fixes-audio
+Vivek,
 
+On Wed, Dec 19, 2012 at 9:51 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+> Hi Doug,
+>
+>
+> On Thu, Dec 20, 2012 at 3:18 AM, Doug Anderson <dianders@chromium.org> wrote:
+>> Vivek,
+>>
+>> Since you're changing the name, I would have expected to see a removal
+>> of the old enum type in this patch.  I don't see it.  After applying
+>> all of your patches I find that S5P_USB_PHY_HOST and
+>> S5P_USB_PHY_DEVICE are still defined and used.
+>>
+>
+> True that we should have removed the earlier defined enums, infact i
+> did the same
+> in patchset v4 for this series. But since in this patchset i separated
+> out drivers and
+> architecture part, i thought it would be easier to remove them in one
+> shot in a latter commit
+> which will actually touch upon all architecture related code
+> (mach-exynos/setup-usb-phy.c,
+> mach-s5pv210/setup-usb-phy.c, and include/plat/usb-phy.h) once this
+> approach is accepted.
+>
+>> $ git grep S5P_USB_PHY_HOST
+>> arch/arm/mach-exynos/setup-usb-phy.c:   else if (type == S5P_USB_PHY_HOST)
+>> arch/arm/mach-exynos/setup-usb-phy.c:   else if (type == S5P_USB_PHY_HOST)
+>> arch/arm/plat-samsung/include/plat/usb-phy.h:   S5P_USB_PHY_HOST,
+>>
+>> I believe that those usages of the old enum should also be switched
+>> over and the old enum removed.
+>>
+> Sure, those enums need to be removed.
+> If you say i will submit a patch for the same.
 
-Pulled.
+It would be nice to add it to the patch series in the next version.  Thanks!
 
-
--Olof
+-Doug
