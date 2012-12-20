@@ -1,76 +1,55 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 1/4] ARM: EXYNOS: Update & move usb-phy types to
- generic include layer
-Date: Fri, 21 Dec 2012 00:33:19 +0530
-Message-ID: <CAFp+6iHcF44BWxq-1avHJM8BvU6c0oSMk=-SRTGHCLNT9-DwrQ@mail.gmail.com>
-References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
-	<1355841786-13307-2-git-send-email-gautam.vivek@samsung.com>
-	<CAD=FV=Ved4TSr7v413u5_o2cBrfegGrpKe1V2qKwQ36v-MQTHA@mail.gmail.com>
-	<CAFp+6iEGhrSh+oFnv1s_Tqdzxh_nhy=NEhCetVF20KVehy3PLw@mail.gmail.com>
-	<CAD=FV=UeAN103KVLb_z-oF8AXu7m00uZs6jw_BOHTz9RExK4SA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=UeAN103KVLb_z-oF8AXu7m00uZs6jw_BOHTz9RExK4SA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: dts: fix split memory bank for SSDK5440
+Date: Thu, 20 Dec 2012 11:03:37 -0800
+Message-ID: <1356030217-5472-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:19113 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752342Ab2LTTDw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Dec 2012 14:03:52 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MFC003ZJFMEI6T0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 21 Dec 2012 04:03:50 +0900 (KST)
+Received: from cass.0.0.1 ([105.128.18.183])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MFC009N7FM7EL10@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 21 Dec 2012 04:03:50 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Doug,
+The size of memory bank should be under 256MB, because current
+section size is 256MB on EXYNOS SoCs. This patch fixes it.
 
-On Thu, Dec 20, 2012 at 10:23 PM, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Vivek,
->
-> On Wed, Dec 19, 2012 at 9:51 PM, Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Hi Doug,
->>
->>
->> On Thu, Dec 20, 2012 at 3:18 AM, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>> Vivek,
->>>
->>> Since you're changing the name, I would have expected to see a removal
->>> of the old enum type in this patch.  I don't see it.  After applying
->>> all of your patches I find that S5P_USB_PHY_HOST and
->>> S5P_USB_PHY_DEVICE are still defined and used.
->>>
->>
->> True that we should have removed the earlier defined enums, infact i
->> did the same
->> in patchset v4 for this series. But since in this patchset i separated
->> out drivers and
->> architecture part, i thought it would be easier to remove them in one
->> shot in a latter commit
->> which will actually touch upon all architecture related code
->> (mach-exynos/setup-usb-phy.c,
->> mach-s5pv210/setup-usb-phy.c, and include/plat/usb-phy.h) once this
->> approach is accepted.
->>
->>> $ git grep S5P_USB_PHY_HOST
->>> arch/arm/mach-exynos/setup-usb-phy.c:   else if (type == S5P_USB_PHY_HOST)
->>> arch/arm/mach-exynos/setup-usb-phy.c:   else if (type == S5P_USB_PHY_HOST)
->>> arch/arm/plat-samsung/include/plat/usb-phy.h:   S5P_USB_PHY_HOST,
->>>
->>> I believe that those usages of the old enum should also be switched
->>> over and the old enum removed.
->>>
->> Sure, those enums need to be removed.
->> If you say i will submit a patch for the same.
->
-> It would be nice to add it to the patch series in the next version.  Thanks!
->
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Sure i shall add the same to the arch patches in the next version, or
-if needed will send a separate patch for this.
-
-> -Doug
-
-
-
+diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+index 44d4d24..79d02cc 100644
+--- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
++++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+@@ -17,7 +17,14 @@
+ 	compatible = "samsung,ssdk5440", "samsung,exynos5440";
+ 
+ 	memory {
+-		reg = <0x80000000 0x80000000>;
++		reg = <0x80000000 0x10000000
++		       0x90000000 0x10000000
++		       0xA0000000 0x10000000
++		       0xB0000000 0x10000000
++		       0xC0000000 0x10000000
++		       0xD0000000 0x10000000
++		       0xE0000000 0x10000000
++		       0xF0000000 0x10000000>;
+ 	};
+ 
+ 	chosen {
 -- 
-Thanks & Regards
-Vivek
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.10.4
