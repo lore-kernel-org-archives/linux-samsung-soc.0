@@ -1,51 +1,47 @@
-From: tomasz.figa@gmail.com
-Subject: Re: [PATCH v2 3/3] ARM: EXYNOS5: save CLK_TOP_SRC3 register before
- powergating
-Date: Thu, 20 Dec 2012 22:06:27 +0100
-Message-ID: <21192551.mmsSZImfn7@flatron>
-References: <CAPmaG0uqkRcoUBR8Gjv_+BSJ3hwxUCz0G-YKNQX=qvx83i6QOQ@mail.gmail.com>
- <1356006378-17441-4-git-send-email-prasanna.ps@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] ARM: dts: fix split memory bank for SSDK5440
+Date: Thu, 20 Dec 2012 22:14:26 +0100
+Message-ID: <1464138.NEt7mMkYJc@flatron>
+References: <1356030217-5472-1-git-send-email-kgene.kim@samsung.com> <CAOesGMg03Yn=fDr1XqmbBUs=eZO0_8=iti1LUiJ6CX5n1Bm45g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1356006378-17441-4-git-send-email-prasanna.ps@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Prasanna Kumar <prasanna.ps@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f49.google.com ([74.125.83.49]:39734 "EHLO
+	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751168Ab2LTVOa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Dec 2012 16:14:30 -0500
+Received: by mail-ee0-f49.google.com with SMTP id c4so1993847eek.22
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Dec 2012 13:14:28 -0800 (PST)
+In-Reply-To: <CAOesGMg03Yn=fDr1XqmbBUs=eZO0_8=iti1LUiJ6CX5n1Bm45g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Prasanna,
+Hi Olof,
 
-On Thursday 20 of December 2012 17:56:18 Prasanna Kumar wrote:
-> This patch adds a software workaround to the hardware
-> problem found in exynos5 while powergating.
+On Thursday 20 of December 2012 11:56:59 Olof Johansson wrote:
+> Hi,
 > 
-> It is observed that CLK_TOP_SRC3 register gets modified if
-> the G-Scaler/MFC devices are power gated. The clock for G-Scaler gets
-> set to XXTI which results in the device running very slow .
-> A big drop in performance is noticed whilerunning the video.
-> This issue also occurs while powergating MFC.
+> On Thu, Dec 20, 2012 at 11:03 AM, Kukjin Kim <kgene.kim@samsung.com> 
+wrote:
+> > The size of memory bank should be under 256MB, because current
+> > section size is 256MB on EXYNOS SoCs. This patch fixes it.
 > 
-> The value of clock source register is restored once the powergating
-> operation is completed.
+> This makes no sense. You don't have to split up memory ranges, the
+> code should be made to handle it instead.
 
-Is the problem really related to power gating at all? From what you 
-described in comment in the code, it seems like it's a problem with 
-suspend/resume, not power gating, so it should be rather saved on suspend 
-and restored on resume. Please recheck clock save/restore part of power 
-management code.
+It's not Exynos code which causes the problem. Sparsemem initialization 
+relies on the fact that initial amount of structures to described memory 
+equals to maximum section size which is defined per arch (e.g. 
+ARCH_EXYNOS).
 
-Altering clock configuration registers from power domain code looks really 
-ugly...
+> What's the actual bug caused by this? The description is vague.
+
+The kernel panics early on NULL pointer dereference in memory 
+initialization.
 
 Best regards,
 Tomasz Figa
