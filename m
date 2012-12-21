@@ -1,56 +1,82 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Fri, 21 Dec 2012 09:39:20 -0800
-Message-ID: <CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
-References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
-	<20121215072014.2E05E3E0AE3@localhost>
-	<CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
-	<CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] ARM: Exynos5250: Enabling ehci-s5p driver
+Date: Fri, 21 Dec 2012 10:13:50 -0800
+Message-ID: <CAD=FV=X=GRz0ZuFSqEHPy6i2ULtHk==M2_gaCvdmd=81YMNmMg@mail.gmail.com>
+References: <1355416562-25539-1-git-send-email-gautam.vivek@samsung.com>
+	<1355416562-25539-2-git-send-email-gautam.vivek@samsung.com>
+	<20121215072312.EBCAA3E0C06@localhost>
+	<CAFp+6iHoS4XJWHNrsyVsQS4bYZs1PUNEGsRr=EqAS7kpm2XGMQ@mail.gmail.com>
+	<CAFp+6iFSZjfVJp23j2dEz0hRap07RMo68GJpsQM7YqOMBCbqsQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:64461 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752492Ab2LURjZ (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:59082 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751182Ab2LUSN5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Dec 2012 12:39:25 -0500
-Received: by mail-la0-f54.google.com with SMTP id j13so5536731lah.27
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Dec 2012 09:39:23 -0800 (PST)
-Received: by mail-la0-f50.google.com with SMTP id c1so5530651lah.37
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Dec 2012 09:39:20 -0800 (PST)
-In-Reply-To: <CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
+	Fri, 21 Dec 2012 13:13:57 -0500
+Received: by mail-la0-f46.google.com with SMTP id p5so5582576lag.33
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Dec 2012 10:13:55 -0800 (PST)
+Received: by mail-la0-f50.google.com with SMTP id c1so5441676lah.23
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Dec 2012 10:13:51 -0800 (PST)
+In-Reply-To: <CAFp+6iFSZjfVJp23j2dEz0hRap07RMo68GJpsQM7YqOMBCbqsQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, Alan Stern <stern@rowland.harvard.edu>, Grant Likely <grant.likely@secretlab.ca>, balbi@ti.com, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree-discuss@lists.ozlabs.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Vivek Gautam <gautam.vivek@samsung.com>
 
-On Fri, Dec 21, 2012 at 12:14 AM, Vivek Gautam
+Vivek,
+
+
+On Fri, Dec 21, 2012 at 12:16 AM, Vivek Gautam
 <gautamvivek1987@gmail.com> wrote:
-> On Wed, Dec 19, 2012 at 7:16 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
->>
->> On Sat, Dec 15, 2012 at 12:50 PM, Grant Likely
->> <grant.likely@secretlab.ca> wrote:
->>> On Thu, 13 Dec 2012 20:22:26 +0530, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->>>> Using chip specific compatible string as it should be.
->>>> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
->>>> which till now used a generic 'exynos' in their compatible strings.
->>>>
->>>> This goes as per the discussion happened in the thread for
->>>> [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
->>>> available at:
->>>> http://www.spinics.net/lists/linux-usb/msg74145.html
->>>>
->>>> Vivek Gautam (2):
->>>>   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
->>>>   usb: dwc3-exynos: Fix compatible strings for the device
->>>
->>> for both patches:
->>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
->>>
+> Hi all,
 >
-> Any more thought about this patch-set?
+>
+> On Wed, Dec 19, 2012 at 7:20 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+>> CC: Doug Anderson
+>>
+>>
+>> On Sat, Dec 15, 2012 at 12:53 PM, Grant Likely
+>> <grant.likely@secretlab.ca> wrote:
+>>> On Thu, 13 Dec 2012 22:06:01 +0530, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>>>> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>>>> index 462e5ac..b3b9af1 100644
+>>>> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+>>>> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>>>> @@ -110,6 +110,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+>>>>                               "samsung-i2s.1", NULL),
+>>>>       OF_DEV_AUXDATA("samsung,samsung-i2s", 0x12D70000,
+>>>>                               "samsung-i2s.2", NULL),
+>>>> +     OF_DEV_AUXDATA("samsung,exynos4210-ehci", EXYNOS5_PA_EHCI,
+>>>> +                             "s5p-ehci", NULL),
+>>>
+>>> I'm assuming the above change is temporary. What is left to be done to
+>>> drop the auxdata in theses two patches?
+>>>
+>>> Otherwise the patch looks fine.
+>>>
+>>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+>
+> Any more thought about this patch?
 > Or does this change seems fine?
 
-These two changes look good to me.  For both of them:
+I'm fairly certain we can just drop the OF_DEV_AUXDATA entry here.  I
+haven't been following this as closely as I should, but I know that
+the comment for this table says that the whole purpose is to override
+device names and that it should be temporary.  We don't need to do any
+overriding of device names here, do we?
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+When I drop this (and the ohci and phy) entries from my table I can
+still boot and still can use USB.  The big difference is what shows up
+in dmesg
+
+[    1.605000] s5p-ehci s5p-ehci: S5P EHCI Host Controller
+
+Becomes:
+
+[    1.550000] s5p-ehci 12110000.usb: S5P EHCI Host Controller
+
+...and some sysfs paths change.
+
+-Doug
