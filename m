@@ -1,66 +1,148 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Fri, 21 Dec 2012 13:44:13 +0530
-Message-ID: <CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
-References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
-	<20121215072014.2E05E3E0AE3@localhost>
-	<CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v3 1/2] ARM: Exynos5250: Enabling ehci-s5p driver
+Date: Fri, 21 Dec 2012 13:46:28 +0530
+Message-ID: <CAFp+6iFSZjfVJp23j2dEz0hRap07RMo68GJpsQM7YqOMBCbqsQ@mail.gmail.com>
+References: <1355416562-25539-1-git-send-email-gautam.vivek@samsung.com>
+	<1355416562-25539-2-git-send-email-gautam.vivek@samsung.com>
+	<20121215072312.EBCAA3E0C06@localhost>
+	<CAFp+6iHoS4XJWHNrsyVsQS4bYZs1PUNEGsRr=EqAS7kpm2XGMQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f51.google.com ([209.85.215.51]:50372 "EHLO
+	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750812Ab2LUIQa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Dec 2012 03:16:30 -0500
+In-Reply-To: <CAFp+6iHoS4XJWHNrsyVsQS4bYZs1PUNEGsRr=EqAS7kpm2XGMQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dianders@chromium.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, Grant Likely <grant.likely@secretlab.ca>, Vivek Gautam <gautam.vivek@samsung.com>
 
 Hi all,
 
 
-On Wed, Dec 19, 2012 at 7:16 PM, Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Wed, Dec 19, 2012 at 7:20 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
 > CC: Doug Anderson
 >
 >
-> On Sat, Dec 15, 2012 at 12:50 PM, Grant Likely
-> <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
->> On Thu, 13 Dec 2012 20:22:26 +0530, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> Using chip specific compatible string as it should be.
->>> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
->>> which till now used a generic 'exynos' in their compatible strings.
+> On Sat, Dec 15, 2012 at 12:53 PM, Grant Likely
+> <grant.likely@secretlab.ca> wrote:
+>> On Thu, 13 Dec 2012 22:06:01 +0530, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>>> Adding EHCI device tree node for Exynos5250 along with
+>>> the device base adress and gpio line for vbus.
 >>>
->>> This goes as per the discussion happened in the thread for
->>> [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
->>> available at:
->>> http://www.spinics.net/lists/linux-usb/msg74145.html
+>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>> Acked-by: Jingoo Han <jg1.han@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/usb/exynos-usb.txt         |   25 ++++++++++++++++++++
+>>>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 +++
+>>>  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++
+>>>  arch/arm/mach-exynos/include/mach/map.h            |    1 +
+>>>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
+>>>  5 files changed, 38 insertions(+), 0 deletions(-)
+>>>  create mode 100644 Documentation/devicetree/bindings/usb/exynos-usb.txt
 >>>
->>> Vivek Gautam (2):
->>>   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
->>>   usb: dwc3-exynos: Fix compatible strings for the device
+>>> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>>> new file mode 100644
+>>> index 0000000..e8bbb47
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>>> @@ -0,0 +1,25 @@
+>>> +Samsung Exynos SoC USB controller
+>>> +
+>>> +The USB devices interface with USB controllers on Exynos SOCs.
+>>> +The device node has following properties.
+>>> +
+>>> +EHCI
+>>> +Required properties:
+>>> + - compatible: should be "samsung,exynos4210-ehci" for USB 2.0
+>>> +   EHCI controller in host mode.
+>>> + - reg: physical base address of the controller and length of memory mapped
+>>> +   region.
+>>> + - interrupts: interrupt number to the cpu.
+>>> +
+>>> +Optional properties:
+>>> + - samsung,vbus-gpio:  if present, specifies the GPIO that
+>>> +   needs to be pulled up for the bus to be powered.
+>>> +
+>>> +Example:
+>>> +
+>>> +     usb@12110000 {
+>>> +             compatible = "samsung,exynos4210-ehci";
+>>> +             reg = <0x12110000 0x100>;
+>>> +             interrupts = <0 71 0>;
+>>> +             samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+>>> +     };
+>>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>> index 711b55f..f990086 100644
+>>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>> @@ -218,4 +218,8 @@
+>>>       i2s_2: i2s@12D70000 {
+>>>               status = "disabled";
+>>>       };
+>>> +
+>>> +     usb@12110000 {
+>>> +             samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+>>> +     };
+>>>  };
+>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>>> index 581e57a..584bb9a 100644
+>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>>> @@ -299,6 +299,12 @@
+>>>               rx-dma-channel = <&pdma0 11>; /* preliminary */
+>>>       };
+>>>
+>>> +     usb@12110000 {
+>>> +             compatible = "samsung,exynos4210-ehci";
+>>> +             reg = <0x12110000 0x100>;
+>>> +             interrupts = <0 71 0>;
+>>> +     };
+>>> +
+>>>       amba {
+>>>               #address-cells = <1>;
+>>>               #size-cells = <1>;
+>>> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+>>> index cbb2852..b2c662f 100644
+>>> --- a/arch/arm/mach-exynos/include/mach/map.h
+>>> +++ b/arch/arm/mach-exynos/include/mach/map.h
+>>> @@ -201,6 +201,7 @@
+>>>  #define EXYNOS4_PA_EHCI                      0x12580000
+>>>  #define EXYNOS4_PA_OHCI                      0x12590000
+>>>  #define EXYNOS4_PA_HSPHY             0x125B0000
+>>> +#define EXYNOS5_PA_EHCI                      0x12110000
+>>>  #define EXYNOS4_PA_MFC                       0x13400000
+>>>
+>>>  #define EXYNOS4_PA_UART                      0x13800000
+>>> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>>> index 462e5ac..b3b9af1 100644
+>>> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+>>> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>>> @@ -110,6 +110,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+>>>                               "samsung-i2s.1", NULL),
+>>>       OF_DEV_AUXDATA("samsung,samsung-i2s", 0x12D70000,
+>>>                               "samsung-i2s.2", NULL),
+>>> +     OF_DEV_AUXDATA("samsung,exynos4210-ehci", EXYNOS5_PA_EHCI,
+>>> +                             "s5p-ehci", NULL),
 >>
->> for both patches:
->> Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+>> I'm assuming the above change is temporary. What is left to be done to
+>> drop the auxdata in theses two patches?
 >>
+>> Otherwise the patch looks fine.
+>>
+>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
-Any more thought about this patch-set?
+Any more thought about this patch?
 Or does this change seems fine?
 
->>>
->>>  drivers/usb/dwc3/dwc3-exynos.c |    2 +-
->>>  drivers/usb/host/ehci-s5p.c    |    2 +-
->>>  drivers/usb/host/ohci-exynos.c |    2 +-
->>>  3 files changed, 3 insertions(+), 3 deletions(-)
->>>
->>> --
->>> 1.7.6.5
->>>
->>
 >> --
->> Grant Likely, B.Sc, P.Eng.
->> Secret Lab Technologies, Ltd.
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
 >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
 >
 >
 >
@@ -73,7 +155,3 @@ Or does this change seems fine?
 -- 
 Thanks & Regards
 Vivek
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
