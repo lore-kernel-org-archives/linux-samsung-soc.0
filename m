@@ -1,119 +1,72 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: dts: Fix gpio pin names of keypad columns in
- exynos4x12-pinctrl
-Date: Fri, 21 Dec 2012 10:34:52 -0800
-Message-ID: <007d01cddfa9$ded572d0$9c805870$@samsung.com>
-References: <1354788815-21579-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Fri, 21 Dec 2012 11:02:06 -0800
+Message-ID: <008401cddfad$ae2d19e0$0a874da0$@samsung.com>
+References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
+ <1355395373-22058-3-git-send-email-padma.v@samsung.com>
+ <20121219132414.2CF653E0AD7@localhost>
+ <20121219170937.GV4985@opensource.wolfsonmicro.com>
+ <CAAgF-Bc3zSyhaMwSOy977PJ-PdtMfDXjFrTvpzETeHJAAQU3vQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:25028 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:25747 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751340Ab2LUSe4 (ORCPT
+	with ESMTP id S1752008Ab2LUTCN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Dec 2012 13:34:56 -0500
+	Fri, 21 Dec 2012 14:02:13 -0500
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MFE00B6U8Y7H230@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 22 Dec 2012 03:34:55 +0900 (KST)
+ 17 2011)) with ESMTP id <0MFE00BEGA7LH230@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 22 Dec 2012 04:02:11 +0900 (KST)
 Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MFE004AQ8Y51C70@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 22 Dec 2012 03:34:55 +0900 (KST)
-In-reply-to: <1354788815-21579-1-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0MFE001DXA7J7ZD0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 22 Dec 2012 04:02:11 +0900 (KST)
+In-reply-to: <CAAgF-Bc3zSyhaMwSOy977PJ-PdtMfDXjFrTvpzETeHJAAQU3vQ@mail.gmail.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org, 'Tomasz Figa' <t.figa@samsung.com>
+To: 'Padma Venkat' <padma.kvr@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Padmavathi Venna' <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, sbkim73@samsung.com, tiwai@suse.de, ben-linux@fluff.org, lrg@ti.com
 
-Sachin Kamat wrote:
+Padma Venkat wrote:
 > 
-> Keypad columns are connected to gpx1 pins on 4x12.
+> Hi,
 > 
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   16 ++++++++--------
->  1 files changed, 8 insertions(+), 8 deletions(-)
+> On Wed, Dec 19, 2012 at 10:39 PM, Mark Brown
+> <broonie@opensource.wolfsonmicro.com> wrote:
+> > On Wed, Dec 19, 2012 at 01:24:14PM +0000, Grant Likely wrote:
+> >> On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna
+> <padma.v@samsung.com> wrote:
+> >
+> >> > +- compatible : "samsung,samsung-i2s"
+> >
+> >> Isn't that kind of redundant?  :-)
+> >
+> >> The format of the compatible strings should be "<vendor>,<part-
+> number>-i2s".
+> >> Please be specific about the part number that you're doing the binding
+> >> for. For example; use "samsung,exynos4210-i2s" instead of
+> "samsung,exynos-i2s".
+> >
+> > There are actually versioned IPs here (where the versions are used
+> > publically in a few places) but it's not clearly documented which is
+> > which.  It would be reasonable to use the IP versions here I think.
 > 
-> diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> index 8e6115a..0b293fb 100644
-> --- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> @@ -779,56 +779,56 @@
->  		};
-> 
->  		keypad_col0: keypad-col0 {
-> -			samsung,pins = "gpl2-0";
-> +			samsung,pins = "gpx1-0";
->  			samsung,pin-function = <3>;
->  			samsung,pin-pud = <0>;
->  			samsung,pin-drv = <0>;
->  		};
-> 
->  		keypad_col1: keypad-col1 {
-> -			samsung,pins = "gpl2-1";
-> +			samsung,pins = "gpx1-1";
->  			samsung,pin-function = <3>;
->  			samsung,pin-pud = <0>;
->  			samsung,pin-drv = <0>;
->  		};
-> 
->  		keypad_col2: keypad-col2 {
-> -			samsung,pins = "gpl2-2";
-> +			samsung,pins = "gpx1-2";
->  			samsung,pin-function = <3>;
->  			samsung,pin-pud = <0>;
->  			samsung,pin-drv = <0>;
->  		};
-> 
->  		keypad_col3: keypad-col3 {
-> -			samsung,pins = "gpl2-3";
-> +			samsung,pins = "gpx1-3";
->  			samsung,pin-function = <3>;
->  			samsung,pin-pud = <0>;
->  			samsung,pin-drv = <0>;
->  		};
-> 
->  		keypad_col4: keypad-col4 {
-> -			samsung,pins = "gpl2-4";
-> +			samsung,pins = "gpx1-4";
->  			samsung,pin-function = <3>;
->  			samsung,pin-pud = <0>;
->  			samsung,pin-drv = <0>;
->  		};
-> 
->  		keypad_col5: keypad-col5 {
-> -			samsung,pins = "gpl2-5";
-> +			samsung,pins = "gpx1-5";
->  			samsung,pin-function = <3>;
->  			samsung,pin-pud = <0>;
->  			samsung,pin-drv = <0>;
->  		};
-> 
->  		keypad_col6: keypad-col6 {
-> -			samsung,pins = "gpl2-6";
-> +			samsung,pins = "gpx1-6";
->  			samsung,pin-function = <3>;
->  			samsung,pin-pud = <0>;
->  			samsung,pin-drv = <0>;
->  		};
-> 
->  		keypad_col7: keypad-col7 {
-> -			samsung,pins = "gpl2-7";
-> +			samsung,pins = "gpx1-7";
->  			samsung,pin-function = <3>;
->  			samsung,pin-pud = <0>;
->  			samsung,pin-drv = <0>;
-> --
-> 1.7.4.1
+> Samsung has three i2s drivers one for s3c24xx, one for s3c2412 and one
+> for rest of the platforms. The above mentioned other platforms has
+> Version 3/4/5 of i2s controllers. This dt binding is for for the i2s
 
-As I commented in your other patch, the value should be defined at the board
-dt file not here. And I think, need to fix this file.
+Where is the version defined such as 3, 4, 5? So, what is the
+"sound/soc/Samsung/s3c-i2s-v2.[ch]"?
 
-- Kukjin 
+> driver that has support for Version 3/4/5 of i2s controller. So
+> "samsung,i2s-v5" is okay as compatible name? Please suggest me.
+> 
+I agree with using version here but we need some consensus about that.
+
+- Kukjin
