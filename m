@@ -1,150 +1,54 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH] usb: phy: samsung: Add support for USB 3.0 phy for exynos5250
-Date: Fri, 21 Dec 2012 16:14:05 +0530
-Message-ID: <CAFp+6iEE8=Zv2FUrLZfwn1XpBygaQRZX=XJ13fq5a0uOhRF8-w@mail.gmail.com>
-References: <1355843426-13613-1-git-send-email-gautam.vivek@samsung.com>
-	<1355843426-13613-2-git-send-email-gautam.vivek@samsung.com>
-	<20121218151349.GC32437@arwen.pp.htv.fi>
-	<CAFp+6iHQMDuwPd08KwPyxE_eXyofv_31-Azr0F9+LS2E9aY52w@mail.gmail.com>
-	<CAFp+6iFk_eXaJidfL-PBhB6haJnmovVw3AwG5p6kJ-U+R2jFzA@mail.gmail.com>
-	<20121219075550.GD5228@arwen.pp.htv.fi>
+From: Padma Venkat <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Fri, 21 Dec 2012 17:06:58 +0530
+Message-ID: <CAAgF-Bc3zSyhaMwSOy977PJ-PdtMfDXjFrTvpzETeHJAAQU3vQ@mail.gmail.com>
+References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
+ <1355395373-22058-3-git-send-email-padma.v@samsung.com>
+ <20121219132414.2CF653E0AD7@localhost>
+ <20121219170937.GV4985@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:37138 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751603Ab2LUKoI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Dec 2012 05:44:08 -0500
-In-Reply-To: <20121219075550.GD5228@arwen.pp.htv.fi>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20121219170937.GV4985-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: linux-usb@vger.kernel.org, dianders@chromium.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, av.tikhomirov@samsung.com, yulgon.kim@samsung.com, kishon@ti.com, p.paneri@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hi Felipe,
+Hi,
 
-
-On Wed, Dec 19, 2012 at 1:25 PM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
+On Wed, Dec 19, 2012 at 10:39 PM, Mark Brown
+<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> On Wed, Dec 19, 2012 at 01:24:14PM +0000, Grant Likely wrote:
+>> On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
 >
-> On Wed, Dec 19, 2012 at 11:52:01AM +0530, Vivek Gautam wrote:
->> >>> @@ -736,7 +1035,41 @@ static int __devinit samsung_usbphy_probe(struct platform_device *pdev)
->> >>>
->> >>>       sphy->clk = clk;
->> >>>
->> >>> -     return usb_add_phy(&sphy->phy, USB_PHY_TYPE_USB2);
->> >>> +     sphy->has_usb3 = (sphy->cpu_type == TYPE_EXYNOS5250);
->> >>> +
->> >>> +     if (sphy->has_usb3) {
->> >>> +             struct resource *usb3phy_mem;
->> >>> +             void __iomem    *usb3phy_base;
->> >>> +
->> >>> +             usb3phy_mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->> >>> +             if (!usb3phy_mem) {
->> >>> +                     dev_err(dev, "%s: missing mem resource\n", __func__);
->> >>> +                     return -ENODEV;
->> >>> +             }
->> >>> +
->> >>> +             usb3phy_base = devm_request_and_ioremap(dev, usb3phy_mem);
->> >>> +             if (!usb3phy_base) {
->> >>> +                     dev_err(dev, "%s: register mapping failed\n", __func__);
->> >>> +                     return -ENXIO;
->> >>> +             }
->> >>> +
->> >>> +             sphy->usb3phy.regs_phy          = usb3phy_base;
->> >>> +             sphy->usb3phy.phy.dev           = sphy->dev;
->> >>> +             sphy->usb3phy.phy.label         = "samsung-usb3phy";
->> >>> +             sphy->usb3phy.phy.init          = samsung_usb3phy_init;
->> >>> +             sphy->usb3phy.phy.shutdown      = samsung_usb3phy_shutdown;
->> >>> +     }
->> >>> +
->> >>> +     ret = usb_add_phy(&sphy->phy, USB_PHY_TYPE_USB2);
->> >>> +     if (ret)
->> >>> +             return ret;
->> >>
->> >> is this realy how your HW behaves ? USB2 and USB3 phys are a single HW
->> >> entity ? I kinda doubt that :-s
->> >>
->>
->> They are separate HW in fact.
->> So, do you expect to see a separate driver interface for USB 3.0 type phy ?
+>> > +- compatible : "samsung,samsung-i2s"
 >
-> yes. Just as we did on OMAP. One driver for the USB2 part and one driver
-> for USB3 part (which are actually two, but you can only talk to them as
-> one) :-)
+>> Isn't that kind of redundant?  :-)
 >
-Sure as you suggest, we will pull out the USB 3.0 code from here and put
-a new driver in place for the same.
+>> The format of the compatible strings should be "<vendor>,<part-number>-i2s".
+>> Please be specific about the part number that you're doing the binding
+>> for. For example; use "samsung,exynos4210-i2s" instead of "samsung,exynos-i2s".
+>
+> There are actually versioned IPs here (where the versions are used
+> publically in a few places) but it's not clearly documented which is
+> which.  It would be reasonable to use the IP versions here I think.
 
->> That will be quite similar architecturally to current samsung-usbphy
->> driver for USB 2.0 type phy,
->> and may require some code duplication too.
->
-> If it duplicates code, then perhaps it's best to keep it as is but I'm
-> actually surprised you guys have similar programming model on both
-> parts. I mean, the differences at HW behavior are huge: on one side you
-> use ULPI/UTMI+ on the other PIPE3, on one side you have 480Mbps
-> half-duplex signalling, on the other you have 5Gbps dual simplex
-> signalling, the differences go on and on.
->
-The programming model for USB phy is just about setting up the phy registers
-for example to provide proper clocks to PHY controller, setting up setting up
-the UTMI block etc, under a sequence.
+Samsung has three i2s drivers one for s3c24xx, one for s3c2412 and one
+for rest of the platforms. The above mentioned other platforms has
+Version 3/4/5 of i2s controllers. This dt binding is for for the i2s
+driver that has support for Version 3/4/5 of i2s controller. So
+"samsung,i2s-v5" is okay as compatible name? Please suggest me.
 
-> Also, what you say about duplicating, it seems to me that it will
-> duplicate only the boilerplate part (allocating memory, having a
-> platform_driver, and so on), because you _do_ have completely separate
-> functions to handle usb3 part.
->
-Yes, the duplication was in fact just the boilerplate part ;-)
-apart from having separate functions for USB 3.0 type phy.
-
-> One more comment below:
->
->> +static u32 exynos5_usb3phy_set_clock(struct samsung_usbphy *sphy)
->> +{
->> +     u32 reg;
->> +     u32 refclk;
->> +
->> +     refclk = sphy->ref_clk_freq;
->> +
->> +     reg = PHYCLKRST_REFCLKSEL_EXT_REFCLK |
->> +             PHYCLKRST_FSEL(refclk);
->> +
->> +     switch (refclk) {
->> +     case HOST_CTRL0_FSEL_CLKSEL_50M:
->> +             reg |= (PHYCLKRST_MPLL_MULTIPLIER_50M_REF |
->> +                     PHYCLKRST_SSC_REFCLKSEL(0x00));
->> +             break;
->> +     case HOST_CTRL0_FSEL_CLKSEL_20M:
->> +             reg |= (PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF |
->> +                     PHYCLKRST_SSC_REFCLKSEL(0x00));
->> +             break;
->> +     case HOST_CTRL0_FSEL_CLKSEL_19200K:
->> +             reg |= (PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF |
->> +                     PHYCLKRST_SSC_REFCLKSEL(0x88));
->> +             break;
->> +     case HOST_CTRL0_FSEL_CLKSEL_24M:
->> +     default:
->> +             reg |= (PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF |
->> +                     PHYCLKRST_SSC_REFCLKSEL(0x88));
->> +             break;
->> +     }
->> +
->> +     return reg;
->> +}
->
-> looks like this should be done by commong clock framework by clock
-> reparenting perhaps ?
->
-Need to check on this one.
-
-> --
-> balbi
-
-
-
--- 
-Thanks & Regards
-Vivek
+Thanks
+Padma
