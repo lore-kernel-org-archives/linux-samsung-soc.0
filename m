@@ -1,62 +1,53 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/5 RESEND] cpufreq: exynos: Remove unused variable & IS_ERR
-Date: Fri, 21 Dec 2012 15:13:20 -0800
-Message-ID: <009701cddfd0$c62900e0$527b02a0$@samsung.com>
-References: <002701cdd6a7$25fd9270$71f8b750$%choi@samsung.com>
- <002201cddd9d$fcb42200$f61c6600$@samsung.com>
- <1484988.Q8kjeUgMrE@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17894 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751593Ab2LUXN0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Dec 2012 18:13:26 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MFE0042ILUC6J10@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 22 Dec 2012 08:13:24 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MFE00DOOLUAV490@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 22 Dec 2012 08:13:24 +0900 (KST)
-In-reply-to: <1484988.Q8kjeUgMrE@vostro.rjw.lan>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH V2] spi: remove check for bits_per_word on transfer from low level driver
+Date: Sat, 22 Dec 2012 09:54:04 +0000
+Message-ID: <20121222095404.420FC3E08BE@localhost>
+References: <1355820943-25228-1-git-send-email-ldewangan@nvidia.com> <20121219162433.1E1E43E0BCF@localhost> <50D2AA43.8050106@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <50D2AA43.8050106@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "baohua.song@csr.com" <baohua.song@csr.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "spi-devel-general@lists.sourceforge.net" <spi-devel-general@lists.sourceforge.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jonas.gorski@gmail.com" <jonas.gorski@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "'Rafael J. Wysocki'" <rjw@sisk.pl>
-Cc: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Jaecheol Lee' <jc.lee@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>
 
-Rafael J. Wysocki wrote:
-> 
-> On Tuesday, December 18, 2012 08:04:45 PM Kukjin Kim wrote:
-> > Jonghwan Choi wrote:
-> > >
-> > > The variable 'max_support_idx, min_support_idx, pm_lock_idx"
-> > > are never used, so remove the unused variable.
-> > >
-> > > Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> > > ---
+On Thu, 20 Dec 2012 11:33:47 +0530, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> On Wednesday 19 December 2012 09:54 PM, Grant Likely wrote:
+> > On Tue, 18 Dec 2012 14:25:43 +0530, Laxman Dewangan<ldewangan@nvidia.com>  wrote:
+> >> The spi core make sure that each transfer structure have the proper
+> >> setting for bits_per_word before calling low level transfer APIs.
+> >>
+> >> Hence it is no more require to check again in low level driver for
+> >> this field whether this is set correct or not. Removing such code
+> >> from low level driver.
+> >>
+> >> Signed-off-by: Laxman Dewangan<ldewangan@nvidia.com>
+> > [...]
+> >> */
+> >>
+> >>   		if (prev_speed_hz != speed_hz
+> >> @@ -316,9 +315,8 @@ static int txx9spi_transfer(struct spi_device *spi, struct spi_message *m)
+> >>   	/* check each transfer's parameters */
+> >>   	list_for_each_entry (t,&m->transfers, transfer_list) {
+> >>   		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
+> >> -		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
+> >> +		u8 bits_per_word = t->bits_per_word;
+> >>
+> >> -		bits_per_word = bits_per_word ? : 8;
+> > Have you verified here that bits_per_word can never be '0' here? What is
+> > the path that ensures spi->bits_per_word (and hence t->bits_per_word) is
+> > set to 8 here?
 > >
-> > Basically, looks OK to me...
-> >
-> > Rafael, are you taking this series in your tree?
-> > Or let me pick into Samsung tree?
+> > Otherwise the patch looks good. Thanks for doing this work.
 > 
-> Please take it to the Samsung tree, if that's not a problem.
 > 
-OK, let me pick this up.
-
-> I generally prefer driver changes to go through platform trees where they
-> can
-> get more testing coverage.
+> When we do the spi_add_device(), the spi_setup() get called.
+> In spi_setup, it make  sure that spi->bits_per_word is not zero.
 > 
-Yes, if any problems, let you know.
+> in spi_setup(spi.c)
+> 
+> if (!spi->bits_per_word)
+>                  spi->bits_per_word = 8;
 
-Thanks.
+Applied, thanks.
 
-- Kukjin
+g.
