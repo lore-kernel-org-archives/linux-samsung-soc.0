@@ -1,156 +1,76 @@
-From: jonghwan Choi <jhbird.choi@gmail.com>
-Subject: Re: [PATCH v2 3/3] ARM: EXYNOS5: save CLK_TOP_SRC3 register before
- powergating
-Date: Fri, 21 Dec 2012 10:37:07 +0900
-Message-ID: <CAGZ6kuOmd_0o71ZZa_p52NR2Fn-vgA+WOWZpx+DUwHZcHTC41g@mail.gmail.com>
-References: <CAPmaG0uqkRcoUBR8Gjv_+BSJ3hwxUCz0G-YKNQX=qvx83i6QOQ@mail.gmail.com>
- <1356006378-17441-4-git-send-email-prasanna.ps@samsung.com>
- <21192551.mmsSZImfn7@flatron>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Sun, 23 Dec 2012 15:13:14 -0800
+Message-ID: <016801cde163$17d83670$4788a350$@samsung.com>
+References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
+ <1355395373-22058-3-git-send-email-padma.v@samsung.com>
+ <20121219132414.2CF653E0AD7@localhost>
+ <20121219170937.GV4985@opensource.wolfsonmicro.com>
+ <CAAgF-Bc3zSyhaMwSOy977PJ-PdtMfDXjFrTvpzETeHJAAQU3vQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5209401622745490288=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <21192551.mmsSZImfn7@flatron>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: tomasz.figa@gmail.com
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, Prasanna Kumar <prasanna.ps@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============5209401622745490288==
-Content-Type: multipart/alternative; boundary=f46d044304dca970f704d152e2da
-
---f46d044304dca970f704d152e2da
-Content-Type: text/plain; charset=ISO-8859-1
-
-Hi~
-
-This code should be changed.
-
-I insert  this code (save/restore clock source register - CLK_SRC_TOP3)
-temporary.
-
-But we removed this code. And we use another  method to fix it.
-
-I think this is not right way.
-
-Thanks.
-
-
-
-On Fri, Dec 21, 2012 at 6:06 AM, <tomasz.figa@gmail.com> wrote:
-
-> Hi Prasanna,
->
-> On Thursday 20 of December 2012 17:56:18 Prasanna Kumar wrote:
-> > This patch adds a software workaround to the hardware
-> > problem found in exynos5 while powergating.
-> >
-> > It is observed that CLK_TOP_SRC3 register gets modified if
-> > the G-Scaler/MFC devices are power gated. The clock for G-Scaler gets
-> > set to XXTI which results in the device running very slow .
-> > A big drop in performance is noticed whilerunning the video.
-> > This issue also occurs while powergating MFC.
-> >
-> > The value of clock source register is restored once the powergating
-> > operation is completed.
->
-> Is the problem really related to power gating at all? From what you
-> described in comment in the code, it seems like it's a problem with
-> suspend/resume, not power gating, so it should be rather saved on suspend
-> and restored on resume. Please recheck clock save/restore part of power
-> management code.
->
-> Altering clock configuration registers from power domain code looks really
-> ugly...
->
-> Best regards,
-> Tomasz Figa
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
---f46d044304dca970f704d152e2da
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<p>Hi~<br></p>
-<p>This code should be changed.</p>
-<p>I insert =A0this code (save/restore clock source register - CLK_SRC_TOP3=
-) temporary.</p>
-<p>But we removed this code. And we use another =A0method to fix it.<br></p=
->
-<p>I think this is not right way.<br></p>
-<p>Thanks.</p>
-<p>=A0<br><br></p>
-<div class=3D"gmail_quote">On Fri, Dec 21, 2012 at 6:06 AM,  <span dir=3D"l=
-tr">&lt;<a href=3D"mailto:tomasz.figa@gmail.com" target=3D"_blank">tomasz.f=
-iga@gmail.com</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" st=
-yle=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
-
-Hi Prasanna,<br>
-<div><br>
-On Thursday 20 of December 2012 17:56:18 Prasanna Kumar wrote:<br>
-&gt; This patch adds a software workaround to the hardware<br>
-&gt; problem found in exynos5 while powergating.<br>
-&gt;<br>
-&gt; It is observed that CLK_TOP_SRC3 register gets modified if<br>
-&gt; the G-Scaler/MFC devices are power gated. The clock for G-Scaler gets<=
-br>
-&gt; set to XXTI which results in the device running very slow .<br>
-&gt; A big drop in performance is noticed whilerunning the video.<br>
-&gt; This issue also occurs while powergating MFC.<br>
-&gt;<br>
-&gt; The value of clock source register is restored once the powergating<br=
->
-&gt; operation is completed.<br>
-<br>
-</div>Is the problem really related to power gating at all? From what you<b=
-r>
-described in comment in the code, it seems like it&#39;s a problem with<br>
-suspend/resume, not power gating, so it should be rather saved on suspend<b=
-r>
-and restored on resume. Please recheck clock save/restore part of power<br>
-management code.<br>
-<br>
-Altering clock configuration registers from power domain code looks really<=
-br>
-ugly...<br>
-<br>
-Best regards,<br>
-Tomasz Figa<br>
-<div><div><br>
---<br>
-To unsubscribe from this list: send the line &quot;unsubscribe linux-samsun=
-g-soc&quot; in<br>
-the body of a message to <a href=3D"mailto:majordomo@vger.kernel.org" targe=
-t=3D"_blank">majordomo@vger.kernel.org</a><br>
-More majordomo info at =A0<a href=3D"http://vger.kernel.org/majordomo-info.=
-html" target=3D"_blank">http://vger.kernel.org/majordomo-info.html</a><br>
-</div></div></blockquote></div><br>
-
---f46d044304dca970f704d152e2da--
-
-
---===============5209401622745490288==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:12666 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752258Ab2LWXNX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 23 Dec 2012 18:13:23 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MFI00GR3B69SR70@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Dec 2012 08:13:21 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MFI00NCBB652100@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Dec 2012 08:13:21 +0900 (KST)
+In-reply-to: 
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Padma Venkat' <padma.kvr@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Padmavathi Venna' <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, sbkim73@samsung.com, tiwai@suse.de, ben-linux@fluff.org
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Kukjin Kim wrote:
+> 
+Re-sending due to e-mail client problem :(
 
---===============5209401622745490288==--
+> Padma Venkat wrote:
+> >
+> > Hi,
+> >
+> > On Wed, Dec 19, 2012 at 10:39 PM, Mark Brown
+> > <broonie@opensource.wolfsonmicro.com> wrote:
+> > > On Wed, Dec 19, 2012 at 01:24:14PM +0000, Grant Likely wrote:
+> > >> On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna
+> > <padma.v@samsung.com> wrote:
+> > >
+> > >> > +- compatible : "samsung,samsung-i2s"
+> > >
+> > >> Isn't that kind of redundant?  :-)
+> > >
+> > >> The format of the compatible strings should be "<vendor>,<part-
+> > number>-i2s".
+> > >> Please be specific about the part number that you're doing the
+> > >> binding for. For example; use "samsung,exynos4210-i2s" instead of
+> > "samsung,exynos-i2s".
+> > >
+> > > There are actually versioned IPs here (where the versions are used
+> > > publically in a few places) but it's not clearly documented which is
+> > > which.  It would be reasonable to use the IP versions here I think.
+> >
+> > Samsung has three i2s drivers one for s3c24xx, one for s3c2412 and one
+> > for rest of the platforms. The above mentioned other platforms has
+> > Version 3/4/5 of i2s controllers. This dt binding is for for the i2s
+> 
+> Where is the version defined such as 3, 4, 5? So, what is the
+> "sound/soc/Samsung/s3c-i2s-v2.[ch]"?
+> 
+> > driver that has support for Version 3/4/5 of i2s controller. So
+> > "samsung,i2s-v5" is okay as compatible name? Please suggest me.
+> >
+> I agree with using version here but we need some consensus about that.
+> 
+> - Kukjin
