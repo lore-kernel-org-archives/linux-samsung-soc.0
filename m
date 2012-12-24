@@ -1,107 +1,104 @@
-From: Prasanna Kumar <prasannapadubidri@gmail.com>
-Subject: Re: [PATCH v2 3/3] ARM: EXYNOS5: save CLK_TOP_SRC3 register before powergating
-Date: Mon, 24 Dec 2012 11:12:30 +0530
-Message-ID: <CAPmaG0sgFHaS3V8MNd5i6H1PDO-W9_64mthZEgrefBrqgdtruw@mail.gmail.com>
-References: <CAPmaG0uqkRcoUBR8Gjv_+BSJ3hwxUCz0G-YKNQX=qvx83i6QOQ@mail.gmail.com>
-	<1356006378-17441-4-git-send-email-prasanna.ps@samsung.com>
-	<21192551.mmsSZImfn7@flatron>
-	<CAGZ6kuOmd_0o71ZZa_p52NR2Fn-vgA+WOWZpx+DUwHZcHTC41g@mail.gmail.com>
-	<CAPmaG0t-PDDzPQknjfA8dMP4eCsm=1xup2k7MC=M2uTeWBnVNQ@mail.gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
+Date: Mon, 24 Dec 2012 13:43:23 +0530
+Message-ID: <CAFp+6iGq32UV3mZ=QYVizJGQEark0Qztu7m4jy3DvG431ajV1w@mail.gmail.com>
+References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
+	<20121215072014.2E05E3E0AE3@localhost>
+	<CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
+	<CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
+	<CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
+	<016901cde163$6be034c0$43a09e40$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f52.google.com ([209.85.212.52]:33128 "EHLO
-	mail-vb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751648Ab2LXFmc (ORCPT
+Received: from mail-la0-f44.google.com ([209.85.215.44]:47011 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752934Ab2LXINZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Dec 2012 00:42:32 -0500
-Received: by mail-vb0-f52.google.com with SMTP id ez10so7045816vbb.39
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Dec 2012 21:42:31 -0800 (PST)
-In-Reply-To: <CAPmaG0t-PDDzPQknjfA8dMP4eCsm=1xup2k7MC=M2uTeWBnVNQ@mail.gmail.com>
+	Mon, 24 Dec 2012 03:13:25 -0500
+In-Reply-To: <016901cde163$6be034c0$43a09e40$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jonghwan Choi <jhbird.choi@gmail.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Prasanna Kumar <prasanna.ps@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, balbi@ti.com, Thomas Abraham <thomas.abraham@linaro.org>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, Alan Stern <stern@rowland.harvard.edu>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hi Choi,
+Hi Kukjin,
 
-On Mon, Dec 24, 2012 at 9:56 AM, Prasanna Kumar
-<prasannapadubidri@gmail.com> wrote:
-> Hi Choi,
->
-> The method "Save/restore clock source register - CLK_SRC_TOP3" was
-> suggested as well as preferred by our hardware team.
->
-> Would it be possible to give more information on this  alternate method ?
->
-   I just wanted to be more clear on the last sentence of my previous email.
-   Here alternate method means, the method you have used to fix the issue.
-   Kindly share information on that.
-   --
-Thanks
 
+On Mon, Dec 24, 2012 at 4:45 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Kukjin Kim wrote:
+>>
+> Re-sending due to e-mail client problem...
 >
-> On Fri, Dec 21, 2012 at 7:07 AM, jonghwan Choi <jhbird.choi@gmail.com> wrote:
->> Hi~
+>> Doug Anderson wrote:
+>> >
+>> > On Fri, Dec 21, 2012 at 12:14 AM, Vivek Gautam
+>> > <gautamvivek1987@gmail.com> wrote:
+>> > > On Wed, Dec 19, 2012 at 7:16 PM, Vivek Gautam
+>> > <gautamvivek1987@gmail.com> wrote:
+>> > >>
+>> > >> On Sat, Dec 15, 2012 at 12:50 PM, Grant Likely
+>> > >> <grant.likely@secretlab.ca> wrote:
+>> > >>> On Thu, 13 Dec 2012 20:22:26 +0530, Vivek Gautam
+>> > <gautam.vivek@samsung.com> wrote:
+>> > >>>> Using chip specific compatible string as it should be.
+>> > >>>> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
+>> > >>>> which till now used a generic 'exynos' in their compatible strings.
+>> > >>>>
+>> > >>>> This goes as per the discussion happened in the thread for
+>> > >>>> [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
+>> > >>>> available at:
+>> > >>>> http://www.spinics.net/lists/linux-usb/msg74145.html
+>> > >>>>
+>> > >>>> Vivek Gautam (2):
+>> > >>>>   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
+>> > >>>>   usb: dwc3-exynos: Fix compatible strings for the device
+>> > >>>
+>> > >>> for both patches:
+>> > >>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+>> > >>>
+>> > >
+>> > > Any more thought about this patch-set?
+>> > > Or does this change seems fine?
+>> >
+>> > These two changes look good to me.  For both of them:
+>> >
+>> > Reviewed-by: Doug Anderson <dianders@chromium.org>
 >>
->> This code should be changed.
+>> Well, I have another idea. Yes, I know, specific chip name should be used.
+> But
+>> you know the specific chip name in compatible can cause another confusion
+>> on other SoC which has same IP. So I think, we need to consider to use
+>> common name or any specific name not chip in compatible for IP/driver like
+>> following?
 >>
->> I insert  this code (save/restore clock source register - CLK_SRC_TOP3)
->> temporary.
+>> -     { .compatible = "samsung,exynos-dwc3" },
+>> +     { .compatible = "samsung,synopsis-dwc3" },
 >>
->> But we removed this code. And we use another  method to fix it.
+>> Or if any version or something, how about following?
 >>
->> I think this is not right way.
+>> +     { .compatible = "samsung,dwc-v3" },
 >>
->> Thanks.
->>
->>
->>
->> On Fri, Dec 21, 2012 at 6:06 AM, <tomasz.figa@gmail.com> wrote:
->>>
->>> Hi Prasanna,
->>>
->>> On Thursday 20 of December 2012 17:56:18 Prasanna Kumar wrote:
->>> > This patch adds a software workaround to the hardware
->>> > problem found in exynos5 while powergating.
->>> >
->>> > It is observed that CLK_TOP_SRC3 register gets modified if
->>> > the G-Scaler/MFC devices are power gated. The clock for G-Scaler gets
->>> > set to XXTI which results in the device running very slow .
->>> > A big drop in performance is noticed whilerunning the video.
->>> > This issue also occurs while powergating MFC.
->>> >
->>> > The value of clock source register is restored once the powergating
->>> > operation is completed.
->>>
->>> Is the problem really related to power gating at all? From what you
->>> described in comment in the code, it seems like it's a problem with
->>> suspend/resume, not power gating, so it should be rather saved on suspend
->>> and restored on resume. Please recheck clock save/restore part of power
->>> management code.
->>>
->>> Altering clock configuration registers from power domain code looks really
->>> ugly...
->>>
->>> Best regards,
->>> Tomasz Figa
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe
->>> linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
+Well, yes the newer SoCs with same IP using the chip name can cause some
+confusion, but won't it be fine that -
+"Newer parts using the same core can claim compatibility by
+including the older string in the compatible list" - as quoted by Grant Likely
+
+Or, can we try another option, using multiple compatible strings for
+SoC specific
+in of_match_table, so that we don't create any confusion by using same
+compatible
+for newer SoCs also. Like,
+
+-     { .compatible = "samsung,exynos-dwc3" },
++     { .compatible = "samsung,exynos5250-dwc3" },
++     { .compatible = <new SoC using same IP> },
+
+>> - Kukjin
 >
->
->
-> --
-> Thanks
-> Prasanna Kumar
+
+
+
+-- 
+Thanks & Regards
+Vivek
