@@ -1,79 +1,78 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Sun, 23 Dec 2012 15:15:35 -0800
-Message-ID: <016901cde163$6be034c0$43a09e40$@samsung.com>
-References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
- <20121215072014.2E05E3E0AE3@localhost>
- <CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
- <CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
- <CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Mon, 24 Dec 2012 09:33:18 +0530
+Message-ID: <CAAgF-BckOnct3gGgrxiG2W-D74sFmD=7HfBOqkj9HTc66ZPoiQ@mail.gmail.com>
+References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
+	<1355395373-22058-3-git-send-email-padma.v@samsung.com>
+	<20121219132414.2CF653E0AD7@localhost>
+	<20121219170937.GV4985@opensource.wolfsonmicro.com>
+	<CAAgF-Bc3zSyhaMwSOy977PJ-PdtMfDXjFrTvpzETeHJAAQU3vQ@mail.gmail.com>
+	<008401cddfad$ae2d19e0$0a874da0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:12861 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752258Ab2LWXPn (ORCPT
+Received: from mail-la0-f44.google.com ([209.85.215.44]:34477 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752513Ab2LXEDU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 Dec 2012 18:15:43 -0500
-In-reply-to: 
-Content-language: en-us
+	Sun, 23 Dec 2012 23:03:20 -0500
+Received: by mail-la0-f44.google.com with SMTP id d3so8071331lah.17
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Dec 2012 20:03:18 -0800 (PST)
+In-Reply-To: <008401cddfad$ae2d19e0$0a874da0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, 'Vivek Gautam' <gautamvivek1987@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, 'Alan Stern' <stern@rowland.harvard.edu>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Rob Herring' <rob.herring@calxeda.com>, jg1.han@samsung.com, 'Vivek Gautam' <gautam.vivek@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, sbkim73@samsung.com, tiwai@suse.de, ben-linux@fluff.org, lrg@ti.com
 
-Kukjin Kim wrote:
-> 
-Re-sending due to e-mail client problem...
+Hi,
 
-> Doug Anderson wrote:
-> >
-> > On Fri, Dec 21, 2012 at 12:14 AM, Vivek Gautam
-> > <gautamvivek1987@gmail.com> wrote:
-> > > On Wed, Dec 19, 2012 at 7:16 PM, Vivek Gautam
-> > <gautamvivek1987@gmail.com> wrote:
-> > >>
-> > >> On Sat, Dec 15, 2012 at 12:50 PM, Grant Likely
-> > >> <grant.likely@secretlab.ca> wrote:
-> > >>> On Thu, 13 Dec 2012 20:22:26 +0530, Vivek Gautam
-> > <gautam.vivek@samsung.com> wrote:
-> > >>>> Using chip specific compatible string as it should be.
-> > >>>> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
-> > >>>> which till now used a generic 'exynos' in their compatible strings.
-> > >>>>
-> > >>>> This goes as per the discussion happened in the thread for
-> > >>>> [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
-> > >>>> available at:
-> > >>>> http://www.spinics.net/lists/linux-usb/msg74145.html
-> > >>>>
-> > >>>> Vivek Gautam (2):
-> > >>>>   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
-> > >>>>   usb: dwc3-exynos: Fix compatible strings for the device
-> > >>>
-> > >>> for both patches:
-> > >>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
-> > >>>
-> > >
-> > > Any more thought about this patch-set?
-> > > Or does this change seems fine?
-> >
-> > These two changes look good to me.  For both of them:
-> >
-> > Reviewed-by: Doug Anderson <dianders@chromium.org>
-> 
-> Well, I have another idea. Yes, I know, specific chip name should be used.
-But
-> you know the specific chip name in compatible can cause another confusion
-> on other SoC which has same IP. So I think, we need to consider to use
-> common name or any specific name not chip in compatible for IP/driver like
-> following?
-> 
-> -	{ .compatible = "samsung,exynos-dwc3" },
-> +	{ .compatible = "samsung,synopsis-dwc3" },
-> 
-> Or if any version or something, how about following?
-> 
-> +	{ .compatible = "samsung,dwc-v3" },
-> 
+On Sat, Dec 22, 2012 at 12:32 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Padma Venkat wrote:
+>>
+>> Hi,
+>>
+>> On Wed, Dec 19, 2012 at 10:39 PM, Mark Brown
+>> <broonie@opensource.wolfsonmicro.com> wrote:
+>> > On Wed, Dec 19, 2012 at 01:24:14PM +0000, Grant Likely wrote:
+>> >> On Thu, 13 Dec 2012 16:12:53 +0530, Padmavathi Venna
+>> <padma.v@samsung.com> wrote:
+>> >
+>> >> > +- compatible : "samsung,samsung-i2s"
+>> >
+>> >> Isn't that kind of redundant?  :-)
+>> >
+>> >> The format of the compatible strings should be "<vendor>,<part-
+>> number>-i2s".
+>> >> Please be specific about the part number that you're doing the binding
+>> >> for. For example; use "samsung,exynos4210-i2s" instead of
+>> "samsung,exynos-i2s".
+>> >
+>> > There are actually versioned IPs here (where the versions are used
+>> > publically in a few places) but it's not clearly documented which is
+>> > which.  It would be reasonable to use the IP versions here I think.
+>>
+>> Samsung has three i2s drivers one for s3c24xx, one for s3c2412 and one
+>> for rest of the platforms. The above mentioned other platforms has
+>> Version 3/4/5 of i2s controllers. This dt binding is for for the i2s
+>
+> Where is the version defined such as 3, 4, 5? So, what is the
+> "sound/soc/Samsung/s3c-i2s-v2.[ch]"?
+
+Versions 3, 4, 5 are defined in dev-audio.c file of corresponding platforms.
+s3c-i2s-v2 is used in s3c2412 platform.
+
+>
+>> driver that has support for Version 3/4/5 of i2s controller. So
+>> "samsung,i2s-v5" is okay as compatible name? Please suggest me.
+>>
+> I agree with using version here but we need some consensus about that.
+>
 > - Kukjin
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Thanks
+Padma
