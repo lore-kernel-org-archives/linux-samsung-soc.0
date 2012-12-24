@@ -1,104 +1,58 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Mon, 24 Dec 2012 13:43:23 +0530
-Message-ID: <CAFp+6iGq32UV3mZ=QYVizJGQEark0Qztu7m4jy3DvG431ajV1w@mail.gmail.com>
-References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
-	<20121215072014.2E05E3E0AE3@localhost>
-	<CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
-	<CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
-	<CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
-	<016901cde163$6be034c0$43a09e40$@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] regulator: s5m8767: Fix probe failure due to stack
+ corruption
+Date: Mon, 24 Dec 2012 16:25:05 +0000
+Message-ID: <20121224162505.GT30837@opensource.wolfsonmicro.com>
+References: <1355282820-18364-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1Dvf9Qz7hFaodvwE"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:47011 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752934Ab2LXINZ (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46346 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752597Ab2LXQZI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Dec 2012 03:13:25 -0500
-In-Reply-To: <016901cde163$6be034c0$43a09e40$@samsung.com>
+	Mon, 24 Dec 2012 11:25:08 -0500
+Content-Disposition: inline
+In-Reply-To: <1355282820-18364-1-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, balbi@ti.com, Thomas Abraham <thomas.abraham@linaro.org>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, Alan Stern <stern@rowland.harvard.edu>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
-
-Hi Kukjin,
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-kernel@vger.kernel.org, sbkim73@samsung.com, lrg@ti.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
 
-On Mon, Dec 24, 2012 at 4:45 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Kukjin Kim wrote:
->>
-> Re-sending due to e-mail client problem...
->
->> Doug Anderson wrote:
->> >
->> > On Fri, Dec 21, 2012 at 12:14 AM, Vivek Gautam
->> > <gautamvivek1987@gmail.com> wrote:
->> > > On Wed, Dec 19, 2012 at 7:16 PM, Vivek Gautam
->> > <gautamvivek1987@gmail.com> wrote:
->> > >>
->> > >> On Sat, Dec 15, 2012 at 12:50 PM, Grant Likely
->> > >> <grant.likely@secretlab.ca> wrote:
->> > >>> On Thu, 13 Dec 2012 20:22:26 +0530, Vivek Gautam
->> > <gautam.vivek@samsung.com> wrote:
->> > >>>> Using chip specific compatible string as it should be.
->> > >>>> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
->> > >>>> which till now used a generic 'exynos' in their compatible strings.
->> > >>>>
->> > >>>> This goes as per the discussion happened in the thread for
->> > >>>> [PATCH v2] ARM: Exynos5250: Enabling dwc3-exynos driver
->> > >>>> available at:
->> > >>>> http://www.spinics.net/lists/linux-usb/msg74145.html
->> > >>>>
->> > >>>> Vivek Gautam (2):
->> > >>>>   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
->> > >>>>   usb: dwc3-exynos: Fix compatible strings for the device
->> > >>>
->> > >>> for both patches:
->> > >>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
->> > >>>
->> > >
->> > > Any more thought about this patch-set?
->> > > Or does this change seems fine?
->> >
->> > These two changes look good to me.  For both of them:
->> >
->> > Reviewed-by: Doug Anderson <dianders@chromium.org>
->>
->> Well, I have another idea. Yes, I know, specific chip name should be used.
-> But
->> you know the specific chip name in compatible can cause another confusion
->> on other SoC which has same IP. So I think, we need to consider to use
->> common name or any specific name not chip in compatible for IP/driver like
->> following?
->>
->> -     { .compatible = "samsung,exynos-dwc3" },
->> +     { .compatible = "samsung,synopsis-dwc3" },
->>
->> Or if any version or something, how about following?
->>
->> +     { .compatible = "samsung,dwc-v3" },
->>
-Well, yes the newer SoCs with same IP using the chip name can cause some
-confusion, but won't it be fine that -
-"Newer parts using the same core can claim compatibility by
-including the older string in the compatible list" - as quoted by Grant Likely
+--1Dvf9Qz7hFaodvwE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Or, can we try another option, using multiple compatible strings for
-SoC specific
-in of_match_table, so that we don't create any confusion by using same
-compatible
-for newer SoCs also. Like,
+On Wed, Dec 12, 2012 at 08:57:00AM +0530, Inderpal Singh wrote:
+> The function sec_reg_read invokes regmap_read which expects unsigned int *
+> as the destination address. The existing driver is passing address of local
+> variable "val" which is u8. This causes the stack corruption and following
+> dump is observed during probe.
 
--     { .compatible = "samsung,exynos-dwc3" },
-+     { .compatible = "samsung,exynos5250-dwc3" },
-+     { .compatible = <new SoC using same IP> },
+Applied, thanks.
 
->> - Kukjin
->
+--1Dvf9Qz7hFaodvwE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
+iQIcBAEBAgAGBQJQ2IHNAAoJELSic+t+oim9AvoP/AqwtNeJNYSJxpg4jukdJmVl
+TSG0Yaq1Ben2O3ssTWLsVhfoHP1ViLrramIUOjTA1TbcT2jMMGFkCAYiplb9nfgS
+189uoGcz49/A1mKEgvjlFv4p8zokPBsqmth1zRyZNVEtSCYtnHsp5gSI4dqvPysT
+Y4fCAt3f//BDlb7phu/H7lpg3LaFV4GvDguWF2av/lkwAleyQWd+d6MqSYGgNMEY
+8MuCTVmc7lfGBCEqbTgSnxYSh56HEIkVe6Wl1eqk/XovP29fnIk5S/82bQr2h8xh
+ITTG6J3irmc9LHCQbfPzfWf7XHt+YHObYDnlyfaZ68SEeDnyJ60JoEwPumA2Wr1a
+OvDoTXFVHno46O53GFEQHvKoFix9ywqn1srqwAX/AqLYYZ/CqNi5acE5fdb8u9Ky
+RXDnQ/70rPw1Jm7XOXqu+EwnE9QV3jKCTOe0aIYKGGI9bZsFz1OMBH0ofJFW6c0m
+pDkeLbLP6YWAQ/bUCptfVN68LvJQ0UGZfuP1VZnnYUt+lXhikgmwKHn+uSsILqhj
+NnBi5JBXd1b5Q2lEsLCCrNbvkoOeALE32pZd6Cr0tDgfAs9tAr1rc4M4nwJRyGKO
+IafC7H6XqOFG4qQLp2uBRIv5E1amVXNjk3DAJxAaEoDEEXJXIdnQaGCMFVeqh0Kn
+0AMeD7MhG1C7/eTJbRr3
+=GnP4
+-----END PGP SIGNATURE-----
 
--- 
-Thanks & Regards
-Vivek
+--1Dvf9Qz7hFaodvwE--
