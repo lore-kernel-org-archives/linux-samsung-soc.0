@@ -1,84 +1,42 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH v3 4/6] ARM: EXYNOS: Add support for Exynos secure firmware
-Date: Wed, 26 Dec 2012 16:30:37 +0800
-Message-ID: <CAGsJ_4zPWPtak_SBO=x=mEjxSNc8HVLiaYpwHJp0Tck+aPchqA@mail.gmail.com>
-References: <1351178560-19188-1-git-send-email-t.figa@samsung.com>
- <1351178560-19188-5-git-send-email-t.figa@samsung.com>
- <20121112095114.GD28327@n2100.arm.linux.org.uk>
- <1632996.MFS2BfkxD2@amdc1227>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 3/5] ARM: EXYNOS: Add support for Exynos secure firmware
+Date: Wed, 26 Dec 2012 08:53:50 +0000
+Message-ID: <201212260853.50852.arnd@arndb.de>
+References: <1353599478-24617-1-git-send-email-t.figa@samsung.com> <1353599478-24617-4-git-send-email-t.figa@samsung.com> <CAGsJ_4yjm-CE6iJC+pAT=aiNAf0dpANH49e2OD+CqBG+JveGfQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1632996.MFS2BfkxD2@amdc1227>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: kgene.kim@samsung.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, arnd@arndb.de, tomasz.figa@gmail.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, olof@lixom.net, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.186]:54962 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753940Ab2LZIyL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Dec 2012 03:54:11 -0500
+In-Reply-To: <CAGsJ_4yjm-CE6iJC+pAT=aiNAf0dpANH49e2OD+CqBG+JveGfQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Barry Song <21cnbao@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, tomasz.figa@gmail.com, kyungmin.park@samsung.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-2012/11/12, Tomasz Figa <t.figa@samsung.com>:
-> Hi Russel,
->
-> On Monday 12 of November 2012 09:51:14 Russell King - ARM Linux wrote:
->> > +
->> > +static int exynos_cpu_boot(int cpu)
->> > +{
->> > +	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
->> > +	return 0;
->> > +}
->>
->> Same for this (though, what _exactly_ is 'cpu', is it the physical CPU
->> number or the logical CPU number?)
->
-> Yes, it's the physical CPU number.
->
->> > +
->> > +static int exynos_cpu_boot_reg(int cpu, void __iomem **ptr)
->> > +{
->> > +	*ptr = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
->> > +	return 0;
->> > +}
->>
->> This is really bad.  What's it trying to do?  What is the significance
->> of the 'ptr' returned?  What if a platform doesn't have a boot register?
->
-> It returns a pointer to the area where boot code (secondary startup)
-> address must be stored.
->
-> This callback (just as all the firmware callbacks) is optional, if it is
-> not appropriate for given platform, it will not use it.
->
-> However, now when I think of it, it may be better to just add a callback
-> like set_boot_addr(cpu, addr), which would set boot address of given CPU
-> without exporting address of its boot register outside firmware code. Are
-> you OK with this kind of approach?
+On Wednesday 26 December 2012, Barry Song wrote:
+> >       / {
+> >               /* ... */
+> >
+> >               firmware@0203F000 {
+> >                       compatible = "samsung,secure-firmware";
+> >                       reg = <0x0203F000 0x1000>;
+> >               };
+> >
+> >               /* ... */
+> >       };
+> 
+> well. amazing, dts is used to describle hardware details, here the
+> firmware is just a software and reg is the memory the firmware will
+> use. is this something againest the dt rule?
+> but it is really simple.
 
-it seems the firmware_ops you are providing is just for samsung EXYNOS
-SMC, esepecially for the boot of secondary physical cpu. then it
-really should be namespaced.
+We have for a long time had DT bindings to describe firmware, e.g.
+on IBM Power systems, I think this is fine.
 
-more callbacks for a common secure monitor APIs might need to cover
-1. boot of 2nd CPU
-2. do_idle(might let the other RTOS running on secure mode to be schedued in)
-3. call SMC, send param and get feedback from firmware
-4. might need to handle the steal time of firmware, firmware is also
-taking the CPU time, but linux doesn't know. it will affect the
-scheduler of Linux.
-
->
->
-> Best regards,
-> --
-> Tomasz Figa
-> Samsung Poland R&D Center
-> SW Solution Development, Linux Platform
-
--barry
+	Arnd
