@@ -1,36 +1,30 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4] usb: phy: samsung: Add support to set pmu isolation
-Date: Wed, 26 Dec 2012 19:26:16 +0530
-Message-ID: <CAFp+6iEoy-d6gHBMAiNi0n+tE8iS7Hk=k92w8EWfT_r3eeN_UA@mail.gmail.com>
-References: <1356524912-4736-1-git-send-email-gautam.vivek@samsung.com>
-	<1356524912-4736-2-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1356524912-4736-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Dongjin Kim <tobetter@gmail.com>
+Subject: [PATCH 0/2] EXYNOS4: Add device tree support for USB/EHCI
+Date: Thu, 27 Dec 2012 03:42:19 +0900
+Message-ID: <1356547341-23620-1-git-send-email-tobetter@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:57647 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751830Ab2LZSn4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Dec 2012 13:43:56 -0500
+Received: by mail-pa0-f43.google.com with SMTP id fb10so5062461pad.16
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Dec 2012 10:43:56 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Dongjin Kim <tobetter@gmail.com>
 
-Hi Sylwester,
+This patch set adds device tree upport for USB/EHCI device.
 
+Dongjin Kim (2):
+  ARM: dts: Add EHCI device tree node for Exynos4
+  USB: ehci-s5p: Add to get interrupt from DT
 
-On Wed, Dec 26, 2012 at 5:58 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Adding support to parse device node data in order to get
-> required properties to set pmu isolation for usb-phy.
->
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-
-Hope these changes align with what architectural changes you had suggested ?
-
-
+ arch/arm/boot/dts/exynos4.dtsi         |    7 +++++++
+ arch/arm/mach-exynos/mach-exynos4-dt.c |    9 +++++++++
+ drivers/usb/host/ehci-s5p.c            |    8 +++++++-
+ 3 files changed, 23 insertions(+), 1 deletion(-)
 
 -- 
-Thanks & Regards
-Vivek
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.10.4
