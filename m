@@ -1,30 +1,84 @@
 From: Dongjin Kim <tobetter@gmail.com>
-Subject: [PATCH 0/2] EXYNOS4: Add device tree support for USB/EHCI
-Date: Thu, 27 Dec 2012 03:42:19 +0900
-Message-ID: <1356547341-23620-1-git-send-email-tobetter@gmail.com>
+Subject: [PATCH 1/2] ARM: dts: Add EHCI device tree node for Exynos4
+Date: Thu, 27 Dec 2012 03:42:20 +0900
+Message-ID: <1356547341-23620-2-git-send-email-tobetter@gmail.com>
+References: <1356547341-23620-1-git-send-email-tobetter@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:57647 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751830Ab2LZSn4 (ORCPT
+Received: from mail-da0-f49.google.com ([209.85.210.49]:45752 "EHLO
+	mail-da0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751830Ab2LZSoN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Dec 2012 13:43:56 -0500
-Received: by mail-pa0-f43.google.com with SMTP id fb10so5062461pad.16
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Dec 2012 10:43:56 -0800 (PST)
+	Wed, 26 Dec 2012 13:44:13 -0500
+In-Reply-To: <1356547341-23620-1-git-send-email-tobetter@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: Dongjin Kim <tobetter@gmail.com>
+Cc: Dongjin Kim <tobetter@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-This patch set adds device tree upport for USB/EHCI device.
+This patch adds EHCI device node on device tree for Exynos4 and defines its
+default platform data, s5p_usb_phy_init and s5p_usb_phy_exit, so that those
+function can be called from the driver.
 
-Dongjin Kim (2):
-  ARM: dts: Add EHCI device tree node for Exynos4
-  USB: ehci-s5p: Add to get interrupt from DT
-
+Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+---
  arch/arm/boot/dts/exynos4.dtsi         |    7 +++++++
  arch/arm/mach-exynos/mach-exynos4-dt.c |    9 +++++++++
- drivers/usb/host/ehci-s5p.c            |    8 +++++++-
- 3 files changed, 23 insertions(+), 1 deletion(-)
+ 2 files changed, 16 insertions(+)
 
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 92bca86..df1a9f0 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -140,6 +140,13 @@
+ 		status = "disabled";
+ 	};
+ 
++	ehci@12580000 {
++		compatible = "samsung,exynos-ehci";
++		reg = <0x12580000 0x100>;
++		interrupts = <0 70 0>;
++		status = "disabled";
++	};
++
+ 	serial@13800000 {
+ 		compatible = "samsung,exynos4210-uart";
+ 		reg = <0x13800000 0x100>;
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index 92757ff..c8a23f0 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/of_platform.h>
+ #include <linux/serial_core.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -20,9 +21,15 @@
+ 
+ #include <plat/cpu.h>
+ #include <plat/regs-serial.h>
++#include <plat/usb-phy.h>
+ 
+ #include "common.h"
+ 
++static struct s5p_ehci_platdata s5p_ehci_platdata = {
++	.phy_init = s5p_usb_phy_init,
++	.phy_exit = s5p_usb_phy_exit,
++};
++
+ /*
+  * The following lookup table is used to override device names when devices
+  * are registered from device tree. This is temporarily added to enable
+@@ -80,6 +87,8 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
+ 				"exynos-tmu", NULL),
++	OF_DEV_AUXDATA("samsung,exynos-ehci", EXYNOS4_PA_EHCI,
++				"s5p-ehci", &s5p_ehci_platdata),
+ 	{},
+ };
+ 
 -- 
 1.7.10.4
