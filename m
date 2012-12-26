@@ -1,101 +1,80 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH RESEND] ARM: EXYNOS: change the name of USB ohci header
-Date: Wed, 26 Dec 2012 15:35:26 +0900
-Message-ID: <030301cde333$3142efc0$93c8cf40$%han@samsung.com>
+From: Barry Song <21cnbao@gmail.com>
+Subject: Re: [PATCH v4 1/5] ARM: Add interface for registering and calling
+ firmware-specific operations
+Date: Wed, 26 Dec 2012 16:00:27 +0800
+Message-ID: <CAGsJ_4xhE0dXmesBfZPgajeEUTWkO594rjy8qTKsN3fZ7LZNaQ@mail.gmail.com>
+References: <1353599478-24617-1-git-send-email-t.figa@samsung.com>
+	<1353599478-24617-2-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:36093 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751508Ab2LZGf4 (ORCPT
+Received: from mail-la0-f42.google.com ([209.85.215.42]:50234 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751189Ab2LZIA3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Dec 2012 01:35:56 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MFM009R0KZ33L60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Dec 2012 15:35:27 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.120.99])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MFM00CD5KZ2IA00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Dec 2012 15:35:27 +0900 (KST)
-Content-language: ko
+	Wed, 26 Dec 2012 03:00:29 -0500
+Received: by mail-la0-f42.google.com with SMTP id s15so10397564lag.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Dec 2012 00:00:28 -0800 (PST)
+In-Reply-To: <1353599478-24617-2-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Alan Stern' <stern@rowland.harvard.edu>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, tomasz.figa@gmail.com, kyungmin.park@samsung.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-This patch changes the name of USB ohci header from 'usb-exynos.h'
-to 'usb-ohci-exynos.h'. This is because this header file has
-the platdata for only Exynos ohci.
+2012/11/22, Tomasz Figa <t.figa@samsung.com>:
+> Some boards are running with secure firmware running in TrustZone secure
+> world, which changes the way some things have to be initialized.
+>
+> This patch adds an interface for platforms to specify available firmware
+> operations and call them.
+>
+> A wrapper macro, call_firmware_op(), checks if the operation is provided
+> and calls it if so, otherwise returns -ENOSYS to allow fallback to
+> legacy operation..
+>
+> By default no operations are provided.
+>
+> Example of use:
+>
+> In code using firmware ops:
+>
+> 	__raw_writel(virt_to_phys(exynos4_secondary_startup),
+> 		CPU1_BOOT_REG);
+>
+> 	/* Call Exynos specific smc call */
+> 	if (call_firmware_op(cpu_boot, cpu) == -ENOSYS)
+> 		cpu_boot_legacy(...); /* Try legacy way */
+>
+> 	gic_raise_softirq(cpumask_of(cpu), 1);
+>
+> In board-/platform-specific code:
+>
+> 	static int platformX_do_idle(void)
+> 	{
+> 		/* tell platformX firmware to enter idle */
+> 	        return 0;
+> 	}
+>
+> 	static int platformX_cpu_boot(int i)
+> 	{
+> 		/* tell platformX firmware to boot CPU i */
+> 		return 0;
+> 	}
+>
+> 	static const struct firmware_ops platformX_firmware_ops = {
+> 		.do_idle	= exynos_do_idle,
+> 		.cpu_boot	= exynos_cpu_boot,
+> 		/* other operations not available on platformX */
+> 	};
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- arch/arm/mach-exynos/dev-ohci.c                    |    2 +-
- arch/arm/mach-exynos/mach-origen.c                 |    2 +-
- arch/arm/mach-exynos/mach-smdkv310.c               |    2 +-
- drivers/usb/host/ohci-exynos.c                     |    2 +-
- .../{usb-exynos.h => usb-ohci-exynos.h}            |    0
- 5 files changed, 4 insertions(+), 4 deletions(-)
- rename include/linux/platform_data/{usb-exynos.h => usb-ohci-exynos.h} (100%)
+i am thinking the firmware_ops should be namespaced, some hardware has
+firmware, firmware_ops should not be using a global namespace here.
 
-diff --git a/arch/arm/mach-exynos/dev-ohci.c b/arch/arm/mach-exynos/dev-ohci.c
-index 4244d02..d5bc129 100644
---- a/arch/arm/mach-exynos/dev-ohci.c
-+++ b/arch/arm/mach-exynos/dev-ohci.c
-@@ -12,7 +12,7 @@
- 
- #include <linux/dma-mapping.h>
- #include <linux/platform_device.h>
--#include <linux/platform_data/usb-exynos.h>
-+#include <linux/platform_data/usb-ohci-exynos.h>
- 
- #include <mach/irqs.h>
- #include <mach/map.h>
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 5e34b9c..5035d9c 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -26,7 +26,7 @@
- #include <linux/platform_data/i2c-s3c2410.h>
- #include <linux/platform_data/s3c-hsotg.h>
- #include <linux/platform_data/usb-ehci-s5p.h>
--#include <linux/platform_data/usb-exynos.h>
-+#include <linux/platform_data/usb-ohci-exynos.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index 35548e3..0c2912f 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -23,7 +23,7 @@
- #include <linux/platform_data/i2c-s3c2410.h>
- #include <linux/platform_data/s3c-hsotg.h>
- #include <linux/platform_data/usb-ehci-s5p.h>
--#include <linux/platform_data/usb-exynos.h>
-+#include <linux/platform_data/usb-ohci-exynos.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index aa3b884..a3fd454 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -14,7 +14,7 @@
- #include <linux/clk.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
--#include <linux/platform_data/usb-exynos.h>
-+#include <linux/platform_data/usb-ohci-exynos.h>
- #include <plat/usb-phy.h>
- 
- struct exynos_ohci_hcd {
-diff --git a/include/linux/platform_data/usb-exynos.h b/include/linux/platform_data/usb-ohci-exynos.h
-similarity index 100%
-rename from include/linux/platform_data/usb-exynos.h
-rename to include/linux/platform_data/usb-ohci-exynos.h
--- 
-1.7.2.5
+>
+> 	static void __init board_init_early(void)
+> 	{
+> 	        register_firmware_ops(&platformX_firmware_ops);
+> 	}
+>
+
+-barry
