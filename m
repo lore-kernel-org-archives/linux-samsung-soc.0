@@ -1,219 +1,109 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/2] i2c-exynos5: add debugfs support for registers
-Date: Tue, 25 Dec 2012 16:55:55 +0530
-Message-ID: <1356434755-13702-2-git-send-email-ch.naveen@samsung.com>
-References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
- <1356434755-13702-1-git-send-email-ch.naveen@samsung.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System MMU
+	driver with DT
+Date: Wed, 26 Dec 2012 10:53:15 +0900
+Message-ID: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1356434755-13702-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-language: ko
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch replaces the dev_vdbg with debugfs function calls
-in i2c-exynos5.c driver.
+notice: v6 patch-set is rebased on next/iommu-exynos branch of
+linux-samsung.git.  This patch-set does not include 2 patches (05 and 06
+patches in v5 patch-se) because they alread exist already in the branch.
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
-Changes since v1:
-The debugfs implementation is a suggestion by Felipe Balbi.
-Its not tested, Implemented only for review purpose..
+The current exynos-iommu(System MMU) driver does not work autonomously
+since it is lack of support for power management of peripheral blocks.
+For example, MFC device driver must ensure that its System MMU is disabled
+before MFC block is power-down not to invalidate IOTLB in the System MMU
+when I/O memory mapping is changed. Because A System MMU is resides in the
+same H/W block, access to control registers of System MMU while the H/W
+block is turned off must be prohibited.
 
- drivers/i2c/busses/i2c-exynos5.c |  140 +++++++++++++++++++++++++++++---------
- 1 file changed, 109 insertions(+), 31 deletions(-)
+This set of changes solves the above problem with setting each System MMUs
+as the parent of the device which owns the System MMU to recieve the
+information when the device is turned off or turned on.
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 7614f60..2d2da22 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/debugfs.h>
- 
- #include <linux/i2c.h>
- #include <linux/init.h>
-@@ -55,6 +56,7 @@ struct exynos5_i2c {
- 
- 	int			bus_num;
- 	int			speed_mode;
-+	struct dentry		*debugfs_root;
- };
- 
- static const struct of_device_id exynos5_i2c_match[] = {
-@@ -63,39 +65,112 @@ static const struct of_device_id exynos5_i2c_match[] = {
- };
- MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
- 
--/* TODO: Should go to debugfs */
--static inline void dump_i2c_register(struct exynos5_i2c *i2c)
-+static int exynos5_i2c_regs_show(struct seq_file *s, void *data)
- {
--	dev_vdbg(i2c->dev, "Register dump(%d) :\n %x\n %x\n %x\n %x\n"
--		" %x\n %x\n %x\n %x\n %x\n"
--		" %x\n %x\n %x\n %x\n %x\n"
--		" %x\n %x\n %x\n %x\n %x\n"
--		" %x\n %x\n %x\n %x\n %x\n",
--		i2c->suspended,
--		readl(i2c->regs + HSI2C_CTL),
--		readl(i2c->regs + HSI2C_FIFO_CTL),
--		readl(i2c->regs + HSI2C_TRAILIG_CTL),
--		readl(i2c->regs + HSI2C_CLK_CTL),
--		readl(i2c->regs + HSI2C_CLK_SLOT),
--		readl(i2c->regs + HSI2C_INT_ENABLE),
--		readl(i2c->regs + HSI2C_INT_STATUS),
--		readl(i2c->regs + HSI2C_ERR_STATUS),
--		readl(i2c->regs + HSI2C_FIFO_STATUS),
--		readl(i2c->regs + HSI2C_TX_DATA),
--		readl(i2c->regs + HSI2C_RX_DATA),
--		readl(i2c->regs + HSI2C_CONF),
--		readl(i2c->regs + HSI2C_AUTO_CONF),
--		readl(i2c->regs + HSI2C_TIMEOUT),
--		readl(i2c->regs + HSI2C_MANUAL_CMD),
--		readl(i2c->regs + HSI2C_TRANS_STATUS),
--		readl(i2c->regs + HSI2C_TIMING_HS1),
--		readl(i2c->regs + HSI2C_TIMING_HS2),
--		readl(i2c->regs + HSI2C_TIMING_HS3),
--		readl(i2c->regs + HSI2C_TIMING_FS1),
--		readl(i2c->regs + HSI2C_TIMING_FS2),
--		readl(i2c->regs + HSI2C_TIMING_FS3),
--		readl(i2c->regs + HSI2C_TIMING_SLA),
-+	struct exynos5_i2c *i2c = (struct exynos5_i2c *)s->private;
-+
-+	if (i2c->suspended) {
-+		seq_printf(s, "i2c suspended, can't read registers\n");
-+		return 0;
-+	}
-+
-+	pm_runtime_get_sync(i2c->dev);
-+
-+	seq_printf(s, "CTL:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_CTL));
-+	seq_printf(s, "FIFO_CTL:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_FIFO_CTL));
-+	seq_printf(s, "TRAILIG_CTL:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TRAILIG_CTL));
-+	seq_printf(s, "CLK_CTL:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_CLK_CTL));
-+	seq_printf(s, "CLK_SLOT:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_CLK_SLOT));
-+	seq_printf(s, "INT_ENABLE:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_INT_ENABLE));
-+	seq_printf(s, "INT_STATUS:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_INT_STATUS));
-+	seq_printf(s, "FIFO_STATUS:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_FIFO_STATUS));
-+	seq_printf(s, "TX_DATA:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TX_DATA));
-+	seq_printf(s, "RX_DATA:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_RX_DATA));
-+	seq_printf(s, "CONF:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_CONF));
-+	seq_printf(s, "AUTO_CONF:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_AUTO_CONF));
-+	seq_printf(s, "TIMEOUT:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TIMEOUT));
-+	seq_printf(s, "MANUAL_CMD:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_MANUAL_CMD));
-+	seq_printf(s, "TRANS_STATUS:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TRANS_STATUS));
-+	seq_printf(s, "TIMING_HS1:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TIMING_HS1));
-+	seq_printf(s, "TIMING_HS2:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TIMING_HS2));
-+	seq_printf(s, "TIMING_HS3:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TIMING_HS3));
-+	seq_printf(s, "TIMING_FS1:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TIMING_FS1));
-+	seq_printf(s, "TIMING_FS2:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TIMING_FS2));
-+	seq_printf(s, "TIMING_FS3:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TIMING_FS3));
-+	seq_printf(s, "TIMING_SLA:\t\t0x%08x\n",
-+		readl(i2c->regs + HSI2C_TIMING_SLA));
-+	seq_printf(s, "ADDR:\t\t0x%08x\n",
- 		readl(i2c->regs + HSI2C_ADDR));
-+
-+	pm_runtime_mark_last_busy(i2c->dev);
-+	pm_runtime_put_autosuspend(i2c->dev);
-+
-+	return 0;
-+}
-+
-+static int exynos5_i2c_regs_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, exynos5_i2c_regs_show, inode->i_private);
-+}
-+
-+static const struct file_operations exynos5_i2c_regs_fops = {
-+	.open           = exynos5_i2c_regs_open,
-+	.read           = seq_read,
-+	.llseek         = seq_lseek,
-+	.release        = single_release,
-+};
-+
-+static void exynos5_i2c_debugfs(struct exynos5_i2c *i2c)
-+{
-+	if (i2c->debugfs_root)
-+		debugfs_create_file("regs", S_IRUSR, i2c->debugfs_root,
-+			i2c, &exynos5_i2c_regs_fops);
-+}
-+
-+static void exynos5_i2c_add_debugfs(struct exynos5_i2c *i2c)
-+{
-+	struct dentry *root;
-+
-+	root = debugfs_create_dir(dev_name(i2c->dev), NULL);
-+	if (IS_ERR(root))
-+		/* Don't complain -- debugfs just isn't enabled */
-+		return;
-+	if (!root)
-+		/* Complain -- debugfs is enabled, but it failed to
-+		 * create the directory. */
-+		goto err_root;
-+
-+	i2c->debugfs_root = root;
-+	return;
-+
-+ err_root:
-+	dev_err(i2c->dev, "failed to initialize debugfs\n");
-+}
-+
-+void exynos5_i2c_remove_debugfs(struct exynos5_i2c *i2c)
-+{
-+	debugfs_remove_recursive(i2c->debugfs_root);
- }
- 
- static inline void exynos5_i2c_stop(struct exynos5_i2c *i2c, int ret)
-@@ -553,6 +628,8 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 	dev_info(&pdev->dev, "%s: Exynos5 HS-I2C adapter\n",
- 		dev_name(&i2c->adap.dev));
- 
-+	exynos5_i2c_add_debugfs(i2c);
-+	exynos5_i2c_debugfs(i2c);
- 	clk_disable_unprepare(i2c->clk);
- 	pm_runtime_mark_last_busy(i2c->dev);
- 	pm_runtime_put_autosuspend(i2c->dev);
-@@ -586,6 +663,7 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
- 
- 	iounmap(i2c->regs);
- 	platform_set_drvdata(pdev, NULL);
-+	exynos5_i2c_remove_debugfs(i2c);
- 
- 	return 0;
- }
--- 
-1.7.9.5
+Another big change to the driver is the support for devicetree.
+The bindings for System MMU is described in
+Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+
+In addition, this patchset also includes several bug fixes and enhancements
+of the current driver.
+
+Change log:
+v6:
+- Rebased on the branch, next/iommu-exynos of
+  git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+
+v5:
+- new bugfix: patch 01
+- Reordered patches
+  * patch 01 ~ 05: Bugfix and enhancements of the existing driver
+  * patch 06 ~ 10: Device Tree support and callbacks for power management
+  * patch 11     : System MMU 3.2 and 3.3 support
+  * patch 12 ~ 14: Debugging features
+- Additional code compaction
+
+v4:
+- Remove Change-Id from v3 patches
+- Change the order of the third and the first patch
+  Thanks to Kukjin Kim.
+- Fix memory leak when allocating and assigning exynos_iommu_owner to client
+  device if the client device has multiple System MMUs.
+  Thanks to Rahul Sharma.
+
+v3:
+- Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
+- Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
+  Thanks to Prathyush.
+
+v2:
+- Split the patch to iommu/exynos into 9 patches
+- Support for System MMU 3.3
+- Some code compaction
+
+Patch summary:
+[PATCH v6 01/12] iommu/exynos: add missing cache flush for removed pagetable entries
+[PATCH v6 02/12] iommu/exynos: always use iommu fault handler
+[PATCH v6 03/12] iommu/exynos: allocate lv2 page table from own slab
+[PATCH v6 04/12] iommu/exynos: change rwlock to spinlock
+[PATCH v6 05/12] iommu/exynos: support for device tree
+[PATCH v6 06/12] iommu/exynos: set System MMU as the parent of client device
+[PATCH v6 07/12] ARM: EXYNOS: remove system mmu initialization from exynos tree
+[PATCH v6 08/12] iommu/exynos: add support for runtime pm and suspend/resume
+[PATCH v6 09/12] iommu/exynos: add support for System MMU 3.2 and 3.3
+[PATCH v6 10/12] iommu/exynos: pass version information from DT
+[PATCH v6 11/12] iommu/exynos: add literal name of System MMU for debugging
+[PATCH v6 12/12] iommu/exynos: add debugfs entries for System MMU
+
+Diffstats:
+ arch/arm/boot/dts/exynos5250-smdk5250.dts  |    2 +-
+ arch/arm/boot/dts/exynos5250.dtsi          |   27 +-
+ arch/arm/mach-exynos/Kconfig               |    5 -
+ arch/arm/mach-exynos/Makefile              |    1 -
+ arch/arm/mach-exynos/clock-exynos4.c       |   41 +-
+ arch/arm/mach-exynos/clock-exynos4210.c    |    9 +-
+ arch/arm/mach-exynos/clock-exynos4212.c    |   23 +-
+ arch/arm/mach-exynos/clock-exynos5.c       |   87 +-
+ arch/arm/mach-exynos/dev-sysmmu.c          |  274 ------
+ arch/arm/mach-exynos/include/mach/sysmmu.h |   66 --
+ arch/arm/mach-exynos/mach-exynos4-dt.c     |   34 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c     |   30 +
+ drivers/iommu/Kconfig                      |    2 +-
+ drivers/iommu/Makefile                     |    2 +-
+ drivers/iommu/exynos-iommu.c               | 1477 +++++++++++++++++++++-------
+ 15 files changed, 1284 insertions(+), 796 deletions(-)
