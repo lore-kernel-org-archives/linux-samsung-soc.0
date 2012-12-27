@@ -1,100 +1,72 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 3/3] ARM: EXYNOS5: save CLK_TOP_SRC3 register before
- powergating
-Date: Thu, 27 Dec 2012 16:23:31 +0100
-Message-ID: <1630653.cgu5QYax72@amdc1227>
-References: <CAPmaG0uqkRcoUBR8Gjv_+BSJ3hwxUCz0G-YKNQX=qvx83i6QOQ@mail.gmail.com>
- <1356006378-17441-4-git-send-email-prasanna.ps@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V5 2/2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Thu, 27 Dec 2012 16:48:18 +0000
+Message-ID: <20121227164818.GD5005@opensource.wolfsonmicro.com>
+References: <1355395373-22058-1-git-send-email-padma.v@samsung.com>
+ <1355395373-22058-3-git-send-email-padma.v@samsung.com>
+ <20121219132414.2CF653E0AD7@localhost>
+ <20121219170937.GV4985@opensource.wolfsonmicro.com>
+ <CAAgF-Bc3zSyhaMwSOy977PJ-PdtMfDXjFrTvpzETeHJAAQU3vQ@mail.gmail.com>
+ <008401cddfad$ae2d19e0$0a874da0$@samsung.com>
+ <CAAgF-BckOnct3gGgrxiG2W-D74sFmD=7HfBOqkj9HTc66ZPoiQ@mail.gmail.com>
+ <CAAgF-BdNwk=aB9PdOieb=t-WBmCvB5CWEYic44fc6WwhJUHGmw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:23676 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752932Ab2L0PXo (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:57264 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753079Ab2L0QsV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Dec 2012 10:23:44 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MFP00IID438A9J0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Dec 2012 00:23:34 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MFP00BSJ4385I10@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Dec 2012 00:23:34 +0900 (KST)
-In-reply-to: <1356006378-17441-4-git-send-email-prasanna.ps@samsung.com>
+	Thu, 27 Dec 2012 11:48:21 -0500
+Content-Disposition: inline
+In-Reply-To: <CAAgF-BdNwk=aB9PdOieb=t-WBmCvB5CWEYic44fc6WwhJUHGmw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Prasanna Kumar <prasanna.ps@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, sbkim73@samsung.com, tiwai@suse.de, ben-linux@fluff.org, lrg@ti.com
 
-Hi Prasanna,
 
-On Thursday 20 of December 2012 17:56:18 Prasanna Kumar wrote:
-> This patch adds a software workaround to the hardware
-> problem found in exynos5 while powergating.
-> 
-> It is observed that CLK_TOP_SRC3 register gets modified if
-> the G-Scaler/MFC devices are power gated. The clock for G-Scaler gets
-> set to XXTI which results in the device running very slow .
-> A big drop in performance is noticed whilerunning the video.
-> This issue also occurs while powergating MFC.
-> 
-> The value of clock source register is restored once the powergating
-> operation is completed.
-> 
-> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
-> ---
->  arch/arm/mach-exynos/pm_domains.c |   27 +++++++++++++++++++++++++++
->  1 files changed, 27 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/pm_domains.c
-> b/arch/arm/mach-exynos/pm_domains.c index 9f1351d..bd8a41e 100644
-> --- a/arch/arm/mach-exynos/pm_domains.c
-> +++ b/arch/arm/mach-exynos/pm_domains.c
-> @@ -24,6 +24,8 @@
-> 
->  #include <mach/regs-pmu.h>
->  #include <plat/devs.h>
-> +#include <mach/regs-clock.h>
-> +#include <plat/cpu.h>
-> 
->  /*
->   * Exynos specific wrapper around the generic power domain
-> @@ -41,6 +43,24 @@ static int exynos_pd_power(struct generic_pm_domain
-> *domain, bool power_on) void __iomem *base;
->  	u32 timeout, pwr;
->  	char *op;
-> +	u32 tmp = 0;
-> +
-> +	/*
-> +	 *It is found that the CLK SRC register in exynos5
-> +	 *gets modified when power domain of gsc/mfc/isp/disp1
-> +	 *is powered off.This happens only after the system is
-> +	 *suspended and resumed and not before that.
-> +	 *The following fix adresses this hardware issue.
-> +	 *It saves the value of clock source register and
-> +	 *resores it later
-> +	 */
-> +
-> +	if (of_machine_is_compatible("samsung,exynos5250")) {
-> +		if (!power_on) {
-> +			/* save clock source register */
-> +			tmp = __raw_readl(EXYNOS5_CLKSRC_TOP3);
+--pY3vCvL1qV+PayAL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I really think this problem needs more investigation, but if gating
-a power domain can really change a clock source register and save/restore 
-when gating is really required, then the code must be reworked so it does 
-not access clock registers directly.
+On Wed, Dec 26, 2012 at 04:21:58PM +0530, Padma Venkat wrote:
+> Hi,
+>=20
+> On Mon, Dec 24, 2012 at 9:33 AM, Padma Venkat <padma.kvr@gmail.com> wrote:
+> > Hi,
 
-At the moment it is not a problem, but we are going to have Exynos support 
-for Common Clock Framework merged in near future and it will remove static 
-mapping of clock registers.
+You should always delete irrelevant text from mails, it makes it much
+easier for people to find whatever content you've added.
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+> >> I agree with using version here but we need some consensus about that.
+
+> Any suggestions on i2s compatible name or "samsung,i2s-v5" is okay?
+
+I think that's fine.
+
+--pY3vCvL1qV+PayAL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ3HvLAAoJELSic+t+oim92OwQAIjnHDvG+xboxn0WBEj63k9/
+02LFbqpsexDFKcL2cyljmeSatnWyN66kTfQ+iTuq137VbivhB+LCiwIuGpZ3ChVk
+a6jM0LdFR5In+sc/Cg5lbsi8vMObnbHsqoY7aGmJnykZ/Rd1p6znQMBNAy5pe/2L
+FMd9OJF9J3B4+2h0nqrT2QGclbapblN2klqmbknB+RVawFVfnr9ZkB51XOcSH970
+owEYD6sKvt27HGUCHJ8kUN3g7a1PNtBfcFWYl4eATST7aa5eXxTTrlh2bdGF22is
+zHlyW1GJ8hRkj6ocnWBOfTlnIre5NCTaEPlOAp14GN8lR9feMv7v3GGcf7o5i28O
+HpFnk/ci7/U0IhvxXah/Ub2NLCzy/nqC6QfYF2PvPqSeI0hlqmPkDRjtKJp5TBms
+2yO83/L31JXdz9/SleB5U6seraJPNx4/PTodrL8AZEWiFdZ7tsTs4VXnlaNrxU/J
+RlKztRtEzsXpmgznnmRJ3LxizgrBnZraAzKfduhihKwRyVJOb/1IEaLcqDLYuP6I
+ItNCpazybAG6yxd4PBXmyN8SsmRUghodorRCs1uQ4l3mDirM0lQyILmilz1aM5Va
+nNqFx99Bin9loQJaesWBiImPauNBxDffua/Z/9eo25HwAlO5+YpNMra2wvxR7ush
+er63/jQMb4oC2uPEvp4f
+=cChj
+-----END PGP SIGNATURE-----
+
+--pY3vCvL1qV+PayAL--
