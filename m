@@ -1,107 +1,51 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] pinctrl: exynos: add exynos5250 SoC specific data
-Date: Thu, 27 Dec 2012 08:58:57 -0800
-Message-ID: <017801cde453$77b03eb0$6710bc10$@samsung.com>
-References: <1355399644-29417-1-git-send-email-thomas.abraham@linaro.org>
- <1355399644-29417-2-git-send-email-thomas.abraham@linaro.org>
- <CACRpkdaQ10CgoFXtk4EyqL4LWVpsdEAdrmy5R-_Rqm5fJdqS4A@mail.gmail.com>
- <CAJuYYwTZkzCXjowhKaJ253Oji07eDdEjMvNssyL1ThWtETswSQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] gpio: samsung: fix pinctrl condition for exynos and exynos5440
+Date: Thu, 27 Dec 2012 10:11:10 -0800
+Message-ID: <1356631870-1499-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:33140 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752749Ab2L0Q7H (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:30993 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751204Ab2L0SLi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Dec 2012 11:59:07 -0500
-In-reply-to: <CAJuYYwTZkzCXjowhKaJ253Oji07eDdEjMvNssyL1ThWtETswSQ@mail.gmail.com>
-Content-language: en-us
+	Thu, 27 Dec 2012 13:11:38 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MFP00N5NBV832J0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Dec 2012 03:11:37 +0900 (KST)
+Received: from localhost.localdomain ([105.128.18.183])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MFP00J5NBV8EKA0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Dec 2012 03:11:36 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
 
-Thomas Abraham wrote:
-> 
-> Hi Linus,
-> 
-> On 14 December 2012 21:21, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Thu, Dec 13, 2012 at 12:54 PM, Thomas Abraham
-> > <thomas.abraham@linaro.org> wrote:
-> >
-> >> Add Samsung Exynos5250 SoC specific data to enable pinctrl support for
-> >> all platforms based on Exynos5250.
-> >>
-> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> >
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > For this series, I guess you'll fix it through the Samsung tree?
-> 
-> Thanks for your ack. Since there are patches to be prepared for
-> migrating the rest of Exynos5250 related code to the pinctrl
-> framework, it would be easier if this series goes through the Samsung
-> tree.
-> 
-I applied this series, thanks.
+Since EXYNOS5440 can select PINCTRL_EXYNOS5440 without PINCTRL_SAMSUNG,
+it should be fixed. In detail, PINCTRL_SAMSUNG is a kind of frame work
+for supporting pinctrl on most Samsung SoCs including S3C, S5P as well
+except EXYNOS5440 so PINCTRL_EXYNOS5440 has been implemented separated.
 
-And I think, would be clear if the config could be changed like following.
-
-8<----------------------------------------------------------------------
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] pinctrl: exynos: change PINCTRL_EXYNOS option
-
-Since pinctrl-exynos can support exynos4 and exynos5 so changed
-the option name to PINCTRL_EXYNOS for more clarity.
-
-Cc: Thomas Abraham <Thomas.abraham@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 91d5b6f..e1f63e7 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -412,7 +412,7 @@ config MACH_EXYNOS4_DT
- 	select CPU_EXYNOS4210
- 	select HAVE_SAMSUNG_KEYPAD if INPUT_KEYBOARD
- 	select PINCTRL
--	select PINCTRL_EXYNOS4
-+	select PINCTRL_EXYNOS
- 	select USE_OF
- 	help
- 	  Machine support for Samsung Exynos4 machine with device tree
-enabled.
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index c31aeb0..f59feab 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -185,8 +185,8 @@ config PINCTRL_SAMSUNG
- 	select PINMUX
- 	select PINCONF
- 
--config PINCTRL_EXYNOS4
--	bool "Pinctrl driver data for Exynos4 SoC"
-+config PINCTRL_EXYNOS
-+	bool "Pinctrl driver data for Samsung EXYNOS SoCs"
- 	depends on OF && GPIOLIB
- 	select PINCTRL_SAMSUNG
- 
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index fc4606f..6e87e52 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -36,7 +36,7 @@ obj-$(CONFIG_PINCTRL_TEGRA30)	+= pinctrl-tegra30.o
- obj-$(CONFIG_PINCTRL_U300)	+= pinctrl-u300.o
- obj-$(CONFIG_PINCTRL_COH901)	+= pinctrl-coh901.o
- obj-$(CONFIG_PINCTRL_SAMSUNG)	+= pinctrl-samsung.o
--obj-$(CONFIG_PINCTRL_EXYNOS4)	+= pinctrl-exynos.o
-+obj-$(CONFIG_PINCTRL_EXYNOS)	+= pinctrl-exynos.o
- obj-$(CONFIG_PINCTRL_EXYNOS5440)	+= pinctrl-exynos5440.o
- obj-$(CONFIG_PINCTRL_XWAY)	+= pinctrl-xway.o
- obj-$(CONFIG_PINCTRL_LANTIQ)	+= pinctrl-lantiq.o
-8<----------------------------------------------------------------------
+ drivers/gpio/gpio-samsung.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Kukjin
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index 365ecce..509c08c 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -3010,7 +3010,7 @@ static __init int samsung_gpiolib_init(void)
+ 	int i, nr_chips;
+ 	int group = 0;
+ 
+-#ifdef CONFIG_PINCTRL_SAMSUNG
++#if defined(CONFIG_PINCTRL_EXYNOS) || defined(CONFIG_PINCTRL_EXYNOS5440)
+ 	/*
+ 	* This gpio driver includes support for device tree support and there
+ 	* are platforms using it. In order to maintain compatibility with those
+-- 
+1.7.10.4
