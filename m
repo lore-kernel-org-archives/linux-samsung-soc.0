@@ -1,35 +1,39 @@
-From: Inderpal Singh <inderpal.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 2/2] i2c: s3c2410: free gpios in suspend function
-Date: Thu, 27 Dec 2012 09:39:44 +0530
-Message-ID: <1356581384-23063-2-git-send-email-inderpal.singh@linaro.org>
-References: <1356581384-23063-1-git-send-email-inderpal.singh@linaro.org>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1356581384-23063-1-git-send-email-inderpal.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH 1/2] i2c: s3c2410: Initialize i2c->gpios[] with requested gpio lines
+Date: Thu, 27 Dec 2012 09:39:43 +0530
+Message-ID: <1356581384-23063-1-git-send-email-inderpal.singh@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f41.google.com ([209.85.210.41]:39015 "EHLO
+	mail-da0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751852Ab2L0EJu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Dec 2012 23:09:50 -0500
+Received: by mail-da0-f41.google.com with SMTP id e20so4160002dak.28
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Dec 2012 20:09:49 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, thomas.abraham@linaro.org, patches@linaro.org
 
-While resuming the gpios are being requested again, hence we need
-to free the gpios before going to suspend otherwise it gives
-"gpio request failed" errors while resuming.
+i2c->gpios[] is being used to free_gpios but it's not getting initialized.
 
-Signed-off-by: Inderpal Singh <inderpal.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
 ---
- drivers/i2c/busses/i2c-s3c2410.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/i2c/busses/i2c-s3c2410.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index f1d1f1e..55c1762 100644
+index a290d08..f1d1f1e 100644
 --- a/drivers/i2c/busses/i2c-s3c2410.c
 +++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1172,6 +1172,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
- 
-+	s3c24xx_i2c_dt_gpio_free(i2c);
- 	i2c->suspended = 1;
- 
+@@ -875,6 +875,8 @@ static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
+ 			dev_err(i2c->dev, "gpio [%d] request failed\n", gpio);
+ 			goto free_gpio;
+ 		}
++
++		i2c->gpios[idx] = gpio;
+ 	}
  	return 0;
+ 
 -- 
 1.7.9.5
