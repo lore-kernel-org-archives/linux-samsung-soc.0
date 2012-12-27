@@ -1,56 +1,127 @@
-From: Prathyush K <prathyush.k@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Interchange control bits of sysmmu mfc_l and mfc_r
-Date: Thu, 27 Dec 2012 03:44:06 -0500
-Message-ID: <1356597846-5785-1-git-send-email-prathyush.k@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v4] usb: phy: samsung: Add support to set pmu isolation
+Date: Thu, 27 Dec 2012 14:50:47 +0530
+Message-ID: <CAFp+6iHWnXzkTgGkacHM7fQ6mC61N-0JFjoH_p-PzkGDNZCHNA@mail.gmail.com>
+References: <1356524912-4736-1-git-send-email-gautam.vivek@samsung.com>
+	<1356524912-4736-2-git-send-email-gautam.vivek@samsung.com>
+	<20121227002646.GC24604@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:33173 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751072Ab2L0IVv (ORCPT
+Received: from mail-la0-f48.google.com ([209.85.215.48]:52549 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751389Ab2L0JUt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Dec 2012 03:21:51 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MFO0072IKK2ZZC0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Dec 2012 17:21:50 +0900 (KST)
-Received: from chrome-ubuntu.sisodomain.com ([107.108.73.106])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MFO00GXLKK3SZ20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Dec 2012 17:21:50 +0900 (KST)
+	Thu, 27 Dec 2012 04:20:49 -0500
+In-Reply-To: <20121227002646.GC24604@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, pullip.cho@samsung.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, l.majewski@samsung.com, linux-samsung-soc@vger.kernel.org, heiko@sntech.de, p.paneri@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, balbi@ti.com, dianders@chromium.org, grant.likely@secretlab.ca, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, ben-linux@fluff.org, sylvester.nawrocki@gmail.com, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org
 
-The control bits for mfc_l and mfc_r sysmmus are incorrectly set.
-This patch interchanges the control bits so that the mfc sysmmus
-function correctly.
+Hi Russell,
 
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
----
- arch/arm/mach-exynos/clock-exynos5.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 0208c3a..730d54c 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -873,13 +873,13 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.devname	= SYSMMU_CLOCK_DEVNAME(mfc_l, 0),
- 		.enable		= &exynos5_clk_ip_mfc_ctrl,
- 		.ops		= &exynos5_gate_clk_ops,
--		.ctrlbit	= (1 << 1),
-+		.ctrlbit	= (1 << 2),
- 	}, {
- 		.name		= SYSMMU_CLOCK_NAME,
- 		.devname	= SYSMMU_CLOCK_DEVNAME(mfc_r, 1),
- 		.enable		= &exynos5_clk_ip_mfc_ctrl,
- 		.ops		= &exynos5_gate_clk_ops,
--		.ctrlbit	= (1 << 2),
-+		.ctrlbit	= (1 << 1),
- 	}, {
- 		.name		= SYSMMU_CLOCK_NAME,
- 		.devname	= SYSMMU_CLOCK_DEVNAME(tv, 2),
+On Thu, Dec 27, 2012 at 5:56 AM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Wed, Dec 26, 2012 at 05:58:32PM +0530, Vivek Gautam wrote:
+>> +     if (!ret)
+>> +             sphy->phyctrl_pmureg = ioremap(reg[0], reg[1]);
+>> +
+>> +     of_node_put(usbphy_pmu);
+>> +
+>> +     if (IS_ERR_OR_NULL(sphy->phyctrl_pmureg)) {
+>
+> No.  Learn what the error return values are from functions.  Using the
+> wrong ones is buggy.  ioremap() only ever returns NULL on error.  You
+> must check against NULL, and not use the IS_ERR stuff.
+>
+True, i should have checked the things. :-(
+ioremap() won't return error. Will amend this to check against NULL.
+
+>> +/*
+>> + * Set isolation here for phy.
+>> + * SOCs control this by controlling corresponding PMU registers
+>> + */
+>> +static void samsung_usbphy_set_isolation(struct samsung_usbphy *sphy, int on)
+>> +{
+>> +     u32 reg;
+>> +     int en_mask;
+>> +
+>> +     if (!sphy->phyctrl_pmureg) {
+>> +             dev_warn(sphy->dev, "Can't set pmu isolation\n");
+>> +             return;
+>> +     }
+>> +
+>> +     reg = readl(sphy->phyctrl_pmureg);
+>> +
+>> +     en_mask = sphy->drv_data->devphy_en_mask;
+>> +
+>> +     if (on)
+>> +             writel(reg & ~en_mask, sphy->phyctrl_pmureg);
+>> +     else
+>> +             writel(reg | en_mask, sphy->phyctrl_pmureg);
+>
+> What guarantees that this read-modify-write sequence of this register safe?
+> And, btw, this can't be optimised very well because of the barrier inside
+> writel().  This would be better:
+>
+>         if (on)
+>                 reg &= ~en_mask;
+>         else
+>                 reg |= en_mask;
+>
+>         writel(reg, sphy->phyctrl_pmureg);
+>
+Sure will amend this.
+A similar way suggested by Sylwester in the earlier mail in this thread:
+
+reg = on ? reg & ~mask : reg | mask;
+writel(reg, sphy->phyctrl_pmureg);
+
+Does this look fine ?
+
+>> +static inline struct samsung_usbphy_drvdata
+>> +*samsung_usbphy_get_driver_data(struct platform_device *pdev)
+>>  {
+>>       if (pdev->dev.of_node) {
+>>               const struct of_device_id *match;
+>>               match = of_match_node(samsung_usbphy_dt_match,
+>>                                                       pdev->dev.of_node);
+>> -             return (int) match->data;
+>> +             return (struct samsung_usbphy_drvdata *) match->data;
+>
+> match->data is a const void pointer.  Is there a reason you need this
+> cast here?  What if you made the returned pointer from this function
+> also const and fixed up all its users (no user should modify this
+> data.)
+>
+Right, we won't need this cast since match->data is a void pointer.
+Will also make the returned pointer const.
+
+>>  #ifdef CONFIG_OF
+>>  static const struct of_device_id samsung_usbphy_dt_match[] = {
+>>       {
+>>               .compatible = "samsung,s3c64xx-usbphy",
+>> -             .data = (void *)TYPE_S3C64XX,
+>> +             .data = (void *)&usbphy_s3c64xx,
+>
+> Why do you need this cast?
+>
+True we don't need this cast. Will remove this one.
+
+>>       }, {
+>>               .compatible = "samsung,exynos4210-usbphy",
+>> -             .data = (void *)TYPE_EXYNOS4210,
+>> +             .data = (void *)&usbphy_exynos4,
+>
+> Ditto.
+
+True we don't need this cast. Will remove this one.
+
+Thanks for the review :-)
+
+
 -- 
-1.8.0
+Regards
+Vivek
