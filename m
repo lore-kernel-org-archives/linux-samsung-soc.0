@@ -1,39 +1,35 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Add support for rtc wakeup
-Date: Thu, 27 Dec 2012 09:30:40 +0530
-Message-ID: <1356580840-22960-1-git-send-email-inderpal.singh@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:47891 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751743Ab2L0EAr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Dec 2012 23:00:47 -0500
-Received: by mail-pb0-f52.google.com with SMTP id ro2so5094749pbb.25
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Dec 2012 20:00:47 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inderpal Singh <inderpal.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 2/2] i2c: s3c2410: free gpios in suspend function
+Date: Thu, 27 Dec 2012 09:39:44 +0530
+Message-ID: <1356581384-23063-2-git-send-email-inderpal.singh@linaro.org>
+References: <1356581384-23063-1-git-send-email-inderpal.singh@linaro.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1356581384-23063-1-git-send-email-inderpal.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
 
-Set the gic arch extension callback to support rtc wakeup.
+While resuming the gpios are being requested again, hence we need
+to free the gpios before going to suspend otherwise it gives
+"gpio request failed" errors while resuming.
 
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+Signed-off-by: Inderpal Singh <inderpal.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- arch/arm/mach-exynos/common.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/i2c/busses/i2c-s3c2410.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 578a610..bf2ee1d 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -747,6 +747,8 @@ void __init exynos4_init_irq(void)
- 	 * uses GIC instead of VIC.
- 	 */
- 	s5p_init_irq(NULL, 0);
-+
-+	gic_arch_extn.irq_set_wake = s3c_irq_wake;
- }
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index f1d1f1e..55c1762 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1172,6 +1172,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
  
- void __init exynos5_init_irq(void)
++	s3c24xx_i2c_dt_gpio_free(i2c);
+ 	i2c->suspended = 1;
+ 
+ 	return 0;
 -- 
 1.7.9.5
