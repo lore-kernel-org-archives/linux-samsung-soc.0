@@ -1,138 +1,180 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 2/2] i2c-exynos5: add debugfs support for registers
-Date: Fri, 28 Dec 2012 00:59:50 +0200
-Message-ID: <20121227225950.GC12665@arwen.pp.htv.fi>
-References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
- <1356434755-13702-1-git-send-email-ch.naveen@samsung.com>
- <1356434755-13702-2-git-send-email-ch.naveen@samsung.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH] video: drm: exynos: mie bypass enable for fimd
+Date: Fri, 28 Dec 2012 09:39:48 +0530
+Message-ID: <CAL1wa8d+cwkL5uWyYv9Kx_Cdhm_MTrL2hc7z4QX+vgDTtzMpKw@mail.gmail.com>
+References: <1356503854-28100-1-git-send-email-l.krishna@samsung.com> <CAAQKjZOPQtCPE6BHnyJ7mqfi04VWbg3VWeVf9fcjxZC3jjUYdQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ctP54qlpMx3WjD+/"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1356434755-13702-2-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:53013 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753169Ab2L1EKJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Dec 2012 23:10:09 -0500
+Received: by mail-pa0-f54.google.com with SMTP id bi5so5859135pad.41
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Dec 2012 20:10:08 -0800 (PST)
+In-Reply-To: <CAAQKjZOPQtCPE6BHnyJ7mqfi04VWbg3VWeVf9fcjxZC3jjUYdQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
---ctP54qlpMx3WjD+/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Inki Dae,
 
-On Tue, Dec 25, 2012 at 04:55:55PM +0530, Naveen Krishna Chatradhi wrote:
-> This patch replaces the dev_vdbg with debugfs function calls
-> in i2c-exynos5.c driver.
->=20
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Changes since v1:
-> The debugfs implementation is a suggestion by Felipe Balbi.
-> Its not tested, Implemented only for review purpose..
->=20
->  drivers/i2c/busses/i2c-exynos5.c |  140 +++++++++++++++++++++++++++++---=
-------
->  1 file changed, 109 insertions(+), 31 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-ex=
-ynos5.c
-> index 7614f60..2d2da22 100644
-> --- a/drivers/i2c/busses/i2c-exynos5.c
-> +++ b/drivers/i2c/busses/i2c-exynos5.c
-> @@ -12,6 +12,7 @@
-> =20
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/debugfs.h>
-> =20
->  #include <linux/i2c.h>
->  #include <linux/init.h>
-> @@ -55,6 +56,7 @@ struct exynos5_i2c {
-> =20
->  	int			bus_num;
->  	int			speed_mode;
-> +	struct dentry		*debugfs_root;
->  };
-> =20
->  static const struct of_device_id exynos5_i2c_match[] =3D {
-> @@ -63,39 +65,112 @@ static const struct of_device_id exynos5_i2c_match[]=
- =3D {
->  };
->  MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
-> =20
-> -/* TODO: Should go to debugfs */
-> -static inline void dump_i2c_register(struct exynos5_i2c *i2c)
-> +static int exynos5_i2c_regs_show(struct seq_file *s, void *data)
->  {
-> -	dev_vdbg(i2c->dev, "Register dump(%d) :\n %x\n %x\n %x\n %x\n"
-> -		" %x\n %x\n %x\n %x\n %x\n"
-> -		" %x\n %x\n %x\n %x\n %x\n"
-> -		" %x\n %x\n %x\n %x\n %x\n"
-> -		" %x\n %x\n %x\n %x\n %x\n",
-> -		i2c->suspended,
-> -		readl(i2c->regs + HSI2C_CTL),
-> -		readl(i2c->regs + HSI2C_FIFO_CTL),
-> -		readl(i2c->regs + HSI2C_TRAILIG_CTL),
-> -		readl(i2c->regs + HSI2C_CLK_CTL),
-> -		readl(i2c->regs + HSI2C_CLK_SLOT),
-> -		readl(i2c->regs + HSI2C_INT_ENABLE),
-> -		readl(i2c->regs + HSI2C_INT_STATUS),
-> -		readl(i2c->regs + HSI2C_ERR_STATUS),
-> -		readl(i2c->regs + HSI2C_FIFO_STATUS),
-> -		readl(i2c->regs + HSI2C_TX_DATA),
-> -		readl(i2c->regs + HSI2C_RX_DATA),
-> -		readl(i2c->regs + HSI2C_CONF),
-> -		readl(i2c->regs + HSI2C_AUTO_CONF),
-> -		readl(i2c->regs + HSI2C_TIMEOUT),
-> -		readl(i2c->regs + HSI2C_MANUAL_CMD),
-> -		readl(i2c->regs + HSI2C_TRANS_STATUS),
-> -		readl(i2c->regs + HSI2C_TIMING_HS1),
-> -		readl(i2c->regs + HSI2C_TIMING_HS2),
-> -		readl(i2c->regs + HSI2C_TIMING_HS3),
-> -		readl(i2c->regs + HSI2C_TIMING_FS1),
-> -		readl(i2c->regs + HSI2C_TIMING_FS2),
-> -		readl(i2c->regs + HSI2C_TIMING_FS3),
-> -		readl(i2c->regs + HSI2C_TIMING_SLA),
-> +	struct exynos5_i2c *i2c =3D (struct exynos5_i2c *)s->private;
-> +
-> +	if (i2c->suspended) {
-> +		seq_printf(s, "i2c suspended, can't read registers\n");
-> +		return 0;
-> +	}
-> +
-> +	pm_runtime_get_sync(i2c->dev);
-> +
-> +	seq_printf(s, "CTL:\t\t0x%08x\n",
-> +		readl(i2c->regs + HSI2C_CTL));
+On Thu, Dec 27, 2012 at 11:47 AM, Inki Dae <inki.dae@samsung.com> wrote:
+>
+> Hi,
+>
+> DISP1BLK_CFG register is related to GScaler, HDCP and MIXER as well. So
+> it's not good that this register is controlled in fimd module. And I think
+> the function to control the register should be placed in SoC common file .
+> In other words, other drivers should be able to control the register through
+> common thing also.
+>
 
-BTW, there is a generic regdump debugfs interface nowadays, please use
-that instead (look for debugfs_create_regset32)
+Thanks for reviewing the patch.
+You mean to say that this functionality should be implemented at arch side
+and called by drivers using call back functions ?
 
---=20
-balbi
+If so, then if we moved the driver to full DT version, all the call
+backs will be removed.
+Then how to make a call to this function?
 
---ctP54qlpMx3WjD+/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+So I thought other drivers (apart from Fimd) also parses the
+appropriate nodes and
+program the register as per the need.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Please correct me if my understanding is wrong.
 
-iQIcBAEBAgAGBQJQ3NLmAAoJEIaOsuA1yqREV8gP/0t+V6LGzhei/9urBbKCTid6
-ZH3Xf7TwjjaWLgr/x/TL6aDuPhtnrovJJq5hU2us813Qt1qcLmt3Rtux/m4gZb6n
-nKhyQAtAvSxMbB9d3MSRI8+iHrF3Ehqo2wLdoQrpK/kzc0wWIrPdtUxrUNlNCiDh
-jmy/bphYskmQqQc7AtyaIWL+gllxzg9hw4M7wAteW352WLSwDY5I4UrvX9jGHwfW
-+rqFy6kp2XllMpJZgvcWrK4uo4VkyshA1Bp5Kt7hA2IybXwf7X5BpAz/SG0BpUrA
-gvkgSpe3nVCyN0GFpTOTMv3S2NboTU0JvOsfPYYR0jfC5ftymusMi3C+remHV7fF
-CX1Dd2x54TL4TVypBgd/sqlewn0872+Mggn0KgAWnkboTU+r0oEwc52F+s+EkkLq
-q//ZE8lqmEcicF0487veXKOFLUyv7w+5rxB3TvtfCG4qW9Q9wg4/1BGgLzLoy6lh
-m5AkZh1+f0c9EcV9H3tTLiFJvkYz0qAMOumf2G8P7gVY8jaXg5oCUcrtMNzqoSWZ
-pf9rDYoIHn37YuU9dMveFn3QZK6DIGeOC0Z+PilkPLRTeyHAaxI0VFQXIRo/fNgW
-jH+6UXU4S59JeKfJugRx05Ewx0i5lUTh/kcl+GHx5yCGhtM7/fJQYGIos9v57FGX
-fl2Ldqxta/ulrSyOFhZH
-=Nm/6
------END PGP SIGNATURE-----
+Best Wishes,
+Leela Krishna Amudala.
 
---ctP54qlpMx3WjD+/--
+
+> Thanks,
+> Inki Dae
+>
+> 2012/12/26 Leela Krishna Amudala <l.krishna@samsung.com>
+>>
+>> Bypasses the mie for fimd by parsing the register and bit offset values
+>> from "mie-bypass" node, if "mie-bypass" node is present in the dts file.
+>>
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 55
+>> ++++++++++++++++++++++++++++++++
+>>  1 file changed, 55 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> index bf0d9ba..f8ad259 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> @@ -118,6 +118,12 @@ static const struct of_device_id
+>> fimd_driver_dt_match[] = {
+>>  MODULE_DEVICE_TABLE(of, fimd_driver_dt_match);
+>>  #endif
+>>
+>> +struct mie_bypass {
+>> +       u32                             enable_bypass;
+>> +       void __iomem                    *bypass_reg;
+>> +       u32                             bypass_bit_offset;
+>> +};
+>> +
+>>  static inline struct fimd_driver_data *drm_fimd_get_driver_data(
+>>         struct platform_device *pdev)
+>>  {
+>> @@ -133,6 +139,41 @@ static inline struct fimd_driver_data
+>> *drm_fimd_get_driver_data(
+>>                 platform_get_device_id(pdev)->driver_data;
+>>  }
+>>
+>> +static struct mie_bypass *parse_mie_bypass_for_fimd(struct device *dev,
+>> +                                       struct device_node
+>> *mie_bypass_node)
+>> +{
+>> +       struct mie_bypass *bypass_data;
+>> +       u32 phy_address;
+>> +
+>> +       bypass_data = devm_kzalloc(dev, sizeof(*bypass_data),
+>> GFP_KERNEL);
+>> +       if (!bypass_data) {
+>> +               dev_err(dev, "memory allocation for bypass data
+>> failed\n");
+>> +               return ERR_PTR(-ENOMEM);
+>> +       }
+>> +       of_property_read_u32(mie_bypass_node,
+>> "samsung,mie-bypass-enable",
+>> +                       &bypass_data->enable_bypass);
+>> +       of_property_read_u32(mie_bypass_node, "samsung,disp1blk-cfg-reg",
+>> +                       &phy_address);
+>> +       of_property_read_u32(mie_bypass_node,
+>> "samsung,bypass-bit-offset",
+>> +                       &bypass_data->bypass_bit_offset);
+>> +
+>> +       bypass_data->bypass_reg = ioremap(phy_address, SZ_4);
+>>
+>> +       if (!bypass_data->bypass_reg) {
+>> +               dev_err(dev, "failed to ioremap phy_address\n");
+>> +               return ERR_PTR(-ENOMEM);
+>> +       }
+>> +       return bypass_data;
+>> +}
+>>
+>> +
+>> +static void mie_bypass_for_fimd(struct mie_bypass *bypass_data)
+>> +{
+>> +       u32 reg;
+>> +
+>> +       reg = __raw_readl(bypass_data->bypass_reg);
+>> +       reg |= (1 << bypass_data->bypass_bit_offset);
+>> +       __raw_writel(reg, bypass_data->bypass_reg);
+>> +}
+>> +
+>>  static bool fimd_display_is_connected(struct device *dev)
+>>  {
+>>         DRM_DEBUG_KMS("%s\n", __FILE__);
+>> @@ -906,12 +947,26 @@ static int __devinit fimd_probe(struct
+>> platform_device *pdev)
+>>         struct exynos_drm_fimd_pdata *pdata;
+>>         struct exynos_drm_panel_info *panel;
+>>         struct resource *res;
+>> +       struct device_node *mie_bypass_node;
+>> +       struct mie_bypass *bypass_data = NULL;
+>>         int win;
+>>         int ret = -EINVAL;
+>>
+>>         DRM_DEBUG_KMS("%s\n", __FILE__);
+>>
+>>         pdata = pdev->dev.platform_data;
+>> +       if (pdev->dev.of_node) {
+>> +               mie_bypass_node = of_find_node_by_name(pdev->dev.of_node,
+>> +                                                       "mie-bypass");
+>> +               if (mie_bypass_node) {
+>> +                       bypass_data =
+>> parse_mie_bypass_for_fimd(&pdev->dev,
+>> +                                                       mie_bypass_node);
+>>
+>> +                       if (IS_ERR(bypass_data))
+>> +                               return PTR_ERR(bypass_data);
+>> +                       if (bypass_data->enable_bypass)
+>> +                               mie_bypass_for_fimd(bypass_data);
+>> +               }
+>> +       }
+>>         if (!pdata) {
+>>                 dev_err(dev, "no platform data specified\n");
+>>                 return -EINVAL;
+>> --
+>> 1.8.0
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
