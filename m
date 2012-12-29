@@ -1,160 +1,119 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v3 2/5] ARM: Exynos: prepare an array of MCT interrupt numbers and use it
-Date: Sat, 29 Dec 2012 12:50:35 -0800
-Message-ID: <1356814238-23895-3-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v3 5/5] ARM: dts: add mct device tree node for all supported Exynos SoC's
+Date: Sat, 29 Dec 2012 12:50:38 -0800
+Message-ID: <1356814238-23895-6-git-send-email-thomas.abraham@linaro.org>
 References: <1356814238-23895-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f50.google.com ([209.85.210.50]:62598 "EHLO
-	mail-da0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753106Ab2L2U54 (ORCPT
+Received: from mail-da0-f42.google.com ([209.85.210.42]:42886 "EHLO
+	mail-da0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753106Ab2L2U57 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 29 Dec 2012 15:57:56 -0500
-Received: by mail-da0-f50.google.com with SMTP id h15so5247653dan.37
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 12:57:55 -0800 (PST)
+	Sat, 29 Dec 2012 15:57:59 -0500
+Received: by mail-da0-f42.google.com with SMTP id z17so5282566dal.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 12:57:59 -0800 (PST)
 In-Reply-To: <1356814238-23895-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com, chaos.youn@samsung.com, sylvester.nawrocki@gmail.com
 
-Instead of using soc_is_xxx macro at more than one place in the MCT
-controller driver to decide the MCT interrpt number to be setup, populate
-a table of known MCT global and local timer interrupts and use the values
-in table to setup the MCT interrupts.
-
-This also helps in adding device tree support for MCT controller driver by
-allowing the driver to retrieve interrupt numbers from device tree and
-populating them into this table, thereby supporting both legacy and dt
-functionality to co-exist.
+Add MCT device tree node for Exynos4210, Exynos4212, Exynos4412 and Exynos5250.
 
 Cc: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/mct.c |   57 +++++++++++++++++++++++++++----------------
- 1 files changed, 36 insertions(+), 21 deletions(-)
+ arch/arm/boot/dts/exynos4210.dtsi |    8 ++++++++
+ arch/arm/boot/dts/exynos4212.dtsi |   10 ++++++++++
+ arch/arm/boot/dts/exynos4412.dtsi |    8 ++++++++
+ arch/arm/boot/dts/exynos5250.dtsi |   21 +++++++++++++++++++++
+ 4 files changed, 47 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-index a9fd001..2f4ea16 100644
---- a/arch/arm/mach-exynos/mct.c
-+++ b/arch/arm/mach-exynos/mct.c
-@@ -66,9 +66,22 @@ enum {
- 	MCT_INT_PPI
- };
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 89c7dd0..1542d86 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -47,6 +47,14 @@
+ 			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
+ 	};
  
-+enum {
-+	MCT_G0_IRQ,
-+	MCT_G1_IRQ,
-+	MCT_G2_IRQ,
-+	MCT_G3_IRQ,
-+	MCT_L0_IRQ,
-+	MCT_L1_IRQ,
-+	MCT_L2_IRQ,
-+	MCT_L3_IRQ,
-+	MCT_NR_IRQS,
-+};
++	mct@10050000 {
++		compatible = "samsung,exynos4210-mct";
++		reg = <0x10050000 0x800>;
++		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
++			     <0 42 0>, <0 48 0>;
++		samsung,mct-nr-local-irqs = <4>;
++	};
 +
- static void __iomem *reg_base;
- static unsigned long clk_rate;
- static unsigned int mct_int_type;
-+static int mct_irqs[MCT_NR_IRQS];
+ 	pmu {
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupt-parent = <&combiner>;
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+index c6ae200..87c6da4 100644
+--- a/arch/arm/boot/dts/exynos4212.dtsi
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -25,4 +25,14 @@
+ 	gic:interrupt-controller@10490000 {
+ 		cpu-offset = <0x8000>;
+ 	};
++
++	mct@10050000 {
++		compatible = "samsung,exynos4210-mct";
++		reg = <0x10050000 0x800>;
++		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
++			     <1 12 0>, <1 12 0>;
++		samsung,mct-nr-local-irqs = <2>;
++	};
++
++
+ };
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index d7dfe31..ccf020a 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -25,4 +25,12 @@
+ 	gic:interrupt-controller@10490000 {
+ 		cpu-offset = <0x4000>;
+ 	};
++
++	mct@10050000 {
++		compatible = "samsung,exynos4210-mct";
++		reg = <0x10050000 0x800>;
++		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
++			     <1 12 0>, <1 12 0>, <1 12 0>, <1 12 0>;
++		samsung,mct-nr-local-irqs = <4>;
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 45799e8..7e9600d 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -69,6 +69,27 @@
+ 			     <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
+ 	};
  
- struct mct_clock_event_device {
- 	struct clock_event_device *evt;
-@@ -287,11 +300,7 @@ static void exynos4_clockevent_init(void)
- 		clockevent_delta2ns(0xf, &mct_comp_device);
- 	mct_comp_device.cpumask = cpumask_of(0);
- 	clockevents_register_device(&mct_comp_device);
--
--	if (soc_is_exynos5250())
--		setup_irq(EXYNOS5_IRQ_MCT_G0, &mct_comp_event_irq);
--	else
--		setup_irq(EXYNOS4_IRQ_MCT_G0, &mct_comp_event_irq);
-+	setup_irq(mct_irqs[MCT_G0_IRQ], &mct_comp_event_irq);
- }
- 
- #ifdef CONFIG_LOCAL_TIMERS
-@@ -415,7 +424,6 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
- {
- 	struct mct_clock_event_device *mevt;
- 	unsigned int cpu = smp_processor_id();
--	int mct_lx_irq;
- 
- 	mevt = this_cpu_ptr(&percpu_mct_tick);
- 	mevt->evt = evt;
-@@ -442,21 +450,17 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
- 
- 	if (mct_int_type == MCT_INT_SPI) {
- 		if (cpu == 0) {
--			mct_lx_irq = soc_is_exynos4210() ? EXYNOS4_IRQ_MCT_L0 :
--						EXYNOS5_IRQ_MCT_L0;
- 			mct_tick0_event_irq.dev_id = mevt;
--			evt->irq = mct_lx_irq;
--			setup_irq(mct_lx_irq, &mct_tick0_event_irq);
-+			evt->irq = mct_irqs[MCT_L0_IRQ];
-+			setup_irq(evt->irq, &mct_tick0_event_irq);
- 		} else {
--			mct_lx_irq = soc_is_exynos4210() ? EXYNOS4_IRQ_MCT_L1 :
--						EXYNOS5_IRQ_MCT_L1;
- 			mct_tick1_event_irq.dev_id = mevt;
--			evt->irq = mct_lx_irq;
--			setup_irq(mct_lx_irq, &mct_tick1_event_irq);
--			irq_set_affinity(mct_lx_irq, cpumask_of(1));
-+			evt->irq = mct_irqs[MCT_L1_IRQ];
-+			setup_irq(evt->irq, &mct_tick1_event_irq);
-+			irq_set_affinity(evt->irq, cpumask_of(1));
- 		}
- 	} else {
--		enable_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER, 0);
-+		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
- 	}
- 
- 	return 0;
-@@ -472,7 +476,7 @@ static void exynos4_local_timer_stop(struct clock_event_device *evt)
- 		else
- 			remove_irq(evt->irq, &mct_tick1_event_irq);
- 	else
--		disable_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER);
-+		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
- }
- 
- static struct local_timer_ops exynos4_mct_tick_ops __cpuinitdata = {
-@@ -494,11 +498,11 @@ static void __init exynos4_timer_resources(void)
- 	if (mct_int_type == MCT_INT_PPI) {
- 		int err;
- 
--		err = request_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER,
-+		err = request_percpu_irq(mct_irqs[MCT_L0_IRQ],
- 					 exynos4_mct_tick_isr, "MCT",
- 					 &percpu_mct_tick);
- 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
--		     EXYNOS_IRQ_MCT_LOCALTIMER, err);
-+		     mct_irqs[MCT_L0_IRQ], err);
- 	}
- 
- 	local_timer_register(&exynos4_mct_tick_ops);
-@@ -512,10 +516,21 @@ static void __init exynos_timer_init(void)
- 		return;
- 	}
- 
--	if ((soc_is_exynos4210()) || (soc_is_exynos5250()))
-+	if (soc_is_exynos4210()) {
-+		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
-+		mct_irqs[MCT_L0_IRQ] = EXYNOS4_IRQ_MCT_L0;
-+		mct_irqs[MCT_L1_IRQ] = EXYNOS4_IRQ_MCT_L1;
- 		mct_int_type = MCT_INT_SPI;
--	else
-+	} else if (soc_is_exynos5250()) {
-+		mct_irqs[MCT_G0_IRQ] = EXYNOS5_IRQ_MCT_G0;
-+		mct_irqs[MCT_L0_IRQ] = EXYNOS5_IRQ_MCT_L0;
-+		mct_irqs[MCT_L1_IRQ] = EXYNOS5_IRQ_MCT_L1;
-+		mct_int_type = MCT_INT_SPI;
-+	} else {
-+		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
-+		mct_irqs[MCT_L0_IRQ] = EXYNOS_IRQ_MCT_LOCALTIMER;
- 		mct_int_type = MCT_INT_PPI;
-+	}
- 
- 	exynos4_timer_resources();
- 	exynos4_clocksource_init();
++	mct@101C0000 {
++		compatible = "samsung,exynos4210-mct";
++		reg = <0x101C0000 0x800>;
++		interrupt-controller;
++		#interrups-cells = <2>;
++		interrupt-parent = <&mct_map>;
++		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
++			     <4 0>, <5 0>;
++		samsung,mct-nr-local-irqs = <2>;
++
++		mct_map: mct-map {
++			compatible = "samsung,mct-map";
++			#interrupt-cells = <2>;
++			#address-cells = <0>;
++			#size-cells = <0>;
++			interrupt-map = <0x0 0 &combiner 23 3>,
++					<0x4 0 &gic 0 120 0>,
++					<0x5 0 &gic 0 121 0>;
++		};
++	};
++
+ 	pmu {
+ 		compatible = "arm,cortex-a15-pmu";
+ 		interrupt-parent = <&combiner>;
 -- 
 1.7.5.4
