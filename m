@@ -1,56 +1,91 @@
-From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v3 0/5] ARM: Exynos: Enable device tree support for MCT
- controller
-Date: Sat, 29 Dec 2012 12:50:33 -0800
-Message-ID: <1356814238-23895-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chaos.youn-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] ARM: dts: add board dts file for EXYNOS4412 based Origen board
+Date: Sat, 29 Dec 2012 15:04:52 -0800
+Message-ID: <1356822292-26465-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:46181 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753405Ab2L2XME (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 29 Dec 2012 18:12:04 -0500
+Received: by mail-pa0-f43.google.com with SMTP id fb10so6637177pad.30
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 15:12:03 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com
 
-Changes since v2:
-- Rebased to linux 3.8-rc1
+Add a minimal board dts file for EXYNOS4412 based Insignal Origen board.
 
-Changes since v1:
-- Includes changes suggested by Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/boot/dts/Makefile              |    1 +
+ arch/arm/boot/dts/exynos4412-origen.dts |   45 +++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4412-origen.dts
 
-This patch series adds device tree support for Exynos4/5 MCT controller.
-This patch series has been tested on Exynos4210 based Origen board, Exynos4412
-based Origen board and Exynos5250 based SMDK board.
-
-Thomas Abraham (5):
-  ARM: Exynos: add a register base address variable in mct controller driver
-  ARM: Exynos: prepare an array of MCT interrupt numbers and use it
-  ARM: Exynos: add device tree support for MCT controller driver
-  ARM: Exynos: remove static io-remapping of mct registers for Exynos5
-  ARM: dts: add mct device tree node for all supported Exynos SoC's
-
- .../bindings/timer/samsung,exynos4210-mct.txt      |   69 ++++++++
- arch/arm/boot/dts/exynos4210.dtsi                  |    8 +
- arch/arm/boot/dts/exynos4212.dtsi                  |   10 +
- arch/arm/boot/dts/exynos4412.dtsi                  |    8 +
- arch/arm/boot/dts/exynos5250.dtsi                  |   21 +++
- arch/arm/mach-exynos/common.c                      |    5 -
- arch/arm/mach-exynos/include/mach/irqs.h           |    6 -
- arch/arm/mach-exynos/include/mach/map.h            |    1 -
- arch/arm/mach-exynos/include/mach/regs-mct.h       |   53 ------
- arch/arm/mach-exynos/mct.c                         |  175 +++++++++++++-------
- 10 files changed, 232 insertions(+), 124 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-mct.h
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index e44da40..c84f9f7 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -43,6 +43,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4210-smdkv310.dtb \
+ 	exynos4210-trats.dtb \
+ 	exynos4412-smdk4412.dtb \
++	exynos4412-origen.dtb \
+ 	exynos5250-smdk5250.dtb \
+ 	exynos5250-snow.dtb \
+ 	exynos5440-ssdk5440.dtb
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+new file mode 100644
+index 0000000..df880c4
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -0,0 +1,45 @@
++/*
++ * Insignal's Exynos4412 based Origen board device tree source
++ *
++ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Device tree source file for Insignal's Origen board which is based on
++ * Samsung's Exynos4412 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++/include/ "exynos4412.dtsi"
++
++/ {
++	model = "Insignal Origen evaluation board based on Exynos4412";
++	compatible = "insignal,origen4412", "samsung,exynos4412";
++
++	memory {
++		reg = <0x40000000 0x40000000>;
++	};
++
++	chosen {
++		bootargs ="console=ttySAC2,115200";
++	};
++
++	serial@13800000 {
++		status = "okay";
++	};
++
++	serial@13810000 {
++		status = "okay";
++	};
++
++	serial@13820000 {
++		status = "okay";
++	};
++
++	serial@13830000 {
++		status = "okay";
++	};
++};
 -- 
 1.7.5.4
