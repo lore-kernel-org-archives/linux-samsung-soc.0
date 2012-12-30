@@ -1,121 +1,64 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v5 08/12] ARM: Exynos4: allow legacy board support to specify xxti and xusbxti clock speed
-Date: Sat, 29 Dec 2012 16:33:37 -0800
-Message-ID: <1356827621-27617-9-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v5 06/12] ARM: dts: add exynos4 clock controller nodes
+Date: Sat, 29 Dec 2012 16:33:35 -0800
+Message-ID: <1356827621-27617-7-git-send-email-thomas.abraham@linaro.org>
 References: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:58486 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753734Ab2L3AlP (ORCPT
+Received: from mail-da0-f47.google.com ([209.85.210.47]:50717 "EHLO
+	mail-da0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753728Ab2L3AlM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 29 Dec 2012 19:41:15 -0500
-Received: by mail-pa0-f51.google.com with SMTP id fb11so6580969pad.38
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 16:41:14 -0800 (PST)
+	Sat, 29 Dec 2012 19:41:12 -0500
+Received: by mail-da0-f47.google.com with SMTP id s35so5283562dak.6
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 16:41:12 -0800 (PST)
 In-Reply-To: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: devicetree-discuss@lists.ozlabs.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-The clock speed of xxti and xusbxti clocks depends on the oscillator used on the
-board to generate these clocks. For non-dt platforms, allow the board support
-for those platforms to set the clock frequency of xxti and xusbxti clocks.
+Add clock controller nodes for Exynos4210 and Exynos4x12 SoC's.
 
 Cc: Kukjin Kim <kgene.kim@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/common.c              |    3 +++
- arch/arm/mach-exynos/common.h              |    1 +
- arch/arm/mach-exynos/mach-nuri.c           |    2 ++
- arch/arm/mach-exynos/mach-origen.c         |    2 ++
- arch/arm/mach-exynos/mach-smdkv310.c       |    2 ++
- arch/arm/mach-exynos/mach-universal_c210.c |    2 ++
- 6 files changed, 12 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/exynos4210.dtsi |    6 ++++++
+ arch/arm/boot/dts/exynos4x12.dtsi |    6 ++++++
+ 2 files changed, 12 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 2b1b225..6349432 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -71,6 +71,8 @@ static void exynos5_init_clocks(int xtal);
- static void exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- static int exynos_init(void);
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 1542d86..a47d7fc 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -55,6 +55,12 @@
+ 		samsung,mct-nr-local-irqs = <4>;
+ 	};
  
-+unsigned long xxti_f = 0, xusbxti_f = 0;
++	clock: clock-controller@0x10030000 {
++		compatible = "samsung,exynos4210-clock";
++		reg = <0x10030000 0x20000>;
++		#clock-cells = <1>;
++	};
 +
- static struct cpu_table cpu_ids[] __initdata = {
- 	{
- 		.idcode		= EXYNOS4210_CPU_ID,
-@@ -455,6 +457,7 @@ void __init exynos_timer_init(void)
- 	if (!of_have_populated_dt() && (soc_is_exynos4210() ||
- 		soc_is_exynos4212() || soc_is_exynos4412())) {
- 		exynos4_clk_init();
-+		exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
- 		exynos_mct_init();
- 		return;
- 	}
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index e3ed6bb..6636002 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -24,6 +24,7 @@ void exynos_init_late(void);
- extern void exynos_mct_init(void);
+ 	pmu {
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupt-parent = <&combiner>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 0c6d001..00138d3 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -36,6 +36,12 @@
+ 			     <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>;
+ 	};
  
- #ifdef CONFIG_COMMON_CLK
-+extern unsigned long xxti_f, xusbxti_f;
- extern void exynos4_clk_init(void);
- extern void exynos4_clk_register_fixed_ext(unsigned long, unsigned long);
- #else
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 8695d33..afe068f 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -1332,6 +1332,8 @@ static void __init nuri_map_io(void)
- {
- 	exynos_init_io(NULL, 0);
- 	s3c24xx_init_uarts(nuri_uartcfgs, ARRAY_SIZE(nuri_uartcfgs));
-+	xxti_f = 0;
-+	xusbxti_f = 24000000;
- }
- 
- static void __init nuri_reserve(void)
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 5d9479d..bb72168 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -756,6 +756,8 @@ static void __init origen_map_io(void)
- {
- 	exynos_init_io(NULL, 0);
- 	s3c24xx_init_uarts(origen_uartcfgs, ARRAY_SIZE(origen_uartcfgs));
-+	xxti_f = 0;
-+	xusbxti_f = 24000000;
- }
- 
- static void __init origen_power_init(void)
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index a1be874..7d4e72d 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -373,6 +373,8 @@ static void __init smdkv310_map_io(void)
- {
- 	exynos_init_io(NULL, 0);
- 	s3c24xx_init_uarts(smdkv310_uartcfgs, ARRAY_SIZE(smdkv310_uartcfgs));
-+	xxti_f = 12000000;
-+	xusbxti_f = 24000000;
- }
- 
- static void __init smdkv310_reserve(void)
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index 3999c16..3de63cb 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -1095,6 +1095,8 @@ static void __init universal_map_io(void)
- 	exynos_init_io(NULL, 0);
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
- 	s5p_set_timer_source(S5P_PWM2, S5P_PWM4);
-+	xxti_f = 0;
-+	xusbxti_f = 24000000;
- }
- 
- static void s5p_tv_setup(void)
++	clock: clock-controller@0x10030000 {
++		compatible = "samsung,exynos4412-clock";
++		reg = <0x10030000 0x20000>;
++		#clock-cells = <1>;
++	};
++
+ 	pinctrl_0: pinctrl@11400000 {
+ 		compatible = "samsung,pinctrl-exynos4x12";
+ 		reg = <0x11400000 0x1000>;
 -- 
 1.7.5.4
