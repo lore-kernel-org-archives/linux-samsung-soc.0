@@ -1,59 +1,118 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v5 11/12] ARM: Exynos: use fin_pll clock as the tick clock source for mct
-Date: Sat, 29 Dec 2012 16:33:40 -0800
-Message-ID: <1356827621-27617-12-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v5 07/12] ARM: dts: add xxti and xusbxti fixed rate clock nodes for exynos4 based platforms
+Date: Sat, 29 Dec 2012 16:33:36 -0800
+Message-ID: <1356827621-27617-8-git-send-email-thomas.abraham@linaro.org>
 References: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:35021 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753734Ab2L3AlT (ORCPT
+Received: from mail-da0-f42.google.com ([209.85.210.42]:64021 "EHLO
+	mail-da0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753734Ab2L3AlN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 29 Dec 2012 19:41:19 -0500
-Received: by mail-pa0-f42.google.com with SMTP id rl6so6655576pac.29
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 16:41:18 -0800 (PST)
+	Sat, 29 Dec 2012 19:41:13 -0500
+Received: by mail-da0-f42.google.com with SMTP id z17so5319710dal.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 16:41:13 -0800 (PST)
 In-Reply-To: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: devicetree-discuss@lists.ozlabs.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-With the migration of Exynos4 clocks to use common clock framework, the old
-styled 'xtal' clock is not used anymore. Instead, the clock 'fin_pll' is used
-as the tick clock for mct controller.
+The clock frequency of xxti and xusbxti clocks is dependent on the frequency of the
+on-board oscillator that is used to generate these clocks. So allow the frequency
+of these clocks to be specfied from device tree.
 
 Cc: Kukjin Kim <kgene.kim@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/mct.c |   14 +++++++++++++-
- 1 files changed, 13 insertions(+), 1 deletions(-)
+ arch/arm/boot/dts/exynos4210-origen.dts   |   12 ++++++++++++
+ arch/arm/boot/dts/exynos4210-smdkv310.dts |   12 ++++++++++++
+ arch/arm/boot/dts/exynos4412-origen.dts   |   12 ++++++++++++
+ arch/arm/boot/dts/exynos4412-smdk4412.dts |   12 ++++++++++++
+ 4 files changed, 48 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-index 448ce86..71e1502 100644
---- a/arch/arm/mach-exynos/mct.c
-+++ b/arch/arm/mach-exynos/mct.c
-@@ -487,10 +487,22 @@ static struct local_timer_ops exynos4_mct_tick_ops __cpuinitdata = {
- 
- static void __init exynos4_timer_resources(struct device_node *np)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	struct clk *tick_clk;
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index f271001..d892ccc 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -121,4 +121,16 @@
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
 +
-+	tick_clk = clk_get(NULL, "fin_pll");
-+	if (IS_ERR(tick_clk))
-+		panic("%s: unable to determine tick clock rate\n", __func__);
-+	clk_rate = clk_get_rate(tick_clk);
-+#else
-+	/*
-+	 * todo: remove this legacy code after adding common clock support for
-+	 * exynos5250.
-+	 */
- 	struct clk *mct_clk;
- 	mct_clk = clk_get(NULL, "xtal");
--
- 	clk_rate = clk_get_rate(mct_clk);
-+#endif
- 
- 	reg_base = np ? of_iomap(np, 0) : S5P_VA_SYSTIMER;
- 	if (!reg_base)
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti", "fixed-clock";
++			clock-frequency = <0>;
++		};
++
++		xusbxti {
++			compatible = "samsung,clock-xusbxti", "fixed-clock";
++			clock-frequency = <24000000>;
++		};
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+index 9b23a82..9a379eb 100644
+--- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
++++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+@@ -189,4 +189,16 @@
+ 			};
+ 		};
+ 	};
++
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti", "fixed-clock";
++			clock-frequency = <12000000>;
++		};
++
++		xusbxti {
++			compatible = "samsung,clock-xusbxti", "fixed-clock";
++			clock-frequency = <24000000>;
++		};
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index df880c4..7870bee 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -42,4 +42,16 @@
+ 	serial@13830000 {
+ 		status = "okay";
+ 	};
++
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti", "fixed-clock";
++			clock-frequency = <0>;
++		};
++
++		xusbxti {
++			compatible = "samsung,clock-xusbxti", "fixed-clock";
++			clock-frequency = <24000000>;
++		};
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index f05bf57..8f422fc 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -42,4 +42,16 @@
+ 	serial@13830000 {
+ 		status = "okay";
+ 	};
++
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti", "fixed-clock";
++			clock-frequency = <0>;
++		};
++
++		xusbxti {
++			compatible = "samsung,clock-xusbxti", "fixed-clock";
++			clock-frequency = <24000000>;
++		};
++	};
+ };
 -- 
 1.7.5.4
