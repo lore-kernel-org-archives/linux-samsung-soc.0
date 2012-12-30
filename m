@@ -1,49 +1,38 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 00/12] clk: exynos4: migrate to common clock framework
-Date: Sat, 29 Dec 2012 21:29:53 -0800
-Message-ID: <20121230052953.GB20903@quad.lixom.net>
-References: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH 0/2] Add missing fixed regulators on Origen board
+Date: Sat, 29 Dec 2012 22:25:52 -0800
+Message-ID: <CAOesGMi_bmm9ZpiMzVHN=YUmsLSvyiUyvKRq5DxDmxnMu+Z-tQ@mail.gmail.com>
+References: <1356683670-30451-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:35408 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750714Ab2L3F3r (ORCPT
+Received: from mail-ia0-f179.google.com ([209.85.210.179]:62602 "EHLO
+	mail-ia0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751328Ab2L3GZw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 30 Dec 2012 00:29:47 -0500
-Received: by mail-pb0-f54.google.com with SMTP id wz12so6560811pbc.27
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 21:29:46 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
+	Sun, 30 Dec 2012 01:25:52 -0500
+Received: by mail-ia0-f179.google.com with SMTP id o25so9910128iad.10
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Dec 2012 22:25:52 -0800 (PST)
+In-Reply-To: <1356683670-30451-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On Sat, Dec 29, 2012 at 04:33:29PM -0800, Thomas Abraham wrote:
-> Changes since v4:
-> - Rebased to linux-3.8-rc1.
-> 
-> Changes since v3:
-> - Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> This patch series migrates the Samsung Exynos4 SoC clock code to adopt the
-> common clock framework. The use of Samsung specific clock structures has
-> been removed and all board support code has been updated. imx-style of
-> clock registration and lookup has been adopted for device tree based
-> exynos4 platforms.
+Hi,
 
-I'd prefer to see if exynos4 and 5 were kept common here, and both transitioned
-at the same time. Especially since there are no legacy boards for exynos5, it
-would mean you could have a very clean transition there. What's the plan to
-follow up with 5?
+On Fri, Dec 28, 2012 at 12:34 AM, Tushar Behera
+<tushar.behera@linaro.org> wrote:
+> This patchset adds vmmc and hdmi-en regulators for Origen board.
+>
+> Tushar Behera (2):
+>   ARM: EXYNOS: Add vmmc regulator for Origen board
+>   ARM: EXYNOS: Add hdmi-en regulator for Origen board
 
-What are the plans to remove legacy board files on exynos4 at this time
-and switch them to DT-only? You could do it gradually like Stephen Warren
-did on Tegra, with hooks that call out to some of the legacy code, but
-configure the board through device tree and do away with the classic
-machine descriptors, etc.
+The vmmc one seems to already be there in the dts file for origen. It
+looks like the HDMI one is still needed though.
 
+Please move to using DT board files instead of expanding the legacy board files.
 
 
 -Olof
