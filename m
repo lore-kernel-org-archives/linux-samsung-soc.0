@@ -1,125 +1,81 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: add board dts file for EXYNOS4412 based Origen
- board
-Date: Sun, 30 Dec 2012 18:13:47 -0800
-Message-ID: <02f901cde6fc$78a63d00$69f2b700$@samsung.com>
-References: <1356822292-26465-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Dongjin Kim <tobetter@gmail.com>
+Subject: [PATCH RESEND] ARM: dts: Add EHCI device tree node for Exynos4
+Date: Mon, 31 Dec 2012 11:45:14 +0900
+Message-ID: <1356921918-12959-1-git-send-email-tobetter@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:26099 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752020Ab2LaCN6 (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:53193 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755261Ab2LaCqh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 30 Dec 2012 21:13:58 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MFV00HLHI6YINA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 31 Dec 2012 11:13:57 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MFV00HW5I77HZC0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 31 Dec 2012 11:13:57 +0900 (KST)
-In-reply-to: 
-Content-language: en-us
+	Sun, 30 Dec 2012 21:46:37 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Dongjin Kim <tobetter@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Kukjin Kim wrote:
-> 
-> Thomas Abraham wrote:
-> >
-> > Add a minimal board dts file for EXYNOS4412 based Insignal Origen board.
-> >
-> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> > ---
-> >  arch/arm/boot/dts/Makefile              |    1 +
-> >  arch/arm/boot/dts/exynos4412-origen.dts |   45
-> > +++++++++++++++++++++++++++++++
-> >  2 files changed, 46 insertions(+), 0 deletions(-)
-> >  create mode 100644 arch/arm/boot/dts/exynos4412-origen.dts
-> >
-> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> > index e44da40..c84f9f7 100644
-> > --- a/arch/arm/boot/dts/Makefile
-> > +++ b/arch/arm/boot/dts/Makefile
-> > @@ -43,6 +43,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-
-> > origen.dtb \
-> >  	exynos4210-smdkv310.dtb \
-> >  	exynos4210-trats.dtb \
-> >  	exynos4412-smdk4412.dtb \
-> > +	exynos4412-origen.dtb \
-> >  	exynos5250-smdk5250.dtb \
-> >  	exynos5250-snow.dtb \
-> >  	exynos5440-ssdk5440.dtb
-> > diff --git a/arch/arm/boot/dts/exynos4412-origen.dts
-> > b/arch/arm/boot/dts/exynos4412-origen.dts
-> > new file mode 100644
-> > index 0000000..df880c4
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/exynos4412-origen.dts
-> > @@ -0,0 +1,45 @@
-> > +/*
-> > + * Insignal's Exynos4412 based Origen board device tree source
-> > + *
-> > + * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
-> > + *		http://www.samsung.com
-> > + *
-> > + * Device tree source file for Insignal's Origen board which is based
-on
-> > + * Samsung's Exynos4412 SoC.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > +*/
-> > +
-> > +/dts-v1/;
-> > +/include/ "exynos4412.dtsi"
-> > +
-> > +/ {
-> > +	model = "Insignal Origen evaluation board based on Exynos4412";
-> > +	compatible = "insignal,origen4412", "samsung,exynos4412";
-> > +
-> > +	memory {
-> > +		reg = <0x40000000 0x40000000>;
-> > +	};
-> > +
-> > +	chosen {
-> > +		bootargs ="console=ttySAC2,115200";
-> > +	};
-> > +
-> > +	serial@13800000 {
-> > +		status = "okay";
-> > +	};
-> > +
-> > +	serial@13810000 {
-> > +		status = "okay";
-> > +	};
-> > +
-> > +	serial@13820000 {
-> > +		status = "okay";
-> > +	};
-> > +
-> > +	serial@13830000 {
-> > +		status = "okay";
-> > +	};
-> > +};
-> > --
-> > 1.7.5.4
-> 
-> Looks OK to me, applied.
-> 
-Ah, one more.
-BTW, I think, need to sort out the memory configuration and bootargs
+This patch adds EHCI device node on device tree for Exynos4 and defines its
+default platform data, s5p_usb_phy_init and s5p_usb_phy_exit, so that those
+function can be called from the driver.
 
-And compatible name? origen4412 is right? Probably, origen-quad?
+Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi         |    7 +++++++
+ arch/arm/mach-exynos/mach-exynos4-dt.c |    9 +++++++++
+ 2 files changed, 16 insertions(+)
 
-Thanks.
-
-- Kukjin
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 92bca86..df1a9f0 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -140,6 +140,13 @@
+ 		status = "disabled";
+ 	};
+ 
++	ehci@12580000 {
++		compatible = "samsung,exynos-ehci";
++		reg = <0x12580000 0x100>;
++		interrupts = <0 70 0>;
++		status = "disabled";
++	};
++
+ 	serial@13800000 {
+ 		compatible = "samsung,exynos4210-uart";
+ 		reg = <0x13800000 0x100>;
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index 92757ff..c8a23f0 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/of_platform.h>
+ #include <linux/serial_core.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -20,9 +21,15 @@
+ 
+ #include <plat/cpu.h>
+ #include <plat/regs-serial.h>
++#include <plat/usb-phy.h>
+ 
+ #include "common.h"
+ 
++static struct s5p_ehci_platdata s5p_ehci_platdata = {
++	.phy_init = s5p_usb_phy_init,
++	.phy_exit = s5p_usb_phy_exit,
++};
++
+ /*
+  * The following lookup table is used to override device names when devices
+  * are registered from device tree. This is temporarily added to enable
+@@ -80,6 +87,8 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
+ 				"exynos-tmu", NULL),
++	OF_DEV_AUXDATA("samsung,exynos-ehci", EXYNOS4_PA_EHCI,
++				"s5p-ehci", &s5p_ehci_platdata),
+ 	{},
+ };
+ 
+-- 
+1.7.10.4
