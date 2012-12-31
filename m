@@ -1,57 +1,59 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 0/2] Add missing fixed regulators on Origen board
-Date: Mon, 31 Dec 2012 08:23:22 +0530
-Message-ID: <50E0FE22.8070406@linaro.org>
-References: <1356683670-30451-1-git-send-email-tushar.behera@linaro.org> <CAOesGMi_bmm9ZpiMzVHN=YUmsLSvyiUyvKRq5DxDmxnMu+Z-tQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND] ARM: dts: Add EHCI device tree node for Exynos4
+Date: Mon, 31 Dec 2012 09:09:22 +0530
+Message-ID: <50E108EA.1010404@linaro.org>
+References: <1356921918-12959-1-git-send-email-tobetter@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:57195 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750716Ab2LaCx3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 30 Dec 2012 21:53:29 -0500
-Received: by mail-pa0-f51.google.com with SMTP id fb11so6881981pad.38
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 30 Dec 2012 18:53:28 -0800 (PST)
-In-Reply-To: <CAOesGMi_bmm9ZpiMzVHN=YUmsLSvyiUyvKRq5DxDmxnMu+Z-tQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1356921918-12959-1-git-send-email-tobetter@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 12/30/2012 11:55 AM, Olof Johansson wrote:
-> Hi,
+On 12/31/2012 08:15 AM, Dongjin Kim wrote:
+> This patch adds EHCI device node on device tree for Exynos4 and defines its
+> default platform data, s5p_usb_phy_init and s5p_usb_phy_exit, so that those
+> function can be called from the driver.
 > 
-> On Fri, Dec 28, 2012 at 12:34 AM, Tushar Behera
-> <tushar.behera@linaro.org> wrote:
->> This patchset adds vmmc and hdmi-en regulators for Origen board.
->>
->> Tushar Behera (2):
->>   ARM: EXYNOS: Add vmmc regulator for Origen board
->>   ARM: EXYNOS: Add hdmi-en regulator for Origen board
-> 
-> The vmmc one seems to already be there in the dts file for origen. It
-> looks like the HDMI one is still needed though.
-> 
+> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi         |    7 +++++++
+>  arch/arm/mach-exynos/mach-exynos4-dt.c |    9 +++++++++
+>  2 files changed, 16 insertions(+)
 
-DT enablement patches for HDMI driver were posted sometime back, but
-they have not yet been merged in trunk. So HDMI regulator entry for DT
-will be added after that.
+[ ... ]
 
-> Please move to using DT board files instead of expanding the legacy board files.
-> 
+>  
+> +static struct s5p_ehci_platdata s5p_ehci_platdata = {
+> +	.phy_init = s5p_usb_phy_init,
+> +	.phy_exit = s5p_usb_phy_exit,
+> +};
+> +
 
-Sure, the focus would be on adding DT support.
+Going by the recent development on Samsung USBPHY driver, we won't need
+these hooks once that patch gets accepted. [1]
 
-Legacy board support for Origen is pretty much complete with support for
-various multimedia drivers, so it provides a good environment for
-testing different features. It would be good to get these patches in for
-enabling HDMI support, which otherwise would be broken if
-REGULATOR_DUMMY is not defined.
+Patch for adding EHCI support for EXYNOS5-DT can be found here.[2]
 
-> 
-> -Olof
+[1] https://patchwork.kernel.org/patch/1794651/
+[2] https://patchwork.kernel.org/patch/1875491/
+
+
+>  /*
+>   * The following lookup table is used to override device names when devices
+>   * are registered from device tree. This is temporarily added to enable
+> @@ -80,6 +87,8 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+>  	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
+>  	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
+>  				"exynos-tmu", NULL),
+> +	OF_DEV_AUXDATA("samsung,exynos-ehci", EXYNOS4_PA_EHCI,
+> +				"s5p-ehci", &s5p_ehci_platdata),
+>  	{},
+>  };
+>  
 > 
 
 
