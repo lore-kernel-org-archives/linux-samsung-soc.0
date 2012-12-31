@@ -1,61 +1,54 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH RESEND] ARM: dts: Add EHCI device tree node for Exynos4
-Date: Mon, 31 Dec 2012 09:09:22 +0530
-Message-ID: <50E108EA.1010404@linaro.org>
-References: <1356921918-12959-1-git-send-email-tobetter@gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v3 0/5] ARM: Exynos: Enable device tree support for MCT controller
+Date: Sun, 30 Dec 2012 21:13:57 -0800
+Message-ID: <CAJuYYwTrDXX3+A1WiSCq8f1Xu1J0kd3RsdyY0du-yJaHiveS1g@mail.gmail.com>
+References: <1356814238-23895-1-git-send-email-thomas.abraham@linaro.org>
+	<20121230052453.GA20903@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1356921918-12959-1-git-send-email-tobetter@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dongjin Kim <tobetter@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:34255 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750755Ab2LaFN7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 31 Dec 2012 00:13:59 -0500
+Received: by mail-ie0-f172.google.com with SMTP id c13so14879482ieb.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 30 Dec 2012 21:13:57 -0800 (PST)
+In-Reply-To: <20121230052453.GA20903@quad.lixom.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, chaos.youn@samsung.com, sylvester.nawrocki@gmail.com, linux-arm-kernel@lists.infradead.org
 
-On 12/31/2012 08:15 AM, Dongjin Kim wrote:
-> This patch adds EHCI device node on device tree for Exynos4 and defines its
-> default platform data, s5p_usb_phy_init and s5p_usb_phy_exit, so that those
-> function can be called from the driver.
-> 
-> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi         |    7 +++++++
->  arch/arm/mach-exynos/mach-exynos4-dt.c |    9 +++++++++
->  2 files changed, 16 insertions(+)
+On 29 December 2012 21:24, Olof Johansson <olof@lixom.net> wrote:
+> On Sat, Dec 29, 2012 at 12:50:33PM -0800, Thomas Abraham wrote:
+>> Changes since v2:
+>> - Rebased to linux 3.8-rc1
+>>
+>> Changes since v1:
+>> - Includes changes suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+>>
+>> This patch series adds device tree support for Exynos4/5 MCT controller.
+>> This patch series has been tested on Exynos4210 based Origen board, Exynos4412
+>> based Origen board and Exynos5250 based SMDK board.
+>
+> Hi,
+>
+> Nice cleanups -- no specific comments on those at this time. But
+> this is a good time to move the MCT driver out of arch/arm and into
+> drivers/clocksource. Can you please do that in this series as well,
+> please?
 
-[ ... ]
+Hi Olof,
 
->  
-> +static struct s5p_ehci_platdata s5p_ehci_platdata = {
-> +	.phy_init = s5p_usb_phy_init,
-> +	.phy_exit = s5p_usb_phy_exit,
-> +};
-> +
+Ok. I will move the MCT diver to drivers/clocksource and repost this
+series. Thanks for your suggestion.
 
-Going by the recent development on Samsung USBPHY driver, we won't need
-these hooks once that patch gets accepted. [1]
+Regards,
+Thomas.
 
-Patch for adding EHCI support for EXYNOS5-DT can be found here.[2]
-
-[1] https://patchwork.kernel.org/patch/1794651/
-[2] https://patchwork.kernel.org/patch/1875491/
-
-
->  /*
->   * The following lookup table is used to override device names when devices
->   * are registered from device tree. This is temporarily added to enable
-> @@ -80,6 +87,8 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
->  	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
->  	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
->  				"exynos-tmu", NULL),
-> +	OF_DEV_AUXDATA("samsung,exynos-ehci", EXYNOS4_PA_EHCI,
-> +				"s5p-ehci", &s5p_ehci_platdata),
->  	{},
->  };
->  
-> 
-
-
--- 
-Tushar Behera
+>
+>
+> Thanks,
+>
+> -Olof
