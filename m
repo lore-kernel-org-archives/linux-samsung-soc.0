@@ -1,42 +1,49 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 4/4] ARM: EXYNOS: Add MFC codec support to Origen DT
-Date: Wed,  2 Jan 2013 14:16:09 +0530
-Message-ID: <1357116369-20784-4-git-send-email-sachin.kamat@linaro.org>
-References: <1357116369-20784-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 1/4] ARM: EXYNOS: Update MFC DT binding documentation
+Date: Wed,  2 Jan 2013 14:16:06 +0530
+Message-ID: <1357116369-20784-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:34884 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751061Ab3ABIyQ (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:59826 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751229Ab3ABJAo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jan 2013 03:54:16 -0500
-Received: by mail-pa0-f44.google.com with SMTP id hz11so7854066pad.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jan 2013 00:54:16 -0800 (PST)
-In-Reply-To: <1357116369-20784-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 2 Jan 2013 04:00:44 -0500
+Received: by mail-pb0-f52.google.com with SMTP id ro2so7704070pbb.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jan 2013 01:00:44 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com
+Cc: kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, Arun Kumar K <arun.kk@samsung.com>
 
-This patch adds MFC codec support to Origen DT file.
+Added an example for bindings for illustration and clarity.
 
+Cc: devicetree-discuss@lists.ozlabs.org
+Cc: Arun Kumar K <arun.kk@samsung.com>
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- arch/arm/boot/dts/exynos4210-origen.dts |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+ .../devicetree/bindings/media/s5p-mfc.txt          |   13 +++++++++++++
+ 1 files changed, 13 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index f271001..cd0d1e2 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -121,4 +121,9 @@
- 			linux,default-trigger = "heartbeat";
- 		};
- 	};
+diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+index 67ec3d4..261c9dc 100644
+--- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
++++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+@@ -21,3 +21,16 @@ Required properties:
+ 
+   - samsung,mfc-l : Base address of the second memory bank used by MFC
+ 		    for DMA contiguous memory allocation and its size.
 +
-+	codec@13400000 {
-+		samsung,mfc-r = <0x43000000 0x800000>;
-+		samsung,mfc-l = <0x51000000 0x800000>;
-+	};
- };
++Example:
++
++mfc: codec@13400000 {
++	compatible = "samsung,mfc-v5";
++	reg = <0x13400000 0x10000>;
++	interrupts = <0 94 0>;
++};
++
++codec@13400000 {
++	samsung,mfc-r = <0x43000000 0x800000>;
++	samsung,mfc-l = <0x51000000 0x800000>;
++};
 -- 
 1.7.4.1
