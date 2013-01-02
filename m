@@ -1,15 +1,15 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 10/26] ARM: S3C24XX: make anubis-cpld,
- anubis-irq and anubis-map local
-Date: Wed, 02 Jan 2013 14:23:47 -0800
-Message-ID: <1357165443-3716-11-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 09/26] ARM: SAMSUNG: cleanup mach/gpio-fns.h gpio-track.h and
+ gpio-nrs.h
+Date: Wed, 02 Jan 2013 14:23:46 -0800
+Message-ID: <1357165443-3716-10-git-send-email-kgene.kim@samsung.com>
 References: <1357165443-3716-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout2.samsung.com ([203.254.224.25]:41053 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752743Ab3ABWYt (ORCPT
+	with ESMTP id S1752735Ab3ABWYs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jan 2013 17:24:49 -0500
+	Wed, 2 Jan 2013 17:24:48 -0500
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
@@ -19,241 +19,377 @@ Received: from localhost.localdomain ([105.128.18.183])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MG00028PRKVD920@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 07:24:47 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 07:24:46 +0900 (KST)
 In-reply-to: <1357165443-3716-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>
 
-The headers can be local in mach-s3c24xx/.
+remove <mach/gpio-fns.h>, <mach/gpio-track.h> and <plat/gpio-fns.h>
 
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grant Likely <grant.likely@secretlab.ca>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c24xx/anubis.h                   |   53 ++++++++++++++++++++++
- arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h |   25 ----------
- arch/arm/mach-s3c24xx/include/mach/anubis-irq.h  |   21 ---------
- arch/arm/mach-s3c24xx/include/mach/anubis-map.h  |   38 ----------------
- arch/arm/mach-s3c24xx/mach-anubis.c              |   13 ++----
- 5 files changed, 58 insertions(+), 92 deletions(-)
- create mode 100644 arch/arm/mach-s3c24xx/anubis.h
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-irq.h
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-map.h
+ arch/arm/mach-s3c24xx/include/mach/gpio-fns.h   |    1 -
+ arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h   |   97 -----------------------
+ arch/arm/mach-s3c24xx/include/mach/gpio-track.h |   33 --------
+ arch/arm/mach-s3c24xx/include/mach/gpio.h       |   87 +++++++++++++++++++-
+ arch/arm/mach-s3c24xx/include/mach/regs-gpio.h  |    2 -
+ arch/arm/mach-s3c24xx/mach-at2440evb.c          |    1 +
+ arch/arm/mach-s3c24xx/mach-h1940.c              |    2 -
+ arch/arm/plat-samsung/include/plat/gpio-core.h  |   13 ++-
+ arch/arm/plat-samsung/include/plat/gpio-fns.h   |    1 -
+ drivers/gpio/gpio-samsung.c                     |    1 -
+ 10 files changed, 96 insertions(+), 142 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/gpio-fns.h
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/gpio-track.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/gpio-fns.h
 
-diff --git a/arch/arm/mach-s3c24xx/anubis.h b/arch/arm/mach-s3c24xx/anubis.h
-new file mode 100644
-index 0000000..2691665
---- /dev/null
-+++ b/arch/arm/mach-s3c24xx/anubis.h
-@@ -0,0 +1,53 @@
+diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio-fns.h b/arch/arm/mach-s3c24xx/include/mach/gpio-fns.h
+deleted file mode 100644
+index c53ad34..0000000
+--- a/arch/arm/mach-s3c24xx/include/mach/gpio-fns.h
++++ /dev/null
+@@ -1 +0,0 @@
+-#include <plat/gpio-fns.h>
+diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h b/arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h
+deleted file mode 100644
+index 3890a05..0000000
+--- a/arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h
++++ /dev/null
+@@ -1,97 +0,0 @@
+-/* arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
+- *
+- * Copyright (c) 2008 Simtec Electronics
+- *	http://armlinux.simtec.co.uk/
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * S3C2410 - GPIO bank numbering
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifndef __MACH_GPIONRS_H
+-#define __MACH_GPIONRS_H
+-
+-#define S3C2410_GPIONO(bank,offset) ((bank) + (offset))
+-
+-#define S3C2410_GPIO_BANKG   (32*6)
+-#define S3C2410_GPIO_BANKH   (32*7)
+-
+-/* GPIO sizes for various SoCs:
+- *
+- *             2442
+- *   2410 2412 2440 2443 2416
+- *   ---- ---- ---- ---- ----
+- * A 23   22   25   16   25
+- * B 11   11   11   11   9
+- * C 16   15   16   16   16
+- * D 16   16   16   16   16
+- * E 16   16   16   16   16
+- * F 8    8    8    8    8
+- * G 16   16   16   16   8
+- * H 11   11   9    15   15
+- * J --   --   13   16   --
+- * K --   --   --   --   16
+- * L --   --   --   15   7
+- * M --   --   --   2    2
+- */
+-
+-/* GPIO bank sizes */
+-#define S3C2410_GPIO_A_NR	(32)
+-#define S3C2410_GPIO_B_NR	(32)
+-#define S3C2410_GPIO_C_NR	(32)
+-#define S3C2410_GPIO_D_NR	(32)
+-#define S3C2410_GPIO_E_NR	(32)
+-#define S3C2410_GPIO_F_NR	(32)
+-#define S3C2410_GPIO_G_NR	(32)
+-#define S3C2410_GPIO_H_NR	(32)
+-#define S3C2410_GPIO_J_NR	(32)	/* technically 16. */
+-#define S3C2410_GPIO_K_NR	(32)	/* technically 16. */
+-#define S3C2410_GPIO_L_NR	(32)	/* technically 15. */
+-#define S3C2410_GPIO_M_NR	(32)	/* technically 2. */
+-
+-#if CONFIG_S3C_GPIO_SPACE != 0
+-#error CONFIG_S3C_GPIO_SPACE cannot be nonzero at the moment
+-#endif
+-
+-#define S3C2410_GPIO_NEXT(__gpio) \
+-	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 0)
+-
+-#ifndef __ASSEMBLY__
+-
+-enum s3c_gpio_number {
+-	S3C2410_GPIO_A_START = 0,
+-	S3C2410_GPIO_B_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_A),
+-	S3C2410_GPIO_C_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_B),
+-	S3C2410_GPIO_D_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_C),
+-	S3C2410_GPIO_E_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_D),
+-	S3C2410_GPIO_F_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_E),
+-	S3C2410_GPIO_G_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_F),
+-	S3C2410_GPIO_H_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_G),
+-	S3C2410_GPIO_J_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_H),
+-	S3C2410_GPIO_K_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_J),
+-	S3C2410_GPIO_L_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_K),
+-	S3C2410_GPIO_M_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_L),
+-};
+-
+-#endif /* __ASSEMBLY__ */
+-
+-/* S3C2410 GPIO number definitions. */
+-
+-#define S3C2410_GPA(_nr)	(S3C2410_GPIO_A_START + (_nr))
+-#define S3C2410_GPB(_nr)	(S3C2410_GPIO_B_START + (_nr))
+-#define S3C2410_GPC(_nr)	(S3C2410_GPIO_C_START + (_nr))
+-#define S3C2410_GPD(_nr)	(S3C2410_GPIO_D_START + (_nr))
+-#define S3C2410_GPE(_nr)	(S3C2410_GPIO_E_START + (_nr))
+-#define S3C2410_GPF(_nr)	(S3C2410_GPIO_F_START + (_nr))
+-#define S3C2410_GPG(_nr)	(S3C2410_GPIO_G_START + (_nr))
+-#define S3C2410_GPH(_nr)	(S3C2410_GPIO_H_START + (_nr))
+-#define S3C2410_GPJ(_nr)	(S3C2410_GPIO_J_START + (_nr))
+-#define S3C2410_GPK(_nr)	(S3C2410_GPIO_K_START + (_nr))
+-#define S3C2410_GPL(_nr)	(S3C2410_GPIO_L_START + (_nr))
+-#define S3C2410_GPM(_nr)	(S3C2410_GPIO_M_START + (_nr))
+-
+-#endif /* __MACH_GPIONRS_H */
+-
+diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio-track.h b/arch/arm/mach-s3c24xx/include/mach/gpio-track.h
+deleted file mode 100644
+index c410a07..0000000
+--- a/arch/arm/mach-s3c24xx/include/mach/gpio-track.h
++++ /dev/null
+@@ -1,33 +0,0 @@
+-/* arch/arm/mach-s3c24100/include/mach/gpio-core.h
+- *
+- * Copyright 2008 Openmoko, Inc.
+- * Copyright 2008 Simtec Electronics
+- *      Ben Dooks <ben@simtec.co.uk>
+- *      http://armlinux.simtec.co.uk/
+- *
+- * S3C2410 - GPIO core support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifndef __ASM_ARCH_GPIO_CORE_H
+-#define __ASM_ARCH_GPIO_CORE_H __FILE__
+-
+-#include <mach/regs-gpio.h>
+-
+-extern struct samsung_gpio_chip s3c24xx_gpios[];
+-
+-static inline struct samsung_gpio_chip *samsung_gpiolib_getchip(unsigned int pin)
+-{
+-	struct samsung_gpio_chip *chip;
+-
+-	if (pin > S3C_GPIO_END)
+-		return NULL;
+-
+-	chip = &s3c24xx_gpios[pin/32];
+-	return ((pin - chip->chip.base) < chip->chip.ngpio) ? chip : NULL;
+-}
+-
+-#endif /* __ASM_ARCH_GPIO_CORE_H */
+diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio.h b/arch/arm/mach-s3c24xx/include/mach/gpio.h
+index 6fac70f..1459156 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/gpio.h
++++ b/arch/arm/mach-s3c24xx/include/mach/gpio.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/mach-s3c2410/include/mach/gpio.h
+- *
 +/*
-+ * Copyright (c) 2005 Simtec Electronics
-+ *	http://www.simtec.co.uk/products/
-+ *	Ben Dooks <ben@simtec.co.uk>
+  * Copyright (c) 2008 Simtec Electronics
+  *	http://armlinux.simtec.co.uk/
+  *	Ben Dooks <ben@simtec.co.uk>
+@@ -15,6 +14,9 @@
+  * devices that need GPIO.
+  */
+ 
++#ifndef __MACH_GPIO_H
++#define __MACH_GPIO_H __FILE__
++
+ #ifdef CONFIG_CPU_S3C244X
+ #define ARCH_NR_GPIOS	(32 * 9 + CONFIG_S3C24XX_GPIO_EXTRA)
+ #elif defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
+@@ -23,8 +25,83 @@
+ #define ARCH_NR_GPIOS	(256 + CONFIG_S3C24XX_GPIO_EXTRA)
+ #endif
+ 
+-#include <mach/gpio-nrs.h>
+-#include <mach/gpio-fns.h>
++/*
++ * GPIO sizes for various SoCs:
 + *
-+ * ANUBIS - CPLD control constants
-+ * ANUBIS - IRQ Number definitions
-+ * ANUBIS - Memory map definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
++ *   2410 2412 2440 2443 2416
++ *             2442
++ *   ---- ---- ---- ---- ----
++ * A  23   22   25   16   25
++ * B  11   11   11   11   9
++ * C  16   15   16   16   16
++ * D  16   16   16   16   16
++ * E  16   16   16   16   16
++ * F  8    8    8    8    8
++ * G  16   16   16   16   8
++ * H  11   11   9    15   15
++ * J  --   --   13   16   --
++ * K  --   --   --   --   16
++ * L  --   --   --   15   7
++ * M  --   --   --   2    2
++ */
 +
-+#ifndef __MACH_S3C24XX_ANUBIS_H
-+#define __MACH_S3C24XX_ANUBIS_H __FILE__
++/* GPIO bank sizes */
 +
-+/* CTRL2 - NAND WP control, IDE Reset assert/check */
++#define S3C2410_GPIO_A_NR	(32)
++#define S3C2410_GPIO_B_NR	(32)
++#define S3C2410_GPIO_C_NR	(32)
++#define S3C2410_GPIO_D_NR	(32)
++#define S3C2410_GPIO_E_NR	(32)
++#define S3C2410_GPIO_F_NR	(32)
++#define S3C2410_GPIO_G_NR	(32)
++#define S3C2410_GPIO_H_NR	(32)
++#define S3C2410_GPIO_J_NR	(32)	/* technically 16. */
++#define S3C2410_GPIO_K_NR	(32)	/* technically 16. */
++#define S3C2410_GPIO_L_NR	(32)	/* technically 15. */
++#define S3C2410_GPIO_M_NR	(32)	/* technically 2. */
 +
-+#define ANUBIS_CTRL1_NANDSEL		(0x3)
++#if CONFIG_S3C_GPIO_SPACE != 0
++#error CONFIG_S3C_GPIO_SPACE cannot be nonzero at the moment
++#endif
 +
-+/* IDREG - revision */
++#define S3C2410_GPIO_NEXT(__gpio) \
++	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 0)
 +
-+#define ANUBIS_IDREG_REVMASK		(0x7)
++#ifndef __ASSEMBLY__
 +
-+/* irq */
++enum s3c_gpio_number {
++	S3C2410_GPIO_A_START = 0,
++	S3C2410_GPIO_B_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_A),
++	S3C2410_GPIO_C_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_B),
++	S3C2410_GPIO_D_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_C),
++	S3C2410_GPIO_E_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_D),
++	S3C2410_GPIO_F_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_E),
++	S3C2410_GPIO_G_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_F),
++	S3C2410_GPIO_H_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_G),
++	S3C2410_GPIO_J_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_H),
++	S3C2410_GPIO_K_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_J),
++	S3C2410_GPIO_L_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_K),
++	S3C2410_GPIO_M_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_L),
++};
 +
-+#define ANUBIS_IRQ_IDE0			IRQ_EINT2
-+#define ANUBIS_IRQ_IDE1			IRQ_EINT3
-+#define ANUBIS_IRQ_ASIX			IRQ_EINT1
++#endif /* __ASSEMBLY__ */
 +
-+/* map */
++/* S3C2410 GPIO number definitions. */
 +
-+/* start peripherals off after the S3C2410 */
++#define S3C2410_GPA(_nr)	(S3C2410_GPIO_A_START + (_nr))
++#define S3C2410_GPB(_nr)	(S3C2410_GPIO_B_START + (_nr))
++#define S3C2410_GPC(_nr)	(S3C2410_GPIO_C_START + (_nr))
++#define S3C2410_GPD(_nr)	(S3C2410_GPIO_D_START + (_nr))
++#define S3C2410_GPE(_nr)	(S3C2410_GPIO_E_START + (_nr))
++#define S3C2410_GPF(_nr)	(S3C2410_GPIO_F_START + (_nr))
++#define S3C2410_GPG(_nr)	(S3C2410_GPIO_G_START + (_nr))
++#define S3C2410_GPH(_nr)	(S3C2410_GPIO_H_START + (_nr))
++#define S3C2410_GPJ(_nr)	(S3C2410_GPIO_J_START + (_nr))
++#define S3C2410_GPK(_nr)	(S3C2410_GPIO_K_START + (_nr))
++#define S3C2410_GPL(_nr)	(S3C2410_GPIO_L_START + (_nr))
++#define S3C2410_GPM(_nr)	(S3C2410_GPIO_M_START + (_nr))
 +
-+#define ANUBIS_IOADDR(x)		(S3C2410_ADDR((x) + 0x01800000))
++#include <plat/gpio-cfg.h>
+ 
+ #ifdef CONFIG_CPU_S3C244X
+ #define S3C_GPIO_END	(S3C2410_GPJ(0) + 32)
+@@ -33,3 +110,5 @@
+ #else
+ #define S3C_GPIO_END	(S3C2410_GPH(0) + 32)
+ #endif
 +
-+#define ANUBIS_PA_CPLD			(S3C2410_CS1 | (1<<26))
++#endif /* __MACH_GPIO_H */
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
+index a11a638..c2ef016 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
+@@ -14,8 +14,6 @@
+ #ifndef __ASM_ARCH_REGS_GPIO_H
+ #define __ASM_ARCH_REGS_GPIO_H
+ 
+-#include <mach/gpio-nrs.h>
+-
+ #define S3C24XX_MISCCR		S3C24XX_GPIOREG2(0x80)
+ 
+ /* general configuration options */
+diff --git a/arch/arm/mach-s3c24xx/mach-at2440evb.c b/arch/arm/mach-s3c24xx/mach-at2440evb.c
+index 00381fe..f51bbcb 100644
+--- a/arch/arm/mach-s3c24xx/mach-at2440evb.c
++++ b/arch/arm/mach-s3c24xx/mach-at2440evb.c
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/types.h>
++#include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/list.h>
+ #include <linux/timer.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index b23dd1b..e208dda 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -50,8 +50,6 @@
+ #include <mach/regs-clock.h>
+ 
+ #include <mach/regs-gpio.h>
+-#include <mach/gpio-fns.h>
+-#include <mach/gpio-nrs.h>
+ 
+ #include <mach/h1940.h>
+ #include <mach/h1940-latch.h>
+diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h b/arch/arm/plat-samsung/include/plat/gpio-core.h
+index f7a3ea2..cf5aae5 100644
+--- a/arch/arm/plat-samsung/include/plat/gpio-core.h
++++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
+@@ -106,7 +106,18 @@ static inline struct samsung_gpio_chip *samsung_gpiolib_getchip(unsigned int chi
+ #else
+ /* machine specific code should provide samsung_gpiolib_getchip */
+ 
+-#include <mach/gpio-track.h>
++extern struct samsung_gpio_chip s3c24xx_gpios[];
 +
-+/* we put the CPLD registers next, to get them out of the way */
++static inline struct samsung_gpio_chip *samsung_gpiolib_getchip(unsigned int pin)
++{
++	struct samsung_gpio_chip *chip;
 +
-+#define ANUBIS_VA_CTRL1			ANUBIS_IOADDR(0x00000000)
-+#define ANUBIS_PA_CTRL1			ANUBIS_PA_CPLD
++	if (pin > S3C_GPIO_END)
++		return NULL;
 +
-+#define ANUBIS_VA_IDREG			ANUBIS_IOADDR(0x00300000)
-+#define ANUBIS_PA_IDREG			(ANUBIS_PA_CPLD + (3 << 23))
-+
-+#define ANUBIS_IDEPRI			ANUBIS_IOADDR(0x01000000)
-+#define ANUBIS_IDEPRIAUX		ANUBIS_IOADDR(0x01100000)
-+#define ANUBIS_IDESEC			ANUBIS_IOADDR(0x01200000)
-+#define ANUBIS_IDESECAUX		ANUBIS_IOADDR(0x01300000)
-+
-+#endif /* __MACH_S3C24XX_ANUBIS_H */
-diff --git a/arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h b/arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h
++	chip = &s3c24xx_gpios[pin/32];
++	return ((pin - chip->chip.base) < chip->chip.ngpio) ? chip : NULL;
++}
+ 
+ static inline void s3c_gpiolib_track(struct samsung_gpio_chip *chip) { }
+ #endif
+diff --git a/arch/arm/plat-samsung/include/plat/gpio-fns.h b/arch/arm/plat-samsung/include/plat/gpio-fns.h
 deleted file mode 100644
-index 1b614d5..0000000
---- a/arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h
+index d1ecef0..0000000
+--- a/arch/arm/plat-samsung/include/plat/gpio-fns.h
 +++ /dev/null
-@@ -1,25 +0,0 @@
--/* arch/arm/mach-s3c2410/include/mach/anubis-cpld.h
-- *
-- * Copyright (c) 2005 Simtec Electronics
-- *	http://www.simtec.co.uk/products/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * ANUBIS - CPLD control constants
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_ANUBISCPLD_H
--#define __ASM_ARCH_ANUBISCPLD_H
--
--/* CTRL2 - NAND WP control, IDE Reset assert/check */
--
--#define ANUBIS_CTRL1_NANDSEL		(0x3)
--
--/* IDREG - revision */
--
--#define ANUBIS_IDREG_REVMASK		(0x7)
--
--#endif /* __ASM_ARCH_ANUBISCPLD_H */
-diff --git a/arch/arm/mach-s3c24xx/include/mach/anubis-irq.h b/arch/arm/mach-s3c24xx/include/mach/anubis-irq.h
-deleted file mode 100644
-index a2a3281..0000000
---- a/arch/arm/mach-s3c24xx/include/mach/anubis-irq.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/* arch/arm/mach-s3c2410/include/mach/anubis-irq.h
-- *
-- * Copyright (c) 2005 Simtec Electronics
-- *	http://www.simtec.co.uk/products/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- *  ANUBIS - IRQ Number definitions
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_ANUBISIRQ_H
--#define __ASM_ARCH_ANUBISIRQ_H
--
--#define IRQ_IDE0       IRQ_EINT2
--#define IRQ_IDE1       IRQ_EINT3
--#define IRQ_ASIX       IRQ_EINT1
--
--#endif /* __ASM_ARCH_ANUBISIRQ_H */
-diff --git a/arch/arm/mach-s3c24xx/include/mach/anubis-map.h b/arch/arm/mach-s3c24xx/include/mach/anubis-map.h
-deleted file mode 100644
-index c9deb3a..0000000
---- a/arch/arm/mach-s3c24xx/include/mach/anubis-map.h
-+++ /dev/null
-@@ -1,38 +0,0 @@
--/* arch/arm/mach-s3c2410/include/mach/anubis-map.h
-- *
-- * Copyright (c) 2005 Simtec Electronics
-- *	http://www.simtec.co.uk/products/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * ANUBIS - Memory map definitions
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--/* needs arch/map.h including with this */
--
--#ifndef __ASM_ARCH_ANUBISMAP_H
--#define __ASM_ARCH_ANUBISMAP_H
--
--/* start peripherals off after the S3C2410 */
--
--#define ANUBIS_IOADDR(x)	(S3C2410_ADDR((x) + 0x01800000))
--
--#define ANUBIS_PA_CPLD		(S3C2410_CS1 | (1<<26))
--
--/* we put the CPLD registers next, to get them out of the way */
--
--#define ANUBIS_VA_CTRL1	    ANUBIS_IOADDR(0x00000000)	 /* 0x01800000 */
--#define ANUBIS_PA_CTRL1	    (ANUBIS_PA_CPLD)
--
--#define ANUBIS_VA_IDREG	    ANUBIS_IOADDR(0x00300000)	 /* 0x01B00000 */
--#define ANUBIS_PA_IDREG	    (ANUBIS_PA_CPLD + (3<<23))
--
--#define ANUBIS_IDEPRI	    ANUBIS_IOADDR(0x01000000)
--#define ANUBIS_IDEPRIAUX    ANUBIS_IOADDR(0x01100000)
--#define ANUBIS_IDESEC	    ANUBIS_IOADDR(0x01200000)
--#define ANUBIS_IDESECAUX    ANUBIS_IOADDR(0x01300000)
--
--#endif /* __ASM_ARCH_ANUBISMAP_H */
-diff --git a/arch/arm/mach-s3c24xx/mach-anubis.c b/arch/arm/mach-s3c24xx/mach-anubis.c
-index 1ee8c46..113304c 100644
---- a/arch/arm/mach-s3c24xx/mach-anubis.c
-+++ b/arch/arm/mach-s3c24xx/mach-anubis.c
-@@ -28,10 +28,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
+@@ -1 +0,0 @@
+-#include <plat/gpio-cfg.h>
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index 9070f86..2a42e2c 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -38,7 +38,6 @@
+ #include <plat/gpio-core.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/gpio-cfg-helpers.h>
+-#include <plat/gpio-fns.h>
+ #include <plat/pm.h>
  
--#include <mach/anubis-map.h>
--#include <mach/anubis-irq.h>
--#include <mach/anubis-cpld.h>
--
- #include <mach/hardware.h>
- #include <asm/irq.h>
- #include <asm/mach-types.h>
-@@ -55,8 +51,9 @@
- #include <plat/cpu.h>
- #include <linux/platform_data/asoc-s3c24xx_simtec.h>
- 
--#include "simtec.h"
-+#include "anubis.h"
- #include "common.h"
-+#include "simtec.h"
- 
- #define COPYRIGHT ", Copyright 2005-2009 Simtec Electronics"
- 
-@@ -237,7 +234,7 @@ static struct pata_platform_info anubis_ide_platdata = {
- static struct resource anubis_ide0_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C2410_CS3, 8 * 32),
- 	[2] = DEFINE_RES_MEM(S3C2410_CS3 + (1 << 26) + (6 * 32), 32),
--	[3] = DEFINE_RES_IRQ(IRQ_IDE0),
-+	[3] = DEFINE_RES_IRQ(ANUBIS_IRQ_IDE0),
- };
- 
- static struct platform_device anubis_device_ide0 = {
-@@ -254,7 +251,7 @@ static struct platform_device anubis_device_ide0 = {
- static struct resource anubis_ide1_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C2410_CS4, 8 * 32),
- 	[1] = DEFINE_RES_MEM(S3C2410_CS4 + (1 << 26) + (6 * 32), 32),
--	[2] = DEFINE_RES_IRQ(IRQ_IDE0),
-+	[2] = DEFINE_RES_IRQ(ANUBIS_IRQ_IDE0),
- };
- 
- static struct platform_device anubis_device_ide1 = {
-@@ -279,7 +276,7 @@ static struct ax_plat_data anubis_asix_platdata = {
- 
- static struct resource anubis_asix_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C2410_CS5, 0x20 * 0x20),
--	[1] = DEFINE_RES_IRQ(IRQ_ASIX),
-+	[1] = DEFINE_RES_IRQ(ANUBIS_IRQ_ASIX),
- };
- 
- static struct platform_device anubis_device_asix = {
+ int samsung_gpio_setpull_updown(struct samsung_gpio_chip *chip,
 -- 
 1.7.10.4
