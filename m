@@ -1,51 +1,41 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [PATCH RFC v2 02/15] [media] Add a V4L2 OF parser
-Date: Wed, 2 Jan 2013 12:58:37 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.1301021255380.7829@axis700.grange>
-References: <1356969793-27268-1-git-send-email-s.nawrocki@samsung.com>
- <1356969793-27268-3-git-send-email-s.nawrocki@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: fix uncompress.h and debug-macro.S for EXYNOS5440
+Date: Wed, 2 Jan 2013 17:29:34 +0530
+Message-ID: <CAK9yfHycpk6S1e3wW-8hLB7HM2tFykZGOSiz2jaYVwMf2khOUA@mail.gmail.com>
+References: <1356632834-8934-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1356969793-27268-3-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f43.google.com ([209.85.219.43]:47016 "EHLO
+	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752090Ab3ABL7f (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Jan 2013 06:59:35 -0500
+Received: by mail-oa0-f43.google.com with SMTP id k1so12871877oag.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jan 2013 03:59:35 -0800 (PST)
+In-Reply-To: <1356632834-8934-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester
+Hi Kukjin,
 
-Just one question to this one:
+On 27 December 2012 23:57, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> This patch fixes uart base address for uncompress and debug-macro
+> on EXYNOS5440.
+>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/mach-exynos/include/mach/debug-macro.S |   25 +++++++++++++++++------
+>  arch/arm/mach-exynos/include/mach/map.h         |    1 +
+>  arch/arm/mach-exynos/include/mach/uncompress.h  |   20 +++++++++++-------
+>  3 files changed, 33 insertions(+), 13 deletions(-)
 
-On Mon, 31 Dec 2012, Sylwester Nawrocki wrote:
+With this patch I found that Origen board does not boot.
+It stops at "Uncompressing Linux...".
+Tested using your latest for-next branch.
 
-> diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/v4l2-of.c
-> new file mode 100644
-> index 0000000..cdac04b
-> --- /dev/null
-> +++ b/drivers/media/v4l2-core/v4l2-of.c
-> @@ -0,0 +1,249 @@
-> +/*
-> + * V4L2 OF binding parsing library
-> + *
-> + * Copyright (C) 2012 Renesas Electronics Corp.
-> + * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of version 2 of the GNU General Public License as
-> + * published by the Free Software Foundation.
-> + */
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/slab.h>
-
-Is slab.h really needed? I didn't have it in my version. Maybe you meant 
-to include string.h for memset()?
-
-Thanks
-Guennadi
 ---
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
+With warm regards,
+Sachin
