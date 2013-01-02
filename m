@@ -1,143 +1,47 @@
 From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [PATCH RFC v2 01/15] [media] Add common video interfaces OF
- bindings documentation
-Date: Wed, 2 Jan 2013 12:31:01 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.1301021220370.7829@axis700.grange>
+Subject: Re: [PATCH RFC v2 02/15] [media] Add a V4L2 OF parser
+Date: Wed, 2 Jan 2013 12:58:37 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.1301021255380.7829@axis700.grange>
 References: <1356969793-27268-1-git-send-email-s.nawrocki@samsung.com>
- <1356969793-27268-2-git-send-email-s.nawrocki@samsung.com>
+ <1356969793-27268-3-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:58871 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752134Ab3ABLbE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jan 2013 06:31:04 -0500
-In-Reply-To: <1356969793-27268-2-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1356969793-27268-3-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: linux-media@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Sylwester
 
-Thanks for picking up these patches! In general both look good to me, just 
-a couple of nit-picks, that I couldn't help remarking:-)
+Just one question to this one:
 
 On Mon, 31 Dec 2012, Sylwester Nawrocki wrote:
 
-> From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-> 
-> This patch adds a document describing common OF bindings for video
-> capture, output and video processing devices. It is curently mainly
-> focused on video capture devices, with data busses defined by
-> standards like ITU-R BT.656 or MIPI-CSI2.
-> It also documents a method of describing data links between devices.
-> 
-> Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Reviewed-by: Stephen Warren <swarren@nvidia.com>
-> 
-> ---
-> 
-> This is basically a resend of my previous version of this patch [1],
-> with just a few typo/grammar issue corrections.
-> 
-> [1] http://patchwork.linuxtv.org/patch/15911/
-> ---
->  .../devicetree/bindings/media/video-interfaces.txt |  198 ++++++++++++++++++++
->  1 file changed, 198 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/video-interfaces.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
+> diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/v4l2-of.c
 > new file mode 100644
-> index 0000000..d1eea35
+> index 0000000..cdac04b
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
-> @@ -0,0 +1,198 @@
-> +Common bindings for video data receiver and transmitter interfaces
-> +
-> +General concept
-> +---------------
-> +
-> +Video data pipelines usually consist of external devices, e.g. camera sensors,
-> +controlled over an I2C, SPI or UART bus, and SoC internal IP blocks, including
-> +video DMA engines and video data processors.
-> +
-> +SoC internal blocks are described by DT nodes, placed similarly to other SoC
-> +blocks.  External devices are represented as child nodes of their respective
-> +bus controller nodes, e.g. I2C.
-> +
-> +Data interfaces on all video devices are described by their child 'port' nodes.
-> +Configuration of a port depends on other devices participating in the data
-> +transfer and is described by 'endpoint' subnodes.
-> +
-> +dev {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	port@0 {
-> +		endpoint@0 { ... };
-> +		endpoint@1 { ... };
-> +	};
-> +	port@1 { ... };
-> +};
-> +
-> +If a port can be configured to work with more than one other device on the same
-> +bus, an 'endpoint' child node must be provided for each of them.  If more than
-> +one port is present in a device node or there is more than one endpoint at a
-> +port, a common scheme, using '#address-cells', '#size-cells' and 'reg' properties
-> +is used.
-> +
-> +Two 'endpoint' nodes are linked with each other through their 'remote-endpoint'
-> +phandles.  An endpoint subnode of a device contains all properties needed for
-> +configuration of this device for data exchange with the other device.  In most
-> +cases properties at the peer 'endpoint' nodes will be identical, however
-> +they might need to be different when there is any signal modifications on the
-> +bus between two devices, e.g. there are logic signal inverters on the lines.
-> +
-> +Required properties
-> +-------------------
-> +
-> +If there is more than one 'port' or more than one 'endpoint' node following
-> +properties are required in relevant parent node:
-> +
-> +- #address-cells : number of cells required to define port number, should be 1.
-> +- #size-cells    : should be zero.
-> +
-> +Optional endpoint properties
-> +----------------------------
-> +
-> +- remote-endpoint : phandle to an 'endpoint' subnode of the other device node.
+> +++ b/drivers/media/v4l2-core/v4l2-of.c
+> @@ -0,0 +1,249 @@
+> +/*
+> + * V4L2 OF binding parsing library
+> + *
+> + * Copyright (C) 2012 Renesas Electronics Corp.
+> + * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of version 2 of the GNU General Public License as
+> + * published by the Free Software Foundation.
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/slab.h>
 
-This spacing before ":" looks strange to me. I personally prefer the 
-normal English rule - "x: y," i.e. no space before and a space after, but 
-I wouldn't remark on your choice of a space on each side in this specific 
-case, if it was consistent. Whereas sometimes having one space and 
-sometimes having none looks weird to me. I would go for "no space before 
-':'" throughout this document.
-
-> +- slave-mode : a boolean property, run the link in slave mode. Default is master
-> +  mode.
-> +- bus-width : number of data lines, valid for parallel buses.
-
-As we discussed before, both "busses" and "buses" spellings are commonly 
-used at different locations around the world, but I think we should stick 
-to only one of them in a single document. It looks weird to have "buses" 
-in one line and "busses" in the following one.
-
-> +- data-shift: on parallel data busses, if bus-width is used to specify the
-> +  number of data lines, data-shift can be used to specify which data lines are
-> +  used, e.g. "bus-width=<10>; data-shift=<2>;" means, that lines 9:2 are used.
-> +- hsync-active : active state of HSYNC signal, 0/1 for LOW/HIGH respectively.
-> +- vsync-active : active state of VSYNC signal, 0/1 for LOW/HIGH respectively.
-> +  Note, that if HSYNC and VSYNC polarities are not specified, embedded
-> +  synchronization may be required, where supported.
-> +- data-active : similar to HSYNC and VSYNC, specifies data line polarity.
-> +- field-even-active: field signal level during the even field data transmission.
-> +- pclk-sample : rising (1) or falling (0) edge to sample the pixel clock signal.
-
-Yes, it was in my original document too, but don't we mean "sample data on 
-rising (1) or falling (0) edge of the pixel clock signal?"
+Is slab.h really needed? I didn't have it in my version. Maybe you meant 
+to include string.h for memset()?
 
 Thanks
 Guennadi
