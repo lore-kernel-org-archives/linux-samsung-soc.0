@@ -1,115 +1,259 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 08/26] ARM: SAMSUNG: cleanup mach/regs-audss.h file
-Date: Wed, 02 Jan 2013 14:23:45 -0800
-Message-ID: <1357165443-3716-9-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 10/26] ARM: S3C24XX: make anubis-cpld,
+ anubis-irq and anubis-map local
+Date: Wed, 02 Jan 2013 14:23:47 -0800
+Message-ID: <1357165443-3716-11-git-send-email-kgene.kim@samsung.com>
 References: <1357165443-3716-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41052 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:41053 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752735Ab3ABWYq (ORCPT
+	with ESMTP id S1752743Ab3ABWYt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jan 2013 17:24:46 -0500
+	Wed, 2 Jan 2013 17:24:49 -0500
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MG000B7VRKLFV10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 07:24:45 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 07:24:47 +0900 (KST)
 Received: from localhost.localdomain ([105.128.18.183])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MG00028PRKVD920@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 07:24:44 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 07:24:47 +0900 (KST)
 In-reply-to: <1357165443-3716-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Kukjin Kim <kgene.kim@samsung.com>
 
+The headers can be local in mach-s3c24xx/.
+
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-exynos/dev-audio.c                |    3 ++-
- arch/arm/mach-exynos/include/mach/regs-audss.h  |   18 ------------------
- arch/arm/mach-s5pv210/dev-audio.c               |    3 ++-
- arch/arm/mach-s5pv210/include/mach/regs-audss.h |   18 ------------------
- 4 files changed, 4 insertions(+), 38 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-audss.h
- delete mode 100644 arch/arm/mach-s5pv210/include/mach/regs-audss.h
+ arch/arm/mach-s3c24xx/anubis.h                   |   53 ++++++++++++++++++++++
+ arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h |   25 ----------
+ arch/arm/mach-s3c24xx/include/mach/anubis-irq.h  |   21 ---------
+ arch/arm/mach-s3c24xx/include/mach/anubis-map.h  |   38 ----------------
+ arch/arm/mach-s3c24xx/mach-anubis.c              |   13 ++----
+ 5 files changed, 58 insertions(+), 92 deletions(-)
+ create mode 100644 arch/arm/mach-s3c24xx/anubis.h
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-irq.h
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-map.h
 
-diff --git a/arch/arm/mach-exynos/dev-audio.c b/arch/arm/mach-exynos/dev-audio.c
-index 9d1a609..c662c89 100644
---- a/arch/arm/mach-exynos/dev-audio.c
-+++ b/arch/arm/mach-exynos/dev-audio.c
-@@ -21,7 +21,8 @@
- #include <mach/map.h>
- #include <mach/dma.h>
- #include <mach/irqs.h>
--#include <mach/regs-audss.h>
+diff --git a/arch/arm/mach-s3c24xx/anubis.h b/arch/arm/mach-s3c24xx/anubis.h
+new file mode 100644
+index 0000000..2691665
+--- /dev/null
++++ b/arch/arm/mach-s3c24xx/anubis.h
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (c) 2005 Simtec Electronics
++ *	http://www.simtec.co.uk/products/
++ *	Ben Dooks <ben@simtec.co.uk>
++ *
++ * ANUBIS - CPLD control constants
++ * ANUBIS - IRQ Number definitions
++ * ANUBIS - Memory map definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#define EXYNOS4_AUDSS_INT_MEM	(0x03000000)
- 
- static int exynos4_cfg_i2s(struct platform_device *pdev)
- {
-diff --git a/arch/arm/mach-exynos/include/mach/regs-audss.h b/arch/arm/mach-exynos/include/mach/regs-audss.h
++#ifndef __MACH_S3C24XX_ANUBIS_H
++#define __MACH_S3C24XX_ANUBIS_H __FILE__
++
++/* CTRL2 - NAND WP control, IDE Reset assert/check */
++
++#define ANUBIS_CTRL1_NANDSEL		(0x3)
++
++/* IDREG - revision */
++
++#define ANUBIS_IDREG_REVMASK		(0x7)
++
++/* irq */
++
++#define ANUBIS_IRQ_IDE0			IRQ_EINT2
++#define ANUBIS_IRQ_IDE1			IRQ_EINT3
++#define ANUBIS_IRQ_ASIX			IRQ_EINT1
++
++/* map */
++
++/* start peripherals off after the S3C2410 */
++
++#define ANUBIS_IOADDR(x)		(S3C2410_ADDR((x) + 0x01800000))
++
++#define ANUBIS_PA_CPLD			(S3C2410_CS1 | (1<<26))
++
++/* we put the CPLD registers next, to get them out of the way */
++
++#define ANUBIS_VA_CTRL1			ANUBIS_IOADDR(0x00000000)
++#define ANUBIS_PA_CTRL1			ANUBIS_PA_CPLD
++
++#define ANUBIS_VA_IDREG			ANUBIS_IOADDR(0x00300000)
++#define ANUBIS_PA_IDREG			(ANUBIS_PA_CPLD + (3 << 23))
++
++#define ANUBIS_IDEPRI			ANUBIS_IOADDR(0x01000000)
++#define ANUBIS_IDEPRIAUX		ANUBIS_IOADDR(0x01100000)
++#define ANUBIS_IDESEC			ANUBIS_IOADDR(0x01200000)
++#define ANUBIS_IDESECAUX		ANUBIS_IOADDR(0x01300000)
++
++#endif /* __MACH_S3C24XX_ANUBIS_H */
+diff --git a/arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h b/arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h
 deleted file mode 100644
-index ca5a8b6..0000000
---- a/arch/arm/mach-exynos/include/mach/regs-audss.h
+index 1b614d5..0000000
+--- a/arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h
 +++ /dev/null
-@@ -1,18 +0,0 @@
--/* arch/arm/mach-exynos4/include/mach/regs-audss.h
+@@ -1,25 +0,0 @@
+-/* arch/arm/mach-s3c2410/include/mach/anubis-cpld.h
 - *
-- * Copyright (c) 2011 Samsung Electronics
-- *		http://www.samsung.com
+- * Copyright (c) 2005 Simtec Electronics
+- *	http://www.simtec.co.uk/products/
+- *	Ben Dooks <ben@simtec.co.uk>
 - *
-- * Exynos4 Audio SubSystem clock register definitions
+- * ANUBIS - CPLD control constants
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 -*/
 -
--#ifndef __PLAT_REGS_AUDSS_H
--#define __PLAT_REGS_AUDSS_H __FILE__
+-#ifndef __ASM_ARCH_ANUBISCPLD_H
+-#define __ASM_ARCH_ANUBISCPLD_H
 -
--#define EXYNOS4_AUDSS_INT_MEM	(0x03000000)
+-/* CTRL2 - NAND WP control, IDE Reset assert/check */
 -
--#endif /* _PLAT_REGS_AUDSS_H */
-diff --git a/arch/arm/mach-s5pv210/dev-audio.c b/arch/arm/mach-s5pv210/dev-audio.c
-index addfb16..2d67361 100644
---- a/arch/arm/mach-s5pv210/dev-audio.c
-+++ b/arch/arm/mach-s5pv210/dev-audio.c
-@@ -18,7 +18,8 @@
- #include <mach/map.h>
- #include <mach/dma.h>
- #include <mach/irqs.h>
--#include <mach/regs-audss.h>
-+
-+#define S5PV210_AUDSS_INT_MEM	(0xC0000000)
- 
- static int s5pv210_cfg_i2s(struct platform_device *pdev)
- {
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-audss.h b/arch/arm/mach-s5pv210/include/mach/regs-audss.h
+-#define ANUBIS_CTRL1_NANDSEL		(0x3)
+-
+-/* IDREG - revision */
+-
+-#define ANUBIS_IDREG_REVMASK		(0x7)
+-
+-#endif /* __ASM_ARCH_ANUBISCPLD_H */
+diff --git a/arch/arm/mach-s3c24xx/include/mach/anubis-irq.h b/arch/arm/mach-s3c24xx/include/mach/anubis-irq.h
 deleted file mode 100644
-index eacc1f7..0000000
---- a/arch/arm/mach-s5pv210/include/mach/regs-audss.h
+index a2a3281..0000000
+--- a/arch/arm/mach-s3c24xx/include/mach/anubis-irq.h
 +++ /dev/null
-@@ -1,18 +0,0 @@
--/* arch/arm/mach-s5pv210/include/mach/regs-audss.h
+@@ -1,21 +0,0 @@
+-/* arch/arm/mach-s3c2410/include/mach/anubis-irq.h
 - *
-- * Copyright (c) 2011 Samsung Electronics
-- *		http://www.samsung.com
+- * Copyright (c) 2005 Simtec Electronics
+- *	http://www.simtec.co.uk/products/
+- *	Ben Dooks <ben@simtec.co.uk>
 - *
-- * S5PV210 Audio SubSystem clock register definitions
+- *  ANUBIS - IRQ Number definitions
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 -*/
 -
--#ifndef __PLAT_REGS_AUDSS_H
--#define __PLAT_REGS_AUDSS_H __FILE__
+-#ifndef __ASM_ARCH_ANUBISIRQ_H
+-#define __ASM_ARCH_ANUBISIRQ_H
 -
--#define S5PV210_AUDSS_INT_MEM	(0xC0000000)
+-#define IRQ_IDE0       IRQ_EINT2
+-#define IRQ_IDE1       IRQ_EINT3
+-#define IRQ_ASIX       IRQ_EINT1
 -
--#endif /* _PLAT_REGS_AUDSS_H */
+-#endif /* __ASM_ARCH_ANUBISIRQ_H */
+diff --git a/arch/arm/mach-s3c24xx/include/mach/anubis-map.h b/arch/arm/mach-s3c24xx/include/mach/anubis-map.h
+deleted file mode 100644
+index c9deb3a..0000000
+--- a/arch/arm/mach-s3c24xx/include/mach/anubis-map.h
++++ /dev/null
+@@ -1,38 +0,0 @@
+-/* arch/arm/mach-s3c2410/include/mach/anubis-map.h
+- *
+- * Copyright (c) 2005 Simtec Electronics
+- *	http://www.simtec.co.uk/products/
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * ANUBIS - Memory map definitions
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-/* needs arch/map.h including with this */
+-
+-#ifndef __ASM_ARCH_ANUBISMAP_H
+-#define __ASM_ARCH_ANUBISMAP_H
+-
+-/* start peripherals off after the S3C2410 */
+-
+-#define ANUBIS_IOADDR(x)	(S3C2410_ADDR((x) + 0x01800000))
+-
+-#define ANUBIS_PA_CPLD		(S3C2410_CS1 | (1<<26))
+-
+-/* we put the CPLD registers next, to get them out of the way */
+-
+-#define ANUBIS_VA_CTRL1	    ANUBIS_IOADDR(0x00000000)	 /* 0x01800000 */
+-#define ANUBIS_PA_CTRL1	    (ANUBIS_PA_CPLD)
+-
+-#define ANUBIS_VA_IDREG	    ANUBIS_IOADDR(0x00300000)	 /* 0x01B00000 */
+-#define ANUBIS_PA_IDREG	    (ANUBIS_PA_CPLD + (3<<23))
+-
+-#define ANUBIS_IDEPRI	    ANUBIS_IOADDR(0x01000000)
+-#define ANUBIS_IDEPRIAUX    ANUBIS_IOADDR(0x01100000)
+-#define ANUBIS_IDESEC	    ANUBIS_IOADDR(0x01200000)
+-#define ANUBIS_IDESECAUX    ANUBIS_IOADDR(0x01300000)
+-
+-#endif /* __ASM_ARCH_ANUBISMAP_H */
+diff --git a/arch/arm/mach-s3c24xx/mach-anubis.c b/arch/arm/mach-s3c24xx/mach-anubis.c
+index 1ee8c46..113304c 100644
+--- a/arch/arm/mach-s3c24xx/mach-anubis.c
++++ b/arch/arm/mach-s3c24xx/mach-anubis.c
+@@ -28,10 +28,6 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
+ 
+-#include <mach/anubis-map.h>
+-#include <mach/anubis-irq.h>
+-#include <mach/anubis-cpld.h>
+-
+ #include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <asm/mach-types.h>
+@@ -55,8 +51,9 @@
+ #include <plat/cpu.h>
+ #include <linux/platform_data/asoc-s3c24xx_simtec.h>
+ 
+-#include "simtec.h"
++#include "anubis.h"
+ #include "common.h"
++#include "simtec.h"
+ 
+ #define COPYRIGHT ", Copyright 2005-2009 Simtec Electronics"
+ 
+@@ -237,7 +234,7 @@ static struct pata_platform_info anubis_ide_platdata = {
+ static struct resource anubis_ide0_resource[] = {
+ 	[0] = DEFINE_RES_MEM(S3C2410_CS3, 8 * 32),
+ 	[2] = DEFINE_RES_MEM(S3C2410_CS3 + (1 << 26) + (6 * 32), 32),
+-	[3] = DEFINE_RES_IRQ(IRQ_IDE0),
++	[3] = DEFINE_RES_IRQ(ANUBIS_IRQ_IDE0),
+ };
+ 
+ static struct platform_device anubis_device_ide0 = {
+@@ -254,7 +251,7 @@ static struct platform_device anubis_device_ide0 = {
+ static struct resource anubis_ide1_resource[] = {
+ 	[0] = DEFINE_RES_MEM(S3C2410_CS4, 8 * 32),
+ 	[1] = DEFINE_RES_MEM(S3C2410_CS4 + (1 << 26) + (6 * 32), 32),
+-	[2] = DEFINE_RES_IRQ(IRQ_IDE0),
++	[2] = DEFINE_RES_IRQ(ANUBIS_IRQ_IDE0),
+ };
+ 
+ static struct platform_device anubis_device_ide1 = {
+@@ -279,7 +276,7 @@ static struct ax_plat_data anubis_asix_platdata = {
+ 
+ static struct resource anubis_asix_resource[] = {
+ 	[0] = DEFINE_RES_MEM(S3C2410_CS5, 0x20 * 0x20),
+-	[1] = DEFINE_RES_IRQ(IRQ_ASIX),
++	[1] = DEFINE_RES_IRQ(ANUBIS_IRQ_ASIX),
+ };
+ 
+ static struct platform_device anubis_device_asix = {
 -- 
 1.7.10.4
