@@ -1,70 +1,113 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/2] ARM: dts: Fix compatible value of pinctrl module on
- EXYNOS5440
-Date: Wed, 02 Jan 2013 16:20:22 -0800
-Message-ID: <1357172423-8217-1-git-send-email-kgene.kim@samsung.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v2 00/11] ARM: S3C24XX: rework irq handling for a later dt usage
+Date: Thu, 3 Jan 2013 01:48:34 +0100
+Message-ID: <201301030148.35569.heiko@sntech.de>
+References: <201301012251.15899.heiko@sntech.de> <042901cde941$bb8d2d30$32a78790$@samsung.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45281 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752853Ab3ACA11 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:46042 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753050Ab3ACAsq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jan 2013 19:27:27 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MG000JO3X9MV030@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 09:27:25 +0900 (KST)
-Received: from localhost.localdomain ([105.128.18.183])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MG000A0GX9LNY20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 09:27:25 +0900 (KST)
+	Wed, 2 Jan 2013 19:48:46 -0500
+In-Reply-To: <042901cde941$bb8d2d30$32a78790$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+Am Donnerstag, 3. Januar 2013, 00:34:36 schrieb Kukjin Kim:
+> Heiko St=C3=BCbner wrote:
+> > Second version of redoing the s3c24xx irqs in a generic way by usin=
+g a
+> > declarative approach.
+> >=20
+> > Changes include further generalizations resulting only in common
+> > irq-type declarations being needed and thus again easier code.
+> >=20
+> > As in the first version, the 1st patch might be hard to read due to=
+ the
+> > rewrite character, but I didn't see a way to do these changes in
+> > individual steps. So it might be helpful to look at the result afte=
+r
+> > applying this patch.
+> >=20
+> > Runtime-tested on a s3c2416 based board and compile tested for the
+> > others.
+> >=20
+> > As also written before, inclusion of the other S3C24XX SoCs to foll=
+ow
+> > once the general approach is acceptable.
+> >=20
+> > Heiko Stuebner (11):
+> >   ARM: S3C24XX: transform irq handling into a declarative form
+> >   ARM: S3C24XX: move irq-pm code into main irq file
+> >   ARM: S3C24XX: cleanup irq-pm integration
+> >   ARM: S3C24XX: move s3c2416 irq init to common irq code
+> >   ARM: S3C24XX: modify s3c2416 irq init to initialize all irqs
+> >   ARM: S3C24XX: assimilate s3c2416 subirqs into new structure
+> >   ARM: S3C24XX: assimilate second s3c2416 interrupt into new struct=
+ure
+> >   ARM: S3C24XX: move s3c2443 irq code to irq.c
+> >   ARM: S3C24XX: modify s3c2443 irq init to initialize all irqs
+> >   ARM: S3C24XX: assimilate s3c2443 subirqs into new structure
+> >   ARM: S3C24XX: remove maskack irq ack funtions
+> > =20
+> >  arch/arm/mach-s3c24xx/Makefile               |    6 +-
+> >  arch/arm/mach-s3c24xx/common.h               |    2 +
+> >  arch/arm/mach-s3c24xx/irq-pm.c               |   95 ---
+> >  arch/arm/mach-s3c24xx/irq-s3c2416.c          |  348 --------
+> >  arch/arm/mach-s3c24xx/irq-s3c2443.c          |  281 -------
+> >  arch/arm/mach-s3c24xx/mach-smdk2416.c        |    2 +-
+> >  arch/arm/mach-s3c24xx/mach-smdk2443.c        |    2 +-
+> >  arch/arm/mach-s3c24xx/s3c2410.c              |    4 +-
+> >  arch/arm/mach-s3c24xx/s3c2412.c              |    4 +-
+> >  arch/arm/mach-s3c24xx/s3c2416.c              |    4 +-
+> >  arch/arm/mach-s3c24xx/s3c2440.c              |    4 +-
+> >  arch/arm/mach-s3c24xx/s3c2442.c              |    4 +-
+> >  arch/arm/plat-s3c24xx/Kconfig                |    1 +
+> >  arch/arm/plat-s3c24xx/irq.c                  | 1092
+> >  +++++++++++++++----------- arch/arm/plat-samsung/include/plat/pm.h=
+    =20
+> >  |    6 -
+> >  arch/arm/plat-samsung/include/plat/s3c2416.h |    1 +
+> >  arch/arm/plat-samsung/include/plat/s3c2443.h |    2 +
+> >  17 files changed, 649 insertions(+), 1209 deletions(-)
+> >  delete mode 100644 arch/arm/mach-s3c24xx/irq-pm.c
+> >  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2416.c
+> >  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2443.c
+>=20
+> Hi Heiko,
+>=20
+> Happy New Year!
 
-Fix the incorrect compatible property value of pin-controller module
-EXYNOS5440 SoC.
+a happy new year to you too
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>
-[kgene.kim@samsung.com: fixed it in gpio together for exynos5440]
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Cc: devicetree-discuss@lists.ozlabs.org
----
- arch/arm/boot/dts/exynos5440.dtsi |    2 +-
- drivers/gpio/gpio-samsung.c       |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> Basically, looks OK but will look at in this weekend :-)
 
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index 024269d..25f0fa6 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -86,7 +86,7 @@
- 	};
- 
- 	pinctrl {
--		compatible = "samsung,pinctrl-exynos5440";
-+		compatible = "samsung,exynos5440-pinctrl";
- 		reg = <0xE0000 0x1000>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index 953737d..cac4b45 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -3026,7 +3026,7 @@ static __init int samsung_gpiolib_init(void)
- 	static const struct of_device_id exynos_pinctrl_ids[] = {
- 		{ .compatible = "samsung,pinctrl-exynos4210", },
- 		{ .compatible = "samsung,pinctrl-exynos4x12", },
--		{ .compatible = "samsung,pinctrl-exynos5440", },
-+		{ .compatible = "samsung,exynos5440-pinctrl", },
- 	};
- 	for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
- 		if (pctrl_np && of_device_is_available(pctrl_np))
--- 
-1.7.10.4
+cool :-)
+
+> BTW, I have no idea why you want to keep the irq.c in plat-s3c24xx. A=
+s I
+> said, I'm cleaning up the plat-s3c24xx directory and it will be going
+> away.
+
+As you might have seen I tried to move it to drivers/irqchip in the pas=
+t and=20
+it seems only drivers using the new irqchip init stuff should go there =
+now.
+
+So I left it where it is for now, to see how far I get with the modific=
+ations=20
+first. So, as drivers/irqchip is out of the question for now, should we=
+ move=20
+it to mach-s3c24xx in the meantime?
+
+As I still need to also send the redone devicetree patches on top of th=
+is=20
+series, I could do the move there to a location you prefer :-)
+
+
+Heiko
