@@ -1,103 +1,201 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 00/11] ARM: S3C24XX: rework irq handling for a later dt
- usage
-Date: Wed, 02 Jan 2013 15:34:36 -0800
-Message-ID: <042901cde941$bb8d2d30$32a78790$@samsung.com>
-References: <201301012251.15899.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH 2/2] ARM: dts: fix compatible value for exynos pinctrl
+Date: Wed, 02 Jan 2013 16:20:23 -0800
+Message-ID: <1357172423-8217-2-git-send-email-kgene.kim@samsung.com>
+References: <1357172423-8217-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:48384 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:55963 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752711Ab3ABXev convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1753023Ab3ACA12 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jan 2013 18:34:51 -0500
+	Wed, 2 Jan 2013 19:27:28 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MG000EMJUTU7A50@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 08:34:50 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
+ 17 2011)) with ESMTP id <0MG000NJKX943B20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 09:27:27 +0900 (KST)
+Received: from localhost.localdomain ([105.128.18.183])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MG0007HTUTZQH10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 08:34:49 +0900 (KST)
-In-reply-to: <201301012251.15899.heiko@sntech.de>
-Content-language: en-us
+ with ESMTPA id <0MG000A0GX9LNY20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Jan 2013 09:27:26 +0900 (KST)
+In-reply-to: <1357172423-8217-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: ben-linux@fluff.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, devicetree-discuss@lists.ozlabs.org
 
-Heiko St=C3=BCbner wrote:
->=20
-> Second version of redoing the s3c24xx irqs in a generic way by using =
-a
-> declarative approach.
->=20
-> Changes include further generalizations resulting only in common
-> irq-type declarations being needed and thus again easier code.
->=20
-> As in the first version, the 1st patch might be hard to read due to t=
-he
-> rewrite character, but I didn't see a way to do these changes in indi=
-vidual
-> steps. So it might be helpful to look at the result after applying th=
-is patch.
->=20
-> Runtime-tested on a s3c2416 based board and compile tested for the ot=
-hers.
->=20
-> As also written before, inclusion of the other S3C24XX SoCs to follow=
- once
-> the general approach is acceptable.
->=20
-> Heiko Stuebner (11):
->   ARM: S3C24XX: transform irq handling into a declarative form
->   ARM: S3C24XX: move irq-pm code into main irq file
->   ARM: S3C24XX: cleanup irq-pm integration
->   ARM: S3C24XX: move s3c2416 irq init to common irq code
->   ARM: S3C24XX: modify s3c2416 irq init to initialize all irqs
->   ARM: S3C24XX: assimilate s3c2416 subirqs into new structure
->   ARM: S3C24XX: assimilate second s3c2416 interrupt into new structur=
-e
->   ARM: S3C24XX: move s3c2443 irq code to irq.c
->   ARM: S3C24XX: modify s3c2443 irq init to initialize all irqs
->   ARM: S3C24XX: assimilate s3c2443 subirqs into new structure
->   ARM: S3C24XX: remove maskack irq ack funtions
->=20
->  arch/arm/mach-s3c24xx/Makefile               |    6 +-
->  arch/arm/mach-s3c24xx/common.h               |    2 +
->  arch/arm/mach-s3c24xx/irq-pm.c               |   95 ---
->  arch/arm/mach-s3c24xx/irq-s3c2416.c          |  348 --------
->  arch/arm/mach-s3c24xx/irq-s3c2443.c          |  281 -------
->  arch/arm/mach-s3c24xx/mach-smdk2416.c        |    2 +-
->  arch/arm/mach-s3c24xx/mach-smdk2443.c        |    2 +-
->  arch/arm/mach-s3c24xx/s3c2410.c              |    4 +-
->  arch/arm/mach-s3c24xx/s3c2412.c              |    4 +-
->  arch/arm/mach-s3c24xx/s3c2416.c              |    4 +-
->  arch/arm/mach-s3c24xx/s3c2440.c              |    4 +-
->  arch/arm/mach-s3c24xx/s3c2442.c              |    4 +-
->  arch/arm/plat-s3c24xx/Kconfig                |    1 +
->  arch/arm/plat-s3c24xx/irq.c                  | 1092 +++++++++++++++-=
-----------
->  arch/arm/plat-samsung/include/plat/pm.h      |    6 -
->  arch/arm/plat-samsung/include/plat/s3c2416.h |    1 +
->  arch/arm/plat-samsung/include/plat/s3c2443.h |    2 +
->  17 files changed, 649 insertions(+), 1209 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/irq-pm.c
->  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2416.c
->  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2443.c
->=20
-Hi Heiko,
+Fix the incorrect compatible property value of pinctrl for EXYNOS4 SoCs.
 
-Happy New Year!
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grant Likely <grant.likely@secretlab.ca>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org
+---
+ .../devicetree/bindings/pinctrl/samsung-pinctrl.txt        |   12 ++++++------
+ arch/arm/boot/dts/exynos4210.dtsi                          |    6 +++---
+ arch/arm/boot/dts/exynos4x12.dtsi                          |    8 ++++----
+ arch/arm/mach-exynos/common.c                              |    4 ++--
+ drivers/gpio/gpio-samsung.c                                |    4 ++--
+ drivers/pinctrl/pinctrl-samsung.c                          |    4 ++--
+ 6 files changed, 19 insertions(+), 19 deletions(-)
 
-Basically, looks OK but will look at in this weekend :-)
-
-BTW, I have no idea why you want to keep the irq.c in plat-s3c24xx. As =
-I said, I'm cleaning up the plat-s3c24xx directory and it will be going=
- away.
-
-- Kukjin
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+index e97a278..4598a47 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+@@ -7,9 +7,9 @@ on-chip controllers onto these pads.
+ 
+ Required Properties:
+ - compatible: should be one of the following.
+-  - "samsung,pinctrl-exynos4210": for Exynos4210 compatible pin-controller.
+-  - "samsung,pinctrl-exynos4x12": for Exynos4x12 compatible pin-controller.
+-  - "samsung,pinctrl-exynos5250": for Exynos5250 compatible pin-controller.
++  - "samsung,exynos4210-pinctrl": for Exynos4210 compatible pin-controller.
++  - "samsung,exynos4x12-pinctrl": for Exynos4x12 compatible pin-controller.
++  - "samsung,exynos5250-pinctrl": for Exynos5250 compatible pin-controller.
+ 
+ - reg: Base address of the pin controller hardware module and length of
+   the address space it occupies.
+@@ -142,7 +142,7 @@ the following format 'pinctrl{n}' where n is a unique number for the alias.
+ Example: A pin-controller node with pin banks:
+ 
+ 	pinctrl_0: pinctrl@11400000 {
+-		compatible = "samsung,pinctrl-exynos4210";
++		compatible = "samsung,exynos4210-pinctrl";
+ 		reg = <0x11400000 0x1000>;
+ 		interrupts = <0 47 0>;
+ 
+@@ -185,7 +185,7 @@ Example: A pin-controller node with pin banks:
+ Example 1: A pin-controller node with pin groups.
+ 
+ 	pinctrl_0: pinctrl@11400000 {
+-		compatible = "samsung,pinctrl-exynos4210";
++		compatible = "samsung,exynos4210-pinctrl";
+ 		reg = <0x11400000 0x1000>;
+ 		interrupts = <0 47 0>;
+ 
+@@ -230,7 +230,7 @@ Example 1: A pin-controller node with pin groups.
+ Example 2: A pin-controller node with external wakeup interrupt controller node.
+ 
+ 	pinctrl_1: pinctrl@11000000 {
+-		compatible = "samsung,pinctrl-exynos4210";
++		compatible = "samsung,exynos4210-pinctrl";
+ 		reg = <0x11000000 0x1000>;
+ 		interrupts = <0 46 0>
+ 
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index e31bfc4..2feffc7 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -48,13 +48,13 @@
+ 	};
+ 
+ 	pinctrl_0: pinctrl@11400000 {
+-		compatible = "samsung,pinctrl-exynos4210";
++		compatible = "samsung,exynos4210-pinctrl";
+ 		reg = <0x11400000 0x1000>;
+ 		interrupts = <0 47 0>;
+ 	};
+ 
+ 	pinctrl_1: pinctrl@11000000 {
+-		compatible = "samsung,pinctrl-exynos4210";
++		compatible = "samsung,exynos4210-pinctrl";
+ 		reg = <0x11000000 0x1000>;
+ 		interrupts = <0 46 0>;
+ 
+@@ -66,7 +66,7 @@
+ 	};
+ 
+ 	pinctrl_2: pinctrl@03860000 {
+-		compatible = "samsung,pinctrl-exynos4210";
++		compatible = "samsung,exynos4210-pinctrl";
+ 		reg = <0x03860000 0x1000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 179a62e..9a87806 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -37,13 +37,13 @@
+ 	};
+ 
+ 	pinctrl_0: pinctrl@11400000 {
+-		compatible = "samsung,pinctrl-exynos4x12";
++		compatible = "samsung,exynos4x12-pinctrl";
+ 		reg = <0x11400000 0x1000>;
+ 		interrupts = <0 47 0>;
+ 	};
+ 
+ 	pinctrl_1: pinctrl@11000000 {
+-		compatible = "samsung,pinctrl-exynos4x12";
++		compatible = "samsung,exynos4x12-pinctrl";
+ 		reg = <0x11000000 0x1000>;
+ 		interrupts = <0 46 0>;
+ 
+@@ -55,14 +55,14 @@
+ 	};
+ 
+ 	pinctrl_2: pinctrl@03860000 {
+-		compatible = "samsung,pinctrl-exynos4x12";
++		compatible = "samsung,exynos4x12-pinctrl";
+ 		reg = <0x03860000 0x1000>;
+ 		interrupt-parent = <&combiner>;
+ 		interrupts = <10 0>;
+ 	};
+ 
+ 	pinctrl_3: pinctrl@106E0000 {
+-		compatible = "samsung,pinctrl-exynos4x12";
++		compatible = "samsung,exynos4x12-pinctrl";
+ 		reg = <0x106E0000 0x1000>;
+ 		interrupts = <0 72 0>;
+ 	};
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index d6d0dc6..3777a41 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -1024,8 +1024,8 @@ static int __init exynos_init_irq_eint(void)
+ 	 * interrupt support code here can be completely removed.
+ 	 */
+ 	static const struct of_device_id exynos_pinctrl_ids[] = {
+-		{ .compatible = "samsung,pinctrl-exynos4210", },
+-		{ .compatible = "samsung,pinctrl-exynos4x12", },
++		{ .compatible = "samsung,exynos4210-pinctrl", },
++		{ .compatible = "samsung,exynos4x12-pinctrl", },
+ 	};
+ 	struct device_node *pctrl_np, *wkup_np;
+ 	const char *wkup_compat = "samsung,exynos4210-wakeup-eint";
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index cac4b45..8c00f7d 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -3024,8 +3024,8 @@ static __init int samsung_gpiolib_init(void)
+ 	*/
+ 	struct device_node *pctrl_np;
+ 	static const struct of_device_id exynos_pinctrl_ids[] = {
+-		{ .compatible = "samsung,pinctrl-exynos4210", },
+-		{ .compatible = "samsung,pinctrl-exynos4x12", },
++		{ .compatible = "samsung,exynos4210-pinctrl", },
++		{ .compatible = "samsung,exynos4x12-pinctrl", },
+ 		{ .compatible = "samsung,exynos5440-pinctrl", },
+ 	};
+ 	for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
+diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+index 864fed8..602b30b 100644
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@ -945,9 +945,9 @@ static int __devinit samsung_pinctrl_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+-	{ .compatible = "samsung,pinctrl-exynos4210",
++	{ .compatible = "samsung,exynos4210-pinctrl",
+ 		.data = (void *)exynos4210_pin_ctrl },
+-	{ .compatible = "samsung,pinctrl-exynos4x12",
++	{ .compatible = "samsung,exynos4x12-pinctrl",
+ 		.data = (void *)exynos4x12_pin_ctrl },
+ 	{},
+ };
+-- 
+1.7.10.4
