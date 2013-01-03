@@ -1,78 +1,55 @@
-From: Bryan Evenson <bevenson@melinkcorp.com>
-Subject: RE: Early kernel hang with big DTB appended
-Date: Thu, 3 Jan 2013 13:40:43 -0500
-Message-ID: <91586D499ADFD74FBCFB8425266A5DE40139F1B06030@pluto.melinkcorp.local>
-References: <7811936.npteFbuYu2@amdc1227>
+From: H Hartley Sweeten <hartleys@visionengravers.com>
+Subject: RE: [PATCH v4 14/19] ARM: remove unneeded vic.h includes
+Date: Thu, 3 Jan 2013 13:52:01 -0600
+Message-ID: <ADE657CA350FB648AAC2C43247A983F00206D69AB47F@AUSP01VMBX24.collaborationhost.net>
+References: <1357235668-9450-1-git-send-email-robherring2@gmail.com>
+ <1357235668-9450-15-git-send-email-robherring2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <7811936.npteFbuYu2@amdc1227>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail131.messagelabs.com ([216.82.242.99]:48349 "EHLO
+	mail131.messagelabs.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753710Ab3ACTwS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 3 Jan 2013 14:52:18 -0500
+In-Reply-To: <1357235668-9450-15-git-send-email-robherring2@gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "nico@linaro.org" <nico@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "bones@secretlab.ca" <bones@secretlab.ca>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, "thomas.petazzoni@free-electrons.com" <thomas.petazzoni@free-electrons.com>, Rob Herring <rob.herring@calxeda.com>, Ryan Mallon <rmallon@gmail.com>, Hubert Feurstein <hubert.feurstein@contec.at>, Alessandro Rubini <rubini@unipv.it>, Linus Walleij <linus.walleij@linaro.org>, STEricsson <STEricsson_nomadik_linux@list.st.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kyungmin Park <kyungmin.park@samsung.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "patches@opensource.wolfsonmicro.com" <patches@opensource.wolfsonmicro.com>
 
-> -----Original Message-----
-> From: linux-arm-kernel-bounces@lists.infradead.org [mailto:linux-arm-
-> kernel-bounces@lists.infradead.org] On Behalf Of Tomasz Figa
-> Sent: Thursday, January 03, 2013 10:55 AM
-> To: devicetree-discuss@lists.ozlabs.org
-> Cc: linux-samsung-soc@vger.kernel.org; linux@arm.linux.org.uk;
-> nico@linaro.org; kgene.kim@samsung.com; thomas.abraham@linaro.org;
-> bones@secretlab.ca; linux-arm-kernel@lists.infradead.org
-> Subject: Early kernel hang with big DTB appended
-> 
-> Hi,
-> 
-> I'm observing strange behavior when booting 3.8-rc1 and -rc2 with
-> appended DTB. The kernel hangs very early when the DTB is bigger than
-> some threshold somewhere around 24 KiB. With fullest possible low level
-> UART debugging (and printk patched to use printascii) I'm receiving
-> following
-> output:
-> 
-> Uncompressing Linux... done, booting the kernel.
-> Booting Linux on physical CPU 0xa00
-> Linux version 3.8.0-rc1-00073-gdf6efca-dirty (t.figa@amdc1227) (gcc
-> version 4.5.2 (Gentoo 4.5.2 p1.2, pie-0.4.5) ) #2 SMP PREEMPT Thu Jan 3
-> 15:37:35 CET 2013
-> CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d
-> CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction
-> cache
-> 
-> I tested on two Exynos-based boards (exynos4210-trats and one internal
-> exynos4412-based board) and same happens on both.
-> 
-> Do you have any ideas?
+On Thursday, January 03, 2013 10:54 AM, Rob Herring wrote:
+> From: Rob Herring <rob.herring@calxeda.com>
+>
+> Numerous includes of asm/hardware/vic.h aren't needed, so remove them.
+>
+> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+> Cc: Hartley Sweeten <hsweeten@visionengravers.com>
+> Cc: Ryan Mallon <rmallon@gmail.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Hubert Feurstein <hubert.feurstein@contec.at>
+> Cc: Alessandro Rubini <rubini@unipv.it>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: STEricsson <STEricsson_nomadik_linux@list.st.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: patches@opensource.wolfsonmicro.com
+> ---
+>  arch/arm/mach-ep93xx/adssphere.c              |    1 -
+>  arch/arm/mach-ep93xx/edb93xx.c                |    1 -
+>  arch/arm/mach-ep93xx/gesbc9312.c              |    1 -
+>  arch/arm/mach-ep93xx/micro9.c                 |    1 -
+>  arch/arm/mach-ep93xx/simone.c                 |    1 -
+>  arch/arm/mach-ep93xx/snappercl15.c            |    1 -
+>  arch/arm/mach-ep93xx/ts72xx.c                 |    1 -
+>  arch/arm/mach-ep93xx/vision_ep9307.c          |    1 -
 
-Tomasz,
+For ep93xx:
 
-Sounds to me like the DTB is not being fully written to memory or that it isn't being fully read from memory.  I've had similar problems when I placed the DTB too close to the end of flash and not all of the DTB was written to flash.
-
-If you load a debug build of U-Boot, I believe there are a number of debug messages related to loading the device tree that U-Boot prints.  Then you can at least verify that U-Boot is loading the entire device tree.
-
-Regards,
-Bryan
-
-> 
-> Best regards,
-> --
-> Tomasz Figa
-> Samsung Poland R&D Center
-> SW Solution Development, Linux Platform
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
