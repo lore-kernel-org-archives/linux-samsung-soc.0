@@ -1,7 +1,8 @@
 From: Rob Herring <robherring2@gmail.com>
-Subject: [PATCH v4 14/19] ARM: remove unneeded vic.h includes
-Date: Thu,  3 Jan 2013 11:54:23 -0600
-Message-ID: <1357235668-9450-15-git-send-email-robherring2@gmail.com>
+Subject: [PATCH v4 19/19] irqchip: Move ARM vic.h to
+ include/linux/irqchip/arm-vic.h
+Date: Thu,  3 Jan 2013 11:54:28 -0600
+Message-ID: <1357235668-9450-20-git-send-email-robherring2@gmail.com>
 References: <1357235668-9450-1-git-send-email-robherring2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -18,370 +19,144 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: thomas.petazzoni@free-electrons.com, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ryan Mallon <rmallon@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, patches@opensource.wolfsonmicro.com, Rob Herring <rob.herring@calxeda.com>, Hubert Feurstein <hubert.feurstein@contec.at>, Hartley Sweeten <hsweeten@visionengravers.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Olof Johansson <olof@lixom.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, STEricsson <STEricsson_nomadik_linux@list.st.com>, Alessandro Rubini <rubini@unipv.it>
+Cc: thomas.petazzoni@free-electrons.com, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ryan Mallon <rmallon@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Hartley Sweeten <hsweeten@visionengravers.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, STEricsson <STEricsson_nomadik_linux@list.st.com>, Alessandro Rubini <rubini@unipv.it>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Rob Herring <rob.herring@calxeda.com>
 
-Numerous includes of asm/hardware/vic.h aren't needed, so remove them.
+Now that we have VIC moved to drivers/irqchip and all VIC DT init for
+platforms using irqchip_init, move gic.h and update the remaining
+includes.
 
 Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Hartley Sweeten <hsweeten@visionengravers.com>
 Cc: Ryan Mallon <rmallon@gmail.com>
 Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Hubert Feurstein <hubert.feurstein@contec.at>
 Cc: Alessandro Rubini <rubini@unipv.it>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: STEricsson <STEricsson_nomadik_linux@list.st.com>
 Cc: Ben Dooks <ben-linux@fluff.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
 Cc: linux-samsung-soc@vger.kernel.org
-Cc: patches@opensource.wolfsonmicro.com
 ---
- arch/arm/mach-ep93xx/adssphere.c              |    1 -
- arch/arm/mach-ep93xx/edb93xx.c                |    1 -
- arch/arm/mach-ep93xx/gesbc9312.c              |    1 -
- arch/arm/mach-ep93xx/micro9.c                 |    1 -
- arch/arm/mach-ep93xx/simone.c                 |    1 -
- arch/arm/mach-ep93xx/snappercl15.c            |    1 -
- arch/arm/mach-ep93xx/ts72xx.c                 |    1 -
- arch/arm/mach-ep93xx/vision_ep9307.c          |    1 -
- arch/arm/mach-netx/nxdb500.c                  |    1 -
- arch/arm/mach-netx/nxdkn.c                    |    1 -
- arch/arm/mach-netx/nxeb500hmi.c               |    1 -
- arch/arm/mach-nomadik/board-nhk8815.c         |    1 -
- arch/arm/mach-s3c64xx/mach-anw6410.c          |    1 -
- arch/arm/mach-s3c64xx/mach-crag6410.c         |    1 -
- arch/arm/mach-s3c64xx/mach-hmt.c              |    1 -
- arch/arm/mach-s3c64xx/mach-mini6410.c         |    1 -
- arch/arm/mach-s3c64xx/mach-ncp.c              |    1 -
- arch/arm/mach-s3c64xx/mach-real6410.c         |    1 -
- arch/arm/mach-s3c64xx/mach-smartq5.c          |    1 -
- arch/arm/mach-s3c64xx/mach-smartq7.c          |    1 -
- arch/arm/mach-s3c64xx/mach-smdk6400.c         |    1 -
- arch/arm/mach-s3c64xx/mach-smdk6410.c         |    1 -
- arch/arm/mach-s5p64x0/mach-smdk6440.c         |    1 -
- arch/arm/mach-s5p64x0/mach-smdk6450.c         |    1 -
- arch/arm/mach-s5pc100/mach-smdkc100.c         |    1 -
- arch/arm/mach-s5pv210/include/mach/regs-irq.h |    1 -
- arch/arm/mach-s5pv210/mach-aquila.c           |    1 -
- arch/arm/mach-s5pv210/mach-goni.c             |    1 -
- arch/arm/mach-s5pv210/mach-smdkc110.c         |    1 -
- arch/arm/mach-s5pv210/mach-smdkv210.c         |    1 -
- arch/arm/mach-s5pv210/mach-torbreck.c         |    1 -
- arch/arm/mach-sunxi/sunxi.c                   |    1 -
- arch/arm/mach-versatile/versatile_ab.c        |    1 -
- arch/arm/mach-versatile/versatile_dt.c        |    1 -
- arch/arm/mach-versatile/versatile_pb.c        |    1 -
- 35 files changed, 35 deletions(-)
+ arch/arm/mach-ep93xx/core.c                                         |    3 +--
+ arch/arm/mach-netx/generic.c                                        |    2 +-
+ arch/arm/mach-nomadik/cpu-8815.c                                    |    2 +-
+ arch/arm/mach-s3c64xx/common.c                                      |    2 +-
+ arch/arm/mach-s3c64xx/include/mach/regs-irq.h                       |    1 -
+ arch/arm/mach-s3c64xx/include/mach/tick.h                           |    2 ++
+ arch/arm/mach-s5p64x0/include/mach/regs-irq.h                       |    1 -
+ arch/arm/mach-s5pc100/include/mach/regs-irq.h                       |    1 -
+ arch/arm/mach-s5pc100/include/mach/tick.h                           |    2 ++
+ arch/arm/mach-u300/core.c                                           |    2 +-
+ arch/arm/mach-versatile/core.c                                      |    2 +-
+ arch/arm/plat-samsung/s5p-irq-eint.c                                |    2 --
+ arch/arm/plat-samsung/s5p-irq.c                                     |    3 +--
+ drivers/irqchip/irq-vic.c                                           |    2 +-
+ .../include/asm/hardware/vic.h => include/linux/irqchip/arm-vic.h   |    1 -
+ 15 files changed, 12 insertions(+), 16 deletions(-)
+ rename arch/arm/include/asm/hardware/vic.h => include/linux/irqchip/arm-vic.h (94%)
 
-diff --git a/arch/arm/mach-ep93xx/adssphere.c b/arch/arm/mach-ep93xx/adssphere.c
-index 03f793e..19332bf 100644
---- a/arch/arm/mach-ep93xx/adssphere.c
-+++ b/arch/arm/mach-ep93xx/adssphere.c
-@@ -17,7 +17,6 @@
+diff --git a/arch/arm/mach-ep93xx/core.c b/arch/arm/mach-ep93xx/core.c
+index e85bf17..c533f37 100644
+--- a/arch/arm/mach-ep93xx/core.c
++++ b/arch/arm/mach-ep93xx/core.c
+@@ -34,6 +34,7 @@
+ #include <linux/i2c-gpio.h>
+ #include <linux/spi/spi.h>
+ #include <linux/export.h>
++#include <linux/irqchip/arm-vic.h>
  
  #include <mach/hardware.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-ep93xx/edb93xx.c b/arch/arm/mach-ep93xx/edb93xx.c
-index 4423a1e..5abf2cb 100644
---- a/arch/arm/mach-ep93xx/edb93xx.c
-+++ b/arch/arm/mach-ep93xx/edb93xx.c
-@@ -39,7 +39,6 @@
- #include <linux/platform_data/spi-ep93xx.h>
- #include <mach/gpio-ep93xx.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-ep93xx/gesbc9312.c b/arch/arm/mach-ep93xx/gesbc9312.c
-index 6df752f..2a7375b 100644
---- a/arch/arm/mach-ep93xx/gesbc9312.c
-+++ b/arch/arm/mach-ep93xx/gesbc9312.c
-@@ -17,7 +17,6 @@
- 
- #include <mach/hardware.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-ep93xx/micro9.c b/arch/arm/mach-ep93xx/micro9.c
-index 6a66cda..723c0d3 100644
---- a/arch/arm/mach-ep93xx/micro9.c
-+++ b/arch/arm/mach-ep93xx/micro9.c
-@@ -18,7 +18,6 @@
- 
- #include <mach/hardware.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-ep93xx/simone.c b/arch/arm/mach-ep93xx/simone.c
-index a5dba8f..651a7db 100644
---- a/arch/arm/mach-ep93xx/simone.c
-+++ b/arch/arm/mach-ep93xx/simone.c
-@@ -25,7 +25,6 @@
  #include <linux/platform_data/video-ep93xx.h>
- #include <mach/gpio-ep93xx.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-ep93xx/snappercl15.c b/arch/arm/mach-ep93xx/snappercl15.c
-index 6be24c0..b4389d3 100644
---- a/arch/arm/mach-ep93xx/snappercl15.c
-+++ b/arch/arm/mach-ep93xx/snappercl15.c
-@@ -31,7 +31,6 @@
- #include <linux/platform_data/video-ep93xx.h>
- #include <mach/gpio-ep93xx.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-ep93xx/ts72xx.c b/arch/arm/mach-ep93xx/ts72xx.c
-index 66703f7..1eeee09 100644
---- a/arch/arm/mach-ep93xx/ts72xx.c
-+++ b/arch/arm/mach-ep93xx/ts72xx.c
-@@ -22,7 +22,6 @@
- 
- #include <mach/hardware.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
+@@ -44,8 +45,6 @@
  #include <asm/mach/map.h>
- #include <asm/mach/arch.h>
-diff --git a/arch/arm/mach-ep93xx/vision_ep9307.c b/arch/arm/mach-ep93xx/vision_ep9307.c
-index 88303a2..723d048 100644
---- a/arch/arm/mach-ep93xx/vision_ep9307.c
-+++ b/arch/arm/mach-ep93xx/vision_ep9307.c
-@@ -34,7 +34,6 @@
- #include <linux/platform_data/spi-ep93xx.h>
- #include <mach/gpio-ep93xx.h>
+ #include <asm/mach/time.h>
  
 -#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
+-
+ #include "soc.h"
+ 
+ /*************************************************************************
+diff --git a/arch/arm/mach-netx/generic.c b/arch/arm/mach-netx/generic.c
+index aa62746..27c2cb7 100644
+--- a/arch/arm/mach-netx/generic.c
++++ b/arch/arm/mach-netx/generic.c
+@@ -23,9 +23,9 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
++#include <linux/irqchip/arm-vic.h>
+ #include <mach/hardware.h>
  #include <asm/mach/map.h>
- #include <asm/mach/arch.h>
-diff --git a/arch/arm/mach-netx/nxdb500.c b/arch/arm/mach-netx/nxdb500.c
-index fe40c52..04d5e5e 100644
---- a/arch/arm/mach-netx/nxdb500.c
-+++ b/arch/arm/mach-netx/nxdb500.c
-@@ -28,7 +28,6 @@
- #include <mach/hardware.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
 -#include <asm/hardware/vic.h>
  #include <mach/netx-regs.h>
- #include <linux/platform_data/eth-netx.h>
+ #include <asm/mach/irq.h>
  
-diff --git a/arch/arm/mach-netx/nxdkn.c b/arch/arm/mach-netx/nxdkn.c
-index e09d0d4..cf15bdd 100644
---- a/arch/arm/mach-netx/nxdkn.c
-+++ b/arch/arm/mach-netx/nxdkn.c
-@@ -28,7 +28,6 @@
- #include <mach/hardware.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
--#include <asm/hardware/vic.h>
- #include <mach/netx-regs.h>
- #include <linux/platform_data/eth-netx.h>
- 
-diff --git a/arch/arm/mach-netx/nxeb500hmi.c b/arch/arm/mach-netx/nxeb500hmi.c
-index 169172b..069bd26 100644
---- a/arch/arm/mach-netx/nxeb500hmi.c
-+++ b/arch/arm/mach-netx/nxeb500hmi.c
-@@ -28,7 +28,6 @@
- #include <mach/hardware.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
--#include <asm/hardware/vic.h>
- #include <mach/netx-regs.h>
- #include <linux/platform_data/eth-netx.h>
- 
-diff --git a/arch/arm/mach-nomadik/board-nhk8815.c b/arch/arm/mach-nomadik/board-nhk8815.c
-index 9c15879..edb3f8a 100644
---- a/arch/arm/mach-nomadik/board-nhk8815.c
-+++ b/arch/arm/mach-nomadik/board-nhk8815.c
-@@ -28,7 +28,6 @@
+diff --git a/arch/arm/mach-nomadik/cpu-8815.c b/arch/arm/mach-nomadik/cpu-8815.c
+index 1273931..3514046 100644
+--- a/arch/arm/mach-nomadik/cpu-8815.c
++++ b/arch/arm/mach-nomadik/cpu-8815.c
+@@ -25,13 +25,13 @@
+ #include <linux/slab.h>
+ #include <linux/irq.h>
+ #include <linux/dma-mapping.h>
++#include <linux/irqchip/arm-vic.h>
+ #include <linux/platform_data/clk-nomadik.h>
  #include <linux/platform_data/pinctrl-nomadik.h>
- #include <linux/platform_data/clocksource-nomadik-mtu.h>
- #include <linux/platform_data/mtd-nomadik-nand.h>
--#include <asm/hardware/vic.h>
- #include <asm/sizes.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-index 94c9e8a..fa570c2 100644
---- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-@@ -31,7 +31,6 @@
- #include <video/platform_lcd.h>
- #include <video/samsung_fimd.h>
  
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 29bfec2..9b6f20c 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -42,7 +42,6 @@
- 
- #include <sound/wm1250-ev1.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index 052c459..2c81bf1 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -30,7 +30,6 @@
  #include <mach/hardware.h>
+ #include <mach/irqs.h>
+ #include <asm/mach/map.h>
+-#include <asm/hardware/vic.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
+diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
+index aef303b..0b9c0ba 100644
+--- a/arch/arm/mach-s3c64xx/common.c
++++ b/arch/arm/mach-s3c64xx/common.c
+@@ -25,10 +25,10 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/irq.h>
+ #include <linux/gpio.h>
++#include <linux/irqchip/arm-vic.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+-#include <asm/hardware/vic.h>
+ #include <asm/system_misc.h>
+ 
  #include <mach/map.h>
+diff --git a/arch/arm/mach-s3c64xx/include/mach/regs-irq.h b/arch/arm/mach-s3c64xx/include/mach/regs-irq.h
+index bcce68a..6a11278 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/regs-irq.h
++++ b/arch/arm/mach-s3c64xx/include/mach/regs-irq.h
+@@ -15,6 +15,5 @@
+ #ifndef __ASM_ARCH_REGS_IRQ_H
+ #define __ASM_ARCH_REGS_IRQ_H __FILE__
  
 -#include <asm/hardware/vic.h>
- #include <asm/irq.h>
- #include <asm/mach-types.h>
  
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index b5635fe..3f1e010 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-@@ -24,7 +24,6 @@
- #include <linux/serial_core.h>
- #include <linux/types.h>
+ #endif /* __ASM_ARCH_6400_REGS_IRQ_H */
+diff --git a/arch/arm/mach-s3c64xx/include/mach/tick.h b/arch/arm/mach-s3c64xx/include/mach/tick.h
+index ebe18a9..db9c1b1 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/tick.h
++++ b/arch/arm/mach-s3c64xx/include/mach/tick.h
+@@ -15,6 +15,8 @@
+ #ifndef __ASM_ARCH_TICK_H
+ #define __ASM_ARCH_TICK_H __FILE__
  
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-index 08a445c..73caf9f 100644
---- a/arch/arm/mach-s3c64xx/mach-ncp.c
-+++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-@@ -26,7 +26,6 @@
- #include <video/platform_lcd.h>
- #include <video/samsung_fimd.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-index 5980c18..4f8129d 100644
---- a/arch/arm/mach-s3c64xx/mach-real6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-@@ -25,7 +25,6 @@
- #include <linux/serial_core.h>
- #include <linux/types.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c b/arch/arm/mach-s3c64xx/mach-smartq5.c
-index 28f3303..323399b 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq5.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
-@@ -17,7 +17,6 @@
- #include <linux/leds.h>
- #include <linux/platform_device.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq7.c b/arch/arm/mach-s3c64xx/mach-smartq7.c
-index 2d8a5d5..9077b85 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq7.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq7.c
-@@ -17,7 +17,6 @@
- #include <linux/leds.h>
- #include <linux/platform_device.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-index 9de7c26..7df76e4 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-@@ -22,7 +22,6 @@
- 
- #include <asm/mach-types.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 65fea58..ad5142a 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -45,7 +45,6 @@
- #include <video/platform_lcd.h>
- #include <video/samsung_fimd.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-index 7b752ac..e241929 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-@@ -29,7 +29,6 @@
- #include <video/platform_lcd.h>
- #include <video/samsung_fimd.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/irq.h>
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-index 97585f3..9992731 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-@@ -29,7 +29,6 @@
- #include <video/platform_lcd.h>
- #include <video/samsung_fimd.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/irq.h>
-diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index 99686de..c3f3095 100644
---- a/arch/arm/mach-s5pc100/mach-smdkc100.c
-+++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -25,7 +25,6 @@
- #include <linux/input.h>
- #include <linux/pwm_backlight.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- 
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-irq.h b/arch/arm/mach-s5pv210/include/mach/regs-irq.h
-index 5c3b104..d8bc1e6 100644
---- a/arch/arm/mach-s5pv210/include/mach/regs-irq.h
-+++ b/arch/arm/mach-s5pv210/include/mach/regs-irq.h
++#include <linux/irqchip/arm-vic.h>
++
+ /* note, the timer interrutps turn up in 2 places, the vic and then
+  * the timer block. We take the VIC as the base at the moment.
+  */
+diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-irq.h b/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
+index 4aaebda..d60397d 100644
+--- a/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
++++ b/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
 @@ -13,7 +13,6 @@
  #ifndef __ASM_ARCH_REGS_IRQ_H
  #define __ASM_ARCH_REGS_IRQ_H __FILE__
@@ -390,113 +165,123 @@ index 5c3b104..d8bc1e6 100644
  #include <mach/map.h>
  
  #endif /* __ASM_ARCH_REGS_IRQ_H */
-diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
-index 1cba073..45eb0a8 100644
---- a/arch/arm/mach-s5pv210/mach-aquila.c
-+++ b/arch/arm/mach-s5pv210/mach-aquila.c
-@@ -22,7 +22,6 @@
- #include <linux/input.h>
- #include <linux/gpio.h>
+diff --git a/arch/arm/mach-s5pc100/include/mach/regs-irq.h b/arch/arm/mach-s5pc100/include/mach/regs-irq.h
+index 4d9036d..7616278 100644
+--- a/arch/arm/mach-s5pc100/include/mach/regs-irq.h
++++ b/arch/arm/mach-s5pc100/include/mach/regs-irq.h
+@@ -14,6 +14,5 @@
+ #define __ASM_ARCH_REGS_IRQ_H __FILE__
  
+ #include <mach/map.h>
 -#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
+ 
+ #endif /* __ASM_ARCH_REGS_IRQ_H */
+diff --git a/arch/arm/mach-s5pc100/include/mach/tick.h b/arch/arm/mach-s5pc100/include/mach/tick.h
+index 20f6873..0af8e41 100644
+--- a/arch/arm/mach-s5pc100/include/mach/tick.h
++++ b/arch/arm/mach-s5pc100/include/mach/tick.h
+@@ -15,6 +15,8 @@
+ #ifndef __ASM_ARCH_TICK_H
+ #define __ASM_ARCH_TICK_H __FILE__
+ 
++#include <linux/irqchip/arm-vic.h>
++
+ /* note, the timer interrutps turn up in 2 places, the vic and then
+  * the timer block. We take the VIC as the base at the moment.
+  */
+diff --git a/arch/arm/mach-u300/core.c b/arch/arm/mach-u300/core.c
+index a9d3bcf..26b48fa 100644
+--- a/arch/arm/mach-u300/core.c
++++ b/arch/arm/mach-u300/core.c
+@@ -31,11 +31,11 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/platform_data/clk-u300.h>
+ #include <linux/platform_data/pinctrl-coh901.h>
++#include <linux/irqchip/arm-vic.h>
+ 
+ #include <asm/types.h>
  #include <asm/setup.h>
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 8f26d53..9f7f160 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -29,7 +29,6 @@
- #include <linux/interrupt.h>
- #include <linux/platform_data/s3c-hsotg.h>
- 
+ #include <asm/memory.h>
 -#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
  #include <asm/mach/map.h>
- #include <asm/setup.h>
-diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
-index 7fa0221..2f152f9 100644
---- a/arch/arm/mach-s5pv210/mach-smdkc110.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
-@@ -15,7 +15,6 @@
- #include <linux/i2c.h>
- #include <linux/device.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/setup.h>
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index ebf31ee..721967b 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -21,7 +21,6 @@
- #include <linux/pwm_backlight.h>
- #include <linux/platform_data/s3c-hsotg.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/setup.h>
-diff --git a/arch/arm/mach-s5pv210/mach-torbreck.c b/arch/arm/mach-s5pv210/mach-torbreck.c
-index 8936018..0ed270f 100644
---- a/arch/arm/mach-s5pv210/mach-torbreck.c
-+++ b/arch/arm/mach-s5pv210/mach-torbreck.c
-@@ -14,7 +14,6 @@
- #include <linux/init.h>
- #include <linux/serial_core.h>
- 
--#include <asm/hardware/vic.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/setup.h>
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index 9be910f..b1b5131 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -21,7 +21,6 @@
- 
- #include <linux/irqchip/sunxi.h>
- 
--#include <asm/hardware/vic.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-diff --git a/arch/arm/mach-versatile/versatile_ab.c b/arch/arm/mach-versatile/versatile_ab.c
-index 886d976..ddeec67 100644
---- a/arch/arm/mach-versatile/versatile_ab.c
-+++ b/arch/arm/mach-versatile/versatile_ab.c
-@@ -26,7 +26,6 @@
- 
- #include <mach/hardware.h>
- #include <asm/irq.h>
--#include <asm/hardware/vic.h>
- #include <asm/mach-types.h>
- 
- #include <asm/mach/arch.h>
-diff --git a/arch/arm/mach-versatile/versatile_dt.c b/arch/arm/mach-versatile/versatile_dt.c
-index 17782cd..f48f2e4 100644
---- a/arch/arm/mach-versatile/versatile_dt.c
-+++ b/arch/arm/mach-versatile/versatile_dt.c
-@@ -24,7 +24,6 @@
- #include <linux/init.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
--#include <asm/hardware/vic.h>
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
- 
-diff --git a/arch/arm/mach-versatile/versatile_pb.c b/arch/arm/mach-versatile/versatile_pb.c
-index 4119320..e52eb23 100644
---- a/arch/arm/mach-versatile/versatile_pb.c
-+++ b/arch/arm/mach-versatile/versatile_pb.c
-@@ -27,7 +27,6 @@
+diff --git a/arch/arm/mach-versatile/core.c b/arch/arm/mach-versatile/core.c
+index 5d59294..49ac384 100644
+--- a/arch/arm/mach-versatile/core.c
++++ b/arch/arm/mach-versatile/core.c
+@@ -32,6 +32,7 @@
+ #include <linux/amba/mmci.h>
+ #include <linux/amba/pl022.h>
  #include <linux/io.h>
- 
- #include <mach/hardware.h>
--#include <asm/hardware/vic.h>
++#include <linux/irqchip/arm-vic.h>
+ #include <linux/irqchip/versatile-fpga.h>
+ #include <linux/gfp.h>
+ #include <linux/clkdev.h>
+@@ -40,7 +41,6 @@
  #include <asm/irq.h>
+ #include <asm/hardware/arm_timer.h>
+ #include <asm/hardware/icst.h>
+-#include <asm/hardware/vic.h>
  #include <asm/mach-types.h>
  
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/plat-samsung/s5p-irq-eint.c b/arch/arm/plat-samsung/s5p-irq-eint.c
+index 974bf98..faa6516 100644
+--- a/arch/arm/plat-samsung/s5p-irq-eint.c
++++ b/arch/arm/plat-samsung/s5p-irq-eint.c
+@@ -17,8 +17,6 @@
+ #include <linux/gpio.h>
+ #include <linux/irqchip/arm-vic.h>
+ 
+-#include <asm/hardware/vic.h>
+-
+ #include <plat/regs-irqtype.h>
+ 
+ #include <mach/map.h>
+diff --git a/arch/arm/plat-samsung/s5p-irq.c b/arch/arm/plat-samsung/s5p-irq.c
+index dfb47d6..103e371 100644
+--- a/arch/arm/plat-samsung/s5p-irq.c
++++ b/arch/arm/plat-samsung/s5p-irq.c
+@@ -13,8 +13,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/io.h>
+-
+-#include <asm/hardware/vic.h>
++#include <linux/irqchip/arm-vic.h>
+ 
+ #include <mach/map.h>
+ #include <plat/regs-timer.h>
+diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
+index 554deaf..1fc2578 100644
+--- a/drivers/irqchip/irq-vic.c
++++ b/drivers/irqchip/irq-vic.c
+@@ -30,10 +30,10 @@
+ #include <linux/syscore_ops.h>
+ #include <linux/device.h>
+ #include <linux/amba/bus.h>
++#include <linux/irqchip/arm-vic.h>
+ 
+ #include <asm/exception.h>
+ #include <asm/mach/irq.h>
+-#include <asm/hardware/vic.h>
+ 
+ #include "irqchip.h"
+ 
+diff --git a/arch/arm/include/asm/hardware/vic.h b/include/linux/irqchip/arm-vic.h
+similarity index 94%
+rename from arch/arm/include/asm/hardware/vic.h
+rename to include/linux/irqchip/arm-vic.h
+index de7aad1..e3c82dc 100644
+--- a/arch/arm/include/asm/hardware/vic.h
++++ b/include/linux/irqchip/arm-vic.h
+@@ -32,6 +32,5 @@ struct pt_regs;
+ void __vic_init(void __iomem *base, int irq_start, u32 vic_sources,
+ 		u32 resume_sources, struct device_node *node);
+ void vic_init(void __iomem *base, unsigned int irq_start, u32 vic_sources, u32 resume_sources);
+-int vic_of_init(struct device_node *node, struct device_node *parent);
+ 
+ #endif
 -- 
 1.7.10.4
