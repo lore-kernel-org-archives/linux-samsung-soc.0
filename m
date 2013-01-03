@@ -1,132 +1,43 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v6 05/12] iommu/exynos: support for device tree
-Date: Thu, 03 Jan 2013 22:34:38 +0100
-Message-ID: <50E5F96E.2040703@gmail.com>
-References: <003801cde30b$d9667b90$8c3372b0$%cho@samsung.com> <50E1E62B.3090501@gmail.com> <CAHQjnOMav9A43m4=7=N9kzEHTHE_q_ygu8x6mzY6Cus=q0c06A@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 15/19] ARM: samsung: remove unused tick.h
+Date: Thu, 3 Jan 2013 21:51:32 +0000
+Message-ID: <201301032151.32337.arnd@arndb.de>
+References: <1357235668-9450-1-git-send-email-robherring2@gmail.com> <1357235668-9450-16-git-send-email-robherring2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f52.google.com ([74.125.83.52]:38015 "EHLO
-	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753643Ab3ACVen (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.10]:63708 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753737Ab3ACVvu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Jan 2013 16:34:43 -0500
-In-Reply-To: <CAHQjnOMav9A43m4=7=N9kzEHTHE_q_ygu8x6mzY6Cus=q0c06A@mail.gmail.com>
+	Thu, 3 Jan 2013 16:51:50 -0500
+In-Reply-To: <1357235668-9450-16-git-send-email-robherring2@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Hyunwoong Kim <khw0178.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, thomas.petazzoni@free-electrons.com, Rob Herring <rob.herring@calxeda.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On 01/02/2013 06:53 AM, KyongHo Cho wrote:
->> > +/*
->> > + * Descriptions of Device Tree node for System MMU
->> > + *
->> > + * A System MMU should be described by a single tree node.
->> > + *
->> > + * A System MMU node should have the following properties:
->> > + * - reg: tuples of the base address and the size of the IO region
-> of System MMU
->> > + * - compatible: it must be "samsung,exynos-sysmmu".
->>
->>  I think this compatible property is too generic. It should include
->>  specific SoC
->>  name in it, e.g. samsung,exynos4210-sysmmu. Please refer to this thread
->>  http://www.spinics.net/lists/linux-omap/msg83512.html, which discusses
->>  similar issue.
->
-> Ok, I got the point. BTW , I think this will cause adding a
-> compatibility property whenever a SoC is released even though it has
-> completely sameSystem MMU. Is it inevitable?
+On Thursday 03 January 2013, Rob Herring wrote:
+> From: Rob Herring <rob.herring@calxeda.com>
+> 
+> Remove tick.h on s5p64x0 and s5pv210 as they are unused.
+> 
+> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> ---
+>  arch/arm/mach-s5pv210/include/mach/tick.h |   26 --------------------------
+>  arch/arm/plat-samsung/s5p-irq-eint.c      |    1 +
+>  2 files changed, 1 insertion(+), 26 deletions(-)
+>  delete mode 100644 arch/arm/mach-s5pv210/include/mach/tick.h
 
-No, there is no need for separate 'compatible' property for each SoC.
-If the iommu is same across several SoCs same 'compatible' string should be
-used for it. Please refer to the below table.
+The second half of the patch does not relate to the description,
+and the first half looks correct but out of place here.
 
-  SoC       | sysmmu type |    compatible
--------------------------------------------------------------
-exynos4210 |  A          | samsung,exynos4210-sysmmu
-exynos4212 |  A          | samsung,exynos4210-sysmmu
-exynos4412 |  B          | samsung,exynos4412-sysmmu
-exynos5250 |  C          | samsung,exynos5250-sysmmu
+Did you accidentally fold another patch into the one you wanted,
+or am I just misreading the intention of the patch?
 
-In fact, the sysmmu device compatible property could contain more than one
-string, e.g.
-
-   compatible = "samsung,exynos4412-sysmmu", "samsung,exynos4210-sysmmu";
-
-if type A is subset of type B in terms of functionality and the register
-maps are compatible.
-
-It might be useful to put in the documentation which compatible applies
-to which SoC. Then the driver can distinguish between different versions
-of the hardware by looking at the 'compatible' property.
-
-In patch "[PATCH v6 10/12] iommu/exynos: pass version information from DT"
-you are doing something that looks strange to me. Couldn't you use 
-compatible
-property to derive the SYSMMU major/minor version information ? Or do these
-numbers differ even within single SoC type ?
-
->> > + * - interrupt-parent = specify if the interrupt of System MMU is
-> generated by
->> > + *   interrupt combiner or interrupt controller.
->> > + * - interrupts: tuples of interrupt numbers. a tuple has 2 elements if
->> > + *   @interrupt-parent is '<&combiner>', 3 elements otherwise.
->>
->>  It's probably enough to say that format of the interrupts property is
->>  dependant on
->>  the interrupt controller used.
->
-> I agree that :)
->
->> > + *
->> > + * 'mmuname', 'reg' and 'interrupts' properties can be an array if
-> the System
->> > + * MMU driver controls several number of System MMUs at the same
-> time. Note that
->> > + * the number of elements in those three properties must be the same.
->>
->>  It might be useful to provide some example here.
->
-> examples are there in Documentations directory.
-
-Oops, sorry. I missed these are just comments in the code. AFAIU, there is
-no need to keep 2 copies of the binding's description. I would put it only
-under the Documentation directory.
-
->> > + * The following properties are optional:
->> > + * - mmuname: name of the System MMU for debugging purpose
->>
->>  Not sure if it is something that is supposed to be included in FDT. You
->>  could
->>  probably derive it from the 'compatible' property, if it is really
->>  needed. The device
->>  tree bindings should not be treated as direct replacement for platform
->>  data structures.
->
-> actually it is just for debugging purpose.
-> I understand that it should not be there.
-> Thank you.
->
->> > + * - mmu-master: reference to the node of the master device.
->> > + * - mmu-master-compat: 'compatible' proberty of the node of the
-> master device
->> > + *    of System MMU. This is ignored if @mmu-master is currectly
-> specified.
->> > + * - mmu-master-no: instance number of the master device of System
-> MMU. This is
->> > + *    ignored if @mmu-master is correctly specified. This is '0' by
-> default.
->>
->>  Maybe device node aliases would be better alternative here ? But what
->>  would be
->>  a use case where you can't set 'mmu-master' and 'mmu-master-no' is
-> needed ?
->
-> It is for platform devices that are not specified in FDT.
-> Don't we need consider that?
-
-I don't think there is a need for that. But I might be missing something.
-In any case it's probably better to use aliases, e.g. like it's done with
-the exynos5 gscaler device.
+	Arnd
