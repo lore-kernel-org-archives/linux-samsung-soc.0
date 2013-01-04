@@ -1,180 +1,63 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: DTS: exynos4210-origen: Add MAX8997 node entry
-Date: Fri,  4 Jan 2013 13:53:49 +0530
-Message-ID: <1357287829-21701-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: thomas.abraham@linaro.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: Early kernel hang with big DTB appended
+Date: Fri, 04 Jan 2013 11:18:56 +0100
+Message-ID: <35730055.SShm3zF9mO@amdc1227>
+References: <7811936.npteFbuYu2@amdc1227>
+ <alpine.LFD.2.02.1301032144490.1263@xanadu.home>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:63994 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752557Ab3ADKTD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Jan 2013 05:19:03 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MG300GQPJBN7ED0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Jan 2013 19:19:01 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MG300A1EJBNB010@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Jan 2013 19:19:01 +0900 (KST)
+In-reply-to: <alpine.LFD.2.02.1301032144490.1263@xanadu.home>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bones@secretlab.ca, linux@arm.linux.org.uk, thomas.abraham@linaro.org, kgene.kim@samsung.com
 
-The node entry is added as per documentation and legacy board file.
+Hi Nicolas,
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
-The patch is rebased on v3.8-rc1.
+Thanks for your reply.
 
- arch/arm/boot/dts/exynos4210-origen.dts |  150 +++++++++++++++++++++++++++++++
- 1 files changed, 150 insertions(+), 0 deletions(-)
+On Thursday 03 of January 2013 21:48:05 Nicolas Pitre wrote:
+> On Thu, 3 Jan 2013, Tomasz Figa wrote:
+> > Hi,
+> > 
+> > I'm observing strange behavior when booting 3.8-rc1 and -rc2 with
+> > appended DTB. The kernel hangs very early when the DTB is bigger than
+> > some threshold somewhere around 24 KiB.
+> 
+> What is the address where you load your zImage?
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index f271001..362ef58 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -121,4 +121,154 @@
- 			linux,default-trigger = "heartbeat";
- 		};
- 	};
-+
-+	i2c@13860000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-max-bus-freq = <20000>;
-+		pinctrl-0 = <&i2c0_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+
-+		max8997_pmic@66 {
-+			compatible = "maxim,max8997-pmic";
-+			reg = <0x66>;
-+			interrupt-parent = <&gpx0>;
-+			interrupts = <4 0>, <3 0>;
-+
-+			max8997,pmic-ignore-gpiodvs-side-effect;
-+			max8997,pmic-buck125-default-dvs-idx = <0>;
-+			max8997,pmic-buck125-dvs-gpios = <&gpx0 0 0>,
-+							 <&gpx0 1 0>,
-+							 <&gpx0 2 0>;
-+			max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
-+							 <1250000>, <1200000>,
-+							 <1150000>, <1100000>,
-+							 <1000000>, <950000>;
-+			max8997,pmic-buck2-dvs-voltage = <1100000>, <1100000>,
-+							 <1100000>, <1100000>,
-+							 <1000000>, <1000000>,
-+							 <1000000>, <1000000>;
-+			max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
-+							 <1200000>, <1200000>,
-+							 <1200000>, <1200000>,
-+							 <1200000>, <1200000>;
-+
-+			regulators {
-+				ldo1_reg: LDO1 {
-+					regulator-name = "VDD_ABB_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldo2_reg: LDO2 {
-+					regulator-name = "VDD_ALIVE_1.1V";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo3_reg: LDO3 {
-+					regulator-name = "VMIPI_1.1V";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo4_reg: LDO4 {
-+					regulator-name = "VDD_RTC_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt	= <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo6_reg: LDO6 {
-+					regulator-name = "VMIPI_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt	= <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo7_reg: LDO7 {
-+					regulator-name = "VDD_AUD_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt	= <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo8_reg: LDO8 {
-+					regulator-name = "VADC_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo9_reg: LDO9 {
-+					regulator-name = "DVDD_SWB_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo10_reg: LDO10 {
-+					regulator-name = "VDD_PLL_1.1V";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo11_reg: LDO11 {
-+					regulator-name = "VDD_AUD_3V";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+				};
-+
-+				ldo14_reg: LDO14 {
-+					regulator-name = "AVDD18_SWB_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo17_reg: LDO17 {
-+					regulator-name = "VDD_SWB_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				buck1_reg: BUCK1 {
-+					regulator-name = "vdd_arm";
-+					regulator-min-microvolt = <950000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck2_reg: BUCK2 {
-+					regulator-name = "vdd_int";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck5_reg: BUCK5 {
-+					regulator-name = "VDDQ_M1M2_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				buck7_reg: BUCK7 {
-+					regulator-name = "VDD_LCD_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-boot-on;
-+				};
-+			};
-+		};
-+	};
-+
- };
+We are using uImages built with same parameters as those used in simple 
+'make uImage', just with a DTB appended to zImage before running mkimage 
+on it.
+
+By default the load address is set to 0x40008000, where 0x40000000 is DRAM 
+base.
+
+> What if you load it, say, at an offset of 16MB from the start of RAM?
+> Not that this is a fix, but at least that would help isolate the issue.
+
+Yes, it indeed helps. I tried with shifting the load address by 16 MiB to 
+0x41008000 (by adjusting mkimage parameters) and it now boots fine.
+
+Best regards,
 -- 
-1.7.4.1
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
