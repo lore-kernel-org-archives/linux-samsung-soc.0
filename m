@@ -1,42 +1,180 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5] usb: phy: samsung: Add support to set pmu isolation
-Date: Fri, 4 Jan 2013 11:59:43 +0530
-Message-ID: <CAFp+6iHGCemgxQ_bV2PPsUk2vrXbwFRMgsEbUMEU+C433LurTA@mail.gmail.com>
-References: <CAFp+6iEUNjZewY1b3T-eCHeiZrouxYGPXtxHuNvJdi+UEKTNjg@mail.gmail.com>
- <1356686018-18586-1-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1356686018-18586-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: DTS: exynos4210-origen: Add MAX8997 node entry
+Date: Fri,  4 Jan 2013 13:53:49 +0530
+Message-ID: <1357287829-21701-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: thomas.abraham@linaro.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The node entry is added as per documentation and legacy board file.
 
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+The patch is rebased on v3.8-rc1.
 
-On Fri, Dec 28, 2012 at 2:43 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Adding support to parse device node data in order to get
-> required properties to set pmu isolation for usb-phy.
->
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->
+ arch/arm/boot/dts/exynos4210-origen.dts |  150 +++++++++++++++++++++++++++++++
+ 1 files changed, 150 insertions(+), 0 deletions(-)
 
-Any further comments on this ? Or does this seem fine ?
-
-
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index f271001..362ef58 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -121,4 +121,154 @@
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
++
++	i2c@13860000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <20000>;
++		pinctrl-0 = <&i2c0_bus>;
++		pinctrl-names = "default";
++		status = "okay";
++
++		max8997_pmic@66 {
++			compatible = "maxim,max8997-pmic";
++			reg = <0x66>;
++			interrupt-parent = <&gpx0>;
++			interrupts = <4 0>, <3 0>;
++
++			max8997,pmic-ignore-gpiodvs-side-effect;
++			max8997,pmic-buck125-default-dvs-idx = <0>;
++			max8997,pmic-buck125-dvs-gpios = <&gpx0 0 0>,
++							 <&gpx0 1 0>,
++							 <&gpx0 2 0>;
++			max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
++							 <1250000>, <1200000>,
++							 <1150000>, <1100000>,
++							 <1000000>, <950000>;
++			max8997,pmic-buck2-dvs-voltage = <1100000>, <1100000>,
++							 <1100000>, <1100000>,
++							 <1000000>, <1000000>,
++							 <1000000>, <1000000>;
++			max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
++							 <1200000>, <1200000>,
++							 <1200000>, <1200000>,
++							 <1200000>, <1200000>;
++
++			regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "VDD_ABB_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldo2_reg: LDO2 {
++					regulator-name = "VDD_ALIVE_1.1V";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "VMIPI_1.1V";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++				};
++
++				ldo4_reg: LDO4 {
++					regulator-name = "VDD_RTC_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt	= <1800000>;
++					regulator-always-on;
++				};
++
++				ldo6_reg: LDO6 {
++					regulator-name = "VMIPI_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt	= <1800000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "VDD_AUD_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt	= <1800000>;
++					regulator-always-on;
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "VADC_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				ldo9_reg: LDO9 {
++					regulator-name = "DVDD_SWB_2.8V";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "VDD_PLL_1.1V";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++				};
++
++				ldo11_reg: LDO11 {
++					regulator-name = "VDD_AUD_3V";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++				};
++
++				ldo14_reg: LDO14 {
++					regulator-name = "AVDD18_SWB_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo17_reg: LDO17 {
++					regulator-name = "VDD_SWB_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <950000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "VDDQ_M1M2_1.2V";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++				};
++
++				buck7_reg: BUCK7 {
++					regulator-name = "VDD_LCD_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-boot-on;
++				};
++			};
++		};
++	};
++
+ };
 -- 
-Thanks & Regards
-Vivek
+1.7.4.1
