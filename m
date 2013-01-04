@@ -1,11 +1,13 @@
 From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 1/5] ARM: exynos: factor out the idle states
-Date: Fri,  4 Jan 2013 17:59:55 +0100
-Message-ID: <1357318799-24378-1-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH 5/5] ARM: exynos: enable/disable cpuidle when cpu1 is down/up
+Date: Fri,  4 Jan 2013 17:59:59 +0100
+Message-ID: <1357318799-24378-5-git-send-email-daniel.lezcano@linaro.org>
+References: <1357318799-24378-1-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+In-Reply-To: <1357318799-24378-1-git-send-email-daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
 	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
@@ -19,41 +21,147 @@ To: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The states are defined in the driver. We can get rid of the
-intermediate cpuidle states initialization and the memcpy by
-directly initializing the driver states.
+What we have now is (1) cpu0 going always to WFI when cpu1 is up,
+(2) cpu0 going to all states when cpu1 is down.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In other words, cpuidle is disabled when cpu1 is up and enabled
+when cpu1 is down.
+
+This patch use the cpu hotplug notifier to enable/disable cpuidle,
+when the cpu1 is plugged or unplugged. That clarifies the code and
+make it simpler.
+
+Signed-off: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- arch/arm/mach-exynos/cpuidle.c |   45 +++++++++++++++-------------------------
- 1 file changed, 17 insertions(+), 28 deletions(-)
+ arch/arm/mach-exynos/cpuidle.c |  117 +++++++++++++++++++++++-----------------
+ 1 file changed, 69 insertions(+), 48 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 0509241..f8dd1cd 100644
+index e6f006b..d8f6f33 100644
 --- a/arch/arm/mach-exynos/cpuidle.c
 +++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -40,24 +40,25 @@ static int exynos4_enter_lowpower(struct cpuidle_device *dev,
- 				struct cpuidle_driver *drv,
- 				int index);
+@@ -12,6 +12,8 @@
+ #include <linux/init.h>
+ #include <linux/cpuidle.h>
+ #include <linux/cpu_pm.h>
++#include <linux/notifier.h>
++#include <linux/cpu.h>
+ #include <linux/io.h>
+ #include <linux/export.h>
+ #include <linux/time.h>
+@@ -36,31 +38,8 @@
  
--static struct cpuidle_state exynos4_cpuidle_set[] __initdata = {
--	[0] = ARM_CPUIDLE_WFI_STATE,
--	[1] = {
--		.enter			= exynos4_enter_lowpower,
--		.exit_latency		= 300,
--		.target_residency	= 100000,
--		.flags			= CPUIDLE_FLAG_TIME_VALID,
--		.name			= "C1",
--		.desc			= "ARM power down",
+ #define S5P_CHECK_AFTR		0xFCBA0D10
+ 
+-static int exynos4_enter_lowpower(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv,
+-				int index);
+-
+ static struct cpuidle_device exynos4_cpuidle_device;
+ 
+-static struct cpuidle_driver exynos4_idle_driver = {
+-	.name			= "exynos4_idle",
+-	.owner			= THIS_MODULE,
+-	.en_core_tk_irqen	= 1,
+-	.states = {
+-		[0] = ARM_CPUIDLE_WFI_STATE,
+-		[1] = {
+-			.enter            = exynos4_enter_lowpower,
+-			.exit_latency     = 300,
+-			.target_residency = 100000,
+-			.flags            = CPUIDLE_FLAG_TIME_VALID,
+-			.name             = "C1",
+-			.desc             = "ARM power down",
+-		},
 -	},
+-	.state_count = 2,
+-	.safe_state_index = 0,
 -};
 -
- static DEFINE_PER_CPU(struct cpuidle_device, exynos4_cpuidle_device);
+ /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+ static void exynos4_set_wakeupmask(void)
+ {
+@@ -93,9 +72,9 @@ static int idle_finisher(unsigned long flags)
+ 	return 1;
+ }
  
- static struct cpuidle_driver exynos4_idle_driver = {
- 	.name			= "exynos4_idle",
- 	.owner			= THIS_MODULE,
- 	.en_core_tk_irqen	= 1,
+-static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv,
+-				int index)
++static int exynos4_enter_lowpower(struct cpuidle_device *dev,
++				  struct cpuidle_driver *drv,
++				  int index)
+ {
+ 	unsigned long tmp;
+ 
+@@ -143,22 +122,6 @@ static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+ 	return index;
+ }
+ 
+-static int exynos4_enter_lowpower(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv,
+-				int index)
+-{
+-	int new_index = index;
+-
+-	/* This mode only can be entered when other core's are offline */
+-	if (num_online_cpus() > 1)
+-		new_index = drv->safe_state_index;
+-
+-	if (new_index == 0)
+-		return arm_cpuidle_simple_enter(dev, drv, new_index);
+-	else
+-		return exynos4_enter_core0_aftr(dev, drv, new_index);
+-}
+-
+ static void __init exynos5_core_down_clk(void)
+ {
+ 	unsigned int tmp;
+@@ -191,6 +154,62 @@ static void __init exynos5_core_down_clk(void)
+ 	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
+ }
+ 
++static int cpu_hotplug_notify(struct notifier_block *n,
++			      unsigned long action, void *hcpu)
++{
++	int ret;
++
++	/*
++	 * cpu0 can't be shutdown on Origen, so this routine is
++	 * called only for cpu1.
++	 */
++
++	switch (action & 0xf) {
++
++	case CPU_ONLINE:
++		cpuidle_pause_and_lock();
++		cpuidle_disable_device(&exynos4_cpuidle_device);
++		cpuidle_resume_and_unlock();
++		break;
++
++	case CPU_DEAD:
++		if (!exynos4_cpuidle_device.registered) {
++			ret = cpuidle_register_device(&exynos4_cpuidle_device);
++			WARN_ONCE(ret, "Failed to register cpuidle device");
++		} else {
++			cpuidle_pause_and_lock();
++			cpuidle_enable_device(&exynos4_cpuidle_device);
++			cpuidle_resume_and_unlock();
++		}
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block cpu_hotplug_notifier = {
++	.notifier_call = cpu_hotplug_notify,
++};
++
++static struct cpuidle_driver exynos4_idle_driver = {
++	.name			= "exynos4_idle",
++	.owner			= THIS_MODULE,
++	.en_core_tk_irqen	= 1,
 +	.states = {
 +		[0] = ARM_CPUIDLE_WFI_STATE,
 +		[1] = {
@@ -67,46 +175,31 @@ index 0509241..f8dd1cd 100644
 +	},
 +	.state_count = 2,
 +	.safe_state_index = 0,
- };
- 
- /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
-@@ -192,33 +193,21 @@ static void __init exynos5_core_down_clk(void)
- 
++};
++
  static int __init exynos4_init_cpuidle(void)
  {
--	int i, max_cpuidle_state, cpu_id;
-+	int cpu_id;
- 	struct cpuidle_device *device;
--	struct cpuidle_driver *drv = &exynos4_idle_driver;
+ 	int ret;
+@@ -204,12 +223,14 @@ static int __init exynos4_init_cpuidle(void)
+ 		return ret;
+ 	}
  
- 	if (soc_is_exynos5250())
- 		exynos5_core_down_clk();
- 
--	/* Setup cpuidle driver */
--	drv->state_count = (sizeof(exynos4_cpuidle_set) /
--				       sizeof(struct cpuidle_state));
--	max_cpuidle_state = drv->state_count;
--	for (i = 0; i < max_cpuidle_state; i++) {
--		memcpy(&drv->states[i], &exynos4_cpuidle_set[i],
--				sizeof(struct cpuidle_state));
+-	ret = cpuidle_register_device(&exynos4_cpuidle_device);
+-	if (ret) {
+-		printk(KERN_ERR "CPUidle register device failed\n");
+-		return ret;
 -	}
--	drv->safe_state_index = 0;
- 	cpuidle_register_driver(&exynos4_idle_driver);
++	ret = register_cpu_notifier(&cpu_hotplug_notifier);
++	if (ret)
++		goto out_unregister_driver;
++out:
++	return ret;
  
- 	for_each_cpu(cpu_id, cpu_online_mask) {
- 		device = &per_cpu(exynos4_cpuidle_device, cpu_id);
- 		device->cpu = cpu_id;
- 
--		if (cpu_id == 0)
--			device->state_count = (sizeof(exynos4_cpuidle_set) /
--					       sizeof(struct cpuidle_state));
--		else
--			device->state_count = 1;	/* Support IDLE only */
-+                /* Support IDLE only */
-+		if (cpu_id != 0)
-+			device->state_count = 1;
- 
- 		if (cpuidle_register_device(device)) {
- 			printk(KERN_ERR "CPUidle register device failed\n,");
+-	return 0;
++out_unregister_driver:
++	cpuidle_unregister_driver(&exynos4_idle_driver);
++	goto out;
+ }
+ device_initcall(exynos4_init_cpuidle);
 -- 
 1.7.9.5
