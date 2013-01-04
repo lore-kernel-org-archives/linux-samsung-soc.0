@@ -1,36 +1,42 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: Early kernel hang with big DTB appended
-Date: Thu, 3 Jan 2013 21:48:05 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1301032144490.1263@xanadu.home>
-References: <7811936.npteFbuYu2@amdc1227>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5] usb: phy: samsung: Add support to set pmu isolation
+Date: Fri, 4 Jan 2013 11:59:43 +0530
+Message-ID: <CAFp+6iHGCemgxQ_bV2PPsUk2vrXbwFRMgsEbUMEU+C433LurTA@mail.gmail.com>
+References: <CAFp+6iEUNjZewY1b3T-eCHeiZrouxYGPXtxHuNvJdi+UEKTNjg@mail.gmail.com>
+ <1356686018-18586-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f169.google.com ([209.85.216.169]:46166 "EHLO
-	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754973Ab3ADCsI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Jan 2013 21:48:08 -0500
-Received: by mail-qc0-f169.google.com with SMTP id t2so8491559qcq.14
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Jan 2013 18:48:07 -0800 (PST)
-In-Reply-To: <7811936.npteFbuYu2@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1356686018-18586-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bones@secretlab.ca, linux@arm.linux.org.uk, thomas.abraham@linaro.org, kgene.kim@samsung.com
 
-On Thu, 3 Jan 2013, Tomasz Figa wrote:
-
-> Hi,
-> 
-> I'm observing strange behavior when booting 3.8-rc1 and -rc2 with appended 
-> DTB. The kernel hangs very early when the DTB is bigger than some 
-> threshold somewhere around 24 KiB.
-
-What is the address where you load your zImage?
-
-What if you load it, say, at an offset of 16MB from the start of RAM?  
-Not that this is a fix, but at least that would help isolate the issue.
+Hi,
 
 
-Nicolas
+On Fri, Dec 28, 2012 at 2:43 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Adding support to parse device node data in order to get
+> required properties to set pmu isolation for usb-phy.
+>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>
+
+Any further comments on this ? Or does this seem fine ?
+
+
+-- 
+Thanks & Regards
+Vivek
