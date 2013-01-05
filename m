@@ -1,72 +1,103 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: dts: Fix compatible value of pinctrl module on
- EXYNOS5440
-Date: Sat, 5 Jan 2013 14:54:18 -0800
-Message-ID: <CAOesGMiXUJ2+a8znVnzyzx_u1cqg57zxwff3jObTH3yxn_MC8w@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/2] ARM: dts: fix compatible value for exynos pinctrl
+Date: Sat, 5 Jan 2013 14:57:54 -0800
+Message-ID: <CAOesGMiSgcuD7z4yc2Z+_hi+PZnuv9pa7saeGymwT0DPz=j8dQ@mail.gmail.com>
 References: <1357172423-8217-1-git-send-email-kgene.kim@samsung.com>
+	<1357172423-8217-2-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1357172423-8217-1-git-send-email-kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f182.google.com ([209.85.215.182]:34815 "EHLO
+	mail-ea0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755899Ab3AEW54 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 5 Jan 2013 17:57:56 -0500
+Received: by mail-ea0-f182.google.com with SMTP id a14so7458011eaa.13
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 05 Jan 2013 14:57:55 -0800 (PST)
+In-Reply-To: <1357172423-8217-2-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, devicetree-discuss@lists.ozlabs.org
 
-On Wed, Jan 2, 2013 at 4:20 PM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> From: Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Wed, Jan 2, 2013 at 4:20 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Fix the incorrect compatible property value of pinctrl for EXYNOS4 SoCs.
+
+Ah, this answers my question from the previous patch. So, why do 5450
+as a separate patch?
+
+
+> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> index e97a278..4598a47 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> @@ -7,9 +7,9 @@ on-chip controllers onto these pads.
 >
-> Fix the incorrect compatible property value of pin-controller module
-> EXYNOS5440 SoC.
->
-> Signed-off-by: Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> [kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org: fixed it in gpio together for exynos5440]
-> Signed-off-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> ---
->  arch/arm/boot/dts/exynos5440.dtsi |    2 +-
->  drivers/gpio/gpio-samsung.c       |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> index 024269d..25f0fa6 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -86,7 +86,7 @@
+>  Required Properties:
+>  - compatible: should be one of the following.
+> -  - "samsung,pinctrl-exynos4210": for Exynos4210 compatible pin-controller.
+> -  - "samsung,pinctrl-exynos4x12": for Exynos4x12 compatible pin-controller.
+> -  - "samsung,pinctrl-exynos5250": for Exynos5250 compatible pin-controller.
+> +  - "samsung,exynos4210-pinctrl": for Exynos4210 compatible pin-controller.
+> +  - "samsung,exynos4x12-pinctrl": for Exynos4x12 compatible pin-controller.
+> +  - "samsung,exynos5250-pinctrl": for Exynos5250 compatible pin-controller.
+
+Do we care about backwards compatibility for ARM device trees yet?
+It's becoming time to start caring soon, if we don't. So while this
+might be OK for this time around, we should start requiring some
+backwards compatibility for bindings that have been used in at least
+one released kernel.
+
+Once we do care, then you can update the dts/dtsi files, but you'll
+need to keep both the old and the new bindings in the C file below.
+
+
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index d6d0dc6..3777a41 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -1024,8 +1024,8 @@ static int __init exynos_init_irq_eint(void)
+>          * interrupt support code here can be completely removed.
+>          */
+>         static const struct of_device_id exynos_pinctrl_ids[] = {
+> -               { .compatible = "samsung,pinctrl-exynos4210", },
+> -               { .compatible = "samsung,pinctrl-exynos4x12", },
+> +               { .compatible = "samsung,exynos4210-pinctrl", },
+> +               { .compatible = "samsung,exynos4x12-pinctrl", },
 >         };
->
->         pinctrl {
-> -               compatible = "samsung,pinctrl-exynos5440";
-> +               compatible = "samsung,exynos5440-pinctrl";
->                 reg = <0xE0000 0x1000>;
->                 interrupt-controller;
->                 #interrupt-cells = <2>;
+>         struct device_node *pctrl_np, *wkup_np;
+>         const char *wkup_compat = "samsung,exynos4210-wakeup-eint";
 > diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-> index 953737d..cac4b45 100644
+> index cac4b45..8c00f7d 100644
 > --- a/drivers/gpio/gpio-samsung.c
 > +++ b/drivers/gpio/gpio-samsung.c
-> @@ -3026,7 +3026,7 @@ static __init int samsung_gpiolib_init(void)
+> @@ -3024,8 +3024,8 @@ static __init int samsung_gpiolib_init(void)
+>         */
+>         struct device_node *pctrl_np;
 >         static const struct of_device_id exynos_pinctrl_ids[] = {
->                 { .compatible = "samsung,pinctrl-exynos4210", },
->                 { .compatible = "samsung,pinctrl-exynos4x12", },
-> -               { .compatible = "samsung,pinctrl-exynos5440", },
-> +               { .compatible = "samsung,exynos5440-pinctrl", },
-
-Uugh. There's something to be said about consistency, even if it's
-possibly not 100% correct. Is it really worth it to have 5440 be the
-only one with the "right" naming here?
+> -               { .compatible = "samsung,pinctrl-exynos4210", },
+> -               { .compatible = "samsung,pinctrl-exynos4x12", },
+> +               { .compatible = "samsung,exynos4210-pinctrl", },
+> +               { .compatible = "samsung,exynos4x12-pinctrl", },
+>                 { .compatible = "samsung,exynos5440-pinctrl", },
+>         };
+>         for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
+> diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+> index 864fed8..602b30b 100644
+> --- a/drivers/pinctrl/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/pinctrl-samsung.c
+> @@ -945,9 +945,9 @@ static int __devinit samsung_pinctrl_probe(struct platform_device *pdev)
+>  }
+>
+>  static const struct of_device_id samsung_pinctrl_dt_match[] = {
+> -       { .compatible = "samsung,pinctrl-exynos4210",
+> +       { .compatible = "samsung,exynos4210-pinctrl",
+>                 .data = (void *)exynos4210_pin_ctrl },
+> -       { .compatible = "samsung,pinctrl-exynos4x12",
+> +       { .compatible = "samsung,exynos4x12-pinctrl",
+>                 .data = (void *)exynos4x12_pin_ctrl },
+>         {},
+>  };
 
 
 -Olof
