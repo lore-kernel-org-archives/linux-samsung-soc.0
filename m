@@ -1,47 +1,89 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] pinctrl: exynos: add exynos5250 SoC specific data
-Date: Mon, 7 Jan 2013 00:31:25 +0100
-Message-ID: <CACRpkdZKB1_1U1VZfYADwWfFpBum0Qc88kWtW37h7Z05RtSJfA@mail.gmail.com>
-References: <1355399644-29417-1-git-send-email-thomas.abraham@linaro.org>
-	<1355399644-29417-2-git-send-email-thomas.abraham@linaro.org>
-	<CACRpkdaQ10CgoFXtk4EyqL4LWVpsdEAdrmy5R-_Rqm5fJdqS4A@mail.gmail.com>
-	<CAJuYYwTZkzCXjowhKaJ253Oji07eDdEjMvNssyL1ThWtETswSQ@mail.gmail.com>
-	<017801cde453$77b03eb0$6710bc10$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH 2/5 RESEND] thermal: exynos: Miscellaneous fixes to support falling threshold interrupt
+Date: Sun,  6 Jan 2013 15:50:48 -0800
+Message-ID: <1357516248-31350-1-git-send-email-amit.daniel@samsung.com>
+References: <1353937640-9939-3-git-send-email-amit.kachhap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:50267 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753301Ab3AFXb0 (ORCPT
+Received: from mail-ye0-f172.google.com ([209.85.213.172]:43124 "EHLO
+	mail-ye0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753228Ab3AFXvL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 6 Jan 2013 18:31:26 -0500
-Received: by mail-ie0-f177.google.com with SMTP id k13so22407397iea.22
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Jan 2013 15:31:26 -0800 (PST)
-In-Reply-To: <017801cde453$77b03eb0$6710bc10$@samsung.com>
+	Sun, 6 Jan 2013 18:51:11 -0500
+In-Reply-To: <1353937640-9939-3-git-send-email-amit.kachhap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, patches@linaro.org
+To: linux-pm@lists.linux-foundation.org, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2012 at 5:58 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+Below fixes are done to support falling threshold interrupt,
+* Falling interrupt status macro corrected according to exynos5 data sheet.
+* The get trend function modified to calculate trip temperature correctly.
+* The clearing of interrupt status in the isr is now done after handling
+  the event that caused the interrupt.
 
-> And I think, would be clear if the config could be changed like following.
->
-> 8<----------------------------------------------------------------------
-> From: Kukjin Kim <kgene.kim@samsung.com>
-> Subject: [PATCH] pinctrl: exynos: change PINCTRL_EXYNOS option
->
-> Since pinctrl-exynos can support exynos4 and exynos5 so changed
-> the option name to PINCTRL_EXYNOS for more clarity.
->
-> Cc: Thomas Abraham <Thomas.abraham@linaro.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
+ drivers/thermal/exynos_thermal.c |   19 ++++++++++++-------
+ 1 files changed, 12 insertions(+), 7 deletions(-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Shall I take this into the pinctrl tree?
-
-Yours,
-Linus Walleij
+diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
+index dcd13f7..0d17d41 100644
+--- a/drivers/thermal/exynos_thermal.c
++++ b/drivers/thermal/exynos_thermal.c
+@@ -82,7 +82,7 @@
+ 
+ #define EXYNOS_TRIMINFO_RELOAD		0x1
+ #define EXYNOS_TMU_CLEAR_RISE_INT	0x111
+-#define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 16)
++#define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
+ #define EXYNOS_MUX_ADDR_VALUE		6
+ #define EXYNOS_MUX_ADDR_SHIFT		20
+ #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
+@@ -373,12 +373,19 @@ static int exynos_get_temp(struct thermal_zone_device *thermal,
+ static int exynos_get_trend(struct thermal_zone_device *thermal,
+ 			int trip, enum thermal_trend *trend)
+ {
+-	if (thermal->temperature >= trip)
++	int ret = 0;
++	unsigned long trip_temp;
++
++	ret = exynos_get_trip_temp(thermal, trip, &trip_temp);
++	if (ret < 0)
++		return ret;
++
++	if (thermal->temperature >= trip_temp)
+ 		*trend = THERMAL_TREND_RAISING;
+ 	else
+ 		*trend = THERMAL_TREND_DROPPING;
+ 
+-	return 0;
++	return ret;
+ }
+ /* Operation callback functions for thermal zone */
+ static struct thermal_zone_device_ops const exynos_dev_ops = {
+@@ -712,10 +719,9 @@ static void exynos_tmu_work(struct work_struct *work)
+ 	struct exynos_tmu_data *data = container_of(work,
+ 			struct exynos_tmu_data, irq_work);
+ 
++	exynos_report_trigger();
+ 	mutex_lock(&data->lock);
+ 	clk_enable(data->clk);
+-
+-
+ 	if (data->soc == SOC_ARCH_EXYNOS)
+ 		writel(EXYNOS_TMU_CLEAR_RISE_INT |
+ 				EXYNOS_TMU_CLEAR_FALL_INT,
+@@ -723,10 +729,9 @@ static void exynos_tmu_work(struct work_struct *work)
+ 	else
+ 		writel(EXYNOS4210_TMU_INTCLEAR_VAL,
+ 				data->base + EXYNOS_TMU_REG_INTCLEAR);
+-
+ 	clk_disable(data->clk);
+ 	mutex_unlock(&data->lock);
+-	exynos_report_trigger();
++
+ 	enable_irq(data->irq);
+ }
+ 
+-- 
+1.7.5.4
