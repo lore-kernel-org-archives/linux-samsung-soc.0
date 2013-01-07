@@ -1,59 +1,76 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] i2c: samsung: resume race fix
-Date: Mon, 7 Jan 2013 13:25:10 +0100
-Message-ID: <20130107132510.7a6ce9ae@endymion.delvare>
-References: <1352284106-24988-1-git-send-email-ch.naveen@samsung.com>
-	<20121107114437.0a563c7e@endymion.delvare>
-	<CAHfPSqCQ9e3VR3En+hQGWVOt0RRGsmHzHTFvBF+h2-rEX5oXhQ@mail.gmail.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: [PATCH v2] arch/arm/mach-s5pv210: adding ifdef CONFIG_CPU_S5PV210
+ to fix compiling issue
+Date: Mon, 07 Jan 2013 20:31:18 +0800
+Message-ID: <50EAC016.6090707@asianux.com>
+References: <50EA972E.3040404@asianux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=GB2312
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHfPSqCQ9e3VR3En+hQGWVOt0RRGsmHzHTFvBF+h2-rEX5oXhQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:36146 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754203Ab3AGMal (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Jan 2013 07:30:41 -0500
+In-Reply-To: <50EA972E.3040404@asianux.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, linux@arm.linux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, 7 Jan 2013 17:35:25 +0530, Naveen Krishna Ch wrote:
-> On 7 November 2012 16:14, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org> wrote:
-> > On Wed, 07 Nov 2012 15:58:26 +0530, Naveen Krishna Chatradhi wrote:
-> >> Don't unmark the device as suspended until after it's been re-setup.
-> >>
-> >> The main race would be w.r.t. an i2c driver that gets resumed at the same
-> >> time (asyncronously), that is allowed to do a transfer since suspended
-> >> is set to 0 before reinit, but really should have seen the -EIO return
-> >> instead.
-> >>
-> >> Signed-off-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> ---
-> >>  drivers/i2c/busses/i2c-s3c2410.c |    2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> >> index 3e0335f..dbaf920 100644
-> >> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> >> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> >> @@ -1134,10 +1134,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
-> >>       struct platform_device *pdev = to_platform_device(dev);
-> >>       struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
-> >>
-> >> -     i2c->suspended = 0;
-> >>       clk_prepare_enable(i2c->clk);
-> >>       s3c24xx_i2c_init(i2c);
-> >>       clk_disable_unprepare(i2c->clk);
-> >> +     i2c->suspended = 0;
-> >>
-> >>       return 0;
-> >>  }
-> >
-> > Acked-by: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-> I don't see this patch landed any where in linux-i2c tree, Though it was acked.
-> Was it missed or should i be doing something for this to be merged ??
 
-Nothing needed from your side AFAIK, Wolfram should pick patches when I
-ack them, maybe this one was simply overlooked.
+  if not define CONFIG_CPU_S5PV210
 
+    it will define NULL in common.h for:
+      s5pv210_map_io, s5pv210_init_clocks, s5pv210_init, s5pv210_init_uarts
+
+    so need using #ifdef CONFIG_CPU_S5PV210 for them too, in common.c.
+      or compiling issue will occur.
+
+
+Signed-off-by: Chen Gang <gang.chen@asianux.com>
+---
+ arch/arm/mach-s5pv210/common.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/common.c
+index 9dfe93e..5c88f88 100644
+--- a/arch/arm/mach-s5pv210/common.c
++++ b/arch/arm/mach-s5pv210/common.c
+@@ -167,6 +167,8 @@ void __init s5pv210_init_io(struct map_desc *mach_desc, int size)
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
+ }
+ 
++#ifdef CONFIG_CPU_S5PV210
++
+ void __init s5pv210_map_io(void)
+ {
+ 	/* initialise device information early */
+@@ -209,6 +211,9 @@ void __init s5pv210_init_clocks(int xtal)
+ 	s5pv210_setup_clocks();
+ }
+ 
++#endif /* CONFIG_CPU_S5PV210 */
++
++
+ void __init s5pv210_init_irq(void)
+ {
+ 	u32 vic[4];	/* S5PV210 supports 4 VIC */
+@@ -227,6 +232,8 @@ struct bus_type s5pv210_subsys = {
+ 	.dev_name	= "s5pv210-core",
+ };
+ 
++#ifdef CONFIG_CPU_S5PV210
++
+ static struct device s5pv210_dev = {
+ 	.bus	= &s5pv210_subsys,
+ };
+@@ -249,3 +256,5 @@ void __init s5pv210_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+ {
+ 	s3c24xx_init_uartdevs("s5pv210-uart", s5p_uart_resources, cfg, no);
+ }
++
++#endif /* CONFIG_CPU_S5PV210 */
 -- 
-Jean Delvare
+1.7.10.4
