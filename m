@@ -1,83 +1,59 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: exynos5: Add gate clocks for HS-I2C
-Date: Mon, 7 Jan 2013 17:36:17 +0530
-Message-ID: <CAHfPSqCgYz8r05gBxOwCbi3a4_R0Kaatps8aOEmp_Ck=fakoFg@mail.gmail.com>
-References: <1356694851-1345-1-git-send-email-ch.naveen@samsung.com>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] i2c: samsung: resume race fix
+Date: Mon, 7 Jan 2013 13:25:10 +0100
+Message-ID: <20130107132510.7a6ce9ae@endymion.delvare>
+References: <1352284106-24988-1-git-send-email-ch.naveen@samsung.com>
+	<20121107114437.0a563c7e@endymion.delvare>
+	<CAHfPSqCQ9e3VR3En+hQGWVOt0RRGsmHzHTFvBF+h2-rEX5oXhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1356694851-1345-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAHfPSqCQ9e3VR3En+hQGWVOt0RRGsmHzHTFvBF+h2-rEX5oXhQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 28 December 2012 17:10, Naveen Krishna Chatradhi
-<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Adds clock gating bits for High Speed I2C channels 0, 1, 2 and 3.
->
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/mach-exynos/clock-exynos5.c |   24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-> index 0208c3a..f9fa0c7 100644
-> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> @@ -753,6 +753,30 @@ static struct clk exynos5_init_clocks_off[] = {
->                 .enable         = exynos5_clk_ip_peric_ctrl,
->                 .ctrlbit        = (1 << 27),
->         }, {
-> +               .name           = "hsi2c",
-> +               .devname        = "exynos5-hsi2c.0",
-> +               .enable         = exynos5_clk_ip_peric_ctrl,
-> +               .parent         = &exynos5_clk_aclk_66.clk,
-> +               .ctrlbit        = (1 << 28),
-> +       }, {
-> +               .name           = "hsi2c",
-> +               .devname        = "exynos5-hsi2c.1",
-> +               .enable         = exynos5_clk_ip_peric_ctrl,
-> +               .parent         = &exynos5_clk_aclk_66.clk,
-> +               .ctrlbit        = (1 << 29),
-> +       }, {
-> +               .name           = "hsi2c",
-> +               .devname        = "exynos5-hsi2c.2",
-> +               .enable         = exynos5_clk_ip_peric_ctrl,
-> +               .parent         = &exynos5_clk_aclk_66.clk,
-> +               .ctrlbit        = (1 << 30),
-> +       }, {
-> +               .name           = "hsi2c",
-> +               .devname        = "exynos5-hsi2c.3",
-> +               .enable         = exynos5_clk_ip_peric_ctrl,
-> +               .parent         = &exynos5_clk_aclk_66.clk,
-> +               .ctrlbit        = (1 << 31),
-> +       }, {
->                 .name           = "usbhost",
->                 .enable         = exynos5_clk_ip_fsys_ctrl ,
->                 .ctrlbit        = (1 << 18),
-> --
-> 1.7.9.5
+On Mon, 7 Jan 2013 17:35:25 +0530, Naveen Krishna Ch wrote:
+> On 7 November 2012 16:14, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org> wrote:
+> > On Wed, 07 Nov 2012 15:58:26 +0530, Naveen Krishna Chatradhi wrote:
+> >> Don't unmark the device as suspended until after it's been re-setup.
+> >>
+> >> The main race would be w.r.t. an i2c driver that gets resumed at the same
+> >> time (asyncronously), that is allowed to do a transfer since suspended
+> >> is set to 0 before reinit, but really should have seen the -EIO return
+> >> instead.
+> >>
+> >> Signed-off-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >> ---
+> >>  drivers/i2c/busses/i2c-s3c2410.c |    2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> >> index 3e0335f..dbaf920 100644
+> >> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> >> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> >> @@ -1134,10 +1134,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
+> >>       struct platform_device *pdev = to_platform_device(dev);
+> >>       struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+> >>
+> >> -     i2c->suspended = 0;
+> >>       clk_prepare_enable(i2c->clk);
+> >>       s3c24xx_i2c_init(i2c);
+> >>       clk_disable_unprepare(i2c->clk);
+> >> +     i2c->suspended = 0;
+> >>
+> >>       return 0;
+> >>  }
+> >
+> > Acked-by: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+> I don't see this patch landed any where in linux-i2c tree, Though it was acked.
+> Was it missed or should i be doing something for this to be merged ??
 
-Any comments on this patch please.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+Nothing needed from your side AFAIK, Wolfram should pick patches when I
+ack them, maybe this one was simply overlooked.
 
 -- 
-Shine bright,
-(: Nav :)
+Jean Delvare
