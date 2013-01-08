@@ -1,62 +1,54 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes-2 for v3.8
-Date: Mon, 7 Jan 2013 21:14:41 -0800
-Message-ID: <CAOesGMjjsT-fZqLQQf9=SBY6WKoF76MZmt7CfXEsyNFsNzJhzQ@mail.gmail.com>
-References: <081701cded2f$6dcf9960$496ecc20$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:58541 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750788Ab3AHFOm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jan 2013 00:14:42 -0500
-Received: by mail-ie0-f175.google.com with SMTP id qd14so34405ieb.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jan 2013 21:14:41 -0800 (PST)
-In-Reply-To: <081701cded2f$6dcf9960$496ecc20$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH] cpufreq: exynos: Show list of available frequencies
+Date: Tue,  8 Jan 2013 16:20:58 +0530
+Message-ID: <1357642258-32421-1-git-send-email-inderpal.singh@linaro.org>
+Return-path: <cpufreq-owner@vger.kernel.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: linux-pm@lists.linux-foundation.org
+Cc: rjw@sisk.pl, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
+Add freq_attr attribute to show list of available frequencies.
 
-On Mon, Jan 7, 2013 at 3:33 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Hi Arnd, Olof
->
-> Here is Samsung-fixes-2 for v3.8.
-> Most of them are EXYNOS5440 fixes which are for changing uart console, cpu
-> id (typo)  and silent complaining gpio error in kernel boot.
->
-> If any problems, please kindly let me know.
->
-> Thanks and a very happy new year.
->
-> - Kukjin
->
-> The following changes since commit a49f0d1ea3ec94fc7cf33a7c36a16343b74bd565:
->
->   Linux 3.8-rc1 (2012-12-21 17:19:00 -0800)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.8-samsung-fixes-2
->
-> for you to fetch changes up to 61bcbc2af8be4cafb5723d4bd306053b70f52a7a:
->
->   ARM: EXYNOS: skip the clock initialization for exynos5440 (2013-01-05
-> 08:32:55 -0800)
->
-> ----------------------------------------------------------------
-> Kukjin Kim (5):
->       ARM: SAMSUNG: fix the cpu id for EXYNOS5440
->       ARM: dts: use uart port0 for console on exynos5440-ssdk5440
->       ARM: dts: use uart port1 for console on exynos4210-smdkv310
->       ARM: EXYNOS: enable PINCTRL for EXYNOS5440
->       ARM: EXYNOS: skip the clock initialization for exynos5440
+Signed-off-by: Donggeun Kim <dg77.kim@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: KyungMin Park <kyungmin.park@samsung.com>
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+ drivers/cpufreq/exynos-cpufreq.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-See comment I just sent to the posted patch for this one.
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index 7012ea8..bc1e833 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -244,13 +244,26 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	return cpufreq_frequency_table_cpuinfo(policy, exynos_info->freq_table);
+ }
+ 
++static int exynos_cpufreq_cpu_exit(struct cpufreq_policy *policy)
++{
++	cpufreq_frequency_table_put_attr(policy->cpu);
++	return 0;
++}
++
++static struct freq_attr *exynos_cpufreq_attr[] = {
++	&cpufreq_freq_attr_scaling_available_freqs,
++	NULL,
++};
++
+ static struct cpufreq_driver exynos_driver = {
+ 	.flags		= CPUFREQ_STICKY,
+ 	.verify		= exynos_verify_speed,
+ 	.target		= exynos_target,
+ 	.get		= exynos_getspeed,
+ 	.init		= exynos_cpufreq_cpu_init,
++	.exit           = exynos_cpufreq_cpu_exit,
+ 	.name		= "exynos_cpufreq",
++	.attr           = exynos_cpufreq_attr,
+ #ifdef CONFIG_PM
+ 	.suspend	= exynos_cpufreq_suspend,
+ 	.resume		= exynos_cpufreq_resume,
+-- 
+1.7.9.5
 
-
--Olof
