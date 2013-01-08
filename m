@@ -1,52 +1,62 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: EXYNOS: skip the clock initialization for exynos5440
-Date: Mon, 7 Jan 2013 21:14:08 -0800
-Message-ID: <CAOesGMjaaGtGh8SOJVUWU+nJ2kJ9ZfhA=ieutmZRuNYu=2W2gw@mail.gmail.com>
-References: <1356996838-21796-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [GIT PULL] Samsung fixes-2 for v3.8
+Date: Mon, 7 Jan 2013 21:14:41 -0800
+Message-ID: <CAOesGMjjsT-fZqLQQf9=SBY6WKoF76MZmt7CfXEsyNFsNzJhzQ@mail.gmail.com>
+References: <081701cded2f$6dcf9960$496ecc20$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:40328 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750766Ab3AHFOJ (ORCPT
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:58541 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750788Ab3AHFOm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jan 2013 00:14:09 -0500
-Received: by mail-ie0-f181.google.com with SMTP id 16so34489iea.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jan 2013 21:14:08 -0800 (PST)
-In-Reply-To: <1356996838-21796-1-git-send-email-kgene.kim@samsung.com>
+	Tue, 8 Jan 2013 00:14:42 -0500
+Received: by mail-ie0-f175.google.com with SMTP id qd14so34405ieb.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jan 2013 21:14:41 -0800 (PST)
+In-Reply-To: <081701cded2f$6dcf9960$496ecc20$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
+Cc: arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On Mon, Dec 31, 2012 at 3:33 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Since exynos5440 can support only common clk stuff, so this
-> patch skips legacy exynos5 clock initialization.
+On Mon, Jan 7, 2013 at 3:33 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Hi Arnd, Olof
 >
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.c |    7 +++++++
->  1 file changed, 7 insertions(+)
+> Here is Samsung-fixes-2 for v3.8.
+> Most of them are EXYNOS5440 fixes which are for changing uart console, cpu
+> id (typo)  and silent complaining gpio error in kernel boot.
 >
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index d6d0dc6..1a89824 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -424,11 +424,18 @@ static void __init exynos5_init_clocks(int xtal)
->  {
->         printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
+> If any problems, please kindly let me know.
 >
-> +       /* EXYNOS5440 can support only common clock framework */
-> +
-> +       if (soc_is_exynos5440())
-> +               return;
-> +
-> +#ifdef CONFIG_SOC_EXYNOS5250
+> Thanks and a very happy new year.
+>
+> - Kukjin
+>
+> The following changes since commit a49f0d1ea3ec94fc7cf33a7c36a16343b74bd565:
+>
+>   Linux 3.8-rc1 (2012-12-21 17:19:00 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> v3.8-samsung-fixes-2
+>
+> for you to fetch changes up to 61bcbc2af8be4cafb5723d4bd306053b70f52a7a:
+>
+>   ARM: EXYNOS: skip the clock initialization for exynos5440 (2013-01-05
+> 08:32:55 -0800)
+>
+> ----------------------------------------------------------------
+> Kukjin Kim (5):
+>       ARM: SAMSUNG: fix the cpu id for EXYNOS5440
+>       ARM: dts: use uart port0 for console on exynos5440-ssdk5440
+>       ARM: dts: use uart port1 for console on exynos4210-smdkv310
+>       ARM: EXYNOS: enable PINCTRL for EXYNOS5440
+>       ARM: EXYNOS: skip the clock initialization for exynos5440
 
-Why are you adding an ifdef here, when the return above will take care
-of returning early for 5440?
+See comment I just sent to the posted patch for this one.
 
 
 -Olof
