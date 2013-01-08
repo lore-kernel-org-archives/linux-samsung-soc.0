@@ -1,62 +1,61 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH] cpufreq: exynos: Show list of available frequencies
-Date: Tue, 8 Jan 2013 16:30:45 +0530
-Message-ID: <CAG17yqSKUDtAWvUnMFgavvmZABekrD_MkXK4Myk57X82Xu6RfA@mail.gmail.com>
-References: <1357642258-32421-1-git-send-email-inderpal.singh@linaro.org>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH] ARM: dts: correct the dw-mshc timing properties as per
+ binding
+Date: Tue, 8 Jan 2013 22:59:17 +0530
+Message-ID: <CAGOxZ52vsbmmmKBLZjvy2wZBDGeVTP5rwJ5Oc00oYUo2ztA2Dg@mail.gmail.com>
+References: <1357557585-30257-1-git-send-email-alim.akhtar@samsung.com>
+ <CAD=FV=XUpLwZCn=bpShFqiPBzFBaAbWYn5-+-_OuTqC55sKi3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1357642258-32421-1-git-send-email-inderpal.singh@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@lists.linux-foundation.org
-Cc: rjw@sisk.pl, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, dg77.kim@samsung.com, MyungJoo Ham <myungjoo.ham@samsung.com>, kyungmin.park@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAD=FV=XUpLwZCn=bpShFqiPBzFBaAbWYn5-+-_OuTqC55sKi3Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alim Akhtar <alim.akhtar@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-+CC:
-dg77.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+Hi Doug,
 
-On 8 January 2013 16:20, Inderpal Singh <inderpal.singh@linaro.org> wrote:
-> Add freq_attr attribute to show list of available frequencies.
+On Tue, Jan 8, 2013 at 12:34 AM, Doug Anderson <dianders@chromium.org> wrote:
 >
-> Signed-off-by: Donggeun Kim <dg77.kim@samsung.com>
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: KyungMin Park <kyungmin.park@samsung.com>
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
-> ---
->  drivers/cpufreq/exynos-cpufreq.c |   13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> Alim,
 >
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-> index 7012ea8..bc1e833 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -244,13 +244,26 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
->         return cpufreq_frequency_table_cpuinfo(policy, exynos_info->freq_table);
->  }
+> On Mon, Jan 7, 2013 at 3:19 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+> > As per the current exynos-dw-mshc bindings, dw-mshc-sdr-timing and
+> > dw-mshc-ddr-timing properties are having only two cells, these properties
+> > are wrongly set for exynos5250 based cros5250 and smdk5250 platfroms. This patch
+> > corrects above timing propreties for above platfroms
 >
-> +static int exynos_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-> +{
-> +       cpufreq_frequency_table_put_attr(policy->cpu);
-> +       return 0;
-> +}
-> +
-> +static struct freq_attr *exynos_cpufreq_attr[] = {
-> +       &cpufreq_freq_attr_scaling_available_freqs,
-> +       NULL,
-> +};
-> +
->  static struct cpufreq_driver exynos_driver = {
->         .flags          = CPUFREQ_STICKY,
->         .verify         = exynos_verify_speed,
->         .target         = exynos_target,
->         .get            = exynos_getspeed,
->         .init           = exynos_cpufreq_cpu_init,
-> +       .exit           = exynos_cpufreq_cpu_exit,
->         .name           = "exynos_cpufreq",
-> +       .attr           = exynos_cpufreq_attr,
->  #ifdef CONFIG_PM
->         .suspend        = exynos_cpufreq_suspend,
->         .resume         = exynos_cpufreq_resume,
+> Thanks for catching this.  Given that this just removes a number from
+> the dts file that isn't read by the code, I don't expect any
+> functional change and I don't see any.
+>
+> I also double-checked usage and compared to the current Chrome OS
+> tree.  The third number (that you removed) is already correctly
+> specified in the dts as "samsung,dw-mshc-ciu-div".  :)
+
+ Yes, no functional changes as the removed number is passed using
+dw-mshc-ciu-div  property now as mentioned by you.
+>
+>
+>
+> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>
+> Tested-by: Doug Anderson <dianders@chromium.org>
+> Acked-by: Doug Anderson <dianders@chromium.org>
+Thanks!!!
+
+>
 > --
-> 1.7.9.5
->
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
