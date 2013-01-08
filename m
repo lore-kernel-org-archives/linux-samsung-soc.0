@@ -1,582 +1,334 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 4/4] regulator: add device tree support for s5m8767
-Date: Tue, 8 Jan 2013 14:07:36 -0800
-Message-ID: <CAJuYYwT-hrLWdX9cO1x4-yTWK=bqeDrnbozK5MJThiu0gjznRg@mail.gmail.com>
-References: <1355143782-15133-1-git-send-email-amit.daniel@samsung.com>
-	<1355143782-15133-5-git-send-email-amit.daniel@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Tue, 08 Jan 2013 23:23:45 +0100
+Message-ID: <50EC9C71.7010909@gmail.com>
+References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com> <50E611D5.5040909@gmail.com> <CAHQjnOMxYo1D6EgX6ZnGBm_Ufr+u4hgKQzAyQdXJGhiC3XpKdA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:51779 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753662Ab3AHWHh (ORCPT
+Received: from mail-ea0-f169.google.com ([209.85.215.169]:59346 "EHLO
+	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754294Ab3AHWXu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jan 2013 17:07:37 -0500
-Received: by mail-ie0-f172.google.com with SMTP id c13so1223677ieb.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Jan 2013 14:07:37 -0800 (PST)
-In-Reply-To: <1355143782-15133-5-git-send-email-amit.daniel@samsung.com>
+	Tue, 8 Jan 2013 17:23:50 -0500
+In-Reply-To: <CAHQjnOMxYo1D6EgX6ZnGBm_Ufr+u4hgKQzAyQdXJGhiC3XpKdA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, amit.kachhap@gmail.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Linux Kernel <linux-kernel@vger.kernel.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Hyunwoong Kim <khw0178.kim@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Prathyush <prathyush.k@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-On 10 December 2012 04:49, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
-> Add device tree based discovery support for pmic block of s5m8767
+On 01/07/2013 11:45 AM, KyongHo Cho wrote:
+>> > The current exynos-iommu(System MMU) driver does not work autonomously
+>> > since it is lack of support for power management of peripheral blocks.
+>> > For example, MFC device driver must ensure that its System MMU is
+> disabled
+>> > before MFC block is power-down not to invalidate IOTLB in the System MMU
+>> > when I/O memory mapping is changed. Because A System MMU is resides
+> in the
+>> > same H/W block, access to control registers of System MMU while the H/W
+>> > block is turned off must be prohibited.
+>> >
+>> > This set of changes solves the above problem with setting each System
+> MMUs
+>> > as the parent of the device which owns the System MMU to recieve the
+>> > information when the device is turned off or turned on.
+>>
+>>
+>>  I intend to make Exynos4412 FIMC-LITEn (Exynos5 CAMIFn) devices child
+>>  devices of the FIMC-IS (camera ISP) platform device. This patch reflects
+>>  that: http://patchwork.linuxtv.org/patch/16046
+>>
+>>  This is required since AFAIK FIMC-LITE depends on clocks from FIMC-IS.
+>>  By setting fimc-is device as the parent fimc-lite's dependency on it is
+>>  resolved without any hacks between these drivers.
+>>
+>>  Then how this tree will look like after your sysmmu related re-parenting:
+>>
+>>           fimc-is
+>>          /      \
+>>   fimc-lite0    fimc-lite1
+>>
+>>
+>>  ?
 >
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  .../bindings/regulator/s5m8767-regulator.txt       |  133 ++++++++++++++
->  drivers/mfd/sec-core.c                             |   75 ++++++++-
->  drivers/regulator/s5m8767.c                        |  190 +++++++++++++++++++-
->  include/linux/mfd/samsung/core.h                   |    3 +
->  4 files changed, 398 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+> First of all, I think that clock dependency shuold be resolved with
+> setting the parent of clock descriptor of fimc-lite  to the clock
+> descriptor of fimc-is.
+
+I'll need to investigate it more, but AFAIU there is more than one clock
+for the FIMC-IS device that needs to be enabled before FIMC-LITE can be
+used. IOW FIMC-LITE must be activated after FIMC-IS, and deactivated before
+FIMC-IS is (runtime) suspended.
+
+So I'm afraid I can't simply alter the clock tree for the sake of the
+subsystem dependencies - it's not a one-to-one relation and it doesn't
+sound right.
+
+> If you are concerning about power management, it is simply resolved with
+> putting fimc-lite to the power domain of fimc-is.
+
+Yes, these devices are already registered to same power domain (ISP).
+
+> The above tree will be changed like below after probing System MMU:
+> sysmmu-fimc-is
+>              I
+>       fimc-is
 >
-> diff --git a/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt b/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
-> new file mode 100644
-> index 0000000..59c372b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
-> @@ -0,0 +1,133 @@
-> +* Samsung S5M8767 Voltage and Current Regulator
-> +
-> +The Samsung S5M8767 is a multi-function device which includes volatage and
-> +current regulators, rtc, charger controller and other sub-blocks. It is
-> +interfaced to the host controller using a i2c interface. Each sub-block is
-> +addressed by the host system using different i2c slave address. This document
-> +describes the bindings for 'pmic' sub-block of s5m8767.
-> +
-> +Required properties:
-> +- compatible: Should be "samsung,s5m8767-pmic".
-> +- reg: Specifies the i2c slave address of the pmic block. It should be 0x66.
-> +
-> +- s5m8767,pmic-buck2-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
-> +  units for buck2 when changing voltage using gpio dvs. Refer to [1] below
-> +  for additional information.
-> +
-> +- s5m8767,pmic-buck3-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
-> +  units for buck3 when changing voltage using gpio dvs. Refer to [1] below
-> +  for additional information.
-> +
-> +- s5m8767,pmic-buck4-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
-> +  units for buck4 when changing voltage using gpio dvs. Refer to [1] below
-> +  for additional information.
-> +
-> +[1] If none of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
-> +    property is specified, the 's5m8767,pmic-buck[2/3/4]-dvs-voltage'
-> +    property should specify atleast one voltage level (which would be a
-> +    safe operating voltage).
-> +
-> +    If either of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
-> +    property is specified, then all the eigth voltage values for the
-> +    's5m8767,pmic-buck[2/3/4]-dvs-voltage' should be specified.
-> +
-> +Optional properties:
-> +- interrupt-parent: Specifies the phandle of the interrupt controller to which
-> +  the interrupts from s5m8767 are delivered to.
-> +- interrupts: Interrupt specifiers for two interrupt sources.
-> +  - First interrupt specifier is for 'irq1' interrupt.
-> +  - Second interrupt specifier is for 'alert' interrupt.
-> +- s5m8767,pmic-buck2-uses-gpio-dvs: 'buck2' can be controlled by gpio dvs.
-> +- s5m8767,pmic-buck3-uses-gpio-dvs: 'buck3' can be controlled by gpio dvs.
-> +- s5m8767,pmic-buck4-uses-gpio-dvs: 'buck4' can be controlled by gpio dvs.
-> +
-> +Additional properties required if either of the optional properties are used:
-> +
-> +- s5m8767,pmic-buck234-default-dvs-idx: Default voltage setting selected from
-> +  the possible 8 options selectable by the dvs gpios. The value of this
-> +  property should be between 0 and 7. If not specified or if out of range, the
-> +  default value of this property is set to 0.
-> +
-> +- s5m8767,pmic-buck-dvs-gpios: GPIO specifiers for three host gpio's used
-> +  for dvs. The format of the gpio specifier depends in the gpio controller.
-> +
-> +Regulators: The regulators of s5m8767 that have to be instantiated should be
-> +included in a sub-node named 'regulators'. Regulator nodes included in this
-> +sub-node should be of the format as listed below.
-> +
-> +       regulator_name {
-> +               standard regulator bindings here
-> +       };
-> +
-> +The following are the names of the regulators that the s5m8767 pmic block
-> +supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
-> +as per the datasheet of s5m8767.
-> +
-> +       - LDOn
-> +                 - valid values for n are 1 to 28
-> +                 - Example: LDO0, LD01, LDO28
-> +       - BUCKn
-> +                 - valid values for n are 1 to 9.
-> +                 - Example: BUCK1, BUCK2, BUCK9
-> +
-> +The bindings inside the regulator nodes use the standard regulator bindings
-> +which are documented elsewhere.
-> +
-> +Example:
-> +
-> +       s5m8767_pmic@66 {
-> +               compatible = "samsung,s5m8767-pmic";
-> +               reg = <0x66>;
-> +
-> +               s5m8767,pmic-buck2-uses-gpio-dvs;
-> +               s5m8767,pmic-buck3-uses-gpio-dvs;
-> +               s5m8767,pmic-buck4-uses-gpio-dvs;
-> +
-> +               s5m8767,pmic-buck-default-dvs-idx = <0>;
-> +
-> +               s5m8767,pmic-buck-dvs-gpios = <&gpx0 0 1 0 0>, /* DVS1 */
-> +                                                <&gpx0 1 1 0 0>, /* DVS2 */
-> +                                                <&gpx0 2 1 0 0>; /* DVS3 */
-> +
-> +               s5m8767,pmic-buck-ds-gpios = <&gpx2 3 1 0 0>, /* SET1 */
-> +                                               <&gpx2 4 1 0 0>, /* SET2 */
-> +                                               <&gpx2 5 1 0 0>; /* SET3 */
-> +
-> +               s5m8767,pmic-buck2-dvs-voltage = <1350000>, <1300000>,
-> +                                                <1250000>, <1200000>,
-> +                                                <1150000>, <1100000>,
-> +                                                <1000000>, <950000>;
-> +
-> +               s5m8767,pmic-buck3-dvs-voltage = <1100000>, <1100000>,
-> +                                                <1100000>, <1100000>,
-> +                                                <1000000>, <1000000>,
-> +                                                <1000000>, <1000000>;
-> +
-> +               s5m8767,pmic-buck4-dvs-voltage = <1200000>, <1200000>,
-> +                                                <1200000>, <1200000>,
-> +                                                <1200000>, <1200000>,
-> +                                                <1200000>, <1200000>;
-> +
-> +               regulators {
-> +                       ldo1_reg: LDO1 {
-> +                               regulator-name = "VDD_ABB_3.3V";
-> +                               regulator-min-microvolt = <3300000>;
-> +                               regulator-max-microvolt = <3300000>;
-> +                       };
-> +
-> +                       ldo2_reg: LDO2 {
-> +                               regulator-name = "VDD_ALIVE_1.1V";
-> +                               regulator-min-microvolt = <1100000>;
-> +                               regulator-max-microvolt = <1100000>;
-> +                               regulator-always-on;
-> +                       };
-> +
-> +                       buck1_reg: BUCK1 {
-> +                               regulator-name = "VDD_MIF_1.2V";
-> +                               regulator-min-microvolt = <950000>;
-> +                               regulator-max-microvolt = <1350000>;
-> +                               regulator-always-on;
-> +                               regulator-boot-on;
-> +                       };
-> +               };
-> +       };
-> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-> index 49d361a..51de531 100644
-> --- a/drivers/mfd/sec-core.c
-> +++ b/drivers/mfd/sec-core.c
-> @@ -17,6 +17,7 @@
->  #include <linux/err.h>
->  #include <linux/slab.h>
->  #include <linux/i2c.h>
-> +#include <linux/of_irq.h>
->  #include <linux/interrupt.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/mutex.h>
-> @@ -60,6 +61,15 @@ static struct mfd_cell s2mps11_devs[] = {
->         },
->  };
+> sysmmu-fimc-lite0
+>                I
+>        fimc-lite0
 >
-> +#ifdef CONFIG_OF
-> +static struct of_device_id __devinitdata sec_dt_match[] = {
-> +       {       .compatible = "samsung,s5m8767-pmic",
-> +               .data = S5M8767X,
-> +       },
-> +       {},
-> +};
-> +#endif
-> +
->  int sec_reg_read(struct sec_pmic_dev *sec_pmic, u8 reg, void *dest)
->  {
->         return regmap_read(sec_pmic->regmap, reg, dest);
-> @@ -95,6 +105,57 @@ static struct regmap_config sec_regmap_config = {
->         .val_bits = 8,
->  };
+> sysmmu-fimc-lite1
+>               I
+>         fimc-lite1
+
+I'm just concerned that this iommu driver would drop previous parent
+configurations and introduce its own. There might be other devices for
+which this would be harmful. Didn't you consider just moving any existing
+device's parent and setting it as iommu's parent, so the tree looks like
+
+          sysmmu-fimc-is	
+                |
+             fimc-is
+         /            \
+   sysmmu-fimc-lite0  sysmmu-fimc-lite1
+         |              |
+   fimc-lite0         fimc-lite1
+
+?
+
+But it's not really much better...
+
+>> > Another big change to the driver is the support for devicetree.
+>> > The bindings for System MMU is described in
+>> > Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+>>
+>>
+>>  Yes, and there is no patch adding this file in this series. Let me paste
+>>  it here:
+>>
+>>  From 88987ff5b77acc7211b9f537a6ef6ea38e3efdd0 Mon Sep 17 00:00:00 2001
+>>  From: KyongHo Cho <pullip.cho@samsung.com <mailto:pullip.cho@samsung.com>>
+>>  Date: Tue, 11 Dec 2012 14:06:25 +0900
+>>  Subject: [PATCH] ARM: EXYNOS: add System MMU definition to DT
+>>
+>>  This commit adds System MMU nodes to DT of Exynos SoCs.
+>>
+>>  Signed-off-by: KyongHo Cho <pullip.cho@samsung.com
+> <mailto:pullip.cho@samsung.com>>
+>>  Signed-off-by: Kukjin Kim <kgene.kim@samsung.com
+> <mailto:kgene.kim@samsung.com>>
+>>  ---
+>>   .../devicetree/bindings/arm/exynos/system-mmu.txt  |   86 ++++++++++++
+>>   arch/arm/boot/dts/exynos4210.dtsi                  |   96 +++++++++++++
+>>   arch/arm/boot/dts/exynos4x12.dtsi                  |  124
+> +++++++++++++++++
+>>   arch/arm/boot/dts/exynos5250.dtsi                  |  147
+> +++++++++++++++++++-
+>>   4 files changed, 451 insertions(+), 2 deletions(-)
+>>   create mode 100644
+> Documentation/devicetree/bindings/arm/exynos/system-mmu.txt
+>>
+>>  diff --git
+> a/Documentation/devicetree/bindings/arm/exynos/system-mmu.txt
+> b/Documentation/devicetree/bindings/arm/exynos/system-mmu.txt
+>>  new file mode 100644
+>>  index 0000000..b33d682
+>>  --- /dev/null
+>>  +++ b/Documentation/devicetree/bindings/arm/exynos/system-mmu.txt
+>>  @@ -0,0 +1,86 @@
+>>  +* Samsung Exynos System MMU
+>>  +
+>>  +Samsung's Exynos architecture includes System MMU that enables scattered
+>>  +physical chunks to be visible as a contiguous region to DMA-capabile
+> peripheral
+>>  +devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
+>>  +
+>>  +System MMU is a sort of IOMMU and support identical translation table
+> format to
+>>  +ARMv7 translation tables with minimum set of page properties
+> including access
+>>  +permissions, shareability and security protection. In addition System
+> MMU has
+>>  +another capabilities like L2 TLB or block-fetch buffers to minimize
+> translation
+>>  +latency
+>>  +
+>>  +Each System MMU is included in the H/W block of a peripheral device.
+> Thus, it is
+>>  +important to specify that a System MMU is dedicated to which
+> peripheral device
+>>  +before using System MMU. System initialization must specify the
+> relationships
+>>  +between a System MMU and a peripheral device that owns the System MMU.
+>>  +
+>>  +Some device drivers may control several peripheral devices with a
+> single device
+>>  +descriptor like MFC. Since handling a System MMU with IOMMU API
+> requires a
+>>  +device descriptor that needs the System MMU, it is best to combine
+> the System
+>>  +MMUs of the peripheral devices and control them with a single System
+> MMU device
+>>  +descriptor. If it is unable to combine them into a single device
+> descriptor,
+>>  +they can be linked with each other by the means of device.parent
+> relationship.
+>>  +
+>>  +Required properties:
+>>  +- compatible: Should be "samsung,exynos-sysmmu".
+>>  +- reg: Tuples of base address and size of System MMU registers. The
+> number of
+>>  +       tuples can be more than one if two or more System MMUs are
+> controlled
+>>  +       by a single device descriptor.
+>>  +- interrupt-parent: The phandle of the interrupt controller of System MMU
+>>  +- interrupts: Tuples of numbers that indicates the interrupt source. The
+>>  +              number of elements in the tuple is dependent upon
+>>  + 'interrupt-parent' property. The number of tuples in this property
+>>  +             must be the same with 'reg' property.
+>>  +
+>>  +Optional properties:
+>>  +- mmuname: Strings of the name of System MMU for debugging purpose.
+> The number
+>>  +          of strings must be the same with the number of tuples in 'reg'
+>>  +          property.
+>>
+>>  As commented on previous patch, this isn't something that belongs here.
+>>  But for debugging you could probably retrieve this from the node name ?
 >
-> +
-> +#ifdef CONFIG_OF
-> +/*
-> + * Only the common platform data elements for s5m8767 are parsed here from the
-> + * device tree. Other sub-modules of s5m8767 such as pmic, rtc , charger and
-> + * others have to parse their own platform data elements from device tree.
-> + *
-> + * The s5m8767 platform data structure is instantiated here and the drivers for
-> + * the sub-modules need not instantiate another instance while parsing their
-> + * platform data.
-> + */
-> +static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
-> +                                       struct device *dev)
-> +{
-> +       struct sec_platform_data *pd;
-> +
-> +       pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-> +       if (!pd) {
-> +               dev_err(dev, "could not allocate memory for pdata\n");
-> +               return ERR_PTR(-ENOMEM);
-> +       }
-> +
-> +       /*
-> +        * ToDo: the 'wakeup' member in the platform data is more of a linux
-> +        * specfic information. Hence, there is no binding for that yet and
-> +        * not parsed here.
-> +        */
-> +
-> +       return pd;
-> +}
-> +#else
-> +static struct sec_platform_data *sec_i2c_parse_dt_pdata(
-> +                                       struct device *dev)
-> +{
-> +       return 0;
-> +}
-> +#endif
-> +
-> +static inline int sec_i2c_get_driver_data(struct i2c_client *i2c,
-> +                                               const struct i2c_device_id *id)
-> +{
-> +#ifdef CONFIG_OF
-> +       if (i2c->dev.of_node) {
-> +               const struct of_device_id *match;
-> +               match = of_match_node(sec_dt_match, i2c->dev.of_node);
-> +               return (int)match->data;
-> +       }
-> +#endif
-> +       return (int)id->driver_data;
-> +}
-> +
->  static int sec_pmic_probe(struct i2c_client *i2c,
->                             const struct i2c_device_id *id)
->  {
-> @@ -111,13 +172,22 @@ static int sec_pmic_probe(struct i2c_client *i2c,
->         sec_pmic->dev = &i2c->dev;
->         sec_pmic->i2c = i2c;
->         sec_pmic->irq = i2c->irq;
-> -       sec_pmic->type = id->driver_data;
-> -
-> +       sec_pmic->type = sec_i2c_get_driver_data(i2c, id);
-> +
-> +       if (sec_pmic->dev->of_node) {
-> +               pdata = sec_pmic_i2c_parse_dt_pdata(sec_pmic->dev);
-> +               if (IS_ERR(pdata)) {
-> +                       ret = PTR_ERR(pdata);
-> +                       return ret;
-> +               }
-> +               pdata->device_type = sec_pmic->type;
-> +       }
->         if (pdata) {
->                 sec_pmic->device_type = pdata->device_type;
->                 sec_pmic->ono = pdata->ono;
->                 sec_pmic->irq_base = pdata->irq_base;
->                 sec_pmic->wakeup = pdata->wakeup;
-> +               sec_pmic->pdata = pdata;
->         }
->
->         sec_pmic->regmap = devm_regmap_init_i2c(i2c, &sec_regmap_config);
-> @@ -192,6 +262,7 @@ static struct i2c_driver sec_pmic_driver = {
->         .driver = {
->                    .name = "sec_pmic",
->                    .owner = THIS_MODULE,
-> +                  .of_match_table = of_match_ptr(sec_dt_match),
->         },
->         .probe = sec_pmic_probe,
->         .remove = sec_pmic_remove,
-> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-> index 9f991f2..fcd606d 100644
-> --- a/drivers/regulator/s5m8767.c
-> +++ b/drivers/regulator/s5m8767.c
-> @@ -14,6 +14,7 @@
->  #include <linux/bug.h>
->  #include <linux/err.h>
->  #include <linux/gpio.h>
-> +#include <linux/of_gpio.h>
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> @@ -21,6 +22,11 @@
->  #include <linux/regulator/machine.h>
->  #include <linux/mfd/samsung/core.h>
->  #include <linux/mfd/samsung/s5m8767.h>
-> +#include <linux/regulator/of_regulator.h>
-> +#include <linux/io.h>
-> +#include <mach/map.h>
-> +
-> +#define S5M8767_OPMODE_NORMAL_MODE 0x1
->
->  struct s5m8767_info {
->         struct device *dev;
-> @@ -508,15 +514,196 @@ static struct regulator_desc regulators[] = {
->         s5m8767_regulator_desc(BUCK9),
->  };
->
-> +#ifdef CONFIG_OF
-> +static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
-> +                       struct sec_platform_data *pdata,
-> +                       struct device_node *pmic_np)
-> +{
-> +       int i, gpio;
-> +
-> +       for (i = 0; i < 3; i++) {
-> +               gpio = of_get_named_gpio(pmic_np,
-> +                                       "s5m8767,pmic-buck-dvs-gpios", i);
-> +               if (!gpio_is_valid(gpio)) {
-> +                       dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
-> +                       return -EINVAL;
-> +               }
-> +               pdata->buck_gpios[i] = gpio;
-> +       }
-> +       return 0;
-> +}
-> +
-> +static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
-> +                       struct sec_platform_data *pdata,
-> +                       struct device_node *pmic_np)
-> +{
-> +       int i, gpio;
-> +
-> +       for (i = 0; i < 3; i++) {
-> +               gpio = of_get_named_gpio(pmic_np,
-> +                                       "s5m8767,pmic-buck-ds-gpios", i);
+> Thank you for good idea. However mmuname is an array of strings,
+> actually. Anyway I agree with your opinion that 'mmuname' is not proper
+> property of a device node. I will remove it and substitute it with base
+> register address of a System MMU.
 
-The binding "s5m8767,pmic-buck-ds-gpios" should be documented.
+Ok.
 
-> +               if (!gpio_is_valid(gpio)) {
-> +                       dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
-> +                       return -EINVAL;
-> +               }
-> +               pdata->buck_ds[i] = gpio;
-> +       }
-> +       return 0;
-> +}
-> +
-> +static int s5m8767_pmic_dt_parse_pdata(struct sec_pmic_dev *iodev,
-> +                                       struct sec_platform_data *pdata)
-> +{
-> +       struct device_node *pmic_np, *regulators_np, *reg_np;
-> +       struct sec_regulator_data *rdata;
-> +       struct sec_opmode_data *rmode;
-> +       unsigned int i, dvs_voltage_nr = 1, ret;
-> +
-> +       pmic_np = iodev->dev->of_node;
-> +       if (!pmic_np) {
-> +               dev_err(iodev->dev, "could not find pmic sub-node\n");
-> +               return -ENODEV;
-> +       }
-> +
-> +       regulators_np = of_find_node_by_name(pmic_np, "regulators");
-> +       if (!regulators_np) {
-> +               dev_err(iodev->dev, "could not find regulators sub-node\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       /* count the number of regulators to be supported in pmic */
-> +       pdata->num_regulators = 0;
-> +       for_each_child_of_node(regulators_np, reg_np) {
-> +               pdata->num_regulators++;
-> +       }
+>>  +- mmu-master: phandle to the device node that owns System MMU. Only
+> the device
+>>  +          that is specified whith this property can control System
+> MMU with
+>>  +          IOMMU API.
+>>  +
+>>  +Examples:
+>>  +
+>>  +MFC has 2 System MMUs for each port that MFC is attached. Thus it
+> seems natural
+>>  +to define 2 System MMUs for each port of the MFC:
 
-{ } can be dropped.
+"The video codec (MFC) device has a System MMUs for each port (AXI master).
+Thus it seems natural to define a System MMU device node for each port of
+the MFC:"
 
-> +
-> +       rdata = devm_kzalloc(iodev->dev, sizeof(*rdata) *
-> +                               pdata->num_regulators, GFP_KERNEL);
-> +       if (!rdata) {
-> +               dev_err(iodev->dev,
-> +                       "could not allocate memory for regulator data\n");
-> +               return -ENOMEM;
-> +       }
-> +
-> +       rmode = devm_kzalloc(iodev->dev, sizeof(*rmode) *
-> +                               pdata->num_regulators, GFP_KERNEL);
-> +       if (!rdata) {
-> +               dev_err(iodev->dev,
-> +                       "could not allocate memory for regulator mode\n");
-> +               return -ENOMEM;
-> +       }
-> +
-> +
+>>  +
+>>  +       sysmmu-mfc-l {
+>>  +               mmuname = "mfc_l";
+>>  +               reg = <0x11210000 0x1000>;
+>>  +               compatible = "samsung,exynos-sysmmu";
+>>  +               interrupt-parent = <&combiner>;
+>>  +               interrupts = <8 5>;
+>>  +               mmu-master = <&mfc>;
+>>  +       };
+>>  +
+>>  +       sysmmu-mfc-r {
+>>  +               mmuname = "mfc_r";
+>>  +               reg = <0x11200000 0x1000>;
+>>  +               compatible = "samsung,exynos-sysmmu";
+>>  +               interrupt-parent = <&combiner>;
+>>  +               interrupts = <6 2>;
+>>  +               mmu-master = <&mfc>;
+>>  +       };
+>>  +
+>>  +Actually, MFC device driver requires sub-devices that represents each
+> port and
+>>  +above 'mmu-master' properties of sysmmu-mfc-l and sysmmu-mfc-r have
+> the phandles
+>>  +to those sub-devices.
+>>
+>>  I find this sentence really difficult to parse. This documentation
+> should talk
+>>  about how the device is designed and represented, rather than about
+> its driver.
+>>
+> OK. I will trying to find another expression easy to understand.  Do you
+> have any suggestion?
 
-Additional blank line here can be removed.
+I'm not a native English speaker, but maybe something like this makes sense:
 
-> +       pdata->regulators = rdata;
-> +       pdata->opmode = rmode;
-> +       for_each_child_of_node(regulators_np, reg_np) {
-> +               for (i = 0; i < ARRAY_SIZE(regulators); i++)
-> +                       if (!of_node_cmp(reg_np->name, regulators[i].name))
-> +                               break;
-> +
-> +               if (i == ARRAY_SIZE(regulators)) {
-> +                       dev_warn(iodev->dev,
-> +                       "don't know how to configure regulator %s\n",
-> +                       reg_np->name);
-> +                       continue;
-> +               }
-> +
-> +               rdata->id = i;
-> +               rdata->initdata = of_get_regulator_init_data(
-> +                                               iodev->dev, reg_np);
-> +               rdata->reg_node = reg_np;
-> +               rdata++;
-> +               rmode->id = i;
-> +               if (of_property_read_u32(reg_np, "op_mode",
-> +                               &rmode->mode)) {
+"The sysmmu-mfc-l, sysmmy-mfc-r nodes represent parts of the MFC device 
+which
+indicate their 'mmu-master' phandles pointing to the mfc node."
 
-"op_mode" binding needs to be documented. And rmode->mode is an 'int'.
-So it is better to use a temporary u32 variable to read the value of
-op_mode. And assign the value of temporary variable back to
-rmode->mode. Or use of_property_read_u16 api but that is still not
-right since "rmode->mode" is signed value.
+?
 
-> +                       dev_warn(iodev->dev, "no op_mode property property at %s\n",
-> +                               reg_np->full_name);
-> +
-> +                       rmode->mode = S5M8767_OPMODE_NORMAL_MODE;
-> +               }
-> +               rmode++;
-> +       }
-> +
-> +       if (of_get_property(pmic_np, "s5m8767,pmic-buck2-uses-gpio-dvs", NULL))
-> +               pdata->buck2_gpiodvs = true;
-> +
-> +       if (of_get_property(pmic_np, "s5m8767,pmic-buck3-uses-gpio-dvs", NULL))
-> +               pdata->buck3_gpiodvs = true;
-> +
-> +       if (of_get_property(pmic_np, "s5m8767,pmic-buck4-uses-gpio-dvs", NULL))
-> +               pdata->buck4_gpiodvs = true;
-> +
-> +       if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
-> +                                               pdata->buck4_gpiodvs) {
-> +               ret = s5m8767_pmic_dt_parse_dvs_gpio(iodev, pdata, pmic_np);
-> +               if (ret)
-> +                       return -EINVAL;
-> +
-> +               if (of_property_read_u32(pmic_np,
-> +                               "s5m8767,pmic-buck-default-dvs-idx",
-> +                               &pdata->buck_default_idx)) {
-> +                       pdata->buck_default_idx = 0;
-> +               } else {
-> +                       if (pdata->buck_default_idx >= 8) {
-> +                               pdata->buck_default_idx = 0;
-> +                               dev_info(iodev->dev,
-> +                               "invalid value for default dvs index, use 0\n");
-> +                       }
-> +               }
-> +
-> +               dvs_voltage_nr = 8;
-> +       }
-> +
-> +       ret = s5m8767_pmic_dt_parse_ds_gpio(iodev, pdata, pmic_np);
-> +       if (ret)
-> +               return -EINVAL;
-> +
-> +       if (of_property_read_u32_array(pmic_np,
-> +                               "s5m8767,pmic-buck2-dvs-voltage",
-> +                               pdata->buck2_voltage, dvs_voltage_nr)) {
+>>  +However, it is also a good idea that treats the above System MMUs as
 
-Same here. Maybe it is better to change pdata->buck2/3/4_voltage to
-u32 data type.
+treats -> treat
 
-> +               dev_err(iodev->dev, "buck2 voltages not specified\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (of_property_read_u32_array(pmic_np,
-> +                               "s5m8767,pmic-buck3-dvs-voltage",
-> +                               pdata->buck3_voltage, dvs_voltage_nr)) {
+> one System
+>>  +MMU because those System MMUs are actually required by the MFC device:
+>>  +
+>>  +       sysmmu-mfc {
+>>  +               mmuname = "mfc_l", "mfc_r";
+>>  +               reg = <0x11210000 0x1000
+>>  +                      0x11200000 0x1000>;
+>>  +               compatible = "samsung,exynos-sysmmu";
+>>  +               interrupt-parent = <&combiner>;
+>>  +               interrupts = <8 5
+>>  +                             6 2>;
 
-same here...
+interrupts = <8 5>, <6 2>; ?
 
-> +               dev_err(iodev->dev, "buck3 voltages not specified\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (of_property_read_u32_array(pmic_np,
-> +                               "s5m8767,pmic-buck4-dvs-voltage",
-> +                               pdata->buck4_voltage, dvs_voltage_nr)) {
+>>  +               mmu-master = <&mfc>;
+>>  +       };
+>>  +
+>>  +If System MMU of MFC is defined like the above, the number of
+> elements and the
+>>  +order of list in 'mmuname', 'reg' and 'interrupts' must be the same.
+...
+>>  diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+>>  index 2e3b6ef..2ff6d78 100644
+>>  --- a/arch/arm/boot/dts/exynos5250.dtsi
+>>  +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>>  @@ -75,7 +75,7 @@
+>>                  interrupts = <0 42 0>;
+>>          };
+>>
+...
+>>  +       sysmmu-is0 {
+>>  +               mmuname = "isp", "drc", "scalerc", "scalerp", "fd", "mcu";
+>>  +               reg = < 0x13260000 0x1000
+>>  +                       0x13270000 0x1000
+>>  +                       0x13280000 0x1000
+>>  +                       0x13290000 0x1000
+>>  +                       0x132A0000 0x1000
+>>  +                       0x132B0000 0x1000 >;
+>>  +               compatible = "samsung,exynos-sysmmu";
+>>  +               interrupt-parent = <&combiner>;
+>>  +               interrupts = <  10 6
+>>  +                               11 6
+>>  +                                5 2
+>>  +                                3 6
+>>  +                                5 0
+>>  +                                5 4 >;
+>>
+>>  I believe this should be
+>>
+>>                  interrupts = <10 6>, <11 6>, <5 2>,
+>>  <3 6>, <5 0>, <5 4>;
+>>
+> I found the syntax of array of resources in the specifications of device
+> tree. I found that it works correctly.
 
-same here...
+OK, it seems both conventions are valid. I just found it unusual, since
+all interrupt specifiers I've seen for Samsung SoCs use the syntax, where
+each interrupt is enclosed in triangular brackets. Maybe it's better to
+keep it consistent across all files ?
 
-> +               dev_err(iodev->dev, "buck4 voltages not specified\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       return 0;
-> +}
-> +#else
-> +static int s5m8767_pmic_dt_parse_pdata(struct sec_pmic_dev *iodev,
-> +                                       struct sec_platform_data *pdata)
-> +{
-> +       return 0;
-> +}
-> +#endif /* CONFIG_OF */
-> +
->  static int s5m8767_pmic_probe(struct platform_device *pdev)
->  {
->         struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-> -       struct sec_platform_data *pdata = dev_get_platdata(iodev->dev);
-> +       struct sec_platform_data *pdata = iodev->pdata;
->         struct regulator_config config = { };
->         struct regulator_dev **rdev;
->         struct s5m8767_info *s5m8767;
->         int i, ret, size, buck_init;
->
-> +       if (iodev->dev->of_node) {
-> +               ret = s5m8767_pmic_dt_parse_pdata(iodev, pdata);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
->         if (!pdata) {
->                 dev_err(pdev->dev.parent, "Platform data not supplied\n");
->                 return -ENODEV;
-> @@ -765,6 +952,7 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
->                 config.dev = s5m8767->dev;
->                 config.init_data = pdata->regulators[i].initdata;
->                 config.driver_data = s5m8767;
-> +               config.of_node = pdata->regulators[i].reg_node;
->
->                 rdev[i] = regulator_register(&regulators[id], &config);
->                 if (IS_ERR(rdev[i])) {
-> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-> index b50c38f..380ed95 100644
-> --- a/include/linux/mfd/samsung/core.h
-> +++ b/include/linux/mfd/samsung/core.h
-> @@ -26,6 +26,7 @@ enum sec_device_type {
->  /**
->   * struct sec_pmic_dev - s5m87xx master device for sub-drivers
->   * @dev: master device of the chip (can be used to access platform data)
-> + * @pdata: pointer to private data used to pass platform data to child
->   * @i2c: i2c client private data for regulator
->   * @rtc: i2c client private data for rtc
->   * @iolock: mutex for serializing io access
-> @@ -39,6 +40,7 @@ enum sec_device_type {
->   */
->  struct sec_pmic_dev {
->         struct device *dev;
-> +       struct sec_platform_data *pdata;
->         struct regmap *regmap;
->         struct i2c_client *i2c;
->         struct i2c_client *rtc;
-> @@ -127,6 +129,7 @@ struct sec_platform_data {
->  struct sec_regulator_data {
->         int                             id;
->         struct regulator_init_data      *initdata;
-> +       struct device_node *reg_node;
->  };
->
->  /*
-> --
-> 1.7.1
->
+--
 
-After fixing these, you could add:
-Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+Regards,
+Sylwester
