@@ -1,56 +1,50 @@
 From: Prasanna Kumar <prasanna.ps@samsung.com>
-Subject: [PATCH 1/3] ARM: dts: exynos5: Add power domain clocks to pd node of
- Gscaler and MFC
-Date: Wed, 09 Jan 2013 18:24:39 +0530
-Message-ID: <1357736081-19390-2-git-send-email-prasanna.ps@samsung.com>
-References: <1357736081-19390-1-git-send-email-prasanna.ps@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:18286 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757478Ab3AIMuy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jan 2013 07:50:54 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGC00IFOZOBZ6H0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Jan 2013 21:50:52 +0900 (KST)
-Received: from user-ubuntu.sisodomain.com ([107.108.83.235])
- by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MGC00CPHZLNZ970@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Jan 2013 21:50:52 +0900 (KST)
-In-reply-to: <1357736081-19390-1-git-send-email-prasanna.ps@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/3] ARM:exynos5:power-domain: Save and restore CLK_TOP_SRC3
+ via clock framework.
+Date: Wed, 09 Jan 2013 18:24:38 +0530
+Message-ID: <1357736081-19390-1-git-send-email-prasanna.ps@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, jhbird.choi@samsung.com
 Cc: Prasanna Kumar <prasanna.ps@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Power domain clks are added to Gscaler and MFC pd nodes.
-These clocks are saved during power off.
+After Suspend-Resume operation of exynos5, CLK_TOP_SRC3 register modified
+while power gating G-scaler and MFC power domains.This is seen only after
+suspend and resume.
 
-Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+The solution to this problem is to save CLK_SRC_TOP3 register and restore
+it while powergating. But CLK_SRC_TOP3 register cannot accessed directly 
+by power domain code.
+Please refer below URL to know the background of this issue.
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14347.html.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 6d0e87c..8043be3 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -558,11 +558,13 @@
- 	pd_gsc: gsc-power-domain@0x10044000 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044000 0x20>;
-+		samsung,exynos-pd-clks ="aclk_266_gscl","aclk_300_gscl";
- 	};
- 
- 	pd_mfc: mfc-power-domain@0x10044040 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044040 0x20>;
-+		samsung,exynos-pd-clks ="aclk_333";
- 	};
- 
- 	gsc_0:  gsc@0x13e00000 {
+This patch set adds clock framework support for save and restore
+clock register (CLK_SRC_TOP3)  for G-scaler and MFC power domains.
+
+This patch set depends on
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14648.html
+
+Prasanna Kumar (3):
+  ARM: dts: exynos5: Add power domain clocks to pd node of Gscaler and MFC
+  ARM:exynos5:dts: Bindings for clock definitions are added.
+  ARM: exynos5: Add clock save and restore operation(CLK_SRC_TOP3) using clock framework.
+
+ .../bindings/arm/exynos/power_domain.txt           |   14 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    2 +
+ arch/arm/mach-exynos/pm_domains.c                  |  125 ++++++++++++++++++++
+ 3 files changed, 141 insertions(+), 0 deletions(-)
+
 -- 
 1.7.5.4
