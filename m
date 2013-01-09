@@ -1,69 +1,51 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 1/3] ARM: dts: exynos5: Add power domain clocks to pd node
- of Gscaler and MFC
-Date: Wed, 9 Jan 2013 09:25:28 -0800
-Message-ID: <CAJuYYwTv-YCQnOXA8sFOipvnd4+jE_WqmdsAphteofumSdYF4w@mail.gmail.com>
-References: <1357736081-19390-1-git-send-email-prasanna.ps@samsung.com>
-	<1357736081-19390-2-git-send-email-prasanna.ps@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 1/5 v2] Rename s5p-time to samsung-time
+Date: Wed, 09 Jan 2013 11:26:23 -0800
+Message-ID: <50EDC45F.5010105@samsung.com>
+References: <50885608.1030503@openwide.fr> <201212101359.51974.heiko@sntech.de> <50CCEEE7.4090203@openwide.fr> <6825637.7rn5o5FT8e@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f182.google.com ([209.85.210.182]:40251 "EHLO
-	mail-ia0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754923Ab3AIRZ3 (ORCPT
+Received: from mail-vb0-f50.google.com ([209.85.212.50]:53920 "EHLO
+	mail-vb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932451Ab3AIT0c (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jan 2013 12:25:29 -0500
-Received: by mail-ia0-f182.google.com with SMTP id x2so1718334iad.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jan 2013 09:25:28 -0800 (PST)
-In-Reply-To: <1357736081-19390-2-git-send-email-prasanna.ps@samsung.com>
+	Wed, 9 Jan 2013 14:26:32 -0500
+Received: by mail-vb0-f50.google.com with SMTP id ft2so1918089vbb.37
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jan 2013 11:26:31 -0800 (PST)
+In-Reply-To: <6825637.7rn5o5FT8e@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Prasanna Kumar <prasanna.ps@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, jhbird.choi@samsung.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Romain Naour <romain.naour@openwide.fr>, =?ISO-8859-1?Q?Heiko_St=FC?= =?ISO-8859-1?Q?bner?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
 
-On 9 January 2013 04:54, Prasanna Kumar <prasanna.ps@samsung.com> wrote:
-> Power domain clks are added to Gscaler and MFC pd nodes.
-> These clocks are saved during power off.
+On 01/08/13 13:00, Tomasz Figa wrote:
+> Hi Romain,
+
+[...]
+
+>> What's wrong with this part of the patch ?
+>> I applied this patch today on linux-next tree, branch next-20121214.
+>> (with some hunk but no error)
 >
-> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
+> Patches that are supposed to go through Samsung (Kgene's) tree, should be
+> based on for-next branch of Samsung tree.
 >
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 6d0e87c..8043be3 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -558,11 +558,13 @@
->         pd_gsc: gsc-power-domain@0x10044000 {
->                 compatible = "samsung,exynos4210-pd";
->                 reg = <0x10044000 0x20>;
-> +               samsung,exynos-pd-clks ="aclk_266_gscl","aclk_300_gscl";
-
-Passing clock names from dts is generally discouraged. These clock
-names are linux specific. dts/dtsi files should only describe the
-hardware and not have any linux specific entries in them. Common clock
-framework can be used here to specify the clock.
-
->         };
+> Do you have plans to rebase and resubmit this series again? I plan to
+> submit some patches for S3C64xx (partly based on my historical work on
+> this platform) and would be nice to have hrtime support already there,
+> especially when all left is to just merge it.
 >
->         pd_mfc: mfc-power-domain@0x10044040 {
->                 compatible = "samsung,exynos4210-pd";
->                 reg = <0x10044040 0x20>;
-> +               samsung,exynos-pd-clks ="aclk_333";
+Tomasz, thanks.
 
-same as above comment.
+As I said, this looks good to me, but, please re-submit this series 
+against on latest my for-next so that I can pick up in Samsung tree. I 
+couldn't apply due to too many conflicts :-(
 
-Thanks,
-Thomas.
+One more note, please add config option and inclusion by alphabetical 
+order rather than just replacing them.
 
->         };
->
->         gsc_0:  gsc@0x13e00000 {
-> --
-> 1.7.5.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks.
+
+- Kukjin
