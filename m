@@ -1,143 +1,207 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/5 v3]  S3C / S5PC100: add clockevent/clocksource support
-Date: Wed, 09 Jan 2013 16:38:11 -0800
-Message-ID: <00ac01cdeeca$c6e281b0$54a78510$@samsung.com>
-References: <50885608.1030503@openwide.fr> <6825637.7rn5o5FT8e@flatron>
- <50EDF297.4020908@openwide.fr> <10694299.cZC5vmGaMJ@flatron>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFC PATCH 5/7] ARM: s3c64xx: Add board file for boot using Device Tree
+Date: Thu, 10 Jan 2013 01:38:36 +0100
+Message-ID: <2541046.aUZy19q6jk@flatron>
+References: <1357774909-29938-1-git-send-email-tomasz.figa@gmail.com> <1357774909-29938-6-git-send-email-tomasz.figa@gmail.com> <00aa01cdeec8$e48ba7c0$ada2f740$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52013 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932224Ab3AJAia (ORCPT
+Received: from mail-ea0-f169.google.com ([209.85.215.169]:57491 "EHLO
+	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932224Ab3AJAih (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jan 2013 19:38:30 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGD002ZIWEKYD20@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 09:38:25 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MGD00MOWWFY69B0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 09:38:25 +0900 (KST)
-In-reply-to: <10694299.cZC5vmGaMJ@flatron>
-Content-language: en-us
+	Wed, 9 Jan 2013 19:38:37 -0500
+Received: by mail-ea0-f169.google.com with SMTP id a12so943820eaa.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jan 2013 16:38:35 -0800 (PST)
+In-Reply-To: <00aa01cdeec8$e48ba7c0$ada2f740$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Romain Naour' <romain.naour@openwide.fr>
-Cc: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk
 
-Tomasz Figa wrote:
-> 
-> Hi Romain, Kukjin,
-> 
-> On Wednesday 09 of January 2013 23:43:35 Romain Naour wrote:
-> > This series of patches converts the s3c and s5pc100 timer driver to the
-> > clocksource/clockevent API. I made some test on a mini2440 board and I
-> > had to reduce timers frequency to 1MHz in order to produce a timer's
-> > overflow every 64ms. Initial timer's frequency (8,45MHz) provide only
-> > 7ms between each overflow. It is not enough. As timers were previously
-> > used to produce an IRQ at 200Hz, some board (Osiris, Anubis board) use
-> > an external 12MHz signal to clock the timers (tclk1). So, I changed
-> > their configuration to select internal pclk clock instead, but I can't
-> > test it.
-> >
-> > Since clockevent/clocksource API becomes available, we can use High
-> > Resolution Timer and Tickless mode.
-> >
-> > Most of the work is already done in s5p-time.c (renamed samsung-time.c).
-> > I added some #define for s3c24xx and s5pc100 case.
-> >
-> >
-> > Naour Romain (5):
-> >   Rename s5p-time to samsung-time
-> >   Add samsung-time support for s3c24xx
-> >   Add samsung-time support for s3c64xx
-> >   Add samsung-time support for s5pc100
-> >   Remove unused plat-samsung/time.c
-> >
-> >  arch/arm/Kconfig                                   |   9 +-
-> >  arch/arm/mach-exynos/Kconfig                       |   2 +-
-> >  arch/arm/mach-exynos/mach-universal_c210.c         |   6 +-
-> >  arch/arm/mach-s3c24xx/Kconfig                      |   6 +
-> >  arch/arm/mach-s3c24xx/mach-amlm5900.c              |   5 +-
-> >  arch/arm/mach-s3c24xx/mach-anubis.c                |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-at2440evb.c             |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-bast.c                  |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-gta02.c                 |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-h1940.c                 |   5 +-
-> >  arch/arm/mach-s3c24xx/mach-jive.c                  |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-mini2440.c              |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-n30.c                   |   6 +-
-> >  arch/arm/mach-s3c24xx/mach-nexcoder.c              |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-osiris.c                |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-otom.c                  |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-qt2410.c                |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-rx1950.c                |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-rx3715.c                |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-smdk2410.c              |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-smdk2413.c              |   8 +-
-> >  arch/arm/mach-s3c24xx/mach-smdk2416.c              |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-smdk2440.c              |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-smdk2443.c              |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-tct_hammer.c            |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-vr1000.c                |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-vstms.c                 |   5 +-
-> >  arch/arm/mach-s3c64xx/Kconfig                      |   2 +
-> >  arch/arm/mach-s3c64xx/mach-anw6410.c               |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-crag6410.c              |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-hmt.c                   |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-mini6410.c              |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-ncp.c                   |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-real6410.c              |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-smartq.c                |   2 +
-> >  arch/arm/mach-s3c64xx/mach-smartq5.c               |   3 +-
-> >  arch/arm/mach-s3c64xx/mach-smartq7.c               |   3 +-
-> >  arch/arm/mach-s3c64xx/mach-smdk6400.c              |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-smdk6410.c              |   4 +-
-> >  arch/arm/mach-s5p64x0/Kconfig                      |   4 +-
-> >  arch/arm/mach-s5p64x0/mach-smdk6440.c              |   6 +-
-> >  arch/arm/mach-s5p64x0/mach-smdk6450.c              |   6 +-
-> >  arch/arm/mach-s5pc100/Kconfig                      |   1 +
-> >  arch/arm/mach-s5pc100/mach-smdkc100.c              |   4 +-
-> >  arch/arm/mach-s5pv210/Kconfig                      |   2 +-
-> >  arch/arm/mach-s5pv210/mach-aquila.c                |   6 +-
-> >  arch/arm/mach-s5pv210/mach-goni.c                  |   6 +-
-> >  arch/arm/mach-s5pv210/mach-smdkc110.c              |   6 +-
-> >  arch/arm/mach-s5pv210/mach-smdkv210.c              |   6 +-
-> >  arch/arm/mach-s5pv210/mach-torbreck.c              |   6 +-
-> >  arch/arm/plat-samsung/Kconfig                      |   2 +-
-> >  arch/arm/plat-samsung/Makefile                     |   3 +-
-> >  arch/arm/plat-samsung/include/plat/cpu.h           |   5 -
-> >  arch/arm/plat-samsung/include/plat/s5p-time.h      |  40 ---
-> >  arch/arm/plat-samsung/include/plat/samsung-time.h  |  51 ++++
-> >  .../plat-samsung/{s5p-time.c => samsung-time.c}    | 144 +++++------
-> >  arch/arm/plat-samsung/time.c                       | 285
-> > --------------------- 57 files changed, 274 insertions(+), 475
-> > deletions(-)
-> >  delete mode 100644 arch/arm/plat-samsung/include/plat/s5p-time.h
-> >  create mode 100644 arch/arm/plat-samsung/include/plat/samsung-time.h
-> >  rename arch/arm/plat-samsung/{s5p-time.c => samsung-time.c} (68%)
-> >  delete mode 100644 arch/arm/plat-samsung/time.c
-> 
-> The whole series looks good to me.
-> 
-> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> Also I tested it on a Tiny6410 (Mini6410-compatible) board.
-> 
-> Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-Looks good to me, Romain thanks.
-BTW, which one is right "Naour Romain" or "Romain Naour"?
-I'm looking at your name both "From: Romain Naour..." and "Signed-off-by:
-Naour Romain...".
+Hi Kukjin,
 
-Tomasz, thanks for your review and test on s3c64xx board.
+On Wednesday 09 of January 2013 16:24:42 Kukjin Kim wrote:
+> Tomasz Figa wrote:
+> > This patch adds board file that will be used to boot S3C64xx-based
+> > boards using Device Tree.
+> > 
+> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > ---
+> > 
+> >  arch/arm/mach-s3c64xx/Kconfig           | 13 +++++
+> >  arch/arm/mach-s3c64xx/Makefile          |  1 +
+> >  arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c | 93
+> > 
+> > +++++++++++++++++++++++++++++++++
+> > 
+> >  3 files changed, 107 insertions(+)
+> >  create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+> > 
+> > diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-
+> > s3c64xx/Kconfig
+> > index 131c862..a43b3f7 100644
+> > --- a/arch/arm/mach-s3c64xx/Kconfig
+> > +++ b/arch/arm/mach-s3c64xx/Kconfig
+> > @@ -309,3 +309,16 @@ config MACH_WLF_CRAGG_6410
+> > 
+> >  	select SAMSUNG_GPIO_EXTRA128
+> >  	help
+> >  	
+> >  	  Machine support for the Wolfson Cragganmore S3C6410 variant.
+> > 
+> > +
+> > +config MACH_S3C64XX_DT
+> > +	bool "Samsung S3C6400/S3C6410 machine using Device Tree"
+> > +	select CPU_S3C6400
+> > +	select CPU_S3C6410
+> > +	select USE_OF
+> > +	help
+> > +	  Machine support for Samsung S3C6400/S3C6410 machines with
+> > Device Tree
+> > +	  enabled.
+> > +	  Select this if a fdt blob is available for your S3C64XX SoC based
+> > +	  board.
+> > +	  Note: This is under development and not all peripherals can be
+> > +	  supported with this machine file.
+> > diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-
+> > s3c64xx/Makefile
+> > index f9ce1dc..59b3d06 100644
+> > --- a/arch/arm/mach-s3c64xx/Makefile
+> > +++ b/arch/arm/mach-s3c64xx/Makefile
+> > @@ -58,3 +58,4 @@ obj-$(CONFIG_MACH_SMARTQ7)		+= mach-
+> > smartq7.o
+> > 
+> >  obj-$(CONFIG_MACH_SMDK6400)		+= mach-smdk6400.o
+> >  obj-$(CONFIG_MACH_SMDK6410)		+= mach-smdk6410.o
+> >  obj-$(CONFIG_MACH_WLF_CRAGG_6410)	+= mach-crag6410.o mach-
+> > 
+> > crag6410-module.o
+> > +obj-$(CONFIG_MACH_S3C64XX_DT)		+= mach-s3c64xx-dt.o
+> > diff --git a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c b/arch/arm/mach-
+> > s3c64xx/mach-s3c64xx-dt.c
+> > new file mode 100644
+> > index 0000000..f5725ce
+> > --- /dev/null
+> > +++ b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+> > @@ -0,0 +1,93 @@
+> > +/*
+> > + * Samsung's S3C64XX flattened device tree enabled machine
+> > + *
+> > + * Copyright (c) 2012 Tomasz Figa <tomasz.figa@gmail.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > modify + * it under the terms of the GNU General Public License
+> > version 2 as + * published by the Free Software Foundation.
+> > +*/
+> > +
+> > +#include <linux/of_platform.h>
+> > +#include <linux/serial_core.h>
+> > +
+> > +#include <asm/mach/arch.h>
+> > +#include <asm/hardware/vic.h>
+> > +#include <mach/map.h>
+> > +
+> > +#include <plat/cpu.h>
+> > +#include <plat/regs-serial.h>
+> > +#include <plat/s5p-time.h>
+> > +
+> > +#include "common.h"
+> > +
+> > +/*
+> > + * The following lookup table is used to override device names when
+> > devices
+> > + * are registered from device tree. This is temporarily added to
+> > enable + * device tree support addition for the Exynos4 architecture.
+> > + *
+> > + * For drivers that require platform data to be provided from the
+> > machine + * file, a platform data pointer can also be supplied along
+> > with the + * devices names. Usually, the platform data elements that
+> > cannot be parsed
+> > + * from the device tree by the drivers (example: function pointers)
+> > are + * supplied. But it should be noted that this is a temporary
+> > mechanism
+> and
+> 
+> > + * at some point, the drivers should be capable of parsing all the
+> 
+> platform
+> 
+> > + * data from the device tree.
+> > + */
+> > +static const struct of_dev_auxdata s3c64xx_auxdata_lookup[]
+> > __initconst = {
+> > +	OF_DEV_AUXDATA("samsung,s3c6400-uart", S3C_PA_UART0,
+> > +				"s3c6400-uart.0", NULL),
+> > +	OF_DEV_AUXDATA("samsung,s3c6400-uart", S3C_PA_UART1,
+> > +				"s3c6400-uart.1", NULL),
+> > +	OF_DEV_AUXDATA("samsung,s3c6400-uart", S3C_PA_UART2,
+> > +				"s3c6400-uart.2", NULL),
+> > +	OF_DEV_AUXDATA("samsung,s3c6400-uart", S3C_PA_UART3,
+> > +				"s3c6400-uart.3", NULL),
+> 
+> I'd prefer to use 0x7F005000 instead of S3C_PA_UART0 so that we can
+> remove the static definitions at the map.h
 
-Heiko, can you test this on your s3c24xx board?
+Ideally, I would like to completely get rid of this and start cleanly with 
+common clock framework, but support for it would be probably based on 
+Thomas Abraham's code for Exynos, which would have to be merged first.
 
-- Kukjin
+So for now I will replace symbolic addresses with numeric ones, as you 
+suggested.
+
+> > +	{},
+> > +};
+> > +
+> > +static void __init s3c64xx_dt_map_io(void)
+> > +{
+> > +	s3c64xx_init_io(NULL, 0);
+> > +	s3c24xx_init_clocks(12000000);
+> 
+> The value of xtal clock for s3c24xx_init_clocks() should be defined via
+> dt according to board condition _next_time_  because it can be
+> different on each board, it's same on current s3c64xx boards though.
+
+This is yet another issue that will be solved by using Common 
+Clock Framework.
+
+> > +}
+> > +
+> > +static void __init s3c64xx_dt_machine_init(void)
+> > +{
+> > +	of_platform_populate(NULL, of_default_bus_match_table,
+> > +				s3c64xx_auxdata_lookup, NULL);
+> > +}
+> > +
+> > +static char const *s3c6400_dt_compat[] __initdata = {
+> > +	"samsung,s3c6400",
+> > +	NULL
+> > +};
+> > +
+> > +DT_MACHINE_START(S3C6400_DT, "Samsung S3C6400 (Flattened Device
+> > Tree)")
+> > +	/* Maintainer: Tomasz Figa <tomasz.figa@gmail.com> */
+> > +	.init_irq	= s3c6400_init_irq,
+> > +	.map_io		= s3c64xx_dt_map_io,
+> > +	.handle_irq	= vic_handle_irq,
+> > +	.init_machine	= s3c64xx_dt_machine_init,
+> > +	.init_late	= s3c64xx_init_late,
+> > +	.timer		= &s3c24xx_timer,
+> > +	.dt_compat	= s3c6400_dt_compat,
+> > +	.restart        = s3c64xx_restart,
+> > +MACHINE_END
+> > +
+> > +static char const *s3c6410_dt_compat[] __initdata = {
+> > +	"samsung,s3c6410",
+> > +	NULL
+> > +};
+> 
+> I think, we don't need separation.
+
+These two differ in init_irq callback, but now as I look at it, all the 
+data are already being parsed from device tree, so I will just add 
+s3c64xx_of_init_irq and make just one DT machine.
+
+Best regards,
+Tomasz Figa
