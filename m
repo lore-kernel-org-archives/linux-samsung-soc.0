@@ -1,42 +1,48 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: DTS: exynos4210-origen: Add MAX8997 node entry
-Date: Wed, 09 Jan 2013 17:42:43 -0800
-Message-ID: <00e401cdeed3$ca5942d0$5f0bc870$@samsung.com>
-References: <1357287829-21701-1-git-send-email-tushar.behera@linaro.org>
- <CAJuYYwQx0hFQmkLaggd2NdA_xommXGPBDbhj1AuSH5YuASWA-w@mail.gmail.com>
+Subject: RE: [PATCH] ARM: dts: correct the dw-mshc timing properties as per
+ binding
+Date: Wed, 09 Jan 2013 17:46:55 -0800
+Message-ID: <00e601cdeed4$60e2b4c0$22a81e40$@samsung.com>
+References: <1357557585-30257-1-git-send-email-alim.akhtar@samsung.com>
+ <CAD=FV=XUpLwZCn=bpShFqiPBzFBaAbWYn5-+-_OuTqC55sKi3Q@mail.gmail.com>
+ <CAGOxZ52vsbmmmKBLZjvy2wZBDGeVTP5rwJ5Oc00oYUo2ztA2Dg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23390 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932383Ab3AJBm5 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:64455 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932621Ab3AJBrm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jan 2013 20:42:57 -0500
-In-reply-to: <CAJuYYwQx0hFQmkLaggd2NdA_xommXGPBDbhj1AuSH5YuASWA-w@mail.gmail.com>
+	Wed, 9 Jan 2013 20:47:42 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGD003H2ZKVOJ60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 10:47:08 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MGD003FXZMI1V60@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 10:47:08 +0900 (KST)
+In-reply-to: <CAGOxZ52vsbmmmKBLZjvy2wZBDGeVTP5rwJ5Oc00oYUo2ztA2Dg@mail.gmail.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, patches@linaro.org
+To: 'Alim Akhtar' <alim.akhtar@gmail.com>, 'Doug Anderson' <dianders@chromium.org>
+Cc: 'Alim Akhtar' <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas P Abraham' <thomas.ab@samsung.com>
 
-Thomas Abraham wrote:
+Alim Akhtar wrote:
 > 
-> On 4 January 2013 00:23, Tushar Behera <tushar.behera@linaro.org> wrote:
-> > The node entry is added as per documentation and legacy board file.
+
+[...]
+
+> > > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > >
-> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> > ---
-> > The patch is rebased on v3.8-rc1.
-> >
-> >  arch/arm/boot/dts/exynos4210-origen.dts |  150
-> +++++++++++++++++++++++++++++++
-> >  1 files changed, 150 insertions(+), 0 deletions(-)
-> 
-> This patch has already been posted. Here is the link:
-> https://patchwork.kernel.org/patch/1794501/
-> 
-OK, I will apply.
+> > Tested-by: Doug Anderson <dianders@chromium.org>
+> > Acked-by: Doug Anderson <dianders@chromium.org>
+
+Looks OK to me, applied.
 
 Thanks.
 
