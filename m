@@ -1,14 +1,15 @@
-From: Federico Vaga <federico.vaga@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 Subject: Re: [PATCH v5 2/3] sta2x11_vip: convert to videobuf2 and control
  framework
-Date: Thu, 10 Jan 2013 13:57:19 +0100
-Message-ID: <3596574.18Q2Rh4jo9@harkonnen>
+Date: Thu, 10 Jan 2013 17:01:50 +0300
+Message-ID: <20130110140150.GA19949@mwanda>
 References: <1357822010-30419-1-git-send-email-federico.vaga@gmail.com>
  <1357822010-30419-3-git-send-email-federico.vaga@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
 In-Reply-To: <1357822010-30419-3-git-send-email-federico.vaga@gmail.com>
 List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
  <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
@@ -19,90 +20,28 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>
  <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
 Errors-To: devel-bounces@linuxdriverproject.org
 Sender: "devel" <devel-bounces@linuxdriverproject.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Srinivas Kandagatla <srinivas.kandagatla@st.com>, Peter Senna Tschudin <peter.senna@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devel@driverdev.osuosl.org, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Sachin Kamat <sachin.kamat@linaro.org>, Prabhakar Lad <prabhakar.lad@ti.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sasha Levin <sasha.levin@oracle.com>, linux-media@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, Pawel Osciak <pawel@osciak.com>, davinci-linux-open-source@linux.davincidsp.com, Mauro Carvalho Chehab <mchehab@infradead.org>, Jeongtae Park <jtp.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm
+To: Federico Vaga <federico.vaga@gmail.com>
+Cc: Kamil Debski <k.debski@samsung.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Srinivas Kandagatla <srinivas.kandagatla@st.com>, Sungchun Kang <sungchun.kang@samsung.com>, Peter Senna Tschudin <peter.senna@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devel@driverdev.osuosl.org, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Sachin Kamat <sachin.kamat@linaro.org>, Prabhakar Lad <prabhakar.lad@ti.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sasha Levin <sasha.levin@oracle.com>, linux-media@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, Pawel Osciak <pawel@osciak.com>, Scott Jiang <scott.jiang.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jeongtae Park <jtp.park@samsung.com>Andrzej Pietrasiewicz <and>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-@Hans: here the output of v4l2-compliance that you request me for the v4 
-version. This is done on the v5 version where I applied your suggestion. I 
-have 1 warning but I don't understand where is the problem
+This would be easier to review if it were broken up into separate
+patches.
 
-Driver Info:
-	Driver name   : sta2x11_vip
-	Card type     : sta2x11_vip
-	Bus info      : PCI:0000:06:00.0
-	Driver version: 3.6.0
-	Capabilities  : 0x85000001
-		Video Capture
-		Read/Write
-		Streaming
-		Device Capabilities
-	Device Caps   : 0x05000001
-		Video Capture
-		Read/Write
-		Streaming
+1) There are superflous white spaces changes
+2) Changes to the copyright
+3) pr_warning => pr_warn
+4) The REG_READ and REG_WRITE macros are now inline functions
+5) KBUILD_MODNAME is used instead of DRV_NAME
+6) It now uses the video_drvdata() function
+7) Lots of comments deleted.  For exmple, vidioc_enum_fmt_vid_cap()
+   didn't change.  Just the comments were deleted.
+8) Comments added for existing code.
+9) Other behavior changes not related to using videobuf2 like in
+   vidioc_try_fmt_vid_cap().
+10) etc...
 
-Compliance test for device /dev/video0 (not using libv4l2):
+If all the uninteresting changes are in separate patches it makes
+the complicated stuff much shorter and easier to review.
 
-Required ioctls:
-	test VIDIOC_QUERYCAP: OK
-
-Allow for multiple opens:
-	test second video open: OK
-	test VIDIOC_QUERYCAP: OK
-	test VIDIOC_G/S_PRIORITY: OK
-
-Debug ioctls:
-	test VIDIOC_DBG_G_CHIP_IDENT: Not Supported
-	test VIDIOC_DBG_G/S_REGISTER: Not Supported
-	test VIDIOC_LOG_STATUS: OK
-
-Input ioctls:
-	test VIDIOC_G/S_TUNER: Not Supported
-	test VIDIOC_G/S_FREQUENCY: Not Supported
-	test VIDIOC_S_HW_FREQ_SEEK: OK
-	test VIDIOC_ENUMAUDIO: Not Supported
-	test VIDIOC_G/S/ENUMINPUT: OK
-	test VIDIOC_G/S_AUDIO: Not Supported
-	Inputs: 2 Audio Inputs: 0 Tuners: 0
-
-Output ioctls:
-	test VIDIOC_G/S_MODULATOR: Not Supported
-	test VIDIOC_G/S_FREQUENCY: Not Supported
-	test VIDIOC_ENUMAUDOUT: Not Supported
-	test VIDIOC_G/S/ENUMOUTPUT: Not Supported
-	test VIDIOC_G/S_AUDOUT: Not Supported
-	Outputs: 0 Audio Outputs: 0 Modulators: 0
-
-Control ioctls:
-	test VIDIOC_QUERYCTRL/MENU: OK
-	test VIDIOC_G/S_CTRL: OK
-	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
-	test VIDIOC_G/S_JPEGCOMP: Not Supported
-	Standard Controls: 5 Private Controls: 0
-
-Input/Output configuration ioctls:
-	test VIDIOC_ENUM/G/S/QUERY_STD: OK
-	test VIDIOC_ENUM/G/S/QUERY_DV_PRESETS: Not Supported
-	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: Not Supported
-	test VIDIOC_DV_TIMINGS_CAP: Not Supported
-
-Format ioctls:
-	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-	test VIDIOC_G/S_PARM: OK
-	test VIDIOC_G_FBUF: Not Supported
-	test VIDIOC_G_FMT: OK
-	test VIDIOC_TRY_FMT: OK
-	test VIDIOC_S_FMT: OK
-	test VIDIOC_G_SLICED_VBI_CAP: Not Supported
-
-Buffer ioctls:
-	test VIDIOC_REQBUFS/CREATE_BUFS: OK
-	test read/write: OK
-
-Total: 36, Succeeded: 36, Failed: 0, Warnings: 1
-
-
--- 
-Federico Vaga
+regards,
+dan carpenter
