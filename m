@@ -1,38 +1,36 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFC PATCH 5/7] ARM: s3c64xx: Add board file for boot using Device Tree
-Date: Thu, 10 Jan 2013 11:55:01 +0100
-Message-ID: <1513533.R0vnZSVmMe@flatron>
-References: <1357774909-29938-1-git-send-email-tomasz.figa@gmail.com> <1357774909-29938-6-git-send-email-tomasz.figa@gmail.com> <20130110105221.GG20956@opensource.wolfsonmicro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 19/19] irqchip: Move ARM vic.h to include/linux/irqchip/arm-vic.h
+Date: Thu, 10 Jan 2013 11:58:42 +0100
+Message-ID: <CACRpkdZdR5YC7WEqQhxeNGbwreSnA2QmyRHFfeO1CncZSK6YVA@mail.gmail.com>
+References: <1357235668-9450-1-git-send-email-robherring2@gmail.com>
+	<1357235668-9450-20-git-send-email-robherring2@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f169.google.com ([209.85.215.169]:42906 "EHLO
-	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753373Ab3AJKzB (ORCPT
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:46185 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753378Ab3AJK6m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jan 2013 05:55:01 -0500
-Received: by mail-ea0-f169.google.com with SMTP id a12so162265eaa.14
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 02:55:00 -0800 (PST)
-In-Reply-To: <20130110105221.GG20956@opensource.wolfsonmicro.com>
+	Thu, 10 Jan 2013 05:58:42 -0500
+Received: by mail-ie0-f170.google.com with SMTP id k10so522992iea.29
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 02:58:42 -0800 (PST)
+In-Reply-To: <1357235668-9450-20-git-send-email-robherring2@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, thomas.petazzoni@free-electrons.com, Rob Herring <rob.herring@calxeda.com>, Thomas Gleixner <tglx@linutronix.de>, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Alessandro Rubini <rubini@unipv.it>, STEricsson <STEricsson_nomadik_linux@list.st.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Hi Mark,
+On Thu, Jan 3, 2013 at 6:54 PM, Rob Herring <robherring2@gmail.com> wrote:
 
-On Thursday 10 of January 2013 10:52:22 Mark Brown wrote:
-> On Thu, Jan 10, 2013 at 12:41:47AM +0100, Tomasz Figa wrote:
-> > + * The following lookup table is used to override device names when
-> > devices + * are registered from device tree. This is temporarily
-> > added to enable + * device tree support addition for the Exynos4
-> > architecture.
-> Cut'n'paste.
+> From: Rob Herring <rob.herring@calxeda.com>
+>
+> Now that we have VIC moved to drivers/irqchip and all VIC DT init for
+> platforms using irqchip_init, move gic.h and update the remaining
+> includes.
 
-Oh my, you got me. ;)
+This will need to be rebased on fixes merged for -rc3.
 
-I will correct it in next version. Thanks for spotting this.
+Apart from that, Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Best regards,
-Tomasz Figa
+Yours,
+Linus Walleij
