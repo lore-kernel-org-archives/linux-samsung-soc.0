@@ -1,59 +1,42 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 09/26] ARM: SAMSUNG: cleanup mach/gpio-fns.h gpio-track.h
- and gpio-nrs.h
-Date: Thu, 10 Jan 2013 10:44:35 -0800
-Message-ID: <027801cdef62$8aec2e20$a0c48a60$@samsung.com>
-References: <1357165443-3716-1-git-send-email-kgene.kim@samsung.com>
- <1357165443-3716-10-git-send-email-kgene.kim@samsung.com>
- <CACRpkda5rKrY85GXgdzomE5q6q0btGKX6UGgCn3N5AzxLv=s7Q@mail.gmail.com>
+From: 'Joerg Roedel' <joro@8bytes.org>
+Subject: Re: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Thu, 10 Jan 2013 20:12:08 +0100
+Message-ID: <20130110191207.GI25591@8bytes.org>
+References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
+ <032401cde783$485ae1a0$d910a4e0$@samsung.com>
+ <20130110171844.GA2650@8bytes.org>
+ <027601cdef61$2df576a0$89e063e0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10725 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754856Ab3AJSot (ORCPT
+Received: from 8bytes.org ([85.214.48.195]:56335 "EHLO mail.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755337Ab3AJTMM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jan 2013 13:44:49 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGF009UPAQLGPE0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 11 Jan 2013 03:44:48 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MGF004OKAQMSA20@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 11 Jan 2013 03:44:48 +0900 (KST)
-In-reply-to: <CACRpkda5rKrY85GXgdzomE5q6q0btGKX6UGgCn3N5AzxLv=s7Q@mail.gmail.com>
-Content-language: en-us
+	Thu, 10 Jan 2013 14:12:12 -0500
+Received: from localhost (localhost [127.0.0.1])
+	by mail.8bytes.org (Postfix) with SMTP id 64E5A12B189
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 20:12:10 +0100 (CET)
+Content-Disposition: inline
+In-Reply-To: <027601cdef61$2df576a0$89e063e0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Cho KyongHo' <pullip.cho@samsung.com>, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>
 
-Linus Walleij wrote:
+On Thu, Jan 10, 2013 at 10:34:48AM -0800, Kukjin Kim wrote:
+> Hmm, I think, just one [7/12] patch does matter so if you could create topic
+> branch and apply [7/12] patch firstly before other drivers/ changes would be
+> better to me. It's OK on both trees if I just _merge_ the first [7/12]
+> commit in the topic branch you provided for exynos-iommu. But you know, you
+> don't have to rebase it once I merge it in Samsung tree.
 > 
-> On Wed, Jan 2, 2013 at 11:23 PM, Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
-> 
-> > remove <mach/gpio-fns.h>, <mach/gpio-track.h> and <plat/gpio-fns.h>
-> >
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Grant Likely <grant.likely@secretlab.ca>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> This really needs cleanup so
+> How about?
 
-Yes! And sorry for late ;-)
-Just note, I'm working on cleanup for other Samsung gpio stuff.
+Sounds good. Should I take the patch directly from this post? I would
+add your Acked-by then and make it the base for the arm/exynos branch.
+Once the branch is set-up, as usual it will not be rebased.
 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I guess you will carry this through the Samsung tree?
 
-Yes :-) Let me add your ack on that.
-
-Thanks.
-
-- Kukjin
+	Joerg
