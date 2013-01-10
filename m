@@ -1,44 +1,60 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: [PATCH v5] modify videobuf2-dma-contig and update sta2x11_vip
-Date: Thu, 10 Jan 2013 14:06:11 -0200
-Message-ID: <20130110140611.05feb735@redhat.com>
-References: <1357822010-30419-1-git-send-email-federico.vaga@gmail.com>
- <1491201.YT9CD19YNt@harkonnen>
+From: 'Joerg Roedel' <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
+	MMU driver with DT
+Date: Thu, 10 Jan 2013 18:19:05 +0100
+Message-ID: <20130110171844.GA2650@8bytes.org>
+References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
+	<032401cde783$485ae1a0$d910a4e0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1491201.YT9CD19YNt@harkonnen>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel/>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: devel-bounces@linuxdriverproject.org
-Sender: "devel" <devel-bounces@linuxdriverproject.org>
-To: Federico Vaga <federico.vaga@gmail.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Srinivas Kandagatla <srinivas.kandagatla@st.com>, Peter Senna Tschudin <peter.senna@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devel@driverdev.osuosl.org, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Sachin Kamat <sachin.kamat@linaro.org>, Prabhakar Lad <prabhakar.lad@ti.com>, Hans Verkuil <hans.verkuil@cisco.com>, Sasha Levin <sasha.levin@oracle.com>, linux-media@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, Pawel Osciak <pawel@osciak.com>, davinci-linux-open-source@linux.davincidsp.com, Mauro Carvalho Chehab <mchehab@infradead.org>, Jeongtae Park <jtp.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <032401cde783$485ae1a0$d910a4e0$@samsung.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Cho KyongHo' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Em Thu, 10 Jan 2013 16:22:39 +0100
-Federico Vaga <federico.vaga@gmail.com> escreveu:
+On Mon, Dec 31, 2012 at 10:18:46AM -0800, Kukjin Kim wrote:
+> Cho KyongHo wrote:
 
-> We have some new ideas for this new complex architecture (sta2x11) that can 
-> fix our DMA problems without change the existent code. Obviously, ideas arrive 
-> when I already sent the patches. Anyway, consider this patch series as an RFC. 
-> They are not ready for the mainline. I take some time to investigate on the 
-> architecture side of the project to try to fix our problem.
+> > Diffstats:
+> >  arch/arm/boot/dts/exynos5250-smdk5250.dts  |    2 +-
+> >  arch/arm/boot/dts/exynos5250.dtsi          |   27 +-
+> >  arch/arm/mach-exynos/Kconfig               |    5 -
+> >  arch/arm/mach-exynos/Makefile              |    1 -
+> >  arch/arm/mach-exynos/clock-exynos4.c       |   41 +-
+> >  arch/arm/mach-exynos/clock-exynos4210.c    |    9 +-
+> >  arch/arm/mach-exynos/clock-exynos4212.c    |   23 +-
+> >  arch/arm/mach-exynos/clock-exynos5.c       |   87 +-
+> >  arch/arm/mach-exynos/dev-sysmmu.c          |  274 ------
+> >  arch/arm/mach-exynos/include/mach/sysmmu.h |   66 --
+> >  arch/arm/mach-exynos/mach-exynos4-dt.c     |   34 +
+> >  arch/arm/mach-exynos/mach-exynos5-dt.c     |   30 +
+> >  drivers/iommu/Kconfig                      |    2 +-
+> >  drivers/iommu/Makefile                     |    2 +-
+> >  drivers/iommu/exynos-iommu.c               | 1477 +++++++++++++++++++++--
+> > -----
+> >  15 files changed, 1284 insertions(+), 796 deletions(-)
 > 
-> Anyway, if you consider interesting configure the gfp flags for dma-contig, I 
-> can propose a v6 series which correct the alloc coherent line.
-> 
-> Sorry for the spam :(
+> Joerg, it's time to merge this. If you don't mind, let me pick up this whole
+> series into Samsung tree because this touches many Samsung stuff.
 
-This is not spam, it is part of the process of maturating a patchset ;)
+Well, looking at the diffstat the IOMMU changes are a lot larger than
+the exynos ones. So I think this should go through the IOMMU tree once
+the latest review comments are fixed.
 
-I'll just tag all those patches as RFC on linux-media patchwork.
+> Happy new year, thanks.
 
-Regards,
-Mauro
+Happy new year too,
+
+      Joerg
