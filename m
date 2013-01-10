@@ -1,39 +1,76 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: exynos5250: Set HDMI version to v1.4
-Date: Wed, 09 Jan 2013 17:37:05 -0800
-Message-ID: <00e101cdeed3$00a18d30$01e4a790$@samsung.com>
-References: <1357592400-18117-1-git-send-email-seanpaul@chromium.org>
- <CAOw6vbJRoFtrhhhf4t0KDu72TieKBQ0LDvgPVfi7Q4OwQUTqDw@mail.gmail.com>
+Subject: RE: [PATCH] ARM: Samsung: Export MIPI CSIS/DSIM PHY control functions
+Date: Wed, 09 Jan 2013 17:40:01 -0800
+Message-ID: <00e201cdeed3$69b40cd0$3d1c2670$@samsung.com>
+References: <1357226497-25166-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:22326 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:22859 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932383Ab3AJBhT (ORCPT
+	with ESMTP id S932383Ab3AJBkP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jan 2013 20:37:19 -0500
-In-reply-to: <CAOw6vbJRoFtrhhhf4t0KDu72TieKBQ0LDvgPVfi7Q4OwQUTqDw@mail.gmail.com>
+	Wed, 9 Jan 2013 20:40:15 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGD00JDNZAUN7E0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 10:40:14 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MGD005B0ZAZL020@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 10:40:14 +0900 (KST)
+In-reply-to: <1357226497-25166-1-git-send-email-s.nawrocki@samsung.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sean Paul' <seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org, 'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: thomas.abraham@linaro.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Sean Paul wrote:
+Sylwester Nawrocki wrote:
 > 
-> On Mon, Jan 7, 2013 at 4:00 PM, Sean Paul <seanpaul@chromium.org> wrote:
-> > Set the HDMI version to v1.4 for all exynos5250 targets. This property
-> > was previously being inferred by the existence of the hdmi node.
-> >
-> > Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> > ---
+> The s5p_csis_phy_enable/s5p_dsim_phy_enable functions are now used
+> directly by corresponding drivers and thus need to be exported so
+> the drivers can be built as modules.
 > 
-> The patch adding the property has churned a bit from
-> devicetree-discuss reviews. I'll upload this again after it's settled.
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/plat-samsung/setup-mipiphy.c |    3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Please drop.
+> diff --git a/arch/arm/plat-samsung/setup-mipiphy.c b/arch/arm/plat-
+> samsung/setup-mipiphy.c
+> index 1474593..66df315 100644
+> --- a/arch/arm/plat-samsung/setup-mipiphy.c
+> +++ b/arch/arm/plat-samsung/setup-mipiphy.c
+> @@ -8,6 +8,7 @@
+>   * published by the Free Software Foundation.
+>   */
 > 
-OK, thanks for your information.
+> +#include <linux/export.h>
+>  #include <linux/kernel.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/io.h>
+> @@ -50,8 +51,10 @@ int s5p_csis_phy_enable(int id, bool on)
+>  {
+>  	return __s5p_mipi_phy_control(id, on, S5P_MIPI_DPHY_SRESETN);
+>  }
+> +EXPORT_SYMBOL(s5p_csis_phy_enable);
+> 
+>  int s5p_dsim_phy_enable(struct platform_device *pdev, bool on)
+>  {
+>  	return __s5p_mipi_phy_control(pdev->id, on,
+> S5P_MIPI_DPHY_MRESETN);
+>  }
+> +EXPORT_SYMBOL(s5p_dsim_phy_enable);
+> --
+> 1.7.9.5
+
+OK, applied.
+
+Thanks.
 
 - Kukjin
