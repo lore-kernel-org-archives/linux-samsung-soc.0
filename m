@@ -1,61 +1,98 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [REPOST PATCH v3 3/4] mmc: dw_mmc: exynos: Remove code for wp-gpios
-Date: Thu, 10 Jan 2013 10:24:28 -0800
-Message-ID: <1357842269-15062-3-git-send-email-dianders@chromium.org>
-References: <1354251857-21587-1-git-send-email-dianders@chromium.org>
- <1357842269-15062-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f202.google.com ([209.85.216.202]:64936 "EHLO
-	mail-qc0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753238Ab3AJS0O (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jan 2013 13:26:14 -0500
-Received: by mail-qc0-f202.google.com with SMTP id s25so100305qcq.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 10:26:13 -0800 (PST)
-In-Reply-To: <1357842269-15062-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
+	MMU driver with DT
+Date: Thu, 10 Jan 2013 10:34:48 -0800
+Message-ID: <027601cdef61$2df576a0$89e063e0$@samsung.com>
+References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
+	<032401cde783$485ae1a0$d910a4e0$@samsung.com>
+	<20130110171844.GA2650@8bytes.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: 
+Content-language: en-us
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'Joerg Roedel' <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Cho KyongHo' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>
 
-The exynos code claimed the write protect with devm_gpio_request() but
-never did anything with it.  That meant that anyone using a write
-protect GPIO would effectively be write protected all the time.
+Kukjin Kim wrote:
+> 
+> 'Joerg Roedel' wrote:
+> >
+> > On Mon, Dec 31, 2012 at 10:18:46AM -0800, Kukjin Kim wrote:
+> > > Cho KyongHo wrote:
+> >
+> > > > Diffstats:
+> > > >  arch/arm/boot/dts/exynos5250-smdk5250.dts  |    2 +-
+> > > >  arch/arm/boot/dts/exynos5250.dtsi          |   27 +-
+> > > >  arch/arm/mach-exynos/Kconfig               |    5 -
+> > > >  arch/arm/mach-exynos/Makefile              |    1 -
+> > > >  arch/arm/mach-exynos/clock-exynos4.c       |   41 +-
+> > > >  arch/arm/mach-exynos/clock-exynos4210.c    |    9 +-
+> > > >  arch/arm/mach-exynos/clock-exynos4212.c    |   23 +-
+> > > >  arch/arm/mach-exynos/clock-exynos5.c       |   87 +-
+> > > >  arch/arm/mach-exynos/dev-sysmmu.c          |  274 ------
+> > > >  arch/arm/mach-exynos/include/mach/sysmmu.h |   66 --
+> > > >  arch/arm/mach-exynos/mach-exynos4-dt.c     |   34 +
+> > > >  arch/arm/mach-exynos/mach-exynos5-dt.c     |   30 +
+> > > >  drivers/iommu/Kconfig                      |    2 +-
+> > > >  drivers/iommu/Makefile                     |    2 +-
+> > > >  drivers/iommu/exynos-iommu.c               | 1477
+> > +++++++++++++++++++++--
+> > > > -----
+> > > >  15 files changed, 1284 insertions(+), 796 deletions(-)
+> > >
+> > > Joerg, it's time to merge this. If you don't mind, let me pick up this
+whole
+> > > series into Samsung tree because this touches many Samsung stuff.
+> >
+> > Well, looking at the diffstat the IOMMU changes are a lot larger than
+> > the exynos ones. So I think this should go through the IOMMU tree once
+> > the latest review comments are fixed.
+> >
+> If so, too many ugly merge conflicts will be happened when Linus merges
+for
+> v3.9 because the legacy(current) exynos clock stuff is going away in
+Samsung
+> tree and as I said, this touches Samsung stuff widely. Of course, Stephen
+> should complain the conflicts between your tree and mine once you apply
+> this whole series in your -next before Linus' merge for v3.9. I believe,
+you
+> don't want it.
+> 
+> You know, we have several options to avoid it. When you take this series
+in
+> your tree, you can provide topic branch for me. Or this series should be
+> separated for arch/arm/ and drivers/ for both trees, then only
+> drivers/iommu changes should be picked up in your tree. I'm OK both, let
+me
+> know which one you would prefer or other way.
+> 
+Hmm, I think, just one [7/12] patch does matter so if you could create topic
+branch and apply [7/12] patch firstly before other drivers/ changes would be
+better to me. It's OK on both trees if I just _merge_ the first [7/12]
+commit in the topic branch you provided for exynos-iommu. But you know, you
+don't have to rebase it once I merge it in Samsung tree.
 
-The handling for wp-gpios belongs in the main dw_mmc driver and has
-been moved there.
+How about?
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
----
-Changes in v3:
-- Totally removed wp-gpios handling from exynos code.
+> BTW, KyongHo, you need to update the clock changes for exynos-iommu
+> against on exynos common clock stuff.
+> 
+KyoungHo, your changes don't matter on exynos common clock stuff and I can
+take care in my tree. So no need more work for it in your side. If any
+updates, let you know.
 
-Changes in v2: None
+Thanks.
 
- drivers/mmc/host/dw_mmc-exynos.c |   10 ----------
- 1 files changed, 0 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index 4d50da6..72fd0f2 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -175,16 +175,6 @@ static int dw_mci_exynos_setup_bus(struct dw_mci *host,
- 		}
- 	}
- 
--	gpio = of_get_named_gpio(slot_np, "wp-gpios", 0);
--	if (gpio_is_valid(gpio)) {
--		if (devm_gpio_request(host->dev, gpio, "dw-mci-wp"))
--			dev_info(host->dev, "gpio [%d] request failed\n",
--						gpio);
--	} else {
--		dev_info(host->dev, "wp gpio not available");
--		host->pdata->quirks |= DW_MCI_QUIRK_NO_WRITE_PROTECT;
--	}
--
- 	if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
- 		return 0;
- 
--- 
-1.7.7.3
+- Kukjin
