@@ -1,83 +1,123 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [RFC PATCH 1/7] ARM: common: vic: Parse interrupt and resume masks from device tree
-Date: Thu, 10 Jan 2013 00:41:43 +0100
-Message-ID: <1357774909-29938-2-git-send-email-tomasz.figa@gmail.com>
-References: <1357774909-29938-1-git-send-email-tomasz.figa@gmail.com>
+Subject: Re: [PATCH 0/5 v3]  S3C / S5PC100: add clockevent/clocksource support
+Date: Thu, 10 Jan 2013 01:14:02 +0100
+Message-ID: <10694299.cZC5vmGaMJ@flatron>
+References: <50885608.1030503@openwide.fr> <6825637.7rn5o5FT8e@flatron> <50EDF297.4020908@openwide.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f175.google.com ([209.85.215.175]:59399 "EHLO
-	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758148Ab3AIXmD (ORCPT
+Received: from mail-ea0-f182.google.com ([209.85.215.182]:60572 "EHLO
+	mail-ea0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932120Ab3AJAOD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jan 2013 18:42:03 -0500
-Received: by mail-ea0-f175.google.com with SMTP id h11so895459eaa.34
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jan 2013 15:42:02 -0800 (PST)
-In-Reply-To: <1357774909-29938-1-git-send-email-tomasz.figa@gmail.com>
+	Wed, 9 Jan 2013 19:14:03 -0500
+Received: by mail-ea0-f182.google.com with SMTP id d1so130359eaa.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jan 2013 16:14:01 -0800 (PST)
+In-Reply-To: <50EDF297.4020908@openwide.fr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Tomasz Figa <tomasz.figa@gmail.com>
+To: Romain Naour <romain.naour@openwide.fr>
+Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
 
-This patch extends vic_of_init to parse valid interrupt sources
-and resume sources masks from device tree.
+Hi Romain, Kukjin,
 
-If mask values are not specified in device tree, all sources
-are assumed to be valid, as before this patch.
+On Wednesday 09 of January 2013 23:43:35 Romain Naour wrote:
+> This series of patches converts the s3c and s5pc100 timer driver to the
+> clocksource/clockevent API. I made some test on a mini2440 board and I
+> had to reduce timers frequency to 1MHz in order to produce a timer's
+> overflow every 64ms. Initial timer's frequency (8,45MHz) provide only
+> 7ms between each overflow. It is not enough. As timers were previously
+> used to produce an IRQ at 200Hz, some board (Osiris, Anubis board) use
+> an external 12MHz signal to clock the timers (tclk1). So, I changed
+> their configuration to select internal pclk clock instead, but I can't
+> test it.
+> 
+> Since clockevent/clocksource API becomes available, we can use High
+> Resolution Timer and Tickless mode.
+> 
+> Most of the work is already done in s5p-time.c (renamed samsung-time.c).
+> I added some #define for s3c24xx and s5pc100 case.
+> 
+> 
+> Naour Romain (5):
+>   Rename s5p-time to samsung-time
+>   Add samsung-time support for s3c24xx
+>   Add samsung-time support for s3c64xx
+>   Add samsung-time support for s5pc100
+>   Remove unused plat-samsung/time.c
+> 
+>  arch/arm/Kconfig                                   |   9 +-
+>  arch/arm/mach-exynos/Kconfig                       |   2 +-
+>  arch/arm/mach-exynos/mach-universal_c210.c         |   6 +-
+>  arch/arm/mach-s3c24xx/Kconfig                      |   6 +
+>  arch/arm/mach-s3c24xx/mach-amlm5900.c              |   5 +-
+>  arch/arm/mach-s3c24xx/mach-anubis.c                |   4 +-
+>  arch/arm/mach-s3c24xx/mach-at2440evb.c             |   4 +-
+>  arch/arm/mach-s3c24xx/mach-bast.c                  |   4 +-
+>  arch/arm/mach-s3c24xx/mach-gta02.c                 |   4 +-
+>  arch/arm/mach-s3c24xx/mach-h1940.c                 |   5 +-
+>  arch/arm/mach-s3c24xx/mach-jive.c                  |   4 +-
+>  arch/arm/mach-s3c24xx/mach-mini2440.c              |   4 +-
+>  arch/arm/mach-s3c24xx/mach-n30.c                   |   6 +-
+>  arch/arm/mach-s3c24xx/mach-nexcoder.c              |   4 +-
+>  arch/arm/mach-s3c24xx/mach-osiris.c                |   4 +-
+>  arch/arm/mach-s3c24xx/mach-otom.c                  |   4 +-
+>  arch/arm/mach-s3c24xx/mach-qt2410.c                |   4 +-
+>  arch/arm/mach-s3c24xx/mach-rx1950.c                |   4 +-
+>  arch/arm/mach-s3c24xx/mach-rx3715.c                |   4 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2410.c              |   4 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2413.c              |   8 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |   4 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2440.c              |   4 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2443.c              |   4 +-
+>  arch/arm/mach-s3c24xx/mach-tct_hammer.c            |   4 +-
+>  arch/arm/mach-s3c24xx/mach-vr1000.c                |   4 +-
+>  arch/arm/mach-s3c24xx/mach-vstms.c                 |   5 +-
+>  arch/arm/mach-s3c64xx/Kconfig                      |   2 +
+>  arch/arm/mach-s3c64xx/mach-anw6410.c               |   4 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410.c              |   4 +-
+>  arch/arm/mach-s3c64xx/mach-hmt.c                   |   4 +-
+>  arch/arm/mach-s3c64xx/mach-mini6410.c              |   4 +-
+>  arch/arm/mach-s3c64xx/mach-ncp.c                   |   4 +-
+>  arch/arm/mach-s3c64xx/mach-real6410.c              |   4 +-
+>  arch/arm/mach-s3c64xx/mach-smartq.c                |   2 +
+>  arch/arm/mach-s3c64xx/mach-smartq5.c               |   3 +-
+>  arch/arm/mach-s3c64xx/mach-smartq7.c               |   3 +-
+>  arch/arm/mach-s3c64xx/mach-smdk6400.c              |   4 +-
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c              |   4 +-
+>  arch/arm/mach-s5p64x0/Kconfig                      |   4 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c              |   6 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6450.c              |   6 +-
+>  arch/arm/mach-s5pc100/Kconfig                      |   1 +
+>  arch/arm/mach-s5pc100/mach-smdkc100.c              |   4 +-
+>  arch/arm/mach-s5pv210/Kconfig                      |   2 +-
+>  arch/arm/mach-s5pv210/mach-aquila.c                |   6 +-
+>  arch/arm/mach-s5pv210/mach-goni.c                  |   6 +-
+>  arch/arm/mach-s5pv210/mach-smdkc110.c              |   6 +-
+>  arch/arm/mach-s5pv210/mach-smdkv210.c              |   6 +-
+>  arch/arm/mach-s5pv210/mach-torbreck.c              |   6 +-
+>  arch/arm/plat-samsung/Kconfig                      |   2 +-
+>  arch/arm/plat-samsung/Makefile                     |   3 +-
+>  arch/arm/plat-samsung/include/plat/cpu.h           |   5 -
+>  arch/arm/plat-samsung/include/plat/s5p-time.h      |  40 ---
+>  arch/arm/plat-samsung/include/plat/samsung-time.h  |  51 ++++
+>  .../plat-samsung/{s5p-time.c => samsung-time.c}    | 144 +++++------
+>  arch/arm/plat-samsung/time.c                       | 285
+> --------------------- 57 files changed, 274 insertions(+), 475
+> deletions(-)
+>  delete mode 100644 arch/arm/plat-samsung/include/plat/s5p-time.h
+>  create mode 100644 arch/arm/plat-samsung/include/plat/samsung-time.h
+>  rename arch/arm/plat-samsung/{s5p-time.c => samsung-time.c} (68%)
+>  delete mode 100644 arch/arm/plat-samsung/time.c
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- Documentation/devicetree/bindings/arm/vic.txt | 6 ++++++
- arch/arm/common/vic.c                         | 7 ++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+The whole series looks good to me.
 
-diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
-index 266716b..bb7137c 100644
---- a/Documentation/devicetree/bindings/arm/vic.txt
-+++ b/Documentation/devicetree/bindings/arm/vic.txt
-@@ -18,6 +18,9 @@ Required properties:
- Optional properties:
- 
- - interrupts : Interrupt source for parent controllers if the VIC is nested.
-+- interrupt-mask : Bit mask of valid interrupt sources (defaults to all valid)
-+- wakeup-mask : Bit mask of interrupt sources that can wake up the system
-+  (defaults to all allowed)
- 
- Example:
- 
-@@ -26,4 +29,7 @@ Example:
- 		interrupt-controller;
- 		#interrupt-cells = <1>;
- 		reg = <0x60000 0x1000>;
-+
-+		interrupt-mask = <0xffffff7f>;
-+		wakeup-mask = <0x0000ff7f>;
- 	};
-diff --git a/arch/arm/common/vic.c b/arch/arm/common/vic.c
-index e4df17c..c2889da 100644
---- a/arch/arm/common/vic.c
-+++ b/arch/arm/common/vic.c
-@@ -407,6 +407,8 @@ void __init vic_init(void __iomem *base, unsigned int irq_start,
- int __init vic_of_init(struct device_node *node, struct device_node *parent)
- {
- 	void __iomem *regs;
-+	u32 interrupt_mask = ~0;
-+	u32 wakeup_mask = ~0;
- 
- 	if (WARN(parent, "non-root VICs are not supported"))
- 		return -EINVAL;
-@@ -415,10 +417,13 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
- 	if (WARN_ON(!regs))
- 		return -EIO;
- 
-+	of_property_read_u32(node, "interrupt-mask", &interrupt_mask);
-+	of_property_read_u32(node, "wakeup-mask", &wakeup_mask);
-+
- 	/*
- 	 * Passing -1 as first IRQ makes the simple domain allocate descriptors
- 	 */
--	__vic_init(regs, -1, ~0, ~0, node);
-+	__vic_init(regs, -1, interrupt_mask, wakeup_mask, node);
- 
- 	return 0;
- }
--- 
-1.8.1
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Also I tested it on a Tiny6410 (Mini6410-compatible) board.
+
+Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Best regards,
+Tomasz Figa
