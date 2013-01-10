@@ -1,73 +1,57 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/5 v3]  S3C / S5PC100: add clockevent/clocksource support
-Date: Wed, 09 Jan 2013 16:48:22 -0800
-Message-ID: <00b901cdeecc$3255b830$97012890$@samsung.com>
-References: <50885608.1030503@openwide.fr> <6825637.7rn5o5FT8e@flatron>
- <50EDF297.4020908@openwide.fr> <201301100137.13695.heiko@sntech.de>
+Subject: RE: [PATCH] spi/s3c64xx: Complain if we fail to set a transfer speed
+Date: Wed, 09 Jan 2013 17:17:52 -0800
+Message-ID: <00cf01cdeed0$51d193b0$f574bb10$@samsung.com>
+References: <1357335189-17398-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:13420 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:18626 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932487Ab3AJAsg convert rfc822-to-8bit (ORCPT
+	with ESMTP id S932323Ab3AJBSH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jan 2013 19:48:36 -0500
+	Wed, 9 Jan 2013 20:18:07 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGD00FAFWW3C8D0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 09:48:34 +0900 (KST)
+ 17 2011)) with ESMTP id <0MGD00FUSY9SC8E0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 10:18:05 +0900 (KST)
 Received: from visitor4lab ([105.128.18.157])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MGD003QMWWWDP00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 09:48:34 +0900 (KST)
-In-reply-to: <201301100137.13695.heiko@sntech.de>
+ with ESMTPA id <0MGD002B1YA3UBB0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Jan 2013 10:18:05 +0900 (KST)
+In-reply-to: <1357335189-17398-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Romain Naour' <romain.naour@openwide.fr>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Grant Likely' <grant.likely@secretlab.ca>
+Cc: linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
 
-Heiko St=FCbner wrote:
->=20
-> Am Mittwoch, 9. Januar 2013, 23:43:35 schrieb Romain Naour:
-> > This series of patches converts the s3c and s5pc100 timer driver to=
- the
-> > clocksource/clockevent API. I made some test on a mini2440 board an=
-d I
-> had
-> > to reduce timers frequency to 1MHz in order to produce a timer's
-overflow
-> > every 64ms. Initial timer's frequency (8,45MHz) provide only 7ms be=
-tween
-> > each overflow. It is not enough. As timers were previously used to
-produce
-> > an IRQ at 200Hz, some board (Osiris, Anubis board) use an external =
-12MHz
-> > signal to clock the timers (tclk1). So, I changed their configurati=
-on to
-> > select internal pclk clock instead, but I can't test it.
-> >
-> > Since clockevent/clocksource API becomes available, we can use High
-> > Resolution Timer and Tickless mode.
-> >
-> > Most of the work is already done in s5p-time.c (renamed samsung-tim=
-e.c).
-> > I added some #define for s3c24xx and s5pc100 case.
->=20
-> not sure, if the ack I added to the previous patches will carry thru,=
- so:
->=20
-> The whole series
->=20
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
->=20
-> and tested on a s3c2416 based machine, so
->=20
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
->=20
-Thanks for your review and test on s3c2416 board :-)
+Mark Brown wrote:
+> 
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-- Kukjin
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+> ---
+>  drivers/spi/spi-s3c64xx.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c index
+> ad93231..6495352 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -957,6 +957,8 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>  		if (spi->max_speed_hz >= speed) {
+>  			spi->max_speed_hz = speed;
+>  		} else {
+> +			dev_err(&spi->dev, "Can't set %dHz transfer
+> speed\n",
+> +				spi->max_speed_hz);
+>  			err = -EINVAL;
+>  			goto setup_exit;
+>  		}
+> --
+> 1.7.10.4
