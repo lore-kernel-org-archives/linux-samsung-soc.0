@@ -1,76 +1,42 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
- MMU driver with DT
-Date: Thu, 10 Jan 2013 10:06:24 -0800
-Message-ID: <026e01cdef5d$364fd150$a2ef73f0$@samsung.com>
-References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
- <032401cde783$485ae1a0$d910a4e0$@samsung.com>
- <20130110171844.GA2650@8bytes.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20265 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753510Ab3AJSGk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jan 2013 13:06:40 -0500
-In-reply-to: <20130110171844.GA2650@8bytes.org>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [REPOST PATCH v3 2/4] ARM: dts: Add disable-wp for sd card slot on smdk5250
+Date: Thu, 10 Jan 2013 10:24:27 -0800
+Message-ID: <1357842269-15062-2-git-send-email-dianders@chromium.org>
+References: <1354251857-21587-1-git-send-email-dianders@chromium.org>
+ <1357842269-15062-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1357842269-15062-1-git-send-email-dianders@chromium.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Russell King <linux@arm.linux.org.uk>, Rahul Sharma <rahul.sharma@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joerg Roedel' <joro@8bytes.org>
-Cc: 'Cho KyongHo' <pullip.cho@samsung.com>, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>
 
-'Joerg Roedel' wrote:
-> 
-> On Mon, Dec 31, 2012 at 10:18:46AM -0800, Kukjin Kim wrote:
-> > Cho KyongHo wrote:
-> 
-> > > Diffstats:
-> > >  arch/arm/boot/dts/exynos5250-smdk5250.dts  |    2 +-
-> > >  arch/arm/boot/dts/exynos5250.dtsi          |   27 +-
-> > >  arch/arm/mach-exynos/Kconfig               |    5 -
-> > >  arch/arm/mach-exynos/Makefile              |    1 -
-> > >  arch/arm/mach-exynos/clock-exynos4.c       |   41 +-
-> > >  arch/arm/mach-exynos/clock-exynos4210.c    |    9 +-
-> > >  arch/arm/mach-exynos/clock-exynos4212.c    |   23 +-
-> > >  arch/arm/mach-exynos/clock-exynos5.c       |   87 +-
-> > >  arch/arm/mach-exynos/dev-sysmmu.c          |  274 ------
-> > >  arch/arm/mach-exynos/include/mach/sysmmu.h |   66 --
-> > >  arch/arm/mach-exynos/mach-exynos4-dt.c     |   34 +
-> > >  arch/arm/mach-exynos/mach-exynos5-dt.c     |   30 +
-> > >  drivers/iommu/Kconfig                      |    2 +-
-> > >  drivers/iommu/Makefile                     |    2 +-
-> > >  drivers/iommu/exynos-iommu.c               | 1477
-> +++++++++++++++++++++--
-> > > -----
-> > >  15 files changed, 1284 insertions(+), 796 deletions(-)
-> >
-> > Joerg, it's time to merge this. If you don't mind, let me pick up this
-whole
-> > series into Samsung tree because this touches many Samsung stuff.
-> 
-> Well, looking at the diffstat the IOMMU changes are a lot larger than
-> the exynos ones. So I think this should go through the IOMMU tree once
-> the latest review comments are fixed.
-> 
-If so, too many ugly merge conflicts will be happened when Linus merges for
-v3.9 because the legacy(current) exynos clock stuff is going away in Samsung
-tree and as I said, this touches Samsung stuff widely. Of course, Stephen
-should complain the conflicts between your tree and mine once you apply this
-whole series in your -next before Linus' merge for v3.9. I believe, you
-don't want it.
+The next change will remove the code from the dw_mmc-exynos that added
+the DW_MCI_QUIRK_NO_WRITE_PROTECT.  Keep existing functionality of
+having no write protect pin on smdk5250 by adding the disable-wp
+property.
 
-You know, we have several options to avoid it. When you take this series in
-your tree, you can provide topic branch for me. Or this series should be
-separated for arch/arm/ and drivers/ for both trees, then only drivers/iommu
-changes should be picked up in your tree. I'm OK both, let me know which one
-you would prefer or other way.
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+Changes in v3:
+- New for this version of the patch series.
 
-BTW, KyongHo, you need to update the clock changes for exynos-iommu against
-on exynos common clock stuff. 
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Thanks.
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 942d576..75b9d83 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -146,6 +146,7 @@
+ 			reg = <0>;
+ 			bus-width = <4>;
+ 			samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
++			disable-wp;
+ 			gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
+ 				<&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
+ 				<&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>,
+-- 
+1.7.7.3
 
-- Kukjin 
