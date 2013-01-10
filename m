@@ -1,97 +1,47 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Audio support on Mini6410 board [was Re: Hi again]
-Date: Fri, 11 Jan 2013 00:16:27 +0100
-Message-ID: <50EF4BCB.40307@gmail.com>
-References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com> <50D19AE6.1080306@gmail.com> <50D19D03.3060203@gmail.com> <CACuz9s0hXGO_kBtWWLqMtktMyUhVBw-a0+auVEEfMvVEX4jD=w@mail.gmail.com> <50D2109D.9@gmail.com> <CACuz9s3vY3XvaWymLGwnzEudBkOUW4o-LpfJQTF0=mgy0cAhzg@mail.gmail.com> <CACuz9s0a2A6F7zWyxQkBAZtj=Xi1NwT7cLEHe-fa6G5p__bUgg@mail.gmail.com> <50D2F879.6020501@gmail.com> <CACuz9s0rTGDGvB9PcKfjGvvt8vEdBDKKvQTx94fuj1MrDcNfOg@mail.gmail.com> <50D305CF.2030600@gmail.com> <CACuz9s19M2Qv8dOBY0h0EKNidD3r4G3esvAAWZAUDZEjFMCGiA@mail.gmail.com> <50D30F6C.7000004@gmail.com> <CACuz9s1_KKfVDCa4FvZLe9pEVWuqQzuLPX7pYX9Tw1NUQGPtzA@mail.gmail.com> <CACuz9s1waQ3VgRjdxw9CoiHX2BtfOaxTosqLDwhX+O7px0=JXg@mail.gmail.com> <50D31BF8.8040301@gmail.com> <CACuz9s3xtCndC2jks4T-ytSWxwTBjLbXUrehE
- tsNwm7H=wJC1Q@mail.gmail.com> <50D31F63.6090304@gmail.com> <CACuz9s06v5nXNze+AAZyPTyxib4OXmqRi9E_Hw4SqBoprym0UA@mail.gmail.com> <CACuz9s1mnOon=EywOrcxZjMOGrx2=f0-4sj6ietZFoEXC66uWQ@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [REPOST PATCH v3 1/4] mmc: dw_mmc: Add "disable-wp" device tree property
+Date: Thu, 10 Jan 2013 15:23:02 -0800
+Message-ID: <CAD=FV=W_++TL0+5iu=HUchGQ47q4AWxNi5sy37ysM=EMb+NFmA@mail.gmail.com>
+References: <1354251857-21587-1-git-send-email-dianders@chromium.org>
+	<1357842269-15062-1-git-send-email-dianders@chromium.org>
+	<20130110230121.GA20584@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f43.google.com ([74.125.83.43]:40153 "EHLO
-	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754332Ab3AJXQb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jan 2013 18:16:31 -0500
-Received: by mail-ee0-f43.google.com with SMTP id c50so580676eek.16
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 15:16:30 -0800 (PST)
-In-Reply-To: <CACuz9s1mnOon=EywOrcxZjMOGrx2=f0-4sj6ietZFoEXC66uWQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130110230121.GA20584@quad.lixom.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Nestorov <alexandernst@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi Alexander,
+Olof,
 
-Cc: linux-samsung-soc@vger.kernel.org
+Thanks for your comments.
 
-On 12/21/2012 07:39 PM, Alexander Nestorov wrote:
-> Hi once again :)
+On Thu, Jan 10, 2013 at 3:01 PM, Olof Johansson <olof@lixom.net> wrote:
 >
-> After some more work there is some (really small) progress.
-> I'm able to make the kernel throw errors about something related with
-> AC97 and/or ALSA
->
-> This is the kernel log: http://pastie.org/5562475
-> Those are the patches I have applied (probably something is wrong, I
-> just don't know what/where): http://pastie.org/5562478
-> And this is the kernel's configuracion: http://pastie.org/5562483
->   (should I disable/enable something?)
+> The previous code used the controller-common quirk field to set a
+> per-controller DW_MCI_QUIRK_NO_WRITE_PROTECT. Is there really need to
+> do this per-slot? And if so, please explain in the commit message why
+> there is need for a brand new quirk for the same functionality.
 
-It might be correct, but I suspect you need add an entry for Mini6410
-board, similar to this one
+I'm happy to move back to using a per-controller quirk here--it
+simplifies the code quite a bit since it can use all of the
+preexisting quirks code.  I originally coded it up as per-slot since
+generally each slot needs its own write-protect line.  Without ever
+seeing any hardware using multiple slots per controller I can't say
+how common this would be, so it may be overkill to handle that
+situation.
 
-"SoC AC97 Audio support for SMDK with WM9713"
+Note that I think of the new code as being the device-tree equivalent
+of the non-device-tree "brd->get_ro(slot_id)" function.  That function
+is per-slot.
 
-> What do you think? Any notes/comments?
+I will wait a day or two to see if others have feedback.  If I hear no
+feedback I'll send up a patch that moves this to be at the controller
+level.
 
-I have virtually no experience with ASoC and no board to check it,
-so my ability to help you with this is really limited. Anyway, let's
-try to make it work.
 
-In the kernel log there are 2 things I noticed and would need to be
-checked:
+Thanks!
 
-Lines 164...166:
-
-soc-audio soc-audio: ASoC machine SMDK WM9713 should use 
-snd_soc_register_card()
-soc-audio soc-audio: CPU DAI samsung-ac97 not registered
-platform soc-audio: Driver soc-audio requests probe deferral
-
-and line 182:
-
-soc-audio: probe of soc-audio failed with error -22
-
-Likely only this last error is important.
-
-I would add some debug prints to snd_soc_register_card() and
-snd_soc_instantiate_card() to find out where it fails exactly.
-
-Anyway, it seems you have added wrong audio devices to your board file,
-copied from mach-mini2440.c ? Instead, you should find what's in board
-files for boards based on s3c6410 SoC, e.g. mach-s3c6410/mach-crag6410.c.
-
-I think you need one of these devices in mini6410_devices[] array:
-
-	&s3c64xx_device_iis0,
-	&s3c64xx_device_iis1,
-
-Also, can you check what devices are registered in the system, e.g.
-
-# find /sys/devices
-
-?
-You might want to have a look at sound/soc/samsung/smdk_wm9713.c.
-Likely you need to add something similar for Mini6410.
-
-And just do remove all mini2440 devices from your board file, like:
-uda1340_codec, mini2440_audio. Those certainly shouldn't be there.
-
-I'm not sure yet where AC97_* SoC pins are configured (corresponding
-to B29...B33 pins of Tiny6410 module).
-
---
-
-Regards,
-Sylwester
+-Doug
