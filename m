@@ -1,58 +1,222 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
-	MMU driver with DT
-Date: Thu, 10 Jan 2013 11:33:41 -0800
-Message-ID: <02ae01cdef69$67d66200$37832600$@samsung.com>
-References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
-	<032401cde783$485ae1a0$d910a4e0$@samsung.com>
-	<20130110171844.GA2650@8bytes.org>
-	<027601cdef61$2df576a0$89e063e0$@samsung.com>
-	<20130110191207.GI25591@8bytes.org>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH 5/5] ARM: exynos: enable/disable cpuidle when cpu1 is down/up
+Date: Thu, 10 Jan 2013 12:07:52 -0800
+Message-ID: <CADGdYn7y_SSmLoEpeRjL8PDSZS-YJwC1QpRcUocSSnDyM8BRhQ@mail.gmail.com>
+References: <1357318799-24378-1-git-send-email-daniel.lezcano@linaro.org>
+	<1357318799-24378-5-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <20130110191207.GI25591-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Content-language: en-us
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: 'Joerg Roedel' <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Cho KyongHo' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ia0-f173.google.com ([209.85.210.173]:64582 "EHLO
+	mail-ia0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754495Ab3AJUHx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Jan 2013 15:07:53 -0500
+Received: by mail-ia0-f173.google.com with SMTP id w21so882203iac.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 12:07:52 -0800 (PST)
+In-Reply-To: <1357318799-24378-5-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-'Joerg Roedel' wrote:
-> 
-> On Thu, Jan 10, 2013 at 10:34:48AM -0800, Kukjin Kim wrote:
-> > Hmm, I think, just one [7/12] patch does matter so if you could create
-topic
-> > branch and apply [7/12] patch firstly before other drivers/ changes
-would
-> be
-> > better to me. It's OK on both trees if I just _merge_ the first [7/12]
-> > commit in the topic branch you provided for exynos-iommu. But you know,
-> you
-> > don't have to rebase it once I merge it in Samsung tree.
-> >
-> > How about?
-> 
-> Sounds good. Should I take the patch directly from this post? I would
-> add your Acked-by then and make it the base for the arm/exynos branch.
+Hi Daniel,
 
-Sure, keep going on with
+This hotplug noifiers looks fine. I suppose it should add extra state
+C1 in cpu0. If it is done like below than for normal cases(when all
+cpu's are online) there wont be any statistics for C0 state also which
+is required. Other patches look good.
 
-Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Thanks,
+Amit
 
-> Once the branch is set-up, as usual it will not be rebased.
-
-OK, good. Let me know the name of branch when you set-up it :-)
-
-Thanks.
-
-- Kukjin
+On Fri, Jan 4, 2013 at 8:59 AM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> What we have now is (1) cpu0 going always to WFI when cpu1 is up,
+> (2) cpu0 going to all states when cpu1 is down.
+>
+> In other words, cpuidle is disabled when cpu1 is up and enabled
+> when cpu1 is down.
+>
+> This patch use the cpu hotplug notifier to enable/disable cpuidle,
+> when the cpu1 is plugged or unplugged. That clarifies the code and
+> make it simpler.
+>
+> Signed-off: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  arch/arm/mach-exynos/cpuidle.c |  117 +++++++++++++++++++++++-----------------
+>  1 file changed, 69 insertions(+), 48 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+> index e6f006b..d8f6f33 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -12,6 +12,8 @@
+>  #include <linux/init.h>
+>  #include <linux/cpuidle.h>
+>  #include <linux/cpu_pm.h>
+> +#include <linux/notifier.h>
+> +#include <linux/cpu.h>
+>  #include <linux/io.h>
+>  #include <linux/export.h>
+>  #include <linux/time.h>
+> @@ -36,31 +38,8 @@
+>
+>  #define S5P_CHECK_AFTR         0xFCBA0D10
+>
+> -static int exynos4_enter_lowpower(struct cpuidle_device *dev,
+> -                               struct cpuidle_driver *drv,
+> -                               int index);
+> -
+>  static struct cpuidle_device exynos4_cpuidle_device;
+>
+> -static struct cpuidle_driver exynos4_idle_driver = {
+> -       .name                   = "exynos4_idle",
+> -       .owner                  = THIS_MODULE,
+> -       .en_core_tk_irqen       = 1,
+> -       .states = {
+> -               [0] = ARM_CPUIDLE_WFI_STATE,
+> -               [1] = {
+> -                       .enter            = exynos4_enter_lowpower,
+> -                       .exit_latency     = 300,
+> -                       .target_residency = 100000,
+> -                       .flags            = CPUIDLE_FLAG_TIME_VALID,
+> -                       .name             = "C1",
+> -                       .desc             = "ARM power down",
+> -               },
+> -       },
+> -       .state_count = 2,
+> -       .safe_state_index = 0,
+> -};
+> -
+>  /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+>  static void exynos4_set_wakeupmask(void)
+>  {
+> @@ -93,9 +72,9 @@ static int idle_finisher(unsigned long flags)
+>         return 1;
+>  }
+>
+> -static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+> -                               struct cpuidle_driver *drv,
+> -                               int index)
+> +static int exynos4_enter_lowpower(struct cpuidle_device *dev,
+> +                                 struct cpuidle_driver *drv,
+> +                                 int index)
+>  {
+>         unsigned long tmp;
+>
+> @@ -143,22 +122,6 @@ static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+>         return index;
+>  }
+>
+> -static int exynos4_enter_lowpower(struct cpuidle_device *dev,
+> -                               struct cpuidle_driver *drv,
+> -                               int index)
+> -{
+> -       int new_index = index;
+> -
+> -       /* This mode only can be entered when other core's are offline */
+> -       if (num_online_cpus() > 1)
+> -               new_index = drv->safe_state_index;
+> -
+> -       if (new_index == 0)
+> -               return arm_cpuidle_simple_enter(dev, drv, new_index);
+> -       else
+> -               return exynos4_enter_core0_aftr(dev, drv, new_index);
+> -}
+> -
+>  static void __init exynos5_core_down_clk(void)
+>  {
+>         unsigned int tmp;
+> @@ -191,6 +154,62 @@ static void __init exynos5_core_down_clk(void)
+>         __raw_writel(tmp, EXYNOS5_PWR_CTRL2);
+>  }
+>
+> +static int cpu_hotplug_notify(struct notifier_block *n,
+> +                             unsigned long action, void *hcpu)
+> +{
+> +       int ret;
+> +
+> +       /*
+> +        * cpu0 can't be shutdown on Origen, so this routine is
+> +        * called only for cpu1.
+> +        */
+> +
+> +       switch (action & 0xf) {
+> +
+> +       case CPU_ONLINE:
+> +               cpuidle_pause_and_lock();
+> +               cpuidle_disable_device(&exynos4_cpuidle_device);
+> +               cpuidle_resume_and_unlock();
+> +               break;
+> +
+> +       case CPU_DEAD:
+> +               if (!exynos4_cpuidle_device.registered) {
+> +                       ret = cpuidle_register_device(&exynos4_cpuidle_device);
+> +                       WARN_ONCE(ret, "Failed to register cpuidle device");
+> +               } else {
+> +                       cpuidle_pause_and_lock();
+> +                       cpuidle_enable_device(&exynos4_cpuidle_device);
+> +                       cpuidle_resume_and_unlock();
+> +               }
+> +               break;
+> +       }
+> +
+> +       return NOTIFY_OK;
+> +}
+> +
+> +static struct notifier_block cpu_hotplug_notifier = {
+> +       .notifier_call = cpu_hotplug_notify,
+> +};
+> +
+> +static struct cpuidle_driver exynos4_idle_driver = {
+> +       .name                   = "exynos4_idle",
+> +       .owner                  = THIS_MODULE,
+> +       .en_core_tk_irqen       = 1,
+> +       .states = {
+> +               [0] = ARM_CPUIDLE_WFI_STATE,
+> +               [1] = {
+> +                       .enter            = exynos4_enter_lowpower,
+> +                       .exit_latency     = 300,
+> +                       .target_residency = 100000,
+> +                       .flags            = CPUIDLE_FLAG_TIME_VALID,
+> +                       .name             = "C1",
+> +                       .desc             = "ARM power down",
+> +               },
+> +       },
+> +       .state_count = 2,
+> +       .safe_state_index = 0,
+> +};
+> +
+>  static int __init exynos4_init_cpuidle(void)
+>  {
+>         int ret;
+> @@ -204,12 +223,14 @@ static int __init exynos4_init_cpuidle(void)
+>                 return ret;
+>         }
+>
+> -       ret = cpuidle_register_device(&exynos4_cpuidle_device);
+> -       if (ret) {
+> -               printk(KERN_ERR "CPUidle register device failed\n");
+> -               return ret;
+> -       }
+> +       ret = register_cpu_notifier(&cpu_hotplug_notifier);
+> +       if (ret)
+> +               goto out_unregister_driver;
+> +out:
+> +       return ret;
+>
+> -       return 0;
+> +out_unregister_driver:
+> +       cpuidle_unregister_driver(&exynos4_idle_driver);
+> +       goto out;
+>  }
+>  device_initcall(exynos4_init_cpuidle);
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linaro-dev mailing list
+> linaro-dev@lists.linaro.org
+> http://lists.linaro.org/mailman/listinfo/linaro-dev
