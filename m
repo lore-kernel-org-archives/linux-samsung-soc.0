@@ -1,41 +1,34 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: S3C24XX: Make 'clk_msysclk' static
-Date: Thu, 10 Jan 2013 15:49:51 +0530
-Message-ID: <1357813191-1873-1-git-send-email-sachin.kamat@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 01/26] gpio: samsung: remove inclusion <mach/regs-clock.h>
+Date: Thu, 10 Jan 2013 11:52:28 +0100
+Message-ID: <CACRpkdYhNHwqK3YkEKQedFvYDc6kuwesY4gmMroipnnhrLP6pA@mail.gmail.com>
+References: <1357165443-3716-1-git-send-email-kgene.kim@samsung.com>
+	<1357165443-3716-2-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:34772 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752470Ab3AJK2I (ORCPT
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:42697 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752470Ab3AJKw3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jan 2013 05:28:08 -0500
-Received: by mail-pb0-f41.google.com with SMTP id xa7so222374pbc.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 02:28:08 -0800 (PST)
+	Thu, 10 Jan 2013 05:52:29 -0500
+Received: by mail-ie0-f176.google.com with SMTP id 13so502496iea.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 02:52:29 -0800 (PST)
+In-Reply-To: <1357165443-3716-2-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>
 
-Fixes the following warning:
-arch/arm/mach-s3c24xx/common-s3c2443.c:135:19: warning:
-symbol 'clk_msysclk' was not declared. Should it be static?
+On Wed, Jan 2, 2013 at 11:23 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-s3c24xx/common-s3c2443.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> The <mach/regs-clock.h> is not needed for gpio-samsung.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
-diff --git a/arch/arm/mach-s3c24xx/common-s3c2443.c b/arch/arm/mach-s3c24xx/common-s3c2443.c
-index aeb4a24..f6b9f2e 100644
---- a/arch/arm/mach-s3c24xx/common-s3c2443.c
-+++ b/arch/arm/mach-s3c24xx/common-s3c2443.c
-@@ -132,7 +132,7 @@ static struct clk *clk_msysclk_sources[] = {
- 	[3] = &clk_mpllref,
- };
- 
--struct clksrc_clk clk_msysclk = {
-+static struct clksrc_clk clk_msysclk = {
- 	.clk	= {
- 		.name		= "msysclk",
- 		.parent		= &clk_xtal,
--- 
-1.7.4.1
+Applied to fixes, thanks.
+
+Yours,
+Linus Walleij
