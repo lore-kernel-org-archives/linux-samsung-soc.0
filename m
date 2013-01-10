@@ -1,38 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 09/26] ARM: SAMSUNG: cleanup mach/gpio-fns.h gpio-track.h
- and gpio-nrs.h
-Date: Thu, 10 Jan 2013 11:53:34 +0100
-Message-ID: <CACRpkda5rKrY85GXgdzomE5q6q0btGKX6UGgCn3N5AzxLv=s7Q@mail.gmail.com>
-References: <1357165443-3716-1-git-send-email-kgene.kim@samsung.com>
-	<1357165443-3716-10-git-send-email-kgene.kim@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFC PATCH 5/7] ARM: s3c64xx: Add board file for boot using Device Tree
+Date: Thu, 10 Jan 2013 11:55:01 +0100
+Message-ID: <1513533.R0vnZSVmMe@flatron>
+References: <1357774909-29938-1-git-send-email-tomasz.figa@gmail.com> <1357774909-29938-6-git-send-email-tomasz.figa@gmail.com> <20130110105221.GG20956@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f171.google.com ([209.85.210.171]:47696 "EHLO
-	mail-ia0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753374Ab3AJKxf (ORCPT
+Received: from mail-ea0-f169.google.com ([209.85.215.169]:42906 "EHLO
+	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753373Ab3AJKzB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jan 2013 05:53:35 -0500
-Received: by mail-ia0-f171.google.com with SMTP id q36so384322iaq.30
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 02:53:34 -0800 (PST)
-In-Reply-To: <1357165443-3716-10-git-send-email-kgene.kim@samsung.com>
+	Thu, 10 Jan 2013 05:55:01 -0500
+Received: by mail-ea0-f169.google.com with SMTP id a12so162265eaa.14
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 02:55:00 -0800 (PST)
+In-Reply-To: <20130110105221.GG20956@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk
 
-On Wed, Jan 2, 2013 at 11:23 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+Hi Mark,
 
-> remove <mach/gpio-fns.h>, <mach/gpio-track.h> and <plat/gpio-fns.h>
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+On Thursday 10 of January 2013 10:52:22 Mark Brown wrote:
+> On Thu, Jan 10, 2013 at 12:41:47AM +0100, Tomasz Figa wrote:
+> > + * The following lookup table is used to override device names when
+> > devices + * are registered from device tree. This is temporarily
+> > added to enable + * device tree support addition for the Exynos4
+> > architecture.
+> Cut'n'paste.
 
-This really needs cleanup so
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Oh my, you got me. ;)
 
-I guess you will carry this through the Samsung tree?
+I will correct it in next version. Thanks for spotting this.
 
-Yours,
-Linus Walleij
+Best regards,
+Tomasz Figa
