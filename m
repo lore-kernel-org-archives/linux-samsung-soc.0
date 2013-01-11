@@ -1,39 +1,107 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: dts: sorting the device nodes in alphabetical order
- for EXYNOS DT
-Date: Thu, 10 Jan 2013 17:34:24 -0800
-Message-ID: <CAOesGMjXSnE_k763T0RiJiZO2dDj1HX_HROU+dTtnVTCMdLnmQ@mail.gmail.com>
-References: <1357861132-16275-1-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH] arm: exynos4: Fix suspend/resume hang
+Date: Fri, 11 Jan 2013 11:17:58 +0530
+Message-ID: <1357883278-26239-1-git-send-email-inderpal.singh@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:57376 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753781Ab3AKBeY (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:60363 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752572Ab3AKFsI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jan 2013 20:34:24 -0500
-Received: by mail-ie0-f180.google.com with SMTP id c10so1687514ieb.25
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 17:34:24 -0800 (PST)
-In-Reply-To: <1357861132-16275-1-git-send-email-kgene.kim@samsung.com>
+	Fri, 11 Jan 2013 00:48:08 -0500
+Received: by mail-pa0-f50.google.com with SMTP id hz10so807476pad.37
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jan 2013 21:48:08 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, lorenzo.pieralisi@arm.com, amit.daniel@samsung.com, patches@linaro.org
 
-On Thu, Jan 10, 2013 at 3:38 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> To reduce merge conflicts it would be easier maintain the device nodes
-> under the root node sorted in alphabetical order.
->
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Olof Johansson <olof@lixom.net>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+commit d0341c61a2 removed the l2 cache save/restore from pm.c and commit
+7c6035b63b added the l2 cache restoration in sleep.s to early enable the
+cache in resume path.
 
-While this would be good to do; it's 600+ lines of pure churn and I
-would like to keep the diffstat down in 3.9 given the comments we got
-for 3.8.
+With these changes the system hangs while resuming when vdd_arm
+is turned off in suspended state. The cache needs to be invalidated
+before turning it on, as it was being done before mentioned commits.
 
-So, let's hold this off for another release, please.
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+ arch/arm/mach-exynos/common.h     |    1 +
+ arch/arm/mach-exynos/pm.c         |    4 ++++
+ arch/arm/plat-samsung/s5p-sleep.S |   23 +++++++++++++++++++++++
+ 3 files changed, 28 insertions(+)
 
-
--Olof
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index af33872..056d9ce 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -78,6 +78,7 @@ enum sys_powerdown {
+ };
+ 
+ extern unsigned long l2x0_regs_phys;
++extern unsigned long wake_reason_reg_phys;
+ struct exynos_pmu_conf {
+ 	void __iomem *reg;
+ 	unsigned int val[NUM_SYS_POWERDOWN];
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index f459afd..b10513c 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -220,6 +220,10 @@ static __init int exynos_pm_drvinit(void)
+ 
+ 	s3c_pm_init();
+ 
++#ifdef CONFIG_CACHE_L2X0
++	if (!soc_is_exynos5250() && !soc_is_exynos5440())
++		wake_reason_reg_phys = virt_to_phys(S5P_INFORM1);
++#endif
+ 	/* All wakeup disable */
+ 
+ 	tmp = __raw_readl(S5P_WAKEUP_MASK);
+diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-samsung/s5p-sleep.S
+index bdf6dad..74331e2 100644
+--- a/arch/arm/plat-samsung/s5p-sleep.S
++++ b/arch/arm/plat-samsung/s5p-sleep.S
+@@ -24,6 +24,7 @@
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+ #include <asm/hardware/cache-l2x0.h>
++#include <mach/regs-pmu.h>
+ 
+ /*
+  *	 The following code is located into the .data section. This is to
+@@ -67,6 +68,25 @@ ENTRY(s3c_cpu_resume)
+ 	str	r2, [r1, #L2X0_PREFETCH_CTRL]
+ 	ldr	r2, [r0, #L2X0_R_PWR_CTRL]
+ 	str	r2, [r1, #L2X0_POWER_CTRL]
++
++        /* check resume reason */
++	adr	r0, wake_reason_reg_phys
++	ldr	r0, [r0]
++	ldr	r2, [r0]
++	ldr	r0, =S5P_CHECK_SLEEP
++	cmp	r0, r2
++	bne	turn_cache_on
++
++	/* Invalidate the cache if resume from sleep */
++	ldr	r2, =0xffff
++	str	r2, [r1, #L2X0_INV_WAY]
++wait:
++	ldr	r2, [r1, #L2X0_INV_WAY]
++	ldr	r0, =0xffff
++	ands	r2, r2, r0
++	bne	wait
++
++turn_cache_on:
+ 	mov	r2, #1
+ 	str	r2, [r1, #L2X0_CTRL]
+ resume_l2on:
+@@ -77,4 +97,7 @@ ENDPROC(s3c_cpu_resume)
+ 	.globl l2x0_regs_phys
+ l2x0_regs_phys:
+ 	.long	0
++	.globl wake_reason_reg_phys
++wake_reason_reg_phys:
++	.long	0
+ #endif
+-- 
+1.7.9.5
