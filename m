@@ -1,86 +1,69 @@
-From: Alexander Nestorov <alexandernst@gmail.com>
-Subject: Re: Audio support on Mini6410 board [was Re: Hi again]
-Date: Fri, 11 Jan 2013 19:17:00 +0100
-Message-ID: <CACuz9s3fMLQUdm8rbLUBKFbHi0E3tGHYUdHLGQQB9wYAt-zo8g@mail.gmail.com>
-References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com>
- <50D19AE6.1080306@gmail.com> <50D19D03.3060203@gmail.com> <CACuz9s0hXGO_kBtWWLqMtktMyUhVBw-a0+auVEEfMvVEX4jD=w@mail.gmail.com>
- <50D2109D.9@gmail.com> <CACuz9s3vY3XvaWymLGwnzEudBkOUW4o-LpfJQTF0=mgy0cAhzg@mail.gmail.com>
- <CACuz9s0a2A6F7zWyxQkBAZtj=Xi1NwT7cLEHe-fa6G5p__bUgg@mail.gmail.com>
- <50D2F879.6020501@gmail.com> <CACuz9s0rTGDGvB9PcKfjGvvt8vEdBDKKvQTx94fuj1MrDcNfOg@mail.gmail.com>
- <50D305CF.2030600@gmail.com> <CACuz9s19M2Qv8dOBY0h0EKNidD3r4G3esvAAWZAUDZEjFMCGiA@mail.gmail.com>
- <50D30F6C.7000004@gmail.com> <CACuz9s1_KKfVDCa4FvZLe9pEVWuqQzuLPX7pYX9Tw1NUQGPtzA@mail.gmail.com>
- <CACuz9s1waQ3VgRjdxw9CoiHX2BtfOaxTosqLDwhX+O7px0=JXg@mail.gmail.com>
- <50D31BF8.8040301@gmail.com> <CACuz9s3xtCndC2jks4T-ytSWxwTBjLbXUrehEtsNwm7H=wJC1Q@mail.gmail.com>
- <50D31F63.6090304@gmail.com> <CACuz9s06v5nXNze+AAZyPTyxib4OXmqRi9E_Hw4SqBoprym0UA@mail.gmail.com>
- <CACuz9s1mnOon=EywOrcxZjMOGrx2=f0-4sj6ietZFoEXC66uWQ@mail.gmail.com>
- <50EF4BCB.40307@gmail.com> <CAA11ShCbyKEtgK=p2Wz57RPZtV1nG5dWb-5Ajq7FuSTse4xPBg@mail.gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [REPOST PATCH 2/2] i2c: pxa: Use i2c-core to get bus number now
+Date: Fri, 11 Jan 2013 23:12:20 +0100
+Message-ID: <50F08E44.3050500@gmail.com>
+References: <1353522362-25519-2-git-send-email-dianders@chromium.org> <1357927027-4857-1-git-send-email-dianders@chromium.org> <1357927027-4857-3-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:45799 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753510Ab3AKSRl (ORCPT
+Received: from mail-ee0-f43.google.com ([74.125.83.43]:48472 "EHLO
+	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754607Ab3AKWMZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jan 2013 13:17:41 -0500
-Received: by mail-ob0-f172.google.com with SMTP id za17so2035285obc.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 10:17:40 -0800 (PST)
-In-Reply-To: <CAA11ShCbyKEtgK=p2Wz57RPZtV1nG5dWb-5Ajq7FuSTse4xPBg@mail.gmail.com>
+	Fri, 11 Jan 2013 17:12:25 -0500
+In-Reply-To: <1357927027-4857-3-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrey Gusakov <dron0gus@gmail.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-i2c@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Wolfram Sang <w.sang@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, Karol Lewandowski <k.lewandowsk@samsung.com>, linux-kernel@vger.kernel.org
 
 Hi,
 
-thank you both for REing :)
+On 01/11/2013 06:57 PM, Doug Anderson wrote:
+> The commit: "i2c-core: dt: Pick i2c bus number from i2c alias if
+> present" adds support for automatically picking the bus number based
+> on the alias ID.  Remove the now unnecessary code from i2c-pxa that
+> did the same thing.
+>
+> Signed-off-by: Doug Anderson<dianders@chromium.org>
+> Acked-by: Haojian Zhuang<haojian.zhuang@gmail.com>
+> ---
+>   drivers/i2c/busses/i2c-pxa.c |    8 +-------
+>   1 files changed, 1 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
+> index 1034d93..8ee9fa0 100644
+> --- a/drivers/i2c/busses/i2c-pxa.c
+> +++ b/drivers/i2c/busses/i2c-pxa.c
+> @@ -1053,16 +1053,10 @@ static int i2c_pxa_probe_dt(struct platform_device *pdev, struct pxa_i2c *i2c,
+>   	struct device_node *np = pdev->dev.of_node;
+>   	const struct of_device_id *of_id =
+>   			of_match_device(i2c_pxa_dt_ids,&pdev->dev);
+> -	int ret;
+>
+>   	if (!of_id)
+>   		return 1;
+> -	ret = of_alias_get_id(np, "i2c");
+> -	if (ret<  0) {
+> -		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
+> -		return ret;
+> -	}
+> -	pdev->id = ret;
+> +	pdev->id = -1;
 
-I made some changes following your instructions and also looking at
-the diff between a clean 2.6.38 kernel and FriendlyARM's 2.6.38
-kernel.
-This is my diff so far: http://pastie.org/5669444
-Also, I created a new file for the mini6410 (it's pretty much a copy
-of the smdk_wm9713.c in sound/soc/samsung/): http://pastie.org/5669453
+I think assignments like this are illegal. At this point the device is
+already registered and modifying pdev->id can cause issues at the core
+code.
 
-So, booting this kernel (3.7 from Sylwester's media/testing branch,
-which is just 3.7 with a patch for the OV9650)
-gives me this output:
+It might be better to have the bus number stored in struct pxa_i2c,
+initialized with pdev->id value for non-dt and now with -1 for dt case.
 
-samsung-ac97 samsung-ac97: cfg_gpio callback not provided!
-samsung-ac97: probe of samsung-ac97 failed with error -22
-soc-audio soc-audio: ASoC machine MINI6410 should use snd_soc_register_card()
-soc-audio soc-audio: CPU DAI samsung-ac97 not registered
-platform soc-audio: Driver soc-audio requests probe deferral
-soc-audio: probe of soc-audio failed with error -22
-ALSA device list:
-  No soundcards found.
-
-If I uncomment the line 56 in my diff (
-//s3c64xx_ac97_setup_gpio(S3C64XX_AC97_GPD); ) I get
-errors about the function not being defined. I do know that it's in
-arch/arm/mach-s3c64xx/dev-audio.c
-and include/linux/platform_data/asoc-s3c.h but I can't see any other
-board-specific code using it.
-
-Also S3C64XX_AC97_GPD not being defined, (but present in both files).
-What include am I missing? I mean, of course I could include
-asoc-s3c.h, but that's not how other boards are
-doing it and they do have audio support. How is that done?
-
-@Andrey One more thing, what do you mean by filter all writes to reg 0x0?
-Literally something like:
-
-void s3c_ac97_write(*ac97, reg, val){
-  if(reg == 0x0)
-    return;
-
-  ...code here..
-  ...
-}
-
-If so, yeah, it looks kind of ugly, but I'll try :)   (as soon as I
-can get the "include" problem fixed)
-
-Regards!
+I realize it is not something your patch is intended to deal with,
+but since you're touching this code maybe it's worth to fix that issue
+as well ?
 
 --
-alexandernst
+
+Thanks,
+Sylwester
