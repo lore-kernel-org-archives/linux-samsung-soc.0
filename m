@@ -1,216 +1,51 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 4/4] USB: ohci-exynos: Add phy driver support
-Date: Fri, 11 Jan 2013 20:32:30 +0530
-Message-ID: <1357916550-11421-5-git-send-email-gautam.vivek@samsung.com>
-References: <1357916550-11421-1-git-send-email-gautam.vivek@samsung.com>
+From: 'Joerg Roedel' <joro@8bytes.org>
+Subject: Re: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Fri, 11 Jan 2013 16:52:26 +0100
+Message-ID: <20130111155226.GK25591@8bytes.org>
+References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
+ <032401cde783$485ae1a0$d910a4e0$@samsung.com>
+ <20130110171844.GA2650@8bytes.org>
+ <027601cdef61$2df576a0$89e063e0$@samsung.com>
+ <20130110191207.GI25591@8bytes.org>
+ <02ae01cdef69$67d66200$37832600$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1357916550-11421-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 8bytes.org ([85.214.48.195]:57783 "EHLO mail.8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752977Ab3AKPwb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Jan 2013 10:52:31 -0500
+Received: from localhost (localhost [127.0.0.1])
+	by mail.8bytes.org (Postfix) with SMTP id 9D8D512B18F
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 16:52:28 +0100 (CET)
+Content-Disposition: inline
+In-Reply-To: <02ae01cdef69$67d66200$37832600$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Cho KyongHo' <pullip.cho@samsung.com>, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>
 
-Adding the phy-driver to ohci-exynos. Keeping the platform data
-for continuing the smooth operation for boards which still uses it
+Hi Kukjin,
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/usb/host/ohci-exynos.c |   84 ++++++++++++++++++++++++++++++----------
- 1 files changed, 63 insertions(+), 21 deletions(-)
+On Thu, Jan 10, 2013 at 11:33:41AM -0800, Kukjin Kim wrote:
+> Sure, keep going on with
+> 
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 804fb62..1b38409 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -15,6 +15,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/usb-exynos.h>
-+#include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
- #include <plat/usb-phy.h>
- 
-@@ -22,8 +23,31 @@ struct exynos_ohci_hcd {
- 	struct device *dev;
- 	struct usb_hcd *hcd;
- 	struct clk *clk;
-+	struct usb_phy *phy;
-+	struct usb_otg *otg;
-+	struct exynos4_ohci_platdata *pdata;
- };
- 
-+static void exynos_ohci_phy_enable(struct exynos_ohci_hcd *exynos_ohci)
-+{
-+	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
-+
-+	if (exynos_ohci->phy)
-+		usb_phy_init(exynos_ohci->phy);
-+	else if (exynos_ohci->pdata->phy_init)
-+		exynos_ohci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
-+}
-+
-+static void exynos_ohci_phy_disable(struct exynos_ohci_hcd *exynos_ohci)
-+{
-+	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
-+
-+	if (exynos_ohci->phy)
-+		usb_phy_shutdown(exynos_ohci->phy);
-+	else if (exynos_ohci->pdata->phy_exit)
-+		exynos_ohci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
-+}
-+
- static int ohci_exynos_reset(struct usb_hcd *hcd)
- {
- 	return ohci_init(hcd_to_ohci(hcd));
-@@ -79,20 +103,15 @@ static u64 ohci_exynos_dma_mask = DMA_BIT_MASK(32);
- 
- static int exynos_ohci_probe(struct platform_device *pdev)
- {
--	struct exynos4_ohci_platdata *pdata;
-+	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
- 	struct exynos_ohci_hcd *exynos_ohci;
- 	struct usb_hcd *hcd;
- 	struct ohci_hcd *ohci;
- 	struct resource *res;
-+	struct usb_phy *phy;
- 	int irq;
- 	int err;
- 
--	pdata = pdev->dev.platform_data;
--	if (!pdata) {
--		dev_err(&pdev->dev, "No platform data defined\n");
--		return -EINVAL;
--	}
--
- 	/*
- 	 * Right now device-tree probed devices don't get dma_mask set.
- 	 * Since shared usb code relies on it, set it here for now.
-@@ -108,6 +127,20 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 	if (!exynos_ohci)
- 		return -ENOMEM;
- 
-+	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-+	if (IS_ERR_OR_NULL(phy)) {
-+		/* Fallback to pdata */
-+		if (!pdata) {
-+			dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
-+			return -EPROBE_DEFER;
-+		} else {
-+			exynos_ohci->pdata = pdata;
-+		}
-+	} else {
-+		exynos_ohci->phy = phy;
-+		exynos_ohci->otg = phy->otg;
-+	}
-+
- 	exynos_ohci->dev = &pdev->dev;
- 
- 	hcd = usb_create_hcd(&exynos_ohci_hc_driver, &pdev->dev,
-@@ -153,8 +186,11 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 		goto fail_io;
- 	}
- 
--	if (pdata->phy_init)
--		pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
-+	if (exynos_ohci->otg)
-+		exynos_ohci->otg->set_host(exynos_ohci->otg,
-+					&exynos_ohci->hcd->self);
-+
-+	exynos_ohci_phy_enable(exynos_ohci);
- 
- 	ohci = hcd_to_ohci(hcd);
- 	ohci_hcd_init(ohci);
-@@ -162,13 +198,15 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
--		goto fail_io;
-+		goto fail_add_hcd;
- 	}
- 
- 	platform_set_drvdata(pdev, exynos_ohci);
- 
- 	return 0;
- 
-+fail_add_hcd:
-+	exynos_ohci_phy_disable(exynos_ohci);
- fail_io:
- 	clk_disable_unprepare(exynos_ohci->clk);
- fail_clk:
-@@ -178,14 +216,16 @@ fail_clk:
- 
- static int exynos_ohci_remove(struct platform_device *pdev)
- {
--	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
- 	struct exynos_ohci_hcd *exynos_ohci = platform_get_drvdata(pdev);
- 	struct usb_hcd *hcd = exynos_ohci->hcd;
- 
- 	usb_remove_hcd(hcd);
- 
--	if (pdata && pdata->phy_exit)
--		pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
-+	if (exynos_ohci->otg)
-+		exynos_ohci->otg->set_host(exynos_ohci->otg,
-+					&exynos_ohci->hcd->self);
-+
-+	exynos_ohci_phy_disable(exynos_ohci);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -209,8 +249,6 @@ static int exynos_ohci_suspend(struct device *dev)
- 	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
- 	struct usb_hcd *hcd = exynos_ohci->hcd;
- 	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
- 	unsigned long flags;
- 	int rc = 0;
- 
-@@ -229,8 +267,11 @@ static int exynos_ohci_suspend(struct device *dev)
- 
- 	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
- 
--	if (pdata && pdata->phy_exit)
--		pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
-+	if (exynos_ohci->otg)
-+		exynos_ohci->otg->set_host(exynos_ohci->otg,
-+					&exynos_ohci->hcd->self);
-+
-+	exynos_ohci_phy_disable(exynos_ohci);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -244,13 +285,14 @@ static int exynos_ohci_resume(struct device *dev)
- {
- 	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
- 	struct usb_hcd *hcd = exynos_ohci->hcd;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
--	if (pdata && pdata->phy_init)
--		pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
-+	if (exynos_ohci->otg)
-+		exynos_ohci->otg->set_host(exynos_ohci->otg,
-+					&exynos_ohci->hcd->self);
-+
-+	exynos_ohci_phy_enable(exynos_ohci);
- 
- 	ohci_resume(hcd, false);
- 
--- 
-1.7.6.5
+Done that. Applied the patch, some manual work was necessary as the
+patch didn't apply cleanly to v3.8-rc3. Please double-check if the
+result is correct.
+
+> OK, good. Let me know the name of branch when you set-up it :-)
+
+I pushed the branch to
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git arm/exynos
+
+>From there you can pull it into your tree.
+
+Have fun,
+
+     Joerg
