@@ -1,136 +1,91 @@
-From: Andrey Gusakov <dron0gus@gmail.com>
-Subject: Re: Audio support on Mini6410 board [was Re: Hi again]
-Date: Fri, 11 Jan 2013 13:13:05 +0300
-Message-ID: <CAA11ShCbyKEtgK=p2Wz57RPZtV1nG5dWb-5Ajq7FuSTse4xPBg@mail.gmail.com>
-References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com>
-	<50D19AE6.1080306@gmail.com>
-	<50D19D03.3060203@gmail.com>
-	<CACuz9s0hXGO_kBtWWLqMtktMyUhVBw-a0+auVEEfMvVEX4jD=w@mail.gmail.com>
-	<50D2109D.9@gmail.com>
-	<CACuz9s3vY3XvaWymLGwnzEudBkOUW4o-LpfJQTF0=mgy0cAhzg@mail.gmail.com>
-	<CACuz9s0a2A6F7zWyxQkBAZtj=Xi1NwT7cLEHe-fa6G5p__bUgg@mail.gmail.com>
-	<50D2F879.6020501@gmail.com>
-	<CACuz9s0rTGDGvB9PcKfjGvvt8vEdBDKKvQTx94fuj1MrDcNfOg@mail.gmail.com>
-	<50D305CF.2030600@gmail.com>
-	<CACuz9s19M2Qv8dOBY0h0EKNidD3r4G3esvAAWZAUDZEjFMCGiA@mail.gmail.com>
-	<50D30F6C.7000004@gmail.com>
-	<CACuz9s1_KKfVDCa4FvZLe9pEVWuqQzuLPX7pYX9Tw1NUQGPtzA@mail.gmail.com>
-	<CACuz9s1waQ3VgRjdxw9CoiHX2BtfOaxTosqLDwhX+O7px0=JXg@mail.gmail.com>
-	<50D31BF8.8040301@gmail.com>
-	<CACuz9s3xtCndC2jks4T-ytSWxwTBjLbXUrehEtsNwm7H=wJC1Q@mail.gmail.com>
-	<50D31F63.6090304@gmail.com>
-	<CACuz9s06v5nXNze+AAZyPTyxib4OXmqRi9E_Hw4SqBoprym0UA@mail.gmail.com>
-	<CACuz9s1mnOon=EywOrcxZjMOGrx2=f0-4sj6ietZFoEXC66uWQ@mail.gmail.com>
-	<50EF4BCB.40307@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: FIMC/CAMIF V4L2 driver
+Date: Fri, 11 Jan 2013 11:39:51 +0100
+Message-ID: <50EFEBF7.4080801@samsung.com>
+References: <1356685333.4296.92.camel@thor.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:37895 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754394Ab3AKKNG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jan 2013 05:13:06 -0500
-Received: by mail-pb0-f44.google.com with SMTP id uo1so878214pbc.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 02:13:05 -0800 (PST)
-In-Reply-To: <50EF4BCB.40307@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1356685333.4296.92.camel@thor.lan>
+Sender: linux-media-owner@vger.kernel.org
+To: =?UTF-8?B?U2ViYXN0aWFuIERyw7ZnZQ==?= <slomo@circular-chaos.org>
+Cc: sylvester.nawrocki@gmail.com, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Alexander Nestorov <alexandernst@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi.
+Hi Sebastian,
 
-I also had some problems with WM9714 on mini6410. The problem was
-write to register 0x00 of coded. That is SW reset command. I had no
-time to deal with it, so I just filter out all writes to register 0x00
-in samsung AC97 driver. May be it can help you.
-http://comments.gmane.org/gmane.linux.alsa.devel/101674
-Also you have to add platform_devices samsung_asoc_dma and s3c64xx_device_ac97
-And call s3c64xx_ac97_setup_gpio(S3C64XX_AC97_GPD) from <your_board>_map_io
-You Can use sound/soc/samsung/smdk_wm9713.c or create your own. As i
-see from boot log you use SMDK file.
+Cc: <linux-media@vger.kernel.org>
 
-On Fri, Jan 11, 2013 at 3:16 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> Hi Alexander,
->
-> Cc: linux-samsung-soc@vger.kernel.org
->
-> On 12/21/2012 07:39 PM, Alexander Nestorov wrote:
->>
->> Hi once again :)
->>
->> After some more work there is some (really small) progress.
->> I'm able to make the kernel throw errors about something related with
->> AC97 and/or ALSA
->>
->> This is the kernel log: http://pastie.org/5562475
->> Those are the patches I have applied (probably something is wrong, I
->> just don't know what/where): http://pastie.org/5562478
->> And this is the kernel's configuracion: http://pastie.org/5562483
->>   (should I disable/enable something?)
->
->
-> It might be correct, but I suspect you need add an entry for Mini6410
-> board, similar to this one
->
-> "SoC AC97 Audio support for SMDK with WM9713"
->
->> What do you think? Any notes/comments?
->
->
-> I have virtually no experience with ASoC and no board to check it,
-> so my ability to help you with this is really limited. Anyway, let's
-> try to make it work.
->
-> In the kernel log there are 2 things I noticed and would need to be
-> checked:
->
-> Lines 164...166:
->
-> soc-audio soc-audio: ASoC machine SMDK WM9713 should use
-> snd_soc_register_card()
-> soc-audio soc-audio: CPU DAI samsung-ac97 not registered
-> platform soc-audio: Driver soc-audio requests probe deferral
->
-> and line 182:
->
-> soc-audio: probe of soc-audio failed with error -22
->
-> Likely only this last error is important.
->
-> I would add some debug prints to snd_soc_register_card() and
-> snd_soc_instantiate_card() to find out where it fails exactly.
->
-> Anyway, it seems you have added wrong audio devices to your board file,
-> copied from mach-mini2440.c ? Instead, you should find what's in board
-> files for boards based on s3c6410 SoC, e.g. mach-s3c6410/mach-crag6410.c.
->
-> I think you need one of these devices in mini6410_devices[] array:
->
->         &s3c64xx_device_iis0,
->         &s3c64xx_device_iis1,
->
-> Also, can you check what devices are registered in the system, e.g.
->
-> # find /sys/devices
->
-> ?
-> You might want to have a look at sound/soc/samsung/smdk_wm9713.c.
-> Likely you need to add something similar for Mini6410.
->
-> And just do remove all mini2440 devices from your board file, like:
-> uda1340_codec, mini2440_audio. Those certainly shouldn't be there.
->
-> I'm not sure yet where AC97_* SoC pins are configured (corresponding
-> to B29...B33 pins of Tiny6410 module).
->
-> --
->
-> Regards,
-> Sylwester
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 12/28/2012 10:02 AM, Sebastian Dr=C3=B6ge wrote:
+> Hi Sylwester,
+>=20
+> Kamil Debski told me that you should be able to help me with any issu=
+es
+> about the FIMC/CAMIF V4L2 driver. I'm currently using it on Exynos 4
+> hardware and wrote a GStreamer plugin using it (and the MFC driver).
+>=20
+> So far everything works great but I found a bug in the driver. When
+> configuring the CAPTURE side to use the pixel format
+> V4L2_PIX_FMT_YUV420M the strides that are reported are wrong.
+>=20
+> I get them by setting a v4l2_format with VIDIOC_S_FMT and having the
+> fmt.pix_mp.plane_fmt[X].bytesperline set to zero. The value set there
+> after the ioctl is correct for the luma plane but has the same value =
+for
+> the chroma planes while it should be the half.
+> By using a stride that is half the value I can get valid and usable
+> output.
+>=20
+> For V4L2_PIX_FMT_NV12MT and V4L2_PIX_FMT_NV12M these stride values ar=
+e
+> correct, so maybe a check for V4L2_PIX_FMT_YUV420M is missing somewhe=
+re
+> to divide by two for the chroma planes.
+
+Thank you for the bug report. And sorry for the delay..
+
+The driver sets same bytesperline value for each plane, since I found
+definition of this parameter very vague for planar formats, especially
+the macro-block ones, e.g. [1]. So it's really a feature, not a bug ;)
+
+Nevertheless, what the documentation [2] says is:
+
+"\bytesperline\    Distance in bytes between the leftmost pixels in two
+adjacent lines."
+=2E..
+
+"When the image format is planar the bytesperline value applies to the
+largest plane and is divided by the same factor as the width field for
+any smaller planes. For example the Cb and Cr planes of a YUV 4:2:0 ima=
+ge
+have half as many padding bytes following each line as the Y plane. To
+avoid ambiguities drivers must return a bytesperline value rounded up t=
+o
+a multiple of the scale factor."
+
+Then, for V4L2_PIX_FMT_NV12M format bytesperline for both planes should=
+ be
+same, since according to the format definition chroma and luma plane wi=
+dth
+are same.
+
+=46or V4L2_PIX_FMT_YUV420M the Cr and Cb plane is half the width and ha=
+lf
+the height of the image (Y plane). I agree the bytesperline of the chro=
+ma
+should be half of that of luma plane.
+
+Please let me know if this patch helps:
+http://patchwork.linuxtv.org/patch/16205
+
+If it's OK then I'll submit it for v3.9 kernel.
+
+[1] http://linuxtv.org/downloads/v4l-dvb-apis/re31.html
+[2] http://linuxtv.org/downloads/v4l-dvb-apis/pixfmt.html#v4l2-pix-form=
+at
+
+--
+
+Regards,
+Sylwester
