@@ -1,159 +1,113 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v5 2/4] usb: phy: samsung: Add host phy support to
- samsung-phy driver
-Date: Fri, 11 Jan 2013 16:50:45 -0800
-Message-ID: <CAD=FV=XhMbWjCR5r=R3+zE1524NuUUvFDf2HZuCrXPmsei4BNA@mail.gmail.com>
-References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
-	<1355841786-13307-3-git-send-email-gautam.vivek@samsung.com>
-	<CAD=FV=WMjqszsTQja82_uZc4Ue50TfTmSNO2yOhSMCX1w1L5Dg@mail.gmail.com>
-	<CAFp+6iHYRRS3uSWnmdqBvfOgUDKKJUzMvqoj1HP2uXS=Fdaifg@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH] arm: exynos4: Fix suspend/resume hang
+Date: Fri, 11 Jan 2013 19:35:04 -0800
+Message-ID: <CAJuYYwQQuC4tgzy-umpyDHAUmLcROzq9ayZOico813Rssa+JvQ@mail.gmail.com>
+References: <1357883278-26239-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:63875 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755069Ab3ALAuu (ORCPT
+Received: from mail-ia0-f178.google.com ([209.85.210.178]:57912 "EHLO
+	mail-ia0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754213Ab3ALDfF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jan 2013 19:50:50 -0500
-Received: by mail-la0-f54.google.com with SMTP id fp12so2340302lab.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 16:50:48 -0800 (PST)
-Received: by mail-la0-f42.google.com with SMTP id fe20so2342883lab.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 16:50:45 -0800 (PST)
-In-Reply-To: <CAFp+6iHYRRS3uSWnmdqBvfOgUDKKJUzMvqoj1HP2uXS=Fdaifg@mail.gmail.com>
+	Fri, 11 Jan 2013 22:35:05 -0500
+Received: by mail-ia0-f178.google.com with SMTP id k25so2122517iah.37
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 19:35:04 -0800 (PST)
+In-Reply-To: <1357883278-26239-1-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, yulgon.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Praveen Paneri <p.paneri@samsung.com>, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, jg1.han@samsung.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, balbi@ti.com, kishon@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Rob Herring <rob.herring@calxeda.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, lorenzo.pieralisi@arm.com, amit.daniel@samsung.com, patches@linaro.org
 
-Vivek,
-
-On Fri, Jan 11, 2013 at 4:40 AM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
->>> +#define HOST_CTRL0_REFCLKSEL_MASK              (0x3)
->>> +#define HOST_CTRL0_REFCLKSEL_XTAL              (0x0 << 19)
->>> +#define HOST_CTRL0_REFCLKSEL_EXTL              (0x1 << 19)
->>> +#define HOST_CTRL0_REFCLKSEL_CLKCORE           (0x2 << 19)
->>> +
->>> +#define HOST_CTRL0_FSEL_MASK                   (0x7 << 16)
->>> +#define HOST_CTRL0_FSEL(_x)                    ((_x) << 16)
->>> +#define HOST_CTRL0_FSEL_CLKSEL_50M             (0x7)
->>> +#define HOST_CTRL0_FSEL_CLKSEL_24M             (0x5)
->>> +#define HOST_CTRL0_FSEL_CLKSEL_20M             (0x4)
->>> +#define HOST_CTRL0_FSEL_CLKSEL_19200K          (0x3)
->>> +#define HOST_CTRL0_FSEL_CLKSEL_12M             (0x2)
->>> +#define HOST_CTRL0_FSEL_CLKSEL_10M             (0x1)
->>> +#define HOST_CTRL0_FSEL_CLKSEL_9600K           (0x0)
->>
->> Add the shifts to the #defines and remove HOST_CTRL0_FSEL(_x).  That
->> makes it match the older phy more closely.
->>
-> Wouldn't it hamper the readability when shifts are used ??
-> I mean if we have something like this -
+On 10 January 2013 21:47, Inderpal Singh <inderpal.singh@linaro.org> wrote:
+> commit d0341c61a2 removed the l2 cache save/restore from pm.c and commit
+> 7c6035b63b added the l2 cache restoration in sleep.s to early enable the
+> cache in resume path.
 >
-> phyhost |= HOST_CTRL0_FSEL(phyclk)
+> With these changes the system hangs while resuming when vdd_arm
+> is turned off in suspended state. The cache needs to be invalidated
+> before turning it on, as it was being done before mentioned commits.
 >
-> so, if we are using the shifts then
-> phyhost |= (HOST_CTRL0_FSEL_CLKSEL_24M << HOST_CTRL0_FSEL_SHIFT)
-
-I was actually suggesting modifying the #defines like this:
-
-#define HOST_CTRL0_FSEL_SHIFT 16
-#define HOST_CTRL0_FSEL_MASK                   (0x7 << HOST_CTRL0_FSEL_SHIFT)
-#define HOST_CTRL0_FSEL_CLKSEL_50M             (0x7 << HOST_CTRL0_FSEL_SHIFT)
-#define HOST_CTRL0_FSEL_CLKSEL_24M             (0x5 << HOST_CTRL0_FSEL_SHIFT)
-#define HOST_CTRL0_FSEL_CLKSEL_20M             (0x4 << HOST_CTRL0_FSEL_SHIFT)
-#define HOST_CTRL0_FSEL_CLKSEL_19200K          (0x3 << HOST_CTRL0_FSEL_SHIFT)
-#define HOST_CTRL0_FSEL_CLKSEL_12M             (0x2 << HOST_CTRL0_FSEL_SHIFT)
-#define HOST_CTRL0_FSEL_CLKSEL_10M             (0x1 << HOST_CTRL0_FSEL_SHIFT)
-#define HOST_CTRL0_FSEL_CLKSEL_9600K           (0x0 << HOST_CTRL0_FSEL_SHIFT)
-
-...then the code doesn't need to think about shifts, right?
-
-
->>>         if (IS_ERR(ref_clk)) {
->>>                 dev_err(sphy->dev, "Failed to get reference clock\n");
->>>                 return PTR_ERR(ref_clk);
->>>         }
->>>
->>> -       switch (clk_get_rate(ref_clk)) {
->>> -       case 12 * MHZ:
->>> -               refclk_freq = PHYCLK_CLKSEL_12M;
->>> -               break;
->>> -       case 24 * MHZ:
->>> -               refclk_freq = PHYCLK_CLKSEL_24M;
->>> -               break;
->>> -       case 48 * MHZ:
->>> -               refclk_freq = PHYCLK_CLKSEL_48M;
->>> -               break;
->>> -       default:
->>> -               if (sphy->cpu_type == TYPE_S3C64XX)
->>> -                       refclk_freq = PHYCLK_CLKSEL_48M;
->>> -               else
->>> +       if (sphy->cpu_type == TYPE_EXYNOS5250) {
->>> +               /* set clock frequency for PLL */
->>> +               switch (clk_get_rate(ref_clk)) {
->>> +               case 96 * 100000:
->>
->> nit: change to 9600 * KHZ to match; below too.
->>
-> sure.
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> ---
+>  arch/arm/mach-exynos/common.h     |    1 +
+>  arch/arm/mach-exynos/pm.c         |    4 ++++
+>  arch/arm/plat-samsung/s5p-sleep.S |   23 +++++++++++++++++++++++
+>  3 files changed, 28 insertions(+)
 >
->>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_9600K;
->>
->> Why |= with 0?
->>
-> kept this just to keep things look similar :-). will remove this line,
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index af33872..056d9ce 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -78,6 +78,7 @@ enum sys_powerdown {
+>  };
+>
+>  extern unsigned long l2x0_regs_phys;
+> +extern unsigned long wake_reason_reg_phys;
+>  struct exynos_pmu_conf {
+>         void __iomem *reg;
+>         unsigned int val[NUM_SYS_POWERDOWN];
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index f459afd..b10513c 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -220,6 +220,10 @@ static __init int exynos_pm_drvinit(void)
+>
+>         s3c_pm_init();
+>
+> +#ifdef CONFIG_CACHE_L2X0
+> +       if (!soc_is_exynos5250() && !soc_is_exynos5440())
+> +               wake_reason_reg_phys = virt_to_phys(S5P_INFORM1);
+> +#endif
+>         /* All wakeup disable */
+>
+>         tmp = __raw_readl(S5P_WAKEUP_MASK);
+> diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-samsung/s5p-sleep.S
+> index bdf6dad..74331e2 100644
+> --- a/arch/arm/plat-samsung/s5p-sleep.S
+> +++ b/arch/arm/plat-samsung/s5p-sleep.S
+> @@ -24,6 +24,7 @@
+>  #include <linux/linkage.h>
+>  #include <asm/asm-offsets.h>
+>  #include <asm/hardware/cache-l2x0.h>
+> +#include <mach/regs-pmu.h>
+>
+>  /*
+>   *      The following code is located into the .data section. This is to
+> @@ -67,6 +68,25 @@ ENTRY(s3c_cpu_resume)
+>         str     r2, [r1, #L2X0_PREFETCH_CTRL]
+>         ldr     r2, [r0, #L2X0_R_PWR_CTRL]
+>         str     r2, [r1, #L2X0_POWER_CTRL]
+> +
+> +        /* check resume reason */
+> +       adr     r0, wake_reason_reg_phys
+> +       ldr     r0, [r0]
+> +       ldr     r2, [r0]
+> +       ldr     r0, =S5P_CHECK_SLEEP
+> +       cmp     r0, r2
+> +       bne     turn_cache_on
+> +
+> +       /* Invalidate the cache if resume from sleep */
+> +       ldr     r2, =0xffff
+> +       str     r2, [r1, #L2X0_INV_WAY]
+> +wait:
+> +       ldr     r2, [r1, #L2X0_INV_WAY]
+> +       ldr     r0, =0xffff
+> +       ands    r2, r2, r0
+> +       bne     wait
+> +
+> +turn_cache_on:
+>         mov     r2, #1
+>         str     r2, [r1, #L2X0_CTRL]
+>  resume_l2on:
+> @@ -77,4 +97,7 @@ ENDPROC(s3c_cpu_resume)
+>         .globl l2x0_regs_phys
+>  l2x0_regs_phys:
+>         .long   0
+> +       .globl wake_reason_reg_phys
+> +wake_reason_reg_phys:
+> +       .long   0
+>  #endif
 
-My comment was about keeping things similar.  Right now the 5250 code
-has the |= and the non-5250 code doesn't.  I don't care which is
-picked but the two sides of the "if" should be symmetric.
 
-See parts of the patch below.
-
->>> +                       break;
->>> +               case 10 * MHZ:
->>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_10M;
->>> +                       break;
->>> +               case 12 * MHZ:
->>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_12M;
->>> +                       break;
->>> +               case 192 * 100000:
->>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_19200K;
->>> +                       break;
->>> +               case 20 * MHZ:
->>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_20M;
->>> +                       break;
->>> +               case 50 * MHZ:
->>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_50M;
->>> +                       break;
->>> +               case 24 * MHZ:
->>> +               default:
->>> +                       /* default reference clock */
->>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_24M;
->>> +                       break;
->>> +               }
->>> +       } else {
->>> +               switch (clk_get_rate(ref_clk)) {
->>> +               case 12 * MHZ:
->>> +                       refclk_freq = PHYCLK_CLKSEL_12M;
->>> +                       break;
->>> +               case 24 * MHZ:
->>>                         refclk_freq = PHYCLK_CLKSEL_24M;
->>> -               break;
->>> +                       break;
->>> +               case 48 * MHZ:
->>> +                       refclk_freq = PHYCLK_CLKSEL_48M;
->>> +                       break;
->>> +               default:
->>> +                       if (sphy->cpu_type == TYPE_S3C64XX)
->>> +                               refclk_freq = PHYCLK_CLKSEL_48M;
->>> +                       else
->>> +                               refclk_freq = PHYCLK_CLKSEL_24M;
->>> +                       break;
->>> +               }
->>>         }
->>>         clk_put(ref_clk);
->>>
->>>         return refclk_freq;
->>>  }
-
--Doug
+Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
