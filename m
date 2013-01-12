@@ -1,105 +1,159 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: Audio support on Mini6410 board
-Date: Fri, 11 Jan 2013 23:50:08 +0100
-Message-ID: <50F09720.7000102@gmail.com>
-References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com> <CACuz9s0a2A6F7zWyxQkBAZtj=Xi1NwT7cLEHe-fa6G5p__bUgg@mail.gmail.com> <50D2F879.6020501@gmail.com> <CACuz9s0rTGDGvB9PcKfjGvvt8vEdBDKKvQTx94fuj1MrDcNfOg@mail.gmail.com> <50D305CF.2030600@gmail.com> <CACuz9s19M2Qv8dOBY0h0EKNidD3r4G3esvAAWZAUDZEjFMCGiA@mail.gmail.com> <50D30F6C.7000004@gmail.com> <CACuz9s1_KKfVDCa4FvZLe9pEVWuqQzuLPX7pYX9Tw1NUQGPtzA@mail.gmail.com> <CACuz9s1waQ3VgRjdxw9CoiHX2BtfOaxTosqLDwhX+O7px0=JXg@mail.gmail.com> <50D31BF8.8040301@gmail.com> <CACuz9s3xtCndC2jks4T-ytSWxwTBjLbXUrehEtsNwm7H=wJC1Q@mail.gmail.com> <50D31F63.6090304@gmail.com> <CACuz9s06v5nXNze+AAZyPTyxib4OXmqRi9E_Hw4SqBoprym0UA@mail.gmail.com> <CACuz9s1mnOon=EywOrcxZjMOGrx2=f0-4sj6ietZFoEXC66uWQ@mail.gmail.com> <50EF4BCB.40307@gmail.
- com> <CAA11ShCbyKEtgK=p2Wz57RPZtV1nG5dWb-5Ajq7FuSTse4xPBg@mail.gmail.com> <CACuz9s3fMLQUdm8rbLUBKFbHi0E3tGHYUdHLGQQB9wYAt-zo8g@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v5 2/4] usb: phy: samsung: Add host phy support to
+ samsung-phy driver
+Date: Fri, 11 Jan 2013 16:50:45 -0800
+Message-ID: <CAD=FV=XhMbWjCR5r=R3+zE1524NuUUvFDf2HZuCrXPmsei4BNA@mail.gmail.com>
+References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
+	<1355841786-13307-3-git-send-email-gautam.vivek@samsung.com>
+	<CAD=FV=WMjqszsTQja82_uZc4Ue50TfTmSNO2yOhSMCX1w1L5Dg@mail.gmail.com>
+	<CAFp+6iHYRRS3uSWnmdqBvfOgUDKKJUzMvqoj1HP2uXS=Fdaifg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f179.google.com ([209.85.215.179]:38695 "EHLO
-	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755620Ab3AKWuM (ORCPT
+Received: from mail-la0-f54.google.com ([209.85.215.54]:63875 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755069Ab3ALAuu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jan 2013 17:50:12 -0500
-Received: by mail-ea0-f179.google.com with SMTP id i12so890631eaa.24
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 14:50:11 -0800 (PST)
-In-Reply-To: <CACuz9s3fMLQUdm8rbLUBKFbHi0E3tGHYUdHLGQQB9wYAt-zo8g@mail.gmail.com>
+	Fri, 11 Jan 2013 19:50:50 -0500
+Received: by mail-la0-f54.google.com with SMTP id fp12so2340302lab.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 16:50:48 -0800 (PST)
+Received: by mail-la0-f42.google.com with SMTP id fe20so2342883lab.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jan 2013 16:50:45 -0800 (PST)
+In-Reply-To: <CAFp+6iHYRRS3uSWnmdqBvfOgUDKKJUzMvqoj1HP2uXS=Fdaifg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Nestorov <alexandernst@gmail.com>
-Cc: Andrey Gusakov <dron0gus@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, yulgon.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Praveen Paneri <p.paneri@samsung.com>, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, jg1.han@samsung.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, balbi@ti.com, kishon@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Rob Herring <rob.herring@calxeda.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-Hi,
+Vivek,
 
-On 01/11/2013 07:17 PM, Alexander Nestorov wrote:
-> samsung-ac97 samsung-ac97: cfg_gpio callback not provided!
-> samsung-ac97: probe of samsung-ac97 failed with error -22
-> soc-audio soc-audio: ASoC machine MINI6410 should use snd_soc_register_card()
-> soc-audio soc-audio: CPU DAI samsung-ac97 not registered
-> platform soc-audio: Driver soc-audio requests probe deferral
-> soc-audio: probe of soc-audio failed with error -22
-> ALSA device list:
->    No soundcards found.
+On Fri, Jan 11, 2013 at 4:40 AM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+>>> +#define HOST_CTRL0_REFCLKSEL_MASK              (0x3)
+>>> +#define HOST_CTRL0_REFCLKSEL_XTAL              (0x0 << 19)
+>>> +#define HOST_CTRL0_REFCLKSEL_EXTL              (0x1 << 19)
+>>> +#define HOST_CTRL0_REFCLKSEL_CLKCORE           (0x2 << 19)
+>>> +
+>>> +#define HOST_CTRL0_FSEL_MASK                   (0x7 << 16)
+>>> +#define HOST_CTRL0_FSEL(_x)                    ((_x) << 16)
+>>> +#define HOST_CTRL0_FSEL_CLKSEL_50M             (0x7)
+>>> +#define HOST_CTRL0_FSEL_CLKSEL_24M             (0x5)
+>>> +#define HOST_CTRL0_FSEL_CLKSEL_20M             (0x4)
+>>> +#define HOST_CTRL0_FSEL_CLKSEL_19200K          (0x3)
+>>> +#define HOST_CTRL0_FSEL_CLKSEL_12M             (0x2)
+>>> +#define HOST_CTRL0_FSEL_CLKSEL_10M             (0x1)
+>>> +#define HOST_CTRL0_FSEL_CLKSEL_9600K           (0x0)
+>>
+>> Add the shifts to the #defines and remove HOST_CTRL0_FSEL(_x).  That
+>> makes it match the older phy more closely.
+>>
+> Wouldn't it hamper the readability when shifts are used ??
+> I mean if we have something like this -
 >
-> If I uncomment the line 56 in my diff (
-> //s3c64xx_ac97_setup_gpio(S3C64XX_AC97_GPD); ) I get
-> errors about the function not being defined. I do know that it's in
-> arch/arm/mach-s3c64xx/dev-audio.c
-> and include/linux/platform_data/asoc-s3c.h but I can't see any other
-> board-specific code using it.
+> phyhost |= HOST_CTRL0_FSEL(phyclk)
 >
-> Also S3C64XX_AC97_GPD not being defined, (but present in both files).
-> What include am I missing? I mean, of course I could include
-> asoc-s3c.h, but that's not how other boards are
-> doing it and they do have audio support. How is that done?
+> so, if we are using the shifts then
+> phyhost |= (HOST_CTRL0_FSEL_CLKSEL_24M << HOST_CTRL0_FSEL_SHIFT)
 
-Just include <linux/platform_data/asoc-s3c.h> file in the board file.
-This is the only header where the required functions are declared
+I was actually suggesting modifying the #defines like this:
 
-/* The machine init code calls s3c*_ac97_setup_gpio with
-  * one of these defines in order to select appropriate bank
-  * of GPIO for AC97 pins
-  */
-#define S3C64XX_AC97_GPD  0
-#define S3C64XX_AC97_GPE  1
-extern void s3c64xx_ac97_setup_gpio(int);
+#define HOST_CTRL0_FSEL_SHIFT 16
+#define HOST_CTRL0_FSEL_MASK                   (0x7 << HOST_CTRL0_FSEL_SHIFT)
+#define HOST_CTRL0_FSEL_CLKSEL_50M             (0x7 << HOST_CTRL0_FSEL_SHIFT)
+#define HOST_CTRL0_FSEL_CLKSEL_24M             (0x5 << HOST_CTRL0_FSEL_SHIFT)
+#define HOST_CTRL0_FSEL_CLKSEL_20M             (0x4 << HOST_CTRL0_FSEL_SHIFT)
+#define HOST_CTRL0_FSEL_CLKSEL_19200K          (0x3 << HOST_CTRL0_FSEL_SHIFT)
+#define HOST_CTRL0_FSEL_CLKSEL_12M             (0x2 << HOST_CTRL0_FSEL_SHIFT)
+#define HOST_CTRL0_FSEL_CLKSEL_10M             (0x1 << HOST_CTRL0_FSEL_SHIFT)
+#define HOST_CTRL0_FSEL_CLKSEL_9600K           (0x0 << HOST_CTRL0_FSEL_SHIFT)
 
-Maybe some boards use default gpio configuration callbacks, grep shows
-that only arch/arm/mach-s5pc100/mach-smdkc100.c includes this header.
+...then the code doesn't need to think about shifts, right?
 
-Maybe it's worth to set statically a default gpio helper function:
 
---------------------8<------------------------
-
-diff --git a/arch/arm/mach-s3c64xx/dev-audio.c 
-b/arch/arm/mach-s3c64xx/dev-audio.c
-index e367e87..bc41c13 100644
---- a/arch/arm/mach-s3c64xx/dev-audio.c
-+++ b/arch/arm/mach-s3c64xx/dev-audio.c
-@@ -201,7 +201,9 @@ static struct resource s3c64xx_ac97_resource[] = {
-         [4] = DEFINE_RES_IRQ(IRQ_AC97),
-  };
-
--static struct s3c_audio_pdata s3c_ac97_pdata;
-+static struct s3c_audio_pdata s3c_ac97_pdata = {
-+       .cfg_gpio = s3c64xx_ac97_cfg_gpd
-+};
-
-  static u64 s3c64xx_ac97_dmamask = DMA_BIT_MASK(32);
-
---------------------8<------------------------
-
-so there is no need to add s3c64xx_ac97_setup_gpio(S3C64XX_AC97_GPD)
-call to boards that use the GPD port.
-
-> @Andrey One more thing, what do you mean by filter all writes to reg 0x0?
-> Literally something like:
+>>>         if (IS_ERR(ref_clk)) {
+>>>                 dev_err(sphy->dev, "Failed to get reference clock\n");
+>>>                 return PTR_ERR(ref_clk);
+>>>         }
+>>>
+>>> -       switch (clk_get_rate(ref_clk)) {
+>>> -       case 12 * MHZ:
+>>> -               refclk_freq = PHYCLK_CLKSEL_12M;
+>>> -               break;
+>>> -       case 24 * MHZ:
+>>> -               refclk_freq = PHYCLK_CLKSEL_24M;
+>>> -               break;
+>>> -       case 48 * MHZ:
+>>> -               refclk_freq = PHYCLK_CLKSEL_48M;
+>>> -               break;
+>>> -       default:
+>>> -               if (sphy->cpu_type == TYPE_S3C64XX)
+>>> -                       refclk_freq = PHYCLK_CLKSEL_48M;
+>>> -               else
+>>> +       if (sphy->cpu_type == TYPE_EXYNOS5250) {
+>>> +               /* set clock frequency for PLL */
+>>> +               switch (clk_get_rate(ref_clk)) {
+>>> +               case 96 * 100000:
+>>
+>> nit: change to 9600 * KHZ to match; below too.
+>>
+> sure.
 >
-> void s3c_ac97_write(*ac97, reg, val){
->    if(reg == 0x0)
->      return;
->
->    ...code here..
->    ...
-> }
+>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_9600K;
+>>
+>> Why |= with 0?
+>>
+> kept this just to keep things look similar :-). will remove this line,
 
-I think this is what he meant. I would just try it and then when you
-get similar results to Andrey we might consider trying to find the root
-cause of this problem.
+My comment was about keeping things similar.  Right now the 5250 code
+has the |= and the non-5250 code doesn't.  I don't care which is
+picked but the two sides of the "if" should be symmetric.
 
---
+See parts of the patch below.
 
-Regards,
-Sylwester
+>>> +                       break;
+>>> +               case 10 * MHZ:
+>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_10M;
+>>> +                       break;
+>>> +               case 12 * MHZ:
+>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_12M;
+>>> +                       break;
+>>> +               case 192 * 100000:
+>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_19200K;
+>>> +                       break;
+>>> +               case 20 * MHZ:
+>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_20M;
+>>> +                       break;
+>>> +               case 50 * MHZ:
+>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_50M;
+>>> +                       break;
+>>> +               case 24 * MHZ:
+>>> +               default:
+>>> +                       /* default reference clock */
+>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_24M;
+>>> +                       break;
+>>> +               }
+>>> +       } else {
+>>> +               switch (clk_get_rate(ref_clk)) {
+>>> +               case 12 * MHZ:
+>>> +                       refclk_freq = PHYCLK_CLKSEL_12M;
+>>> +                       break;
+>>> +               case 24 * MHZ:
+>>>                         refclk_freq = PHYCLK_CLKSEL_24M;
+>>> -               break;
+>>> +                       break;
+>>> +               case 48 * MHZ:
+>>> +                       refclk_freq = PHYCLK_CLKSEL_48M;
+>>> +                       break;
+>>> +               default:
+>>> +                       if (sphy->cpu_type == TYPE_S3C64XX)
+>>> +                               refclk_freq = PHYCLK_CLKSEL_48M;
+>>> +                       else
+>>> +                               refclk_freq = PHYCLK_CLKSEL_24M;
+>>> +                       break;
+>>> +               }
+>>>         }
+>>>         clk_put(ref_clk);
+>>>
+>>>         return refclk_freq;
+>>>  }
+
+-Doug
