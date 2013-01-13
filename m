@@ -1,58 +1,99 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 0/6] Initial Device Tree support for S3C64xx
-Date: Sun, 13 Jan 2013 02:10:52 +0100
-Message-ID: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 6/6] ARM: dts: Add dts file for S3C6410-based Mini6410 board
+Date: Sun, 13 Jan 2013 02:10:58 +0100
+Message-ID: <1358039458-31960-7-git-send-email-tomasz.figa@gmail.com>
+References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f49.google.com ([74.125.83.49]:44931 "EHLO
-	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753781Ab3AMBLL (ORCPT
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:36342 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753781Ab3AMBLS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Jan 2013 20:11:11 -0500
-Received: by mail-ee0-f49.google.com with SMTP id c4so1381649eek.36
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jan 2013 17:11:10 -0800 (PST)
+	Sat, 12 Jan 2013 20:11:18 -0500
+Received: by mail-ee0-f47.google.com with SMTP id e52so1389857eek.6
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jan 2013 17:11:17 -0800 (PST)
+In-Reply-To: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Tomasz Figa <tomasz.figa@gmail.com>
 
-This series is adds Device Tree support for Samsung S3C64xx SoC series.
+This patch adds basic device tree sources for FriendlyARM Mini6410 board
+based on Samsung S3C6410 SoC.
 
-It fixes several problems preventing from booting an S3C64xx-based system
-using Device Tree, adds all the infrastructure for Device Tree-based board
-support, including mach-s3c64xx-dt and dts include files for S3C64xx SoCs, and
-(very) basic device tree source for FriendlyARM Mini6410 board.
-
-Current support is very limited and allows only basic bootup with UART and
-SDHCI, but should be fine as a start and will be extended in future, hopefully
-with help of S3C64xx board maintainers.
-
-Tomasz Figa (6):
-  ARM: common: vic: Parse interrupt and resume masks from device tree
-  ARM: common: vic: Fix invalid first IRQ number in OF-based
-    registration
-  ARM: s3c64xx: Add support for OF-based VIC initialization
-  ARM: s3c64xx: Add board file for boot using Device Tree
-  ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
-  ARM: dts: Add dts file for S3C6410-based Mini6410 board
-
- Documentation/devicetree/bindings/arm/vic.txt |  6 ++
- arch/arm/boot/dts/Makefile                    |  1 +
- arch/arm/boot/dts/s3c6400.dtsi                | 33 +++++++++
- arch/arm/boot/dts/s3c6410-mini6410.dts        | 50 ++++++++++++++
- arch/arm/boot/dts/s3c6410.dtsi                | 33 +++++++++
- arch/arm/boot/dts/s3c64xx.dtsi                | 97 +++++++++++++++++++++++++++
- arch/arm/common/vic.c                         |  9 ++-
- arch/arm/mach-s3c64xx/Kconfig                 | 13 ++++
- arch/arm/mach-s3c64xx/Makefile                |  1 +
- arch/arm/mach-s3c64xx/common.c                | 16 +++++
- arch/arm/mach-s3c64xx/common.h                |  4 ++
- arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c       | 84 +++++++++++++++++++++++
- 12 files changed, 345 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ arch/arm/boot/dts/Makefile             |  1 +
+ arch/arm/boot/dts/s3c6410-mini6410.dts | 50 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
  create mode 100644 arch/arm/boot/dts/s3c6410-mini6410.dts
- create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
- create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
- create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
 
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index e44da40..9ca30ea 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -120,6 +120,7 @@ dtb-$(CONFIG_ARCH_U8500) += snowball.dtb \
+ 	hrefprev60.dtb \
+ 	hrefv60plus.dtb \
+ 	ccu9540.dtb
++dtb-$(CONFIG_ARCH_S3C64XX) += s3c6410-mini6410.dtb
+ dtb-$(CONFIG_ARCH_SHMOBILE) += emev2-kzm9d.dtb \
+ 	r8a7740-armadillo800eva.dtb \
+ 	sh73a0-kzm9g.dtb \
+diff --git a/arch/arm/boot/dts/s3c6410-mini6410.dts b/arch/arm/boot/dts/s3c6410-mini6410.dts
+new file mode 100644
+index 0000000..9ac82c2
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
+@@ -0,0 +1,50 @@
++/*
++ * Samsung's S3C6410 based Mini6410 board device tree source
++ *
++ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Device tree source file for FriendlyARM Mini6410 board which is based on
++ * Samsung's S3C6410 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++/include/ "s3c6410.dtsi"
++
++/ {
++	model = "FriendlyARM Mini6410 board based on S3C6410";
++	compatible = "friendlyarm,mini6410", "samsung,s3c6410";
++
++	memory {
++		reg = <0x50000000 0x10000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttySAC0,115200n8 earlyprintk rootwait root=/dev/mmcblk0p1";
++	};
++
++	serial@7f005000 {
++		status = "okay";
++	};
++
++	serial@7f005400 {
++		status = "okay";
++	};
++
++	serial@7f005800 {
++		status = "okay";
++	};
++
++	serial@7f005c00 {
++		status = "okay";
++	};
++
++	sdhci@7c200000 {
++		bus-width = <4>;
++		non-removable;
++		status = "okay";
++	};
++};
 -- 
 1.8.1
