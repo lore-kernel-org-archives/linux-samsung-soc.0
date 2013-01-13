@@ -1,152 +1,218 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 4/6] ARM: s3c64xx: Add board file for boot using Device Tree
-Date: Sun, 13 Jan 2013 02:10:56 +0100
-Message-ID: <1358039458-31960-5-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 5/6] ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
+Date: Sun, 13 Jan 2013 02:10:57 +0100
+Message-ID: <1358039458-31960-6-git-send-email-tomasz.figa@gmail.com>
 References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f175.google.com ([209.85.215.175]:48806 "EHLO
-	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753781Ab3AMBLQ (ORCPT
+Received: from mail-ea0-f170.google.com ([209.85.215.170]:41550 "EHLO
+	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753920Ab3AMBLR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Jan 2013 20:11:16 -0500
-Received: by mail-ea0-f175.google.com with SMTP id d1so51245eab.20
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jan 2013 17:11:15 -0800 (PST)
+	Sat, 12 Jan 2013 20:11:17 -0500
+Received: by mail-ea0-f170.google.com with SMTP id d11so1241221eaa.29
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jan 2013 17:11:16 -0800 (PST)
 In-Reply-To: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Tomasz Figa <tomasz.figa@gmail.com>
 
-This patch adds board file that will be used to boot S3C64xx-based boards
-using Device Tree.
+This patch adds basic device tree definitions for Samsung S3C64xx SoCs.
+
+Since all the SoCs in the series are very similar, the files are created
+hierarchically - one file for the whole series and then separate files
+for particular SoCs including the common one.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- arch/arm/mach-s3c64xx/Kconfig           | 13 +++++
- arch/arm/mach-s3c64xx/Makefile          |  1 +
- arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c | 84 +++++++++++++++++++++++++++++++++
- 3 files changed, 98 insertions(+)
- create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+ arch/arm/boot/dts/s3c6400.dtsi | 33 ++++++++++++++
+ arch/arm/boot/dts/s3c6410.dtsi | 33 ++++++++++++++
+ arch/arm/boot/dts/s3c64xx.dtsi | 97 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 163 insertions(+)
+ create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 283cb77..b1c7106 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -311,3 +311,16 @@ config MACH_WLF_CRAGG_6410
- 	select SAMSUNG_GPIO_EXTRA128
- 	help
- 	  Machine support for the Wolfson Cragganmore S3C6410 variant.
-+
-+config MACH_S3C64XX_DT
-+	bool "Samsung S3C6400/S3C6410 machine using Device Tree"
-+	select CPU_S3C6400
-+	select CPU_S3C6410
-+	select USE_OF
-+	help
-+	  Machine support for Samsung S3C6400/S3C6410 machines with Device Tree
-+	  enabled.
-+	  Select this if a fdt blob is available for your S3C64XX SoC based
-+	  board.
-+	  Note: This is under development and not all peripherals can be
-+	  supported with this machine file.
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index f9ce1dc..59b3d06 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -58,3 +58,4 @@ obj-$(CONFIG_MACH_SMARTQ7)		+= mach-smartq7.o
- obj-$(CONFIG_MACH_SMDK6400)		+= mach-smdk6400.o
- obj-$(CONFIG_MACH_SMDK6410)		+= mach-smdk6410.o
- obj-$(CONFIG_MACH_WLF_CRAGG_6410)	+= mach-crag6410.o mach-crag6410-module.o
-+obj-$(CONFIG_MACH_S3C64XX_DT)		+= mach-s3c64xx-dt.o
-diff --git a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+diff --git a/arch/arm/boot/dts/s3c6400.dtsi b/arch/arm/boot/dts/s3c6400.dtsi
 new file mode 100644
-index 0000000..974af2a
+index 0000000..76106b8
 --- /dev/null
-+++ b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
-@@ -0,0 +1,84 @@
++++ b/arch/arm/boot/dts/s3c6400.dtsi
+@@ -0,0 +1,33 @@
 +/*
-+ * Samsung's S3C64XX flattened device tree enabled machine
++ * Samsung's S3C6400 SoC device tree source
 + *
 + * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Samsung's S3C6400 SoC device nodes are listed in this file. S3C6400
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * S3C6400 SoC. As device tree coverage for S3C6400 increases, additional
++ * nodes can be added to this file.
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#include <linux/of_platform.h>
-+#include <linux/serial_core.h>
++/include/ "s3c64xx.dtsi"
 +
-+#include <asm/mach/arch.h>
-+#include <asm/hardware/vic.h>
-+#include <mach/map.h>
++/ {
++	compatible = "samsung,s3c6400";
 +
-+#include <plat/cpu.h>
-+#include <plat/regs-serial.h>
-+#include <plat/samsung-time.h>
++	vic0: interrupt-controller@71200000 {
++		interrupt-mask = <0xfffffe1f>;
++		wakeup-mask = <0x00200004>;
++	};
 +
-+#include "common.h"
-+
++	vic1: interrupt-controller@71300000 {
++		interrupt-mask = <0xffffffff>;
++		wakeup-mask = <0x53020000>;
++	};
++};
+diff --git a/arch/arm/boot/dts/s3c6410.dtsi b/arch/arm/boot/dts/s3c6410.dtsi
+new file mode 100644
+index 0000000..4a74df9
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c6410.dtsi
+@@ -0,0 +1,33 @@
 +/*
-+ * The following lookup table is used to override device names when devices
-+ * are registered from device tree. This is temporarily added to enable
-+ * device tree support addition for the S3C64xx architecture.
++ * Samsung's S3C6410 SoC device tree source
 + *
-+ * For drivers that require platform data to be provided from the machine
-+ * file, a platform data pointer can also be supplied along with the
-+ * devices names. Usually, the platform data elements that cannot be parsed
-+ * from the device tree by the drivers (example: function pointers) are
-+ * supplied. But it should be noted that this is a temporary mechanism and
-+ * at some point, the drivers should be capable of parsing all the platform
-+ * data from the device tree.
++ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Samsung's S3C6410 SoC device nodes are listed in this file. S3C6410
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * S3C6410 SoC. As device tree coverage for S3C6410 increases, additional
++ * nodes can be added to this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/include/ "s3c64xx.dtsi"
++
++/ {
++	compatible = "samsung,s3c6410";
++
++	vic0: interrupt-controller@71200000 {
++		interrupt-mask = <0xffffff7f>;
++		wakeup-mask = <0x00200004>;
++	};
++
++	vic1: interrupt-controller@71300000 {
++		interrupt-mask = <0xffffffff>;
++		wakeup-mask = <0x53020000>;
++	};
++};
+diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
+new file mode 100644
+index 0000000..55d6e08
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c64xx.dtsi
+@@ -0,0 +1,97 @@
++/*
++ * Samsung's S3C64xx SoC series common device tree source
++ *
++ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Samsung's S3C64xx SoC series device nodes are listed in this file.
++ * Particular SoCs from S3C64xx series can include this file and provide
++ * values for SoCs specfic bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * S3C64xx SoCs. As device tree coverage for S3C64xx increases, additional
++ * nodes can be added to this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + */
-+static const struct of_dev_auxdata s3c64xx_auxdata_lookup[] __initconst = {
-+	OF_DEV_AUXDATA("samsung,s3c6400-uart", 0x7f005000,
-+				"s3c6400-uart.0", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c6400-uart", 0x7f005400,
-+				"s3c6400-uart.1", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c6400-uart", 0x7f005800,
-+				"s3c6400-uart.2", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c6400-uart", 0x7f005c00,
-+				"s3c6400-uart.3", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", 0x7c200000,
-+				"s3c-sdhci.0", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", 0x7c300000,
-+				"s3c-sdhci.1", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", 0x7c400000,
-+				"s3c-sdhci.2", NULL),
-+	{},
++
++/include/ "skeleton.dtsi"
++
++/ {
++	cpus {
++		cpu@0 {
++			compatible = "arm,arm1176jzf-s";
++		};
++	};
++
++	vic0: interrupt-controller@71200000 {
++		compatible = "arm,pl192-vic";
++		interrupt-controller;
++		reg = <0x71200000 0x1000>;
++		#interrupt-cells = <1>;
++	};
++
++	vic1: interrupt-controller@71300000 {
++		compatible = "arm,pl192-vic";
++		interrupt-controller;
++		reg = <0x71300000 0x1000>;
++		#interrupt-cells = <1>;
++	};
++
++	serial@7f005000 {
++		compatible = "samsung,s3c6400-uart";
++		reg = <0x7f005000 0x100>;
++		interrupt-parent = <&vic1>;
++		interrupts = <5 0>;
++		status = "disabled";
++	};
++
++	serial@7f005400 {
++		compatible = "samsung,s3c6400-uart";
++		reg = <0x7f005400 0x100>;
++		interrupt-parent = <&vic1>;
++		interrupts = <6 0>;
++		status = "disabled";
++	};
++
++	serial@7f005800 {
++		compatible = "samsung,s3c6400-uart";
++		reg = <0x7f005800 0x100>;
++		interrupt-parent = <&vic1>;
++		interrupts = <7 0>;
++		status = "disabled";
++	};
++
++	serial@7f005c00 {
++		compatible = "samsung,s3c6400-uart";
++		reg = <0x7f005c00 0x100>;
++		interrupt-parent = <&vic1>;
++		interrupts = <8 0>;
++		status = "disabled";
++	};
++
++	sdhci@7c200000 {
++		compatible = "samsung,s3c6410-sdhci";
++		reg = <0x7c200000 0x100>;
++		interrupt-parent = <&vic1>;
++		interrupts = <24 0>;
++		status = "disabled";
++	};
++
++	sdhci@7c300000 {
++		compatible = "samsung,s3c6410-sdhci";
++		reg = <0x7c300000 0x100>;
++		interrupt-parent = <&vic1>;
++		interrupts = <25 0>;
++		status = "disabled";
++	};
++
++	sdhci@7c400000 {
++		compatible = "samsung,s3c6410-sdhci";
++		reg = <0x7c400000 0x100>;
++		interrupt-parent = <&vic1>;
++		interrupts = <17 0>;
++		status = "disabled";
++	};
 +};
-+
-+static void __init s3c64xx_dt_map_io(void)
-+{
-+	s3c64xx_init_io(NULL, 0);
-+	s3c24xx_init_clocks(12000000);
-+	samsung_set_timer_source(SAMSUNG_PWM3, SAMSUNG_PWM4);
-+}
-+
-+static void __init s3c64xx_dt_machine_init(void)
-+{
-+	of_platform_populate(NULL, of_default_bus_match_table,
-+				s3c64xx_auxdata_lookup, NULL);
-+}
-+
-+static char const *s3c64xx_dt_compat[] __initdata = {
-+	"samsung,s3c6400",
-+	"samsung,s3c6410",
-+	NULL
-+};
-+
-+DT_MACHINE_START(S3C6400_DT, "Samsung S3C64xx (Flattened Device Tree)")
-+	/* Maintainer: Tomasz Figa <tomasz.figa@gmail.com> */
-+	.init_irq	= s3c64xx_of_init_irq,
-+	.map_io		= s3c64xx_dt_map_io,
-+	.handle_irq	= vic_handle_irq,
-+	.init_machine	= s3c64xx_dt_machine_init,
-+	.init_late	= s3c64xx_init_late,
-+	.timer		= &samsung_timer,
-+	.dt_compat	= s3c64xx_dt_compat,
-+	.restart        = s3c64xx_restart,
-+MACHINE_END
 -- 
 1.8.1
