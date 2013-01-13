@@ -1,218 +1,83 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 5/6] ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
-Date: Sun, 13 Jan 2013 02:10:57 +0100
-Message-ID: <1358039458-31960-6-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 1/6] ARM: common: vic: Parse interrupt and resume masks from device tree
+Date: Sun, 13 Jan 2013 02:10:53 +0100
+Message-ID: <1358039458-31960-2-git-send-email-tomasz.figa@gmail.com>
 References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f170.google.com ([209.85.215.170]:41550 "EHLO
-	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753920Ab3AMBLR (ORCPT
+Received: from mail-ee0-f49.google.com ([74.125.83.49]:47759 "EHLO
+	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753795Ab3AMBLM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Jan 2013 20:11:17 -0500
-Received: by mail-ea0-f170.google.com with SMTP id d11so1241221eaa.29
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jan 2013 17:11:16 -0800 (PST)
+	Sat, 12 Jan 2013 20:11:12 -0500
+Received: by mail-ee0-f49.google.com with SMTP id c4so1390039eek.8
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jan 2013 17:11:11 -0800 (PST)
 In-Reply-To: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Tomasz Figa <tomasz.figa@gmail.com>
 
-This patch adds basic device tree definitions for Samsung S3C64xx SoCs.
+This patch extends vic_of_init to parse valid interrupt sources
+and resume sources masks from device tree.
 
-Since all the SoCs in the series are very similar, the files are created
-hierarchically - one file for the whole series and then separate files
-for particular SoCs including the common one.
+If mask values are not specified in device tree, all sources
+are assumed to be valid, as before this patch.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- arch/arm/boot/dts/s3c6400.dtsi | 33 ++++++++++++++
- arch/arm/boot/dts/s3c6410.dtsi | 33 ++++++++++++++
- arch/arm/boot/dts/s3c64xx.dtsi | 97 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
- create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
- create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
+ Documentation/devicetree/bindings/arm/vic.txt | 6 ++++++
+ arch/arm/common/vic.c                         | 7 ++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s3c6400.dtsi b/arch/arm/boot/dts/s3c6400.dtsi
-new file mode 100644
-index 0000000..76106b8
---- /dev/null
-+++ b/arch/arm/boot/dts/s3c6400.dtsi
-@@ -0,0 +1,33 @@
-+/*
-+ * Samsung's S3C6400 SoC device tree source
-+ *
-+ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-+ *
-+ * Samsung's S3C6400 SoC device nodes are listed in this file. S3C6400
-+ * based board files can include this file and provide values for board specfic
-+ * bindings.
-+ *
-+ * Note: This file does not include device nodes for all the controllers in
-+ * S3C6400 SoC. As device tree coverage for S3C6400 increases, additional
-+ * nodes can be added to this file.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
+index 266716b..bb7137c 100644
+--- a/Documentation/devicetree/bindings/arm/vic.txt
++++ b/Documentation/devicetree/bindings/arm/vic.txt
+@@ -18,6 +18,9 @@ Required properties:
+ Optional properties:
+ 
+ - interrupts : Interrupt source for parent controllers if the VIC is nested.
++- interrupt-mask : Bit mask of valid interrupt sources (defaults to all valid)
++- wakeup-mask : Bit mask of interrupt sources that can wake up the system
++  (defaults to all allowed)
+ 
+ Example:
+ 
+@@ -26,4 +29,7 @@ Example:
+ 		interrupt-controller;
+ 		#interrupt-cells = <1>;
+ 		reg = <0x60000 0x1000>;
 +
-+/include/ "s3c64xx.dtsi"
-+
-+/ {
-+	compatible = "samsung,s3c6400";
-+
-+	vic0: interrupt-controller@71200000 {
-+		interrupt-mask = <0xfffffe1f>;
-+		wakeup-mask = <0x00200004>;
-+	};
-+
-+	vic1: interrupt-controller@71300000 {
-+		interrupt-mask = <0xffffffff>;
-+		wakeup-mask = <0x53020000>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/s3c6410.dtsi b/arch/arm/boot/dts/s3c6410.dtsi
-new file mode 100644
-index 0000000..4a74df9
---- /dev/null
-+++ b/arch/arm/boot/dts/s3c6410.dtsi
-@@ -0,0 +1,33 @@
-+/*
-+ * Samsung's S3C6410 SoC device tree source
-+ *
-+ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-+ *
-+ * Samsung's S3C6410 SoC device nodes are listed in this file. S3C6410
-+ * based board files can include this file and provide values for board specfic
-+ * bindings.
-+ *
-+ * Note: This file does not include device nodes for all the controllers in
-+ * S3C6410 SoC. As device tree coverage for S3C6410 increases, additional
-+ * nodes can be added to this file.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/include/ "s3c64xx.dtsi"
-+
-+/ {
-+	compatible = "samsung,s3c6410";
-+
-+	vic0: interrupt-controller@71200000 {
 +		interrupt-mask = <0xffffff7f>;
-+		wakeup-mask = <0x00200004>;
-+	};
++		wakeup-mask = <0x0000ff7f>;
+ 	};
+diff --git a/arch/arm/common/vic.c b/arch/arm/common/vic.c
+index e4df17c..c2889da 100644
+--- a/arch/arm/common/vic.c
++++ b/arch/arm/common/vic.c
+@@ -407,6 +407,8 @@ void __init vic_init(void __iomem *base, unsigned int irq_start,
+ int __init vic_of_init(struct device_node *node, struct device_node *parent)
+ {
+ 	void __iomem *regs;
++	u32 interrupt_mask = ~0;
++	u32 wakeup_mask = ~0;
+ 
+ 	if (WARN(parent, "non-root VICs are not supported"))
+ 		return -EINVAL;
+@@ -415,10 +417,13 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
+ 	if (WARN_ON(!regs))
+ 		return -EIO;
+ 
++	of_property_read_u32(node, "interrupt-mask", &interrupt_mask);
++	of_property_read_u32(node, "wakeup-mask", &wakeup_mask);
 +
-+	vic1: interrupt-controller@71300000 {
-+		interrupt-mask = <0xffffffff>;
-+		wakeup-mask = <0x53020000>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
-new file mode 100644
-index 0000000..55d6e08
---- /dev/null
-+++ b/arch/arm/boot/dts/s3c64xx.dtsi
-@@ -0,0 +1,97 @@
-+/*
-+ * Samsung's S3C64xx SoC series common device tree source
-+ *
-+ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-+ *
-+ * Samsung's S3C64xx SoC series device nodes are listed in this file.
-+ * Particular SoCs from S3C64xx series can include this file and provide
-+ * values for SoCs specfic bindings.
-+ *
-+ * Note: This file does not include device nodes for all the controllers in
-+ * S3C64xx SoCs. As device tree coverage for S3C64xx increases, additional
-+ * nodes can be added to this file.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/include/ "skeleton.dtsi"
-+
-+/ {
-+	cpus {
-+		cpu@0 {
-+			compatible = "arm,arm1176jzf-s";
-+		};
-+	};
-+
-+	vic0: interrupt-controller@71200000 {
-+		compatible = "arm,pl192-vic";
-+		interrupt-controller;
-+		reg = <0x71200000 0x1000>;
-+		#interrupt-cells = <1>;
-+	};
-+
-+	vic1: interrupt-controller@71300000 {
-+		compatible = "arm,pl192-vic";
-+		interrupt-controller;
-+		reg = <0x71300000 0x1000>;
-+		#interrupt-cells = <1>;
-+	};
-+
-+	serial@7f005000 {
-+		compatible = "samsung,s3c6400-uart";
-+		reg = <0x7f005000 0x100>;
-+		interrupt-parent = <&vic1>;
-+		interrupts = <5 0>;
-+		status = "disabled";
-+	};
-+
-+	serial@7f005400 {
-+		compatible = "samsung,s3c6400-uart";
-+		reg = <0x7f005400 0x100>;
-+		interrupt-parent = <&vic1>;
-+		interrupts = <6 0>;
-+		status = "disabled";
-+	};
-+
-+	serial@7f005800 {
-+		compatible = "samsung,s3c6400-uart";
-+		reg = <0x7f005800 0x100>;
-+		interrupt-parent = <&vic1>;
-+		interrupts = <7 0>;
-+		status = "disabled";
-+	};
-+
-+	serial@7f005c00 {
-+		compatible = "samsung,s3c6400-uart";
-+		reg = <0x7f005c00 0x100>;
-+		interrupt-parent = <&vic1>;
-+		interrupts = <8 0>;
-+		status = "disabled";
-+	};
-+
-+	sdhci@7c200000 {
-+		compatible = "samsung,s3c6410-sdhci";
-+		reg = <0x7c200000 0x100>;
-+		interrupt-parent = <&vic1>;
-+		interrupts = <24 0>;
-+		status = "disabled";
-+	};
-+
-+	sdhci@7c300000 {
-+		compatible = "samsung,s3c6410-sdhci";
-+		reg = <0x7c300000 0x100>;
-+		interrupt-parent = <&vic1>;
-+		interrupts = <25 0>;
-+		status = "disabled";
-+	};
-+
-+	sdhci@7c400000 {
-+		compatible = "samsung,s3c6410-sdhci";
-+		reg = <0x7c400000 0x100>;
-+		interrupt-parent = <&vic1>;
-+		interrupts = <17 0>;
-+		status = "disabled";
-+	};
-+};
+ 	/*
+ 	 * Passing -1 as first IRQ makes the simple domain allocate descriptors
+ 	 */
+-	__vic_init(regs, -1, ~0, ~0, node);
++	__vic_init(regs, -1, interrupt_mask, wakeup_mask, node);
+ 
+ 	return 0;
+ }
 -- 
 1.8.1
