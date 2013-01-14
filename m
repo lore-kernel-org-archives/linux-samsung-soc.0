@@ -1,28 +1,30 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 0/2] Add automatic bus number support for i2c busses with device tree
-Date: Mon, 14 Jan 2013 10:53:20 -0800
-Message-ID: <1358189602-24180-1-git-send-email-dianders@chromium.org>
+Subject: [PATCH v2 2/2] i2c: pxa: Use i2c-core to get bus number now
+Date: Mon, 14 Jan 2013 10:53:22 -0800
+Message-ID: <1358189602-24180-3-git-send-email-dianders@chromium.org>
 References: <1357927027-4857-2-git-send-email-dianders@chromium.org>
+ <1358189602-24180-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f201.google.com ([209.85.216.201]:49616 "EHLO
-	mail-qc0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757247Ab3ANSxb (ORCPT
+Received: from mail-gg0-f202.google.com ([209.85.161.202]:60596 "EHLO
+	mail-gg0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757641Ab3ANSxc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jan 2013 13:53:31 -0500
-Received: by mail-qc0-f201.google.com with SMTP id a6so522855qch.4
+	Mon, 14 Jan 2013 13:53:32 -0500
+Received: by mail-gg0-f202.google.com with SMTP id k1so522121ggn.3
         for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 10:53:31 -0800 (PST)
-In-Reply-To: <1357927027-4857-2-git-send-email-dianders@chromium.org>
+In-Reply-To: <1358189602-24180-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-i2c@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Wolfram Sang <w.sang@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Doug Anderson <dianders@chromium.org>, Karol Lewandowski <k.lewandowsk@samsung.com>, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Wolfram Sang <w.sang@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Doug Anderson <dianders@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, Karol Lewandowski <k.lewandowsk@samsung.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, linux-kernel@vger.kernel.org
 
-This was suggested by Mark Brown in response to a patch for adding
-this functionality only for the s3c2410 bus:
-  https://lkml.org/lkml/2012/11/20/681
+The commit: "i2c-core: dt: Pick i2c bus number from i2c alias if
+present" adds support for automatically picking the bus number based
+on the alias ID.  Remove the now unnecessary code from i2c-pxa that
+did the same thing.
 
-I have also modified the i2c-pxa driver to use this new functionality.
-
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
 Changes in v2:
 - No longer tweak pdev->id as per Sylwester Nawrocki.
 - No longer add the dev ID to the adap.name.  Other drivers don't
@@ -33,13 +35,63 @@ Changes in v2:
 - This change was only compile-tested (corgi_defconfig), since I don't
   have access to a board that uses this driver.
 
-Doug Anderson (2):
-  i2c-core: dt: Pick i2c bus number from i2c alias if present
-  i2c: pxa: Use i2c-core to get bus number now
+ drivers/i2c/busses/i2c-pxa.c |   20 +++++++++-----------
+ 1 files changed, 9 insertions(+), 11 deletions(-)
 
- drivers/i2c/busses/i2c-pxa.c |   20 ++++----
- drivers/i2c/i2c-core.c       |  105 ++++++++++++++++++++++++++++++-----------
- 2 files changed, 86 insertions(+), 39 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
+index 1034d93..705cc9f 100644
+--- a/drivers/i2c/busses/i2c-pxa.c
++++ b/drivers/i2c/busses/i2c-pxa.c
+@@ -1053,16 +1053,13 @@ static int i2c_pxa_probe_dt(struct platform_device *pdev, struct pxa_i2c *i2c,
+ 	struct device_node *np = pdev->dev.of_node;
+ 	const struct of_device_id *of_id =
+ 			of_match_device(i2c_pxa_dt_ids, &pdev->dev);
+-	int ret;
+ 
+ 	if (!of_id)
+ 		return 1;
+-	ret = of_alias_get_id(np, "i2c");
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
+-		return ret;
+-	}
+-	pdev->id = ret;
++
++	/* For device tree we always use the dynamic or alias-assigned ID */
++	i2c->adap.nr = -1;
++
+ 	if (of_get_property(np, "mrvl,i2c-polling", NULL))
+ 		i2c->use_pio = 1;
+ 	if (of_get_property(np, "mrvl,i2c-fast-mode", NULL))
+@@ -1100,6 +1097,9 @@ static int i2c_pxa_probe(struct platform_device *dev)
+ 		goto emalloc;
+ 	}
+ 
++	/* Default adapter num to device id; i2c_pxa_probe_dt can override. */
++	i2c->adap.nr = dev->id;
++
+ 	ret = i2c_pxa_probe_dt(dev, i2c, &i2c_type);
+ 	if (ret > 0)
+ 		ret = i2c_pxa_probe_pdata(dev, i2c, &i2c_type);
+@@ -1124,9 +1124,7 @@ static int i2c_pxa_probe(struct platform_device *dev)
+ 	spin_lock_init(&i2c->lock);
+ 	init_waitqueue_head(&i2c->wait);
+ 
+-	i2c->adap.nr = dev->id;
+-	snprintf(i2c->adap.name, sizeof(i2c->adap.name), "pxa_i2c-i2c.%u",
+-		 i2c->adap.nr);
++	strlcpy(i2c->adap.name, "pxa_i2c-i2c", sizeof(i2c->adap.name));
+ 
+ 	i2c->clk = clk_get(&dev->dev, NULL);
+ 	if (IS_ERR(i2c->clk)) {
+@@ -1169,7 +1167,7 @@ static int i2c_pxa_probe(struct platform_device *dev)
+ 	} else {
+ 		i2c->adap.algo = &i2c_pxa_algorithm;
+ 		ret = request_irq(irq, i2c_pxa_handler, IRQF_SHARED,
+-				  i2c->adap.name, i2c);
++				  dev_name(&dev->dev), i2c);
+ 		if (ret)
+ 			goto ereqirq;
+ 	}
 -- 
 1.7.7.3
