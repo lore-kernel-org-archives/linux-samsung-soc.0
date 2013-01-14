@@ -1,36 +1,99 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH] ARM: S3C64XX: Fix up IRQ mapping for balblair on Cragganmore
-Date: Sat, 12 Jan 2013 18:42:32 +0000
-Message-ID: <1358016152-5056-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, stable@vger.kernel.org
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 1/6] ARM: common: vic: Parse interrupt and resume masks
+ from device tree
+Date: Sun, 13 Jan 2013 19:08:49 -0600
+Message-ID: <50F35AA1.1010902@gmail.com>
+References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com> <1358039458-31960-2-git-send-email-tomasz.figa@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:43498 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751663Ab3ANBIy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 13 Jan 2013 20:08:54 -0500
+Received: by mail-ob0-f170.google.com with SMTP id wp18so3460511obc.29
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Jan 2013 17:08:54 -0800 (PST)
+In-Reply-To: <1358039458-31960-2-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, kwangwoo.lee@gmail.com, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, mcuelenaere@gmail.com, augulis.darius@gmail.com, linux-arm-kernel@lists.infradead.org
 
-From: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
+On 01/12/2013 07:10 PM, Tomasz Figa wrote:
+> This patch extends vic_of_init to parse valid interrupt sources
+> and resume sources masks from device tree.
+> 
+> If mask values are not specified in device tree, all sources
+> are assumed to be valid, as before this patch.
+> 
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/vic.txt | 6 ++++++
+>  arch/arm/common/vic.c                         | 7 ++++++-
+>  2 files changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
+> index 266716b..bb7137c 100644
+> --- a/Documentation/devicetree/bindings/arm/vic.txt
+> +++ b/Documentation/devicetree/bindings/arm/vic.txt
+> @@ -18,6 +18,9 @@ Required properties:
+>  Optional properties:
+>  
+>  - interrupts : Interrupt source for parent controllers if the VIC is nested.
+> +- interrupt-mask : Bit mask of valid interrupt sources (defaults to all valid)
 
-We are using S3C_EINT(4) instead of S3C_EINT(5).
+Can you explain why this is needed and is not just the OR of all
+interrupts described in the DT?
 
-Signed-off-by: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: stable@vger.kernel.org
----
- arch/arm/mach-s3c64xx/mach-crag6410-module.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +- wakeup-mask : Bit mask of interrupt sources that can wake up the system
+> +  (defaults to all allowed)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index 553059f..755c0bb 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -47,7 +47,7 @@ static struct spi_board_info wm1253_devs[] = {
- 		.bus_num	= 0,
- 		.chip_select	= 0,
- 		.mode		= SPI_MODE_0,
--		.irq		= S3C_EINT(5),
-+		.irq		= S3C_EINT(4),
- 		.controller_data = &wm0010_spi_csinfo,
- 		.platform_data = &wm0010_pdata,
- 	},
--- 
-1.7.10.4
+Seems like this would be all VIC interrupts unless the wake-up handling
+is done in some shadow controller. If the former is true, then wake-up
+capability is really a property of individual devices. If the later,
+then this property would belong in that shadow controller.
+
+Rob
+
+>  
+>  Example:
+>  
+> @@ -26,4 +29,7 @@ Example:
+>  		interrupt-controller;
+>  		#interrupt-cells = <1>;
+>  		reg = <0x60000 0x1000>;
+> +
+> +		interrupt-mask = <0xffffff7f>;
+> +		wakeup-mask = <0x0000ff7f>;
+>  	};
+> diff --git a/arch/arm/common/vic.c b/arch/arm/common/vic.c
+> index e4df17c..c2889da 100644
+> --- a/arch/arm/common/vic.c
+> +++ b/arch/arm/common/vic.c
+> @@ -407,6 +407,8 @@ void __init vic_init(void __iomem *base, unsigned int irq_start,
+>  int __init vic_of_init(struct device_node *node, struct device_node *parent)
+>  {
+>  	void __iomem *regs;
+> +	u32 interrupt_mask = ~0;
+> +	u32 wakeup_mask = ~0;
+>  
+>  	if (WARN(parent, "non-root VICs are not supported"))
+>  		return -EINVAL;
+> @@ -415,10 +417,13 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
+>  	if (WARN_ON(!regs))
+>  		return -EIO;
+>  
+> +	of_property_read_u32(node, "interrupt-mask", &interrupt_mask);
+> +	of_property_read_u32(node, "wakeup-mask", &wakeup_mask);
+> +
+>  	/*
+>  	 * Passing -1 as first IRQ makes the simple domain allocate descriptors
+>  	 */
+> -	__vic_init(regs, -1, ~0, ~0, node);
+> +	__vic_init(regs, -1, interrupt_mask, wakeup_mask, node);
+>  
+>  	return 0;
+>  }
+> 
