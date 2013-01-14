@@ -1,64 +1,76 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] usb: phy: samsung: Add support to set pmu isolation
-Date: Mon, 14 Jan 2013 14:11:42 -0800
-Message-ID: <CAD=FV=Vxdjo5aOU25a-iDNDaiGZCu0+G-p5y1NifXHUJBF0AHg@mail.gmail.com>
-References: <1357891738-26259-1-git-send-email-gautam.vivek@samsung.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: Early kernel hang with big DTB appended
+Date: Mon, 14 Jan 2013 17:13:09 -0500 (EST)
+Message-ID: <alpine.LFD.2.02.1301141655570.6300@xanadu.home>
+References: <7811936.npteFbuYu2@amdc1227> <20130111164531.GC13025@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1357891738-26259-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, gregkh@linuxfoundation.org, balbi@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, l.majewski@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Praveen Paneri <p.paneri@samsung.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f175.google.com ([209.85.216.175]:60142 "EHLO
+	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757295Ab3ANWNM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Jan 2013 17:13:12 -0500
+Received: by mail-qc0-f175.google.com with SMTP id j3so2845363qcs.34
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 14:13:11 -0800 (PST)
+In-Reply-To: <20130111164531.GC13025@pengutronix.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Tomasz Figa <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, kgene.kim@samsung.com, thomas.abraham@linaro.org, bones@secretlab.ca, linux-arm-kernel@lists.infradead.org
 
-Vivek,
+On Fri, 11 Jan 2013, Sascha Hauer wrote:
 
-Sorry for being so absent from these reviews.  I'll try to look over a
-few patches today, but please don't hold up anything on account of my
-reviews.  I'm definitely a bit of an interested bystander in USB land.
- ;)
+> On Thu, Jan 03, 2013 at 04:55:00PM +0100, Tomasz Figa wrote:
+> > Hi,
+> > 
+> > I'm observing strange behavior when booting 3.8-rc1 and -rc2 with appended 
+> > DTB. The kernel hangs very early when the DTB is bigger than some 
+> > threshold somewhere around 24 KiB. With fullest possible low level UART 
+> > debugging (and printk patched to use printascii) I'm receiving following 
+> > output:
+> > 
+> > Uncompressing Linux... done, booting the kernel.
+> > Booting Linux on physical CPU 0xa00
+> > Linux version 3.8.0-rc1-00073-gdf6efca-dirty (t.figa@amdc1227) (gcc 
+> > version 4.5.2 (Gentoo 4.5.2 p1.2, pie-0.4.5) ) #2 SMP PREEMPT Thu Jan 3 
+> > 15:37:35 CET 2013
+> > CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d
+> > CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+> > 
+> > I tested on two Exynos-based boards (exynos4210-trats and one internal 
+> > exynos4412-based board) and same happens on both.
+> > 
+> > Do you have any ideas?
+> 
+> Another thing besides the things already mentioned is that the dtb may
+> not cross a 1MiB boundary. The Kernel uses a single 1Mib section
+> (aligned to 1Mib) to initially map the dtb. Once you cross that boundary
+> parts of the dtb won't be accessible for the Kernel anymore.
 
-In general things look pretty good here.  :)  One last comment below...
+Crap.  You're right.  This patch should fix this issue.
 
-On Fri, Jan 11, 2013 at 12:08 AM, Vivek Gautam
-<gautam.vivek@samsung.com> wrote:> +static int
-samsung_usbphy_parse_dt(struct samsung_usbphy *sphy)
-> +{
-> +       struct device_node *usbphy_sys;
-> +
-> +       /* Getting node for system controller interface for usb-phy */
-> +       usbphy_sys = of_get_child_by_name(sphy->dev->of_node, "usbphy-sys");
-> +       if (!usbphy_sys)
-> +               dev_warn(sphy->dev, "No sys-controller interface for usb-phy\n");
-
-Seems like you ought to return with an error here.  Calling of_iomap()
-with a NULL value seems undesirable.
-
-> +
-> +       sphy->pmuregs = of_iomap(usbphy_sys, 0);
-> +
-> +       of_node_put(usbphy_sys);
-> +
-> +       if (sphy->pmuregs == NULL) {
-> +               dev_err(sphy->dev, "Can't get usb-phy pmu control register\n");
-> +               return -ENODEV;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +/*
-> + * Set isolation here for phy.
-> + * Here 'on = true' would mean USB PHY block is isolated, hence
-> + * de-activated and vice-versa.
-> + */
-
-Thank you very much for this comment.  :)  This explains one of the
-confusions I had earlier...
+@Tomasz: please could you confirm this fixes your initial problem?
 
 
-Once you fix the one error condition above you can add my
-"Reviewed-by".  Thanks!
-
--Doug
+diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+index 4eee351f46..61fcb18c7e 100644
+--- a/arch/arm/kernel/head.S
++++ b/arch/arm/kernel/head.S
+@@ -246,6 +246,7 @@ __create_page_tables:
+ 
+ 	/*
+ 	 * Then map boot params address in r2 if specified.
++	 * We map 2 sections in case the ATAGs/DTB crosses a section boundary.
+ 	 */
+ 	mov	r0, r2, lsr #SECTION_SHIFT
+ 	movs	r0, r0, lsl #SECTION_SHIFT
+@@ -253,6 +254,8 @@ __create_page_tables:
+ 	addne	r3, r3, #PAGE_OFFSET
+ 	addne	r3, r4, r3, lsr #(SECTION_SHIFT - PMD_ORDER)
+ 	orrne	r6, r7, r0
++	strne	r6, [r3], #1 << PMD_ORDER
++	addne	r6, r6, #1 << SECTION_SHIFT
+ 	strne	r6, [r3]
+ 
+ #ifdef CONFIG_DEBUG_LL
