@@ -1,97 +1,48 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH 5/6] ARM: dts: Add basic dts include files for Samsung
- S3C64xx SoCs
-Date: Mon, 14 Jan 2013 15:05:32 +0000
-Message-ID: <20130114150531.GE21142@e102568-lin.cambridge.arm.com>
-References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
- <1358039458-31960-6-git-send-email-tomasz.figa@gmail.com>
- <20130114144841.GE7990@e106331-lin.cambridge.arm.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v4 5/5] mmc: dw_mmc: Remove DW_MCI_QUIRK_NO_WRITE_PROTECT
+Date: Mon, 14 Jan 2013 08:09:56 -0800
+Message-ID: <CAD=FV=XEfydu-0oD-Vc_uwqt6qRU9Fs9ROgta3FugSEmPp7nFA@mail.gmail.com>
+References: <1357842269-15062-1-git-send-email-dianders@chromium.org>
+	<1357923834-31641-1-git-send-email-dianders@chromium.org>
+	<1357923834-31641-5-git-send-email-dianders@chromium.org>
+	<CAFbHwiTafLhK-uJKjUX4_yLC+27OOUnC2JxYM9-3rHZkPx7s5Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:59331 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752999Ab3ANPFh convert rfc822-to-8bit (ORCPT
+Received: from mail-la0-f49.google.com ([209.85.215.49]:36081 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757245Ab3ANQKA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jan 2013 10:05:37 -0500
-In-Reply-To: <20130114144841.GE7990@e106331-lin.cambridge.arm.com>
-Content-Disposition: inline
+	Mon, 14 Jan 2013 11:10:00 -0500
+Received: by mail-la0-f49.google.com with SMTP id fk20so3967183lab.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 08:09:59 -0800 (PST)
+Received: by mail-la0-f42.google.com with SMTP id fe20so4061455lab.29
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 08:09:56 -0800 (PST)
+In-Reply-To: <CAFbHwiTafLhK-uJKjUX4_yLC+27OOUnC2JxYM9-3rHZkPx7s5Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Rutland <Mark.Rutland@arm.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "kwangwoo.lee@gmail.com" <kwangwoo.lee@gmail.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "mcuelenaere@gmail.com" <mcuelenaere@gmail.com>, "augulis.darius@gmail.com" <augulis.darius@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dave Martin <dave.martin@linaro.org>
+To: Will Newton <will.newton@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Mon, Jan 14, 2013 at 02:48:41PM +0000, Mark Rutland wrote:
-> Hello,
-> 
-> This all looks good. I just have a couple of comments about the cpus node.
-> 
-> On Sun, Jan 13, 2013 at 01:10:57AM +0000, Tomasz Figa wrote:
-> > This patch adds basic device tree definitions for Samsung S3C64xx SoCs.
-> > 
-> > Since all the SoCs in the series are very similar, the files are created
-> > hierarchically - one file for the whole series and then separate files
-> > for particular SoCs including the common one.
-> > 
-> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> [...]
-> 
-> > diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
-> > new file mode 100644
-> > index 0000000..55d6e08
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/s3c64xx.dtsi
-> > @@ -0,0 +1,97 @@
-> > +/*
-> > + * Samsung's S3C64xx SoC series common device tree source
-> > + *
-> > + * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-> > + *
-> > + * Samsung's S3C64xx SoC series device nodes are listed in this file.
-> > + * Particular SoCs from S3C64xx series can include this file and provide
-> > + * values for SoCs specfic bindings.
-> > + *
-> > + * Note: This file does not include device nodes for all the controllers in
-> > + * S3C64xx SoCs. As device tree coverage for S3C64xx increases, additional
-> > + * nodes can be added to this file.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + */
-> > +
-> > +/include/ "skeleton.dtsi"
-> > +
-> > +/ {
-> > +	cpus {
-> > +		cpu@0 {
-> > +			compatible = "arm,arm1176jzf-s";
-> > +		};
-> > +	};
-> 
-> You can drop the unit address from the cpu node - it's meant to be there to
-> differentiate multiple nodes (and is supposed to match the reg property, which
-> the 1176jzf-s can't have, as it doesn't have an MPIDR).
+Will,
 
-Well, this is a point that I should consider since the kernel docs I wrote are
-misleading, they require the reg property that can not be there on UP.
-True, MPIDR does not exist in this case, but I have to document this in the
-bindings since it is unclear.
+On Mon, Jan 14, 2013 at 2:47 AM, Will Newton <will.newton@gmail.com> wrote:
+> These changes look ok to me. I don't know if patch 4 made it to the
+> list, I only got a copy via the cc and the only archive I can find of
+> linux-mmc (gmane) seems to be missing a lot of messages besides this
+> one.
 
-> 
-> Also, "arm,arm1176jzf-s" isn't listed in the binding doc. There was a question
-> about how to maintain this list [1], but I can't seem to find a conclusion, if
-> any were reached.  It might be worth appending "arm,arm1176" to the compatible
-> list for the cpu node in case we want to enable something via dt for all 1176
-> variations.
-> 
-> Dave, Lorenzo, any thoughts?
+It seems to have made it onto patchwork, in any case.  Here's the link:
+    https://patchwork.kernel.org/patch/1966771/
 
-Eh, frankly I do not know how to handle this. Either we add a compatible
-string to the bindings anytime a DT gets merged in the kernel but how
-to maintain it, it has to be defined. Happy to hear some feedback on
-this.
+The whole bundle of all 5 patches at v4 is here:
+    http://patchwork.kernel.org/bundle/dianders/mmc_wp/
 
-Lorenzo
+
+> So for the dw_mmc parts:
+>
+> Acked-by: Will Newton <will.newton@imgtec.com>
+
+Thank you for your review and your ack.  :)
+
+-Doug
