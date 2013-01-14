@@ -1,99 +1,182 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 1/6] ARM: common: vic: Parse interrupt and resume masks
- from device tree
-Date: Sun, 13 Jan 2013 19:08:49 -0600
-Message-ID: <50F35AA1.1010902@gmail.com>
-References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com> <1358039458-31960-2-git-send-email-tomasz.figa@gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v5 2/4] usb: phy: samsung: Add host phy support to
+ samsung-phy driver
+Date: Mon, 14 Jan 2013 11:15:15 +0530
+Message-ID: <CAFp+6iHFw2orVOxxzb+daQJsA46zUk2ZOA=h6QwGAme18JngXw@mail.gmail.com>
+References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
+	<1355841786-13307-3-git-send-email-gautam.vivek@samsung.com>
+	<CAD=FV=WMjqszsTQja82_uZc4Ue50TfTmSNO2yOhSMCX1w1L5Dg@mail.gmail.com>
+	<CAFp+6iHYRRS3uSWnmdqBvfOgUDKKJUzMvqoj1HP2uXS=Fdaifg@mail.gmail.com>
+	<CAD=FV=XhMbWjCR5r=R3+zE1524NuUUvFDf2HZuCrXPmsei4BNA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:43498 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751663Ab3ANBIy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 13 Jan 2013 20:08:54 -0500
-Received: by mail-ob0-f170.google.com with SMTP id wp18so3460511obc.29
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Jan 2013 17:08:54 -0800 (PST)
-In-Reply-To: <1358039458-31960-2-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=XhMbWjCR5r=R3+zE1524NuUUvFDf2HZuCrXPmsei4BNA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, yulgon.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Praveen Paneri <p.paneri@samsung.com>, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, jg1.han@samsung.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, balbi@ti.com, kishon@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Rob Herring <rob.herring@calxeda.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, kwangwoo.lee@gmail.com, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, mcuelenaere@gmail.com, augulis.darius@gmail.com, linux-arm-kernel@lists.infradead.org
 
-On 01/12/2013 07:10 PM, Tomasz Figa wrote:
-> This patch extends vic_of_init to parse valid interrupt sources
-> and resume sources masks from device tree.
-> 
-> If mask values are not specified in device tree, all sources
-> are assumed to be valid, as before this patch.
-> 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/vic.txt | 6 ++++++
->  arch/arm/common/vic.c                         | 7 ++++++-
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
-> index 266716b..bb7137c 100644
-> --- a/Documentation/devicetree/bindings/arm/vic.txt
-> +++ b/Documentation/devicetree/bindings/arm/vic.txt
-> @@ -18,6 +18,9 @@ Required properties:
->  Optional properties:
->  
->  - interrupts : Interrupt source for parent controllers if the VIC is nested.
-> +- interrupt-mask : Bit mask of valid interrupt sources (defaults to all valid)
+Hi Doug,
 
-Can you explain why this is needed and is not just the OR of all
-interrupts described in the DT?
 
-> +- wakeup-mask : Bit mask of interrupt sources that can wake up the system
-> +  (defaults to all allowed)
+On Sat, Jan 12, 2013 at 6:20 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Vivek,
+>
+> On Fri, Jan 11, 2013 at 4:40 AM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+>>>> +#define HOST_CTRL0_REFCLKSEL_MASK              (0x3)
+>>>> +#define HOST_CTRL0_REFCLKSEL_XTAL              (0x0 << 19)
+>>>> +#define HOST_CTRL0_REFCLKSEL_EXTL              (0x1 << 19)
+>>>> +#define HOST_CTRL0_REFCLKSEL_CLKCORE           (0x2 << 19)
+>>>> +
+>>>> +#define HOST_CTRL0_FSEL_MASK                   (0x7 << 16)
+>>>> +#define HOST_CTRL0_FSEL(_x)                    ((_x) << 16)
+>>>> +#define HOST_CTRL0_FSEL_CLKSEL_50M             (0x7)
+>>>> +#define HOST_CTRL0_FSEL_CLKSEL_24M             (0x5)
+>>>> +#define HOST_CTRL0_FSEL_CLKSEL_20M             (0x4)
+>>>> +#define HOST_CTRL0_FSEL_CLKSEL_19200K          (0x3)
+>>>> +#define HOST_CTRL0_FSEL_CLKSEL_12M             (0x2)
+>>>> +#define HOST_CTRL0_FSEL_CLKSEL_10M             (0x1)
+>>>> +#define HOST_CTRL0_FSEL_CLKSEL_9600K           (0x0)
+>>>
+>>> Add the shifts to the #defines and remove HOST_CTRL0_FSEL(_x).  That
+>>> makes it match the older phy more closely.
+>>>
+>> Wouldn't it hamper the readability when shifts are used ??
+>> I mean if we have something like this -
+>>
+>> phyhost |= HOST_CTRL0_FSEL(phyclk)
+>>
+>> so, if we are using the shifts then
+>> phyhost |= (HOST_CTRL0_FSEL_CLKSEL_24M << HOST_CTRL0_FSEL_SHIFT)
+>
+> I was actually suggesting modifying the #defines like this:
+>
+> #define HOST_CTRL0_FSEL_SHIFT 16
+> #define HOST_CTRL0_FSEL_MASK                   (0x7 << HOST_CTRL0_FSEL_SHIFT)
+> #define HOST_CTRL0_FSEL_CLKSEL_50M             (0x7 << HOST_CTRL0_FSEL_SHIFT)
+> #define HOST_CTRL0_FSEL_CLKSEL_24M             (0x5 << HOST_CTRL0_FSEL_SHIFT)
+> #define HOST_CTRL0_FSEL_CLKSEL_20M             (0x4 << HOST_CTRL0_FSEL_SHIFT)
+> #define HOST_CTRL0_FSEL_CLKSEL_19200K          (0x3 << HOST_CTRL0_FSEL_SHIFT)
+> #define HOST_CTRL0_FSEL_CLKSEL_12M             (0x2 << HOST_CTRL0_FSEL_SHIFT)
+> #define HOST_CTRL0_FSEL_CLKSEL_10M             (0x1 << HOST_CTRL0_FSEL_SHIFT)
+> #define HOST_CTRL0_FSEL_CLKSEL_9600K           (0x0 << HOST_CTRL0_FSEL_SHIFT)
+>
+> ...then the code doesn't need to think about shifts, right?
+>
 
-Seems like this would be all VIC interrupts unless the wake-up handling
-is done in some shadow controller. If the former is true, then wake-up
-capability is really a property of individual devices. If the later,
-then this property would belong in that shadow controller.
+right right, sorry i din't get your point earlier. :-(
 
-Rob
+this way things will be similar in samsung_usbphy_get_refclk_freq()
+across exynos 5 and older SoCs.
 
->  
->  Example:
->  
-> @@ -26,4 +29,7 @@ Example:
->  		interrupt-controller;
->  		#interrupt-cells = <1>;
->  		reg = <0x60000 0x1000>;
-> +
-> +		interrupt-mask = <0xffffff7f>;
-> +		wakeup-mask = <0x0000ff7f>;
->  	};
-> diff --git a/arch/arm/common/vic.c b/arch/arm/common/vic.c
-> index e4df17c..c2889da 100644
-> --- a/arch/arm/common/vic.c
-> +++ b/arch/arm/common/vic.c
-> @@ -407,6 +407,8 @@ void __init vic_init(void __iomem *base, unsigned int irq_start,
->  int __init vic_of_init(struct device_node *node, struct device_node *parent)
->  {
->  	void __iomem *regs;
-> +	u32 interrupt_mask = ~0;
-> +	u32 wakeup_mask = ~0;
->  
->  	if (WARN(parent, "non-root VICs are not supported"))
->  		return -EINVAL;
-> @@ -415,10 +417,13 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
->  	if (WARN_ON(!regs))
->  		return -EIO;
->  
-> +	of_property_read_u32(node, "interrupt-mask", &interrupt_mask);
-> +	of_property_read_u32(node, "wakeup-mask", &wakeup_mask);
-> +
->  	/*
->  	 * Passing -1 as first IRQ makes the simple domain allocate descriptors
->  	 */
-> -	__vic_init(regs, -1, ~0, ~0, node);
-> +	__vic_init(regs, -1, interrupt_mask, wakeup_mask, node);
->  
->  	return 0;
->  }
-> 
+Is it fine if we don't use macro for SHIFT, earlier code also doesn't use it.
+Can we just do like this ..
+#define HOST_CTRL0_FSEL_MASK                       (0x7 << 16)
+#define HOST_CTRL0_FSEL_CLKSEL_50M            (0x7 << 16)
+#define HOST_CTRL0_FSEL_CLKSEL_24M            (0x5 << 16)
+#define HOST_CTRL0_FSEL_CLKSEL_20M            (0x4 << 16)
+#define HOST_CTRL0_FSEL_CLKSEL_19200K       (0x3 << 16)
+#define HOST_CTRL0_FSEL_CLKSEL_12M            (0x2 << 16)
+#define HOST_CTRL0_FSEL_CLKSEL_10M            (0x1 << 16)
+#define HOST_CTRL0_FSEL_CLKSEL_9600K         (0x0 << 16)
+
+>
+>>>>         if (IS_ERR(ref_clk)) {
+>>>>                 dev_err(sphy->dev, "Failed to get reference clock\n");
+>>>>                 return PTR_ERR(ref_clk);
+>>>>         }
+>>>>
+>>>> -       switch (clk_get_rate(ref_clk)) {
+>>>> -       case 12 * MHZ:
+>>>> -               refclk_freq = PHYCLK_CLKSEL_12M;
+>>>> -               break;
+>>>> -       case 24 * MHZ:
+>>>> -               refclk_freq = PHYCLK_CLKSEL_24M;
+>>>> -               break;
+>>>> -       case 48 * MHZ:
+>>>> -               refclk_freq = PHYCLK_CLKSEL_48M;
+>>>> -               break;
+>>>> -       default:
+>>>> -               if (sphy->cpu_type == TYPE_S3C64XX)
+>>>> -                       refclk_freq = PHYCLK_CLKSEL_48M;
+>>>> -               else
+>>>> +       if (sphy->cpu_type == TYPE_EXYNOS5250) {
+>>>> +               /* set clock frequency for PLL */
+>>>> +               switch (clk_get_rate(ref_clk)) {
+>>>> +               case 96 * 100000:
+>>>
+>>> nit: change to 9600 * KHZ to match; below too.
+>>>
+>> sure.
+>>
+>>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_9600K;
+>>>
+>>> Why |= with 0?
+>>>
+>> kept this just to keep things look similar :-). will remove this line,
+>
+> My comment was about keeping things similar.  Right now the 5250 code
+> has the |= and the non-5250 code doesn't.  I don't care which is
+> picked but the two sides of the "if" should be symmetric.
+>
+
+True, it's good to maintain symmetry in the code.
+I shall amend the code as suggested.
+
+> See parts of the patch below.
+>
+>>>> +                       break;
+>>>> +               case 10 * MHZ:
+>>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_10M;
+>>>> +                       break;
+>>>> +               case 12 * MHZ:
+>>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_12M;
+>>>> +                       break;
+>>>> +               case 192 * 100000:
+>>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_19200K;
+>>>> +                       break;
+>>>> +               case 20 * MHZ:
+>>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_20M;
+>>>> +                       break;
+>>>> +               case 50 * MHZ:
+>>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_50M;
+>>>> +                       break;
+>>>> +               case 24 * MHZ:
+>>>> +               default:
+>>>> +                       /* default reference clock */
+>>>> +                       refclk_freq |= HOST_CTRL0_FSEL_CLKSEL_24M;
+>>>> +                       break;
+>>>> +               }
+>>>> +       } else {
+>>>> +               switch (clk_get_rate(ref_clk)) {
+>>>> +               case 12 * MHZ:
+>>>> +                       refclk_freq = PHYCLK_CLKSEL_12M;
+>>>> +                       break;
+>>>> +               case 24 * MHZ:
+>>>>                         refclk_freq = PHYCLK_CLKSEL_24M;
+>>>> -               break;
+>>>> +                       break;
+>>>> +               case 48 * MHZ:
+>>>> +                       refclk_freq = PHYCLK_CLKSEL_48M;
+>>>> +                       break;
+>>>> +               default:
+>>>> +                       if (sphy->cpu_type == TYPE_S3C64XX)
+>>>> +                               refclk_freq = PHYCLK_CLKSEL_48M;
+>>>> +                       else
+>>>> +                               refclk_freq = PHYCLK_CLKSEL_24M;
+>>>> +                       break;
+>>>> +               }
+>>>>         }
+>>>>         clk_put(ref_clk);
+>>>>
+>>>>         return refclk_freq;
+>>>>  }
+>
+> -Doug
+
+
+
+-- 
+Thanks & Regards
+Vivek
