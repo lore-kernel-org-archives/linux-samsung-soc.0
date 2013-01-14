@@ -1,179 +1,64 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 1/2] i2c-core: dt: Pick i2c bus number from i2c alias if present
-Date: Mon, 14 Jan 2013 10:53:21 -0800
-Message-ID: <1358189602-24180-2-git-send-email-dianders@chromium.org>
-References: <1357927027-4857-2-git-send-email-dianders@chromium.org>
- <1358189602-24180-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f202.google.com ([209.85.215.202]:54472 "EHLO
-	mail-ea0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758148Ab3ANSxd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jan 2013 13:53:33 -0500
-Received: by mail-ea0-f202.google.com with SMTP id a1so144777eaa.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 10:53:32 -0800 (PST)
-In-Reply-To: <1358189602-24180-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH] usb: phy: samsung: Add support to set pmu isolation
+Date: Mon, 14 Jan 2013 14:11:42 -0800
+Message-ID: <CAD=FV=Vxdjo5aOU25a-iDNDaiGZCu0+G-p5y1NifXHUJBF0AHg@mail.gmail.com>
+References: <1357891738-26259-1-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1357891738-26259-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, gregkh@linuxfoundation.org, balbi@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, l.majewski@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Praveen Paneri <p.paneri@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Wolfram Sang <w.sang@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org
 
-This allows you to get the equivalent functionality of
-i2c_add_numbered_adapter() with all data in the device tree and no
-special case code in your driver.  This is a common device tree
-technique.
+Vivek,
 
-For quick reference, the FDT syntax for using an alias to provide an
-ID looks like:
-  aliases {
-    i2c0 = &i2c_0;
-    i2c1 = &i2c_1;
-  };
+Sorry for being so absent from these reviews.  I'll try to look over a
+few patches today, but please don't hold up anything on account of my
+reviews.  I'm definitely a bit of an interested bystander in USB land.
+ ;)
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
----
-Changes in v2: None
+In general things look pretty good here.  :)  One last comment below...
 
- drivers/i2c/i2c-core.c |  105 +++++++++++++++++++++++++++++++++++-------------
- 1 files changed, 77 insertions(+), 28 deletions(-)
+On Fri, Jan 11, 2013 at 12:08 AM, Vivek Gautam
+<gautam.vivek@samsung.com> wrote:> +static int
+samsung_usbphy_parse_dt(struct samsung_usbphy *sphy)
+> +{
+> +       struct device_node *usbphy_sys;
+> +
+> +       /* Getting node for system controller interface for usb-phy */
+> +       usbphy_sys = of_get_child_by_name(sphy->dev->of_node, "usbphy-sys");
+> +       if (!usbphy_sys)
+> +               dev_warn(sphy->dev, "No sys-controller interface for usb-phy\n");
 
-diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-index e388590..a60ed6d 100644
---- a/drivers/i2c/i2c-core.c
-+++ b/drivers/i2c/i2c-core.c
-@@ -921,13 +921,81 @@ out_list:
- }
- 
- /**
-+ * i2c_get_number_from_dt - get the adapter number based on dt alias
-+ * @adap: the adapter to look at
-+ *
-+ * Check whether there's an alias in the FDT that gives an ID for this i2c
-+ * device.  Use an alias like "i2c<nr>", like:
-+ *   aliases {
-+ *     i2c0 = &i2c_0;
-+ *     i2c1 = &i2c_1;
-+ *   };
-+ *
-+ * Returns the ID if found.  If no alias is found returns -1.
-+ */
-+static int i2c_get_number_from_dt(struct i2c_adapter *adap)
-+{
-+	struct device *dev = &adap->dev;
-+	int id;
-+
-+	if (!dev->of_node)
-+		return -1;
-+
-+	id = of_alias_get_id(dev->of_node, "i2c");
-+	if (id < 0)
-+		return -1;
-+	return id;
-+}
-+
-+/**
-+ * _i2c_add_numbered_adapter - i2c_add_numbered_adapter where nr is never -1
-+ * @adap: the adapter to register (with adap->nr initialized)
-+ * Context: can sleep
-+ *
-+ * See i2c_add_numbered_adapter() for details.
-+ */
-+static int _i2c_add_numbered_adapter(struct i2c_adapter *adap)
-+{
-+	int	id;
-+	int	status;
-+
-+	/* Handled by wrappers */
-+	BUG_ON(adap->nr == -1);
-+
-+	if (adap->nr & ~MAX_IDR_MASK)
-+		return -EINVAL;
-+
-+retry:
-+	if (idr_pre_get(&i2c_adapter_idr, GFP_KERNEL) == 0)
-+		return -ENOMEM;
-+
-+	mutex_lock(&core_lock);
-+	/* "above" here means "above or equal to", sigh;
-+	 * we need the "equal to" result to force the result
-+	 */
-+	status = idr_get_new_above(&i2c_adapter_idr, adap, adap->nr, &id);
-+	if (status == 0 && id != adap->nr) {
-+		status = -EBUSY;
-+		idr_remove(&i2c_adapter_idr, id);
-+	}
-+	mutex_unlock(&core_lock);
-+	if (status == -EAGAIN)
-+		goto retry;
-+
-+	if (status == 0)
-+		status = i2c_register_adapter(adap);
-+	return status;
-+}
-+
-+/**
-  * i2c_add_adapter - declare i2c adapter, use dynamic bus number
-  * @adapter: the adapter to add
-  * Context: can sleep
-  *
-  * This routine is used to declare an I2C adapter when its bus number
-- * doesn't matter.  Examples: for I2C adapters dynamically added by
-- * USB links or PCI plugin cards.
-+ * doesn't matter or when its bus number is specified by an dt alias.
-+ * Examples of bases when the bus number doesn't matter: I2C adapters
-+ * dynamically added by USB links or PCI plugin cards.
-  *
-  * When this returns zero, a new bus number was allocated and stored
-  * in adap->nr, and the specified adapter became available for clients.
-@@ -937,6 +1005,12 @@ int i2c_add_adapter(struct i2c_adapter *adapter)
- {
- 	int	id, res = 0;
- 
-+	id = i2c_get_number_from_dt(adapter);
-+	if (id >= 0) {
-+		adapter->nr = id;
-+		return _i2c_add_numbered_adapter(adapter);
-+	}
-+
- retry:
- 	if (idr_pre_get(&i2c_adapter_idr, GFP_KERNEL) == 0)
- 		return -ENOMEM;
-@@ -983,34 +1057,9 @@ EXPORT_SYMBOL(i2c_add_adapter);
-  */
- int i2c_add_numbered_adapter(struct i2c_adapter *adap)
- {
--	int	id;
--	int	status;
--
- 	if (adap->nr == -1) /* -1 means dynamically assign bus id */
- 		return i2c_add_adapter(adap);
--	if (adap->nr & ~MAX_IDR_MASK)
--		return -EINVAL;
--
--retry:
--	if (idr_pre_get(&i2c_adapter_idr, GFP_KERNEL) == 0)
--		return -ENOMEM;
--
--	mutex_lock(&core_lock);
--	/* "above" here means "above or equal to", sigh;
--	 * we need the "equal to" result to force the result
--	 */
--	status = idr_get_new_above(&i2c_adapter_idr, adap, adap->nr, &id);
--	if (status == 0 && id != adap->nr) {
--		status = -EBUSY;
--		idr_remove(&i2c_adapter_idr, id);
--	}
--	mutex_unlock(&core_lock);
--	if (status == -EAGAIN)
--		goto retry;
--
--	if (status == 0)
--		status = i2c_register_adapter(adap);
--	return status;
-+	return _i2c_add_numbered_adapter(adap);
- }
- EXPORT_SYMBOL_GPL(i2c_add_numbered_adapter);
- 
--- 
-1.7.7.3
+Seems like you ought to return with an error here.  Calling of_iomap()
+with a NULL value seems undesirable.
+
+> +
+> +       sphy->pmuregs = of_iomap(usbphy_sys, 0);
+> +
+> +       of_node_put(usbphy_sys);
+> +
+> +       if (sphy->pmuregs == NULL) {
+> +               dev_err(sphy->dev, "Can't get usb-phy pmu control register\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Set isolation here for phy.
+> + * Here 'on = true' would mean USB PHY block is isolated, hence
+> + * de-activated and vice-versa.
+> + */
+
+Thank you very much for this comment.  :)  This explains one of the
+confusions I had earlier...
+
+
+Once you fix the one error condition above you can add my
+"Reviewed-by".  Thanks!
+
+-Doug
