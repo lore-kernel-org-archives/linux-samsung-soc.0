@@ -1,147 +1,104 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: Audio support on Mini6410 board
-Date: Mon, 14 Jan 2013 23:44:13 +0100
-Message-ID: <50F48A3D.8050502@gmail.com>
-References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com> <50D2F879.6020501@gmail.com> <CACuz9s0rTGDGvB9PcKfjGvvt8vEdBDKKvQTx94fuj1MrDcNfOg@mail.gmail.com> <50D305CF.2030600@gmail.com> <CACuz9s19M2Qv8dOBY0h0EKNidD3r4G3esvAAWZAUDZEjFMCGiA@mail.gmail.com> <50D30F6C.7000004@gmail.com> <CACuz9s1_KKfVDCa4FvZLe9pEVWuqQzuLPX7pYX9Tw1NUQGPtzA@mail.gmail.com> <CACuz9s1waQ3VgRjdxw9CoiHX2BtfOaxTosqLDwhX+O7px0=JXg@mail.gmail.com> <50D31BF8.8040301@gmail.com> <CACuz9s3xtCndC2jks4T-ytSWxwTBjLbXUrehEtsNwm7H=wJC1Q@mail.gmail.com> <50D31F63.6090304@gmail.com> <CACuz9s06v5nXNze+AAZyPTyxib4OXmqRi9E_Hw4SqBoprym0UA@mail.gmail.com> <CACuz9s1mnOon=EywOrcxZjMOGrx2=f0-4sj6ietZFoEXC66uWQ@mail.gmail.com> <50EF4BCB.40307@gmail.com> <CAA11ShCbyKEtgK=p2Wz57RPZtV1nG5dWb-5Ajq7FuSTse4xPBg@mail.gmail.
- com> <CACuz9s3fMLQUdm8rbLUBKFbHi0E3tGHYUdHLGQQB9wYAt-zo8g@mail.gmail.com> <50F09720.7000102@gmail.com> <CACuz9s2fQYw-2pbE6dyNY7MiUSQxGiWArmXARxdwn1ULuDwm_Q@mail.gmail.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 2/4] usb: phy: samsung: Add host phy support to
+ samsung-phy driver
+Date: Mon, 14 Jan 2013 15:45:30 -0800
+Message-ID: <CAD=FV=Vxo8D+W_=m1+ODEarMXgCgcT0cSs3KekTkGyvVVANyMA@mail.gmail.com>
+References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
+ <1355841786-13307-3-git-send-email-gautam.vivek@samsung.com>
+ <CAD=FV=WMjqszsTQja82_uZc4Ue50TfTmSNO2yOhSMCX1w1L5Dg@mail.gmail.com>
+ <CAFp+6iHYRRS3uSWnmdqBvfOgUDKKJUzMvqoj1HP2uXS=Fdaifg@mail.gmail.com>
+ <CAD=FV=XhMbWjCR5r=R3+zE1524NuUUvFDf2HZuCrXPmsei4BNA@mail.gmail.com>
+ <CAFp+6iHFw2orVOxxzb+daQJsA46zUk2ZOA=h6QwGAme18JngXw@mail.gmail.com>
+ <CAFp+6iF4Q2uUzJKf8d-jMZoxBcVzxBAxLyKDqF4B8=p+_JYuCQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f43.google.com ([74.125.83.43]:42991 "EHLO
-	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756216Ab3ANWoS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jan 2013 17:44:18 -0500
-Received: by mail-ee0-f43.google.com with SMTP id c50so2199564eek.30
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 14:44:16 -0800 (PST)
-In-Reply-To: <CACuz9s2fQYw-2pbE6dyNY7MiUSQxGiWArmXARxdwn1ULuDwm_Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CAFp+6iF4Q2uUzJKf8d-jMZoxBcVzxBAxLyKDqF4B8=p+_JYuCQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Nestorov <alexandernst@gmail.com>
-Cc: Andrey Gusakov <dron0gus@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, oselas@community.pengutronix.de, Juergen Beisert <jbe@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi,
+Vivek,
 
-Cc: Kukjin Kim, the maintainer of Samsung ARM sub-arch
 
-On 01/12/2013 06:07 PM, Alexander Nestorov wrote:
-> Hi,
+On Mon, Jan 14, 2013 at 12:06 AM, Vivek Gautam
+<gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> Is it fine if we don't use macro for SHIFT, earlier code also doesn't use it.
+>> Can we just do like this ..
+>> #define HOST_CTRL0_FSEL_MASK                       (0x7 << 16)
+>> #define HOST_CTRL0_FSEL_CLKSEL_50M            (0x7 << 16)
+>> #define HOST_CTRL0_FSEL_CLKSEL_24M            (0x5 << 16)
+>> #define HOST_CTRL0_FSEL_CLKSEL_20M            (0x4 << 16)
+>> #define HOST_CTRL0_FSEL_CLKSEL_19200K       (0x3 << 16)
+>> #define HOST_CTRL0_FSEL_CLKSEL_12M            (0x2 << 16)
+>> #define HOST_CTRL0_FSEL_CLKSEL_10M            (0x1 << 16)
+>> #define HOST_CTRL0_FSEL_CLKSEL_9600K         (0x0 << 16)
+
+I don't have a problem with just putting the << 16 there...
+
+> Actually missed one thing here, this "HOST_CTRL0_FSEL_CLKSEL_XX" is
+> being used by
+> HOST/OTG blocks to prepare reference clock, that's the reason we kept
+>             #define HOST_CTRL0_FSEL(_x)                  ((_x) << 16)
+> and       #define OTG_SYS_FSEL(_x)                       ((_x) << 4)
+> where (_x) is the reference clock returned from
+> samsung_usbphy_get_refclk_freq().
+
+I feel like samsung_usbphy_get_refclk_freq() is supposed to be
+returning an already shifted value.  ...at least that's how it appears
+to work with existing code.  Why does it feel like that?  ...because
+with existing code we have:
+
+#define PHYCLK_CLKSEL_MASK (0x3 << 0)
+#define PHYCLK_CLKSEL_48M (0x0 << 0)
+#define PHYCLK_CLKSEL_12M (0x2 << 0)
+#define PHYCLK_CLKSEL_24M (0x3 << 0)
+
+Those #defines are what are returned by
+samsung_usbphy_get_refclk_freq().  The fact that the "<< 0" is there
+implies (to me) that the existing function would return shifted values
+if it were applicable.
+
+For exynos you are having the same function return things like:
+
+#define FSEL_CLKSEL_50M (0x7)
+#define FSEL_CLKSEL_24M (0x5)
+#define FSEL_CLKSEL_20M (0x4)
+
+...to me that means that the exynos code is returning unshifted values.
+
+
+If you say that samsung_usbphy_get_refclk_freq() is in charge of
+returning shifted values then you no longer need the HOST_CTRL0_FSEL()
+macro.
+
+
+In any case, I will defer to whatever Felipe thinks is best here (if
+he has an opinion on it).  I am only pointing out that the exynos code
+and existing code seem to be specifying things differently.  That's
+weird to me.
+
+
+> so we can change this to something like
 >
-> it's finally working! :)
+>                            case 10 * MHZ:
+>                                      refclk_freq = FSEL_CLKSEL_10M;
+>                                      break;
+> and so on.
+> will this be fine ?
 
-Great news! ;) I guess you now have all required features working with
-latest mainline kernel ? Is there anything still missing ?
+Seems good to me.
 
-> This is my entire diff: http://pastie.org/5674242  (note: it doesn't include
-> sound/soc/samsung/mini6410_wm9713.c file, which is a copy of the
-> smdk6410_wm9713.c file)
-> Here's the mini6410_wm9713.c file: http://pastie.org/5674322
->
->
-> This is what I'm getting from boot:
->
-> soc-audio soc-audio: ASoC machine SMDK WM9713 should use snd_soc_register_card()
-> soc-audio soc-audio:  wm9713-hifi<->  samsung-ac97 mapping ok
-> ALSA device list:
->    #0: MINI6410
->
-> which is what I was expecting (at least that's what I get booting the
-> FriendlyARM kernel).
 
-Sounds good.
-
-> I had to unmute everything because everything was muted by default,
-> but that really doesn't bother me.
->
-> The bad part is that, as Andrey told us, the filter hack is necessary.
-> If I remove it, I can't get any sound working.
-> Even further, if I try to run some amixer sset commands to unmute a
-> control, I get a few printfs with
-> "ac97: req addr = 12, rep addr = 00".
->
-> Also, there is one strange compile warning which I'm not able to
-> understand where is coming from:
->
-> WARNING: vmlinux.o(.data+0x6a78): Section mismatch in reference from
-> the variable smdk6410_b_pwr_5v_data to the (unknown reference)
-> .init.data:(unknown)
-> The variable smdk6410_b_pwr_5v_data references
-> the (unknown reference) __initdata (unknown)
-> If the reference is valid then annotate the
-> variable with __init* or __refdata (see linux/init.h) or name the variable:
-> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
->
-> I do know that it came right after adding the mini6410_wm9713.c to the
-> Makefile but that really shouldn't make it bug. Also, it has nothing
-> to do with SMDK, which
-> is what this warning is suggesting. I'm not using
-> smdk6410_b_pwr_5v_data in my mach-mini6410.c so...
-
-This is an issue at the SMDK board file, don't need to worry about it.
-I must have shown up when the kernel got linked again. The below patch
-should fix that issue.
-
-> Sylwester, I can start sending you well-formated patches now or I can
-> wait for the filter hack to be fixed first, just say :)
-
-I know I asked you previously for preparing patches so others don't
-need to waste much time to enable all required features on those s3c64xx
-reference boards. But now when there is the device tree support for
-s3c64xx SoCs on the horizon [1], I'm not sure if we should be updating
-the board files. Especially adding new static platform devices might be
-not welcome.
-
-@Kukjin: Do you think we can merge things like in this diff:
-http://pastie.org/5674242, while device tree support is being worked on ?
-Or should that be rather kept in private branches ?
-
-[1] http://www.spinics.net/lists/arm-kernel/msg216616.html
-
-Regards,
-Sylwester
-
--------------8<--------------------------------------
-
- From 03c7f2470f58a6575b4a15ff52e9d1252f392933 Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Date: Sat, 12 Jan 2013 19:49:13 +0100
-Subject: [PATCH] ARM: S3C64XX: Fix section mismatch in smdk6410 board file
-
-This patch corrects smdk6410_b_pwr_5v_consumers[] array attribute
-and eliminates following compilation warning:
-
-WARNING: arch/arm/mach-s3c64xx/built-in.o(.data+0x5704): Section mismatch
-in reference from the variable smdk6410_b_pwr_5v_data to the (unknown
-reference) .init.data:(unknown)
-
-The variable smdk6410_b_pwr_5v_data references
-the (unknown reference) __initdata (unknown)
-If the reference is valid then annotate the
-variable with __init* or __refdata (see linux/init.h) or name the variable:
-*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
-
-Reported-by: Alexander Nestorov <alexandernst@gmail.com>
-Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
----
-  arch/arm/mach-s3c64xx/mach-smdk6410.c |    2 +-
-  1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c 
-b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 574a9ee..819c133 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -209,7 +209,7 @@ static struct platform_device smdk6410_smsc911x = {
-  };
-
-  #ifdef CONFIG_REGULATOR
--static struct regulator_consumer_supply smdk6410_b_pwr_5v_consumers[] 
-__initdata = {
-+static struct regulator_consumer_supply smdk6410_b_pwr_5v_consumers[] = {
-  	REGULATOR_SUPPLY("PVDD", "0-001b"),
-  	REGULATOR_SUPPLY("AVDD", "0-001b"),
-  };
--- 
-1.7.4.1
--------------8<--------------------------------------
+-Doug
