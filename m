@@ -1,100 +1,93 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH v2] arch/arm/mach-s5pv210: adding ifdef CONFIG_CPU_S5PV210
- to fix compiling issue
-Date: Tue, 15 Jan 2013 18:02:49 +0800
-Message-ID: <50F52949.6010808@asianux.com>
-References: <50EA972E.3040404@asianux.com> <50EAC016.6090707@asianux.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: Early kernel hang with big DTB appended
+Date: Tue, 15 Jan 2013 11:53:49 +0100
+Message-ID: <20130115105349.GK1906@pengutronix.de>
+References: <7811936.npteFbuYu2@amdc1227>
+ <20130111164531.GC13025@pengutronix.de>
+ <alpine.LFD.2.02.1301141655570.6300@xanadu.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GB2312
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:34393 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752369Ab3AOKCF (ORCPT
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:50118 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755379Ab3AOKxw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jan 2013 05:02:05 -0500
-In-Reply-To: <50EAC016.6090707@asianux.com>
+	Tue, 15 Jan 2013 05:53:52 -0500
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.02.1301141655570.6300@xanadu.home>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux@arm.linux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, kgene.kim@samsung.com, thomas.abraham@linaro.org, bones@secretlab.ca, linux-arm-kernel@lists.infradead.org
 
-Hello kgene.kim
+On Mon, Jan 14, 2013 at 05:13:09PM -0500, Nicolas Pitre wrote:
+> On Fri, 11 Jan 2013, Sascha Hauer wrote:
+> 
+> > On Thu, Jan 03, 2013 at 04:55:00PM +0100, Tomasz Figa wrote:
+> > > Hi,
+> > > 
+> > > I'm observing strange behavior when booting 3.8-rc1 and -rc2 with appended 
+> > > DTB. The kernel hangs very early when the DTB is bigger than some 
+> > > threshold somewhere around 24 KiB. With fullest possible low level UART 
+> > > debugging (and printk patched to use printascii) I'm receiving following 
+> > > output:
+> > > 
+> > > Uncompressing Linux... done, booting the kernel.
+> > > Booting Linux on physical CPU 0xa00
+> > > Linux version 3.8.0-rc1-00073-gdf6efca-dirty (t.figa@amdc1227) (gcc 
+> > > version 4.5.2 (Gentoo 4.5.2 p1.2, pie-0.4.5) ) #2 SMP PREEMPT Thu Jan 3 
+> > > 15:37:35 CET 2013
+> > > CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d
+> > > CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+> > > 
+> > > I tested on two Exynos-based boards (exynos4210-trats and one internal 
+> > > exynos4412-based board) and same happens on both.
+> > > 
+> > > Do you have any ideas?
+> > 
+> > Another thing besides the things already mentioned is that the dtb may
+> > not cross a 1MiB boundary. The Kernel uses a single 1Mib section
+> > (aligned to 1Mib) to initially map the dtb. Once you cross that boundary
+> > parts of the dtb won't be accessible for the Kernel anymore.
+> 
+> Crap.  You're right.  This patch should fix this issue.
 
-  when you have free time, please give a glance for this patch.
+Just successfully tested with a devicetree explicitly located just before a 1MiB
+boundary, so:
 
-  I sent it according to script/get_maintainter.pl.
-  if I sent to an incorrect member, please tell me, thanks.
+Tested-by: Sascha Hauer <s.hauer@pengutronix.de>
 
+Sascha
 
-  Regards
+> 
+> @Tomasz: please could you confirm this fixes your initial problem?
+> 
+> 
+> diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+> index 4eee351f46..61fcb18c7e 100644
+> --- a/arch/arm/kernel/head.S
+> +++ b/arch/arm/kernel/head.S
+> @@ -246,6 +246,7 @@ __create_page_tables:
+>  
+>  	/*
+>  	 * Then map boot params address in r2 if specified.
+> +	 * We map 2 sections in case the ATAGs/DTB crosses a section boundary.
+>  	 */
+>  	mov	r0, r2, lsr #SECTION_SHIFT
+>  	movs	r0, r0, lsl #SECTION_SHIFT
+> @@ -253,6 +254,8 @@ __create_page_tables:
+>  	addne	r3, r3, #PAGE_OFFSET
+>  	addne	r3, r4, r3, lsr #(SECTION_SHIFT - PMD_ORDER)
+>  	orrne	r6, r7, r0
+> +	strne	r6, [r3], #1 << PMD_ORDER
+> +	addne	r6, r6, #1 << SECTION_SHIFT
+>  	strne	r6, [r3]
+>  
+>  #ifdef CONFIG_DEBUG_LL
+> 
 
-gchen.
-
-
-=D3=DA 2013=C4=EA01=D4=C207=C8=D5 20:31, Chen Gang =D0=B4=B5=C0:
->=20
->   if not define CONFIG_CPU_S5PV210
->=20
->     it will define NULL in common.h for:
->       s5pv210_map_io, s5pv210_init_clocks, s5pv210_init, s5pv210_init=
-_uarts
->=20
->     so need using #ifdef CONFIG_CPU_S5PV210 for them too, in common.c=
-=2E
->       or compiling issue will occur.
->=20
->=20
-> Signed-off-by: Chen Gang <gang.chen@asianux.com>
-> ---
->  arch/arm/mach-s5pv210/common.c |    9 +++++++++
->  1 file changed, 9 insertions(+)
->=20
-> diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/c=
-ommon.c
-> index 9dfe93e..5c88f88 100644
-> --- a/arch/arm/mach-s5pv210/common.c
-> +++ b/arch/arm/mach-s5pv210/common.c
-> @@ -167,6 +167,8 @@ void __init s5pv210_init_io(struct map_desc *mach=
-_desc, int size)
->  	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
->  }
-> =20
-> +#ifdef CONFIG_CPU_S5PV210
-> +
->  void __init s5pv210_map_io(void)
->  {
->  	/* initialise device information early */
-> @@ -209,6 +211,9 @@ void __init s5pv210_init_clocks(int xtal)
->  	s5pv210_setup_clocks();
->  }
-> =20
-> +#endif /* CONFIG_CPU_S5PV210 */
-> +
-> +
->  void __init s5pv210_init_irq(void)
->  {
->  	u32 vic[4];	/* S5PV210 supports 4 VIC */
-> @@ -227,6 +232,8 @@ struct bus_type s5pv210_subsys =3D {
->  	.dev_name	=3D "s5pv210-core",
->  };
-> =20
-> +#ifdef CONFIG_CPU_S5PV210
-> +
->  static struct device s5pv210_dev =3D {
->  	.bus	=3D &s5pv210_subsys,
->  };
-> @@ -249,3 +256,5 @@ void __init s5pv210_init_uarts(struct s3c2410_uar=
-tcfg *cfg, int no)
->  {
->  	s3c24xx_init_uartdevs("s5pv210-uart", s5p_uart_resources, cfg, no);
->  }
-> +
-> +#endif /* CONFIG_CPU_S5PV210 */
->=20
-
-
---=20
-Chen Gang
-
-Asianux Corporation
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
