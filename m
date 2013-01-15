@@ -1,13 +1,15 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v7] usb: phy: samsung: Add support to set pmu isolation
-Date: Tue, 15 Jan 2013 11:40:25 +0530
-Message-ID: <1358230225-2770-1-git-send-email-gautam.vivek@samsung.com>
-References: <CAFp+6iE7zEJ7E_pRCOYz5mQqbk-MFE6Hwr02pRRT1yP+X3z7kQ@mail.gmail.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v4 1/5] mmc: dw_mmc: Add "disable-wp" device tree property
+Date: Mon, 14 Jan 2013 22:20:04 -0800
+Message-ID: <20130115062004.GA19801@quad.lixom.net>
+References: <1357842269-15062-1-git-send-email-dianders@chromium.org>
+ <1357923834-31641-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <CAFp+6iE7zEJ7E_pRCOYz5mQqbk-MFE6Hwr02pRRT1yP+X3z7kQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1357923834-31641-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
@@ -18,400 +20,43 @@ List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
 Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Sender: "devicetree-discuss"
  <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Newton <will.newton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adding support to parse device node data in order to get
-required properties to set pmu isolation for usb-phy.
+On Fri, Jan 11, 2013 at 09:03:50AM -0800, Doug Anderson wrote:
+> The "disable-wp" property is used to specify that a given SD card slot
+> doesn't have a concept of write protect.  This eliminates the need for
+> special case code for SD slots that should never be write protected
+> (like a micro SD slot or a dev board).
+> 
+> The dw_mmc driver is special in needing to specify "disable-wp"
+> because the lack of a "wp-gpios" property means to use the special
+> purpose write protect line.  On some other mmc devices the lack of
+> "wp-gpios" means that write protect should be disabled.
+> 
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Acked-by: Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
+Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-Changes from v6:
- - Returning error code in samsung_usbphy_parse_dt() when
-   'usbphy-sys' sub-node is not present and thereby putting up
-   dev_err() instead of dev_warn()
+Nit below.
 
- .../devicetree/bindings/usb/samsung-usbphy.txt     |   36 +++++
- drivers/usb/phy/samsung-usbphy.c                   |  163 +++++++++++++++++---
- 2 files changed, 177 insertions(+), 22 deletions(-)
+> @@ -825,7 +828,13 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
+>  	struct dw_mci_board *brd = slot->host->pdata;
+>  
+>  	/* Use platform get_ro function, else try on board write protect */
+> -	if (brd->quirks & DW_MCI_QUIRK_NO_WRITE_PROTECT)
+> +
+> +	/*
+> +	 * NOTE: DW_MCI_QUIRK_NO_WRITE_PROTECT will be removed in a future
+> +	 * patch in the series once reference to it is removed.
+> +	 */
+> +	if ((brd->quirks & DW_MCI_QUIRK_NO_WRITE_PROTECT) ||
+> +	    (slot->quirks & DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT))
 
-diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-index 7b26e2d..22d06cf 100644
---- a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-+++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-@@ -9,3 +9,39 @@ Required properties:
- - compatible : should be "samsung,exynos4210-usbphy"
- - reg : base physical address of the phy registers and length of memory mapped
- 	region.
-+
-+Optional properties:
-+- #address-cells: should be '1' when usbphy node has a child node with 'reg'
-+		  property.
-+- #size-cells: should be '1' when usbphy node has a child node with 'reg'
-+	       property.
-+- ranges: allows valid translation between child's address space and parent's
-+	  address space.
-+
-+- The child node 'usbphy-sys' to the node 'usbphy' is for the system controller
-+  interface for usb-phy. It should provide the following information required by
-+  usb-phy controller to control phy.
-+  - reg : base physical address of PHY_CONTROL registers.
-+	  The size of this register is the total sum of size of all PHY_CONTROL
-+	  registers that the SoC has. For example, the size will be
-+	  '0x4' in case we have only one PHY_CONTROL register (e.g.
-+	  OTHERS register in S3C64XX or USB_PHY_CONTROL register in S5PV210)
-+	  and, '0x8' in case we have two PHY_CONTROL registers (e.g.
-+	  USBDEVICE_PHY_CONTROL and USBHOST_PHY_CONTROL registers in exynos4x).
-+	  and so on.
-+
-+Example:
-+ - Exynos4210
-+
-+	usbphy@125B0000 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "samsung,exynos4210-usbphy";
-+		reg = <0x125B0000 0x100>;
-+		ranges;
-+
-+		usbphy-sys {
-+			/* USB device and host PHY_CONTROL registers */
-+			reg = <0x10020704 0x8>;
-+		};
-+	};
-diff --git a/drivers/usb/phy/samsung-usbphy.c b/drivers/usb/phy/samsung-usbphy.c
-index 5c5e1bb5..30aebb5 100644
---- a/drivers/usb/phy/samsung-usbphy.c
-+++ b/drivers/usb/phy/samsung-usbphy.c
-@@ -24,6 +24,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/usb/otg.h>
- #include <linux/platform_data/samsung-usbphy.h>
- 
-@@ -60,20 +61,46 @@
- #define MHZ (1000*1000)
- #endif
- 
-+#define S3C64XX_USBPHY_ENABLE			(0x1 << 16)
-+#define EXYNOS_USBPHY_ENABLE			(0x1 << 0)
-+
- enum samsung_cpu_type {
- 	TYPE_S3C64XX,
- 	TYPE_EXYNOS4210,
- };
- 
- /*
-+ * struct samsung_usbphy_drvdata - driver data for various SoC variants
-+ * @cpu_type: machine identifier
-+ * @devphy_en_mask: device phy enable mask for PHY CONTROL register
-+ * @devphy_reg_offset: offset to DEVICE PHY CONTROL register from
-+ *		       mapped address of system controller.
-+ *
-+ *	Here we have a separate mask for device type phy.
-+ *	Having different masks for host and device type phy helps
-+ *	in setting independent masks in case of SoCs like S5PV210,
-+ *	in which PHY0 and PHY1 enable bits belong to same register
-+ *	placed at position 0 and 1 respectively.
-+ *	Although for newer SoCs like exynos these bits belong to
-+ *	different registers altogether placed at position 0.
-+ */
-+struct samsung_usbphy_drvdata {
-+	int cpu_type;
-+	int devphy_en_mask;
-+	u32 devphy_reg_offset;
-+};
-+
-+/*
-  * struct samsung_usbphy - transceiver driver state
-  * @phy: transceiver structure
-  * @plat: platform data
-  * @dev: The parent device supplied to the probe function
-  * @clk: usb phy clock
-- * @regs: usb phy register memory base
-+ * @regs: usb phy controller registers memory base
-+ * @pmuregs: USB device PHY_CONTROL register memory base
-  * @ref_clk_freq: reference clock frequency selection
-- * @cpu_type: machine identifier
-+ * @drv_data: driver data available for different SoCs
-+ * @lock: lock for phy operations
-  */
- struct samsung_usbphy {
- 	struct usb_phy	phy;
-@@ -81,12 +108,66 @@ struct samsung_usbphy {
- 	struct device	*dev;
- 	struct clk	*clk;
- 	void __iomem	*regs;
-+	void __iomem	*pmuregs;
- 	int		ref_clk_freq;
--	int		cpu_type;
-+	const struct samsung_usbphy_drvdata *drv_data;
-+	spinlock_t	lock;
- };
- 
- #define phy_to_sphy(x)		container_of((x), struct samsung_usbphy, phy)
- 
-+static int samsung_usbphy_parse_dt(struct samsung_usbphy *sphy)
-+{
-+	struct device_node *usbphy_sys;
-+
-+	/* Getting node for system controller interface for usb-phy */
-+	usbphy_sys = of_get_child_by_name(sphy->dev->of_node, "usbphy-sys");
-+	if (!usbphy_sys) {
-+		dev_err(sphy->dev, "No sys-controller interface for usb-phy\n");
-+		return -ENODEV;
-+	}
-+
-+	sphy->pmuregs = of_iomap(usbphy_sys, 0);
-+
-+	of_node_put(usbphy_sys);
-+
-+	if (sphy->pmuregs == NULL) {
-+		dev_err(sphy->dev, "Can't get usb-phy pmu control register\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Set isolation here for phy.
-+ * Here 'on = true' would mean USB PHY block is isolated, hence
-+ * de-activated and vice-versa.
-+ */
-+static void samsung_usbphy_set_isolation(struct samsung_usbphy *sphy, bool on)
-+{
-+	void __iomem *reg;
-+	u32 reg_val;
-+	u32 en_mask;
-+
-+	if (!sphy->pmuregs) {
-+		dev_warn(sphy->dev, "Can't set pmu isolation\n");
-+		return;
-+	}
-+
-+	reg = sphy->pmuregs + sphy->drv_data->devphy_reg_offset;
-+	en_mask = sphy->drv_data->devphy_en_mask;
-+
-+	reg_val = readl(reg);
-+
-+	if (on)
-+		reg_val &= ~en_mask;
-+	else
-+		reg_val |= en_mask;
-+
-+	writel(reg_val, reg);
-+}
-+
- /*
-  * Returns reference clock frequency selection value
-  */
-@@ -112,7 +193,7 @@ static int samsung_usbphy_get_refclk_freq(struct samsung_usbphy *sphy)
- 		refclk_freq = PHYCLK_CLKSEL_48M;
- 		break;
- 	default:
--		if (sphy->cpu_type == TYPE_S3C64XX)
-+		if (sphy->drv_data->cpu_type == TYPE_S3C64XX)
- 			refclk_freq = PHYCLK_CLKSEL_48M;
- 		else
- 			refclk_freq = PHYCLK_CLKSEL_24M;
-@@ -135,7 +216,7 @@ static void samsung_usbphy_enable(struct samsung_usbphy *sphy)
- 	phypwr = readl(regs + SAMSUNG_PHYPWR);
- 	rstcon = readl(regs + SAMSUNG_RSTCON);
- 
--	switch (sphy->cpu_type) {
-+	switch (sphy->drv_data->cpu_type) {
- 	case TYPE_S3C64XX:
- 		phyclk &= ~PHYCLK_COMMON_ON_N;
- 		phypwr &= ~PHYPWR_NORMAL_MASK;
-@@ -165,7 +246,7 @@ static void samsung_usbphy_disable(struct samsung_usbphy *sphy)
- 
- 	phypwr = readl(regs + SAMSUNG_PHYPWR);
- 
--	switch (sphy->cpu_type) {
-+	switch (sphy->drv_data->cpu_type) {
- 	case TYPE_S3C64XX:
- 		phypwr |= PHYPWR_NORMAL_MASK;
- 		break;
-@@ -185,6 +266,7 @@ static void samsung_usbphy_disable(struct samsung_usbphy *sphy)
- static int samsung_usbphy_init(struct usb_phy *phy)
- {
- 	struct samsung_usbphy *sphy;
-+	unsigned long flags;
- 	int ret = 0;
- 
- 	sphy = phy_to_sphy(phy);
-@@ -196,13 +278,19 @@ static int samsung_usbphy_init(struct usb_phy *phy)
- 		return ret;
- 	}
- 
-+	spin_lock_irqsave(&sphy->lock, flags);
-+
- 	/* Disable phy isolation */
- 	if (sphy->plat && sphy->plat->pmu_isolation)
- 		sphy->plat->pmu_isolation(false);
-+	else
-+		samsung_usbphy_set_isolation(sphy, false);
- 
- 	/* Initialize usb phy registers */
- 	samsung_usbphy_enable(sphy);
- 
-+	spin_unlock_irqrestore(&sphy->lock, flags);
-+
- 	/* Disable the phy clock */
- 	clk_disable_unprepare(sphy->clk);
- 	return ret;
-@@ -214,6 +302,7 @@ static int samsung_usbphy_init(struct usb_phy *phy)
- static void samsung_usbphy_shutdown(struct usb_phy *phy)
- {
- 	struct samsung_usbphy *sphy;
-+	unsigned long flags;
- 
- 	sphy = phy_to_sphy(phy);
- 
-@@ -222,44 +311,47 @@ static void samsung_usbphy_shutdown(struct usb_phy *phy)
- 		return;
- 	}
- 
-+	spin_lock_irqsave(&sphy->lock, flags);
-+
- 	/* De-initialize usb phy registers */
- 	samsung_usbphy_disable(sphy);
- 
- 	/* Enable phy isolation */
- 	if (sphy->plat && sphy->plat->pmu_isolation)
- 		sphy->plat->pmu_isolation(true);
-+	else
-+		samsung_usbphy_set_isolation(sphy, true);
-+
-+	spin_unlock_irqrestore(&sphy->lock, flags);
- 
- 	clk_disable_unprepare(sphy->clk);
- }
- 
- static const struct of_device_id samsung_usbphy_dt_match[];
- 
--static inline int samsung_usbphy_get_driver_data(struct platform_device *pdev)
-+static inline const struct samsung_usbphy_drvdata
-+*samsung_usbphy_get_driver_data(struct platform_device *pdev)
- {
- 	if (pdev->dev.of_node) {
- 		const struct of_device_id *match;
- 		match = of_match_node(samsung_usbphy_dt_match,
- 							pdev->dev.of_node);
--		return (int) match->data;
-+		return match->data;
- 	}
- 
--	return platform_get_device_id(pdev)->driver_data;
-+	return (struct samsung_usbphy_drvdata *)
-+				platform_get_device_id(pdev)->driver_data;
- }
- 
- static int __devinit samsung_usbphy_probe(struct platform_device *pdev)
- {
- 	struct samsung_usbphy *sphy;
--	struct samsung_usbphy_data *pdata;
-+	struct samsung_usbphy_data *pdata = pdev->dev.platform_data;
- 	struct device *dev = &pdev->dev;
- 	struct resource *phy_mem;
- 	void __iomem	*phy_base;
- 	struct clk *clk;
--
--	pdata = pdev->dev.platform_data;
--	if (!pdata) {
--		dev_err(&pdev->dev, "%s: no platform data defined\n", __func__);
--		return -EINVAL;
--	}
-+	int ret;
- 
- 	phy_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!phy_mem) {
-@@ -283,7 +375,19 @@ static int __devinit samsung_usbphy_probe(struct platform_device *pdev)
- 		return PTR_ERR(clk);
- 	}
- 
--	sphy->dev		= &pdev->dev;
-+	sphy->dev = dev;
-+
-+	if (dev->of_node) {
-+		ret = samsung_usbphy_parse_dt(sphy);
-+		if (ret < 0)
-+			return ret;
-+	} else {
-+		if (!pdata) {
-+			dev_err(dev, "no platform data specified\n");
-+			return -EINVAL;
-+		}
-+	}
-+
- 	sphy->plat		= pdata;
- 	sphy->regs		= phy_base;
- 	sphy->clk		= clk;
-@@ -291,9 +395,11 @@ static int __devinit samsung_usbphy_probe(struct platform_device *pdev)
- 	sphy->phy.label		= "samsung-usbphy";
- 	sphy->phy.init		= samsung_usbphy_init;
- 	sphy->phy.shutdown	= samsung_usbphy_shutdown;
--	sphy->cpu_type		= samsung_usbphy_get_driver_data(pdev);
-+	sphy->drv_data		= samsung_usbphy_get_driver_data(pdev);
- 	sphy->ref_clk_freq	= samsung_usbphy_get_refclk_freq(sphy);
- 
-+	spin_lock_init(&sphy->lock);
-+
- 	platform_set_drvdata(pdev, sphy);
- 
- 	return usb_add_phy(&sphy->phy, USB_PHY_TYPE_USB2);
-@@ -305,17 +411,30 @@ static int __exit samsung_usbphy_remove(struct platform_device *pdev)
- 
- 	usb_remove_phy(&sphy->phy);
- 
-+	if (sphy->pmuregs)
-+		iounmap(sphy->pmuregs);
-+
- 	return 0;
- }
- 
-+static const struct samsung_usbphy_drvdata usbphy_s3c64xx = {
-+	.cpu_type		= TYPE_S3C64XX,
-+	.devphy_en_mask		= S3C64XX_USBPHY_ENABLE,
-+};
-+
-+static const struct samsung_usbphy_drvdata usbphy_exynos4 = {
-+	.cpu_type		= TYPE_EXYNOS4210,
-+	.devphy_en_mask		= EXYNOS_USBPHY_ENABLE,
-+};
-+
- #ifdef CONFIG_OF
- static const struct of_device_id samsung_usbphy_dt_match[] = {
- 	{
- 		.compatible = "samsung,s3c64xx-usbphy",
--		.data = (void *)TYPE_S3C64XX,
-+		.data = &usbphy_s3c64xx,
- 	}, {
- 		.compatible = "samsung,exynos4210-usbphy",
--		.data = (void *)TYPE_EXYNOS4210,
-+		.data = &usbphy_exynos4,
- 	},
- 	{},
- };
-@@ -325,10 +444,10 @@ MODULE_DEVICE_TABLE(of, samsung_usbphy_dt_match);
- static struct platform_device_id samsung_usbphy_driver_ids[] = {
- 	{
- 		.name		= "s3c64xx-usbphy",
--		.driver_data	= TYPE_S3C64XX,
-+		.driver_data	= (unsigned long)&usbphy_s3c64xx,
- 	}, {
- 		.name		= "exynos4210-usbphy",
--		.driver_data	= TYPE_EXYNOS4210,
-+		.driver_data	= (unsigned long)&usbphy_exynos4,
- 	},
- 	{},
- };
--- 
-1.7.6.5
+Given that it never worked properly, you could have nuked it first and avoid
+the extra churn. Still, not a strong enough reason to respin the series, IMHO.
+
+
+-Olof
