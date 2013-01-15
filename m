@@ -1,35 +1,41 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 5/5] mmc: dw_mmc: Remove DW_MCI_QUIRK_NO_WRITE_PROTECT
-Date: Mon, 14 Jan 2013 22:28:13 -0800
-Message-ID: <20130115062813.GD20105@quad.lixom.net>
-References: <1357842269-15062-1-git-send-email-dianders@chromium.org>
- <1357923834-31641-1-git-send-email-dianders@chromium.org>
- <1357923834-31641-5-git-send-email-dianders@chromium.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] i2c-core: dt: Pick i2c bus number from i2c alias
+ if present
+Date: Mon, 14 Jan 2013 22:34:25 -0800
+Message-ID: <20130115063425.GE20105@quad.lixom.net>
+References: <1357927027-4857-2-git-send-email-dianders@chromium.org>
+ <1358189602-24180-1-git-send-email-dianders@chromium.org>
+ <1358189602-24180-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:33559 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756141Ab3AOG2N (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jan 2013 01:28:13 -0500
-Received: by mail-pb0-f50.google.com with SMTP id wz7so2654088pbc.37
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 22:28:12 -0800 (PST)
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1357923834-31641-5-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1358189602-24180-2-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Fri, Jan 11, 2013 at 09:03:54AM -0800, Doug Anderson wrote:
-> The original quirk was added in the change 'mmc: dw_mmc: add quirk to
-> indicate missing write protect line'.  The original quirk was added at
-> a controller level even though each slot has its own write protect (so
-> the quirk should be at the slot level).  A recent change (mmc: dw_mmc:
-> Add "disable-wp" device tree property) added a slot-level quirk and
-> support for the quirk directly to dw_mmc.
+On Mon, Jan 14, 2013 at 10:53:21AM -0800, Doug Anderson wrote:
+> This allows you to get the equivalent functionality of
+> i2c_add_numbered_adapter() with all data in the device tree and no
+> special case code in your driver.  This is a common device tree
+> technique.
 > 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> For quick reference, the FDT syntax for using an alias to provide an
+> ID looks like:
+>   aliases {
+>     i2c0 = &i2c_0;
+>     i2c1 = &i2c_1;
+>   };
+> 
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Acked-by: Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Acked-by: Olof Johansson <olof@lixom.net>
+The call path for i2c_add_numbered_adapter() with nr == -1 is a little
+awkward now, but I don't see much how it can be improved much.
+
+Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+
+
+-Olof
