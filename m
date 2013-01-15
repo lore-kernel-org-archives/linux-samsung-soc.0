@@ -1,104 +1,56 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v5 2/4] usb: phy: samsung: Add host phy support to
- samsung-phy driver
-Date: Mon, 14 Jan 2013 15:45:30 -0800
-Message-ID: <CAD=FV=Vxo8D+W_=m1+ODEarMXgCgcT0cSs3KekTkGyvVVANyMA@mail.gmail.com>
-References: <1355841786-13307-1-git-send-email-gautam.vivek@samsung.com>
- <1355841786-13307-3-git-send-email-gautam.vivek@samsung.com>
- <CAD=FV=WMjqszsTQja82_uZc4Ue50TfTmSNO2yOhSMCX1w1L5Dg@mail.gmail.com>
- <CAFp+6iHYRRS3uSWnmdqBvfOgUDKKJUzMvqoj1HP2uXS=Fdaifg@mail.gmail.com>
- <CAD=FV=XhMbWjCR5r=R3+zE1524NuUUvFDf2HZuCrXPmsei4BNA@mail.gmail.com>
- <CAFp+6iHFw2orVOxxzb+daQJsA46zUk2ZOA=h6QwGAme18JngXw@mail.gmail.com>
- <CAFp+6iF4Q2uUzJKf8d-jMZoxBcVzxBAxLyKDqF4B8=p+_JYuCQ@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Remove wrong I2S0 clock from peril clock
+Date: Tue, 15 Jan 2013 09:01:49 +0530
+Message-ID: <50F4CDA5.3090904@linaro.org>
+References: <003501cd9d65$9611d060$c2357120$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <CAFp+6iF4Q2uUzJKf8d-jMZoxBcVzxBAxLyKDqF4B8=p+_JYuCQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f54.google.com ([209.85.210.54]:40568 "EHLO
+	mail-da0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751699Ab3AODb5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Jan 2013 22:31:57 -0500
+Received: by mail-da0-f54.google.com with SMTP id n2so2073074dad.27
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 19:31:56 -0800 (PST)
+In-Reply-To: <003501cd9d65$9611d060$c2357120$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sangsu Park <sangsu4u.park@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>
 
-Vivek,
+On 09/28/2012 04:09 PM, Sangsu Park wrote:
+> Remove I2S0 clock from peril since peril doesn't have I2S0 clock for EXYNOS4.
+> Audio Subsystem block has I2S0 clk.
+> 
+> Signed-off-by: sangsu <sangsu@sangsu-P560.(none)>
+> ---
+>  arch/arm/mach-exynos/clock-exynos4.c |    5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/clock-exynos4.c
+> b/arch/arm/mach-exynos/clock-exynos4.c
+> index 6a45c9a..fa8a134 100644
+> --- a/arch/arm/mach-exynos/clock-exynos4.c
+> +++ b/arch/arm/mach-exynos/clock-exynos4.c
+> @@ -613,11 +613,6 @@ static struct clk exynos4_init_clocks_off[] = {
+>  		.ctrlbit	= (1 << 18),
+>  	}, {
+>  		.name		= "iis",
+> -		.devname	= "samsung-i2s.0",
+> -		.enable		= exynos4_clk_ip_peril_ctrl,
+> -		.ctrlbit	= (1 << 19),
+> -	}, {
+> -		.name		= "iis",
+>  		.devname	= "samsung-i2s.1",
+>  		.enable		= exynos4_clk_ip_peril_ctrl,
+>  		.ctrlbit	= (1 << 20),
+> 
 
+After this clock has been removed, I2S0 registration fails on EXYNOS4
+based boards (clk_get for iis clock fails). The alternate clock from
+Audio subsystem block is missing.
 
-On Mon, Jan 14, 2013 at 12:06 AM, Vivek Gautam
-<gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Is it fine if we don't use macro for SHIFT, earlier code also doesn't use it.
->> Can we just do like this ..
->> #define HOST_CTRL0_FSEL_MASK                       (0x7 << 16)
->> #define HOST_CTRL0_FSEL_CLKSEL_50M            (0x7 << 16)
->> #define HOST_CTRL0_FSEL_CLKSEL_24M            (0x5 << 16)
->> #define HOST_CTRL0_FSEL_CLKSEL_20M            (0x4 << 16)
->> #define HOST_CTRL0_FSEL_CLKSEL_19200K       (0x3 << 16)
->> #define HOST_CTRL0_FSEL_CLKSEL_12M            (0x2 << 16)
->> #define HOST_CTRL0_FSEL_CLKSEL_10M            (0x1 << 16)
->> #define HOST_CTRL0_FSEL_CLKSEL_9600K         (0x0 << 16)
-
-I don't have a problem with just putting the << 16 there...
-
-> Actually missed one thing here, this "HOST_CTRL0_FSEL_CLKSEL_XX" is
-> being used by
-> HOST/OTG blocks to prepare reference clock, that's the reason we kept
->             #define HOST_CTRL0_FSEL(_x)                  ((_x) << 16)
-> and       #define OTG_SYS_FSEL(_x)                       ((_x) << 4)
-> where (_x) is the reference clock returned from
-> samsung_usbphy_get_refclk_freq().
-
-I feel like samsung_usbphy_get_refclk_freq() is supposed to be
-returning an already shifted value.  ...at least that's how it appears
-to work with existing code.  Why does it feel like that?  ...because
-with existing code we have:
-
-#define PHYCLK_CLKSEL_MASK (0x3 << 0)
-#define PHYCLK_CLKSEL_48M (0x0 << 0)
-#define PHYCLK_CLKSEL_12M (0x2 << 0)
-#define PHYCLK_CLKSEL_24M (0x3 << 0)
-
-Those #defines are what are returned by
-samsung_usbphy_get_refclk_freq().  The fact that the "<< 0" is there
-implies (to me) that the existing function would return shifted values
-if it were applicable.
-
-For exynos you are having the same function return things like:
-
-#define FSEL_CLKSEL_50M (0x7)
-#define FSEL_CLKSEL_24M (0x5)
-#define FSEL_CLKSEL_20M (0x4)
-
-...to me that means that the exynos code is returning unshifted values.
-
-
-If you say that samsung_usbphy_get_refclk_freq() is in charge of
-returning shifted values then you no longer need the HOST_CTRL0_FSEL()
-macro.
-
-
-In any case, I will defer to whatever Felipe thinks is best here (if
-he has an opinion on it).  I am only pointing out that the exynos code
-and existing code seem to be specifying things differently.  That's
-weird to me.
-
-
-> so we can change this to something like
->
->                            case 10 * MHZ:
->                                      refclk_freq = FSEL_CLKSEL_10M;
->                                      break;
-> and so on.
-> will this be fine ?
-
-Seems good to me.
-
-
--Doug
+-- 
+Tushar Behera
