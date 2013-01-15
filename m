@@ -1,93 +1,81 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
+From: Tomasz Figa <t.figa@samsung.com>
 Subject: Re: Early kernel hang with big DTB appended
-Date: Tue, 15 Jan 2013 11:53:49 +0100
-Message-ID: <20130115105349.GK1906@pengutronix.de>
+Date: Tue, 15 Jan 2013 12:26 +0100
+Message-ID: <1389186.eYbeMx0y73@amdc1227>
 References: <7811936.npteFbuYu2@amdc1227>
  <20130111164531.GC13025@pengutronix.de>
  <alpine.LFD.2.02.1301141655570.6300@xanadu.home>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:50118 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755379Ab3AOKxw (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:29548 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751636Ab3AOL0I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jan 2013 05:53:52 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.02.1301141655570.6300@xanadu.home>
+	Tue, 15 Jan 2013 06:26:08 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGN00A52ZQY4J01@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 Jan 2013 20:26:06 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MGN005MZZRGPE70@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 Jan 2013 20:26:06 +0900 (KST)
+In-reply-to: <alpine.LFD.2.02.1301141655570.6300@xanadu.home>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, kgene.kim@samsung.com, thomas.abraham@linaro.org, bones@secretlab.ca, linux-arm-kernel@lists.infradead.org
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, kgene.kim@samsung.com, thomas.abraham@linaro.org, bones@secretlab.ca, linux-arm-kernel@lists.infradead.org
 
-On Mon, Jan 14, 2013 at 05:13:09PM -0500, Nicolas Pitre wrote:
+Hi Nicolas,
+
+On Monday 14 of January 2013 17:13:09 Nicolas Pitre wrote:
 > On Fri, 11 Jan 2013, Sascha Hauer wrote:
-> 
 > > On Thu, Jan 03, 2013 at 04:55:00PM +0100, Tomasz Figa wrote:
 > > > Hi,
 > > > 
-> > > I'm observing strange behavior when booting 3.8-rc1 and -rc2 with appended 
-> > > DTB. The kernel hangs very early when the DTB is bigger than some 
-> > > threshold somewhere around 24 KiB. With fullest possible low level UART 
-> > > debugging (and printk patched to use printascii) I'm receiving following 
-> > > output:
+> > > I'm observing strange behavior when booting 3.8-rc1 and -rc2 with
+> > > appended DTB. The kernel hangs very early when the DTB is bigger
+> > > than some threshold somewhere around 24 KiB. With fullest possible
+> > > low level UART debugging (and printk patched to use printascii) I'm
+> > > receiving following output:
 > > > 
 > > > Uncompressing Linux... done, booting the kernel.
 > > > Booting Linux on physical CPU 0xa00
-> > > Linux version 3.8.0-rc1-00073-gdf6efca-dirty (t.figa@amdc1227) (gcc 
-> > > version 4.5.2 (Gentoo 4.5.2 p1.2, pie-0.4.5) ) #2 SMP PREEMPT Thu Jan 3 
+> > > Linux version 3.8.0-rc1-00073-gdf6efca-dirty (t.figa@amdc1227) (gcc
+> > > version 4.5.2 (Gentoo 4.5.2 p1.2, pie-0.4.5) ) #2 SMP PREEMPT Thu
+> > > Jan 3
 > > > 15:37:35 CET 2013
 > > > CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d
-> > > CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+> > > CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction
+> > > cache
 > > > 
-> > > I tested on two Exynos-based boards (exynos4210-trats and one internal 
+> > > I tested on two Exynos-based boards (exynos4210-trats and one
+> > > internal
 > > > exynos4412-based board) and same happens on both.
 > > > 
 > > > Do you have any ideas?
 > > 
 > > Another thing besides the things already mentioned is that the dtb may
 > > not cross a 1MiB boundary. The Kernel uses a single 1Mib section
-> > (aligned to 1Mib) to initially map the dtb. Once you cross that boundary
-> > parts of the dtb won't be accessible for the Kernel anymore.
+> > (aligned to 1Mib) to initially map the dtb. Once you cross that
+> > boundary parts of the dtb won't be accessible for the Kernel anymore.
 > 
 > Crap.  You're right.  This patch should fix this issue.
-
-Just successfully tested with a devicetree explicitly located just before a 1MiB
-boundary, so:
-
-Tested-by: Sascha Hauer <s.hauer@pengutronix.de>
-
-Sascha
-
 > 
 > @Tomasz: please could you confirm this fixes your initial problem?
-> 
-> 
-> diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-> index 4eee351f46..61fcb18c7e 100644
-> --- a/arch/arm/kernel/head.S
-> +++ b/arch/arm/kernel/head.S
-> @@ -246,6 +246,7 @@ __create_page_tables:
->  
->  	/*
->  	 * Then map boot params address in r2 if specified.
-> +	 * We map 2 sections in case the ATAGs/DTB crosses a section boundary.
->  	 */
->  	mov	r0, r2, lsr #SECTION_SHIFT
->  	movs	r0, r0, lsl #SECTION_SHIFT
-> @@ -253,6 +254,8 @@ __create_page_tables:
->  	addne	r3, r3, #PAGE_OFFSET
->  	addne	r3, r4, r3, lsr #(SECTION_SHIFT - PMD_ORDER)
->  	orrne	r6, r7, r0
-> +	strne	r6, [r3], #1 << PMD_ORDER
-> +	addne	r6, r6, #1 << SECTION_SHIFT
->  	strne	r6, [r3]
->  
->  #ifdef CONFIG_DEBUG_LL
-> 
 
+I just tested the patch and it fixes the problem indeed. The kernel
+now boots successfully after applying the patch, while undoing it
+makes the kernel fail to boot again. Thanks.
+
+Tested-by: Tomasz Figa <t.figa@samsung.com>
+
+Best regards,
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
