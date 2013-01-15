@@ -1,56 +1,79 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Remove wrong I2S0 clock from peril clock
-Date: Tue, 15 Jan 2013 09:01:49 +0530
-Message-ID: <50F4CDA5.3090904@linaro.org>
-References: <003501cd9d65$9611d060$c2357120$@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH] usb: phy: samsung: Add support to set pmu isolation
+Date: Tue, 15 Jan 2013 11:08:16 +0530
+Message-ID: <CAFp+6iE7zEJ7E_pRCOYz5mQqbk-MFE6Hwr02pRRT1yP+X3z7kQ@mail.gmail.com>
+References: <1357891738-26259-1-git-send-email-gautam.vivek@samsung.com>
+	<CAD=FV=Vxdjo5aOU25a-iDNDaiGZCu0+G-p5y1NifXHUJBF0AHg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f54.google.com ([209.85.210.54]:40568 "EHLO
-	mail-da0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751699Ab3AODb5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jan 2013 22:31:57 -0500
-Received: by mail-da0-f54.google.com with SMTP id n2so2073074dad.27
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jan 2013 19:31:56 -0800 (PST)
-In-Reply-To: <003501cd9d65$9611d060$c2357120$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=Vxdjo5aOU25a-iDNDaiGZCu0+G-p5y1NifXHUJBF0AHg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, l.majewski@samsung.com, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Praveen Paneri <p.paneri@samsung.com>, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, balbi@ti.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangsu Park <sangsu4u.park@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>
 
-On 09/28/2012 04:09 PM, Sangsu Park wrote:
-> Remove I2S0 clock from peril since peril doesn't have I2S0 clock for EXYNOS4.
-> Audio Subsystem block has I2S0 clk.
-> 
-> Signed-off-by: sangsu <sangsu@sangsu-P560.(none)>
-> ---
->  arch/arm/mach-exynos/clock-exynos4.c |    5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/clock-exynos4.c
-> b/arch/arm/mach-exynos/clock-exynos4.c
-> index 6a45c9a..fa8a134 100644
-> --- a/arch/arm/mach-exynos/clock-exynos4.c
-> +++ b/arch/arm/mach-exynos/clock-exynos4.c
-> @@ -613,11 +613,6 @@ static struct clk exynos4_init_clocks_off[] = {
->  		.ctrlbit	= (1 << 18),
->  	}, {
->  		.name		= "iis",
-> -		.devname	= "samsung-i2s.0",
-> -		.enable		= exynos4_clk_ip_peril_ctrl,
-> -		.ctrlbit	= (1 << 19),
-> -	}, {
-> -		.name		= "iis",
->  		.devname	= "samsung-i2s.1",
->  		.enable		= exynos4_clk_ip_peril_ctrl,
->  		.ctrlbit	= (1 << 20),
-> 
+Hi Doug,
 
-After this clock has been removed, I2S0 registration fails on EXYNOS4
-based boards (clk_get for iis clock fails). The alternate clock from
-Audio subsystem block is missing.
+
+On Tue, Jan 15, 2013 at 3:41 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Vivek,
+>
+> Sorry for being so absent from these reviews.  I'll try to look over a
+> few patches today, but please don't hold up anything on account of my
+> reviews.  I'm definitely a bit of an interested bystander in USB land.
+>  ;)
+>
+> In general things look pretty good here.  :)  One last comment below...
+>
+> On Fri, Jan 11, 2013 at 12:08 AM, Vivek Gautam
+> <gautam.vivek@samsung.com> wrote:> +static int
+> samsung_usbphy_parse_dt(struct samsung_usbphy *sphy)
+>> +{
+>> +       struct device_node *usbphy_sys;
+>> +
+>> +       /* Getting node for system controller interface for usb-phy */
+>> +       usbphy_sys = of_get_child_by_name(sphy->dev->of_node, "usbphy-sys");
+>> +       if (!usbphy_sys)
+>> +               dev_warn(sphy->dev, "No sys-controller interface for usb-phy\n");
+>
+> Seems like you ought to return with an error here.  Calling of_iomap()
+> with a NULL value seems undesirable.
+>
+
+Yeah, true. This should have been returning error value alongwith dev_err().
+
+>> +
+>> +       sphy->pmuregs = of_iomap(usbphy_sys, 0);
+>> +
+>> +       of_node_put(usbphy_sys);
+>> +
+>> +       if (sphy->pmuregs == NULL) {
+>> +               dev_err(sphy->dev, "Can't get usb-phy pmu control register\n");
+>> +               return -ENODEV;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +/*
+>> + * Set isolation here for phy.
+>> + * Here 'on = true' would mean USB PHY block is isolated, hence
+>> + * de-activated and vice-versa.
+>> + */
+>
+> Thank you very much for this comment.  :)  This explains one of the
+> confusions I had earlier...
+>
+Your welcome :-)
+>
+> Once you fix the one error condition above you can add my
+> "Reviewed-by".  Thanks!
+>
+Sure, thanks !!
+
+
 
 -- 
-Tushar Behera
+Thanks & Regards
+Vivek
