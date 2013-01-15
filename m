@@ -1,73 +1,97 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: Early kernel hang with big DTB appended
-Date: Tue, 15 Jan 2013 13:12:46 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1301151311400.6300@xanadu.home>
-References: <7811936.npteFbuYu2@amdc1227> <20130111164531.GC13025@pengutronix.de> <alpine.LFD.2.02.1301141655570.6300@xanadu.home> <1389186.eYbeMx0y73@amdc1227>
+From: Alexander Nestorov <alexandernst@gmail.com>
+Subject: Re: [oselas] Audio support on Mini6410 board
+Date: Tue, 15 Jan 2013 19:58:20 +0100
+Message-ID: <CACuz9s0bZa0yKKkghKqFhSQ5YDX5YdwmmpXhmb3m9yKApWqPzQ@mail.gmail.com>
+References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com>
+ <50F09720.7000102@gmail.com> <CACuz9s2fQYw-2pbE6dyNY7MiUSQxGiWArmXARxdwn1ULuDwm_Q@mail.gmail.com>
+ <201301151030.11851.jbe@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f177.google.com ([209.85.216.177]:37262 "EHLO
-	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756294Ab3AOSMt (ORCPT
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:38744 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757500Ab3AOS7B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jan 2013 13:12:49 -0500
-Received: by mail-qc0-f177.google.com with SMTP id u28so262823qcs.36
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jan 2013 10:12:48 -0800 (PST)
-In-Reply-To: <1389186.eYbeMx0y73@amdc1227>
+	Tue, 15 Jan 2013 13:59:01 -0500
+Received: by mail-ob0-f181.google.com with SMTP id oi10so495593obb.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jan 2013 10:59:00 -0800 (PST)
+In-Reply-To: <201301151030.11851.jbe@pengutronix.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, kgene.kim@samsung.com, thomas.abraham@linaro.org, bones@secretlab.ca, linux-arm-kernel@lists.infradead.org
+To: Juergen Beisert <jbe@pengutronix.de>
+Cc: oselas@community.pengutronix.de, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrey Gusakov <dron0gus@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Tue, 15 Jan 2013, Tomasz Figa wrote:
-
-> Hi Nicolas,
-> 
-> On Monday 14 of January 2013 17:13:09 Nicolas Pitre wrote:
-> > On Fri, 11 Jan 2013, Sascha Hauer wrote:
-> > > On Thu, Jan 03, 2013 at 04:55:00PM +0100, Tomasz Figa wrote:
-> > > > Hi,
-> > > > 
-> > > > I'm observing strange behavior when booting 3.8-rc1 and -rc2 with
-> > > > appended DTB. The kernel hangs very early when the DTB is bigger
-> > > > than some threshold somewhere around 24 KiB. With fullest possible
-> > > > low level UART debugging (and printk patched to use printascii) I'm
-> > > > receiving following output:
-> > > > 
-> > > > Uncompressing Linux... done, booting the kernel.
-> > > > Booting Linux on physical CPU 0xa00
-> > > > Linux version 3.8.0-rc1-00073-gdf6efca-dirty (t.figa@amdc1227) (gcc
-> > > > version 4.5.2 (Gentoo 4.5.2 p1.2, pie-0.4.5) ) #2 SMP PREEMPT Thu
-> > > > Jan 3
-> > > > 15:37:35 CET 2013
-> > > > CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c53c7d
-> > > > CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction
-> > > > cache
-> > > > 
-> > > > I tested on two Exynos-based boards (exynos4210-trats and one
-> > > > internal
-> > > > exynos4412-based board) and same happens on both.
-> > > > 
-> > > > Do you have any ideas?
-> > > 
-> > > Another thing besides the things already mentioned is that the dtb may
-> > > not cross a 1MiB boundary. The Kernel uses a single 1Mib section
-> > > (aligned to 1Mib) to initially map the dtb. Once you cross that
-> > > boundary parts of the dtb won't be accessible for the Kernel anymore.
-> > 
-> > Crap.  You're right.  This patch should fix this issue.
-> > 
-> > @Tomasz: please could you confirm this fixes your initial problem?
-> 
-> I just tested the patch and it fixes the problem indeed. The kernel
-> now boots successfully after applying the patch, while undoing it
-> makes the kernel fail to boot again. Thanks.
-> 
-> Tested-by: Tomasz Figa <t.figa@samsung.com>
-
-Thanks.
-
-The patch is queued as 7628/1 in RMK's patch system.
+Hi everyone :)
 
 
-Nicolas
+
+Juergen Beisert <jbe@pengutronix.de>:
+> I gave your patches yesterday a try on my Mini6410: when I enable the audio
+> support, the system freezes forever. Don't know why yet.
+> What is the base revision where I have to apply the patches to? I tried with
+> 3.7.2.
+
+I'm using Sylwester's s3c-camif branch in v4l media[1], that is 3.7.0
+
+
+Sylwester Nawrocki <sylvester.nawrocki@gmail.com>:
+> Great news! ;) I guess you now have all required features working with
+>latest mainline kernel ? Is there anything still missing ?
+
+I'm still playing around with the board, trying to run my project on top of it.
+Till now video works great (both video output and v4l2 src).
+Audio is working great (both speakers and headphones), but I haven't tested
+playing audio more than 10s (other than gst-launch audiotestsrc !
+autoaudiosink).
+Network (via eth) is working too.
+
+I'm not sure if mic is working ok or failing. Can't say yet as there
+is some kind of
+audio input but it's really week and there's too much noise. I'll keep
+playing with it
+for a few more days.
+
+The only thing I haven't really tested is the touch screen.
+That's what I get if I try to run 'ts_test':
+/dev/input/event1: No such file or directory
+Also, if I start tapping at the screen, after ~10 taps I start getting
+this on the console:
+s3c_adc_start: failed to find adc
+
+Anyways, during the boot I get:
+
+s3c-adc s3c64xx-adc: operating without regulator "vdd" .
+platform s3c64xx-adc: Driver s3c-adc requests probe deferral
+samsung-ts s3c64xx-ts: driver attached, registering input device
+input: S3C24XX TouchScreen as /devices/virtual/input/input0
+
+So, why is ts_test trying to use input1 instead of input0?
+Also, I'm missing some code related to vdd, right? Can't say if that's
+critical or not...
+
+If there is built-in support for this in the kernel, then there must
+be something wrong (but small/easy to fix)
+with my code. If there isn't, then I'll try diff-ing FriendlyARM's
+kernel and an untouched one
+and applying to your branch.
+
+>This patch corrects smdk6410_b_pwr_5v_consumers[] compilation warning:
+
+Yes indeed, it worked like a charm :)
+
+
+>I know I asked you previously for preparing patches so others don't
+>need to waste much time to enable all required features on those s3c64xx
+>reference boards. But now when there is the device tree support for
+>s3c64xx SoCs on the horizon
+
+I'm fine with whatever fits better in the kernel :)
+We can wait and see if my patches are needed or I can send them to you
+now (or at any moment in the future),
+you just need to say.
+
+
+Regards!
+
+
+[1] http://git.linuxtv.org/snawrocki/media.git/shortlog/refs/heads/testing/s3c-camif
