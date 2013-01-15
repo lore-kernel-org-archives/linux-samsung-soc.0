@@ -1,7 +1,7 @@
 From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 3/4] ARM: Exynos5250: Add clock information for dwc3-exynos
-Date: Tue, 15 Jan 2013 19:08:31 +0530
-Message-ID: <1358257112-19595-4-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v4 4/4] ARM: Exynos5250: Enabling dwc3-exynos driver
+Date: Tue, 15 Jan 2013 19:08:32 +0530
+Message-ID: <1358257112-19595-5-git-send-email-gautam.vivek@samsung.com>
 References: <1358257112-19595-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,62 +22,67 @@ To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adding necessary device clock to exynos5 needed for
-the DWC3 controller.
+Adding DWC3 device tree node for Exynos5250 needed to
+parse device tree data.
+Also enabling XHCI support on exynos5250.
 
 Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-exynos/clock-exynos5.c |   24 ++++++++++++++++++++++++
- 1 files changed, 24 insertions(+), 0 deletions(-)
+ .../devicetree/bindings/usb/exynos-usb.txt         |   14 ++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++++
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ 3 files changed, 21 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 0208c3a..13af020 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -757,6 +757,11 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.enable		= exynos5_clk_ip_fsys_ctrl ,
- 		.ctrlbit	= (1 << 18),
- 	}, {
-+		.name		= "usbdrd30",
-+		.parent		= &exynos5_clk_aclk_200.clk,
-+		.enable		= exynos5_clk_ip_fsys_ctrl,
-+		.ctrlbit	= (1 << 19),
-+	}, {
- 		.name		= "usbotg",
- 		.enable		= exynos5_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 7),
-@@ -1035,6 +1040,16 @@ static struct clksrc_sources exynos5_clkset_group = {
- 	.nr_sources	= ARRAY_SIZE(exynos5_clkset_group_list),
- };
- 
-+struct clk *exynos5_clkset_usbdrd30_list[] = {
-+	[0] = &exynos5_clk_mout_mpll.clk,
-+	[1] = &exynos5_clk_mout_cpll.clk,
-+};
+diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+index f66fcdd..d660410 100644
+--- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
++++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+@@ -38,3 +38,17 @@ Example:
+ 		reg = <0x12120000 0x100>;
+ 		interrupts = <0 71 0>;
+ 	};
 +
-+struct clksrc_sources exynos5_clkset_usbdrd30 = {
-+	.sources        = exynos5_clkset_usbdrd30_list,
-+	.nr_sources     = ARRAY_SIZE(exynos5_clkset_usbdrd30_list),
-+};
++DWC3
++Required properties:
++ - compatible: should be "samsung,exynos5250-dwc3" for USB 3.0 DWC3 controller.
++ - reg: physical base address of the controller and length of memory mapped
++   region.
++ - interrupts: interrupt number to the cpu.
 +
- /* Possible clock sources for aclk_266_gscl_sub Mux */
- static struct clk *clk_src_gscl_266_list[] = {
- 	[0] = &clk_ext_xtal_mux,
-@@ -1329,6 +1344,15 @@ static struct clksrc_clk exynos5_clksrcs[] = {
- 			.parent		= &exynos5_clk_mout_cpll.clk,
- 		},
- 		.reg_div = { .reg = EXYNOS5_CLKDIV_GEN, .shift = 4, .size = 3 },
-+	}, {
-+		.clk    = {
-+			.name           = "sclk_usbdrd30",
-+			.enable         = exynos5_clksrc_mask_fsys_ctrl,
-+			.ctrlbit        = (1 << 28),
-+		},
-+		.sources = &exynos5_clkset_usbdrd30,
-+		.reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 28, .size = 1 },
-+		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 24, .size = 4 },
- 	},
- };
++Example:
++	usb@12000000 {
++		compatible = "samsung,exynos5250-dwc3";
++		reg = <0x12000000 0x10000>;
++		interrupts = <0 72 0>;
++	};
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index ebb0907..a747524 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -275,6 +275,12 @@
+ 		#size-cells = <0>;
+ 	};
  
++	usb@12000000 {
++		compatible = "samsung,exynos5250-dwc3";
++		reg = <0x12000000 0x10000>;
++		interrupts = <0 72 0>;
++	};
++
+ 	usb@12110000 {
+ 		compatible = "samsung,exynos4210-ehci";
+ 		reg = <0x12110000 0x100>;
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index d26c9f9..e62fd20 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -428,6 +428,7 @@ config MACH_EXYNOS5_DT
+ 	depends on ARCH_EXYNOS5
+ 	select ARM_AMBA
+ 	select USE_OF
++	select USB_ARCH_HAS_XHCI
+ 	help
+ 	  Machine support for Samsung EXYNOS5 machine with device tree enabled.
+ 	  Select this if a fdt blob is available for the EXYNOS5 SoC based board.
 -- 
 1.7.6.5
