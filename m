@@ -1,34 +1,33 @@
-From: Jessica Allison <jessica.allison.2012@hotmail.com>
-Subject: exynos5 graphics problems
-Date: Wed, 16 Jan 2013 07:48:12 +0000
-Message-ID: <DUB114-W131EC5CE219179F77207A2BD02C0@phx.gbl>
+From: Nicola Johnsen <nicolajohnsen@yahoo.co.uk>
+Subject: Exynos5 DRM/DRI
+Date: Wed, 16 Jan 2013 08:23:26 +0000 (GMT)
+Message-ID: <1358324606.64464.YahooMailNeo@web133101.mail.ir2.yahoo.com>
+Reply-To: Nicola Johnsen <nicolajohnsen@yahoo.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dub0-omc4-s21.dub0.hotmail.com ([157.55.2.96]:4490 "EHLO
-	dub0-omc4-s21.dub0.hotmail.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752258Ab3APHy3 convert rfc822-to-8bit
+Received: from nm21-vm0.bullet.mail.ird.yahoo.com ([212.82.108.204]:46579 "EHLO
+	nm21-vm0.bullet.mail.ird.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754122Ab3API3p convert rfc822-to-8bit
 	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jan 2013 02:54:29 -0500
+	Wed, 16 Jan 2013 03:29:45 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
+Hi everyone,
 
-Developers,
+I'm using the latest DRM drivers for the exynos5. My code is pulling fr=
+om git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos
+I have enabled Exynos FIMD and IOMMU support in the kernel configuratio=
+n under DRM settings.
 
-I'm looking for some support on graphics for the Exynos5 chip.=A0
-I have seen that there is some support for exynos5 in the DRM FIMD driv=
-er. However, on my system there is no X11 in user space so there is no =
-DRM/DRI support. Is there any way I can still get graphics to work on t=
-he exynos5? Which driver can be used?
-I don't need GPU support, just a way to output graphics on my lcd scree=
-n which is connected on the MIPI DSI interface.
+I'm using libdrm-2.4.40 in user space and I run Ubuntu 12. As I read th=
+rough the manual of libdrm, this version has exynos support. I also loo=
+ked into the source code and found exynos related code. However, it see=
+ms as if libdrm and the kernel DRM framework are not communicating. Can=
+ you give me any information on how I can debug the problem? Should lib=
+drm-2.4.40 not be working with the latest kernel code?=A0
 
-Many thanks,
-Jess 		 	   		  --
-To unsubscribe from this list: send the line "unsubscribe linux-samsung=
--soc" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Many thanks for any pointers.
