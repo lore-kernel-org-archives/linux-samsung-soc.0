@@ -1,18 +1,18 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 2/4] ARM: Exynos5250: Enabling ohci-exynos driver
-Date: Wed, 16 Jan 2013 08:44:54 +0100
-Message-ID: <2542030.a14I18dBkO@flatron>
-References: <1358257112-19595-1-git-send-email-gautam.vivek@samsung.com> <1358257112-19595-3-git-send-email-gautam.vivek@samsung.com>
+Subject: Re: [PATCH v4 3/4] ARM: Exynos5250: Add clock information for dwc3-exynos
+Date: Wed, 16 Jan 2013 08:49:23 +0100
+Message-ID: <3963234.Gb249i4a6U@flatron>
+References: <1358257112-19595-1-git-send-email-gautam.vivek@samsung.com> <1358257112-19595-4-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f178.google.com ([209.85.215.178]:32938 "EHLO
-	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752676Ab3APHpA (ORCPT
+Received: from mail-ee0-f45.google.com ([74.125.83.45]:44350 "EHLO
+	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758221Ab3APHtY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jan 2013 02:45:00 -0500
-In-Reply-To: <1358257112-19595-3-git-send-email-gautam.vivek@samsung.com>
+	Wed, 16 Jan 2013 02:49:24 -0500
+In-Reply-To: <1358257112-19595-4-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Vivek Gautam <gautam.vivek@samsung.com>
@@ -20,68 +20,69 @@ Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linu
 
 Hi Vivek,
 
-On Tuesday 15 of January 2013 19:08:30 Vivek Gautam wrote:
-> Adding OHCI device tree node for Exynos5250 along with
-> the device base address.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
-> Acked-by: Grant Likely <grant.likely@secretlab.ca>
-> ---
->  .../devicetree/bindings/usb/exynos-usb.txt         |   15
-> +++++++++++++++ arch/arm/boot/dts/exynos5250.dtsi                  |   
-> 6 ++++++ 2 files changed, 21 insertions(+), 0 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> b/Documentation/devicetree/bindings/usb/exynos-usb.txt index
-> e8bbb47..f66fcdd 100644
-> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> @@ -23,3 +23,18 @@ Example:
->  		interrupts = <0 71 0>;
->  		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
->  	};
-> +
-> +OHCI
-> +Required properties:
-> + - compatible: should be "samsung,exynos4210-ohci" for USB 2.0
-> +   OHCI companion controller in host mode.
-> + - reg: physical base address of the controller and length of memory
-> mapped +   region.
-> + - interrupts: interrupt number to the cpu.
-> +
-> +Example:
-> +	usb@12120000 {
-> +		compatible = "samsung,exynos4210-ohci";
-> +		reg = <0x12120000 0x100>;
-> +		interrupts = <0 71 0>;
-> +	};
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi index 2cbe53e..ebb0907 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -281,6 +281,12 @@
->  		interrupts = <0 71 0>;
->  	};
-> 
-> +	usb@12120000 {
-> +		compatible = "samsung,exynos4210-ohci";
-> +		reg = <0x12120000 0x100>;
-> +		interrupts = <0 71 0>;
-
-For Samsung platforms we decided per board enabling of nodes and so this 
-node should also contain:
-
-		status = "disabled";
-
-while in dts file of board using ohci there would be an overriding entry:
-
-	usb@12120000 {
-		status = "okay";
-	};
-
-I know that Exynos5250 has not been yet converted into this convention, 
-but using it when adding new devices will simplify the process.
+Don't you need also some clkdev lookup entry to make the clock available 
+in the driver?
 
 Best regards,
 Tomasz
+
+On Tuesday 15 of January 2013 19:08:31 Vivek Gautam wrote:
+> Adding necessary device clock to exynos5 needed for
+> the DWC3 controller.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+>  arch/arm/mach-exynos/clock-exynos5.c |   24 ++++++++++++++++++++++++
+>  1 files changed, 24 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/clock-exynos5.c
+> b/arch/arm/mach-exynos/clock-exynos5.c index 0208c3a..13af020 100644
+> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> @@ -757,6 +757,11 @@ static struct clk exynos5_init_clocks_off[] = {
+>  		.enable		= exynos5_clk_ip_fsys_ctrl ,
+>  		.ctrlbit	= (1 << 18),
+>  	}, {
+> +		.name		= "usbdrd30",
+> +		.parent		= &exynos5_clk_aclk_200.clk,
+> +		.enable		= exynos5_clk_ip_fsys_ctrl,
+> +		.ctrlbit	= (1 << 19),
+> +	}, {
+>  		.name		= "usbotg",
+>  		.enable		= exynos5_clk_ip_fsys_ctrl,
+>  		.ctrlbit	= (1 << 7),
+> @@ -1035,6 +1040,16 @@ static struct clksrc_sources exynos5_clkset_group
+> = { .nr_sources	= ARRAY_SIZE(exynos5_clkset_group_list),
+>  };
+> 
+> +struct clk *exynos5_clkset_usbdrd30_list[] = {
+> +	[0] = &exynos5_clk_mout_mpll.clk,
+> +	[1] = &exynos5_clk_mout_cpll.clk,
+> +};
+> +
+> +struct clksrc_sources exynos5_clkset_usbdrd30 = {
+> +	.sources        = exynos5_clkset_usbdrd30_list,
+> +	.nr_sources     = ARRAY_SIZE(exynos5_clkset_usbdrd30_list),
+> +};
+> +
+>  /* Possible clock sources for aclk_266_gscl_sub Mux */
+>  static struct clk *clk_src_gscl_266_list[] = {
+>  	[0] = &clk_ext_xtal_mux,
+> @@ -1329,6 +1344,15 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+>  			.parent		= &exynos5_clk_mout_cpll.clk,
+>  		},
+>  		.reg_div = { .reg = EXYNOS5_CLKDIV_GEN, .shift = 4, .size = 3 
+},
+> +	}, {
+> +		.clk    = {
+> +			.name           = "sclk_usbdrd30",
+> +			.enable         = exynos5_clksrc_mask_fsys_ctrl,
+> +			.ctrlbit        = (1 << 28),
+> +		},
+> +		.sources = &exynos5_clkset_usbdrd30,
+> +		.reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 28, .size = 
+1 },
+> +		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 24, .size = 
+4 },
+>  	},
+>  };
