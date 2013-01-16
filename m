@@ -1,97 +1,75 @@
-From: Alexander Nestorov <alexandernst@gmail.com>
-Subject: Re: [oselas] Audio support on Mini6410 board
-Date: Tue, 15 Jan 2013 19:58:20 +0100
-Message-ID: <CACuz9s0bZa0yKKkghKqFhSQ5YDX5YdwmmpXhmb3m9yKApWqPzQ@mail.gmail.com>
-References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com>
- <50F09720.7000102@gmail.com> <CACuz9s2fQYw-2pbE6dyNY7MiUSQxGiWArmXARxdwn1ULuDwm_Q@mail.gmail.com>
- <201301151030.11851.jbe@pengutronix.de>
+From: Sangsu Park <sangsu4u.park@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS: Remove wrong I2S0 clock from peril clock
+Date: Wed, 16 Jan 2013 10:08:06 +0900
+Message-ID: <00fb01cdf385$f116dde0$d34499a0$@samsung.com>
+References: <003501cd9d65$9611d060$c2357120$@samsung.com>
+ <50F4CDA5.3090904@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:38744 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757500Ab3AOS7B (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:22116 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757442Ab3APBII (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jan 2013 13:59:01 -0500
-Received: by mail-ob0-f181.google.com with SMTP id oi10so495593obb.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jan 2013 10:59:00 -0800 (PST)
-In-Reply-To: <201301151030.11851.jbe@pengutronix.de>
+	Tue, 15 Jan 2013 20:08:08 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGP00IPM1SVEY80@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Jan 2013 10:08:06 +0900 (KST)
+Received: from DOSANGSU4UP02 ([12.23.118.226])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MGP00JNN1TI9O30@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Jan 2013 10:08:06 +0900 (KST)
+In-reply-to: <50F4CDA5.3090904@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Juergen Beisert <jbe@pengutronix.de>
-Cc: oselas@community.pengutronix.de, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrey Gusakov <dron0gus@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
-
-Hi everyone :)
+To: 'Tushar Behera' <tushar.behera@linaro.org>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Sangbeom Kim' <sbkim73@samsung.com>
 
 
+On 1/15/2013 12:32 PM, Tushar Behera wrote: 
+> On 09/28/2012 04:09 PM, Sangsu Park wrote:
+> > Remove I2S0 clock from peril since peril doesn't have I2S0 clock for
+EXYNOS4.
+> > Audio Subsystem block has I2S0 clk.
+> >
+> > Signed-off-by: sangsu <sangsu@sangsu-P560.(none)>
+> > ---
+> >  arch/arm/mach-exynos/clock-exynos4.c |    5 -----
+> >  1 file changed, 5 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-exynos/clock-exynos4.c
+> > b/arch/arm/mach-exynos/clock-exynos4.c
+> > index 6a45c9a..fa8a134 100644
+> > --- a/arch/arm/mach-exynos/clock-exynos4.c
+> > +++ b/arch/arm/mach-exynos/clock-exynos4.c
+> > @@ -613,11 +613,6 @@ static struct clk exynos4_init_clocks_off[] = {
+> >  		.ctrlbit	= (1 << 18),
+> >  	}, {
+> >  		.name		= "iis",
+> > -		.devname	= "samsung-i2s.0",
+> > -		.enable		= exynos4_clk_ip_peril_ctrl,
+> > -		.ctrlbit	= (1 << 19),
+> > -	}, {
+> > -		.name		= "iis",
+> >  		.devname	= "samsung-i2s.1",
+> >  		.enable		= exynos4_clk_ip_peril_ctrl,
+> >  		.ctrlbit	= (1 << 20),
+> >
+> 
+> After this clock has been removed, I2S0 registration fails on EXYNOS4
+> based boards (clk_get for iis clock fails). The alternate clock from
+> Audio subsystem block is missing.
+> 
+Yes, you're right.
+I2S0 clock doesn't belong to peril clock.
+Audio Subsystem has its own clock and also I2S0 clock.
+That work might be missed. I'll do that work soon.
 
-Juergen Beisert <jbe@pengutronix.de>:
-> I gave your patches yesterday a try on my Mini6410: when I enable the audio
-> support, the system freezes forever. Don't know why yet.
-> What is the base revision where I have to apply the patches to? I tried with
-> 3.7.2.
-
-I'm using Sylwester's s3c-camif branch in v4l media[1], that is 3.7.0
-
-
-Sylwester Nawrocki <sylvester.nawrocki@gmail.com>:
-> Great news! ;) I guess you now have all required features working with
->latest mainline kernel ? Is there anything still missing ?
-
-I'm still playing around with the board, trying to run my project on top of it.
-Till now video works great (both video output and v4l2 src).
-Audio is working great (both speakers and headphones), but I haven't tested
-playing audio more than 10s (other than gst-launch audiotestsrc !
-autoaudiosink).
-Network (via eth) is working too.
-
-I'm not sure if mic is working ok or failing. Can't say yet as there
-is some kind of
-audio input but it's really week and there's too much noise. I'll keep
-playing with it
-for a few more days.
-
-The only thing I haven't really tested is the touch screen.
-That's what I get if I try to run 'ts_test':
-/dev/input/event1: No such file or directory
-Also, if I start tapping at the screen, after ~10 taps I start getting
-this on the console:
-s3c_adc_start: failed to find adc
-
-Anyways, during the boot I get:
-
-s3c-adc s3c64xx-adc: operating without regulator "vdd" .
-platform s3c64xx-adc: Driver s3c-adc requests probe deferral
-samsung-ts s3c64xx-ts: driver attached, registering input device
-input: S3C24XX TouchScreen as /devices/virtual/input/input0
-
-So, why is ts_test trying to use input1 instead of input0?
-Also, I'm missing some code related to vdd, right? Can't say if that's
-critical or not...
-
-If there is built-in support for this in the kernel, then there must
-be something wrong (but small/easy to fix)
-with my code. If there isn't, then I'll try diff-ing FriendlyARM's
-kernel and an untouched one
-and applying to your branch.
-
->This patch corrects smdk6410_b_pwr_5v_consumers[] compilation warning:
-
-Yes indeed, it worked like a charm :)
-
-
->I know I asked you previously for preparing patches so others don't
->need to waste much time to enable all required features on those s3c64xx
->reference boards. But now when there is the device tree support for
->s3c64xx SoCs on the horizon
-
-I'm fine with whatever fits better in the kernel :)
-We can wait and see if my patches are needed or I can send them to you
-now (or at any moment in the future),
-you just need to say.
-
-
-Regards!
-
-
-[1] http://git.linuxtv.org/snawrocki/media.git/shortlog/refs/heads/testing/s3c-camif
+Thanks.
+> --
+> Tushar Behera
