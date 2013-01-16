@@ -1,33 +1,52 @@
-From: Nicola Johnsen <nicolajohnsen@yahoo.co.uk>
-Subject: Exynos5 DRM/DRI
-Date: Wed, 16 Jan 2013 08:23:26 +0000 (GMT)
-Message-ID: <1358324606.64464.YahooMailNeo@web133101.mail.ir2.yahoo.com>
-Reply-To: Nicola Johnsen <nicolajohnsen@yahoo.co.uk>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Wed, 16 Jan 2013 10:53:27 +0000
+Message-ID: <20130116105327.GA16543@mudshark.cambridge.arm.com>
+References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from nm21-vm0.bullet.mail.ird.yahoo.com ([212.82.108.204]:46579 "EHLO
-	nm21-vm0.bullet.mail.ird.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754122Ab3API3p convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jan 2013 03:29:45 -0500
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.21]:43514 "EHLO
+	cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752720Ab3APKx5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Jan 2013 05:53:57 -0500
+Content-Disposition: inline
+In-Reply-To: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Rahul Sharma' <rahul.sharma@samsung.com>
 
-Hi everyone,
+On Wed, Dec 26, 2012 at 01:53:15AM +0000, Cho KyongHo wrote:
+> notice: v6 patch-set is rebased on next/iommu-exynos branch of
+> linux-samsung.git.  This patch-set does not include 2 patches (05 and 06
+> patches in v5 patch-se) because they alread exist already in the branch.
 
-I'm using the latest DRM drivers for the exynos5. My code is pulling fr=
-om git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos
-I have enabled Exynos FIMD and IOMMU support in the kernel configuratio=
-n under DRM settings.
+Given that devicetree-discuss has been notably absent from discussion
+surrounding the proposed binding, I think that including that patch in
+linux-samsung.git and dropping it from this series is rather premature.
 
-I'm using libdrm-2.4.40 in user space and I run Ubuntu 12. As I read th=
-rough the manual of libdrm, this version has exynos support. I also loo=
-ked into the source code and found exynos related code. However, it see=
-ms as if libdrm and the kernel DRM framework are not communicating. Can=
- you give me any information on how I can debug the problem? Should lib=
-drm-2.4.40 not be working with the latest kernel code?=A0
+I have comments on the binding, so I'll dig up the version you posted in v5
+and add devicetree-discuss to CC.
 
-Many thanks for any pointers.
+> The current exynos-iommu(System MMU) driver does not work autonomously
+> since it is lack of support for power management of peripheral blocks.
+> For example, MFC device driver must ensure that its System MMU is disabled
+> before MFC block is power-down not to invalidate IOTLB in the System MMU
+> when I/O memory mapping is changed. Because A System MMU is resides in the
+> same H/W block, access to control registers of System MMU while the H/W
+> block is turned off must be prohibited.
+> 
+> This set of changes solves the above problem with setting each System MMUs
+> as the parent of the device which owns the System MMU to recieve the
+> information when the device is turned off or turned on.
+> 
+> Another big change to the driver is the support for devicetree.
+> The bindings for System MMU is described in
+> Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+
+This should probably be Documentation/devicetree/bindings/iommu/ no?
+
+Will
