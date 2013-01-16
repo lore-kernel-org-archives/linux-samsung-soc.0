@@ -1,52 +1,118 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v6 00/12] iommu/exynos: Fixes and Enhancements of System
- MMU driver with DT
-Date: Wed, 16 Jan 2013 10:53:27 +0000
-Message-ID: <20130116105327.GA16543@mudshark.cambridge.arm.com>
-References: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
+From: Dave Martin <dave.martin@linaro.org>
+Subject: Re: [PATCH 5/6] ARM: dts: Add basic dts include files for Samsung
+ S3C64xx SoCs
+Date: Wed, 16 Jan 2013 10:59:57 +0000
+Message-ID: <20130116105957.GA1963@linaro.org>
+References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
+ <1358039458-31960-6-git-send-email-tomasz.figa@gmail.com>
+ <20130114144841.GE7990@e106331-lin.cambridge.arm.com>
+ <20130114150531.GE21142@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.21]:43514 "EHLO
-	cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752720Ab3APKx5 (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:41177 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751106Ab3APLAM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jan 2013 05:53:57 -0500
+	Wed, 16 Jan 2013 06:00:12 -0500
+Received: by mail-la0-f46.google.com with SMTP id fq13so1202488lab.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jan 2013 03:00:09 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <003301cde30b$c584c2d0$508e4870$%cho@samsung.com>
+In-Reply-To: <20130114150531.GE21142@e102568-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Cho KyongHo <pullip.cho@samsung.com>
-Cc: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Rahul Sharma' <rahul.sharma@samsung.com>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "kwangwoo.lee@gmail.com" <kwangwoo.lee@gmail.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "mcuelenaere@gmail.com" <mcuelenaere@gmail.com>, "augulis.darius@gmail.com" <augulis.darius@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Dec 26, 2012 at 01:53:15AM +0000, Cho KyongHo wrote:
-> notice: v6 patch-set is rebased on next/iommu-exynos branch of
-> linux-samsung.git.  This patch-set does not include 2 patches (05 and 06
-> patches in v5 patch-se) because they alread exist already in the branch.
-
-Given that devicetree-discuss has been notably absent from discussion
-surrounding the proposed binding, I think that including that patch in
-linux-samsung.git and dropping it from this series is rather premature.
-
-I have comments on the binding, so I'll dig up the version you posted in v5
-and add devicetree-discuss to CC.
-
-> The current exynos-iommu(System MMU) driver does not work autonomously
-> since it is lack of support for power management of peripheral blocks.
-> For example, MFC device driver must ensure that its System MMU is disabled
-> before MFC block is power-down not to invalidate IOTLB in the System MMU
-> when I/O memory mapping is changed. Because A System MMU is resides in the
-> same H/W block, access to control registers of System MMU while the H/W
-> block is turned off must be prohibited.
+On Mon, Jan 14, 2013 at 03:05:32PM +0000, Lorenzo Pieralisi wrote:
+> On Mon, Jan 14, 2013 at 02:48:41PM +0000, Mark Rutland wrote:
+> > Hello,
+> > 
+> > This all looks good. I just have a couple of comments about the cpus node.
+> > 
+> > On Sun, Jan 13, 2013 at 01:10:57AM +0000, Tomasz Figa wrote:
+> > > This patch adds basic device tree definitions for Samsung S3C64xx SoCs.
+> > > 
+> > > Since all the SoCs in the series are very similar, the files are created
+> > > hierarchically - one file for the whole series and then separate files
+> > > for particular SoCs including the common one.
+> > > 
+> > > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > 
+> > [...]
+> > 
+> > > diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
+> > > new file mode 100644
+> > > index 0000000..55d6e08
+> > > --- /dev/null
+> > > +++ b/arch/arm/boot/dts/s3c64xx.dtsi
+> > > @@ -0,0 +1,97 @@
+> > > +/*
+> > > + * Samsung's S3C64xx SoC series common device tree source
+> > > + *
+> > > + * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
+> > > + *
+> > > + * Samsung's S3C64xx SoC series device nodes are listed in this file.
+> > > + * Particular SoCs from S3C64xx series can include this file and provide
+> > > + * values for SoCs specfic bindings.
+> > > + *
+> > > + * Note: This file does not include device nodes for all the controllers in
+> > > + * S3C64xx SoCs. As device tree coverage for S3C64xx increases, additional
+> > > + * nodes can be added to this file.
+> > > + *
+> > > + * This program is free software; you can redistribute it and/or modify
+> > > + * it under the terms of the GNU General Public License version 2 as
+> > > + * published by the Free Software Foundation.
+> > > + */
+> > > +
+> > > +/include/ "skeleton.dtsi"
+> > > +
+> > > +/ {
+> > > +	cpus {
+> > > +		cpu@0 {
+> > > +			compatible = "arm,arm1176jzf-s";
+> > > +		};
+> > > +	};
+> > 
+> > You can drop the unit address from the cpu node - it's meant to be there to
+> > differentiate multiple nodes (and is supposed to match the reg property, which
+> > the 1176jzf-s can't have, as it doesn't have an MPIDR).
 > 
-> This set of changes solves the above problem with setting each System MMUs
-> as the parent of the device which owns the System MMU to recieve the
-> information when the device is turned off or turned on.
+> Well, this is a point that I should consider since the kernel docs I wrote are
+> misleading, they require the reg property that can not be there on UP.
+> True, MPIDR does not exist in this case, but I have to document this in the
+> bindings since it is unclear.
 > 
-> Another big change to the driver is the support for devicetree.
-> The bindings for System MMU is described in
-> Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+> > 
+> > Also, "arm,arm1176jzf-s" isn't listed in the binding doc. There was a question
+> > about how to maintain this list [1], but I can't seem to find a conclusion, if
+> > any were reached.  It might be worth appending "arm,arm1176" to the compatible
+> > list for the cpu node in case we want to enable something via dt for all 1176
+> > variations.
+> > 
+> > Dave, Lorenzo, any thoughts?
+> 
+> Eh, frankly I do not know how to handle this. Either we add a compatible
+> string to the bindings anytime a DT gets merged in the kernel but how
+> to maintain it, it has to be defined. Happy to hear some feedback on
+> this.
 
-This should probably be Documentation/devicetree/bindings/iommu/ no?
+Well, the number of CPU types does not grow rapidly.  It will be much
+less than one per SoC -- so keeping the list up to date shouldn't be
+that much effort.
 
-Will
+For ARM1176JZF-S, it could make sense for the comatible list to be
+
+	"arm,arm1176jzf-s", "arm,arm1176"
+
+...since the differences between 1176 variants are software probeable
+(i.e., whether there is an FPU or not).  AFAIK the J, Z apply to all
+ARM1176, and the -S (synthesisable RTL) is nothing to do with software.
+The kernel probably only really needs to know "arm,arm1176".
+
+Cheers
+---Dave
+
+> 
+> Lorenzo
+> 
