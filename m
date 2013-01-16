@@ -1,152 +1,87 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH 1/2] thermal: sysfs: Add a new sysfs node emul_temp
-Date: Wed, 16 Jan 2013 15:33:21 +0800
-Message-ID: <1358321601.2252.36.camel@rzhang1-mobl4>
-References: <1357517296-31402-1-git-send-email-amit.daniel@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 2/4] ARM: Exynos5250: Enabling ohci-exynos driver
+Date: Wed, 16 Jan 2013 08:44:54 +0100
+Message-ID: <2542030.a14I18dBkO@flatron>
+References: <1358257112-19595-1-git-send-email-gautam.vivek@samsung.com> <1358257112-19595-3-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1357517296-31402-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f178.google.com ([209.85.215.178]:32938 "EHLO
+	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752676Ab3APHpA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Jan 2013 02:45:00 -0500
+In-Reply-To: <1358257112-19595-3-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, grant.likely@secretlab.ca, dianders@chromium.org, jg1.han@samsung.com
 
-Hi, Amit,
+Hi Vivek,
 
-On Sun, 2013-01-06 at 16:08 -0800, Amit Daniel Kachhap wrote:
-> This patch adds support to set the emulated temperature method in
-> thermal zone (sensor). After setting this feature thermal zone must
-> report this temperature and not the actual temperature. The actual
-> implementation of this emulated temperature is based on sensor
-> capability or platform specific. This is useful in debugging different
-> temperature threshold and its associated cooling action. Writing 0 on
-> this node should disable emulation.
-
-Question:
-will this bring hardware issue? Say, critical temperature reached while
-in emulation mode?
-
-As this is for debug purpose, I'd prefer to have a seperate Kconfig
-option for this feature.
-
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  Documentation/thermal/sysfs-api.txt |   14 ++++++++++++++
->  drivers/thermal/thermal_sys.c       |   26 ++++++++++++++++++++++++++
->  include/linux/thermal.h             |    1 +
->  3 files changed, 41 insertions(+), 0 deletions(-)
+On Tuesday 15 of January 2013 19:08:30 Vivek Gautam wrote:
+> Adding OHCI device tree node for Exynos5250 along with
+> the device base address.
 > 
-> diff --git a/Documentation/thermal/sysfs-api.txt b/Documentation/thermal/sysfs-api.txt
-> index 88c0233..e8f2ee4 100644
-> --- a/Documentation/thermal/sysfs-api.txt
-> +++ b/Documentation/thermal/sysfs-api.txt
-> @@ -55,6 +55,8 @@ temperature) and throttle appropriate devices.
->  	.get_trip_type: get the type of certain trip point.
->  	.get_trip_temp: get the temperature above which the certain trip point
->  			will be fired.
-> +	.set_emul_temp: set the emulation temperature which helps in debugging
-> +			different threshold temperature points.
->  
->  1.1.2 void thermal_zone_device_unregister(struct thermal_zone_device *tz)
->  
-> @@ -153,6 +155,7 @@ Thermal zone device sys I/F, created once it's registered:
->      |---trip_point_[0-*]_temp:	Trip point temperature
->      |---trip_point_[0-*]_type:	Trip point type
->      |---trip_point_[0-*]_hyst:	Hysteresis value for this trip point
-> +    |---emul_temp:		Emulated temperature set node
->  
->  Thermal cooling device sys I/F, created once it's registered:
->  /sys/class/thermal/cooling_device[0-*]:
-> @@ -252,6 +255,17 @@ passive
->  	Valid values: 0 (disabled) or greater than 1000
->  	RW, Optional
->  
-> +emul_temp
-> +	Interface to set the emulated temperature method in thermal zone
-> +	(sensor). After setting this feature thermal zone must report
-> +	this temperature and not the actual temperature. The actual
-> +	implementation of this emulated	temperature is platform specific.
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> ---
+>  .../devicetree/bindings/usb/exynos-usb.txt         |   15
+> +++++++++++++++ arch/arm/boot/dts/exynos5250.dtsi                  |   
+> 6 ++++++ 2 files changed, 21 insertions(+), 0 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> b/Documentation/devicetree/bindings/usb/exynos-usb.txt index
+> e8bbb47..f66fcdd 100644
+> --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> @@ -23,3 +23,18 @@ Example:
+>  		interrupts = <0 71 0>;
+>  		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+>  	};
+> +
+> +OHCI
+> +Required properties:
+> + - compatible: should be "samsung,exynos4210-ohci" for USB 2.0
+> +   OHCI companion controller in host mode.
+> + - reg: physical base address of the controller and length of memory
+> mapped +   region.
+> + - interrupts: interrupt number to the cpu.
+> +
+> +Example:
+> +	usb@12120000 {
+> +		compatible = "samsung,exynos4210-ohci";
+> +		reg = <0x12120000 0x100>;
+> +		interrupts = <0 71 0>;
+> +	};
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi index 2cbe53e..ebb0907 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -281,6 +281,12 @@
+>  		interrupts = <0 71 0>;
+>  	};
+> 
+> +	usb@12120000 {
+> +		compatible = "samsung,exynos4210-ohci";
+> +		reg = <0x12120000 0x100>;
+> +		interrupts = <0 71 0>;
 
-can we have a pure software temperature emulation method?
-say, the generic thermal layer caches the emulated temperature value,
-and hook it in update_temperature()?
-This is also useful for testing in polling mode, and it does not require
-platform specific callback support. I mean thermal_ops->set_emul_temp is
-optional, but thermal emulation is always available for all platforms.
+For Samsung platforms we decided per board enabling of nodes and so this 
+node should also contain:
 
-thanks,
-rui
-> +	This is useful in debugging different temperature threshold and its
-> +	associated cooling action. Writing 0 on this node should disable
-> +	emulation.
-> +	Unit: millidegree Celsius
-> +	WO, Optional
-> +
->  *****************************
->  * Cooling device attributes *
->  *****************************
-> diff --git a/drivers/thermal/thermal_sys.c b/drivers/thermal/thermal_sys.c
-> index 8c8ce80..ecdfc7d 100644
-> --- a/drivers/thermal/thermal_sys.c
-> +++ b/drivers/thermal/thermal_sys.c
-> @@ -700,11 +700,31 @@ policy_show(struct device *dev, struct device_attribute *devattr, char *buf)
->  	return sprintf(buf, "%s\n", tz->governor->name);
->  }
->  
-> +static ssize_t
-> +emul_temp_store(struct device *dev, struct device_attribute *attr,
-> +		     const char *buf, size_t count)
-> +{
-> +	struct thermal_zone_device *tz = to_thermal_zone(dev);
-> +	int ret;
-> +	unsigned long temperature;
-> +
-> +	if (!tz->ops->set_emul_temp)
-> +		return -EPERM;
-> +
-> +	if (kstrtoul(buf, 10, &temperature))
-> +		return -EINVAL;
-> +
-> +	ret = tz->ops->set_emul_temp(tz, temperature);
-> +
-> +	return ret ? ret : count;
-> +}
-> +
->  static DEVICE_ATTR(type, 0444, type_show, NULL);
->  static DEVICE_ATTR(temp, 0444, temp_show, NULL);
->  static DEVICE_ATTR(mode, 0644, mode_show, mode_store);
->  static DEVICE_ATTR(passive, S_IRUGO | S_IWUSR, passive_show, passive_store);
->  static DEVICE_ATTR(policy, S_IRUGO | S_IWUSR, policy_show, policy_store);
-> +static DEVICE_ATTR(emul_temp, S_IWUSR, NULL, emul_temp_store);
->  
->  /* sys I/F for cooling device */
->  #define to_cooling_device(_dev)	\
-> @@ -1592,6 +1612,12 @@ struct thermal_zone_device *thermal_zone_device_register(const char *type,
->  			goto unregister;
->  	}
->  
-> +	if (ops->set_emul_temp) {
-> +		result = device_create_file(&tz->device, &dev_attr_emul_temp);
-> +		if (result)
-> +			goto unregister;
-> +	}
-> +
->  	/* Create policy attribute */
->  	result = device_create_file(&tz->device, &dev_attr_policy);
->  	if (result)
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index 883bcda..fbb87d4 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -123,6 +123,7 @@ struct thermal_zone_device_ops {
->  	int (*set_trip_hyst) (struct thermal_zone_device *, int,
->  			      unsigned long);
->  	int (*get_crit_temp) (struct thermal_zone_device *, unsigned long *);
-> +	int (*set_emul_temp) (struct thermal_zone_device *, unsigned long);
->  	int (*get_trend) (struct thermal_zone_device *, int,
->  			  enum thermal_trend *);
->  	int (*notify) (struct thermal_zone_device *, int,
+		status = "disabled";
 
+while in dts file of board using ohci there would be an overriding entry:
 
+	usb@12120000 {
+		status = "okay";
+	};
+
+I know that Exynos5250 has not been yet converted into this convention, 
+but using it when adding new devices will simplify the process.
+
+Best regards,
+Tomasz
