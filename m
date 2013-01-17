@@ -1,60 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: dts: Fix compatible value of pinctrl module on EXYNOS5440
-Date: Thu, 17 Jan 2013 09:34:53 +0100
-Message-ID: <CACRpkdYCw8pyR2hGkMT_uMCyHUU_fCF4Zn9DhXPyuF+74JLfAg@mail.gmail.com>
-References: <1357172423-8217-1-git-send-email-kgene.kim@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: dts: Add vmmc regulator node in
+ exynos4412-origen.dts
+Date: Thu, 17 Jan 2013 10:26:18 +0100
+Message-ID: <5436877.rqOLY7SjmE@amdc1227>
+References: <1358401693-3361-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:48246 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932093Ab3AQIey (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:42797 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756172Ab3AQJ1X (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jan 2013 03:34:54 -0500
-Received: by mail-ie0-f181.google.com with SMTP id 16so4337347iea.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jan 2013 00:34:54 -0800 (PST)
-In-Reply-To: <1357172423-8217-1-git-send-email-kgene.kim@samsung.com>
+	Thu, 17 Jan 2013 04:27:23 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGR003LQJL62HC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Jan 2013 18:27:22 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MGR00HLHJLKAB00@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Jan 2013 18:27:22 +0900 (KST)
+In-reply-to: <1358401693-3361-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree-discuss@lists.ozlabs.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On Thu, Jan 3, 2013 at 1:20 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+Hi Sachin,
 
-> From: Thomas Abraham <thomas.ab@samsung.com>
->
-> Fix the incorrect compatible property value of pin-controller module
-> EXYNOS5440 SoC.
->
-(...)
->
->         pinctrl {
-> -               compatible = "samsung,pinctrl-exynos5440";
-> +               compatible = "samsung,exynos5440-pinctrl";
->                 reg = <0xE0000 0x1000>;
->                 interrupt-controller;
->                 #interrupt-cells = <2>;
-> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-> index 953737d..cac4b45 100644
-> --- a/drivers/gpio/gpio-samsung.c
-> +++ b/drivers/gpio/gpio-samsung.c
-> @@ -3026,7 +3026,7 @@ static __init int samsung_gpiolib_init(void)
->         static const struct of_device_id exynos_pinctrl_ids[] = {
->                 { .compatible = "samsung,pinctrl-exynos4210", },
->                 { .compatible = "samsung,pinctrl-exynos4x12", },
-> -               { .compatible = "samsung,pinctrl-exynos5440", },
-> +               { .compatible = "samsung,exynos5440-pinctrl", },
->         };
->         for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
->                 if (pctrl_np && of_device_is_available(pctrl_np))
+On Thursday 17 of January 2013 11:18:12 Sachin Kamat wrote:
+> Added vmmc regulator node in exynos4412-origen.dts file.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4412-origen.dts |    9 +++++++++
+>  1 files changed, 9 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts
+> b/arch/arm/boot/dts/exynos4412-origen.dts index df880c4..fe70bc6 100644
+> --- a/arch/arm/boot/dts/exynos4412-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
+> @@ -27,6 +27,15 @@
+>  		bootargs ="console=ttySAC2,115200";
+>  	};
+> 
+> +	mmc_reg: voltage-regulator {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VMEM_VDD_2.8V";
+> +		regulator-min-microvolt = <2800000>;
+> +		regulator-max-microvolt = <2800000>;
+> +		gpio = <&gpx1 1 0>;
+> +		enable-active-high;
+> +	};
+> +
+>  	serial@13800000 {
+>  		status = "okay";
+>  	};
 
-I am tempted to apply this patch just to annoy people with
-obsessive-compulsive disorder (but that's a bit mean).
-Reference:
-http://izismile.com/2011/08/16/obnoxious_ways_to_drive_people_with_ocd_nuts_16_pics.html
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-But I'd like a word from Rob, Grant or Stephen so I have some
-guidance here.
-
-Yours,
-Linus Walleij
+Best regards,
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
