@@ -1,46 +1,31 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/2] ARM: dts: Add vmmc regulator node in exynos4412-origen.dts
-Date: Thu, 17 Jan 2013 11:18:12 +0530
-Message-ID: <1358401693-3361-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:58542 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751632Ab3AQF4s (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jan 2013 00:56:48 -0500
-Received: by mail-pa0-f46.google.com with SMTP id bh2so1252165pad.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jan 2013 21:56:48 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: samsung: add GPIO interrupt registration for exynos5
+Date: Thu, 17 Jan 2013 09:14:53 +0100
+Message-ID: <CACRpkdZtiqk6WKjORFrFacd_wG7KMeCd4QedbSG3eROJ2om6FA@mail.gmail.com>
+References: <1355481842-17952-1-git-send-email-jy0922.shim@samsung.com>
+	<1355481842-17952-2-git-send-email-jy0922.shim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1355481842-17952-2-git-send-email-jy0922.shim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>, kyungmin.park@samsung.com, Thomas Abraham <thomas.abraham@linaro.com>, kgene.kim@samsung.com
+Cc: grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Added vmmc regulator node in exynos4412-origen.dts file.
+On Fri, Dec 14, 2012 at 11:44 AM, Joonyoung Shim
+<jy0922.shim@samsung.com> wrote:
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/boot/dts/exynos4412-origen.dts |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
+> This adds GPIO interrupt registration and modification needs to register
+> GPIO interrupt rightly for exynos5 SoCs. EXYNOS5_GPYx gpios shouldn't be
+> counted to GPIO interrupt group register number because they doesn't
+> support GPIO interrupt, so their struct samsung_gpio_cfg should be
+> initialized to &samsung_gpio_cfgs[8] in declaration ahead.
+>
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
 
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index df880c4..fe70bc6 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -27,6 +27,15 @@
- 		bootargs ="console=ttySAC2,115200";
- 	};
- 
-+	mmc_reg: voltage-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VMEM_VDD_2.8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpx1 1 0>;
-+		enable-active-high;
-+	};
-+
- 	serial@13800000 {
- 		status = "okay";
- 	};
--- 
-1.7.4.1
+This patch has been floating for a while, Kyungmin, Kukjin, Thomas:
+shall it be applied?
+
+Yours,
+Linus Walleij
