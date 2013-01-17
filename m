@@ -1,89 +1,47 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH V3 2/3] thermal: exynos: Miscellaneous fixes to support falling threshold interrupt
-Date: Wed, 16 Jan 2013 17:42:18 -0800
-Message-ID: <1358386938-13577-1-git-send-email-amit.daniel@samsung.com>
-References: <CADGdYn4CeWB5zHuHrfSLYsyOCA_zcSgm9LHTwtei1zAhfmDJNQ@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 2/2] ARM: dts: Add sdhci node for exynos4412-origen
+Date: Thu, 17 Jan 2013 11:18:13 +0530
+Message-ID: <1358401693-3361-2-git-send-email-sachin.kamat@linaro.org>
+References: <1358401693-3361-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ye0-f182.google.com ([209.85.213.182]:41625 "EHLO
-	mail-ye0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756821Ab3AQBmm (ORCPT
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:47207 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751632Ab3AQF4v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jan 2013 20:42:42 -0500
-In-Reply-To: <CADGdYn4CeWB5zHuHrfSLYsyOCA_zcSgm9LHTwtei1zAhfmDJNQ@mail.gmail.com>
+	Thu, 17 Jan 2013 00:56:51 -0500
+Received: by mail-pb0-f41.google.com with SMTP id xa7so1193868pbc.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jan 2013 21:56:50 -0800 (PST)
+In-Reply-To: <1358401693-3361-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
-Cc: jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com, joe@perches.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Below fixes are done to support falling threshold interrupt,
-* Falling interrupt status macro corrected according to exynos5 data sheet.
-* The get trend function modified to calculate trip temperature correctly.
-* The clearing of interrupt status in the isr is now done after handling
-  the event that caused the interrupt.
+Added sdhci node for exynos4412-origen.
 
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
-Changes since V2,
-Incorporated Joe Perches <joe@perches.com> review comments about coding
-guidelines.
+ arch/arm/boot/dts/exynos4412-origen.dts |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-This path is based on thermal maintainer next tree.
-
- drivers/thermal/exynos_thermal.c |   17 +++++++++++------
- 1 files changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-index dcd13f7..f4dd68a 100644
---- a/drivers/thermal/exynos_thermal.c
-+++ b/drivers/thermal/exynos_thermal.c
-@@ -82,7 +82,7 @@
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index fe70bc6..4eba374 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -36,6 +36,14 @@
+ 		enable-active-high;
+ 	};
  
- #define EXYNOS_TRIMINFO_RELOAD		0x1
- #define EXYNOS_TMU_CLEAR_RISE_INT	0x111
--#define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 16)
-+#define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
- #define EXYNOS_MUX_ADDR_VALUE		6
- #define EXYNOS_MUX_ADDR_SHIFT		20
- #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
-@@ -373,7 +373,14 @@ static int exynos_get_temp(struct thermal_zone_device *thermal,
- static int exynos_get_trend(struct thermal_zone_device *thermal,
- 			int trip, enum thermal_trend *trend)
- {
--	if (thermal->temperature >= trip)
-+	int ret;
-+	unsigned long trip_temp;
++	sdhci@12530000 {
++		bus-width = <4>;
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
++		pinctrl-names = "default";
++		vmmc-supply = <&mmc_reg>;
++		status = "okay";
++	};
 +
-+	ret = exynos_get_trip_temp(thermal, trip, &trip_temp);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (thermal->temperature >= trip_temp)
- 		*trend = THERMAL_TREND_RAISING;
- 	else
- 		*trend = THERMAL_TREND_DROPPING;
-@@ -712,10 +719,9 @@ static void exynos_tmu_work(struct work_struct *work)
- 	struct exynos_tmu_data *data = container_of(work,
- 			struct exynos_tmu_data, irq_work);
- 
-+	exynos_report_trigger();
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
--
--
- 	if (data->soc == SOC_ARCH_EXYNOS)
- 		writel(EXYNOS_TMU_CLEAR_RISE_INT |
- 				EXYNOS_TMU_CLEAR_FALL_INT,
-@@ -723,10 +729,9 @@ static void exynos_tmu_work(struct work_struct *work)
- 	else
- 		writel(EXYNOS4210_TMU_INTCLEAR_VAL,
- 				data->base + EXYNOS_TMU_REG_INTCLEAR);
--
- 	clk_disable(data->clk);
- 	mutex_unlock(&data->lock);
--	exynos_report_trigger();
-+
- 	enable_irq(data->irq);
- }
- 
+ 	serial@13800000 {
+ 		status = "okay";
+ 	};
 -- 
-1.7.5.4
+1.7.4.1
