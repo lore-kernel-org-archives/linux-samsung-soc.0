@@ -1,33 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: removing duplicated condition for PINCTRL_SAMSUNG
-Date: Fri, 18 Jan 2013 16:11:23 +0100
-Message-ID: <CACRpkdbX=hMMmAvOw1zvgXX380CyQp7tPg87_+J5YFEkfQ7ziQ@mail.gmail.com>
-References: <1356632004-3067-1-git-send-email-kgene.kim@samsung.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v6 3/4] USB: ehci-s5p: Add phy driver support
+Date: Fri, 18 Jan 2013 10:37:47 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1301181037200.1988-100000@iolanthe.rowland.org>
+References: <1357916550-11421-4-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f179.google.com ([209.85.210.179]:45876 "EHLO
-	mail-ia0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750820Ab3ARPTl (ORCPT
+Received: from iolanthe.rowland.org ([192.131.102.54]:43594 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751146Ab3ARPhs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jan 2013 10:19:41 -0500
-Received: by mail-ia0-f179.google.com with SMTP id x24so1486768iak.24
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jan 2013 07:19:41 -0800 (PST)
-In-Reply-To: <1356632004-3067-1-git-send-email-kgene.kim@samsung.com>
+	Fri, 18 Jan 2013 10:37:48 -0500
+In-Reply-To: <1357916550-11421-4-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Thomas Abraham <thomas.ab@samsung.com>
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, dianders@chromium.org, jg1.han@samsung.com, p.paneri@samsung.com
 
-On Thu, Dec 27, 2012 at 7:13 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+On Fri, 11 Jan 2013, Vivek Gautam wrote:
 
-> Now, PINCTRL_SAMSUNG should be enabled with PINCTRL_EXYNOS so we don't
-> need to add 'depends on' condition already added in PINCTRL_EXYNOS.
->
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Adding the phy driver to ehci-s5p. Keeping the platform data
+> for continuing the smooth operation for boards which still uses it
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
 
-Patch applied to pinctrl fixes, thanks!
-
-Yours,
-Linus Walleij
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
