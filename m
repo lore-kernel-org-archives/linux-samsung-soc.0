@@ -1,108 +1,178 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V6 00/10]  Add DT support for i2s
-Date: Fri, 18 Jan 2013 17:16:59 +0530
-Message-ID: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
+Subject: [PATCH V6 01/10] ASoC: Samsung: Rename samsung i2s secondary device
+ name
+Date: Fri, 18 Jan 2013 17:17:00 +0530
+Message-ID: <1358509629-20471-2-git-send-email-padma.v@samsung.com>
+References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47536 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751809Ab3ARLss (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60093 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751618Ab3ARLuK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jan 2013 06:48:48 -0500
+	Fri, 18 Jan 2013 06:50:10 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGT00CDAKT29D01@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 20:48:47 +0900 (KST)
+ 17 2011)) with ESMTP id <0MGT00J2NKVG9BC0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 20:50:08 +0900 (KST)
 Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
  by mmp1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTPA id <0MGT00LG7KPYX890@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 20:48:46 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 20:50:08 +0900 (KST)
+In-reply-to: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: padma.v@samsung.com, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org
 Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
 
-This patch set is dependent on the following patches from
-Vinod Koul next branch
-1)of: Add generic device tree DMA helpers
-2)dmaengine: add helper function to request a slave DMA channel
+All Samsung SoCs has max 3 i2s controllers. So the i2s secondary fifo
+interface device id was named as samsung-i2s.4. Renaming this to
+"samsung-i2s-sec" to support device tree in i2s driver.
 
-and also dependent on
-1)DMA: PL330: Add xlate function
-2)DMA: PL330: Register the DMA controller with the generic DMA helpers
-3)ARM: dts: Add #dma-cells for generic dma binding support
-4)DMA: PL330: Modify pl330 filter based on new generic dma dt bindings.
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
+ sound/soc/samsung/i2s.c         |   31 ++++++++++++++++++++++++++++---
+ sound/soc/samsung/i2s.h         |    7 -------
+ sound/soc/samsung/smdk_wm8580.c |    7 ++-----
+ sound/soc/samsung/smdk_wm8994.c |    4 ++--
+ 4 files changed, 32 insertions(+), 17 deletions(-)
 
-This patch set is made based Kukjin Kim for-next branch
-
-Changes since V5:
-	- Add generic DMA DT binding support
-	- Change the compatible name as suggested by Grant,Mark and Kukjin
-	- Make dma dev request api compatible to DT and non-DT
-	- Fix compilation error in dmaengine.h for non-DT case 
-	- Add basic device tree based lookup for smdk wm8994 machine file.
-	- Make SPI driver use generic DMA DT bindings support
-
-Changes since V4:
-        - Add a new patch for renaming the samsung i2s secondary fifo interface
-          device name from "samsung-i2s.4" to "samsung-i2s-sec"
-        - Add platform_device_id table for the primary and secondary DAIs
-        - Avoid using of alias ids in the i2s driver by adding of_device_id
-          table. Primary device can get registered via dt or non-dt but secondary
-          device can get registered only at runtime because the secondary is not
-          physically present on the board.
-
-Changes since V3:
-        - Added syntex of gpio specifier as suggested by Mark Brown in
-          DT document file
-        - Added the requirement for having I2S alias ids
-        - Explained about gpio lines
-        - Made a seperate patch to get the I2S rclk src clk from alias ID
-
-Changes since V2:
-        - Rebased on 3.7-rc3
-        - Custom DT bindings are prefixed with samsung
-        - As generic device tree DMA helpers not yet mainlined
-          I am still using custom dma bindings. So added a
-          priliminary statement regarding the same. I will rework
-          on my patch once generic DMA helpers are mainlined.
-
-Chnages since V1:
-        - Rebased on 3.6-rc6
-
-Padmavathi Venna (10):
-  ASoC: Samsung: Rename samsung i2s secondary device name
-  ASoC: SAMSUNG: Add DT support for i2s
-  ARM: SAMSUNG: Make dma request compatible to generic dma bindings.
-  spi: s3c64xx: Modify SPI driver to use generic DMA DT support
-  ARM: dts: Add nodes for i2s controllers for Samsung Exynos5 platforms
-  ARM: EXYNOS: Enable platform support for I2S controllers
-  ASoC: SMDK: WM8994: Add device tree support for machine file
-  ARM: dts: Modify SPI nodes according generic DMA DT bindings
-  ASoC: Samsung: Update Kconfig for I2S,SPDIF and PCM audio
-  dmaengine: Fix compilation error in non-DT case
-
- .../bindings/sound/samsung,smdk-wm8994.txt         |   14 ++
- .../devicetree/bindings/sound/samsung-i2s.txt      |   63 +++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |   26 +++
- arch/arm/boot/dts/exynos5250.dtsi                  |   44 +++-
- arch/arm/mach-exynos/mach-exynos5-dt.c             |    6 +
- arch/arm/plat-samsung/dma-ops.c                    |   10 +-
- arch/arm/plat-samsung/include/plat/dma-ops.h       |    3 +-
- arch/arm/plat-samsung/s3c-dma-ops.c                |    3 +-
- drivers/spi/spi-s3c64xx.c                          |   77 ++-----
- include/linux/dmaengine.h                          |    2 +-
- sound/soc/samsung/Kconfig                          |    6 +-
- sound/soc/samsung/dma.c                            |    3 +-
- sound/soc/samsung/dma.h                            |    1 +
- sound/soc/samsung/i2s.c                            |  238 ++++++++++++++++----
- sound/soc/samsung/i2s.h                            |    7 -
- sound/soc/samsung/smdk_wm8580.c                    |    7 +-
- sound/soc/samsung/smdk_wm8994.c                    |   30 +++-
- 17 files changed, 410 insertions(+), 130 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/samsung,smdk-wm8994.txt
- create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
-
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index d2d124f..ed5eeae 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -29,6 +29,11 @@
+ 
+ #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
+ 
++enum samsung_dai_type {
++	TYPE_PRI,
++	TYPE_SEC,
++};
++
+ struct i2s_dai {
+ 	/* Platform device for this DAI */
+ 	struct platform_device *pdev;
+@@ -981,8 +986,7 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
+ 		i2s->i2s_dai_drv.capture.formats = SAMSUNG_I2S_FMTS;
+ 	} else {	/* Create a new platform_device for Secondary */
+ 		i2s->pdev = platform_device_register_resndata(NULL,
+-				pdev->name, pdev->id + SAMSUNG_I2S_SECOFF,
+-				NULL, 0, NULL, 0);
++				"samsung-i2s-sec", -1, NULL, 0, NULL, 0);
+ 		if (IS_ERR(i2s->pdev))
+ 			return NULL;
+ 	}
+@@ -993,6 +997,11 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
+ 	return i2s;
+ }
+ 
++static inline int samsung_i2s_get_driver_data(struct platform_device *pdev)
++{
++	return platform_get_device_id(pdev)->driver_data;
++}
++
+ static int samsung_i2s_probe(struct platform_device *pdev)
+ {
+ 	u32 dma_pl_chan, dma_cp_chan, dma_pl_sec_chan;
+@@ -1001,10 +1010,13 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	struct samsung_i2s *i2s_cfg;
+ 	struct resource *res;
+ 	u32 regs_base, quirks;
++	enum samsung_dai_type samsung_dai_type;
+ 	int ret = 0;
+ 
+ 	/* Call during Seconday interface registration */
+-	if (pdev->id >= SAMSUNG_I2S_SECOFF) {
++	samsung_dai_type = samsung_i2s_get_driver_data(pdev);
++
++	if (samsung_dai_type == TYPE_SEC) {
+ 		sec_dai = dev_get_drvdata(&pdev->dev);
+ 		snd_soc_register_dai(&sec_dai->pdev->dev,
+ 			&sec_dai->i2s_dai_drv);
+@@ -1143,9 +1155,22 @@ static int samsung_i2s_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static struct platform_device_id samsung_i2s_driver_ids[] = {
++	{
++		.name           = "samsung-i2s",
++		.driver_data	= TYPE_PRI,
++	}, {
++		.name           = "samsung-i2s-sec",
++		.driver_data	= TYPE_SEC,
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(platform, samsung-i2s-driver-ids);
++
+ static struct platform_driver samsung_i2s_driver = {
+ 	.probe  = samsung_i2s_probe,
+ 	.remove = samsung_i2s_remove,
++	.id_table = samsung_i2s_driver_ids,
+ 	.driver = {
+ 		.name = "samsung-i2s",
+ 		.owner = THIS_MODULE,
+diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
+index d420a7c..7966afc 100644
+--- a/sound/soc/samsung/i2s.h
++++ b/sound/soc/samsung/i2s.h
+@@ -13,13 +13,6 @@
+ #ifndef __SND_SOC_SAMSUNG_I2S_H
+ #define __SND_SOC_SAMSUNG_I2S_H
+ 
+-/*
+- * Maximum number of I2S blocks that any SoC can have.
+- * The secondary interface of a CPU dai(if there exists any),
+- * is indexed at [cpu-dai's ID + SAMSUNG_I2S_SECOFF]
+- */
+-#define SAMSUNG_I2S_SECOFF	4
+-
+ #define SAMSUNG_I2S_DIV_BCLK	1
+ 
+ #define SAMSUNG_I2S_RCLKSRC_0	0
+diff --git a/sound/soc/samsung/smdk_wm8580.c b/sound/soc/samsung/smdk_wm8580.c
+index 7e2b710..7a16b32 100644
+--- a/sound/soc/samsung/smdk_wm8580.c
++++ b/sound/soc/samsung/smdk_wm8580.c
+@@ -193,9 +193,9 @@ static struct snd_soc_dai_link smdk_dai[] = {
+ 	[SEC_PLAYBACK] = { /* Sec_Fifo Playback i/f */
+ 		.name = "Sec_FIFO TX",
+ 		.stream_name = "Playback",
+-		.cpu_dai_name = "samsung-i2s.x",
++		.cpu_dai_name = "samsung-i2s-sec",
+ 		.codec_dai_name = "wm8580-hifi-playback",
+-		.platform_name = "samsung-i2s.x",
++		.platform_name = "samsung-i2s-sec",
+ 		.codec_name = "wm8580.0-001b",
+ 		.ops = &smdk_ops,
+ 	},
+@@ -223,9 +223,6 @@ static int __init smdk_audio_init(void)
+ 	if (machine_is_smdkc100()
+ 			|| machine_is_smdkv210() || machine_is_smdkc110()) {
+ 		smdk.num_links = 3;
+-		/* Secondary is at offset SAMSUNG_I2S_SECOFF from Primary */
+-		str = (char *)smdk_dai[SEC_PLAYBACK].cpu_dai_name;
+-		str[strlen(str) - 1] = '0' + SAMSUNG_I2S_SECOFF;
+ 	} else if (machine_is_smdk6410()) {
+ 		str = (char *)smdk_dai[PRI_PLAYBACK].cpu_dai_name;
+ 		str[strlen(str) - 1] = '2';
+diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
+index b0d0ab8..cc2f407 100644
+--- a/sound/soc/samsung/smdk_wm8994.c
++++ b/sound/soc/samsung/smdk_wm8994.c
+@@ -134,9 +134,9 @@ static struct snd_soc_dai_link smdk_dai[] = {
+ 	}, { /* Sec_Fifo Playback i/f */
+ 		.name = "Sec_FIFO TX",
+ 		.stream_name = "Sec_Dai",
+-		.cpu_dai_name = "samsung-i2s.4",
++		.cpu_dai_name = "samsung-i2s-sec",
+ 		.codec_dai_name = "wm8994-aif1",
+-		.platform_name = "samsung-i2s.4",
++		.platform_name = "samsung-i2s-sec",
+ 		.codec_name = "wm8994-codec",
+ 		.ops = &smdk_ops,
+ 	},
 -- 
 1.7.4.4
