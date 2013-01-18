@@ -1,52 +1,75 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] arm: mach-s3c24xx/common.c: fix uninitialized variable
- warning
-Date: Thu, 17 Jan 2013 19:57:39 -0800
-Message-ID: <00bf01cdf52f$f7c7d8f0$e7578ad0$@samsung.com>
-References: <1358185860-5425-1-git-send-email-dinggnu@gmail.com>
+Subject: RE: [PATCH] cpufreq: exynos: Get booting freq value in
+ exynos_cpufreq_init
+Date: Thu, 17 Jan 2013 20:34:30 -0800
+Message-ID: <00e201cdf535$1ce7d680$56b78380$@samsung.com>
+References: <00b801cdecb1$57d55e20$07801a60$%choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28896 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752798Ab3ARD5z (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:8223 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753038Ab3AREer (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jan 2013 22:57:55 -0500
-In-reply-to: <1358185860-5425-1-git-send-email-dinggnu@gmail.com>
+	Thu, 17 Jan 2013 23:34:47 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGT00FE70PBT270@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 13:34:43 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MGT00MPQ0PSEJA0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 13:34:43 +0900 (KST)
+In-reply-to: <00b801cdecb1$57d55e20$07801a60$%choi@samsung.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Cong Ding' <dinggnu@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Jaecheol Lee' <jc.lee@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King' <linux@arm.linux.org.uk>
 
-Cong Ding wrote:
+Jonghwan Choi wrote:
 > 
-> the use of variable tmp is uninitialized, so we fix it.
+> Boot_freq is for saving booting freq. But exynos_cpufreq_cpu_init
+> is called in hotplug. If boot_freq is existed in exynos_cpufreq_cpu_init,
+> boot_freq could be changed.
 > 
-> Signed-off-by: Cong Ding <dinggnu@gmail.com>
+> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 > ---
->  arch/arm/mach-s3c24xx/common.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/cpufreq/exynos-cpufreq.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-
-> s3c24xx/common.c
-> index 0c9e9a7..6bcf87f 100644
-> --- a/arch/arm/mach-s3c24xx/common.c
-> +++ b/arch/arm/mach-s3c24xx/common.c
-> @@ -197,7 +197,7 @@ static unsigned long s3c24xx_read_idcode_v4(void)
+> diff --git a/drivers/cpufreq/exynos-cpufreq.c
+> b/drivers/cpufreq/exynos-cpufreq.c
+> index 7012ea8..41fc550 100644
+> --- a/drivers/cpufreq/exynos-cpufreq.c
+> +++ b/drivers/cpufreq/exynos-cpufreq.c
+> @@ -222,8 +222,6 @@ static int exynos_cpufreq_cpu_init(struct
+> cpufreq_policy
+> *policy)
 > 
->  static void s3c24xx_default_idle(void)
->  {
-> -	unsigned long tmp;
-> +	unsigned long tmp = 0;
->  	int i;
+>  	cpufreq_frequency_table_get_attr(exynos_info->freq_table,
+> policy->cpu);
 > 
->  	/* idle the system by using the idle mode which will wait for an
+> -	locking_frequency = exynos_getspeed(0);
+> -
+>  	/* set the transition latency value */
+>  	policy->cpuinfo.transition_latency = 100000;
+> 
+> @@ -288,6 +286,8 @@ static int __init exynos_cpufreq_init(void)
+>  		goto err_vdd_arm;
+>  	}
+> 
+> +	locking_frequency = exynos_getspeed(0);
+> +
+>  	register_pm_notifier(&exynos_cpufreq_nb);
+> 
+>  	if (cpufreq_register_driver(&exynos_driver)) {
 > --
-> 1.7.9.5
+> 1.7.4.1
 
-Yes, correct. Applied.
-
-Thanks.
+Applied, thanks.
 
 - Kukjin
