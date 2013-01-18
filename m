@@ -1,65 +1,48 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [linux-pm] [PATCH] cpufreq: exynos: Show list of available
- frequencies
-Date: Thu, 17 Jan 2013 20:35:17 -0800
-Message-ID: <00e301cdf535$38f933a0$aaeb9ae0$@samsung.com>
-References: <1357642258-32421-1-git-send-email-inderpal.singh@linaro.org>
- <CADGdYn6=fztS_Z9UeQiRyfE3FTAq+XfuPSrY=fT7LOgU498QXQ@mail.gmail.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: [PATCH v2] arch/arm/mach-s5pv210: adding ifdef CONFIG_CPU_S5PV210to
+ fix compiling issue
+Date: Fri, 18 Jan 2013 21:47:01 +0800
+Message-ID: <50F95255.5090107@asianux.com>
+References: <001c01cdf510$c89c9800$59d5c800$@samsung.com> <20130118011846.3CEE21840258@intranet.asianux.com> <009801cdf52c$99adc200$cd094600$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-reply-to: <CADGdYn6=fztS_Z9UeQiRyfE3FTAq+XfuPSrY=fT7LOgU498QXQ@mail.gmail.com>
-Content-language: en-us
-Sender: cpufreq-owner@vger.kernel.org
-To: 'amit kachhap' <amit.kachhap@gmail.com>, 'Inderpal Singh' <inderpal.singh@linaro.org>
-Cc: linux-pm@lists.linux-foundation.org, patches@linaro.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:56775 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750844Ab3ARFpe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Jan 2013 00:45:34 -0500
+In-Reply-To: <009801cdf52c$99adc200$cd094600$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-amit kachhap wrote:
+On 01/18/2013 11:33 AM, Kukjin Kim wrote:
+> Chen,Gang( ??) wrote:
+>>   thank you, I should notice it next time.
+>>     an incorrect subject is not easy to get maintainer's notice
+>>     maybe it is the reason why you can not reply in time, since you can not notice it.
+>>
+>>   :-)
+>>
+> Just I was busy ;-) sorry for late my reply.
 > 
-> On Tue, Jan 8, 2013 at 2:50 AM, Inderpal Singh
-> <inderpal.singh@linaro.org> wrote:
-> > Add freq_attr attribute to show list of available frequencies.
-> >
-> > Signed-off-by: Donggeun Kim <dg77.kim@samsung.com>
-> > Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> > Signed-off-by: KyungMin Park <kyungmin.park@samsung.com>
-> > Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
-> > ---
-> >  drivers/cpufreq/exynos-cpufreq.c |   13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-
-> cpufreq.c
-> > index 7012ea8..bc1e833 100644
-> > --- a/drivers/cpufreq/exynos-cpufreq.c
-> > +++ b/drivers/cpufreq/exynos-cpufreq.c
-> > @@ -244,13 +244,26 @@ static int exynos_cpufreq_cpu_init(struct
-> cpufreq_policy *policy)
-> >         return cpufreq_frequency_table_cpuinfo(policy, exynos_info-
-> >freq_table);
-> >  }
-> >
-> > +static int exynos_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-> > +{
-> > +       cpufreq_frequency_table_put_attr(policy->cpu);
-> > +       return 0;
-> > +}
-> > +
-> > +static struct freq_attr *exynos_cpufreq_attr[] = {
-> > +       &cpufreq_freq_attr_scaling_available_freqs,
-> > +       NULL,
-> > +};
-> > +
+
+  not mind, most of us are often busy, I will have more patience, next time.
+
+
+
+> Anyway Gang, don't post with html typed e-mail, probably, you got some kind of error that your previous reply wasn't accepted from mailing list mail server. Please make sure that your e-mail is plain text type for mailing list.
 > 
-> This change looks fine. I guess this was posted before also but could
-> not go mainline.
-> Reviewed-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
-> 
-Looks OK to me, applied.
+> [...]
 
-Thanks.
+  thank you, I should notice, next time.
 
-- Kukjin
 
+--
+
+ Chen Gang
+
+ Asianux Corporation
