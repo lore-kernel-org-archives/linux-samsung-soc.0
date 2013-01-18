@@ -1,73 +1,70 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Fix compatible value of pinctrl module
- on EXYNOS5440
-Date: Thu, 17 Jan 2013 20:24:23 -0600
-Message-ID: <50F8B257.1090108@gmail.com>
-References: <1357172423-8217-1-git-send-email-kgene.kim@samsung.com> <CACRpkdYCw8pyR2hGkMT_uMCyHUU_fCF4Zn9DhXPyuF+74JLfAg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2] arch/arm/mach-s5pv210: adding ifdef
+ CONFIG_CPU_S5PV210to fix compiling issue
+Date: Thu, 17 Jan 2013 19:33:34 -0800
+Message-ID: <009801cdf52c$99adc200$cd094600$@samsung.com>
+References: <001c01cdf510$c89c9800$59d5c800$@samsung.com>
+ <20130118011846.3CEE21840258@intranet.asianux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:57946 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753594Ab3ARCYZ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:25889 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754560Ab3ARDeM convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jan 2013 21:24:25 -0500
-Received: by mail-ob0-f179.google.com with SMTP id x4so3232027obh.24
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jan 2013 18:24:25 -0800 (PST)
-In-Reply-To: <CACRpkdYCw8pyR2hGkMT_uMCyHUU_fCF4Zn9DhXPyuF+74JLfAg@mail.gmail.com>
+	Thu, 17 Jan 2013 22:34:12 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGS00J2BXW9NMB0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 12:33:47 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MGS00JWLXW9LTA0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 12:33:47 +0900 (KST)
+In-reply-to: <20130118011846.3CEE21840258@intranet.asianux.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree-discuss@lists.ozlabs.org
+To: =?UTF-8?Q?'Chen=2CGang=28_=E9=99=88=E5=88=9A=29'?= <gang.chen@asianux.com>
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 01/17/2013 02:34 AM, Linus Walleij wrote:
-> On Thu, Jan 3, 2013 at 1:20 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+Chen,Gang( ??) wrote:
 > 
->> From: Thomas Abraham <thomas.ab@samsung.com>
->>
->> Fix the incorrect compatible property value of pin-controller module
->> EXYNOS5440 SoC.
->>
-> (...)
->>
->>         pinctrl {
->> -               compatible = "samsung,pinctrl-exynos5440";
->> +               compatible = "samsung,exynos5440-pinctrl";
->>                 reg = <0xE0000 0x1000>;
->>                 interrupt-controller;
->>                 #interrupt-cells = <2>;
->> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
->> index 953737d..cac4b45 100644
->> --- a/drivers/gpio/gpio-samsung.c
->> +++ b/drivers/gpio/gpio-samsung.c
->> @@ -3026,7 +3026,7 @@ static __init int samsung_gpiolib_init(void)
->>         static const struct of_device_id exynos_pinctrl_ids[] = {
->>                 { .compatible = "samsung,pinctrl-exynos4210", },
->>                 { .compatible = "samsung,pinctrl-exynos4x12", },
->> -               { .compatible = "samsung,pinctrl-exynos5440", },
->> +               { .compatible = "samsung,exynos5440-pinctrl", },
->>         };
->>         for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
->>                 if (pctrl_np && of_device_is_available(pctrl_np))
 > 
-> I am tempted to apply this patch just to annoy people with
-> obsessive-compulsive disorder (but that's a bit mean).
-> Reference:
-> http://izismile.com/2011/08/16/obnoxious_ways_to_drive_people_with_ocd_nuts_16_pics.html
+> > For subject:
+> > Please see the git log before your commit, it should be helpful to you.
+> > In this case, 'ARM: S5PV210: ...' is used.
 > 
-> But I'd like a word from Rob, Grant or Stephen so I have some
-> guidance here.
+>   thank you, I should notice it next time.
+>     an incorrect subject is not easy to get maintainer's notice
+>     maybe it is the reason why you can not reply in time, since you can not notice it.
+> 
+>   :-)
+> 
+Just I was busy ;-) sorry for late my reply.
 
-As long as we're consistently inconsistent... What about 4210 and 4x12?
-Hopefully, the reason was to avoid breaking them.
+Anyway Gang, don't post with html typed e-mail, probably, you got some kind of error that your previous reply wasn't accepted from mailing list mail server. Please make sure that your e-mail is plain text type for mailing list.
 
-This creates horrible incompatibilities between dts and kernel versions
-by changing both. Any prior kernel will not work with this dts or later.
-And more importantly this kernel version or newer will not work with
-existing dtb's. We've been pretty lax on this as DT support has been
-under heavy development, but things need to start tightening up. That
-being said, if this isn't yet a concern for this platform, then I don't
-really care.
+[...]
 
-Rob
+> > I don't think so, because common.c in mach-s5pv210 should be built with
+> > selecting CONFIG_CPU_S5PV210, actually it depends on CONFIG_ARCH_S5PV210
+> > though.
+> > 
+> > Any concerns, please let me know.
+> 
+>   ok, thank you.
+>   and
+>     is it suitable to delete the reletive code of  " define NULL in common.h for s5pv210_* "  ?
+>     it seems they are wast.
+> 
+Yes, right. We don't need more that.  I missed it when I introduced common.[ch] local at the commit 3fa754c2. Thanks for pointing out and I will sort out.
+
+[...]
+
+Thanks.
+
+- Kukjin
