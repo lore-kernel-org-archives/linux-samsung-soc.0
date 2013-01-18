@@ -1,44 +1,73 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v7] usb: phy: samsung: Add support to set pmu isolation
-Date: Thu, 17 Jan 2013 17:16:16 -0800
-Message-ID: <003001cdf519$6d21c690$476553b0$@samsung.com>
-References: <CAFp+6iE7zEJ7E_pRCOYz5mQqbk-MFE6Hwr02pRRT1yP+X3z7kQ@mail.gmail.com>
- <1358230225-2770-1-git-send-email-gautam.vivek@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: Fix compatible value of pinctrl module
+ on EXYNOS5440
+Date: Thu, 17 Jan 2013 20:24:23 -0600
+Message-ID: <50F8B257.1090108@gmail.com>
+References: <1357172423-8217-1-git-send-email-kgene.kim@samsung.com> <CACRpkdYCw8pyR2hGkMT_uMCyHUU_fCF4Zn9DhXPyuF+74JLfAg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1358230225-2770-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-language: en-us
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:57946 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753594Ab3ARCYZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Jan 2013 21:24:25 -0500
+Received: by mail-ob0-f179.google.com with SMTP id x4so3232027obh.24
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jan 2013 18:24:25 -0800 (PST)
+In-Reply-To: <CACRpkdYCw8pyR2hGkMT_uMCyHUU_fCF4Zn9DhXPyuF+74JLfAg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, devicetree-discuss@lists.ozlabs.org
 
-Vivek Gautam wrote:
+On 01/17/2013 02:34 AM, Linus Walleij wrote:
+> On Thu, Jan 3, 2013 at 1:20 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 > 
-> Adding support to parse device node data in order to get
-> required properties to set pmu isolation for usb-phy.
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> Fix the incorrect compatible property value of pin-controller module
+>> EXYNOS5440 SoC.
+>>
+> (...)
+>>
+>>         pinctrl {
+>> -               compatible = "samsung,pinctrl-exynos5440";
+>> +               compatible = "samsung,exynos5440-pinctrl";
+>>                 reg = <0xE0000 0x1000>;
+>>                 interrupt-controller;
+>>                 #interrupt-cells = <2>;
+>> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+>> index 953737d..cac4b45 100644
+>> --- a/drivers/gpio/gpio-samsung.c
+>> +++ b/drivers/gpio/gpio-samsung.c
+>> @@ -3026,7 +3026,7 @@ static __init int samsung_gpiolib_init(void)
+>>         static const struct of_device_id exynos_pinctrl_ids[] = {
+>>                 { .compatible = "samsung,pinctrl-exynos4210", },
+>>                 { .compatible = "samsung,pinctrl-exynos4x12", },
+>> -               { .compatible = "samsung,pinctrl-exynos5440", },
+>> +               { .compatible = "samsung,exynos5440-pinctrl", },
+>>         };
+>>         for_each_matching_node(pctrl_np, exynos_pinctrl_ids)
+>>                 if (pctrl_np && of_device_is_available(pctrl_np))
 > 
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> I am tempted to apply this patch just to annoy people with
+> obsessive-compulsive disorder (but that's a bit mean).
+> Reference:
+> http://izismile.com/2011/08/16/obnoxious_ways_to_drive_people_with_ocd_nuts_16_pics.html
+> 
+> But I'd like a word from Rob, Grant or Stephen so I have some
+> guidance here.
 
-This looks good to me,
-Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+As long as we're consistently inconsistent... What about 4210 and 4x12?
+Hopefully, the reason was to avoid breaking them.
 
-Vivek, could you please re-send following in one series?
-- [PATCH v9 1/2] usb: phy: samsung: Introducing usb phy driver for hsotg
-- [PATCH v8 2/2] usb: s3c-hsotg: Adding phy driver support
+This creates horrible incompatibilities between dts and kernel versions
+by changing both. Any prior kernel will not work with this dts or later.
+And more importantly this kernel version or newer will not work with
+existing dtb's. We've been pretty lax on this as DT support has been
+under heavy development, but things need to start tightening up. That
+being said, if this isn't yet a concern for this platform, then I don't
+really care.
 
-As I know, this should be applied on top of above patches.
-
-Thanks.
-
-- Kukjin
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Rob
