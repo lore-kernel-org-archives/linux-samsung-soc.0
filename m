@@ -1,75 +1,65 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] cpufreq: exynos: Get booting freq value in
- exynos_cpufreq_init
-Date: Thu, 17 Jan 2013 20:34:30 -0800
-Message-ID: <00e201cdf535$1ce7d680$56b78380$@samsung.com>
-References: <00b801cdecb1$57d55e20$07801a60$%choi@samsung.com>
+Subject: RE: [linux-pm] [PATCH] cpufreq: exynos: Show list of available
+ frequencies
+Date: Thu, 17 Jan 2013 20:35:17 -0800
+Message-ID: <00e301cdf535$38f933a0$aaeb9ae0$@samsung.com>
+References: <1357642258-32421-1-git-send-email-inderpal.singh@linaro.org>
+ <CADGdYn6=fztS_Z9UeQiRyfE3FTAq+XfuPSrY=fT7LOgU498QXQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:8223 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753038Ab3AREer (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jan 2013 23:34:47 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGT00FE70PBT270@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 13:34:43 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MGT00MPQ0PSEJA0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Jan 2013 13:34:43 +0900 (KST)
-In-reply-to: <00b801cdecb1$57d55e20$07801a60$%choi@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <CADGdYn6=fztS_Z9UeQiRyfE3FTAq+XfuPSrY=fT7LOgU498QXQ@mail.gmail.com>
 Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: cpufreq-owner@vger.kernel.org
+To: 'amit kachhap' <amit.kachhap@gmail.com>, 'Inderpal Singh' <inderpal.singh@linaro.org>
+Cc: linux-pm@lists.linux-foundation.org, patches@linaro.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Jaecheol Lee' <jc.lee@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King' <linux@arm.linux.org.uk>
 
-Jonghwan Choi wrote:
+amit kachhap wrote:
 > 
-> Boot_freq is for saving booting freq. But exynos_cpufreq_cpu_init
-> is called in hotplug. If boot_freq is existed in exynos_cpufreq_cpu_init,
-> boot_freq could be changed.
+> On Tue, Jan 8, 2013 at 2:50 AM, Inderpal Singh
+> <inderpal.singh@linaro.org> wrote:
+> > Add freq_attr attribute to show list of available frequencies.
+> >
+> > Signed-off-by: Donggeun Kim <dg77.kim@samsung.com>
+> > Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> > Signed-off-by: KyungMin Park <kyungmin.park@samsung.com>
+> > Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> > ---
+> >  drivers/cpufreq/exynos-cpufreq.c |   13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-
+> cpufreq.c
+> > index 7012ea8..bc1e833 100644
+> > --- a/drivers/cpufreq/exynos-cpufreq.c
+> > +++ b/drivers/cpufreq/exynos-cpufreq.c
+> > @@ -244,13 +244,26 @@ static int exynos_cpufreq_cpu_init(struct
+> cpufreq_policy *policy)
+> >         return cpufreq_frequency_table_cpuinfo(policy, exynos_info-
+> >freq_table);
+> >  }
+> >
+> > +static int exynos_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+> > +{
+> > +       cpufreq_frequency_table_put_attr(policy->cpu);
+> > +       return 0;
+> > +}
+> > +
+> > +static struct freq_attr *exynos_cpufreq_attr[] = {
+> > +       &cpufreq_freq_attr_scaling_available_freqs,
+> > +       NULL,
+> > +};
+> > +
 > 
-> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> ---
->  drivers/cpufreq/exynos-cpufreq.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
+> This change looks fine. I guess this was posted before also but could
+> not go mainline.
+> Reviewed-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
 > 
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c
-> b/drivers/cpufreq/exynos-cpufreq.c
-> index 7012ea8..41fc550 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -222,8 +222,6 @@ static int exynos_cpufreq_cpu_init(struct
-> cpufreq_policy
-> *policy)
-> 
->  	cpufreq_frequency_table_get_attr(exynos_info->freq_table,
-> policy->cpu);
-> 
-> -	locking_frequency = exynos_getspeed(0);
-> -
->  	/* set the transition latency value */
->  	policy->cpuinfo.transition_latency = 100000;
-> 
-> @@ -288,6 +286,8 @@ static int __init exynos_cpufreq_init(void)
->  		goto err_vdd_arm;
->  	}
-> 
-> +	locking_frequency = exynos_getspeed(0);
-> +
->  	register_pm_notifier(&exynos_cpufreq_nb);
-> 
->  	if (cpufreq_register_driver(&exynos_driver)) {
-> --
-> 1.7.4.1
+Looks OK to me, applied.
 
-Applied, thanks.
+Thanks.
 
 - Kukjin
+
