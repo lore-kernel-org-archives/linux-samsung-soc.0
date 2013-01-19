@@ -1,58 +1,58 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/2] ARM: S5PC100: remove useless ifdef in common.h
-Date: Fri, 18 Jan 2013 22:58:16 -0800
-Message-ID: <1358578697-29534-1-git-send-email-kgene.kim@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Add watchdog in exynos5440-ssdk5440 device list
+Date: Sat, 19 Jan 2013 11:40:51 +0100
+Message-ID: <1793091.ko9ZbaznTT@flatron>
+References: <1358571651-22020-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45239 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750959Ab3ASG6x (ORCPT
+Received: from mail-ee0-f51.google.com ([74.125.83.51]:44109 "EHLO
+	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751723Ab3ASKkw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Jan 2013 01:58:53 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGV00KP7224DXE0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 19 Jan 2013 15:58:52 +0900 (KST)
-Received: from localhost.localdomain ([105.128.18.183])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MGV001JK21ZID90@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 19 Jan 2013 15:58:51 +0900 (KST)
+	Sat, 19 Jan 2013 05:40:52 -0500
+Received: by mail-ee0-f51.google.com with SMTP id d17so2089098eek.24
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Jan 2013 02:40:51 -0800 (PST)
+In-Reply-To: <1358571651-22020-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Giridhar Maruthy <giridhar.m@samsung.com>
 
-The mach-s5pc100 should be complied with selecting CPU_S5PC100,
-so the 'ifdef' in common.h is not required.
+Hi Kukjin,
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pc100/common.h |    9 ---------
- 1 file changed, 9 deletions(-)
+The commit message is a bit confusing, because it says that something is 
+being added, while in fact the whole node is being removed.
 
-diff --git a/arch/arm/mach-s5pc100/common.h b/arch/arm/mach-s5pc100/common.h
-index 9fbd3ae..c41f912 100644
---- a/arch/arm/mach-s5pc100/common.h
-+++ b/arch/arm/mach-s5pc100/common.h
-@@ -20,18 +20,9 @@ void s5pc100_setup_clocks(void);
- 
- void s5pc100_restart(char mode, const char *cmd);
- 
--#ifdef CONFIG_CPU_S5PC100
--
- extern  int s5pc100_init(void);
- extern void s5pc100_map_io(void);
- extern void s5pc100_init_clocks(int xtal);
- extern void s5pc100_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- 
--#else
--#define s5pc100_init_clocks NULL
--#define s5pc100_init_uarts NULL
--#define s5pc100_map_io NULL
--#define s5pc100_init NULL
--#endif
--
- #endif /* __ARCH_ARM_MACH_S5PC100_COMMON_H */
--- 
-1.7.10.4
+Shouldn't it rather say something like:
+ARM: dts: exynos5440-ssdk5440: Remove disabled status from watchdog node
+
+Best regards,
+Tomasz Figa
+
+On Friday 18 of January 2013 21:00:51 Kukjin Kim wrote:
+> From: Giridhar Maruthy <giridhar.m@samsung.com>
+> 
+> Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5440-ssdk5440.dts |    4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+> b/arch/arm/boot/dts/exynos5440-ssdk5440.dts index 81e2c96..5239d75
+> 100644
+> --- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+> +++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+> @@ -36,10 +36,6 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	watchdog {
+> -		status = "disabled";
+> -	};
+> -
+>  	rtc {
+>  		status = "disabled";
+>  	};
