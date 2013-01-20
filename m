@@ -1,61 +1,36 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] ARM: dts: fix tick and alarm inq numbers for exynos5440
-Date: Sun, 20 Jan 2013 09:30:52 +0530
-Message-ID: <CAK9yfHxGS1EunwNpjQfAsBXR6FsYuwXjV0PQqd_NP=rgL6Qasg@mail.gmail.com>
-References: <1358571422-21832-1-git-send-email-kgene.kim@samsung.com>
+From: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
+Subject: Re: [PATCH V3 2/3] thermal: exynos: Miscellaneous fixes to support
+ falling threshold interrupt
+Date: Sun, 20 Jan 2013 18:23:57 +0530
+Message-ID: <CAM=Q2ctj3-_WZQM9iH==nPvR8hQTG33743+McjrHqzb_FnJsJw@mail.gmail.com>
+References: <CADGdYn4CeWB5zHuHrfSLYsyOCA_zcSgm9LHTwtei1zAhfmDJNQ@mail.gmail.com>
+	<1358386938-13577-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:35022 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752054Ab3ATEAx (ORCPT
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:51918 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750920Ab3ATMx6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Jan 2013 23:00:53 -0500
-Received: by mail-ob0-f178.google.com with SMTP id eh20so4919957obb.37
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Jan 2013 20:00:52 -0800 (PST)
-In-Reply-To: <1358571422-21832-1-git-send-email-kgene.kim@samsung.com>
+	Sun, 20 Jan 2013 07:53:58 -0500
+In-Reply-To: <1358386938-13577-1-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Giridhar Maruthy <giridhar.m@samsung.com>
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com, joe@perches.com
 
-typo in patch title s/inq/irq
+On 1/17/13, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
+> Below fixes are done to support falling threshold interrupt,
+> * Falling interrupt status macro corrected according to exynos5 data sheet.
+> * The get trend function modified to calculate trip temperature correctly.
+> * The clearing of interrupt status in the isr is now done after handling
+>   the event that caused the interrupt.
+One fix per patch would have been better.
 
+However not particular.
 
-On 19 January 2013 10:27, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> From: Giridhar Maruthy <giridhar.m@samsung.com>
+Also are they applicable to older kernels?
+
 >
-> The interrupts for RTC tick and alarm interrupt were swapped.
-> Has been fixed here.
->
-> Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5440.dtsi |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> index 25f0fa6..5f3562a 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -154,6 +154,6 @@
->         rtc {
->                 compatible = "samsung,s3c6410-rtc";
->                 reg = <0x130000 0x1000>;
-> -               interrupts = <0 16 0>, <0 17 0>;
-> +               interrupts = <0 17 0>, <0 16 0>;
->         };
->  };
-> --
-> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-With warm regards,
-Sachin
