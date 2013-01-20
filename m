@@ -1,41 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] i2c: s3c2410: Add quirk to exclude GPIO config for
- exynos5440
-Date: Sun, 20 Jan 2013 15:28:24 -0800
-Message-ID: <030f01cdf765$d98a00b0$8c9e0210$@samsung.com>
-References: <1358572323-24486-1-git-send-email-kgene.kim@samsung.com>
- <1786045.3qNF5pjnvJ@flatron>
+Subject: RE: [PATCH] ARM: dts: Add RTC in exynos5440-ssdk5440 device list
+Date: Sun, 20 Jan 2013 15:29:15 -0800
+Message-ID: <031001cdf765$f7953200$e6bf9600$@samsung.com>
+References: <1358571880-24199-1-git-send-email-kgene.kim@samsung.com>
+ <1986461.4YYQHTpIaN@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50919 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752039Ab3ATX2m (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:33740 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752039Ab3ATX3c (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Jan 2013 18:28:42 -0500
-In-reply-to: <1786045.3qNF5pjnvJ@flatron>
+	Sun, 20 Jan 2013 18:29:32 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGY00CZD6L7T130@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 21 Jan 2013 08:29:31 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MGY00JMH6L50VD0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 21 Jan 2013 08:29:31 +0900 (KST)
+In-reply-to: <1986461.4YYQHTpIaN@flatron>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 'Wolfram Sang' <w.sang@pengutronix.de>, 'Giridhar Maruthy' <giridhar.m@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Giridhar Maruthy' <giridhar.m@samsung.com>
 
 Tomasz Figa wrote:
 > 
 > Hi Kukjin,
 > 
-Hi,
-
-> You should also add the new compatible value to the documentation of
-> device tree bindings for i2c-s3c2410.
+> Just like with
 > 
-Yeah, agreed.
-
-> (Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt)
+> [PATCH] ARM: dts: Add watchdog in exynos5440-ssdk5440 device list
 > 
-Giridhar, please address comments from Tomasz.
+> the commit message is a bit confusing.
+> 
+Yes, more clear subject is better.
 
-Thanks.
+Let me modify when I apply.
+
+Thanks for your suggestion.
 
 - Kukjin
