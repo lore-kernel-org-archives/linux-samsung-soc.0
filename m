@@ -1,81 +1,44 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v3 0/2] Adding USB 3.0 DRD-phy support for exynos5250
-Date: Mon, 21 Jan 2013 10:26:43 +0200
-Message-ID: <20130121082643.GF8777@arwen.pp.htv.fi>
-References: <1358168377-22919-1-git-send-email-gautam.vivek@samsung.com>
- <CAFp+6iHbvwTBUSZO2EvCaeCT=g=UzubLGrmPHjKUgi9Ef7enzQ@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Andrey Gusakov <dron0gus@gmail.com>
+Subject: Re: [oselas] Audio support on Mini6410 board
+Date: Mon, 21 Jan 2013 12:01:52 +0300
+Message-ID: <CAA11ShDet7jFvUtjrqG6pOCc_W0ePtfK+mvyUjP-8CKdwjrnag@mail.gmail.com>
+References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com>
+	<50F09720.7000102@gmail.com>
+	<CACuz9s2fQYw-2pbE6dyNY7MiUSQxGiWArmXARxdwn1ULuDwm_Q@mail.gmail.com>
+	<201301151030.11851.jbe@pengutronix.de>
+	<CACuz9s0bZa0yKKkghKqFhSQ5YDX5YdwmmpXhmb3m9yKApWqPzQ@mail.gmail.com>
+	<CACuz9s0kscbt5Z87mOX6C=9vKg2wrU-T69RS6NQmeSRqP_8K4w@mail.gmail.com>
+	<CAA11ShCKo0GEEBos-ZiPZ6j7jO8aKCNJZ1JGBWbUCtiUQqAXsg@mail.gmail.com>
+	<CACuz9s0mUHjDiS-K_zvnn7UYC7ws6WV86=3oSYXms8gmF9y-bw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oFbHfjnMgUMsrGjO"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:37003 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750955Ab3AUI07 (ORCPT
+Received: from mail-da0-f43.google.com ([209.85.210.43]:45361 "EHLO
+	mail-da0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752329Ab3AUJBx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 03:26:59 -0500
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iHbvwTBUSZO2EvCaeCT=g=UzubLGrmPHjKUgi9Ef7enzQ@mail.gmail.com>
+	Mon, 21 Jan 2013 04:01:53 -0500
+Received: by mail-da0-f43.google.com with SMTP id u36so2629365dak.30
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 01:01:52 -0800 (PST)
+In-Reply-To: <CACuz9s0mUHjDiS-K_zvnn7UYC7ws6WV86=3oSYXms8gmF9y-bw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: balbi@ti.com, linux-usb@vger.kernel.org, kgene.kim@samsung.com, p.paneri@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, sylvester.nawrocki@gmail.com, av.tikhomirov@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Doug Anderson <dianders@chromium.org>, kishon <kishon@ti.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Alexander Nestorov <alexandernst@gmail.com>
+Cc: Juergen Beisert <jbe@pengutronix.de>, oselas@community.pengutronix.de, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
---oFbHfjnMgUMsrGjO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi.
 
-Hi,
+On Mon, Jan 21, 2013 at 12:07 PM, Alexander Nestorov
+<alexandernst@gmail.com> wrote:
+> Hi,
+>
+> I see. Maybe you already saw it, but just in case, I found this[1] I
+> hope it helps.
+Thanks. It s looks like code from 2.6.28, I'll take a closer look.
 
-On Mon, Jan 21, 2013 at 12:15:10PM +0530, Vivek Gautam wrote:
-> Hi Felipe,
->=20
->=20
-> On Mon, Jan 14, 2013 at 6:29 PM, Vivek Gautam <gautam.vivek@samsung.com> =
-wrote:
-> > Changes from v2:
-> >  - Renaming 'samsung-usbphy.c' driver to 'samsung-usb2.c' indicating
-> >    usb 2.0 phy controller's driver for Samsung's SoCs.
-> >  - Moving the register definitions and strcuture definitions to
-> >    common header file 'samsung-usbphy.h' to be used across
-> >    usb 2.0 and usb 3.0 phy.
-> >  - Keeping common exported function definitions in samsung-usbphy.c
-> >    which can be used across usb 2.0 and usb 3.0 phy.
-> >  - Writting separate driver file for Samsung's USB 3.0 phy controller.
-> >    and making it dependent on USB_DWC3.
-> >
->=20
-> Is the re-organization being done here fine as per requirements for
-> separate drivers for usb 2.0 type PHY and usb 3.0 type PHY ?
-
-should be fine ;-) If there is *truly generic* pieces, it makes sense to
-re-use - unless those "generic" parts are common driver churn
-(platform_driver definition, module_init(), module_exit(), etc).
-
---=20
-balbi
-
---oFbHfjnMgUMsrGjO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ/PvDAAoJEIaOsuA1yqREbJcQAKGcvaVboLtCXoQJuWnrfC0b
-Eupv6hbk2ZQtt8hUwriSa0IFQm80T/xj2psZX2UxN+PpXyB3KPNMe6ADgvPNyb9f
-EGwbhP3f7lylAaDa8lZY6yzqKHo7T/x6ufMC2vIApPxYzDyMMQJ53s3z/ZVStNNc
-vJK0CEsZDrlY2ojtv0yq5RjARg+9t+ddAC/6IYZlXW5p87BYk2Ty4mgM9PvFgCR6
-qGSCgOc8aHx2YwSglRogpfDPlMLdlhjaateM/35wg7BRtPnZIRO73pZsw8FrBVNX
-hLnkubTlzGMGzp8fRU4z7CdRoCcR9WOQ4PHw435jCIBPB36mXsg/BeWAsWAlkAKC
-wKGVJMCKaQy1/Olqjq0KAPRm9ZVzvDYIy/2/1fNPEP/DJBGk9XoAHG5WGYlVCBjm
-7PJjcAAhsZtSZR2A7Htub1uCdinPqjHLE3oIbxvwn8pfR3MeJDuPu5w2FUXqLkJc
-rFISQZTEkwbhF3IFlXDQ/G5CwziQDV/KIWON+JR87RskMIg4uOC2FFTbPcHKHBfl
-+bo0i07EuP6reE8PkWgr+DQ0iX1DYcFoa88iN2GdvIh/+ScPv5G8qPNnkakcGOqQ
-YFkFOxzaoPUOsQ8J112OquZ5An2rsHNJdNsgN3FU6mEAe3IKL9LsfZSFTkzwSLrJ
-uCX4lIde+gH/0c0WQVla
-=hJDy
------END PGP SIGNATURE-----
-
---oFbHfjnMgUMsrGjO--
+> Do you plan sharing your code in GitHub or equivalent? I'm working on
+> that board too
+> and I'll probably have to make my software use hw acceleration.
+Yes, I'll share it as soon as get it work or at least compile without
+errors. Now it looks like mix of code from 2.6.28, s5p-mfc code and
+documentation quotes.
