@@ -1,160 +1,238 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v4 2/7] ARM: Exynos: prepare an array of MCT interrupt numbers and use it
-Date: Mon, 21 Jan 2013 02:02:17 -0800
-Message-ID: <1358762542-19008-3-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v4 4/7] ARM: Exynos: allow dt based discovery of mct controller using clocksource_of_init
+Date: Mon, 21 Jan 2013 02:02:19 -0800
+Message-ID: <1358762542-19008-5-git-send-email-thomas.abraham@linaro.org>
 References: <1358762542-19008-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:33200 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752340Ab3AUKDD (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:64214 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752581Ab3AUKDF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 05:03:03 -0500
-Received: by mail-pa0-f49.google.com with SMTP id bi1so3323786pad.36
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 02:03:02 -0800 (PST)
+	Mon, 21 Jan 2013 05:03:05 -0500
+Received: by mail-pa0-f48.google.com with SMTP id fa1so3322847pad.21
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 02:03:05 -0800 (PST)
 In-Reply-To: <1358762542-19008-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com, chaos.youn@samsung.com, sylvester.nawrocki@gmail.com, olof@lixom.net, swarren@nvidia.com
 
-Instead of using soc_is_xxx macro at more than one place in the MCT
-controller driver to decide the MCT interrpt number to be setup, populate
-a table of known MCT global and local timer interrupts and use the values
-in table to setup the MCT interrupts.
+Add entries to __clksrc_of_table so that Exynos MCT controller is discoverable
+using call to clocksource_of_init. With this change, it would be appropriate to
+rename the function 'exynos4_timer_init' as 'mct_init' since it aptly describes
+this function. Additionally, the 'init_time' callback of all machine descriptors
+for exynos platforms that were previously set to 'exynos4_timer_init' are now
+set to either 'mct_init' or 'clocksource_of_init'.
 
-This also helps in adding device tree support for MCT controller driver by
-allowing the driver to retrieve interrupt numbers from device tree and
-populating them into this table, thereby supporting both legacy and dt
-functionality to co-exist.
-
-Cc: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/mct.c |   57 +++++++++++++++++++++++++++----------------
- 1 files changed, 36 insertions(+), 21 deletions(-)
+ arch/arm/mach-exynos/Kconfig           |    2 ++
+ arch/arm/mach-exynos/common.h          |    2 +-
+ arch/arm/mach-exynos/mach-armlex4210.c |    2 +-
+ arch/arm/mach-exynos/mach-exynos4-dt.c |    3 ++-
+ arch/arm/mach-exynos/mach-exynos5-dt.c |    3 ++-
+ arch/arm/mach-exynos/mach-nuri.c       |    2 +-
+ arch/arm/mach-exynos/mach-origen.c     |    2 +-
+ arch/arm/mach-exynos/mach-smdk4x12.c   |    4 ++--
+ arch/arm/mach-exynos/mach-smdkv310.c   |    4 ++--
+ arch/arm/mach-exynos/mct.c             |   12 ++++++------
+ 10 files changed, 20 insertions(+), 16 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index e103c29..8bdeaa5 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -416,6 +416,7 @@ config MACH_EXYNOS4_DT
+ 	select PINCTRL
+ 	select PINCTRL_EXYNOS4
+ 	select USE_OF
++	select CLKSRC_OF
+ 	help
+ 	  Machine support for Samsung Exynos4 machine with device tree enabled.
+ 	  Select this if a fdt blob is available for the Exynos4 SoC based board.
+@@ -428,6 +429,7 @@ config MACH_EXYNOS5_DT
+ 	depends on ARCH_EXYNOS5
+ 	select ARM_AMBA
+ 	select USE_OF
++	select CLKSRC_OF
+ 	help
+ 	  Machine support for Samsung EXYNOS5 machine with device tree enabled.
+ 	  Select this if a fdt blob is available for the EXYNOS5 SoC based board.
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 3ab3c03..be3ea62 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -12,7 +12,7 @@
+ #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ 
+-extern void exynos4_timer_init(void);
++extern void mct_init(void);
+ 
+ struct map_desc;
+ void exynos_init_io(struct map_desc *mach_desc, int size);
+diff --git a/arch/arm/mach-exynos/mach-armlex4210.c b/arch/arm/mach-exynos/mach-armlex4210.c
+index 2f18130..27b51d2 100644
+--- a/arch/arm/mach-exynos/mach-armlex4210.c
++++ b/arch/arm/mach-exynos/mach-armlex4210.c
+@@ -204,6 +204,6 @@ MACHINE_START(ARMLEX4210, "ARMLEX4210")
+ 	.handle_irq	= gic_handle_irq,
+ 	.init_machine	= armlex4210_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= mct_init,
+ 	.restart	= exynos4_restart,
+ MACHINE_END
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index 2a2c96a..6a75e96 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/of_platform.h>
+ #include <linux/serial_core.h>
++#include <linux/clocksource.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -111,7 +112,7 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
+ 	.init_early	= exynos_firmware_init,
+ 	.init_machine	= exynos4_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= clocksource_of_init,
+ 	.dt_compat	= exynos4_dt_compat,
+ 	.restart        = exynos4_restart,
+ MACHINE_END
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index 4e074c6..39563ce 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -14,6 +14,7 @@
+ #include <linux/serial_core.h>
+ #include <linux/memblock.h>
+ #include <linux/io.h>
++#include <linux/clocksource.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -182,7 +183,7 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+ 	.handle_irq	= gic_handle_irq,
+ 	.init_machine	= exynos5_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= clocksource_of_init,
+ 	.dt_compat	= exynos5_dt_compat,
+ 	.restart        = exynos5_restart,
+ 	.reserve	= exynos5_reserve,
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index dccd1d1..e4a7ae5 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -1382,7 +1382,7 @@ MACHINE_START(NURI, "NURI")
+ 	.handle_irq	= gic_handle_irq,
+ 	.init_machine	= nuri_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= mct_init,
+ 	.reserve        = &nuri_reserve,
+ 	.restart	= exynos4_restart,
+ MACHINE_END
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 4e11563..16a7019 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -817,7 +817,7 @@ MACHINE_START(ORIGEN, "ORIGEN")
+ 	.handle_irq	= gic_handle_irq,
+ 	.init_machine	= origen_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= mct_init,
+ 	.reserve	= &origen_reserve,
+ 	.restart	= exynos4_restart,
+ MACHINE_END
+diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
+index e9c9c29..a66e916e 100644
+--- a/arch/arm/mach-exynos/mach-smdk4x12.c
++++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+@@ -378,7 +378,7 @@ MACHINE_START(SMDK4212, "SMDK4212")
+ 	.map_io		= smdk4x12_map_io,
+ 	.handle_irq	= gic_handle_irq,
+ 	.init_machine	= smdk4x12_machine_init,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= mct_init,
+ 	.restart	= exynos4_restart,
+ 	.reserve	= &smdk4x12_reserve,
+ MACHINE_END
+@@ -393,7 +393,7 @@ MACHINE_START(SMDK4412, "SMDK4412")
+ 	.handle_irq	= gic_handle_irq,
+ 	.init_machine	= smdk4x12_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= mct_init,
+ 	.restart	= exynos4_restart,
+ 	.reserve	= &smdk4x12_reserve,
+ MACHINE_END
+diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
+index b228ab9..ecf4723 100644
+--- a/arch/arm/mach-exynos/mach-smdkv310.c
++++ b/arch/arm/mach-exynos/mach-smdkv310.c
+@@ -425,7 +425,7 @@ MACHINE_START(SMDKV310, "SMDKV310")
+ 	.map_io		= smdkv310_map_io,
+ 	.handle_irq	= gic_handle_irq,
+ 	.init_machine	= smdkv310_machine_init,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= mct_init,
+ 	.reserve	= &smdkv310_reserve,
+ 	.restart	= exynos4_restart,
+ MACHINE_END
+@@ -439,7 +439,7 @@ MACHINE_START(SMDKC210, "SMDKC210")
+ 	.handle_irq	= gic_handle_irq,
+ 	.init_machine	= smdkv310_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos4_timer_init,
++	.init_time	= mct_init,
+ 	.reserve	= &smdkv310_reserve,
+ 	.restart	= exynos4_restart,
+ MACHINE_END
 diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-index 6ceb1dd..3c91511 100644
+index 2942bee..1d3c3f4 100644
 --- a/arch/arm/mach-exynos/mct.c
 +++ b/arch/arm/mach-exynos/mct.c
-@@ -66,9 +66,22 @@ enum {
- 	MCT_INT_PPI
+@@ -22,6 +22,7 @@
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
++#include <linux/clocksource.h>
+ 
+ #include <asm/arch_timer.h>
+ #include <asm/hardware/gic.h>
+@@ -518,17 +519,12 @@ static const struct of_device_id exynos_mct_ids[] = {
+ 	{ .compatible = "samsung,exynos4412-mct", .data = (void *)MCT_INT_PPI },
  };
  
-+enum {
-+	MCT_G0_IRQ,
-+	MCT_G1_IRQ,
-+	MCT_G2_IRQ,
-+	MCT_G3_IRQ,
-+	MCT_L0_IRQ,
-+	MCT_L1_IRQ,
-+	MCT_L2_IRQ,
-+	MCT_L3_IRQ,
-+	MCT_NR_IRQS,
-+};
-+
- static void __iomem *reg_base;
- static unsigned long clk_rate;
- static unsigned int mct_int_type;
-+static int mct_irqs[MCT_NR_IRQS];
- 
- struct mct_clock_event_device {
- 	struct clock_event_device *evt;
-@@ -287,11 +300,7 @@ static void exynos4_clockevent_init(void)
- 		clockevent_delta2ns(0xf, &mct_comp_device);
- 	mct_comp_device.cpumask = cpumask_of(0);
- 	clockevents_register_device(&mct_comp_device);
--
--	if (soc_is_exynos5250())
--		setup_irq(EXYNOS5_IRQ_MCT_G0, &mct_comp_event_irq);
--	else
--		setup_irq(EXYNOS4_IRQ_MCT_G0, &mct_comp_event_irq);
-+	setup_irq(mct_irqs[MCT_G0_IRQ], &mct_comp_event_irq);
- }
- 
- #ifdef CONFIG_LOCAL_TIMERS
-@@ -415,7 +424,6 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
+-void __init exynos4_timer_init(void)
++void __init mct_init(void)
  {
- 	struct mct_clock_event_device *mevt;
- 	unsigned int cpu = smp_processor_id();
--	int mct_lx_irq;
+ 	struct device_node *np = NULL;
+ 	const struct of_device_id *match;
+ 	u32 nr_irqs, i;
  
- 	mevt = this_cpu_ptr(&percpu_mct_tick);
- 	mevt->evt = evt;
-@@ -442,21 +450,17 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
- 
- 	if (mct_int_type == MCT_INT_SPI) {
- 		if (cpu == 0) {
--			mct_lx_irq = soc_is_exynos4210() ? EXYNOS4_IRQ_MCT_L0 :
--						EXYNOS5_IRQ_MCT_L0;
- 			mct_tick0_event_irq.dev_id = mevt;
--			evt->irq = mct_lx_irq;
--			setup_irq(mct_lx_irq, &mct_tick0_event_irq);
-+			evt->irq = mct_irqs[MCT_L0_IRQ];
-+			setup_irq(evt->irq, &mct_tick0_event_irq);
- 		} else {
--			mct_lx_irq = soc_is_exynos4210() ? EXYNOS4_IRQ_MCT_L1 :
--						EXYNOS5_IRQ_MCT_L1;
- 			mct_tick1_event_irq.dev_id = mevt;
--			evt->irq = mct_lx_irq;
--			setup_irq(mct_lx_irq, &mct_tick1_event_irq);
--			irq_set_affinity(mct_lx_irq, cpumask_of(1));
-+			evt->irq = mct_irqs[MCT_L1_IRQ];
-+			setup_irq(evt->irq, &mct_tick1_event_irq);
-+			irq_set_affinity(evt->irq, cpumask_of(1));
- 		}
- 	} else {
--		enable_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER, 0);
-+		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
- 	}
- 
- 	return 0;
-@@ -472,7 +476,7 @@ static void exynos4_local_timer_stop(struct clock_event_device *evt)
- 		else
- 			remove_irq(evt->irq, &mct_tick1_event_irq);
- 	else
--		disable_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER);
-+		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
- }
- 
- static struct local_timer_ops exynos4_mct_tick_ops __cpuinitdata = {
-@@ -494,11 +498,11 @@ static void __init exynos4_timer_resources(void)
- 	if (mct_int_type == MCT_INT_PPI) {
- 		int err;
- 
--		err = request_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER,
-+		err = request_percpu_irq(mct_irqs[MCT_L0_IRQ],
- 					 exynos4_mct_tick_isr, "MCT",
- 					 &percpu_mct_tick);
- 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
--		     EXYNOS_IRQ_MCT_LOCALTIMER, err);
-+		     mct_irqs[MCT_L0_IRQ], err);
- 	}
- 
- 	local_timer_register(&exynos4_mct_tick_ops);
-@@ -512,10 +516,21 @@ void __init exynos4_timer_init(void)
- 		return;
- 	}
- 
--	if ((soc_is_exynos4210()) || (soc_is_exynos5250()))
-+	if (soc_is_exynos4210()) {
-+		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
-+		mct_irqs[MCT_L0_IRQ] = EXYNOS4_IRQ_MCT_L0;
-+		mct_irqs[MCT_L1_IRQ] = EXYNOS4_IRQ_MCT_L1;
- 		mct_int_type = MCT_INT_SPI;
--	else
-+	} else if (soc_is_exynos5250()) {
-+		mct_irqs[MCT_G0_IRQ] = EXYNOS5_IRQ_MCT_G0;
-+		mct_irqs[MCT_L0_IRQ] = EXYNOS5_IRQ_MCT_L0;
-+		mct_irqs[MCT_L1_IRQ] = EXYNOS5_IRQ_MCT_L1;
-+		mct_int_type = MCT_INT_SPI;
-+	} else {
-+		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
-+		mct_irqs[MCT_L0_IRQ] = EXYNOS_IRQ_MCT_LOCALTIMER;
- 		mct_int_type = MCT_INT_PPI;
-+	}
- 
- 	exynos4_timer_resources();
+-	if (soc_is_exynos5440()) {
+-		arch_timer_of_register();
+-		return;
+-	}
+-
+ #ifdef CONFIG_OF
+ 	np = of_find_matching_node_and_match(NULL, exynos_mct_ids, &match);
+ #endif
+@@ -561,3 +557,7 @@ void __init exynos4_timer_init(void)
  	exynos4_clocksource_init();
+ 	exynos4_clockevent_init();
+ }
++#ifdef CONFIG_CLKSRC_OF
++CLOCKSOURCE_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init)
++CLOCKSOURCE_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init)
++#endif
 -- 
 1.7.5.4
