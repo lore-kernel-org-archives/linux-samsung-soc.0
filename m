@@ -1,75 +1,77 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3 0/2] Adding USB 3.0 DRD-phy support for exynos5250
-Date: Mon, 21 Jan 2013 12:15:10 +0530
-Message-ID: <CAFp+6iHbvwTBUSZO2EvCaeCT=g=UzubLGrmPHjKUgi9Ef7enzQ@mail.gmail.com>
-References: <1358168377-22919-1-git-send-email-gautam.vivek@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: dts: Add watchdog in exynos5440-ssdk5440 device
+ list
+Date: Mon, 21 Jan 2013 12:21:41 +0530
+Message-ID: <50FCE57D.9030200@linaro.org>
+References: <1358571651-22020-1-git-send-email-kgene.kim@samsung.com> <1793091.ko9ZbaznTT@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f49.google.com ([209.85.214.49]:47814 "EHLO
-	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751792Ab3AUGpM (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:57559 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752667Ab3AUGvs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 01:45:12 -0500
-In-Reply-To: <1358168377-22919-1-git-send-email-gautam.vivek@samsung.com>
+	Mon, 21 Jan 2013 01:51:48 -0500
+Received: by mail-pa0-f43.google.com with SMTP id fb10so3220455pad.16
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Jan 2013 22:51:47 -0800 (PST)
+In-Reply-To: <1793091.ko9ZbaznTT@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: linux-usb@vger.kernel.org, kgene.kim@samsung.com, p.paneri@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, sylvester.nawrocki@gmail.com, av.tikhomirov@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Doug Anderson <dianders@chromium.org>, kishon <kishon@ti.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Giridhar Maruthy <giridhar.m@samsung.com>
 
-Hi Felipe,
+On 01/19/2013 04:10 PM, Tomasz Figa wrote:
+> Hi Kukjin,
+> 
+> The commit message is a bit confusing, because it says that something is 
+> being added, while in fact the whole node is being removed.
+> 
+> Shouldn't it rather say something like:
+> ARM: dts: exynos5440-ssdk5440: Remove disabled status from watchdog node
+> 
 
+Rather, should we not be following a consistent approach for both
+EXYNSO4 and EXYNOS5.
 
-On Mon, Jan 14, 2013 at 6:29 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Changes from v2:
->  - Renaming 'samsung-usbphy.c' driver to 'samsung-usb2.c' indicating
->    usb 2.0 phy controller's driver for Samsung's SoCs.
->  - Moving the register definitions and strcuture definitions to
->    common header file 'samsung-usbphy.h' to be used across
->    usb 2.0 and usb 3.0 phy.
->  - Keeping common exported function definitions in samsung-usbphy.c
->    which can be used across usb 2.0 and usb 3.0 phy.
->  - Writting separate driver file for Samsung's USB 3.0 phy controller.
->    and making it dependent on USB_DWC3.
->
+In EXYNOS4, the default state of the nodes is 'disabled' and they are
+enabled in the board-specific files whereas it is exactly the opposite
+in case of EXYNOS5.
 
-Is the re-organization being done here fine as per requirements for
-separate drivers for usb 2.0 type PHY and usb 3.0 type PHY ?
-
-> Rebased on top of usb-next followed by following patches/patch-threads:
->         -- [PATCH v9 1/2] usb: phy: samsung: Introducing usb phy driver for hsotg
->         -- [PATCH] usb: phy: samsung: Add support to set pmu isolation (version 6)
->         -- [PATCH v6 0/4] Adding usb2.0 host-phy support for exynos5250
->
-> Changes form v1:
->  - Moved architecture related patch out of this patch-set.
->  - Replaced unnecessary multi-line macro definitions by
->    single line definitions.
->  - Creating new data structure for USB 3.0 phy type and embedding
->    it in 'samsung_usbphy' structure.
->  - Adding a flag in 'samsung_usbphy' structure to check if device
->    has usb 3.0 type phy or not.
->  - Restructuring probe sequence for USB 3.0 phy, such that we are
->    initializing only when device has usb3.0 type phy.
->
-> Vivek Gautam (2):
->   usb: phy: samsung: Common out the generic stuff
->   usb: phy: samsung: Add PHY support for USB 3.0 controller
->
->  drivers/usb/phy/Kconfig          |    8 +
->  drivers/usb/phy/Makefile         |    3 +-
->  drivers/usb/phy/samsung-usb2.c   |  511 +++++++++++++++++++++++++++
->  drivers/usb/phy/samsung-usb3.c   |  349 +++++++++++++++++++
->  drivers/usb/phy/samsung-usbphy.c |  713 +-------------------------------------
->  drivers/usb/phy/samsung-usbphy.h |  328 +++++++++++++++++
->  6 files changed, 1205 insertions(+), 707 deletions(-)
->  create mode 100644 drivers/usb/phy/samsung-usb2.c
->  create mode 100644 drivers/usb/phy/samsung-usb3.c
->  create mode 100644 drivers/usb/phy/samsung-usbphy.h
->
-
+> Best regards,
+> Tomasz Figa
+> 
+> On Friday 18 of January 2013 21:00:51 Kukjin Kim wrote:
+>> From: Giridhar Maruthy <giridhar.m@samsung.com>
+>>
+>> Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
+>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5440-ssdk5440.dts |    4 ----
+>>  1 file changed, 4 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+>> b/arch/arm/boot/dts/exynos5440-ssdk5440.dts index 81e2c96..5239d75
+>> 100644
+>> --- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+>> +++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
+>> @@ -36,10 +36,6 @@
+>>  		status = "disabled";
+>>  	};
+>>
+>> -	watchdog {
+>> -		status = "disabled";
+>> -	};
+>> -
+>>  	rtc {
+>>  		status = "disabled";
+>>  	};
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
 
 -- 
-Thanks & Regards
-Vivek
+Tushar Behera
