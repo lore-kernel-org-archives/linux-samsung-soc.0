@@ -1,39 +1,81 @@
-From: Alexander Nestorov <alexandernst@gmail.com>
-Subject: Re: [oselas] Audio support on Mini6410 board
-Date: Mon, 21 Jan 2013 09:07:38 +0100
-Message-ID: <CACuz9s0mUHjDiS-K_zvnn7UYC7ws6WV86=3oSYXms8gmF9y-bw@mail.gmail.com>
-References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com>
- <50F09720.7000102@gmail.com> <CACuz9s2fQYw-2pbE6dyNY7MiUSQxGiWArmXARxdwn1ULuDwm_Q@mail.gmail.com>
- <201301151030.11851.jbe@pengutronix.de> <CACuz9s0bZa0yKKkghKqFhSQ5YDX5YdwmmpXhmb3m9yKApWqPzQ@mail.gmail.com>
- <CACuz9s0kscbt5Z87mOX6C=9vKg2wrU-T69RS6NQmeSRqP_8K4w@mail.gmail.com> <CAA11ShCKo0GEEBos-ZiPZ6j7jO8aKCNJZ1JGBWbUCtiUQqAXsg@mail.gmail.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v3 0/2] Adding USB 3.0 DRD-phy support for exynos5250
+Date: Mon, 21 Jan 2013 10:26:43 +0200
+Message-ID: <20130121082643.GF8777@arwen.pp.htv.fi>
+References: <1358168377-22919-1-git-send-email-gautam.vivek@samsung.com>
+ <CAFp+6iHbvwTBUSZO2EvCaeCT=g=UzubLGrmPHjKUgi9Ef7enzQ@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oFbHfjnMgUMsrGjO"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:40764 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750926Ab3AUIIS (ORCPT
+Received: from comal.ext.ti.com ([198.47.26.152]:37003 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750955Ab3AUI07 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 03:08:18 -0500
-Received: by mail-ob0-f179.google.com with SMTP id x4so5574505obh.24
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 00:08:18 -0800 (PST)
-In-Reply-To: <CAA11ShCKo0GEEBos-ZiPZ6j7jO8aKCNJZ1JGBWbUCtiUQqAXsg@mail.gmail.com>
+	Mon, 21 Jan 2013 03:26:59 -0500
+Content-Disposition: inline
+In-Reply-To: <CAFp+6iHbvwTBUSZO2EvCaeCT=g=UzubLGrmPHjKUgi9Ef7enzQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrey Gusakov <dron0gus@gmail.com>
-Cc: Juergen Beisert <jbe@pengutronix.de>, oselas@community.pengutronix.de, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: balbi@ti.com, linux-usb@vger.kernel.org, kgene.kim@samsung.com, p.paneri@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, sylvester.nawrocki@gmail.com, av.tikhomirov@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Doug Anderson <dianders@chromium.org>, kishon <kishon@ti.com>, Grant Likely <grant.likely@secretlab.ca>
+
+--oFbHfjnMgUMsrGjO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-I see. Maybe you already saw it, but just in case, I found this[1] I
-hope it helps.
-Do you plan sharing your code in GitHub or equivalent? I'm working on
-that board too
-and I'll probably have to make my software use hw acceleration.
+On Mon, Jan 21, 2013 at 12:15:10PM +0530, Vivek Gautam wrote:
+> Hi Felipe,
+>=20
+>=20
+> On Mon, Jan 14, 2013 at 6:29 PM, Vivek Gautam <gautam.vivek@samsung.com> =
+wrote:
+> > Changes from v2:
+> >  - Renaming 'samsung-usbphy.c' driver to 'samsung-usb2.c' indicating
+> >    usb 2.0 phy controller's driver for Samsung's SoCs.
+> >  - Moving the register definitions and strcuture definitions to
+> >    common header file 'samsung-usbphy.h' to be used across
+> >    usb 2.0 and usb 3.0 phy.
+> >  - Keeping common exported function definitions in samsung-usbphy.c
+> >    which can be used across usb 2.0 and usb 3.0 phy.
+> >  - Writting separate driver file for Samsung's USB 3.0 phy controller.
+> >    and making it dependent on USB_DWC3.
+> >
+>=20
+> Is the re-organization being done here fine as per requirements for
+> separate drivers for usb 2.0 type PHY and usb 3.0 type PHY ?
 
-Regards!
+should be fine ;-) If there is *truly generic* pieces, it makes sense to
+re-use - unless those "generic" parts are common driver churn
+(platform_driver definition, module_init(), module_exit(), etc).
 
-[1] http://code.google.com/p/openwrt-arm/source/browse/trunk/openwrt/target/linux/s3c64xx/files-2.6.36/drivers/media/video/samsung/?r=20
+--=20
+balbi
 
+--oFbHfjnMgUMsrGjO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-alexandernst
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ/PvDAAoJEIaOsuA1yqREbJcQAKGcvaVboLtCXoQJuWnrfC0b
+Eupv6hbk2ZQtt8hUwriSa0IFQm80T/xj2psZX2UxN+PpXyB3KPNMe6ADgvPNyb9f
+EGwbhP3f7lylAaDa8lZY6yzqKHo7T/x6ufMC2vIApPxYzDyMMQJ53s3z/ZVStNNc
+vJK0CEsZDrlY2ojtv0yq5RjARg+9t+ddAC/6IYZlXW5p87BYk2Ty4mgM9PvFgCR6
+qGSCgOc8aHx2YwSglRogpfDPlMLdlhjaateM/35wg7BRtPnZIRO73pZsw8FrBVNX
+hLnkubTlzGMGzp8fRU4z7CdRoCcR9WOQ4PHw435jCIBPB36mXsg/BeWAsWAlkAKC
+wKGVJMCKaQy1/Olqjq0KAPRm9ZVzvDYIy/2/1fNPEP/DJBGk9XoAHG5WGYlVCBjm
+7PJjcAAhsZtSZR2A7Htub1uCdinPqjHLE3oIbxvwn8pfR3MeJDuPu5w2FUXqLkJc
+rFISQZTEkwbhF3IFlXDQ/G5CwziQDV/KIWON+JR87RskMIg4uOC2FFTbPcHKHBfl
++bo0i07EuP6reE8PkWgr+DQ0iX1DYcFoa88iN2GdvIh/+ScPv5G8qPNnkakcGOqQ
+YFkFOxzaoPUOsQ8J112OquZ5An2rsHNJdNsgN3FU6mEAe3IKL9LsfZSFTkzwSLrJ
+uCX4lIde+gH/0c0WQVla
+=hJDy
+-----END PGP SIGNATURE-----
+
+--oFbHfjnMgUMsrGjO--
