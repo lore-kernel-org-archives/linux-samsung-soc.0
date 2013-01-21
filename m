@@ -1,54 +1,108 @@
-From: Ben Dooks <ben@fluff.org>
-Subject: Re: [PATCH] ARM: plat-samsung: using vsnprintf instead of vsprintf
- for the limit buffer length 256
-Date: Mon, 21 Jan 2013 13:56:26 +0000
-Message-ID: <20130121135626.GP1095@trinity.fluff.org>
-References: <50FD178E.9090105@asianux.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [RESEND PATCH v9 0/2] usb: phy: samsung: Introducing usb phy
+ driver for samsung SoCs
+Date: Mon, 21 Jan 2013 15:23:23 +0100
+Message-ID: <1427513.LyTIEL8olI@amdc1227>
+References: <1358499623-13901-1-git-send-email-p.paneri@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <50FD178E.9090105@asianux.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chen Gang <gang.chen@asianux.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:11111 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752458Ab3AUOXh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Jan 2013 09:23:37 -0500
+In-reply-to: <1358499623-13901-1-git-send-email-p.paneri@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Praveen Paneri <p.paneri@samsung.com>
+Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de, gautam.vivek@samsung.com
 
-On Mon, Jan 21, 2013 at 06:25:18PM +0800, Chen Gang wrote:
+On Friday 18 of January 2013 14:30:21 Praveen Paneri wrote:
+> Changes from v8:
+> Resending this patch series after rebasing to the latest usb-next
+> branch. Rewording inline comments for better readability.
+> Removed IS_ENABLED(CONFIG_OF) as pdev->dev.of_node is enough to check
+> for dt support. Using of_match_ptr to add of_match_table to
+> platform_driver structure. Removed unnecessary variables.
 > 
->   the buff size is 256, so need use vsnprintf instead of vsprintf.
+> Changes from v7:
+> Rebased to the latest usb-next branch.
+> Separating arch patches from these driver patches.
 > 
-> Signed-off-by: Chen Gang <gang.chen@asianux.com>
-> ---
->  arch/arm/plat-samsung/pm.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes from v6:
+> Modified register definitions according to the existing ones.
+> Changed default PHY clk selection for SoCs.
+> Improved binding text and rebased to the latest usb-next.
 > 
-> diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-> index 1507028..8d07b45 100644
-> --- a/arch/arm/plat-samsung/pm.c
-> +++ b/arch/arm/plat-samsung/pm.c
-> @@ -51,7 +51,7 @@ void s3c_pm_dbg(const char *fmt, ...)
->  	char buff[256];
->  
->  	va_start(va, fmt);
-> -	vsprintf(buff, fmt, va);
-> +	vsnprintf(buff, 256, fmt, va);
+> Changes from v5:
+> Moved clk_get() to driver's probe function. Now reference clock
+> frequency selection value is stored in samsung_usbphy structure for
+> later use. Used IS_ENABLED() instead of #ifdef in
+> samsung_usbphy_get_driver_data().
+> 
+> Changes from v4:
+> Moved header file contents to driver's source file
+> Removed unnecessary print message from driver's probe function
+> Dropped the Free Software Foundation address from the header
+> 
+> Changes from v3:
+> Replaced susbsys_initcall()/module_exit() by module_platform_driver().
+> Accordingly in the hsotg driver returned -EPROBE_DEFER until phy driver
+> is registered
+> Removed unnecessary devm_usb_put_phy() call from the hsotg driver
+> remove.
+> 
+> Changes from v2:
+> Changed the driver filenames to samsung-usbphy
+> Rectified coding style related errors
+> 
+> Changes from v1:
+> Rebased patches to latest usb-next branch
+> Changed the name 'sec_usbphy' to 'samsung_usbphy'
+> 
+> This patch set introduces a phy driver for samsung SoCs. It uses the
+> existing transceiver infrastructure to provide phy control functions.
+> Use of this driver can be extended for usb host phy as well. Over the
+> period of time all the phy related code for most of the samsung SoCs
+> can be integrated here. Removing the existing phy code from
+> mach-s3c64xx. Same can be done for other SoCs when they start
+> supporting this phy driver.
+> This driver is tested with smdk6410 and Exynos4210(with DT).
+> 
+> Praveen Paneri (2):
+>   usb: phy: samsung: Introducing usb phy driver for hsotg
+>   usb: s3c-hsotg: Adding phy driver support
+> 
+>  .../devicetree/bindings/usb/samsung-usbphy.txt     |   11 +
+>  drivers/usb/gadget/s3c-hsotg.c                     |   37 ++-
+>  drivers/usb/phy/Kconfig                            |    8 +
+>  drivers/usb/phy/Makefile                           |    1 +
+>  drivers/usb/phy/samsung-usbphy.c                   |  354
+> ++++++++++++++++++++ include/linux/platform_data/samsung-usbphy.h      
+> |   27 ++
+>  6 files changed, 428 insertions(+), 10 deletions(-)
+>  create mode 100644
+> Documentation/devicetree/bindings/usb/samsung-usbphy.txt create mode
+> 100644 drivers/usb/phy/samsung-usbphy.c
+>  create mode 100644 include/linux/platform_data/samsung-usbphy.h
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+> linux-samsung-soc" in the body of a message to
+> majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-How about: vsnprintf(buff, sizeof(buff), fmt, va);
+Tested on Exynos4210-Trats.
 
-It means we do not end up assuming the size of 'buff' and will be correct
-if the code is changed to declare 'buff' to be a different size.
+Tested-by: Tomasz Figa <t.figa@samsung.com>
 
+I also have patches for Exynos 4x12, which I will send once this series 
+and generic PMU isolation setting patches get merged.
+
+Best regards,
 -- 
-Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
-
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
