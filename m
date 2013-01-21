@@ -1,108 +1,168 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [RESEND PATCH v9 0/2] usb: phy: samsung: Introducing usb phy
- driver for samsung SoCs
-Date: Mon, 21 Jan 2013 15:23:23 +0100
-Message-ID: <1427513.LyTIEL8olI@amdc1227>
-References: <1358499623-13901-1-git-send-email-p.paneri@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v5 00/12] clk: exynos4: migrate to common clock framework
+Date: Mon, 21 Jan 2013 15:29:16 +0100
+Message-ID: <50FD50BC.4020902@samsung.com>
+References: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:11111 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752458Ab3AUOXh (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:16139 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754372Ab3AUO3W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 09:23:37 -0500
-In-reply-to: <1358499623-13901-1-git-send-email-p.paneri@samsung.com>
+	Mon, 21 Jan 2013 09:29:22 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MGZ001OGC7WM730@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 21 Jan 2013 14:29:19 +0000 (GMT)
+Received: from [106.116.147.32] by eusync1.samsung.com
+ (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
+ 10 2011)) with ESMTPA id <0MGZ00BE2C8VJ560@eusync1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 21 Jan 2013 14:29:19 +0000 (GMT)
+In-reply-to: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Praveen Paneri <p.paneri@samsung.com>
-Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de, gautam.vivek@samsung.com
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Friday 18 of January 2013 14:30:21 Praveen Paneri wrote:
-> Changes from v8:
-> Resending this patch series after rebasing to the latest usb-next
-> branch. Rewording inline comments for better readability.
-> Removed IS_ENABLED(CONFIG_OF) as pdev->dev.of_node is enough to check
-> for dt support. Using of_match_ptr to add of_match_table to
-> platform_driver structure. Removed unnecessary variables.
+On 12/30/2012 01:33 AM, Thomas Abraham wrote:
+> Changes since v4:
+> - Rebased to linux-3.8-rc1.
 > 
-> Changes from v7:
-> Rebased to the latest usb-next branch.
-> Separating arch patches from these driver patches.
+> Changes since v3:
+> - Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
 > 
-> Changes from v6:
-> Modified register definitions according to the existing ones.
-> Changed default PHY clk selection for SoCs.
-> Improved binding text and rebased to the latest usb-next.
+> This patch series migrates the Samsung Exynos4 SoC clock code to adopt the
+> common clock framework. The use of Samsung specific clock structures has
+> been removed and all board support code has been updated. imx-style of
+> clock registration and lookup has been adopted for device tree based
+> exynos4 platforms.
 > 
-> Changes from v5:
-> Moved clk_get() to driver's probe function. Now reference clock
-> frequency selection value is stored in samsung_usbphy structure for
-> later use. Used IS_ENABLED() instead of #ifdef in
-> samsung_usbphy_get_driver_data().
+> This patch series depends on this series:
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14471.html
+> and this patch
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14472.html
 > 
-> Changes from v4:
-> Moved header file contents to driver's source file
-> Removed unnecessary print message from driver's probe function
-> Dropped the Free Software Foundation address from the header
+> Thomas Abraham (12):
+>   clk: samsung: add common clock framework helper functions for Samsung platforms
+>   clk: samsung: add pll clock registration helper functions
+>   clk: exynos4: register clocks using common clock framework
+>   ARM: Exynos: Rework timer initialization sequence
+>   ARM: Exynos4: Migrate clock support to common clock framework
+>   ARM: dts: add exynos4 clock controller nodes
+>   ARM: dts: add xxti and xusbxti fixed rate clock nodes for exynos4 based platforms
+>   ARM: Exynos4: allow legacy board support to specify xxti and xusbxti clock speed
+>   ARM: dts: add clock provider information for all controllers in Exynos4 SoC
+>   ARM: Exynos4: remove auxdata table from machine file
+>   ARM: Exynos: use fin_pll clock as the tick clock source for mct
+>   ARM: Exynos: add support for mct clock setup
 > 
-> Changes from v3:
-> Replaced susbsys_initcall()/module_exit() by module_platform_driver().
-> Accordingly in the hsotg driver returned -EPROBE_DEFER until phy driver
-> is registered
-> Removed unnecessary devm_usb_put_phy() call from the hsotg driver
-> remove.
-> 
-> Changes from v2:
-> Changed the driver filenames to samsung-usbphy
-> Rectified coding style related errors
-> 
-> Changes from v1:
-> Rebased patches to latest usb-next branch
-> Changed the name 'sec_usbphy' to 'samsung_usbphy'
-> 
-> This patch set introduces a phy driver for samsung SoCs. It uses the
-> existing transceiver infrastructure to provide phy control functions.
-> Use of this driver can be extended for usb host phy as well. Over the
-> period of time all the phy related code for most of the samsung SoCs
-> can be integrated here. Removing the existing phy code from
-> mach-s3c64xx. Same can be done for other SoCs when they start
-> supporting this phy driver.
-> This driver is tested with smdk6410 and Exynos4210(with DT).
-> 
-> Praveen Paneri (2):
->   usb: phy: samsung: Introducing usb phy driver for hsotg
->   usb: s3c-hsotg: Adding phy driver support
-> 
->  .../devicetree/bindings/usb/samsung-usbphy.txt     |   11 +
->  drivers/usb/gadget/s3c-hsotg.c                     |   37 ++-
->  drivers/usb/phy/Kconfig                            |    8 +
->  drivers/usb/phy/Makefile                           |    1 +
->  drivers/usb/phy/samsung-usbphy.c                   |  354
-> ++++++++++++++++++++ include/linux/platform_data/samsung-usbphy.h      
-> |   27 ++
->  6 files changed, 428 insertions(+), 10 deletions(-)
->  create mode 100644
-> Documentation/devicetree/bindings/usb/samsung-usbphy.txt create mode
-> 100644 drivers/usb/phy/samsung-usbphy.c
->  create mode 100644 include/linux/platform_data/samsung-usbphy.h
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to
-> majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  .../devicetree/bindings/clock/exynos4-clock.txt    |  215 +++++++
+>  arch/arm/boot/dts/exynos4.dtsi                     |   50 ++
+>  arch/arm/boot/dts/exynos4210-origen.dts            |   12 +
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts          |   12 +
+>  arch/arm/boot/dts/exynos4210.dtsi                  |    6 +
+>  arch/arm/boot/dts/exynos4412-origen.dts            |   12 +
+>  arch/arm/boot/dts/exynos4412-smdk4412.dts          |   12 +
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |    6 +
+>  arch/arm/mach-exynos/Kconfig                       |    1 +
+>  arch/arm/mach-exynos/Makefile                      |    3 -
+>  arch/arm/mach-exynos/clock-exynos4.h               |   35 -
+>  arch/arm/mach-exynos/clock-exynos4210.c            |  188 ------
+>  arch/arm/mach-exynos/clock-exynos4212.c            |  192 ------
+>  arch/arm/mach-exynos/common.c                      |   57 ++-
+>  arch/arm/mach-exynos/common.h                      |   21 +-
+>  arch/arm/mach-exynos/mach-armlex4210.c             |    3 +-
+>  arch/arm/mach-exynos/mach-exynos4-dt.c             |   72 +--
+>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +-
+>  arch/arm/mach-exynos/mach-nuri.c                   |    5 +-
+>  arch/arm/mach-exynos/mach-origen.c                 |    5 +-
+>  arch/arm/mach-exynos/mach-smdk4x12.c               |    5 +-
+>  arch/arm/mach-exynos/mach-smdkv310.c               |    7 +-
+>  arch/arm/mach-exynos/mach-universal_c210.c         |    3 +-
+>  arch/arm/mach-exynos/mct.c                         |   32 +-
+>  arch/arm/plat-samsung/Kconfig                      |    4 +-
+>  drivers/clk/Makefile                               |    1 +
+>  drivers/clk/samsung/Makefile                       |    6 +
+>  drivers/clk/samsung/clk-exynos4.c                  |  655 ++++++++++++++++++++
+>  drivers/clk/samsung/clk-pll.c                      |  400 ++++++++++++
+>  drivers/clk/samsung/clk-pll.h                      |   38 ++
+>  drivers/clk/samsung/clk.c                          |  180 ++++++
+>  drivers/clk/samsung/clk.h                          |  216 +++++++
+>  32 files changed, 1919 insertions(+), 537 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/exynos4-clock.txt
+>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.h
+>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
+>  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
+>  create mode 100644 drivers/clk/samsung/Makefile
+>  create mode 100644 drivers/clk/samsung/clk-exynos4.c
+>  create mode 100644 drivers/clk/samsung/clk-pll.c
+>  create mode 100644 drivers/clk/samsung/clk-pll.h
+>  create mode 100644 drivers/clk/samsung/clk.c
+>  create mode 100644 drivers/clk/samsung/clk.h
 
-Tested on Exynos4210-Trats.
+Thanks Thomas! The patch series generally looks good to me, I've tested 
+it on an Exynos4412 based board. I have applied couple fixes that Tomasz
+Figa has sent you off the mailing list. And to make a MIPI-CSI2 camera 
+working a small fixup patch as below.
 
-Tested-by: Tomasz Figa <t.figa@samsung.com>
+I have just one remark, but this could possibly be done as a follow up 
+patch. Namely it may make sense to rename various sclk_* clocks to just
+"sclk", so for instance we don't have "fimd", "sclk_fimd", "fimc", 
+"sclk_fimc" but e.g. "bus" or "gate" and "sclk" for each device. Such 
+naming might be better for handling devices at core subsystems level, 
+e.g. Runtime PM or devfreq.
 
-I also have patches for Exynos 4x12, which I will send once this series 
-and generic PMU isolation setting patches get merged.
+Please feel free to add:
 
-Best regards,
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+I would be great to have this patch set merged for 3.9, so people can 
+switch earlier to the common clock API, rather than modifying files 
+that will be removed soon.
+
+--
+
+Regards,
+Sylwester
+
+>From 8382dcc93bf465e9a03f4f07426825f1a9be0ba1 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Fri, 18 Jan 2013 19:13:52 +0100
+Subject: [PATCH] clk: samsung: Correct definition of sclk_cam gate clocks
+
+sclk_cam0/1 clock gates are present on all exynos4 SoCs. Move
+definitions of these clocks to proper table to reflect that.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 6bdb13b..9c3e106 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -299,6 +299,8 @@ struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
+ 			0xc320, 24, CLK_SET_RATE_PARENT, 0, "sclk_csis"),
+ 	GATE_DA(sclk_csis1, "s5p-mipi-csis.1", "sclk_csis1", "div_csis1",
+ 			0xc320, 28, CLK_SET_RATE_PARENT, 0, "sclk_csis"),
++	GATE(sclk_cam0, "sclk_cam0", "div_cam0", 0xc820, 4, CLK_SET_RATE_PARENT, 0),
++	GATE(sclk_cam1, "sclk_cam1", "div_cam1", 0xc820, 5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(sclk_hdmi, "sclk_hdmi", "mout_hdmi", 0xc324, 0, 0, 0),
+ 	GATE(sclk_mixer, "sclk_mixer", "mout_mixer", 0xc324, 4, 0, 0),
+ 	GATE(sclk_dac, "sclk_dac", "mout_dac", 0xc324, 8, 0, 0),
+@@ -416,8 +418,6 @@ struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
+ 			0xc338, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
+ 	GATE(sclk_mipi1, "sclk_mipi1", "div_mipi_pre1", 0xc338, 12, CLK_SET_RATE_PARENT, 0),
+ 	GATE(sclk_sata, "sclk_sata", "div_sata", 0xc340, 24, CLK_SET_RATE_PARENT, 0),
+-	GATE(sclk_cam0, "sclk_cam0", "div_cam0", 0xc820, 4, CLK_SET_RATE_PARENT, 0),
+-	GATE(sclk_cam1, "sclk_cam1", "div_cam1", 0xc820, 5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(tvenc, "tvenc", "aclk160", 0xc924, 2, 0, 0),
+ 	GATE(g2d, "g2d", "aclk200", 0xc930, 0, 0, 0),
+ 	GATE(rotator, "rotator", "aclk200", 0xc930, 1, 0, 0),
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+1.7.9.5
