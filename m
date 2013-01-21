@@ -1,44 +1,76 @@
-From: Andrey Gusakov <dron0gus@gmail.com>
-Subject: Re: [oselas] Audio support on Mini6410 board
-Date: Mon, 21 Jan 2013 12:01:52 +0300
-Message-ID: <CAA11ShDet7jFvUtjrqG6pOCc_W0ePtfK+mvyUjP-8CKdwjrnag@mail.gmail.com>
-References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com>
-	<50F09720.7000102@gmail.com>
-	<CACuz9s2fQYw-2pbE6dyNY7MiUSQxGiWArmXARxdwn1ULuDwm_Q@mail.gmail.com>
-	<201301151030.11851.jbe@pengutronix.de>
-	<CACuz9s0bZa0yKKkghKqFhSQ5YDX5YdwmmpXhmb3m9yKApWqPzQ@mail.gmail.com>
-	<CACuz9s0kscbt5Z87mOX6C=9vKg2wrU-T69RS6NQmeSRqP_8K4w@mail.gmail.com>
-	<CAA11ShCKo0GEEBos-ZiPZ6j7jO8aKCNJZ1JGBWbUCtiUQqAXsg@mail.gmail.com>
-	<CACuz9s0mUHjDiS-K_zvnn7UYC7ws6WV86=3oSYXms8gmF9y-bw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v4 0/7] ARM: Exynos: Enable device tree support for MCT controller
+Date: Mon, 21 Jan 2013 02:02:15 -0800
+Message-ID: <1358762542-19008-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f43.google.com ([209.85.210.43]:45361 "EHLO
-	mail-da0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752329Ab3AUJBx (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:46961 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751874Ab3AUKC7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 04:01:53 -0500
-Received: by mail-da0-f43.google.com with SMTP id u36so2629365dak.30
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 01:01:52 -0800 (PST)
-In-Reply-To: <CACuz9s0mUHjDiS-K_zvnn7UYC7ws6WV86=3oSYXms8gmF9y-bw@mail.gmail.com>
+	Mon, 21 Jan 2013 05:02:59 -0500
+Received: by mail-pa0-f42.google.com with SMTP id rl6so3330023pac.29
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 02:02:59 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Nestorov <alexandernst@gmail.com>
-Cc: Juergen Beisert <jbe@pengutronix.de>, oselas@community.pengutronix.de, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com, chaos.youn@samsung.com, sylvester.nawrocki@gmail.com, olof@lixom.net, swarren@nvidia.com
 
-Hi.
+Changes since v3:
+- Based on Stephen Warren's CONFIG_CLKSRC_OF patches (merged from arm-soc
+  'timer/cleanup' branch).
+- Moved the mct driver from mach-exynos to drivers/clocksource
 
-On Mon, Jan 21, 2013 at 12:07 PM, Alexander Nestorov
-<alexandernst@gmail.com> wrote:
-> Hi,
->
-> I see. Maybe you already saw it, but just in case, I found this[1] I
-> hope it helps.
-Thanks. It s looks like code from 2.6.28, I'll take a closer look.
+Changes since v2:
+- Rebased to linux 3.8-rc1
 
-> Do you plan sharing your code in GitHub or equivalent? I'm working on
-> that board too
-> and I'll probably have to make my software use hw acceleration.
-Yes, I'll share it as soon as get it work or at least compile without
-errors. Now it looks like mix of code from 2.6.28, s5p-mfc code and
-documentation quotes.
+Changes since v1:
+- Includes changes suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+
+This patch series adds device tree support for Exynos4/5 MCT controller and
+moves the MCT driver from mach-exynos to drivers/clocksource. These patches
+are based on Stephen Warren's CONFIG_CLKSRC_OF patches which were merged from
+the 'timer/cleanup' branch of the arm-soc tree. It also depends on the
+following two patches.
+
+- http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/143084.html
+- http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/143119.html
+
+This patch series has been tested on Exynos4210 based Origen board, Exynos4412
+based Origen board and Exynos5250 based SMDK board.
+
+Thomas Abraham (7):
+  ARM: Exynos: add a register base address variable in mct controller driver
+  ARM: Exynos: prepare an array of MCT interrupt numbers and use it
+  ARM: Exynos: add device tree support for MCT controller driver
+  ARM: Exynos: allow dt based discovery of mct controller using clocksource_of_init
+  ARM: dts: add mct device tree node for all supported Exynos SoC's
+  ARM: Exynos: remove static io-remapping of mct registers for Exynos5
+  ARM: Exynos: move mct driver to drivers/clocksource
+
+ .../bindings/timer/samsung,exynos4210-mct.txt      |   68 +++++++
+ arch/arm/Kconfig                                   |    2 +-
+ arch/arm/boot/dts/exynos4210.dtsi                  |    7 +
+ arch/arm/boot/dts/exynos4212.dtsi                  |    9 +
+ arch/arm/boot/dts/exynos4412.dtsi                  |    7 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   20 ++
+ arch/arm/mach-exynos/Kconfig                       |    8 +-
+ arch/arm/mach-exynos/Makefile                      |    2 -
+ arch/arm/mach-exynos/common.c                      |    5 -
+ arch/arm/mach-exynos/common.h                      |    2 +-
+ arch/arm/mach-exynos/include/mach/irqs.h           |    6 -
+ arch/arm/mach-exynos/include/mach/map.h            |    1 -
+ arch/arm/mach-exynos/include/mach/regs-mct.h       |   53 ------
+ arch/arm/mach-exynos/mach-armlex4210.c             |    2 +-
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |    3 +-
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    3 +-
+ arch/arm/mach-exynos/mach-nuri.c                   |    2 +-
+ arch/arm/mach-exynos/mach-origen.c                 |    2 +-
+ arch/arm/mach-exynos/mach-smdk4x12.c               |    4 +-
+ arch/arm/mach-exynos/mach-smdkv310.c               |    4 +-
+ drivers/clocksource/Kconfig                        |    5 +
+ drivers/clocksource/Makefile                       |    1 +
+ .../mct.c => drivers/clocksource/exynos_mct.c      |  197 +++++++++++++-------
+ 23 files changed, 264 insertions(+), 149 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+ delete mode 100644 arch/arm/mach-exynos/include/mach/regs-mct.h
+ rename arch/arm/mach-exynos/mct.c => drivers/clocksource/exynos_mct.c (67%)
