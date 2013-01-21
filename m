@@ -1,50 +1,90 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: Add watchdog in exynos5440-ssdk5440 device list
-Date: Sun, 20 Jan 2013 15:29:51 -0800
-Message-ID: <031101cdf766$0cf74930$26e5db90$@samsung.com>
-References: <1358571651-22020-1-git-send-email-kgene.kim@samsung.com>
- <1793091.ko9ZbaznTT@flatron>
+From: Praveen Paneri <p.paneri@samsung.com>
+Subject: Re: [RESEND PATCH v9 0/2] usb: phy: samsung: Introducing usb phy
+ driver for samsung SoCs
+Date: Mon, 21 Jan 2013 12:13:10 +0530
+Message-ID: <CAD6zSYOA0mDMPyu163br87eZ7V+3HawHATW_QHidzsRw_E3q4g@mail.gmail.com>
+References: <1358499623-13901-1-git-send-email-p.paneri@samsung.com>
+	<20130118184619.GA1991@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33824 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752039Ab3ATXaI (ORCPT
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:50112 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751811Ab3AUGnL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Jan 2013 18:30:08 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGY00CZZ6LZT130@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 21 Jan 2013 08:30:07 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MGY00LMF6M5HX50@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 21 Jan 2013 08:30:06 +0900 (KST)
-In-reply-to: <1793091.ko9ZbaznTT@flatron>
-Content-language: en-us
+	Mon, 21 Jan 2013 01:43:11 -0500
+In-Reply-To: <20130118184619.GA1991@arwen.pp.htv.fi>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Giridhar Maruthy' <giridhar.m@samsung.com>
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, gregkh@linuxfoundation.org, Thomas Abraham <thomas.abraham@linaro.org>, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Tomasz Figa wrote:
-> 
-> Hi Kukjin,
-> 
-Hi,
+Hi Felipe,
 
-> The commit message is a bit confusing, because it says that something is
-> being added, while in fact the whole node is being removed.
-> 
-> Shouldn't it rather say something like:
-> ARM: dts: exynos5440-ssdk5440: Remove disabled status from watchdog
-> node
-> 
-Same as previous my comments.
+On Sat, Jan 19, 2013 at 12:16 AM, Felipe Balbi <balbi@ti.com> wrote:
+> Hi,
+>
+> On Fri, Jan 18, 2013 at 02:30:21PM +0530, Praveen Paneri wrote:
+>> Changes from v8:
+>> Resending this patch series after rebasing to the latest usb-next branch.
+>> Rewording inline comments for better readability.
+>> Removed IS_ENABLED(CONFIG_OF) as pdev->dev.of_node is enough to check for dt support.
+>> Using of_match_ptr to add of_match_table to platform_driver structure.
+>> Removed unnecessary variables.
+>>
+>> Changes from v7:
+>> Rebased to the latest usb-next branch.
+>> Separating arch patches from these driver patches.
+>>
+>> Changes from v6:
+>> Modified register definitions according to the existing ones.
+>> Changed default PHY clk selection for SoCs.
+>> Improved binding text and rebased to the latest usb-next.
+>>
+>> Changes from v5:
+>> Moved clk_get() to driver's probe function. Now reference clock frequency
+>> selection value is stored in samsung_usbphy structure for later use. Used
+>> IS_ENABLED() instead of #ifdef in samsung_usbphy_get_driver_data().
+>>
+>> Changes from v4:
+>> Moved header file contents to driver's source file
+>> Removed unnecessary print message from driver's probe function
+>> Dropped the Free Software Foundation address from the header
+>>
+>> Changes from v3:
+>> Replaced susbsys_initcall()/module_exit() by module_platform_driver().
+>> Accordingly in the hsotg driver returned -EPROBE_DEFER until phy driver
+>> is registered
+>> Removed unnecessary devm_usb_put_phy() call from the hsotg driver remove.
+>>
+>> Changes from v2:
+>> Changed the driver filenames to samsung-usbphy
+>> Rectified coding style related errors
+>>
+>> Changes from v1:
+>> Rebased patches to latest usb-next branch
+>> Changed the name 'sec_usbphy' to 'samsung_usbphy'
+>>
+>> This patch set introduces a phy driver for samsung SoCs. It uses the existing
+>> transceiver infrastructure to provide phy control functions. Use of this driver
+>> can be extended for usb host phy as well. Over the period of time all the phy
+>> related code for most of the samsung SoCs can be integrated here.
+>> Removing the existing phy code from mach-s3c64xx. Same can be done for other SoCs
+>> when they start supporting this phy driver.
+>> This driver is tested with smdk6410 and Exynos4210(with DT).
+>>
+>> Praveen Paneri (2):
+>>   usb: phy: samsung: Introducing usb phy driver for hsotg
+>>   usb: s3c-hsotg: Adding phy driver support
+>
+> Can you check on my xceiv branch if this is applied correctly ?
+Yes! It is applied fine.
 
-Thanks.
+Thanks :)
 
-- Kukjin
+Praveen
+>
+> thanks
+>
+> --
+> balbi
