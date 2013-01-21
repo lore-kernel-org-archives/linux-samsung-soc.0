@@ -1,90 +1,75 @@
-From: Praveen Paneri <p.paneri@samsung.com>
-Subject: Re: [RESEND PATCH v9 0/2] usb: phy: samsung: Introducing usb phy
- driver for samsung SoCs
-Date: Mon, 21 Jan 2013 12:13:10 +0530
-Message-ID: <CAD6zSYOA0mDMPyu163br87eZ7V+3HawHATW_QHidzsRw_E3q4g@mail.gmail.com>
-References: <1358499623-13901-1-git-send-email-p.paneri@samsung.com>
-	<20130118184619.GA1991@arwen.pp.htv.fi>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v3 0/2] Adding USB 3.0 DRD-phy support for exynos5250
+Date: Mon, 21 Jan 2013 12:15:10 +0530
+Message-ID: <CAFp+6iHbvwTBUSZO2EvCaeCT=g=UzubLGrmPHjKUgi9Ef7enzQ@mail.gmail.com>
+References: <1358168377-22919-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:50112 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751811Ab3AUGnL (ORCPT
+Received: from mail-bk0-f49.google.com ([209.85.214.49]:47814 "EHLO
+	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751792Ab3AUGpM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 01:43:11 -0500
-In-Reply-To: <20130118184619.GA1991@arwen.pp.htv.fi>
+	Mon, 21 Jan 2013 01:45:12 -0500
+In-Reply-To: <1358168377-22919-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, gregkh@linuxfoundation.org, Thomas Abraham <thomas.abraham@linaro.org>, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>
+To: balbi@ti.com
+Cc: linux-usb@vger.kernel.org, kgene.kim@samsung.com, p.paneri@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, sylvester.nawrocki@gmail.com, av.tikhomirov@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Doug Anderson <dianders@chromium.org>, kishon <kishon@ti.com>, Grant Likely <grant.likely@secretlab.ca>
 
 Hi Felipe,
 
-On Sat, Jan 19, 2013 at 12:16 AM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> On Fri, Jan 18, 2013 at 02:30:21PM +0530, Praveen Paneri wrote:
->> Changes from v8:
->> Resending this patch series after rebasing to the latest usb-next branch.
->> Rewording inline comments for better readability.
->> Removed IS_ENABLED(CONFIG_OF) as pdev->dev.of_node is enough to check for dt support.
->> Using of_match_ptr to add of_match_table to platform_driver structure.
->> Removed unnecessary variables.
->>
->> Changes from v7:
->> Rebased to the latest usb-next branch.
->> Separating arch patches from these driver patches.
->>
->> Changes from v6:
->> Modified register definitions according to the existing ones.
->> Changed default PHY clk selection for SoCs.
->> Improved binding text and rebased to the latest usb-next.
->>
->> Changes from v5:
->> Moved clk_get() to driver's probe function. Now reference clock frequency
->> selection value is stored in samsung_usbphy structure for later use. Used
->> IS_ENABLED() instead of #ifdef in samsung_usbphy_get_driver_data().
->>
->> Changes from v4:
->> Moved header file contents to driver's source file
->> Removed unnecessary print message from driver's probe function
->> Dropped the Free Software Foundation address from the header
->>
->> Changes from v3:
->> Replaced susbsys_initcall()/module_exit() by module_platform_driver().
->> Accordingly in the hsotg driver returned -EPROBE_DEFER until phy driver
->> is registered
->> Removed unnecessary devm_usb_put_phy() call from the hsotg driver remove.
->>
->> Changes from v2:
->> Changed the driver filenames to samsung-usbphy
->> Rectified coding style related errors
->>
->> Changes from v1:
->> Rebased patches to latest usb-next branch
->> Changed the name 'sec_usbphy' to 'samsung_usbphy'
->>
->> This patch set introduces a phy driver for samsung SoCs. It uses the existing
->> transceiver infrastructure to provide phy control functions. Use of this driver
->> can be extended for usb host phy as well. Over the period of time all the phy
->> related code for most of the samsung SoCs can be integrated here.
->> Removing the existing phy code from mach-s3c64xx. Same can be done for other SoCs
->> when they start supporting this phy driver.
->> This driver is tested with smdk6410 and Exynos4210(with DT).
->>
->> Praveen Paneri (2):
->>   usb: phy: samsung: Introducing usb phy driver for hsotg
->>   usb: s3c-hsotg: Adding phy driver support
->
-> Can you check on my xceiv branch if this is applied correctly ?
-Yes! It is applied fine.
 
-Thanks :)
+On Mon, Jan 14, 2013 at 6:29 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> Changes from v2:
+>  - Renaming 'samsung-usbphy.c' driver to 'samsung-usb2.c' indicating
+>    usb 2.0 phy controller's driver for Samsung's SoCs.
+>  - Moving the register definitions and strcuture definitions to
+>    common header file 'samsung-usbphy.h' to be used across
+>    usb 2.0 and usb 3.0 phy.
+>  - Keeping common exported function definitions in samsung-usbphy.c
+>    which can be used across usb 2.0 and usb 3.0 phy.
+>  - Writting separate driver file for Samsung's USB 3.0 phy controller.
+>    and making it dependent on USB_DWC3.
+>
 
-Praveen
+Is the re-organization being done here fine as per requirements for
+separate drivers for usb 2.0 type PHY and usb 3.0 type PHY ?
+
+> Rebased on top of usb-next followed by following patches/patch-threads:
+>         -- [PATCH v9 1/2] usb: phy: samsung: Introducing usb phy driver for hsotg
+>         -- [PATCH] usb: phy: samsung: Add support to set pmu isolation (version 6)
+>         -- [PATCH v6 0/4] Adding usb2.0 host-phy support for exynos5250
 >
-> thanks
+> Changes form v1:
+>  - Moved architecture related patch out of this patch-set.
+>  - Replaced unnecessary multi-line macro definitions by
+>    single line definitions.
+>  - Creating new data structure for USB 3.0 phy type and embedding
+>    it in 'samsung_usbphy' structure.
+>  - Adding a flag in 'samsung_usbphy' structure to check if device
+>    has usb 3.0 type phy or not.
+>  - Restructuring probe sequence for USB 3.0 phy, such that we are
+>    initializing only when device has usb3.0 type phy.
 >
-> --
-> balbi
+> Vivek Gautam (2):
+>   usb: phy: samsung: Common out the generic stuff
+>   usb: phy: samsung: Add PHY support for USB 3.0 controller
+>
+>  drivers/usb/phy/Kconfig          |    8 +
+>  drivers/usb/phy/Makefile         |    3 +-
+>  drivers/usb/phy/samsung-usb2.c   |  511 +++++++++++++++++++++++++++
+>  drivers/usb/phy/samsung-usb3.c   |  349 +++++++++++++++++++
+>  drivers/usb/phy/samsung-usbphy.c |  713 +-------------------------------------
+>  drivers/usb/phy/samsung-usbphy.h |  328 +++++++++++++++++
+>  6 files changed, 1205 insertions(+), 707 deletions(-)
+>  create mode 100644 drivers/usb/phy/samsung-usb2.c
+>  create mode 100644 drivers/usb/phy/samsung-usb3.c
+>  create mode 100644 drivers/usb/phy/samsung-usbphy.h
+>
+
+
+
+-- 
+Thanks & Regards
+Vivek
