@@ -1,42 +1,54 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: [PATCH] ARM: plat-samsung: using vsnprintf instead of vsprintf for
- the limit buffer length 256
-Date: Mon, 21 Jan 2013 18:25:18 +0800
-Message-ID: <50FD178E.9090105@asianux.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=GB2312
-Content-Transfer-Encoding: 7bit
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] ARM: dts: add mshc controller node for Exynos4x12 SoCs
+Date: Mon, 21 Jan 2013 02:39:15 -0800
+Message-ID: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:11738 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751874Ab3AUKYc (ORCPT
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:50776 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751509Ab3AUKjX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 05:24:32 -0500
+	Mon, 21 Jan 2013 05:39:23 -0500
+Received: by mail-pb0-f42.google.com with SMTP id rp2so3269874pbb.29
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 02:39:22 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tobetter@gmail.com, tgih.jun@samsung.com, jh80.chung@samsung.com
 
+Commit cea0f256 ("ARM: dts: Add board dts file for ODROID-X") includes a node
+to describe the board level properties for mshc controller. But the mshc
+controller node was not added in the Exynos4x12 dtsi file which resulted
+in the following warning when compiling the dtb files.
 
-  the buff size is 256, so need use vsnprintf instead of vsprintf.
+Warning (reg_format): "reg" property in /mshc@12550000/slot@0 has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+Warning (avoid_default_addr_size): Relying on default #address-cells value for /mshc@12550000/slot@0
+Warning (avoid_default_addr_size): Relying on default #size-cells value for /mshc@12550000/slot@0
 
-Signed-off-by: Chen Gang <gang.chen@asianux.com>
+Fix this by adding the mshc controller node for Exynos4x12 SoCs.
+
+Cc: Dongjin Kim <tobetter@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/plat-samsung/pm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4412.dtsi |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 1507028..8d07b45 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -51,7 +51,7 @@ void s3c_pm_dbg(const char *fmt, ...)
- 	char buff[256];
- 
- 	va_start(va, fmt);
--	vsprintf(buff, fmt, va);
-+	vsnprintf(buff, 256, fmt, va);
- 	va_end(va);
- 
- 	printascii(buff);
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 78ed377..96f5b66 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -32,4 +32,12 @@
+ 		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
+ 			     <1 12 0>, <1 12 0>, <1 12 0>, <1 12 0>;
+ 	};
++
++	mshc@12550000 {
++		compatible = "samsung,exynos4412-dw-mshc";
++		reg = <0x12550000 0x1000>;
++		interrupts = <0 77 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
 -- 
-1.7.10.4
+1.7.5.4
