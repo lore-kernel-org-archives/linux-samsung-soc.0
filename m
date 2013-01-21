@@ -1,54 +1,62 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] ARM: dts: add mshc controller node for Exynos4x12 SoCs
-Date: Mon, 21 Jan 2013 02:39:15 -0800
-Message-ID: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org>
+From: Prasanna Kumar <prasannapadubidri@gmail.com>
+Subject: Re: [PATCH 0/2] ARM: Exynos5 : Add Power domain device tree support
+ for MFC and GSC
+Date: Mon, 21 Jan 2013 18:35:29 +0530
+Message-ID: <CAPmaG0vduUv+792LFu0TkyyhmvP_GGK5kwhb-NK5Rsn4xgKNnw@mail.gmail.com>
+References: <1357733733-18769-1-git-send-email-prasanna.ps@samsung.com>
+	<CAPmaG0vQHJbp5tkHTPxEM3Oy1GASbN4asN-x+gtxb77jwpOK0g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:50776 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751509Ab3AUKjX (ORCPT
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:37873 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752612Ab3AUNFa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 05:39:23 -0500
-Received: by mail-pb0-f42.google.com with SMTP id rp2so3269874pbb.29
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 02:39:22 -0800 (PST)
+	Mon, 21 Jan 2013 08:05:30 -0500
+Received: by mail-vc0-f171.google.com with SMTP id fk10so4198031vcb.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 05:05:29 -0800 (PST)
+In-Reply-To: <CAPmaG0vQHJbp5tkHTPxEM3Oy1GASbN4asN-x+gtxb77jwpOK0g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tobetter@gmail.com, tgih.jun@samsung.com, jh80.chung@samsung.com
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Commit cea0f256 ("ARM: dts: Add board dts file for ODROID-X") includes a node
-to describe the board level properties for mshc controller. But the mshc
-controller node was not added in the Exynos4x12 dtsi file which resulted
-in the following warning when compiling the dtb files.
+Hello ,
 
-Warning (reg_format): "reg" property in /mshc@12550000/slot@0 has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-Warning (avoid_default_addr_size): Relying on default #address-cells value for /mshc@12550000/slot@0
-Warning (avoid_default_addr_size): Relying on default #size-cells value for /mshc@12550000/slot@0
+Any comments for this patch set ?
 
-Fix this by adding the mshc controller node for Exynos4x12 SoCs.
+> On Wed, Jan 9, 2013 at 5:45 PM, Prasanna Kumar <prasanna.ps@samsung.com> wrote:
+>>
+>> Hello all,
+>>
+>> This patch set adds device tree support for power domains (Gscaler and
+>> MFC) of exynos5
+>>
+>> Prasanna Kumar (2):
+>>   arm: exynos5: Enable PM generic domain support in Kconfig
+>>   ARM: dts: exynos5: Set up power domain for  MFC and G-scaler
+>>
+>>  arch/arm/boot/dts/exynos5250.dtsi |   15 +++++++++++++++
+>>  arch/arm/mach-exynos/Kconfig      |    1 +
+>>  2 files changed, 16 insertions(+), 0 deletions(-)
+>>
+>> --
+>> 1.7.5.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+>
+> --
+> Thanks
+> Prasanna Kumar
 
-Cc: Dongjin Kim <tobetter@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/boot/dts/exynos4412.dtsi |    8 ++++++++
- 1 files changed, 8 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 78ed377..96f5b66 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -32,4 +32,12 @@
- 		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
- 			     <1 12 0>, <1 12 0>, <1 12 0>, <1 12 0>;
- 	};
-+
-+	mshc@12550000 {
-+		compatible = "samsung,exynos4412-dw-mshc";
-+		reg = <0x12550000 0x1000>;
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
--- 
-1.7.5.4
+
+
+--
+Thanks
+Prasanna Kumar
