@@ -1,150 +1,139 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v5 00/12] clk: exynos4: migrate to common clock framework
-Date: Mon, 21 Jan 2013 17:22:39 +0100
-Message-ID: <2433961.3Qz5gqDyvb@amdc1227>
-References: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
- <50FD50BC.4020902@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v4 3/7] ARM: Exynos: add device tree support for MCT
+ controller driver
+Date: Mon, 21 Jan 2013 10:34:01 -0800
+Message-ID: <CAJuYYwQTSOBtJ_7YQs9FpkU=vpKRR=YG0MXmX10OkiBsHmNUSQ@mail.gmail.com>
+References: <1358762542-19008-1-git-send-email-thomas.abraham@linaro.org>
+	<1358762542-19008-4-git-send-email-thomas.abraham@linaro.org>
+	<20130121134610.GJ15707@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44223 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753756Ab3AUQWt (ORCPT
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:60694 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753037Ab3AUSeC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 11:22:49 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MGZ009LXHHRYUB0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 01:22:48 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MGZ000FRHHXQQ90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 01:22:47 +0900 (KST)
-In-reply-to: <50FD50BC.4020902@samsung.com>
+	Mon, 21 Jan 2013 13:34:02 -0500
+Received: by mail-ie0-f177.google.com with SMTP id k13so9981330iea.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 10:34:01 -0800 (PST)
+In-Reply-To: <20130121134610.GJ15707@e106331-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, mturquette@linaro.org, kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "swarren@nvidia.com" <swarren@nvidia.com>, "sylvester.nawrocki@gmail.com" <sylvester.nawrocki@gmail.com>, "chaos.youn@samsung.com" <chaos.youn@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Thomas, Sylwester,
+Hi Marc,
 
-On Monday 21 of January 2013 15:29:16 Sylwester Nawrocki wrote:
-> On 12/30/2012 01:33 AM, Thomas Abraham wrote:
-> > Changes since v4:
-> > - Rebased to linux-3.8-rc1.
-> > 
-> > Changes since v3:
-> > - Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
-> > 
-> > This patch series migrates the Samsung Exynos4 SoC clock code to adopt
-> > the common clock framework. The use of Samsung specific clock
-> > structures has been removed and all board support code has been
-> > updated. imx-style of clock registration and lookup has been adopted
-> > for device tree based exynos4 platforms.
-> > 
-> > This patch series depends on this series:
-> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14471
-> > .html and this patch
-> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14472
-> > .html> 
-> > Thomas Abraham (12):
-> >   clk: samsung: add common clock framework helper functions for
-> >   Samsung platforms clk: samsung: add pll clock registration helper
-> >   functions
-> >   clk: exynos4: register clocks using common clock framework
-> >   ARM: Exynos: Rework timer initialization sequence
-> >   ARM: Exynos4: Migrate clock support to common clock framework
-> >   ARM: dts: add exynos4 clock controller nodes
-> >   ARM: dts: add xxti and xusbxti fixed rate clock nodes for exynos4
-> >   based platforms ARM: Exynos4: allow legacy board support to specify
-> >   xxti and xusbxti clock speed ARM: dts: add clock provider
-> >   information for all controllers in Exynos4 SoC ARM: Exynos4: remove
-> >   auxdata table from machine file
-> >   ARM: Exynos: use fin_pll clock as the tick clock source for mct
-> >   ARM: Exynos: add support for mct clock setup
-> >  
-> >  .../devicetree/bindings/clock/exynos4-clock.txt    |  215 +++++++
-> >  arch/arm/boot/dts/exynos4.dtsi                     |   50 ++
-> >  arch/arm/boot/dts/exynos4210-origen.dts            |   12 +
-> >  arch/arm/boot/dts/exynos4210-smdkv310.dts          |   12 +
-> >  arch/arm/boot/dts/exynos4210.dtsi                  |    6 +
-> >  arch/arm/boot/dts/exynos4412-origen.dts            |   12 +
-> >  arch/arm/boot/dts/exynos4412-smdk4412.dts          |   12 +
-> >  arch/arm/boot/dts/exynos4x12.dtsi                  |    6 +
-> >  arch/arm/mach-exynos/Kconfig                       |    1 +
-> >  arch/arm/mach-exynos/Makefile                      |    3 -
-> >  arch/arm/mach-exynos/clock-exynos4.h               |   35 -
-> >  arch/arm/mach-exynos/clock-exynos4210.c            |  188 ------
-> >  arch/arm/mach-exynos/clock-exynos4212.c            |  192 ------
-> >  arch/arm/mach-exynos/common.c                      |   57 ++-
-> >  arch/arm/mach-exynos/common.h                      |   21 +-
-> >  arch/arm/mach-exynos/mach-armlex4210.c             |    3 +-
-> >  arch/arm/mach-exynos/mach-exynos4-dt.c             |   72 +--
-> >  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +-
-> >  arch/arm/mach-exynos/mach-nuri.c                   |    5 +-
-> >  arch/arm/mach-exynos/mach-origen.c                 |    5 +-
-> >  arch/arm/mach-exynos/mach-smdk4x12.c               |    5 +-
-> >  arch/arm/mach-exynos/mach-smdkv310.c               |    7 +-
-> >  arch/arm/mach-exynos/mach-universal_c210.c         |    3 +-
-> >  arch/arm/mach-exynos/mct.c                         |   32 +-
-> >  arch/arm/plat-samsung/Kconfig                      |    4 +-
-> >  drivers/clk/Makefile                               |    1 +
-> >  drivers/clk/samsung/Makefile                       |    6 +
-> >  drivers/clk/samsung/clk-exynos4.c                  |  655
-> >  ++++++++++++++++++++ drivers/clk/samsung/clk-pll.c                  
-> >     |  400 ++++++++++++ drivers/clk/samsung/clk-pll.h                
-> >       |   38 ++
-> >  drivers/clk/samsung/clk.c                          |  180 ++++++
-> >  drivers/clk/samsung/clk.h                          |  216 +++++++
-> >  32 files changed, 1919 insertions(+), 537 deletions(-)
-> >  create mode 100644
-> >  Documentation/devicetree/bindings/clock/exynos4-clock.txt delete
-> >  mode 100644 arch/arm/mach-exynos/clock-exynos4.h
-> >  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
-> >  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
-> >  create mode 100644 drivers/clk/samsung/Makefile
-> >  create mode 100644 drivers/clk/samsung/clk-exynos4.c
-> >  create mode 100644 drivers/clk/samsung/clk-pll.c
-> >  create mode 100644 drivers/clk/samsung/clk-pll.h
-> >  create mode 100644 drivers/clk/samsung/clk.c
-> >  create mode 100644 drivers/clk/samsung/clk.h
-> 
-> Thanks Thomas! The patch series generally looks good to me, I've tested
-> it on an Exynos4412 based board. I have applied couple fixes that Tomasz
-> Figa has sent you off the mailing list. And to make a MIPI-CSI2 camera
-> working a small fixup patch as below.
-> 
-> I have just one remark, but this could possibly be done as a follow up
-> patch. Namely it may make sense to rename various sclk_* clocks to just
-> "sclk", so for instance we don't have "fimd", "sclk_fimd", "fimc",
-> "sclk_fimc" but e.g. "bus" or "gate" and "sclk" for each device. Such
-> naming might be better for handling devices at core subsystems level,
-> e.g. Runtime PM or devfreq.
-> 
-> Please feel free to add:
-> 
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On 21 January 2013 05:46, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Mon, Jan 21, 2013 at 10:02:18AM +0000, Thomas Abraham wrote:
+>> Allow the MCT controller base address and interrupts to be obtained from
+>> device tree and remove unused static definitions of these. The non-dt support
+>> for Exynos5250 is removed but retained for Exynos4210 based platforms.
+>>
+>> Cc: Changhwan Youn <chaos.youn@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>>  .../bindings/timer/samsung,exynos4210-mct.txt      |   68 ++++++++++++++++++++
+>>  arch/arm/mach-exynos/include/mach/irqs.h           |    6 --
+>>  arch/arm/mach-exynos/mct.c                         |   49 +++++++++++----
+>>  3 files changed, 105 insertions(+), 18 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+>> new file mode 100644
+>> index 0000000..cb47bfb
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+>> @@ -0,0 +1,68 @@
+>> +Samsung's Multi Core Timer (MCT)
+>> +
+>> +The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+>> +global timer and CPU local timers. The global timer is a 64-bit free running
+>> +up-counter and can generate 4 interrupts when the counter reaches one of the
+>> +four preset counter values. The CPU local timers are 32-bit free running
+>> +down-counters and generate an interrupt when the counter expires. There is
+>> +one CPU local timer instantiated in MCT for every CPU in the system.
+>> +
+>> +Required properties:
+>> +
+>> +- compatible: should be "samsung,exynos4210-mct".
+>> +  (a) "samsung,exynos4210-mct", for mct compatible with Exynos4210 mct.
+>> +  (b) "samsung,exynos4412-mct", for mct compatible with Exynos4412 mct.
+>> +
+>> +- reg: base address of the mct controller and length of the address space
+>> +  it occupies.
+>> +
+>> +- interrupts: the list of interrupts generated by the controller. The following
+>> +  should be the order of the interrupts specified. The local timer interrupts
+>> +  should be specified after the four global timer interrupts have been
+>> +  specified.
+>> +
+>> +     0: Global Timer Interrupt 0
+>> +     1: Global Timer Interrupt 1
+>> +     2: Global Timer Interrupt 2
+>> +     3: Global Timer Interrupt 3
+>> +     4: Local Timer Interrupt 0
+>> +     5: Local Timer Interrupt 1
+>> +     6: ..
+>> +     7: ..
+>> +     i: Local Timer Interrupt n
+>> +
+>> +Example 1: In this example, the system uses only the first global timer
+>> +        interrupt generated by MCT and the remaining three global timer
+>> +        interrupts are unused. Two local timer interrupts have been
+>> +        specified.
+>> +
+>> +     mct@10050000 {
+>> +             compatible = "samsung,exynos4210-mct";
+>> +             reg = <0x10050000 0x800>;
+>> +             interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
+>> +                          <0 42 0>, <0 48 0>;
+>
+> Rather than padding the interrupts list with nonexistent interrupts, could you
+> not use something like a #global-interrupts property?
+>
+> That way you don't have to list fake interrupts, you know exactly how many
+> global interrupts to expect (so you can sanity-check the list without any
+> special knowledge of the interrupt controller), and it's easier to support
+> future revisions which could have more interrupts, in a backwards-compatible
+> fashion.
 
-I fully agree with Sylwester. After adding mentioned fixup patches, feel 
-free to add my Reviewed-by and Tested-by as well.
+Yes, you are right. I will do this change in the next version. Thanks
+for your suggestion.
 
-> 
-> I would be great to have this patch set merged for 3.9, so people can
-> switch earlier to the common clock API, rather than modifying files
-> that will be removed soon.
+Thanks,
+Thomas.
 
-Yes, it would be great to have this series merged earlier, because it's 
-very important for further development of Device Tree support on Samsung 
-platforms. Possibly for 3.9 it could be merged as an alternative to the 
-legacy clock code and after enough testing legacy code could be dropped in 
-next kernel release.
-
-Best regards
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+>
+>> +     };
+>> +
+>> +Example 2: In this example, the MCT global and local timer interrupts are
+>> +        connected to two seperate interrupt controllers. Hence, an
+>> +        interrupt-map is created to map the interrupts to the respective
+>> +        interrupt controllers.
+>> +
+>> +     mct@101C0000 {
+>> +             compatible = "samsung,exynos4210-mct";
+>> +             reg = <0x101C0000 0x800>;
+>> +             interrupt-controller;
+>> +             #interrups-cells = <2>;
+>> +             interrupt-parent = <&mct_map>;
+>> +             interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+>> +                          <4 0>, <5 0>;
+>> +
+>> +             mct_map: mct-map {
+>> +                     #interrupt-cells = <2>;
+>> +                     #address-cells = <0>;
+>> +                     #size-cells = <0>;
+>> +                     interrupt-map = <0x0 0 &combiner 23 3>,
+>> +                                     <0x4 0 &gic 0 120 0>,
+>> +                                     <0x5 0 &gic 0 121 0>;
+>> +             };
+>> +     };
+>
+>
+> [...]
+>
+> Thanks,
+> Mark.
+>
