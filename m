@@ -1,60 +1,83 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/2] ARM: Exynos5250: Enabling samsung usb phy
-Date: Mon, 21 Jan 2013 21:06:58 -0800
-Message-ID: <053501cdf85e$507c2560$f1747020$@samsung.com>
-References: <1355845182-14104-1-git-send-email-gautam.vivek@samsung.com>
- <20130118131013.GG4672@arwen.pp.htv.fi> <20130118131250.GH4672@arwen.pp.htv.fi>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v6 0/4] Adding usb2.0 host-phy support for exynos5250
+Date: Mon, 21 Jan 2013 21:23:28 -0800
+Message-ID: <053c01cdf860$9e98df20$dbca9d60$@samsung.com>
+References: <1357916550-11421-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39320 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750899Ab3AVFHT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jan 2013 00:07:19 -0500
-In-reply-to: <20130118131250.GH4672@arwen.pp.htv.fi>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1357916550-11421-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, p.paneri@samsung.com, cpgs@samsung.com
 
-Felipe Balbi wrote:
+Vivek Gautam wrote:
 > 
-> On Fri, Jan 18, 2013 at 03:10:13PM +0200, Felipe Balbi wrote:
-> > Hi,
-> >
-> > On Tue, Dec 18, 2012 at 09:09:40PM +0530, Vivek Gautam wrote:
-> > > This patch-set enables the samsung-usbphy driver on exynos5250,
-> > > which enables the support for USB2 type and USB3 type phys.
-> > > The corresponding phy driver patches are available at:
-> > >  1) https://lkml.org/lkml/2012/12/18/201
-> > >  2) https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-
-> December/024559.html
-> > >
-> > > Tested this patch-set on exynos5250 with following patch-sets for
-> > > USB 2.0 and USB 3.0:
-> > >  - https://patchwork.kernel.org/patch/1794651/
-> > >  - https://lkml.org/lkml/2012/12/18/201
-> > >  - https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-
-> December/024559.html
-> > >  - http://comments.gmane.org/gmane.linux.usb.general/76352
-> > >  - https://lkml.org/lkml/2012/12/13/492
-> > >
-> > > Vivek Gautam (2):
-> > >   ARM: Exynos5250: Enabling samsung-usbphy driver
-> > >   ARM: Exynos5250: Enabling USB 3.0 phy for samsung-usbphy driver
-> >
-> > What should I do with this series ? Is it ready to apply ? If it is,
-> > then please resend with Kukjim's Acked-by.
+> Changes from v5:
+>  - Rebased on top of latest patches:
+>         usb: phy: samsung: Introducing usb phy driver for hsotg (v9)
+>         usb: phy: samsung: Add support to set pmu isolation (v6)
+>    As a result adding hostphy enable mask and hostphy register offsets
+>    to driver data in order to access the HOSTPHY CONTROL register.
 > 
-> actually, now that I look again, it's all under arch/arm/, so Kukjim can
-> take all of those through his tree ;-)
+>  - Adding member 'otg' to struct samsung-usbphy so that its consumers
+>    can call otg->set_host so as to make 'phy' aware of the consumer type:
+> 	HOST/DEVICE
 > 
-Yes, once Vivek addresses comments from Sylwester, let me pick up into
-Samsung tree :-)
+>  - Adding 'otg' to 'struct s5p_ehci_hcd' and 'struct exynos_ohci_hcd'
+>    which keeps track of 'otg' of the controllers' phy. This then sets
+>    the host.
+> 
+>  - Moved samsung_usbphy_set_type() calls from ehci-s5p and ohci-exynos
+>    to phy driver itself where based on phy_type it is called.
+> 
+>  - Added separate macro definition for USB20PHY_CFG register to select
+>    between host/device type usb link.
+> 
+>  - Removing unnecessary argument 'phy_type' from
+> samsung_usbphy_set_type()
+>    and samsung_usbphy_cfg_sel().
+> 
+>  - Addressed few nits:
+> 	-- added macro for 'KHZ'
+> 	-- removing useless 'if' from samsung_usbphy_cfg_sel()
+> 	-- keeping the place of clk_get intact and requesting driver
+> 	   data before that.
+> 
+> Vivek Gautam (4):
+>   ARM: EXYNOS: Update & move usb-phy types to generic include layer
+>   usb: phy: samsung: Add host phy support to samsung-phy driver
+>   USB: ehci-s5p: Add phy driver support
+>   USB: ohci-exynos: Add phy driver support
+> 
+>  .../devicetree/bindings/usb/samsung-usbphy.txt     |   12 +-
+>  drivers/usb/host/ehci-s5p.c                        |   81 +++-
+>  drivers/usb/host/ohci-exynos.c                     |   85 +++-
+>  drivers/usb/phy/Kconfig                            |    2 +-
+>  drivers/usb/phy/samsung-usbphy.c                   |  512
+++++++++++++++++++--
+>  include/linux/usb/samsung_usb_phy.h                |   16 +
+>  6 files changed, 635 insertions(+), 73 deletions(-)
+>  create mode 100644 include/linux/usb/samsung_usb_phy.h
+> 
+> --
+> 1.7.6.5
+
+Looks good to me,
+
+Felipe and Greg, I don't know who should take this series anyway, feel free
+to add  my ack:
+
+Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
 Thanks.
 
 - Kukjin
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
