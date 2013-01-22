@@ -1,211 +1,106 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v8 4/4] USB: ohci-exynos: Add phy driver support
-Date: Tue, 22 Jan 2013 18:30:43 +0530
-Message-ID: <1358859643-5030-5-git-send-email-gautam.vivek@samsung.com>
-References: <1358859643-5030-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:22273 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751951Ab3AVM6W (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jan 2013 07:58:22 -0500
-In-reply-to: <1358859643-5030-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Prasanna Kumar <prasannapadubidri@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos5: Set up power domain for MFC and
+ G-scaler
+Date: Tue, 22 Jan 2013 19:15:37 +0530
+Message-ID: <CAPmaG0tnqm07br_d76MB2C3FJ5Ryt96r9oLK87pvFjDO+gGRMA@mail.gmail.com>
+References: <1357733733-18769-1-git-send-email-prasanna.ps@samsung.com>
+ <1357733733-18769-3-git-send-email-prasanna.ps@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1357733733-18769-3-git-send-email-prasanna.ps@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, kgene.kim@samsung.com, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, dianders@chromium.org, jg1.han@samsung.com, p.paneri@samsung.com
 
-Adding the phy-driver to ohci-exynos. Keeping the platform data
-for continuing the smooth operation for boards which still uses it
+Hi Kukjin,
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/usb/host/ohci-exynos.c |   84 ++++++++++++++++++++++++++++++----------
- 1 files changed, 63 insertions(+), 21 deletions(-)
+Kindly review this patch.
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 804fb62..1b38409 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -15,6 +15,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/usb-exynos.h>
-+#include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
- #include <plat/usb-phy.h>
- 
-@@ -22,8 +23,31 @@ struct exynos_ohci_hcd {
- 	struct device *dev;
- 	struct usb_hcd *hcd;
- 	struct clk *clk;
-+	struct usb_phy *phy;
-+	struct usb_otg *otg;
-+	struct exynos4_ohci_platdata *pdata;
- };
- 
-+static void exynos_ohci_phy_enable(struct exynos_ohci_hcd *exynos_ohci)
-+{
-+	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
-+
-+	if (exynos_ohci->phy)
-+		usb_phy_init(exynos_ohci->phy);
-+	else if (exynos_ohci->pdata->phy_init)
-+		exynos_ohci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
-+}
-+
-+static void exynos_ohci_phy_disable(struct exynos_ohci_hcd *exynos_ohci)
-+{
-+	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
-+
-+	if (exynos_ohci->phy)
-+		usb_phy_shutdown(exynos_ohci->phy);
-+	else if (exynos_ohci->pdata->phy_exit)
-+		exynos_ohci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
-+}
-+
- static int ohci_exynos_reset(struct usb_hcd *hcd)
- {
- 	return ohci_init(hcd_to_ohci(hcd));
-@@ -79,20 +103,15 @@ static u64 ohci_exynos_dma_mask = DMA_BIT_MASK(32);
- 
- static int exynos_ohci_probe(struct platform_device *pdev)
- {
--	struct exynos4_ohci_platdata *pdata;
-+	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
- 	struct exynos_ohci_hcd *exynos_ohci;
- 	struct usb_hcd *hcd;
- 	struct ohci_hcd *ohci;
- 	struct resource *res;
-+	struct usb_phy *phy;
- 	int irq;
- 	int err;
- 
--	pdata = pdev->dev.platform_data;
--	if (!pdata) {
--		dev_err(&pdev->dev, "No platform data defined\n");
--		return -EINVAL;
--	}
--
- 	/*
- 	 * Right now device-tree probed devices don't get dma_mask set.
- 	 * Since shared usb code relies on it, set it here for now.
-@@ -108,6 +127,20 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 	if (!exynos_ohci)
- 		return -ENOMEM;
- 
-+	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-+	if (IS_ERR_OR_NULL(phy)) {
-+		/* Fallback to pdata */
-+		if (!pdata) {
-+			dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
-+			return -EPROBE_DEFER;
-+		} else {
-+			exynos_ohci->pdata = pdata;
-+		}
-+	} else {
-+		exynos_ohci->phy = phy;
-+		exynos_ohci->otg = phy->otg;
-+	}
-+
- 	exynos_ohci->dev = &pdev->dev;
- 
- 	hcd = usb_create_hcd(&exynos_ohci_hc_driver, &pdev->dev,
-@@ -153,8 +186,11 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 		goto fail_io;
- 	}
- 
--	if (pdata->phy_init)
--		pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
-+	if (exynos_ohci->otg)
-+		exynos_ohci->otg->set_host(exynos_ohci->otg,
-+					&exynos_ohci->hcd->self);
-+
-+	exynos_ohci_phy_enable(exynos_ohci);
- 
- 	ohci = hcd_to_ohci(hcd);
- 	ohci_hcd_init(ohci);
-@@ -162,13 +198,15 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
--		goto fail_io;
-+		goto fail_add_hcd;
- 	}
- 
- 	platform_set_drvdata(pdev, exynos_ohci);
- 
- 	return 0;
- 
-+fail_add_hcd:
-+	exynos_ohci_phy_disable(exynos_ohci);
- fail_io:
- 	clk_disable_unprepare(exynos_ohci->clk);
- fail_clk:
-@@ -178,14 +216,16 @@ fail_clk:
- 
- static int exynos_ohci_remove(struct platform_device *pdev)
- {
--	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
- 	struct exynos_ohci_hcd *exynos_ohci = platform_get_drvdata(pdev);
- 	struct usb_hcd *hcd = exynos_ohci->hcd;
- 
- 	usb_remove_hcd(hcd);
- 
--	if (pdata && pdata->phy_exit)
--		pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
-+	if (exynos_ohci->otg)
-+		exynos_ohci->otg->set_host(exynos_ohci->otg,
-+					&exynos_ohci->hcd->self);
-+
-+	exynos_ohci_phy_disable(exynos_ohci);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -209,8 +249,6 @@ static int exynos_ohci_suspend(struct device *dev)
- 	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
- 	struct usb_hcd *hcd = exynos_ohci->hcd;
- 	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
- 	unsigned long flags;
- 	int rc = 0;
- 
-@@ -229,8 +267,11 @@ static int exynos_ohci_suspend(struct device *dev)
- 
- 	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
- 
--	if (pdata && pdata->phy_exit)
--		pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
-+	if (exynos_ohci->otg)
-+		exynos_ohci->otg->set_host(exynos_ohci->otg,
-+					&exynos_ohci->hcd->self);
-+
-+	exynos_ohci_phy_disable(exynos_ohci);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-@@ -244,13 +285,14 @@ static int exynos_ohci_resume(struct device *dev)
- {
- 	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
- 	struct usb_hcd *hcd = exynos_ohci->hcd;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
--	if (pdata && pdata->phy_init)
--		pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
-+	if (exynos_ohci->otg)
-+		exynos_ohci->otg->set_host(exynos_ohci->otg,
-+					&exynos_ohci->hcd->self);
-+
-+	exynos_ohci_phy_enable(exynos_ohci);
- 
- 	ohci_resume(hcd, false);
- 
+On Wed, Jan 9, 2013 at 5:45 PM, Prasanna Kumar <prasanna.ps@samsung.com> wrote:
+> This patch adds device tree nodes for MFC and G-scaler power domains
+> of exynos5.It binds these power-domain nodes to repsective device tree nodes.
+>
+> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |   15 +++++++++++++++
+>  1 files changed, 15 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 30485de..6d0e87c 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -85,6 +85,7 @@
+>                 compatible = "samsung,mfc-v6";
+>                 reg = <0x11000000 0x10000>;
+>                 interrupts = <0 96 0>;
+> +               samsung,power-domain = <&pd_mfc>;
+>         };
+>
+>         rtc {
+> @@ -554,28 +555,42 @@
+>                 };
+>         };
+>
+> +       pd_gsc: gsc-power-domain@0x10044000 {
+> +               compatible = "samsung,exynos4210-pd";
+> +               reg = <0x10044000 0x20>;
+> +       };
+> +
+> +       pd_mfc: mfc-power-domain@0x10044040 {
+> +               compatible = "samsung,exynos4210-pd";
+> +               reg = <0x10044040 0x20>;
+> +       };
+> +
+>         gsc_0:  gsc@0x13e00000 {
+>                 compatible = "samsung,exynos5-gsc";
+>                 reg = <0x13e00000 0x1000>;
+>                 interrupts = <0 85 0>;
+> +               samsung,power-domain = <&pd_gsc>;
+>         };
+>
+>         gsc_1:  gsc@0x13e10000 {
+>                 compatible = "samsung,exynos5-gsc";
+>                 reg = <0x13e10000 0x1000>;
+>                 interrupts = <0 86 0>;
+> +               samsung,power-domain = <&pd_gsc>;
+>         };
+>
+>         gsc_2:  gsc@0x13e20000 {
+>                 compatible = "samsung,exynos5-gsc";
+>                 reg = <0x13e20000 0x1000>;
+>                 interrupts = <0 87 0>;
+> +               samsung,power-domain = <&pd_gsc>;
+>         };
+>
+>         gsc_3:  gsc@0x13e30000 {
+>                 compatible = "samsung,exynos5-gsc";
+>                 reg = <0x13e30000 0x1000>;
+>                 interrupts = <0 88 0>;
+> +               samsung,power-domain = <&pd_gsc>;
+>         };
+>
+>         hdmi {
+> --
+> 1.7.5.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
 -- 
-1.7.6.5
+Thanks
+Prasanna Kumar
