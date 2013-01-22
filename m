@@ -1,34 +1,37 @@
-From: Matt Sealey <matt@genesi-usa.com>
-Subject: Re: One of these things (CONFIG_HZ) is not like the others..
-Date: Mon, 21 Jan 2013 18:26:14 -0600
-Message-ID: <CAKGA1bndiQkVSFh=Fpk8WjLe4L_EFyRa1mHyVUF9PFine-Wpcg@mail.gmail.com>
-References: <CAKGA1bkiowcO7OPSfPmaB6eRj_3FNr+4ONnaQHEZkpxB2XfduQ@mail.gmail.com>
- <201301212041.17951.arnd@arndb.de> <50FDAC5F.4040605@linaro.org>
- <20130121211218.GX23505@n2100.arm.linux.org.uk> <CAKGA1bkZ4sN_eXAk1nUzvGE6cvvQ+b+jnTezTM863qFNL8NqWg@mail.gmail.com>
- <20130121224252.GY23505@n2100.arm.linux.org.uk> <CAKGA1b=AG_a=KCi6qoeoRoG+5bcYkn3gAVb4S2dbaFzu4ioJdQ@mail.gmail.com>
- <20130121234908.GD23505@n2100.arm.linux.org.uk> <CAKGA1bk-K=D6EDBfJ7LggpTroj1sFC8VStctqGi=NacLEu95cA@mail.gmail.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: [PATCH] ARM: plat-samsung: using vsnprintf instead of vsprintf
+ for the limit buffer length 256
+Date: Tue, 22 Jan 2013 09:00:03 +0800
+Message-ID: <50FDE493.1020204@asianux.com>
+References: <50FD178E.9090105@asianux.com> <20130121135626.GP1095@trinity.fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKGA1bk-K=D6EDBfJ7LggpTroj1sFC8VStctqGi=NacLEu95cA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Linux ARM Kernel ML <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:49518 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751569Ab3AVA7S (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Jan 2013 19:59:18 -0500
+In-Reply-To: <20130121135626.GP1095@trinity.fluff.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben@fluff.org>
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 21, 2013 at 6:09 PM, Matt Sealey <matt@genesi-usa.com> wrote:
+=E4=BA=8E 2013=E5=B9=B401=E6=9C=8821=E6=97=A5 21:56, Ben Dooks =E5=86=99=
+=E9=81=93:
+> How about: vsnprintf(buff, sizeof(buff), fmt, va);
+>=20
+> It means we do not end up assuming the size of 'buff' and will be cor=
+rect
+> if the code is changed to declare 'buff' to be a different size.
 
-[LAKML: about lack of SCHED_HRTICK because we don't use
-kernel/Kconfig.hz on ARM)]
+  thank you, I will send patch v2.
 
-> kind of leaves ARM in the doghouse.. who knows what weirdo scheduler
-> reactions are related to it not being enabled. Maybe when it is, HZ
-> *would* need to be allowed to be bumped when using this code path?
+  :-)
 
-Or conversely maybe this is exactly why the Samsung maintainers
-decided they need HZ=200, because SCHED_HRTICK isn't being enabled and
-they're experiencing some multimedia lag because of it?
+--=20
+Chen Gang
 
--- 
-Matt Sealey <matt@genesi-usa.com>
-Product Development Analyst, Genesi USA, Inc.
+Asianux Corporation
