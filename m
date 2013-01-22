@@ -1,104 +1,154 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH] arm: plat-samsung: check soc ids before l2x0 cache restoration in resume
-Date: Tue, 22 Jan 2013 13:55:09 +0530
-Message-ID: <1358843109-11072-1-git-send-email-inderpal.singh@linaro.org>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
+Date: Tue, 22 Jan 2013 10:48:17 +0200
+Message-ID: <20130122084817.GC16143@arwen.pp.htv.fi>
+References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
+ <20121215072014.2E05E3E0AE3@localhost>
+ <CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
+ <CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
+ <CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
+ <016901cde163$6be034c0$43a09e40$@samsung.com>
+ <CAFp+6iGq32UV3mZ=QYVizJGQEark0Qztu7m4jy3DvG431ajV1w@mail.gmail.com>
+ <50DB811A.8010408@gmail.com>
+ <054601cdf862$534a8ad0$f9dfa070$@samsung.com>
+ <CAFp+6iGrp8b+T3n+xNha7jMFMgDsFR8E9zCijoUANZgmN4QL_A@mail.gmail.com>
+Reply-To: <balbi@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/Uq4LBwYP4y1W6pO"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:39163 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753170Ab3AVIZS (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:59802 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752875Ab3AVIsg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jan 2013 03:25:18 -0500
-Received: by mail-pb0-f53.google.com with SMTP id un1so3179039pbc.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jan 2013 00:25:18 -0800 (PST)
+	Tue, 22 Jan 2013 03:48:36 -0500
+Content-Disposition: inline
+In-Reply-To: <CAFp+6iGrp8b+T3n+xNha7jMFMgDsFR8E9zCijoUANZgmN4QL_A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Doug Anderson <dianders@chromium.org>, balbi@ti.com, Thomas Abraham <thomas.abraham@linaro.org>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, Alan Stern <stern@rowland.harvard.edu>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, cpgs@samsung.com
 
-Only exynos4 based platforms have l2x0 cache controller. Hence check
-the same before restoring the cache in resume.
+--/Uq4LBwYP4y1W6pO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is needed for single kernel image.
+Hi,
 
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
----
- arch/arm/mach-exynos/common.c           |    2 ++
- arch/arm/plat-samsung/include/plat/pm.h |    1 +
- arch/arm/plat-samsung/s5p-sleep.S       |   28 ++++++++++++++++++++++++++++
- 3 files changed, 31 insertions(+)
+On Tue, Jan 22, 2013 at 11:18:55AM +0530, Vivek Gautam wrote:
+> On Tue, Jan 22, 2013 at 11:05 AM, Kukjin Kim <kgene.kim@samsung.com> wrot=
+e:
+> > Sylwester Nawrocki wrote:
+> >>
+> >> On 12/24/2012 09:13 AM, Vivek Gautam wrote:
+> >> >>>> These two changes look good to me.  For both of them:
+> >> >>>>
+> >> >>>> Reviewed-by: Doug Anderson<dianders@chromium.org>
+> >> >>>
+> >> >>> Well, I have another idea. Yes, I know, specific chip name should =
+be
+> > used.
+> >> >> But
+> >> >>> you know the specific chip name in compatible can cause another
+> >> confusion
+> >> >>> on other SoC which has same IP. So I think, we need to consider to=
+ use
+> >> >>> common name or any specific name not chip in compatible for IP/dri=
+ver
+> >> like
+> >> >>> following?
+> >> >>>
+> >> >>> -     { .compatible =3D "samsung,exynos-dwc3" },
+> >> >>> +     { .compatible =3D "samsung,synopsis-dwc3" },
+> >> >>>
+> >> >>> Or if any version or something, how about following?
+> >> >>>
+> >> >>> +     { .compatible =3D "samsung,dwc-v3" },
+> >> >>>
+> >> > Well, yes the newer SoCs with same IP using the chip name can cause =
+some
+> >> > confusion, but won't it be fine that -
+> >> > "Newer parts using the same core can claim compatibility by
+> >> > including the older string in the compatible list" - as quoted by Gr=
+ant
+> > Likely
+> >> >
+> >> > Or, can we try another option, using multiple compatible strings for
+> >> > SoC specific
+> >> > in of_match_table, so that we don't create any confusion by using sa=
+me
+> >> > compatible for newer SoCs also. Like,
+> >> >
+> >> > -     { .compatible =3D "samsung,exynos-dwc3" },
+> >> > +     { .compatible =3D "samsung,exynos5250-dwc3" },
+> >> > +     { .compatible =3D<new SoC using same IP>  },
+> >>
+> >> Yes, why not just use an SoC name where given IP first appeared ? I
+> > believe
+> >> IP revision numbers are not always well documented. Also when an IP is
+> >> instantiated multiple times in specific SoC, its revision number might=
+ not
+> >> be sufficient to determine the system integration details for each
+> > instance.
+> >> I think having version for some devices and SoC name for others just a=
+dds
+> >> to the confusion. Thus using specific chip name in the compatible prop=
+erty
+> >> seems more clear to me.
+> >>
+> > Well, I don't think so. Let's see the DMAC PL330. Its compatible is
+> > "arm,pl330" and "arm,primecell" not SoC/Chip name. I think DWC is a same
+> > case or at least similar.
+> >
+> > You know, the DWC is a IP from Synopsis and I _Believe_ it has a kind of
+> > version and it can be used for identify.
+> >
+>=20
+> Right, DWC has version number, but that being the kind of USB controller
+> (USB 2.0 and USB 3.0)
+>=20
+> DWC2: USB High Speed controller (as also indicated in the patch from
+> Paul: [RFC PATCH 0/6] DWC2 DesignWare HS OTG driver)
+> DWC3: USB Super Speed controller
+>=20
+> Is it fine if we use something like shown below, as suggested by you earl=
+ier ?
+>=20
+> -     { .compatible =3D "samsung,exynos-dwc3" },
+> +     { .compatible =3D "samsung,synopsis-dwc3" }
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index cdaa55f..ab7ca00 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -796,6 +796,8 @@ static int __init exynos4_l2x0_cache_init(void)
- 	if (soc_is_exynos5250() || soc_is_exynos5440())
- 		return 0;
- 
-+	s5p_cpu = samsung_cpu_id & EXYNOS4_CPU_MASK;
-+
- 	ret = l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
- 	if (!ret) {
- 		l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
-diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
-index 887a0c9..285c8c8 100644
---- a/arch/arm/plat-samsung/include/plat/pm.h
-+++ b/arch/arm/plat-samsung/include/plat/pm.h
-@@ -190,3 +190,4 @@ extern void samsung_pm_save_gpios(void);
- 
- extern void s3c_pm_save_core(void);
- extern void s3c_pm_restore_core(void);
-+extern unsigned long s5p_cpu;
-diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-samsung/s5p-sleep.S
-index bdf6dad..006d35f 100644
---- a/arch/arm/plat-samsung/s5p-sleep.S
-+++ b/arch/arm/plat-samsung/s5p-sleep.S
-@@ -25,6 +25,15 @@
- #include <asm/asm-offsets.h>
- #include <asm/hardware/cache-l2x0.h>
- 
-+#define EXYNOS4210_CPU_ID	0x43210000
-+#define EXYNOS4212_CPU_ID	0x43220000
-+#define EXYNOS4412_CPU_ID	0xE4412200
-+#define EXYNOS4_CPU_MASK	0xFFFE0000
-+
-+#define EXYNOS4210_CPU		(EXYNOS4210_CPU_ID & EXYNOS4_CPU_MASK)
-+#define EXYNOS4212_CPU		(EXYNOS4212_CPU_ID & EXYNOS4_CPU_MASK)
-+#define EXYNOS4412_CPU		(EXYNOS4412_CPU_ID & EXYNOS4_CPU_MASK)
-+
- /*
-  *	 The following code is located into the .data section. This is to
-  *	 allow l2x0_regs_phys to be accessed with a relative load while we
-@@ -51,6 +60,22 @@
- 
- ENTRY(s3c_cpu_resume)
- #ifdef CONFIG_CACHE_L2X0
-+	adr	r0, s5p_cpu
-+	ldr	r1, [r0]
-+
-+	ldr	r0, =EXYNOS4210_CPU
-+	cmp	r1, r0
-+	beq	continue
-+
-+	ldr	r0, =EXYNOS4212_CPU
-+	cmp	r1, r0
-+	beq	continue
-+
-+	ldr	r0, =EXYNOS4412_CPU
-+	cmp	r1, r0
-+	bne	resume_l2on
-+
-+continue:
- 	adr	r0, l2x0_regs_phys
- 	ldr	r0, [r0]
- 	ldr	r1, [r0, #L2X0_R_PHY_BASE]
-@@ -77,4 +102,7 @@ ENDPROC(s3c_cpu_resume)
- 	.globl l2x0_regs_phys
- l2x0_regs_phys:
- 	.long	0
-+	.globl s5p_cpu
-+s5p_cpu:
-+	.long	0
- #endif
--- 
-1.7.9.5
+You're both missing a point here. The synopsys IP driver is called
+dwc3.ko and that's compatible with synopsys,dwc3. Your glue layer driver
+(dwc3-exynos.ko) is compatible with your platform, so
+samsung,exynos-dwc3 sounds correct to me.
+
+The glue layer is just to "abstract" away the integration details of the
+IP core into a specific platform.
+
+--=20
+balbi
+
+--/Uq4LBwYP4y1W6pO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ/lJRAAoJEIaOsuA1yqRE32AQAJQlZdxvlxSDkWSVeHqUwuY/
+tYhw5vRMFIf1vR+d3vdef0+W+UZy955hP9IHVYj4AzJzeSKTeEP95vDABkO032pg
+sahLoQbgLElkIBNW6yVtnV3tuNchd0WsyWZuLWYg0NtD1e3od++Ei5pxLxMj3S5o
+dHMIhVSNzxunYqWOx///urEuoyh93U7hnZR/46kPOLH3bfq9GzUYLvemXaw4cY2V
+ptOQCD3xajVpb8VdvCTgwjcdgWZ2XPhkaOjubwo5ImJToQP3HbkFNdBSKStcUp/F
+q+3oyztUDOvKoEFD8mQSwwmCK7Pu5qI2CKdv1Og/ZSdZ3NzYWrRO0f8YAymyer1P
+NT6cd0DkMOqU6eb56hRrPdF9P0pk76GzfuftZrCJbHtc5cMm+EziM1na8yZ4tBJs
+cDTNJXNmNyGgoyl0GYv59nsmhv8KTqba7h5N8R6hc9gdRswBJrXfSdcqGOZnT9if
+OvBYOc4JRhpxbWIm4c7ElsHMoDkmJs/za45+og9NVB7Xf8VHTGloLNHHRYLMdAic
+S3O423D/SvKZNIvoC9JYaW/+6M5CVqkysLF77NnkPZX1f5hY9DWQYwZ986zpmFP3
+8H6gV9t14h64pRwTQLVT2HN/SZa1/OtU8HjUalG2gy/nPeE6FQgunp/SK/18Wi7U
+TpbReAfHDZTvQQYPxNg5
+=Dfqu
+-----END PGP SIGNATURE-----
+
+--/Uq4LBwYP4y1W6pO--
