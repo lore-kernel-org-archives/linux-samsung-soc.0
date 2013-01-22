@@ -1,567 +1,580 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
-Date: Tue, 22 Jan 2013 19:33:00 +0530
-Message-ID: <CAHfPSqDWRU6Jjnhjx-8=Ps_2G3KRok8_+aNSMcvtA+rFTDE2Yw@mail.gmail.com>
-References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <50FE5F76.7090803@metafoo.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50FE5F76.7090803-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
+Date: Tue, 22 Jan 2013 19:57:29 +0530
+Message-ID: <1358864849-27505-1-git-send-email-ch.naveen@samsung.com>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:45945 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752910Ab3AVO2v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Jan 2013 09:28:51 -0500
+In-reply-to: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-iio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de
 
-Hello All,
+This patch add an ADC IP found on EXYNOS5 series socs from Samsung.
+Also adds the Documentation for device tree bindings.
 
-On 22 January 2013 15:14, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
->
-> Hi,
->
-> On 01/21/2013 02:37 PM, Naveen Krishna Chatradhi wrote:
-> > This patch add an ADC IP found on EXYNOS5 series socs from Samsung.
-> > Also adds the Documentation for device tree bindings.
-> >[...]
-> > diff --git a/drivers/iio/adc/exynos5_adc.c
-> > b/drivers/iio/adc/exynos5_adc.c
-> > new file mode 100644
-> > index 0000000..cd33ea2
-> > --- /dev/null
-> > +++ b/drivers/iio/adc/exynos5_adc.c
-> > @@ -0,0 +1,412 @@
-> > +/*
-> > + *  exynos5_adc.c - Support for ADC in EXYNOS5 SoCs
-> > + *
-> > + *  8-channel, 10/12-bit ADC
-> > + *
-> > + *  Copyright (C) 2013 Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > + *
-> > + *  This program is free software; you can redistribute it and/or
-> > modify
-> > + *  it under the terms of the GNU General Public License as published
-> > by
-> > + *  the Free Software Foundation; either version 2 of the License, or
-> > + *  (at your option) any later version.
-> > + *
-> > + *  This program is distributed in the hope that it will be useful,
-> > + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + *  GNU General Public License for more details.
-> > + *
-> > + *  You should have received a copy of the GNU General Public License
-> > + *  along with this program; if not, write to the Free Software
-> > + *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-> > + */
-> > +
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/io.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/completion.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_irq.h>
-> > +#include <linux/regulator/consumer.h>
-> > +#include <linux/of_platform.h>
-> > +
-> > +#include <linux/iio/iio.h>
-> > +#include <linux/iio/machine.h>
-> > +#include <linux/iio/driver.h>
-> > +
-> > +/* Samsung ADC registers definitions */
-> > +#define EXYNOS_ADC_CON(x)    ((x) + 0x00)
-> > +#define EXYNOS_ADC_DLY(x)    ((x) + 0x08)
-> > +#define EXYNOS_ADC_DATX(x)   ((x) + 0x0C)
-> > +#define EXYNOS_ADC_INTCLR(x) ((x) + 0x18)
-> > +#define EXYNOS_ADC_MUX(x)    ((x) + 0x1c)
-> > +
-> > +/* Bit definitions for EXYNOS_ADC_MUX: */
-> > +#define ADC_RES              (1u << 16)
-> > +#define ADC_ECFLG    (1u << 15)
-> > +#define ADC_PRSCEN   (1u << 14)
-> > +#define ADC_PRSCLV(x)        (((x) & 0xFF) << 6)
-> > +#define ADC_PRSCVLMASK       (0xFF << 6)
-> > +#define ADC_STANDBY  (1u << 2)
-> > +#define ADC_READ_START       (1u << 1)
-> > +#define ADC_EN_START (1u << 0)
->
-> You are a bit inconsistent with your prefixes, sometimes you use
-> EXYNOS_ADC,
-> sometimes just ADC, it would be better to use the same prefix all the
-> time.
-Will correct that.
->
-> > +
-> > +#define ADC_DATX_MASK        0xFFF
-> > +
-> > +struct exynos5_adc {
-> > +     void __iomem            *regs;
-> > +     struct clk              *clk;
-> > +     unsigned int            irq;
-> > +     struct regulator        *vdd;
-> > +
-> > +     struct completion       completion;
-> > +
-> > +     struct iio_map          *map;
-> > +     u32                     value;
-> > +     u32                     prescale;
-> > +};
-> > +
-> > +static const struct of_device_id exynos5_adc_match[] = {
-> > +     { .compatible = "samsung,exynos5250-adc" },
-> > +     {},
-> > +};
-> > +MODULE_DEVICE_TABLE(of, exynos5_adc_match);
-> > +
-> > +/* default maps used by iio consumer (ex: ntc-thermistor driver) */
-> > +static struct iio_map exynos5_adc_iio_maps[] = {
-> > +     {
-> > +             .consumer_dev_name = "0.ncp15wb473",
-> > +             .consumer_channel = "adc_user3",
-> > +             .adc_channel_label = "adc3",
-> > +     },
-> > +     {},
-> > +};
->
-> Hm... this should not be in the driver itself.
-I've taken the example of "drivers/iio/adc/lp8788_adc.c"
-I think this one is a tightly coupled driver.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+Changes since v1:
 
-Kindly, suggest me a better example.
+1. Fixed comments from Lars
+2. Added support for ADC on EXYNOS5410
 
->
-> > +
-> > +static int exynos5_read_raw(struct iio_dev *indio_dev,
-> > +                             struct iio_chan_spec const *chan,
-> > +                             int *val,
-> > +                             int *val2,
-> > +                             long mask)
-> > +{
-> > +     struct exynos5_adc *info = iio_priv(indio_dev);
-> > +     u32 con;
-> > +
-> > +     if (mask == IIO_CHAN_INFO_RAW) {
-> > +             mutex_lock(&indio_dev->mlock);
-> > +
-> > +             /* Select the channel to be used */
-> > +             writel(chan->address, EXYNOS_ADC_MUX(info->regs));
-> > +             /* Trigger conversion */
-> > +             con = readl(EXYNOS_ADC_CON(info->regs));
-> > +             writel(con | ADC_EN_START, EXYNOS_ADC_CON(info->regs));
-> > +
-> > +             wait_for_completion(&info->completion);
-> > +             *val = info->value;
-> > +
-> > +             mutex_unlock(&indio_dev->mlock);
-> > +
-> > +             return IIO_VAL_INT;
-> > +     }
-> > +
-> > +     return -EINVAL;
-> > +}
-> > +
-> > +static irqreturn_t exynos5_adc_isr(int irq, void *dev_id)
-> > +{
-> > +     struct exynos5_adc *info = (struct exynos5_adc *)dev_id;
-> > +
-> > +     /* Read value and clear irq */
-> > +     info->value = readl(EXYNOS_ADC_DATX(info->regs)) &
-> > +                             ADC_DATX_MASK;
-> > +     writel(0, EXYNOS_ADC_INTCLR(info->regs));
-> > +
-> > +     complete(&info->completion);
-> > +
-> > +     return IRQ_HANDLED;
-> > +}
-> > +
-> > +static int exynos5_adc_reg_access(struct iio_dev *indio_dev,
-> > +                           unsigned reg, unsigned writeval,
-> > +                           unsigned *readval)
-> > +{
-> > +     struct exynos5_adc *info = iio_priv(indio_dev);
-> > +     u32 ret;
-> > +
-> > +     mutex_lock(&indio_dev->mlock);
->
-> Do we really need to take the lock here?
-Took from the reference
->
-> > +
-> > +     if (readval != NULL) {
-> > +             if (reg == 0x08)
-> > +                     ret = readl(EXYNOS_ADC_DLY(info->regs));
-> > +             else if (reg == 0x0C)
-> > +                     ret = readl(EXYNOS_ADC_DATX(info->regs));
-> > +             else if (reg == 0x1C)
-> > +                     ret = readl(EXYNOS_ADC_MUX(info->regs));
-> > +             else
-> > +                     ret = readl(EXYNOS_ADC_CON(info->regs));
->
-> How about
->                 ret = readl(info->regs + reg)
->
-> instead of the whole if ... else if ... else if ...
-Sure
->
-> > +
-> > +             readval = &ret;
->
-> Uhm, I'm pretty sure that the line above does not work. At least it won't
-> do
-> what you want it to do.
-Right, sorry
->
-> > +     } else
-> > +             ret = -EINVAL;
-> > +
-> > +     mutex_unlock(&indio_dev->mlock);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static const struct iio_info exynos5_adc_iio_info = {
-> > +     .read_raw = &exynos5_read_raw,
-> > +     .debugfs_reg_access = &exynos5_adc_reg_access,
-> > +     .driver_module = THIS_MODULE,
-> > +};
-> > +
-> > +#define EXYNOS_ADC_CHANNEL(_index, _id) {            \
-> > +     .type = IIO_VOLTAGE,                            \
-> > +     .indexed = 1,                                   \
-> > +     .channel = _index,                              \
-> > +     .address = _index,                              \
-> > +     .info_mask = IIO_CHAN_INFO_RAW_SEPARATE_BIT,    \
-> > +     .datasheet_name = _id,                          \
-> > +}
-> > +
-> > +static const struct iio_chan_spec exynos5_adc_iio_channels[] = {
-> > +     EXYNOS_ADC_CHANNEL(0, "adc0"),
-> > +     EXYNOS_ADC_CHANNEL(1, "adc1"),
-> > +     EXYNOS_ADC_CHANNEL(2, "adc2"),
-> > +     EXYNOS_ADC_CHANNEL(3, "adc3"),
-> > +     EXYNOS_ADC_CHANNEL(4, "adc4"),
-> > +     EXYNOS_ADC_CHANNEL(5, "adc5"),
-> > +     EXYNOS_ADC_CHANNEL(6, "adc6"),
-> > +     EXYNOS_ADC_CHANNEL(7, "adc7"),
-The next version has 10 channels and future version are gonna support
-more that that. May be my earlier doubt will fix this as well.
-> > +};
-> > +
-> > +static int exynos5_adc_iio_map_register(struct iio_dev *indio_dev,
-> > +                             struct exynos5_adc *adc)
-> > +{
-> > +     int ret;
-> > +
-> > +     adc->map = exynos5_adc_iio_maps;
-> > +
-> > +     ret = iio_map_array_register(indio_dev, adc->map);
-> > +     if (ret) {
-> > +             dev_err(&indio_dev->dev, "iio map err: %d\n", ret);
-> > +             return ret;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
->
-> Just use iio_map_array_register instead of exynos5_adc_iio_map_register
->
-> > +
-> > +static inline void exynos5_adc_iio_map_unregister(struct iio_dev
-> > *indio_dev,
-> > +                             struct exynos5_adc *adc)
-> > +{
-> > +     iio_map_array_unregister(indio_dev, adc->map);
-> > +}
->
-> Just use iio_map_array_unregister directly instead of
-> exynos5_adc_iio_map_unregister
->
-> > +
-> > +static int exynos5_adc_remove_devices(struct device *dev, void *c)
-> > +{
-> > +     struct platform_device *pdev = to_platform_device(dev);
-> > +
-> > +     platform_device_unregister(pdev);
-> > +
-> > +     return 0;
-> > +}
->
-> Again, a single line wrapper function...
-This is a call back. So..
->
-> > +
-> > +static int exynos5_adc_probe(struct platform_device *pdev)
-> > +{
-> > +     struct exynos5_adc *info = NULL;
-> > +     struct device_node *np = pdev->dev.of_node;
-> > +     struct iio_dev *iodev = NULL;
->
-> this is usually called indio_dev, would be good to be consistent across
-> dirvers.
-Sure.
->
-> > +     struct resource *mem;
-> > +     int ret = -ENODEV;
-> > +     int irq;
-> > +     u32 con;
-> > +
-> > +     iodev = iio_device_alloc(sizeof(struct exynos5_adc));
-> > +     if (!iodev) {
-> > +             dev_err(&pdev->dev, "failed allocating iio device\n");
-> > +             return -ENOMEM;
-> > +     }
-> > +
-> > +     info = iio_priv(iodev);
-> > +
-> > +     mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +     if (!mem) {
->
-> devm_request_and_ioremap will check if mem is NULL, so you don't need to
-> do
-> this manually.
->
-> > +             dev_err(&pdev->dev, "no mem resource?\n");
-> > +             goto err_iio;
-> > +     }
-> > +
-> > +     info->regs = devm_request_and_ioremap(&pdev->dev, mem);
-> > +     if (!info->regs) {
-> > +             dev_err(&pdev->dev, "cannot map EXYNOS5 ADC registers\n");
->
-> devm_request_and_ioremap already prints an error message.
->
-> > +             ret = -ENOMEM;
-> > +             goto err_iio;
-> > +     }
-> > +
-> > +     irq = platform_get_irq(pdev, 0);
-> > +     if (irq < 0) {
-> > +             dev_err(&pdev->dev, "no irq resource?\n");
-> > +             ret = irq;
-> > +             goto err_iio;
-> > +     }
-> > +
-> > +     info->irq = irq;
-> > +
-> > +     ret = devm_request_irq(&pdev->dev, info->irq, exynos5_adc_isr,
-> > +                                     0, dev_name(&pdev->dev), info);
->
-> Using devm_request_irq is racy in this case, since the IRQ will be freed
-> after the device has been freed, while it needs to be freed before the
-> devie
-> has been freed.
->
-> > +     if (ret < 0) {
-> > +             dev_err(&pdev->dev, "cannot request Samsung ADC IRQ %d\n",
-> > +                                                     info->irq);
-> > +             goto err_iio;
-> > +     }
-> > +
-> > +     info->clk = devm_clk_get(&pdev->dev, "adc");
-> > +     if (IS_ERR(info->clk)) {
-> > +             dev_err(&pdev->dev, "failed getting clock\n");
->
-> I think it is a good idea to include the error code in the error message.
->
-> > +             ret = PTR_ERR(info->clk);
-> > +             goto err_iio;
-> > +     }
-> > +
-> > +     clk_enable(info->clk);
-> > +
-> > +     info->vdd = devm_regulator_get(&pdev->dev, "vdd");
-> > +     if (IS_ERR(info->vdd)) {
-> > +             dev_err(&pdev->dev, "operating without regulator \"vdd\"
-> > .\n");
->
-> Same here.
-Sure
->
-> > +             ret = PTR_ERR(info->vdd);
-> > +             goto err_iio;
-> > +     }
-> > +
-> > +     platform_set_drvdata(pdev, iodev);
-> > +
-> > +     init_completion(&info->completion);
-> > +
-> > +     iodev->name = dev_name(&pdev->dev);
-> > +     iodev->dev.parent = &pdev->dev;
-> > +     iodev->dev.of_node = pdev->dev.of_node;
-> > +     iodev->info = &exynos5_adc_iio_info;
-> > +     iodev->modes = INDIO_DIRECT_MODE;
-> > +     iodev->channels = exynos5_adc_iio_channels;
-> > +     iodev->num_channels = ARRAY_SIZE(exynos5_adc_iio_channels);
-> > +
-> > +     /* Enable prescaler and set platform default */
-> > +     info->prescale = ADC_PRSCLV(49);
-> > +     con = info->prescale | ADC_PRSCEN;
-> > +
-> > +     /* Enable 12-bit ADC resolution */
-> > +     con |= ADC_RES;
-> > +
-> > +     writel(con, EXYNOS_ADC_CON(info->regs));
-> > +
-> > +     ret = exynos5_adc_iio_map_register(iodev, info);
-> > +     if (ret)
-> > +             goto err_iio;
-> > +
-> > +     ret = iio_device_register(iodev);
-> > +     if (ret)
-> > +             goto err_map;
-> > +
-> > +     ret = regulator_enable(info->vdd);
-> > +     if (ret)
-> > +             goto err_iio_dev;
-> > +
-> > +     ret = of_platform_populate(np, exynos5_adc_match, NULL,
-> > &pdev->dev);
->
-> Which kind of child nodes to you expect it to have? There is nothing about
-> this in your dt bindings documentation.
-I've tested with ntc thermistors (hwmon device) on a chromebook.
->
-> > +     if (ret < 0) {
-> > +             dev_err(&pdev->dev, "failed to add child nodes\n");
-> > +             goto err_of_populate;
-> > +     }
-> > +
-> > +     dev_info(&pdev->dev, "EXYNOS5 ADC driver loaded.\n");
->
-> That's just noise, please remove it.
->
-> > +
-> > +     return 0;
-> > +
-> > +err_of_populate:
-> > +     device_for_each_child(&pdev->dev, NULL,
-> > exynos5_adc_remove_devices);
-> > +err_iio_dev:
-> > +     iio_device_unregister(iodev);
-> > +err_map:
-> > +     exynos5_adc_iio_map_unregister(iodev, info);
-> > +err_iio:
-> > +     iio_device_free(iodev);
-> > +     return ret;
-> > +}
-> > +
-> > +static int exynos5_adc_remove(struct platform_device *pdev)
-> > +{
-> > +     struct iio_dev *iodev = platform_get_drvdata(pdev);
-> > +     struct exynos5_adc *info = iio_priv(iodev);
-> > +
-> > +     platform_set_drvdata(pdev, NULL);
->
-> The line above should not be needed
->
-> > +     iio_device_unregister(iodev);
-> > +     exynos5_adc_iio_map_unregister(iodev, info);
-> > +     iio_device_free(iodev);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +#ifdef CONFIG_PM
->
-> CONFIG_PM_SLEEP
->
-> > +static int exynos5_adc_suspend(struct device *dev)
-> > +{
-> > +     struct platform_device *pdev = container_of(dev,
-> > +                     struct platform_device, dev);
->
-> to_platform_device
->
-> > +     struct exynos5_adc *info = platform_get_drvdata(pdev);
->
-> Although using dev_get_data(dev) here would also be ok I guess.
->
-> > +     u32 con;
-> > +
-> > +     con = readl(EXYNOS_ADC_CON(info->regs));
-> > +     con |= ADC_STANDBY;
-> > +     writel(con, EXYNOS_ADC_CON(info->regs));
-> > +
-> > +     clk_disable(info->clk);
->
-> clk_unprepare_disable
-Right, sure
->
-> > +     regulator_disable(info->vdd);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int exynos5_adc_resume(struct device *dev)
-> > +{
-> > +     struct platform_device *pdev = container_of(dev,
-> > +                     struct platform_device, dev);
->
-> Same as above.
->
-> > +     struct exynos5_adc *info = platform_get_drvdata(pdev);
-> > +     unsigned int con;
-> > +     int ret;
-> > +
-> > +     ret = regulator_enable(info->vdd);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     clk_enable(info->clk);
->
-> clk_prepare_enable
->
-> > +
-> > +     /* TODO: Enable prescalar */
-> > +     con = info->prescale | ADC_PRSCEN;
->
-> I guess you need to enable the prescaler here ;) (or removed the TODO
-> comment)
-Sorry, missed to remove the comment
->
-> > +     writel(con | ADC_RES, EXYNOS_ADC_CON(info->regs));
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +#else
-> > +#define s3c_adc_suspend NULL
-> > +#define s3c_adc_resume NULL
-> > +#endif
-> > +
-> > +static const struct dev_pm_ops adc_pm_ops = {
-> > +     .suspend        = exynos5_adc_suspend,
-> > +     .resume         = exynos5_adc_resume,
-> > +};
->
-> static SIMPLE_DEV_PM_OPS(exynos5_adc_pm_ops, exynos5_adc_suspend,
->         exynos5_adc_resume);
->
-> > +
-> > +static struct platform_driver exynos5_adc_driver = {
-> > +     .probe          = exynos5_adc_probe,
-> > +     .remove         = exynos5_adc_remove,
-> > +     .driver         = {
-> > +             .name   = "exynos5-adc",
-> > +             .owner  = THIS_MODULE,
-> > +             .of_match_table = of_match_ptr(exynos5_adc_match),
-> > +             .pm     = &adc_pm_ops,
-> > +     },
-> > +};
-> > +
-> > +module_platform_driver(exynos5_adc_driver);
-> > +
-> > +MODULE_AUTHOR("Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
-> > +MODULE_DESCRIPTION("Samsung EXYNOS5 ADC driver");
-> > +MODULE_LICENSE("GPL");
->
+Few doubts regarding the mappings.
+Kindly, suggest me better methods.
 
-Lars, Thanks for your comments.
-Will submit a V2 soon..
+ .../bindings/arm/samsung/exynos5-adc.txt           |   37 ++
+ drivers/iio/adc/Kconfig                            |    7 +
+ drivers/iio/adc/Makefile                           |    1 +
+ drivers/iio/adc/exynos5_adc.c                      |  461 ++++++++++++++++++++
+ 4 files changed, 506 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt
+ create mode 100644 drivers/iio/adc/exynos5_adc.c
 
---
-Shine bright,
-(: Nav :)
+diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt
+new file mode 100644
+index 0000000..9a5b515
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt
+@@ -0,0 +1,37 @@
++Samsung Exynos5 Analog to Digital Converter bindings
++
++Required properties:
++- compatible:		Must be "samsung,exynos5250-adc" for exynos5250 controllers.
++- reg:			Contains ADC register address range (base address and
++			length).
++- interrupts: 		Contains the interrupt information for the timer. The
++			format is being dependent on which interrupt controller
++			the Samsung device uses.
++
++Note: child nodes can be added for auto probing from device tree.
++
++Example: adding device info in dtsi file
++
++adc@12D10000 {
++	compatible = "samsung,exynos5250-adc";
++	reg = <0x12D10000 0x100>;
++	interrupts = <0 106 0>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++	ranges;
++};
++
++
++Example: Adding child nodes in dts file
++
++adc@12D10000 {
++
++	/* NTC thermistor is a hwmon device */
++	ncp15wb473@0 {
++		compatible = "ntc,ncp15wb473";
++		reg = <0x0>;
++		pullup-uV = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++	};
++};
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index fe822a1..33ceabf 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -91,6 +91,13 @@ config AT91_ADC
+ 	help
+ 	  Say yes here to build support for Atmel AT91 ADC.
+ 
++config EXYNOS5_ADC
++	bool "Exynos5 ADC driver support"
++	help
++	  Core support for the ADC block found in the Samsung EXYNOS5 series
++	  of SoCs for drivers such as the touchscreen and hwmon to use to share
++	  this resource.
++
+ config LP8788_ADC
+ 	bool "LP8788 ADC driver"
+ 	depends on MFD_LP8788
+diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+index 2d5f100..5b4a4f6 100644
+--- a/drivers/iio/adc/Makefile
++++ b/drivers/iio/adc/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_AD7791) += ad7791.o
+ obj-$(CONFIG_AD7793) += ad7793.o
+ obj-$(CONFIG_AD7887) += ad7887.o
+ obj-$(CONFIG_AT91_ADC) += at91_adc.o
++obj-$(CONFIG_EXYNOS5_ADC) += exynos5_adc.o
+ obj-$(CONFIG_LP8788_ADC) += lp8788_adc.o
+ obj-$(CONFIG_MAX1363) += max1363.o
+ obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
+diff --git a/drivers/iio/adc/exynos5_adc.c b/drivers/iio/adc/exynos5_adc.c
+new file mode 100644
+index 0000000..62643f5
+--- /dev/null
++++ b/drivers/iio/adc/exynos5_adc.c
+@@ -0,0 +1,461 @@
++/*
++ *  exynos5_adc.c - Support for ADC in EXYNOS5 SoCs
++ *
++ *  8 ~ 10 channel, 10/12-bit ADC
++ *
++ *  Copyright (C) 2013 Naveen Krishna Chatradhi <ch.naveen@samsung.com>
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/interrupt.h>
++#include <linux/delay.h>
++#include <linux/kernel.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/clk.h>
++#include <linux/completion.h>
++#include <linux/of.h>
++#include <linux/of_irq.h>
++#include <linux/regulator/consumer.h>
++#include <linux/of_platform.h>
++
++#include <linux/iio/iio.h>
++#include <linux/iio/machine.h>
++#include <linux/iio/driver.h>
++
++enum adc_version {
++	ADC_V1,
++	ADC_V2
++};
++
++/* EXYNOS5250 ADC_V1 registers definitions */
++#define ADC_V1_CON(x)		((x) + 0x00)
++#define ADC_V1_DLY(x)		((x) + 0x08)
++#define ADC_V1_DATX(x)		((x) + 0x0C)
++#define ADC_V1_INTCLR(x)	((x) + 0x18)
++#define ADC_V1_MUX(x)		((x) + 0x1c)
++
++/* EXYNOS5410 ADC_V2 registers definitions */
++#define ADC_V2_CON1(x)		((x) + 0x00)
++#define ADC_V2_CON2(x)		((x) + 0x04)
++#define ADC_V2_STAT(x)		((x) + 0x08)
++#define ADC_V2_INT_EN(x)	((x) + 0x10)
++#define ADC_V2_INT_ST(x)	((x) + 0x14)
++#define ADC_V2_VER(x)		((x) + 0x20)
++
++/* Bit definitions for ADC_V1 */
++#define ADC_V1_CON_RES		(1u << 16)
++#define ADC_V1_CON_PRSCEN	(1u << 14)
++#define ADC_V1_CON_PRSCLV(x)	(((x) & 0xFF) << 6)
++#define ADC_V1_CON_STANDBY	(1u << 2)
++
++/* Bit definitions for ADC_V2 */
++#define ADC_V2_CON1_SOFT_RESET	(1u << 2)
++
++#define ADC_V2_CON2_OSEL	(1u << 10)
++#define ADC_V2_CON2_ESEL	(1u << 9)
++#define ADC_V2_CON2_HIGHF	(1u << 8)
++#define ADC_V2_CON2_C_TIME(x)	(((x) & 7) << 4)
++#define ADC_V2_CON2_ACH_SEL(x)	(((x) & 0xF) << 0)
++#define ADC_V2_CON2_ACH_MASK	0xF
++
++/* Bit definitions common for ADC_V1 and ADC_V2 */
++#define ADC_V1_CON_EN_START		(1u << 0)
++#define ADC_V1_DATX_MASK	0xFFF
++
++struct exynos5_adc {
++	void __iomem		*regs;
++	struct clk		*clk;
++	unsigned int		irq;
++	struct regulator	*vdd;
++
++	struct completion	completion;
++
++	struct iio_map		*map;
++	u32			value;
++	unsigned int            version;
++};
++
++static const struct of_device_id exynos5_adc_match[] = {
++	{ .compatible = "samsung,exynos5250-adc", .data = (void *)ADC_V1 },
++	{ .compatible = "samsung,exynos5410-adc", .data = (void *)ADC_V2 },
++	{},
++};
++MODULE_DEVICE_TABLE(of, exynos5_adc_match);
++
++static inline unsigned int exynos5_adc_get_version(struct platform_device *pdev)
++{
++	const struct of_device_id *match;
++
++	match = of_match_node(exynos5_adc_match, pdev->dev.of_node);
++	return (unsigned int)match->data;
++}
++
++/* default maps used by iio consumer (ex: ntc-thermistor driver) */
++static struct iio_map exynos5_adc_iio_maps[] = {
++	{
++		.consumer_dev_name = "0.ncp15wb473",
++		.consumer_channel = "adc3",
++		.adc_channel_label = "adc3",
++	},
++	{
++		.consumer_dev_name = "1.ncp15wb473",
++		.consumer_channel = "adc4",
++		.adc_channel_label = "adc4",
++	},
++	{
++		.consumer_dev_name = "2.ncp15wb473",
++		.consumer_channel = "adc5",
++		.adc_channel_label = "adc5",
++	},
++	{
++		.consumer_dev_name = "3.ncp15wb473",
++		.consumer_channel = "adc6",
++		.adc_channel_label = "adc6",
++	},
++	{},
++};
++
++static int exynos5_read_raw(struct iio_dev *indio_dev,
++				struct iio_chan_spec const *chan,
++				int *val,
++				int *val2,
++				long mask)
++{
++	struct exynos5_adc *info = iio_priv(indio_dev);
++	u32 con1, con2;
++
++	if (mask == IIO_CHAN_INFO_RAW) {
++		mutex_lock(&indio_dev->mlock);
++
++		/* Select the channel to be used and Trigger conversion */
++		if (info->version == ADC_V2) {
++			con2 = readl(ADC_V2_CON2(info->regs));
++			con2 &= ~ADC_V2_CON2_ACH_MASK;
++			con2 |= ADC_V2_CON2_ACH_SEL(chan->address);
++			writel(con2, ADC_V2_CON2(info->regs));
++
++			con1 = readl(ADC_V2_CON1(info->regs));
++			writel(con1 | ADC_V1_CON_EN_START,
++					ADC_V2_CON1(info->regs));
++		} else {
++			writel(chan->address, ADC_V1_MUX(info->regs));
++
++			con1 = readl(ADC_V1_CON(info->regs));
++			writel(con1 | ADC_V1_CON_EN_START,
++					ADC_V1_CON(info->regs));
++		}
++
++		wait_for_completion(&info->completion);
++		*val = info->value;
++
++		mutex_unlock(&indio_dev->mlock);
++
++		return IIO_VAL_INT;
++	}
++
++	return -EINVAL;
++}
++
++static irqreturn_t exynos5_adc_isr(int irq, void *dev_id)
++{
++	struct exynos5_adc *info = (struct exynos5_adc *)dev_id;
++
++	/* Read value */
++	info->value = readl(ADC_V1_DATX(info->regs)) &
++						ADC_V1_DATX_MASK;
++	/* clear irq */
++	if (info->version == ADC_V2)
++		writel(1, ADC_V2_INT_ST(info->regs));
++	else
++		writel(1, ADC_V1_INTCLR(info->regs));
++
++	complete(&info->completion);
++
++	return IRQ_HANDLED;
++}
++
++static int exynos5_adc_reg_access(struct iio_dev *indio_dev,
++			      unsigned reg, unsigned writeval,
++			      unsigned *readval)
++{
++	struct exynos5_adc *info = iio_priv(indio_dev);
++	u32 ret;
++
++	mutex_lock(&indio_dev->mlock);
++
++	if (readval != NULL) {
++		ret = readl(info->regs + reg);
++		*readval = ret;
++	} else
++		ret = -EINVAL;
++
++	mutex_unlock(&indio_dev->mlock);
++
++	return ret;
++}
++
++static const struct iio_info exynos5_adc_iio_info = {
++	.read_raw = &exynos5_read_raw,
++	.debugfs_reg_access = &exynos5_adc_reg_access,
++	.driver_module = THIS_MODULE,
++};
++
++#define ADC_V1_CHANNEL(_index, _id) {		\
++	.type = IIO_VOLTAGE,				\
++	.indexed = 1,					\
++	.channel = _index,				\
++	.address = _index,				\
++	.info_mask = IIO_CHAN_INFO_RAW_SEPARATE_BIT,	\
++	.datasheet_name = _id,				\
++}
++
++/** ADC core in EXYNOS5410 has 10 channels,
++ * ADC core in EXYNOS5250 has 8 channels
++*/
++static const struct iio_chan_spec exynos5_adc_iio_channels[] = {
++	ADC_V1_CHANNEL(0, "adc0"),
++	ADC_V1_CHANNEL(1, "adc1"),
++	ADC_V1_CHANNEL(2, "adc2"),
++	ADC_V1_CHANNEL(3, "adc3"),
++	ADC_V1_CHANNEL(4, "adc4"),
++	ADC_V1_CHANNEL(5, "adc5"),
++	ADC_V1_CHANNEL(6, "adc6"),
++	ADC_V1_CHANNEL(7, "adc7"),
++	ADC_V1_CHANNEL(8, "adc8"),
++	ADC_V1_CHANNEL(9, "adc9"),
++};
++
++static int exynos5_adc_remove_devices(struct device *dev, void *c)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++
++	platform_device_unregister(pdev);
++
++	return 0;
++}
++
++static void exynos5_adc_hw_init(struct exynos5_adc *info)
++{
++	u32 con1, con2;
++
++	if (info->version == ADC_V2) {
++		con1 = ADC_V2_CON1_SOFT_RESET;
++		writel(con1, ADC_V2_CON1(info->regs));
++
++		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
++			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
++		writel(con2, ADC_V2_CON2(info->regs));
++
++		/* Enable interrupts */
++		writel(1, ADC_V2_INT_EN(info->regs));
++	} else {
++		/* set default prescaler values and Enable prescaler */
++		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
++
++		/* Enable 12-bit ADC resolution */
++		con1 |= ADC_V1_CON_RES;
++		writel(con1, ADC_V1_CON(info->regs));
++	}
++}
++
++static int exynos5_adc_probe(struct platform_device *pdev)
++{
++	struct exynos5_adc *info = NULL;
++	struct device_node *np = pdev->dev.of_node;
++	struct iio_dev *iodev = NULL;
++	struct resource	*mem;
++	int ret = -ENODEV;
++	int irq;
++
++	if (!np)
++		return ret;
++
++	iodev = iio_device_alloc(sizeof(struct exynos5_adc));
++	if (!iodev) {
++		dev_err(&pdev->dev, "failed allocating iio device\n");
++		return -ENOMEM;
++	}
++
++	info = iio_priv(iodev);
++
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++
++	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(&pdev->dev, "no irq resource?\n");
++		ret = irq;
++		goto err_iio;
++	}
++
++	info->irq = irq;
++
++	ret = devm_request_irq(&pdev->dev, info->irq, exynos5_adc_isr,
++					0, dev_name(&pdev->dev), info);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
++							info->irq);
++		goto err_iio;
++	}
++
++	info->clk = devm_clk_get(&pdev->dev, "adc");
++	if (IS_ERR(info->clk)) {
++		dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
++							PTR_ERR(info->clk));
++		ret = PTR_ERR(info->clk);
++		goto err_iio;
++	}
++
++	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
++	if (IS_ERR(info->vdd)) {
++		dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
++							PTR_ERR(info->vdd));
++		ret = PTR_ERR(info->vdd);
++		goto err_iio;
++	}
++
++	info->version = exynos5_adc_get_version(pdev);
++
++	platform_set_drvdata(pdev, iodev);
++
++	init_completion(&info->completion);
++
++	iodev->name = dev_name(&pdev->dev);
++	iodev->dev.parent = &pdev->dev;
++	iodev->dev.of_node = pdev->dev.of_node;
++	iodev->info = &exynos5_adc_iio_info;
++	iodev->modes = INDIO_DIRECT_MODE;
++	iodev->channels = exynos5_adc_iio_channels;
++	iodev->num_channels = ARRAY_SIZE(exynos5_adc_iio_channels);
++
++	info->map = exynos5_adc_iio_maps;
++
++	ret = iio_map_array_register(iodev, info->map);
++	if (ret) {
++		dev_err(&iodev->dev, "failed mapping iio map err: %d\n", ret);
++		goto err_iio;
++	}
++
++	ret = iio_device_register(iodev);
++	if (ret)
++		goto err_map;
++
++	ret = regulator_enable(info->vdd);
++	if (ret)
++		goto err_iio_dev;
++
++	clk_prepare_enable(info->clk);
++
++	exynos5_adc_hw_init(info);
++
++	ret = of_platform_populate(np, exynos5_adc_match, NULL, &pdev->dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed adding child nodes\n");
++		goto err_of_populate;
++	}
++
++	return 0;
++
++err_of_populate:
++	device_for_each_child(&pdev->dev, NULL, exynos5_adc_remove_devices);
++err_iio_dev:
++	iio_device_unregister(iodev);
++err_map:
++	iio_map_array_unregister(iodev, info->map);
++err_iio:
++	iio_device_free(iodev);
++	return ret;
++}
++
++static int exynos5_adc_remove(struct platform_device *pdev)
++{
++	struct iio_dev *iodev = platform_get_drvdata(pdev);
++	struct exynos5_adc *info = iio_priv(iodev);
++
++	iio_device_unregister(iodev);
++	iio_map_array_unregister(iodev, info->map);
++	iio_device_free(iodev);
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int exynos5_adc_suspend(struct device *dev)
++{
++	struct exynos5_adc *info = dev_get_data(dev);
++	u32 con;
++
++	if (info->version == ADC_V2) {
++		con = readl(ADC_V2_CON1(info->regs));
++		con &= ~ADC_V1_CON_EN_START;
++		writel(con, ADC_V2_CON1(info->regs));
++	} else {
++		con = readl(ADC_V1_CON(info->regs));
++		con |= ADC_V1_CON_STANDBY;
++		writel(con, ADC_V1_CON(info->regs));
++	}
++
++	clk_unprepare_disable(info->clk);
++	regulator_disable(info->vdd);
++
++	return 0;
++}
++
++static int exynos5_adc_resume(struct device *dev)
++{
++	struct exynos5_adc *info = dev_get_data(dev);
++	int ret;
++
++	ret = regulator_enable(info->vdd);
++	if (ret)
++		return ret;
++
++	clk_prepare_enable(info->clk);
++
++	exynos5_adc_hw_init(info);
++
++	return 0;
++}
++
++#else
++#define exynos5_adc_suspend NULL
++#define exynos5_adc_resume NULL
++#endif
++
++static SIMPLE_DEV_PM_OPS(exynos5_adc_pm_ops,
++			exynos5_adc_suspend,
++			exynos5_adc_resume);
++
++static struct platform_driver exynos5_adc_driver = {
++	.probe		= exynos5_adc_probe,
++	.remove		= exynos5_adc_remove,
++	.driver		= {
++		.name	= "exynos5-adc",
++		.owner	= THIS_MODULE,
++		.of_match_table = of_match_ptr(exynos5_adc_match),
++		.pm	= &exynos5_adc_pm_ops,
++	},
++};
++
++module_platform_driver(exynos5_adc_driver);
++
++MODULE_AUTHOR("Naveen Krishna Chatradhi <ch.naveen@samsung.com>");
++MODULE_DESCRIPTION("Samsung EXYNOS5 ADC driver");
++MODULE_LICENSE("GPL");
+-- 
+1.7.9.5
