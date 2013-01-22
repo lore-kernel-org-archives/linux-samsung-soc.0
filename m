@@ -1,112 +1,72 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARM: dts: specify all the per-cpu interrupts of arch
- timer for exynos5440
-Date: Tue, 22 Jan 2013 10:15:54 +0000
-Message-ID: <20130122101554.GA18876@e106331-lin.cambridge.arm.com>
-References: <1358818887-16870-1-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:47339 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753485Ab3AVKRQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jan 2013 05:17:16 -0500
-In-Reply-To: <1358818887-16870-1-git-send-email-kgene.kim@samsung.com>
-Content-Language: en-US
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v8 0/4] Adding usb2.0 host-phy support for exynos5250
+Date: Tue, 22 Jan 2013 18:30:39 +0530
+Message-ID: <1358859643-5030-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.ab@samsung.com>
 
-On Tue, Jan 22, 2013 at 01:41:27AM +0000, Kukjin Kim wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> Need to be changed requirements in the 'cpus' node for exynos5440
-> to specify all the per-cpu interrupts of arch timer.
+Changes from v7:
+ - Rebased on 'xceive' of Balbi's usb tree.
+ - Placing proper Acked By's received for each patch.
 
-The node(s) for the arch timer should not be in the cpus/cpu@N nodes.
-Instead, there should be one node (in the root of the tree).
+Changes from v6:
+ - Changing macro names from 'HOST_CTRL0_FSEL_CLKSEL_XX' to 'FSEL_CLKSEL_XX'
+   since it's being used by HOST and OTG block to prepare reference clock.
+ - Directly Assigning 'FSEL_CLKSEL_XX' to refclk_freq in
+   samsung_usbphy_get_refclk_freq() instead of ORing them since we are
+   anyways using macros:
+        "HOST_CTRL0_FSEL(_x)                    ((_x) << 16)"
+        "OTG_SYS_FSEL(_x)                       ((_x) << 4)"
 
-If this works currently it's only because the driver picks up one of the nodes,
-and luckily it's the same as the others. This is not guaranteed to work in
-future, and will likely break.
+Changes from v5:
+ - Adding hostphy enable mask and hostphy register offsets
+   to driver data in order to access the HOSTPHY CONTROL register.
 
-> 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5440.dtsi |   20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> index 5406689..c5bd8ed 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -28,7 +28,10 @@
->  			compatible = "arm,cortex-a15";
->  			timer {
->  				compatible = "arm,armv7-timer";
-> -				interrupts = <1 13 0xf08>;
-> +				interrupts = <1 13 0xf08>,
-> +					     <1 14 0xf08>,
-> +					     <1 11 0xf08>,
-> +					     <1 10 0xf08>;
+ - Adding member 'otg' to struct samsung-usbphy so that its consumers
+   can call otg->set_host so as to make 'phy' aware of the consumer type:
+        HOST/DEVICE
 
-Also, this interrupts list is updated differently to all the other nodes. Typo?
+ - Adding 'otg' to 'struct s5p_ehci_hcd' and 'struct exynos_ohci_hcd'
+   which keeps track of 'otg' of the controllers' phy. This then sets
+   the host.
 
->  				clock-frequency = <1000000>;
->  			};
->  		};
-> @@ -36,7 +39,10 @@
->  			compatible = "arm,cortex-a15";
->  			timer {
->  				compatible = "arm,armv7-timer";
-> -				interrupts = <1 14 0xf08>;
-> +				interrupts = <1 13 0xf08>;
-> +					     <1 14 0xf08>,
-> +					     <1 11 0xf08>,
-> +					     <1 10 0xf08>;
->  				clock-frequency = <1000000>;
->  			};
->  		};
-> @@ -44,7 +50,10 @@
->  			compatible = "arm,cortex-a15";
->  			timer {
->  				compatible = "arm,armv7-timer";
-> -				interrupts = <1 14 0xf08>;
-> +				interrupts = <1 13 0xf08>;
-> +					     <1 14 0xf08>,
-> +					     <1 11 0xf08>,
-> +					     <1 10 0xf08>;
->  				clock-frequency = <1000000>;
->  			};
->  		};
-> @@ -52,7 +61,10 @@
->  			compatible = "arm,cortex-a15";
->  			timer {
->  				compatible = "arm,armv7-timer";
-> -				interrupts = <1 14 0xf08>;
-> +				interrupts = <1 13 0xf08>;
-> +					     <1 14 0xf08>,
-> +					     <1 11 0xf08>,
-> +					     <1 10 0xf08>;
->  				clock-frequency = <1000000>;
->  			};
->  		};
-> -- 
-> 1.7.10.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+ - Moved samsung_usbphy_set_type() calls from ehci-s5p and ohci-exynos
+   to phy driver itself where based on phy_type it is called.
 
-Please fix this up to only have one timer node, in the root of the tree.
+ - Added separate macro definition for USB20PHY_CFG register to select
+   between host/device type usb link.
 
-Thanks,
-Mark.
+ - Removing unnecessary argument 'phy_type' from samsung_usbphy_set_type()
+   and samsung_usbphy_cfg_sel().
+
+ - Addressed few nits:
+        -- added macro for 'KHZ'
+        -- removing useless 'if' from samsung_usbphy_cfg_sel()
+        -- keeping the place of clk_get intact and requesting driver
+           data before that.
+
+Vivek Gautam (4):
+  ARM: EXYNOS: Update & move usb-phy types to generic include layer
+  usb: phy: samsung: Add host phy support to samsung-phy driver
+  USB: ehci-s5p: Add phy driver support
+  USB: ohci-exynos: Add phy driver support
+
+ .../devicetree/bindings/usb/samsung-usbphy.txt     |   12 +-
+ drivers/usb/host/ehci-s5p.c                        |   81 +++-
+ drivers/usb/host/ohci-exynos.c                     |   85 +++-
+ drivers/usb/phy/Kconfig                            |    2 +-
+ drivers/usb/phy/samsung-usbphy.c                   |  513 ++++++++++++++++++--
+ include/linux/usb/samsung_usb_phy.h                |   16 +
+ 6 files changed, 636 insertions(+), 73 deletions(-)
+ create mode 100644 include/linux/usb/samsung_usb_phy.h
+
+-- 
+1.7.6.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
