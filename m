@@ -1,139 +1,235 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/6] ARM: S3C24XX: Move mach-s3c2410/ cpufreq into mach-s3c24xx/
-Date: Mon, 21 Jan 2013 17:12:06 -0800
-Message-ID: <1358817131-27169-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 6/6] ARM: S3C24XX: Move mach-s3c2440/ pll into mach-s3c24xx/
+Date: Mon, 21 Jan 2013 17:12:11 -0800
+Message-ID: <1358817131-27169-7-git-send-email-kgene.kim@samsung.com>
 References: <1358817131-27169-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20035 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:20052 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667Ab3AVBM6 (ORCPT
+	with ESMTP id S1752728Ab3AVBNF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 20:12:58 -0500
+	Mon, 21 Jan 2013 20:13:05 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MH0000Q6611QXL0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:12:57 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:13:03 +0900 (KST)
 Received: from localhost.localdomain ([105.128.18.183])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MH000NXU61A2ED0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:12:57 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:13:03 +0900 (KST)
 In-reply-to: <1358817131-27169-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-Basically, the cpufreq driver for s3c2410 should be implemented into
-drivers/cpufreq, but we don't need to keep the mach-s3c2410 directory.
-So this patch moves current cpufreq driver into mach-s3c24xx/.
+This patch moves mach-s3c2440/pll into mach-s3c24xx/
+and removes arch/arm/mach-s3c2440/ directory in kernel.
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c2410/Kconfig                                   |    7 -------
- arch/arm/mach-s3c2410/Makefile                                  |    1 -
- arch/arm/mach-s3c24xx/Kconfig                                   |    7 +++++++
- arch/arm/mach-s3c24xx/Makefile                                  |    1 +
- .../{mach-s3c2410/cpu-freq.c => mach-s3c24xx/cpufreq-s3c2410.c} |    7 ++-----
- 5 files changed, 10 insertions(+), 13 deletions(-)
- rename arch/arm/{mach-s3c2410/cpu-freq.c => mach-s3c24xx/cpufreq-s3c2410.c} (98%)
+ arch/arm/Kconfig                                   |    3 --
+ arch/arm/Makefile                                  |    2 +-
+ arch/arm/mach-s3c2440/Kconfig                      |   29 --------------------
+ arch/arm/mach-s3c2440/Makefile                     |   13 ---------
+ arch/arm/mach-s3c24xx/Kconfig                      |   26 ++++++++++++++++++
+ arch/arm/mach-s3c24xx/Makefile                     |    2 ++
+ .../pll-s3c2440-12000000.c}                        |    5 +---
+ .../pll-s3c2440-16934400.c}                        |    5 +---
+ 8 files changed, 31 insertions(+), 54 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c2440/Kconfig
+ delete mode 100644 arch/arm/mach-s3c2440/Makefile
+ rename arch/arm/{mach-s3c2440/s3c2440-pll-12000000.c => mach-s3c24xx/pll-s3c2440-12000000.c} (98%)
+ rename arch/arm/{mach-s3c2440/s3c2440-pll-16934400.c => mach-s3c24xx/pll-s3c2440-16934400.c} (99%)
 
-diff --git a/arch/arm/mach-s3c2410/Kconfig b/arch/arm/mach-s3c2410/Kconfig
-index 68d89cb..910b8d2 100644
---- a/arch/arm/mach-s3c2410/Kconfig
-+++ b/arch/arm/mach-s3c2410/Kconfig
-@@ -4,13 +4,6 @@
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 5d566bf..f22c510 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1094,9 +1094,6 @@ source "arch/arm/mach-socfpga/Kconfig"
+ source "arch/arm/plat-spear/Kconfig"
  
- # cpu frequency scaling support
+ source "arch/arm/mach-s3c24xx/Kconfig"
+-if ARCH_S3C24XX
+-source "arch/arm/mach-s3c2440/Kconfig"
+-endif
  
--config S3C2410_CPUFREQ
--	bool
--	depends on CPU_FREQ_S3C24XX && CPU_S3C2410
--	select S3C2410_CPUFREQ_UTILS
--	help
--	  CPU Frequency scaling support for S3C2410
+ if ARCH_S3C64XX
+ source "arch/arm/mach-s3c64xx/Kconfig"
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 29e8fae..0935dac 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -173,7 +173,7 @@ machine-$(CONFIG_ARCH_PRIMA2)		+= prima2
+ machine-$(CONFIG_ARCH_PXA)		+= pxa
+ machine-$(CONFIG_ARCH_REALVIEW)		+= realview
+ machine-$(CONFIG_ARCH_RPC)		+= rpc
+-machine-$(CONFIG_ARCH_S3C24XX)		+= s3c24xx s3c2440
++machine-$(CONFIG_ARCH_S3C24XX)		+= s3c24xx
+ machine-$(CONFIG_ARCH_S3C64XX)		+= s3c64xx
+ machine-$(CONFIG_ARCH_S5P64X0)		+= s5p64x0
+ machine-$(CONFIG_ARCH_S5PC100)		+= s5pc100
+diff --git a/arch/arm/mach-s3c2440/Kconfig b/arch/arm/mach-s3c2440/Kconfig
+deleted file mode 100644
+index ad06fa2..0000000
+--- a/arch/arm/mach-s3c2440/Kconfig
++++ /dev/null
+@@ -1,29 +0,0 @@
+-# Copyright 2007 Simtec Electronics
+-#
+-# Licensed under GPLv2
 -
- config S3C2410_PLLTABLE
- 	bool
- 	depends on S3C2410_CPUFREQ && CPU_FREQ_S3C24XX_PLL
-diff --git a/arch/arm/mach-s3c2410/Makefile b/arch/arm/mach-s3c2410/Makefile
-index 6b9a316..2a160a5 100644
---- a/arch/arm/mach-s3c2410/Makefile
-+++ b/arch/arm/mach-s3c2410/Makefile
-@@ -9,6 +9,5 @@ obj-m				:=
- obj-n				:=
- obj-				:=
- 
--obj-$(CONFIG_S3C2410_CPUFREQ)	+= cpu-freq.o
- obj-$(CONFIG_S3C2410_PLLTABLE)	+= pll.o
- 
+-config S3C2440_XTAL_12000000
+-	bool
+-	help
+-	  Indicate that the build needs to support 12MHz system
+-	  crystal.
+-
+-config S3C2440_XTAL_16934400
+-	bool
+-	help
+-	  Indicate that the build needs to support 16.9344MHz system
+-	  crystal.
+-
+-config S3C2440_PLL_12000000
+-	bool
+-	depends on S3C2440_CPUFREQ && S3C2440_XTAL_12000000
+-	default y if CPU_FREQ_S3C24XX_PLL
+-	help
+-	  PLL tables for S3C2440 or S3C2442 CPUs with 12MHz crystals.
+-
+-config S3C2440_PLL_16934400
+-	bool
+-	depends on S3C2440_CPUFREQ && S3C2440_XTAL_16934400
+-	default y if CPU_FREQ_S3C24XX_PLL
+-	help
+-	  PLL tables for S3C2440 or S3C2442 CPUs with 16.934MHz crystals.
+diff --git a/arch/arm/mach-s3c2440/Makefile b/arch/arm/mach-s3c2440/Makefile
+deleted file mode 100644
+index d76e4b9..0000000
+--- a/arch/arm/mach-s3c2440/Makefile
++++ /dev/null
+@@ -1,13 +0,0 @@
+-# arch/arm/mach-s3c2440/Makefile
+-#
+-# Copyright 2007 Simtec Electronics
+-#
+-# Licensed under GPLv2
+-
+-obj-y				:=
+-obj-m				:=
+-obj-n				:=
+-obj-				:=
+-
+-obj-$(CONFIG_S3C2440_PLL_12000000) += s3c2440-pll-12000000.o
+-obj-$(CONFIG_S3C2440_PLL_16934400) += s3c2440-pll-16934400.o
 diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 25df14a..04921b9 100644
+index edf6549..67df58b 100644
 --- a/arch/arm/mach-s3c24xx/Kconfig
 +++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -127,6 +127,13 @@ config S3C2410_PM
- 
- if CPU_S3C2410
- 
-+config S3C2410_CPUFREQ
-+	bool
-+	depends on CPU_FREQ_S3C24XX && CPU_S3C2410
-+	select S3C2410_CPUFREQ_UTILS
-+	help
-+	  CPU Frequency scaling support for S3C2410
-+
- config S3C24XX_SIMTEC_NOR
- 	bool
+@@ -400,6 +400,32 @@ config S3C2440_DMA
  	help
+ 	  Support for S3C2440 specific DMA code5A
+ 
++config S3C2440_XTAL_12000000
++	bool
++	help
++	  Indicate that the build needs to support 12MHz system
++	  crystal.
++
++config S3C2440_XTAL_16934400
++	bool
++	help
++	  Indicate that the build needs to support 16.9344MHz system
++	  crystal.
++
++config S3C2440_PLL_12000000
++	bool
++	depends on S3C2440_CPUFREQ && S3C2440_XTAL_12000000
++	default y if CPU_FREQ_S3C24XX_PLL
++	help
++	  PLL tables for S3C2440 or S3C2442 CPUs with 12MHz crystals.
++
++config S3C2440_PLL_16934400
++	bool
++	depends on S3C2440_CPUFREQ && S3C2440_XTAL_16934400
++	default y if CPU_FREQ_S3C24XX_PLL
++	help
++	  PLL tables for S3C2440 or S3C2442 CPUs with 16.934MHz crystals.
++
+ comment "S3C2440 Boards"
+ 
+ #
 diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index 0ab6ab1..3c9fd51 100644
+index 6d4b9ad..08b87cd 100644
 --- a/arch/arm/mach-s3c24xx/Makefile
 +++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -17,6 +17,7 @@ obj-				:=
- obj-y				+= common.o
+@@ -36,6 +36,8 @@ obj-$(CONFIG_CPU_S3C2442)	+= s3c2442.o
+ obj-$(CONFIG_CPU_S3C244X)	+= s3c244x.o irq-s3c244x.o clock-s3c244x.o
+ obj-$(CONFIG_S3C2440_CPUFREQ)	+= cpufreq-s3c2440.o
+ obj-$(CONFIG_S3C2440_DMA)	+= dma-s3c2440.o
++obj-$(CONFIG_S3C2440_PLL_12000000) += pll-s3c2440-12000000.o
++obj-$(CONFIG_S3C2440_PLL_16934400) += pll-s3c2440-16934400.o
  
- obj-$(CONFIG_CPU_S3C2410)	+= s3c2410.o
-+obj-$(CONFIG_S3C2410_CPUFREQ)	+= cpufreq-s3c2410.o
- obj-$(CONFIG_S3C2410_DMA)	+= dma-s3c2410.o
- obj-$(CONFIG_S3C2410_PM)	+= pm-s3c2410.o sleep-s3c2410.o
+ obj-$(CONFIG_CPU_S3C2443)	+= s3c2443.o irq-s3c2443.o clock-s3c2443.o
  
-diff --git a/arch/arm/mach-s3c2410/cpu-freq.c b/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
+diff --git a/arch/arm/mach-s3c2440/s3c2440-pll-12000000.c b/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
 similarity index 98%
-rename from arch/arm/mach-s3c2410/cpu-freq.c
-rename to arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
-index 5404535..cfa0dd8 100644
---- a/arch/arm/mach-s3c2410/cpu-freq.c
-+++ b/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
+rename from arch/arm/mach-s3c2440/s3c2440-pll-12000000.c
+rename to arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
+index 551fb43..6737817 100644
+--- a/arch/arm/mach-s3c2440/s3c2440-pll-12000000.c
++++ b/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
 @@ -1,5 +1,4 @@
--/* linux/arch/arm/mach-s3c2410/cpu-freq.c
+-/* arch/arm/mach-s3c2440/s3c2440-pll-12000000.c
+- *
++/*
+  * Copyright (c) 2006-2007 Simtec Electronics
+  *	http://armlinux.simtec.co.uk/
+  *	Ben Dooks <ben@simtec.co.uk>
+@@ -83,7 +82,6 @@ static int __init s3c2440_pll_12mhz(void)
+ 	return subsys_interface_register(&s3c2440_plls12_interface);
+ 
+ }
+-
+ arch_initcall(s3c2440_pll_12mhz);
+ 
+ static struct subsys_interface s3c2442_plls12_interface = {
+@@ -97,5 +95,4 @@ static int __init s3c2442_pll_12mhz(void)
+ 	return subsys_interface_register(&s3c2442_plls12_interface);
+ 
+ }
+-
+ arch_initcall(s3c2442_pll_12mhz);
+diff --git a/arch/arm/mach-s3c2440/s3c2440-pll-16934400.c b/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+similarity index 99%
+rename from arch/arm/mach-s3c2440/s3c2440-pll-16934400.c
+rename to arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+index 3f15bcf..debfa10 100644
+--- a/arch/arm/mach-s3c2440/s3c2440-pll-16934400.c
++++ b/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+@@ -1,5 +1,4 @@
+-/* arch/arm/mach-s3c2440/s3c2440-pll-16934400.c
 - *
 +/*
   * Copyright (c) 2006-2008 Simtec Electronics
   *	http://armlinux.simtec.co.uk/
   *	Ben Dooks <ben@simtec.co.uk>
-@@ -81,7 +80,7 @@ static int s3c2410_cpufreq_calcdivs(struct s3c_cpufreq_config *cfg)
- 	cfg->divs.p_divisor = pdiv;
- 	cfg->divs.h_divisor = hdiv;
- 
--	return 0      ;
-+	return 0;
- }
- 
- static struct s3c_cpufreq_info s3c2410_cpufreq_info = {
-@@ -131,7 +130,6 @@ static int __init s3c2410_cpufreq_init(void)
+@@ -111,7 +110,6 @@ static int __init s3c2440_pll_16934400(void)
  {
- 	return subsys_interface_register(&s3c2410_cpufreq_interface);
+ 	return subsys_interface_register(&s3c2440_plls169344_interface);
  }
 -
- arch_initcall(s3c2410_cpufreq_init);
+ arch_initcall(s3c2440_pll_16934400);
  
- static int s3c2410a_cpufreq_add(struct device *dev,
-@@ -159,5 +157,4 @@ static int __init s3c2410a_cpufreq_init(void)
+ static struct subsys_interface s3c2442_plls169344_interface = {
+@@ -124,5 +122,4 @@ static int __init s3c2442_pll_16934400(void)
  {
- 	return subsys_interface_register(&s3c2410a_cpufreq_interface);
+ 	return subsys_interface_register(&s3c2442_plls169344_interface);
  }
 -
- arch_initcall(s3c2410a_cpufreq_init);
+ arch_initcall(s3c2442_pll_16934400);
 -- 
 1.7.10.4
