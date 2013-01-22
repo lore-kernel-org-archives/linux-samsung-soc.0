@@ -1,150 +1,34 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v5 00/12] clk: exynos4: migrate to common clock framework
-Date: Mon, 21 Jan 2013 11:07:20 -0800
-Message-ID: <20130121190720.3982.81903@quantum>
-References: <1356827621-27617-1-git-send-email-thomas.abraham@linaro.org>
- <50FD50BC.4020902@samsung.com> <2433961.3Qz5gqDyvb@amdc1227>
+From: Matt Sealey <matt@genesi-usa.com>
+Subject: Re: One of these things (CONFIG_HZ) is not like the others..
+Date: Mon, 21 Jan 2013 18:26:14 -0600
+Message-ID: <CAKGA1bndiQkVSFh=Fpk8WjLe4L_EFyRa1mHyVUF9PFine-Wpcg@mail.gmail.com>
+References: <CAKGA1bkiowcO7OPSfPmaB6eRj_3FNr+4ONnaQHEZkpxB2XfduQ@mail.gmail.com>
+ <201301212041.17951.arnd@arndb.de> <50FDAC5F.4040605@linaro.org>
+ <20130121211218.GX23505@n2100.arm.linux.org.uk> <CAKGA1bkZ4sN_eXAk1nUzvGE6cvvQ+b+jnTezTM863qFNL8NqWg@mail.gmail.com>
+ <20130121224252.GY23505@n2100.arm.linux.org.uk> <CAKGA1b=AG_a=KCi6qoeoRoG+5bcYkn3gAVb4S2dbaFzu4ioJdQ@mail.gmail.com>
+ <20130121234908.GD23505@n2100.arm.linux.org.uk> <CAKGA1bk-K=D6EDBfJ7LggpTroj1sFC8VStctqGi=NacLEu95cA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:38187 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751190Ab3AUTHZ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 14:07:25 -0500
-Received: by mail-pb0-f52.google.com with SMTP id ro2so3502588pbb.39
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jan 2013 11:07:24 -0800 (PST)
-In-Reply-To: <2433961.3Qz5gqDyvb@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAKGA1bk-K=D6EDBfJ7LggpTroj1sFC8VStctqGi=NacLEu95cA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Linux ARM Kernel ML <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Quoting Tomasz Figa (2013-01-21 08:22:39)
-> Hi Thomas, Sylwester,
-> 
-> On Monday 21 of January 2013 15:29:16 Sylwester Nawrocki wrote:
-> > On 12/30/2012 01:33 AM, Thomas Abraham wrote:
-> > > Changes since v4:
-> > > - Rebased to linux-3.8-rc1.
-> > > 
-> > > Changes since v3:
-> > > - Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
-> > > 
-> > > This patch series migrates the Samsung Exynos4 SoC clock code to adopt
-> > > the common clock framework. The use of Samsung specific clock
-> > > structures has been removed and all board support code has been
-> > > updated. imx-style of clock registration and lookup has been adopted
-> > > for device tree based exynos4 platforms.
-> > > 
-> > > This patch series depends on this series:
-> > > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14471
-> > > .html and this patch
-> > > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14472
-> > > .html> 
-> > > Thomas Abraham (12):
-> > >   clk: samsung: add common clock framework helper functions for
-> > >   Samsung platforms clk: samsung: add pll clock registration helper
-> > >   functions
-> > >   clk: exynos4: register clocks using common clock framework
-> > >   ARM: Exynos: Rework timer initialization sequence
-> > >   ARM: Exynos4: Migrate clock support to common clock framework
-> > >   ARM: dts: add exynos4 clock controller nodes
-> > >   ARM: dts: add xxti and xusbxti fixed rate clock nodes for exynos4
-> > >   based platforms ARM: Exynos4: allow legacy board support to specify
-> > >   xxti and xusbxti clock speed ARM: dts: add clock provider
-> > >   information for all controllers in Exynos4 SoC ARM: Exynos4: remove
-> > >   auxdata table from machine file
-> > >   ARM: Exynos: use fin_pll clock as the tick clock source for mct
-> > >   ARM: Exynos: add support for mct clock setup
-> > >  
-> > >  .../devicetree/bindings/clock/exynos4-clock.txt    |  215 +++++++
-> > >  arch/arm/boot/dts/exynos4.dtsi                     |   50 ++
-> > >  arch/arm/boot/dts/exynos4210-origen.dts            |   12 +
-> > >  arch/arm/boot/dts/exynos4210-smdkv310.dts          |   12 +
-> > >  arch/arm/boot/dts/exynos4210.dtsi                  |    6 +
-> > >  arch/arm/boot/dts/exynos4412-origen.dts            |   12 +
-> > >  arch/arm/boot/dts/exynos4412-smdk4412.dts          |   12 +
-> > >  arch/arm/boot/dts/exynos4x12.dtsi                  |    6 +
-> > >  arch/arm/mach-exynos/Kconfig                       |    1 +
-> > >  arch/arm/mach-exynos/Makefile                      |    3 -
-> > >  arch/arm/mach-exynos/clock-exynos4.h               |   35 -
-> > >  arch/arm/mach-exynos/clock-exynos4210.c            |  188 ------
-> > >  arch/arm/mach-exynos/clock-exynos4212.c            |  192 ------
-> > >  arch/arm/mach-exynos/common.c                      |   57 ++-
-> > >  arch/arm/mach-exynos/common.h                      |   21 +-
-> > >  arch/arm/mach-exynos/mach-armlex4210.c             |    3 +-
-> > >  arch/arm/mach-exynos/mach-exynos4-dt.c             |   72 +--
-> > >  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +-
-> > >  arch/arm/mach-exynos/mach-nuri.c                   |    5 +-
-> > >  arch/arm/mach-exynos/mach-origen.c                 |    5 +-
-> > >  arch/arm/mach-exynos/mach-smdk4x12.c               |    5 +-
-> > >  arch/arm/mach-exynos/mach-smdkv310.c               |    7 +-
-> > >  arch/arm/mach-exynos/mach-universal_c210.c         |    3 +-
-> > >  arch/arm/mach-exynos/mct.c                         |   32 +-
-> > >  arch/arm/plat-samsung/Kconfig                      |    4 +-
-> > >  drivers/clk/Makefile                               |    1 +
-> > >  drivers/clk/samsung/Makefile                       |    6 +
-> > >  drivers/clk/samsung/clk-exynos4.c                  |  655
-> > >  ++++++++++++++++++++ drivers/clk/samsung/clk-pll.c                  
-> > >     |  400 ++++++++++++ drivers/clk/samsung/clk-pll.h                
-> > >       |   38 ++
-> > >  drivers/clk/samsung/clk.c                          |  180 ++++++
-> > >  drivers/clk/samsung/clk.h                          |  216 +++++++
-> > >  32 files changed, 1919 insertions(+), 537 deletions(-)
-> > >  create mode 100644
-> > >  Documentation/devicetree/bindings/clock/exynos4-clock.txt delete
-> > >  mode 100644 arch/arm/mach-exynos/clock-exynos4.h
-> > >  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
-> > >  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
-> > >  create mode 100644 drivers/clk/samsung/Makefile
-> > >  create mode 100644 drivers/clk/samsung/clk-exynos4.c
-> > >  create mode 100644 drivers/clk/samsung/clk-pll.c
-> > >  create mode 100644 drivers/clk/samsung/clk-pll.h
-> > >  create mode 100644 drivers/clk/samsung/clk.c
-> > >  create mode 100644 drivers/clk/samsung/clk.h
-> > 
-> > Thanks Thomas! The patch series generally looks good to me, I've tested
-> > it on an Exynos4412 based board. I have applied couple fixes that Tomasz
-> > Figa has sent you off the mailing list. And to make a MIPI-CSI2 camera
-> > working a small fixup patch as below.
-> > 
-> > I have just one remark, but this could possibly be done as a follow up
-> > patch. Namely it may make sense to rename various sclk_* clocks to just
-> > "sclk", so for instance we don't have "fimd", "sclk_fimd", "fimc",
-> > "sclk_fimc" but e.g. "bus" or "gate" and "sclk" for each device. Such
-> > naming might be better for handling devices at core subsystems level,
-> > e.g. Runtime PM or devfreq.
-> > 
-> > Please feel free to add:
-> > 
-> > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> I fully agree with Sylwester. After adding mentioned fixup patches, feel 
-> free to add my Reviewed-by and Tested-by as well.
-> 
-> > 
-> > I would be great to have this patch set merged for 3.9, so people can
-> > switch earlier to the common clock API, rather than modifying files
-> > that will be removed soon.
-> 
-> Yes, it would be great to have this series merged earlier, because it's 
-> very important for further development of Device Tree support on Samsung 
-> platforms. Possibly for 3.9 it could be merged as an alternative to the 
-> legacy clock code and after enough testing legacy code could be dropped in 
-> next kernel release.
-> 
+On Mon, Jan 21, 2013 at 6:09 PM, Matt Sealey <matt@genesi-usa.com> wrote:
 
-I thought that the Exynos4 and Exynos5 ports to the common clk framework
-were going to be merged.  Is that still the plan?
+[LAKML: about lack of SCHED_HRTICK because we don't use
+kernel/Kconfig.hz on ARM)]
 
-Regards,
-Mike
+> kind of leaves ARM in the doghouse.. who knows what weirdo scheduler
+> reactions are related to it not being enabled. Maybe when it is, HZ
+> *would* need to be allowed to be bumped when using this code path?
 
-> Best regards
-> -- 
-> Tomasz Figa
-> Samsung Poland R&D Center
-> SW Solution Development, Linux Platform
+Or conversely maybe this is exactly why the Samsung maintainers
+decided they need HZ=200, because SCHED_HRTICK isn't being enabled and
+they're experiencing some multimedia lag because of it?
+
+-- 
+Matt Sealey <matt@genesi-usa.com>
+Product Development Analyst, Genesi USA, Inc.
