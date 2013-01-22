@@ -1,140 +1,59 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 2/6] ARM: S3C24XX: Move mach-s3c2410/ pll into mach-s3c24xx/
-Date: Mon, 21 Jan 2013 17:12:07 -0800
-Message-ID: <1358817131-27169-3-git-send-email-kgene.kim@samsung.com>
-References: <1358817131-27169-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54949 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667Ab3AVBNA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 20:13:00 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MH000L5461GPK90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:12:58 +0900 (KST)
-Received: from localhost.localdomain ([105.128.18.183])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MH000NXU61A2ED0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:12:58 +0900 (KST)
-In-reply-to: <1358817131-27169-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: RE: [PATCH 1/2] thermal: sysfs: Add a new sysfs node emul_temp
+Date: Mon, 21 Jan 2013 17:27:30 -0800
+Message-ID: <04ce01cdf83f$a7352b00$f59f8100$@samsung.com>
+References: <1357517296-31402-1-git-send-email-amit.daniel@samsung.com>
+ <1358321601.2252.36.camel@rzhang1-mobl4>
+ <CADGdYn4CWscQf0y6dmgYUsKB8u25BOmLYq+T64haBKpwnZ3KBQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <CADGdYn4CWscQf0y6dmgYUsKB8u25BOmLYq+T64haBKpwnZ3KBQ@mail.gmail.com>
+Content-language: en-us
+Sender: linux-pm-owner@vger.kernel.org
+To: 'amit kachhap' <amit.kachhap@gmail.com>, 'Zhang Rui' <rui.zhang@intel.com>
+Cc: linux-pm@vger.kernel.org, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Durgadoss' <durgadoss.r@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-This patch moves mach-s3c2410/pll into mach-s3c24xx/
-and removes arch/arm/mach-s3c2410/ directory in kernel.
+amit kachhap wrote:
+> 
+> Hi Rui,
+> 
+> Thanks for the review comments,
+> On Tue, Jan 15, 2013 at 11:33 PM, Zhang Rui <rui.zhang@intel.com> wrote:
+> > Hi, Amit,
+> >
+> > On Sun, 2013-01-06 at 16:08 -0800, Amit Daniel Kachhap wrote:
+> >> This patch adds support to set the emulated temperature method in
+> >> thermal zone (sensor). After setting this feature thermal zone must
+> >> report this temperature and not the actual temperature. The actual
+> >> implementation of this emulated temperature is based on sensor
+> >> capability or platform specific. This is useful in debugging different
+> >> temperature threshold and its associated cooling action. Writing 0 on
+> >> this node should disable emulation.
+> >
+> > Question:
+> > will this bring hardware issue? Say, critical temperature reached while
+> > in emulation mode?
+> No emulation does cause any h/w issue.
+> >
+> > As this is for debug purpose, I'd prefer to have a seperate Kconfig
+> > option for this feature.
+> Yes agreed. Will re-submit with kconfig option.
+> >
+> >> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s3c2410/Kconfig                             |   13 -------------
- arch/arm/mach-s3c2410/Makefile                            |   13 -------------
- arch/arm/mach-s3c24xx/Kconfig                             |    7 +++++++
- arch/arm/mach-s3c24xx/Makefile                            |    1 +
- .../{mach-s3c2410/pll.c => mach-s3c24xx/pll-s3c2410.c}    |    5 +----
- 5 files changed, 9 insertions(+), 30 deletions(-)
- delete mode 100644 arch/arm/mach-s3c2410/Kconfig
- delete mode 100644 arch/arm/mach-s3c2410/Makefile
- rename arch/arm/{mach-s3c2410/pll.c => mach-s3c24xx/pll-s3c2410.c} (99%)
+Hi Zhang,
 
-diff --git a/arch/arm/mach-s3c2410/Kconfig b/arch/arm/mach-s3c2410/Kconfig
-deleted file mode 100644
-index 910b8d2..0000000
---- a/arch/arm/mach-s3c2410/Kconfig
-+++ /dev/null
-@@ -1,13 +0,0 @@
--# Copyright 2007 Simtec Electronics
--#
--# Licensed under GPLv2
--
--# cpu frequency scaling support
--
--config S3C2410_PLLTABLE
--	bool
--	depends on S3C2410_CPUFREQ && CPU_FREQ_S3C24XX_PLL
--	default y
--	help
--	  Select the PLL table for the S3C2410
--
-diff --git a/arch/arm/mach-s3c2410/Makefile b/arch/arm/mach-s3c2410/Makefile
-deleted file mode 100644
-index 2a160a5..0000000
---- a/arch/arm/mach-s3c2410/Makefile
-+++ /dev/null
-@@ -1,13 +0,0 @@
--# arch/arm/mach-s3c2410/Makefile
--#
--# Copyright 2007 Simtec Electronics
--#
--# Licensed under GPLv2
--
--obj-y				:=
--obj-m				:=
--obj-n				:=
--obj-				:=
--
--obj-$(CONFIG_S3C2410_PLLTABLE)	+= pll.o
--
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 04921b9..5cc740c 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -134,6 +134,13 @@ config S3C2410_CPUFREQ
- 	help
- 	  CPU Frequency scaling support for S3C2410
- 
-+config S3C2410_PLL
-+	bool
-+	depends on S3C2410_CPUFREQ && CPU_FREQ_S3C24XX_PLL
-+	default y
-+	help
-+	  Select the PLL table for the S3C2410
-+
- config S3C24XX_SIMTEC_NOR
- 	bool
- 	help
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index 3c9fd51..ecace54 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -19,6 +19,7 @@ obj-y				+= common.o
- obj-$(CONFIG_CPU_S3C2410)	+= s3c2410.o
- obj-$(CONFIG_S3C2410_CPUFREQ)	+= cpufreq-s3c2410.o
- obj-$(CONFIG_S3C2410_DMA)	+= dma-s3c2410.o
-+obj-$(CONFIG_S3C2410_PLL)	+= pll-s3c2410.o
- obj-$(CONFIG_S3C2410_PM)	+= pm-s3c2410.o sleep-s3c2410.o
- 
- obj-$(CONFIG_CPU_S3C2412)	+= s3c2412.o irq-s3c2412.o clock-s3c2412.o
-diff --git a/arch/arm/mach-s3c2410/pll.c b/arch/arm/mach-s3c24xx/pll-s3c2410.c
-similarity index 99%
-rename from arch/arm/mach-s3c2410/pll.c
-rename to arch/arm/mach-s3c24xx/pll-s3c2410.c
-index e0b3b34..dcf3420 100644
---- a/arch/arm/mach-s3c2410/pll.c
-+++ b/arch/arm/mach-s3c24xx/pll-s3c2410.c
-@@ -1,5 +1,4 @@
--/* arch/arm/mach-s3c2410/pll.c
-- *
-+/*
-  * Copyright (c) 2006-2007 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-@@ -82,7 +81,6 @@ static int __init s3c2410_pll_init(void)
- 	return subsys_interface_register(&s3c2410_plls_interface);
- 
- }
--
- arch_initcall(s3c2410_pll_init);
- 
- static struct subsys_interface s3c2410a_plls_interface = {
-@@ -95,5 +93,4 @@ static int __init s3c2410a_pll_init(void)
- {
- 	return subsys_interface_register(&s3c2410a_plls_interface);
- }
--
- arch_initcall(s3c2410a_pll_init);
--- 
-1.7.10.4
+Once Amit addresses comments from you, I think, this looks good to Exynos
+SoCs. And this is _really_ needed.
+
+Feel free to add my ack on this 1st and 2nd patches:
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Thanks.
+
+- Kukjin
+
