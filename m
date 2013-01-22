@@ -1,83 +1,91 @@
 From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v6 0/4] Adding usb2.0 host-phy support for exynos5250
-Date: Mon, 21 Jan 2013 21:23:28 -0800
-Message-ID: <053c01cdf860$9e98df20$dbca9d60$@samsung.com>
-References: <1357916550-11421-1-git-send-email-gautam.vivek@samsung.com>
+Subject: RE: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
+Date: Mon, 21 Jan 2013 21:35:41 -0800
+Message-ID: <054601cdf862$534a8ad0$f9dfa070$@samsung.com>
+References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
+ <20121215072014.2E05E3E0AE3@localhost>
+ <CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
+ <CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
+ <CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
+ <016901cde163$6be034c0$43a09e40$@samsung.com>
+ <CAFp+6iGq32UV3mZ=QYVizJGQEark0Qztu7m4jy3DvG431ajV1w@mail.gmail.com>
+ <50DB811A.8010408@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1357916550-11421-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <50DB811A.8010408-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-language: en-us
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: 'Sylwester Nawrocki' <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Vivek Gautam' <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, 'Rob Herring' <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Vivek Gautam wrote:
+Sylwester Nawrocki wrote:
 > 
-> Changes from v5:
->  - Rebased on top of latest patches:
->         usb: phy: samsung: Introducing usb phy driver for hsotg (v9)
->         usb: phy: samsung: Add support to set pmu isolation (v6)
->    As a result adding hostphy enable mask and hostphy register offsets
->    to driver data in order to access the HOSTPHY CONTROL register.
+> On 12/24/2012 09:13 AM, Vivek Gautam wrote:
+> >>>> These two changes look good to me.  For both of them:
+> >>>>
+> >>>> Reviewed-by: Doug Anderson<dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> >>>
+> >>> Well, I have another idea. Yes, I know, specific chip name should be
+used.
+> >> But
+> >>> you know the specific chip name in compatible can cause another
+> confusion
+> >>> on other SoC which has same IP. So I think, we need to consider to use
+> >>> common name or any specific name not chip in compatible for IP/driver
+> like
+> >>> following?
+> >>>
+> >>> -     { .compatible = "samsung,exynos-dwc3" },
+> >>> +     { .compatible = "samsung,synopsis-dwc3" },
+> >>>
+> >>> Or if any version or something, how about following?
+> >>>
+> >>> +     { .compatible = "samsung,dwc-v3" },
+> >>>
+> > Well, yes the newer SoCs with same IP using the chip name can cause some
+> > confusion, but won't it be fine that -
+> > "Newer parts using the same core can claim compatibility by
+> > including the older string in the compatible list" - as quoted by Grant
+Likely
+> >
+> > Or, can we try another option, using multiple compatible strings for
+> > SoC specific
+> > in of_match_table, so that we don't create any confusion by using same
+> > compatible for newer SoCs also. Like,
+> >
+> > -     { .compatible = "samsung,exynos-dwc3" },
+> > +     { .compatible = "samsung,exynos5250-dwc3" },
+> > +     { .compatible =<new SoC using same IP>  },
 > 
->  - Adding member 'otg' to struct samsung-usbphy so that its consumers
->    can call otg->set_host so as to make 'phy' aware of the consumer type:
-> 	HOST/DEVICE
+> Yes, why not just use an SoC name where given IP first appeared ? I
+believe
+> IP revision numbers are not always well documented. Also when an IP is
+> instantiated multiple times in specific SoC, its revision number might not
+> be sufficient to determine the system integration details for each
+instance.
+> I think having version for some devices and SoC name for others just adds
+> to the confusion. Thus using specific chip name in the compatible property
+> seems more clear to me.
 > 
->  - Adding 'otg' to 'struct s5p_ehci_hcd' and 'struct exynos_ohci_hcd'
->    which keeps track of 'otg' of the controllers' phy. This then sets
->    the host.
-> 
->  - Moved samsung_usbphy_set_type() calls from ehci-s5p and ohci-exynos
->    to phy driver itself where based on phy_type it is called.
-> 
->  - Added separate macro definition for USB20PHY_CFG register to select
->    between host/device type usb link.
-> 
->  - Removing unnecessary argument 'phy_type' from
-> samsung_usbphy_set_type()
->    and samsung_usbphy_cfg_sel().
-> 
->  - Addressed few nits:
-> 	-- added macro for 'KHZ'
-> 	-- removing useless 'if' from samsung_usbphy_cfg_sel()
-> 	-- keeping the place of clk_get intact and requesting driver
-> 	   data before that.
-> 
-> Vivek Gautam (4):
->   ARM: EXYNOS: Update & move usb-phy types to generic include layer
->   usb: phy: samsung: Add host phy support to samsung-phy driver
->   USB: ehci-s5p: Add phy driver support
->   USB: ohci-exynos: Add phy driver support
-> 
->  .../devicetree/bindings/usb/samsung-usbphy.txt     |   12 +-
->  drivers/usb/host/ehci-s5p.c                        |   81 +++-
->  drivers/usb/host/ohci-exynos.c                     |   85 +++-
->  drivers/usb/phy/Kconfig                            |    2 +-
->  drivers/usb/phy/samsung-usbphy.c                   |  512
-++++++++++++++++++--
->  include/linux/usb/samsung_usb_phy.h                |   16 +
->  6 files changed, 635 insertions(+), 73 deletions(-)
->  create mode 100644 include/linux/usb/samsung_usb_phy.h
-> 
-> --
-> 1.7.6.5
+Well, I don't think so. Let's see the DMAC PL330. Its compatible is
+"arm,pl330" and "arm,primecell" not SoC/Chip name. I think DWC is a same
+case or at least similar.
 
-Looks good to me,
-
-Felipe and Greg, I don't know who should take this series anyway, feel free
-to add  my ack:
-
-Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+You know, the DWC is a IP from Synopsis and I _Believe_ it has a kind of
+version and it can be used for identify.
 
 Thanks.
 
 - Kukjin
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
