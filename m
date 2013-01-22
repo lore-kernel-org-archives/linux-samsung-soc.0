@@ -1,65 +1,91 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2 0/3] thermal: Add support for interrupt based
- notification to thermal layer
-Date: Mon, 21 Jan 2013 17:32:58 -0800
-Message-ID: <04d101cdf840$6a547e10$3efd7a30$@samsung.com>
-References: <1353937640-9939-1-git-send-email-amit.kachhap@linaro.org>
- <CADGdYn7SpsaJ54OoxuUw3XnEpdi+qReEHw2wX=3rTQ-f2edNUg@mail.gmail.com>
- <CADGdYn6UqNhBmZxcU9k+=K5zZV8rBa6LtJJF0kNzd=RpzJ8B9g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: dts: specify all the per-cpu interrupts of arch timer for
+ exynos5440
+Date: Mon, 21 Jan 2013 17:41:27 -0800
+Message-ID: <1358818887-16870-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:24301 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751635Ab3AVBdQ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:30280 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751635Ab3AVBmH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 20:33:16 -0500
-In-reply-to: <CADGdYn6UqNhBmZxcU9k+=K5zZV8rBa6LtJJF0kNzd=RpzJ8B9g@mail.gmail.com>
-Content-language: en-us
+	Mon, 21 Jan 2013 20:42:07 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MH0006F77E1FZ50@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:42:05 +0900 (KST)
+Received: from localhost.localdomain ([105.128.18.183])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MH0001MT7E1A9F0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:42:04 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'amit daniel kachhap' <amit.daniel@samsung.com>, 'Zhang Rui' <rui.zhang@intel.com>
-Cc: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jonghwa3.lee@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Amit Daniel Kachhap wrote:
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-> > On Mon, Nov 26, 2012 at 5:47 AM, Amit Daniel Kachhap
-> > <amit.kachhap@linaro.org> wrote:
-> >> Changes since V1: Used the new thermal trend type macro
-> >>
-> >> The patch submitted by Jonghwa Lee
-> (https://patchwork.kernel.org/patch/1683441/)
-> >> adds support for interrupt based notification to thermal layer. This is
-a
-> good
-> >> feature but the current code need more fixes to support that feature so
-> using 2 new thermal
-> >> trend type to implement this feature and some falling interrupt fixes.
-> >>
-> >> All these patches are based on thermal maintainer thermal branch.
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git thermal
-> >>
-> >> Amit Daniel Kachhap (2):
-> >>   thermal: exynos: Miscellaneous fixes to support falling threshold
-> >>     interrupt
-> >>   thermal: exynos: Use the new thermal trend type for quick cooling
-> >>     action.
-> >>
-> >> Jonghwa Lee (1):
-> >>   Thermal: exynos: Add support for temperature falling interrupt.
-> >>
-> >>  drivers/thermal/exynos_thermal.c             |  108
-+++++++++++++++--------
-> ---
-> >>  include/linux/platform_data/exynos_thermal.h |    3 +
-> >>  2 files changed, 67 insertions(+), 44 deletions(-)
+Need to be changed requirements in the 'cpus' node for exynos5440
+to specify all the per-cpu interrupts of arch timer.
 
-This whole series looks good to me. And if you want to add my ack as a
-maintainer of EXYNOS SoCs, feel free.
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/boot/dts/exynos5440.dtsi |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Thanks.
-
-- Kukjin
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index 5406689..c5bd8ed 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -28,7 +28,10 @@
+ 			compatible = "arm,cortex-a15";
+ 			timer {
+ 				compatible = "arm,armv7-timer";
+-				interrupts = <1 13 0xf08>;
++				interrupts = <1 13 0xf08>,
++					     <1 14 0xf08>,
++					     <1 11 0xf08>,
++					     <1 10 0xf08>;
+ 				clock-frequency = <1000000>;
+ 			};
+ 		};
+@@ -36,7 +39,10 @@
+ 			compatible = "arm,cortex-a15";
+ 			timer {
+ 				compatible = "arm,armv7-timer";
+-				interrupts = <1 14 0xf08>;
++				interrupts = <1 13 0xf08>;
++					     <1 14 0xf08>,
++					     <1 11 0xf08>,
++					     <1 10 0xf08>;
+ 				clock-frequency = <1000000>;
+ 			};
+ 		};
+@@ -44,7 +50,10 @@
+ 			compatible = "arm,cortex-a15";
+ 			timer {
+ 				compatible = "arm,armv7-timer";
+-				interrupts = <1 14 0xf08>;
++				interrupts = <1 13 0xf08>;
++					     <1 14 0xf08>,
++					     <1 11 0xf08>,
++					     <1 10 0xf08>;
+ 				clock-frequency = <1000000>;
+ 			};
+ 		};
+@@ -52,7 +61,10 @@
+ 			compatible = "arm,cortex-a15";
+ 			timer {
+ 				compatible = "arm,armv7-timer";
+-				interrupts = <1 14 0xf08>;
++				interrupts = <1 13 0xf08>;
++					     <1 14 0xf08>,
++					     <1 11 0xf08>,
++					     <1 10 0xf08>;
+ 				clock-frequency = <1000000>;
+ 			};
+ 		};
+-- 
+1.7.10.4
