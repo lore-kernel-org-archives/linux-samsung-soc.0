@@ -1,71 +1,104 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/2] ARM: Exynos5250: Enabling samsung usb phy
-Date: Tue, 22 Jan 2013 11:24:25 +0530
-Message-ID: <CAFp+6iFM8g28PohX=95qMccNDkdmt86gKNg9=AJXdrCovsryPQ@mail.gmail.com>
-References: <1355845182-14104-1-git-send-email-gautam.vivek@samsung.com>
-	<20130118131013.GG4672@arwen.pp.htv.fi>
-	<20130118131250.GH4672@arwen.pp.htv.fi>
-	<053501cdf85e$507c2560$f1747020$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <053501cdf85e$507c2560$f1747020$@samsung.com>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH] arm: plat-samsung: check soc ids before l2x0 cache restoration in resume
+Date: Tue, 22 Jan 2013 13:55:09 +0530
+Message-ID: <1358843109-11072-1-git-send-email-inderpal.singh@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f53.google.com ([209.85.160.53]:39163 "EHLO
+	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753170Ab3AVIZS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Jan 2013 03:25:18 -0500
+Received: by mail-pb0-f53.google.com with SMTP id un1so3179039pbc.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jan 2013 00:25:18 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, patches@linaro.org
 
-Hi Kukjin,
+Only exynos4 based platforms have l2x0 cache controller. Hence check
+the same before restoring the cache in resume.
 
+This is needed for single kernel image.
 
-On Tue, Jan 22, 2013 at 10:36 AM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Felipe Balbi wrote:
->>
->> On Fri, Jan 18, 2013 at 03:10:13PM +0200, Felipe Balbi wrote:
->> > Hi,
->> >
->> > On Tue, Dec 18, 2012 at 09:09:40PM +0530, Vivek Gautam wrote:
->> > > This patch-set enables the samsung-usbphy driver on exynos5250,
->> > > which enables the support for USB2 type and USB3 type phys.
->> > > The corresponding phy driver patches are available at:
->> > >  1) https://lkml.org/lkml/2012/12/18/201
->> > >  2) https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-
->> December/024559.html
->> > >
->> > > Tested this patch-set on exynos5250 with following patch-sets for
->> > > USB 2.0 and USB 3.0:
->> > >  - https://patchwork.kernel.org/patch/1794651/
->> > >  - https://lkml.org/lkml/2012/12/18/201
->> > >  - https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-
->> December/024559.html
->> > >  - http://comments.gmane.org/gmane.linux.usb.general/76352
->> > >  - https://lkml.org/lkml/2012/12/13/492
->> > >
->> > > Vivek Gautam (2):
->> > >   ARM: Exynos5250: Enabling samsung-usbphy driver
->> > >   ARM: Exynos5250: Enabling USB 3.0 phy for samsung-usbphy driver
->> >
->> > What should I do with this series ? Is it ready to apply ? If it is,
->> > then please resend with Kukjim's Acked-by.
->>
->> actually, now that I look again, it's all under arch/arm/, so Kukjim can
->> take all of those through his tree ;-)
->>
-> Yes, once Vivek addresses comments from Sylwester, let me pick up into
-> Samsung tree :-)
->
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+ arch/arm/mach-exynos/common.c           |    2 ++
+ arch/arm/plat-samsung/include/plat/pm.h |    1 +
+ arch/arm/plat-samsung/s5p-sleep.S       |   28 ++++++++++++++++++++++++++++
+ 3 files changed, 31 insertions(+)
 
-Sure, i shall update this patch-series based on separate drivers for
-USB 3.0 PHY controller
-as posted in following patch series :
-[PATCH v3 0/2] Adding USB 3.0 DRD-phy support for exynos5250
-
-
-
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index cdaa55f..ab7ca00 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -796,6 +796,8 @@ static int __init exynos4_l2x0_cache_init(void)
+ 	if (soc_is_exynos5250() || soc_is_exynos5440())
+ 		return 0;
+ 
++	s5p_cpu = samsung_cpu_id & EXYNOS4_CPU_MASK;
++
+ 	ret = l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
+ 	if (!ret) {
+ 		l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
+diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
+index 887a0c9..285c8c8 100644
+--- a/arch/arm/plat-samsung/include/plat/pm.h
++++ b/arch/arm/plat-samsung/include/plat/pm.h
+@@ -190,3 +190,4 @@ extern void samsung_pm_save_gpios(void);
+ 
+ extern void s3c_pm_save_core(void);
+ extern void s3c_pm_restore_core(void);
++extern unsigned long s5p_cpu;
+diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-samsung/s5p-sleep.S
+index bdf6dad..006d35f 100644
+--- a/arch/arm/plat-samsung/s5p-sleep.S
++++ b/arch/arm/plat-samsung/s5p-sleep.S
+@@ -25,6 +25,15 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/hardware/cache-l2x0.h>
+ 
++#define EXYNOS4210_CPU_ID	0x43210000
++#define EXYNOS4212_CPU_ID	0x43220000
++#define EXYNOS4412_CPU_ID	0xE4412200
++#define EXYNOS4_CPU_MASK	0xFFFE0000
++
++#define EXYNOS4210_CPU		(EXYNOS4210_CPU_ID & EXYNOS4_CPU_MASK)
++#define EXYNOS4212_CPU		(EXYNOS4212_CPU_ID & EXYNOS4_CPU_MASK)
++#define EXYNOS4412_CPU		(EXYNOS4412_CPU_ID & EXYNOS4_CPU_MASK)
++
+ /*
+  *	 The following code is located into the .data section. This is to
+  *	 allow l2x0_regs_phys to be accessed with a relative load while we
+@@ -51,6 +60,22 @@
+ 
+ ENTRY(s3c_cpu_resume)
+ #ifdef CONFIG_CACHE_L2X0
++	adr	r0, s5p_cpu
++	ldr	r1, [r0]
++
++	ldr	r0, =EXYNOS4210_CPU
++	cmp	r1, r0
++	beq	continue
++
++	ldr	r0, =EXYNOS4212_CPU
++	cmp	r1, r0
++	beq	continue
++
++	ldr	r0, =EXYNOS4412_CPU
++	cmp	r1, r0
++	bne	resume_l2on
++
++continue:
+ 	adr	r0, l2x0_regs_phys
+ 	ldr	r0, [r0]
+ 	ldr	r1, [r0, #L2X0_R_PHY_BASE]
+@@ -77,4 +102,7 @@ ENDPROC(s3c_cpu_resume)
+ 	.globl l2x0_regs_phys
+ l2x0_regs_phys:
+ 	.long	0
++	.globl s5p_cpu
++s5p_cpu:
++	.long	0
+ #endif
 -- 
-Thanks & Regards
-Vivek
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.9.5
