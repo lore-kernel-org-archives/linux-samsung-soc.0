@@ -1,25 +1,24 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 5/6] ARM: S3C24XX: Move mach-s3c2440/ cpufreq driver into
- mach-s3c24xx/
-Date: Mon, 21 Jan 2013 17:12:10 -0800
-Message-ID: <1358817131-27169-6-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 3/6] ARM: S3C2412: Remove useless codes mach-s3c2412/gpio.c
+Date: Mon, 21 Jan 2013 17:12:08 -0800
+Message-ID: <1358817131-27169-4-git-send-email-kgene.kim@samsung.com>
 References: <1358817131-27169-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20052 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:20044 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752769Ab3AVBNE (ORCPT
+	with ESMTP id S1752728Ab3AVBNA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jan 2013 20:13:04 -0500
+	Mon, 21 Jan 2013 20:13:00 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MH0000Q6611QXL0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:13:02 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:12:59 +0900 (KST)
 Received: from localhost.localdomain ([105.128.18.183])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MH000NXU61A2ED0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:13:01 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Jan 2013 10:12:59 +0900 (KST)
 In-reply-to: <1358817131-27169-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -28,95 +27,95 @@ Cc: Kukjin Kim <kgene.kim@samsung.com>
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c2440/Kconfig                                  |    8 --------
- arch/arm/mach-s3c2440/Makefile                                 |    2 --
- arch/arm/mach-s3c24xx/Kconfig                                  |    8 ++++++++
- arch/arm/mach-s3c24xx/Makefile                                 |    1 +
- .../s3c2440-cpufreq.c => mach-s3c24xx/cpufreq-s3c2440.c}       |    4 +---
- 5 files changed, 10 insertions(+), 13 deletions(-)
- rename arch/arm/{mach-s3c2440/s3c2440-cpufreq.c => mach-s3c24xx/cpufreq-s3c2440.c} (99%)
+ arch/arm/mach-s3c2412/gpio.c                  |   62 -------------------------
+ arch/arm/mach-s3c24xx/include/mach/hardware.h |    6 ---
+ 2 files changed, 68 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c2412/gpio.c
 
-diff --git a/arch/arm/mach-s3c2440/Kconfig b/arch/arm/mach-s3c2440/Kconfig
-index a4d7fd2..ad06fa2 100644
---- a/arch/arm/mach-s3c2440/Kconfig
-+++ b/arch/arm/mach-s3c2440/Kconfig
-@@ -2,14 +2,6 @@
- #
- # Licensed under GPLv2
- 
--config S3C2440_CPUFREQ
--	bool "S3C2440/S3C2442 CPU Frequency scaling support"
--	depends on CPU_FREQ_S3C24XX && (CPU_S3C2440 || CPU_S3C2442)
--	default y
--	select S3C2410_CPUFREQ_UTILS
--	help
--	  CPU Frequency scaling support for S3C2440 and S3C2442 SoC CPUs.
--
- config S3C2440_XTAL_12000000
- 	bool
- 	help
-diff --git a/arch/arm/mach-s3c2440/Makefile b/arch/arm/mach-s3c2440/Makefile
-index 0ddd17f..d76e4b9 100644
---- a/arch/arm/mach-s3c2440/Makefile
-+++ b/arch/arm/mach-s3c2440/Makefile
-@@ -9,7 +9,5 @@ obj-m				:=
- obj-n				:=
- obj-				:=
- 
--obj-$(CONFIG_S3C2440_CPUFREQ)	+= s3c2440-cpufreq.o
--
- obj-$(CONFIG_S3C2440_PLL_12000000) += s3c2440-pll-12000000.o
- obj-$(CONFIG_S3C2440_PLL_16934400) += s3c2440-pll-16934400.o
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index f1d3951..edf6549 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -387,6 +387,14 @@ endif	# CPU_S3C2416
- 
- if CPU_S3C2440
- 
-+config S3C2440_CPUFREQ
-+	bool "S3C2440/S3C2442 CPU Frequency scaling support"
-+	depends on CPU_FREQ_S3C24XX && (CPU_S3C2440 || CPU_S3C2442)
-+	default y
-+	select S3C2410_CPUFREQ_UTILS
-+	help
-+	  CPU Frequency scaling support for S3C2440 and S3C2442 SoC CPUs.
-+
- config S3C2440_DMA
- 	bool
- 	help
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index 0f042d1..6d4b9ad 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -34,6 +34,7 @@ obj-$(CONFIG_S3C2416_PM)	+= pm-s3c2416.o
- obj-$(CONFIG_CPU_S3C2440)	+= s3c2440.o irq-s3c2440.o clock-s3c2440.o
- obj-$(CONFIG_CPU_S3C2442)	+= s3c2442.o
- obj-$(CONFIG_CPU_S3C244X)	+= s3c244x.o irq-s3c244x.o clock-s3c244x.o
-+obj-$(CONFIG_S3C2440_CPUFREQ)	+= cpufreq-s3c2440.o
- obj-$(CONFIG_S3C2440_DMA)	+= dma-s3c2440.o
- 
- obj-$(CONFIG_CPU_S3C2443)	+= s3c2443.o irq-s3c2443.o clock-s3c2443.o
-diff --git a/arch/arm/mach-s3c2440/s3c2440-cpufreq.c b/arch/arm/mach-s3c24xx/cpufreq-s3c2440.c
-similarity index 99%
-rename from arch/arm/mach-s3c2440/s3c2440-cpufreq.c
-rename to arch/arm/mach-s3c24xx/cpufreq-s3c2440.c
-index 6177676..72b2cc8 100644
---- a/arch/arm/mach-s3c2440/s3c2440-cpufreq.c
-+++ b/arch/arm/mach-s3c24xx/cpufreq-s3c2440.c
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/plat-s3c24xx/s3c2440-cpufreq.c
+diff --git a/arch/arm/mach-s3c2412/gpio.c b/arch/arm/mach-s3c2412/gpio.c
+deleted file mode 100644
+index 4526f6b..0000000
+--- a/arch/arm/mach-s3c2412/gpio.c
++++ /dev/null
+@@ -1,62 +0,0 @@
+-/* linux/arch/arm/mach-s3c2412/gpio.c
 - *
-+/*
-  * Copyright (c) 2006-2009 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-@@ -310,5 +309,4 @@ static int s3c2442_cpufreq_init(void)
- {
- 	return subsys_interface_register(&s3c2442_cpufreq_interface);
- }
+- * Copyright (c) 2007 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * http://armlinux.simtec.co.uk/.
+- *
+- * S3C2412/S3C2413 specific GPIO support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
 -
- subsys_initcall(s3c2442_cpufreq_init);
+-#include <linux/kernel.h>
+-#include <linux/types.h>
+-#include <linux/module.h>
+-#include <linux/interrupt.h>
+-#include <linux/gpio.h>
+-
+-#include <asm/mach/arch.h>
+-#include <asm/mach/map.h>
+-
+-#include <mach/regs-gpio.h>
+-#include <mach/hardware.h>
+-
+-#include <plat/gpio-core.h>
+-
+-int s3c2412_gpio_set_sleepcfg(unsigned int pin, unsigned int state)
+-{
+-	struct samsung_gpio_chip *chip = samsung_gpiolib_getchip(pin);
+-	unsigned long offs = pin - chip->chip.base;
+-	unsigned long flags;
+-	unsigned long slpcon;
+-
+-	offs *= 2;
+-
+-	if (pin < S3C2410_GPB(0))
+-		return -EINVAL;
+-
+-	if (pin >= S3C2410_GPF(0) &&
+-	    pin <= S3C2410_GPG(16))
+-		return -EINVAL;
+-
+-	if (pin > S3C2410_GPH(16))
+-		return -EINVAL;
+-
+-	local_irq_save(flags);
+-
+-	slpcon = __raw_readl(chip->base + 0x0C);
+-
+-	slpcon &= ~(3 << offs);
+-	slpcon |= state << offs;
+-
+-	__raw_writel(slpcon, chip->base + 0x0C);
+-
+-	local_irq_restore(flags);
+-
+-	return 0;
+-}
+-
+-EXPORT_SYMBOL(s3c2412_gpio_set_sleepcfg);
+diff --git a/arch/arm/mach-s3c24xx/include/mach/hardware.h b/arch/arm/mach-s3c24xx/include/mach/hardware.h
+index aef5631..a6cc14a 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/hardware.h
++++ b/arch/arm/mach-s3c24xx/include/mach/hardware.h
+@@ -23,12 +23,6 @@ extern int s3c2440_set_dsc(unsigned int pin, unsigned int value);
+ 
+ #endif /* CONFIG_CPU_S3C2440 */
+ 
+-#ifdef CONFIG_CPU_S3C2412
+-
+-extern int s3c2412_gpio_set_sleepcfg(unsigned int pin, unsigned int state);
+-
+-#endif /* CONFIG_CPU_S3C2412 */
+-
+ #endif /* __ASSEMBLY__ */
+ 
+ #include <asm/sizes.h>
 -- 
 1.7.10.4
