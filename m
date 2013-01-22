@@ -1,95 +1,147 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: specify all the per-cpu interrupts of arch timer
- for exynos5440
-Date: Tue, 22 Jan 2013 14:05:18 -0800
-Message-ID: <063f01cdf8ec$926cda30$b7468e90$@samsung.com>
-References: <1358818887-16870-1-git-send-email-kgene.kim@samsung.com>
- <20130122101554.GA18876@e106331-lin.cambridge.arm.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH] ARM: dts: add mshc controller node for Exynos4x12 SoCs
+Date: Tue, 22 Jan 2013 15:25:11 -0800
+Message-ID: <CAJuYYwTT+e5e6S7GtK+=PRS_C-3XqARwrb2bqhmehScN3DRT9A@mail.gmail.com>
+References: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org>
+	<CADoNuNee7xbRPJupGvUKVRB8TKq0WZMg1XYk24-ks34fbRPt1Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:22133 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750955Ab3AVWFi (ORCPT
+Received: from mail-ia0-f173.google.com ([209.85.210.173]:48941 "EHLO
+	mail-ia0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750899Ab3AVXZM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jan 2013 17:05:38 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MH100AD3S1C5T80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Jan 2013 07:05:37 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MH100FD1S1APE20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Jan 2013 07:05:36 +0900 (KST)
-In-reply-to: <20130122101554.GA18876@e106331-lin.cambridge.arm.com>
-Content-language: en-us
+	Tue, 22 Jan 2013 18:25:12 -0500
+Received: by mail-ia0-f173.google.com with SMTP id l29so3647117iag.32
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jan 2013 15:25:12 -0800 (PST)
+In-Reply-To: <CADoNuNee7xbRPJupGvUKVRB8TKq0WZMg1XYk24-ks34fbRPt1Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Rutland' <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.ab@samsung.com>, devicetree-discuss@lists.ozlabs.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, 'Tony Lindgren' <tony@atomide.com>
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tgih.jun@samsung.com, jh80.chung@samsung.com
 
-Mark Rutland wrote:
+Hi Dongjin,
+
+On 22 January 2013 10:15, Dongjin Kim <tobetter@gmail.com> wrote:
+> Hi Thomas,
 >
-+ devicetree-discuss, Grant Likely, Rob Herring and Tony Lindgren
- 
-> On Tue, Jan 22, 2013 at 01:41:27AM +0000, Kukjin Kim wrote:
-> > From: Thomas Abraham <thomas.ab@samsung.com>
-> >
-> > Need to be changed requirements in the 'cpus' node for exynos5440
-> > to specify all the per-cpu interrupts of arch timer.
-> 
-> The node(s) for the arch timer should not be in the cpus/cpu@N nodes.
-> Instead, there should be one node (in the root of the tree).
-> 
-Well, I don't think so. As per my understanding, the local timers are
-attached to every ARM cores (cpus) and it generates certain interrupt to the
-GIC. So the correct representation for this in device tree is to include the
-interrupts in the cpu nodes in dts file. Your comments  refer to a
-limitation in the Linux kernel implementation of the arch_timer and it
-should not result in representing the hardware details incorrectly in the
-dts file.
+> Good to see your patch, actually I had sent similar one before but no
+> one care my patch. And now I feel it seems to be wrong.
+>
+> But I have a couple of question if I use your patch to enable MSHC
+> controller work properly on Exynos4412.
+>
+> What's the exact form of ".compatible" on board file?
+> With your patch, MSHC is not probed at all in my board. The
+> ".compatible" has to be 'samsung,exynos5250-dw-mshc' and it works.
+>
+> I also tried '.compatible = "samsung,exynos5250-dw-mshc",
+> "samsung,exynos4412-dw-mshc"', it probes the driver but in the
+> function 'dw_mci_exynos_priv_init', priv->ctrl_type always becomes
+> DW_MCI_TYPE_EXYNOS5250. Because there is a loop and returns each
+> compatible strings in alphanumeric order whatever it is ordered in the
+> board file.
+>
+> I also tried below patch to add a compatible for Exynos4412 to
+> 'dw_mci_exynos_match' with its specific data, and it works. What's the
+> right direction? If I am missing something or wrong, please correct
+> me. :)
 
-> If this works currently it's only because the driver picks up one of the
-nodes,
-> and luckily it's the same as the others. This is not guaranteed to work in
-> future, and will likely break.
-> 
-It is up to the Linux kernel implementation of arch_timer to handle the
-hardware details in dts file accordingly.
+Yes, your below patch is the correct thing to do. The dt patches for
+dwmmc controller driver were only tested on Exynos5250 based board. So
+I had not added the compatible string for Exynos4412 in
+'of_match_table' of the driver. Please submit the below change as a
+patch (minor comment below).
 
-> >
-> > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos5440.dtsi |   20 ++++++++++++++++----
-> >  1 file changed, 16 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5440.dtsi
-> b/arch/arm/boot/dts/exynos5440.dtsi
-> > index 5406689..c5bd8ed 100644
-> > --- a/arch/arm/boot/dts/exynos5440.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> > @@ -28,7 +28,10 @@
-> >  			compatible = "arm,cortex-a15";
-> >  			timer {
-> >  				compatible = "arm,armv7-timer";
-> > -				interrupts = <1 13 0xf08>;
-> > +				interrupts = <1 13 0xf08>,
-> > +					     <1 14 0xf08>,
-> > +					     <1 11 0xf08>,
-> > +					     <1 10 0xf08>;
-> 
-> Also, this interrupts list is updated differently to all the other nodes.
-Typo?
-> 
-Hmm, I think this should be fine. If any concerns, please let me know in
-detail.
+>
+> Many thanks,
+> Dongjin.
+>
+> @@ -184,6 +186,25 @@ static int dw_mci_exynos_setup_bus(struct dw_mci *host,
+>         return 0;
+>  }
+>
+> +/* Exynos4412 controller specific capabilities */
+> +static unsigned long exynos4412_dwmmc_caps[4] = {
+> +       MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
+> +               MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
+> +       MMC_CAP_CMD23,
+> +       MMC_CAP_CMD23,
+> +       MMC_CAP_CMD23,
+> +};
 
-[...]
+Since this is same as the 'exynos5250_dwmmc_caps', it can be reused
+for 4412 as well, avoiding duplicate copy 'exynos4412_dwmmc_caps'.
 
-Thanks.
+> +
+> +static const struct dw_mci_drv_data exynos4412_drv_data = {
+> +       .caps                   = exynos4412_dwmmc_caps,
+> +       .init                   = dw_mci_exynos_priv_init,
+> +       .setup_clock            = dw_mci_exynos_setup_clock,
+> +       .prepare_command        = dw_mci_exynos_prepare_command,
+> +       .set_ios                = dw_mci_exynos_set_ios,
+> +       .parse_dt               = dw_mci_exynos_parse_dt,
+> +       .setup_bus              = dw_mci_exynos_setup_bus,
+> +};
 
-- Kukjin
+If the above change is done, 'exynos4412_drv_data ' also could be avoided.
+
+> +
+>  /* Exynos5250 controller specific capabilities */
+>  static unsigned long exynos5250_dwmmc_caps[4] = {
+>         MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
+> @@ -204,6 +225,8 @@ static const struct dw_mci_drv_data exynos5250_drv_data = {
+>  };
+>
+>  static const struct of_device_id dw_mci_exynos_match[] = {
+> +       { .compatible = "samsung,exynos4412-dw-mshc",
+> +                       .data = &exynos4412_drv_data, },
+>         { .compatible = "samsung,exynos5250-dw-mshc",
+>                         .data = &exynos5250_drv_data, },
+>         {},
+
+Thanks,
+Thomas.
+
+>
+>
+> On Mon, Jan 21, 2013 at 7:39 PM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
+>> Commit cea0f256 ("ARM: dts: Add board dts file for ODROID-X") includes a node
+>> to describe the board level properties for mshc controller. But the mshc
+>> controller node was not added in the Exynos4x12 dtsi file which resulted
+>> in the following warning when compiling the dtb files.
+>>
+>> Warning (reg_format): "reg" property in /mshc@12550000/slot@0 has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+>> Warning (avoid_default_addr_size): Relying on default #address-cells value for /mshc@12550000/slot@0
+>> Warning (avoid_default_addr_size): Relying on default #size-cells value for /mshc@12550000/slot@0
+>>
+>> Fix this by adding the mshc controller node for Exynos4x12 SoCs.
+>>
+>> Cc: Dongjin Kim <tobetter@gmail.com>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/exynos4412.dtsi |    8 ++++++++
+>>  1 files changed, 8 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+>> index 78ed377..96f5b66 100644
+>> --- a/arch/arm/boot/dts/exynos4412.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+>> @@ -32,4 +32,12 @@
+>>                 interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
+>>                              <1 12 0>, <1 12 0>, <1 12 0>, <1 12 0>;
+>>         };
+>> +
+>> +       mshc@12550000 {
+>> +               compatible = "samsung,exynos4412-dw-mshc";
+>> +               reg = <0x12550000 0x1000>;
+>> +               interrupts = <0 77 0>;
+>> +               #address-cells = <1>;
+>> +               #size-cells = <0>;
+>> +       };
+>>  };
+>> --
+>> 1.7.5.4
+>>
