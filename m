@@ -1,88 +1,121 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Tue, 22 Jan 2013 09:49:39 +0100
-Message-ID: <50FE52A3.8030807@samsung.com>
-References: <1355410348-5129-1-git-send-email-gautam.vivek@samsung.com>
- <20121215072014.2E05E3E0AE3@localhost>
- <CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
- <CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
- <CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
- <016901cde163$6be034c0$43a09e40$@samsung.com>
- <CAFp+6iGq32UV3mZ=QYVizJGQEark0Qztu7m4jy3DvG431ajV1w@mail.gmail.com>
- <50DB811A.8010408@gmail.com> <054601cdf862$534a8ad0$f9dfa070$@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v6 0/4] Adding usb2.0 host-phy support for exynos5250
+Date: Tue, 22 Jan 2013 10:50:04 +0200
+Message-ID: <20130122085004.GD16143@arwen.pp.htv.fi>
+References: <1357916550-11421-1-git-send-email-gautam.vivek@samsung.com>
+ <053c01cdf860$9e98df20$dbca9d60$@samsung.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <054601cdf862$534a8ad0$f9dfa070$@samsung.com>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Sylwester Nawrocki' <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Vivek Gautam' <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Doug Anderson' <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Grant Likely' <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, 'Rob Herring' <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fXStkuK2IQBfcDe+"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:57507 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753209Ab3AVIuX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Jan 2013 03:50:23 -0500
+Content-Disposition: inline
+In-Reply-To: <053c01cdf860$9e98df20$dbca9d60$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, dianders@chromium.org, jg1.han@samsung.com, p.paneri@samsung.com, cpgs@samsung.com, Alan Stern <stern@rowland.harvard.edu>
 
-On 01/22/2013 06:35 AM, Kukjin Kim wrote:
->>>>> -     { .compatible = "samsung,exynos-dwc3" },
->>>>> +     { .compatible = "samsung,synopsis-dwc3" },
->>>>>
->>>>> Or if any version or something, how about following?
->>>>>
->>>>> +     { .compatible = "samsung,dwc-v3" },
->>>>>
->>> Well, yes the newer SoCs with same IP using the chip name can cause some
->>> confusion, but won't it be fine that -
->>> "Newer parts using the same core can claim compatibility by
->>> including the older string in the compatible list" - as quoted by Grant
-> Likely
->>>
->>> Or, can we try another option, using multiple compatible strings for
->>> SoC specific
->>> in of_match_table, so that we don't create any confusion by using same
->>> compatible for newer SoCs also. Like,
->>>
->>> -     { .compatible = "samsung,exynos-dwc3" },
->>> +     { .compatible = "samsung,exynos5250-dwc3" },
->>> +     { .compatible =<new SoC using same IP>  },
->>
->> Yes, why not just use an SoC name where given IP first appeared ? I
-> believe
->> IP revision numbers are not always well documented. Also when an IP is
->> instantiated multiple times in specific SoC, its revision number might not
->> be sufficient to determine the system integration details for each
-> instance.
->> I think having version for some devices and SoC name for others just adds
->> to the confusion. Thus using specific chip name in the compatible property
->> seems more clear to me.
->>
-> Well, I don't think so. Let's see the DMAC PL330. Its compatible is
-> "arm,pl330" and "arm,primecell" not SoC/Chip name. I think DWC is a same
-> case or at least similar.
-> 
-> You know, the DWC is a IP from Synopsis and I _Believe_ it has a kind of
-> version and it can be used for identify.
+--fXStkuK2IQBfcDe+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's a good point, but isn't DesignWare just a name of a family of IP
-cores from Synopsys [1] ? And what would DWC be supposed to signify ?
-DesignWare Controller ? Wouldn't that be too generic ? Synopsys seems
-to offer multiple different controllers and any of them could eventually
-end up in a specific SoC [2].
+HI,
 
-Maybe the compatible property should be something like:
+On Mon, Jan 21, 2013 at 09:23:28PM -0800, Kukjin Kim wrote:
+> Vivek Gautam wrote:
+> >=20
+> > Changes from v5:
+> >  - Rebased on top of latest patches:
+> >         usb: phy: samsung: Introducing usb phy driver for hsotg (v9)
+> >         usb: phy: samsung: Add support to set pmu isolation (v6)
+> >    As a result adding hostphy enable mask and hostphy register offsets
+> >    to driver data in order to access the HOSTPHY CONTROL register.
+> >=20
+> >  - Adding member 'otg' to struct samsung-usbphy so that its consumers
+> >    can call otg->set_host so as to make 'phy' aware of the consumer typ=
+e:
+> > 	HOST/DEVICE
+> >=20
+> >  - Adding 'otg' to 'struct s5p_ehci_hcd' and 'struct exynos_ohci_hcd'
+> >    which keeps track of 'otg' of the controllers' phy. This then sets
+> >    the host.
+> >=20
+> >  - Moved samsung_usbphy_set_type() calls from ehci-s5p and ohci-exynos
+> >    to phy driver itself where based on phy_type it is called.
+> >=20
+> >  - Added separate macro definition for USB20PHY_CFG register to select
+> >    between host/device type usb link.
+> >=20
+> >  - Removing unnecessary argument 'phy_type' from
+> > samsung_usbphy_set_type()
+> >    and samsung_usbphy_cfg_sel().
+> >=20
+> >  - Addressed few nits:
+> > 	-- added macro for 'KHZ'
+> > 	-- removing useless 'if' from samsung_usbphy_cfg_sel()
+> > 	-- keeping the place of clk_get intact and requesting driver
+> > 	   data before that.
+> >=20
+> > Vivek Gautam (4):
+> >   ARM: EXYNOS: Update & move usb-phy types to generic include layer
+> >   usb: phy: samsung: Add host phy support to samsung-phy driver
+> >   USB: ehci-s5p: Add phy driver support
+> >   USB: ohci-exynos: Add phy driver support
+> >=20
+> >  .../devicetree/bindings/usb/samsung-usbphy.txt     |   12 +-
+> >  drivers/usb/host/ehci-s5p.c                        |   81 +++-
+> >  drivers/usb/host/ohci-exynos.c                     |   85 +++-
+> >  drivers/usb/phy/Kconfig                            |    2 +-
+> >  drivers/usb/phy/samsung-usbphy.c                   |  512
+> ++++++++++++++++++--
+> >  include/linux/usb/samsung_usb_phy.h                |   16 +
+> >  6 files changed, 635 insertions(+), 73 deletions(-)
+> >  create mode 100644 include/linux/usb/samsung_usb_phy.h
+> >=20
+> > --
+> > 1.7.6.5
+>=20
+> Looks good to me,
+>=20
+> Felipe and Greg, I don't know who should take this series anyway, feel fr=
+ee
+> to add  my ack:
+>=20
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-compatible = "samsung,exynos5250-dwc-3", "synopsys,dw-usb-3";
-or
-compatible = "samsung,exynos5250-usb3", "synopsys,dw-ss-usb3";
+I will take care of it. But I need Alan's Acked-by for EHCI and OHCI
+parts.
 
-? Or anything more specific in the synopsys part to indicate which
-exactly USB controller IP is used ?
+--=20
+balbi
 
-[1] http://www.synopsys.com/IP/InterfaceIP/USB/Pages/default.aspx
-[2] http://www.synopsys.com/IP/InterfaceIP/Pages/default.aspx
+--fXStkuK2IQBfcDe+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
---
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Regards,
-Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+iQIcBAEBAgAGBQJQ/lK7AAoJEIaOsuA1yqREY+cQAKG7OfsZ9AuSFPy95plICRni
+zh2KSmmr17QaLjW74ifH826RsR0fe9Htt+GiqVEcONNV/9WaNRWm4EP6ZFWCY+/5
+CNya6MySxQeSpbajzeLx8ziiUmPmAIN4kSUFq43Oimj8+s6qJn/pgx99wjfIlAEs
+3j2KpbDVnjooxHDXLtPNg7poJOkpE1LSGy61hdqA6huT1UlmOuD06q1kBtjFbkc6
+88wJrvZZXDDdULfy7KsNEUnXASHpiCkpH87a2Xn4wGEa4qqPOUqRGCbzO+s0hNRV
+0i8FTrhg0WwcCbozoFS+XzbTlBPQxD7HWn/9J5kbRpHw45F6qGlEFXE0dNWfQJYW
+esPJ49qs+gNjPDgriI+0lvEN7jB/d9JWWGaWmT2+2ksZvVLThBQFEg/r2lND8HPc
+O21DVdUfkke5tu4c9+NHVLy8ZeVT/lEHQBi7dewdWoPm8X3c68jWVNAIZCnP13XF
+zihiXlED3X/161ivnR0aU6SrvDzJZtaSghK3KhCCZRy5lTC2vdvJ6kJqTSgrcom5
+20Uh3CV61m6tFqtDqoTrvzdw6FeZhNzBbOC4TlGFMK5nATSTRmXL7MWWaBl3WwHf
+3DpjOXmasvpktlfjDF6+y884OseQciNcqgf/pgaPraiH1slnlGVNZFjkzAY9Ray0
+Wz6DVMrXCE5zSigYNwBG
+=0HyY
+-----END PGP SIGNATURE-----
+
+--fXStkuK2IQBfcDe+--
