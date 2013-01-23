@@ -1,103 +1,109 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC v3 09/14] s5p-fimc: Use pinctrl API for camera ports
- configuration
-Date: Wed, 23 Jan 2013 20:31:24 +0100
-Message-ID: <1358969489-20420-10-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC v3 10/14] ARM: dts: Add camera to node exynos4.dtsi
+Date: Wed, 23 Jan 2013 20:31:25 +0100
+Message-ID: <1358969489-20420-11-git-send-email-s.nawrocki@samsung.com>
 References: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:35949 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:35955 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752074Ab3AWTcp (ORCPT
+	with ESMTP id S1751388Ab3AWTcv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jan 2013 14:32:45 -0500
+	Wed, 23 Jan 2013 14:32:51 -0500
 In-reply-to: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: hverkuil@xs4all.nl, g.liakhovetski@gmx.de, laurent.pinchart@ideasonboard.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, grant.likely@secretlab.ca, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, myungjoo.ham@samsung.com, sw0312.kim@samsung.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Before the camera ports can be used the pinmux needs to be configured
-properly. This patch adds a function to get the pinctrl states and to
-set default camera port pinmux state during the media driver's probe().
-The camera port(s) are configured for video bus operation in this way.
+This patch adds common FIMC device nodes for all Exynos4 SoCs.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyugmin Park <kyungmin.park@samsung.com>
-
-Changes since v3:
- - removed the "inactive" pinctrl state, it will be added later if required
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/media/soc/samsung-fimc.txt |    4 ++++
- drivers/media/platform/s5p-fimc/fimc-mdevice.c     |   14 ++++++++++++++
- drivers/media/platform/s5p-fimc/fimc-mdevice.h     |    2 ++
- 3 files changed, 20 insertions(+)
+ arch/arm/boot/dts/exynos4.dtsi |   64 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-index 0538990..f844b4a 100644
---- a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-+++ b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-@@ -18,6 +18,10 @@ Required properties:
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 0ad4899..12b46e1 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -36,6 +36,12 @@
+ 		i2c5 = &i2c_5;
+ 		i2c6 = &i2c_6;
+ 		i2c7 = &i2c_7;
++		csis0 = &csis_0;
++		csis1 = &csis_1;
++		fimc0 = &fimc_0;
++		fimc1 = &fimc_1;
++		fimc2 = &fimc_2;
++		fimc3 = &fimc_3;
+ 	};
  
- - compatible	   : must be "samsung,fimc", "simple-bus"
+ 	pd_mfc: mfc-power-domain@10023C40 {
+@@ -110,6 +116,64 @@
+ 		status = "disabled";
+ 	};
  
-+- pinctrl-names    : pinctrl names for camera port pinmux control, at least
-+		     "default" need to be specified.
-+- pinctrl-0...N	   : pinctrl properties corresponding to pinctrl-names
++	camera {
++		compatible = "samsung,fimc", "simple-bus";
++		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
 +
- The 'camera' node must include at least one 'fimc' child node.
- 
- 
-diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.c b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-index a21db59..c3cd2ad 100644
---- a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-+++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-@@ -1137,6 +1137,14 @@ static ssize_t fimc_md_sysfs_store(struct device *dev,
- static DEVICE_ATTR(subdev_conf_mode, S_IWUSR | S_IRUGO,
- 		   fimc_md_sysfs_show, fimc_md_sysfs_store);
- 
-+static int fimc_md_get_pinctrl(struct fimc_md *fmd)
-+{
-+	fmd->pinctl = devm_pinctrl_get_select_default(&fmd->pdev->dev);
-+	if (IS_ERR(fmd->pinctl))
-+		return PTR_ERR(fmd->pinctl);
-+	return 0;
-+}
++		fimc_0: fimc@11800000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11800000 0x1000>;
++			interrupts = <0 84 0>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
 +
- static int fimc_md_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1181,6 +1189,12 @@ static int fimc_md_probe(struct platform_device *pdev)
- 	/* Protect the media graph while we're registering entities */
- 	mutex_lock(&fmd->media_dev.graph_mutex);
- 
-+	if (dev->of_node) {
-+		ret = fimc_md_get_pinctrl(fmd);
-+		if (ret < 0)
-+			goto err_unlock;
-+	}
++		fimc_1: fimc@11810000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11810000 0x1000>;
++			interrupts = <0 85 0>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
 +
- 	if (fmd->pdev->dev.of_node)
- 		ret = fimc_md_register_of_platform_entities(fmd, dev->of_node);
- 	else
-diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.h b/drivers/media/platform/s5p-fimc/fimc-mdevice.h
-index 38006ba..8be68a7 100644
---- a/drivers/media/platform/s5p-fimc/fimc-mdevice.h
-+++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.h
-@@ -10,6 +10,7 @@
- #define FIMC_MDEVICE_H_
- 
- #include <linux/clk.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/mutex.h>
- #include <media/media-device.h>
-@@ -85,6 +86,7 @@ struct fimc_md {
- 	struct media_device media_dev;
- 	struct v4l2_device v4l2_dev;
- 	struct platform_device *pdev;
-+	struct pinctrl *pinctl;
- 	bool user_subdev_api;
- 	spinlock_t slock;
- };
++		fimc_2: fimc@11820000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11820000 0x1000>;
++			interrupts = <0 86 0>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
++
++		fimc_3: fimc@11830000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11830000 0x1000>;
++			interrupts = <0 87 0>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
++
++		csis_0: csis@11880000 {
++			compatible = "samsung,exynos4210-csis";
++			reg = <0x11880000 0x4000>;
++			interrupts = <0 78 0>;
++			bus-width = <4>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
++
++		csis_1: csis@11890000 {
++			compatible = "samsung,exynos4210-csis";
++			reg = <0x11890000 0x4000>;
++			interrupts = <0 80 0>;
++			bus-width = <2>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
++	};
++
+ 	watchdog@10060000 {
+ 		compatible = "samsung,s3c2410-wdt";
+ 		reg = <0x10060000 0x100>;
 -- 
 1.7.9.5
