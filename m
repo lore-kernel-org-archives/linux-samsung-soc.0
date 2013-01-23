@@ -1,15 +1,14 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC v4 01/14] [media] Add common video interfaces OF bindings
- documentation
-Date: Wed, 23 Jan 2013 20:31:16 +0100
-Message-ID: <1358969489-20420-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC v4 02/14] [media] Add a V4L2 OF parser
+Date: Wed, 23 Jan 2013 20:31:17 +0100
+Message-ID: <1358969489-20420-3-git-send-email-s.nawrocki@samsung.com>
 References: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12722 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:12728 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751805Ab3AWTb5 (ORCPT
+	with ESMTP id S1751208Ab3AWTcD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jan 2013 14:31:57 -0500
+	Wed, 23 Jan 2013 14:32:03 -0500
 In-reply-to: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -18,235 +17,383 @@ Cc: hverkuil@xs4all.nl, g.liakhovetski@gmx.de, laurent.pinchart@ideasonboard.com
 
 From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
-This patch adds a document describing common OF bindings for video
-capture, output and video processing devices. It is curently mainly
-focused on video capture devices, with data busses defined by
-standards like ITU-R BT.656 or MIPI-CSI2.
-It also documents a method of describing data links between devices.
+Add a V4L2 OF parser, implementing bindings documented in
+Documentation/devicetree/bindings/media/video-interfaces.txt.
 
 Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+[s.nawrocki@samsung.com: various corrections and improvements
+since the initial version]
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
-Acked-by: Rob Herring <rob.herring@calxeda.com>
 ---
 
 Changes since v3:
- - improved clock-lanes property description,
- - grammar corrections of the example dts snippet description.
+ - minor corrections of the comments,
+ - replaced parent->name with parent->full_name.
 ---
- .../devicetree/bindings/media/video-interfaces.txt |  204 ++++++++++++++++++++
- 1 file changed, 204 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/video-interfaces.txt
+ drivers/media/v4l2-core/Makefile  |    3 +
+ drivers/media/v4l2-core/v4l2-of.c |  253 +++++++++++++++++++++++++++++++++++++
+ include/media/v4l2-of.h           |   79 ++++++++++++
+ 3 files changed, 335 insertions(+)
+ create mode 100644 drivers/media/v4l2-core/v4l2-of.c
+ create mode 100644 include/media/v4l2-of.h
 
-diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
+diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
+index c2d61d4..00f64d6 100644
+--- a/drivers/media/v4l2-core/Makefile
++++ b/drivers/media/v4l2-core/Makefile
+@@ -9,6 +9,9 @@ videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
+ ifeq ($(CONFIG_COMPAT),y)
+   videodev-objs += v4l2-compat-ioctl32.o
+ endif
++ifeq ($(CONFIG_OF),y)
++  videodev-objs += v4l2-of.o
++endif
+
+ obj-$(CONFIG_VIDEO_DEV) += videodev.o v4l2-int-device.o
+ obj-$(CONFIG_VIDEO_V4L2) += v4l2-common.o
+diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/v4l2-of.c
 new file mode 100644
-index 0000000..0da126f
+index 0000000..15d4396
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
-@@ -0,0 +1,204 @@
-+Common bindings for video data receiver and transmitter interfaces
++++ b/drivers/media/v4l2-core/v4l2-of.c
+@@ -0,0 +1,253 @@
++/*
++ * V4L2 OF binding parsing library
++ *
++ * Copyright (C) 2012 Renesas Electronics Corp.
++ * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of version 2 of the GNU General Public License as
++ * published by the Free Software Foundation.
++ */
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/string.h>
++#include <linux/types.h>
 +
-+General concept
-+---------------
++#include <media/v4l2-of.h>
 +
-+Video data pipelines usually consist of external devices, e.g. camera sensors,
-+controlled over an I2C, SPI or UART bus, and SoC internal IP blocks, including
-+video DMA engines and video data processors.
++/**
++ * v4l2_of_parse_mipi_csi2() - parse MIPI CSI-2 bus properties
++ * @node: pointer to endpoint device_node
++ * @endpoint: pointer to v4l2_of_endpoint data structure
++ *
++ * Return: 0 on success or negative error value otherwise.
++ */
++int v4l2_of_parse_mipi_csi2(const struct device_node *node,
++			    struct v4l2_of_endpoint *endpoint)
++{
++	struct v4l2_of_mipi_csi2 *mipi_csi2 = &endpoint->mipi_csi_2;
++	u32 data_lanes[ARRAY_SIZE(mipi_csi2->data_lanes)];
++	struct property *prop;
++	const __be32 *lane = NULL;
++	u32 v;
++	int i = 0;
 +
-+SoC internal blocks are described by DT nodes, placed similarly to other SoC
-+blocks.  External devices are represented as child nodes of their respective
-+bus controller nodes, e.g. I2C.
++	prop = of_find_property(node, "data-lanes", NULL);
++	if (!prop)
++		return -EINVAL;
++	do {
++		lane = of_prop_next_u32(prop, lane, &data_lanes[i]);
++	} while (lane && i++ < ARRAY_SIZE(data_lanes));
 +
-+Data interfaces on all video devices are described by their child 'port' nodes.
-+Configuration of a port depends on other devices participating in the data
-+transfer and is described by 'endpoint' subnodes.
++	mipi_csi2->num_data_lanes = i;
++	while (i--)
++		mipi_csi2->data_lanes[i] = data_lanes[i];
 +
-+dev {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	port@0 {
-+		endpoint@0 { ... };
-+		endpoint@1 { ... };
-+	};
-+	port@1 { ... };
++	if (!of_property_read_u32(node, "clock-lanes", &v))
++		mipi_csi2->clock_lane = v;
++
++	if (of_get_property(node, "clock-noncontinuous", &v))
++		endpoint->mbus_flags |= V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
++
++	return 0;
++}
++EXPORT_SYMBOL(v4l2_of_parse_mipi_csi2);
++
++/**
++ * v4l2_of_parse_parallel_bus() - parse parallel bus properties
++ * @node: pointer to endpoint device_node
++ * @endpoint: pointer to v4l2_of_endpoint data structure
++ */
++void v4l2_of_parse_parallel_bus(const struct device_node *node,
++				struct v4l2_of_endpoint *endpoint)
++{
++	unsigned int flags = 0;
++	u32 v;
++
++	if (WARN_ON(!endpoint))
++		return;
++
++	if (!of_property_read_u32(node, "hsync-active", &v))
++		flags |= v ? V4L2_MBUS_HSYNC_ACTIVE_HIGH :
++			V4L2_MBUS_HSYNC_ACTIVE_LOW;
++
++	if (!of_property_read_u32(node, "vsync-active", &v))
++		flags |= v ? V4L2_MBUS_VSYNC_ACTIVE_HIGH :
++			V4L2_MBUS_VSYNC_ACTIVE_LOW;
++
++	if (!of_property_read_u32(node, "pclk-sample", &v))
++		flags |= v ? V4L2_MBUS_PCLK_SAMPLE_RISING :
++			V4L2_MBUS_PCLK_SAMPLE_FALLING;
++
++	if (!of_property_read_u32(node, "field-even-active", &v))
++		flags |= v ? V4L2_MBUS_FIELD_EVEN_HIGH :
++			V4L2_MBUS_FIELD_EVEN_LOW;
++	if (flags)
++		endpoint->mbus_type = V4L2_MBUS_PARALLEL;
++	else
++		endpoint->mbus_type = V4L2_MBUS_BT656;
++
++	if (!of_property_read_u32(node, "data-active", &v))
++		flags |= v ? V4L2_MBUS_DATA_ACTIVE_HIGH :
++			V4L2_MBUS_DATA_ACTIVE_LOW;
++
++	if (of_get_property(node, "slave-mode", &v))
++		flags |= V4L2_MBUS_SLAVE;
++
++	if (!of_property_read_u32(node, "bus-width", &v))
++		endpoint->parallel.bus_width = v;
++
++	if (!of_property_read_u32(node, "data-shift", &v))
++		endpoint->parallel.data_shift = v;
++
++	endpoint->mbus_flags = flags;
++}
++EXPORT_SYMBOL(v4l2_of_parse_parallel_bus);
++
++/**
++ * v4l2_of_parse_endpoint() - parse all endpoint node properties
++ * @node: pointer to endpoint device_node
++ * @endpoint: pointer to v4l2_of_endpoint data structure
++ *
++ * All properties are optional. If none are found, we don't set any flags.
++ * This means the port has a static configuration and no properties have
++ * to be specified explicitly.
++ * If any properties that identify the bus as parallel are found and
++ * slave-mode isn't set, we set V4L2_MBUS_MASTER. Similarly, if we recognise
++ * the bus as serial CSI-2 and clock-noncontinuous isn't set, we set the
++ * V4L2_MBUS_CSI2_CONTINUOUS_CLOCK flag.
++ * The caller should hold a reference to @node.
++ */
++void v4l2_of_parse_endpoint(const struct device_node *node,
++			    struct v4l2_of_endpoint *endpoint)
++{
++	const struct device_node *port_node = of_get_parent(node);
++	bool data_lanes_present = false;
++
++	memset(endpoint, 0, sizeof(*endpoint));
++
++	endpoint->local_node = node;
++	/*
++	 * It doesn't matter whether the two calls below succeed. If they
++	 * don't then the default value 0 is used.
++	 */
++	of_property_read_u32(port_node, "reg", &endpoint->port);
++	of_property_read_u32(node, "reg", &endpoint->addr);
++
++	v4l2_of_parse_parallel_bus(node, endpoint);
++
++	/* If any parallel bus properties have been found, skip serial ones. */
++	if (endpoint->parallel.bus_width || endpoint->parallel.data_shift ||
++	    endpoint->mbus_flags) {
++		/* Default parallel bus-master. */
++		if (!(endpoint->mbus_flags & V4L2_MBUS_SLAVE))
++			endpoint->mbus_flags |= V4L2_MBUS_MASTER;
++		return;
++	}
++
++	endpoint->mbus_type = V4L2_MBUS_CSI2;
++
++	if (!v4l2_of_parse_mipi_csi2(node, endpoint))
++		data_lanes_present = true;
++
++	if ((endpoint->mipi_csi_2.clock_lane || data_lanes_present) &&
++	    !(endpoint->mbus_flags & V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK)) {
++		/* Default CSI-2: continuous clock. */
++		endpoint->mbus_flags |= V4L2_MBUS_CSI2_CONTINUOUS_CLOCK;
++	}
++}
++EXPORT_SYMBOL(v4l2_of_parse_endpoint);
++
++/*
++ * Return a refcounted next 'endpoint' device_node. Contrary to the common OF
++ * practice, we do not drop the reference to previous, users have to do it
++ * themselves, when they're done with the node.
++ */
++struct device_node *v4l2_of_get_next_endpoint(const struct device_node *parent,
++					struct device_node *previous)
++{
++	struct device_node *child, *port;
++
++	if (!parent)
++		return NULL;
++
++	if (!previous) {
++		/*
++		 * If this is the first call, we have to find a port within
++		 * this node.
++		 */
++		for_each_child_of_node(parent, port) {
++			if (!of_node_cmp(port->name, "port"))
++				break;
++		}
++		if (port) {
++			/* Found a port, get a link. */
++			child = of_get_next_child(port, NULL);
++			of_node_put(port);
++		} else {
++			child = NULL;
++		}
++		if (!child)
++			pr_err("%s(): Invalid DT: %s has no link children!\n",
++			       __func__, parent->full_name);
++	} else {
++		port = of_get_parent(previous);
++		if (!port)
++			/* Hm, has someone given us the root node?... */
++			return NULL;
++
++		/* Avoid dropping previous refcount to 0. */
++		of_node_get(previous);
++		child = of_get_next_child(port, previous);
++		if (child) {
++			of_node_put(port);
++			return child;
++		}
++
++		/* No more links under this port, try the next one. */
++		do {
++			port = of_get_next_child(parent, port);
++			if (!port)
++				return NULL;
++		} while (of_node_cmp(port->name, "port"));
++
++		/* Pick up the first link on this port. */
++		child = of_get_next_child(port, NULL);
++		of_node_put(port);
++	}
++
++	return child;
++}
++EXPORT_SYMBOL(v4l2_of_get_next_endpoint);
++
++/**
++ * v4l2_of_get_remote_port_parent() - get remote port's parent node
++ * @node: pointer to local endpoint device_node
++ *
++ * Return: Remote device node associated with remote endpoint node linked
++ *	   to @node. Use of_node_put() on it when done.
++ */
++struct device_node *v4l2_of_get_remote_port_parent(
++			       const struct device_node *node)
++{
++	struct device_node *re, *tmp;
++
++	/* Get remote endpoint node. */
++	re = of_parse_phandle(node, "remote-endpoint", 0);
++	if (!re)
++		return NULL;
++
++	/* Remote port. */
++	tmp = of_get_parent(re);
++	of_node_put(re);
++	if (!tmp)
++		return NULL;
++
++	/* Remote device node. */
++	re = of_get_parent(tmp);
++	of_node_put(tmp);
++
++	return re;
++}
++EXPORT_SYMBOL(v4l2_of_get_remote_port_parent);
+diff --git a/include/media/v4l2-of.h b/include/media/v4l2-of.h
+new file mode 100644
+index 0000000..1aba3b3
+--- /dev/null
++++ b/include/media/v4l2-of.h
+@@ -0,0 +1,79 @@
++/*
++ * V4L2 OF binding parsing library
++ *
++ * Copyright (C) 2012 Renesas Electronics Corp.
++ * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of version 2 of the GNU General Public License as
++ * published by the Free Software Foundation.
++ */
++#ifndef _V4L2_OF_H
++#define _V4L2_OF_H
++
++#include <linux/list.h>
++#include <linux/types.h>
++#include <linux/errno.h>
++
++#include <media/v4l2-mediabus.h>
++
++struct device_node;
++
++struct v4l2_of_mipi_csi2 {
++	unsigned char data_lanes[4];
++	unsigned char clock_lane;
++	unsigned short num_data_lanes;
 +};
 +
-+If a port can be configured to work with more than one other device on the same
-+bus, an 'endpoint' child node must be provided for each of them.  If more than
-+one port is present in a device node or there is more than one endpoint at a
-+port, a common scheme, using '#address-cells', '#size-cells' and 'reg' properties
-+is used.
-+
-+Two 'endpoint' nodes are linked with each other through their 'remote-endpoint'
-+phandles.  An endpoint subnode of a device contains all properties needed for
-+configuration of this device for data exchange with the other device.  In most
-+cases properties at the peer 'endpoint' nodes will be identical, however
-+they might need to be different when there is any signal modifications on the
-+bus between two devices, e.g. there are logic signal inverters on the lines.
-+
-+Required properties
-+-------------------
-+
-+If there is more than one 'port' or more than one 'endpoint' node following
-+properties are required in relevant parent node:
-+
-+- #address-cells : number of cells required to define port number, should be 1.
-+- #size-cells    : should be zero.
-+
-+Optional endpoint properties
-+----------------------------
-+
-+- remote-endpoint: phandle to an 'endpoint' subnode of the other device node.
-+- slave-mode: a boolean property, run the link in slave mode. Default is master
-+  mode.
-+- bus-width: number of data lines, valid for parallel busses.
-+- data-shift: on parallel data busses, if bus-width is used to specify the
-+  number of data lines, data-shift can be used to specify which data lines are
-+  used, e.g. "bus-width=<10>; data-shift=<2>;" means, that lines 9:2 are used.
-+- hsync-active: active state of HSYNC signal, 0/1 for LOW/HIGH respectively.
-+- vsync-active: active state of VSYNC signal, 0/1 for LOW/HIGH respectively.
-+  Note, that if HSYNC and VSYNC polarities are not specified, embedded
-+  synchronization may be required, where supported.
-+- data-active: similar to HSYNC and VSYNC, specifies data line polarity.
-+- field-even-active: field signal level during the even field data transmission.
-+- pclk-sample: sample data on rising (1) or falling (0) edge of the pixel clock
-+  signal.
-+- data-lanes: an array of physical data lane indexes. Position of an entry
-+  determines the logical lane number, while the value of an entry indicates
-+  physical lane, e.g. for 2-lane MIPI CSI-2 bus we could have
-+  "data-lanes = <1>, <2>;", assuming the clock lane is on hardware lane 0.
-+  This property is valid for serial busses only (e.g. MIPI CSI-2).
-+- clock-lanes: an array of physical clock lane indexes. Position of an entry
-+  determines the logical lane number, while the value of an entry indicates
-+  physical lane, e.g. for a MIPI CSI-2 bus we could have "clock-lanes = <0>;",
-+  which places the clock lane on hardware lane 0. This property is valid for
-+  serial busses only (e.g. MIPI CSI-2). Note that for the MIPI CSI-2 bus this
-+  array contains only one entry.
-+- clock-noncontinuous: a boolean property to allow MIPI CSI-2 non-continuous
-+  clock mode.
-+
-+Example
-+-------
-+
-+The example snippet below describes two data pipelines.  ov772x and imx074 are
-+camera sensors with a parallel and serial (MIPI CSI-2) video bus respectively.
-+Both sensors are on the I2C control bus corresponding to the i2c0 controller
-+node.  ov772x sensor is linked directly to the ceu0 video host interface.
-+imx074 is linked to ceu0 through the MIPI CSI-2 receiver (csi2). ceu0 has a
-+(single) DMA engine writing captured data to memory.  ceu0 node has a single
-+'port' node which indicates that at any time only one of the following data
-+pipelines can be active: ov772x -> ceu0 or imx074 -> csi2 -> ceu0.
-+
-+	ceu0: ceu@0xfe910000 {
-+		compatible = "renesas,sh-mobile-ceu";
-+		reg = <0xfe910000 0xa0>;
-+		interrupts = <0x880>;
-+
-+		mclk: master_clock {
-+			compatible = "renesas,ceu-clock";
-+			#clock-cells = <1>;
-+			clock-frequency = <50000000>;	/* Max clock frequency */
-+			clock-output-names = "mclk";
-+		};
-+
-+		port {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			ceu0_1: endpoint@1 {
-+				reg = <1>;		/* Local endpoint # */
-+				remote = <&ov772x_1_1>;	/* Remote phandle */
-+				bus-width = <8>;	/* Used data lines */
-+				data-shift = <0>;	/* Lines 7:0 are used */
-+
-+				/* If hsync-active/vsync-active are missing,
-+				   embedded bt.605 sync is used */
-+				hsync-active = <1>;	/* Active high */
-+				vsync-active = <1>;	/* Active high */
-+				data-active = <1>;	/* Active high */
-+				pclk-sample = <1>;	/* Rising */
-+			};
-+
-+			ceu0_0: endpoint@0 {
-+				reg = <0>;
-+				remote = <&csi2_2>;
-+				immutable;
-+			};
-+		};
++struct v4l2_of_endpoint {
++	unsigned int port;
++	unsigned int addr;
++	struct list_head head;
++	const struct device_node *local_node;
++	const __be32 *remote;
++	enum v4l2_mbus_type mbus_type;
++	unsigned int mbus_flags;
++	union {
++		struct {
++			unsigned char bus_width;
++			unsigned char data_shift;
++		} parallel;
++		struct v4l2_of_mipi_csi2 mipi_csi_2;
 +	};
++};
 +
-+	i2c0: i2c@0xfff20000 {
-+		...
-+		ov772x_1: camera@0x21 {
-+			compatible = "omnivision,ov772x";
-+			reg = <0x21>;
-+			vddio-supply = <&regulator1>;
-+			vddcore-supply = <&regulator2>;
++#ifdef CONFIG_OF
++int v4l2_of_parse_mipi_csi2(const struct device_node *node,
++			    struct v4l2_of_endpoint *endpoint);
++void v4l2_of_parse_parallel_bus(const struct device_node *node,
++				struct v4l2_of_endpoint *endpoint);
++void v4l2_of_parse_endpoint(const struct device_node *node,
++			    struct v4l2_of_endpoint *link);
++struct device_node *v4l2_of_get_next_endpoint(const struct device_node *parent,
++					struct device_node *previous);
++struct device_node *v4l2_of_get_remote_port_parent(
++					const struct device_node *node);
++#else /* CONFIG_OF */
 +
-+			clock-frequency = <20000000>;
-+			clocks = <&mclk 0>;
-+			clock-names = "xclk";
++static inline int v4l2_of_parse_endpoint(const struct device_node *node,
++					struct v4l2_of_endpoint *link)
++{
++	return -ENOSYS;
++}
 +
-+			port {
-+				/* With 1 endpoint per port no need in addresses. */
-+				ov772x_1_1: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&ceu0_1>;
-+					hsync-active = <1>;
-+					vsync-active = <0>; /* Who came up with an
-+							       inverter here ?... */
-+					data-active = <1>;
-+					pclk-sample = <1>;
-+				};
-+			};
-+		};
++static inline struct device_node *v4l2_of_get_next_endpoint(
++					const struct device_node *parent,
++					struct device_node *previous)
++{
++	return NULL;
++}
 +
-+		imx074: camera@0x1a {
-+			compatible = "sony,imx074";
-+			reg = <0x1a>;
-+			vddio-supply = <&regulator1>;
-+			vddcore-supply = <&regulator2>;
++static inline struct device_node *v4l2_of_get_remote_endpoint(
++					const struct device_node *node)
++{
++	return NULL;
++}
 +
-+			clock-frequency = <30000000>;	/* Shared clock with ov772x_1 */
-+			clocks = <&mclk 0>;
-+			clock-names = "sysclk";		/* Assuming this is the
-+							   name in the datasheet */
-+			port {
-+				imx074_1: endpoint {
-+					clock-lanes = <0>;
-+					data-lanes = <1>, <2>;
-+					remote-endpoint = <&csi2_1>;
-+				};
-+			};
-+		};
-+	};
++#endif /* CONFIG_OF */
 +
-+	csi2: csi2@0xffc90000 {
-+		compatible = "renesas,sh-mobile-csi2";
-+		reg = <0xffc90000 0x1000>;
-+		interrupts = <0x17a0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			compatible = "renesas,csi2c";	/* One of CSI2I and CSI2C. */
-+			reg = <1>;			/* CSI-2 PHY #1 of 2: PHY_S,
-+							   PHY_M has port address 0,
-+							   is unused. */
-+			csi2_1: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <2>, <1>;
-+				remote-endpoint = <&imx074_1>;
-+			};
-+		};
-+		port@2 {
-+			reg = <2>;			/* port 2: link to the CEU */
-+
-+			csi2_2: endpoint {
-+				immutable;
-+				remote-endpoint = <&ceu0_0>;
-+			};
-+		};
-+	};
++#endif /* _V4L2_OF_H */
 --
 1.7.9.5
