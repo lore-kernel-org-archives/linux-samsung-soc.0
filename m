@@ -1,83 +1,252 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC v3 00/14] V4L2 device tree bindings and OF helpers
-Date: Wed, 23 Jan 2013 20:31:15 +0100
-Message-ID: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
+Subject: [PATCH RFC v4 01/14] [media] Add common video interfaces OF bindings
+ documentation
+Date: Wed, 23 Jan 2013 20:31:16 +0100
+Message-ID: <1358969489-20420-2-git-send-email-s.nawrocki@samsung.com>
+References: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:12722 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751805Ab3AWTb5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Jan 2013 14:31:57 -0500
+In-reply-to: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: hverkuil@xs4all.nl, g.liakhovetski@gmx.de, laurent.pinchart@ideasonboard.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, grant.likely@secretlab.ca, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, myungjoo.ham@samsung.com, sw0312.kim@samsung.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-This series includes the updated device tree bindings documentation and
-the V4L2 OF parser (v4). There were just couple minor changes since v3:
-     - improved clock-lanes property description,
-     - grammar corrections of the example dts snippet description,
-     - minor comments corrections.
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
-This series also includes patches adding device tree support for Exynos4
-SoC camera subsystem. Changes in this part include:
- - dropped patch adding OF_DEV_AUXDATA entries as this series has
-   been tested with the new Exynos4 clocks driver;
- - max-data-lanes property of the CSIS device node replaced with bus-width;
- - added clock-frequency property to FIMC device nodes;
- - corrected FIMC-LITE devices registration (the code didn't consider
-   they are child nodes of the fimc-is node);
- - removed the "inactive" camera port pinctrl state, it is now optional
-   and handling of it wasn't implemeted at the driver yet anyway;
+This patch adds a document describing common OF bindings for video
+capture, output and video processing devices. It is curently mainly
+focused on video capture devices, with data busses defined by
+standards like ITU-R BT.656 or MIPI-CSI2.
+It also documents a method of describing data links between devices.
 
-I have also tested this patch set with the FIMC-IS (the camera ISP
-subsystem with a dedicated ARM MCU) driver.
+Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
+Acked-by: Rob Herring <rob.herring@calxeda.com>
+---
 
-For the media patches 01..09/14 I intend to send a pull request within
-a few days. Patches 10..13/14 I'd like to be applied by the Samsung
-platforms maintainer.
-
-Patch 14/14 is an example only.
-
-Thank you for all reviews!
-
-Guennadi Liakhovetski (2):
-  [media] Add common video interfaces OF bindings documentation
-  [media] Add a V4L2 OF parser
-
-Sylwester Nawrocki (12):
-  s5p-csis: Add device tree support
-  s5p-fimc: Add device tree support for FIMC devices
-  s5p-fimc: Add device tree support for FIMC-LITE devices
-  s5p-fimc: Change platform subdevs registration method
-  s5p-fimc: Add device tree support for the main media device driver
-  s5p-fimc: Add device tree based sensors registration
-  s5p-fimc: Use pinctrl API for camera ports configuration
-  ARM: dts: Add camera to node exynos4.dtsi
-  ARM: dts: Add ISP power domain node for Exynos4x12
-  ARM: dts: Add FIMC and MIPI CSIS device nodes for Exynos4x12
-  ARM: dts: Add camera pinctrl nodes for Exynos4x12 SoCs
-  ARM: dts: Add camera device nodes nodes for PQ board
-
- .../devicetree/bindings/media/soc/samsung-fimc.txt |  184 +++++++
- .../bindings/media/soc/samsung-mipi-csis.txt       |   82 +++
- .../devicetree/bindings/media/video-interfaces.txt |  204 ++++++++
- arch/arm/boot/dts/exynos4.dtsi                     |   64 +++
- arch/arm/boot/dts/exynos4412-slp_pq.dts            |  169 +++++++
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          |   33 +-
- arch/arm/boot/dts/exynos4x12.dtsi                  |   52 ++
- drivers/media/platform/s5p-fimc/fimc-capture.c     |    2 +-
- drivers/media/platform/s5p-fimc/fimc-core.c        |   94 ++--
- drivers/media/platform/s5p-fimc/fimc-lite.c        |   65 ++-
- drivers/media/platform/s5p-fimc/fimc-mdevice.c     |  526 +++++++++++++++-----
- drivers/media/platform/s5p-fimc/fimc-mdevice.h     |    6 +
- drivers/media/platform/s5p-fimc/mipi-csis.c        |  158 ++++--
- drivers/media/platform/s5p-fimc/mipi-csis.h        |    1 +
- drivers/media/v4l2-core/Makefile                   |    3 +
- drivers/media/v4l2-core/v4l2-of.c                  |  253 ++++++++++
- include/media/s5p_fimc.h                           |   17 +
- include/media/v4l2-of.h                            |   79 +++
- 18 files changed, 1771 insertions(+), 221 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
- create mode 100644 Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
+Changes since v3:
+ - improved clock-lanes property description,
+ - grammar corrections of the example dts snippet description.
+---
+ .../devicetree/bindings/media/video-interfaces.txt |  204 ++++++++++++++++++++
+ 1 file changed, 204 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/media/video-interfaces.txt
- create mode 100644 drivers/media/v4l2-core/v4l2-of.c
- create mode 100644 include/media/v4l2-of.h
 
+diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
+new file mode 100644
+index 0000000..0da126f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
+@@ -0,0 +1,204 @@
++Common bindings for video data receiver and transmitter interfaces
++
++General concept
++---------------
++
++Video data pipelines usually consist of external devices, e.g. camera sensors,
++controlled over an I2C, SPI or UART bus, and SoC internal IP blocks, including
++video DMA engines and video data processors.
++
++SoC internal blocks are described by DT nodes, placed similarly to other SoC
++blocks.  External devices are represented as child nodes of their respective
++bus controller nodes, e.g. I2C.
++
++Data interfaces on all video devices are described by their child 'port' nodes.
++Configuration of a port depends on other devices participating in the data
++transfer and is described by 'endpoint' subnodes.
++
++dev {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	port@0 {
++		endpoint@0 { ... };
++		endpoint@1 { ... };
++	};
++	port@1 { ... };
++};
++
++If a port can be configured to work with more than one other device on the same
++bus, an 'endpoint' child node must be provided for each of them.  If more than
++one port is present in a device node or there is more than one endpoint at a
++port, a common scheme, using '#address-cells', '#size-cells' and 'reg' properties
++is used.
++
++Two 'endpoint' nodes are linked with each other through their 'remote-endpoint'
++phandles.  An endpoint subnode of a device contains all properties needed for
++configuration of this device for data exchange with the other device.  In most
++cases properties at the peer 'endpoint' nodes will be identical, however
++they might need to be different when there is any signal modifications on the
++bus between two devices, e.g. there are logic signal inverters on the lines.
++
++Required properties
++-------------------
++
++If there is more than one 'port' or more than one 'endpoint' node following
++properties are required in relevant parent node:
++
++- #address-cells : number of cells required to define port number, should be 1.
++- #size-cells    : should be zero.
++
++Optional endpoint properties
++----------------------------
++
++- remote-endpoint: phandle to an 'endpoint' subnode of the other device node.
++- slave-mode: a boolean property, run the link in slave mode. Default is master
++  mode.
++- bus-width: number of data lines, valid for parallel busses.
++- data-shift: on parallel data busses, if bus-width is used to specify the
++  number of data lines, data-shift can be used to specify which data lines are
++  used, e.g. "bus-width=<10>; data-shift=<2>;" means, that lines 9:2 are used.
++- hsync-active: active state of HSYNC signal, 0/1 for LOW/HIGH respectively.
++- vsync-active: active state of VSYNC signal, 0/1 for LOW/HIGH respectively.
++  Note, that if HSYNC and VSYNC polarities are not specified, embedded
++  synchronization may be required, where supported.
++- data-active: similar to HSYNC and VSYNC, specifies data line polarity.
++- field-even-active: field signal level during the even field data transmission.
++- pclk-sample: sample data on rising (1) or falling (0) edge of the pixel clock
++  signal.
++- data-lanes: an array of physical data lane indexes. Position of an entry
++  determines the logical lane number, while the value of an entry indicates
++  physical lane, e.g. for 2-lane MIPI CSI-2 bus we could have
++  "data-lanes = <1>, <2>;", assuming the clock lane is on hardware lane 0.
++  This property is valid for serial busses only (e.g. MIPI CSI-2).
++- clock-lanes: an array of physical clock lane indexes. Position of an entry
++  determines the logical lane number, while the value of an entry indicates
++  physical lane, e.g. for a MIPI CSI-2 bus we could have "clock-lanes = <0>;",
++  which places the clock lane on hardware lane 0. This property is valid for
++  serial busses only (e.g. MIPI CSI-2). Note that for the MIPI CSI-2 bus this
++  array contains only one entry.
++- clock-noncontinuous: a boolean property to allow MIPI CSI-2 non-continuous
++  clock mode.
++
++Example
++-------
++
++The example snippet below describes two data pipelines.  ov772x and imx074 are
++camera sensors with a parallel and serial (MIPI CSI-2) video bus respectively.
++Both sensors are on the I2C control bus corresponding to the i2c0 controller
++node.  ov772x sensor is linked directly to the ceu0 video host interface.
++imx074 is linked to ceu0 through the MIPI CSI-2 receiver (csi2). ceu0 has a
++(single) DMA engine writing captured data to memory.  ceu0 node has a single
++'port' node which indicates that at any time only one of the following data
++pipelines can be active: ov772x -> ceu0 or imx074 -> csi2 -> ceu0.
++
++	ceu0: ceu@0xfe910000 {
++		compatible = "renesas,sh-mobile-ceu";
++		reg = <0xfe910000 0xa0>;
++		interrupts = <0x880>;
++
++		mclk: master_clock {
++			compatible = "renesas,ceu-clock";
++			#clock-cells = <1>;
++			clock-frequency = <50000000>;	/* Max clock frequency */
++			clock-output-names = "mclk";
++		};
++
++		port {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			ceu0_1: endpoint@1 {
++				reg = <1>;		/* Local endpoint # */
++				remote = <&ov772x_1_1>;	/* Remote phandle */
++				bus-width = <8>;	/* Used data lines */
++				data-shift = <0>;	/* Lines 7:0 are used */
++
++				/* If hsync-active/vsync-active are missing,
++				   embedded bt.605 sync is used */
++				hsync-active = <1>;	/* Active high */
++				vsync-active = <1>;	/* Active high */
++				data-active = <1>;	/* Active high */
++				pclk-sample = <1>;	/* Rising */
++			};
++
++			ceu0_0: endpoint@0 {
++				reg = <0>;
++				remote = <&csi2_2>;
++				immutable;
++			};
++		};
++	};
++
++	i2c0: i2c@0xfff20000 {
++		...
++		ov772x_1: camera@0x21 {
++			compatible = "omnivision,ov772x";
++			reg = <0x21>;
++			vddio-supply = <&regulator1>;
++			vddcore-supply = <&regulator2>;
++
++			clock-frequency = <20000000>;
++			clocks = <&mclk 0>;
++			clock-names = "xclk";
++
++			port {
++				/* With 1 endpoint per port no need in addresses. */
++				ov772x_1_1: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&ceu0_1>;
++					hsync-active = <1>;
++					vsync-active = <0>; /* Who came up with an
++							       inverter here ?... */
++					data-active = <1>;
++					pclk-sample = <1>;
++				};
++			};
++		};
++
++		imx074: camera@0x1a {
++			compatible = "sony,imx074";
++			reg = <0x1a>;
++			vddio-supply = <&regulator1>;
++			vddcore-supply = <&regulator2>;
++
++			clock-frequency = <30000000>;	/* Shared clock with ov772x_1 */
++			clocks = <&mclk 0>;
++			clock-names = "sysclk";		/* Assuming this is the
++							   name in the datasheet */
++			port {
++				imx074_1: endpoint {
++					clock-lanes = <0>;
++					data-lanes = <1>, <2>;
++					remote-endpoint = <&csi2_1>;
++				};
++			};
++		};
++	};
++
++	csi2: csi2@0xffc90000 {
++		compatible = "renesas,sh-mobile-csi2";
++		reg = <0xffc90000 0x1000>;
++		interrupts = <0x17a0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@1 {
++			compatible = "renesas,csi2c";	/* One of CSI2I and CSI2C. */
++			reg = <1>;			/* CSI-2 PHY #1 of 2: PHY_S,
++							   PHY_M has port address 0,
++							   is unused. */
++			csi2_1: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <2>, <1>;
++				remote-endpoint = <&imx074_1>;
++			};
++		};
++		port@2 {
++			reg = <2>;			/* port 2: link to the CEU */
++
++			csi2_2: endpoint {
++				immutable;
++				remote-endpoint = <&ceu0_0>;
++			};
++		};
++	};
 --
 1.7.9.5
