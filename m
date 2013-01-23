@@ -1,63 +1,191 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Wed, 23 Jan 2013 13:40:11 +0100
-Message-ID: <50FFDA2B.4010506@samsung.com>
-References: <CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
- <CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
- <CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
- <016901cde163$6be034c0$43a09e40$@samsung.com>
- <CAFp+6iGq32UV3mZ=QYVizJGQEark0Qztu7m4jy3DvG431ajV1w@mail.gmail.com>
- <50DB811A.8010408@gmail.com> <054601cdf862$534a8ad0$f9dfa070$@samsung.com>
- <CAFp+6iGrp8b+T3n+xNha7jMFMgDsFR8E9zCijoUANZgmN4QL_A@mail.gmail.com>
- <20130122084817.GC16143@arwen.pp.htv.fi>
- <063e01cdf8ec$85e637c0$91b2a740$@samsung.com>
- <20130123095021.GB22054@arwen.pp.htv.fi>
- <CAFp+6iH2_18s=HwsLhekyUZW=yNCjZzskiA5s-ofrCbzDBGL4Q@mail.gmail.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
+Date: Wed, 23 Jan 2013 13:52:58 +0100
+Message-ID: <50FFDD2A.9040102@metafoo.de>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:64967 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755825Ab3AWMkP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jan 2013 07:40:15 -0500
-In-reply-to: <CAFp+6iH2_18s=HwsLhekyUZW=yNCjZzskiA5s-ofrCbzDBGL4Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: balbi@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, Alan Stern <stern@rowland.harvard.edu>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, cpgs@samsung.com
+
+On 01/23/2013 05:58 AM, Naveen Krishna Chatradhi wrote:
+> This patch add an ADC IP found on EXYNOS5 series socs from Samsung.
+> Also adds the Documentation for device tree bindings.
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> ---
+> Changes since v1:
+> 
+> 1. Fixed comments from Lars
+> 2. Added support for ADC on EXYNOS5410
+> 
+> Changes since v2:
+> 
+> 1. Changed the instance name for (struct iio_dev *) to indio_dev
+> 2. Changed devm_request_irq to request_irq
+> 
+> Few doubts regarding the mappings and child device handling.
+> Kindly, suggest me better methods.
+> 
 
 Hi,
 
-On 01/23/2013 01:20 PM, Vivek Gautam wrote:
->>>>> -     { .compatible = "samsung,exynos-dwc3" },
->>>>> +     { .compatible = "samsung,synopsis-dwc3" }
->>>>
->>>> You're both missing a point here. The synopsys IP driver is called
->>>> dwc3.ko and that's compatible with synopsys,dwc3. Your glue layer driver
->>>> (dwc3-exynos.ko) is compatible with your platform, so
->>>> samsung,exynos-dwc3 sounds correct to me.
->>>>
->>> Hmm...yeah, you're right and agreed.
->>>
->>> However, we need to use more clear name there like "samsung,exynos-dwusb3"
->>> in compatible, because you know there are lots of other IPs in Synopsis
->>> Design Ware brand. So we have to include usb in compatible for that.
->>
->> fair enough.
->>
-> 
-> Thanks for your suggestions. This definitely make things clear.
-> I shall then keep "samsung,exynos-dwusb3" as the compatible string or,
-> should i be including '5250' string as well, something like
-> "samsung,exynos5250-dwusb3"
-> as pointed out by Grant earlier ?  :-O
+The patch looks mostly good now. As for the mappings, the problem is that we
+currently do not have any device tree bindings for IIO. So a proper solution
+would be to add dt bindings for IIO.
 
-IMHO this needs to be "samsung,exynos5250-dwusb3", rather than 
-"samsung,exynos-dwusb3". :)
+[...]
+> diff --git a/drivers/iio/adc/exynos5_adc.c b/drivers/iio/adc/exynos5_adc.c
+> new file mode 100644
+> index 0000000..8982675
+> --- /dev/null
+> +++ b/drivers/iio/adc/exynos5_adc.c
+[...]
+> +
+> +/** ADC core in EXYNOS5410 has 10 channels,
+> + * ADC core in EXYNOS5250 has 8 channels
+> +*/
 
---
+Minor nitpick, according to Documentation/Codingsytle multi-line comments
+should look like this:
 
-Thanks,
-Sylwester
+/*
+ * Text
+ * Text
+ */
+
+[...]
+> +static int exynos5_adc_probe(struct platform_device *pdev)
+> +{
+> +	struct exynos5_adc *info = NULL;
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct iio_dev *indio_dev = NULL;
+> +	struct resource	*mem;
+> +	int ret = -ENODEV;
+> +	int irq;
+> +
+> +	if (!np)
+> +		return ret;
+> +
+> +	indio_dev = iio_device_alloc(sizeof(struct exynos5_adc));
+> +	if (!indio_dev) {
+> +		dev_err(&pdev->dev, "failed allocating iio device\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	info = iio_priv(indio_dev);
+> +
+> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +
+> +	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
+
+While devm_request_and_ioremap takes care of the printing and error you
+still need to check whether regs is non NULL.
+
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0) {
+> +		dev_err(&pdev->dev, "no irq resource?\n");
+> +		ret = irq;
+> +		goto err_iio;
+> +	}
+> +
+> +	info->irq = irq;
+> +
+> +	ret = request_irq(info->irq, exynos5_adc_isr,
+> +					0, dev_name(&pdev->dev), info);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
+> +							info->irq);
+> +		goto err_iio;
+> +	}
+> +
+> +	info->clk = devm_clk_get(&pdev->dev, "adc");
+> +	if (IS_ERR(info->clk)) {
+> +		dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
+> +							PTR_ERR(info->clk));
+> +		ret = PTR_ERR(info->clk);
+> +		goto err_irq;
+> +	}
+> +
+> +	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
+> +	if (IS_ERR(info->vdd)) {
+> +		dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
+> +							PTR_ERR(info->vdd));
+> +		ret = PTR_ERR(info->vdd);
+> +		goto err_irq;
+> +	}
+> +
+> +	info->version = exynos5_adc_get_version(pdev);
+> +
+> +	platform_set_drvdata(pdev, indio_dev);
+> +
+> +	init_completion(&info->completion);
+
+Since the completion is used in the IRQ handler it should be initialized
+before the IRQ is requested.
+
+> +
+> +	indio_dev->name = dev_name(&pdev->dev);
+> +	indio_dev->dev.parent = &pdev->dev;
+> +	indio_dev->dev.of_node = pdev->dev.of_node;
+> +	indio_dev->info = &exynos5_adc_iio_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->channels = exynos5_adc_iio_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(exynos5_adc_iio_channels);
+
+Shouldn't the number of channels depend on the ADC version? E.g. 8 for v1
+and 10 for v2?
+
+> +
+> +	info->map = exynos5_adc_iio_maps;
+> +
+> +	ret = iio_map_array_register(indio_dev, info->map);
+> +	if (ret) {
+> +		dev_err(&indio_dev->dev, "failed mapping iio, err: %d\n", ret);
+> +		goto err_irq;
+> +	}
+> +
+> +	ret = iio_device_register(indio_dev);
+> +	if (ret)
+> +		goto err_map;
+> +
+> +	ret = regulator_enable(info->vdd);
+> +	if (ret)
+> +		goto err_iio_dev;
+
+You never disable the regulator again. I think you need to do that before it
+is freed.
+
+> +
+> +	clk_prepare_enable(info->clk);
+> +
+> +	exynos5_adc_hw_init(info);
+> +
+> +	ret = of_platform_populate(np, exynos5_adc_match, NULL, &pdev->dev);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed adding child nodes\n");
+> +		goto err_of_populate;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_of_populate:
+> +	device_for_each_child(&pdev->dev, NULL, exynos5_adc_remove_devices);
+> +err_iio_dev:
+> +	iio_device_unregister(indio_dev);
+> +err_map:
+> +	iio_map_array_unregister(indio_dev, info->map);
+> +err_irq:
+> +	free_irq(info->irq, info);
+> +err_iio:
+> +	iio_device_free(indio_dev);
+> +	return ret;
+> +}
+> +
+[..]
