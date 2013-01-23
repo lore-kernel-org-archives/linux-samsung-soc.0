@@ -1,191 +1,123 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
-Date: Wed, 23 Jan 2013 13:52:58 +0100
-Message-ID: <50FFDD2A.9040102@metafoo.de>
-References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 3/4] ARM: Exynos5250: Add clock information for
+ dwc3-exynos
+Date: Wed, 23 Jan 2013 18:45:09 +0530
+Message-ID: <CAFp+6iE+WvQz_rbKY2L4N2KoUeTTZYhwc3v3wU5iua_bEPN1ng@mail.gmail.com>
+References: <1358257112-19595-1-git-send-email-gautam.vivek@samsung.com>
+ <1358257112-19595-4-git-send-email-gautam.vivek@samsung.com>
+ <3963234.Gb249i4a6U@flatron>
+ <CAFp+6iHd66_dvj_M5zOpJZ7sEy-pYa-CdWKUZBYc3Dfn3JHtfg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CAFp+6iHd66_dvj_M5zOpJZ7sEy-pYa-CdWKUZBYc3Dfn3JHtfg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01/23/2013 05:58 AM, Naveen Krishna Chatradhi wrote:
-> This patch add an ADC IP found on EXYNOS5 series socs from Samsung.
-> Also adds the Documentation for device tree bindings.
-> 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> ---
-> Changes since v1:
-> 
-> 1. Fixed comments from Lars
-> 2. Added support for ADC on EXYNOS5410
-> 
-> Changes since v2:
-> 
-> 1. Changed the instance name for (struct iio_dev *) to indio_dev
-> 2. Changed devm_request_irq to request_irq
-> 
-> Few doubts regarding the mappings and child device handling.
-> Kindly, suggest me better methods.
-> 
+Hi Tomasz,
 
-Hi,
 
-The patch looks mostly good now. As for the mappings, the problem is that we
-currently do not have any device tree bindings for IIO. So a proper solution
-would be to add dt bindings for IIO.
+On Wed, Jan 16, 2013 at 8:35 PM, Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Hi Tomasz,
+>
+>
+> On Wed, Jan 16, 2013 at 1:19 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> Hi Vivek,
+>>
+>> Don't you need also some clkdev lookup entry to make the clock available
+>> in the driver?
+>>
+>
+> This clock source we added with a motive of completion, however it's
+> not being used as of now.
+> As far as i could see the lookup structure contains clocks for devices
+> having multiple instances.
+> Do you feel that i should be adding an entry in clk_lookup structure ?
+> May be i am missing here something. Can you please elaborate on the
+> use-case of clk_lookup
+> entries.
+>
 
-[...]
-> diff --git a/drivers/iio/adc/exynos5_adc.c b/drivers/iio/adc/exynos5_adc.c
-> new file mode 100644
-> index 0000000..8982675
-> --- /dev/null
-> +++ b/drivers/iio/adc/exynos5_adc.c
-[...]
-> +
-> +/** ADC core in EXYNOS5410 has 10 channels,
-> + * ADC core in EXYNOS5250 has 8 channels
-> +*/
+Any suggestions on this please ?
 
-Minor nitpick, according to Documentation/Codingsytle multi-line comments
-should look like this:
+>>
+>> On Tuesday 15 of January 2013 19:08:31 Vivek Gautam wrote:
+>>> Adding necessary device clock to exynos5 needed for
+>>> the DWC3 controller.
+>>>
+>>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> ---
+>>>  arch/arm/mach-exynos/clock-exynos5.c |   24 ++++++++++++++++++++++++
+>>>  1 files changed, 24 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos/clock-exynos5.c
+>>> b/arch/arm/mach-exynos/clock-exynos5.c index 0208c3a..13af020 100644
+>>> --- a/arch/arm/mach-exynos/clock-exynos5.c
+>>> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+>>> @@ -757,6 +757,11 @@ static struct clk exynos5_init_clocks_off[] = {
+>>>               .enable         = exynos5_clk_ip_fsys_ctrl ,
+>>>               .ctrlbit        = (1 << 18),
+>>>       }, {
+>>> +             .name           = "usbdrd30",
+>>> +             .parent         = &exynos5_clk_aclk_200.clk,
+>>> +             .enable         = exynos5_clk_ip_fsys_ctrl,
+>>> +             .ctrlbit        = (1 << 19),
+>>> +     }, {
+>>>               .name           = "usbotg",
+>>>               .enable         = exynos5_clk_ip_fsys_ctrl,
+>>>               .ctrlbit        = (1 << 7),
+>>> @@ -1035,6 +1040,16 @@ static struct clksrc_sources exynos5_clkset_group
+>>> = { .nr_sources       = ARRAY_SIZE(exynos5_clkset_group_list),
+>>>  };
+>>>
+>>> +struct clk *exynos5_clkset_usbdrd30_list[] = {
+>>> +     [0] = &exynos5_clk_mout_mpll.clk,
+>>> +     [1] = &exynos5_clk_mout_cpll.clk,
+>>> +};
+>>> +
+>>> +struct clksrc_sources exynos5_clkset_usbdrd30 = {
+>>> +     .sources        = exynos5_clkset_usbdrd30_list,
+>>> +     .nr_sources     = ARRAY_SIZE(exynos5_clkset_usbdrd30_list),
+>>> +};
+>>> +
+>>>  /* Possible clock sources for aclk_266_gscl_sub Mux */
+>>>  static struct clk *clk_src_gscl_266_list[] = {
+>>>       [0] = &clk_ext_xtal_mux,
+>>> @@ -1329,6 +1344,15 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+>>>                       .parent         = &exynos5_clk_mout_cpll.clk,
+>>>               },
+>>>               .reg_div = { .reg = EXYNOS5_CLKDIV_GEN, .shift = 4, .size = 3
+>> },
+>>> +     }, {
+>>> +             .clk    = {
+>>> +                     .name           = "sclk_usbdrd30",
+>>> +                     .enable         = exynos5_clksrc_mask_fsys_ctrl,
+>>> +                     .ctrlbit        = (1 << 28),
+>>> +             },
+>>> +             .sources = &exynos5_clkset_usbdrd30,
+>>> +             .reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 28, .size =
+>> 1 },
+>>> +             .reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 24, .size =
+>> 4 },
+>>>       },
+>>>  };
+>
+>
 
-/*
- * Text
- * Text
- */
 
-[...]
-> +static int exynos5_adc_probe(struct platform_device *pdev)
-> +{
-> +	struct exynos5_adc *info = NULL;
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct iio_dev *indio_dev = NULL;
-> +	struct resource	*mem;
-> +	int ret = -ENODEV;
-> +	int irq;
-> +
-> +	if (!np)
-> +		return ret;
-> +
-> +	indio_dev = iio_device_alloc(sizeof(struct exynos5_adc));
-> +	if (!indio_dev) {
-> +		dev_err(&pdev->dev, "failed allocating iio device\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	info = iio_priv(indio_dev);
-> +
-> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +
-> +	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
 
-While devm_request_and_ioremap takes care of the printing and error you
-still need to check whether regs is non NULL.
-
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		dev_err(&pdev->dev, "no irq resource?\n");
-> +		ret = irq;
-> +		goto err_iio;
-> +	}
-> +
-> +	info->irq = irq;
-> +
-> +	ret = request_irq(info->irq, exynos5_adc_isr,
-> +					0, dev_name(&pdev->dev), info);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
-> +							info->irq);
-> +		goto err_iio;
-> +	}
-> +
-> +	info->clk = devm_clk_get(&pdev->dev, "adc");
-> +	if (IS_ERR(info->clk)) {
-> +		dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
-> +							PTR_ERR(info->clk));
-> +		ret = PTR_ERR(info->clk);
-> +		goto err_irq;
-> +	}
-> +
-> +	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
-> +	if (IS_ERR(info->vdd)) {
-> +		dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
-> +							PTR_ERR(info->vdd));
-> +		ret = PTR_ERR(info->vdd);
-> +		goto err_irq;
-> +	}
-> +
-> +	info->version = exynos5_adc_get_version(pdev);
-> +
-> +	platform_set_drvdata(pdev, indio_dev);
-> +
-> +	init_completion(&info->completion);
-
-Since the completion is used in the IRQ handler it should be initialized
-before the IRQ is requested.
-
-> +
-> +	indio_dev->name = dev_name(&pdev->dev);
-> +	indio_dev->dev.parent = &pdev->dev;
-> +	indio_dev->dev.of_node = pdev->dev.of_node;
-> +	indio_dev->info = &exynos5_adc_iio_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = exynos5_adc_iio_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(exynos5_adc_iio_channels);
-
-Shouldn't the number of channels depend on the ADC version? E.g. 8 for v1
-and 10 for v2?
-
-> +
-> +	info->map = exynos5_adc_iio_maps;
-> +
-> +	ret = iio_map_array_register(indio_dev, info->map);
-> +	if (ret) {
-> +		dev_err(&indio_dev->dev, "failed mapping iio, err: %d\n", ret);
-> +		goto err_irq;
-> +	}
-> +
-> +	ret = iio_device_register(indio_dev);
-> +	if (ret)
-> +		goto err_map;
-> +
-> +	ret = regulator_enable(info->vdd);
-> +	if (ret)
-> +		goto err_iio_dev;
-
-You never disable the regulator again. I think you need to do that before it
-is freed.
-
-> +
-> +	clk_prepare_enable(info->clk);
-> +
-> +	exynos5_adc_hw_init(info);
-> +
-> +	ret = of_platform_populate(np, exynos5_adc_match, NULL, &pdev->dev);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed adding child nodes\n");
-> +		goto err_of_populate;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_of_populate:
-> +	device_for_each_child(&pdev->dev, NULL, exynos5_adc_remove_devices);
-> +err_iio_dev:
-> +	iio_device_unregister(indio_dev);
-> +err_map:
-> +	iio_map_array_unregister(indio_dev, info->map);
-> +err_irq:
-> +	free_irq(info->irq, info);
-> +err_iio:
-> +	iio_device_free(indio_dev);
-> +	return ret;
-> +}
-> +
-[..]
+-- 
+Thanks & Regards
+Vivek
