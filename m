@@ -1,72 +1,82 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/2] usb: exynos: Fix compatible strings used for device
-Date: Wed, 23 Jan 2013 18:46:03 +0530
-Message-ID: <CAFp+6iH7Jkc1ER6O4jUhMaLQ_hTJLNqXMb6tg85J+sbOY+OeMA@mail.gmail.com>
-References: <CAFp+6iHaYpinaq8K7rf1GxOJoap6Rd8kGcJn4UmHU28BjTCAsA@mail.gmail.com>
-	<CAFp+6iFVSi_pg39YyeEbAgwDsU4kun7u0g8z3u3dVMP4oLpavQ@mail.gmail.com>
-	<CAD=FV=WtsfDr=W7TB5BYW087FqXyxXCb0xVfGha6_F65cPCE9A@mail.gmail.com>
-	<016901cde163$6be034c0$43a09e40$@samsung.com>
-	<CAFp+6iGq32UV3mZ=QYVizJGQEark0Qztu7m4jy3DvG431ajV1w@mail.gmail.com>
-	<50DB811A.8010408@gmail.com>
-	<054601cdf862$534a8ad0$f9dfa070$@samsung.com>
-	<CAFp+6iGrp8b+T3n+xNha7jMFMgDsFR8E9zCijoUANZgmN4QL_A@mail.gmail.com>
-	<20130122084817.GC16143@arwen.pp.htv.fi>
-	<063e01cdf8ec$85e637c0$91b2a740$@samsung.com>
-	<20130123095021.GB22054@arwen.pp.htv.fi>
-	<CAFp+6iH2_18s=HwsLhekyUZW=yNCjZzskiA5s-ofrCbzDBGL4Q@mail.gmail.com>
-	<50FFDA2B.4010506@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] ARM: dts: specify all the per-cpu interrupts of arch
+ timer for exynos5440
+Date: Wed, 23 Jan 2013 07:55:26 -0600
+Message-ID: <50FFEBCE.3080502@gmail.com>
+References: <1358818887-16870-1-git-send-email-kgene.kim@samsung.com> <20130122101554.GA18876@e106331-lin.cambridge.arm.com> <063f01cdf8ec$926cda30$b7468e90$@samsung.com> <20130123103614.GD32237@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50FFDA2B.4010506-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:46908 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755144Ab3AWNzg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Jan 2013 08:55:36 -0500
+Received: by mail-ob0-f169.google.com with SMTP id ta14so262108obb.14
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jan 2013 05:55:35 -0800 (PST)
+In-Reply-To: <20130123103614.GD32237@e106331-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Thomas Abraham' <thomas.ab@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Grant Likely <grant.likely@secretlab.ca>, 'Tony Lindgren' <tony@atomide.com>
 
-Hi Sylwester,
-
-
-On Wed, Jan 23, 2013 at 6:10 PM, Sylwester Nawrocki
-<s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Hi,
->
-> On 01/23/2013 01:20 PM, Vivek Gautam wrote:
->>>>>> -     { .compatible = "samsung,exynos-dwc3" },
->>>>>> +     { .compatible = "samsung,synopsis-dwc3" }
->>>>>
->>>>> You're both missing a point here. The synopsys IP driver is called
->>>>> dwc3.ko and that's compatible with synopsys,dwc3. Your glue layer driver
->>>>> (dwc3-exynos.ko) is compatible with your platform, so
->>>>> samsung,exynos-dwc3 sounds correct to me.
->>>>>
->>>> Hmm...yeah, you're right and agreed.
+On 01/23/2013 04:36 AM, Mark Rutland wrote:
+> On Tue, Jan 22, 2013 at 10:05:18PM +0000, Kukjin Kim wrote:
+>> Mark Rutland wrote:
+>>>
+>> + devicetree-discuss, Grant Likely, Rob Herring and Tony Lindgren
+>>  
+>>> On Tue, Jan 22, 2013 at 01:41:27AM +0000, Kukjin Kim wrote:
+>>>> From: Thomas Abraham <thomas.ab@samsung.com>
 >>>>
->>>> However, we need to use more clear name there like "samsung,exynos-dwusb3"
->>>> in compatible, because you know there are lots of other IPs in Synopsis
->>>> Design Ware brand. So we have to include usb in compatible for that.
+>>>> Need to be changed requirements in the 'cpus' node for exynos5440
+>>>> to specify all the per-cpu interrupts of arch timer.
 >>>
->>> fair enough.
+>>> The node(s) for the arch timer should not be in the cpus/cpu@N nodes.
+>>> Instead, there should be one node (in the root of the tree).
 >>>
+>> Well, I don't think so. As per my understanding, the local timers are
+>> attached to every ARM cores (cpus) and it generates certain interrupt to the
+>> GIC. So the correct representation for this in device tree is to include the
+>> interrupts in the cpu nodes in dts file. Your comments  refer to a
+>> limitation in the Linux kernel implementation of the arch_timer and it
+>> should not result in representing the hardware details incorrectly in the
+>> dts file.
+> 
+> I disagree. The "correct representation" is whatever the devicetree binding
+> documentation describes. It does not describe placing timer nodes in the cpu
+> nodes.
+
+I don't think we should add other nodes to /cpus besides cpu nodes.
+
+The presence of architected timers is defined by the cpu being a
+Cortex-A15. So you don't really need a timer node at all. All that is
+really needed is the interrupt. You could add interrupts property
+directly to each cpu node. The location of PMU nodes has come up
+recently as well, and the PMU interrupt could be added as well.
+
+Whether we should change the binding at this point is questionable.
+Normally, we wouldn't want to do that, but as this is all pretty new it
+may be okay to make an exception here. However, I don't see anything
+that is fundamentally broken with the current binding. Multi-cluster
+could introduce some issues.
+
 >>
->> Thanks for your suggestions. This definitely make things clear.
->> I shall then keep "samsung,exynos-dwusb3" as the compatible string or,
->> should i be including '5250' string as well, something like
->> "samsung,exynos5250-dwusb3"
->> as pointed out by Grant earlier ?  :-O
->
-> IMHO this needs to be "samsung,exynos5250-dwusb3", rather than
-> "samsung,exynos-dwusb3". :)
->
+>>> If this works currently it's only because the driver picks up one of the
+>> nodes,
+>>> and luckily it's the same as the others. This is not guaranteed to work in
+>>> future, and will likely break.
+>>>
+>> It is up to the Linux kernel implementation of arch_timer to handle the
+>> hardware details in dts file accordingly.
+> 
+> The binding specification does not specify that there should be multiple timer
+> nodes, nor does it specify that they should be under cpu nodes. The timers,
+> being a banked resource, can be described with one node.
+> 
+> It is not up to the Linux kernel to handle undocumented variations of bindings.
 
-Alright, thanks.
-I shall update this patch.  :)
+Except things done before documentation was enforced.
 
-
--- 
-Thanks & Regards
-Vivek
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Rob
