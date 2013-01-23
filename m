@@ -1,62 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: Add watchdog in exynos5440-ssdk5440 device list
-Date: Tue, 22 Jan 2013 18:36:55 -0800
-Message-ID: <069201cdf912$84096c30$8c1c4490$@samsung.com>
-References: <1358571651-22020-1-git-send-email-kgene.kim@samsung.com>
- <1793091.ko9ZbaznTT@flatron> <50FCE57D.9030200@linaro.org>
- <9639911.zE6ZmhnMfv@amdc1227>
+Subject: PATCH v2] i2c: s3c2410: Add quirk to exclude GPIO config for exynos5440
+Date: Tue, 22 Jan 2013 18:47:39 -0800
+Message-ID: <069301cdf914$03d16890$0b7439b0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:11027 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751819Ab3AWChP (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:36576 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752346Ab3AWCr7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jan 2013 21:37:15 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MH2008AQ4LK06M0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Jan 2013 11:37:13 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MH2000J84LZ17G0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Jan 2013 11:37:13 +0900 (KST)
-In-reply-to: <9639911.zE6ZmhnMfv@amdc1227>
+	Tue, 22 Jan 2013 21:47:59 -0500
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, 'Giridhar Maruthy' <giridhar.m@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 'Wolfram Sang' <w.sang@pengutronix.de>, 'Giridhar Maruthy' <giridhar.m@samsung.com>
 
-Tomasz Figa wrote:
-> 
-> On Monday 21 of January 2013 12:21:41 Tushar Behera wrote:
-> > On 01/19/2013 04:10 PM, Tomasz Figa wrote:
-> > > Hi Kukjin,
-> > >
-> > > The commit message is a bit confusing, because it says that something
-> > > is being added, while in fact the whole node is being removed.
-> > >
-> > > Shouldn't it rather say something like:
-> > > ARM: dts: exynos5440-ssdk5440: Remove disabled status from watchdog
-> > > node
-> > Rather, should we not be following a consistent approach for both
-> > EXYNSO4 and EXYNOS5.
-> >
-> > In EXYNOS4, the default state of the nodes is 'disabled' and they are
-> > enabled in the board-specific files whereas it is exactly the opposite
-> > in case of EXYNOS5.
-> 
-> Yes, I think we should eventually modify Exynos 5 to use the same approach
-> as Exynos 4.
-> 
-Well, I know what you suggested and the way is used on exynos4 DT. But in
-the case of EXYNOS5440, all the peripherals are used on boards based on
-EXYNOS5440 SoC, so we can keep the peripherals available.
+From: Giridhar Maruthy <giridhar.m@samsung.com>
 
-Thanks.
+Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+Changes since v1:
+- added documentation of device tree bindings for i2c-s3c2410,
+  as per Tomasz's suggestion
+- changed ordering for of_device_id according to binding ordering
+  of the documentation
 
-- Kukjin
+ Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt |    2 ++
+ drivers/i2c/busses/i2c-s3c2410.c                      |    2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+index e9611ac..b92bc14 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+@@ -8,6 +8,8 @@ Required properties:
+       (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
+       (c) "samsung, s3c2440-hdmiphy-i2c", for s3c2440-like i2c used
+           inside HDMIPHY block found on several samsung SoCs
++      (d) "samsung, exynos5440-i2c", for s3c2440-like i2c used
++	   on EXYNOS5440 which does not need GPIO configuration.
+   - reg: physical base address of the controller and length of memory
+mapped
+     region.
+   - interrupts: interrupt number to the cpu.
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c
+b/drivers/i2c/busses/i2c-s3c2410.c
+index a290d08..17c5c37 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -111,6 +111,8 @@ static const struct of_device_id s3c24xx_i2c_match[] = {
+ 	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)QUIRK_S3C2440
+},
+ 	{ .compatible = "samsung,s3c2440-hdmiphy-i2c",
+ 	  .data = (void *)(QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO) },
++	{ .compatible = "samsung,exynos5440-i2c",
++	  .data = (void *)(QUIRK_S3C2440 | QUIRK_NO_GPIO) },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+-- 
+1.7.10.4
