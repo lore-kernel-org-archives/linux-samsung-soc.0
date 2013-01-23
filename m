@@ -1,163 +1,83 @@
-From: Dongjin Kim <tobetter@gmail.com>
-Subject: Re: [PATCH] ARM: dts: add mshc controller node for Exynos4x12 SoCs
-Date: Thu, 24 Jan 2013 00:36:45 +0900
-Message-ID: <CADoNuNd6OfUj32q5jA+HxBURmfVa=wdVHAQhcngr_yY+Y3O8gw@mail.gmail.com>
-References: <1358764755-21470-1-git-send-email-thomas.abraham@linaro.org>
-	<CADoNuNee7xbRPJupGvUKVRB8TKq0WZMg1XYk24-ks34fbRPt1Q@mail.gmail.com>
-	<CAJuYYwTT+e5e6S7GtK+=PRS_C-3XqARwrb2bqhmehScN3DRT9A@mail.gmail.com>
-	<CADoNuNcF3oVEN3y-j4cxu2YLK0+YXLfCOAs1mU9jL2-Gbi98RA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:59348 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755713Ab3AWPgr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jan 2013 10:36:47 -0500
-Received: by mail-we0-f173.google.com with SMTP id r5so354753wey.32
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jan 2013 07:36:45 -0800 (PST)
-In-Reply-To: <CADoNuNcF3oVEN3y-j4cxu2YLK0+YXLfCOAs1mU9jL2-Gbi98RA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH RFC v3 00/14] V4L2 device tree bindings and OF helpers
+Date: Wed, 23 Jan 2013 20:31:15 +0100
+Message-ID: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: hverkuil@xs4all.nl, g.liakhovetski@gmx.de, laurent.pinchart@ideasonboard.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, grant.likely@secretlab.ca, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, myungjoo.ham@samsung.com, sw0312.kim@samsung.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tgih.jun@samsung.com, jh80.chung@samsung.com
 
-Tested-by: Dongjin Kim <tobetter@gmail.com>
+This series includes the updated device tree bindings documentation and
+the V4L2 OF parser (v4). There were just couple minor changes since v3:
+     - improved clock-lanes property description,
+     - grammar corrections of the example dts snippet description,
+     - minor comments corrections.
 
-This patch had been tested on v3.8-rc4 with ODROID-X hardware.
+This series also includes patches adding device tree support for Exynos4
+SoC camera subsystem. Changes in this part include:
+ - dropped patch adding OF_DEV_AUXDATA entries as this series has
+   been tested with the new Exynos4 clocks driver;
+ - max-data-lanes property of the CSIS device node replaced with bus-width;
+ - added clock-frequency property to FIMC device nodes;
+ - corrected FIMC-LITE devices registration (the code didn't consider
+   they are child nodes of the fimc-is node);
+ - removed the "inactive" camera port pinctrl state, it is now optional
+   and handling of it wasn't implemeted at the driver yet anyway;
 
-On Wed, Jan 23, 2013 at 2:21 PM, Dongjin Kim <tobetter@gmail.com> wrote:
-> Hello Thomas,
->
-> Thank you. I will submit the change soon.
->
-> Thanks again.
-> Dongjin.
->
-> On Wed, Jan 23, 2013 at 8:25 AM, Thomas Abraham
-> <thomas.abraham@linaro.org> wrote:
->> Hi Dongjin,
->>
->> On 22 January 2013 10:15, Dongjin Kim <tobetter@gmail.com> wrote:
->>> Hi Thomas,
->>>
->>> Good to see your patch, actually I had sent similar one before but no
->>> one care my patch. And now I feel it seems to be wrong.
->>>
->>> But I have a couple of question if I use your patch to enable MSHC
->>> controller work properly on Exynos4412.
->>>
->>> What's the exact form of ".compatible" on board file?
->>> With your patch, MSHC is not probed at all in my board. The
->>> ".compatible" has to be 'samsung,exynos5250-dw-mshc' and it works.
->>>
->>> I also tried '.compatible = "samsung,exynos5250-dw-mshc",
->>> "samsung,exynos4412-dw-mshc"', it probes the driver but in the
->>> function 'dw_mci_exynos_priv_init', priv->ctrl_type always becomes
->>> DW_MCI_TYPE_EXYNOS5250. Because there is a loop and returns each
->>> compatible strings in alphanumeric order whatever it is ordered in the
->>> board file.
->>>
->>> I also tried below patch to add a compatible for Exynos4412 to
->>> 'dw_mci_exynos_match' with its specific data, and it works. What's the
->>> right direction? If I am missing something or wrong, please correct
->>> me. :)
->>
->> Yes, your below patch is the correct thing to do. The dt patches for
->> dwmmc controller driver were only tested on Exynos5250 based board. So
->> I had not added the compatible string for Exynos4412 in
->> 'of_match_table' of the driver. Please submit the below change as a
->> patch (minor comment below).
->>
->>>
->>> Many thanks,
->>> Dongjin.
->>>
->>> @@ -184,6 +186,25 @@ static int dw_mci_exynos_setup_bus(struct dw_mci *host,
->>>         return 0;
->>>  }
->>>
->>> +/* Exynos4412 controller specific capabilities */
->>> +static unsigned long exynos4412_dwmmc_caps[4] = {
->>> +       MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
->>> +               MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
->>> +       MMC_CAP_CMD23,
->>> +       MMC_CAP_CMD23,
->>> +       MMC_CAP_CMD23,
->>> +};
->>
->> Since this is same as the 'exynos5250_dwmmc_caps', it can be reused
->> for 4412 as well, avoiding duplicate copy 'exynos4412_dwmmc_caps'.
->>
->>> +
->>> +static const struct dw_mci_drv_data exynos4412_drv_data = {
->>> +       .caps                   = exynos4412_dwmmc_caps,
->>> +       .init                   = dw_mci_exynos_priv_init,
->>> +       .setup_clock            = dw_mci_exynos_setup_clock,
->>> +       .prepare_command        = dw_mci_exynos_prepare_command,
->>> +       .set_ios                = dw_mci_exynos_set_ios,
->>> +       .parse_dt               = dw_mci_exynos_parse_dt,
->>> +       .setup_bus              = dw_mci_exynos_setup_bus,
->>> +};
->>
->> If the above change is done, 'exynos4412_drv_data ' also could be avoided.
->>
->>> +
->>>  /* Exynos5250 controller specific capabilities */
->>>  static unsigned long exynos5250_dwmmc_caps[4] = {
->>>         MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
->>> @@ -204,6 +225,8 @@ static const struct dw_mci_drv_data exynos5250_drv_data = {
->>>  };
->>>
->>>  static const struct of_device_id dw_mci_exynos_match[] = {
->>> +       { .compatible = "samsung,exynos4412-dw-mshc",
->>> +                       .data = &exynos4412_drv_data, },
->>>         { .compatible = "samsung,exynos5250-dw-mshc",
->>>                         .data = &exynos5250_drv_data, },
->>>         {},
->>
->> Thanks,
->> Thomas.
->>
->>>
->>>
->>> On Mon, Jan 21, 2013 at 7:39 PM, Thomas Abraham
->>> <thomas.abraham@linaro.org> wrote:
->>>> Commit cea0f256 ("ARM: dts: Add board dts file for ODROID-X") includes a node
->>>> to describe the board level properties for mshc controller. But the mshc
->>>> controller node was not added in the Exynos4x12 dtsi file which resulted
->>>> in the following warning when compiling the dtb files.
->>>>
->>>> Warning (reg_format): "reg" property in /mshc@12550000/slot@0 has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
->>>> Warning (avoid_default_addr_size): Relying on default #address-cells value for /mshc@12550000/slot@0
->>>> Warning (avoid_default_addr_size): Relying on default #size-cells value for /mshc@12550000/slot@0
->>>>
->>>> Fix this by adding the mshc controller node for Exynos4x12 SoCs.
->>>>
->>>> Cc: Dongjin Kim <tobetter@gmail.com>
->>>> Cc: Kukjin Kim <kgene.kim@samsung.com>
->>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->>>> ---
->>>>  arch/arm/boot/dts/exynos4412.dtsi |    8 ++++++++
->>>>  1 files changed, 8 insertions(+), 0 deletions(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
->>>> index 78ed377..96f5b66 100644
->>>> --- a/arch/arm/boot/dts/exynos4412.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos4412.dtsi
->>>> @@ -32,4 +32,12 @@
->>>>                 interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
->>>>                              <1 12 0>, <1 12 0>, <1 12 0>, <1 12 0>;
->>>>         };
->>>> +
->>>> +       mshc@12550000 {
->>>> +               compatible = "samsung,exynos4412-dw-mshc";
->>>> +               reg = <0x12550000 0x1000>;
->>>> +               interrupts = <0 77 0>;
->>>> +               #address-cells = <1>;
->>>> +               #size-cells = <0>;
->>>> +       };
->>>>  };
->>>> --
->>>> 1.7.5.4
->>>>
+I have also tested this patch set with the FIMC-IS (the camera ISP
+subsystem with a dedicated ARM MCU) driver.
+
+For the media patches 01..09/14 I intend to send a pull request within
+a few days. Patches 10..13/14 I'd like to be applied by the Samsung
+platforms maintainer.
+
+Patch 14/14 is an example only.
+
+Thank you for all reviews!
+
+Guennadi Liakhovetski (2):
+  [media] Add common video interfaces OF bindings documentation
+  [media] Add a V4L2 OF parser
+
+Sylwester Nawrocki (12):
+  s5p-csis: Add device tree support
+  s5p-fimc: Add device tree support for FIMC devices
+  s5p-fimc: Add device tree support for FIMC-LITE devices
+  s5p-fimc: Change platform subdevs registration method
+  s5p-fimc: Add device tree support for the main media device driver
+  s5p-fimc: Add device tree based sensors registration
+  s5p-fimc: Use pinctrl API for camera ports configuration
+  ARM: dts: Add camera to node exynos4.dtsi
+  ARM: dts: Add ISP power domain node for Exynos4x12
+  ARM: dts: Add FIMC and MIPI CSIS device nodes for Exynos4x12
+  ARM: dts: Add camera pinctrl nodes for Exynos4x12 SoCs
+  ARM: dts: Add camera device nodes nodes for PQ board
+
+ .../devicetree/bindings/media/soc/samsung-fimc.txt |  184 +++++++
+ .../bindings/media/soc/samsung-mipi-csis.txt       |   82 +++
+ .../devicetree/bindings/media/video-interfaces.txt |  204 ++++++++
+ arch/arm/boot/dts/exynos4.dtsi                     |   64 +++
+ arch/arm/boot/dts/exynos4412-slp_pq.dts            |  169 +++++++
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          |   33 +-
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   52 ++
+ drivers/media/platform/s5p-fimc/fimc-capture.c     |    2 +-
+ drivers/media/platform/s5p-fimc/fimc-core.c        |   94 ++--
+ drivers/media/platform/s5p-fimc/fimc-lite.c        |   65 ++-
+ drivers/media/platform/s5p-fimc/fimc-mdevice.c     |  526 +++++++++++++++-----
+ drivers/media/platform/s5p-fimc/fimc-mdevice.h     |    6 +
+ drivers/media/platform/s5p-fimc/mipi-csis.c        |  158 ++++--
+ drivers/media/platform/s5p-fimc/mipi-csis.h        |    1 +
+ drivers/media/v4l2-core/Makefile                   |    3 +
+ drivers/media/v4l2-core/v4l2-of.c                  |  253 ++++++++++
+ include/media/s5p_fimc.h                           |   17 +
+ include/media/v4l2-of.h                            |   79 +++
+ 18 files changed, 1771 insertions(+), 221 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
+ create mode 100644 Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
+ create mode 100644 Documentation/devicetree/bindings/media/video-interfaces.txt
+ create mode 100644 drivers/media/v4l2-core/v4l2-of.c
+ create mode 100644 include/media/v4l2-of.h
+
+--
+1.7.9.5
