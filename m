@@ -1,399 +1,435 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC v4 02/14] [media] Add a V4L2 OF parser
-Date: Wed, 23 Jan 2013 20:31:17 +0100
-Message-ID: <1358969489-20420-3-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC v3 03/14] s5p-csis: Add device tree support
+Date: Wed, 23 Jan 2013 20:31:18 +0100
+Message-ID: <1358969489-20420-4-git-send-email-s.nawrocki@samsung.com>
 References: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12728 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751208Ab3AWTcD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jan 2013 14:32:03 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: hverkuil@xs4all.nl, g.liakhovetski@gmx.de, laurent.pinchart@ideasonboard.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, grant.likely@secretlab.ca, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, myungjoo.ham@samsung.com, sw0312.kim@samsung.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+s5p-csis is platform device driver for MIPI-CSI frontend to the FIMC
+device. This patch support for binding the driver to the MIPI-CSIS
+devices instantiated from device tree and for parsing all SoC and
+board specific properties.
 
-Add a V4L2 OF parser, implementing bindings documented in
-Documentation/devicetree/bindings/media/video-interfaces.txt.
-
-Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-[s.nawrocki@samsung.com: various corrections and improvements
-since the initial version]
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
 
 Changes since v3:
- - minor corrections of the comments,
- - replaced parent->name with parent->full_name.
+ - 'max-data-lanes' property replaced with 'bus-width'
 ---
- drivers/media/v4l2-core/Makefile  |    3 +
- drivers/media/v4l2-core/v4l2-of.c |  253 +++++++++++++++++++++++++++++++++++++
- include/media/v4l2-of.h           |   79 ++++++++++++
- 3 files changed, 335 insertions(+)
- create mode 100644 drivers/media/v4l2-core/v4l2-of.c
- create mode 100644 include/media/v4l2-of.h
+ .../bindings/media/soc/samsung-mipi-csis.txt       |   82 ++++++++++
+ drivers/media/platform/s5p-fimc/mipi-csis.c        |  158 +++++++++++++++-----
+ drivers/media/platform/s5p-fimc/mipi-csis.h        |    1 +
+ 3 files changed, 205 insertions(+), 36 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
 
-diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
-index c2d61d4..00f64d6 100644
---- a/drivers/media/v4l2-core/Makefile
-+++ b/drivers/media/v4l2-core/Makefile
-@@ -9,6 +9,9 @@ videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
- ifeq ($(CONFIG_COMPAT),y)
-   videodev-objs += v4l2-compat-ioctl32.o
- endif
-+ifeq ($(CONFIG_OF),y)
-+  videodev-objs += v4l2-of.o
-+endif
-
- obj-$(CONFIG_VIDEO_DEV) += videodev.o v4l2-int-device.o
- obj-$(CONFIG_VIDEO_V4L2) += v4l2-common.o
-diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/v4l2-of.c
+diff --git a/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt b/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
 new file mode 100644
-index 0000000..15d4396
+index 0000000..00af24a
 --- /dev/null
-+++ b/drivers/media/v4l2-core/v4l2-of.c
-@@ -0,0 +1,253 @@
-+/*
-+ * V4L2 OF binding parsing library
-+ *
-+ * Copyright (C) 2012 Renesas Electronics Corp.
-+ * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of version 2 of the GNU General Public License as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/module.h>
++++ b/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
+@@ -0,0 +1,82 @@
++Samsung S5P/EXYNOS SoC MIPI-CSI2 receiver (MIPI CSIS)
++-----------------------------------------------------
++
++Required properties:
++
++- compatible	  : "samsung,s5pv210-csis" for S5PV210 SoCs,
++		    "samsung,exynos4210-csis" for Exynos4210 and later SoCs;
++- reg		  : physical base address and size of the device memory mapped
++		    registers;
++- interrupts      : should contain MIPI CSIS interrupt; the format of the
++		    interrupt specifier depends on the interrupt controller;
++- bus-width	  : maximum number of data lanes supported (SoC specific);
++- vddio-supply    : MIPI CSIS I/O and PLL voltage supply (e.g. 1.8V);
++- vddcore-supply  : MIPI CSIS Core voltage supply (e.g. 1.1V).
++
++Optional properties:
++
++- clock-frequency : The IP's main (system bus) clock frequency in Hz, default
++		    value when this property is not specified is 166 MHz;
++- samsung,csis-wclk : CSI-2 wrapper clock selection. If this property is present
++		    external clock from CMU will be used, if not bus clock will
++		    be selected.
++
++The device node should contain one 'port' child node with one child 'endpoint'
++node, as outlined in the common media bindings specification. See
++Documentation/devicetree/bindings/media/video-interfaces.txt for details.
++The following are properties specific to these nodes.
++
++port node
++---------
++
++- reg		  : (required) must be 3 for camera C input (CSIS0) or 4 for
++		    camera D input (CSIS1);
++
++endpoint node
++-------------
++
++- data-lanes	  : (required) an array specifying active physical MIPI-CSI2
++		    data input lanes and their mapping to logical lanes; the
++		    array's content is unused, only its length is meaningful;
++
++- samsung,csis-hs-settle : (optional) differential receiver (HS-RX) settle time;
++
++
++Example:
++
++	reg0: regulator@0 {
++	};
++
++	reg1: regulator@1 {
++	};
++
++/* SoC properties */
++
++	aliases {
++		csis0 = &csis_0;
++	};
++
++	csis_0: csis@11880000 {
++		compatible = "samsung,exynos4210-csis";
++		reg = <0x11880000 0x1000>;
++		interrupts = <0 78 0>;
++		bus-width = <4>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++
++/* Board properties */
++
++	csis_0: csis@11880000 {
++		clock-frequency = <166000000>;
++		vddio-supply = <&reg0>;
++		vddcore-supply = <&reg1>;
++		port {
++			reg = <3>; /* 3 - CSIS0, 4 - CSIS1 */
++			csis0_ep: endpoint {
++				remote-endpoint = <...>;
++				data-lanes = <1>, <2>;
++				samsung,csis-hs-settle = <12>;
++			};
++		};
++	};
+diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.c b/drivers/media/platform/s5p-fimc/mipi-csis.c
+index 9815b67..c25dbc4 100644
+--- a/drivers/media/platform/s5p-fimc/mipi-csis.c
++++ b/drivers/media/platform/s5p-fimc/mipi-csis.c
+@@ -19,12 +19,14 @@
+ #include <linux/kernel.h>
+ #include <linux/memory.h>
+ #include <linux/module.h>
 +#include <linux/of.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
-+
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/videodev2.h>
 +#include <media/v4l2-of.h>
+ #include <media/v4l2-subdev.h>
+ #include <linux/platform_data/mipi-csis.h>
+ #include "mipi-csis.h"
+@@ -113,6 +115,7 @@ static char *csi_clock_name[] = {
+ 	[CSIS_CLK_GATE] = "csis",
+ };
+ #define NUM_CSIS_CLOCKS	ARRAY_SIZE(csi_clock_name)
++#define DEFAULT_SCLK_CSIS_FREQ	166000000UL
+ 
+ static const char * const csis_supply_name[] = {
+ 	"vddcore",  /* CSIS Core (1.0V, 1.1V or 1.2V) suppply */
+@@ -167,6 +170,11 @@ struct csis_pktbuf {
+  * @clock: CSIS clocks
+  * @irq: requested s5p-mipi-csis irq number
+  * @flags: the state variable for power and streaming control
++ * @clock_frequency: device bus clock frequency
++ * @hs_settle: HS-RX settle time
++ * @num_lanes: number of MIPI-CSI data lanes used
++ * @max_num_lanes: maximum number of MIPI-CSI data lanes supported
++ * @wclk_ext: CSI wrapper clock: 0 - bus clock, 1 - external SCLK_CAM
+  * @csis_fmt: current CSIS pixel format
+  * @format: common media bus format for the source and sink pad
+  * @slock: spinlock protecting structure members below
+@@ -184,6 +192,13 @@ struct csis_state {
+ 	struct clk *clock[NUM_CSIS_CLOCKS];
+ 	int irq;
+ 	u32 flags;
 +
-+/**
-+ * v4l2_of_parse_mipi_csi2() - parse MIPI CSI-2 bus properties
-+ * @node: pointer to endpoint device_node
-+ * @endpoint: pointer to v4l2_of_endpoint data structure
-+ *
-+ * Return: 0 on success or negative error value otherwise.
-+ */
-+int v4l2_of_parse_mipi_csi2(const struct device_node *node,
-+			    struct v4l2_of_endpoint *endpoint)
++	u32 clk_frequency;
++	u32 hs_settle;
++	u32 num_lanes;
++	u32 max_num_lanes;
++	u8 wclk_ext;
++
+ 	const struct csis_pix_format *csis_fmt;
+ 	struct v4l2_mbus_framefmt format;
+ 
+@@ -273,7 +288,6 @@ static void s5pcsis_reset(struct csis_state *state)
+ 
+ static void s5pcsis_system_enable(struct csis_state *state, int on)
+ {
+-	struct s5p_platform_mipi_csis *pdata = state->pdev->dev.platform_data;
+ 	u32 val, mask;
+ 
+ 	val = s5pcsis_read(state, S5PCSIS_CTRL);
+@@ -286,7 +300,7 @@ static void s5pcsis_system_enable(struct csis_state *state, int on)
+ 	val = s5pcsis_read(state, S5PCSIS_DPHYCTRL);
+ 	val &= ~S5PCSIS_DPHYCTRL_ENABLE;
+ 	if (on) {
+-		mask = (1 << (pdata->lanes + 1)) - 1;
++		mask = (1 << (state->num_lanes + 1)) - 1;
+ 		val |= (mask & S5PCSIS_DPHYCTRL_ENABLE);
+ 	}
+ 	s5pcsis_write(state, S5PCSIS_DPHYCTRL, val);
+@@ -321,15 +335,14 @@ static void s5pcsis_set_hsync_settle(struct csis_state *state, int settle)
+ 
+ static void s5pcsis_set_params(struct csis_state *state)
+ {
+-	struct s5p_platform_mipi_csis *pdata = state->pdev->dev.platform_data;
+ 	u32 val;
+ 
+ 	val = s5pcsis_read(state, S5PCSIS_CONFIG);
+-	val = (val & ~S5PCSIS_CFG_NR_LANE_MASK) | (pdata->lanes - 1);
++	val = (val & ~S5PCSIS_CFG_NR_LANE_MASK) | (state->num_lanes - 1);
+ 	s5pcsis_write(state, S5PCSIS_CONFIG, val);
+ 
+ 	__s5pcsis_set_format(state);
+-	s5pcsis_set_hsync_settle(state, pdata->hs_settle);
++	s5pcsis_set_hsync_settle(state, state->hs_settle);
+ 
+ 	val = s5pcsis_read(state, S5PCSIS_CTRL);
+ 	if (state->csis_fmt->data_alignment == 32)
+@@ -338,7 +351,7 @@ static void s5pcsis_set_params(struct csis_state *state)
+ 		val &= ~S5PCSIS_CTRL_ALIGN_32BIT;
+ 
+ 	val &= ~S5PCSIS_CTRL_WCLK_EXTCLK;
+-	if (pdata->wclk_source)
++	if (state->wclk_ext)
+ 		val |= S5PCSIS_CTRL_WCLK_EXTCLK;
+ 	s5pcsis_write(state, S5PCSIS_CTRL, val);
+ 
+@@ -696,55 +709,117 @@ static irqreturn_t s5pcsis_irq_handler(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++static int s5pcsis_get_platform_data(struct platform_device *pdev,
++				     struct csis_state *state)
 +{
-+	struct v4l2_of_mipi_csi2 *mipi_csi2 = &endpoint->mipi_csi_2;
-+	u32 data_lanes[ARRAY_SIZE(mipi_csi2->data_lanes)];
-+	struct property *prop;
-+	const __be32 *lane = NULL;
-+	u32 v;
-+	int i = 0;
++	struct s5p_platform_mipi_csis *pdata = pdev->dev.platform_data;
 +
-+	prop = of_find_property(node, "data-lanes", NULL);
-+	if (!prop)
++	if (pdata == NULL) {
++		dev_err(&pdev->dev, "Platform data not specified\n");
 +		return -EINVAL;
-+	do {
-+		lane = of_prop_next_u32(prop, lane, &data_lanes[i]);
-+	} while (lane && i++ < ARRAY_SIZE(data_lanes));
-+
-+	mipi_csi2->num_data_lanes = i;
-+	while (i--)
-+		mipi_csi2->data_lanes[i] = data_lanes[i];
-+
-+	if (!of_property_read_u32(node, "clock-lanes", &v))
-+		mipi_csi2->clock_lane = v;
-+
-+	if (of_get_property(node, "clock-noncontinuous", &v))
-+		endpoint->mbus_flags |= V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
-+
++	}
++	state->clk_frequency = pdata->clk_rate;
++	state->num_lanes = pdata->lanes;
++	state->hs_settle = pdata->hs_settle;
++	state->index = max(0, pdev->id);
++	if (state->index == 1)
++		state->max_num_lanes = CSIS1_MAX_LANES;
++	else
++		state->max_num_lanes = CSIS0_MAX_LANES;
 +	return 0;
 +}
-+EXPORT_SYMBOL(v4l2_of_parse_mipi_csi2);
-+
-+/**
-+ * v4l2_of_parse_parallel_bus() - parse parallel bus properties
-+ * @node: pointer to endpoint device_node
-+ * @endpoint: pointer to v4l2_of_endpoint data structure
-+ */
-+void v4l2_of_parse_parallel_bus(const struct device_node *node,
-+				struct v4l2_of_endpoint *endpoint)
-+{
-+	unsigned int flags = 0;
-+	u32 v;
-+
-+	if (WARN_ON(!endpoint))
-+		return;
-+
-+	if (!of_property_read_u32(node, "hsync-active", &v))
-+		flags |= v ? V4L2_MBUS_HSYNC_ACTIVE_HIGH :
-+			V4L2_MBUS_HSYNC_ACTIVE_LOW;
-+
-+	if (!of_property_read_u32(node, "vsync-active", &v))
-+		flags |= v ? V4L2_MBUS_VSYNC_ACTIVE_HIGH :
-+			V4L2_MBUS_VSYNC_ACTIVE_LOW;
-+
-+	if (!of_property_read_u32(node, "pclk-sample", &v))
-+		flags |= v ? V4L2_MBUS_PCLK_SAMPLE_RISING :
-+			V4L2_MBUS_PCLK_SAMPLE_FALLING;
-+
-+	if (!of_property_read_u32(node, "field-even-active", &v))
-+		flags |= v ? V4L2_MBUS_FIELD_EVEN_HIGH :
-+			V4L2_MBUS_FIELD_EVEN_LOW;
-+	if (flags)
-+		endpoint->mbus_type = V4L2_MBUS_PARALLEL;
-+	else
-+		endpoint->mbus_type = V4L2_MBUS_BT656;
-+
-+	if (!of_property_read_u32(node, "data-active", &v))
-+		flags |= v ? V4L2_MBUS_DATA_ACTIVE_HIGH :
-+			V4L2_MBUS_DATA_ACTIVE_LOW;
-+
-+	if (of_get_property(node, "slave-mode", &v))
-+		flags |= V4L2_MBUS_SLAVE;
-+
-+	if (!of_property_read_u32(node, "bus-width", &v))
-+		endpoint->parallel.bus_width = v;
-+
-+	if (!of_property_read_u32(node, "data-shift", &v))
-+		endpoint->parallel.data_shift = v;
-+
-+	endpoint->mbus_flags = flags;
-+}
-+EXPORT_SYMBOL(v4l2_of_parse_parallel_bus);
-+
-+/**
-+ * v4l2_of_parse_endpoint() - parse all endpoint node properties
-+ * @node: pointer to endpoint device_node
-+ * @endpoint: pointer to v4l2_of_endpoint data structure
-+ *
-+ * All properties are optional. If none are found, we don't set any flags.
-+ * This means the port has a static configuration and no properties have
-+ * to be specified explicitly.
-+ * If any properties that identify the bus as parallel are found and
-+ * slave-mode isn't set, we set V4L2_MBUS_MASTER. Similarly, if we recognise
-+ * the bus as serial CSI-2 and clock-noncontinuous isn't set, we set the
-+ * V4L2_MBUS_CSI2_CONTINUOUS_CLOCK flag.
-+ * The caller should hold a reference to @node.
-+ */
-+void v4l2_of_parse_endpoint(const struct device_node *node,
-+			    struct v4l2_of_endpoint *endpoint)
-+{
-+	const struct device_node *port_node = of_get_parent(node);
-+	bool data_lanes_present = false;
-+
-+	memset(endpoint, 0, sizeof(*endpoint));
-+
-+	endpoint->local_node = node;
-+	/*
-+	 * It doesn't matter whether the two calls below succeed. If they
-+	 * don't then the default value 0 is used.
-+	 */
-+	of_property_read_u32(port_node, "reg", &endpoint->port);
-+	of_property_read_u32(node, "reg", &endpoint->addr);
-+
-+	v4l2_of_parse_parallel_bus(node, endpoint);
-+
-+	/* If any parallel bus properties have been found, skip serial ones. */
-+	if (endpoint->parallel.bus_width || endpoint->parallel.data_shift ||
-+	    endpoint->mbus_flags) {
-+		/* Default parallel bus-master. */
-+		if (!(endpoint->mbus_flags & V4L2_MBUS_SLAVE))
-+			endpoint->mbus_flags |= V4L2_MBUS_MASTER;
-+		return;
-+	}
-+
-+	endpoint->mbus_type = V4L2_MBUS_CSI2;
-+
-+	if (!v4l2_of_parse_mipi_csi2(node, endpoint))
-+		data_lanes_present = true;
-+
-+	if ((endpoint->mipi_csi_2.clock_lane || data_lanes_present) &&
-+	    !(endpoint->mbus_flags & V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK)) {
-+		/* Default CSI-2: continuous clock. */
-+		endpoint->mbus_flags |= V4L2_MBUS_CSI2_CONTINUOUS_CLOCK;
-+	}
-+}
-+EXPORT_SYMBOL(v4l2_of_parse_endpoint);
-+
-+/*
-+ * Return a refcounted next 'endpoint' device_node. Contrary to the common OF
-+ * practice, we do not drop the reference to previous, users have to do it
-+ * themselves, when they're done with the node.
-+ */
-+struct device_node *v4l2_of_get_next_endpoint(const struct device_node *parent,
-+					struct device_node *previous)
-+{
-+	struct device_node *child, *port;
-+
-+	if (!parent)
-+		return NULL;
-+
-+	if (!previous) {
-+		/*
-+		 * If this is the first call, we have to find a port within
-+		 * this node.
-+		 */
-+		for_each_child_of_node(parent, port) {
-+			if (!of_node_cmp(port->name, "port"))
-+				break;
-+		}
-+		if (port) {
-+			/* Found a port, get a link. */
-+			child = of_get_next_child(port, NULL);
-+			of_node_put(port);
-+		} else {
-+			child = NULL;
-+		}
-+		if (!child)
-+			pr_err("%s(): Invalid DT: %s has no link children!\n",
-+			       __func__, parent->full_name);
-+	} else {
-+		port = of_get_parent(previous);
-+		if (!port)
-+			/* Hm, has someone given us the root node?... */
-+			return NULL;
-+
-+		/* Avoid dropping previous refcount to 0. */
-+		of_node_get(previous);
-+		child = of_get_next_child(port, previous);
-+		if (child) {
-+			of_node_put(port);
-+			return child;
-+		}
-+
-+		/* No more links under this port, try the next one. */
-+		do {
-+			port = of_get_next_child(parent, port);
-+			if (!port)
-+				return NULL;
-+		} while (of_node_cmp(port->name, "port"));
-+
-+		/* Pick up the first link on this port. */
-+		child = of_get_next_child(port, NULL);
-+		of_node_put(port);
-+	}
-+
-+	return child;
-+}
-+EXPORT_SYMBOL(v4l2_of_get_next_endpoint);
-+
-+/**
-+ * v4l2_of_get_remote_port_parent() - get remote port's parent node
-+ * @node: pointer to local endpoint device_node
-+ *
-+ * Return: Remote device node associated with remote endpoint node linked
-+ *	   to @node. Use of_node_put() on it when done.
-+ */
-+struct device_node *v4l2_of_get_remote_port_parent(
-+			       const struct device_node *node)
-+{
-+	struct device_node *re, *tmp;
-+
-+	/* Get remote endpoint node. */
-+	re = of_parse_phandle(node, "remote-endpoint", 0);
-+	if (!re)
-+		return NULL;
-+
-+	/* Remote port. */
-+	tmp = of_get_parent(re);
-+	of_node_put(re);
-+	if (!tmp)
-+		return NULL;
-+
-+	/* Remote device node. */
-+	re = of_get_parent(tmp);
-+	of_node_put(tmp);
-+
-+	return re;
-+}
-+EXPORT_SYMBOL(v4l2_of_get_remote_port_parent);
-diff --git a/include/media/v4l2-of.h b/include/media/v4l2-of.h
-new file mode 100644
-index 0000000..1aba3b3
---- /dev/null
-+++ b/include/media/v4l2-of.h
-@@ -0,0 +1,79 @@
-+/*
-+ * V4L2 OF binding parsing library
-+ *
-+ * Copyright (C) 2012 Renesas Electronics Corp.
-+ * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of version 2 of the GNU General Public License as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef _V4L2_OF_H
-+#define _V4L2_OF_H
-+
-+#include <linux/list.h>
-+#include <linux/types.h>
-+#include <linux/errno.h>
-+
-+#include <media/v4l2-mediabus.h>
-+
-+struct device_node;
-+
-+struct v4l2_of_mipi_csi2 {
-+	unsigned char data_lanes[4];
-+	unsigned char clock_lane;
-+	unsigned short num_data_lanes;
-+};
-+
-+struct v4l2_of_endpoint {
-+	unsigned int port;
-+	unsigned int addr;
-+	struct list_head head;
-+	const struct device_node *local_node;
-+	const __be32 *remote;
-+	enum v4l2_mbus_type mbus_type;
-+	unsigned int mbus_flags;
-+	union {
-+		struct {
-+			unsigned char bus_width;
-+			unsigned char data_shift;
-+		} parallel;
-+		struct v4l2_of_mipi_csi2 mipi_csi_2;
-+	};
-+};
 +
 +#ifdef CONFIG_OF
-+int v4l2_of_parse_mipi_csi2(const struct device_node *node,
-+			    struct v4l2_of_endpoint *endpoint);
-+void v4l2_of_parse_parallel_bus(const struct device_node *node,
-+				struct v4l2_of_endpoint *endpoint);
-+void v4l2_of_parse_endpoint(const struct device_node *node,
-+			    struct v4l2_of_endpoint *link);
-+struct device_node *v4l2_of_get_next_endpoint(const struct device_node *parent,
-+					struct device_node *previous);
-+struct device_node *v4l2_of_get_remote_port_parent(
-+					const struct device_node *node);
-+#else /* CONFIG_OF */
-+
-+static inline int v4l2_of_parse_endpoint(const struct device_node *node,
-+					struct v4l2_of_endpoint *link)
++static int s5pcsis_parse_dt(struct platform_device *pdev,
++			    struct csis_state *state)
 +{
-+	return -ENOSYS;
++	struct device_node *node = pdev->dev.of_node;
++	struct v4l2_of_endpoint endpoint;
++	int ret;
++
++	state->index = of_alias_get_id(node, "csis");
++	if (state->index < 0 || state->index >= CSIS_MAX_ENTITIES)
++		return -EINVAL;
++
++	ret = of_property_read_u32(node, "bus-width",
++				   &state->max_num_lanes);
++	if (ret < 0)
++		return ret;
++
++	if (of_property_read_u32(node, "clock-frequency",
++				 &state->clk_frequency))
++		state->clk_frequency = DEFAULT_SCLK_CSIS_FREQ;
++	/*
++	 * Get endpoint node. We care only about first child
++	 * nodes since these are the only ones available.
++	 */
++	while ((node = of_get_next_child(node, NULL))) {
++		if (!of_node_cmp(node->name, "endpoint"))
++			break;
++		of_node_put(node);
++	};
++	if (!node)
++		return -EINVAL;
++	of_property_read_u32(node, "samsung,csis-hs-settle",
++					&state->hs_settle);
++	state->wclk_ext = of_property_read_bool(node,
++					"samsung,csis-wclk");
++	ret = v4l2_of_parse_mipi_csi2(node, &endpoint);
++	state->num_lanes = endpoint.mipi_csi_2.num_data_lanes;
++
++	of_node_put(node);
++	return 0;
 +}
++#else
++#define s5pcsis_parse_dt(pdev, state) (-ENOSYS)
++#endif
 +
-+static inline struct device_node *v4l2_of_get_next_endpoint(
-+					const struct device_node *parent,
-+					struct device_node *previous)
-+{
-+	return NULL;
-+}
+ static int __devinit s5pcsis_probe(struct platform_device *pdev)
+ {
+-	struct s5p_platform_mipi_csis *pdata;
++	struct device *dev = &pdev->dev;
+ 	struct resource *mem_res;
+ 	struct csis_state *state;
+ 	int ret = -ENOMEM;
+ 	int i;
+ 
+-	state = devm_kzalloc(&pdev->dev, sizeof(*state), GFP_KERNEL);
++	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
+ 	if (!state)
+ 		return -ENOMEM;
+ 
+ 	mutex_init(&state->lock);
+ 	spin_lock_init(&state->slock);
+-
+ 	state->pdev = pdev;
+-	state->index = max(0, pdev->id);
+ 
+-	pdata = pdev->dev.platform_data;
+-	if (pdata == NULL) {
+-		dev_err(&pdev->dev, "Platform data not fully specified\n");
+-		return -EINVAL;
+-	}
++	if (dev->of_node)
++		ret = s5pcsis_parse_dt(pdev, state);
++	else
++		ret = s5pcsis_get_platform_data(pdev, state);
++	if (ret < 0)
++		return ret;
+ 
+-	if ((state->index == 1 && pdata->lanes > CSIS1_MAX_LANES) ||
+-	    pdata->lanes > CSIS0_MAX_LANES) {
+-		dev_err(&pdev->dev, "Unsupported number of data lanes: %d\n",
+-			pdata->lanes);
++	if (state->num_lanes == 0 || state->num_lanes > state->max_num_lanes) {
++		dev_err(dev, "Unsupported number of data lanes: %d (max. %d)\n",
++			state->num_lanes, state->max_num_lanes);
+ 		return -EINVAL;
+ 	}
+ 
+ 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	state->regs = devm_request_and_ioremap(&pdev->dev, mem_res);
++	state->regs = devm_request_and_ioremap(dev, mem_res);
+ 	if (state->regs == NULL) {
+-		dev_err(&pdev->dev, "Failed to request and remap io memory\n");
++		dev_err(dev, "Failed to request and remap io memory\n");
+ 		return -ENXIO;
+ 	}
+ 
+ 	state->irq = platform_get_irq(pdev, 0);
+ 	if (state->irq < 0) {
+-		dev_err(&pdev->dev, "Failed to get irq\n");
++		dev_err(dev, "Failed to get irq\n");
+ 		return state->irq;
+ 	}
+ 
+ 	for (i = 0; i < CSIS_NUM_SUPPLIES; i++)
+ 		state->supplies[i].supply = csis_supply_name[i];
+ 
+-	ret = regulator_bulk_get(&pdev->dev, CSIS_NUM_SUPPLIES,
+-				 state->supplies);
++	ret = regulator_bulk_get(dev, CSIS_NUM_SUPPLIES, state->supplies);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -753,21 +828,22 @@ static int __devinit s5pcsis_probe(struct platform_device *pdev)
+ 		goto e_clkput;
+ 
+ 	clk_enable(state->clock[CSIS_CLK_MUX]);
+-	if (pdata->clk_rate)
+-		clk_set_rate(state->clock[CSIS_CLK_MUX], pdata->clk_rate);
++	if (state->clk_frequency)
++		clk_set_rate(state->clock[CSIS_CLK_MUX], state->clk_frequency);
+ 	else
+-		dev_WARN(&pdev->dev, "No clock frequency specified!\n");
++		dev_WARN(dev, "No clock frequency specified!\n");
+ 
+-	ret = devm_request_irq(&pdev->dev, state->irq, s5pcsis_irq_handler,
+-			       0, dev_name(&pdev->dev), state);
++	ret = devm_request_irq(dev, state->irq, s5pcsis_irq_handler,
++			       0, dev_name(dev), state);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Interrupt request failed\n");
++		dev_err(dev, "Interrupt request failed\n");
+ 		goto e_regput;
+ 	}
+ 
+ 	v4l2_subdev_init(&state->sd, &s5pcsis_subdev_ops);
+ 	state->sd.owner = THIS_MODULE;
+-	strlcpy(state->sd.name, dev_name(&pdev->dev), sizeof(state->sd.name));
++	snprintf(state->sd.name, sizeof(state->sd.name), "%s.%d",
++		 CSIS_SUBDEV_NAME, state->index);
+ 	state->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+ 	state->csis_fmt = &s5pcsis_formats[0];
+ 
+@@ -787,10 +863,12 @@ static int __devinit s5pcsis_probe(struct platform_device *pdev)
+ 
+ 	/* .. and a pointer to the subdev. */
+ 	platform_set_drvdata(pdev, &state->sd);
+-
+ 	memcpy(state->events, s5pcsis_events, sizeof(state->events));
++	pm_runtime_enable(dev);
+ 
+-	pm_runtime_enable(&pdev->dev);
++	dev_info(&pdev->dev, "lanes: %d, hs_settle: %d, wclk: %d, freq: %u\n",
++		 state->num_lanes, state->hs_settle, state->wclk_ext,
++		 state->clk_frequency);
+ 	return 0;
+ 
+ e_regput:
+@@ -916,13 +994,21 @@ static const struct dev_pm_ops s5pcsis_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(s5pcsis_suspend, s5pcsis_resume)
+ };
+ 
++static const struct of_device_id s5pcsis_of_match[] __devinitconst = {
++	{ .compatible = "samsung,s5pv210-csis" },
++	{ .compatible = "samsung,exynos4210-csis" },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, s5pcsis_of_match);
 +
-+static inline struct device_node *v4l2_of_get_remote_endpoint(
-+					const struct device_node *node)
-+{
-+	return NULL;
-+}
-+
-+#endif /* CONFIG_OF */
-+
-+#endif /* _V4L2_OF_H */
---
+ static struct platform_driver s5pcsis_driver = {
+ 	.probe		= s5pcsis_probe,
+ 	.remove		= __devexit_p(s5pcsis_remove),
+ 	.driver		= {
+-		.name	= CSIS_DRIVER_NAME,
+-		.owner	= THIS_MODULE,
+-		.pm	= &s5pcsis_pm_ops,
++		.of_match_table = of_match_ptr(s5pcsis_of_match),
++		.name		= CSIS_DRIVER_NAME,
++		.owner		= THIS_MODULE,
++		.pm		= &s5pcsis_pm_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.h b/drivers/media/platform/s5p-fimc/mipi-csis.h
+index 2709286..28c11c4 100644
+--- a/drivers/media/platform/s5p-fimc/mipi-csis.h
++++ b/drivers/media/platform/s5p-fimc/mipi-csis.h
+@@ -11,6 +11,7 @@
+ #define S5P_MIPI_CSIS_H_
+ 
+ #define CSIS_DRIVER_NAME	"s5p-mipi-csis"
++#define CSIS_SUBDEV_NAME	CSIS_DRIVER_NAME
+ #define CSIS_MAX_ENTITIES	2
+ #define CSIS0_MAX_LANES		4
+ #define CSIS1_MAX_LANES		2
+-- 
 1.7.9.5
