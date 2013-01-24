@@ -1,35 +1,64 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v2 0/2] usb: exynos: Fix compatible strings used for device
-Date: Thu, 24 Jan 2013 19:15:28 +0530
-Message-ID: <1359035130-22667-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:26268 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752863Ab3AXNjL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 08:39:11 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 1/2] usb: ehci-s5p/ohci-exynos: Fix compatible strings for
+ the device
+Date: Thu, 24 Jan 2013 19:15:29 +0530
+Message-ID: <1359035130-22667-2-git-send-email-gautam.vivek@samsung.com>
+References: <1359035130-22667-1-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <1359035130-22667-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, kgene.kim@samsung.com, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, dianders@chromium.org, jg1.han@samsung.com, cpgs@samsung.com
 
-Using chip specific compatible string as it should be.
-So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
-which till now used a generic 'exynos' in their compatible strings.
+Using specific chip in compatible strings. Newer SOCs can claim
+device by using older string in the compatible list.
 
-Changes from v1:
-	- Changing compatible string from "samsung,exynos5250-dwc3" to
-	  "samsung,exynos5250-dwusb3" as per discussion happened in thread:
-	  [PATCH 0/2] usb: exynos: Fix compatible strings used for device.
-
-Vivek Gautam (2):
-  usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
-  usb: dwc3-exynos: Fix compatible strings for the device
-
- drivers/usb/dwc3/dwc3-exynos.c |    2 +-
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
  drivers/usb/host/ehci-s5p.c    |    2 +-
  drivers/usb/host/ohci-exynos.c |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 319dcfa..f18e6ac 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -266,7 +266,7 @@ static const struct dev_pm_ops s5p_ehci_pm_ops = {
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id exynos_ehci_match[] = {
+-	{ .compatible = "samsung,exynos-ehci" },
++	{ .compatible = "samsung,exynos4210-ehci" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, exynos_ehci_match);
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index aa3b884..77f2017 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -267,7 +267,7 @@ static const struct dev_pm_ops exynos_ohci_pm_ops = {
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id exynos_ohci_match[] = {
+-	{ .compatible = "samsung,exynos-ohci" },
++	{ .compatible = "samsung,exynos4210-ohci" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, exynos_ohci_match);
 -- 
 1.7.6.5
