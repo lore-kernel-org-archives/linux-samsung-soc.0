@@ -1,132 +1,74 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [RFC/PATCH 32/32] usb: gadget: drop now unnecessary flag
-Date: Thu, 24 Jan 2013 21:09:26 +0200
-Message-ID: <20130124190926.GA31254@arwen.pp.htv.fi>
-References: <1359042370-4358-1-git-send-email-balbi@ti.com>
- <1359042370-4358-33-git-send-email-balbi@ti.com>
- <2268214.yJrDJgELNj@flatron>
-Reply-To: <balbi@ti.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
+Date: Thu, 24 Jan 2013 20:15:14 +0100
+Message-ID: <1523320.h6ZorTqNLc@flatron>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <CAD=FV=VRKqeRxvcV1-aQCbu0FoTpMiVVXoNiVEx5SxLe3N_tgQ@mail.gmail.com> <51017B4D.7000105@metafoo.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2268214.yJrDJgELNj@flatron>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Felipe Balbi <balbi@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, alexander.shishkin@linux.intel.com, gregkh@linuxfoundation.org, dahlmann.thomas@arcor.de, nicolas.ferre@atmel.com, leoli@freescale.com, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, ben-linux@fluff.org, kgene.kim@samsung.com, kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-geode@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51017B4D.7000105-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, Jan 24, 2013 at 07:52:52PM +0100, Tomasz Figa wrote:
-> Hi Felipe,
->=20
-> On Thursday 24 of January 2013 17:46:10 Felipe Balbi wrote:
-> > We don't need the ->register_my_device flag
-> > anymore because all UDC drivers have been
-> > properly converted.
-> >=20
-> > Let's remove every history of it.
-> >=20
-> > Signed-off-by: Felipe Balbi <balbi@ti.com>
-> > ---
-> >  drivers/usb/chipidea/udc.c             | 1 -
-> >  drivers/usb/dwc3/gadget.c              | 1 -
-> >  drivers/usb/gadget/amd5536udc.c        | 1 -
-> >  drivers/usb/gadget/at91_udc.c          | 1 -
-> >  drivers/usb/gadget/atmel_usba_udc.c    | 1 -
-> >  drivers/usb/gadget/bcm63xx_udc.c       | 1 -
-> >  drivers/usb/gadget/dummy_hcd.c         | 1 -
-> >  drivers/usb/gadget/fsl_qe_udc.c        | 1 -
-> >  drivers/usb/gadget/fsl_udc_core.c      | 1 -
-> >  drivers/usb/gadget/fusb300_udc.c       | 1 -
-> >  drivers/usb/gadget/goku_udc.c          | 1 -
-> >  drivers/usb/gadget/imx_udc.c           | 1 -
-> >  drivers/usb/gadget/lpc32xx_udc.c       | 1 -
-> >  drivers/usb/gadget/m66592-udc.c        | 1 -
-> >  drivers/usb/gadget/mv_u3d_core.c       | 1 -
-> >  drivers/usb/gadget/mv_udc_core.c       | 1 -
-> >  drivers/usb/gadget/net2272.c           | 1 -
-> >  drivers/usb/gadget/net2280.c           | 1 -
-> >  drivers/usb/gadget/omap_udc.c          | 1 -
-> >  drivers/usb/gadget/pch_udc.c           | 1 -
-> >  drivers/usb/gadget/pxa25x_udc.c        | 1 -
-> >  drivers/usb/gadget/pxa27x_udc.c        | 1 -
-> >  drivers/usb/gadget/r8a66597-udc.c      | 1 -
-> >  drivers/usb/gadget/s3c-hsotg.c         | 1 -
-> >  drivers/usb/gadget/s3c-hsudc.c         | 1 -
-> >  drivers/usb/gadget/s3c2410_udc.c       | 1 -
-> >  drivers/usb/gadget/udc-core.c          | 3 ---
-> >  drivers/usb/musb/musb_gadget.c         | 1 -
-> >  drivers/usb/renesas_usbhs/mod_gadget.c | 1 -
-> >  include/linux/usb/gadget.h             | 4 ----
-> >  30 files changed, 35 deletions(-)
-> >=20
-> [snip]
-> > diff --git a/drivers/usb/gadget/udc-core.c
-> > b/drivers/usb/gadget/udc-core.c index 9195054..4ee0efc 100644
-> > --- a/drivers/usb/gadget/udc-core.c
-> > +++ b/drivers/usb/gadget/udc-core.c
-> > @@ -173,7 +173,6 @@ int usb_add_gadget_udc(struct device *parent, struct
-> > usb_gadget *gadget) if (!udc)
-> >  		goto err1;
-> >=20
-> > -	if (gadget->register_my_device) {
-> >  		dev_set_name(&gadget->dev, "gadget");
-> >=20
-> >  		ret =3D device_register(&gadget->dev);
-> > @@ -211,7 +210,6 @@ err3:
-> >  	put_device(&udc->dev);
-> >=20
-> >  err2:
-> > -	if (gadget->register_my_device)
-> >  		put_device(&gadget->dev);
-> >  err1:
-> >  	return ret;
-> > @@ -267,7 +265,6 @@ found:
-> >  	kobject_uevent(&udc->dev.kobj, KOBJ_REMOVE);
-> >  	device_unregister(&udc->dev);
-> >=20
-> > -	if (gadget->register_my_device)
-> >  		device_unregister(&gadget->dev);
->=20
-> Correct me if I am wrong, but doesn't this patch leave us with incorrect=
-=20
-> indentation?
+On Thursday 24 of January 2013 19:19:57 Lars-Peter Clausen wrote:
+> On 01/24/2013 05:12 PM, Doug Anderson wrote:
+> > Lars,
+> > 
+> > Thank you for your comments / thoughts...
+> 
+> Hi,
+> 
+> > On Thu, Jan 24, 2013 at 1:54 AM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> 
+wrote:
+> >> adc: adc@12D10000 {
+> >> 
+> >>         #io-channel-cells = <1>;
+> >>         io-channel-output-names = "adc1", "adc2", ...;
+> >>         
+> >>         ncp15wb473@0 {
+> >>         
+> >>                 compatible = "ntc,ncp15wb473";
+> >>                 ...
+> >>                 io-channels = <&adc 0>; // First ADC channel
+> > 
+> > I'm not an expert, but I think the typical way is:
+> > * No need to include a handle to &adc.  It's logically our parent.  In
+> > a similar way i2c devices don't specify their parent bus--they are
+> > just listed under it.
+> > * The "0" should be specified with reg = <0>
+> 
+> The relationship between the IIO sensor device and the consumer device
+> is not always a parent child relationship. In this case it makes sense
+> to have the ADC as the parent for the thermistors. But for other cases
+> this may not be true. E.g. take a touchscreen or power monitoring
+> platform device which uses the IIO device to do measurements.
 
-right, I fixed it up on my branch, see [1]. That was me trusting my poor
-sed skills and not verifying the result ;-)
+The policy is to use children with reg property only inside a node 
+representing a bus controller through which the child device is being 
+accessed (like I2C, SPI).
 
-[1] http://git.kernel.org/?p=3Dlinux/kernel/git/balbi/usb.git;a=3Dcommitdif=
-f;h=3Dd0bdf2970dd68677c65671be9bd56759593cfaf1
+I would see IIO bindings similar to what we have with GPIOs, interrupts or 
+regulators, so io-channels = <&iio-controller channel> seems fine (or 
+rather iio-channels) with the node under appropriate parent.
 
---=20
-balbi
+> > To implement this I'd imagine that we'll need a new API call, right?
+> > In this case the thermistor driver won't know the name of the channel.
+> > 
+> >  It can find the ADC (the struct device and probably other things) and
+> > 
+> > knows a channel index.  Am I understanding properly?
+> 
+> This can be done by adding a new api call, but it would be best if both
+> dt and non-dt based consumers can use the same function. I outlined one
+> possible solution how this can be done in the previous mail to Naveen.
 
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+In case of the solution I mentioned, implementation would be almost 
+identical to what is done with GPIOs (see drivers/gpio/gpiolib-of.c).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRAYbmAAoJEIaOsuA1yqRE3EsQAIRJ4cf9cxaxwgF6STF+90gs
-jy+oxA1eMxpk1qtL8rJ5sfXB8/B90dO6lQzHx2KtcpXx5hlXgOfn1BZCoMwWocFj
-4nI/HdgP4T4UXrtWXOpGhqdwSUWjID6vcvWaybCEUT3bhLZSNzTeZ3K1pzQAg54P
-+S45/YsZkiqvNUfDIrbf0YLZ3/zJp4nE5ZH+jMLUV0LUy26YyXAmIU/LUS4brstF
-RUqU2X7Z+9Oxd8eTgpuMZrNZrDo6Z0yYCKnamRpiYmzCndDOgFOY2lCxinkpZnE1
-SyVqFi4Ckw2UaSJozPKJZydYhNOJ60VRgy+C1B0c1YTCYDzSt/kBKyCcBajQqm5g
-q2QNaB40Rc95K2ZWRgf+BGYgStjsf6qxIBEm3nqWwO3/cerwxsf3gebm6g2XdMR3
-afgW2/vfJMhIr0rILSVKjp8NTtDPiMgIKfzM+TTE+ITVi0ZsWGieHGIwQGHRRK8M
-L87TsWv4kNKAMf4Soa5P4Cg+j09CNDeR99jI2ewEhZzXGoSVDyKK8pnnSZInXJeE
-mLjScdKpKYTIBulBepbMeyaweRlgYNklLBvG3U5WAs0HG7nChQ13WDd7Snt5gCXw
-NeP2LzaXHkDCRHy4nHZBGf9kLsz4ix+HA5JTzsgnwZxDgBwdHT0vY1DnYwmPPX8U
-VEDUlmb/NcSOJmlBOGbR
-=iJlK
------END PGP SIGNATURE-----
-
---/04w6evG8XlLl3ft--
+Best regards,
+Tomasz
