@@ -1,55 +1,87 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 re-send] i2c: s3c2410: Add quirk to exclude GPIO config for
- exynos5440
-Date: Thu, 24 Jan 2013 11:27:51 -0800
-Message-ID: <1359055671-4173-1-git-send-email-kgene.kim@samsung.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
+Date: Thu, 24 Jan 2013 20:30:15 +0100
+Message-ID: <51018BC7.20100@metafoo.de>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <CAD=FV=VRKqeRxvcV1-aQCbu0FoTpMiVVXoNiVEx5SxLe3N_tgQ@mail.gmail.com> <51017B4D.7000105@metafoo.de> <1523320.h6ZorTqNLc@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20251 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754838Ab3AXT2p (ORCPT
+Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:59567 "EHLO
+	mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754939Ab3AXT2s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 14:28:45 -0500
+	Thu, 24 Jan 2013 14:28:48 -0500
+In-Reply-To: <1523320.h6ZorTqNLc@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: Wolfram Sang <w.sang@pengutronix.de>, Giridhar Maruthy <giridhar.m@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Doug Anderson <dianders@chromium.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, Naveen Krishna <naveenkrishna.ch@gmail.com>
 
-From: Giridhar Maruthy <giridhar.m@samsung.com>
+On 01/24/2013 08:15 PM, Tomasz Figa wrote:
+> Hi,
+> 
+> On Thursday 24 of January 2013 19:19:57 Lars-Peter Clausen wrote:
+>> On 01/24/2013 05:12 PM, Doug Anderson wrote:
+>>> Lars,
+>>>
+>>> Thank you for your comments / thoughts...
+>>
+>> Hi,
+>>
+>>> On Thu, Jan 24, 2013 at 1:54 AM, Lars-Peter Clausen <lars@metafoo.de> 
+> wrote:
+>>>> adc: adc@12D10000 {
+>>>>
+>>>>         #io-channel-cells = <1>;
+>>>>         io-channel-output-names = "adc1", "adc2", ...;
+>>>>         
+>>>>         ncp15wb473@0 {
+>>>>         
+>>>>                 compatible = "ntc,ncp15wb473";
+>>>>                 ...
+>>>>                 io-channels = <&adc 0>; // First ADC channel
+>>>
+>>> I'm not an expert, but I think the typical way is:
+>>> * No need to include a handle to &adc.  It's logically our parent.  In
+>>> a similar way i2c devices don't specify their parent bus--they are
+>>> just listed under it.
+>>> * The "0" should be specified with reg = <0>
+>>
+>> The relationship between the IIO sensor device and the consumer device
+>> is not always a parent child relationship. In this case it makes sense
+>> to have the ADC as the parent for the thermistors. But for other cases
+>> this may not be true. E.g. take a touchscreen or power monitoring
+>> platform device which uses the IIO device to do measurements.
+> 
+> The policy is to use children with reg property only inside a node 
+> representing a bus controller through which the child device is being 
+> accessed (like I2C, SPI).
+> 
+> I would see IIO bindings similar to what we have with GPIOs, interrupts or 
+> regulators, so io-channels = <&iio-controller channel> seems fine (or 
+> rather iio-channels) with the node under appropriate parent.
 
-Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Resending due to line wrapped from e-mail client.
+IIO is a very Linux specific term, the device tree bindings should be as OS
+agnostic as possible, so io-channels is probably the better term.
 
- Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt |    2 ++
- drivers/i2c/busses/i2c-s3c2410.c                      |    2 ++
- 2 files changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-index e9611ac..b92bc14 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-@@ -8,6 +8,8 @@ Required properties:
-       (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
-       (c) "samsung, s3c2440-hdmiphy-i2c", for s3c2440-like i2c used
-           inside HDMIPHY block found on several samsung SoCs
-+      (d) "samsung, exynos5440-i2c", for s3c2440-like i2c used
-+	   on EXYNOS5440 which does not need GPIO configuration.
-   - reg: physical base address of the controller and length of memory mapped
-     region.
-   - interrupts: interrupt number to the cpu.
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index a290d08..17c5c37 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -111,6 +111,8 @@ static const struct of_device_id s3c24xx_i2c_match[] = {
- 	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)QUIRK_S3C2440 },
- 	{ .compatible = "samsung,s3c2440-hdmiphy-i2c",
- 	  .data = (void *)(QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO) },
-+	{ .compatible = "samsung,exynos5440-i2c",
-+	  .data = (void *)(QUIRK_S3C2440 | QUIRK_NO_GPIO) },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
--- 
-1.7.10.4
+> 
+>>> To implement this I'd imagine that we'll need a new API call, right?
+>>> In this case the thermistor driver won't know the name of the channel.
+>>>
+>>>  It can find the ADC (the struct device and probably other things) and
+>>>
+>>> knows a channel index.  Am I understanding properly?
+>>
+>> This can be done by adding a new api call, but it would be best if both
+>> dt and non-dt based consumers can use the same function. I outlined one
+>> possible solution how this can be done in the previous mail to Naveen.
+> 
+> In case of the solution I mentioned, implementation would be almost 
+> identical to what is done with GPIOs (see drivers/gpio/gpiolib-of.c).
+
+Although similar to the GPIO bindings, the clk bindings are in my opinion an
+even better example.
+
+- Lars
