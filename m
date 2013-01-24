@@ -1,135 +1,129 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
-Date: Thu, 24 Jan 2013 19:50:48 +0530
-Message-ID: <CAHfPSqC90LwqEZ2kQdWY94CQHeqvCTYmw-WkAqBBNQui7wkKZQ@mail.gmail.com>
-References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com>
- <1358917086-4148-1-git-send-email-ch.naveen@samsung.com> <50FFDD2A.9040102@metafoo.de>
- <CAD=FV=VgrpPSLrwwrzFDFLBXTw+-t3C=UwnS6b53o41hxM_AyQ@mail.gmail.com> <510104BD.2020500@metafoo.de>
+From: Felipe Balbi <balbi@ti.com>
+Subject: [RFC/PATCH 01/32] usb: gadget: udc-core: allow udc class register gadget device
+Date: Thu, 24 Jan 2013 17:45:39 +0200
+Message-ID: <1359042370-4358-2-git-send-email-balbi@ti.com>
+References: <1359042370-4358-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <510104BD.2020500-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:37556 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752455Ab3AXPrA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Jan 2013 10:47:00 -0500
+In-Reply-To: <1359042370-4358-1-git-send-email-balbi@ti.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linux USB Mailing List <linux-usb@vger.kernel.org>
+Cc: alexander.shishkin@linux.intel.com, gregkh@linuxfoundation.org, dahlmann.thomas@arcor.de, nicolas.ferre@atmel.com, leoli@freescale.com, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, ben-linux@fluff.org, kgene.kim@samsung.com, kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-geode@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 
-On 24 January 2013 15:24, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
->
-> On 01/24/2013 01:42 AM, Doug Anderson wrote:
-> > Lars,
-> >
-> > On Wed, Jan 23, 2013 at 4:52 AM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
-> >>> Few doubts regarding the mappings and child device handling.
-> >>> Kindly, suggest me better methods.
-> >>
-> >> The patch looks mostly good now. As for the mappings, the problem is that we
-> >> currently do not have any device tree bindings for IIO. So a proper solution
-> >> would be to add dt bindings for IIO.
-> >
-> > Can you explain more how you think this would work?  It seems like
-> > just having child nodes as platform drivers would be OK (to me) and
-> > having them instantiated with of_platform_populate() seems reasonable.
-> >
-> > ...but the one thing that is missing is a way for children to get
-> > access to the channel properly.
-> >
-> > The children have access to the ADC "struct device" (it is their
-> > parent device) and have a channel number (their "reg" field), but
-> > there is no API call to map this to a "struct iio_channel".  Is that
-> > all that's needed in this case?  ...or are you envisioning something
-> > more?
->
-> Well, the idea is that the consumer doesn't need to know the channel number.
-> That's what the mapping takes care of. It basically creates a consumer alias
-> for the channel. When requesting the channel the consumer always uses the
-> same name.
->
-> iio_channel_get(dev_name(&pdev->dev), "voltage");
->
-> And the mapping contains an entry which maps the tuple of device name and
-> channel name to a real IIO channel which as been registered by a IIO device.
-> Note if there is only one channel you can also just use NULL for the channel
-> name. This is similar to how clocks are managed with the clk framework.
->
-> Now for the dt bindings I think we should stick to something similar to what
-> the clk framework does.
->
-> E.g.
->
-> adc: adc@12D10000 {
->
->         #io-channel-cells = <1>;
->         io-channel-output-names = "adc1", "adc2", ...;
->
->         ncp15wb473@0 {
->                 compatible = "ntc,ncp15wb473";
->                 ...
->                 io-channels = <&adc 0>; // First ADC channel
->                 io-channel-names = "voltage";
->         };
->
->         ncp15wb473@0 {
->                 compatible = "ntc,ncp15wb473";
->                 ...
->                 io-channels = <&adc 1>; // Second ADC channel
->                 io-channel-names = "voltage";
->         }
-> };
->
-Hello Lars,
+Currently all UDC drivers are calling
+device_register() before calling
+usb_add_gadget_udc(). In order to avoid
+code duplication, we can allow udc-core.c
+register that device.
 
-I've a doubt here
+However that would become a really large patch,
+so to cope with the meanwhile and allow us
+to write bite-sized patches, we're adding
+a flag which will be set by UDC driver once
+it removes the code for registering the
+gadget device.
 
-How do i find the child dev_name for iio_map_array_register();
+Once all are converted, the new flag will
+be removed.
 
-cause the child devices are probed during of_platform_populate();
+Signed-off-by: Felipe Balbi <balbi@ti.com>
+---
+ drivers/usb/gadget/udc-core.c | 23 +++++++++++++++++++----
+ include/linux/usb/gadget.h    |  4 ++++
+ 2 files changed, 23 insertions(+), 4 deletions(-)
 
-and during the probe the child calls
-iio_channel_get(dev_name(&pdev->dev), "voltage");
-
-The child device nodes are ncp15wb473.0 and ncp15wb473.1 in this case.
-But, this may change.
-
-Kindly, help.
-
-Assume we have a device tree like this
-
-        adc@12D10000 {
-                #io-channel-cells = <1>;
-                io-channel-output-names = "adc0", "adc1", "adc2",
-                                        "adc3", "adc4", "adc5",
-                                "adc6", "adc7", "adc8", "adc9";
-
-                ncp15wb473@0 {
-                        compatible = "ntc,ncp15wb473";
-                        reg = <0x0>;
-                        io-channel-names = "voltage";
-                        pullup-uV = <1800000>;
-                        pullup-ohm = <47000>;
-                        pulldown-ohm = <0>;
-                };
-                ncp15wb473@1 {
-                        compatible = "ntc,ncp15wb473";
-                        reg = <0x1>;
-                        io-channel-names = "voltage";
-                        pullup-uV = <1800000>;
-                        pullup-ohm = <47000>;
-                        pulldown-ohm = <0>;
-                };
-
-      };
-
-
-> io-channel-output-names and io-channel-names can be optional. In the case
-> where there is only one channel it's not really necessary to use
-> io-channel-names.
->
-> - Lars
-
-
-
-
---
-Shine bright,
-(: Nav :)
+diff --git a/drivers/usb/gadget/udc-core.c b/drivers/usb/gadget/udc-core.c
+index 2a9cd36..9195054 100644
+--- a/drivers/usb/gadget/udc-core.c
++++ b/drivers/usb/gadget/udc-core.c
+@@ -173,6 +173,14 @@ int usb_add_gadget_udc(struct device *parent, struct usb_gadget *gadget)
+ 	if (!udc)
+ 		goto err1;
+ 
++	if (gadget->register_my_device) {
++		dev_set_name(&gadget->dev, "gadget");
++
++		ret = device_register(&gadget->dev);
++		if (ret)
++			goto err2;
++	}
++
+ 	device_initialize(&udc->dev);
+ 	udc->dev.release = usb_udc_release;
+ 	udc->dev.class = udc_class;
+@@ -180,7 +188,7 @@ int usb_add_gadget_udc(struct device *parent, struct usb_gadget *gadget)
+ 	udc->dev.parent = parent;
+ 	ret = dev_set_name(&udc->dev, "%s", kobject_name(&parent->kobj));
+ 	if (ret)
+-		goto err2;
++		goto err3;
+ 
+ 	udc->gadget = gadget;
+ 
+@@ -189,18 +197,22 @@ int usb_add_gadget_udc(struct device *parent, struct usb_gadget *gadget)
+ 
+ 	ret = device_add(&udc->dev);
+ 	if (ret)
+-		goto err3;
++		goto err4;
+ 
+ 	mutex_unlock(&udc_lock);
+ 
+ 	return 0;
+-err3:
++
++err4:
+ 	list_del(&udc->list);
+ 	mutex_unlock(&udc_lock);
+ 
+-err2:
++err3:
+ 	put_device(&udc->dev);
+ 
++err2:
++	if (gadget->register_my_device)
++		put_device(&gadget->dev);
+ err1:
+ 	return ret;
+ }
+@@ -254,6 +266,9 @@ found:
+ 
+ 	kobject_uevent(&udc->dev.kobj, KOBJ_REMOVE);
+ 	device_unregister(&udc->dev);
++
++	if (gadget->register_my_device)
++		device_unregister(&gadget->dev);
+ }
+ EXPORT_SYMBOL_GPL(usb_del_gadget_udc);
+ 
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index 2e297e8..fcd9ef8 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -494,6 +494,9 @@ struct usb_gadget_ops {
+  *	only supports HNP on a different root port.
+  * @b_hnp_enable: OTG device feature flag, indicating that the A-Host
+  *	enabled HNP support.
++ * @register_my_device: Flag telling udc-core that UDC driver didn't
++ *	register the gadget device to the driver model. Temporary until
++ *	all UDC drivers are fixed up properly.
+  * @name: Identifies the controller hardware type.  Used in diagnostics
+  *	and sometimes configuration.
+  * @dev: Driver model state for this abstract device.
+@@ -531,6 +534,7 @@ struct usb_gadget {
+ 	unsigned			b_hnp_enable:1;
+ 	unsigned			a_hnp_support:1;
+ 	unsigned			a_alt_hnp_support:1;
++	unsigned			register_my_device:1;
+ 	const char			*name;
+ 	struct device			dev;
+ 	unsigned			out_epnum;
+-- 
+1.8.1.rc1.5.g7e0651a
