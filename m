@@ -1,201 +1,27 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH] ARM: DTS: exynos5250-arndale: Add initial board support file
-Date: Thu, 24 Jan 2013 12:21:45 +0530
-Message-ID: <CAGOxZ53VsXE_as6aNk85jdxVG2FAg-SqWc8svTHpgrcttE_q0w@mail.gmail.com>
-References: <1359008188-23395-1-git-send-email-tushar.behera@linaro.org>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH V2 0/4] i2c: s3c2410: Add devm_* apis and cleanup
+Date: Thu, 24 Jan 2013 08:26:47 +0100
+Message-ID: <20130124072647.GF8364@nekote.pengutronix.de>
+References: <1353660115-9710-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:54407 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751141Ab3AXGw0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 01:52:26 -0500
-Received: by mail-oa0-f49.google.com with SMTP id l10so9562043oag.36
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jan 2013 22:52:26 -0800 (PST)
-In-Reply-To: <1359008188-23395-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1353660115-9710-1-git-send-email-tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Girish K S <ks.giri@samsung.com>
 
-Hi Tushar,
+On Fri, Nov 23, 2012 at 02:11:51PM +0530, Tushar Behera wrote:
+> This patchset cleans up the probe function of i2c-s3c2410 driver.
+> These have been tested on Exynos4210 based Origen board.
+> 
+> Changes since V1:
+>   * devm_request_mem_region and devm_ioremap calls were replaced by
+> devm_request_and_ioremap() call.
+>   * All devm_* related modifications (earlier patches 2-5) were merged
+> to a single patch.
+> 
 
-On Thu, Jan 24, 2013 at 11:46 AM, Tushar Behera
-<tushar.behera@linaro.org> wrote:
-> From: Girish K S <ks.giri@samsung.com>
->
-> Arndale is a low cost board based on the Samsung Exynos5250 SoC. This
-> patch adds initial device tree support for this board.
->
-> Signed-off-by: Girish K S <ks.giri@samsung.com>
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
->  arch/arm/boot/dts/Makefile               |    1 +
->  arch/arm/boot/dts/exynos5250-arndale.dts |  124 ++++++++++++++++++++++++++++++
->  2 files changed, 125 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos5250-arndale.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 5ebb44f..60a9e52 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -44,6 +44,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->         exynos4210-trats.dtb \
->         exynos4412-smdk4412.dtb \
->         exynos5250-smdk5250.dtb \
-> +       exynos5250-arndale.dtb \
->         exynos5250-snow.dtb \
->         exynos5440-ssdk5440.dtb
->  dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb \
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-> new file mode 100644
-> index 0000000..7504cf3
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -0,0 +1,124 @@
-> +/*
-> + * Samsung's Exynos5250 based Arndale board device tree source
-> + *
-> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +/include/ "exynos5250.dtsi"
-> +
-> +/ {
-> +       model = "Insignal Arndale evaluation board based on EXYNOS5250";
-> +       compatible = "insignal,arndale", "samsung,exynos5250";
-> +
-> +       memory {
-> +               reg = <0x40000000 0x80000000>;
-> +       };
-> +
-> +       chosen {
-> +               bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
-> +       };
-> +
-> +       i2c@12C60000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@12C70000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@12C80000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@12C90000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@12CA0000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@12CB0000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@12CC0000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@12CD0000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@121D0000 {
-> +               status = "disabled";
-> +       };
-> +
-
-Why to disable these i2c devices here? Any particular reason?
-You can moves these to exynos5250.dtsi which is suppose to be common
-for all the exynos5250 platforms.
-Please see the exynos4.dtsi for reference.
-
-> +       dwmmc_0: dwmmc0@12200000 {
-> +               num-slots = <1>;
-> +               supports-highspeed;
-> +               broken-cd;
-> +               fifo-depth = <0x80>;
-> +               card-detect-delay = <200>;
-> +               samsung,dw-mshc-ciu-div = <3>;
-> +               samsung,dw-mshc-sdr-timing = <2 3>;
-> +               samsung,dw-mshc-ddr-timing = <1 2>;
-> +
-> +               slot@0 {
-> +                       reg = <0>;
-> +                       bus-width = <8>;
-> +                       gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
-> +                               <&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
-> +                               <&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
-> +                               <&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
-> +                               <&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
-> +               };
-> +       };
-> +
-> +       dwmmc_1: dwmmc1@12210000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       dwmmc_2: dwmmc2@12220000 {
-> +               num-slots = <1>;
-> +               supports-highspeed;
-> +               fifo-depth = <0x80>;
-> +               card-detect-delay = <200>;
-> +               samsung,dw-mshc-ciu-div = <3>;
-> +               samsung,dw-mshc-sdr-timing = <2 3>;
-> +               samsung,dw-mshc-ddr-timing = <1 2>;
-> +
-> +               slot@0 {
-> +                       reg = <0>;
-> +                       bus-width = <4>;
-> +                       samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
-> +                       gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
-> +                               <&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
-> +                               <&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>,
-> +                               <&gpc4 3 3 3 3>, <&gpc4 3 3 3 3>,
-> +                               <&gpc4 5 3 3 3>, <&gpc4 6 3 3 3>;
-> +               };
-> +       };
-> +
-> +       dwmmc_3: dwmmc3@12230000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       spi_0: spi@12d20000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       spi_1: spi@12d30000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       spi_2: spi@12d40000 {
-> +               status = "disabled";
-> +       };
-
-Same as above.
-> +};
-> --
-> 1.7.4.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Regards,
-Alim
+Patch series looks good. Can you rebase to 3.8-rc4?
