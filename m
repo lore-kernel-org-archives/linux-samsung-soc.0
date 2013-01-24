@@ -1,43 +1,76 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+From: Felipe Balbi <balbi@ti.com>
 Subject: Re: [PATCH v2 2/2] usb: dwc3-exynos: Fix compatible strings for the
  device
-Date: Thu, 24 Jan 2013 13:32:13 -0800
-Message-ID: <20130124213213.GA21329@kroah.com>
+Date: Fri, 25 Jan 2013 00:32:21 +0200
+Message-ID: <20130124223221.GA14320@arwen.pp.htv.fi>
 References: <1359035130-22667-1-git-send-email-gautam.vivek@samsung.com>
  <1359035130-22667-3-git-send-email-gautam.vivek@samsung.com>
+ <20130124213213.GA21329@kroah.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:36900 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754705Ab3AXWco (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Jan 2013 17:32:44 -0500
 Content-Disposition: inline
-In-Reply-To: <1359035130-22667-3-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+In-Reply-To: <20130124213213.GA21329@kroah.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, balbi@ti.com, stern@rowland.harvard.edu, kgene.kim@samsung.com, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, dianders@chromium.org, jg1.han@samsung.com, cpgs@samsung.com
 
-On Thu, Jan 24, 2013 at 07:15:30PM +0530, Vivek Gautam wrote:
-> Using specific chip in compatible strings. Newer SOCs can claim
-> device by using older string in the compatible list.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> ---
->  drivers/usb/dwc3/dwc3-exynos.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Felipe, want me to take this one, or will you?
+Hi,
 
-thanks,
+On Thu, Jan 24, 2013 at 01:32:13PM -0800, Greg KH wrote:
+> On Thu, Jan 24, 2013 at 07:15:30PM +0530, Vivek Gautam wrote:
+> > Using specific chip in compatible strings. Newer SOCs can claim
+> > device by using older string in the compatible list.
+> >=20
+> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> > Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> > Reviewed-by: Doug Anderson <dianders@chromium.org>
+> > ---
+> >  drivers/usb/dwc3/dwc3-exynos.c |    2 +-
+> >  1 files changed, 1 insertions(+), 1 deletions(-)
+>=20
+> Felipe, want me to take this one, or will you?
 
-greg k-h
+I'll take in few hours after sleeping ;-)
+
+cheers
+
+--=20
+balbi
+
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRAbZ1AAoJEIaOsuA1yqRELIoP+wVoZaBNk79FI2uUGNPu0gp6
+Yw1FVUvwvwNAzQtkjaOHm85TDVlxPMMu3KCFXeOLtdad+5oOPkO4jznmgbIFj0gq
+H4Y0Bjgybhh88tep0aYOwgmP2ygw3/l1I12Yqr0DxnKkTawa+divVuYH/+fPfuNR
+kSUCe9pu6eLMCQ+tlthDOOUvdr/M0aX5aHgEpsRFfUdgG5fJ1HQVOTZIbz+2BbQb
+6XWhYvVnNWi8W+o8mkiFWtdm1IDDzI24EbzGUmPc4EvP0vcYdQS0luDba7fcgOZU
+nf+cx1lTAbRSf0tET1l8jUkfS/AF/0V1M7cbtGVZEKug8j3ESfMe75Bu69dHBR5W
+oKhwxX8wZIeKA8RVsxbcEhWgCadx7CdGKq/IKh9jALYQvCHwq01lV0GUeM9rl1pN
+78AaqAGRnGDvsH1AJAYwYhmVLP3IWrU5n08SwgIvIbNwO59SrU9f/0ji+C696QIA
+OFHLuXTdYoayS2fkiv9xOpzXBScV/QDLPSc9svDYu84ft5/xJrogWghZ/hsqfPs1
+/YM/WZqO609htbHZ7OXA+Qocbti8m+ttPH+XzbkwnyokNGhXM8hQDpcdysePi4d6
+eagvLNlWRXFp2CvvOkqN5ify8a5NDQ6DzVPwz5qQTevyOBgKNa9NFKKeic3jMJZM
+amV/Om328v5V8xOSDwu2
+=nFz6
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
