@@ -1,67 +1,28 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
-Date: Thu, 24 Jan 2013 19:11:03 +0100
-Message-ID: <51017937.40106@metafoo.de>
-References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <1358917086-4148-1-git-send-email-ch.naveen@samsung.com> <50FFDD2A.9040102@metafoo.de> <CAD=FV=VgrpPSLrwwrzFDFLBXTw+-t3C=UwnS6b53o41hxM_AyQ@mail.gmail.com> <510104BD.2020500@metafoo.de> <CAHfPSqC90LwqEZ2kQdWY94CQHeqvCTYmw-WkAqBBNQui7wkKZQ@mail.gmail.com>
+Date: Thu, 24 Jan 2013 19:19:57 +0100
+Message-ID: <51017B4D.7000105@metafoo.de>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <1358917086-4148-1-git-send-email-ch.naveen@samsung.com> <50FFDD2A.9040102@metafoo.de> <CAD=FV=VgrpPSLrwwrzFDFLBXTw+-t3C=UwnS6b53o41hxM_AyQ@mail.gmail.com> <510104BD.2020500@metafoo.de> <CAD=FV=VRKqeRxvcV1-aQCbu0FoTpMiVVXoNiVEx5SxLe3N_tgQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-out-079.synserver.de ([212.40.185.79]:1378 "EHLO
-	smtp-out-075.synserver.de" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751902Ab3AXSKV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 13:10:21 -0500
-In-Reply-To: <CAHfPSqC90LwqEZ2kQdWY94CQHeqvCTYmw-WkAqBBNQui7wkKZQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=VRKqeRxvcV1-aQCbu0FoTpMiVVXoNiVEx5SxLe3N_tgQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Doug Anderson <dianders@chromium.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, gregkh@linuxfoundation.org, Jonathan Cameron <jic23@kernel.org>
 
-On 01/24/2013 03:20 PM, Naveen Krishna Ch wrote:
-> On 24 January 2013 15:24, Lars-Peter Clausen <lars@metafoo.de> wrote:
->>
->> On 01/24/2013 01:42 AM, Doug Anderson wrote:
->>> Lars,
->>>
->>> On Wed, Jan 23, 2013 at 4:52 AM, Lars-Peter Clausen <lars@metafoo.de> wrote:
->>>>> Few doubts regarding the mappings and child device handling.
->>>>> Kindly, suggest me better methods.
->>>>
->>>> The patch looks mostly good now. As for the mappings, the problem is that we
->>>> currently do not have any device tree bindings for IIO. So a proper solution
->>>> would be to add dt bindings for IIO.
->>>
->>> Can you explain more how you think this would work?  It seems like
->>> just having child nodes as platform drivers would be OK (to me) and
->>> having them instantiated with of_platform_populate() seems reasonable.
->>>
->>> ...but the one thing that is missing is a way for children to get
->>> access to the channel properly.
->>>
->>> The children have access to the ADC "struct device" (it is their
->>> parent device) and have a channel number (their "reg" field), but
->>> there is no API call to map this to a "struct iio_channel".  Is that
->>> all that's needed in this case?  ...or are you envisioning something
->>> more?
->>
->> Well, the idea is that the consumer doesn't need to know the channel number.
->> That's what the mapping takes care of. It basically creates a consumer alias
->> for the channel. When requesting the channel the consumer always uses the
->> same name.
->>
->> iio_channel_get(dev_name(&pdev->dev), "voltage");
->>
->> And the mapping contains an entry which maps the tuple of device name and
->> channel name to a real IIO channel which as been registered by a IIO device.
->> Note if there is only one channel you can also just use NULL for the channel
->> name. This is similar to how clocks are managed with the clk framework.
->>
->> Now for the dt bindings I think we should stick to something similar to what
->> the clk framework does.
->>
->> E.g.
->>
+On 01/24/2013 05:12 PM, Doug Anderson wrote:
+> Lars,
+> 
+> Thank you for your comments / thoughts...
+> 
+
+Hi,
+
+> 
+> On Thu, Jan 24, 2013 at 1:54 AM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
 >> adc: adc@12D10000 {
 >>
 >>         #io-channel-cells = <1>;
@@ -71,85 +32,27 @@ On 01/24/2013 03:20 PM, Naveen Krishna Ch wrote:
 >>                 compatible = "ntc,ncp15wb473";
 >>                 ...
 >>                 io-channels = <&adc 0>; // First ADC channel
->>                 io-channel-names = "voltage";
->>         };
->>
->>         ncp15wb473@0 {
->>                 compatible = "ntc,ncp15wb473";
->>                 ...
->>                 io-channels = <&adc 1>; // Second ADC channel
->>                 io-channel-names = "voltage";
->>         }
->> };
->>
-> Hello Lars,
 > 
-> I've a doubt here
+> I'm not an expert, but I think the typical way is:
+> * No need to include a handle to &adc.  It's logically our parent.  In
+> a similar way i2c devices don't specify their parent bus--they are
+> just listed under it.
+> * The "0" should be specified with reg = <0>
+
+The relationship between the IIO sensor device and the consumer device is
+not always a parent child relationship. In this case it makes sense to have
+the ADC as the parent for the thermistors. But for other cases this may not
+be true. E.g. take a touchscreen or power monitoring platform device which
+uses the IIO device to do measurements.
+
 > 
-> How do i find the child dev_name for iio_map_array_register();
-> 
-> cause the child devices are probed during of_platform_populate();
-> 
-> and during the probe the child calls
-> iio_channel_get(dev_name(&pdev->dev), "voltage");
-> 
-> The child device nodes are ncp15wb473.0 and ncp15wb473.1 in this case.
-> But, this may change.
+> To implement this I'd imagine that we'll need a new API call, right?
+> In this case the thermistor driver won't know the name of the channel.
+>  It can find the ADC (the struct device and probably other things) and
+> knows a channel index.  Am I understanding properly?
 
-
-Hi,
-
-I think we should handle the devicetree channel mapping in the IIO core and
-not in the individual drivers. If we handle it in the core we do not need to
-create a iio_map and won't need to know the name of the consumer.
-
-You'd basically need to check whether the device requesting the IIO channel
-has a of_node. If it has, check if it has an io-channels attribute. If it
-also has an io-channels attribute lookup the IIO device by the phandle and
-create a iio_channel for the nth channel of that device.
-
-If either the device has no of_node or no io-channels attribute fallback to
-using the iio_map based lookup method.
-
-This would require one API change though, iio_channel_get would need to take
-a device instead of the device name so it has access to both the device name
-and the device node. Jonathan: any particular reason why you choose to let
-iio_channel_get the device name instead of the device itself?
+This can be done by adding a new api call, but it would be best if both dt
+and non-dt based consumers can use the same function. I outlined one
+possible solution how this can be done in the previous mail to Naveen.
 
 - Lars
-
-> 
-> Kindly, help.
-> 
-> Assume we have a device tree like this
-> 
->         adc@12D10000 {
->                 #io-channel-cells = <1>;
->                 io-channel-output-names = "adc0", "adc1", "adc2",
->                                         "adc3", "adc4", "adc5",
->                                 "adc6", "adc7", "adc8", "adc9";
-> 
->                 ncp15wb473@0 {
->                         compatible = "ntc,ncp15wb473";
->                         reg = <0x0>;
->                         io-channel-names = "voltage";
->                         pullup-uV = <1800000>;
->                         pullup-ohm = <47000>;
->                         pulldown-ohm = <0>;
->                 };
->                 ncp15wb473@1 {
->                         compatible = "ntc,ncp15wb473";
->                         reg = <0x1>;
->                         io-channel-names = "voltage";
->                         pullup-uV = <1800000>;
->                         pullup-ohm = <47000>;
->                         pulldown-ohm = <0>;
->                 };
-> 
->       };
-> 
-> 
->> io-channel-output-names and io-channel-names can be optional. In the case
->> where there is only one channel it's not really necessary to use
->> io-channel-names.
->>
