@@ -1,49 +1,135 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v2 0/2] usb: exynos: Fix compatible strings used for device
-Date: Thu, 24 Jan 2013 19:31:40 +0530
-Message-ID: <CAFp+6iFcn9G2jvdOUduCn-hE1hC-dqg=t0akO94VECFvCM7ZfA@mail.gmail.com>
-References: <1359035130-22667-1-git-send-email-gautam.vivek@samsung.com>
+From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
+Date: Thu, 24 Jan 2013 19:50:48 +0530
+Message-ID: <CAHfPSqC90LwqEZ2kQdWY94CQHeqvCTYmw-WkAqBBNQui7wkKZQ@mail.gmail.com>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com>
+ <1358917086-4148-1-git-send-email-ch.naveen@samsung.com> <50FFDD2A.9040102@metafoo.de>
+ <CAD=FV=VgrpPSLrwwrzFDFLBXTw+-t3C=UwnS6b53o41hxM_AyQ@mail.gmail.com> <510104BD.2020500@metafoo.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f48.google.com ([209.85.214.48]:53120 "EHLO
-	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750780Ab3AXOBm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 09:01:42 -0500
-In-Reply-To: <1359035130-22667-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <510104BD.2020500-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, kgene.kim@samsung.com, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, dianders@chromium.org, jg1.han@samsung.com, cpgs@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-On Thu, Jan 24, 2013 at 7:15 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Using chip specific compatible string as it should be.
-> So fixing this for ehci-s5p, ohci-exynos and dwc3-exynos
-> which till now used a generic 'exynos' in their compatible strings.
+On 24 January 2013 15:24, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
 >
-> Changes from v1:
->         - Changing compatible string from "samsung,exynos5250-dwc3" to
->           "samsung,exynos5250-dwusb3" as per discussion happened in thread:
->           [PATCH 0/2] usb: exynos: Fix compatible strings used for device.
+> On 01/24/2013 01:42 AM, Doug Anderson wrote:
+> > Lars,
+> >
+> > On Wed, Jan 23, 2013 at 4:52 AM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
+> >>> Few doubts regarding the mappings and child device handling.
+> >>> Kindly, suggest me better methods.
+> >>
+> >> The patch looks mostly good now. As for the mappings, the problem is that we
+> >> currently do not have any device tree bindings for IIO. So a proper solution
+> >> would be to add dt bindings for IIO.
+> >
+> > Can you explain more how you think this would work?  It seems like
+> > just having child nodes as platform drivers would be OK (to me) and
+> > having them instantiated with of_platform_populate() seems reasonable.
+> >
+> > ...but the one thing that is missing is a way for children to get
+> > access to the channel properly.
+> >
+> > The children have access to the ADC "struct device" (it is their
+> > parent device) and have a channel number (their "reg" field), but
+> > there is no API call to map this to a "struct iio_channel".  Is that
+> > all that's needed in this case?  ...or are you envisioning something
+> > more?
 >
+> Well, the idea is that the consumer doesn't need to know the channel number.
+> That's what the mapping takes care of. It basically creates a consumer alias
+> for the channel. When requesting the channel the consumer always uses the
+> same name.
+>
+> iio_channel_get(dev_name(&pdev->dev), "voltage");
+>
+> And the mapping contains an entry which maps the tuple of device name and
+> channel name to a real IIO channel which as been registered by a IIO device.
+> Note if there is only one channel you can also just use NULL for the channel
+> name. This is similar to how clocks are managed with the clk framework.
+>
+> Now for the dt bindings I think we should stick to something similar to what
+> the clk framework does.
+>
+> E.g.
+>
+> adc: adc@12D10000 {
+>
+>         #io-channel-cells = <1>;
+>         io-channel-output-names = "adc1", "adc2", ...;
+>
+>         ncp15wb473@0 {
+>                 compatible = "ntc,ncp15wb473";
+>                 ...
+>                 io-channels = <&adc 0>; // First ADC channel
+>                 io-channel-names = "voltage";
+>         };
+>
+>         ncp15wb473@0 {
+>                 compatible = "ntc,ncp15wb473";
+>                 ...
+>                 io-channels = <&adc 1>; // Second ADC channel
+>                 io-channel-names = "voltage";
+>         }
+> };
+>
+Hello Lars,
 
-Based on 'usb-next' branch.
+I've a doubt here
 
-> Vivek Gautam (2):
->   usb: ehci-s5p/ohci-exynos: Fix compatible strings for the device
->   usb: dwc3-exynos: Fix compatible strings for the device
->
->  drivers/usb/dwc3/dwc3-exynos.c |    2 +-
->  drivers/usb/host/ehci-s5p.c    |    2 +-
->  drivers/usb/host/ohci-exynos.c |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> --
-> 1.7.6.5
->
+How do i find the child dev_name for iio_map_array_register();
+
+cause the child devices are probed during of_platform_populate();
+
+and during the probe the child calls
+iio_channel_get(dev_name(&pdev->dev), "voltage");
+
+The child device nodes are ncp15wb473.0 and ncp15wb473.1 in this case.
+But, this may change.
+
+Kindly, help.
+
+Assume we have a device tree like this
+
+        adc@12D10000 {
+                #io-channel-cells = <1>;
+                io-channel-output-names = "adc0", "adc1", "adc2",
+                                        "adc3", "adc4", "adc5",
+                                "adc6", "adc7", "adc8", "adc9";
+
+                ncp15wb473@0 {
+                        compatible = "ntc,ncp15wb473";
+                        reg = <0x0>;
+                        io-channel-names = "voltage";
+                        pullup-uV = <1800000>;
+                        pullup-ohm = <47000>;
+                        pulldown-ohm = <0>;
+                };
+                ncp15wb473@1 {
+                        compatible = "ntc,ncp15wb473";
+                        reg = <0x1>;
+                        io-channel-names = "voltage";
+                        pullup-uV = <1800000>;
+                        pullup-ohm = <47000>;
+                        pulldown-ohm = <0>;
+                };
+
+      };
 
 
--- 
-Thanks & Regards
-Vivek
+> io-channel-output-names and io-channel-names can be optional. In the case
+> where there is only one channel it's not really necessary to use
+> io-channel-names.
+>
+> - Lars
+
+
+
+
+--
+Shine bright,
+(: Nav :)
