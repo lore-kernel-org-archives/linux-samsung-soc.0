@@ -1,35 +1,29 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
 Subject: Re: [PATCH] ARM: dts: specify all the per-cpu interrupts of arch
  timer for exynos5440
-Date: Thu, 24 Jan 2013 18:23:21 +0530
-Message-ID: <51012EC1.6010803@ti.com>
-References: <1358818887-16870-1-git-send-email-kgene.kim@samsung.com>
- <20130122101554.GA18876@e106331-lin.cambridge.arm.com>
- <063f01cdf8ec$926cda30$b7468e90$@samsung.com>
- <20130123103614.GD32237@e106331-lin.cambridge.arm.com>
- <50FFC1B0.8000601@ti.com> <51012C4B.5080300@ti.com>
+Date: Thu, 24 Jan 2013 13:16:34 +0000
+Message-ID: <51013432.3080903@arm.com>
+References: <1358818887-16870-1-git-send-email-kgene.kim@samsung.com> <20130122101554.GA18876@e106331-lin.cambridge.arm.com> <063f01cdf8ec$926cda30$b7468e90$@samsung.com> <20130123103614.GD32237@e106331-lin.cambridge.arm.com> <50FFC1B0.8000601@ti.com> <51012C4B.5080300@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <51012C4B.5080300-l0cyMroinI0@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Benoit Cousson <b-cousson-l0cyMroinI0@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Thomas Abraham' <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:47486 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750975Ab3AXNQk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Jan 2013 08:16:40 -0500
+In-Reply-To: <51012C4B.5080300@ti.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Benoit Cousson <b-cousson@ti.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, Mark Rutland <Mark.Rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Tony Lindgren' <tony@atomide.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, 'Thomas Abraham' <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thursday 24 January 2013 06:12 PM, Benoit Cousson wrote:
+Hi Benoit,
+
+On 24/01/13 12:42, Benoit Cousson wrote:
 > Hi Santosh,
->
+> 
 > On 01/23/2013 11:55 AM, Santosh Shilimkar wrote:
 >> Looping Marc, Benoit
 >>
@@ -40,7 +34,7 @@ On Thursday 24 January 2013 06:12 PM, Benoit Cousson wrote:
 >>>> + devicetree-discuss, Grant Likely, Rob Herring and Tony Lindgren
 >>>>
 >>>>> On Tue, Jan 22, 2013 at 01:41:27AM +0000, Kukjin Kim wrote:
->>>>>> From: Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
 >>>>>>
 >>>>>> Need to be changed requirements in the 'cpus' node for exynos5440
 >>>>>> to specify all the per-cpu interrupts of arch timer.
@@ -75,18 +69,34 @@ On Thursday 24 January 2013 06:12 PM, Benoit Cousson wrote:
 >> considering, more of such duplication needs to follow. e.g gic i/f
 >>
 >> Am still waiting on what Benoit has to say ?
->
+> 
 > I agree with you :-)
->
+> 
 > I'm not sure the binding was properly done to reflect the HW accurately.
->
+> 
 > A local timer for my point of view should be located in the cpu node
 > like a L1 cache. Or at least referenced in each cpu by a phandle.
 >
 > What was the rational to put it in the root?
->
- From Marc's answer it seems to avoid the duplication of data but
-I let him elaborate it.
 
-Regards,
-Santosh
+The rational was to follow what we already do for most (all?) banked
+resources. We already have TWD, GIC and PMU that have a root node,
+avoiding duplicated resources. I think consistency is an important thing
+to have.
+
+If we decide to move everything into CPU nodes and duplicate all the
+banked resources, fine. But that has impacts that reach far beyond the
+simple case of the timer.
+
+In particular, good luck with the GIC distributor interface, where the
+32 first interrupts are per CPU. This would also mandate a redesign of
+the way we specify a PPI, as the CPU mask in the third field doesn't
+mean a thing anymore.
+
+If you insist on having a phandle to a timer node, fine by me.
+
+Cheers,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
