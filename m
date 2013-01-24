@@ -1,58 +1,206 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V6 01/10] ASoC: Samsung: Rename samsung i2s secondary
- device name
-Date: Thu, 24 Jan 2013 14:41:12 +0800
-Message-ID: <20130124064111.GC4955@opensource.wolfsonmicro.com>
-References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
- <1358509629-20471-2-git-send-email-padma.v@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] ARM: DTS: exynos5250-arndale: Add initial board support file
+Date: Thu, 24 Jan 2013 12:14:50 +0530
+Message-ID: <CAK9yfHyKK4L_YH5fw=CrcjzeZgfhGKtDMpZQ3GVLnoVt3gkNiQ@mail.gmail.com>
+References: <1359008188-23395-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="O5XBE6gyVG5Rl6Rj"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:45017 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751278Ab3AXGlZ (ORCPT
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:39300 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751199Ab3AXGou (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 01:41:25 -0500
-Content-Disposition: inline
-In-Reply-To: <1358509629-20471-2-git-send-email-padma.v@samsung.com>
+	Thu, 24 Jan 2013 01:44:50 -0500
+Received: by mail-oa0-f51.google.com with SMTP id n12so9389125oag.38
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jan 2013 22:44:50 -0800 (PST)
+In-Reply-To: <1359008188-23395-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Girish K S <ks.giri@samsung.com>
+
+Hi Tushar,
+
+Just a couple of minor comments.
+
+On 24 January 2013 11:46, Tushar Behera <tushar.behera@linaro.org> wrote:
+> From: Girish K S <ks.giri@samsung.com>
+>
+> Arndale is a low cost board based on the Samsung Exynos5250 SoC. This
+> patch adds initial device tree support for this board.
+>
+> Signed-off-by: Girish K S <ks.giri@samsung.com>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+>  arch/arm/boot/dts/Makefile               |    1 +
+>  arch/arm/boot/dts/exynos5250-arndale.dts |  124 ++++++++++++++++++++++++++++++
+>  2 files changed, 125 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos5250-arndale.dts
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 5ebb44f..60a9e52 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -44,6 +44,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>         exynos4210-trats.dtb \
+>         exynos4412-smdk4412.dtb \
+>         exynos5250-smdk5250.dtb \
+> +       exynos5250-arndale.dtb \
+
+I think this entry could be moved one step up for maintaining
+alphabetical order.
+
+>         exynos5250-snow.dtb \
+>         exynos5440-ssdk5440.dtb
+>  dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb \
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+> new file mode 100644
+> index 0000000..7504cf3
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -0,0 +1,124 @@
+> +/*
+> + * Samsung's Exynos5250 based Arndale board device tree source
+> + *
+> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+
+2013?
+
+> + *             http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +/dts-v1/;
+> +/include/ "exynos5250.dtsi"
+> +
+> +/ {
+> +       model = "Insignal Arndale evaluation board based on EXYNOS5250";
+> +       compatible = "insignal,arndale", "samsung,exynos5250";
+> +
+> +       memory {
+> +               reg = <0x40000000 0x80000000>;
+> +       };
+> +
+> +       chosen {
+> +               bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
+
+This could be resticted only to console
+                bootargs = "console=ttySAC2,115200";
 
 
---O5XBE6gyVG5Rl6Rj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> +       };
+> +
+> +       i2c@12C60000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c@12C70000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c@12C80000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c@12C90000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c@12CA0000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c@12CB0000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c@12CC0000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c@12CD0000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c@121D0000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       dwmmc_0: dwmmc0@12200000 {
+> +               num-slots = <1>;
+> +               supports-highspeed;
+> +               broken-cd;
+> +               fifo-depth = <0x80>;
+> +               card-detect-delay = <200>;
+> +               samsung,dw-mshc-ciu-div = <3>;
+> +               samsung,dw-mshc-sdr-timing = <2 3>;
+> +               samsung,dw-mshc-ddr-timing = <1 2>;
+> +
+> +               slot@0 {
+> +                       reg = <0>;
+> +                       bus-width = <8>;
+> +                       gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
+> +                               <&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
+> +                               <&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
+> +                               <&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
+> +                               <&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
+> +               };
+> +       };
+> +
+> +       dwmmc_1: dwmmc1@12210000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       dwmmc_2: dwmmc2@12220000 {
+> +               num-slots = <1>;
+> +               supports-highspeed;
+> +               fifo-depth = <0x80>;
+> +               card-detect-delay = <200>;
+> +               samsung,dw-mshc-ciu-div = <3>;
+> +               samsung,dw-mshc-sdr-timing = <2 3>;
+> +               samsung,dw-mshc-ddr-timing = <1 2>;
+> +
+> +               slot@0 {
+> +                       reg = <0>;
+> +                       bus-width = <4>;
+> +                       samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
+> +                       gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
+> +                               <&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
+> +                               <&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>,
+> +                               <&gpc4 3 3 3 3>, <&gpc4 3 3 3 3>,
+> +                               <&gpc4 5 3 3 3>, <&gpc4 6 3 3 3>;
+> +               };
+> +       };
+> +
+> +       dwmmc_3: dwmmc3@12230000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       spi_0: spi@12d20000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       spi_1: spi@12d30000 {
+> +               status = "disabled";
+> +       };
+> +
+> +       spi_2: spi@12d40000 {
+> +               status = "disabled";
+> +       };
+> +};
+> --
+> 1.7.4.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-On Fri, Jan 18, 2013 at 05:17:00PM +0530, Padmavathi Venna wrote:
-> All Samsung SoCs has max 3 i2s controllers. So the i2s secondary fifo
-> interface device id was named as samsung-i2s.4. Renaming this to
-> "samsung-i2s-sec" to support device tree in i2s driver.
 
-Applied, thanks.
 
---O5XBE6gyVG5Rl6Rj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRANeAAAoJELSic+t+oim9ndQP/ima1hyyIS6X1SLkrMFm14t+
-W5/vP87orHdz/7MHaBfPO+syHV5uzsuN5MUfrJsIzGt7UemIVDEtkz+1wB8VB5oy
-mUwoeh8uKDzbHHD+Lc7PKuQOma/rgNX9WGVNap+MFqnL5fPwuRCeTaDBjfnbqtTE
-JvRZexCTKCKCkR2zMaJ4a6YXM4UwIyB9G7CMhodt479daraHJKqswuIVx8sU0C9Q
-MTIE93fF4fznteriRXBUfQsdbxLCgSj37/0kLEN6qek6K61oFnj0jBG9khGxNwaI
-Bio6fUaneH5Z2zkbviTl2wVMFFgH3Vff7gv0TI4lk6XB6zP6HN6b42aT1APRiwFc
-75S4Qlx8HVbluS2N+cFO//vtjtGg0niFxTZHnOD/Z5ojeC8yChJCowljqshEkt5+
-oMSien9dRMgi1Po0YF6uMd2p80eKF2glWZNVcDL0+06SeSurC8AULi6EDPxVNtCk
-jEFqH5CqDIipBUFOPxcwwMmbOj8UToIrv6uY539n/durXDtlHQt6oBR3pN11gvgU
-LIV7GjPAk9RvYkfIb9HcG8jOtIXS9QJu6KDMYEy0renkIwiD+Nts1t9I1Tl60SAo
-PKC+tyTF7Owu22aoU+IqAvRbKzz2qzexY1wiPWZ+rus5i3atkkKJJMfqpXEvGlqI
-rKpC4pS1jWi84VqxNE5g
-=twyB
------END PGP SIGNATURE-----
-
---O5XBE6gyVG5Rl6Rj--
+-- 
+With warm regards,
+Sachin
