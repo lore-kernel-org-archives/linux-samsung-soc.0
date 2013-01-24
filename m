@@ -1,128 +1,78 @@
-From: Sangsu Park <sangsu4u.park@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Add clocks for EXYNOS I2S and PCM I/F
-Date: Thu, 24 Jan 2013 20:00:33 +0900
-Message-ID: <013e01cdfa22$07fa03f0$17ee0bd0$@samsung.com>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] i2c-core: Add gpio based bus arbitration
+ implementation
+Date: Thu, 24 Jan 2013 12:13:29 +0100
+Message-ID: <20130124111329.GC12933@pengutronix.de>
+References: <1355464254-12768-1-git-send-email-ch.naveen@samsung.com>
+ <1355464254-12768-2-git-send-email-ch.naveen@samsung.com>
+ <50CB4E99.9060506@wwwdotorg.org>
+ <20121215142135.GB22033@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49454 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752995Ab3AXLAe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 06:00:34 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MH400HTIMKH0QR0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 24 Jan 2013 20:00:32 +0900 (KST)
-Received: from DOSANGSU4UP02 ([12.23.118.226])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MH400064MKVLE30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 24 Jan 2013 20:00:32 +0900 (KST)
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6zdv2QT/q3FMhpsV"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20121215142135.GB22033-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, naveen-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, sbkim73@samsung.com, Tushar Behera <tushar.behera@linaro.org>
 
-Audio Subsystem has own clocks for I2S0 and PCM0 in all EXYNOS series.
-This patch add clocks for I2S0 and PCM0 I/F.
 
-Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
----
- arch/arm/mach-exynos/Makefile      |    1 +
- arch/arm/mach-exynos/clock-audss.c |   64 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos/clock-audss.c
+--6zdv2QT/q3FMhpsV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 7e53a3a..5b6c7c0 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -13,6 +13,7 @@ obj-				:=
- # Core
- 
- obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
-+obj-$(CONFIG_ARCH_EXYNOS)	+= clock-audss.o
- obj-$(CONFIG_ARCH_EXYNOS4)	+= clock-exynos4.o
- obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
- obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
-diff --git a/arch/arm/mach-exynos/clock-audss.c
-b/arch/arm/mach-exynos/clock-audss.c
-new file mode 100644
-index 0000000..8260185
---- /dev/null
-+++ b/arch/arm/mach-exynos/clock-audss.c
-@@ -0,0 +1,64 @@
-+/*
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Clock support for EXYNOS Audio Subsystem
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+
-+#include <plat/clock.h>
-+#include <plat/s5p-clock.h>
-+
-+#define EXYNOS_PA_AUDSS	(0x03810000)
-+
-+/* IP Clock Gate 0 Registers */
-+#define EXYNOS_AUDSS_CLKGATE_I2SBUS	(1<<2)
-+#define EXYNOS_AUDSS_CLKGATE_I2SSPECIAL	(1<<3)
-+#define EXYNOS_AUDSS_CLKGATE_PCMBUS	(1<<4)
-+#define EXYNOS_AUDSS_CLKGATE_PCMSPECIAL	(1<<5)
-+#define EXYNOS_AUDSS_CLKGATE_GPIO	(1<<6)
-+
-+static void __iomem *clk_audss_base = 0;
-+
-+static int exynos_clk_audss_ctrl(struct clk *clk, int enable)
-+{
-+	if (!clk_audss_base)
-+		return ENOMEM;
-+
-+	return s5p_gatectrl(clk_audss_base, clk, enable);
-+}
-+
-+static struct clk exynos_init_audss_clocks[] = {
-+	{
-+		.name		= "iis",
-+		.devname	= "samsung-i2s.0",
-+		.enable		= exynos_clk_audss_ctrl,
-+		.ctrlbit	= EXYNOS_AUDSS_CLKGATE_I2SSPECIAL |
-EXYNOS_AUDSS_CLKGATE_I2SBUS
-+				| EXYNOS_AUDSS_CLKGATE_GPIO,
-+	}, {
-+		.name		= "pcm",
-+		.devname	= "samsung-pcm.0",
-+		.enable		= exynos_clk_audss_ctrl,
-+		.ctrlbit	= EXYNOS_AUDSS_CLKGATE_PCMSPECIAL |
-EXYNOS_AUDSS_CLKGATE_PCMBUS
-+				| EXYNOS_AUDSS_CLKGATE_GPIO,
-+	},
-+};
-+
-+void __init exynos_register_audss_clocks(void)
-+{
-+	clk_audss_base = ioremap(EXYNOS_PA_AUDSS, SZ_4K);
-+	if (clk_audss_base == NULL) {
-+		pr_err("unable to ioremap for gpio_base1\n");
-+		return;
-+	}
-+
-+	s3c_register_clocks(exynos_init_audss_clocks,
-ARRAY_SIZE(exynos_init_audss_clocks));
-+	s3c_disable_clocks(exynos_init_audss_clocks,
-ARRAY_SIZE(exynos_init_audss_clocks));
-+}
--- 
-1.7.4.1
+Hi,
+
+On Sat, Dec 15, 2012 at 11:21:36PM +0900, Mark Brown wrote:
+> On Fri, Dec 14, 2012 at 09:06:49AM -0700, Stephen Warren wrote:
+> > On 12/13/2012 10:50 PM, Naveen Krishna Chatradhi wrote:
+>=20
+> > > +The first should be an output, and is used to claim the I2C bus,
+> > > +the second should be an input, and signals that the other side (Clie=
+nt)
+> > > +wants to claim the bus. This allows two masters to share the same I2=
+C bus.
+>=20
+> > I'm confused why this is even needed; the I2C protocol itself defines
+> > how multi-master is supposed to work, just using the regular SCL/SDA li=
+nes.
+>=20
+> Practically speaking essentially no systems actually do that - mostly
+> Linux will treat failure to get the bus as an error for example.
+
+It is true that Linux currently does not have proper multi-master
+support. It is worth a look what is missing and how far we can get with
+the I2C specified arbitration IMO.
+
+> also get things like read operations which appear as multiple
+> transactions on the I2C bus so require something higher level than what
+> multi-master provides.
+
+I don't get what you mean here. Can you elaborate?
+
+That being said. Grant's design was the most promising one.
+
+Thanks,
+
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--6zdv2QT/q3FMhpsV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAlEBF1kACgkQD27XaX1/VRullQCePgYzSfFOMBAK94oXjHZnLFtt
+TYIAoMQogd0XfDbXQpVnMGySY0AW5KEI
+=Zzsm
+-----END PGP SIGNATURE-----
+
+--6zdv2QT/q3FMhpsV--
