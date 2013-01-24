@@ -1,19 +1,24 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Subject: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
-Date: Thu, 24 Jan 2013 10:28:34 +0530
-Message-ID: <1359003514-1646-1-git-send-email-ch.naveen@samsung.com>
+Date: Thu, 24 Jan 2013 10:35:32 +0530
+Message-ID: <1359003932-3306-1-git-send-email-ch.naveen@samsung.com>
 References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1358775470-21278-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:26117 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750779Ab3AXFGr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Jan 2013 00:06:47 -0500
+In-reply-to: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-iio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de
 
-This patch adds driver for ADC IP found on EXYNOS5250 and EXYNOS5410
+This patch add an ADC IP found on EXYNOS5250 and EXYNOS5410 SoCs
 from Samsung. Also adds the Documentation for device tree bindings.
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 ---
 Changes since v1:
 
@@ -37,6 +42,10 @@ Changes since v3:
 5. Change the define ADC_V1_CHANNEL to ADC_CHANNEL
 6. Update the Documentation to include EXYNOS5410 compatible
 
+Changes since v4:
+
+1. if devm_request_and_ioremap() failes, free iio_device before returning 
+
 Doug, i've used
 	chan = iio_channel_get(dev_name(&pdev->dev), "adc3");
 in ntc thermistor driver during probe and
@@ -52,8 +61,8 @@ Thanks for the comments
  .../bindings/arm/samsung/exynos5-adc.txt           |   38 ++
  drivers/iio/adc/Kconfig                            |    7 +
  drivers/iio/adc/Makefile                           |    1 +
- drivers/iio/adc/exynos5_adc.c                      |  475 ++++++++++++++++++++
- 4 files changed, 521 insertions(+)
+ drivers/iio/adc/exynos5_adc.c                      |  477 ++++++++++++++++++++
+ 4 files changed, 523 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt
  create mode 100644 drivers/iio/adc/exynos5_adc.c
 
@@ -133,16 +142,16 @@ index 2d5f100..5b4a4f6 100644
  obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
 diff --git a/drivers/iio/adc/exynos5_adc.c b/drivers/iio/adc/exynos5_adc.c
 new file mode 100644
-index 0000000..4963649
+index 0000000..197d622
 --- /dev/null
 +++ b/drivers/iio/adc/exynos5_adc.c
-@@ -0,0 +1,475 @@
+@@ -0,0 +1,477 @@
 +/*
 + *  exynos5_adc.c - Support for ADC in EXYNOS5 SoCs
 + *
 + *  8 ~ 10 channel, 10/12-bit ADC
 + *
-+ *  Copyright (C) 2013 Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
++ *  Copyright (C) 2013 Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 + *
 + *  This program is free software; you can redistribute it and/or modify
 + *  it under the terms of the GNU General Public License as published by
@@ -433,8 +442,10 @@ index 0000000..4963649
 +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 +
 +	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
-+	if (!info->regs)
-+		return -ENOMEM;
++	if (!info->regs) {
++		ret = -ENOMEM;
++		goto err_iio;
++	}
 +
 +	irq = platform_get_irq(pdev, 0);
 +	if (irq < 0) {
@@ -521,8 +532,8 @@ index 0000000..4963649
 +
 +err_of_populate:
 +	device_for_each_child(&pdev->dev, NULL, exynos5_adc_remove_devices);
-+	clk_disable_unprepare(info->clk);
 +	regulator_disable(info->vdd);
++	clk_disable_unprepare(info->clk);
 +err_iio_dev:
 +	iio_device_unregister(indio_dev);
 +err_map:
@@ -539,8 +550,8 @@ index 0000000..4963649
 +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
 +	struct exynos5_adc *info = iio_priv(indio_dev);
 +
-+	clk_disable_unprepare(info->clk);
 +	regulator_disable(info->vdd);
++	clk_disable_unprepare(info->clk);
 +	iio_device_unregister(indio_dev);
 +	iio_map_array_unregister(indio_dev, info->map);
 +	free_irq(info->irq, info);
@@ -609,7 +620,7 @@ index 0000000..4963649
 +
 +module_platform_driver(exynos5_adc_driver);
 +
-+MODULE_AUTHOR("Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
++MODULE_AUTHOR("Naveen Krishna Chatradhi <ch.naveen@samsung.com>");
 +MODULE_DESCRIPTION("Samsung EXYNOS5 ADC driver");
 +MODULE_LICENSE("GPL");
 -- 
