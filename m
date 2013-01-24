@@ -1,54 +1,128 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH V3 4/4] i2c: s3c2410: Remove err_cpufreq label
-Date: Thu, 24 Jan 2013 15:41:09 +0530
-Message-ID: <1359022269-12593-5-git-send-email-tushar.behera@linaro.org>
-References: <1359022269-12593-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1359022269-12593-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: w.sang@pengutronix.de, kgene.kim@samsung.com, patches@linaro.org
+From: Sangsu Park <sangsu4u.park@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Add clocks for EXYNOS I2S and PCM I/F
+Date: Thu, 24 Jan 2013 20:00:33 +0900
+Message-ID: <013e01cdfa22$07fa03f0$17ee0bd0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:49454 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752995Ab3AXLAe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Jan 2013 06:00:34 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MH400HTIMKH0QR0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Jan 2013 20:00:32 +0900 (KST)
+Received: from DOSANGSU4UP02 ([12.23.118.226])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MH400064MKVLE30@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Jan 2013 20:00:32 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, sbkim73@samsung.com, Tushar Behera <tushar.behera@linaro.org>
 
-err_cpufreq label is now used only once. It can be removed and related
-code can be moved to the caller location.
+Audio Subsystem has own clocks for I2S0 and PCM0 in all EXYNOS series.
+This patch add clocks for I2S0 and PCM0 I/F.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
 ---
-Changes since V2:
-  * Rebased to v3.8-rc4.
+ arch/arm/mach-exynos/Makefile      |    1 +
+ arch/arm/mach-exynos/clock-audss.c |   64 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/clock-audss.c
 
-Changes since V1:
-  * Rebased as per the V2 patch series.
-
-
- drivers/i2c/busses/i2c-s3c2410.c |    7 ++-----
- 1 files changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 4d1ba8d..3479ca7 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1109,7 +1109,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	ret = i2c_add_numbered_adapter(&i2c->adap);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
--		goto err_cpufreq;
-+		s3c24xx_i2c_deregister_cpufreq(i2c);
-+		return ret;
- 	}
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 7e53a3a..5b6c7c0 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -13,6 +13,7 @@ obj-				:=
+ # Core
  
- 	of_i2c_register_devices(&i2c->adap);
-@@ -1120,10 +1121,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 
- 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
- 	return 0;
--
-- err_cpufreq:
--	s3c24xx_i2c_deregister_cpufreq(i2c);
--	return ret;
- }
- 
- /* s3c24xx_i2c_remove
+ obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
++obj-$(CONFIG_ARCH_EXYNOS)	+= clock-audss.o
+ obj-$(CONFIG_ARCH_EXYNOS4)	+= clock-exynos4.o
+ obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
+ obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
+diff --git a/arch/arm/mach-exynos/clock-audss.c
+b/arch/arm/mach-exynos/clock-audss.c
+new file mode 100644
+index 0000000..8260185
+--- /dev/null
++++ b/arch/arm/mach-exynos/clock-audss.c
+@@ -0,0 +1,64 @@
++/*
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Clock support for EXYNOS Audio Subsystem
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/io.h>
++
++#include <plat/clock.h>
++#include <plat/s5p-clock.h>
++
++#define EXYNOS_PA_AUDSS	(0x03810000)
++
++/* IP Clock Gate 0 Registers */
++#define EXYNOS_AUDSS_CLKGATE_I2SBUS	(1<<2)
++#define EXYNOS_AUDSS_CLKGATE_I2SSPECIAL	(1<<3)
++#define EXYNOS_AUDSS_CLKGATE_PCMBUS	(1<<4)
++#define EXYNOS_AUDSS_CLKGATE_PCMSPECIAL	(1<<5)
++#define EXYNOS_AUDSS_CLKGATE_GPIO	(1<<6)
++
++static void __iomem *clk_audss_base = 0;
++
++static int exynos_clk_audss_ctrl(struct clk *clk, int enable)
++{
++	if (!clk_audss_base)
++		return ENOMEM;
++
++	return s5p_gatectrl(clk_audss_base, clk, enable);
++}
++
++static struct clk exynos_init_audss_clocks[] = {
++	{
++		.name		= "iis",
++		.devname	= "samsung-i2s.0",
++		.enable		= exynos_clk_audss_ctrl,
++		.ctrlbit	= EXYNOS_AUDSS_CLKGATE_I2SSPECIAL |
+EXYNOS_AUDSS_CLKGATE_I2SBUS
++				| EXYNOS_AUDSS_CLKGATE_GPIO,
++	}, {
++		.name		= "pcm",
++		.devname	= "samsung-pcm.0",
++		.enable		= exynos_clk_audss_ctrl,
++		.ctrlbit	= EXYNOS_AUDSS_CLKGATE_PCMSPECIAL |
+EXYNOS_AUDSS_CLKGATE_PCMBUS
++				| EXYNOS_AUDSS_CLKGATE_GPIO,
++	},
++};
++
++void __init exynos_register_audss_clocks(void)
++{
++	clk_audss_base = ioremap(EXYNOS_PA_AUDSS, SZ_4K);
++	if (clk_audss_base == NULL) {
++		pr_err("unable to ioremap for gpio_base1\n");
++		return;
++	}
++
++	s3c_register_clocks(exynos_init_audss_clocks,
+ARRAY_SIZE(exynos_init_audss_clocks));
++	s3c_disable_clocks(exynos_init_audss_clocks,
+ARRAY_SIZE(exynos_init_audss_clocks));
++}
 -- 
 1.7.4.1
