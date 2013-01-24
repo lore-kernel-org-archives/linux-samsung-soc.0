@@ -1,77 +1,87 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] drivers: cpufreq: exynos: update related_cpus mask to fix hotplug dump
-Date: Thu, 24 Jan 2013 13:32:45 +0100
-Message-ID: <4727448.lA9hpgMK7A@vostro.rjw.lan>
-References: <1359000647-8366-1-git-send-email-inderpal.singh@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1359000647-8366-1-git-send-email-inderpal.singh@linaro.org>
-Sender: cpufreq-owner@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+From: "R. Chandrasekar" <rcsekar@samsung.com>
+Subject: [PATCH] Asoc: Samsung: Add support for I2S runtime S2R
+Date: Thu, 24 Jan 2013 18:05:30 +0530
+Message-ID: <1359030931-27354-1-git-send-email-rcsekar@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:58328 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753065Ab3AXMix (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Jan 2013 07:38:53 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MH400HDSR4I0QU0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Jan 2013 21:38:51 +0900 (KST)
+Received: from sekar-ubuntu.sisodomain.com ([107.108.73.178])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MH4007KRR2EEQ50@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Jan 2013 21:38:51 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, ben-linux@fluff.org, kgene.kim@samsung.com, jassisinghbrar@gmail.com, "R. Chandrasekar" <rcsekar@samsung.com>
 
-On Thursday, January 24, 2013 09:40:47 AM Inderpal Singh wrote:
-> commit "7e6087e595d3...cpufreq: Simplify cpufreq_add_dev()" started using
-> related_cpus mask to check if the current cpu is already managed.
-> 
-> With above commit hotplug in exynos gives following dump.
-> 
-> / $ echo 1 > /sys/devices/system/cpu/cpu1/online
-> CPU1: Booted secondary processor
-> ------------[ cut here ]------------
-> WARNING: at fs/sysfs/dir.c:536 sysfs_add_one+0x88/0xbc()
-> sysfs: cannot create duplicate filename '/devices/system/cpu/cpu0/cpufreq'
-> Modules linked in:
-> [<c0014560>] (unwind_backtrace+0x0/0xf8) from [<c0020214>] (warn_slowpath_common+0x4c/0x64)
-> [<c0020214>] (warn_slowpath_common+0x4c/0x64) from [<c00202c0>] (warn_slowpath_fmt+0x30/0x40)
-> [<c00202c0>] (warn_slowpath_fmt+0x30/0x40) from [<c00fb548>] (sysfs_add_one+0x88/0xbc)
-> [<c00fb548>] (sysfs_add_one+0x88/0xbc) from [<c00fc184>] (sysfs_do_create_link+0x110/0x208)
-> [<c00fc184>] (sysfs_do_create_link+0x110/0x208) from [<c019a868>] (cpufreq_add_dev_interface+0x218/0x2b0)
-> [<c019a868>] (cpufreq_add_dev_interface+0x218/0x2b0) from [<c019ac0c>] (cpufreq_add_dev+0x30c/0x448)
-> [<c019ac0c>] (cpufreq_add_dev+0x30c/0x448) from [<c01bdb84>] (cpufreq_cpu_callback+0x94/0x9c)
-> [<c01bdb84>] (cpufreq_cpu_callback+0x94/0x9c) from [<c0040fac>] (notifier_call_chain+0x44/0x84)
-> [<c0040fac>] (notifier_call_chain+0x44/0x84) from [<c0023484>] (__cpu_notify+0x28/0x44)
-> [<c0023484>] (__cpu_notify+0x28/0x44) from [<c01bc320>] (_cpu_up+0x104/0x154)
-> [<c01bc320>] (_cpu_up+0x104/0x154) from [<c01bc3d4>] (cpu_up+0x64/0x84)
-> [<c01bc3d4>] (cpu_up+0x64/0x84) from [<c01bafc8>] (store_online+0x50/0x78)
-> [<c01bafc8>] (store_online+0x50/0x78) from [<c016850c>] (dev_attr_store+0x18/0x24)
-> [<c016850c>] (dev_attr_store+0x18/0x24) from [<c00fa12c>] (sysfs_write_file+0x168/0x198)
-> [<c00fa12c>] (sysfs_write_file+0x168/0x198) from [<c00a7424>] (vfs_write+0x9c/0x140)
-> [<c00a7424>] (vfs_write+0x9c/0x140) from [<c00a76b0>] (sys_write+0x3c/0x70)
-> [<c00a76b0>] (sys_write+0x3c/0x70) from [<c000e2c0>] (ret_fast_syscall+0x0/0x30)
-> ---[ end trace 3d002b0ded69f43b ]---
-> 
-> This patch fixes it by updating the related_cpus mask.
-> 
-> Tested on Rafael's linux-next.
+From: "R. Chandrasekar" <rcsekar@samsung.com>
 
-I'll take this as a fix for v3.8 if no one objects.
+This patch adds runtime suspend to resume support for I2S.
 
-Thanks,
-Rafael
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: R. Chandrasekar <rcsekar@samsung.com>
+---
+ sound/soc/samsung/i2s.c |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
-> ---
->  drivers/cpufreq/exynos-cpufreq.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-> index 7012ea8..8ba4cdb 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -238,6 +238,7 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  		cpumask_copy(policy->cpus, cpu_online_mask);
->  	} else {
->  		policy->shared_type = CPUFREQ_SHARED_TYPE_ANY;
-> +		cpumask_setall(policy->related_cpus);
->  		cpumask_setall(policy->cpus);
->  	}
->  
-> 
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index d2d124f..27a5ab1 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -993,6 +993,26 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
+ 	return i2s;
+ }
+ 
++#ifdef CONFIG_PM_RUNTIME
++static int i2s_runtime_suspend(struct device *dev)
++{
++	struct i2s_dai *i2s = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(i2s->clk);
++
++	return 0;
++}
++
++static int i2s_runtime_resume(struct device *dev)
++{
++	struct i2s_dai *i2s = dev_get_drvdata(dev);
++
++	clk_prepare_enable(i2s->clk);
++
++	return 0;
++}
++#endif /* CONFIG_PM_RUNTIME */
++
+ static int samsung_i2s_probe(struct platform_device *pdev)
+ {
+ 	u32 dma_pl_chan, dma_cp_chan, dma_pl_sec_chan;
+@@ -1143,12 +1163,18 @@ static int samsung_i2s_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct dev_pm_ops samsung_i2s_pm = {
++	SET_RUNTIME_PM_OPS(i2s_runtime_suspend,
++				i2s_runtime_resume, NULL)
++};
++
+ static struct platform_driver samsung_i2s_driver = {
+ 	.probe  = samsung_i2s_probe,
+ 	.remove = samsung_i2s_remove,
+ 	.driver = {
+ 		.name = "samsung-i2s",
+ 		.owner = THIS_MODULE,
++		.pm = &samsung_i2s_pm,
+ 	},
+ };
+ 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+1.7.9.5
