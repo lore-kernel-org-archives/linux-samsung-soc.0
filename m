@@ -1,44 +1,64 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
-Date: Wed, 23 Jan 2013 16:42:54 -0800
-Message-ID: <CAD=FV=VgrpPSLrwwrzFDFLBXTw+-t3C=UwnS6b53o41hxM_AyQ@mail.gmail.com>
-References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com>
-	<1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
-	<50FFDD2A.9040102@metafoo.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50FFDD2A.9040102-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH] drivers: cpufreq: exynos: update related_cpus mask to fix hotplug dump
+Date: Thu, 24 Jan 2013 09:40:47 +0530
+Message-ID: <1359000647-8366-1-git-send-email-inderpal.singh@linaro.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: cpufreq@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: rjw@sisk.pl, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Lars,
+commit "7e6087e595d3...cpufreq: Simplify cpufreq_add_dev()" started using
+related_cpus mask to check if the current cpu is already managed.
 
-On Wed, Jan 23, 2013 at 4:52 AM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
->> Few doubts regarding the mappings and child device handling.
->> Kindly, suggest me better methods.
->
-> The patch looks mostly good now. As for the mappings, the problem is that we
-> currently do not have any device tree bindings for IIO. So a proper solution
-> would be to add dt bindings for IIO.
+With above commit hotplug in exynos gives following dump.
 
-Can you explain more how you think this would work?  It seems like
-just having child nodes as platform drivers would be OK (to me) and
-having them instantiated with of_platform_populate() seems reasonable.
+/ $ echo 1 > /sys/devices/system/cpu/cpu1/online
+CPU1: Booted secondary processor
+------------[ cut here ]------------
+WARNING: at fs/sysfs/dir.c:536 sysfs_add_one+0x88/0xbc()
+sysfs: cannot create duplicate filename '/devices/system/cpu/cpu0/cpufreq'
+Modules linked in:
+[<c0014560>] (unwind_backtrace+0x0/0xf8) from [<c0020214>] (warn_slowpath_common+0x4c/0x64)
+[<c0020214>] (warn_slowpath_common+0x4c/0x64) from [<c00202c0>] (warn_slowpath_fmt+0x30/0x40)
+[<c00202c0>] (warn_slowpath_fmt+0x30/0x40) from [<c00fb548>] (sysfs_add_one+0x88/0xbc)
+[<c00fb548>] (sysfs_add_one+0x88/0xbc) from [<c00fc184>] (sysfs_do_create_link+0x110/0x208)
+[<c00fc184>] (sysfs_do_create_link+0x110/0x208) from [<c019a868>] (cpufreq_add_dev_interface+0x218/0x2b0)
+[<c019a868>] (cpufreq_add_dev_interface+0x218/0x2b0) from [<c019ac0c>] (cpufreq_add_dev+0x30c/0x448)
+[<c019ac0c>] (cpufreq_add_dev+0x30c/0x448) from [<c01bdb84>] (cpufreq_cpu_callback+0x94/0x9c)
+[<c01bdb84>] (cpufreq_cpu_callback+0x94/0x9c) from [<c0040fac>] (notifier_call_chain+0x44/0x84)
+[<c0040fac>] (notifier_call_chain+0x44/0x84) from [<c0023484>] (__cpu_notify+0x28/0x44)
+[<c0023484>] (__cpu_notify+0x28/0x44) from [<c01bc320>] (_cpu_up+0x104/0x154)
+[<c01bc320>] (_cpu_up+0x104/0x154) from [<c01bc3d4>] (cpu_up+0x64/0x84)
+[<c01bc3d4>] (cpu_up+0x64/0x84) from [<c01bafc8>] (store_online+0x50/0x78)
+[<c01bafc8>] (store_online+0x50/0x78) from [<c016850c>] (dev_attr_store+0x18/0x24)
+[<c016850c>] (dev_attr_store+0x18/0x24) from [<c00fa12c>] (sysfs_write_file+0x168/0x198)
+[<c00fa12c>] (sysfs_write_file+0x168/0x198) from [<c00a7424>] (vfs_write+0x9c/0x140)
+[<c00a7424>] (vfs_write+0x9c/0x140) from [<c00a76b0>] (sys_write+0x3c/0x70)
+[<c00a76b0>] (sys_write+0x3c/0x70) from [<c000e2c0>] (ret_fast_syscall+0x0/0x30)
+---[ end trace 3d002b0ded69f43b ]---
 
-...but the one thing that is missing is a way for children to get
-access to the channel properly.
+This patch fixes it by updating the related_cpus mask.
 
-The children have access to the ADC "struct device" (it is their
-parent device) and have a channel number (their "reg" field), but
-there is no API call to map this to a "struct iio_channel".  Is that
-all that's needed in this case?  ...or are you envisioning something
-more?
+Tested on Rafael's linux-next.
 
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+ drivers/cpufreq/exynos-cpufreq.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks!  :)
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index 7012ea8..8ba4cdb 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -238,6 +238,7 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		cpumask_copy(policy->cpus, cpu_online_mask);
+ 	} else {
+ 		policy->shared_type = CPUFREQ_SHARED_TYPE_ANY;
++		cpumask_setall(policy->related_cpus);
+ 		cpumask_setall(policy->cpus);
+ 	}
+ 
+-- 
+1.7.9.5
 
-
--Doug
