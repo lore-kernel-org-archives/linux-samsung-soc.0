@@ -1,63 +1,60 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: [RFC/PATCH 09/32] usb: gadget: dummy_hcd: let udc-core manage gadget->dev
-Date: Thu, 24 Jan 2013 17:45:47 +0200
-Message-ID: <1359042370-4358-10-git-send-email-balbi@ti.com>
-References: <1359042370-4358-1-git-send-email-balbi@ti.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
+Date: Thu, 24 Jan 2013 08:12:17 -0800
+Message-ID: <CAD=FV=VRKqeRxvcV1-aQCbu0FoTpMiVVXoNiVEx5SxLe3N_tgQ@mail.gmail.com>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com>
+	<1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
+	<50FFDD2A.9040102@metafoo.de>
+	<CAD=FV=VgrpPSLrwwrzFDFLBXTw+-t3C=UwnS6b53o41hxM_AyQ@mail.gmail.com>
+	<510104BD.2020500@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1359042370-4358-1-git-send-email-balbi@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Linux USB Mailing List <linux-usb@vger.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, gregkh@linuxfoundation.org, dahlmann.thomas@arcor.de, nicolas.ferre@atmel.com, leoli@freescale.com, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, ben-linux@fluff.org, kgene.kim@samsung.com, kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-geode@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@ti.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:47605 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750970Ab3AXQMW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Jan 2013 11:12:22 -0500
+Received: by mail-lb0-f173.google.com with SMTP id gf7so6506895lbb.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jan 2013 08:12:21 -0800 (PST)
+Received: by mail-lb0-f179.google.com with SMTP id j14so2803375lbo.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jan 2013 08:12:17 -0800 (PST)
+In-Reply-To: <510104BD.2020500@metafoo.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, Naveen Krishna <naveenkrishna.ch@gmail.com>
 
-By simply setting a flag, we can drop some
-boilerplate code.
+Lars,
 
-Signed-off-by: Felipe Balbi <balbi@ti.com>
----
- drivers/usb/gadget/dummy_hcd.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+Thank you for your comments / thoughts...
 
-diff --git a/drivers/usb/gadget/dummy_hcd.c b/drivers/usb/gadget/dummy_hcd.c
-index 95d584d..8155d4a 100644
---- a/drivers/usb/gadget/dummy_hcd.c
-+++ b/drivers/usb/gadget/dummy_hcd.c
-@@ -982,16 +982,10 @@ static int dummy_udc_probe(struct platform_device *pdev)
- 	dum->gadget.name = gadget_name;
- 	dum->gadget.ops = &dummy_ops;
- 	dum->gadget.max_speed = USB_SPEED_SUPER;
-+	dum->gadget.register_my_device = true;
- 
--	dev_set_name(&dum->gadget.dev, "gadget");
- 	dum->gadget.dev.parent = &pdev->dev;
- 	dum->gadget.dev.release = dummy_gadget_release;
--	rc = device_register(&dum->gadget.dev);
--	if (rc < 0) {
--		put_device(&dum->gadget.dev);
--		return rc;
--	}
--
- 	init_dummy_udc_hw(dum);
- 
- 	rc = usb_add_gadget_udc(&pdev->dev, &dum->gadget);
-@@ -1007,7 +1001,6 @@ static int dummy_udc_probe(struct platform_device *pdev)
- err_dev:
- 	usb_del_gadget_udc(&dum->gadget);
- err_udc:
--	device_unregister(&dum->gadget.dev);
- 	return rc;
- }
- 
-@@ -1018,7 +1011,6 @@ static int dummy_udc_remove(struct platform_device *pdev)
- 	usb_del_gadget_udc(&dum->gadget);
- 	platform_set_drvdata(pdev, NULL);
- 	device_remove_file(&dum->gadget.dev, &dev_attr_function);
--	device_unregister(&dum->gadget.dev);
- 	return 0;
- }
- 
--- 
-1.8.1.rc1.5.g7e0651a
 
+On Thu, Jan 24, 2013 at 1:54 AM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> adc: adc@12D10000 {
+>
+>         #io-channel-cells = <1>;
+>         io-channel-output-names = "adc1", "adc2", ...;
+>
+>         ncp15wb473@0 {
+>                 compatible = "ntc,ncp15wb473";
+>                 ...
+>                 io-channels = <&adc 0>; // First ADC channel
+
+I'm not an expert, but I think the typical way is:
+* No need to include a handle to &adc.  It's logically our parent.  In
+a similar way i2c devices don't specify their parent bus--they are
+just listed under it.
+* The "0" should be specified with reg = <0>
+
+Everything else about this syntax looks good.
+
+To implement this I'd imagine that we'll need a new API call, right?
+In this case the thermistor driver won't know the name of the channel.
+ It can find the ADC (the struct device and probably other things) and
+knows a channel index.  Am I understanding properly?
+
+I think Naveen expressed the same question, though he said it a bit
+differently than me.
+
+-Doug
