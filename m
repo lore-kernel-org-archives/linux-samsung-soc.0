@@ -1,13 +1,14 @@
-From: Prasanna Kumar <prasannapadubidri@gmail.com>
-Subject: Re: [PATCH 0/2] ARM: Exynos5 : Add Power domain device tree support
- for MFC and GSC
-Date: Tue, 15 Jan 2013 16:17:46 +0530
-Message-ID: <CAPmaG0vQHJbp5tkHTPxEM3Oy1GASbN4asN-x+gtxb77jwpOK0g@mail.gmail.com>
-References: <1357733733-18769-1-git-send-email-prasanna.ps@samsung.com>
+From: Olof Johansson <olofj@chromium.org>
+Subject: Re: [PATCH] i2c: samsung: resume race fix
+Date: Thu, 24 Jan 2013 08:41:20 -0800
+Message-ID: <CALiw-2F7tG9ogDHj4Yf47T47rBn6mAiH2XvK8jpWB1a3OhNJBQ@mail.gmail.com>
+References: <1352284106-24988-1-git-send-email-ch.naveen@samsung.com>
+ <20121107114437.0a563c7e@endymion.delvare>
+ <20130124132759.GH12933@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0794260887254655583=="
+Content-Type: multipart/mixed; boundary="===============6149729957268440774=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1357733733-18769-1-git-send-email-prasanna.ps@samsung.com>
+In-Reply-To: <20130124132759.GH12933@pengutronix.de>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,90 +18,98 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: Wolfram Sang <w.sang@pengutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, Jean Delvare <khali@linux-fr.org>, naveenkrishna.ch@gmail.com, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============0794260887254655583==
-Content-Type: multipart/alternative; boundary=20cf3071ce3ef9cf9f04d3517df7
+--===============6149729957268440774==
+Content-Type: multipart/alternative; boundary=bcaec55551200acca204d40b7b96
 
---20cf3071ce3ef9cf9f04d3517df7
+--bcaec55551200acca204d40b7b96
 Content-Type: text/plain; charset=ISO-8859-1
 
-Hello all,
+2013/1/24 Wolfram Sang <w.sang@pengutronix.de>
 
-Any comments for this patch set ?
-
-On Wed, Jan 9, 2013 at 5:45 PM, Prasanna Kumar <prasanna.ps@samsung.com>wrote:
-
-> Hello all,
+> On Wed, Nov 07, 2012 at 11:44:37AM +0100, Jean Delvare wrote:
+> > On Wed, 07 Nov 2012 15:58:26 +0530, Naveen Krishna Chatradhi wrote:
+> > > Don't unmark the device as suspended until after it's been re-setup.
+> > >
+> > > The main race would be w.r.t. an i2c driver that gets resumed at the
+> same
+> > > time (asyncronously), that is allowed to do a transfer since suspended
+> > > is set to 0 before reinit, but really should have seen the -EIO return
+> > > instead.
+> >
+> > I thought that the suspend order was children first and the resume
+> > order was parent first?
 >
-> This patch set adds device tree support for power domains (Gscaler and
-> MFC) of exynos5
->
-> Prasanna Kumar (2):
->   arm: exynos5: Enable PM generic domain support in Kconfig
->   ARM: dts: exynos5: Set up power domain for  MFC and G-scaler
->
->  arch/arm/boot/dts/exynos5250.dtsi |   15 +++++++++++++++
->  arch/arm/mach-exynos/Kconfig      |    1 +
->  2 files changed, 16 insertions(+), 0 deletions(-)
->
-> --
-> 1.7.5.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Same here, why does it not work this way?
 >
 
+Sorry for being quiet on this so far, I didn't notice the controversy until
+now.
+
+This is actually about half of what the original fix was (which I wrote,
+thus my signed-off-by). The original one was related to us having the GPIO
+handshake for a shared bus (see separate discussions on how that should be
+upstreamed, and the work on that). For reference, that patch is at:
+https://gerrit.chromium.org/gerrit/#/c/28126/1/drivers/i2c/busses/i2c-s3c2410.c
+.
+
+So, I'm not sure that this patch is really needed. The significant part of
+the original one was the move of our internal s3c24xx_i2c_dt_gpio_free()
+below setting suspended = 1. Upstream implementation of the same
+functionality will be implemented differently, most likely.
 
 
--- 
-Thanks
-Prasanna Kumar
+-Olof
 
---20cf3071ce3ef9cf9f04d3517df7
+--bcaec55551200acca204d40b7b96
 Content-Type: text/html; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hello all,<div><br></div><div>Any comments for this patch set ?<br><br><div=
- class=3D"gmail_quote">On Wed, Jan 9, 2013 at 5:45 PM, Prasanna Kumar <span=
- dir=3D"ltr">&lt;<a href=3D"mailto:prasanna.ps@samsung.com" target=3D"_blan=
-k">prasanna.ps@samsung.com</a>&gt;</span> wrote:<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">Hello all,<br>
+<div class=3D"gmail_quote">2013/1/24 Wolfram Sang <span dir=3D"ltr">&lt;<a =
+href=3D"mailto:w.sang@pengutronix.de" target=3D"_blank">w.sang@pengutronix.=
+de</a>&gt;</span><br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 =
+0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
+<div class=3D"im">On Wed, Nov 07, 2012 at 11:44:37AM +0100, Jean Delvare wr=
+ote:<br>
+&gt; On Wed, 07 Nov 2012 15:58:26 +0530, Naveen Krishna Chatradhi wrote:<br=
+>
+&gt; &gt; Don&#39;t unmark the device as suspended until after it&#39;s bee=
+n re-setup.<br>
+&gt; &gt;<br>
+&gt; &gt; The main race would be w.r.t. an i2c driver that gets resumed at =
+the same<br>
+&gt; &gt; time (asyncronously), that is allowed to do a transfer since susp=
+ended<br>
+&gt; &gt; is set to 0 before reinit, but really should have seen the -EIO r=
+eturn<br>
+&gt; &gt; instead.<br>
+&gt;<br>
+&gt; I thought that the suspend order was children first and the resume<br>
+&gt; order was parent first?<br>
 <br>
-This patch set adds device tree support for power domains (Gscaler and<br>
-MFC) of exynos5<br>
-<br>
-Prasanna Kumar (2):<br>
-=A0 arm: exynos5: Enable PM generic domain support in Kconfig<br>
-=A0 ARM: dts: exynos5: Set up power domain for =A0MFC and G-scaler<br>
-<br>
-=A0arch/arm/boot/dts/exynos5250.dtsi | =A0 15 +++++++++++++++<br>
-=A0arch/arm/mach-exynos/Kconfig =A0 =A0 =A0| =A0 =A01 +<br>
-=A02 files changed, 16 insertions(+), 0 deletions(-)<br>
-<span class=3D"HOEnZb"><font color=3D"#888888"><br>
---<br>
-1.7.5.4<br>
-<br>
---<br>
-To unsubscribe from this list: send the line &quot;unsubscribe linux-samsun=
-g-soc&quot; in<br>
-the body of a message to <a href=3D"mailto:majordomo@vger.kernel.org">major=
-domo@vger.kernel.org</a><br>
-More majordomo info at =A0<a href=3D"http://vger.kernel.org/majordomo-info.=
-html" target=3D"_blank">http://vger.kernel.org/majordomo-info.html</a><br>
-</font></span></blockquote></div><br><br clear=3D"all"><div><br></div>-- <b=
-r>Thanks<br>Prasanna Kumar
+</div>Same here, why does it not work this way?<br></blockquote><div></div>=
+</div><br><div>Sorry for being quiet on this so far, I didn&#39;t notice th=
+e controversy until now.</div><div><br></div><div>This is actually about ha=
+lf of what the original fix was (which I wrote, thus my signed-off-by). The=
+ original one was related to us having the GPIO handshake for a shared bus =
+(see separate discussions on how that should be upstreamed, and the work on=
+ that). For reference, that patch is at:=A0<a href=3D"https://gerrit.chromi=
+um.org/gerrit/#/c/28126/1/drivers/i2c/busses/i2c-s3c2410.c">https://gerrit.=
+chromium.org/gerrit/#/c/28126/1/drivers/i2c/busses/i2c-s3c2410.c</a>.</div>
+<div><br></div><div>So, I&#39;m not sure that this patch is really needed. =
+The significant part of the original one was the move of our internal=A0s3c=
+24xx_i2c_dt_gpio_free() below setting suspended =3D 1. Upstream implementat=
+ion of the same functionality will be implemented differently, most likely.=
 </div>
+<div><br></div><div><br></div><div>-Olof</div>
 
---20cf3071ce3ef9cf9f04d3517df7--
+--bcaec55551200acca204d40b7b96--
 
 
---===============0794260887254655583==
+--===============6149729957268440774==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -111,4 +120,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============0794260887254655583==--
+--===============6149729957268440774==--
