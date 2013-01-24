@@ -1,57 +1,81 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: DTS: exynos5250-arndale: Add initial board support
- file
-Date: Thu, 24 Jan 2013 14:52:05 +0530
-Message-ID: <5100FD3D.7080206@linaro.org>
-References: <1359008188-23395-1-git-send-email-tushar.behera@linaro.org> <CAGOxZ53VsXE_as6aNk85jdxVG2FAg-SqWc8svTHpgrcttE_q0w@mail.gmail.com>
+From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH] iio: adc: add exynos5 adc driver under iio framwork
+Date: Thu, 24 Jan 2013 10:54:05 +0100
+Message-ID: <510104BD.2020500@metafoo.de>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <1358917086-4148-1-git-send-email-ch.naveen@samsung.com> <50FFDD2A.9040102@metafoo.de> <CAD=FV=VgrpPSLrwwrzFDFLBXTw+-t3C=UwnS6b53o41hxM_AyQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:57609 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752529Ab3AXJWN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 04:22:13 -0500
-Received: by mail-pa0-f44.google.com with SMTP id hz11so5383510pad.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jan 2013 01:22:12 -0800 (PST)
-In-Reply-To: <CAGOxZ53VsXE_as6aNk85jdxVG2FAg-SqWc8svTHpgrcttE_q0w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=VgrpPSLrwwrzFDFLBXTw+-t3C=UwnS6b53o41hxM_AyQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Girish K S <ks.giri@samsung.com>
 
-On 01/24/2013 12:21 PM, Alim Akhtar wrote:
-
->> +
->> +       i2c@12CC0000 {
->> +               status = "disabled";
->> +       };
->> +
->> +       i2c@12CD0000 {
->> +               status = "disabled";
->> +       };
->> +
->> +       i2c@121D0000 {
->> +               status = "disabled";
->> +       };
->> +
+On 01/24/2013 01:42 AM, Doug Anderson wrote:
+> Lars,
 > 
-> Why to disable these i2c devices here? Any particular reason?
-> You can moves these to exynos5250.dtsi which is suppose to be common
-> for all the exynos5250 platforms.
-> Please see the exynos4.dtsi for reference.
+> On Wed, Jan 23, 2013 at 4:52 AM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
+>>> Few doubts regarding the mappings and child device handling.
+>>> Kindly, suggest me better methods.
+>>
+>> The patch looks mostly good now. As for the mappings, the problem is that we
+>> currently do not have any device tree bindings for IIO. So a proper solution
+>> would be to add dt bindings for IIO.
 > 
+> Can you explain more how you think this would work?  It seems like
+> just having child nodes as platform drivers would be OK (to me) and
+> having them instantiated with of_platform_populate() seems reasonable.
+> 
+> ...but the one thing that is missing is a way for children to get
+> access to the channel properly.
+> 
+> The children have access to the ADC "struct device" (it is their
+> parent device) and have a channel number (their "reg" field), but
+> there is no API call to map this to a "struct iio_channel".  Is that
+> all that's needed in this case?  ...or are you envisioning something
+> more?
 
-Agreed. There was a discussion going on in [1] related to this. Since
-there was no consensus on that, I preferred to go with the current
-approach that is followed for other EXYNOS5250 based scripts.
+Well, the idea is that the consumer doesn't need to know the channel number.
+That's what the mapping takes care of. It basically creates a consumer alias
+for the channel. When requesting the channel the consumer always uses the
+same name.
 
-If it is agreed by Kukjin to move to Exynos4 style, then I can submit
-patches for that.
+iio_channel_get(dev_name(&pdev->dev), "voltage");
 
-[1]
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15013.html
+And the mapping contains an entry which maps the tuple of device name and
+channel name to a real IIO channel which as been registered by a IIO device.
+Note if there is only one channel you can also just use NULL for the channel
+name. This is similar to how clocks are managed with the clk framework.
 
--- 
-Tushar Behera
+Now for the dt bindings I think we should stick to something similar to what
+the clk framework does.
+
+E.g.
+
+adc: adc@12D10000 {
+
+	#io-channel-cells = <1>;
+	io-channel-output-names = "adc1", "adc2", ...;
+
+	ncp15wb473@0 {
+		compatible = "ntc,ncp15wb473";
+		...
+		io-channels = <&adc 0>; // First ADC channel
+		io-channel-names = "voltage";
+	};
+
+	ncp15wb473@0 {
+		compatible = "ntc,ncp15wb473";
+		...
+		io-channels = <&adc 1>; // Second ADC channel
+		io-channel-names = "voltage";
+	}
+};
+
+io-channel-output-names and io-channel-names can be optional. In the case
+where there is only one channel it's not really necessary to use
+io-channel-names.
+
+- Lars
