@@ -1,48 +1,174 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: [PATCH] ARM:plat-s3c24xx: for memcpy, reading more things out of
- boundary
-Date: Thu, 24 Jan 2013 13:27:31 +0800
-Message-ID: <5100C643.5010101@asianux.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=GB2312
-Content-Transfer-Encoding: 7bit
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: DTS: exynos5250-arndale: Add initial board support file
+Date: Thu, 24 Jan 2013 11:46:28 +0530
+Message-ID: <1359008188-23395-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:32451 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751302Ab3AXF1e (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:52675 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750771Ab3AXGZZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jan 2013 00:27:34 -0500
+	Thu, 24 Jan 2013 01:25:25 -0500
+Received: by mail-pa0-f46.google.com with SMTP id kp14so3920944pab.33
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jan 2013 22:25:25 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Girish K S <ks.giri@samsung.com>
 
+From: Girish K S <ks.giri@samsung.com>
 
-  the size is made by "plls_no + 1".
-  so when copy from original buffer, need dec 1, or reading out of boundary.
+Arndale is a low cost board based on the Samsung Exynos5250 SoC. This
+patch adds initial device tree support for this board.
 
-additional info:
-  plls_no is ARRARY_SIZE(plls).
-
-
-Signed-off-by: Chen Gang <gang.chen@asianux.com>
+Signed-off-by: Girish K S <ks.giri@samsung.com>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- arch/arm/plat-s3c24xx/cpu-freq.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/Makefile               |    1 +
+ arch/arm/boot/dts/exynos5250-arndale.dts |  124 ++++++++++++++++++++++++++++++
+ 2 files changed, 125 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5250-arndale.dts
 
-diff --git a/arch/arm/plat-s3c24xx/cpu-freq.c b/arch/arm/plat-s3c24xx/cpu-freq.c
-index 4680799..df093b2 100644
---- a/arch/arm/plat-s3c24xx/cpu-freq.c
-+++ b/arch/arm/plat-s3c24xx/cpu-freq.c
-@@ -700,7 +700,8 @@ int __init s3c_plltab_register(struct cpufreq_frequency_table *plls,
- 
- 	vals = kmalloc(size, GFP_KERNEL);
- 	if (vals) {
--		memcpy(vals, plls, size);
-+		memcpy(vals, plls,
-+			size - sizeof(struct cpufreq_frequency_table));
- 		pll_reg = vals;
- 
- 		/* write a terminating entry, we don't store it in the
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 5ebb44f..60a9e52 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -44,6 +44,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4210-trats.dtb \
+ 	exynos4412-smdk4412.dtb \
+ 	exynos5250-smdk5250.dtb \
++	exynos5250-arndale.dtb \
+ 	exynos5250-snow.dtb \
+ 	exynos5440-ssdk5440.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += highbank.dtb \
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+new file mode 100644
+index 0000000..7504cf3
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -0,0 +1,124 @@
++/*
++ * Samsung's Exynos5250 based Arndale board device tree source
++ *
++ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++/include/ "exynos5250.dtsi"
++
++/ {
++	model = "Insignal Arndale evaluation board based on EXYNOS5250";
++	compatible = "insignal,arndale", "samsung,exynos5250";
++
++	memory {
++		reg = <0x40000000 0x80000000>;
++	};
++
++	chosen {
++		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
++	};
++
++	i2c@12C60000 {
++		status = "disabled";
++	};
++
++	i2c@12C70000 {
++		status = "disabled";
++	};
++
++	i2c@12C80000 {
++		status = "disabled";
++	};
++
++	i2c@12C90000 {
++		status = "disabled";
++	};
++
++	i2c@12CA0000 {
++		status = "disabled";
++	};
++
++	i2c@12CB0000 {
++		status = "disabled";
++	};
++
++	i2c@12CC0000 {
++		status = "disabled";
++	};
++
++	i2c@12CD0000 {
++		status = "disabled";
++	};
++
++	i2c@121D0000 {
++		status = "disabled";
++	};
++
++	dwmmc_0: dwmmc0@12200000 {
++		num-slots = <1>;
++		supports-highspeed;
++		broken-cd;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
++				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
++				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
++				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
++				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
++		};
++	};
++
++	dwmmc_1: dwmmc1@12210000 {
++		status = "disabled";
++	};
++
++	dwmmc_2: dwmmc2@12220000 {
++		num-slots = <1>;
++		supports-highspeed;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++			samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
++			gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
++				<&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
++				<&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>,
++				<&gpc4 3 3 3 3>, <&gpc4 3 3 3 3>,
++				<&gpc4 5 3 3 3>, <&gpc4 6 3 3 3>;
++		};
++	};
++
++	dwmmc_3: dwmmc3@12230000 {
++		status = "disabled";
++	};
++
++	spi_0: spi@12d20000 {
++		status = "disabled";
++	};
++
++	spi_1: spi@12d30000 {
++		status = "disabled";
++	};
++
++	spi_2: spi@12d40000 {
++		status = "disabled";
++	};
++};
 -- 
-1.7.10.4
+1.7.4.1
