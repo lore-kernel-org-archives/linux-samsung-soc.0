@@ -1,66 +1,53 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH V2] ARM: DTS: exynos5250-arndale: Add initial board support
- file
-Date: Fri, 25 Jan 2013 12:03:26 +0530
-Message-ID: <51022736.5030007@linaro.org>
-References: <1359090411-26159-1-git-send-email-tushar.behera@linaro.org> <CAGOxZ50LiupEj0s2scMYZQiCA2V4GNT6zoUVYR7TMyEsX3sf-Q@mail.gmail.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: [PATCH v2 re-send] i2c: s3c2410: Add quirk to exclude GPIO
+ config for exynos5440
+Date: Fri, 25 Jan 2013 09:39:35 +0100
+Message-ID: <20130125083935.GA5684@pengutronix.de>
+References: <1359055671-4173-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:64687 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750961Ab3AYGde (ORCPT
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:50348 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751307Ab3AYIji (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jan 2013 01:33:34 -0500
-Received: by mail-pb0-f42.google.com with SMTP id rp2so27751pbb.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jan 2013 22:33:33 -0800 (PST)
-In-Reply-To: <CAGOxZ50LiupEj0s2scMYZQiCA2V4GNT6zoUVYR7TMyEsX3sf-Q@mail.gmail.com>
+	Fri, 25 Jan 2013 03:39:38 -0500
+Content-Disposition: inline
+In-Reply-To: <1359055671-4173-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Girish K S <ks.giri@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Giridhar Maruthy <giridhar.m@samsung.com>
 
-On 01/25/2013 10:59 AM, Alim Akhtar wrote:
 
-[ ... ]
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +
->> +       dwmmc_2: dwmmc2@12220000 {
->> +               num-slots = <1>;
->> +               supports-highspeed;
->> +               fifo-depth = <0x80>;
->> +               card-detect-delay = <200>;
->> +               samsung,dw-mshc-ciu-div = <3>;
->> +               samsung,dw-mshc-sdr-timing = <2 3>;
->> +               samsung,dw-mshc-ddr-timing = <1 2>;
->> +
->> +               slot@0 {
->> +                       reg = <0>;
->> +                       bus-width = <4>;
->> +                       samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
->> +                       gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
->> +                               <&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
->> +                               <&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>,
->> +                               <&gpc4 3 3 3 3>, <&gpc4 4 3 3 3>,
->> +                               <&gpc4 5 3 3 3>, <&gpc4 6 3 3 3>;
-> bus-width property is assigned as 4 (see above bus-width = <4>;) but
-> here you are configuring 8 __data line__ . Any reason?
-> I am not sure if Arndale board supports 8 bit bus-width, in any case
-> either change the bus-width or gpios properties accordingly.
+On Thu, Jan 24, 2013 at 11:27:51AM -0800, Kukjin Kim wrote:
+> From: Giridhar Maruthy <giridhar.m@samsung.com>
+>=20
+> Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Right. As per the schematics, Arndale supports 4-bit bus-width. I will
-remove the extra GPIO lines.
+Thanks, applied to for-next.
 
-[ ... ]
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
-> 
-> with the above fix fill free to add
->    Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> 
-> 
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Thanks for reviewing. I will re-submit the patch with your ack.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
--- 
-Tushar Behera
+iEYEARECAAYFAlECRMcACgkQD27XaX1/VRsyjwCeJ5x9Kzf549mkjIif+qwjb5Zh
+upAAnjsJAzKXS5mU6nguCKC+5rKcMYLr
+=nS+F
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
