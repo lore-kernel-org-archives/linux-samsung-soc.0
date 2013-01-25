@@ -1,180 +1,67 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH V3] ARM: DTS: exynos5250-arndale: Add initial board support file
-Date: Fri, 25 Jan 2013 15:14:14 +0530
-Message-ID: <1359107054-7177-1-git-send-email-tushar.behera@linaro.org>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH 1/4] ARM: dts: add support for hdmi to exynos4
+Date: Fri, 25 Jan 2013 05:39:41 -0500
+Message-ID: <1359110384-28402-2-git-send-email-rahul.sharma@samsung.com>
+References: <1359110384-28402-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f45.google.com ([209.85.160.45]:40665 "EHLO
-	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753944Ab3AYJxK (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:55291 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754333Ab3AYKSO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jan 2013 04:53:10 -0500
-Received: by mail-pb0-f45.google.com with SMTP id rq13so122380pbb.32
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jan 2013 01:53:09 -0800 (PST)
+	Fri, 25 Jan 2013 05:18:14 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MH600LMXFA6W6G0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Jan 2013 19:18:13 +0900 (KST)
+Received: from chrome-ubuntu.sisodomain.com ([107.108.73.106])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MH600LMIFA67490@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Jan 2013 19:18:13 +0900 (KST)
+In-reply-to: <1359110384-28402-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Girish K S <ks.giri@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
-From: Girish K S <ks.giri@samsung.com>
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 
-Arndale is a low cost board based on the Samsung Exynos5250 SoC. This
-patch adds initial device tree support for this board.
-
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Girish K S <ks.giri@samsung.com>
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+Conflicts:
+	arch/arm/mach-exynos/mach-exynos4-dt.c
 ---
-Changes for V3:
-  * Removed unused GPIO lines for dwmmc2.
+ arch/arm/boot/dts/exynos4.dtsi         | 7 +++++++
+ arch/arm/mach-exynos/mach-exynos4-dt.c | 2 ++
+ 2 files changed, 9 insertions(+)
 
-Changes for V2:
-  * Addressed review comments from Sachin.
-  * Fixed GPIO numbers for dwmmc0 and dwmmc2.
-
- arch/arm/boot/dts/Makefile               |    1 +
- arch/arm/boot/dts/exynos5250-arndale.dts |  122 ++++++++++++++++++++++++++++++
- 2 files changed, 123 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5250-arndale.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 5ebb44f..e21f27c 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -43,6 +43,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos4210-smdkv310.dtb \
- 	exynos4210-trats.dtb \
- 	exynos4412-smdk4412.dtb \
-+	exynos5250-arndale.dtb \
- 	exynos5250-smdk5250.dtb \
- 	exynos5250-snow.dtb \
- 	exynos5440-ssdk5440.dtb
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-new file mode 100644
-index 0000000..63572f9
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -0,0 +1,122 @@
-+/*
-+ * Samsung's Exynos5250 based Arndale board device tree source
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e1347fc..6c2c79d 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -289,4 +289,11 @@
+ 			interrupts = <0 34 0>;
+ 		};
+ 	};
 +
-+/dts-v1/;
-+/include/ "exynos5250.dtsi"
-+
-+/ {
-+	model = "Insignal Arndale evaluation board based on EXYNOS5250";
-+	compatible = "insignal,arndale", "samsung,exynos5250";
-+
-+	memory {
-+		reg = <0x40000000 0x80000000>;
++	hdmi {
++		compatible = "samsung,exynos4-hdmi14";
++		reg = <0x12D00000 0x70000>;
++		interrupts = <0 95 0>;
++		hpd-gpio = <&gpx3 7 0xf 1 3>;
 +	};
-+
-+	chosen {
-+		bootargs = "console=ttySAC2,115200";
-+	};
-+
-+	i2c@12C60000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@12C70000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@12C80000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@12C90000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@12CA0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@12CB0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@12CC0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@12CD0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@121D0000 {
-+		status = "disabled";
-+	};
-+
-+	dwmmc_0: dwmmc0@12200000 {
-+		num-slots = <1>;
-+		supports-highspeed;
-+		broken-cd;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
-+				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
-+				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>,
-+				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
-+				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>;
-+		};
-+	};
-+
-+	dwmmc_1: dwmmc1@12210000 {
-+		status = "disabled";
-+	};
-+
-+	dwmmc_2: dwmmc2@12220000 {
-+		num-slots = <1>;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+			samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
-+			gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
-+				<&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
-+				<&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>;
-+		};
-+	};
-+
-+	dwmmc_3: dwmmc3@12230000 {
-+		status = "disabled";
-+	};
-+
-+	spi_0: spi@12d20000 {
-+		status = "disabled";
-+	};
-+
-+	spi_1: spi@12d30000 {
-+		status = "disabled";
-+	};
-+
-+	spi_2: spi@12d40000 {
-+		status = "disabled";
-+	};
-+};
+ };
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index ab1dacc..24f72a5 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -80,6 +80,8 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
+ 				"exynos-tmu", NULL),
++	OF_DEV_AUXDATA("samsung,exynos4-hdmi14", EXYNOS4_PA_HDMI,
++				"exynos4-hdmi", NULL),
+ 	{},
+ };
+ 
 -- 
-1.7.4.1
+1.8.0
