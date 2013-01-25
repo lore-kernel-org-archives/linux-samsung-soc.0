@@ -1,33 +1,178 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] usb: ehci-s5p/ohci-exynos: Fix compatible strings
- for the device
-Date: Fri, 25 Jan 2013 02:04:32 +0000 (GMT)
-Message-ID: <12939188.154411359079472121.JavaMail.weblogic@epml15>
-Reply-To: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-MIME-version: 1.0
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH V2] ARM: DTS: exynos5250-arndale: Add initial board support file
+Date: Fri, 25 Jan 2013 10:36:51 +0530
+Message-ID: <1359090411-26159-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:46802 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750776Ab3AYFPp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Jan 2013 00:15:45 -0500
+Received: by mail-pa0-f49.google.com with SMTP id bi1so35441pad.22
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jan 2013 21:15:45 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Girish K S <ks.giri@samsung.com>
 
-T24gVGh1cnNkYXksIEphbnVhcnkgMjQsIDIwMTMgMTA6NDUgUE0sIFZpdmVrIEdhdXRhbSB3cm90
-ZQ0KPiANCj4gVXNpbmcgc3BlY2lmaWMgY2hpcCBpbiBjb21wYXRpYmxlIHN0cmluZ3MuIE5ld2Vy
-IFNPQ3MgY2FuIGNsYWltDQo+IGRldmljZSBieSB1c2luZyBvbGRlciBzdHJpbmcgaW4gdGhlIGNv
-bXBhdGlibGUgbGlzdC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFZpdmVrIEdhdXRhbSA8Z2F1dGFt
-LnZpdmVrQHNhbXN1bmcuY29tPg0KPiBBY2tlZC1ieTogR3JhbnQgTGlrZWx5IDxncmFudC5saWtl
-bHlAc2VjcmV0bGFiLmNhPg0KPiBSZXZpZXdlZC1ieTogRG91ZyBBbmRlcnNvbiA8ZGlhbmRlcnNA
-Y2hyb21pdW0ub3JnPg0KDQpBY2tlZC1ieTogSmluZ29vIEhhbiA8amcxLmhhbkBzYW1zdW5nLmNv
-bT4NCg0KQmVzdCByZWdhcmRzLA0KSmluZ29vIEhhbg0KDQo+IC0tLQ0KPiAgZHJpdmVycy91c2Iv
-aG9zdC9laGNpLXM1cC5jICAgIHwgICAgMiArLQ0KPiAgZHJpdmVycy91c2IvaG9zdC9vaGNpLWV4
-eW5vcy5jIHwgICAgMiArLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pDQo+IA==
+From: Girish K S <ks.giri@samsung.com>
 
+Arndale is a low cost board based on the Samsung Exynos5250 SoC. This
+patch adds initial device tree support for this board.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Girish K S <ks.giri@samsung.com>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+Changes for V2:
+  * Addressed review comments from Sachin.
+  * Fixed GPIO numbers for dwmmc0 and dwmmc2.
+
+ arch/arm/boot/dts/Makefile               |    1 +
+ arch/arm/boot/dts/exynos5250-arndale.dts |  124 ++++++++++++++++++++++++++++++
+ 2 files changed, 125 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5250-arndale.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 5ebb44f..e21f27c 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -43,6 +43,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4210-smdkv310.dtb \
+ 	exynos4210-trats.dtb \
+ 	exynos4412-smdk4412.dtb \
++	exynos5250-arndale.dtb \
+ 	exynos5250-smdk5250.dtb \
+ 	exynos5250-snow.dtb \
+ 	exynos5440-ssdk5440.dtb
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+new file mode 100644
+index 0000000..23ec841
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -0,0 +1,124 @@
++/*
++ * Samsung's Exynos5250 based Arndale board device tree source
++ *
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++/include/ "exynos5250.dtsi"
++
++/ {
++	model = "Insignal Arndale evaluation board based on EXYNOS5250";
++	compatible = "insignal,arndale", "samsung,exynos5250";
++
++	memory {
++		reg = <0x40000000 0x80000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttySAC2,115200";
++	};
++
++	i2c@12C60000 {
++		status = "disabled";
++	};
++
++	i2c@12C70000 {
++		status = "disabled";
++	};
++
++	i2c@12C80000 {
++		status = "disabled";
++	};
++
++	i2c@12C90000 {
++		status = "disabled";
++	};
++
++	i2c@12CA0000 {
++		status = "disabled";
++	};
++
++	i2c@12CB0000 {
++		status = "disabled";
++	};
++
++	i2c@12CC0000 {
++		status = "disabled";
++	};
++
++	i2c@12CD0000 {
++		status = "disabled";
++	};
++
++	i2c@121D0000 {
++		status = "disabled";
++	};
++
++	dwmmc_0: dwmmc0@12200000 {
++		num-slots = <1>;
++		supports-highspeed;
++		broken-cd;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
++				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
++				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>,
++				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
++				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>;
++		};
++	};
++
++	dwmmc_1: dwmmc1@12210000 {
++		status = "disabled";
++	};
++
++	dwmmc_2: dwmmc2@12220000 {
++		num-slots = <1>;
++		supports-highspeed;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++			samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
++			gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
++				<&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
++				<&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>,
++				<&gpc4 3 3 3 3>, <&gpc4 4 3 3 3>,
++				<&gpc4 5 3 3 3>, <&gpc4 6 3 3 3>;
++		};
++	};
++
++	dwmmc_3: dwmmc3@12230000 {
++		status = "disabled";
++	};
++
++	spi_0: spi@12d20000 {
++		status = "disabled";
++	};
++
++	spi_1: spi@12d30000 {
++		status = "disabled";
++	};
++
++	spi_2: spi@12d40000 {
++		status = "disabled";
++	};
++};
+-- 
+1.7.4.1
