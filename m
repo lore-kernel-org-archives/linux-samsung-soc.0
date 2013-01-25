@@ -1,62 +1,64 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] ARM: plat-samsung: using vsnprintf instead of vsprintf
- for the limit buffer length 256
-Date: Fri, 25 Jan 2013 10:29:42 -0800
-Message-ID: <013d01cdfb29$f3595000$da0bf000$@samsung.com>
-References: <50FE0D8B.7010908@asianux.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: EXYNOS: Fix crash on soft reset
+Date: Fri, 25 Jan 2013 10:42:11 -0800
+Message-ID: <1359139331-25220-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56891 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:57192 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932368Ab3AYSaF (ORCPT
+	with ESMTP id S1757141Ab3AYSm5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jan 2013 13:30:05 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	Fri, 25 Jan 2013 13:42:57 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MH70041N2245T00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 26 Jan 2013 03:30:04 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ 17 2011)) with ESMTP id <0MH700K7G2NGWTU0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 26 Jan 2013 03:42:56 +0900 (KST)
+Received: from localhost.localdomain ([105.128.18.183])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MH700HZC221OT60@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 26 Jan 2013 03:30:03 +0900 (KST)
-In-reply-to: <50FE0D8B.7010908@asianux.com>
-Content-language: en-us
+ with ESMTPA id <0MH700KOH2NFPP80@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 26 Jan 2013 03:42:56 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chen Gang' <gang.chen@asianux.com>, ben-linux@fluff.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: 'Ben Dooks' <ben@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Girish K S <ks.giri@samsung.com>, Kukjin <kgene.kim@samsung.com>
 
-Chen Gang wrote:
-> 
-> 
->   the buff is 256 limited, so need use vsnprintf instead of vsprintf
-> 
-> Signed-off-by: Chen Gang <gang.chen@asianux.com>
-> Cc: Ben Dooks <ben@fluff.org>
-> ---
->  arch/arm/plat-samsung/pm.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-> index 1507028..d896add 100644
-> --- a/arch/arm/plat-samsung/pm.c
-> +++ b/arch/arm/plat-samsung/pm.c
-> @@ -51,7 +51,7 @@ void s3c_pm_dbg(const char *fmt, ...)
->  	char buff[256];
-> 
->  	va_start(va, fmt);
-> -	vsprintf(buff, fmt, va);
-> +	vsnprintf(buff, sizeof(buff), fmt, va);
->  	va_end(va);
-> 
->  	printascii(buff);
-> --
-> 1.7.10.4
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-Applied, thanks.
+The soft-reset control register is located in the XMU controller space.
+Map this controller space before writing to the soft-reset controller
+register.
 
-- Kukjin
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Girish K S <ks.giri@samsung.com>
+Signed-off-by: Kukjin <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/common.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index ed53a4f..b4d3188 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -294,6 +294,7 @@ void exynos4_restart(char mode, const char *cmd)
+ 
+ void exynos5_restart(char mode, const char *cmd)
+ {
++	struct device_node *np;
+ 	u32 val;
+ 	void __iomem *addr;
+ 
+@@ -301,8 +302,9 @@ void exynos5_restart(char mode, const char *cmd)
+ 		val = 0x1;
+ 		addr = EXYNOS_SWRESET;
+ 	} else if (of_machine_is_compatible("samsung,exynos5440")) {
+-		val = (0x10 << 20) | (0x1 << 16);
+-		addr = EXYNOS5440_SWRESET;
++		np = of_find_compatible_node(NULL, NULL, "samsung,exynos5440-clock");
++		addr = of_iomap(np, 0) + 0xcc;
++		val = (0xfff << 20) | (0x1 << 16);
+ 	} else {
+ 		pr_err("%s: cannot support non-DT\n", __func__);
+ 		return;
+-- 
+1.7.10.4
