@@ -1,53 +1,180 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: [PATCH v2 re-send] i2c: s3c2410: Add quirk to exclude GPIO
- config for exynos5440
-Date: Fri, 25 Jan 2013 09:39:35 +0100
-Message-ID: <20130125083935.GA5684@pengutronix.de>
-References: <1359055671-4173-1-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH V3] ARM: DTS: exynos5250-arndale: Add initial board support file
+Date: Fri, 25 Jan 2013 15:14:14 +0530
+Message-ID: <1359107054-7177-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:50348 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751307Ab3AYIji (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:40665 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753944Ab3AYJxK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jan 2013 03:39:38 -0500
-Content-Disposition: inline
-In-Reply-To: <1359055671-4173-1-git-send-email-kgene.kim@samsung.com>
+	Fri, 25 Jan 2013 04:53:10 -0500
+Received: by mail-pb0-f45.google.com with SMTP id rq13so122380pbb.32
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jan 2013 01:53:09 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Giridhar Maruthy <giridhar.m@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Girish K S <ks.giri@samsung.com>
 
+From: Girish K S <ks.giri@samsung.com>
 
---zYM0uCDKw75PZbzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Arndale is a low cost board based on the Samsung Exynos5250 SoC. This
+patch adds initial device tree support for this board.
 
-On Thu, Jan 24, 2013 at 11:27:51AM -0800, Kukjin Kim wrote:
-> From: Giridhar Maruthy <giridhar.m@samsung.com>
->=20
-> Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Girish K S <ks.giri@samsung.com>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+Changes for V3:
+  * Removed unused GPIO lines for dwmmc2.
 
-Thanks, applied to for-next.
+Changes for V2:
+  * Addressed review comments from Sachin.
+  * Fixed GPIO numbers for dwmmc0 and dwmmc2.
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+ arch/arm/boot/dts/Makefile               |    1 +
+ arch/arm/boot/dts/exynos5250-arndale.dts |  122 ++++++++++++++++++++++++++++++
+ 2 files changed, 123 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5250-arndale.dts
 
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAlECRMcACgkQD27XaX1/VRsyjwCeJ5x9Kzf549mkjIif+qwjb5Zh
-upAAnjsJAzKXS5mU6nguCKC+5rKcMYLr
-=nS+F
------END PGP SIGNATURE-----
-
---zYM0uCDKw75PZbzx--
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 5ebb44f..e21f27c 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -43,6 +43,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4210-smdkv310.dtb \
+ 	exynos4210-trats.dtb \
+ 	exynos4412-smdk4412.dtb \
++	exynos5250-arndale.dtb \
+ 	exynos5250-smdk5250.dtb \
+ 	exynos5250-snow.dtb \
+ 	exynos5440-ssdk5440.dtb
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+new file mode 100644
+index 0000000..63572f9
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -0,0 +1,122 @@
++/*
++ * Samsung's Exynos5250 based Arndale board device tree source
++ *
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++/include/ "exynos5250.dtsi"
++
++/ {
++	model = "Insignal Arndale evaluation board based on EXYNOS5250";
++	compatible = "insignal,arndale", "samsung,exynos5250";
++
++	memory {
++		reg = <0x40000000 0x80000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttySAC2,115200";
++	};
++
++	i2c@12C60000 {
++		status = "disabled";
++	};
++
++	i2c@12C70000 {
++		status = "disabled";
++	};
++
++	i2c@12C80000 {
++		status = "disabled";
++	};
++
++	i2c@12C90000 {
++		status = "disabled";
++	};
++
++	i2c@12CA0000 {
++		status = "disabled";
++	};
++
++	i2c@12CB0000 {
++		status = "disabled";
++	};
++
++	i2c@12CC0000 {
++		status = "disabled";
++	};
++
++	i2c@12CD0000 {
++		status = "disabled";
++	};
++
++	i2c@121D0000 {
++		status = "disabled";
++	};
++
++	dwmmc_0: dwmmc0@12200000 {
++		num-slots = <1>;
++		supports-highspeed;
++		broken-cd;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
++				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
++				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>,
++				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
++				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>;
++		};
++	};
++
++	dwmmc_1: dwmmc1@12210000 {
++		status = "disabled";
++	};
++
++	dwmmc_2: dwmmc2@12220000 {
++		num-slots = <1>;
++		supports-highspeed;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++			samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
++			gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
++				<&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
++				<&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>;
++		};
++	};
++
++	dwmmc_3: dwmmc3@12230000 {
++		status = "disabled";
++	};
++
++	spi_0: spi@12d20000 {
++		status = "disabled";
++	};
++
++	spi_1: spi@12d30000 {
++		status = "disabled";
++	};
++
++	spi_2: spi@12d40000 {
++		status = "disabled";
++	};
++};
+-- 
+1.7.4.1
