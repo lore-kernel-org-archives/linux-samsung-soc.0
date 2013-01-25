@@ -1,102 +1,126 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 0/9] ARM: S3C24XX: rework irq handling for a later dt
- usage
-Date: Fri, 25 Jan 2013 10:59:18 -0800
-Message-ID: <016101cdfb2e$15cbd640$416382c0$@samsung.com>
-References: <201301190403.50317.heiko@sntech.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 5/6] ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
+Date: Fri, 25 Jan 2013 11:08:01 -0800 (PST)
+Message-ID: <3747315.IyCCRDXgbD@flatron>
+References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com> <20130114150531.GE21142@e102568-lin.cambridge.arm.com> <20130116105957.GA1963@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:18019 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755991Ab3AYS7l convert rfc822-to-8bit (ORCPT
+Received: from mail-ea0-f180.google.com ([209.85.215.180]:33019 "EHLO
+	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756789Ab3AYTIE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jan 2013 13:59:41 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MH7004B83FFMFG0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 26 Jan 2013 03:59:40 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MH700KSG3FDGN90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 26 Jan 2013 03:59:39 +0900 (KST)
-In-reply-to: <201301190403.50317.heiko@sntech.de>
-Content-language: en-us
+	Fri, 25 Jan 2013 14:08:04 -0500
+Received: by mail-ea0-f180.google.com with SMTP id c1so284766eaa.25
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jan 2013 11:08:02 -0800 (PST)
+In-Reply-To: <20130116105957.GA1963@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Dave Martin <dave.martin@linaro.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "kwangwoo.lee@gmail.com" <kwangwoo.lee@gmail.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "mcuelenaere@gmail.com" <mcuelenaere@gmail.com>, "augulis.darius@gmail.com" <augulis.darius@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Heiko St=C3=BCbner wrote:
->=20
-> Third version of redoing the s3c24xx irqs in a generic way by using a
-> declarative approach.
->=20
-> Main change is the different approach to the init. Moved the
-> s3c24xx_init_intc function from the dt patchset here, so that both in=
-it types
-> (dt and non-dt) can use a similar init scheme.
->=20
-> As in the second version, the 1st patch might be hard to read due to =
-the
-> rewrite character, but I didn't see a way to do these changes in indi=
-vidual
-> steps. So it might be helpful to look at the result after applying th=
-is patch.
->=20
-> Runtime-tested on a s3c2416 based board and compile tested for the ot=
-hers.
->=20
-> As also written before, inclusion of the other S3C24XX SoCs to follow=
- once
-> the general approach is acceptable.
->=20
-> Applies to the most current for-next (from two hours ago) from linux-
-> samsung
->=20
-> Heiko Stuebner (9):
->   ARM: S3C24XX: transform irq handling into a declarative form
->   ARM: S3C24XX: Move irq syscore-ops to irq-pm
->   ARM: S3C24XX: Modify s3c_irq_wake to use the hwirq property
->   ARM: S3C24XX: move s3c2416 irq init to common irq code
->   ARM: S3C24XX: modify s3c2416 irq init to initialize all irqs
->   ARM: S3C24XX: transform s3c2416 irqs into new structure
->   ARM: S3C24XX: move s3c2443 irq code to irq.c
->   ARM: S3C24XX: modify s3c2443 irq init to initialize all irqs
->   ARM: S3C24XX: transform s3c2443 subirqs into new structure
->=20
->  arch/arm/mach-s3c24xx/Makefile               |    4 +-
->  arch/arm/mach-s3c24xx/common.h               |    2 +
->  arch/arm/mach-s3c24xx/irq-pm.c               |   41 +-
->  arch/arm/mach-s3c24xx/irq-s3c2416.c          |  348 --------
->  arch/arm/mach-s3c24xx/irq-s3c2443.c          |  281 -------
->  arch/arm/mach-s3c24xx/mach-smdk2416.c        |    2 +-
->  arch/arm/mach-s3c24xx/mach-smdk2443.c        |    2 +-
->  arch/arm/mach-s3c24xx/s3c2410.c              |    4 +-
->  arch/arm/mach-s3c24xx/s3c2412.c              |    4 +-
->  arch/arm/mach-s3c24xx/s3c2416.c              |    4 +-
->  arch/arm/mach-s3c24xx/s3c2440.c              |    4 +-
->  arch/arm/mach-s3c24xx/s3c2442.c              |    4 +-
->  arch/arm/plat-s3c24xx/Kconfig                |    1 +
->  arch/arm/plat-s3c24xx/irq.c                  | 1110 +++++++++++++++-=
-----------
->  arch/arm/plat-samsung/include/plat/pm.h      |    6 -
->  arch/arm/plat-samsung/include/plat/s3c2416.h |    1 +
->  arch/arm/plat-samsung/include/plat/s3c2443.h |    2 +
->  17 files changed, 688 insertions(+), 1132 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2416.c
->  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2443.c
->=20
-> --
-> 1.7.2.3
+Hi,
 
-Heiko, looks good to me :-)
-BTW, can you rebase this against on next/cleanup-s3c24xx branch in my t=
-ree?
+On Wednesday 16 of January 2013 10:59:57 Dave Martin wrote:
+> On Mon, Jan 14, 2013 at 03:05:32PM +0000, Lorenzo Pieralisi wrote:
+> > On Mon, Jan 14, 2013 at 02:48:41PM +0000, Mark Rutland wrote:
+> > > Hello,
+> > > 
+> > > This all looks good. I just have a couple of comments about the cpus
+> > > node.> > 
+> > > On Sun, Jan 13, 2013 at 01:10:57AM +0000, Tomasz Figa wrote:
+> > > > This patch adds basic device tree definitions for Samsung S3C64xx
+> > > > SoCs.
+> > > > 
+> > > > Since all the SoCs in the series are very similar, the files are
+> > > > created hierarchically - one file for the whole series and then
+> > > > separate files for particular SoCs including the common one.
+> > > > 
+> > > > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > > 
+> > > [...]
+> > > 
+> > > > diff --git a/arch/arm/boot/dts/s3c64xx.dtsi
+> > > > b/arch/arm/boot/dts/s3c64xx.dtsi new file mode 100644
+> > > > index 0000000..55d6e08
+> > > > --- /dev/null
+> > > > +++ b/arch/arm/boot/dts/s3c64xx.dtsi
+> > > > @@ -0,0 +1,97 @@
+> > > > +/*
+> > > > + * Samsung's S3C64xx SoC series common device tree source
+> > > > + *
+> > > > + * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
+> > > > + *
+> > > > + * Samsung's S3C64xx SoC series device nodes are listed in this
+> > > > file.
+> > > > + * Particular SoCs from S3C64xx series can include this file and
+> > > > provide + * values for SoCs specfic bindings.
+> > > > + *
+> > > > + * Note: This file does not include device nodes for all the
+> > > > controllers in + * S3C64xx SoCs. As device tree coverage for
+> > > > S3C64xx increases, additional + * nodes can be added to this
+> > > > file.
+> > > > + *
+> > > > + * This program is free software; you can redistribute it and/or
+> > > > modify + * it under the terms of the GNU General Public License
+> > > > version 2 as + * published by the Free Software Foundation.
+> > > > + */
+> > > > +
+> > > > +/include/ "skeleton.dtsi"
+> > > > +
+> > > > +/ {
+> > > > +	cpus {
+> > > > +		cpu@0 {
+> > > > +			compatible = "arm,arm1176jzf-s";
+> > > > +		};
+> > > > +	};
+> > > 
+> > > You can drop the unit address from the cpu node - it's meant to be
+> > > there to differentiate multiple nodes (and is supposed to match the
+> > > reg property, which the 1176jzf-s can't have, as it doesn't have an
+> > > MPIDR).
+> > 
+> > Well, this is a point that I should consider since the kernel docs I
+> > wrote are misleading, they require the reg property that can not be
+> > there on UP. True, MPIDR does not exist in this case, but I have to
+> > document this in the bindings since it is unclear.
+> > 
+> > > Also, "arm,arm1176jzf-s" isn't listed in the binding doc. There was
+> > > a question about how to maintain this list [1], but I can't seem to
+> > > find a conclusion, if any were reached.  It might be worth
+> > > appending "arm,arm1176" to the compatible list for the cpu node in
+> > > case we want to enable something via dt for all 1176 variations.
+> > > 
+> > > Dave, Lorenzo, any thoughts?
+> > 
+> > Eh, frankly I do not know how to handle this. Either we add a
+> > compatible string to the bindings anytime a DT gets merged in the
+> > kernel but how to maintain it, it has to be defined. Happy to hear
+> > some feedback on this.
+> 
+> Well, the number of CPU types does not grow rapidly.  It will be much
+> less than one per SoC -- so keeping the list up to date shouldn't be
+> that much effort.
+> 
+> For ARM1176JZF-S, it could make sense for the comatible list to be
+> 
+> 	"arm,arm1176jzf-s", "arm,arm1176"
+> 
+> ...since the differences between 1176 variants are software probeable
+> (i.e., whether there is an FPU or not).  AFAIK the J, Z apply to all
+> ARM1176, and the -S (synthesisable RTL) is nothing to do with software.
+> The kernel probably only really needs to know "arm,arm1176".
 
-Thanks.
+OK. So the conclusion is that I should change the cpus node to following:
 
-- Kukjin
+       cpus {
+               cpu {
+                       compatible = "arm,arm1176jzf-s", "arm,arm1176";
+               };
+       };
+
+Am I right?
+
+Best regards,
+Tomasz
