@@ -1,49 +1,44 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 2/2] drm/exynos: add support for dt based search to exynos4
- mixer
-Date: Fri, 25 Jan 2013 05:55:46 -0500
-Message-ID: <1359111346-12908-3-git-send-email-rahul.sharma@samsung.com>
-References: <1359111346-12908-1-git-send-email-rahul.sharma@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: Add sdhci node for exynos4412-smdk4412
+Date: Fri, 25 Jan 2013 17:21:26 +0530
+Message-ID: <1359114686-7871-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15095 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753619Ab3AYKeU (ORCPT
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:33778 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753657Ab3AYMAU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jan 2013 05:34:20 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MH6009FOG0W12U0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Jan 2013 19:34:19 +0900 (KST)
-Received: from chrome-ubuntu.sisodomain.com ([107.108.73.106])
- by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MH600I57G0W88B0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Jan 2013 19:34:19 +0900 (KST)
-In-reply-to: <1359111346-12908-1-git-send-email-rahul.sharma@samsung.com>
+	Fri, 25 Jan 2013 07:00:20 -0500
+Received: by mail-pb0-f49.google.com with SMTP id xa12so177136pbc.22
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jan 2013 04:00:20 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, r.sh.open@gmail.com, sw0312.kim@samsung.com, joshi@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Added sdhci node for exynos4412-smdk4412.
+
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/exynos4412-smdk4412.dts |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index c414584..67f50b5 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1131,6 +1131,9 @@ static struct of_device_id mixer_match_types[] = {
- 		.compatible = "samsung,exynos5-mixer",
- 		.data	= &exynos5_mxr_drv_data,
- 	}, {
-+		.compatible = "samsung,exynos4-mixer",
-+		.data	= &exynos4_mxr_drv_data,
-+	}, {
- 		/* end node */
- 	}
- };
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index f05bf57..e885971 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -27,6 +27,13 @@
+ 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
+ 	};
+ 
++	sdhci@12530000 {
++		bus-width = <4>;
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++
+ 	serial@13800000 {
+ 		status = "okay";
+ 	};
 -- 
-1.8.0
+1.7.4.1
