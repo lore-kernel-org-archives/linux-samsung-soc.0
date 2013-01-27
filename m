@@ -1,56 +1,95 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V6 10/10] dmaengine: Fix compilation error in non-DT case
-Date: Sun, 27 Jan 2013 11:39:31 +0800
-Message-ID: <20130127033929.GH4650@opensource.wolfsonmicro.com>
-References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
- <1358509629-20471-11-git-send-email-padma.v@samsung.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v3 0/9] ARM: S3C24XX: rework irq handling for a later dt usage
+Date: Sun, 27 Jan 2013 12:41:21 +0100
+Message-ID: <201301271241.21651.heiko@sntech.de>
+References: <201301190403.50317.heiko@sntech.de> <016101cdfb2e$15cbd640$416382c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pfTAc8Cvt8L6I27a"
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36613 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755561Ab3A0Djv (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:45704 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756556Ab3A0LlY convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 26 Jan 2013 22:39:51 -0500
-Content-Disposition: inline
-In-Reply-To: <1358509629-20471-11-git-send-email-padma.v@samsung.com>
+	Sun, 27 Jan 2013 06:41:24 -0500
+In-Reply-To: <016101cdfb2e$15cbd640$416382c0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+
+Am Freitag, 25. Januar 2013, 19:59:18 schrieb Kukjin Kim:
+> Heiko St=C3=BCbner wrote:
+> > Third version of redoing the s3c24xx irqs in a generic way by using=
+ a
+> > declarative approach.
+> >=20
+> > Main change is the different approach to the init. Moved the
+> > s3c24xx_init_intc function from the dt patchset here, so that both =
+init
+> > types (dt and non-dt) can use a similar init scheme.
+> >=20
+> > As in the second version, the 1st patch might be hard to read due t=
+o the
+> > rewrite character, but I didn't see a way to do these changes in
+> > individual steps. So it might be helpful to look at the result afte=
+r
+> > applying this patch.
+> >=20
+> > Runtime-tested on a s3c2416 based board and compile tested for the
+> > others.
+> >=20
+> > As also written before, inclusion of the other S3C24XX SoCs to foll=
+ow
+> > once the general approach is acceptable.
+> >=20
+> > Applies to the most current for-next (from two hours ago) from linu=
+x-
+> > samsung
+> >=20
+> > Heiko Stuebner (9):
+> >   ARM: S3C24XX: transform irq handling into a declarative form
+> >   ARM: S3C24XX: Move irq syscore-ops to irq-pm
+> >   ARM: S3C24XX: Modify s3c_irq_wake to use the hwirq property
+> >   ARM: S3C24XX: move s3c2416 irq init to common irq code
+> >   ARM: S3C24XX: modify s3c2416 irq init to initialize all irqs
+> >   ARM: S3C24XX: transform s3c2416 irqs into new structure
+> >   ARM: S3C24XX: move s3c2443 irq code to irq.c
+> >   ARM: S3C24XX: modify s3c2443 irq init to initialize all irqs
+> >   ARM: S3C24XX: transform s3c2443 subirqs into new structure
+> > =20
+> >  arch/arm/mach-s3c24xx/Makefile               |    4 +-
+> >  arch/arm/mach-s3c24xx/common.h               |    2 +
+> >  arch/arm/mach-s3c24xx/irq-pm.c               |   41 +-
+> >  arch/arm/mach-s3c24xx/irq-s3c2416.c          |  348 --------
+> >  arch/arm/mach-s3c24xx/irq-s3c2443.c          |  281 -------
+> >  arch/arm/mach-s3c24xx/mach-smdk2416.c        |    2 +-
+> >  arch/arm/mach-s3c24xx/mach-smdk2443.c        |    2 +-
+> >  arch/arm/mach-s3c24xx/s3c2410.c              |    4 +-
+> >  arch/arm/mach-s3c24xx/s3c2412.c              |    4 +-
+> >  arch/arm/mach-s3c24xx/s3c2416.c              |    4 +-
+> >  arch/arm/mach-s3c24xx/s3c2440.c              |    4 +-
+> >  arch/arm/mach-s3c24xx/s3c2442.c              |    4 +-
+> >  arch/arm/plat-s3c24xx/Kconfig                |    1 +
+> >  arch/arm/plat-s3c24xx/irq.c                  | 1110
+> >  +++++++++++++++----------- arch/arm/plat-samsung/include/plat/pm.h=
+    =20
+> >  |    6 -
+> >  arch/arm/plat-samsung/include/plat/s3c2416.h |    1 +
+> >  arch/arm/plat-samsung/include/plat/s3c2443.h |    2 +
+> >  17 files changed, 688 insertions(+), 1132 deletions(-)
+> >  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2416.c
+> >  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2443.c
+> >=20
+> > --
+> > 1.7.2.3
+>=20
+> Heiko, looks good to me :-)
+very cool :-)
+
+> BTW, can you rebase this against on next/cleanup-s3c24xx branch in my=
+ tree?
+will try to do this today
 
 
---pfTAc8Cvt8L6I27a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Jan 18, 2013 at 05:17:09PM +0530, Padmavathi Venna wrote:
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-
-This should be sent separately to Vinod for merge into v3.8, it's not
-obviously related to the rest of the series and is a bug fix.
-
---pfTAc8Cvt8L6I27a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRBKFqAAoJELSic+t+oim9TSEP/iq5gmQgg6rdn6kuy5M6vBJL
-qUjbUMe8eZ2Bmtd8tXQLD1VjEixOmHCdX9GrLYsITFkNCQ7uyTM6ZapNh9Hbp4Qr
-UIAGrsLg2oDP0p39ThwBIgHYV58h/zCgNdLTWOidq9KESWtqlivfA4d+IwNaQolr
-sVZAY5FOoyg69i3oQafI7knJ7cySL4G1FBwJ2i6nKTsDOw0iSzCsj7zYrIdTY9pl
-x/NIpN+jUcht/1RWRXfwNqitiq/hClOKOSy+wobVKNvPCO7sGZH82PpRBm3ekeBw
-RXIN8cA6ZDQQOU/MbBus0zg+nuoh9UZYy96mC0wgWxz8h9WMF3rkJF2Juub+jLjR
-g87fW/a6VX7jKFw3wtdpMGsCdNTHW1A1zfuRWYTIaL/6+1eM/2V9NUvvG99BkRPW
-8NMSSoFBm4hfHs0G/om4dkKi2y6EHIU3mR4B1x2P6eqGa2jHy8YW8YEnPMs+Dlwp
-MY8BpdORaLTAQN/y09nf2d3d1k/G+qeiUoWS8eI+6IW7UPqJTGYUjPOpIkLxtucr
-fa03uvqM6pW1uqF8sfJCKngzrzb79BCLJ5+IvOhRx0AsDKJfXqnu80EJ2WZR4okd
-zZ+BcINTHntQTdD4Vme52Xjrp/aZm16rxKRBZvRakf7rdwsO05/7TW571+E6q5hx
-CA1+OXWGO7L2HXSWI+W+
-=y9Cg
------END PGP SIGNATURE-----
-
---pfTAc8Cvt8L6I27a--
+Heiko
