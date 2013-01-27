@@ -1,251 +1,89 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v4 2/9] ARM: S3C24XX: Move irq syscore-ops to irq-pm
-Date: Sun, 27 Jan 2013 21:36:40 +0100
-Message-ID: <201301272136.40856.heiko@sntech.de>
-References: <201301272124.18530.heiko@sntech.de>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 3/4] ARM: dts: add support for hdmi-ddc to exynos4412-origen
+Date: Sun, 27 Jan 2013 21:37:07 +0100
+Message-ID: <51058FF3.6070408@gmail.com>
+References: <1359110384-28402-1-git-send-email-rahul.sharma@samsung.com> <1359110384-28402-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:51399 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755445Ab3A0Ugj (ORCPT
+Received: from mail-bk0-f44.google.com ([209.85.214.44]:47909 "EHLO
+	mail-bk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755445Ab3A0UhQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Jan 2013 15:36:39 -0500
-In-Reply-To: <201301272124.18530.heiko@sntech.de>
+	Sun, 27 Jan 2013 15:37:16 -0500
+Received: by mail-bk0-f44.google.com with SMTP id j4so1004524bkw.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jan 2013 12:37:15 -0800 (PST)
+In-Reply-To: <1359110384-28402-4-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
-With this the definition of s3c24xx_irq_syscore_ops can also move to
-common.h from plat/pm.h and the definitions of s3c24xx_irq_suspend
-and s3c24xx_irq_resume are also not necessary anymore in plat/pm.h
+Hi,
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/common.h          |    2 ++
- arch/arm/mach-s3c24xx/irq-pm.c          |   10 ++++++++--
- arch/arm/mach-s3c24xx/s3c2410.c         |    4 +++-
- arch/arm/mach-s3c24xx/s3c2412.c         |    4 +++-
- arch/arm/mach-s3c24xx/s3c2416.c         |    4 +++-
- arch/arm/mach-s3c24xx/s3c2440.c         |    4 +++-
- arch/arm/mach-s3c24xx/s3c2442.c         |    4 +++-
- arch/arm/plat-s3c24xx/irq.c             |    6 ------
- arch/arm/plat-samsung/include/plat/pm.h |    6 ------
- 9 files changed, 25 insertions(+), 19 deletions(-)
+On 01/25/2013 11:39 AM, Rahul Sharma wrote:
+> Signed-off-by: Rahul Sharma<rahul.sharma@samsung.com>
 
-diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/common.h
-index c2f596e..ed6276f 100644
---- a/arch/arm/mach-s3c24xx/common.h
-+++ b/arch/arm/mach-s3c24xx/common.h
-@@ -15,4 +15,6 @@
- void s3c2410_restart(char mode, const char *cmd);
- void s3c244x_restart(char mode, const char *cmd);
- 
-+extern struct syscore_ops s3c24xx_irq_syscore_ops;
-+
- #endif /* __ARCH_ARM_MACH_S3C24XX_COMMON_H */
-diff --git a/arch/arm/mach-s3c24xx/irq-pm.c b/arch/arm/mach-s3c24xx/irq-pm.c
-index 0efb2e2..d48126d 100644
---- a/arch/arm/mach-s3c24xx/irq-pm.c
-+++ b/arch/arm/mach-s3c24xx/irq-pm.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-+#include <linux/syscore_ops.h>
- 
- #include <plat/cpu.h>
- #include <plat/pm.h>
-@@ -64,7 +65,7 @@ static unsigned long save_extint[3];
- static unsigned long save_eintflt[4];
- static unsigned long save_eintmask;
- 
--int s3c24xx_irq_suspend(void)
-+static int s3c24xx_irq_suspend(void)
- {
- 	unsigned int i;
- 
-@@ -80,7 +81,7 @@ int s3c24xx_irq_suspend(void)
- 	return 0;
- }
- 
--void s3c24xx_irq_resume(void)
-+static void s3c24xx_irq_resume(void)
- {
- 	unsigned int i;
- 
-@@ -93,3 +94,8 @@ void s3c24xx_irq_resume(void)
- 	s3c_pm_do_restore(irq_save, ARRAY_SIZE(irq_save));
- 	__raw_writel(save_eintmask, S3C24XX_EINTMASK);
- }
-+
-+struct syscore_ops s3c24xx_irq_syscore_ops = {
-+	.suspend	= s3c24xx_irq_suspend,
-+	.resume		= s3c24xx_irq_resume,
-+};
-diff --git a/arch/arm/mach-s3c24xx/s3c2410.c b/arch/arm/mach-s3c24xx/s3c2410.c
-index a3c5cb0..9ebef95 100644
---- a/arch/arm/mach-s3c24xx/s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/s3c2410.c
-@@ -49,6 +49,8 @@
- #include <plat/gpio-cfg.h>
- #include <plat/gpio-cfg-helpers.h>
- 
-+#include "common.h"
-+
- /* Initial IO mappings */
- 
- static struct map_desc s3c2410_iodesc[] __initdata = {
-@@ -182,8 +184,8 @@ int __init s3c2410_init(void)
- 
- #ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
--#endif
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
-+#endif
- 
- 	return device_register(&s3c2410_dev);
- }
-diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3c2412.c
-index c511a22..533b4a9 100644
---- a/arch/arm/mach-s3c24xx/s3c2412.c
-+++ b/arch/arm/mach-s3c24xx/s3c2412.c
-@@ -52,6 +52,8 @@
- #define S3C2412_SWRST			(S3C24XX_VA_CLKPWR + 0x30)
- #define S3C2412_SWRST_RESET		(0x533C2412)
- 
-+#include "common.h"
-+
- #ifndef CONFIG_CPU_S3C2412_ONLY
- void __iomem *s3c24xx_va_gpio2 = S3C24XX_VA_GPIO;
- 
-@@ -245,8 +247,8 @@ int __init s3c2412_init(void)
- 
- #ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2412_pm_syscore_ops);
--#endif
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
-+#endif
- 
- 	return device_register(&s3c2412_dev);
- }
-diff --git a/arch/arm/mach-s3c24xx/s3c2416.c b/arch/arm/mach-s3c24xx/s3c2416.c
-index 77ee0b7..e30476d 100644
---- a/arch/arm/mach-s3c24xx/s3c2416.c
-+++ b/arch/arm/mach-s3c24xx/s3c2416.c
-@@ -63,6 +63,8 @@
- #include <plat/rtc-core.h>
- #include <plat/spi-core.h>
- 
-+#include "common.h"
-+
- static struct map_desc s3c2416_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
- 	IODESC_ENT(CLKPWR),
-@@ -105,9 +107,9 @@ int __init s3c2416_init(void)
- 
- #ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2416_pm_syscore_ops);
--#endif
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- 	register_syscore_ops(&s3c2416_irq_syscore_ops);
-+#endif
- 
- 	return device_register(&s3c2416_dev);
- }
-diff --git a/arch/arm/mach-s3c24xx/s3c2440.c b/arch/arm/mach-s3c24xx/s3c2440.c
-index 2b3dddb..559e394 100644
---- a/arch/arm/mach-s3c24xx/s3c2440.c
-+++ b/arch/arm/mach-s3c24xx/s3c2440.c
-@@ -40,6 +40,8 @@
- #include <plat/gpio-cfg.h>
- #include <plat/gpio-cfg-helpers.h>
- 
-+#include "common.h"
-+
- static struct device s3c2440_dev = {
- 	.bus		= &s3c2440_subsys,
- };
-@@ -57,9 +59,9 @@ int __init s3c2440_init(void)
- 
- #ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
-+	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- #endif
- 	register_syscore_ops(&s3c244x_pm_syscore_ops);
--	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- 
- 	/* register our system device for everything else */
- 
-diff --git a/arch/arm/mach-s3c24xx/s3c2442.c b/arch/arm/mach-s3c24xx/s3c2442.c
-index 22cb7c9..f732826 100644
---- a/arch/arm/mach-s3c24xx/s3c2442.c
-+++ b/arch/arm/mach-s3c24xx/s3c2442.c
-@@ -51,6 +51,8 @@
- #include <plat/gpio-cfg.h>
- #include <plat/gpio-cfg-helpers.h>
- 
-+#include "common.h"
-+
- /* S3C2442 extended clock support */
- 
- static unsigned long s3c2442_camif_upll_round(struct clk *clk,
-@@ -172,9 +174,9 @@ int __init s3c2442_init(void)
- 
- #ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
-+	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- #endif
- 	register_syscore_ops(&s3c244x_pm_syscore_ops);
--	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- 
- 	return device_register(&s3c2442_dev);
- }
-diff --git a/arch/arm/plat-s3c24xx/irq.c b/arch/arm/plat-s3c24xx/irq.c
-index 9e24ef5..adb4358 100644
---- a/arch/arm/plat-s3c24xx/irq.c
-+++ b/arch/arm/plat-s3c24xx/irq.c
-@@ -24,7 +24,6 @@
- #include <linux/interrupt.h>
- #include <linux/ioport.h>
- #include <linux/device.h>
--#include <linux/syscore_ops.h>
- #include <linux/irqdomain.h>
- 
- #include <asm/mach/irq.h>
-@@ -627,8 +626,3 @@ void __init s3c24xx_init_irq(void)
- 	s3c24xx_init_intc(NULL, &init_subint[0], main_intc, 0x4a000018);
- 	s3c24xx_init_intc(NULL, &init_eint[0], main_intc, 0x560000a4);
- }
--
--struct syscore_ops s3c24xx_irq_syscore_ops = {
--	.suspend	= s3c24xx_irq_suspend,
--	.resume		= s3c24xx_irq_resume,
--};
-diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
-index 887a0c9..f6fcade 100644
---- a/arch/arm/plat-samsung/include/plat/pm.h
-+++ b/arch/arm/plat-samsung/include/plat/pm.h
-@@ -109,17 +109,11 @@ extern void s3c_pm_do_restore_core(struct sleep_save *ptr, int count);
- #ifdef CONFIG_PM
- extern int s3c_irq_wake(struct irq_data *data, unsigned int state);
- extern int s3c_irqext_wake(struct irq_data *data, unsigned int state);
--extern int s3c24xx_irq_suspend(void);
--extern void s3c24xx_irq_resume(void);
- #else
- #define s3c_irq_wake NULL
- #define s3c_irqext_wake NULL
--#define s3c24xx_irq_suspend NULL
--#define s3c24xx_irq_resume  NULL
- #endif
- 
--extern struct syscore_ops s3c24xx_irq_syscore_ops;
--
- /* PM debug functions */
- 
- #ifdef CONFIG_SAMSUNG_PM_DEBUG
--- 
-1.7.10.4
+Please explain why this patch is needed, in more detail...
+
+> ---
+>   arch/arm/boot/dts/exynos4.dtsi          |  1 -
+>   arch/arm/boot/dts/exynos4412-origen.dts | 13 +++++++++++++
+>   2 files changed, 13 insertions(+), 1 deletion(-)
+>   mode change 100644 =>  100755 arch/arm/boot/dts/exynos4412.dtsi
+>
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 07cb7d4..a75e2f5 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -219,7 +219,6 @@
+>   		compatible = "samsung,s3c2440-i2c";
+>   		reg =<0x138C0000 0x100>;
+>   		interrupts =<0 64 0>;
+> -		status = "disabled";
+
+No, it's not how it is supposed to be done. If you want to enable
+this specific I2C controller on your board, just add status = "okay";
+line in its node in the board-specific dts file. Please see below.
+
+>   	};
+>
+>   	i2c_7: i2c@138D0000 {
+> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+> index 4eba374..6299f1b 100644
+> --- a/arch/arm/boot/dts/exynos4412-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
+> @@ -59,4 +59,17 @@
+>   	serial@13830000 {
+>   		status = "okay";
+>   	};
+> +
+> +	i2c_6: i2c@138C0000 {
+> +		samsung,i2c-sda-delay =<100>;
+> +		samsung,i2c-max-bus-freq =<66000>;
+> +
+> +		pinctrl-0 =<&i2c6_bus>;
+> +		pinctrl-names = "default";
+
+		status = "okay";
+
+> +		hdmiddc@50 {
+> +			compatible = "samsung,exynos4-hdmiddc";
+> +			reg =<0x50>;
+> +		};
+> +	};
+>   };
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> old mode 100644
+> new mode 100755
+
+Are you sure you need to add all these execute permissions ?
+Do you think these values are more sane than the previous ones ?
+I'm afraid there is something going wrong with the file permissions
+in your environment...
+
+--
+
+Thanks,
+Sylwester
