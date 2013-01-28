@@ -1,87 +1,88 @@
-From: Dave Martin <dave.martin@linaro.org>
-Subject: Re: [PATCH 5/6] ARM: dts: Add basic dts include files for Samsung
- S3C64xx SoCs
-Date: Mon, 28 Jan 2013 13:04:34 +0000
-Message-ID: <20130128130434.GB2027@linaro.org>
-References: <1358039458-31960-1-git-send-email-tomasz.figa@gmail.com>
- <20130114150531.GE21142@e102568-lin.cambridge.arm.com>
- <20130116105957.GA1963@linaro.org>
- <3747315.IyCCRDXgbD@flatron>
- <016c01cdfb30$64f80430$2ee80c90$@samsung.com>
- <20130128090240.GA7754@e106331-lin.cambridge.arm.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 4/4] usb: phy: samsung: Enable runtime power management
+ on samsung-usb3
+Date: Mon, 28 Jan 2013 15:07:03 +0200
+Message-ID: <20130128130703.GO28698@arwen.pp.htv.fi>
+References: <1359373348-18320-1-git-send-email-gautam.vivek@samsung.com>
+ <1359373348-18320-5-git-send-email-gautam.vivek@samsung.com>
+ <20130128120909.GG28698@arwen.pp.htv.fi>
+ <CAFp+6iHjzSKyya-t6dtsVQdOuhBTsCgWu+NFnDXFeRWwnBt-Jw@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:57039 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755477Ab3A1NEk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jan 2013 08:04:40 -0500
-Received: by mail-lb0-f174.google.com with SMTP id l12so3870817lbo.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jan 2013 05:04:39 -0800 (PST)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XVTPT6MZt3zd/C+/"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130128090240.GA7754@e106331-lin.cambridge.arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <CAFp+6iHjzSKyya-t6dtsVQdOuhBTsCgWu+NFnDXFeRWwnBt-Jw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, kgene.kim@samsung.com, dianders@chromium.org, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "kwangwoo.lee@gmail.com" <kwangwoo.lee@gmail.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "mcuelenaere@gmail.com" <mcuelenaere@gmail.com>, "augulis.darius@gmail.com" <augulis.darius@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Jan 28, 2013 at 09:02:40AM +0000, Mark Rutland wrote:
-> On Fri, Jan 25, 2013 at 07:15:48PM +0000, Kukjin Kim wrote:
-> > Tomasz Figa wrote:
-> > 
-> > [...]
-> > 
-> > > > Well, the number of CPU types does not grow rapidly.  It will be much
-> > > > less than one per SoC -- so keeping the list up to date shouldn't be
-> > > > that much effort.
-> > > >
-> > > > For ARM1176JZF-S, it could make sense for the comatible list to be
-> > > >
-> > > > 	"arm,arm1176jzf-s", "arm,arm1176"
-> > > >
-> > > > ...since the differences between 1176 variants are software probeable
-> > > > (i.e., whether there is an FPU or not).  AFAIK the J, Z apply to all
-> > > > ARM1176, and the -S (synthesisable RTL) is nothing to do with software.
-> > > > The kernel probably only really needs to know "arm,arm1176".
-> > > 
-> > > OK. So the conclusion is that I should change the cpus node to following:
-> > > 
-> > >        cpus {
-> > >                cpu {
-> > 
-> > cpu@0 { ?
-> 
-> As the CPU has no MPIDR, and thus doesn't have a reg property, there's no reason
-> to have a unit address. Just "cpu" should be fine.
-> 
-> > 
-> > >                        compatible = "arm,arm1176jzf-s", "arm,arm1176";
-> > >                };
-> > >        };
-> > > 
-> > > Am I right?
-> > > 
-> > I think so :-)
-> > 
-> > - Kukjin
-> > 
-> 
-> As Dave pointed out, the "jzf-s" portion might be superfluous. It's worth
-> having the "arm,arm1176", though.
+--XVTPT6MZt3zd/C+/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think we should always have a fully-qualified part name as the first
-compatible entry, following general devicetree policy.  It's better to
-have this and not need it than to discover later that we want it and
-incompatibly backport it in.
+Hi,
 
-Before deciding, do we follow a consistent policy for other CPUs, such
-as arm1136?
+On Mon, Jan 28, 2013 at 06:34:15PM +0530, Vivek Gautam wrote:
+> >> @@ -65,7 +67,22 @@ static u32 samsung_usb3_phy_set_refclk(struct samsu=
+ng_usbphy *sphy)
+> >>       return reg;
+> >>  }
+> >>
+> >> -static int samsung_exynos5_usb3_phy_enable(struct samsung_usbphy *sph=
+y)
+> >> +/*
+> >> + * Sets the phy clk as ref_pad_clk (XusbXTI) which is clock from exte=
+rnal PLL.
+> >> + */
+> >> +static u32 samsung_usb3_phy_set_refclk_ext(void)
+> >> +{
+> >> +     u32 reg;
+> >> +
+> >> +     reg =3D PHYCLKRST_REFCLKSEL_PAD_REFCLK |
+> >> +             PHYCLKRST_FSEL_PAD_100MHZ |
+> >> +             PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF;
+> >> +
+> >> +     return reg;
+> >> +}
+> >
+> > I wonder if you really need this small function (likewise for
+> > set_refclk_int()). They don't do much, so you could just inline them on
+> > the only caller.
+> >
+>=20
+> Created this just to keep symmetry, ;-)
+> will move this in the caller only.
 
+you can have a patch before this series moving the refclk_int() to the
+caller, then you will have symmetry ;-)
 
-The issues there are similar: the only software-visible difference between
-arm1136j-s and arm1136jf-s should be the absence/presence of VFP, and it
-looks like the code in vfpmodule.c should be able to probe it.
+--=20
+balbi
 
-Cheers
----Dave
+--XVTPT6MZt3zd/C+/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRBnf3AAoJEIaOsuA1yqRErg8P/A8LL74pdW99KzZlcXcWj7jG
+y+T6DDAYmR/5rN3mQZ968mNz1OHUH+T5sYxlKndNl38t9Y04RnSyBUl72GgvXC+I
+eIvJdsNVY4F8g8BEl+6xFvYqWXltVUCQN5YH+28cSaCKp2bTXofdBv2cdKWMbORg
+a3UnyVvNNm5uGq0Nzhq3/PFRp0AIYSF94anJ4kGpYiU1Q1aCtvsgGwLLI65xY18l
+2WupvL5ngJAatO8kd6oH7bHrUy4RybHL1T+IJrYZRgYlXx5zwXqm6WlIIheR55If
+xl5tZVbJqL0hWd8RztY2CwW/nFVuZRWkGMd5TFaQsG6wMZ86HL5dMpAAsZS7heLA
+bqDd3HF0qIuNPyiHRDge14OQgsrXwdVZC4ET3+1oI2O5cdg/l1NM1APbS/in7JKo
+F7fBMzRtVeQuBWIByIgoWD+Jd1ZsHc2C0xcJX0AxLLjd4NyokbcueB90PxwiR+jx
+f7BDUo9/xvD56smI/8L9tn5uXX0qqPU+rYSYMw9GxAGsIeHoKYWmT8B4QblGRLwr
+JFwdW8NUCO4QXuzqsfaYYGtYor1mq43myjJPLiCRpCK7X+88Hrtr00zGSxQVUhFG
+p0Jv4RWRQF54IKrjSVX0qiQiD2YEajAUf/6YNZqspY1y23xH8wOEjopbwq8Oz47G
+VVei9MpJZsMXsxeJMSsY
+=4DDU
+-----END PGP SIGNATURE-----
+
+--XVTPT6MZt3zd/C+/--
