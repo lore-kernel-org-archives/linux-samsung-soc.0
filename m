@@ -1,97 +1,81 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 3/4] usb: dwc3: exynos: Enable runtime power management
-Date: Mon, 28 Jan 2013 14:12:31 +0200
-Message-ID: <20130128121231.GH28698@arwen.pp.htv.fi>
-References: <1359373348-18320-1-git-send-email-gautam.vivek@samsung.com>
- <1359373348-18320-4-git-send-email-gautam.vivek@samsung.com>
- <20130128114755.GF28698@arwen.pp.htv.fi>
- <CAFp+6iEb4R3NQkvtrY8X4h8oMwPf7E+LDYfb_cS5z2WfdGHNWA@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] drivers: cpufreq: exynos: update related_cpus mask to fix hotplug dump
+Date: Mon, 28 Jan 2013 13:26:31 +0100
+Message-ID: <5258369.So5tj1UHcd@vostro.rjw.lan>
+References: <1359000647-8366-1-git-send-email-inderpal.singh@linaro.org> <CAOh2x==_n7d+FUyAA6nWuHHLK0TA7smBYXd2M=72HDQef3NG4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HuscSE0D68UGttcd"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iEb4R3NQkvtrY8X4h8oMwPf7E+LDYfb_cS5z2WfdGHNWA@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, kgene.kim@samsung.com, dianders@chromium.org, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAOh2x==_n7d+FUyAA6nWuHHLK0TA7smBYXd2M=72HDQef3NG4w@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Inderpal Singh <inderpal.singh@linaro.org>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---HuscSE0D68UGttcd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Mon, Jan 28, 2013 at 05:28:30PM +0530, Vivek Gautam wrote:
-> >> +static int dwc3_exynos_runtime_resume(struct device *dev)
-> >> +{
-> >> +     struct dwc3_exynos      *exynos =3D dev_get_drvdata(dev);
-> >> +     struct platform_device  *pdev_dwc =3D exynos->dwc3;
-> >> +     struct dwc3             *dwc =3D NULL;
-> >> +
-> >> +     dwc =3D platform_get_drvdata(pdev_dwc);
-> >> +
-> >> +     clk_enable(exynos->clk);
-> >> +
-> >> +     if (!dwc)
-> >> +             return 0;
-> >> +
-> >> +     pm_runtime_get_sync(dwc->usb3_phy->dev);
+On Monday, January 28, 2013 09:45:02 AM Viresh Kumar wrote:
+> On Thu, Jan 24, 2013 at 9:40 AM, Inderpal Singh
+> <inderpal.singh@linaro.org> wrote:
+> > commit "7e6087e595d3...cpufreq: Simplify cpufreq_add_dev()" started using
+> > related_cpus mask to check if the current cpu is already managed.
 > >
-> > dude, this is wrong :-)
+> > With above commit hotplug in exynos gives following dump.
 > >
-> > look at this:
+> > / $ echo 1 > /sys/devices/system/cpu/cpu1/online
+> > CPU1: Booted secondary processor
+> > ------------[ cut here ]------------
+> > WARNING: at fs/sysfs/dir.c:536 sysfs_add_one+0x88/0xbc()
+> > sysfs: cannot create duplicate filename '/devices/system/cpu/cpu0/cpufreq'
+> > Modules linked in:
+> > [<c0014560>] (unwind_backtrace+0x0/0xf8) from [<c0020214>] (warn_slowpath_common+0x4c/0x64)
+> > [<c0020214>] (warn_slowpath_common+0x4c/0x64) from [<c00202c0>] (warn_slowpath_fmt+0x30/0x40)
+> > [<c00202c0>] (warn_slowpath_fmt+0x30/0x40) from [<c00fb548>] (sysfs_add_one+0x88/0xbc)
+> > [<c00fb548>] (sysfs_add_one+0x88/0xbc) from [<c00fc184>] (sysfs_do_create_link+0x110/0x208)
+> > [<c00fc184>] (sysfs_do_create_link+0x110/0x208) from [<c019a868>] (cpufreq_add_dev_interface+0x218/0x2b0)
+> > [<c019a868>] (cpufreq_add_dev_interface+0x218/0x2b0) from [<c019ac0c>] (cpufreq_add_dev+0x30c/0x448)
+> > [<c019ac0c>] (cpufreq_add_dev+0x30c/0x448) from [<c01bdb84>] (cpufreq_cpu_callback+0x94/0x9c)
+> > [<c01bdb84>] (cpufreq_cpu_callback+0x94/0x9c) from [<c0040fac>] (notifier_call_chain+0x44/0x84)
+> > [<c0040fac>] (notifier_call_chain+0x44/0x84) from [<c0023484>] (__cpu_notify+0x28/0x44)
+> > [<c0023484>] (__cpu_notify+0x28/0x44) from [<c01bc320>] (_cpu_up+0x104/0x154)
+> > [<c01bc320>] (_cpu_up+0x104/0x154) from [<c01bc3d4>] (cpu_up+0x64/0x84)
+> > [<c01bc3d4>] (cpu_up+0x64/0x84) from [<c01bafc8>] (store_online+0x50/0x78)
+> > [<c01bafc8>] (store_online+0x50/0x78) from [<c016850c>] (dev_attr_store+0x18/0x24)
+> > [<c016850c>] (dev_attr_store+0x18/0x24) from [<c00fa12c>] (sysfs_write_file+0x168/0x198)
+> > [<c00fa12c>] (sysfs_write_file+0x168/0x198) from [<c00a7424>] (vfs_write+0x9c/0x140)
+> > [<c00a7424>] (vfs_write+0x9c/0x140) from [<c00a76b0>] (sys_write+0x3c/0x70)
+> > [<c00a76b0>] (sys_write+0x3c/0x70) from [<c000e2c0>] (ret_fast_syscall+0x0/0x30)
+> > ---[ end trace 3d002b0ded69f43b ]---
 > >
-> > pm_runtime_get() -> dwc3_exynos_runtime_resume() ->
-> > pm_runtime_get_sync() -> dwc3_exynos_runtime_resume() -> ...
+> > This patch fixes it by updating the related_cpus mask.
 > >
-> > only your clock enalbe should do
+> > Tested on Rafael's linux-next.
 > >
->=20
-> We want to wake up "dwc->usb3_phy" so tried to call pm_runtime_get_sync()
-> with "dwc->usb3_phy->dev".
-> Missing something ? :-(
+> > Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> > ---
+> >  drivers/cpufreq/exynos-cpufreq.c |    1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+> > index 7012ea8..8ba4cdb 100644
+> > --- a/drivers/cpufreq/exynos-cpufreq.c
+> > +++ b/drivers/cpufreq/exynos-cpufreq.c
+> > @@ -238,6 +238,7 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+> >                 cpumask_copy(policy->cpus, cpu_online_mask);
+> >         } else {
+> >                 policy->shared_type = CPUFREQ_SHARED_TYPE_ANY;
+> > +               cpumask_setall(policy->related_cpus);
+> >                 cpumask_setall(policy->cpus);
+> 
+> This is required for all SMP systems.
 
-oh, my bad. That's the PHY... But we can't really do that for samsung
-only. It needs to be done generically for the entire dwc3 core driver,
-and for that we need to introduce usb_phy_autopm_get(),
-usb_phy_autopm_get_sync() and friends.
+Grumble.
 
-Then, from dwc_probe() we call:
+So here's a deal: I'll drop "cpufreq: Simplify cpufreq_add_dev()" for now and
+you'll generate a new patch that won't cause the WARN_ON() to trigger.  OK?
 
-phy =3D usb_get_phy();
-usb_phy_autopm_enable(phy);
-usb_phy_autopm_get_sync(phy);
+Rafael
 
-or something similar ;-) Bottom line, you shouldn't fiddle with phy->dev
-directly.
 
---=20
-balbi
-
---HuscSE0D68UGttcd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRBmsvAAoJEIaOsuA1yqREavAQALWOFDxyumbTkI6lXtC8YX5f
-Y9cnlIbLXFoqq+4qgLF3vds5uxT7HTNejw4qa1Cs1fIcc2L/VXeDn+AJYoL6357l
-ynLcugulc8os0li8lWpDsyP1xEb+nlfqVbFzbmZNGHgPSpvlZ5+9OM2EcoQKh6EL
-s0JQ3dOdOjMqDuqVHmo9opTj1OTIdNiYk7hmRAbxlx5YiCqY1hwZMaEl7zjeWNVB
-SSb2HdastxppYXWvOVyEmteHcKonuOUX5TxOmPZcykvw4Gs7EgqfxvtCZPNZAY13
-xRSMefDAMPULNxCZ+pRa0+UDujmoxY1keJvWvWqr1Li5F6rfFW1ty5OUveTv6M0O
-+IL0LiY8/fZlU8prQlSlQD1qAS8KRZz/KD/kaiCyYz/brTlS3DInTJ2Eb4fBfW7p
-3cXBt9tGwfAc/FW805wL1ajnyi4b78NraR0OzB0NtPv7flSGL11v6lRGEIKtTFo9
-5ER07ely6lhjStSi2nqyIOnV1ITK7gSWOWS2MoAwGroOLFHLUq9nRSRnw2pdX0nD
-oV35ykTBONM02XoxCAl+W9Otx32+hdIjUCKpB/DGXidiInzqwFMLoLKEK8pHa6ef
-FX1HNdzexuaqXvUJKo278TZ8I3Yd28WTntoRdivpF03iranBIWDkqgqKy8KXzyOJ
-IrFvI66vJPFgaA/mpjhK
-=HoRc
------END PGP SIGNATURE-----
-
---HuscSE0D68UGttcd--
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
