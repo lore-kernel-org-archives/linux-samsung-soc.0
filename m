@@ -1,50 +1,46 @@
-From: Alexey Galakhov <agalakhov@gmail.com>
-Subject: [PATCH] Fix compilation error on S3C2440
-Date: Mon, 28 Jan 2013 23:07:03 +0600
-Message-ID: <1359392823-30529-1-git-send-email-agalakhov@gmail.com>
+From: Jon Hunter <jon-hunter@ti.com>
+Subject: Re: [PATCH 2/4] DMA: PL330: Register the DMA controller with the
+ generic DMA helpers
+Date: Mon, 28 Jan 2013 11:54:36 -0600
+Message-ID: <5106BB5C.1010302@ti.com>
+References: <1358508824-20352-1-git-send-email-padma.v@samsung.com> <1358508824-20352-3-git-send-email-padma.v@samsung.com> <201301281451.00364.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:56225 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756242Ab3A1RHs (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:34513 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757655Ab3A1Ryx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jan 2013 12:07:48 -0500
-Received: by mail-lb0-f181.google.com with SMTP id gm6so4238103lbb.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jan 2013 09:07:47 -0800 (PST)
+	Mon, 28 Jan 2013 12:54:53 -0500
+In-Reply-To: <201301281451.00364.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Alexey Galakhov <agalakhov@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: devicetree-discuss@lists.ozlabs.org, boojin.kim@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, swarren@nvidia.com, Padmavathi Venna <padma.v@samsung.com>, sbkim73@samsung.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com
 
-There was a compilation error introduced on Dec 7, 2012
-by commit a08485d8fdf6f67ca5f173b68d8f873c574745f2.
 
-Combination of CONFIG_CPU_S3C2440 and CONFIG_SND_S3C24XX_I2S
-caused the following:
-sound/soc/samsung/s3c24xx-i2s.c: In function 's3c24xx_iis_dev_probe':
-sound/soc/samsung/s3c24xx-i2s.c:472:2: error: implicit declaration of
-function 's3c_i2sv2_register_dai' [-Werror=implicit-function-declaration]
-sound/soc/samsung/s3c24xx-i2s.c:472:48: error: 's3c2412_i2s_dai'
-undeclared (first use in this function)
+On 01/28/2013 08:51 AM, Arnd Bergmann wrote:
+> On Friday 18 January 2013, Padmavathi Venna wrote:
+>> +       pfi = devm_kzalloc(&adev->dev, sizeof(*pfi), GFP_KERNEL);
+>> +       if (!pfi) {
+>> +               dev_err(&adev->dev, "unable to allocate mem\n");
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       pfi->dma_cap = pd->cap_mask;
+>> +       pfi->filter_fn = pl330_filter;
+>> +
+>> +       ret = of_dma_controller_register(adev->dev.of_node,
+>> +                                        of_dma_pl330_xlate, pfi);
+> 
+> Why do you pass a 'struct of_dma_filter_info' here? I would
+> expect that you pass the pdmac object as the third argument.
 
-This patch fixes the problem and makes S3C2440 I2S usable again.
+I believe it is because that is the data that the xlate function is
+using. Are you suggesting the data should be stored in the pdmac object
+and extracted from there? That could be done too given that this
+controller has its own xlate.
 
-Signed-off-by: Alexey Galakhov <agalakhov@gmail.com>
----
- sound/soc/samsung/s3c24xx-i2s.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index ee10e87..13f6dd1 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -469,7 +469,7 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
- 
--	ret = s3c_i2sv2_register_dai(&pdev->dev, -1, &s3c2412_i2s_dai);
-+	ret = snd_soc_register_dai(&pdev->dev, &s3c24xx_i2s_dai);
- 	if (ret) {
- 		pr_err("failed to register the dai\n");
- 		return ret;
--- 
-1.7.10.4
+Cheers
+Jon
