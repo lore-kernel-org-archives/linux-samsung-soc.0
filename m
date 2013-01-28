@@ -1,33 +1,56 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v4 3/7] ARM: Exynos: add device tree support for MCT controller
- driver
-Date: Mon, 28 Jan 2013 13:59:22 -0700
-Message-ID: <5106E6AA.3080801@wwwdotorg.org>
-References: <1358762542-19008-1-git-send-email-thomas.abraham@linaro.org> <1358762542-19008-4-git-send-email-thomas.abraham@linaro.org>
+From: Jon Hunter <jon-hunter@ti.com>
+Subject: Re: [PATCH 2/4] DMA: PL330: Register the DMA controller with the
+ generic DMA helpers
+Date: Mon, 28 Jan 2013 15:11:01 -0600
+Message-ID: <5106E965.4080308@ti.com>
+References: <1358508824-20352-1-git-send-email-padma.v@samsung.com> <201301281451.00364.arnd@arndb.de> <5106BB5C.1010302@ti.com> <201301281801.13865.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:44675 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751650Ab3A1U7Z (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:43928 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751155Ab3A1VNO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jan 2013 15:59:25 -0500
-In-Reply-To: <1358762542-19008-4-git-send-email-thomas.abraham@linaro.org>
+	Mon, 28 Jan 2013 16:13:14 -0500
+In-Reply-To: <201301281801.13865.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, swarren@nvidia.com, sylvester.nawrocki@gmail.com, chaos.youn@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: devicetree-discuss@lists.ozlabs.org, boojin.kim@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, swarren@nvidia.com, Padmavathi Venna <padma.v@samsung.com>, sbkim73@samsung.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com
 
-On 01/21/2013 03:02 AM, Thomas Abraham wrote:
-> Allow the MCT controller base address and interrupts to be obtained from
-> device tree and remove unused static definitions of these. The non-dt support
-> for Exynos5250 is removed but retained for Exynos4210 based platforms.
 
-Patches 3 and later in this series, fairly quickly,
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
+On 01/28/2013 12:01 PM, Arnd Bergmann wrote:
+> On Monday 28 January 2013, Jon Hunter wrote:
+>> On 01/28/2013 08:51 AM, Arnd Bergmann wrote:
+>>> On Friday 18 January 2013, Padmavathi Venna wrote:
+>>>> +       pfi = devm_kzalloc(&adev->dev, sizeof(*pfi), GFP_KERNEL);
+>>>> +       if (!pfi) {
+>>>> +               dev_err(&adev->dev, "unable to allocate mem\n");
+>>>> +               return -ENOMEM;
+>>>> +       }
+>>>> +
+>>>> +       pfi->dma_cap = pd->cap_mask;
+>>>> +       pfi->filter_fn = pl330_filter;
+>>>> +
+>>>> +       ret = of_dma_controller_register(adev->dev.of_node,
+>>>> +                                        of_dma_pl330_xlate, pfi);
+>>>
+>>> Why do you pass a 'struct of_dma_filter_info' here? I would
+>>> expect that you pass the pdmac object as the third argument.
+>>
+>> I believe it is because that is the data that the xlate function is
+>> using. Are you suggesting the data should be stored in the pdmac object
+>> and extracted from there? That could be done too given that this
+>> controller has its own xlate.
+> 
+> It just seems weird that we are passing a constant cap_mask in
+> a data structure, and that we need our own filter function still,
+> but don't pass the pointer to the data structure that we actually
+> need in the filter function (the dma_device *).
 
-Sorry for the slow review.
+Gotcha. I was still thinking about the generic case, but in this case if
+you know the dma controller, it is redundant.
 
-I'm not 100% sure if I like Mark's #global-interrupts suggestion or not,
-but I'd be fine with the binding either way, so choose as you see fit.
+Cheers
+Jon
