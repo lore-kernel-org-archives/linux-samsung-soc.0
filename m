@@ -1,90 +1,57 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 1/4] ARM: dts: add support for hdmi to exynos4
-Date: Mon, 28 Jan 2013 11:49:22 +0530
-Message-ID: <CAPdUM4Py3dbV_tFnZ6GOxSm-6Sq8FBZu00JH3UDq_PV2U8yq_A@mail.gmail.com>
-References: <1359110384-28402-1-git-send-email-rahul.sharma@samsung.com>
-	<1359110384-28402-2-git-send-email-rahul.sharma@samsung.com>
-	<51059402.2030405@gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 0/5] Add DRM FIMD DT support for Exynos4 DT Machines
+Date: Mon, 28 Jan 2013 11:56:23 +0530
+Message-ID: <CAK9yfHzN-n3OisZ-k_Kb2mNW7_mh-r2SfE-q+CTe1WQriTDi+w@mail.gmail.com>
+References: <1359351872-20518-1-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:52328 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751112Ab3A1GTX (ORCPT
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:55308 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751334Ab3A1G0Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jan 2013 01:19:23 -0500
-Received: by mail-wi0-f180.google.com with SMTP id hj13so1105296wib.13
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jan 2013 22:19:22 -0800 (PST)
-In-Reply-To: <51059402.2030405@gmail.com>
+	Mon, 28 Jan 2013 01:26:24 -0500
+Received: by mail-oa0-f54.google.com with SMTP id n9so2423958oag.27
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jan 2013 22:26:23 -0800 (PST)
+In-Reply-To: <1359351872-20518-1-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-Hi Sylwester,
+Hi Vikas,
 
-On Mon, Jan 28, 2013 at 2:24 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> On 01/25/2013 11:39 AM, Rahul Sharma wrote:
->>
->> Signed-off-by: Rahul Sharma<rahul.sharma@samsung.com>
->
->
-> Please provide proper commit text.
->
->> Conflicts:
->>         arch/arm/mach-exynos/mach-exynos4-dt.c
->
->
-> And make sure things like this are removed when submitting patches.
->
+You need to CC devicetree-discuss@lists.ozlabs.org for patches adding
+new bindings and add documentation related to it.
 
-I will take care.
+On 28 January 2013 11:14, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> This patch series adds support for DRM FIMD DT for Exynos4 DT Machines,
+> specifically for Exynos4412 SoC.
 >
->> ---
->>   arch/arm/boot/dts/exynos4.dtsi         | 7 +++++++
->>   arch/arm/mach-exynos/mach-exynos4-dt.c | 2 ++
->>   2 files changed, 9 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos4.dtsi
->> b/arch/arm/boot/dts/exynos4.dtsi
->> index e1347fc..6c2c79d 100644
->> --- a/arch/arm/boot/dts/exynos4.dtsi
->> +++ b/arch/arm/boot/dts/exynos4.dtsi
->> @@ -289,4 +289,11 @@
->>                         interrupts =<0 34 0>;
->>                 };
->>         };
->> +
->> +       hdmi {
->> +               compatible = "samsung,exynos4-hdmi14";
+> Is based on branch "for-next"
+> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 >
+> Vikas Sajjan (5):
+>   ARM: dts: Add FIMD node to exynos4
+>   ARM: dts: Adds lcd pinctrl node entries for SAMSUNG EXYNOS4412 SoC
+>   ARM: dts: Add FIMD node and display timing node to
+>     exynos4412-origen.dts
+>   ARM: dts: adds FIMD AUXDATA node entry for exynos4 DT
+>   ARM: EXYNOS: Enable backlight and PWM support for Exynos4 DT machines
 >
-> What "-hdmi14" signifies here ? And to which Exynos4 SoC revisions this
-> compatible property is supposed to apply ?
+>  arch/arm/boot/dts/exynos4.dtsi            |    7 +++++++
+>  arch/arm/boot/dts/exynos4412-origen.dts   |   21 +++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   26 ++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/Kconfig              |    2 ++
+>  arch/arm/mach-exynos/mach-exynos4-dt.c    |    4 ++++
+>  5 files changed, 60 insertions(+)
 >
-
--hdmi14 signifies 1.4 compliant Hdmi IP like in Exynos4412, while
-Exynos4210 has 1.3
-compliant HDMI block. I have done a mistake here. I should have kept
-it in 4412.dtsi. OR
-I can move it to 4x12.dtsi but not sure whether all 4x12 socs have 1.4 hdmi.
-
->
->> +               reg =<0x12D00000 0x70000>;
->> +               interrupts =<0 95 0>;
->> +               hpd-gpio =<&gpx3 7 0xf 1 3>;
->> +       };
->
->
-> New bindings need to be documented in Documentation/devicetree/bindings/.
->
-It is present at Documentation/devicetree/bindings/drm/exynos/hdmi.txt.
-
-Regards,
-Rahul Sharma.
-
 > --
+> 1.7.9.5
 >
-> Thanks,
-> Sylwester
+
+
+
+-- 
+With warm regards,
+Sachin
