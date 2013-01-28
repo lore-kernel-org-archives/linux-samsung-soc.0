@@ -1,56 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 0/4] Add generic DMA DT binding support
-Date: Mon, 28 Jan 2013 15:16:00 +0000
-Message-ID: <201301281516.00498.arnd@arndb.de>
-References: <1358508824-20352-1-git-send-email-padma.v@samsung.com> <20130128134305.GU26562@intel.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Alexey Galakhov <agalakhov@gmail.com>
+Subject: [PATCH] Fix compilation error on S3C2440
+Date: Mon, 28 Jan 2013 23:07:03 +0600
+Message-ID: <1359392823-30529-1-git-send-email-agalakhov@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:51347 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751165Ab3A1PQL (ORCPT
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:56225 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756242Ab3A1RHs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jan 2013 10:16:11 -0500
-In-Reply-To: <20130128134305.GU26562@intel.com>
+	Mon, 28 Jan 2013 12:07:48 -0500
+Received: by mail-lb0-f181.google.com with SMTP id gm6so4238103lbb.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jan 2013 09:07:47 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Alexey Galakhov <agalakhov@gmail.com>
 
-On Monday 28 January 2013, Vinod Koul wrote:
-> On Fri, Jan 18, 2013 at 05:03:40PM +0530, Padmavathi Venna wrote:
-> > This patch set adds support for generic dma device tree bindings for
-> > Samsung platforms and is dependent on the following patches from
-> > Vinod Koul next branch
-> > 1)of: Add generic device tree DMA helpers
-> > 2)dmaengine: add helper function to request a slave DMA channel
-> Changes look fairly decent. I need somone with better knowldge of DT to akc this
-> before this is applied. Arnd...?
+There was a compilation error introduced on Dec 7, 2012
+by commit a08485d8fdf6f67ca5f173b68d8f873c574745f2.
 
-Thanks for the pointer, it seems everthing is coming together today ;-)
+Combination of CONFIG_CPU_S3C2440 and CONFIG_SND_S3C24XX_I2S
+caused the following:
+sound/soc/samsung/s3c24xx-i2s.c: In function 's3c24xx_iis_dev_probe':
+sound/soc/samsung/s3c24xx-i2s.c:472:2: error: implicit declaration of
+function 's3c_i2sv2_register_dai' [-Werror=implicit-function-declaration]
+sound/soc/samsung/s3c24xx-i2s.c:472:48: error: 's3c2412_i2s_dai'
+undeclared (first use in this function)
 
-The binding looks good, aside from the wording on some of the properties
-in there that could be a little clearer.
+This patch fixes the problem and makes S3C2440 I2S usable again.
 
-The method of calling dma_request_channel() from the xlate() function
-is a little bit clumsy IMHO, but it does work and is the easiest way
-to retrofit generic DT support to this driver, given that it already
-provides a global filter function. It's also apparently what Jon had
-in mind, and what Matt is doing on AM33XX.
+Signed-off-by: Alexey Galakhov <agalakhov@gmail.com>
+---
+ sound/soc/samsung/s3c24xx-i2s.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll probably propose something similar on dw_dma, since I was just
-(this hour, actually) looking at the same problem there. I believe
-you had something smarter in mind when we discussed it in San Diego,
-but I don't remember what the idea was.  I would need something
-like
-
-	struct dma_chan *dma_channel_get(struct dma_device *);
-
-and I assume that there is a reason for why I can't call this
-from the xlate() function but instead have to go through
-dma_request_channel(), but I don't completely understand that part
-of the puzzle.
-
-	Arnd
+diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+index ee10e87..13f6dd1 100644
+--- a/sound/soc/samsung/s3c24xx-i2s.c
++++ b/sound/soc/samsung/s3c24xx-i2s.c
+@@ -469,7 +469,7 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
+ {
+ 	int ret = 0;
+ 
+-	ret = s3c_i2sv2_register_dai(&pdev->dev, -1, &s3c2412_i2s_dai);
++	ret = snd_soc_register_dai(&pdev->dev, &s3c24xx_i2s_dai);
+ 	if (ret) {
+ 		pr_err("failed to register the dai\n");
+ 		return ret;
+-- 
+1.7.10.4
