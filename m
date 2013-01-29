@@ -1,87 +1,105 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH 1/1] video: drm: exynos: Adds display-timing node parsing using
- video helper function
-Date: Tue, 29 Jan 2013 03:12:26 -0500
-Message-ID: <1359447146-23359-2-git-send-email-l.krishna@samsung.com>
-References: <1359447146-23359-1-git-send-email-l.krishna@samsung.com>
+From: Vasanth Ananthan <vasanthananthan@gmail.com>
+Subject: [PATCH] ARM: dts: map SATA controller port to SATA PHY controller
+Date: Tue, 29 Jan 2013 13:36:50 +0530
+Message-ID: <1359446810-26098-1-git-send-email-vasanthananthan@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:8619 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753045Ab3A2HvN (ORCPT
+Received: from mail-da0-f46.google.com ([209.85.210.46]:34792 "EHLO
+	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754472Ab3A2IHG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 02:51:13 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHD00A2SN4XU7P0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 16:51:09 +0900 (KST)
-Received: from chrome-ubuntu.sisodomain.com ([107.108.73.106])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHD00DY4N4VWE70@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 16:51:08 +0900 (KST)
-In-reply-to: <1359447146-23359-1-git-send-email-l.krishna@samsung.com>
+	Tue, 29 Jan 2013 03:07:06 -0500
+Received: by mail-da0-f46.google.com with SMTP id p5so102251dak.33
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 00:07:04 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: inki.dae@samsung.com, kgene.kim@samsung.com, vikas.sajjan@linaro.org, linux-samsung-soc@vger.kernel.org, s.trumtrar@pengutronix.de
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, girish.shivananjappa@linaro.org, Vasanth Ananthan <vasanthananthan@gmail.com>, Vasanth Ananthan <vasanth.a@samsung.com>
 
-This patch adds display-timing node parsing using video helper function
+Adding port nodes to the sata controller node, thus mapping
+the ports in sata controller to the corresponding PHY controllers they
+are connected to.
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-Tested-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   11 -----------
+ arch/arm/boot/dts/exynos5250.dtsi         |   15 ++++++++++++---
+ arch/arm/mach-exynos/mach-exynos5-dt.c    |    4 ++--
+ 3 files changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 9537761..19dc842 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -876,6 +876,8 @@ static int fimd_probe(struct platform_device *pdev)
- 	struct fimd_context *ctx;
- 	struct exynos_drm_subdrv *subdrv;
- 	struct exynos_drm_fimd_pdata *pdata;
-+	struct fb_videomode *fbmode;
-+	struct device *disp_dev = &pdev->dev;
- 	struct exynos_drm_panel_info *panel;
- 	struct resource *res;
- 	int win;
-@@ -883,10 +885,31 @@ static int fimd_probe(struct platform_device *pdev)
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 942d576..49b89f6 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -51,17 +51,6 @@
+ 		};
+ 	};
  
- 	DRM_DEBUG_KMS("%s\n", __FILE__);
+-	i2c@121D0000 {
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <40000>;
+-		samsung,i2c-slave-addr = <0x38>;
+-
+-		sata-phy {
+-			compatible = "samsung,sata-phy";
+-			reg = <0x38>;
+-		};
+-	};
+-
+ 	sata@122F0000 {
+ 		samsung,sata-freq = <66>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 3acf594..d33dc89 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -118,13 +118,14 @@
+ 	};
  
--	pdata = pdev->dev.platform_data;
--	if (!pdata) {
--		dev_err(dev, "no platform data specified\n");
--		return -EINVAL;
-+	if (pdev->dev.of_node) {
-+		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-+		if (!pdata) {
-+			DRM_ERROR("memory allocation for pdata failed\n");
-+			return -ENOMEM;
-+		}
+ 	sata@122F0000 {
+-		compatible = "samsung,exynos5-sata-ahci";
++		compatible = "samsung,exynos5250-ahci";
+ 		reg = <0x122F0000 0x1ff>;
+ 		interrupts = <0 115 0>;
++		samsung,exynos-sata-phy = <&phy0>;
+ 	};
+ 
+-	sata-phy@12170000 {
+-		compatible = "samsung,exynos5-sata-phy";
++	phy0: sata-phy@12170000 {
++		compatible = "samsung,exynos5250-sata-phy";
+ 		reg = <0x12170000 0x1ff>;
+ 	};
+ 
+@@ -205,6 +206,14 @@
+                 reg = <0x121D0000 0x100>;
+                 #address-cells = <1>;
+                 #size-cells = <0>;
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <40000>;
++		samsung,i2c-slave-addr = <0x38>;
 +
-+		fbmode = devm_kzalloc(dev, sizeof(*fbmode), GFP_KERNEL);
-+		if (!fbmode) {
-+			DRM_ERROR("memory allocation for fbmode failed\n");
-+			return -ENOMEM;
-+		}
-+
-+		ret = of_get_fb_videomode(disp_dev->of_node, fbmode, -1);
-+		if (ret) {
-+			DRM_ERROR("failed to get fb_videomode\n");
-+			return -EINVAL;
-+		}
-+		pdata->panel.timing = (struct fb_videomode) *fbmode;
-+	} else {
-+		pdata = pdev->dev.platform_data;
-+		if (!pdata) {
-+			DRM_ERROR("no platform data specified\n");
-+			return -EINVAL;
-+		}
- 	}
++		sata-phy {
++			compatible = "samsung,exynos5250-sataphy";
++			reg = <0x38>;
++		};
+ 	};
  
- 	panel = &pdata->panel;
+ 	spi_0: spi@12d20000 {
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index e99d3d8..09a88fb 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -80,9 +80,9 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+ 				"exynos4210-spi.1", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI2,
+ 				"exynos4210-spi.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-sata-ahci", 0x122F0000,
++	OF_DEV_AUXDATA("samsung,exynos5250-ahci", 0x122F0000,
+ 				"exynos5-sata", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-sata-phy", 0x12170000,
++	OF_DEV_AUXDATA("samsung,exynos5250-sata-phy", 0x12170000,
+ 				"exynos5-sata-phy", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos5-sata-phy-i2c", 0x121D0000,
+ 				"exynos5-sata-phy-i2c", NULL),
 -- 
-1.8.0
+1.7.9.5
