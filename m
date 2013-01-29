@@ -1,62 +1,41 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 3/6] ARM: dts: Add MFC codec support to SMDKV310 DT
-Date: Tue, 29 Jan 2013 14:40:55 +0100
-Message-ID: <5107D167.4050209@samsung.com>
-References: <1359432822-23846-1-git-send-email-sachin.kamat@linaro.org>
- <1359432822-23846-4-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Vasanth Ananthan <vasanthananthan@gmail.com>
+Subject: [PATCH 0/2] Adding SATA PHY framework and PHY controller driver
+Date: Tue, 29 Jan 2013 20:49:16 +0530
+Message-ID: <1359472758-31350-1-git-send-email-vasanthananthan@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:17142 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752200Ab3A2NlC (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:45036 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753858Ab3A2PT2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 08:41:02 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHE00GY53BEDT40@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 13:40:59 +0000 (GMT)
-Received: from [106.116.147.32] by eusync4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHE0042I3CA6E20@eusync4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 13:40:59 +0000 (GMT)
-In-reply-to: <1359432822-23846-4-git-send-email-sachin.kamat@linaro.org>
+	Tue, 29 Jan 2013 10:19:28 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, patches@linaro.org
+To: linux-ide@vger.kernel.org
+Cc: jeff@garzik.org, jgarzik@redhat.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, girish.shivananjappa@linaro.org, Vasanth Ananthan <vasanthananthan@gmail.com>
 
-On 01/29/2013 05:13 AM, Sachin Kamat wrote:
-> Added MFC codec support to SMDKV310 DT file.
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos4210-smdkv310.dts |    5 +++++
->  1 files changed, 5 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> index f634907..8481f8f 100644
-> --- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> +++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> @@ -189,4 +189,9 @@
->  			};
->  		};
->  	};
-> +
-> +	codec@13400000 {
-> +		samsung,mfc-r = <0x43000000 0x800000>;
-> +		samsung,mfc-l = <0x51000000 0x800000>;
+Adding SATA PHY framework. The framework acts as an interface
+between the SATA controller and the PHY controller.
 
-With the change as I proposed in patch 2/6 you need to add:
+The framework can be used by any platform with device tree support.
+It primarily serves to de-couple the SATA controller driver and the
+PHY controller driver.
 
-		status = "okay";
+Vasanth Ananthan (2):
+  driver: ata: SATA PHY framework
+  driver: ata: add new Exynos5250 SATA PHY controller driver
 
-in this node and for all other boards in the further patches
-in this series.
+ arch/arm/mach-exynos/include/mach/regs-pmu.h  |    3 +
+ arch/arm/mach-exynos/include/mach/regs-sata.h |   29 +++
+ drivers/ata/Kconfig                           |   10 +
+ drivers/ata/Makefile                          |    1 +
+ drivers/ata/sata_exynos_phy.c                 |  265 +++++++++++++++++++++++++
+ drivers/ata/sata_phy.c                        |  145 ++++++++++++++
+ drivers/ata/sata_phy.h                        |   29 +++
+ 7 files changed, 482 insertions(+)
+ create mode 100644 arch/arm/mach-exynos/include/mach/regs-sata.h
+ create mode 100644 drivers/ata/sata_exynos_phy.c
+ create mode 100644 drivers/ata/sata_phy.c
+ create mode 100644 drivers/ata/sata_phy.h
 
---
-
-Thanks,
-Sylwester
+-- 
+1.7.9.5
