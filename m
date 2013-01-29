@@ -1,76 +1,66 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V6 04/10] spi: s3c64xx: Modify SPI driver to use generic
- DMA DT support
-Date: Tue, 29 Jan 2013 13:19:46 +0800
-Message-ID: <20130129051943.GE6878@opensource.wolfsonmicro.com>
-References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
- <1358509629-20471-5-git-send-email-padma.v@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/2] arm: exynos5: Enable PM generic domain support in
+ Kconfig
+Date: Mon, 28 Jan 2013 21:22:29 -0800
+Message-ID: <05b901cdfde0$a373a860$ea5af920$@samsung.com>
+References: <1357733733-18769-1-git-send-email-prasanna.ps@samsung.com>
+ <1357733733-18769-2-git-send-email-prasanna.ps@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Rgf3q3z9SdmXC6oT"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37836 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752877Ab3A2FUB (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47143 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752023Ab3A2FWf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 00:20:01 -0500
-Content-Disposition: inline
-In-Reply-To: <1358509629-20471-5-git-send-email-padma.v@samsung.com>
+	Tue, 29 Jan 2013 00:22:35 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHD00628G9FJNM0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 14:22:34 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHD00448G9KAS30@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 14:22:34 +0900 (KST)
+In-reply-to: <1357733733-18769-2-git-send-email-prasanna.ps@samsung.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
+To: 'Prasanna Kumar' <prasanna.ps@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
+Prasanna Kumar wrote:
+> 
+> This patch adds support to enable PM generic domains
+> under Exynos5 family
+> 
+> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-
+> exynos/Kconfig
+> index e103c29..871be97 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -63,6 +63,7 @@ config SOC_EXYNOS5250
+>  	depends on ARCH_EXYNOS5
+>  	select S5P_PM if PM
+>  	select S5P_SLEEP if PM
+> +	select PM_GENERIC_DOMAINS if PM
+>  	select S5P_DEV_MFC
+>  	select SAMSUNG_DMADEV
+>  	help
+> --
+> 1.7.5.4
 
---Rgf3q3z9SdmXC6oT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Firstly, this patch can be squashed into 2nd one.
+Secondly, please put the statements alphanumerically.
+Finally, please use the same format for subject like following:
+"ARM: EXYNOS: ..."
 
-On Fri, Jan 18, 2013 at 05:17:03PM +0530, Padmavathi Venna wrote:
-> This patch modifies the SPI driver to use generic dma dt bindings
-> support. This passes all the required arguments to dma dev request
-> functon which in turn calls the dma_request_slave_channel or dma__
-> request_channel based on DT or non-DT respectively.
+Thanks.
 
-This loooks OK and I'm actually applying SPI patches so I could apply it
-but I'm not sure I see the relevance of this patch to the rest of the
-series (which is about ASoC).  Is there some reason why it's included in
-this patch series or can it be applied to the SPI tree?  The SMDKs use
-I2C for their CODEC control rather than SPI.
-
-Also is there a binding document update or device tree file update to go
-with this?
-
-> +	if (!sdd->pdev->dev.of_node) {
-> +		res = platform_get_resource(pdev, IORESOURCE_DMA,  0);
-> +		if (!res) {
-> +			dev_err(&pdev->dev, "Unable to get SPI tx dma "
-> +					"resource\n");
-
-I appreciate that this is cut'n'paste from the code you're refactoring
-but please don't split error messages over lines, it makes it hard to
-grep for them in the kernel source.
-
---Rgf3q3z9SdmXC6oT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRB1vTAAoJELSic+t+oim9b2UP/RWygjy50b9hux8CIRbD7Iv8
-TgraLNnL4RdJwBL3AKDGdRAa28A3zN5ssSlU21bj9hUsPuw/FR6j0xBE32VS2ERw
-y0J0Zk6fab/QWP0FeNLyZHPaIRFmfMfSfFoXAhLnoDb67w3IGxr00awKgMqlr6Dt
-DBWKQ2fP+IZAq41ejf7J1QtPJyv6Tj8T1zKdSPOmrxECJBolY9YCUD3mExxWHzvK
-Tc28/hO6K7qFstHYK2LvDeLT7AGxoCfpeJZYlKXphH5tY7xp11WJjmj14JXbJfGc
-+kVFcjuOGeaBKlgfchYY96a2kZlIuZ3Tqy/aD9fxH7YuctFCi/C3UiGZgn+aBpFu
-akn+S5dMMVcU8rSMIfNUQl1RjYnDQdBWDtmrOxlNaatlj7iFB24tSM/nwMQBL7zQ
-Q9L4XXB+QrwRvzKAr19stbgBSR30yoBn4bxjyjFi51ZUunRyLo+yXA2vL01IWrUA
-fokRTGvtO+oqe5C5Vft6sdCixtNukwOIZVR0b9YvsVlFzDa94Rn4eATmyi0rwnT3
-NzOaG599ZYXEPwbt+ZO1BHTb5QFqaWh80KQ33XvGzTZWzAXMWBW4WNgaJBTy1r3n
-jaO0fIqF1BPwZfH7sSZzbq/YX7dpLM3sGYJmIzJlF5kC2HzIwavCe+3+gmwsaCyT
-rVe55qCv9Hp7EfQrc/TZ
-=YEaM
------END PGP SIGNATURE-----
-
---Rgf3q3z9SdmXC6oT--
+- Kukjin
