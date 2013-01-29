@@ -1,46 +1,108 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V6 07/10] ASoC: SMDK: WM8994: Add device tree support for
- machine file
-Date: Tue, 29 Jan 2013 15:09:06 +0530
-Message-ID: <CAAgF-Be_E8Hxmo08OH-zzGrqP_4BmX2dAYMnh2zxvXSMTM2jEg@mail.gmail.com>
-References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
-	<1358509629-20471-8-git-send-email-padma.v@samsung.com>
-	<20130129071231.GG6878@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Prasanna Kumar <prasanna.ps@samsung.com>
+Subject: [PATCH RESEND] ARM: EXYNOS: dts: Set up power domain for MFC and
+ G-scaler
+Date: Tue, 29 Jan 2013 15:25:20 +0530
+Message-ID: <1359453320-14911-1-git-send-email-prasanna.ps@samsung.com>
+References: <05b901cdfde0$a373a860$ea5af920$@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:35229 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751210Ab3A2JjH (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:10153 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755366Ab3A2Jt6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 04:39:07 -0500
-Received: by mail-ie0-f176.google.com with SMTP id 13so142166iea.35
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 01:39:06 -0800 (PST)
-In-Reply-To: <20130129071231.GG6878@opensource.wolfsonmicro.com>
+	Tue, 29 Jan 2013 04:49:58 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHD00AHOSN0D001@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 18:49:56 +0900 (KST)
+Received: from user-ubuntu.sisodomain.com ([107.108.83.235])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MHD00KDYSMBAK10@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 18:49:55 +0900 (KST)
+In-reply-to: <05b901cdfde0$a373a860$ea5af920$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, tiwai@suse.de, ben-linux@fluff.org
+To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 29, 2013 at 12:42 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Fri, Jan 18, 2013 at 05:17:06PM +0530, Padmavathi Venna wrote:
->
->> +Samsung SMDK audio complex
->
-> This is just for SMDKs with WM8994.  I'll apply but please send a
-> followup patch to clarify this - it'll be a different binding for others
-> like the older boards using WM8580 and WM9713.
+This patch adds device tree nodes for MFC and G-scaler power
+domains of exynos5250.It binds these power-domain nodes to repsective
+device tree nodes
 
-OK. I will send.
+It also adds support to enable PM generic domains for exynos5250.
 
->
->> +             samsung,i2s-controller = <&i2s0>;
->> +             samsung,audio-codec = <&wm8994>;
->
-> I was thinking this should really point at the DAI but since it's
-> specific to the SMDKs I don't think it particularly matters - they all
-> use AIF1 anyway.
+Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |   15 +++++++++++++++
+ arch/arm/mach-exynos/Kconfig      |    1 +
+ 2 files changed, 16 insertions(+), 0 deletions(-)
 
-Thanks
-Padma
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 30485de..6d0e87c 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -85,6 +85,7 @@
+ 		compatible = "samsung,mfc-v6";
+ 		reg = <0x11000000 0x10000>;
+ 		interrupts = <0 96 0>;
++		samsung,power-domain = <&pd_mfc>;
+ 	};
+ 
+ 	rtc {
+@@ -554,28 +555,42 @@
+ 		};
+ 	};
+ 
++	pd_gsc: gsc-power-domain@0x10044000 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x10044000 0x20>;
++	};
++
++	pd_mfc: mfc-power-domain@0x10044040 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x10044040 0x20>;
++	};
++
+ 	gsc_0:  gsc@0x13e00000 {
+ 		compatible = "samsung,exynos5-gsc";
+ 		reg = <0x13e00000 0x1000>;
+ 		interrupts = <0 85 0>;
++		samsung,power-domain = <&pd_gsc>;
+ 	};
+ 
+ 	gsc_1:  gsc@0x13e10000 {
+ 		compatible = "samsung,exynos5-gsc";
+ 		reg = <0x13e10000 0x1000>;
+ 		interrupts = <0 86 0>;
++		samsung,power-domain = <&pd_gsc>;
+ 	};
+ 
+ 	gsc_2:  gsc@0x13e20000 {
+ 		compatible = "samsung,exynos5-gsc";
+ 		reg = <0x13e20000 0x1000>;
+ 		interrupts = <0 87 0>;
++		samsung,power-domain = <&pd_gsc>;
+ 	};
+ 
+ 	gsc_3:  gsc@0x13e30000 {
+ 		compatible = "samsung,exynos5-gsc";
+ 		reg = <0x13e30000 0x1000>;
+ 		interrupts = <0 88 0>;
++		samsung,power-domain = <&pd_gsc>;
+ 	};
+ 
+ 	hdmi {
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index e103c29..96f4a9f 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -61,6 +61,7 @@ config SOC_EXYNOS5250
+ 	bool "SAMSUNG EXYNOS5250"
+ 	default y
+ 	depends on ARCH_EXYNOS5
++	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+ 	select S5P_DEV_MFC
+-- 
+1.7.5.4
