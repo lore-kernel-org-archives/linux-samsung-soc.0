@@ -1,65 +1,73 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] arm: exynos5: Enable PM generic domain support in
- Kconfig
-Date: Mon, 28 Jan 2013 21:22:29 -0800
-Message-ID: <05b901cdfde0$a373a860$ea5af920$@samsung.com>
-References: <1357733733-18769-1-git-send-email-prasanna.ps@samsung.com>
- <1357733733-18769-2-git-send-email-prasanna.ps@samsung.com>
+Subject: RE: [PATCH 0/3]  ARM:exynos5:power-domain: Save and restore
+ CLK_TOP_SRC3 via clock framework.
+Date: Mon, 28 Jan 2013 21:24:35 -0800
+Message-ID: <05ba01cdfde0$ee4e6870$caeb3950$@samsung.com>
+References: <1357736081-19390-1-git-send-email-prasanna.ps@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47143 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:47502 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752023Ab3A2FWf (ORCPT
+	with ESMTP id S1752911Ab3A2FYk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 00:22:35 -0500
+	Tue, 29 Jan 2013 00:24:40 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHD00628G9FJNM0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 14:22:34 +0900 (KST)
+ 17 2011)) with ESMTP id <0MHD00960GBNZKL0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 14:24:39 +0900 (KST)
 Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHD00448G9KAS30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 14:22:34 +0900 (KST)
-In-reply-to: <1357733733-18769-2-git-send-email-prasanna.ps@samsung.com>
+ with ESMTPA id <0MHD0073BGD1Y710@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 14:24:39 +0900 (KST)
+In-reply-to: <1357736081-19390-1-git-send-email-prasanna.ps@samsung.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Prasanna Kumar' <prasanna.ps@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Prasanna Kumar' <prasanna.ps@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, jhbird.choi@samsung.com
 
 Prasanna Kumar wrote:
 > 
-> This patch adds support to enable PM generic domains
-> under Exynos5 family
+> After Suspend-Resume operation of exynos5, CLK_TOP_SRC3 register
+> modified
+> while power gating G-scaler and MFC power domains.This is seen only after
+> suspend and resume.
 > 
-> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
-> ---
->  arch/arm/mach-exynos/Kconfig |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+> The solution to this problem is to save CLK_SRC_TOP3 register and restore
+> it while powergating. But CLK_SRC_TOP3 register cannot accessed directly
+> by power domain code.
+> Please refer below URL to know the background of this issue.
+> http://www.mail-archive.com/linux-samsung-
+> soc@vger.kernel.org/msg14347.html.
 > 
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-
-> exynos/Kconfig
-> index e103c29..871be97 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -63,6 +63,7 @@ config SOC_EXYNOS5250
->  	depends on ARCH_EXYNOS5
->  	select S5P_PM if PM
->  	select S5P_SLEEP if PM
-> +	select PM_GENERIC_DOMAINS if PM
->  	select S5P_DEV_MFC
->  	select SAMSUNG_DMADEV
->  	help
+> This patch set adds clock framework support for save and restore
+> clock register (CLK_SRC_TOP3)  for G-scaler and MFC power domains.
+> 
+> This patch set depends on
+> http://www.mail-archive.com/linux-samsung-
+> soc@vger.kernel.org/msg14648.html
+> 
+> Prasanna Kumar (3):
+>   ARM: dts: exynos5: Add power domain clocks to pd node of Gscaler and
+> MFC
+>   ARM:exynos5:dts: Bindings for clock definitions are added.
+>   ARM: exynos5: Add clock save and restore operation(CLK_SRC_TOP3) using
+> clock framework.
+> 
+>  .../bindings/arm/exynos/power_domain.txt           |   14 ++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    2 +
+>  arch/arm/mach-exynos/pm_domains.c                  |  125
+> ++++++++++++++++++++
+>  3 files changed, 141 insertions(+), 0 deletions(-)
+> 
 > --
 > 1.7.5.4
 
-Firstly, this patch can be squashed into 2nd one.
-Secondly, please put the statements alphanumerically.
-Finally, please use the same format for subject like following:
-"ARM: EXYNOS: ..."
+I think, you need to re-submit this after addressing comments from some
+guys.
 
 Thanks.
 
