@@ -1,67 +1,79 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 2/4] ARM: dts: add support for mixer to exynos4
-Date: Tue, 29 Jan 2013 21:24:53 +0100
-Message-ID: <51083015.2030403@gmail.com>
-References: <1359110384-28402-1-git-send-email-rahul.sharma@samsung.com> <1359110384-28402-3-git-send-email-rahul.sharma@samsung.com> <5105965F.9050402@gmail.com> <CAPdUM4P_jf0w+B22p1hmso8uhmTXs=fLdF8WrzDWL8cPyLeTCw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM: dts: add support for hdmi to exynos4
+Date: Tue, 29 Jan 2013 21:42:53 +0100
+Message-ID: <5108344D.4090202@gmail.com>
+References: <1359110384-28402-1-git-send-email-rahul.sharma@samsung.com> <1359110384-28402-2-git-send-email-rahul.sharma@samsung.com> <51059402.2030405@gmail.com> <CAPdUM4Py3dbV_tFnZ6GOxSm-6Sq8FBZu00JH3UDq_PV2U8yq_A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f171.google.com ([209.85.215.171]:34100 "EHLO
-	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751958Ab3A2UZA (ORCPT
+Received: from mail-ee0-f43.google.com ([74.125.83.43]:39203 "EHLO
+	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751518Ab3A2UnB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 15:25:00 -0500
-Received: by mail-ea0-f171.google.com with SMTP id c13so386103eaa.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 12:24:59 -0800 (PST)
-In-Reply-To: <CAPdUM4P_jf0w+B22p1hmso8uhmTXs=fLdF8WrzDWL8cPyLeTCw@mail.gmail.com>
+	Tue, 29 Jan 2013 15:43:01 -0500
+Received: by mail-ee0-f43.google.com with SMTP id c50so453655eek.30
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 12:42:59 -0800 (PST)
+In-Reply-To: <CAPdUM4Py3dbV_tFnZ6GOxSm-6Sq8FBZu00JH3UDq_PV2U8yq_A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-Hi,
+Hi Rahul,
 
-On 01/28/2013 07:44 AM, Rahul Sharma wrote:
+On 01/28/2013 07:19 AM, Rahul Sharma wrote:
+>>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>>> @@ -289,4 +289,11 @@
+>>>                          interrupts =<0 34 0>;
+>>>                  };
+>>>          };
 >>> +
->>> +       mixer: mixer {
->>> +               compatible = "samsung,exynos4-mixer";
+>>> +       hdmi {
+>>> +               compatible = "samsung,exynos4-hdmi14";
 >>
 >>
->> I'm afraid this compatible property it too generic. Is the video mixer IP
->> really identical an all the Exynos4 series SoCs ?
+>> What "-hdmi14" signifies here ? And to which Exynos4 SoC revisions this
+>> compatible property is supposed to apply ?
 >>
 >
-> It is same in Exynos4210, 4212 and 4412.
->
->>
->>> +               reg =<0x12c10000 0x10000>,
->>> +<0x12c00000 0x10000>;
->>> +               interrupts =<0 91 0>;
->>> +               samsung,power-domain =<&pd_tv>;
+> -hdmi14 signifies 1.4 compliant Hdmi IP like in Exynos4412, while
+> Exynos4210 has 1.3
+> compliant HDMI block. I have done a mistake here. I should have kept
+> it in 4412.dtsi. OR
+> I can move it to 4x12.dtsi but not sure whether all 4x12 socs have 1.4 hdmi.
+
+Exynos4210 also have the HDMI IP. I'm not sure how much common those 
+IP's are
+among Exynos4 series SoCs. I suppose it makes sense to create a hdmi node in
+exynos4.dtsi and override what's required either in exynos4x12.dtsi or
+exynos4412.dtsi file.
+
+What is worring me is that you're trying to just append the supported
+HDMI standard version to the string, and there might be more differences
+in the IPs across all Exynos4 SoC series. What if there are two different
+SoCs that support e.g. HDMI v1.4 but there are some differences in the
+HDMI IPs ? You would likely need to invent new properties and pass them
+to the driver. Appending specific SoC name to the compatible string looks
+like a better alternative to me.
+
+>>> +               reg =<0x12D00000 0x70000>;
+>>> +               interrupts =<0 95 0>;
+>>> +               hpd-gpio =<&gpx3 7 0xf 1 3>;
 >>> +       };
->>>    };
 >>
 >>
->> Is there documentation for these new bindings available somewhere ?
+>> New bindings need to be documented in Documentation/devicetree/bindings/.
 >>
->
-> it is there at Documentation/devicetree/bindings/drm/exynos/mixer.txt.
-> Probably I need to add details for power domain node property.
+> It is present at Documentation/devicetree/bindings/drm/exynos/hdmi.txt.
 
-Sorry, I can't see anything for Exynos4 there, it's only for exynos5 SoCs.
-I think the need for the 'samsung,power-domain' property (I guess that
-should be optional) needs to be documented for completeness.
-
-Getting back to the bindings documentation,
-Documentation/devicetree/bindings/drm/exynos/ seems not exactly right
-place for me, but that's a minor issue. There is also a V4L2 driver
-for the HDMI and TV output devices in drivers/media/platform/s5p-tv.
-So Documentation/devicetree/bindings/video or
-Documentation/devicetree/bindings/media might be a better home for that
-bindings documentation. These IPs are not specific to DRM at all.
+Thanks. Sorry, I've missed that. But it seems to be only for exynos5 SoCs ?
+Also the location is a bit unexpected to me, if we want to have Exynos4 and
+Exynos5 specific IP documented in this file. As I mentioned in previous
+e-mail this IP is not only handled by the DRM API.
 
 --
 
-Thanks,
+Regards,
 Sylwester
