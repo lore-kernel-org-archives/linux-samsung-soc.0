@@ -1,108 +1,80 @@
-From: Prasanna Kumar <prasanna.ps@samsung.com>
-Subject: [PATCH RESEND] ARM: EXYNOS: dts: Set up power domain for MFC and
- G-scaler
-Date: Tue, 29 Jan 2013 15:25:20 +0530
-Message-ID: <1359453320-14911-1-git-send-email-prasanna.ps@samsung.com>
-References: <05b901cdfde0$a373a860$ea5af920$@samsung.com>
+From: srinidhi kasagar <srinidhi.kasagar@stericsson.com>
+Subject: [PATCH v2 0/5] ARM: Manage the pl310 erratas in a dynamic way
+Date: Tue, 29 Jan 2013 15:40:38 +0530
+Message-ID: <20130129101026.GA1063@bnru10>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:10153 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755366Ab3A2Jt6 (ORCPT
+Received: from eu1sys200aog114.obsmtp.com ([207.126.144.137]:44128 "EHLO
+	eu1sys200aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751845Ab3A2KLS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 04:49:58 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHD00AHOSN0D001@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 18:49:56 +0900 (KST)
-Received: from user-ubuntu.sisodomain.com ([107.108.83.235])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHD00KDYSMBAK10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 18:49:55 +0900 (KST)
-In-reply-to: <05b901cdfde0$a373a860$ea5af920$@samsung.com>
+	Tue, 29 Jan 2013 05:11:18 -0500
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux@arm.linux.org.uk, avorontsov@mvista.com, gregory.clement@free-electrons.com, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, shawn.guo@linaro.org, rubini@unipv.it, linus.walleij@linaro.org, linux-omap@vger.kernel.org, tony@atomide.com, horms@verge.net.au, magnus.damm@gmail.com, viresh.linux@gmail.com, shiraz.hashim@st.com
 
-This patch adds device tree nodes for MFC and G-scaler power
-domains of exynos5250.It binds these power-domain nodes to repsective
-device tree nodes
+This series of patches attempts to manage the pl310 erratas dynamically rather 
+allowing platforms to choose them during build time.
 
-It also adds support to enable PM generic domains for exynos5250.
+A bit of information which triggered the cause for this series is here:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2012-December/138066.html
 
-Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |   15 +++++++++++++++
- arch/arm/mach-exynos/Kconfig      |    1 +
- 2 files changed, 16 insertions(+), 0 deletions(-)
+v2:
+- The commit 74ddcdb868a84f4a9f65e33c1ca0d24e1134e53a 
+  (l2x0: Only set .set_debug on PL310 r3p0 and earlier) which makes the
+  assumption that non-secure platforms will implement .set_debug interface.
+  An attempt is made to set .set_debug only if 'smc' is passed either
+  through DT or through legacy interface (l2x0_init).
+  With this background, this series adds 'smc' identifier to differentiate
+  the paltforms which implements SMC interface.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 30485de..6d0e87c 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -85,6 +85,7 @@
- 		compatible = "samsung,mfc-v6";
- 		reg = <0x11000000 0x10000>;
- 		interrupts = <0 96 0>;
-+		samsung,power-domain = <&pd_mfc>;
- 	};
- 
- 	rtc {
-@@ -554,28 +555,42 @@
- 		};
- 	};
- 
-+	pd_gsc: gsc-power-domain@0x10044000 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044000 0x20>;
-+	};
-+
-+	pd_mfc: mfc-power-domain@0x10044040 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044040 0x20>;
-+	};
-+
- 	gsc_0:  gsc@0x13e00000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e00000 0x1000>;
- 		interrupts = <0 85 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_1:  gsc@0x13e10000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e10000 0x1000>;
- 		interrupts = <0 86 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_2:  gsc@0x13e20000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e20000 0x1000>;
- 		interrupts = <0 87 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_3:  gsc@0x13e30000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e30000 0x1000>;
- 		interrupts = <0 88 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	hdmi {
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index e103c29..96f4a9f 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -61,6 +61,7 @@ config SOC_EXYNOS5250
- 	bool "SAMSUNG EXYNOS5250"
- 	default y
- 	depends on ARCH_EXYNOS5
-+	select PM_GENERIC_DOMAINS if PM
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
- 	select S5P_DEV_MFC
+- Use the stashed value	instead of reading RTL revision all over the place(Will)
+
+- Added l2x0_quirks to manage the errata in cpu_idle path. Tried to address
+  Russell's comment on this, but could not completely. Because, neither I can
+  keep the #ifdef CONFIG_PL310_ERRATA_769419 nor remove it entirely since
+  the platform A suffers from this bug, whereas B do not but shares the same
+  defconfig.
+
+srinidhi kasagar (5):
+  ARM: cache-l2x0: add 'smc' identifier
+  ARM: cache-l2x0: Manage the errata at run time
+  ARM: make the platforms not to select the l2x0 erratas
+  ARM: Handle l2x0 quirks in cpu_idle path
+  ARM: mach-omap2: apply the errata at run time rather
+
+ arch/arm/boot/dts/omap4.dtsi                   |    1 +
+ arch/arm/include/asm/hardware/cache-l2x0.h     |   16 ++++-
+ arch/arm/kernel/process.c                      |    7 +-
+ arch/arm/mach-cns3xxx/core.c                   |    4 +-
+ arch/arm/mach-exynos/common.c                  |    4 +-
+ arch/arm/mach-imx/Kconfig                      |    3 -
+ arch/arm/mach-imx/mm-imx3.c                    |    4 +-
+ arch/arm/mach-nomadik/cpu-8815.c               |    4 +-
+ arch/arm/mach-omap2/Kconfig                    |    2 -
+ arch/arm/mach-omap2/omap4-common.c             |    2 +-
+ arch/arm/mach-omap2/sleep44xx.S                |   25 ++++++-
+ arch/arm/mach-realview/realview_eb.c           |    4 +-
+ arch/arm/mach-realview/realview_pb1176.c       |    4 +-
+ arch/arm/mach-realview/realview_pb11mp.c       |    4 +-
+ arch/arm/mach-realview/realview_pbx.c          |    4 +-
+ arch/arm/mach-shmobile/board-ag5evm.c          |    2 +-
+ arch/arm/mach-shmobile/board-armadillo800eva.c |    4 +-
+ arch/arm/mach-shmobile/board-bonito.c          |    4 +-
+ arch/arm/mach-shmobile/board-kota2.c           |    4 +-
+ arch/arm/mach-shmobile/board-kzm9g.c           |    4 +-
+ arch/arm/mach-shmobile/setup-r8a7779.c         |    4 +-
+ arch/arm/mach-spear13xx/spear13xx.c            |    2 +-
+ arch/arm/mach-tegra/Kconfig                    |    3 -
+ arch/arm/mach-ux500/Kconfig                    |    1 -
+ arch/arm/mach-ux500/cache-l2x0.c               |    2 +-
+ arch/arm/mach-vexpress/Kconfig                 |    1 -
+ arch/arm/mach-vexpress/ct-ca9x4.c              |    2 +-
+ arch/arm/mm/cache-l2x0.c                       |   90 +++++++++++++-----------
+ 28 files changed, 121 insertions(+), 90 deletions(-)
+
 -- 
-1.7.5.4
+1.7.2.dirty
