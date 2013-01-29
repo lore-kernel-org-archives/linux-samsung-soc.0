@@ -1,35 +1,46 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2 0/5] ARM: Manage the pl310 erratas in a dynamic way
-Date: Tue, 29 Jan 2013 11:29:17 +0000
-Message-ID: <20130129112917.GF2637@n2100.arm.linux.org.uk>
-References: <20130129101026.GA1063@bnru10>
+Subject: Re: [PATCH v1 1/5] ARM: cache-l2x0: add 'smc' identifier
+Date: Tue, 29 Jan 2013 11:33:25 +0000
+Message-ID: <20130129113325.GG2637@n2100.arm.linux.org.uk>
+References: <20130129101328.GA11878@bnru10>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:57522 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:57540 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751580Ab3A2L3d (ORCPT
+	with ESMTP id S1751732Ab3A2Ldo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 06:29:33 -0500
+	Tue, 29 Jan 2013 06:33:44 -0500
 Content-Disposition: inline
-In-Reply-To: <20130129101026.GA1063@bnru10>
+In-Reply-To: <20130129101328.GA11878@bnru10>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: srinidhi kasagar <srinidhi.kasagar@stericsson.com>
-Cc: linux-arm-kernel@lists.infradead.org, avorontsov@mvista.com, gregory.clement@free-electrons.com, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, shawn.guo@linaro.org, rubini@unipv.it, linus.walleij@linaro.org, linux-omap@vger.kernel.org, tony@atomide.com, horms@verge.net.au, magnus.damm@gmail.com, viresh.linux@gmail.com, shiraz.hashim@st.com
+Cc: linux-arm-kernel@lists.infradead.org, avorontsov@mvista.com, gregory.clement@free-electrons.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, shawn.guo@linaro.org, rubini@unipv.it, linus.walleij@linaro.org, linux-omap@vger.kernel.org, tony@atomide.com, horms@verge.net.au, magnus.damm@gmail.com, viresh.linux@gmail.com, shiraz.hashim@st.com
 
-On Tue, Jan 29, 2013 at 03:40:38PM +0530, srinidhi kasagar wrote:
-> - Added l2x0_quirks to manage the errata in cpu_idle path. Tried to address
->   Russell's comment on this, but could not completely. Because, neither I can
->   keep the #ifdef CONFIG_PL310_ERRATA_769419 nor remove it entirely since
->   the platform A suffers from this bug, whereas B do not but shares the same
->   defconfig.
+On Tue, Jan 29, 2013 at 03:43:31PM +0530, srinidhi kasagar wrote:
+> Add 'smc' (Secure Monitor Call) identifier to differentiates
+> the platforms which implements this.
 
-Yes you can and I covered this situation in my email.  In that case,
-you _define_ CONFIG_PL310_ERRATA_769419 such that the barrier _always_
-gets included both both platforms.
+This patch makes no sense.
 
-As I already said, there is _no_ point making the barrier conditional;
-it's probably more expensive to make it conditional than just to execute
-it every time.  But we still might as well optimize it away if we are
-running _only_ on platforms which _do_ _not_ have that errata.
+So, if setting 'smc' in the DT description is supposed to mean that
+the platform has a secure monitor then...
+
+> +	is_smc = of_property_read_bool(np, "smc");
+> +
+> +	if (is_smc) {
+> +		/* set the debug interface */
+> +		outer_cache.set_debug = pl310_set_debug;
+> +	}
+
+Now, let's look at what pl310_set_debug() does:
+
+static void pl310_set_debug(unsigned long val)
+{
+        writel_relaxed(val, l2x0_base + L2X0_DEBUG_CTRL);
+}
+
+Can you explain where the secure monitor call is there please, because
+I can't see one.  In fact, this is the function used when there _isn't_
+a secure monitor.  So this patch just seems totally wrong to me.
