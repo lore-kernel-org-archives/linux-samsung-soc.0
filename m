@@ -1,61 +1,65 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: Failure due to missing (Exynos related) pinctrl patch
-Date: Mon, 28 Jan 2013 22:20:15 -0800
-Message-ID: <05ed01cdfde8$b529fc00$1f7df400$@samsung.com>
-References: <CAK9yfHybC6ZgGwxa_i=LrMpU_q9M4aaMraTqK63B+fw11NBqRA@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V6 03/10] ARM: SAMSUNG: Make dma request compatible to
+ generic dma bindings.
+Date: Tue, 29 Jan 2013 14:20:11 +0800
+Message-ID: <20130129061958.GF6878@opensource.wolfsonmicro.com>
+References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
+ <1358509629-20471-4-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1Y7d0dPL928TPQbc"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:28378 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753530Ab3A2GUV (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44678 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753523Ab3A2GUf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 01:20:21 -0500
-In-reply-to: <CAK9yfHybC6ZgGwxa_i=LrMpU_q9M4aaMraTqK63B+fw11NBqRA@mail.gmail.com>
-Content-language: en-us
+	Tue, 29 Jan 2013 01:20:35 -0500
+Content-Disposition: inline
+In-Reply-To: <1358509629-20471-4-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: 'LKML' <linux-kernel@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
 
-Sachin Kamat wrote:
-> 
-> Hi Linus, Kukjin,
-> 
-> Patch titled "pinctrl: exynos: change PINCTRL_EXYNOS option"
-> (linux-next commit Id: 7452b64d) which is present in linux-next is
-> missing in the mainline kernel. This patch is required along with the
-> patch "gpio: samsung: fix pinctrl condition for exynos and exynos5440"
-> (mainline commit Id: e4a5da51) which has already made it into
-> mainline. Without the missing patch we get the following boot up
-> warnings and subsequent failures with dt boot on 4412 based board:
-> 
->  WARNING: at drivers/gpio/gpio-samsung.c:3102
-> samsung_gpiolib_init+0x29c/0x2e8()
->  Unknown SoC in gpio-samsung, no GPIOs added
->  Modules linked in:
->  [<c00142dc>] (unwind_backtrace+0x0/0xf8) from [<c00202bc>]
-> (warn_slowpath_common+0x4c/0x64)
->  [<c00202bc>] (warn_slowpath_common+0x4c/0x64) from [<c0020368>]
-> (warn_slowpath_fmt+0x30/0x40)
->  [<c0020368>] (warn_slowpath_fmt+0x30/0x40) from [<c028b924>]
-> (samsung_gpiolib_init+0x29c/0x2e8)
->  [<c028b924>] (samsung_gpiolib_init+0x29c/0x2e8) from [<c000862c>]
-> (do_one_initcall+0x34/0x174)
->  [<c000862c>] (do_one_initcall+0x34/0x174) from [<c0275960>]
-> (kernel_init_freeable+0xfc/0x1c8)
->  [<c0275960>] (kernel_init_freeable+0xfc/0x1c8) from [<c01c0a5c>]
-> (kernel_init+0x8/0xe4)
->  [<c01c0a5c>] (kernel_init+0x8/0xe4) from [<c000e158>]
-> (ret_from_fork+0x14/0x3c)
-> 
-Sachin, thanks for your information.
 
-Linus, can you check following again?
+--1Y7d0dPL928TPQbc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://lkml.org/lkml/2013/1/18/461
+On Fri, Jan 18, 2013 at 05:17:02PM +0530, Padmavathi Venna wrote:
+> This patch make the dma dev request operation compatible for both
+> DT and non-DT cases. It takes the all the arguments required for
+> dma_request_slave_channel and dma_request_channel. If the driver
+> is initiated via DT or non-DT the corresponding call will be made.
 
-Thanks.
+OK, so this is where the SPI change came from - the API has been changed
+incompatibly and SPI needs updating.  For bisection this API update
+ought to be done in a single commit, otherwise there will be steps in
+the bisection where nothing will work.
 
-- Kukjin
+Anyway, I'll go ahead and apply this, the SPI and the ASoC ones but this
+is something to bear in mind for the future.
+
+--1Y7d0dPL928TPQbc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRB2n8AAoJELSic+t+oim9GgUP/2aPCUUCEzzZ84pZU/YE0x7k
+P6yNjLxF9nCd3VnQ1skcw4Avmc/Z9oWAoBzqrWtSO2j9HrvHNw26shCZ/vcUY85q
+9B7SmXO+Ig7kao9bjguCD4ofQ6NKU5ijo4j8oGg7+ASZqfi29Kjvc1Y48ay4Xgad
+mnFrBrapuF+FeHJ793emSX1l6m54vMcxUu6cR4aTJStCHwogGiT218n4n5Tbfb9K
+SLCuJxkoUdiZR4kH6IipOp/jb3zJUoKXRnVDB56CHslF+EAYAL5andk8zxUb3S5+
+8cwpuVIn9tKEdvHvnEn0NN6I+QGM9YdQX3KkhcgRLJjXs/HIAhx98UZdXm1R8Xl+
+KkQlyTP8vkZhh7lV6SSYe2rjJtP5yyfPPHNjJMxCjr47pF9HkHzfAS1UNz95Z0en
+PAo4z/WPOl6xbbV3a37LD1YSuw7/TxxHObveIp+VHjYhFaD3fGJbseGem+qc8Lfm
+kqk9nTNBHyKneLhl2BZyr4ZIrg55zru2/Utz56yQWW3Uv6wcwXLMPzq+FJz4KQpG
+vNlYSa1laVeD9wnvPBGubx9f9cLoWVCTaheb7nEo0b/dIoCS8www11kU8WmYdnWM
+s6i2cIag/5eti5YjNK22viZEp2OcsZT00NhRF65b1EP89DSxHPzLOk/aftHEfCoJ
+YJlm0eElFpXJBl923UJa
+=gZTf
+-----END PGP SIGNATURE-----
+
+--1Y7d0dPL928TPQbc--
