@@ -1,51 +1,60 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v2 0/2] ARM: Exynos5250: Enabling samsung usb phy
-Date: Tue, 29 Jan 2013 17:40:28 +0530
-Message-ID: <CAFp+6iGJLV2rnHESX_Qmp+uL63mM7i=2tmFxaj=dK+SqCeg29A@mail.gmail.com>
-References: <1358868680-5757-1-git-send-email-gautam.vivek@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v1 1/5] ARM: cache-l2x0: add 'smc' identifier
+Date: Tue, 29 Jan 2013 12:22:56 +0000
+Message-ID: <20130129122255.GI2637@n2100.arm.linux.org.uk>
+References: <20130129101328.GA11878@bnru10> <20130129113325.GG2637@n2100.arm.linux.org.uk> <20130129114926.GA14624@bnru10>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f54.google.com ([209.85.214.54]:55004 "EHLO
-	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756109Ab3A2MKa (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:57644 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752814Ab3A2MXQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 07:10:30 -0500
-In-Reply-To: <1358868680-5757-1-git-send-email-gautam.vivek@samsung.com>
+	Tue, 29 Jan 2013 07:23:16 -0500
+Content-Disposition: inline
+In-Reply-To: <20130129114926.GA14624@bnru10>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, grant.likely@secretlab.ca, dianders@chromium.org, balbi@ti.com, thomas.abraham@linaro.org, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, Vivek Gautam <gautam.vivek@samsung.com>
+To: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "avorontsov@mvista.com" <avorontsov@mvista.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "rubini@unipv.it" <rubini@unipv.it>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "horms@verge.net.au" <horms@verge.net.au>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "viresh.linux@gmail.com" <viresh.linux@gmail.com>, Shiraz HASHIM <shiraz.hashim@st.com>
 
-On Tue, Jan 22, 2013 at 9:01 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Changes from v1:
->  - Putting separate device nodes for usb 2.0 phy and usb 3.0 phy
->    based on separate driver for samsung usb 3.0 phy and
->    samsung usb 2.0 phy:
->    [PATCH v3 0/2] Adding USB 3.0 DRD-phy support for exynos5250
->    [PATCH v8 0/4] Adding usb2.0 host-phy support for exynos5250
->  - Aligning as per the patch:
->    usb: phy: samsung: Add support to set pmu isolation
->  - Replaced phy-handle approach for PHY CONTROL registers
->    to child nodes.
->  - Removing AUX data entry from exynos5250 dt file.
->
-> Vivek Gautam (2):
->   ARM: Exynos5250: Enabling samsung-usbphy driver
->   ARM: Exynos5250: Enabling samsung-usb3-phy driver
->
+On Tue, Jan 29, 2013 at 05:19:27PM +0530, Srinidhi Kasagar wrote:
+> On Tue, Jan 29, 2013 at 12:33:25 +0100, Russell King - ARM Linux wrote:
+> > On Tue, Jan 29, 2013 at 03:43:31PM +0530, srinidhi kasagar wrote:
+> > > Add 'smc' (Secure Monitor Call) identifier to differentiates
+> > > the platforms which implements this.
+> > 
+> > This patch makes no sense.
+> > 
+> > So, if setting 'smc' in the DT description is supposed to mean that
+> > the platform has a secure monitor then...
+> > 
+> > > +	is_smc = of_property_read_bool(np, "smc");
+> > > +
+> > > +	if (is_smc) {
+> > > +		/* set the debug interface */
+> > > +		outer_cache.set_debug = pl310_set_debug;
+> > > +	}
+> > 
+> > Now, let's look at what pl310_set_debug() does:
+> > 
+> > static void pl310_set_debug(unsigned long val)
+> > {
+> >         writel_relaxed(val, l2x0_base + L2X0_DEBUG_CTRL);
+> 
+> You can do this operation (write to DEBUG_CTRL) only if SMC is implemented.
 
-any comments on this patch-series please ?
+Err... no.  You can do it if you're running in secure mode without a
+secure monitor, because the security stuff doesn't get in the way.
 
->  arch/arm/boot/dts/exynos5250.dtsi |   28 ++++++++++++++++++++++++++++
->  1 files changed, 28 insertions(+), 0 deletions(-)
->
-> --
-> 1.7.6.5
->
+What other platforms do is up to them, and up to *how* the secure monitor
+is implemented, not *if*.
 
+> > }
+> > 
+> > Can you explain where the secure monitor call is there please, because
+> > I can't see one.  In fact, this is the function used when there _isn't_
+> > a secure monitor.  So this patch just seems totally wrong to me.
 
-
--- 
-Thanks & Regards
-Vivek
+So this is going to be difficult because you only ever answer half an
+email?  So, I repeat the question above.
