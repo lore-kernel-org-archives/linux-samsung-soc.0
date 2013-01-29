@@ -1,105 +1,52 @@
-From: Vasanth Ananthan <vasanthananthan@gmail.com>
-Subject: [PATCH] ARM: dts: map SATA controller port to SATA PHY controller
-Date: Tue, 29 Jan 2013 13:36:50 +0530
-Message-ID: <1359446810-26098-1-git-send-email-vasanthananthan@gmail.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V6 10/10] dmaengine: Fix compilation error in non-DT case
+Date: Tue, 29 Jan 2013 14:23:05 +0530
+Message-ID: <CAAgF-BddMcNZs-99Jw=ZhRs9CCO_-eev=b5TW5BR2DS9gM_2Qw@mail.gmail.com>
+References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
+	<1358509629-20471-11-git-send-email-padma.v@samsung.com>
+	<20130128134726.GV26562@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f46.google.com ([209.85.210.46]:34792 "EHLO
-	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754472Ab3A2IHG (ORCPT
+Received: from mail-ia0-f180.google.com ([209.85.210.180]:64648 "EHLO
+	mail-ia0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753514Ab3A2IxH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 03:07:06 -0500
-Received: by mail-da0-f46.google.com with SMTP id p5so102251dak.33
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 00:07:04 -0800 (PST)
+	Tue, 29 Jan 2013 03:53:07 -0500
+Received: by mail-ia0-f180.google.com with SMTP id f27so242244iae.39
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 00:53:06 -0800 (PST)
+In-Reply-To: <20130128134726.GV26562@intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, girish.shivananjappa@linaro.org, Vasanth Ananthan <vasanthananthan@gmail.com>, Vasanth Ananthan <vasanth.a@samsung.com>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
 
-Adding port nodes to the sata controller node, thus mapping
-the ports in sata controller to the corresponding PHY controllers they
-are connected to.
+Hi,
 
-Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   11 -----------
- arch/arm/boot/dts/exynos5250.dtsi         |   15 ++++++++++++---
- arch/arm/mach-exynos/mach-exynos5-dt.c    |    4 ++--
- 3 files changed, 14 insertions(+), 16 deletions(-)
+On Mon, Jan 28, 2013 at 7:17 PM, Vinod Koul <vinod.koul@intel.com> wrote:
+> On Fri, Jan 18, 2013 at 05:17:09PM +0530, Padmavathi Venna wrote:
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> ---
+>>  include/linux/dmaengine.h |    2 +-
+>>  1 files changed, 1 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+>> index 8cd0e25..c88f302 100644
+>> --- a/include/linux/dmaengine.h
+>> +++ b/include/linux/dmaengine.h
+>> @@ -992,7 +992,7 @@ static inline struct dma_chan *__dma_request_channel(dma_cap_mask_t *mask,
+>>  static inline struct dma_chan *dma_request_slave_channel(struct device *dev,
+>>                                                        char *name)
+>>  {
+>> -     return NULL
+>> +     return NULL;
+> what tree was this generated against? this was fixed by 678bd8
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 942d576..49b89f6 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -51,17 +51,6 @@
- 		};
- 	};
- 
--	i2c@121D0000 {
--		samsung,i2c-sda-delay = <100>;
--		samsung,i2c-max-bus-freq = <40000>;
--		samsung,i2c-slave-addr = <0x38>;
--
--		sata-phy {
--			compatible = "samsung,sata-phy";
--			reg = <0x38>;
--		};
--	};
--
- 	sata@122F0000 {
- 		samsung,sata-freq = <66>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 3acf594..d33dc89 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -118,13 +118,14 @@
- 	};
- 
- 	sata@122F0000 {
--		compatible = "samsung,exynos5-sata-ahci";
-+		compatible = "samsung,exynos5250-ahci";
- 		reg = <0x122F0000 0x1ff>;
- 		interrupts = <0 115 0>;
-+		samsung,exynos-sata-phy = <&phy0>;
- 	};
- 
--	sata-phy@12170000 {
--		compatible = "samsung,exynos5-sata-phy";
-+	phy0: sata-phy@12170000 {
-+		compatible = "samsung,exynos5250-sata-phy";
- 		reg = <0x12170000 0x1ff>;
- 	};
- 
-@@ -205,6 +206,14 @@
-                 reg = <0x121D0000 0x100>;
-                 #address-cells = <1>;
-                 #size-cells = <0>;
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-max-bus-freq = <40000>;
-+		samsung,i2c-slave-addr = <0x38>;
-+
-+		sata-phy {
-+			compatible = "samsung,exynos5250-sataphy";
-+			reg = <0x38>;
-+		};
- 	};
- 
- 	spi_0: spi@12d20000 {
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index e99d3d8..09a88fb 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -80,9 +80,9 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"exynos4210-spi.1", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI2,
- 				"exynos4210-spi.2", NULL),
--	OF_DEV_AUXDATA("samsung,exynos5-sata-ahci", 0x122F0000,
-+	OF_DEV_AUXDATA("samsung,exynos5250-ahci", 0x122F0000,
- 				"exynos5-sata", NULL),
--	OF_DEV_AUXDATA("samsung,exynos5-sata-phy", 0x12170000,
-+	OF_DEV_AUXDATA("samsung,exynos5250-sata-phy", 0x12170000,
- 				"exynos5-sata-phy", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos5-sata-phy-i2c", 0x121D0000,
- 				"exynos5-sata-phy-i2c", NULL),
--- 
-1.7.9.5
+I generated against Kukjin for-next branch. I just noticed that it's
+fixed in your next branch. I will drop this patch.
+
+Thanks
+Padma
+>
+> --
+> ~Vinod
