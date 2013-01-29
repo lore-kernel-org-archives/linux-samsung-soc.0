@@ -1,37 +1,47 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: ehci: s5p: Power-off VBUS during suspend.
-Date: Tue, 29 Jan 2013 17:31:00 +0530
-Message-ID: <CAFp+6iGpbSmCsdFVzk1W+cKXMzzUtnreP+bTCab7xOtBs60tXg@mail.gmail.com>
-References: <1359456765-7335-1-git-send-email-gautam.vivek@samsung.com>
-	<2944580.3eEfUK6kfJ@linux-5eaq.site>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v2 0/2] ARM: Exynos5250: Enabling samsung usb phy
+Date: Tue, 29 Jan 2013 17:40:28 +0530
+Message-ID: <CAFp+6iGJLV2rnHESX_Qmp+uL63mM7i=2tmFxaj=dK+SqCeg29A@mail.gmail.com>
+References: <1358868680-5757-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2944580.3eEfUK6kfJ-7ztolUikljGernLeA6q8OA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Oliver Neukum <oneukum-l3A5Bk7waGM@public.gmane.org>
-Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f54.google.com ([209.85.214.54]:55004 "EHLO
+	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756109Ab3A2MKa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Jan 2013 07:10:30 -0500
+In-Reply-To: <1358868680-5757-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, grant.likely@secretlab.ca, dianders@chromium.org, balbi@ti.com, thomas.abraham@linaro.org, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hi Oliver,
-
-
-On Tue, Jan 29, 2013 at 5:07 PM, Oliver Neukum <oneukum-l3A5Bk7waGM@public.gmane.org> wrote:
-> On Tuesday 29 January 2013 16:22:45 Vivek Gautam wrote:
->> This change de-asserts vbus_gpio on suspend and
->> re-asserts on resume in order to save power.
->> NOTE, this change means no USB charging in suspend
->> mode.
+On Tue, Jan 22, 2013 at 9:01 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> Changes from v1:
+>  - Putting separate device nodes for usb 2.0 phy and usb 3.0 phy
+>    based on separate driver for samsung usb 3.0 phy and
+>    samsung usb 2.0 phy:
+>    [PATCH v3 0/2] Adding USB 3.0 DRD-phy support for exynos5250
+>    [PATCH v8 0/4] Adding usb2.0 host-phy support for exynos5250
+>  - Aligning as per the patch:
+>    usb: phy: samsung: Add support to set pmu isolation
+>  - Replaced phy-handle approach for PHY CONTROL registers
+>    to child nodes.
+>  - Removing AUX data entry from exynos5250 dt file.
 >
-> What happens if a device on the bus is a source of wakeups?
+> Vivek Gautam (2):
+>   ARM: Exynos5250: Enabling samsung-usbphy driver
+>   ARM: Exynos5250: Enabling samsung-usb3-phy driver
 >
 
-The device will not be powered in suspend state,
-so the corresponding wakeup will get missed ?
+any comments on this patch-series please ?
 
-
->         Regards
->                 Oliver
+>  arch/arm/boot/dts/exynos5250.dtsi |   28 ++++++++++++++++++++++++++++
+>  1 files changed, 28 insertions(+), 0 deletions(-)
+>
+> --
+> 1.7.6.5
 >
 
 
@@ -39,7 +49,3 @@ so the corresponding wakeup will get missed ?
 -- 
 Thanks & Regards
 Vivek
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
