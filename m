@@ -1,36 +1,42 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH v4 5/5] mmc: dw_mmc: Remove DW_MCI_QUIRK_NO_WRITE_PROTECT
-Date: Mon, 28 Jan 2013 16:14:19 -0500
-Message-ID: <87k3qx80yc.fsf@laptop.org>
-References: <1357842269-15062-1-git-send-email-dianders@chromium.org>
-	<1357923834-31641-1-git-send-email-dianders@chromium.org>
-	<1357923834-31641-5-git-send-email-dianders@chromium.org>
-	<CAFbHwiTafLhK-uJKjUX4_yLC+27OOUnC2JxYM9-3rHZkPx7s5Q@mail.gmail.com>
-	<CAD=FV=XEfydu-0oD-Vc_uwqt6qRU9Fs9ROgta3FugSEmPp7nFA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH Resend 0/6] ARM: dts: Add MFC support for Exynos4
+Date: Tue, 29 Jan 2013 09:43:36 +0530
+Message-ID: <1359432822-23846-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:52007 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754001Ab3A1VPT (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:34438 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753323Ab3A2EWo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jan 2013 16:15:19 -0500
-In-Reply-To: <CAD=FV=XEfydu-0oD-Vc_uwqt6qRU9Fs9ROgta3FugSEmPp7nFA@mail.gmail.com>
-	(Doug Anderson's message of "Mon, 14 Jan 2013 08:09:56 -0800")
+	Mon, 28 Jan 2013 23:22:44 -0500
+Received: by mail-pa0-f42.google.com with SMTP id rl6so130517pac.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jan 2013 20:22:44 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Will Newton <will.newton@gmail.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Will Newton <will.newton@imgtec.com>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Hi Doug,
+Resending this series after adding support for some Exynos4412 boards
+(patches 5 and 6) and renaming the patch titles to "ARM: dts: ".
 
-On Mon, Jan 14 2013, Doug Anderson wrote:
-> The whole bundle of all 5 patches at v4 is here:
->     http://patchwork.kernel.org/bundle/dianders/mmc_wp/
+This series is based on for-next branch of Kukjin Kim's tree.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-Thanks, I've pushed all 5 to mmc-next for 3.9 now with the collected ACKs.
+Sachin Kamat (6):
+  ARM: dts: Update MFC DT binding documentation
+  ARM: dts: Add MFC codec support for Exynos4 DT machines
+  ARM: dts: Add MFC codec support to SMDKV310 DT
+  ARM: dts: Add MFC codec support to Origen DT
+  ARM: dts: Add MFC codec entry to exynos4412-origen DT file
+  ARM: dts: Add MFC codec entry to exynos4412-smdk4412 DT file
 
-- Chris.
+ .../devicetree/bindings/media/s5p-mfc.txt          |   13 +++++++++++++
+ arch/arm/boot/dts/exynos4.dtsi                     |    7 +++++++
+ arch/arm/boot/dts/exynos4210-origen.dts            |    5 +++++
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |    5 +++++
+ arch/arm/boot/dts/exynos4412-origen.dts            |    5 +++++
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |    5 +++++
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |   17 +++++++++++++++++
+ 7 files changed, 57 insertions(+), 0 deletions(-)
+
 -- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+1.7.4.1
