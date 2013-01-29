@@ -1,66 +1,57 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V6 07/10] ASoC: SMDK: WM8994: Add device tree support for
- machine file
-Date: Tue, 29 Jan 2013 15:12:41 +0800
-Message-ID: <20130129071231.GG6878@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V6 08/10] ARM: dts: Modify SPI nodes according generic
+ DMA DT bindings
+Date: Tue, 29 Jan 2013 15:39:38 +0800
+Message-ID: <20130129073936.GA32597@opensource.wolfsonmicro.com>
 References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
- <1358509629-20471-8-git-send-email-padma.v@samsung.com>
+ <1358509629-20471-9-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VACxsDaSTfeluoxK"
+	protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40701 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39815 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753727Ab3A2HMw (ORCPT
+	by vger.kernel.org with ESMTP id S1754166Ab3A2Hjv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 02:12:52 -0500
+	Tue, 29 Jan 2013 02:39:51 -0500
 Content-Disposition: inline
-In-Reply-To: <1358509629-20471-8-git-send-email-padma.v@samsung.com>
+In-Reply-To: <1358509629-20471-9-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Padmavathi Venna <padma.v@samsung.com>
 Cc: padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
 
 
---VACxsDaSTfeluoxK
+--DocE+STaALJfprDB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Jan 18, 2013 at 05:17:06PM +0530, Padmavathi Venna wrote:
+On Fri, Jan 18, 2013 at 05:17:07PM +0530, Padmavathi Venna wrote:
+> This patch removes custom way of adding spi dma channels and
+> adds according to new generic DMA DT bindings.
 
-> +Samsung SMDK audio complex
+Applied, thanks.
 
-This is just for SMDKs with WM8994.  I'll apply but please send a
-followup patch to clarify this - it'll be a different binding for others
-like the older boards using WM8580 and WM9713.
-
-> +		samsung,i2s-controller = <&i2s0>;
-> +		samsung,audio-codec = <&wm8994>;
-
-I was thinking this should really point at the DAI but since it's
-specific to the SMDKs I don't think it particularly matters - they all
-use AIF1 anyway.
-
---VACxsDaSTfeluoxK
+--DocE+STaALJfprDB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRB3WlAAoJELSic+t+oim99M8P/1ip3oe2f5jXA9OapyY7nH5Y
-dXREkRc8mmtFW7WgIEQvlLaaDhUzS7Soz/pbvl6A0Q3KILc3vuSMbLQA6PlWmyGU
-AjYEOLxO6ZnmkULSgxgFCJC/biJafs3Czkw9KsqlPZmvVpSfCg/K9JL+jbzinsw6
-fE9xd8GznkOu7dg1pLjClNdpvJvwR6QeD1Rr1yl4atuH2jMIEbo93pCzrocIhk20
-Fcnb5DTEHYp0yw6lAB2xJspWLSgx5B5W0b9jeHjm6BbVcJLzfAr1B+EYTCfqiMrH
-UHrBiN9TehyOSCH6vysCJwyjRijSvS+7w99DF2hg7bsHu5RkNZrf3vMg5S2o5tfL
-IFl8lzNIWPvxUy7u3VyaaXUrlpIjdCLKtHfDVucuYDNGCTfC+xcdqy4qHe3bpLvi
-mRME4MKRXnbZMXsrS/FCNV2/R3PhAbM8Hs6SQFKIHQS+yoVfrYjioy9wcpnRpY9R
-uygB4XK4UMTXgyHRwbc5L3eofS4xCnN6qOsCO7na8yq6ahcMXyqIR8BkE5kHfM5/
-Lx4z8FXYBrx+HKG+XJVMcH8zsaSmVv27ZInCtiRA7Ez8DrPkp7dLQqL8eFeJk5Xw
-3W+s9XObNsgnKkAM6xvcaO2KYQWbaWXp/oD+3m9vVDDIGgD1yP/eV/ERcL4+5lPc
-7d/wx1Vrw4zApY2c3ZhN
-=DqlG
+iQIcBAEBAgAGBQJRB3wNAAoJELSic+t+oim9U5YP/3RQVs5jcPpelUP+qAXHcZkB
+OPOhByBgHNmogdXK/0YQR4w/FvorTUDn+A38rbWiHFe3zJQYMp5ohVJ7xBG38xc+
+oSEyoenJr7GydkPUB97L8+vtxV3DVBmhxWqeGa06XR0Hq85m5cjqOf5VA9ayY0Ku
+p6QFOAMTwmBhnNYzDJ3NUFaLK5cxC9BZnAXmRMORWyHD+WEkUv8eepiAnLrH0liV
+Ol6LouQB7P8fbc6lj9wP/xg0R5m3QfGrZhZ/FDfjx3hmrWt7LZJpLYgBZPBnW6hU
+slTy3euDRPVWzf7jkGhq+Ef0GYBJ26UA3S/YrfOvjHwcVA9bUhhGVUX83kSkpD/f
+KPHg58w+B4MB7IHYLbE8GrtQsbB7kzqFcesd8sXdS29l9en0O6IJzGWmbzFufO6B
+87RY5txULE9Za6nb8Mzhzgn3JoyDSqqQkmlWwyVwGSTcTPBPZuMbMyQUaLpLYu9q
+envGAr7Q9CczJwbAROhB2qi8GPRGfLH+6INOk0ICycl2rgqnWNqjyHPDAkzUT4UF
+dCvZ1aZt6rDES4igsfOsusB63A8wz6pBCJcjfeJ9Y7SsuPkM4svynpYWwGZfsz1E
+HgVF8QITMztlW+/JLMwoXDWFnATczJBX7CqXlzh4fj8cxUX17JOoXaQaS5O+Xokp
+P6DwlSSWDk9szXEJKsZ4
+=pbXw
 -----END PGP SIGNATURE-----
 
---VACxsDaSTfeluoxK--
+--DocE+STaALJfprDB--
