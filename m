@@ -1,83 +1,88 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes-4 for v3.8
-Date: Tue, 29 Jan 2013 10:03:54 -0800
-Message-ID: <06c601cdfe4b$01ef8890$05ce99b0$@samsung.com>
+Subject: RE: [PATCH 2/2] driver: ata: add new Exynos5250 SATA PHY controller
+ driver
+Date: Tue, 29 Jan 2013 10:13:51 -0800
+Message-ID: <06c701cdfe4c$665a5ca0$330f15e0$@samsung.com>
+References: <1359472758-31350-1-git-send-email-vasanthananthan@gmail.com>
+ <1359472758-31350-3-git-send-email-vasanthananthan@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49473 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754205Ab3A2SEB (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:49497 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750741Ab3A2SN7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 13:04:01 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHE00HG2FIMXW40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 03:04:00 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHE00JWTFILD540@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 03:03:59 +0900 (KST)
+	Tue, 29 Jan 2013 13:13:59 -0500
+In-reply-to: <1359472758-31350-3-git-send-email-vasanthananthan@gmail.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Vasanth Ananthan' <vasanthananthan@gmail.com>, linux-ide@vger.kernel.org
+Cc: jeff@garzik.org, jgarzik@redhat.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, girish.shivananjappa@linaro.org, 'Vasanth Ananthan' <vasanth.a@samsung.com>
 
-Hi Arnd and Olof,
+Vasanth Ananthan wrote:
+> 
+> Adding platform driver and I2C client driver for SATA PHY controller
+> for Samsung Exynos5250.
+> 
+Well, I think, if required, you need to implement that via DT...
 
-Here is a pull request for Samsung fixes-4 for v3.8.
+> The PHY controller in Exynos5250 has both the APB interface
+> and I2C client interface, hence it requires both a platform driver
+> and an I2C client driver. The PHY controller's primary charecteristics
+> are handled through the APB interface, facilitated by the platform driver
+> and the 40 bit interface should be enabled through the I2C interface,
+> facilitated by the I2C client driver.
+> 
+> Further, this PHY controller driver uses PHY framework introduced by this
+> patchset. The driver registers its initialization/shutdown call back to
+the
+> framework and corresponding port this PHY controller is assciated with
+> gets this PHY and initializes it.
+> 
+> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
+> ---
+>  arch/arm/mach-exynos/include/mach/regs-pmu.h  |    3 +
+>  arch/arm/mach-exynos/include/mach/regs-sata.h |   29 +++
+>  drivers/ata/Makefile                          |    2 +-
+>  drivers/ata/sata_exynos_phy.c                 |  265
+> +++++++++++++++++++++++++
+>  4 files changed, 298 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/mach-exynos/include/mach/regs-sata.h
 
-This fixes compatible values for exynos pinctrl and crash on soft reset,
-tick and alarm irq numbers on exynos5440 and uninitialized variable on
-s3c24xx.
+If this header file is used only for sata driver, this can be moved into
+drivers/ata/.
 
-If any problems, please kindly let me know.
+>  create mode 100644 drivers/ata/sata_exynos_phy.c
+> 
+> diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> index 3f30aa1..fd813d9 100644
+> --- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> @@ -369,4 +369,7 @@
+> 
+>  #define EXYNOS5_OPTION_USE_RETENTION				(1 <<
+> 4)
+> 
+> +/* Only for EXYNOS5250 */
+> +#define EXYNOS5_SATA_PHY_CONTROL
+> 	S5P_PMUREG(0x0724)
+
+This should be handled into the driver. Please don't make a dependency with
+SoC for your driver.
+
+[...]
+
+> -obj-$(CONFIG_SATA_PHY)		+= sata_phy.o
+> +obj-$(CONFIG_SATA_PHY)		+= sata_phy.o sata_exynos_phy.o
+
+Do you _really_ want to build the sata_exynos_phy.c under CONFIG_SATA_PHY? I
+don't think so.
+
+[...]
 
 Thanks.
 
 - Kukjin
-
-The following changes since commit 949db153b6466c6f7cad5a427ecea94985927311:
-
-  Linux 3.8-rc5 (2013-01-25 11:57:28 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.8-samsung-fixes-4
-
-for you to fetch changes up to 60db7e5f9c9a25a7a9b01007e6e3f5a93bc16a3a:
-
-  ARM: EXYNOS: Fix crash on soft reset on EXYNOS5440 (2013-01-28 14:27:50
--0800)
-
-----------------------------------------------------------------
-Cong Ding (1):
-      ARM: S3C24XX: fix uninitialized variable warning
-
-Giridhar Maruthy (1):
-      ARM: dts: fix tick and alarm irq numbers for exynos5440
-
-Kukjin Kim (1):
-      ARM: dts: fix compatible value for exynos pinctrl
-
-Thomas Abraham (2):
-      ARM: dts: Fix compatible value of pinctrl module on EXYNOS5440
-      ARM: EXYNOS: Fix crash on soft reset on EXYNOS5440
-
- Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt |   12
-++++++------
- arch/arm/boot/dts/exynos4210.dtsi                             |    6 +++---
- arch/arm/boot/dts/exynos4x12.dtsi                             |    8
-++++----
- arch/arm/boot/dts/exynos5440.dtsi                             |    4 ++--
- arch/arm/mach-exynos/common.c                                 |   10
-++++++----
- arch/arm/mach-s3c24xx/common.c                                |    2 +-
- drivers/gpio/gpio-samsung.c                                   |    6 +++---
- drivers/pinctrl/pinctrl-samsung.c                             |    4 ++--
- 8 files changed, 27 insertions(+), 25 deletions(-)
