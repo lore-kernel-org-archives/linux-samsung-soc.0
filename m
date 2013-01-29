@@ -1,60 +1,77 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v1 1/5] ARM: cache-l2x0: add 'smc' identifier
-Date: Tue, 29 Jan 2013 12:22:56 +0000
-Message-ID: <20130129122255.GI2637@n2100.arm.linux.org.uk>
-References: <20130129101328.GA11878@bnru10> <20130129113325.GG2637@n2100.arm.linux.org.uk> <20130129114926.GA14624@bnru10>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/6] ARM: dts: Update MFC DT binding documentation
+Date: Tue, 29 Jan 2013 14:33:17 +0100
+Message-ID: <5107CF9D.6000200@samsung.com>
+References: <1359432822-23846-1-git-send-email-sachin.kamat@linaro.org>
+ <1359432822-23846-2-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:57644 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752814Ab3A2MXQ (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:28619 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756338Ab3A2Nd0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 07:23:16 -0500
-Content-Disposition: inline
-In-Reply-To: <20130129114926.GA14624@bnru10>
+	Tue, 29 Jan 2013 08:33:26 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHE00FX92Z04N20@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 13:33:22 +0000 (GMT)
+Received: from [106.116.147.32] by eusync4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MHE00IKR2ZLUC70@eusync4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 13:33:21 +0000 (GMT)
+In-reply-to: <1359432822-23846-2-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "avorontsov@mvista.com" <avorontsov@mvista.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "rubini@unipv.it" <rubini@unipv.it>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "horms@verge.net.au" <horms@verge.net.au>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "viresh.linux@gmail.com" <viresh.linux@gmail.com>, Shiraz HASHIM <shiraz.hashim@st.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, patches@linaro.org, Arun Kumar K <arun.kk@samsung.com>
 
-On Tue, Jan 29, 2013 at 05:19:27PM +0530, Srinidhi Kasagar wrote:
-> On Tue, Jan 29, 2013 at 12:33:25 +0100, Russell King - ARM Linux wrote:
-> > On Tue, Jan 29, 2013 at 03:43:31PM +0530, srinidhi kasagar wrote:
-> > > Add 'smc' (Secure Monitor Call) identifier to differentiates
-> > > the platforms which implements this.
-> > 
-> > This patch makes no sense.
-> > 
-> > So, if setting 'smc' in the DT description is supposed to mean that
-> > the platform has a secure monitor then...
-> > 
-> > > +	is_smc = of_property_read_bool(np, "smc");
-> > > +
-> > > +	if (is_smc) {
-> > > +		/* set the debug interface */
-> > > +		outer_cache.set_debug = pl310_set_debug;
-> > > +	}
-> > 
-> > Now, let's look at what pl310_set_debug() does:
-> > 
-> > static void pl310_set_debug(unsigned long val)
-> > {
-> >         writel_relaxed(val, l2x0_base + L2X0_DEBUG_CTRL);
+Hi Sachin,
+
+On 01/29/2013 05:13 AM, Sachin Kamat wrote:
+> Added an example for bindings for illustration and clarity.
 > 
-> You can do this operation (write to DEBUG_CTRL) only if SMC is implemented.
+> Cc: devicetree-discuss@lists.ozlabs.org
+> Cc: Arun Kumar K <arun.kk@samsung.com>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  .../devicetree/bindings/media/s5p-mfc.txt          |   13 +++++++++++++
+>  1 files changed, 13 insertions(+), 0 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> index 67ec3d4..261c9dc 100644
+> --- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> @@ -21,3 +21,16 @@ Required properties:
+>  
+>    - samsung,mfc-l : Base address of the second memory bank used by MFC
+>  		    for DMA contiguous memory allocation and its size.
+> +
+> +Example:
 
-Err... no.  You can do it if you're running in secure mode without a
-secure monitor, because the security stuff doesn't get in the way.
+Maybe adding a comment that this is a SoC...
 
-What other platforms do is up to them, and up to *how* the secure monitor
-is implemented, not *if*.
+> +mfc: codec@13400000 {
+> +	compatible = "samsung,mfc-v5";
+> +	reg = <0x13400000 0x10000>;
+> +	interrupts = <0 94 0>;
+> +};
 
-> > }
-> > 
-> > Can you explain where the secure monitor call is there please, because
-> > I can't see one.  In fact, this is the function used when there _isn't_
-> > a secure monitor.  So this patch just seems totally wrong to me.
+and the board specific part would make it more clear ?
 
-So this is going to be difficult because you only ever answer half an
-email?  So, I repeat the question above.
+> +codec@13400000 {
+> +	samsung,mfc-r = <0x43000000 0x800000>;
+> +	samsung,mfc-l = <0x51000000 0x800000>;
+> +};
+
+Also please note that in the first node above you need
+status = "disabled"; line, so the MFC is disabled by default.
+Then in dts files for boards that use the codec it can be
+overridden to enable the device as needed.
+
+--
+
+Thanks,
+Sylwester
