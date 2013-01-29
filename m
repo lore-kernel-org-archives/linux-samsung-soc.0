@@ -1,53 +1,45 @@
-From: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
-Subject: Re: [PATCH v1 1/5] ARM: cache-l2x0: add 'smc' identifier
-Date: Tue, 29 Jan 2013 17:19:27 +0530
-Message-ID: <20130129114926.GA14624@bnru10>
-References: <20130129101328.GA11878@bnru10>
- <20130129113325.GG2637@n2100.arm.linux.org.uk>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] usb: ehci: s5p: Power-off VBUS during suspend.
+Date: Tue, 29 Jan 2013 17:31:00 +0530
+Message-ID: <CAFp+6iGpbSmCsdFVzk1W+cKXMzzUtnreP+bTCab7xOtBs60tXg@mail.gmail.com>
+References: <1359456765-7335-1-git-send-email-gautam.vivek@samsung.com>
+	<2944580.3eEfUK6kfJ@linux-5eaq.site>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from eu1sys200aog102.obsmtp.com ([207.126.144.113]:45698 "EHLO
-	eu1sys200aog102.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751732Ab3A2LuE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 06:50:04 -0500
-Content-Disposition: inline
-In-Reply-To: <20130129113325.GG2637@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <2944580.3eEfUK6kfJ-7ztolUikljGernLeA6q8OA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Oliver Neukum <oneukum-l3A5Bk7waGM@public.gmane.org>
+Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "avorontsov@mvista.com" <avorontsov@mvista.com>, "gregory.clement@free-electrons.com" <gregory.clement@free-electrons.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "rubini@unipv.it" <rubini@unipv.it>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "horms@verge.net.au" <horms@verge.net.au>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "viresh.linux@gmail.com" <viresh.linux@gmail.com>, Shiraz HASHIM <shiraz.hashim@st.com>
 
-On Tue, Jan 29, 2013 at 12:33:25 +0100, Russell King - ARM Linux wrote:
-> On Tue, Jan 29, 2013 at 03:43:31PM +0530, srinidhi kasagar wrote:
-> > Add 'smc' (Secure Monitor Call) identifier to differentiates
-> > the platforms which implements this.
-> 
-> This patch makes no sense.
-> 
-> So, if setting 'smc' in the DT description is supposed to mean that
-> the platform has a secure monitor then...
-> 
-> > +	is_smc = of_property_read_bool(np, "smc");
-> > +
-> > +	if (is_smc) {
-> > +		/* set the debug interface */
-> > +		outer_cache.set_debug = pl310_set_debug;
-> > +	}
-> 
-> Now, let's look at what pl310_set_debug() does:
-> 
-> static void pl310_set_debug(unsigned long val)
-> {
->         writel_relaxed(val, l2x0_base + L2X0_DEBUG_CTRL);
+Hi Oliver,
 
-You can do this operation (write to DEBUG_CTRL) only if SMC is implemented.
 
-> }
-> 
-> Can you explain where the secure monitor call is there please, because
-> I can't see one.  In fact, this is the function used when there _isn't_
-> a secure monitor.  So this patch just seems totally wrong to me.
+On Tue, Jan 29, 2013 at 5:07 PM, Oliver Neukum <oneukum-l3A5Bk7waGM@public.gmane.org> wrote:
+> On Tuesday 29 January 2013 16:22:45 Vivek Gautam wrote:
+>> This change de-asserts vbus_gpio on suspend and
+>> re-asserts on resume in order to save power.
+>> NOTE, this change means no USB charging in suspend
+>> mode.
+>
+> What happens if a device on the bus is a source of wakeups?
+>
 
-regards/srinidhi
+The device will not be powered in suspend state,
+so the corresponding wakeup will get missed ?
+
+
+>         Regards
+>                 Oliver
+>
+
+
+
+-- 
+Thanks & Regards
+Vivek
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
