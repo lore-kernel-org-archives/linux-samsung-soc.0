@@ -1,57 +1,44 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V6 09/10] ASoC: Samsung: Update Kconfig for I2S,SPDIF and
- PCM audio
-Date: Tue, 29 Jan 2013 15:40:27 +0800
-Message-ID: <20130129074025.GB32597@opensource.wolfsonmicro.com>
-References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
- <1358509629-20471-10-git-send-email-padma.v@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5I6of5zJg18YgZEa"
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 0/1] Adds display-timing node parsing to exynos drm fimd
+Date: Tue, 29 Jan 2013 03:12:25 -0500
+Message-ID: <1359447146-23359-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39843 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753747Ab3A2Hki (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:19829 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753045Ab3A2HvI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 02:40:38 -0500
-Content-Disposition: inline
-In-Reply-To: <1358509629-20471-10-git-send-email-padma.v@samsung.com>
+	Tue, 29 Jan 2013 02:51:08 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHD00B6PN3DYMT0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 16:51:07 +0900 (KST)
+Received: from chrome-ubuntu.sisodomain.com ([107.108.73.106])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MHD00DY4N4VWE70@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 16:51:06 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
+To: dri-devel@lists.freedesktop.org
+Cc: inki.dae@samsung.com, kgene.kim@samsung.com, vikas.sajjan@linaro.org, linux-samsung-soc@vger.kernel.org, s.trumtrar@pengutronix.de
 
+This patch adds display-timing node parsing to drm fimd, this depends on
+the display helper patchset at
+http://lists.freedesktop.org/archives/dri-devel/2013-January/033998.html
 
---5I6of5zJg18YgZEa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Patch is based on branch "exynos-drm-next" at
+http://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/
 
-On Fri, Jan 18, 2013 at 05:17:08PM +0530, Padmavathi Venna wrote:
-> Update Kconfig file to enable I2S,PCM audio for wm8994 and spdif on all
-> samsung platforms.
+It is tested on Exynos5250 and Exynos4412 board by applying dependent patches available at
+http://lists.freedesktop.org/archives/dri-devel/2013-January/033998.html
 
-Applied, thanks.
+Leela Krishna Amudala (1):
+  video: drm: exynos: Adds display-timing node parsing using video
+    helper function
 
---5I6of5zJg18YgZEa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRB3zLAAoJELSic+t+oim9iAgP/iWQQmsX1NQIGtPVUqskyNbA
-rWSIX8IgNW39O6DqKIA/AInPFKdZZVv8Rs6DQv5/ZrjYxAtTM2K4U0p+zUqA4Xur
-FZbZhooCL7vHPitjEhUHgWqnVRMY76T7ansphOQ0tt1SOZsiID/FMrlRENvjsnjz
-ZRaI48RnSD0axBq4FNy+vAxgqcgQIzIUeqXdkVEQOCCuJs6sWsyj+LyYJe0hjaH6
-d2aYEdVOP3N4Zu9Yy8reRUoImdoJbwJRwdw7XmuxMTvtaQLLLkiPBrzI9vqegcgd
-WDu1FXR1CvPRxyx2sjaaxjUv+t97eJ9P24AiHu9u33sz6q3kfkTA598fXmxOUaTG
-oGIQG0fYES4wvsL6wJhAMnE6LEu3IAZKilfZytvW885/3BNTOYmVMtqRWtYmfjFn
-6zbxghOduzClSTKaZ30mI54VyjpgIqH+rAD5s/zHsmil0M9m/8K2zKf8qUCBdO9m
-PtKEDCl/TqZds2m65351SExQuA6nxNtxuH7qD1JW8L58yYxxpF90n9rR0Gv2g6FB
-UK/dMB//RMj2RoDH6bGr7aqUwkDrguVWAYfqD+hvnyj9XkmTHpBr9qQac8xNrvfk
-AVFGkGtdHs4GqI8MANtv59WWXnAJfDdBIy91FYNSLrqTJYmXsWIcqFOWrq+aNc/J
-2WAdQ4VLJRoGzj7rsLar
-=gaPS
------END PGP SIGNATURE-----
-
---5I6of5zJg18YgZEa--
+-- 
+1.8.0
