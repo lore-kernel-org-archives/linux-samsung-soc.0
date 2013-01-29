@@ -1,78 +1,61 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] Fix compilation error on S3C2440
-Date: Mon, 28 Jan 2013 22:06:24 -0800
-Message-ID: <05e201cdfde6$c711cb70$55356250$@samsung.com>
-References: <1359392823-30529-1-git-send-email-agalakhov@gmail.com>
+Subject: RE: Failure due to missing (Exynos related) pinctrl patch
+Date: Mon, 28 Jan 2013 22:20:15 -0800
+Message-ID: <05ed01cdfde8$b529fc00$1f7df400$@samsung.com>
+References: <CAK9yfHybC6ZgGwxa_i=LrMpU_q9M4aaMraTqK63B+fw11NBqRA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:25663 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:28378 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753697Ab3A2GGc (ORCPT
+	with ESMTP id S1753530Ab3A2GUV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 01:06:32 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHD00AKBIAOD0O0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 15:06:31 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHD00529IASSW70@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jan 2013 15:06:31 +0900 (KST)
-In-reply-to: <1359392823-30529-1-git-send-email-agalakhov@gmail.com>
+	Tue, 29 Jan 2013 01:20:21 -0500
+In-reply-to: <CAK9yfHybC6ZgGwxa_i=LrMpU_q9M4aaMraTqK63B+fw11NBqRA@mail.gmail.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Alexey Galakhov' <agalakhov@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Padmavathi Venna' <padma.v@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Linus Walleij' <linus.walleij@linaro.org>
+Cc: 'LKML' <linux-kernel@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Alexey Galakhov wrote:
+Sachin Kamat wrote:
 > 
-> There was a compilation error introduced on Dec 7, 2012
-> by commit a08485d8fdf6f67ca5f173b68d8f873c574745f2.
+> Hi Linus, Kukjin,
 > 
-Following is better:
+> Patch titled "pinctrl: exynos: change PINCTRL_EXYNOS option"
+> (linux-next commit Id: 7452b64d) which is present in linux-next is
+> missing in the mainline kernel. This patch is required along with the
+> patch "gpio: samsung: fix pinctrl condition for exynos and exynos5440"
+> (mainline commit Id: e4a5da51) which has already made it into
+> mainline. Without the missing patch we get the following boot up
+> warnings and subsequent failures with dt boot on 4412 based board:
+> 
+>  WARNING: at drivers/gpio/gpio-samsung.c:3102
+> samsung_gpiolib_init+0x29c/0x2e8()
+>  Unknown SoC in gpio-samsung, no GPIOs added
+>  Modules linked in:
+>  [<c00142dc>] (unwind_backtrace+0x0/0xf8) from [<c00202bc>]
+> (warn_slowpath_common+0x4c/0x64)
+>  [<c00202bc>] (warn_slowpath_common+0x4c/0x64) from [<c0020368>]
+> (warn_slowpath_fmt+0x30/0x40)
+>  [<c0020368>] (warn_slowpath_fmt+0x30/0x40) from [<c028b924>]
+> (samsung_gpiolib_init+0x29c/0x2e8)
+>  [<c028b924>] (samsung_gpiolib_init+0x29c/0x2e8) from [<c000862c>]
+> (do_one_initcall+0x34/0x174)
+>  [<c000862c>] (do_one_initcall+0x34/0x174) from [<c0275960>]
+> (kernel_init_freeable+0xfc/0x1c8)
+>  [<c0275960>] (kernel_init_freeable+0xfc/0x1c8) from [<c01c0a5c>]
+> (kernel_init+0x8/0xe4)
+>  [<c01c0a5c>] (kernel_init+0x8/0xe4) from [<c000e158>]
+> (ret_from_fork+0x14/0x3c)
+> 
+Sachin, thanks for your information.
 
-The commit a08485d8 ("ASoC: Samsung: Do not register samsung audio dma
-device as pdev") introduced compilation error.
+Linus, can you check following again?
 
-> Combination of CONFIG_CPU_S3C2440 and CONFIG_SND_S3C24XX_I2S
-> caused the following:
-> sound/soc/samsung/s3c24xx-i2s.c: In function 's3c24xx_iis_dev_probe':
-> sound/soc/samsung/s3c24xx-i2s.c:472:2: error: implicit declaration of
-> function 's3c_i2sv2_register_dai' [-Werror=implicit-function-declaration]
-> sound/soc/samsung/s3c24xx-i2s.c:472:48: error: 's3c2412_i2s_dai'
-> undeclared (first use in this function)
-> 
-> This patch fixes the problem and makes S3C2440 I2S usable again.
-> 
-> Signed-off-by: Alexey Galakhov <agalakhov@gmail.com>
+https://lkml.org/lkml/2013/1/18/461
 
-Cc: Padmavathi Venna <padma.v@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Thanks.
 
-> ---
->  sound/soc/samsung/s3c24xx-i2s.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/samsung/s3c24xx-i2s.c
-> b/sound/soc/samsung/s3c24xx-i2s.c
-> index ee10e87..13f6dd1 100644
-> --- a/sound/soc/samsung/s3c24xx-i2s.c
-> +++ b/sound/soc/samsung/s3c24xx-i2s.c
-> @@ -469,7 +469,7 @@ static int s3c24xx_iis_dev_probe(struct
-> platform_device *pdev)
->  {
->  	int ret = 0;
-> 
-> -	ret = s3c_i2sv2_register_dai(&pdev->dev, -1, &s3c2412_i2s_dai);
-> +	ret = snd_soc_register_dai(&pdev->dev, &s3c24xx_i2s_dai);
->  	if (ret) {
->  		pr_err("failed to register the dai\n");
->  		return ret;
-> --
-> 1.7.10.4
+- Kukjin
