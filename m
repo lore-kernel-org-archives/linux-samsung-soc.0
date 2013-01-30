@@ -1,59 +1,56 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] driver: ata: add new Exynos5250 SATA controller driver
-Date: Wed, 30 Jan 2013 11:13:48 +0530
-Message-ID: <5108B314.5090207@linaro.org>
-References: <1359472964-31445-1-git-send-email-vasanthananthan@gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/6] ARM: dts: Update MFC DT binding documentation
+Date: Wed, 30 Jan 2013 11:19:29 +0530
+Message-ID: <CAK9yfHzK_J5Xu9m8_-b65MrsOFP4oH2Z_+Ea5O7oBCzKmgw6SA@mail.gmail.com>
+References: <1359432822-23846-1-git-send-email-sachin.kamat@linaro.org>
+	<1359432822-23846-2-git-send-email-sachin.kamat@linaro.org>
+	<5107CF9D.6000200@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:60358 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750732Ab3A3Fn6 (ORCPT
+Received: from mail-oa0-f43.google.com ([209.85.219.43]:55631 "EHLO
+	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751145Ab3A3Fta (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 00:43:58 -0500
-Received: by mail-pa0-f51.google.com with SMTP id fb11so875137pad.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 21:43:58 -0800 (PST)
-In-Reply-To: <1359472964-31445-1-git-send-email-vasanthananthan@gmail.com>
+	Wed, 30 Jan 2013 00:49:30 -0500
+Received: by mail-oa0-f43.google.com with SMTP id l10so1314980oag.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 21:49:29 -0800 (PST)
+In-Reply-To: <5107CF9D.6000200@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasanth Ananthan <vasanthananthan@gmail.com>
-Cc: linux-ide@vger.kernel.org, jeff@garzik.org, jgarzik@redhat.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, girish.shivananjappa@linaro.org, Vasanth Ananthan <vasanth.a@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, patches@linaro.org, Arun Kumar K <arun.kk@samsung.com>
 
-On 01/29/2013 08:52 PM, Vasanth Ananthan wrote:
-> Adding platform driver for AHCI based SATA controller for Exynos5250.
-> The SATA controller in Exynos5250 is an AHCI based controller. Though
-> the controller implements only one port, the driver is scalable for
-> maximum number of ports possible. The drivers uses libahci framework
-> to initialize the controller and the ports implemented.
-> 
-> The driver also initializes the PHY controllers associated with the
-> sata controller, for which the port-phy mapping have to provided
-> in the device tree node of the sata controller node. The driver extracts
-> the device_node of the PHY controller provided in the mapping, passes it
-> the SATA PHY framework. The framework, return the corresponding PHY,
-> if it has be registered with the framework, after which the driver
-> intializes the PHY controller(s).
-> 
-> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
-> ---
+Hi Sylwester,
 
-[ ... ]
+>> +Example:
+>
+> Maybe adding a comment that this is a SoC...
+>
+>> +mfc: codec@13400000 {
+>> +     compatible = "samsung,mfc-v5";
+>> +     reg = <0x13400000 0x10000>;
+>> +     interrupts = <0 94 0>;
+>> +};
+>
+> and the board specific part would make it more clear ?
 
-> +
-> +static int __init exynos_sata_probe(struct platform_device *pdev)
-> +{
+Absolutely :)
 
-__init would result in a section mismatch warning.
+>
+>> +codec@13400000 {
+>> +     samsung,mfc-r = <0x43000000 0x800000>;
+>> +     samsung,mfc-l = <0x51000000 0x800000>;
+>> +};
+>
+> Also please note that in the first node above you need
+> status = "disabled"; line, so the MFC is disabled by default.
+> Then in dts files for boards that use the codec it can be
+> overridden to enable the device as needed.
 
-[ ... ]
-
-> +
-> +static int __devexit exynos_sata_remove(struct platform_device *pdev)
-> +{
-
-Use of __devexit is deprecated now. Please remove that.
+Right.
 
 
 -- 
-Tushar Behera
+With warm regards,
+Sachin
