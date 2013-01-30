@@ -1,1420 +1,1136 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [RFC PATCH 3/4] video: display: Add exynos-dsi video source driver
-Date: Wed, 30 Jan 2013 16:39:02 +0100
-Message-ID: <1359560343-31636-4-git-send-email-t.figa@samsung.com>
+Subject: [RFC PATCH 4/4] video: display: Add Samsung s6e8ax0 display panel
+ driver
+Date: Wed, 30 Jan 2013 16:39:03 +0100
+Message-ID: <1359560343-31636-5-git-send-email-t.figa@samsung.com>
 References: <1359560343-31636-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:8467 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:8476 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753020Ab3A3Pjk (ORCPT
+	with ESMTP id S1753020Ab3A3Pjr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 10:39:40 -0500
+	Wed, 30 Jan 2013 10:39:47 -0500
 In-reply-to: <1359560343-31636-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org
 Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, Daniel Vetter <daniel@ffwll.ch>, Marcus Lorentzon <marcus.xm.lorentzon@stericsson.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, rob@ti.com, tomi.valkeinen@ti.com, Vikas Sajjan <vikas.sajjan@linaro.org>, inki.dae@samsung.com, dh09.lee@samsung.com, ville.syrjala@intel.com, s.nawrocki@samsung.com
 
-This patch adds new driver for DSI master block available in Samsung
-Exynos SoCs. The driver is designed and written specifically for Common
-Display Framework.
+This patch adds Common Display Framework driver for Samsung s6e8ax0
+MIPI DSI display panel.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/video/display/Kconfig             |    3 +
- drivers/video/display/Makefile            |    1 +
- drivers/video/display/source-exynos_dsi.c | 1313 +++++++++++++++++++++++++++++
- include/video/exynos_dsi.h                |   41 +
- 4 files changed, 1358 insertions(+)
- create mode 100644 drivers/video/display/source-exynos_dsi.c
- create mode 100644 include/video/exynos_dsi.h
+ drivers/video/display/Kconfig         |    3 +
+ drivers/video/display/Makefile        |    1 +
+ drivers/video/display/panel-s6e8ax0.c | 1027 +++++++++++++++++++++++++++++++++
+ include/video/panel-s6e8ax0.h         |   41 ++
+ 4 files changed, 1072 insertions(+)
+ create mode 100644 drivers/video/display/panel-s6e8ax0.c
+ create mode 100644 include/video/panel-s6e8ax0.h
 
 diff --git a/drivers/video/display/Kconfig b/drivers/video/display/Kconfig
-index 477192d..b14527a 100644
+index b14527a..f19ec04 100644
 --- a/drivers/video/display/Kconfig
 +++ b/drivers/video/display/Kconfig
-@@ -6,5 +6,8 @@ menuconfig DISPLAY_CORE
+@@ -5,6 +5,9 @@ menuconfig DISPLAY_CORE
+ 
  if DISPLAY_CORE
  
++config DISPLAY_PANEL_S6E8AX0
++	tristate "S6E8AX0 DSI video mode panel"
++	select OF_VIDEOMODE
  
-+config DISPLAY_SOURCE_EXYNOS_DSI
-+	tristate "Samsung SoC MIPI DSI Master"
-+
- 
- endif # DISPLAY_CORE
+ config DISPLAY_SOURCE_EXYNOS_DSI
+ 	tristate "Samsung SoC MIPI DSI Master"
 diff --git a/drivers/video/display/Makefile b/drivers/video/display/Makefile
-index bd93496..40a283a 100644
+index 40a283a..0f7fdc2 100644
 --- a/drivers/video/display/Makefile
 +++ b/drivers/video/display/Makefile
-@@ -1 +1,2 @@
+@@ -1,2 +1,3 @@
  obj-$(CONFIG_DISPLAY_CORE) += display-core.o
-+obj-$(CONFIG_DISPLAY_SOURCE_EXYNOS_DSI) += source-exynos_dsi.o
-diff --git a/drivers/video/display/source-exynos_dsi.c b/drivers/video/display/source-exynos_dsi.c
++obj-$(CONFIG_DISPLAY_PANEL_S6E8AX0) += panel-s6e8ax0.o
+ obj-$(CONFIG_DISPLAY_SOURCE_EXYNOS_DSI) += source-exynos_dsi.o
+diff --git a/drivers/video/display/panel-s6e8ax0.c b/drivers/video/display/panel-s6e8ax0.c
 new file mode 100644
-index 0000000..30b15bf
+index 0000000..4c09fe2
 --- /dev/null
-+++ b/drivers/video/display/source-exynos_dsi.c
-@@ -0,0 +1,1313 @@
-+/*
-+ * Samsung SoC MIPI DSI Master driver.
++++ b/drivers/video/display/panel-s6e8ax0.c
+@@ -0,0 +1,1027 @@
++/* linux/drivers/video/exynos/s6e8ax0.c
 + *
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd
++ * MIPI-DSI based s6e8ax0 AMOLED lcd 4.65 inch panel driver.
 + *
-+ * Contacts: Tomasz Figa <t.figa@samsung.com>
++ * Inki Dae, <inki.dae@samsung.com>
++ * Donghwa Lee, <dh09.lee@samsung.com>
++ * Tomasz Figa, <t.figa@samsung.com>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
-+*/
++ */
 +
-+#include <linux/clk.h>
-+#include <linux/completion.h>
-+#include <linux/delay.h>
-+#include <linux/errno.h>
-+#include <linux/fb.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/kernel.h>
-+#include <linux/list.h>
-+#include <linux/memory.h>
-+#include <linux/mm.h>
 +#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/mutex.h>
++#include <linux/wait.h>
++#include <linux/ctype.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++
++#include <linux/fb.h>
++#include <linux/gpio.h>
++#include <linux/lcd.h>
 +#include <linux/of.h>
++#include <linux/of_gpio.h>
++#include <linux/of_videomode.h>
 +#include <linux/platform_device.h>
 +#include <linux/pm_runtime.h>
++#include <linux/backlight.h>
 +#include <linux/regulator/consumer.h>
-+#include <linux/spinlock.h>
-+#include <linux/videomode.h>
-+#include <linux/wait.h>
 +
 +#include <video/display.h>
-+#include <video/exynos_dsi.h>
 +#include <video/mipi_display.h>
++#include <video/panel-s6e8ax0.h>
 +
-+#define DSIM_STATUS_REG		0x0	/* Status register */
-+#define DSIM_SWRST_REG		0x4	/* Software reset register */
-+#define DSIM_CLKCTRL_REG	0x8	/* Clock control register */
-+#define DSIM_TIMEOUT_REG	0xc	/* Time out register */
-+#define DSIM_CONFIG_REG		0x10	/* Configuration register */
-+#define DSIM_ESCMODE_REG	0x14	/* Escape mode register */
++#define LDI_MTP_LENGTH		24
++#define DSIM_PM_STABLE_TIME	10
++#define MIN_BRIGHTNESS		0
++#define MAX_BRIGHTNESS		24
++#define GAMMA_TABLE_COUNT	26
 +
-+/* Main display image resolution register */
-+#define DSIM_MDRESOL_REG	0x18
-+#define DSIM_MVPORCH_REG	0x1c	/* Main display Vporch register */
-+#define DSIM_MHPORCH_REG	0x20	/* Main display Hporch register */
-+#define DSIM_MSYNC_REG		0x24	/* Main display sync area register */
-+
-+/* Sub display image resolution register */
-+#define DSIM_SDRESOL_REG	0x28
-+#define DSIM_INTSRC_REG		0x2c	/* Interrupt source register */
-+#define DSIM_INTMSK_REG		0x30	/* Interrupt mask register */
-+#define DSIM_PKTHDR_REG		0x34	/* Packet Header FIFO register */
-+#define DSIM_PAYLOAD_REG	0x38	/* Payload FIFO register */
-+#define DSIM_RXFIFO_REG		0x3c	/* Read FIFO register */
-+#define DSIM_FIFOTHLD_REG	0x40	/* FIFO threshold level register */
-+#define DSIM_FIFOCTRL_REG	0x44	/* FIFO status and control register */
-+
-+/* FIFO memory AC characteristic register */
-+#define DSIM_PLLCTRL_REG	0x4c	/* PLL control register */
-+#define DSIM_PLLTMR_REG		0x50	/* PLL timer register */
-+#define DSIM_PHYACCHR_REG	0x54	/* D-PHY AC characteristic register */
-+#define DSIM_PHYACCHR1_REG	0x58	/* D-PHY AC characteristic register1 */
-+
-+/* DSIM_STATUS */
-+#define DSIM_STOP_STATE_DAT(x)		(((x) & 0xf) << 0)
-+#define DSIM_STOP_STATE_CLK		(1 << 8)
-+#define DSIM_TX_READY_HS_CLK		(1 << 10)
-+#define DSIM_PLL_STABLE			(1 << 31)
-+
-+/* DSIM_SWRST */
-+#define DSIM_FUNCRST			(1 << 16)
-+#define DSIM_SWRST			(1 << 0)
-+
-+/* DSIM_TIMEOUT */
-+#define DSIM_LPDR_TOUT(x)		((x) << 0)
-+#define DSIM_BTA_TOUT(x)		((x) << 16)
-+
-+/* DSIM_CLKCTRL */
-+#define DSIM_ESC_PRESCALER(x)		(((x) & 0xffff) << 0)
-+#define DSIM_ESC_PRESCALER_MASK		(0xffff << 0)
-+#define DSIM_LANE_ESC_CLK_EN_CLK	(1 << 19)
-+#define DSIM_LANE_ESC_CLK_EN_DATA(x)	(((x) & 0xf) << 20)
-+#define DSIM_LANE_ESC_CLK_EN_DATA_MASK	(0xf << 20)
-+#define DSIM_BYTE_CLKEN			(1 << 24)
-+#define DSIM_BYTE_CLK_SRC(x)		(((x) & 0x3) << 25)
-+#define DSIM_BYTE_CLK_SRC_MASK		(0x3 << 25)
-+#define DSIM_PLL_BYPASS			(1 << 27)
-+#define DSIM_ESC_CLKEN			(1 << 28)
-+#define DSIM_TX_REQUEST_HSCLK		(1 << 31)
-+
-+/* DSIM_CONFIG */
-+#define DSIM_LANE_EN_CLK		(1 << 0)
-+#define DSIM_LANE_EN(x)			(((x) & 0xf) << 1)
-+#define DSIM_NUM_OF_DATA_LANE(x)	(((x) & 0x3) << 5)
-+#define DSIM_SUB_PIX_FORMAT(x)		(((x) & 0x7) << 8)
-+#define DSIM_MAIN_PIX_FORMAT_MASK	(0x7 << 12)
-+#define DSIM_MAIN_PIX_FORMAT_RGB888	(0x7 << 12)
-+#define DSIM_MAIN_PIX_FORMAT_RGB666	(0x6 << 12)
-+#define DSIM_MAIN_PIX_FORMAT_RGB666_P	(0x5 << 12)
-+#define DSIM_MAIN_PIX_FORMAT_RGB565	(0x4 << 12)
-+#define DSIM_SUB_VC			(((x) & 0x3) << 16)
-+#define DSIM_MAIN_VC			(((x) & 0x3) << 18)
-+#define DSIM_HSA_MODE			(1 << 20)
-+#define DSIM_HBP_MODE			(1 << 21)
-+#define DSIM_HFP_MODE			(1 << 22)
-+#define DSIM_HSE_MODE			(1 << 23)
-+#define DSIM_AUTO_MODE			(1 << 24)
-+#define DSIM_VIDEO_MODE			(1 << 25)
-+#define DSIM_BURST_MODE			(1 << 26)
-+#define DSIM_SYNC_INFORM		(1 << 27)
-+#define DSIM_EOT_DISABLE		(1 << 28)
-+#define DSIM_MFLUSH_VS			(1 << 29)
-+
-+/* DSIM_ESCMODE */
-+#define DSIM_TX_LPDT_LP			(1 << 6)
-+#define DSIM_CMD_LPDT_LP		(1 << 7)
-+#define DSIM_FORCE_STOP_STATE		(1 << 20)
-+#define DSIM_STOP_STATE_CNT(x)		(((x) & 0x7ff) << 21)
-+#define DSIM_STOP_STATE_CNT_MASK	(0x7ff << 21)
-+
-+/* DSIM_MDRESOL */
-+#define DSIM_MAIN_STAND_BY		(1 << 31)
-+#define DSIM_MAIN_VRESOL(x)		(((x) & 0x7ff) << 16)
-+#define DSIM_MAIN_HRESOL(x)		(((x) & 0X7ff) << 0)
-+
-+/* DSIM_MVPORCH */
-+#define DSIM_CMD_ALLOW(x)		((x) << 28)
-+#define DSIM_STABLE_VFP(x)		((x) << 16)
-+#define DSIM_MAIN_VBP(x)		((x) << 0)
-+#define DSIM_CMD_ALLOW_MASK		(0xf << 28)
-+#define DSIM_STABLE_VFP_MASK		(0x7ff << 16)
-+#define DSIM_MAIN_VBP_MASK		(0x7ff << 0)
-+
-+/* DSIM_MHPORCH */
-+#define DSIM_MAIN_HFP(x)		((x) << 16)
-+#define DSIM_MAIN_HBP(x)		((x) << 0)
-+#define DSIM_MAIN_HFP_MASK		((0xffff) << 16)
-+#define DSIM_MAIN_HBP_MASK		((0xffff) << 0)
-+
-+/* DSIM_MSYNC */
-+#define DSIM_MAIN_VSA(x)		((x) << 22)
-+#define DSIM_MAIN_HSA(x)		((x) << 0)
-+#define DSIM_MAIN_VSA_MASK		((0x3ff) << 22)
-+#define DSIM_MAIN_HSA_MASK		((0xffff) << 0)
-+
-+/* DSIM_SDRESOL */
-+#define DSIM_SUB_STANDY(x)		((x) << 31)
-+#define DSIM_SUB_VRESOL(x)		((x) << 16)
-+#define DSIM_SUB_HRESOL(x)		((x) << 0)
-+#define DSIM_SUB_STANDY_MASK		((0x1) << 31)
-+#define DSIM_SUB_VRESOL_MASK		((0x7ff) << 16)
-+#define DSIM_SUB_HRESOL_MASK		((0x7ff) << 0)
-+
-+/* DSIM_INTSRC */
-+#define DSIM_INT_PLL_STABLE		(1 << 31)
-+#define DSIM_INT_SW_RST_RELEASE		(1 << 30)
-+#define DSIM_INT_SFR_FIFO_EMPTY		(1 << 29)
-+#define DSIM_INT_BTA			(1 << 25)
-+#define DSIM_INT_FRAME_DONE		(1 << 24)
-+#define DSIM_INT_RX_TIMEOUT		(1 << 21)
-+#define DSIM_INT_BTA_TIMEOUT		(1 << 20)
-+#define DSIM_INT_RX_DONE		(1 << 18)
-+#define DSIM_INT_RX_TE			(1 << 17)
-+#define DSIM_INT_RX_ACK			(1 << 16)
-+#define DSIM_INT_RX_ECC_ERR		(1 << 15)
-+#define DSIM_INT_RX_CRC_ERR		(1 << 14)
-+
-+/* DSIM_FIFOCTRL */
-+#define SFR_HEADER_EMPTY		(1 << 22)
-+
-+/* DSIM_PHYACCHR */
-+#define DSIM_AFC_EN			(1 << 14)
-+#define DSIM_AFC_CTL(x)			(((x) & 0x7) << 5)
-+
-+/* DSIM_PLLCTRL */
-+#define DSIM_FREQ_BAND(x)		((x) << 24)
-+#define DSIM_PLL_EN			(1 << 23)
-+#define DSIM_PLL_P(x)			((x) << 13)
-+#define DSIM_PLL_M(x)			((x) << 4)
-+#define DSIM_PLL_S(x)			((x) << 1)
-+
-+#define DSI_MAX_BUS_WIDTH		4
-+#define DSI_NUM_VIRTUAL_CHANNELS	4
-+#define DSI_TX_FIFO_SIZE		2048
-+#define DSI_XFER_TIMEOUT_MS		100
-+
-+enum exynos_dsi_transfer_type {
-+	EXYNOS_DSI_TX,
-+	EXYNOS_DSI_RX,
-+};
-+
-+struct exynos_dsi_transfer {
-+	struct list_head list;
-+	struct completion completed;
-+	int result;
-+	u8 type;
-+	u8 data[2];
-+
-+	const u8 *tx_payload;
-+	u16 tx_len;
-+	u16 tx_done;
-+
-+	u8 *rx_payload;
-+	u16 rx_len;
-+	u16 rx_done;
-+};
-+
-+struct exynos_dsi {
-+	struct video_source out;
-+	struct mipi_dsi_interface_params params;
-+	bool streaming;
-+
++struct s6e8ax0 {
++	struct display_entity entity;
 +	struct device *dev;
-+	struct resource *res;
-+	struct clk *pll_clk;
-+	struct clk *bus_clk;
-+	unsigned int irq;
-+	void __iomem *reg_base;
++
++	struct s6e8ax0_platform_data *pdata;
++	struct backlight_device	*bd;
++	struct lcd_device *ld;
 +	struct regulator_bulk_data supplies[2];
-+	struct exynos_dsi_platform_data *pd;
 +
-+	spinlock_t transfer_lock;
-+	struct list_head transfer_list;
-+	bool hs_mode;
++	bool enabled;
++	unsigned int id;
++	unsigned int gamma;
++	unsigned int acl_enable;
++	unsigned int cur_acl;
++	int power;
++
++	unsigned int reset_gpio;
 +};
 +
-+#define src_to_dsi(src)		container_of(src, struct exynos_dsi, out)
++#define to_panel(p)	container_of(p, struct s6e8ax0, entity)
 +
-+/*
-+ * H/W control
-+ */
++static const unsigned char s6e8ax0_22_gamma_30[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xf5, 0x00, 0xff, 0xad, 0xaf,
++	0xbA, 0xc3, 0xd8, 0xc5, 0x9f, 0xc6, 0x9e, 0xc1, 0xdc, 0xc0,
++	0x00, 0x61, 0x00, 0x5a, 0x00, 0x74,
++};
 +
-+static void exynos_dsi_reset(struct exynos_dsi *dsi)
++static const unsigned char s6e8ax0_22_gamma_50[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xe8, 0x1f, 0xf7, 0xad, 0xc0,
++	0xb5, 0xc4, 0xdc, 0xc4, 0x9e, 0xc6, 0x9c, 0xbb, 0xd8, 0xbb,
++	0x00, 0x70, 0x00, 0x68, 0x00, 0x86,
++};
++
++static const unsigned char s6e8ax0_22_gamma_60[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xde, 0x1f, 0xef, 0xad, 0xc4,
++	0xb3, 0xc3, 0xdd, 0xc4, 0x9e, 0xc6, 0x9c, 0xbc, 0xd6, 0xba,
++	0x00, 0x75, 0x00, 0x6e, 0x00, 0x8d,
++};
++
++static const unsigned char s6e8ax0_22_gamma_70[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xd8, 0x1f, 0xe7, 0xaf, 0xc8,
++	0xb4, 0xc4, 0xdd, 0xc3, 0x9d, 0xc6, 0x9c, 0xbb, 0xd6, 0xb9,
++	0x00, 0x7a, 0x00, 0x72, 0x00, 0x93,
++};
++
++static const unsigned char s6e8ax0_22_gamma_80[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xc9, 0x1f, 0xde, 0xae, 0xc9,
++	0xb1, 0xc3, 0xdd, 0xc2, 0x9d, 0xc5, 0x9b, 0xbc, 0xd6, 0xbb,
++	0x00, 0x7f, 0x00, 0x77, 0x00, 0x99,
++};
++
++static const unsigned char s6e8ax0_22_gamma_90[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xc7, 0x1f, 0xd9, 0xb0, 0xcc,
++	0xb2, 0xc3, 0xdc, 0xc1, 0x9c, 0xc6, 0x9c, 0xbc, 0xd4, 0xb9,
++	0x00, 0x83, 0x00, 0x7b, 0x00, 0x9e,
++};
++
++static const unsigned char s6e8ax0_22_gamma_100[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xbd, 0x80, 0xcd, 0xba, 0xce,
++	0xb3, 0xc4, 0xde, 0xc3, 0x9c, 0xc4, 0x9, 0xb8, 0xd3, 0xb6,
++	0x00, 0x88, 0x00, 0x80, 0x00, 0xa5,
++};
++
++static const unsigned char s6e8ax0_22_gamma_120[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb9, 0x95, 0xc8, 0xb1, 0xcf,
++	0xb2, 0xc6, 0xdf, 0xc5, 0x9b, 0xc3, 0x99, 0xb6, 0xd2, 0xb6,
++	0x00, 0x8f, 0x00, 0x86, 0x00, 0xac,
++};
++
++static const unsigned char s6e8ax0_22_gamma_130[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb7, 0xa0, 0xc7, 0xb1, 0xd0,
++	0xb2, 0xc4, 0xdd, 0xc3, 0x9a, 0xc3, 0x98, 0xb6, 0xd0, 0xb4,
++	0x00, 0x92, 0x00, 0x8a, 0x00, 0xb1,
++};
++
++static const unsigned char s6e8ax0_22_gamma_140[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb7, 0xa0, 0xc5, 0xb2, 0xd0,
++	0xb3, 0xc3, 0xde, 0xc3, 0x9b, 0xc2, 0x98, 0xb6, 0xd0, 0xb4,
++	0x00, 0x95, 0x00, 0x8d, 0x00, 0xb5,
++};
++
++static const unsigned char s6e8ax0_22_gamma_150[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb3, 0xa0, 0xc2, 0xb2, 0xd0,
++	0xb2, 0xc1, 0xdd, 0xc2, 0x9b, 0xc2, 0x98, 0xb4, 0xcf, 0xb1,
++	0x00, 0x99, 0x00, 0x90, 0x00, 0xba,
++};
++
++static const unsigned char s6e8ax0_22_gamma_160[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xaf, 0xa5, 0xbf, 0xb0, 0xd0,
++	0xb1, 0xc3, 0xde, 0xc2, 0x99, 0xc1, 0x97, 0xb4, 0xce, 0xb1,
++	0x00, 0x9c, 0x00, 0x93, 0x00, 0xbe,
++};
++
++static const unsigned char s6e8ax0_22_gamma_170[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xaf, 0xb5, 0xbf, 0xb1, 0xd1,
++	0xb1, 0xc3, 0xde, 0xc3, 0x99, 0xc0, 0x96, 0xb4, 0xce, 0xb1,
++	0x00, 0x9f, 0x00, 0x96, 0x00, 0xc2,
++};
++
++static const unsigned char s6e8ax0_22_gamma_180[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xaf, 0xb7, 0xbe, 0xb3, 0xd2,
++	0xb3, 0xc3, 0xde, 0xc2, 0x97, 0xbf, 0x95, 0xb4, 0xcd, 0xb1,
++	0x00, 0xa2, 0x00, 0x99, 0x00, 0xc5,
++};
++
++static const unsigned char s6e8ax0_22_gamma_190[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xaf, 0xb9, 0xbe, 0xb2, 0xd2,
++	0xb2, 0xc3, 0xdd, 0xc3, 0x98, 0xbf, 0x95, 0xb2, 0xcc, 0xaf,
++	0x00, 0xa5, 0x00, 0x9c, 0x00, 0xc9,
++};
++
++static const unsigned char s6e8ax0_22_gamma_200[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xaf, 0xb9, 0xbc, 0xb2, 0xd2,
++	0xb1, 0xc4, 0xdd, 0xc3, 0x97, 0xbe, 0x95, 0xb1, 0xcb, 0xae,
++	0x00, 0xa8, 0x00, 0x9f, 0x00, 0xcd,
++};
++
++static const unsigned char s6e8ax0_22_gamma_210[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb1, 0xc1, 0xbd, 0xb1, 0xd1,
++	0xb1, 0xc2, 0xde, 0xc2, 0x97, 0xbe, 0x94, 0xB0, 0xc9, 0xad,
++	0x00, 0xae, 0x00, 0xa4, 0x00, 0xd4,
++};
++
++static const unsigned char s6e8ax0_22_gamma_220[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb1, 0xc7, 0xbd, 0xb1, 0xd1,
++	0xb1, 0xc2, 0xdd, 0xc2, 0x97, 0xbd, 0x94, 0xb0, 0xc9, 0xad,
++	0x00, 0xad, 0x00, 0xa2, 0x00, 0xd3,
++};
++
++static const unsigned char s6e8ax0_22_gamma_230[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb1, 0xc3, 0xbd, 0xb2, 0xd1,
++	0xb1, 0xc3, 0xdd, 0xc1, 0x96, 0xbd, 0x94, 0xb0, 0xc9, 0xad,
++	0x00, 0xb0, 0x00, 0xa7, 0x00, 0xd7,
++};
++
++static const unsigned char s6e8ax0_22_gamma_240[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb1, 0xcb, 0xbd, 0xb1, 0xd2,
++	0xb1, 0xc3, 0xdD, 0xc2, 0x95, 0xbd, 0x93, 0xaf, 0xc8, 0xab,
++	0x00, 0xb3, 0x00, 0xa9, 0x00, 0xdb,
++};
++
++static const unsigned char s6e8ax0_22_gamma_250[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb3, 0xcc, 0xbe, 0xb0, 0xd2,
++	0xb0, 0xc3, 0xdD, 0xc2, 0x94, 0xbc, 0x92, 0xae, 0xc8, 0xab,
++	0x00, 0xb6, 0x00, 0xab, 0x00, 0xde,
++};
++
++static const unsigned char s6e8ax0_22_gamma_260[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb3, 0xd0, 0xbe, 0xaf, 0xd1,
++	0xaf, 0xc2, 0xdd, 0xc1, 0x96, 0xbc, 0x93, 0xaf, 0xc8, 0xac,
++	0x00, 0xb7, 0x00, 0xad, 0x00, 0xe0,
++};
++
++static const unsigned char s6e8ax0_22_gamma_270[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb2, 0xcF, 0xbd, 0xb0, 0xd2,
++	0xaf, 0xc2, 0xdc, 0xc1, 0x95, 0xbd, 0x93, 0xae, 0xc6, 0xaa,
++	0x00, 0xba, 0x00, 0xb0, 0x00, 0xe4,
++};
++
++static const unsigned char s6e8ax0_22_gamma_280[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb2, 0xd0, 0xbd, 0xaf, 0xd0,
++	0xad, 0xc4, 0xdd, 0xc3, 0x95, 0xbd, 0x93, 0xac, 0xc5, 0xa9,
++	0x00, 0xbd, 0x00, 0xb2, 0x00, 0xe7,
++};
++
++static const unsigned char s6e8ax0_22_gamma_300[] = {
++	0xfa, 0x01, 0x60, 0x10, 0x60, 0xb5, 0xd3, 0xbd, 0xb1, 0xd2,
++	0xb0, 0xc0, 0xdc, 0xc0, 0x94, 0xba, 0x91, 0xac, 0xc5, 0xa9,
++	0x00, 0xc2, 0x00, 0xb7, 0x00, 0xed,
++};
++
++static const unsigned char *s6e8ax0_22_gamma_table[] = {
++	s6e8ax0_22_gamma_30,
++	s6e8ax0_22_gamma_50,
++	s6e8ax0_22_gamma_60,
++	s6e8ax0_22_gamma_70,
++	s6e8ax0_22_gamma_80,
++	s6e8ax0_22_gamma_90,
++	s6e8ax0_22_gamma_100,
++	s6e8ax0_22_gamma_120,
++	s6e8ax0_22_gamma_130,
++	s6e8ax0_22_gamma_140,
++	s6e8ax0_22_gamma_150,
++	s6e8ax0_22_gamma_160,
++	s6e8ax0_22_gamma_170,
++	s6e8ax0_22_gamma_180,
++	s6e8ax0_22_gamma_190,
++	s6e8ax0_22_gamma_200,
++	s6e8ax0_22_gamma_210,
++	s6e8ax0_22_gamma_220,
++	s6e8ax0_22_gamma_230,
++	s6e8ax0_22_gamma_240,
++	s6e8ax0_22_gamma_250,
++	s6e8ax0_22_gamma_260,
++	s6e8ax0_22_gamma_270,
++	s6e8ax0_22_gamma_280,
++	s6e8ax0_22_gamma_300,
++};
++
++static void s6e8ax0_panel_cond(struct s6e8ax0 *lcd)
 +{
-+	writel(DSIM_SWRST, dsi->reg_base + DSIM_SWRST_REG);
++	static const unsigned char data_to_send[] = {
++		0xf8, 0x3d, 0x35, 0x00, 0x00, 0x00, 0x93, 0x00, 0x3c, 0x7d,
++		0x08, 0x27, 0x7d, 0x3f, 0x00, 0x00, 0x00, 0x20, 0x04, 0x08,
++		0x6e, 0x00, 0x00, 0x00, 0x02, 0x08, 0x08, 0x23, 0x23, 0xc0,
++		0xc8, 0x08, 0x48, 0xc1, 0x00, 0xc1, 0xff, 0xff, 0xc8
++	};
++	static const unsigned char data_to_send_panel_reverse[] = {
++		0xf8, 0x19, 0x35, 0x00, 0x00, 0x00, 0x93, 0x00, 0x3c, 0x7d,
++		0x08, 0x27, 0x7d, 0x3f, 0x00, 0x00, 0x00, 0x20, 0x04, 0x08,
++		0x6e, 0x00, 0x00, 0x00, 0x02, 0x08, 0x08, 0x23, 0x23, 0xc0,
++		0xc1, 0x01, 0x41, 0xc1, 0x00, 0xc1, 0xf6, 0xf6, 0xc1
++	};
 +
-+	udelay(10);
++	if (lcd->pdata->panel_reverse)
++		dsi_dcs_write(lcd->entity.source, 0,
++				data_to_send_panel_reverse,
++				ARRAY_SIZE(data_to_send_panel_reverse));
++	else
++		dsi_dcs_write(lcd->entity.source, 0,
++				data_to_send, ARRAY_SIZE(data_to_send));
 +}
 +
-+#ifndef MHZ
-+#define MHZ	(1000*1000)
-+#endif
-+
-+static const unsigned long freq_bands[] = {
-+	100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
-+	270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
-+	510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
-+	770 * MHZ, 870 * MHZ, 950 * MHZ,
-+};
-+
-+static const int afc_settings[] = {
-+	1, 0, 3, 2, 5, 4,
-+};
-+
-+static unsigned long exynos_dsi_pll_find_pms(struct exynos_dsi *dsi,
-+		unsigned long fin, unsigned long fout, u8 *p, u16 *m, u8 *s)
++static void s6e8ax0_display_cond(struct s6e8ax0 *lcd)
 +{
-+	unsigned long best_freq = 0;
-+	u32 min_delta = 0xffffffff;
-+	u8 p_min, p_max;
-+	u8 _p, best_p;
-+	u16 _m, best_m;
-+	u8 _s, best_s;
++	static const unsigned char data_to_send[] = {
++		0xf2, 0x80, 0x03, 0x0d
++	};
 +
-+	p_min = DIV_ROUND_UP(fin, (12 * MHZ));
-+	p_max = fin / (6 * MHZ);
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
 +
-+	for (_p = p_min; _p <= p_max; ++_p) {
-+		for (_s = 0; _s <= 5; ++_s) {
-+			u64 tmp;
-+			u32 delta;
-+			u16 div;
++/* Gamma 2.2 Setting (200cd, 7500K, 10MPCD) */
++static void s6e8ax0_gamma_cond(struct s6e8ax0 *lcd)
++{
++	unsigned int gamma = lcd->bd->props.brightness;
 +
-+			tmp = (u64)fout * (_p << _s);
-+			do_div(tmp, fin);
-+			_m = tmp;
-+			if (_m < 41 || _m > 125)
-+				continue;
++	dsi_dcs_write(lcd->entity.source, 0,
++			s6e8ax0_22_gamma_table[gamma],
++			GAMMA_TABLE_COUNT);
++}
 +
-+			tmp = (u64)_m * fin;
-+			do_div(tmp, _p);
-+			if (tmp < 500 * MHZ || tmp > 1000 * MHZ)
-+				continue;
++static void s6e8ax0_gamma_update(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xf7, 0x03
++	};
 +
-+			tmp = (u64)_m * fin;
-+			div = (_p << _s);
-+			do_div(tmp, div);
++	dsi_dcs_write(lcd->entity.source, 0, data_to_send,
++		ARRAY_SIZE(data_to_send));
++}
 +
-+			delta = abs(fout - tmp);
-+			if (delta < min_delta) {
-+				best_p = _p;
-+				best_m = _m;
-+				best_s = _s;
-+				min_delta = delta;
-+				best_freq = tmp;
-+			}
++static void s6e8ax0_etc_cond1(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xd1, 0xfe, 0x80, 0x00, 0x01, 0x0b, 0x00, 0x00, 0x40,
++		0x0d, 0x00, 0x00
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_etc_cond2(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xb6, 0x0c, 0x02, 0x03, 0x32, 0xff, 0x44, 0x44, 0xc0,
++		0x00
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_etc_cond3(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xe1, 0x10, 0x1c, 0x17, 0x08, 0x1d
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_etc_cond4(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xe2, 0xed, 0x07, 0xc3, 0x13, 0x0d, 0x03
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_etc_cond5(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xf4, 0xcf, 0x0a, 0x12, 0x10, 0x19, 0x33, 0x02
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++static void s6e8ax0_etc_cond6(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xe3, 0x40
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_etc_cond7(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xe4, 0x00, 0x00, 0x14, 0x80, 0x00, 0x00, 0x00
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_elvss_set(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xb1, 0x04, 0x00
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_elvss_nvm_set(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xd9, 0x5c, 0x20, 0x0c, 0x0f, 0x41, 0x00, 0x10, 0x11,
++		0x12, 0xd1, 0x00, 0x00, 0x00, 0x00, 0x80, 0xcb, 0xed,
++		0x64, 0xaf
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_sleep_in(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0x10
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_sleep_out(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0x11
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_display_on(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0x29
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_display_off(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0x28
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_apply_level2_key(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xf0, 0x5a, 0x5a
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_acl_on(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xc0, 0x01
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++static void s6e8ax0_acl_off(struct s6e8ax0 *lcd)
++{
++	static const unsigned char data_to_send[] = {
++		0xc0, 0x00
++	};
++
++	dsi_dcs_write(lcd->entity.source, 0,
++		data_to_send, ARRAY_SIZE(data_to_send));
++}
++
++/* Full white 50% reducing setting */
++static void s6e8ax0_acl_ctrl_set(struct s6e8ax0 *lcd)
++{
++	/* Full white 50% reducing setting */
++	static const unsigned char cutoff_50[] = {
++		0xc1, 0x47, 0x53, 0x13, 0x53, 0x00, 0x00, 0x02, 0xcf,
++		0x00, 0x00, 0x04, 0xff,	0x00, 0x00, 0x00, 0x00, 0x00,
++		0x01, 0x08, 0x0f, 0x16, 0x1d, 0x24, 0x2a, 0x31, 0x38,
++		0x3f, 0x46
++	};
++	/* Full white 45% reducing setting */
++	static const unsigned char cutoff_45[] = {
++		0xc1, 0x47, 0x53, 0x13, 0x53, 0x00, 0x00, 0x02, 0xcf,
++		0x00, 0x00, 0x04, 0xff,	0x00, 0x00, 0x00, 0x00, 0x00,
++		0x01, 0x07, 0x0d, 0x13, 0x19, 0x1f, 0x25, 0x2b, 0x31,
++		0x37, 0x3d
++	};
++	/* Full white 40% reducing setting */
++	static const unsigned char cutoff_40[] = {
++		0xc1, 0x47, 0x53, 0x13, 0x53, 0x00, 0x00, 0x02, 0xcf,
++		0x00, 0x00, 0x04, 0xff,	0x00, 0x00, 0x00, 0x00, 0x00,
++		0x01, 0x06, 0x0c, 0x11, 0x16, 0x1c, 0x21, 0x26, 0x2b,
++		0x31, 0x36
++	};
++
++	if (lcd->acl_enable) {
++		if (lcd->cur_acl == 0) {
++			if (lcd->gamma == 0 || lcd->gamma == 1) {
++				s6e8ax0_acl_off(lcd);
++				dev_dbg(lcd->dev,
++					"cur_acl=%d\n", lcd->cur_acl);
++			} else
++				s6e8ax0_acl_on(lcd);
 +		}
-+	}
-+
-+	if (best_freq) {
-+		*p = best_p;
-+		*m = best_m;
-+		*s = best_s;
-+	}
-+
-+	return best_freq;
-+}
-+
-+static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
-+							unsigned long freq)
-+{
-+	unsigned long fin, fout, fin_pll;
-+	int timeout;
-+	u8 p;
-+	u16 m;
-+	u8 s;
-+	int band;
-+	int afc;
-+	u32 reg;
-+
-+	clk_set_rate(dsi->pll_clk, dsi->pd->pll_clk_rate);
-+
-+	fin = clk_get_rate(dsi->pll_clk);
-+	if (!fin) {
-+		dev_err(dsi->dev, "failed to get PLL clock frequency\n");
-+		return 0;
-+	}
-+
-+	dev_dbg(dsi->dev, "PLL input frequency: %lu\n", fin);
-+
-+	fout = exynos_dsi_pll_find_pms(dsi, fin, freq, &p, &m, &s);
-+	if (!fout) {
-+		dev_err(dsi->dev,
-+			"failed to find PLL coefficients for requested frequency\n");
-+		return -EFAULT;
-+	}
-+
-+	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d)\n", fout, p, m, s);
-+
-+	for (band = 0; band < ARRAY_SIZE(freq_bands); ++band)
-+		if (fout < freq_bands[band])
++		switch (lcd->gamma) {
++		case 0: /* 30cd */
++			s6e8ax0_acl_off(lcd);
++			lcd->cur_acl = 0;
 +			break;
-+
-+	fin_pll = DIV_ROUND_CLOSEST(fin, p);
-+	fin_pll /= MHZ;
-+	if (fin_pll > 6)
-+		fin_pll -= 6;
-+	else
-+		fin_pll = 0;
-+	if (fin_pll >= ARRAY_SIZE(afc_settings))
-+		fin_pll = ARRAY_SIZE(afc_settings) - 1;
-+
-+	afc = afc_settings[fin_pll];
-+
-+	dev_dbg(dsi->dev, "freq band %d, afc_setting %d\n", band, afc);
-+
-+	writel(dsi->pd->pll_stable_time, dsi->reg_base + DSIM_PLLTMR_REG);
-+
-+	reg = DSIM_AFC_CTL(afc) | DSIM_AFC_EN;
-+	writel(reg, dsi->reg_base + DSIM_PHYACCHR_REG);
-+
-+	reg = DSIM_FREQ_BAND(band) | DSIM_PLL_EN
-+			| DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
-+	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
-+
-+	timeout = 1000;
-+	do {
-+		if (timeout-- == 0) {
-+			dev_err(dsi->dev, "PLL failed to stabilize\n");
-+			return -EFAULT;
++		case 1 ... 3: /* 50cd ~ 90cd */
++			dsi_dcs_write(lcd->entity.source, 0,
++				cutoff_40,
++				ARRAY_SIZE(cutoff_40));
++			lcd->cur_acl = 40;
++			break;
++		case 4 ... 7: /* 120cd ~ 210cd */
++			dsi_dcs_write(lcd->entity.source, 0,
++				cutoff_45,
++				ARRAY_SIZE(cutoff_45));
++			lcd->cur_acl = 45;
++			break;
++		case 8 ... 10: /* 220cd ~ 300cd */
++			dsi_dcs_write(lcd->entity.source, 0,
++				cutoff_50,
++				ARRAY_SIZE(cutoff_50));
++			lcd->cur_acl = 50;
++			break;
++		default:
++			break;
 +		}
-+		reg = readl(dsi->reg_base + DSIM_STATUS_REG);
-+	} while ((reg & DSIM_PLL_STABLE) == 0);
-+
-+	return fout;
++	} else {
++		s6e8ax0_acl_off(lcd);
++		lcd->cur_acl = 0;
++		dev_dbg(lcd->dev, "cur_acl = %d\n", lcd->cur_acl);
++	}
 +}
 +
-+static int exynos_dsi_enable_clock(struct exynos_dsi *dsi)
++static void s6e8ax0_read_id(struct s6e8ax0 *lcd, u8 *mtp_id)
 +{
-+	unsigned long hs_clk, byte_clk, esc_clk;
-+	unsigned long esc_div;
-+	u32 reg;
++	unsigned int ret;
++	u8 addr = 0xd1;	/* MTP ID */
 +
-+	hs_clk = exynos_dsi_set_pll(dsi, dsi->params.hs_clk_freq);
-+	if (!hs_clk) {
-+		dev_err(dsi->dev, "failed to configure DSI PLL\n");
-+		return -EFAULT;
-+	}
++	ret = dsi_dcs_read(lcd->entity.source, 0, addr, mtp_id, 3);
++}
 +
-+	byte_clk = hs_clk / 8;
-+	esc_div = DIV_ROUND_UP(byte_clk, dsi->params.esc_clk_freq);
-+	esc_clk = byte_clk / esc_div;
++static int s6e8ax0_panel_init(struct s6e8ax0 *lcd)
++{
++	s6e8ax0_apply_level2_key(lcd);
++	s6e8ax0_sleep_out(lcd);
++	msleep(1);
++	s6e8ax0_panel_cond(lcd);
++	s6e8ax0_display_cond(lcd);
++	s6e8ax0_gamma_cond(lcd);
++	s6e8ax0_gamma_update(lcd);
 +
-+	if (esc_clk > 20 * MHZ) {
-+		++esc_div;
-+		esc_clk = byte_clk / esc_div;
-+	}
++	s6e8ax0_etc_cond1(lcd);
++	s6e8ax0_etc_cond2(lcd);
++	s6e8ax0_etc_cond3(lcd);
++	s6e8ax0_etc_cond4(lcd);
++	s6e8ax0_etc_cond5(lcd);
++	s6e8ax0_etc_cond6(lcd);
++	s6e8ax0_etc_cond7(lcd);
 +
-+	dev_dbg(dsi->dev, "hs_clk = %lu, byte_clk = %lu, esc_clk = %lu\n",
-+						hs_clk, byte_clk, esc_clk);
++	s6e8ax0_elvss_nvm_set(lcd);
++	s6e8ax0_elvss_set(lcd);
 +
-+	reg = readl(dsi->reg_base + DSIM_CLKCTRL_REG);
-+	reg &= ~(DSIM_ESC_PRESCALER_MASK | DSIM_LANE_ESC_CLK_EN_CLK
-+			| DSIM_LANE_ESC_CLK_EN_DATA_MASK | DSIM_PLL_BYPASS
-+			| DSIM_BYTE_CLK_SRC_MASK);
-+	reg |= DSIM_ESC_CLKEN | DSIM_BYTE_CLKEN
-+			| DSIM_ESC_PRESCALER(esc_div)
-+			| DSIM_LANE_ESC_CLK_EN_CLK
-+			| DSIM_LANE_ESC_CLK_EN_DATA(dsi->params.data_lanes)
-+			| DSIM_BYTE_CLK_SRC(0)
-+			| DSIM_TX_REQUEST_HSCLK;
-+	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
++	s6e8ax0_acl_ctrl_set(lcd);
++	s6e8ax0_acl_on(lcd);
++
++	/* if ID3 value is not 33h, branch private elvss mode */
++	msleep(lcd->pdata->power_on_delay);
 +
 +	return 0;
 +}
 +
-+static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
++static int s6e8ax0_update_gamma_ctrl(struct s6e8ax0 *lcd, int brightness)
 +{
-+	u32 reg;
++	dsi_dcs_write(lcd->entity.source, 0,
++			s6e8ax0_22_gamma_table[brightness],
++			ARRAY_SIZE(s6e8ax0_22_gamma_table));
 +
-+	reg = readl(dsi->reg_base + DSIM_CLKCTRL_REG);
-+	reg &= ~(DSIM_LANE_ESC_CLK_EN_CLK | DSIM_LANE_ESC_CLK_EN_DATA_MASK |
-+			DSIM_ESC_CLKEN | DSIM_BYTE_CLKEN);
-+	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
++	/* update gamma table. */
++	s6e8ax0_gamma_update(lcd);
++	lcd->gamma = brightness;
 +
-+	reg = readl(dsi->reg_base + DSIM_PLLCTRL_REG);
-+	reg &= ~DSIM_PLL_EN;
-+	writel(reg, dsi->reg_base + DSIM_PLLCTRL_REG);
++	return 0;
 +}
 +
-+static int exynos_dsi_init_link(struct exynos_dsi *dsi)
++static int s6e8ax0_gamma_ctrl(struct s6e8ax0 *lcd, int gamma)
 +{
-+	u32 reg;
-+	int timeout;
++	s6e8ax0_update_gamma_ctrl(lcd, gamma);
 +
-+	/* Initialize FIFO pointers */
-+	reg = readl(dsi->reg_base + DSIM_FIFOCTRL_REG);
-+	reg &= ~0x1f;
-+	writel(reg, dsi->reg_base + DSIM_FIFOCTRL_REG);
++	return 0;
++}
 +
-+	msleep(10);
++static int s6e8ax0_get_brightness(struct backlight_device *bd)
++{
++	return bd->props.brightness;
++}
 +
-+	reg |= 0x1f;
-+	writel(reg, dsi->reg_base + DSIM_FIFOCTRL_REG);
++static int s6e8ax0_set_brightness(struct backlight_device *bd)
++{
++	int ret = 0, brightness = bd->props.brightness;
++	struct s6e8ax0 *lcd = bl_get_data(bd);
 +
-+	msleep(10);
-+
-+	/* DSI configuration */
-+	reg = 0;
-+
-+	if (dsi->params.mode & DSI_MODE_VIDEO) {
-+		reg |= DSIM_VIDEO_MODE;
-+
-+		if (!(dsi->params.mode & DSI_MODE_VSYNC_FLUSH))
-+			reg |= DSIM_MFLUSH_VS;
-+		if (!(dsi->params.mode & DSI_MODE_EOT_PACKET))
-+			reg |= DSIM_EOT_DISABLE;
-+		if (dsi->params.mode & DSI_MODE_VIDEO_SYNC_PULSE)
-+			reg |= DSIM_SYNC_INFORM;
-+		if (dsi->params.mode & DSI_MODE_VIDEO_BURST)
-+			reg |= DSIM_BURST_MODE;
-+		if (dsi->params.mode & DSI_MODE_VIDEO_AUTO_VERT)
-+			reg |= DSIM_AUTO_MODE;
-+		if (dsi->params.mode & DSI_MODE_VIDEO_HSE)
-+			reg |= DSIM_HSE_MODE;
-+		if (!(dsi->params.mode & DSI_MODE_VIDEO_HFP))
-+			reg |= DSIM_HFP_MODE;
-+		if (!(dsi->params.mode & DSI_MODE_VIDEO_HBP))
-+			reg |= DSIM_HBP_MODE;
-+		if (!(dsi->params.mode & DSI_MODE_VIDEO_HSA))
-+			reg |= DSIM_HSA_MODE;
-+	}
-+
-+	switch (dsi->params.format) {
-+	case DSI_FMT_RGB888:
-+		reg |= DSIM_MAIN_PIX_FORMAT_RGB888;
-+		break;
-+	case DSI_FMT_RGB666:
-+		reg |= DSIM_MAIN_PIX_FORMAT_RGB666;
-+		break;
-+	case DSI_FMT_RGB666_PACKED:
-+		reg |= DSIM_MAIN_PIX_FORMAT_RGB666_P;
-+		break;
-+	case DSI_FMT_RGB565:
-+		reg |= DSIM_MAIN_PIX_FORMAT_RGB565;
-+		break;
-+	default:
-+		dev_err(dsi->dev, "invalid pixel format\n");
++	if (brightness < MIN_BRIGHTNESS ||
++		brightness > bd->props.max_brightness) {
++		dev_err(lcd->dev,
++					"lcd brightness should be %d to %d.\n",
++					MIN_BRIGHTNESS, MAX_BRIGHTNESS);
 +		return -EINVAL;
 +	}
 +
-+	switch (dsi->params.data_lanes) {
-+	case 0x1:
-+		reg |= DSIM_NUM_OF_DATA_LANE(0);
-+		break;
-+	case 0x3:
-+		reg |= DSIM_NUM_OF_DATA_LANE(1);
-+		break;
-+	case 0x7:
-+		reg |= DSIM_NUM_OF_DATA_LANE(2);
-+		break;
-+	case 0xf:
-+		reg |= DSIM_NUM_OF_DATA_LANE(3);
-+		break;
-+	default:
-+		return -EINVAL;
++	ret = s6e8ax0_gamma_ctrl(lcd, brightness);
++	if (ret) {
++		dev_err(lcd->dev,
++					"lcd brightness setting failed.\n");
++		return -EIO;
 +	}
 +
-+	writel(reg, dsi->reg_base + DSIM_CONFIG_REG);
-+
-+	reg |= DSIM_LANE_EN_CLK;
-+	writel(reg, dsi->reg_base + DSIM_CONFIG_REG);
-+
-+	reg |= DSIM_LANE_EN(dsi->params.data_lanes);
-+	writel(reg, dsi->reg_base + DSIM_CONFIG_REG);
-+
-+	/* Clock configuration */
-+	exynos_dsi_enable_clock(dsi);
-+
-+	/* Check clock and data lane state are stop state */
-+	timeout = 100;
-+	do {
-+		if (timeout-- == 0) {
-+			dev_err(dsi->dev, "waiting for bus lanes timed out\n");
-+			return -EFAULT;
-+		}
-+
-+		reg = readl(dsi->reg_base + DSIM_STATUS_REG);
-+		if ((reg & DSIM_STOP_STATE_DAT(dsi->params.data_lanes))
-+		    != DSIM_STOP_STATE_DAT(dsi->params.data_lanes))
-+			continue;
-+	} while (!(reg & (DSIM_STOP_STATE_CLK | DSIM_TX_READY_HS_CLK)));
-+
-+	reg = readl(dsi->reg_base + DSIM_ESCMODE_REG);
-+	reg &= ~DSIM_STOP_STATE_CNT_MASK;
-+	reg |= DSIM_STOP_STATE_CNT(dsi->pd->stop_holding_cnt);
-+	writel(reg, dsi->reg_base + DSIM_ESCMODE_REG);
-+
-+	reg = DSIM_BTA_TOUT(dsi->pd->bta_timeout)
-+					| DSIM_LPDR_TOUT(dsi->pd->rx_timeout);
-+	writel(reg, dsi->reg_base + DSIM_TIMEOUT_REG);
-+
-+	return 0;
++	return ret;
 +}
 +
-+static int exynos_dsi_set_display_mode(struct exynos_dsi *dsi)
-+{
-+	const struct videomode *mode;
-+	u32 reg;
-+	int ret;
-+
-+	ret = display_entity_get_modes(dsi->out.sink, &mode);
-+	if (ret < 0) {
-+		dev_err(dsi->dev, "failed to get display video mode\n");
-+		return ret;
-+	}
-+
-+	if (dsi->params.mode & DSI_MODE_VIDEO) {
-+		reg = DSIM_CMD_ALLOW(dsi->params.cmd_allow)
-+			| DSIM_STABLE_VFP(mode->vfront_porch)
-+			| DSIM_MAIN_VBP(mode->vback_porch);
-+		writel(reg, dsi->reg_base + DSIM_MVPORCH_REG);
-+
-+		reg = DSIM_MAIN_HFP(mode->hfront_porch)
-+			| DSIM_MAIN_HBP(mode->hback_porch);
-+		writel(reg, dsi->reg_base + DSIM_MHPORCH_REG);
-+
-+		reg = DSIM_MAIN_VSA(mode->vsync_len)
-+			| DSIM_MAIN_HSA(mode->hsync_len);
-+		writel(reg, dsi->reg_base + DSIM_MSYNC_REG);
-+	}
-+
-+	reg = DSIM_MAIN_HRESOL(mode->hactive) | DSIM_MAIN_VRESOL(mode->vactive);
-+	writel(reg, dsi->reg_base + DSIM_MDRESOL_REG);
-+
-+	dev_dbg(dsi->dev, "LCD width = %d, height = %d\n",
-+						mode->hactive, mode->vactive);
-+
-+	return 0;
-+}
-+
-+static void exynos_dsi_set_display_enable(struct exynos_dsi *dsi, bool enable)
-+{
-+	u32 reg;
-+
-+	reg = readl(dsi->reg_base + DSIM_MDRESOL_REG);
-+	if (enable)
-+		reg |= DSIM_MAIN_STAND_BY;
-+	else
-+		reg &= ~DSIM_MAIN_STAND_BY;
-+	writel(reg, dsi->reg_base +DSIM_MDRESOL_REG);
-+}
-+
-+/*
-+ * FIFO
-+ */
-+
-+static void exynos_dsi_send_to_fifo(struct exynos_dsi *dsi,
-+					struct exynos_dsi_transfer *xfer)
-+{
-+	const u8 *payload = xfer->tx_payload + xfer->tx_done;
-+	u16 length = xfer->tx_len - xfer->tx_done;
-+	bool first = !xfer->tx_done;
-+	u32 reg;
-+
-+	dev_dbg(dsi->dev,
-+		"< xfer %p, tx_len %u, tx_done %u, rx_len %u, rx_done %u\n",
-+		xfer, xfer->tx_len, xfer->tx_done, xfer->rx_len, xfer->rx_done);
-+
-+	if (length > DSI_TX_FIFO_SIZE)
-+		length = DSI_TX_FIFO_SIZE;
-+
-+	xfer->tx_done += length;
-+
-+	/* Send payload */
-+	while (length >= 4) {
-+		reg = (payload[3] << 24) | (payload[2] << 16)
-+					| (payload[1] << 8) | payload[0];
-+		writel(reg, dsi->reg_base + DSIM_PAYLOAD_REG);
-+		payload += 4;
-+		length -= 4;
-+	}
-+
-+	reg = 0;
-+	switch (length) {
-+	case 3:
-+		reg |= payload[2] << 16;
-+		/* Fall through */
-+	case 2:
-+		reg |= payload[1] << 8;
-+		/* Fall through */
-+	case 1:
-+		reg |= payload[0];
-+		writel(reg, dsi->reg_base + DSIM_PAYLOAD_REG);
-+		break;
-+	case 0:
-+		/* Do nothing */
-+		break;
-+	}
-+
-+	/* Send packet header */
-+	if (first) {
-+		if (xfer->rx_len) {
-+			reg = (xfer->rx_len << 8)
-+				| MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE;
-+			writel(reg, dsi->reg_base + DSIM_PKTHDR_REG);
-+		}
-+		reg = (xfer->data[1] << 16) | (xfer->data[0] << 8) | xfer->type;
-+		writel(reg, dsi->reg_base + DSIM_PKTHDR_REG);
-+	}
-+}
-+
-+static void exynos_readl_from_fifo(struct exynos_dsi *dsi,
-+					struct exynos_dsi_transfer *xfer)
-+{
-+	u8 *payload = xfer->rx_payload + xfer->rx_done;
-+	bool first = !xfer->rx_done;
-+	u16 length;
-+	u32 reg;
-+
-+	if (first) {
-+		reg = readl(dsi->reg_base + DSIM_RXFIFO_REG);
-+		length = (reg >> 8) & 0xffff;
-+		if (length > xfer->rx_len)
-+			dev_dbg(dsi->dev,
-+				"response too long (expected %u, got %u bytes)\n",
-+				xfer->rx_len, length);
-+		if (length < xfer->rx_len)
-+			xfer->rx_len = length;
-+	}
-+
-+	length = xfer->rx_len - xfer->rx_done;
-+	xfer->rx_done += length;
-+
-+	/* Receive payload */
-+	while (length >= 4) {
-+		reg = readl(dsi->reg_base + DSIM_RXFIFO_REG);
-+		payload[0] = (reg >>  0) & 0xff;
-+		payload[1] = (reg >>  8) & 0xff;
-+		payload[2] = (reg >> 16) & 0xff;
-+		payload[3] = (reg >> 24) & 0xff;
-+		payload += 4;
-+		length -= 4;
-+	}
-+
-+	if (length) {
-+		reg = readl(dsi->reg_base + DSIM_RXFIFO_REG);
-+		switch (length) {
-+		case 3:
-+			payload[2] = (reg >> 16) & 0xff;
-+			/* Fall through */
-+		case 2:
-+			payload[1] = (reg >> 8) & 0xff;
-+			/* Fall through */
-+		case 1:
-+			payload[0] = reg & 0xff;
-+		}
-+	}
-+
-+	do {
-+		reg = readl(dsi->reg_base + DSIM_RXFIFO_REG);
-+	} while (reg != 0x30800002);
-+}
-+
-+/*
-+ * Transfer
-+ */
-+
-+static void exynos_dsi_transfer_cancel(struct exynos_dsi *dsi,
-+					struct exynos_dsi_transfer *xfer)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&dsi->transfer_lock, flags);
-+
-+	if (!list_empty(&xfer->list))
-+		list_del_init(&xfer->list);
-+
-+	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-+}
-+
-+static void exynos_dsi_transfer_start(struct exynos_dsi *dsi)
-+{
-+	unsigned long flags;
-+	struct exynos_dsi_transfer *xfer;
-+
-+	spin_lock_irqsave(&dsi->transfer_lock, flags);
-+
-+	if (list_empty(&dsi->transfer_list)) {
-+		spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-+		return;
-+	}
-+
-+	xfer = list_first_entry(&dsi->transfer_list,
-+					struct exynos_dsi_transfer, list);
-+
-+	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-+
-+	if (xfer->tx_len && xfer->tx_done == xfer->tx_len)
-+		/* waiting for RX */
-+		return;
-+
-+	exynos_dsi_send_to_fifo(dsi, xfer);
-+}
-+
-+static void exynos_dsi_transfer_finish(struct exynos_dsi *dsi,
-+					enum exynos_dsi_transfer_type type)
-+{
-+	struct exynos_dsi_transfer *xfer;
-+	unsigned long flags;
-+	bool start = true;
-+
-+	spin_lock_irqsave(&dsi->transfer_lock, flags);
-+
-+	if (list_empty(&dsi->transfer_list)) {
-+		spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-+		dev_warn(dsi->dev, "unexpected TX/RX interrupt\n");
-+		return;
-+	}
-+
-+	xfer = list_first_entry(&dsi->transfer_list,
-+					struct exynos_dsi_transfer, list);
-+
-+	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-+
-+	dev_dbg(dsi->dev,
-+		"> xfer %p, tx_len %u, tx_done %u, rx_len %u, rx_done %u\n",
-+		xfer, xfer->tx_len, xfer->tx_done, xfer->rx_len, xfer->rx_done);
-+
-+	if (type == EXYNOS_DSI_RX)
-+		exynos_readl_from_fifo(dsi, xfer);
-+
-+	if (xfer->tx_done == xfer->tx_len && xfer->rx_done == xfer->rx_len) {
-+		spin_lock_irqsave(&dsi->transfer_lock, flags);
-+		list_del_init(&xfer->list);
-+		start = !list_empty(&dsi->transfer_list);
-+		spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-+		xfer->result = 0;
-+		complete(&xfer->completed);
-+	}
-+
-+	if (type == EXYNOS_DSI_TX && xfer->tx_done != xfer->tx_len)
-+		exynos_dsi_send_to_fifo(dsi, xfer);
-+
-+	if (start)
-+		exynos_dsi_transfer_start(dsi);
-+}
-+
-+static int exynos_dsi_transfer(struct exynos_dsi *dsi,
-+		struct exynos_dsi_transfer *xfers, unsigned int num_xfers)
-+{
-+	unsigned long flags;
-+	bool stopped;
-+	LIST_HEAD(xfer_list);
-+
-+	for (; num_xfers; --num_xfers, ++xfers) {
-+		xfers->tx_done = 0;
-+		xfers->rx_done = 0;
-+		xfers->result = -ETIMEDOUT;
-+		init_completion(&xfers->completed);
-+
-+		list_add_tail(&xfers->list, &xfer_list);
-+	}
-+
-+	spin_lock_irqsave(&dsi->transfer_lock, flags);
-+
-+	stopped = list_empty(&dsi->transfer_list);
-+	list_splice_tail(&xfer_list, &dsi->transfer_list);
-+
-+	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-+
-+	if (stopped)
-+		exynos_dsi_transfer_start(dsi);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Interrupt handler
-+ */
-+
-+static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
-+{
-+	struct exynos_dsi *dsi = dev_id;
-+	u32 status;
-+
-+	status = readl(dsi->reg_base + DSIM_INTSRC_REG);
-+	writel(status, dsi->reg_base + DSIM_INTSRC_REG);
-+
-+	if (status & DSIM_INT_SW_RST_RELEASE) {
-+		u32 mask = ~(DSIM_INT_RX_DONE | DSIM_INT_SFR_FIFO_EMPTY);
-+		writel(mask, dsi->reg_base + DSIM_INTMSK_REG);
-+		return IRQ_HANDLED;
-+	}
-+
-+	if (status & DSIM_INT_RX_DONE) {
-+		exynos_dsi_transfer_finish(dsi, EXYNOS_DSI_RX);
-+		return IRQ_HANDLED;
-+	}
-+
-+	if (status & DSIM_INT_SFR_FIFO_EMPTY) {
-+		exynos_dsi_transfer_finish(dsi, EXYNOS_DSI_TX);
-+		return IRQ_HANDLED;
-+	}
-+
-+	return IRQ_NONE;
-+}
-+
-+/*
-+ * Display source
-+ */
-+
-+static int exynos_dsi_set_stream(struct video_source *src,
-+					enum video_source_stream_state state)
-+{
-+	struct exynos_dsi *dsi = src_to_dsi(src);
-+
-+	if (pm_runtime_suspended(dsi->dev))
-+		return -EINVAL;
-+
-+	switch (state) {
-+	case DISPLAY_ENTITY_STREAM_STOPPED:
-+		exynos_dsi_set_display_enable(dsi, false);
-+		dsi->streaming = false;
-+		break;
-+
-+	case DISPLAY_ENTITY_STREAM_CONTINUOUS:
-+		exynos_dsi_set_display_mode(dsi);
-+		exynos_dsi_set_display_enable(dsi, true);
-+		dsi->streaming = true;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+/* enable/disable dsi bus */
-+static int exynos_dsi_enable(struct video_source *src)
-+{
-+	struct display_entity_interface_params params;
-+	struct exynos_dsi *dsi = src_to_dsi(src);
-+	int ret;
-+
-+	ret = display_entity_get_params(src->sink, &params);
-+	if (ret < 0)
-+		return ret;
-+	dsi->params = params.p.dsi;
-+
-+	ret = pm_runtime_get_sync(dsi->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	exynos_dsi_reset(dsi);
-+	exynos_dsi_init_link(dsi);
-+
-+	return 0;
-+}
-+
-+static int exynos_dsi_disable(struct video_source *src)
-+{
-+	struct exynos_dsi *dsi = src_to_dsi(src);
-+
-+	if (dsi->streaming)
-+		return -EBUSY;
-+
-+	exynos_dsi_disable_clock(dsi);
-+
-+	return pm_runtime_put_sync(dsi->dev);
-+}
-+
-+static void exynos_dsi_enable_hs(struct video_source *src, bool enable)
-+{
-+	struct exynos_dsi *dsi = src_to_dsi(src);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&dsi->transfer_lock, flags);
-+
-+	dsi->hs_mode = enable;
-+
-+	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-+}
-+
-+/* data transfer */
-+static int exynos_dsi_dcs_write(struct video_source *src, int channel,
-+						const u8 *data, size_t len)
-+{
-+	struct exynos_dsi *dsi = src_to_dsi(src);
-+	struct exynos_dsi_transfer xfer;
-+	long ret;
-+
-+	if (!len)
-+		return -EINVAL;
-+
-+	switch (len) {
-+#if 0
-+	/* FIXME: Fix handling of short packets */
-+	case 1:
-+		len = 0;
-+		xfer.type = MIPI_DSI_DCS_SHORT_WRITE;
-+		xfer.data[0] = data[0];
-+		xfer.data[1] = 0;
-+		break;
-+	case 2:
-+		len = 0;
-+		xfer.type = MIPI_DSI_DCS_SHORT_WRITE_PARAM;
-+		xfer.data[0] = data[0];
-+		xfer.data[1] = data[1];
-+		break;
-+#endif
-+	default:
-+		xfer.type = MIPI_DSI_DCS_LONG_WRITE;
-+		xfer.data[0] = len & 0xff;
-+		xfer.data[1] = len >> 8;
-+	}
-+	
-+	xfer.tx_payload = data;
-+	xfer.tx_len = len;
-+	xfer.rx_len = 0;
-+
-+	ret = exynos_dsi_transfer(dsi, &xfer, 1);
-+	if (ret < 0)
-+		return ret;
-+
-+	wait_for_completion_timeout(&xfer.completed,
-+					msecs_to_jiffies(DSI_XFER_TIMEOUT_MS));
-+	if (xfer.result == -ETIMEDOUT) {
-+		exynos_dsi_transfer_cancel(dsi, &xfer);
-+		dev_err(dsi->dev, "xfer timed out\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	/* Also covers timeout condition */
-+	return xfer.result;
-+}
-+
-+static int exynos_dsi_dcs_read(struct video_source *src,
-+				int channel, u8 dcs_cmd, u8 *data, size_t len)
-+{
-+	struct exynos_dsi *dsi = src_to_dsi(src);
-+	struct exynos_dsi_transfer xfer;
-+	long ret;
-+
-+	xfer.type = MIPI_DSI_DCS_READ;
-+	xfer.tx_len = 0;
-+	xfer.rx_payload = data;
-+	xfer.rx_len = len;
-+	xfer.data[0] = dcs_cmd;
-+	xfer.data[1] = 0x00;
-+
-+	ret = exynos_dsi_transfer(dsi, &xfer, 1);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = wait_for_completion_timeout(&xfer.completed,
-+					msecs_to_jiffies(DSI_XFER_TIMEOUT_MS));
-+	if (xfer.result == -ETIMEDOUT) {
-+		exynos_dsi_transfer_cancel(dsi, &xfer);
-+		dev_err(dsi->dev, "xfer timed out\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	/* Also covers timeout condition */
-+	return xfer.result;
-+}
-+
-+static const struct common_video_source_ops exynos_dsi_common_ops = {
-+	.set_stream = exynos_dsi_set_stream,
++static const struct backlight_ops s6e8ax0_backlight_ops = {
++	.get_brightness = s6e8ax0_get_brightness,
++	.update_status = s6e8ax0_set_brightness,
 +};
 +
-+static const struct dsi_video_source_ops exynos_dsi_ops = {
-+	.enable = exynos_dsi_enable,
-+	.disable = exynos_dsi_disable,
++static int s6e8ax0_set_power(struct lcd_device *ld, int power)
++{
++	struct s6e8ax0 *lcd = lcd_get_data(ld);
++	enum display_entity_state state;
++	int ret;
 +
-+	.enable_hs = exynos_dsi_enable_hs,
++	if (power == FB_BLANK_POWERDOWN)
++		state = DISPLAY_ENTITY_STATE_OFF;
++	else if (power != FB_BLANK_UNBLANK)
++		state = DISPLAY_ENTITY_STATE_STANDBY;
++	else
++		state = DISPLAY_ENTITY_STATE_ON;
 +
-+	.dcs_write = exynos_dsi_dcs_write,
-+	.dcs_read = exynos_dsi_dcs_read,
++	ret = display_entity_set_state(&lcd->entity, state);
++	if (ret)
++		return ret;
++
++	lcd->power = power;
++	return 0;
++}
++
++static int s6e8ax0_get_power(struct lcd_device *ld)
++{
++	struct s6e8ax0 *lcd = lcd_get_data(ld);
++
++	return lcd->power;
++}
++
++static struct lcd_ops s6e8ax0_lcd_ops = {
++	.set_power = s6e8ax0_set_power,
++	.get_power = s6e8ax0_get_power,
 +};
++
++static void s6e8ax0_set_sequence(struct s6e8ax0 *lcd)
++{
++	u8 mtp_id[3] = {0, };
++
++	msleep(100);
++
++	s6e8ax0_read_id(lcd, mtp_id);
++	if (mtp_id[0] == 0x00)
++		dev_err(lcd->dev, "read id failed\n");
++
++	dev_info(lcd->dev, "Read ID : %x, %x, %x\n",
++			mtp_id[0], mtp_id[1], mtp_id[2]);
++
++	if (mtp_id[2] == 0x33)
++		dev_info(lcd->dev,
++			"ID-3 is 0xff does not support dynamic elvss\n");
++	else
++		dev_info(lcd->dev,
++			"ID-3 is 0x%x support dynamic elvss\n", mtp_id[2]);
++
++	s6e8ax0_panel_init(lcd);
++	s6e8ax0_display_on(lcd);
++}
 +
 +#ifdef CONFIG_OF
-+/*
-+ * Device Tree
-+ */
-+
-+static int (* const of_phy_enables[])(struct platform_device *, bool) = {
-+#ifdef CONFIG_S5P_SETUP_MIPIPHY
-+	[0] = s5p_dsim_phy_enable,
-+#endif
-+};
-+
-+static struct exynos_dsi_platform_data *exynos_dsi_parse_dt(
-+						struct platform_device *pdev)
++static int s6e8ax0_generic_reset(struct device *dev)
 +{
-+	struct device_node *node = pdev->dev.of_node;
-+	struct exynos_dsi_platform_data *dsi_pd;
-+	struct device *dev = &pdev->dev;
-+	const __be32 *prop_data;
-+	u32 val;
++	struct s6e8ax0 *lcd = dev_get_drvdata(dev);
 +
-+	dsi_pd = kzalloc(sizeof(*dsi_pd), GFP_KERNEL);
-+	if (!dsi_pd) {
-+		dev_err(dev, "failed to allocate dsi platform data\n");
++	mdelay(10);
++	gpio_set_value(lcd->reset_gpio, 0);
++	mdelay(10);
++	gpio_set_value(lcd->reset_gpio, 1);
++
++	return 0;
++}
++
++static struct s6e8ax0_platform_data *s6e8ax0_parse_dt(struct s6e8ax0 *lcd)
++{
++	struct device_node *node = lcd->dev->of_node;
++	struct s6e8ax0_platform_data *data;
++	const __be32 *prop_data;
++	int ret;
++
++	data = devm_kzalloc(lcd->dev, sizeof(*data), GFP_KERNEL);
++	if (!data) {
++		dev_err(lcd->dev, "failed to allocate platform data.\n");
 +		return NULL;
 +	}
 +
-+	prop_data = of_get_property(node, "samsung,phy-type", NULL);
-+	if (!prop_data) {
-+		dev_err(dev, "failed to get phy-type property\n");
-+		goto err_free_pd;
++	ret = of_get_videomode(node, &data->mode, 0);
++	if (ret) {
++		dev_err(lcd->dev, "failed to read video mode from DT\n");
++		return NULL;
 +	}
 +
-+	val = be32_to_cpu(*prop_data);
-+	if (val >= ARRAY_SIZE(of_phy_enables) || !of_phy_enables[val]) {
-+		dev_err(dev, "Invalid phy-type %u\n", val);
-+		goto err_free_pd;
-+	}
-+	dsi_pd->phy_enable = of_phy_enables[val];
++	lcd->reset_gpio = of_get_named_gpio(node, "reset-gpio", 0);
++	if (lcd->reset_gpio < 0)
++		return NULL;
 +
-+	prop_data = of_get_property(node, "samsung,pll-stable-time", NULL);
-+	if (!prop_data) {
-+		dev_err(dev, "failed to get pll-stable-time property\n");
-+		goto err_free_pd;
-+	}
-+	dsi_pd->pll_stable_time = be32_to_cpu(*prop_data);
++	prop_data = of_get_property(node, "reset-delay", NULL);
++	if (!prop_data)
++		return NULL;
++	data->reset_delay = be32_to_cpu(*prop_data);
 +
-+	prop_data = of_get_property(node, "samsung,stop-holding-count", NULL);
-+	if (!prop_data) {
-+		dev_err(dev, "failed to get stop-holding-count property\n");
-+		goto err_free_pd;
-+	}
-+	dsi_pd->stop_holding_cnt = be32_to_cpu(*prop_data);
++	prop_data = of_get_property(node, "power-off-delay", NULL);
++	if (!prop_data)
++		return NULL;
++	data->power_off_delay = be32_to_cpu(*prop_data);
 +
-+	prop_data = of_get_property(node, "samsung,bta-timeout", NULL);
-+	if (!prop_data) {
-+		dev_err(dev, "failed to get bta-timeout property\n");
-+		goto err_free_pd;
-+	}
-+	dsi_pd->bta_timeout = be32_to_cpu(*prop_data);
++	prop_data = of_get_property(node, "power-on-delay", NULL);
++	if (!prop_data)
++		return NULL;
++	data->power_on_delay = be32_to_cpu(*prop_data);
 +
-+	prop_data = of_get_property(node, "samsung,rx-timeout", NULL);
-+	if (!prop_data) {
-+		dev_err(dev, "failed to get rx-timeout property\n");
-+		goto err_free_pd;
-+	}
-+	dsi_pd->rx_timeout = be32_to_cpu(*prop_data);
++	data->reset = s6e8ax0_generic_reset;
 +
-+	prop_data = of_get_property(node, "samsung,pll-clk-freq", NULL);
-+	if (!prop_data) {
-+		dev_err(dev, "failed to get pll-clk-freq property\n");
-+		goto err_free_pd;
-+	}
-+	dsi_pd->pll_clk_rate = be32_to_cpu(*prop_data);
-+
-+	return dsi_pd;
-+
-+err_free_pd:
-+	kfree(dsi_pd);
-+
-+	return NULL;
++	return data;
 +}
 +
-+static struct of_device_id exynos_dsi_of_match[] = {
-+	{ .compatible = "samsung,exynos4210-mipi-dsi" },
++static struct of_device_id s6e8ax0_of_match[] = {
++	{ .compatible = "samsung,s6e8ax0" },
 +	{ }
 +};
 +
-+MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
++MODULE_DEVICE_TABLE(of, s6e8ax0_of_match);
 +#else
-+static struct exynos_dsi_platform_data *exynos_dsi_parse_dt(
-+						struct platform_device *pdev)
++static struct s6e8ax0_platform_data *s6e8ax0_parse_dt(struct s6e8ax0 *lcd)
 +{
 +	return NULL;
 +}
 +#endif
 +
-+/*
-+ * Platform driver
-+ */
-+
-+static int exynos_dsi_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct exynos_dsi *dsi;
-+	int ret;
-+
-+	dsi = devm_kzalloc(&pdev->dev, sizeof(*dsi), GFP_KERNEL);
-+	if (!dsi) {
-+		dev_err(&pdev->dev, "failed to allocate dsi object.\n");
-+		return -ENOMEM;
-+	}
-+
-+	spin_lock_init(&dsi->transfer_lock);
-+	INIT_LIST_HEAD(&dsi->transfer_list);
-+
-+	dsi->dev = &pdev->dev;
-+	dsi->pd = pdev->dev.platform_data;
-+
-+	if (dsi->pd == NULL && pdev->dev.of_node)
-+		dsi->pd = exynos_dsi_parse_dt(pdev);
-+
-+	if (dsi->pd == NULL) {
-+		dev_err(&pdev->dev, "failed to get platform data for dsi.\n");
-+		return -EINVAL;
-+	}
-+
-+	dsi->supplies[0].supply = "vdd11";
-+	dsi->supplies[1].supply = "vdd18";
-+	ret = devm_regulator_bulk_get(&pdev->dev,
-+				ARRAY_SIZE(dsi->supplies), dsi->supplies);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get regulators: %d\n", ret);
-+		return ret;
-+	}
-+
-+	dsi->pll_clk = devm_clk_get(&pdev->dev, "pll_clk");
-+	if (IS_ERR(dsi->pll_clk)) {
-+		dev_err(&pdev->dev, "failed to get dsi pll input clock\n");
-+		return -ENODEV;
-+	}
-+
-+	dsi->bus_clk = devm_clk_get(&pdev->dev, "bus_clk");
-+	if (IS_ERR(dsi->bus_clk)) {
-+		dev_err(&pdev->dev, "failed to get dsi bus clock\n");
-+		return -ENODEV;
-+	}
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		dev_err(&pdev->dev, "failed to get io memory region\n");
-+		return -ENODEV;
-+	}
-+
-+	dsi->reg_base = devm_request_and_ioremap(&pdev->dev, res);
-+	if (!dsi->reg_base) {
-+		dev_err(&pdev->dev, "failed to remap io region\n");
-+		return -ENOMEM;
-+	}
-+
-+	platform_set_drvdata(pdev, dsi);
-+
-+	pm_runtime_set_suspended(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+
-+	pm_runtime_get_sync(&pdev->dev);
-+	writel(~0, dsi->reg_base + DSIM_INTMSK_REG);
-+	pm_runtime_put_sync(&pdev->dev);
-+
-+	dsi->irq = platform_get_irq(pdev, 0);
-+	if (dsi->irq < 0) {
-+		dev_err(&pdev->dev, "failed to request dsi irq resource\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = devm_request_irq(&pdev->dev, dsi->irq, exynos_dsi_irq,
-+						0, dev_name(&pdev->dev), dsi);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to request dsi irq\n");
-+		return ret;
-+	}
-+
-+	dsi->out.name = dev_name(&pdev->dev);
-+	dsi->out.id = -1;
-+	dsi->out.of_node = pdev->dev.of_node;
-+	dsi->out.common_ops = &exynos_dsi_common_ops;
-+	dsi->out.ops.dsi = &exynos_dsi_ops;
-+
-+	ret = video_source_register(&dsi->out);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to register video source\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __devexit exynos_dsi_remove(struct platform_device *pdev)
-+{
-+	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
-+
-+	video_source_unregister(&dsi->out);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Power management
-+ */
-+
-+static int exynos_dsi_runtime_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
-+
-+	dev_info(dev, "%s\n", __func__);
-+
-+	if (dsi->pd->phy_enable)
-+		dsi->pd->phy_enable(pdev, false);
-+
-+	clk_disable_unprepare(dsi->pll_clk);
-+	clk_disable_unprepare(dsi->bus_clk);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
-+
-+	return 0;
-+}
-+
-+static int exynos_dsi_runtime_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
-+
-+	dev_info(dev, "%s\n", __func__);
-+
-+	regulator_bulk_enable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
-+
-+	clk_prepare_enable(dsi->bus_clk);
-+	clk_prepare_enable(dsi->pll_clk);
-+
-+	if (dsi->pd->phy_enable)
-+		dsi->pd->phy_enable(pdev, true);
-+
-+	return 0;
-+}
-+
-+static int exynos_dsi_suspend(struct device *dev)
-+{
-+	if (pm_runtime_suspended(dev))
-+		return 0;
-+
-+	return exynos_dsi_runtime_suspend(dev);
-+}
-+
-+static int exynos_dsi_resume(struct device *dev)
-+{
-+	if (pm_runtime_suspended(dev))
-+		return 0;
-+
-+	return exynos_dsi_runtime_resume(dev);
-+}
-+
-+static const struct dev_pm_ops exynos_dsi_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos_dsi_runtime_suspend,
-+					exynos_dsi_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(exynos_dsi_suspend, exynos_dsi_resume)
-+};
-+
-+/*
-+ * Module
-+ */
-+
-+static struct platform_driver exynos_dsi_driver = {
-+	.probe = exynos_dsi_probe,
-+	.remove = __devexit_p(exynos_dsi_remove),
-+	.driver = {
-+		   .name = "exynos-dsi",
-+		   .owner = THIS_MODULE,
-+		   .pm = &exynos_dsi_pm_ops,
-+		   .of_match_table = of_match_ptr(exynos_dsi_of_match),
++static const struct display_entity_interface_params s6e8ax0_params = {
++	.type = DISPLAY_ENTITY_INTERFACE_DSI,
++	.p.dsi = {
++		.format = DSI_FMT_RGB888,
++		.mode = DSI_MODE_VIDEO | DSI_MODE_VIDEO_BURST
++			| DSI_MODE_VIDEO_HFP | DSI_MODE_VIDEO_HBP
++			| DSI_MODE_VIDEO_HSA | DSI_MODE_EOT_PACKET
++			| DSI_MODE_VSYNC_FLUSH,
++		.data_lanes = 0xf,
++		.hs_clk_freq = 500000000,
++		.esc_clk_freq = 10000000,
 +	},
 +};
 +
-+module_platform_driver(exynos_dsi_driver);
++static int s6e8ax0_set_state(struct display_entity *entity,
++			    enum display_entity_state state)
++{
++	struct s6e8ax0 *panel = to_panel(entity);
 +
++	switch (state) {
++	case DISPLAY_ENTITY_STATE_OFF:
++		if (entity->state == DISPLAY_ENTITY_STATE_ON) {
++			s6e8ax0_sleep_in(panel);
++			panel->entity.source->common_ops->set_stream(entity->source,
++						DISPLAY_ENTITY_STREAM_STOPPED);
++
++			msleep(panel->pdata->power_off_delay);
++			s6e8ax0_display_off(panel);
++
++			panel->entity.source->ops.dsi->disable(entity->source);
++
++			regulator_bulk_disable(ARRAY_SIZE(panel->supplies),
++								panel->supplies);
++		} else if (entity->state == DISPLAY_ENTITY_STATE_STANDBY) {
++			msleep(panel->pdata->power_off_delay);
++			s6e8ax0_display_off(panel);
++
++			panel->entity.source->ops.dsi->disable(entity->source);
++
++			regulator_bulk_disable(ARRAY_SIZE(panel->supplies),
++								panel->supplies);
++		}
++		break;
++
++	case DISPLAY_ENTITY_STATE_STANDBY:
++		if (entity->state == DISPLAY_ENTITY_STATE_ON) {
++			s6e8ax0_sleep_in(panel);
++			panel->entity.source->common_ops->set_stream(entity->source,
++						DISPLAY_ENTITY_STREAM_STOPPED);
++		} else if (entity->state == DISPLAY_ENTITY_STATE_OFF) {
++			msleep(panel->pdata->power_on_delay);
++
++			regulator_bulk_enable(ARRAY_SIZE(panel->supplies),
++								panel->supplies);
++
++			msleep(panel->pdata->reset_delay);
++
++			/* lcd reset */
++			if (panel->pdata->reset)
++				panel->pdata->reset(panel->dev);
++			msleep(5);
++
++			panel->entity.source->ops.dsi->enable(entity->source);
++
++			s6e8ax0_set_sequence(panel);
++			s6e8ax0_sleep_in(panel);
++		}
++		break;
++
++	case DISPLAY_ENTITY_STATE_ON:
++		if (entity->state == DISPLAY_ENTITY_STATE_OFF) {
++			msleep(panel->pdata->power_on_delay);
++
++			regulator_bulk_enable(ARRAY_SIZE(panel->supplies),
++								panel->supplies);
++
++			msleep(panel->pdata->reset_delay);
++
++			/* lcd reset */
++			if (panel->pdata->reset)
++				panel->pdata->reset(panel->dev);
++			msleep(5);
++
++			panel->entity.source->ops.dsi->enable(entity->source);
++
++			s6e8ax0_set_sequence(panel);
++
++			panel->entity.source->common_ops->set_stream(entity->source,
++					DISPLAY_ENTITY_STREAM_CONTINUOUS);
++		} else {
++			panel->entity.source->common_ops->set_stream(entity->source,
++					DISPLAY_ENTITY_STREAM_CONTINUOUS);
++			s6e8ax0_sleep_out(panel);
++		}
++		break;
++
++	default:
++		break;
++	}
++
++	return 0;
++}
++
++static int s6e8ax0_get_modes(struct display_entity *entity,
++			    const struct videomode **modes)
++{
++	struct s6e8ax0 *panel = to_panel(entity);
++
++	*modes = &panel->pdata->mode;
++	return 1;
++}
++
++static int s6e8ax0_get_size(struct display_entity *entity,
++			   unsigned int *width, unsigned int *height)
++{
++	struct s6e8ax0 *panel = to_panel(entity);
++
++	*width = panel->pdata->width;
++	*height = panel->pdata->height;
++	return 0;
++}
++
++static int s6e8ax0_get_params(struct display_entity *entity,
++				struct display_entity_interface_params *params)
++{
++	*params = s6e8ax0_params;
++	return 0;
++}
++
++static const struct display_entity_control_ops s6e8ax0_control_ops = {
++	.set_state = s6e8ax0_set_state,
++	.get_modes = s6e8ax0_get_modes,
++	.get_size = s6e8ax0_get_size,
++	.get_params = s6e8ax0_get_params,
++};
++
++static void s6e8ax0_release(struct display_entity *entity)
++{
++	struct s6e8ax0 *panel = to_panel(entity);
++
++	backlight_device_unregister(panel->bd);
++	lcd_device_unregister(panel->ld);
++	regulator_bulk_free(ARRAY_SIZE(panel->supplies), panel->supplies);
++	kfree(panel);
++}
++
++static int s6e8ax0_probe(struct platform_device *pdev)
++{
++	struct s6e8ax0 *lcd;
++	int ret;
++
++	lcd = kzalloc(sizeof(struct s6e8ax0), GFP_KERNEL);
++	if (!lcd) {
++		dev_err(&pdev->dev, "failed to allocate s6e8ax0 structure.\n");
++		return -ENOMEM;
++	}
++
++	lcd->dev = &pdev->dev;
++	lcd->pdata = (struct s6e8ax0_platform_data *)pdev->dev.platform_data;
++
++	if (!lcd->pdata) {
++		lcd->pdata = s6e8ax0_parse_dt(lcd);
++		if (!lcd->pdata) {
++			dev_err(&pdev->dev, "failed to find platform data\n");
++			return -ENODEV;
++		}
++	}
++
++	lcd->supplies[0].supply = "vdd3";
++	lcd->supplies[1].supply = "vci";
++	ret = regulator_bulk_get(&pdev->dev,
++				ARRAY_SIZE(lcd->supplies), lcd->supplies);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to get regulators: %d\n", ret);
++		goto err_regulator_bulk_get;
++	}
++
++	lcd->ld = lcd_device_register("s6e8ax0", &pdev->dev, lcd,
++			&s6e8ax0_lcd_ops);
++	if (IS_ERR(lcd->ld)) {
++		dev_err(&pdev->dev, "failed to register lcd ops.\n");
++		ret = PTR_ERR(lcd->ld);
++		goto err_lcd_register;
++	}
++
++	lcd->bd = backlight_device_register("s6e8ax0-bl", &pdev->dev, lcd,
++			&s6e8ax0_backlight_ops, NULL);
++	if (IS_ERR(lcd->bd)) {
++		dev_err(&pdev->dev, "failed to register backlight ops.\n");
++		ret = PTR_ERR(lcd->bd);
++		goto err_backlight_register;
++	}
++
++	lcd->acl_enable = 1;
++	lcd->cur_acl = 0;
++	lcd->power = FB_BLANK_UNBLANK;
++
++	lcd->bd->props.max_brightness = MAX_BRIGHTNESS;
++	lcd->bd->props.brightness = MAX_BRIGHTNESS;
++
++	lcd->entity.of_node = pdev->dev.of_node;
++	lcd->entity.dev = &pdev->dev;
++	lcd->entity.release = s6e8ax0_release;
++	lcd->entity.ops = &s6e8ax0_control_ops;
++
++	platform_set_drvdata(pdev, lcd);
++
++	ret = display_entity_register(&lcd->entity);
++	if (ret < 0)
++		goto err_display_register;
++
++	display_entity_set_state(&lcd->entity, DISPLAY_ENTITY_STATE_ON);
++
++	dev_dbg(&pdev->dev, "probed s6e8ax0 panel driver.\n");
++
++	return 0;
++
++err_display_register:
++	backlight_device_unregister(lcd->bd);
++err_backlight_register:
++	lcd_device_unregister(lcd->ld);
++err_lcd_register:
++	regulator_bulk_free(ARRAY_SIZE(lcd->supplies), lcd->supplies);
++err_regulator_bulk_get:
++	kfree(lcd);
++
++	return ret;
++}
++
++static int s6e8ax0_remove(struct platform_device *dev)
++{
++	struct s6e8ax0 *lcd = platform_get_drvdata(dev);
++
++	platform_set_drvdata(dev, NULL);
++	display_entity_unregister(&lcd->entity);
++
++	return 0;
++}
++
++static int s6e8ax0_suspend(struct device *dev)
++{
++	struct s6e8ax0 *lcd = dev_get_drvdata(dev);
++
++	if (lcd->power == FB_BLANK_UNBLANK)
++		display_entity_set_state(&lcd->entity,
++						DISPLAY_ENTITY_STATE_OFF);
++
++	return 0;
++}
++
++static int s6e8ax0_resume(struct device *dev)
++{
++	struct s6e8ax0 *lcd = dev_get_drvdata(dev);
++
++	if (lcd->power == FB_BLANK_UNBLANK)
++		display_entity_set_state(&lcd->entity,
++						DISPLAY_ENTITY_STATE_ON);
++
++	return 0;
++}
++
++static struct dev_pm_ops s6e8ax0_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(s6e8ax0_suspend, s6e8ax0_resume)
++};
++
++static struct platform_driver s6e8ax0_driver = {
++	.probe = s6e8ax0_probe,
++	.remove = s6e8ax0_remove,
++	.driver = {
++		.name = "panel_s6e8ax0",
++		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(s6e8ax0_of_match),
++		.pm = &s6e8ax0_pm_ops,
++	},
++};
++module_platform_driver(s6e8ax0_driver);
++
++MODULE_AUTHOR("Donghwa Lee <dh09.lee@samsung.com>");
++MODULE_AUTHOR("Inki Dae <inki.dae@samsung.com>");
 +MODULE_AUTHOR("Tomasz Figa <t.figa@samsung.com>");
-+MODULE_DESCRIPTION("Samsung SoC MIPI DSI Master");
++MODULE_DESCRIPTION("MIPI-DSI based s6e8ax0 AMOLED LCD Panel Driver");
 +MODULE_LICENSE("GPL");
-diff --git a/include/video/exynos_dsi.h b/include/video/exynos_dsi.h
+diff --git a/include/video/panel-s6e8ax0.h b/include/video/panel-s6e8ax0.h
 new file mode 100644
-index 0000000..95e1568
+index 0000000..e522bfb
 --- /dev/null
-+++ b/include/video/exynos_dsi.h
++++ b/include/video/panel-s6e8ax0.h
 @@ -0,0 +1,41 @@
-+/* include/video/exynos_mipi_dsim.h
++/*
++ * Renesas R61505-based Display Panels
 + *
-+ * Platform data header for Samsung SoC MIPI-DSIM.
++ * Copyright (C) 2012 Renesas Solutions Corp.
 + *
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd
-+ *
-+ * InKi Dae <inki.dae@samsung.com>
-+ * Donghwa Lee <dh09.lee@samsung.com>
++ * Contacts: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
-+*/
-+
-+#ifndef _EXYNOS_MIPI_DSIM_H
-+#define _EXYNOS_MIPI_DSIM_H
-+
-+#include <linux/device.h>
-+
-+/*
-+ * struct exynos_dsi_platform_data - interface to platform data
-+ *	for mipi-dsi driver.
-+ *
-+ * TODO
 + */
-+struct exynos_dsi_platform_data {
-+	unsigned int enabled;
 +
-+	int (*phy_enable)(struct platform_device *pdev, bool on);
++#ifndef __PANEL_S6E8AX0_H__
++#define __PANEL_S6E8AX0_H__
 +
-+	unsigned int pll_stable_time;
-+	unsigned long pll_clk_rate;
-+	unsigned long esc_clk_rate;
-+	unsigned short stop_holding_cnt;
-+	unsigned char bta_timeout;
-+	unsigned short rx_timeout;
++#include <linux/videomode.h>
++
++struct s6e8ax0_platform_data {
++	unsigned long width;		/* Panel width in mm */
++	unsigned long height;		/* Panel height in mm */
++	struct videomode mode;
++
++	/* reset lcd panel device. */
++	int (*reset)(struct device *dev);
++
++	/* it indicates whether lcd panel was enabled
++	   from bootloader or not. */
++	int lcd_enabled;
++	/* it means delay for stable time when it becomes low to high
++	   or high to low that is dependent on whether reset gpio is
++	   low active or high active. */
++	unsigned int reset_delay;
++	/* stable time needing to become lcd power on. */
++	unsigned int power_on_delay;
++	/* stable time needing to become lcd power off. */
++	unsigned int power_off_delay;
++	/* panel is reversed */
++	bool panel_reverse;
 +};
 +
-+int s5p_dsim_phy_enable(struct platform_device *pdev, bool on);
-+
-+#endif /* _EXYNOS_MIPI_DSIM_H */
++#endif /* __PANEL_S6E8AX0_H__ */
 -- 
 1.8.1
