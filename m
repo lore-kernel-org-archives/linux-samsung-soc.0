@@ -1,89 +1,127 @@
-From: "R. Chandrasekar" <rcsekar@samsung.com>
-Subject: [PATCH] Asoc: Samsung: I2S: Add support for runtime S2R
-Date: Wed, 30 Jan 2013 17:41:04 +0530
-Message-ID: <1359547864-1057-1-git-send-email-rcsekar@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC v4 01/14] [media] Add common video interfaces OF
+ bindings documentation
+Date: Wed, 30 Jan 2013 13:40:48 +0100
+Message-ID: <510914D0.6050404@samsung.com>
+References: <1358969489-20420-1-git-send-email-s.nawrocki@samsung.com>
+ <1525960.fMnIjkZnjX@avalon> <51017DB2.5050905@samsung.com>
+ <453041220.G3D9E6yQdS@avalon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:33298 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751285Ab3A3MOY (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34273 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751153Ab3A3Mkw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 07:14:24 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHF00M5ETZXRI41@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 21:14:22 +0900 (KST)
-Received: from sekar-ubuntu.sisodomain.com ([107.108.73.178])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHF001O6TXULM40@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 21:14:22 +0900 (KST)
+	Wed, 30 Jan 2013 07:40:52 -0500
+In-reply-to: <453041220.G3D9E6yQdS@avalon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, ben-linux@fluff.org, kgene.kim@samsung.com, jassisinghbrar@gmail.com, "R. Chandrasekar" <rcsekar@samsung.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, hverkuil@xs4all.nl, g.liakhovetski@gmx.de, kyungmin.park@samsung.com, kgene.kim@samsung.com, grant.likely@secretlab.ca, rob.herring@calxeda.com, thomas.abraham@linaro.org, t.figa@samsung.com, myungjoo.ham@samsung.com, sw0312.kim@samsung.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
 
-From: "R. Chandrasekar" <rcsekar@samsung.com>
+Hi Laurent,
 
-This patch adds runtime suspend to resume support for I2S.
-I2S clk is disabled at suspend and enabled at resume.
+On 01/25/2013 02:52 AM, Laurent Pinchart wrote:
+>>>> +Data interfaces on all video devices are described by their child 'port'
+>>>> +nodes. Configuration of a port depends on other devices participating in
+>>>> +the data transfer and is described by 'endpoint' subnodes.
+>>>> +
+>>>> +dev {
+>>>> +	#address-cells = <1>;
+>>>> +	#size-cells = <0>;
+>>>> +	port@0 {
+>>>> +		endpoint@0 { ... };
+>>>> +		endpoint@1 { ... };
+>>>> +	};
+>>>> +	port@1 { ... };
+>>>> +};
+>>>> +
+>>>> +If a port can be configured to work with more than one other device on
+>>>> +the same bus, an 'endpoint' child node must be provided for each of
+>>>> +them. If more than one port is present in a device node or there is more
+>>>> +than one endpoint at a port, a common scheme, using '#address-cells',
+>>>> +'#size-cells' and 'reg' properties is used.
+>>>
+>>> Wouldn't this cause problems if the device has both video ports and a
+>>> child bus ? Using #address-cells and #size-cells for the video ports would
+>>> prevent the child bus from being handled in the usual way.
+>>
+>> Indeed, it looks like a serious issue in these bindings.
+>>
+>>> A possible solution would be to number ports with a dash instead of a @,
+>>> as done in pinctrl for instance. We would then get
+>>>
+>>> 	port-0 {
+>>> 		endpoint-0 { ... };
+>>> 		endpoint-1 { ... };
+>>> 	};
+>>> 	port-1 { ... };
 
-Signed-off-by: R. Chandrasekar <rcsekar@samsung.com>
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- sound/soc/samsung/i2s.c |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+One problem here is that index of the port or the endpoint node can have 
+random value and don't need to start with 0, which is the case for the pinctrl
+properties. It makes iterating over those nodes more difficult, instead
+of using standard functions like of_node_cmp() we would need to search for 
+sub-strings in the node name.
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 2fc42f9..d7231e3 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1071,6 +1071,26 @@ static inline int samsung_i2s_get_driver_data(struct platform_device *pdev)
- 		return platform_get_device_id(pdev)->driver_data;
- }
- 
-+#ifdef CONFIG_PM_RUNTIME
-+static int i2s_runtime_suspend(struct device *dev)
-+{
-+	struct i2s_dai *i2s = dev_get_drvdata(dev);
-+
-+	clk_disable_unprepare(i2s->clk);
-+
-+	return 0;
-+}
-+
-+static int i2s_runtime_resume(struct device *dev)
-+{
-+	struct i2s_dai *i2s = dev_get_drvdata(dev);
-+
-+	clk_prepare_enable(i2s->clk);
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM_RUNTIME */
-+
- static int samsung_i2s_probe(struct platform_device *pdev)
- {
- 	struct i2s_dai *pri_dai, *sec_dai = NULL;
-@@ -1288,6 +1308,11 @@ static const struct of_device_id exynos_i2s_match[] = {
- MODULE_DEVICE_TABLE(of, exynos_i2s_match);
- #endif
- 
-+static const struct dev_pm_ops samsung_i2s_pm = {
-+	SET_RUNTIME_PM_OPS(i2s_runtime_suspend,
-+				i2s_runtime_resume, NULL)
-+};
-+
- static struct platform_driver samsung_i2s_driver = {
- 	.probe  = samsung_i2s_probe,
- 	.remove = samsung_i2s_remove,
-@@ -1296,6 +1321,7 @@ static struct platform_driver samsung_i2s_driver = {
- 		.name = "samsung-i2s",
- 		.owner = THIS_MODULE,
- 		.of_match_table = of_match_ptr(exynos_i2s_match),
-+		.pm = &samsung_i2s_pm,
- 	},
- };
- 
--- 
-1.7.9.5
+>> Sounds like a good alternative, I can't think of any better solution at the
+>> moment.
+>>
+>>>> +Two 'endpoint' nodes are linked with each other through their
+>>>> +'remote-endpoint' phandles.  An endpoint subnode of a device contains
+>>>> +all properties needed for configuration of this device for data exchange
+>>>> +with the other device.  In most cases properties at the peer 'endpoint'
+>>>> +nodes will be identical, however they might need to be different when
+>>>> +there is any signal modifications on the bus between two devices, e.g.
+>>>> +there are logic signal inverters on the lines.
+>>>> +
+>>>> +Required properties
+>>>> +-------------------
+>>>> +
+>>>> +If there is more than one 'port' or more than one 'endpoint' node
+>>>> following +properties are required in relevant parent node:
+>>>> +
+>>>> +- #address-cells : number of cells required to define port number,
+>>>> should be 1.
+>>>> +- #size-cells    : should be zero.
+>>>
+>>> I wonder if we should specify whether a port is a data sink or data
+>>> source. A source can be connected to multiple sinks at the same time, but
+>>> a sink can only be connected to a single source. If we want to perform
+>>> automatic sanity checks in the core knowing the direction might help.
+>>
+>> Multiple sources can be linked to a single sink, but only one link can be
+>> active at any time.
+>>
+>> So I'm not sure if knowing if a DT port is a data source or data sink would
+>> let us to validate device tree structure statically in general.
+>>
+>> Such source/sink property could be useful later at runtime, when data
+>> pipeline is set up for streaming.
+> 
+> Yes, I was mostly thinking about runtime.
+> 
+>> How do you think this could be represented ? By just having boolean
+>> properties like: 'source' and 'sink' in the port nodes ? Or perhaps in the
+>> endpoint nodes, since some devices might be bidirectional ? I don't recall
+>> any at the moment though.
+> 
+> Source and sink properties would do. We could also use a direction property 
+> that could take sink, source and bidirectional values, but that might be more 
+> complex.
+
+Since we're going to allow multiple endpoints at a port to be active at any
+time, for the reasons we discussed in IRC [1], I assume it's no longer
+possible to perform sanity checks mentioned above in the core. Should we 
+then keep the 'source', 'sink' properties in the port nodes ?
+
+[1] http://linuxtv.org/irc/v4l/index.php?date=2013-01-29
+
+> I don't think we will have bidirectional link (as that would most probably 
+> involve a very different kind of bus, and thus new bindings).
+
+--
+
+Thanks,
+Sylwester
