@@ -1,49 +1,47 @@
-From: Alexey Galakhov <agalakhov@gmail.com>
-Subject: [PATCH] Fix compilation error on S3C2440
-Date: Wed, 30 Jan 2013 15:35:22 +0600
-Message-ID: <1359538522-4738-1-git-send-email-agalakhov@gmail.com>
-References: <20130130021857.GF4945@opensource.wolfsonmicro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Failure due to missing (Exynos related) pinctrl patch
+Date: Wed, 30 Jan 2013 10:48:18 +0100
+Message-ID: <CACRpkdZp8wM+ho9gg51YRx4ScJVw9RnPCpVJXKJgZ=xngi6=Jg@mail.gmail.com>
+References: <CAK9yfHybC6ZgGwxa_i=LrMpU_q9M4aaMraTqK63B+fw11NBqRA@mail.gmail.com>
+	<CACRpkdYj_e6+iT7iAVtA8_t=4e_2Lxo9duozXccfcbKY8fGk7A@mail.gmail.com>
+	<CAK9yfHwav_u3mjVqNdX4kY=LyUW30vr6AMGUExfGKuJn2KH8qQ@mail.gmail.com>
+	<076401cdfe9f$6a0f5fa0$3e2e1ee0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:38953 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754293Ab3A3Jfm (ORCPT
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:44027 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754322Ab3A3JsT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 04:35:42 -0500
-Received: by mail-la0-f41.google.com with SMTP id fo12so945044lab.28
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 01:35:40 -0800 (PST)
-In-Reply-To: <20130130021857.GF4945@opensource.wolfsonmicro.com>
+	Wed, 30 Jan 2013 04:48:19 -0500
+Received: by mail-ie0-f170.google.com with SMTP id c11so1116717ieb.15
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 01:48:18 -0800 (PST)
+In-Reply-To: <076401cdfe9f$6a0f5fa0$3e2e1ee0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@opensource.wolfsonmicro.com
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, bkim73@samsung.com, Alexey Galakhov <agalakhov@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-The commit a08485d8 ("ASoC: Samsung: Do not register samsung audio dma
-device as pdev") introduced compilation error.
+On Wed, Jan 30, 2013 at 5:08 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Sachin Kamat wrote:
+>>
+>> >> This patch is required along with the
+>> >> patch "gpio: samsung: fix pinctrl condition for exynos and exynos5440"
+>> >> (mainline commit Id: e4a5da51) which has already made it into
+>> >> mainline. Without the missing patch we get the following boot up
+>> >> warnings and subsequent failures with dt boot on 4412 based board:
+>> >
+>> > Hm I didn't realize there was a dependency between these
+>> > patches, oh well, better get the pull for the pinctrl tree finished
+>> > off then...
+>>
+>> Ideally those 2 patches should have been squashed together.
+>>
+> Err, Sachin, what are you talking about? As you said, one patch has been
+> merged into the mainline, so how does it can be squashed? In this case, just
+> applying the other patch into pinctrl-fixes is enough.
 
-Combination of CONFIG_CPU_S3C2440 and CONFIG_SND_S3C24XX_I2S
-caused undefined symbols 's3c_i2sv2_register_dai' and 's3c2412_i2s_dai'
-in sound/soc/samsung/s3c24xx-i2s.c.
+Torvalds has already pulled it in -> problem solved. :-)
 
-This patch fixes the problem and makes S3C2440 I2S usable again. It does
-not affect S3C2412 (aka I2S-v2).
-
-Signed-off-by: Alexey Galakhov <agalakhov@gmail.com>
----
- sound/soc/samsung/s3c24xx-i2s.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index ee10e87..13f6dd1 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -469,7 +469,7 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
- 
--	ret = s3c_i2sv2_register_dai(&pdev->dev, -1, &s3c2412_i2s_dai);
-+	ret = snd_soc_register_dai(&pdev->dev, &s3c24xx_i2s_dai);
- 	if (ret) {
- 		pr_err("failed to register the dai\n");
- 		return ret;
--- 
-1.7.10.4
+Yours,
+Linus Walleij
