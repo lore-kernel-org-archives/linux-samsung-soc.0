@@ -1,57 +1,116 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: Failure due to missing (Exynos related) pinctrl patch
-Date: Wed, 30 Jan 2013 09:40:03 +0530
-Message-ID: <CAK9yfHzOVbz0unEZdJEQ=Zn9XS0H6fft-nuxC4wvupCk=B5KnQ@mail.gmail.com>
-References: <CAK9yfHybC6ZgGwxa_i=LrMpU_q9M4aaMraTqK63B+fw11NBqRA@mail.gmail.com>
-	<CACRpkdYj_e6+iT7iAVtA8_t=4e_2Lxo9duozXccfcbKY8fGk7A@mail.gmail.com>
-	<CAK9yfHwav_u3mjVqNdX4kY=LyUW30vr6AMGUExfGKuJn2KH8qQ@mail.gmail.com>
-	<076401cdfe9f$6a0f5fa0$3e2e1ee0$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Prasanna Kumar <prasanna.ps@samsung.com>
+Subject: [PATCH RESEND v2] ARM: EXYNOS: dts: Set up power domain for MFC and
+ G-scaler
+Date: Wed, 30 Jan 2013 10:19:04 +0530
+Message-ID: <1359521344-17189-1-git-send-email-prasanna.ps@samsung.com>
+References: <06e301cdfe51$f11b59c0$d3520d40$@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:60093 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752990Ab3A3EKF (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:44603 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752171Ab3A3EnS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 23:10:05 -0500
-Received: by mail-pb0-f41.google.com with SMTP id ro12so713837pbb.28
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 20:10:04 -0800 (PST)
-In-Reply-To: <076401cdfe9f$6a0f5fa0$3e2e1ee0$@samsung.com>
+	Tue, 29 Jan 2013 23:43:18 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHF00L4E92ZVP20@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 13:43:16 +0900 (KST)
+Received: from user-ubuntu.sisodomain.com ([107.108.83.235])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MHF000R593VFOW0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 13:43:16 +0900 (KST)
+In-reply-to: <06e301cdfe51$f11b59c0$d3520d40$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 30 January 2013 09:38, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Sachin Kamat wrote:
->>
->> >> This patch is required along with the
->> >> patch "gpio: samsung: fix pinctrl condition for exynos and exynos5440"
->> >> (mainline commit Id: e4a5da51) which has already made it into
->> >> mainline. Without the missing patch we get the following boot up
->> >> warnings and subsequent failures with dt boot on 4412 based board:
->> >
->> > Hm I didn't realize there was a dependency between these
->> > patches, oh well, better get the pull for the pinctrl tree finished
->> > off then...
->>
->> Ideally those 2 patches should have been squashed together.
->>
-> Err, Sachin, what are you talking about? As you said, one patch has been
-> merged into the mainline, so how does it can be squashed? In this case, just
-> applying the other patch into pinctrl-fixes is enough.
+This patch adds device tree nodes for MFC and G-scaler power
+domains of exynos5250.It binds these power-domain nodes to repsective
+device tree nodes
 
-Yes you are right. It cannot be squashed now. I was referring to the
-time of generation of these patches.
+It also adds support to enable PM generic domains for exynos5250.
 
->
-> Thanks.
->
-> - Kukjin
->
+Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++++++++++++
+ arch/arm/mach-exynos/Kconfig      |    1 +
+ 2 files changed, 17 insertions(+), 0 deletions(-)
 
-
-
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 30485de..e282fde 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -46,6 +46,16 @@
+ 		i2c8 = &i2c_8;
+ 	};
+ 
++	pd_gsc: gsc-power-domain@0x10044000 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x10044000 0x20>;
++	};
++
++	pd_mfc: mfc-power-domain@0x10044040 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x10044040 0x20>;
++	};
++
+ 	gic:interrupt-controller@10481000 {
+ 		compatible = "arm,cortex-a9-gic";
+ 		#interrupt-cells = <3>;
+@@ -85,6 +95,7 @@
+ 		compatible = "samsung,mfc-v6";
+ 		reg = <0x11000000 0x10000>;
+ 		interrupts = <0 96 0>;
++		samsung,power-domain = <&pd_mfc>;
+ 	};
+ 
+ 	rtc {
+@@ -554,28 +565,33 @@
+ 		};
+ 	};
+ 
++
+ 	gsc_0:  gsc@0x13e00000 {
+ 		compatible = "samsung,exynos5-gsc";
+ 		reg = <0x13e00000 0x1000>;
+ 		interrupts = <0 85 0>;
++		samsung,power-domain = <&pd_gsc>;
+ 	};
+ 
+ 	gsc_1:  gsc@0x13e10000 {
+ 		compatible = "samsung,exynos5-gsc";
+ 		reg = <0x13e10000 0x1000>;
+ 		interrupts = <0 86 0>;
++		samsung,power-domain = <&pd_gsc>;
+ 	};
+ 
+ 	gsc_2:  gsc@0x13e20000 {
+ 		compatible = "samsung,exynos5-gsc";
+ 		reg = <0x13e20000 0x1000>;
+ 		interrupts = <0 87 0>;
++		samsung,power-domain = <&pd_gsc>;
+ 	};
+ 
+ 	gsc_3:  gsc@0x13e30000 {
+ 		compatible = "samsung,exynos5-gsc";
+ 		reg = <0x13e30000 0x1000>;
+ 		interrupts = <0 88 0>;
++		samsung,power-domain = <&pd_gsc>;
+ 	};
+ 
+ 	hdmi {
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index e103c29..96f4a9f 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -61,6 +61,7 @@ config SOC_EXYNOS5250
+ 	bool "SAMSUNG EXYNOS5250"
+ 	default y
+ 	depends on ARCH_EXYNOS5
++	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+ 	select S5P_DEV_MFC
 -- 
-With warm regards,
-Sachin
+1.7.5.4
