@@ -1,36 +1,44 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 0/6] ARM: dts: Add MFC support for Exynos4
-Date: Wed, 30 Jan 2013 16:01:13 +0530
-Message-ID: <CAK9yfHzNGkEnEnwh2dsVzTx==sx0M9NTzqJOdGqAUoVZ+s9i3A@mail.gmail.com>
-References: <1359529889-26318-1-git-send-email-sachin.kamat@linaro.org>
-	<5108E110.3040503@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v2 1/5] ARM: dts: Add FIMD node to exynos4
+Date: Wed, 30 Jan 2013 17:29:23 +0530
+Message-ID: <1359547167-16560-2-git-send-email-vikas.sajjan@linaro.org>
+References: <1359547167-16560-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:44935 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754209Ab3A3KbO (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:40669 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751482Ab3A3L7k (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 05:31:14 -0500
-Received: by mail-oa0-f45.google.com with SMTP id o6so1465130oag.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 02:31:13 -0800 (PST)
-In-Reply-To: <5108E110.3040503@samsung.com>
+	Wed, 30 Jan 2013 06:59:40 -0500
+Received: by mail-pb0-f45.google.com with SMTP id rq13so930392pbb.32
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 03:59:39 -0800 (PST)
+In-Reply-To: <1359547167-16560-1-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, sachin.kamat@linaro.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
->
-> Thanks Sachin. For the whole series:
->
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
-> I have also tested patch 2/6 on an Exynos4412 based board,
-> just added the mfc clock entries in the codec node.
+This adds common FIMD device node for all Exynos4 SoCs.
 
-Thanks Sylwester for your review and testing.
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+---
+ arch/arm/boot/dts/exynos4.dtsi |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e1347fc..96c3b4a 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -289,4 +289,11 @@
+ 			interrupts = <0 34 0>;
+ 		};
+ 	};
++
++	fimd@11c00000 {
++		compatible = "samsung,exynos4-fimd";
++		interrupt-parent = <&combiner>;
++		reg = <0x11c00000 0x20000>;
++		interrupts = <11 1>, <11 0>, <11 2>;
++	};
+ };
 -- 
-With warm regards,
-Sachin
+1.7.9.5
