@@ -1,51 +1,49 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] regulator: s2mps11: fix incorrect register for buck10
-Date: Wed, 30 Jan 2013 08:02:27 -0500
-Message-ID: <1359550947-5731-1-git-send-email-alim.akhtar@samsung.com>
+From: Alexey Galakhov <agalakhov@gmail.com>
+Subject: S3C2440 DMA broken
+Date: Wed, 30 Jan 2013 19:10:13 +0600
+Message-ID: <51091BB5.2000400@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:31974 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752990Ab3A3Mlz (ORCPT
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:58130 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753841Ab3A3NKW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 07:41:55 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHF002DKV9G3XW0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 21:41:53 +0900 (KST)
-Received: from chrome-ubuntu.sisodomain.com ([107.108.73.106])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHF002N9V8AC670@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 21:41:53 +0900 (KST)
+	Wed, 30 Jan 2013 08:10:22 -0500
+Received: by mail-lb0-f173.google.com with SMTP id gf7so2115385lbb.18
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 05:10:20 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: sbkim73@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, broonie@opensource.wolfsonmicro.com
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-For BUCK10 the control registers are wrongly set as buck9 control register
-This patch corrects the control registers for buck10
+Hello,
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- drivers/regulator/s2mps11.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I found that audio on S3C2440 was broken since commit 344b4c4 (ASoC:
+Samsung: Update DMA interface). Each audio buffer is played multiple times.
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index bd062a2..cd9ea2e 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -174,9 +174,9 @@ static struct regulator_ops s2mps11_buck_ops = {
- 	.min_uV		= S2MPS11_BUCK_MIN2,			\
- 	.uV_step	= S2MPS11_BUCK_STEP2,			\
- 	.n_voltages	= S2MPS11_BUCK_N_VOLTAGES,		\
--	.vsel_reg	= S2MPS11_REG_B9CTRL2,			\
-+	.vsel_reg	= S2MPS11_REG_B10CTRL2,			\
- 	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
--	.enable_reg	= S2MPS11_REG_B9CTRL1,			\
-+	.enable_reg	= S2MPS11_REG_B10CTRL1,			\
- 	.enable_mask	= S2MPS11_ENABLE_MASK			\
- }
- 
--- 
-1.8.0
+An investigation of the issue has shown that it is caused by incorrect
+buffer length passed to s3c2410_dma_enqueue() in the s3c_dma_prepare()
+function (file arch/arm/plat-samsung/s3c-dma-ops.c). To be more precise:
+
+int len = (param->cap == DMA_CYCLIC) ? param->period : param->len;
+
+The buffer length is set in sound/soc/samsung/dma.c like that:
+
+dma_info.period = prtd->dma_period;
+dma_info.len = prtd->dma_period*limit;
+
+So the "limit" multiplier is used twice. To prove it, I changed the line
+in s3c-dma-ops.c to the following:
+
+int len = /*(param->cap == DMA_CYCLIC)*/1 ? param->period : param->len;
+
+and the audio was played correctly.
+
+What is the intended behavior of s3c_dma_prepare()? Where shoild the
+length to be fixed - in s3c_dma_prepare() or in dma.c ?
+
+Regards,
+--
+Alex
