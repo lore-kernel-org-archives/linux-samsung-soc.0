@@ -1,116 +1,68 @@
-From: Prasanna Kumar <prasanna.ps@samsung.com>
-Subject: [PATCH RESEND v2] ARM: EXYNOS: dts: Set up power domain for MFC and
- G-scaler
-Date: Wed, 30 Jan 2013 10:19:04 +0530
-Message-ID: <1359521344-17189-1-git-send-email-prasanna.ps@samsung.com>
-References: <06e301cdfe51$f11b59c0$d3520d40$@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 1/2] ARM: Exynos5250: Enabling samsung-usbphy driver
+Date: Tue, 29 Jan 2013 21:06:22 -0800
+Message-ID: <076f01cdfea7$8e752d90$ab5f88b0$@samsung.com>
+References: <1358868680-5757-1-git-send-email-gautam.vivek@samsung.com>
+ <1358868680-5757-2-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44603 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:48728 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752171Ab3A3EnS (ORCPT
+	with ESMTP id S1750769Ab3A3FGb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 23:43:18 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHF00L4E92ZVP20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 13:43:16 +0900 (KST)
-Received: from user-ubuntu.sisodomain.com ([107.108.83.235])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHF000R593VFOW0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 13:43:16 +0900 (KST)
-In-reply-to: <06e301cdfe51$f11b59c0$d3520d40$@samsung.com>
+	Wed, 30 Jan 2013 00:06:31 -0500
+In-reply-to: <1358868680-5757-2-git-send-email-gautam.vivek@samsung.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, dianders@chromium.org, balbi@ti.com, thomas.abraham@linaro.org, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, p.paneri@samsung.com
 
-This patch adds device tree nodes for MFC and G-scaler power
-domains of exynos5250.It binds these power-domain nodes to repsective
-device tree nodes
+Vivek Gautam wrote:
+> 
+> Adding usbphy node for Exynos5250 along with the
+> necessary device data to be parsed.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |   15 +++++++++++++++
+>  1 files changed, 15 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index 30485de..610e338 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -275,6 +275,21 @@
+>  		#size-cells = <0>;
+>  	};
+> 
+> +	usbphy@12130000 {
 
-It also adds support to enable PM generic domains for exynos5250.
+Please put above node by order of address.
 
-Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++++++++++++
- arch/arm/mach-exynos/Kconfig      |    1 +
- 2 files changed, 17 insertions(+), 0 deletions(-)
+> +		compatible = "samsung,exynos5250-usbphy";
+> +		reg = <0x12130000 0x100>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		usbphy-sys {
+> +			      /* USB device and host PHY_CONTROL registers
+*/
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 30485de..e282fde 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -46,6 +46,16 @@
- 		i2c8 = &i2c_8;
- 	};
- 
-+	pd_gsc: gsc-power-domain@0x10044000 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044000 0x20>;
-+	};
-+
-+	pd_mfc: mfc-power-domain@0x10044040 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044040 0x20>;
-+	};
-+
- 	gic:interrupt-controller@10481000 {
- 		compatible = "arm,cortex-a9-gic";
- 		#interrupt-cells = <3>;
-@@ -85,6 +95,7 @@
- 		compatible = "samsung,mfc-v6";
- 		reg = <0x11000000 0x10000>;
- 		interrupts = <0 96 0>;
-+		samsung,power-domain = <&pd_mfc>;
- 	};
- 
- 	rtc {
-@@ -554,28 +565,33 @@
- 		};
- 	};
- 
-+
- 	gsc_0:  gsc@0x13e00000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e00000 0x1000>;
- 		interrupts = <0 85 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_1:  gsc@0x13e10000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e10000 0x1000>;
- 		interrupts = <0 86 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_2:  gsc@0x13e20000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e20000 0x1000>;
- 		interrupts = <0 87 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	gsc_3:  gsc@0x13e30000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e30000 0x1000>;
- 		interrupts = <0 88 0>;
-+		samsung,power-domain = <&pd_gsc>;
- 	};
- 
- 	hdmi {
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index e103c29..96f4a9f 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -61,6 +61,7 @@ config SOC_EXYNOS5250
- 	bool "SAMSUNG EXYNOS5250"
- 	default y
- 	depends on ARCH_EXYNOS5
-+	select PM_GENERIC_DOMAINS if PM
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
- 	select S5P_DEV_MFC
--- 
-1.7.5.4
+Please add the binding documentation instead of comment here.
+
+> +			reg = <0x10040704 0x8>,
+> +			      /* USB2.0 PHY configuration register */
+> +			      <0x10050230 0x4>;
+> +		};
+> +	};
+> +
+>  	amba {
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+> --
+> 1.7.6.5
