@@ -1,72 +1,89 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v2 5/5] ARM: exynos: dts: Add FIMD DT binding Documentation
-Date: Wed, 30 Jan 2013 17:29:27 +0530
-Message-ID: <1359547167-16560-6-git-send-email-vikas.sajjan@linaro.org>
-References: <1359547167-16560-1-git-send-email-vikas.sajjan@linaro.org>
+From: "R. Chandrasekar" <rcsekar@samsung.com>
+Subject: [PATCH] Asoc: Samsung: I2S: Add support for runtime S2R
+Date: Wed, 30 Jan 2013 17:41:04 +0530
+Message-ID: <1359547864-1057-1-git-send-email-rcsekar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f47.google.com ([209.85.210.47]:63777 "EHLO
-	mail-da0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753109Ab3A3L75 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:33298 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751285Ab3A3MOY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 06:59:57 -0500
-Received: by mail-da0-f47.google.com with SMTP id s35so742151dak.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 03:59:57 -0800 (PST)
-In-Reply-To: <1359547167-16560-1-git-send-email-vikas.sajjan@linaro.org>
+	Wed, 30 Jan 2013 07:14:24 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHF00M5ETZXRI41@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 21:14:22 +0900 (KST)
+Received: from sekar-ubuntu.sisodomain.com ([107.108.73.178])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MHF001O6TXULM40@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 21:14:22 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, sachin.kamat@linaro.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, ben-linux@fluff.org, kgene.kim@samsung.com, jassisinghbrar@gmail.com, "R. Chandrasekar" <rcsekar@samsung.com>
 
-Adds FIMD DT binding documentation both SoC and Board, with an example
+From: "R. Chandrasekar" <rcsekar@samsung.com>
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+This patch adds runtime suspend to resume support for I2S.
+I2S clk is disabled at suspend and enabled at resume.
+
+Signed-off-by: R. Chandrasekar <rcsekar@samsung.com>
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- .../devicetree/bindings/drm/exynos/fimd.txt        |   37 ++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/drm/exynos/fimd.txt
+ sound/soc/samsung/i2s.c |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
-new file mode 100644
-index 0000000..bec9d07
---- /dev/null
-+++ b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
-@@ -0,0 +1,37 @@
-+Device-Tree bindings for fimd driver
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 2fc42f9..d7231e3 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1071,6 +1071,26 @@ static inline int samsung_i2s_get_driver_data(struct platform_device *pdev)
+ 		return platform_get_device_id(pdev)->driver_data;
+ }
+ 
++#ifdef CONFIG_PM_RUNTIME
++static int i2s_runtime_suspend(struct device *dev)
++{
++	struct i2s_dai *i2s = dev_get_drvdata(dev);
 +
-+FIMD stands for Fully Interactive Mobile Display, is the Display Controller for
-+the Exynos series of SoCs which transfers the image data from a video buffer
-+located in the system memory to an external LCD interface.
++	clk_disable_unprepare(i2s->clk);
 +
-+Required properties:
-+- compatible := value should be "samsung,exynos5-fimd" or "samsung,exynos4-fimd"
-+- reg := physical base address of the fimd and length of memory mapped region
-+- interrupt-parent := reference to the interrupt combiner node with phandle
-+- interrupts := interrupt number from the combiner to the cpu
-+- pinctrl := property defining the pinctrl configurations with a phandle
-+- pinctrl-names := name of the pinctrl
++	return 0;
++}
 +
-+Optional Properties:
-+- samsung,power-domain := power domain property defined with a phandle
-+- status := property defining the status of the node
++static int i2s_runtime_resume(struct device *dev)
++{
++	struct i2s_dai *i2s = dev_get_drvdata(dev);
 +
-+Example:
++	clk_prepare_enable(i2s->clk);
 +
-+SoC specific DT Entry:
++	return 0;
++}
++#endif /* CONFIG_PM_RUNTIME */
 +
-+	fimd@11c00000 {
-+		compatible = "samsung,exynos4-fimd";
-+		interrupt-parent = <&combiner>;
-+		reg = <0x11c00000 0x20000>;
-+		interrupts = <11 1>, <11 0>, <11 2>;
-+	};
+ static int samsung_i2s_probe(struct platform_device *pdev)
+ {
+ 	struct i2s_dai *pri_dai, *sec_dai = NULL;
+@@ -1288,6 +1308,11 @@ static const struct of_device_id exynos_i2s_match[] = {
+ MODULE_DEVICE_TABLE(of, exynos_i2s_match);
+ #endif
+ 
++static const struct dev_pm_ops samsung_i2s_pm = {
++	SET_RUNTIME_PM_OPS(i2s_runtime_suspend,
++				i2s_runtime_resume, NULL)
++};
 +
-+Board specific DT Entry:
-+
-+	fimd@11c00000 {
-+		samsung,power-domain = <&pd_lcd0>;
-+		pinctrl-0 = <&lcd_sync &lcd_clk &lcd_en &lcd0_data &pwm1_out>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
+ static struct platform_driver samsung_i2s_driver = {
+ 	.probe  = samsung_i2s_probe,
+ 	.remove = samsung_i2s_remove,
+@@ -1296,6 +1321,7 @@ static struct platform_driver samsung_i2s_driver = {
+ 		.name = "samsung-i2s",
+ 		.owner = THIS_MODULE,
+ 		.of_match_table = of_match_ptr(exynos_i2s_match),
++		.pm = &samsung_i2s_pm,
+ 	},
+ };
+ 
 -- 
 1.7.9.5
