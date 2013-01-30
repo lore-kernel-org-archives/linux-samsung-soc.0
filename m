@@ -1,68 +1,55 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v2 2/2] ARM: Exynos5250: Enabling samsung-usb3-phy driver
-Date: Tue, 29 Jan 2013 21:12:10 -0800
-Message-ID: <077901cdfea8$5db3aeb0$191b0c10$@samsung.com>
-References: <1358868680-5757-1-git-send-email-gautam.vivek@samsung.com>
- <1358868680-5757-3-git-send-email-gautam.vivek@samsung.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH 0/1] Adds display-timing node parsing to exynos drm fimd
+Date: Wed, 30 Jan 2013 11:01:36 +0530
+Message-ID: <CAL1wa8fbfN+0Bw5yW=WEqU7mBtLfEuShJb2YquYRf9HUNKmFzA@mail.gmail.com>
+References: <1359447146-23359-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1358868680-5757-3-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-language: en-us
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vb0-f41.google.com ([209.85.212.41]:35570 "EHLO
+	mail-vb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750732Ab3A3Fb5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jan 2013 00:31:57 -0500
+Received: by mail-vb0-f41.google.com with SMTP id l22so793030vbn.14
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jan 2013 21:31:57 -0800 (PST)
+In-Reply-To: <1359447146-23359-1-git-send-email-l.krishna@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, kgene.kim@samsung.com, vikas.sajjan@linaro.org, linux-samsung-soc@vger.kernel.org, s.trumtrar@pengutronix.de
 
-Vivek Gautam wrote:
-> 
-> Adding usb3.0 phy node for Exynos5250 along with the
-> necessary device data to be parsed.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |   13 +++++++++++++
->  1 files changed, 13 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> index 610e338..018a70d 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -275,6 +275,19 @@
->  		#size-cells = <0>;
->  	};
-> 
-> +	usbphy@12100000 {
-> +		compatible = "samsung,exynos5250-usb3-phy";
-> +		reg = <0x12100000 0x100>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		usbphy-sys {
-> +			      /* USB device and host PHY_CONTROL registers
-*/
-> +			reg = <0x10040704 0x8>;
-> +		};
-> +	};
-> +
->  	usbphy@12130000 {
->  		compatible = "samsung,exynos5250-usbphy";
->  		reg = <0x12130000 0x100>;
+Hello Sean,
+This patch set will be abandoned and your comments will be addressed
+in reply to
+http://lists.freedesktop.org/archives/dri-devel/2013-January/034080.html
+
+Thanks,
+Leela Krishna Amudala.
+
+On Tue, Jan 29, 2013 at 1:42 PM, Leela Krishna Amudala
+<l.krishna@samsung.com> wrote:
+> This patch adds display-timing node parsing to drm fimd, this depends on
+> the display helper patchset at
+> http://lists.freedesktop.org/archives/dri-devel/2013-January/033998.html
+>
+> Patch is based on branch "exynos-drm-next" at
+> http://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git/
+>
+> It is tested on Exynos5250 and Exynos4412 board by applying dependent patches available at
+> http://lists.freedesktop.org/archives/dri-devel/2013-January/033998.html
+>
+> Leela Krishna Amudala (1):
+>   video: drm: exynos: Adds display-timing node parsing using video
+>     helper function
+>
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 31 +++++++++++++++++++++++++++----
+>  1 file changed, 27 insertions(+), 4 deletions(-)
+>
 > --
-> 1.7.6.5
-
-Same as previous comments.
-
-Thanks.
-
-- Kukjin
-
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 1.8.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
