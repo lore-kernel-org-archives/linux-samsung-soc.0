@@ -1,57 +1,49 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 0/6] ARM: dts: Add MFC support for Exynos4
-Date: Wed, 30 Jan 2013 10:00:00 +0100
-Message-ID: <5108E110.3040503@samsung.com>
-References: <1359529889-26318-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Alexey Galakhov <agalakhov@gmail.com>
+Subject: [PATCH] Fix compilation error on S3C2440
+Date: Wed, 30 Jan 2013 15:35:22 +0600
+Message-ID: <1359538522-4738-1-git-send-email-agalakhov@gmail.com>
+References: <20130130021857.GF4945@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:61737 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751285Ab3A3JAE (ORCPT
+Received: from mail-la0-f41.google.com ([209.85.215.41]:38953 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754293Ab3A3Jfm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 04:00:04 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHF008OGKZCFC20@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 09:00:01 +0000 (GMT)
-Received: from [106.116.147.32] by eusync4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHF005PJL010S70@eusync4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 09:00:01 +0000 (GMT)
-In-reply-to: <1359529889-26318-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 30 Jan 2013 04:35:42 -0500
+Received: by mail-la0-f41.google.com with SMTP id fo12so945044lab.28
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 01:35:40 -0800 (PST)
+In-Reply-To: <20130130021857.GF4945@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, patches@linaro.org
+To: broonie@opensource.wolfsonmicro.com
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, bkim73@samsung.com, Alexey Galakhov <agalakhov@gmail.com>
 
-On 01/30/2013 08:11 AM, Sachin Kamat wrote:
-> Changes since v1:
-> Addressed comments from Sylwester
->   - Updated documentation
->   - Added 'status' to the nodes
->   - Updated Kconfig entry
-> 
-> This series is based on for-next branch of Kukjin Kim's tree.
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> Sachin Kamat (6):
->   ARM: dts: Update MFC DT binding documentation
->   ARM: dts: Add MFC codec support for Exynos4 DT machines
->   ARM: dts: Add MFC codec support to SMDKV310 DT
->   ARM: dts: Add MFC codec support to Origen DT
->   ARM: dts: Add MFC codec entry to exynos4412-origen DT file
->   ARM: dts: Add MFC codec entry to exynos4412-smdk4412 DT file
+The commit a08485d8 ("ASoC: Samsung: Do not register samsung audio dma
+device as pdev") introduced compilation error.
 
-Thanks Sachin. For the whole series:
+Combination of CONFIG_CPU_S3C2440 and CONFIG_SND_S3C24XX_I2S
+caused undefined symbols 's3c_i2sv2_register_dai' and 's3c2412_i2s_dai'
+in sound/soc/samsung/s3c24xx-i2s.c.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This patch fixes the problem and makes S3C2440 I2S usable again. It does
+not affect S3C2412 (aka I2S-v2).
 
-I have also tested patch 2/6 on an Exynos4412 based board,
-just added the mfc clock entries in the codec node.
+Signed-off-by: Alexey Galakhov <agalakhov@gmail.com>
+---
+ sound/soc/samsung/s3c24xx-i2s.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-
-Regards,
-Sylwester
+diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+index ee10e87..13f6dd1 100644
+--- a/sound/soc/samsung/s3c24xx-i2s.c
++++ b/sound/soc/samsung/s3c24xx-i2s.c
+@@ -469,7 +469,7 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
+ {
+ 	int ret = 0;
+ 
+-	ret = s3c_i2sv2_register_dai(&pdev->dev, -1, &s3c2412_i2s_dai);
++	ret = snd_soc_register_dai(&pdev->dev, &s3c24xx_i2s_dai);
+ 	if (ret) {
+ 		pr_err("failed to register the dai\n");
+ 		return ret;
+-- 
+1.7.10.4
