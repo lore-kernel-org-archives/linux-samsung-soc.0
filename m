@@ -1,58 +1,35 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: Failure due to missing (Exynos related) pinctrl patch
-Date: Wed, 30 Jan 2013 15:45:46 +0530
-Message-ID: <CAK9yfHxhwRXCeqb0YbkP74MXgnOOqTNVvtv0ykHnVBB+aiCbKg@mail.gmail.com>
-References: <CAK9yfHybC6ZgGwxa_i=LrMpU_q9M4aaMraTqK63B+fw11NBqRA@mail.gmail.com>
-	<CACRpkdYj_e6+iT7iAVtA8_t=4e_2Lxo9duozXccfcbKY8fGk7A@mail.gmail.com>
-	<CAK9yfHwav_u3mjVqNdX4kY=LyUW30vr6AMGUExfGKuJn2KH8qQ@mail.gmail.com>
-	<076401cdfe9f$6a0f5fa0$3e2e1ee0$@samsung.com>
-	<CACRpkdZp8wM+ho9gg51YRx4ScJVw9RnPCpVJXKJgZ=xngi6=Jg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] ARM: dts: Add MFC support for Exynos4
+Date: Wed, 30 Jan 2013 16:01:13 +0530
+Message-ID: <CAK9yfHzNGkEnEnwh2dsVzTx==sx0M9NTzqJOdGqAUoVZ+s9i3A@mail.gmail.com>
+References: <1359529889-26318-1-git-send-email-sachin.kamat@linaro.org>
+	<5108E110.3040503@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:48103 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754184Ab3A3KPr (ORCPT
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:44935 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754209Ab3A3KbO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 05:15:47 -0500
-Received: by mail-ob0-f178.google.com with SMTP id wd20so1447803obb.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 02:15:47 -0800 (PST)
-In-Reply-To: <CACRpkdZp8wM+ho9gg51YRx4ScJVw9RnPCpVJXKJgZ=xngi6=Jg@mail.gmail.com>
+	Wed, 30 Jan 2013 05:31:14 -0500
+Received: by mail-oa0-f45.google.com with SMTP id o6so1465130oag.4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jan 2013 02:31:13 -0800 (PST)
+In-Reply-To: <5108E110.3040503@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-
-Hi Linus,
-
-On 30 January 2013 15:18, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Jan 30, 2013 at 5:08 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> Sachin Kamat wrote:
->>>
->>> >> This patch is required along with the
->>> >> patch "gpio: samsung: fix pinctrl condition for exynos and exynos5440"
->>> >> (mainline commit Id: e4a5da51) which has already made it into
->>> >> mainline. Without the missing patch we get the following boot up
->>> >> warnings and subsequent failures with dt boot on 4412 based board:
->>> >
->>> > Hm I didn't realize there was a dependency between these
->>> > patches, oh well, better get the pull for the pinctrl tree finished
->>> > off then...
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, patches@linaro.org
 
 >
-> Torvalds has already pulled it in -> problem solved. :-)
+> Thanks Sachin. For the whole series:
 >
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>
+> I have also tested patch 2/6 on an Exynos4412 based board,
+> just added the mfc clock entries in the codec node.
 
-I tested this on Linus T.'s latest tip (2e51b231) and the problem
-still persists :(
+Thanks Sylwester for your review and testing.
 
-You sent the following patch in your pull request to Linus T.:
-Kukjin Kim (1):
-      pinctrl: samsung: removing duplicated condition for PINCTRL_SAMSUNG
-
-However, the missing dependent patch is:
-
-"pinctrl: exynos: change PINCTRL_EXYNOS option"
 
 -- 
 With warm regards,
