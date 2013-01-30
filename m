@@ -1,68 +1,60 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] Fix compilation error on S3C2440
-Date: Wed, 30 Jan 2013 10:18:58 +0800
-Message-ID: <20130130021857.GF4945@opensource.wolfsonmicro.com>
-References: <1359392823-30529-1-git-send-email-agalakhov@gmail.com>
- <05e201cdfde6$c711cb70$55356250$@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH V3 1/2] ARM: EXYNOS: Add AUXDATA for DP controller
+Date: Wed, 30 Jan 2013 12:42:38 +0900
+Message-ID: <00c201cdfe9b$d992b970$8cb82c50$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DEueqSqTbz/jWVG1"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38102 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753328Ab3A3CTF (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:34384 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753080Ab3A3Dmk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jan 2013 21:19:05 -0500
-Content-Disposition: inline
-In-Reply-To: <05e201cdfde6$c711cb70$55356250$@samsung.com>
+	Tue, 29 Jan 2013 22:42:40 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHF00C3N6B3GQO0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 12:42:39 +0900 (KST)
+Received: from DOJG1HAN02 ([12.23.120.99])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHF001CI6B23F10@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Jan 2013 12:42:38 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Alexey Galakhov' <agalakhov@gmail.com>, linux-samsung-soc@vger.kernel.org, 'Padmavathi Venna' <padma.v@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
+Use AUXDATA to set the device names for DP controller instance
+discovered from device tree.
 
---DEueqSqTbz/jWVG1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+Tested with SMDK5250 board
 
-On Mon, Jan 28, 2013 at 10:06:24PM -0800, Kukjin Kim wrote:
-> Alexey Galakhov wrote:
-> >=20
-> > There was a compilation error introduced on Dec 7, 2012
-> > by commit a08485d8fdf6f67ca5f173b68d8f873c574745f2.
-> >=20
-> Following is better:
->=20
-> The commit a08485d8 ("ASoC: Samsung: Do not register samsung audio dma
-> device as pdev") introduced compilation error.
+Changes since v2:
+- rebase on linux-samsung for-next branch
 
-Can someone send me the patch formatted in an e-mail (rather than
-quoted) so I can apply please?  Though I've got a horrible feeling this
-will conflict with Padma's work...
+Changes since v1:
+- replace the definition with the value
 
-Always sned patches to maintainers.
+ arch/arm/mach-exynos/mach-exynos5-dt.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
---DEueqSqTbz/jWVG1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRCIMBAAoJELSic+t+oim9cDQP/0wcsnqvOT7V6EONQ3uTnbr3
-9TH/VOJtytEMvknsX2Epy3Z8Qnu8VEgqnHdkxcOmR4/9mu0G8wqFE0j/gx1T+qjt
-tddxb2MTSdejHFH5rhp7yqm/WaK1UpvUc3M8eoRNMGDbCihE0vdFpOcQ4vUd8NEn
-ldqoRbQnOhV6+NNvIri1bDja7pgVzexuD7Y4RCMCHC7UoeyXt9kKRT8xiVo5Xdfn
-0gCvAG2bKIeh3vzWJsWWJ8BpRbsX/hQMUcHFFSlYf+PjPxh2JXGPFtk5E3yJ7YLM
-skb9xjoIKJRViLjgUpV8rLwlC8PIBWqj4ouNgWrk/TcnK6U/9aK1BpF3NDEMiygb
-5hu4s8ydR8QD0KYVoOQFAiPSjBGzL9yb1QUm/NGWuCXM96PRyp/QfeyvqXc9H2ZP
-PE5RSC5npM0ADRAKaMuK/tKsfcRWq6Om1dA5p+oOTDSFtxg5DPYjtmiopvrQgih5
-Yj4x55+9tJ5jIOFyaZbBk1T1KThREOhDJb+ISVSaaUBehU7/+k7zSMBsFBgawe8s
-PKjiJ6wNMu/WuKc69EUraK1r3JdD8+HWLA6MGEohYUFrvux9+y6tWx2Oibm25bwZ
-zrh+azgRDrRzBA6+M6AkRhHNTOnJqfKhuq3MsxTh/tIAZuFCzmeWriNpoJSDPFjN
-juVwc0g3mVOniuU/tIVN
-=Fcx5
------END PGP SIGNATURE-----
-
---DEueqSqTbz/jWVG1--
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index e99d3d8..00ee732 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -104,6 +104,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+ 	OF_DEV_AUXDATA("samsung,mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos5250-tmu", 0x10060000,
+ 				"exynos-tmu", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5-dp", 0x145B0000, "exynos-dp", NULL),
+ 	{},
+ };
+ 
+-- 
+1.7.2.5
