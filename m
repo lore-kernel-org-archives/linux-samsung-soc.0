@@ -1,55 +1,57 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] regulator: s2mps11: fix incorrect register for buck10
-Date: Thu, 31 Jan 2013 14:45:27 +0800
-Message-ID: <20130131064525.GD7663@opensource.wolfsonmicro.com>
-References: <1359550947-5731-1-git-send-email-alim.akhtar@samsung.com>
+Subject: Re: [PATCH] Fix compilation error on S3C2440
+Date: Thu, 31 Jan 2013 14:49:43 +0800
+Message-ID: <20130131064941.GE7663@opensource.wolfsonmicro.com>
+References: <20130130021857.GF4945@opensource.wolfsonmicro.com>
+ <1359538522-4738-1-git-send-email-agalakhov@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6WlEvdN9Dv0WHSBl"
+	protocol="application/pgp-signature"; boundary="phCU5ROyZO6kBE05"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:33260 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50399 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750917Ab3AaGpe (ORCPT
+	by vger.kernel.org with ESMTP id S1751045Ab3AaGtu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jan 2013 01:45:34 -0500
+	Thu, 31 Jan 2013 01:49:50 -0500
 Content-Disposition: inline
-In-Reply-To: <1359550947-5731-1-git-send-email-alim.akhtar@samsung.com>
+In-Reply-To: <1359538522-4738-1-git-send-email-agalakhov@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Alexey Galakhov <agalakhov@gmail.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, bkim73@samsung.com
 
 
---6WlEvdN9Dv0WHSBl
+--phCU5ROyZO6kBE05
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Jan 30, 2013 at 08:02:27AM -0500, Alim Akhtar wrote:
-> For BUCK10 the control registers are wrongly set as buck9 control register
-> This patch corrects the control registers for buck10
+On Wed, Jan 30, 2013 at 03:35:22PM +0600, Alexey Galakhov wrote:
+> The commit a08485d8 ("ASoC: Samsung: Do not register samsung audio dma
+> device as pdev") introduced compilation error.
 
-Applied, thanks.
+Applied, thanks.  Please use subject lines appropriate for the
+subsystem and in general follow SubmittingPatches.
 
---6WlEvdN9Dv0WHSBl
+--phCU5ROyZO6kBE05
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRChLzAAoJELSic+t+oim9iwgP/RbqLbprwzNJ+pU8B9DDg+YG
-QTNAAiPM5KPnLksY3xKQAB7vL6XdgTo0oGenepznB5ED0TaLsajXwYcDBtgFxQ/u
-EXwgT4HeVVsw/6SO0NfQu3+PrcNAfWCgdlOX8m9zW99py0uGv0cQiDGXPqtBjswE
-fF5KGU5htGExk065oRRzW9MYVYY8t4hrxbdCPi2nc2eSBw0uhx9X0DYBdGDv1AWx
-ovjonqR1lrLxmmyP1EhL/09dfKaIsYnSclxqZOhuopqtTRAvEStZTBQjCA46IZY2
-lDx8dSYESuBVKPDqCPAUhdmBNMM5k4C1JyDCqv8YfHmTI+jxkwOJi/SM4dIApxHn
-TMz06agPFDgUiyRvDFdi/X1IIa7sB75XPqjO/BH4Xf4k4+6g9y8Qefp6fihXYYQo
-zU9nmw249TwnNFUSQYsT45a04R2Dv4WdbRBS1pZC9ls54ESOwGWIQpXRByXNv8vY
-+Q0JW7MmkGgy7ly853AjoccZWIi1MrzFtTi/CRj3B4t+pxnxxs942zKuQO1rhEkM
-92RlwyLMUyVq4ZtWouCC2HBG+OlIYIdKJnyze+75nkKg6BIOvnP79Xs8b+F+WrAm
-fnW2/VT+zZQZy67Nh241F1rLqRf+x0ei9Fwj8k5De6CFXtEtnrLdFsTNO5ZxPzx7
-8z+KBuZyU2yNNorGxmux
-=NXkG
+iQIcBAEBAgAGBQJRChP2AAoJELSic+t+oim9j+sP/1vn1dF0xIYacv5tuBtaRI8U
+/DPLcpkJUM6nFfrKygdukRJh8oLV+zN/tB1ZOB7e9Z3x3nyj9RzTEIkcZN8oBw4z
+F/bgYu7dlTCvKTO61pRIDnA8G5fCWOGT6BiXVU5dPcftN4fZEgj5rv3PRlkC/771
+X82EfoK6ke64sUBSy5nU5p+tSb7BuIvYv07z3jcOC1P/pK1oDajMy+Hk9XRJL96o
+Wsf6wDFN0eMBJJggAYEthQ1k8Mom/YUDCiuSmb66iTJ5RmI/HI3ElTzgL+c7sTHf
+of8/oI3ii2oa6bWPS/PJdZCjD4ISOtpjaqvOjN4rs3lCa73BxYOEjBJ2MM9Eshj3
+/YFkPixJnAJPk5sRpjwXPizJmH0Ig1Sie0IC97rGbLwLKoNcUNvdTRfmFDmpwjTR
+58ytJScunkCsBDudRJqBdvx5hS0PCcDe6tjzZ1G0+wEsRaTav/6wd+jFWbYv8Q1T
+E/znSCvl++JsueBJVJ9rHYYVJEqtIzmIoHMcTJa21O/NcPXBlttEKqZ/lQlZNCe8
+Hxme5MLbowRnLw9xHnYsTjICtxWLLplOeg6yUwIsy5bCcH/DLyuoncKAMgaDoR/e
+NEfMmhxFBmfb7XTG76XmClwKQEW1j20jT3wFFb0iyuZmgb/yfJV0jDaa2wVbSAlF
+DklDKXU+H2i5LguAUUkd
+=zY2p
 -----END PGP SIGNATURE-----
 
---6WlEvdN9Dv0WHSBl--
+--phCU5ROyZO6kBE05--
