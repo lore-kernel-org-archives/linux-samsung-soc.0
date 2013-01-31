@@ -1,52 +1,78 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq: exynos: Broadcast frequency change notifications
- for all cores
-Date: Thu, 31 Jan 2013 20:46:10 +0530
-Message-ID: <CAKohpomEcrPa7UnZmtTouxN6JXxcaa7dBstMGUWjXGL0n1+=Ng@mail.gmail.com>
-References: <1887364.fvxYYNb7Mm@amdc1227>
-	<1520677.WES295RohH@amdc1227>
-	<CAKohpombSKY-HMXovBAyZd5Ce8ZAEo2+yiwYL1G4=OEUJM1u5g@mail.gmail.com>
-	<1520678.Zm627xxIN3@amdc1227>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH RFC] usb: dwc3: Get PHY from platform specific dwc3 dt node.
+Date: Thu, 31 Jan 2013 20:53:27 +0530
+Message-ID: <CAFp+6iFkb=U0CJA=3zmQvd5XfMwbROuRJjXoJG7zvvq4_upzNw@mail.gmail.com>
+References: <1359631232-7107-1-git-send-email-gautam.vivek@samsung.com>
+	<510A56BF.3040804@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1520678.Zm627xxIN3@amdc1227>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <510A56BF.3040804@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: kishon <kishon@ti.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 31 January 2013 20:34, Tomasz Figa <t.figa@samsung.com> wrote:
-> Well, the fact that it isn't used at the moment doesn't mean that it
-> shouldn't be set correctly. The field is present in the structure and has
-> a set of defined values - one of which should be selected. For example,
-> I can imagine some governor taking this information into account.
-
-Governors already take this information but from a different variable:
-policy->cpus.
-
-Look at the patch which added it:
-
-commit 3b2d99429e3386b6e2ac949fc72486509c8bbe36
-Author: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>
-Date:   Wed Dec 14 15:05:00 2005 -0500
-
-    P-state software coordination for ACPI core
-
-    http://bugzilla.kernel.org/show_bug.cgi?id=5737
-
-    Signed-off-by: Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>
-    Signed-off-by: Len Brown <len.brown@intel.com>
----
- drivers/acpi/processor_perflib.c | 228
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- include/acpi/processor.h         |  27 ++++++++++++-
- include/linux/cpufreq.h          |   4 ++
- 3 files changed, 258 insertions(+), 1 deletion(-)
+Hi Kishon,
 
 
-It was clearly for ACPI, but was probably named badly and we people
-got confused that it is for our use.
+On Thu, Jan 31, 2013 at 5:04 PM, kishon <kishon@ti.com> wrote:
+> Hi,
+>
 
---
-viresh
+Thanks for your quick help.
+
+>
+> On Thursday 31 January 2013 04:50 PM, Vivek Gautam wrote:
+>>
+>> With device tree support in place for dwc3-core layer,
+>> it gets PHY from "synopsis-dwc3" node.
+>> Some controllers may not have separate memory maps and interrupts
+>> for dwc3 core and platform glue layers. In such case only glue
+>> layer's node will exist.
+>
+>
+> Not really. As long as you have dwc3 core as a separate device, you can add
+> a node for it.
+> Just that the glue should create a device for dwc3 core using
+> of_platform_populate.(You can have a look at drivers/usb/dwc3/dwc3-omap.c in
+> usb-next)
+>
+
+Right, we should be doing this way.
+
+>> Moreover, SoCs having multiple dwc3 controllers will have multiple
+>> PHYs, which eventually be added using usb_add_phy_dev(), and not
+>> using usb_add_phy(). So each dwc3 controller won't be able to
+>> get PHYs by simply calling devm_usb_get_phy() also.
+>
+> No. We have added usb_get_phy_dev() for that purpose in the case of non-dt.
+> I think, instead you can have a patch to use devm_usb_get_phy_dev() here and
+> in exynos platform specific code use usb_bind_phy() to bind the phy and
+> controller till you change it to dt.
+>
+
+We have dt support for dwc3-exynos, in such case we should go ahead with
+of_platform_populate(), right ?
+But if when i use of_platform_populate() i will not be able to set
+dma_mask to dwc3->dev. :-(
+And setting it in dwc3_probe() won't be good idea, isn't it ?
+
+>> In such cases, dwc3 should expect PHYs from its parent's node.
+>
+> NAK.
+>
+> Thanks
+> Kishon
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Thanks & Regards
+Vivek
