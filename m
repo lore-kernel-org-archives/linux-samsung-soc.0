@@ -1,80 +1,33 @@
-From: Jonghwan Choi <jhbird.choi@samsung.com>
-Subject: [PATCH 2/2] cpufreq: exynos: Fix hang in pm handler due to frequency
- mismatch
-Date: Thu, 31 Jan 2013 08:25:08 +0900
-Message-ID: <000301cdff41$1bbeab10$533c0130$%choi@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: exynos: Broadcast frequency change notifications
+ for all cores
+Date: Thu, 31 Jan 2013 09:50:37 +0530
+Message-ID: <CAOh2x==GeK4qM=kjy-tzhbEh4L9AmRXoG_0tUzov1SK+uRFxcw@mail.gmail.com>
+References: <1887364.fvxYYNb7Mm@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:32136 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754805Ab3A3XZm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jan 2013 18:25:42 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHG00MR7P2OOB20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 31 Jan 2013 08:25:36 +0900 (KST)
-Received: from DOJHBIRDCHO03 ([12.23.51.131])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHG00N09P2O2JU0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 31 Jan 2013 08:25:36 +0900 (KST)
-References: 
-In-reply-to: 
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1887364.fvxYYNb7Mm@amdc1227>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King' <linux@arm.linux.org.uk>
 
-When pm handler set freq & voltage, frequency mismatch occurred.
-Because freqs.new isn't set in pm handler.
+On Tue, Nov 13, 2012 at 2:56 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> On Exynos SoCs all cores share the same frequency setting, so changing
+> frequency of one core will affect rest of cores.
+>
+> This patch modifies the exynos-cpufreq driver to inform cpufreq core
+> about this behavior and broadcast frequency change notifications for all
+> cores.
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
----
- drivers/cpufreq/exynos-cpufreq.c |    8 +++++---
- 1 files changed, 5 insertions(+), 3 deletions(-)
+>         /* When the new frequency is lower than current frequency */
+>         if ((freqs.new < freqs.old) ||
+> @@ -235,6 +237,7 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>                 cpumask_copy(policy->related_cpus, cpu_possible_mask);
+>                 cpumask_copy(policy->cpus, cpu_online_mask);
+>         } else {
+> +               policy->shared_type = CPUFREQ_SHARED_TYPE_ANY;
+>                 cpumask_setall(policy->cpus);
 
-diff --git a/drivers/cpufreq/exynos-cpufreq.c
-b/drivers/cpufreq/exynos-cpufreq.c
-index 6d6ba0d..48ee439 100644
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -69,9 +69,10 @@ static int exynos_cpufreq_scale(unsigned int target_freq)
- 	int ret = 0;
- 
- 	freqs.old = policy->cur;
-+	freqs.new = target_freq;
- 	freqs.cpu = policy->cpu;
- 
--	if (target_freq == freqs.old)
-+	if (freqs.new == freqs.old)
- 		goto out;
- 
- 	/*
-@@ -159,6 +160,7 @@ static int exynos_target(struct cpufreq_policy *policy,
- {
- 	struct cpufreq_frequency_table *freq_table =
-exynos_info->freq_table;
- 	unsigned int index;
-+	unsigned int new_freq;
- 	int ret = 0;
- 
- 	mutex_lock(&cpufreq_lock);
-@@ -172,9 +174,9 @@ static int exynos_target(struct cpufreq_policy *policy,
- 		goto out;
- 	}
- 
--	freqs.new = freq_table[index].frequency;
-+	new_freq = freq_table[index].frequency;
- 
--	ret = exynos_cpufreq_scale(freqs.new);
-+	ret = exynos_cpufreq_scale(new_freq);
- 
- out:
- 	mutex_unlock(&cpufreq_lock);
--- 
-1.7.4.1
+I couldn't understand the use of this change. Can you please explain ?
