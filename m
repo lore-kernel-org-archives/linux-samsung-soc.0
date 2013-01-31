@@ -1,65 +1,71 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v4 2/4] ARM: Exynos5250: Enabling ohci-exynos driver
-Date: Thu, 31 Jan 2013 14:26:51 -0800
-Message-ID: <0b0001ce0002$12ecda90$38c68fb0$@samsung.com>
-References: <1358257112-19595-1-git-send-email-gautam.vivek@samsung.com>
- <1358257112-19595-3-git-send-email-gautam.vivek@samsung.com>
- <2542030.a14I18dBkO@flatron>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: dts: Add node for GMAC for exynos5440
+Date: Thu, 31 Jan 2013 14:54:30 -0800
+Message-ID: <0b5501ce0005$ef0df970$cd29ec50$@samsung.com>
+References: <014101cdfb4b$466426a0$d32c73e0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <2542030.a14I18dBkO@flatron>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:22745 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756705Ab3AaWyj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jan 2013 17:54:39 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHI00M1OIB1LD20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 01 Feb 2013 07:54:37 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHI005LNIAZVR30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 01 Feb 2013 07:54:37 +0900 (KST)
+In-reply-to: <014101cdfb4b$466426a0$d32c73e0$@samsung.com>
 Content-language: en-us
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Byungho An' <bh74.an@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Tomasz Figa wrote:
+Byungho An wrote:
 > 
-> Hi Vivek,
+> 
+> This patch adds node for GMAC for exynos5440
+> EXYNOS5440 SoC supported by GMAC driver.
+> 
+> Signed-off-by: Byungho An <bh74.an@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5440.dtsi |   11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5440.dtsi
+> b/arch/arm/boot/dts/exynos5440.dtsi
+> index 024269d..d8c215e 100644
+> --- a/arch/arm/boot/dts/exynos5440.dtsi
+> +++ b/arch/arm/boot/dts/exynos5440.dtsi
+> @@ -131,6 +131,17 @@
+>  		interrupts = <0 1 0>;
+>  	};
+> 
+> +	gmac: ethernet@00230000 {
+> +		compatible = "snps,dwmac-3.70a";
+> +		reg = <0x00230000 0x8000>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <0 31 4>;
+> +		interrupt-names = "macirq";
+> +		phy-mode = "sgmii";
+> +		clocks = <&clock 12>;
+> +		clock-names = "stmmaceth";
+> +	};
+> +
+>  	amba {
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+> --
+> 1.7.10.4
 
-[...]
-
-> > +	usb@12120000 {
-> > +		compatible = "samsung,exynos4210-ohci";
-> > +		reg = <0x12120000 0x100>;
-> > +		interrupts = <0 71 0>;
-> 
-> For Samsung platforms we decided per board enabling of nodes and so this
-> node should also contain:
-> 
-> 		status = "disabled";
-> 
-> while in dts file of board using ohci there would be an overriding entry:
-> 
-> 	usb@12120000 {
-> 		status = "okay";
-> 	};
-> 
-> I know that Exynos5250 has not been yet converted into this convention,
-> but using it when adding new devices will simplify the process.
-> 
-Well, I have another opinion on this...
-
-Let's see, yeah, we are using following method in EXYNOS4 DT...
-- disabling IPs in SoC DT source and enabling IPs in board DT source
-
-But as I said, in EXYNOS5440 DT, I want to use following, because most of
-them should be enabled/used.
-- enabling IPs in SoC DT source and no need enabling in board DT source.
-
-I mean, it depends on each SoC's situation.
+Can you put it by order of address?
 
 Thanks.
 
