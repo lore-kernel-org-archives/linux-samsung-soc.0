@@ -1,66 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Failure due to missing (Exynos related) pinctrl patch
-Date: Thu, 31 Jan 2013 14:59:08 +0100
-Message-ID: <CACRpkdb5at3vtguNn3NRRzL9sPB2DPU5Z2bfm53VhBzsMFOWpw@mail.gmail.com>
-References: <CAK9yfHybC6ZgGwxa_i=LrMpU_q9M4aaMraTqK63B+fw11NBqRA@mail.gmail.com>
-	<CACRpkdYj_e6+iT7iAVtA8_t=4e_2Lxo9duozXccfcbKY8fGk7A@mail.gmail.com>
-	<CAK9yfHwav_u3mjVqNdX4kY=LyUW30vr6AMGUExfGKuJn2KH8qQ@mail.gmail.com>
-	<076401cdfe9f$6a0f5fa0$3e2e1ee0$@samsung.com>
-	<CACRpkdZp8wM+ho9gg51YRx4ScJVw9RnPCpVJXKJgZ=xngi6=Jg@mail.gmail.com>
-	<CAK9yfHxhwRXCeqb0YbkP74MXgnOOqTNVvtv0ykHnVBB+aiCbKg@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] cpufreq: exynos: Broadcast frequency change notifications
+ for all cores
+Date: Thu, 31 Jan 2013 15:45:19 +0100
+Message-ID: <1520677.WES295RohH@amdc1227>
+References: <1887364.fvxYYNb7Mm@amdc1227>
+ <CAOh2x==GeK4qM=kjy-tzhbEh4L9AmRXoG_0tUzov1SK+uRFxcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f180.google.com ([209.85.210.180]:42412 "EHLO
-	mail-ia0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751189Ab3AaN7K (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:20323 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481Ab3AaOpe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jan 2013 08:59:10 -0500
-Received: by mail-ia0-f180.google.com with SMTP id f27so3845709iae.25
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jan 2013 05:59:08 -0800 (PST)
-In-Reply-To: <CAK9yfHxhwRXCeqb0YbkP74MXgnOOqTNVvtv0ykHnVBB+aiCbKg@mail.gmail.com>
+	Thu, 31 Jan 2013 09:45:34 -0500
+In-reply-to: <CAOh2x==GeK4qM=kjy-tzhbEh4L9AmRXoG_0tUzov1SK+uRFxcw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-On Wed, Jan 30, 2013 at 11:15 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> On 30 January 2013 15:18, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Wed, Jan 30, 2013 at 5:08 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->>> Sachin Kamat wrote:
->>>>
->>>> >> This patch is required along with the
->>>> >> patch "gpio: samsung: fix pinctrl condition for exynos and exynos5440"
->>>> >> (mainline commit Id: e4a5da51) which has already made it into
->>>> >> mainline. Without the missing patch we get the following boot up
->>>> >> warnings and subsequent failures with dt boot on 4412 based board:
->>>> >
->>>> > Hm I didn't realize there was a dependency between these
->>>> > patches, oh well, better get the pull for the pinctrl tree finished
->>>> > off then...
->
->>
->> Torvalds has already pulled it in -> problem solved. :-)
->>
->
-> I tested this on Linus T.'s latest tip (2e51b231) and the problem
-> still persists :(
->
-> You sent the following patch in your pull request to Linus T.:
-> Kukjin Kim (1):
->       pinctrl: samsung: removing duplicated condition for PINCTRL_SAMSUNG
->
-> However, the missing dependent patch is:
->
-> "pinctrl: exynos: change PINCTRL_EXYNOS option"
+Hi Viresh,
 
-Aha how typically chaotical.
+On Thursday 31 of January 2013 09:50:37 Viresh Kumar wrote:
+> On Tue, Nov 13, 2012 at 2:56 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> > On Exynos SoCs all cores share the same frequency setting, so changing
+> > frequency of one core will affect rest of cores.
+> > 
+> > This patch modifies the exynos-cpufreq driver to inform cpufreq core
+> > about this behavior and broadcast frequency change notifications for
+> > all cores.
+> > 
+> >         /* When the new frequency is lower than current frequency */
+> >         if ((freqs.new < freqs.old) ||
+> > 
+> > @@ -235,6 +237,7 @@ static int exynos_cpufreq_cpu_init(struct
+> > cpufreq_policy *policy)> 
+> >                 cpumask_copy(policy->related_cpus, cpu_possible_mask);
+> >                 cpumask_copy(policy->cpus, cpu_online_mask);
+> >         
+> >         } else {
+> > 
+> > +               policy->shared_type = CPUFREQ_SHARED_TYPE_ANY;
+> > 
+> >                 cpumask_setall(policy->cpus);
+> 
+> I couldn't understand the use of this change. Can you please explain ?
 
-And that is in the middle of the devel branch that people are
-basing their development on.
+All cores on Exynos SoCs share the same clock source, which means that 
+they all always run at the same frequency. So setting frequency on one 
+core sets the frequency on all cores and so it doesn't matter on which 
+core the frequency setting operation is done.
 
-Not much to do, I cherry-picked that patch to the fixes branch
-and hope that git will cope. (It usually does.)
+As you can see in include/linux/cpufreq.h:
 
-Yours,
-Linus Walleij
+#define CPUFREQ_SHARED_TYPE_ANY  (3) /* Freq can be set from any dependent 
+CPU*/
+
+which basically tells (together with rest of the patch) the cpufreq 
+subsystem about what I wrote earlier.
+
+Best regards,
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Linux Platform
