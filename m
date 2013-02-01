@@ -1,109 +1,39 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 07/10] ARM: dts: Add camera to node exynos4.dtsi
-Date: Fri, 01 Feb 2013 20:09:28 +0100
-Message-ID: <1359745771-23684-8-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v4 08/10] ARM: dts: Add ISP power domain node for Exynos4x12
+Date: Fri, 01 Feb 2013 20:09:29 +0100
+Message-ID: <1359745771-23684-9-git-send-email-s.nawrocki@samsung.com>
 References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55390 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757242Ab3BATKO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Feb 2013 14:10:14 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, swarren@wwwdotorg.org, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds common FIMC device nodes for all Exynos4 SoCs.
+The ISP power domain is a common power domain for fimc-lite
+and fimc-is (ISP) devices.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi |   64 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ arch/arm/boot/dts/exynos4x12.dtsi |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index e1347fc..75c388b 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -36,6 +36,12 @@
- 		i2c5 = &i2c_5;
- 		i2c6 = &i2c_6;
- 		i2c7 = &i2c_7;
-+		csis0 = &csis_0;
-+		csis1 = &csis_1;
-+		fimc0 = &fimc_0;
-+		fimc1 = &fimc_1;
-+		fimc2 = &fimc_2;
-+		fimc3 = &fimc_3;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 179a62e..9c809b72 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -28,6 +28,11 @@
+ 		pinctrl3 = &pinctrl_3;
  	};
  
- 	pd_mfc: mfc-power-domain@10023C40 {
-@@ -82,6 +88,64 @@
- 		reg = <0x10440000 0x1000>;
- 	};
- 
-+	camera {
-+		compatible = "samsung,fimc", "simple-bus";
-+		status = "disabled";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		fimc_0: fimc@11800000 {
-+			compatible = "samsung,exynos4210-fimc";
-+			reg = <0x11800000 0x1000>;
-+			interrupts = <0 84 0>;
-+			samsung,power-domain = <&pd_cam>;
-+			status = "disabled";
-+		};
-+
-+		fimc_1: fimc@11810000 {
-+			compatible = "samsung,exynos4210-fimc";
-+			reg = <0x11810000 0x1000>;
-+			interrupts = <0 85 0>;
-+			samsung,power-domain = <&pd_cam>;
-+			status = "disabled";
-+		};
-+
-+		fimc_2: fimc@11820000 {
-+			compatible = "samsung,exynos4210-fimc";
-+			reg = <0x11820000 0x1000>;
-+			interrupts = <0 86 0>;
-+			samsung,power-domain = <&pd_cam>;
-+			status = "disabled";
-+		};
-+
-+		fimc_3: fimc@11830000 {
-+			compatible = "samsung,exynos4210-fimc";
-+			reg = <0x11830000 0x1000>;
-+			interrupts = <0 87 0>;
-+			samsung,power-domain = <&pd_cam>;
-+			status = "disabled";
-+		};
-+
-+		csis_0: csis@11880000 {
-+			compatible = "samsung,exynos4210-csis";
-+			reg = <0x11880000 0x4000>;
-+			interrupts = <0 78 0>;
-+			bus-width = <4>;
-+			samsung,power-domain = <&pd_cam>;
-+			status = "disabled";
-+		};
-+
-+		csis_1: csis@11890000 {
-+			compatible = "samsung,exynos4210-csis";
-+			reg = <0x11890000 0x4000>;
-+			interrupts = <0 80 0>;
-+			bus-width = <2>;
-+			samsung,power-domain = <&pd_cam>;
-+			status = "disabled";
-+		};
++	pd_isp: isp-power-domain@10023CA0 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x10023CA0 0x20>;
 +	};
 +
- 	watchdog@10060000 {
- 		compatible = "samsung,s3c2410-wdt";
- 		reg = <0x10060000 0x100>;
+ 	combiner:interrupt-controller@10440000 {
+ 		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+ 			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
 -- 
 1.7.9.5
