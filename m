@@ -1,108 +1,91 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH RFC] usb: dwc3: Get PHY from platform specific dwc3 dt node.
-Date: Fri, 1 Feb 2013 11:54:01 +0530
-Message-ID: <CAFp+6iGZU29nt4yBjkyeeS+s_D1=AamgGTOsJq1xo_5z2O-sDg@mail.gmail.com>
-References: <1359631232-7107-1-git-send-email-gautam.vivek@samsung.com>
-	<510A56BF.3040804@ti.com>
-	<CAFp+6iFkb=U0CJA=3zmQvd5XfMwbROuRJjXoJG7zvvq4_upzNw@mail.gmail.com>
-	<20130131152527.GE4064@arwen.pp.htv.fi>
-	<CAFp+6iHvKYiF_neANRq5roAEJwhvcaLk7pAd7Dy94Z5XiDkhgA@mail.gmail.com>
-	<20130131153836.GF4064@arwen.pp.htv.fi>
-	<510B50DA.6010201@ti.com>
-	<CAFp+6iF2HMmiMVR4YyEG7bmpCZ4KdwBT7q2Jy-P1SMVtoVBn6g@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH v2 3/5] ARM: dts: Add FIMD node and display timing node to
+ exynos4412-origen.dts
+Date: Fri, 01 Feb 2013 16:52:54 +0900
+Message-ID: <001301ce0051$24495620$6cdc0260$%han@samsung.com>
+References: <1359547167-16560-1-git-send-email-vikas.sajjan@linaro.org>
+ <1359547167-16560-4-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f45.google.com ([209.85.214.45]:45291 "EHLO
-	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751850Ab3BAGYD (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:42912 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754598Ab3BAHw6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Feb 2013 01:24:03 -0500
-In-Reply-To: <CAFp+6iF2HMmiMVR4YyEG7bmpCZ4KdwBT7q2Jy-P1SMVtoVBn6g@mail.gmail.com>
+	Fri, 1 Feb 2013 02:52:58 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHJ00JH4784QYQ0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 01 Feb 2013 16:52:54 +0900 (KST)
+Received: from DOJG1HAN02 ([12.23.120.99])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHJ0022E785V3B0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 01 Feb 2013 16:52:54 +0900 (KST)
+In-reply-to: <1359547167-16560-4-git-send-email-vikas.sajjan@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: kishon <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org
+To: 'Vikas Sajjan' <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, sachin.kamat@linaro.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Balbi,
+On Wednesday, January 30, 2013 8:59 PM, Vikas Sajjan wrote
+> 
+> Adds FIMD DT support to Origen quad board
+> 
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4412-origen.dts |   22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+> index 4eba374..de877c5 100644
+> --- a/arch/arm/boot/dts/exynos4412-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
+> @@ -44,6 +44,28 @@
+>  		status = "okay";
+>  	};
+> 
+> +       fimd@11c00000 {
+> +		samsung,power-domain = <&pd_lcd0>;
+> +		pinctrl-0 = <&lcd_sync &lcd_clk &lcd_en &lcd0_data &pwm1_out>;
 
-
-On Fri, Feb 1, 2013 at 11:52 AM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
-> Hi Kishon,
->
->
-> On Fri, Feb 1, 2013 at 10:51 AM, kishon <kishon@ti.com> wrote:
->> Hi,
->>
->>
->> On Thursday 31 January 2013 09:08 PM, Felipe Balbi wrote:
->>>
->>> On Thu, Jan 31, 2013 at 09:00:37PM +0530, Vivek Gautam wrote:
->>>>
->>>> Hi Felipe,
->>>>
->>>>
->>>> On Thu, Jan 31, 2013 at 8:55 PM, Felipe Balbi <balbi@ti.com> wrote:
->>>>>
->>>>> Hi,
->>>>>
->>>>> On Thu, Jan 31, 2013 at 08:53:27PM +0530, Vivek Gautam wrote:
->>>>>>>>
->>>>>>>> Moreover, SoCs having multiple dwc3 controllers will have multiple
->>>>>>>> PHYs, which eventually be added using usb_add_phy_dev(), and not
->>>>>>>> using usb_add_phy(). So each dwc3 controller won't be able to
->>>>>>>> get PHYs by simply calling devm_usb_get_phy() also.
->>>>>>>
->>>>>>>
->>>>>>> No. We have added usb_get_phy_dev() for that purpose in the case of
->>>>>>> non-dt.
->>>>>>> I think, instead you can have a patch to use devm_usb_get_phy_dev()
->>>>>>> here and
->>>>>>> in exynos platform specific code use usb_bind_phy() to bind the phy
->>>>>>> and
->>>>>>> controller till you change it to dt.
->>>>>>>
->>>>>>
->>>>>> We have dt support for dwc3-exynos, in such case we should go ahead
->>>>>> with
->>>>>> of_platform_populate(), right ?
->>>>>> But if when i use of_platform_populate() i will not be able to set
->>>>>> dma_mask to dwc3->dev. :-(
->>
->>
->> You can do something like this
->>
->> static u64 dwc3_exynos_dma_mask = DMA_BIT_MASK(32);
->>
->> static int dwc3_exynos_set_dmamask(struct device *dev, void *c)
->> {
->>         dev->dma_mask = &dwc3_exynos_dma_mask;
->>
->>         return 0;
->> }
->>
->> And in your probe after of_platform_populate, you can add
->>
->> device_for_each_child(&pdev->dev, NULL, dwc3_exynos_set_dmamask);
->>
->> Here pdev is the platform device of dwc3-exynos. By this way all the
->> children of dwc3-exynos will have dma_mask set to the required value.
->>
->
-> Nice idea, thanks :-)
-> hmm.. so i can patch this now, and get things working ;-)
->
-
-If this is fine with you shall i go ahead and post a patch for the same ? ;-)
+lcd0_data is the same with lcd_data24.
+How about using lcd_data24 instead of lcd0_data?
 
 
->> I'm not sure if there is any other better way to achieve the same (without
->> patching of.c ;-))
->>
->
+> +		pinctrl-names = "default";
+> +		status = "okay";
+> +	};
+> +
+> +	display-timings {
+> +                native-mode = <&timing0>;
+> +                timing0: timing@0 {
+Please replace spaces with tabs.
 
+> +			clock-frequency = <50000>;
+> +			hactive = <1024>;
+> +			vactive = <600>;
+> +			hfront-porch = <64>;
+> +			hback-porch = <16>;
+> +			hsync-len = <48>;
+> +			vback-porch = <64>;
+> +			vfront-porch = <16>;
+> +			vsync-len = <3>;
+> +                };
+> +        };
+Please replace spaces with tabs.
 
-
--- 
-Thanks & Regards
-Vivek
+> +
+>  	serial@13800000 {
+>  		status = "okay";
+>  	};
+> --
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
