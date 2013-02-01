@@ -1,95 +1,92 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 09/10] ARM: dts: Add FIMC and MIPI CSIS device nodes for
- Exynos4x12
-Date: Fri, 01 Feb 2013 20:09:30 +0100
-Message-ID: <1359745771-23684-10-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v4 10/10] ARM: dts: Correct camera pinctrl nodes for Exynos4x12
+ SoCs
+Date: Fri, 01 Feb 2013 20:09:31 +0100
+Message-ID: <1359745771-23684-11-git-send-email-s.nawrocki@samsung.com>
 References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55401 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:55409 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757298Ab3BATKW (ORCPT
+	with ESMTP id S1757242Ab3BATKZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Feb 2013 14:10:22 -0500
+	Fri, 1 Feb 2013 14:10:25 -0500
 In-reply-to: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, swarren@wwwdotorg.org, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Add common camera node and fimc nodes specific to Exynos4212 and
-Exynos4412 SoCs. fimc-is is a node for the Exynos4x12 FIMC-IS
-subsystem and fimc-lite nodes are created as its child nodes,
-among others due to FIMC-LITE device dependencies on FIMC-IS
-related clocks.
+Add separate nodes for the CAMCLK pin and turn off pull-up on camera
+ports A, B. The video bus pins and the clock output (CAMCLK) pin need
+separate nodes since full camera port is not used in some configurations,
+e.g. for MIPI CSI-2 bus on CAMCLK is required and data/clock signal
+use separate dedicated pins.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4x12.dtsi |   47 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 9c809b72..59b2b8e 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -26,6 +26,8 @@
- 		pinctrl1 = &pinctrl_1;
- 		pinctrl2 = &pinctrl_2;
- 		pinctrl3 = &pinctrl_3;
-+		fimc-lite0 = &fimc_lite_0;
-+		fimc-lite1 = &fimc_lite_1;
+Changes since v3:
+  - corrected camera port B part and removed entries for
+    "inactive" state
+---
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+index 8e6115a..4c3a2c3 100644
+--- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+@@ -401,15 +401,21 @@
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+-		cam_port_a: cam-port-a {
++		cam_port_a_io: cam-port-a-io {
+ 			samsung,pins = "gpj0-0", "gpj0-1", "gpj0-2", "gpj0-3",
+ 					"gpj0-4", "gpj0-5", "gpj0-6", "gpj0-7",
+-					"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-3",
+-					"gpj1-4";
++					"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-4";
+ 			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
++			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
++
++		cam_port_a_clk_active: cam-port-a-clk-active {
++			samsung,pins = "gpj1-3";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
  	};
  
- 	pd_isp: isp-power-domain@10023CA0 {
-@@ -71,4 +73,49 @@
- 		reg = <0x106E0000 0x1000>;
- 		interrupts = <0 72 0>;
- 	};
-+
-+	camera {
-+		fimc_0: fimc@11800000 {
-+			compatible = "samsung,exynos4212-fimc";
+ 	pinctrl@11000000 {
+@@ -834,16 +840,22 @@
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
+-		cam_port_b: cam-port-b {
++		cam_port_b_io: cam-port-b-io {
+ 			samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
+ 					"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
+-					"gpm1-0", "gpm1-1", "gpm2-0", "gpm2-1",
+-					"gpm2-2";
++					"gpm1-0", "gpm1-1", "gpm2-0", "gpm2-1";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <3>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
++		cam_port_b_clk_active: cam-port-b-clk-active {
++			samsung,pins = "gpm2-2";
++			samsung,pin-function = <3>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
 +		};
 +
-+		fimc_1: fimc@11810000 {
-+			compatible = "samsung,exynos4212-fimc";
-+		};
-+
-+		fimc_2: fimc@11820000 {
-+			compatible = "samsung,exynos4212-fimc";
-+		};
-+
-+		fimc_3: fimc@11830000 {
-+			compatible = "samsung,exynos4212-fimc";
-+		};
-+
-+		fimc_is: fimc-is@12000000 {
-+			compatible = "samsung,exynos4212-fimc-is", "simple-bus";
-+			reg = <0x12000000 0x260000>;
-+			interrupts = <0 90 0>, <0 95 0>;
-+			samsung,power-domain = <&pd_isp>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			fimc_lite_0: fimc-lite@12390000 {
-+				compatible = "samsung,exynos4212-fimc-lite";
-+				reg = <0x12390000 0x1000>;
-+				interrupts = <0 105 0>;
-+				samsung,power-domain = <&pd_isp>;
-+				status = "disabled";
-+			};
-+
-+			fimc_lite_1: fimc-lite@123A0000 {
-+				compatible = "samsung,exynos4212-fimc-lite";
-+				reg = <0x123A0000 0x1000>;
-+				interrupts = <0 106 0>;
-+				samsung,power-domain = <&pd_isp>;
-+				status = "disabled";
-+			};
-+		};
-+	};
- };
+ 		eint0: ext-int0 {
+ 			samsung,pins = "gpx0-0";
+ 			samsung,pin-function = <0xf>;
 -- 
 1.7.9.5
