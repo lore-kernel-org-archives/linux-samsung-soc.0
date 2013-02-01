@@ -1,40 +1,46 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [QUESTION] : why is the exynos not using the TWD as local timers
- ?
-Date: Fri, 01 Feb 2013 17:05:18 +0100
-Message-ID: <510BE7BE.2060100@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 5/5] s5p-fimc: Redefine platform data structure for fimc-is
+Date: Fri, 01 Feb 2013 09:36:58 -0800
+Message-ID: <0c4d01ce00a2$be31cdc0$3a956940$@samsung.com>
+References: <1359566606-31394-1-git-send-email-s.nawrocki@samsung.com>
+ <1359566606-31394-6-git-send-email-s.nawrocki@samsung.com>
+ <510BA174.1010602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:63596 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754200Ab3BAQFT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Feb 2013 11:05:19 -0500
-Received: by mail-wi0-f173.google.com with SMTP id hq4so760917wib.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Feb 2013 08:05:18 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <510BA174.1010602@samsung.com>
+Content-language: en-us
+Sender: linux-media-owner@vger.kernel.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: linux-media@vger.kernel.org, kyungmin.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+Sylwester Nawrocki wrote:
+> 
+> On 01/30/2013 06:23 PM, Sylwester Nawrocki wrote:
+> > Newer Exynos4 SoC are equipped with a local camera ISP that
+> > controls external raw image sensor directly. Such sensors
+> > can be connected through FIMC-LITEn (and MIPI-CSISn) IPs to
+> > the ISP, which then feeds image data to the FIMCn IP. Thus
+> > there can be two busses associated with an image source
+> > (sensor). Rename struct s5p_fimc_isp_info describing external
+> > image sensor (video decoder) to struct fimc_source_info to
+> > avoid confusion. bus_type is split into fimc_bus_type and
+> > sensor_bus_type. The bus type enumeration is extended to
+> > include both FIMC Writeback input types.
+> >
+> > The bus_type enumeration and the data structure name in the
+> > board files are modified according to the above changes.
+> >
+> > Cc: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Kukjin, can I please have your ack on this patch so it can be
+> merged through the media tree ?
+> 
+Sure, why not? Please go ahead with my ack:
 
-Hi all,
-
-why is the exynos not using the TWD as local timers ?
-
-Probably already asked, but I was not able to find an detailed answer
-for that [1]
-
-Thanks
-  -- Daniel
-
-[1] http://www.spinics.net/lists/arm-kernel/msg218906.html
-
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
