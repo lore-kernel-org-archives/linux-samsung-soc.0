@@ -1,87 +1,109 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 06/10] s5p-fimc: Use pinctrl API for camera ports
- configuration
-Date: Fri, 01 Feb 2013 20:09:27 +0100
-Message-ID: <1359745771-23684-7-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v4 07/10] ARM: dts: Add camera to node exynos4.dtsi
+Date: Fri, 01 Feb 2013 20:09:28 +0100
+Message-ID: <1359745771-23684-8-git-send-email-s.nawrocki@samsung.com>
 References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:27971 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757171Ab3BATKL (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:55390 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757242Ab3BATKO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Feb 2013 14:10:11 -0500
+	Fri, 1 Feb 2013 14:10:14 -0500
 In-reply-to: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, swarren@wwwdotorg.org, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Before the camera ports can be used the pinmux needs to be configured
-properly. This patch adds a function to set the camera ports pinctrl
-to a default state within the media driver's probe().
-The camera port(s) are then configured for the video bus operation.
+This patch adds common FIMC device nodes for all Exynos4 SoCs.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-
-Changes since v3:
- - removed the "inactive" pinctrl state, it will be added later if required
 ---
- .../devicetree/bindings/media/soc/samsung-fimc.txt |    7 +++++++
- drivers/media/platform/s5p-fimc/fimc-mdevice.c     |    9 +++++++++
- 2 files changed, 16 insertions(+)
+ arch/arm/boot/dts/exynos4.dtsi |   64 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-index 6b81ad1..3788305 100644
---- a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-+++ b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
-@@ -18,6 +18,10 @@ Required properties:
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e1347fc..75c388b 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -36,6 +36,12 @@
+ 		i2c5 = &i2c_5;
+ 		i2c6 = &i2c_6;
+ 		i2c7 = &i2c_7;
++		csis0 = &csis_0;
++		csis1 = &csis_1;
++		fimc0 = &fimc_0;
++		fimc1 = &fimc_1;
++		fimc2 = &fimc_2;
++		fimc3 = &fimc_3;
+ 	};
  
- - compatible	   : must be "samsung,fimc", "simple-bus"
+ 	pd_mfc: mfc-power-domain@10023C40 {
+@@ -82,6 +88,64 @@
+ 		reg = <0x10440000 0x1000>;
+ 	};
  
-+- pinctrl-names    : pinctrl names for camera port pinmux control, at least
-+		     "default" needs to be specified.
-+- pinctrl-0...N	   : pinctrl properties corresponding to pinctrl-names
++	camera {
++		compatible = "samsung,fimc", "simple-bus";
++		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
 +
- The 'camera' node must include at least one 'fimc' child node.
- 
- 
-@@ -133,6 +137,9 @@ Example:
- 		#size-cells = <1>;
- 		status = "okay";
- 
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cam_port_a_clk_active>;
++		fimc_0: fimc@11800000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11800000 0x1000>;
++			interrupts = <0 84 0>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
 +
- 		/* parallel camera ports */
- 		parallel-ports {
- 			/* camera A input */
-diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.c b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-index 2bb501f..6c2c9e3 100644
---- a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-+++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-@@ -21,6 +21,7 @@
- #include <linux/of_platform.h>
- #include <linux/of_device.h>
- #include <linux/of_i2c.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/types.h>
-@@ -1197,6 +1198,14 @@ static int fimc_md_probe(struct platform_device *pdev)
- 	/* Protect the media graph while we're registering entities */
- 	mutex_lock(&fmd->media_dev.graph_mutex);
- 
-+	if (dev->of_node) {
-+		struct pinctrl *pctl = devm_pinctrl_get_select_default(dev);
-+		if (IS_ERR(pctl)) {
-+			ret = PTR_ERR(pctl);
-+			goto err_unlock;
-+		}
-+	}
++		fimc_1: fimc@11810000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11810000 0x1000>;
++			interrupts = <0 85 0>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
 +
- 	if (fmd->pdev->dev.of_node)
- 		ret = fimc_md_register_of_platform_entities(fmd, dev->of_node);
- 	else
++		fimc_2: fimc@11820000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11820000 0x1000>;
++			interrupts = <0 86 0>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
++
++		fimc_3: fimc@11830000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11830000 0x1000>;
++			interrupts = <0 87 0>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
++
++		csis_0: csis@11880000 {
++			compatible = "samsung,exynos4210-csis";
++			reg = <0x11880000 0x4000>;
++			interrupts = <0 78 0>;
++			bus-width = <4>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
++
++		csis_1: csis@11890000 {
++			compatible = "samsung,exynos4210-csis";
++			reg = <0x11890000 0x4000>;
++			interrupts = <0 80 0>;
++			bus-width = <2>;
++			samsung,power-domain = <&pd_cam>;
++			status = "disabled";
++		};
++	};
++
+ 	watchdog@10060000 {
+ 		compatible = "samsung,s3c2410-wdt";
+ 		reg = <0x10060000 0x100>;
 -- 
 1.7.9.5
