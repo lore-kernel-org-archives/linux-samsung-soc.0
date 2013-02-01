@@ -1,92 +1,69 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 10/10] ARM: dts: Correct camera pinctrl nodes for Exynos4x12
- SoCs
-Date: Fri, 01 Feb 2013 20:09:31 +0100
-Message-ID: <1359745771-23684-11-git-send-email-s.nawrocki@samsung.com>
-References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55409 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757242Ab3BATKZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Feb 2013 14:10:25 -0500
-In-reply-to: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH v4] i2c: exynos5: add High Speed I2C controller driver
+Date: Fri, 1 Feb 2013 20:29:23 +0100
+Message-ID: <20130201192923.GA23176@pengutronix.de>
+References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
+ <1359734084-10594-1-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1359734084-10594-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, swarren@wwwdotorg.org, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Add separate nodes for the CAMCLK pin and turn off pull-up on camera
-ports A, B. The video bus pins and the clock output (CAMCLK) pin need
-separate nodes since full camera port is not used in some configurations,
-e.g. for MIPI CSI-2 bus on CAMCLK is required and data/clock signal
-use separate dedicated pins.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since v3:
-  - corrected camera port B part and removed entries for
-    "inactive" state
----
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+On Fri, Feb 01, 2013 at 09:24:44PM +0530, Naveen Krishna Chatradhi wrote:
+> Adds support for High Speed I2C driver found in Exynos5 and later
+> SoCs from Samsung. This driver currently supports Auto mode.
+>=20
+> Driver only supports Device Tree method.
+> Note: Added debugfs support for registers view, not tested.
+>=20
+> Signed-off-by: Taekgyun Ko <taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> Help please,
+>=20
+> Usual reads and writes are happening. But, when i try doing
+> i2cdetect -y 0 0x10 0x59; It throws me continous interrupts at 0x1a
+> i2cdetect -y 0 0x50 0x64; It throws me continous interrupts at 0x63
+>=20
+> There are eeproms from 0x50 till 0x58
+> wm8994 codec at 0x1a
+>=20
+> Kindly, can anyone explain this behaviour.
 
-diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-index 8e6115a..4c3a2c3 100644
---- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-@@ -401,15 +401,21 @@
- 			samsung,pin-drv = <0>;
- 		};
- 
--		cam_port_a: cam-port-a {
-+		cam_port_a_io: cam-port-a-io {
- 			samsung,pins = "gpj0-0", "gpj0-1", "gpj0-2", "gpj0-3",
- 					"gpj0-4", "gpj0-5", "gpj0-6", "gpj0-7",
--					"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-3",
--					"gpj1-4";
-+					"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-4";
- 			samsung,pin-function = <2>;
--			samsung,pin-pud = <3>;
-+			samsung,pin-pud = <0>;
- 			samsung,pin-drv = <0>;
- 		};
-+
-+		cam_port_a_clk_active: cam-port-a-clk-active {
-+			samsung,pins = "gpj1-3";
-+			samsung,pin-function = <2>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <3>;
-+		};
- 	};
- 
- 	pinctrl@11000000 {
-@@ -834,16 +840,22 @@
- 			samsung,pin-drv = <0>;
- 		};
- 
--		cam_port_b: cam-port-b {
-+		cam_port_b_io: cam-port-b-io {
- 			samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
- 					"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
--					"gpm1-0", "gpm1-1", "gpm2-0", "gpm2-1",
--					"gpm2-2";
-+					"gpm1-0", "gpm1-1", "gpm2-0", "gpm2-1";
- 			samsung,pin-function = <3>;
- 			samsung,pin-pud = <3>;
- 			samsung,pin-drv = <0>;
- 		};
- 
-+		cam_port_b_clk_active: cam-port-b-clk-active {
-+			samsung,pins = "gpm2-2";
-+			samsung,pin-function = <3>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <3>;
-+		};
-+
- 		eint0: ext-int0 {
- 			samsung,pins = "gpx0-0";
- 			samsung,pin-function = <0xf>;
--- 
-1.7.9.5
+You select I2C_FUNC_SMBUS_EMUL, but make sure your hardware really
+supports I2C_FUNC_SMBUS_QUICK. That would be my first guess. Also, which
+eeprom do you have? Check its datasheet, some in deed use 8 addresses.
+
+Regards,
+
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAlEMF5MACgkQD27XaX1/VRuM3QCbBcAfzGgPKWsLTrkhFvLpB53t
+S6IAn2f/VN+TgMX6H6KfBdwS2PNuXyRh
+=mwNd
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
