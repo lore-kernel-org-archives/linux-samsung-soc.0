@@ -1,136 +1,96 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH] ARM: EXYNOS5: Fix PMU register configuration for local power
- blocks
-Date: Fri, 01 Feb 2013 11:50:26 +0530
-Message-ID: <1359699626-28525-1-git-send-email-a.kesavan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:31942 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754438Ab3BAGMD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Feb 2013 01:12:03 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHJ00LAN2JJ77M0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 01 Feb 2013 15:12:01 +0900 (KST)
-Received: from abhilash-ubuntu.sisodomain.com ([107.108.73.92])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHJ003512JP2WB0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 01 Feb 2013 15:12:01 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH RFC] usb: dwc3: Get PHY from platform specific dwc3 dt node.
+Date: Fri, 1 Feb 2013 11:52:27 +0530
+Message-ID: <CAFp+6iF2HMmiMVR4YyEG7bmpCZ4KdwBT7q2Jy-P1SMVtoVBn6g@mail.gmail.com>
+References: <1359631232-7107-1-git-send-email-gautam.vivek@samsung.com>
+	<510A56BF.3040804@ti.com>
+	<CAFp+6iFkb=U0CJA=3zmQvd5XfMwbROuRJjXoJG7zvvq4_upzNw@mail.gmail.com>
+	<20130131152527.GE4064@arwen.pp.htv.fi>
+	<CAFp+6iHvKYiF_neANRq5roAEJwhvcaLk7pAd7Dy94Z5XiDkhgA@mail.gmail.com>
+	<20130131153836.GF4064@arwen.pp.htv.fi>
+	<510B50DA.6010201@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <510B50DA.6010201-l0cyMroinI0@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kishon <kishon-l0cyMroinI0@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
-Cc: kyungmin.park@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>
 
-For the six local power blocks - MFC, DISP1, GSC, MAU, G3D and ISP
-the respective CMU_RESET, CMU_SYSCLK and CMU_CLKSTOP registers need
-to be low initially for normal mode on Exynos5250.
-Also fix the corresponding AFTR and LPA configurations.
+Hi Kishon,
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- arch/arm/mach-exynos/pmu.c |   66 ++++++++++++++++++++++++++++++++------------
- 1 file changed, 48 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index daebc1a..61cedd7 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -295,24 +295,24 @@ static struct exynos_pmu_conf exynos5250_pmu_config[] = {
- 	{ EXYNOS5_G3D_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
- 	{ EXYNOS5_DISP1_SYS_PWR_REG,			{ 0x7, 0x0, 0x0} },
- 	{ EXYNOS5_MAU_SYS_PWR_REG,			{ 0x7, 0x7, 0x0} },
--	{ EXYNOS5_CMU_CLKSTOP_GSCL_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_CLKSTOP_ISP_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_CLKSTOP_MFC_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_CLKSTOP_G3D_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_CLKSTOP_DISP1_SYS_PWR_REG,	{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_CLKSTOP_MAU_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
--	{ EXYNOS5_CMU_SYSCLK_GSCL_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_SYSCLK_ISP_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_SYSCLK_MFC_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_SYSCLK_G3D_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_SYSCLK_DISP1_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_SYSCLK_MAU_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
--	{ EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_RESET_MFC_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_RESET_DISP1_SYS_PWR_REG,		{ 0x1, 0x0, 0x0} },
--	{ EXYNOS5_CMU_RESET_MAU_SYS_PWR_REG,		{ 0x1, 0x1, 0x0} },
-+	{ EXYNOS5_CMU_CLKSTOP_GSCL_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_CLKSTOP_ISP_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_CLKSTOP_MFC_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_CLKSTOP_G3D_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_CLKSTOP_DISP1_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_CLKSTOP_MAU_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_SYSCLK_GSCL_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_SYSCLK_ISP_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_SYSCLK_MFC_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_SYSCLK_G3D_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_SYSCLK_DISP1_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_SYSCLK_MAU_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_RESET_MFC_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_RESET_DISP1_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
-+	{ EXYNOS5_CMU_RESET_MAU_SYS_PWR_REG,		{ 0x0, 0x0, 0x0} },
- 	{ PMU_TABLE_END,},
- };
- 
-@@ -336,6 +336,27 @@ static void __iomem *exynos5_list_diable_wfi_wfe[] = {
- 	EXYNOS5_ISP_ARM_OPTION,
- };
- 
-+void __iomem *exynos5_list_disable_pmu_reg[] = {
-+	EXYNOS5_CMU_CLKSTOP_GSCL_SYS_PWR_REG,
-+	EXYNOS5_CMU_CLKSTOP_ISP_SYS_PWR_REG,
-+	EXYNOS5_CMU_CLKSTOP_MFC_SYS_PWR_REG,
-+	EXYNOS5_CMU_CLKSTOP_G3D_SYS_PWR_REG,
-+	EXYNOS5_CMU_CLKSTOP_DISP1_SYS_PWR_REG,
-+	EXYNOS5_CMU_CLKSTOP_MAU_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_GSCL_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_ISP_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_MFC_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_G3D_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_DISP1_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_MAU_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_MFC_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_DISP1_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_MAU_SYS_PWR_REG,
-+};
-+
- static void exynos5_init_pmu(void)
- {
- 	unsigned int i;
-@@ -392,6 +413,7 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
- static int __init exynos_pmu_init(void)
- {
- 	unsigned int value;
-+	unsigned int i;
- 
- 	exynos_pmu_config = exynos4210_pmu_config;
- 
-@@ -414,6 +436,14 @@ static int __init exynos_pmu_init(void)
- 		value &= ~EXYNOS5_SYS_WDTRESET;
- 		__raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
- 
-+		/*
-+		 * Set the CMU_RESET, CMU_SYSCLK and CMU_CLKSTOP registers for
-+		 * local power blocks to Low initially as per the "System-Level
-+		 * Power-Down Configuration Registers" table.
-+		 */
-+		for (i = 0; i < ARRAY_SIZE(exynos5_list_disable_pmu_reg); i++)
-+			__raw_writel(0x0, exynos5_list_disable_pmu_reg[i]);
-+
- 		exynos_pmu_config = exynos5250_pmu_config;
- 		pr_info("EXYNOS5250 PMU Initialize\n");
- 	} else {
+On Fri, Feb 1, 2013 at 10:51 AM, kishon <kishon-l0cyMroinI0@public.gmane.org> wrote:
+> Hi,
+>
+>
+> On Thursday 31 January 2013 09:08 PM, Felipe Balbi wrote:
+>>
+>> On Thu, Jan 31, 2013 at 09:00:37PM +0530, Vivek Gautam wrote:
+>>>
+>>> Hi Felipe,
+>>>
+>>>
+>>> On Thu, Jan 31, 2013 at 8:55 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> On Thu, Jan 31, 2013 at 08:53:27PM +0530, Vivek Gautam wrote:
+>>>>>>>
+>>>>>>> Moreover, SoCs having multiple dwc3 controllers will have multiple
+>>>>>>> PHYs, which eventually be added using usb_add_phy_dev(), and not
+>>>>>>> using usb_add_phy(). So each dwc3 controller won't be able to
+>>>>>>> get PHYs by simply calling devm_usb_get_phy() also.
+>>>>>>
+>>>>>>
+>>>>>> No. We have added usb_get_phy_dev() for that purpose in the case of
+>>>>>> non-dt.
+>>>>>> I think, instead you can have a patch to use devm_usb_get_phy_dev()
+>>>>>> here and
+>>>>>> in exynos platform specific code use usb_bind_phy() to bind the phy
+>>>>>> and
+>>>>>> controller till you change it to dt.
+>>>>>>
+>>>>>
+>>>>> We have dt support for dwc3-exynos, in such case we should go ahead
+>>>>> with
+>>>>> of_platform_populate(), right ?
+>>>>> But if when i use of_platform_populate() i will not be able to set
+>>>>> dma_mask to dwc3->dev. :-(
+>
+>
+> You can do something like this
+>
+> static u64 dwc3_exynos_dma_mask = DMA_BIT_MASK(32);
+>
+> static int dwc3_exynos_set_dmamask(struct device *dev, void *c)
+> {
+>         dev->dma_mask = &dwc3_exynos_dma_mask;
+>
+>         return 0;
+> }
+>
+> And in your probe after of_platform_populate, you can add
+>
+> device_for_each_child(&pdev->dev, NULL, dwc3_exynos_set_dmamask);
+>
+> Here pdev is the platform device of dwc3-exynos. By this way all the
+> children of dwc3-exynos will have dma_mask set to the required value.
+>
+
+Nice idea, thanks :-)
+hmm.. so i can patch this now, and get things working ;-)
+
+> I'm not sure if there is any other better way to achieve the same (without
+> patching of.c ;-))
+>
+
+
 -- 
-1.7.9.5
+Thanks & Regards
+Vivek
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
