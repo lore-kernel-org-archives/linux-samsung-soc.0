@@ -1,48 +1,30 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: Exynos: enable ARM_HAS_SG_CHAIN
-Date: Fri, 01 Feb 2013 15:49:03 +0100
-Message-ID: <1359730143-462-1-git-send-email-m.szyprowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V2 1/4] DMA: PL330: Add xlate function
+Date: Fri, 1 Feb 2013 14:57:16 +0000
+Message-ID: <201302011457.16711.arnd@arndb.de>
+References: <1359723116-18173-1-git-send-email-padma.v@samsung.com> <1359723116-18173-2-git-send-email-padma.v@samsung.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51848 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756409Ab3BAOt4 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.187]:51333 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751769Ab3BAO5V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Feb 2013 09:49:56 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHJ00KCYQJ6S901@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 01 Feb 2013 23:49:54 +0900 (KST)
-Received: from localhost.localdomain ([106.116.147.30])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHJ00L7BQIWZG40@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 01 Feb 2013 23:49:54 +0900 (KST)
+	Fri, 1 Feb 2013 09:57:21 -0500
+In-Reply-To: <1359723116-18173-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
 
-Exynos DRM driver needs support for scatter-list chaining and all
-drivers available on Samsung platform, which use scatter-lists are
-already aware of chaining api, so lets enable global support for it.
+On Friday 01 February 2013, Padmavathi Venna wrote:
+> 
+> Add xlate to translate the device-tree binding information into
+> the appropriate format. The filter function requires the dma
+> controller device and dma channel number as filter_params.
+> 
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index cb06d7a..939b0d9 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -836,6 +836,7 @@ config ARCH_EXYNOS
- 	select ARCH_HAS_CPUFREQ
- 	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARCH_SPARSEMEM_ENABLE
-+	select ARM_HAS_SG_CHAIN
- 	select CLKDEV_LOOKUP
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
--- 
-1.7.9.5
+Acked-by: Arnd Bergmann <arnd@arndb.de>
