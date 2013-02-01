@@ -1,104 +1,71 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 1/4] ARM: dts: add support for hdmi to exynos4
-Date: Fri, 1 Feb 2013 09:34:57 +0530
-Message-ID: <CAPdUM4M1r9qd22BhikRcxsWZi99rWh-0wg+LkDtz9KxooGT=vw@mail.gmail.com>
-References: <1359110384-28402-1-git-send-email-rahul.sharma@samsung.com>
-	<1359110384-28402-2-git-send-email-rahul.sharma@samsung.com>
-	<51059402.2030405@gmail.com>
-	<CAPdUM4Py3dbV_tFnZ6GOxSm-6Sq8FBZu00JH3UDq_PV2U8yq_A@mail.gmail.com>
-	<5108344D.4090202@gmail.com>
-	<CAPdUM4NxRkE_g36yPPjhFO8jHYdBwQ6cNk+pndyO+h9fcwn-8w@mail.gmail.com>
-	<0aff01ce0001$edc8f320$c95ad960$@samsung.com>
+From: kishon <kishon@ti.com>
+Subject: Re: [PATCH RFC] usb: dwc3: Get PHY from platform specific dwc3 dt
+ node.
+Date: Fri, 1 Feb 2013 10:51:30 +0530
+Message-ID: <510B50DA.6010201@ti.com>
+References: <1359631232-7107-1-git-send-email-gautam.vivek@samsung.com> <510A56BF.3040804@ti.com> <CAFp+6iFkb=U0CJA=3zmQvd5XfMwbROuRJjXoJG7zvvq4_upzNw@mail.gmail.com> <20130131152527.GE4064@arwen.pp.htv.fi> <CAFp+6iHvKYiF_neANRq5roAEJwhvcaLk7pAd7Dy94Z5XiDkhgA@mail.gmail.com> <20130131153836.GF4064@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:36942 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751582Ab3BAENS (ORCPT
+Received: from comal.ext.ti.com ([198.47.26.152]:59235 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750770Ab3BAFVv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jan 2013 23:13:18 -0500
-Received: by mail-wi0-f176.google.com with SMTP id hm14so143631wib.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jan 2013 20:13:17 -0800 (PST)
-In-Reply-To: <0aff01ce0001$edc8f320$c95ad960$@samsung.com>
+	Fri, 1 Feb 2013 00:21:51 -0500
+In-Reply-To: <20130131153836.GF4064@arwen.pp.htv.fi>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, joshi@samsung.com, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>, thomas.ab@samsung.com
+To: balbi@ti.com
+Cc: Vivek Gautam <gautamvivek1987@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org
 
-On Fri, Feb 1, 2013 at 3:55 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Rahul Sharma wrote:
->
-> [...]
->
->> >>>> +       hdmi {
->> >>>> +               compatible = "samsung,exynos4-hdmi14";
->> >>>
->> >>>
->> >>>
->> >>> What "-hdmi14" signifies here ? And to which Exynos4 SoC revisions
-> this
->> >>> compatible property is supposed to apply ?
->> >>>
->> >>
->> >> -hdmi14 signifies 1.4 compliant Hdmi IP like in Exynos4412, while
->> >> Exynos4210 has 1.3
->> >> compliant HDMI block. I have done a mistake here. I should have kept
->> >> it in 4412.dtsi. OR
->> >> I can move it to 4x12.dtsi but not sure whether all 4x12 socs have 1.4
->> >> hdmi.
->> >
->> >
->> > Exynos4210 also have the HDMI IP. I'm not sure how much common those
->> IP's
->> > are
->> > among Exynos4 series SoCs. I suppose it makes sense to create a hdmi
->> node in
->> > exynos4.dtsi and override what's required either in exynos4x12.dtsi or
->> > exynos4412.dtsi file.
->> >
->> > What is worring me is that you're trying to just append the supported
->> > HDMI standard version to the string, and there might be more differences
->> > in the IPs across all Exynos4 SoC series. What if there are two
-> different
->> > SoCs that support e.g. HDMI v1.4 but there are some differences in the
->> > HDMI IPs ? You would likely need to invent new properties and pass them
->> > to the driver. Appending specific SoC name to the compatible string
-> looks
->> > like a better alternative to me.
->> >
+Hi,
+
+On Thursday 31 January 2013 09:08 PM, Felipe Balbi wrote:
+> On Thu, Jan 31, 2013 at 09:00:37PM +0530, Vivek Gautam wrote:
+>> Hi Felipe,
 >>
->> I agree to it. Putting compatible string with first soc having the IP,
->> is a better
->> approach altogether. I will incorporate the change in next version.
 >>
-> Well, in this case, why should we use the SoC name? If just we need specific
-> name here. I think, putting SoC name in compatible is a way to identify and
-> when the version of IP is available, we can the version instead...like
-> following, as some guy said before.
->
-> compatible = "samsung,hdmi-1.4"
->
-> If there is for hdmi 1.4a,
->
-> compatible = "samsung,hdmi-1.4a"
->
-> Thanks.
->
-> - Kukjin
->
+>> On Thu, Jan 31, 2013 at 8:55 PM, Felipe Balbi <balbi@ti.com> wrote:
+>>> Hi,
+>>>
+>>> On Thu, Jan 31, 2013 at 08:53:27PM +0530, Vivek Gautam wrote:
+>>>>>> Moreover, SoCs having multiple dwc3 controllers will have multiple
+>>>>>> PHYs, which eventually be added using usb_add_phy_dev(), and not
+>>>>>> using usb_add_phy(). So each dwc3 controller won't be able to
+>>>>>> get PHYs by simply calling devm_usb_get_phy() also.
+>>>>>
+>>>>> No. We have added usb_get_phy_dev() for that purpose in the case of non-dt.
+>>>>> I think, instead you can have a patch to use devm_usb_get_phy_dev() here and
+>>>>> in exynos platform specific code use usb_bind_phy() to bind the phy and
+>>>>> controller till you change it to dt.
+>>>>>
+>>>>
+>>>> We have dt support for dwc3-exynos, in such case we should go ahead with
+>>>> of_platform_populate(), right ?
+>>>> But if when i use of_platform_populate() i will not be able to set
+>>>> dma_mask to dwc3->dev. :-(
 
-Hi Mr. Kim,
+You can do something like this
 
-Putting hdmi version in compatible string is safe only if we are
-sure that there will not be any changes in HDMI IPs for a given
-hdmi version number in all upcoming exynos family SoCs. But
-it seems unlikely to happen.
+static u64 dwc3_exynos_dma_mask = DMA_BIT_MASK(32);
 
-This point is getting discussed in details in the following thread.
-https://patchwork.kernel.org/patch/1948061/
+static int dwc3_exynos_set_dmamask(struct device *dev, void *c)
+{
+	dev->dma_mask = &dwc3_exynos_dma_mask;
 
--- 
-Regards,
-Rahul Sharma,
-email to: rahul.sharma@samsung.com
-Samsung India.
+	return 0;
+}
+
+And in your probe after of_platform_populate, you can add
+
+device_for_each_child(&pdev->dev, NULL, dwc3_exynos_set_dmamask);
+
+Here pdev is the platform device of dwc3-exynos. By this way all the 
+children of dwc3-exynos will have dma_mask set to the required value.
+
+I'm not sure if there is any other better way to achieve the same 
+(without patching of.c ;-))
+
+Thanks
+Kishon
