@@ -1,69 +1,312 @@
-From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH v4] i2c: exynos5: add High Speed I2C controller driver
-Date: Fri, 1 Feb 2013 20:29:23 +0100
-Message-ID: <20130201192923.GA23176@pengutronix.de>
-References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
- <1359734084-10594-1-git-send-email-ch.naveen@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1359734084-10594-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] mmc: s3cmci: moved mach/regs-sdi.h into s3cmci device driver
+Date: Fri, 01 Feb 2013 16:45:17 -0800
+Message-ID: <1359765917-11219-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:40671 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757099Ab3BBAqS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 Feb 2013 19:46:18 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: Chris Ball <cjb@laptop.org>, Kukjin Kim <kgene.kim@samsung.com>
 
+Since mach/regs-sdi.h is used only for s3cmci.c, so this moves the
+header file into the driver file, drivers/mmc/host/s3cmci.c file.
 
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s3c24xx/dma-s3c2410.c           |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2412.c           |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2440.c           |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2443.c           |    1 -
+ arch/arm/mach-s3c24xx/include/mach/regs-sdi.h |  127 -------------------------
+ drivers/mmc/host/s3cmci.c                     |   83 +++++++++++++++-
+ 6 files changed, 81 insertions(+), 133 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-sdi.h
 
-On Fri, Feb 01, 2013 at 09:24:44PM +0530, Naveen Krishna Chatradhi wrote:
-> Adds support for High Speed I2C driver found in Exynos5 and later
-> SoCs from Samsung. This driver currently supports Auto mode.
->=20
-> Driver only supports Device Tree method.
-> Note: Added debugfs support for registers view, not tested.
->=20
-> Signed-off-by: Taekgyun Ko <taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Help please,
->=20
-> Usual reads and writes are happening. But, when i try doing
-> i2cdetect -y 0 0x10 0x59; It throws me continous interrupts at 0x1a
-> i2cdetect -y 0 0x50 0x64; It throws me continous interrupts at 0x63
->=20
-> There are eeproms from 0x50 till 0x58
-> wm8994 codec at 0x1a
->=20
-> Kindly, can anyone explain this behaviour.
-
-You select I2C_FUNC_SMBUS_EMUL, but make sure your hardware really
-supports I2C_FUNC_SMBUS_QUICK. That would be my first guess. Also, which
-eeprom do you have? Check its datasheet, some in deed use 8 addresses.
-
-Regards,
-
-   Wolfram
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---u3/rZRmxL6MmkK24
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAlEMF5MACgkQD27XaX1/VRuM3QCbBcAfzGgPKWsLTrkhFvLpB53t
-S6IAn2f/VN+TgMX6H6KfBdwS2PNuXyRh
-=mwNd
------END PGP SIGNATURE-----
-
---u3/rZRmxL6MmkK24--
+diff --git a/arch/arm/mach-s3c24xx/dma-s3c2410.c b/arch/arm/mach-s3c24xx/dma-s3c2410.c
+index 4803338..6eb5be9 100644
+--- a/arch/arm/mach-s3c24xx/dma-s3c2410.c
++++ b/arch/arm/mach-s3c24xx/dma-s3c2410.c
+@@ -29,7 +29,6 @@
+ #include <plat/regs-dma.h>
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+-#include <mach/regs-sdi.h>
+ #include <plat/regs-iis.h>
+ #include <plat/regs-spi.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/dma-s3c2412.c b/arch/arm/mach-s3c24xx/dma-s3c2412.c
+index 38472ac..f239d09 100644
+--- a/arch/arm/mach-s3c24xx/dma-s3c2412.c
++++ b/arch/arm/mach-s3c24xx/dma-s3c2412.c
+@@ -29,7 +29,6 @@
+ #include <plat/regs-dma.h>
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+-#include <mach/regs-sdi.h>
+ #include <plat/regs-iis.h>
+ #include <plat/regs-spi.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/dma-s3c2440.c b/arch/arm/mach-s3c24xx/dma-s3c2440.c
+index 5f0a0c8..ca98189 100644
+--- a/arch/arm/mach-s3c24xx/dma-s3c2440.c
++++ b/arch/arm/mach-s3c24xx/dma-s3c2440.c
+@@ -29,7 +29,6 @@
+ #include <plat/regs-dma.h>
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+-#include <mach/regs-sdi.h>
+ #include <plat/regs-iis.h>
+ #include <plat/regs-spi.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/dma-s3c2443.c b/arch/arm/mach-s3c24xx/dma-s3c2443.c
+index 2d94228..d3448f6 100644
+--- a/arch/arm/mach-s3c24xx/dma-s3c2443.c
++++ b/arch/arm/mach-s3c24xx/dma-s3c2443.c
+@@ -29,7 +29,6 @@
+ #include <plat/regs-dma.h>
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+-#include <mach/regs-sdi.h>
+ #include <plat/regs-iis.h>
+ #include <plat/regs-spi.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-sdi.h b/arch/arm/mach-s3c24xx/include/mach/regs-sdi.h
+deleted file mode 100644
+index cbf2d88..0000000
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-sdi.h
++++ /dev/null
+@@ -1,127 +0,0 @@
+-/* arch/arm/mach-s3c2410/include/mach/regs-sdi.h
+- *
+- * Copyright (c) 2004 Simtec Electronics <linux@simtec.co.uk>
+- *		      http://www.simtec.co.uk/products/SWLINUX/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * S3C2410 MMC/SDIO register definitions
+-*/
+-
+-#ifndef __ASM_ARM_REGS_SDI
+-#define __ASM_ARM_REGS_SDI "regs-sdi.h"
+-
+-#define S3C2410_SDICON                (0x00)
+-#define S3C2410_SDIPRE                (0x04)
+-#define S3C2410_SDICMDARG             (0x08)
+-#define S3C2410_SDICMDCON             (0x0C)
+-#define S3C2410_SDICMDSTAT            (0x10)
+-#define S3C2410_SDIRSP0               (0x14)
+-#define S3C2410_SDIRSP1               (0x18)
+-#define S3C2410_SDIRSP2               (0x1C)
+-#define S3C2410_SDIRSP3               (0x20)
+-#define S3C2410_SDITIMER              (0x24)
+-#define S3C2410_SDIBSIZE              (0x28)
+-#define S3C2410_SDIDCON               (0x2C)
+-#define S3C2410_SDIDCNT               (0x30)
+-#define S3C2410_SDIDSTA               (0x34)
+-#define S3C2410_SDIFSTA               (0x38)
+-
+-#define S3C2410_SDIDATA               (0x3C)
+-#define S3C2410_SDIIMSK               (0x40)
+-
+-#define S3C2440_SDIDATA               (0x40)
+-#define S3C2440_SDIIMSK               (0x3C)
+-
+-#define S3C2440_SDICON_SDRESET        (1<<8)
+-#define S3C2440_SDICON_MMCCLOCK       (1<<5)
+-#define S3C2410_SDICON_BYTEORDER      (1<<4)
+-#define S3C2410_SDICON_SDIOIRQ        (1<<3)
+-#define S3C2410_SDICON_RWAITEN        (1<<2)
+-#define S3C2410_SDICON_FIFORESET      (1<<1)
+-#define S3C2410_SDICON_CLOCKTYPE      (1<<0)
+-
+-#define S3C2410_SDICMDCON_ABORT       (1<<12)
+-#define S3C2410_SDICMDCON_WITHDATA    (1<<11)
+-#define S3C2410_SDICMDCON_LONGRSP     (1<<10)
+-#define S3C2410_SDICMDCON_WAITRSP     (1<<9)
+-#define S3C2410_SDICMDCON_CMDSTART    (1<<8)
+-#define S3C2410_SDICMDCON_SENDERHOST  (1<<6)
+-#define S3C2410_SDICMDCON_INDEX       (0x3f)
+-
+-#define S3C2410_SDICMDSTAT_CRCFAIL    (1<<12)
+-#define S3C2410_SDICMDSTAT_CMDSENT    (1<<11)
+-#define S3C2410_SDICMDSTAT_CMDTIMEOUT (1<<10)
+-#define S3C2410_SDICMDSTAT_RSPFIN     (1<<9)
+-#define S3C2410_SDICMDSTAT_XFERING    (1<<8)
+-#define S3C2410_SDICMDSTAT_INDEX      (0xff)
+-
+-#define S3C2440_SDIDCON_DS_BYTE       (0<<22)
+-#define S3C2440_SDIDCON_DS_HALFWORD   (1<<22)
+-#define S3C2440_SDIDCON_DS_WORD       (2<<22)
+-#define S3C2410_SDIDCON_IRQPERIOD     (1<<21)
+-#define S3C2410_SDIDCON_TXAFTERRESP   (1<<20)
+-#define S3C2410_SDIDCON_RXAFTERCMD    (1<<19)
+-#define S3C2410_SDIDCON_BUSYAFTERCMD  (1<<18)
+-#define S3C2410_SDIDCON_BLOCKMODE     (1<<17)
+-#define S3C2410_SDIDCON_WIDEBUS       (1<<16)
+-#define S3C2410_SDIDCON_DMAEN         (1<<15)
+-#define S3C2410_SDIDCON_STOP          (1<<14)
+-#define S3C2440_SDIDCON_DATSTART      (1<<14)
+-#define S3C2410_SDIDCON_DATMODE	      (3<<12)
+-#define S3C2410_SDIDCON_BLKNUM        (0x7ff)
+-
+-/* constants for S3C2410_SDIDCON_DATMODE */
+-#define S3C2410_SDIDCON_XFER_READY    (0<<12)
+-#define S3C2410_SDIDCON_XFER_CHKSTART (1<<12)
+-#define S3C2410_SDIDCON_XFER_RXSTART  (2<<12)
+-#define S3C2410_SDIDCON_XFER_TXSTART  (3<<12)
+-
+-#define S3C2410_SDIDCON_BLKNUM_MASK   (0xFFF)
+-#define S3C2410_SDIDCNT_BLKNUM_SHIFT  (12)
+-
+-#define S3C2410_SDIDSTA_RDYWAITREQ    (1<<10)
+-#define S3C2410_SDIDSTA_SDIOIRQDETECT (1<<9)
+-#define S3C2410_SDIDSTA_FIFOFAIL      (1<<8)	/* reserved on 2440 */
+-#define S3C2410_SDIDSTA_CRCFAIL       (1<<7)
+-#define S3C2410_SDIDSTA_RXCRCFAIL     (1<<6)
+-#define S3C2410_SDIDSTA_DATATIMEOUT   (1<<5)
+-#define S3C2410_SDIDSTA_XFERFINISH    (1<<4)
+-#define S3C2410_SDIDSTA_BUSYFINISH    (1<<3)
+-#define S3C2410_SDIDSTA_SBITERR       (1<<2)	/* reserved on 2410a/2440 */
+-#define S3C2410_SDIDSTA_TXDATAON      (1<<1)
+-#define S3C2410_SDIDSTA_RXDATAON      (1<<0)
+-
+-#define S3C2440_SDIFSTA_FIFORESET      (1<<16)
+-#define S3C2440_SDIFSTA_FIFOFAIL       (3<<14)  /* 3 is correct (2 bits) */
+-#define S3C2410_SDIFSTA_TFDET          (1<<13)
+-#define S3C2410_SDIFSTA_RFDET          (1<<12)
+-#define S3C2410_SDIFSTA_TFHALF         (1<<11)
+-#define S3C2410_SDIFSTA_TFEMPTY        (1<<10)
+-#define S3C2410_SDIFSTA_RFLAST         (1<<9)
+-#define S3C2410_SDIFSTA_RFFULL         (1<<8)
+-#define S3C2410_SDIFSTA_RFHALF         (1<<7)
+-#define S3C2410_SDIFSTA_COUNTMASK      (0x7f)
+-
+-#define S3C2410_SDIIMSK_RESPONSECRC    (1<<17)
+-#define S3C2410_SDIIMSK_CMDSENT        (1<<16)
+-#define S3C2410_SDIIMSK_CMDTIMEOUT     (1<<15)
+-#define S3C2410_SDIIMSK_RESPONSEND     (1<<14)
+-#define S3C2410_SDIIMSK_READWAIT       (1<<13)
+-#define S3C2410_SDIIMSK_SDIOIRQ        (1<<12)
+-#define S3C2410_SDIIMSK_FIFOFAIL       (1<<11)
+-#define S3C2410_SDIIMSK_CRCSTATUS      (1<<10)
+-#define S3C2410_SDIIMSK_DATACRC        (1<<9)
+-#define S3C2410_SDIIMSK_DATATIMEOUT    (1<<8)
+-#define S3C2410_SDIIMSK_DATAFINISH     (1<<7)
+-#define S3C2410_SDIIMSK_BUSYFINISH     (1<<6)
+-#define S3C2410_SDIIMSK_SBITERR        (1<<5)	/* reserved 2440/2410a */
+-#define S3C2410_SDIIMSK_TXFIFOHALF     (1<<4)
+-#define S3C2410_SDIIMSK_TXFIFOEMPTY    (1<<3)
+-#define S3C2410_SDIIMSK_RXFIFOLAST     (1<<2)
+-#define S3C2410_SDIIMSK_RXFIFOFULL     (1<<1)
+-#define S3C2410_SDIIMSK_RXFIFOHALF     (1<<0)
+-
+-#endif /* __ASM_ARM_REGS_SDI */
+diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+index 63fb265..8d6794c 100644
+--- a/drivers/mmc/host/s3cmci.c
++++ b/drivers/mmc/host/s3cmci.c
+@@ -25,14 +25,93 @@
+ 
+ #include <mach/dma.h>
+ 
+-#include <mach/regs-sdi.h>
+-
+ #include <linux/platform_data/mmc-s3cmci.h>
+ 
+ #include "s3cmci.h"
+ 
+ #define DRIVER_NAME "s3c-mci"
+ 
++#define S3C2410_SDICON			(0x00)
++#define S3C2410_SDIPRE			(0x04)
++#define S3C2410_SDICMDARG		(0x08)
++#define S3C2410_SDICMDCON		(0x0C)
++#define S3C2410_SDICMDSTAT		(0x10)
++#define S3C2410_SDIRSP0			(0x14)
++#define S3C2410_SDIRSP1			(0x18)
++#define S3C2410_SDIRSP2			(0x1C)
++#define S3C2410_SDIRSP3			(0x20)
++#define S3C2410_SDITIMER		(0x24)
++#define S3C2410_SDIBSIZE		(0x28)
++#define S3C2410_SDIDCON			(0x2C)
++#define S3C2410_SDIDCNT			(0x30)
++#define S3C2410_SDIDSTA			(0x34)
++#define S3C2410_SDIFSTA			(0x38)
++
++#define S3C2410_SDIDATA			(0x3C)
++#define S3C2410_SDIIMSK			(0x40)
++
++#define S3C2440_SDIDATA			(0x40)
++#define S3C2440_SDIIMSK			(0x3C)
++
++#define S3C2440_SDICON_SDRESET		(1 << 8)
++#define S3C2410_SDICON_SDIOIRQ		(1 << 3)
++#define S3C2410_SDICON_FIFORESET	(1 << 1)
++#define S3C2410_SDICON_CLOCKTYPE	(1 << 0)
++
++#define S3C2410_SDICMDCON_LONGRSP	(1 << 10)
++#define S3C2410_SDICMDCON_WAITRSP	(1 << 9)
++#define S3C2410_SDICMDCON_CMDSTART	(1 << 8)
++#define S3C2410_SDICMDCON_SENDERHOST	(1 << 6)
++#define S3C2410_SDICMDCON_INDEX		(0x3f)
++
++#define S3C2410_SDICMDSTAT_CRCFAIL	(1 << 12)
++#define S3C2410_SDICMDSTAT_CMDSENT	(1 << 11)
++#define S3C2410_SDICMDSTAT_CMDTIMEOUT	(1 << 10)
++#define S3C2410_SDICMDSTAT_RSPFIN	(1 << 9)
++
++#define S3C2440_SDIDCON_DS_WORD		(2 << 22)
++#define S3C2410_SDIDCON_TXAFTERRESP	(1 << 20)
++#define S3C2410_SDIDCON_RXAFTERCMD	(1 << 19)
++#define S3C2410_SDIDCON_BLOCKMODE	(1 << 17)
++#define S3C2410_SDIDCON_WIDEBUS		(1 << 16)
++#define S3C2410_SDIDCON_DMAEN		(1 << 15)
++#define S3C2410_SDIDCON_STOP		(1 << 14)
++#define S3C2440_SDIDCON_DATSTART	(1 << 14)
++
++#define S3C2410_SDIDCON_XFER_RXSTART	(2 << 12)
++#define S3C2410_SDIDCON_XFER_TXSTART	(3 << 12)
++
++#define S3C2410_SDIDCON_BLKNUM_MASK	(0xFFF)
++
++#define S3C2410_SDIDSTA_SDIOIRQDETECT	(1 << 9)
++#define S3C2410_SDIDSTA_FIFOFAIL	(1 << 8)
++#define S3C2410_SDIDSTA_CRCFAIL		(1 << 7)
++#define S3C2410_SDIDSTA_RXCRCFAIL	(1 << 6)
++#define S3C2410_SDIDSTA_DATATIMEOUT	(1 << 5)
++#define S3C2410_SDIDSTA_XFERFINISH	(1 << 4)
++#define S3C2410_SDIDSTA_TXDATAON	(1 << 1)
++#define S3C2410_SDIDSTA_RXDATAON	(1 << 0)
++
++#define S3C2440_SDIFSTA_FIFORESET	(1 << 16)
++#define S3C2440_SDIFSTA_FIFOFAIL	(3 << 14)
++#define S3C2410_SDIFSTA_TFDET		(1 << 13)
++#define S3C2410_SDIFSTA_RFDET		(1 << 12)
++#define S3C2410_SDIFSTA_COUNTMASK	(0x7f)
++
++#define S3C2410_SDIIMSK_RESPONSECRC	(1 << 17)
++#define S3C2410_SDIIMSK_CMDSENT		(1 << 16)
++#define S3C2410_SDIIMSK_CMDTIMEOUT	(1 << 15)
++#define S3C2410_SDIIMSK_RESPONSEND	(1 << 14)
++#define S3C2410_SDIIMSK_SDIOIRQ		(1 << 12)
++#define S3C2410_SDIIMSK_FIFOFAIL	(1 << 11)
++#define S3C2410_SDIIMSK_CRCSTATUS	(1 << 10)
++#define S3C2410_SDIIMSK_DATACRC		(1 << 9)
++#define S3C2410_SDIIMSK_DATATIMEOUT	(1 << 8)
++#define S3C2410_SDIIMSK_DATAFINISH	(1 << 7)
++#define S3C2410_SDIIMSK_TXFIFOHALF	(1 << 4)
++#define S3C2410_SDIIMSK_RXFIFOLAST	(1 << 2)
++#define S3C2410_SDIIMSK_RXFIFOHALF	(1 << 0)
++
+ enum dbg_channels {
+ 	dbg_err   = (1 << 0),
+ 	dbg_debug = (1 << 1),
+-- 
+1.7.10.4
