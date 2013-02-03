@@ -1,253 +1,594 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFC PATCH 0/4] Common Display Framework-TF
-Date: Sun, 03 Feb 2013 20:17:22 +0100
-Message-ID: <3272191.03RiBNfhoM@flatron>
-References: <1359560343-31636-1-git-send-email-t.figa@samsung.com> <4292748.rtElrP8BXd@avalon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f45.google.com ([74.125.83.45]:43888 "EHLO
-	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753450Ab3BCTRX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Feb 2013 14:17:23 -0500
-In-Reply-To: <4292748.rtElrP8BXd@avalon>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH V3] regulator: add device tree support for s5m8767
+Date: Sun,  3 Feb 2013 15:49:47 -0800
+Message-ID: <1359935387-19065-1-git-send-email-amit.daniel@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lrg@ti.com>, amit.kachhap@gmail.com, Thomas Abraham <thomas.abraham@linaro.org>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, Daniel Vetter <daniel@ffwll.ch>, Marcus Lorentzon <marcus.xm.lorentzon@stericsson.com>, rob@ti.com, tomi.valkeinen@ti.com, Vikas Sajjan <vikas.sajjan@linaro.org>, inki.dae@samsung.com, dh09.lee@samsung.com, ville.syrjala@intel.com, s.nawrocki@samsung.com
 
-Hi Laurent,
+This device tree support is added for PMIC block of S5m8767 multi
+function driver. The usage detail is added in the device tree
+documentation section. This change is tested on exynos5250 based
+arndale platform by regulator voltage set/get API's.
 
-On Saturday 02 of February 2013 11:39:59 Laurent Pinchart wrote:
-> Hi Tomasz,
-> 
-> Thank you for your RFC.
-> 
-> On Wednesday 30 January 2013 16:38:59 Tomasz Figa wrote:
-> > Hi,
-> > 
-> > After pretty long time of trying to adapt Exynos-specific DSI display
-> > support to Common Display Framework I'm ready to show some preliminary
-> > RFC patches. This series shows some ideas for CDF that came to my
-> > mind during my work, some changes based on comments received by
-> > Tomi's edition of CDF and also preliminarys version of Exynos DSI
-> > (video source part only, still with some FIXMEs) and Samsung S6E8AX0
-> > DSI panel drivers.
-> > 
-> > It is heavily based on Tomi's work which can be found here:
-> > http://thread.gmane.org/gmane.comp.video.dri.devel/78227
-> > 
-> > The code might be a bit hacky in places, as I wanted to get it to a
-> > kind of complete and working state first. However I hope that some of
-> > the ideas might useful for further works.
-> > 
-> > So, here comes the TF edition of Common Clock Framework.
-> > --------------------------------------------------------
-> > 
-> > Changes done to Tomi's edition of CDF:
-> >  - Replaced set_operation_mode, set_pixel_format and set_size video
-> >  source>  
-> >    operations with get_params display entity operation, as it was
-> >    originally in Laurent's version.
-> >    
-> >    We have discussed this matter on the mailing list and decided that
-> >    it
-> >    would be better to have the source ask the sink for its parameter
-> >    structure and do whatever appropriate with it.
-> 
-> Could you briefly outline the rationale behind this ?
+Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
+Changes since V2:
+* Remove un-necessary inclusion of platform file as pointed by
+  Rahul Sharma <r.sh.open@gmail.com> 
 
-Display interfaces may be described by an arbitrary number of parameters. 
-Some will require just video timings, others like DSI will require a 
-significant number of additional bus-specific ones.
+Changes since V1:
+* Added description of pmic-buck-ds-gpios and op_mode in the device tree
+  documentation as suggested by Thomas Abraham.
+* Incorporated coding guidelines review comments.
 
-Separating all the parameters (all of which are usually set at the same 
-time) into a lot of ops setting single parameter will just add unnecessary 
-complexity.
+This patch is based on Mark Brown's tree for-next branch.
+git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
 
-> I'm wondering whether get_params could limit us if a device needs to
-> modify parameters at runtime. For instance a panel might need to change
-> clock frequencies or number of used data lane depending on various
-> runtime conditions. I don't have a real use case here, so it might just
-> be a bit of over-engineering.
+ .../bindings/regulator/s5m8767-regulator.txt       |  152 ++++++++++++++++
+ drivers/mfd/sec-core.c                             |   75 ++++++++-
+ drivers/regulator/s5m8767.c                        |  186 +++++++++++++++++++-
+ include/linux/mfd/samsung/core.h                   |   11 +-
+ 4 files changed, 417 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
 
-Hmm, isn't it in the opposite direction (the user requests the display 
-interface to change, for example, video mode, which in turn reconfigures 
-the link and requests the panel to update its settings)?
-
-However it might be reasonable to split the parameters into constant and 
-variable ones. In case of DSI bus, there is a lot of parameters that are 
-considered just at link initialization time (the whole dsi params struct I 
-defined). Video mode, however, is a variable parameter that can be changed 
-on some displays.
-
-> 
-> >  - Defined a preliminary set of DSI bus parameters.
-> >  
-> >    Following parameters are defined:
-> >    
-> >    1. Pixel format used for video data transmission.
-> >    
-> >    2. Mode flags (several bit flags ORed together):
-> >      a) DSI_MODE_VIDEO - entity uses video mode (as opposed to command
-> >      
-> >         mode), following DSI_MODE_VIDEO_* flags are relevant only if
-> >         this
-> >         flag is set.
-> >         b) DSI_MODE_VIDEO_BURST - entity uses burst transfer for video
-> >         data
-> >         c) DSI_MODE_VIDEO_SYNC_PULSE - entity uses sync pulses (as
-> >         opposed
-> >         
-> >            to sync events)
-> >         
-> >         d) DSI_MODE_VIDEO_AUTO_VERT - entity uses automatic video mode
-> >         
-> >            detection
-> >         
-> >         e) DSI_MODE_VIDEO_HSE - entity needs horizontal sync end
-> >         packets
-> >         f) DSI_MODE_VIDEO_HFP - entity needs horizontal front porch
-> >         area
-> >         g) DSI_MODE_VIDEO_HBP - entity needs horizontal back porch
-> >         area
-> >         h) DSI_MODE_VIDEO_HSA - entity needs horizontal sync active
-> >         area
-> >      
-> >      i) DSI_MODE_VSYNC_FLUSH - vertical sync pulse flushes video data
-> >      j) DSI_MODE_EOT_PACKET - entity needs EoT packets
-> >    
-> >    3. Bit (serial) clock frequency in HS mode.
-> >    4. Escape mode clock frequency.
-> >    5. Mask of used data lanes (each bit represents single lane).
-> 
-> From my experience with MIPI CSI (Camera Serial Interface, similar to
-> DSI) some transceivers can reroute data lanes internally. Is that true
-> for DSI as well ? In that case we would need a list of data lanes, not
-> just a mask.
-
-Hmm, I don't remember at the moment, will have to look to the 
-specification. Exynos DSI master doesn't support such feature.
-
-> >    6. Command allow area in video mode - amount of lines after
-> >    transmitting>    
-> >       video data when generic commands are accepted.
-> >    
-> >    Feel free to suggest anything missing or wrong, as the list of
-> >    parameters is based merely on what was used in original Exynos MIPI
-> >    DSIM driver.
-> >  
-> >  - Redesigned source-entity matching.
-> >  
-> >    Now each source has name string and integer id and each entity has
-> >    source name and source id. In addition, they can have of_node
-> >    specified, which is used for Device Tree-based matching.
-> >    
-> >    The matching procedure is as follows:
-> >    
-> >    1. Matching takes place when display entity registers.
-> >    
-> >      a) If there is of_node specified for the entity then
-> >      "video-source"
-> >      
-> >         phandle of this node is being parsed and list of registered
-> >         sources
-> >         is traversed in search of a source with of_node received from
-> >         parsing the phandle.
-> >      
-> >      b) Otherwise the matching key is a pair of source name and id.
-> >    
-> >    2. If no matching source is found, display_entity_register returns
-> >    
-> >       -EPROBE_DEFER error which causes the entity driver to defer its
-> >       probe until the source registers.
-> >    
-> >    3. Otherwise an optional bind operation of video source is called,
-> >    
-> >       sink field of source and source field of entity are set and the
-> >       matching ends successfully.
-> >  
-> >  - Some initial concept of source-entity cross-locking.
-> >  
-> >    Only video source is protected at the moment, as I still have to
-> >    think
-> >    a bit about locking the entity in a way where removing it by user
-> >    request is still possible.
-> 
-> One of the main locking issues here are cross-references. The display
-> entity holds a reference to the video source (for video operations),
-> and the display controller driver holds a reference to the display
-> entity (for control operations), resulting in a cross-references lock
-> situation. One possible solution would be to first unbind the display
-> entity device from its driver to break the cycle.
-
-Yes, this is a problem that requires a bit more thought.
-
-I've been discussing this issue with Sylwester and we came to a conclusion 
-that for sure a display entity can normally get a reference to its video 
-source (e.g. module_get, to prevent unloading the module), as there should 
-be no possibility of video source going away, leaving display entity 
-present and so there is no need for unregistering a bound video source. 
-This is what I implemented in my code.
-
-Now it shall be possible to unregister a bound display entity, for example 
-to have the ability of unplugging a hotpluggable display (HDMI, Display 
-Port), but this will need some non-trivial synchronization. I'm still 
-thinking how to do it properly.
-
-Best regards,
-Tomasz
+diff --git a/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt b/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+new file mode 100644
+index 0000000..a35ff99
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+@@ -0,0 +1,152 @@
++* Samsung S5M8767 Voltage and Current Regulator
++
++The Samsung S5M8767 is a multi-function device which includes volatage and
++current regulators, rtc, charger controller and other sub-blocks. It is
++interfaced to the host controller using a i2c interface. Each sub-block is
++addressed by the host system using different i2c slave address. This document
++describes the bindings for 'pmic' sub-block of s5m8767.
++
++Required properties:
++- compatible: Should be "samsung,s5m8767-pmic".
++- reg: Specifies the i2c slave address of the pmic block. It should be 0x66.
++
++- s5m8767,pmic-buck2-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
++  units for buck2 when changing voltage using gpio dvs. Refer to [1] below
++  for additional information.
++
++- s5m8767,pmic-buck3-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
++  units for buck3 when changing voltage using gpio dvs. Refer to [1] below
++  for additional information.
++
++- s5m8767,pmic-buck4-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
++  units for buck4 when changing voltage using gpio dvs. Refer to [1] below
++  for additional information.
++
++- s5m8767,pmic-buck-ds-gpios: GPIO specifiers for three host gpio's used
++  for selecting GPIO DVS lines. It is one-to-one mapped to dvs gpio lines.
++
++[1] If none of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
++    property is specified, the 's5m8767,pmic-buck[2/3/4]-dvs-voltage'
++    property should specify atleast one voltage level (which would be a
++    safe operating voltage).
++
++    If either of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
++    property is specified, then all the eight voltage values for the
++    's5m8767,pmic-buck[2/3/4]-dvs-voltage' should be specified.
++
++Optional properties:
++- interrupt-parent: Specifies the phandle of the interrupt controller to which
++  the interrupts from s5m8767 are delivered to.
++- interrupts: Interrupt specifiers for two interrupt sources.
++  - First interrupt specifier is for 'irq1' interrupt.
++  - Second interrupt specifier is for 'alert' interrupt.
++- s5m8767,pmic-buck2-uses-gpio-dvs: 'buck2' can be controlled by gpio dvs.
++- s5m8767,pmic-buck3-uses-gpio-dvs: 'buck3' can be controlled by gpio dvs.
++- s5m8767,pmic-buck4-uses-gpio-dvs: 'buck4' can be controlled by gpio dvs.
++
++Additional properties required if either of the optional properties are used:
++
++- s5m8767,pmic-buck234-default-dvs-idx: Default voltage setting selected from
++  the possible 8 options selectable by the dvs gpios. The value of this
++  property should be between 0 and 7. If not specified or if out of range, the
++  default value of this property is set to 0.
++
++- s5m8767,pmic-buck-dvs-gpios: GPIO specifiers for three host gpio's used
++  for dvs. The format of the gpio specifier depends in the gpio controller.
++
++Regulators: The regulators of s5m8767 that have to be instantiated should be
++included in a sub-node named 'regulators'. Regulator nodes included in this
++sub-node should be of the format as listed below.
++
++	regulator_name {
++		ldo1_reg: LDO1 {
++			regulator-name = "VDD_ALIVE_1.0V";
++			regulator-min-microvolt = <1100000>;
++			regulator-max-microvolt = <1100000>;
++			regulator-always-on;
++			regulator-boot-on;
++			op_mode = <1>; /* Normal Mode */
++		};
++	};
++The above regulator entries are defined in regulator bindings documentation
++except op_mode description.
++	- op_mode: describes the different operating modes of the LDO's with
++		power mode change in SOC. The different possible values are,
++		0 - always off mode
++		1 - on in normal mode
++		2 - low power mode
++		3 - suspend mode
++
++The following are the names of the regulators that the s5m8767 pmic block
++supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
++as per the datasheet of s5m8767.
++
++	- LDOn
++		  - valid values for n are 1 to 28
++		  - Example: LDO0, LD01, LDO28
++	- BUCKn
++		  - valid values for n are 1 to 9.
++		  - Example: BUCK1, BUCK2, BUCK9
++
++The bindings inside the regulator nodes use the standard regulator bindings
++which are documented elsewhere.
++
++Example:
++
++	s5m8767_pmic@66 {
++		compatible = "samsung,s5m8767-pmic";
++		reg = <0x66>;
++
++		s5m8767,pmic-buck2-uses-gpio-dvs;
++		s5m8767,pmic-buck3-uses-gpio-dvs;
++		s5m8767,pmic-buck4-uses-gpio-dvs;
++
++		s5m8767,pmic-buck-default-dvs-idx = <0>;
++
++		s5m8767,pmic-buck-dvs-gpios = <&gpx0 0 1 0 0>, /* DVS1 */
++						 <&gpx0 1 1 0 0>, /* DVS2 */
++						 <&gpx0 2 1 0 0>; /* DVS3 */
++
++		s5m8767,pmic-buck-ds-gpios = <&gpx2 3 1 0 0>, /* SET1 */
++						<&gpx2 4 1 0 0>, /* SET2 */
++						<&gpx2 5 1 0 0>; /* SET3 */
++
++		s5m8767,pmic-buck2-dvs-voltage = <1350000>, <1300000>,
++						 <1250000>, <1200000>,
++						 <1150000>, <1100000>,
++						 <1000000>, <950000>;
++
++		s5m8767,pmic-buck3-dvs-voltage = <1100000>, <1100000>,
++						 <1100000>, <1100000>,
++						 <1000000>, <1000000>,
++						 <1000000>, <1000000>;
++
++		s5m8767,pmic-buck4-dvs-voltage = <1200000>, <1200000>,
++						 <1200000>, <1200000>,
++						 <1200000>, <1200000>,
++						 <1200000>, <1200000>;
++
++		regulators {
++			ldo1_reg: LDO1 {
++				regulator-name = "VDD_ABB_3.3V";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++				op_mode = <1>; /* Normal Mode */
++			};
++
++			ldo2_reg: LDO2 {
++				regulator-name = "VDD_ALIVE_1.1V";
++				regulator-min-microvolt = <1100000>;
++				regulator-max-microvolt = <1100000>;
++				regulator-always-on;
++			};
++
++			buck1_reg: BUCK1 {
++				regulator-name = "VDD_MIF_1.2V";
++				regulator-min-microvolt = <950000>;
++				regulator-max-microvolt = <1350000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++		};
++	};
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 49d361a..ae02983 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -17,6 +17,7 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/i2c.h>
++#include <linux/of_irq.h>
+ #include <linux/interrupt.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/mutex.h>
+@@ -60,6 +61,15 @@ static struct mfd_cell s2mps11_devs[] = {
+ 	},
+ };
  
-> >  - Dropped any panels and chips that I can't test.
-> >  
-> >    They are irrelevant for this series, so there is no point in
-> >    including
-> >    them.
-> >  
-> >  - Added Exynos DSI video source driver.
-> >  
-> >    This is a new driver for the DSI controller found in Exynos SoCs.
-> >    It
-> >    still needs some work, but in current state can be considered an
-> >    example of DSI video source implementation for my version of CDF.
-> >  
-> >  - Added Samsung S6E8AX0 DSI panel driver.
-> >  
-> >    This is the old Exynos-specific driver, just migrated to CDF and
-> >    with
-> >    some hacks to provide control over entity state to userspace using
-> >    lcd device. However it can be used to demonstrate video source ops
-> >    in
-> >    use.
-> > 
-> > Feel free to comment as much as you can.
-> > 
-> > Tomasz Figa (4):
-> >   video: add display-core
-> >   video: add makefile & kconfig
-> >   video: display: Add exynos-dsi video source driver
-> >   video: display: Add Samsung s6e8ax0 display panel driver
-> >  
-> >  drivers/video/Kconfig                     |    1 +
-> >  drivers/video/Makefile                    |    1 +
-> >  drivers/video/display/Kconfig             |   16 +
-> >  drivers/video/display/Makefile            |    3 +
-> >  drivers/video/display/display-core.c      |  295 +++++++
-> >  drivers/video/display/panel-s6e8ax0.c     | 1027
-> >  ++++++++++++++++++++++
-> >  drivers/video/display/source-exynos_dsi.c | 1313
-> >  ++++++++++++++++++++++++++ include/video/display.h                  
-> >  |  230 +++++
-> >  include/video/exynos_dsi.h                |   41 +
-> >  include/video/panel-s6e8ax0.h             |   41 +
-> >  10 files changed, 2968 insertions(+)
-> >  create mode 100644 drivers/video/display/Kconfig
-> >  create mode 100644 drivers/video/display/Makefile
-> >  create mode 100644 drivers/video/display/display-core.c
-> >  create mode 100644 drivers/video/display/panel-s6e8ax0.c
-> >  create mode 100644 drivers/video/display/source-exynos_dsi.c
-> >  create mode 100644 include/video/display.h
-> >  create mode 100644 include/video/exynos_dsi.h
-> >  create mode 100644 include/video/panel-s6e8ax0.h
++#ifdef CONFIG_OF
++static struct of_device_id sec_dt_match[] = {
++	{	.compatible = "samsung,s5m8767-pmic",
++		.data = (void *)S5M8767X,
++	},
++	{},
++};
++#endif
++
+ int sec_reg_read(struct sec_pmic_dev *sec_pmic, u8 reg, void *dest)
+ {
+ 	return regmap_read(sec_pmic->regmap, reg, dest);
+@@ -95,6 +105,57 @@ static struct regmap_config sec_regmap_config = {
+ 	.val_bits = 8,
+ };
+ 
++
++#ifdef CONFIG_OF
++/*
++ * Only the common platform data elements for s5m8767 are parsed here from the
++ * device tree. Other sub-modules of s5m8767 such as pmic, rtc , charger and
++ * others have to parse their own platform data elements from device tree.
++ *
++ * The s5m8767 platform data structure is instantiated here and the drivers for
++ * the sub-modules need not instantiate another instance while parsing their
++ * platform data.
++ */
++static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
++					struct device *dev)
++{
++	struct sec_platform_data *pd;
++
++	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
++	if (!pd) {
++		dev_err(dev, "could not allocate memory for pdata\n");
++		return ERR_PTR(-ENOMEM);
++	}
++
++	/*
++	 * ToDo: the 'wakeup' member in the platform data is more of a linux
++	 * specfic information. Hence, there is no binding for that yet and
++	 * not parsed here.
++	 */
++
++	return pd;
++}
++#else
++static struct sec_platform_data *sec_i2c_parse_dt_pdata(
++					struct device *dev)
++{
++	return 0;
++}
++#endif
++
++static inline int sec_i2c_get_driver_data(struct i2c_client *i2c,
++						const struct i2c_device_id *id)
++{
++#ifdef CONFIG_OF
++	if (i2c->dev.of_node) {
++		const struct of_device_id *match;
++		match = of_match_node(sec_dt_match, i2c->dev.of_node);
++		return (int)match->data;
++	}
++#endif
++	return (int)id->driver_data;
++}
++
+ static int sec_pmic_probe(struct i2c_client *i2c,
+ 			    const struct i2c_device_id *id)
+ {
+@@ -111,13 +172,22 @@ static int sec_pmic_probe(struct i2c_client *i2c,
+ 	sec_pmic->dev = &i2c->dev;
+ 	sec_pmic->i2c = i2c;
+ 	sec_pmic->irq = i2c->irq;
+-	sec_pmic->type = id->driver_data;
+-
++	sec_pmic->type = sec_i2c_get_driver_data(i2c, id);
++
++	if (sec_pmic->dev->of_node) {
++		pdata = sec_pmic_i2c_parse_dt_pdata(sec_pmic->dev);
++		if (IS_ERR(pdata)) {
++			ret = PTR_ERR(pdata);
++			return ret;
++		}
++		pdata->device_type = sec_pmic->type;
++	}
+ 	if (pdata) {
+ 		sec_pmic->device_type = pdata->device_type;
+ 		sec_pmic->ono = pdata->ono;
+ 		sec_pmic->irq_base = pdata->irq_base;
+ 		sec_pmic->wakeup = pdata->wakeup;
++		sec_pmic->pdata = pdata;
+ 	}
+ 
+ 	sec_pmic->regmap = devm_regmap_init_i2c(i2c, &sec_regmap_config);
+@@ -192,6 +262,7 @@ static struct i2c_driver sec_pmic_driver = {
+ 	.driver = {
+ 		   .name = "sec_pmic",
+ 		   .owner = THIS_MODULE,
++		   .of_match_table = of_match_ptr(sec_dt_match),
+ 	},
+ 	.probe = sec_pmic_probe,
+ 	.remove = sec_pmic_remove,
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index aa0ccef..1250cef 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -14,6 +14,7 @@
+ #include <linux/bug.h>
+ #include <linux/err.h>
+ #include <linux/gpio.h>
++#include <linux/of_gpio.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -21,6 +22,9 @@
+ #include <linux/regulator/machine.h>
+ #include <linux/mfd/samsung/core.h>
+ #include <linux/mfd/samsung/s5m8767.h>
++#include <linux/regulator/of_regulator.h>
++
++#define S5M8767_OPMODE_NORMAL_MODE 0x1
+ 
+ struct s5m8767_info {
+ 	struct device *dev;
+@@ -474,15 +478,194 @@ static struct regulator_desc regulators[] = {
+ 	s5m8767_regulator_desc(BUCK9),
+ };
+ 
++#ifdef CONFIG_OF
++static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
++			struct sec_platform_data *pdata,
++			struct device_node *pmic_np)
++{
++	int i, gpio;
++
++	for (i = 0; i < 3; i++) {
++		gpio = of_get_named_gpio(pmic_np,
++					"s5m8767,pmic-buck-dvs-gpios", i);
++		if (!gpio_is_valid(gpio)) {
++			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
++			return -EINVAL;
++		}
++		pdata->buck_gpios[i] = gpio;
++	}
++	return 0;
++}
++
++static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
++			struct sec_platform_data *pdata,
++			struct device_node *pmic_np)
++{
++	int i, gpio;
++
++	for (i = 0; i < 3; i++) {
++		gpio = of_get_named_gpio(pmic_np,
++					"s5m8767,pmic-buck-ds-gpios", i);
++		if (!gpio_is_valid(gpio)) {
++			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
++			return -EINVAL;
++		}
++		pdata->buck_ds[i] = gpio;
++	}
++	return 0;
++}
++
++static int s5m8767_pmic_dt_parse_pdata(struct sec_pmic_dev *iodev,
++					struct sec_platform_data *pdata)
++{
++	struct device_node *pmic_np, *regulators_np, *reg_np;
++	struct sec_regulator_data *rdata;
++	struct sec_opmode_data *rmode;
++	unsigned int i, dvs_voltage_nr = 1, ret;
++
++	pmic_np = iodev->dev->of_node;
++	if (!pmic_np) {
++		dev_err(iodev->dev, "could not find pmic sub-node\n");
++		return -ENODEV;
++	}
++
++	regulators_np = of_find_node_by_name(pmic_np, "regulators");
++	if (!regulators_np) {
++		dev_err(iodev->dev, "could not find regulators sub-node\n");
++		return -EINVAL;
++	}
++
++	/* count the number of regulators to be supported in pmic */
++	pdata->num_regulators = 0;
++	for_each_child_of_node(regulators_np, reg_np)
++		pdata->num_regulators++;
++
++	rdata = devm_kzalloc(iodev->dev, sizeof(*rdata) *
++				pdata->num_regulators, GFP_KERNEL);
++	if (!rdata) {
++		dev_err(iodev->dev,
++			"could not allocate memory for regulator data\n");
++		return -ENOMEM;
++	}
++
++	rmode = devm_kzalloc(iodev->dev, sizeof(*rmode) *
++				pdata->num_regulators, GFP_KERNEL);
++	if (!rdata) {
++		dev_err(iodev->dev,
++			"could not allocate memory for regulator mode\n");
++		return -ENOMEM;
++	}
++
++	pdata->regulators = rdata;
++	pdata->opmode = rmode;
++	for_each_child_of_node(regulators_np, reg_np) {
++		for (i = 0; i < ARRAY_SIZE(regulators); i++)
++			if (!of_node_cmp(reg_np->name, regulators[i].name))
++				break;
++
++		if (i == ARRAY_SIZE(regulators)) {
++			dev_warn(iodev->dev,
++			"don't know how to configure regulator %s\n",
++			reg_np->name);
++			continue;
++		}
++
++		rdata->id = i;
++		rdata->initdata = of_get_regulator_init_data(
++						iodev->dev, reg_np);
++		rdata->reg_node = reg_np;
++		rdata++;
++		rmode->id = i;
++		if (of_property_read_u32(reg_np, "op_mode",
++				&rmode->mode)) {
++			dev_warn(iodev->dev,
++				"no op_mode property property at %s\n",
++				reg_np->full_name);
++
++			rmode->mode = S5M8767_OPMODE_NORMAL_MODE;
++		}
++		rmode++;
++	}
++
++	if (of_get_property(pmic_np, "s5m8767,pmic-buck2-uses-gpio-dvs", NULL))
++		pdata->buck2_gpiodvs = true;
++
++	if (of_get_property(pmic_np, "s5m8767,pmic-buck3-uses-gpio-dvs", NULL))
++		pdata->buck3_gpiodvs = true;
++
++	if (of_get_property(pmic_np, "s5m8767,pmic-buck4-uses-gpio-dvs", NULL))
++		pdata->buck4_gpiodvs = true;
++
++	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
++						pdata->buck4_gpiodvs) {
++		ret = s5m8767_pmic_dt_parse_dvs_gpio(iodev, pdata, pmic_np);
++		if (ret)
++			return -EINVAL;
++
++		if (of_property_read_u32(pmic_np,
++				"s5m8767,pmic-buck-default-dvs-idx",
++				&pdata->buck_default_idx)) {
++			pdata->buck_default_idx = 0;
++		} else {
++			if (pdata->buck_default_idx >= 8) {
++				pdata->buck_default_idx = 0;
++				dev_info(iodev->dev,
++				"invalid value for default dvs index, use 0\n");
++			}
++		}
++		dvs_voltage_nr = 8;
++	}
++
++	ret = s5m8767_pmic_dt_parse_ds_gpio(iodev, pdata, pmic_np);
++	if (ret)
++		return -EINVAL;
++
++	if (of_property_read_u32_array(pmic_np,
++				"s5m8767,pmic-buck2-dvs-voltage",
++				pdata->buck2_voltage, dvs_voltage_nr)) {
++		dev_err(iodev->dev, "buck2 voltages not specified\n");
++		return -EINVAL;
++	}
++
++	if (of_property_read_u32_array(pmic_np,
++				"s5m8767,pmic-buck3-dvs-voltage",
++				pdata->buck3_voltage, dvs_voltage_nr)) {
++		dev_err(iodev->dev, "buck3 voltages not specified\n");
++		return -EINVAL;
++	}
++
++	if (of_property_read_u32_array(pmic_np,
++				"s5m8767,pmic-buck4-dvs-voltage",
++				pdata->buck4_voltage, dvs_voltage_nr)) {
++		dev_err(iodev->dev, "buck4 voltages not specified\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++#else
++static int s5m8767_pmic_dt_parse_pdata(struct sec_pmic_dev *iodev,
++					struct sec_platform_data *pdata)
++{
++	return 0;
++}
++#endif /* CONFIG_OF */
++
+ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ {
+ 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct sec_platform_data *pdata = dev_get_platdata(iodev->dev);
++	struct sec_platform_data *pdata = iodev->pdata;
+ 	struct regulator_config config = { };
+ 	struct regulator_dev **rdev;
+ 	struct s5m8767_info *s5m8767;
+ 	int i, ret, size, buck_init;
+ 
++	if (iodev->dev->of_node) {
++		ret = s5m8767_pmic_dt_parse_pdata(iodev, pdata);
++		if (ret)
++			return ret;
++	}
++
+ 	if (!pdata) {
+ 		dev_err(pdev->dev.parent, "Platform data not supplied\n");
+ 		return -ENODEV;
+@@ -726,6 +909,7 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 		config.init_data = pdata->regulators[i].initdata;
+ 		config.driver_data = s5m8767;
+ 		config.regmap = iodev->regmap;
++		config.of_node = pdata->regulators[i].reg_node;
+ 
+ 		rdev[i] = regulator_register(&regulators[id], &config);
+ 		if (IS_ERR(rdev[i])) {
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index b50c38f..f0f4de3 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -26,6 +26,7 @@ enum sec_device_type {
+ /**
+  * struct sec_pmic_dev - s5m87xx master device for sub-drivers
+  * @dev: master device of the chip (can be used to access platform data)
++ * @pdata: pointer to private data used to pass platform data to child
+  * @i2c: i2c client private data for regulator
+  * @rtc: i2c client private data for rtc
+  * @iolock: mutex for serializing io access
+@@ -39,6 +40,7 @@ enum sec_device_type {
+  */
+ struct sec_pmic_dev {
+ 	struct device *dev;
++	struct sec_platform_data *pdata;
+ 	struct regmap *regmap;
+ 	struct i2c_client *i2c;
+ 	struct i2c_client *rtc;
+@@ -82,11 +84,11 @@ struct sec_platform_data {
+ 
+ 	int				buck_gpios[3];
+ 	int				buck_ds[3];
+-	int				buck2_voltage[8];
++	unsigned int			buck2_voltage[8];
+ 	bool				buck2_gpiodvs;
+-	int				buck3_voltage[8];
++	unsigned int			buck3_voltage[8];
+ 	bool				buck3_gpiodvs;
+-	int				buck4_voltage[8];
++	unsigned int			buck4_voltage[8];
+ 	bool				buck4_gpiodvs;
+ 
+ 	int				buck_set1;
+@@ -127,6 +129,7 @@ struct sec_platform_data {
+ struct sec_regulator_data {
+ 	int				id;
+ 	struct regulator_init_data	*initdata;
++	struct device_node *reg_node;
+ };
+ 
+ /*
+@@ -136,7 +139,7 @@ struct sec_regulator_data {
+  */
+ struct sec_opmode_data {
+ 	int id;
+-	int mode;
++	unsigned int mode;
+ };
+ 
+ /*
+-- 
+1.7.5.4
