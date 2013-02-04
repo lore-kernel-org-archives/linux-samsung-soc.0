@@ -1,107 +1,85 @@
-From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Subject: Re: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
-Date: Mon, 4 Feb 2013 16:43:35 +0530
-Message-ID: <CAKuRcO+DZJU3nB9x_fkxQZBkitKMZE0dzGDNWvboziMVFrwq_g@mail.gmail.com>
-References: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 2/4] ARM: Exynos5250: Enabling ohci-exynos driver
+Date: Mon, 4 Feb 2013 16:45:03 +0530
+Message-ID: <CAFp+6iEEtq=ncTb9pWQSMpvW2S-eRpSPBBYM2SnUmmvVaA=Zvg@mail.gmail.com>
+References: <1358257112-19595-1-git-send-email-gautam.vivek@samsung.com>
+ <1358257112-19595-3-git-send-email-gautam.vivek@samsung.com>
+ <2542030.a14I18dBkO@flatron>
+ <0b0001ce0002$12ecda90$38c68fb0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:55344 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752478Ab3BDLNh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Feb 2013 06:13:37 -0500
-In-Reply-To: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <0b0001ce0002$12ecda90$38c68fb0$@samsung.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, w.sang@pengutronix.de
-Cc: broonie@opensource.wolfsonmicro.com, ch.naveen@samsung.com, sjg@chromium.org, grundler@chromium.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Below are the links on multi master bus arbitration where it has been
-discussing.
-
- http://comments.gmane.org/gmane.linux.kernel/1410276
-
- http://www.kernelhub.org/?msg=179505&p=2
+Hi Kukjin,
 
 
-On Mon, Feb 4, 2013 at 2:33 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
-> This RFC patch is w.r.t multimaster bus arbitration which is already
-> being discussing in the mainline.
-> This patch provides hooks for the i2c multimaster bus arbitration
-> and to have the arbitration parameters.
+On Fri, Feb 1, 2013 at 3:56 AM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Tomasz Figa wrote:
+>>
+>> Hi Vivek,
 >
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> ---
->  drivers/i2c/i2c-core.c |   13 ++++++++++++-
->  include/linux/i2c.h    |   12 ++++++++++++
->  2 files changed, 24 insertions(+), 1 deletion(-)
+> [...]
 >
-> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-> index e388590..ed89fc8 100644
-> --- a/drivers/i2c/i2c-core.c
-> +++ b/drivers/i2c/i2c-core.c
-> @@ -1408,18 +1408,29 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
->                                 (msgs[ret].flags & I2C_M_RECV_LEN) ? "+" : "");
->                 }
->  #endif
-> +               if (adap->mm_arbit_algo) {
-> +                       ret = adap->mm_arbit_algo->i2c_mm_bus_get(adap);
-> +                       if (ret)
-> +                               /* I2C bus under control of another master. */
-> +                               return -EAGAIN;
-> +               }
+>> > +   usb@12120000 {
+>> > +           compatible = "samsung,exynos4210-ohci";
+>> > +           reg = <0x12120000 0x100>;
+>> > +           interrupts = <0 71 0>;
+>>
+>> For Samsung platforms we decided per board enabling of nodes and so this
+>> node should also contain:
+>>
+>>               status = "disabled";
+>>
+>> while in dts file of board using ohci there would be an overriding entry:
+>>
+>>       usb@12120000 {
+>>               status = "okay";
+>>       };
+>>
+>> I know that Exynos5250 has not been yet converted into this convention,
+>> but using it when adding new devices will simplify the process.
+>>
+> Well, I have another opinion on this...
 >
->                 if (in_atomic() || irqs_disabled()) {
->                         ret = i2c_trylock_adapter(adap);
-> -                       if (!ret)
-> +                       if (!ret && adap->mm_arbit_algo) {
-> +                               adap->mm_arbit_algo->i2c_mm_bus_release(adap);
-> +
->                                 /* I2C activity is ongoing. */
->                                 return -EAGAIN;
-> +                       }
->                 } else {
->                         i2c_lock_adapter(adap);
->                 }
+> Let's see, yeah, we are using following method in EXYNOS4 DT...
+> - disabling IPs in SoC DT source and enabling IPs in board DT source
 >
->                 ret = __i2c_transfer(adap, msgs, num);
->                 i2c_unlock_adapter(adap);
-> +               if (adap->mm_arbit_algo)
-> +                       adap->mm_arbit_algo->i2c_mm_bus_release(adap);
+> But as I said, in EXYNOS5440 DT, I want to use following, because most of
+> them should be enabled/used.
+> - enabling IPs in SoC DT source and no need enabling in board DT source.
 >
->                 return ret;
->         } else {
-> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-> index d0c4db7..61fbfe3 100644
-> --- a/include/linux/i2c.h
-> +++ b/include/linux/i2c.h
-> @@ -371,6 +371,17 @@ struct i2c_algorithm {
->  };
+> I mean, it depends on each SoC's situation.
 >
->  /*
-> + *This struct provides hooks for i2c multi-master arbitration needs.
-> + */
-> +struct i2c_mm_arbitration {
-> +       void *arbitration_data;
-> +
-> +       /* Should return 0 if mastership could be successfully established */
-> +       int (*i2c_mm_bus_get)(struct i2c_adapter *adap);
-> +       void (*i2c_mm_bus_release)(struct i2c_adapter *adap);
-> +};
-> +
-> +/*
->   * i2c_adapter is the structure used to identify a physical i2c bus along
->   * with the access algorithms necessary to access it.
->   */
-> @@ -393,6 +404,7 @@ struct i2c_adapter {
->
->         struct mutex userspace_clients_lock;
->         struct list_head userspace_clients;
-> +       struct i2c_mm_arbitration *mm_arbit_algo;
->  };
->  #define to_i2c_adapter(d) container_of(d, struct i2c_adapter, dev)
->
-> --
-> 1.7.9.5
->
+
+So, since USB 2.0 (EHCI/OHCI) shall be always enabled on almost all the boards,
+so we shall keep it enabled in SOC DT source.
+
+In that case following patches can be picked for a merge:
+[PATCH v5 1/4] ARM: Exynos5250: Enabling ehci-s5p driver
+http://www.mail-archive.com/linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12330.html
+
+[PATCH v4 2/4] ARM: Exynos5250: Enabling ohci-exynos driver
+http://www.mail-archive.com/linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12266.html
+
+These will enable EHCI and OHCI support on exynos5250.
+Please let me know if you want me to resend them. ;-)
+
+
+-- 
+Thanks & Regards
+Vivek
