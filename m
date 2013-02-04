@@ -1,266 +1,69 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH V3 1/2] thermal: sysfs: Add a new sysfs node emul_temp
- for thermal emulation
-Date: Mon, 04 Feb 2013 10:20:02 +0800
-Message-ID: <1359944402.2250.44.camel@rzhang1-mobl4>
-References: <1359343700-30190-1-git-send-email-amit.daniel@samsung.com>
-	 <1359937815-29851-1-git-send-email-amit.daniel@samsung.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V2 4/4] DMA: PL330: Modify pl330 filter based on new
+ generic dma dt bindings.
+Date: Mon, 4 Feb 2013 10:51:29 +0530
+Message-ID: <CAAgF-BdfwpOSyrGccs+xepZqMix4q1GRLSAgDnx2NxNTq+MNxA@mail.gmail.com>
+References: <1359723116-18173-1-git-send-email-padma.v@samsung.com>
+	<201302011523.25771.arnd@arndb.de>
+	<CAAgF-Bf55eN2WOgU5nQa=nF76fHvBHR7NdmvoBpF-n4ke6rd1g@mail.gmail.com>
+	<1692358.6BmDsJsb25@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:8748 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753785Ab3BDCUM (ORCPT
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:34425 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750790Ab3BDFVa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Feb 2013 21:20:12 -0500
-In-Reply-To: <1359937815-29851-1-git-send-email-amit.daniel@samsung.com>
+	Mon, 4 Feb 2013 00:21:30 -0500
+Received: by mail-ie0-f182.google.com with SMTP id k14so5245018iea.41
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Feb 2013 21:21:30 -0800 (PST)
+In-Reply-To: <1692358.6BmDsJsb25@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com, kgene.kim@samsung.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, boojin.kim@samsung.com, jassisinghbrar@gmail.com, linux-samsung-soc@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, vinod.koul@intel.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, jon-hunter@ti.com
 
-On Sun, 2013-02-03 at 16:30 -0800, Amit Daniel Kachhap wrote:
-> This patch adds support to set the emulated temperature method in
-> thermal zone (sensor). After setting this feature thermal zone may
-> report this temperature and not the actual temperature. The emulation
-> implementation may be based on sensor capability through platform
-> specific handler or pure software emulation if no platform handler defined.
-> 
-> This is useful in debugging different temperature threshold and its
-> associated cooling action. Critical threshold's cannot be emulated.
-> Writing 0 on this node should disable emulation.
-> 
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+On Sat, Feb 2, 2013 at 8:39 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Saturday 02 February 2013 08:00:54 Padma Venkat wrote:
+>
+>> > The result of this looks good, but I fear that changing the filter function
+>> > like this wil break all drivers that currently use the plat-samsung/dma-ops.c
+>> > code. For migration purposes, I think the best way is to change
+>> > samsung_dmadev_request() to match the new filter_param format.
+>> >
+>> > After that is done, you can migrate all the drivers using samsung_dma_get_ops
+>> > over to the new dma_request_slave_channel interface without breaking
+>> > anything when only part of the series is applied.
+>> >
+>> >         Arnd
+>>
+>> Please check the below link where I made the dma request compatible to
+>> both DT and non-DT
+>>
+>> http://git.kernel.org/?p=linux/kernel/git/broonie/sound.git;a=commit;h=e7ba5f1d0f6292e1b99c63cc4bb74c70232e9065
+>> http://git.kernel.org/?p=linux/kernel/git/broonie/sound.git;a=commit;h=b5be04d35dbb2e00ab27a97bfd26e17019e857ef
+>>
+>> Please let me know if any changes required.
+>>
+>
+> Those two changes by themselves still look ok, I think but you
+> still break the non-DT case in this 4/4 patch by changing the
+> pl330_filter function in an incompatible way. You will still
+> have to either change the filter_param argument in the
+> samsung_dmadev_request() function, or provide separate filter
+> functions, one to be used by samsung_dmadev_request and
+> one for the pl330_xlate function.
 
-applied to thermal -next.
+I missed out to delete this part. Thanks for your point. I will send
+another patch.
 
-thanks,
-rui
-> ---
-> Changes in V3:
-> * Removed the un-necessary get_temp pointer check.
-> * Added the read temp code in #ifdef EMULATION macros
-> 
-> Changes in V2:
-> * Added config option for enabling emulation support.
-> * Added s/w emulation if no platform handler registered.
-> * skip the critical trip point emulation
-> 
-> This patchset is based on thermal maintainer next tree.
-> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next 
-> 
->  Documentation/thermal/sysfs-api.txt |   13 ++++++
->  drivers/thermal/Kconfig             |    8 ++++
->  drivers/thermal/thermal_sys.c       |   79 ++++++++++++++++++++++++++++++-----
->  include/linux/thermal.h             |    2 +
->  4 files changed, 91 insertions(+), 11 deletions(-)
-> 
-> diff --git a/Documentation/thermal/sysfs-api.txt b/Documentation/thermal/sysfs-api.txt
-> index 526d4b9..6859661 100644
-> --- a/Documentation/thermal/sysfs-api.txt
-> +++ b/Documentation/thermal/sysfs-api.txt
-> @@ -55,6 +55,8 @@ temperature) and throttle appropriate devices.
->  	.get_trip_type: get the type of certain trip point.
->  	.get_trip_temp: get the temperature above which the certain trip point
->  			will be fired.
-> +	.set_emul_temp: set the emulation temperature which helps in debugging
-> +			different threshold temperature points.
->  
->  1.1.2 void thermal_zone_device_unregister(struct thermal_zone_device *tz)
->  
-> @@ -153,6 +155,7 @@ Thermal zone device sys I/F, created once it's registered:
->      |---trip_point_[0-*]_temp:	Trip point temperature
->      |---trip_point_[0-*]_type:	Trip point type
->      |---trip_point_[0-*]_hyst:	Hysteresis value for this trip point
-> +    |---emul_temp:		Emulated temperature set node
->  
->  Thermal cooling device sys I/F, created once it's registered:
->  /sys/class/thermal/cooling_device[0-*]:
-> @@ -252,6 +255,16 @@ passive
->  	Valid values: 0 (disabled) or greater than 1000
->  	RW, Optional
->  
-> +emul_temp
-> +	Interface to set the emulated temperature method in thermal zone
-> +	(sensor). After setting this temperature, the thermal zone may pass
-> +	this temperature to platform emulation function if registered or
-> +	cache it locally. This is useful in debugging different temperature
-> +	threshold and its associated cooling action. This is write only node
-> +	and writing 0 on this node should disable emulation.
-> +	Unit: millidegree Celsius
-> +	WO, Optional
-> +
->  *****************************
->  * Cooling device attributes *
->  *****************************
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index faf38c5..e4cf7fb 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -78,6 +78,14 @@ config CPU_THERMAL
->  	  and not the ACPI interface.
->  	  If you want this support, you should say Y here.
->  
-> +config THERMAL_EMULATION
-> +	bool "Thermal emulation mode support"
-> +	help
-> +	  Enable this option to make a emul_temp sysfs node in thermal zone
-> +	  directory to support temperature emulation. With emulation sysfs node,
-> +	  user can manually input temperature and test the different trip
-> +	  threshold behaviour for simulation purpose.
-> +
->  config SPEAR_THERMAL
->  	bool "SPEAr thermal sensor driver"
->  	depends on PLAT_SPEAR
-> diff --git a/drivers/thermal/thermal_sys.c b/drivers/thermal/thermal_sys.c
-> index 0a1bf6b..0675687 100644
-> --- a/drivers/thermal/thermal_sys.c
-> +++ b/drivers/thermal/thermal_sys.c
-> @@ -378,24 +378,54 @@ static void handle_thermal_trip(struct thermal_zone_device *tz, int trip)
->  	monitor_thermal_zone(tz);
->  }
->  
-> +static int thermal_zone_get_temp(struct thermal_zone_device *tz,
-> +				unsigned long *temp)
-> +{
-> +	int ret = 0, count;
-> +	unsigned long crit_temp = -1UL;
-> +	enum thermal_trip_type type;
-> +
-> +	mutex_lock(&tz->lock);
-> +
-> +	ret = tz->ops->get_temp(tz, temp);
-> +#ifdef CONFIG_THERMAL_EMULATION
-> +	if (!tz->emul_temperature)
-> +		goto skip_emul;
-> +
-> +	for (count = 0; count < tz->trips; count++) {
-> +		ret = tz->ops->get_trip_type(tz, count, &type);
-> +		if (!ret && type == THERMAL_TRIP_CRITICAL) {
-> +			ret = tz->ops->get_trip_temp(tz, count, &crit_temp);
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (ret)
-> +		goto skip_emul;
-> +
-> +	if (*temp < crit_temp)
-> +		*temp = tz->emul_temperature;
-> +skip_emul:
-> +#endif
-> +	mutex_unlock(&tz->lock);
-> +	return ret;
-> +}
-> +
->  static void update_temperature(struct thermal_zone_device *tz)
->  {
->  	long temp;
->  	int ret;
->  
-> -	mutex_lock(&tz->lock);
-> -
-> -	ret = tz->ops->get_temp(tz, &temp);
-> +	ret = thermal_zone_get_temp(tz, &temp);
->  	if (ret) {
->  		dev_warn(&tz->device, "failed to read out thermal zone %d\n",
->  			 tz->id);
-> -		goto exit;
-> +		return;
->  	}
->  
-> +	mutex_lock(&tz->lock);
->  	tz->last_temperature = tz->temperature;
->  	tz->temperature = temp;
-> -
-> -exit:
->  	mutex_unlock(&tz->lock);
->  }
->  
-> @@ -438,10 +468,7 @@ temp_show(struct device *dev, struct device_attribute *attr, char *buf)
->  	long temperature;
->  	int ret;
->  
-> -	if (!tz->ops->get_temp)
-> -		return -EPERM;
-> -
-> -	ret = tz->ops->get_temp(tz, &temperature);
-> +	ret = thermal_zone_get_temp(tz, &temperature);
->  
->  	if (ret)
->  		return ret;
-> @@ -701,6 +728,31 @@ policy_show(struct device *dev, struct device_attribute *devattr, char *buf)
->  	return sprintf(buf, "%s\n", tz->governor->name);
->  }
->  
-> +#ifdef CONFIG_THERMAL_EMULATION
-> +static ssize_t
-> +emul_temp_store(struct device *dev, struct device_attribute *attr,
-> +		     const char *buf, size_t count)
-> +{
-> +	struct thermal_zone_device *tz = to_thermal_zone(dev);
-> +	int ret = 0;
-> +	unsigned long temperature;
-> +
-> +	if (kstrtoul(buf, 10, &temperature))
-> +		return -EINVAL;
-> +
-> +	if (!tz->ops->set_emul_temp) {
-> +		mutex_lock(&tz->lock);
-> +		tz->emul_temperature = temperature;
-> +		mutex_unlock(&tz->lock);
-> +	} else {
-> +		ret = tz->ops->set_emul_temp(tz, temperature);
-> +	}
-> +
-> +	return ret ? ret : count;
-> +}
-> +static DEVICE_ATTR(emul_temp, S_IWUSR, NULL, emul_temp_store);
-> +#endif/*CONFIG_THERMAL_EMULATION*/
-> +
->  static DEVICE_ATTR(type, 0444, type_show, NULL);
->  static DEVICE_ATTR(temp, 0444, temp_show, NULL);
->  static DEVICE_ATTR(mode, 0644, mode_show, mode_store);
-> @@ -843,7 +895,7 @@ temp_input_show(struct device *dev, struct device_attribute *attr, char *buf)
->  				       temp_input);
->  	struct thermal_zone_device *tz = temp->tz;
->  
-> -	ret = tz->ops->get_temp(tz, &temperature);
-> +	ret = thermal_zone_get_temp(tz, &temperature);
->  
->  	if (ret)
->  		return ret;
-> @@ -1596,6 +1648,11 @@ struct thermal_zone_device *thermal_zone_device_register(const char *type,
->  			goto unregister;
->  	}
->  
-> +#ifdef CONFIG_THERMAL_EMULATION
-> +	result = device_create_file(&tz->device, &dev_attr_emul_temp);
-> +	if (result)
-> +		goto unregister;
-> +#endif
->  	/* Create policy attribute */
->  	result = device_create_file(&tz->device, &dev_attr_policy);
->  	if (result)
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index 9b78f8c..f0bd7f9 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -123,6 +123,7 @@ struct thermal_zone_device_ops {
->  	int (*set_trip_hyst) (struct thermal_zone_device *, int,
->  			      unsigned long);
->  	int (*get_crit_temp) (struct thermal_zone_device *, unsigned long *);
-> +	int (*set_emul_temp) (struct thermal_zone_device *, unsigned long);
->  	int (*get_trend) (struct thermal_zone_device *, int,
->  			  enum thermal_trend *);
->  	int (*notify) (struct thermal_zone_device *, int,
-> @@ -165,6 +166,7 @@ struct thermal_zone_device {
->  	int polling_delay;
->  	int temperature;
->  	int last_temperature;
-> +	int emul_temperature;
->  	int passive;
->  	unsigned int forced_passive;
->  	const struct thermal_zone_device_ops *ops;
+>
+> In the long run, I think it would be better to move the slave
+> drivers away from the samsung_dma wrappers and use
+> dma_request_slave_channel directly, but that is an independent
+> discussion.
+>
+>         Arnd
+
+Regards
+Padma
