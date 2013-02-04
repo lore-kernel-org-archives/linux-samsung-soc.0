@@ -1,69 +1,372 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V2 4/4] DMA: PL330: Modify pl330 filter based on new
- generic dma dt bindings.
-Date: Mon, 4 Feb 2013 10:51:29 +0530
-Message-ID: <CAAgF-BdfwpOSyrGccs+xepZqMix4q1GRLSAgDnx2NxNTq+MNxA@mail.gmail.com>
-References: <1359723116-18173-1-git-send-email-padma.v@samsung.com>
-	<201302011523.25771.arnd@arndb.de>
-	<CAAgF-Bf55eN2WOgU5nQa=nF76fHvBHR7NdmvoBpF-n4ke6rd1g@mail.gmail.com>
-	<1692358.6BmDsJsb25@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: Add s5m8767 PMIC node to exynos4412-origen.dts
+Date: Mon,  4 Feb 2013 12:01:54 +0530
+Message-ID: <1359959514-21866-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:34425 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750790Ab3BDFVa (ORCPT
+Received: from mail-da0-f45.google.com ([209.85.210.45]:46462 "EHLO
+	mail-da0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751699Ab3BDGlP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Feb 2013 00:21:30 -0500
-Received: by mail-ie0-f182.google.com with SMTP id k14so5245018iea.41
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Feb 2013 21:21:30 -0800 (PST)
-In-Reply-To: <1692358.6BmDsJsb25@wuerfel>
+	Mon, 4 Feb 2013 01:41:15 -0500
+Received: by mail-da0-f45.google.com with SMTP id w4so2514744dam.32
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Feb 2013 22:41:14 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, boojin.kim@samsung.com, jassisinghbrar@gmail.com, linux-samsung-soc@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, vinod.koul@intel.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, jon-hunter@ti.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-On Sat, Feb 2, 2013 at 8:39 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Saturday 02 February 2013 08:00:54 Padma Venkat wrote:
->
->> > The result of this looks good, but I fear that changing the filter function
->> > like this wil break all drivers that currently use the plat-samsung/dma-ops.c
->> > code. For migration purposes, I think the best way is to change
->> > samsung_dmadev_request() to match the new filter_param format.
->> >
->> > After that is done, you can migrate all the drivers using samsung_dma_get_ops
->> > over to the new dma_request_slave_channel interface without breaking
->> > anything when only part of the series is applied.
->> >
->> >         Arnd
->>
->> Please check the below link where I made the dma request compatible to
->> both DT and non-DT
->>
->> http://git.kernel.org/?p=linux/kernel/git/broonie/sound.git;a=commit;h=e7ba5f1d0f6292e1b99c63cc4bb74c70232e9065
->> http://git.kernel.org/?p=linux/kernel/git/broonie/sound.git;a=commit;h=b5be04d35dbb2e00ab27a97bfd26e17019e857ef
->>
->> Please let me know if any changes required.
->>
->
-> Those two changes by themselves still look ok, I think but you
-> still break the non-DT case in this 4/4 patch by changing the
-> pl330_filter function in an incompatible way. You will still
-> have to either change the filter_param argument in the
-> samsung_dmadev_request() function, or provide separate filter
-> functions, one to be used by samsung_dmadev_request and
-> one for the pl330_xlate function.
+Added s5m8767 PMIC node to exynos4412-origen DT file.
 
-I missed out to delete this part. Thanks for your point. I will send
-another patch.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+This patch is created against for-next branch of Kukjin Kim's tree.
+This patch is added on top of the following patch:
+http://www.spinics.net/lists/linux-samsung-soc/msg15423.html
 
->
-> In the long run, I think it would be better to move the slave
-> drivers away from the samsung_dma wrappers and use
-> dma_request_slave_channel directly, but that is an independent
-> discussion.
->
->         Arnd
+and based on the below patch:
+http://comments.gmane.org/gmane.linux.kernel/1434801
+---
+ arch/arm/boot/dts/exynos4412-origen.dts |  330 +++++++++++++++++++++++++++++++
+ 1 files changed, 330 insertions(+), 0 deletions(-)
 
-Regards
-Padma
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index e066fc6..daa3884 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -65,4 +65,334 @@
+ 	serial@13830000 {
+ 		status = "okay";
+ 	};
++
++	i2c@13860000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <20000>;
++		pinctrl-0 = <&i2c0_bus>;
++		pinctrl-names = "default";
++		status = "okay";
++
++		s5m8767_pmic@66 {
++			compatible = "samsung,s5m8767-pmic";
++			reg = <0x66>;
++
++			s5m8767,pmic-buck-default-dvs-idx = <3>;
++
++			s5m8767,pmic-buck-dvs-gpios = <&gpx2 3 0>,
++							 <&gpx2 4 0>,
++							 <&gpx2 5 0>;
++
++			s5m8767,pmic-buck-ds-gpios = <&gpm3 5 0>,
++							<&gpm3 6 0>,
++							<&gpm3 7 0>;
++
++			s5m8767,pmic-buck2-dvs-voltage = <1250000>, <1200000>,
++							 <1200000>, <1200000>,
++							 <1200000>, <1200000>,
++							 <1200000>, <1200000>;
++
++			s5m8767,pmic-buck3-dvs-voltage = <1100000>, <1100000>,
++							 <1100000>, <1100000>,
++							 <1100000>, <1100000>,
++							 <1100000>, <1100000>;
++
++			s5m8767,pmic-buck4-dvs-voltage = <1200000>, <1200000>,
++							 <1200000>, <1200000>,
++							 <1200000>, <1200000>,
++							 <1200000>, <1200000>;
++
++			regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "VDD_ALIVE";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++					regulator-boot-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo2_reg: LDO2 {
++					regulator-name = "VDDQ_M12";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "VDDIOAP_18";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo4_reg: LDO4 {
++					regulator-name = "VDDQ_PRE";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo5_reg: LDO5 {
++					regulator-name = "VDD18_2M";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo6_reg: LDO6 {
++					regulator-name = "VDD10_MPLL";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "VDD10_XPLL";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "VDD10_MIPI";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo9_reg: LDO9 {
++					regulator-name = "VDD33_LCD";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "VDD18_MIPI";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo11_reg: LDO11 {
++					regulator-name = "VDD18_ABB1";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo12_reg: LDO12 {
++					regulator-name = "VDD33_UOTG";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo13_reg: LDO13 {
++					regulator-name = "VDDIOPERI_18";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo14_reg: LDO14 {
++					regulator-name = "VDD18_ABB02";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo15_reg: LDO15 {
++					regulator-name = "VDD10_USH";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo16_reg: LDO16 {
++					regulator-name = "VDD18_HSIC";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo17_reg: LDO17 {
++					regulator-name = "VDDIOAP_MMC012_28";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo18_reg: LDO18 {
++					regulator-name = "VDDIOPERI_28";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo19_reg: LDO19 {
++					regulator-name = "DVDD25";
++					regulator-min-microvolt = <2500000>;
++					regulator-max-microvolt = <2500000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo20_reg: LDO20 {
++					regulator-name = "VDD28_CAM";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo21_reg: LDO21 {
++					regulator-name = "VDD28_AF";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo22_reg: LDO22 {
++					regulator-name = "VDDA28_2M";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo23_reg: LDO23 {
++					regulator-name = "VDD28_TF";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo24_reg: LDO24 {
++					regulator-name = "VDD33_A31";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo25_reg: LDO25 {
++					regulator-name = "VDD18_CAM";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo26_reg: LDO26 {
++					regulator-name = "VDD18_A31";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo27_reg: LDO27 {
++					regulator-name = "GPS_1V8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				ldo28_reg: LDO28 {
++					regulator-name = "DVDD12";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "vdd_mif";
++					regulator-min-microvolt = <950000>;
++					regulator-max-microvolt	= <1100000>;
++					regulator-always-on;
++					regulator-boot-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <925000>;
++					regulator-max-microvolt	= <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				buck3_reg: BUCK3 {
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt	= <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				buck4_reg: BUCK4 {
++					regulator-name = "vdd_g3d";
++					regulator-min-microvolt = <750000>;
++					regulator-max-microvolt	= <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "vdd_m12";
++					regulator-min-microvolt = <750000>;
++					regulator-max-microvolt	= <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				buck6_reg: BUCK6 {
++					regulator-name = "vdd12_5m";
++					regulator-min-microvolt = <750000>;
++					regulator-max-microvolt	= <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++
++				buck9_reg: BUCK9 {
++					regulator-name = "vddf28_emmc";
++					regulator-min-microvolt = <750000>;
++					regulator-max-microvolt	= <3000000>;
++					regulator-always-on;
++					regulator-boot-on;
++					op_mode = <1>; /* Normal Mode */
++				};
++			};
++		};
++	};
+ };
+-- 
+1.7.4.1
