@@ -1,38 +1,123 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH V3] regulator: add device tree support for s5m8767
-Date: Mon, 4 Feb 2013 12:16:05 +0530
-Message-ID: <CAK9yfHx+9uu_aJTaFC2jLuFej_SvggWGDddDm-qKoetVfdfLYg@mail.gmail.com>
-References: <1359935387-19065-1-git-send-email-amit.daniel@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: dma: Remove unnecessary code
+Date: Mon, 04 Feb 2013 14:17:55 +0530
+Message-ID: <1359967675-624-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:40422 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752350Ab3BDGqH (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:28956 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753691Ab3BDIrY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Feb 2013 01:46:07 -0500
-Received: by mail-ob0-f177.google.com with SMTP id wc18so6073953obb.36
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Feb 2013 22:46:05 -0800 (PST)
-In-Reply-To: <1359935387-19065-1-git-send-email-amit.daniel@samsung.com>
+	Mon, 4 Feb 2013 03:47:24 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHO00B7OTQHPRV0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 04 Feb 2013 17:47:23 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MHO00DF3TQQ7V60@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 04 Feb 2013 17:47:22 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lrg@ti.com>, amit.kachhap@gmail.com, Thomas Abraham <thomas.abraham@linaro.org>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, arnd@arndb.de, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
 
-On 4 February 2013 05:19, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
-> This device tree support is added for PMIC block of S5m8767 multi
-> function driver. The usage detail is added in the device tree
-> documentation section. This change is tested on exynos5250 based
-> arndale platform by regulator voltage set/get API's.
->
-> Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+This patch removes the usage of DMACH_DT_PROP and dt_dmach_prop
+from dma code as the new generic dma dt binding support has been
+added.
 
-Tested this patch using [1] on Exynos4412 based Origen board and it works fine.
-Feel free to add Tested-by: Sachin Kamat <sachin.kamat@linaro.org> if needed.
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
 
-[1] http://patches.linaro.org/14445/
+The functionality of this patch is dependent on following patches in the link.
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15402.html
 
+This patch is made based on Mark Brown next branch.
+
+ arch/arm/mach-s3c24xx/include/mach/dma.h       |    1 -
+ arch/arm/mach-s3c64xx/include/mach/dma.h       |    1 -
+ arch/arm/plat-samsung/dma-ops.c                |   10 +---------
+ arch/arm/plat-samsung/include/plat/dma-ops.h   |    1 -
+ arch/arm/plat-samsung/include/plat/dma-pl330.h |    1 -
+ 5 files changed, 1 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/include/mach/dma.h b/arch/arm/mach-s3c24xx/include/mach/dma.h
+index 6b72d5a..b55da1d 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/dma.h
++++ b/arch/arm/mach-s3c24xx/include/mach/dma.h
+@@ -24,7 +24,6 @@
+ */
+ 
+ enum dma_ch {
+-	DMACH_DT_PROP = -1,	/* not yet supported, do not use */
+ 	DMACH_XD0 = 0,
+ 	DMACH_XD1,
+ 	DMACH_SDI,
+diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
+index 57b1ff4..fe1a98c 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/dma.h
++++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
+@@ -21,7 +21,6 @@
+  */
+ enum dma_ch {
+ 	/* DMA0/SDMA0 */
+-	DMACH_DT_PROP = -1, /* not yet supported, do not use */
+ 	DMACH_UART0 = 0,
+ 	DMACH_UART0_SRC2,
+ 	DMACH_UART1,
+diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
+index 71d58dd..ec0d731 100644
+--- a/arch/arm/plat-samsung/dma-ops.c
++++ b/arch/arm/plat-samsung/dma-ops.c
+@@ -23,23 +23,15 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
+ 				struct device *dev, char *ch_name)
+ {
+ 	dma_cap_mask_t mask;
+-	void *filter_param;
+ 
+ 	dma_cap_zero(mask);
+ 	dma_cap_set(param->cap, mask);
+ 
+-	/*
+-	 * If a dma channel property of a device node from device tree is
+-	 * specified, use that as the fliter parameter.
+-	 */
+-	filter_param = (dma_ch == DMACH_DT_PROP) ?
+-		(void *)param->dt_dmach_prop : (void *)dma_ch;
+-
+ 	if (dev->of_node)
+ 		return (unsigned)dma_request_slave_channel(dev, ch_name);
+ 	else
+ 		return (unsigned)dma_request_channel(mask, pl330_filter,
+-							filter_param);
++							(void *)dma_ch);
+ }
+ 
+ static int samsung_dmadev_release(unsigned ch, void *param)
+diff --git a/arch/arm/plat-samsung/include/plat/dma-ops.h b/arch/arm/plat-samsung/include/plat/dma-ops.h
+index 1141782..ce6d763 100644
+--- a/arch/arm/plat-samsung/include/plat/dma-ops.h
++++ b/arch/arm/plat-samsung/include/plat/dma-ops.h
+@@ -18,7 +18,6 @@
+ 
+ struct samsung_dma_req {
+ 	enum dma_transaction_type cap;
+-	struct property *dt_dmach_prop;
+ 	struct s3c2410_dma_client *client;
+ };
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+index d384a80..abe07fa 100644
+--- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
++++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+@@ -21,7 +21,6 @@
+  * use these just as IDs.
+  */
+ enum dma_ch {
+-	DMACH_DT_PROP = -1,
+ 	DMACH_UART0_RX = 0,
+ 	DMACH_UART0_TX,
+ 	DMACH_UART1_RX,
 -- 
-With warm regards,
-Sachin
+1.7.4.4
