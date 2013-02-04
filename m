@@ -1,93 +1,52 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Subject: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
-Date: Mon,  4 Feb 2013 14:33:15 +0530
-Message-ID: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:62738 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754004Ab3BDJDn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Feb 2013 04:03:43 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V3] regulator: add device tree support for s5m8767
+Date: Mon, 4 Feb 2013 10:32:11 +0000
+Message-ID: <20130204103211.GI4720@opensource.wolfsonmicro.com>
+References: <1359935387-19065-1-git-send-email-amit.daniel@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rCb8EA+9TsBVtA92"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1359935387-19065-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lrg@ti.com>, amit.kachhap@gmail.com, Thomas Abraham <thomas.abraham@linaro.org>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, w.sang@pengutronix.de
-Cc: broonie@opensource.wolfsonmicro.com, ch.naveen@samsung.com, sjg@chromium.org, grundler@chromium.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-This RFC patch is w.r.t multimaster bus arbitration which is already
-being discussing in the mainline.
-This patch provides hooks for the i2c multimaster bus arbitration
-and to have the arbitration parameters.
 
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
----
- drivers/i2c/i2c-core.c |   13 ++++++++++++-
- include/linux/i2c.h    |   12 ++++++++++++
- 2 files changed, 24 insertions(+), 1 deletion(-)
+--rCb8EA+9TsBVtA92
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-index e388590..ed89fc8 100644
---- a/drivers/i2c/i2c-core.c
-+++ b/drivers/i2c/i2c-core.c
-@@ -1408,18 +1408,29 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 				(msgs[ret].flags & I2C_M_RECV_LEN) ? "+" : "");
- 		}
- #endif
-+		if (adap->mm_arbit_algo) {
-+			ret = adap->mm_arbit_algo->i2c_mm_bus_get(adap);
-+			if (ret)
-+				/* I2C bus under control of another master. */
-+				return -EAGAIN;
-+		}
- 
- 		if (in_atomic() || irqs_disabled()) {
- 			ret = i2c_trylock_adapter(adap);
--			if (!ret)
-+			if (!ret && adap->mm_arbit_algo) {
-+				adap->mm_arbit_algo->i2c_mm_bus_release(adap);
-+
- 				/* I2C activity is ongoing. */
- 				return -EAGAIN;
-+			}
- 		} else {
- 			i2c_lock_adapter(adap);
- 		}
- 
- 		ret = __i2c_transfer(adap, msgs, num);
- 		i2c_unlock_adapter(adap);
-+		if (adap->mm_arbit_algo)
-+			adap->mm_arbit_algo->i2c_mm_bus_release(adap);
- 
- 		return ret;
- 	} else {
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index d0c4db7..61fbfe3 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -371,6 +371,17 @@ struct i2c_algorithm {
- };
- 
- /*
-+ *This struct provides hooks for i2c multi-master arbitration needs.
-+ */
-+struct i2c_mm_arbitration {
-+	void *arbitration_data;
-+
-+	/* Should return 0 if mastership could be successfully established */
-+	int (*i2c_mm_bus_get)(struct i2c_adapter *adap);
-+	void (*i2c_mm_bus_release)(struct i2c_adapter *adap);
-+};
-+
-+/*
-  * i2c_adapter is the structure used to identify a physical i2c bus along
-  * with the access algorithms necessary to access it.
-  */
-@@ -393,6 +404,7 @@ struct i2c_adapter {
- 
- 	struct mutex userspace_clients_lock;
- 	struct list_head userspace_clients;
-+	struct i2c_mm_arbitration *mm_arbit_algo;
- };
- #define to_i2c_adapter(d) container_of(d, struct i2c_adapter, dev)
- 
--- 
-1.7.9.5
+On Sun, Feb 03, 2013 at 03:49:47PM -0800, Amit Daniel Kachhap wrote:
+> This device tree support is added for PMIC block of S5m8767 multi
+> function driver. The usage detail is added in the device tree
+> documentation section. This change is tested on exynos5250 based
+> arndale platform by regulator voltage set/get API's.
+
+Applied, thanks.
+
+--rCb8EA+9TsBVtA92
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRD44eAAoJELSic+t+oim9F2kQAI1oapH3N0mA60jSVNnZL6NL
+AIGkSHMRebYen+83oYRh5kfw7RvYUQoys2rti7KpchczqRhidGTs4jM/MsA9rnyx
+92Jtvlm2YBkzgMl8pS2qEDRethMZQjMU84FUj7wNbW+wjTuxfjW9AIOnN6gkgZAr
+2FYiCQQH8T9OaVAt9DSpqXp+8O82U6vIKYi9FS1WRvdL72RtAkj0Db3h7CAIBXZq
+q85zIUJGMN6mW1S4XaZeMym3PpI298XwXZe+PQe9NUAw8kzelkl1xq+752Y2TBGa
+fOZKXX4ppJvFE0tT182fcrl13bEufNPCwhGMEpnoYxL4SEuVLzxOh3JB/OjLANLr
+W8dZA9VZGC6j+iFfsXrUyp7d93FSy787G15nnHEN3Oxl3l/9MsDkZPeGJQeVT+sJ
+M3RsdD2xq02tMEJO87TkiHOaugGfz5Tc2QCz9j07QTptJ11K3iJ7m58KBtGqsLYJ
+nt82f4oPTstLAGCLEahJAVWO79XMfl9V4N3m0MvUdGj+wzNlmKfAzmZxZanfDfkj
+++0GpFRFlYndl8UOpM3MoAwXpsfsTevbyMDByae9Z2V2blTvvoYiJ+zIPHklsewL
+OOvyfiDiSvjdiQUWWJkcMmQelYcZ5yQrKHHYWiW/5h2Z6pw54tibD+Whzyo7MLwD
+tJjU0hyryirm+89QZshF
+=USWJ
+-----END PGP SIGNATURE-----
+
+--rCb8EA+9TsBVtA92--
