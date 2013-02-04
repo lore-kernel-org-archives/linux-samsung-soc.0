@@ -1,85 +1,54 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 2/4] ARM: Exynos5250: Enabling ohci-exynos driver
-Date: Mon, 4 Feb 2013 16:45:03 +0530
-Message-ID: <CAFp+6iEEtq=ncTb9pWQSMpvW2S-eRpSPBBYM2SnUmmvVaA=Zvg@mail.gmail.com>
-References: <1358257112-19595-1-git-send-email-gautam.vivek@samsung.com>
- <1358257112-19595-3-git-send-email-gautam.vivek@samsung.com>
- <2542030.a14I18dBkO@flatron>
- <0b0001ce0002$12ecda90$38c68fb0$@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: SAMSUNG: dma: Remove unnecessary code
+Date: Mon, 4 Feb 2013 17:43:54 +0000
+Message-ID: <201302041743.55029.arnd@arndb.de>
+References: <1359967675-624-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <0b0001ce0002$12ecda90$38c68fb0$@samsung.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.8]:53460 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754070Ab3BDRoH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 Feb 2013 12:44:07 -0500
+In-Reply-To: <1359967675-624-1-git-send-email-padma.v@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
 
-Hi Kukjin,
+On Monday 04 February 2013, Padmavathi Venna wrote:
+> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
+> index 71d58dd..ec0d731 100644
+> --- a/arch/arm/plat-samsung/dma-ops.c
+> +++ b/arch/arm/plat-samsung/dma-ops.c
+> @@ -23,23 +23,15 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
+>  				struct device *dev, char *ch_name)
+>  {
+>  	dma_cap_mask_t mask;
+> -	void *filter_param;
+>  
+>  	dma_cap_zero(mask);
+>  	dma_cap_set(param->cap, mask);
+>  
+> -	/*
+> -	 * If a dma channel property of a device node from device tree is
+> -	 * specified, use that as the fliter parameter.
+> -	 */
+> -	filter_param = (dma_ch == DMACH_DT_PROP) ?
+> -		(void *)param->dt_dmach_prop : (void *)dma_ch;
+> -
+>  	if (dev->of_node)
+>  		return (unsigned)dma_request_slave_channel(dev, ch_name);
+>  	else
+>  		return (unsigned)dma_request_channel(mask, pl330_filter,
+> -							filter_param);
+> +							(void *)dma_ch);
+>  }
 
+This still looks wrong to me, because the pl330_filter function now tkes
+a struct dma_pl330_filter_args pointer argument, not dma_ch name.
 
-On Fri, Feb 1, 2013 at 3:56 AM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Tomasz Figa wrote:
->>
->> Hi Vivek,
->
-> [...]
->
->> > +   usb@12120000 {
->> > +           compatible = "samsung,exynos4210-ohci";
->> > +           reg = <0x12120000 0x100>;
->> > +           interrupts = <0 71 0>;
->>
->> For Samsung platforms we decided per board enabling of nodes and so this
->> node should also contain:
->>
->>               status = "disabled";
->>
->> while in dts file of board using ohci there would be an overriding entry:
->>
->>       usb@12120000 {
->>               status = "okay";
->>       };
->>
->> I know that Exynos5250 has not been yet converted into this convention,
->> but using it when adding new devices will simplify the process.
->>
-> Well, I have another opinion on this...
->
-> Let's see, yeah, we are using following method in EXYNOS4 DT...
-> - disabling IPs in SoC DT source and enabling IPs in board DT source
->
-> But as I said, in EXYNOS5440 DT, I want to use following, because most of
-> them should be enabled/used.
-> - enabling IPs in SoC DT source and no need enabling in board DT source.
->
-> I mean, it depends on each SoC's situation.
->
-
-So, since USB 2.0 (EHCI/OHCI) shall be always enabled on almost all the boards,
-so we shall keep it enabled in SOC DT source.
-
-In that case following patches can be picked for a merge:
-[PATCH v5 1/4] ARM: Exynos5250: Enabling ehci-s5p driver
-http://www.mail-archive.com/linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12330.html
-
-[PATCH v4 2/4] ARM: Exynos5250: Enabling ohci-exynos driver
-http://www.mail-archive.com/linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12266.html
-
-These will enable EHCI and OHCI support on exynos5250.
-Please let me know if you want me to resend them. ;-)
-
-
--- 
-Thanks & Regards
-Vivek
+	Arnd
