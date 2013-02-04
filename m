@@ -1,220 +1,259 @@
-From: kgene@kernel.org
-Subject: RE: [PATCH] ARM: dts: specify all the per-cpu interrupts of arch timer
- for exynos5440
-Date: Mon, 04 Feb 2013 14:25:37 -0800
-Message-ID: <11ec01ce0326$90bcb590$b23620b0$@kernel.org>
-References: <1358818887-16870-1-git-send-email-kgene.kim@samsung.com>
- <20130122101554.GA18876@e106331-lin.cambridge.arm.com>
- <063f01cdf8ec$926cda30$b7468e90$@samsung.com>
- <20130123103614.GD32237@e106331-lin.cambridge.arm.com>
- <50FFC1B0.8000601@ti.com> <51012C4B.5080300@ti.com> <51013432.3080903@arm.com>
- <5108C9C9.4010409@ti.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung cleanup-header for v3.9
+Date: Mon, 04 Feb 2013 15:15:18 -0800
+Message-ID: <120101ce032d$80ca0d20$825e2760$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:28875 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:34457 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755014Ab3BDWZz (ORCPT
+	with ESMTP id S1754479Ab3BDXPc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Feb 2013 17:25:55 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	Mon, 4 Feb 2013 18:15:32 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHP0032YVMYKT80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 07:25:52 +0900 (KST)
+ 17 2011)) with ESMTP id <0MHP003IMXXIKT90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 08:15:30 +0900 (KST)
 Received: from visitor4lab ([105.128.18.157])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHP0047GVMZVP10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 07:25:50 +0900 (KST)
-In-reply-to: <5108C9C9.4010409@ti.com>
+ with ESMTPA id <0MHP0071LXXSXL00@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 08:15:30 +0900 (KST)
+References: 
+In-reply-to: 
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Santosh Shilimkar' <santosh.shilimkar@ti.com>, 'Benoit Cousson' <b-cousson@ti.com>
-Cc: 'Marc Zyngier' <marc.zyngier@arm.com>, 'Mark Rutland' <Mark.Rutland@arm.com>, linux-samsung-soc@vger.kernel.org, 'Tony Lindgren' <tony@atomide.com>, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, 'Grant Likely' <grant.likely@secretlab.ca>, 'Thomas Abraham' <thomas.ab@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Santosh Shilimkar wrote:
+Kukjin Kim wrote:
 > 
-> Benoit,
+> Hi, Arnd, Olof
 > 
-> On Thursday 24 January 2013 06:46 PM, Marc Zyngier wrote:
-> > Hi Benoit,
-> >
-> > On 24/01/13 12:42, Benoit Cousson wrote:
-> >> Hi Santosh,
-> >>
-> >> On 01/23/2013 11:55 AM, Santosh Shilimkar wrote:
-> >>> Looping Marc, Benoit
-> >>>
-> >>> On Wednesday 23 January 2013 04:06 PM, Mark Rutland wrote:
-> >>>> On Tue, Jan 22, 2013 at 10:05:18PM +0000, Kukjin Kim wrote:
-> >>>>> Mark Rutland wrote:
-> >>>>>>
-> >>>>> + devicetree-discuss, Grant Likely, Rob Herring and Tony Lindgren
-> >>>>>
-> >>>>>> On Tue, Jan 22, 2013 at 01:41:27AM +0000, Kukjin Kim wrote:
-> >>>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
-> >>>>>>>
-> >>>>>>> Need to be changed requirements in the 'cpus' node for
-> exynos5440
-> >>>>>>> to specify all the per-cpu interrupts of arch timer.
-> >>>>>>
-> >>>>>> The node(s) for the arch timer should not be in the cpus/cpu@N
-> nodes.
-> >>>>>> Instead, there should be one node (in the root of the tree).
-> >>>>>>
-> >>>>> Well, I don't think so. As per my understanding, the local timers
-are
-> >>>>> attached to every ARM cores (cpus) and it generates certain
-interrupt
-> >>>>> to the
-> >>>>> GIC. So the correct representation for this in device tree is to
-> >>>>> include the
-> >>>>> interrupts in the cpu nodes in dts file. Your comments  refer to a
-> >>>>> limitation in the Linux kernel implementation of the arch_timer and
-it
-> >>>>> should not result in representing the hardware details incorrectly
-in
-> >>>>> the
-> >>>>> dts file.
-> >>>>
-> >>>> I disagree. The "correct representation" is whatever the devicetree
-> >>>> binding
-> >>>> documentation describes. It does not describe placing timer nodes in
-> >>>> the cpu
-> >>>> nodes.
-> >>>>
-> >>> This seems to be exact same topic what is getting discussed here [1]
-> >>> Technically DT is suppose to represent how the hardware is rather than
-> >>> how the bindings are done.
-> >>>
-> >>> But as Marc pointed out, the approach taken currently is to not
-> >>> duplicate the banked information. The thread [1] isn't concluded
-> >>> yet but looks like we might want to avoid duplicating the information
-> >>> considering, more of such duplication needs to follow. e.g gic i/f
-> >>>
-> >>> Am still waiting on what Benoit has to say ?
-> >>
-> >> I agree with you :-)
-> >>
-> >> I'm not sure the binding was properly done to reflect the HW
-accurately.
-> >>
-> >> A local timer for my point of view should be located in the cpu node
-> >> like a L1 cache. Or at least referenced in each cpu by a phandle.
-> >>
-> >> What was the rational to put it in the root?
-> >
-> > The rational was to follow what we already do for most (all?) banked
-> > resources. We already have TWD, GIC and PMU that have a root node,
-> > avoiding duplicated resources. I think consistency is an important thing
-> > to have.
-> >
-> > If we decide to move everything into CPU nodes and duplicate all the
-> > banked resources, fine. But that has impacts that reach far beyond the
-> > simple case of the timer.
-> >
-> > In particular, good luck with the GIC distributor interface, where the
-> > 32 first interrupts are per CPU. This would also mandate a redesign of
-> > the way we specify a PPI, as the CPU mask in the third field doesn't
-> > mean a thing anymore.
-> >
-> > If you insist on having a phandle to a timer node, fine by me.
-> >
-> Can you please comment on it so that we can conclude this thread ?
-> I would like to update my patches and hence the push.
+> Here is cleanup headers for Samsung stuff.
+> AS I commented, this makes <mach/*.h> local so that they could be
+> removed.
 > 
-Hmm...it's time to decide for now.
+> Please pull from:
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> next/cleanup-header
+> 
+> If any problems, please kindly let me know.
+> 
+Hi Arnd and Olof,
 
-Let me add timer node for ARM arch timer at this moment. Then if any change
-is required, will do it later.
-
-If any objection, let me know. If not, I will queue following patch for
-v3.9.
+Probably, you guys missed this?
+Or if any problems, please kindly let me know.
 
 Thanks.
 
 - Kukjin
 
----------8<------------------------------8<---------------------------------
--
-
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: dts: re-organized cpu node for exynos5440
-
-This patch adds timer node and re-organizes cpu node for exynos5440.
-
-Acked-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/boot/dts/exynos5440.dtsi |   37
-+++++++++++++++++--------------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi
-b/arch/arm/boot/dts/exynos5440.dtsi
-index 1e7a2b0..5c5a699 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -24,40 +24,37 @@
- 	};
- 
- 	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
- 		cpu@0 {
- 			compatible = "arm,cortex-a15";
--			timer {
--				compatible = "arm,armv7-timer";
--				interrupts = <1 13 0xf08>;
--				clock-frequency = <1000000>;
--			};
-+			reg = <0>;
- 		};
- 		cpu@1 {
- 			compatible = "arm,cortex-a15";
--			timer {
--				compatible = "arm,armv7-timer";
--				interrupts = <1 14 0xf08>;
--				clock-frequency = <1000000>;
--			};
-+			reg = <1>;
- 		};
- 		cpu@2 {
- 			compatible = "arm,cortex-a15";
--			timer {
--				compatible = "arm,armv7-timer";
--				interrupts = <1 14 0xf08>;
--				clock-frequency = <1000000>;
--			};
-+			reg = <2>;
- 		};
- 		cpu@3 {
- 			compatible = "arm,cortex-a15";
--			timer {
--				compatible = "arm,armv7-timer";
--				interrupts = <1 14 0xf08>;
--				clock-frequency = <1000000>;
--			};
-+			reg = <3>;
- 		};
- 	};
- 
-+	timer {
-+		compatible = "arm,cortex-a15-timer",
-+			     "arm,armv7-timer";
-+		interrupts = <1 13 0xf08>,
-+			     <1 14 0xf08>,
-+			     <1 11 0xf08>,
-+			     <1 10 0xf08>;
-+		clock-frequency = <50000000>;
-+	};
-+
- 	serial@B0000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0xB0000 0x1000>;
--- 
-1.7.10.4
+> The following changes since commit
+> a49f0d1ea3ec94fc7cf33a7c36a16343b74bd565:
+> 
+>   Linux 3.8-rc1 (2012-12-21 17:19:00 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> next/cleanup-header
+> 
+> for you to fetch changes up to 3a71c5c375e29fc9c1493b5ead1cf36572139c3e:
+> 
+>   ARM: S3C64XX: Fix missing header error with CONFIG_CPU_IDLE enabled
+> (2013-01-10 10:45:41 -0800)
+> 
+> ----------------------------------------------------------------
+> Kukjin Kim (25):
+>       cpufreq: exynos: cleanup exynos-cpufreq header
+>       ARM: S5P64X0: remove gpiolib.c file in mach-s5p64x0
+>       ARM: S5P64X0: move i2c.h into local directory
+>       ARM: S5P64X0: move s5p64x0-clock.h into local directory
+>       ARM: S5PV210: move regs-sys.h into setup-usb-phy.c file
+>       ARM: EXYNOS: move mach/pmu.h file into common.h
+>       ARM: SAMSUNG: cleanup mach/regs-audss.h file
+>       ARM: SAMSUNG: cleanup mach/gpio-fns.h gpio-track.h and gpio-nrs.h
+>       ARM: S3C24XX: make anubis-cpld, anubis-irq and anubis-map local
+>       ARM: S3C24XX: make bast-cpld.h, bast-irq.h and bast-map.h local
+>       ARM: S3C24XX: make gta02.h local
+>       ARM: S3C24XX: make h1940.h and h1940-latch.h local
+>       ARM: S3C24XX: make osiris-cpld.h and osiris-map.h local
+>       ARM: S3C24XX: make otom-map.h local
+>       ARM: S3C24XX: make vr1000-cpld.h, vr1000-irq.h and vr1000-map.h
+local
+>       ARM: S3C2416: remove regs-s3c2416-mem.h and regs-s3c2416.h
+>       ARM: S3C2412: cleanup regs-s3c2412.h
+>       ARM: S3C24XX: remove idle.h
+>       ARM: S3C24XX: remove dsc.c and make regs-dsc.h local
+>       ARM: S3C64XX: make crag6410.h local
+>       ARM: S3C64XX: make regs-gpio-memport.h local
+>       ARM: S3C64XX: make regs-modem.h local
+>       ARM: S3C64XX: make regs-srom.h local
+>       ARM: S3C64XX: make regs-sys.h local
+>       ARM: S3C64XX: make regs-syscon-power.h local
+> 
+> Tomasz Figa (1):
+>       ARM: S3C64XX: Fix missing header error with CONFIG_CPU_IDLE enabled
+> 
+>  arch/arm/mach-exynos/common.c                      |    1 -
+>  arch/arm/mach-exynos/common.h                      |   20 +
+>  arch/arm/mach-exynos/cpuidle.c                     |    3 +-
+>  arch/arm/mach-exynos/dev-audio.c                   |    3 +-
+>  arch/arm/mach-exynos/include/mach/pmu.h            |   34 --
+>  arch/arm/mach-exynos/include/mach/regs-audss.h     |   18 -
+>  arch/arm/mach-exynos/pm.c                          |    3 +-
+>  arch/arm/mach-exynos/pmu.c                         |    3 +-
+>  arch/arm/mach-s3c2440/Makefile                     |    2 -
+>  arch/arm/mach-s3c2440/dsc.c                        |   54 ---
+>  arch/arm/mach-s3c24xx/anubis.h                     |   53 ++
+>  arch/arm/mach-s3c24xx/bast-ide.c                   |   18 +-
+>  arch/arm/mach-s3c24xx/bast-irq.c                   |   19 +-
+>  arch/arm/mach-s3c24xx/bast.h                       |  197 ++++++++
+>  arch/arm/mach-s3c24xx/{include/mach => }/gta02.h   |   14 +-
+>  arch/arm/mach-s3c24xx/h1940-bluetooth.c            |    6 +-
+>  .../{include/mach/h1940-latch.h => h1940.h}        |   22 +-
+>  arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h   |   25 -
+>  arch/arm/mach-s3c24xx/include/mach/anubis-irq.h    |   21 -
+>  arch/arm/mach-s3c24xx/include/mach/anubis-map.h    |   38 --
+>  arch/arm/mach-s3c24xx/include/mach/bast-cpld.h     |   53 --
+>  arch/arm/mach-s3c24xx/include/mach/bast-irq.h      |   29 --
+>  arch/arm/mach-s3c24xx/include/mach/bast-map.h      |  146 ------
+>  arch/arm/mach-s3c24xx/include/mach/gpio-fns.h      |    1 -
+>  arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h      |   97 ----
+>  arch/arm/mach-s3c24xx/include/mach/gpio-track.h    |   33 --
+>  arch/arm/mach-s3c24xx/include/mach/gpio.h          |   87 +++-
+>  arch/arm/mach-s3c24xx/include/mach/h1940.h         |   24 -
+>  arch/arm/mach-s3c24xx/include/mach/idle.h          |   24 -
+>  arch/arm/mach-s3c24xx/include/mach/osiris-cpld.h   |   30 --
+>  arch/arm/mach-s3c24xx/include/mach/regs-gpio.h     |    2 -
+>  arch/arm/mach-s3c24xx/include/mach/regs-s3c2412.h  |   23 -
+>  .../mach-s3c24xx/include/mach/regs-s3c2416-mem.h   |   30 --
+>  arch/arm/mach-s3c24xx/include/mach/regs-s3c2416.h  |   24 -
+>  arch/arm/mach-s3c24xx/include/mach/vr1000-cpld.h   |   18 -
+>  arch/arm/mach-s3c24xx/include/mach/vr1000-irq.h    |   26 -
+>  arch/arm/mach-s3c24xx/include/mach/vr1000-map.h    |  110 -----
+>  arch/arm/mach-s3c24xx/mach-anubis.c                |   13 +-
+>  arch/arm/mach-s3c24xx/mach-at2440evb.c             |    1 +
+>  arch/arm/mach-s3c24xx/mach-bast.c                  |   52 +-
+>  arch/arm/mach-s3c24xx/mach-gta02.c                 |   59 ++-
+>  arch/arm/mach-s3c24xx/mach-h1940.c                 |   37 +-
+>  arch/arm/mach-s3c24xx/mach-osiris.c                |   27 +-
+>  arch/arm/mach-s3c24xx/mach-otom.c                  |   20 +-
+>  arch/arm/mach-s3c24xx/mach-rx1950.c                |   31 +-
+>  arch/arm/mach-s3c24xx/mach-rx3715.c                |   16 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2413.c              |    1 -
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    1 -
+>  arch/arm/mach-s3c24xx/mach-smdk2440.c              |    1 -
+>  arch/arm/mach-s3c24xx/mach-smdk2443.c              |    1 -
+>  arch/arm/mach-s3c24xx/mach-vr1000.c                |   37 +-
+>  arch/arm/mach-s3c24xx/mach-vstms.c                 |    1 -
+>  .../{include/mach/osiris-map.h => osiris.h}        |   23 +-
+>  .../{include/mach/otom-map.h => otom.h}            |   20 +-
+>  arch/arm/mach-s3c24xx/pm-s3c2410.c                 |    6 +-
+>  arch/arm/mach-s3c24xx/pm-s3c2412.c                 |    8 +-
+>  .../arm/mach-s3c24xx/{include/mach => }/regs-dsc.h |    0
+>  arch/arm/mach-s3c24xx/s3c2412.c                    |   29 +-
+>  arch/arm/mach-s3c24xx/s3c244x.c                    |    3 +-
+>  arch/arm/mach-s3c24xx/simtec-audio.c               |    5 +-
+>  arch/arm/mach-s3c24xx/simtec-nor.c                 |    3 +-
+>  arch/arm/mach-s3c24xx/simtec-usb.c                 |    8 +-
+>  arch/arm/mach-s3c24xx/vr1000.h                     |  118 +++++
+>  arch/arm/mach-s3c64xx/clock.c                      |    3 +-
+>  arch/arm/mach-s3c64xx/cpuidle.c                    |    4 +-
+>  .../arm/mach-s3c64xx/{include/mach => }/crag6410.h |    0
+>  arch/arm/mach-s3c64xx/dma.c                        |    4 +-
+>  arch/arm/mach-s3c64xx/include/mach/regs-sys.h      |   31 --
+>  arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410-module.c       |    2 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410.c              |    9 +-
+>  arch/arm/mach-s3c64xx/mach-mini6410.c              |    4 +-
+>  arch/arm/mach-s3c64xx/mach-real6410.c              |    4 +-
+>  arch/arm/mach-s3c64xx/mach-smartq.c                |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c              |    6 +-
+>  arch/arm/mach-s3c64xx/pm.c                         |    9 +-
+>  .../{include/mach => }/regs-gpio-memport.h         |    9 +-
+>  .../mach-s3c64xx/{include/mach => }/regs-modem.h   |   11 +-
+>  .../mach-s3c64xx/{include/mach => }/regs-srom.h    |   11 +-
+>  arch/arm/mach-s3c64xx/regs-sys.h                   |   30 ++
+>  .../{include/mach => }/regs-syscon-power.h         |    9 +-
+>  arch/arm/mach-s3c64xx/setup-usb-phy.c              |    3 +-
+>  arch/arm/mach-s5p64x0/clock-s5p6440.c              |    2 +-
+>  arch/arm/mach-s5p64x0/clock-s5p6450.c              |    2 +-
+>  .../{include/mach/s5p64x0-clock.h => clock.h}      |    9 +-
+>  arch/arm/mach-s5p64x0/gpiolib.c                    |  508
+--------------------
+>  arch/arm/mach-s5p64x0/{include/mach => }/i2c.h     |    3 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c              |    2 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6450.c              |    2 +-
+>  arch/arm/mach-s5p64x0/setup-i2c0.c                 |    2 +-
+>  arch/arm/mach-s5p64x0/setup-i2c1.c                 |    2 +-
+>  arch/arm/mach-s5pv210/dev-audio.c                  |    3 +-
+>  arch/arm/mach-s5pv210/include/mach/regs-audss.h    |   18 -
+>  arch/arm/mach-s5pv210/include/mach/regs-sys.h      |   15 -
+>  arch/arm/mach-s5pv210/setup-usb-phy.c              |    7 +-
+>  arch/arm/plat-samsung/include/plat/gpio-core.h     |   13 +-
+>  arch/arm/plat-samsung/include/plat/gpio-fns.h      |    1 -
+>  drivers/cpufreq/exynos-cpufreq.c                   |    4 +-
+>  .../cpufreq.h => drivers/cpufreq/exynos-cpufreq.h  |    3 +-
+>  drivers/cpufreq/exynos4210-cpufreq.c               |    3 +-
+>  drivers/cpufreq/exynos4x12-cpufreq.c               |    3 +-
+>  drivers/cpufreq/exynos5250-cpufreq.c               |    3 +-
+>  drivers/gpio/gpio-samsung.c                        |    1 -
+>  sound/soc/samsung/h1940_uda1380.c                  |   13 +-
+>  sound/soc/samsung/neo1973_wm8753.c                 |    8 +-
+>  105 files changed, 836 insertions(+), 1776 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/include/mach/pmu.h
+>  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-audss.h
+>  delete mode 100644 arch/arm/mach-s3c2440/dsc.c
+>  create mode 100644 arch/arm/mach-s3c24xx/anubis.h
+>  create mode 100644 arch/arm/mach-s3c24xx/bast.h
+>  rename arch/arm/mach-s3c24xx/{include/mach => }/gta02.h (53%)
+>  rename arch/arm/mach-s3c24xx/{include/mach/h1940-latch.h => h1940.h}
+> (70%)
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-cpld.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-irq.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/anubis-map.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/bast-cpld.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/bast-irq.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/bast-map.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/gpio-fns.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/gpio-track.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/h1940.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/idle.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/osiris-cpld.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-s3c2412.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-s3c2416-
+> mem.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-s3c2416.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/vr1000-cpld.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/vr1000-irq.h
+>  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/vr1000-map.h
+>  rename arch/arm/mach-s3c24xx/{include/mach/osiris-map.h => osiris.h}
+> (69%)
+>  rename arch/arm/mach-s3c24xx/{include/mach/otom-map.h => otom.h}
+> (50%)
+>  rename arch/arm/mach-s3c24xx/{include/mach => }/regs-dsc.h (100%)
+>  create mode 100644 arch/arm/mach-s3c24xx/vr1000.h
+>  rename arch/arm/mach-s3c64xx/{include/mach => }/crag6410.h (100%)
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/regs-sys.h
+>  rename arch/arm/mach-s3c64xx/{include/mach => }/regs-gpio-memport.h
+> (71%)
+>  rename arch/arm/mach-s3c64xx/{include/mach => }/regs-modem.h (78%)
+>  rename arch/arm/mach-s3c64xx/{include/mach => }/regs-srom.h (90%)
+>  create mode 100644 arch/arm/mach-s3c64xx/regs-sys.h
+>  rename arch/arm/mach-s3c64xx/{include/mach => }/regs-syscon-power.h
+> (95%)
+>  rename arch/arm/mach-s5p64x0/{include/mach/s5p64x0-clock.h => clock.h}
+> (87%)
+>  delete mode 100644 arch/arm/mach-s5p64x0/gpiolib.c
+>  rename arch/arm/mach-s5p64x0/{include/mach => }/i2c.h (91%)
+>  delete mode 100644 arch/arm/mach-s5pv210/include/mach/regs-audss.h
+>  delete mode 100644 arch/arm/mach-s5pv210/include/mach/regs-sys.h
+>  delete mode 100644 arch/arm/plat-samsung/include/plat/gpio-fns.h
+>  rename arch/arm/mach-exynos/include/mach/cpufreq.h =>
+> drivers/cpufreq/exynos-cpufreq.h (94%)
