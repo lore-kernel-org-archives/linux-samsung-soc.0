@@ -1,123 +1,93 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: dma: Remove unnecessary code
-Date: Mon, 04 Feb 2013 14:17:55 +0530
-Message-ID: <1359967675-624-1-git-send-email-padma.v@samsung.com>
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
+Date: Mon,  4 Feb 2013 14:33:15 +0530
+Message-ID: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:28956 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753691Ab3BDIrY (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:62738 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754004Ab3BDJDn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Feb 2013 03:47:24 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHO00B7OTQHPRV0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Feb 2013 17:47:23 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHO00DF3TQQ7V60@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Feb 2013 17:47:22 +0900 (KST)
+	Mon, 4 Feb 2013 04:03:43 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, arnd@arndb.de, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
+To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, w.sang@pengutronix.de
+Cc: broonie@opensource.wolfsonmicro.com, ch.naveen@samsung.com, sjg@chromium.org, grundler@chromium.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-This patch removes the usage of DMACH_DT_PROP and dt_dmach_prop
-from dma code as the new generic dma dt binding support has been
-added.
+This RFC patch is w.r.t multimaster bus arbitration which is already
+being discussing in the mainline.
+This patch provides hooks for the i2c multimaster bus arbitration
+and to have the arbitration parameters.
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 ---
+ drivers/i2c/i2c-core.c |   13 ++++++++++++-
+ include/linux/i2c.h    |   12 ++++++++++++
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-The functionality of this patch is dependent on following patches in the link.
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15402.html
-
-This patch is made based on Mark Brown next branch.
-
- arch/arm/mach-s3c24xx/include/mach/dma.h       |    1 -
- arch/arm/mach-s3c64xx/include/mach/dma.h       |    1 -
- arch/arm/plat-samsung/dma-ops.c                |   10 +---------
- arch/arm/plat-samsung/include/plat/dma-ops.h   |    1 -
- arch/arm/plat-samsung/include/plat/dma-pl330.h |    1 -
- 5 files changed, 1 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/include/mach/dma.h b/arch/arm/mach-s3c24xx/include/mach/dma.h
-index 6b72d5a..b55da1d 100644
---- a/arch/arm/mach-s3c24xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/dma.h
-@@ -24,7 +24,6 @@
- */
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index e388590..ed89fc8 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -1408,18 +1408,29 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 				(msgs[ret].flags & I2C_M_RECV_LEN) ? "+" : "");
+ 		}
+ #endif
++		if (adap->mm_arbit_algo) {
++			ret = adap->mm_arbit_algo->i2c_mm_bus_get(adap);
++			if (ret)
++				/* I2C bus under control of another master. */
++				return -EAGAIN;
++		}
  
- enum dma_ch {
--	DMACH_DT_PROP = -1,	/* not yet supported, do not use */
- 	DMACH_XD0 = 0,
- 	DMACH_XD1,
- 	DMACH_SDI,
-diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
-index 57b1ff4..fe1a98c 100644
---- a/arch/arm/mach-s3c64xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
-@@ -21,7 +21,6 @@
-  */
- enum dma_ch {
- 	/* DMA0/SDMA0 */
--	DMACH_DT_PROP = -1, /* not yet supported, do not use */
- 	DMACH_UART0 = 0,
- 	DMACH_UART0_SRC2,
- 	DMACH_UART1,
-diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-index 71d58dd..ec0d731 100644
---- a/arch/arm/plat-samsung/dma-ops.c
-+++ b/arch/arm/plat-samsung/dma-ops.c
-@@ -23,23 +23,15 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
- 				struct device *dev, char *ch_name)
- {
- 	dma_cap_mask_t mask;
--	void *filter_param;
+ 		if (in_atomic() || irqs_disabled()) {
+ 			ret = i2c_trylock_adapter(adap);
+-			if (!ret)
++			if (!ret && adap->mm_arbit_algo) {
++				adap->mm_arbit_algo->i2c_mm_bus_release(adap);
++
+ 				/* I2C activity is ongoing. */
+ 				return -EAGAIN;
++			}
+ 		} else {
+ 			i2c_lock_adapter(adap);
+ 		}
  
- 	dma_cap_zero(mask);
- 	dma_cap_set(param->cap, mask);
+ 		ret = __i2c_transfer(adap, msgs, num);
+ 		i2c_unlock_adapter(adap);
++		if (adap->mm_arbit_algo)
++			adap->mm_arbit_algo->i2c_mm_bus_release(adap);
  
--	/*
--	 * If a dma channel property of a device node from device tree is
--	 * specified, use that as the fliter parameter.
--	 */
--	filter_param = (dma_ch == DMACH_DT_PROP) ?
--		(void *)param->dt_dmach_prop : (void *)dma_ch;
--
- 	if (dev->of_node)
- 		return (unsigned)dma_request_slave_channel(dev, ch_name);
- 	else
- 		return (unsigned)dma_request_channel(mask, pl330_filter,
--							filter_param);
-+							(void *)dma_ch);
- }
- 
- static int samsung_dmadev_release(unsigned ch, void *param)
-diff --git a/arch/arm/plat-samsung/include/plat/dma-ops.h b/arch/arm/plat-samsung/include/plat/dma-ops.h
-index 1141782..ce6d763 100644
---- a/arch/arm/plat-samsung/include/plat/dma-ops.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-ops.h
-@@ -18,7 +18,6 @@
- 
- struct samsung_dma_req {
- 	enum dma_transaction_type cap;
--	struct property *dt_dmach_prop;
- 	struct s3c2410_dma_client *client;
+ 		return ret;
+ 	} else {
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index d0c4db7..61fbfe3 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -371,6 +371,17 @@ struct i2c_algorithm {
  };
  
-diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-index d384a80..abe07fa 100644
---- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-@@ -21,7 +21,6 @@
-  * use these just as IDs.
+ /*
++ *This struct provides hooks for i2c multi-master arbitration needs.
++ */
++struct i2c_mm_arbitration {
++	void *arbitration_data;
++
++	/* Should return 0 if mastership could be successfully established */
++	int (*i2c_mm_bus_get)(struct i2c_adapter *adap);
++	void (*i2c_mm_bus_release)(struct i2c_adapter *adap);
++};
++
++/*
+  * i2c_adapter is the structure used to identify a physical i2c bus along
+  * with the access algorithms necessary to access it.
   */
- enum dma_ch {
--	DMACH_DT_PROP = -1,
- 	DMACH_UART0_RX = 0,
- 	DMACH_UART0_TX,
- 	DMACH_UART1_RX,
+@@ -393,6 +404,7 @@ struct i2c_adapter {
+ 
+ 	struct mutex userspace_clients_lock;
+ 	struct list_head userspace_clients;
++	struct i2c_mm_arbitration *mm_arbit_algo;
+ };
+ #define to_i2c_adapter(d) container_of(d, struct i2c_adapter, dev)
+ 
 -- 
-1.7.4.4
+1.7.9.5
