@@ -1,566 +1,329 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 3/3] ARM: S3C24XX: header mach/regs-mem.h local
-Date: Sun, 03 Feb 2013 17:18:31 -0800
-Message-ID: <1359940711-29764-3-git-send-email-kgene.kim@samsung.com>
-References: <1359940711-29764-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:18574 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753771Ab3BDBTf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Feb 2013 20:19:35 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHO00G1I906YNF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Feb 2013 10:19:31 +0900 (KST)
-Received: from localhost.localdomain ([105.128.18.183])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHO00CIF90C7U10@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Feb 2013 10:19:30 +0900 (KST)
-In-reply-to: <1359940711-29764-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH V2 2/2] thermal: exynos: Use the framework for
+ temperature emulation support
+Date: Mon, 04 Feb 2013 10:14:26 +0800
+Message-ID: <1359944066.2250.43.camel@rzhang1-mobl4>
+References: <1359343700-30190-1-git-send-email-amit.daniel@samsung.com>
+	 <1359343700-30190-2-git-send-email-amit.daniel@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1359343700-30190-2-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-Since header mach/regs-mem.h is used only into mach-s3c24xx/,
-this patch moves the header file in local.
+On Sun, 2013-01-27 at 19:28 -0800, Amit Daniel Kachhap wrote:
+> This removes the driver specific sysfs support of the temperature
+> emulation and uses the newly added core thermal framework for thermal
+> emulation. A platform specific handler is added to support this.
+> 
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> Changes in V2:
+> * Added config option CONFIG_THERMAL_EMULATION instead of
+>  CONFIG_EXYNOS_THERMAL_EMUL 
+> 
+> This patchset is based on thermal maintainer next tree.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next 
+> 
+>  Documentation/thermal/exynos_thermal_emulation |    8 +-
+>  drivers/thermal/Kconfig                        |    9 --
+>  drivers/thermal/exynos_thermal.c               |  158 ++++++++++--------------
+>  3 files changed, 67 insertions(+), 108 deletions(-)
+> 
+> diff --git a/Documentation/thermal/exynos_thermal_emulation b/Documentation/thermal/exynos_thermal_emulation
+> index b73bbfb..36a3e79 100644
+> --- a/Documentation/thermal/exynos_thermal_emulation
+> +++ b/Documentation/thermal/exynos_thermal_emulation
+> @@ -13,11 +13,11 @@ Thermal emulation mode supports software debug for TMU's operation. User can set
+>  manually with software code and TMU will read current temperature from user value not from
+>  sensor's value.
+>  
+> -Enabling CONFIG_EXYNOS_THERMAL_EMUL option will make this support in available.
+> -When it's enabled, sysfs node will be created under
+> -/sys/bus/platform/devices/'exynos device name'/ with name of 'emulation'.
+> +Enabling CONFIG_THERMAL_EMULATION option will make this support available.
+> +When it's enabled, sysfs node will be created as
+> +/sys/devices/virtual/thermal/thermal_zone'zone id'/emul_temp.
+>  
+> -The sysfs node, 'emulation', will contain value 0 for the initial state. When you input any
+> +The sysfs node, 'emul_node', will contain value 0 for the initial state. When you input any
+>  temperature you want to update to sysfs node, it automatically enable emulation mode and
+>  current temperature will be changed into it.
+>  (Exynos also supports user changable delay time which would be used to delay of
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index e4cf7fb..2a79510 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -109,15 +109,6 @@ config EXYNOS_THERMAL
+>  	  If you say yes here you get support for TMU (Thermal Management
+>  	  Unit) on SAMSUNG EXYNOS series of SoC.
+>  
+> -config EXYNOS_THERMAL_EMUL
+> -	bool "EXYNOS TMU emulation mode support"
+> -	depends on EXYNOS_THERMAL
+> -	help
+> -	  Exynos 4412 and 4414 and 5 series has emulation mode on TMU.
+> -	  Enable this option will be make sysfs node in exynos thermal platform
+> -	  device directory to support emulation mode. With emulation mode sysfs
+> -	  node, you can manually input temperature to TMU for simulation purpose.
+> -
+>  config DB8500_THERMAL
+>  	bool "DB8500 thermal management"
+>  	depends on ARCH_U8500
+> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
+> index 327102a..afe9c2a 100644
+> --- a/drivers/thermal/exynos_thermal.c
+> +++ b/drivers/thermal/exynos_thermal.c
+> @@ -99,13 +99,13 @@
+>  #define IDLE_INTERVAL 10000
+>  #define MCELSIUS	1000
+>  
+> -#ifdef CONFIG_EXYNOS_THERMAL_EMUL
+> +#ifdef CONFIG_THERMAL_EMULATION
+>  #define EXYNOS_EMUL_TIME	0x57F0
+>  #define EXYNOS_EMUL_TIME_SHIFT	16
+>  #define EXYNOS_EMUL_DATA_SHIFT	8
+>  #define EXYNOS_EMUL_DATA_MASK	0xFF
+>  #define EXYNOS_EMUL_ENABLE	0x1
+> -#endif /* CONFIG_EXYNOS_THERMAL_EMUL */
+> +#endif /* CONFIG_THERMAL_EMULATION */
+>  
+>  /* CPU Zone information */
+>  #define PANIC_ZONE      4
+> @@ -143,6 +143,7 @@ struct	thermal_cooling_conf {
+>  struct thermal_sensor_conf {
+>  	char name[SENSOR_NAME_LEN];
+>  	int (*read_temperature)(void *data);
+> +	int (*write_emul_temp)(void *data, unsigned long temp);
+>  	struct thermal_trip_point_conf trip_data;
+>  	struct thermal_cooling_conf cooling_data;
+>  	void *private_data;
+> @@ -366,6 +367,23 @@ static int exynos_get_temp(struct thermal_zone_device *thermal,
+>  	return 0;
+>  }
+>  
+> +/* Get temperature callback functions for thermal zone */
+> +static int exynos_set_emul_temp(struct thermal_zone_device *thermal,
+> +						unsigned long temp)
+> +{
+> +	void *data;
+> +	int ret = -EINVAL;
+> +
+> +	if (!th_zone->sensor_conf) {
+> +		pr_info("Temperature sensor not initialised\n");
+> +		return -EINVAL;
+> +	}
+> +	data = th_zone->sensor_conf->private_data;
+> +	if (th_zone->sensor_conf->write_emul_temp)
+> +		ret = th_zone->sensor_conf->write_emul_temp(data, temp);
+> +	return ret;
+> +}
+> +
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s3c24xx/cpufreq-utils.c         |    3 +-
- arch/arm/mach-s3c24xx/dma-s3c2410.c           |    1 -
- arch/arm/mach-s3c24xx/dma-s3c2412.c           |    1 -
- arch/arm/mach-s3c24xx/dma-s3c2440.c           |    1 -
- arch/arm/mach-s3c24xx/dma-s3c2443.c           |    1 -
- arch/arm/mach-s3c24xx/include/mach/regs-mem.h |  202 -------------------------
- arch/arm/mach-s3c24xx/iotiming-s3c2410.c      |    3 +-
- arch/arm/mach-s3c24xx/mach-anubis.c           |    1 -
- arch/arm/mach-s3c24xx/mach-at2440evb.c        |    1 -
- arch/arm/mach-s3c24xx/mach-bast.c             |    1 -
- arch/arm/mach-s3c24xx/mach-gta02.c            |    1 -
- arch/arm/mach-s3c24xx/mach-jive.c             |    1 -
- arch/arm/mach-s3c24xx/mach-mini2440.c         |    1 -
- arch/arm/mach-s3c24xx/mach-osiris.c           |    2 +-
- arch/arm/mach-s3c24xx/pm.c                    |    3 +-
- arch/arm/mach-s3c24xx/regs-mem.h              |   54 +++++++
- arch/arm/mach-s3c24xx/simtec-pm.c             |    3 +-
- arch/arm/mach-s3c24xx/sleep-s3c2410.S         |    3 +-
- arch/arm/mach-s3c24xx/sleep.S                 |    1 -
- 19 files changed, 65 insertions(+), 219 deletions(-)
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-mem.h
- create mode 100644 arch/arm/mach-s3c24xx/regs-mem.h
+>  /* Get the temperature trend */
+>  static int exynos_get_trend(struct thermal_zone_device *thermal,
+>  			int trip, enum thermal_trend *trend)
+> @@ -382,6 +400,7 @@ static struct thermal_zone_device_ops const exynos_dev_ops = {
+>  	.bind = exynos_bind,
+>  	.unbind = exynos_unbind,
+>  	.get_temp = exynos_get_temp,
+> +	.set_emul_temp = exynos_set_emul_temp,
+>  	.get_trend = exynos_get_trend,
+>  	.get_mode = exynos_get_mode,
+>  	.set_mode = exynos_set_mode,
+> @@ -700,6 +719,44 @@ static int exynos_tmu_read(struct exynos_tmu_data *data)
+>  	return temp;
+>  }
+>  
+> +#ifdef CONFIG_THERMAL_EMULATION
+> +static int exynos_tmu_set_emulation(struct exynos_tmu_data *data,
+> +					unsigned long temp)
+> +{
+> +	unsigned int reg;
+> +	int ret = -EINVAL;
+> +
+> +	if (data->soc == SOC_ARCH_EXYNOS4210)
+> +		goto out;
+> +
+> +	if (temp && temp < MCELSIUS)
+> +		goto out;
+> +
+> +	mutex_lock(&data->lock);
+> +	clk_enable(data->clk);
+> +
+> +	reg = readl(data->base + EXYNOS_EMUL_CON);
+> +
+> +	if (temp) {
+> +		temp /= MCELSIUS;
+> +
+> +		reg = (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT) |
+> +			(temp_to_code(data, temp)
+> +			 << EXYNOS_EMUL_DATA_SHIFT) | EXYNOS_EMUL_ENABLE;
+> +	} else {
+> +		reg &= ~EXYNOS_EMUL_ENABLE;
+> +	}
+> +
+> +	writel(reg, data->base + EXYNOS_EMUL_CON);
+> +
+> +	clk_disable(data->clk);
+> +	mutex_unlock(&data->lock);
+> +	return 0;
+> +out:
+> +	return ret;
+> +}
+> +#endif/*CONFIG_THERMAL_EMULATION*/
+> +
+>  static void exynos_tmu_work(struct work_struct *work)
+>  {
+>  	struct exynos_tmu_data *data = container_of(work,
+> @@ -839,93 +896,6 @@ static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
+>  			platform_get_device_id(pdev)->driver_data;
+>  }
+>  
+> -#ifdef CONFIG_EXYNOS_THERMAL_EMUL
+> -static ssize_t exynos_tmu_emulation_show(struct device *dev,
+> -					 struct device_attribute *attr,
+> -					 char *buf)
+> -{
+> -	struct platform_device *pdev = container_of(dev,
+> -					struct platform_device, dev);
+> -	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> -	unsigned int reg;
+> -	u8 temp_code;
+> -	int temp = 0;
+> -
+> -	if (data->soc == SOC_ARCH_EXYNOS4210)
+> -		goto out;
+> -
+> -	mutex_lock(&data->lock);
+> -	clk_enable(data->clk);
+> -	reg = readl(data->base + EXYNOS_EMUL_CON);
+> -	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+> -
+> -	if (reg & EXYNOS_EMUL_ENABLE) {
+> -		reg >>= EXYNOS_EMUL_DATA_SHIFT;
+> -		temp_code = reg & EXYNOS_EMUL_DATA_MASK;
+> -		temp = code_to_temp(data, temp_code);
+> -	}
+> -out:
+> -	return sprintf(buf, "%d\n", temp * MCELSIUS);
+> -}
+> -
+> -static ssize_t exynos_tmu_emulation_store(struct device *dev,
+> -					struct device_attribute *attr,
+> -					const char *buf, size_t count)
+> -{
+> -	struct platform_device *pdev = container_of(dev,
+> -					struct platform_device, dev);
+> -	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> -	unsigned int reg;
+> -	int temp;
+> -
+> -	if (data->soc == SOC_ARCH_EXYNOS4210)
+> -		goto out;
+> -
+> -	if (!sscanf(buf, "%d\n", &temp) || temp < 0)
+> -		return -EINVAL;
+> -
+> -	mutex_lock(&data->lock);
+> -	clk_enable(data->clk);
+> -
+> -	reg = readl(data->base + EXYNOS_EMUL_CON);
+> -
+> -	if (temp) {
+> -		/* Both CELSIUS and MCELSIUS type are available for input */
+> -		if (temp > MCELSIUS)
+> -			temp /= MCELSIUS;
+> -
+> -		reg = (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT) |
+> -			(temp_to_code(data, (temp / MCELSIUS))
+> -			 << EXYNOS_EMUL_DATA_SHIFT) | EXYNOS_EMUL_ENABLE;
+> -	} else {
+> -		reg &= ~EXYNOS_EMUL_ENABLE;
+> -	}
+> -
+> -	writel(reg, data->base + EXYNOS_EMUL_CON);
+> -
+> -	clk_disable(data->clk);
+> -	mutex_unlock(&data->lock);
+> -
+> -out:
+> -	return count;
+> -}
+> -
+> -static DEVICE_ATTR(emulation, 0644, exynos_tmu_emulation_show,
+> -					exynos_tmu_emulation_store);
+> -static int create_emulation_sysfs(struct device *dev)
+> -{
+> -	return device_create_file(dev, &dev_attr_emulation);
+> -}
+> -static void remove_emulation_sysfs(struct device *dev)
+> -{
+> -	device_remove_file(dev, &dev_attr_emulation);
+> -}
+> -#else
+> -static inline int create_emulation_sysfs(struct device *dev) { return 0; }
+> -static inline void remove_emulation_sysfs(struct device *dev) {}
+> -#endif
+> -
+>  static int __devinit exynos_tmu_probe(struct platform_device *pdev)
+>  {
+>  	struct exynos_tmu_data *data;
+> @@ -1002,6 +972,10 @@ static int __devinit exynos_tmu_probe(struct platform_device *pdev)
+>  
+>  	/* Register the sensor with thermal management interface */
+>  	(&exynos_sensor_conf)->private_data = data;
+> +#ifdef CONFIG_THERMAL_EMULATION
+> +	(&exynos_sensor_conf)->write_emul_temp =
+> +		(int (*)(void *, unsigned long))exynos_tmu_set_emulation;
+> +#endif
 
-diff --git a/arch/arm/mach-s3c24xx/cpufreq-utils.c b/arch/arm/mach-s3c24xx/cpufreq-utils.c
-index 89e4e2b..ddd8280 100644
---- a/arch/arm/mach-s3c24xx/cpufreq-utils.c
-+++ b/arch/arm/mach-s3c24xx/cpufreq-utils.c
-@@ -16,11 +16,12 @@
- #include <linux/io.h>
- 
- #include <mach/map.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-clock.h>
- 
- #include <plat/cpu-freq-core.h>
- 
-+#include "regs-mem.h"
-+
- /**
-  * s3c2410_cpufreq_setrefresh - set SDRAM refresh value
-  * @cfg: The frequency configuration
-diff --git a/arch/arm/mach-s3c24xx/dma-s3c2410.c b/arch/arm/mach-s3c24xx/dma-s3c2410.c
-index 6eb5be9..a6c94b8 100644
---- a/arch/arm/mach-s3c24xx/dma-s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/dma-s3c2410.c
-@@ -27,7 +27,6 @@
- #include <mach/regs-gpio.h>
- #include <plat/regs-ac97.h>
- #include <plat/regs-dma.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- #include <plat/regs-iis.h>
- #include <plat/regs-spi.h>
-diff --git a/arch/arm/mach-s3c24xx/dma-s3c2412.c b/arch/arm/mach-s3c24xx/dma-s3c2412.c
-index f239d09..c0e8c3f 100644
---- a/arch/arm/mach-s3c24xx/dma-s3c2412.c
-+++ b/arch/arm/mach-s3c24xx/dma-s3c2412.c
-@@ -27,7 +27,6 @@
- #include <mach/regs-gpio.h>
- #include <plat/regs-ac97.h>
- #include <plat/regs-dma.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- #include <plat/regs-iis.h>
- #include <plat/regs-spi.h>
-diff --git a/arch/arm/mach-s3c24xx/dma-s3c2440.c b/arch/arm/mach-s3c24xx/dma-s3c2440.c
-index ca98189..1c08eccd 100644
---- a/arch/arm/mach-s3c24xx/dma-s3c2440.c
-+++ b/arch/arm/mach-s3c24xx/dma-s3c2440.c
-@@ -27,7 +27,6 @@
- #include <mach/regs-gpio.h>
- #include <plat/regs-ac97.h>
- #include <plat/regs-dma.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- #include <plat/regs-iis.h>
- #include <plat/regs-spi.h>
-diff --git a/arch/arm/mach-s3c24xx/dma-s3c2443.c b/arch/arm/mach-s3c24xx/dma-s3c2443.c
-index d3448f6..000e4c6 100644
---- a/arch/arm/mach-s3c24xx/dma-s3c2443.c
-+++ b/arch/arm/mach-s3c24xx/dma-s3c2443.c
-@@ -27,7 +27,6 @@
- #include <mach/regs-gpio.h>
- #include <plat/regs-ac97.h>
- #include <plat/regs-dma.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- #include <plat/regs-iis.h>
- #include <plat/regs-spi.h>
-diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-mem.h b/arch/arm/mach-s3c24xx/include/mach/regs-mem.h
-deleted file mode 100644
-index e0c67b0..0000000
---- a/arch/arm/mach-s3c24xx/include/mach/regs-mem.h
-+++ /dev/null
-@@ -1,202 +0,0 @@
--/* arch/arm/mach-s3c2410/include/mach/regs-mem.h
-- *
-- * Copyright (c) 2004 Simtec Electronics <linux@simtec.co.uk>
-- *		http://www.simtec.co.uk/products/SWLINUX/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * S3C2410 Memory Control register definitions
--*/
--
--#ifndef __ASM_ARM_MEMREGS_H
--#define __ASM_ARM_MEMREGS_H
--
--#ifndef S3C2410_MEMREG
--#define S3C2410_MEMREG(x) (S3C24XX_VA_MEMCTRL + (x))
--#endif
--
--/* bus width, and wait state control */
--#define S3C2410_BWSCON			S3C2410_MEMREG(0x0000)
--
--/* bank zero config - note, pinstrapped from OM pins! */
--#define S3C2410_BWSCON_DW0_16		(1<<1)
--#define S3C2410_BWSCON_DW0_32		(2<<1)
--
--/* bank one configs */
--#define S3C2410_BWSCON_DW1_8		(0<<4)
--#define S3C2410_BWSCON_DW1_16		(1<<4)
--#define S3C2410_BWSCON_DW1_32		(2<<4)
--#define S3C2410_BWSCON_WS1		(1<<6)
--#define S3C2410_BWSCON_ST1		(1<<7)
--
--/* bank 2 configurations */
--#define S3C2410_BWSCON_DW2_8		(0<<8)
--#define S3C2410_BWSCON_DW2_16		(1<<8)
--#define S3C2410_BWSCON_DW2_32		(2<<8)
--#define S3C2410_BWSCON_WS2		(1<<10)
--#define S3C2410_BWSCON_ST2		(1<<11)
--
--/* bank 3 configurations */
--#define S3C2410_BWSCON_DW3_8		(0<<12)
--#define S3C2410_BWSCON_DW3_16		(1<<12)
--#define S3C2410_BWSCON_DW3_32		(2<<12)
--#define S3C2410_BWSCON_WS3		(1<<14)
--#define S3C2410_BWSCON_ST3		(1<<15)
--
--/* bank 4 configurations */
--#define S3C2410_BWSCON_DW4_8		(0<<16)
--#define S3C2410_BWSCON_DW4_16		(1<<16)
--#define S3C2410_BWSCON_DW4_32		(2<<16)
--#define S3C2410_BWSCON_WS4		(1<<18)
--#define S3C2410_BWSCON_ST4		(1<<19)
--
--/* bank 5 configurations */
--#define S3C2410_BWSCON_DW5_8		(0<<20)
--#define S3C2410_BWSCON_DW5_16		(1<<20)
--#define S3C2410_BWSCON_DW5_32		(2<<20)
--#define S3C2410_BWSCON_WS5		(1<<22)
--#define S3C2410_BWSCON_ST5		(1<<23)
--
--/* bank 6 configurations */
--#define S3C2410_BWSCON_DW6_8		(0<<24)
--#define S3C2410_BWSCON_DW6_16		(1<<24)
--#define S3C2410_BWSCON_DW6_32		(2<<24)
--#define S3C2410_BWSCON_WS6		(1<<26)
--#define S3C2410_BWSCON_ST6		(1<<27)
--
--/* bank 7 configurations */
--#define S3C2410_BWSCON_DW7_8		(0<<28)
--#define S3C2410_BWSCON_DW7_16		(1<<28)
--#define S3C2410_BWSCON_DW7_32		(2<<28)
--#define S3C2410_BWSCON_WS7		(1<<30)
--#define S3C2410_BWSCON_ST7		(1<<31)
--
--/* accesor functions for getting BANK(n) configuration. (n != 0) */
--
--#define S3C2410_BWSCON_GET(_bwscon, _bank) (((_bwscon) >> ((_bank) * 4)) & 0xf)
--
--#define S3C2410_BWSCON_DW8		(0)
--#define S3C2410_BWSCON_DW16		(1)
--#define S3C2410_BWSCON_DW32		(2)
--#define S3C2410_BWSCON_WS		(1 << 2)
--#define S3C2410_BWSCON_ST		(1 << 3)
--
--/* memory set (rom, ram) */
--#define S3C2410_BANKCON0		S3C2410_MEMREG(0x0004)
--#define S3C2410_BANKCON1		S3C2410_MEMREG(0x0008)
--#define S3C2410_BANKCON2		S3C2410_MEMREG(0x000C)
--#define S3C2410_BANKCON3		S3C2410_MEMREG(0x0010)
--#define S3C2410_BANKCON4		S3C2410_MEMREG(0x0014)
--#define S3C2410_BANKCON5		S3C2410_MEMREG(0x0018)
--#define S3C2410_BANKCON6		S3C2410_MEMREG(0x001C)
--#define S3C2410_BANKCON7		S3C2410_MEMREG(0x0020)
--
--/* bank configuration registers */
--
--#define S3C2410_BANKCON_PMCnorm		(0x00)
--#define S3C2410_BANKCON_PMC4		(0x01)
--#define S3C2410_BANKCON_PMC8		(0x02)
--#define S3C2410_BANKCON_PMC16		(0x03)
--
--/* bank configurations for banks 0..7, note banks
-- * 6 and 7 have different configurations depending on
-- * the memory type bits */
--
--#define S3C2410_BANKCON_Tacp2		(0x0 << 2)
--#define S3C2410_BANKCON_Tacp3		(0x1 << 2)
--#define S3C2410_BANKCON_Tacp4		(0x2 << 2)
--#define S3C2410_BANKCON_Tacp6		(0x3 << 2)
--#define S3C2410_BANKCON_Tacp_SHIFT	(2)
--
--#define S3C2410_BANKCON_Tcah0		(0x0 << 4)
--#define S3C2410_BANKCON_Tcah1		(0x1 << 4)
--#define S3C2410_BANKCON_Tcah2		(0x2 << 4)
--#define S3C2410_BANKCON_Tcah4		(0x3 << 4)
--#define S3C2410_BANKCON_Tcah_SHIFT	(4)
--
--#define S3C2410_BANKCON_Tcoh0		(0x0 << 6)
--#define S3C2410_BANKCON_Tcoh1		(0x1 << 6)
--#define S3C2410_BANKCON_Tcoh2		(0x2 << 6)
--#define S3C2410_BANKCON_Tcoh4		(0x3 << 6)
--#define S3C2410_BANKCON_Tcoh_SHIFT	(6)
--
--#define S3C2410_BANKCON_Tacc1		(0x0 << 8)
--#define S3C2410_BANKCON_Tacc2		(0x1 << 8)
--#define S3C2410_BANKCON_Tacc3		(0x2 << 8)
--#define S3C2410_BANKCON_Tacc4		(0x3 << 8)
--#define S3C2410_BANKCON_Tacc6		(0x4 << 8)
--#define S3C2410_BANKCON_Tacc8		(0x5 << 8)
--#define S3C2410_BANKCON_Tacc10		(0x6 << 8)
--#define S3C2410_BANKCON_Tacc14		(0x7 << 8)
--#define S3C2410_BANKCON_Tacc_SHIFT	(8)
--
--#define S3C2410_BANKCON_Tcos0		(0x0 << 11)
--#define S3C2410_BANKCON_Tcos1		(0x1 << 11)
--#define S3C2410_BANKCON_Tcos2		(0x2 << 11)
--#define S3C2410_BANKCON_Tcos4		(0x3 << 11)
--#define S3C2410_BANKCON_Tcos_SHIFT	(11)
--
--#define S3C2410_BANKCON_Tacs0		(0x0 << 13)
--#define S3C2410_BANKCON_Tacs1		(0x1 << 13)
--#define S3C2410_BANKCON_Tacs2		(0x2 << 13)
--#define S3C2410_BANKCON_Tacs4		(0x3 << 13)
--#define S3C2410_BANKCON_Tacs_SHIFT	(13)
--
--#define S3C2410_BANKCON_SRAM		(0x0 << 15)
--#define S3C2410_BANKCON_SDRAM		(0x3 << 15)
--
--/* next bits only for SDRAM in 6,7 */
--#define S3C2410_BANKCON_Trcd2		(0x00 << 2)
--#define S3C2410_BANKCON_Trcd3		(0x01 << 2)
--#define S3C2410_BANKCON_Trcd4		(0x02 << 2)
--
--/* control column address select */
--#define S3C2410_BANKCON_SCANb8		(0x00 << 0)
--#define S3C2410_BANKCON_SCANb9		(0x01 << 0)
--#define S3C2410_BANKCON_SCANb10		(0x02 << 0)
--
--#define S3C2410_REFRESH			S3C2410_MEMREG(0x0024)
--#define S3C2410_BANKSIZE		S3C2410_MEMREG(0x0028)
--#define S3C2410_MRSRB6			S3C2410_MEMREG(0x002C)
--#define S3C2410_MRSRB7			S3C2410_MEMREG(0x0030)
--
--/* refresh control */
--
--#define S3C2410_REFRESH_REFEN		(1<<23)
--#define S3C2410_REFRESH_SELF		(1<<22)
--#define S3C2410_REFRESH_REFCOUNTER	((1<<11)-1)
--
--#define S3C2410_REFRESH_TRP_MASK	(3<<20)
--#define S3C2410_REFRESH_TRP_2clk	(0<<20)
--#define S3C2410_REFRESH_TRP_3clk	(1<<20)
--#define S3C2410_REFRESH_TRP_4clk	(2<<20)
--
--#define S3C2410_REFRESH_TSRC_MASK	(3<<18)
--#define S3C2410_REFRESH_TSRC_4clk	(0<<18)
--#define S3C2410_REFRESH_TSRC_5clk	(1<<18)
--#define S3C2410_REFRESH_TSRC_6clk	(2<<18)
--#define S3C2410_REFRESH_TSRC_7clk	(3<<18)
--
--
--/* mode select register(s) */
--
--#define  S3C2410_MRSRB_CL1		(0x00 << 4)
--#define  S3C2410_MRSRB_CL2		(0x02 << 4)
--#define  S3C2410_MRSRB_CL3		(0x03 << 4)
--
--/* bank size register */
--#define S3C2410_BANKSIZE_128M		(0x2 << 0)
--#define S3C2410_BANKSIZE_64M		(0x1 << 0)
--#define S3C2410_BANKSIZE_32M		(0x0 << 0)
--#define S3C2410_BANKSIZE_16M		(0x7 << 0)
--#define S3C2410_BANKSIZE_8M		(0x6 << 0)
--#define S3C2410_BANKSIZE_4M		(0x5 << 0)
--#define S3C2410_BANKSIZE_2M		(0x4 << 0)
--#define S3C2410_BANKSIZE_MASK		(0x7 << 0)
--#define S3C2410_BANKSIZE_SCLK_EN	(1<<4)
--#define S3C2410_BANKSIZE_SCKE_EN	(1<<5)
--#define S3C2410_BANKSIZE_BURST		(1<<7)
--
--#endif /* __ASM_ARM_MEMREGS_H */
-diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-index 48ccfcf..4cd13ab 100644
---- a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-@@ -19,11 +19,12 @@
- #include <linux/slab.h>
- 
- #include <mach/map.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-clock.h>
- 
- #include <plat/cpu-freq-core.h>
- 
-+#include "regs-mem.h"
-+
- #define print_ns(x) ((x) / 10), ((x) % 10)
- 
- /**
-diff --git a/arch/arm/mach-s3c24xx/mach-anubis.c b/arch/arm/mach-s3c24xx/mach-anubis.c
-index 113304c..3767d51 100644
---- a/arch/arm/mach-s3c24xx/mach-anubis.c
-+++ b/arch/arm/mach-s3c24xx/mach-anubis.c
-@@ -34,7 +34,6 @@
- 
- #include <plat/regs-serial.h>
- #include <mach/regs-gpio.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- #include <linux/platform_data/mtd-nand-s3c2410.h>
- #include <linux/platform_data/i2c-s3c2410.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-at2440evb.c b/arch/arm/mach-s3c24xx/mach-at2440evb.c
-index f51bbcb..2fa0517 100644
---- a/arch/arm/mach-s3c24xx/mach-at2440evb.c
-+++ b/arch/arm/mach-s3c24xx/mach-at2440evb.c
-@@ -35,7 +35,6 @@
- 
- #include <plat/regs-serial.h>
- #include <mach/regs-gpio.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- #include <linux/platform_data/mtd-nand-s3c2410.h>
- #include <linux/platform_data/i2c-s3c2410.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-bast.c b/arch/arm/mach-s3c24xx/mach-bast.c
-index 1ed29b4..00d57f3 100644
---- a/arch/arm/mach-s3c24xx/mach-bast.c
-+++ b/arch/arm/mach-s3c24xx/mach-bast.c
-@@ -48,7 +48,6 @@
- #include <mach/hardware.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
--#include <mach/regs-mem.h>
- 
- #include <plat/clock.h>
- #include <plat/cpu.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-gta02.c b/arch/arm/mach-s3c24xx/mach-gta02.c
-index 1053706..fa9bbe6 100644
---- a/arch/arm/mach-s3c24xx/mach-gta02.c
-+++ b/arch/arm/mach-s3c24xx/mach-gta02.c
-@@ -75,7 +75,6 @@
- #include <mach/hardware.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-irq.h>
--#include <mach/regs-mem.h>
- 
- #include <plat/cpu.h>
- #include <plat/devs.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
-index 0de85e3..ceaaf0b 100644
---- a/arch/arm/mach-s3c24xx/mach-jive.c
-+++ b/arch/arm/mach-s3c24xx/mach-jive.c
-@@ -36,7 +36,6 @@
- #include <linux/platform_data/i2c-s3c2410.h>
- 
- #include <mach/regs-gpio.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- #include <mach/fb.h>
- 
-diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-index a31d5b8..64494ff 100644
---- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-@@ -40,7 +40,6 @@
- #include <plat/regs-serial.h>
- #include <mach/regs-gpio.h>
- #include <linux/platform_data/leds-s3c24xx.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- #include <mach/irqs.h>
- #include <linux/platform_data/mtd-nand-s3c2410.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-osiris.c b/arch/arm/mach-s3c24xx/mach-osiris.c
-index 1eeeee4..572f1c8 100644
---- a/arch/arm/mach-s3c24xx/mach-osiris.c
-+++ b/arch/arm/mach-s3c24xx/mach-osiris.c
-@@ -47,11 +47,11 @@
- 
- #include <mach/hardware.h>
- #include <mach/regs-gpio.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-lcd.h>
- 
- #include "common.h"
- #include "osiris.h"
-+#include "regs-mem.h"
- 
- /* onboard perihperal map */
- 
-diff --git a/arch/arm/mach-s3c24xx/pm.c b/arch/arm/mach-s3c24xx/pm.c
-index 724755f..caa5b72 100644
---- a/arch/arm/mach-s3c24xx/pm.c
-+++ b/arch/arm/mach-s3c24xx/pm.c
-@@ -38,7 +38,6 @@
- #include <plat/regs-serial.h>
- #include <mach/regs-clock.h>
- #include <mach/regs-gpio.h>
--#include <mach/regs-mem.h>
- #include <mach/regs-irq.h>
- 
- #include <asm/mach/time.h>
-@@ -46,6 +45,8 @@
- #include <plat/gpio-cfg.h>
- #include <plat/pm.h>
- 
-+#include "regs-mem.h"
-+
- #define PFX "s3c24xx-pm: "
- 
- static struct sleep_save core_save[] = {
-diff --git a/arch/arm/mach-s3c24xx/regs-mem.h b/arch/arm/mach-s3c24xx/regs-mem.h
-new file mode 100644
-index 0000000..86b1258
---- /dev/null
-+++ b/arch/arm/mach-s3c24xx/regs-mem.h
-@@ -0,0 +1,54 @@
-+/*
-+ * Copyright (c) 2004 Simtec Electronics <linux@simtec.co.uk>
-+ *		http://www.simtec.co.uk/products/SWLINUX/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * S3C2410 Memory Control register definitions
-+ */
-+
-+#ifndef __ARCH_ARM_MACH_S3C24XX_REGS_MEM_H
-+#define __ARCH_ARM_MACH_S3C24XX_REGS_MEM_H __FILE__
-+
-+#define S3C2410_MEMREG(x)		(S3C24XX_VA_MEMCTRL + (x))
-+
-+#define S3C2410_BWSCON			S3C2410_MEMREG(0x00)
-+#define S3C2410_BANKCON0		S3C2410_MEMREG(0x04)
-+#define S3C2410_BANKCON1		S3C2410_MEMREG(0x08)
-+#define S3C2410_BANKCON2		S3C2410_MEMREG(0x0C)
-+#define S3C2410_BANKCON3		S3C2410_MEMREG(0x10)
-+#define S3C2410_BANKCON4		S3C2410_MEMREG(0x14)
-+#define S3C2410_BANKCON5		S3C2410_MEMREG(0x18)
-+#define S3C2410_BANKCON6		S3C2410_MEMREG(0x1C)
-+#define S3C2410_BANKCON7		S3C2410_MEMREG(0x20)
-+#define S3C2410_REFRESH			S3C2410_MEMREG(0x24)
-+#define S3C2410_BANKSIZE		S3C2410_MEMREG(0x28)
-+
-+#define S3C2410_BWSCON_ST1		(1 << 7)
-+#define S3C2410_BWSCON_ST2		(1 << 11)
-+#define S3C2410_BWSCON_ST3		(1 << 15)
-+#define S3C2410_BWSCON_ST4		(1 << 19)
-+#define S3C2410_BWSCON_ST5		(1 << 23)
-+
-+#define S3C2410_BWSCON_GET(_bwscon, _bank) (((_bwscon) >> ((_bank) * 4)) & 0xf)
-+
-+#define S3C2410_BWSCON_WS		(1 << 2)
-+
-+#define S3C2410_BANKCON_PMC16		(0x3)
-+
-+#define S3C2410_BANKCON_Tacp_SHIFT	(2)
-+#define S3C2410_BANKCON_Tcah_SHIFT	(4)
-+#define S3C2410_BANKCON_Tcoh_SHIFT	(6)
-+#define S3C2410_BANKCON_Tacc_SHIFT	(8)
-+#define S3C2410_BANKCON_Tcos_SHIFT	(11)
-+#define S3C2410_BANKCON_Tacs_SHIFT	(13)
-+
-+#define S3C2410_BANKCON_SDRAM		(0x3 << 15)
-+
-+#define S3C2410_REFRESH_SELF		(1 << 22)
-+
-+#define S3C2410_BANKSIZE_MASK		(0x7 << 0)
-+
-+#endif /* __ARCH_ARM_MACH_S3C24XX_REGS_MEM_H */
-diff --git a/arch/arm/mach-s3c24xx/simtec-pm.c b/arch/arm/mach-s3c24xx/simtec-pm.c
-index 699f931..38a2f1f 100644
---- a/arch/arm/mach-s3c24xx/simtec-pm.c
-+++ b/arch/arm/mach-s3c24xx/simtec-pm.c
-@@ -28,12 +28,13 @@
- 
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
--#include <mach/regs-mem.h>
- 
- #include <asm/mach-types.h>
- 
- #include <plat/pm.h>
- 
-+#include "regs-mem.h"
-+
- #define COPYRIGHT ", Copyright 2005 Simtec Electronics"
- 
- /* pm_simtec_init
-diff --git a/arch/arm/mach-s3c24xx/sleep-s3c2410.S b/arch/arm/mach-s3c24xx/sleep-s3c2410.S
-index dd5b638..25b2121 100644
---- a/arch/arm/mach-s3c24xx/sleep-s3c2410.S
-+++ b/arch/arm/mach-s3c24xx/sleep-s3c2410.S
-@@ -31,9 +31,10 @@
- 
- #include <mach/regs-gpio.h>
- #include <mach/regs-clock.h>
--#include <mach/regs-mem.h>
- #include <plat/regs-serial.h>
- 
-+#include "regs-mem.h"
-+
- 	/* s3c2410_cpu_suspend
- 	 *
- 	 * put the cpu into sleep mode
-diff --git a/arch/arm/mach-s3c24xx/sleep.S b/arch/arm/mach-s3c24xx/sleep.S
-index c566125..7f378b6 100644
---- a/arch/arm/mach-s3c24xx/sleep.S
-+++ b/arch/arm/mach-s3c24xx/sleep.S
-@@ -31,7 +31,6 @@
- 
- #include <mach/regs-gpio.h>
- #include <mach/regs-clock.h>
--#include <mach/regs-mem.h>
- #include <plat/regs-serial.h>
- 
- /* CONFIG_DEBUG_RESUME is dangerous if your bootloader does not
--- 
-1.7.10.4
+this is a little complicate.
+to enable emulation, you just need
+
+#ifdef CONFIG_THERMAL_EMUL
+static int exynos_set_emul_temp(struct thermal_zone_device *thermal,
+						unsigned long temp)
+{
+	remove exynos_tmu_set_emulation and copy its code here.
+}
+#else
+static int exynos_set_emul_temp() { return -EINVAL; }
+#endif
+
+and
++ .set_emul_temp = exynos_set_emul_temp,
+
+or do I miss something?
+
+thanks,
+rui
+>  	exynos_sensor_conf.trip_data.trip_count = pdata->trigger_level0_en +
+>  			pdata->trigger_level1_en + pdata->trigger_level2_en +
+>  			pdata->trigger_level3_en;
+> @@ -1025,10 +999,6 @@ static int __devinit exynos_tmu_probe(struct platform_device *pdev)
+>  		goto err_clk;
+>  	}
+>  
+> -	ret = create_emulation_sysfs(&pdev->dev);
+> -	if (ret)
+> -		dev_err(&pdev->dev, "Failed to create emulation mode sysfs node\n");
+> -
+>  	return 0;
+>  err_clk:
+>  	platform_set_drvdata(pdev, NULL);
+> @@ -1040,8 +1010,6 @@ static int __devexit exynos_tmu_remove(struct platform_device *pdev)
+>  {
+>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>  
+> -	remove_emulation_sysfs(&pdev->dev);
+> -
+>  	exynos_tmu_control(pdev, false);
+>  
+>  	exynos_unregister_thermal();
