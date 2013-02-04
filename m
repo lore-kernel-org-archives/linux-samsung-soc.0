@@ -1,54 +1,81 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: SAMSUNG: dma: Remove unnecessary code
-Date: Mon, 4 Feb 2013 17:43:54 +0000
-Message-ID: <201302041743.55029.arnd@arndb.de>
-References: <1359967675-624-1-git-send-email-padma.v@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [RFC/PATCH 29/32] usb: gadget: pxa27x_udc: let udc-core manage
+ gadget->dev
+Date: Mon, 4 Feb 2013 21:53:15 +0200
+Message-ID: <20130204195315.GA29628@arwen.pp.htv.fi>
+References: <1359042370-4358-1-git-send-email-balbi@ti.com>
+ <1359042370-4358-30-git-send-email-balbi@ti.com>
+ <87txq1m57u.fsf@free.fr>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:53460 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754070Ab3BDRoH (ORCPT
+Received: from comal.ext.ti.com ([198.47.26.152]:55692 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754143Ab3BDTx5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Feb 2013 12:44:07 -0500
-In-Reply-To: <1359967675-624-1-git-send-email-padma.v@samsung.com>
+	Mon, 4 Feb 2013 14:53:57 -0500
+Content-Disposition: inline
+In-Reply-To: <87txq1m57u.fsf@free.fr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Felipe Balbi <balbi@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, kgene.kim@samsung.com, eric.y.miao@gmail.com, kuninori.morimoto.gx@renesas.com, alexander.shishkin@linux.intel.com, gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, nicolas.ferre@atmel.com, linux-geode@lists.infradead.org, haojian.zhuang@gmail.com, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, dahlmann.thomas@arcor.de, linux@arm.linux.org.uk, leoli@freescale.com, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 
-On Monday 04 February 2013, Padmavathi Venna wrote:
-> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-> index 71d58dd..ec0d731 100644
-> --- a/arch/arm/plat-samsung/dma-ops.c
-> +++ b/arch/arm/plat-samsung/dma-ops.c
-> @@ -23,23 +23,15 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
->  				struct device *dev, char *ch_name)
->  {
->  	dma_cap_mask_t mask;
-> -	void *filter_param;
->  
->  	dma_cap_zero(mask);
->  	dma_cap_set(param->cap, mask);
->  
-> -	/*
-> -	 * If a dma channel property of a device node from device tree is
-> -	 * specified, use that as the fliter parameter.
-> -	 */
-> -	filter_param = (dma_ch == DMACH_DT_PROP) ?
-> -		(void *)param->dt_dmach_prop : (void *)dma_ch;
-> -
->  	if (dev->of_node)
->  		return (unsigned)dma_request_slave_channel(dev, ch_name);
->  	else
->  		return (unsigned)dma_request_channel(mask, pl330_filter,
-> -							filter_param);
-> +							(void *)dma_ch);
->  }
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This still looks wrong to me, because the pl330_filter function now tkes
-a struct dma_pl330_filter_args pointer argument, not dma_ch name.
+On Mon, Jan 28, 2013 at 09:18:29PM +0100, Robert Jarzmik wrote:
+> Felipe Balbi <balbi@ti.com> writes:
+>=20
+> > By simply setting a flag, we can drop some
+> > boilerplate code.
+> >
+> > Signed-off-by: Felipe Balbi <balbi@ti.com>
+> > ---
+> >  drivers/usb/gadget/pxa27x_udc.c | 9 +--------
+> Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>=20
+> And I tested also your patch and it works in my environment. For next pat=
+ches
+> I'd like to be CCed for pxa27x_udc stuff as I'm maintaining that one sinc=
+e its
+> beginning (and yes, I know, I didn't put that in MAINTAINERS ...).
 
-	Arnd
+you should add yourself to MAINTAINERS. Please send a patch to Greg when
+you have time.
+
+No need to prepare a tree, though. I just need you to give your Acked-by
+and I'll queue the patches myself.
+
+cheers
+
+--=20
+balbi
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJREBGrAAoJEIaOsuA1yqRE0vUQAKyazTVwVicGXO+vGMA3PsuF
+eOWtYr8dSlvXy/cjOo5ltIlFBbjc8tZVWsOqurALqO+qzu0pfON9AAQShpyHq2YV
++J6iAGFYaQ6x5QrPuFDeDWG9SEWwcAJtSxa99x8pPrVyzt/an06JwEwSztezLHUj
+flhRU0iHLuBPgZVwUPK5Zx9PRu7XeHUoyVLB2pSzsffxM+2cR4P6cglNSrU7uqJY
+vNtoZpwpAMDDjtgzRNLAj3LTiSlmpG6/Jxaq3vqt5xUR34f6OywafM/rjW64CmbT
+u+NGIPnWxXXawThlBkIhotZzMQgS3hD0cZtnw3v9RTdAgSH3KE1sWum/QXkOAMwI
+Jg/6fwcNto4E7npl6cGQqREXYcOg4lH0d4eZ8va1sZQUwSinJKMWZj2Dkd1esGdr
+VDa/3hw6tncruTbaSXcgyr9bWCcSjmZYNdF8hd9B+fEPgMeRBcLH0PF+w2bRcG4Q
+xiPgGG2y3s3SWsUXvyXRE2vtSp1f+aPEYLmWZdGDIum+Ev5v7yRK1s3d2s3kLM/Q
+1Kb3kQMyfachlwYd0Ev54L8X1vyjHe5SQylhdzIbW7RpXY3vn3KIxbT9WjLM385t
+ok43ibbIzXBtS7z17PqMNLQoIrNtJk+vJEaMJsmY7hBBCgfmnFpRqJiRQaTi65xr
+uexTC1K/SknBAg/8+Z8h
+=qf2p
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
