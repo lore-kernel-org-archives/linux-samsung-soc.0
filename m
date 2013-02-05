@@ -1,49 +1,68 @@
-From: vinholikatti@gmail.com
-Subject: [PATCH V6 4/4] [SCSI] ufs: Correct the expected data transfersize
-Date: Tue,  5 Feb 2013 22:17:37 +0530
-Message-ID: <511137e6.0657420a.5b57.ffffa80b@mx.google.com>
-References: <1360082857-3317-1-git-send-email-y>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH RESEND] ARM: EXYNOS: change the name of USB ohci header
+Date: Tue, 05 Feb 2013 11:13:06 -0800
+Message-ID: <149b01ce03d4$d56a59f0$803f0dd0$@samsung.com>
+References: <000501ce0349$0f1a97a0$2d4fc6e0$%han@samsung.com>
+ <Pine.LNX.4.44L0.1302051019430.2245-100000@iolanthe.rowland.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:52844 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755764Ab3BEQsk (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17758 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754785Ab3BETNU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 11:48:40 -0500
-In-Reply-To: <1360082857-3317-1-git-send-email-y>
+	Tue, 5 Feb 2013 14:13:20 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHR003R2HE001S0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 04:13:19 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHR00EKBHE49S50@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 04:13:18 +0900 (KST)
+In-reply-to: <Pine.LNX.4.44L0.1302051019430.2245-100000@iolanthe.rowland.org>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: james.bottomley@hansenpartnership.com
-Cc: linux-scsi@vger.kernel.org, santoshsy@gmail.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, saugata.das@linaro.org, venkat@linaro.org, subhashj@codeaurora.org, sthumma@codeaurora.org, vinholikatti@gmail.com
+To: 'Alan Stern' <stern@rowland.harvard.edu>, 'Jingoo Han' <jg1.han@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-From: Vinayak Holikatti <vinholikatti@gmail.com>
+Alan Stern wrote:
+> 
+> On Tue, 5 Feb 2013, Jingoo Han wrote:
+> 
+> > On Wednesday, December 26, 2012 3:35 PM, Jingoo Han wrote
+> > >
+> > > This patch changes the name of USB ohci header from 'usb-exynos.h'
+> > > to 'usb-ohci-exynos.h'. This is because this header file has
+> > > the platdata for only Exynos ohci.
+> > >
+> > > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > > ---
+> > >  arch/arm/mach-exynos/dev-ohci.c                    |    2 +-
+> > >  arch/arm/mach-exynos/mach-origen.c                 |    2 +-
+> > >  arch/arm/mach-exynos/mach-smdkv310.c               |    2 +-
+> > >  drivers/usb/host/ohci-exynos.c                     |    2 +-
+> > >  .../{usb-exynos.h => usb-ohci-exynos.h}            |    0
+> > >  5 files changed, 4 insertions(+), 4 deletions(-)
+> > >  rename include/linux/platform_data/{usb-exynos.h => usb-ohci-
+> exynos.h} (100%)
+> > >
+> >
+> > Hi Alan,
+> >
+> > Can I get your Acked-by for 'drivers/usb/host/ohci-exynos.c'?
+> 
+> Yes, it's a trivial change.  Sorry I missed it; probably because it
+> came right in the middle of the holidays.
+> 
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-This patch corrects the expected data transfer size of the
-command UPIU. The current implementation of cmd->transfersize
-is wrong as it probably equal to sector size. With this
-implementation the transfer size is updated correctly
+Looks good, applied this into samsung tree with Alan's ack.
 
-Reported-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
-Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
----
- drivers/scsi/ufs/ufshcd.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Thanks.
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 60fd40c..c32a478 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -478,7 +478,7 @@ static void ufshcd_compose_upiu(struct ufshcd_lrb *lrbp)
- 		ucd_cmd_ptr->header.dword_2 = 0;
- 
- 		ucd_cmd_ptr->exp_data_transfer_len =
--			cpu_to_be32(lrbp->cmd->transfersize);
-+			cpu_to_be32(lrbp->cmd->sdb.length);
- 
- 		memcpy(ucd_cmd_ptr->cdb,
- 		       lrbp->cmd->cmnd,
--- 
-1.7.5.4
+- Kukjin
