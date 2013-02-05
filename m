@@ -1,131 +1,68 @@
-From: Prasanna Kumar <prasannapadubidri@gmail.com>
-Subject: Re: [PATCH RESEND v2] ARM: EXYNOS: dts: Set up power domain for MFC
- and G-scaler
-Date: Tue, 5 Feb 2013 11:30:23 +0530
-Message-ID: <CAPmaG0uKJMHxviVd5Mz=kx-d=86raA3FBjtt=Ju1P2ZESnDO7Q@mail.gmail.com>
-References: <06e301cdfe51$f11b59c0$d3520d40$@samsung.com>
- <1359521344-17189-1-git-send-email-prasanna.ps@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 0/6] ARM: dts: Add MFC support for Exynos4
+Date: Mon, 04 Feb 2013 22:01:32 -0800
+Message-ID: <126001ce0366$40f3f380$c2dbda80$@samsung.com>
+References: <1359529889-26318-1-git-send-email-sachin.kamat@linaro.org>
+ <5108E110.3040503@samsung.com>
+ <CAK9yfHxer-nsWS1_a0-5UJMOBkO1TUC6Ada4xfMSP0BYGbsTdQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1359521344-17189-1-git-send-email-prasanna.ps@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:48670 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750786Ab3BEGBq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Feb 2013 01:01:46 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHQ00K40GQS3CQ0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 15:01:44 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHQ0025LGQUGHB0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 15:01:44 +0900 (KST)
+In-reply-to: <CAK9yfHxer-nsWS1_a0-5UJMOBkO1TUC6Ada4xfMSP0BYGbsTdQ@mail.gmail.com>
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, patches@linaro.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
 
-Hi kukjin,
-I have put the above nodes by order of address.
-Kindly review and ack the patch.
+Sachin Kamat wrote:
+> 
+> Hi Kukjin,
+> 
+> On 30 January 2013 14:30, Sylwester Nawrocki <s.nawrocki@samsung.com>
+> wrote:
+> > On 01/30/2013 08:11 AM, Sachin Kamat wrote:
+> >> Changes since v1:
+> >> Addressed comments from Sylwester
+> >>   - Updated documentation
+> >>   - Added 'status' to the nodes
+> >>   - Updated Kconfig entry
+> >>
+> >> This series is based on for-next branch of Kukjin Kim's tree.
+> >> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> >> Sachin Kamat (6):
+> >>   ARM: dts: Update MFC DT binding documentation
+> >>   ARM: dts: Add MFC codec support for Exynos4 DT machines
+> >>   ARM: dts: Add MFC codec support to SMDKV310 DT
+> >>   ARM: dts: Add MFC codec support to Origen DT
+> >>   ARM: dts: Add MFC codec entry to exynos4412-origen DT file
+> >>   ARM: dts: Add MFC codec entry to exynos4412-smdk4412 DT file
+> >
+> > Thanks Sachin. For the whole series:
+> >
+> > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >
+> 
+> Can you please review/add this patch series?
+> 
+Looks good to me, applied.
 
-On Wed, Jan 30, 2013 at 10:19 AM, Prasanna Kumar
-<prasanna.ps@samsung.com> wrote:
-> This patch adds device tree nodes for MFC and G-scaler power
-> domains of exynos5250.It binds these power-domain nodes to repsective
-> device tree nodes
->
-> It also adds support to enable PM generic domains for exynos5250.
->
-> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++++++++++++
->  arch/arm/mach-exynos/Kconfig      |    1 +
->  2 files changed, 17 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 30485de..e282fde 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -46,6 +46,16 @@
->                 i2c8 = &i2c_8;
->         };
->
-> +       pd_gsc: gsc-power-domain@0x10044000 {
-> +               compatible = "samsung,exynos4210-pd";
-> +               reg = <0x10044000 0x20>;
-> +       };
-> +
-> +       pd_mfc: mfc-power-domain@0x10044040 {
-> +               compatible = "samsung,exynos4210-pd";
-> +               reg = <0x10044040 0x20>;
-> +       };
-> +
->         gic:interrupt-controller@10481000 {
->                 compatible = "arm,cortex-a9-gic";
->                 #interrupt-cells = <3>;
-> @@ -85,6 +95,7 @@
->                 compatible = "samsung,mfc-v6";
->                 reg = <0x11000000 0x10000>;
->                 interrupts = <0 96 0>;
-> +               samsung,power-domain = <&pd_mfc>;
->         };
->
->         rtc {
-> @@ -554,28 +565,33 @@
->                 };
->         };
->
-> +
->         gsc_0:  gsc@0x13e00000 {
->                 compatible = "samsung,exynos5-gsc";
->                 reg = <0x13e00000 0x1000>;
->                 interrupts = <0 85 0>;
-> +               samsung,power-domain = <&pd_gsc>;
->         };
->
->         gsc_1:  gsc@0x13e10000 {
->                 compatible = "samsung,exynos5-gsc";
->                 reg = <0x13e10000 0x1000>;
->                 interrupts = <0 86 0>;
-> +               samsung,power-domain = <&pd_gsc>;
->         };
->
->         gsc_2:  gsc@0x13e20000 {
->                 compatible = "samsung,exynos5-gsc";
->                 reg = <0x13e20000 0x1000>;
->                 interrupts = <0 87 0>;
-> +               samsung,power-domain = <&pd_gsc>;
->         };
->
->         gsc_3:  gsc@0x13e30000 {
->                 compatible = "samsung,exynos5-gsc";
->                 reg = <0x13e30000 0x1000>;
->                 interrupts = <0 88 0>;
-> +               samsung,power-domain = <&pd_gsc>;
->         };
->
->         hdmi {
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index e103c29..96f4a9f 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -61,6 +61,7 @@ config SOC_EXYNOS5250
->         bool "SAMSUNG EXYNOS5250"
->         default y
->         depends on ARCH_EXYNOS5
-> +       select PM_GENERIC_DOMAINS if PM
->         select S5P_PM if PM
->         select S5P_SLEEP if PM
->         select S5P_DEV_MFC
-> --
-> 1.7.5.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks.
 
-
-
--- 
-Thanks
-Prasanna Kumar
+- Kukjin
