@@ -1,68 +1,86 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/6] ARM: dts: Add MFC support for Exynos4
-Date: Mon, 04 Feb 2013 22:01:32 -0800
-Message-ID: <126001ce0366$40f3f380$c2dbda80$@samsung.com>
-References: <1359529889-26318-1-git-send-email-sachin.kamat@linaro.org>
- <5108E110.3040503@samsung.com>
- <CAK9yfHxer-nsWS1_a0-5UJMOBkO1TUC6Ada4xfMSP0BYGbsTdQ@mail.gmail.com>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH v3 5/5] ARM: exynos: dts: Add FIMD DT binding Documentation
+Date: Tue, 5 Feb 2013 11:32:19 +0530
+Message-ID: <CAGm_ybiHcac_PnOhon-E7MG6osLKAU3dD+V61Ymmex831GuANw@mail.gmail.com>
+References: <1359718376-21947-1-git-send-email-vikas.sajjan@linaro.org>
+	<1359718376-21947-6-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:48670 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750786Ab3BEGBq (ORCPT
+Received: from mail-we0-f176.google.com ([74.125.82.176]:35693 "EHLO
+	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751070Ab3BEGCV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 01:01:46 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHQ00K40GQS3CQ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 15:01:44 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHQ0025LGQUGHB0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 15:01:44 +0900 (KST)
-In-reply-to: <CAK9yfHxer-nsWS1_a0-5UJMOBkO1TUC6Ada4xfMSP0BYGbsTdQ@mail.gmail.com>
-Content-language: en-us
+	Tue, 5 Feb 2013 01:02:21 -0500
+Received: by mail-we0-f176.google.com with SMTP id s43so5331085wey.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Feb 2013 22:02:20 -0800 (PST)
+In-Reply-To: <1359718376-21947-6-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, patches@linaro.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-Sachin Kamat wrote:
-> 
-> Hi Kukjin,
-> 
-> On 30 January 2013 14:30, Sylwester Nawrocki <s.nawrocki@samsung.com>
-> wrote:
-> > On 01/30/2013 08:11 AM, Sachin Kamat wrote:
-> >> Changes since v1:
-> >> Addressed comments from Sylwester
-> >>   - Updated documentation
-> >>   - Added 'status' to the nodes
-> >>   - Updated Kconfig entry
-> >>
-> >> This series is based on for-next branch of Kukjin Kim's tree.
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> >> Sachin Kamat (6):
-> >>   ARM: dts: Update MFC DT binding documentation
-> >>   ARM: dts: Add MFC codec support for Exynos4 DT machines
-> >>   ARM: dts: Add MFC codec support to SMDKV310 DT
-> >>   ARM: dts: Add MFC codec support to Origen DT
-> >>   ARM: dts: Add MFC codec entry to exynos4412-origen DT file
-> >>   ARM: dts: Add MFC codec entry to exynos4412-smdk4412 DT file
-> >
-> > Thanks Sachin. For the whole series:
-> >
-> > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >
-> 
-> Can you please review/add this patch series?
-> 
-Looks good to me, applied.
+Hi,
 
-Thanks.
+any more comments for the below patch.
 
-- Kukjin
+
+On Fri, Feb 1, 2013 at 5:02 PM, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> Adds FIMD DT binding documentation both SoC and Board, with an example
+>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  .../devicetree/bindings/drm/exynos/fimd.txt        |   37 ++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/drm/exynos/fimd.txt
+>
+> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
+> new file mode 100644
+> index 0000000..bec9d07
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
+> @@ -0,0 +1,37 @@
+> +Device-Tree bindings for fimd driver
+> +
+> +FIMD stands for Fully Interactive Mobile Display, is the Display Controller for
+> +the Exynos series of SoCs which transfers the image data from a video buffer
+> +located in the system memory to an external LCD interface.
+> +
+> +Required properties:
+> +- compatible := value should be "samsung,exynos5-fimd" or "samsung,exynos4-fimd"
+> +- reg := physical base address of the fimd and length of memory mapped region
+> +- interrupt-parent := reference to the interrupt combiner node with phandle
+> +- interrupts := interrupt number from the combiner to the cpu
+> +- pinctrl := property defining the pinctrl configurations with a phandle
+> +- pinctrl-names := name of the pinctrl
+> +
+> +Optional Properties:
+> +- samsung,power-domain := power domain property defined with a phandle
+> +- status := property defining the status of the node
+> +
+> +Example:
+> +
+> +SoC specific DT Entry:
+> +
+> +       fimd@11c00000 {
+> +               compatible = "samsung,exynos4-fimd";
+> +               interrupt-parent = <&combiner>;
+> +               reg = <0x11c00000 0x20000>;
+> +               interrupts = <11 1>, <11 0>, <11 2>;
+> +       };
+> +
+> +Board specific DT Entry:
+> +
+> +       fimd@11c00000 {
+> +               samsung,power-domain = <&pd_lcd0>;
+> +               pinctrl-0 = <&lcd_sync &lcd_clk &lcd_en &lcd0_data &pwm1_out>;
+> +               pinctrl-names = "default";
+> +               status = "okay";
+> +       };
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
