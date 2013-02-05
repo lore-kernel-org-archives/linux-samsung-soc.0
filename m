@@ -1,63 +1,56 @@
 From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: Re: Help connect s3c2410-lcd device to SMDK2443
-Date: Tue, 5 Feb 2013 23:17:43 +0100
-Message-ID: <201302052317.44431.heiko@sntech.de>
-References: <51115F34.8030503@mail.ru>
+Subject: [PATCH 0/6] ARM: S3C24XX: Move s3c2440 and s3c2442 into new irq structure
+Date: Wed, 6 Feb 2013 00:10:53 +0100
+Message-ID: <201302060010.53929.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:58536 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:58900 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757074Ab3BEWRs (ORCPT
+	id S1756741Ab3BEXLB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 17:17:48 -0500
-In-Reply-To: <51115F34.8030503@mail.ru>
+	Tue, 5 Feb 2013 18:11:01 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Varnin <fenixk19@mail.ru>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Alexander,
+Follows the formular laid out in the previous series, i.e. moving of the code,
+changing of the init and creation of the mapping structure.
 
-Am Dienstag, 5. Februar 2013, 20:36:20 schrieb Alexander Varnin:
-> Hello. I'm trying to setup "s3c2410-lcd" device on SMDK2443 with 3.6
-> kernel. On requesting interrupt it fails with EINVAL:
-> ~ # dmesg | grep lcd
-> s3c2410-lcd s3c2410-lcd: cannot get irq 32 - err -22
-> s3c2410-lcd: probe of s3c2410-lcd failed with error -16
+As I lack hardware for these arches, compile tested only. But as it is similar
+to the architectures of the previous run, hopefully I didn't break anything.
 
-If I remember correctly the s3c2443 has a new-style framebuffer. So using the 
-s3c2410-fb/lcd driver is the wrong approach. The correct driver to use would 
-be the s3cfb.
+Applies to current for-next of the linux-samsung tree, which includes the move
+of irq.c to mach-s3c24xx.
 
-Take a look at mach-smdk2416.c which uses this driver. The init for the 
-s3c2443 should probably be similar.
+Heiko Stuebner (6):
+  ARM: S3C24XX: move s3c244x irq init to common irq code
+  ARM: S3C24XX: create dedicated irq init functions for s3c2440 and s3c2442
+  ARM: S3C24XX: move s3c2440 irqs to common irq code
+  ARM: S3C24XX: integrate s3c2440 irqs into common init
+  ARM: S3C24XX: transform s3c2442 irqs into new structure
+  ARM: S3C24XX: transform s3c2440 irqs into new structure
 
+ arch/arm/mach-s3c24xx/Makefile         |    4 +-
+ arch/arm/mach-s3c24xx/common.h         |    4 +
+ arch/arm/mach-s3c24xx/irq-s3c2440.c    |  128 ---------------------------
+ arch/arm/mach-s3c24xx/irq-s3c244x.c    |  142 ------------------------------
+ arch/arm/mach-s3c24xx/irq.c            |  148 ++++++++++++++++++++++++++++++++
+ arch/arm/mach-s3c24xx/mach-anubis.c    |    2 +-
+ arch/arm/mach-s3c24xx/mach-at2440evb.c |    2 +-
+ arch/arm/mach-s3c24xx/mach-gta02.c     |    2 +-
+ arch/arm/mach-s3c24xx/mach-mini2440.c  |    2 +-
+ arch/arm/mach-s3c24xx/mach-nexcoder.c  |    2 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c    |    2 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c    |    2 +-
+ arch/arm/mach-s3c24xx/mach-rx3715.c    |    7 +--
+ arch/arm/mach-s3c24xx/mach-smdk2440.c  |    2 +-
+ 14 files changed, 163 insertions(+), 286 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2440.c
+ delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c244x.c
 
-Also the irq you requested is a parent irq to different lcd-irqs in the sub-
-register on the s3c2443 and s3c2416. Therfore requesting it directly is 
-disabled by the irq-subsystem.
-
-
-Hope that helps
-Heiko
-
-> 
-> The interrupt is not busy by something else. Here is my table:
-> ~ # cat /proc/interrupts
-> CPU0
->   17:          0  s3c-ext0 s3c-mci
->   30:     409934       s3c  S3C2410 Timer Tick
->   37:          0       s3c s3c-mci
->   42:        416       s3c ohci_hcd:usb1
->   43:          0       s3c s3c2410-i2c
->   56:          1   s3c-ext uio_mcross
->   57:      72585   s3c-ext eth0
->   73:         63  s3c-uart1 s3c2440-uart
->   74:        108  s3c-uart1 s3c2440-uart
->   97:          0         - s3c2410-wdt
-> Err:
-> 
-> Please, help me to find the reason.
+-- 
+1.7.2.3
