@@ -1,205 +1,92 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v4 1/2] usb: phy: samsung: Common out the generic stuff
-Date: Tue, 5 Feb 2013 12:02:29 +0530
-Message-ID: <CAFp+6iGDONL0wMs0uqxyk0JP+H=9Zq7YOsBxo-_s87RojYgTBw@mail.gmail.com>
-References: <1358168377-22919-2-git-send-email-gautam.vivek@samsung.com>
-	<1359368690-30178-1-git-send-email-gautam.vivek@samsung.com>
-	<077e01cdfeae$8fbc2850$af3478f0$@samsung.com>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 2/2] usb: phy: samsung: Add PHY support for USB 3.0 controller
+Date: Tue, 5 Feb 2013 12:06:57 +0530
+Message-ID: <CAFp+6iHOT0Ge4KGn_Nw=4N3ipCeSuMQBy4+cRoH4ODR0Ct2cWQ@mail.gmail.com>
+References: <1358168377-22919-3-git-send-email-gautam.vivek@samsung.com>
+	<1359368782-30224-1-git-send-email-gautam.vivek@samsung.com>
+	<077f01cdfeaf$4f7b8780$ee729680$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f50.google.com ([209.85.214.50]:43300 "EHLO
-	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750786Ab3BEGcb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 01:32:31 -0500
-In-Reply-To: <077e01cdfeae$8fbc2850$af3478f0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <077f01cdfeaf$4f7b8780$ee729680$@samsung.com>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, grant.likely@secretlab.ca, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, av.tikhomirov@samsung.com, dianders@chromium.org, p.paneri@samsung.com
 
 Hi Kukjin,
 
 
-On Wed, Jan 30, 2013 at 11:26 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+On Wed, Jan 30, 2013 at 11:31 AM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
 > Vivek Gautam wrote:
 >>
->> Moving register and structure definitions to header file,
->> and keeping the generic functions to be used across
->> multiple PHYs in common file "samsung-usbphy.c".
->> Also renaming the usb 2.0 phy driver to "samsung-usb2.c"
->
-> Just in my opinion, Samsung-usb2phy is more clear?...In addition, I looked
-> at using SAMSUNG_USB2PHY as a statement.
->
-
-Sure will change the file names as suggested
-samsung-usbphy.c : common PHY controller driver
-samsung-usb2phy.c : USB 2.0 PHY controller driver
-
-Will change the names for CONFIG_XX also accordingly.
-
+>> Adding PHY driver support for USB 3.0 controller for Samsung's
+>> SoCs.
 >>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >> ---
 >>
 >> Changes from v3:
->>  - Using separate config SAMSUNG_USB2PHY dependent on
->>    SAMSUNG_USBPHY for samsung-usb2 type PHY controller.
+>>  - Making SAMSUNG_USB3PHY dependent on SAMSUNG_USBPHY.
+>>  - Adding USB_DWC3 to dependencies of SAMSUNG_USB2PHY since
+>>    dwc3 controller also looks for USB2 type PHY.
 >>
->>  drivers/usb/phy/Kconfig          |   14 +-
+>>  drivers/usb/phy/Kconfig          |   11 +-
 >>  drivers/usb/phy/Makefile         |    1 +
->>  drivers/usb/phy/samsung-usb2.c   |  511 +++++++++++++++++++++++++++
->>  drivers/usb/phy/samsung-usbphy.c |  714
-> +-------------------------------------
->>  drivers/usb/phy/samsung-usbphy.h |  247 +++++++++++++
->>  5 files changed, 778 insertions(+), 709 deletions(-)
->>  create mode 100644 drivers/usb/phy/samsung-usb2.c
->>  create mode 100644 drivers/usb/phy/samsung-usbphy.h
+>>  drivers/usb/phy/samsung-usb3.c   |  349
+>> ++++++++++++++++++++++++++++++++++++++
+>>  drivers/usb/phy/samsung-usbphy.h |   81 +++++++++
+>>  4 files changed, 441 insertions(+), 1 deletions(-)
+>>  create mode 100644 drivers/usb/phy/samsung-usb3.c
 >>
 >> diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
->> index fae4d08..cc0d230 100644
+>> index cc0d230..9325a95 100644
 >> --- a/drivers/usb/phy/Kconfig
 >> +++ b/drivers/usb/phy/Kconfig
->> @@ -48,8 +48,18 @@ config USB_RCAR_PHY
+>> @@ -52,14 +52,23 @@ config SAMSUNG_USBPHY
+>>       help
+>>         Enable this to support Samsung USB phy controllers for Samsung
+>>         SoCs.
+>> +       Further enable USB 2.0 type PHY or USB 3.0 type PHY as required
+>> +       for USB controllers in use.
 >>
->>  config SAMSUNG_USBPHY
->>       bool "Samsung USB PHY controller Driver"
+>>  if SAMSUNG_USBPHY
+>>
+>>  config SAMSUNG_USB2PHY
+>>       bool "Samsung USB 2.0 PHY controller Driver"
 >> -     depends on USB_S3C_HSOTG || USB_EHCI_S5P ||
 >> USB_OHCI_EXYNOS
->
-> So this can be selected without any dependency?
->
-
-The idea was SAMSUNG_USBPHY is selected for usb2 type PHY as well as
-usb 3 type PHY.
-But this seems to be bad :-(
-Better we do something like this ?
-
-config SAMSUNG_USB2
-        bool "Samsung USB 2.0 PHY controller Driver"
-        select SAMSUNG_USBPHY
-        select USB_OTG_UTILS
-        help
-          Enable this to support Samsung USB 2.0 (High Speed) PHY controller
-          driver for Samsung SoCs.
-
-config SAMSUNG_USBPHY
-        bool "Samsung USB PHY controller Driver"
-        help
-          Enable this to support Samsung USB phy helper driver for Samsung SoCs.
-          This driver provides common interface for Samsung USB 2.0 PHY driver
-          and later for Samsung USB 3.0 PHY driver.
-
->>       select USB_OTG_UTILS
->>       help
->> -       Enable this to support Samsung USB phy controller for samsung
->> +       Enable this to support Samsung USB phy controllers for Samsung
->>         SoCs.
->
-> Hmm, according to above comments, this should be enabled under Samsung SoC?
->
-
-May we just add these configs under USB as mentioned above ?
-
->> +
->> +if SAMSUNG_USBPHY
->
-> Why is this needed here?
->
-
-We will not need this if we change to something like mentioned above.
-
->> +
->> +config SAMSUNG_USB2PHY
->> +     bool "Samsung USB 2.0 PHY controller Driver"
 >> +     depends on USB_S3C_HSOTG || USB_EHCI_S5P ||
->> USB_OHCI_EXYNOS
+>> USB_OHCI_EXYNOS || USB_DWC3
+>>       help
+>>         Enable this to support Samsung USB 2.0 (High Speed) phy controller
+>>         for Samsung SoCs.
+>>
+>> +config SAMSUNG_USB3PHY
+>> +     bool "Samsung USB 3.0 PHY controller Driver"
+>> +     depends on USB_DWC3
 >> +     help
->> +       Enable this to support Samsung USB 2.0 (High Speed) phy controller
->> +       for Samsung SoCs.
+>> +       Enable this to support Samsung USB 3.0 (Super Speed) phy
+>> controller
+>> +       for samsung SoCs.
 >> +
->> +endif
->> diff --git a/drivers/usb/phy/Makefile b/drivers/usb/phy/Makefile
->> index ec304f6..7ba9862 100644
->> --- a/drivers/usb/phy/Makefile
->> +++ b/drivers/usb/phy/Makefile
->> @@ -10,3 +10,4 @@ obj-$(CONFIG_MV_U3D_PHY)            +=
->> mv_u3d_phy.o
->>  obj-$(CONFIG_USB_EHCI_TEGRA) += tegra_usb_phy.o
->>  obj-$(CONFIG_USB_RCAR_PHY)           += rcar-phy.o
->>  obj-$(CONFIG_SAMSUNG_USBPHY)         += samsung-usbphy.o
->> +obj-$(CONFIG_SAMSUNG_USB2PHY)                += samsung-usb2.o
->> diff --git a/drivers/usb/phy/samsung-usb2.c b/drivers/usb/phy/samsung-
->> usb2.c
->> new file mode 100644
->> index 0000000..9a9d1d0
->> --- /dev/null
->> +++ b/drivers/usb/phy/samsung-usb2.c
->> @@ -0,0 +1,511 @@
->> +/* linux/drivers/usb/phy/samsung-usb2.c
->> + *
->> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
->> + *              http://www.samsung.com
->> + *
->> + * Author: Praveen Paneri <p.paneri@samsung.com>
->> + *
->> + * Samsung USB2.0 PHY transceiver; talks to S3C HS OTG controller,
-> EHCI-S5P
->> and
->> + * OHCI-EXYNOS controllers.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->> +#include <linux/device.h>
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/of.h>
->> +#include <linux/usb/otg.h>
->> +#include <linux/usb/samsung_usb_phy.h>
->> +#include <linux/platform_data/samsung-usbphy.h>
->> +
->> +#include "samsung-usbphy.h"
->> +
->> +int samsung_usbphy_set_host(struct usb_otg *otg, struct usb_bus *host)
+>>  endif
 >
-> For naming, if you want to support usb 2.0 phy here, the name of fuction
-> should be changed to more clear name such as usb2phy or whatever.
->
-> As I'm understanding, the samsung-usbphy.c can be used for common stuff and
-> this is for only usb 2.0 phy.
+> It mean, when USB_DWC3 is selected, we can select only one USB2PHY or
+> USB3PHY?
 >
 
-True.
-Will keep the naming as suggested. usb2phy naming for functions
-specific to SAMSUNG_USB2PHY
+Actually, DWC3 expects both USB2PHY and USB3PHY, so went this way.
+But this seems bad :-(
+Will remove these dependencies as suggested by Felipe also.
 
 > [...]
 >
 >> +#ifdef CONFIG_OF
 >> +static const struct of_device_id samsung_usbphy_dt_match[] = {
 >> +     {
->> +             .compatible = "samsung,s3c64xx-usbphy",
->> +             .data = &usbphy_s3c64xx,
->> +     }, {
->> +             .compatible = "samsung,exynos4210-usbphy",
->> +             .data = &usbphy_exynos4,
->> +     }, {
->> +             .compatible = "samsung,exynos5250-usbphy",
->> +             .data = &usbphy_exynos5
+>> +             .compatible = "samsung,exynos5250-usb3-phy",
+>> +             .data = &usb3_phy_exynos5
 >> +     },
 >> +     {},
 >> +};
@@ -208,60 +95,49 @@ specific to SAMSUNG_USB2PHY
 >> +
 >> +static struct platform_device_id samsung_usbphy_driver_ids[] = {
 >> +     {
->> +             .name           = "s3c64xx-usbphy",
->> +             .driver_data    = (unsigned long)&usbphy_s3c64xx,
->> +     }, {
->> +             .name           = "exynos4210-usbphy",
->> +             .driver_data    = (unsigned long)&usbphy_exynos4,
->> +     }, {
->> +             .name           = "exynos5250-usbphy",
->> +             .driver_data    = (unsigned long)&usbphy_exynos5,
+>> +             .name           = "exynos5250-usb3-phy",
+>
+> According to the name of file, exynos5250-usb3phy? Just it is imho...
+>
+
+Ok, sure will amend this.
+
+>> +             .driver_data    = (unsigned long)&usb3_phy_exynos5,
 >> +     },
 >> +     {},
 >> +};
 >> +
 >> +MODULE_DEVICE_TABLE(platform, samsung_usbphy_driver_ids);
 >> +
->> +static struct platform_driver samsung_usbphy_driver = {
->> +     .probe          = samsung_usbphy_probe,
->> +     .remove         = samsung_usbphy_remove,
+>> +static struct platform_driver samsung_usb3_phy_driver = {
+>> +     .probe          = samsung_usb3_phy_probe,
+>> +     .remove         = samsung_usb3_phy_remove,
 >> +     .id_table       = samsung_usbphy_driver_ids,
 >> +     .driver         = {
->> +             .name   = "samsung-usbphy",
+>> +             .name   = "samsung-usb3-phy",
 >> +             .owner  = THIS_MODULE,
 >> +             .of_match_table =
 >> of_match_ptr(samsung_usbphy_dt_match),
 >> +     },
 >> +};
 >> +
->> +module_platform_driver(samsung_usbphy_driver);
+>> +module_platform_driver(samsung_usb3_phy_driver);
 >> +
->> +MODULE_DESCRIPTION("Samsung USB phy controller");
->
-> USB 2.0 Phy?
->
-
-Yes, will amend this.
-
->> +MODULE_AUTHOR("Praveen Paneri <p.paneri@samsung.com>");
+>> +MODULE_DESCRIPTION("Samsung USB 3.0 phy controller");
+>> +MODULE_AUTHOR("Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
 >> +MODULE_LICENSE("GPL");
->> +MODULE_ALIAS("platform:samsung-usbphy");
+>> +MODULE_ALIAS("platform:samsung-usb3-phy");
 >
-> Is this for samsung-usbphy or samsung-usb2/samsung-usb2phy?
->
-
-Must be changed to samsung-usb2phy.
-
-> [...]
->
-> I know why you create separated phy file samsung-usbphy.c and samsung-usb2.c
-> here, but I think for that, would be better if you could consider the name
-> and so on.
+> I want you to use same naming rule.
 >
 
-Yes, sure will keep the naming convention as suggested.
+Sure.
 
 
 -- 
 Thanks & Regards
 Vivek
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
