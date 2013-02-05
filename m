@@ -1,68 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH RESEND] ARM: EXYNOS: change the name of USB ohci header
-Date: Tue, 05 Feb 2013 11:13:06 -0800
-Message-ID: <149b01ce03d4$d56a59f0$803f0dd0$@samsung.com>
-References: <000501ce0349$0f1a97a0$2d4fc6e0$%han@samsung.com>
- <Pine.LNX.4.44L0.1302051019430.2245-100000@iolanthe.rowland.org>
+From: Alexander Varnin <fenixk19@mail.ru>
+Subject: Help connect s3c2410-lcd device to SMDK2443
+Date: Tue, 05 Feb 2013 23:36:20 +0400
+Message-ID: <51115F34.8030503@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:17758 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754785Ab3BETNU (ORCPT
+Received: from fallback6.mail.ru ([94.100.176.134]:48596 "EHLO
+	fallback6.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756658Ab3BEVHo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 14:13:20 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHR003R2HE001S0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 04:13:19 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHR00EKBHE49S50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 04:13:18 +0900 (KST)
-In-reply-to: <Pine.LNX.4.44L0.1302051019430.2245-100000@iolanthe.rowland.org>
-Content-language: en-us
+	Tue, 5 Feb 2013 16:07:44 -0500
+Received: from smtp31.i.mail.ru (smtp31.i.mail.ru [94.100.177.91])
+	by fallback6.mail.ru (mPOP.Fallback_MX) with ESMTP id 85D8FA5C9830
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Feb 2013 23:36:50 +0400 (MSK)
+Received: from [46.28.89.34] (port=59946 helo=[10.1.1.191])
+	by smtp31.i.mail.ru with esmtpa (envelope-from <fenixk19@mail.ru>)
+	id 1U2oJb-0003bX-Dd
+	for linux-samsung-soc@vger.kernel.org; Tue, 05 Feb 2013 23:36:23 +0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Alan Stern' <stern@rowland.harvard.edu>, 'Jingoo Han' <jg1.han@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Alan Stern wrote:
-> 
-> On Tue, 5 Feb 2013, Jingoo Han wrote:
-> 
-> > On Wednesday, December 26, 2012 3:35 PM, Jingoo Han wrote
-> > >
-> > > This patch changes the name of USB ohci header from 'usb-exynos.h'
-> > > to 'usb-ohci-exynos.h'. This is because this header file has
-> > > the platdata for only Exynos ohci.
-> > >
-> > > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > > ---
-> > >  arch/arm/mach-exynos/dev-ohci.c                    |    2 +-
-> > >  arch/arm/mach-exynos/mach-origen.c                 |    2 +-
-> > >  arch/arm/mach-exynos/mach-smdkv310.c               |    2 +-
-> > >  drivers/usb/host/ohci-exynos.c                     |    2 +-
-> > >  .../{usb-exynos.h => usb-ohci-exynos.h}            |    0
-> > >  5 files changed, 4 insertions(+), 4 deletions(-)
-> > >  rename include/linux/platform_data/{usb-exynos.h => usb-ohci-
-> exynos.h} (100%)
-> > >
-> >
-> > Hi Alan,
-> >
-> > Can I get your Acked-by for 'drivers/usb/host/ohci-exynos.c'?
-> 
-> Yes, it's a trivial change.  Sorry I missed it; probably because it
-> came right in the middle of the holidays.
-> 
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Hello. I'm trying to setup "s3c2410-lcd" device on SMDK2443 with 3.6 kernel.
+On requesting interrupt it fails with EINVAL:
+~ # dmesg | grep lcd
+s3c2410-lcd s3c2410-lcd: cannot get irq 32 - err -22
+s3c2410-lcd: probe of s3c2410-lcd failed with error -16
 
-Looks good, applied this into samsung tree with Alan's ack.
 
-Thanks.
+The interrupt is not busy by something else. Here is my table:
+~ # cat /proc/interrupts
+CPU0
+  17:          0  s3c-ext0 s3c-mci
+  30:     409934       s3c  S3C2410 Timer Tick
+  37:          0       s3c s3c-mci
+  42:        416       s3c ohci_hcd:usb1
+  43:          0       s3c s3c2410-i2c
+  56:          1   s3c-ext uio_mcross
+  57:      72585   s3c-ext eth0
+  73:         63  s3c-uart1 s3c2440-uart
+  74:        108  s3c-uart1 s3c2440-uart
+  97:          0         - s3c2410-wdt
+Err:
 
-- Kukjin
+Please, help me to find the reason.
