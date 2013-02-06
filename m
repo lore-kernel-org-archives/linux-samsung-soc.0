@@ -1,66 +1,45 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 1/3] drm/exynos: Get HDMI version from device tree
-Date: Tue, 05 Feb 2013 17:22:23 -0700
-Message-ID: <5111A23F.50300@wwwdotorg.org>
-References: <1360107777-17490-1-git-send-email-seanpaul@chromium.org> <1360107777-17490-2-git-send-email-seanpaul@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
+Date: Tue, 5 Feb 2013 16:23:41 -0800
+Message-ID: <CAD=FV=W+rCOADrSYoP9wzXuq1ftLYqbbSUT1KKgEc7WfVMojMA@mail.gmail.com>
+References: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:56562 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753729Ab3BFAW2 (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:45741 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753302Ab3BFAXp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 19:22:28 -0500
-In-Reply-To: <1360107777-17490-2-git-send-email-seanpaul@chromium.org>
+	Tue, 5 Feb 2013 19:23:45 -0500
+Received: by mail-la0-f46.google.com with SMTP id fq12so802266lab.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Feb 2013 16:23:44 -0800 (PST)
+Received: by mail-la0-f50.google.com with SMTP id ec20so797922lab.23
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Feb 2013 16:23:41 -0800 (PST)
+In-Reply-To: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, t.stanislaws@samsung.com, kgene.kim@samsung.com, linux-kernel@vger.kernel.org, tomasz.figa@gmail.com, inki.dae@samsung.com, sylvester.nawrocki@gmail.com, olofj@chromium.org, rahul.sharma@samsung.com
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Wolfram Sang <w.sang@pengutronix.de>, Grant Grundler <grundler@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Simon Glass <sjg@chromium.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, naveen krishna <ch.naveen@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
 
-n 02/05/2013 04:42 PM, Sean Paul wrote:
-> Use the compatible string in the device tree to determine which
-> registers/functions to use in the HDMI driver. Also changes the
-> references from v13 to 4210 and v14 to 4212 to reflect the IP
-> block version instead of the HDMI version.
+Yavaraj,
 
-> diff --git a/Documentation/devicetree/bindings/drm/exynos/hdmi.txt b/Documentation/devicetree/bindings/drm/exynos/hdmi.txt
+On Mon, Feb 4, 2013 at 1:03 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>
+> This RFC patch is w.r.t multimaster bus arbitration which is already
+> being discussing in the mainline.
+> This patch provides hooks for the i2c multimaster bus arbitration
+> and to have the arbitration parameters.
 
-Binding looks sane to me.
+I may have missed something in all the threads, but my recollection
+was that the request was that this should be implemented without
+touching the i2c core code.  Your patch modifies the i2c core code.
 
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+My impression was that the best solution was to use the infrastructure
+in place for i2c multiplexing.  ...but in your case you would only
+multiplex one thing.  This was suggested by Grant Likely and seems the
+cleanest...
 
->  #ifdef CONFIG_OF
->  static struct of_device_id hdmi_match_types[] = {
->  	{
-> -		.compatible = "samsung,exynos5-hdmi",
-> -		.data	= (void	*)HDMI_TYPE14,
-> +		.compatible = "samsung,exynos4-hdmi",
->  	}, {
->  		/* end node */
->  	}
 
-Why not fill in all the "base" compatible values there (I think you need
-this anyway so that DTs don't all have to be compatible with
-samsung,exynos4-hdmi), with .data containing the HDMI_VER_EXYNOS*
-values, then ...
+[apologies for double-email; darn gmail and HTML email]
 
-> @@ -2218,17 +2217,18 @@ static int hdmi_probe(struct platform_device *pdev)
-
-> +
-> +	if (of_device_is_compatible(dev->of_node, "samsung,exynos4210-hdmi"))
-> +		hdata->version |= HDMI_VER_EXYNOS4210;
-> +	if (of_device_is_compatible(dev->of_node, "samsung,exynos4212-hdmi"))
-> +		hdata->version |= HDMI_VER_EXYNOS4212;
-> +	if (of_device_is_compatible(dev->of_node, "samsung,exynos5250-hdmi"))
-> +		hdata->version |= HDMI_VER_EXYNOS5250;
-
-Instead of that, do roughly:
-
-    match = of_match_device(hdmi_match_types, &pdev->dev);
-    if (match)
-        hdata->version |= (int)match->data;
-
-That way, it's all table-based. Any future additions to
-hdmi_match_types[] won't require another if statement to be added to
-probe().
+-Doug
