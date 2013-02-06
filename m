@@ -1,39 +1,37 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
+From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Subject: [PATCH] ARM: dts: moving dt binding documents for video devices to
  common place
-Date: Wed, 06 Feb 2013 09:51:39 -0500
-Message-ID: <1360162299-8893-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57959 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751294Ab3BFOba (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Feb 2013 09:31:30 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHS00I11Z0F7L70@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 23:31:29 +0900 (KST)
-Received: from chrome-ubuntu.sisodomain.com ([107.108.73.106])
- by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MHS00IPFYYLHJ30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 23:31:28 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Date: Wed, 06 Feb 2013 09:57:48 -0500
+Message-ID: <1360162668-29677-1-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
 Binding Documents for drm-devices are placed in
 Documentation/devicetree/bindings/drm/*. But these devices are common
-for v4l framework, hence moved to a common place at
+for v4l framework, hence moved to a common place
 Documentation/devicetree/bindings/video/. 'exynos_' prefix is added to
 associate them with exynos soc series.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
 It is base on for-next branch of
 git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+
  .../devicetree/bindings/drm/exynos/hdmi.txt        | 22 ----------------------
  .../devicetree/bindings/drm/exynos/hdmiddc.txt     | 12 ------------
  .../devicetree/bindings/drm/exynos/hdmiphy.txt     | 12 ------------
@@ -139,11 +137,11 @@ index 9b2ea03..0000000
 -	};
 diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
 new file mode 100644
-index 0000000..589edee
+index 0000000..4c48a83
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
 @@ -0,0 +1,22 @@
-+Device-Tree bindings for drm hdmi driver
++Device-Tree bindings for hdmi driver
 +
 +Required properties:
 +- compatible: value should be "samsung,exynos5-hdmi".
