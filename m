@@ -1,54 +1,72 @@
-From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Subject: Re: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
-Date: Wed, 6 Feb 2013 11:03:09 +0530
-Message-ID: <CAKuRcOK1B-iNACQntZ2LsTTXaKULwZvOWDVCQF_vz8ym_JeG2g@mail.gmail.com>
-References: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
-	<CAD=FV=VQywwQ3YAFb=1qFmd3UEW39Xu=ok6fdjhvBXdwOQOa1Q@mail.gmail.com>
-	<CAKuRcOKx4VLcmhwi8VWHKNOizgiVsE5f0v-CGmK5+bH=BjJAPg@mail.gmail.com>
+From: Sangsu Park <sangsu4u.park@samsung.com>
+Subject: RE: [RESEND][PATCH] ARM: EXYNOS: Add clocks for EXYNOS I2S and PCM I/F
+Date: Wed, 06 Feb 2013 14:42:49 +0900
+Message-ID: <003601ce042c$cc599c60$650cd520$@samsung.com>
+References: <003201ce0429$c15e8350$441b89f0$@samsung.com>
+ <CAK9yfHwZ6JOxtSEd1960v_Zb2QkpTQz7RG6NcSrJMCLzVWjJEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:57449 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751370Ab3BFFdK (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:39865 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751309Ab3BFFmv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Feb 2013 00:33:10 -0500
-In-Reply-To: <CAKuRcOKx4VLcmhwi8VWHKNOizgiVsE5f0v-CGmK5+bH=BjJAPg@mail.gmail.com>
+	Wed, 6 Feb 2013 00:42:51 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHS0012YAHTZCM0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 14:42:49 +0900 (KST)
+Received: from DOSANGSU4UP02 ([12.23.118.226])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHS00IARAJD6F70@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 14:42:49 +0900 (KST)
+In-reply-to: <CAK9yfHwZ6JOxtSEd1960v_Zb2QkpTQz7RG6NcSrJMCLzVWjJEg@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Wolfram Sang <w.sang@pengutronix.de>, Grant Grundler <grundler@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Simon Glass <sjg@chromium.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, naveen krishna <ch.naveen@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Kukjin Kim' <kgene.kim@samsung.com>, sbkim73@samsung.com, 'Tushar Behera' <tushar.behera@linaro.org>
 
-On Wed, Feb 6, 2013 at 10:58 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
-> On Wed, Feb 6, 2013 at 5:48 AM, Doug Anderson <dianders@chromium.org> wrote:
->> Yavaraj,
->>
->> On Mon, Feb 4, 2013 at 1:03 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
->> wrote:
->>>
->>> This RFC patch is w.r.t multimaster bus arbitration which is already
->>> being discussing in the mainline.
->>> This patch provides hooks for the i2c multimaster bus arbitration
->>> and to have the arbitration parameters.
->>
->>
->> I may have missed something in all the threads, but my recollection was that
->> the request was that this should be implemented without touching the i2c
->> core code.  Your patch modifies the i2c core code.
+On 6 February 2013 11:00, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 6 February 2013 10:51, Sangsu Park <sangsu4u.park@samsung.com> wrote:
+> > Audio Subsystem has own clocks for I2S0 and PCM0 in all EXYNOS series.
+> > This patch add clocks for I2S0 and PCM0 I/F.
+> >
+> > Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/Makefile      |    1 +
+> >  arch/arm/mach-exynos/clock-audss.c |   64
+> ++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 65 insertions(+), 0 deletions(-)
+> >  create mode 100644 arch/arm/mach-exynos/clock-audss.c
+> >
+> [snip]
+> > diff --git a/arch/arm/mach-exynos/clock-audss.c
+> > b/arch/arm/mach-exynos/clock-audss.c
+> > new file mode 100644
+> > index 0000000..8260185
+> > --- /dev/null
+> > +++ b/arch/arm/mach-exynos/clock-audss.c
+> > @@ -0,0 +1,64 @@
+> [snip]
+> > +static void __iomem *clk_audss_base = 0;
+> > +
+> > +static int exynos_clk_audss_ctrl(struct clk *clk, int enable)
+> > +{
+> > +       if (!clk_audss_base)
+> > +               return ENOMEM;
+> 
+> Return value should be negative (-ENOMEM).
 
-   Different i2c devices will directly talk to i2c core using i2c_transfer().
-    If we put this out of the i2c core,the i2c devices like tpsxxxx and etc
-    should be registered through the bridge/mux .
+Thanks for your comment.
+I'll fix it.
 
->>
->> My impression was that the best solution was to use the infrastructure in
->> place for i2c multiplexing.  ...but in your case you would only multiplex
->> one thing.  This was suggested by Grant Likely and seems the cleanest...
->
-     I agree that Grants idea was the cleanest but we may end up in change in
-      i2c device probe to register through mux/bridge.(for the
-device's connected on that
-     particular bus which requires arbitration).
->
->>
->> -Doug
+> 
+> 
+> 
+> --
+> With warm regards,
+> Sachin
