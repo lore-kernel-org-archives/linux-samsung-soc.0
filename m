@@ -1,68 +1,64 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
-Date: Tue, 5 Feb 2013 22:00:04 -0800
-Message-ID: <CAPnjgZ1DG2Txh41r8PsfqfZMaUem5ScTijMP+==3ATFK0Q1=Dw@mail.gmail.com>
-References: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
-	<CAD=FV=VQywwQ3YAFb=1qFmd3UEW39Xu=ok6fdjhvBXdwOQOa1Q@mail.gmail.com>
-	<CAKuRcOKx4VLcmhwi8VWHKNOizgiVsE5f0v-CGmK5+bH=BjJAPg@mail.gmail.com>
-	<CAKuRcOK1B-iNACQntZ2LsTTXaKULwZvOWDVCQF_vz8ym_JeG2g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH V3 0/5] Add generic DMA DT binding support
+Date: Wed, 06 Feb 2013 11:48:44 +0530
+Message-ID: <1360131529-2847-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:43605 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752019Ab3BFGAF (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60461 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751890Ab3BFGSX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Feb 2013 01:00:05 -0500
-Received: by mail-ob0-f172.google.com with SMTP id tb18so1091911obb.17
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Feb 2013 22:00:04 -0800 (PST)
-In-Reply-To: <CAKuRcOK1B-iNACQntZ2LsTTXaKULwZvOWDVCQF_vz8ym_JeG2g@mail.gmail.com>
+	Wed, 6 Feb 2013 01:18:23 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHS00ESTC6I63N0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 15:18:22 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MHS001KWC6CC970@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 15:18:21 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Cc: Doug Anderson <dianders@chromium.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Wolfram Sang <w.sang@pengutronix.de>, Grant Grundler <grundler@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, naveen krishna <ch.naveen@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, arnd@arndb.de, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
 
-Hi,
+Changes since V2:
+	- Add new filter function for DT case as suggested by Arnd
+	- Add xlate as static function
+	- Use newly added filter function in xlate.
+	- Add Acked-by for some of the patches
 
-On Tue, Feb 5, 2013 at 9:33 PM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
-> On Wed, Feb 6, 2013 at 10:58 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
->> On Wed, Feb 6, 2013 at 5:48 AM, Doug Anderson <dianders@chromium.org> wrote:
->>> Yavaraj,
->>>
->>> On Mon, Feb 4, 2013 at 1:03 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
->>> wrote:
->>>>
->>>> This RFC patch is w.r.t multimaster bus arbitration which is already
->>>> being discussing in the mainline.
->>>> This patch provides hooks for the i2c multimaster bus arbitration
->>>> and to have the arbitration parameters.
->>>
->>>
->>> I may have missed something in all the threads, but my recollection was that
->>> the request was that this should be implemented without touching the i2c
->>> core code.  Your patch modifies the i2c core code.
->
->    Different i2c devices will directly talk to i2c core using i2c_transfer().
->     If we put this out of the i2c core,the i2c devices like tpsxxxx and etc
->     should be registered through the bridge/mux .
->
->>>
->>> My impression was that the best solution was to use the infrastructure in
->>> place for i2c multiplexing.  ...but in your case you would only multiplex
->>> one thing.  This was suggested by Grant Likely and seems the cleanest...
->>
->      I agree that Grants idea was the cleanest but we may end up in change in
->       i2c device probe to register through mux/bridge.(for the
-> device's connected on that
->      particular bus which requires arbitration).
+Changes since V1:
+        - Address the review comments by Arnd Bergmann as below
+        - Wording of the properties.
+        - Pass pdmac as third parameter to of_dma_controller_register
+        - Filter the dma channel based on channel number and dma_device
 
-Does the device tree not handle that case automatically? How are
-muxes/bridges done in that case? It's not problem to adjust the device
-tree file accordingly if Grant's approach is the cleanest method.
+This patch set adds support for generic dma device tree bindings for
+Samsung platforms and is dependent on the following patches from
+Vinod Koul next branch
+1)of: Add generic device tree DMA helpers
+2)dmaengine: add helper function to request a slave DMA channel
 
-Regards,
-Simon
+This patch set is made based Mark Brown next branch
 
->>
->>>
->>> -Doug
+Padmavathi Venna (5):
+  DMA: PL330: Add new pl330 filter for DT case.
+  DMA: PL330: Add xlate function
+  DMA: PL330: Register the DMA controller with the generic DMA helpers
+  ARM: dts: Add #dma-cells for generic dma binding support
+  ARM: SAMSUNG: dma: Remove unnecessary code
+
+ .../devicetree/bindings/dma/arm-pl330.txt          |   15 ++++-
+ arch/arm/boot/dts/exynos5250.dtsi                  |    4 +
+ arch/arm/mach-s3c24xx/include/mach/dma.h           |    1 -
+ arch/arm/mach-s3c64xx/include/mach/dma.h           |    1 -
+ arch/arm/plat-samsung/dma-ops.c                    |   10 +---
+ arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 -
+ arch/arm/plat-samsung/include/plat/dma-pl330.h     |    1 -
+ drivers/dma/pl330.c                                |   64 +++++++++++++++----
+ 8 files changed, 66 insertions(+), 31 deletions(-)
+
+-- 
+1.7.4.4
