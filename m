@@ -1,71 +1,137 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: SAMSUNG: dma: Remove unnecessary code
-Date: Tue, 5 Feb 2013 23:51:26 +0000
-Message-ID: <201302052351.26643.arnd@arndb.de>
-References: <1359967675-624-1-git-send-email-padma.v@samsung.com> <201302051113.22720.arnd@arndb.de> <CAAgF-Bf4Jhv1AKFdkNMHtrPojHgt2a2L2bg=dJvfsEq=cmbFkg@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 2/5] Samsung cleanup-s3c24xx for v3.9
+Date: Tue, 5 Feb 2013 16:15:32 -0800
+Message-ID: <20130206001532.GA28722@quad.lixom.net>
+References: <120c01ce0331$389e43a0$a9dacae0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:52016 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751211Ab3BEXvo (ORCPT
+Received: from mail-da0-f42.google.com ([209.85.210.42]:65370 "EHLO
+	mail-da0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753990Ab3BFAPe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 18:51:44 -0500
-In-Reply-To: <CAAgF-Bf4Jhv1AKFdkNMHtrPojHgt2a2L2bg=dJvfsEq=cmbFkg@mail.gmail.com>
+	Tue, 5 Feb 2013 19:15:34 -0500
+Received: by mail-da0-f42.google.com with SMTP id z17so321302dal.15
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Feb 2013 16:15:34 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <120c01ce0331$389e43a0$a9dacae0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Tuesday 05 February 2013, Padma Venkat wrote:
-> In none of my patches I have changed the pl330_filter args.  This
-> function always takes the same argument void*. In non-DT case 'enum
-> dma_ch' was typecasted to void* and in DT case I am passing a pointer
-> to dma_pl330_filter_args and in pl330_filter function they are
-> converted back. In both cases it finally comes down to
-> dma_request_channel which takes them as void* which in turn calls the
-> pl330_filter.
+On Mon, Feb 04, 2013 at 03:41:55PM -0800, Kukjin Kim wrote:
+> Hi Arnd and Olof,
 > 
-> I think this is what you are pointing to. Please let me know if I am
-> still wrong :( .
+> Here is 2nd cleanup for Samsung S3C24XX stuff and based on previous
+> pull-request branch, 'next/cleanup-header'.
+> Basically, this patch merges mach-s3c2410, mach-s3c2412 and mach-s3c2440
+> into mach-s3c24xx.
+> 
+> Note, this is 2nd pull request and first is 'next/cleanup-header' branch.
+> If any problems, please let me know.
 
-I think I see the misunderstanding now. The pl330_filter function
-you have actually interprets the void* argument differently, based
-on whether the pl330 device was instantiated from device tree or not.
-I failed to see this, and you are probably right that this works
-correctly.
+Hi,
 
-It is however a rather unusual interface, and it would be safer and
-easier to understand if you used separate filter functions for
-the two cases, like this:
+So, your first pull request didn't contain a "1/5", so it's hard to match them
+up.
 
-bool pl330_filter(struct dma_chan *chan, void *param)
-{
-        u8 *peri_id;
+Also, see how the word wrapping looks below? I wonder if you run your "git
+request-pull" in a terminal window that is wider than 80 characters, and then
+copy-and-paste it over? That doesn't work well. (I suspect you do since your
+git URL is always wrapped too :( )
 
-        if (chan->device->dev->driver != &pl330_driver.drv)
-                return false;
+Finally, would you mind starting to use signed tags with branch descriptions,
+or at least give a short overview of the branches in the pull requests?
 
-        peri_id = chan->private;
-        return *peri_id == (unsigned)param;
-}
-EXPORT_SYMBOL(pl330_filter);
 
-static bool pl330_dt_filter(struct dma_chan *chan, void *param)
-{
-        struct dma_pl330_filter_args *fargs = param;
+Thanks.
 
-        if (chan->device != &fargs->pdmac->ddma)
-                return false;
+-Olof
 
-        return (chan->chan_id == fargs->chan_id);
-}
-
-So this is not a correctness issue, but more one of readability. I would
-assume however that if I was misunderstanding the code, the next person
-also wouldn't know what is going on here if you have one filter function
-that performs two completely different tasks.
-
-	Arnd
+> 
+> Thanks.
+> 
+> - Kukjin
+> 
+> 
+> The following changes since commit 3a71c5c375e29fc9c1493b5ead1cf36572139c3e:
+> 
+>   ARM: S3C64XX: Fix missing header error with CONFIG_CPU_IDLE enabled
+> (2013-01-10 10:45:41 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> next/cleanup-s3c24xx
+> 
+> for you to fetch changes up to acf2d41d8595829eb0ac7bf6891f4875a78d4d6e:
+> 
+>   ARM: S3C24XX: Move mach-s3c2440/ pll into mach-s3c24xx/ (2013-01-21
+> 17:05:23 -0800)
+> 
+> ----------------------------------------------------------------
+> Kukjin Kim (6):
+>       ARM: S3C24XX: Move mach-s3c2410/ cpufreq into mach-s3c24xx/
+>       ARM: S3C24XX: Move mach-s3c2410/ pll into mach-s3c24xx/
+>       ARM: S3C2412: Remove useless codes mach-s3c2412/gpio.c
+>       ARM: S3C24XX: Move mach-s3c2412/ cpufreq driver into mach-s3c24xx/
+>       ARM: S3C24XX: Move mach-s3c2440/ cpufreq driver into mach-s3c24xx/
+>       ARM: S3C24XX: Move mach-s3c2440/ pll into mach-s3c24xx/
+> 
+>  arch/arm/Kconfig
+> |    4 ----
+>  arch/arm/Makefile
+> |    2 +-
+>  arch/arm/mach-s3c2410/Kconfig
+> |   20 ----------------
+>  arch/arm/mach-s3c2410/Makefile
+> |   14 -----------
+>  arch/arm/mach-s3c2412/Kconfig
+> |   13 ----------
+>  arch/arm/mach-s3c2412/Makefile
+> |   12 ----------
+>  arch/arm/mach-s3c2412/gpio.c
+> |   62 ------------------------------------------------
+>  arch/arm/mach-s3c2440/Kconfig
+> |   37 -----------------------------
+>  arch/arm/mach-s3c2440/Makefile
+> |   15 ------------
+>  arch/arm/mach-s3c24xx/Kconfig
+> |   56 +++++++++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-s3c24xx/Makefile
+> |    6 +++++
+>  arch/arm/{mach-s3c2410/cpu-freq.c => mach-s3c24xx/cpufreq-s3c2410.c}
+> |    7 ++----
+>  arch/arm/{mach-s3c2412/cpu-freq.c => mach-s3c24xx/cpufreq-s3c2412.c}
+> |    6 ++---
+>  arch/arm/{mach-s3c2440/s3c2440-cpufreq.c => mach-s3c24xx/cpufreq-s3c2440.c}
+> |    4 +---
+>  arch/arm/mach-s3c24xx/include/mach/hardware.h
+> |    6 -----
+>  arch/arm/{mach-s3c2410/pll.c => mach-s3c24xx/pll-s3c2410.c}
+> |    5 +---
+>  arch/arm/{mach-s3c2440/s3c2440-pll-12000000.c =>
+> mach-s3c24xx/pll-s3c2440-12000000.c} |    5 +---
+>  arch/arm/{mach-s3c2440/s3c2440-pll-16934400.c =>
+> mach-s3c24xx/pll-s3c2440-16934400.c} |    5 +---
+>  18 files changed, 71 insertions(+), 208 deletions(-)
+>  delete mode 100644 arch/arm/mach-s3c2410/Kconfig
+>  delete mode 100644 arch/arm/mach-s3c2410/Makefile
+>  delete mode 100644 arch/arm/mach-s3c2412/Kconfig
+>  delete mode 100644 arch/arm/mach-s3c2412/Makefile
+>  delete mode 100644 arch/arm/mach-s3c2412/gpio.c
+>  delete mode 100644 arch/arm/mach-s3c2440/Kconfig
+>  delete mode 100644 arch/arm/mach-s3c2440/Makefile
+>  rename arch/arm/{mach-s3c2410/cpu-freq.c => mach-s3c24xx/cpufreq-s3c2410.c}
+> (98%)
+>  rename arch/arm/{mach-s3c2412/cpu-freq.c => mach-s3c24xx/cpufreq-s3c2412.c}
+> (99%)
+>  rename arch/arm/{mach-s3c2440/s3c2440-cpufreq.c =>
+> mach-s3c24xx/cpufreq-s3c2440.c} (99%)
+>  rename arch/arm/{mach-s3c2410/pll.c => mach-s3c24xx/pll-s3c2410.c} (99%)
+>  rename arch/arm/{mach-s3c2440/s3c2440-pll-12000000.c =>
+> mach-s3c24xx/pll-s3c2440-12000000.c} (98%)
+>  rename arch/arm/{mach-s3c2440/s3c2440-pll-16934400.c =>
+> mach-s3c24xx/pll-s3c2440-16934400.c} (99%)
+> 
