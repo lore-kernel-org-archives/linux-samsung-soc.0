@@ -1,178 +1,128 @@
-From: =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
-Subject: Re: [PATCH v3 1/3] drm/exynos: Get HDMI version from device tree
-Date: Wed, 06 Feb 2013 11:56:59 +0900
-Message-ID: <5111C67B.3060909@samsung.com>
-References: <1360107777-17490-1-git-send-email-seanpaul@chromium.org>
- <1360107777-17490-2-git-send-email-seanpaul@chromium.org>
- <5111A23F.50300@wwwdotorg.org>
- <CAOw6vb+W3phFDJXp3gCx7y0N7mF4o2DpEfTGuNT1pGdKqiCGTg@mail.gmail.com>
- <5111A6D9.7090700@wwwdotorg.org>
- <CAOw6vbKhsWp7VnqgvECd-P4e5okX6dwKn3P8+phfpG29rA+h7g@mail.gmail.com>
-Reply-To: sw0312.kim@samsung.com
+From: Sangsu Park <sangsu4u.park@samsung.com>
+Subject: [RESEND][PATCH] ARM: EXYNOS: Add clocks for EXYNOS I2S and PCM I/F
+Date: Wed, 06 Feb 2013 14:21:02 +0900
+Message-ID: <003201ce0429$c15e8350$441b89f0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:39348 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:61816 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753390Ab3BFC4r (ORCPT
+	with ESMTP id S1751317Ab3BFFVE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 21:56:47 -0500
-In-reply-to: <CAOw6vbKhsWp7VnqgvECd-P4e5okX6dwKn3P8+phfpG29rA+h7g@mail.gmail.com>
+	Wed, 6 Feb 2013 00:21:04 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHS00MYJ9J03EI0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 14:21:02 +0900 (KST)
+Received: from DOSANGSU4UP02 ([12.23.118.226])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHS00GWI9J2VZ80@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 14:21:02 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Tomasz Stanislawski <t.stanislaws@samsung.com>, "kgene.kim" <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Olof Johansson <olofj@chromium.org>, linux-arm-kernel@lists.infradead.org, RAHUL SHARMA <rahul.sharma@samsung.com>, sw0312.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, sbkim73@samsung.com, Tushar Behera <tushar.behera@linaro.org>
 
+Audio Subsystem has own clocks for I2S0 and PCM0 in all EXYNOS series.
+This patch add clocks for I2S0 and PCM0 I/F.
 
+Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
+---
+ arch/arm/mach-exynos/Makefile      |    1 +
+ arch/arm/mach-exynos/clock-audss.c |   64 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/clock-audss.c
 
-On 2013=EB=85=84 02=EC=9B=94 06=EC=9D=BC 09:56, Sean Paul wrote:
-> On Tue, Feb 5, 2013 at 4:42 PM, Stephen Warren <swarren@wwwdotorg.org=
-> wrote:
->> On 02/05/2013 05:37 PM, Sean Paul wrote:
->>> On Tue, Feb 5, 2013 at 4:22 PM, Stephen Warren <swarren@wwwdotorg.o=
-rg> wrote:
->>>> n 02/05/2013 04:42 PM, Sean Paul wrote:
->>>>> Use the compatible string in the device tree to determine which
->>>>> registers/functions to use in the HDMI driver. Also changes the
->>>>> references from v13 to 4210 and v14 to 4212 to reflect the IP
->>>>> block version instead of the HDMI version.
->>>>
->>>>> diff --git a/Documentation/devicetree/bindings/drm/exynos/hdmi.tx=
-t b/Documentation/devicetree/bindings/drm/exynos/hdmi.txt
->>>>
->>>> Binding looks sane to me.
->>>>
->>>>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/d=
-rm/exynos/exynos_hdmi.c
->>>>
->>>>>  #ifdef CONFIG_OF
->>>>>  static struct of_device_id hdmi_match_types[] =3D {
->>>>>       {
->>>>> -             .compatible =3D "samsung,exynos5-hdmi",
->>>>> -             .data   =3D (void *)HDMI_TYPE14,
->>>>> +             .compatible =3D "samsung,exynos4-hdmi",
->>>>>       }, {
->>>>>               /* end node */
->>>>>       }
->>>>
->>>> Why not fill in all the "base" compatible values there (I think yo=
-u need
->>>> this anyway so that DTs don't all have to be compatible with
->>>> samsung,exynos4-hdmi), with .data containing the HDMI_VER_EXYNOS*
->>>> values, then ...
->>>>
->>>
->>> At the moment, all DTs have to be compatible with exynos4-hdmi sinc=
-e
->>> it provides the base for the current driver. The driver uses 4210 a=
-nd
->>> 4212 to differentiate between different register addresses and
->>> features, but most things are just exynos4-hdmi compatible.
->>
->> The DT nodes should include only the compatible values that the HW i=
-s
->> actually compatible with. If the HW isn't compatible with exynos4-hd=
-mi,
->> that value shouldn't be in the compatible property, but instead what=
-ever
->> the "base" value that the HW really is compatible with. The driver c=
-an
->> support multiple "base" compatible values from this table.
->>
->=20
-> All devices that use this driver are compatible, at some level, with
-> exynos4-hdmi, so I think its usage is correct here.
->=20
->>>>> @@ -2218,17 +2217,18 @@ static int hdmi_probe(struct platform_dev=
-ice *pdev)
->>>>
->>>>> +
->>>>> +     if (of_device_is_compatible(dev->of_node, "samsung,exynos42=
-10-hdmi"))
->>>>> +             hdata->version |=3D HDMI_VER_EXYNOS4210;
->>>>> +     if (of_device_is_compatible(dev->of_node, "samsung,exynos42=
-12-hdmi"))
->>>>> +             hdata->version |=3D HDMI_VER_EXYNOS4212;
->>>>> +     if (of_device_is_compatible(dev->of_node, "samsung,exynos52=
-50-hdmi"))
->>>>> +             hdata->version |=3D HDMI_VER_EXYNOS5250;
->>>>
->>>> Instead of that, do roughly:
->>>>
->>>>     match =3D of_match_device(hdmi_match_types, &pdev->dev);
->>>>     if (match)
->>>>         hdata->version |=3D (int)match->data;
->>>>
->>>> That way, it's all table-based. Any future additions to
->>>> hdmi_match_types[] won't require another if statement to be added =
-to
->>>> probe().
->>>
->>> I don't think it's that easy. of_match_device returns the first mat=
-ch
->>> from the device table, so I'd still need to iterate through the
->>> matches. I could still break this out into a table, but I don't thi=
-nk
->>> of_match_device is the right way to probe it.
->>
->> You shouldn't have to iterate over multiple matches. of_match_device=
-()
->> is supposed to return the match for the first entry in the compatibl=
-e
->> property, then if there was no match, move on to looking at the next
->> entry in the compatible property, etc. In practice, I think it's sti=
-ll
->> not implemented quite correctly for this, but you can make it work b=
-y
->> putting the newest compatible value first in the match table.
->=20
-> I think the only way that works is if you hardcode the compatible
-> versions in the driver, like this:
->=20
-> static struct of_device_id hdmi_match_types[] =3D {
->         {
->                 .compatible =3D "samsung,exynos5250-hdmi",
->                 .data =3D (void *)(HDMI_VER_EXYNOS5250 | HDMI_VER_EXY=
-NOS4212);
->         }, {
->                 .compatible =3D "samsung,exynos4212-hdmi",
->                 .data =3D (void *)HDMI_VER_EXYNOS4212;
->         }, {
->                 .compatible =3D "samsung,exynos4210-hdmi",
->                 .data =3D (void *)HDMI_VER_EXYNOS4210;
->         }, {
->                 /* end node */
->         }
-> };
-
-Actually, I can't understand why there is HDMI_VER_EXYNOS5250 because i=
-t
-is not used anywhere in your patch. I'm not sure I missed something fro=
-m
-your v2 patch thread, but to me, just hdmi version or hdmi ip version
-can be used as data field of struct of_device_id as like your v2 patch
-set. and then of_match_device() can be used without | in data field.
-
-If I have missed some point from v2 thread, please let me know.
-
-Best Regards,
-- Seung-Woo Kim
-
->=20
-> In that case, it eliminates the benefit of using device tree to
-> determine the compatible bits. I hope I'm just being thick and missin=
-g
-> something.
->=20
-> Sean
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->=20
-
---=20
-Seung-Woo Kim
-Samsung Software R&D Center
---
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 7e53a3a..5b6c7c0 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -13,6 +13,7 @@ obj-				:=
+ # Core
+ 
+ obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
++obj-$(CONFIG_ARCH_EXYNOS)	+= clock-audss.o
+ obj-$(CONFIG_ARCH_EXYNOS4)	+= clock-exynos4.o
+ obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
+ obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
+diff --git a/arch/arm/mach-exynos/clock-audss.c
+b/arch/arm/mach-exynos/clock-audss.c
+new file mode 100644
+index 0000000..8260185
+--- /dev/null
++++ b/arch/arm/mach-exynos/clock-audss.c
+@@ -0,0 +1,64 @@
++/*
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Clock support for EXYNOS Audio Subsystem
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/io.h>
++
++#include <plat/clock.h>
++#include <plat/s5p-clock.h>
++
++#define EXYNOS_PA_AUDSS	(0x03810000)
++
++/* IP Clock Gate 0 Registers */
++#define EXYNOS_AUDSS_CLKGATE_I2SBUS	(1<<2)
++#define EXYNOS_AUDSS_CLKGATE_I2SSPECIAL	(1<<3)
++#define EXYNOS_AUDSS_CLKGATE_PCMBUS	(1<<4)
++#define EXYNOS_AUDSS_CLKGATE_PCMSPECIAL	(1<<5)
++#define EXYNOS_AUDSS_CLKGATE_GPIO	(1<<6)
++
++static void __iomem *clk_audss_base = 0;
++
++static int exynos_clk_audss_ctrl(struct clk *clk, int enable)
++{
++	if (!clk_audss_base)
++		return ENOMEM;
++
++	return s5p_gatectrl(clk_audss_base, clk, enable);
++}
++
++static struct clk exynos_init_audss_clocks[] = {
++	{
++		.name		= "iis",
++		.devname	= "samsung-i2s.0",
++		.enable		= exynos_clk_audss_ctrl,
++		.ctrlbit	= EXYNOS_AUDSS_CLKGATE_I2SSPECIAL |
+EXYNOS_AUDSS_CLKGATE_I2SBUS
++				| EXYNOS_AUDSS_CLKGATE_GPIO,
++	}, {
++		.name		= "pcm",
++		.devname	= "samsung-pcm.0",
++		.enable		= exynos_clk_audss_ctrl,
++		.ctrlbit	= EXYNOS_AUDSS_CLKGATE_PCMSPECIAL |
+EXYNOS_AUDSS_CLKGATE_PCMBUS
++				| EXYNOS_AUDSS_CLKGATE_GPIO,
++	},
++};
++
++void __init exynos_register_audss_clocks(void)
++{
++	clk_audss_base = ioremap(EXYNOS_PA_AUDSS, SZ_4K);
++	if (clk_audss_base == NULL) {
++		pr_err("unable to ioremap for gpio_base1\n");
++		return;
++	}
++
++	s3c_register_clocks(exynos_init_audss_clocks,
+ARRAY_SIZE(exynos_init_audss_clocks));
++	s3c_disable_clocks(exynos_init_audss_clocks,
+ARRAY_SIZE(exynos_init_audss_clocks));
++}
+-- 
+1.7.4.1
