@@ -1,19 +1,19 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V3 1/5] DMA: PL330: Add new pl330 filter for DT case.
-Date: Wed, 6 Feb 2013 09:00:26 +0000
-Message-ID: <201302060900.26986.arnd@arndb.de>
-References: <1360131529-2847-1-git-send-email-padma.v@samsung.com> <1360131529-2847-2-git-send-email-padma.v@samsung.com>
+Subject: Re: [PATCH V3 5/5] ARM: SAMSUNG: dma: Remove unnecessary code
+Date: Wed, 6 Feb 2013 09:00:45 +0000
+Message-ID: <201302060900.45462.arnd@arndb.de>
+References: <1360131529-2847-1-git-send-email-padma.v@samsung.com> <1360131529-2847-6-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:60933 "EHLO
+Received: from moutng.kundenserver.de ([212.227.126.186]:57025 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751323Ab3BFJAl (ORCPT
+	with ESMTP id S1751268Ab3BFJBE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Feb 2013 04:00:41 -0500
-In-Reply-To: <1360131529-2847-2-git-send-email-padma.v@samsung.com>
+	Wed, 6 Feb 2013 04:01:04 -0500
+In-Reply-To: <1360131529-2847-6-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Padmavathi Venna <padma.v@samsung.com>
@@ -21,10 +21,11 @@ Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linu
 
 On Wednesday 06 February 2013, Padmavathi Venna wrote:
 > 
-> This patch adds a new pl330_dt_filter for DT case to filter the
-> required channel based on the new filter params and modifies the
-> old filter only for non-DT case as suggested by Arnd Bergmann.
+> This patch removes the usage of DMACH_DT_PROP and dt_dmach_prop
+> from dma code as the new generic dma dt binding support has been
+> added.
 > 
 > Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+
 
 Acked-by: Arnd Bergmann <arnd@arndb.de>
