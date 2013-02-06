@@ -1,83 +1,126 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 2/5] Samsung cleanup-s3c24xx for v3.9
-Date: Tue, 05 Feb 2013 16:54:28 -0800
-Message-ID: <14ef01ce0404$87e51280$97af3780$@samsung.com>
-References: <120c01ce0331$389e43a0$a9dacae0$@samsung.com>
- <20130206001532.GA28722@quad.lixom.net>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v3 1/3] drm/exynos: Get HDMI version from device tree
+Date: Tue, 5 Feb 2013 16:56:31 -0800
+Message-ID: <CAOw6vbKhsWp7VnqgvECd-P4e5okX6dwKn3P8+phfpG29rA+h7g@mail.gmail.com>
+References: <1360107777-17490-1-git-send-email-seanpaul@chromium.org>
+ <1360107777-17490-2-git-send-email-seanpaul@chromium.org> <5111A23F.50300@wwwdotorg.org>
+ <CAOw6vb+W3phFDJXp3gCx7y0N7mF4o2DpEfTGuNT1pGdKqiCGTg@mail.gmail.com> <5111A6D9.7090700@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:31022 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753729Ab3BFAyq (ORCPT
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:35946 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753729Ab3BFA44 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Feb 2013 19:54:46 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHR00KPHX6X0270@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 09:54:45 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHR0043AX752S70@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Feb 2013 09:54:45 +0900 (KST)
-In-reply-to: <20130206001532.GA28722@quad.lixom.net>
-Content-language: en-us
+	Tue, 5 Feb 2013 19:56:56 -0500
+Received: by mail-lb0-f175.google.com with SMTP id n3so736762lbo.20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Feb 2013 16:56:54 -0800 (PST)
+Received: by mail-la0-f51.google.com with SMTP id fo13so814583lab.24
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Feb 2013 16:56:52 -0800 (PST)
+In-Reply-To: <5111A6D9.7090700@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, "kgene.kim" <kgene.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, InKi Dae <inki.dae@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Olof Johansson <olofj@chromium.org>, RAHUL SHARMA <rahul.sharma@samsung.com>
 
-Olof Johansson wrote:
-> 
-> On Mon, Feb 04, 2013 at 03:41:55PM -0800, Kukjin Kim wrote:
-> > Hi Arnd and Olof,
-> >
-> > Here is 2nd cleanup for Samsung S3C24XX stuff and based on previous
-> > pull-request branch, 'next/cleanup-header'.
-> > Basically, this patch merges mach-s3c2410, mach-s3c2412 and mach-s3c2440
-> > into mach-s3c24xx.
-> >
-> > Note, this is 2nd pull request and first is 'next/cleanup-header'
-branch.
-> > If any problems, please let me know.
-> 
-> Hi,
-> 
-Hi,
+On Tue, Feb 5, 2013 at 4:42 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 02/05/2013 05:37 PM, Sean Paul wrote:
+>> On Tue, Feb 5, 2013 at 4:22 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>> n 02/05/2013 04:42 PM, Sean Paul wrote:
+>>>> Use the compatible string in the device tree to determine which
+>>>> registers/functions to use in the HDMI driver. Also changes the
+>>>> references from v13 to 4210 and v14 to 4212 to reflect the IP
+>>>> block version instead of the HDMI version.
+>>>
+>>>> diff --git a/Documentation/devicetree/bindings/drm/exynos/hdmi.txt b/Documentation/devicetree/bindings/drm/exynos/hdmi.txt
+>>>
+>>> Binding looks sane to me.
+>>>
+>>>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>>>
+>>>>  #ifdef CONFIG_OF
+>>>>  static struct of_device_id hdmi_match_types[] = {
+>>>>       {
+>>>> -             .compatible = "samsung,exynos5-hdmi",
+>>>> -             .data   = (void *)HDMI_TYPE14,
+>>>> +             .compatible = "samsung,exynos4-hdmi",
+>>>>       }, {
+>>>>               /* end node */
+>>>>       }
+>>>
+>>> Why not fill in all the "base" compatible values there (I think you need
+>>> this anyway so that DTs don't all have to be compatible with
+>>> samsung,exynos4-hdmi), with .data containing the HDMI_VER_EXYNOS*
+>>> values, then ...
+>>>
+>>
+>> At the moment, all DTs have to be compatible with exynos4-hdmi since
+>> it provides the base for the current driver. The driver uses 4210 and
+>> 4212 to differentiate between different register addresses and
+>> features, but most things are just exynos4-hdmi compatible.
+>
+> The DT nodes should include only the compatible values that the HW is
+> actually compatible with. If the HW isn't compatible with exynos4-hdmi,
+> that value shouldn't be in the compatible property, but instead whatever
+> the "base" value that the HW really is compatible with. The driver can
+> support multiple "base" compatible values from this table.
+>
 
-> So, your first pull request didn't contain a "1/5", so it's hard to match
-them
-> up.
-> 
-Could be, sorry for that.
+All devices that use this driver are compatible, at some level, with
+exynos4-hdmi, so I think its usage is correct here.
 
-> Also, see how the word wrapping looks below? I wonder if you run your "git
-> request-pull" in a terminal window that is wider than 80 characters, and
-then
-> copy-and-paste it over? That doesn't work well. (I suspect you do since
-your
-> git URL is always wrapped too :( )
-> 
-Yeah, I know...sigh, it's hard to me how to avoid wrapped git URL...anyway
-let me check it more closely from now on.
+>>>> @@ -2218,17 +2217,18 @@ static int hdmi_probe(struct platform_device *pdev)
+>>>
+>>>> +
+>>>> +     if (of_device_is_compatible(dev->of_node, "samsung,exynos4210-hdmi"))
+>>>> +             hdata->version |= HDMI_VER_EXYNOS4210;
+>>>> +     if (of_device_is_compatible(dev->of_node, "samsung,exynos4212-hdmi"))
+>>>> +             hdata->version |= HDMI_VER_EXYNOS4212;
+>>>> +     if (of_device_is_compatible(dev->of_node, "samsung,exynos5250-hdmi"))
+>>>> +             hdata->version |= HDMI_VER_EXYNOS5250;
+>>>
+>>> Instead of that, do roughly:
+>>>
+>>>     match = of_match_device(hdmi_match_types, &pdev->dev);
+>>>     if (match)
+>>>         hdata->version |= (int)match->data;
+>>>
+>>> That way, it's all table-based. Any future additions to
+>>> hdmi_match_types[] won't require another if statement to be added to
+>>> probe().
+>>
+>> I don't think it's that easy. of_match_device returns the first match
+>> from the device table, so I'd still need to iterate through the
+>> matches. I could still break this out into a table, but I don't think
+>> of_match_device is the right way to probe it.
+>
+> You shouldn't have to iterate over multiple matches. of_match_device()
+> is supposed to return the match for the first entry in the compatible
+> property, then if there was no match, move on to looking at the next
+> entry in the compatible property, etc. In practice, I think it's still
+> not implemented quite correctly for this, but you can make it work by
+> putting the newest compatible value first in the match table.
 
-> Finally, would you mind starting to use signed tags with branch
-descriptions,
+I think the only way that works is if you hardcode the compatible
+versions in the driver, like this:
 
-Hmm, I see...but unfortunately, I can't use signed tag in my office, because
-I can't use my own laptop in my office due to company security. Let me find
-the way but probably need more time to use it.
+static struct of_device_id hdmi_match_types[] = {
+        {
+                .compatible = "samsung,exynos5250-hdmi",
+                .data = (void *)(HDMI_VER_EXYNOS5250 | HDMI_VER_EXYNOS4212);
+        }, {
+                .compatible = "samsung,exynos4212-hdmi",
+                .data = (void *)HDMI_VER_EXYNOS4212;
+        }, {
+                .compatible = "samsung,exynos4210-hdmi",
+                .data = (void *)HDMI_VER_EXYNOS4210;
+        }, {
+                /* end node */
+        }
+};
 
-> or at least give a short overview of the branches in the pull requests?
-> 
-OK, let me add it next time.
+In that case, it eliminates the benefit of using device tree to
+determine the compatible bits. I hope I'm just being thick and missing
+something.
 
-So you want to re-send this pull request? Even though I'm not sure how I can
-cover your ask except a short overview...
-
-Thanks.
-
-- Kukjin
+Sean
