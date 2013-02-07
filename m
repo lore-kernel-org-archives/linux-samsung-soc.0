@@ -1,173 +1,73 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 2/2] ARM: S3C24XX: cleanup the included soc init functions in common.h
-Date: Thu, 7 Feb 2013 22:50:57 +0100
-Message-ID: <201302072250.57275.heiko@sntech.de>
-References: <201302072249.04263.heiko@sntech.de>
+From: Alexander Varnin <fenixk19@mail.ru>
+Subject: Re: Help connect s3c2410-lcd device to SMDK2443
+Date: Fri, 08 Feb 2013 03:43:28 +0400
+Message-ID: <51143C20.1050704@mail.ru>
+References: <51115F34.8030503@mail.ru> <201302052317.44431.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:50975 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1422652Ab3BGVvB (ORCPT
+Received: from fallback1.mail.ru ([94.100.176.18]:53662 "EHLO
+	fallback1.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1422758Ab3BGXod (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Feb 2013 16:51:01 -0500
-In-Reply-To: <201302072249.04263.heiko@sntech.de>
+	Thu, 7 Feb 2013 18:44:33 -0500
+In-Reply-To: <201302052317.44431.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Only the _init, _init_clocks, _init_uarts and _map_io functions need
-NULL defines, as they are used in the cpu map.
-
-Further integrate the two restart functions already in common.h in
-their respective soc part and compact the numerous empty lines.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/common.h |   47 ++++-----------------------------------
- 1 files changed, 5 insertions(+), 42 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/common.h
-index 4db3dd8..8a2b413 100644
---- a/arch/arm/mach-s3c24xx/common.h
-+++ b/arch/arm/mach-s3c24xx/common.h
-@@ -12,17 +12,15 @@
- #ifndef __ARCH_ARM_MACH_S3C24XX_COMMON_H
- #define __ARCH_ARM_MACH_S3C24XX_COMMON_H __FILE__
- 
--#ifdef CONFIG_CPU_S3C2410
-+struct s3c2410_uartcfg;
- 
-+#ifdef CONFIG_CPU_S3C2410
- extern  int s3c2410_init(void);
- extern  int s3c2410a_init(void);
--
- extern void s3c2410_map_io(void);
--
- extern void s3c2410_init_uarts(struct s3c2410_uartcfg *cfg, int no);
--
- extern void s3c2410_init_clocks(int xtal);
--
-+extern void s3c2410_restart(char mode, const char *cmd);
- #else
- #define s3c2410_init_clocks NULL
- #define s3c2410_init_uarts NULL
-@@ -32,61 +30,41 @@ extern void s3c2410_init_clocks(int xtal);
- #endif
- 
- #ifdef CONFIG_CPU_S3C2412
--
- extern  int s3c2412_init(void);
--
- extern void s3c2412_map_io(void);
--
- extern void s3c2412_init_uarts(struct s3c2410_uartcfg *cfg, int no);
--
- extern void s3c2412_init_clocks(int xtal);
--
- extern  int s3c2412_baseclk_add(void);
--
- extern void s3c2412_restart(char mode, const char *cmd);
- #else
- #define s3c2412_init_clocks NULL
- #define s3c2412_init_uarts NULL
- #define s3c2412_map_io NULL
- #define s3c2412_init NULL
--#define s3c2412_restart NULL
- #endif
- 
- #ifdef CONFIG_CPU_S3C2416
--
--struct s3c2410_uartcfg;
--
- extern  int s3c2416_init(void);
--
- extern void s3c2416_map_io(void);
--
- extern void s3c2416_init_uarts(struct s3c2410_uartcfg *cfg, int no);
--
- extern void s3c2416_init_clocks(int xtal);
--
- extern  int s3c2416_baseclk_add(void);
--
- extern void s3c2416_restart(char mode, const char *cmd);
--
- extern void s3c2416_init_irq(void);
--extern struct syscore_ops s3c2416_irq_syscore_ops;
- 
-+extern struct syscore_ops s3c2416_irq_syscore_ops;
- #else
- #define s3c2416_init_clocks NULL
- #define s3c2416_init_uarts NULL
- #define s3c2416_map_io NULL
- #define s3c2416_init NULL
--#define s3c2416_restart NULL
- #endif
- 
- #if defined(CONFIG_CPU_S3C2440) || defined(CONFIG_CPU_S3C2442)
--
- extern void s3c244x_map_io(void);
--
- extern void s3c244x_init_uarts(struct s3c2410_uartcfg *cfg, int no);
--
- extern void s3c244x_init_clocks(int xtal);
--
-+extern void s3c244x_restart(char mode, const char *cmd);
- #else
- #define s3c244x_init_clocks NULL
- #define s3c244x_init_uarts NULL
-@@ -94,7 +72,6 @@ extern void s3c244x_init_clocks(int xtal);
- 
- #ifdef CONFIG_CPU_S3C2440
- extern  int s3c2440_init(void);
--
- extern void s3c2440_map_io(void);
- #else
- #define s3c2440_init NULL
-@@ -103,7 +80,6 @@ extern void s3c2440_map_io(void);
- 
- #ifdef CONFIG_CPU_S3C2442
- extern  int s3c2442_init(void);
--
- extern void s3c2442_map_io(void);
- #else
- #define s3c2442_init NULL
-@@ -111,33 +87,20 @@ extern void s3c2442_map_io(void);
- #endif
- 
- #ifdef CONFIG_CPU_S3C2443
--
--struct s3c2410_uartcfg;
--
- extern  int s3c2443_init(void);
--
- extern void s3c2443_map_io(void);
--
- extern void s3c2443_init_uarts(struct s3c2410_uartcfg *cfg, int no);
--
- extern void s3c2443_init_clocks(int xtal);
--
- extern  int s3c2443_baseclk_add(void);
--
- extern void s3c2443_restart(char mode, const char *cmd);
--
- extern void s3c2443_init_irq(void);
- #else
- #define s3c2443_init_clocks NULL
- #define s3c2443_init_uarts NULL
- #define s3c2443_map_io NULL
- #define s3c2443_init NULL
--#define s3c2443_restart NULL
- #endif
- 
--void s3c2410_restart(char mode, const char *cmd);
--void s3c244x_restart(char mode, const char *cmd);
--
- extern struct syscore_ops s3c24xx_irq_syscore_ops;
- 
- #endif /* __ARCH_ARM_MACH_S3C24XX_COMMON_H */
--- 
-1.7.2.3
+06.02.2013 02:17, Heiko St=C3=BCbner =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> Hi Alexander,
+>
+> Am Dienstag, 5. Februar 2013, 20:36:20 schrieb Alexander Varnin:
+>> Hello. I'm trying to setup "s3c2410-lcd" device on SMDK2443 with 3.6
+>> kernel. On requesting interrupt it fails with EINVAL:
+>> ~ # dmesg | grep lcd
+>> s3c2410-lcd s3c2410-lcd: cannot get irq 32 - err -22
+>> s3c2410-lcd: probe of s3c2410-lcd failed with error -16
+> If I remember correctly the s3c2443 has a new-style framebuffer. So u=
+sing the
+> s3c2410-fb/lcd driver is the wrong approach. The correct driver to us=
+e would
+> be the s3cfb.
+>
+> Take a look at mach-smdk2416.c which uses this driver. The init for t=
+he
+> s3c2443 should probably be similar.
+>
+>
+> Also the irq you requested is a parent irq to different lcd-irqs in t=
+he sub-
+> register on the s3c2443 and s3c2416. Therfore requesting it directly =
+is
+> disabled by the irq-subsystem.
+>
+>
+> Hope that helps
+> Heiko
+Thank you for help. I have used s3c-fb driver and all is ok.
+>
+>> The interrupt is not busy by something else. Here is my table:
+>> ~ # cat /proc/interrupts
+>> CPU0
+>>    17:          0  s3c-ext0 s3c-mci
+>>    30:     409934       s3c  S3C2410 Timer Tick
+>>    37:          0       s3c s3c-mci
+>>    42:        416       s3c ohci_hcd:usb1
+>>    43:          0       s3c s3c2410-i2c
+>>    56:          1   s3c-ext uio_mcross
+>>    57:      72585   s3c-ext eth0
+>>    73:         63  s3c-uart1 s3c2440-uart
+>>    74:        108  s3c-uart1 s3c2440-uart
+>>    97:          0         - s3c2410-wdt
+>> Err:
+>>
+>> Please, help me to find the reason.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
