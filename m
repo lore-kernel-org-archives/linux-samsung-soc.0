@@ -1,43 +1,57 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH 2/3] cpufreq: exynos: Adding cpufreq driver for exynos5440
-Date: Thu, 7 Feb 2013 16:58:34 +0530
-Message-ID: <CAG17yqQtvg4aL7tV6b5GmrdhjwvT4k+iCyStRykkHFOmP21Q9g@mail.gmail.com>
-References: <1360179562-19950-1-git-send-email-amit.daniel@samsung.com>
-	<1360179562-19950-2-git-send-email-amit.daniel@samsung.com>
-	<CAG17yqSh3bk8C9YSXtEsh4F5AJttwbVjFY0tdoy6=SZX5qibkQ@mail.gmail.com>
-	<CAOh2x=n+-PenMYNf9iZG0SeS4ENYdh0aKFWVZtLqWVHDUYhaMw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: exynos4412-origen: Add MSHC node
+Date: Thu,  7 Feb 2013 16:57:22 +0530
+Message-ID: <1360236442-24811-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:64666 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758032Ab3BGL2g (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:40620 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751849Ab3BGLgt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Feb 2013 06:28:36 -0500
-Received: by mail-wi0-f172.google.com with SMTP id ez12so6719415wid.17
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Feb 2013 03:28:34 -0800 (PST)
-In-Reply-To: <CAOh2x=n+-PenMYNf9iZG0SeS4ENYdh0aKFWVZtLqWVHDUYhaMw@mail.gmail.com>
+	Thu, 7 Feb 2013 06:36:49 -0500
+Received: by mail-pa0-f41.google.com with SMTP id fb11so1354550pad.14
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Feb 2013 03:36:48 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-On 7 February 2013 16:49, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On Thu, Feb 7, 2013 at 10:39 AM, Inderpal Singh
-> <inderpal.singh@linaro.org> wrote:
->>> +#define DRIVER_NAME            "exynos5440_dvfs"
->
->>> +static struct cpufreq_driver exynos_driver = {
->>> +       .name           = DRIVER_NAME,
->>> +};
->>> +
->>
->> Since this driver is only for exynos5440, having the same names as
->> common exynos-cpufreq is misleading.
->
-> Where is it same?
+Added MSHC node to Origen-4412 board.
 
-I meant hooks names (verify/get/target and init)
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/boot/dts/exynos4412-origen.dts |   20 ++++++++++++++++++++
+ 1 files changed, 20 insertions(+), 0 deletions(-)
 
-Thanks,
-Inder
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index 1df7ebd..14709da 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -48,6 +48,26 @@
+ 		status = "okay";
+ 	};
+ 
++	mshc@12550000 {
++		pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
++		pinctrl-names = "default";
++		status = "okay";
++
++		num-slots = <1>;
++		supports-highspeed;
++		broken-cd;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
+ 	codec@13400000 {
+ 		samsung,mfc-r = <0x43000000 0x800000>;
+ 		samsung,mfc-l = <0x51000000 0x800000>;
+-- 
+1.7.4.1
