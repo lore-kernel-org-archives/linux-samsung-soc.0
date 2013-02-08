@@ -1,58 +1,138 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v4 01/10] s5p-csis: Add device tree support
-Date: Fri, 08 Feb 2013 23:29:10 +0100
-Message-ID: <51157C36.6030505@gmail.com>
-References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-2-git-send-email-s.nawrocki@samsung.com> <5112E907.4080100@wwwdotorg.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v5 1/4] ARM: Exynos5250: Enabling ehci-s5p driver
+Date: Fri, 08 Feb 2013 14:35:06 -0800
+Message-ID: <1a5501ce064c$8d2ed1a0$a78c74e0$@samsung.com>
+References: <CAFp+6iFgaT9D2hR0pX34jo2g+GHftmA0Mw3y96-oKe0KakZOxA@mail.gmail.com>
+ <1358315143-16620-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:46055 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1947074Ab3BHW3T (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:58949 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760328Ab3BHWfZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Feb 2013 17:29:19 -0500
-In-Reply-To: <5112E907.4080100@wwwdotorg.org>
+	Fri, 8 Feb 2013 17:35:25 -0500
+In-reply-to: <1358315143-16620-1-git-send-email-gautam.vivek@samsung.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, dianders@chromium.org, jg1.han@samsung.com, Thomas Abraham <thomas.ab@samsung.com>
 
-On 02/07/2013 12:36 AM, Stephen Warren wrote:
-> On 02/01/2013 12:09 PM, Sylwester Nawrocki wrote:
->> s5p-csis is platform device driver for MIPI-CSI frontend to the FIMC
->> device. This patch support for binding the driver to the MIPI-CSIS
->> devices instantiated from device tree and for parsing all SoC and
->> board specific properties.
->
->> diff --git a/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
->b/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
->
->> +Optional properties:
->> +
->> +- clock-frequency : The IP's main (system bus) clock frequency in Hz, default
->> +		    value when this property is not specified is 166 MHz;
->
-> Shouldn't this be a "clocks" property, so that the driver can call
-> clk_get(), clk_prepare_enable(), clk_get_rate(), etc. on it?
+Vivek Gautam wrote:
+> 
+> Adding EHCI device tree node for Exynos5250 along with
+> the device base adress and gpio line for vbus.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> ---
+> 
+> Changes from v4:
+>  - Added gpio line for VBUS of USB2.0 on snow board.
+> 
+>  .../devicetree/bindings/usb/exynos-usb.txt         |   25
+> ++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 +++
+>  arch/arm/boot/dts/exynos5250-snow.dts              |    4 +++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++
+>  4 files changed, 39 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/usb/exynos-
+> usb.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> new file mode 100644
+> index 0000000..e8bbb47
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> @@ -0,0 +1,25 @@
+> +Samsung Exynos SoC USB controller
+> +
+> +The USB devices interface with USB controllers on Exynos SOCs.
+> +The device node has following properties.
+> +
+> +EHCI
+> +Required properties:
+> + - compatible: should be "samsung,exynos4210-ehci" for USB 2.0
+> +   EHCI controller in host mode.
+> + - reg: physical base address of the controller and length of memory
+> mapped
+> +   region.
+> + - interrupts: interrupt number to the cpu.
+> +
+> +Optional properties:
+> + - samsung,vbus-gpio:  if present, specifies the GPIO that
+> +   needs to be pulled up for the bus to be powered.
+> +
+> +Example:
+> +
+> +	usb@12110000 {
+> +		compatible = "samsung,exynos4210-ehci";
+> +		reg = <0x12110000 0x100>;
+> +		interrupts = <0 71 0>;
+> +		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+> +	};
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index 942d576..7363e14 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -204,4 +204,8 @@
+>  		samsung,mfc-r = <0x43000000 0x800000>;
+>  		samsung,mfc-l = <0x51000000 0x800000>;
+>  	};
+> +
+> +	usb@12110000 {
+> +		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+> +	};
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
+> b/arch/arm/boot/dts/exynos5250-snow.dts
+> index 17dd951..47b6b84 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -40,4 +40,8 @@
+>  				<&gpc4 5 2 3 0>, <&gpc4 6 2 3 0>;
+>  		};
+>  	};
+> +
+> +	usb@12110000 {
+> +		samsung,vbus-gpio = <&gpx1 1 1 3 3>;
+> +	};
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index 30485de..2cbe53e 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -275,6 +275,12 @@
+>  		#size-cells = <0>;
+>  	};
+> 
+> +	usb@12110000 {
+> +		compatible = "samsung,exynos4210-ehci";
+> +		reg = <0x12110000 0x100>;
+> +		interrupts = <0 71 0>;
+> +	};
+> +
+>  	amba {
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+> --
+> 1.7.6.5
 
-Hi Stephen,
+Looks good to me and applied this and "[PATCH v3 2/4] ARM: Exynos5250:
+Enabling ohci-exynos driver" in Samsung tree.
 
-Thanks for your review!
+Note, I think, you need to implement to use pinctrl for this instead of old
+gpio bindings next time, probably after release v3.9-rc1.
 
-I also use "clocks" and "clock-names" property, but didn't specify
-it here, because the Exynos SoCs clocks driver is not in the mainline yet.
+Ah, one more, please use subject lines appropriate like others, "ARM: dts:
+....".
 
-There are two clocks the driver needs to be aware of. One of them needs
-to have a specific parent clock set and the frequency set properly,
-so when it is put into a data pipeline with other IPs there is no overflows
-of their input/output FIFOs.
+Thanks.
 
-devfreq may change those frequencies if enabled, however its another topic.
-I wanted to ensure the device has initially correct local clock frequency
-set, with which it can operate.
-
---
-
-Thanks,
-Sylwester
+- Kukjin
