@@ -1,52 +1,55 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH] pinctrl: samsung: remove duplicated line of
- samsung_pinctrl_register()
-Date: Fri, 08 Feb 2013 14:39:30 +0900
-Message-ID: <001901ce05be$aacdeb30$0069c190$%han@samsung.com>
+From: Sangsu Park <sangsu4u.park@samsung.com>
+Subject: RE: [RESEND][PATCH] ARM: EXYNOS: Add clocks for EXYNOS I2S and PCM I/F
+Date: Fri, 08 Feb 2013 17:57:08 +0900
+Message-ID: <011101ce05da$46be7760$d43b6620$@samsung.com>
+References: <003201ce0429$c15e8350$441b89f0$@samsung.com>
+ <CAAgF-Be1UKyyX0VBkdy7GbhxH4mZmsVwskr2Yj3TM54qjs6dEQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54409 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:29608 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751541Ab3BHFjc (ORCPT
+	with ESMTP id S1946115Ab3BHI5L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Feb 2013 00:39:32 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	Fri, 8 Feb 2013 03:57:11 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHV00M8EZOPSK60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Feb 2013 14:39:31 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.120.99])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ 17 2011)) with ESMTP id <0MHW006QU8UWI9C0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 Feb 2013 17:57:10 +0900 (KST)
+Received: from DOSANGSU4UP02 ([12.23.118.226])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHV00AMGZPUUDC0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Feb 2013 14:39:30 +0900 (KST)
+ with ESMTPA id <0MHW004JS8V9PM20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 Feb 2013 17:57:09 +0900 (KST)
+In-reply-to: <CAAgF-Be1UKyyX0VBkdy7GbhxH4mZmsVwskr2Yj3TM54qjs6dEQ@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: 'Linus Walleij' <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
+To: 'Padma Venkat' <padma.kvr@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Kukjin Kim' <kgene.kim@samsung.com>, sbkim73@samsung.com, 'Tushar Behera' <tushar.behera@linaro.org>
 
-This patch removes duplicated line of samsung_pinctrl_register(),
-because the number of pins is redundantly assigned twice.
+On Fri, Feb 8, 2013 at 13:23 PM, Padma Venkat <padma.kvr@gmail.com> wrote:
+> On Wed, Feb 6, 2013 at 10:51 AM, Sangsu Park <sangsu4u.park@samsung.com>
+wrote:
+> > +void __init exynos_register_audss_clocks(void)
+> > +{
+> > +       clk_audss_base = ioremap(EXYNOS_PA_AUDSS, SZ_4K);
+> > +       if (clk_audss_base == NULL) {
+> 
+> Please run checkpatch. There should be space after if.
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- drivers/pinctrl/pinctrl-samsung.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+I mistakenly forgot checking patch with checkpatch.
+I can find some errors and warnings about this patch.
+I'll fix them. Thank you for your comment.
 
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index 294bcdd..3d5cf63 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -716,7 +716,6 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
- 	}
- 	ctrldesc->pins = pindesc;
- 	ctrldesc->npins = drvdata->ctrl->nr_pins;
--	ctrldesc->npins = drvdata->ctrl->nr_pins;
- 
- 	/* dynamically populate the pin number and pin name for pindesc */
- 	for (pin = 0, pdesc = pindesc; pin < ctrldesc->npins; pin++, pdesc++)
--- 
-1.7.2.5
+> 
+> > +               pr_err("unable to ioremap for gpio_base1\n");
+> 
+> Please fix the err message.
+
+I'll change it. :)
+
+Thanks.
+Sangsu Park
