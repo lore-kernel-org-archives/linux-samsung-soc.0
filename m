@@ -1,83 +1,77 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH 3/3] dts: Add cpufreq controller node for Exynos5440 SoC
-Date: Fri, 8 Feb 2013 22:19:09 +0530
-Message-ID: <CAG17yqQBjuc9t2iXg0sjTMo=pbXcjkwuP0uRFu=YR=58+AmEmA@mail.gmail.com>
-References: <1360179562-19950-1-git-send-email-amit.daniel@samsung.com>
-	<1360179562-19950-3-git-send-email-amit.daniel@samsung.com>
-	<CAG17yqTSxjoTDcGg+6rt+gnDyJBO7j3MBP_g5B=vYZqa1qaD+g@mail.gmail.com>
-	<CADGdYn44okjQHQo-W9Y-pFFHzO9-3HL-ZB36aVvfzMRp098ZtA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CADGdYn44okjQHQo-W9Y-pFFHzO9-3HL-ZB36aVvfzMRp098ZtA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: amit kachhap <amit.kachhap@gmail.com>
-Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH v3 1/2] ARM: Exynos5250: Enabling ehci-s5p driver
+Date: Fri, 08 Feb 2013 21:41:36 +0000
+Message-ID: <20130208214137.05F7D3E2C27@localhost>
+References: <1355416562-25539-1-git-send-email-gautam.vivek@samsung.com> <1355416562-25539-2-git-send-email-gautam.vivek@samsung.com> <20121215072312.EBCAA3E0C06@localhost> <CAFp+6iHoS4XJWHNrsyVsQS4bYZs1PUNEGsRr=EqAS7kpm2XGMQ@mail.gmail.com> <CAFp+6iFSZjfVJp23j2dEz0hRap07RMo68GJpsQM7YqOMBCbqsQ@mail.gmail.com> <CAD=FV=X=GRz0ZuFSqEHPy6i2ULtHk==M2_gaCvdmd=81YMNmMg@mail.gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:60191 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1947190Ab3BHVll (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 Feb 2013 16:41:41 -0500
+Received: by mail-wi0-f170.google.com with SMTP id hm11so1486457wib.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Feb 2013 13:41:40 -0800 (PST)
+In-Reply-To: <CAD=FV=X=GRz0ZuFSqEHPy6i2ULtHk==M2_gaCvdmd=81YMNmMg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree-discuss@lists.ozlabs.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
-On 8 February 2013 00:03, amit kachhap <amit.kachhap@gmail.com> wrote:
-> On Wed, Feb 6, 2013 at 8:49 PM, Inderpal Singh
-> <inderpal.singh@linaro.org> wrote:
->> On 7 February 2013 01:09, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
->>> Add cpufreq controller device node for Exynos5440 SoC for passing
->>> parameters like controller base address, interrupt and cpufreq
->>> table.
->>>
->>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->>> ---
->>>  arch/arm/boot/dts/exynos5440.dtsi |    9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
->>> index 024269d..b20b517 100644
->>> --- a/arch/arm/boot/dts/exynos5440.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5440.dtsi
->>> @@ -63,6 +63,15 @@
->>>
->>>         };
->>>
->>> +       cpufreq@160000 {
->>> +               compatible = "samsung,exynos5440-cpufreq";
->>> +               reg = <0x160000 0x1000>;
->>> +               interrupts = <0 57 0>;
->>> +               cpufreq_tbl = < 1200000 1025000
->>> +                               1000000 975000
->>> +                               800000  925000 >;
->>> +       };
->>> +
->>
->> I think cpufreq_tbl should be part of the cpu node as it's the
->> property of the cpu.
->> Please refer cpufreq-cpu0 and spear-cpufreq.
->
-> http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/15364.
-> In this thread same discussion followed. I am not sure what is the
-> correct way but looks like Kukjin concluded this with a timer node
-> separate from the CPU code.
->
+On Fri, 21 Dec 2012 10:13:50 -0800, Doug Anderson <dianders@chromium.org> wrote:
+> Vivek,
+> 
+> 
+> On Fri, Dec 21, 2012 at 12:16 AM, Vivek Gautam
+> <gautamvivek1987@gmail.com> wrote:
+> > Hi all,
+> >
+> >
+> > On Wed, Dec 19, 2012 at 7:20 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+> >> CC: Doug Anderson
+> >>
+> >>
+> >> On Sat, Dec 15, 2012 at 12:53 PM, Grant Likely
+> >> <grant.likely@secretlab.ca> wrote:
+> >>> On Thu, 13 Dec 2012 22:06:01 +0530, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> >>>> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> >>>> index 462e5ac..b3b9af1 100644
+> >>>> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> >>>> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> >>>> @@ -110,6 +110,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+> >>>>                               "samsung-i2s.1", NULL),
+> >>>>       OF_DEV_AUXDATA("samsung,samsung-i2s", 0x12D70000,
+> >>>>                               "samsung-i2s.2", NULL),
+> >>>> +     OF_DEV_AUXDATA("samsung,exynos4210-ehci", EXYNOS5_PA_EHCI,
+> >>>> +                             "s5p-ehci", NULL),
+> >>>
+> >>> I'm assuming the above change is temporary. What is left to be done to
+> >>> drop the auxdata in theses two patches?
+> >>>
+> >>> Otherwise the patch looks fine.
+> >>>
+> >>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> >
+> > Any more thought about this patch?
+> > Or does this change seems fine?
+> 
+> I'm fairly certain we can just drop the OF_DEV_AUXDATA entry here.  I
+> haven't been following this as closely as I should, but I know that
+> the comment for this table says that the whole purpose is to override
+> device names and that it should be temporary.  We don't need to do any
+> overriding of device names here, do we?
+> 
+> When I drop this (and the ohci and phy) entries from my table I can
+> still boot and still can use USB.  The big difference is what shows up
+> in dmesg
+> 
+> [    1.605000] s5p-ehci s5p-ehci: S5P EHCI Host Controller
+> 
+> Becomes:
+> 
+> [    1.550000] s5p-ehci 12110000.usb: S5P EHCI Host Controller
+> 
+> ...and some sysfs paths change.
 
-I am only talking about cpufreq_tbl and its nothing but operating
-points for the cpus. It seems its agreed upon to add operating-points
-to cpu node as being done by all other platforms like imx6q, am33xx,
-cpufreq-cpu0 and spear.
+Right. Drop the AUXDATA then.  :-)
 
-Thanks,
-Inder
-
-> Thanks,
-> Amit Daniel
->>
->>>         serial@B0000 {
->>>                 compatible = "samsung,exynos4210-uart";
->>>                 reg = <0xB0000 0x1000>;
->>> --
->>> 1.7.10.4
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+g.
