@@ -1,245 +1,85 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH V3 1/2] Thermal: exynos: Add support for temperature falling interrupt.
-Date: Thu,  7 Feb 2013 17:13:06 -0800
-Message-ID: <1360285987-13921-1-git-send-email-amit.daniel@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 2/3] cpufreq: exynos: Adding cpufreq driver for exynos5440
+Date: Fri, 8 Feb 2013 08:12:25 +0530
+Message-ID: <CAKohpon1J+7ZQu+Nevz_KBXpVa2Kus--DxR3cOhb97o-scB0fw@mail.gmail.com>
+References: <1360179562-19950-1-git-send-email-amit.daniel@samsung.com>
+	<1360179562-19950-2-git-send-email-amit.daniel@samsung.com>
+	<CAOh2x=kYM8n8XipvQ0-3H5f=B2TwAeFSa0DP=hy+SWQvPXJh6Q@mail.gmail.com>
+	<CADGdYn7+U1fvFdHkAikoH9P-owF0ZKk6ZSgrPfY+16S3vO=S3A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gh0-f175.google.com ([209.85.160.175]:38409 "EHLO
-	mail-gh0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759566Ab3BHBN0 (ORCPT
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:63017 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759433Ab3BHCm0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Feb 2013 20:13:26 -0500
+	Thu, 7 Feb 2013 21:42:26 -0500
+Received: by mail-oa0-f42.google.com with SMTP id i18so3614989oag.15
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Feb 2013 18:42:26 -0800 (PST)
+In-Reply-To: <CADGdYn7+U1fvFdHkAikoH9P-owF0ZKk6ZSgrPfY+16S3vO=S3A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
-Cc: jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com
+To: amit kachhap <amit.kachhap@gmail.com>
+Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, Amit Kucheria <amit.kucheria@linaro.org>
 
-From: Jonghwa Lee <jonghwa3.lee@samsung.com>
+On 8 February 2013 00:38, amit kachhap <amit.kachhap@gmail.com> wrote:
+> Hi Viresh,
+>
+> Thanks for the detailed review. Will try to handle them in the next version,
 
-This patch introduces using temperature falling interrupt in exynos
-thermal driver. Former patch, it only use polling way to check
-whether if system themperature is fallen. However, exynos SOC also
-provides temperature falling interrupt way to do same things by hw.
-This feature is not supported in exynos4210.
+np. I haven't seen reply to few questions, you missed them or accept them.
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
-Hi,
+General tip: Leave a blank line before and after your comment, it makes it more
+readable. :)
 
-Submitting these patches again as they got lost somewhere and was not merged.
+> On Thu, Feb 7, 2013 at 3:17 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>> On Thu, Feb 7, 2013 at 1:09 AM, Amit Daniel Kachhap
+>>> +Required properties:
+>>> +- interrupts: Interrupt to know the completion of cpu frequency change.
+>>> +- cpufreq_tbl: Table of frequencies and voltage CPU could be transitioned into,
+>>
+>> This has to be "operating-points" as in cpufreq-cpu0 driver.
+> Yes I will check if opp table is beneficial. In my case it is just one
+> time parsing of cpufreq table and those values(freq, volt) are not
+> used later so did not use opp libraries.
 
-Changes since V2:
-* Rebased against Rui Zhang next tree.
-* Added Kukjin Kim acked by.
+Its one time parsing for everybody, nobody do it twice :)
 
-Changes since V1: Used the new thermal trend type macro
+>>> +       for (old_index = 0;
+>>> +               freq_table[old_index].frequency != CPUFREQ_TABLE_END;
+>>> +               old_index++)
+>>> +               if (freq_table[old_index].frequency == freqs.old)
+>>> +                       break;
+>>> +
+>>> +       if (freq_table[old_index].frequency == CPUFREQ_TABLE_END) {
+>>
+>> How can this be true?
+> This is error scenario
 
-All these patches are based on thermal maintainer next branch.
-git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git thermal
+We have given cpufreq core a valid table and it has to set frequency from
+this table only. How can cpu have any other freq here ? And you have done
+something similar in your init() too, where you check if cpu has freq from the
+table or not.
 
- drivers/thermal/exynos_thermal.c             |   81 +++++++++++++++-----------
- include/linux/platform_data/exynos_thermal.h |    3 +
- 2 files changed, 49 insertions(+), 35 deletions(-)
+>>> +       dvfs_info = kzalloc(sizeof(struct exynos_dvfs_data), GFP_KERNEL);
+>>
+>> sizeof(*dvfs_info) ?? why don't make it static too, as you have other
+>> stuff too.. ?
+>> The better option for single image solution to allocate everything
+>> dynamically, so that
+>> unused drivers don't occupy any space.
 
-diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-index 3a1b01e..65f69cf 100644
---- a/drivers/thermal/exynos_thermal.c
-+++ b/drivers/thermal/exynos_thermal.c
-@@ -94,6 +94,7 @@
- #define SENSOR_NAME_LEN	16
- #define MAX_TRIP_COUNT	8
- #define MAX_COOLING_DEVICE 4
-+#define MAX_THRESHOLD_LEVS 4
- 
- #define ACTIVE_INTERVAL 500
- #define IDLE_INTERVAL 10000
-@@ -133,6 +134,7 @@ struct exynos_tmu_data {
- struct	thermal_trip_point_conf {
- 	int trip_val[MAX_TRIP_COUNT];
- 	int trip_count;
-+	u8 trigger_falling;
- };
- 
- struct	thermal_cooling_conf {
-@@ -183,7 +185,8 @@ static int exynos_set_mode(struct thermal_zone_device *thermal,
- 
- 	mutex_lock(&th_zone->therm_dev->lock);
- 
--	if (mode == THERMAL_DEVICE_ENABLED)
-+	if (mode == THERMAL_DEVICE_ENABLED &&
-+		!th_zone->sensor_conf->trip_data.trigger_falling)
- 		th_zone->therm_dev->polling_delay = IDLE_INTERVAL;
- 	else
- 		th_zone->therm_dev->polling_delay = 0;
-@@ -447,7 +450,8 @@ static void exynos_report_trigger(void)
- 			break;
- 	}
- 
--	if (th_zone->mode == THERMAL_DEVICE_ENABLED) {
-+	if (th_zone->mode == THERMAL_DEVICE_ENABLED &&
-+		!th_zone->sensor_conf->trip_data.trigger_falling) {
- 		if (i > 0)
- 			th_zone->therm_dev->polling_delay = ACTIVE_INTERVAL;
- 		else
-@@ -486,7 +490,8 @@ static int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf)
- 
- 	th_zone->therm_dev = thermal_zone_device_register(sensor_conf->name,
- 			EXYNOS_ZONE_COUNT, 0, NULL, &exynos_dev_ops, NULL, 0,
--			IDLE_INTERVAL);
-+			sensor_conf->trip_data.trigger_falling ?
-+			0 : IDLE_INTERVAL);
- 
- 	if (IS_ERR(th_zone->therm_dev)) {
- 		pr_err("Failed to register thermal zone device\n");
-@@ -593,8 +598,9 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 	struct exynos_tmu_platform_data *pdata = data->pdata;
--	unsigned int status, trim_info, rising_threshold;
--	int ret = 0, threshold_code;
-+	unsigned int status, trim_info;
-+	unsigned int rising_threshold = 0, falling_threshold = 0;
-+	int ret = 0, threshold_code, i, trigger_levs = 0;
- 
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
-@@ -619,6 +625,11 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 			(data->temp_error2 != 0))
- 		data->temp_error1 = pdata->efuse_value;
- 
-+	/* Count trigger levels to be enabled */
-+	for (i = 0; i < MAX_THRESHOLD_LEVS; i++)
-+		if (pdata->trigger_levels[i])
-+			trigger_levs++;
-+
- 	if (data->soc == SOC_ARCH_EXYNOS4210) {
- 		/* Write temperature code for threshold */
- 		threshold_code = temp_to_code(data, pdata->threshold);
-@@ -628,44 +639,38 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		}
- 		writeb(threshold_code,
- 			data->base + EXYNOS4210_TMU_REG_THRESHOLD_TEMP);
--
--		writeb(pdata->trigger_levels[0],
--			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0);
--		writeb(pdata->trigger_levels[1],
--			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL1);
--		writeb(pdata->trigger_levels[2],
--			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL2);
--		writeb(pdata->trigger_levels[3],
--			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL3);
-+		for (i = 0; i < trigger_levs; i++)
-+			writeb(pdata->trigger_levels[i],
-+			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0 + i * 4);
- 
- 		writel(EXYNOS4210_TMU_INTCLEAR_VAL,
- 			data->base + EXYNOS_TMU_REG_INTCLEAR);
- 	} else if (data->soc == SOC_ARCH_EXYNOS) {
--		/* Write temperature code for threshold */
--		threshold_code = temp_to_code(data, pdata->trigger_levels[0]);
--		if (threshold_code < 0) {
--			ret = threshold_code;
--			goto out;
--		}
--		rising_threshold = threshold_code;
--		threshold_code = temp_to_code(data, pdata->trigger_levels[1]);
--		if (threshold_code < 0) {
--			ret = threshold_code;
--			goto out;
--		}
--		rising_threshold |= (threshold_code << 8);
--		threshold_code = temp_to_code(data, pdata->trigger_levels[2]);
--		if (threshold_code < 0) {
--			ret = threshold_code;
--			goto out;
-+		/* Write temperature code for rising and falling threshold */
-+		for (i = 0; i < trigger_levs; i++) {
-+			threshold_code = temp_to_code(data,
-+						pdata->trigger_levels[i]);
-+			if (threshold_code < 0) {
-+				ret = threshold_code;
-+				goto out;
-+			}
-+			rising_threshold |= threshold_code << 8 * i;
-+			if (pdata->threshold_falling) {
-+				threshold_code = temp_to_code(data,
-+						pdata->trigger_levels[i] -
-+						pdata->threshold_falling);
-+				if (threshold_code > 0)
-+					falling_threshold |=
-+						threshold_code << 8 * i;
-+			}
- 		}
--		rising_threshold |= (threshold_code << 16);
- 
- 		writel(rising_threshold,
- 				data->base + EXYNOS_THD_TEMP_RISE);
--		writel(0, data->base + EXYNOS_THD_TEMP_FALL);
-+		writel(falling_threshold,
-+				data->base + EXYNOS_THD_TEMP_FALL);
- 
--		writel(EXYNOS_TMU_CLEAR_RISE_INT|EXYNOS_TMU_CLEAR_FALL_INT,
-+		writel(EXYNOS_TMU_CLEAR_RISE_INT | EXYNOS_TMU_CLEAR_FALL_INT,
- 				data->base + EXYNOS_TMU_REG_INTCLEAR);
- 	}
- out:
-@@ -698,6 +703,8 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
- 			pdata->trigger_level2_en << 8 |
- 			pdata->trigger_level1_en << 4 |
- 			pdata->trigger_level0_en;
-+		if (pdata->threshold_falling)
-+			interrupt_en |= interrupt_en << 16;
- 	} else {
- 		con |= EXYNOS_TMU_CORE_OFF;
- 		interrupt_en = 0; /* Disable all interrupts */
-@@ -773,7 +780,8 @@ static void exynos_tmu_work(struct work_struct *work)
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
- 	if (data->soc == SOC_ARCH_EXYNOS)
--		writel(EXYNOS_TMU_CLEAR_RISE_INT,
-+		writel(EXYNOS_TMU_CLEAR_RISE_INT |
-+				EXYNOS_TMU_CLEAR_FALL_INT,
- 				data->base + EXYNOS_TMU_REG_INTCLEAR);
- 	else
- 		writel(EXYNOS4210_TMU_INTCLEAR_VAL,
-@@ -829,6 +837,7 @@ static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
- 
- #if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
- static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
-+	.threshold_falling = 10,
- 	.trigger_levels[0] = 85,
- 	.trigger_levels[1] = 103,
- 	.trigger_levels[2] = 110,
-@@ -1076,6 +1085,8 @@ static int __devinit exynos_tmu_probe(struct platform_device *pdev)
- 		exynos_sensor_conf.trip_data.trip_val[i] =
- 			pdata->threshold + pdata->trigger_levels[i];
- 
-+	exynos_sensor_conf.trip_data.trigger_falling = pdata->threshold_falling;
-+
- 	exynos_sensor_conf.cooling_data.freq_clip_count =
- 						pdata->freq_tab_count;
- 	for (i = 0; i < pdata->freq_tab_count; i++) {
-diff --git a/include/linux/platform_data/exynos_thermal.h b/include/linux/platform_data/exynos_thermal.h
-index a7bdb2f..da7e627 100644
---- a/include/linux/platform_data/exynos_thermal.h
-+++ b/include/linux/platform_data/exynos_thermal.h
-@@ -53,6 +53,8 @@ struct freq_clip_table {
-  * struct exynos_tmu_platform_data
-  * @threshold: basic temperature for generating interrupt
-  *	       25 <= threshold <= 125 [unit: degree Celsius]
-+ * @threshold_falling: differntial value for setting threshold
-+ *		       of temperature falling interrupt.
-  * @trigger_levels: array for each interrupt levels
-  *	[unit: degree Celsius]
-  *	0: temperature for trigger_level0 interrupt
-@@ -97,6 +99,7 @@ struct freq_clip_table {
-  */
- struct exynos_tmu_platform_data {
- 	u8 threshold;
-+	u8 threshold_falling;
- 	u8 trigger_levels[4];
- 	bool trigger_level0_en;
- 	bool trigger_level1_en;
--- 
-1.7.5.4
+?
+
+>>> +       if ((len == 0) || (len / 2 > CPUFREQ_LEVEL_END)) {
+>>
+>> I really didn't like this limit you have put at the number of dvfs
+>> points. Better
+>> would be to use:
+
+>>> +       dvfs_info->dvfs_init = true;
+>>
+>> why do you need this ?
+> This is added to synchronize the interrupts.
+
+How? You are setting it once in init() and not touching it afterwards. :)
