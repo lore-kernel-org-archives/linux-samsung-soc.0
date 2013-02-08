@@ -1,84 +1,130 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/2] ARM: S3C24XX: make s3c24XX.h header content local
-Date: Fri, 08 Feb 2013 14:42:01 -0800
-Message-ID: <1a5701ce064d$840dd2f0$8c2978d0$@samsung.com>
-References: <201302072249.04263.heiko@sntech.de>
+Subject: RE: [PATCH RESEND v2] ARM: EXYNOS: dts: Set up power domain for MFC
+ and G-scaler
+Date: Fri, 08 Feb 2013 14:44:05 -0800
+Message-ID: <1a5801ce064d$cddb41b0$6991c510$@samsung.com>
+References: <06e301cdfe51$f11b59c0$d3520d40$@samsung.com>
+ <1359521344-17189-1-git-send-email-prasanna.ps@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:31743 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760359Ab3BHWmS convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:53363 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760366Ab3BHWoW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Feb 2013 17:42:18 -0500
+	Fri, 8 Feb 2013 17:44:22 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHX004ZIB2HJFC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 09 Feb 2013 07:42:17 +0900 (KST)
+ 17 2011)) with ESMTP id <0MHX00CKTB5XAC30@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 09 Feb 2013 07:44:21 +0900 (KST)
 Received: from visitor4lab ([105.128.18.157])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHX00G94B2F7V60@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 09 Feb 2013 07:42:17 +0900 (KST)
-In-reply-to: <201302072249.04263.heiko@sntech.de>
+ with ESMTPA id <0MHX00GETB5V7V60@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 09 Feb 2013 07:44:21 +0900 (KST)
+In-reply-to: <1359521344-17189-1-git-send-email-prasanna.ps@samsung.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Prasanna Kumar' <prasanna.ps@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Heiko St=C3=BCbner wrote:
->=20
-> This series moves the contents of the plat/s3c24XX.h headers into
-> common.h, as their content does not need to be global anymore, now th=
-at
-> everything lives in mach-s3c24xx.
->=20
-> Heiko Stuebner (2):
->   ARM: S3C24XX: move plat-samsung/s3c24XX headers to local common.h
->   ARM: S3C24XX: cleanup the included soc init functions in common.h
->=20
->  arch/arm/mach-s3c24xx/clock-s3c2410.c        |    1 -
->  arch/arm/mach-s3c24xx/clock-s3c2412.c        |    1 -
->  arch/arm/mach-s3c24xx/clock-s3c2416.c        |    1 -
->  arch/arm/mach-s3c24xx/clock-s3c2443.c        |    1 -
->  arch/arm/mach-s3c24xx/common.c               |    7 +--
->  arch/arm/mach-s3c24xx/common.h               |   90
-> +++++++++++++++++++++++++-
->  arch/arm/mach-s3c24xx/mach-jive.c            |    2 +-
->  arch/arm/mach-s3c24xx/mach-n30.c             |    1 -
->  arch/arm/mach-s3c24xx/mach-nexcoder.c        |    2 -
->  arch/arm/mach-s3c24xx/mach-otom.c            |    1 -
->  arch/arm/mach-s3c24xx/mach-smdk2413.c        |    4 +-
->  arch/arm/mach-s3c24xx/mach-smdk2416.c        |    3 +-
->  arch/arm/mach-s3c24xx/mach-smdk2440.c        |    2 -
->  arch/arm/mach-s3c24xx/mach-smdk2443.c        |    4 +-
->  arch/arm/mach-s3c24xx/mach-vstms.c           |    4 +-
->  arch/arm/mach-s3c24xx/pm-s3c2412.c           |    1 -
->  arch/arm/mach-s3c24xx/s3c2410.c              |    1 -
->  arch/arm/mach-s3c24xx/s3c2412.c              |    1 -
->  arch/arm/mach-s3c24xx/s3c2416.c              |    1 -
->  arch/arm/mach-s3c24xx/s3c2440.c              |    1 -
->  arch/arm/mach-s3c24xx/s3c2442.c              |    1 -
->  arch/arm/mach-s3c24xx/s3c2443.c              |    1 -
->  arch/arm/mach-s3c24xx/s3c244x.c              |    2 -
->  arch/arm/plat-samsung/include/plat/s3c2410.h |   31 ---------
->  arch/arm/plat-samsung/include/plat/s3c2412.h |   32 ---------
->  arch/arm/plat-samsung/include/plat/s3c2416.h |   37 -----------
->  arch/arm/plat-samsung/include/plat/s3c2443.h |   36 ----------
->  arch/arm/plat-samsung/include/plat/s3c244x.h |   42 ------------
->  28 files changed, 99 insertions(+), 212 deletions(-)
->  delete mode 100644 arch/arm/plat-samsung/include/plat/s3c2410.h
->  delete mode 100644 arch/arm/plat-samsung/include/plat/s3c2412.h
->  delete mode 100644 arch/arm/plat-samsung/include/plat/s3c2416.h
->  delete mode 100644 arch/arm/plat-samsung/include/plat/s3c2443.h
->  delete mode 100644 arch/arm/plat-samsung/include/plat/s3c244x.h
->=20
+Prasanna Kumar wrote:
+> 
+> This patch adds device tree nodes for MFC and G-scaler power
+> domains of exynos5250.It binds these power-domain nodes to repsective
+> device tree nodes
+> 
+> It also adds support to enable PM generic domains for exynos5250.
+> 
+> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++++++++++++
+>  arch/arm/mach-exynos/Kconfig      |    1 +
+>  2 files changed, 17 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index 30485de..e282fde 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -46,6 +46,16 @@
+>  		i2c8 = &i2c_8;
+>  	};
+> 
+> +	pd_gsc: gsc-power-domain@0x10044000 {
+> +		compatible = "samsung,exynos4210-pd";
+> +		reg = <0x10044000 0x20>;
+> +	};
+> +
+> +	pd_mfc: mfc-power-domain@0x10044040 {
+> +		compatible = "samsung,exynos4210-pd";
+> +		reg = <0x10044040 0x20>;
+> +	};
+> +
+>  	gic:interrupt-controller@10481000 {
+>  		compatible = "arm,cortex-a9-gic";
+>  		#interrupt-cells = <3>;
+> @@ -85,6 +95,7 @@
+>  		compatible = "samsung,mfc-v6";
+>  		reg = <0x11000000 0x10000>;
+>  		interrupts = <0 96 0>;
+> +		samsung,power-domain = <&pd_mfc>;
+>  	};
+> 
+>  	rtc {
+> @@ -554,28 +565,33 @@
+>  		};
+>  	};
+> 
+> +
+>  	gsc_0:  gsc@0x13e00000 {
+>  		compatible = "samsung,exynos5-gsc";
+>  		reg = <0x13e00000 0x1000>;
+>  		interrupts = <0 85 0>;
+> +		samsung,power-domain = <&pd_gsc>;
+>  	};
+> 
+>  	gsc_1:  gsc@0x13e10000 {
+>  		compatible = "samsung,exynos5-gsc";
+>  		reg = <0x13e10000 0x1000>;
+>  		interrupts = <0 86 0>;
+> +		samsung,power-domain = <&pd_gsc>;
+>  	};
+> 
+>  	gsc_2:  gsc@0x13e20000 {
+>  		compatible = "samsung,exynos5-gsc";
+>  		reg = <0x13e20000 0x1000>;
+>  		interrupts = <0 87 0>;
+> +		samsung,power-domain = <&pd_gsc>;
+>  	};
+> 
+>  	gsc_3:  gsc@0x13e30000 {
+>  		compatible = "samsung,exynos5-gsc";
+>  		reg = <0x13e30000 0x1000>;
+>  		interrupts = <0 88 0>;
+> +		samsung,power-domain = <&pd_gsc>;
+>  	};
+> 
+>  	hdmi {
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-
+> exynos/Kconfig
+> index e103c29..96f4a9f 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -61,6 +61,7 @@ config SOC_EXYNOS5250
+>  	bool "SAMSUNG EXYNOS5250"
+>  	default y
+>  	depends on ARCH_EXYNOS5
+> +	select PM_GENERIC_DOMAINS if PM
+>  	select S5P_PM if PM
+>  	select S5P_SLEEP if PM
+>  	select S5P_DEV_MFC
 > --
+> 1.7.5.4
 
-Yeah, looks good to me, applied this series.
+Looks OK to me, applied.
 
 Thanks.
 
