@@ -1,130 +1,136 @@
 From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V3 4/5] ARM: dts: Add #dma-cells for generic dma binding support
-Date: Fri, 8 Feb 2013 09:50:54 +0530
-Message-ID: <CAAgF-BeEyXUCUrPcA87bmkHAjUtW0jE7pT0XE6voG4dav2rgSg@mail.gmail.com>
-References: <1360131529-2847-1-git-send-email-padma.v@samsung.com>
-	<1360131529-2847-5-git-send-email-padma.v@samsung.com>
-	<511275AA.1070006@gmail.com>
+Subject: Re: [RESEND][PATCH] ARM: EXYNOS: Add clocks for EXYNOS I2S and PCM I/F
+Date: Fri, 8 Feb 2013 09:52:44 +0530
+Message-ID: <CAAgF-Be1UKyyX0VBkdy7GbhxH4mZmsVwskr2Yj3TM54qjs6dEQ@mail.gmail.com>
+References: <003201ce0429$c15e8350$441b89f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:63096 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759724Ab3BHEU5 (ORCPT
+Received: from mail-ia0-f178.google.com ([209.85.210.178]:58326 "EHLO
+	mail-ia0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759778Ab3BHEWo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Feb 2013 23:20:57 -0500
-Received: by mail-ie0-f173.google.com with SMTP id 9so4573605iec.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Feb 2013 20:20:55 -0800 (PST)
-In-Reply-To: <511275AA.1070006@gmail.com>
+	Thu, 7 Feb 2013 23:22:44 -0500
+Received: by mail-ia0-f178.google.com with SMTP id y26so3718638iab.23
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Feb 2013 20:22:44 -0800 (PST)
+In-Reply-To: <003201ce0429$c15e8350$441b89f0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, arnd@arndb.de, boojin.kim@samsung.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, vinod.koul@intel.com, thomas.abraham@linaro.org, jon-hunter@ti.com
+To: Sangsu Park <sangsu4u.park@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, sbkim73@samsung.com, Tushar Behera <tushar.behera@linaro.org>
 
-Hi Rob,
+On Wed, Feb 6, 2013 at 10:51 AM, Sangsu Park <sangsu4u.park@samsung.com> wrote:
+> Audio Subsystem has own clocks for I2S0 and PCM0 in all EXYNOS series.
+> This patch add clocks for I2S0 and PCM0 I/F.
+>
+> Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Makefile      |    1 +
+>  arch/arm/mach-exynos/clock-audss.c |   64 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 65 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-exynos/clock-audss.c
+>
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> index 7e53a3a..5b6c7c0 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -13,6 +13,7 @@ obj-                          :=
+>  # Core
+>
+>  obj-$(CONFIG_ARCH_EXYNOS)      += common.o
+> +obj-$(CONFIG_ARCH_EXYNOS)      += clock-audss.o
+>  obj-$(CONFIG_ARCH_EXYNOS4)     += clock-exynos4.o
+>  obj-$(CONFIG_CPU_EXYNOS4210)   += clock-exynos4210.o
+>  obj-$(CONFIG_SOC_EXYNOS4212)   += clock-exynos4212.o
+> diff --git a/arch/arm/mach-exynos/clock-audss.c
+> b/arch/arm/mach-exynos/clock-audss.c
+> new file mode 100644
+> index 0000000..8260185
+> --- /dev/null
+> +++ b/arch/arm/mach-exynos/clock-audss.c
+> @@ -0,0 +1,64 @@
+> +/*
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *             http://www.samsung.com
+> + *
+> + * Clock support for EXYNOS Audio Subsystem
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +
+> +#include <plat/clock.h>
+> +#include <plat/s5p-clock.h>
+> +
+> +#define EXYNOS_PA_AUDSS        (0x03810000)
+> +
+> +/* IP Clock Gate 0 Registers */
+> +#define EXYNOS_AUDSS_CLKGATE_I2SBUS    (1<<2)
+> +#define EXYNOS_AUDSS_CLKGATE_I2SSPECIAL        (1<<3)
+> +#define EXYNOS_AUDSS_CLKGATE_PCMBUS    (1<<4)
+> +#define EXYNOS_AUDSS_CLKGATE_PCMSPECIAL        (1<<5)
+> +#define EXYNOS_AUDSS_CLKGATE_GPIO      (1<<6)
+> +
+> +static void __iomem *clk_audss_base = 0;
+> +
+> +static int exynos_clk_audss_ctrl(struct clk *clk, int enable)
+> +{
+> +       if (!clk_audss_base)
+> +               return ENOMEM;
+> +
+> +       return s5p_gatectrl(clk_audss_base, clk, enable);
+> +}
+> +
+> +static struct clk exynos_init_audss_clocks[] = {
+> +       {
+> +               .name           = "iis",
+> +               .devname        = "samsung-i2s.0",
+> +               .enable         = exynos_clk_audss_ctrl,
+> +               .ctrlbit        = EXYNOS_AUDSS_CLKGATE_I2SSPECIAL |
+> EXYNOS_AUDSS_CLKGATE_I2SBUS
+> +                               | EXYNOS_AUDSS_CLKGATE_GPIO,
+> +       }, {
+> +               .name           = "pcm",
+> +               .devname        = "samsung-pcm.0",
+> +               .enable         = exynos_clk_audss_ctrl,
+> +               .ctrlbit        = EXYNOS_AUDSS_CLKGATE_PCMSPECIAL |
+> EXYNOS_AUDSS_CLKGATE_PCMBUS
+> +                               | EXYNOS_AUDSS_CLKGATE_GPIO,
+> +       },
+> +};
+> +
+> +void __init exynos_register_audss_clocks(void)
+> +{
+> +       clk_audss_base = ioremap(EXYNOS_PA_AUDSS, SZ_4K);
+> +       if (clk_audss_base == NULL) {
 
-On Wed, Feb 6, 2013 at 8:54 PM, Rob Herring <robherring2@gmail.com> wrote:
-> On 02/06/2013 12:18 AM, Padmavathi Venna wrote:
->> This patch adds #dma-cells property to PL330 DMA controller
->> nodes for supporting generic dma dt bindings on samsung
->> exynos5250 platform.
->
-> The subject doesn't reflect this is for pl330.
-OK. I will fix this.
->
->>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->> Acked-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  .../devicetree/bindings/dma/arm-pl330.txt          |   15 +++++++++++----
->>  arch/arm/boot/dts/exynos5250.dtsi                  |    4 ++++
->>  2 files changed, 15 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/dma/arm-pl330.txt b/Documentation/devicetree/bindings/dma/arm-pl330.txt
->> index 36e27d5..1fdbff6 100644
->> --- a/Documentation/devicetree/bindings/dma/arm-pl330.txt
->> +++ b/Documentation/devicetree/bindings/dma/arm-pl330.txt
->> @@ -8,6 +8,8 @@ Required properties:
->>    - reg: physical base address of the controller and length of memory mapped
->>      region.
->>    - interrupts: interrupt number to the cpu.
->> +  - #dma-cells: must be <1>. used to represent the number of integer
->> +    cells in the dmas property of client device.
->
-> This should be optional in the case of platforms supporting only memory
-> to memory xfers.
+Please run checkpatch. There should be space after if.
 
-In Exynos we have support for both peripheral to peripheral and memory
-to memory.
-So I made it as required property. Should I make this as optional?
+> +               pr_err("unable to ioremap for gpio_base1\n");
 
+Please fix the err message.
+
+> +               return;
+> +       }
+> +
+> +       s3c_register_clocks(exynos_init_audss_clocks,
+> ARRAY_SIZE(exynos_init_audss_clocks));
+> +       s3c_disable_clocks(exynos_init_audss_clocks,
+> ARRAY_SIZE(exynos_init_audss_clocks));
+> +}
+> --
+> 1.7.4.1
 >
-> Rob
 >
->>
->>  Optional properties:
->>  - dma-coherent      : Present if dma operations are coherent
->> @@ -18,16 +20,21 @@ Example:
->>               compatible = "arm,pl330", "arm,primecell";
->>               reg = <0x12680000 0x1000>;
->>               interrupts = <99>;
->> +             #dma-cells = <1>;
->>       };
->>
->>  Client drivers (device nodes requiring dma transfers from dev-to-mem or
->> -mem-to-dev) should specify the DMA channel numbers using a two-value pair
->> +mem-to-dev) should specify the DMA channel numbers and dma channel names
->>  as shown below.
->>
->>    [property name]  = <[phandle of the dma controller] [dma request id]>;
->> +  [property name]  = <[dma channel name]>
->>
->>        where 'dma request id' is the dma request number which is connected
->> -      to the client controller. The 'property name' is recommended to be
->> -      of the form <name>-dma-channel.
->> +      to the client controller. The 'property name' 'dmas' and 'dma-names'
->> +      as required by the generic dma device tree binding helpers. The dma
->> +      names correspond 1:1 with the dma request ids in the dmas property.
->>
->> -  Example:  tx-dma-channel = <&pdma0 12>;
->> +  Example:  dmas = <&pdma0 12
->> +                 &pdma1 11>;
->> +         dma-names = "tx", "rx";
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
->> index f50b4e8..724f5bd 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -312,24 +312,28 @@
->>                       compatible = "arm,pl330", "arm,primecell";
->>                       reg = <0x121A0000 0x1000>;
->>                       interrupts = <0 34 0>;
->> +                     #dma-cells = <1>;
->>               };
->>
->>               pdma1: pdma@121B0000 {
->>                       compatible = "arm,pl330", "arm,primecell";
->>                       reg = <0x121B0000 0x1000>;
->>                       interrupts = <0 35 0>;
->> +                     #dma-cells = <1>;
->>               };
->>
->>               mdma0: mdma@10800000 {
->>                       compatible = "arm,pl330", "arm,primecell";
->>                       reg = <0x10800000 0x1000>;
->>                       interrupts = <0 33 0>;
->> +                     #dma-cells = <1>;
->>               };
->>
->>               mdma1: mdma@11C10000 {
->>                       compatible = "arm,pl330", "arm,primecell";
->>                       reg = <0x11C10000 0x1000>;
->>                       interrupts = <0 124 0>;
->> +                     #dma-cells = <1>;
->>               };
->>       };
->>
->>
->
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 Thanks
 Padma
