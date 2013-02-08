@@ -1,138 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v5 1/4] ARM: Exynos5250: Enabling ehci-s5p driver
-Date: Fri, 08 Feb 2013 14:35:06 -0800
-Message-ID: <1a5501ce064c$8d2ed1a0$a78c74e0$@samsung.com>
-References: <CAFp+6iFgaT9D2hR0pX34jo2g+GHftmA0Mw3y96-oKe0KakZOxA@mail.gmail.com>
- <1358315143-16620-1-git-send-email-gautam.vivek@samsung.com>
+Subject: RE: [PATCH 1/1] ARM: dts: exynos4412-origen: Add MSHC node
+Date: Fri, 08 Feb 2013 14:41:33 -0800
+Message-ID: <1a5601ce064d$738b23b0$5aa16b10$@samsung.com>
+References: <1360236442-24811-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58949 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760328Ab3BHWfZ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:31725 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1947091Ab3BHWlv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Feb 2013 17:35:25 -0500
-In-reply-to: <1358315143-16620-1-git-send-email-gautam.vivek@samsung.com>
+	Fri, 8 Feb 2013 17:41:51 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MHX001A2B1P13F0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 09 Feb 2013 07:41:49 +0900 (KST)
+Received: from visitor4lab ([105.128.18.157])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MHX00G7KB1N7V60@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 09 Feb 2013 07:41:49 +0900 (KST)
+In-reply-to: <1360236442-24811-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, dianders@chromium.org, jg1.han@samsung.com, Thomas Abraham <thomas.ab@samsung.com>
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
-Vivek Gautam wrote:
+Sachin Kamat wrote:
 > 
-> Adding EHCI device tree node for Exynos5250 along with
-> the device base adress and gpio line for vbus.
+> Added MSHC node to Origen-4412 board.
 > 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
-> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
+>  arch/arm/boot/dts/exynos4412-origen.dts |   20 ++++++++++++++++++++
+>  1 files changed, 20 insertions(+), 0 deletions(-)
 > 
-> Changes from v4:
->  - Added gpio line for VBUS of USB2.0 on snow board.
+> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts
+> b/arch/arm/boot/dts/exynos4412-origen.dts
+> index 1df7ebd..14709da 100644
+> --- a/arch/arm/boot/dts/exynos4412-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
+> @@ -48,6 +48,26 @@
+>  		status = "okay";
+>  	};
 > 
->  .../devicetree/bindings/usb/exynos-usb.txt         |   25
-> ++++++++++++++++++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 +++
->  arch/arm/boot/dts/exynos5250-snow.dts              |    4 +++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++
->  4 files changed, 39 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/usb/exynos-
-> usb.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> new file mode 100644
-> index 0000000..e8bbb47
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-> @@ -0,0 +1,25 @@
-> +Samsung Exynos SoC USB controller
+> +	mshc@12550000 {
+> +		pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
+> +		pinctrl-names = "default";
+> +		status = "okay";
 > +
-> +The USB devices interface with USB controllers on Exynos SOCs.
-> +The device node has following properties.
+> +		num-slots = <1>;
+> +		supports-highspeed;
+> +		broken-cd;
+> +		fifo-depth = <0x80>;
+> +		card-detect-delay = <200>;
+> +		samsung,dw-mshc-ciu-div = <3>;
+> +		samsung,dw-mshc-sdr-timing = <2 3>;
+> +		samsung,dw-mshc-ddr-timing = <1 2>;
 > +
-> +EHCI
-> +Required properties:
-> + - compatible: should be "samsung,exynos4210-ehci" for USB 2.0
-> +   EHCI controller in host mode.
-> + - reg: physical base address of the controller and length of memory
-> mapped
-> +   region.
-> + - interrupts: interrupt number to the cpu.
-> +
-> +Optional properties:
-> + - samsung,vbus-gpio:  if present, specifies the GPIO that
-> +   needs to be pulled up for the bus to be powered.
-> +
-> +Example:
-> +
-> +	usb@12110000 {
-> +		compatible = "samsung,exynos4210-ehci";
-> +		reg = <0x12110000 0x100>;
-> +		interrupts = <0 71 0>;
-> +		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+> +		slot@0 {
+> +			reg = <0>;
+> +			bus-width = <8>;
+> +		};
 > +	};
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 942d576..7363e14 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -204,4 +204,8 @@
+> +
+>  	codec@13400000 {
 >  		samsung,mfc-r = <0x43000000 0x800000>;
 >  		samsung,mfc-l = <0x51000000 0x800000>;
->  	};
-> +
-> +	usb@12110000 {
-> +		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
-> +	};
->  };
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
-> b/arch/arm/boot/dts/exynos5250-snow.dts
-> index 17dd951..47b6b84 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -40,4 +40,8 @@
->  				<&gpc4 5 2 3 0>, <&gpc4 6 2 3 0>;
->  		};
->  	};
-> +
-> +	usb@12110000 {
-> +		samsung,vbus-gpio = <&gpx1 1 1 3 3>;
-> +	};
->  };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> index 30485de..2cbe53e 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -275,6 +275,12 @@
->  		#size-cells = <0>;
->  	};
-> 
-> +	usb@12110000 {
-> +		compatible = "samsung,exynos4210-ehci";
-> +		reg = <0x12110000 0x100>;
-> +		interrupts = <0 71 0>;
-> +	};
-> +
->  	amba {
->  		#address-cells = <1>;
->  		#size-cells = <1>;
 > --
-> 1.7.6.5
+> 1.7.4.1
 
-Looks good to me and applied this and "[PATCH v3 2/4] ARM: Exynos5250:
-Enabling ohci-exynos driver" in Samsung tree.
-
-Note, I think, you need to implement to use pinctrl for this instead of old
-gpio bindings next time, probably after release v3.9-rc1.
-
-Ah, one more, please use subject lines appropriate like others, "ARM: dts:
-....".
-
-Thanks.
+Applied, thanks.
 
 - Kukjin
