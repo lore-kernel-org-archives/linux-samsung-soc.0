@@ -1,54 +1,66 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v4 05/10] s5p-fimc: Add device tree based sensors registration
-Date: Sat, 09 Feb 2013 00:26:49 +0100
-Message-ID: <511589B9.7030007@gmail.com>
-References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-6-git-send-email-s.nawrocki@samsung.com> <5112EA60.6090209@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v4 01/10] s5p-csis: Add device tree support
+Date: Fri, 08 Feb 2013 16:27:30 -0700
+Message-ID: <511589E2.9030308@wwwdotorg.org>
+References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-2-git-send-email-s.nawrocki@samsung.com> <5112E907.4080100@wwwdotorg.org> <51157C36.6030505@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f41.google.com ([74.125.83.41]:47435 "EHLO
-	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757638Ab3BHX0y (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:48843 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757638Ab3BHX1e (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Feb 2013 18:26:54 -0500
-In-Reply-To: <5112EA60.6090209@wwwdotorg.org>
+	Fri, 8 Feb 2013 18:27:34 -0500
+In-Reply-To: <51157C36.6030505@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 02/07/2013 12:42 AM, Stephen Warren wrote:
-> On 02/01/2013 12:09 PM, Sylwester Nawrocki wrote:
->> The sensor (I2C and/or SPI client) devices are instantiated by their
->> corresponding control bus drivers. Since the I2C client's master clock
->> is often provided by a video bus receiver (host interface) or other
->> than I2C/SPI controller device, the drivers of those client devices
->> are not accessing hardware in their driver's probe() callback. Instead,
->> after enabling clock, the host driver calls back into a sub-device
->> when it wants to activate them. This pattern is used by some in-tree
->> drivers and this patch also uses it for DT case. This patch is intended
->> as a first step for adding device tree support to the S5P/Exynos SoC
->> camera drivers. The second one is adding support for asynchronous
->> sub-devices registration and clock control from sub-device driver
->> level. The bindings shall not change when asynchronous probing support
->> is added.
->
->> diff --git a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
->
->> +The sensor device nodes should be added as their control bus controller
->
-> I think "as" should be "to"?
+On 02/08/2013 03:29 PM, Sylwester Nawrocki wrote:
+> On 02/07/2013 12:36 AM, Stephen Warren wrote:
+>> On 02/01/2013 12:09 PM, Sylwester Nawrocki wrote:
+>>> s5p-csis is platform device driver for MIPI-CSI frontend to the FIMC
+>>> device. This patch support for binding the driver to the MIPI-CSIS
+>>> devices instantiated from device tree and for parsing all SoC and
+>>> board specific properties.
+>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
+>> b/Documentation/devicetree/bindings/media/soc/samsung-mipi-csis.txt
+>>
+>>> +Optional properties:
+>>> +
+>>> +- clock-frequency : The IP's main (system bus) clock frequency in
+>>> Hz, default
+>>> +            value when this property is not specified is 166 MHz;
+>>
+>> Shouldn't this be a "clocks" property, so that the driver can call
+>> clk_get(), clk_prepare_enable(), clk_get_rate(), etc. on it?
+> 
+> Hi Stephen,
+> 
+> Thanks for your review!
+> 
+> I also use "clocks" and "clock-names" property, but didn't specify
+> it here, because the Exynos SoCs clocks driver is not in the mainline yet.
 
-Yes, something is wrong here. Hopefully this is more correct:
+I'm a bit sympathetic to this, since I've been trying to push Tegra
+towards the common clock framework and describing clock connectivity in
+DT, before adding new drivers that need clocks, specifically to avoid
+this kind of situation.
 
-The sensor device nodes should be added to their control bus controller
-(e.g. I2C0) nodes and linked to a port node in the csis or parallel-ports
+The problem here is that if this gets merged now, then the clock driver
+comes along later, you'll have to change this binding definition to
+account for it, and DT bindings aren't supposed to be changed...
 
->> +(e.g. I2C0) child nodes and linked to a port node in the csis or parallel-ports
->> +node, using common the common video interfaces bindings, i.e. port/endpoint
-                ^^^^^^^^
-And this needs correction too.
+Do you have any clock driver at all upstream yet? Or, could you add a
+dummy clock driver to satisfy the driver's clkl_get() needs? If you do,
+you can always set up some AUXDATA so that clk_get() works for your
+driver right now, and then remove that once the complete clock driver is
+in place with full device tree support. That's how we've ended up
+handling this for Tegra drivers.
 
->> +node pairs. The implementation of this binding requires clock-frequency
->> +property to be present in the sensor device nodes.
+Anyway, this is all mainly food-for-thought rather than an objection to
+the patch; I'd leave that to Grant/Rob if applicable.
