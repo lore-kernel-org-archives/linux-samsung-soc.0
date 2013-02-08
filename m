@@ -1,348 +1,130 @@
-From: amit kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH V2 2/2] thermal: exynos: Use the framework for temperature
- emulation support
-Date: Thu, 7 Feb 2013 19:34:10 -0800
-Message-ID: <CADGdYn5QW-hvw-CiqroOBRDin5ZK=Yq4wYi-g225xYuW_94a1g@mail.gmail.com>
-References: <1359343700-30190-1-git-send-email-amit.daniel@samsung.com>
-	<1359343700-30190-2-git-send-email-amit.daniel@samsung.com>
-	<1359944066.2250.43.camel@rzhang1-mobl4>
-	<1360292662.2242.0.camel@rzhang1-mobl4>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V3 4/5] ARM: dts: Add #dma-cells for generic dma binding support
+Date: Fri, 8 Feb 2013 09:50:54 +0530
+Message-ID: <CAAgF-BeEyXUCUrPcA87bmkHAjUtW0jE7pT0XE6voG4dav2rgSg@mail.gmail.com>
+References: <1360131529-2847-1-git-send-email-padma.v@samsung.com>
+	<1360131529-2847-5-git-send-email-padma.v@samsung.com>
+	<511275AA.1070006@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1360292662.2242.0.camel@rzhang1-mobl4>
-Sender: linux-pm-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-pm@vger.kernel.org, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, durgadoss.r@intel.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:63096 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759724Ab3BHEU5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 7 Feb 2013 23:20:57 -0500
+Received: by mail-ie0-f173.google.com with SMTP id 9so4573605iec.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Feb 2013 20:20:55 -0800 (PST)
+In-Reply-To: <511275AA.1070006@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, arnd@arndb.de, boojin.kim@samsung.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, vinod.koul@intel.com, thomas.abraham@linaro.org, jon-hunter@ti.com
 
-On Thu, Feb 7, 2013 at 7:04 PM, Zhang Rui <rui.zhang@intel.com> wrote:
-> On Mon, 2013-02-04 at 10:14 +0800, Zhang Rui wrote:
->> On Sun, 2013-01-27 at 19:28 -0800, Amit Daniel Kachhap wrote:
->> > This removes the driver specific sysfs support of the temperature
->> > emulation and uses the newly added core thermal framework for thermal
->> > emulation. A platform specific handler is added to support this.
->> >
->> > Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->> > ---
->> > Changes in V2:
->> > * Added config option CONFIG_THERMAL_EMULATION instead of
->> >  CONFIG_EXYNOS_THERMAL_EMUL
->> >
->> > This patchset is based on thermal maintainer next tree.
->> > git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
->> >
->> >  Documentation/thermal/exynos_thermal_emulation |    8 +-
->> >  drivers/thermal/Kconfig                        |    9 --
->> >  drivers/thermal/exynos_thermal.c               |  158 ++++++++++--------------
->> >  3 files changed, 67 insertions(+), 108 deletions(-)
->> >
->> > diff --git a/Documentation/thermal/exynos_thermal_emulation b/Documentation/thermal/exynos_thermal_emulation
->> > index b73bbfb..36a3e79 100644
->> > --- a/Documentation/thermal/exynos_thermal_emulation
->> > +++ b/Documentation/thermal/exynos_thermal_emulation
->> > @@ -13,11 +13,11 @@ Thermal emulation mode supports software debug for TMU's operation. User can set
->> >  manually with software code and TMU will read current temperature from user value not from
->> >  sensor's value.
->> >
->> > -Enabling CONFIG_EXYNOS_THERMAL_EMUL option will make this support in available.
->> > -When it's enabled, sysfs node will be created under
->> > -/sys/bus/platform/devices/'exynos device name'/ with name of 'emulation'.
->> > +Enabling CONFIG_THERMAL_EMULATION option will make this support available.
->> > +When it's enabled, sysfs node will be created as
->> > +/sys/devices/virtual/thermal/thermal_zone'zone id'/emul_temp.
->> >
->> > -The sysfs node, 'emulation', will contain value 0 for the initial state. When you input any
->> > +The sysfs node, 'emul_node', will contain value 0 for the initial state. When you input any
->> >  temperature you want to update to sysfs node, it automatically enable emulation mode and
->> >  current temperature will be changed into it.
->> >  (Exynos also supports user changable delay time which would be used to delay of
->> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
->> > index e4cf7fb..2a79510 100644
->> > --- a/drivers/thermal/Kconfig
->> > +++ b/drivers/thermal/Kconfig
->> > @@ -109,15 +109,6 @@ config EXYNOS_THERMAL
->> >       If you say yes here you get support for TMU (Thermal Management
->> >       Unit) on SAMSUNG EXYNOS series of SoC.
->> >
->> > -config EXYNOS_THERMAL_EMUL
->> > -   bool "EXYNOS TMU emulation mode support"
->> > -   depends on EXYNOS_THERMAL
->> > -   help
->> > -     Exynos 4412 and 4414 and 5 series has emulation mode on TMU.
->> > -     Enable this option will be make sysfs node in exynos thermal platform
->> > -     device directory to support emulation mode. With emulation mode sysfs
->> > -     node, you can manually input temperature to TMU for simulation purpose.
->> > -
->> >  config DB8500_THERMAL
->> >     bool "DB8500 thermal management"
->> >     depends on ARCH_U8500
->> > diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
->> > index 327102a..afe9c2a 100644
->> > --- a/drivers/thermal/exynos_thermal.c
->> > +++ b/drivers/thermal/exynos_thermal.c
->> > @@ -99,13 +99,13 @@
->> >  #define IDLE_INTERVAL 10000
->> >  #define MCELSIUS   1000
->> >
->> > -#ifdef CONFIG_EXYNOS_THERMAL_EMUL
->> > +#ifdef CONFIG_THERMAL_EMULATION
->> >  #define EXYNOS_EMUL_TIME   0x57F0
->> >  #define EXYNOS_EMUL_TIME_SHIFT     16
->> >  #define EXYNOS_EMUL_DATA_SHIFT     8
->> >  #define EXYNOS_EMUL_DATA_MASK      0xFF
->> >  #define EXYNOS_EMUL_ENABLE 0x1
->> > -#endif /* CONFIG_EXYNOS_THERMAL_EMUL */
->> > +#endif /* CONFIG_THERMAL_EMULATION */
->> >
->> >  /* CPU Zone information */
->> >  #define PANIC_ZONE      4
->> > @@ -143,6 +143,7 @@ struct  thermal_cooling_conf {
->> >  struct thermal_sensor_conf {
->> >     char name[SENSOR_NAME_LEN];
->> >     int (*read_temperature)(void *data);
->> > +   int (*write_emul_temp)(void *data, unsigned long temp);
->> >     struct thermal_trip_point_conf trip_data;
->> >     struct thermal_cooling_conf cooling_data;
->> >     void *private_data;
->> > @@ -366,6 +367,23 @@ static int exynos_get_temp(struct thermal_zone_device *thermal,
->> >     return 0;
->> >  }
->> >
->> > +/* Get temperature callback functions for thermal zone */
->> > +static int exynos_set_emul_temp(struct thermal_zone_device *thermal,
->> > +                                           unsigned long temp)
->> > +{
->> > +   void *data;
->> > +   int ret = -EINVAL;
->> > +
->> > +   if (!th_zone->sensor_conf) {
->> > +           pr_info("Temperature sensor not initialised\n");
->> > +           return -EINVAL;
->> > +   }
->> > +   data = th_zone->sensor_conf->private_data;
->> > +   if (th_zone->sensor_conf->write_emul_temp)
->> > +           ret = th_zone->sensor_conf->write_emul_temp(data, temp);
->> > +   return ret;
->> > +}
->> > +
->>
->> >  /* Get the temperature trend */
->> >  static int exynos_get_trend(struct thermal_zone_device *thermal,
->> >                     int trip, enum thermal_trend *trend)
->> > @@ -382,6 +400,7 @@ static struct thermal_zone_device_ops const exynos_dev_ops = {
->> >     .bind = exynos_bind,
->> >     .unbind = exynos_unbind,
->> >     .get_temp = exynos_get_temp,
->> > +   .set_emul_temp = exynos_set_emul_temp,
->> >     .get_trend = exynos_get_trend,
->> >     .get_mode = exynos_get_mode,
->> >     .set_mode = exynos_set_mode,
->> > @@ -700,6 +719,44 @@ static int exynos_tmu_read(struct exynos_tmu_data *data)
->> >     return temp;
->> >  }
->> >
->> > +#ifdef CONFIG_THERMAL_EMULATION
->> > +static int exynos_tmu_set_emulation(struct exynos_tmu_data *data,
->> > +                                   unsigned long temp)
->> > +{
->> > +   unsigned int reg;
->> > +   int ret = -EINVAL;
->> > +
->> > +   if (data->soc == SOC_ARCH_EXYNOS4210)
->> > +           goto out;
->> > +
->> > +   if (temp && temp < MCELSIUS)
->> > +           goto out;
->> > +
->> > +   mutex_lock(&data->lock);
->> > +   clk_enable(data->clk);
->> > +
->> > +   reg = readl(data->base + EXYNOS_EMUL_CON);
->> > +
->> > +   if (temp) {
->> > +           temp /= MCELSIUS;
->> > +
->> > +           reg = (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT) |
->> > +                   (temp_to_code(data, temp)
->> > +                    << EXYNOS_EMUL_DATA_SHIFT) | EXYNOS_EMUL_ENABLE;
->> > +   } else {
->> > +           reg &= ~EXYNOS_EMUL_ENABLE;
->> > +   }
->> > +
->> > +   writel(reg, data->base + EXYNOS_EMUL_CON);
->> > +
->> > +   clk_disable(data->clk);
->> > +   mutex_unlock(&data->lock);
->> > +   return 0;
->> > +out:
->> > +   return ret;
->> > +}
->> > +#endif/*CONFIG_THERMAL_EMULATION*/
->> > +
->> >  static void exynos_tmu_work(struct work_struct *work)
->> >  {
->> >     struct exynos_tmu_data *data = container_of(work,
->> > @@ -839,93 +896,6 @@ static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
->> >                     platform_get_device_id(pdev)->driver_data;
->> >  }
->> >
->> > -#ifdef CONFIG_EXYNOS_THERMAL_EMUL
->> > -static ssize_t exynos_tmu_emulation_show(struct device *dev,
->> > -                                    struct device_attribute *attr,
->> > -                                    char *buf)
->> > -{
->> > -   struct platform_device *pdev = container_of(dev,
->> > -                                   struct platform_device, dev);
->> > -   struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->> > -   unsigned int reg;
->> > -   u8 temp_code;
->> > -   int temp = 0;
->> > -
->> > -   if (data->soc == SOC_ARCH_EXYNOS4210)
->> > -           goto out;
->> > -
->> > -   mutex_lock(&data->lock);
->> > -   clk_enable(data->clk);
->> > -   reg = readl(data->base + EXYNOS_EMUL_CON);
->> > -   clk_disable(data->clk);
->> > -   mutex_unlock(&data->lock);
->> > -
->> > -   if (reg & EXYNOS_EMUL_ENABLE) {
->> > -           reg >>= EXYNOS_EMUL_DATA_SHIFT;
->> > -           temp_code = reg & EXYNOS_EMUL_DATA_MASK;
->> > -           temp = code_to_temp(data, temp_code);
->> > -   }
->> > -out:
->> > -   return sprintf(buf, "%d\n", temp * MCELSIUS);
->> > -}
->> > -
->> > -static ssize_t exynos_tmu_emulation_store(struct device *dev,
->> > -                                   struct device_attribute *attr,
->> > -                                   const char *buf, size_t count)
->> > -{
->> > -   struct platform_device *pdev = container_of(dev,
->> > -                                   struct platform_device, dev);
->> > -   struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->> > -   unsigned int reg;
->> > -   int temp;
->> > -
->> > -   if (data->soc == SOC_ARCH_EXYNOS4210)
->> > -           goto out;
->> > -
->> > -   if (!sscanf(buf, "%d\n", &temp) || temp < 0)
->> > -           return -EINVAL;
->> > -
->> > -   mutex_lock(&data->lock);
->> > -   clk_enable(data->clk);
->> > -
->> > -   reg = readl(data->base + EXYNOS_EMUL_CON);
->> > -
->> > -   if (temp) {
->> > -           /* Both CELSIUS and MCELSIUS type are available for input */
->> > -           if (temp > MCELSIUS)
->> > -                   temp /= MCELSIUS;
->> > -
->> > -           reg = (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT) |
->> > -                   (temp_to_code(data, (temp / MCELSIUS))
->> > -                    << EXYNOS_EMUL_DATA_SHIFT) | EXYNOS_EMUL_ENABLE;
->> > -   } else {
->> > -           reg &= ~EXYNOS_EMUL_ENABLE;
->> > -   }
->> > -
->> > -   writel(reg, data->base + EXYNOS_EMUL_CON);
->> > -
->> > -   clk_disable(data->clk);
->> > -   mutex_unlock(&data->lock);
->> > -
->> > -out:
->> > -   return count;
->> > -}
->> > -
->> > -static DEVICE_ATTR(emulation, 0644, exynos_tmu_emulation_show,
->> > -                                   exynos_tmu_emulation_store);
->> > -static int create_emulation_sysfs(struct device *dev)
->> > -{
->> > -   return device_create_file(dev, &dev_attr_emulation);
->> > -}
->> > -static void remove_emulation_sysfs(struct device *dev)
->> > -{
->> > -   device_remove_file(dev, &dev_attr_emulation);
->> > -}
->> > -#else
->> > -static inline int create_emulation_sysfs(struct device *dev) { return 0; }
->> > -static inline void remove_emulation_sysfs(struct device *dev) {}
->> > -#endif
->> > -
->> >  static int __devinit exynos_tmu_probe(struct platform_device *pdev)
->> >  {
->> >     struct exynos_tmu_data *data;
->> > @@ -1002,6 +972,10 @@ static int __devinit exynos_tmu_probe(struct platform_device *pdev)
->> >
->> >     /* Register the sensor with thermal management interface */
->> >     (&exynos_sensor_conf)->private_data = data;
->> > +#ifdef CONFIG_THERMAL_EMULATION
->> > +   (&exynos_sensor_conf)->write_emul_temp =
->> > +           (int (*)(void *, unsigned long))exynos_tmu_set_emulation;
->> > +#endif
->>
->> this is a little complicate.
->> to enable emulation, you just need
->>
->> #ifdef CONFIG_THERMAL_EMUL
->> static int exynos_set_emul_temp(struct thermal_zone_device *thermal,
->>                                               unsigned long temp)
->> {
->>       remove exynos_tmu_set_emulation and copy its code here.
->> }
->> #else
->> static int exynos_set_emul_temp() { return -EINVAL; }
->> #endif
->>
->> and
->> + .set_emul_temp = exynos_set_emul_temp,
->>
->> or do I miss something?
->>
-> maybe you missed this email.
-> IMO, the code above should be much cleaner.
+Hi Rob,
 
-ohh sorry I missed the later part. Will implement these comments.
+On Wed, Feb 6, 2013 at 8:54 PM, Rob Herring <robherring2@gmail.com> wrote:
+> On 02/06/2013 12:18 AM, Padmavathi Venna wrote:
+>> This patch adds #dma-cells property to PL330 DMA controller
+>> nodes for supporting generic dma dt bindings on samsung
+>> exynos5250 platform.
+>
+> The subject doesn't reflect this is for pl330.
+OK. I will fix this.
+>
+>>
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  .../devicetree/bindings/dma/arm-pl330.txt          |   15 +++++++++++----
+>>  arch/arm/boot/dts/exynos5250.dtsi                  |    4 ++++
+>>  2 files changed, 15 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/arm-pl330.txt b/Documentation/devicetree/bindings/dma/arm-pl330.txt
+>> index 36e27d5..1fdbff6 100644
+>> --- a/Documentation/devicetree/bindings/dma/arm-pl330.txt
+>> +++ b/Documentation/devicetree/bindings/dma/arm-pl330.txt
+>> @@ -8,6 +8,8 @@ Required properties:
+>>    - reg: physical base address of the controller and length of memory mapped
+>>      region.
+>>    - interrupts: interrupt number to the cpu.
+>> +  - #dma-cells: must be <1>. used to represent the number of integer
+>> +    cells in the dmas property of client device.
+>
+> This should be optional in the case of platforms supporting only memory
+> to memory xfers.
 
-Thanks,
-Amit D
+In Exynos we have support for both peripheral to peripheral and memory
+to memory.
+So I made it as required property. Should I make this as optional?
+
 >
-> thanks,
-> rui
->> thanks,
->> rui
->> >     exynos_sensor_conf.trip_data.trip_count = pdata->trigger_level0_en +
->> >                     pdata->trigger_level1_en + pdata->trigger_level2_en +
->> >                     pdata->trigger_level3_en;
->> > @@ -1025,10 +999,6 @@ static int __devinit exynos_tmu_probe(struct platform_device *pdev)
->> >             goto err_clk;
->> >     }
->> >
->> > -   ret = create_emulation_sysfs(&pdev->dev);
->> > -   if (ret)
->> > -           dev_err(&pdev->dev, "Failed to create emulation mode sysfs node\n");
->> > -
->> >     return 0;
->> >  err_clk:
->> >     platform_set_drvdata(pdev, NULL);
->> > @@ -1040,8 +1010,6 @@ static int __devexit exynos_tmu_remove(struct platform_device *pdev)
->> >  {
->> >     struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->> >
->> > -   remove_emulation_sysfs(&pdev->dev);
->> > -
->> >     exynos_tmu_control(pdev, false);
->> >
->> >     exynos_unregister_thermal();
+> Rob
 >
+>>
+>>  Optional properties:
+>>  - dma-coherent      : Present if dma operations are coherent
+>> @@ -18,16 +20,21 @@ Example:
+>>               compatible = "arm,pl330", "arm,primecell";
+>>               reg = <0x12680000 0x1000>;
+>>               interrupts = <99>;
+>> +             #dma-cells = <1>;
+>>       };
+>>
+>>  Client drivers (device nodes requiring dma transfers from dev-to-mem or
+>> -mem-to-dev) should specify the DMA channel numbers using a two-value pair
+>> +mem-to-dev) should specify the DMA channel numbers and dma channel names
+>>  as shown below.
+>>
+>>    [property name]  = <[phandle of the dma controller] [dma request id]>;
+>> +  [property name]  = <[dma channel name]>
+>>
+>>        where 'dma request id' is the dma request number which is connected
+>> -      to the client controller. The 'property name' is recommended to be
+>> -      of the form <name>-dma-channel.
+>> +      to the client controller. The 'property name' 'dmas' and 'dma-names'
+>> +      as required by the generic dma device tree binding helpers. The dma
+>> +      names correspond 1:1 with the dma request ids in the dmas property.
+>>
+>> -  Example:  tx-dma-channel = <&pdma0 12>;
+>> +  Example:  dmas = <&pdma0 12
+>> +                 &pdma1 11>;
+>> +         dma-names = "tx", "rx";
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>> index f50b4e8..724f5bd 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -312,24 +312,28 @@
+>>                       compatible = "arm,pl330", "arm,primecell";
+>>                       reg = <0x121A0000 0x1000>;
+>>                       interrupts = <0 34 0>;
+>> +                     #dma-cells = <1>;
+>>               };
+>>
+>>               pdma1: pdma@121B0000 {
+>>                       compatible = "arm,pl330", "arm,primecell";
+>>                       reg = <0x121B0000 0x1000>;
+>>                       interrupts = <0 35 0>;
+>> +                     #dma-cells = <1>;
+>>               };
+>>
+>>               mdma0: mdma@10800000 {
+>>                       compatible = "arm,pl330", "arm,primecell";
+>>                       reg = <0x10800000 0x1000>;
+>>                       interrupts = <0 33 0>;
+>> +                     #dma-cells = <1>;
+>>               };
+>>
+>>               mdma1: mdma@11C10000 {
+>>                       compatible = "arm,pl330", "arm,primecell";
+>>                       reg = <0x11C10000 0x1000>;
+>>                       interrupts = <0 124 0>;
+>> +                     #dma-cells = <1>;
+>>               };
+>>       };
+>>
+>>
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Thanks
+Padma
