@@ -1,75 +1,71 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: smdk2410: Fix compile breakage
-Date: Fri, 08 Feb 2013 14:48:19 -0800
-Message-ID: <1a6101ce064e$657204f0$30560ed0$@samsung.com>
-References: <1360174228-29950-1-git-send-email-shc_work@mail.ru>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v4 02/10] s5p-fimc: Add device tree support for FIMC devices
+Date: Sat, 09 Feb 2013 00:16:26 +0100
+Message-ID: <5115874A.6050406@gmail.com>
+References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-3-git-send-email-s.nawrocki@samsung.com> <5112E9EF.8090908@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:31939 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1947111Ab3BHWsg (ORCPT
+Received: from mail-ee0-f53.google.com ([74.125.83.53]:45368 "EHLO
+	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757385Ab3BHXQc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Feb 2013 17:48:36 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MHX001CRBCR13F0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 09 Feb 2013 07:48:35 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MHX00GRPBCX7V60@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 09 Feb 2013 07:48:35 +0900 (KST)
-In-reply-to: <1360174228-29950-1-git-send-email-shc_work@mail.ru>
-Content-language: en-us
+	Fri, 8 Feb 2013 18:16:32 -0500
+In-Reply-To: <5112E9EF.8090908@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Alexander Shiyan' <shc_work@mail.ru>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Alexander Shiyan wrote:
-> 
-> Symbol S3C_DEV_USB_HOST should be defined to avoid this problem.
->   LINK    vmlinux
->   LD      vmlinux.o
->   MODPOST vmlinux.o
-> WARNING: modpost: Found 2 section mismatch(es).
-> To see full details build your kernel with:
-> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
->   GEN     .version
->   CHK     include/generated/compile.h
->   UPD     include/generated/compile.h
->   CC      init/version.o
->   LD      init/built-in.o
-> arch/arm/mach-s3c24xx/built-in.o:(.init.data+0x660): undefined reference
-to
-> `s3c_device_ohci'
-> make: *** [vmlinux] Error 1
-> 
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
-> ---
->  arch/arm/mach-s3c24xx/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-
-> s3c24xx/Kconfig
-> index ba6c501..8080dc1 100644
-> --- a/arch/arm/mach-s3c24xx/Kconfig
-> +++ b/arch/arm/mach-s3c24xx/Kconfig
-> @@ -350,6 +350,7 @@ config MACH_QT2410
->  config ARCH_SMDK2410
->  	bool "SMDK2410/A9M2410"
->  	select S3C24XX_SMDK
-> +	select S3C_DEV_USB_HOST
->  	help
->  	  Say Y here if you are using the SMDK2410 or the derived module
-> A9M2410
->  	  <http://www.fsforth.de>
-> --
-> 1.7.12.4
+On 02/07/2013 12:40 AM, Stephen Warren wrote:
+>> diff --git a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
+>
+>> +Samsung S5P/EXYNOS SoC Camera Subsystem (FIMC)
+>> +----------------------------------------------
+>> +
+>> +The Exynos Camera subsystem comprises of multiple sub-devices that are
+>> +represented by separate platform devices. Some of the IPs come in different
+>
+> "platform devices" is a rather Linux-centric term, and DT bindings
+> should be OS-agnostic. Perhaps use "device tree nodes" here?
 
-Applied, thanks.
+Indeed, thank you for the suggestion, I'll change it.
 
-- Kukjin
+>> +variants across the SoC revisions (FIMC) and some remain mostly unchanged
+>> +(MIPI CSIS, FIMC-LITE).
+>> +
+>> +All those sub-subdevices are defined as parent nodes of the common device
+>
+> s/parent nodes/child node/ I think?
+
+Yeah, 'parent nodes' doesn't really make sense. Thanks for catching it.
+
+>> +For every fimc node a numbered alias should be present in the aliases node.
+>> +Aliases are of the form fimc<n>, where<n>  is an integer (0...N) specifying
+>> +the IP's instance index.
+>
+> Why? Isn't it up to the DT author whether they care if each fimc node is
+> assigned a specific identification v.s. whether identification is
+> assigned automatically?
+
+There are at least three different kinds of IPs that come in multiple
+instances in an SoC. To activate data links between them each instance
+needs to be clearly identified. There are also differences between
+instances of same device. Hence it's important these aliases don't have
+random values.
+
+Some more details about the SoC can be found at [1]. The aliases are
+also already used in the Exynos5 GScaler bindings [2] in a similar way.
+
+>> +Optional properties
+>> +
+>> + - clock-frequency - maximum FIMC local clock (LCLK) frequency
+>
+> Again, I'd expect a clocks property here instead.
+
+Please see my comment to patch 01/10. Analogously, I needed this clock
+frequency to ensure reliable video data pipeline operation.
+
+[1] http://tinyurl.com/anw9udm
+[2] http://www.spinics.net/lists/arm-kernel/msg200036.html
