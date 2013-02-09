@@ -1,96 +1,80 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v4 02/10] s5p-fimc: Add device tree support for FIMC devices
-Date: Fri, 08 Feb 2013 17:32:30 -0700
-Message-ID: <5115991E.7050009@wwwdotorg.org>
-References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-3-git-send-email-s.nawrocki@samsung.com> <5112E9EF.8090908@wwwdotorg.org> <5115874A.6050406@gmail.com> <51158873.3060508@wwwdotorg.org> <511592B4.5050406@gmail.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 00/10] ARM: S3C24XX: irq rework for S3C2412, S3C2440 and S3C2442
+Date: Sat, 9 Feb 2013 18:11:05 +0100
+Message-ID: <201302091811.05437.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:44443 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1947344Ab3BIAcm (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:37470 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760757Ab3BIRLR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Feb 2013 19:32:42 -0500
-In-Reply-To: <511592B4.5050406@gmail.com>
+	Sat, 9 Feb 2013 12:11:17 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 02/08/2013 05:05 PM, Sylwester Nawrocki wrote:
-> On 02/09/2013 12:21 AM, Stephen Warren wrote:
->> On 02/08/2013 04:16 PM, Sylwester Nawrocki wrote:
->>> On 02/07/2013 12:40 AM, Stephen Warren wrote:
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
->>>>> b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
->>>>
->>>>> +Samsung S5P/EXYNOS SoC Camera Subsystem (FIMC)
->>>>> +----------------------------------------------
->> ...
->>>>> +For every fimc node a numbered alias should be present in the
->>>>> aliases node.
->>>>> +Aliases are of the form fimc<n>, where<n>   is an integer (0...N)
->>>>> specifying
->>>>> +the IP's instance index.
->>>>
->>>> Why? Isn't it up to the DT author whether they care if each fimc
->>>> node is
->>>> assigned a specific identification v.s. whether identification is
->>>> assigned automatically?
->>>
->>> There are at least three different kinds of IPs that come in multiple
->>> instances in an SoC. To activate data links between them each instance
->>> needs to be clearly identified. There are also differences between
->>> instances of same device. Hence it's important these aliases don't have
->>> random values.
->>>
->>> Some more details about the SoC can be found at [1]. The aliases are
->>> also already used in the Exynos5 GScaler bindings [2] in a similar way.
->>
->> Hmmm. I'd expect explicit DT properties to represent the
->> instance-specific "configuration", or even different compatible values.
->> Relying on the alias ID seems rather indirect; what if in e.g.
->> Exynos6/... the mapping from instance/alias ID to feature set changes.
->> With explicit DT properties, that'd just be a .dts change, whereas by
->> requiring alias IDs now, you'd need a driver change to support this.
-> 
-> In the initial version of this patch series I used cell-index property,
-> but then Grant pointed out in some other mail thread it should be
-> avoided. Hence I used the node aliases.
+This series finishes the irq rework by moving the irqs for s3c2412, s3c2440
+and s3c2442 into the new structure.
 
-To me, using cell-index is semantically equivalent to using the alias ID.
+Now the only open point is the different handling of the eint0 to eint3
+interrupts on the s3c2412. On this SoC these interrupts are represented
+in both the main register and the eint register and also need to be handled
+in both.
 
-> Different compatible values might not work, when for example there
-> are 3 IPs out of 4 of one type and the fourth one of another type.
-> It wouldn't even by really different types, just quirks/little
-> differences between them, e.g. no data path routed to one of other IPs.
+As this should be handlable via the new structure, I'm still investigating
+the right way to do it. Therefore the override of the eint0 to eint3
+interrupts will still remain for a bit.
 
-I was thinking of using feature-/quirk-oriented properties. For example,
-if there's a port on 3 of the 4 devices to connect to some other IP
-block, simply include a boolean property to indicate whether that port
-is present. It would be in 3 of the nodes but not the 4th.
+As I lack the relevant hardware, this series is compile tested only, but as
+the used mechanisms are the same as with the s3c2416, there shouldn't be
+any complications.
 
-> Then to connect e.g. MIPI-CSIS.0 to FIMC.2 at run time an index of the
-> MIPI-CSIS needs to be written to the FIMC.2 data input control register.
-> Even though MIPI-CSIS.N are same in terms of hardware structure they still
-> need to be distinguished as separate instances.
+This series applies on top of the moved s3c24XX.h headers into the common.h
+file in mach-s3c24xx.
 
-Oh, so you're using the alias ID as the value to write into the FIMC.2
-register for that. I'm not 100% familiar with aliases, but they seem
-like a more user-oriented naming thing to me, whereas values for hooking
-up intra-SoC routing are an unrelated namespace semantically, even if
-the values happen to line up right now. Perhaps rather than a Boolean
-property I mentioned above, use a custom property to indicate the ID
-that the FIMC.2 object knows the MIPI-CSIS.0 object as? While this seems
-similar to using cell-index, my *guess* is that Grant's objection to
-using cell-index was more based on re-using cell-index for something
-other than its intended purpose than pushing you to use an alias ID
-rather than a property.
+changes since v1:
+- included the changes for the s3c2412
 
-After all, what happens in some later SoC where you have two different
-types of module that feed into the common module, such that type A
-sources have IDs 0..3 in the common module, and type B sources have IDs
-4..7 in the common module - you wouldn't want to require alias ISs 4..7
-for the type B DT nodes.
+Heiko Stuebner (10):
+  ARM: S3C24XX: move s3c244x irq init to common irq code
+  ARM: S3C24XX: create dedicated irq init functions for s3c2440 and s3c2442
+  ARM: S3C24XX: move s3c2440 irqs to common irq code
+  ARM: S3C24XX: integrate s3c2440 irqs into common init
+  ARM: S3C24XX: transform s3c2442 irqs into new structure
+  ARM: S3C24XX: transform s3c2440 irqs into new structure
+  ARM: S3C24XX: use samsung_sync_wakemask in s3c2412 pm
+  ARM: S3C24XX: move s3c2412 irq init to common code
+  ARM: S3C24XX: modify s3c2412 irq init to initialize all irqs
+  ARM: S3C24XX: transform s3c2412 irqs into new structure
+
+ arch/arm/mach-s3c24xx/Kconfig          |    1 +
+ arch/arm/mach-s3c24xx/Makefile         |    6 +-
+ arch/arm/mach-s3c24xx/common.h         |    3 +
+ arch/arm/mach-s3c24xx/irq-s3c2412.c    |  215 -----------------------
+ arch/arm/mach-s3c24xx/irq-s3c2440.c    |  128 --------------
+ arch/arm/mach-s3c24xx/irq-s3c244x.c    |  142 ---------------
+ arch/arm/mach-s3c24xx/irq.c            |  299 ++++++++++++++++++++++++++++++++
+ arch/arm/mach-s3c24xx/mach-anubis.c    |    2 +-
+ arch/arm/mach-s3c24xx/mach-at2440evb.c |    2 +-
+ arch/arm/mach-s3c24xx/mach-gta02.c     |    2 +-
+ arch/arm/mach-s3c24xx/mach-jive.c      |    2 +-
+ arch/arm/mach-s3c24xx/mach-mini2440.c  |    2 +-
+ arch/arm/mach-s3c24xx/mach-nexcoder.c  |    2 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c    |    2 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c    |    2 +-
+ arch/arm/mach-s3c24xx/mach-rx3715.c    |    7 +-
+ arch/arm/mach-s3c24xx/mach-smdk2413.c  |    6 +-
+ arch/arm/mach-s3c24xx/mach-smdk2440.c  |    2 +-
+ arch/arm/mach-s3c24xx/mach-vstms.c     |    2 +-
+ arch/arm/mach-s3c24xx/pm-s3c2412.c     |    8 +
+ 20 files changed, 328 insertions(+), 507 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2412.c
+ delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2440.c
+ delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c244x.c
+
+-- 
+1.7.2.3
