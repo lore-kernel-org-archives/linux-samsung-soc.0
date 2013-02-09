@@ -1,184 +1,88 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v2 10/10] ARM: S3C24XX: transform s3c2412 irqs into new structure
-Date: Sat, 9 Feb 2013 18:19:49 +0100
-Message-ID: <201302091819.49855.heiko@sntech.de>
-References: <201302091811.05437.heiko@sntech.de>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [oselas] Audio support on Mini6410 board
+Date: Sat, 09 Feb 2013 19:21:32 +0100
+Message-ID: <511693AC.5010604@gmail.com>
+References: <CACuz9s2w28eVG8qS9FXkUYAggXn7y2deHi2fPGizcURu_Bp4wg@mail.gmail.com> <50F09720.7000102@gmail.com> <CACuz9s2fQYw-2pbE6dyNY7MiUSQxGiWArmXARxdwn1ULuDwm_Q@mail.gmail.com> <201301151030.11851.jbe@pengutronix.de> <CACuz9s0bZa0yKKkghKqFhSQ5YDX5YdwmmpXhmb3m9yKApWqPzQ@mail.gmail.com> <CACuz9s0kscbt5Z87mOX6C=9vKg2wrU-T69RS6NQmeSRqP_8K4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:37635 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760757Ab3BIRTz (ORCPT
+Received: from mail-ee0-f44.google.com ([74.125.83.44]:47268 "EHLO
+	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932472Ab3BISVh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 9 Feb 2013 12:19:55 -0500
-In-Reply-To: <201302091811.05437.heiko@sntech.de>
+	Sat, 9 Feb 2013 13:21:37 -0500
+Received: by mail-ee0-f44.google.com with SMTP id l10so2584586eei.17
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Feb 2013 10:21:36 -0800 (PST)
+In-Reply-To: <CACuz9s0kscbt5Z87mOX6C=9vKg2wrU-T69RS6NQmeSRqP_8K4w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Alexander Nestorov <alexandernst@gmail.com>
+Cc: Juergen Beisert <jbe@pengutronix.de>, oselas@community.pengutronix.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrey Gusakov <dron0gus@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Contains only the new mapping structure. The special handling
-of the eint0 to eint3 interrupts still needs to be solved.
+Hi,
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/irq.c |  122 +++++++++++++++++++++++--------------------
- 1 files changed, 66 insertions(+), 56 deletions(-)
+On 01/20/2013 09:46 PM, Alexander Nestorov wrote:
+> I have been playing for a week with the board. Both audio and video
+> work correctly, but I haven't
+> been able to set the mic settings in alsamixer (so I can't test the mic).
+> The touchscreen isn't working, so I'll try to make it working and send
+> you some patches.
+>
+> Anyways, now there's another question/problem that I have. Video
+> playback is really slow because
+> I'm not using the device's cpu-decoder but rather doing everything in
+> software mode.
+>
+> Is there support for hardware acceleration in the kernel for this
+> device? Also, after talking with
 
-diff --git a/arch/arm/mach-s3c24xx/irq.c b/arch/arm/mach-s3c24xx/irq.c
-index bf1e964..1cb1962 100644
---- a/arch/arm/mach-s3c24xx/irq.c
-+++ b/arch/arm/mach-s3c24xx/irq.c
-@@ -629,9 +629,58 @@ void __init s3c24xx_init_irq(void)
- }
- 
- #ifdef CONFIG_CPU_S3C2412
-+static struct s3c_irq_data init_s3c2412base[32] = {
-+	{ .type = S3C_IRQTYPE_EINT, }, /* EINT0 */
-+	{ .type = S3C_IRQTYPE_EINT, }, /* EINT1 */
-+	{ .type = S3C_IRQTYPE_EINT, }, /* EINT2 */
-+	{ .type = S3C_IRQTYPE_EINT, }, /* EINT3 */
-+	{ .type = S3C_IRQTYPE_LEVEL, }, /* EINT4to7 */
-+	{ .type = S3C_IRQTYPE_LEVEL, }, /* EINT8to23 */
-+	{ .type = S3C_IRQTYPE_NONE, }, /* reserved */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* nBATT_FLT */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* TICK */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* WDT */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* TIMER0 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* TIMER1 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* TIMER2 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* TIMER3 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* TIMER4 */
-+	{ .type = S3C_IRQTYPE_LEVEL, }, /* UART2 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* LCD */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* DMA0 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* DMA1 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* DMA2 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* DMA3 */
-+	{ .type = S3C_IRQTYPE_LEVEL, }, /* SDI/CF */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* SPI0 */
-+	{ .type = S3C_IRQTYPE_LEVEL, }, /* UART1 */
-+	{ .type = S3C_IRQTYPE_NONE, }, /* reserved */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* USBD */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* USBH */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* IIC */
-+	{ .type = S3C_IRQTYPE_LEVEL, }, /* UART0 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* SPI1 */
-+	{ .type = S3C_IRQTYPE_EDGE, }, /* RTC */
-+	{ .type = S3C_IRQTYPE_LEVEL, }, /* ADCPARENT */
-+};
- 
--#define INTMSK(start, end) ((1 << ((end) + 1 - (start))) - 1)
--#define INTMSK_SUB(start, end) (INTMSK(start, end) << ((start - S3C2410_IRQSUB(0))))
-+static struct s3c_irq_data init_s3c2412subint[32] = {
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 28 }, /* UART0-RX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 28 }, /* UART0-TX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 28 }, /* UART0-ERR */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 23 }, /* UART1-RX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 23 }, /* UART1-TX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 23 }, /* UART1-ERR */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-RX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-TX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-ERR */
-+	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* TC */
-+	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* ADC */
-+	{ .type = S3C_IRQTYPE_NONE, },
-+	{ .type = S3C_IRQTYPE_NONE, },
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 21 }, /* SDI */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 21 }, /* CF */
-+};
- 
- /* the s3c2412 changes the behaviour of IRQ_EINT0 through IRQ_EINT3 by
-  * having them turn up in both the INT* and the EINT* registers. Whilst
-@@ -700,72 +749,33 @@ static struct irq_chip s3c2412_irq_eint0t4 = {
- 	.irq_set_type	= s3c_irqext_type,
- };
- 
--#define INTBIT(x)	(1 << ((x) - S3C2410_IRQSUB(0)))
--
--/* CF and SDI sub interrupts */
--
--static void s3c2412_irq_demux_cfsdi(unsigned int irq, struct irq_desc *desc)
--{
--	unsigned int subsrc, submsk;
--
--	subsrc = __raw_readl(S3C2410_SUBSRCPND);
--	submsk = __raw_readl(S3C2410_INTSUBMSK);
--
--	subsrc  &= ~submsk;
--
--	if (subsrc & INTBIT(IRQ_S3C2412_SDI))
--		generic_handle_irq(IRQ_S3C2412_SDI);
--
--	if (subsrc & INTBIT(IRQ_S3C2412_CF))
--		generic_handle_irq(IRQ_S3C2412_CF);
--}
--
--#define INTMSK_CFSDI	(1UL << (IRQ_S3C2412_CFSDI - IRQ_EINT0))
--#define SUBMSK_CFSDI	INTMSK_SUB(IRQ_S3C2412_SDI, IRQ_S3C2412_CF)
--
--static void s3c2412_irq_cfsdi_mask(struct irq_data *data)
-+void s3c2412_init_irq(void)
- {
--	s3c_irqsub_mask(data->irq, INTMSK_CFSDI, SUBMSK_CFSDI);
--}
-+	struct s3c_irq_intc *main_intc;
-+	unsigned int irqno;
- 
--static void s3c2412_irq_cfsdi_unmask(struct irq_data *data)
--{
--	s3c_irqsub_unmask(data->irq, INTMSK_CFSDI);
--}
-+	pr_info("S3C2412: IRQ Support\n");
- 
--static void s3c2412_irq_cfsdi_ack(struct irq_data *data)
--{
--	s3c_irqsub_maskack(data->irq, INTMSK_CFSDI, SUBMSK_CFSDI);
--}
-+#ifdef CONFIG_FIQ
-+	init_FIQ(FIQ_START);
-+#endif
- 
--static struct irq_chip s3c2412_irq_cfsdi = {
--	.name		= "s3c2412-cfsdi",
--	.irq_ack	= s3c2412_irq_cfsdi_ack,
--	.irq_mask	= s3c2412_irq_cfsdi_mask,
--	.irq_unmask	= s3c2412_irq_cfsdi_unmask,
--};
-+	main_intc = s3c24xx_init_intc(NULL, &init_s3c2412base[0], NULL, 0x4a000000);
-+	if (IS_ERR(main_intc)) {
-+		pr_err("irq: could not create main interrupt controller\n");
-+		return;
-+	}
- 
--void s3c2412_init_irq(void)
--{
--	unsigned int irqno;
-+	s3c24xx_init_intc(NULL, &init_eint[0], main_intc, 0x560000a4);
-+	s3c24xx_init_intc(NULL, &init_s3c2412subint[0], main_intc, 0x4a000018);
- 
--	s3c24xx_init_irq();
-+	/* special handling for eints 0 to 3 */
- 
- 	for (irqno = IRQ_EINT0; irqno <= IRQ_EINT3; irqno++) {
- 		irq_set_chip_and_handler(irqno, &s3c2412_irq_eint0t4,
- 					 handle_edge_irq);
- 		set_irq_flags(irqno, IRQF_VALID);
- 	}
--
--	/* add demux support for CF/SDI */
--
--	irq_set_chained_handler(IRQ_S3C2412_CFSDI, s3c2412_irq_demux_cfsdi);
--
--	for (irqno = IRQ_S3C2412_SDI; irqno <= IRQ_S3C2412_CF; irqno++) {
--		irq_set_chip_and_handler(irqno, &s3c2412_irq_cfsdi,
--					 handle_level_irq);
--		set_irq_flags(irqno, IRQF_VALID);
--	}
- }
- #endif
- 
--- 
-1.7.2.3
+No, there is still no video codec (MFC) driver for s3c6410 upstream.
+Now, when there is support for the hardware video codec available in
+newer SoC (Exynos4/5) and some V4L2 infrastructure added together with
+the s5p-mfc driver, it should be much easier to write a driver for the
+s3c64xx MFC. Still it is relatively huge task and I didn't see any
+volunteers willing to add support upstream for the s3c64xx MFC, except
+Andrey who replied in this thread. I could provide some help, but
+I will likely won't find time to do any development work or testing.
+
+Also please note there is no support for the mem-to-mem features (color
+space conversion, scaling, rotation/flip) in the s3c-camif driver.
+It should be relatively simple to add it though. I'm not really sure
+if it is needed to run the codec on s3c64xx, but the plugin [1] uses
+FIMC (CAMIF) as a video post-processor. This plugin sets up processing
+pipeline like:
+
+memory (compressed data) -> MFC -> (YCbCr tiled) memory -> FIMC -> 
+memory (display)
+
+> some people from #gstreamer they pointed me to a component[1] in
+> gstreamer, but I'm not really
+> sure how to I use it. Any ideas/experience with that?
+
+This component uses multi-planar V4L2 API [2], which also use the s5p-mfc
+and s5p-fimc driver. The s3c-camif driver uses the single-planar API
+at the camera capture video node. So if this existing plugin was to be
+used with the s3c64xx hardware, the drivers for it would have to
+support the multi-planar API, which I believe is not needed on s3c64xx
+hardware.
+The best is probably to make the drivers only single-plane API aware
+and adapt the plugin. The required changes at the plugin wouldn't be
+significant.
+
+Anyway, a real problem here is lack of the s3c64xx MFC driver. So
+first we need the codec driver, which could be tested with modified
+test application [3], or directly with modified plugin [1].
+
+> Regards!
+>
+> [1] http://cgit.freedesktop.org/gstreamer/gst-plugins-bad/tree/sys/mfc
+
+[2] http://linuxtv.org/downloads/v4l-dvb-apis/planar-apis.html
+[3] 
+http://git.infradead.org/users/kmpark/public-apps/tree/9c057b001e8873861a70f7025214003837a0860b
+
+--
+
+Regards,
+Sylwester
