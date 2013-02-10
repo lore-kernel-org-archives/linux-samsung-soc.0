@@ -1,77 +1,151 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 08/12] ARM: SAMSUNG: devs: Drop unnecessary IRQ resources of timer devices
-Date: Sun, 10 Feb 2013 14:20:19 +0100
-Message-ID: <1360502423-2246-9-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 09/12] clocksource: samsung-time: Do not use static IRQ definition
+Date: Sun, 10 Feb 2013 14:20:20 +0100
+Message-ID: <1360502423-2246-10-git-send-email-tomasz.figa@gmail.com>
 References: <1360502423-2246-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f169.google.com ([209.85.215.169]:58976 "EHLO
-	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754791Ab3BJNU4 (ORCPT
+Received: from mail-ee0-f45.google.com ([74.125.83.45]:63331 "EHLO
+	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754952Ab3BJNVA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Feb 2013 08:20:56 -0500
-Received: by mail-ea0-f169.google.com with SMTP id d13so2272707eaa.14
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Feb 2013 05:20:55 -0800 (PST)
+	Sun, 10 Feb 2013 08:21:00 -0500
+Received: by mail-ee0-f45.google.com with SMTP id b57so2708894eek.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Feb 2013 05:20:58 -0800 (PST)
 In-Reply-To: <1360502423-2246-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, arhuaco@freaks-unidos.net, buserror@gmail.com, christer@weinigel.se, guillaume.gourat@nexvision.tv, jekhor@gmail.com, danders@amltd.com, bhmin@samsung.com, ghcstop@gmail.com, Tomasz Figa <tomasz.figa@gmail.com>
 
-Devices from s3c_device_timer array are used only for PWM driver, which
-does not need interrupts. This patch removes IRQ resources of those
-devices.
+As another step towards multiplatform support, this patch modifies the
+samsung-time clocksource driver and its users to pass timer IRQ numbers
+through the samsung_timer_variant structure.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- arch/arm/plat-samsung/devs.c | 28 ++++++++--------------------
- 1 file changed, 8 insertions(+), 20 deletions(-)
+ arch/arm/mach-exynos/mach-universal_c210.c | 4 ++++
+ arch/arm/mach-s3c24xx/common.c             | 3 +++
+ arch/arm/mach-s3c64xx/common.c             | 4 ++++
+ arch/arm/mach-s5p64x0/common.c             | 4 ++++
+ arch/arm/mach-s5pc100/common.c             | 4 ++++
+ arch/arm/mach-s5pv210/common.c             | 4 ++++
+ drivers/clocksource/samsung-time.c         | 2 +-
+ include/linux/samsung-time.h               | 1 +
+ 8 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index e1124d9..196aa68 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -1137,34 +1137,22 @@ arch_initcall(s5p_pmu_init);
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 50fe390..0573db7 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -1092,6 +1092,10 @@ static struct platform_device *universal_devices[] __initdata = {
  
- #ifdef CONFIG_SAMSUNG_DEV_PWM
+ static const struct samsung_timer_variant universal_timer_variant = {
+ 	.reg_base = EXYNOS4_PA_TIMER,
++	.irqs = {
++		IRQ_TIMER0, IRQ_TIMER1, IRQ_TIMER2,
++		IRQ_TIMER3, IRQ_TIMER4
++	},
+ 	.bits = 32,
+ 	.prescale = 2,
+ 	.divisor = 2,
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index 9a0584e..3344c33 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -222,6 +222,9 @@ static void s3c24xx_default_idle(void)
  
--#define TIMER_RESOURCE_SIZE (1)
--
--#define TIMER_RESOURCE(_tmr, _irq)			\
--	(struct resource [TIMER_RESOURCE_SIZE]) {	\
--		[0] = {					\
--			.start	= _irq,			\
--			.end	= _irq,			\
--			.flags	= IORESOURCE_IRQ	\
--		}					\
-+#define DEFINE_S3C_TIMER(_tmr_no) {			\
-+		.name		= "s3c24xx-pwm",	\
-+		.id		= _tmr_no,		\
- 	}
+ static const struct samsung_timer_variant s3c24xx_timer_variant = {
+ 	.reg_base = S3C24XX_PA_TIMER,
++	.irqs = {
++		IRQ_TIMER0, IRQ_TIMER1, IRQ_TIMER2, IRQ_TIMER3, IRQ_TIMER4
++	},
+ 	.bits = 16,
+ 	.prescale = 25,
+ 	.divisor = 50,
+diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
+index eb36740e..345d08a 100644
+--- a/arch/arm/mach-s3c64xx/common.c
++++ b/arch/arm/mach-s3c64xx/common.c
+@@ -151,6 +151,10 @@ static struct device s3c64xx_dev = {
  
--#define DEFINE_S3C_TIMER(_tmr_no, _irq)			\
--	.name		= "s3c24xx-pwm",		\
--	.id		= _tmr_no,			\
--	.num_resources	= TIMER_RESOURCE_SIZE,		\
--	.resource	= TIMER_RESOURCE(_tmr_no, _irq),	\
--
- /*
-  * since we already have an static mapping for the timer,
-  * we do not bother setting any IO resource for the base.
-  */
+ static const struct samsung_timer_variant s3c64xx_timer_variant = {
+ 	.reg_base = S3C_PA_TIMER,
++	.irqs = {
++		IRQ_TIMER0, IRQ_TIMER1, IRQ_TIMER2,
++		IRQ_TIMER3, IRQ_TIMER4
++	},
+ 	.bits = 32,
+ 	.prescale = 2,
+ 	.divisor = 2,
+diff --git a/arch/arm/mach-s5p64x0/common.c b/arch/arm/mach-s5p64x0/common.c
+index 0158c22..911122e 100644
+--- a/arch/arm/mach-s5p64x0/common.c
++++ b/arch/arm/mach-s5p64x0/common.c
+@@ -159,6 +159,10 @@ static void s5p64x0_idle(void)
  
- struct platform_device s3c_device_timer[] = {
--	[0] = { DEFINE_S3C_TIMER(0, IRQ_TIMER0) },
--	[1] = { DEFINE_S3C_TIMER(1, IRQ_TIMER1) },
--	[2] = { DEFINE_S3C_TIMER(2, IRQ_TIMER2) },
--	[3] = { DEFINE_S3C_TIMER(3, IRQ_TIMER3) },
--	[4] = { DEFINE_S3C_TIMER(4, IRQ_TIMER4) },
-+	[0] = DEFINE_S3C_TIMER(0),
-+	[1] = DEFINE_S3C_TIMER(1),
-+	[2] = DEFINE_S3C_TIMER(2),
-+	[3] = DEFINE_S3C_TIMER(3),
-+	[4] = DEFINE_S3C_TIMER(4),
- };
- #endif /* CONFIG_SAMSUNG_DEV_PWM */
+ static const struct samsung_timer_variant s5p64x0_timer_variant = {
+ 	.reg_base = S5P_PA_TIMER,
++	.irqs = {
++		IRQ_TIMER0, IRQ_TIMER1, IRQ_TIMER2,
++		IRQ_TIMER3, IRQ_TIMER4
++	},
+ 	.bits = 32,
+ 	.prescale = 2,
+ 	.divisor = 2,
+diff --git a/arch/arm/mach-s5pc100/common.c b/arch/arm/mach-s5pc100/common.c
+index 5ca2f53..f45b1988 100644
+--- a/arch/arm/mach-s5pc100/common.c
++++ b/arch/arm/mach-s5pc100/common.c
+@@ -134,6 +134,10 @@ static struct map_desc s5pc100_iodesc[] __initdata = {
  
+ static const struct samsung_timer_variant s5pc100_timer_variant = {
+ 	.reg_base = S5P_PA_TIMER,
++	.irqs = {
++		IRQ_TIMER0, IRQ_TIMER1, IRQ_TIMER2,
++		IRQ_TIMER3, IRQ_TIMER4
++	},
+ 	.bits = 32,
+ 	.prescale = 2,
+ 	.divisor = 2,
+diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/common.c
+index c80aa9c..a3ad2cf 100644
+--- a/arch/arm/mach-s5pv210/common.c
++++ b/arch/arm/mach-s5pv210/common.c
+@@ -151,6 +151,10 @@ void s5pv210_restart(char mode, const char *cmd)
+ 
+ static const struct samsung_timer_variant s5pv210_timer_variant = {
+ 	.reg_base = S5P_PA_TIMER,
++	.irqs = {
++		IRQ_TIMER0, IRQ_TIMER1, IRQ_TIMER2,
++		IRQ_TIMER3, IRQ_TIMER4
++	},
+ 	.bits = 32,
+ 	.prescale = 2,
+ 	.divisor = 2,
+diff --git a/drivers/clocksource/samsung-time.c b/drivers/clocksource/samsung-time.c
+index 29fc63f..3af3054 100644
+--- a/drivers/clocksource/samsung-time.c
++++ b/drivers/clocksource/samsung-time.c
+@@ -388,7 +388,7 @@ static void __init samsung_clockevent_init(void)
+ 	time_event_device.cpumask = cpumask_of(0);
+ 	clockevents_config_and_register(&time_event_device, clock_rate, 1, -1);
+ 
+-	irq_number = timer_source.event_id + IRQ_TIMER0;
++	irq_number = timer_variant.irqs[timer_source.event_id];
+ 	setup_irq(irq_number, &samsung_clock_event_irq);
+ }
+ 
+diff --git a/include/linux/samsung-time.h b/include/linux/samsung-time.h
+index 526ff99..8d8ffe8 100644
+--- a/include/linux/samsung-time.h
++++ b/include/linux/samsung-time.h
+@@ -29,6 +29,7 @@ struct samsung_timer_source {
+ 
+ struct samsung_timer_variant {
+ 	unsigned long reg_base;
++	unsigned int irqs[5];
+ 	int bits;
+ 	u16 prescale;
+ 	u16 divisor;
 -- 
 1.8.1.2
