@@ -1,29 +1,117 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v4 02/10] s5p-fimc: Add device tree support for FIMC devices
-Date: Sat, 09 Feb 2013 23:52:03 +0100
-Message-ID: <5116D313.8000603@gmail.com>
-References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-3-git-send-email-s.nawrocki@samsung.com> <5112E9EF.8090908@wwwdotorg.org> <5115874A.6050406@gmail.com> <51158873.3060508@wwwdotorg.org> <511592B4.5050406@gmail.com> <5115991E.7050009@wwwdotorg.org> <5116CDBB.4080807@gmail.com>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] i2c-core: dt: Pick i2c bus number from i2c alias
+ if present
+Date: Sun, 10 Feb 2013 13:19:01 +0100
+Message-ID: <20130210121901.GA15546@nekote.pengutronix.de>
+References: <1357927027-4857-2-git-send-email-dianders@chromium.org>
+ <1358189602-24180-1-git-send-email-dianders@chromium.org>
+ <1358189602-24180-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <5116CDBB.4080807@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1358189602-24180-2-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/09/2013 11:29 PM, Sylwester Nawrocki wrote:
->
->> After all, what happens in some later SoC where you have two different
->> types of module that feed into the common module, such that type A
->> sources have IDs 0..3 in the common module, and type B sources have IDs
->> 4..7 in the common module - you wouldn't want to require alias ISs 4..7
->> for the type B DT nodes.
+Hi Doug,
 
-I forgot to add, any ID remapping could happen in the common module, if
-it requires it. Type A and type B sources could have indexes 0...3 and
-the common module could derive its configuration from the source ID *and*
-the source type. The idea behind aliases was to identify each instance,
-rather than providing an exact configuration data that the common module
-could use.
+On Mon, Jan 14, 2013 at 10:53:21AM -0800, Doug Anderson wrote:
+> This allows you to get the equivalent functionality of
+> i2c_add_numbered_adapter() with all data in the device tree and no
+> special case code in your driver.  This is a common device tree
+> technique.
+> 
+> For quick reference, the FDT syntax for using an alias to provide an
+> ID looks like:
+>   aliases {
+>     i2c0 = &i2c_0;
+>     i2c1 = &i2c_1;
+>   };
+> 
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Acked-by: Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> Changes in v2: None
+> 
+>  drivers/i2c/i2c-core.c |  105 +++++++++++++++++++++++++++++++++++-------------
+>  1 files changed, 77 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+> index e388590..a60ed6d 100644
+> --- a/drivers/i2c/i2c-core.c
+> +++ b/drivers/i2c/i2c-core.c
+> @@ -921,13 +921,81 @@ out_list:
+>  }
+>  
+>  /**
+> + * i2c_get_number_from_dt - get the adapter number based on dt alias
+> + * @adap: the adapter to look at
+> + *
+> + * Check whether there's an alias in the FDT that gives an ID for this i2c
+> + * device.  Use an alias like "i2c<nr>", like:
+> + *   aliases {
+> + *     i2c0 = &i2c_0;
+> + *     i2c1 = &i2c_1;
+> + *   };
+> + *
+> + * Returns the ID if found.  If no alias is found returns -1.
+> + */
+> +static int i2c_get_number_from_dt(struct i2c_adapter *adap)
+
+i2c_get_id_from_dt()?
+
+> +{
+> +	struct device *dev = &adap->dev;
+> +	int id;
+> +
+> +	if (!dev->of_node)
+> +		return -1;
+
+-ESOMETHING?
+
+> +
+> +	id = of_alias_get_id(dev->of_node, "i2c");
+> +	if (id < 0)
+> +		return -1;
+> +	return id;
+
+Simply 'return of_alias_get_id(...)'? Even more, since this function
+boils down to calling of_alias_get_id only and is only used once, I'd
+think we can implement that directly and drop this function. That
+shouldn't hurt readability.
+
+> +}
+> +
+> +/**
+> + * _i2c_add_numbered_adapter - i2c_add_numbered_adapter where nr is never -1
+> + * @adap: the adapter to register (with adap->nr initialized)
+> + * Context: can sleep
+> + *
+> + * See i2c_add_numbered_adapter() for details.
+> + */
+> +static int _i2c_add_numbered_adapter(struct i2c_adapter *adap)
+
+All other internal functions are prefixed with '__'.
+
+> +{
+> +	int	id;
+> +	int	status;
+> +
+> +	/* Handled by wrappers */
+> +	BUG_ON(adap->nr == -1);
+
+Is that a reason to halt the kernel? WARN and bailing out would do IMO.
+
+> +
+> +	if (adap->nr & ~MAX_IDR_MASK)
+> +		return -EINVAL;
+
+Note the idr-cleanup series from Tejun Heo. Given that his series is
+scheduled for v3.9, I'd like to have your patches on top of his.
+
+Thanks,
+
+   Wolfram
