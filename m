@@ -1,33 +1,33 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
-Date: Sun, 10 Feb 2013 19:17:10 +0100
-Message-ID: <20130210181710.GB12760@nekote.pengutronix.de>
-References: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: samsung: remove duplicated line of samsung_pinctrl_register()
+Date: Sun, 10 Feb 2013 20:17:44 +0100
+Message-ID: <CACRpkdbA_BrjL2bCEZJHxQh=kvAN0sH-Jgbm=MOJ7-J+J8e5rg@mail.gmail.com>
+References: <001901ce05be$aacdeb30$0069c190$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:43710 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756365Ab3BJSRN (ORCPT
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:46513 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756136Ab3BJTRo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Feb 2013 13:17:13 -0500
-Content-Disposition: inline
-In-Reply-To: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
+	Sun, 10 Feb 2013 14:17:44 -0500
+Received: by mail-ie0-f169.google.com with SMTP id 13so7066937iea.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Feb 2013 11:17:44 -0800 (PST)
+In-Reply-To: <001901ce05be$aacdeb30$0069c190$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, ch.naveen@samsung.com, sjg@chromium.org, grundler@chromium.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
 
-On Mon, Feb 04, 2013 at 02:33:15PM +0530, Yuvaraj Kumar C D wrote:
-> This RFC patch is w.r.t multimaster bus arbitration which is already
-> being discussing in the mainline.
-> This patch provides hooks for the i2c multimaster bus arbitration
-> and to have the arbitration parameters.
+On Fri, Feb 8, 2013 at 6:39 AM, Jingoo Han <jg1.han@samsung.com> wrote:
 
-I still haven't understood why the arbitration specified in the I2C
-standard is not enough for you. Or what you would need to make use of
-it.
+> This patch removes duplicated line of samsung_pinctrl_register(),
+> because the number of pins is redundantly assigned twice.
+>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 
-Thanks,
+Patch applied with the Reviewed-by/Acked-by tags from
+the maintainers.
 
-   Wolfram
+Thanks!
+Linus Walleij
