@@ -1,235 +1,111 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 12/12] clocksource: samsung-time: Add Device Tree support
-Date: Mon, 11 Feb 2013 11:00:56 +0000
-Message-ID: <20130211110056.GC32455@e106331-lin.cambridge.arm.com>
-References: <1360502423-2246-1-git-send-email-tomasz.figa@gmail.com>
- <1360502423-2246-13-git-send-email-tomasz.figa@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v4 02/10] s5p-fimc: Add device tree support for FIMC devices
+Date: Mon, 11 Feb 2013 14:50:36 -0700
+Message-ID: <511967AC.7030909@wwwdotorg.org>
+References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-3-git-send-email-s.nawrocki@samsung.com> <5112E9EF.8090908@wwwdotorg.org> <5115874A.6050406@gmail.com> <51158873.3060508@wwwdotorg.org> <511592B4.5050406@gmail.com> <5115991E.7050009@wwwdotorg.org> <5116CDBB.4080807@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1360502423-2246-13-git-send-email-tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Disposition: inline
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "arhuaco-pI7LgTZv5U2z2LnJBvBa6V6hYfS7NtTn@public.gmane.org" <arhuaco-pI7LgTZv5U2z2LnJBvBa6V6hYfS7NtTn@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "kwangwoo.lee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <kwangwoo.lee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "guillaume.gourat-SG84m9Bk/uxjrEqMGRc/AA@public.gmane.org" <guillaume.gourat-SG84m9Bk/uxjrEqMGRc/AA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "jekhor-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <jekhor-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "danders-/aE0K3SWWjcAvxtiuMwx3w@public.gmane.org" <danders-/aE0K3SWWjcAvxtiuMwx3w@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "bhmin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <bhmin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "augulis.darius-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <augulis.darius-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "christer-rKHMIqA5R6gwFerOooGFRg@public.gmane.org" <christer-rKHMIqA5R6gwFerOooGFRg@public.gmane.org>, "linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org" <linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>"ghcstop-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <g>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:52175 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932522Ab3BKVuk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Feb 2013 16:50:40 -0500
+In-Reply-To: <5116CDBB.4080807@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Sun, Feb 10, 2013 at 01:20:23PM +0000, Tomasz Figa wrote:
-> This patch adds support for parsing all platform-specific data from
-> Device Tree and instantiation using clocksource_of_init to samsung-time
-> clocksource driver.
+On 02/09/2013 03:29 PM, Sylwester Nawrocki wrote:
+> On 02/09/2013 01:32 AM, Stephen Warren wrote:
+>> On 02/08/2013 05:05 PM, Sylwester Nawrocki wrote:
+>>> On 02/09/2013 12:21 AM, Stephen Warren wrote:
+>>>> On 02/08/2013 04:16 PM, Sylwester Nawrocki wrote:
+>>>>> On 02/07/2013 12:40 AM, Stephen Warren wrote:
+>>>>>>> diff --git
+>>>>>>> a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
+>>>>>>> b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
+>>>>>>
+>>>>>>> +Samsung S5P/EXYNOS SoC Camera Subsystem (FIMC)
+>>>>>>> +----------------------------------------------
+>>>> ...
+>>>>>>> +For every fimc node a numbered alias should be present in the
+>>>>>>> aliases node.
+>>>>>>> +Aliases are of the form fimc<n>, where<n>    is an integer (0...N)
+>>>>>>> specifying
+>>>>>>> +the IP's instance index.
+...
+>>> Different compatible values might not work, when for example there
+>>> are 3 IPs out of 4 of one type and the fourth one of another type.
+>>> It wouldn't even by really different types, just quirks/little
+>>> differences between them, e.g. no data path routed to one of other IPs.
+>>
+>> I was thinking of using feature-/quirk-oriented properties. For example,
+>> if there's a port on 3 of the 4 devices to connect to some other IP
+>> block, simply include a boolean property to indicate whether that port
+>> is present. It would be in 3 of the nodes but not the 4th.
 > 
-> Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> Signed-off-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  .../devicetree/bindings/arm/samsung-timer.txt      |  32 +++++++
->  drivers/clocksource/samsung-time.c                 | 102 ++++++++++++++++++++-
->  2 files changed, 131 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/samsung-timer.txt
+> Yes, I could add several properties corresponding to all members of this
+> [3] data structure. But still it is needed to clearly identify the IP
+> block in a set of the hardware instances.
+
+Why? What decisions will be made based on the identify of the IP block
+instance that wouldn't be covered by DT properties that describe which
+features/bugs/... the IP block instance has?
+
+>>> Then to connect e.g. MIPI-CSIS.0 to FIMC.2 at run time an index of the
+>>> MIPI-CSIS needs to be written to the FIMC.2 data input control register.
+>>> Even though MIPI-CSIS.N are same in terms of hardware structure they
+>>> still
+>>> need to be distinguished as separate instances.
+>>
+>> Oh, so you're using the alias ID as the value to write into the FIMC.2
+>> register for that. I'm not 100% familiar with aliases, but they seem
+>> like a more user-oriented naming thing to me, whereas values for hooking
+>> up intra-SoC routing are an unrelated namespace semantically, even if
+>> the values happen to line up right now. Perhaps rather than a Boolean
+>> property I mentioned above, use a custom property to indicate the ID
+>> that the FIMC.2 object knows the MIPI-CSIS.0 object as? While this seems
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung-timer.txt b/Documentation/devicetree/bindings/arm/samsung-timer.txt
-> new file mode 100644
-> index 0000000..8eb7030
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/samsung-timer.txt
-> @@ -0,0 +1,32 @@
-> +* Samsung PWM timer
-> +
-> +Samsung SoCs contain PWM timer blocks which can be used for system clock source
-> +and clock event timers.
-> +
-> +Be aware that this configuration is supported only on uniprocessor platforms.
-> +For SMP SoCs, SMP-aware timers should be used, like MCT.
-> +
-> +Required properties:
-> +- compatible : should be one of following:
-> +    samsung,s3c24xx-pwm-timer - for 16-bit timers present on S3C24xx
-> +    samsung,s3c64xx-pwm-timer - for 32-bit timers present on S3C64xx and newer
-> +- reg: base address and size of register area
-> +- interrupts: interrupt list for all five PWM timers.
+> That could be 'reg' property in the MIPI-CSIS.0 'port' subnode that
+> links it to the image sensor node ([4], line 165). Because MIPI-CSIS IP
+> blocks are immutably connected to the SoC camera physical MIPI CSI-2
+> interfaces, and the physical camera ports have fixed assignment to the
+> MIPI-CSIS devices..  This way we could drop alias ID for the MIPI-CSIS
+> nodes. And their instance index that is required for the top level
+> driver which exposes topology and the routing capabilities to user space
+> could be restored from the reg property value by subtracting a fixed
+> offset.
 
-Is this a set of combined interrupts, or one per timer?
+I suppose that would work. It feels a little indirect, and I think means
+that the driver needs to go find some child node defining its end of
+some link, then find the node representing the other end of the link,
+then read properties out of that other node to find the value. That
+seems a little unusual, but I guess it would work. I'm not sure of the
+long-term implications of doing that kind of thing. You'd want to run
+the idea past some DT maintainers/experts.
 
-Which order are they in?
+...
+> I can see aliases used in bindings of multiple devices: uart, spi, sound
+> interfaces, gpio, ... And all bindings seem to impose some rules on how
+> their aliases are created.
 
-Assuming they're one per timer, in order, how about something like:
+Do you have specific examples? I really don't think the bindings should
+be dictating the alias values.
 
-"- interrupts: one interrupt per timer, starting at timer 0".
+>> After all, what happens in some later SoC where you have two different
+>> types of module that feed into the common module, such that type A
+>> sources have IDs 0..3 in the common module, and type B sources have IDs
+>> 4..7 in the common module - you wouldn't want to require alias ISs 4..7
+>> for the type B DT nodes.
+> 
+> There is no need to write alias ID directly into registers, and actually
+> it doesn't really happen. But we need to know that, for example camera A
+> is connected to physical MIPI CSI-2 channel 0 and to capture video with
+> DMA engine of FIMC.2 we need to set FIMC.2 input register to link it to
+> MIPI-CSIS 0.
 
-> +- samsung,source-timer: index of timer to be used as clocksource
-> +- samsung,event-timer: index of timer to be used as clock event
-
-Is there any reason this needs to be specified in the dt?
-
-Can the driver not just select two arbitrary timers from the hardware?
-
-> +
-> +Optional properties:
-> +- samsung,prescale: PWM prescaler divisor (from 1 to 256)
-
-It might be better to have this named "samsung,prescale-divisor" to make it
-clear to the average reader that its a divisor value rather than a
-multiplier value.
-
-> +- samsung,divisor: PWM main divider divisor (1, 2, 4, 8 or 16)
-> +
-> +Example:
-> +	timer@7f006000 {
-> +		compatible = "samsung,s3c64xx-pwm-timer";
-> +		reg = <0x7f006000 0x1000>;
-> +		interrupt-parent = <&vic0>;
-> +		interrupts = <23>, <24>, <25>, <27>, <28>;
-> +		samsung,source-timer = <4>;
-> +		samsung,event-timer = <3>;
-> +		samsung,prescale = <2>;
-> +		samsung,divisor = <1>;
-> +	};
-> diff --git a/drivers/clocksource/samsung-time.c b/drivers/clocksource/samsung-time.c
-> index 19a1c8a..63d2992 100644
-> --- a/drivers/clocksource/samsung-time.c
-> +++ b/drivers/clocksource/samsung-time.c
-> @@ -14,6 +14,9 @@
->  #include <linux/err.h>
->  #include <linux/clk.h>
->  #include <linux/clockchips.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
->  #include <linux/platform_device.h>
->  #include <linux/samsung-time.h>
->  
-> @@ -479,9 +482,11 @@ static void __init samsung_timer_resources(void)
->  	unsigned long source_id = timer_source.source_id;
->  	char devname[15];
->  
-> -	timer_base = ioremap_nocache(timer_variant.reg_base, SZ_4K);
-> -	if (!timer_base)
-> -		panic("failed to map timer registers");
-> +	if (!timer_base) {
-> +		timer_base = ioremap_nocache(timer_variant.reg_base, SZ_4K);
-> +		if (!timer_base)
-> +			panic("failed to map timer registers");
-> +	}
-
-You map 4K here, but the binding didn't mention that 4K is always the expected
-size of the reg.
-
->  
->  	timerclk = clk_get(NULL, "timers");
->  	if (IS_ERR(timerclk))
-> @@ -514,8 +519,92 @@ static void __init samsung_timer_resources(void)
->  	clk_enable(tin_source);
->  }
->  
-> +enum {
-> +	TYPE_S3C24XX,
-> +	TYPE_S3C64XX,
-> +};
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id samsung_timer_ids[] = {
-> +	{ .compatible = "samsung,s3c24xx-pwm-timer",
-> +					.data = (void *)TYPE_S3C24XX, },
-> +	{ .compatible = "samsung,s3c64xx-pwm-timer",
-> +					.data = (void *)TYPE_S3C64XX, },
-> +	{},
-> +};
-> +
-> +static void samsung_timer_parse_dt(struct device_node *np,
-> +					const struct of_device_id *match)
-> +{
-> +	int i;
-> +	u32 val;
-> +
-> +	if (of_property_read_u32(np, "samsung,source-timer", &val))
-> +		panic("no samsung,source-timer property provided");
-> +	if (val > ARRAY_SIZE(timer_variant.irqs))
-> +		panic("samsung,source-timer property out of range");
-
-This check doesn't tell you if you actually had an irq in the dt for the timer
-at that index.
-
-Do you really need to panic here? Can you not just warn?
-
-What if a future platform has another timer driver that can at least get the
-board to boot?
-
-> +	timer_source.source_id = val;
-> +
-> +	if (of_property_read_u32(np, "samsung,event-timer", &val))
-> +		panic("no samsung,event-timer property provided");
-> +	if (val > ARRAY_SIZE(timer_variant.irqs))
-> +		panic("samsung,event-timer property out of range");
-> +	timer_source.event_id = val;
-
-I have the same problems here as with the source-timer block above.
-
-> +
-> +	timer_base = of_iomap(np, 0);
-> +	if (!timer_base)
-> +		panic("failed to map timer registers");
-
-Similarly here and every other place that panics: I think warning might be a
-better bet.
-
-> +
-> +	for (i = 0; i < ARRAY_SIZE(timer_variant.irqs); ++i)
-> +		timer_variant.irqs[i] = irq_of_parse_and_map(np, i);
-> +
-> +	if (!timer_variant.irqs[timer_source.event_id])
-> +		panic("no clock event irq provided");
-> +
-> +	switch ((unsigned int)match->data) {
-> +	case TYPE_S3C24XX:
-> +		timer_variant.bits = 16;
-> +		timer_variant.prescale = 25;
-> +		timer_variant.prescale = 50;
-> +		timer_variant.has_tint_cstat = false;
-> +		break;
-> +	case TYPE_S3C64XX:
-> +		timer_variant.bits = 32;
-> +		timer_variant.prescale = 2;
-> +		timer_variant.divisor = 2;
-> +		timer_variant.has_tint_cstat = true;
-> +		break;
-> +	}
-> +
-> +	if (!of_property_read_u32(np, "samsung,prescale", &val)) {
-> +		if (val < 1 || val > 256)
-> +			panic("prescale must be from 1 to 256 range");
-> +		timer_variant.prescale = val;
-> +	}
-> +
-> +	if (!of_property_read_u32(np, "samsung,divisor", &val)) {
-> +		if (val > 16 || (1 << (fls(val) - 1)) != val)
-> +			panic("divsor must be 1, 2, 4, 8 or 16");
-> +		timer_variant.divisor = timer_variant.prescale * val;
-
-Maybe it's just me, but I find this somewhat difficult to read.
-
-How about something like:
-
-switch (val) {
-case 1:
-case 2:
-case 4:
-case 8:
-case 16:
-	timer_variant.divisor = timer_variant.prescale * val;
-	break;
-default:
-	warn("no divisor specified");
-};
-
-Thanks,
-Mark.
+OK, so the IDs are selecting which register to write, or which mux
+settings to access. That's pretty much semantically the same thing.
