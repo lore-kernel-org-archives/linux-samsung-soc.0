@@ -1,144 +1,70 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [RFC PATCH 0/4] Common Display Framework-TF
-Date: Mon, 11 Feb 2013 10:21:20 +0200
-Message-ID: <5118AA00.2000505@ti.com>
-References: <1359560343-31636-1-git-send-email-t.figa@samsung.com> <4292748.rtElrP8BXd@avalon> <3272191.03RiBNfhoM@flatron> <5114E412.5030806@ti.com> <5114F224.6010201@stericsson.com> <5114F7C9.4040803@ti.com> <5114FD86.2020400@stericsson.com> <5115055B.2080509@ti.com> <511511B3.3060404@stericsson.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="------------enig865B519E65BD0F11BA97861F"
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH V4 0/5] Add generic DMA DT binding support
+Date: Mon, 11 Feb 2013 14:08:20 +0530
+Message-ID: <1360571905-15285-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:53453 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752968Ab3BKIVj (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:63904 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751219Ab3BKIh5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Feb 2013 03:21:39 -0500
-In-Reply-To: <511511B3.3060404@stericsson.com>
+	Mon, 11 Feb 2013 03:37:57 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MI1008Q7RZ7XJ60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 11 Feb 2013 17:37:56 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MI1001YDRZ0HC30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 11 Feb 2013 17:37:55 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marcus Lorentzon <marcus.xm.lorentzon@stericsson.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomasz Figa <t.figa@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, Daniel Vetter <daniel@ffwll.ch>, Vikas Sajjan <vikas.sajjan@linaro.org>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "dh09.lee@samsung.com" <dh09.lee@samsung.com>, "ville.syrjala@intel.com" <ville.syrjala@intel.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, arnd@arndb.de, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org, robherring2@gmail.com
 
---------------enig865B519E65BD0F11BA97861F
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Changes since V3:
+	- Make dma-cells property optional as suggested by Rob Herring
+	- Add dma-requests and dma-channels properties to DMA controller
+	  as suggested by Arnd for future-proof
+	- Add Acked-by for some of the patches
 
-On 2013-02-08 16:54, Marcus Lorentzon wrote:
-> On 02/08/2013 03:02 PM, Tomi Valkeinen wrote:
->> On 2013-02-08 15:28, Marcus Lorentzon wrote:
->>
->>> When we do that we stop->setup->start during blanking. So our "DSS" i=
-s
->>> optimized to be able to do that without getting blocked. All DSI vide=
-o
->>> mode panels (and DPI) products we have done so far have not had any
->>> issue with that (as long as DSI HS clock is set to continuous). I thi=
-nk
->>> this approach is less platform dependant, as long as there is no SoC
->>> that take more than a blanking period to reconfigure.
->> So do you stop, setup and start the link with CPU, and this has to be
->> happen during blanking? Isn't that prone to errors? Or did you mean th=
-at
->> the hardware handles that automatically?
->>
->> In OMAP DSS there are so called shadow registers, that can be programm=
-ed
->> at any time. The you set a bit (GO bit), which tells the hardware to
->> take the new settings into use at the next vblank.
->>
->>  From DSI driver's perspective the link is never stopped when
->> reconfiguring the video timings. However, many other settings have to =
-be
->> configured when the link is disabled.
->=20
-> Yeah, you lucky guys with the GO bit ;). No, we actually do CPU
-> stop,setup,start. But since it is video mode, master is driving the syn=
-c
-> so it is not a hard deadline. It is enough to restart before pixels
-> start to degrade. On an LCD that is not so much time, but on an OLED it=
+Changes since V2:
+        - Add new filter function for DT case as suggested by Arnd
+        - Add xlate as static function
+        - Use newly added filter function in xlate.
+        - Add Acked-by for some of the patches
 
-> could be 10 secs :). Anyway, we have had several mass products with thi=
-s
-> soft solution and it has worked well.
+Changes since V1:
+        - Address the review comments by Arnd Bergmann as below
+        - Wording of the properties.
+        - Pass pdmac as third parameter to of_dma_controller_register
+        - Filter the dma channel based on channel number and dma_device
 
-Ah, ok. But in that case what you said in an earlier mail is not quite
-correct: "I think this approach is less platform dependant, as long as
-there is no SoC that take more than a blanking period to reconfigure.".
-So in your approach the reconfiguration doesn't have to be done inside
-the blanking period, but before the panel's picture starts to fade?
+This patch set adds support for generic dma device tree bindings for
+Samsung platforms and is dependent on the following patches from
+Vinod Koul next branch
+1)of: Add generic device tree DMA helpers
+2)dmaengine: add helper function to request a slave DMA channel
 
-I don't know... It's early Monday morning, and not enough coffee yet,
-but I get a bit uneasy feeling if I think that your method of
-reconfiguring would be the only think allowed by the CDF API.
+This patch set is made based Mark Brown next branch
 
-Some SoCs do support reconfiguring on the fly, without disabling the
-link. It would not be nice if we didn't allow this to happen. And
-actually, we're not only talking about SoCs here, but also any display
-devices, like external buffer chips etc. They may also offer means to
-change configs on the fly.
+Padmavathi Venna (5):
+  DMA: PL330: Add new pl330 filter for DT case.
+  DMA: PL330: Add xlate function
+  DMA: PL330: Register the DMA controller with the generic DMA helpers
+  ARM: dts: pl330: Add #dma-cells for generic dma binding support
+  ARM: SAMSUNG: dma: Remove unnecessary code
 
-Well, I don't have any hard point about this at the moment, but I think
-we should think different approaches how the configuration can be done.
+ .../devicetree/bindings/dma/arm-pl330.txt          |   21 +++++--
+ arch/arm/boot/dts/exynos5250.dtsi                  |   12 ++++
+ arch/arm/mach-s3c24xx/include/mach/dma.h           |    1 -
+ arch/arm/mach-s3c64xx/include/mach/dma.h           |    1 -
+ arch/arm/plat-samsung/dma-ops.c                    |   10 +---
+ arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 -
+ arch/arm/plat-samsung/include/plat/dma-pl330.h     |    1 -
+ drivers/dma/pl330.c                                |   64 +++++++++++++++----
+ 8 files changed, 79 insertions(+), 32 deletions(-)
 
-> I understand, but removing the omap prefix doesn't mean it has to go in=
-
-> the panel slave port/bus settings. I still can't see why this should be=
-
-> configuration on the panel driver and not the DSI master driver. Number=
-
-> of pins might be useful since you might start with one lane and then
-> activate the rest. But partial muxing (pre pinmux) doesn't seem to be
-> something the panel should control or know anything about. Sounds like
-> normal platform/DT data per product/board.
-
-I think one case where this kind of pin configuration is needed, and
-which also dictates that all panel related configuration has to be in
-the panel's data, not in the DSI master's data, is hotplug.
-
-If you have a board that has two panels connected to the same video
-output, probably via some kind of mux, at least for the sensitive pins
-like DSI, only one of the panels can be enabled at a time. The panels
-can have different wiring, and thus the panel driver would need to
-configure everything related to the bus when it's starting up.
-
-The same also happens if you have a true hotplug, i.e. you can remove
-the panel totally and plug in a new one. Again the wiring can be
-different, and needs to be set up.
-
-And, as I said, this means that all relevant data about the video bus
-has to be in the panel's data, so that each panel can have its own set
-of, say, pin configuration.
-
-Hotplug is not a use case we should aim to support for the CDF v1, but I
-think we should strive not to prevent hotplug either. So if we can
-design the API so that hotplug is possible, I say let's do that.
-
- Tomi
-
-
-
---------------enig865B519E65BD0F11BA97861F
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with undefined - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJRGKoAAAoJEPo9qoy8lh71SbYQAI392d86tkQlV/wt40WpeS9B
-8SVV6eXwhyxGjBS76nBPb8YY0YLrpWUMcnL6ODeMy3OfNz9mMZHdjhpZUnOBJVBN
-97ZbeFLi2VHmDtclU1kAymn1TyBy5QyPKmNmlXPp97cnm0NB6LYKlqcqAJrb0mGo
-AIJvBfLdxSkb8zHCmy05Rj+6xi69Q878VUF7ZbLfehcnKjM2bxcIY8zqWbbx8L81
-7i6Y9A3674mst08LTt0XvCFxnYR9KniGh9SMlgjMOy2L9qB1rL7bEYs7STZa5N82
-7w5xvqbzoYKW2xSlHPO3hVmJWySsgxTTmoIWmJmRzbZUcdrpM6Caa+IOR8/14kOI
-226Cp42JoYo+LXGgJrzDBMMQkasO+QOkj2/+5YWw0UvVAmn7df6FHrwCjA31Z1WH
-52o9u82/P8ERL603ysv5wxchgy8mxE08EtsWNMYrrLTSlbpUUV26yICuoZ5A/0UE
-TI3DsvLYvtp3bGHBq+l3yY6e6O36mXiL31DbBaHk2Qt0OESpS1pAS1hq2ef2cPYW
-KltPhOwTsiKTGVMUVev/f5Z18esJjNF1MMZpTFt/xTeO7DNqn1BYWiKLKO3C7h5J
-Q/vbm3Nfs2frE9LqO7bIaRJvrtP6Lr8NuJCDKMKy7fUpKl9imUhbqZ+0z91TDVOM
-MQblvwVZFS2CCPzseDl9
-=35gR
------END PGP SIGNATURE-----
-
---------------enig865B519E65BD0F11BA97861F--
+-- 
+1.7.4.4
