@@ -1,65 +1,34 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos4x12-pinctrl: Correct pin configuration of
- SD 4
-Date: Mon, 11 Feb 2013 11:26:09 +0100
-Message-ID: <2881673.R8geCWDSpT@amdc1227>
-References: <1360578073-16207-1-git-send-email-s.shirish@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 04/12] clocksource: samsung-time: Move samsung-time.h
+ header to include/linux
+Date: Mon, 11 Feb 2013 10:36:02 +0000
+Message-ID: <20130211103602.GB32455@e106331-lin.cambridge.arm.com>
+References: <1360502423-2246-1-git-send-email-tomasz.figa@gmail.com>
+ <1360502423-2246-5-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34353 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755053Ab3BKK0P (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Feb 2013 05:26:15 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI100AX3WZGTK50@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 11 Feb 2013 19:26:14 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MI1004NFWZO2Q10@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 11 Feb 2013 19:26:14 +0900 (KST)
-In-reply-to: <1360578073-16207-1-git-send-email-s.shirish@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1360502423-2246-5-git-send-email-tomasz.figa@gmail.com>
+Content-Disposition: inline
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "arhuaco@freaks-unidos.net" <arhuaco@freaks-unidos.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "kwangwoo.lee@gmail.com" <kwangwoo.lee@gmail.com>, "guillaume.gourat@nexvision.tv" <guillaume.gourat@nexvision.tv>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "mcuelenaere@gmail.com" <mcuelenaere@gmail.com>, "jekhor@gmail.com" <jekhor@gmail.com>, "danders@amltd.com" <danders@amltd.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "bhmin@samsung.com" <bhmin@samsung.com>, "jacmet@sunsite.dk" <jacmet@sunsite.dk>, "augulis.darius@gmail.com" <augulis.darius@gmail.com>, "christer@weinigel.se" <christer@weinigel.se>, "linux@simtec.co.uk" <linux@simtec.co.uk>, "ghcstop@gmail.com" <ghcstop@gmail.com>, Sylwester
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shirish S <s.shirish@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Monday 11 of February 2013 05:21:13 Shirish S wrote:
-> This patch corrects the pin function value of sd4_bus8 from 3
-> to 4.
-> This is verified on origen board for testing eMMC on
-> dw_mci controller.
-> 
-> Signed-off-by: Shirish S <s.shirish@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi index 8e6115a..099cec7
-> 100644
-> --- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> @@ -661,7 +661,7 @@
-> 
->  		sd4_bus8: sd4-bus-width8 {
->  			samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
-> -			samsung,pin-function = <3>;
-> +			samsung,pin-function = <4>;
->  			samsung,pin-pud = <4>;
->  			samsung,pin-drv = <3>;
->  		};
+On Sun, Feb 10, 2013 at 01:20:15PM +0000, Tomasz Figa wrote:
+> This patch moves the samsung-time.h header file to include/linux
+> directory and fixes all references to it.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Perhaps include/clocksource would be better?
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+Thanks,
+Mark.
