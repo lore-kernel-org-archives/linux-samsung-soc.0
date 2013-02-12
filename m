@@ -1,557 +1,214 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: [PATCH] ARM: exynos: move exynos4210-combiner to drivers/irqchip
-Date: Tue, 12 Feb 2013 16:04:52 -0600
-Message-ID: <1360706692-13622-1-git-send-email-robherring2@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, arm@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, linux-samsung-soc@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v4 02/10] s5p-fimc: Add device tree support for FIMC devices
+Date: Tue, 12 Feb 2013 23:39:35 +0100
+Message-ID: <511AC4A7.7030706@gmail.com>
+References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-3-git-send-email-s.nawrocki@samsung.com> <5112E9EF.8090908@wwwdotorg.org> <5115874A.6050406@gmail.com> <51158873.3060508@wwwdotorg.org> <511592B4.5050406@gmail.com> <5115991E.7050009@wwwdotorg.org> <5116CDBB.4080807@gmail.com> <511967AC.7030909@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f173.google.com ([209.85.215.173]:57857 "EHLO
+	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752140Ab3BLWjk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Feb 2013 17:39:40 -0500
+In-Reply-To: <511967AC.7030909@wwwdotorg.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Rob Herring <rob.herring@calxeda.com>
+On 02/11/2013 10:50 PM, Stephen Warren wrote:
+> On 02/09/2013 03:29 PM, Sylwester Nawrocki wrote:
+>> On 02/09/2013 01:32 AM, Stephen Warren wrote:
+>>> On 02/08/2013 05:05 PM, Sylwester Nawrocki wrote:
+>>>> On 02/09/2013 12:21 AM, Stephen Warren wrote:
+>>>>> On 02/08/2013 04:16 PM, Sylwester Nawrocki wrote:
+>>>>>> On 02/07/2013 12:40 AM, Stephen Warren wrote:
+>>>>>>>> diff --git
+>>>>>>>> a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
+>>>>>>>> b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
+>>>>>>>
+>>>>>>>> +Samsung S5P/EXYNOS SoC Camera Subsystem (FIMC)
+>>>>>>>> +----------------------------------------------
+>>>>> ...
+>>>>>>>> +For every fimc node a numbered alias should be present in the
+>>>>>>>> aliases node.
+>>>>>>>> +Aliases are of the form fimc<n>, where<n>     is an integer (0...N)
+>>>>>>>> specifying
+>>>>>>>> +the IP's instance index.
+> ...
+>>>> Different compatible values might not work, when for example there
+>>>> are 3 IPs out of 4 of one type and the fourth one of another type.
+>>>> It wouldn't even by really different types, just quirks/little
+>>>> differences between them, e.g. no data path routed to one of other IPs.
+>>>
+>>> I was thinking of using feature-/quirk-oriented properties. For example,
+>>> if there's a port on 3 of the 4 devices to connect to some other IP
+>>> block, simply include a boolean property to indicate whether that port
+>>> is present. It would be in 3 of the nodes but not the 4th.
+>>
+>> Yes, I could add several properties corresponding to all members of this
+>> [3] data structure. But still it is needed to clearly identify the IP
+>> block in a set of the hardware instances.
+>
+> Why? What decisions will be made based on the identify of the IP block
+> instance that wouldn't be covered by DT properties that describe which
+> features/bugs/... the IP block instance has?
 
-Exynos boot is broken with commit 0529e315 (ARM: use common irqchip_init
-for GIC init). This commit split the irqchip initialization into 2 calls
-to of_irq_init. This does not work because of_irq_init requires interrupt
-parents to be in the match list.
+The whole subsystem topology is exposed to user space through the Media
+Controller API. Although the user space libraries/applications using
+this driver are not much concerned how the hardware is represented
+internally in the kernel, some properties of the media entities seen
+in user space are derived from the hardware details, e.g. the media entity
+names contain index of a corresponding IP block. Please see [1] for
+an example of a topology exposed by the driver.
 
-Rather than reverting exynos changes, make it do the proper thing by using
-IRQCHIP_DECLARE. This requires moving the combiner code to drivers/irqchip.
+Since different H/W instances have different capabilities, user space
+libraries/plugins can be coded to e.g. use one instance for video playback
+post-processing and another for camera capture. The capabilities could be
+also discovered with the V4L2 API to some level of detail. But still
+assigning random entity names to the IP blocks has a potential of breaking
+user space or causing some malfunctions.
 
-Reported-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Rob Herring <rob.herring@calxeda.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-samsung-soc@vger.kernel.org
----
+Perhaps I should just use a custom properties like "samsung,fimc-id" ?
+I tried to represent some intra-soc data routing details with our common
+video interfaces bindings and it really looked like a lot of unnecessary
+nodes, with 11 camera sub-device nodes required to cover a front a rear
+facing camera. Some details can be just coded in the driver, especially
+that newer SoCs will get a new driver anyway, since there are huge
+differences between the media subsystem architecture across subsequent
+SoC revisions.
 
-I thought there may be other platforms broken in the same way, but I
-checked and exynos is the only one.
+[1] http://www.spinics.net/lists/linux-media/attachments/psPhA96YX70U.ps
 
-This is based on my gic/vic irqchip branch in arm-soc.
+>>>> Then to connect e.g. MIPI-CSIS.0 to FIMC.2 at run time an index of the
+>>>> MIPI-CSIS needs to be written to the FIMC.2 data input control register.
+>>>> Even though MIPI-CSIS.N are same in terms of hardware structure they
+>>>> still
+>>>> need to be distinguished as separate instances.
+>>>
+>>> Oh, so you're using the alias ID as the value to write into the FIMC.2
+>>> register for that. I'm not 100% familiar with aliases, but they seem
+>>> like a more user-oriented naming thing to me, whereas values for hooking
+>>> up intra-SoC routing are an unrelated namespace semantically, even if
+>>> the values happen to line up right now. Perhaps rather than a Boolean
+>>> property I mentioned above, use a custom property to indicate the ID
+>>> that the FIMC.2 object knows the MIPI-CSIS.0 object as? While this seems
+>>
+>> That could be 'reg' property in the MIPI-CSIS.0 'port' subnode that
+>> links it to the image sensor node ([4], line 165). Because MIPI-CSIS IP
+>> blocks are immutably connected to the SoC camera physical MIPI CSI-2
+>> interfaces, and the physical camera ports have fixed assignment to the
+>> MIPI-CSIS devices..  This way we could drop alias ID for the MIPI-CSIS
+>> nodes. And their instance index that is required for the top level
+>> driver which exposes topology and the routing capabilities to user space
+>> could be restored from the reg property value by subtracting a fixed
+>> offset.
+>
+> I suppose that would work. It feels a little indirect, and I think means
+> that the driver needs to go find some child node defining its end of
+> some link, then find the node representing the other end of the link,
+> then read properties out of that other node to find the value. That
+> seems a little unusual, but I guess it would work. I'm not sure of the
+> long-term implications of doing that kind of thing. You'd want to run
+> the idea past some DT maintainers/experts.
 
-Rob
+It's a bit simpler than that. We would need only to look for the reg
+property in a local port subnode. MIPI-CSIS correspond to physical MIPI
+CSI-2 bus interface of an SoC, hence it has to have specific reg values
+that identify each camera input interface.
 
- arch/arm/mach-exynos/common.c     |  218 +----------------------------------
- arch/arm/mach-exynos/common.h     |    3 +
- drivers/irqchip/Makefile          |    1 +
- drivers/irqchip/exynos-combiner.c |  230 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 236 insertions(+), 216 deletions(-)
- create mode 100644 drivers/irqchip/exynos-combiner.c
+csis { /* MIPI CSI-2 Slave */
+     ...
+     port {
+         reg = <1>;  /* e.g. MIPI-CSIS.1 */
+         csis_ep: endpoint {
+             remote-endpoint = <&img_sensor_ep>;
+         }	
+     };
+};
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 4ea80bc..50577b6 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -12,6 +12,7 @@
- #include <linux/kernel.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-+#include <linux/irqchip.h>
- #include <linux/io.h>
- #include <linux/device.h>
- #include <linux/gpio.h>
-@@ -439,218 +440,6 @@ static void __init exynos5_init_clocks(int xtal)
- #endif
- }
- 
--#define COMBINER_ENABLE_SET	0x0
--#define COMBINER_ENABLE_CLEAR	0x4
--#define COMBINER_INT_STATUS	0xC
--
--static DEFINE_SPINLOCK(irq_controller_lock);
--
--struct combiner_chip_data {
--	unsigned int irq_offset;
--	unsigned int irq_mask;
--	void __iomem *base;
--};
--
--static struct irq_domain *combiner_irq_domain;
--static struct combiner_chip_data combiner_data[MAX_COMBINER_NR];
--
--static inline void __iomem *combiner_base(struct irq_data *data)
--{
--	struct combiner_chip_data *combiner_data =
--		irq_data_get_irq_chip_data(data);
--
--	return combiner_data->base;
--}
--
--static void combiner_mask_irq(struct irq_data *data)
--{
--	u32 mask = 1 << (data->hwirq % 32);
--
--	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_CLEAR);
--}
--
--static void combiner_unmask_irq(struct irq_data *data)
--{
--	u32 mask = 1 << (data->hwirq % 32);
--
--	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_SET);
--}
--
--static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
--{
--	struct combiner_chip_data *chip_data = irq_get_handler_data(irq);
--	struct irq_chip *chip = irq_get_chip(irq);
--	unsigned int cascade_irq, combiner_irq;
--	unsigned long status;
--
--	chained_irq_enter(chip, desc);
--
--	spin_lock(&irq_controller_lock);
--	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
--	spin_unlock(&irq_controller_lock);
--	status &= chip_data->irq_mask;
--
--	if (status == 0)
--		goto out;
--
--	combiner_irq = __ffs(status);
--
--	cascade_irq = combiner_irq + (chip_data->irq_offset & ~31);
--	if (unlikely(cascade_irq >= NR_IRQS))
--		do_bad_IRQ(cascade_irq, desc);
--	else
--		generic_handle_irq(cascade_irq);
--
-- out:
--	chained_irq_exit(chip, desc);
--}
--
--static struct irq_chip combiner_chip = {
--	.name		= "COMBINER",
--	.irq_mask	= combiner_mask_irq,
--	.irq_unmask	= combiner_unmask_irq,
--};
--
--static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
--{
--	unsigned int max_nr;
--
--	if (soc_is_exynos5250())
--		max_nr = EXYNOS5_MAX_COMBINER_NR;
--	else
--		max_nr = EXYNOS4_MAX_COMBINER_NR;
--
--	if (combiner_nr >= max_nr)
--		BUG();
--	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
--		BUG();
--	irq_set_chained_handler(irq, combiner_handle_cascade_irq);
--}
--
--static void __init combiner_init_one(unsigned int combiner_nr,
--				     void __iomem *base)
--{
--	combiner_data[combiner_nr].base = base;
--	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
--		combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
--	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
--
--	/* Disable all interrupts */
--	__raw_writel(combiner_data[combiner_nr].irq_mask,
--		     base + COMBINER_ENABLE_CLEAR);
--}
--
--#ifdef CONFIG_OF
--static int combiner_irq_domain_xlate(struct irq_domain *d,
--				     struct device_node *controller,
--				     const u32 *intspec, unsigned int intsize,
--				     unsigned long *out_hwirq,
--				     unsigned int *out_type)
--{
--	if (d->of_node != controller)
--		return -EINVAL;
--
--	if (intsize < 2)
--		return -EINVAL;
--
--	*out_hwirq = intspec[0] * MAX_IRQ_IN_COMBINER + intspec[1];
--	*out_type = 0;
--
--	return 0;
--}
--#else
--static int combiner_irq_domain_xlate(struct irq_domain *d,
--				     struct device_node *controller,
--				     const u32 *intspec, unsigned int intsize,
--				     unsigned long *out_hwirq,
--				     unsigned int *out_type)
--{
--	return -EINVAL;
--}
--#endif
--
--static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
--				   irq_hw_number_t hw)
--{
--	irq_set_chip_and_handler(irq, &combiner_chip, handle_level_irq);
--	irq_set_chip_data(irq, &combiner_data[hw >> 3]);
--	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
--
--	return 0;
--}
--
--static struct irq_domain_ops combiner_irq_domain_ops = {
--	.xlate	= combiner_irq_domain_xlate,
--	.map	= combiner_irq_domain_map,
--};
--
--static void __init combiner_init(void __iomem *combiner_base,
--				 struct device_node *np)
--{
--	int i, irq, irq_base;
--	unsigned int max_nr, nr_irq;
--
--	if (np) {
--		if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
--			pr_warning("%s: number of combiners not specified, "
--				"setting default as %d.\n",
--				__func__, EXYNOS4_MAX_COMBINER_NR);
--			max_nr = EXYNOS4_MAX_COMBINER_NR;
--		}
--	} else {
--		max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
--						EXYNOS4_MAX_COMBINER_NR;
--	}
--	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
--
--	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
--	if (IS_ERR_VALUE(irq_base)) {
--		irq_base = COMBINER_IRQ(0, 0);
--		pr_warning("%s: irq desc alloc failed. Continuing with %d as linux irq base\n", __func__, irq_base);
--	}
--
--	combiner_irq_domain = irq_domain_add_legacy(np, nr_irq, irq_base, 0,
--				&combiner_irq_domain_ops, &combiner_data);
--	if (WARN_ON(!combiner_irq_domain)) {
--		pr_warning("%s: irq domain init failed\n", __func__);
--		return;
--	}
--
--	for (i = 0; i < max_nr; i++) {
--		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
--		irq = IRQ_SPI(i);
--#ifdef CONFIG_OF
--		if (np)
--			irq = irq_of_parse_and_map(np, i);
--#endif
--		combiner_cascade_irq(i, irq);
--	}
--}
--
--#ifdef CONFIG_OF
--static int __init combiner_of_init(struct device_node *np,
--				   struct device_node *parent)
--{
--	void __iomem *combiner_base;
--
--	combiner_base = of_iomap(np, 0);
--	if (!combiner_base) {
--		pr_err("%s: failed to map combiner registers\n", __func__);
--		return -ENXIO;
--	}
--
--	combiner_init(combiner_base, np);
--
--	return 0;
--}
--
--static const struct of_device_id exynos_dt_irq_match[] = {
--	{ .compatible = "samsung,exynos4210-combiner",
--			.data = combiner_of_init, },
--	{},
--};
--#endif
--
- void __init exynos4_init_irq(void)
- {
- 	unsigned int gic_bank_offset;
-@@ -660,10 +449,8 @@ void __init exynos4_init_irq(void)
- 	if (!of_have_populated_dt())
- 		gic_init_bases(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU, gic_bank_offset, NULL);
- #ifdef CONFIG_OF
--	else {
-+	else
- 		irqchip_init();
--		of_irq_init(exynos_dt_irq_match);
--	}
- #endif
- 
- 	if (!of_have_populated_dt())
-@@ -681,7 +468,6 @@ void __init exynos5_init_irq(void)
- {
- #ifdef CONFIG_OF
- 	irqchip_init();
--	of_irq_init(exynos_dt_irq_match);
- #endif
- 	/*
- 	 * The parameters of s5p_init_irq() are for VIC init.
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 04744f9..29196d7 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -60,6 +60,9 @@ void exynos4212_register_clocks(void);
- #define exynos4212_register_clocks()
- #endif
- 
-+struct device_node;
-+void combiner_init(void __iomem *combiner_base, struct device_node *np);
-+
- extern struct smp_operations exynos_smp_ops;
- 
- extern void exynos_cpu_die(unsigned int cpu);
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 0fb8655..e65fbf2 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -1,6 +1,7 @@
- obj-$(CONFIG_IRQCHIP)			+= irqchip.o
- 
- obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
-+obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
- obj-$(CONFIG_ARCH_SUNXI)		+= irq-sunxi.o
- obj-$(CONFIG_ARCH_SPEAR3XX)		+= spear-shirq.o
- obj-$(CONFIG_ARM_GIC)			+= irq-gic.o
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-new file mode 100644
-index 0000000..04d86a9
---- /dev/null
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -0,0 +1,230 @@
-+/*
-+ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Combiner irqchip for EXYNOS
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/err.h>
-+#include <linux/export.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/irqdomain.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <asm/mach/irq.h>
-+
-+#include <plat/cpu.h>
-+
-+#include "irqchip.h"
-+
-+#define COMBINER_ENABLE_SET	0x0
-+#define COMBINER_ENABLE_CLEAR	0x4
-+#define COMBINER_INT_STATUS	0xC
-+
-+static DEFINE_SPINLOCK(irq_controller_lock);
-+
-+struct combiner_chip_data {
-+	unsigned int irq_offset;
-+	unsigned int irq_mask;
-+	void __iomem *base;
-+};
-+
-+static struct irq_domain *combiner_irq_domain;
-+static struct combiner_chip_data combiner_data[MAX_COMBINER_NR];
-+
-+static inline void __iomem *combiner_base(struct irq_data *data)
-+{
-+	struct combiner_chip_data *combiner_data =
-+		irq_data_get_irq_chip_data(data);
-+
-+	return combiner_data->base;
-+}
-+
-+static void combiner_mask_irq(struct irq_data *data)
-+{
-+	u32 mask = 1 << (data->hwirq % 32);
-+
-+	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_CLEAR);
-+}
-+
-+static void combiner_unmask_irq(struct irq_data *data)
-+{
-+	u32 mask = 1 << (data->hwirq % 32);
-+
-+	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_SET);
-+}
-+
-+static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
-+{
-+	struct combiner_chip_data *chip_data = irq_get_handler_data(irq);
-+	struct irq_chip *chip = irq_get_chip(irq);
-+	unsigned int cascade_irq, combiner_irq;
-+	unsigned long status;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	spin_lock(&irq_controller_lock);
-+	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
-+	spin_unlock(&irq_controller_lock);
-+	status &= chip_data->irq_mask;
-+
-+	if (status == 0)
-+		goto out;
-+
-+	combiner_irq = __ffs(status);
-+
-+	cascade_irq = combiner_irq + (chip_data->irq_offset & ~31);
-+	if (unlikely(cascade_irq >= NR_IRQS))
-+		do_bad_IRQ(cascade_irq, desc);
-+	else
-+		generic_handle_irq(cascade_irq);
-+
-+ out:
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static struct irq_chip combiner_chip = {
-+	.name		= "COMBINER",
-+	.irq_mask	= combiner_mask_irq,
-+	.irq_unmask	= combiner_unmask_irq,
-+};
-+
-+static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
-+{
-+	unsigned int max_nr;
-+
-+	if (soc_is_exynos5250())
-+		max_nr = EXYNOS5_MAX_COMBINER_NR;
-+	else
-+		max_nr = EXYNOS4_MAX_COMBINER_NR;
-+
-+	if (combiner_nr >= max_nr)
-+		BUG();
-+	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
-+		BUG();
-+	irq_set_chained_handler(irq, combiner_handle_cascade_irq);
-+}
-+
-+static void __init combiner_init_one(unsigned int combiner_nr,
-+				     void __iomem *base)
-+{
-+	combiner_data[combiner_nr].base = base;
-+	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
-+		combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
-+	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
-+
-+	/* Disable all interrupts */
-+	__raw_writel(combiner_data[combiner_nr].irq_mask,
-+		     base + COMBINER_ENABLE_CLEAR);
-+}
-+
-+#ifdef CONFIG_OF
-+static int combiner_irq_domain_xlate(struct irq_domain *d,
-+				     struct device_node *controller,
-+				     const u32 *intspec, unsigned int intsize,
-+				     unsigned long *out_hwirq,
-+				     unsigned int *out_type)
-+{
-+	if (d->of_node != controller)
-+		return -EINVAL;
-+
-+	if (intsize < 2)
-+		return -EINVAL;
-+
-+	*out_hwirq = intspec[0] * MAX_IRQ_IN_COMBINER + intspec[1];
-+	*out_type = 0;
-+
-+	return 0;
-+}
-+#else
-+static int combiner_irq_domain_xlate(struct irq_domain *d,
-+				     struct device_node *controller,
-+				     const u32 *intspec, unsigned int intsize,
-+				     unsigned long *out_hwirq,
-+				     unsigned int *out_type)
-+{
-+	return -EINVAL;
-+}
-+#endif
-+
-+static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
-+				   irq_hw_number_t hw)
-+{
-+	irq_set_chip_and_handler(irq, &combiner_chip, handle_level_irq);
-+	irq_set_chip_data(irq, &combiner_data[hw >> 3]);
-+	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+
-+	return 0;
-+}
-+
-+static struct irq_domain_ops combiner_irq_domain_ops = {
-+	.xlate	= combiner_irq_domain_xlate,
-+	.map	= combiner_irq_domain_map,
-+};
-+
-+void __init combiner_init(void __iomem *combiner_base,
-+			  struct device_node *np)
-+{
-+	int i, irq, irq_base;
-+	unsigned int max_nr, nr_irq;
-+
-+	if (np) {
-+		if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
-+			pr_warning("%s: number of combiners not specified, "
-+				"setting default as %d.\n",
-+				__func__, EXYNOS4_MAX_COMBINER_NR);
-+			max_nr = EXYNOS4_MAX_COMBINER_NR;
-+		}
-+	} else {
-+		max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
-+						EXYNOS4_MAX_COMBINER_NR;
-+	}
-+	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
-+
-+	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
-+	if (IS_ERR_VALUE(irq_base)) {
-+		irq_base = COMBINER_IRQ(0, 0);
-+		pr_warning("%s: irq desc alloc failed. Continuing with %d as linux irq base\n", __func__, irq_base);
-+	}
-+
-+	combiner_irq_domain = irq_domain_add_legacy(np, nr_irq, irq_base, 0,
-+				&combiner_irq_domain_ops, &combiner_data);
-+	if (WARN_ON(!combiner_irq_domain)) {
-+		pr_warning("%s: irq domain init failed\n", __func__);
-+		return;
-+	}
-+
-+	for (i = 0; i < max_nr; i++) {
-+		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
-+		irq = IRQ_SPI(i);
-+#ifdef CONFIG_OF
-+		if (np)
-+			irq = irq_of_parse_and_map(np, i);
-+#endif
-+		combiner_cascade_irq(i, irq);
-+	}
-+}
-+
-+#ifdef CONFIG_OF
-+static int __init combiner_of_init(struct device_node *np,
-+				   struct device_node *parent)
-+{
-+	void __iomem *combiner_base;
-+
-+	combiner_base = of_iomap(np, 0);
-+	if (!combiner_base) {
-+		pr_err("%s: failed to map combiner registers\n", __func__);
-+		return -ENXIO;
-+	}
-+
-+	combiner_init(combiner_base, np);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(exynos4210_combiner, "samsung,exynos4210-combiner",
-+		combiner_of_init);
-+#endif
--- 
-1.7.10.4
+i2c-controller {
+     ...
+     image-sensor {  /* MIPI CSI-2 Master */
+         ...
+         port {
+             img_sensor_ep: endpoint {
+                 remote-endpoint = <&csis_ep>;
+             }	
+         };
+     };
+};
+
+Naturally the image-sensor node represents a device external to an SoC.
+
+> ...
+>> I can see aliases used in bindings of multiple devices: uart, spi, sound
+>> interfaces, gpio, ... And all bindings seem to impose some rules on how
+>> their aliases are created.
+>
+> Do you have specific examples? I really don't think the bindings should
+> be dictating the alias values.
+
+I just grepped through the existing bindings documentation:
+
+gpio/gpio-mxs.txt:Note: Each GPIO port should have an alias correctly 
+numbered in "aliases"
+gpio/gpio-mxs.txt-node.
+
+serial/fsl-imx-uart.txt:Note: Each uart controller should have an alias 
+correctly numbered
+serial/fsl-imx-uart.txt:in "aliases" node.
+
+mmc/synopsis-dw-mshc.txt:- All the MSHC controller nodes should be 
+represented in the aliases node using
+mmc/synopsis-dw-mshc.txt:  the following format 'mshc{n}' where n is a 
+unique number for the alias.
+
+sound/mxs-saif.txt:Note: Each SAIF controller should have an alias 
+correctly numbered
+sound/mxs-saif.txt:in "aliases" node.
+
+spi/spi-samsung.txt:- All the SPI controller nodes should be represented 
+in the aliases node using
+spi/spi-samsung.txt:  the following format 'spi{n}' where n is a unique 
+number for the alias.
+
+tty/serial/fsl-mxs-auart.txt:Note: Each auart port should have an alias 
+correctly numbered in "aliases"
+tty/serial/fsl-mxs-auart.txt-node.
+
+powerpc/fsl/mpic-msgr.txt:    An alias should be created for every 
+message register block.  They are not
+powerpc/fsl/mpic-msgr.txt-    required, though.  However, a particular 
+implementation of this binding
+powerpc/fsl/mpic-msgr.txt:    may require aliases to be present. 
+Aliases are of the form
+powerpc/fsl/mpic-msgr.txt-    'mpic-msgr-block<n>', where <n> is an 
+integer specifying the block's number.
+powerpc/fsl/mpic-msgr.txt-    Numbers shall start at 0.
+
+I think "correctly numbered" in the above statements means there are some
+specific rules on how the aliases are created, however those seem not
+clearly communicated.
+
+And there is a new patch series that allows I2C bus controller enumeration
+by means of the aliases:
+
+http://www.spinics.net/lists/arm-kernel/msg224162.html
+
+>>> After all, what happens in some later SoC where you have two different
+>>> types of module that feed into the common module, such that type A
+>>> sources have IDs 0..3 in the common module, and type B sources have IDs
+>>> 4..7 in the common module - you wouldn't want to require alias ISs 4..7
+>>> for the type B DT nodes.
+>>
+>> There is no need to write alias ID directly into registers, and actually
+>> it doesn't really happen. But we need to know that, for example camera A
+>> is connected to physical MIPI CSI-2 channel 0 and to capture video with
+>> DMA engine of FIMC.2 we need to set FIMC.2 input register to link it to
+>> MIPI-CSIS 0.
+>
+> OK, so the IDs are selecting which register to write, or which mux
+> settings to access. That's pretty much semantically the same thing.
