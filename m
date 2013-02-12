@@ -1,112 +1,132 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 00/10] ARM: S3C24XX: irq rework for S3C2412,
- S3C2440 and S3C2442
-Date: Tue, 12 Feb 2013 11:13:29 -0800
-Message-ID: <1d8801ce0955$0bef8600$23ce9200$@samsung.com>
-References: <201302091811.05437.heiko@sntech.de>
+Subject: RE: [PATCH] arm: plat-samsung: check soc ids before l2x0 cache
+ restoration in resume
+Date: Tue, 12 Feb 2013 11:27:14 -0800
+Message-ID: <1d9501ce0956$f7ce4150$e76ac3f0$@samsung.com>
+References: <1358843109-11072-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17049 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933695Ab3BLTNu convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13044 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932189Ab3BLT1g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Feb 2013 14:13:50 -0500
+	Tue, 12 Feb 2013 14:27:36 -0500
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI400DEGG2XVFA0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 04:13:49 +0900 (KST)
+ 17 2011)) with ESMTP id <0MI4000LGGPYPE10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 04:27:34 +0900 (KST)
 Received: from visitor4lab ([105.128.18.157])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MI4000UTG2Z3K30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 04:13:49 +0900 (KST)
-In-reply-to: <201302091811.05437.heiko@sntech.de>
+ with ESMTPA id <0MI4000RSGPW2040@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 04:27:34 +0900 (KST)
+In-reply-to: <1358843109-11072-1-git-send-email-inderpal.singh@linaro.org>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Inderpal Singh' <inderpal.singh@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: patches@linaro.org
 
-Heiko St=C3=BCbner wrote:
->=20
-> This series finishes the irq rework by moving the irqs for s3c2412, s=
-3c2440
-> and s3c2442 into the new structure.
->=20
-> Now the only open point is the different handling of the eint0 to ein=
-t3
-> interrupts on the s3c2412. On this SoC these interrupts are represent=
-ed
-> in both the main register and the eint register and also need to be h=
-andled
-> in both.
->=20
-> As this should be handlable via the new structure, I'm still investig=
-ating
-> the right way to do it. Therefore the override of the eint0 to eint3
-> interrupts will still remain for a bit.
->=20
-> As I lack the relevant hardware, this series is compile tested only, =
-but as
-> the used mechanisms are the same as with the s3c2416, there shouldn't=
- be
-> any complications.
->=20
-> This series applies on top of the moved s3c24XX.h headers into the
-> common.h
-> file in mach-s3c24xx.
->=20
-> changes since v1:
-> - included the changes for the s3c2412
->=20
-> Heiko Stuebner (10):
->   ARM: S3C24XX: move s3c244x irq init to common irq code
->   ARM: S3C24XX: create dedicated irq init functions for s3c2440 and s=
-3c2442
->   ARM: S3C24XX: move s3c2440 irqs to common irq code
->   ARM: S3C24XX: integrate s3c2440 irqs into common init
->   ARM: S3C24XX: transform s3c2442 irqs into new structure
->   ARM: S3C24XX: transform s3c2440 irqs into new structure
->   ARM: S3C24XX: use samsung_sync_wakemask in s3c2412 pm
->   ARM: S3C24XX: move s3c2412 irq init to common code
->   ARM: S3C24XX: modify s3c2412 irq init to initialize all irqs
->   ARM: S3C24XX: transform s3c2412 irqs into new structure
->=20
->  arch/arm/mach-s3c24xx/Kconfig          |    1 +
->  arch/arm/mach-s3c24xx/Makefile         |    6 +-
->  arch/arm/mach-s3c24xx/common.h         |    3 +
->  arch/arm/mach-s3c24xx/irq-s3c2412.c    |  215 ----------------------=
--
->  arch/arm/mach-s3c24xx/irq-s3c2440.c    |  128 --------------
->  arch/arm/mach-s3c24xx/irq-s3c244x.c    |  142 ---------------
->  arch/arm/mach-s3c24xx/irq.c            |  299
-> ++++++++++++++++++++++++++++++++
->  arch/arm/mach-s3c24xx/mach-anubis.c    |    2 +-
->  arch/arm/mach-s3c24xx/mach-at2440evb.c |    2 +-
->  arch/arm/mach-s3c24xx/mach-gta02.c     |    2 +-
->  arch/arm/mach-s3c24xx/mach-jive.c      |    2 +-
->  arch/arm/mach-s3c24xx/mach-mini2440.c  |    2 +-
->  arch/arm/mach-s3c24xx/mach-nexcoder.c  |    2 +-
->  arch/arm/mach-s3c24xx/mach-osiris.c    |    2 +-
->  arch/arm/mach-s3c24xx/mach-rx1950.c    |    2 +-
->  arch/arm/mach-s3c24xx/mach-rx3715.c    |    7 +-
->  arch/arm/mach-s3c24xx/mach-smdk2413.c  |    6 +-
->  arch/arm/mach-s3c24xx/mach-smdk2440.c  |    2 +-
->  arch/arm/mach-s3c24xx/mach-vstms.c     |    2 +-
->  arch/arm/mach-s3c24xx/pm-s3c2412.c     |    8 +
->  20 files changed, 328 insertions(+), 507 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2412.c
->  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c2440.c
->  delete mode 100644 arch/arm/mach-s3c24xx/irq-s3c244x.c
->=20
+Inderpal Singh wrote:
+> 
+> Only exynos4 based platforms have l2x0 cache controller. Hence check
+> the same before restoring the cache in resume.
+> 
+I think, the code can determine by checking ARM main ID cp15 register
+instead of Chip ID. Because if so, we don't need to do something for ahother
+EXYNOS4 SoCs next time.
+
+> This is needed for single kernel image.
+> 
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> ---
+>  arch/arm/mach-exynos/common.c           |    2 ++
+>  arch/arm/plat-samsung/include/plat/pm.h |    1 +
+>  arch/arm/plat-samsung/s5p-sleep.S       |   28
+> ++++++++++++++++++++++++++++
+>  3 files changed, 31 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-
+> exynos/common.c
+> index cdaa55f..ab7ca00 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -796,6 +796,8 @@ static int __init exynos4_l2x0_cache_init(void)
+>  	if (soc_is_exynos5250() || soc_is_exynos5440())
+>  		return 0;
+> 
+> +	s5p_cpu = samsung_cpu_id & EXYNOS4_CPU_MASK;
+> +
+>  	ret = l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
+>  	if (!ret) {
+>  		l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
+> diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-
+> samsung/include/plat/pm.h
+> index 887a0c9..285c8c8 100644
+> --- a/arch/arm/plat-samsung/include/plat/pm.h
+> +++ b/arch/arm/plat-samsung/include/plat/pm.h
+> @@ -190,3 +190,4 @@ extern void samsung_pm_save_gpios(void);
+> 
+>  extern void s3c_pm_save_core(void);
+>  extern void s3c_pm_restore_core(void);
+> +extern unsigned long s5p_cpu;
+> diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-
+> samsung/s5p-sleep.S
+> index bdf6dad..006d35f 100644
+> --- a/arch/arm/plat-samsung/s5p-sleep.S
+> +++ b/arch/arm/plat-samsung/s5p-sleep.S
+> @@ -25,6 +25,15 @@
+>  #include <asm/asm-offsets.h>
+>  #include <asm/hardware/cache-l2x0.h>
+> 
+> +#define EXYNOS4210_CPU_ID	0x43210000
+> +#define EXYNOS4212_CPU_ID	0x43220000
+> +#define EXYNOS4412_CPU_ID	0xE4412200
+> +#define EXYNOS4_CPU_MASK	0xFFFE0000
+> +
+> +#define EXYNOS4210_CPU		(EXYNOS4210_CPU_ID &
+> EXYNOS4_CPU_MASK)
+> +#define EXYNOS4212_CPU		(EXYNOS4212_CPU_ID &
+> EXYNOS4_CPU_MASK)
+> +#define EXYNOS4412_CPU		(EXYNOS4412_CPU_ID &
+> EXYNOS4_CPU_MASK)
+> +
+>  /*
+>   *	 The following code is located into the .data section. This is to
+>   *	 allow l2x0_regs_phys to be accessed with a relative load while we
+> @@ -51,6 +60,22 @@
+> 
+>  ENTRY(s3c_cpu_resume)
+>  #ifdef CONFIG_CACHE_L2X0
+> +	adr	r0, s5p_cpu
+> +	ldr	r1, [r0]
+> +
+> +	ldr	r0, =EXYNOS4210_CPU
+> +	cmp	r1, r0
+> +	beq	continue
+> +
+> +	ldr	r0, =EXYNOS4212_CPU
+> +	cmp	r1, r0
+> +	beq	continue
+> +
+> +	ldr	r0, =EXYNOS4412_CPU
+> +	cmp	r1, r0
+> +	bne	resume_l2on
+> +
+> +continue:
+>  	adr	r0, l2x0_regs_phys
+>  	ldr	r0, [r0]
+>  	ldr	r1, [r0, #L2X0_R_PHY_BASE]
+> @@ -77,4 +102,7 @@ ENDPROC(s3c_cpu_resume)
+>  	.globl l2x0_regs_phys
+>  l2x0_regs_phys:
+>  	.long	0
+> +	.globl s5p_cpu
+> +s5p_cpu:
+> +	.long	0
+>  #endif
 > --
-> 1.7.2.3
-
-Applied, this whole series and integration 2412 eint handling.
-
-Thanks for your time and support.
-
-- Kukjin
+> 1.7.9.5
