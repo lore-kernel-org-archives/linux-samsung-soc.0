@@ -1,132 +1,221 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] arm: plat-samsung: check soc ids before l2x0 cache
- restoration in resume
-Date: Tue, 12 Feb 2013 11:27:14 -0800
-Message-ID: <1d9501ce0956$f7ce4150$e76ac3f0$@samsung.com>
-References: <1358843109-11072-1-git-send-email-inderpal.singh@linaro.org>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH] ARM: S3C24XX: remove plat-samsung/irq.h
+Date: Tue, 12 Feb 2013 20:42:32 +0100
+Message-ID: <201302122042.32471.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:13044 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932189Ab3BLT1g (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:50807 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933161Ab3BLTmk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Feb 2013 14:27:36 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI4000LGGPYPE10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 04:27:34 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MI4000RSGPW2040@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 04:27:34 +0900 (KST)
-In-reply-to: <1358843109-11072-1-git-send-email-inderpal.singh@linaro.org>
-Content-language: en-us
+	Tue, 12 Feb 2013 14:42:40 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Inderpal Singh' <inderpal.singh@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Inderpal Singh wrote:
-> 
-> Only exynos4 based platforms have l2x0 cache controller. Hence check
-> the same before restoring the cache in resume.
-> 
-I think, the code can determine by checking ARM main ID cp15 register
-instead of Chip ID. Because if so, we don't need to do something for ahother
-EXYNOS4 SoCs next time.
+plat-samsung/irq.h did only contain functions for handling the spread out
+subirqs on s3c24xx arches, which are not needed anymore.
 
-> This is needed for single kernel image.
-> 
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
-> ---
->  arch/arm/mach-exynos/common.c           |    2 ++
->  arch/arm/plat-samsung/include/plat/pm.h |    1 +
->  arch/arm/plat-samsung/s5p-sleep.S       |   28
-> ++++++++++++++++++++++++++++
->  3 files changed, 31 insertions(+)
-> 
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-
-> exynos/common.c
-> index cdaa55f..ab7ca00 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -796,6 +796,8 @@ static int __init exynos4_l2x0_cache_init(void)
->  	if (soc_is_exynos5250() || soc_is_exynos5440())
->  		return 0;
-> 
-> +	s5p_cpu = samsung_cpu_id & EXYNOS4_CPU_MASK;
-> +
->  	ret = l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
->  	if (!ret) {
->  		l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
-> diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-
-> samsung/include/plat/pm.h
-> index 887a0c9..285c8c8 100644
-> --- a/arch/arm/plat-samsung/include/plat/pm.h
-> +++ b/arch/arm/plat-samsung/include/plat/pm.h
-> @@ -190,3 +190,4 @@ extern void samsung_pm_save_gpios(void);
-> 
->  extern void s3c_pm_save_core(void);
->  extern void s3c_pm_restore_core(void);
-> +extern unsigned long s5p_cpu;
-> diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-
-> samsung/s5p-sleep.S
-> index bdf6dad..006d35f 100644
-> --- a/arch/arm/plat-samsung/s5p-sleep.S
-> +++ b/arch/arm/plat-samsung/s5p-sleep.S
-> @@ -25,6 +25,15 @@
->  #include <asm/asm-offsets.h>
->  #include <asm/hardware/cache-l2x0.h>
-> 
-> +#define EXYNOS4210_CPU_ID	0x43210000
-> +#define EXYNOS4212_CPU_ID	0x43220000
-> +#define EXYNOS4412_CPU_ID	0xE4412200
-> +#define EXYNOS4_CPU_MASK	0xFFFE0000
-> +
-> +#define EXYNOS4210_CPU		(EXYNOS4210_CPU_ID &
-> EXYNOS4_CPU_MASK)
-> +#define EXYNOS4212_CPU		(EXYNOS4212_CPU_ID &
-> EXYNOS4_CPU_MASK)
-> +#define EXYNOS4412_CPU		(EXYNOS4412_CPU_ID &
-> EXYNOS4_CPU_MASK)
-> +
->  /*
->   *	 The following code is located into the .data section. This is to
->   *	 allow l2x0_regs_phys to be accessed with a relative load while we
-> @@ -51,6 +60,22 @@
-> 
->  ENTRY(s3c_cpu_resume)
->  #ifdef CONFIG_CACHE_L2X0
-> +	adr	r0, s5p_cpu
-> +	ldr	r1, [r0]
-> +
-> +	ldr	r0, =EXYNOS4210_CPU
-> +	cmp	r1, r0
-> +	beq	continue
-> +
-> +	ldr	r0, =EXYNOS4212_CPU
-> +	cmp	r1, r0
-> +	beq	continue
-> +
-> +	ldr	r0, =EXYNOS4412_CPU
-> +	cmp	r1, r0
-> +	bne	resume_l2on
-> +
-> +continue:
->  	adr	r0, l2x0_regs_phys
->  	ldr	r0, [r0]
->  	ldr	r1, [r0, #L2X0_R_PHY_BASE]
-> @@ -77,4 +102,7 @@ ENDPROC(s3c_cpu_resume)
->  	.globl l2x0_regs_phys
->  l2x0_regs_phys:
->  	.long	0
-> +	.globl s5p_cpu
-> +s5p_cpu:
-> +	.long	0
->  #endif
-> --
-> 1.7.9.5
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+Sorry for bringing this separate submission, but I just remembered
+it this evening.
+
+This applies on top of all the other s3c24xx irq changes and
+I think this patch will mark the end of the irq-cleanup for now.
+
+ arch/arm/mach-s3c24xx/irq-pm.c           |    7 ++-
+ arch/arm/mach-s3c24xx/irq.c              |    8 +--
+ arch/arm/plat-samsung/include/plat/irq.h |  116 ------------------------------
+ 3 files changed, 9 insertions(+), 122 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/irq.h
+
+diff --git a/arch/arm/mach-s3c24xx/irq-pm.c b/arch/arm/mach-s3c24xx/irq-pm.c
+index e119959..b91341e 100644
+--- a/arch/arm/mach-s3c24xx/irq-pm.c
++++ b/arch/arm/mach-s3c24xx/irq-pm.c
+@@ -16,10 +16,15 @@
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/syscore_ops.h>
++#include <linux/io.h>
+ 
+ #include <plat/cpu.h>
+ #include <plat/pm.h>
+-#include <plat/irq.h>
++#include <plat/map-base.h>
++#include <plat/map-s3c.h>
++
++#include <mach/regs-irq.h>
++#include <mach/regs-gpio.h>
+ 
+ #include <asm/irq.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/irq.c b/arch/arm/mach-s3c24xx/irq.c
+index debf606..3f3de74 100644
+--- a/arch/arm/mach-s3c24xx/irq.c
++++ b/arch/arm/mach-s3c24xx/irq.c
+@@ -34,7 +34,6 @@
+ #include <plat/cpu.h>
+ #include <plat/regs-irqtype.h>
+ #include <plat/pm.h>
+-#include <plat/irq.h>
+ 
+ #define S3C_IRQTYPE_NONE	0
+ #define S3C_IRQTYPE_EINT	1
+@@ -175,8 +174,7 @@ static int s3c_irqext_type_set(void __iomem *gpcon_reg,
+ 	return 0;
+ }
+ 
+-/* FIXME: make static when it's out of plat-samsung/irq.h */
+-int s3c_irqext_type(struct irq_data *data, unsigned int type)
++static int s3c_irqext_type(struct irq_data *data, unsigned int type)
+ {
+ 	void __iomem *extint_reg;
+ 	void __iomem *gpcon_reg;
+@@ -224,7 +222,7 @@ static int s3c_irqext0_type(struct irq_data *data, unsigned int type)
+ 				   extint_offset, type);
+ }
+ 
+-struct irq_chip s3c_irq_chip = {
++static struct irq_chip s3c_irq_chip = {
+ 	.name		= "s3c",
+ 	.irq_ack	= s3c_irq_ack,
+ 	.irq_mask	= s3c_irq_mask,
+@@ -232,7 +230,7 @@ struct irq_chip s3c_irq_chip = {
+ 	.irq_set_wake	= s3c_irq_wake
+ };
+ 
+-struct irq_chip s3c_irq_level_chip = {
++static struct irq_chip s3c_irq_level_chip = {
+ 	.name		= "s3c-level",
+ 	.irq_mask	= s3c_irq_mask,
+ 	.irq_unmask	= s3c_irq_unmask,
+diff --git a/arch/arm/plat-samsung/include/plat/irq.h b/arch/arm/plat-samsung/include/plat/irq.h
+deleted file mode 100644
+index e21a89b..0000000
+--- a/arch/arm/plat-samsung/include/plat/irq.h
++++ /dev/null
+@@ -1,116 +0,0 @@
+-/* linux/arch/arm/plat-samsung/include/plat/irq.h
+- *
+- * Copyright (c) 2004-2005 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * Header file for S3C24XX CPU IRQ support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/io.h>
+-
+-#include <mach/hardware.h>
+-#include <mach/regs-irq.h>
+-#include <mach/regs-gpio.h>
+-
+-#define irqdbf(x...)
+-#define irqdbf2(x...)
+-
+-#define EXTINT_OFF (IRQ_EINT4 - 4)
+-
+-/* these are exported for arch/arm/mach-* usage */
+-extern struct irq_chip s3c_irq_level_chip;
+-extern struct irq_chip s3c_irq_chip;
+-
+-static inline void s3c_irqsub_mask(unsigned int irqno,
+-				   unsigned int parentbit,
+-				   int subcheck)
+-{
+-	unsigned long mask;
+-	unsigned long submask;
+-
+-	submask = __raw_readl(S3C2410_INTSUBMSK);
+-	mask = __raw_readl(S3C2410_INTMSK);
+-
+-	submask |= (1UL << (irqno - IRQ_S3CUART_RX0));
+-
+-	/* check to see if we need to mask the parent IRQ */
+-
+-	if ((submask  & subcheck) == subcheck)
+-		__raw_writel(mask | parentbit, S3C2410_INTMSK);
+-
+-	/* write back masks */
+-	__raw_writel(submask, S3C2410_INTSUBMSK);
+-
+-}
+-
+-static inline void s3c_irqsub_unmask(unsigned int irqno,
+-				     unsigned int parentbit)
+-{
+-	unsigned long mask;
+-	unsigned long submask;
+-
+-	submask = __raw_readl(S3C2410_INTSUBMSK);
+-	mask = __raw_readl(S3C2410_INTMSK);
+-
+-	submask &= ~(1UL << (irqno - IRQ_S3CUART_RX0));
+-	mask &= ~parentbit;
+-
+-	/* write back masks */
+-	__raw_writel(submask, S3C2410_INTSUBMSK);
+-	__raw_writel(mask, S3C2410_INTMSK);
+-}
+-
+-
+-static inline void s3c_irqsub_maskack(unsigned int irqno,
+-				      unsigned int parentmask,
+-				      unsigned int group)
+-{
+-	unsigned int bit = 1UL << (irqno - IRQ_S3CUART_RX0);
+-
+-	s3c_irqsub_mask(irqno, parentmask, group);
+-
+-	__raw_writel(bit, S3C2410_SUBSRCPND);
+-
+-	/* only ack parent if we've got all the irqs (seems we must
+-	 * ack, all and hope that the irq system retriggers ok when
+-	 * the interrupt goes off again)
+-	 */
+-
+-	if (1) {
+-		__raw_writel(parentmask, S3C2410_SRCPND);
+-		__raw_writel(parentmask, S3C2410_INTPND);
+-	}
+-}
+-
+-static inline void s3c_irqsub_ack(unsigned int irqno,
+-				  unsigned int parentmask,
+-				  unsigned int group)
+-{
+-	unsigned int bit = 1UL << (irqno - IRQ_S3CUART_RX0);
+-
+-	__raw_writel(bit, S3C2410_SUBSRCPND);
+-
+-	/* only ack parent if we've got all the irqs (seems we must
+-	 * ack, all and hope that the irq system retriggers ok when
+-	 * the interrupt goes off again)
+-	 */
+-
+-	if (1) {
+-		__raw_writel(parentmask, S3C2410_SRCPND);
+-		__raw_writel(parentmask, S3C2410_INTPND);
+-	}
+-}
+-
+-/* exported for use in arch/arm/mach-s3c2410 */
+-
+-#ifdef CONFIG_PM
+-extern int s3c_irq_wake(struct irq_data *data, unsigned int state);
+-#else
+-#define s3c_irq_wake NULL
+-#endif
+-
+-extern int s3c_irqext_type(struct irq_data *d, unsigned int type);
+-- 
+1.7.2.3
