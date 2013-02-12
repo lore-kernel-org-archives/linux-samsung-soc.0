@@ -1,56 +1,125 @@
-From: Simon Glass <sjg@google.com>
-Subject: Re: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
-Date: Mon, 11 Feb 2013 16:17:16 -0800
-Message-ID: <CAPnjgZ3HnXDp9ErsbZEfpc-NexuAt1C5cUWbFn=BW2TMGiMJEg@mail.gmail.com>
-References: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
-	<20130210181710.GB12760@nekote.pengutronix.de>
-	<CAD=FV=XzfseMEHK4KutgYYoU4kEFPq7qoFoJtaBrh6QJUa1Y_w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:48202 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760679Ab3BLARR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Feb 2013 19:17:17 -0500
-Received: by mail-oa0-f43.google.com with SMTP id l10so6906861oag.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Feb 2013 16:17:17 -0800 (PST)
-In-Reply-To: <CAD=FV=XzfseMEHK4KutgYYoU4kEFPq7qoFoJtaBrh6QJUa1Y_w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v3 1/2] i2c-core: dt: Pick i2c bus number from i2c alias if present
+Date: Mon, 11 Feb 2013 16:48:04 -0800
+Message-ID: <1360630085-26874-2-git-send-email-dianders@chromium.org>
+References: <1360630085-26874-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1360630085-26874-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Wolfram Sang <w.sang@pengutronix.de>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, linux-samsung-soc@vger.kernel.org, Grant Grundler <grundler@chromium.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, naveen krishna <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Feb 11, 2013 at 3:53 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Wolfram,
->
-> On Sun, Feb 10, 2013 at 10:17 AM, Wolfram Sang <w.sang@pengutronix.de> wrote:
->> On Mon, Feb 04, 2013 at 02:33:15PM +0530, Yuvaraj Kumar C D wrote:
->>> This RFC patch is w.r.t multimaster bus arbitration which is already
->>> being discussing in the mainline.
->>> This patch provides hooks for the i2c multimaster bus arbitration
->>> and to have the arbitration parameters.
->>
->> I still haven't understood why the arbitration specified in the I2C
->> standard is not enough for you. Or what you would need to make use of
->> it.
->
-> At the moment perhaps the strongest argument for why this particular
-> arbitration scheme is needed is that's what the EC (embedded
-> controller) on the ARM Chromebook uses.  There have been several
-> arguments in-house about whether this was the most ideal way to
-> structure things, but that's what we shipped with.  Thus, if we want
-> to be able to talk to i2c devices on this bus (contains the keyboard,
-> battery, and a bunch of power switches) we need something in the
-> system that implements this arbitration scheme.
->
+This allows you to get the equivalent functionality of
+i2c_add_numbered_adapter() with all data in the device tree and no
+special case code in your driver.  This is a common device tree
+technique.
 
-There was some discussion about using the built-in I2C multi-master
-support but no one had had a good experience getting it to work
-reliably in a real system so we ended up deciding not to rely on this.
+For quick reference, the FDT syntax for using an alias to provide an
+ID looks like:
+  aliases {
+    i2c0 = &i2c_0;
+    i2c1 = &i2c_1;
+  };
 
-> As a side note: I'm trying to code up a quick arbitrator now using the
-> muxing framework as Grant suggested.  I will play with this and post
-> it if I can get it to work.  It's quite short so far.
->
-> -Doug
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+
+---
+Changes in v3:
+- Addressed Wolfram's feedback; rebased atop idr-cleanup series.
+
+Changes in v2: None
+
+ drivers/i2c/i2c-core.c | 54 +++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 40 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index 0b599f2..5204818 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -921,13 +921,41 @@ out_list:
+ }
+ 
+ /**
++ * __i2c_add_numbered_adapter - i2c_add_numbered_adapter where nr is never -1
++ * @adap: the adapter to register (with adap->nr initialized)
++ * Context: can sleep
++ *
++ * See i2c_add_numbered_adapter() for details.
++ */
++static int __i2c_add_numbered_adapter(struct i2c_adapter *adap)
++{
++	int	id;
++
++	/* Handled by wrappers */
++	if (WARN_ON(adap->nr == -1))
++		return -EINVAL;
++
++	if (adap->nr & ~MAX_IDR_MASK)
++		return -EINVAL;
++
++	mutex_lock(&core_lock);
++	id = idr_alloc(&i2c_adapter_idr, adap, adap->nr, adap->nr + 1,
++		       GFP_KERNEL);
++	mutex_unlock(&core_lock);
++	if (id < 0)
++		return id == -ENOSPC ? -EBUSY : id;
++	return i2c_register_adapter(adap);
++}
++
++/**
+  * i2c_add_adapter - declare i2c adapter, use dynamic bus number
+  * @adapter: the adapter to add
+  * Context: can sleep
+  *
+  * This routine is used to declare an I2C adapter when its bus number
+- * doesn't matter.  Examples: for I2C adapters dynamically added by
+- * USB links or PCI plugin cards.
++ * doesn't matter or when its bus number is specified by an dt alias.
++ * Examples of bases when the bus number doesn't matter: I2C adapters
++ * dynamically added by USB links or PCI plugin cards.
+  *
+  * When this returns zero, a new bus number was allocated and stored
+  * in adap->nr, and the specified adapter became available for clients.
+@@ -935,8 +963,17 @@ out_list:
+  */
+ int i2c_add_adapter(struct i2c_adapter *adapter)
+ {
++	struct device *dev = &adapter->dev;
+ 	int res;
+ 
++	if (dev->of_node) {
++		res = of_alias_get_id(dev->of_node, "i2c");
++		if (res >= 0) {
++			adapter->nr = res;
++			return __i2c_add_numbered_adapter(adapter);
++		}
++	}
++
+ 	mutex_lock(&core_lock);
+ 	res = idr_alloc(&i2c_adapter_idr, adapter,
+ 			__i2c_first_dynamic_bus_num, 0, GFP_KERNEL);
+@@ -974,20 +1011,9 @@ EXPORT_SYMBOL(i2c_add_adapter);
+  */
+ int i2c_add_numbered_adapter(struct i2c_adapter *adap)
+ {
+-	int	id;
+-
+ 	if (adap->nr == -1) /* -1 means dynamically assign bus id */
+ 		return i2c_add_adapter(adap);
+-	if (adap->nr & ~MAX_IDR_MASK)
+-		return -EINVAL;
+-
+-	mutex_lock(&core_lock);
+-	id = idr_alloc(&i2c_adapter_idr, adap, adap->nr, adap->nr + 1,
+-		       GFP_KERNEL);
+-	mutex_unlock(&core_lock);
+-	if (id < 0)
+-		return id == -ENOSPC ? -EBUSY : id;
+-	return i2c_register_adapter(adap);
++	return __i2c_add_numbered_adapter(adap);
+ }
+ EXPORT_SYMBOL_GPL(i2c_add_numbered_adapter);
+ 
+-- 
+1.8.1
