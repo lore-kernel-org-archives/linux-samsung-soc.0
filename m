@@ -1,620 +1,557 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: iio: adc: add exynos5 adc driver under iio framwork
-Date: Tue, 12 Feb 2013 13:07:32 -0800
-Message-ID: <20130212210732.GA8634@roeck-us.net>
-References: <1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Rob Herring <robherring2@gmail.com>
+Subject: [PATCH] ARM: exynos: move exynos4210-combiner to drivers/irqchip
+Date: Tue, 12 Feb 2013 16:04:52 -0600
+Message-ID: <1360706692-13622-1-git-send-email-robherring2@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de
+To: Doug Anderson <dianders@chromium.org>, arm@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 23, 2013 at 04:58:06AM -0000, Naveen Krishna Chatradhi wrote:
-> This patch add an ADC IP found on EXYNOS5 series socs from Samsung.
-> Also adds the Documentation for device tree bindings.
-> 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> 
-> ---
-> Changes since v1:
-> 
-> 1. Fixed comments from Lars
-> 2. Added support for ADC on EXYNOS5410
-> 
-> Changes since v2:
-> 
-> 1. Changed the instance name for (struct iio_dev *) to indio_dev
-> 2. Changed devm_request_irq to request_irq
-> 
-> Few doubts regarding the mappings and child device handling.
-> Kindly, suggest me better methods.
-> 
->  .../bindings/arm/samsung/exynos5-adc.txt           |   37 ++
->  drivers/iio/adc/Kconfig                            |    7 +
->  drivers/iio/adc/Makefile                           |    1 +
->  drivers/iio/adc/exynos5_adc.c                      |  464 ++++++++++++++++++++
->  4 files changed, 509 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt
->  create mode 100644 drivers/iio/adc/exynos5_adc.c
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt
-> new file mode 100644
-> index 0000000..9a5b515
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos5-adc.txt
-> @@ -0,0 +1,37 @@
-> +Samsung Exynos5 Analog to Digital Converter bindings
-> +
-> +Required properties:
-> +- compatible:		Must be "samsung,exynos5250-adc" for exynos5250 controllers.
-> +- reg:			Contains ADC register address range (base address and
-> +			length).
-> +- interrupts: 		Contains the interrupt information for the timer. The
-> +			format is being dependent on which interrupt controller
-> +			the Samsung device uses.
-> +
-> +Note: child nodes can be added for auto probing from device tree.
-> +
-> +Example: adding device info in dtsi file
-> +
-> +adc@12D10000 {
-> +	compatible = "samsung,exynos5250-adc";
-> +	reg = <0x12D10000 0x100>;
-> +	interrupts = <0 106 0>;
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	ranges;
-> +};
-> +
-> +
-> +Example: Adding child nodes in dts file
-> +
-> +adc@12D10000 {
-> +
-> +	/* NTC thermistor is a hwmon device */
-> +	ncp15wb473@0 {
-> +		compatible = "ntc,ncp15wb473";
-> +		reg = <0x0>;
-> +		pullup-uV = <1800000>;
-> +		pullup-ohm = <47000>;
-> +		pulldown-ohm = <0>;
-> +	};
-> +};
+From: Rob Herring <rob.herring@calxeda.com>
 
-How about:
+Exynos boot is broken with commit 0529e315 (ARM: use common irqchip_init
+for GIC init). This commit split the irqchip initialization into 2 calls
+to of_irq_init. This does not work because of_irq_init requires interrupt
+parents to be in the match list.
 
-	adc: adc@12D10000 {
-		compatible = "samsung,exynos5250-adc";
-		reg = <0x12D10000 0x100>;
-		interrupts = <0 106 0>;
-		#io-channel-cells = <1>;
-	};
+Rather than reverting exynos changes, make it do the proper thing by using
+IRQCHIP_DECLARE. This requires moving the combiner code to drivers/irqchip.
 
-	...
+Reported-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org
+---
 
-	ncp15wb473@0 {
-		compatible = "ntc,ncp15wb473";
-		reg = <0x0>; /* is this needed ? */
-		io-channels = <&adc 0>;
-		io-channel-names = "adc";
-		pullup-uV = <1800000>;	/* uV or uv ? */ 
-		pullup-ohm = <47000>;
-		pulldown-ohm = <0>;
-	};
+I thought there may be other platforms broken in the same way, but I
+checked and exynos is the only one.
 
-The ncp15wb473 driver would then use either iio_channel_get_all() to get the iio
-channel list or, if it only supports one adc channel per instance, iio_channel_get().
+This is based on my gic/vic irqchip branch in arm-soc.
 
-In that context, it would probably make sense to rework the ntc_thermistor
-driver to support both DT as well as direct instantiation using access functions
-and platform data (as it does today).
+Rob
 
-Also see https://patchwork.kernel.org/patch/2112171/.
+ arch/arm/mach-exynos/common.c     |  218 +----------------------------------
+ arch/arm/mach-exynos/common.h     |    3 +
+ drivers/irqchip/Makefile          |    1 +
+ drivers/irqchip/exynos-combiner.c |  230 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 236 insertions(+), 216 deletions(-)
+ create mode 100644 drivers/irqchip/exynos-combiner.c
 
-Thanks,
-Guenter
-
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index fe822a1..33ceabf 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -91,6 +91,13 @@ config AT91_ADC
->  	help
->  	  Say yes here to build support for Atmel AT91 ADC.
->  
-> +config EXYNOS5_ADC
-> +	bool "Exynos5 ADC driver support"
-> +	help
-> +	  Core support for the ADC block found in the Samsung EXYNOS5 series
-> +	  of SoCs for drivers such as the touchscreen and hwmon to use to share
-> +	  this resource.
-> +
->  config LP8788_ADC
->  	bool "LP8788 ADC driver"
->  	depends on MFD_LP8788
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index 2d5f100..5b4a4f6 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_AD7791) += ad7791.o
->  obj-$(CONFIG_AD7793) += ad7793.o
->  obj-$(CONFIG_AD7887) += ad7887.o
->  obj-$(CONFIG_AT91_ADC) += at91_adc.o
-> +obj-$(CONFIG_EXYNOS5_ADC) += exynos5_adc.o
->  obj-$(CONFIG_LP8788_ADC) += lp8788_adc.o
->  obj-$(CONFIG_MAX1363) += max1363.o
->  obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
-> diff --git a/drivers/iio/adc/exynos5_adc.c b/drivers/iio/adc/exynos5_adc.c
-> new file mode 100644
-> index 0000000..8982675
-> --- /dev/null
-> +++ b/drivers/iio/adc/exynos5_adc.c
-> @@ -0,0 +1,464 @@
-> +/*
-> + *  exynos5_adc.c - Support for ADC in EXYNOS5 SoCs
-> + *
-> + *  8 ~ 10 channel, 10/12-bit ADC
-> + *
-> + *  Copyright (C) 2013 Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> + *
-> + *  This program is free software; you can redistribute it and/or modify
-> + *  it under the terms of the GNU General Public License as published by
-> + *  the Free Software Foundation; either version 2 of the License, or
-> + *  (at your option) any later version.
-> + *
-> + *  This program is distributed in the hope that it will be useful,
-> + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *  GNU General Public License for more details.
-> + *
-> + *  You should have received a copy of the GNU General Public License
-> + *  along with this program; if not, write to the Free Software
-> + *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/delay.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +#include <linux/io.h>
-> +#include <linux/clk.h>
-> +#include <linux/completion.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/of_platform.h>
-> +
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/machine.h>
-> +#include <linux/iio/driver.h>
-> +
-> +enum adc_version {
-> +	ADC_V1,
-> +	ADC_V2
-> +};
-> +
-> +/* EXYNOS5250 ADC_V1 registers definitions */
-> +#define ADC_V1_CON(x)		((x) + 0x00)
-> +#define ADC_V1_DLY(x)		((x) + 0x08)
-> +#define ADC_V1_DATX(x)		((x) + 0x0C)
-> +#define ADC_V1_INTCLR(x)	((x) + 0x18)
-> +#define ADC_V1_MUX(x)		((x) + 0x1c)
-> +
-> +/* EXYNOS5410 ADC_V2 registers definitions */
-> +#define ADC_V2_CON1(x)		((x) + 0x00)
-> +#define ADC_V2_CON2(x)		((x) + 0x04)
-> +#define ADC_V2_STAT(x)		((x) + 0x08)
-> +#define ADC_V2_INT_EN(x)	((x) + 0x10)
-> +#define ADC_V2_INT_ST(x)	((x) + 0x14)
-> +#define ADC_V2_VER(x)		((x) + 0x20)
-> +
-> +/* Bit definitions for ADC_V1 */
-> +#define ADC_V1_CON_RES		(1u << 16)
-> +#define ADC_V1_CON_PRSCEN	(1u << 14)
-> +#define ADC_V1_CON_PRSCLV(x)	(((x) & 0xFF) << 6)
-> +#define ADC_V1_CON_STANDBY	(1u << 2)
-> +
-> +/* Bit definitions for ADC_V2 */
-> +#define ADC_V2_CON1_SOFT_RESET	(1u << 2)
-> +
-> +#define ADC_V2_CON2_OSEL	(1u << 10)
-> +#define ADC_V2_CON2_ESEL	(1u << 9)
-> +#define ADC_V2_CON2_HIGHF	(1u << 8)
-> +#define ADC_V2_CON2_C_TIME(x)	(((x) & 7) << 4)
-> +#define ADC_V2_CON2_ACH_SEL(x)	(((x) & 0xF) << 0)
-> +#define ADC_V2_CON2_ACH_MASK	0xF
-> +
-> +/* Bit definitions common for ADC_V1 and ADC_V2 */
-> +#define ADC_V1_CON_EN_START		(1u << 0)
-> +#define ADC_V1_DATX_MASK	0xFFF
-> +
-> +struct exynos5_adc {
-> +	void __iomem		*regs;
-> +	struct clk		*clk;
-> +	unsigned int		irq;
-> +	struct regulator	*vdd;
-> +
-> +	struct completion	completion;
-> +
-> +	struct iio_map		*map;
-> +	u32			value;
-> +	unsigned int            version;
-> +};
-> +
-> +static const struct of_device_id exynos5_adc_match[] = {
-> +	{ .compatible = "samsung,exynos5250-adc", .data = (void *)ADC_V1 },
-> +	{ .compatible = "samsung,exynos5410-adc", .data = (void *)ADC_V2 },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, exynos5_adc_match);
-> +
-> +static inline unsigned int exynos5_adc_get_version(struct platform_device *pdev)
-> +{
-> +	const struct of_device_id *match;
-> +
-> +	match = of_match_node(exynos5_adc_match, pdev->dev.of_node);
-> +	return (unsigned int)match->data;
-> +}
-> +
-> +/* default maps used by iio consumer (ex: ntc-thermistor driver) */
-> +static struct iio_map exynos5_adc_iio_maps[] = {
-> +	{
-> +		.consumer_dev_name = "0.ncp15wb473",
-> +		.consumer_channel = "adc3",
-> +		.adc_channel_label = "adc3",
-> +	},
-> +	{
-> +		.consumer_dev_name = "1.ncp15wb473",
-> +		.consumer_channel = "adc4",
-> +		.adc_channel_label = "adc4",
-> +	},
-> +	{
-> +		.consumer_dev_name = "2.ncp15wb473",
-> +		.consumer_channel = "adc5",
-> +		.adc_channel_label = "adc5",
-> +	},
-> +	{
-> +		.consumer_dev_name = "3.ncp15wb473",
-> +		.consumer_channel = "adc6",
-> +		.adc_channel_label = "adc6",
-> +	},
-> +	{},
-> +};
-> +
-> +static int exynos5_read_raw(struct iio_dev *indio_dev,
-> +				struct iio_chan_spec const *chan,
-> +				int *val,
-> +				int *val2,
-> +				long mask)
-> +{
-> +	struct exynos5_adc *info = iio_priv(indio_dev);
-> +	u32 con1, con2;
-> +
-> +	if (mask == IIO_CHAN_INFO_RAW) {
-> +		mutex_lock(&indio_dev->mlock);
-> +
-> +		/* Select the channel to be used and Trigger conversion */
-> +		if (info->version == ADC_V2) {
-> +			con2 = readl(ADC_V2_CON2(info->regs));
-> +			con2 &= ~ADC_V2_CON2_ACH_MASK;
-> +			con2 |= ADC_V2_CON2_ACH_SEL(chan->address);
-> +			writel(con2, ADC_V2_CON2(info->regs));
-> +
-> +			con1 = readl(ADC_V2_CON1(info->regs));
-> +			writel(con1 | ADC_V1_CON_EN_START,
-> +					ADC_V2_CON1(info->regs));
-> +		} else {
-> +			writel(chan->address, ADC_V1_MUX(info->regs));
-> +
-> +			con1 = readl(ADC_V1_CON(info->regs));
-> +			writel(con1 | ADC_V1_CON_EN_START,
-> +					ADC_V1_CON(info->regs));
-> +		}
-> +
-> +		wait_for_completion(&info->completion);
-> +		*val = info->value;
-> +
-> +		mutex_unlock(&indio_dev->mlock);
-> +
-> +		return IIO_VAL_INT;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static irqreturn_t exynos5_adc_isr(int irq, void *dev_id)
-> +{
-> +	struct exynos5_adc *info = (struct exynos5_adc *)dev_id;
-> +
-> +	/* Read value */
-> +	info->value = readl(ADC_V1_DATX(info->regs)) &
-> +						ADC_V1_DATX_MASK;
-> +	/* clear irq */
-> +	if (info->version == ADC_V2)
-> +		writel(1, ADC_V2_INT_ST(info->regs));
-> +	else
-> +		writel(1, ADC_V1_INTCLR(info->regs));
-> +
-> +	complete(&info->completion);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int exynos5_adc_reg_access(struct iio_dev *indio_dev,
-> +			      unsigned reg, unsigned writeval,
-> +			      unsigned *readval)
-> +{
-> +	struct exynos5_adc *info = iio_priv(indio_dev);
-> +	u32 ret;
-> +
-> +	mutex_lock(&indio_dev->mlock);
-> +
-> +	if (readval != NULL) {
-> +		ret = readl(info->regs + reg);
-> +		*readval = ret;
-> +	} else
-> +		ret = -EINVAL;
-> +
-> +	mutex_unlock(&indio_dev->mlock);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct iio_info exynos5_adc_iio_info = {
-> +	.read_raw = &exynos5_read_raw,
-> +	.debugfs_reg_access = &exynos5_adc_reg_access,
-> +	.driver_module = THIS_MODULE,
-> +};
-> +
-> +#define ADC_V1_CHANNEL(_index, _id) {		\
-> +	.type = IIO_VOLTAGE,				\
-> +	.indexed = 1,					\
-> +	.channel = _index,				\
-> +	.address = _index,				\
-> +	.info_mask = IIO_CHAN_INFO_RAW_SEPARATE_BIT,	\
-> +	.datasheet_name = _id,				\
-> +}
-> +
-> +/** ADC core in EXYNOS5410 has 10 channels,
-> + * ADC core in EXYNOS5250 has 8 channels
-> +*/
-> +static const struct iio_chan_spec exynos5_adc_iio_channels[] = {
-> +	ADC_V1_CHANNEL(0, "adc0"),
-> +	ADC_V1_CHANNEL(1, "adc1"),
-> +	ADC_V1_CHANNEL(2, "adc2"),
-> +	ADC_V1_CHANNEL(3, "adc3"),
-> +	ADC_V1_CHANNEL(4, "adc4"),
-> +	ADC_V1_CHANNEL(5, "adc5"),
-> +	ADC_V1_CHANNEL(6, "adc6"),
-> +	ADC_V1_CHANNEL(7, "adc7"),
-> +	ADC_V1_CHANNEL(8, "adc8"),
-> +	ADC_V1_CHANNEL(9, "adc9"),
-> +};
-> +
-> +static int exynos5_adc_remove_devices(struct device *dev, void *c)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +
-> +	platform_device_unregister(pdev);
-> +
-> +	return 0;
-> +}
-> +
-> +static void exynos5_adc_hw_init(struct exynos5_adc *info)
-> +{
-> +	u32 con1, con2;
-> +
-> +	if (info->version == ADC_V2) {
-> +		con1 = ADC_V2_CON1_SOFT_RESET;
-> +		writel(con1, ADC_V2_CON1(info->regs));
-> +
-> +		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
-> +			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
-> +		writel(con2, ADC_V2_CON2(info->regs));
-> +
-> +		/* Enable interrupts */
-> +		writel(1, ADC_V2_INT_EN(info->regs));
-> +	} else {
-> +		/* set default prescaler values and Enable prescaler */
-> +		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-> +
-> +		/* Enable 12-bit ADC resolution */
-> +		con1 |= ADC_V1_CON_RES;
-> +		writel(con1, ADC_V1_CON(info->regs));
-> +	}
-> +}
-> +
-> +static int exynos5_adc_probe(struct platform_device *pdev)
-> +{
-> +	struct exynos5_adc *info = NULL;
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct iio_dev *indio_dev = NULL;
-> +	struct resource	*mem;
-> +	int ret = -ENODEV;
-> +	int irq;
-> +
-> +	if (!np)
-> +		return ret;
-> +
-> +	indio_dev = iio_device_alloc(sizeof(struct exynos5_adc));
-> +	if (!indio_dev) {
-> +		dev_err(&pdev->dev, "failed allocating iio device\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	info = iio_priv(indio_dev);
-> +
-> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +
-> +	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		dev_err(&pdev->dev, "no irq resource?\n");
-> +		ret = irq;
-> +		goto err_iio;
-> +	}
-> +
-> +	info->irq = irq;
-> +
-> +	ret = request_irq(info->irq, exynos5_adc_isr,
-> +					0, dev_name(&pdev->dev), info);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
-> +							info->irq);
-> +		goto err_iio;
-> +	}
-> +
-> +	info->clk = devm_clk_get(&pdev->dev, "adc");
-> +	if (IS_ERR(info->clk)) {
-> +		dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
-> +							PTR_ERR(info->clk));
-> +		ret = PTR_ERR(info->clk);
-> +		goto err_irq;
-> +	}
-> +
-> +	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
-> +	if (IS_ERR(info->vdd)) {
-> +		dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
-> +							PTR_ERR(info->vdd));
-> +		ret = PTR_ERR(info->vdd);
-> +		goto err_irq;
-> +	}
-> +
-> +	info->version = exynos5_adc_get_version(pdev);
-> +
-> +	platform_set_drvdata(pdev, indio_dev);
-> +
-> +	init_completion(&info->completion);
-> +
-> +	indio_dev->name = dev_name(&pdev->dev);
-> +	indio_dev->dev.parent = &pdev->dev;
-> +	indio_dev->dev.of_node = pdev->dev.of_node;
-> +	indio_dev->info = &exynos5_adc_iio_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = exynos5_adc_iio_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(exynos5_adc_iio_channels);
-> +
-> +	info->map = exynos5_adc_iio_maps;
-> +
-> +	ret = iio_map_array_register(indio_dev, info->map);
-> +	if (ret) {
-> +		dev_err(&indio_dev->dev, "failed mapping iio, err: %d\n", ret);
-> +		goto err_irq;
-> +	}
-> +
-> +	ret = iio_device_register(indio_dev);
-> +	if (ret)
-> +		goto err_map;
-> +
-> +	ret = regulator_enable(info->vdd);
-> +	if (ret)
-> +		goto err_iio_dev;
-> +
-> +	clk_prepare_enable(info->clk);
-> +
-> +	exynos5_adc_hw_init(info);
-> +
-> +	ret = of_platform_populate(np, exynos5_adc_match, NULL, &pdev->dev);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed adding child nodes\n");
-> +		goto err_of_populate;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_of_populate:
-> +	device_for_each_child(&pdev->dev, NULL, exynos5_adc_remove_devices);
-> +err_iio_dev:
-> +	iio_device_unregister(indio_dev);
-> +err_map:
-> +	iio_map_array_unregister(indio_dev, info->map);
-> +err_irq:
-> +	free_irq(info->irq, info);
-> +err_iio:
-> +	iio_device_free(indio_dev);
-> +	return ret;
-> +}
-> +
-> +static int exynos5_adc_remove(struct platform_device *pdev)
-> +{
-> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +	struct exynos5_adc *info = iio_priv(indio_dev);
-> +
-> +	iio_device_unregister(indio_dev);
-> +	iio_map_array_unregister(indio_dev, info->map);
-> +	free_irq(info->irq, info);
-> +	iio_device_free(indio_dev);
-> +
-> +	return 0;
-> +}
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int exynos5_adc_suspend(struct device *dev)
-> +{
-> +	struct exynos5_adc *info = dev_get_data(dev);
-> +	u32 con;
-> +
-> +	if (info->version == ADC_V2) {
-> +		con = readl(ADC_V2_CON1(info->regs));
-> +		con &= ~ADC_V1_CON_EN_START;
-> +		writel(con, ADC_V2_CON1(info->regs));
-> +	} else {
-> +		con = readl(ADC_V1_CON(info->regs));
-> +		con |= ADC_V1_CON_STANDBY;
-> +		writel(con, ADC_V1_CON(info->regs));
-> +	}
-> +
-> +	clk_unprepare_disable(info->clk);
-> +	regulator_disable(info->vdd);
-> +
-> +	return 0;
-> +}
-> +
-> +static int exynos5_adc_resume(struct device *dev)
-> +{
-> +	struct exynos5_adc *info = dev_get_data(dev);
-> +	int ret;
-> +
-> +	ret = regulator_enable(info->vdd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	clk_prepare_enable(info->clk);
-> +
-> +	exynos5_adc_hw_init(info);
-> +
-> +	return 0;
-> +}
-> +
-> +#else
-> +#define exynos5_adc_suspend NULL
-> +#define exynos5_adc_resume NULL
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(exynos5_adc_pm_ops,
-> +			exynos5_adc_suspend,
-> +			exynos5_adc_resume);
-> +
-> +static struct platform_driver exynos5_adc_driver = {
-> +	.probe		= exynos5_adc_probe,
-> +	.remove		= exynos5_adc_remove,
-> +	.driver		= {
-> +		.name	= "exynos5-adc",
-> +		.owner	= THIS_MODULE,
-> +		.of_match_table = of_match_ptr(exynos5_adc_match),
-> +		.pm	= &exynos5_adc_pm_ops,
-> +	},
-> +};
-> +
-> +module_platform_driver(exynos5_adc_driver);
-> +
-> +MODULE_AUTHOR("Naveen Krishna Chatradhi <ch.naveen@samsung.com>");
-> +MODULE_DESCRIPTION("Samsung EXYNOS5 ADC driver");
-> +MODULE_LICENSE("GPL");
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 4ea80bc..50577b6 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -12,6 +12,7 @@
+ #include <linux/kernel.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
++#include <linux/irqchip.h>
+ #include <linux/io.h>
+ #include <linux/device.h>
+ #include <linux/gpio.h>
+@@ -439,218 +440,6 @@ static void __init exynos5_init_clocks(int xtal)
+ #endif
+ }
+ 
+-#define COMBINER_ENABLE_SET	0x0
+-#define COMBINER_ENABLE_CLEAR	0x4
+-#define COMBINER_INT_STATUS	0xC
+-
+-static DEFINE_SPINLOCK(irq_controller_lock);
+-
+-struct combiner_chip_data {
+-	unsigned int irq_offset;
+-	unsigned int irq_mask;
+-	void __iomem *base;
+-};
+-
+-static struct irq_domain *combiner_irq_domain;
+-static struct combiner_chip_data combiner_data[MAX_COMBINER_NR];
+-
+-static inline void __iomem *combiner_base(struct irq_data *data)
+-{
+-	struct combiner_chip_data *combiner_data =
+-		irq_data_get_irq_chip_data(data);
+-
+-	return combiner_data->base;
+-}
+-
+-static void combiner_mask_irq(struct irq_data *data)
+-{
+-	u32 mask = 1 << (data->hwirq % 32);
+-
+-	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_CLEAR);
+-}
+-
+-static void combiner_unmask_irq(struct irq_data *data)
+-{
+-	u32 mask = 1 << (data->hwirq % 32);
+-
+-	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_SET);
+-}
+-
+-static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+-{
+-	struct combiner_chip_data *chip_data = irq_get_handler_data(irq);
+-	struct irq_chip *chip = irq_get_chip(irq);
+-	unsigned int cascade_irq, combiner_irq;
+-	unsigned long status;
+-
+-	chained_irq_enter(chip, desc);
+-
+-	spin_lock(&irq_controller_lock);
+-	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
+-	spin_unlock(&irq_controller_lock);
+-	status &= chip_data->irq_mask;
+-
+-	if (status == 0)
+-		goto out;
+-
+-	combiner_irq = __ffs(status);
+-
+-	cascade_irq = combiner_irq + (chip_data->irq_offset & ~31);
+-	if (unlikely(cascade_irq >= NR_IRQS))
+-		do_bad_IRQ(cascade_irq, desc);
+-	else
+-		generic_handle_irq(cascade_irq);
+-
+- out:
+-	chained_irq_exit(chip, desc);
+-}
+-
+-static struct irq_chip combiner_chip = {
+-	.name		= "COMBINER",
+-	.irq_mask	= combiner_mask_irq,
+-	.irq_unmask	= combiner_unmask_irq,
+-};
+-
+-static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
+-{
+-	unsigned int max_nr;
+-
+-	if (soc_is_exynos5250())
+-		max_nr = EXYNOS5_MAX_COMBINER_NR;
+-	else
+-		max_nr = EXYNOS4_MAX_COMBINER_NR;
+-
+-	if (combiner_nr >= max_nr)
+-		BUG();
+-	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
+-		BUG();
+-	irq_set_chained_handler(irq, combiner_handle_cascade_irq);
+-}
+-
+-static void __init combiner_init_one(unsigned int combiner_nr,
+-				     void __iomem *base)
+-{
+-	combiner_data[combiner_nr].base = base;
+-	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
+-		combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
+-	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
+-
+-	/* Disable all interrupts */
+-	__raw_writel(combiner_data[combiner_nr].irq_mask,
+-		     base + COMBINER_ENABLE_CLEAR);
+-}
+-
+-#ifdef CONFIG_OF
+-static int combiner_irq_domain_xlate(struct irq_domain *d,
+-				     struct device_node *controller,
+-				     const u32 *intspec, unsigned int intsize,
+-				     unsigned long *out_hwirq,
+-				     unsigned int *out_type)
+-{
+-	if (d->of_node != controller)
+-		return -EINVAL;
+-
+-	if (intsize < 2)
+-		return -EINVAL;
+-
+-	*out_hwirq = intspec[0] * MAX_IRQ_IN_COMBINER + intspec[1];
+-	*out_type = 0;
+-
+-	return 0;
+-}
+-#else
+-static int combiner_irq_domain_xlate(struct irq_domain *d,
+-				     struct device_node *controller,
+-				     const u32 *intspec, unsigned int intsize,
+-				     unsigned long *out_hwirq,
+-				     unsigned int *out_type)
+-{
+-	return -EINVAL;
+-}
+-#endif
+-
+-static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
+-				   irq_hw_number_t hw)
+-{
+-	irq_set_chip_and_handler(irq, &combiner_chip, handle_level_irq);
+-	irq_set_chip_data(irq, &combiner_data[hw >> 3]);
+-	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
+-
+-	return 0;
+-}
+-
+-static struct irq_domain_ops combiner_irq_domain_ops = {
+-	.xlate	= combiner_irq_domain_xlate,
+-	.map	= combiner_irq_domain_map,
+-};
+-
+-static void __init combiner_init(void __iomem *combiner_base,
+-				 struct device_node *np)
+-{
+-	int i, irq, irq_base;
+-	unsigned int max_nr, nr_irq;
+-
+-	if (np) {
+-		if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
+-			pr_warning("%s: number of combiners not specified, "
+-				"setting default as %d.\n",
+-				__func__, EXYNOS4_MAX_COMBINER_NR);
+-			max_nr = EXYNOS4_MAX_COMBINER_NR;
+-		}
+-	} else {
+-		max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
+-						EXYNOS4_MAX_COMBINER_NR;
+-	}
+-	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
+-
+-	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
+-	if (IS_ERR_VALUE(irq_base)) {
+-		irq_base = COMBINER_IRQ(0, 0);
+-		pr_warning("%s: irq desc alloc failed. Continuing with %d as linux irq base\n", __func__, irq_base);
+-	}
+-
+-	combiner_irq_domain = irq_domain_add_legacy(np, nr_irq, irq_base, 0,
+-				&combiner_irq_domain_ops, &combiner_data);
+-	if (WARN_ON(!combiner_irq_domain)) {
+-		pr_warning("%s: irq domain init failed\n", __func__);
+-		return;
+-	}
+-
+-	for (i = 0; i < max_nr; i++) {
+-		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
+-		irq = IRQ_SPI(i);
+-#ifdef CONFIG_OF
+-		if (np)
+-			irq = irq_of_parse_and_map(np, i);
+-#endif
+-		combiner_cascade_irq(i, irq);
+-	}
+-}
+-
+-#ifdef CONFIG_OF
+-static int __init combiner_of_init(struct device_node *np,
+-				   struct device_node *parent)
+-{
+-	void __iomem *combiner_base;
+-
+-	combiner_base = of_iomap(np, 0);
+-	if (!combiner_base) {
+-		pr_err("%s: failed to map combiner registers\n", __func__);
+-		return -ENXIO;
+-	}
+-
+-	combiner_init(combiner_base, np);
+-
+-	return 0;
+-}
+-
+-static const struct of_device_id exynos_dt_irq_match[] = {
+-	{ .compatible = "samsung,exynos4210-combiner",
+-			.data = combiner_of_init, },
+-	{},
+-};
+-#endif
+-
+ void __init exynos4_init_irq(void)
+ {
+ 	unsigned int gic_bank_offset;
+@@ -660,10 +449,8 @@ void __init exynos4_init_irq(void)
+ 	if (!of_have_populated_dt())
+ 		gic_init_bases(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU, gic_bank_offset, NULL);
+ #ifdef CONFIG_OF
+-	else {
++	else
+ 		irqchip_init();
+-		of_irq_init(exynos_dt_irq_match);
+-	}
+ #endif
+ 
+ 	if (!of_have_populated_dt())
+@@ -681,7 +468,6 @@ void __init exynos5_init_irq(void)
+ {
+ #ifdef CONFIG_OF
+ 	irqchip_init();
+-	of_irq_init(exynos_dt_irq_match);
+ #endif
+ 	/*
+ 	 * The parameters of s5p_init_irq() are for VIC init.
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 04744f9..29196d7 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -60,6 +60,9 @@ void exynos4212_register_clocks(void);
+ #define exynos4212_register_clocks()
+ #endif
+ 
++struct device_node;
++void combiner_init(void __iomem *combiner_base, struct device_node *np);
++
+ extern struct smp_operations exynos_smp_ops;
+ 
+ extern void exynos_cpu_die(unsigned int cpu);
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 0fb8655..e65fbf2 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -1,6 +1,7 @@
+ obj-$(CONFIG_IRQCHIP)			+= irqchip.o
+ 
+ obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
++obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
+ obj-$(CONFIG_ARCH_SUNXI)		+= irq-sunxi.o
+ obj-$(CONFIG_ARCH_SPEAR3XX)		+= spear-shirq.o
+ obj-$(CONFIG_ARM_GIC)			+= irq-gic.o
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+new file mode 100644
+index 0000000..04d86a9
+--- /dev/null
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -0,0 +1,230 @@
++/*
++ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Combiner irqchip for EXYNOS
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/err.h>
++#include <linux/export.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/irqdomain.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <asm/mach/irq.h>
++
++#include <plat/cpu.h>
++
++#include "irqchip.h"
++
++#define COMBINER_ENABLE_SET	0x0
++#define COMBINER_ENABLE_CLEAR	0x4
++#define COMBINER_INT_STATUS	0xC
++
++static DEFINE_SPINLOCK(irq_controller_lock);
++
++struct combiner_chip_data {
++	unsigned int irq_offset;
++	unsigned int irq_mask;
++	void __iomem *base;
++};
++
++static struct irq_domain *combiner_irq_domain;
++static struct combiner_chip_data combiner_data[MAX_COMBINER_NR];
++
++static inline void __iomem *combiner_base(struct irq_data *data)
++{
++	struct combiner_chip_data *combiner_data =
++		irq_data_get_irq_chip_data(data);
++
++	return combiner_data->base;
++}
++
++static void combiner_mask_irq(struct irq_data *data)
++{
++	u32 mask = 1 << (data->hwirq % 32);
++
++	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_CLEAR);
++}
++
++static void combiner_unmask_irq(struct irq_data *data)
++{
++	u32 mask = 1 << (data->hwirq % 32);
++
++	__raw_writel(mask, combiner_base(data) + COMBINER_ENABLE_SET);
++}
++
++static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
++{
++	struct combiner_chip_data *chip_data = irq_get_handler_data(irq);
++	struct irq_chip *chip = irq_get_chip(irq);
++	unsigned int cascade_irq, combiner_irq;
++	unsigned long status;
++
++	chained_irq_enter(chip, desc);
++
++	spin_lock(&irq_controller_lock);
++	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
++	spin_unlock(&irq_controller_lock);
++	status &= chip_data->irq_mask;
++
++	if (status == 0)
++		goto out;
++
++	combiner_irq = __ffs(status);
++
++	cascade_irq = combiner_irq + (chip_data->irq_offset & ~31);
++	if (unlikely(cascade_irq >= NR_IRQS))
++		do_bad_IRQ(cascade_irq, desc);
++	else
++		generic_handle_irq(cascade_irq);
++
++ out:
++	chained_irq_exit(chip, desc);
++}
++
++static struct irq_chip combiner_chip = {
++	.name		= "COMBINER",
++	.irq_mask	= combiner_mask_irq,
++	.irq_unmask	= combiner_unmask_irq,
++};
++
++static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
++{
++	unsigned int max_nr;
++
++	if (soc_is_exynos5250())
++		max_nr = EXYNOS5_MAX_COMBINER_NR;
++	else
++		max_nr = EXYNOS4_MAX_COMBINER_NR;
++
++	if (combiner_nr >= max_nr)
++		BUG();
++	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
++		BUG();
++	irq_set_chained_handler(irq, combiner_handle_cascade_irq);
++}
++
++static void __init combiner_init_one(unsigned int combiner_nr,
++				     void __iomem *base)
++{
++	combiner_data[combiner_nr].base = base;
++	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
++		combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
++	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
++
++	/* Disable all interrupts */
++	__raw_writel(combiner_data[combiner_nr].irq_mask,
++		     base + COMBINER_ENABLE_CLEAR);
++}
++
++#ifdef CONFIG_OF
++static int combiner_irq_domain_xlate(struct irq_domain *d,
++				     struct device_node *controller,
++				     const u32 *intspec, unsigned int intsize,
++				     unsigned long *out_hwirq,
++				     unsigned int *out_type)
++{
++	if (d->of_node != controller)
++		return -EINVAL;
++
++	if (intsize < 2)
++		return -EINVAL;
++
++	*out_hwirq = intspec[0] * MAX_IRQ_IN_COMBINER + intspec[1];
++	*out_type = 0;
++
++	return 0;
++}
++#else
++static int combiner_irq_domain_xlate(struct irq_domain *d,
++				     struct device_node *controller,
++				     const u32 *intspec, unsigned int intsize,
++				     unsigned long *out_hwirq,
++				     unsigned int *out_type)
++{
++	return -EINVAL;
++}
++#endif
++
++static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
++				   irq_hw_number_t hw)
++{
++	irq_set_chip_and_handler(irq, &combiner_chip, handle_level_irq);
++	irq_set_chip_data(irq, &combiner_data[hw >> 3]);
++	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
++
++	return 0;
++}
++
++static struct irq_domain_ops combiner_irq_domain_ops = {
++	.xlate	= combiner_irq_domain_xlate,
++	.map	= combiner_irq_domain_map,
++};
++
++void __init combiner_init(void __iomem *combiner_base,
++			  struct device_node *np)
++{
++	int i, irq, irq_base;
++	unsigned int max_nr, nr_irq;
++
++	if (np) {
++		if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
++			pr_warning("%s: number of combiners not specified, "
++				"setting default as %d.\n",
++				__func__, EXYNOS4_MAX_COMBINER_NR);
++			max_nr = EXYNOS4_MAX_COMBINER_NR;
++		}
++	} else {
++		max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
++						EXYNOS4_MAX_COMBINER_NR;
++	}
++	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
++
++	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
++	if (IS_ERR_VALUE(irq_base)) {
++		irq_base = COMBINER_IRQ(0, 0);
++		pr_warning("%s: irq desc alloc failed. Continuing with %d as linux irq base\n", __func__, irq_base);
++	}
++
++	combiner_irq_domain = irq_domain_add_legacy(np, nr_irq, irq_base, 0,
++				&combiner_irq_domain_ops, &combiner_data);
++	if (WARN_ON(!combiner_irq_domain)) {
++		pr_warning("%s: irq domain init failed\n", __func__);
++		return;
++	}
++
++	for (i = 0; i < max_nr; i++) {
++		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
++		irq = IRQ_SPI(i);
++#ifdef CONFIG_OF
++		if (np)
++			irq = irq_of_parse_and_map(np, i);
++#endif
++		combiner_cascade_irq(i, irq);
++	}
++}
++
++#ifdef CONFIG_OF
++static int __init combiner_of_init(struct device_node *np,
++				   struct device_node *parent)
++{
++	void __iomem *combiner_base;
++
++	combiner_base = of_iomap(np, 0);
++	if (!combiner_base) {
++		pr_err("%s: failed to map combiner registers\n", __func__);
++		return -ENXIO;
++	}
++
++	combiner_init(combiner_base, np);
++
++	return 0;
++}
++IRQCHIP_DECLARE(exynos4210_combiner, "samsung,exynos4210-combiner",
++		combiner_of_init);
++#endif
+-- 
+1.7.10.4
