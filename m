@@ -1,42 +1,41 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: update secondary startup code to use 24 bits of MPIDR
-Date: Tue, 12 Feb 2013 11:02:11 +0530
-Message-ID: <1360647131-18461-1-git-send-email-chander.kashyap@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:34149 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750909Ab3BLFcg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Feb 2013 00:32:36 -0500
-Received: by mail-ee0-f50.google.com with SMTP id e51so3797932eek.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Feb 2013 21:32:35 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Wolfram Sang <wolfram-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [RFC] i2c: Providing hooks for i2c multimaster bus arbitration.
+Date: Tue, 12 Feb 2013 11:03:35 +0100
+Message-ID: <20130212100335.GA5490@nekote.pengutronix.de>
+References: <1359968595-21291-1-git-send-email-yuvaraj.cd@samsung.com>
+ <20130210181710.GB12760@nekote.pengutronix.de>
+ <CAD=FV=XzfseMEHK4KutgYYoU4kEFPq7qoFoJtaBrh6QJUa1Y_w@mail.gmail.com>
+ <CAPnjgZ3HnXDp9ErsbZEfpc-NexuAt1C5cUWbFn=BW2TMGiMJEg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAPnjgZ3HnXDp9ErsbZEfpc-NexuAt1C5cUWbFn=BW2TMGiMJEg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, naveen krishna <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, lorenzo.pieralisi@arm.com, patches@linaro.org, linaro-dev@lists.linaro.org, Chander Kashyap <chander.kashyap@linaro.org>, Inderpal Singh <inderpal.singh@linaro.org>
 
-Commit a0ae0240507... "ARM: kernel: add device tree init map function" started
-using 24 LSBs of MPIDR to calculate the cpu_logical_map. Hence update the same
-in exynos_secondary_startup code.
+Hi,
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
----
- arch/arm/mach-exynos/headsmp.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > At the moment perhaps the strongest argument for why this particular
+> > arbitration scheme is needed is that's what the EC (embedded
+> > controller) on the ARM Chromebook uses.  There have been several
+> > arguments in-house about whether this was the most ideal way to
+> > structure things, but that's what we shipped with.  Thus, if we want
+> > to be able to talk to i2c devices on this bus (contains the keyboard,
+> > battery, and a bunch of power switches) we need something in the
+> > system that implements this arbitration scheme.
+> >
+> 
+> There was some discussion about using the built-in I2C multi-master
+> support but no one had had a good experience getting it to work
+> reliably in a real system so we ended up deciding not to rely on this.
 
-diff --git a/arch/arm/mach-exynos/headsmp.S b/arch/arm/mach-exynos/headsmp.S
-index 5364d4b..5c1c24a 100644
---- a/arch/arm/mach-exynos/headsmp.S
-+++ b/arch/arm/mach-exynos/headsmp.S
-@@ -22,7 +22,7 @@
-  */
- ENTRY(exynos4_secondary_startup)
- 	mrc	p15, 0, r0, c0, c0, 5
--	and	r0, r0, #15
-+	and	r0, r0, #0xffffff
- 	adr	r4, 1f
- 	ldmia	r4, {r5, r6}
- 	sub	r4, r4, r5
--- 
-1.7.9.5
+So, were there no experiences at all or bad experiences when trying? I
+am interested in hearing what I2C multi master restrictions might exist
+in practice.
+
+Thanks,
+
+   Wolfram
