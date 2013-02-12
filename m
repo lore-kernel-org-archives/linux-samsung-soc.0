@@ -1,195 +1,118 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH 1/2] i2c: s3c2410: move mach/regs-iic.h into i2c-s3c2410
- device driver
-Date: Tue, 12 Feb 2013 09:41:10 -0800
-Message-ID: <1d3501ce0948$26826c60$73874520$@samsung.com>
-References: <201302080057.00664.heiko@sntech.de>
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/7] ARM: dts: Add G2D DT nodes to Exynos4 machines
+Date: Tue, 12 Feb 2013 23:17:10 +0530
+Message-ID: <CAK9yfHzb5+vaA2+4WOmzzsVEvuftTVN=M11K0nzfQmMNF01yLw@mail.gmail.com>
+References: <1360151477-26460-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <201302080057.00664.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Content-language: en-us
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, 'Wolfram Sang' <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============6545391479824743142=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1360151477-26460-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Cc: "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Heiko St=C3=BCbner wrote:
->=20
-> The register definitions are only used in the driver itself.
-> This also removes the last dependency on plat/ includes from the
-> i2c driver.
->=20
-> Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-> ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c           |    1 -
->  arch/arm/plat-samsung/devs.c                  |    1 -
->  arch/arm/plat-samsung/include/plat/regs-iic.h |   56 ---------------=
-----------
->  drivers/i2c/busses/i2c-s3c2410.c              |   41 +++++++++++++++=
-+++-
->  4 files changed, 40 insertions(+), 59 deletions(-)
->  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-iic.h
->=20
-> diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-
-> s3c24xx/mach-rx1950.c
-> index 799af43..64b52a9 100644
-> --- a/arch/arm/mach-s3c24xx/mach-rx1950.c
-> +++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-> @@ -56,7 +56,6 @@
->  #include <plat/cpu.h>
->  #include <plat/devs.h>
->  #include <plat/pm.h>
-> -#include <plat/regs-iic.h>
->  #include <plat/regs-serial.h>
->  #include <plat/samsung-time.h>
->=20
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/dev=
-s.c
-> index e1124d9..6317a9e 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -62,7 +62,6 @@
->  #include <linux/platform_data/usb-s3c2410_udc.h>
->  #include <linux/platform_data/usb-ohci-s3c2410.h>
->  #include <plat/usb-phy.h>
-> -#include <plat/regs-iic.h>
->  #include <plat/regs-serial.h>
->  #include <plat/regs-spi.h>
->  #include <linux/platform_data/spi-s3c64xx.h>
-> diff --git a/arch/arm/plat-samsung/include/plat/regs-iic.h b/arch/arm=
-/plat-
-> samsung/include/plat/regs-iic.h
-> deleted file mode 100644
-> index 2f7c17d..0000000
-> --- a/arch/arm/plat-samsung/include/plat/regs-iic.h
-> +++ /dev/null
-> @@ -1,56 +0,0 @@
-> -/* arch/arm/mach-s3c2410/include/mach/regs-iic.h
-> - *
-> - * Copyright (c) 2004 Simtec Electronics <linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>
-> - *		http://www.simtec.co.uk/products/SWLINUX/
-> - *
-> - * This program is free software; you can redistribute it and/or mod=
-ify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
-> - * S3C2410 I2C Controller
-> -*/
-> -
-> -#ifndef __ASM_ARCH_REGS_IIC_H
-> -#define __ASM_ARCH_REGS_IIC_H __FILE__
-> -
-> -/* see s3c2410x user guide, v1.1, section 9 (p447) for more info */
-> -
-> -#define S3C2410_IICREG(x) (x)
-> -
-> -#define S3C2410_IICCON    S3C2410_IICREG(0x00)
-> -#define S3C2410_IICSTAT   S3C2410_IICREG(0x04)
-> -#define S3C2410_IICADD    S3C2410_IICREG(0x08)
-> -#define S3C2410_IICDS     S3C2410_IICREG(0x0C)
-> -#define S3C2440_IICLC	  S3C2410_IICREG(0x10)
-> -
-> -#define S3C2410_IICCON_ACKEN		(1<<7)
-> -#define S3C2410_IICCON_TXDIV_16		(0<<6)
-> -#define S3C2410_IICCON_TXDIV_512	(1<<6)
-> -#define S3C2410_IICCON_IRQEN		(1<<5)
-> -#define S3C2410_IICCON_IRQPEND		(1<<4)
-> -#define S3C2410_IICCON_SCALE(x)		((x)&15)
-> -#define S3C2410_IICCON_SCALEMASK	(0xf)
-> -
-> -#define S3C2410_IICSTAT_MASTER_RX	(2<<6)
-> -#define S3C2410_IICSTAT_MASTER_TX	(3<<6)
-> -#define S3C2410_IICSTAT_SLAVE_RX	(0<<6)
-> -#define S3C2410_IICSTAT_SLAVE_TX	(1<<6)
-> -#define S3C2410_IICSTAT_MODEMASK	(3<<6)
-> -
-> -#define S3C2410_IICSTAT_START		(1<<5)
-> -#define S3C2410_IICSTAT_BUSBUSY		(1<<5)
-> -#define S3C2410_IICSTAT_TXRXEN		(1<<4)
-> -#define S3C2410_IICSTAT_ARBITR		(1<<3)
-> -#define S3C2410_IICSTAT_ASSLAVE		(1<<2)
-> -#define S3C2410_IICSTAT_ADDR0		(1<<1)
-> -#define S3C2410_IICSTAT_LASTBIT		(1<<0)
-> -
-> -#define S3C2410_IICLC_SDA_DELAY0	(0 << 0)
-> -#define S3C2410_IICLC_SDA_DELAY5	(1 << 0)
-> -#define S3C2410_IICLC_SDA_DELAY10	(2 << 0)
-> -#define S3C2410_IICLC_SDA_DELAY15	(3 << 0)
-> -#define S3C2410_IICLC_SDA_DELAY_MASK	(3 << 0)
-> -
-> -#define S3C2410_IICLC_FILTER_ON		(1<<2)
-> -
-> -#endif /* __ASM_ARCH_REGS_IIC_H */
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2=
-c-
-> s3c2410.c
-> index a290d08..5cc4f71 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -42,9 +42,48 @@
->=20
->  #include <asm/irq.h>
->=20
-> -#include <plat/regs-iic.h>
->  #include <linux/platform_data/i2c-s3c2410.h>
->=20
-> +/* see s3c2410x user guide, v1.1, section 9 (p447) for more info */
-> +
-> +#define S3C2410_IICREG(x) (x)
-> +
-> +#define S3C2410_IICCON    S3C2410_IICREG(0x00)
-> +#define S3C2410_IICSTAT   S3C2410_IICREG(0x04)
-> +#define S3C2410_IICADD    S3C2410_IICREG(0x08)
-> +#define S3C2410_IICDS     S3C2410_IICREG(0x0C)
-> +#define S3C2440_IICLC	  S3C2410_IICREG(0x10)
-> +
-> +#define S3C2410_IICCON_ACKEN		(1<<7)
-> +#define S3C2410_IICCON_TXDIV_16		(0<<6)
-> +#define S3C2410_IICCON_TXDIV_512	(1<<6)
-> +#define S3C2410_IICCON_IRQEN		(1<<5)
-> +#define S3C2410_IICCON_IRQPEND		(1<<4)
-> +#define S3C2410_IICCON_SCALE(x)		((x)&15)
-> +#define S3C2410_IICCON_SCALEMASK	(0xf)
-> +
-> +#define S3C2410_IICSTAT_MASTER_RX	(2<<6)
-> +#define S3C2410_IICSTAT_MASTER_TX	(3<<6)
-> +#define S3C2410_IICSTAT_SLAVE_RX	(0<<6)
-> +#define S3C2410_IICSTAT_SLAVE_TX	(1<<6)
-> +#define S3C2410_IICSTAT_MODEMASK	(3<<6)
-> +
-> +#define S3C2410_IICSTAT_START		(1<<5)
-> +#define S3C2410_IICSTAT_BUSBUSY		(1<<5)
-> +#define S3C2410_IICSTAT_TXRXEN		(1<<4)
-> +#define S3C2410_IICSTAT_ARBITR		(1<<3)
-> +#define S3C2410_IICSTAT_ASSLAVE		(1<<2)
-> +#define S3C2410_IICSTAT_ADDR0		(1<<1)
-> +#define S3C2410_IICSTAT_LASTBIT		(1<<0)
-> +
-> +#define S3C2410_IICLC_SDA_DELAY0	(0 << 0)
-> +#define S3C2410_IICLC_SDA_DELAY5	(1 << 0)
-> +#define S3C2410_IICLC_SDA_DELAY10	(2 << 0)
-> +#define S3C2410_IICLC_SDA_DELAY15	(3 << 0)
-> +#define S3C2410_IICLC_SDA_DELAY_MASK	(3 << 0)
-> +
-> +#define S3C2410_IICLC_FILTER_ON		(1<<2)
-> +
->  /* Treat S3C2410 as baseline hardware, anything else is supported vi=
-a quirks
-> */
->  #define QUIRK_S3C2440		(1 << 0)
->  #define QUIRK_HDMIPHY		(1 << 1)
+--===============6545391479824743142==
+Content-Type: multipart/alternative; boundary=e89a8ff1ce247580e704d58a9d4a
+
+--e89a8ff1ce247580e704d58a9d4a
+Content-Type: text/plain; charset=ISO-8859-1
+
+Ping...
+
+On Wednesday, 6 February 2013, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> This patch series is based on for-next branch of Kukjin Kim's tree
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>
+> Patches added on top of MFC DT series which has been accepted by Kukjin.
+> http://www.spinics.net/lists/linux-samsung-soc/msg15419.html
+>
+> Sachin Kamat (7):
+>   ARM: dts: Add G2D node to exynos4210.dtsi
+>   ARM: dts: Add G2D node to SMDKV310
+>   ARM: dts: Add G2D node to exynos4210-origen
+>   ARM: dts: Add G2D node to exynos4x12.dtsi
+>   ARM: dts: Add G2D node to SMDK4412
+>   ARM: dts: Add G2D node to exynos4412-origen
+>   ARM: dts: Add Samsung G2D DT bindings documentation
+>
+>  .../devicetree/bindings/gpu/samsung-g2d.txt        |   30
+++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4210-origen.dts            |    4 ++
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts          |    4 ++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |    8 +++++
+>  arch/arm/boot/dts/exynos4412-origen.dts            |    4 ++
+>  arch/arm/boot/dts/exynos4412-smdk4412.dts          |    4 ++
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |    7 ++++
+>  7 files changed, 61 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+>
 > --
-> 1.7.2.3
+> 1.7.4.1
+>
+>
 
-Looks good to me on this series:
-Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+-- 
+With warm regards,
+Sachin
 
-Hi Wolfram, if you're ok on this, please pick up into your tree with my=
- ack.
+--e89a8ff1ce247580e704d58a9d4a
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+<br>Ping...<br><br>On Wednesday, 6 February 2013, Sachin Kamat &lt;<a href=
+=3D"mailto:sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org">sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org</a>&gt; wrote:<=
+br>&gt; This patch series is based on for-next branch of Kukjin Kim&#39;s t=
+ree<br>
+&gt; git://<a href=3D"http://git.kernel.org/pub/scm/linux/kernel/git/kgene/=
+linux-samsung.git">git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-sams=
+ung.git</a><br>&gt;<br>&gt; Patches added on top of MFC DT series which has=
+ been accepted by Kukjin.<br>
+&gt; <a href=3D"http://www.spinics.net/lists/linux-samsung-soc/msg15419.htm=
+l">http://www.spinics.net/lists/linux-samsung-soc/msg15419.html</a><br>&gt;=
+<br>&gt; Sachin Kamat (7):<br>&gt; =A0 ARM: dts: Add G2D node to exynos4210=
+.dtsi<br>
+&gt; =A0 ARM: dts: Add G2D node to SMDKV310<br>&gt; =A0 ARM: dts: Add G2D n=
+ode to exynos4210-origen<br>&gt; =A0 ARM: dts: Add G2D node to exynos4x12.d=
+tsi<br>&gt; =A0 ARM: dts: Add G2D node to SMDK4412<br>&gt; =A0 ARM: dts: Ad=
+d G2D node to exynos4412-origen<br>
+&gt; =A0 ARM: dts: Add Samsung G2D DT bindings documentation<br>&gt;<br>&gt=
+; =A0.../devicetree/bindings/gpu/samsung-g2d.txt =A0 =A0 =A0 =A0| =A0 30 ++=
+++++++++++++++++++<br>&gt; =A0arch/arm/boot/dts/exynos4210-origen.dts =A0 =
+=A0 =A0 =A0 =A0 =A0| =A0 =A04 ++<br>
+&gt; =A0arch/arm/boot/dts/exynos4210-smdkv310.dts =A0 =A0 =A0 =A0 =A0| =A0 =
+=A04 ++<br>&gt; =A0arch/arm/boot/dts/exynos4210.dtsi =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0| =A0 =A08 +++++<br>&gt; =A0arch/arm/boot/dts/exynos4412-ori=
+gen.dts =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A04 ++<br>&gt; =A0arch/arm/boot/dts/e=
+xynos4412-smdk4412.dts =A0 =A0 =A0 =A0 =A0| =A0 =A04 ++<br>
+&gt; =A0arch/arm/boot/dts/exynos4x12.dtsi =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0| =A0 =A07 ++++<br>&gt; =A07 files changed, 61 insertions(+), 0 deletion=
+s(-)<br>&gt; =A0create mode 100644 Documentation/devicetree/bindings/gpu/sa=
+msung-g2d.txt<br>&gt;<br>
+&gt; --<br>&gt; 1.7.4.1<br>&gt;<br>&gt;<br><br>-- <br><div>With warm regard=
+s,</div>
+<div>Sachin</div><br>
 
-- Kukjin
+--e89a8ff1ce247580e704d58a9d4a--
+
+--===============6545391479824743142==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============6545391479824743142==--
