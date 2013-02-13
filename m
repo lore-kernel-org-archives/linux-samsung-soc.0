@@ -1,222 +1,65 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] ARM: DTS: CROS5250: Add max77686 device tree support
-Date: Tue, 12 Feb 2013 21:23:36 -0800
-Message-ID: <1e0801ce09aa$4779d4a0$d66d7de0$@samsung.com>
-References: <1354099900-24779-1-git-send-email-a.kesavan@samsung.com>
- <1354677702-22669-1-git-send-email-a.kesavan@samsung.com>
+Subject: RE: [PATCH V3] ARM: EXYNOS: Add clocks for EXYNOS I2S and PCM I/F
+Date: Tue, 12 Feb 2013 21:29:01 -0800
+Message-ID: <1e0c01ce09ab$09600b70$1c202250$@samsung.com>
+References: <011201ce05db$82ae97e0$880bc7a0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:24818 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232Ab3BMFX7 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:64287 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751311Ab3BMF3Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Feb 2013 00:23:59 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
+	Wed, 13 Feb 2013 00:29:24 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI50017K8B7IIH0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 14:23:57 +0900 (KST)
+ 17 2011)) with ESMTP id <0MI5000VX8KKP7L0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 14:29:22 +0900 (KST)
 Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MI500DWI8BUFJ10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 14:23:56 +0900 (KST)
-In-reply-to: <1354677702-22669-1-git-send-email-a.kesavan@samsung.com>
+ with ESMTPA id <0MI5007JV8KV94A0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 14:29:21 +0900 (KST)
+In-reply-to: <011201ce05db$82ae97e0$880bc7a0$@samsung.com>
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Abhilash Kesavan' <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org
-Cc: olof@lixom.net, rahul.sharma@samsung.com, thomas.abraham@linaro.org
+To: 'Sangsu Park' <sangsu4u.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, sbkim73@samsung.com, 'Tushar Behera' <tushar.behera@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Padma Venkat' <padma.kvr@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>
 
-Abhilash Kesavan wrote:
+Sangsu Park wrote:
 > 
-> The exynos5250 based chromebooks have a max77686 pmic on i2c channel 0.
-> Add support for the pmic in the common cros5250 dts file.
-> Tested after enabling cpufreq support for exynos5250 SoC and varying the
-> arm frequency/voltage using the userspace governer.
+> Audio Subsystem has own clocks for I2S0 and PCM0 in all EXYNOS series.
+> This patch add clocks for I2S0 and PCM0 I/F.
 > 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Acked-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
 > ---
-> Changes since v1:
-> * Used generic names for the regulators
-> * Changed BUCK5 as being default "ON"
-> Changes since v2:
-> * Fixed the LDO7 name from "P1.0V_LDO_OUT7" to "P1.1V_LDO_OUT7"
+>  arch/arm/mach-exynos/Makefile      |    1 +
+>  arch/arm/mach-exynos/clock-audss.c |   68
+> ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 69 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-exynos/clock-audss.c
 > 
->  arch/arm/boot/dts/cros5250-common.dtsi |  138
-> ++++++++++++++++++++++++++++++++
->  1 files changed, 138 insertions(+), 0 deletions(-)
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-
+> exynos/Makefile
+> index 7e53a3a..5b6c7c0 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -13,6 +13,7 @@ obj-				:=
+>  # Core
 > 
-> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi
-> b/arch/arm/boot/dts/cros5250-common.dtsi
-> index fddd174..8ab8394 100644
-> --- a/arch/arm/boot/dts/cros5250-common.dtsi
-> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
-> @@ -24,6 +24,144 @@
->  		samsung,i2c-max-bus-freq = <378000>;
->  		gpios = <&gpb3 0 2 3 0>,
->  			<&gpb3 1 2 3 0>;
-> +
-> +		max77686@09 {
-> +			compatible = "maxim,max77686";
-> +			reg = <0x09>;
-> +
-> +			voltage-regulators {
-> +				ldo1_reg: LDO1 {
-> +					regulator-name =
-> "P1.0V_LDO_OUT1";
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo2_reg: LDO2 {
-> +					regulator-name =
-> "P1.8V_LDO_OUT2";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo3_reg: LDO3 {
-> +					regulator-name =
-> "P1.8V_LDO_OUT3";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo7_reg: LDO7 {
-> +					regulator-name =
-> "P1.1V_LDO_OUT7";
-> +					regulator-min-microvolt = <1100000>;
-> +					regulator-max-microvolt = <1100000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo8_reg: LDO8 {
-> +					regulator-name =
-> "P1.0V_LDO_OUT8";
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo10_reg: LDO10 {
-> +					regulator-name =
-> "P1.8V_LDO_OUT10";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo12_reg: LDO12 {
-> +					regulator-name =
-> "P3.0V_LDO_OUT12";
-> +					regulator-min-microvolt = <3000000>;
-> +					regulator-max-microvolt = <3000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo14_reg: LDO14 {
-> +					regulator-name =
-> "P1.8V_LDO_OUT14";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo15_reg: LDO15 {
-> +					regulator-name =
-> "P1.0V_LDO_OUT15";
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo16_reg: LDO16 {
-> +					regulator-name =
-> "P1.8V_LDO_OUT16";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				buck1_reg: BUCK1 {
-> +					regulator-name = "vdd_mif";
-> +					regulator-min-microvolt = <950000>;
-> +					regulator-max-microvolt = <1300000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck2_reg: BUCK2 {
-> +					regulator-name = "vdd_arm";
-> +					regulator-min-microvolt = <850000>;
-> +					regulator-max-microvolt = <1350000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck3_reg: BUCK3 {
-> +					regulator-name = "vdd_int";
-> +					regulator-min-microvolt = <900000>;
-> +					regulator-max-microvolt = <1200000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck4_reg: BUCK4 {
-> +					regulator-name = "vdd_g3d";
-> +					regulator-min-microvolt = <850000>;
-> +					regulator-max-microvolt = <1300000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck5_reg: BUCK5 {
-> +					regulator-name =
-> "P1.8V_BUCK_OUT5";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck6_reg: BUCK6 {
-> +					regulator-name =
-> "P1.35V_BUCK_OUT6";
-> +					regulator-min-microvolt = <1350000>;
-> +					regulator-max-microvolt = <1350000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				buck7_reg: BUCK7 {
-> +					regulator-name =
-> "P2.0V_BUCK_OUT7";
-> +					regulator-min-microvolt = <2000000>;
-> +					regulator-max-microvolt = <2000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				buck8_reg: BUCK8 {
-> +					regulator-name =
-> "P2.85V_BUCK_OUT8";
-> +					regulator-min-microvolt = <2850000>;
-> +					regulator-max-microvolt = <2850000>;
-> +					regulator-always-on;
-> +				};
-> +			};
-> +		};
->  	};
-> 
->  	i2c@12C70000 {
-> --
-> 1.6.6.1
+>  obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
+> +obj-$(CONFIG_ARCH_EXYNOS)	+= clock-audss.o
 
-Applied, thanks.
+Sorry for late response.
+
+Basically, this should be implemented with common clock stuff but its
+posting was delayed due to some reason :-( I think, you can see the patches
+from Thomas P Abraham soon, so please re-work this based on that. If any
+updates, let you know.
+
+Thanks.
 
 - Kukjin
