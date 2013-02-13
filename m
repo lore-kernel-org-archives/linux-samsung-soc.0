@@ -1,64 +1,61 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V3] ARM: EXYNOS: Add clocks for EXYNOS I2S and PCM I/F
-Date: Tue, 12 Feb 2013 21:29:01 -0800
-Message-ID: <1e0c01ce09ab$09600b70$1c202250$@samsung.com>
-References: <011201ce05db$82ae97e0$880bc7a0$@samsung.com>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v6 05/12] iommu/exynos: support for device tree
+Date: Tue, 12 Feb 2013 21:33:01 -0800
+Message-ID: <1e0d01ce09ab$98eed690$cacc83b0$@samsung.com>
+References: <003801cde30b$d9667b90$8c3372b0$%cho@samsung.com>
+	<50E1E62B.3090501@gmail.com>
+	<CAHQjnOMav9A43m4=7=N9kzEHTHE_q_ygu8x6mzY6Cus=q0c06A@mail.gmail.com>
+	<20130201135114.GF25591@8bytes.org>
+	<CAHQjnOP1U=LRU-fe-HuWzp=17s=KG8zPvSO3_zeVrrviEkmyHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:64287 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751311Ab3BMF3Y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Feb 2013 00:29:24 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI5000VX8KKP7L0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 14:29:22 +0900 (KST)
-Received: from visitor4lab ([105.128.18.157])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MI5007JV8KV94A0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 14:29:21 +0900 (KST)
-In-reply-to: <011201ce05db$82ae97e0$880bc7a0$@samsung.com>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <CAHQjnOP1U=LRU-fe-HuWzp=17s=KG8zPvSO3_zeVrrviEkmyHw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'KyongHo Cho' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Joerg Roedel' <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'devicetree-discuss' <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Sylwester Nawrocki' <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sangsu Park' <sangsu4u.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, sbkim73@samsung.com, 'Tushar Behera' <tushar.behera@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Padma Venkat' <padma.kvr@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>
 
-Sangsu Park wrote:
+KyongHo Cho wrote:
 > 
-> Audio Subsystem has own clocks for I2S0 and PCM0 in all EXYNOS series.
-> This patch add clocks for I2S0 and PCM0 I/F.
+> On Fri, Feb 1, 2013 at 10:51 PM, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> wrote:
+> > Cho,
+> >
+> > On Wed, Jan 02, 2013 at 02:53:49PM +0900, KyongHo Cho wrote:
+> >> On Tuesday, January 1, 2013, Sylwester Nawrocki
+> <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >
+> >> > Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> >
+> > Since patch 7 of this set is already merged, do you mind to re-post the
+> > rest of this patch-set with the latest comments addressed? I can have a
+> > look at it again then and consider it for 3.9.
+> >
+> Thank you for your considerations.
 > 
-> Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
-> ---
->  arch/arm/mach-exynos/Makefile      |    1 +
->  arch/arm/mach-exynos/clock-audss.c |   68
-> ++++++++++++++++++++++++++++++++++++
->  2 files changed, 69 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-exynos/clock-audss.c
+> I also think that I need to post the patch set again with some fixes that
+are
+> addressed in the comments.
 > 
-> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-
-> exynos/Makefile
-> index 7e53a3a..5b6c7c0 100644
-> --- a/arch/arm/mach-exynos/Makefile
-> +++ b/arch/arm/mach-exynos/Makefile
-> @@ -13,6 +13,7 @@ obj-				:=
->  # Core
+> Due to the heavy workload in my business I have hardly had a chance to
+> handle this patch-set.
+> As soon as the business lets me handle other pending issues, I will
+> work on this patchset.
+> I think I can start to it in the next 2 weeks.
 > 
->  obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
-> +obj-$(CONFIG_ARCH_EXYNOS)	+= clock-audss.o
+OK, I see.
 
-Sorry for late response.
-
-Basically, this should be implemented with common clock stuff but its
-posting was delayed due to some reason :-( I think, you can see the patches
-from Thomas P Abraham soon, so please re-work this based on that. If any
-updates, let you know.
+Joerg, please hold this on until KyongHo's re-work, probably 3.10?
 
 Thanks.
 
