@@ -1,45 +1,107 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 Subject: Re: iio: adc: add exynos5 adc driver under iio framwork
-Date: Wed, 13 Feb 2013 15:05:09 +0100
-Message-ID: <511B9D95.2030803@metafoo.de>
-References: <1358917086-4148-1-git-send-email-ch.naveen@samsung.com> <20130212210732.GA8634@roeck-us.net> <CAHfPSqCwqD2gzB9eiTi1hSQvRgwbsjp9NfEb3RKpy+_+DbdhzQ@mail.gmail.com> <CAHfPSqAJN8C6d6Oa=1UDpJ+hTXbEOGBio4Ob__ZphsKq=Rvppg@mail.gmail.com> <511B9575.1050506@metafoo.de> <CAHfPSqD3-sxJANEznbuvL0in4ObPSStgCJHVLucMdzz-jVa1Fw@mail.gmail.com>
+Date: Wed, 13 Feb 2013 07:51:00 -0800
+Message-ID: <20130213155100.GA7198@roeck-us.net>
+References: <1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
+ <20130212210732.GA8634@roeck-us.net>
+ <CAHfPSqCwqD2gzB9eiTi1hSQvRgwbsjp9NfEb3RKpy+_+DbdhzQ@mail.gmail.com>
+ <CAHfPSqAJN8C6d6Oa=1UDpJ+hTXbEOGBio4Ob__ZphsKq=Rvppg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-out-084.synserver.de ([212.40.185.84]:1107 "EHLO
-	smtp-out-083.synserver.de" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1757203Ab3BMODu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Feb 2013 09:03:50 -0500
-In-Reply-To: <CAHfPSqD3-sxJANEznbuvL0in4ObPSStgCJHVLucMdzz-jVa1Fw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAHfPSqAJN8C6d6Oa=1UDpJ+hTXbEOGBio4Ob__ZphsKq=Rvppg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, dianders@chromium.org, gregkh@linuxfoundation.org
 
-On 02/13/2013 02:53 PM, Naveen Krishna Ch wrote:
-[...]
->>> ADC driver will use of_platform_populate() to populate the child nodes
->>> (ntc thermistors in my case)
->>>
->>> I've modified the NTC driver to support DT. in probe
->>> chan = iio_channel_get(&pdev->dev, "adcX");
->>> and using "id" field to use respective ADC channel to do the raw_read()
->>
->> The beauty of the interface is that the consumer doesn't need to know the
->> number of the channel it is using. This is already fully described in the
->> io-channels property. Since you only have one channel per consumer just use
->>
->>         iio_chanel_get(&pdev->dev, NULL)
-> Right this helped me get the channels properly.
+On Wed, Feb 13, 2013 at 06:46:01PM +0530, Naveen Krishna Ch wrote:
+[ ... ]
 > 
-> I've a doubt in the driver posted at https://lkml.org/lkml/2013/1/24/2
-> i don't need to use this anymore right use iio_map_array_register() Right.
+> Hello Guenter,
 > 
-> Thats so simple then.. Thanks
+> I've rebase my adc driver on top of your (OF for IIO patch)
+> 
+> My setup is like the below one. kindly, help me find the right device
+> tree node params
+> 
+> One ADC controller with 8 channels,
+>   4 NTC thermistors are connected to channel 3, 4, 5 and 6 of ADC respectively
+> 
+> ADC ch - 0
+> ADC ch - 1
+> ADC ch - 2
+> ADC ch - 3 ------------------NTC
+> ADC ch - 4 ------------------NTC
+> ADC ch - 5 ------------------NTC
+> ADC ch - 6 ------------------NTC
+> ADC ch - 7
+> 
+> I've started off with something like this.
+> 
+>         adc0: adc@12D10000 {
+>                 compatible = "samsung,exynos5250-adc";
+>                 reg = <0x12D10000 0x100>;
+>                 interrupts = <0 106 0>;
+>                 #io-channel-cells = <1>;
+>         };
+> 
+>         adc0: adc@12D10000 {
+>                 vdd-supply = <&buck5_reg>;
+> 
+>                 ncp15wb473@0 {
+>                         compatible = "ntc,ncp15wb473";
+>                         io-channels = <&adc0 3>;
+>                         io-channel-names = "adc3";
+>                         pullup-uV = <1800000>;
+>                         pullup-ohm = <47000>;
+>                         pulldown-ohm = <0>;
+>                         id = <3>;
+>                 };
+> 
+>                 ncp15wb473@1 {
+>                         compatible = "ntc,ncp15wb473";
+>                         pullup-uV = <1800000>;
+>                         pullup-ohm = <47000>;
+>                         pulldown-ohm = <0>;
+>                         io-channels = <&adc0 4>;
+>                         io-channel-names = "adc4";
+>                         id = <4>;
+>                 };
+>                 ncp15wb473@2 {
+>                         compatible = "ntc,ncp15wb473";
+>                         pullup-uV = <1800000>;
+>                         pullup-ohm = <47000>;
+>                         pulldown-ohm = <0>;
+>                         io-channels = <&adc0 5>;
+>                         io-channel-names = "adc5";
+>                         id = <5>;
+>                 };
+>                 ncp15wb473@3 {
+>                         compatible = "ntc,ncp15wb473";
+>                         pullup-uV = <1800000>;
+>                         pullup-ohm = <47000>;
+>                         pulldown-ohm = <0>;
+>                         io-channels = <&adc0 6>;
+>                         io-channel-names = "adc6";
+>                         id = <6>;
+>                 };
+>         };
+> 
+> ADC driver will use of_platform_populate() to populate the child nodes
+> (ntc thermistors in my case)
+> 
+> I've modified the NTC driver to support DT. in probe
+> chan = iio_channel_get(&pdev->dev, "adcX");
+> and using "id" field to use respective ADC channel to do the raw_read()
+> 
+> Issue:
+> 1. I get weird device names for thermistors starting from ncp15wb473.2
+> to ncp15wb473.5
 
-Yes, if you are using devicetree you don't need to use
-iio_map_array_register() anymore :)
+I noticed that device IDs and names created when OF is active are sometimes
+not as one would expect. I never managed to get the device IDs I tried to
+configure. Ultimately, it did not matter and I never bothered to track it down.
 
-- Lars
+Guenter
