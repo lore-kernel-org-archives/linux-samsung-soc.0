@@ -1,107 +1,65 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: iio: adc: add exynos5 adc driver under iio framwork
-Date: Wed, 13 Feb 2013 07:51:00 -0800
-Message-ID: <20130213155100.GA7198@roeck-us.net>
-References: <1358917086-4148-1-git-send-email-ch.naveen@samsung.com>
- <20130212210732.GA8634@roeck-us.net>
- <CAHfPSqCwqD2gzB9eiTi1hSQvRgwbsjp9NfEb3RKpy+_+DbdhzQ@mail.gmail.com>
- <CAHfPSqAJN8C6d6Oa=1UDpJ+hTXbEOGBio4Ob__ZphsKq=Rvppg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: exynos: move exynos4210-combiner to drivers/irqchip
+Date: Wed, 13 Feb 2013 10:51:10 -0800
+Message-ID: <CAD=FV=WcHuW+2KBqDOGezW2Q9Fhr3Zq-ZtpX_y5qKN2LFEgMDA@mail.gmail.com>
+References: <1360706692-13622-1-git-send-email-robherring2@gmail.com>
+	<20130212225227.GA24096@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAHfPSqAJN8C6d6Oa=1UDpJ+hTXbEOGBio4Ob__ZphsKq=Rvppg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f52.google.com ([209.85.215.52]:39645 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756845Ab3BMSvM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Feb 2013 13:51:12 -0500
+Received: by mail-la0-f52.google.com with SMTP id fs12so1472842lab.25
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Feb 2013 10:51:11 -0800 (PST)
+In-Reply-To: <20130212225227.GA24096@quad.lixom.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Rob Herring <robherring2@gmail.com>, arm@kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 13, 2013 at 06:46:01PM +0530, Naveen Krishna Ch wrote:
-[ ... ]
-> 
-> Hello Guenter,
-> 
-> I've rebase my adc driver on top of your (OF for IIO patch)
-> 
-> My setup is like the below one. kindly, help me find the right device
-> tree node params
-> 
-> One ADC controller with 8 channels,
->   4 NTC thermistors are connected to channel 3, 4, 5 and 6 of ADC respectively
-> 
-> ADC ch - 0
-> ADC ch - 1
-> ADC ch - 2
-> ADC ch - 3 ------------------NTC
-> ADC ch - 4 ------------------NTC
-> ADC ch - 5 ------------------NTC
-> ADC ch - 6 ------------------NTC
-> ADC ch - 7
-> 
-> I've started off with something like this.
-> 
->         adc0: adc@12D10000 {
->                 compatible = "samsung,exynos5250-adc";
->                 reg = <0x12D10000 0x100>;
->                 interrupts = <0 106 0>;
->                 #io-channel-cells = <1>;
->         };
-> 
->         adc0: adc@12D10000 {
->                 vdd-supply = <&buck5_reg>;
-> 
->                 ncp15wb473@0 {
->                         compatible = "ntc,ncp15wb473";
->                         io-channels = <&adc0 3>;
->                         io-channel-names = "adc3";
->                         pullup-uV = <1800000>;
->                         pullup-ohm = <47000>;
->                         pulldown-ohm = <0>;
->                         id = <3>;
->                 };
-> 
->                 ncp15wb473@1 {
->                         compatible = "ntc,ncp15wb473";
->                         pullup-uV = <1800000>;
->                         pullup-ohm = <47000>;
->                         pulldown-ohm = <0>;
->                         io-channels = <&adc0 4>;
->                         io-channel-names = "adc4";
->                         id = <4>;
->                 };
->                 ncp15wb473@2 {
->                         compatible = "ntc,ncp15wb473";
->                         pullup-uV = <1800000>;
->                         pullup-ohm = <47000>;
->                         pulldown-ohm = <0>;
->                         io-channels = <&adc0 5>;
->                         io-channel-names = "adc5";
->                         id = <5>;
->                 };
->                 ncp15wb473@3 {
->                         compatible = "ntc,ncp15wb473";
->                         pullup-uV = <1800000>;
->                         pullup-ohm = <47000>;
->                         pulldown-ohm = <0>;
->                         io-channels = <&adc0 6>;
->                         io-channel-names = "adc6";
->                         id = <6>;
->                 };
->         };
-> 
-> ADC driver will use of_platform_populate() to populate the child nodes
-> (ntc thermistors in my case)
-> 
-> I've modified the NTC driver to support DT. in probe
-> chan = iio_channel_get(&pdev->dev, "adcX");
-> and using "id" field to use respective ADC channel to do the raw_read()
-> 
-> Issue:
-> 1. I get weird device names for thermistors starting from ncp15wb473.2
-> to ncp15wb473.5
+Rob / Olof,
 
-I noticed that device IDs and names created when OF is active are sometimes
-not as one would expect. I never managed to get the device IDs I tried to
-configure. Ultimately, it did not matter and I never bothered to track it down.
+On Tue, Feb 12, 2013 at 2:52 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Tue, Feb 12, 2013 at 04:04:52PM -0600, Rob Herring wrote:
+>> From: Rob Herring <rob.herring@calxeda.com>
+>>
+>> Exynos boot is broken with commit 0529e315 (ARM: use common irqchip_init
+>> for GIC init). This commit split the irqchip initialization into 2 calls
+>> to of_irq_init. This does not work because of_irq_init requires interrupt
+>> parents to be in the match list.
+>>
+>> Rather than reverting exynos changes, make it do the proper thing by using
+>> IRQCHIP_DECLARE. This requires moving the combiner code to drivers/irqchip.
+>>
+>> Reported-by: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Cc: Russell King <linux@arm.linux.org.uk>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: linux-samsung-soc@vger.kernel.org
+>> ---
+>>
+>> I thought there may be other platforms broken in the same way, but I
+>> checked and exynos is the only one.
+>>
+>> This is based on my gic/vic irqchip branch in arm-soc.
+>
+> Applied to next/cleanup.
 
-Guenter
+I synced up to next-20130213 and the problem is fixed.  :)  ...that
+label doesn't exactly boot but the problems are unrelated to this
+problem now (there are problems with the OF conversions to raw
+spinlocks)...
+
+I haven't done any review of this code (I'm assuming that Olof already
+looked it over and Samsung engineers will give it a thorough review),
+but it's definitely tested.  :)
+
+Tested-by: Doug Anderson <dianders@chromium.org>
+
+Thanks!
+
+-Doug
