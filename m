@@ -1,75 +1,90 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v5 0/2] Adding USB 3.0 DRD-phy support for exynos5250
-Date: Wed, 13 Feb 2013 14:39:32 +0530
-Message-ID: <CAFp+6iEfVSbyGVNhDFc2wW7w=ZMGwVpcc28GAGOgHffCWQRLMQ@mail.gmail.com>
-References: <1360068256-19602-1-git-send-email-gautam.vivek@samsung.com>
-	<1e3101ce09b3$b2e178c0$18a46a40$@kernel.org>
-	<20130213083218.GA2426@arwen.pp.htv.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [RFC v2 0/3] Support Common Display Framework on Exynos5 SoC
+Date: Wed, 13 Feb 2013 15:31:04 +0530
+Message-ID: <1360749667-12028-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f50.google.com ([209.85.214.50]:45395 "EHLO
-	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751108Ab3BMJJe (ORCPT
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:47423 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932862Ab3BMKBU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Feb 2013 04:09:34 -0500
-In-Reply-To: <20130213083218.GA2426@arwen.pp.htv.fi>
+	Wed, 13 Feb 2013 05:01:20 -0500
+Received: by mail-pa0-f53.google.com with SMTP id bg4so608248pad.26
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Feb 2013 02:01:20 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: kgene@kernel.org, linux-samsung-soc@vger.kernel.org, p.paneri@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, tomasz.figa@gmail.com, av.tikhomirov@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, sylvester.nawrocki@gmail.com, rob.herring@calxeda.com
+To: dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, l.krishna@samsung.com, joshi@samsung.com, aditya.ps@samsung.com, tom.gall@linaro.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, ragesh.r@linaro.org, jesse.barker@linaro.org, robdclark@gmail.com, sumit.semwal@linaro.org
 
-On Wed, Feb 13, 2013 at 2:02 PM, Felipe Balbi <balbi@ti.com> wrote:
-> On Tue, Feb 12, 2013 at 10:31:00PM -0800, kgene@kernel.org wrote:
->> Vivek Gautam wrote:
->> >
->> > Based on 'usb-next'
->> >
->> > Changes from v4:
->> >  - Modifying function names and driver names to follow a common
->> >    naming convention.
->> >         "usb2phy" for samsung-usb2phy driver
->> >         "usb3phy" for samsung-usb3phy driver
->> >  - Changing file names "samsung-usb2.c" to "samsung-usb2phy.c" and,
->> >    "samsung-usb3.c" to "samsung-usb3phy.c"
->> >  - Removing dependencies for SAMSUNG_USB2PHY and
->> > SAMSUNG_USB3PHY.
->> >  - Arranging SAMSUNG_USB2PHY and SAMSUNG_USB3PHY to select
->> > SAMSUNG_USBPHY,
->> >    which is the usb-phy helper driver.
->> >
->> > Vivek Gautam (2):
->> >   usb: phy: samsung: Common out the generic stuff
->> >   usb: phy: samsung: Add PHY support for USB 3.0 controller
->> >
->> >  drivers/usb/phy/Kconfig           |   25 +-
->> >  drivers/usb/phy/Makefile          |    2 +
->> >  drivers/usb/phy/samsung-usb2phy.c |  511
->> > ++++++++++++++++++++++++++
->> >  drivers/usb/phy/samsung-usb3phy.c |  349 ++++++++++++++++++
->> >  drivers/usb/phy/samsung-usbphy.c  |  717
->> +------------------------------------
->> >  drivers/usb/phy/samsung-usbphy.h  |  328 +++++++++++++++++
->> >  6 files changed, 1219 insertions(+), 713 deletions(-)
->> >  create mode 100644 drivers/usb/phy/samsung-usb2phy.c
->> >  create mode 100644 drivers/usb/phy/samsung-usb3phy.c
->> >  create mode 100644 drivers/usb/phy/samsung-usbphy.h
->> >
->> > --
->> > 1.7.6.5
->>
->> For now, looks good to me, and if any enhancement is required, it can be
->> done next time.
->>
->> Felipe, please go ahead with my ack :-)
->> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->
-> Thank you, but it's too late for v3.9, this will have to wait until
-> v3.10. You will get an email once I apply these to my branch.
->
-Sure, thanks :)
+changes since v1:
+Since v1 was not tested when I posted it, now that I have the s6e8aa0 panel, I 
+tested the same on Exynos5 SoC. Needed to make below mentioned changes to make 
+it work.
 
+In exynos mipi driver:
+	1> added "enable_hs" as part of "dsi_video_source_ops", as this function
+	needs to be called from the s6e8aa0 panel probe after LCD "power_on".
+
+	2> moved the call exynos_mipi_dsi_set_hs_enable()
+	out of the exynos_mipi_update_cfg() function as it needs to be called only
+	after the LCD "power_on". hence in s6e8aa0 probe added call "enable_hs" 
+	after "power_on". otherwise DSI COMMAND TIME OUT error occurs, after
+	sending WRITE COMMAND.
+	Prior to CDF changes, things used to work fine, as the panel 
+	used to register with MIPI DSIM driver and in the MIPI DSI probe used to 
+	call LCD "power_on" first and then "exynos_mipi_dsi_set_hs_enable".
+	Since the CDF support is introduced, the both panel and mipi dsi probe
+	happens independently and DSI COMMAND TIME OUT error used to occurs, after
+	sending WRITE COMMAND. by making above mentioned changes it started working.
+
+In s6e8ax0 driver:
+	1> added call "enable_hs" in probe after "power_on", to over come above 
+	mentioned error.
+	2> addd init_lcd(), the missing sequence to initialise the lcd.
+
+This patch series contains 3 patches with the following changes
+
+is based on CDF-T proposed by Tomi Valkeinen <tomi.valkeinen@ti.com>
+http://lwn.net/Articles/529489/
+
+[PATCH 1/3] video: display: Adding frame related ops to MIPI DSI video source struct
+		Adds the frame related ops to the MIPI DSI video source struct
+
+[PATCH 2/3] video: exynos: mipi dsi: Making Exynos MIPI Compliant with CDF
+		Makes the Exynos MIPI DSI driver compliant with CDF.
+	
+[PATCH 3/3] video: exynos: Making s6e8ax0 panel driver compliant with CDF
+
+	Makes the Exynos s6e8ax0 panel driver compliant with CDF.
+	Have made necessary changes in s6e8ax0 panel driver, made an effort to 
+	remove dependency on backlight and lcd framework, but its NOT fully done.
+	s6e8ax0_get_brightness() and s6e8ax0_set_brightness() functionalities
+	have NOT been modified. as backlight support in CDF are _NOT_
+	implemented yet.
+	Thought of adding these "get and set" as part of 
+	display_entity_control_ops(), but didn't modify as of now.
+	Any thoughts on the same will be helpful.
+	removed the lcd_ops "set_power and get_power" and added as part of 
+	panel_set_state.
+
+Testing: 
+	Tested on Exynos5 SoC with s6e8aa0 panel connected, by applying some of
+	the dependent patches
+	Could see the linux logo and ran "modetest" application and saw the 
+	test pattern on display panel.
+
+Vikas Sajjan (3):
+  video: display: Adding frame related ops to MIPI DSI video source
+    struct
+  video: exynos: mipi dsi: Making Exynos MIPI Compliant with CDF
+  video: exynos: Making s6e8ax0 panel driver compliant with CDF
+
+ drivers/video/exynos/exynos_mipi_dsi.c        |  197 ++----
+ drivers/video/exynos/exynos_mipi_dsi_common.c |   22 +-
+ drivers/video/exynos/exynos_mipi_dsi_common.h |   12 +-
+ drivers/video/exynos/s6e8ax0.c                |  848 +++++++++++++------------
+ include/video/display.h                       |    6 +
+ include/video/exynos_mipi_dsim.h              |    5 +-
+ 6 files changed, 519 insertions(+), 571 deletions(-)
 
 -- 
-Thanks & Regards
-Vivek
+1.7.9.5
