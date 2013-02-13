@@ -1,55 +1,96 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C24XX: remove plat-samsung/irq.h
-Date: Tue, 12 Feb 2013 15:25:22 -0800
-Message-ID: <1dc701ce0978$3c127090$b43751b0$@samsung.com>
-References: <201302122042.32471.heiko@sntech.de>
+Subject: [GIT PULL fixes] Samsung-fixes for v3.9
+Date: Tue, 12 Feb 2013 16:20:43 -0800
+Message-ID: <1dce01ce097f$f7bd2db0$e7378910$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:10087 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:19082 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751610Ab3BLXZo convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1754460Ab3BMAVF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Feb 2013 18:25:44 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	Tue, 12 Feb 2013 19:21:05 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI400C8TRQ69F20@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 08:25:42 +0900 (KST)
+ 17 2011)) with ESMTP id <0MI4000ADUAYP780@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 09:21:04 +0900 (KST)
 Received: from visitor4lab ([105.128.18.157])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MI400GJFRQSKT70@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 08:25:42 +0900 (KST)
-In-reply-to: <201302122042.32471.heiko@sntech.de>
+ with ESMTPA id <0MI400F2IUB1V760@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Feb 2013 09:21:03 +0900 (KST)
 Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: olof@lixom.net, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Heiko St=C3=BCbner wrote:
->=20
-> plat-samsung/irq.h did only contain functions for handling the spread=
- out
-> subirqs on s3c24xx arches, which are not needed anymore.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> Sorry for bringing this separate submission, but I just remembered
-> it this evening.
->=20
-> This applies on top of all the other s3c24xx irq changes and
-> I think this patch will mark the end of the irq-cleanup for now.
->=20
->  arch/arm/mach-s3c24xx/irq-pm.c           |    7 ++-
->  arch/arm/mach-s3c24xx/irq.c              |    8 +--
->  arch/arm/plat-samsung/include/plat/irq.h |  116 --------------------=
-----------
->  3 files changed, 9 insertions(+), 122 deletions(-)
->  delete mode 100644 arch/arm/plat-samsung/include/plat/irq.h
->=20
-Applied, thanks :-)
+Hi Arnd and Olof,
+
+Here is Samsung fixes for v3.9 and it is not a critical fixes.
+
+Please pull from:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+next/fixes-samsung
+
+Thanks.
 
 - Kukjin
+
+The following changes since commit 7d1f9aeff1ee4a20b1aeb377dd0f579fe9647619:
+
+  Linux 3.8-rc4 (2013-01-17 19:25:45 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+next/fixes-samsung
+
+for you to fetch changes up to ebf4762812ebe77ed960543421ec894108315f2f:
+
+  ARM: dts: Correct pin configuration of SD 4 for exynos4x12-pinctrl
+(2013-02-12 10:35:50 -0800)
+
+----------------------------------------------------------------
+Abhilash Kesavan (1):
+      ARM: SAMSUNG: Gracefully exit on suspend failure
+
+Alexander Shiyan (1):
+      ARM: S3C24XX: Fix compile breakage for SMDK2410
+
+Alexey Galakhov (1):
+      ARM: S5PV210: Fix early uart output in fifo mode
+
+Chen Gang (1):
+      ARM: SAMSUNG: using vsnprintf instead of vsprintf for the limit buffer
+length 256
+
+Heiko Stuebner (2):
+      ARM: S3C24XX: let S3C2412_PM select S3C2412_PM_SLEEP
+      ARM: S3C24XX: add missing platform_device.h include for osiris
+
+Sachin Kamat (3):
+      ARM: S3C24XX: Make 'clk_msysclk' static
+      ARM: SAMSUNG: Silence empty switch warning in sdhci.h
+      ARM: SAMSUNG: Silence empty switch warning in fimc-core.h
+
+Shirish S (1):
+      ARM: dts: Correct pin configuration of SD 4 for exynos4x12-pinctrl
+
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi       |    2 +-
+ arch/arm/mach-exynos/pm.c                       |    6 ++++--
+ arch/arm/mach-s3c24xx/Kconfig                   |    2 ++
+ arch/arm/mach-s3c24xx/common-s3c2443.c          |    2 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c             |    1 +
+ arch/arm/mach-s3c24xx/pm-s3c2412.c              |    3 ++-
+ arch/arm/mach-s3c24xx/pm-s3c2416.c              |    3 ++-
+ arch/arm/mach-s3c64xx/pm.c                      |    3 ++-
+ arch/arm/mach-s5p64x0/pm.c                      |    4 ++--
+ arch/arm/mach-s5pv210/include/mach/uncompress.h |    2 ++
+ arch/arm/mach-s5pv210/pm.c                      |    4 ++--
+ arch/arm/plat-samsung/include/plat/fimc-core.h  |    2 ++
+ arch/arm/plat-samsung/include/plat/sdhci.h      |    2 ++
+ arch/arm/plat-samsung/pm.c                      |    7 +++++--
+ 14 files changed, 30 insertions(+), 13 deletions(-)
