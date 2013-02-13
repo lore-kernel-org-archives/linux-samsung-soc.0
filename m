@@ -1,199 +1,80 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v3] ARM: DTS: CROS5250: Add max77686 device tree support
-Date: Wed, 13 Feb 2013 09:13:34 +0530
-Message-ID: <CAM4voande7QK7=TE5w+zdw-NY+7A243OrKG_YDbEDb9L=w_+uw@mail.gmail.com>
-References: <1354099900-24779-1-git-send-email-a.kesavan@samsung.com>
-	<1354677702-22669-1-git-send-email-a.kesavan@samsung.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V4 0/5] Add generic DMA DT binding support
+Date: Wed, 13 Feb 2013 09:52:30 +0530
+Message-ID: <CAAgF-Be1w-8yjuyXT+d8sUO8dee1x7oYFJLXHCmcJSf17eXWyw@mail.gmail.com>
+References: <1360571905-15285-1-git-send-email-padma.v@samsung.com>
+	<20130212144950.GJ3789@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:44739 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752329Ab3BMDnf (ORCPT
+Received: from mail-ia0-f182.google.com ([209.85.210.182]:59020 "EHLO
+	mail-ia0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752035Ab3BMEWc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Feb 2013 22:43:35 -0500
-Received: by mail-oa0-f42.google.com with SMTP id i18so873072oag.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Feb 2013 19:43:34 -0800 (PST)
-In-Reply-To: <1354677702-22669-1-git-send-email-a.kesavan@samsung.com>
+	Tue, 12 Feb 2013 23:22:32 -0500
+Received: by mail-ia0-f182.google.com with SMTP id w33so810025iag.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Feb 2013 20:22:31 -0800 (PST)
+In-Reply-To: <20130212144950.GJ3789@intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org
-Cc: olof@lixom.net, Abhilash Kesavan <a.kesavan@samsung.com>, thomas.abraham@linaro.org, rahul.sharma@samsung.com
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, arnd@arndb.de, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org, robherring2@gmail.com
 
-Adding Kukjin Kim who was accidentally missed out in the re-worked patches.
+Hi Vinod,
 
-On Wed, Dec 5, 2012 at 8:51 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
-> The exynos5250 based chromebooks have a max77686 pmic on i2c channel 0.
-> Add support for the pmic in the common cros5250 dts file.
-> Tested after enabling cpufreq support for exynos5250 SoC and varying the
-> arm frequency/voltage using the userspace governer.
+On Tue, Feb 12, 2013 at 8:19 PM, Vinod Koul <vinod.koul@intel.com> wrote:
+> On Mon, Feb 11, 2013 at 02:08:20PM +0530, Padmavathi Venna wrote:
 >
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Acked-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes since v1:
-> * Used generic names for the regulators
-> * Changed BUCK5 as being default "ON"
-> Changes since v2:
-> * Fixed the LDO7 name from "P1.0V_LDO_OUT7" to "P1.1V_LDO_OUT7"
+> This looks fine, I have only question. The code seems to assume that pl330 dma
+> controller always uses DT. But I dont see that as dependency for pl330.
 >
->  arch/arm/boot/dts/cros5250-common.dtsi |  138 ++++++++++++++++++++++++++++++++
->  1 files changed, 138 insertions(+), 0 deletions(-)
+> Something tells me withot OF the driver may not build, have you checked it?
 >
-> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
-> index fddd174..8ab8394 100644
-> --- a/arch/arm/boot/dts/cros5250-common.dtsi
-> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
-> @@ -24,6 +24,144 @@
->                 samsung,i2c-max-bus-freq = <378000>;
->                 gpios = <&gpb3 0 2 3 0>,
->                         <&gpb3 1 2 3 0>;
-> +
-> +               max77686@09 {
-> +                       compatible = "maxim,max77686";
-> +                       reg = <0x09>;
-> +
-> +                       voltage-regulators {
-> +                               ldo1_reg: LDO1 {
-> +                                       regulator-name = "P1.0V_LDO_OUT1";
-> +                                       regulator-min-microvolt = <1000000>;
-> +                                       regulator-max-microvolt = <1000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo2_reg: LDO2 {
-> +                                       regulator-name = "P1.8V_LDO_OUT2";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo3_reg: LDO3 {
-> +                                       regulator-name = "P1.8V_LDO_OUT3";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo7_reg: LDO7 {
-> +                                       regulator-name = "P1.1V_LDO_OUT7";
-> +                                       regulator-min-microvolt = <1100000>;
-> +                                       regulator-max-microvolt = <1100000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo8_reg: LDO8 {
-> +                                       regulator-name = "P1.0V_LDO_OUT8";
-> +                                       regulator-min-microvolt = <1000000>;
-> +                                       regulator-max-microvolt = <1000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo10_reg: LDO10 {
-> +                                       regulator-name = "P1.8V_LDO_OUT10";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo12_reg: LDO12 {
-> +                                       regulator-name = "P3.0V_LDO_OUT12";
-> +                                       regulator-min-microvolt = <3000000>;
-> +                                       regulator-max-microvolt = <3000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo14_reg: LDO14 {
-> +                                       regulator-name = "P1.8V_LDO_OUT14";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo15_reg: LDO15 {
-> +                                       regulator-name = "P1.0V_LDO_OUT15";
-> +                                       regulator-min-microvolt = <1000000>;
-> +                                       regulator-max-microvolt = <1000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               ldo16_reg: LDO16 {
-> +                                       regulator-name = "P1.8V_LDO_OUT16";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               buck1_reg: BUCK1 {
-> +                                       regulator-name = "vdd_mif";
-> +                                       regulator-min-microvolt = <950000>;
-> +                                       regulator-max-microvolt = <1300000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck2_reg: BUCK2 {
-> +                                       regulator-name = "vdd_arm";
-> +                                       regulator-min-microvolt = <850000>;
-> +                                       regulator-max-microvolt = <1350000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck3_reg: BUCK3 {
-> +                                       regulator-name = "vdd_int";
-> +                                       regulator-min-microvolt = <900000>;
-> +                                       regulator-max-microvolt = <1200000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck4_reg: BUCK4 {
-> +                                       regulator-name = "vdd_g3d";
-> +                                       regulator-min-microvolt = <850000>;
-> +                                       regulator-max-microvolt = <1300000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck5_reg: BUCK5 {
-> +                                       regulator-name = "P1.8V_BUCK_OUT5";
-> +                                       regulator-min-microvolt = <1800000>;
-> +                                       regulator-max-microvolt = <1800000>;
-> +                                       regulator-always-on;
-> +                                       regulator-boot-on;
-> +                               };
-> +
-> +                               buck6_reg: BUCK6 {
-> +                                       regulator-name = "P1.35V_BUCK_OUT6";
-> +                                       regulator-min-microvolt = <1350000>;
-> +                                       regulator-max-microvolt = <1350000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               buck7_reg: BUCK7 {
-> +                                       regulator-name = "P2.0V_BUCK_OUT7";
-> +                                       regulator-min-microvolt = <2000000>;
-> +                                       regulator-max-microvolt = <2000000>;
-> +                                       regulator-always-on;
-> +                               };
-> +
-> +                               buck8_reg: BUCK8 {
-> +                                       regulator-name = "P2.85V_BUCK_OUT8";
-> +                                       regulator-min-microvolt = <2850000>;
-> +                                       regulator-max-microvolt = <2850000>;
-> +                                       regulator-always-on;
-> +                               };
-> +                       };
-> +               };
->         };
+>> This patch set adds support for generic dma device tree bindings for
+>> Samsung platforms and is dependent on the following patches from
+>> Vinod Koul next branch
+>> 1)of: Add generic device tree DMA helpers
+>> 2)dmaengine: add helper function to request a slave DMA channel
+>>
+>> This patch set is made based Mark Brown next branch
+> Is this targetted for ASoC tree, if so why? It would fail to build if applied
+> there
+
+I have done this for my testing purpose (I expected all will directly
+apply in your branch). But 3rd patch is not applied directly. I will
+resend the patches after re-basing on your tree. 5th patch has to go
+in ASoC tree because it has dependency on "ARM: SAMSUNG: Make dma
+request compatible to generic dma bindings" which is there in ASoC
+tree.
+
+Hi Mark,
+
+Can you please take the 5th patch in your tree(if there is no issue)
+or should I resend it as a separate patch?
+
 >
->         i2c@12C70000 {
 > --
-> 1.6.6.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> ~Vinod
+>>
+>> Padmavathi Venna (5):
+>>   DMA: PL330: Add new pl330 filter for DT case.
+>>   DMA: PL330: Add xlate function
+>>   DMA: PL330: Register the DMA controller with the generic DMA helpers
+>>   ARM: dts: pl330: Add #dma-cells for generic dma binding support
+>>   ARM: SAMSUNG: dma: Remove unnecessary code
+>>
+>>  .../devicetree/bindings/dma/arm-pl330.txt          |   21 +++++--
+>>  arch/arm/boot/dts/exynos5250.dtsi                  |   12 ++++
+>>  arch/arm/mach-s3c24xx/include/mach/dma.h           |    1 -
+>>  arch/arm/mach-s3c64xx/include/mach/dma.h           |    1 -
+>>  arch/arm/plat-samsung/dma-ops.c                    |   10 +---
+>>  arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 -
+>>  arch/arm/plat-samsung/include/plat/dma-pl330.h     |    1 -
+>>  drivers/dma/pl330.c                                |   64 +++++++++++++++----
+>>  8 files changed, 79 insertions(+), 32 deletions(-)
+>>
+>> --
+>> 1.7.4.4
+>>
+Thanks
+Padma
