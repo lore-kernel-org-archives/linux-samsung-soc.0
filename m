@@ -1,140 +1,80 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v4 02/10] s5p-fimc: Add device tree support for FIMC devices
-Date: Wed, 13 Feb 2013 13:42:20 -0700
-Message-ID: <511BFAAC.6020008@wwwdotorg.org>
-References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-3-git-send-email-s.nawrocki@samsung.com> <5112E9EF.8090908@wwwdotorg.org> <5115874A.6050406@gmail.com> <51158873.3060508@wwwdotorg.org> <511592B4.5050406@gmail.com> <5115991E.7050009@wwwdotorg.org> <5116CDBB.4080807@gmail.com> <511967AC.7030909@wwwdotorg.org> <511AC4A7.7030706@gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 7/7] ARM: dts: Add Samsung G2D DT bindings documentation
+Date: Wed, 13 Feb 2013 23:32:02 +0100
+Message-ID: <511C1462.5060106@gmail.com>
+References: <1360151477-26460-1-git-send-email-sachin.kamat@linaro.org> <1360151477-26460-8-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <511AC4A7.7030706@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f172.google.com ([209.85.215.172]:53173 "EHLO
+	mail-ea0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751859Ab3BMW51 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Feb 2013 17:57:27 -0500
+Received: by mail-ea0-f172.google.com with SMTP id f13so677875eaa.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Feb 2013 14:57:25 -0800 (PST)
+In-Reply-To: <1360151477-26460-8-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, s.nawrocki@samsung.com, inki.dae@samsung.com, patches@linaro.org
 
-On 02/12/2013 03:39 PM, Sylwester Nawrocki wrote:
-> On 02/11/2013 10:50 PM, Stephen Warren wrote:
->> On 02/09/2013 03:29 PM, Sylwester Nawrocki wrote:
->>> On 02/09/2013 01:32 AM, Stephen Warren wrote:
->>>> On 02/08/2013 05:05 PM, Sylwester Nawrocki wrote:
->>>>> On 02/09/2013 12:21 AM, Stephen Warren wrote:
->>>>>> On 02/08/2013 04:16 PM, Sylwester Nawrocki wrote:
->>>>>>> On 02/07/2013 12:40 AM, Stephen Warren wrote:
->>>>>>>>> diff --git
->>>>>>>>> a/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
->>>>>>>>> b/Documentation/devicetree/bindings/media/soc/samsung-fimc.txt
->>>>>>>>
->>>>>>>>> +Samsung S5P/EXYNOS SoC Camera Subsystem (FIMC)
->>>>>>>>> +----------------------------------------------
->>>>>> ...
->>>>>>>>> +For every fimc node a numbered alias should be present in the
->>>>>>>>> aliases node.
->>>>>>>>> +Aliases are of the form fimc<n>, where<n>     is an integer
->>>>>>>>> (0...N)
->>>>>>>>> specifying
->>>>>>>>> +the IP's instance index.
->> ...
->>>>> Different compatible values might not work, when for example there
->>>>> are 3 IPs out of 4 of one type and the fourth one of another type.
->>>>> It wouldn't even by really different types, just quirks/little
->>>>> differences between them, e.g. no data path routed to one of other
->>>>> IPs.
->>>>
->>>> I was thinking of using feature-/quirk-oriented properties. For
->>>> example,
->>>> if there's a port on 3 of the 4 devices to connect to some other IP
->>>> block, simply include a boolean property to indicate whether that port
->>>> is present. It would be in 3 of the nodes but not the 4th.
->>>
->>> Yes, I could add several properties corresponding to all members of this
->>> [3] data structure. But still it is needed to clearly identify the IP
->>> block in a set of the hardware instances.
->>
->> Why? What decisions will be made based on the identify of the IP block
->> instance that wouldn't be covered by DT properties that describe which
->> features/bugs/... the IP block instance has?
-> 
-> The whole subsystem topology is exposed to user space through the Media
-> Controller API.
+On 02/06/2013 12:51 PM, Sachin Kamat wrote:
+> Added documentaion about G2D bindings.
 
-OK, stable user-visible names are a reasonable use for device tree. I
-still don't think you should use those user-visible IDs for making any
-other kind of decision though.
+s/documentaion/documentation
 
->>>>> Then to connect e.g. MIPI-CSIS.0 to FIMC.2 at run time an index of the
->>>>> MIPI-CSIS needs to be written to the FIMC.2 data input control
->>>>> register.
->>>>> Even though MIPI-CSIS.N are same in terms of hardware structure they
->>>>> still
->>>>> need to be distinguished as separate instances.
->>>>
->>>> Oh, so you're using the alias ID as the value to write into the FIMC.2
->>>> register for that. I'm not 100% familiar with aliases, but they seem
->>>> like a more user-oriented naming thing to me, whereas values for
->>>> hooking
->>>> up intra-SoC routing are an unrelated namespace semantically, even if
->>>> the values happen to line up right now. Perhaps rather than a Boolean
->>>> property I mentioned above, use a custom property to indicate the ID
->>>> that the FIMC.2 object knows the MIPI-CSIS.0 object as? While this
->>>> seems
->>>
->>> That could be 'reg' property in the MIPI-CSIS.0 'port' subnode that
->>> links it to the image sensor node ([4], line 165). Because MIPI-CSIS IP
->>> blocks are immutably connected to the SoC camera physical MIPI CSI-2
->>> interfaces, and the physical camera ports have fixed assignment to the
->>> MIPI-CSIS devices..  This way we could drop alias ID for the MIPI-CSIS
->>> nodes. And their instance index that is required for the top level
->>> driver which exposes topology and the routing capabilities to user space
->>> could be restored from the reg property value by subtracting a fixed
->>> offset.
->>
->> I suppose that would work. It feels a little indirect, and I think means
->> that the driver needs to go find some child node defining its end of
->> some link, then find the node representing the other end of the link,
->> then read properties out of that other node to find the value. That
->> seems a little unusual, but I guess it would work. I'm not sure of the
->> long-term implications of doing that kind of thing. You'd want to run
->> the idea past some DT maintainers/experts.
-> 
-> It's a bit simpler than that. We would need only to look for the reg
-> property in a local port subnode. MIPI-CSIS correspond to physical MIPI
-> CSI-2 bus interface of an SoC, hence it has to have specific reg values
-> that identify each camera input interface.
+> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+> ---
+>   .../devicetree/bindings/gpu/samsung-g2d.txt        |   30 ++++++++++++++++++++
+>   1 files changed, 30 insertions(+), 0 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+>
+> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> new file mode 100644
+> index 0000000..838b26b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> @@ -0,0 +1,30 @@
+> +* Samsung 2D Graphics Accelerator
+> +
 
-Oh I see. I guess if a device is using its own node to determine its own
-identify, that's reasonable.
+> +Samsung FIMG2D is a 2D graphics accelerator which supports Bit Block Transfer.
+> +We set the drawing-context registers for configuring the rendering parameters
+> +and then start rendering.
+> +The G2D has V4L2 as well as DRM framework based driver support.
 
-I thought you were talking about a situation like:
+IMHO this whole paragraph is irrelevant and could be dropped.
 
-FIMC <--> XXX
+> +Required properties:
+> +  - compatible : value should be one among the following
 
-where FIMC wanted to determine what ID XXX knew that particular FIMC as.
+missing colon at the end of line ?
 
->>> I can see aliases used in bindings of multiple devices: uart, spi, sound
->>> interfaces, gpio, ... And all bindings seem to impose some rules on how
->>> their aliases are created.
->>
->> Do you have specific examples? I really don't think the bindings should
->> be dictating the alias values.
-> 
-> I just grepped through the existing bindings documentation:
-...
-> I think "correctly numbered" in the above statements means there are some
-> specific rules on how the aliases are created, however those seem not
-> clearly communicated.
+> +	(a) "samsung,s5pv210-g2d" for G2D IP present in S5PV210&  Exynos4210 SoC
+> +	(b) "samsung,exynos4212-g2d" for G2D IP present in Exynos4x12 SoCs
+> +	(b) "samsung,exynos5250-g2d" for G2D IP present in Exynos5250 SoC
 
-A binding specifying that an alias must (or even should) exist for each
-node seems odd to me. In the absence of an explicit rule for how to
-determine the alias IDs to use, I think the rule would simply be that
-the aliases must be unique?
+s/(b)/(c)
 
-> And there is a new patch series that allows I2C bus controller enumeration
-> by means of the aliases:
-> 
-> http://www.spinics.net/lists/arm-kernel/msg224162.html
+> +
+> +  - reg : Physical base address of the IP registers and length of memory
+> +	  mapped region.
+> +
+> +  - interrupts : G2D interrupt number to the CPU.
+> +
+> +Optional properties:
+> +  - samsung,power-domain : power-domain property defined with a phandle
+> +			   to respective power domain.
+> +
+> +Example:
+> +	g2d@12800000 {
+> +		compatible = "samsung,s5pv210-g2d";
+> +		reg =<0x12800000 0x1000>;
+> +		interrupts =<0 89 0>;
+> +		samsung,power-domain =<&pd_lcd0>;
+> +		status = "disabled";
+> +	};
 
-That's not enumerating controllers by alias (they're still enumerated by
-scanning the DT nodes for buses in the normal way). The change simply
-assigns the bus ID of each controller from an alias; exactly what
-aliases are for.
+Otherwise looks good to me.
