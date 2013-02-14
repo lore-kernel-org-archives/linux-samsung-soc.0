@@ -1,40 +1,45 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 7/7] ARM: dts: Add Samsung G2D DT bindings documentation
-Date: Thu, 14 Feb 2013 17:01:34 +0100
-Message-ID: <511D0A5E.7060907@samsung.com>
-References: <1360151477-26460-1-git-send-email-sachin.kamat@linaro.org>
- <1360151477-26460-8-git-send-email-sachin.kamat@linaro.org>
- <511C1462.5060106@gmail.com>
- <CAK9yfHyEfEhRE-7CUeu7x7GbqJZL4aJfgHso2kXoGCWRrxiYWw@mail.gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH V6 02/10] ASoC: SAMSUNG: Add DT support for i2s
+Date: Thu, 14 Feb 2013 21:33:00 +0100
+Message-ID: <511D49FC.4080402@gmail.com>
+References: <1358509629-20471-1-git-send-email-padma.v@samsung.com> <1358509629-20471-3-git-send-email-padma.v@samsung.com> <511CC11B.5030700@samsung.com> <20130214114337.GD13249@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:31930 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757979Ab3BNQBh (ORCPT
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:45220 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758834Ab3BNUdG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Feb 2013 11:01:37 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI700JT2WFYVLA0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Feb 2013 16:01:35 +0000 (GMT)
-Received: from [106.116.147.32] by eusync3.samsung.com
- (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
- 10 2011)) with ESMTPA id <0MI700ID6WINY470@eusync3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Feb 2013 16:01:35 +0000 (GMT)
-In-reply-to: <CAK9yfHyEfEhRE-7CUeu7x7GbqJZL4aJfgHso2kXoGCWRrxiYWw@mail.gmail.com>
+	Thu, 14 Feb 2013 15:33:06 -0500
+Received: by mail-ea0-f174.google.com with SMTP id 1so1130832eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Feb 2013 12:33:05 -0800 (PST)
+In-Reply-To: <20130214114337.GD13249@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "patches@linaro.org" <patches@linaro.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Padmavathi Venna <padma.v@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
 
-On 02/14/2013 04:45 PM, Sachin Kamat wrote:
-> Thanks for reviewing. Does the filename look good or should it be exynos-g2d?
+On 02/14/2013 12:43 PM, Mark Brown wrote:
+> On Thu, Feb 14, 2013 at 11:48:59AM +0100, Sylwester Nawrocki wrote:
+>
+>> NAK.
+>
+>> Why we should live with this temporary code when there is already
+>> pinctrl support for Exynos SoCs ?
+>
+>> If the pinctrl driver for Exynos5 was updated you could instead just do
+>
+>> devm_pinctrl_get_select_default(&i2s->pdev->dev);
+>
+> Too late, this stuff is already merged and on its way upstream.
 
-You're welcome. My apologies for being a bit late.
-I guess exynos-g2d.txt would be more appropriate. OTOH if this document is
-going to cover all Samsung G2D IP blocks then current name might be better.
-I used samsung- prefix for fimc and mipi-csis as those documents are supposed
-to cover the S5P and Exynos4 SoCs.
+My apologies for the late review. It's already sixth version of this patch
+series... But I noticed it just now when applying it for Exynos4. The GPIO
+part of the bindings is now incompatible with Exynos4 and the bindings will
+need to be changed. Leaving the compatibility code in the I2S driver, when
+we could have it done well right from the beginning. If I'm not mistaken
+a file similar to arch/arm/boot/dts/exynos4x12-pinctrl.dtsi with at least
+entries for the I2S devices is needed and an addition of related pinctrl
+nodes in exynos5250.dtsi. But I guess this is not something that could be
+fixed in the -rc period ?
