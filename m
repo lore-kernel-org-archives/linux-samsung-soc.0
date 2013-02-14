@@ -1,118 +1,82 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: dma: Remove unnecessary code
-Date: Thu, 14 Feb 2013 09:17:46 +0530
-Message-ID: <1360813666-9651-1-git-send-email-padma.v@samsung.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH V4 0/5] Add generic DMA DT binding support
+Date: Thu, 14 Feb 2013 10:17:04 +0530
+Message-ID: <20130214044704.GE7777@intel.com>
+References: <1360571905-15285-1-git-send-email-padma.v@samsung.com>
+ <20130212144950.GJ3789@intel.com>
+ <CAAgF-Be1w-8yjuyXT+d8sUO8dee1x7oYFJLXHCmcJSf17eXWyw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:22135 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753055Ab3BNDrV (ORCPT
+Received: from mga11.intel.com ([192.55.52.93]:60138 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754196Ab3BNEsK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Feb 2013 22:47:21 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI6004OLYIKSQ70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Feb 2013 12:47:20 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MI600NTOYIN4AN0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Feb 2013 12:47:19 +0900 (KST)
+	Wed, 13 Feb 2013 23:48:10 -0500
+Content-Disposition: inline
+In-Reply-To: <CAAgF-Be1w-8yjuyXT+d8sUO8dee1x7oYFJLXHCmcJSf17eXWyw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, arnd@arndb.de, vinod.koul@intel.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, arnd@arndb.de, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, thomas.abraham@linaro.org, robherring2@gmail.com
 
-This patch removes the usage of DMACH_DT_PROP and dt_dmach_prop
-from dma code as the new generic dma dt binding support has been
-added.
+On Wed, Feb 13, 2013 at 09:52:30AM +0530, Padma Venkat wrote:
+> Hi Vinod,
+> 
+> On Tue, Feb 12, 2013 at 8:19 PM, Vinod Koul <vinod.koul@intel.com> wrote:
+> > On Mon, Feb 11, 2013 at 02:08:20PM +0530, Padmavathi Venna wrote:
+> >
+> > This looks fine, I have only question. The code seems to assume that pl330 dma
+> > controller always uses DT. But I dont see that as dependency for pl330.
+Have you checked this?
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-s3c24xx/include/mach/dma.h       |    1 -
- arch/arm/mach-s3c64xx/include/mach/dma.h       |    1 -
- arch/arm/plat-samsung/dma-ops.c                |   10 +---------
- arch/arm/plat-samsung/include/plat/dma-ops.h   |    1 -
- arch/arm/plat-samsung/include/plat/dma-pl330.h |    1 -
- 5 files changed, 1 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/include/mach/dma.h b/arch/arm/mach-s3c24xx/include/mach/dma.h
-index 6b72d5a..b55da1d 100644
---- a/arch/arm/mach-s3c24xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/dma.h
-@@ -24,7 +24,6 @@
- */
- 
- enum dma_ch {
--	DMACH_DT_PROP = -1,	/* not yet supported, do not use */
- 	DMACH_XD0 = 0,
- 	DMACH_XD1,
- 	DMACH_SDI,
-diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
-index 57b1ff4..fe1a98c 100644
---- a/arch/arm/mach-s3c64xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
-@@ -21,7 +21,6 @@
-  */
- enum dma_ch {
- 	/* DMA0/SDMA0 */
--	DMACH_DT_PROP = -1, /* not yet supported, do not use */
- 	DMACH_UART0 = 0,
- 	DMACH_UART0_SRC2,
- 	DMACH_UART1,
-diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-index 71d58dd..ec0d731 100644
---- a/arch/arm/plat-samsung/dma-ops.c
-+++ b/arch/arm/plat-samsung/dma-ops.c
-@@ -23,23 +23,15 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
- 				struct device *dev, char *ch_name)
- {
- 	dma_cap_mask_t mask;
--	void *filter_param;
- 
- 	dma_cap_zero(mask);
- 	dma_cap_set(param->cap, mask);
- 
--	/*
--	 * If a dma channel property of a device node from device tree is
--	 * specified, use that as the fliter parameter.
--	 */
--	filter_param = (dma_ch == DMACH_DT_PROP) ?
--		(void *)param->dt_dmach_prop : (void *)dma_ch;
--
- 	if (dev->of_node)
- 		return (unsigned)dma_request_slave_channel(dev, ch_name);
- 	else
- 		return (unsigned)dma_request_channel(mask, pl330_filter,
--							filter_param);
-+							(void *)dma_ch);
- }
- 
- static int samsung_dmadev_release(unsigned ch, void *param)
-diff --git a/arch/arm/plat-samsung/include/plat/dma-ops.h b/arch/arm/plat-samsung/include/plat/dma-ops.h
-index 1141782..ce6d763 100644
---- a/arch/arm/plat-samsung/include/plat/dma-ops.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-ops.h
-@@ -18,7 +18,6 @@
- 
- struct samsung_dma_req {
- 	enum dma_transaction_type cap;
--	struct property *dt_dmach_prop;
- 	struct s3c2410_dma_client *client;
- };
- 
-diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-index d384a80..abe07fa 100644
---- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-@@ -21,7 +21,6 @@
-  * use these just as IDs.
-  */
- enum dma_ch {
--	DMACH_DT_PROP = -1,
- 	DMACH_UART0_RX = 0,
- 	DMACH_UART0_TX,
- 	DMACH_UART1_RX,
--- 
-1.7.4.4
+> > Something tells me withot OF the driver may not build, have you checked it?
+> >
+> >> This patch set adds support for generic dma device tree bindings for
+> >> Samsung platforms and is dependent on the following patches from
+> >> Vinod Koul next branch
+> >> 1)of: Add generic device tree DMA helpers
+> >> 2)dmaengine: add helper function to request a slave DMA channel
+> >>
+> >> This patch set is made based Mark Brown next branch
+> > Is this targetted for ASoC tree, if so why? It would fail to build if applied
+> > there
+> 
+> I have done this for my testing purpose (I expected all will directly
+> apply in your branch). But 3rd patch is not applied directly. I will
+> resend the patches after re-basing on your tree. 5th patch has to go
+> in ASoC tree because it has dependency on "ARM: SAMSUNG: Make dma
+> request compatible to generic dma bindings" which is there in ASoC
+> tree.
+> 
+> Hi Mark,
+> 
+> Can you please take the 5th patch in your tree(if there is no issue)
+> or should I resend it as a separate patch?
+> 
+> >
+> > --
+> > ~Vinod
+> >>
+> >> Padmavathi Venna (5):
+> >>   DMA: PL330: Add new pl330 filter for DT case.
+> >>   DMA: PL330: Add xlate function
+> >>   DMA: PL330: Register the DMA controller with the generic DMA helpers
+> >>   ARM: dts: pl330: Add #dma-cells for generic dma binding support
+> >>   ARM: SAMSUNG: dma: Remove unnecessary code
+> >>
+> >>  .../devicetree/bindings/dma/arm-pl330.txt          |   21 +++++--
+> >>  arch/arm/boot/dts/exynos5250.dtsi                  |   12 ++++
+> >>  arch/arm/mach-s3c24xx/include/mach/dma.h           |    1 -
+> >>  arch/arm/mach-s3c64xx/include/mach/dma.h           |    1 -
+> >>  arch/arm/plat-samsung/dma-ops.c                    |   10 +---
+> >>  arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 -
+> >>  arch/arm/plat-samsung/include/plat/dma-pl330.h     |    1 -
+> >>  drivers/dma/pl330.c                                |   64 +++++++++++++++----
+> >>  8 files changed, 79 insertions(+), 32 deletions(-)
+> >>
+> >> --
+> >> 1.7.4.4
+> >>
+> Thanks
+> Padma
