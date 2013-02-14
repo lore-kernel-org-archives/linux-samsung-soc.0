@@ -1,45 +1,210 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH V6 02/10] ASoC: SAMSUNG: Add DT support for i2s
-Date: Thu, 14 Feb 2013 21:33:00 +0100
-Message-ID: <511D49FC.4080402@gmail.com>
-References: <1358509629-20471-1-git-send-email-padma.v@samsung.com> <1358509629-20471-3-git-send-email-padma.v@samsung.com> <511CC11B.5030700@samsung.com> <20130214114337.GD13249@opensource.wolfsonmicro.com>
+From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH v6] iio: adc: add exynos adc driver under iio framwork
+Date: Thu, 14 Feb 2013 21:55:59 +0100
+Message-ID: <511D4F5F.6010200@metafoo.de>
+References: <1358775470-21278-1-git-send-email-ch.naveen@samsung.com> <1360843890-28466-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:45220 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758834Ab3BNUdG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Feb 2013 15:33:06 -0500
-Received: by mail-ea0-f174.google.com with SMTP id 1so1130832eaa.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Feb 2013 12:33:05 -0800 (PST)
-In-Reply-To: <20130214114337.GD13249@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360843890-28466-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Padmavathi Venna <padma.v@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
 
-On 02/14/2013 12:43 PM, Mark Brown wrote:
-> On Thu, Feb 14, 2013 at 11:48:59AM +0100, Sylwester Nawrocki wrote:
->
->> NAK.
->
->> Why we should live with this temporary code when there is already
->> pinctrl support for Exynos SoCs ?
->
->> If the pinctrl driver for Exynos5 was updated you could instead just do
->
->> devm_pinctrl_get_select_default(&i2s->pdev->dev);
->
-> Too late, this stuff is already merged and on its way upstream.
+On 02/14/2013 01:11 PM, Naveen Krishna Chatradhi wrote:
+> This patch adds New driver to support:
+> 1. Supports ADC IF found on EXYNOS4412/EXYNOS5250
+>    and future SoCs from Samsung
+> 2. Add ADC driver under iio/adc framework
+> 3. Also adds the Documentation for device tree bindings
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-My apologies for the late review. It's already sixth version of this patch
-series... But I noticed it just now when applying it for Exynos4. The GPIO
-part of the bindings is now incompatible with Exynos4 and the bindings will
-need to be changed. Leaving the compatibility code in the I2S driver, when
-we could have it done well right from the beginning. If I'm not mistaken
-a file similar to arch/arm/boot/dts/exynos4x12-pinctrl.dtsi with at least
-entries for the I2S devices is needed and an addition of related pinctrl
-nodes in exynos5250.dtsi. But I guess this is not something that could be
-fixed in the -rc period ?
+Looks good to me. There is one bug left in debugfs_reg_access function though,
+which should be fixed before the driver is merged.
+
+> ---
+> Changes since v1:
+> 
+> 1. Fixed comments from Lars
+> 2. Added support for ADC on EXYNOS5410
+> 
+> Changes since v2:
+> 
+> 1. Changed the instance name for (struct iio_dev *) to indio_dev
+> 2. Changed devm_request_irq to request_irq
+> 
+> Few doubts regarding the mappings and child device handling.
+> Kindly, suggest me better methods.
+> 
+> Changes since v3:
+> 
+> 1. Added clk_prepare_disable and regulator_disable calls in _remove()
+> 2. Moved init_completion before irq_request
+> 3. Added NULL pointer check for devm_request_and_ioremap() return value.
+> 4. Use number of channels as per the ADC version
+> 5. Change the define ADC_V1_CHANNEL to ADC_CHANNEL
+> 6. Update the Documentation to include EXYNOS5410 compatible
+> 
+> Changes since v4:
+> 
+> 1. if devm_request_and_ioremap() failes, free iio_device before returning
+> 
+> Changes since v5:
+> 
+> 1. Fixed comments from Olof (ADC hardware version handling)
+> 2. Rebased on top of comming OF framework for IIO by "Guenter Roeck".
+> 
+>  .../bindings/arm/samsung/exynos5-adc.txt           |   42 ++
+>  drivers/iio/adc/Kconfig                            |    7 +
+>  drivers/iio/adc/Makefile                           |    1 +
+>  drivers/iio/adc/exynos_adc.c                       |  438 ++++++++++++++++++++
+>  4 files changed, 488 insertions(+)
+>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |   52 +++
+>  drivers/iio/adc/Kconfig                            |    7 +
+>  drivers/iio/adc/Makefile                           |    1 +
+>  drivers/iio/adc/exynos_adc.c                       |  437 ++++++++++++++++++++
+>  4 files changed, 497 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+>  create mode 100644 drivers/iio/adc/exynos_adc.c
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> new file mode 100644
+> index 0000000..f686378
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> @@ -0,0 +1,52 @@
+[...]
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index 2d5f100..fabac2c 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_AD7791) += ad7791.o
+>  obj-$(CONFIG_AD7793) += ad7793.o
+>  obj-$(CONFIG_AD7887) += ad7887.o
+>  obj-$(CONFIG_AT91_ADC) += at91_adc.o
+> +obj-$(CONFIG_EXYNOS_ADC) += exynos_adc.o
+>  obj-$(CONFIG_LP8788_ADC) += lp8788_adc.o
+>  obj-$(CONFIG_MAX1363) += max1363.o
+>  obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
+> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> new file mode 100644
+> index 0000000..144a9e2
+> --- /dev/null
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -0,0 +1,437 @@
+> [...]
+> +static int exynos_read_raw(struct iio_dev *indio_dev,
+> +				struct iio_chan_spec const *chan,
+> +				int *val,
+> +				int *val2,
+> +				long mask)
+> +{
+> +	struct exynos_adc *info = iio_priv(indio_dev);
+> +	u32 con1, con2;
+> +
+> +	if (mask == IIO_CHAN_INFO_RAW) {
+
+How about rewriting this as:
+
+	if (mask != IIO_CHAN_INFO_RAW)
+		return -EINVAL;
+
+	mutex_lock(...);
+	...
+
+keeps the indention level low.
+
+> +		mutex_lock(&indio_dev->mlock);
+> +
+> +		/* Select the channel to be used and Trigger conversion */
+> +		if (info->version == ADC_V2) {
+> +			con2 = readl(ADC_V2_CON2(info->regs));
+> +			con2 &= ~ADC_V2_CON2_ACH_MASK;
+> +			con2 |= ADC_V2_CON2_ACH_SEL(chan->address);
+> +			writel(con2, ADC_V2_CON2(info->regs));
+> +
+> +			con1 = readl(ADC_V2_CON1(info->regs));
+> +			writel(con1 | ADC_CON_EN_START,
+> +					ADC_V2_CON1(info->regs));
+> +		} else {
+> +			writel(chan->address, ADC_V1_MUX(info->regs));
+> +
+> +			con1 = readl(ADC_V1_CON(info->regs));
+> +			writel(con1 | ADC_CON_EN_START,
+> +					ADC_V1_CON(info->regs));
+> +		}
+> +
+> +		wait_for_completion(&info->completion);
+
+I'd add at least a timeout so you don't get stuck here forever if something
+goes wrong.
+
+> +		*val = info->value;
+> +
+> +		mutex_unlock(&indio_dev->mlock);
+> +
+> +		return IIO_VAL_INT;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+[...]
+> +static int exynos_adc_reg_access(struct iio_dev *indio_dev,
+> +			      unsigned reg, unsigned writeval,
+> +			      unsigned *readval)
+> +{
+> +	struct exynos_adc *info = iio_priv(indio_dev);
+> +	u32 ret;
+> +
+> +	mutex_lock(&indio_dev->mlock);
+
+I don't think the locking here is necessary.
+
+> +
+> +	if (readval != NULL) {
+> +		ret = readl(info->regs + reg);
+> +		*readval = ret;
+
+At the end of the function you return the read value, you should return 0 on
+success though.
+
+> +	} else
+> +		ret = -EINVAL;
+> +
+> +	mutex_unlock(&indio_dev->mlock);
+
+
+How about rewriting the function as:
+
+	if (readval == NULL)
+		return -EINVAL;
+
+	*readval = readl(info->regs + reg)
+
+	return 0;
+
+> +
+> +	return ret;
+> +}
+[...]
+> +
+> +static int exynos_adc_remove(struct platform_device *pdev)
+> +{
+> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct exynos_adc *info = iio_priv(indio_dev);
+> +
+
+Do you need to remove the child devices here as well?
+
+> +	regulator_disable(info->vdd);
+> +	clk_disable_unprepare(info->clk);
+> +	iio_device_unregister(indio_dev);
+> +	free_irq(info->irq, info);
+> +	iio_device_free(indio_dev);
+> +
+> +	return 0;
+> +}
