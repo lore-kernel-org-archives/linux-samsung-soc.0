@@ -1,108 +1,67 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v4 5/5] ARM: exynos: dts: Add FIMD DT binding Documentation
-Date: Fri, 15 Feb 2013 11:38:00 +0100
-Message-ID: <511E1008.6010308@samsung.com>
-References: <1360912200-26377-1-git-send-email-vikas.sajjan@linaro.org>
- <1360912200-26377-6-git-send-email-vikas.sajjan@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V6 02/10] ASoC: SAMSUNG: Add DT support for i2s
+Date: Fri, 15 Feb 2013 12:01:45 +0000
+Message-ID: <20130215120145.GC22283@opensource.wolfsonmicro.com>
+References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
+ <1358509629-20471-3-git-send-email-padma.v@samsung.com>
+ <511CC11B.5030700@samsung.com>
+ <20130214114337.GD13249@opensource.wolfsonmicro.com>
+ <511D49FC.4080402@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="raC6veAxrt5nqIoY"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39013 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760282Ab3BOKiE (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:49078 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751018Ab3BOMBs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Feb 2013 05:38:04 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MI9007YCC460O40@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Feb 2013 10:38:01 +0000 (GMT)
-Received: from [106.116.147.32] by eusync2.samsung.com
- (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
- 10 2011)) with ESMTPA id <0MI900MFFC7DE500@eusync2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Feb 2013 10:38:01 +0000 (GMT)
-In-reply-to: <1360912200-26377-6-git-send-email-vikas.sajjan@linaro.org>
+	Fri, 15 Feb 2013 07:01:48 -0500
+Content-Disposition: inline
+In-Reply-To: <511D49FC.4080402@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
-
-Hi,
-
-On 02/15/2013 08:10 AM, Vikas Sajjan wrote:
-> Adds FIMD DT binding documentation both SoC and Board, with an example
-> 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> ---
->  .../devicetree/bindings/drm/exynos/fimd.txt        |   37 ++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/drm/exynos/fimd.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
-> new file mode 100644
-> index 0000000..bec9d07
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
-> @@ -0,0 +1,37 @@
-> +Device-Tree bindings for fimd driver
-> +
-> +FIMD stands for Fully Interactive Mobile Display, is the Display Controller for
-> +the Exynos series of SoCs which transfers the image data from a video buffer
-> +located in the system memory to an external LCD interface.
-> +
-> +Required properties:
-> +- compatible := value should be "samsung,exynos5-fimd" or "samsung,exynos4-fimd"
-
-What about older SoCs like S5Pv210 ? There is the FIMD IP block in those SoCs
-as well. There are also differences in the FIMD IP block across various SoC 
-version, so either you need to list the quirks in the bindings or use an
-appropriate compatible properties if there are significant differences across 
-FIMDs that make them not really compatible.
-
-> +- reg := physical base address of the fimd and length of memory mapped region
-> +- interrupt-parent := reference to the interrupt combiner node with phandle
-> +- interrupts := interrupt number from the combiner to the cpu
-
-These are actually 3 interrupts. Can you please document what they are
-and in what order should be listed in the interrupts property ?
-
-> +- pinctrl := property defining the pinctrl configurations with a phandle
-> +- pinctrl-names := name of the pinctrl
-> +
-> +Optional Properties:
-> +- samsung,power-domain := power domain property defined with a phandle
-> +- status := property defining the status of the node
-
-I don't think this standard property needs to be documented here.
-
-> +
-> +Example:
-> +
-> +SoC specific DT Entry:
-> +
-> +	fimd@11c00000 {
-> +		compatible = "samsung,exynos4-fimd";
-> +		interrupt-parent = <&combiner>;
-> +		reg = <0x11c00000 0x20000>;
-> +		interrupts = <11 1>, <11 0>, <11 2>;
-
-Why this order exactly ? Because currently the driver expects VSYNC 
-interrupt specifier in the first entry and it won't work when you put
-any other interrupt specifier there ?
-
-The interrupts order really needs to be specified above, otherwise
-you need to look at the bindings implementation in the driver to
-figure out why it didn't work when you put the interrupt in different
-order... see confused and angry faces of developers ? ... :)
-
-If I'm not mistaken we have "Video Frame" (VSYNC), "I80 Interface" 
-and "FIFO Level" interrupts here.
-
-> +	};
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
 
 
-Thanks,
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+--raC6veAxrt5nqIoY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Feb 14, 2013 at 09:33:00PM +0100, Sylwester Nawrocki wrote:
+
+> My apologies for the late review. It's already sixth version of this patch
+> series... But I noticed it just now when applying it for Exynos4. The GPIO
+> part of the bindings is now incompatible with Exynos4 and the bindings will
+> need to be changed. Leaving the compatibility code in the I2S driver, when
+> we could have it done well right from the beginning. If I'm not mistaken
+> a file similar to arch/arm/boot/dts/exynos4x12-pinctrl.dtsi with at least
+> entries for the I2S devices is needed and an addition of related pinctrl
+> nodes in exynos5250.dtsi. But I guess this is not something that could be
+> fixed in the -rc period ?
+
+Yes, and incremental fix would be fine.
+
+--raC6veAxrt5nqIoY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRHiOTAAoJELSic+t+oim9GPEP/AtrJRFWIHCLk4NEnjR/2P+2
+7mppHqMPnc2/7vWPnawjUzwULGLTiJl7WwMtyGcCD82KQJnoLv6kvgRfAiBUwOf+
+lC/P0WPjWHtbEpa9Fi2Z6j1GmpdNorggPTiRFhvoZ+TKxhKRgQyhqxuC8Pgg1rVm
+Kq7HXwg8lDW/6d32luN7jkCT+F2kBg7hhTicSyWpnR1+tbGW1cWdj8qDeY5K46Iz
+H/L1POHTnLVCEb8PmwAithPeHJXYi6hZ69npeob+FvG8MQCtZj3LI2zninincEpE
+F5wt3Gp9N2o5bxtPZFv9XTKJZum0Hsl7hpFHHHvqDKMnX/LZ2pSPnQlNaz6pII69
+XY/rTNYsN71k3LJ+m7DXD1dgEM5z2Bv202ycrQ3OHlFmNqUN9uXQStywnum4qejb
+Lo86uC9mn6sn8ab3TiV793RgkS/2kVq9QU0zAsHjclH3zDBz3WV0ispUyYwEAGp+
+erez1A475WN7QarKpFveHCglz1/nkBpvnnSNsXmdFA8cDhpQXnki3IcLMijjsiWZ
+B7P2Kam5HwJBpt16e20F0yXn1hNOmY0hfwMo9S787ZobwZ5VWMpatw6pWVgDFfCu
+851CcJ4Bh3Mq/lnkdWEGrU8DATTTIJfAgg4z/6IG1lTc+E9uI1MLfKgWEU89Qloj
+bn8sT8HH7WzJ1oDyHTTE
+=hMEl
+-----END PGP SIGNATURE-----
+
+--raC6veAxrt5nqIoY--
