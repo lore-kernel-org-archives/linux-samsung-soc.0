@@ -1,87 +1,147 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v4 02/10] s5p-fimc: Add device tree support for FIMC devices
-Date: Fri, 15 Feb 2013 00:03:42 +0100
-Message-ID: <511D6D4E.9040201@gmail.com>
-References: <1359745771-23684-1-git-send-email-s.nawrocki@samsung.com> <1359745771-23684-3-git-send-email-s.nawrocki@samsung.com> <5112E9EF.8090908@wwwdotorg.org> <5115874A.6050406@gmail.com> <51158873.3060508@wwwdotorg.org> <511592B4.5050406@gmail.com> <5115991E.7050009@wwwdotorg.org> <5116CDBB.4080807@gmail.com> <511967AC.7030909@wwwdotorg.org> <511AC4A7.7030706@gmail.com> <511BFAAC.6020008@wwwdotorg.org>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v5 1/4] ARM: Exynos5250: Enabling ehci-s5p driver
+Date: Fri, 15 Feb 2013 10:39:25 +0530
+Message-ID: <CAFp+6iHn1A0qBV0jE8qZoVgjWZDbSGXi5QV=hpUvErzf7BC4Sw@mail.gmail.com>
+References: <CAFp+6iFgaT9D2hR0pX34jo2g+GHftmA0Mw3y96-oKe0KakZOxA@mail.gmail.com>
+	<1358315143-16620-1-git-send-email-gautam.vivek@samsung.com>
+	<1a5501ce064c$8d2ed1a0$a78c74e0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <511BFAAC.6020008@wwwdotorg.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rob.herring@calxeda.com, prabhakar.lad@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1a5501ce064c$8d2ed1a0$a78c74e0$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, grant.likely@secretlab.ca, dianders@chromium.org, jg1.han@samsung.com, Thomas Abraham <thomas.ab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/13/2013 09:42 PM, Stephen Warren wrote:
-> On 02/12/2013 03:39 PM, Sylwester Nawrocki wrote:
-[...]
->> The whole subsystem topology is exposed to user space through the Media
->> Controller API.
->
-> OK, stable user-visible names are a reasonable use for device tree. I
-> still don't think you should use those user-visible IDs for making any
-> other kind of decision though.
-
-OK, I will update the bindings so all variant details are placed in the
-device tree. Then the routing information would mostly be coming from the
-device specific dt properties/the common media bindings and the state of
-links between the media entities, set by the user.
-
->> It's a bit simpler than that. We would need only to look for the reg
->> property in a local port subnode. MIPI-CSIS correspond to physical MIPI
->> CSI-2 bus interface of an SoC, hence it has to have specific reg values
->> that identify each camera input interface.
->
-> Oh I see. I guess if a device is using its own node to determine its own
-> identify, that's reasonable.
-
-OK, I'm going to post an updated patch series in a week or two.
-
-> I thought you were talking about a situation like:
->
-> FIMC <--> XXX
->
-> where FIMC wanted to determine what ID XXX knew that particular FIMC as.
-
-Ah, no. Sorry for the poor explanation. FIMC are on a sort if interconnect
-bus and they can be attached to a single data source, even in parallel,
-and the data source entity don't even need to be fully aware of it.
-
->>>> I can see aliases used in bindings of multiple devices: uart, spi, sound
->>>> interfaces, gpio, ... And all bindings seem to impose some rules on how
->>>> their aliases are created.
->>>
->>> Do you have specific examples? I really don't think the bindings should
->>> be dictating the alias values.
+On Sat, Feb 9, 2013 at 4:05 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Vivek Gautam wrote:
 >>
->> I just grepped through the existing bindings documentation:
-> ...
->> I think "correctly numbered" in the above statements means there are some
->> specific rules on how the aliases are created, however those seem not
->> clearly communicated.
->
-> A binding specifying that an alias must (or even should) exist for each
-> node seems odd to me. In the absence of an explicit rule for how to
-> determine the alias IDs to use, I think the rule would simply be that
-> the aliases must be unique?
-
-I guess so. Inspecting of_alias_get_id() call sites tells us that most 
-drivers
-just fail when alias is not present and only rarely it is not treated as an
-error condition.
-
->> And there is a new patch series that allows I2C bus controller enumeration
->> by means of the aliases:
+>> Adding EHCI device tree node for Exynos5250 along with
+>> the device base adress and gpio line for vbus.
 >>
->> http://www.spinics.net/lists/arm-kernel/msg224162.html
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> Acked-by: Jingoo Han <jg1.han@samsung.com>
+>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+>> ---
+>>
+>> Changes from v4:
+>>  - Added gpio line for VBUS of USB2.0 on snow board.
+>>
+>>  .../devicetree/bindings/usb/exynos-usb.txt         |   25
+>> ++++++++++++++++++++
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 +++
+>>  arch/arm/boot/dts/exynos5250-snow.dts              |    4 +++
+>>  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++
+>>  4 files changed, 39 insertions(+), 0 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/usb/exynos-
+>> usb.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>> b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>> new file mode 100644
+>> index 0000000..e8bbb47
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+>> @@ -0,0 +1,25 @@
+>> +Samsung Exynos SoC USB controller
+>> +
+>> +The USB devices interface with USB controllers on Exynos SOCs.
+>> +The device node has following properties.
+>> +
+>> +EHCI
+>> +Required properties:
+>> + - compatible: should be "samsung,exynos4210-ehci" for USB 2.0
+>> +   EHCI controller in host mode.
+>> + - reg: physical base address of the controller and length of memory
+>> mapped
+>> +   region.
+>> + - interrupts: interrupt number to the cpu.
+>> +
+>> +Optional properties:
+>> + - samsung,vbus-gpio:  if present, specifies the GPIO that
+>> +   needs to be pulled up for the bus to be powered.
+>> +
+>> +Example:
+>> +
+>> +     usb@12110000 {
+>> +             compatible = "samsung,exynos4210-ehci";
+>> +             reg = <0x12110000 0x100>;
+>> +             interrupts = <0 71 0>;
+>> +             samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+>> +     };
+>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> index 942d576..7363e14 100644
+>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> @@ -204,4 +204,8 @@
+>>               samsung,mfc-r = <0x43000000 0x800000>;
+>>               samsung,mfc-l = <0x51000000 0x800000>;
+>>       };
+>> +
+>> +     usb@12110000 {
+>> +             samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+>> +     };
+>>  };
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
+>> b/arch/arm/boot/dts/exynos5250-snow.dts
+>> index 17dd951..47b6b84 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>> @@ -40,4 +40,8 @@
+>>                               <&gpc4 5 2 3 0>, <&gpc4 6 2 3 0>;
+>>               };
+>>       };
+>> +
+>> +     usb@12110000 {
+>> +             samsung,vbus-gpio = <&gpx1 1 1 3 3>;
+>> +     };
+>>  };
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 30485de..2cbe53e 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -275,6 +275,12 @@
+>>               #size-cells = <0>;
+>>       };
+>>
+>> +     usb@12110000 {
+>> +             compatible = "samsung,exynos4210-ehci";
+>> +             reg = <0x12110000 0x100>;
+>> +             interrupts = <0 71 0>;
+>> +     };
+>> +
+>>       amba {
+>>               #address-cells = <1>;
+>>               #size-cells = <1>;
+>> --
+>> 1.7.6.5
 >
-> That's not enumerating controllers by alias (they're still enumerated by
-> scanning the DT nodes for buses in the normal way). The change simply
-> assigns the bus ID of each controller from an alias; exactly what
-> aliases are for.
+> Looks good to me and applied this and "[PATCH v3 2/4] ARM: Exynos5250:
+> Enabling ohci-exynos driver" in Samsung tree.
+>
+> Note, I think, you need to implement to use pinctrl for this instead of old
+> gpio bindings next time, probably after release v3.9-rc1.
+>
 
-OK, that clarifies a bit my understanding of the aliases.
+Sure, will add the necessary pinctrl support replacing the old gpio bindings,
+and post the same asap. :-)
 
-Thanks,
-Sylwester
+> Ah, one more, please use subject lines appropriate like others, "ARM: dts:
+> ....".
+>
+
+Sorry, for misleading subject line, will keep commit titles
+aligned-with in future,
+
+> Thanks.
+>
+> - Kukjin
+>
+
+
+-- 
+Thanks & Regards
+Vivek
