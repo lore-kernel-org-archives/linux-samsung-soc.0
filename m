@@ -1,67 +1,69 @@
-From: merez@codeaurora.org
-Subject: Re: [PATCH V6 0/4] [SCSI] ufs: Adds glue drivers to ufshcd
-Date: Fri, 15 Feb 2013 14:30:03 -0800
-Message-ID: <340aa7e0584e68b3066f20ed54d64fda.squirrel@www.codeaurora.org>
-References: <511137ce.0657420a.5b57.ffffa7db@mx.google.com>
-    <CAKVbJB8=HU=Rc7u2siKSQmKQf461=dz0v-k2Ww6XMZdUBTQkcA@mail.gmail.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: [Suggestion] ARM:S5PV210:  version merging compiling issue for 'struct
+ fimc_source_info'
+Date: Sat, 16 Feb 2013 17:26:39 +0800
+Message-ID: <511F50CF.90403@asianux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <CAKVbJB8=HU=Rc7u2siKSQmKQf461=dz0v-k2Ww6XMZdUBTQkcA@mail.gmail.com>
-Sender: linux-scsi-owner@vger.kernel.org
-Cc: james.bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, santoshsy@gmail.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, venkat@linaro.org, subhashj@codeaurora.org, sthumma@codeaurora.org, vinholikatti@gmail.com
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:27478 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752886Ab3BPJ0s (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 16 Feb 2013 04:26:48 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kyungmin.park@samsung.com, kgene.kim@samsung.com, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Tested-by: Maya Erez <merez@codeaurora.org>
+Hello Kukjin Kim:
 
-> Hi James,
->
-> look like these patches are fine. Can you please integrate these
-> patches in your tree.
->
->
-> On Tue, Feb 5, 2013 at 10:17 PM,  <vinholikatti@gmail.com> wrote:
->> From: Vinayak Holikatti <vinholikatti@gmail.com>
->>
->> This patch set adds following features
->>  - Seggregate PCI specific code in ufshcd.c and corrected copyright
->>  - Adds PCI glue driver ufshcd-pci.c and ufshcd.c become core module
->>  - Adds Platform glue driver ufshcd-pltfrm.c
->>  - Update correct transfer size in Command UPIU
->>
->> Vinayak Holikatti (4):
->>   [SCSI] drivers/scsi/ufs: Seggregate PCI Specific Code
->>   [SCSI] drivers/scsi/ufs: Separate PCI code into glue driver
->>   [SCSI] ufs: Add Platform glue driver for ufshcd
->>   [SCSI] ufs: Correct the expected data transfersize
->>
->>  drivers/scsi/ufs/Kconfig         |   87 +++++---
->>  drivers/scsi/ufs/Makefile        |    2 +
->>  drivers/scsi/ufs/ufs.h           |   44 ++---
->>  drivers/scsi/ufs/ufshcd-pci.c    |  211 +++++++++++++++++++
->>  drivers/scsi/ufs/ufshcd-pltfrm.c |  217 +++++++++++++++++++
->>  drivers/scsi/ufs/ufshcd.c        |  426
->> ++++++++------------------------------
->>  drivers/scsi/ufs/ufshcd.h        |  202 ++++++++++++++++++
->>  drivers/scsi/ufs/ufshci.h        |   44 ++---
->>  8 files changed, 811 insertions(+), 422 deletions(-)
->>  create mode 100644 drivers/scsi/ufs/ufshcd-pci.c
->>  create mode 100644 drivers/scsi/ufs/ufshcd-pltfrm.c
->>  create mode 100644 drivers/scsi/ufs/ufshcd.h
->>
->> --
->> 1.7.5.4
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+  it is a compiling issue, please help check when you have time.
+
+thanks.
+
+gchen.
+
+in arch/arm/mach-s5pv210/mach-goni.c:848:
+  error: unknown field 'bus_type' specified in initializer
+
+843 static struct fimc_source_info goni_camera_sensors[] = {
+844         {
+845                 .mux_id         = 0,
+846                 .flags          = V4L2_MBUS_PCLK_SAMPLE_FALLING |
+847                                   V4L2_MBUS_VSYNC_ACTIVE_LOW,
+848                 .bus_type       = FIMC_BUS_TYPE_ITU_601,
+849                 .board_info     = &noon010pc30_board_info,
+850                 .i2c_bus_num    = 0,
+851                 .clk_frequency  = 16000000UL,
+852         },
+853 };
 
 
--- 
-Maya Erez
-QUALCOMM ISRAEL, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+in include/media/s5p_fimc.h:50
 
+ 37 /**
+ 38  * struct fimc_source_info - video source description required for the host
+ 39  *                           interface configuration
+ 40  *
+ 41  * @board_info: pointer to I2C subdevice's board info
+ 42  * @clk_frequency: frequency of the clock the host interface provides to sensor
+ 43  * @fimc_bus_type: FIMC camera input type
+ 44  * @sensor_bus_type: image sensor bus type, MIPI, ITU-R BT.601 etc.
+ 45  * @flags: the parallel sensor bus flags defining signals polarity (V4L2_MBUS_*)
+ 46  * @i2c_bus_num: i2c control bus id the sensor is attached to
+ 47  * @mux_id: FIMC camera interface multiplexer index (separate for MIPI and ITU)
+ 48  * @clk_id: index of the SoC peripheral clock for sensors
+ 49  */
+ 50 struct fimc_source_info {
+ 51         struct i2c_board_info *board_info;
+ 52         unsigned long clk_frequency;
+ 53         enum fimc_bus_type fimc_bus_type;
+ 54         enum fimc_bus_type sensor_bus_type;
+ 55         u16 flags;
+ 56         u16 i2c_bus_num;
+ 57         u16 mux_id;
+ 58         u8 clk_id;
+ 59 };
+ 60 
