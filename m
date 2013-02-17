@@ -1,60 +1,48 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v2 00/12] ARM: samsung-time: Prepare for multiplatform support
-Date: Sun, 17 Feb 2013 00:05:07 +0100
-Message-ID: <201302170005.08300.heiko@sntech.de>
-References: <1361033044-27629-1-git-send-email-tomasz.figa@gmail.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V6 02/10] ASoC: SAMSUNG: Add DT support for i2s
+Date: Sun, 17 Feb 2013 06:01:53 +0530
+Message-ID: <CAAgF-BdopAF4CxT4Wb4O6OoYVA0Yib+1hwm7Nu_KkXjFcky2gQ@mail.gmail.com>
+References: <1358509629-20471-1-git-send-email-padma.v@samsung.com>
+	<1358509629-20471-3-git-send-email-padma.v@samsung.com>
+	<511CC11B.5030700@samsung.com>
+	<20130214114337.GD13249@opensource.wolfsonmicro.com>
+	<511D49FC.4080402@gmail.com>
+	<20130215120145.GC22283@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:41741 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754645Ab3BPXFQ (ORCPT
+Received: from mail-ia0-f170.google.com ([209.85.210.170]:57139 "EHLO
+	mail-ia0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755123Ab3BQAby (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Feb 2013 18:05:16 -0500
-In-Reply-To: <1361033044-27629-1-git-send-email-tomasz.figa@gmail.com>
+	Sat, 16 Feb 2013 19:31:54 -0500
+Received: by mail-ia0-f170.google.com with SMTP id k20so4385544iak.29
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 16 Feb 2013 16:31:53 -0800 (PST)
+In-Reply-To: <20130215120145.GC22283@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, Mark Rutland <mark.rutland@arm.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, vinod.koul@intel.com, grant.likely@secretlab.ca, swarren@nvidia.com, boojin.kim@samsung.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, thomas.abraham@linaro.org, lrg@ti.com, tiwai@suse.de, ben-linux@fluff.org
 
-Am Samstag, 16. Februar 2013, 17:43:52 schrieb Tomasz Figa:
-> This series is an attempt to make the samsung-time clocksource driver ready
-> for multiplatform kernels. It moves the driver to drivers/clocksource,
-> cleans it up from uses of static platform-specific definitions, simplifies
-> timer interrupt handling and adds Device Tree support.
-> 
-> Tested on a Tiny6410 board (Mini6410-compatible) both with and without
-> Devicee Tree (with my DT patches for S3C64xx). Compile tested for other
-> related SoCs.
-> 
-> Changes since v1:
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16005)
->  - Addressed comments from Mark Rutland
->  - Documented struct samsung_timer_variant
->  - Dropped inactive mail addresses from CC
-> 
-> Tomasz Figa (12):
->   ARM: SAMSUNG: Move samsung-time to drivers/clocksource
->   clocksource: samsung-time: Set platform-specific parameters at runtime
->   clocksource: samsung-time: Drop useless defines from public header
->   ARM: SAMSUNG: Move samsung-time.h header to inlude/clocksource
->   clocksource: samsung-time: Use local register definitions
->   clocksource: samsung-time: Remove use of static register mapping
->   clocksource: samsung-time: Use clk_get_sys for getting clocks
->   ARM: SAMSUNG: devs: Drop unnecessary IRQ resources of timer devices
->   clocksource: samsung-time: Do not use static IRQ definition
->   clocksource: samsung-time: Move IRQ mask/ack handling to the driver
->   ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
->   clocksource: samsung-time: Add Device Tree support
+Hi,
 
-on a non-dt s3c2416 based board
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+On Fri, Feb 15, 2013 at 5:31 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Thu, Feb 14, 2013 at 09:33:00PM +0100, Sylwester Nawrocki wrote:
+>
+>> My apologies for the late review. It's already sixth version of this patch
+>> series... But I noticed it just now when applying it for Exynos4. The GPIO
+>> part of the bindings is now incompatible with Exynos4 and the bindings will
+>> need to be changed. Leaving the compatibility code in the I2S driver, when
+>> we could have it done well right from the beginning. If I'm not mistaken
+>> a file similar to arch/arm/boot/dts/exynos4x12-pinctrl.dtsi with at least
+>> entries for the I2S devices is needed and an addition of related pinctrl
+>> nodes in exynos5250.dtsi. But I guess this is not something that could be
+>> fixed in the -rc period ?
+>
+> Yes, and incremental fix would be fine.
 
+I will send a patch for required pinctrl support soon.
 
-once I've ported my s3c2416 dt patches to all the recent changes, I will also 
-test the dt side.
-
-
-Heiko
+Thanks
+Padma
