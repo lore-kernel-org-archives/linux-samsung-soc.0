@@ -1,36 +1,603 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v6 00/16] clk: exynos4/5: migrate to common clock framework
-Date: Mon, 18 Feb 2013 13:51:10 +0530
-Message-ID: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v6 02/16] clk: samsung: add pll clock registration helper functions
+Date: Mon, 18 Feb 2013 13:51:12 +0530
+Message-ID: <1361175686-19400-3-git-send-email-thomas.abraham@linaro.org>
+References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:41892 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753978Ab3BRIVx (ORCPT
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:40489 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756623Ab3BRIWA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Feb 2013 03:21:53 -0500
-Received: by mail-pa0-f41.google.com with SMTP id fb11so2722004pad.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Feb 2013 00:21:52 -0800 (PST)
+	Mon, 18 Feb 2013 03:22:00 -0500
+Received: by mail-pb0-f41.google.com with SMTP id um15so1559141pbc.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Feb 2013 00:21:59 -0800 (PST)
+In-Reply-To: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: devicetree-discuss@lists.ozlabs.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-Changes since v5:
-- Squashed several Exynos4 fixes patch from Tomasz Figa
-- Included support for Exynos5250 and Exynos5440, thus converting all
-  Exynos4 and Exynos5 platforms to common clock framework.
-- Depends on the following patch series.
-  - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15849.html
-  - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15852.html
+There are several types of pll clocks used in Samsung SoC's and these pll
+clocks can be represented as Samsung specific pll clock types and registered
+with the common clock framework. Add support for pll35xx, pll36xx, pll45xx,
+pll46xx and pll2550x clock types and helper functions to register them.
 
-Changes since v4:
-- Rebased to linux-3.8-rc1.
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Tested-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/clk/samsung/Makefile  |    2 +-
+ drivers/clk/samsung/clk-pll.c |  499 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.h |   41 ++++
+ 3 files changed, 541 insertions(+), 1 deletions(-)
+ create mode 100644 drivers/clk/samsung/clk-pll.c
+ create mode 100644 drivers/clk/samsung/clk-pll.h
 
-Changes since v3:
-- Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
-
-This patch series migrates the Samsung Exynos4/5 SoC clock code to adopt the
-common clock framework. The use of Samsung specific clock structures has
-been removed and all board support code has been updated. imx-style of
-clock registration and lookup has been adopted for device tree based
-exynos4/5 platforms.
+diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+index bd920b4..78e5aaa 100644
+--- a/drivers/clk/samsung/Makefile
++++ b/drivers/clk/samsung/Makefile
+@@ -2,4 +2,4 @@
+ # Samsung Clock specific Makefile
+ #
+ 
+-obj-$(CONFIG_COMMON_CLK)	+= clk.o
++obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+new file mode 100644
+index 0000000..4b24511
+--- /dev/null
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -0,0 +1,499 @@
++/*
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2013 Linaro Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This file contains the utility functions to register the pll clocks.
++*/
++
++#include <linux/errno.h>
++#include "clk.h"
++#include "clk-pll.h"
++
++/*
++ * PLL35xx Clock Type
++ */
++
++#define PLL35XX_MDIV_MASK       (0x3FF)
++#define PLL35XX_PDIV_MASK       (0x3F)
++#define PLL35XX_SDIV_MASK       (0x7)
++#define PLL35XX_MDIV_SHIFT      (16)
++#define PLL35XX_PDIV_SHIFT      (8)
++#define PLL35XX_SDIV_SHIFT      (0)
++
++struct samsung_clk_pll35xx {
++	struct clk_hw		hw;
++	const void __iomem	*con_reg;
++};
++
++#define to_clk_pll35xx(_hw) container_of(_hw, struct samsung_clk_pll35xx, hw)
++
++static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
++				unsigned long parent_rate)
++{
++	struct samsung_clk_pll35xx *pll = to_clk_pll35xx(hw);
++	u32 mdiv, pdiv, sdiv, pll_con;
++	u64 fvco = parent_rate;
++
++	pll_con = __raw_readl(pll->con_reg);
++	mdiv = (pll_con >> PLL35XX_MDIV_SHIFT) & PLL35XX_MDIV_MASK;
++	pdiv = (pll_con >> PLL35XX_PDIV_SHIFT) & PLL35XX_PDIV_MASK;
++	sdiv = (pll_con >> PLL35XX_SDIV_SHIFT) & PLL35XX_SDIV_MASK;
++
++	fvco *= mdiv;
++	do_div(fvco, (pdiv << sdiv));
++
++	return (unsigned long)fvco;
++}
++
++/* todo: implement pl35xx clock round rate operation */
++static long samsung_pll35xx_round_rate(struct clk_hw *hw,
++				unsigned long drate, unsigned long *prate)
++{
++	return -ENOTSUPP;
++}
++
++/* todo: implement pl35xx clock set rate */
++static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
++				unsigned long prate)
++{
++	return -ENOTSUPP;
++}
++
++static const struct clk_ops samsung_pll35xx_clk_ops = {
++	.recalc_rate = samsung_pll35xx_recalc_rate,
++	.round_rate = samsung_pll35xx_round_rate,
++	.set_rate = samsung_pll35xx_set_rate,
++};
++
++struct clk * __init samsung_clk_register_pll35xx(const char *name,
++			const char *pname, const void __iomem *con_reg)
++{
++	struct samsung_clk_pll35xx *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll) {
++		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
++		return NULL;
++	}
++
++	init.name = name;
++	init.ops = &samsung_pll35xx_clk_ops;
++	init.flags = CLK_GET_RATE_NOCACHE;
++	init.parent_names = &pname;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++	pll->con_reg = con_reg;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register pll clock %s\n", __func__,
++				name);
++		kfree(pll);
++	}
++
++	if (clk_register_clkdev(clk, name, NULL))
++		pr_err("%s: failed to register lookup for %s", __func__, name);
++
++	return clk;
++}
++
++/*
++ * PLL36xx Clock Type
++ */
++
++#define PLL36XX_KDIV_MASK	(0xFFFF)
++#define PLL36XX_MDIV_MASK	(0x1FF)
++#define PLL36XX_PDIV_MASK	(0x3F)
++#define PLL36XX_SDIV_MASK	(0x7)
++#define PLL36XX_MDIV_SHIFT	(16)
++#define PLL36XX_PDIV_SHIFT	(8)
++#define PLL36XX_SDIV_SHIFT	(0)
++
++struct samsung_clk_pll36xx {
++	struct clk_hw		hw;
++	const void __iomem	*con_reg;
++};
++
++#define to_clk_pll36xx(_hw) container_of(_hw, struct samsung_clk_pll36xx, hw)
++
++static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
++				unsigned long parent_rate)
++{
++	struct samsung_clk_pll36xx *pll = to_clk_pll36xx(hw);
++	u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
++	u64 fvco = parent_rate;
++
++	pll_con0 = __raw_readl(pll->con_reg);
++	pll_con1 = __raw_readl(pll->con_reg + 4);
++	mdiv = (pll_con0 >> PLL36XX_MDIV_SHIFT) & PLL36XX_MDIV_MASK;
++	pdiv = (pll_con0 >> PLL36XX_PDIV_SHIFT) & PLL36XX_PDIV_MASK;
++	sdiv = (pll_con0 >> PLL36XX_SDIV_SHIFT) & PLL36XX_SDIV_MASK;
++	kdiv = pll_con1 & PLL36XX_KDIV_MASK;
++
++	fvco *= (mdiv << 16) + kdiv;
++	do_div(fvco, (pdiv << sdiv));
++	fvco >>= 16;
++
++	return (unsigned long)fvco;
++}
++
++/* todo: implement pl36xx clock round rate operation */
++static long samsung_pll36xx_round_rate(struct clk_hw *hw,
++				unsigned long drate, unsigned long *prate)
++{
++	return -ENOTSUPP;
++}
++
++/* todo: implement pl36xx clock set rate */
++static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
++				unsigned long prate)
++{
++	return -ENOTSUPP;
++}
++
++static const struct clk_ops samsung_pll36xx_clk_ops = {
++	.recalc_rate = samsung_pll36xx_recalc_rate,
++	.round_rate = samsung_pll36xx_round_rate,
++	.set_rate = samsung_pll36xx_set_rate,
++};
++
++struct clk * __init samsung_clk_register_pll36xx(const char *name,
++			const char *pname, const void __iomem *con_reg)
++{
++	struct samsung_clk_pll36xx *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll) {
++		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
++		return NULL;
++	}
++
++	init.name = name;
++	init.ops = &samsung_pll36xx_clk_ops;
++	init.flags = CLK_GET_RATE_NOCACHE;
++	init.parent_names = &pname;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++	pll->con_reg = con_reg;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register pll clock %s\n", __func__,
++				name);
++		kfree(pll);
++	}
++
++	if (clk_register_clkdev(clk, name, NULL))
++		pr_err("%s: failed to register lookup for %s", __func__, name);
++
++	return clk;
++}
++
++/*
++ * PLL45xx Clock Type
++ */
++
++#define PLL45XX_MDIV_MASK	(0x3FF)
++#define PLL45XX_PDIV_MASK	(0x3F)
++#define PLL45XX_SDIV_MASK	(0x7)
++#define PLL45XX_MDIV_SHIFT	(16)
++#define PLL45XX_PDIV_SHIFT	(8)
++#define PLL45XX_SDIV_SHIFT	(0)
++
++struct samsung_clk_pll45xx {
++	struct clk_hw		hw;
++	enum pll45xx_type	type;
++	const void __iomem	*con_reg;
++};
++
++#define to_clk_pll45xx(_hw) container_of(_hw, struct samsung_clk_pll45xx, hw)
++
++static unsigned long samsung_pll45xx_recalc_rate(struct clk_hw *hw,
++				unsigned long parent_rate)
++{
++	struct samsung_clk_pll45xx *pll = to_clk_pll45xx(hw);
++	u32 mdiv, pdiv, sdiv, pll_con;
++	u64 fvco = parent_rate;
++
++	pll_con = __raw_readl(pll->con_reg);
++	mdiv = (pll_con >> PLL45XX_MDIV_SHIFT) & PLL45XX_MDIV_MASK;
++	pdiv = (pll_con >> PLL45XX_PDIV_SHIFT) & PLL45XX_PDIV_MASK;
++	sdiv = (pll_con >> PLL45XX_SDIV_SHIFT) & PLL45XX_SDIV_MASK;
++
++	if (pll->type == pll_4508)
++		sdiv = sdiv - 1;
++
++	fvco *= mdiv;
++	do_div(fvco, (pdiv << sdiv));
++
++	return (unsigned long)fvco;
++}
++
++/* todo: implement pl45xx clock round rate operation */
++static long samsung_pll45xx_round_rate(struct clk_hw *hw,
++				unsigned long drate, unsigned long *prate)
++{
++	return -ENOTSUPP;
++}
++
++/* todo: implement pl45xx clock set rate */
++static int samsung_pll45xx_set_rate(struct clk_hw *hw, unsigned long drate,
++				unsigned long prate)
++{
++	return -ENOTSUPP;
++}
++
++static const struct clk_ops samsung_pll45xx_clk_ops = {
++	.recalc_rate = samsung_pll45xx_recalc_rate,
++	.round_rate = samsung_pll45xx_round_rate,
++	.set_rate = samsung_pll45xx_set_rate,
++};
++
++struct clk * __init samsung_clk_register_pll45xx(const char *name,
++			const char *pname, const void __iomem *con_reg,
++			enum pll45xx_type type)
++{
++	struct samsung_clk_pll45xx *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll) {
++		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
++		return NULL;
++	}
++
++	init.name = name;
++	init.ops = &samsung_pll45xx_clk_ops;
++	init.flags = CLK_GET_RATE_NOCACHE;
++	init.parent_names = &pname;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++	pll->con_reg = con_reg;
++	pll->type = type;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register pll clock %s\n", __func__,
++				name);
++		kfree(pll);
++	}
++
++	if (clk_register_clkdev(clk, name, NULL))
++		pr_err("%s: failed to register lookup for %s", __func__, name);
++
++	return clk;
++}
++
++/*
++ * PLL46xx Clock Type
++ */
++
++#define PLL46XX_MDIV_MASK	(0x1FF)
++#define PLL46XX_PDIV_MASK	(0x3F)
++#define PLL46XX_SDIV_MASK	(0x7)
++#define PLL46XX_MDIV_SHIFT	(16)
++#define PLL46XX_PDIV_SHIFT	(8)
++#define PLL46XX_SDIV_SHIFT	(0)
++
++#define PLL46XX_KDIV_MASK	(0xFFFF)
++#define PLL4650C_KDIV_MASK	(0xFFF)
++#define PLL46XX_KDIV_SHIFT	(0)
++
++struct samsung_clk_pll46xx {
++	struct clk_hw		hw;
++	enum pll46xx_type	type;
++	const void __iomem	*con_reg;
++};
++
++#define to_clk_pll46xx(_hw) container_of(_hw, struct samsung_clk_pll46xx, hw)
++
++static unsigned long samsung_pll46xx_recalc_rate(struct clk_hw *hw,
++				unsigned long parent_rate)
++{
++	struct samsung_clk_pll46xx *pll = to_clk_pll46xx(hw);
++	u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1, shift;
++	u64 fvco = parent_rate;
++
++	pll_con0 = __raw_readl(pll->con_reg);
++	pll_con1 = __raw_readl(pll->con_reg + 4);
++	mdiv = (pll_con0 >> PLL46XX_MDIV_SHIFT) & PLL46XX_MDIV_MASK;
++	pdiv = (pll_con0 >> PLL46XX_PDIV_SHIFT) & PLL46XX_PDIV_MASK;
++	sdiv = (pll_con0 >> PLL46XX_SDIV_SHIFT) & PLL46XX_SDIV_MASK;
++	kdiv = pll->type == pll_4650c ? pll_con1 & PLL4650C_KDIV_MASK :
++					pll_con1 & PLL46XX_KDIV_MASK;
++
++	shift = pll->type == pll_4600 ? 16 : 10;
++	fvco *= (mdiv << shift) + kdiv;
++	do_div(fvco, (pdiv << sdiv));
++	fvco >>= shift;
++
++	return (unsigned long)fvco;
++}
++
++/* todo: implement pl46xx clock round rate operation */
++static long samsung_pll46xx_round_rate(struct clk_hw *hw,
++				unsigned long drate, unsigned long *prate)
++{
++	return -ENOTSUPP;
++}
++
++/* todo: implement pl46xx clock set rate */
++static int samsung_pll46xx_set_rate(struct clk_hw *hw, unsigned long drate,
++				unsigned long prate)
++{
++	return -ENOTSUPP;
++}
++
++static const struct clk_ops samsung_pll46xx_clk_ops = {
++	.recalc_rate = samsung_pll46xx_recalc_rate,
++	.round_rate = samsung_pll46xx_round_rate,
++	.set_rate = samsung_pll46xx_set_rate,
++};
++
++struct clk * __init samsung_clk_register_pll46xx(const char *name,
++			const char *pname, const void __iomem *con_reg,
++			enum pll46xx_type type)
++{
++	struct samsung_clk_pll46xx *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll) {
++		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
++		return NULL;
++	}
++
++	init.name = name;
++	init.ops = &samsung_pll46xx_clk_ops;
++	init.flags = CLK_GET_RATE_NOCACHE;
++	init.parent_names = &pname;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++	pll->con_reg = con_reg;
++	pll->type = type;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register pll clock %s\n", __func__,
++				name);
++		kfree(pll);
++	}
++
++	if (clk_register_clkdev(clk, name, NULL))
++		pr_err("%s: failed to register lookup for %s", __func__, name);
++
++	return clk;
++}
++
++/*
++ * PLL2550x Clock Type
++ */
++
++#define PLL2550X_R_MASK       (0x1)
++#define PLL2550X_P_MASK       (0x3F)
++#define PLL2550X_M_MASK       (0x3FF)
++#define PLL2550X_S_MASK       (0x7)
++#define PLL2550X_R_SHIFT      (20)
++#define PLL2550X_P_SHIFT      (14)
++#define PLL2550X_M_SHIFT      (4)
++#define PLL2550X_S_SHIFT      (0)
++
++struct samsung_clk_pll2550x {
++	struct clk_hw		hw;
++	const void __iomem	*reg_base;
++	unsigned long		offset;
++};
++
++#define to_clk_pll2550x(_hw) container_of(_hw, struct samsung_clk_pll2550x, hw)
++
++static unsigned long samsung_pll2550x_recalc_rate(struct clk_hw *hw,
++				unsigned long parent_rate)
++{
++	struct samsung_clk_pll2550x *pll = to_clk_pll2550x(hw);
++	u32 r, p, m, s, pll_stat;
++	u64 fvco = parent_rate;
++
++	pll_stat = __raw_readl(pll->reg_base + pll->offset * 3);
++	r = (pll_stat >> PLL2550X_R_SHIFT) & PLL2550X_R_MASK;
++	if (!r)
++		return 0;
++	p = (pll_stat >> PLL2550X_P_SHIFT) & PLL2550X_P_MASK;
++	m = (pll_stat >> PLL2550X_M_SHIFT) & PLL2550X_M_MASK;
++	s = (pll_stat >> PLL2550X_S_SHIFT) & PLL2550X_S_MASK;
++
++	fvco *= m;
++	do_div(fvco, (p << s));
++
++	return (unsigned long)fvco;
++}
++
++/* todo: implement pl2550x clock round rate operation */
++static long samsung_pll2550x_round_rate(struct clk_hw *hw,
++				unsigned long drate, unsigned long *prate)
++{
++	return -ENOTSUPP;
++}
++
++/* todo: implement pl2550x clock set rate */
++static int samsung_pll2550x_set_rate(struct clk_hw *hw, unsigned long drate,
++				unsigned long prate)
++{
++	return -ENOTSUPP;
++}
++
++static const struct clk_ops samsung_pll2550x_clk_ops = {
++	.recalc_rate = samsung_pll2550x_recalc_rate,
++	.round_rate = samsung_pll2550x_round_rate,
++	.set_rate = samsung_pll2550x_set_rate,
++};
++
++struct clk * __init samsung_clk_register_pll2550x(const char *name,
++			const char *pname, const void __iomem *reg_base,
++			const unsigned long offset)
++{
++	struct samsung_clk_pll2550x *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll) {
++		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
++		return NULL;
++	}
++
++	init.name = name;
++	init.ops = &samsung_pll2550x_clk_ops;
++	init.flags = CLK_GET_RATE_NOCACHE;
++	init.parent_names = &pname;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++	pll->reg_base = reg_base;
++	pll->offset = offset;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register pll clock %s\n", __func__,
++				name);
++		kfree(pll);
++	}
++
++	if (clk_register_clkdev(clk, name, NULL))
++		pr_err("%s: failed to register lookup for %s", __func__, name);
++
++	return clk;
++}
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+new file mode 100644
+index 0000000..f33786e
+--- /dev/null
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2013 Linaro Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Common Clock Framework support for all PLL's in Samsung platforms
++*/
++
++#ifndef __SAMSUNG_CLK_PLL_H
++#define __SAMSUNG_CLK_PLL_H
++
++enum pll45xx_type {
++	pll_4500,
++	pll_4502,
++	pll_4508
++};
++
++enum pll46xx_type {
++	pll_4600,
++	pll_4650,
++	pll_4650c,
++};
++
++extern struct clk * __init samsung_clk_register_pll35xx(const char *name,
++			const char *pname, const void __iomem *con_reg);
++extern struct clk * __init samsung_clk_register_pll36xx(const char *name,
++			const char *pname, const void __iomem *con_reg);
++extern struct clk * __init samsung_clk_register_pll45xx(const char *name,
++			const char *pname, const void __iomem *con_reg,
++			enum pll45xx_type type);
++extern struct clk * __init samsung_clk_register_pll46xx(const char *name,
++			const char *pname, const void __iomem *con_reg,
++			enum pll46xx_type type);
++extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
++			const char *pname, const void __iomem *reg_base,
++			const unsigned long offset);
++
++#endif /* __SAMSUNG_CLK_PLL_H */
+-- 
+1.7.5.4
