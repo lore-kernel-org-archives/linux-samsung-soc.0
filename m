@@ -1,163 +1,61 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 5/7] ARM: dts: add mct device tree node for all supported Exynos SoC's
-Date: Mon, 18 Feb 2013 13:43:43 +0530
-Message-ID: <1361175225-19282-6-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 6/7] ARM: Exynos: remove static io-remapping of mct registers for Exynos5
+Date: Mon, 18 Feb 2013 13:43:44 +0530
+Message-ID: <1361175225-19282-7-git-send-email-thomas.abraham@linaro.org>
 References: <1361175225-19282-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:63323 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753527Ab3BRIOd (ORCPT
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:42004 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753905Ab3BRIOg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Feb 2013 03:14:33 -0500
-Received: by mail-pb0-f49.google.com with SMTP id xa12so1550526pbc.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Feb 2013 00:14:32 -0800 (PST)
+	Mon, 18 Feb 2013 03:14:36 -0500
+Received: by mail-pb0-f47.google.com with SMTP id rp2so1540373pbb.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Feb 2013 00:14:36 -0800 (PST)
 In-Reply-To: <1361175225-19282-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com, chaos.youn@samsung.com, sylvester.nawrocki@gmail.com, swarren@nvidia.com
 
-Add MCT device tree node for Exynos4210, Exynos4212, Exynos4412 and Exynos5250.
+With device tree support enabled for MCT controller, the staticio-remapping
+of the MCT controller address space is removed for Exynos5 platforms (which
+supports only device tree based boot).
 
 Cc: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 Reviewed-by: Stephen Warren <swarren@nvidia.com>
 ---
- arch/arm/boot/dts/exynos4210.dtsi |   22 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos4212.dtsi |   22 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412.dtsi |   24 ++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi |   22 ++++++++++++++++++++++
- 4 files changed, 90 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos/common.c           |    5 -----
+ arch/arm/mach-exynos/include/mach/map.h |    1 -
+ 2 files changed, 0 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 79ba247..0e16a34 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -47,6 +47,28 @@
- 			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
- 	};
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 4ce342e..3b6527b 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -283,11 +283,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+-		.virtual	= (unsigned long)S5P_VA_SYSTIMER,
+-		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSTIMER),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+ 		.virtual	= (unsigned long)S5P_VA_SYSRAM,
+ 		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSRAM),
+ 		.length		= SZ_4K,
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index b8ea67e..99e0a79 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -68,7 +68,6 @@
+ #define EXYNOS5_PA_CMU			0x10010000
  
-+	mct@10050000 {
-+		compatible = "samsung,exynos4210-mct";
-+		reg = <0x10050000 0x800>;
-+		interrupt-controller;
-+		#interrups-cells = <2>;
-+		interrupt-parent = <&mct_map>;
-+		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-+			     <4 0>, <5 0>;
-+
-+		mct_map: mct-map {
-+			#interrupt-cells = <2>;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			interrupt-map = <0x0 0 &gic 0 57 0>,
-+					<0x1 0 &gic 0 69 0>,
-+					<0x2 0 &combiner 12 6>,
-+					<0x3 0 &combiner 12 7>,
-+					<0x4 0 &gic 0 42 0>,
-+					<0x5 0 &gic 0 48 0>;
-+		};
-+	};
-+
- 	pmu {
- 		compatible = "arm,cortex-a9-pmu";
- 		interrupt-parent = <&combiner>;
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index c6ae200..36d4299 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -25,4 +25,26 @@
- 	gic:interrupt-controller@10490000 {
- 		cpu-offset = <0x8000>;
- 	};
-+
-+	mct@10050000 {
-+		compatible = "samsung,exynos4412-mct";
-+		reg = <0x10050000 0x800>;
-+		interrupt-controller;
-+		#interrups-cells = <2>;
-+		interrupt-parent = <&mct_map>;
-+		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-+			     <4 0>, <5 0>;
-+
-+		mct_map: mct-map {
-+			#interrupt-cells = <2>;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			interrupt-map = <0x0 0 &gic 0 57 0>,
-+					<0x1 0 &combiner 12 5>,
-+					<0x2 0 &combiner 12 6>,
-+					<0x3 0 &combiner 12 7>,
-+					<0x4 0 &gic 1 12 0>,
-+					<0x5 0 &gic 1 12 0>;
-+		};
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index d7dfe31..821c9fd 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -25,4 +25,28 @@
- 	gic:interrupt-controller@10490000 {
- 		cpu-offset = <0x4000>;
- 	};
-+
-+	mct@10050000 {
-+		compatible = "samsung,exynos4412-mct";
-+		reg = <0x10050000 0x800>;
-+		interrupt-controller;
-+		#interrups-cells = <2>;
-+		interrupt-parent = <&mct_map>;
-+		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-+			     <4 0>, <5 0>, <6 0>, <7 0>;
-+
-+		mct_map: mct-map {
-+			#interrupt-cells = <2>;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			interrupt-map = <0x0 0 &gic 0 57 0>,
-+					<0x1 0 &combiner 12 5>,
-+					<0x2 0 &combiner 12 6>,
-+					<0x3 0 &combiner 12 7>,
-+					<0x4 0 &gic 1 12 0>,
-+					<0x5 0 &gic 1 12 0>,
-+					<0x6 0 &gic 1 12 0>,
-+					<0x7 0 &gic 1 12 0>;
-+		};
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 7c3d07a..8d8b5a0 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -79,6 +79,28 @@
- 			     <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
- 	};
+ #define EXYNOS4_PA_SYSTIMER		0x10050000
+-#define EXYNOS5_PA_SYSTIMER		0x101C0000
  
-+	mct@101C0000 {
-+		compatible = "samsung,exynos4210-mct";
-+		reg = <0x101C0000 0x800>;
-+		interrupt-controller;
-+		#interrups-cells = <2>;
-+		interrupt-parent = <&mct_map>;
-+		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-+			     <4 0>, <5 0>;
-+
-+		mct_map: mct-map {
-+			#interrupt-cells = <2>;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			interrupt-map = <0x0 0 &combiner 23 3>,
-+					<0x1 0 &combiner 23 4>,
-+					<0x2 0 &combiner 25 2>,
-+					<0x3 0 &combiner 25 3>,
-+					<0x4 0 &gic 0 120 0>,
-+					<0x5 0 &gic 0 121 0>;
-+		};
-+	};
-+
- 	pmu {
- 		compatible = "arm,cortex-a15-pmu";
- 		interrupt-parent = <&combiner>;
+ #define EXYNOS4_PA_WATCHDOG		0x10060000
+ #define EXYNOS5_PA_WATCHDOG		0x101D0000
 -- 
 1.7.5.4
