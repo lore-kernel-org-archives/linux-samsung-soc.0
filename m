@@ -1,48 +1,41 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
 Subject: Re: [PATCH 7/7] ARM: dts: Add Samsung G2D DT bindings documentation
-Date: Mon, 18 Feb 2013 10:45:37 +0530
-Message-ID: <CAK9yfHyvfq0WV5SiB+kSGtMhFDWmc7FK0EXDUtHB_B=C-3ijow@mail.gmail.com>
+Date: Mon, 18 Feb 2013 10:47:58 +0530
+Message-ID: <CAK9yfHzf7f=+rmVVjr-Mkx1B=GbbgKgkkoz-pSp13os+fy9=dA@mail.gmail.com>
 References: <1360151477-26460-1-git-send-email-sachin.kamat@linaro.org>
- <1360151477-26460-8-git-send-email-sachin.kamat@linaro.org>
- <511C1462.5060106@gmail.com>
- <CAK9yfHyEfEhRE-7CUeu7x7GbqJZL4aJfgHso2kXoGCWRrxiYWw@mail.gmail.com>
- <511D0A5E.7060907@samsung.com>
+	<1360151477-26460-8-git-send-email-sachin.kamat@linaro.org>
+	<104679815.9jiIT0ld5D@flatron>
+	<CAK9yfHxcZ41rLK5i_hZ2QoBKsxUHEk252XLOHSMHeS2WvGrcrQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <511D0A5E.7060907-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:36849 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753666Ab3BRFR7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Feb 2013 00:17:59 -0500
+Received: by mail-oa0-f47.google.com with SMTP id o17so5429810oag.6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Feb 2013 21:17:59 -0800 (PST)
+In-Reply-To: <CAK9yfHxcZ41rLK5i_hZ2QoBKsxUHEk252XLOHSMHeS2WvGrcrQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "patches@linaro.org" <patches@linaro.org>
 
-Hi Sylwester,
+Hi Tomasz,
 
-On 14 February 2013 21:31, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 02/14/2013 04:45 PM, Sachin Kamat wrote:
->> Thanks for reviewing. Does the filename look good or should it be exynos-g2d?
+>>> +Optional properties:
+>>> +  - samsung,power-domain : power-domain property defined with a phandle
+>>> +                        to respective power domain.
+>>
+>> I'm not sure if samsung,power-domain should be mentioned in this
+>> documentation file. The driver itself does not use this property.
 >
-> You're welcome. My apologies for being a bit late.
-> I guess exynos-g2d.txt would be more appropriate. OTOH if this document is
-> going to cover all Samsung G2D IP blocks then current name might be better.
-> I used samsung- prefix for fimc and mipi-csis as those documents are supposed
-> to cover the S5P and Exynos4 SoCs.
->
+> Oh ok. I will check this again and remove if unnecessary.
 
-I have retained the filename as it was since it addresses both S5P as
-well as Exynos IPs.
-Thanks for the tip.
-I have resent this series with your other comments addressed.
+The driver does not use power-domain property for now and hence I have
+removed this in V2.
+Thanks for pointing out.
 
 -- 
 With warm regards,
