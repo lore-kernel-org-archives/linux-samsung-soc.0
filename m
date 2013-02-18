@@ -1,42 +1,35 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 7/7] ARM: dts: Add Samsung G2D DT bindings documentation
-Date: Mon, 18 Feb 2013 10:47:58 +0530
-Message-ID: <CAK9yfHzf7f=+rmVVjr-Mkx1B=GbbgKgkkoz-pSp13os+fy9=dA@mail.gmail.com>
-References: <1360151477-26460-1-git-send-email-sachin.kamat@linaro.org>
-	<1360151477-26460-8-git-send-email-sachin.kamat@linaro.org>
-	<104679815.9jiIT0ld5D@flatron>
-	<CAK9yfHxcZ41rLK5i_hZ2QoBKsxUHEk252XLOHSMHeS2WvGrcrQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/2] ARM: Exynos: Add DT based I/O mapping for Chip-ID controller
+Date: Mon, 18 Feb 2013 13:24:57 +0530
+Message-ID: <1361174099-18749-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:36849 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753666Ab3BRFR7 (ORCPT
+Received: from mail-da0-f51.google.com ([209.85.210.51]:33480 "EHLO
+	mail-da0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753527Ab3BRHz1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Feb 2013 00:17:59 -0500
-Received: by mail-oa0-f47.google.com with SMTP id o17so5429810oag.6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Feb 2013 21:17:59 -0800 (PST)
-In-Reply-To: <CAK9yfHxcZ41rLK5i_hZ2QoBKsxUHEk252XLOHSMHeS2WvGrcrQ@mail.gmail.com>
+	Mon, 18 Feb 2013 02:55:27 -0500
+Received: by mail-da0-f51.google.com with SMTP id n15so2353481dad.24
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Feb 2013 23:55:26 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "patches@linaro.org" <patches@linaro.org>
+To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-Hi Tomasz,
+This patch series allows device tree enabled platforms to setup a runtime
+I/O mapping for the chip-id controller. This helps to remove statically
+defined I/O mapping for the Chip-ID controller.
 
->>> +Optional properties:
->>> +  - samsung,power-domain : power-domain property defined with a phandle
->>> +                        to respective power domain.
->>
->> I'm not sure if samsung,power-domain should be mentioned in this
->> documentation file. The driver itself does not use this property.
->
-> Oh ok. I will check this again and remove if unnecessary.
+Thomas Abraham (2):
+  ARM: Exynos: Create virtual I/O mapping for Chip-ID controller using device tree
+  ARM: dts: Add chip-id controller node on Exynos4/5 SoC
 
-The driver does not use power-domain property for now and hence I have
-removed this in V2.
-Thanks for pointing out.
+ .../arm/samsung/samsung,exynos4210-chipid.txt      |   15 ++++++
+ arch/arm/boot/dts/exynos4.dtsi                     |    5 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    5 ++
+ arch/arm/mach-exynos/common.c                      |   53 +++++++++++---------
+ arch/arm/mach-exynos/include/mach/map.h            |    1 -
+ 5 files changed, 55 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/samsung,exynos4210-chipid.txt
 
 -- 
-With warm regards,
-Sachin
+1.7.5.4
