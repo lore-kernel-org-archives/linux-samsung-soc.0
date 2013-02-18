@@ -1,121 +1,258 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v6 08/16] ARM: Exynos4: allow legacy board support to specify xxti and xusbxti clock speed
-Date: Mon, 18 Feb 2013 13:51:18 +0530
-Message-ID: <1361175686-19400-9-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v6 09/16] ARM: Exynos: remove auxdata table from exynos4/5 dt machine file
+Date: Mon, 18 Feb 2013 13:51:19 +0530
+Message-ID: <1361175686-19400-10-git-send-email-thomas.abraham@linaro.org>
 References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:44701 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756663Ab3BRIWV (ORCPT
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:35411 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756663Ab3BRIWZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Feb 2013 03:22:21 -0500
-Received: by mail-pb0-f46.google.com with SMTP id uo15so1551168pbc.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Feb 2013 00:22:21 -0800 (PST)
+	Mon, 18 Feb 2013 03:22:25 -0500
+Received: by mail-pb0-f43.google.com with SMTP id md12so1557738pbc.30
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Feb 2013 00:22:24 -0800 (PST)
 In-Reply-To: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: devicetree-discuss@lists.ozlabs.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-The clock speed of xxti and xusbxti clocks depends on the oscillator used on the
-board to generate these clocks. For non-dt platforms, allow the board support
-for those platforms to set the clock frequency of xxti and xusbxti clocks.
+With support for device tree based clock lookup now available, remove the
+auxdata table from exynos4/5 dt-enabled machine file.
 
 Cc: Kukjin Kim <kgene.kim@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/common.c              |    3 +++
- arch/arm/mach-exynos/common.h              |    1 +
- arch/arm/mach-exynos/mach-nuri.c           |    2 ++
- arch/arm/mach-exynos/mach-origen.c         |    2 ++
- arch/arm/mach-exynos/mach-smdkv310.c       |    2 ++
- arch/arm/mach-exynos/mach-universal_c210.c |    2 ++
- 6 files changed, 12 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos/mach-exynos4-dt.c |   69 +----------------------
+ arch/arm/mach-exynos/mach-exynos5-dt.c |   98 +-------------------------------
+ 2 files changed, 3 insertions(+), 164 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 64585af..974978b 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -68,6 +68,8 @@ static void exynos5440_map_io(void);
- static void exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- static int exynos_init(void);
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index 6c5e068..809c274 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -11,6 +11,7 @@
+  * published by the Free Software Foundation.
+ */
  
-+unsigned long xxti_f = 0, xusbxti_f = 0;
-+
- static struct cpu_table cpu_ids[] __initdata = {
- 	{
- 		.idcode		= EXYNOS4210_CPU_ID,
-@@ -448,6 +450,7 @@ void __init exynos_init_time(void)
- 	} else {
- 		/* todo: remove after migrating legacy E4 platforms to dt */
- 		exynos4_clk_init(NULL);
-+		exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
- 		mct_init();
++#include <linux/kernel.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_fdt.h>
+ #include <linux/serial_core.h>
+@@ -19,75 +20,10 @@
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+-#include <mach/map.h>
+-
+-#include <plat/cpu.h>
+-#include <plat/regs-serial.h>
+ #include <plat/mfc.h>
+ 
+ #include "common.h"
+ 
+-/*
+- * The following lookup table is used to override device names when devices
+- * are registered from device tree. This is temporarily added to enable
+- * device tree support addition for the Exynos4 architecture.
+- *
+- * For drivers that require platform data to be provided from the machine
+- * file, a platform data pointer can also be supplied along with the
+- * devices names. Usually, the platform data elements that cannot be parsed
+- * from the device tree by the drivers (example: function pointers) are
+- * supplied. But it should be noted that this is a temporary mechanism and
+- * at some point, the drivers should be capable of parsing all the platform
+- * data from the device tree.
+- */
+-static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART0,
+-				"exynos4210-uart.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART1,
+-				"exynos4210-uart.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART2,
+-				"exynos4210-uart.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART3,
+-				"exynos4210-uart.3", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(0),
+-				"exynos4-sdhci.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(1),
+-				"exynos4-sdhci.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(2),
+-				"exynos4-sdhci.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(3),
+-				"exynos4-sdhci.3", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(0),
+-				"s3c2440-i2c.0", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(1),
+-				"s3c2440-i2c.1", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(2),
+-				"s3c2440-i2c.2", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(3),
+-				"s3c2440-i2c.3", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(4),
+-				"s3c2440-i2c.4", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(5),
+-				"s3c2440-i2c.5", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(6),
+-				"s3c2440-i2c.6", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(7),
+-				"s3c2440-i2c.7", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS4_PA_SPI0,
+-				"exynos4210-spi.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS4_PA_SPI1,
+-				"exynos4210-spi.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS4_PA_SPI2,
+-				"exynos4210-spi.2", NULL),
+-	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
+-	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
+-	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_MDMA1, "dma-pl330.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-tmu", EXYNOS4_PA_TMU,
+-				"exynos-tmu", NULL),
+-	OF_DEV_AUXDATA("samsung,mfc-v5", 0x13400000, "s5p-mfc", NULL),
+-	{},
+-};
+-
+ static void __init exynos4_dt_map_io(void)
+ {
+ 	exynos_init_io(NULL, 0);
+@@ -95,8 +31,7 @@ static void __init exynos4_dt_map_io(void)
+ 
+ static void __init exynos4_dt_machine_init(void)
+ {
+-	of_platform_populate(NULL, of_default_bus_match_table,
+-				exynos4_auxdata_lookup, NULL);
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+ 
+ static char const *exynos4_dt_compat[] __initdata = {
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index dfe51ee..7027bb9 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -11,110 +11,19 @@
+ 
+ #include <linux/of_platform.h>
+ #include <linux/of_fdt.h>
+-#include <linux/serial_core.h>
+ #include <linux/memblock.h>
+ #include <linux/io.h>
+ #include <linux/clocksource.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+-#include <mach/map.h>
+ #include <mach/regs-pmu.h>
+ 
+ #include <plat/cpu.h>
+-#include <plat/regs-serial.h>
+ #include <plat/mfc.h>
+ 
+ #include "common.h"
+ 
+-/*
+- * The following lookup table is used to override device names when devices
+- * are registered from device tree. This is temporarily added to enable
+- * device tree support addition for the EXYNOS5 architecture.
+- *
+- * For drivers that require platform data to be provided from the machine
+- * file, a platform data pointer can also be supplied along with the
+- * devices names. Usually, the platform data elements that cannot be parsed
+- * from the device tree by the drivers (example: function pointers) are
+- * supplied. But it should be noted that this is a temporary mechanism and
+- * at some point, the drivers should be capable of parsing all the platform
+- * data from the device tree.
+- */
+-static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS5_PA_UART0,
+-				"exynos4210-uart.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS5_PA_UART1,
+-				"exynos4210-uart.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS5_PA_UART2,
+-				"exynos4210-uart.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS5_PA_UART3,
+-				"exynos4210-uart.3", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(0),
+-				"s3c2440-i2c.0", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(1),
+-				"s3c2440-i2c.1", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(2),
+-				"s3c2440-i2c.2", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(3),
+-				"s3c2440-i2c.3", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(4),
+-				"s3c2440-i2c.4", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(5),
+-				"s3c2440-i2c.5", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(6),
+-				"s3c2440-i2c.6", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(7),
+-				"s3c2440-i2c.7", NULL),
+-	OF_DEV_AUXDATA("samsung,s3c2440-hdmiphy-i2c", EXYNOS5_PA_IIC(8),
+-				"s3c2440-hdmiphy-i2c", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI0,
+-				"dw_mmc.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI1,
+-				"dw_mmc.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI2,
+-				"dw_mmc.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI3,
+-				"dw_mmc.3", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI0,
+-				"exynos4210-spi.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI1,
+-				"exynos4210-spi.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI2,
+-				"exynos4210-spi.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-sata-ahci", 0x122F0000,
+-				"exynos5-sata", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-sata-phy", 0x12170000,
+-				"exynos5-sata-phy", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-sata-phy-i2c", 0x121D0000,
+-				"exynos5-sata-phy-i2c", NULL),
+-	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
+-	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
+-	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC0,
+-				"exynos-gsc.0", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC1,
+-				"exynos-gsc.1", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC2,
+-				"exynos-gsc.2", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC3,
+-				"exynos-gsc.3", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-hdmi", 0x14530000,
+-				"exynos5-hdmi", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-mixer", 0x14450000,
+-				"exynos5-mixer", NULL),
+-	OF_DEV_AUXDATA("samsung,mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5250-tmu", 0x10060000,
+-				"exynos-tmu", NULL),
+-	OF_DEV_AUXDATA("samsung,exynos5-dp", 0x145B0000, "exynos-dp", NULL),
+-	{},
+-};
+-
+-static const struct of_dev_auxdata exynos5440_auxdata_lookup[] __initconst = {
+-	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS5440_PA_UART0,
+-				"exynos4210-uart.0", NULL),
+-	{},
+-};
+-
+ static void __init exynos5_dt_map_io(void)
+ {
+ 	exynos_init_io(NULL, 0);
+@@ -144,12 +53,7 @@ static void __init exynos5_dt_machine_init(void)
+ 		}
  	}
- }
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 2c3cdae..8d9ae73 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -16,6 +16,7 @@
  
- extern void mct_init(void);
- void exynos_init_time(void);
-+extern unsigned long xxti_f, xusbxti_f;
- 
- struct map_desc;
- void exynos_init_io(struct map_desc *mach_desc, int size);
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index cdae74b..abe36ec 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -1332,6 +1332,8 @@ static void __init nuri_map_io(void)
- {
- 	exynos_init_io(NULL, 0);
- 	s3c24xx_init_uarts(nuri_uartcfgs, ARRAY_SIZE(nuri_uartcfgs));
-+	xxti_f = 0;
-+	xusbxti_f = 24000000;
+-	if (of_machine_is_compatible("samsung,exynos5250"))
+-		of_platform_populate(NULL, of_default_bus_match_table,
+-				     exynos5250_auxdata_lookup, NULL);
+-	else if (of_machine_is_compatible("samsung,exynos5440"))
+-		of_platform_populate(NULL, of_default_bus_match_table,
+-				     exynos5440_auxdata_lookup, NULL);
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
  }
  
- static void __init nuri_reserve(void)
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index e9ab921..e7b36ca 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -756,6 +756,8 @@ static void __init origen_map_io(void)
- {
- 	exynos_init_io(NULL, 0);
- 	s3c24xx_init_uarts(origen_uartcfgs, ARRAY_SIZE(origen_uartcfgs));
-+	xxti_f = 0;
-+	xusbxti_f = 24000000;
- }
- 
- static void __init origen_power_init(void)
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index eb51c06..d146393 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -373,6 +373,8 @@ static void __init smdkv310_map_io(void)
- {
- 	exynos_init_io(NULL, 0);
- 	s3c24xx_init_uarts(smdkv310_uartcfgs, ARRAY_SIZE(smdkv310_uartcfgs));
-+	xxti_f = 12000000;
-+	xusbxti_f = 24000000;
- }
- 
- static void __init smdkv310_reserve(void)
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index 53de074..8cc315e 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -1095,6 +1095,8 @@ static void __init universal_map_io(void)
- 	exynos_init_io(NULL, 0);
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM2, SAMSUNG_PWM4);
-+	xxti_f = 0;
-+	xusbxti_f = 24000000;
- }
- 
- static void s5p_tv_setup(void)
+ static char const *exynos5_dt_compat[] __initdata = {
 -- 
 1.7.5.4
