@@ -1,68 +1,74 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH 2/2] ARM: EXYNOS: support burst mode for for dev-to-mem and
- dev-to-mem transmit
-Date: Tue, 19 Feb 2013 11:02:09 +0900
-Message-ID: <00eb01ce0e45$20223c90$6066b5b0$%kim@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v6 16/16] ARM: dts: add board specific fixed rate clock
+ nodes for Exynos based platforms
+Date: Mon, 18 Feb 2013 21:11:26 -0800
+Message-ID: <CAOesGMjXv6DnGKx3=Xvgae_z=Jj5dZ5ncXyRNQ7wmmpSNkh==g@mail.gmail.com>
+References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
+	<1361175686-19400-17-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43690 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758027Ab3BSCCO (ORCPT
+Received: from mail-we0-f170.google.com ([74.125.82.170]:63219 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751340Ab3BSFL2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Feb 2013 21:02:14 -0500
-References: 
-In-reply-to: 
-Content-language: ko
+	Tue, 19 Feb 2013 00:11:28 -0500
+Received: by mail-we0-f170.google.com with SMTP id z53so5590095wey.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Feb 2013 21:11:26 -0800 (PST)
+In-Reply-To: <1361175686-19400-17-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Dan Williams' <djbw@fb.com>, 'Vinod Koul' <vinod.koul@intel.com>, 'Jaswinder Singh' <jassi.brar@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-This patch adds to support burst mode for for dev-to-mem and dev-to-mem transmit
+Hi,
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
----
- arch/arm/plat-samsung/dma-ops.c              |   10 ++++++++--
- arch/arm/plat-samsung/include/plat/dma-ops.h |    1 +
- 2 files changed, 9 insertions(+), 2 deletions(-)
+On Mon, Feb 18, 2013 at 12:21 AM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
+> The clock frequency of xxti and xusbxti clocks is dependent on the frequency of the
+> on-board oscillator that is used to generate these clocks. So allow the frequency
+> of these clocks to be specfied from device tree.
+>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4210-origen.dts   |   12 ++++++++++++
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts |   12 ++++++++++++
+>  arch/arm/boot/dts/exynos4210-trats.dts    |   12 ++++++++++++
+>  arch/arm/boot/dts/exynos4412-odroidx.dts  |   12 ++++++++++++
+>  arch/arm/boot/dts/exynos4412-origen.dts   |   12 ++++++++++++
+>  arch/arm/boot/dts/exynos4412-smdk4412.dts |   12 ++++++++++++
+>  arch/arm/boot/dts/exynos5250-arndale.dts  |    7 +++++++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |    7 +++++++
+>  arch/arm/boot/dts/exynos5250-snow.dts     |    7 +++++++
+>  arch/arm/boot/dts/exynos5440-ssdk5440.dts |    7 +++++++
+>  10 files changed, 100 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 052606b..1b30bc8 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -127,4 +127,16 @@
+>                         linux,default-trigger = "heartbeat";
+>                 };
+>         };
+> +
+> +       fixed-rate-clocks {
+> +               xxti {
+> +                       compatible = "samsung,clock-xxti";
+> +                       clock-frequency = <0>;
+> +               };
+> +
+> +               xusbxti {
+> +                       compatible = "samsung,clock-xusbxti";
+> +                       clock-frequency = <24000000>;
+> +               };
+> +       };
 
-diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-index d088afa..c25e842 100644
---- a/arch/arm/plat-samsung/dma-ops.c
-+++ b/arch/arm/plat-samsung/dma-ops.c
-@@ -54,14 +54,20 @@ static int samsung_dmadev_config(unsigned ch,
- 		slave_config.direction = param->direction;
- 		slave_config.src_addr = param->fifo;
- 		slave_config.src_addr_width = param->width;
--		slave_config.src_maxburst = 1;
-+		if (param->maxburst)
-+			slave_config.src_maxburst = param->maxburst;
-+		else
-+			slave_config.src_maxburst = 1;
- 		dmaengine_slave_config(chan, &slave_config);
- 	} else if (param->direction == DMA_MEM_TO_DEV) {
- 		memset(&slave_config, 0, sizeof(struct dma_slave_config));
- 		slave_config.direction = param->direction;
- 		slave_config.dst_addr = param->fifo;
- 		slave_config.dst_addr_width = param->width;
--		slave_config.dst_maxburst = 1;
-+		if (param->maxburst)
-+			slave_config.dst_maxburst = param->maxburst;
-+		else
-+			slave_config.dst_maxburst = 1;
- 		dmaengine_slave_config(chan, &slave_config);
- 	} else {
- 		pr_warn("unsupported direction\n");
-diff --git a/arch/arm/plat-samsung/include/plat/dma-ops.h b/arch/arm/plat-samsung/include/plat/dma-ops.h
-index f5144cd..95893c7 100644
---- a/arch/arm/plat-samsung/include/plat/dma-ops.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-ops.h
-@@ -35,6 +35,7 @@ struct samsung_dma_prep {
- struct samsung_dma_config {
- 	enum dma_transfer_direction direction;
- 	enum dma_slave_buswidth width;
-+	u32 maxburst;
- 	dma_addr_t fifo;
- };
+Looks like xxti = 0 and xusbxti = 24MHz is the common frequencies on
+nearly all boards. It probably makes sense to add that to the defaults
+in dtsi, and override on the boards where it isn't the case. Saves
+some boilerplate code in the .dts files.
 
---
-1.7.5.4
+
+-Olof
