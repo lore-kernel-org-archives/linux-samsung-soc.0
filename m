@@ -1,155 +1,250 @@
-From: Dave Martin <dave.martin@linaro.org>
-Subject: Re: [PATCH V4 4/4] ARM: dts: pl330: Add #dma-cells for generic dma
- binding support
-Date: Tue, 19 Feb 2013 12:38:20 +0000
-Message-ID: <20130219123820.GF1978@linaro.org>
-References: <1360813208-9498-1-git-send-email-padma.v@samsung.com>
- <1360813208-9498-5-git-send-email-padma.v@samsung.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH V3 1/2] Thermal: exynos: Add support for temperature
+ falling interrupt.
+Date: Tue, 19 Feb 2013 23:49:57 +0800
+Message-ID: <1361288997.2323.32.camel@rzhang1-mobl4>
+References: <1360285987-13921-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:50595 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932712Ab3BSMi0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Feb 2013 07:38:26 -0500
-Received: by mail-ee0-f50.google.com with SMTP id e51so3604441eek.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Feb 2013 04:38:25 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1360813208-9498-5-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1360285987-13921-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, jonghwa3.lee@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, jassisinghbrar@gmail.com, kgene.kim@samsung.com, arnd@arndb.de, boojin.kim@samsung.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, vinod.koul@intel.com, thomas.abraham@linaro.org, jon-hunter@ti.com
 
-On Thu, Feb 14, 2013 at 09:10:08AM +0530, Padmavathi Venna wrote:
-> This patch adds #dma-cells property to PL330 DMA controller
-> nodes for supporting generic dma dt bindings on samsung
-> exynos5250 platform.
-
-Can you comment on the following thread?
-
-https://lists.ozlabs.org/pipermail/devicetree-discuss/2013-February/028188.html
-
-
-Describing DMA controllers is part of a wider problem of how to describe
-bus masters in DT.
-
-The key problem is that nobody knows what subset of the bus hierarchy is
-accessed by a DMA controller (or something else) in its master role.
-Currently I think that the PCI-oriented standard bindings in the ePAPR
-specification are not adequate to describe arbitrary SoC platforms,
-but maybe I'm missing something or being too pessimistic...
-
-The "what does a master see" problem is mostly independent of your
-DMA bindings, except that coherency is not specific to DMA controllers,
-and ideally we would describe that in a common way for all masters.
-(Also, in general most devices don't power up coherent -- configuration
-both in the peripheral and in the bus fabric may be needed before
-coherency is established).
-
-Cheers
----Dave
-
+On Thu, 2013-02-07 at 17:13 -0800, Amit Daniel Kachhap wrote:
+> From: Jonghwa Lee <jonghwa3.lee@samsung.com>
 > 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> This patch introduces using temperature falling interrupt in exynos
+> thermal driver. Former patch, it only use polling way to check
+> whether if system themperature is fallen. However, exynos SOC also
+> provides temperature falling interrupt way to do same things by hw.
+> This feature is not supported in exynos4210.
+> 
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+
+applied to thermal -next.
+
+thanks,
+rui
 > ---
->  .../devicetree/bindings/dma/arm-pl330.txt          |   21 +++++++++++++++----
->  arch/arm/boot/dts/exynos5250.dtsi                  |   12 +++++++++++
->  2 files changed, 28 insertions(+), 5 deletions(-)
+> Hi,
 > 
-> diff --git a/Documentation/devicetree/bindings/dma/arm-pl330.txt b/Documentation/devicetree/bindings/dma/arm-pl330.txt
-> index 36e27d5..2675658 100644
-> --- a/Documentation/devicetree/bindings/dma/arm-pl330.txt
-> +++ b/Documentation/devicetree/bindings/dma/arm-pl330.txt
-> @@ -10,7 +10,11 @@ Required properties:
->    - interrupts: interrupt number to the cpu.
->  
->  Optional properties:
-> -- dma-coherent      : Present if dma operations are coherent
-> +  - dma-coherent      : Present if dma operations are coherent
-> +  - #dma-cells: must be <1>. used to represent the number of integer
-> +    cells in the dmas property of client device.
-> +  - dma-channels: contains the total number of DMA channels supported by the DMAC
-> +  - dma-requests: contains the total number of DMA requests supported by the DMAC
->  
->  Example:
->  
-> @@ -18,16 +22,23 @@ Example:
->  		compatible = "arm,pl330", "arm,primecell";
->  		reg = <0x12680000 0x1000>;
->  		interrupts = <99>;
-> +		#dma-cells = <1>;
-> +		#dma-channels = <8>;
-> +		#dma-requests = <32>;
->  	};
->  
->  Client drivers (device nodes requiring dma transfers from dev-to-mem or
-> -mem-to-dev) should specify the DMA channel numbers using a two-value pair
-> +mem-to-dev) should specify the DMA channel numbers and dma channel names
->  as shown below.
->  
->    [property name]  = <[phandle of the dma controller] [dma request id]>;
-> +  [property name]  = <[dma channel name]>
->  
->        where 'dma request id' is the dma request number which is connected
-> -      to the client controller. The 'property name' is recommended to be
-> -      of the form <name>-dma-channel.
-> +      to the client controller. The 'property name' 'dmas' and 'dma-names'
-> +      as required by the generic dma device tree binding helpers. The dma
-> +      names correspond 1:1 with the dma request ids in the dmas property.
->  
-> -  Example:  tx-dma-channel = <&pdma0 12>;
-> +  Example:  dmas = <&pdma0 12
-> +		    &pdma1 11>;
-> +	    dma-names = "tx", "rx";
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 2e3b6ef..c774aae 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -280,24 +280,36 @@
->  			compatible = "arm,pl330", "arm,primecell";
->  			reg = <0x121A0000 0x1000>;
->  			interrupts = <0 34 0>;
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
->  		};
->  
->  		pdma1: pdma@121B0000 {
->  			compatible = "arm,pl330", "arm,primecell";
->  			reg = <0x121B0000 0x1000>;
->  			interrupts = <0 35 0>;
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
->  		};
->  
->  		mdma0: mdma@10800000 {
->  			compatible = "arm,pl330", "arm,primecell";
->  			reg = <0x10800000 0x1000>;
->  			interrupts = <0 33 0>;
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <1>;
->  		};
->  
->  		mdma1: mdma@11C10000 {
->  			compatible = "arm,pl330", "arm,primecell";
->  			reg = <0x11C10000 0x1000>;
->  			interrupts = <0 124 0>;
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <1>;
->  		};
->  	};
->  
-> -- 
-> 1.7.4.4
+> Submitting these patches again as they got lost somewhere and was not merged.
 > 
+> Changes since V2:
+> * Rebased against Rui Zhang next tree.
+> * Added Kukjin Kim acked by.
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Changes since V1: Used the new thermal trend type macro
+> 
+> All these patches are based on thermal maintainer next branch.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git thermal
+> 
+>  drivers/thermal/exynos_thermal.c             |   81 +++++++++++++++-----------
+>  include/linux/platform_data/exynos_thermal.h |    3 +
+>  2 files changed, 49 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
+> index 3a1b01e..65f69cf 100644
+> --- a/drivers/thermal/exynos_thermal.c
+> +++ b/drivers/thermal/exynos_thermal.c
+> @@ -94,6 +94,7 @@
+>  #define SENSOR_NAME_LEN	16
+>  #define MAX_TRIP_COUNT	8
+>  #define MAX_COOLING_DEVICE 4
+> +#define MAX_THRESHOLD_LEVS 4
+>  
+>  #define ACTIVE_INTERVAL 500
+>  #define IDLE_INTERVAL 10000
+> @@ -133,6 +134,7 @@ struct exynos_tmu_data {
+>  struct	thermal_trip_point_conf {
+>  	int trip_val[MAX_TRIP_COUNT];
+>  	int trip_count;
+> +	u8 trigger_falling;
+>  };
+>  
+>  struct	thermal_cooling_conf {
+> @@ -183,7 +185,8 @@ static int exynos_set_mode(struct thermal_zone_device *thermal,
+>  
+>  	mutex_lock(&th_zone->therm_dev->lock);
+>  
+> -	if (mode == THERMAL_DEVICE_ENABLED)
+> +	if (mode == THERMAL_DEVICE_ENABLED &&
+> +		!th_zone->sensor_conf->trip_data.trigger_falling)
+>  		th_zone->therm_dev->polling_delay = IDLE_INTERVAL;
+>  	else
+>  		th_zone->therm_dev->polling_delay = 0;
+> @@ -447,7 +450,8 @@ static void exynos_report_trigger(void)
+>  			break;
+>  	}
+>  
+> -	if (th_zone->mode == THERMAL_DEVICE_ENABLED) {
+> +	if (th_zone->mode == THERMAL_DEVICE_ENABLED &&
+> +		!th_zone->sensor_conf->trip_data.trigger_falling) {
+>  		if (i > 0)
+>  			th_zone->therm_dev->polling_delay = ACTIVE_INTERVAL;
+>  		else
+> @@ -486,7 +490,8 @@ static int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf)
+>  
+>  	th_zone->therm_dev = thermal_zone_device_register(sensor_conf->name,
+>  			EXYNOS_ZONE_COUNT, 0, NULL, &exynos_dev_ops, NULL, 0,
+> -			IDLE_INTERVAL);
+> +			sensor_conf->trip_data.trigger_falling ?
+> +			0 : IDLE_INTERVAL);
+>  
+>  	if (IS_ERR(th_zone->therm_dev)) {
+>  		pr_err("Failed to register thermal zone device\n");
+> @@ -593,8 +598,9 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  {
+>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>  	struct exynos_tmu_platform_data *pdata = data->pdata;
+> -	unsigned int status, trim_info, rising_threshold;
+> -	int ret = 0, threshold_code;
+> +	unsigned int status, trim_info;
+> +	unsigned int rising_threshold = 0, falling_threshold = 0;
+> +	int ret = 0, threshold_code, i, trigger_levs = 0;
+>  
+>  	mutex_lock(&data->lock);
+>  	clk_enable(data->clk);
+> @@ -619,6 +625,11 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  			(data->temp_error2 != 0))
+>  		data->temp_error1 = pdata->efuse_value;
+>  
+> +	/* Count trigger levels to be enabled */
+> +	for (i = 0; i < MAX_THRESHOLD_LEVS; i++)
+> +		if (pdata->trigger_levels[i])
+> +			trigger_levs++;
+> +
+>  	if (data->soc == SOC_ARCH_EXYNOS4210) {
+>  		/* Write temperature code for threshold */
+>  		threshold_code = temp_to_code(data, pdata->threshold);
+> @@ -628,44 +639,38 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  		}
+>  		writeb(threshold_code,
+>  			data->base + EXYNOS4210_TMU_REG_THRESHOLD_TEMP);
+> -
+> -		writeb(pdata->trigger_levels[0],
+> -			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0);
+> -		writeb(pdata->trigger_levels[1],
+> -			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL1);
+> -		writeb(pdata->trigger_levels[2],
+> -			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL2);
+> -		writeb(pdata->trigger_levels[3],
+> -			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL3);
+> +		for (i = 0; i < trigger_levs; i++)
+> +			writeb(pdata->trigger_levels[i],
+> +			data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0 + i * 4);
+>  
+>  		writel(EXYNOS4210_TMU_INTCLEAR_VAL,
+>  			data->base + EXYNOS_TMU_REG_INTCLEAR);
+>  	} else if (data->soc == SOC_ARCH_EXYNOS) {
+> -		/* Write temperature code for threshold */
+> -		threshold_code = temp_to_code(data, pdata->trigger_levels[0]);
+> -		if (threshold_code < 0) {
+> -			ret = threshold_code;
+> -			goto out;
+> -		}
+> -		rising_threshold = threshold_code;
+> -		threshold_code = temp_to_code(data, pdata->trigger_levels[1]);
+> -		if (threshold_code < 0) {
+> -			ret = threshold_code;
+> -			goto out;
+> -		}
+> -		rising_threshold |= (threshold_code << 8);
+> -		threshold_code = temp_to_code(data, pdata->trigger_levels[2]);
+> -		if (threshold_code < 0) {
+> -			ret = threshold_code;
+> -			goto out;
+> +		/* Write temperature code for rising and falling threshold */
+> +		for (i = 0; i < trigger_levs; i++) {
+> +			threshold_code = temp_to_code(data,
+> +						pdata->trigger_levels[i]);
+> +			if (threshold_code < 0) {
+> +				ret = threshold_code;
+> +				goto out;
+> +			}
+> +			rising_threshold |= threshold_code << 8 * i;
+> +			if (pdata->threshold_falling) {
+> +				threshold_code = temp_to_code(data,
+> +						pdata->trigger_levels[i] -
+> +						pdata->threshold_falling);
+> +				if (threshold_code > 0)
+> +					falling_threshold |=
+> +						threshold_code << 8 * i;
+> +			}
+>  		}
+> -		rising_threshold |= (threshold_code << 16);
+>  
+>  		writel(rising_threshold,
+>  				data->base + EXYNOS_THD_TEMP_RISE);
+> -		writel(0, data->base + EXYNOS_THD_TEMP_FALL);
+> +		writel(falling_threshold,
+> +				data->base + EXYNOS_THD_TEMP_FALL);
+>  
+> -		writel(EXYNOS_TMU_CLEAR_RISE_INT|EXYNOS_TMU_CLEAR_FALL_INT,
+> +		writel(EXYNOS_TMU_CLEAR_RISE_INT | EXYNOS_TMU_CLEAR_FALL_INT,
+>  				data->base + EXYNOS_TMU_REG_INTCLEAR);
+>  	}
+>  out:
+> @@ -698,6 +703,8 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
+>  			pdata->trigger_level2_en << 8 |
+>  			pdata->trigger_level1_en << 4 |
+>  			pdata->trigger_level0_en;
+> +		if (pdata->threshold_falling)
+> +			interrupt_en |= interrupt_en << 16;
+>  	} else {
+>  		con |= EXYNOS_TMU_CORE_OFF;
+>  		interrupt_en = 0; /* Disable all interrupts */
+> @@ -773,7 +780,8 @@ static void exynos_tmu_work(struct work_struct *work)
+>  	mutex_lock(&data->lock);
+>  	clk_enable(data->clk);
+>  	if (data->soc == SOC_ARCH_EXYNOS)
+> -		writel(EXYNOS_TMU_CLEAR_RISE_INT,
+> +		writel(EXYNOS_TMU_CLEAR_RISE_INT |
+> +				EXYNOS_TMU_CLEAR_FALL_INT,
+>  				data->base + EXYNOS_TMU_REG_INTCLEAR);
+>  	else
+>  		writel(EXYNOS4210_TMU_INTCLEAR_VAL,
+> @@ -829,6 +837,7 @@ static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
+>  
+>  #if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
+>  static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
+> +	.threshold_falling = 10,
+>  	.trigger_levels[0] = 85,
+>  	.trigger_levels[1] = 103,
+>  	.trigger_levels[2] = 110,
+> @@ -1076,6 +1085,8 @@ static int __devinit exynos_tmu_probe(struct platform_device *pdev)
+>  		exynos_sensor_conf.trip_data.trip_val[i] =
+>  			pdata->threshold + pdata->trigger_levels[i];
+>  
+> +	exynos_sensor_conf.trip_data.trigger_falling = pdata->threshold_falling;
+> +
+>  	exynos_sensor_conf.cooling_data.freq_clip_count =
+>  						pdata->freq_tab_count;
+>  	for (i = 0; i < pdata->freq_tab_count; i++) {
+> diff --git a/include/linux/platform_data/exynos_thermal.h b/include/linux/platform_data/exynos_thermal.h
+> index a7bdb2f..da7e627 100644
+> --- a/include/linux/platform_data/exynos_thermal.h
+> +++ b/include/linux/platform_data/exynos_thermal.h
+> @@ -53,6 +53,8 @@ struct freq_clip_table {
+>   * struct exynos_tmu_platform_data
+>   * @threshold: basic temperature for generating interrupt
+>   *	       25 <= threshold <= 125 [unit: degree Celsius]
+> + * @threshold_falling: differntial value for setting threshold
+> + *		       of temperature falling interrupt.
+>   * @trigger_levels: array for each interrupt levels
+>   *	[unit: degree Celsius]
+>   *	0: temperature for trigger_level0 interrupt
+> @@ -97,6 +99,7 @@ struct freq_clip_table {
+>   */
+>  struct exynos_tmu_platform_data {
+>  	u8 threshold;
+> +	u8 threshold_falling;
+>  	u8 trigger_levels[4];
+>  	bool trigger_level0_en;
+>  	bool trigger_level1_en;
