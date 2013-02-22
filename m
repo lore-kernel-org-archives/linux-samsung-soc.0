@@ -1,170 +1,69 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH v4 5/5] ARM: exynos: dts: Add FIMD DT binding Documentation
-Date: Fri, 22 Feb 2013 12:36:22 +0530
-Message-ID: <CAD025yTb5yfXWpzCnCg7KY9NsTw1wfsLFU6y32aD=WXe23xiwg@mail.gmail.com>
-References: <1360912200-26377-1-git-send-email-vikas.sajjan@linaro.org>
- <1360912200-26377-6-git-send-email-vikas.sajjan@linaro.org>
- <511E1008.6010308@samsung.com> <CAD025yQokBbJwyFWeg8KwzTsE-4jgra5UhLuic5zJnQRt+GNTw@mail.gmail.com>
- <5122A119.7070501@gmail.com> <CAD025yRmvSpnM9RJJvN+FM00Rgz8Bt5msmEYcyFVxNTEKsM2xg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: [PATCH v2 1/4] DMA: pl330: support burst mode for dev-to-mem and
+ mem-to-dev transmit
+Date: Fri, 22 Feb 2013 17:04:15 +0900
+Message-ID: <000001ce10d3$354dd440$9fe97cc0$%kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:36198 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752972Ab3BVHGo (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13740 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754415Ab3BVIES (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Feb 2013 02:06:44 -0500
-Received: by mail-la0-f51.google.com with SMTP id fo13so312473lab.10
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Feb 2013 23:06:43 -0800 (PST)
-In-Reply-To: <CAD025yRmvSpnM9RJJvN+FM00Rgz8Bt5msmEYcyFVxNTEKsM2xg@mail.gmail.com>
+	Fri, 22 Feb 2013 03:04:18 -0500
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, sunil joshi <joshi@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, alsa-devel@alsa-project.org
+Cc: 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <djbw@fb.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Rob Herring' <rob.herring@calxeda.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Boojin Kim' <boojin.kim@samsung.com>
 
-On 21 February 2013 12:34, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
-> Hi,
->
-> On 19 February 2013 03:16, Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com> wrote:
->> Hi,
->>
->>
->> On 02/18/2013 11:51 AM, Vikas Sajjan wrote:
->>>
->>> On 15 February 2013 16:08, Sylwester Nawrocki<s.nawrocki@samsung.com>
->>> wrote:
->>>>
->>>> On 02/15/2013 08:10 AM, Vikas Sajjan wrote:
->>>>
->>>>> Adds FIMD DT binding documentation both SoC and Board, with an example
->>>>>
->>>>> Signed-off-by: Vikas Sajjan<vikas.sajjan@linaro.org>
->>>>> ---
->>>>>   .../devicetree/bindings/drm/exynos/fimd.txt        |   37
->>>>> ++++++++++++++++++++
->>>>>   1 file changed, 37 insertions(+)
->>>>>   create mode 100644
->>>>> Documentation/devicetree/bindings/drm/exynos/fimd.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt
->>>>> b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
->>>>> new file mode 100644
->>>>> index 0000000..bec9d07
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
->>
->>
->> Wouldn't Documentation/devicetree/bindings/video/exynos-fimd.txt be more
->> appropriate location for this file ? There is also framebuffer driver for
->> FIMD. Even if the framebuffer driver gets phased out it still feels like
->> a more intuitive location for a display controller bindings.
->> This is just my humble suggestion though.
->>
-> I think we can move it there.
->
->> I think you should CC the device tree mailing list and the maintainers.
->>
->>
-> will do.
->
->>>>> @@ -0,0 +1,37 @@
->>>>> +Device-Tree bindings for fimd driver
->>>>> +
->>>>> +FIMD stands for Fully Interactive Mobile Display, is the Display
->>>>> Controller for
->>>>> +the Exynos series of SoCs which transfers the image data from a video
->>>>> buffer
->>>>> +located in the system memory to an external LCD interface.
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible := value should be "samsung,exynos5-fimd" or
->>>>> "samsung,exynos4-fimd"
->>>>
->>>>
->>>> What about older SoCs like S5Pv210 ? There is the FIMD IP block in those
->>>> SoCs
->>>> as well. There are also differences in the FIMD IP block across various
->>>> SoC
->>>> version, so either you need to list the quirks in the bindings or use an
->>>> appropriate compatible properties if there are significant differences
->>>> across
->>>> FIMDs that make them not really compatible.
->>>>
->>> as of now, I was working on Exynos4 and Exynos5 SoC. have to really
->>> see the differences in the previous SoC and how to handle all those
->>> FIMD IPs in the driver.
->>> if you know the differences between these FIMD IPs, please let me know.
->>
->>
->> Please have a look at drivers/video/s3c-fb.c and all driver_data structures
->> defined for various SoCs.
->>
->> [...]
->>
-> I went through the driver_data structures define for s5p64x0,s3c2443,
-> s5pv210, s5pc100 ad 64xx SoCs.
-> there are some differences w.r.t number of windows, osd_stride  length
-> and regsiter offsets.
-> but  I dont have access to all the above mentioned Boards and so that
-> I can modify and test on each one of them.
->
-as far as i know this file exynos_drm_fimd.c is meant only for exynos4
-onwards SoCs,
-( I think Mr. Inki Dae can throw more light on this )
-and also the previous  boards based on  s5p64x0,s3c2443,s5pv210,
-s5pc100 and 64xx, dont have DT support.
-also in the function drm_fimd_get_driver_data(), there is provision to
-get the NON-DT "driver data" as well. So somebody who wants to use
-this driver for the above mentioned SoCs can add the driver-data.
+This patch adds to support burst mode for dev-to-mem and mem-to-dev transmit
 
-so wanted to know how you want me to go about it.
+Change-Id: I9723e49383416773699cf7735168177c8d036f30
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+---
+ drivers/dma/pl330.c |   12 +++++++-----
+ 1 files changed, 7 insertions(+), 5 deletions(-)
 
->>> we have 3 interrupts and the Interrupt combiner order is FIFO Level ,
->>> VSYNC  and LCD_SYSTEM.
->>> since we only use VSYNC interrupt , In the driver to get the interrupt
->>> number
->>>
->>> res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
->>>           if (!res) {
->>>                   dev_err(dev, "irq request failed.\n");
->>>                   return -ENXIO;
->>>            }
->>>
->>>   ctx->irq = res->start;
->>>
->>>   I am passing the 3rd parameter as '0' , to get the VSYNC interrupt,
->>> and hence in the DTSI file     i have it in the order  VSYNC,  FIFO
->>> LEVEL and LCD_SYSTEM.
->>
->>
->> Yes, I'm aware what's going on here. Since I had to change the interrupts
->> order when I used one of the first version of patches adding device tree
->> support for FIMD, when I needed working display to test the camera.
->>
->>
->>> what I can do is the pass the 3rd parameter as '1' , and rectify the
->>> order in DTSI file as  FIFO LEVEL, VSYNC and LCD_SYSTEM.
->>
->>
->> Then you would have to do it only for dt case. I guess it is okay to
->> require VSYNC as the first interrupt. I'm fine with that, as long as
->> it is properly documented.
->>
->  So, I shall keep the logic as is, and just document it well. is it ok.?
->> --
->>
->> Regards,
->> Sylwester
->
->
->
-> --
-> Thanks and Regards
->  Vikas Sajjan
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 80680ee..c67f037 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -1271,10 +1271,11 @@ static inline int _ldst_devtomem(unsigned dry_run, u8 buf[],
+ 		const struct _xfer_spec *pxs, int cyc)
+ {
+ 	int off = 0;
++	enum pl330_cond cond = (pxs->r->cfg->brst_len == 1) ? SINGLE : BURST;
 
+ 	while (cyc--) {
+-		off += _emit_WFP(dry_run, &buf[off], SINGLE, pxs->r->peri);
+-		off += _emit_LDP(dry_run, &buf[off], SINGLE, pxs->r->peri);
++		off += _emit_WFP(dry_run, &buf[off], cond, pxs->r->peri);
++		off += _emit_LDP(dry_run, &buf[off], cond, pxs->r->peri);
+ 		off += _emit_ST(dry_run, &buf[off], ALWAYS);
+ 		off += _emit_FLUSHP(dry_run, &buf[off], pxs->r->peri);
+ 	}
+@@ -1286,11 +1287,12 @@ static inline int _ldst_memtodev(unsigned dry_run, u8 buf[],
+ 		const struct _xfer_spec *pxs, int cyc)
+ {
+ 	int off = 0;
++	enum pl330_cond cond = (pxs->r->cfg->brst_len == 1) ? SINGLE : BURST;
 
+ 	while (cyc--) {
+-		off += _emit_WFP(dry_run, &buf[off], SINGLE, pxs->r->peri);
++		off += _emit_WFP(dry_run, &buf[off], cond, pxs->r->peri);
+ 		off += _emit_LD(dry_run, &buf[off], ALWAYS);
+-		off += _emit_STP(dry_run, &buf[off], SINGLE, pxs->r->peri);
++		off += _emit_STP(dry_run, &buf[off], cond, pxs->r->peri);
+ 		off += _emit_FLUSHP(dry_run, &buf[off], pxs->r->peri);
+ 	}
 
--- 
-Thanks and Regards
- Vikas Sajjan
+@@ -2835,7 +2837,7 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 		}
+
+ 		desc->rqcfg.brst_size = pch->burst_sz;
+-		desc->rqcfg.brst_len = 1;
++		desc->rqcfg.brst_len = pch->burst_len;
+ 	}
+
+ 	/* Return the last desc in the chain */
+--
+1.7.5.4
