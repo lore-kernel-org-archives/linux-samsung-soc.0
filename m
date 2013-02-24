@@ -1,174 +1,47 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: return real error codes when pinctrl is not included
-Date: Sun, 24 Feb 2013 01:40:58 +0100
-Message-ID: <CACRpkdbA-S7qYHnN72c65Wo_Q7qD3tUxUSNYEXkk4gHbpez4+Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] i2c: s3c2410: check for NULL pinctrl handle
+Date: Sun, 24 Feb 2013 01:47:49 +0100
+Message-ID: <CACRpkdaFv=V8M_Ztb5-hrYm6YnXiG6fg6Z13y3NVFdszBk=7ZQ@mail.gmail.com>
 References: <201302231855.47560.heiko@sntech.de>
-	<201302231856.35083.heiko@sntech.de>
+	<201302231857.46445.heiko@sntech.de>
+	<CACRpkdbV-CznfnbCbKkKpndjiG32V9yNdrF1F7M=4qe1EUroGA@mail.gmail.com>
+	<5027662.bpQdq7jhyn@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201302231856.35083.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush K <prathyush-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ia0-f180.google.com ([209.85.210.180]:59185 "EHLO
+	mail-ia0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759256Ab3BXArt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 23 Feb 2013 19:47:49 -0500
+Received: by mail-ia0-f180.google.com with SMTP id f27so1598424iae.11
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Feb 2013 16:47:49 -0800 (PST)
+In-Reply-To: <5027662.bpQdq7jhyn@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
 
-On Sat, Feb 23, 2013 at 6:56 PM, Heiko St=FCbner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org> wrot=
-e:
+On Sun, Feb 24, 2013 at 1:38 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-> Currently the fallback functions when pinctrl is not being built do
-> return either NULL or 0, either no pinctrl handle or no error,
-> making them fail silently.
->
-> All drivers using pinctrl do only test for error conditions, which
-> made for example the i2c-s3c2410 driver fail on a devicetree based
-> machine without pinctrl, as the conditional
->         if (IS_ERR(i2c->pctrl) && s3c24xx_i2c_parse_dt_gpio(i2c))
-> did not reach the second part to initialize the gpios from dt.
->
-> Therefore let the fallback pinctrl functions return -ENOTSUPP
-> or the equivalent ERR_PTR to indicate that pinctrl is not supported.
+> The driver must know whether pin control is available, because it has to
+> fall back to legacy GPIO-based pin configuration if it is not. This means
+> that we must either check for NULL (which probably is not right, since
+> returned handle is considered to be opaque) or pin control core must
+> return an error code specific to this situation, e.g. -ENODEV.
 
-NAK.
+OK so pass a flag like a bool in your platform data from the
+machine like go into <linux/platform_data/i2c-s3c2410.h>
+and add:
 
-You are abusing IS_ERR(i2c->pctrl) to check if pinctrl is available
-on the system which is *NOT* the intended usecase and that is
-why your code fails.
+struct s3c2410_platform_i2c {
+        bool  use_that_old_gpio_interface;
+        (...)
+};
 
-So I discussed the *exact* same thing with Tomasz and Pratyush a
-while back in a private thread, which teaches me to probably not
-waste time on responding to anything unless it's public.
+Instead of trying to semi-guess if the pinctrl framework is there?
 
-This make me suspect that you have this ugly patch in some
-private repo and I will be seeing it again and again :-(
-
-Here is an excerpt of that conversation:
-
--------------8<---------------------------8<--------------------------8=
-<----------------------
-
-On Mon, Dec 24, 2012 at 12:26 PM, Prathyush K <prathyush-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> =
-wrote:
-
-> Exynos5250 does not yet support pinctrl so CONFIG_PINCTRL is not defi=
-ned.
->
-> The i2c-s3c2410 driver calls 'devm_pinctrl_get_select_default' which =
-returns
-> NULL.
-> While checking for error, we use IS_ERR and not IS_ERR_OR_NULL inside=
- the
-> driver.
-> This was causing the i2c hdmi phy to fail.
->
-> I checked the other i2c drivers and realized, no-one is actually chec=
-king
-> for IS_ERR_OR_NULL.
->
-> Even ./Documentation/pinctrl.txt says:
->
->         /* Setup */
->         p =3D devm_pinctrl_get(&device);
->         if (IS_ERR(p))
->
-> I think the consumer.h should be modified to return an error and not =
-just
-> NULL if CONFIG_PINCTRL is not defined.
-
-No. That is not the idea with compile-out stubs.
-
-The idea is not to check at runtime whether you have this or that
-framework enabled, if you need this framework for the driver to work
-it should be depends on PINCTRL in Kconfig for the driver so it's non-o=
-ptional.
-This seems to be the case here?
-
-The stubs are for the case where pinctrl is optional for the driver(s) =
-on the
-system, for example if one driver is used on many diverse systems,
-some which have pinctrl and some which does not.
-
-We cannot have a shared driver, like drivers/tty/serial/amba-pl011.c
-fail on RealView just because the U300 need pins when using the
-same driver, that would be unmanageable.
-
-Your reasoning above can only work in a world where e.g. all systems
-using that driver have pinctrl. And then you can just depend on it in
-Kconfig and problem is solved.
-
-On Thu, Dec 27, 2012 at 10:58 AM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrot=
-e:
-
-> I think that devm_pinctrl_get stub, as well as other pinctrl stubs, s=
-hould
-> not return NULL, but rather a reasonable error code.
-
-No. It is perfectly valid to not implement pinctrl on a system.
-And the driver stubs should then work without pins being controlled
-(for example as if they were set up at boot time by some bootloader,
-or ROM.)
-
-If the driver does not work without pinctrl it should have
-depends on PINCTRL in Kconfig.
-
-On Thu, Jan 17, 2013 at 9:50 AM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote=
-:
-
->> If the driver does not work without pinctrl it should have
->> depends on PINCTRL in Kconfig.
->
-> What about drivers that support several pin configuration methods?
-
-The platforms that use some other method shall call
-pinctrl_provide_dummies() in their machine set-up code.
-
-Then they will get dummy regulators that appear to work
-but does nothing.
-
-Then they shall be converted to use pinctrl proper.
-
-On Thu, Jan 17, 2013 at 3:05 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote=
-:
-
-> We have a bunch of drivers that should try pin control and if it is n=
-ot
-> supported on given platform then it should fall back to legacy
-> configuration method (like cfg_gpio() callback passed through platfor=
-m
-> data).
->
-> From what you are saying, it seems like there is no way to check if p=
-in
-> control is supported on platform we are running on.
-
-No we never saw that usecase before :-)
-
-It's very hard to say whether pinctrl is available or not as well,
-as drivers can be deferred.
-
-In any case the stubs are not designed to solve this type of problem.
-
-> Of course this can be resolved by trying the legacy method first and =
-try
-> pin control only if it is not provided (no platform data or NULL call=
-back
-> pointer).
-
-I would just set some bool value in platform_data like .use_legacy_pins
-if you need to support this.
-
--------------8<---------------------------8<--------------------------8=
-<----------------------
-
-All chrystal clear now?
-
-Plus, I think that now that the device core is handling pin control you
-should be able to just remove all this default-enabling from your
-drivers.
-
-*NO* using of pinctrl to check if "do we need to do it some other
-way".
+Surely you know this when setting up the pdata from your machine?
 
 Yours,
 Linus Walleij
