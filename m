@@ -1,59 +1,38 @@
-From: vinayak holikatti <vinholikatti@gmail.com>
-Subject: Re: [PATCH V6 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific Code
-Date: Sun, 24 Feb 2013 17:55:39 +0530
-Message-ID: <CAKVbJB-Xaq-ORfD6+bzprvGefnZtM2UjLMUW=qg7Nwnw3QwVBw@mail.gmail.com>
-References: <511137d6.0657420a.5b57.ffffa7eb@mx.google.com>
-	<1361697785.16652.1.camel@dabdike.int.hansenpartnership.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: question about arch/arm/mach-s3c24xx/irq.c
+Date: Sun, 24 Feb 2013 12:38:49 +0000
+Message-ID: <20130224123849.GH17833@n2100.arm.linux.org.uk>
+References: <alpine.DEB.2.02.1302241241440.1943@hadrien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <1361697785.16652.1.camel@dabdike.int.hansenpartnership.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-scsi@vger.kernel.org, santoshsy@gmail.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, saugata.das@linaro.org, venkat@linaro.org, subhashj@codeaurora.org, sthumma@codeaurora.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:49163 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755670Ab3BXMjy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 24 Feb 2013 07:39:54 -0500
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1302241241440.1943@hadrien>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2013 at 2:53 PM, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
-> On Tue, 2013-02-05 at 22:17 +0530, vinholikatti@gmail.com wrote:
->> From: Vinayak Holikatti <vinholikatti@gmail.com>
->>
->> This patch seggregates the PCI specific code in ufshcd.c to make it
->> ready for splitting into core ufs driver and PCI glue driver. Also
->> copyright header modification to remove extra warranty disclaim.
->>
->> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
->> Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
->> Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
->> Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
->> ---
->>  drivers/scsi/ufs/Kconfig  |   50 +++----
->>  drivers/scsi/ufs/ufs.h    |   44 +++----
->>  drivers/scsi/ufs/ufshcd.c |  350 +++++++++++++++++++++++++++------------------
->>  drivers/scsi/ufs/ufshci.h |   44 +++----
->>  4 files changed, 268 insertions(+), 220 deletions(-)
->
-> This patch doesn't apply:
->
-> jejb@dabdike> patch -p1 < .git/rebase-apply/patch
-> patching file drivers/scsi/ufs/Kconfig
-> patching file drivers/scsi/ufs/ufs.h
-> patching file drivers/scsi/ufs/ufshcd.c
-> Hunk #26 FAILED at 1823.
-> Hunk #27 succeeded at 1898 (offset -1 lines).
-> Hunk #28 succeeded at 1924 (offset -1 lines).
-> Hunk #29 FAILED at 2039.
-> 2 out of 29 hunks FAILED -- saving rejects to file
-> drivers/scsi/ufs/ufshcd.c.rej
-> patching file drivers/scsi/ufs/ufshci.h
->
-> The rejects are pretty complex hunks; could you please rebase to the top
-> of the scsi-misc tree?  Thanks,
+On Sun, Feb 24, 2013 at 12:45:11PM +0100, Julia Lawall wrote:
+> The function s3c24xx_irq_map in arch/arm/mach-s3c24xx/irq.c contains the
+> code:
+> 
+>                 parent_irq_data = &parent_intc->irqs[irq_data->parent_irq];
+> 		if (!irq_data) {
+>                         pr_err("irq-s3c24xx: no irq data found for hwirq %lu\n",
+>                                hw);
+>                         goto err;
+> 		}
+> 
+> At this point irq_data has already been tested, so the null test on
+> irq_data does not look correct.  But I wonder if parent_irq_data could
+> ever be null here?
 
-Ok, I will do it.
-
->
-> James
->
->
+That would be really obscure - because that would require parent_intc to
+be a "negative" pointer (to counter-act the indexing by
+irq_data->parent_irq).  So it looks to me like the above is redundant.
