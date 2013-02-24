@@ -1,59 +1,63 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: return real error codes when pinctrl is not included
-Date: Mon, 25 Feb 2013 00:15:29 +0100
-Message-ID: <201302250015.29899.heiko@sntech.de>
-References: <201302231855.47560.heiko@sntech.de> <201302242334.42408.heiko@sntech.de> <CACRpkdbKFWcT_Oa00nd_Op5ndOEc-cEkZm6fzHRuxs0Rc+ZOeA@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] i2c: s3c2410: check for NULL pinctrl handle
+Date: Mon, 25 Feb 2013 00:16:49 +0100
+Message-ID: <201302250016.49773.heiko@sntech.de>
+References: <201302231855.47560.heiko@sntech.de> <1366216.NzXQfD1BG7@flatron> <CACRpkdbfQOeJ3u8_UvgVMRyu_MMmOZD0tjQT+qNr9iOEpAHLWQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdbKFWcT_Oa00nd_Op5ndOEc-cEkZm6fzHRuxs0Rc+ZOeA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush K <prathyush-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:39376 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758716Ab3BXXQy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 24 Feb 2013 18:16:54 -0500
+In-Reply-To: <CACRpkdbfQOeJ3u8_UvgVMRyu_MMmOZD0tjQT+qNr9iOEpAHLWQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
 
-Am Sonntag, 24. Februar 2013, 23:42:32 schrieb Linus Walleij:
-> On Sun, Feb 24, 2013 at 11:34 PM, Heiko St=FCbner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org> w=
-rote:
-> > [Me]
-> >=20
-> >> This make me suspect that you have this ugly patch in some
-> >> private repo and I will be seeing it again and again :-(
-> >=20
-> > All my s3c24xx work is done is my spare time, so I have to confess =
-I came
-> > up with this "ugly patch" all by myself when working on dt support =
-for
-> > my machine and stumbling upon the described problem with the pin
-> > configuration.
-> >=20
-> > So, as it is obviously wrong, I also won't hold onto it.
-> >=20
-> > In any case, thanks for the thorough explanation, which I probably =
-won't
-> > forget anytime soon.
->=20
-> Hm, maybe I have come across as too harsh and then I feel bad about
-> that :-(
->
-> I really want spare-time contributors, they are often more valueable
-> in addition to the corporate ones since they provide an outside view
-> of things.
+Am Sonntag, 24. Februar 2013, 23:39:44 schrieb Linus Walleij:
+> On Sun, Feb 24, 2013 at 6:00 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> >> > Note that we are talking here about a temporary solution. The legacy
+> >> > DT- based pin configuration will go away after all the DT-enabled
+> >> > platforms using this driver get migrated to pin control and so will
+> >> > the need to check if pin control is available.
+> >> 
+> >> So use AUXDATA, and you get a pdata for that driver?
+> > 
+> > Hmm, and then have some platform data passed statically and some parsed
+> > from device tree?
+> 
+> This is done by several in-tree drivers today. It is even necessary for
+> things like machine-specific callbacks.
+> 
+> > Not even saying that we are going towards getting rid of
+> > auxdata, not adding further dependencies for it.
+> 
+> The other option is to do the non-temporary solution you are
+> referring to below...
+> 
+> > Sorry, but this sounds more broken to me than checking the return value
+> > of devm_pinctrl_get_select_default for NULL in the driver.
+> 
+> Both are bad solution, auxdata is less bad than trying to check
+> struct pinctrl * handles for non-NULL, which has *never* been a
+> good thing to do and should never have been merged in the first
+> place.
+> 
+> (Maybe I ACKed that, then I was doing something stupid.)
+> 
+> > Still, all the platforms relying on the legacy DT GPIO support should
+> > have been already migrated to pin control, so ideally instead of
+> > "fixing" the drivers to continue supporting the deprecated method, such
+> > platforms should be fixed.
+> 
+> I agree.
 
-Just to ease your mind, it didn't sound to harsh and my mail wasn't mea=
-nt to=20
-criticize (hopefully it didn't sound that way) - I am very much gratefu=
-l for=20
-the explanation.
-
-Writing a pinctrl driver for the s3c24xx arches is still on my list, so=
- my=20
-understanding of pinctrl (above knowing of its existence) is not very b=
-road=20
-yet. With your explanation, in retrospect I can understand the ugliness=
- of the=20
-patch now :-) as it goes against a core principle.
+Fine by me ... I'll work on a pinctrl driver for s3c24xx then :-)
 
 
 Heiko
