@@ -1,41 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] i2c: s3c2410: check for NULL pinctrl handle
-Date: Sun, 24 Feb 2013 02:01:45 +0100
-Message-ID: <CACRpkdYBjZgEo6qEyBOcYuPzpQUAZ9x-kvFabz0y0pEQs35sKw@mail.gmail.com>
-References: <201302231855.47560.heiko@sntech.de>
-	<5027662.bpQdq7jhyn@flatron>
-	<CACRpkdaFv=V8M_Ztb5-hrYm6YnXiG6fg6Z13y3NVFdszBk=7ZQ@mail.gmail.com>
-	<31669750.ZZOiY1AEPv@flatron>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: [PATCH V6 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific
+ Code
+Date: Sun, 24 Feb 2013 09:23:05 +0000
+Message-ID: <1361697785.16652.1.camel@dabdike.int.hansenpartnership.com>
+References: <1360082857-3317-1-git-send-email-y>
+	 <511137d6.0657420a.5b57.ffffa7eb@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f173.google.com ([209.85.210.173]:40944 "EHLO
-	mail-ia0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759267Ab3BXBBq (ORCPT
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:46008 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750807Ab3BXJXJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 23 Feb 2013 20:01:46 -0500
-Received: by mail-ia0-f173.google.com with SMTP id h37so1578408iak.18
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Feb 2013 17:01:46 -0800 (PST)
-In-Reply-To: <31669750.ZZOiY1AEPv@flatron>
+	Sun, 24 Feb 2013 04:23:09 -0500
+In-Reply-To: <511137d6.0657420a.5b57.ffffa7eb@mx.google.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
+To: vinholikatti@gmail.com
+Cc: linux-scsi@vger.kernel.org, santoshsy@gmail.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, saugata.das@linaro.org, venkat@linaro.org, subhashj@codeaurora.org, sthumma@codeaurora.org
 
-On Sun, Feb 24, 2013 at 1:58 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On Tue, 2013-02-05 at 22:17 +0530, vinholikatti@gmail.com wrote:
+> From: Vinayak Holikatti <vinholikatti@gmail.com>
+> 
+> This patch seggregates the PCI specific code in ufshcd.c to make it
+> ready for splitting into core ufs driver and PCI glue driver. Also
+> copyright header modification to remove extra warranty disclaim.
+> 
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
+> Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
+> Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
+> ---
+>  drivers/scsi/ufs/Kconfig  |   50 +++----
+>  drivers/scsi/ufs/ufs.h    |   44 +++----
+>  drivers/scsi/ufs/ufshcd.c |  350 +++++++++++++++++++++++++++------------------
+>  drivers/scsi/ufs/ufshci.h |   44 +++----
+>  4 files changed, 268 insertions(+), 220 deletions(-)
 
-> [Me]
->> Surely you know this when setting up the pdata from your machine?
->
-> Cases 2) and 3) are both DT-enabled cases, where there is no pdata coming
-> from board-specific code.
-(...)
-> Note that we are talking here about a temporary solution. The legacy DT-
-> based pin configuration will go away after all the DT-enabled platforms
-> using this driver get migrated to pin control and so will the need to
-> check if pin control is available.
+This patch doesn't apply:
 
-So use AUXDATA, and you get a pdata for that driver?
+jejb@dabdike> patch -p1 < .git/rebase-apply/patch 
+patching file drivers/scsi/ufs/Kconfig
+patching file drivers/scsi/ufs/ufs.h
+patching file drivers/scsi/ufs/ufshcd.c
+Hunk #26 FAILED at 1823.
+Hunk #27 succeeded at 1898 (offset -1 lines).
+Hunk #28 succeeded at 1924 (offset -1 lines).
+Hunk #29 FAILED at 2039.
+2 out of 29 hunks FAILED -- saving rejects to file
+drivers/scsi/ufs/ufshcd.c.rej
+patching file drivers/scsi/ufs/ufshci.h
 
-Yours,
-Linus Walleij
+The rejects are pretty complex hunks; could you please rebase to the top
+of the scsi-misc tree?  Thanks,
+
+James
