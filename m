@@ -1,52 +1,42 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] ARM: S5PV210: Fix compilation error in mach-goni.c
-Date: Mon, 25 Feb 2013 15:41:32 +0530
-Message-ID: <CAK9yfHwNnadfVEco5ORn4fCK=myazmVnUCMec_xJa2_tzLzvbQ@mail.gmail.com>
-References: <1361779938-30023-1-git-send-email-sachin.kamat@linaro.org>
-	<512B3723.8070801@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Vinayak Holikatti <vinholikatti@gmail.com>
+Subject: [PATCH V6 Resend 0/4] [SCSI] ufs: Adds glue drivers to ufshcd
+Date: Mon, 25 Feb 2013 21:44:31 +0530
+Message-ID: <1361808875-2803-1-git-send-email-vinholikatti@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:33277 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932469Ab3BYKLc convert rfc822-to-8bit (ORCPT
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:42192 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759906Ab3BYQPT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Feb 2013 05:11:32 -0500
-Received: by mail-ob0-f181.google.com with SMTP id ni5so2642332obc.26
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Feb 2013 02:11:32 -0800 (PST)
-In-Reply-To: <512B3723.8070801@samsung.com>
+	Mon, 25 Feb 2013 11:15:19 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: james.bottomley@hansenpartnership.com
+Cc: linux-scsi@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, linux-samsung-soc@vger.kernel.org, venkat@linaro.org, subhashj@codeaurora.org, sthumma@codeaurora.org, merez@codeaurora.org, Vinayak Holikatti <vinholikatti@gmail.com>
 
-Hi Sylwester,
+This patch set adds following features
+ - Seggregate PCI specific code in ufshcd.c and corrected copyright
+ - Adds PCI glue driver ufshcd-pci.c and ufshcd.c become core module
+ - Adds Platform glue driver ufshcd-pltfrm.c
+ - Update correct transfer size in Command UPIU
 
-On 25 February 2013 15:34, Sylwester Nawrocki <s.nawrocki@samsung.com> =
-wrote:
-> Hi Sachin,
->
-> On 02/25/2013 09:12 AM, Sachin Kamat wrote:
->> Commit 56bc91 ("[media] s5p-fimc: Redefine platform data structure f=
-or fimc-is")
->> split bus_type into fimc_bus_type and sensor_bus_type and converted =
-all
->> instances of it. This file however escaped the change.
->>
->> Without this patch we get the following build error:
->> arch/arm/mach-s5pv210/mach-goni.c:848:3: error:
->> unknown field =91bus_type=92 specified in initializer
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
-> Thanks for the patch. My apologies for this omission, there is alread=
-y
-> similar patch from Arnd [1], [2].
+Vinayak Holikatti (4):
+  [SCSI] drivers/scsi/ufs: Seggregate PCI Specific Code
+  [SCSI] drivers/scsi/ufs: Separate PCI code into glue driver
+  [SCSI] ufs: Add Platform glue driver for ufshcd
+  [SCSI] ufs: Correct the expected data transfersize
 
-Yes, they fix the same issue. I had not noticed them earlier.
+ drivers/scsi/ufs/Kconfig         |   87 +++++---
+ drivers/scsi/ufs/Makefile        |    2 +
+ drivers/scsi/ufs/ufs.h           |   44 ++---
+ drivers/scsi/ufs/ufshcd-pci.c    |  211 +++++++++++++++++++
+ drivers/scsi/ufs/ufshcd-pltfrm.c |  217 +++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.c        |  425 ++++++++------------------------------
+ drivers/scsi/ufs/ufshcd.h        |  202 ++++++++++++++++++
+ drivers/scsi/ufs/ufshci.h        |   44 ++---
+ 8 files changed, 811 insertions(+), 421 deletions(-)
+ create mode 100644 drivers/scsi/ufs/ufshcd-pci.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-pltfrm.c
+ create mode 100644 drivers/scsi/ufs/ufshcd.h
 
---=20
-With warm regards,
-Sachin
+-- 
+1.7.5.4
