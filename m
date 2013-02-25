@@ -1,84 +1,54 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] i2c: s3c2410: check for NULL pinctrl handle
-Date: Mon, 25 Feb 2013 01:02:43 +0100
-Message-ID: <2474544.LLiqKSFeoG@flatron>
-References: <201302231855.47560.heiko@sntech.de> <CACRpkdbfQOeJ3u8_UvgVMRyu_MMmOZD0tjQT+qNr9iOEpAHLWQ@mail.gmail.com> <201302250016.49773.heiko@sntech.de>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: S5PV210: Fix compilation error in mach-goni.c
+Date: Mon, 25 Feb 2013 13:42:18 +0530
+Message-ID: <1361779938-30023-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201302250016.49773.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:59671 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754567Ab3BYIWa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Feb 2013 03:22:30 -0500
+Received: by mail-pa0-f52.google.com with SMTP id fb1so1615171pad.25
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Feb 2013 00:22:30 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi,
+Commit 56bc91 ("[media] s5p-fimc: Redefine platform data structure for =
+fimc-is")
+split bus_type into fimc_bus_type and sensor_bus_type and converted all
+instances of it. This file however escaped the change.
 
-On Monday 25 of February 2013 00:16:49 Heiko St=FCbner wrote:
-> Am Sonntag, 24. Februar 2013, 23:39:44 schrieb Linus Walleij:
-> > On Sun, Feb 24, 2013 at 6:00 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org=
->=20
-wrote:
-> > >> > Note that we are talking here about a temporary solution. The
-> > >> > legacy
-> > >> > DT- based pin configuration will go away after all the DT-enab=
-led
-> > >> > platforms using this driver get migrated to pin control and so
-> > >> > will
-> > >> > the need to check if pin control is available.
-> > >>=20
-> > >> So use AUXDATA, and you get a pdata for that driver?
-> > >=20
-> > > Hmm, and then have some platform data passed statically and some
-> > > parsed
-> > > from device tree?
-> >=20
-> > This is done by several in-tree drivers today. It is even necessary
-> > for
-> > things like machine-specific callbacks.
-> >=20
-> > > Not even saying that we are going towards getting rid of
-> > > auxdata, not adding further dependencies for it.
-> >=20
-> > The other option is to do the non-temporary solution you are
-> > referring to below...
-> >=20
-> > > Sorry, but this sounds more broken to me than checking the return
-> > > value
-> > > of devm_pinctrl_get_select_default for NULL in the driver.
-> >=20
-> > Both are bad solution, auxdata is less bad than trying to check
-> > struct pinctrl * handles for non-NULL, which has *never* been a
-> > good thing to do and should never have been merged in the first
-> > place.
-> >=20
-> > (Maybe I ACKed that, then I was doing something stupid.)
-> >=20
-> > > Still, all the platforms relying on the legacy DT GPIO support
-> > > should
-> > > have been already migrated to pin control, so ideally instead of
-> > > "fixing" the drivers to continue supporting the deprecated method=
-,
-> > > such
-> > > platforms should be fixed.
-> >=20
-> > I agree.
->=20
-> Fine by me ... I'll work on a pinctrl driver for s3c24xx then :-)
+Without this patch we get the following build error:
+arch/arm/mach-s5pv210/mach-goni.c:848:3: error:
+unknown field =E2=80=98bus_type=E2=80=99 specified in initializer
 
-Good.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Based on Linus' mainline kernel tree (v3.8+).
+---
+ arch/arm/mach-s5pv210/mach-goni.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-I belive that pinctrl-samsung driver can be easily used for s3c24xx, wi=
-th=20
-minor modifications to remove some assumptions that are true for all th=
-e=20
-newer Samsung SoCs.
-
-I'm currently working (in my free time) on pinctrl driver for s3c64xx (=
-as=20
-a part of my DT-enablement work), so possibly some of the code I will=20
-create may be useful for s3c24xx as well.
-
-Best regards,
-Tomasz
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/=
+mach-goni.c
+index 3a38f7b..e373de4 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -845,7 +845,7 @@ static struct fimc_source_info goni_camera_sensors[=
+] =3D {
+ 		.mux_id		=3D 0,
+ 		.flags		=3D V4L2_MBUS_PCLK_SAMPLE_FALLING |
+ 				  V4L2_MBUS_VSYNC_ACTIVE_LOW,
+-		.bus_type	=3D FIMC_BUS_TYPE_ITU_601,
++		.fimc_bus_type	=3D FIMC_BUS_TYPE_ITU_601,
+ 		.board_info	=3D &noon010pc30_board_info,
+ 		.i2c_bus_num	=3D 0,
+ 		.clk_frequency	=3D 16000000UL,
+--=20
+1.7.4.1
