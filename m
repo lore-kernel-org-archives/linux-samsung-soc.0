@@ -1,235 +1,188 @@
-From: Lonsn <lonsn2005@gmail.com>
-Subject: Re: SMDKV210 support issue in kernel 3.8 (dma-pl330 and HDMI failed)
-Date: Tue, 26 Feb 2013 20:59:42 +0800
-Message-ID: <512CB1BE.1070401@gmail.com>
-References: <51275DF7.4010600@gmail.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH] drm/exynos: hdmi: use drm_display_mode to check the
+ supported modes
+Date: Tue, 26 Feb 2013 12:25:25 -0500
+Message-ID: <CAOw6vbLQwk2a77M3ZJ1uv9fx80yx+oP=2QZRhJNKD-xEOQUE6g@mail.gmail.com>
+References: <1361880975-14189-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f43.google.com ([209.85.210.43]:40885 "EHLO
-	mail-da0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750888Ab3BZM7r (ORCPT
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:36414 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754961Ab3BZRZu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Feb 2013 07:59:47 -0500
-In-Reply-To: <51275DF7.4010600@gmail.com>
+	Tue, 26 Feb 2013 12:25:50 -0500
+Received: by mail-lb0-f173.google.com with SMTP id gf7so3256904lbb.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Feb 2013 09:25:48 -0800 (PST)
+Received: by mail-lb0-f170.google.com with SMTP id ge1so3315004lbb.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Feb 2013 09:25:46 -0800 (PST)
+In-Reply-To: <1361880975-14189-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>
 
-Now I checked HDMI failed at:
-drivers/media/platform/s5p-tv/hdmi_drv.c: 912 line
-	adapter = i2c_get_adapter(pdata->hdmiphy_bus);
-	if (adapter == NULL) {
-		dev_err(dev, "hdmiphy adapter request failed\n");
-		ret = -ENXIO;
-		goto fail_vdev;
-	}
-Since pdata->hdmiphy_bus is 3, why i2c_get_adapter failed?
+On Tue, Feb 26, 2013 at 7:16 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> Exynos hdmi driver is using drm_display_mode for setting timing values
+> for a supported resolution. Conversion to fb_videomode and then comparing
+> with the mixer/hdmi/phy limits is not required. Instead, drm_display_mode
+> fields cane be directly compared.
+>
+> This patch is dependent on https://patchwork.kernel.org/patch/2176021/.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+> It is based on exynos-drm-next-todo branch at
+> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+>
+>  drivers/gpu/drm/exynos/exynos_drm_connector.c |  5 +----
+>  drivers/gpu/drm/exynos/exynos_drm_hdmi.h      |  6 +++---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c          | 15 +++++++--------
+>  drivers/gpu/drm/exynos/exynos_mixer.c         | 13 +++++++------
+>  4 files changed, 18 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> index 4c5b685..ab0f67a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> @@ -168,15 +168,12 @@ static int exynos_drm_connector_mode_valid(struct drm_connector *connector,
+>                                         to_exynos_connector(connector);
+>         struct exynos_drm_manager *manager = exynos_connector->manager;
+>         struct exynos_drm_display_ops *display_ops = manager->display_ops;
+> -       struct fb_videomode timing;
+>         int ret = MODE_BAD;
+>
+>         DRM_DEBUG_KMS("%s\n", __FILE__);
+>
+> -       convert_to_video_timing(&timing, mode);
 
-Thanks.
+Is this function being used any longer? If not, you should remove it.
 
-> Hi,
-> I have tested the kernel 3.8 with a SMDKV210 like board. But I failed
-> with dma-pl330 and HDMI driver.
-> For dma-pl330, kernel print:
-> dma-pl330 dma-pl330.0: PERIPH_ID 0x0, PCELL_ID 0x0 !
-> dma-pl330: probe of dma-pl330.0 failed with error -22
-> dma-pl330 dma-pl330.1: PERIPH_ID 0x0, PCELL_ID 0x0 !
-> dma-pl330: probe of dma-pl330.1 failed with error -22
+> -
+>         if (display_ops && display_ops->check_timing)
+> -               if (!display_ops->check_timing(manager->dev, (void *)&timing))
+> +               if (!display_ops->check_timing(manager->dev, (void *)mode))
+>                         ret = MODE_OK;
 >
-> For HDMI driver,
-> I have added the following HDMI related code to
-> arch/arm/mach-s5pv210/mach-smdkv210.c:
-> /* I2C module and id for HDMIPHY */
-> static struct i2c_board_info hdmiphy_info = {
->          I2C_BOARD_INFO("hdmiphy-s5pv210", 0x38),
-> };
+>         return ret;
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> index b7faa36..844addb 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> @@ -32,14 +32,14 @@ struct exynos_hdmi_ops {
+>         bool (*is_connected)(void *ctx);
+>         struct edid *(*get_edid)(void *ctx,
+>                         struct drm_connector *connector);
+> -       int (*check_timing)(void *ctx, struct fb_videomode *timing);
+> +       int (*check_timing)(void *ctx, struct drm_display_mode *mode);
+>         int (*power_on)(void *ctx, int mode);
 >
->         i2c_register_board_info(2, smdkv210_i2c_devs2,
->                          ARRAY_SIZE(smdkv210_i2c_devs2));
+>         /* manager */
+>         void (*mode_fixup)(void *ctx, struct drm_connector *connector,
+>                                 const struct drm_display_mode *mode,
+>                                 struct drm_display_mode *adjusted_mode);
+> -       void (*mode_set)(void *ctx, void *mode);
+> +       void (*mode_set)(void *ctx, struct drm_display_mode *mode);
+>         void (*get_max_resol)(void *ctx, unsigned int *width,
+>                                 unsigned int *height);
+>         void (*commit)(void *ctx);
+> @@ -60,7 +60,7 @@ struct exynos_mixer_ops {
+>         void (*win_disable)(void *ctx, int zpos);
 >
->          s5p_i2c_hdmiphy_set_platdata(NULL);
->          s5p_hdmi_set_platdata(&hdmiphy_info, NULL, 0);
+>         /* display */
+> -       int (*check_timing)(void *ctx, struct fb_videomode *timing);
+> +       int (*check_timing)(void *ctx, struct drm_display_mode *mode);
+>  };
 >
->          s3c_ide_set_platdata(&smdkv210_ide_pdata);
+>  void exynos_hdmi_drv_attach(struct exynos_drm_hdmi_context *ctx);
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index c38d275..d8d78a6 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -798,18 +798,17 @@ static int hdmi_find_phy_conf(struct hdmi_context *hdata, u32 pixel_clock)
+>         return -EINVAL;
+>  }
 >
-> then kernel print:
-> s5p-hdmi s5pv210-hdmi: hdmiphy adapter request failed
-> s5p-hdmi s5pv210-hdmi: probe failed
-> Samsung TV Mixer driver, (c) 2010-2011 Samsung Electronics Co., Ltd.
+> -static int hdmi_check_timing(void *ctx, struct fb_videomode *timing)
+> +static int hdmi_check_timing(void *ctx, struct drm_display_mode *mode)
+>  {
+>         struct hdmi_context *hdata = ctx;
+>         int ret;
 >
-> s5p-mixer s5p-mixer: probe start
-> s5p-mixer s5p-mixer: resources acquired
-> s5p-mixer s5p-mixer: module s5p-hdmi provides no subdev!
-> s5p-mixer s5p-mixer: module s5p-sdo provides no subdev!
-> s5p-mixer s5p-mixer: failed to register any output
-> s5p-mixer s5p-mixer: probe failed
+> -       DRM_DEBUG_KMS("[%d] %s\n", __LINE__, __func__);
+> -
+> -       DRM_DEBUG_KMS("[%d]x[%d] [%d]Hz [%x]\n", timing->xres,
+> -                       timing->yres, timing->refresh,
+> -                       timing->vmode);
+> +       DRM_DEBUG_KMS("%s : xres=%d, yres=%d, refresh=%d, intl=%d clock=%d\n",
+> +               __func__, mode->hdisplay, mode->vdisplay,
+> +               mode->vrefresh, (mode->flags & DRM_MODE_FLAG_INTERLACE) ? true :
+> +               false, mode->clock * 1000);
+
+I don't think passing a bool to intl=%d makes much sense. If you're
+going to parse the flag, convert to a string "yes" : "no".
+Alternatively, just post the flags directly.
+
 >
-> Can anybody help me on how to config the HDMI output function in linux
-> kernel 3.8? I mainly want to do video hardware decode using s5pv210 MFC
-> and then display with HDMI.
+> -       ret = hdmi_find_phy_conf(hdata, timing->pixclock);
+> +       ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
+>         if (ret < 0)
+>                 return ret;
+>         return 0;
+> @@ -1691,7 +1690,7 @@ static void hdmi_v14_mode_set(struct hdmi_context *hdata,
+>         hdmi_set_reg(tg->tg_3d, 1, 0x0);
+>  }
 >
-> Thanks!
+> -static void hdmi_mode_set(void *ctx, void *mode)
+> +static void hdmi_mode_set(void *ctx, struct drm_display_mode *mode)
+>  {
+>         struct hdmi_context *hdata = ctx;
+>         struct drm_display_mode *m = mode;
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index b6339f9..55cfde5 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -811,17 +811,17 @@ static void mixer_win_disable(void *ctx, int win)
+>         mixer_ctx->win_data[win].enabled = false;
+>  }
 >
-> The followings are full kernel boot info:
-> Starting kernel ...
+> -int mixer_check_timing(void *ctx, struct fb_videomode *timing)
+> +int mixer_check_timing(void *ctx, struct drm_display_mode *mode)
+>  {
+>         u32 w, h;
 >
-> Uncompressing Linux... done, booting the kernel.
-> Booting Linux on physical CPU 0x0
-> Linux version 3.8.0-dirty (lonsn@lonsn-laptop) (gcc version 4.4.1
-> (Sourcery G++ Lite 2009q3-67) ) #14 PREEMPT Thu Feb 21 21:21:41 CST 2013
-> CPU: ARMv7 Processor [412fc082] revision 2 (ARMv7), cr=10c53c7d
-> CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
-> Machine: SMDKV210
-> Memory policy: ECC disabled, Data cache writeback
-> CPU S5PV210/S5PC110 (id 0x43110220)
-> S3C24XX Clocks, Copyright 2004 Simtec Electronics
-> S5PV210: PLL settings, A=1000000000, M=667000000, E=80000000 V=54000000
-> S5PV210: ARMCLK=1000000000, HCLKM=200000000, HCLKD=166750000
-> HCLKP=133400000, PCLKM=100000000, PCLKD=83375000, PCLKP=66700000
-> sclk_dmc: source is sclk_a2m (0), rate is 200000000
-> sclk_onenand: source is hclk_dsys (1), rate is 166750000
-> sclk_fimc: source is ext_xtal (0), rate is 24000000
-> sclk_fimc: source is ext_xtal (0), rate is 24000000
-> sclk_fimc: source is ext_xtal (0), rate is 24000000
-> sclk_cam0: source is ext_xtal (0), rate is 24000000
-> sclk_cam1: source is ext_xtal (0), rate is 24000000
-> sclk_fimd: source is ext_xtal (0), rate is 24000000
-> sclk_mfc: source is sclk_a2m (0), rate is 200000000
-> sclk_g2d: source is sclk_a2m (0), rate is 200000000
-> sclk_g3d: source is sclk_a2m (0), rate is 200000000
-> sclk_csis: source is ext_xtal (0), rate is 24000000
-> sclk_pwi: source is ext_xtal (0), rate is 24000000
-> sclk_pwm: source is ext_xtal (0), rate is 24000000
-> Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 128016
-> Kernel command line: console=ttySAC2,115200 init=/linuxrc root=/dev/nfs
-> ip=192.168.2.20:192.168.2.200:192.168.2.1:255.255.255.0:L210::off
-> nfsroot=192.168.2.200:/home/lonsn/work/s5pv210/nfs,v3 rw rootwait
-> enable_wait_mode=off
-> PID hash table entries: 2048 (order: 1, 8192 bytes)
-> Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
-> Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
-> __ex_table already sorted, skipping sort
-> Memory: 256MB 48MB 200MB = 504MB total
-> Memory: 506400k/514592k available, 9696k reserved, 0K highmem
-> Virtual kernel memory layout:
->      vector  : 0xffff0000 - 0xffff1000   (   4 kB)
->      fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
->      vmalloc : 0xb0800000 - 0xff000000   (1256 MB)
->      lowmem  : 0x80000000 - 0xb0000000   ( 768 MB)
->      modules : 0x7f000000 - 0x80000000   (  16 MB)
->        .text : 0x80008000 - 0x80466414   (4474 kB)
->        .init : 0x80467000 - 0x80487884   ( 131 kB)
->        .data : 0x80488000 - 0x804c3760   ( 238 kB)
->         .bss : 0x804c3760 - 0x804faa48   ( 221 kB)
-> SLUB: Genslabs=11, HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
-> NR_IRQS:208
-> VIC @f6000000: id 0x00041192, vendor 0x41
-> VIC @f6010000: id 0x00041192, vendor 0x41
-> VIC @f6020000: id 0x00041192, vendor 0x41
-> VIC @f6030000: id 0x00041192, vendor 0x41
-> sched_clock: 32 bits at 33MHz, resolution 29ns, wraps every 128784ms
-> Console: colour dummy device 80x30
-> Calibrating delay loop... 663.55 BogoMIPS (lpj=1658880)
-> pid_max: default: 32768 minimum: 301
-> Mount-cache hash table entries: 512
-> CPU: Testing write buffer coherency: ok
-> Setting up static identity map for 0x2034e1a8 - 0x2034e200
-> NET: Registered protocol family 16
-> DMA: preallocated 256 KiB pool for atomic coherent allocations
-> S3C Power Management, Copyright 2004 Simtec Electronics
-> S5PV210: Initializing architecture
-> bio: create slab <bio-0> at 0
-> SCSI subsystem initialized
-> s3c-i2c s3c2440-i2c.0: slave address 0x10
-> s3c-i2c s3c2440-i2c.0: bus frequency set to 65 KHz
-> s3c-i2c s3c2440-i2c.0: i2c-0: S3C I2C adapter
-> s3c-i2c s3c2440-i2c.1: slave address 0x10
-> s3c-i2c s3c2440-i2c.1: bus frequency set to 65 KHz
-> s3c-i2c s3c2440-i2c.1: i2c-1: S3C I2C adapter
-> s3c-i2c s3c2440-i2c.2: slave address 0x10
-> s3c-i2c s3c2440-i2c.2: bus frequency set to 65 KHz
-> s3c-i2c s3c2440-i2c.2: i2c-2: S3C I2C adapter
-> Linux video capture interface: v2.00
-> Advanced Linux Sound Architecture Driver Initialized.
-> Switching to clocksource s5p_clocksource_timer
-> NET: Registered protocol family 2
-> TCP established hash table entries: 4096 (order: 3, 32768 bytes)
-> TCP bind hash table entries: 4096 (order: 4, 81920 bytes)
-> TCP: Hash tables configured (established 4096 bind 4096)
-> TCP: reno registered
-> UDP hash table entries: 256 (order: 1, 12288 bytes)
-> UDP-Lite hash table entries: 256 (order: 1, 12288 bytes)
-> NET: Registered protocol family 1
-> RPC: Registered named UNIX socket transport module.
-> RPC: Registered udp transport module.
-> RPC: Registered tcp transport module.
-> RPC: Registered tcp NFSv4.1 backchannel transport module.
-> NFS: Registering the id_resolver key type
-> Key type id_resolver registered
-> Key type id_legacy registered
-> ROMFS MTD (C) 2007 Red Hat, Inc.
-> io scheduler noop registered
-> io scheduler deadline registered
-> io scheduler cfq registered (default)
-> s3c-fb s5pv210-fb: window 0: fb
-> dma-pl330 dma-pl330.0: PERIPH_ID 0x0, PCELL_ID 0x0 !
-> dma-pl330: probe of dma-pl330.0 failed with error -22
-> dma-pl330 dma-pl330.1: PERIPH_ID 0x0, PCELL_ID 0x0 !
-> dma-pl330: probe of dma-pl330.1 failed with error -22
-> Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
-> s5pv210-uart.0: ttySAC0 at MMIO 0xe2900000 (irq = 74) is a S3C6400/10
-> s5pv210-uart.1: ttySAC1 at MMIO 0xe2900400 (irq = 75) is a S3C6400/10
-> s5pv210-uart.2: ttySAC2 at MMIO 0xe2900800 (irq = 76) is a S3C6400/10
-> console [ttySAC2] enabled
-> s5pv210-uart.3: ttySAC3 at MMIO 0xe2900c00 (irq = 77) is a S3C6400/10
-> brd: module loaded
-> loop: module loaded
-> dm9000 Ethernet Driver, V1.31
-> eth0: dm9000a at b09da300,b09dc30c IRQ 41 MAC: 00:09:c0:ff:ec:48
-> (platform data)
-> mousedev: PS/2 mouse device common for all mice
-> i2c /dev entries driver
-> m2m-testdev m2m-testdev.0: mem2mem-testdevDevice registered as /dev/video0
-> s5p-jpeg s5p-jpeg.0: encoder device registered as /dev/video1
-> s5p-jpeg s5p-jpeg.0: decoder device registered as /dev/video2
-> s5p-jpeg s5p-jpeg.0: Samsung S5P JPEG codec
-> s5p-mfc s5p-mfc: decoder registered as /dev/video3
-> s5p-mfc s5p-mfc: encoder registered as /dev/video4
-> s5p-hdmi s5pv210-hdmi: hdmiphy adapter request failed
-> s5p-hdmi s5pv210-hdmi: probe failed
-> Samsung TV Mixer driver, (c) 2010-2011 Samsung Electronics Co., Ltd.
+> -       w = timing->xres;
+> -       h = timing->yres;
+> +       w = mode->hdisplay;
+> +       h = mode->vdisplay;
 >
-> s5p-mixer s5p-mixer: probe start
-> s5p-mixer s5p-mixer: resources acquired
-> s5p-mixer s5p-mixer: module s5p-hdmi provides no subdev!
-> s5p-mixer s5p-mixer: module s5p-sdo provides no subdev!
-> s5p-mixer s5p-mixer: failed to register any output
-> s5p-mixer s5p-mixer: probe failed
-> samsung-ac97 samsung-ac97: ac97 failed to get ac97_clock
-> soc-audio soc-audio: ASoC: machine SMDK WM9713 should use
-> snd_soc_register_card()
-> soc-audio soc-audio: ASoC: CPU DAI samsung-ac97 not registered
-> platform soc-audio: Driver soc-audio requests probe deferral
-> TCP: cubic registered
-> NET: Registered protocol family 17
-> Key type dns_resolver registered
-> VFP support v0.3: implementor 41 architecture 3 part 30 variant c rev 2
-> soc-audio: probe of soc-audio failed with error -22
-> dm9000 dm9000 eth0: link up, 100Mbps, full-duplex, lpa 0xCDE1
-> IP-Config: Complete:
->       device=eth0, hwaddr=00:09:c0:ff:ec:48, ipaddr=192.168.2.20,
-> mask=255.255.255.0, gw=192.168.2.1
->       host=L210, domain=, nis-domain=(none)
->       bootserver=192.168.2.200, rootserver=192.168.2.200, rootpath=
-> ALSA device list:
->    No soundcards found.
-> VFS: Mounted root (nfs filesystem) on device 0:9.
-> Freeing init memory: 128K
-> Failed to execute /linuxrc.  Attempting defaults...
-> init: ureadahead main process (1031) terminated with status 5
+>         DRM_DEBUG_KMS("%s : xres=%d, yres=%d, refresh=%d, intl=%d\n",
+> -               __func__, timing->xres, timing->yres,
+> -               timing->refresh, (timing->vmode &
+> -               FB_VMODE_INTERLACED) ? true : false);
+> +               __func__, mode->hdisplay, mode->vdisplay,
+> +               mode->vrefresh, (mode->flags &
+> +               DRM_MODE_FLAG_INTERLACE) ? true : false);
+
+Same comment regarding flag parsing.
+
+Sean
+
 >
-> Last login: Thu Jan  1 00:00:16 UTC 1970 on tty1
-> root@linaro-developer:~#
+>         if ((w >= 464 && w <= 720 && h >= 261 && h <= 576) ||
+>                 (w >= 1024 && w <= 1280 && h >= 576 && h <= 720) ||
+> @@ -830,6 +830,7 @@ int mixer_check_timing(void *ctx, struct fb_videomode *timing)
 >
+>         return -EINVAL;
+>  }
+> +
+>  static void mixer_wait_for_vblank(void *ctx)
+>  {
+>         struct mixer_context *mixer_ctx = ctx;
+> --
+> 1.8.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
