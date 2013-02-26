@@ -1,39 +1,52 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v4 5/5] ARM: exynos: dts: Add FIMD DT binding Documentation
-Date: Tue, 26 Feb 2013 23:48:24 +0100
-Message-ID: <512D3BB8.50807@gmail.com>
-References: <1360912200-26377-1-git-send-email-vikas.sajjan@linaro.org> <CAD025yQxOp1nd8N8K5wYco_o2TkW19fk_3jXHYHfVDnsDLR9VQ@mail.gmail.com> <512D2FBB.5090507@gmail.com> <3726480.lf0XiLbqs9@flatron>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko.stuebner@bqreaders.com>
+Subject: [PATCH 0/5] ARM: S3C24XX: more fixes and enhancements for the s3c24xx irqs
+Date: Tue, 26 Feb 2013 23:55:44 +0100
+Message-ID: <201302262355.44995.heiko.stuebner@bqreaders.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:39184 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753053Ab3BZWs3 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:35306 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758699Ab3BZWzz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Feb 2013 17:48:29 -0500
-Received: by mail-ee0-f50.google.com with SMTP id e51so2861455eek.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Feb 2013 14:48:27 -0800 (PST)
-In-Reply-To: <3726480.lf0XiLbqs9@flatron>
+	Tue, 26 Feb 2013 17:55:55 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, sunil joshi <joshi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tom Gall <tom.gall@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 02/26/2013 11:11 PM, Tomasz Figa wrote:
-> We should stick to the rule that compatible value should be named after
-> first specific SoC model in which this particular IP version was included.
->
-> So this is what I would suggest:
->
-> compatible = "samsung,s3c2443-fimd"; // for S3C24XX SoCs
-> compatible = "samsung,s3c6400-fimd"; // for S3C64XX SoCs
-> compatible = "samsung,s5p6440-fimd"; // for S5P64X0 SoCs
-> compatible = "samsung,s5pc100-fimd"; // for S5PC100 SoC
-> compatible = "samsung,s5pv210-fimd"; // for S5PV210 SoC
-> compatible = "samsung,exynos4210-fimd"; // for Exynos4 SoCs
-> compatible = "samsung,exynos5250-fimd"; // for Exynos5 SoCs
+Asorted fixes and enhancements for the recent redo of the s3c24xx
+interrupt controllers.
 
-Yes, that looks good to me. I'm just not sure though if there is
-any reference to "fimd" in the s3c2443 SoC documentation. Or
-is it simply called lcd controller there ?
+The only real error that gets fixed is the handling of 0-hwirq as
+parent_irq on s3c2412 in patch 2. No other of the s3c24xx platforms
+uses the bit0 of the parent controller as parent_irq.
+
+Heiko Stuebner (5):
+  ARM: S3C24XX: fix redundant checks in the irq mapping function
+  ARM: S3C24XX: fix irq parent check
+  ARM: S3C24XX: move s3c24xx_init_irq to s3c2410_init_irq
+  ARM: S3C24XX: make s3c24xx_init_intc static
+  ARM: S3C24XX: add handle_irq function
+
+ arch/arm/Kconfig                                 |    1 +
+ arch/arm/mach-s3c24xx/common.h                   |    1 +
+ arch/arm/mach-s3c24xx/include/mach/entry-macro.S |   70 ---------
+ arch/arm/mach-s3c24xx/irq.c                      |  167 +++++++++++++--------
+ arch/arm/mach-s3c24xx/mach-amlm5900.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-bast.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-h1940.c               |    7 +-
+ arch/arm/mach-s3c24xx/mach-n30.c                 |    4 +-
+ arch/arm/mach-s3c24xx/mach-otom.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-qt2410.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2410.c            |    2 +-
+ arch/arm/mach-s3c24xx/mach-tct_hammer.c          |    2 +-
+ arch/arm/mach-s3c24xx/mach-vr1000.c              |    2 +-
+ arch/arm/plat-samsung/include/plat/cpu.h         |    1 -
+ 14 files changed, 115 insertions(+), 150 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/entry-macro.S
+
+-- 
+1.7.2.3
