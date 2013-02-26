@@ -1,17 +1,17 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko.stuebner@bqreaders.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
 Subject: [PATCH 0/5] ARM: S3C24XX: more fixes and enhancements for the s3c24xx irqs
-Date: Tue, 26 Feb 2013 23:55:44 +0100
-Message-ID: <201302262355.44995.heiko.stuebner@bqreaders.com>
+Date: Tue, 26 Feb 2013 23:57:24 +0100
+Message-ID: <201302262357.24544.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:35306 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:35397 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758699Ab3BZWzz (ORCPT
+	id S1759888Ab3BZW5a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Feb 2013 17:55:55 -0500
+	Tue, 26 Feb 2013 17:57:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
