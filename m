@@ -1,78 +1,106 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [Suggestion] ARM:S5PV210: version merging compiling issue for
- 'struct fimc_source_info'
-Date: Tue, 26 Feb 2013 10:50:21 +0100
-Message-ID: <512C855D.6090109@samsung.com>
-References: <511F50CF.90403@asianux.com>
- <CAH9JG2WS5q4SR8zk5=OC32PHLZ2+ZYva7csyshG7oANacqbCuA@mail.gmail.com>
- <512C5877.7090805@asianux.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH v2] arm: plat-samsung: check processor type before cache restoration in resume
+Date: Tue, 26 Feb 2013 15:26:53 +0530
+Message-ID: <1361872613-12040-1-git-send-email-inderpal.singh@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:34555 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756687Ab3BZJuZ (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:37678 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759185Ab3BZJ5F (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Feb 2013 04:50:25 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MIT00BMBNB1BU60@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 26 Feb 2013 09:50:23 +0000 (GMT)
-Received: from [106.116.147.32] by eusync1.samsung.com
- (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
- 10 2011)) with ESMTPA id <0MIT00MZONBY6S60@eusync1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 26 Feb 2013 09:50:23 +0000 (GMT)
-In-reply-to: <512C5877.7090805@asianux.com>
+	Tue, 26 Feb 2013 04:57:05 -0500
+Received: by mail-pa0-f45.google.com with SMTP id kl14so2350436pab.32
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Feb 2013 01:57:05 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chen Gang <gang.chen@asianux.com>
-Cc: Kyungmin Park <kmpark@infradead.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@redhat.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, patches@linaro.org
 
-Hi,
+Only cortex-a9 based samsung platforms have l2x0 cache controller. Hence check
+the same before restoring the cache in resume.
 
-On 02/26/2013 07:38 AM, Chen Gang wrote:
-> =E4=BA=8E 2013=E5=B9=B402=E6=9C=8816=E6=97=A5 19:39, Kyungmin Park =E5=
-=86=99=E9=81=93:
->> You can find it at recent patch from Arnd.
->=20
->   excuse me, could you please provide more information about it ?
->=20
->   I have checked 2 tags:
->     the next-20130225 tag in git://git.kernel.org/pub/scm/linux/kerne=
-l/git/next/linux-next.git
->=20
->       in Feb 1 2013, by Sylwester Nawrocki, Kyungmin Park, Mauro Carv=
-alho Chehab
->       git number: 56bc911ac3b94c731db3a6de20258827f1a61c20
->         in include/media/s5p_fimc.h, the structure fimc_source_info i=
-s changed.
->         in arch/arm/mach-s5pv210/mach-goni.c, the structure fimc_sour=
-ce_info is not changed.
->           still use .bus_type (not use .fimc_bus_type like others).
->=20
->       it seems, the relative members forgot to change it to .fimc_bus=
-_type.
->=20
->       did the patch from Arnd still not applied into next tree ?
->=20
->     the v3.8-rc7 tag in git clone git://git.kernel.org/pub/scm/linux/=
-kernel/git/kgene/linux-samsung.git
->       it seems no relative changes (change nothing).
+This is needed for single kernel image.
 
-No, the fix is not yet in linux-next. I has not been merged through the=
- media
-tree and it might take some time until it gets to Linus's tree now. You=
- can use
-one of following patches to fix this build break:
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+changes in v2:
+	- check processor midr instead of checking all soc ids as 
+	suggested by Kukjin
 
-http://www.spinics.net/lists/linux-samsung-soc/msg16023.html
-https://patchwork.kernel.org/patch/2143211
-http://patchwork.linuxtv.org/patch/16892
+ arch/arm/mach-exynos/common.c           |    4 ++++
+ arch/arm/plat-samsung/include/plat/pm.h |    1 +
+ arch/arm/plat-samsung/s5p-sleep.S       |   10 ++++++++++
+ 3 files changed, 15 insertions(+)
 
-Kgene, could you push any of these fixes upstream ?
-
-
-Thanks,
-Sylwester
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index c4b2071..5585325 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -31,6 +31,7 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
+ #include <asm/cacheflush.h>
++#include <asm/cputype.h>
+ 
+ #include <mach/regs-irq.h>
+ #include <mach/regs-pmu.h>
+@@ -53,6 +54,7 @@
+ #include "common.h"
+ #define L2_AUX_VAL 0x7C470001
+ #define L2_AUX_MASK 0xC200ffff
++#define CPU_MASK	0xff0ffff0
+ 
+ static const char name_exynos4210[] = "EXYNOS4210";
+ static const char name_exynos4212[] = "EXYNOS4212";
+@@ -716,6 +718,8 @@ static int __init exynos4_l2x0_cache_init(void)
+ 	if (soc_is_exynos5250() || soc_is_exynos5440())
+ 		return 0;
+ 
++	cpu_midr = read_cpuid_id() & CPU_MASK;
++
+ 	ret = l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
+ 	if (!ret) {
+ 		l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
+diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
+index f6fcade..532f5d7 100644
+--- a/arch/arm/plat-samsung/include/plat/pm.h
++++ b/arch/arm/plat-samsung/include/plat/pm.h
+@@ -184,3 +184,4 @@ extern void samsung_pm_save_gpios(void);
+ 
+ extern void s3c_pm_save_core(void);
+ extern void s3c_pm_restore_core(void);
++extern unsigned long cpu_midr;
+diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-samsung/s5p-sleep.S
+index bdf6dad..3b350d0 100644
+--- a/arch/arm/plat-samsung/s5p-sleep.S
++++ b/arch/arm/plat-samsung/s5p-sleep.S
+@@ -25,6 +25,8 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/hardware/cache-l2x0.h>
+ 
++#define CPU_CORTEX_A9		0x410FC090
++
+ /*
+  *	 The following code is located into the .data section. This is to
+  *	 allow l2x0_regs_phys to be accessed with a relative load while we
+@@ -51,6 +53,11 @@
+ 
+ ENTRY(s3c_cpu_resume)
+ #ifdef CONFIG_CACHE_L2X0
++	adr	r0, cpu_midr
++	ldr	r1, [r0]
++	ldr	r0, =CPU_CORTEX_A9
++	cmp	r1, r0
++	bne	resume_l2on
+ 	adr	r0, l2x0_regs_phys
+ 	ldr	r0, [r0]
+ 	ldr	r1, [r0, #L2X0_R_PHY_BASE]
+@@ -77,4 +84,7 @@ ENDPROC(s3c_cpu_resume)
+ 	.globl l2x0_regs_phys
+ l2x0_regs_phys:
+ 	.long	0
++	.globl cpu_midr
++cpu_midr:
++	.long	0
+ #endif
+-- 
+1.7.9.5
