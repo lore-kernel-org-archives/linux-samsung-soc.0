@@ -1,175 +1,160 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH v4 5/5] ARM: exynos: dts: Add FIMD DT binding Documentation
-Date: Tue, 26 Feb 2013 09:49:53 +0530
-Message-ID: <CAD025yQxOp1nd8N8K5wYco_o2TkW19fk_3jXHYHfVDnsDLR9VQ@mail.gmail.com>
-References: <1360912200-26377-1-git-send-email-vikas.sajjan@linaro.org>
- <1360912200-26377-6-git-send-email-vikas.sajjan@linaro.org>
- <511E1008.6010308@samsung.com> <CAD025yQokBbJwyFWeg8KwzTsE-4jgra5UhLuic5zJnQRt+GNTw@mail.gmail.com>
- <5122A119.7070501@gmail.com> <CAD025yRmvSpnM9RJJvN+FM00Rgz8Bt5msmEYcyFVxNTEKsM2xg@mail.gmail.com>
- <CAD025yTb5yfXWpzCnCg7KY9NsTw1wfsLFU6y32aD=WXe23xiwg@mail.gmail.com> <5127E533.4060702@gmail.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: [Suggestion] ARM:S5PV210: version merging compiling issue for
+ 'struct fimc_source_info'
+Date: Tue, 26 Feb 2013 14:38:47 +0800
+Message-ID: <512C5877.7090805@asianux.com>
+References: <511F50CF.90403@asianux.com> <CAH9JG2WS5q4SR8zk5=OC32PHLZ2+ZYva7csyshG7oANacqbCuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:62910 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757513Ab3BZEUQ (ORCPT
+Received: from intranet.asianux.com ([58.214.24.6]:60442 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755915Ab3BZGjI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Feb 2013 23:20:16 -0500
-Received: by mail-la0-f48.google.com with SMTP id fq13so3372631lab.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Feb 2013 20:20:14 -0800 (PST)
-In-Reply-To: <5127E533.4060702@gmail.com>
+	Tue, 26 Feb 2013 01:39:08 -0500
+In-Reply-To: <CAH9JG2WS5q4SR8zk5=OC32PHLZ2+ZYva7csyshG7oANacqbCuA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, sunil joshi <joshi@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tom Gall <tom.gall@linaro.org>
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, s.nawrocki@samsung.com
 
-Hi,
+=E4=BA=8E 2013=E5=B9=B402=E6=9C=8816=E6=97=A5 19:39, Kyungmin Park =E5=86=
+=99=E9=81=93:
+> Hi,
+>=20
+> You can find it at recent patch from Arnd.
+>=20
 
-On 23 February 2013 03:07, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> Hi Vikas,
->
-> On 02/22/2013 08:06 AM, Vikas Sajjan wrote:
->>>>>>>
->>>>>>> +++ b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
->
-> [...]
->
->>>>>>> @@ -0,0 +1,37 @@
->>>>>>> +Device-Tree bindings for fimd driver
->
->
-> Perhaps something like:
->
-> Exynos SoC display controller (FIMD)
->
-> would do ? Even though bindings are to be used by some driver we should
-> be focusing on describing the actual hardware.
->
-OK. will change.
->
->>>>>>> +FIMD stands for Fully Interactive Mobile Display, is the Display
->>>>>>> Controller for
->>>>>>> +the Exynos series of SoCs which transfers the image data from a
->>>>>>> video
->>>>>>> buffer
->>>>>>> +located in the system memory to an external LCD interface.
->>>>>>> +
->>>>>>> +Required properties:
->>>>>>> +- compatible := value should be "samsung,exynos5-fimd" or
->>>>>>> "samsung,exynos4-fimd"
->>>>>>
->>>>>>
->>>>>>
->>>>>> What about older SoCs like S5Pv210 ? There is the FIMD IP block in
->>>>>> those
->>>>>> SoCs
->>>>>> as well. There are also differences in the FIMD IP block across
->>>>>> various
->>>>>> SoC
->>>>>> version, so either you need to list the quirks in the bindings or use
->>>>>> an
->>>>>> appropriate compatible properties if there are significant differences
->>>>>> across
->>>>>> FIMDs that make them not really compatible.
->>>>>>
->>>>> as of now, I was working on Exynos4 and Exynos5 SoC. have to really
->>>>> see the differences in the previous SoC and how to handle all those
->>>>> FIMD IPs in the driver.
->>>>> if you know the differences between these FIMD IPs, please let me know.
->>>>
->>>>
->>>>
->>>> Please have a look at drivers/video/s3c-fb.c and all driver_data
->>>> structures
->>>> defined for various SoCs.
->>>>
->>>> [...]
->>>>
->>> I went through the driver_data structures define for s5p64x0,s3c2443,
->>> s5pv210, s5pc100 ad 64xx SoCs.
->>> there are some differences w.r.t number of windows, osd_stride  length
->>> and regsiter offsets.
->>> but  I dont have access to all the above mentioned Boards and so that
->>> I can modify and test on each one of them.
->
->
-> I don't ask you to add support for all existing FIMD variants. Please just
-> make sure the bindings you're documenting here, with focus on the Exynos
-> SoCs, are also usable for older SoC series.
->
->
->> as far as i know this file exynos_drm_fimd.c is meant only for exynos4
->> onwards SoCs,
->
->
-> Yes, but the bindings are for FIMD IP block and should possibly be
-> consistent
-> across all SoC series. I think we should bear in mind that eventually all
-> these SoCs get device tree support. Actually I've seen already patches for
-> s3c24xx and s3c64xx SoC series.
->
->
->> ( I think Mr. Inki Dae can throw more light on this )
->> and also the previous  boards based on  s5p64x0,s3c2443,s5pv210,
->> s5pc100 and 64xx, dont have DT support.
->
->
-> We can't tell for sure the SoC series listed above won't get device tree
-> support sooner or later, as this is an open source project.
->
->
->> also in the function drm_fimd_get_driver_data(), there is provision to
->> get the NON-DT "driver data" as well. So somebody who wants to use
->> this driver for the above mentioned SoCs can add the driver-data.
->
->
-> I'm not concerned about this particular driver, only about the DT bindings
-> that are not supposed to change over time. So some care needs to be taken
-> when designing the bindings.
->
->
->> so wanted to know how you want me to go about it.
->
->
-> My concern was that you use "samsung,exynos4-fimd" for FIMD IP found on all
-> Exynos4 SoC, whereas there could be some differences for Exynos4210 and
-> Exynos4212/4412. It looks like both are shipped with FIMD rev. 6.0 though.
-> Anyway, still there are some details that may need to be handled, e.g.
-> maximum
-> VCLK frequency is 80 MHz for Exynos4210 FIMD0 and Exynos4412 FIMD (there is
-> only one there in Exynos4412 as opposed to two in Exynos4210), while for
-> Exynos4210 FIMD1 it is only 50 MHz. When there are differences we really
-> care about (and support for FIMD1 is added) I guess things like this could
-> be handled through optional properties.
->
-> I thought about something like:
->
-> compatible = "samsung,exynos4210-fimd"; for Exynos4210 and
-> compatible = "samsung,exynos4212-fimd", "samsung,exynos4210-fimd"; for
->               Exynos4212 and Exynos412,
->
-> but "samsung,exynos4-fimd" seems good enough, since the FIMD IP block
-> appears nearly identical across Exynos4210...Exynos4412.
->
+  excuse me, could you please provide more information about it ?
 
-ok thanks. Will modify the documentation as below.
+  I have checked 2 tags:
+    the next-20130225 tag in git://git.kernel.org/pub/scm/linux/kernel/=
+git/next/linux-next.git
 
-compatible = "samsung, exynos4-fimd"; for Exynos4 SoCs
-compatible = "samsung, exynos5-fimd" ; for Exynos5 SoCs
-compatible = "samsung, s3c64xx-fimd" ; for S3C64XX SoCs
-compatible = "samsung, s3c24xx-fimd" ; for S3C24XX SoCs
-compatible = "samsung, s5p64x0-fimd" ; for S5P64X0 SoCs
-compatible = "samsung, s5pc100-fimd" ; for S5PC100 SoCs
-compatible = "samsung, s5pv210-fimd" ; for S5PV210 SoCs
+      in Feb 1 2013, by Sylwester Nawrocki, Kyungmin Park, Mauro Carval=
+ho Chehab
+      git number: 56bc911ac3b94c731db3a6de20258827f1a61c20
+        in include/media/s5p_fimc.h, the structure fimc_source_info is =
+changed.
+        in arch/arm/mach-s5pv210/mach-goni.c, the structure fimc_source=
+_info is not changed.
+          still use .bus_type (not use .fimc_bus_type like others).
 
-> --
->
-> Thanks,
-> Sylwester
+      it seems, the relative members forgot to change it to .fimc_bus_t=
+ype.
+
+      did the patch from Arnd still not applied into next tree ?
+
+    the v3.8-rc7 tag in git clone git://git.kernel.org/pub/scm/linux/ke=
+rnel/git/kgene/linux-samsung.git
+      it seems no relative changes (change nothing).
 
 
+  thanks.
 
--- 
-Thanks and Regards
- Vikas Sajjan
+  :-)
+
+gchen.
+
+
+> Thank you,
+> Kyungmin Park
+>=20
+> On Saturday, February 16, 2013, Chen Gang wrote:
+>=20
+>     Hello Kukjin Kim:
+>=20
+>     =EF=BF=BD it is a compiling issue, please help check when you hav=
+e time.
+>=20
+>     thanks.
+>=20
+>     gchen.
+>=20
+>     in arch/arm/mach-s5pv210/mach-goni.c:848:
+>     =EF=BF=BD error: unknown field 'bus_type' specified in initialize=
+r
+>=20
+>     843 static struct fimc_source_info goni_camera_sensors[] =3D {
+>     844 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD {
+>     845 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
+=BF=BD =EF=BF=BD .mux_id =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =3D 0,
+>     846 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
+=BF=BD =EF=BF=BD .flags =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD=
+=3D V4L2_MBUS_PCLK_SAMPLE_FALLING |
+>     847 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
+=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=
+=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD V4L2_MBUS_VSYNC_ACTIVE_LOW,
+>     848 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
+=BF=BD =EF=BF=BD .bus_type =EF=BF=BD =EF=BF=BD =EF=BF=BD =3D FIMC_BUS_T=
+YPE_ITU_601,
+>     849 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
+=BF=BD =EF=BF=BD .board_info =EF=BF=BD =EF=BF=BD =3D &noon010pc30_board=
+_info,
+>     850 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
+=BF=BD =EF=BF=BD .i2c_bus_num =EF=BF=BD =EF=BF=BD=3D 0,
+>     851 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
+=BF=BD =EF=BF=BD .clk_frequency =EF=BF=BD=3D 16000000UL,
+>     852 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD },
+>     853 };
+>=20
+>=20
+>     in include/media/s5p_fimc.h:50
+>=20
+>     =EF=BF=BD37 /**
+>     =EF=BF=BD38 =EF=BF=BD* struct fimc_source_info - video source des=
+cription required
+>     for the host
+>     =EF=BF=BD39 =EF=BF=BD* =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=
+=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=
+=BD =EF=BF=BD interface configuration
+>     =EF=BF=BD40 =EF=BF=BD*
+>     =EF=BF=BD41 =EF=BF=BD* @board_info: pointer to I2C subdevice's bo=
+ard info
+>     =EF=BF=BD42 =EF=BF=BD* @clk_frequency: frequency of the clock the=
+ host interface
+>     provides to sensor
+>     =EF=BF=BD43 =EF=BF=BD* @fimc_bus_type: FIMC camera input type
+>     =EF=BF=BD44 =EF=BF=BD* @sensor_bus_type: image sensor bus type, M=
+IPI, ITU-R BT.601 etc.
+>     =EF=BF=BD45 =EF=BF=BD* @flags: the parallel sensor bus flags defi=
+ning signals
+>     polarity (V4L2_MBUS_*)
+>     =EF=BF=BD46 =EF=BF=BD* @i2c_bus_num: i2c control bus id the senso=
+r is attached to
+>     =EF=BF=BD47 =EF=BF=BD* @mux_id: FIMC camera interface multiplexer=
+ index (separate
+>     for MIPI and ITU)
+>     =EF=BF=BD48 =EF=BF=BD* @clk_id: index of the SoC peripheral clock=
+ for sensors
+>     =EF=BF=BD49 =EF=BF=BD*/
+>     =EF=BF=BD50 struct fimc_source_info {
+>     =EF=BF=BD51 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD struct i2c_bo=
+ard_info *board_info;
+>     =EF=BF=BD52 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD unsigned long=
+ clk_frequency;
+>     =EF=BF=BD53 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD enum fimc_bus=
+_type fimc_bus_type;
+>     =EF=BF=BD54 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD enum fimc_bus=
+_type sensor_bus_type;
+>     =EF=BF=BD55 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD u16 flags;
+>     =EF=BF=BD56 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD u16 i2c_bus_n=
+um;
+>     =EF=BF=BD57 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD u16 mux_id;
+>     =EF=BF=BD58 =EF=BF=BD =EF=BF=BD =EF=BF=BD =EF=BF=BD u8 clk_id;
+>     =EF=BF=BD59 };
+>     =EF=BF=BD60
+>=20
+>=20
+>     _______________________________________________
+>     linux-arm-kernel mailing list
+>     linux-arm-kernel@lists.infradead.org <javascript:;>
+>     http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+
+
+--=20
+Chen Gang
+
+Asianux Corporation
