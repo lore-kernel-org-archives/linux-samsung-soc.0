@@ -1,27 +1,58 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2] arm: plat-samsung: check processor type before
-	cache restoration in resume
-Date: Tue, 26 Feb 2013 10:02:22 +0000
-Message-ID: <20130226100222.GQ17833@n2100.arm.linux.org.uk>
-References: <1361872613-12040-1-git-send-email-inderpal.singh@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 2/3] ARM: dts: Add display timing node to
+ exynos5250-smdk5250.dts
+Date: Tue, 26 Feb 2013 06:25:39 -0500
+Message-ID: <1361877940-8559-3-git-send-email-l.krishna@samsung.com>
+References: <1361877940-8559-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50112 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760078Ab3BZKCb (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:26468 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756964Ab3BZLFW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Feb 2013 05:02:31 -0500
-Content-Disposition: inline
-In-Reply-To: <1361872613-12040-1-git-send-email-inderpal.singh@linaro.org>
+	Tue, 26 Feb 2013 06:05:22 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MIT003MBQSWEA20@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 26 Feb 2013 20:05:20 +0900 (KST)
+In-reply-to: <1361877940-8559-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-On Tue, Feb 26, 2013 at 03:26:53PM +0530, Inderpal Singh wrote:
-> Only cortex-a9 based samsung platforms have l2x0 cache controller. Hence check
-> the same before restoring the cache in resume.
+Add display timing node to exynos5250-smdk5250.dts
 
-Why is this patch soo complicated?  Can't you read the CPUs MIDR register
-from assembly code?
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250-smdk5250.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index e05b18f..2d8c577 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -204,4 +204,20 @@
+ 		samsung,mfc-r = <0x43000000 0x800000>;
+ 		samsung,mfc-l = <0x51000000 0x800000>;
+ 	};
++
++	display-timings {
++		native-mode = <&timing0>;
++		timing0: timing@0 {
++			/* 1280x800 */
++			clock-frequency = <50000>;
++			hactive = <1280>;
++			vactive = <800>;
++			hfront-porch = <4>;
++			hback-porch = <4>;
++			hsync-len = <4>;
++			vback-porch = <4>;
++			vfront-porch = <4>;
++			vsync-len = <4>;
++		};
++	};
+ };
+-- 
+1.8.0
