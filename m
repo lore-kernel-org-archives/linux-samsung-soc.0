@@ -1,133 +1,187 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
+From: Lonsn <lonsn2005@gmail.com>
 Subject: Re: SMDKV210 support issue in kernel 3.8 (dma-pl330 and HDMI failed)
-Date: Wed, 27 Feb 2013 21:02:18 +0530
-Message-ID: <CAG17yqRYF-DRDigQVfJ1nvt0x2evnX=dnNfL6FFxPWno+NGqMg@mail.gmail.com>
-References: <51275DF7.4010600@gmail.com>
-	<512D2780.3020103@gmail.com>
-	<CAG17yqQ3d+3Uwpfo+_r0Jwm4TQXcSY-bcW4qRcygzjq=9qXvvA@mail.gmail.com>
-	<512DEC6C.60607@samsung.com>
+Date: Wed, 27 Feb 2013 23:48:15 +0800
+Message-ID: <512E2ABF.1080206@gmail.com>
+References: <51275DF7.4010600@gmail.com> <512CB1BE.1070401@gmail.com> <512D160D.1050706@gmail.com> <512D1BFB.4000700@gmail.com> <512E22AA.8020006@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <512DEC6C.60607@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Lonsn <lonsn2005@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:32941 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759943Ab3B0PsW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Feb 2013 10:48:22 -0500
+In-Reply-To: <512E22AA.8020006@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
 
-On 27 February 2013 16:52, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> On 02/27/2013 11:51 AM, Inderpal Singh wrote:
->> On 27 February 2013 02:52, Sylwester Nawrocki
->> <sylvester.nawrocki@gmail.com> wrote:
->>> On 02/22/2013 01:00 PM, Lonsn wrote:
->>>>
->>>> Hi,
->>>> I have tested the kernel 3.8 with a SMDKV210 like board. But I failed
->>>> with dma-pl330 and HDMI driver.
->>>> For dma-pl330, kernel print:
->>>> dma-pl330 dma-pl330.0: PERIPH_ID 0x0, PCELL_ID 0x0 !
->>>> dma-pl330: probe of dma-pl330.0 failed with error -22
->>>> dma-pl330 dma-pl330.1: PERIPH_ID 0x0, PCELL_ID 0x0 !
->>>> dma-pl330: probe of dma-pl330.1 failed with error -22
+=E4=BA=8E 2013/2/27 23:13, Lonsn =E5=86=99=E9=81=93:
+>> On 02/26/2013 09:07 PM, Sylwester Nawrocki wrote:
+>>> Hi Lonsn,
 >>>
+>>> On 02/26/2013 01:59 PM, Lonsn wrote:
+>>>> Now I checked HDMI failed at:
+>>>> drivers/media/platform/s5p-tv/hdmi_drv.c: 912 line
+>>>> adapter =3D i2c_get_adapter(pdata->hdmiphy_bus);
+>>>> if (adapter =3D=3D NULL) {
+>>>> dev_err(dev, "hdmiphy adapter request failed\n");
+>>>> ret =3D -ENXIO;
+>>>> goto fail_vdev;
+>>>> }
+>>>> Since pdata->hdmiphy_bus is 3, why i2c_get_adapter failed?
 >>>
->>> Maybe there is some issue with the PL330 DMA controller clocks and the
->>> read values are all 0 because the clocks are disabled ?
+>>> Do you have I2C3 bus controller device added to the list of devices
+>>> registered in the init_machine() callback, i.e. &s3c_device_i2c3
+>>> entry in smdkv210_devices[] array ?
 >>>
->>> It seems arch/arm/mach-s5pv210/clock.c might be missing "apb_pclk" clock
->>> supply names, which I suspect may be required after commits:
->>>
->>> commit 7c71b8eb268ee38235f7e924d943ea9d90e59469
->>> Author: Inderpal Singh <inderpal.singh@linaro.org>
->>> Date:   Fri Sep 7 12:14:48 2012 +0530
->>>
->>>     DMA: PL330: Remove redundant runtime_suspend/resume functions
->>>
->>>     The driver's  runtime_suspend/resume functions just disable/enable
->>>     the clock which is already being managed at AMBA bus level
->>>     runtime_suspend/resume functions.
->>>
->>>     Hence, remove the driver's runtime_suspend/resume functions.
->>>
->>>     Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
->>>     Tested-by: Chander Kashyap <chander.kashyap@linaro.org>
->>>     Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
->>>
->>> commit faf6fbc6f2ca3b34bf464a8bb079a998e571957c
->>> Author: Inderpal Singh <inderpal.singh@linaro.org>
->>> Date:   Fri Sep 7 12:14:47 2012 +0530
->>>
->>>     DMA: PL330: Remove controller clock enable/disable
->>>
->>>     The controller clock is being enabled/disabled in AMBA bus
->>>     infrastructre in probe/remove functions. Hence, its not required
->>>     at driver level probe/remove.
->>>
->>>     Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
->>>     Tested-by: Chander Kashyap <chander.kashyap@linaro.org>
->>>     Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
->>>
->>> I have added people who made related changes at Cc, hopefully they
->>> can provide some help in debugging this.
->>>
+>>> You can refer to arch/arm/mach-exynos/mach-universal_c210.c board f=
+ile
+>>> for how a complete setup for the HDMI driver should look like. It's
+>>> for Exynos4210 SoCs but it should not be much different from what y=
+ou
+>>> need for S5PV210.
 >>
->> The mentioned patches just removed the redundant clock enable/disable
->> from the driver as clock is already being managed at amba bus level in
->> the same code path. As per my understanding the issue should come even
->> without these patches.
+>> To build the kernel with s3c_device_i2c3 S3C_DEV_I2C3 and
+>> S5PV210_SETUP_I2C3
+>> need to be selected in Kconfig, e.g.
+>>
+>> diff --git a/arch/arm/mach-s5pv210/Kconfig
+>> b/arch/arm/mach-s5pv210/Kconfig
+>> index 92ad72f..51ce100 100644
+>> --- a/arch/arm/mach-s5pv210/Kconfig
+>> +++ b/arch/arm/mach-s5pv210/Kconfig
+>> @@ -151,12 +151,14 @@ config MACH_SMDKV210
+>>          select S3C_DEV_HSMMC3
+>>          select S3C_DEV_I2C1
+>>          select S3C_DEV_I2C2
+>> +       select S3C_DEV_I2C3
+>>          select S3C_DEV_RTC
+>>          select S3C_DEV_USB_HSOTG
+>>          select S3C_DEV_WDT
+>>          select S5PV210_SETUP_FB_24BPP
+>>          select S5PV210_SETUP_I2C1
+>>          select S5PV210_SETUP_I2C2
+>> +       select S5PV210_SETUP_I2C3
+>>          select S5PV210_SETUP_IDE
+>>          select S5PV210_SETUP_KEYPAD
+>>          select S5PV210_SETUP_SDHCI
+> Sylwester, thank you very much for your suggestions! Now HDMI phy has
+> been detected after I add HDMI phy i2c bus in
+> arch/arm/mach-s5pv210/Kconfig:
+> config MACH_SMDKV210
+>          bool "SMDKV210"
+>          select CPU_S5PV210
+>          select S3C_DEV_FB
+>          select S3C_DEV_HSMMC
+>          select S3C_DEV_HSMMC1
+>          select S3C_DEV_HSMMC2
+>          select S3C_DEV_HSMMC3
+>          select S3C_DEV_I2C1
+>          select S3C_DEV_I2C2
+> +       select S5P_DEV_I2C_HDMIPHY
+>          select S3C_DEV_RTC
+>          select S3C_DEV_USB_HSOTG
+> and arch/arm/mach-s5pv210/mach-smdkv210.c:
+> static struct platform_device *smdkv210_devices[] __initdata =3D {
+>      &s3c_device_adc,
+>      &s3c_device_cfcon,
+>      &s3c_device_fb,
+>      &s3c_device_hsmmc0,
+>      &s3c_device_hsmmc1,
+>      &s3c_device_hsmmc2,
+>      &s3c_device_hsmmc3,
+>      &s3c_device_i2c0,
+>      &s3c_device_i2c1,
+>      &s3c_device_i2c2,
+> +    &s5p_device_i2c_hdmiphy,
+>      &s3c_device_rtc,
+>      &s3c_device_ts,
+>      &s3c_device_usb_hsotg,
+>      &s3c_device_wdt,
+>      &s5p_device_fimc0,
+>      &s5p_device_fimc1,
+>      &s5p_device_fimc2,
+>      &s5p_device_fimc_md,
+>      &s5p_device_jpeg,
+>      &s5p_device_mfc,
+>      &s5p_device_mfc_l,
+>      &s5p_device_mfc_r,
+>      &s5pv210_device_ac97,
+>      &s5pv210_device_iis0,
+>      &s5pv210_device_spdif,
+>      &samsung_asoc_idma,
+>      &samsung_device_keypad,
+>      &smdkv210_dm9000,
+> //    &smdkv210_lcd_lte480wv,
+>      &s5p_device_hdmi,
+>      &s5p_device_mixer,
+> };
+> Now kernel prints the following HDMI related:
+> m2m-testdev m2m-testdev.0: mem2mem-testdevDevice registered as /dev/v=
+ideo0
+> s5p-jpeg s5p-jpeg.0: encoder device registered as /dev/video1
+> s5p-jpeg s5p-jpeg.0: decoder device registered as /dev/video2
+> s5p-jpeg s5p-jpeg.0: Samsung S5P JPEG codec
+> s5p-mfc s5p-mfc: decoder registered as /dev/video3
+> s5p-mfc s5p-mfc: encoder registered as /dev/video4
+> s5p-hdmi s5pv210-hdmi: probe start
+> s5p-hdmi s5pv210-hdmi: HDMI resource init
+> s5p-hdmiphy 3-0038: probe successful
+> s5p-hdmi s5pv210-hdmi: probe successful
+> Samsung TV Mixer driver, (c) 2010-2011 Samsung Electronics Co., Ltd.
 >
-> But were the clocks managed directly by the pl330 driver same as those
-> managed at amba bus level ? The first patch as above removed chunk
+> s5p-mixer s5p-mixer: probe start
+> s5p-mixer s5p-mixer: resources acquired
+> s5p-mixer s5p-mixer: added output 'S5P HDMI connector' from module
+> 's5p-hdmi'
+> s5p-mixer s5p-mixer: module s5p-sdo provides no subdev!
+> s5p-mixer s5p-mixer: registered layer graph0 as /dev/video5
+> s5p-mixer s5p-mixer: registered layer graph1 as /dev/video6
+> s5p-mixer s5p-mixer: registered layer video0 as /dev/video7
+> s5p-mixer s5p-mixer: probe successful
 >
-> @@ -2887,24 +2884,17 @@ pl330_probe(struct amba_device *adev, const struct
-> amba_id *id)
->                 goto probe_err1;
->         }
+> How can I test the HDMI output whether it's OK? Which /dev/video is r=
+eal
+> HDMI output? I have used
+> http://git.infradead.org/users/kmpark/public-apps hdmi test program b=
+uf
+> failed:
+> root@linaro-developer:/opt# ./tvdemo /dev/video7 720 480 0 0
+> ERROR(main.c:80) : VIDIOC_S_FMT failed: Invalid argument
+> Aborted
+> root@linaro-developer:/opt#
+> Maybe I still miss some configuration in mach-smdkv210.c.
 >
-> -       pdmac->clk = clk_get(&adev->dev, "dma");
-> -       if (IS_ERR(pdmac->clk)) {
-> -               dev_err(&adev->dev, "Cannot get operation clock.\n");
-> -               ret = -EINVAL;
-> -               goto probe_err2;
-> -       }
-> -
 >
-> which suggest the driver was enabling directly "dma" clocks, defined at
-> S5PV210 platform level as:
->
->         {
->                 .name           = "dma",
->                 .devname        = "dma-pl330.0",
->                 .parent         = &clk_hclk_psys.clk,
->                 .enable         = s5pv210_clk_ip0_ctrl,
->                 .ctrlbit        = (1 << 3),
->         }, {
->                 .name           = "dma",
->                 .devname        = "dma-pl330.1",
->                 .parent         = &clk_hclk_psys.clk,
->                 .enable         = s5pv210_clk_ip0_ctrl,
->                 .ctrlbit        = (1 << 4),
->         }, {
->
-> And amba bus was getting only dummy clocks behind "apb_pclk" clock
-> conn_id.
->
-
-Ahh Yes, I had missed this point. So the changes you suggested needs
-to be done as confirmed by Lonsn.
-
-Thanks Lonsn for bringing this up :-)
-
-Regards,
-Inder
-
->> @Lonsn: Can you please test without these patches?
->
-> I suspect reverting only patch
-> DMA: PL330: Remove redundant runtime_suspend/resume functions
-> with PM_RUNTIME enabled might fix the issue.
->
-> --
->
-> Regards,
-> Sylwester
+The kernel print when run tvdemo:
+root@linaro-developer:/opt# ./tvdemo /dev/video7 720 480 0 0
+ERROR(main.c:80) : VIDIOC_S_FMT failed: Invalid argument
+Aborted
+root@linaro-developer:/opt# dmesg
+s5p-mixer s5p-mixer: mxr_video_open:762
+s5p-mixer s5p-mixer: resume - start
+s5p-mixer s5p-mixer: resume - finished
+s5p-hdmi s5pv210-hdmi: hdmi_g_mbus_fmt
+s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
+s5p-mixer s5p-mixer: src.size =3D (720, 480)
+s5p-mixer s5p-mixer: src.offset =3D (0, 0)
+s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
+s5p-mixer s5p-mixer: dst.size =3D (720, 480)
+s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
+s5p-mixer s5p-mixer: ratio =3D (0, 0)
+s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
+s5p-mixer s5p-mixer: src.size =3D (720, 480)
+s5p-mixer s5p-mixer: src.offset =3D (0, 0)
+s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
+s5p-mixer s5p-mixer: dst.size =3D (720, 480)
+s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
+s5p-mixer s5p-mixer: ratio =3D (65536, 65536)
+s5p-mixer s5p-mixer: mxr_s_fmt:322
+s5p-mixer s5p-mixer: not recognized fourcc: 34524742
+s5p-mixer s5p-mixer: mxr_video_release:842
+s5p-mixer s5p-mixer: suspend - start
+s5p-mixer s5p-mixer: suspend - finished
+root@linaro-developer:/opt#
