@@ -1,103 +1,87 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 2/4] USB: dwc3: Adjust runtime pm the dwc3 driver to
- allow runtime suspend
-Date: Wed, 27 Feb 2013 10:06:18 +0200
-Message-ID: <20130227080617.GD8016@arwen.pp.htv.fi>
-References: <1359373348-18320-1-git-send-email-gautam.vivek@samsung.com>
- <1359373348-18320-3-git-send-email-gautam.vivek@samsung.com>
- <20130128114554.GE28698@arwen.pp.htv.fi>
- <CAFp+6iFcZwu3=2u5ig_F14UKxTXwb2Czrv3JjCqR6QGLPHzFqg@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [RESEND PATCH v9 0/2] usb: phy: samsung: Introducing usb phy
+ driver for samsung SoCs
+Date: Wed, 27 Feb 2013 10:15:21 +0200
+Message-ID: <20130227081521.GG8016@arwen.pp.htv.fi>
+References: <1358499623-13901-1-git-send-email-p.paneri@samsung.com>
+Reply-To: balbi-l0cyMroinI0@public.gmane.org
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OROCMA9jn6tkzFBc"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iFcZwu3=2u5ig_F14UKxTXwb2Czrv3JjCqR6QGLPHzFqg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, kgene.kim@samsung.com, dianders@chromium.org, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com
+Content-Type: multipart/mixed; boundary="===============0005576832858029460=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1358499623-13901-1-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---OROCMA9jn6tkzFBc
+--===============0005576832858029460==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hcut4fGOf7Kh6EdG"
+Content-Disposition: inline
+
+--hcut4fGOf7Kh6EdG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-sorry for the delay
+On Fri, Jan 18, 2013 at 02:30:21PM +0530, Praveen Paneri wrote:
+> Changes from v8:
+> Resending this patch series after rebasing to the latest usb-next branch.
+> Rewording inline comments for better readability.
+> Removed IS_ENABLED(CONFIG_OF) as pdev->dev.of_node is enough to check for=
+ dt support.
+> Using of_match_ptr to add of_match_table to platform_driver structure.
+> Removed unnecessary variables.
 
-On Mon, Jan 28, 2013 at 07:06:56PM +0530, Vivek Gautam wrote:
-> Hi Felipe,
->=20
->=20
-> On Mon, Jan 28, 2013 at 5:15 PM, Felipe Balbi <balbi@ti.com> wrote:
-> > On Mon, Jan 28, 2013 at 05:12:26PM +0530, Vivek Gautam wrote:
-> >> The current code in the dwc3 probe effectively disables runtime pm
-> >> from ever working because it calls a get() that was never put() until
-> >> device removal.  Change the runtime pm code to match the standard
-> >> formula and allow runtime pm to function.
-> >>
-> >> Note that this doesn't enable full runtime pm on the DWC3 device in
-> >> that the port isn't put into a lower power mode when not used.
-> >> However it does allow users of dwc3 (like dwc3-exynos) to do some
-> >> amount of runtime power management.
-> >>
-> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> >> ---
-> >>  drivers/usb/dwc3/core.c |    4 +++-
-> >>  1 files changed, 3 insertions(+), 1 deletions(-)
-> >>
-> >> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> >> index 3a4004a..59c2494 100644
-> >> --- a/drivers/usb/dwc3/core.c
-> >> +++ b/drivers/usb/dwc3/core.c
-> >> @@ -453,6 +453,7 @@ static int dwc3_probe(struct platform_device *pdev)
-> >>       if (of_get_property(node, "tx-fifo-resize", NULL))
-> >>               dwc->needs_fifo_resize =3D true;
-> >>
-> >> +     pm_runtime_set_active(dev);
-> >
-> > this usage of pm_runtime_set_active() actually makes me a bit scared. At
-> > least OMAP starts with the device switched off, so this will probably
-> > break OMAP at least.
->=20
-> I am fine with dropping pm_runtime_set_active(), actually thought
-> to put device in active state so that as and when system finds it idle,
-> force into suspend state.
->=20
-> I fact should i drop  pm_runtime_set_active() calls from other places too
-> (xhci-plat, dwc3-exynos, and samsung-usb3 phy) and call get_sync() alongw=
-ith
-> enable() ?
-
-that's correct, make sure it works fine for you ;-)
+trying applying these but it doesn't apply unfortunately.
 
 --=20
 balbi
 
---OROCMA9jn6tkzFBc
+--hcut4fGOf7Kh6EdG
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRLb55AAoJEIaOsuA1yqREepoP/jCPKn/Xg63Ne1Rk7nfdEUUz
-7Z+t2PCdxCdqSQIL/mo0yydkSO4aBozmxoXqPKOpALa8xa008GnIFW0+Hbl5Wn6G
-G1o/E23GWFZEOuhhNzLmo5eNf8hIzCkWKjdvdcjPBLvtJ8vUN7LAYc8anF+HoF6k
-PPIn6NSnEUj1/j2jmC3RXYXwnGo0iNgjp8S32H3eu4QU4GFg7jakZyR5VxFkTQ7F
-u0XC8YAGleiPjqiEAkSXA57MJUj9XD0/bE5KYvXkTMdiGh9NTxc3uF5ke00FJ1qR
-mxYWyAz/pBy4K9xJGq8YMkZKK3p/5K8YjSgk0ETHbKx4fjQw5B/2eGpUATK9EmMx
-hn5fTruT7Z9sIsbZy0cqP2MY89wZwYf898u7Ibw8ZRwkCUw6Pwbx8rGMEiEPF18x
-51r34jLQ89aViG5kLAik49g2HkHx/HRxr6sxMSv8vTg4rQMQaX9vzjkgu3m3hRO8
-H+MkLNUcr0e/TVkvAPd9tWmMw1+5Jmt89kg4bfhwjy4EoZ84htT+EjHvE3RPIfWj
-yga/J4WtzFqL1m4InX4HepQGLS/IeVcycwbH96JUJj4PRZT2xGNNEdRCEYI75Gkj
-mtly4g1EWflqs5GwVcysA7/JYRYn1Pcb3qACxCUFN1SHDgPA2o+sNzNlRG05t56E
-/l+AwSiCyP883Mj592pc
-=EVen
+iQIcBAEBAgAGBQJRLcCZAAoJEIaOsuA1yqRERyUQAKM96JXcyc3HSo9Fctfsvl/V
+nPUm6BAmpb99XWdof9euQNobeGt0f5sgH1LhEr6NaQuLAvVjmPz12n+U8XjaYQkW
+mQfSbEh3BZ1DmP9D/x2f6gja6OWHHE/61x9LJ8JwmvkfhNUpTuUFaEQf++us5Ljr
+CVuQ5RQ7UIQWcVTvozbAk3/NO7mBlxUIZ4UGHYgcLYkKeglQ7x2JGObeLIGUWEto
+pPLc+30qXBfLBdigVG5ezmqWmKqQZq6JL8IxU63n6YqI/z5G+87fzqz4PFs9jj4y
+9S4JCfg+r4GnC930WqaHmibJKrPDdqjh65mJ+NU61D/Ar30xkeHYUavlUXYZgzwW
+kfdwj0OwZb9225dR9VAAtYwkdVKw1S+No/zeRHdlEZ3cSH9jjs0OGwRvgj0ffXs1
+OxUNwtQ5q5/rqAMQrhMFUlT2bCwwvV/67C/IYN8oFVwS0LmWlbf+CPRiPNoqhda+
+dfQAX0YYma5aY8HgE4z7IN2j2/sbPVKyzcfqvrJ+34PZ4YRbHVz56LOa3a1cJBXx
+pAktgRkOi3qmVUF5aMct4mY+J3wd5e2f6/rEHeNAq6y3+28f9Nnc3AOnN+ovWBMC
+w4c+F7yIGTpuoWqyJdC9drZjktwhUxzA+CTO3HAoFeTLxXDDrN+fBaohkh6w6bVO
+aROZhssoMIFDSnYFC2ot
+=5cnV
 -----END PGP SIGNATURE-----
 
---OROCMA9jn6tkzFBc--
+--hcut4fGOf7Kh6EdG--
+
+--===============0005576832858029460==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============0005576832858029460==--
