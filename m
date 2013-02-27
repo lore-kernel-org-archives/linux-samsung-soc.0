@@ -1,87 +1,43 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH 2/4] USB: dwc3: Adjust runtime pm the dwc3 driver to allow
- runtime suspend
-Date: Wed, 27 Feb 2013 14:23:27 +0530
-Message-ID: <CAFp+6iH0pDPV9bZ32m6sS1fCRF4E+Z0ocgwMtodji3RT=akGJA@mail.gmail.com>
-References: <1359373348-18320-1-git-send-email-gautam.vivek@samsung.com>
-	<1359373348-18320-3-git-send-email-gautam.vivek@samsung.com>
-	<20130128114554.GE28698@arwen.pp.htv.fi>
-	<CAFp+6iFcZwu3=2u5ig_F14UKxTXwb2Czrv3JjCqR6QGLPHzFqg@mail.gmail.com>
-	<20130227080617.GD8016@arwen.pp.htv.fi>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH V2 0/3] Add FIMD DT support for Exynos5 DT Machines
+Date: Wed, 27 Feb 2013 04:40:44 -0500
+Message-ID: <1361958047-21994-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f45.google.com ([209.85.214.45]:56411 "EHLO
-	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754297Ab3B0Ix3 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:28882 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754981Ab3B0JUP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Feb 2013 03:53:29 -0500
-In-Reply-To: <20130227080617.GD8016@arwen.pp.htv.fi>
+	Wed, 27 Feb 2013 04:20:15 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MIV00H5VGLMHRV0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Feb 2013 18:20:13 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, kgene.kim@samsung.com, dianders@chromium.org, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-Hi Felipe,
+This patch series adds support for FIMD DT for Exynos5 DT Machines
+Adds display timing node for smdk5250 board.
 
+changes since v1:
+        - modified compatible string for exynos5 fimd as "exynos5250-fimd"
 
-On Wed, Feb 27, 2013 at 1:36 PM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> sorry for the delay
->
+This series is rebased on branch
+http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=shortlog;h=refs/heads/for-next
 
-That's alright ;-)
+Leela Krishna Amudala (3):
+  ARM: dts: Add FIMD node to exynos5
+  ARM: dts: Add display timing node to exynos5250-smdk5250.dts
+  ARM: Exynos5: add FIMD AUXDATA entry for exynos5 DT
 
-> On Mon, Jan 28, 2013 at 07:06:56PM +0530, Vivek Gautam wrote:
->> Hi Felipe,
->>
->>
->> On Mon, Jan 28, 2013 at 5:15 PM, Felipe Balbi <balbi@ti.com> wrote:
->> > On Mon, Jan 28, 2013 at 05:12:26PM +0530, Vivek Gautam wrote:
->> >> The current code in the dwc3 probe effectively disables runtime pm
->> >> from ever working because it calls a get() that was never put() until
->> >> device removal.  Change the runtime pm code to match the standard
->> >> formula and allow runtime pm to function.
->> >>
->> >> Note that this doesn't enable full runtime pm on the DWC3 device in
->> >> that the port isn't put into a lower power mode when not used.
->> >> However it does allow users of dwc3 (like dwc3-exynos) to do some
->> >> amount of runtime power management.
->> >>
->> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> >> ---
->> >>  drivers/usb/dwc3/core.c |    4 +++-
->> >>  1 files changed, 3 insertions(+), 1 deletions(-)
->> >>
->> >> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
->> >> index 3a4004a..59c2494 100644
->> >> --- a/drivers/usb/dwc3/core.c
->> >> +++ b/drivers/usb/dwc3/core.c
->> >> @@ -453,6 +453,7 @@ static int dwc3_probe(struct platform_device *pdev)
->> >>       if (of_get_property(node, "tx-fifo-resize", NULL))
->> >>               dwc->needs_fifo_resize = true;
->> >>
->> >> +     pm_runtime_set_active(dev);
->> >
->> > this usage of pm_runtime_set_active() actually makes me a bit scared. At
->> > least OMAP starts with the device switched off, so this will probably
->> > break OMAP at least.
->>
->> I am fine with dropping pm_runtime_set_active(), actually thought
->> to put device in active state so that as and when system finds it idle,
->> force into suspend state.
->>
->> I fact should i drop  pm_runtime_set_active() calls from other places too
->> (xhci-plat, dwc3-exynos, and samsung-usb3 phy) and call get_sync() alongwith
->> enable() ?
->
-> that's correct, make sure it works fine for you ;-)
->
-Yeah sure.
-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts | 16 ++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi         |  7 +++++++
+ arch/arm/mach-exynos/include/mach/map.h   |  1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c    |  2 ++
+ 4 files changed, 26 insertions(+)
 
 -- 
-Thanks & Regards
-Vivek
+1.8.0
