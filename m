@@ -1,41 +1,210 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [Suggestion] ARM:S5PV210: version merging compiling issue for
- 'struct fimc_source_info'
-Date: Wed, 27 Feb 2013 09:14:05 +0800
-Message-ID: <512D5DDD.6060409@asianux.com>
-References: <511F50CF.90403@asianux.com> <CAH9JG2WS5q4SR8zk5=OC32PHLZ2+ZYva7csyshG7oANacqbCuA@mail.gmail.com> <512C5877.7090805@asianux.com> <512C855D.6090109@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH] drm/exynos: hdmi: use drm_display_mode to check the
+	supported modes
+Date: Wed, 27 Feb 2013 11:28:09 +0530
+Message-ID: <CAPdUM4NXoXW8D8qtJm5eXbbU72N-T+ZTMSNRbskH_A4UPDdGOQ@mail.gmail.com>
+References: <1361880975-14189-1-git-send-email-rahul.sharma@samsung.com>
+	<CAOw6vbLQwk2a77M3ZJ1uv9fx80yx+oP=2QZRhJNKD-xEOQUE6g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:16895 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756969Ab3B0BO0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Feb 2013 20:14:26 -0500
-In-Reply-To: <512C855D.6090109@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <CAOw6vbLQwk2a77M3ZJ1uv9fx80yx+oP=2QZRhJNKD-xEOQUE6g@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: linux-samsung-soc@vger.kernel.org, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel@lists.freedesktop.org, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Kyungmin Park <kmpark@infradead.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
-=E4=BA=8E 2013=E5=B9=B402=E6=9C=8826=E6=97=A5 17:50, Sylwester Nawrocki=
- =E5=86=99=E9=81=93:
-> No, the fix is not yet in linux-next. I has not been merged through t=
-he media
-> tree and it might take some time until it gets to Linus's tree now. Y=
-ou can use
-> one of following patches to fix this build break:
->=20
-> http://www.spinics.net/lists/linux-samsung-soc/msg16023.html
-> https://patchwork.kernel.org/patch/2143211
-> http://patchwork.linuxtv.org/patch/16892
+Thanks Sean,
 
-  thank you.
+On Tue, Feb 26, 2013 at 10:55 PM, Sean Paul <seanpaul@chromium.org> wrote:
+> On Tue, Feb 26, 2013 at 7:16 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>> Exynos hdmi driver is using drm_display_mode for setting timing values
+>> for a supported resolution. Conversion to fb_videomode and then comparing
+>> with the mixer/hdmi/phy limits is not required. Instead, drm_display_mode
+>> fields cane be directly compared.
+>>
+>> This patch is dependent on https://patchwork.kernel.org/patch/2176021/.
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> ---
+>> It is based on exynos-drm-next-todo branch at
+>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+>>
+>>  drivers/gpu/drm/exynos/exynos_drm_connector.c |  5 +----
+>>  drivers/gpu/drm/exynos/exynos_drm_hdmi.h      |  6 +++---
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c          | 15 +++++++--------
+>>  drivers/gpu/drm/exynos/exynos_mixer.c         | 13 +++++++------
+>>  4 files changed, 18 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+>> index 4c5b685..ab0f67a 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+>> @@ -168,15 +168,12 @@ static int exynos_drm_connector_mode_valid(struct drm_connector *connector,
+>>                                         to_exynos_connector(connector);
+>>         struct exynos_drm_manager *manager = exynos_connector->manager;
+>>         struct exynos_drm_display_ops *display_ops = manager->display_ops;
+>> -       struct fb_videomode timing;
+>>         int ret = MODE_BAD;
+>>
+>>         DRM_DEBUG_KMS("%s\n", __FILE__);
+>>
+>> -       convert_to_video_timing(&timing, mode);
+>
+> Is this function being used any longer? If not, you should remove it.
 
-  :-)
+Its will not be used after this patch. I can remove it.
+>
+>> -
+>>         if (display_ops && display_ops->check_timing)
+>> -               if (!display_ops->check_timing(manager->dev, (void *)&timing))
+>> +               if (!display_ops->check_timing(manager->dev, (void *)mode))
+>>                         ret = MODE_OK;
+>>
+>>         return ret;
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+>> index b7faa36..844addb 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+>> @@ -32,14 +32,14 @@ struct exynos_hdmi_ops {
+>>         bool (*is_connected)(void *ctx);
+>>         struct edid *(*get_edid)(void *ctx,
+>>                         struct drm_connector *connector);
+>> -       int (*check_timing)(void *ctx, struct fb_videomode *timing);
+>> +       int (*check_timing)(void *ctx, struct drm_display_mode *mode);
+>>         int (*power_on)(void *ctx, int mode);
+>>
+>>         /* manager */
+>>         void (*mode_fixup)(void *ctx, struct drm_connector *connector,
+>>                                 const struct drm_display_mode *mode,
+>>                                 struct drm_display_mode *adjusted_mode);
+>> -       void (*mode_set)(void *ctx, void *mode);
+>> +       void (*mode_set)(void *ctx, struct drm_display_mode *mode);
+>>         void (*get_max_resol)(void *ctx, unsigned int *width,
+>>                                 unsigned int *height);
+>>         void (*commit)(void *ctx);
+>> @@ -60,7 +60,7 @@ struct exynos_mixer_ops {
+>>         void (*win_disable)(void *ctx, int zpos);
+>>
+>>         /* display */
+>> -       int (*check_timing)(void *ctx, struct fb_videomode *timing);
+>> +       int (*check_timing)(void *ctx, struct drm_display_mode *mode);
+>>  };
+>>
+>>  void exynos_hdmi_drv_attach(struct exynos_drm_hdmi_context *ctx);
+>> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> index c38d275..d8d78a6 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> @@ -798,18 +798,17 @@ static int hdmi_find_phy_conf(struct hdmi_context *hdata, u32 pixel_clock)
+>>         return -EINVAL;
+>>  }
+>>
+>> -static int hdmi_check_timing(void *ctx, struct fb_videomode *timing)
+>> +static int hdmi_check_timing(void *ctx, struct drm_display_mode *mode)
+>>  {
+>>         struct hdmi_context *hdata = ctx;
+>>         int ret;
+>>
+>> -       DRM_DEBUG_KMS("[%d] %s\n", __LINE__, __func__);
+>> -
+>> -       DRM_DEBUG_KMS("[%d]x[%d] [%d]Hz [%x]\n", timing->xres,
+>> -                       timing->yres, timing->refresh,
+>> -                       timing->vmode);
+>> +       DRM_DEBUG_KMS("%s : xres=%d, yres=%d, refresh=%d, intl=%d clock=%d\n",
+>> +               __func__, mode->hdisplay, mode->vdisplay,
+>> +               mode->vrefresh, (mode->flags & DRM_MODE_FLAG_INTERLACE) ? true :
+>> +               false, mode->clock * 1000);
+>
+> I don't think passing a bool to intl=%d makes much sense. If you're
+> going to parse the flag, convert to a string "yes" : "no".
+> Alternatively, just post the flags directly.
 
---=20
-Chen Gang
+Yea, better. I will change that.
+how about "$Width x $Height@$framerate[I/P] at $pixclock" ?
 
-Asianux Corporation
+>
+>>
+>> -       ret = hdmi_find_phy_conf(hdata, timing->pixclock);
+>> +       ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
+>>         if (ret < 0)
+>>                 return ret;
+>>         return 0;
+>> @@ -1691,7 +1690,7 @@ static void hdmi_v14_mode_set(struct hdmi_context *hdata,
+>>         hdmi_set_reg(tg->tg_3d, 1, 0x0);
+>>  }
+>>
+>> -static void hdmi_mode_set(void *ctx, void *mode)
+>> +static void hdmi_mode_set(void *ctx, struct drm_display_mode *mode)
+>>  {
+>>         struct hdmi_context *hdata = ctx;
+>>         struct drm_display_mode *m = mode;
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> index b6339f9..55cfde5 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -811,17 +811,17 @@ static void mixer_win_disable(void *ctx, int win)
+>>         mixer_ctx->win_data[win].enabled = false;
+>>  }
+>>
+>> -int mixer_check_timing(void *ctx, struct fb_videomode *timing)
+>> +int mixer_check_timing(void *ctx, struct drm_display_mode *mode)
+>>  {
+>>         u32 w, h;
+>>
+>> -       w = timing->xres;
+>> -       h = timing->yres;
+>> +       w = mode->hdisplay;
+>> +       h = mode->vdisplay;
+>>
+>>         DRM_DEBUG_KMS("%s : xres=%d, yres=%d, refresh=%d, intl=%d\n",
+>> -               __func__, timing->xres, timing->yres,
+>> -               timing->refresh, (timing->vmode &
+>> -               FB_VMODE_INTERLACED) ? true : false);
+>> +               __func__, mode->hdisplay, mode->vdisplay,
+>> +               mode->vrefresh, (mode->flags &
+>> +               DRM_MODE_FLAG_INTERLACE) ? true : false);
+>
+> Same comment regarding flag parsing.
+>
+> Sean
+>
+>>
+>>         if ((w >= 464 && w <= 720 && h >= 261 && h <= 576) ||
+>>                 (w >= 1024 && w <= 1280 && h >= 576 && h <= 720) ||
+>> @@ -830,6 +830,7 @@ int mixer_check_timing(void *ctx, struct fb_videomode *timing)
+>>
+>>         return -EINVAL;
+>>  }
+>> +
+>>  static void mixer_wait_for_vblank(void *ctx)
+>>  {
+>>         struct mixer_context *mixer_ctx = ctx;
+>> --
+>> 1.8.0
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Regards,
+Rahul Sharma,
+email to: rahul.sharma@samsung.com
+Samsung India.
