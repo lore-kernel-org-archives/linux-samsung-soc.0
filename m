@@ -1,214 +1,79 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 5/5] ARM: S3C24XX: add handle_irq function
-Date: Wed, 27 Feb 2013 00:00:48 +0100
-Message-ID: <201302270000.48423.heiko@sntech.de>
-References: <201302262357.24544.heiko@sntech.de>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Keep USB related LDOs always active on Origen
+Date: Wed, 27 Feb 2013 09:45:34 +0900
+Message-ID: <CAH9JG2XpSCGArKGPwzZK_YPsP4VMQTS6u+DJFkuappc5TY4g-Q@mail.gmail.com>
+References: <51271673.9090003@linaro.org>
+	<1361515707-8571-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:35575 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752828Ab3BZXAw (ORCPT
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:35526 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933009Ab3B0Apf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Feb 2013 18:00:52 -0500
-In-Reply-To: <201302262357.24544.heiko@sntech.de>
+	Tue, 26 Feb 2013 19:45:35 -0500
+In-Reply-To: <1361515707-8571-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, john.stultz@linaro.org, patches@linaro.org
 
-This removes the dependency on static irq mappings for basic irq handling
-and makes the s3c24xx entry-macro.S obsolete.
+Hi,
 
-Also the interrupts of the second full interrupt controller on the s3c2416
-are really handled now, which was forgotten when adding them.
+On Fri, Feb 22, 2013 at 3:48 PM, Tushar Behera <tushar.behera@linaro.org> wrote:
+> LDO3 and LDO8 are used for powering both device and host phy controllers.
+> These regulators are not handled in USB host driver. Hence we get
+> unexpected behaviour when the regulators are disabled elsewhere.
+>
+> It would be best to keep these regulators always on.
+No, it's just workaround patch.
 
-The handling itself does the same as the previous assembler-code in that
-it tries to get the interrupt offset from the offset register first and
-if that produces wrong results manually searches for the interrupt bit
-in the pending register value. It also saves the historic comment which
-explains the reason behind this.
+It should be handled at USB drivers.
+we usually used this scheme enable USB power always. but it consumes
+lots of power.
+There's no need to enable usb power when there's no usb connection.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/Kconfig                                 |    1 +
- arch/arm/mach-s3c24xx/include/mach/entry-macro.S |   70 ----------------------
- arch/arm/mach-s3c24xx/irq.c                      |   58 ++++++++++++++++++
- 3 files changed, 59 insertions(+), 70 deletions(-)
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/entry-macro.S
+So I suggest to enable power when usb is connected only.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index aacea44..23e894e 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -777,6 +777,7 @@ config ARCH_S3C24XX
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
-+	select MULTI_IRQ_HANDLER
- 	select NEED_MACH_GPIO_H
- 	select NEED_MACH_IO_H
- 	help
-diff --git a/arch/arm/mach-s3c24xx/include/mach/entry-macro.S b/arch/arm/mach-s3c24xx/include/mach/entry-macro.S
-deleted file mode 100644
-index 6a21bee..0000000
---- a/arch/arm/mach-s3c24xx/include/mach/entry-macro.S
-+++ /dev/null
-@@ -1,70 +0,0 @@
--/*
-- * arch/arm/mach-s3c2410/include/mach/entry-macro.S
-- *
-- * Low-level IRQ helper macros for S3C2410-based platforms
-- *
-- * This file is licensed under  the terms of the GNU General Public
-- * License version 2. This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
--*/
--
--/* We have a problem that the INTOFFSET register does not always
-- * show one interrupt. Occasionally we get two interrupts through
-- * the prioritiser, and this causes the INTOFFSET register to show
-- * what looks like the logical-or of the two interrupt numbers.
-- *
-- * Thanks to Klaus, Shannon, et al for helping to debug this problem
--*/
--
--#define INTPND		(0x10)
--#define INTOFFSET	(0x14)
--
--#include <mach/hardware.h>
--#include <asm/irq.h>
--
--	.macro  get_irqnr_preamble, base, tmp
--	.endm
--
--	.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
--
--		mov	\base, #S3C24XX_VA_IRQ
--
--		@@ try the interrupt offset register, since it is there
--
--		ldr	\irqstat, [\base, #INTPND ]
--		teq	\irqstat, #0
--		beq	1002f
--		ldr	\irqnr, [\base, #INTOFFSET ]
--		mov	\tmp, #1
--		tst	\irqstat, \tmp, lsl \irqnr
--		bne	1001f
--
--		@@ the number specified is not a valid irq, so try
--		@@ and work it out for ourselves
--
--		mov	\irqnr, #0		@@ start here
--
--		@@ work out which irq (if any) we got
--
--		movs	\tmp, \irqstat, lsl#16
--		addeq	\irqnr, \irqnr, #16
--		moveq	\irqstat, \irqstat, lsr#16
--		tst	\irqstat, #0xff
--		addeq	\irqnr, \irqnr, #8
--		moveq	\irqstat, \irqstat, lsr#8
--		tst	\irqstat, #0xf
--		addeq	\irqnr, \irqnr, #4
--		moveq	\irqstat, \irqstat, lsr#4
--		tst	\irqstat, #0x3
--		addeq	\irqnr, \irqnr, #2
--		moveq	\irqstat, \irqstat, lsr#2
--		tst	\irqstat, #0x1
--		addeq	\irqnr, \irqnr, #1
--
--		@@ we have the value
--1001:
--		adds	\irqnr, \irqnr, #IRQ_EINT0
--1002:
--		@@ exit here, Z flag unset if IRQ
--
--	.endm
-diff --git a/arch/arm/mach-s3c24xx/irq.c b/arch/arm/mach-s3c24xx/irq.c
-index 8bc2931..5c9f8b7 100644
---- a/arch/arm/mach-s3c24xx/irq.c
-+++ b/arch/arm/mach-s3c24xx/irq.c
-@@ -26,6 +26,7 @@
- #include <linux/device.h>
- #include <linux/irqdomain.h>
- 
-+#include <asm/exception.h>
- #include <asm/mach/irq.h>
- 
- #include <mach/regs-irq.h>
-@@ -282,6 +283,56 @@ static void s3c_irq_demux(unsigned int irq, struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+static struct s3c_irq_intc *main_intc;
-+static struct s3c_irq_intc *main_intc2;
-+
-+static inline int s3c24xx_handle_intc(struct s3c_irq_intc *intc,
-+				      struct pt_regs *regs)
-+{
-+	int pnd;
-+	int offset;
-+	int irq;
-+
-+	pnd = __raw_readl(intc->reg_intpnd);
-+	if (!pnd)
-+		return false;
-+
-+	/* We have a problem that the INTOFFSET register does not always
-+	 * show one interrupt. Occasionally we get two interrupts through
-+	 * the prioritiser, and this causes the INTOFFSET register to show
-+	 * what looks like the logical-or of the two interrupt numbers.
-+	 *
-+	 * Thanks to Klaus, Shannon, et al for helping to debug this problem
-+	 */
-+	offset = __raw_readl(intc->reg_intpnd + 4);
-+
-+	/* Find the bit manually, when the offset is wrong.
-+	 * The pending register only ever contains the one bit of the next
-+	 * interrupt to handle.
-+	 */
-+	if (!(pnd & (1 << offset)))
-+		offset =  __ffs(pnd);
-+
-+	irq = irq_find_mapping(intc->domain, offset);
-+	handle_IRQ(irq, regs);
-+	return true;
-+}
-+
-+asmlinkage void __exception_irq_entry s3c24xx_handle_irq(struct pt_regs *regs)
-+{
-+	do {
-+		if (likely(main_intc))
-+			if (s3c24xx_handle_intc(main_intc, regs))
-+				continue;
-+
-+		if (main_intc2)
-+			if (s3c24xx_handle_intc(main_intc2, regs))
-+				continue;
-+
-+		break;
-+	} while (1);
-+}
-+
- #ifdef CONFIG_FIQ
- /**
-  * s3c24xx_set_fiq - set the FIQ routing
-@@ -502,6 +553,13 @@ static struct s3c_irq_intc *s3c24xx_init_intc(struct device_node *np,
- 		goto err;
- 	}
- 
-+	if (address == 0x4a000000)
-+		main_intc = intc;
-+	else if (address == 0x4a000040)
-+		main_intc2 = intc;
-+
-+	set_handle_irq(s3c24xx_handle_irq);
-+
- 	return intc;
- 
- err:
--- 
-1.7.2.3
+In our case, micro IC detects the usb connection and enable usb power
+at that time.
+
+Thank you,
+Kyungmin Park
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+>
+> Based on v3.8.
+>
+>  arch/arm/mach-exynos/mach-origen.c |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+> index 5e34b9c..7351063 100644
+> --- a/arch/arm/mach-exynos/mach-origen.c
+> +++ b/arch/arm/mach-exynos/mach-origen.c
+> @@ -169,6 +169,7 @@ static struct regulator_init_data __initdata max8997_ldo3_data = {
+>                 .min_uV         = 1100000,
+>                 .max_uV         = 1100000,
+>                 .apply_uV       = 1,
+> +               .always_on      = 1,
+>                 .valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>                 .state_mem      = {
+>                         .disabled       = 1,
+> @@ -227,6 +228,7 @@ static struct regulator_init_data __initdata max8997_ldo8_data = {
+>                 .min_uV         = 3300000,
+>                 .max_uV         = 3300000,
+>                 .apply_uV       = 1,
+> +               .always_on      = 1,
+>                 .valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>                 .state_mem      = {
+>                         .disabled       = 1,
+> --
+> 1.7.4.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
