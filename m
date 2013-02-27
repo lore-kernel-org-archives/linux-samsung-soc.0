@@ -1,55 +1,41 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 0/2] Add automatic bus number support for i2c busses
- with device tree
-Date: Tue, 26 Feb 2013 17:01:51 -0800
-Message-ID: <CAD=FV=WS5Vj74d-FNXCVpNsx6Nf-8+RC-WO29Z1XNmkEOYLxfQ@mail.gmail.com>
-References: <1360630085-26874-1-git-send-email-dianders@chromium.org>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: [Suggestion] ARM:S5PV210: version merging compiling issue for
+ 'struct fimc_source_info'
+Date: Wed, 27 Feb 2013 09:14:05 +0800
+Message-ID: <512D5DDD.6060409@asianux.com>
+References: <511F50CF.90403@asianux.com> <CAH9JG2WS5q4SR8zk5=OC32PHLZ2+ZYva7csyshG7oANacqbCuA@mail.gmail.com> <512C5877.7090805@asianux.com> <512C855D.6090109@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1360630085-26874-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Doug Anderson <dianders@chromium.org>, Karol Lewandowski <k.lewandowsk@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@marvell.com>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:16895 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756969Ab3B0BO0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Feb 2013 20:14:26 -0500
+In-Reply-To: <512C855D.6090109@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kyungmin Park <kmpark@infradead.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
-Wolfram,
+=E4=BA=8E 2013=E5=B9=B402=E6=9C=8826=E6=97=A5 17:50, Sylwester Nawrocki=
+ =E5=86=99=E9=81=93:
+> No, the fix is not yet in linux-next. I has not been merged through t=
+he media
+> tree and it might take some time until it gets to Linus's tree now. Y=
+ou can use
+> one of following patches to fix this build break:
+>=20
+> http://www.spinics.net/lists/linux-samsung-soc/msg16023.html
+> https://patchwork.kernel.org/patch/2143211
+> http://patchwork.linuxtv.org/patch/16892
 
-On Mon, Feb 11, 2013 at 4:48 PM, Doug Anderson <dianders@chromium.org> wrote:
-> This was suggested by Mark Brown in response to a patch for adding
-> this functionality only for the s3c2410 bus:
->   https://lkml.org/lkml/2012/11/20/681
->
-> I have also modified the i2c-pxa driver to use this new functionality.
-> The i2c-pxa driver changes have only been compile-tested and are just
-> for cleanup purposes.
->
-> Changes in v3:
-> - Addressed Wolfram's feedback; rebased atop idr-cleanup series.
->
-> Changes in v2:
-> - No longer tweak pdev->id as per Sylwester Nawrocki.
-> - No longer add the dev ID to the adap.name.  Other drivers don't
->   include the device ID here and it doesn't make sense with
->   dynamically (or automatically) allocated IDs.
-> - Use dev_name(&dev->dev) to register for the IRQ; this matches what
->   the i2c-s3c2410.c does and handles dynamically allocated IDs.
-> - This change was only compile-tested (corgi_defconfig), since I don't
->   have access to a board that uses this driver.
->
-> Doug Anderson (2):
->   i2c-core: dt: Pick i2c bus number from i2c alias if present
->   i2c: pxa: Use i2c-core to get bus number now
->
->  drivers/i2c/busses/i2c-pxa.c | 20 ++++++++--------
->  drivers/i2c/i2c-core.c       | 54 ++++++++++++++++++++++++++++++++------------
->  2 files changed, 49 insertions(+), 25 deletions(-)
+  thank you.
 
-Is there anything else needed for this patch series?  It's been
-hanging around for quite a while and it would be nice to see it land.
-If you're waiting for additional acks or reviews I'll ask around and
-see if I can get them...
+  :-)
 
-Thanks!  :)
+--=20
+Chen Gang
 
--Doug
+Asianux Corporation
