@@ -1,67 +1,87 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH 3/3] ARM: Exynos5: add FIMD AUXDATA entry for exynos5 DT
-Date: Wed, 27 Feb 2013 14:17:11 +0530
-Message-ID: <CAGm_ybisARCE0xVZ-cpo4Y58hO5zSMkzZsy_fv4-VpRv0ivGOw@mail.gmail.com>
-References: <1361877940-8559-1-git-send-email-l.krishna@samsung.com>
-	<1361877940-8559-4-git-send-email-l.krishna@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH 2/4] USB: dwc3: Adjust runtime pm the dwc3 driver to allow
+ runtime suspend
+Date: Wed, 27 Feb 2013 14:23:27 +0530
+Message-ID: <CAFp+6iH0pDPV9bZ32m6sS1fCRF4E+Z0ocgwMtodji3RT=akGJA@mail.gmail.com>
+References: <1359373348-18320-1-git-send-email-gautam.vivek@samsung.com>
+	<1359373348-18320-3-git-send-email-gautam.vivek@samsung.com>
+	<20130128114554.GE28698@arwen.pp.htv.fi>
+	<CAFp+6iFcZwu3=2u5ig_F14UKxTXwb2Czrv3JjCqR6QGLPHzFqg@mail.gmail.com>
+	<20130227080617.GD8016@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:64357 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755697Ab3B0IrO (ORCPT
+Received: from mail-bk0-f45.google.com ([209.85.214.45]:56411 "EHLO
+	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754297Ab3B0Ix3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Feb 2013 03:47:14 -0500
-Received: by mail-we0-f173.google.com with SMTP id r5so237759wey.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Feb 2013 00:47:12 -0800 (PST)
-In-Reply-To: <1361877940-8559-4-git-send-email-l.krishna@samsung.com>
+	Wed, 27 Feb 2013 03:53:29 -0500
+In-Reply-To: <20130227080617.GD8016@arwen.pp.htv.fi>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, sunil joshi <joshi@samsung.com>
+To: balbi@ti.com
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, kgene.kim@samsung.com, dianders@chromium.org, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com
 
-Hi Leela,
+Hi Felipe,
 
-On Tue, Feb 26, 2013 at 4:55 PM, Leela Krishna Amudala
-<l.krishna@samsung.com> wrote:
-> Adds the FIMD AUXDATA entry for Exynos5
+
+On Wed, Feb 27, 2013 at 1:36 PM, Felipe Balbi <balbi@ti.com> wrote:
+> Hi,
 >
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  arch/arm/mach-exynos/include/mach/map.h | 1 +
->  arch/arm/mach-exynos/mach-exynos5-dt.c  | 2 ++
->  2 files changed, 3 insertions(+)
+> sorry for the delay
 >
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index 1df6abb..5e3f789 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -178,6 +178,7 @@
->  #define EXYNOS4_PA_MIPI_CSIS1          0x11890000
+
+That's alright ;-)
+
+> On Mon, Jan 28, 2013 at 07:06:56PM +0530, Vivek Gautam wrote:
+>> Hi Felipe,
+>>
+>>
+>> On Mon, Jan 28, 2013 at 5:15 PM, Felipe Balbi <balbi@ti.com> wrote:
+>> > On Mon, Jan 28, 2013 at 05:12:26PM +0530, Vivek Gautam wrote:
+>> >> The current code in the dwc3 probe effectively disables runtime pm
+>> >> from ever working because it calls a get() that was never put() until
+>> >> device removal.  Change the runtime pm code to match the standard
+>> >> formula and allow runtime pm to function.
+>> >>
+>> >> Note that this doesn't enable full runtime pm on the DWC3 device in
+>> >> that the port isn't put into a lower power mode when not used.
+>> >> However it does allow users of dwc3 (like dwc3-exynos) to do some
+>> >> amount of runtime power management.
+>> >>
+>> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> >> ---
+>> >>  drivers/usb/dwc3/core.c |    4 +++-
+>> >>  1 files changed, 3 insertions(+), 1 deletions(-)
+>> >>
+>> >> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+>> >> index 3a4004a..59c2494 100644
+>> >> --- a/drivers/usb/dwc3/core.c
+>> >> +++ b/drivers/usb/dwc3/core.c
+>> >> @@ -453,6 +453,7 @@ static int dwc3_probe(struct platform_device *pdev)
+>> >>       if (of_get_property(node, "tx-fifo-resize", NULL))
+>> >>               dwc->needs_fifo_resize = true;
+>> >>
+>> >> +     pm_runtime_set_active(dev);
+>> >
+>> > this usage of pm_runtime_set_active() actually makes me a bit scared. At
+>> > least OMAP starts with the device switched off, so this will probably
+>> > break OMAP at least.
+>>
+>> I am fine with dropping pm_runtime_set_active(), actually thought
+>> to put device in active state so that as and when system finds it idle,
+>> force into suspend state.
+>>
+>> I fact should i drop  pm_runtime_set_active() calls from other places too
+>> (xhci-plat, dwc3-exynos, and samsung-usb3 phy) and call get_sync() alongwith
+>> enable() ?
 >
->  #define EXYNOS4_PA_FIMD0               0x11C00000
-> +#define EXYNOS5_PA_FIMD1               0x14400000
+> that's correct, make sure it works fine for you ;-)
 >
->  #define EXYNOS4_PA_HSMMC(x)            (0x12510000 + ((x) * 0x10000))
->  #define EXYNOS4_PA_DWMCI               0x12550000
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index e99d3d8..14b3ec1 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -104,6 +104,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->         OF_DEV_AUXDATA("samsung,mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
->         OF_DEV_AUXDATA("samsung,exynos5250-tmu", 0x10060000,
->                                 "exynos-tmu", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos5-fimd", EXYNOS5_PA_FIMD1,
-> +                               "exynos5-fb.1", NULL),
- please refer to the discussion at https://patchwork.kernel.org/patch/2144861/
->         {},
->  };
->
-> --
-> 1.8.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yeah sure.
+
+
+-- 
+Thanks & Regards
+Vivek
