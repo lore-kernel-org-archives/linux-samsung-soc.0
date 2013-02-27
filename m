@@ -1,84 +1,63 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH 1/3] ARM: dts: Add FIMD node to exynos5
-Date: Wed, 27 Feb 2013 15:18:10 +0530
-Message-ID: <CAGm_ybig1BdOH40p6mpHZ-TgKXmc=H57a_D_FMCVx=qCSb=QSg@mail.gmail.com>
-References: <1361877940-8559-1-git-send-email-l.krishna@samsung.com>
-	<1361877940-8559-2-git-send-email-l.krishna@samsung.com>
-	<CAGm_ybjsuTr-M60B025kjwfbaeRXMkBMqmmLKrfMLRqjpD_2zQ@mail.gmail.com>
-	<CAL1wa8fuP8Gn2rufCo_85NzGbsWdO3mmNEqSwgvC694-_YTzWA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH v3] arm: plat-samsung: check processor type before cache restoration in resume
+Date: Wed, 27 Feb 2013 16:06:03 +0530
+Message-ID: <1361961363-28412-1-git-send-email-inderpal.singh@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:48878 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751410Ab3B0JsL (ORCPT
+Received: from mail-da0-f44.google.com ([209.85.210.44]:57784 "EHLO
+	mail-da0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751937Ab3B0KgX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Feb 2013 04:48:11 -0500
-Received: by mail-wi0-f175.google.com with SMTP id l13so5978329wie.14
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Feb 2013 01:48:10 -0800 (PST)
-In-Reply-To: <CAL1wa8fuP8Gn2rufCo_85NzGbsWdO3mmNEqSwgvC694-_YTzWA@mail.gmail.com>
+	Wed, 27 Feb 2013 05:36:23 -0500
+Received: by mail-da0-f44.google.com with SMTP id z20so237478dae.31
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Feb 2013 02:36:22 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, sunil joshi <joshi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, patches@linaro.org
 
-Hi Leela,
+Only cortex-a9 based samsung platforms have l2x0 cache controller. Hence check
+the same before restoring the cache in resume.
 
-On Wed, Feb 27, 2013 at 2:56 PM, Leela Krishna Amudala
-<l.krishna@samsung.com> wrote:
-> Hello Vikas,
->
-> On Wed, Feb 27, 2013 at 2:15 PM, Vikas Sajjan <sajjan.linux@gmail.com> wrote:
->>
->> Hi Leela,
->>
->> On Tue, Feb 26, 2013 at 4:55 PM, Leela Krishna Amudala
->> <l.krishna@samsung.com> wrote:
->> > This adds common FIMD device node for all Exynos5 SoCs.
->> >
->> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> > ---
->> >  arch/arm/boot/dts/exynos5250.dtsi | 7 +++++++
->> >  1 file changed, 7 insertions(+)
->> >
->> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->> > b/arch/arm/boot/dts/exynos5250.dtsi
->> > index 3acf594..0ee4706 100644
->> > --- a/arch/arm/boot/dts/exynos5250.dtsi
->> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> > @@ -583,4 +583,11 @@
->> >                 reg = <0x14450000 0x10000>;
->> >                 interrupts = <0 94 0>;
->> >         };
->> > +
->> > +       fimd {
->> > +               compatible = "samsung,exynos5-fimd";
->> I think we can modify this as "samsung,exynos5250-fimd", please refer
->> to the discussion at https://patchwork.kernel.org/patch/2144861/
->
-> Then in that case this compatible string has to be modify in driver also.
+This is needed for single kernel image.
 
-yea, right. Will be posting the changes soon.
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+changes in v2:
+        - check processor midr instead of checking all soc ids as
+        suggested by Kukjin
 
->
-> Best wishes,
-> Leela Krishna Amudala.
->
->> > +               interrupt-parent = <&combiner>;
->> > +               reg = <0x14400000 0x40000>;
->> > +               interrupts = <18 5>, <18 4>, <18 6>;
->> > +       };
->> >  };
->> > --
->> > 1.8.0
->> >
->> > --
->> > To unsubscribe from this list: send the line "unsubscribe
->> > linux-samsung-soc" in
->> > the body of a message to majordomo@vger.kernel.org
->> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> --
->> To unsubscribe from this list: send the line "unsubscribe
->> linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+changes in v3:
+	- simplify by reading midr in assembly as per Russell
+
+ arch/arm/plat-samsung/s5p-sleep.S |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-samsung/s5p-sleep.S
+index bdf6dad..6e15993 100644
+--- a/arch/arm/plat-samsung/s5p-sleep.S
++++ b/arch/arm/plat-samsung/s5p-sleep.S
+@@ -25,6 +25,9 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/hardware/cache-l2x0.h>
+ 
++#define CPU_MASK	0xff0ffff0
++#define CPU_CORTEX_A9	0x410fc090
++
+ /*
+  *	 The following code is located into the .data section. This is to
+  *	 allow l2x0_regs_phys to be accessed with a relative load while we
+@@ -51,6 +54,12 @@
+ 
+ ENTRY(s3c_cpu_resume)
+ #ifdef CONFIG_CACHE_L2X0
++	mrc     p15, 0, r0, c0, c0, 0
++	ldr	r1, =CPU_MASK
++	and	r0, r0, r1
++	ldr	r1, =CPU_CORTEX_A9
++	cmp	r0, r1
++	bne	resume_l2on
+ 	adr	r0, l2x0_regs_phys
+ 	ldr	r0, [r0]
+ 	ldr	r1, [r0, #L2X0_R_PHY_BASE]
+-- 
+1.7.9.5
