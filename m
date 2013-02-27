@@ -1,63 +1,70 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH v3] arm: plat-samsung: check processor type before cache restoration in resume
-Date: Wed, 27 Feb 2013 16:06:03 +0530
-Message-ID: <1361961363-28412-1-git-send-email-inderpal.singh@linaro.org>
+From: Felipe Balbi <balbi@ti.com>
+Subject: [PATCH] usb: phy: samsung: let it be built as a module
+Date: Wed, 27 Feb 2013 12:48:53 +0200
+Message-ID: <1361962133-21296-1-git-send-email-balbi@ti.com>
+References: <CAFp+6iEfVSbyGVNhDFc2wW7w=ZMGwVpcc28GAGOgHffCWQRLMQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f44.google.com ([209.85.210.44]:57784 "EHLO
-	mail-da0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751937Ab3B0KgX (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:52320 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756581Ab3B0KtE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Feb 2013 05:36:23 -0500
-Received: by mail-da0-f44.google.com with SMTP id z20so237478dae.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Feb 2013 02:36:22 -0800 (PST)
+	Wed, 27 Feb 2013 05:49:04 -0500
+In-Reply-To: <CAFp+6iEfVSbyGVNhDFc2wW7w=ZMGwVpcc28GAGOgHffCWQRLMQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, patches@linaro.org
+To: Linux USB Mailing List <linux-usb@vger.kernel.org>
+Cc: gautamvivek1987@gmail.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 
-Only cortex-a9 based samsung platforms have l2x0 cache controller. Hence check
-the same before restoring the cache in resume.
+There's no reason not to allow samsung PHY
+drivers be built as modules. This patch changes
+Kconfig to allow that.
 
-This is needed for single kernel image.
-
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+Signed-off-by: Felipe Balbi <balbi@ti.com>
 ---
-changes in v2:
-        - check processor midr instead of checking all soc ids as
-        suggested by Kukjin
 
-changes in v3:
-	- simplify by reading midr in assembly as per Russell
+Hi,
 
- arch/arm/plat-samsung/s5p-sleep.S |    9 +++++++++
- 1 file changed, 9 insertions(+)
+I will take your patches but I'm planning to add this on top
+as there is no reason not to allow these drivers being built
+as modules.
 
-diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-samsung/s5p-sleep.S
-index bdf6dad..6e15993 100644
---- a/arch/arm/plat-samsung/s5p-sleep.S
-+++ b/arch/arm/plat-samsung/s5p-sleep.S
-@@ -25,6 +25,9 @@
- #include <asm/asm-offsets.h>
- #include <asm/hardware/cache-l2x0.h>
+cheers
+
+ drivers/usb/phy/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
+index 723d7b1..4f696d0 100644
+--- a/drivers/usb/phy/Kconfig
++++ b/drivers/usb/phy/Kconfig
+@@ -67,7 +67,7 @@ config USB_RCAR_PHY
+ 	  module will be called rcar-phy.
  
-+#define CPU_MASK	0xff0ffff0
-+#define CPU_CORTEX_A9	0x410fc090
-+
- /*
-  *	 The following code is located into the .data section. This is to
-  *	 allow l2x0_regs_phys to be accessed with a relative load while we
-@@ -51,6 +54,12 @@
+ config SAMSUNG_USB2PHY
+-	bool "Samsung USB 2.0 PHY controller Driver"
++	tristate "Samsung USB 2.0 PHY controller Driver"
+ 	select SAMSUNG_USBPHY
+ 	select USB_OTG_UTILS
+ 	help
+@@ -75,7 +75,7 @@ config SAMSUNG_USB2PHY
+ 	  driver for Samsung SoCs.
  
- ENTRY(s3c_cpu_resume)
- #ifdef CONFIG_CACHE_L2X0
-+	mrc     p15, 0, r0, c0, c0, 0
-+	ldr	r1, =CPU_MASK
-+	and	r0, r0, r1
-+	ldr	r1, =CPU_CORTEX_A9
-+	cmp	r0, r1
-+	bne	resume_l2on
- 	adr	r0, l2x0_regs_phys
- 	ldr	r0, [r0]
- 	ldr	r1, [r0, #L2X0_R_PHY_BASE]
+ config SAMSUNG_USB3PHY
+-	bool "Samsung USB 3.0 PHY controller Driver"
++	tristate "Samsung USB 3.0 PHY controller Driver"
+ 	select SAMSUNG_USBPHY
+ 	select USB_OTG_UTILS
+ 	help
+@@ -83,7 +83,7 @@ config SAMSUNG_USB3PHY
+ 	  for samsung SoCs.
+ 
+ config SAMSUNG_USBPHY
+-	bool "Samsung USB PHY Driver"
++	tristate "Samsung USB PHY Driver"
+ 	help
+ 	  Enable this to support Samsung USB phy helper driver for Samsung SoCs.
+ 	  This driver provides common interface to interact, for Samsung USB 2.0 PHY
 -- 
-1.7.9.5
+1.8.1.rc1.5.g7e0651a
