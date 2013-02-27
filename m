@@ -1,87 +1,44 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
 Subject: Re: [RESEND PATCH v9 0/2] usb: phy: samsung: Introducing usb phy
  driver for samsung SoCs
-Date: Wed, 27 Feb 2013 10:15:21 +0200
-Message-ID: <20130227081521.GG8016@arwen.pp.htv.fi>
+Date: Wed, 27 Feb 2013 14:00:25 +0530
+Message-ID: <CAFp+6iGx1z9BcE3nLTVvOMG6VWVuYhDuKm5wu3DtbL8M1pfUtg@mail.gmail.com>
 References: <1358499623-13901-1-git-send-email-p.paneri@samsung.com>
-Reply-To: balbi-l0cyMroinI0@public.gmane.org
+	<20130227081521.GG8016@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0005576832858029460=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1358499623-13901-1-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f51.google.com ([209.85.214.51]:60526 "EHLO
+	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753735Ab3B0Ia0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Feb 2013 03:30:26 -0500
+In-Reply-To: <20130227081521.GG8016@arwen.pp.htv.fi>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: balbi@ti.com
+Cc: Praveen Paneri <p.paneri@samsung.com>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de, t.figa@samsung.com, gautam.vivek@samsung.com
 
---===============0005576832858029460==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hcut4fGOf7Kh6EdG"
-Content-Disposition: inline
+Hi Balbi,
 
---hcut4fGOf7Kh6EdG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Feb 27, 2013 at 1:45 PM, Felipe Balbi <balbi@ti.com> wrote:
+> Hi,
+>
+> On Fri, Jan 18, 2013 at 02:30:21PM +0530, Praveen Paneri wrote:
+>> Changes from v8:
+>> Resending this patch series after rebasing to the latest usb-next branch.
+>> Rewording inline comments for better readability.
+>> Removed IS_ENABLED(CONFIG_OF) as pdev->dev.of_node is enough to check for dt support.
+>> Using of_match_ptr to add of_match_table to platform_driver structure.
+>> Removed unnecessary variables.
+>
+> trying applying these but it doesn't apply unfortunately.
+>
 
-On Fri, Jan 18, 2013 at 02:30:21PM +0530, Praveen Paneri wrote:
-> Changes from v8:
-> Resending this patch series after rebasing to the latest usb-next branch.
-> Rewording inline comments for better readability.
-> Removed IS_ENABLED(CONFIG_OF) as pdev->dev.of_node is enough to check for=
- dt support.
-> Using of_match_ptr to add of_match_table to platform_driver structure.
-> Removed unnecessary variables.
+Already present in 3.8.0 ? ;-)
 
-trying applying these but it doesn't apply unfortunately.
 
---=20
-balbi
-
---hcut4fGOf7Kh6EdG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRLcCZAAoJEIaOsuA1yqRERyUQAKM96JXcyc3HSo9Fctfsvl/V
-nPUm6BAmpb99XWdof9euQNobeGt0f5sgH1LhEr6NaQuLAvVjmPz12n+U8XjaYQkW
-mQfSbEh3BZ1DmP9D/x2f6gja6OWHHE/61x9LJ8JwmvkfhNUpTuUFaEQf++us5Ljr
-CVuQ5RQ7UIQWcVTvozbAk3/NO7mBlxUIZ4UGHYgcLYkKeglQ7x2JGObeLIGUWEto
-pPLc+30qXBfLBdigVG5ezmqWmKqQZq6JL8IxU63n6YqI/z5G+87fzqz4PFs9jj4y
-9S4JCfg+r4GnC930WqaHmibJKrPDdqjh65mJ+NU61D/Ar30xkeHYUavlUXYZgzwW
-kfdwj0OwZb9225dR9VAAtYwkdVKw1S+No/zeRHdlEZ3cSH9jjs0OGwRvgj0ffXs1
-OxUNwtQ5q5/rqAMQrhMFUlT2bCwwvV/67C/IYN8oFVwS0LmWlbf+CPRiPNoqhda+
-dfQAX0YYma5aY8HgE4z7IN2j2/sbPVKyzcfqvrJ+34PZ4YRbHVz56LOa3a1cJBXx
-pAktgRkOi3qmVUF5aMct4mY+J3wd5e2f6/rEHeNAq6y3+28f9Nnc3AOnN+ovWBMC
-w4c+F7yIGTpuoWqyJdC9drZjktwhUxzA+CTO3HAoFeTLxXDDrN+fBaohkh6w6bVO
-aROZhssoMIFDSnYFC2ot
-=5cnV
------END PGP SIGNATURE-----
-
---hcut4fGOf7Kh6EdG--
-
---===============0005576832858029460==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============0005576832858029460==--
+-- 
+Thanks & Regards
+Vivek
