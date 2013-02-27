@@ -1,509 +1,143 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v6 2/2] usb: phy: samsung: Add PHY support for USB 3.0
- controller
-Date: Wed, 27 Feb 2013 20:13:49 +0530
-Message-ID: <1361976229-16024-3-git-send-email-gautam.vivek@samsung.com>
-References: <1361976229-16024-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55453 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759935Ab3B0OqR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Feb 2013 09:46:17 -0500
-In-reply-to: <1361976229-16024-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lonsn <lonsn2005@gmail.com>
+Subject: Re: SMDKV210 support issue in kernel 3.8 (dma-pl330 and HDMI failed)
+Date: Wed, 27 Feb 2013 23:13:46 +0800
+Message-ID: <512E22AA.8020006@gmail.com>
+References: <51275DF7.4010600@gmail.com> <512CB1BE.1070401@gmail.com> <512D160D.1050706@gmail.com> <512D1BFB.4000700@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <512D1BFB.4000700@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, dianders@chromium.org, p.paneri@samsung.com
 
-Adding PHY driver support for USB 3.0 controller for Samsung's
-SoCs.
+> On 02/26/2013 09:07 PM, Sylwester Nawrocki wrote:
+>> Hi Lonsn,
+>>
+>> On 02/26/2013 01:59 PM, Lonsn wrote:
+>>> Now I checked HDMI failed at:
+>>> drivers/media/platform/s5p-tv/hdmi_drv.c: 912 line
+>>> adapter = i2c_get_adapter(pdata->hdmiphy_bus);
+>>> if (adapter == NULL) {
+>>> dev_err(dev, "hdmiphy adapter request failed\n");
+>>> ret = -ENXIO;
+>>> goto fail_vdev;
+>>> }
+>>> Since pdata->hdmiphy_bus is 3, why i2c_get_adapter failed?
+>>
+>> Do you have I2C3 bus controller device added to the list of devices
+>> registered in the init_machine() callback, i.e. &s3c_device_i2c3
+>> entry in smdkv210_devices[] array ?
+>>
+>> You can refer to arch/arm/mach-exynos/mach-universal_c210.c board file
+>> for how a complete setup for the HDMI driver should look like. It's
+>> for Exynos4210 SoCs but it should not be much different from what you
+>> need for S5PV210.
+>
+> To build the kernel with s3c_device_i2c3 S3C_DEV_I2C3 and
+> S5PV210_SETUP_I2C3
+> need to be selected in Kconfig, e.g.
+>
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index 92ad72f..51ce100 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -151,12 +151,14 @@ config MACH_SMDKV210
+>          select S3C_DEV_HSMMC3
+>          select S3C_DEV_I2C1
+>          select S3C_DEV_I2C2
+> +       select S3C_DEV_I2C3
+>          select S3C_DEV_RTC
+>          select S3C_DEV_USB_HSOTG
+>          select S3C_DEV_WDT
+>          select S5PV210_SETUP_FB_24BPP
+>          select S5PV210_SETUP_I2C1
+>          select S5PV210_SETUP_I2C2
+> +       select S5PV210_SETUP_I2C3
+>          select S5PV210_SETUP_IDE
+>          select S5PV210_SETUP_KEYPAD
+>          select S5PV210_SETUP_SDHCI
+Sylwester, thank you very much for your suggestions! Now HDMI phy has 
+been detected after I add HDMI phy i2c bus in arch/arm/mach-s5pv210/Kconfig:
+config MACH_SMDKV210
+         bool "SMDKV210"
+         select CPU_S5PV210
+         select S3C_DEV_FB
+         select S3C_DEV_HSMMC
+         select S3C_DEV_HSMMC1
+         select S3C_DEV_HSMMC2
+         select S3C_DEV_HSMMC3
+         select S3C_DEV_I2C1
+         select S3C_DEV_I2C2
++       select S5P_DEV_I2C_HDMIPHY
+         select S3C_DEV_RTC
+         select S3C_DEV_USB_HSOTG
+and arch/arm/mach-s5pv210/mach-smdkv210.c:
+static struct platform_device *smdkv210_devices[] __initdata = {
+	&s3c_device_adc,
+	&s3c_device_cfcon,
+	&s3c_device_fb,
+	&s3c_device_hsmmc0,
+	&s3c_device_hsmmc1,
+	&s3c_device_hsmmc2,
+	&s3c_device_hsmmc3,
+	&s3c_device_i2c0,
+	&s3c_device_i2c1,
+	&s3c_device_i2c2,
++	&s5p_device_i2c_hdmiphy,
+	&s3c_device_rtc,
+	&s3c_device_ts,
+	&s3c_device_usb_hsotg,
+	&s3c_device_wdt,
+	&s5p_device_fimc0,
+	&s5p_device_fimc1,
+	&s5p_device_fimc2,
+	&s5p_device_fimc_md,
+	&s5p_device_jpeg,
+	&s5p_device_mfc,
+	&s5p_device_mfc_l,
+	&s5p_device_mfc_r,
+	&s5pv210_device_ac97,
+	&s5pv210_device_iis0,
+	&s5pv210_device_spdif,
+	&samsung_asoc_idma,
+	&samsung_device_keypad,
+	&smdkv210_dm9000,
+//	&smdkv210_lcd_lte480wv,
+	&s5p_device_hdmi,
+	&s5p_device_mixer,
+};
+Now kernel prints the following HDMI related:
+m2m-testdev m2m-testdev.0: mem2mem-testdevDevice registered as /dev/video0
+s5p-jpeg s5p-jpeg.0: encoder device registered as /dev/video1
+s5p-jpeg s5p-jpeg.0: decoder device registered as /dev/video2
+s5p-jpeg s5p-jpeg.0: Samsung S5P JPEG codec
+s5p-mfc s5p-mfc: decoder registered as /dev/video3
+s5p-mfc s5p-mfc: encoder registered as /dev/video4
+s5p-hdmi s5pv210-hdmi: probe start
+s5p-hdmi s5pv210-hdmi: HDMI resource init
+s5p-hdmiphy 3-0038: probe successful
+s5p-hdmi s5pv210-hdmi: probe successful
+Samsung TV Mixer driver, (c) 2010-2011 Samsung Electronics Co., Ltd.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Signed-off-by: Felipe Balbi <balbi@ti.com>
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/usb/phy/Kconfig           |    8 +
- drivers/usb/phy/Makefile          |    1 +
- drivers/usb/phy/samsung-usb3phy.c |  349 +++++++++++++++++++++++++++++++++++++
- drivers/usb/phy/samsung-usbphy.h  |   81 +++++++++
- 4 files changed, 439 insertions(+), 0 deletions(-)
- create mode 100644 drivers/usb/phy/samsung-usb3phy.c
+s5p-mixer s5p-mixer: probe start
+s5p-mixer s5p-mixer: resources acquired
+s5p-mixer s5p-mixer: added output 'S5P HDMI connector' from module 
+'s5p-hdmi'
+s5p-mixer s5p-mixer: module s5p-sdo provides no subdev!
+s5p-mixer s5p-mixer: registered layer graph0 as /dev/video5
+s5p-mixer s5p-mixer: registered layer graph1 as /dev/video6
+s5p-mixer s5p-mixer: registered layer video0 as /dev/video7
+s5p-mixer s5p-mixer: probe successful
 
-diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
-index 4d72962..4f696d0 100644
---- a/drivers/usb/phy/Kconfig
-+++ b/drivers/usb/phy/Kconfig
-@@ -74,6 +74,14 @@ config SAMSUNG_USB2PHY
- 	  Enable this to support Samsung USB 2.0 (High Speed) PHY controller
- 	  driver for Samsung SoCs.
- 
-+config SAMSUNG_USB3PHY
-+	tristate "Samsung USB 3.0 PHY controller Driver"
-+	select SAMSUNG_USBPHY
-+	select USB_OTG_UTILS
-+	help
-+	  Enable this to support Samsung USB 3.0 (Super Speed) phy controller
-+	  for samsung SoCs.
-+
- config SAMSUNG_USBPHY
- 	tristate "Samsung USB PHY Driver"
- 	help
-diff --git a/drivers/usb/phy/Makefile b/drivers/usb/phy/Makefile
-index 1efa174..77f0b2e 100644
---- a/drivers/usb/phy/Makefile
-+++ b/drivers/usb/phy/Makefile
-@@ -13,3 +13,4 @@ obj-$(CONFIG_USB_EHCI_TEGRA)	+= tegra_usb_phy.o
- obj-$(CONFIG_USB_RCAR_PHY)		+= rcar-phy.o
- obj-$(CONFIG_SAMSUNG_USBPHY)		+= samsung-usbphy.o
- obj-$(CONFIG_SAMSUNG_USB2PHY)		+= samsung-usb2phy.o
-+obj-$(CONFIG_SAMSUNG_USB3PHY)		+= samsung-usb3phy.o
-diff --git a/drivers/usb/phy/samsung-usb3phy.c b/drivers/usb/phy/samsung-usb3phy.c
-new file mode 100644
-index 0000000..70e2c7b
---- /dev/null
-+++ b/drivers/usb/phy/samsung-usb3phy.c
-@@ -0,0 +1,349 @@
-+/* linux/drivers/usb/phy/samsung-usb3phy.c
-+ *
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+ *              http://www.samsung.com
-+ *
-+ * Author: Vivek Gautam <gautam.vivek@samsung.com>
-+ *
-+ * Samsung USB 3.0 PHY transceiver; talks to DWC3 controller.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/usb/samsung_usb_phy.h>
-+#include <linux/platform_data/samsung-usbphy.h>
-+
-+#include "samsung-usbphy.h"
-+
-+/*
-+ * Sets the phy clk as EXTREFCLK (XXTI) which is internal clock from clock core.
-+ */
-+static u32 samsung_usb3phy_set_refclk(struct samsung_usbphy *sphy)
-+{
-+	u32 reg;
-+	u32 refclk;
-+
-+	refclk = sphy->ref_clk_freq;
-+
-+	reg = PHYCLKRST_REFCLKSEL_EXT_REFCLK |
-+		PHYCLKRST_FSEL(refclk);
-+
-+	switch (refclk) {
-+	case FSEL_CLKSEL_50M:
-+		reg |= (PHYCLKRST_MPLL_MULTIPLIER_50M_REF |
-+			PHYCLKRST_SSC_REFCLKSEL(0x00));
-+		break;
-+	case FSEL_CLKSEL_20M:
-+		reg |= (PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF |
-+			PHYCLKRST_SSC_REFCLKSEL(0x00));
-+		break;
-+	case FSEL_CLKSEL_19200K:
-+		reg |= (PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF |
-+			PHYCLKRST_SSC_REFCLKSEL(0x88));
-+		break;
-+	case FSEL_CLKSEL_24M:
-+	default:
-+		reg |= (PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF |
-+			PHYCLKRST_SSC_REFCLKSEL(0x88));
-+		break;
-+	}
-+
-+	return reg;
-+}
-+
-+static int samsung_exynos5_usb3phy_enable(struct samsung_usbphy *sphy)
-+{
-+	void __iomem *regs = sphy->regs;
-+	u32 phyparam0;
-+	u32 phyparam1;
-+	u32 linksystem;
-+	u32 phybatchg;
-+	u32 phytest;
-+	u32 phyclkrst;
-+
-+	/* Reset USB 3.0 PHY */
-+	writel(0x0, regs + EXYNOS5_DRD_PHYREG0);
-+
-+	phyparam0 = readl(regs + EXYNOS5_DRD_PHYPARAM0);
-+	/* Select PHY CLK source */
-+	phyparam0 &= ~PHYPARAM0_REF_USE_PAD;
-+	/* Set Loss-of-Signal Detector sensitivity */
-+	phyparam0 &= ~PHYPARAM0_REF_LOSLEVEL_MASK;
-+	phyparam0 |= PHYPARAM0_REF_LOSLEVEL;
-+	writel(phyparam0, regs + EXYNOS5_DRD_PHYPARAM0);
-+
-+	writel(0x0, regs + EXYNOS5_DRD_PHYRESUME);
-+
-+	/*
-+	 * Setting the Frame length Adj value[6:1] to default 0x20
-+	 * See xHCI 1.0 spec, 5.2.4
-+	 */
-+	linksystem = LINKSYSTEM_XHCI_VERSION_CONTROL |
-+			LINKSYSTEM_FLADJ(0x20);
-+	writel(linksystem, regs + EXYNOS5_DRD_LINKSYSTEM);
-+
-+	phyparam1 = readl(regs + EXYNOS5_DRD_PHYPARAM1);
-+	/* Set Tx De-Emphasis level */
-+	phyparam1 &= ~PHYPARAM1_PCS_TXDEEMPH_MASK;
-+	phyparam1 |= PHYPARAM1_PCS_TXDEEMPH;
-+	writel(phyparam1, regs + EXYNOS5_DRD_PHYPARAM1);
-+
-+	phybatchg = readl(regs + EXYNOS5_DRD_PHYBATCHG);
-+	phybatchg |= PHYBATCHG_UTMI_CLKSEL;
-+	writel(phybatchg, regs + EXYNOS5_DRD_PHYBATCHG);
-+
-+	/* PHYTEST POWERDOWN Control */
-+	phytest = readl(regs + EXYNOS5_DRD_PHYTEST);
-+	phytest &= ~(PHYTEST_POWERDOWN_SSP |
-+			PHYTEST_POWERDOWN_HSP);
-+	writel(phytest, regs + EXYNOS5_DRD_PHYTEST);
-+
-+	/* UTMI Power Control */
-+	writel(PHYUTMI_OTGDISABLE, regs + EXYNOS5_DRD_PHYUTMI);
-+
-+	phyclkrst = samsung_usb3phy_set_refclk(sphy);
-+
-+	phyclkrst |= PHYCLKRST_PORTRESET |
-+			/* Digital power supply in normal operating mode */
-+			PHYCLKRST_RETENABLEN |
-+			/* Enable ref clock for SS function */
-+			PHYCLKRST_REF_SSP_EN |
-+			/* Enable spread spectrum */
-+			PHYCLKRST_SSC_EN |
-+			/* Power down HS Bias and PLL blocks in suspend mode */
-+			PHYCLKRST_COMMONONN;
-+
-+	writel(phyclkrst, regs + EXYNOS5_DRD_PHYCLKRST);
-+
-+	udelay(10);
-+
-+	phyclkrst &= ~(PHYCLKRST_PORTRESET);
-+	writel(phyclkrst, regs + EXYNOS5_DRD_PHYCLKRST);
-+
-+	return 0;
-+}
-+
-+static void samsung_exynos5_usb3phy_disable(struct samsung_usbphy *sphy)
-+{
-+	u32 phyutmi;
-+	u32 phyclkrst;
-+	u32 phytest;
-+	void __iomem *regs = sphy->regs;
-+
-+	phyutmi = PHYUTMI_OTGDISABLE |
-+			PHYUTMI_FORCESUSPEND |
-+			PHYUTMI_FORCESLEEP;
-+	writel(phyutmi, regs + EXYNOS5_DRD_PHYUTMI);
-+
-+	/* Resetting the PHYCLKRST enable bits to reduce leakage current */
-+	phyclkrst = readl(regs + EXYNOS5_DRD_PHYCLKRST);
-+	phyclkrst &= ~(PHYCLKRST_REF_SSP_EN |
-+			PHYCLKRST_SSC_EN |
-+			PHYCLKRST_COMMONONN);
-+	writel(phyclkrst, regs + EXYNOS5_DRD_PHYCLKRST);
-+
-+	/* Control PHYTEST to remove leakage current */
-+	phytest = readl(regs + EXYNOS5_DRD_PHYTEST);
-+	phytest |= (PHYTEST_POWERDOWN_SSP |
-+			PHYTEST_POWERDOWN_HSP);
-+	writel(phytest, regs + EXYNOS5_DRD_PHYTEST);
-+}
-+
-+static int samsung_usb3phy_init(struct usb_phy *phy)
-+{
-+	struct samsung_usbphy *sphy;
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	sphy = phy_to_sphy(phy);
-+
-+	/* Enable the phy clock */
-+	ret = clk_prepare_enable(sphy->clk);
-+	if (ret) {
-+		dev_err(sphy->dev, "%s: clk_prepare_enable failed\n", __func__);
-+		return ret;
-+	}
-+
-+	spin_lock_irqsave(&sphy->lock, flags);
-+
-+	/* setting default phy-type for USB 3.0 */
-+	samsung_usbphy_set_type(&sphy->phy, USB_PHY_TYPE_DEVICE);
-+
-+	/* Disable phy isolation */
-+	samsung_usbphy_set_isolation(sphy, false);
-+
-+	/* Initialize usb phy registers */
-+	samsung_exynos5_usb3phy_enable(sphy);
-+
-+	spin_unlock_irqrestore(&sphy->lock, flags);
-+
-+	/* Disable the phy clock */
-+	clk_disable_unprepare(sphy->clk);
-+
-+	return ret;
-+}
-+
-+/*
-+ * The function passed to the usb driver for phy shutdown
-+ */
-+static void samsung_usb3phy_shutdown(struct usb_phy *phy)
-+{
-+	struct samsung_usbphy *sphy;
-+	unsigned long flags;
-+
-+	sphy = phy_to_sphy(phy);
-+
-+	if (clk_prepare_enable(sphy->clk)) {
-+		dev_err(sphy->dev, "%s: clk_prepare_enable failed\n", __func__);
-+		return;
-+	}
-+
-+	spin_lock_irqsave(&sphy->lock, flags);
-+
-+	/* setting default phy-type for USB 3.0 */
-+	samsung_usbphy_set_type(&sphy->phy, USB_PHY_TYPE_DEVICE);
-+
-+	/* De-initialize usb phy registers */
-+	samsung_exynos5_usb3phy_disable(sphy);
-+
-+	/* Enable phy isolation */
-+	samsung_usbphy_set_isolation(sphy, true);
-+
-+	spin_unlock_irqrestore(&sphy->lock, flags);
-+
-+	clk_disable_unprepare(sphy->clk);
-+}
-+
-+static int samsung_usb3phy_probe(struct platform_device *pdev)
-+{
-+	struct samsung_usbphy *sphy;
-+	struct samsung_usbphy_data *pdata = pdev->dev.platform_data;
-+	struct device *dev = &pdev->dev;
-+	struct resource *phy_mem;
-+	void __iomem	*phy_base;
-+	struct clk *clk;
-+	int ret;
-+
-+	phy_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!phy_mem) {
-+		dev_err(dev, "%s: missing mem resource\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	phy_base = devm_request_and_ioremap(dev, phy_mem);
-+	if (!phy_base) {
-+		dev_err(dev, "%s: register mapping failed\n", __func__);
-+		return -ENXIO;
-+	}
-+
-+	sphy = devm_kzalloc(dev, sizeof(*sphy), GFP_KERNEL);
-+	if (!sphy)
-+		return -ENOMEM;
-+
-+	clk = devm_clk_get(dev, "usbdrd30");
-+	if (IS_ERR(clk)) {
-+		dev_err(dev, "Failed to get device clock\n");
-+		return PTR_ERR(clk);
-+	}
-+
-+	sphy->dev = dev;
-+
-+	if (dev->of_node) {
-+		ret = samsung_usbphy_parse_dt(sphy);
-+		if (ret < 0)
-+			return ret;
-+	} else {
-+		if (!pdata) {
-+			dev_err(dev, "no platform data specified\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	sphy->plat		= pdata;
-+	sphy->regs		= phy_base;
-+	sphy->clk		= clk;
-+	sphy->phy.dev		= sphy->dev;
-+	sphy->phy.label		= "samsung-usb3phy";
-+	sphy->phy.init		= samsung_usb3phy_init;
-+	sphy->phy.shutdown	= samsung_usb3phy_shutdown;
-+	sphy->drv_data		= samsung_usbphy_get_driver_data(pdev);
-+	sphy->ref_clk_freq	= samsung_usbphy_get_refclk_freq(sphy);
-+
-+	spin_lock_init(&sphy->lock);
-+
-+	platform_set_drvdata(pdev, sphy);
-+
-+	return usb_add_phy(&sphy->phy, USB_PHY_TYPE_USB3);
-+}
-+
-+static int samsung_usb3phy_remove(struct platform_device *pdev)
-+{
-+	struct samsung_usbphy *sphy = platform_get_drvdata(pdev);
-+
-+	usb_remove_phy(&sphy->phy);
-+
-+	if (sphy->pmuregs)
-+		iounmap(sphy->pmuregs);
-+	if (sphy->sysreg)
-+		iounmap(sphy->sysreg);
-+
-+	return 0;
-+}
-+
-+static struct samsung_usbphy_drvdata usb3phy_exynos5 = {
-+	.cpu_type		= TYPE_EXYNOS5250,
-+	.devphy_en_mask		= EXYNOS_USBPHY_ENABLE,
-+};
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id samsung_usbphy_dt_match[] = {
-+	{
-+		.compatible = "samsung,exynos5250-usb3phy",
-+		.data = &usb3phy_exynos5
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, samsung_usbphy_dt_match);
-+#endif
-+
-+static struct platform_device_id samsung_usbphy_driver_ids[] = {
-+	{
-+		.name		= "exynos5250-usb3phy",
-+		.driver_data	= (unsigned long)&usb3phy_exynos5,
-+	},
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(platform, samsung_usbphy_driver_ids);
-+
-+static struct platform_driver samsung_usb3phy_driver = {
-+	.probe		= samsung_usb3phy_probe,
-+	.remove		= samsung_usb3phy_remove,
-+	.id_table	= samsung_usbphy_driver_ids,
-+	.driver		= {
-+		.name	= "samsung-usb3phy",
-+		.owner	= THIS_MODULE,
-+		.of_match_table = of_match_ptr(samsung_usbphy_dt_match),
-+	},
-+};
-+
-+module_platform_driver(samsung_usb3phy_driver);
-+
-+MODULE_DESCRIPTION("Samsung USB 3.0 phy controller");
-+MODULE_AUTHOR("Vivek Gautam <gautam.vivek@samsung.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:samsung-usb3phy");
-diff --git a/drivers/usb/phy/samsung-usbphy.h b/drivers/usb/phy/samsung-usbphy.h
-index 969632b..f7e657d 100644
---- a/drivers/usb/phy/samsung-usbphy.h
-+++ b/drivers/usb/phy/samsung-usbphy.h
-@@ -145,6 +145,87 @@
- 
- #define EXYNOS5_PHY_OTG_TUNE			(0x40)
- 
-+/* EXYNOS5: USB 3.0 DRD */
-+#define EXYNOS5_DRD_LINKSYSTEM			(0x04)
-+
-+#define LINKSYSTEM_FLADJ_MASK			(0x3f << 1)
-+#define LINKSYSTEM_FLADJ(_x)			((_x) << 1)
-+#define LINKSYSTEM_XHCI_VERSION_CONTROL		(0x1 << 27)
-+
-+#define EXYNOS5_DRD_PHYUTMI			(0x08)
-+
-+#define PHYUTMI_OTGDISABLE			(0x1 << 6)
-+#define PHYUTMI_FORCESUSPEND			(0x1 << 1)
-+#define PHYUTMI_FORCESLEEP			(0x1 << 0)
-+
-+#define EXYNOS5_DRD_PHYPIPE			(0x0c)
-+
-+#define EXYNOS5_DRD_PHYCLKRST			(0x10)
-+
-+#define PHYCLKRST_SSC_REFCLKSEL_MASK		(0xff << 23)
-+#define PHYCLKRST_SSC_REFCLKSEL(_x)		((_x) << 23)
-+
-+#define PHYCLKRST_SSC_RANGE_MASK		(0x03 << 21)
-+#define PHYCLKRST_SSC_RANGE(_x)			((_x) << 21)
-+
-+#define PHYCLKRST_SSC_EN			(0x1 << 20)
-+#define PHYCLKRST_REF_SSP_EN			(0x1 << 19)
-+#define PHYCLKRST_REF_CLKDIV2			(0x1 << 18)
-+
-+#define PHYCLKRST_MPLL_MULTIPLIER_MASK		(0x7f << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF	(0x19 << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_50M_REF	(0x02 << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF	(0x68 << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF	(0x7d << 11)
-+#define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF	(0x02 << 11)
-+
-+#define PHYCLKRST_FSEL_MASK			(0x3f << 5)
-+#define PHYCLKRST_FSEL(_x)			((_x) << 5)
-+#define PHYCLKRST_FSEL_PAD_100MHZ		(0x27 << 5)
-+#define PHYCLKRST_FSEL_PAD_24MHZ		(0x2a << 5)
-+#define PHYCLKRST_FSEL_PAD_20MHZ		(0x31 << 5)
-+#define PHYCLKRST_FSEL_PAD_19_2MHZ		(0x38 << 5)
-+
-+#define PHYCLKRST_RETENABLEN			(0x1 << 4)
-+
-+#define PHYCLKRST_REFCLKSEL_MASK		(0x03 << 2)
-+#define PHYCLKRST_REFCLKSEL_PAD_REFCLK		(0x2 << 2)
-+#define PHYCLKRST_REFCLKSEL_EXT_REFCLK		(0x3 << 2)
-+
-+#define PHYCLKRST_PORTRESET			(0x1 << 1)
-+#define PHYCLKRST_COMMONONN			(0x1 << 0)
-+
-+#define EXYNOS5_DRD_PHYREG0			(0x14)
-+#define EXYNOS5_DRD_PHYREG1			(0x18)
-+
-+#define EXYNOS5_DRD_PHYPARAM0			(0x1c)
-+
-+#define PHYPARAM0_REF_USE_PAD			(0x1 << 31)
-+#define PHYPARAM0_REF_LOSLEVEL_MASK		(0x1f << 26)
-+#define PHYPARAM0_REF_LOSLEVEL			(0x9 << 26)
-+
-+#define EXYNOS5_DRD_PHYPARAM1			(0x20)
-+
-+#define PHYPARAM1_PCS_TXDEEMPH_MASK		(0x1f << 0)
-+#define PHYPARAM1_PCS_TXDEEMPH			(0x1c)
-+
-+#define EXYNOS5_DRD_PHYTERM			(0x24)
-+
-+#define EXYNOS5_DRD_PHYTEST			(0x28)
-+
-+#define PHYTEST_POWERDOWN_SSP			(0x1 << 3)
-+#define PHYTEST_POWERDOWN_HSP			(0x1 << 2)
-+
-+#define EXYNOS5_DRD_PHYADP			(0x2c)
-+
-+#define EXYNOS5_DRD_PHYBATCHG			(0x30)
-+
-+#define PHYBATCHG_UTMI_CLKSEL			(0x1 << 2)
-+
-+#define EXYNOS5_DRD_PHYRESUME			(0x34)
-+#define EXYNOS5_DRD_LINKPORT			(0x44)
-+
-+
- #ifndef MHZ
- #define MHZ (1000*1000)
- #endif
--- 
-1.7.6.5
+How can I test the HDMI output whether it's OK? Which /dev/video is real 
+HDMI output? I have used 
+http://git.infradead.org/users/kmpark/public-apps hdmi test program buf 
+failed:
+root@linaro-developer:/opt# ./tvdemo /dev/video7 720 480 0 0
+ERROR(main.c:80) : VIDIOC_S_FMT failed: Invalid argument
+Aborted
+root@linaro-developer:/opt#
+Maybe I still miss some configuration in mach-smdkv210.c.
