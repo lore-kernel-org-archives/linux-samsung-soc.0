@@ -1,449 +1,82 @@
-From: Lonsn <lonsn2005@gmail.com>
-Subject: Re: SMDKV210 support issue in kernel 3.8 (dma-pl330 and HDMI failed)
-Date: Thu, 28 Feb 2013 20:28:14 +0800
-Message-ID: <512F4D5E.5090900@gmail.com>
-References: <51275DF7.4010600@gmail.com> <512CB1BE.1070401@gmail.com> <512D160D.1050706@gmail.com> <512D1BFB.4000700@gmail.com> <512E22AA.8020006@gmail.com> <512E2ABF.1080206@gmail.com> <512E7D97.4000608@gmail.com>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH RFC] usb: dwc3: Get PHY from platform specific dwc3 dt
+ node.
+Date: Thu, 28 Feb 2013 20:09:33 +0530
+Message-ID: <CAFp+6iGTqZY=+crcYyu9o5uEP9Nv2=haSqB+nCuqA2_iUand6A@mail.gmail.com>
+References: <1359631232-7107-1-git-send-email-gautam.vivek@samsung.com>
+ <510A56BF.3040804@ti.com>
+ <CAFp+6iFkb=U0CJA=3zmQvd5XfMwbROuRJjXoJG7zvvq4_upzNw@mail.gmail.com>
+ <20130131152527.GE4064@arwen.pp.htv.fi>
+ <CAFp+6iHvKYiF_neANRq5roAEJwhvcaLk7pAd7Dy94Z5XiDkhgA@mail.gmail.com>
+ <20130131153836.GF4064@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f44.google.com ([209.85.210.44]:57994 "EHLO
-	mail-da0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752313Ab3B1M2V (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Feb 2013 07:28:21 -0500
-In-Reply-To: <512E7D97.4000608@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20130131153836.GF4064-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
 
-=E4=BA=8E 2013/2/28 5:41, Sylwester Nawrocki =E5=86=99=E9=81=93:
-> On 02/27/2013 04:48 PM, Lonsn wrote:
->> =E4=BA=8E 2013/2/27 23:13, Lonsn =E5=86=99=E9=81=93:
->>>> On 02/26/2013 09:07 PM, Sylwester Nawrocki wrote:
->>>>> On 02/26/2013 01:59 PM, Lonsn wrote:
-> [...]
->>> Now kernel prints the following HDMI related:
->>> m2m-testdev m2m-testdev.0: mem2mem-testdevDevice registered as
->>> /dev/video0
->>> s5p-jpeg s5p-jpeg.0: encoder device registered as /dev/video1
->>> s5p-jpeg s5p-jpeg.0: decoder device registered as /dev/video2
->>> s5p-jpeg s5p-jpeg.0: Samsung S5P JPEG codec
->>> s5p-mfc s5p-mfc: decoder registered as /dev/video3
->>> s5p-mfc s5p-mfc: encoder registered as /dev/video4
->>> s5p-hdmi s5pv210-hdmi: probe start
->>> s5p-hdmi s5pv210-hdmi: HDMI resource init
->>> s5p-hdmiphy 3-0038: probe successful
->>> s5p-hdmi s5pv210-hdmi: probe successful
->>> Samsung TV Mixer driver, (c) 2010-2011 Samsung Electronics Co., Ltd=
-=2E
->>>
->>> s5p-mixer s5p-mixer: probe start
->>> s5p-mixer s5p-mixer: resources acquired
->>> s5p-mixer s5p-mixer: added output 'S5P HDMI connector' from module
->>> 's5p-hdmi'
->>> s5p-mixer s5p-mixer: module s5p-sdo provides no subdev!
->>> s5p-mixer s5p-mixer: registered layer graph0 as /dev/video5
->>> s5p-mixer s5p-mixer: registered layer graph1 as /dev/video6
->>> s5p-mixer s5p-mixer: registered layer video0 as /dev/video7
->>> s5p-mixer s5p-mixer: probe successful
->>>
->>> How can I test the HDMI output whether it's OK? Which /dev/video is=
- real
->>> HDMI output? I have used
->>> http://git.infradead.org/users/kmpark/public-apps hdmi test program=
- buf
->>> failed:
->>> root@linaro-developer:/opt# ./tvdemo /dev/video7 720 480 0 0
->>> ERROR(main.c:80) : VIDIOC_S_FMT failed: Invalid argument
+Hi,
+
+On Thu, Jan 31, 2013 at 9:08 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
+> On Thu, Jan 31, 2013 at 09:00:37PM +0530, Vivek Gautam wrote:
+>> Hi Felipe,
+>>
+>>
+>> On Thu, Jan 31, 2013 at 8:55 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
+>> > Hi,
+>> >
+>> > On Thu, Jan 31, 2013 at 08:53:27PM +0530, Vivek Gautam wrote:
+>> >> >> Moreover, SoCs having multiple dwc3 controllers will have multiple
+>> >> >> PHYs, which eventually be added using usb_add_phy_dev(), and not
+>> >> >> using usb_add_phy(). So each dwc3 controller won't be able to
+>> >> >> get PHYs by simply calling devm_usb_get_phy() also.
+>> >> >
+>> >> > No. We have added usb_get_phy_dev() for that purpose in the case of non-dt.
+>> >> > I think, instead you can have a patch to use devm_usb_get_phy_dev() here and
+>> >> > in exynos platform specific code use usb_bind_phy() to bind the phy and
+>> >> > controller till you change it to dt.
+>> >> >
+>> >>
+>> >> We have dt support for dwc3-exynos, in such case we should go ahead with
+>> >> of_platform_populate(), right ?
+>> >> But if when i use of_platform_populate() i will not be able to set
+>> >> dma_mask to dwc3->dev. :-(
+>> >
+>> > do you have a special need for dma_mask because OF already sets it.
+>> >
+>> If i am not wrong of_platform_device_create_pdata() will set
+>> "dev->dev.coherent_dma_mask = DMA_BIT_MASK(32)"
+>> and not dma_mask.
+>> I fact we had some discussion sometime back when we needed the same
+>> for dwc3-exynos in the thread:
+>> [PATCH v2 1/2] USB: dwc3-exynos: Add support for device tree
+>>
+>> But couldn't get final node on it.
+>> So suggestions here please. :-)
 >
-> It failed because you've opened device node of the Video Processor, w=
-hich
-> supports only NV12/21(MT) formats. I believe the v4l2-hdmi-example
-> application, which renders some simple test images, needs to be run w=
-ith
-> one
-> the graphics layer video nodes as an argument.  Doesn't it work when =
-you
-> try
-> on /dev/video5 or /dev/video6 ?
-I have tested /dev/video5 and /dev/video6, the same output as following=
-:
-root@linaro-developer:/opt# ./tvdemo /dev/video5 720 480 0 0
-start
-ERROR(main.c:256) : VIDIOC_DQBUF failed: Invalid argument
-Aborted
-root@linaro-developer:/opt# dmesg
-s5p-mixer s5p-mixer: mxr_video_open:762
-s5p-mixer s5p-mixer: resume - start
-s5p-mixer s5p-mixer: resume - finished
-s5p-hdmi s5pv210-hdmi: hdmi_g_mbus_fmt
-s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: src.size =3D (720, 480)
-s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-s5p-mixer s5p-mixer: ratio =3D (0, 0)
-s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: src.size =3D (720, 480)
-s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-s5p-mixer s5p-mixer: ratio =3D (0, 0)
-s5p-mixer s5p-mixer: mxr_s_fmt:322
-s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: src.size =3D (720, 480)
-s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-s5p-mixer s5p-mixer: ratio =3D (0, 0)
-s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: src.size =3D (720, 480)
-s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-s5p-mixer s5p-mixer: ratio =3D (0, 0)
-s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: src.size =3D (720, 480)
-s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-s5p-mixer s5p-mixer: ratio =3D (0, 0)
-s5p-mixer s5p-mixer: mxr_g_fmt:301
-s5p-mixer s5p-mixer: mxr_g_fmt:301
-s5p-mixer s5p-mixer: mxr_reqbufs:672
-s5p-mixer s5p-mixer: queue_setup
-s5p-mixer s5p-mixer: fmt =3D ARGB8888
-s5p-mixer s5p-mixer: size[0] =3D 00151800
-s5p-mixer s5p-mixer: mxr_querybuf:680
-s5p-mixer s5p-mixer: mxr_video_mmap:829
-s5p-mixer s5p-mixer: mxr_querybuf:680
-s5p-mixer s5p-mixer: mxr_video_mmap:829
-s5p-mixer s5p-mixer: mxr_querybuf:680
-s5p-mixer s5p-mixer: mxr_video_mmap:829
-s5p-mixer s5p-mixer: mxr_s_selection: rect: 720x480@0,0
-s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: src.size =3D (720, 480)
-s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-s5p-mixer s5p-mixer: ratio =3D (0, 0)
-s5p-mixer s5p-mixer: mxr_qbuf:688(0)
-s5p-mixer s5p-mixer: mxr_qbuf:688(1)
-s5p-mixer s5p-mixer: mxr_qbuf:688(2)
-s5p-mixer s5p-mixer: mxr_streamon:713
-s5p-mixer s5p-mixer: queuing buffer
-s5p-mixer s5p-mixer: queuing buffer
-s5p-mixer s5p-mixer: queuing buffer
-s5p-mixer s5p-mixer: start_streaming
-s5p-mixer s5p-mixer: mxr_output_get(1)
-s5p-hdmi s5pv210-hdmi: hdmi_runtime_resume
-s5p-hdmi s5pv210-hdmi: poweron succeed
-s5p-hdmi s5pv210-hdmi: hdmi_g_mbus_fmt
-s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: src.size =3D (720, 480)
-s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-s5p-mixer s5p-mixer: ratio =3D (0, 0)
-s5p-mixer s5p-mixer: mxr_streamer_get(1)
-s5p-hdmi s5pv210-hdmi: hdmi_g_mbus_fmt
-s5p-hdmi s5pv210-hdmi: hdmi_s_stream(1)
-s5p-hdmi s5pv210-hdmi: hdmi_streamon
-s5p-hdmi s5pv210-hdmi: hdmi_conf_apply
-s5p-hdmiphy 3-0038: s_dv_preset(preset =3D 1)
-s5p-tv (hdmi_drv): unplugged
-s5p-hdmiphy 3-0038: s_stream(1)
-s5p-hdmi s5pv210-hdmi: streamon: ---- CONTROL REGISTERS ----
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_INTC_FLAG =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_INTC_CON =3D 0000004c
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_HPD_STATUS =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_PHY_RSTOUT =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_PHY_VPLL =3D 0000008c
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_PHY_CMU =3D 00000080
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_CORE_RSTOUT =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon: ---- CORE REGISTERS ----
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_CON_0 =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_CON_1 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_CON_2 =3D 00000022
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_SYS_STATUS =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_PHY_STATUS =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_STATUS_EN =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_HPD =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_MODE_SEL =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_HPD_GEN =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_DC_CONTROL =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_VIDEO_PATTERN_GEN =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon: ---- CORE SYNC REGISTERS ----
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_H_BLANK_0 =3D 0000008a
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_H_BLANK_1 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_BLANK_0 =3D 0000000d
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_BLANK_1 =3D 0000006a
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_BLANK_2 =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_H_V_LINE_0 =3D 0000000d
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_H_V_LINE_1 =3D 000000a2
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_H_V_LINE_2 =3D 00000035
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_VSYNC_POL =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_INT_PRO_MODE =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_BLANK_F_0 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_BLANK_F_1 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_BLANK_F_2 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_H_SYNC_GEN_0 =3D 00000010
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_H_SYNC_GEN_1 =3D 00000038
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_H_SYNC_GEN_2 =3D 00000011
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_1_0 =3D 0000000f
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_1_1 =3D 00000090
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_1_2 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_2_0 =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_2_1 =3D 00000010
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_2_2 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_3_0 =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_3_1 =3D 00000010
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_V_SYNC_GEN_3_2 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon: ---- TG REGISTERS ----
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_CMD =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_H_FSZ_L =3D 0000005a
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_H_FSZ_H =3D 00000003
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_HACT_ST_L =3D 0000008a
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_HACT_ST_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_HACT_SZ_L =3D 000000d0
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_HACT_SZ_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_V_FSZ_L =3D 0000000d
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_V_FSZ_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VSYNC_L =3D 00000009
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VSYNC_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VSYNC2_L =3D 00000033
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VSYNC2_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VACT_ST_L =3D 0000002d
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VACT_ST_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VACT_SZ_L =3D 000000e0
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VACT_SZ_H =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_FIELD_CHG_L =3D 00000033
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_FIELD_CHG_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VACT_ST2_L =3D 00000048
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VACT_ST2_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VSYNC_TOP_HDMI_L =3D 00000009
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VSYNC_TOP_HDMI_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VSYNC_BOT_HDMI_L =3D 00000033
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_VSYNC_BOT_HDMI_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_FIELD_TOP_HDMI_L =3D 00000009
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_FIELD_TOP_HDMI_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_FIELD_BOT_HDMI_L =3D 00000033
-s5p-hdmi s5pv210-hdmi: streamon:HDMI_TG_FIELD_BOT_HDMI_H =3D 00000002
-s5p-mixer s5p-mixer: MXR_STATUS =3D 00000085
-s5p-mixer s5p-mixer: MXR_CFG =3D 00000194
-s5p-mixer s5p-mixer: MXR_INT_EN =3D 00000700
-s5p-mixer s5p-mixer: MXR_INT_STATUS =3D 00000000
-s5p-mixer s5p-mixer: MXR_LAYER_CFG =3D 00000312
-s5p-mixer s5p-mixer: MXR_VIDEO_CFG =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_CFG =3D 003007ff
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_BASE =3D 4d600000
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_SPAN =3D 000002d0
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_WH =3D 02d001e0
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_SXY =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_DXY =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_CFG =3D 003000ff
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_BASE =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_SPAN =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_WH =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_SXY =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_DXY =3D 00000000
-s5p-mixer s5p-mixer: VP_ENABLE =3D 00000002
-s5p-mixer s5p-mixer: VP_SRESET =3D 00000000
-s5p-mixer s5p-mixer: VP_SHADOW_UPDATE =3D 00000001
-s5p-mixer s5p-mixer: VP_FIELD_ID =3D 00000000
-s5p-mixer s5p-mixer: VP_MODE =3D 00000000
-s5p-mixer s5p-mixer: VP_IMG_SIZE_Y =3D 00000000
-s5p-mixer s5p-mixer: VP_IMG_SIZE_C =3D 00000000
-s5p-mixer s5p-mixer: VP_PER_RATE_CTRL =3D 00000000
-s5p-mixer s5p-mixer: VP_TOP_Y_PTR =3D 00000000
-s5p-mixer s5p-mixer: VP_BOT_Y_PTR =3D 00000000
-s5p-mixer s5p-mixer: VP_TOP_C_PTR =3D 00000000
-s5p-mixer s5p-mixer: VP_BOT_C_PTR =3D 00000000
-s5p-mixer s5p-mixer: VP_ENDIAN_MODE =3D 00000000
-s5p-mixer s5p-mixer: VP_SRC_H_POSITION =3D 00000000
-s5p-mixer s5p-mixer: VP_SRC_V_POSITION =3D 00000000
-s5p-mixer s5p-mixer: VP_SRC_WIDTH =3D 00000000
-s5p-mixer s5p-mixer: VP_SRC_HEIGHT =3D 00000000
-s5p-mixer s5p-mixer: VP_DST_H_POSITION =3D 00000000
-s5p-mixer s5p-mixer: VP_DST_V_POSITION =3D 00000000
-s5p-mixer s5p-mixer: VP_DST_WIDTH =3D 00000000
-s5p-mixer s5p-mixer: VP_DST_HEIGHT =3D 00000000
-s5p-mixer s5p-mixer: VP_H_RATIO =3D 00000000
-s5p-mixer s5p-mixer: VP_V_RATIO =3D 00000000
-s5p-mixer s5p-mixer: mxr_dqbuf:696
-s5p-mixer s5p-mixer: wait_unlock
-s5p-mixer s5p-mixer: wait_lock
-s5p-mixer s5p-mixer: mxr_video_release:842
-s5p-mixer s5p-mixer: stop_streaming
-s5p-mixer s5p-mixer: mxr_streamer_put(0)
-s5p-hdmi s5pv210-hdmi: hdmi_s_stream(0)
-s5p-hdmi s5pv210-hdmi: hdmi_streamoff
-s5p-hdmiphy 3-0038: s_stream(0)
-s5p-hdmi s5pv210-hdmi: streamoff: ---- CONTROL REGISTERS ----
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_INTC_FLAG =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_INTC_CON =3D 0000004c
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_HPD_STATUS =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_PHY_RSTOUT =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_PHY_VPLL =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_PHY_CMU =3D 00000080
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_CORE_RSTOUT =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamoff: ---- CORE REGISTERS ----
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_CON_0 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_CON_1 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_CON_2 =3D 00000022
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_SYS_STATUS =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_PHY_STATUS =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_STATUS_EN =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_HPD =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_MODE_SEL =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_HPD_GEN =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_DC_CONTROL =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_VIDEO_PATTERN_GEN =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff: ---- CORE SYNC REGISTERS ----
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_H_BLANK_0 =3D 0000008a
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_H_BLANK_1 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_BLANK_0 =3D 0000000d
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_BLANK_1 =3D 0000006a
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_BLANK_2 =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_H_V_LINE_0 =3D 0000000d
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_H_V_LINE_1 =3D 000000a2
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_H_V_LINE_2 =3D 00000035
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_VSYNC_POL =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_INT_PRO_MODE =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_BLANK_F_0 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_BLANK_F_1 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_BLANK_F_2 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_H_SYNC_GEN_0 =3D 00000010
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_H_SYNC_GEN_1 =3D 00000038
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_H_SYNC_GEN_2 =3D 00000011
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_1_0 =3D 0000000f
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_1_1 =3D 00000090
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_1_2 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_2_0 =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_2_1 =3D 00000010
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_2_2 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_3_0 =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_3_1 =3D 00000010
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_V_SYNC_GEN_3_2 =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff: ---- TG REGISTERS ----
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_CMD =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_H_FSZ_L =3D 0000005a
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_H_FSZ_H =3D 00000003
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_HACT_ST_L =3D 0000008a
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_HACT_ST_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_HACT_SZ_L =3D 000000d0
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_HACT_SZ_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_V_FSZ_L =3D 0000000d
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_V_FSZ_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VSYNC_L =3D 00000009
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VSYNC_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VSYNC2_L =3D 00000033
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VSYNC2_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VACT_ST_L =3D 0000002d
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VACT_ST_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VACT_SZ_L =3D 000000e0
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VACT_SZ_H =3D 00000001
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_FIELD_CHG_L =3D 00000033
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_FIELD_CHG_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VACT_ST2_L =3D 00000048
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VACT_ST2_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VSYNC_TOP_HDMI_L =3D 00000009
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VSYNC_TOP_HDMI_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VSYNC_BOT_HDMI_L =3D 00000033
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_VSYNC_BOT_HDMI_H =3D 00000002
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_FIELD_TOP_HDMI_L =3D 00000009
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_FIELD_TOP_HDMI_H =3D 00000000
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_FIELD_BOT_HDMI_L =3D 00000033
-s5p-hdmi s5pv210-hdmi: streamoff:HDMI_TG_FIELD_BOT_HDMI_H =3D 00000002
-s5p-mixer s5p-mixer: MXR_STATUS =3D 00000086
-s5p-mixer s5p-mixer: MXR_CFG =3D 00000184
-s5p-mixer s5p-mixer: MXR_INT_EN =3D 00000700
-s5p-mixer s5p-mixer: MXR_INT_STATUS =3D 00000000
-s5p-mixer s5p-mixer: MXR_LAYER_CFG =3D 00000312
-s5p-mixer s5p-mixer: MXR_VIDEO_CFG =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_CFG =3D 003007ff
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_BASE =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_SPAN =3D 000002d0
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_WH =3D 02d001e0
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_SXY =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC0_DXY =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_CFG =3D 003000ff
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_BASE =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_SPAN =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_WH =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_SXY =3D 00000000
-s5p-mixer s5p-mixer: MXR_GRAPHIC1_DXY =3D 00000000
-s5p-mixer s5p-mixer: VP_ENABLE =3D 00000002
-s5p-mixer s5p-mixer: VP_SRESET =3D 00000000
-s5p-mixer s5p-mixer: VP_SHADOW_UPDATE =3D 00000000
-s5p-mixer s5p-mixer: VP_FIELD_ID =3D 00000000
-s5p-mixer s5p-mixer: VP_MODE =3D 00000000
-s5p-mixer s5p-mixer: VP_IMG_SIZE_Y =3D 00000000
-s5p-mixer s5p-mixer: VP_IMG_SIZE_C =3D 00000000
-s5p-mixer s5p-mixer: VP_PER_RATE_CTRL =3D 00000000
-s5p-mixer s5p-mixer: VP_TOP_Y_PTR =3D 00000000
-s5p-mixer s5p-mixer: VP_BOT_Y_PTR =3D 00000000
-s5p-mixer s5p-mixer: VP_TOP_C_PTR =3D 00000000
-s5p-mixer s5p-mixer: VP_BOT_C_PTR =3D 00000000
-s5p-mixer s5p-mixer: VP_ENDIAN_MODE =3D 00000000
-s5p-mixer s5p-mixer: VP_SRC_H_POSITION =3D 00000000
-s5p-mixer s5p-mixer: VP_SRC_V_POSITION =3D 00000000
-s5p-mixer s5p-mixer: VP_SRC_WIDTH =3D 00000000
-s5p-mixer s5p-mixer: VP_SRC_HEIGHT =3D 00000000
-s5p-mixer s5p-mixer: VP_DST_H_POSITION =3D 00000000
-s5p-mixer s5p-mixer: VP_DST_V_POSITION =3D 00000000
-s5p-mixer s5p-mixer: VP_DST_WIDTH =3D 00000000
-s5p-mixer s5p-mixer: VP_DST_HEIGHT =3D 00000000
-s5p-mixer s5p-mixer: VP_H_RATIO =3D 00000000
-s5p-mixer s5p-mixer: VP_V_RATIO =3D 00000000
-s5p-mixer s5p-mixer: mxr_output_put(0)
-s5p-hdmi s5pv210-hdmi: hdmi_runtime_suspend
-s5p-mixer s5p-mixer: suspend - start
-s5p-mixer s5p-mixer: suspend - finished
+> hmm.. you're right there. Grant, Rob ? Any hints ?
 >
->>> root@linaro-developer:/opt#
->>> Maybe I still miss some configuration in mach-smdkv210.c.
->
-> I don't think so, it all looks more or less OK now :)
->
->> The kernel print when run tvdemo:
->> root@linaro-developer:/opt# ./tvdemo /dev/video7 720 480 0 0
->> ERROR(main.c:80) : VIDIOC_S_FMT failed: Invalid argument
->> Aborted
->> root@linaro-developer:/opt# dmesg
->> s5p-mixer s5p-mixer: mxr_video_open:762
->> s5p-mixer s5p-mixer: resume - start
->> s5p-mixer s5p-mixer: resume - finished
->> s5p-hdmi s5pv210-hdmi: hdmi_g_mbus_fmt
->> s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
->> s5p-mixer s5p-mixer: src.size =3D (720, 480)
->> s5p-mixer s5p-mixer: src.offset =3D (0, 0)
->> s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
->> s5p-mixer s5p-mixer: dst.size =3D (720, 480)
->> s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
->> s5p-mixer s5p-mixer: ratio =3D (0, 0)
->> s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
->> s5p-mixer s5p-mixer: src.size =3D (720, 480)
->> s5p-mixer s5p-mixer: src.offset =3D (0, 0)
->> s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
->> s5p-mixer s5p-mixer: dst.size =3D (720, 480)
->> s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
->> s5p-mixer s5p-mixer: ratio =3D (65536, 65536)
->> s5p-mixer s5p-mixer: mxr_s_fmt:322
->> s5p-mixer s5p-mixer: not recognized fourcc: 34524742
->
-> Yes, it must definitely be incorrect video node. Only the graph0/1
-> devices support RGB.
->
-> Regards,
-> Sylwester
+
+Any suggestions on this ?
+
+> --
+> balbi
+
+
+
+-- 
+Thanks & Regards
+Vivek
