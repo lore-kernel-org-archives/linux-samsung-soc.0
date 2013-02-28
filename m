@@ -1,100 +1,79 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: SMDKV210 support issue in kernel 3.8 (dma-pl330 and HDMI failed)
-Date: Wed, 27 Feb 2013 22:41:43 +0100
-Message-ID: <512E7D97.4000608@gmail.com>
-References: <51275DF7.4010600@gmail.com> <512CB1BE.1070401@gmail.com> <512D160D.1050706@gmail.com> <512D1BFB.4000700@gmail.com> <512E22AA.8020006@gmail.com> <512E2ABF.1080206@gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v5 5/5] ARM: exynos: dts: Add FIMD DT binding Documentation
+Date: Thu, 28 Feb 2013 11:42:16 +0530
+Message-ID: <CAK9yfHyqC4TzR4p+xfYv2LH-mrR=vV3k0C68-Kts_t6M-AMgyg@mail.gmail.com>
+References: <1361954620-20614-1-git-send-email-vikas.sajjan@linaro.org>
+	<1361954620-20614-6-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <512E2ABF.1080206@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Lonsn <lonsn2005@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:48733 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751332Ab3B1GMQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 Feb 2013 01:12:16 -0500
+Received: by mail-ie0-f176.google.com with SMTP id k13so1657685iea.35
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Feb 2013 22:12:16 -0800 (PST)
+In-Reply-To: <1361954620-20614-6-git-send-email-vikas.sajjan@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com
 
-On 02/27/2013 04:48 PM, Lonsn wrote:
-> =E4=BA=8E 2013/2/27 23:13, Lonsn =E5=86=99=E9=81=93:
->>> On 02/26/2013 09:07 PM, Sylwester Nawrocki wrote:
->>>> On 02/26/2013 01:59 PM, Lonsn wrote:
-[...]
->> Now kernel prints the following HDMI related:
->> m2m-testdev m2m-testdev.0: mem2mem-testdevDevice registered as
->> /dev/video0
->> s5p-jpeg s5p-jpeg.0: encoder device registered as /dev/video1
->> s5p-jpeg s5p-jpeg.0: decoder device registered as /dev/video2
->> s5p-jpeg s5p-jpeg.0: Samsung S5P JPEG codec
->> s5p-mfc s5p-mfc: decoder registered as /dev/video3
->> s5p-mfc s5p-mfc: encoder registered as /dev/video4
->> s5p-hdmi s5pv210-hdmi: probe start
->> s5p-hdmi s5pv210-hdmi: HDMI resource init
->> s5p-hdmiphy 3-0038: probe successful
->> s5p-hdmi s5pv210-hdmi: probe successful
->> Samsung TV Mixer driver, (c) 2010-2011 Samsung Electronics Co., Ltd.
->>
->> s5p-mixer s5p-mixer: probe start
->> s5p-mixer s5p-mixer: resources acquired
->> s5p-mixer s5p-mixer: added output 'S5P HDMI connector' from module
->> 's5p-hdmi'
->> s5p-mixer s5p-mixer: module s5p-sdo provides no subdev!
->> s5p-mixer s5p-mixer: registered layer graph0 as /dev/video5
->> s5p-mixer s5p-mixer: registered layer graph1 as /dev/video6
->> s5p-mixer s5p-mixer: registered layer video0 as /dev/video7
->> s5p-mixer s5p-mixer: probe successful
->>
->> How can I test the HDMI output whether it's OK? Which /dev/video is =
-real
->> HDMI output? I have used
->> http://git.infradead.org/users/kmpark/public-apps hdmi test program =
-buf
->> failed:
->> root@linaro-developer:/opt# ./tvdemo /dev/video7 720 480 0 0
->> ERROR(main.c:80) : VIDIOC_S_FMT failed: Invalid argument
+Hi Vikas,
 
-It failed because you've opened device node of the Video Processor, whi=
-ch
-supports only NV12/21(MT) formats. I believe the v4l2-hdmi-example
-application, which renders some simple test images, needs to be run wit=
-h one
-the graphics layer video nodes as an argument.  Doesn't it work when yo=
-u=20
-try
-on /dev/video5 or /dev/video6 ?
+On 27 February 2013 14:13, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> Adds FIMD DT binding documentation both SoC and Board, with an example
+>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  .../devicetree/bindings/video/exynos-fimd.txt      |   46 ++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/video/exynos-fimd.txt
+>
+> diff --git a/Documentation/devicetree/bindings/video/exynos-fimd.txt b/Documentation/devicetree/bindings/video/exynos-fimd.txt
+> new file mode 100644
+> index 0000000..b3542b9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/video/exynos-fimd.txt
+> @@ -0,0 +1,46 @@
+> +Device-Tree bindings for Exynos SoC display controller (FIMD)
+> +
+> +FIMD stands for Fully Interactive Mobile Display, is the Display Controller for
+> +the Exynos series of SoCs which transfers the image data from a video buffer
 
->> root@linaro-developer:/opt#
->> Maybe I still miss some configuration in mach-smdkv210.c.
+I think this should be Samsung series of SoCs intead of Exynos series.
+As such the file name could be samsung-fimd.txt.
 
-I don't think so, it all looks more or less OK now :)
+> +located in the system memory to an external LCD interface.
+> +
+> +Required properties:
+> +- compatible := value can be one these below
 
-> The kernel print when run tvdemo:
-> root@linaro-developer:/opt# ./tvdemo /dev/video7 720 480 0 0
-> ERROR(main.c:80) : VIDIOC_S_FMT failed: Invalid argument
-> Aborted
-> root@linaro-developer:/opt# dmesg
-> s5p-mixer s5p-mixer: mxr_video_open:762
-> s5p-mixer s5p-mixer: resume - start
-> s5p-mixer s5p-mixer: resume - finished
-> s5p-hdmi s5pv210-hdmi: hdmi_g_mbus_fmt
-> s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-> s5p-mixer s5p-mixer: src.size =3D (720, 480)
-> s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-> s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-> s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-> s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-> s5p-mixer s5p-mixer: ratio =3D (0, 0)
-> s5p-mixer s5p-mixer: src.full_size =3D (720, 480)
-> s5p-mixer s5p-mixer: src.size =3D (720, 480)
-> s5p-mixer s5p-mixer: src.offset =3D (0, 0)
-> s5p-mixer s5p-mixer: dst.full_size =3D (720, 480)
-> s5p-mixer s5p-mixer: dst.size =3D (720, 480)
-> s5p-mixer s5p-mixer: dst.offset =3D (0, 0)
-> s5p-mixer s5p-mixer: ratio =3D (65536, 65536)
-> s5p-mixer s5p-mixer: mxr_s_fmt:322
-> s5p-mixer s5p-mixer: not recognized fourcc: 34524742
+"value should be one of the following:"
 
-Yes, it must definitely be incorrect video node. Only the graph0/1
-devices support RGB.
 
-Regards,
-Sylwester
+> +               "samsung,s3c2443-fimd"; /* for S3C24XX SoCs */
+> +               "samsung,s3c6400-fimd"; /* for S3C64XX SoCs */
+> +               "samsung,s5p6440-fimd"; /* for S5P64X0 SoCs */
+> +               "samsung,s5pc100-fimd"; /* for S5PC100 SoC  */
+> +               "samsung,s5pv210-fimd"; /* for S5PV210 SoC */
+> +               "samsung,exynos4210-fimd"; /* for Exynos4 SoCs */
+> +               "samsung,exynos5250-fimd"; /* for Exynos5 SoCs */
+
+blank line here would make it more readable?
+
+> +- reg := physical base address of the fimd and length of memory mapped region
+> +- interrupt-parent := reference to the interrupt combiner node with phandle
+> +- interrupts := interrupt number from the combiner to the cpu
+> +               we have 3 interrupts and the Interrupt combiner order is
+> +               FIFO Level, VSYNC and LCD_SYSTEM. Make sure to mention order
+> +               as VSYNC, FIFO Level and LCD_SYSTEM as show in the example below.
+
+Please rephrase the above as there seems to be difference in order in
+the above 2 lines itself. :)
+
+
+-- 
+With warm regards,
+Sachin
