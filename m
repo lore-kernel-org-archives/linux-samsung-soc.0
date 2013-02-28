@@ -1,37 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: SMDKV210 support issue in kernel 3.8 (dma-pl330 and HDMI failed)
-Date: Thu, 28 Feb 2013 16:54:53 +0100
-Message-ID: <512F7DCD.3040301@samsung.com>
-References: <51275DF7.4010600@gmail.com> <512CB1BE.1070401@gmail.com>
- <512D160D.1050706@gmail.com> <512D1BFB.4000700@gmail.com>
- <512E22AA.8020006@gmail.com> <512E2ABF.1080206@gmail.com>
- <512E7D97.4000608@gmail.com> <512F4D5E.5090900@gmail.com>
- <512F732B.4070804@gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v3 0/2] Add automatic bus number support for i2c busses
+ with device tree
+Date: Fri, 1 Mar 2013 00:25:58 +0100
+Message-ID: <20130228232558.GA8180@the-dreams.de>
+References: <1360630085-26874-1-git-send-email-dianders@chromium.org>
+ <CAD=FV=WS5Vj74d-FNXCVpNsx6Nf-8+RC-WO29Z1XNmkEOYLxfQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:14219 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753470Ab3B1Py4 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:43336 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751078Ab3B1X0D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Feb 2013 10:54:56 -0500
-In-reply-to: <512F732B.4070804@gmail.com>
+	Thu, 28 Feb 2013 18:26:03 -0500
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=WS5Vj74d-FNXCVpNsx6Nf-8+RC-WO29Z1XNmkEOYLxfQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lonsn <lonsn2005@gmail.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Karol Lewandowski <k.lewandowsk@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@marvell.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On 02/28/2013 04:09 PM, Lonsn wrote:
-> HDMI output is OK now, it's a variable init question in 'struct v4l2_buffer
-> buf' when call ioctl(fd, VIDIOC_DQBUF, &buf) in the hdmi example application.
-> Add m.planes in buf then OK.
-> Thanks all!
-> I will continue to test the mfc decoder for s5pv210.
 
-Well done! I was going to suggest exactly that to you. It's due to some
-change in v4l2-core in recent versions of the kernel. I'll try to update
-the example application when I find some time.
+> > Doug Anderson (2):
+> >   i2c-core: dt: Pick i2c bus number from i2c alias if present
+> >   i2c: pxa: Use i2c-core to get bus number now
+> >
+> >  drivers/i2c/busses/i2c-pxa.c | 20 ++++++++--------
+> >  drivers/i2c/i2c-core.c       | 54 ++++++++++++++++++++++++++++++++------------
+> >  2 files changed, 49 insertions(+), 25 deletions(-)
+> 
+> Is there anything else needed for this patch series?  It's been
+> hanging around for quite a while and it would be nice to see it land.
+> If you're waiting for additional acks or reviews I'll ask around and
+> see if I can get them...
 
-Regards,
-Sylwester
+Regarding patch 1, I was waiting for the idr changes to hit mainline.
+They are mainline now, but since the removal of MAX_IDR_MASK your patch
+doesn't apply anymore :( Can you rebase and retest, please? I'd like to
+get it into 3.9, still.
+
+For patch 2, some Tested-by would be nice; but it will probably make it
+into my for-next somewhen after rc1 is out.
+
+Thanks,
+
+   Wolfram
