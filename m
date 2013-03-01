@@ -1,107 +1,124 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH RFC] usb: dwc3: Get PHY from platform specific dwc3 dt
- node.
-Date: Fri, 1 Mar 2013 08:41:29 +0200
-Message-ID: <20130301064129.GF3120@arwen.pp.htv.fi>
-References: <1359631232-7107-1-git-send-email-gautam.vivek@samsung.com>
- <510A56BF.3040804@ti.com>
- <CAFp+6iFkb=U0CJA=3zmQvd5XfMwbROuRJjXoJG7zvvq4_upzNw@mail.gmail.com>
- <20130131152527.GE4064@arwen.pp.htv.fi>
- <CAFp+6iHvKYiF_neANRq5roAEJwhvcaLk7pAd7Dy94Z5XiDkhgA@mail.gmail.com>
- <20130131153836.GF4064@arwen.pp.htv.fi>
- <CAFp+6iGTqZY=+crcYyu9o5uEP9Nv2=haSqB+nCuqA2_iUand6A@mail.gmail.com>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="924gEkU1VlJlwnwX"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iGTqZY=+crcYyu9o5uEP9Nv2=haSqB+nCuqA2_iUand6A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, Andrew Morton <akpm@linux-foundation.org>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v4 1/2] i2c-core: dt: Pick i2c bus number from i2c alias if present
+Date: Fri,  1 Mar 2013 08:57:31 -0800
+Message-ID: <1362157052-16738-2-git-send-email-dianders@chromium.org>
+References: <1360630085-26874-1-git-send-email-dianders@chromium.org>
+ <1362157052-16738-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1362157052-16738-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---924gEkU1VlJlwnwX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This allows you to get the equivalent functionality of
+i2c_add_numbered_adapter() with all data in the device tree and no
+special case code in your driver.  This is a common device tree
+technique.
 
-Hi,
+For quick reference, the FDT syntax for using an alias to provide an
+ID looks like:
+  aliases {
+    i2c0 = &i2c_0;
+    i2c1 = &i2c_1;
+  };
 
-On Thu, Feb 28, 2013 at 08:09:33PM +0530, Vivek Gautam wrote:
-> On Thu, Jan 31, 2013 at 9:08 PM, Felipe Balbi <balbi@ti.com> wrote:
-> > On Thu, Jan 31, 2013 at 09:00:37PM +0530, Vivek Gautam wrote:
-> >> Hi Felipe,
-> >>
-> >>
-> >> On Thu, Jan 31, 2013 at 8:55 PM, Felipe Balbi <balbi@ti.com> wrote:
-> >> > Hi,
-> >> >
-> >> > On Thu, Jan 31, 2013 at 08:53:27PM +0530, Vivek Gautam wrote:
-> >> >> >> Moreover, SoCs having multiple dwc3 controllers will have multip=
-le
-> >> >> >> PHYs, which eventually be added using usb_add_phy_dev(), and not
-> >> >> >> using usb_add_phy(). So each dwc3 controller won't be able to
-> >> >> >> get PHYs by simply calling devm_usb_get_phy() also.
-> >> >> >
-> >> >> > No. We have added usb_get_phy_dev() for that purpose in the case =
-of non-dt.
-> >> >> > I think, instead you can have a patch to use devm_usb_get_phy_dev=
-() here and
-> >> >> > in exynos platform specific code use usb_bind_phy() to bind the p=
-hy and
-> >> >> > controller till you change it to dt.
-> >> >> >
-> >> >>
-> >> >> We have dt support for dwc3-exynos, in such case we should go ahead=
- with
-> >> >> of_platform_populate(), right ?
-> >> >> But if when i use of_platform_populate() i will not be able to set
-> >> >> dma_mask to dwc3->dev. :-(
-> >> >
-> >> > do you have a special need for dma_mask because OF already sets it.
-> >> >
-> >> If i am not wrong of_platform_device_create_pdata() will set
-> >> "dev->dev.coherent_dma_mask =3D DMA_BIT_MASK(32)"
-> >> and not dma_mask.
-> >> I fact we had some discussion sometime back when we needed the same
-> >> for dwc3-exynos in the thread:
-> >> [PATCH v2 1/2] USB: dwc3-exynos: Add support for device tree
-> >>
-> >> But couldn't get final node on it.
-> >> So suggestions here please. :-)
-> >
-> > hmm.. you're right there. Grant, Rob ? Any hints ?
-> >
->=20
-> Any suggestions on this ?
+Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-anyone ?
+---
+Changes in v4:
+- Rebased atop the removal of MAX_IDR_MASK.
 
---=20
-balbi
+Changes in v3:
+- Addressed Wolfram's feedback; rebased atop idr-cleanup series.
 
---924gEkU1VlJlwnwX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changes in v2: None
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+ drivers/i2c/i2c-core.c | 49 +++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 37 insertions(+), 12 deletions(-)
 
-iQIcBAEBAgAGBQJRME2ZAAoJEIaOsuA1yqREwBEQAKJl3/2/4qkkHZwyV+aUYAxX
-goGdCgTswl8ZS7cO7te6OxLLsOJIu9Mh+MjAoKoT3R1xjZ2dSI0OCa6snNAbvx7O
-GR/HyoGXAbHDJVYxSyzc1OL6aXTUVN97TE1/JlpDgdhEknxksaar1O0X572O57sB
-KznO2E36Jc4Pp73I+GkwReYYho92SPkna/5YyNTpnydx/jLka4bF8hm3Z7LcwQo4
-02IMlIP6yHjaAsVsGYvEV57KGM0a1ozFTgJ2ZGH/0x/FNIOqVCXorHFTJojHuTGZ
-kkQDa0JmCdF6wpOMbRizIuRK5GmOfMiqkMsVDfmuoHGZdwMzKD1v34B1n49yi768
-cUM1qd935m3cozRm18GAL6BgXmEUzh3xbUapdC/pwv0Jy2HsL6GoIb29HwZ97h0e
-qJlyC9bxBiOpI0KZYbheSGsw7vRTsXy+edp0XI4LYH9bsoDZumjEV1qbNOMcGWfH
-SwZbxvanMqVdMLTL+XNKeTvogyjg29LNk8uyET9fCJkuqEbyxzOZ2lbiiYcbC65o
-hIfWhxF8X9RscxlFOqQjAS/u4dt7K40nu3CDLMUElGvXTG8yB/oTnunOD1giLzSh
-6ReORjGDgb7eofnrorj7obQUWdqE+Kf1kkvnyPyppBeDZk50BmpxoBCK5KAnFHVD
-lBLPkWR2uFIXNFCFEwOf
-=EfNa
------END PGP SIGNATURE-----
-
---924gEkU1VlJlwnwX--
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index 991d38d..66c5252 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -921,13 +921,38 @@ out_list:
+ }
+ 
+ /**
++ * __i2c_add_numbered_adapter - i2c_add_numbered_adapter where nr is never -1
++ * @adap: the adapter to register (with adap->nr initialized)
++ * Context: can sleep
++ *
++ * See i2c_add_numbered_adapter() for details.
++ */
++static int __i2c_add_numbered_adapter(struct i2c_adapter *adap)
++{
++	int	id;
++
++	/* Handled by wrappers */
++	if (WARN_ON(adap->nr == -1))
++		return -EINVAL;
++
++	mutex_lock(&core_lock);
++	id = idr_alloc(&i2c_adapter_idr, adap, adap->nr, adap->nr + 1,
++		       GFP_KERNEL);
++	mutex_unlock(&core_lock);
++	if (id < 0)
++		return id == -ENOSPC ? -EBUSY : id;
++	return i2c_register_adapter(adap);
++}
++
++/**
+  * i2c_add_adapter - declare i2c adapter, use dynamic bus number
+  * @adapter: the adapter to add
+  * Context: can sleep
+  *
+  * This routine is used to declare an I2C adapter when its bus number
+- * doesn't matter.  Examples: for I2C adapters dynamically added by
+- * USB links or PCI plugin cards.
++ * doesn't matter or when its bus number is specified by an dt alias.
++ * Examples of bases when the bus number doesn't matter: I2C adapters
++ * dynamically added by USB links or PCI plugin cards.
+  *
+  * When this returns zero, a new bus number was allocated and stored
+  * in adap->nr, and the specified adapter became available for clients.
+@@ -935,8 +960,17 @@ out_list:
+  */
+ int i2c_add_adapter(struct i2c_adapter *adapter)
+ {
++	struct device *dev = &adapter->dev;
+ 	int id;
+ 
++	if (dev->of_node) {
++		id = of_alias_get_id(dev->of_node, "i2c");
++		if (id >= 0) {
++			adapter->nr = id;
++			return __i2c_add_numbered_adapter(adapter);
++		}
++	}
++
+ 	mutex_lock(&core_lock);
+ 	id = idr_alloc(&i2c_adapter_idr, adapter,
+ 		       __i2c_first_dynamic_bus_num, 0, GFP_KERNEL);
+@@ -975,18 +1009,9 @@ EXPORT_SYMBOL(i2c_add_adapter);
+  */
+ int i2c_add_numbered_adapter(struct i2c_adapter *adap)
+ {
+-	int	id;
+-
+ 	if (adap->nr == -1) /* -1 means dynamically assign bus id */
+ 		return i2c_add_adapter(adap);
+-
+-	mutex_lock(&core_lock);
+-	id = idr_alloc(&i2c_adapter_idr, adap, adap->nr, adap->nr + 1,
+-		       GFP_KERNEL);
+-	mutex_unlock(&core_lock);
+-	if (id < 0)
+-		return id == -ENOSPC ? -EBUSY : id;
+-	return i2c_register_adapter(adap);
++	return __i2c_add_numbered_adapter(adap);
+ }
+ EXPORT_SYMBOL_GPL(i2c_add_numbered_adapter);
+ 
+-- 
+1.8.1.3
