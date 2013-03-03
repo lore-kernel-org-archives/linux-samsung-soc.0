@@ -1,164 +1,111 @@
-From: Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH] ARM: s3c24xx: Add special bus clock ratio mode support for S3C2410A
-Date: Sun,  3 Mar 2013 20:22:06 +0400
-Message-ID: <1362327726-8193-1-git-send-email-shc_work@mail.ru>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v6 5/5] ARM: dts: Add FIMD DT binding Documentation
+Date: Sun, 03 Mar 2013 20:11:36 +0100
+Message-ID: <5133A068.7060906@gmail.com>
+References: <1362044559-7496-1-git-send-email-vikas.sajjan@linaro.org> <1362044559-7496-6-git-send-email-vikas.sajjan@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp36.i.mail.ru ([94.100.177.96]:38997 "EHLO smtp36.i.mail.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753550Ab3CCQWW (ORCPT
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:62250 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753246Ab3CCTLl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Mar 2013 11:22:22 -0500
+	Sun, 3 Mar 2013 14:11:41 -0500
+Received: by mail-ee0-f50.google.com with SMTP id e51so3506685eek.23
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Mar 2013 11:11:40 -0800 (PST)
+In-Reply-To: <1362044559-7496-6-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Alexander Shiyan <shc_work@mail.ru>
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, jy0922.shim@samsung.com
 
-This patch adds a special bus clock ratio mode support (1:4:4) for
-S3C2410A CPU targets. This mode means that the HCLK and PCLK frequency
-is the same as the FCLK/4.
+On 02/28/2013 10:42 AM, Vikas Sajjan wrote:
+> Adds FIMD DT binding documentation both Samsung SoC and Board, with an example
+>
+> Signed-off-by: Vikas Sajjan<vikas.sajjan@linaro.org>
+> ---
+>   .../devicetree/bindings/video/samsung-fimd.txt     |   54 ++++++++++++++++++++
+>   1 file changed, 54 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/video/samsung-fimd.txt
+>
+> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> new file mode 100644
+> index 0000000..8d201e7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> @@ -0,0 +1,54 @@
+> +Device-Tree bindings for Samsung SoC display controller (FIMD)
+> +
+> +FIMD stands for Fully Interactive Mobile Display, is the Display Controller for
+> +the Samsung series of SoCs which transfers the image data from a video buffer
+> +located in the system memory to an external LCD interface.
+> +
+> +Required properties:
+> +- compatible := value should be one of the following
+> +		"samsung,s3c2443-fimd"; /* for S3C24XX SoCs */
+> +		"samsung,s3c6400-fimd"; /* for S3C64XX SoCs */
+> +		"samsung,s5p6440-fimd"; /* for S5P64X0 SoCs */
+> +		"samsung,s5pc100-fimd"; /* for S5PC100 SoC  */
+> +		"samsung,s5pv210-fimd"; /* for S5PV210 SoC */
+> +		"samsung,exynos4210-fimd"; /* for Exynos4 SoCs */
+> +		"samsung,exynos5250-fimd"; /* for Exynos5 SoCs */
+> +
+> +- reg := physical base address of the fimd and length of memory mapped region
 
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
----
- arch/arm/mach-s3c24xx/cpufreq-s3c2410.c         | 36 ++++++++++++++-----------
- arch/arm/mach-s3c24xx/include/mach/regs-clock.h |  1 +
- arch/arm/mach-s3c24xx/include/mach/regs-gpio.h  |  1 +
- arch/arm/mach-s3c24xx/s3c2410.c                 | 11 ++++++--
- 4 files changed, 31 insertions(+), 18 deletions(-)
+I think FIMD should be capitalized.
 
-diff --git a/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c b/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
-index cfa0dd8..0890ab7 100644
---- a/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
-@@ -24,22 +24,25 @@
- #include <asm/mach/map.h>
- 
- #include <mach/regs-clock.h>
-+#include <mach/regs-gpio.h>
- 
- #include <plat/cpu.h>
- #include <plat/clock.h>
- #include <plat/cpu-freq-core.h>
- 
--/* Note, 2410A has an extra mode for 1:4:4 ratio, bit 2 of CLKDIV */
--
- static void s3c2410_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
- {
- 	u32 clkdiv = 0;
- 
--	if (cfg->divs.h_divisor == 2)
--		clkdiv |= S3C2410_CLKDIVN_HDIVN;
-+	if (cfg->divs.h_divisor == 4) {
-+		clkdiv = S3C2410_CLKDIVN_HDIVN1;
-+	} else {
-+		if (cfg->divs.h_divisor == 2)
-+			clkdiv = S3C2410_CLKDIVN_HDIVN;
- 
--	if (cfg->divs.p_divisor != cfg->divs.h_divisor)
--		clkdiv |= S3C2410_CLKDIVN_PDIVN;
-+		if (cfg->divs.p_divisor != cfg->divs.h_divisor)
-+			clkdiv |= S3C2410_CLKDIVN_PDIVN;
-+	}
- 
- 	__raw_writel(clkdiv, S3C2410_CLKDIVN);
- }
-@@ -48,27 +51,27 @@ static int s3c2410_cpufreq_calcdivs(struct s3c_cpufreq_config *cfg)
- {
- 	unsigned long hclk, fclk, pclk;
- 	unsigned int hdiv, pdiv;
--	unsigned long hclk_max;
- 
- 	fclk = cfg->freq.fclk;
--	hclk_max = cfg->max.hclk;
--
--	cfg->freq.armclk = fclk;
--
--	s3c_freq_dbg("%s: fclk is %lu, max hclk %lu\n",
--		      __func__, fclk, hclk_max);
- 
- 	hdiv = (fclk > cfg->max.hclk) ? 2 : 1;
- 	hclk = fclk / hdiv;
-+	pdiv = (hclk > cfg->max.pclk) ? 2 : 1;
-+	pclk = hclk / pdiv;
-+
-+	if ((samsung_cpu_id == S3C2410_GSTATUS1_2410A) &&
-+	    ((hclk > cfg->max.hclk) || (pclk > cfg->max.pclk))) {
-+		hdiv = 4;
-+		hclk = fclk / 4;
-+		pdiv = 1;
-+		pclk = fclk / 4;
-+	}
- 
- 	if (hclk > cfg->max.hclk) {
- 		s3c_freq_dbg("%s: hclk too big\n", __func__);
- 		return -EINVAL;
- 	}
- 
--	pdiv = (hclk > cfg->max.pclk) ? 2 : 1;
--	pclk = hclk / pdiv;
--
- 	if (pclk > cfg->max.pclk) {
- 		s3c_freq_dbg("%s: pclk too big\n", __func__);
- 		return -EINVAL;
-@@ -77,6 +80,7 @@ static int s3c2410_cpufreq_calcdivs(struct s3c_cpufreq_config *cfg)
- 	pdiv *= hdiv;
- 
- 	/* record the result */
-+	cfg->freq.armclk = fclk;
- 	cfg->divs.p_divisor = pdiv;
- 	cfg->divs.h_divisor = hdiv;
- 
-diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-index 3415b60..15b707b 100644
---- a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-@@ -62,6 +62,7 @@
- 
- #define S3C2410_CLKDIVN_PDIVN	     (1<<0)
- #define S3C2410_CLKDIVN_HDIVN	     (1<<1)
-+#define S3C2410_CLKDIVN_HDIVN1	     (1<<2)
- 
- #define S3C2410_CLKSLOW_UCLK_OFF	(1<<7)
- #define S3C2410_CLKSLOW_MPLL_OFF	(1<<5)
-diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
-index c2ef016..ff8ef6a 100644
---- a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
-@@ -571,6 +571,7 @@
- 
- #define S3C2410_GSTATUS1_IDMASK	   (0xffff0000)
- #define S3C2410_GSTATUS1_2410	   (0x32410000)
-+#define S3C2410_GSTATUS1_2410A	   (0x32410002)
- #define S3C2410_GSTATUS1_2412	   (0x32412001)
- #define S3C2410_GSTATUS1_2416	   (0x32416003)
- #define S3C2410_GSTATUS1_2440	   (0x32440000)
-diff --git a/arch/arm/mach-s3c24xx/s3c2410.c b/arch/arm/mach-s3c24xx/s3c2410.c
-index 9ebef95..c512dac 100644
---- a/arch/arm/mach-s3c24xx/s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/s3c2410.c
-@@ -35,6 +35,7 @@
- #include <plat/cpu-freq.h>
- 
- #include <mach/regs-clock.h>
-+#include <mach/regs-gpio.h>
- #include <plat/regs-serial.h>
- 
- #include <plat/s3c2410.h>
-@@ -104,8 +105,14 @@ void __init_or_cpufreq s3c2410_setup_clocks(void)
- 
- 	/* work out clock scalings */
- 
--	hclk = fclk / ((tmp & S3C2410_CLKDIVN_HDIVN) ? 2 : 1);
--	pclk = hclk / ((tmp & S3C2410_CLKDIVN_PDIVN) ? 2 : 1);
-+	if ((samsung_cpu_id == S3C2410_GSTATUS1_2410A) &&
-+	    (tmp & S3C2410_CLKDIVN_HDIVN1)) {
-+		hclk = fclk / 4;
-+		pclk = fclk / 4;
-+	} else {
-+		hclk = fclk / ((tmp & S3C2410_CLKDIVN_HDIVN) ? 2 : 1);
-+		pclk = hclk / ((tmp & S3C2410_CLKDIVN_PDIVN) ? 2 : 1);
-+	}
- 
- 	/* print brieft summary of clocks, etc */
- 
--- 
-1.7.12.4
+> +
+> +- interrupt-parent := reference to the interrupt combiner node with phandle
+
+Perhaps this would have been more clear:
+
+- interrupt-parent : a phandle to the interrupt combiner node;
+
+?
+
+And could we just use a colon instead of ":=", to keep it more consistent
+with other Samsung SoC DT bindings documentation ?
+
+> +
+> +- interrupts := interrupt number from the combiner to the cpu.
+> +		We have 3 interrupts and the interrupt combiner order is
+> +		FIFO Level, VSYNC, and LCD_SYSTEM.
+> +		but since the driver expects VSYNC to be the first IRQ,
+> +		make sure to mention order as VSYNC, FIFO Level and LCD_SYSTEM
+> +		keeping VSYNC as first IRQ as shown below.
+> +		for example: interrupts =<11 1>,<11 0>,<11 2>;
+
+I have a suggestion here. What about using reg-names property to make this
+more explicit, e.g.
+
+- interrupts : should contain a list of all FIMD IP block interrupts:
+   FIFO Level, VSYNC, LCD_SYSTEM. The interrupt specifier format depends
+   on the interrupt controller used;
+
+- interrupt-names : should contain the interrupt names: "fifo", "vsync",
+   "lcd_sys", in the order in which they were listed in the interrupts
+   property;
+
+Or something similar to that. Then the drivers would need to be modified
+to get interrupt resource by name, and not to rely on the VSYNC interrupt
+be listed as the first one.
+
+> +
+> +- pinctrl := property defining the pinctrl configurations with a phandle
+> +
+> +- pinctrl-names := name of the pinctrl
+
+Might be sufficient to just mention that the "default" state needs to be
+specified in the fimd node, with reference to the pinctrl bindings
+documentation, e.g.
+
+"The pinctrl bindings defined in ../../pinctrl/pinctrl-bindings.txt must be
+used to define a pinctrl state named "default".
+
+See https://patchwork.kernel.org/patch/2082311.
+
+> +Optional Properties:
+> +- samsung,power-domain := power domain property defined with a phandle
+
+"a phandle to FIMD power domain node" ?
