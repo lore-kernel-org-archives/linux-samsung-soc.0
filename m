@@ -1,64 +1,59 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2 06/10] usb: xhci: Enable runtime pm in xhci-plat
-Date: Sun, 3 Mar 2013 01:24:22 +0200
-Message-ID: <20130302232422.GD14558@arwen.pp.htv.fi>
-References: <20130302203908.GF12181@arwen.pp.htv.fi>
- <Pine.LNX.4.44L0.1303021647290.17418-100000@netrider.rowland.org>
- <20130302232132.GB14558@arwen.pp.htv.fi>
-Reply-To: <balbi@ti.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v6 01/16] clk: samsung: add common clock framework helper
+ functions for Samsung platforms
+Date: Sun, 3 Mar 2013 02:08:49 +0100
+Message-ID: <201303030208.49722.heiko@sntech.de>
+References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
+ <1361175686-19400-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LKTjZJSUETSlgu2t"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130302232132.GB14558@arwen.pp.htv.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, kgene.kim@samsung.com, kishon@ti.com, Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1361175686-19400-2-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
---LKTjZJSUETSlgu2t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Sun, Mar 03, 2013 at 01:21:32AM +0200, Felipe Balbi wrote:
-> > I don't know much about clock handling.  In general, the
-> > pm_runtime_set_active() and pm_runtime_enable() parts should be done by
-> > the subsystem, not the driver, whenever possible.
->=20
-> good to know :-) Though I disagree with calling pm_runtime_enable() at
-> the subsystem level.
->=20
-> This means we can add pm_runtime_set_active()=20
+Am Montag, 18. Februar 2013, 09:21:11 schrieb Thomas Abraham:
+> All Samsung platforms include different types of clock including
+> fixed-rate, mux, divider and gate clock types. There are typically
+> hundreds of such clocks on each of the Samsung platforms. To enable
+> Samsung platforms to register these clocks using the common clock
+> framework, a bunch of utility functions are introduced here which simplify
+> the clock registration process. The clocks are usually statically
+> instantiated and registered with common clock framework.
+> 
+> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Tested-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Tested-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-ignore this last line, forgot to delete it.
+I'm playing around with this on my s3c2416 platform and it works like a charm 
+for the most part - and the system already comes sort of up again :-) .
 
---=20
-balbi
+So,
+Tested-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 
---LKTjZJSUETSlgu2t
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+But is there an easy way to define more than one alias? On the s3c2416 for 
+example the hsmmc hclk is the "hsmmc" io-clock, as well as the source for the 
+"mmc_busclk.0". Same for the "uart" pclk, that is also a baud clock source.
 
-iQIcBAEBAgAGBQJRMoomAAoJEIaOsuA1yqREUzkP/RFU9kRyZf14+k/53EJFboLT
-NMA0EDE6i4L8Uvf76KGGiwh7Ypsf74mMtWrt731XrqqJUvJbFcze47TsrF1uXHRR
-sqbyE2vad5T6CfD7aUFWVvw6vE9bKIpFwOcWEBGVbaf+XMVSv3Mq3JrWBuYL+ll7
-en77THA8zT0C3D9CyAX/sG2GS4h9zaVi+NDsLBBRJeqrCS98ZZtgifWh6JtqP7Re
-5l7l4dLMXplmC3+VdxKANcrcKyaDyFwHaMH6eHiEsTt9/tBHCCRQkuOp9Dj9esW2
-24Li5E74yj2eDfkToCFip6ORxYNAmfiD1xjkc9VJ/gfpIu+P4noRlI19yfYzDZFZ
-iWqnqAXANPKI7r6YHk/ZUzYc7EV7qchQlbaUD0/FwZjpnHc4aRT9QkRmZSe7ADhg
-bqcrlZa2lnvBq7m1NBKanBqF8I14yWS7eQG5+4u5JUMMspzxCZgF5S7capSUIA+D
-gHkQY/mtewJ6R65VyZTC8XYppvEdpoYSbyK3LOEqGkZFVBNLZ84+Ynr9hgREPK4J
-fwe+1jofn1xD3UrQT2Hzg2NuYgMaTMn9E3llVjhXJZlx6XWTGWgSRN9vZzRB3SQ9
-bz1mzXHS6EpIsdcDGhueUWHGcZ9V4EjyOSCNUq5R5fQwBIaJQ3+FEz/m+3EpX7xK
-up23dblsEFWYFd2CgME7
-=9N5y
------END PGP SIGNATURE-----
 
---LKTjZJSUETSlgu2t--
+Thanks
+Heiko
