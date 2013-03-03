@@ -1,196 +1,122 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v6 01/16] clk: samsung: add common clock framework helper functions for Samsung platforms
-Date: Sun, 3 Mar 2013 13:08:59 +0100
-Message-ID: <201303031309.01118.heiko@sntech.de>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org> <51333149.1060105@gmail.com> <2984153.Xctncej7hL@flatron>
+From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v7] iio: adc: add exynos adc driver under iio framwork
+Date: Sun, 03 Mar 2013 12:16:34 +0000
+Message-ID: <51333F22.70702@kernel.org>
+References: <1360843890-28466-1-git-send-email-ch.naveen@samsung.com> <1360911394-19873-1-git-send-email-ch.naveen@samsung.com> <511E346C.3060701@metafoo.de> <CAHfPSqAQd7TJqX2FVmkvy_aX0yXm25qLu3A9kPoteUGaBLZPQQ@mail.gmail.com> <511E3772.7000605@metafoo.de> <CAHfPSqABgb8P5js8hz2_Xr2vXQ0F3OkTi2B7jZTqiDg_H6Uo4g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:40165 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753244Ab3CCMJM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Mar 2013 07:09:12 -0500
-In-Reply-To: <2984153.Xctncej7hL@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAHfPSqABgb8P5js8hz2_Xr2vXQ0F3OkTi2B7jZTqiDg_H6Uo4g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com
 
-Am Sonntag, 3. M=E4rz 2013, 12:45:01 schrieb Tomasz Figa:
-> Hi,
->=20
-> On Sunday 03 of March 2013 12:17:29 Sylwester Nawrocki wrote:
-> > Hi,
-> >=20
-> > On 03/03/2013 02:08 AM, Heiko St=FCbner wrote:
-> > > But is there an easy way to define more than one alias? On the s3=
-c2416
-> > > for example the hsmmc hclk is the "hsmmc" io-clock, as well as th=
-e
-> > > source for the "mmc_busclk.0". Same for the "uart" pclk, that is =
-also
-> > > a baud clock source.
-> >=20
-> > This driver currently provides for only one additional clkdev looku=
-p
-> > entry per a platform clock. I pointed out this desing issue in the
-> > early version of the patch set. It's because a machine clock defini=
-tion
-> > is coupled with a clock consumer definition. And IMO various
-> > samsung_clock_register_* functions should not have
-> > clk_register_clkdev() inside them. I.e. first step could be registe=
-ring
-> > all machine clocks and in the second one clkdev lookup entries coul=
-d be
-> > created. This is how most (all?) existing SoC clock drivers are
-> > working.
-> >=20
-> > But those multiple aliases are important only for machines with dev=
-ice
-> > tree support, aren't they ?
->=20
-> I suppose you meant _without_ device tree support, right?
+On 02/15/2013 01:35 PM, Naveen Krishna Ch wrote:
+> On 15 February 2013 18:56, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
+>> On 02/15/2013 02:17 PM, Naveen Krishna Ch wrote:
+>>> On 15 February 2013 18:43, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
+>>>> On 02/15/2013 07:56 AM, Naveen Krishna Chatradhi wrote:
+>>>>> This patch adds New driver to support:
+>>>>> 1. Supports ADC IF found on EXYNOS4412/EXYNOS5250
+>>>>>    and future SoCs from Samsung
+>>>>> 2. Add ADC driver under iio/adc framework
+>>>>> 3. Also adds the Documentation for device tree bindings
+>>>>>
+>>>>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>
+>>>> Looks good.
+>>>>
+>>>> Reviewed-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Applied to togreg branch of iio.git
 
-The aliases are only needed for the non-dt case. But as I think common =
-clk
-support will be a requirement for dt support in the future, similar to
-pinctrl, without the correct handling of the aliases it will be hard to
-incrementally convert the other platforms (i.e. s3c24xx before s3c2443,=
- etc).
+Thanks,
 
-=46or the time being I've added my own register_alias function to Thoma=
-s' core
-code, hijacking the clk_table for this - attached for reference below.
-
-
-> > I hope this patch series gets merged early to linux-next in the 3.1=
-0
-> > cycle so the multiple accumulated fixup patches for this clock driv=
-er
-> > can be merged as well and issues like that you pointed out can be
-> > resolved with incremental patches.
->=20
-> Yes, I hope so too.
-
-me too. Following all this still out-of-tree stuff makes me dizzy :-)
-
-
-Heiko
-
-
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index d36cdd5..7f1b5bc 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -57,14 +57,15 @@ void __init samsung_clk_init(struct device_node *np=
-, void __iomem *base,
- 		unsigned long nr_rdump)
- {
- 	reg_base =3D base;
--	if (!np)
--		return;
-=20
--#ifdef CONFIG_OF
- 	clk_table =3D kzalloc(sizeof(struct clk *) * nr_clks, GFP_KERNEL);
- 	if (!clk_table)
- 		panic("could not allocate clock lookup table\n");
-=20
-+	if (!np)
-+		return;
-+
-+#ifdef CONFIG_OF
- 	clk_data.clks =3D clk_table;
- 	clk_data.clk_num =3D nr_clks;
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-@@ -96,6 +97,46 @@ void samsung_clk_add_lookup(struct clk *clk, unsigne=
-d int id)
- 		clk_table[id] =3D clk;
- }
-=20
-+/* register a list of aliases */
-+void __init samsung_clk_register_alias(struct samsung_clock_alias *lis=
-t,
-+					unsigned int nr_clk)
-+{
-+	struct clk *clk;
-+	unsigned int idx, ret;
-+
-+	if (!clk_table) {
-+		pr_err("%s: clock table missing\n", __func__);
-+		return;
-+	}
-+
-+	for (idx =3D 0; idx < nr_clk; idx++, list++) {
-+		if (!list->id) {
-+			pr_err("%s: clock id missing for index %d\n", __func__,
-+				idx);
-+			continue;
-+		}
-+
-+		clk =3D clk_table[list->id];
-+		if (!clk) {
-+			pr_err("%s: failed to find clock %d\n", __func__,
-+				list->id);
-+			continue;
-+		}
-+
-+		/* register a clock lookup only if a clock alias is specified */
-+		if (!list->alias) {
-+			pr_err("%s: no alias defined for clock %d\n", __func__,
-+			       list->id);
-+			continue;
-+		}
-+
-+		ret =3D clk_register_clkdev(clk, list->alias, list->dev_name);
-+		if (ret)
-+			pr_err("%s: failed to register lookup %s\n",
-+					__func__, list->alias);
-+	}
-+}
-+
- /* register a list of fixed clocks */
- void __init samsung_clk_register_fixed_rate(
- 		struct samsung_fixed_rate_clock *list, unsigned int nr_clk)
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 175a9d0..8be9248 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -23,6 +23,25 @@
- #include <mach/map.h>
-=20
- /**
-+ * struct samsung_clock_alias: information about mux clock
-+ * @id: platform specific id of the clock.
-+ * @dev_name: name of the device to which this clock belongs.
-+ * @alias: optional clock alias name to be assigned to this clock.
-+ */
-+struct samsung_clock_alias {
-+	unsigned int		id;
-+	const char		*dev_name;
-+	const char		*alias;
-+};
-+
-+#define ALIAS(_id, dname, a)	\
-+	{							\
-+		.id		=3D _id,				\
-+		.dev_name	=3D dname,			\
-+		.alias		=3D a,				\
-+	}
-+
-+/**
-  * struct samsung_fixed_rate_clock: information about fixed-rate clock
-  * @id: platform specific id of the clock.
-  * @name: name of this fixed-rate clock.
-@@ -260,6 +282,8 @@ extern void __init samsung_clk_of_register_fixed_ex=
-t(
-=20
- extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id);
-=20
-+extern void samsung_clk_register_alias(struct samsung_clock_alias *lis=
-t,
-+		unsigned int nr_clk);
- extern void __init samsung_clk_register_fixed_rate(
- 		struct samsung_fixed_rate_clock *clk_list, unsigned int nr_clk);
- extern void __init samsung_clk_register_fixed_factor(
+>>>>
+>>>> One minor thing though, there are a couple of places where you break a line
+>>>> into multiple lines, even though the line fits easily inside the 80 chars
+>>>> per line limit. In my opinion this doesn't help the legibility of the code.
+>>>> E.g.:
+>>>>
+>>>> +       info->value = readl(ADC_V1_DATX(info->regs)) &
+>>>> +                                               ADC_DATX_MASK;
+>>>>
+>>>> There is no need to respin the patch just for this, but if you happen to
+>>>> make another version of the patch, that's something to consider.
+>>>>
+>>>>> ---
+>>>>> Changes since v1:
+>>>>>
+>>>>> 1. Fixed comments from Lars
+>>>>> 2. Added support for ADC on EXYNOS5410
+>>>>>
+>>>>> Changes since v2:
+>>>>>
+>>>>> 1. Changed the instance name for (struct iio_dev *) to indio_dev
+>>>>> 2. Changed devm_request_irq to request_irq
+>>>>>
+>>>>> Few doubts regarding the mappings and child device handling.
+>>>>> Kindly, suggest me better methods.
+>>>>>
+>>>>> Changes since v3:
+>>>>>
+>>>>> 1. Added clk_prepare_disable and regulator_disable calls in _remove()
+>>>>> 2. Moved init_completion before irq_request
+>>>>> 3. Added NULL pointer check for devm_request_and_ioremap() return value.
+>>>>> 4. Use number of channels as per the ADC version
+>>>>> 5. Change the define ADC_V1_CHANNEL to ADC_CHANNEL
+>>>>> 6. Update the Documentation to include EXYNOS5410 compatible
+>>>>>
+>>>>> Changes since v4:
+>>>>>
+>>>>> 1. if devm_request_and_ioremap() failes, free iio_device before returning
+>>>>>
+>>>>> Changes since v5:
+>>>>>
+>>>>> 1. Fixed comments from Olof (ADC hardware version handling)
+>>>>> 2. Rebased on top of comming OF framework for IIO by "Guenter Roeck".
+>>>>>
+>>>>> Changes since v6:
+>>>>>
+>>>>> 1. Addressed comments from Lars-Peter Clausen
+>>>>
+>>>>
+>>>> btw. these kind of change logs are not really helpful, it would be better to
+>>>> list the actual changes made.
+>>> Hello Lars,
+>>>
+>>> No other changes from my side. But, I can send another version.
+>>> Do you want me to list the latest change alone instead of the whole
+>>> change list ?
+>>
+>> Hi,
+>>
+>> No need to resend the patch, this is just something to consider for the
+>> future. A changelog entry which reads like "Addressed Jon Does comments" is
+>> not really useful since most people will probably not know or not longer
+>> remember all the details of those comments, instead a nice list of all the
+>> changes which have been made is much better. E.g.:
+>>
+>> Changes since v6:
+>>         * Fixed debugfs_read_reg
+>>         * Introduced timeout when waiting for the data ready IRQ
+>>         * Slightly reformatted exynos_read_raw for better legibility
+>>
+>> - Lars
+> 
+> Thanks for your comments and valuable time.
+> Sure Lars, Will do it.
+>>
+>>
+> 
+> 
+> 
+> --
+> Shine bright,
+> (: Nav :)
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
