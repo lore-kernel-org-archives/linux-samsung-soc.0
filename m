@@ -1,51 +1,62 @@
-From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 01/16] clk: samsung: add common clock framework helper
- functions for Samsung platforms
-Date: Sun, 03 Mar 2013 12:17:29 +0100
-Message-ID: <51333149.1060105@gmail.com>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
- <1361175686-19400-2-git-send-email-thomas.abraham@linaro.org>
- <201303030208.49722.heiko@sntech.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v6 01/16] clk: samsung: add common clock framework helper functions for Samsung platforms
+Date: Sun, 03 Mar 2013 12:45:01 +0100
+Message-ID: <2984153.Xctncej7hL@flatron>
+References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org> <201303030208.49722.heiko@sntech.de> <51333149.1060105@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <201303030208.49722.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f53.google.com ([74.125.83.53]:45423 "EHLO
+	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753158Ab3CCLpB convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 3 Mar 2013 06:45:01 -0500
+Received: by mail-ee0-f53.google.com with SMTP id e53so3366451eek.40
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Mar 2013 03:45:00 -0800 (PST)
+In-Reply-To: <51333149.1060105@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com
 
-SGksCgpPbiAwMy8wMy8yMDEzIDAyOjA4IEFNLCBIZWlrbyBTdMO8Ym5lciB3cm90ZToKPiBCdXQg
-aXMgdGhlcmUgYW4gZWFzeSB3YXkgdG8gZGVmaW5lIG1vcmUgdGhhbiBvbmUgYWxpYXM/IE9uIHRo
-ZSBzM2MyNDE2IGZvcgo+IGV4YW1wbGUgdGhlIGhzbW1jIGhjbGsgaXMgdGhlICJoc21tYyIgaW8t
-Y2xvY2ssIGFzIHdlbGwgYXMgdGhlIHNvdXJjZSBmb3IgdGhlCj4gIm1tY19idXNjbGsuMCIuIFNh
-bWUgZm9yIHRoZSAidWFydCIgcGNsaywgdGhhdCBpcyBhbHNvIGEgYmF1ZCBjbG9jayBzb3VyY2Uu
-CgpUaGlzIGRyaXZlciBjdXJyZW50bHkgcHJvdmlkZXMgZm9yIG9ubHkgb25lIGFkZGl0aW9uYWwg
-Y2xrZGV2IGxvb2t1cCBlbnRyeQpwZXIgYSBwbGF0Zm9ybSBjbG9jay4gSSBwb2ludGVkIG91dCB0
-aGlzIGRlc2luZyBpc3N1ZSBpbiB0aGUgZWFybHkgdmVyc2lvbgpvZiB0aGUgcGF0Y2ggc2V0LiBJ
-dCdzIGJlY2F1c2UgYSBtYWNoaW5lIGNsb2NrIGRlZmluaXRpb24gaXMgY291cGxlZCB3aXRoCmEg
-Y2xvY2sgY29uc3VtZXIgZGVmaW5pdGlvbi4gQW5kIElNTyB2YXJpb3VzIHNhbXN1bmdfY2xvY2tf
-cmVnaXN0ZXJfKgpmdW5jdGlvbnMgc2hvdWxkIG5vdCBoYXZlIGNsa19yZWdpc3Rlcl9jbGtkZXYo
-KSBpbnNpZGUgdGhlbS4gSS5lLiBmaXJzdApzdGVwIGNvdWxkIGJlIHJlZ2lzdGVyaW5nIGFsbCBt
-YWNoaW5lIGNsb2NrcyBhbmQgaW4gdGhlIHNlY29uZCBvbmUgY2xrZGV2Cmxvb2t1cCBlbnRyaWVz
-IGNvdWxkIGJlIGNyZWF0ZWQuIFRoaXMgaXMgaG93IG1vc3QgKGFsbD8pIGV4aXN0aW5nIFNvQwpj
-bG9jayBkcml2ZXJzIGFyZSB3b3JraW5nLgoKQnV0IHRob3NlIG11bHRpcGxlIGFsaWFzZXMgYXJl
-IGltcG9ydGFudCBvbmx5IGZvciBtYWNoaW5lcyB3aXRoIGRldmljZQp0cmVlIHN1cHBvcnQsIGFy
-ZW4ndCB0aGV5ID8KCkkgaG9wZSB0aGlzIHBhdGNoIHNlcmllcyBnZXRzIG1lcmdlZCBlYXJseSB0
-byBsaW51eC1uZXh0IGluIHRoZSAzLjEwCmN5Y2xlIHNvIHRoZSBtdWx0aXBsZSBhY2N1bXVsYXRl
-ZCBmaXh1cCBwYXRjaGVzIGZvciB0aGlzIGNsb2NrIGRyaXZlcgpjYW4gYmUgbWVyZ2VkIGFzIHdl
-bGwgYW5kIGlzc3VlcyBsaWtlIHRoYXQgeW91IHBvaW50ZWQgb3V0IGNhbiBiZQpyZXNvbHZlZCB3
-aXRoIGluY3JlbWVudGFsIHBhdGNoZXMuCgpSZWdhcmRzLApTeWx3ZXN0ZXIKCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2aWNldHJlZS1kaXNjdXNz
-IG1haWxpbmcgbGlzdApkZXZpY2V0cmVlLWRpc2N1c3NAbGlzdHMub3psYWJzLm9yZwpodHRwczov
-L2xpc3RzLm96bGFicy5vcmcvbGlzdGluZm8vZGV2aWNldHJlZS1kaXNjdXNzCg==
+Hi,
+
+On Sunday 03 of March 2013 12:17:29 Sylwester Nawrocki wrote:
+> Hi,
+>=20
+> On 03/03/2013 02:08 AM, Heiko St=FCbner wrote:
+> > But is there an easy way to define more than one alias? On the s3c2=
+416
+> > for example the hsmmc hclk is the "hsmmc" io-clock, as well as the
+> > source for the "mmc_busclk.0". Same for the "uart" pclk, that is al=
+so
+> > a baud clock source.
+> This driver currently provides for only one additional clkdev lookup
+> entry per a platform clock. I pointed out this desing issue in the
+> early version of the patch set. It's because a machine clock definiti=
+on
+> is coupled with a clock consumer definition. And IMO various
+> samsung_clock_register_* functions should not have
+> clk_register_clkdev() inside them. I.e. first step could be registeri=
+ng
+> all machine clocks and in the second one clkdev lookup entries could =
+be
+> created. This is how most (all?) existing SoC clock drivers are
+> working.
+>=20
+> But those multiple aliases are important only for machines with devic=
+e
+> tree support, aren't they ?
+
+I suppose you meant _without_ device tree support, right?
+
+> I hope this patch series gets merged early to linux-next in the 3.10
+> cycle so the multiple accumulated fixup patches for this clock driver
+> can be merged as well and issues like that you pointed out can be
+> resolved with incremental patches.
+
+Yes, I hope so too.
+
+Best regards,
+Tomasz
