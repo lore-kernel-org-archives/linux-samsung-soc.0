@@ -1,59 +1,50 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH v6 01/16] clk: samsung: add common clock framework helper
- functions for Samsung platforms
-Date: Sun, 3 Mar 2013 02:08:49 +0100
-Message-ID: <201303030208.49722.heiko@sntech.de>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
- <1361175686-19400-2-git-send-email-thomas.abraham@linaro.org>
+From: Cesar Eduardo Barros <cesarb@cesarb.net>
+Subject: [PATCH 03/14] MAINTAINERS: remove arch/arm/plat-s3c24xx/
+Date: Sat,  2 Mar 2013 22:53:41 -0300
+Message-ID: <1362275632-20242-4-git-send-email-cesarb@cesarb.net>
+References: <1362275632-20242-1-git-send-email-cesarb@cesarb.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1361175686-19400-2-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1362275632-20242-1-git-send-email-cesarb@cesarb.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Joe Perches <joe@perches.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Cesar Eduardo Barros <cesarb@cesarb.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+This directory was removed by commit 09ec1d7 (ARM: S3C24XX: Remove
+plat-s3c24xx directory in arch/arm/).
 
-Am Montag, 18. Februar 2013, 09:21:11 schrieb Thomas Abraham:
-> All Samsung platforms include different types of clock including
-> fixed-rate, mux, divider and gate clock types. There are typically
-> hundreds of such clocks on each of the Samsung platforms. To enable
-> Samsung platforms to register these clocks using the common clock
-> framework, a bunch of utility functions are introduced here which simplify
-> the clock registration process. The clocks are usually statically
-> instantiated and registered with common clock framework.
-> 
-> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Tested-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Tested-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Cesar Eduardo Barros <cesarb@cesarb.net>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-I'm playing around with this on my s3c2416 platform and it works like a charm 
-for the most part - and the system already comes sort of up again :-) .
-
-So,
-Tested-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-
-
-But is there an easy way to define more than one alias? On the s3c2416 for 
-example the hsmmc hclk is the "hsmmc" io-clock, as well as the source for the 
-"mmc_busclk.0". Same for the "uart" pclk, that is also a baud clock source.
-
-
-Thanks
-Heiko
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3c074d5..5af82f9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1119,7 +1119,6 @@ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ W:	http://www.fluff.org/ben/linux/
+ S:	Maintained
+ F:	arch/arm/plat-samsung/
+-F:	arch/arm/plat-s3c24xx/
+ F:	arch/arm/mach-s3c24*/
+ F:	arch/arm/mach-s3c64xx/
+ F:	drivers/*/*s3c2410*
+-- 
+1.7.11.7
