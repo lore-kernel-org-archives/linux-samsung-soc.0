@@ -1,218 +1,164 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v6 01/16] clk: samsung: add common clock framework helper
- functions for Samsung platforms
-Date: Sun, 03 Mar 2013 13:48:12 +0100
-Message-ID: <5133468C.4010001@gmail.com>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org> <51333149.1060105@gmail.com> <2984153.Xctncej7hL@flatron> <201303031309.01118.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Alexander Shiyan <shc_work@mail.ru>
+Subject: [PATCH] ARM: s3c24xx: Add special bus clock ratio mode support for S3C2410A
+Date: Sun,  3 Mar 2013 20:22:06 +0400
+Message-ID: <1362327726-8193-1-git-send-email-shc_work@mail.ru>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f176.google.com ([209.85.215.176]:49337 "EHLO
-	mail-ea0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753000Ab3CCMsS (ORCPT
+Received: from smtp36.i.mail.ru ([94.100.177.96]:38997 "EHLO smtp36.i.mail.ru"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753550Ab3CCQWW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Mar 2013 07:48:18 -0500
-Received: by mail-ea0-f176.google.com with SMTP id a13so618260eaa.21
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Mar 2013 04:48:16 -0800 (PST)
-In-Reply-To: <201303031309.01118.heiko@sntech.de>
+	Sun, 3 Mar 2013 11:22:22 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Alexander Shiyan <shc_work@mail.ru>
 
-On 03/03/2013 01:08 PM, Heiko St=FCbner wrote:
-> Am Sonntag, 3. M=E4rz 2013, 12:45:01 schrieb Tomasz Figa:
->> On Sunday 03 of March 2013 12:17:29 Sylwester Nawrocki wrote:
->>> On 03/03/2013 02:08 AM, Heiko St=FCbner wrote:
->>>> But is there an easy way to define more than one alias? On the s3c=
-2416
->>>> for example the hsmmc hclk is the "hsmmc" io-clock, as well as the
->>>> source for the "mmc_busclk.0". Same for the "uart" pclk, that is a=
-lso
->>>> a baud clock source.
->>>
->>> This driver currently provides for only one additional clkdev looku=
-p
->>> entry per a platform clock. I pointed out this desing issue in the
->>> early version of the patch set. It's because a machine clock defini=
-tion
->>> is coupled with a clock consumer definition. And IMO various
->>> samsung_clock_register_* functions should not have
->>> clk_register_clkdev() inside them. I.e. first step could be registe=
-ring
->>> all machine clocks and in the second one clkdev lookup entries coul=
-d be
->>> created. This is how most (all?) existing SoC clock drivers are
->>> working.
->>>
->>> But those multiple aliases are important only for machines with dev=
-ice
->>> tree support, aren't they ?
->>
->> I suppose you meant _without_ device tree support, right?
+This patch adds a special bus clock ratio mode support (1:4:4) for
+S3C2410A CPU targets. This mode means that the HCLK and PCLK frequency
+is the same as the FCLK/4.
 
-Yes, my mistake, sorry for the confusion.
+Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+---
+ arch/arm/mach-s3c24xx/cpufreq-s3c2410.c         | 36 ++++++++++++++-----------
+ arch/arm/mach-s3c24xx/include/mach/regs-clock.h |  1 +
+ arch/arm/mach-s3c24xx/include/mach/regs-gpio.h  |  1 +
+ arch/arm/mach-s3c24xx/s3c2410.c                 | 11 ++++++--
+ 4 files changed, 31 insertions(+), 18 deletions(-)
 
-> The aliases are only needed for the non-dt case. But as I think commo=
-n clk
-> support will be a requirement for dt support in the future, similar t=
-o
-> pinctrl, without the correct handling of the aliases it will be hard =
-to
-> incrementally convert the other platforms (i.e. s3c24xx before s3c244=
-3, etc).
-
-Yes, indeed. That's a very valid point to have the handling of the alia=
-ses
-implemented correctly, not assuming it will be needed temporarily only.
-
-> For the time being I've added my own register_alias function to Thoma=
-s' core
-> code, hijacking the clk_table for this - attached for reference below=
-=2E
-
-The patch looks good to me. It would make sense to handle all clkdev
-entries like this.
-
->>> I hope this patch series gets merged early to linux-next in the 3.1=
-0
->>> cycle so the multiple accumulated fixup patches for this clock driv=
-er
->>> can be merged as well and issues like that you pointed out can be
->>> resolved with incremental patches.
->>
->> Yes, I hope so too.
->
-> me too. Following all this still out-of-tree stuff makes me dizzy :-)
-
-Yeah, especially that it is not always clear what tag the patch series
-are based of off. For a long patch series like these, touching the core
-subsystems, it would be nice to have a corresponding git tree so it is
-possible to actually use and test the patches without much trouble.
-
-> Heiko
->
->
-> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index d36cdd5..7f1b5bc 100644
-> --- a/drivers/clk/samsung/clk.c
-> +++ b/drivers/clk/samsung/clk.c
-> @@ -57,14 +57,15 @@ void __init samsung_clk_init(struct device_node *=
-np, void __iomem *base,
->   		unsigned long nr_rdump)
->   {
->   	reg_base =3D base;
-> -	if (!np)
-> -		return;
->
-> -#ifdef CONFIG_OF
->   	clk_table =3D kzalloc(sizeof(struct clk *) * nr_clks, GFP_KERNEL);
->   	if (!clk_table)
->   		panic("could not allocate clock lookup table\n");
->
-> +	if (!np)
-> +		return;
-> +
-> +#ifdef CONFIG_OF
->   	clk_data.clks =3D clk_table;
->   	clk_data.clk_num =3D nr_clks;
->   	of_clk_add_provider(np, of_clk_src_onecell_get,&clk_data);
-> @@ -96,6 +97,46 @@ void samsung_clk_add_lookup(struct clk *clk, unsig=
-ned int id)
->   		clk_table[id] =3D clk;
->   }
->
-> +/* register a list of aliases */
-> +void __init samsung_clk_register_alias(struct samsung_clock_alias *l=
-ist,
-> +					unsigned int nr_clk)
-> +{
-> +	struct clk *clk;
-> +	unsigned int idx, ret;
-> +
-> +	if (!clk_table) {
-> +		pr_err("%s: clock table missing\n", __func__);
-> +		return;
-> +	}
-> +
-> +	for (idx =3D 0; idx<  nr_clk; idx++, list++) {
-> +		if (!list->id) {
-> +			pr_err("%s: clock id missing for index %d\n", __func__,
-> +				idx);
-> +			continue;
-> +		}
-> +
-> +		clk =3D clk_table[list->id];
-> +		if (!clk) {
-> +			pr_err("%s: failed to find clock %d\n", __func__,
-> +				list->id);
-> +			continue;
-> +		}
-> +
-> +		/* register a clock lookup only if a clock alias is specified */
-> +		if (!list->alias) {
-> +			pr_err("%s: no alias defined for clock %d\n", __func__,
-> +			       list->id);
-
-I wouldn't print that error in general. It might be a clock with NULL=20
-conn_id.
-It's not an error condition.
-
-> +			continue;
-> +		}
-> +
-> +		ret =3D clk_register_clkdev(clk, list->alias, list->dev_name);
-> +		if (ret)
-> +			pr_err("%s: failed to register lookup %s\n",
-> +					__func__, list->alias);
-> +	}
-> +}
-> +
->   /* register a list of fixed clocks */
->   void __init samsung_clk_register_fixed_rate(
->   		struct samsung_fixed_rate_clock *list, unsigned int nr_clk)
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index 175a9d0..8be9248 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -23,6 +23,25 @@
->   #include<mach/map.h>
->
->   /**
-> + * struct samsung_clock_alias: information about mux clock
-> + * @id: platform specific id of the clock.
-> + * @dev_name: name of the device to which this clock belongs.
-> + * @alias: optional clock alias name to be assigned to this clock.
-> + */
-> +struct samsung_clock_alias {
-> +	unsigned int		id;
-> +	const char		*dev_name;
-> +	const char		*alias;
-> +};
-> +
-> +#define ALIAS(_id, dname, a)	\
-> +	{							\
-> +		.id		=3D _id,				\
-> +		.dev_name	=3D dname,			\
-> +		.alias		=3D a,				\
-> +	}
-> +
-> +/**
->    * struct samsung_fixed_rate_clock: information about fixed-rate cl=
-ock
->    * @id: platform specific id of the clock.
->    * @name: name of this fixed-rate clock.
-> @@ -260,6 +282,8 @@ extern void __init samsung_clk_of_register_fixed_=
-ext(
->
->   extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id=
-);
->
-> +extern void samsung_clk_register_alias(struct samsung_clock_alias *l=
-ist,
-> +		unsigned int nr_clk);
->   extern void __init samsung_clk_register_fixed_rate(
->   		struct samsung_fixed_rate_clock *clk_list, unsigned int nr_clk);
->   extern void __init samsung_clk_register_fixed_factor(
+diff --git a/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c b/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
+index cfa0dd8..0890ab7 100644
+--- a/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
++++ b/arch/arm/mach-s3c24xx/cpufreq-s3c2410.c
+@@ -24,22 +24,25 @@
+ #include <asm/mach/map.h>
+ 
+ #include <mach/regs-clock.h>
++#include <mach/regs-gpio.h>
+ 
+ #include <plat/cpu.h>
+ #include <plat/clock.h>
+ #include <plat/cpu-freq-core.h>
+ 
+-/* Note, 2410A has an extra mode for 1:4:4 ratio, bit 2 of CLKDIV */
+-
+ static void s3c2410_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
+ {
+ 	u32 clkdiv = 0;
+ 
+-	if (cfg->divs.h_divisor == 2)
+-		clkdiv |= S3C2410_CLKDIVN_HDIVN;
++	if (cfg->divs.h_divisor == 4) {
++		clkdiv = S3C2410_CLKDIVN_HDIVN1;
++	} else {
++		if (cfg->divs.h_divisor == 2)
++			clkdiv = S3C2410_CLKDIVN_HDIVN;
+ 
+-	if (cfg->divs.p_divisor != cfg->divs.h_divisor)
+-		clkdiv |= S3C2410_CLKDIVN_PDIVN;
++		if (cfg->divs.p_divisor != cfg->divs.h_divisor)
++			clkdiv |= S3C2410_CLKDIVN_PDIVN;
++	}
+ 
+ 	__raw_writel(clkdiv, S3C2410_CLKDIVN);
+ }
+@@ -48,27 +51,27 @@ static int s3c2410_cpufreq_calcdivs(struct s3c_cpufreq_config *cfg)
+ {
+ 	unsigned long hclk, fclk, pclk;
+ 	unsigned int hdiv, pdiv;
+-	unsigned long hclk_max;
+ 
+ 	fclk = cfg->freq.fclk;
+-	hclk_max = cfg->max.hclk;
+-
+-	cfg->freq.armclk = fclk;
+-
+-	s3c_freq_dbg("%s: fclk is %lu, max hclk %lu\n",
+-		      __func__, fclk, hclk_max);
+ 
+ 	hdiv = (fclk > cfg->max.hclk) ? 2 : 1;
+ 	hclk = fclk / hdiv;
++	pdiv = (hclk > cfg->max.pclk) ? 2 : 1;
++	pclk = hclk / pdiv;
++
++	if ((samsung_cpu_id == S3C2410_GSTATUS1_2410A) &&
++	    ((hclk > cfg->max.hclk) || (pclk > cfg->max.pclk))) {
++		hdiv = 4;
++		hclk = fclk / 4;
++		pdiv = 1;
++		pclk = fclk / 4;
++	}
+ 
+ 	if (hclk > cfg->max.hclk) {
+ 		s3c_freq_dbg("%s: hclk too big\n", __func__);
+ 		return -EINVAL;
+ 	}
+ 
+-	pdiv = (hclk > cfg->max.pclk) ? 2 : 1;
+-	pclk = hclk / pdiv;
+-
+ 	if (pclk > cfg->max.pclk) {
+ 		s3c_freq_dbg("%s: pclk too big\n", __func__);
+ 		return -EINVAL;
+@@ -77,6 +80,7 @@ static int s3c2410_cpufreq_calcdivs(struct s3c_cpufreq_config *cfg)
+ 	pdiv *= hdiv;
+ 
+ 	/* record the result */
++	cfg->freq.armclk = fclk;
+ 	cfg->divs.p_divisor = pdiv;
+ 	cfg->divs.h_divisor = hdiv;
+ 
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+index 3415b60..15b707b 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+@@ -62,6 +62,7 @@
+ 
+ #define S3C2410_CLKDIVN_PDIVN	     (1<<0)
+ #define S3C2410_CLKDIVN_HDIVN	     (1<<1)
++#define S3C2410_CLKDIVN_HDIVN1	     (1<<2)
+ 
+ #define S3C2410_CLKSLOW_UCLK_OFF	(1<<7)
+ #define S3C2410_CLKSLOW_MPLL_OFF	(1<<5)
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
+index c2ef016..ff8ef6a 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
+@@ -571,6 +571,7 @@
+ 
+ #define S3C2410_GSTATUS1_IDMASK	   (0xffff0000)
+ #define S3C2410_GSTATUS1_2410	   (0x32410000)
++#define S3C2410_GSTATUS1_2410A	   (0x32410002)
+ #define S3C2410_GSTATUS1_2412	   (0x32412001)
+ #define S3C2410_GSTATUS1_2416	   (0x32416003)
+ #define S3C2410_GSTATUS1_2440	   (0x32440000)
+diff --git a/arch/arm/mach-s3c24xx/s3c2410.c b/arch/arm/mach-s3c24xx/s3c2410.c
+index 9ebef95..c512dac 100644
+--- a/arch/arm/mach-s3c24xx/s3c2410.c
++++ b/arch/arm/mach-s3c24xx/s3c2410.c
+@@ -35,6 +35,7 @@
+ #include <plat/cpu-freq.h>
+ 
+ #include <mach/regs-clock.h>
++#include <mach/regs-gpio.h>
+ #include <plat/regs-serial.h>
+ 
+ #include <plat/s3c2410.h>
+@@ -104,8 +105,14 @@ void __init_or_cpufreq s3c2410_setup_clocks(void)
+ 
+ 	/* work out clock scalings */
+ 
+-	hclk = fclk / ((tmp & S3C2410_CLKDIVN_HDIVN) ? 2 : 1);
+-	pclk = hclk / ((tmp & S3C2410_CLKDIVN_PDIVN) ? 2 : 1);
++	if ((samsung_cpu_id == S3C2410_GSTATUS1_2410A) &&
++	    (tmp & S3C2410_CLKDIVN_HDIVN1)) {
++		hclk = fclk / 4;
++		pclk = fclk / 4;
++	} else {
++		hclk = fclk / ((tmp & S3C2410_CLKDIVN_HDIVN) ? 2 : 1);
++		pclk = hclk / ((tmp & S3C2410_CLKDIVN_PDIVN) ? 2 : 1);
++	}
+ 
+ 	/* print brieft summary of clocks, etc */
+ 
+-- 
+1.7.12.4
