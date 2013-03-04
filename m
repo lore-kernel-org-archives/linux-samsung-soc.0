@@ -1,59 +1,42 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 03/14] MAINTAINERS: remove arch/arm/plat-s3c24xx/
-Date: Mon, 04 Mar 2013 21:57:38 +0900
-Message-ID: <007f01ce18d7$d94ab430$8be01c90$%kim@samsung.com>
-References: <1362275632-20242-1-git-send-email-cesarb@cesarb.net>
- <1362275632-20242-4-git-send-email-cesarb@cesarb.net>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] DMA: PL330: Add check if device tree compatible
+Date: Mon, 4 Mar 2013 12:58:38 +0000
+Message-ID: <201303041258.39222.arnd@arndb.de>
+References: <1362374943-29312-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:32454 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756930Ab3CDM5k (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Mar 2013 07:57:40 -0500
-In-reply-to: <1362275632-20242-4-git-send-email-cesarb@cesarb.net>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1362374943-29312-1-git-send-email-padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, boojin.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Cesar Eduardo Barros' <cesarb@cesarb.net>, 'Andrew Morton' <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, 'Joe Perches' <joe@perches.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Cesar Eduardo Barros wrote:
-> 
-> This directory was removed by commit 09ec1d7 (ARM: S3C24XX: Remove
-> plat-s3c24xx directory in arch/arm/).
-> 
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
+On Monday 04 March 2013, Padmavathi Venna wrote:
+> +
+> +       if (adev->dev.of_node) {
+> +               ret = of_dma_controller_register(adev->dev.of_node,
+> +                                        of_dma_pl330_xlate, pdmac);
+> +               if (ret) {
+> +                       dev_err(&adev->dev,
+> +                       "unable to register DMA to the generic DT DMA helpers\n");
+> +                       goto probe_err4;
+> +               }
+>         }
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+Hmm, when I did the same thing in dw_dma, Andy commented that this should
+not be a failure at all, since the device is still usable. Could we
+instead make of_dma_controller_register return silently when it
+gets a NULL of_node?
 
-Thanks.
-
-- Kukjin
-
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Cesar Eduardo Barros <cesarb@cesarb.net>
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3c074d5..5af82f9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1119,7 +1119,6 @@ L:	linux-samsung-soc@vger.kernel.org (moderated
-> for non-subscribers)
->  W:	http://www.fluff.org/ben/linux/
->  S:	Maintained
->  F:	arch/arm/plat-samsung/
-> -F:	arch/arm/plat-s3c24xx/
->  F:	arch/arm/mach-s3c24*/
->  F:	arch/arm/mach-s3c64xx/
->  F:	drivers/*/*s3c2410*
-> --
-> 1.7.11.7
+	Arnd
