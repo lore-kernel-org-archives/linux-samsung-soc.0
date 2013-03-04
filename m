@@ -1,74 +1,102 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: S5PV210: Fix compilation error in mach-goni.c
-Date: Mon, 04 Mar 2013 15:18:17 +0100
-Message-ID: <5134AD29.5050901@samsung.com>
-References: <1361779938-30023-1-git-send-email-sachin.kamat@linaro.org>
- <512B3723.8070801@samsung.com>
- <CAK9yfHwNnadfVEco5ORn4fCK=myazmVnUCMec_xJa2_tzLzvbQ@mail.gmail.com>
- <008101ce18d9$b879e850$296db8f0$%kim@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH RFC] usb: dwc3: Get PHY from platform specific dwc3 dt
+ node.
+Date: Mon, 4 Mar 2013 17:02:52 +0200
+Message-ID: <20130304150252.GP3397@arwen.pp.htv.fi>
+References: <1359631232-7107-1-git-send-email-gautam.vivek@samsung.com>
+ <510A56BF.3040804@ti.com>
+ <CAFp+6iFkb=U0CJA=3zmQvd5XfMwbROuRJjXoJG7zvvq4_upzNw@mail.gmail.com>
+ <20130131152527.GE4064@arwen.pp.htv.fi>
+ <CAFp+6iHvKYiF_neANRq5roAEJwhvcaLk7pAd7Dy94Z5XiDkhgA@mail.gmail.com>
+ <20130131153836.GF4064@arwen.pp.htv.fi>
+ <CAFp+6iGTqZY=+crcYyu9o5uEP9Nv2=haSqB+nCuqA2_iUand6A@mail.gmail.com>
+ <20130301064129.GF3120@arwen.pp.htv.fi>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:43809 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757156Ab3CDOSV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Mar 2013 09:18:21 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MJ500LGL3JFDZ90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Mar 2013 14:18:18 +0000 (GMT)
-Received: from [106.116.147.32] by eusync3.samsung.com
- (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
- 10 2011)) with ESMTPA id <0MJ500D9H3QIAH70@eusync3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Mar 2013 14:18:18 +0000 (GMT)
-In-reply-to: <008101ce18d9$b879e850$296db8f0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SlnaBQtdWG0gYnqZ"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130301064129.GF3120@arwen.pp.htv.fi>
+Sender: linux-omap-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Vivek Gautam <gautamvivek1987@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, kishon <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-On 03/04/2013 02:11 PM, Kukjin Kim wrote:
-> Sachin Kamat wrote:
->> On 25 February 2013 15:34, Sylwester Nawrocki <s.nawrocki@samsung.com>
->> wrote:
->>> On 02/25/2013 09:12 AM, Sachin Kamat wrote:
->>>> Commit 56bc91 ("[media] s5p-fimc: Redefine platform data structure for
->> fimc-is")
->>>> split bus_type into fimc_bus_type and sensor_bus_type and converted all
->>>> instances of it. This file however escaped the change.
->>>>
->>>> Without this patch we get the following build error:
->>>> arch/arm/mach-s5pv210/mach-goni.c:848:3: error:
->>>> unknown field 'bus_type' specified in initializer
->>>>
->>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->>>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>>
->>> Thanks for the patch. My apologies for this omission, there is already
->>> similar patch from Arnd [1], [2].
->>
->> Yes, they fix the same issue. I had not noticed them earlier.
->>
-> So, when can be fixed?
+--SlnaBQtdWG0gYnqZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you apply patch from Arnd: "[PATCH 8/9] s5p-fimc: fix s5pv210 build"
-or teh $subject patch from Sachin ? It may take long time to push the fix
-through the media tree, as Mauro sends bug fixes to Linus usually only
-twice per whole -rc cycle. And now the issue is only at arch/arm, hence
-the arm-soc tree may be more appropriate.
+Hi,
 
-My apologies for overlooking this, I'll be more careful next time.
+On Fri, Mar 01, 2013 at 08:41:29AM +0200, Felipe Balbi wrote:
+> > >> >> >> Moreover, SoCs having multiple dwc3 controllers will have mult=
+iple
+> > >> >> >> PHYs, which eventually be added using usb_add_phy_dev(), and n=
+ot
+> > >> >> >> using usb_add_phy(). So each dwc3 controller won't be able to
+> > >> >> >> get PHYs by simply calling devm_usb_get_phy() also.
+> > >> >> >
+> > >> >> > No. We have added usb_get_phy_dev() for that purpose in the cas=
+e of non-dt.
+> > >> >> > I think, instead you can have a patch to use devm_usb_get_phy_d=
+ev() here and
+> > >> >> > in exynos platform specific code use usb_bind_phy() to bind the=
+ phy and
+> > >> >> > controller till you change it to dt.
+> > >> >> >
+> > >> >>
+> > >> >> We have dt support for dwc3-exynos, in such case we should go ahe=
+ad with
+> > >> >> of_platform_populate(), right ?
+> > >> >> But if when i use of_platform_populate() i will not be able to set
+> > >> >> dma_mask to dwc3->dev. :-(
+> > >> >
+> > >> > do you have a special need for dma_mask because OF already sets it.
+> > >> >
+> > >> If i am not wrong of_platform_device_create_pdata() will set
+> > >> "dev->dev.coherent_dma_mask =3D DMA_BIT_MASK(32)"
+> > >> and not dma_mask.
+> > >> I fact we had some discussion sometime back when we needed the same
+> > >> for dwc3-exynos in the thread:
+> > >> [PATCH v2 1/2] USB: dwc3-exynos: Add support for device tree
+> > >>
+> > >> But couldn't get final node on it.
+> > >> So suggestions here please. :-)
+> > >
+> > > hmm.. you're right there. Grant, Rob ? Any hints ?
+> > >
+> >=20
+> > Any suggestions on this ?
+>=20
+> anyone ?
 
-> arch/arm/mach-s5pv210/mach-goni.c:848:3: error: unknown field 'bus_type'
-> specified in initializer
->   CC      arch/arm/mm/idmap.o
-> make[2]: *** [arch/arm/mach-s5pv210/mach-goni.o] Error 1
-> make[2]: *** Waiting for unfinished jobs....
-> 
-> - Kukjin
+ping ?
 
-Regards,
-Sylwester
+--=20
+balbi
+
+--SlnaBQtdWG0gYnqZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRNLecAAoJEIaOsuA1yqRElskP/0tbqXGQqNSsaboaaLXCEKL/
+wOdn6btvDw32bniDijHphIGrw/zwouf2Jsqh8R1Be7ai6xUfqugy1Z097Qo8AlNa
+Ig8QxVSTPonqsTVZjGqHfucbH2sFkS951TdVTV4vGN0P0Ml7h3YhTg4bMfjXoFe/
+DYzDzmuOOPC5msfN6dOpaFq+8rJo3vsZSi6yQ5+ijLCCy5S7ucSGfQ/J8d2zK+Cv
+wSwlje2QRKRuSg/zL8xZxxFGXdJfoL1MVQIrZctWXjUrdxJ7etXqGgHKpbRdfGP2
+e4DGqsG34JmvxgKjmu3QXSejJjkIy0eXFR3Ai+r0sHo1zLtnh0wvlpNT0tEhkwgB
+Q3kzfL3FZIMXDItvS3zDp1JR3oAEViWWgKxINKEqjZJXdtYN0IQLlSB/kwQU8K26
+++Fbae1Wgwoft5lNvRv/Lr9HmZwcRIObxMM+Am6s8sNFxusqHJhrTfhgKxsfciLG
+EKsW2synQjaZHfPvShwLe1DgCRt6S/WcF7DgJfa6f9WSOTo5dArNJ3Pz7WqVym0f
+Wi16IwOL+OAM/PYbkoOPcdAwWFPhZZJqDJ7iMa4g9t9oFl/NF9I4Jm2TfviYGmlC
+iEc0pVz1D4FVBQ+kyRIsUzL5B3fxdC4ItXdyBlLa2D3PURiMaGWHehAZrdPCT4Fy
+nsnjPQbl/kROIsbPfeqD
+=CM64
+-----END PGP SIGNATURE-----
+
+--SlnaBQtdWG0gYnqZ--
