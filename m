@@ -1,64 +1,158 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5PV210: Fix compilation error in mach-goni.c
-Date: Mon, 04 Mar 2013 22:11:02 +0900
-Message-ID: <008101ce18d9$b879e850$296db8f0$%kim@samsung.com>
-References: <1361779938-30023-1-git-send-email-sachin.kamat@linaro.org>
- <512B3723.8070801@samsung.com>
- <CAK9yfHwNnadfVEco5ORn4fCK=myazmVnUCMec_xJa2_tzLzvbQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17136 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757129Ab3CDNLZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Mar 2013 08:11:25 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJ500BRH0MC9JO0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Mar 2013 22:11:02 +0900 (KST)
-In-reply-to: <CAK9yfHwNnadfVEco5ORn4fCK=myazmVnUCMec_xJa2_tzLzvbQ@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] i2c: s3c24xx: allow device core to setup default pin
+ configuration
+Date: Mon, 04 Mar 2013 19:12:53 +0530
+Message-ID: <1362404573-30406-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Sachin Kamat wrote:
-> 
-> Hi Sylwester,
-> 
-> On 25 February 2013 15:34, Sylwester Nawrocki <s.nawrocki@samsung.com>
-> wrote:
-> > Hi Sachin,
-> >
-> > On 02/25/2013 09:12 AM, Sachin Kamat wrote:
-> >> Commit 56bc91 ("[media] s5p-fimc: Redefine platform data structure for
-> fimc-is")
-> >> split bus_type into fimc_bus_type and sensor_bus_type and converted all
-> >> instances of it. This file however escaped the change.
-> >>
-> >> Without this patch we get the following build error:
-> >> arch/arm/mach-s5pv210/mach-goni.c:848:3: error:
-> >> unknown field 'bus_type' specified in initializer
-> >>
-> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >
-> > Thanks for the patch. My apologies for this omission, there is already
-> > similar patch from Arnd [1], [2].
-> 
-> Yes, they fix the same issue. I had not noticed them earlier.
-> 
-So, when can be fixed?
+With device core now able to setup the default pin configuration,
+the call to devm_pinctrl_get_select_default can be removed. And
+the pin configuration code based on the deprecated Samsung specific
+gpio bindings is also removed.
 
-arch/arm/mach-s5pv210/mach-goni.c:848:3: error: unknown field 'bus_type'
-specified in initializer
-  CC      arch/arm/mm/idmap.o
-make[2]: *** [arch/arm/mach-s5pv210/mach-goni.o] Error 1
-make[2]: *** Waiting for unfinished jobs....
+Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
 
-- Kukjin
+Hi Heiko, Tomasz,
+
+We have to make a choice on the path forward for pinctrl support
+on Samsung platforms. We have three cases to deal with.
+
+A. Samsung platforms without DT support.
+B. Samsung platforms with DT support using old Samsung specific
+   gpio bindings for pin-configuration (s3c24xx and s3x64xx).
+C. Samsung platforms with DT support using using pinctrl based
+   pin-configurations (Exynos4 and Exynos5).
+
+For [A], we just let the platform specific callbacks handle the
+pin setup. For [B] and [C], based on Linus Walleij's pin grab
+by device core patch and subsequent discussions with him on the
+mailing list, would it be acceptable that we discontinue support
+for [B] in Samsung SoC device drivers. This will impact your
+current DT work on s3c24xx and s3c64xx platforms. Pinctrl is
+inevitable and we have to migrate to it. Instead of workarounds
+to maintain support for [B], it might be better that we migrate
+s3c24xx and s3c64xx platforms to pinctrl.
+
+Please do let us know your opinion on this.
+
+Thanks,
+Thomas.
+
+ drivers/i2c/busses/i2c-s3c2410.c |   67 +-------------------------------------
+ 1 files changed, 1 insertions(+), 66 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index f6b880b..703272c 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -37,8 +37,6 @@
+ #include <linux/slab.h>
+ #include <linux/io.h>
+ #include <linux/of_i2c.h>
+-#include <linux/of_gpio.h>
+-#include <linux/pinctrl/consumer.h>
+ 
+ #include <asm/irq.h>
+ 
+@@ -84,8 +82,6 @@ struct s3c24xx_i2c {
+ 	struct i2c_adapter	adap;
+ 
+ 	struct s3c2410_platform_i2c	*pdata;
+-	int			gpios[2];
+-	struct pinctrl          *pctrl;
+ #ifdef CONFIG_CPU_FREQ
+ 	struct notifier_block	freq_transition;
+ #endif
+@@ -856,57 +852,6 @@ static inline void s3c24xx_i2c_deregister_cpufreq(struct s3c24xx_i2c *i2c)
+ }
+ #endif
+ 
+-#ifdef CONFIG_OF
+-static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
+-{
+-	int idx, gpio, ret;
+-
+-	if (i2c->quirks & QUIRK_NO_GPIO)
+-		return 0;
+-
+-	for (idx = 0; idx < 2; idx++) {
+-		gpio = of_get_gpio(i2c->dev->of_node, idx);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(i2c->dev, "invalid gpio[%d]: %d\n", idx, gpio);
+-			goto free_gpio;
+-		}
+-		i2c->gpios[idx] = gpio;
+-
+-		ret = gpio_request(gpio, "i2c-bus");
+-		if (ret) {
+-			dev_err(i2c->dev, "gpio [%d] request failed\n", gpio);
+-			goto free_gpio;
+-		}
+-	}
+-	return 0;
+-
+-free_gpio:
+-	while (--idx >= 0)
+-		gpio_free(i2c->gpios[idx]);
+-	return -EINVAL;
+-}
+-
+-static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
+-{
+-	unsigned int idx;
+-
+-	if (i2c->quirks & QUIRK_NO_GPIO)
+-		return;
+-
+-	for (idx = 0; idx < 2; idx++)
+-		gpio_free(i2c->gpios[idx]);
+-}
+-#else
+-static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
+-{
+-	return 0;
+-}
+-
+-static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
+-{
+-}
+-#endif
+-
+ /* s3c24xx_i2c_init
+  *
+  * initialise the controller, set the IO lines and frequency
+@@ -1054,15 +999,9 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	i2c->adap.algo_data = i2c;
+ 	i2c->adap.dev.parent = &pdev->dev;
+ 
+-	i2c->pctrl = devm_pinctrl_get_select_default(i2c->dev);
+-
+ 	/* inititalise the i2c gpio lines */
+-
+-	if (i2c->pdata->cfg_gpio) {
++	if (i2c->pdata->cfg_gpio)
+ 		i2c->pdata->cfg_gpio(to_platform_device(i2c->dev));
+-	} else if (IS_ERR(i2c->pctrl) && s3c24xx_i2c_parse_dt_gpio(i2c)) {
+-		return -EINVAL;
+-	}
+ 
+ 	/* initialise the i2c controller */
+ 
+@@ -1140,10 +1079,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+ 	i2c_del_adapter(&i2c->adap);
+ 
+ 	clk_disable_unprepare(i2c->clk);
+-
+-	if (pdev->dev.of_node && IS_ERR(i2c->pctrl))
+-		s3c24xx_i2c_dt_gpio_free(i2c);
+-
+ 	return 0;
+ }
+ 
+-- 
+1.6.6.rc2
