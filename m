@@ -1,37 +1,59 @@
-From: Lonsn <lonsn2005@gmail.com>
-Subject: Re: MFC decode failed in S5PV210 in kernel 3.8
-Date: Mon, 04 Mar 2013 19:42:46 +0800
-Message-ID: <513488B6.1080704@gmail.com>
-References: <51317952.9040402@gmail.com> <5131C429.2040406@gmail.com> <02f101ce18ba$e8ef8cc0$bacea640$%debski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 03/14] MAINTAINERS: remove arch/arm/plat-s3c24xx/
+Date: Mon, 04 Mar 2013 21:57:38 +0900
+Message-ID: <007f01ce18d7$d94ab430$8be01c90$%kim@samsung.com>
+References: <1362275632-20242-1-git-send-email-cesarb@cesarb.net>
+ <1362275632-20242-4-git-send-email-cesarb@cesarb.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <02f101ce18ba$e8ef8cc0$bacea640$%debski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:32454 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756930Ab3CDM5k (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 Mar 2013 07:57:40 -0500
+In-reply-to: <1362275632-20242-4-git-send-email-cesarb@cesarb.net>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Cesar Eduardo Barros' <cesarb@cesarb.net>, 'Andrew Morton' <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, 'Joe Perches' <joe@perches.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-=E4=BA=8E 2013/3/4 17:30, Kamil Debski =E5=86=99=E9=81=93:
-> Hi,
->
-> This problem is known to us and Marek is planning a fix. However, the
-> problem
-> proved to be quite difficult, so please be patient.
->
-> Best wishes,
->
-Kamil,
-Thanks for your information.
-Is there any workaround method which can let me continue the MFC decode=
-r=20
-test?  Is it a MFC driver or v4l2_deocde app question? If it is just an=
-=20
-app question, then I would like to use gstreamer with mfc plugin to hav=
-e=20
-a test.
+Cesar Eduardo Barros wrote:
+> 
+> This directory was removed by commit 09ec1d7 (ARM: S3C24XX: Remove
+> plat-s3c24xx directory in arch/arm/).
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-Regards,
-Lonsn
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Thanks.
+
+- Kukjin
+
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Cesar Eduardo Barros <cesarb@cesarb.net>
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3c074d5..5af82f9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1119,7 +1119,6 @@ L:	linux-samsung-soc@vger.kernel.org (moderated
+> for non-subscribers)
+>  W:	http://www.fluff.org/ben/linux/
+>  S:	Maintained
+>  F:	arch/arm/plat-samsung/
+> -F:	arch/arm/plat-s3c24xx/
+>  F:	arch/arm/mach-s3c24*/
+>  F:	arch/arm/mach-s3c64xx/
+>  F:	drivers/*/*s3c2410*
+> --
+> 1.7.11.7
