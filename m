@@ -1,189 +1,220 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] i2c: s3c24xx: allow device core to setup default pin configuration
-Date: Mon, 4 Mar 2013 15:03:43 +0100
-Message-ID: <201303041503.44459.heiko@sntech.de>
-References: <1362404573-30406-1-git-send-email-thomas.abraham@linaro.org>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: State of pinctrl and exynos5250?
+Date: Mon, 4 Mar 2013 19:34:49 +0530
+Message-ID: <CAJuYYwRSHYHs=0qOaWq7_U8+ARz-SYLQM5UAGTd8jTA_4x2wow@mail.gmail.com>
+References: <CAD=FV=XTHs5De3hrZu5BMPD3sTzBLikHwdS88XA0KOn-XG499Q@mail.gmail.com>
+	<1534249.MsU3ROUVJz@flatron>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:53778 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757090Ab3CDODu (ORCPT
+Received: from mail-ia0-f182.google.com ([209.85.210.182]:38922 "EHLO
+	mail-ia0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756683Ab3CDOEu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Mar 2013 09:03:50 -0500
-In-Reply-To: <1362404573-30406-1-git-send-email-thomas.abraham@linaro.org>
+	Mon, 4 Mar 2013 09:04:50 -0500
+Received: by mail-ia0-f182.google.com with SMTP id w21so2846672iac.27
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Mar 2013 06:04:49 -0800 (PST)
+In-Reply-To: <1534249.MsU3ROUVJz@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, ben-linux@fluff.org, t.figa@samsung.com, wsa@the-dreams.de
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Prathyush <prathyush.k@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Olof Johansson <olofj@chromium.org>, Simon Glass <sjg@chromium.org>, Katie Roberts-Hoffman <katierh@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Thomas,
+Hi Doug,
 
-Am Montag, 4. M=E4rz 2013, 14:42:53 schrieb Thomas Abraham:
-> With device core now able to setup the default pin configuration,
-> the call to devm_pinctrl_get_select_default can be removed. And
-> the pin configuration code based on the deprecated Samsung specific
-> gpio bindings is also removed.
->=20
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->=20
-> Hi Heiko, Tomasz,
->=20
-> We have to make a choice on the path forward for pinctrl support
-> on Samsung platforms. We have three cases to deal with.
->=20
-> A. Samsung platforms without DT support.
-> B. Samsung platforms with DT support using old Samsung specific
->    gpio bindings for pin-configuration (s3c24xx and s3x64xx).
-> C. Samsung platforms with DT support using using pinctrl based
->    pin-configurations (Exynos4 and Exynos5).
->=20
-> For [A], we just let the platform specific callbacks handle the
-> pin setup. For [B] and [C], based on Linus Walleij's pin grab
-> by device core patch and subsequent discussions with him on the
-> mailing list, would it be acceptable that we discontinue support
-> for [B] in Samsung SoC device drivers. This will impact your
-> current DT work on s3c24xx and s3c64xx platforms. Pinctrl is
-> inevitable and we have to migrate to it. Instead of workarounds
-> to maintain support for [B], it might be better that we migrate
-> s3c24xx and s3c64xx platforms to pinctrl.
->=20
-> Please do let us know your opinion on this.
+On 2 March 2013 17:18, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hello Doug,
+>
+> On Friday 01 of March 2013 16:19:39 Doug Anderson wrote:
+>> Thomas and Tomasz,
+>>
+>> I'm trying to get my head wrapped around the state of pinctrl for
+>> exynos5250.  I see various patches that have floated around at times
+>> but it doesn't look like anything has landed.  It would be really nice
+>> to get this resolved since I think it blocks getting eint support
+>> landed for exynos5250 and that blocks getting many peripherals working
+>> on the ARM Chromebook.
+>
+> It's great that finally someone noticed the problem (despite my comments
+> to patches adding more and more cruft using the GPIO specifier hack).
+>
+>> I'm still a little new to the world on pinctrl so hopefully nothing
+>> below is too stupidly wrong...
+>
+> It's always better to ask than to get something completely wrong.
+>
+>> Patches that seem to be relevant (NOTE: all of these need
+>> "pinctrl-exynos5250" fixed to "exynos5250-pinctrl"):
+>
+>> pinctrl: exynos: add exynos5250 SoC specific data
+>> - https://patchwork.kernel.org/patch/1871901/
+>>
+>> gpio: samsung: skip gpiolib registration if pinctrl support is enabled
+>> for exynos5250
+>> - https://patchwork.kernel.org/patch/1871911/
+>>
+>> arm: exynos: skip wakeup interrupt registration for exynos5250 if
+>> pinctrl is enabled
+>> - https://patchwork.kernel.org/patch/1871921/
+>
+> The 4 patches above are already merged in Kgene's for-next-next (for 3.10)
+> branch.
+>
+>> ARM: dts: add pinctrl nodes for Exynos5250 SoC
+>> - https://patchwork.kernel.org/patch/1871991/
+>
+> This one is not merged yet. Since I do not know much about Exynos 5250, I
+> could not verify any hardware-specific details in the patch, just the
+> general correctness of the patch.
 
-As discusses in the other thread, I'm in favor of going forward this wa=
-y and=20
-not to invest unnecessary energy in keeping the non-pinctrl stuff alive=
-=2E
+This patch was not merged since individual drivers needed modification
+without which it would break existing Exynos5250 based platforms.
 
-Pinctrl for at least the s3c2416 [0] is already on my playground-wishli=
-st, but=20
-I'm still in the process of getting to know it.
+>
+>> --> NOTE: Appears to be missing pinctrl_1 and pinctrl_2.  That
+>> prevents me from compiling with i2c arbitration patches landed since I
+>> need gpf0.
+>
+> Indeed. I would prefer adding all of them at once.
 
-So for this patch:
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+Ok. I will repost this patch again with pinctrl_1 and pinctrl_2
+included. I had not included this in the earlier patch since I was not
+sure of the best pin grouping for the camera and c2c interface.
 
+>
+>> --> NOTE: Appears (IIRC) to have incorrect interrupt for pinctrl_3.  I
+>> believe that 45 is pinctrl_1.  Maybe 3 is 47?
+>
+> I can't verify this, unfortunately.
 
-Heiko
+The documentation does not state this clearly. I will recheck on this
+and correct as needed.
 
+>
+>> --> NIT NOTE: It appears sd0_busN is strangely specified.
+>> Specifically sd0_bus4 includes the pins for sd0_bus1 but sd0_bus8
+>> doesn't.
+>
+> Yes, it is at least somewhat inconsitent. For now this is not really a
+> problem, but eventually it will have to be sanitized. However, note that
+> although sd0_bus8 has the same samsung,pin-function as sd0_bus4, this is
+> no longer the case for sd2_bus8 and sd2_bus4.
+>
+> I would suggest making all the three separate from each other, so 1-bit
+> bus node would just specify sd0_bus1, 4-bit would specify sd0_bus1 and
+> sd0_bus4 and 8-bit all the three.
 
-[0] in contrast to what the gpio-samsung driver implies, the s3c24xx pi=
-n banks=20
-are not uniform between SoCs, making this more difficult still :-)
+Ok. I will do this change in the next version of the patch.
 
+>
+>> ---
+>>
+>> I've got all of the above patches "fixed up" in my local tree
+>> (including adding really basic support for pinctrl_1 and pinctrl_2).
+>> ...but my machine doesn't boot all the way.  I think that's because
+>> many of the peripherals don't yet understand pinctrl.  Specifically I
+>> get delightful looking error messages at bootup that look like:
+>>
+>> [    0.440000] _gpio_request: gpio-36 (i2c-bus) status -16
+>> [    0.445000] s3c-i2c s3c2440-i2c.0: gpio [36] request failed
+>>
+>> I then replaced some of the "muxing via GPIO" with "muxing via
+>> pinctrl" for i2c parts, like:
+>> -               gpios = <&gpb3 0 2 3 0>,
+>> -                       <&gpb3 1 2 3 0>;
+>> +               pinctrl-0 = <&i2c0_bus>;
+>> +               pinctrl-names = "default";
+>>
+>> ...and I got rid of those errors, but it looks like we're missing
+>> pinctrl support for the ever-important "dw_mmc".
+>>
+>> [    0.910000] Synopsys Designware Multimedia Card Interface Driver
+>> [    0.915000] dwmmc_exynos dw_mmc.0: Using internal DMA controller.
+>> [    0.920000] dwmmc_exynos dw_mmc.0: DW MMC controller at irq 107, 32
+>> bit host data width, 128 deep fifo
+>> [    0.930000] of_get_named_gpio_flags exited with status 40
+>> [    0.935000] of_get_named_gpio_flags: can't parse gpios property
+>> [    0.940000] dwmmc_exynos dw_mmc.0: invalid gpio: -2
+>> [    0.945000] dwmmc_exynos: probe of dw_mmc.0 failed with error -22
+>>
+>> We also need it for "spi-s3c64xx.c" but that's less of a critical
+>> component. [    0.405000] of_get_named_gpio_flags exited with status 18
+>> [    0.410000] /spi@12d30000: could not get #gpio-cells for
+>> /pinctrl@11400000/i2c0-bus
+>> [    0.415000] of_get_named_gpio_flags: can't parse gpios property
+>> [    0.420000] s3c64xx-spi exynos4210-spi.1: invalid gpio[1]: -22
+>> [    0.425000] s3c64xx-spi: probe of exynos4210-spi.1 failed with error
+>> -16
+>>
+>> Those are the drivers that have their muxing state defined using the
+>> old hacky samsung gpio descriptor.
+>>
+>>
+>> Hmmm, it also looks like I need to update other "gpio" references too
+>> (gpio-keys, i2c-arbitrator, hpd-gpio) since the GPIO specifier has
+>> changed now that it's based on pinmux.  I guess you either need to
+>> move a whole architecture (all of exynos5250) at once since you can't
+>> mix and match.
+>
+> Correct.
+>
+>>
+>> IMHO that means we've got the following work ahead of us:
+>> 1. Add pinctrl support to dw_mmc-exynos (with backward compability for
+>> GPIO specifier)
+>> 2. Add pinctrl support to spi-s3c64xx.c (with backward compability for
+>> GPIO specifier)
+>
+> There is a patch that should be already merged that makes the driver core
+> set default pinctrl state for a device before entering driver's probe
+> callback.
+>
+> In case when the driver doesn't require more states than just the default
+> one you don't have to add pinctrl support to the driver at all, just
+> specify appropriate pinctrl properties in device tree (with only one state
+> listed in pinctrl-names called "default").
+>
+> However in some drivers this might be prevented by legacy pin
+> configuration code which would fail.
+>
+>> 3. In one fell swoop convert all exynos5 dts / dtsi files over to use
+>> pinctrl since things will be broken with a "half" conversion.
+>>
+>> Assuming I'm understanding #3 above, I guess that means that I "NAK"
+>> the "ARM: dts: add pinctrl nodes for Exynos5250 SoC" patch since it
+>> doesn't include fixup for all of the exynos5250 platforms (smdk5250
+>> and snow) out there.
+>
+> Yes, this seems reasonable.
+>
+>>
+>> ---
+>>
+>> I'd appreciate any thoughts that you have.  I'd also appreciate a
+>> timeframe for when this work will be picked back up, since the old
+>> patches are 2.5 months old now...  I may be able to help a little
+>> (especially with bits relevant to the ARM Chromebook) but I'm not sure
+>> I can do all of the heavy lifting...  ...and I'd hate to rebase/repost
+>> Thomas's patches myself without checking...
+>
+> AFAIK, Thomas had been doing something in this matter, but I haven't seen
+> any progress since the discussion by the way of the patches you linked.
 
->  drivers/i2c/busses/i2c-s3c2410.c |   67
-> +------------------------------------- 1 files changed, 1 insertions(=
-+),
-> 66 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c
-> b/drivers/i2c/busses/i2c-s3c2410.c index f6b880b..703272c 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -37,8 +37,6 @@
->  #include <linux/slab.h>
->  #include <linux/io.h>
->  #include <linux/of_i2c.h>
-> -#include <linux/of_gpio.h>
-> -#include <linux/pinctrl/consumer.h>
->=20
->  #include <asm/irq.h>
->=20
-> @@ -84,8 +82,6 @@ struct s3c24xx_i2c {
->  	struct i2c_adapter	adap;
->=20
->  	struct s3c2410_platform_i2c	*pdata;
-> -	int			gpios[2];
-> -	struct pinctrl          *pctrl;
->  #ifdef CONFIG_CPU_FREQ
->  	struct notifier_block	freq_transition;
->  #endif
-> @@ -856,57 +852,6 @@ static inline void
-> s3c24xx_i2c_deregister_cpufreq(struct s3c24xx_i2c *i2c) }
->  #endif
->=20
-> -#ifdef CONFIG_OF
-> -static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
-> -{
-> -	int idx, gpio, ret;
-> -
-> -	if (i2c->quirks & QUIRK_NO_GPIO)
-> -		return 0;
-> -
-> -	for (idx =3D 0; idx < 2; idx++) {
-> -		gpio =3D of_get_gpio(i2c->dev->of_node, idx);
-> -		if (!gpio_is_valid(gpio)) {
-> -			dev_err(i2c->dev, "invalid gpio[%d]: %d\n", idx, gpio);
-> -			goto free_gpio;
-> -		}
-> -		i2c->gpios[idx] =3D gpio;
-> -
-> -		ret =3D gpio_request(gpio, "i2c-bus");
-> -		if (ret) {
-> -			dev_err(i2c->dev, "gpio [%d] request failed\n", gpio);
-> -			goto free_gpio;
-> -		}
-> -	}
-> -	return 0;
-> -
-> -free_gpio:
-> -	while (--idx >=3D 0)
-> -		gpio_free(i2c->gpios[idx]);
-> -	return -EINVAL;
-> -}
-> -
-> -static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
-> -{
-> -	unsigned int idx;
-> -
-> -	if (i2c->quirks & QUIRK_NO_GPIO)
-> -		return;
-> -
-> -	for (idx =3D 0; idx < 2; idx++)
-> -		gpio_free(i2c->gpios[idx]);
-> -}
-> -#else
-> -static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
-> -{
-> -	return 0;
-> -}
-> -
-> -static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
-> -{
-> -}
-> -#endif
-> -
->  /* s3c24xx_i2c_init
->   *
->   * initialise the controller, set the IO lines and frequency
-> @@ -1054,15 +999,9 @@ static int s3c24xx_i2c_probe(struct platform_de=
-vice
-> *pdev) i2c->adap.algo_data =3D i2c;
->  	i2c->adap.dev.parent =3D &pdev->dev;
->=20
-> -	i2c->pctrl =3D devm_pinctrl_get_select_default(i2c->dev);
-> -
->  	/* inititalise the i2c gpio lines */
-> -
-> -	if (i2c->pdata->cfg_gpio) {
-> +	if (i2c->pdata->cfg_gpio)
->  		i2c->pdata->cfg_gpio(to_platform_device(i2c->dev));
-> -	} else if (IS_ERR(i2c->pctrl) && s3c24xx_i2c_parse_dt_gpio(i2c)) {
-> -		return -EINVAL;
-> -	}
->=20
->  	/* initialise the i2c controller */
->=20
-> @@ -1140,10 +1079,6 @@ static int s3c24xx_i2c_remove(struct platform_=
-device
-> *pdev) i2c_del_adapter(&i2c->adap);
->=20
->  	clk_disable_unprepare(i2c->clk);
-> -
-> -	if (pdev->dev.of_node && IS_ERR(i2c->pctrl))
-> -		s3c24xx_i2c_dt_gpio_free(i2c);
-> -
->  	return 0;
->  }
+I have posted i2c pinctrl support patch based on LinusW's pin grab by
+device core patch. If that is acceptable, I can post pinctrl support
+patches for other other controllers as well.
+
+>
+>> NOTE: I've actually hacked something together that seems to get dw_mmc
+>> happy with pinmuxing and I can boot the system, so I guess that proves
+>> that the above can't all be wrong.  ;)
+>
+> Good. It would be great if we could finally move all the DT-enabled
+> Samsung architectures to pin control and drop the hacky GPIO DT support.
+>
+> Best regards,
+> Tomasz
+>
+
+Thanks,
+Thomas.
