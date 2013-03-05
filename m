@@ -1,148 +1,144 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 09/23] usb: exynos: do not include plat/usb-phy.h
-Date: Tue,  5 Mar 2013 18:42:19 +0100
-Message-ID: <1362505353-8873-10-git-send-email-arnd@arndb.de>
+Subject: [PATCH 21/23] ARM: exynos: hack to disable private clock code
+Date: Tue,  5 Mar 2013 18:42:31 +0100
+Message-ID: <1362505353-8873-22-git-send-email-arnd@arndb.de>
 References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:64325 "EHLO
+Received: from moutng.kundenserver.de ([212.227.126.187]:60541 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753298Ab3CERmm (ORCPT
+	with ESMTP id S1756958Ab3CERml (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 12:42:42 -0500
+	Tue, 5 Mar 2013 12:42:41 -0500
 In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-The definitions have moved to include/linux/usb/samsung-usb-phy.h,
-and plat/usb-phy.h is unavailable from drivers in a multiplatform
-configuration.
-
-Also fix up the plat/usb-phy.h header file to use the definitions
-from the new header instead of providing a separate copy.
+Multiplatform kernels rely on the common clock implementation,
+which conflicts with Samsung's own implementation of the same
+interface. This disables all code that provides or requires
+the nonstandard version.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-exynos/setup-usb-phy.c         | 8 ++++----
- arch/arm/mach-s3c64xx/setup-usb-phy.c        | 4 ++--
- arch/arm/mach-s5pv210/setup-usb-phy.c        | 4 ++--
- arch/arm/plat-samsung/include/plat/usb-phy.h | 5 +----
- drivers/usb/host/ehci-s5p.c                  | 1 -
- drivers/usb/host/ohci-exynos.c               | 1 -
- 6 files changed, 9 insertions(+), 14 deletions(-)
+ arch/arm/mach-exynos/Makefile        | 2 ++
+ arch/arm/mach-exynos/common.c        | 6 ++++++
+ arch/arm/plat-samsung/clock-clksrc.c | 3 +++
+ arch/arm/plat-samsung/s5p-clock.c    | 3 +++
+ drivers/cpufreq/Kconfig.arm          | 4 +++-
+ drivers/devfreq/Kconfig              | 1 +
+ 6 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
-index b81cc56..6af4066 100644
---- a/arch/arm/mach-exynos/setup-usb-phy.c
-+++ b/arch/arm/mach-exynos/setup-usb-phy.c
-@@ -204,9 +204,9 @@ static int exynos4210_usb_phy1_exit(struct platform_device *pdev)
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 435757e..b0dcf7d 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -13,10 +13,12 @@ obj-				:=
+ # Core
  
- int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
++ifdef CONFIG_SAMSUNG_CLOCK
+ obj-$(CONFIG_ARCH_EXYNOS4)	+= clock-exynos4.o
+ obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
+ obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
+ obj-$(CONFIG_SOC_EXYNOS5250)	+= clock-exynos5.o
++endif
+ 
+ obj-$(CONFIG_PM)		+= pm.o
+ obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 4b4526d..504d50e 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -404,6 +404,9 @@ static void __init exynos5_map_io(void)
+ 
+ static void __init exynos4_init_clocks(int xtal)
  {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return exynos4210_usb_phy0_init(pdev);
--	else if (type == S5P_USB_PHY_HOST)
-+	else if (type == USB_PHY_TYPE_HOST)
- 		return exynos4210_usb_phy1_init(pdev);
++	if (!IS_ENABLED(CONFIG_SAMSUNG_CLOCK))
++		return;
++
+ 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
  
- 	return -EINVAL;
-@@ -214,9 +214,9 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 	s3c24xx_register_baseclocks(xtal);
+@@ -425,6 +428,9 @@ static void __init exynos5440_map_io(void)
  
- int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ static void __init exynos5_init_clocks(int xtal)
  {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return exynos4210_usb_phy0_exit(pdev);
--	else if (type == S5P_USB_PHY_HOST)
-+	else if (type == USB_PHY_TYPE_HOST)
- 		return exynos4210_usb_phy1_exit(pdev);
++	if (!IS_ENABLED(CONFIG_SAMSUNG_CLOCK))
++		return;
++
+ 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
  
- 	return -EINVAL;
-diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-index c8174d9..ca960bd 100644
---- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
-+++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-@@ -76,7 +76,7 @@ static int s3c_usb_otgphy_exit(struct platform_device *pdev)
- 
- int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 	/* EXYNOS5440 can support only common clock framework */
+diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
+index 786a410..094fde9 100644
+--- a/arch/arm/plat-samsung/clock-clksrc.c
++++ b/arch/arm/plat-samsung/clock-clksrc.c
+@@ -179,6 +179,9 @@ void __init s3c_register_clksrc(struct clksrc_clk *clksrc, int size)
  {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return s3c_usb_otgphy_init(pdev);
+ 	int ret;
  
- 	return -EINVAL;
-@@ -84,7 +84,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
- 
- int s5p_usb_phy_exit(struct platform_device *pdev, int type)
++	if (!IS_ENABLED(CONFIG_SAMSUNG_CLOCK))
++		return;
++
+ 	for (; size > 0; size--, clksrc++) {
+ 		if (!clksrc->reg_div.reg && !clksrc->reg_src.reg)
+ 			printk(KERN_ERR "%s: clock %s has no registers set\n",
+diff --git a/arch/arm/plat-samsung/s5p-clock.c b/arch/arm/plat-samsung/s5p-clock.c
+index 48a1599..0e22618 100644
+--- a/arch/arm/plat-samsung/s5p-clock.c
++++ b/arch/arm/plat-samsung/s5p-clock.c
+@@ -286,6 +286,9 @@ void __init s5p_register_clocks(unsigned long xtal_freq)
  {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return s3c_usb_otgphy_exit(pdev);
+ 	int ret;
  
- 	return -EINVAL;
-diff --git a/arch/arm/mach-s5pv210/setup-usb-phy.c b/arch/arm/mach-s5pv210/setup-usb-phy.c
-index 356a090..b2ee533 100644
---- a/arch/arm/mach-s5pv210/setup-usb-phy.c
-+++ b/arch/arm/mach-s5pv210/setup-usb-phy.c
-@@ -80,7 +80,7 @@ static int s5pv210_usb_otgphy_exit(struct platform_device *pdev)
++	if (!IS_ENABLED(CONFIG_SAMSUNG_CLOCK))
++		return;
++
+ 	clk_ext_xtal_mux.rate = xtal_freq;
  
- int s5p_usb_phy_init(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return s5pv210_usb_otgphy_init(pdev);
+ 	ret = s3c24xx_register_clocks(s5p_clks, ARRAY_SIZE(s5p_clks));
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 030ddf6..b6fb4fa 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -51,7 +51,7 @@ config ARM_S5PV210_CPUFREQ
  
- 	return -EINVAL;
-@@ -88,7 +88,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ config ARM_EXYNOS_CPUFREQ
+ 	bool "SAMSUNG EXYNOS SoCs"
+-	depends on ARCH_EXYNOS
++	depends on ARCH_EXYNOS && SAMSUNG_CLOCK
+ 	default y
+ 	help
+ 	  This adds the CPUFreq driver common part for Samsung
+@@ -59,6 +59,7 @@ config ARM_EXYNOS_CPUFREQ
  
- int s5p_usb_phy_exit(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return s5pv210_usb_otgphy_exit(pdev);
+ 	  If in doubt, say N.
  
- 	return -EINVAL;
-diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
-index 959bcdb..ab34dfa 100644
---- a/arch/arm/plat-samsung/include/plat/usb-phy.h
-+++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
-@@ -11,10 +11,7 @@
- #ifndef __PLAT_SAMSUNG_USB_PHY_H
- #define __PLAT_SAMSUNG_USB_PHY_H __FILE__
++if ARM_EXYNOS_CPUFREQ
+ config ARM_EXYNOS4210_CPUFREQ
+ 	def_bool CPU_EXYNOS4210
+ 	help
+@@ -76,6 +77,7 @@ config ARM_EXYNOS5250_CPUFREQ
+ 	help
+ 	  This adds the CPUFreq driver for Samsung EXYNOS5250
+ 	  SoC.
++endif
  
--enum s5p_usb_phy_type {
--	S5P_USB_PHY_DEVICE,
--	S5P_USB_PHY_HOST,
--};
-+#include <linux/usb/samsung_usb_phy.h>
- 
- extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
- extern int s5p_usb_phy_exit(struct platform_device *pdev, int type);
-diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-index 20ebf6a..7dc9c15 100644
---- a/drivers/usb/host/ehci-s5p.c
-+++ b/drivers/usb/host/ehci-s5p.c
-@@ -19,7 +19,6 @@
- #include <linux/platform_data/usb-ehci-s5p.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
--#include <plat/usb-phy.h>
- 
- #define EHCI_INSNREG00(base)			(base + 0x90)
- #define EHCI_INSNREG00_ENA_INCR16		(0x1 << 25)
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index e3b7e85..b5b5977 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -17,7 +17,6 @@
- #include <linux/platform_data/usb-exynos.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
--#include <plat/usb-phy.h>
- 
- struct exynos_ohci_hcd {
- 	struct device *dev;
+ config ARM_KIRKWOOD_CPUFREQ
+ 	def_bool ARCH_KIRKWOOD && OF
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 0f079be..d4f9a24 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -68,6 +68,7 @@ comment "DEVFREQ Drivers"
+ config ARM_EXYNOS4_BUS_DEVFREQ
+ 	bool "ARM Exynos4210/4212/4412 Memory Bus DEVFREQ Driver"
+ 	depends on CPU_EXYNOS4210 || CPU_EXYNOS4212 || CPU_EXYNOS4412
++	depends on SAMSUNG_CLOCK
+ 	select ARCH_HAS_OPP
+ 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+ 	help
 -- 
 1.8.1.2
