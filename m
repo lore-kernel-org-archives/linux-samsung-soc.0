@@ -1,50 +1,65 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] dma: of-dma: return error when 'dma-cells' not found
-Date: Tue, 05 Mar 2013 11:15:41 +0100
-Message-ID: <1859273.NY466Orvuh@wuerfel>
-References: <1362475531-32260-1-git-send-email-padma.v@samsung.com>
- <5135BE58.4040105@gmail.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Modify SPI nodes according generic DMA DT bindings
+Date: Tue, 5 Mar 2013 15:49:48 +0530
+Message-ID: <CAAgF-BfUZOrXjY1demxMnWz3B+eR2VFKf4FGKBNhB7G=hR3UZw@mail.gmail.com>
+References: <1362477862-352-1-git-send-email-padma.v@samsung.com>
+	<CAK9yfHwmjwN4ceCQ719Y2DY9keTEX8mt65bHkoHcTTRJc5p9rA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <5135BE58.4040105-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, boojin.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:52667 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750827Ab3CEKTs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Mar 2013 05:19:48 -0500
+Received: by mail-ie0-f179.google.com with SMTP id k11so7471137iea.24
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Mar 2013 02:19:48 -0800 (PST)
+In-Reply-To: <CAK9yfHwmjwN4ceCQ719Y2DY9keTEX8mt65bHkoHcTTRJc5p9rA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, arnd@arndb.de, vinod.koul@intel.com, grant.likely@secretlab.ca
 
-On Tuesday 05 March 2013 03:43:52 Rob Herring wrote:
-> On 03/05/2013 03:25 AM, Padmavathi Venna wrote:
-> > This patch returns error when 'dma-cells' property not found
-> > in the corresponding device node. With out this change there
-> > is a crash in the generic dma incompatible platforms.
-> > 
-> > Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> NAK.
-> 
-> #dma-cells should be optional. It is not needed for platforms supporting
-> memory to memory transfers only and should therefore be optional. You
-> cannot assume the dtb can be updated and kernel changes need to work
-> with old dtbs. I've submitted patches to address this and fix the crash:
-> 
-> https://lists.ozlabs.org/pipermail/devicetree-discuss/2013-February/028769.html
+On Tue, Mar 5, 2013 at 3:36 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 5 March 2013 15:34, Padmavathi Venna <padma.v@samsung.com> wrote:
+>> This patch removes custom way of adding spi dma channels and
+>> adds according to new generic DMA DT bindings on samsung exynos4
+>> and exynos5440 platforms.
+>>
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos4.dtsi    |   15 +++++++++------
+>>  arch/arm/boot/dts/exynos5440.dtsi |    5 +++--
+>>  2 files changed, 12 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+>> index 1a62bcf..2449651 100644
+>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>> @@ -235,8 +235,9 @@
+>>                 compatible = "samsung,exynos4210-spi";
+>>                 reg = <0x13920000 0x100>;
+>>                 interrupts = <0 66 0>;
+>> -               tx-dma-channel = <&pdma0 7>; /* preliminary */
+>> -               rx-dma-channel = <&pdma0 6>; /* preliminary */
+>> +               dmas = <&pdma0 7
+>> +                       &pdma0 6>;
+>> +               dma-names = "tx", "rx";
+>>                 #address-cells = <1>;
+>>                 #size-cells = <0>;
+>>                 status = "disabled";
+>> @@ -246,8 +247,9 @@
+>>                 compatible = "samsung,exynos4210-spi";
+>>                 reg = <0x13930000 0x100>;
+>>                 interrupts = <0 67 0>;
+>> -               tx-dma-channel = <&pdma1 7>; /* preliminary */
+>> -               rx-dma-channel = <&pdma1 6>; /* preliminary */
+>> +               dmas = <&pdma0 7
+>> +                       &pdma0 6>;
+>
+> Shouldn't these be pdma1 as was earlier?
 
-Why would you call of_dma_controller_register() for a dma
-engine that does not support slave channels, when that is the
-only purpose of that interface?
+Oops, It's my mistake. Will repost this.
 
-Note that the binding defines #dma-cells as required, and it
-does not make any sense otherwise.
-
-	Arnd
+Thanks
+Padma
