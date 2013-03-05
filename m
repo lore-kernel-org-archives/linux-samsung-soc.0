@@ -1,70 +1,34 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 00/23] RFC: exynos multiplatform support
-Date: Tue, 5 Mar 2013 23:25:12 +0100
-Message-ID: <201303052325.13143.heiko@sntech.de>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <201303052124.04101.arnd@arndb.de> <201303052154.22857.arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/2] ARM: exynos: pl330: Add #dma-cells for generic dma binding support
+Date: Tue, 5 Mar 2013 22:37:05 +0000
+Message-ID: <201303052237.05910.arnd@arndb.de>
+References: <1362375268-29405-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:47881 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755104Ab3CEWZW (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.187]:50491 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754728Ab3CEWhM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 17:25:22 -0500
-In-Reply-To: <201303052154.22857.arnd@arndb.de>
+	Tue, 5 Mar 2013 17:37:12 -0500
+In-Reply-To: <1362375268-29405-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, boojin.kim@samsung.com, robherring2@gmail.com, dinguyen@altera.com, Olof Johansson <olof@lixom.net>
 
-Am Dienstag, 5. M=E4rz 2013, 22:54:22 schrieb Arnd Bergmann:
-> On Tuesday 05 March 2013, Arnd Bergmann wrote:
-> > The s3c64xx_dma code is also interesting because
-> > it has both an implementation of the s3c_dma interface in
-> > arch/arm/mach-s3c64xx/dma.c and one using the generic interface in
-> > drivers/dma/amba-pl08x.c.
->=20
-> This actually brings me to an interesting idea: the s3c64xx SPI drive=
-r
-> is used with the regular dmaengine API and pl330 on S5P and Exynos,
-> but with the s3c-dma interface and pl080 on S3C64xx.
->
-> If we just convert S3C64xx to use the pl080 dmaengine driver
-> instead, we can apply my SPI patch without breaking anything.
+On Monday 04 March 2013, Padmavathi Venna wrote:
+> 
+> This patch adds #dma-cells property to PL330 DMA controller
+> nodes for supporting generic dma dt bindings on samsung exynos
+> platforms. #dma-channels and #dma-requests are not required now
+> but added in advance.
+> 
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 
-The S3C24XX starting from S3C2443 (including S3C2416 and S3C2450) also =
-use the
-s3c64xx-spi driver.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-My argument has of course the problem of me seemingly being the only us=
-er of
-it currently and it being stuff not in mainline yet [0] :-) .
-
-But on the other hand, it's no use anyway staying attached to old cruft=
-, so
-it also wouldn't be a problem to go your way. I'll just try to come up =
-with
-a dmaengine driver for s3c24xx after common-clk and pinctrl ;-) .
-
-
-[0] https://github.com/mmind/linux-es600/blob/topic/es600-devel/arch/ar=
-m/mach-
-s3c24xx/mach-as090.c#L138
-
-
-> We still need a solution for the ASoC drivers, but they are
-> not as essential. We could probably move the wrapper files
-> from plat-samsung/*dma*.c to sounds/soc/samsung when that becomes
-> the only remaining user.
-
-In ASoC there is also a clear distinction between the different SoC
-generations. SND_SAMSUNG_I2S /_PCM /_AC97 ... is only used by newer SoC=
-s
-while SND_S3C24XX_I2S and SND_S3C_I2SV2_SOC is used by the legacy SoCs.
-
-Of course "my subarch" is bitten again, as it's using the new sound
-interface, but the same as above applies.
-
-
-Heiko
+Should we apply these directly to the arm-soc fixes branch, or wait
+until they come back from the Samsung subarchitecture tree?
