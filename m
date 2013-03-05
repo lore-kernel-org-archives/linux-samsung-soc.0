@@ -1,104 +1,61 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 00/23] RFC: exynos multiplatform support
-Date: Tue, 5 Mar 2013 19:19:02 +0000
-Message-ID: <201303051919.02638.arnd@arndb.de>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <1579361.FL4RHMlS27@amdc1227>
+Subject: Re: [PATCH] dma: of-dma: return error when 'dma-cells' not found
+Date: Tue, 5 Mar 2013 19:48:02 +0000
+Message-ID: <201303051948.02468.arnd@arndb.de>
+References: <1362475531-32260-1-git-send-email-padma.v@samsung.com> <1859273.NY466Orvuh@wuerfel> <51360797.6000007@gmail.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:61878 "EHLO
+Received: from moutng.kundenserver.de ([212.227.126.171]:50305 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758806Ab3CETTL (ORCPT
+	with ESMTP id S1752875Ab3CETsI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 14:19:11 -0500
-In-Reply-To: <1579361.FL4RHMlS27@amdc1227>
+	Tue, 5 Mar 2013 14:48:08 -0500
+In-Reply-To: <51360797.6000007@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, boojin.kim@samsung.com, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, vinod.koul@intel.com, kgene.kim@samsung.com, jon-hunter@ti.com, padma.kvr@gmail.com
 
-On Tuesday 05 March 2013, Tomasz Figa wrote:
-> > 
-> > With this patch set, we can build mach-exynos as part
-> > of a multiplatform kernel, with the following caveats:
-> > 
-> > * Only DT based boards are supported
+On Tuesday 05 March 2013, Rob Herring wrote:
+> > Why would you call of_dma_controller_register() for a dma
+> > engine that does not support slave channels, when that is the
+> > only purpose of that interface?
 > 
-> As far as I'm aware, there are plans to drop non-DT Exynos support. Kgene 
-> should know more on this.
+> Well maybe then that function should be allowed to fail without erroring
+> out. I just fixed it a the line that failed.
 
-Yes, that was my understanding as well. It might not actually be too 
-hard to get multiplatform working with the ATAGS based board files
-(we do that on some of the other platforms), but there is probably
-no reason to try hard.
+We have a lot of interfaces that fall back to silently doing nothing
+when there is no need.
+
+> Doing be32_to_cpup directly
+> on a function return that can be NULL is not correct either.
+
+Agreed.
  
-> > * Moving to common-clk breaks things including cpufreq
-> >   and others. Thomas is working on a patch for this
+> > Note that the binding defines #dma-cells as required, and it
+> > does not make any sense otherwise.
 > 
-> We have several patches internally for fixing things up to run correclty with 
-> common-clk. I'll see if we can post some patches.
+> The 2nd patch I submitted changes that. It does not make sense to
+> require it if you have no requests and hence will never have a phandle
+> reference in a slave device.
 
-Ok, excellent.
+I still don't see why you would want to use the binding for
+dma slaves to describe a dmaengine that does not have slaves.
 
-> > * We disable the gpio implementation, which also breaks
-> >   stuff, but Thomas has a patch already
-> 
-> The legacy GPIO code is needed only for non-DT case. DT-case uses the new 
-> pinctrl-samsung driver, which is (AFAIK) multiplatform-aware.
+> The simple fact is that the pl330 had an
+> existing binding that worked for the memory to memory only case and
+> kernel changes broke this. Kernel changes should not break existing
+> device-trees.
 
-Please have a closer look at the "ARM: exynos: work around missing gpio
-code on multiplatform" patch, I think there a few files I had to touch
-that actually rely on the legacy gpio code:
+Of course we should not break the existing device tree, but I think
+it would be more sensible to change the pl330 specific binding in this
+case to require the use of the generic dma slave binding only when
+there are slaves connected to it.
 
-* the pm-gpio.c file
-* the s3c_i2c0_cfg_gpio function
-* the eint irqchip
-
-If none of these are needed for DT-based systems, we should probably
-build that code conditionally based on the CONFIG_EXYNOS_ATAGS symbol
-I introduced.
-
-> > * sparsemem support is not available on multiplatform
-> 
-> There was some discussion some time ago whether we really need sparsemem on 
-> Exynos. If I remember correctly, it turned out that we don't. So this is not 
-> really an issue.
-
-Ok, good.
- 
-> > Arnd Bergmann (23):
-> >   ARM: exynos: introduce EXYNOS_ATAGS symbol
-> >   irqchip: exynos: remove dependency on mach/irqs.h
-> >   tty: serial/samsung: prepare for common clock API
-> >   tty: serial/samsung: make register definitions global
-> >   tty: serial/samsung: fix modular build
-> >   ARM: exynos: move debug-macro.S to include/debug/
-> >   i2c: s3c2410: make header file local
-> >   mmc: sdhci-s3c: remove platform dependencies
-> >   usb: exynos: do not include plat/usb-phy.h
-> >   [media] exynos: remove unnecessary header inclusions
-> >   video/exynos: remove unnecessary header inclusions
-> >   thermal/exynos: remove unnecessary header inclusions
-> >   mtd: onenand/samsung: make regs-onenand.h file local
-> >   rtc: s3c: make header file local
-> >   spi: s3c64xx: move to generic dmaengine API
-> >   pwm: samsung: repair the worst MMIO abuses
-> 
-> I'm currently working (in my free time) on a series of cleanup patches 
-> sanitizing Samsung PWM code for S3C64xx and S5PV210 DT (and multiplatform) 
-> support.
-
-Ah, nice.
-
-> On those platforms it is a bit more complex case as there are two blocks of 
-> code that access the same hardware - samsung-time (using two PWM channels for 
-> clocksource and clock events) and pwm-samsung.
-> 
-> Hopefully, I will have some patches ready soon.
-
-How are you planning to solve this? Do you want to have a combined driver that
-registers both a clocksource and a pwm?
+If the #dma-cells property is absent, the pl330 driver can be changed
+not to call of_dma_controller_register.
 
 	Arnd
