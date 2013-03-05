@@ -1,253 +1,96 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 20/23] ARM: exynos: prepare for sparse IRQ
-Date: Tue,  5 Mar 2013 18:42:30 +0100
-Message-ID: <1362505353-8873-21-git-send-email-arnd@arndb.de>
+Subject: [PATCH 19/23] ASoC: samsung: use irq resource for idma
+Date: Tue,  5 Mar 2013 18:42:29 +0100
+Message-ID: <1362505353-8873-20-git-send-email-arnd@arndb.de>
 References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:56901 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.8]:59432 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753298Ab3CERml (ORCPT
+	with ESMTP id S1757602Ab3CERmp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 12:42:41 -0500
+	Tue, 5 Mar 2013 12:42:45 -0500
 In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-When we enable CONFIG_SPARSE_IRQ, we have to set the
-value of NR_IRQS in the machine_desc for legacy IRQ
-domains, and any file referring to the number of
-interrupts or a specific number must include the
-mach/irqs.h header file explicitly.
+With multiplatform kernels, we cannot use hardwired IRQ
+numbers in device drivers. This changes the idma driver
+to use a proper resource, like all other drivers do.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-exynos/dev-uart.c          | 1 +
- arch/arm/mach-exynos/include/mach/irqs.h | 5 ++++-
- arch/arm/mach-exynos/mach-armlex4210.c   | 2 ++
- arch/arm/mach-exynos/mach-exynos4-dt.c   | 2 ++
- arch/arm/mach-exynos/mach-exynos5-dt.c   | 2 ++
- arch/arm/mach-exynos/mach-nuri.c         | 2 ++
- arch/arm/mach-exynos/mach-origen.c       | 2 ++
- arch/arm/mach-exynos/mach-smdk4x12.c     | 2 ++
- arch/arm/mach-exynos/mach-smdkv310.c     | 3 +++
- arch/arm/plat-samsung/irq-vic-timer.c    | 1 +
- arch/arm/plat-samsung/pm.c               | 1 +
- arch/arm/plat-samsung/s5p-irq.c          | 1 +
- 12 files changed, 23 insertions(+), 1 deletion(-)
+ arch/arm/plat-samsung/devs.c |  6 ++++++
+ sound/soc/samsung/idma.c     | 10 ++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/dev-uart.c b/arch/arm/mach-exynos/dev-uart.c
-index 7c42f4b..c48aff0 100644
---- a/arch/arm/mach-exynos/dev-uart.c
-+++ b/arch/arm/mach-exynos/dev-uart.c
-@@ -20,6 +20,7 @@
- #include <asm/mach/irq.h>
- #include <mach/hardware.h>
- #include <mach/map.h>
-+#include <mach/irqs.h>
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 58fb02a..ec912e4 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -146,14 +146,20 @@ struct platform_device s3c_device_camif = {
  
- #include <plat/devs.h>
+ /* ASOC DMA */
  
-diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
-index 1f4dc35..8bd5dde 100644
---- a/arch/arm/mach-exynos/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos/include/mach/irqs.h
-@@ -466,7 +466,10 @@
- #define IRQ_TIMER_BASE			(IRQ_GPIO_END + 64)
- 
- /* Set the default NR_IRQS */
-+#define EXYNOS_NR_IRQS			(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
- 
--#define NR_IRQS				(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
-+#ifndef CONFIG_SPARSE_IRQ
-+#define NR_IRQS				EXYNOS_NR_IRQS
++#ifdef CONFIG_PLAT_S5P 
++static struct resource samsung_asoc_idma_resource = DEFINE_RES_IRQ(IRQ_I2S0);
++
+ struct platform_device samsung_asoc_idma = {
+ 	.name		= "samsung-idma",
+ 	.id		= -1,
++	.num_resources	= 1,
++	.resource	= &samsung_asoc_idma_resource,
+ 	.dev		= {
+ 		.dma_mask		= &samsung_device_dma_mask,
+ 		.coherent_dma_mask	= DMA_BIT_MASK(32),
+ 	}
+ };
 +#endif
  
- #endif /* __ASM_ARCH_IRQS_H */
-diff --git a/arch/arm/mach-exynos/mach-armlex4210.c b/arch/arm/mach-exynos/mach-armlex4210.c
-index 685f291..cb95992 100644
---- a/arch/arm/mach-exynos/mach-armlex4210.c
-+++ b/arch/arm/mach-exynos/mach-armlex4210.c
-@@ -25,6 +25,7 @@
- #include <plat/regs-srom.h>
- #include <plat/sdhci.h>
+ /* FB */
  
-+#include <mach/irqs.h>
- #include <mach/map.h>
+diff --git a/sound/soc/samsung/idma.c b/sound/soc/samsung/idma.c
+index a07950b..f36a541 100644
+--- a/sound/soc/samsung/idma.c
++++ b/sound/soc/samsung/idma.c
+@@ -68,6 +68,8 @@ static struct idma_info {
+ 	dma_addr_t	lp_tx_addr;
+ } idma;
  
- #include "common.h"
-@@ -197,6 +198,7 @@ static void __init armlex4210_machine_init(void)
- MACHINE_START(ARMLEX4210, "ARMLEX4210")
- 	/* Maintainer: Alim Akhtar <alim.akhtar@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= armlex4210_map_io,
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index 3358088..55aa611 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -16,6 +16,7 @@
++static int idma_irq;
++
+ static void idma_getpos(dma_addr_t *src)
+ {
+ 	*src = idma.lp_tx_addr +
+@@ -305,7 +307,7 @@ static int idma_open(struct snd_pcm_substream *substream)
+ 	if (prtd == NULL)
+ 		return -ENOMEM;
  
- #include <asm/mach/arch.h>
- #include <mach/map.h>
-+#include <mach/irqs.h>
+-	ret = request_irq(IRQ_I2S0, iis_irq, 0, "i2s", prtd);
++	ret = request_irq(idma_irq, iis_irq, 0, "i2s", prtd);
+ 	if (ret < 0) {
+ 		pr_err("fail to claim i2s irq , ret = %d\n", ret);
+ 		kfree(prtd);
+@@ -324,7 +326,7 @@ static int idma_close(struct snd_pcm_substream *substream)
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct idma_ctrl *prtd = runtime->private_data;
  
- #include <plat/cpu.h>
- #include <plat/regs-serial.h>
-@@ -137,6 +138,7 @@ static char const *exynos4_dt_compat[] __initdata = {
+-	free_irq(IRQ_I2S0, prtd);
++	free_irq(idma_irq, prtd);
  
- DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= exynos4_dt_map_io,
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index acaeb14..c674e7f 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -17,6 +17,7 @@
+ 	if (!prtd)
+ 		pr_err("idma_close called with prtd == NULL\n");
+@@ -418,6 +420,10 @@ static struct snd_soc_platform_driver asoc_idma_platform = {
  
- #include <asm/mach/arch.h>
- #include <mach/map.h>
-+#include <mach/irqs.h>
- #include <mach/regs-pmu.h>
+ static int asoc_idma_platform_probe(struct platform_device *pdev)
+ {
++	idma_irq = platform_get_irq(pdev, 0);
++	if (idma_irq < 0)
++		return idma_irq;
++
+ 	return snd_soc_register_platform(&pdev->dev, &asoc_idma_platform);
+ }
  
- #include <plat/cpu.h>
-@@ -211,6 +212,7 @@ static void __init exynos5_reserve(void)
- 
- DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.init_irq	= exynos5_init_irq,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.map_io		= exynos5_dt_map_io,
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 1ea7973..fee0885 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -53,6 +53,7 @@
- #include <plat/fimc-core.h>
- #include <plat/camport.h>
- 
-+#include <mach/irqs.h>
- #include <mach/map.h>
- 
- #include "common.h"
-@@ -1375,6 +1376,7 @@ static void __init nuri_machine_init(void)
- MACHINE_START(NURI, "NURI")
- 	/* Maintainer: Kyungmin Park <kyungmin.park@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= nuri_map_io,
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 579d2d1..d1849d1 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -46,6 +46,7 @@
- #include <plat/hdmi.h>
- 
- #include <mach/map.h>
-+#include <mach/irqs.h>
- 
- #include <drm/exynos_drm.h>
- #include "common.h"
-@@ -810,6 +811,7 @@ static void __init origen_machine_init(void)
- MACHINE_START(ORIGEN, "ORIGEN")
- 	/* Maintainer: JeongHyeon Kim <jhkim@insignal.co.kr> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= origen_map_io,
-diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
-index fe61496..46c7fc7 100644
---- a/arch/arm/mach-exynos/mach-smdk4x12.c
-+++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-@@ -39,6 +39,7 @@
- #include <plat/regs-serial.h>
- #include <plat/sdhci.h>
- 
-+#include <mach/irqs.h>
- #include <mach/map.h>
- 
- #include <drm/exynos_drm.h>
-@@ -385,6 +386,7 @@ MACHINE_START(SMDK4412, "SMDK4412")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	/* Maintainer: Changhwan Youn <chaos.youn@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= smdk4x12_map_io,
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index d716729..5187687 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -43,6 +43,7 @@
- #include <plat/clock.h>
- #include <plat/hdmi.h>
- 
-+#include <mach/irqs.h>
- #include <mach/map.h>
- 
- #include <drm/exynos_drm.h>
-@@ -419,6 +420,7 @@ MACHINE_START(SMDKV310, "SMDKV310")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	/* Maintainer: Changhwan Youn <chaos.youn@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= smdkv310_map_io,
-@@ -431,6 +433,7 @@ MACHINE_END
- MACHINE_START(SMDKC210, "SMDKC210")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= smdkv310_map_io,
-diff --git a/arch/arm/plat-samsung/irq-vic-timer.c b/arch/arm/plat-samsung/irq-vic-timer.c
-index f980cf3..1113066 100644
---- a/arch/arm/plat-samsung/irq-vic-timer.c
-+++ b/arch/arm/plat-samsung/irq-vic-timer.c
-@@ -19,6 +19,7 @@
- #include <linux/io.h>
- 
- #include <mach/map.h>
-+#include <mach/irqs.h>
- #include <plat/cpu.h>
- #include <plat/irq-vic-timer.h>
- #include <plat/regs-timer.h>
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 002b147..53210ec 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -27,6 +27,7 @@
- #include <plat/regs-serial.h>
- #include <mach/regs-clock.h>
- #include <mach/regs-irq.h>
-+#include <mach/irqs.h>
- #include <asm/irq.h>
- 
- #include <plat/pm.h>
-diff --git a/arch/arm/plat-samsung/s5p-irq.c b/arch/arm/plat-samsung/s5p-irq.c
-index 103e371..ff1a760 100644
---- a/arch/arm/plat-samsung/s5p-irq.c
-+++ b/arch/arm/plat-samsung/s5p-irq.c
-@@ -15,6 +15,7 @@
- #include <linux/io.h>
- #include <linux/irqchip/arm-vic.h>
- 
-+#include <mach/irqs.h>
- #include <mach/map.h>
- #include <plat/regs-timer.h>
- #include <plat/cpu.h>
 -- 
 1.8.1.2
