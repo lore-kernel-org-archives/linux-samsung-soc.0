@@ -1,144 +1,68 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 21/23] ARM: exynos: hack to disable private clock code
-Date: Tue,  5 Mar 2013 18:42:31 +0100
-Message-ID: <1362505353-8873-22-git-send-email-arnd@arndb.de>
+Subject: [PATCH 05/23] tty: serial/samsung: fix modular build
+Date: Tue,  5 Mar 2013 18:42:15 +0100
+Message-ID: <1362505353-8873-6-git-send-email-arnd@arndb.de>
 References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:60541 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.9]:54995 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756958Ab3CERml (ORCPT
+	with ESMTP id S1757891Ab3CERmr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 12:42:41 -0500
+	Tue, 5 Mar 2013 12:42:47 -0500
 In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-Multiplatform kernels rely on the common clock implementation,
-which conflicts with Samsung's own implementation of the same
-interface. This disables all code that provides or requires
-the nonstandard version.
+There are a few bugs in the samsung serial driver when
+built as a loadable module, which makes the console
+code unavailable, as well as giving no access to
+the 'printascii' early debug function. This adds
+the appropriate compile time conditionals.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-exynos/Makefile        | 2 ++
- arch/arm/mach-exynos/common.c        | 6 ++++++
- arch/arm/plat-samsung/clock-clksrc.c | 3 +++
- arch/arm/plat-samsung/s5p-clock.c    | 3 +++
- drivers/cpufreq/Kconfig.arm          | 4 +++-
- drivers/devfreq/Kconfig              | 1 +
- 6 files changed, 18 insertions(+), 1 deletion(-)
+ drivers/tty/serial/samsung.c | 4 ++--
+ drivers/tty/serial/samsung.h | 4 +++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 435757e..b0dcf7d 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -13,10 +13,12 @@ obj-				:=
- # Core
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 729a60d..a3277ca 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -894,7 +894,7 @@ console_initcall(s3c24xx_serial_console_init);
+ #define S3C24XX_SERIAL_CONSOLE NULL
+ #endif
  
- obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
-+ifdef CONFIG_SAMSUNG_CLOCK
- obj-$(CONFIG_ARCH_EXYNOS4)	+= clock-exynos4.o
- obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
- obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
- obj-$(CONFIG_SOC_EXYNOS5250)	+= clock-exynos5.o
-+endif
+-#ifdef CONFIG_CONSOLE_POLL
++#if defined(CONFIG_SERIAL_SAMSUNG_CONSOLE) && defined(CONFIG_CONSOLE_POLL)
+ static int s3c24xx_serial_get_poll_char(struct uart_port *port);
+ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+ 			 unsigned char c);
+@@ -918,7 +918,7 @@ static struct uart_ops s3c24xx_serial_ops = {
+ 	.request_port	= s3c24xx_serial_request_port,
+ 	.config_port	= s3c24xx_serial_config_port,
+ 	.verify_port	= s3c24xx_serial_verify_port,
+-#ifdef CONFIG_CONSOLE_POLL
++#if defined(CONFIG_SERIAL_SAMSUNG_CONSOLE) && defined(CONFIG_CONSOLE_POLL)
+ 	.poll_get_char = s3c24xx_serial_get_poll_char,
+ 	.poll_put_char = s3c24xx_serial_put_poll_char,
+ #endif
+diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
+index 1a4bca3..00a499e 100644
+--- a/drivers/tty/serial/samsung.h
++++ b/drivers/tty/serial/samsung.h
+@@ -76,7 +76,9 @@ struct s3c24xx_uart_port {
+ #define wr_regb(port, reg, val) __raw_writeb(val, portaddr(port, reg))
+ #define wr_regl(port, reg, val) __raw_writel(val, portaddr(port, reg))
  
- obj-$(CONFIG_PM)		+= pm.o
- obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 4b4526d..504d50e 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -404,6 +404,9 @@ static void __init exynos5_map_io(void)
+-#ifdef CONFIG_SERIAL_SAMSUNG_DEBUG
++#if defined(CONFIG_SERIAL_SAMSUNG_DEBUG) && \
++    defined(CONFIG_DEBUG_LL) && \
++    !defined(MODULE)
  
- static void __init exynos4_init_clocks(int xtal)
- {
-+	if (!IS_ENABLED(CONFIG_SAMSUNG_CLOCK))
-+		return;
-+
- 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
+ extern void printascii(const char *);
  
- 	s3c24xx_register_baseclocks(xtal);
-@@ -425,6 +428,9 @@ static void __init exynos5440_map_io(void)
- 
- static void __init exynos5_init_clocks(int xtal)
- {
-+	if (!IS_ENABLED(CONFIG_SAMSUNG_CLOCK))
-+		return;
-+
- 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
- 
- 	/* EXYNOS5440 can support only common clock framework */
-diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-index 786a410..094fde9 100644
---- a/arch/arm/plat-samsung/clock-clksrc.c
-+++ b/arch/arm/plat-samsung/clock-clksrc.c
-@@ -179,6 +179,9 @@ void __init s3c_register_clksrc(struct clksrc_clk *clksrc, int size)
- {
- 	int ret;
- 
-+	if (!IS_ENABLED(CONFIG_SAMSUNG_CLOCK))
-+		return;
-+
- 	for (; size > 0; size--, clksrc++) {
- 		if (!clksrc->reg_div.reg && !clksrc->reg_src.reg)
- 			printk(KERN_ERR "%s: clock %s has no registers set\n",
-diff --git a/arch/arm/plat-samsung/s5p-clock.c b/arch/arm/plat-samsung/s5p-clock.c
-index 48a1599..0e22618 100644
---- a/arch/arm/plat-samsung/s5p-clock.c
-+++ b/arch/arm/plat-samsung/s5p-clock.c
-@@ -286,6 +286,9 @@ void __init s5p_register_clocks(unsigned long xtal_freq)
- {
- 	int ret;
- 
-+	if (!IS_ENABLED(CONFIG_SAMSUNG_CLOCK))
-+		return;
-+
- 	clk_ext_xtal_mux.rate = xtal_freq;
- 
- 	ret = s3c24xx_register_clocks(s5p_clks, ARRAY_SIZE(s5p_clks));
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 030ddf6..b6fb4fa 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -51,7 +51,7 @@ config ARM_S5PV210_CPUFREQ
- 
- config ARM_EXYNOS_CPUFREQ
- 	bool "SAMSUNG EXYNOS SoCs"
--	depends on ARCH_EXYNOS
-+	depends on ARCH_EXYNOS && SAMSUNG_CLOCK
- 	default y
- 	help
- 	  This adds the CPUFreq driver common part for Samsung
-@@ -59,6 +59,7 @@ config ARM_EXYNOS_CPUFREQ
- 
- 	  If in doubt, say N.
- 
-+if ARM_EXYNOS_CPUFREQ
- config ARM_EXYNOS4210_CPUFREQ
- 	def_bool CPU_EXYNOS4210
- 	help
-@@ -76,6 +77,7 @@ config ARM_EXYNOS5250_CPUFREQ
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS5250
- 	  SoC.
-+endif
- 
- config ARM_KIRKWOOD_CPUFREQ
- 	def_bool ARCH_KIRKWOOD && OF
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 0f079be..d4f9a24 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -68,6 +68,7 @@ comment "DEVFREQ Drivers"
- config ARM_EXYNOS4_BUS_DEVFREQ
- 	bool "ARM Exynos4210/4212/4412 Memory Bus DEVFREQ Driver"
- 	depends on CPU_EXYNOS4210 || CPU_EXYNOS4212 || CPU_EXYNOS4412
-+	depends on SAMSUNG_CLOCK
- 	select ARCH_HAS_OPP
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	help
 -- 
 1.8.1.2
