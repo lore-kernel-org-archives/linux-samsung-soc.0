@@ -1,199 +1,424 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 07/23] i2c: s3c2410: make header file local
-Date: Tue,  5 Mar 2013 18:42:17 +0100
-Message-ID: <1362505353-8873-8-git-send-email-arnd@arndb.de>
+Subject: [PATCH 06/23] ARM: exynos: move debug-macro.S to include/debug/
+Date: Tue,  5 Mar 2013 18:42:16 +0100
+Message-ID: <1362505353-8873-7-git-send-email-arnd@arndb.de>
 References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:61170 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.9]:54049 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753298Ab3CERmi (ORCPT
+	with ESMTP id S1753298Ab3CERme (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 12:42:38 -0500
+	Tue, 5 Mar 2013 12:42:34 -0500
 In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-No other file in the kernel besides i2c-s3c2410.c uses
-the current plat/regs-iic.h, so we can simply move the
-header file to live in the same directory as the driver,
-as a preparation to multiplatform builds.
+The move is necessary to support early debug output
+on exynos with multiplatform configurations. This
+implies also moving the plat/debug-macro.S file, but
+we are leaving the remaining users of that file
+in place, to avoid adding large numbers of extra
+configuration options to Kconfig.debug
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c24xx/mach-rx1950.c           |  1 -
- arch/arm/plat-samsung/devs.c                  |  1 -
- arch/arm/plat-samsung/include/plat/regs-iic.h | 56 ---------------------------
- drivers/i2c/busses/i2c-s3c2410.c              |  3 +-
- drivers/i2c/busses/i2c-s3c2410.h              | 56 +++++++++++++++++++++++++++
- 5 files changed, 58 insertions(+), 59 deletions(-)
- delete mode 100644 arch/arm/plat-samsung/include/plat/regs-iic.h
- create mode 100644 drivers/i2c/busses/i2c-s3c2410.h
+ arch/arm/Kconfig.debug                           |  8 +++
+ arch/arm/include/debug/exynos.S                  | 39 +++++++++++
+ arch/arm/include/debug/samsung.S                 | 87 ++++++++++++++++++++++++
+ arch/arm/mach-exynos/include/mach/debug-macro.S  | 39 -----------
+ arch/arm/mach-s3c24xx/include/mach/debug-macro.S |  2 +-
+ arch/arm/mach-s3c64xx/include/mach/debug-macro.S |  2 +-
+ arch/arm/mach-s5p64x0/include/mach/debug-macro.S |  2 +-
+ arch/arm/mach-s5pc100/include/mach/debug-macro.S |  2 +-
+ arch/arm/mach-s5pv210/include/mach/debug-macro.S |  2 +-
+ arch/arm/plat-samsung/include/plat/debug-macro.S | 87 ------------------------
+ 10 files changed, 139 insertions(+), 131 deletions(-)
+ create mode 100644 arch/arm/include/debug/exynos.S
+ create mode 100644 arch/arm/include/debug/samsung.S
+ delete mode 100644 arch/arm/mach-exynos/include/mach/debug-macro.S
+ delete mode 100644 arch/arm/plat-samsung/include/plat/debug-macro.S
 
-diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
-index 1f9ba2a..43f3ac5 100644
---- a/arch/arm/mach-s3c24xx/mach-rx1950.c
-+++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-@@ -56,7 +56,6 @@
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/pm.h>
--#include <plat/regs-iic.h>
- #include <plat/regs-serial.h>
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index acdddda..3c6851a 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -330,6 +330,7 @@ choice
  
- #include "common.h"
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 51afedd..76209c9 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -62,7 +62,6 @@
- #include <linux/platform_data/usb-s3c2410_udc.h>
- #include <linux/platform_data/usb-ohci-s3c2410.h>
- #include <plat/usb-phy.h>
--#include <plat/regs-iic.h>
- #include <plat/regs-serial.h>
- #include <plat/regs-spi.h>
- #include <linux/platform_data/spi-s3c64xx.h>
-diff --git a/arch/arm/plat-samsung/include/plat/regs-iic.h b/arch/arm/plat-samsung/include/plat/regs-iic.h
-deleted file mode 100644
-index 2f7c17d..0000000
---- a/arch/arm/plat-samsung/include/plat/regs-iic.h
-+++ /dev/null
-@@ -1,56 +0,0 @@
--/* arch/arm/mach-s3c2410/include/mach/regs-iic.h
-- *
-- * Copyright (c) 2004 Simtec Electronics <linux@simtec.co.uk>
-- *		http://www.simtec.co.uk/products/SWLINUX/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * S3C2410 I2C Controller
--*/
--
--#ifndef __ASM_ARCH_REGS_IIC_H
--#define __ASM_ARCH_REGS_IIC_H __FILE__
--
--/* see s3c2410x user guide, v1.1, section 9 (p447) for more info */
--
--#define S3C2410_IICREG(x) (x)
--
--#define S3C2410_IICCON    S3C2410_IICREG(0x00)
--#define S3C2410_IICSTAT   S3C2410_IICREG(0x04)
--#define S3C2410_IICADD    S3C2410_IICREG(0x08)
--#define S3C2410_IICDS     S3C2410_IICREG(0x0C)
--#define S3C2440_IICLC	  S3C2410_IICREG(0x10)
--
--#define S3C2410_IICCON_ACKEN		(1<<7)
--#define S3C2410_IICCON_TXDIV_16		(0<<6)
--#define S3C2410_IICCON_TXDIV_512	(1<<6)
--#define S3C2410_IICCON_IRQEN		(1<<5)
--#define S3C2410_IICCON_IRQPEND		(1<<4)
--#define S3C2410_IICCON_SCALE(x)		((x)&15)
--#define S3C2410_IICCON_SCALEMASK	(0xf)
--
--#define S3C2410_IICSTAT_MASTER_RX	(2<<6)
--#define S3C2410_IICSTAT_MASTER_TX	(3<<6)
--#define S3C2410_IICSTAT_SLAVE_RX	(0<<6)
--#define S3C2410_IICSTAT_SLAVE_TX	(1<<6)
--#define S3C2410_IICSTAT_MODEMASK	(3<<6)
--
--#define S3C2410_IICSTAT_START		(1<<5)
--#define S3C2410_IICSTAT_BUSBUSY		(1<<5)
--#define S3C2410_IICSTAT_TXRXEN		(1<<4)
--#define S3C2410_IICSTAT_ARBITR		(1<<3)
--#define S3C2410_IICSTAT_ASSLAVE		(1<<2)
--#define S3C2410_IICSTAT_ADDR0		(1<<1)
--#define S3C2410_IICSTAT_LASTBIT		(1<<0)
--
--#define S3C2410_IICLC_SDA_DELAY0	(0 << 0)
--#define S3C2410_IICLC_SDA_DELAY5	(1 << 0)
--#define S3C2410_IICLC_SDA_DELAY10	(2 << 0)
--#define S3C2410_IICLC_SDA_DELAY15	(3 << 0)
--#define S3C2410_IICLC_SDA_DELAY_MASK	(3 << 0)
--
--#define S3C2410_IICLC_FILTER_ON		(1<<2)
--
--#endif /* __ASM_ARCH_REGS_IIC_H */
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index f6b880b..d042ad0 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -42,9 +42,10 @@
+ 	config DEBUG_S3C_UART0
+ 		depends on PLAT_SAMSUNG
++		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		bool "Use S3C UART 0 for low-level debug"
+ 		help
+ 		  Say Y here if you want the debug print routines to direct
+@@ -341,6 +342,7 @@ choice
  
- #include <asm/irq.h>
+ 	config DEBUG_S3C_UART1
+ 		depends on PLAT_SAMSUNG
++		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		bool "Use S3C UART 1 for low-level debug"
+ 		help
+ 		  Say Y here if you want the debug print routines to direct
+@@ -352,6 +354,7 @@ choice
  
--#include <plat/regs-iic.h>
- #include <linux/platform_data/i2c-s3c2410.h>
+ 	config DEBUG_S3C_UART2
+ 		depends on PLAT_SAMSUNG
++		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		bool "Use S3C UART 2 for low-level debug"
+ 		help
+ 		  Say Y here if you want the debug print routines to direct
+@@ -363,6 +366,7 @@ choice
  
-+#include "i2c-s3c2410.h"
+ 	config DEBUG_S3C_UART3
+ 		depends on PLAT_SAMSUNG && ARCH_EXYNOS
++		select DEBUG_EXYNOS_UART
+ 		bool "Use S3C UART 3 for low-level debug"
+ 		help
+ 		  Say Y here if you want the debug print routines to direct
+@@ -485,6 +489,9 @@ choice
+ 
+ endchoice
+ 
++config DEBUG_EXYNOS_UART
++	bool
 +
- /* Treat S3C2410 as baseline hardware, anything else is supported via quirks */
- #define QUIRK_S3C2440		(1 << 0)
- #define QUIRK_HDMIPHY		(1 << 1)
-diff --git a/drivers/i2c/busses/i2c-s3c2410.h b/drivers/i2c/busses/i2c-s3c2410.h
+ config DEBUG_IMX_UART_PORT
+ 	int "i.MX Debug UART Port Selection" if DEBUG_IMX1_UART || \
+ 						DEBUG_IMX25_UART || \
+@@ -579,6 +586,7 @@ endchoice
+ 
+ config DEBUG_LL_INCLUDE
+ 	string
++	default "debug/exynos.S" if DEBUG_EXYNOS_UART
+ 	default "debug/icedcc.S" if DEBUG_ICEDCC
+ 	default "debug/imx.S" if DEBUG_IMX1_UART || \
+ 				 DEBUG_IMX25_UART || \
+diff --git a/arch/arm/include/debug/exynos.S b/arch/arm/include/debug/exynos.S
 new file mode 100644
-index 0000000..2f7c17d
+index 0000000..b17fdb7
 --- /dev/null
-+++ b/drivers/i2c/busses/i2c-s3c2410.h
-@@ -0,0 +1,56 @@
-+/* arch/arm/mach-s3c2410/include/mach/regs-iic.h
-+ *
-+ * Copyright (c) 2004 Simtec Electronics <linux@simtec.co.uk>
-+ *		http://www.simtec.co.uk/products/SWLINUX/
++++ b/arch/arm/include/debug/exynos.S
+@@ -0,0 +1,39 @@
++/*
++ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
-+ *
-+ * S3C2410 I2C Controller
 +*/
 +
-+#ifndef __ASM_ARCH_REGS_IIC_H
-+#define __ASM_ARCH_REGS_IIC_H __FILE__
++/* pull in the relevant register and map files. */
 +
-+/* see s3c2410x user guide, v1.1, section 9 (p447) for more info */
++#define S3C_ADDR_BASE   0xF6000000
++#define S3C_VA_UART	S3C_ADDR_BASE + 0x01000000
++#define EXYNOS4_PA_UART	0x13800000
++#define EXYNOS5_PA_UART	0x12C00000
 +
-+#define S3C2410_IICREG(x) (x)
++	/* note, for the boot process to work we have to keep the UART
++	 * virtual address aligned to an 1MiB boundary for the L1
++	 * mapping the head code makes. We keep the UART virtual address
++	 * aligned and add in the offset when we load the value here.
++	 */
 +
-+#define S3C2410_IICCON    S3C2410_IICREG(0x00)
-+#define S3C2410_IICSTAT   S3C2410_IICREG(0x04)
-+#define S3C2410_IICADD    S3C2410_IICREG(0x08)
-+#define S3C2410_IICDS     S3C2410_IICREG(0x0C)
-+#define S3C2440_IICLC	  S3C2410_IICREG(0x10)
++	.macro addruart, rp, rv, tmp
++		mrc	p15, 0, \tmp, c0, c0, 0
++		and	\tmp, \tmp, #0xf0
++		teq	\tmp, #0xf0		@@ A15
++		ldreq	\rp, =EXYNOS5_PA_UART
++		movne	\rp, #EXYNOS4_PA_UART	@@ EXYNOS4
++		ldr	\rv, =S3C_VA_UART
++#if CONFIG_DEBUG_S3C_UART != 0
++		add	\rp, \rp, #(0x10000 * CONFIG_DEBUG_S3C_UART)
++		add	\rv, \rv, #(0x10000 * CONFIG_DEBUG_S3C_UART)
++#endif
++	.endm
 +
-+#define S3C2410_IICCON_ACKEN		(1<<7)
-+#define S3C2410_IICCON_TXDIV_16		(0<<6)
-+#define S3C2410_IICCON_TXDIV_512	(1<<6)
-+#define S3C2410_IICCON_IRQEN		(1<<5)
-+#define S3C2410_IICCON_IRQPEND		(1<<4)
-+#define S3C2410_IICCON_SCALE(x)		((x)&15)
-+#define S3C2410_IICCON_SCALEMASK	(0xf)
++#define fifo_full fifo_full_s5pv210
++#define fifo_level fifo_level_s5pv210
 +
-+#define S3C2410_IICSTAT_MASTER_RX	(2<<6)
-+#define S3C2410_IICSTAT_MASTER_TX	(3<<6)
-+#define S3C2410_IICSTAT_SLAVE_RX	(0<<6)
-+#define S3C2410_IICSTAT_SLAVE_TX	(1<<6)
-+#define S3C2410_IICSTAT_MODEMASK	(3<<6)
++#include <debug/samsung.S>
+diff --git a/arch/arm/include/debug/samsung.S b/arch/arm/include/debug/samsung.S
+new file mode 100644
+index 0000000..8d8d922
+--- /dev/null
++++ b/arch/arm/include/debug/samsung.S
+@@ -0,0 +1,87 @@
++/* arch/arm/plat-samsung/include/plat/debug-macro.S
++ *
++ * Copyright 2005, 2007 Simtec Electronics
++ *	http://armlinux.simtec.co.uk/
++ *	Ben Dooks <ben@simtec.co.uk>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#define S3C2410_IICSTAT_START		(1<<5)
-+#define S3C2410_IICSTAT_BUSBUSY		(1<<5)
-+#define S3C2410_IICSTAT_TXRXEN		(1<<4)
-+#define S3C2410_IICSTAT_ARBITR		(1<<3)
-+#define S3C2410_IICSTAT_ASSLAVE		(1<<2)
-+#define S3C2410_IICSTAT_ADDR0		(1<<1)
-+#define S3C2410_IICSTAT_LASTBIT		(1<<0)
++#include <linux/serial_s3c.h>
 +
-+#define S3C2410_IICLC_SDA_DELAY0	(0 << 0)
-+#define S3C2410_IICLC_SDA_DELAY5	(1 << 0)
-+#define S3C2410_IICLC_SDA_DELAY10	(2 << 0)
-+#define S3C2410_IICLC_SDA_DELAY15	(3 << 0)
-+#define S3C2410_IICLC_SDA_DELAY_MASK	(3 << 0)
++/* The S5PV210/S5PC110 implementations are as belows. */
 +
-+#define S3C2410_IICLC_FILTER_ON		(1<<2)
++	.macro fifo_level_s5pv210 rd, rx
++		ldr	\rd, [\rx, # S3C2410_UFSTAT]
++		and	\rd, \rd, #S5PV210_UFSTAT_TXMASK
++	.endm
 +
-+#endif /* __ASM_ARCH_REGS_IIC_H */
++	.macro  fifo_full_s5pv210 rd, rx
++		ldr	\rd, [\rx, # S3C2410_UFSTAT]
++		tst	\rd, #S5PV210_UFSTAT_TXFULL
++	.endm
++
++/* The S3C2440 implementations are used by default as they are the
++ * most widely re-used */
++
++	.macro fifo_level_s3c2440 rd, rx
++		ldr	\rd, [\rx, # S3C2410_UFSTAT]
++		and	\rd, \rd, #S3C2440_UFSTAT_TXMASK
++	.endm
++
++#ifndef fifo_level
++#define fifo_level fifo_level_s3c2440
++#endif
++
++	.macro  fifo_full_s3c2440 rd, rx
++		ldr	\rd, [\rx, # S3C2410_UFSTAT]
++		tst	\rd, #S3C2440_UFSTAT_TXFULL
++	.endm
++
++#ifndef fifo_full
++#define fifo_full fifo_full_s3c2440
++#endif
++
++	.macro	senduart,rd,rx
++		strb 	\rd, [\rx, # S3C2410_UTXH]
++	.endm
++
++	.macro	busyuart, rd, rx
++		ldr	\rd, [\rx, # S3C2410_UFCON]
++		tst	\rd, #S3C2410_UFCON_FIFOMODE	@ fifo enabled?
++		beq	1001f				@
++		@ FIFO enabled...
++1003:
++		fifo_full \rd, \rx
++		bne	1003b
++		b	1002f
++
++1001:
++		@ busy waiting for non fifo
++		ldr	\rd, [\rx, # S3C2410_UTRSTAT]
++		tst	\rd, #S3C2410_UTRSTAT_TXFE
++		beq	1001b
++
++1002:		@ exit busyuart
++	.endm
++
++	.macro	waituart,rd,rx
++		ldr	\rd, [\rx, # S3C2410_UFCON]
++		tst	\rd, #S3C2410_UFCON_FIFOMODE	@ fifo enabled?
++		beq	1001f				@
++		@ FIFO enabled...
++1003:
++		fifo_level \rd, \rx
++		teq	\rd, #0
++		bne	1003b
++		b	1002f
++1001:
++		@ idle waiting for non fifo
++		ldr	\rd, [\rx, # S3C2410_UTRSTAT]
++		tst	\rd, #S3C2410_UTRSTAT_TXFE
++		beq	1001b
++
++1002:		@ exit busyuart
++	.endm
+diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S b/arch/arm/mach-exynos/include/mach/debug-macro.S
+deleted file mode 100644
+index e0c86ea..0000000
+--- a/arch/arm/mach-exynos/include/mach/debug-macro.S
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/* linux/arch/arm/mach-exynos4/include/mach/debug-macro.S
+- *
+- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * Based on arch/arm/mach-s3c6400/include/mach/debug-macro.S
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-/* pull in the relevant register and map files. */
+-
+-#include <mach/map.h>
+-
+-	/* note, for the boot process to work we have to keep the UART
+-	 * virtual address aligned to an 1MiB boundary for the L1
+-	 * mapping the head code makes. We keep the UART virtual address
+-	 * aligned and add in the offset when we load the value here.
+-	 */
+-
+-	.macro addruart, rp, rv, tmp
+-		mrc	p15, 0, \tmp, c0, c0, 0
+-		and	\tmp, \tmp, #0xf0
+-		teq	\tmp, #0xf0		@@ A15
+-		ldreq	\rp, =EXYNOS5_PA_UART
+-		movne	\rp, #EXYNOS4_PA_UART	@@ EXYNOS4
+-		ldr	\rv, =S3C_VA_UART
+-#if CONFIG_DEBUG_S3C_UART != 0
+-		add	\rp, \rp, #(0x10000 * CONFIG_DEBUG_S3C_UART)
+-		add	\rv, \rv, #(0x10000 * CONFIG_DEBUG_S3C_UART)
+-#endif
+-	.endm
+-
+-#define fifo_full fifo_full_s5pv210
+-#define fifo_level fifo_level_s5pv210
+-
+-#include <plat/debug-macro.S>
+diff --git a/arch/arm/mach-s3c24xx/include/mach/debug-macro.S b/arch/arm/mach-s3c24xx/include/mach/debug-macro.S
+index 13ed33c..2558952 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/debug-macro.S
++++ b/arch/arm/mach-s3c24xx/include/mach/debug-macro.S
+@@ -98,4 +98,4 @@
+ 
+ /* include the reset of the code which will do the work */
+ 
+-#include <plat/debug-macro.S>
++#include <debug/samsung.S>
+diff --git a/arch/arm/mach-s3c64xx/include/mach/debug-macro.S b/arch/arm/mach-s3c64xx/include/mach/debug-macro.S
+index c0c076a..dd9ccca 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/debug-macro.S
++++ b/arch/arm/mach-s3c64xx/include/mach/debug-macro.S
+@@ -35,4 +35,4 @@
+  * will be fine with us.
+  */
+ 
+-#include <plat/debug-macro.S>
++#include <debug/samsung.S>
+diff --git a/arch/arm/mach-s5p64x0/include/mach/debug-macro.S b/arch/arm/mach-s5p64x0/include/mach/debug-macro.S
+index e80ba3c..5e2916f 100644
+--- a/arch/arm/mach-s5p64x0/include/mach/debug-macro.S
++++ b/arch/arm/mach-s5p64x0/include/mach/debug-macro.S
+@@ -30,4 +30,4 @@
+ #endif
+ 	.endm
+ 
+-#include <plat/debug-macro.S>
++#include <debug/samsung.S>
+diff --git a/arch/arm/mach-s5pc100/include/mach/debug-macro.S b/arch/arm/mach-s5pc100/include/mach/debug-macro.S
+index 694f759..66cb7f1 100644
+--- a/arch/arm/mach-s5pc100/include/mach/debug-macro.S
++++ b/arch/arm/mach-s5pc100/include/mach/debug-macro.S
+@@ -36,4 +36,4 @@
+  * will be fine with us.
+  */
+ 
+-#include <plat/debug-macro.S>
++#include <debug/samsung.S>
+diff --git a/arch/arm/mach-s5pv210/include/mach/debug-macro.S b/arch/arm/mach-s5pv210/include/mach/debug-macro.S
+index 79e5559..80c2199 100644
+--- a/arch/arm/mach-s5pv210/include/mach/debug-macro.S
++++ b/arch/arm/mach-s5pv210/include/mach/debug-macro.S
+@@ -38,4 +38,4 @@
+  * will be fine with us.
+  */
+ 
+-#include <plat/debug-macro.S>
++#include <debug/samsung.S>
+diff --git a/arch/arm/plat-samsung/include/plat/debug-macro.S b/arch/arm/plat-samsung/include/plat/debug-macro.S
+deleted file mode 100644
+index f3a9cff..0000000
+--- a/arch/arm/plat-samsung/include/plat/debug-macro.S
++++ /dev/null
+@@ -1,87 +0,0 @@
+-/* arch/arm/plat-samsung/include/plat/debug-macro.S
+- *
+- * Copyright 2005, 2007 Simtec Electronics
+- *	http://armlinux.simtec.co.uk/
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <plat/regs-serial.h>
+-
+-/* The S5PV210/S5PC110 implementations are as belows. */
+-
+-	.macro fifo_level_s5pv210 rd, rx
+-		ldr	\rd, [\rx, # S3C2410_UFSTAT]
+-		and	\rd, \rd, #S5PV210_UFSTAT_TXMASK
+-	.endm
+-
+-	.macro  fifo_full_s5pv210 rd, rx
+-		ldr	\rd, [\rx, # S3C2410_UFSTAT]
+-		tst	\rd, #S5PV210_UFSTAT_TXFULL
+-	.endm
+-
+-/* The S3C2440 implementations are used by default as they are the
+- * most widely re-used */
+-
+-	.macro fifo_level_s3c2440 rd, rx
+-		ldr	\rd, [\rx, # S3C2410_UFSTAT]
+-		and	\rd, \rd, #S3C2440_UFSTAT_TXMASK
+-	.endm
+-
+-#ifndef fifo_level
+-#define fifo_level fifo_level_s3c2440
+-#endif
+-
+-	.macro  fifo_full_s3c2440 rd, rx
+-		ldr	\rd, [\rx, # S3C2410_UFSTAT]
+-		tst	\rd, #S3C2440_UFSTAT_TXFULL
+-	.endm
+-
+-#ifndef fifo_full
+-#define fifo_full fifo_full_s3c2440
+-#endif
+-
+-	.macro	senduart,rd,rx
+-		strb 	\rd, [\rx, # S3C2410_UTXH]
+-	.endm
+-
+-	.macro	busyuart, rd, rx
+-		ldr	\rd, [\rx, # S3C2410_UFCON]
+-		tst	\rd, #S3C2410_UFCON_FIFOMODE	@ fifo enabled?
+-		beq	1001f				@
+-		@ FIFO enabled...
+-1003:
+-		fifo_full \rd, \rx
+-		bne	1003b
+-		b	1002f
+-
+-1001:
+-		@ busy waiting for non fifo
+-		ldr	\rd, [\rx, # S3C2410_UTRSTAT]
+-		tst	\rd, #S3C2410_UTRSTAT_TXFE
+-		beq	1001b
+-
+-1002:		@ exit busyuart
+-	.endm
+-
+-	.macro	waituart,rd,rx
+-		ldr	\rd, [\rx, # S3C2410_UFCON]
+-		tst	\rd, #S3C2410_UFCON_FIFOMODE	@ fifo enabled?
+-		beq	1001f				@
+-		@ FIFO enabled...
+-1003:
+-		fifo_level \rd, \rx
+-		teq	\rd, #0
+-		bne	1003b
+-		b	1002f
+-1001:
+-		@ idle waiting for non fifo
+-		ldr	\rd, [\rx, # S3C2410_UTRSTAT]
+-		tst	\rd, #S3C2410_UTRSTAT_TXFE
+-		beq	1001b
+-
+-1002:		@ exit busyuart
+-	.endm
 -- 
 1.8.1.2
