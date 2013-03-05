@@ -1,201 +1,203 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 14/23] rtc: s3c: make header file local
-Date: Tue,  5 Mar 2013 18:42:24 +0100
-Message-ID: <1362505353-8873-15-git-send-email-arnd@arndb.de>
+Subject: [PATCH 23/23] ARM: exynos: experimental multiplatform support
+Date: Tue,  5 Mar 2013 18:42:33 +0100
+Message-ID: <1362505353-8873-24-git-send-email-arnd@arndb.de>
 References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:52706 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.8]:56163 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753298Ab3CERmj (ORCPT
+	with ESMTP id S1757308Ab3CERmm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 12:42:39 -0500
+	Tue, 5 Mar 2013 12:42:42 -0500
 In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-Nothing outside of the rtc driver includes plat/regs-rtc.h,
-so we can simply move the file into the same directory,
-which allows us to build the file as platform-independent
-code.
+This enables the exynos platform to be selected as part
+of a CONFIG_ARCH_MULTIPLATFORM kernel. This still
+breaks a number of drivers, which we will have to
+enable again one by one. Single-platform configurations
+should not be impacted by this.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/plat-samsung/include/plat/regs-rtc.h | 71 ---------------------------
- drivers/rtc/rtc-s3c.c                         |  3 +-
- drivers/rtc/rtc-s3c.h                         | 70 ++++++++++++++++++++++++++
- 3 files changed, 71 insertions(+), 73 deletions(-)
- delete mode 100644 arch/arm/plat-samsung/include/plat/regs-rtc.h
- create mode 100644 drivers/rtc/rtc-s3c.h
+ arch/arm/Kconfig               | 11 ++---------
+ arch/arm/mach-exynos/Kconfig   | 21 +++++++++++++++++----
+ arch/arm/mach-exynos/Makefile  |  1 +
+ arch/arm/plat-samsung/Kconfig  |  5 +++++
+ arch/arm/plat-samsung/Makefile |  3 +++
+ drivers/video/Kconfig          |  2 +-
+ drivers/watchdog/Kconfig       |  1 +
+ 7 files changed, 30 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-rtc.h b/arch/arm/plat-samsung/include/plat/regs-rtc.h
-deleted file mode 100644
-index 0f8263e..0000000
---- a/arch/arm/plat-samsung/include/plat/regs-rtc.h
-+++ /dev/null
-@@ -1,71 +0,0 @@
--/* arch/arm/mach-s3c2410/include/mach/regs-rtc.h
-- *
-- * Copyright (c) 2003 Simtec Electronics <linux@simtec.co.uk>
-- *		      http://www.simtec.co.uk/products/SWLINUX/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * S3C2410 Internal RTC register definition
--*/
--
--#ifndef __ASM_ARCH_REGS_RTC_H
--#define __ASM_ARCH_REGS_RTC_H __FILE__
--
--#define S3C2410_RTCREG(x) (x)
--#define S3C2410_INTP		S3C2410_RTCREG(0x30)
--#define S3C2410_INTP_ALM	(1 << 1)
--#define S3C2410_INTP_TIC	(1 << 0)
--
--#define S3C2410_RTCCON		S3C2410_RTCREG(0x40)
--#define S3C2410_RTCCON_RTCEN	(1 << 0)
--#define S3C2410_RTCCON_CNTSEL	(1 << 2)
--#define S3C2410_RTCCON_CLKRST	(1 << 3)
--#define S3C2443_RTCCON_TICSEL	(1 << 4)
--#define S3C64XX_RTCCON_TICEN	(1 << 8)
--
--#define S3C2410_TICNT		S3C2410_RTCREG(0x44)
--#define S3C2410_TICNT_ENABLE	(1 << 7)
--
--/* S3C2443: tick count is 15 bit wide
-- * TICNT[6:0] contains upper 7 bits
-- * TICNT1[7:0] contains lower 8 bits
-- */
--#define S3C2443_TICNT_PART(x)	((x & 0x7f00) >> 8)
--#define S3C2443_TICNT1		S3C2410_RTCREG(0x4C)
--#define S3C2443_TICNT1_PART(x)	(x & 0xff)
--
--/* S3C2416: tick count is 32 bit wide
-- * TICNT[6:0] contains bits [14:8]
-- * TICNT1[7:0] contains lower 8 bits
-- * TICNT2[16:0] contains upper 17 bits
-- */
--#define S3C2416_TICNT2		S3C2410_RTCREG(0x48)
--#define S3C2416_TICNT2_PART(x)	((x & 0xffff8000) >> 15)
--
--#define S3C2410_RTCALM		S3C2410_RTCREG(0x50)
--#define S3C2410_RTCALM_ALMEN	(1 << 6)
--#define S3C2410_RTCALM_YEAREN	(1 << 5)
--#define S3C2410_RTCALM_MONEN	(1 << 4)
--#define S3C2410_RTCALM_DAYEN	(1 << 3)
--#define S3C2410_RTCALM_HOUREN	(1 << 2)
--#define S3C2410_RTCALM_MINEN	(1 << 1)
--#define S3C2410_RTCALM_SECEN	(1 << 0)
--
--#define S3C2410_ALMSEC		S3C2410_RTCREG(0x54)
--#define S3C2410_ALMMIN		S3C2410_RTCREG(0x58)
--#define S3C2410_ALMHOUR		S3C2410_RTCREG(0x5c)
--
--#define S3C2410_ALMDATE		S3C2410_RTCREG(0x60)
--#define S3C2410_ALMMON		S3C2410_RTCREG(0x64)
--#define S3C2410_ALMYEAR		S3C2410_RTCREG(0x68)
--
--#define S3C2410_RTCSEC		S3C2410_RTCREG(0x70)
--#define S3C2410_RTCMIN		S3C2410_RTCREG(0x74)
--#define S3C2410_RTCHOUR		S3C2410_RTCREG(0x78)
--#define S3C2410_RTCDATE		S3C2410_RTCREG(0x7c)
--#define S3C2410_RTCMON		S3C2410_RTCREG(0x84)
--#define S3C2410_RTCYEAR		S3C2410_RTCREG(0x88)
--
--#endif /* __ASM_ARCH_REGS_RTC_H */
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index fb994e9..7995f79 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -29,9 +29,8 @@
- #include <linux/uaccess.h>
- #include <linux/io.h>
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 5b71469..56b62f5 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -854,18 +854,11 @@ config ARCH_S5PV210
+ 	help
+ 	  Samsung S5PV210/S5PC110 series based systems
  
--#include <mach/hardware.h>
- #include <asm/irq.h>
--#include <plat/regs-rtc.h>
-+#include "rtc-s3c.h"
+-config ARCH_EXYNOS
++config ARCH_EXYNOS_SINGLE
+ 	bool "Samsung EXYNOS"
+ 	select ARCH_HAS_CPUFREQ
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+ 	select ARCH_SPARSEMEM_ENABLE
+-	select CLKDEV_LOOKUP
+-	select CPU_V7
+-	select GENERIC_CLOCKEVENTS
+-	select HAVE_CLK
+-	select HAVE_S3C2410_I2C if I2C
+-	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+-	select HAVE_S3C_RTC if RTC_CLASS
+ 	select NEED_MACH_GPIO_H
+ 	select NEED_MACH_MEMORY_H
+ 	help
+@@ -1650,7 +1643,7 @@ config LOCAL_TIMERS
+ 	bool "Use local timer interrupts"
+ 	depends on SMP
+ 	default y
+-	select HAVE_ARM_TWD if (!ARCH_MSM_SCORPIONMP && !EXYNOS4_MCT)
++	select HAVE_ARM_TWD if (!ARCH_MSM_SCORPIONMP)
+ 	help
+ 	  Enable support for local timers on SMP platforms, rather then the
+ 	  legacy IPI broadcast method.  Local timers allows the system
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 3291a72..1f2e7dc 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -7,6 +7,19 @@
  
- enum s3c_cpu_type {
- 	TYPE_S3C2410,
-diff --git a/drivers/rtc/rtc-s3c.h b/drivers/rtc/rtc-s3c.h
-new file mode 100644
-index 0000000..004b61a
---- /dev/null
-+++ b/drivers/rtc/rtc-s3c.h
-@@ -0,0 +1,70 @@
-+/*
-+ * Copyright (c) 2003 Simtec Electronics <linux@simtec.co.uk>
-+ *		      http://www.simtec.co.uk/products/SWLINUX/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * S3C2410 Internal RTC register definition
-+*/
+ # Configuration options for the EXYNOS4
+ 
++config ARCH_EXYNOS
++	bool "Samsung EXYNOS" if ARCH_MULTI_V7
++	default ARCH_EXYNOS_SINGLE
++	select CLKDEV_LOOKUP
++	select CPU_V7
++	select GENERIC_CLOCKEVENTS
++	select HAVE_CLK
++	select HAVE_S3C2410_I2C if I2C
++	select HAVE_S3C2410_WATCHDOG if WATCHDOG
++	select HAVE_S3C_RTC if RTC_CLASS
++	help
++	  Support for SAMSUNG's EXYNOS SoCs (EXYNOS4/5)
 +
-+#ifndef __ASM_ARCH_REGS_RTC_H
-+#define __ASM_ARCH_REGS_RTC_H __FILE__
+ if ARCH_EXYNOS
+ 
+ menu "SAMSUNG EXYNOS SoCs Support"
+@@ -35,7 +48,7 @@ config CPU_EXYNOS4210
+ 	select PM_GENERIC_DOMAINS
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+-	select SAMSUNG_DMADEV
++	select SAMSUNG_DMADEV if ARCH_EXYNOS_SINGLE
+ 	help
+ 	  Enable EXYNOS4210 CPU support
+ 
+@@ -45,7 +58,7 @@ config SOC_EXYNOS4212
+ 	depends on ARCH_EXYNOS4
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+-	select SAMSUNG_DMADEV
++	select SAMSUNG_DMADEV if ARCH_EXYNOS_SINGLE
+ 	help
+ 	  Enable EXYNOS4212 SoC support
+ 
+@@ -53,7 +66,7 @@ config SOC_EXYNOS4412
+ 	bool "SAMSUNG EXYNOS4412"
+ 	default y
+ 	depends on ARCH_EXYNOS4
+-	select SAMSUNG_DMADEV
++	select SAMSUNG_DMADEV if ARCH_EXYNOS_SINGLE
+ 	help
+ 	  Enable EXYNOS4412 SoC support
+ 
+@@ -64,7 +77,7 @@ config SOC_EXYNOS5250
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+ 	select S5P_DEV_MFC
+-	select SAMSUNG_DMADEV
++	select SAMSUNG_DMADEV if ARCH_EXYNOS_SINGLE
+ 	help
+ 	  Enable EXYNOS5250 SoC support
+ 
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index e2f1742..646b79e 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -4,6 +4,7 @@
+ #		http://www.samsung.com/
+ #
+ # Licensed under GPLv2
++ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
+ 
+ obj-y				:=
+ obj-m				:=
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index a9d5216..b6669db 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -13,6 +13,10 @@ config PLAT_SAMSUNG
+ 	help
+ 	  Base platform code for all Samsung SoC based systems
+ 
++config PLAT_SAMSUNG_SINGLE
++	def_bool PLAT_SAMSUNG && !ARCH_MULTIPLATFORM
++	
 +
-+#define S3C2410_RTCREG(x) (x)
-+#define S3C2410_INTP		S3C2410_RTCREG(0x30)
-+#define S3C2410_INTP_ALM	(1 << 1)
-+#define S3C2410_INTP_TIC	(1 << 0)
+ config PLAT_S5P
+ 	bool
+ 	depends on (ARCH_S5P64X0 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_EXYNOS)
+@@ -178,6 +182,7 @@ config S5P_DEV_UART
+ 
+ config S3C_ADC
+ 	bool "ADC common driver support"
++	depends on PLAT_SAMSUNG_SINGLE
+ 	help
+ 	  Core support for the ADC block found in the Samsung SoC systems
+ 	  for drivers such as the touchscreen and hwmon to use to share
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 3a7c64d..78f560e 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -4,6 +4,9 @@
+ #
+ # Licensed under GPLv2
+ 
++ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
++ccflags-$(CONFIG_ARCH_EXYNOS)	+= -I$(srctree)/arch/arm/mach-exynos/include
 +
-+#define S3C2410_RTCCON		S3C2410_RTCREG(0x40)
-+#define S3C2410_RTCCON_RTCEN	(1 << 0)
-+#define S3C2410_RTCCON_CNTSEL	(1 << 2)
-+#define S3C2410_RTCCON_CLKRST	(1 << 3)
-+#define S3C2443_RTCCON_TICSEL	(1 << 4)
-+#define S3C64XX_RTCCON_TICEN	(1 << 8)
-+
-+#define S3C2410_TICNT		S3C2410_RTCREG(0x44)
-+#define S3C2410_TICNT_ENABLE	(1 << 7)
-+
-+/* S3C2443: tick count is 15 bit wide
-+ * TICNT[6:0] contains upper 7 bits
-+ * TICNT1[7:0] contains lower 8 bits
-+ */
-+#define S3C2443_TICNT_PART(x)	((x & 0x7f00) >> 8)
-+#define S3C2443_TICNT1		S3C2410_RTCREG(0x4C)
-+#define S3C2443_TICNT1_PART(x)	(x & 0xff)
-+
-+/* S3C2416: tick count is 32 bit wide
-+ * TICNT[6:0] contains bits [14:8]
-+ * TICNT1[7:0] contains lower 8 bits
-+ * TICNT2[16:0] contains upper 17 bits
-+ */
-+#define S3C2416_TICNT2		S3C2410_RTCREG(0x48)
-+#define S3C2416_TICNT2_PART(x)	((x & 0xffff8000) >> 15)
-+
-+#define S3C2410_RTCALM		S3C2410_RTCREG(0x50)
-+#define S3C2410_RTCALM_ALMEN	(1 << 6)
-+#define S3C2410_RTCALM_YEAREN	(1 << 5)
-+#define S3C2410_RTCALM_MONEN	(1 << 4)
-+#define S3C2410_RTCALM_DAYEN	(1 << 3)
-+#define S3C2410_RTCALM_HOUREN	(1 << 2)
-+#define S3C2410_RTCALM_MINEN	(1 << 1)
-+#define S3C2410_RTCALM_SECEN	(1 << 0)
-+
-+#define S3C2410_ALMSEC		S3C2410_RTCREG(0x54)
-+#define S3C2410_ALMMIN		S3C2410_RTCREG(0x58)
-+#define S3C2410_ALMHOUR		S3C2410_RTCREG(0x5c)
-+
-+#define S3C2410_ALMDATE		S3C2410_RTCREG(0x60)
-+#define S3C2410_ALMMON		S3C2410_RTCREG(0x64)
-+#define S3C2410_ALMYEAR		S3C2410_RTCREG(0x68)
-+
-+#define S3C2410_RTCSEC		S3C2410_RTCREG(0x70)
-+#define S3C2410_RTCMIN		S3C2410_RTCREG(0x74)
-+#define S3C2410_RTCHOUR		S3C2410_RTCREG(0x78)
-+#define S3C2410_RTCDATE		S3C2410_RTCREG(0x7c)
-+#define S3C2410_RTCMON		S3C2410_RTCREG(0x84)
-+#define S3C2410_RTCYEAR		S3C2410_RTCREG(0x88)
-+
-+#endif /* __ASM_ARCH_REGS_RTC_H */
+ obj-y				:=
+ obj-m				:=
+ obj-n				:= dummy.o
+diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+index 4c1546f..05a4a59 100644
+--- a/drivers/video/Kconfig
++++ b/drivers/video/Kconfig
+@@ -2048,7 +2048,7 @@ config FB_TMIO_ACCELL
+ config FB_S3C
+ 	tristate "Samsung S3C framebuffer support"
+ 	depends on FB && (CPU_S3C2416 || ARCH_S3C64XX || ARCH_S5P64X0 || \
+-		ARCH_S5PC100 || ARCH_S5PV210 || ARCH_EXYNOS)
++		ARCH_S5PC100 || ARCH_S5PV210 || ARCH_EXYNOS_SINGLE)
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 9fcc70c..f39337b 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -187,6 +187,7 @@ config HAVE_S3C2410_WATCHDOG
+ config S3C2410_WATCHDOG
+ 	tristate "S3C2410 Watchdog"
+ 	depends on HAVE_S3C2410_WATCHDOG
++	depends on PLAT_SAMSUNG_SINGLE
+ 	select WATCHDOG_CORE
+ 	help
+ 	  Watchdog timer block in the Samsung SoCs. This will reboot
 -- 
 1.8.1.2
