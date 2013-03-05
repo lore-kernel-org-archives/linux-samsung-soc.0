@@ -1,189 +1,117 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 16/23] pwm: samsung: repair the worst MMIO abuses
-Date: Tue,  5 Mar 2013 18:42:26 +0100
-Message-ID: <1362505353-8873-17-git-send-email-arnd@arndb.de>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 1/3] pinctrl: exynos: add exynos5250 SoC specific data
+Date: Tue, 5 Mar 2013 23:54:30 +0530
+Message-ID: <CAJuYYwSXb2G=eO8H-cmBvrGFgKiL++ts_mWr+WdPgZypoy6nZg@mail.gmail.com>
+References: <1355399644-29417-1-git-send-email-thomas.abraham@linaro.org>
+	<1355399644-29417-2-git-send-email-thomas.abraham@linaro.org>
+	<CACRpkdaQ10CgoFXtk4EyqL4LWVpsdEAdrmy5R-_Rqm5fJdqS4A@mail.gmail.com>
+	<CAJuYYwTZkzCXjowhKaJ253Oji07eDdEjMvNssyL1ThWtETswSQ@mail.gmail.com>
+	<017801cde453$77b03eb0$6710bc10$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:64833 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756958Ab3CERnV (ORCPT
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:50736 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754911Ab3CESYb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 12:43:21 -0500
-In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
+	Tue, 5 Mar 2013 13:24:31 -0500
+Received: by mail-ve0-f178.google.com with SMTP id db10so5945592veb.23
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Mar 2013 10:24:31 -0800 (PST)
+In-Reply-To: <017801cde453$77b03eb0$6710bc10$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, patches@linaro.org
 
-The Samsung PWM driver uses "magic" pointers that are mapped
-at boot time to point its MMIO registers. This fails horribly
-with a multiplatform kernel, which can not rely on platform
-specific header files to contain the right values, aside from
-this being a really bad idea in general.
+On 27 December 2012 22:28, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Thomas Abraham wrote:
+>>
+>> Hi Linus,
+>>
+>> On 14 December 2012 21:21, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> > On Thu, Dec 13, 2012 at 12:54 PM, Thomas Abraham
+>> > <thomas.abraham@linaro.org> wrote:
+>> >
+>> >> Add Samsung Exynos5250 SoC specific data to enable pinctrl support for
+>> >> all platforms based on Exynos5250.
+>> >>
+>> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> >
+>> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>> >
+>> > For this series, I guess you'll fix it through the Samsung tree?
+>>
+>> Thanks for your ack. Since there are patches to be prepared for
+>> migrating the rest of Exynos5250 related code to the pinctrl
+>> framework, it would be easier if this series goes through the Samsung
+>> tree.
+>>
+> I applied this series, thanks.
 
-This changes the driver to at least pass an __iomem token
-around in the device structure to dereference that. Fixing
-the platform code is much harder, so we'll leave that
-until we have a DT binding for pwm-samsung, which may require
-other changes in this area. Since we are already touching
-every MMIO accessor in this driver, let's also use the
-proper readl_relaxed variant rather than __raw_readl.
+This series has not made it into 3.9-rc1. So I will rebase this series
+to 3.9-rc1 and post again.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pwm/pwm-samsung.c | 60 +++++++++++++++++++++++++++++++++--------------
- 1 file changed, 42 insertions(+), 18 deletions(-)
+Thanks,
+Thomas.
 
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index 5207e6c..9d7234d 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -22,9 +22,25 @@
- #include <linux/io.h>
- #include <linux/pwm.h>
- 
--#include <mach/map.h>
-+#ifndef CONFIG_ARCH_MULTIPLATFORM
-+/*
-+ * This is gross: the platform maps the timer at a fixed
-+ * virtual address and expects us to use that address
-+ * rather than a proper resource. This should get done properly
-+ * when we get a DT binding for this driver.
-+ */
-+#include <plat/map-base.h>
-+static inline void dummy(void)
-+{
-+	BUILD_BUG_ON(S3C_VA_TIMER != IOMEM(0xf6300000));
-+}
-+#else
-+#define S3C_VA_TIMER IOMEM(0xf6300000);
-+#endif
- 
--#include <plat/regs-timer.h>
-+#define S3C2410_TCON		8
-+#define S3C2410_TCNTB(tmr)	(0x0c + (tmr)*0x0c + 0x00)
-+#define S3C2410_TCMPB(tmr)	(0x0c + (tmr)*0x0c + 0x04)
- 
- struct s3c_chip {
- 	struct platform_device	*pdev;
-@@ -38,6 +54,7 @@ struct s3c_chip {
- 
- 	unsigned char		 tcon_base;
- 	unsigned char		 pwm_id;
-+	void __iomem		*base;
- 	struct pwm_chip		 chip;
- };
- 
-@@ -65,9 +82,9 @@ static int s3c_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 
- 	local_irq_save(flags);
- 
--	tcon = __raw_readl(S3C2410_TCON);
-+	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
- 	tcon |= pwm_tcon_start(s3c);
--	__raw_writel(tcon, S3C2410_TCON);
-+	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
- 
- 	local_irq_restore(flags);
- 
-@@ -82,9 +99,9 @@ static void s3c_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 
- 	local_irq_save(flags);
- 
--	tcon = __raw_readl(S3C2410_TCON);
-+	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
- 	tcon &= ~pwm_tcon_start(s3c);
--	__raw_writel(tcon, S3C2410_TCON);
-+	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
- 
- 	local_irq_restore(flags);
- }
-@@ -133,8 +150,8 @@ static int s3c_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	/* The TCMP and TCNT can be read without a lock, they're not
- 	 * shared between the timers. */
- 
--	tcmp = __raw_readl(S3C2410_TCMPB(s3c->pwm_id));
--	tcnt = __raw_readl(S3C2410_TCNTB(s3c->pwm_id));
-+	tcmp = readl_relaxed(s3c->base + S3C2410_TCMPB(s3c->pwm_id));
-+	tcnt = readl_relaxed(s3c->base + S3C2410_TCNTB(s3c->pwm_id));
- 
- 	period = NS_IN_HZ / period_ns;
- 
-@@ -177,16 +194,16 @@ static int s3c_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 
- 	local_irq_save(flags);
- 
--	__raw_writel(tcmp, S3C2410_TCMPB(s3c->pwm_id));
--	__raw_writel(tcnt, S3C2410_TCNTB(s3c->pwm_id));
-+	writel_relaxed(tcmp, s3c->base + S3C2410_TCMPB(s3c->pwm_id));
-+	writel_relaxed(tcnt, s3c->base + S3C2410_TCNTB(s3c->pwm_id));
- 
--	tcon = __raw_readl(S3C2410_TCON);
-+	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
- 	tcon |= pwm_tcon_manulupdate(s3c);
- 	tcon |= pwm_tcon_autoreload(s3c);
--	__raw_writel(tcon, S3C2410_TCON);
-+	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
- 
- 	tcon &= ~pwm_tcon_manulupdate(s3c);
--	__raw_writel(tcon, S3C2410_TCON);
-+	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
- 
- 	local_irq_restore(flags);
- 
-@@ -207,6 +224,7 @@ static int s3c_pwm_probe(struct platform_device *pdev)
- 	unsigned long flags;
- 	unsigned long tcon;
- 	unsigned int id = pdev->id;
-+	struct resource *res;
- 	int ret;
- 
- 	if (id == 4) {
-@@ -220,6 +238,12 @@ static int s3c_pwm_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	/* try to get a proper base address, fall back to S3C_VA_TIMER */
-+	s3c->base = S3C_VA_TIMER;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (res)
-+		s3c->base = devm_ioremap(dev, res->start, resource_size(res));
-+
- 	/* calculate base of control bits in TCON */
- 	s3c->tcon_base = id == 0 ? 0 : (id * 4) + 4;
- 	s3c->pwm_id = id;
-@@ -245,9 +269,9 @@ static int s3c_pwm_probe(struct platform_device *pdev)
- 
- 	local_irq_save(flags);
- 
--	tcon = __raw_readl(S3C2410_TCON);
-+	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
- 	tcon |= pwm_tcon_invert(s3c);
--	__raw_writel(tcon, S3C2410_TCON);
-+	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
- 
- 	local_irq_restore(flags);
- 
-@@ -258,7 +282,7 @@ static int s3c_pwm_probe(struct platform_device *pdev)
- 	}
- 
- 	pwm_dbg(s3c, "config bits %02x\n",
--		(__raw_readl(S3C2410_TCON) >> s3c->tcon_base) & 0x0f);
-+		(readl_relaxed(s3c->base + S3C2410_TCON) >> s3c->tcon_base) & 0x0f);
- 
- 	dev_info(dev, "tin at %lu, tdiv at %lu, tin=%sclk, base %d\n",
- 		 clk_get_rate(s3c->clk),
-@@ -310,9 +334,9 @@ static int s3c_pwm_resume(struct platform_device *pdev)
- 	unsigned long tcon;
- 
- 	/* Restore invertion */
--	tcon = __raw_readl(S3C2410_TCON);
-+	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
- 	tcon |= pwm_tcon_invert(s3c);
--	__raw_writel(tcon, S3C2410_TCON);
-+	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
- 
- 	return 0;
- }
--- 
-1.8.1.2
+>
+> And I think, would be clear if the config could be changed like following.
+>
+> 8<----------------------------------------------------------------------
+> From: Kukjin Kim <kgene.kim@samsung.com>
+> Subject: [PATCH] pinctrl: exynos: change PINCTRL_EXYNOS option
+>
+> Since pinctrl-exynos can support exynos4 and exynos5 so changed
+> the option name to PINCTRL_EXYNOS for more clarity.
+>
+> Cc: Thomas Abraham <Thomas.abraham@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 91d5b6f..e1f63e7 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -412,7 +412,7 @@ config MACH_EXYNOS4_DT
+>         select CPU_EXYNOS4210
+>         select HAVE_SAMSUNG_KEYPAD if INPUT_KEYBOARD
+>         select PINCTRL
+> -       select PINCTRL_EXYNOS4
+> +       select PINCTRL_EXYNOS
+>         select USE_OF
+>         help
+>           Machine support for Samsung Exynos4 machine with device tree
+> enabled.
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index c31aeb0..f59feab 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -185,8 +185,8 @@ config PINCTRL_SAMSUNG
+>         select PINMUX
+>         select PINCONF
+>
+> -config PINCTRL_EXYNOS4
+> -       bool "Pinctrl driver data for Exynos4 SoC"
+> +config PINCTRL_EXYNOS
+> +       bool "Pinctrl driver data for Samsung EXYNOS SoCs"
+>         depends on OF && GPIOLIB
+>         select PINCTRL_SAMSUNG
+>
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index fc4606f..6e87e52 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -36,7 +36,7 @@ obj-$(CONFIG_PINCTRL_TEGRA30) += pinctrl-tegra30.o
+>  obj-$(CONFIG_PINCTRL_U300)     += pinctrl-u300.o
+>  obj-$(CONFIG_PINCTRL_COH901)   += pinctrl-coh901.o
+>  obj-$(CONFIG_PINCTRL_SAMSUNG)  += pinctrl-samsung.o
+> -obj-$(CONFIG_PINCTRL_EXYNOS4)  += pinctrl-exynos.o
+> +obj-$(CONFIG_PINCTRL_EXYNOS)   += pinctrl-exynos.o
+>  obj-$(CONFIG_PINCTRL_EXYNOS5440)       += pinctrl-exynos5440.o
+>  obj-$(CONFIG_PINCTRL_XWAY)     += pinctrl-xway.o
+>  obj-$(CONFIG_PINCTRL_LANTIQ)   += pinctrl-lantiq.o
+> 8<----------------------------------------------------------------------
+>
+> - Kukjin
+>
