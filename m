@@ -1,12 +1,12 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 01/23] ARM: exynos: introduce EXYNOS_ATAGS symbol
-Date: Tue,  5 Mar 2013 18:42:11 +0100
-Message-ID: <1362505353-8873-2-git-send-email-arnd@arndb.de>
+Subject: [PATCH 09/23] usb: exynos: do not include plat/usb-phy.h
+Date: Tue,  5 Mar 2013 18:42:19 +0100
+Message-ID: <1362505353-8873-10-git-send-email-arnd@arndb.de>
 References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:54299 "EHLO
+Received: from moutng.kundenserver.de ([212.227.126.186]:64325 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757151Ab3CERmm (ORCPT
+	with ESMTP id S1753298Ab3CERmm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 5 Mar 2013 12:42:42 -0500
 In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
@@ -15,51 +15,134 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-As a preparation for multiplatform support, this introduces
-a new Kconfig symbol to split the ATAGS based EXYNOS platforms
-from the DT based ones. Turning off CONFIG_EXYNOS_ATAGS disables
-all platforms that are not yet converted to DT, and we can
-have code that relies on DT checking for this symbol being
-disabled.
+The definitions have moved to include/linux/usb/samsung-usb-phy.h,
+and plat/usb-phy.h is unavailable from drivers in a multiplatform
+configuration.
+
+Also fix up the plat/usb-phy.h header file to use the definitions
+from the new header instead of providing a separate copy.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-exynos/Kconfig | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/mach-exynos/setup-usb-phy.c         | 8 ++++----
+ arch/arm/mach-s3c64xx/setup-usb-phy.c        | 4 ++--
+ arch/arm/mach-s5pv210/setup-usb-phy.c        | 4 ++--
+ arch/arm/plat-samsung/include/plat/usb-phy.h | 5 +----
+ drivers/usb/host/ehci-s5p.c                  | 1 -
+ drivers/usb/host/ohci-exynos.c               | 1 -
+ 6 files changed, 9 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 70f94c8..3291a72 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -176,7 +176,20 @@ config EXYNOS_SETUP_SPI
- 	help
- 	  Common setup code for SPI GPIO configurations.
+diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
+index b81cc56..6af4066 100644
+--- a/arch/arm/mach-exynos/setup-usb-phy.c
++++ b/arch/arm/mach-exynos/setup-usb-phy.c
+@@ -204,9 +204,9 @@ static int exynos4210_usb_phy1_exit(struct platform_device *pdev)
  
-+
-+config EXYNOS_ATAGS
-+	bool "ATAGS based boot for EXYNOS (deprecated)"
-+	depends on ARCH_EXYNOS_SINGLE
-+	depends on ATAGS
-+	default y
-+	help
-+	  The EXYNOS platform is moving towards being completely probed
-+	  through device tree. This enables support for board files using
-+	  the traditional ATAGS boot format.
-+	  Note that this option is not available for multiplatform builds.
-+
- # machine support
-+if EXYNOS_ATAGS
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return exynos4210_usb_phy0_init(pdev);
+-	else if (type == S5P_USB_PHY_HOST)
++	else if (type == USB_PHY_TYPE_HOST)
+ 		return exynos4210_usb_phy1_init(pdev);
  
- if ARCH_EXYNOS4
+ 	return -EINVAL;
+@@ -214,9 +214,9 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
  
-@@ -400,6 +413,8 @@ config MACH_SMDK4412
- 	  Machine support for Samsung SMDK4412
- endif
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return exynos4210_usb_phy0_exit(pdev);
+-	else if (type == S5P_USB_PHY_HOST)
++	else if (type == USB_PHY_TYPE_HOST)
+ 		return exynos4210_usb_phy1_exit(pdev);
  
-+endif
-+
- comment "Flattened Device Tree based board for EXYNOS SoCs"
+ 	return -EINVAL;
+diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+index c8174d9..ca960bd 100644
+--- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
++++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+@@ -76,7 +76,7 @@ static int s3c_usb_otgphy_exit(struct platform_device *pdev)
  
- config MACH_EXYNOS4_DT
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s3c_usb_otgphy_init(pdev);
+ 
+ 	return -EINVAL;
+@@ -84,7 +84,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s3c_usb_otgphy_exit(pdev);
+ 
+ 	return -EINVAL;
+diff --git a/arch/arm/mach-s5pv210/setup-usb-phy.c b/arch/arm/mach-s5pv210/setup-usb-phy.c
+index 356a090..b2ee533 100644
+--- a/arch/arm/mach-s5pv210/setup-usb-phy.c
++++ b/arch/arm/mach-s5pv210/setup-usb-phy.c
+@@ -80,7 +80,7 @@ static int s5pv210_usb_otgphy_exit(struct platform_device *pdev)
+ 
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s5pv210_usb_otgphy_init(pdev);
+ 
+ 	return -EINVAL;
+@@ -88,7 +88,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s5pv210_usb_otgphy_exit(pdev);
+ 
+ 	return -EINVAL;
+diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
+index 959bcdb..ab34dfa 100644
+--- a/arch/arm/plat-samsung/include/plat/usb-phy.h
++++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
+@@ -11,10 +11,7 @@
+ #ifndef __PLAT_SAMSUNG_USB_PHY_H
+ #define __PLAT_SAMSUNG_USB_PHY_H __FILE__
+ 
+-enum s5p_usb_phy_type {
+-	S5P_USB_PHY_DEVICE,
+-	S5P_USB_PHY_HOST,
+-};
++#include <linux/usb/samsung_usb_phy.h>
+ 
+ extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
+ extern int s5p_usb_phy_exit(struct platform_device *pdev, int type);
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 20ebf6a..7dc9c15 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -19,7 +19,6 @@
+ #include <linux/platform_data/usb-ehci-s5p.h>
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
+-#include <plat/usb-phy.h>
+ 
+ #define EHCI_INSNREG00(base)			(base + 0x90)
+ #define EHCI_INSNREG00_ENA_INCR16		(0x1 << 25)
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index e3b7e85..b5b5977 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -17,7 +17,6 @@
+ #include <linux/platform_data/usb-exynos.h>
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
+-#include <plat/usb-phy.h>
+ 
+ struct exynos_ohci_hcd {
+ 	struct device *dev;
 -- 
 1.8.1.2
