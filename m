@@ -1,96 +1,76 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 19/23] ASoC: samsung: use irq resource for idma
-Date: Tue,  5 Mar 2013 18:42:29 +0100
-Message-ID: <1362505353-8873-20-git-send-email-arnd@arndb.de>
+Subject: [PATCH 03/23] tty: serial/samsung: prepare for common clock API
+Date: Tue,  5 Mar 2013 18:42:13 +0100
+Message-ID: <1362505353-8873-4-git-send-email-arnd@arndb.de>
 References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:59432 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.8]:62161 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757602Ab3CERmp (ORCPT
+	with ESMTP id S1757874Ab3CERmq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 12:42:45 -0500
+	Tue, 5 Mar 2013 12:42:46 -0500
 In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-With multiplatform kernels, we cannot use hardwired IRQ
-numbers in device drivers. This changes the idma driver
-to use a proper resource, like all other drivers do.
+With the common clock interface, there is no way to
+provide the "clock_source" sysfs attribute for the
+samsung serial ports. Given that this file was
+purely informational and had fixed contents, we have
+reason to believe that no user space programs
+were relying on it.
+
+The sysfs file is not documented in the ABI docs.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/plat-samsung/devs.c |  6 ++++++
- sound/soc/samsung/idma.c     | 10 ++++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ drivers/tty/serial/samsung.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 58fb02a..ec912e4 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -146,14 +146,20 @@ struct platform_device s3c_device_camif = {
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 2769a38..603f3f3 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1179,6 +1179,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+ 	return 0;
+ }
  
- /* ASOC DMA */
++#ifdef CONFIG_SAMSUNG_CLOCK
+ static ssize_t s3c24xx_serial_show_clksrc(struct device *dev,
+ 					  struct device_attribute *attr,
+ 					  char *buf)
+@@ -1194,7 +1195,7 @@ static ssize_t s3c24xx_serial_show_clksrc(struct device *dev,
+ }
  
-+#ifdef CONFIG_PLAT_S5P 
-+static struct resource samsung_asoc_idma_resource = DEFINE_RES_IRQ(IRQ_I2S0);
-+
- struct platform_device samsung_asoc_idma = {
- 	.name		= "samsung-idma",
- 	.id		= -1,
-+	.num_resources	= 1,
-+	.resource	= &samsung_asoc_idma_resource,
- 	.dev		= {
- 		.dma_mask		= &samsung_device_dma_mask,
- 		.coherent_dma_mask	= DMA_BIT_MASK(32),
- 	}
- };
+ static DEVICE_ATTR(clock_source, S_IRUGO, s3c24xx_serial_show_clksrc, NULL);
+-
 +#endif
  
- /* FB */
+ /* Device driver serial port probe */
  
-diff --git a/sound/soc/samsung/idma.c b/sound/soc/samsung/idma.c
-index a07950b..f36a541 100644
---- a/sound/soc/samsung/idma.c
-+++ b/sound/soc/samsung/idma.c
-@@ -68,6 +68,8 @@ static struct idma_info {
- 	dma_addr_t	lp_tx_addr;
- } idma;
+@@ -1252,9 +1253,11 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+ 	uart_add_one_port(&s3c24xx_uart_drv, &ourport->port);
+ 	platform_set_drvdata(pdev, &ourport->port);
  
-+static int idma_irq;
-+
- static void idma_getpos(dma_addr_t *src)
- {
- 	*src = idma.lp_tx_addr +
-@@ -305,7 +307,7 @@ static int idma_open(struct snd_pcm_substream *substream)
- 	if (prtd == NULL)
- 		return -ENOMEM;
++#ifdef CONFIG_SAMSUNG_CLOCK
+ 	ret = device_create_file(&pdev->dev, &dev_attr_clock_source);
+ 	if (ret < 0)
+ 		dev_err(&pdev->dev, "failed to add clock source attr.\n");
++#endif
  
--	ret = request_irq(IRQ_I2S0, iis_irq, 0, "i2s", prtd);
-+	ret = request_irq(idma_irq, iis_irq, 0, "i2s", prtd);
- 	if (ret < 0) {
- 		pr_err("fail to claim i2s irq , ret = %d\n", ret);
- 		kfree(prtd);
-@@ -324,7 +326,7 @@ static int idma_close(struct snd_pcm_substream *substream)
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct idma_ctrl *prtd = runtime->private_data;
+ 	ret = s3c24xx_serial_cpufreq_register(ourport);
+ 	if (ret < 0)
+@@ -1272,7 +1275,9 @@ static int s3c24xx_serial_remove(struct platform_device *dev)
  
--	free_irq(IRQ_I2S0, prtd);
-+	free_irq(idma_irq, prtd);
- 
- 	if (!prtd)
- 		pr_err("idma_close called with prtd == NULL\n");
-@@ -418,6 +420,10 @@ static struct snd_soc_platform_driver asoc_idma_platform = {
- 
- static int asoc_idma_platform_probe(struct platform_device *pdev)
- {
-+	idma_irq = platform_get_irq(pdev, 0);
-+	if (idma_irq < 0)
-+		return idma_irq;
-+
- 	return snd_soc_register_platform(&pdev->dev, &asoc_idma_platform);
- }
+ 	if (port) {
+ 		s3c24xx_serial_cpufreq_deregister(to_ourport(port));
++#ifdef CONFIG_SAMSUNG_CLOCK
+ 		device_remove_file(&dev->dev, &dev_attr_clock_source);
++#endif
+ 		uart_remove_one_port(&s3c24xx_uart_drv, port);
+ 	}
  
 -- 
 1.8.1.2
