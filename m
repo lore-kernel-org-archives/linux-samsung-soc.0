@@ -1,209 +1,189 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 22/23] ARM: exynos: work around missing gpio code on multiplatform
-Date: Tue,  5 Mar 2013 18:42:32 +0100
-Message-ID: <1362505353-8873-23-git-send-email-arnd@arndb.de>
+Subject: [PATCH 16/23] pwm: samsung: repair the worst MMIO abuses
+Date: Tue,  5 Mar 2013 18:42:26 +0100
+Message-ID: <1362505353-8873-17-git-send-email-arnd@arndb.de>
 References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:58690 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.9]:64833 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756958Ab3CERnR (ORCPT
+	with ESMTP id S1756958Ab3CERnV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 12:43:17 -0500
+	Tue, 5 Mar 2013 12:43:21 -0500
 In-Reply-To: <1362505353-8873-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-With CONFIG_ARCH_MULTIPLATFORM, we can no longer have
-our own mach/gpio.h included by the kernel-wide linux/gpio.h
-header, and disabling the gpio-samsung driver means we cannot
-use any of the private interfaces. This patch disables
-all code referring to the driver and gets things to build
-again, but surely breaks a lot of stuff in the process.
+The Samsung PWM driver uses "magic" pointers that are mapped
+at boot time to point its MMIO registers. This fails horribly
+with a multiplatform kernel, which can not rely on platform
+specific header files to contain the right values, aside from
+this being a really bad idea in general.
 
-Thomas Abraham alrady has a proper set of patches to
-address this.
-
-Do not apply.
+This changes the driver to at least pass an __iomem token
+around in the device structure to dereference that. Fixing
+the platform code is much harder, so we'll leave that
+until we have a DT binding for pwm-samsung, which may require
+other changes in this area. Since we are already touching
+every MMIO accessor in this driver, let's also use the
+proper readl_relaxed variant rather than __raw_readl.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-exynos/Makefile                  | 2 ++
- arch/arm/mach-exynos/common.c                  | 3 +++
- arch/arm/mach-exynos/dev-audio.c               | 1 +
- arch/arm/mach-exynos/include/mach/gpio.h       | 2 ++
- arch/arm/mach-exynos/mach-armlex4210.c         | 1 +
- arch/arm/mach-exynos/mach-origen.c             | 1 +
- arch/arm/mach-exynos/setup-i2c0.c              | 3 ++-
- arch/arm/mach-s3c64xx/include/mach/gpio.h      | 4 ++++
- arch/arm/plat-samsung/include/plat/gpio-core.h | 3 +++
- arch/arm/plat-samsung/pm-gpio.c                | 1 +
- drivers/gpio/Makefile                          | 2 +-
- 11 files changed, 21 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-samsung.c | 60 +++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 42 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index b0dcf7d..e2f1742 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -50,7 +50,9 @@ obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
- # device support
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 5207e6c..9d7234d 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -22,9 +22,25 @@
+ #include <linux/io.h>
+ #include <linux/pwm.h>
  
- obj-y					+= dev-uart.o
-+ifdef CONFIG_ARCH_EXYNOS_SINGLE
- obj-$(CONFIG_ARCH_EXYNOS4)		+= dev-audio.o
-+endif
- obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
- obj-$(CONFIG_EXYNOS_DEV_DMA)		+= dma.o
- obj-$(CONFIG_EXYNOS4_DEV_USB_OHCI)	+= dev-ohci.o
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 504d50e..59607b5 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -37,6 +37,7 @@
- #include <mach/regs-irq.h>
- #include <mach/regs-pmu.h>
- #include <mach/regs-gpio.h>
-+#include <mach/gpio.h>
- 
- #include <plat/cpu.h>
- #include <plat/clock.h>
-@@ -745,10 +746,12 @@ static int exynos_irq_eint_set_type(struct irq_data *data, unsigned int type)
- 	__raw_writel(ctrl, EINT_CON(exynos_eint_base, data->irq));
- 	spin_unlock(&eint_lock);
- 
-+#ifdef CONFIG_ARCH_EXYNOS_SINGLE
- 	if (soc_is_exynos5250())
- 		s3c_gpio_cfgpin(exynos5_irq_to_gpio(data->irq), S3C_GPIO_SFN(0xf));
- 	else
- 		s3c_gpio_cfgpin(exynos4_irq_to_gpio(data->irq), S3C_GPIO_SFN(0xf));
+-#include <mach/map.h>
++#ifndef CONFIG_ARCH_MULTIPLATFORM
++/*
++ * This is gross: the platform maps the timer at a fixed
++ * virtual address and expects us to use that address
++ * rather than a proper resource. This should get done properly
++ * when we get a DT binding for this driver.
++ */
++#include <plat/map-base.h>
++static inline void dummy(void)
++{
++	BUILD_BUG_ON(S3C_VA_TIMER != IOMEM(0xf6300000));
++}
++#else
++#define S3C_VA_TIMER IOMEM(0xf6300000);
 +#endif
+ 
+-#include <plat/regs-timer.h>
++#define S3C2410_TCON		8
++#define S3C2410_TCNTB(tmr)	(0x0c + (tmr)*0x0c + 0x00)
++#define S3C2410_TCMPB(tmr)	(0x0c + (tmr)*0x0c + 0x04)
+ 
+ struct s3c_chip {
+ 	struct platform_device	*pdev;
+@@ -38,6 +54,7 @@ struct s3c_chip {
+ 
+ 	unsigned char		 tcon_base;
+ 	unsigned char		 pwm_id;
++	void __iomem		*base;
+ 	struct pwm_chip		 chip;
+ };
+ 
+@@ -65,9 +82,9 @@ static int s3c_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 
+ 	local_irq_save(flags);
+ 
+-	tcon = __raw_readl(S3C2410_TCON);
++	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
+ 	tcon |= pwm_tcon_start(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
++	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
+ 
+ 	local_irq_restore(flags);
+ 
+@@ -82,9 +99,9 @@ static void s3c_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 
+ 	local_irq_save(flags);
+ 
+-	tcon = __raw_readl(S3C2410_TCON);
++	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
+ 	tcon &= ~pwm_tcon_start(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
++	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
+ 
+ 	local_irq_restore(flags);
+ }
+@@ -133,8 +150,8 @@ static int s3c_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	/* The TCMP and TCNT can be read without a lock, they're not
+ 	 * shared between the timers. */
+ 
+-	tcmp = __raw_readl(S3C2410_TCMPB(s3c->pwm_id));
+-	tcnt = __raw_readl(S3C2410_TCNTB(s3c->pwm_id));
++	tcmp = readl_relaxed(s3c->base + S3C2410_TCMPB(s3c->pwm_id));
++	tcnt = readl_relaxed(s3c->base + S3C2410_TCNTB(s3c->pwm_id));
+ 
+ 	period = NS_IN_HZ / period_ns;
+ 
+@@ -177,16 +194,16 @@ static int s3c_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 
+ 	local_irq_save(flags);
+ 
+-	__raw_writel(tcmp, S3C2410_TCMPB(s3c->pwm_id));
+-	__raw_writel(tcnt, S3C2410_TCNTB(s3c->pwm_id));
++	writel_relaxed(tcmp, s3c->base + S3C2410_TCMPB(s3c->pwm_id));
++	writel_relaxed(tcnt, s3c->base + S3C2410_TCNTB(s3c->pwm_id));
+ 
+-	tcon = __raw_readl(S3C2410_TCON);
++	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
+ 	tcon |= pwm_tcon_manulupdate(s3c);
+ 	tcon |= pwm_tcon_autoreload(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
++	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
+ 
+ 	tcon &= ~pwm_tcon_manulupdate(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
++	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
+ 
+ 	local_irq_restore(flags);
+ 
+@@ -207,6 +224,7 @@ static int s3c_pwm_probe(struct platform_device *pdev)
+ 	unsigned long flags;
+ 	unsigned long tcon;
+ 	unsigned int id = pdev->id;
++	struct resource *res;
+ 	int ret;
+ 
+ 	if (id == 4) {
+@@ -220,6 +238,12 @@ static int s3c_pwm_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
++	/* try to get a proper base address, fall back to S3C_VA_TIMER */
++	s3c->base = S3C_VA_TIMER;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (res)
++		s3c->base = devm_ioremap(dev, res->start, resource_size(res));
++
+ 	/* calculate base of control bits in TCON */
+ 	s3c->tcon_base = id == 0 ? 0 : (id * 4) + 4;
+ 	s3c->pwm_id = id;
+@@ -245,9 +269,9 @@ static int s3c_pwm_probe(struct platform_device *pdev)
+ 
+ 	local_irq_save(flags);
+ 
+-	tcon = __raw_readl(S3C2410_TCON);
++	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
+ 	tcon |= pwm_tcon_invert(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
++	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
+ 
+ 	local_irq_restore(flags);
+ 
+@@ -258,7 +282,7 @@ static int s3c_pwm_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	pwm_dbg(s3c, "config bits %02x\n",
+-		(__raw_readl(S3C2410_TCON) >> s3c->tcon_base) & 0x0f);
++		(readl_relaxed(s3c->base + S3C2410_TCON) >> s3c->tcon_base) & 0x0f);
+ 
+ 	dev_info(dev, "tin at %lu, tdiv at %lu, tin=%sclk, base %d\n",
+ 		 clk_get_rate(s3c->clk),
+@@ -310,9 +334,9 @@ static int s3c_pwm_resume(struct platform_device *pdev)
+ 	unsigned long tcon;
+ 
+ 	/* Restore invertion */
+-	tcon = __raw_readl(S3C2410_TCON);
++	tcon = readl_relaxed(s3c->base + S3C2410_TCON);
+ 	tcon |= pwm_tcon_invert(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
++	writel_relaxed(tcon, s3c->base + S3C2410_TCON);
  
  	return 0;
  }
-diff --git a/arch/arm/mach-exynos/dev-audio.c b/arch/arm/mach-exynos/dev-audio.c
-index c662c89..25b173b 100644
---- a/arch/arm/mach-exynos/dev-audio.c
-+++ b/arch/arm/mach-exynos/dev-audio.c
-@@ -21,6 +21,7 @@
- #include <mach/map.h>
- #include <mach/dma.h>
- #include <mach/irqs.h>
-+#include <mach/gpio.h>
- 
- #define EXYNOS4_AUDSS_INT_MEM	(0x03000000)
- 
-diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-exynos/include/mach/gpio.h
-index eb24f1e..88c6d26 100644
---- a/arch/arm/mach-exynos/include/mach/gpio.h
-+++ b/arch/arm/mach-exynos/include/mach/gpio.h
-@@ -284,6 +284,8 @@ enum exynos5_gpio_number {
- 
- /* define the number of gpios */
- 
-+#ifdef CONFIG_MACH_EXYNOS_SINGLE
- #define ARCH_NR_GPIOS		(CONFIG_SAMSUNG_GPIO_EXTRA + S3C_GPIO_END)
-+#endif
- 
- #endif /* __ASM_ARCH_GPIO_H */
-diff --git a/arch/arm/mach-exynos/mach-armlex4210.c b/arch/arm/mach-exynos/mach-armlex4210.c
-index cb95992..2a8e7c1 100644
---- a/arch/arm/mach-exynos/mach-armlex4210.c
-+++ b/arch/arm/mach-exynos/mach-armlex4210.c
-@@ -27,6 +27,7 @@
- 
- #include <mach/irqs.h>
- #include <mach/map.h>
-+#include <mach/gpio.h>
- 
- #include "common.h"
- 
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index d1849d1..72650e2 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -47,6 +47,7 @@
- 
- #include <mach/map.h>
- #include <mach/irqs.h>
-+#include <mach/gpio.h>
- 
- #include <drm/exynos_drm.h>
- #include "common.h"
-diff --git a/arch/arm/mach-exynos/setup-i2c0.c b/arch/arm/mach-exynos/setup-i2c0.c
-index e2d9dfb..95acd62 100644
---- a/arch/arm/mach-exynos/setup-i2c0.c
-+++ b/arch/arm/mach-exynos/setup-i2c0.c
-@@ -17,10 +17,11 @@ struct platform_device; /* don't need the contents */
- #include <linux/platform_data/i2c-s3c2410.h>
- #include <plat/gpio-cfg.h>
- #include <plat/cpu.h>
-+#include <mach/gpio.h>
- 
- void s3c_i2c0_cfg_gpio(struct platform_device *dev)
- {
--	if (soc_is_exynos5250() || soc_is_exynos5440())
-+	if (soc_is_exynos5250() || soc_is_exynos5440() || !IS_ENABLED(CONFIG_ARCH_EXYNOS_SINGLE))
- 		/* will be implemented with gpio function */
- 		return;
- 
-diff --git a/arch/arm/mach-s3c64xx/include/mach/gpio.h b/arch/arm/mach-s3c64xx/include/mach/gpio.h
-index 8b540c4..95be5b5 100644
---- a/arch/arm/mach-s3c64xx/include/mach/gpio.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/gpio.h
-@@ -11,6 +11,8 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
- */
-+#ifndef __MACH_GPIO_H
-+#define __MACH_GPIO_H
- 
- /* GPIO bank sizes */
- #define S3C64XX_GPIO_A_NR	(8)
-@@ -91,3 +93,5 @@ enum s3c_gpio_number {
- #define BOARD_NR_GPIOS	(16 + CONFIG_SAMSUNG_GPIO_EXTRA)
- 
- #define ARCH_NR_GPIOS	(GPIO_BOARD_START + BOARD_NR_GPIOS)
-+
-+#endif /* __MACH_GPIO_H */
-diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h b/arch/arm/plat-samsung/include/plat/gpio-core.h
-index cf5aae5..103a958 100644
---- a/arch/arm/plat-samsung/include/plat/gpio-core.h
-+++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
-@@ -101,6 +101,9 @@ extern struct samsung_gpio_chip *s3c_gpios[S3C_GPIO_END];
- 
- static inline struct samsung_gpio_chip *samsung_gpiolib_getchip(unsigned int chip)
- {
-+	if (!IS_ENABLED(CONFIG_ARCH_EXYNOS_SINGLE))
-+		return NULL;
-+
- 	return (chip < S3C_GPIO_END) ? s3c_gpios[chip] : NULL;
- }
- #else
-diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
-index c2ff92c..b24c159 100644
---- a/arch/arm/plat-samsung/pm-gpio.c
-+++ b/arch/arm/plat-samsung/pm-gpio.c
-@@ -19,6 +19,7 @@
- #include <linux/io.h>
- #include <linux/gpio.h>
- 
-+#include <mach/gpio.h>
- #include <plat/gpio-core.h>
- #include <plat/pm.h>
- 
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 22e07bc..91ed0f9 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -57,7 +57,7 @@ obj-$(CONFIG_GPIO_PL061)	+= gpio-pl061.o
- obj-$(CONFIG_GPIO_PXA)		+= gpio-pxa.o
- obj-$(CONFIG_GPIO_RC5T583)	+= gpio-rc5t583.o
- obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc321x.o
--obj-$(CONFIG_PLAT_SAMSUNG)	+= gpio-samsung.o
-+obj-$(CONFIG_PLAT_SAMSUNG_SINGLE) += gpio-samsung.o
- obj-$(CONFIG_ARCH_SA1100)	+= gpio-sa1100.o
- obj-$(CONFIG_GPIO_SCH)		+= gpio-sch.o
- obj-$(CONFIG_GPIO_SODAVILLE)	+= gpio-sodaville.o
 -- 
 1.8.1.2
