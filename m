@@ -1,49 +1,117 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add PCIe driver support
-Date: Wed, 6 Mar 2013 14:07:52 +0100
-Message-ID: <20130306140752.7e5d68c8@skate>
-References: <016b01ce18c2$2c366f10$84a34d30$%han@samsung.com>
-	<CAJuYYwTKe6cC+eMmyAAskCJrDrbS3SmYRYhzL9iui5m1zvgbzw@mail.gmail.com>
+From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] iio: adc: exynos5_adc: fix compilation warnings
+Date: Wed, 6 Mar 2013 22:15:02 +0900
+Message-ID: <CAHfPSqBhAM7aSugC0nAmPnnBOycDOicTd81ZfgPg7YtRNuYkHA@mail.gmail.com>
+References: <1362543092-6446-1-git-send-email-ch.naveen@samsung.com> <513701FF.3000805@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <CAJuYYwTKe6cC+eMmyAAskCJrDrbS3SmYRYhzL9iui5m1zvgbzw@mail.gmail.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Surendranath Gurivireddy Balla <suren.reddy@samsung.com>, Siva Reddy Kallam <siva.kallam@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <513701FF.3000805-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Thomas Abraham,
+On 6 March 2013 17:44, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
+> On 03/06/2013 05:11 AM, Naveen Krishna Chatradhi wrote:
+>> From: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>
+>> Fixes the compilation warnings and potential NULL pointer
+>> dereferencing pointed out by "Dan Carpenter".
+>>
+>
+> I'd say that's a rather un-potential NULL pointer dereferencing, but if it
+> makes the static checkers happy, why not. Since the same match table is used to
+> match the device, probe won't be called unless there is a match, so
+> of_match_node() will never return NULL in this case.
+Right, i was thinking how it is such a potential error.
+Anyway, Dan's suggestion of Kconfig change holds very good.
+I will submit v2, with the appropriate changes.
 
-On Mon, 4 Mar 2013 16:01:59 +0530, Thomas Abraham wrote:
-> On 4 March 2013 15:52, Jingoo Han <jg1.han@samsung.com> wrote:
-> > Exynos5440 has two PCIe controllers which can be used as Root Complex.
-> > This driver supports the PCIe controllers as Root Complex mode.
-> >
-> > Signed-off-by: Surendranath Gurivireddy Balla <suren.reddy@samsung.com>
-> > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > ---
-> >  .../devicetree/bindings/pci/exynos-pcie.txt        |   58 ++
-> >  arch/arm/Kconfig                                   |    2 +
-> >  arch/arm/mach-exynos/Kconfig                       |    8 +
-> >  arch/arm/mach-exynos/Makefile                      |    2 +
-> >  arch/arm/mach-exynos/include/mach/pcie.h           |  146 +++
-> >  arch/arm/mach-exynos/pcie.c                        | 1009 ++++++++++++++++++++
-> 
-> Is there any reason to place this code in arch/arm/...? As you know,
-> there is a constant effort to relocate as much code as possible from
-> arch/arm/mach-exynos. So there must be a strong justification for
-> keeping this code in arch/arm/mach-exynos.
+>
+>> Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  drivers/iio/adc/exynos_adc.c |   24 +++++++++++++++++-------
+>>  1 file changed, 17 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+>> index ed6fdd7..67d07aa 100644
+>> --- a/drivers/iio/adc/exynos_adc.c
+>> +++ b/drivers/iio/adc/exynos_adc.c
+>> @@ -92,7 +92,7 @@ struct exynos_adc {
+>>       struct completion       completion;
+>>
+>>       u32                     value;
+>> -     unsigned int            version;
+>> +     unsigned int            version;
+>>  };
+>>
+>>  static const struct of_device_id exynos_adc_match[] = {
+>> @@ -102,12 +102,15 @@ static const struct of_device_id exynos_adc_match[] = {
+>>  };
+>>  MODULE_DEVICE_TABLE(of, exynos_adc_match);
+>>
+>> -static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
+>> +static inline int exynos_adc_get_version(struct platform_device *pdev)
+>>  {
+>>       const struct of_device_id *match;
+>>
+>>       match = of_match_node(exynos_adc_match, pdev->dev.of_node);
+>> -     return (unsigned int)match->data;
+>> +     if (!match)
+>> +             return -ENODEV;
+>> +
+>> +     return (int)match->data;
+>>  }
+>>
+>>  static int exynos_read_raw(struct iio_dev *indio_dev,
+>> @@ -117,7 +120,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+>>                               long mask)
+>>  {
+>>       struct exynos_adc *info = iio_priv(indio_dev);
+>> -     unsigned long timeout;
+>> +     int timeout;
+>>       u32 con1, con2;
+>>
+>>       if (mask != IIO_CHAN_INFO_RAW)
+>> @@ -255,7 +258,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>>       struct iio_dev *indio_dev = NULL;
+>>       struct resource *mem;
+>>       int ret = -ENODEV;
+>> -     int irq;
+>> +     int irq, version;
+>>
+>>       if (!np)
+>>               return ret;
+>> @@ -268,6 +271,15 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>>
+>>       info = iio_priv(indio_dev);
+>>
+>> +     version = exynos_adc_get_version(pdev);
+>> +     if (version < 0) {
+>> +             dev_err(&pdev->dev, "no matching of_node, err = %d\n", version);
+>> +             ret = version;
+>> +             goto err_iio;
+>> +     }
+>> +
+>> +     info->version = version;
+>> +
+>>       mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>
+>>       info->regs = devm_request_and_ioremap(&pdev->dev, mem);
+>> @@ -311,8 +323,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>>               goto err_irq;
+>>       }
+>>
+>> -     info->version = exynos_adc_get_version(pdev);
+>> -
+>>       platform_set_drvdata(pdev, indio_dev);
+>>
+>>       indio_dev->name = dev_name(&pdev->dev);
+>
 
-Indeed. Thierry Reding (doing the Tegra PCIe driver) and myself (doing
-the Marvell PCIe driver) are putting our drivers in drivers/pci/host/,
-in agreement with the PCI maintainers.
 
-Thomas
+
 -- 
-Thomas Petazzoni, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Shine bright,
+(: Nav :)
