@@ -1,221 +1,195 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] mmc: sdhci-s3c: let device core setup the default pin
+Subject: [PATCH] spi: s3c64xx: let device core setup the default pin
  configuration
-Date: Wed, 06 Mar 2013 17:06:16 +0530
-Message-ID: <1362569776-13932-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, cjb@laptop.org, linus.walleij@linaro.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, ben-linux@fluff.org, jh80.chung@samsung.com, tgih.jun@samsung.com, girish.shivananjappa@linaro.org, patches@linaro.org
+Date: Wed, 06 Mar 2013 17:12:10 +0530
+Message-ID: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:30710 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757540Ab3CFLUR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Mar 2013 06:20:17 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MJ800259KQNJHT0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Mar 2013 20:20:15 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MJ8008Y1KTK6340@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Mar 2013 20:20:15 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: spi-devel-general@lists.sourceforge.net
+Cc: linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, linus.walleij@linaro.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, heiko@sntech.de, jaswinder.singh@linaro.org, patches@linaro.org
 
 With device core now able to setup the default pin configuration,
-the call to devm_pinctrl_get_select_default can be removed. And
 the pin configuration code based on the deprecated Samsung specific
-gpio bindings is also removed.
+gpio bindings is removed.
 
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- .../devicetree/bindings/mmc/samsung-sdhci.txt      |   35 +---------
- drivers/mmc/host/sdhci-s3c.c                       |   71 ++-----------------
- 2 files changed, 12 insertions(+), 94 deletions(-)
+ .../devicetree/bindings/spi/spi-samsung.txt        |    8 +--
+ drivers/spi/spi-s3c64xx.c                          |   66 +------------------
+ 2 files changed, 6 insertions(+), 68 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
-index 3b3a1ee..328e990 100644
---- a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
-+++ b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
-@@ -5,13 +5,6 @@ MMC, SD and eMMC storage mediums. This file documents differences between the
- core mmc properties described by mmc.txt and the properties used by the
- Samsung implmentation of the SDHCI controller.
+diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+index a15ffed..86aa061 100644
+--- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
++++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+@@ -31,9 +31,6 @@ Required Board Specific Properties:
  
--Note: The mmc core bindings documentation states that if none of the core
--card-detect bindings are used, then the standard sdhci card detect mechanism
--is used. The Samsung's SDHCI controller bindings extends this as listed below.
--
--[A] The property "samsung,cd-pinmux-gpio" can be used as stated in the
--    "Optional Board Specific Properties" section below.
--
- Required SoC Specific Properties:
- - compatible: should be one of the following
-   - "samsung,s3c6410-sdhci": For controllers compatible with s3c6410 sdhci
-@@ -20,18 +13,8 @@ Required SoC Specific Properties:
-     controller.
+ - #address-cells: should be 1.
+ - #size-cells: should be 0.
+-- gpios: The gpio specifier for clock, mosi and miso interface lines (in the
+-  order specified). The format of the gpio specifier depends on the gpio
+-  controller.
  
- Required Board Specific Properties:
--- Samsung GPIO variant (will be completely replaced by pinctrl):
--  - gpios: Should specify the gpios used for clock, command and data lines. The
--    gpio specifier format depends on the gpio controller.
--- Pinctrl variant (preferred if available):
--  - pinctrl-0: Should specify pin control groups used for this controller.
--  - pinctrl-names: Should contain only one value - "default".
--
--Optional Board Specific Properties:
--- samsung,cd-pinmux-gpio: Specifies the card detect line that is routed
--  through a pinmux to the card-detect pin of the card slot. This property
--  should be used only if none of the mmc core card-detect properties are
--  used. Only for Samsung GPIO variant.
-+- pinctrl-0: Should specify pin control groups used for this controller.
-+- pinctrl-names: Should contain only one value - "default".
+ Optional Board Specific Properties:
  
- Example:
- 	sdhci@12530000 {
-@@ -39,19 +22,9 @@ Example:
- 		reg = <0x12530000 0x100>;
- 		interrupts = <0 75 0>;
- 		bus-width = <4>;
--		cd-gpios = <&gpk2 2 2 3 3>;
--
--		/* Samsung GPIO variant */
--		gpios = <&gpk2 0 2 0 3>,  /* clock line */
--			<&gpk2 1 2 0 3>,  /* command line */
--			<&gpk2 3 2 3 3>,  /* data line 0 */
--			<&gpk2 4 2 3 3>,  /* data line 1 */
--			<&gpk2 5 2 3 3>,  /* data line 2 */
--			<&gpk2 6 2 3 3>;  /* data line 3 */
--
--		/* Pinctrl variant */
--		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
-+		cd-gpios = <&gpk2 2 0>;
- 		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
- 	};
+@@ -86,9 +83,8 @@ Example:
+ 	spi_0: spi@12d20000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		gpios = <&gpa2 4 2 3 0>,
+-			<&gpa2 6 2 3 0>,
+-			<&gpa2 7 2 3 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&spi0_bus>;
  
- 	Note: This example shows both SoC specific and board specific properties
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 7363efe..86e0bd7 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -24,7 +24,6 @@
- #include <linux/of_gpio.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
--#include <linux/pinctrl/consumer.h>
- 
- #include <linux/mmc/host.h>
- 
-@@ -45,7 +44,6 @@
-  * @ioarea: The resource created when we claimed the IO area.
-  * @pdata: The platform data for this controller.
-  * @cur_clk: The index of the current bus clock.
-- * @gpios: List of gpio numbers parsed from device tree.
-  * @clk_io: The clock for the internal bus interface.
-  * @clk_bus: The clocks that are available for the SD/MMC bus clock.
-  */
-@@ -57,8 +55,6 @@ struct sdhci_s3c {
- 	unsigned int		cur_clk;
- 	int			ext_cd_irq;
- 	int			ext_cd_gpio;
--	int			*gpios;
--	struct pinctrl          *pctrl;
- 
- 	struct clk		*clk_io;
- 	struct clk		*clk_bus[MAX_BUS_CLK];
-@@ -447,88 +443,39 @@ static int sdhci_s3c_parse_dt(struct device *dev,
- 	struct device_node *node = dev->of_node;
- 	struct sdhci_s3c *ourhost = to_s3c(host);
- 	u32 max_width;
--	int gpio, cnt, ret;
-+	int gpio;
- 
- 	/* if the bus-width property is not specified, assume width as 1 */
- 	if (of_property_read_u32(node, "bus-width", &max_width))
- 		max_width = 1;
- 	pdata->max_width = max_width;
- 
--	ourhost->gpios = devm_kzalloc(dev, NUM_GPIOS(pdata->max_width) *
--				sizeof(int), GFP_KERNEL);
--	if (!ourhost->gpios)
--		return -ENOMEM;
--
- 	/* get the card detection method */
- 	if (of_get_property(node, "broken-cd", NULL)) {
- 		pdata->cd_type = S3C_SDHCI_CD_NONE;
--		goto setup_bus;
-+		return 0;
- 	}
- 
- 	if (of_get_property(node, "non-removable", NULL)) {
- 		pdata->cd_type = S3C_SDHCI_CD_PERMANENT;
--		goto setup_bus;
-+		return 0;
- 	}
- 
- 	gpio = of_get_named_gpio(node, "cd-gpios", 0);
- 	if (gpio_is_valid(gpio)) {
- 		pdata->cd_type = S3C_SDHCI_CD_GPIO;
--		goto found_cd;
--	} else if (gpio != -ENOENT) {
--		dev_err(dev, "invalid card detect gpio specified\n");
--		return -EINVAL;
--	}
--
--	gpio = of_get_named_gpio(node, "samsung,cd-pinmux-gpio", 0);
--	if (gpio_is_valid(gpio)) {
--		pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
--		goto found_cd;
--	} else if (gpio != -ENOENT) {
--		dev_err(dev, "invalid card detect gpio specified\n");
--		return -EINVAL;
--	}
--
--	/* assuming internal card detect that will be configured by pinctrl */
--	pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
--	goto setup_bus;
--
-- found_cd:
--	if (pdata->cd_type == S3C_SDHCI_CD_GPIO) {
- 		pdata->ext_cd_gpio = gpio;
- 		ourhost->ext_cd_gpio = -1;
- 		if (of_get_property(node, "cd-inverted", NULL))
- 			pdata->ext_cd_gpio_invert = 1;
--	} else if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
--		ret = devm_gpio_request(dev, gpio, "sdhci-cd");
--		if (ret) {
--			dev_err(dev, "card detect gpio request failed\n");
--			return -EINVAL;
--		}
--		ourhost->ext_cd_gpio = gpio;
--	}
--
-- setup_bus:
--	if (!IS_ERR(ourhost->pctrl))
- 		return 0;
--
--	/* get the gpios for command, clock and data lines */
--	for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
--		gpio = of_get_gpio(node, cnt);
--		if (!gpio_is_valid(gpio)) {
--			dev_err(dev, "invalid gpio[%d]\n", cnt);
--			return -EINVAL;
--		}
--		ourhost->gpios[cnt] = gpio;
--	}
--
--	for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
--		ret = devm_gpio_request(dev, ourhost->gpios[cnt], "sdhci-gpio");
--		if (ret) {
--			dev_err(dev, "gpio[%d] request failed\n", cnt);
--			return -EINVAL;
--		}
-+	} else if (gpio != -ENOENT) {
-+		dev_err(dev, "invalid card detect gpio specified\n");
-+		return -EINVAL;
- 	}
- 
-+	/* assuming internal card detect that will be configured by pinctrl */
-+	pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
- 	return 0;
+ 		w25q80bw@0 {
+ 			#address-cells = <1>;
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index e862ab8..8537b17 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1052,41 +1052,6 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
  }
- #else
-@@ -589,8 +536,6 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 		goto err_pdata_io_clk;
+ 
+ #ifdef CONFIG_OF
+-static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
+-{
+-	struct device *dev = &sdd->pdev->dev;
+-	int idx, gpio, ret;
+-
+-	/* find gpios for mosi, miso and clock lines */
+-	for (idx = 0; idx < 3; idx++) {
+-		gpio = of_get_gpio(dev->of_node, idx);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(dev, "invalid gpio[%d]: %d\n", idx, gpio);
+-			goto free_gpio;
+-		}
+-		sdd->gpios[idx] = gpio;
+-		ret = gpio_request(gpio, "spi-bus");
+-		if (ret) {
+-			dev_err(dev, "gpio [%d] request failed: %d\n",
+-				gpio, ret);
+-			goto free_gpio;
+-		}
+-	}
+-	return 0;
+-
+-free_gpio:
+-	while (--idx >= 0)
+-		gpio_free(sdd->gpios[idx]);
+-	return -EINVAL;
+-}
+-
+-static void s3c64xx_spi_dt_gpio_free(struct s3c64xx_spi_driver_data *sdd)
+-{
+-	unsigned int idx;
+-	for (idx = 0; idx < 3; idx++)
+-		gpio_free(sdd->gpios[idx]);
+-}
+-
+ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
+ {
+ 	struct s3c64xx_spi_info *sci;
+@@ -1119,15 +1084,6 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
+ {
+ 	return dev->platform_data;
+ }
+-
+-static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
+-{
+-	return -EINVAL;
+-}
+-
+-static void s3c64xx_spi_dt_gpio_free(struct s3c64xx_spi_driver_data *sdd)
+-{
+-}
+ #endif
+ 
+ static const struct of_device_id s3c64xx_spi_dt_match[];
+@@ -1247,10 +1203,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err0;
  	}
  
--	sc->pctrl = devm_pinctrl_get_select_default(&pdev->dev);
+-	if (!sci->cfg_gpio && pdev->dev.of_node) {
+-		if (s3c64xx_spi_parse_dt_gpio(sdd))
+-			return -EBUSY;
+-	} else if (sci->cfg_gpio == NULL || sci->cfg_gpio()) {
++	if (sci->cfg_gpio && sci->cfg_gpio()) {
+ 		dev_err(&pdev->dev, "Unable to config gpio\n");
+ 		ret = -EBUSY;
+ 		goto err0;
+@@ -1261,13 +1214,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
+ 		ret = PTR_ERR(sdd->clk);
+-		goto err1;
++		goto err0;
+ 	}
+ 
+ 	if (clk_prepare_enable(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
+ 		ret = -EBUSY;
+-		goto err1;
++		goto err0;
+ 	}
+ 
+ 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
+@@ -1324,9 +1277,6 @@ err3:
+ 	clk_disable_unprepare(sdd->src_clk);
+ err2:
+ 	clk_disable_unprepare(sdd->clk);
+-err1:
+-	if (!sdd->cntrlr_info->cfg_gpio && pdev->dev.of_node)
+-		s3c64xx_spi_dt_gpio_free(sdd);
+ err0:
+ 	platform_set_drvdata(pdev, NULL);
+ 	spi_master_put(master);
+@@ -1349,9 +1299,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(sdd->clk);
+ 
+-	if (!sdd->cntrlr_info->cfg_gpio && pdev->dev.of_node)
+-		s3c64xx_spi_dt_gpio_free(sdd);
 -
- 	if (pdev->dev.of_node) {
- 		ret = sdhci_s3c_parse_dt(&pdev->dev, host, pdata);
- 		if (ret)
+ 	platform_set_drvdata(pdev, NULL);
+ 	spi_master_put(master);
+ 
+@@ -1370,9 +1317,6 @@ static int s3c64xx_spi_suspend(struct device *dev)
+ 	clk_disable_unprepare(sdd->src_clk);
+ 	clk_disable_unprepare(sdd->clk);
+ 
+-	if (!sdd->cntrlr_info->cfg_gpio && dev->of_node)
+-		s3c64xx_spi_dt_gpio_free(sdd);
+-
+ 	sdd->cur_speed = 0; /* Output Clock is stopped */
+ 
+ 	return 0;
+@@ -1384,9 +1328,7 @@ static int s3c64xx_spi_resume(struct device *dev)
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+ 
+-	if (!sci->cfg_gpio && dev->of_node)
+-		s3c64xx_spi_parse_dt_gpio(sdd);
+-	else
++	if (sci->cfg_gpio)
+ 		sci->cfg_gpio();
+ 
+ 	/* Enable the clock */
 -- 
 1.6.6.rc2
-
