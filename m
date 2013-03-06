@@ -1,106 +1,96 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: exynos5_adc: fix compilation warnings
-Date: Wed, 06 Mar 2013 09:44:47 +0100
-Message-ID: <513701FF.3000805@metafoo.de>
-References: <1362543092-6446-1-git-send-email-ch.naveen@samsung.com>
+From: Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add PCIe driver support
+Date: Wed, 6 Mar 2013 08:48:34 +0000
+Message-ID: <20130306084834.GA9721@arm.com>
+References: <016b01ce18c2$2c366f10$84a34d30$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362543092-6446-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:41447 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753951Ab3CFIsi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Mar 2013 03:48:38 -0500
+In-Reply-To: <016b01ce18c2$2c366f10$84a34d30$%han@samsung.com>
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, thomas.petazzoni@free-electrons.com, thierry.reding@avionic-design.de
 
-On 03/06/2013 05:11 AM, Naveen Krishna Chatradhi wrote:
-> From: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Mon, Mar 04, 2013 at 10:22:28AM +0000, Jingoo Han wrote:
+> Exynos5440 has two PCIe controllers which can be used as Root Complex.
+> This driver supports the PCIe controllers as Root Complex mode.
 > 
-> Fixes the compilation warnings and potential NULL pointer
-> dereferencing pointed out by "Dan Carpenter".
-> 
-
-I'd say that's a rather un-potential NULL pointer dereferencing, but if it
-makes the static checkers happy, why not. Since the same match table is used to
-match the device, probe won't be called unless there is a match, so
-of_match_node() will never return NULL in this case.
-
-> Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Surendranath Gurivireddy Balla <suren.reddy@samsung.com>
+> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 > ---
->  drivers/iio/adc/exynos_adc.c |   24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
+>  .../devicetree/bindings/pci/exynos-pcie.txt        |   58 ++
+>  arch/arm/Kconfig                                   |    2 +
+>  arch/arm/mach-exynos/Kconfig                       |    8 +
+>  arch/arm/mach-exynos/Makefile                      |    2 +
+>  arch/arm/mach-exynos/include/mach/pcie.h           |  146 +++
+>  arch/arm/mach-exynos/pcie.c                        | 1009 ++++++++++++++++++++
+>  6 files changed, 1225 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/exynos-pcie.txt
+>  create mode 100644 arch/arm/mach-exynos/include/mach/pcie.h
+>  create mode 100644 arch/arm/mach-exynos/pcie.c
 > 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index ed6fdd7..67d07aa 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -92,7 +92,7 @@ struct exynos_adc {
->  	struct completion	completion;
->  
->  	u32			value;
-> -	unsigned int            version;
-> +	unsigned int		version;
->  };
->  
->  static const struct of_device_id exynos_adc_match[] = {
-> @@ -102,12 +102,15 @@ static const struct of_device_id exynos_adc_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, exynos_adc_match);
->  
-> -static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
-> +static inline int exynos_adc_get_version(struct platform_device *pdev)
->  {
->  	const struct of_device_id *match;
->  
->  	match = of_match_node(exynos_adc_match, pdev->dev.of_node);
-> -	return (unsigned int)match->data;
-> +	if (!match)
-> +		return -ENODEV;
+> diff --git a/Documentation/devicetree/bindings/pci/exynos-pcie.txt b/Documentation/devicetree/bindings/pci/exynos-pcie.txt
+> new file mode 100644
+> index 0000000..4fe05b5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/exynos-pcie.txt
+> @@ -0,0 +1,58 @@
+> +* Samsung Exynos PCIe interface
 > +
-> +	return (int)match->data;
->  }
->  
->  static int exynos_read_raw(struct iio_dev *indio_dev,
-> @@ -117,7 +120,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->  				long mask)
->  {
->  	struct exynos_adc *info = iio_priv(indio_dev);
-> -	unsigned long timeout;
-> +	int timeout;
->  	u32 con1, con2;
->  
->  	if (mask != IIO_CHAN_INFO_RAW)
-> @@ -255,7 +258,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  	struct iio_dev *indio_dev = NULL;
->  	struct resource	*mem;
->  	int ret = -ENODEV;
-> -	int irq;
-> +	int irq, version;
->  
->  	if (!np)
->  		return ret;
-> @@ -268,6 +271,15 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  
->  	info = iio_priv(indio_dev);
->  
-> +	version = exynos_adc_get_version(pdev);
-> +	if (version < 0) {
-> +		dev_err(&pdev->dev, "no matching of_node, err = %d\n", version);
-> +		ret = version;
-> +		goto err_iio;
-> +	}
+> +Required properties:
+> +-compatible: should be "samsung,pcie-host"
+> +-reg: base addresses and lengths of the pcie conteroller,
+> +       additional register for the pcie controller,
+> +       the phy controller,
+> +       additional register for the phy controller.
+> +- interrupts: interrupt values for level interrupt,
+> +       pulse interrupt, special interrupt.
+> +- pcie-host,io_size: memory size for IO
+> +- pcie-host,cfg0_size: memory size for CFG0
+> +- pcie-host,cfg1_size: memory size for CFG1
+> +- pcie-host,mem_size: memory size for MEM
+> +- pcie-host,in_mem_size: memory size for Inbound MEM
+> +- reset-gpio: gpio pin number of power good signal
 > +
-> +	info->version = version;
+> +Example:
 > +
->  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  
->  	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
-> @@ -311,8 +323,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  		goto err_irq;
->  	}
->  
-> -	info->version = exynos_adc_get_version(pdev);
-> -
->  	platform_set_drvdata(pdev, indio_dev);
->  
->  	indio_dev->name = dev_name(&pdev->dev);
+> +SoC specific DT Entry:
+> +
+> +       pcie0@40000000 {
+> +               compatible = "samsung,pcie-host";
+> +               reg = <0x40000000 0x4000
+> +                       0x290000 0x1000
+> +                       0x270000 0x1000
+> +                       0x271000 0x40>;
+> +               interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
+> +               pcie-host,io_size = <0x4000>;
+> +               pcie-host,cfg0_size = <0x100000>;
+> +               pcie-host,cfg1_size = <0x100000>;
+> +               pcie-host,mem_size = <0x10000000>;
+> +               pcie-host,in_mem_size = <0x8000000>;
+> +       };
+> +
+
+It's quite common for information such as mem_size and io_size to be represented
+with the defacto binding ranges  - see
+http://devicetree.org/Device_Tree_Usage#PCI_Address_Translation. Thomas Petazzoni
+and Thierry Reding have recent patch sets that use this representation.
+
+The ranges property is used across many architectures of the kernel, however
+each architecture has its own way of parsing this binding. There isn't an
+accepted version for ARM yet but efforts are underway to add one that doesn't
+duplicate code.
+
+It would probably make sense for all these new PCIe host drivers to be
+consistent where possible.
+
+Andrew Murray
