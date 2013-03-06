@@ -1,37 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 18/23] ASoC: samsung: convert to dmaengine API
-Date: Wed, 6 Mar 2013 12:01:59 +0000
-Message-ID: <201303061201.59414.arnd@arndb.de>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <1362505353-8873-19-git-send-email-arnd@arndb.de> <CAAgF-Bd=b721r_hiJKGDhw1AqRKC8bNkLh6f9ipcGdFtkM62vQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/2] ARM: dts: Add default pin states for client nodes on
+ Exynos4/5 platforms
+Date: Wed, 06 Mar 2013 18:06:36 +0530
+Message-ID: <1362573398-15126-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:58233 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757903Ab3CFMCL (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:29754 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752736Ab3CFMPp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 07:02:11 -0500
-In-Reply-To: <CAAgF-Bd=b721r_hiJKGDhw1AqRKC8bNkLh6f9ipcGdFtkM62vQ@mail.gmail.com>
+	Wed, 6 Mar 2013 07:15:45 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MJ8002N2NE65610@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Mar 2013 21:15:44 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, heiko@sntech.de, linus.walleij@linaro.org, patches@linaro.org
 
-On Wednesday 06 March 2013, Padma Venkat wrote:
+This patch series populates the default pin states in client nodes
+of Exynos4 and Exynos5 platforms. Exynos4/5 platforms are migrating
+to use pinctrl framework and having the default pin states listed
+in the client nodes allows the device core to setup the default
+pin configuration for all the controllers.
 
-> > +               if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-> > +                       config.direction = DMA_MEM_TO_DEV;
-> > +                       config.dst_addr = prtd->params->dma_size;
-> > +                       config.dst_addr_width = prtd->params->dma_addr;
-> 
-> dma_addr and dma_size got interchanged.
+This means the old-styled Samsung specific gpio bindings, which have
+been used till now for setting up the pin configurations, will not be
+used anymore. The corresponding changes required in device drivers
+have been posted seperatly.
 
-Ok, fixed.
+Thomas Abraham (2):
+  ARM: dts: add pin state information in client nodes for Exynos4 platforms
+  ARM: dts: add pin state information in client nodes for Exynos5 platforms
 
-> Except the above one I tested this patch on 5250. It's working fine.
-
-Thanks a lot for testing this!
-
-	Arnd
+ arch/arm/boot/dts/cros5250-common.dtsi    |   51 +--
+ arch/arm/boot/dts/exynos4.dtsi            |   10 +
+ arch/arm/boot/dts/exynos4210-smdkv310.dts |   53 +--
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi |  783 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   33 +-
+ arch/arm/boot/dts/exynos5250-snow.dts     |   22 +-
+ arch/arm/boot/dts/exynos5250.dtsi         |  310 +++---------
+ 7 files changed, 923 insertions(+), 339 deletions(-)
+ create mode 100755 arch/arm/boot/dts/exynos5250-pinctrl.dtsi
