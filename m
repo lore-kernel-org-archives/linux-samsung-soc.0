@@ -1,52 +1,75 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] ARM: EXYNOS: change HAVE_SAMSUNG_KEYPAD to KEYBOARD_SAMSUNG
-Date: Wed, 06 Mar 2013 11:39:25 +0100
-Message-ID: <1362566365.16460.173.camel@x61.thuisdomein>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 00/23] RFC: exynos multiplatform support
+Date: Wed, 6 Mar 2013 10:50:42 +0000
+Message-ID: <201303061050.42451.arnd@arndb.de>
+References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <201303051919.02638.arnd@arndb.de> <1781901.cQ9rKScpd8@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews10.kpnxchange.com ([213.75.39.15]:59393 "EHLO
-	cpsmtpb-ews10.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757107Ab3CFKj1 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.187]:54810 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751183Ab3CFKuy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 05:39:27 -0500
+	Wed, 6 Mar 2013 05:50:54 -0500
+In-Reply-To: <1781901.cQ9rKScpd8@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Thierry Reding <thierry.reding@avionic-design.de>
 
-Commit 6b5ab4f442e32f248b6fad29aafd1d5153f4dbd3 ("ARM: EXYNOS: Add
-Exynos4 device tree enabled board file") added
-	select HAVE_SAMSUNG_KEYPAD if INPUT_KEYBOARD
+On Tuesday 05 March 2013, Tomasz Figa wrote:
+> On Tuesday 05 of March 2013 19:19:02 Arnd Bergmann wrote:
 
-to the MACH_EXYNOS4_DT Kconfig entry. But there's no Kconfig symbol
-HAVE_SAMSUNG_KEYPAD. Since this select statement depends on
-INPUT_KEYBOARD this entry should select KEYBOARD_SAMSUNG instead.
+> > If none of these are needed for DT-based systems, we should probably
+> > build that code conditionally based on the CONFIG_EXYNOS_ATAGS symbol
+> > I introduced.
+> 
+> Yes, none of them are needed for DT-based systems.
 
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
----
-0) Tested with "git grep" only.
+Ah, good. I'll try to make more code conditional then.
+ 
+> > How are you planning to solve this? Do you want to have a combined
+> > driver that registers both a clocksource and a pwm?
+> 
+> Let's start with a quick introduction to the s3c-pwm hardware. Each 
+> channel has its own timer value, compare and reload value registers, so 
+> they don't need any extra locking. However there are additional shared 
+> configuration registers, containing things such as start and reload bits 
+> for all channels, prescaler and main divisor values, etc. Those registers 
+> needs synchronization.
+> 
+> Now there are several possible approaches:
+> 
+> 1) A brute force one - two separate drivers, based on the fact that the
+>    clocksource driver will be used only on uniprocessor systems, so
+>    a simple _irqsave when accessing a shared register in both will 
+>    guarantee correct synchronization.
+> 
+> 2) Two separate drivers with some synchronized shared code accessing 
+>    registers (_start, _stop, _set_reload, _set_prescaler, _set_divisor, 
+>    etc.; all using a shared spinlock).
+> 
+> 3) Single driver registering PWM channels, clocksource and clock event 
+>    device. This does not seem like a bad idea, since the whole code for 
+>    configuration of the PWM block would reside in one location and there 
+>    would be no redundancy. However there is a question where such driver 
+>    should be placed - drivers/clocksource, drivers/pwm, or maybe somewhere 
+>    else?
+> 
+> Personally I wanted to go with first option, which would require least 
+> amount of changes to existing code, at a cost of some code duplication 
+> (but some PWM code is duplicated already).
 
-1) Perhaps the fact that the symbol KEYBOARD_SAMSUNG enables a driver
-called samsung-keypad caused confusion here. Anyhow, my choice for
-KEYBOARD_SAMSUNG is only educated guesswork.
+I would prefer option 3. That is also easier to implement with a straightforward
+DT binding that defines a single node with the clock registers. The location
+doesn't have an obvious answer, but I would probably put them into
+drivers/clocksource if the PWM maintainer agrees.
 
- arch/arm/mach-exynos/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Option 2 would probably come down to having a trivial MFD driver exposing
+a regmap. You can probably reuse drivers/mfd/syscon.c for this and make
+the node compatible with "syscon" to designate the clock registers as
+a system-wide resource, making the other device nodes register-less.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 6c2bdc3..068aeb5 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -403,7 +403,7 @@ config MACH_EXYNOS4_DT
- 	depends on ARCH_EXYNOS4
- 	select ARM_AMBA
- 	select CPU_EXYNOS4210
--	select HAVE_SAMSUNG_KEYPAD if INPUT_KEYBOARD
-+	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
- 	select PINCTRL
- 	select PINCTRL_EXYNOS
- 	select USE_OF
--- 
-1.7.11.7
+	Arnd
