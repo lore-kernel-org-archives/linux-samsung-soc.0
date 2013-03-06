@@ -1,117 +1,90 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: exynos5_adc: fix compilation warnings
-Date: Wed, 6 Mar 2013 22:15:02 +0900
-Message-ID: <CAHfPSqBhAM7aSugC0nAmPnnBOycDOicTd81ZfgPg7YtRNuYkHA@mail.gmail.com>
-References: <1362543092-6446-1-git-send-email-ch.naveen@samsung.com> <513701FF.3000805@metafoo.de>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v6 5/5] ARM: dts: Add FIMD DT binding Documentation
+Date: Wed, 06 Mar 2013 22:13:39 +0100
+Message-ID: <5137B183.6040201@gmail.com>
+References: <1362044559-7496-1-git-send-email-vikas.sajjan@linaro.org> <1362044559-7496-6-git-send-email-vikas.sajjan@linaro.org> <5133A068.7060906@gmail.com> <CAD025yQA+yAPzATDvE-4HQP+HVbmDQkg+XVKd=VUepL+dM9s9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <513701FF.3000805-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f172.google.com ([74.125.82.172]:47252 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752551Ab3CFVNt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Mar 2013 16:13:49 -0500
+Received: by mail-we0-f172.google.com with SMTP id d46so4439916wer.31
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Mar 2013 13:13:48 -0800 (PST)
+In-Reply-To: <CAD025yQA+yAPzATDvE-4HQP+HVbmDQkg+XVKd=VUepL+dM9s9Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, jy0922.shim@samsung.com, sunil joshi <joshi@samsung.com>
 
-On 6 March 2013 17:44, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
-> On 03/06/2013 05:11 AM, Naveen Krishna Chatradhi wrote:
->> From: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
->> Fixes the compilation warnings and potential NULL pointer
->> dereferencing pointed out by "Dan Carpenter".
->>
->
-> I'd say that's a rather un-potential NULL pointer dereferencing, but if it
-> makes the static checkers happy, why not. Since the same match table is used to
-> match the device, probe won't be called unless there is a match, so
-> of_match_node() will never return NULL in this case.
-Right, i was thinking how it is such a potential error.
-Anyway, Dan's suggestion of Kconfig change holds very good.
-I will submit v2, with the appropriate changes.
+On 03/06/2013 11:18 AM, Vikas Sajjan wrote:
+> Good idea, but i am just wondering is it a good idea to modify the
+> fimd driver ?
 
->
->> Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  drivers/iio/adc/exynos_adc.c |   24 +++++++++++++++++-------
->>  1 file changed, 17 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
->> index ed6fdd7..67d07aa 100644
->> --- a/drivers/iio/adc/exynos_adc.c
->> +++ b/drivers/iio/adc/exynos_adc.c
->> @@ -92,7 +92,7 @@ struct exynos_adc {
->>       struct completion       completion;
->>
->>       u32                     value;
->> -     unsigned int            version;
->> +     unsigned int            version;
->>  };
->>
->>  static const struct of_device_id exynos_adc_match[] = {
->> @@ -102,12 +102,15 @@ static const struct of_device_id exynos_adc_match[] = {
->>  };
->>  MODULE_DEVICE_TABLE(of, exynos_adc_match);
->>
->> -static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
->> +static inline int exynos_adc_get_version(struct platform_device *pdev)
->>  {
->>       const struct of_device_id *match;
->>
->>       match = of_match_node(exynos_adc_match, pdev->dev.of_node);
->> -     return (unsigned int)match->data;
->> +     if (!match)
->> +             return -ENODEV;
->> +
->> +     return (int)match->data;
->>  }
->>
->>  static int exynos_read_raw(struct iio_dev *indio_dev,
->> @@ -117,7 +120,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->>                               long mask)
->>  {
->>       struct exynos_adc *info = iio_priv(indio_dev);
->> -     unsigned long timeout;
->> +     int timeout;
->>       u32 con1, con2;
->>
->>       if (mask != IIO_CHAN_INFO_RAW)
->> @@ -255,7 +258,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
->>       struct iio_dev *indio_dev = NULL;
->>       struct resource *mem;
->>       int ret = -ENODEV;
->> -     int irq;
->> +     int irq, version;
->>
->>       if (!np)
->>               return ret;
->> @@ -268,6 +271,15 @@ static int exynos_adc_probe(struct platform_device *pdev)
->>
->>       info = iio_priv(indio_dev);
->>
->> +     version = exynos_adc_get_version(pdev);
->> +     if (version < 0) {
->> +             dev_err(&pdev->dev, "no matching of_node, err = %d\n", version);
->> +             ret = version;
->> +             goto err_iio;
->> +     }
->> +
->> +     info->version = version;
->> +
->>       mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>
->>       info->regs = devm_request_and_ioremap(&pdev->dev, mem);
->> @@ -311,8 +323,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
->>               goto err_irq;
->>       }
->>
->> -     info->version = exynos_adc_get_version(pdev);
->> -
->>       platform_set_drvdata(pdev, indio_dev);
->>
->>       indio_dev->name = dev_name(&pdev->dev);
->
+I think it is. But it depends what code quality you aim for.
 
+Is there any issue in making a change as below ? ;)
 
+Of course it's all up to you, I've just suggested what I thought was
+an improvement to the current situation.
 
--- 
-Shine bright,
-(: Nav :)
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 51afedd..4180247 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -160,9 +160,9 @@ struct platform_device samsung_asoc_idma = {
+  #ifdef CONFIG_S3C_DEV_FB
+  static struct resource s3c_fb_resource[] = {
+         [0] = DEFINE_RES_MEM(S3C_PA_FB, SZ_16K),
+-       [1] = DEFINE_RES_IRQ(IRQ_LCD_VSYNC),
+-       [2] = DEFINE_RES_IRQ(IRQ_LCD_FIFO),
+-       [3] = DEFINE_RES_IRQ(IRQ_LCD_SYSTEM),
++       [1] = DEFINE_RES_IRQ_NAMED(IRQ_LCD_VSYNC, "vsync"),
++       [2] = DEFINE_RES_IRQ_NAMED(IRQ_LCD_FIFO, "fifo"),
++       [3] = DEFINE_RES_IRQ_NAMED(IRQ_LCD_SYSTEM, "system"),
+  };
+
+  struct platform_device s3c_device_fb = {
+@@ -305,9 +305,9 @@ struct platform_device s5p_device_jpeg = {
+  #ifdef CONFIG_S5P_DEV_FIMD0
+  static struct resource s5p_fimd0_resource[] = {
+         [0] = DEFINE_RES_MEM(S5P_PA_FIMD0, SZ_32K),
+-       [1] = DEFINE_RES_IRQ(IRQ_FIMD0_VSYNC),
+-       [2] = DEFINE_RES_IRQ(IRQ_FIMD0_FIFO),
+-       [3] = DEFINE_RES_IRQ(IRQ_FIMD0_SYSTEM),
++       [1] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_VSYNC, "vsync"),
++       [2] = DEFINE_RES_IRQ(IRQ_FIMD0_FIFO, "fifo"),
++       [3] = DEFINE_RES_IRQ(IRQ_FIMD0_SYSTEM, "system"),
+  };
+
+  struct platform_device s5p_device_fimd0 = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c 
+b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 36493ce..5efb4c7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -917,7 +917,7 @@ static int fimd_probe(struct platform_device *pdev)
+         if (IS_ERR(ctx->regs))
+                 return PTR_ERR(ctx->regs);
+
+-       res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
++       res = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "vsync");
+         if (!res) {
+                 dev_err(dev, "irq request failed.\n");
+                 return -ENXIO;
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 968a625..43af0108 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -1427,7 +1427,7 @@ static int s3c_fb_probe(struct platform_device *pdev)
+                 goto err_lcd_clk;
+         }
+
+-       res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
++       res = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "vsync");
+         if (!res) {
+                 dev_err(dev, "failed to acquire irq resource\n");
+                 ret = -ENOENT;
