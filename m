@@ -1,171 +1,221 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 1/3] pinctrl: exynos: add exynos5250 SoC specific data
-Date: Wed, 06 Mar 2013 16:48:30 +0530
-Message-ID: <1362568712-13586-2-git-send-email-thomas.abraham@linaro.org>
-References: <1362568712-13586-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:27519 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757114Ab3CFK4p (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 05:56:45 -0500
-In-reply-to: <1362568712-13586-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] mmc: sdhci-s3c: let device core setup the default pin
+ configuration
+Date: Wed, 06 Mar 2013 17:06:16 +0530
+Message-ID: <1362569776-13932-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, cjb@laptop.org, linus.walleij@linaro.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, ben-linux@fluff.org, jh80.chung@samsung.com, tgih.jun@samsung.com, girish.shivananjappa@linaro.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, patches@linaro.org
 
-Add Samsung Exynos5250 SoC specific data to enable pinctrl support for
-all platforms based on Exynos5250.
+With device core now able to setup the default pin configuration,
+the call to devm_pinctrl_get_select_default can be removed. And
+the pin configuration code based on the deprecated Samsung specific
+gpio bindings is also removed.
 
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/pinctrl-exynos.c  |  108 +++++++++++++++++++++++++++++++++++++
- drivers/pinctrl/pinctrl-samsung.c |    2 +
- drivers/pinctrl/pinctrl-samsung.h |    1 +
- 3 files changed, 111 insertions(+), 0 deletions(-)
+ .../devicetree/bindings/mmc/samsung-sdhci.txt      |   35 +---------
+ drivers/mmc/host/sdhci-s3c.c                       |   71 ++-----------------
+ 2 files changed, 12 insertions(+), 94 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
-index 538b9dd..8738933 100644
---- a/drivers/pinctrl/pinctrl-exynos.c
-+++ b/drivers/pinctrl/pinctrl-exynos.c
-@@ -677,3 +677,111 @@ struct samsung_pin_ctrl exynos4x12_pin_ctrl[] = {
- 		.label		= "exynos4x12-gpio-ctrl3",
- 	},
- };
-+
-+/* pin banks of exynos5250 pin-controller 0 */
-+static struct samsung_pin_bank exynos5250_pin_banks0[] = {
-+	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpa2", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpb0", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpb1", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpb2", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpb3", 0x18),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x0E0, "gpc0", 0x1c),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x100, "gpc1", 0x20),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x120, "gpc2", 0x24),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x140, "gpc3", 0x28),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x160, "gpd0", 0x2c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpd1", 0x30),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x2E0, "gpc4", 0x34),
-+	EXYNOS_PIN_BANK_EINTN(6, 0x1A0, "gpy0"),
-+	EXYNOS_PIN_BANK_EINTN(4, 0x1C0, "gpy1"),
-+	EXYNOS_PIN_BANK_EINTN(6, 0x1E0, "gpy2"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x200, "gpy3"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x220, "gpy4"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x240, "gpy5"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x260, "gpy6"),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
-+};
-+
-+/* pin banks of exynos5250 pin-controller 1 */
-+static struct samsung_pin_bank exynos5250_pin_banks1[] = {
-+	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpe0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x020, "gpe1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x040, "gpf0", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x060, "gpf1", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x080, "gpg0", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0A0, "gpg1", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x0C0, "gpg2", 0x18),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0E0, "gph0", 0x1c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gph1", 0x20),
-+};
-+
-+/* pin banks of exynos5250 pin-controller 2 */
-+static struct samsung_pin_bank exynos5250_pin_banks2[] = {
-+	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpv0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x020, "gpv1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpv2", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x080, "gpv3", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x0C0, "gpv4", 0x10),
-+};
-+
-+/* pin banks of exynos5250 pin-controller 3 */
-+static struct samsung_pin_bank exynos5250_pin_banks3[] = {
-+	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz", 0x00),
-+};
-+
-+/*
-+ * Samsung pinctrl driver data for Exynos5250 SoC. Exynos5250 SoC includes
-+ * four gpio/pin-mux/pinconfig controllers.
-+ */
-+struct samsung_pin_ctrl exynos5250_pin_ctrl[] = {
-+	{
-+		/* pin-controller instance 0 data */
-+		.pin_banks	= exynos5250_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(exynos5250_pin_banks0),
-+		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-+		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-+		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-+		.weint_con	= EXYNOS_WKUP_ECON_OFFSET,
-+		.weint_mask	= EXYNOS_WKUP_EMASK_OFFSET,
-+		.weint_pend	= EXYNOS_WKUP_EPEND_OFFSET,
-+		.svc		= EXYNOS_SVC_OFFSET,
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+		.label		= "exynos5250-gpio-ctrl0",
-+	}, {
-+		/* pin-controller instance 1 data */
-+		.pin_banks	= exynos5250_pin_banks1,
-+		.nr_banks	= ARRAY_SIZE(exynos5250_pin_banks1),
-+		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-+		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-+		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-+		.svc		= EXYNOS_SVC_OFFSET,
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos5250-gpio-ctrl1",
-+	}, {
-+		/* pin-controller instance 2 data */
-+		.pin_banks	= exynos5250_pin_banks2,
-+		.nr_banks	= ARRAY_SIZE(exynos5250_pin_banks2),
-+		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-+		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-+		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-+		.svc		= EXYNOS_SVC_OFFSET,
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos5250-gpio-ctrl2",
-+	}, {
-+		/* pin-controller instance 3 data */
-+		.pin_banks	= exynos5250_pin_banks3,
-+		.nr_banks	= ARRAY_SIZE(exynos5250_pin_banks3),
-+		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-+		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-+		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-+		.svc		= EXYNOS_SVC_OFFSET,
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos5250-gpio-ctrl3",
-+	},
-+};
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index f206df1..3d5cf63 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -948,6 +948,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = (void *)exynos4210_pin_ctrl },
- 	{ .compatible = "samsung,exynos4x12-pinctrl",
- 		.data = (void *)exynos4x12_pin_ctrl },
-+	{ .compatible = "samsung,exynos5250-pinctrl",
-+		.data = (void *)exynos5250_pin_ctrl },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
-diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-index e2d4e67..ee964aa 100644
---- a/drivers/pinctrl/pinctrl-samsung.h
-+++ b/drivers/pinctrl/pinctrl-samsung.h
-@@ -237,5 +237,6 @@ struct samsung_pmx_func {
- /* list of all exported SoC specific data */
- extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
-+extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+diff --git a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+index 3b3a1ee..328e990 100644
+--- a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
++++ b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+@@ -5,13 +5,6 @@ MMC, SD and eMMC storage mediums. This file documents differences between the
+ core mmc properties described by mmc.txt and the properties used by the
+ Samsung implmentation of the SDHCI controller.
  
- #endif /* __PINCTRL_SAMSUNG_H */
+-Note: The mmc core bindings documentation states that if none of the core
+-card-detect bindings are used, then the standard sdhci card detect mechanism
+-is used. The Samsung's SDHCI controller bindings extends this as listed below.
+-
+-[A] The property "samsung,cd-pinmux-gpio" can be used as stated in the
+-    "Optional Board Specific Properties" section below.
+-
+ Required SoC Specific Properties:
+ - compatible: should be one of the following
+   - "samsung,s3c6410-sdhci": For controllers compatible with s3c6410 sdhci
+@@ -20,18 +13,8 @@ Required SoC Specific Properties:
+     controller.
+ 
+ Required Board Specific Properties:
+-- Samsung GPIO variant (will be completely replaced by pinctrl):
+-  - gpios: Should specify the gpios used for clock, command and data lines. The
+-    gpio specifier format depends on the gpio controller.
+-- Pinctrl variant (preferred if available):
+-  - pinctrl-0: Should specify pin control groups used for this controller.
+-  - pinctrl-names: Should contain only one value - "default".
+-
+-Optional Board Specific Properties:
+-- samsung,cd-pinmux-gpio: Specifies the card detect line that is routed
+-  through a pinmux to the card-detect pin of the card slot. This property
+-  should be used only if none of the mmc core card-detect properties are
+-  used. Only for Samsung GPIO variant.
++- pinctrl-0: Should specify pin control groups used for this controller.
++- pinctrl-names: Should contain only one value - "default".
+ 
+ Example:
+ 	sdhci@12530000 {
+@@ -39,19 +22,9 @@ Example:
+ 		reg = <0x12530000 0x100>;
+ 		interrupts = <0 75 0>;
+ 		bus-width = <4>;
+-		cd-gpios = <&gpk2 2 2 3 3>;
+-
+-		/* Samsung GPIO variant */
+-		gpios = <&gpk2 0 2 0 3>,  /* clock line */
+-			<&gpk2 1 2 0 3>,  /* command line */
+-			<&gpk2 3 2 3 3>,  /* data line 0 */
+-			<&gpk2 4 2 3 3>,  /* data line 1 */
+-			<&gpk2 5 2 3 3>,  /* data line 2 */
+-			<&gpk2 6 2 3 3>;  /* data line 3 */
+-
+-		/* Pinctrl variant */
+-		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
++		cd-gpios = <&gpk2 2 0>;
+ 		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
+ 	};
+ 
+ 	Note: This example shows both SoC specific and board specific properties
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index 7363efe..86e0bd7 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -24,7 +24,6 @@
+ #include <linux/of_gpio.h>
+ #include <linux/pm.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/pinctrl/consumer.h>
+ 
+ #include <linux/mmc/host.h>
+ 
+@@ -45,7 +44,6 @@
+  * @ioarea: The resource created when we claimed the IO area.
+  * @pdata: The platform data for this controller.
+  * @cur_clk: The index of the current bus clock.
+- * @gpios: List of gpio numbers parsed from device tree.
+  * @clk_io: The clock for the internal bus interface.
+  * @clk_bus: The clocks that are available for the SD/MMC bus clock.
+  */
+@@ -57,8 +55,6 @@ struct sdhci_s3c {
+ 	unsigned int		cur_clk;
+ 	int			ext_cd_irq;
+ 	int			ext_cd_gpio;
+-	int			*gpios;
+-	struct pinctrl          *pctrl;
+ 
+ 	struct clk		*clk_io;
+ 	struct clk		*clk_bus[MAX_BUS_CLK];
+@@ -447,88 +443,39 @@ static int sdhci_s3c_parse_dt(struct device *dev,
+ 	struct device_node *node = dev->of_node;
+ 	struct sdhci_s3c *ourhost = to_s3c(host);
+ 	u32 max_width;
+-	int gpio, cnt, ret;
++	int gpio;
+ 
+ 	/* if the bus-width property is not specified, assume width as 1 */
+ 	if (of_property_read_u32(node, "bus-width", &max_width))
+ 		max_width = 1;
+ 	pdata->max_width = max_width;
+ 
+-	ourhost->gpios = devm_kzalloc(dev, NUM_GPIOS(pdata->max_width) *
+-				sizeof(int), GFP_KERNEL);
+-	if (!ourhost->gpios)
+-		return -ENOMEM;
+-
+ 	/* get the card detection method */
+ 	if (of_get_property(node, "broken-cd", NULL)) {
+ 		pdata->cd_type = S3C_SDHCI_CD_NONE;
+-		goto setup_bus;
++		return 0;
+ 	}
+ 
+ 	if (of_get_property(node, "non-removable", NULL)) {
+ 		pdata->cd_type = S3C_SDHCI_CD_PERMANENT;
+-		goto setup_bus;
++		return 0;
+ 	}
+ 
+ 	gpio = of_get_named_gpio(node, "cd-gpios", 0);
+ 	if (gpio_is_valid(gpio)) {
+ 		pdata->cd_type = S3C_SDHCI_CD_GPIO;
+-		goto found_cd;
+-	} else if (gpio != -ENOENT) {
+-		dev_err(dev, "invalid card detect gpio specified\n");
+-		return -EINVAL;
+-	}
+-
+-	gpio = of_get_named_gpio(node, "samsung,cd-pinmux-gpio", 0);
+-	if (gpio_is_valid(gpio)) {
+-		pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
+-		goto found_cd;
+-	} else if (gpio != -ENOENT) {
+-		dev_err(dev, "invalid card detect gpio specified\n");
+-		return -EINVAL;
+-	}
+-
+-	/* assuming internal card detect that will be configured by pinctrl */
+-	pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
+-	goto setup_bus;
+-
+- found_cd:
+-	if (pdata->cd_type == S3C_SDHCI_CD_GPIO) {
+ 		pdata->ext_cd_gpio = gpio;
+ 		ourhost->ext_cd_gpio = -1;
+ 		if (of_get_property(node, "cd-inverted", NULL))
+ 			pdata->ext_cd_gpio_invert = 1;
+-	} else if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+-		ret = devm_gpio_request(dev, gpio, "sdhci-cd");
+-		if (ret) {
+-			dev_err(dev, "card detect gpio request failed\n");
+-			return -EINVAL;
+-		}
+-		ourhost->ext_cd_gpio = gpio;
+-	}
+-
+- setup_bus:
+-	if (!IS_ERR(ourhost->pctrl))
+ 		return 0;
+-
+-	/* get the gpios for command, clock and data lines */
+-	for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
+-		gpio = of_get_gpio(node, cnt);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(dev, "invalid gpio[%d]\n", cnt);
+-			return -EINVAL;
+-		}
+-		ourhost->gpios[cnt] = gpio;
+-	}
+-
+-	for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
+-		ret = devm_gpio_request(dev, ourhost->gpios[cnt], "sdhci-gpio");
+-		if (ret) {
+-			dev_err(dev, "gpio[%d] request failed\n", cnt);
+-			return -EINVAL;
+-		}
++	} else if (gpio != -ENOENT) {
++		dev_err(dev, "invalid card detect gpio specified\n");
++		return -EINVAL;
+ 	}
+ 
++	/* assuming internal card detect that will be configured by pinctrl */
++	pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
+ 	return 0;
+ }
+ #else
+@@ -589,8 +536,6 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
+ 		goto err_pdata_io_clk;
+ 	}
+ 
+-	sc->pctrl = devm_pinctrl_get_select_default(&pdev->dev);
+-
+ 	if (pdev->dev.of_node) {
+ 		ret = sdhci_s3c_parse_dt(&pdev->dev, host, pdata);
+ 		if (ret)
 -- 
 1.6.6.rc2
+
