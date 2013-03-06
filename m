@@ -1,22 +1,23 @@
 From: Doug Anderson <dianders@chromium.org>
 Subject: Re: State of pinctrl and exynos5250?
-Date: Tue, 5 Mar 2013 17:00:02 -0800
-Message-ID: <CAD=FV=U2Nb32ZA+gb4X5XyhLe_zUWB7oEWknqeyhtDcgtWuoTw@mail.gmail.com>
+Date: Tue, 5 Mar 2013 17:06:37 -0800
+Message-ID: <CAD=FV=VyREAvvFHKoNygOx8x=OTY4dZRzt=11DWQOeESBsXZdA@mail.gmail.com>
 References: <CAD=FV=XTHs5De3hrZu5BMPD3sTzBLikHwdS88XA0KOn-XG499Q@mail.gmail.com>
 	<1534249.MsU3ROUVJz@flatron>
-	<CAD=FV=XMpL7z-UX4UgqaUv-=QcJAPOD3bKbLVTRsR15RTG1A2Q@mail.gmail.com>
-	<CAJuYYwR41V4m_tZU5Usksb7L8ynOAQpK2i3QP33JDmW9YDkvPw@mail.gmail.com>
+	<CAJuYYwRSHYHs=0qOaWq7_U8+ARz-SYLQM5UAGTd8jTA_4x2wow@mail.gmail.com>
+	<CAD=FV=X8-CAQxfjaw0Fq37j4CvMbYKytaCOpd6Qt6sO++YjJQQ@mail.gmail.com>
+	<CAJuYYwQN-0JFptS+zNG3oq6-a0Tn8UjYWB7892H3QcNa-7SAuA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:42152 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752548Ab3CFBAE (ORCPT
+Received: from mail-la0-f54.google.com ([209.85.215.54]:48443 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753339Ab3CFBGj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 20:00:04 -0500
-Received: by mail-la0-f46.google.com with SMTP id fq12so6832685lab.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Mar 2013 17:00:02 -0800 (PST)
-In-Reply-To: <CAJuYYwR41V4m_tZU5Usksb7L8ynOAQpK2i3QP33JDmW9YDkvPw@mail.gmail.com>
+	Tue, 5 Mar 2013 20:06:39 -0500
+Received: by mail-la0-f54.google.com with SMTP id gw10so6871720lab.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Mar 2013 17:06:37 -0800 (PST)
+In-Reply-To: <CAJuYYwQN-0JFptS+zNG3oq6-a0Tn8UjYWB7892H3QcNa-7SAuA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
@@ -24,67 +25,36 @@ Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Kukji
 
 Thomas,
 
-On Tue, Mar 5, 2013 at 3:49 PM, Thomas Abraham
+On Tue, Mar 5, 2013 at 4:01 PM, Thomas Abraham
 <thomas.abraham@linaro.org> wrote:
-> Yes, I am currently held up with supporting default pin states at slot
-> level. One option that could be considered is to list out the default
-> pin states for all slots in the parent node of the slots. So it would
-> be something like below as an example.
->
->         dwmmc2@12220000 {
->                <....>
->
->                 pinctrl-names = "slot0-default", "slot1-default";
->                 pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
->                 pinctrl-1 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4 &sd2_bus8>;
->
->                 slot@0 {
->                         reg = <0>;
->                         bus-width = <4>;
->                         disable-wp;
->                 };
->
->                 slot@1 {
->                         reg = <0>;
->                         bus-width = <8>;
->                         disable-wp;
->                 };
->         };
->
-> Then, during the initial slot setup stage, the driver, knowing the
-> current slot number that is being setup, can setup the pin state for
-> the particular slot using the devm_pinctrl_get_select API. pinctrl
-> subsystem would not setup the default pin state in this case.
->
-> Does this look like a hack?
+> So now I have: pinctrl_0 is SPI[46], pinctrl_1 is SPI[45], pinctrl_2
+> is SPI[50] and pinctrl_3 is SPI[47]. I am yet to test this and
+> confirm. If you feel these are wrong, could you please let me know.
 
-That feels like a hack to me.  The right place for the slot data is
-under the slot node, not in the parent.  ...but I would certainly
-defer to any experts that might have a different opinion.
+Yes, that matches my findings / guesses.  ;)
 
 
-> For now, I have prepared patches without
-> this approach, since Exynos5250 has just one slot, I have just listed
-> only one default pin state, which the pinctrl framework helps to setup
-> during driver bind.
+> Right, I did not pay attention to the bisecting problem. What I have
+> now is, a set of individual patches that migrate i2c, sdhci, dwmmc,
+> i2s, spi and keypad drivers to pinctrl based pin-configuration. In
+> addition to that, two patches that add default pin-state information
+> for Exynos4 and Exynos5 platforms. Since there are multiple drivers
+> involved, is it okay to keep them as separate patches?
 
-That actually doesn't seem awful to me.  It's basically saying that we
-are describing pinmux at a device level and not a slot level.  It
-would make it a pain to dynamically adjust pinmux on a slot-by-slot
-basis, but is that a terrible thing?
+My own personal opinion is that it's worth keeping bisect working and
+also a good idea to keep the patches to the individual drivers
+separate.  That would mean adding support for either pinctrl or gpio
+in the short term (like Linus did for i2c).  Once everything is moved
+over then killing gpio support would be OK by me.
 
-In the two-slot case you could just do:
+I'd feel most strongly about not killing dw_mmc since that is such a
+critical driver for booting.  i2s/spi/keypad are a little less
+critical and I'd be more OK with them breaking as long as it was clear
+in the commit message that breakage is expected.
 
-  pinctrl-0 = <&sd1_clk &sd1_cmd &sd1_cd &sd2_bus4 &sd2_clk &sd2_cmd
-&sd1_cd &sd1_bus4>;
-  pinctrl-names = "default";
-
-In other words the default state just sets up pin muxing for all the
-whole controller (AKA all slots).
-
-...but maybe someone will yell at me for that suggestion.  It's really
-hard to justify all this extra work for the multiple slot case when
-there are no current users that I know of...
-
+I'm a bit of a latecomer to this conversation, though, so I'm not sure
+my ack / nak holds much weight.  If someone else thinks it's more
+important to kill the old GPIO stuff (or more important to avoid
+useless churn) then their opinion ought to hold.
 
 -Doug
