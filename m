@@ -1,109 +1,68 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 00/23] RFC: exynos multiplatform support
-Date: Wed, 06 Mar 2013 23:57:51 +0100
-Message-ID: <6522816.XSG9RTSW3x@flatron>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <201303061050.42451.arnd@arndb.de> <20130306123426.GB17079@avionic-0098.mockup.avionic-design.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v6 5/5] ARM: dts: Add FIMD DT binding Documentation
+Date: Thu, 07 Mar 2013 08:56:23 +0900
+Message-ID: <013901ce1ac6$3533b130$9f9b1390$%kim@samsung.com>
+References: <1362044559-7496-1-git-send-email-vikas.sajjan@linaro.org>
+ <1362044559-7496-6-git-send-email-vikas.sajjan@linaro.org>
+ <5133A068.7060906@gmail.com>
+ <CAD025yQA+yAPzATDvE-4HQP+HVbmDQkg+XVKd=VUepL+dM9s9Q@mail.gmail.com>
+ <5137B183.6040201@gmail.com> <5137B326.3040404@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:64936 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751701Ab3CFW54 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:19045 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755128Ab3CFX4Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 17:57:56 -0500
-Received: by mail-ee0-f50.google.com with SMTP id e51so6325558eek.23
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Mar 2013 14:57:55 -0800 (PST)
-In-Reply-To: <20130306123426.GB17079@avionic-0098.mockup.avionic-design.de>
+	Wed, 6 Mar 2013 18:56:25 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MJ900BGOJTYUQA0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 08:56:24 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MJ900JAQJTZZV30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 08:56:23 +0900 (KST)
+In-reply-to: <5137B326.3040404@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Vikas Sajjan' <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, sachin.kamat@linaro.org, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, jy0922.shim@samsung.com, 'sunil joshi' <joshi@samsung.com>
 
-On Wednesday 06 of March 2013 13:34:26 Thierry Reding wrote:
-> On Wed, Mar 06, 2013 at 10:50:42AM +0000, Arnd Bergmann wrote:
-> > On Tuesday 05 March 2013, Tomasz Figa wrote:
-> > > On Tuesday 05 of March 2013 19:19:02 Arnd Bergmann wrote:
-> > > > If none of these are needed for DT-based systems, we should
-> > > > probably
-> > > > build that code conditionally based on the CONFIG_EXYNOS_ATAGS
-> > > > symbol
-> > > > I introduced.
-> > > 
-> > > Yes, none of them are needed for DT-based systems.
-> > 
-> > Ah, good. I'll try to make more code conditional then.
-> > 
-> > > > How are you planning to solve this? Do you want to have a combined
-> > > > driver that registers both a clocksource and a pwm?
-> > > 
-> > > Let's start with a quick introduction to the s3c-pwm hardware. Each
-> > > channel has its own timer value, compare and reload value registers,
-> > > so
-> > > they don't need any extra locking. However there are additional
-> > > shared
-> > > configuration registers, containing things such as start and reload
-> > > bits for all channels, prescaler and main divisor values, etc.
-> > > Those registers needs synchronization.
-> > > 
-> > > Now there are several possible approaches:
-> > > 
-> > > 1) A brute force one - two separate drivers, based on the fact that
-> > > the
-> > > 
-> > >    clocksource driver will be used only on uniprocessor systems, so
-> > >    a simple _irqsave when accessing a shared register in both will
-> > >    guarantee correct synchronization.
-> > > 
-> > > 2) Two separate drivers with some synchronized shared code accessing
-> > > 
-> > >    registers (_start, _stop, _set_reload, _set_prescaler,
-> > >    _set_divisor,
-> > >    etc.; all using a shared spinlock).
-> > > 
-> > > 3) Single driver registering PWM channels, clocksource and clock
-> > > event
-> > > 
-> > >    device. This does not seem like a bad idea, since the whole code
-> > >    for
-> > >    configuration of the PWM block would reside in one location and
-> > >    there
-> > >    would be no redundancy. However there is a question where such
-> > >    driver
-> > >    should be placed - drivers/clocksource, drivers/pwm, or maybe
-> > >    somewhere
-> > >    else?
-> > > 
-> > > Personally I wanted to go with first option, which would require
-> > > least
-> > > amount of changes to existing code, at a cost of some code
-> > > duplication
-> > > (but some PWM code is duplicated already).
-> > 
-> > I would prefer option 3. That is also easier to implement with a
-> > straightforward DT binding that defines a single node with the clock
-> > registers. The location doesn't have an obvious answer, but I would
-> > probably put them into drivers/clocksource if the PWM maintainer
-> > agrees.
-> > 
-> > Option 2 would probably come down to having a trivial MFD driver
-> > exposing a regmap. You can probably reuse drivers/mfd/syscon.c for
-> > this and make the node compatible with "syscon" to designate the
-> > clock registers as a system-wide resource, making the other device
-> > nodes register-less.
-> I think option 2 is the standard method if one hardware block provides
-> several logical devices. I find it to be a pretty nice solution to this
-> problem. We also have precedent in the PWM subsystem. The TWL chips for
-> instance use it to create a platform device which is later driven by a
-> PWM driver.
+Sylwester Nawrocki wrote:
+> 
+> On 03/06/2013 10:13 PM, Sylwester Nawrocki wrote:
+> > @@ -305,9 +305,9 @@ struct platform_device s5p_device_jpeg = {
+> >   #ifdef CONFIG_S5P_DEV_FIMD0
+> >   static struct resource s5p_fimd0_resource[] = {
+> >          [0] = DEFINE_RES_MEM(S5P_PA_FIMD0, SZ_32K),
+> > -       [1] = DEFINE_RES_IRQ(IRQ_FIMD0_VSYNC),
+> > -       [2] = DEFINE_RES_IRQ(IRQ_FIMD0_FIFO),
+> > -       [3] = DEFINE_RES_IRQ(IRQ_FIMD0_SYSTEM),
+> > +       [1] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_VSYNC, "vsync"),
+> > +       [2] = DEFINE_RES_IRQ(IRQ_FIMD0_FIFO, "fifo"),
+> > +       [3] = DEFINE_RES_IRQ(IRQ_FIMD0_SYSTEM, "system"),
+> >   };
+> 
+> Oops, something missing here. Of course should be:
+> 
+> @@ -160,9 +160,9 @@ struct platform_device samsung_asoc_idma = {
+>   #ifdef CONFIG_S3C_DEV_FB
+>   static struct resource s3c_fb_resource[] = {
+>          [0] = DEFINE_RES_MEM(S3C_PA_FB, SZ_16K),
+> -       [1] = DEFINE_RES_IRQ(IRQ_LCD_VSYNC),
+> -       [2] = DEFINE_RES_IRQ(IRQ_LCD_FIFO),
+> -       [3] = DEFINE_RES_IRQ(IRQ_LCD_SYSTEM),
+> +       [1] = DEFINE_RES_IRQ_NAMED(IRQ_LCD_VSYNC, "vsync"),
+> +       [2] = DEFINE_RES_IRQ_NAMED(IRQ_LCD_FIFO, "fifo"),
+> +       [3] = DEFINE_RES_IRQ_NAMED(IRQ_LCD_SYSTEM, "system"),
+   ^^^^^^^
 
-I prefer this option over 3), because current driver files could be easily 
-reused (just cleaned up and moved into appropriate directories), which 
-would minimize the amount of needed changes.
+BTW, can you use 'tab' instead of white space at mark '^'
 
-Another reason for having two separate drivers is that on Exynos SoCs the 
-PWM block is not used for timers at all, just for PWM outputs, so the 
-whole part responsible for clocksource would be useless.
-
-Best regards,
-Tomasz
+- Kukjin
