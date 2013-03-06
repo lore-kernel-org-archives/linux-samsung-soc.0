@@ -1,101 +1,46 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] iio: adc: exynos5_adc: fix compilation warnings
-Date: Wed, 06 Mar 2013 09:41:32 +0530
-Message-ID: <1362543092-6446-1-git-send-email-ch.naveen@samsung.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: exynos: pl330: Add #dma-cells for generic dma
+ binding support
+Date: Wed, 6 Mar 2013 10:43:37 +0530
+Message-ID: <CAAgF-Bf+rqiFUaBD=aRqry6-2z4o0Ao2L2YRm8bu1x98TfPPyg@mail.gmail.com>
+References: <1362375268-29405-1-git-send-email-padma.v@samsung.com>
+	<201303052237.05910.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33842 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751639Ab3CFEOW (ORCPT
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:37305 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750794Ab3CFFNi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Mar 2013 23:14:22 -0500
+	Wed, 6 Mar 2013 00:13:38 -0500
+Received: by mail-ie0-f173.google.com with SMTP id 9so8906567iec.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Mar 2013 21:13:37 -0800 (PST)
+In-Reply-To: <201303052237.05910.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, dan.carpenter@oracle.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, boojin.kim@samsung.com, robherring2@gmail.com, dinguyen@altera.com, Olof Johansson <olof@lixom.net>
 
-From: Naveen Krishna Ch <ch.naveen@samsung.com>
+On Wed, Mar 6, 2013 at 4:07 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Monday 04 March 2013, Padmavathi Venna wrote:
+>>
+>> This patch adds #dma-cells property to PL330 DMA controller
+>> nodes for supporting generic dma dt bindings on samsung exynos
+>> platforms. #dma-channels and #dma-requests are not required now
+>> but added in advance.
+>>
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Should we apply these directly to the arm-soc fixes branch, or wait
+> until they come back from the Samsung subarchitecture tree?
 
-Fixes the compilation warnings and potential NULL pointer
-dereferencing pointed out by "Dan Carpenter".
+Hmm, If Kukjin can take in 3.9 rc2 it's better to go via Samsung tree.
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
----
- drivers/iio/adc/exynos_adc.c |   24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+Kukjin,
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index ed6fdd7..67d07aa 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -92,7 +92,7 @@ struct exynos_adc {
- 	struct completion	completion;
- 
- 	u32			value;
--	unsigned int            version;
-+	unsigned int		version;
- };
- 
- static const struct of_device_id exynos_adc_match[] = {
-@@ -102,12 +102,15 @@ static const struct of_device_id exynos_adc_match[] = {
- };
- MODULE_DEVICE_TABLE(of, exynos_adc_match);
- 
--static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
-+static inline int exynos_adc_get_version(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 
- 	match = of_match_node(exynos_adc_match, pdev->dev.of_node);
--	return (unsigned int)match->data;
-+	if (!match)
-+		return -ENODEV;
-+
-+	return (int)match->data;
- }
- 
- static int exynos_read_raw(struct iio_dev *indio_dev,
-@@ -117,7 +120,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				long mask)
- {
- 	struct exynos_adc *info = iio_priv(indio_dev);
--	unsigned long timeout;
-+	int timeout;
- 	u32 con1, con2;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
-@@ -255,7 +258,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	struct iio_dev *indio_dev = NULL;
- 	struct resource	*mem;
- 	int ret = -ENODEV;
--	int irq;
-+	int irq, version;
- 
- 	if (!np)
- 		return ret;
-@@ -268,6 +271,15 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 
- 	info = iio_priv(indio_dev);
- 
-+	version = exynos_adc_get_version(pdev);
-+	if (version < 0) {
-+		dev_err(&pdev->dev, "no matching of_node, err = %d\n", version);
-+		ret = version;
-+		goto err_iio;
-+	}
-+
-+	info->version = version;
-+
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
- 	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
-@@ -311,8 +323,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 		goto err_irq;
- 	}
- 
--	info->version = exynos_adc_get_version(pdev);
--
- 	platform_set_drvdata(pdev, indio_dev);
- 
- 	indio_dev->name = dev_name(&pdev->dev);
--- 
-1.7.9.5
+Can you please take this patch in 3.9 rc2 ?
+
+Thanks
+Padma
