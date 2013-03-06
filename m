@@ -1,82 +1,63 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] mmc: dwmmc: let device core setup the default pin configuration
-Date: Wed, 06 Mar 2013 17:34:21 +0530
-Message-ID: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ASoC: samsung: let device core setup the default pin
+ configuration
+Date: Wed, 6 Mar 2013 19:49:20 +0800
+Message-ID: <20130306114918.GB19556@opensource.wolfsonmicro.com>
+References: <1362570951-14403-1-git-send-email-thomas.abraham@linaro.org>
+ <20130306113741.GA19556@opensource.wolfsonmicro.com>
+ <201303061242.09978.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:26022 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756214Ab3CFLoL (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35894 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757414Ab3CFLuF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 06:44:11 -0500
+	Wed, 6 Mar 2013 06:50:05 -0500
+Content-Disposition: inline
+In-Reply-To: <201303061242.09978.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, heiko@sntech.de, linus.walleij@linaro.org, patches@linaro.org
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, alsa-devel@alsa-project.org, lrg@ti.com, jassisinghbrar@gmail.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, patches@linaro.org
 
-With device core now able to setup the default pin configuration,
-the pin configuration code based on the deprecated Samsung specific
-gpio bindings is removed.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- drivers/mmc/host/dw_mmc-exynos.c |   38 --------------------------------------
- 1 files changed, 0 insertions(+), 38 deletions(-)
+--xgyAXRrhYN0wYx8y
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index 72fd0f2..467d043 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -152,43 +152,6 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
- 	return 0;
- }
- 
--static int dw_mci_exynos_setup_bus(struct dw_mci *host,
--				struct device_node *slot_np, u8 bus_width)
--{
--	int idx, gpio, ret;
--
--	if (!slot_np)
--		return -EINVAL;
--
--	/* cmd + clock + bus-width pins */
--	for (idx = 0; idx < NUM_PINS(bus_width); idx++) {
--		gpio = of_get_gpio(slot_np, idx);
--		if (!gpio_is_valid(gpio)) {
--			dev_err(host->dev, "invalid gpio: %d\n", gpio);
--			return -EINVAL;
--		}
--
--		ret = devm_gpio_request(host->dev, gpio, "dw-mci-bus");
--		if (ret) {
--			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
--			return -EBUSY;
--		}
--	}
--
--	if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
--		return 0;
--
--	gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
--	if (gpio_is_valid(gpio)) {
--		if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
--			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
--	} else {
--		dev_info(host->dev, "cd gpio not available");
--	}
--
--	return 0;
--}
--
- /* Exynos5250 controller specific capabilities */
- static unsigned long exynos5250_dwmmc_caps[4] = {
- 	MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
-@@ -205,7 +168,6 @@ static const struct dw_mci_drv_data exynos5250_drv_data = {
- 	.prepare_command	= dw_mci_exynos_prepare_command,
- 	.set_ios		= dw_mci_exynos_set_ios,
- 	.parse_dt		= dw_mci_exynos_parse_dt,
--	.setup_bus		= dw_mci_exynos_setup_bus,
- };
- 
- static const struct of_device_id dw_mci_exynos_match[] = {
--- 
-1.6.6.rc2
+On Wed, Mar 06, 2013 at 12:42:09PM +0100, Heiko St=FCbner wrote:
+
+> What is going away is the deprecated non-pinctrl way to setup the pins on=
+ dt=20
+> platforms.
+
+OK, can we have a changelog improvement please?  I didn't read the patch
+properly because the changelog said it would break my primary
+development system.
+
+--xgyAXRrhYN0wYx8y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRNyzVAAoJELSic+t+oim99AkQAJrKu1NEkAW0Wy5DjaHwF6By
+K8qiXv7PRV+KSN66TUFS+Hp4HZk+/jW959DiufKIphrOFqfpaCHcZUyth5cTw/2N
+TkKTcyJCg/G8fZX5leLhDqzQbs43YxhIzuSg9AiNbzTa5VTVM32gAiP7qkJJJdxs
+1AbkL6CZsLbigv/vsIq1iCQxvi4jby2+ZMXv007dyqJfnA6gX150LNQX/+OvQe5t
+5GSzTCyjefrA/IaOl/i78DSgF8wE834BsrGUfv7Kd7tz8c0xzTM3bf5lAJz1TQNx
+l6SjTSDW+TGRDQ35BU2OWIy4WQEyuYWiwxGmXDPyfyQDRLTGNDJnfo7cFjMg9RkQ
+g7cwE2/tC4KjQRQz68lXIelmWvSiopnITFC6gpDkZ98CdLkTChRVEIJzliYGko57
+plx19JJ+YA5dGTQTesX3H/wt5x1vBiY/zcvZbJdobP/G/42jWKqe6CBATbhay21J
+27ICpznQiHCdRwGEwSxgOxxsJnVkmouVjHb+//W/MSDUrs/CkjP3cOs9NNbx1szO
+WNJMuVtztCTlQ3j6XhHOuUluyt7Pr/1clC9PNY6kKYBhq5MWdM8hbeKPpPi2FzmX
+nADV+auvs8IiO0MMgzDG6IEcplAk9bjZZXJ3R+SufH1Xl+RmF8Z0NRUdIoJAB6JM
+jAFY7wpeciD97F607MwU
+=C+2N
+-----END PGP SIGNATURE-----
+
+--xgyAXRrhYN0wYx8y--
