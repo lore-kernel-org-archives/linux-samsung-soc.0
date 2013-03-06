@@ -1,28 +1,18 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] spi: s3c64xx: let device core setup the default pin
+Subject: [PATCH] input: samsung-keypad: let device core setup the default pin
  configuration
-Date: Wed, 06 Mar 2013 17:12:10 +0530
-Message-ID: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org>
+Date: Wed, 06 Mar 2013 17:19:17 +0530
+Message-ID: <1362570557-14274-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:30710 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757540Ab3CFLUR (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:58206 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753951Ab3CFL3P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 06:20:17 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MJ800259KQNJHT0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Mar 2013 20:20:15 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MJ8008Y1KTK6340@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Mar 2013 20:20:15 +0900 (KST)
+	Wed, 6 Mar 2013 06:29:15 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: spi-devel-general@lists.sourceforge.net
-Cc: linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, linus.walleij@linaro.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, heiko@sntech.de, jaswinder.singh@linaro.org, patches@linaro.org
+To: linux-input@vger.kernel.org
+Cc: dmitry.torokhov@gmail.com, linus.walleij@linaro.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, heiko@sntech.de, jy0922.shim@samsung.com, dh09.lee@samsung.com, patches@linaro.org
 
 With device core now able to setup the default pin configuration,
 the pin configuration code based on the deprecated Samsung specific
@@ -30,166 +20,146 @@ gpio bindings is removed.
 
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- .../devicetree/bindings/spi/spi-samsung.txt        |    8 +--
- drivers/spi/spi-s3c64xx.c                          |   66 +------------------
- 2 files changed, 6 insertions(+), 68 deletions(-)
+ .../devicetree/bindings/input/samsung-keypad.txt   |   25 ++--------
+ drivers/input/keyboard/samsung-keypad.c            |   52 +-------------------
+ 2 files changed, 7 insertions(+), 70 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index a15ffed..86aa061 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -31,9 +31,6 @@ Required Board Specific Properties:
+diff --git a/Documentation/devicetree/bindings/input/samsung-keypad.txt b/Documentation/devicetree/bindings/input/samsung-keypad.txt
+index ce3e394..73ad847 100644
+--- a/Documentation/devicetree/bindings/input/samsung-keypad.txt
++++ b/Documentation/devicetree/bindings/input/samsung-keypad.txt
+@@ -25,14 +25,6 @@ Required Board Specific Properties:
+ - samsung,keypad-num-columns: Number of column lines connected to the
+   keypad controller.
  
- - #address-cells: should be 1.
- - #size-cells: should be 0.
--- gpios: The gpio specifier for clock, mosi and miso interface lines (in the
--  order specified). The format of the gpio specifier depends on the gpio
--  controller.
+-- row-gpios: List of gpios used as row lines. The gpio specifier for
+-  this property depends on the gpio controller to which these row lines
+-  are connected.
+-
+-- col-gpios: List of gpios used as column lines. The gpio specifier for
+-  this property depends on the gpio controller to which these column
+-  lines are connected.
+-
+ - Keys represented as child nodes: Each key connected to the keypad
+   controller is represented as a child node to the keypad controller
+   device node and should include the following properties.
+@@ -41,6 +33,9 @@ Required Board Specific Properties:
+   - linux,code: the key-code to be reported when the key is pressed
+     and released.
  
- Optional Board Specific Properties:
- 
-@@ -86,9 +83,8 @@ Example:
- 	spi_0: spi@12d20000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		gpios = <&gpa2 4 2 3 0>,
--			<&gpa2 6 2 3 0>,
--			<&gpa2 7 2 3 0>;
++- pinctrl-0: Should specify pin control groups used for this controller.
++- pinctrl-names: Should contain only one value - "default".
++
+ Optional Properties specific to linux:
+ - linux,keypad-no-autorepeat: do no enable autorepeat feature.
+ - linux,keypad-wakeup: use any event on keypad as wakeup event.
+@@ -55,18 +50,8 @@ Example:
+ 		samsung,keypad-num-columns = <8>;
+ 		linux,input-no-autorepeat;
+ 		linux,input-wakeup;
+-
+-		row-gpios = <&gpx2 0 3 3 0
+-			     &gpx2 1 3 3 0>;
+-
+-		col-gpios = <&gpx1 0 3 0 0
+-			     &gpx1 1 3 0 0
+-			     &gpx1 2 3 0 0
+-			     &gpx1 3 3 0 0
+-			     &gpx1 4 3 0 0
+-			     &gpx1 5 3 0 0
+-			     &gpx1 6 3 0 0
+-			     &gpx1 7 3 0 0>;
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&spi0_bus>;
++		pinctrl-0 = <&keypad_rows &keypad_columns>;
  
- 		w25q80bw@0 {
- 			#address-cells = <1>;
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index e862ab8..8537b17 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1052,41 +1052,6 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
+ 		key_1 {
+ 			keypad,row = <0>;
+diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input/keyboard/samsung-keypad.c
+index 22e357b..03bdad7 100644
+--- a/drivers/input/keyboard/samsung-keypad.c
++++ b/drivers/input/keyboard/samsung-keypad.c
+@@ -24,7 +24,6 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
+ #include <linux/sched.h>
+ #include <linux/input/samsung-keypad.h>
+ 
+@@ -79,10 +78,6 @@ struct samsung_keypad {
+ 	unsigned int rows;
+ 	unsigned int cols;
+ 	unsigned int row_state[SAMSUNG_MAX_COLS];
+-#ifdef CONFIG_OF
+-	int row_gpios[SAMSUNG_MAX_ROWS];
+-	int col_gpios[SAMSUNG_MAX_COLS];
+-#endif
+ 	unsigned short keycodes[];
+ };
+ 
+@@ -304,45 +299,6 @@ static struct samsung_keypad_platdata *samsung_keypad_parse_dt(
+ 
+ 	return pdata;
  }
- 
- #ifdef CONFIG_OF
--static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
--{
--	struct device *dev = &sdd->pdev->dev;
--	int idx, gpio, ret;
 -
--	/* find gpios for mosi, miso and clock lines */
--	for (idx = 0; idx < 3; idx++) {
--		gpio = of_get_gpio(dev->of_node, idx);
+-static void samsung_keypad_parse_dt_gpio(struct device *dev,
+-				struct samsung_keypad *keypad)
+-{
+-	struct device_node *np = dev->of_node;
+-	int gpio, error, row, col;
+-
+-	for (row = 0; row < keypad->rows; row++) {
+-		gpio = of_get_named_gpio(np, "row-gpios", row);
+-		keypad->row_gpios[row] = gpio;
 -		if (!gpio_is_valid(gpio)) {
--			dev_err(dev, "invalid gpio[%d]: %d\n", idx, gpio);
--			goto free_gpio;
+-			dev_err(dev, "keypad row[%d]: invalid gpio %d\n",
+-					row, gpio);
+-			continue;
 -		}
--		sdd->gpios[idx] = gpio;
--		ret = gpio_request(gpio, "spi-bus");
--		if (ret) {
--			dev_err(dev, "gpio [%d] request failed: %d\n",
--				gpio, ret);
--			goto free_gpio;
--		}
+-
+-		error = devm_gpio_request(dev, gpio, "keypad-row");
+-		if (error)
+-			dev_err(dev,
+-				"keypad row[%d] gpio request failed: %d\n",
+-				row, error);
 -	}
--	return 0;
 -
--free_gpio:
--	while (--idx >= 0)
--		gpio_free(sdd->gpios[idx]);
--	return -EINVAL;
+-	for (col = 0; col < keypad->cols; col++) {
+-		gpio = of_get_named_gpio(np, "col-gpios", col);
+-		keypad->col_gpios[col] = gpio;
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(dev, "keypad column[%d]: invalid gpio %d\n",
+-					col, gpio);
+-			continue;
+-		}
+-
+-		error = devm_gpio_request(dev, gpio, "keypad-col");
+-		if (error)
+-			dev_err(dev,
+-				"keypad column[%d] gpio request failed: %d\n",
+-				col, error);
+-	}
 -}
--
--static void s3c64xx_spi_dt_gpio_free(struct s3c64xx_spi_driver_data *sdd)
--{
--	unsigned int idx;
--	for (idx = 0; idx < 3; idx++)
--		gpio_free(sdd->gpios[idx]);
--}
--
- static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
- {
- 	struct s3c64xx_spi_info *sci;
-@@ -1119,15 +1084,6 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
- {
- 	return dev->platform_data;
- }
--
--static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
--{
--	return -EINVAL;
--}
--
--static void s3c64xx_spi_dt_gpio_free(struct s3c64xx_spi_driver_data *sdd)
--{
--}
- #endif
+ #else
+ static
+ struct samsung_keypad_platdata *samsung_keypad_parse_dt(struct device *dev)
+@@ -424,15 +380,11 @@ static int samsung_keypad_probe(struct platform_device *pdev)
+ 	keypad->stopped = true;
+ 	init_waitqueue_head(&keypad->wait);
  
- static const struct of_device_id s3c64xx_spi_dt_match[];
-@@ -1247,10 +1203,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		goto err0;
- 	}
+-	if (pdev->dev.of_node) {
+-#ifdef CONFIG_OF
+-		samsung_keypad_parse_dt_gpio(&pdev->dev, keypad);
++	if (pdev->dev.of_node)
+ 		keypad->type = of_device_is_compatible(pdev->dev.of_node,
+ 					"samsung,s5pv210-keypad");
+-#endif
+-	} else {
++	else
+ 		keypad->type = platform_get_device_id(pdev)->driver_data;
+-	}
  
--	if (!sci->cfg_gpio && pdev->dev.of_node) {
--		if (s3c64xx_spi_parse_dt_gpio(sdd))
--			return -EBUSY;
--	} else if (sci->cfg_gpio == NULL || sci->cfg_gpio()) {
-+	if (sci->cfg_gpio && sci->cfg_gpio()) {
- 		dev_err(&pdev->dev, "Unable to config gpio\n");
- 		ret = -EBUSY;
- 		goto err0;
-@@ -1261,13 +1214,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (IS_ERR(sdd->clk)) {
- 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
- 		ret = PTR_ERR(sdd->clk);
--		goto err1;
-+		goto err0;
- 	}
- 
- 	if (clk_prepare_enable(sdd->clk)) {
- 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
- 		ret = -EBUSY;
--		goto err1;
-+		goto err0;
- 	}
- 
- 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-@@ -1324,9 +1277,6 @@ err3:
- 	clk_disable_unprepare(sdd->src_clk);
- err2:
- 	clk_disable_unprepare(sdd->clk);
--err1:
--	if (!sdd->cntrlr_info->cfg_gpio && pdev->dev.of_node)
--		s3c64xx_spi_dt_gpio_free(sdd);
- err0:
- 	platform_set_drvdata(pdev, NULL);
- 	spi_master_put(master);
-@@ -1349,9 +1299,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(sdd->clk);
- 
--	if (!sdd->cntrlr_info->cfg_gpio && pdev->dev.of_node)
--		s3c64xx_spi_dt_gpio_free(sdd);
--
- 	platform_set_drvdata(pdev, NULL);
- 	spi_master_put(master);
- 
-@@ -1370,9 +1317,6 @@ static int s3c64xx_spi_suspend(struct device *dev)
- 	clk_disable_unprepare(sdd->src_clk);
- 	clk_disable_unprepare(sdd->clk);
- 
--	if (!sdd->cntrlr_info->cfg_gpio && dev->of_node)
--		s3c64xx_spi_dt_gpio_free(sdd);
--
- 	sdd->cur_speed = 0; /* Output Clock is stopped */
- 
- 	return 0;
-@@ -1384,9 +1328,7 @@ static int s3c64xx_spi_resume(struct device *dev)
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
- 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
- 
--	if (!sci->cfg_gpio && dev->of_node)
--		s3c64xx_spi_parse_dt_gpio(sdd);
--	else
-+	if (sci->cfg_gpio)
- 		sci->cfg_gpio();
- 
- 	/* Enable the clock */
+ 	input_dev->name = pdev->name;
+ 	input_dev->id.bustype = BUS_HOST;
 -- 
 1.6.6.rc2
