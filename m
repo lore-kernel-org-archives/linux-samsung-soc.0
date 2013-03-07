@@ -1,44 +1,83 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: S3C24XX: drop "select MACH_N35"
-Date: Thu, 7 Mar 2013 09:32:02 +0000
-Message-ID: <20130307093202.GC17833@n2100.arm.linux.org.uk>
-References: <1362609234.28137.2.camel@x61.thuisdomein> <013a01ce1ac7$11b287d0$35179770$%kim@samsung.com> <1362615081.28137.5.camel@x61.thuisdomein> <014601ce1acd$bc63d480$352b7d80$%kim@samsung.com> <20130307005206.GZ17833@n2100.arm.linux.org.uk> <015001ce1ad1$185e66d0$491b3470$%kim@samsung.com>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: Set clock parent if provided
+Date: Thu, 7 Mar 2013 15:12:38 +0530
+Message-ID: <CAOD6ATpb+mJMVDATj2FO9KVX0-xnRezmqdVOeJYpyX2ugR8Rpg@mail.gmail.com>
+References: <1362634301-9706-1-git-send-email-shaik.ameer@samsung.com>
+	<CAPdUM4PzGiwOvbva+Raq7EtHQ6+8g3rY_yudbidCy+aeqT2geA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:56495 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1754114Ab3CGJcq (ORCPT
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:43109 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755394Ab3CGJmj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Mar 2013 04:32:46 -0500
-Content-Disposition: inline
-In-Reply-To: <015001ce1ad1$185e66d0$491b3470$%kim@samsung.com>
+	Thu, 7 Mar 2013 04:42:39 -0500
+Received: by mail-qa0-f53.google.com with SMTP id z4so186668qan.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Mar 2013 01:42:38 -0800 (PST)
+In-Reply-To: <CAPdUM4PzGiwOvbva+Raq7EtHQ6+8g3rY_yudbidCy+aeqT2geA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rahul Sharma <r.sh.open@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On Thu, Mar 07, 2013 at 10:14:19AM +0900, Kukjin Kim wrote:
-> Russell King - ARM Linux wrote:
-> > And deleting entries from it is pointless if they've ever been in the
-> > kernel.
-> 
-> OK, I see and agree.
+Hi Rahul,
 
-The issue is that the database system "locks" an entry into the file as
-soon as support is merged into mainline for the platform.  The reason
-for this is that as soon as the support gets merged into a kernel verison,
-that symbol is then referenced.
+On Thu, Mar 7, 2013 at 2:58 PM, Rahul Sharma <r.sh.open@gmail.com> wrote:
+> On Thu, Mar 7, 2013 at 11:01 AM, Shaik Ameer Basha
+> <shaik.ameer@samsung.com> wrote:
+>> s3c_set_clksrc() updates the clock source as per u-boot settings.
+>> This patch adds the functionality to overwrite u-boot settings,
+>> if user provides the clock parent field. In case of wrong source
+>> provided by the user, it will retain the u-boot settings.
+>>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> ---
+>>  arch/arm/plat-samsung/clock-clksrc.c |    7 ++++++-
+>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
+>> index 786a410..4fecd80 100644
+>> --- a/arch/arm/plat-samsung/clock-clksrc.c
+>> +++ b/arch/arm/plat-samsung/clock-clksrc.c
+>> @@ -150,7 +150,12 @@ void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
+>>                 return;
+>>         }
+>>
+>> -       clk->clk.parent = srcs->sources[clksrc];
+>> +       if (clk->clk.parent) {
+>> +               if (s3c_setparent_clksrc(&clk->clk, clk->clk.parent))
+>> +                       clk->clk.parent = srcs->sources[clksrc];
+>
+> IMO, it make sense to return the error value if failed. Now you
+> are masking the failed cases (due to invalid parent clk) and proceeding
+> with uboot values which is not the intention when parent clock
+> is provided.
 
-If anyone goes to the website to download a new copy of the file, it then
-must continue to contain that symbol because they may be using the file
-with any kernel version - maybe a version of the kernel with your platform
-support in - and maybe they're using something that references the
-generated ID/macros from your entry.
+yes you are right. But as the function s3c_set_clksrc() is not
+expected to return any error codes,
+I tried to use default u-boot settings.
+We can add a warning message to let user know in case of wrong parent
+assignment.
 
-Updates to the file in the mainline kernel are merely re-downloads of the
-file from the website and committed.
+Regards,
+Shaik Ameer Basha
 
-So, deleting entries once used in mainline is extremely problematical.  If
-someone commits such a patch, my next update from the website/database to
-the file will put it back.  Hence the problem.
+>
+> Regards,
+> Rahul Sharma,
+>
+>> +       } else {
+>> +               clk->clk.parent = srcs->sources[clksrc];
+>> +       }
+>>
+>>         if (announce)
+>>                 printk(KERN_INFO "%s: source is %s (%d), rate is %ld\n",
+>> --
+>> 1.7.9.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> --
