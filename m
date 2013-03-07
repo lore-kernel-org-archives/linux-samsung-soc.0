@@ -1,64 +1,95 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: change HAVE_SAMSUNG_KEYPAD to KEYBOARD_SAMSUNG
-Date: Thu, 07 Mar 2013 10:02:07 +0900
-Message-ID: <014b01ce1acf$63ada580$2b08f080$%kim@samsung.com>
-References: <1362566365.16460.173.camel@x61.thuisdomein>
+Subject: RE: [PATCH] ARM: EXYNOS: remove EXYNOS_DEV_SYSMMU entirely
+Date: Thu, 07 Mar 2013 10:12:52 +0900
+Message-ID: <014f01ce1ad0$e4432b10$acc98130$%kim@samsung.com>
+References: <1362509466.16460.108.camel@x61.thuisdomein>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:40783 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753509Ab3CGBCJ convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:33895 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752224Ab3CGBMy convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 20:02:09 -0500
-In-reply-to: <1362566365.16460.173.camel@x61.thuisdomein>
+	Wed, 6 Mar 2013 20:12:54 -0500
+In-reply-to: <1362509466.16460.108.camel@x61.thuisdomein>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Russell King' <linux@arm.linux.org.uk>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Grant Likely' <grant.likely@secretlab.ca>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: 'KyongHo Cho' <pullip.cho@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Paul Bolle wrote:
 > 
-> Commit 6b5ab4f442e32f248b6fad29aafd1d5153f4dbd3 ("ARM: EXYNOS: Add
-> Exynos4 device tree enabled board file") added
-> 	select HAVE_SAMSUNG_KEYPAD if INPUT_KEYBOARD
-> 
-> to the MACH_EXYNOS4_DT Kconfig entry. But there's no Kconfig symbol
-> HAVE_SAMSUNG_KEYPAD. Since this select statement depends on
-> INPUT_KEYBOARD this entry should select KEYBOARD_SAMSUNG instead.
+> Commit 25e9d28d927d2e1731df53f60cde53d75bcb7c36 ("ARM: EXYNOS: remove
+> system mmu initialization from exynos tree") removed the Kconfig symbol
+> EXYNOS_DEV_SYSMMU. Remove its last traces too.
 > 
 > Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 > ---
-> 0) Tested with "git grep" only.
+> 0) Untested.
 > 
-> 1) Perhaps the fact that the symbol KEYBOARD_SAMSUNG enables a driver
-> called samsung-keypad caused confusion here. Anyhow, my choice for
-> KEYBOARD_SAMSUNG is only educated guesswork.
+> 1) Please note that this patch changes the dependencies of EXYNOS_IOMMU
+> (it removed a dependency that could never be met). That's probably what
+> needs to be done but some specific review is needed here.
 > 
->  arch/arm/mach-exynos/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm/mach-exynos/Kconfig | 4 ----
+>  drivers/iommu/Kconfig        | 2 +-
+>  2 files changed, 1 insertion(+), 5 deletions(-)
 > 
 > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 6c2bdc3..068aeb5 100644
+> index 70f94c8..6c2bdc3 100644
 > --- a/arch/arm/mach-exynos/Kconfig
 > +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -403,7 +403,7 @@ config MACH_EXYNOS4_DT
->  	depends on ARCH_EXYNOS4
->  	select ARM_AMBA
->  	select CPU_EXYNOS4210
-> -	select HAVE_SAMSUNG_KEYPAD if INPUT_KEYBOARD
-> +	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
->  	select PINCTRL
->  	select PINCTRL_EXYNOS
->  	select USE_OF
+> @@ -200,7 +200,6 @@ config MACH_SMDKV310
+>  	select EXYNOS4_SETUP_USB_PHY
+>  	select EXYNOS_DEV_DMA
+>  	select EXYNOS_DEV_DRM
+> -	select EXYNOS_DEV_SYSMMU
+>  	select S3C24XX_PWM
+>  	select S3C_DEV_HSMMC
+>  	select S3C_DEV_HSMMC1
+> @@ -254,7 +253,6 @@ config MACH_UNIVERSAL_C210
+>  	select EXYNOS4_SETUP_USB_PHY
+>  	select EXYNOS_DEV_DMA
+>  	select EXYNOS_DEV_DRM
+> -	select EXYNOS_DEV_SYSMMU
+>  	select HAVE_SCHED_CLOCK
+>  	select S3C_DEV_HSMMC
+>  	select S3C_DEV_HSMMC2
+> @@ -331,7 +329,6 @@ config MACH_ORIGEN
+>  	select EXYNOS4_SETUP_USB_PHY
+>  	select EXYNOS_DEV_DMA
+>  	select EXYNOS_DEV_DRM
+> -	select EXYNOS_DEV_SYSMMU
+>  	select S3C24XX_PWM
+>  	select S3C_DEV_HSMMC
+>  	select S3C_DEV_HSMMC2
+> @@ -367,7 +364,6 @@ config MACH_SMDK4212
+>  	select EXYNOS4_SETUP_USB_PHY
+>  	select EXYNOS_DEV_DMA
+>  	select EXYNOS_DEV_DRM
+> -	select EXYNOS_DEV_SYSMMU
+>  	select S3C24XX_PWM
+>  	select S3C_DEV_HSMMC2
+>  	select S3C_DEV_HSMMC3
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index 5c514d07..c520c20 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -168,7 +168,7 @@ config TEGRA_IOMMU_SMMU
+> 
+>  config EXYNOS_IOMMU
+>  	bool "Exynos IOMMU Support"
+> -	depends on ARCH_EXYNOS && EXYNOS_DEV_SYSMMU
+> +	depends on ARCH_EXYNOS
+>  	select IOMMU_API
+>  	help
+>  	  Support for the IOMMU(System MMU) of Samsung Exynos application
 > --
 > 1.7.11.7
 
-Looks good to me, applied.
-
-BTW, just to use only 8~12 digits of commit ID, "Commit 6b5ab4f4" is enough instead of full commit ID.
+Actually, to update iommu for exynos is on-going. And as I know, it will be done this time for v3.10 by KyongHo Cho, so it would be better to handle this cleanup with that at the same time.
 
 Thanks.
 
