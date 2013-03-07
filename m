@@ -1,39 +1,112 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 00/23] RFC: exynos multiplatform support
-Date: Thu, 7 Mar 2013 03:02:46 +0000
-Message-ID: <201303070302.46593.arnd@arndb.de>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <201303061050.42451.arnd@arndb.de> <20130306123426.GB17079@avionic-0098.mockup.avionic-design.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:54067 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751639Ab3CGDC7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 22:02:59 -0500
-In-Reply-To: <20130306123426.GB17079@avionic-0098.mockup.avionic-design.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2] iio: adc: exynos5_adc: fix compilation warnings
+Date: Thu, 07 Mar 2013 08:39:03 +0530
+Message-ID: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-On Wednesday 06 March 2013, Thierry Reding wrote:
-> > Option 2 would probably come down to having a trivial MFD driver exposing
-> > a regmap. You can probably reuse drivers/mfd/syscon.c for this and make
-> > the node compatible with "syscon" to designate the clock registers as
-> > a system-wide resource, making the other device nodes register-less.
-> 
-> I think option 2 is the standard method if one hardware block provides
-> several logical devices. I find it to be a pretty nice solution to this
-> problem. We also have precedent in the PWM subsystem. The TWL chips for
-> instance use it to create a platform device which is later driven by a
-> PWM driver.
+Fixes the compilation warnings and potential NULL pointer
+dereferencing pointed out by "Dan Carpenter".
 
-One difference though is that the TWL chip is a heterogenous MFD that has
-a lot of different sub-devices, where in case of Exynos the timer device
-has a set of identical units, each of which can be used either as a PWM or
-as a clocksource or other timer.
+Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
+Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Series-to: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+---
+Changes since v1:
+	Made the exynos_adc driver depends on CONFIG_OF.
 
-	Arnd
+ drivers/iio/adc/Kconfig      |    1 +
+ drivers/iio/adc/exynos_adc.c |   21 ++++++++++++++-------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index a40d3c2..9c45c0f 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -105,6 +105,7 @@ config AT91_ADC
+ 
+ config EXYNOS_ADC
+ 	bool "Exynos ADC driver support"
++	depends on OF
+ 	help
+ 	  Core support for the ADC block found in the Samsung EXYNOS series
+ 	  of SoCs for drivers such as the touchscreen and hwmon to use to share
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index ed6fdd7..4fd5e3a 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -92,7 +92,7 @@ struct exynos_adc {
+ 	struct completion	completion;
+ 
+ 	u32			value;
+-	unsigned int            version;
++	unsigned int		version;
+ };
+ 
+ static const struct of_device_id exynos_adc_match[] = {
+@@ -102,12 +102,12 @@ static const struct of_device_id exynos_adc_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, exynos_adc_match);
+ 
+-static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
++static inline int exynos_adc_get_version(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
+ 
+ 	match = of_match_node(exynos_adc_match, pdev->dev.of_node);
+-	return (unsigned int)match->data;
++	return (int)match->data;
+ }
+ 
+ static int exynos_read_raw(struct iio_dev *indio_dev,
+@@ -117,7 +117,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 				long mask)
+ {
+ 	struct exynos_adc *info = iio_priv(indio_dev);
+-	unsigned long timeout;
++	int timeout;
+ 	u32 con1, con2;
+ 
+ 	if (mask != IIO_CHAN_INFO_RAW)
+@@ -255,7 +255,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 	struct iio_dev *indio_dev = NULL;
+ 	struct resource	*mem;
+ 	int ret = -ENODEV;
+-	int irq;
++	int irq, version;
+ 
+ 	if (!np)
+ 		return ret;
+@@ -268,6 +268,15 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 
+ 	info = iio_priv(indio_dev);
+ 
++	version = exynos_adc_get_version(pdev);
++	if (version < 0) {
++		dev_err(&pdev->dev, "no matching of_node, err = %d\n", version);
++		ret = version;
++		goto err_iio;
++	}
++
++	info->version = version;
++
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
+@@ -311,8 +320,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 		goto err_irq;
+ 	}
+ 
+-	info->version = exynos_adc_get_version(pdev);
+-
+ 	platform_set_drvdata(pdev, indio_dev);
+ 
+ 	indio_dev->name = dev_name(&pdev->dev);
+-- 
+1.7.9.5
