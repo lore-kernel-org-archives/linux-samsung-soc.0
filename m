@@ -1,69 +1,44 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Set clock parent if provided
-Date: Thu, 7 Mar 2013 14:58:11 +0530
-Message-ID: <CAPdUM4PzGiwOvbva+Raq7EtHQ6+8g3rY_yudbidCy+aeqT2geA@mail.gmail.com>
-References: <1362634301-9706-1-git-send-email-shaik.ameer@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: S3C24XX: drop "select MACH_N35"
+Date: Thu, 7 Mar 2013 09:32:02 +0000
+Message-ID: <20130307093202.GC17833@n2100.arm.linux.org.uk>
+References: <1362609234.28137.2.camel@x61.thuisdomein> <013a01ce1ac7$11b287d0$35179770$%kim@samsung.com> <1362615081.28137.5.camel@x61.thuisdomein> <014601ce1acd$bc63d480$352b7d80$%kim@samsung.com> <20130307005206.GZ17833@n2100.arm.linux.org.uk> <015001ce1ad1$185e66d0$491b3470$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f53.google.com ([74.125.82.53]:55752 "EHLO
-	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755477Ab3CGJ2N (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:56495 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1754114Ab3CGJcq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Mar 2013 04:28:13 -0500
-Received: by mail-wg0-f53.google.com with SMTP id fn15so351623wgb.32
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Mar 2013 01:28:11 -0800 (PST)
-In-Reply-To: <1362634301-9706-1-git-send-email-shaik.ameer@samsung.com>
+	Thu, 7 Mar 2013 04:32:46 -0500
+Content-Disposition: inline
+In-Reply-To: <015001ce1ad1$185e66d0$491b3470$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, shaik.samsung@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 7, 2013 at 11:01 AM, Shaik Ameer Basha
-<shaik.ameer@samsung.com> wrote:
-> s3c_set_clksrc() updates the clock source as per u-boot settings.
-> This patch adds the functionality to overwrite u-boot settings,
-> if user provides the clock parent field. In case of wrong source
-> provided by the user, it will retain the u-boot settings.
->
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> ---
->  arch/arm/plat-samsung/clock-clksrc.c |    7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-> index 786a410..4fecd80 100644
-> --- a/arch/arm/plat-samsung/clock-clksrc.c
-> +++ b/arch/arm/plat-samsung/clock-clksrc.c
-> @@ -150,7 +150,12 @@ void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
->                 return;
->         }
->
-> -       clk->clk.parent = srcs->sources[clksrc];
-> +       if (clk->clk.parent) {
-> +               if (s3c_setparent_clksrc(&clk->clk, clk->clk.parent))
-> +                       clk->clk.parent = srcs->sources[clksrc];
+On Thu, Mar 07, 2013 at 10:14:19AM +0900, Kukjin Kim wrote:
+> Russell King - ARM Linux wrote:
+> > And deleting entries from it is pointless if they've ever been in the
+> > kernel.
+> 
+> OK, I see and agree.
 
-IMO, it make sense to return the error value if failed. Now you
-are masking the failed cases (due to invalid parent clk) and proceeding
-with uboot values which is not the intention when parent clock
-is provided.
+The issue is that the database system "locks" an entry into the file as
+soon as support is merged into mainline for the platform.  The reason
+for this is that as soon as the support gets merged into a kernel verison,
+that symbol is then referenced.
 
-Regards,
-Rahul Sharma,
+If anyone goes to the website to download a new copy of the file, it then
+must continue to contain that symbol because they may be using the file
+with any kernel version - maybe a version of the kernel with your platform
+support in - and maybe they're using something that references the
+generated ID/macros from your entry.
 
-> +       } else {
-> +               clk->clk.parent = srcs->sources[clksrc];
-> +       }
->
->         if (announce)
->                 printk(KERN_INFO "%s: source is %s (%d), rate is %ld\n",
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Updates to the file in the mainline kernel are merely re-downloads of the
+file from the website and committed.
 
---
+So, deleting entries once used in mainline is extremely problematical.  If
+someone commits such a patch, my next update from the website/database to
+the file will put it back.  Hence the problem.
