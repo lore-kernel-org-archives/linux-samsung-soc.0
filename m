@@ -1,41 +1,33 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 3/5] Samsung timer for v3.10
-Date: Thu, 07 Mar 2013 11:23:46 +0900
-Message-ID: <016801ce1ada$cc116d90$643448b0$%kim@samsung.com>
+Subject: [GIT PULL 1/5] Samsung cleanup-s3c for v3.10
+Date: Thu, 07 Mar 2013 11:23:25 +0900
+Message-ID: <016601ce1ada$bf9ad0b0$3ed07210$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58765 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758735Ab3CGCXt (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:49795 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754404Ab3CGCX1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 21:23:49 -0500
+	Wed, 6 Mar 2013 21:23:27 -0500
 Received: from epcpsbgr4.samsung.com
  (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJ900DUNQNHDG40@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 11:23:48 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MJ9003A9QNMJ960@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 11:23:46 +0900 (KST)
+ with ESMTP id <0MJ900020QLZ28G0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 11:23:26 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Romain Naour' <romain.naour@openwide.fr>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
 
-Arnd, Olof,
+Hi Arnd, Olof,
 
-Here is re-work samsung-time which was s5p-time to support
-clocksource/clockevent API for s3c and s5pc100 timer driver. And this enables to
-support high resolution timer and tickles mode on them.
+Here is cleanup for s3c stuff.
 
-Note, this depends on previous pull request (cleanup-s3c) because of touching
-while s3c stuff.
+This is including cleanup soc specific header files and plat/irqs.h.
 
 If any problems, please let me know.
 
@@ -47,88 +39,78 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
+The following changes since commit 6dbe51c251a327e012439c4772097a13df43c5b8:
 
-The following changes since commit 7488335dcf382574c47fb27fcbad3f04a9841db6:
+  Linux 3.9-rc1 (2013-03-03 15:11:05 -0800)
 
-  ARM: S3C24XX: cleanup the included soc init functions in common.h (2013-03-05
-10:42:48 +0900)
-	
 are available in the git repository at:
 
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next/timer-samsung
+next/cleanup-s3c
 
-for you to fetch changes up to ad38bdd15d5b97dcb1ffc46ea77c237e30312fbb:
+for you to fetch changes up to 7488335dcf382574c47fb27fcbad3f04a9841db6:
 
-  ARM: SAMSUNG: Remove unused plat-samsung/time.c (2013-03-05 20:19:54 +0900)
+  ARM: S3C24XX: cleanup the included soc init functions in common.h (2013-03-05
+10:42:48 +0900)
 
 ----------------------------------------------------------------
-Romain Naour (5):
-      ARM: SAMSUNG: Rename s5p-time to samsung-time
-      ARM: S3C24XX: Add samsung-time support for s3c24xx
-      ARM: S3C64XX: Add samsung-time support for s3c64xx
-      ARM: S5PC100: Add samsung-time support for s5pc100
-      ARM: SAMSUNG: Remove unused plat-samsung/time.c
+Heiko Stuebner (3):
+      ARM: S3C24XX: remove plat/irq.h in plat-samsung
+      ARM: S3C24XX: move plat-samsung/s3c24XX headers to local common.h
+      ARM: S3C24XX: cleanup the included soc init functions in common.h
 
- arch/arm/Kconfig                                   |   11 +-
- arch/arm/mach-exynos/Kconfig                       |    2 +-
- arch/arm/mach-exynos/mach-universal_c210.c         |    6 +-
- arch/arm/mach-s3c24xx/Kconfig                      |    6 +
- arch/arm/mach-s3c24xx/mach-amlm5900.c              |    5 +-
- arch/arm/mach-s3c24xx/mach-anubis.c                |    4 +-
- arch/arm/mach-s3c24xx/mach-at2440evb.c             |    4 +-
- arch/arm/mach-s3c24xx/mach-bast.c                  |    4 +-
- arch/arm/mach-s3c24xx/mach-gta02.c                 |    4 +-
- arch/arm/mach-s3c24xx/mach-h1940.c                 |    5 +-
- arch/arm/mach-s3c24xx/mach-jive.c                  |    4 +-
- arch/arm/mach-s3c24xx/mach-mini2440.c              |    4 +-
- arch/arm/mach-s3c24xx/mach-n30.c                   |    6 +-
- arch/arm/mach-s3c24xx/mach-nexcoder.c              |    4 +-
- arch/arm/mach-s3c24xx/mach-osiris.c                |    4 +-
- arch/arm/mach-s3c24xx/mach-otom.c                  |    4 +-
- arch/arm/mach-s3c24xx/mach-qt2410.c                |    4 +-
- arch/arm/mach-s3c24xx/mach-rx1950.c                |    4 +-
- arch/arm/mach-s3c24xx/mach-rx3715.c                |    4 +-
- arch/arm/mach-s3c24xx/mach-smdk2410.c              |    4 +-
- arch/arm/mach-s3c24xx/mach-smdk2413.c              |    8 +-
+Kukjin Kim (2):
+      mmc: s3cmci: moved mach/regs-sdi.h into s3cmci device driver
+      ARM: S3C24XX: plat/common-smdk.h local
+
+ arch/arm/mach-s3c24xx/bast-irq.c                   |    2 -
+ arch/arm/mach-s3c24xx/clock-s3c2410.c              |    1 -
+ arch/arm/mach-s3c24xx/clock-s3c2412.c              |    1 -
+ arch/arm/mach-s3c24xx/clock-s3c2416.c              |    1 -
+ arch/arm/mach-s3c24xx/clock-s3c2443.c              |    1 -
+ arch/arm/mach-s3c24xx/common-smdk.c                |    3 +-
+ .../include/plat => mach-s3c24xx}/common-smdk.h    |    3 +-
+ arch/arm/mach-s3c24xx/common.c                     |    7 +-
+ arch/arm/mach-s3c24xx/common.h                     |   90 +++++++++++++-
+ arch/arm/mach-s3c24xx/dma-s3c2410.c                |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2412.c                |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2440.c                |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2443.c                |    1 -
+ arch/arm/mach-s3c24xx/include/mach/regs-sdi.h      |  127 --------------------
+ arch/arm/mach-s3c24xx/irq-pm.c                     |    7 +-
+ arch/arm/mach-s3c24xx/irq.c                        |    8 +-
+ arch/arm/mach-s3c24xx/mach-jive.c                  |    2 +-
+ arch/arm/mach-s3c24xx/mach-n30.c                   |    1 -
+ arch/arm/mach-s3c24xx/mach-nexcoder.c              |    2 -
+ arch/arm/mach-s3c24xx/mach-otom.c                  |    1 -
+ arch/arm/mach-s3c24xx/mach-qt2410.c                |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2410.c              |    3 +-
+ arch/arm/mach-s3c24xx/mach-smdk2413.c              |    5 +-
  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    4 +-
- arch/arm/mach-s3c24xx/mach-smdk2440.c              |    4 +-
- arch/arm/mach-s3c24xx/mach-smdk2443.c              |    4 +-
- arch/arm/mach-s3c24xx/mach-tct_hammer.c            |    4 +-
- arch/arm/mach-s3c24xx/mach-vr1000.c                |    4 +-
- arch/arm/mach-s3c24xx/mach-vstms.c                 |    4 +-
- arch/arm/mach-s3c64xx/Kconfig                      |    2 +
- arch/arm/mach-s3c64xx/mach-anw6410.c               |    4 +-
- arch/arm/mach-s3c64xx/mach-crag6410.c              |    4 +-
- arch/arm/mach-s3c64xx/mach-hmt.c                   |    4 +-
- arch/arm/mach-s3c64xx/mach-mini6410.c              |    4 +-
- arch/arm/mach-s3c64xx/mach-ncp.c                   |    4 +-
- arch/arm/mach-s3c64xx/mach-real6410.c              |    4 +-
- arch/arm/mach-s3c64xx/mach-smartq.c                |    2 +
- arch/arm/mach-s3c64xx/mach-smartq5.c               |    3 +-
- arch/arm/mach-s3c64xx/mach-smartq7.c               |    3 +-
- arch/arm/mach-s3c64xx/mach-smdk6400.c              |    4 +-
- arch/arm/mach-s3c64xx/mach-smdk6410.c              |    4 +-
- arch/arm/mach-s5p64x0/Kconfig                      |    4 +-
- arch/arm/mach-s5p64x0/mach-smdk6440.c              |    6 +-
- arch/arm/mach-s5p64x0/mach-smdk6450.c              |    6 +-
- arch/arm/mach-s5pc100/Kconfig                      |    1 +
- arch/arm/mach-s5pc100/mach-smdkc100.c              |    4 +-
- arch/arm/mach-s5pv210/Kconfig                      |    2 +-
- arch/arm/mach-s5pv210/mach-aquila.c                |    6 +-
- arch/arm/mach-s5pv210/mach-goni.c                  |    6 +-
- arch/arm/mach-s5pv210/mach-smdkc110.c              |    6 +-
- arch/arm/mach-s5pv210/mach-smdkv210.c              |    6 +-
- arch/arm/mach-s5pv210/mach-torbreck.c              |    6 +-
- arch/arm/plat-samsung/Kconfig                      |    2 +-
- arch/arm/plat-samsung/Makefile                     |    3 +-
- arch/arm/plat-samsung/include/plat/cpu.h           |    4 -
- arch/arm/plat-samsung/include/plat/s5p-time.h      |   40 ---
- arch/arm/plat-samsung/include/plat/samsung-time.h  |   53 ++++
- .../plat-samsung/{s5p-time.c => samsung-time.c}    |  138 +++++-----
- arch/arm/plat-samsung/time.c                       |  287 --------------------
- 57 files changed, 275 insertions(+), 472 deletions(-)
- delete mode 100644 arch/arm/plat-samsung/include/plat/s5p-time.h
- create mode 100644 arch/arm/plat-samsung/include/plat/samsung-time.h
- rename arch/arm/plat-samsung/{s5p-time.c => samsung-time.c} (68%)
- delete mode 100644 arch/arm/plat-samsung/time.c
+ arch/arm/mach-s3c24xx/mach-smdk2440.c              |    5 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c              |    5 +-
+ arch/arm/mach-s3c24xx/mach-vstms.c                 |    3 +-
+ arch/arm/mach-s3c24xx/pm-s3c2412.c                 |    1 -
+ arch/arm/mach-s3c24xx/s3c2410.c                    |    1 -
+ arch/arm/mach-s3c24xx/s3c2412.c                    |    1 -
+ arch/arm/mach-s3c24xx/s3c2416.c                    |    1 -
+ arch/arm/mach-s3c24xx/s3c2440.c                    |    1 -
+ arch/arm/mach-s3c24xx/s3c2442.c                    |    1 -
+ arch/arm/mach-s3c24xx/s3c2443.c                    |    1 -
+ arch/arm/mach-s3c24xx/s3c244x.c                    |    2 -
+ arch/arm/plat-samsung/include/plat/irq.h           |  116 ------------------
+ arch/arm/plat-samsung/include/plat/s3c2410.h       |   31 -----
+ arch/arm/plat-samsung/include/plat/s3c2412.h       |   32 -----
+ arch/arm/plat-samsung/include/plat/s3c2416.h       |   37 ------
+ arch/arm/plat-samsung/include/plat/s3c2443.h       |   36 ------
+ arch/arm/plat-samsung/include/plat/s3c244x.h       |   42 -------
+ drivers/mmc/host/s3cmci.c                          |   83 ++++++++++++-
+ 42 files changed, 194 insertions(+), 480 deletions(-)
+ rename arch/arm/{plat-samsung/include/plat => mach-s3c24xx}/common-smdk.h (86%)
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-sdi.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/irq.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s3c2410.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s3c2412.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s3c2416.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s3c2443.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s3c244x.h
