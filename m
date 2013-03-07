@@ -1,97 +1,105 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Set clock parent if provided
-Date: Thu, 7 Mar 2013 15:54:36 +0530
-Message-ID: <CAPdUM4MR6x5_K0SyEHkf9ePYhEi3TAQEwTxgnLSUPk3wRZduWg@mail.gmail.com>
-References: <1362634301-9706-1-git-send-email-shaik.ameer@samsung.com>
-	<CAPdUM4PzGiwOvbva+Raq7EtHQ6+8g3rY_yudbidCy+aeqT2geA@mail.gmail.com>
-	<CAOD6ATpb+mJMVDATj2FO9KVX0-xnRezmqdVOeJYpyX2ugR8Rpg@mail.gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] mmc: dwmmc: let device core setup the default pin
+ configuration
+Date: Thu, 07 Mar 2013 20:02:10 +0900
+Message-ID: <000e01ce1b23$375166d0$a5f43470$%jun@samsung.com>
+References: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:37063 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752909Ab3CGKYi (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:8843 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754610Ab3CGLCM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Mar 2013 05:24:38 -0500
-Received: by mail-wi0-f172.google.com with SMTP id ez12so665408wid.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Mar 2013 02:24:37 -0800 (PST)
-In-Reply-To: <CAOD6ATpb+mJMVDATj2FO9KVX0-xnRezmqdVOeJYpyX2ugR8Rpg@mail.gmail.com>
+	Thu, 7 Mar 2013 06:02:12 -0500
+In-reply-to: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, heiko@sntech.de, linus.walleij@linaro.org, patches@linaro.org
 
-On Thu, Mar 7, 2013 at 3:12 PM, Shaik Ameer Basha
-<shaik.samsung@gmail.com> wrote:
-> Hi Rahul,
->
-> On Thu, Mar 7, 2013 at 2:58 PM, Rahul Sharma <r.sh.open@gmail.com> wrote:
->> On Thu, Mar 7, 2013 at 11:01 AM, Shaik Ameer Basha
->> <shaik.ameer@samsung.com> wrote:
->>> s3c_set_clksrc() updates the clock source as per u-boot settings.
->>> This patch adds the functionality to overwrite u-boot settings,
->>> if user provides the clock parent field. In case of wrong source
->>> provided by the user, it will retain the u-boot settings.
->>>
->>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->>> ---
->>>  arch/arm/plat-samsung/clock-clksrc.c |    7 ++++++-
->>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
->>> index 786a410..4fecd80 100644
->>> --- a/arch/arm/plat-samsung/clock-clksrc.c
->>> +++ b/arch/arm/plat-samsung/clock-clksrc.c
->>> @@ -150,7 +150,12 @@ void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
->>>                 return;
->>>         }
->>>
->>> -       clk->clk.parent = srcs->sources[clksrc];
->>> +       if (clk->clk.parent) {
->>> +               if (s3c_setparent_clksrc(&clk->clk, clk->clk.parent))
->>> +                       clk->clk.parent = srcs->sources[clksrc];
->>
->> IMO, it make sense to return the error value if failed. Now you
->> are masking the failed cases (due to invalid parent clk) and proceeding
->> with uboot values which is not the intention when parent clock
->> is provided.
->
-> yes you are right. But as the function s3c_set_clksrc() is not
-> expected to return any error codes,
-> I tried to use default u-boot settings.
-> We can add a warning message to let user know in case of wrong parent
-> assignment.
->
+Hi Thomas,
 
-Agreed. Printing error val with KERN_ERR and return would be better.
+On Wednesday, March 06, 2013, Thomas Abraham wrote:
+> With device core now able to setup the default pin configuration,
+> the pin configuration code based on the deprecated Samsung specific
+> gpio bindings is removed.
 
-> Regards,
-> Shaik Ameer Basha
->
->>
->> Regards,
->> Rahul Sharma,
->>
->>> +       } else {
->>> +               clk->clk.parent = srcs->sources[clksrc];
->>> +       }
->>>
->>>         if (announce)
->>>                 printk(KERN_INFO "%s: source is %s (%d), rate is %ld\n",
->>> --
->>> 1.7.9.5
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->> --
+'setup_bus' callback is still useful in dw_mci_drv_data?
+Considering the purpose, it would be good to remove.
+And, could you change commit prefix for consistency?
+dwmmc -> dw_mmc
 
-
-
--- 
-Regards,
-Rahul Sharma,
-email to: rahul.sharma@samsung.com
-Samsung India.
+Thanks,
+Seungwon Jeon
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  drivers/mmc/host/dw_mmc-exynos.c |   38 --------------------------------------
+>  1 files changed, 0 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 72fd0f2..467d043 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -152,43 +152,6 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>  	return 0;
+>  }
+> 
+> -static int dw_mci_exynos_setup_bus(struct dw_mci *host,
+> -				struct device_node *slot_np, u8 bus_width)
+> -{
+> -	int idx, gpio, ret;
+> -
+> -	if (!slot_np)
+> -		return -EINVAL;
+> -
+> -	/* cmd + clock + bus-width pins */
+> -	for (idx = 0; idx < NUM_PINS(bus_width); idx++) {
+> -		gpio = of_get_gpio(slot_np, idx);
+> -		if (!gpio_is_valid(gpio)) {
+> -			dev_err(host->dev, "invalid gpio: %d\n", gpio);
+> -			return -EINVAL;
+> -		}
+> -
+> -		ret = devm_gpio_request(host->dev, gpio, "dw-mci-bus");
+> -		if (ret) {
+> -			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
+> -			return -EBUSY;
+> -		}
+> -	}
+> -
+> -	if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
+> -		return 0;
+> -
+> -	gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
+> -	if (gpio_is_valid(gpio)) {
+> -		if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
+> -			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
+> -	} else {
+> -		dev_info(host->dev, "cd gpio not available");
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  /* Exynos5250 controller specific capabilities */
+>  static unsigned long exynos5250_dwmmc_caps[4] = {
+>  	MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
+> @@ -205,7 +168,6 @@ static const struct dw_mci_drv_data exynos5250_drv_data = {
+>  	.prepare_command	= dw_mci_exynos_prepare_command,
+>  	.set_ios		= dw_mci_exynos_set_ios,
+>  	.parse_dt		= dw_mci_exynos_parse_dt,
+> -	.setup_bus		= dw_mci_exynos_setup_bus,
+>  };
+> 
+>  static const struct of_device_id dw_mci_exynos_match[] = {
+> --
+> 1.6.6.rc2
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
