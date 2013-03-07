@@ -1,95 +1,53 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: remove EXYNOS_DEV_SYSMMU entirely
-Date: Thu, 07 Mar 2013 10:12:52 +0900
-Message-ID: <014f01ce1ad0$e4432b10$acc98130$%kim@samsung.com>
-References: <1362509466.16460.108.camel@x61.thuisdomein>
+Subject: RE: [PATCH] ARM: S3C24XX: drop "select MACH_N35"
+Date: Thu, 07 Mar 2013 10:14:19 +0900
+Message-ID: <015001ce1ad1$185e66d0$491b3470$%kim@samsung.com>
+References: <1362609234.28137.2.camel@x61.thuisdomein>
+ <013a01ce1ac7$11b287d0$35179770$%kim@samsung.com>
+ <1362615081.28137.5.camel@x61.thuisdomein>
+ <014601ce1acd$bc63d480$352b7d80$%kim@samsung.com>
+ <20130307005206.GZ17833@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:33895 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:34140 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752224Ab3CGBMy convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1752224Ab3CGBOX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 20:12:54 -0500
-In-reply-to: <1362509466.16460.108.camel@x61.thuisdomein>
+	Wed, 6 Mar 2013 20:14:23 -0500
+In-reply-to: <20130307005206.GZ17833@n2100.arm.linux.org.uk>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Russell King' <linux@arm.linux.org.uk>
-Cc: 'KyongHo Cho' <pullip.cho@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Paul Bolle wrote:
+Russell King - ARM Linux wrote:
 > 
-> Commit 25e9d28d927d2e1731df53f60cde53d75bcb7c36 ("ARM: EXYNOS: remove
-> system mmu initialization from exynos tree") removed the Kconfig symbol
-> EXYNOS_DEV_SYSMMU. Remove its last traces too.
+> On Thu, Mar 07, 2013 at 09:50:17AM +0900, Kukjin Kim wrote:
+> > Paul Bolle wrote:
+> > >
+> > > On Thu, 2013-03-07 at 09:02 +0900, Kukjin Kim wrote:
+> > >
+> > > > BTW, so the machine type can be removed at arch/arm/tools/mach-types
+> as
+> > > well.
+> > >
+> > > Well, that file has a big comment on top, containing the line:
+> > >     Please do not send patches to this file; it is automatically
+> > > generated!
+> > >
+> > > So I didn't dare to touch it.
+> > >
+> > Yeah, I know.
+> >
+> > It will be handled by Russell King :-)
 > 
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
-> ---
-> 0) Untested.
-> 
-> 1) Please note that this patch changes the dependencies of EXYNOS_IOMMU
-> (it removed a dependency that could never be met). That's probably what
-> needs to be done but some specific review is needed here.
-> 
->  arch/arm/mach-exynos/Kconfig | 4 ----
->  drivers/iommu/Kconfig        | 2 +-
->  2 files changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 70f94c8..6c2bdc3 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -200,7 +200,6 @@ config MACH_SMDKV310
->  	select EXYNOS4_SETUP_USB_PHY
->  	select EXYNOS_DEV_DMA
->  	select EXYNOS_DEV_DRM
-> -	select EXYNOS_DEV_SYSMMU
->  	select S3C24XX_PWM
->  	select S3C_DEV_HSMMC
->  	select S3C_DEV_HSMMC1
-> @@ -254,7 +253,6 @@ config MACH_UNIVERSAL_C210
->  	select EXYNOS4_SETUP_USB_PHY
->  	select EXYNOS_DEV_DMA
->  	select EXYNOS_DEV_DRM
-> -	select EXYNOS_DEV_SYSMMU
->  	select HAVE_SCHED_CLOCK
->  	select S3C_DEV_HSMMC
->  	select S3C_DEV_HSMMC2
-> @@ -331,7 +329,6 @@ config MACH_ORIGEN
->  	select EXYNOS4_SETUP_USB_PHY
->  	select EXYNOS_DEV_DMA
->  	select EXYNOS_DEV_DRM
-> -	select EXYNOS_DEV_SYSMMU
->  	select S3C24XX_PWM
->  	select S3C_DEV_HSMMC
->  	select S3C_DEV_HSMMC2
-> @@ -367,7 +364,6 @@ config MACH_SMDK4212
->  	select EXYNOS4_SETUP_USB_PHY
->  	select EXYNOS_DEV_DMA
->  	select EXYNOS_DEV_DRM
-> -	select EXYNOS_DEV_SYSMMU
->  	select S3C24XX_PWM
->  	select S3C_DEV_HSMMC2
->  	select S3C_DEV_HSMMC3
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index 5c514d07..c520c20 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -168,7 +168,7 @@ config TEGRA_IOMMU_SMMU
-> 
->  config EXYNOS_IOMMU
->  	bool "Exynos IOMMU Support"
-> -	depends on ARCH_EXYNOS && EXYNOS_DEV_SYSMMU
-> +	depends on ARCH_EXYNOS
->  	select IOMMU_API
->  	help
->  	  Support for the IOMMU(System MMU) of Samsung Exynos application
-> --
-> 1.7.11.7
+> And deleting entries from it is pointless if they've ever been in the
+> kernel.
 
-Actually, to update iommu for exynos is on-going. And as I know, it will be done this time for v3.10 by KyongHo Cho, so it would be better to handle this cleanup with that at the same time.
+OK, I see and agree.
 
 Thanks.
 
