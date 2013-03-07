@@ -1,105 +1,57 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH] mmc: dwmmc: let device core setup the default pin
- configuration
-Date: Thu, 07 Mar 2013 20:02:10 +0900
-Message-ID: <000e01ce1b23$375166d0$a5f43470$%jun@samsung.com>
-References: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: S5PV210: Fix PL330 DMA controller clkdev entries
+Date: Thu, 07 Mar 2013 20:08:20 +0900
+Message-ID: <021101ce1b24$13dfcdd0$3b9f6970$%kim@samsung.com>
+References: <1362227906-13921-1-git-send-email-s.nawrocki@samsung.com>
+ <51321326.6050800@gmail.com> <008001ce18d8$451527e0$cf3f77a0$%kim@samsung.com>
+ <5134A78A.9050709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:8843 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:9538 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754610Ab3CGLCM (ORCPT
+	with ESMTP id S932235Ab3CGLIW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Mar 2013 06:02:12 -0500
-In-reply-to: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
+	Thu, 7 Mar 2013 06:08:22 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MJA008BVEXOQ7K0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 20:08:20 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MJA0056REXW8I20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 20:08:20 +0900 (KST)
+In-reply-to: <5134A78A.9050709@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org
-Cc: cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, heiko@sntech.de, linus.walleij@linaro.org, patches@linaro.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: 'Lonsn' <lonsn2005@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Inderpal Singh' <inderpal.singh@linaro.org>, 'Boojin Kim' <boojin.kim@samsung.com>
 
-Hi Thomas,
+Sylwester Nawrocki wrote:
+> 
+> On 03/04/2013 02:00 PM, Kukjin Kim wrote:
+> > Looks good to me, applied into -fixes.
+> >
+> > Sylwester, why did you want to re-send this patch?
+> 
+> Only to add
+> 
+> Tested-by: Lonsn <lonsn2005@gmail.com>
+> Cc: stable@vger.kernel.org # 3.7
+> 
+> tags, and any other in case someone else tests the patch.
+> 
+> I think we would need this fix for stable 3.7 as well.
+> 
+> Thanks for applying it.
+> 
+I already added above when I applied ;-)
 
-On Wednesday, March 06, 2013, Thomas Abraham wrote:
-> With device core now able to setup the default pin configuration,
-> the pin configuration code based on the deprecated Samsung specific
-> gpio bindings is removed.
+Thanks for your confirmation.
 
-'setup_bus' callback is still useful in dw_mci_drv_data?
-Considering the purpose, it would be good to remove.
-And, could you change commit prefix for consistency?
-dwmmc -> dw_mmc
-
-Thanks,
-Seungwon Jeon
-> 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  drivers/mmc/host/dw_mmc-exynos.c |   38 --------------------------------------
->  1 files changed, 0 insertions(+), 38 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index 72fd0f2..467d043 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -152,43 +152,6 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
->  	return 0;
->  }
-> 
-> -static int dw_mci_exynos_setup_bus(struct dw_mci *host,
-> -				struct device_node *slot_np, u8 bus_width)
-> -{
-> -	int idx, gpio, ret;
-> -
-> -	if (!slot_np)
-> -		return -EINVAL;
-> -
-> -	/* cmd + clock + bus-width pins */
-> -	for (idx = 0; idx < NUM_PINS(bus_width); idx++) {
-> -		gpio = of_get_gpio(slot_np, idx);
-> -		if (!gpio_is_valid(gpio)) {
-> -			dev_err(host->dev, "invalid gpio: %d\n", gpio);
-> -			return -EINVAL;
-> -		}
-> -
-> -		ret = devm_gpio_request(host->dev, gpio, "dw-mci-bus");
-> -		if (ret) {
-> -			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
-> -			return -EBUSY;
-> -		}
-> -	}
-> -
-> -	if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
-> -		return 0;
-> -
-> -	gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
-> -	if (gpio_is_valid(gpio)) {
-> -		if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
-> -			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
-> -	} else {
-> -		dev_info(host->dev, "cd gpio not available");
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->  /* Exynos5250 controller specific capabilities */
->  static unsigned long exynos5250_dwmmc_caps[4] = {
->  	MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
-> @@ -205,7 +168,6 @@ static const struct dw_mci_drv_data exynos5250_drv_data = {
->  	.prepare_command	= dw_mci_exynos_prepare_command,
->  	.set_ios		= dw_mci_exynos_set_ios,
->  	.parse_dt		= dw_mci_exynos_parse_dt,
-> -	.setup_bus		= dw_mci_exynos_setup_bus,
->  };
-> 
->  static const struct of_device_id dw_mci_exynos_match[] = {
-> --
-> 1.6.6.rc2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+- Kukjin
