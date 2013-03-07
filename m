@@ -1,49 +1,44 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/3] pinctrl: exynos: add support for Samsung's
- Exynos5250
-Date: Thu, 07 Mar 2013 12:26:29 +0900
-Message-ID: <017b01ce1ae3$8f0486e0$ad0d94a0$%kim@samsung.com>
-References: <1362568712-13586-1-git-send-email-thomas.abraham@linaro.org>
- <014101ce1ac8$5a4e8600$0eeb9200$%kim@samsung.com>
- <CAJuYYwS9+ZV43QaweUmqh_qFffT1fytM7G9WVbVWdi=hFjvpaw@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 0/7] Add G2D nodes to Exynos4 machines
+Date: Thu, 7 Mar 2013 09:12:24 +0530
+Message-ID: <CAK9yfHyQ=2EjRKknhN7nKUygnryKfWZ2A61w1+WRtrzLaF3SBA@mail.gmail.com>
+References: <1361163733-4338-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:12491 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753273Ab3CGD0b (ORCPT
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:56006 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756742Ab3CGDmZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 22:26:31 -0500
-In-reply-to: <CAJuYYwS9+ZV43QaweUmqh_qFffT1fytM7G9WVbVWdi=hFjvpaw@mail.gmail.com>
-Content-language: ko
+	Wed, 6 Mar 2013 22:42:25 -0500
+Received: by mail-oa0-f54.google.com with SMTP id n12so28153oag.27
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Mar 2013 19:42:24 -0800 (PST)
+In-Reply-To: <1361163733-4338-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, t.figa@samsung.com, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, s.nawrocki@samsung.com, patches@linaro.org, sachin.kamat@linaro.org
 
-Thomas Abraham wrote:
-> 
-> On 7 March 2013 05:41, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Thomas Abraham wrote:
-> >>
-> >> Changes since v1:
-> >> - Change the compatible string from "samsung,pinctrl-exynos5250" to
-> >>   "samsung,exynos5250-pinctrl".
-> >> - Rebased to v3.9-rc1
-> >>
-> >
-> > Thomas, this stuff is already in my tree for v3.10, and above changes
-> > included in there. Do you want to replace with this patches?
-> 
-> Dear Mr. Kim,
-> 
-> The v2 version includes one fix for the compatilble string. It changes
-> the compatible string from "samsung,pinctrl-exynos5250" to
-> "samsung,exynos5250-pinctrl". So could you pick this v2 series instead
-> of the series which you have already merged.
-> 
+Hi Kukjin,
 
-Hey, probably, you didn't check my tree. As I said, already changed/fixed.
+Can you please look into this series as it is pending since quite some time.
 
-- Kukjin
+On 18 February 2013 10:32, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> This patch series is based on Kukjin Kim's next/dt-exynos branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tree.
+>
+> Changes since v1:
+> * Removed power-domain entry in patch 1/7 as the driver currently
+>   does not use it.
+> * Addressed review comments from Sylwester Nawrocki and Tomasz Figa
+>   in patch 7/7.
+>
+> Sachin Kamat (7):
+>   ARM: dts: Add G2D node to exynos4210.dtsi
+>   ARM: dts: Add G2D node to SMDKV310
+>   ARM: dts: Add G2D node to exynos4210-origen
+>   ARM: dts: Add G2D node to exynos4x12.dtsi
+>   ARM: dts: Add G2D node to SMDK4412
+>   ARM: dts: Add G2D node to exynos4412-origen
+>   ARM: dts: Add Samsung G2D DT bindings documentation
