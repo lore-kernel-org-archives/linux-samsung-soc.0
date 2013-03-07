@@ -1,47 +1,35 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Set clock parent if provided
-Date: Thu,  7 Mar 2013 11:01:41 +0530
-Message-ID: <1362634301-9706-1-git-send-email-shaik.ameer@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] i2c: s3c24xx: allow device core to setup default pin configuration
+Date: Thu, 7 Mar 2013 07:16:24 +0100
+Message-ID: <CACRpkdbyrecX=4sDsUDfGDErS_MeR22vmB7p_PA-TsfoE6runA@mail.gmail.com>
+References: <1362404573-30406-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:58971 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750800Ab3CGFcH (ORCPT
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:56601 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751874Ab3CGGQZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Mar 2013 00:32:07 -0500
-Received: by mail-pb0-f43.google.com with SMTP id md12so89058pbc.30
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Mar 2013 21:32:07 -0800 (PST)
+	Thu, 7 Mar 2013 01:16:25 -0500
+Received: by mail-ie0-f179.google.com with SMTP id k11so135743iea.38
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Mar 2013 22:16:25 -0800 (PST)
+In-Reply-To: <1362404573-30406-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, shaik.samsung@gmail.com
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, heiko@sntech.de, t.figa@samsung.com, wsa@the-dreams.de
 
-s3c_set_clksrc() updates the clock source as per u-boot settings.
-This patch adds the functionality to overwrite u-boot settings,
-if user provides the clock parent field. In case of wrong source
-provided by the user, it will retain the u-boot settings.
+On Mon, Mar 4, 2013 at 2:42 PM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
----
- arch/arm/plat-samsung/clock-clksrc.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> With device core now able to setup the default pin configuration,
+> the call to devm_pinctrl_get_select_default can be removed. And
+> the pin configuration code based on the deprecated Samsung specific
+> gpio bindings is also removed.
+>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-index 786a410..4fecd80 100644
---- a/arch/arm/plat-samsung/clock-clksrc.c
-+++ b/arch/arm/plat-samsung/clock-clksrc.c
-@@ -150,7 +150,12 @@ void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
- 		return;
- 	}
- 
--	clk->clk.parent = srcs->sources[clksrc];
-+	if (clk->clk.parent) {
-+		if (s3c_setparent_clksrc(&clk->clk, clk->clk.parent))
-+			clk->clk.parent = srcs->sources[clksrc];
-+	} else {
-+		clk->clk.parent = srcs->sources[clksrc];
-+	}
- 
- 	if (announce)
- 		printk(KERN_INFO "%s: source is %s (%d), rate is %ld\n",
--- 
-1.7.9.5
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
