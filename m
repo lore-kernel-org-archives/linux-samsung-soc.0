@@ -1,60 +1,65 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: EXYNOS: Add PCIe driver support
-Date: Thu, 07 Mar 2013 10:17:15 +0900
-Message-ID: <015101ce1ad1$80e4fa20$82aeee60$%kim@samsung.com>
-References: <016b01ce18c2$2c366f10$84a34d30$%han@samsung.com>
- <CAJuYYwTKe6cC+eMmyAAskCJrDrbS3SmYRYhzL9iui5m1zvgbzw@mail.gmail.com>
- <20130306140752.7e5d68c8@skate>
+Subject: RE: [PATCH 1/2] ARM: exynos: pl330: Add #dma-cells for generic dma
+ binding support
+Date: Thu, 07 Mar 2013 10:31:03 +0900
+Message-ID: <015901ce1ad3$6ea43540$4bec9fc0$%kim@samsung.com>
+References: <1362375268-29405-1-git-send-email-padma.v@samsung.com>
+ <201303052237.05910.arnd@arndb.de>
+ <CAAgF-Bf+rqiFUaBD=aRqry6-2z4o0Ao2L2YRm8bu1x98TfPPyg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:52058 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:54935 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752475Ab3CGBRW (ORCPT
+	with ESMTP id S1751132Ab3CGBbF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Mar 2013 20:17:22 -0500
-In-reply-to: <20130306140752.7e5d68c8@skate>
+	Wed, 6 Mar 2013 20:31:05 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MJ900FCIO7EH1A0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 10:31:04 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MJ900M8KO7RZX90@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Mar 2013 10:31:03 +0900 (KST)
+In-reply-to: <CAAgF-Bf+rqiFUaBD=aRqry6-2z4o0Ao2L2YRm8bu1x98TfPPyg@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: 'Jingoo Han' <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>
+To: 'Padma Venkat' <padma.kvr@gmail.com>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Padmavathi Venna' <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, boojin.kim@samsung.com, robherring2@gmail.com, dinguyen@altera.com, 'Olof Johansson' <olof@lixom.net>
 
-Thomas Petazzoni wrote:
+Padma Venkat wrote:
 > 
-> Dear Thomas Abraham,
-> 
-> On Mon, 4 Mar 2013 16:01:59 +0530, Thomas Abraham wrote:
-> > On 4 March 2013 15:52, Jingoo Han <jg1.han@samsung.com> wrote:
-> > > Exynos5440 has two PCIe controllers which can be used as Root Complex.
-> > > This driver supports the PCIe controllers as Root Complex mode.
-> > >
-> > > Signed-off-by: Surendranath Gurivireddy Balla
-> <suren.reddy@samsung.com>
-> > > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> > > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > > ---
-> > >  .../devicetree/bindings/pci/exynos-pcie.txt        |   58 ++
-> > >  arch/arm/Kconfig                                   |    2 +
-> > >  arch/arm/mach-exynos/Kconfig                       |    8 +
-> > >  arch/arm/mach-exynos/Makefile                      |    2 +
-> > >  arch/arm/mach-exynos/include/mach/pcie.h           |  146 +++
-> > >  arch/arm/mach-exynos/pcie.c                        | 1009
-> ++++++++++++++++++++
+> On Wed, Mar 6, 2013 at 4:07 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Monday 04 March 2013, Padmavathi Venna wrote:
+> >>
+> >> This patch adds #dma-cells property to PL330 DMA controller
+> >> nodes for supporting generic dma dt bindings on samsung exynos
+> >> platforms. #dma-channels and #dma-requests are not required now
+> >> but added in advance.
+> >>
+> >> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 > >
-> > Is there any reason to place this code in arch/arm/...? As you know,
-> > there is a constant effort to relocate as much code as possible from
-> > arch/arm/mach-exynos. So there must be a strong justification for
-> > keeping this code in arch/arm/mach-exynos.
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Should we apply these directly to the arm-soc fixes branch, or wait
+> > until they come back from the Samsung subarchitecture tree?
 > 
-> Indeed. Thierry Reding (doing the Tegra PCIe driver) and myself (doing
-> the Marvell PCIe driver) are putting our drivers in drivers/pci/host/,
-> in agreement with the PCI maintainers.
+> Hmm, If Kukjin can take in 3.9 rc2 it's better to go via Samsung tree.
 > 
-I agree.
+> Kukjin,
+> 
+> Can you please take this patch in 3.9 rc2 ?
+> 
+Sure, I will.
 
-Jingoo, please move this stuff into drivers/pci when you address comments.
+BTW, Arnd, I'm not sure second one(socfpga.dtsi) can be handled in samsung
+tree.
 
 Thanks.
 
