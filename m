@@ -1,112 +1,68 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2] iio: adc: exynos5_adc: fix compilation warnings
-Date: Thu, 07 Mar 2013 08:39:03 +0530
-Message-ID: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v2 0/3] pinctrl: exynos: add support for Samsung's Exynos5250
+Date: Thu, 7 Mar 2013 08:52:46 +0530
+Message-ID: <CAJuYYwS9+ZV43QaweUmqh_qFffT1fytM7G9WVbVWdi=hFjvpaw@mail.gmail.com>
+References: <1362568712-13586-1-git-send-email-thomas.abraham@linaro.org>
+	<014101ce1ac8$5a4e8600$0eeb9200$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:43337 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753273Ab3CGDWr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Mar 2013 22:22:47 -0500
+Received: by mail-ie0-f175.google.com with SMTP id c12so11213ieb.34
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Mar 2013 19:22:47 -0800 (PST)
+In-Reply-To: <014101ce1ac8$5a4e8600$0eeb9200$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, t.figa@samsung.com, patches@linaro.org
 
-Fixes the compilation warnings and potential NULL pointer
-dereferencing pointed out by "Dan Carpenter".
+On 7 March 2013 05:41, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Thomas Abraham wrote:
+>>
+>> Changes since v1:
+>> - Change the compatible string from "samsung,pinctrl-exynos5250" to
+>>   "samsung,exynos5250-pinctrl".
+>> - Rebased to v3.9-rc1
+>>
+>
+> Thomas, this stuff is already in my tree for v3.10, and above changes
+> included in there. Do you want to replace with this patches?
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Series-to: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
----
-Changes since v1:
-	Made the exynos_adc driver depends on CONFIG_OF.
+Dear Mr. Kim,
 
- drivers/iio/adc/Kconfig      |    1 +
- drivers/iio/adc/exynos_adc.c |   21 ++++++++++++++-------
- 2 files changed, 15 insertions(+), 7 deletions(-)
+The v2 version includes one fix for the compatilble string. It changes
+the compatible string from "samsung,pinctrl-exynos5250" to
+"samsung,exynos5250-pinctrl". So could you pick this v2 series instead
+of the series which you have already merged.
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index a40d3c2..9c45c0f 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -105,6 +105,7 @@ config AT91_ADC
- 
- config EXYNOS_ADC
- 	bool "Exynos ADC driver support"
-+	depends on OF
- 	help
- 	  Core support for the ADC block found in the Samsung EXYNOS series
- 	  of SoCs for drivers such as the touchscreen and hwmon to use to share
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index ed6fdd7..4fd5e3a 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -92,7 +92,7 @@ struct exynos_adc {
- 	struct completion	completion;
- 
- 	u32			value;
--	unsigned int            version;
-+	unsigned int		version;
- };
- 
- static const struct of_device_id exynos_adc_match[] = {
-@@ -102,12 +102,12 @@ static const struct of_device_id exynos_adc_match[] = {
- };
- MODULE_DEVICE_TABLE(of, exynos_adc_match);
- 
--static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
-+static inline int exynos_adc_get_version(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 
- 	match = of_match_node(exynos_adc_match, pdev->dev.of_node);
--	return (unsigned int)match->data;
-+	return (int)match->data;
- }
- 
- static int exynos_read_raw(struct iio_dev *indio_dev,
-@@ -117,7 +117,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				long mask)
- {
- 	struct exynos_adc *info = iio_priv(indio_dev);
--	unsigned long timeout;
-+	int timeout;
- 	u32 con1, con2;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
-@@ -255,7 +255,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	struct iio_dev *indio_dev = NULL;
- 	struct resource	*mem;
- 	int ret = -ENODEV;
--	int irq;
-+	int irq, version;
- 
- 	if (!np)
- 		return ret;
-@@ -268,6 +268,15 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 
- 	info = iio_priv(indio_dev);
- 
-+	version = exynos_adc_get_version(pdev);
-+	if (version < 0) {
-+		dev_err(&pdev->dev, "no matching of_node, err = %d\n", version);
-+		ret = version;
-+		goto err_iio;
-+	}
-+
-+	info->version = version;
-+
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
- 	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
-@@ -311,8 +320,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 		goto err_irq;
- 	}
- 
--	info->version = exynos_adc_get_version(pdev);
--
- 	platform_set_drvdata(pdev, indio_dev);
- 
- 	indio_dev->name = dev_name(&pdev->dev);
--- 
-1.7.9.5
+Thanks,
+Thomas.
+
+>
+> - Kukjin
+>
+>> This patch series add pinctrl driver support for Samsung's Exynos5250 SoC.
+>> The first patch adds the required Exynos5250 SoC specific data which is
+>> used by the Samsung pinctrl driver to setup the pinctrl/pinmux/eint
+>> controllers. The second and third patches skips the wakeup interrupt and
+>> gpiolib registration if the pinctrl support is enabled for Exynos5250.
+>>
+>> Thomas Abraham (3):
+>>   pinctrl: exynos: add exynos5250 SoC specific data
+>>   gpio: samsung: skip gpiolib registration if pinctrl support is enabled
+>> for exynos5250
+>>   arm: exynos: skip wakeup interrupt registration for exynos5250 if
+>> pinctrl is enabled
+>>
+>>  arch/arm/mach-exynos/common.c     |    1 +
+>>  drivers/gpio/gpio-samsung.c       |    1 +
+>>  drivers/pinctrl/pinctrl-exynos.c  |  108
+>> +++++++++++++++++++++++++++++++++++++
+>>  drivers/pinctrl/pinctrl-samsung.c |    2 +
+>>  drivers/pinctrl/pinctrl-samsung.h |    1 +
+>>  5 files changed, 113 insertions(+), 0 deletions(-)
+>
