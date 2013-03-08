@@ -1,64 +1,302 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: s3c24xx pinctrl help
-Date: Fri, 8 Mar 2013 15:38:04 +0100
-Message-ID: <201303081538.04877.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [RFC 01/12] exynos-fimc-is: Adding device tree nodes
+Date: Fri, 08 Mar 2013 09:59:14 -0500
+Message-ID: <1362754765-2651-2-git-send-email-arun.kk@samsung.com>
+References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: s.nawrocki@samsung.com, kgene.kim@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
+Add the fimc-is node and the required pinctrl nodes for
+fimc-is driver for Exynos5. Also adds the DT binding documentation
+for the new fimc-is node.
 
-taking you up on your offer of helping, I would be cool if you could simply
-give me a push in the right direction :-) .
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
+---
+ .../devicetree/bindings/media/soc/exynos5-is.txt   |   81 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi          |   60 +++++++++++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   54 ++++++++++++-
+ arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++
+ 4 files changed, 201 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/soc/exynos5-is.txt
+ mode change 100644 => 100755 arch/arm/boot/dts/exynos5250-smdk5250.dts
+ mode change 100644 => 100755 arch/arm/boot/dts/exynos5250.dtsi
 
-
->From what I've seen so far, the bank handling itself is very similar between
-exynos and s3c24xx as the underlying structures already handle multiple widths
-of the register contents. More interesting is the eint handling around which I 
-couldn't wrap my head yet.
-
-The basic structure is again similar with special eint registers, but adds 
-some quirks. EINT banks are gpf (8 eints) and gpg (8 or 16 eints depending on
-the SoC).
-
-The current way on Exynos seems to be to mark the offset in the eint register
-and attach an irq_domain to the bank, which gets mapped to the eints starting
-at the offset. The eints seem to have a parent interrupt that is provided via
-the dt.
-
-On the S3C24xx the gpg bank is doing this similar but gpf is very strange.
-
-The first half of the bank (gpf0 to gpf3) is not handled in eintpend registers
-but in the main interrupt controller (bits 0 to 3), while the second
-half of gpf is handled in eintpend. The new interrupt declaration might show
-this better, which can be found at [0].
-
-An exception is the s3c2412 which adds still another quirk where each
-interrupt of gpf0 to gpf3 is represented in both the normal intc and eint
-registers, again for reference probably easier to see in [1].
-
-
-So I'm still quite stumped on how this could fit into the current framework
-and would be really glad for some small pointers :-)
-
-
-Thanks
-Heiko
-
-
-
-[0] https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/tree/arch/arm/mach-s3c24xx/irq.c?h=next/irq-s3c24xx-2&id=17453dd2e7df20612770ebbf1ab5d506a432210c#n574
-[1] https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/tree/arch/arm/mach-s3c24xx/irq.c?h=next/irq-s3c24xx-2&id=17453dd2e7df20612770ebbf1ab5d506a432210c#n712
+diff --git a/Documentation/devicetree/bindings/media/soc/exynos5-is.txt b/Documentation/devicetree/bindings/media/soc/exynos5-is.txt
+new file mode 100644
+index 0000000..e0fdf02
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/soc/exynos5-is.txt
+@@ -0,0 +1,81 @@
++Samsung EXYNOS SoC Camera Subsystem
++-----------------------------------
++
++The camera subsystem on Samsung Exynos5 SoC has some changes relative
++to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
++FIMC-LITE IPs but removed the FIMC-CAPTURE. Instead it has an improved
++FIMC-IS which can provide imate data DMA output.
++
++The device tree binding remain similar to the Exynos4 bindings which can
++be seen at samsung-fimc.txt with the addition of fimc-is sub-node which will
++be explained here.
++
++fimc-is subnode of camera node
++------------------------------
++
++Required properties:
++
++- compatible		: must be "samsung,exynos5250-fimc-is"
++- reg			: physical base address and size of the memory mapped
++			  registers
++- interrupt-parent	: Parent interrupt controller
++- interrupts		: fimc-is interrupt to the parent combiner
++
++Board specific properties:
++
++- pinctrl-names    : pinctrl names for camera port pinmux control, at least
++		     "default" needs to be specified.
++- pinctrl-0...N	   : pinctrl properties corresponding to pinctrl-names
++
++Sensor sub-nodes:
++
++FIMC-IS IP supports custom built sensors to be controlled exclusively by
++the FIMC-IS firmware. These sensor properties are to be defined here.
++Sensor nodes are described in the same way as in generic sensors used in
++Exynos4 and described in samsung-fimc.txt.
++
++Example:
++
++SoC common node:
++
++		fimc_is: fimc-is@13000000 {
++			compatible = "samsung,exynos5250-fimc-is";
++			reg = <0x13000000 0x200000>;
++			interrupt-parent = <&combiner>;
++			interrupts = <19 1>;
++			status = "disabled";
++		};
++
++Board specific node:
++
++		fimc-is@13000000 {
++			status = "okay";
++			pinctrl-0 =
++				<&cam_port_a_clk_active
++				&cam_bayer_clk_active
++				&isp_uart
++				&cam_i2c0
++				&cam_i2c1>;
++			pinctrl-names = "default";
++			s5k4e5 {
++				compatible = "samsung,s5k4e5";
++				gpios = <&gpx1 2 1>;
++				clock-frequency = <24000000>;
++				port {
++					is_s5k4e5_ep: endpoint {
++						remote-endpoint = <&csis0_ep>;
++					};
++				};
++			};
++			s5k6a3 {
++				compatible = "samsung,s5k6a3";
++				gpios = <&gpx1 0 1>;
++				clock-frequency = <24000000>;
++				port {
++					is_s5k6a3_ep: endpoint {
++						remote-endpoint = <&csis1_ep>;
++					};
++				};
++			};
++		};
++
+diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+index 3caaa21..320c22b 100644
+--- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+@@ -556,6 +556,38 @@
+ 	};
+ 
+ 	pinctrl@13400000 {
++		gpe1: gpe1 {
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpf0: gpf0 {
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpf1: gpf1 {
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpg2: gpg2 {
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
+ 		gph0: gph0 {
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+@@ -594,6 +626,34 @@
+ 			samsung,pin-pud = <0>;
+ 			samsung,pin-drv = <0>;
+ 		};
++
++		cam_bayer_clk_active: cam-bayer-clk-active {
++			samsung,pins = "gpg2-1";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
++
++		isp_uart: isp-uart {
++			samsung,pins = "gpe1-0", "gpe1-1";
++			samsung,pin-function = <3>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
++
++		cam_i2c0: cam-i2c0 {
++			samsung,pins = "gpf0-0", "gpf0-1";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
++
++		cam_i2c1: cam-i2c1 {
++			samsung,pins = "gpf0-2", "gpf0-3";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
+ 	};
+ 
+ 	pinctrl_3: pinctrl@03680000 {
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+old mode 100644
+new mode 100755
+index 356e014..0a2da64
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -92,6 +92,7 @@
+ 
+ 		m5mols@1f {
+ 			compatible = "fujitsu,m-5mols";
++			status = "disabled";
+ 			reg = <0x1F>;
+ 			gpios = <&gpx3 3 0xf>, <&gpx1 2 1>;
+ 			clock-frequency = <24000000>;
+@@ -242,7 +243,7 @@
+ 
+ 		csis_0: csis@13C20000 {
+ 			status = "okay";
+-			clock-frequency = <166000000>;
++			clock-frequency = <267000000>; /* s5k4e5 */
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 
+@@ -250,7 +251,7 @@
+ 			port@3 {
+ 				reg = <3>;
+ 				csis0_ep: endpoint {
+-					remote-endpoint = <&m5mols_ep>;
++					remote-endpoint = <&is_s5k4e5_ep>;
+ 					data-lanes = <1 2 3 4>;
+ 					samsung,csis-hs-settle = <12>;
+ 					samsung,csis-wclk;
+@@ -258,5 +259,54 @@
+ 			};
+ 		};
+ 
++		csis_1: csis@13C30000 {
++			status = "okay";
++			clock-frequency = <160000000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			/* Camera D (4) MIPI CSI-2 (CSIS1) */
++			port@4 {
++				reg = <4>;
++				csis1_ep: endpoint {
++					remote-endpoint = <&is_s5k6a3_ep>;
++					data-lanes = <1>;
++					samsung,csis-hs-settle = <18>;
++					samsung,csis-wclk;
++				};
++			};
++		};
++
++		fimc-is@13000000 {
++			status = "okay";
++			pinctrl-0 =
++				<&cam_port_a_clk_active
++				&cam_bayer_clk_active
++				&isp_uart
++				&cam_i2c0
++				&cam_i2c1>;
++			pinctrl-names = "default";
++			s5k4e5 {
++				compatible = "samsung,s5k4e5";
++				gpios = <&gpx1 2 1>;
++				clock-frequency = <24000000>;
++				port {
++					is_s5k4e5_ep: endpoint {
++						remote-endpoint = <&csis0_ep>;
++					};
++				};
++			};
++			s5k6a3 {
++				compatible = "samsung,s5k6a3";
++				gpios = <&gpx1 0 1>;
++				clock-frequency = <24000000>;
++				port {
++					is_s5k6a3_ep: endpoint {
++						remote-endpoint = <&csis1_ep>;
++					};
++				};
++			};
++		};
++
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+old mode 100644
+new mode 100755
+index 564c05f..e18df49
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -410,5 +410,13 @@
+ 			bus-width = <2>;
+ 			status = "disabled";
+ 		};
++
++		fimc_is: fimc-is@13000000 {
++			compatible = "samsung,exynos5250-fimc-is";
++			reg = <0x13000000 0x200000>;
++			interrupt-parent = <&combiner>;
++			interrupts = <19 1>;
++			status = "disabled";
++		};
+ 	};
+ };
+-- 
+1.7.9.5
