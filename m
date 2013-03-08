@@ -1,60 +1,54 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Use wfi macro in platform_do_lowpower
-Date: Fri,  8 Mar 2013 16:39:48 +0530
-Message-ID: <1362740988-16483-1-git-send-email-tushar.behera@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 00/23] RFC: exynos multiplatform support
+Date: Fri, 8 Mar 2013 12:52:28 +0000
+Message-ID: <201303081252.28321.arnd@arndb.de>
+References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <20130307072203.GC3451@avionic-0098.mockup.avionic-design.de> <3271021.WsP8f9ZEBl@flatron>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:54318 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752732Ab3CHLU0 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.9]:60316 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757097Ab3CHMwr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Mar 2013 06:20:26 -0500
-Received: by mail-pa0-f43.google.com with SMTP id bh2so1256184pad.16
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Mar 2013 03:20:25 -0800 (PST)
+	Fri, 8 Mar 2013 07:52:47 -0500
+In-Reply-To: <3271021.WsP8f9ZEBl@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, patches@linaro.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-As per commit b3377d186572 ("ARM: 7064/1: vexpress: Use wfi macro
-in platform_do_lowpower."), wfi macro should be used instead
-of the hardcoded WFI instruction.
+On Friday 08 March 2013, Tomasz Figa wrote:
+> I have a question regarding making this an MFD driver.
+> 
+> As you know, the main clocksource driver must be initialized early, from 
+> init_time callback of machine_desc. How does using the MFD subsystem fit 
+> into this scheme?
+> 
+> P.S. I'm still not convinced about any benefits of options 2 and 3 over 
+> option 1, which has the obvious advantage of requiring least amount of 
+> changes to existing code and not binding the PWM and clocksource drivers 
+> together (on Exynos SoCs only the PWM driver is used, clocksource is 
+> handled by different hardware block - MCT).
 
-This fixes following oops when the kernel is compiled in Thumb-2 mode
-on EXYNOS5. (Tested on EXYNOS5250 based Arndale board)
+I think the main motivation for the MFD here is that you have a shared
+register set, which would be described as a single device node in DT
+as its natural representation, but it's not easy to have two drivers
+be responsible for the same platform device. Similarly, the Linux
+resource handling tries hard to ensure that multiple device drivers
+do not share a single register set.
 
-$ reboot
-Disabling non-boot CPUs ...
-IRQ153 no longer affine to CPU1
-CPU1: shutdown
-Internal error: Oops - undefined instruction: 0 [#1] PREEMPT SMP THUMB2
-Modules linked in:
-CPU: 1    Not tainted  (3.9.0-rc1-00015-gce76372 #1)
-PC is at 0xc065858e
-LR is at exynos_cpu_die+0x53/0xc0
+If you have an MFD driver, that could bind do the platform_device created
+from the DT device node, and provide a simple interface for both the
+timer and the pwm driver to talk to, without exposing those registers
+directly. Or you could use the syscon regmap approach to expose
+those registers in a more controlled way. With syscon, you don't actually
+have to write an MFD driver but could just use the one that is already
+there.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/mach-exynos/hotplug.c |    8 +-------
- 1 files changed, 1 insertions(+), 7 deletions(-)
+Since you want the timer driver to be available really early, you could
+also make that timer driver the master and expose an interface for
+the PWM driver to use.
 
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index c3f825b..d9712fe 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -99,13 +99,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
- 		if (cpu == 1)
- 			__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
- 
--		/*
--		 * here's the WFI
--		 */
--		asm(".word	0xe320f003\n"
--		    :
--		    :
--		    : "memory", "cc");
-+		wfi();
- 
- 		if (pen_release == cpu_logical_map(cpu)) {
- 			/*
--- 
-1.7.4.1
+	Arnd
