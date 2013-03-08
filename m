@@ -1,50 +1,34 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: State of pinctrl and exynos5250?
-Date: Thu, 7 Mar 2013 20:55:42 -0800
-Message-ID: <CAD=FV=WdhwN9RQRPKFc3G8euCeDfqdhz69KZJzqD5mJSgV9O-Q@mail.gmail.com>
-References: <CAD=FV=XTHs5De3hrZu5BMPD3sTzBLikHwdS88XA0KOn-XG499Q@mail.gmail.com>
-	<1534249.MsU3ROUVJz@flatron>
-	<CAD=FV=XMpL7z-UX4UgqaUv-=QcJAPOD3bKbLVTRsR15RTG1A2Q@mail.gmail.com>
-	<CAJuYYwR41V4m_tZU5Usksb7L8ynOAQpK2i3QP33JDmW9YDkvPw@mail.gmail.com>
-	<CACRpkdaCzmW5C1tEm5D=WRyoZc5+gGf2gVtTt1QSkF8SNKrjRg@mail.gmail.com>
-	<CAD=FV=XGm+aeb2VFsbUit13VaoQFVd6vz3-_4zjQUCc0PPOLCg@mail.gmail.com>
-	<CACRpkdZ0u2xNEYr=DM4tsfnT16p1Q-ykeEVDkziiLXJgJ=TiEg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/3] pinctrl: exynos: add exynos5250 SoC specific data
+Date: Fri, 8 Mar 2013 08:09:22 +0100
+Message-ID: <CACRpkdbFZyissz1ZHjSHL29LoC-LVNNm1MoydVk9AMMD5vfGRw@mail.gmail.com>
+References: <1362568712-13586-1-git-send-email-thomas.abraham@linaro.org>
+	<1362568712-13586-2-git-send-email-thomas.abraham@linaro.org>
+	<CACRpkdZ37FutKzwSSF7w425Nh=jPUU-FXf48HPs3oUXO9sJ0oA@mail.gmail.com>
+	<021201ce1b24$3e46e810$bad4b830$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:43072 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752172Ab3CHEzo (ORCPT
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:43007 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932697Ab3CHHJW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Mar 2013 23:55:44 -0500
-Received: by mail-lb0-f172.google.com with SMTP id n8so1051042lbj.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Mar 2013 20:55:43 -0800 (PST)
-In-Reply-To: <CACRpkdZ0u2xNEYr=DM4tsfnT16p1Q-ykeEVDkziiLXJgJ=TiEg@mail.gmail.com>
+	Fri, 8 Mar 2013 02:09:22 -0500
+Received: by mail-ie0-f169.google.com with SMTP id 13so1685710iea.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Mar 2013 23:09:22 -0800 (PST)
+In-Reply-To: <021201ce1b24$3e46e810$bad4b830$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Prathyush <prathyush.k@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Olof Johansson <olofj@chromium.org>, Simon Glass <sjg@chromium.org>, Katie Roberts-Hoffman <katierh@chromium.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Will Newton <will.newton@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, patches@linaro.org
 
-Linus,
+On Thu, Mar 7, 2013 at 12:09 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> [Me]
+>> So shall I merge these three patches to the pinctrl tree or not?
+>>
+> Hi Linus, this series is already in Samsung tree with your ack.
 
-On Thu, Mar 7, 2013 at 6:04 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Mar 7, 2013 at 5:13 PM, Doug Anderson <dianders@chromium.org> wrote:
->
->> ...I think the most important issue at hand is the device tree
->> bindings for pinmux on this device.  It sounds like you are in
->> agreement that the best thing is to have a pinmux specified per-slot.
->
-> I don't know, Stephen's point to have one single pinctrl set-up for the
-> entire device seems perfectly valid, why do you need to specify it
-> per-slot at all?
+OK good, thanks!
 
-OK by me.  It seemed more "pure" to specify it per-slot (in case we
-ever did have a struct device per slot, it would make live easier).
-...but it doesn't seem incorrect to have it once for the entire
-device.
-
-:)
-
--Doug
-
-P.S. sorry for double mail for some people...
+Yours,
+Linus Walleij
