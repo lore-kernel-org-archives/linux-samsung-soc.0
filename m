@@ -1,70 +1,38 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 00/23] RFC: exynos multiplatform support
-Date: Fri, 08 Mar 2013 01:40:53 +0100
-Message-ID: <3271021.WsP8f9ZEBl@flatron>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <201303070302.46593.arnd@arndb.de> <20130307072203.GC3451@avionic-0098.mockup.avionic-design.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: State of pinctrl and exynos5250?
+Date: Fri, 8 Mar 2013 03:04:53 +0100
+Message-ID: <CACRpkdZ0u2xNEYr=DM4tsfnT16p1Q-ykeEVDkziiLXJgJ=TiEg@mail.gmail.com>
+References: <CAD=FV=XTHs5De3hrZu5BMPD3sTzBLikHwdS88XA0KOn-XG499Q@mail.gmail.com>
+	<1534249.MsU3ROUVJz@flatron>
+	<CAD=FV=XMpL7z-UX4UgqaUv-=QcJAPOD3bKbLVTRsR15RTG1A2Q@mail.gmail.com>
+	<CAJuYYwR41V4m_tZU5Usksb7L8ynOAQpK2i3QP33JDmW9YDkvPw@mail.gmail.com>
+	<CACRpkdaCzmW5C1tEm5D=WRyoZc5+gGf2gVtTt1QSkF8SNKrjRg@mail.gmail.com>
+	<CAD=FV=XGm+aeb2VFsbUit13VaoQFVd6vz3-_4zjQUCc0PPOLCg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f41.google.com ([74.125.83.41]:61341 "EHLO
-	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759872Ab3CHAlB (ORCPT
+Received: from mail-ie0-f178.google.com ([209.85.223.178]:32894 "EHLO
+	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759329Ab3CHCEy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Mar 2013 19:41:01 -0500
-Received: by mail-ee0-f41.google.com with SMTP id c13so777858eek.28
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Mar 2013 16:40:59 -0800 (PST)
-In-Reply-To: <20130307072203.GC3451@avionic-0098.mockup.avionic-design.de>
+	Thu, 7 Mar 2013 21:04:54 -0500
+Received: by mail-ie0-f178.google.com with SMTP id c13so1426887ieb.23
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Mar 2013 18:04:54 -0800 (PST)
+In-Reply-To: <CAD=FV=XGm+aeb2VFsbUit13VaoQFVd6vz3-_4zjQUCc0PPOLCg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Prathyush <prathyush.k@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Olof Johansson <olofj@chromium.org>, Simon Glass <sjg@chromium.org>, Katie Roberts-Hoffman <katierh@chromium.org>, Will Newton <will.newton@imgtec.com>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>
 
-On Thursday 07 of March 2013 08:22:03 Thierry Reding wrote:
-> On Thu, Mar 07, 2013 at 03:02:46AM +0000, Arnd Bergmann wrote:
-> > On Wednesday 06 March 2013, Thierry Reding wrote:
-> > > > Option 2 would probably come down to having a trivial MFD driver
-> > > > exposing a regmap. You can probably reuse drivers/mfd/syscon.c
-> > > > for this and make the node compatible with "syscon" to designate
-> > > > the clock registers as a system-wide resource, making the other
-> > > > device nodes register-less.> > 
-> > > I think option 2 is the standard method if one hardware block
-> > > provides
-> > > several logical devices. I find it to be a pretty nice solution to
-> > > this
-> > > problem. We also have precedent in the PWM subsystem. The TWL chips
-> > > for
-> > > instance use it to create a platform device which is later driven by
-> > > a
-> > > PWM driver.
-> > 
-> > One difference though is that the TWL chip is a heterogenous MFD that
-> > has a lot of different sub-devices, where in case of Exynos the timer
-> > device has a set of identical units, each of which can be used either
-> > as a PWM or as a clocksource or other timer.
-> 
-> I didn't know that. However I still making this an MFD driver is a good
-> fit because it'll move the logic of defining the mode of each unit is
-> kept in a parent driver which can instantiate the proper child devices
-> for the corresponding subsystems.
-> 
-> One big disadvantage of this approach is that if this is continued there
-> is a risk that MFD will turn into a dump for all kinds of devices that
-> provide more than a single service.
-> 
-> So if people prefer option 3 I'm fine with it as well.
+On Thu, Mar 7, 2013 at 5:13 PM, Doug Anderson <dianders@chromium.org> wrote:
 
-I have a question regarding making this an MFD driver.
+> ...I think the most important issue at hand is the device tree
+> bindings for pinmux on this device.  It sounds like you are in
+> agreement that the best thing is to have a pinmux specified per-slot.
 
-As you know, the main clocksource driver must be initialized early, from 
-init_time callback of machine_desc. How does using the MFD subsystem fit 
-into this scheme?
+I don't know, Stephen's point to have one single pinctrl set-up for the
+entire device seems perfectly valid, why do you need to specify it
+per-slot at all?
 
-P.S. I'm still not convinced about any benefits of options 2 and 3 over 
-option 1, which has the obvious advantage of requiring least amount of 
-changes to existing code and not binding the PWM and clocksource drivers 
-together (on Exynos SoCs only the PWM driver is used, clocksource is 
-handled by different hardware block - MCT).
-
-Best regards,
-Tomasz
+Yours,
+Linus Walleij
