@@ -1,244 +1,599 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [RFC 02/12] exynos-fimc-is: Adding ARCH support for fimc-is
-Date: Fri, 08 Mar 2013 09:59:15 -0500
-Message-ID: <1362754765-2651-3-git-send-email-arun.kk@samsung.com>
+Subject: [RFC 03/12] exynos-fimc-is: Adds fimc-is driver core files
+Date: Fri, 08 Mar 2013 09:59:16 -0500
+Message-ID: <1362754765-2651-4-git-send-email-arun.kk@samsung.com>
 References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:8636 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932528Ab3CHOj5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Mar 2013 09:39:57 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 Cc: s.nawrocki@samsung.com, kgene.kim@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Adds new clocks needed for ISP submodules in the camera
-subsystem of Exynos5250. Also adds the AUXDATA entry in
-mach-exynos5-dt.c.
+This driver is for the FIMC-IS IP available in Samsung Exynos5
+SoC onwards. This patch adds the core files for the new driver.
 
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
 ---
- arch/arm/mach-exynos/clock-exynos5.c           |  129 ++++++++++++++++++++++++
- arch/arm/mach-exynos/include/mach/map.h        |    2 +
- arch/arm/mach-exynos/include/mach/regs-clock.h |    7 ++
- arch/arm/mach-exynos/mach-exynos5-dt.c         |    2 +
- 4 files changed, 140 insertions(+)
+ drivers/media/platform/exynos5-is/fimc-is-core.c |  421 ++++++++++++++++++++++
+ drivers/media/platform/exynos5-is/fimc-is-core.h |  140 +++++++
+ 2 files changed, 561 insertions(+)
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.h
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 4536515..b2c0825 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -28,6 +28,8 @@
- 
- #include "common.h"
- 
-+#define FIMC_IS_NAME "exynos5-fimc-is"
+diff --git a/drivers/media/platform/exynos5-is/fimc-is-core.c b/drivers/media/platform/exynos5-is/fimc-is-core.c
+new file mode 100644
+index 0000000..2a257c5
+--- /dev/null
++++ b/drivers/media/platform/exynos5-is/fimc-is-core.c
+@@ -0,0 +1,421 @@
++/*
++ * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
++*
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Arun Kumar K <arun.kk@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
- #ifdef CONFIG_PM_SLEEP
- static struct sleep_save exynos5_clock_save[] = {
- 	SAVE_ITEM(EXYNOS5_CLKSRC_MASK_TOP),
-@@ -863,6 +865,16 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.enable		= exynos5_clk_ip_gscl_ctrl,
- 		.ctrlbit	= (1 << 4),
- 	}, {
-+		.name		= "fimc-is0",
-+		.devname	= FIMC_IS_NAME,
-+		.enable		= exynos5_clk_ip_isp0_ctrl,
-+		.ctrlbit	= (0xFFC << 20) | (0xFF << 0),
-+	}, {
-+		.name		= "fimc-is1",
-+		.devname	= FIMC_IS_NAME,
-+		.enable		= exynos5_clk_ip_isp1_ctrl,
-+		.ctrlbit	= (0x3 << 12) | (0x7 << 0)
-+	}, {
- 		.name		= "csis",
- 		.devname	= "s5p-mipi-csis.0",
- 		.enable		= exynos5_clk_ip_gscl_ctrl,
-@@ -1248,6 +1260,107 @@ static struct clksrc_clk exynos5_clk_sclk_fimd1 = {
- 	.reg_div = { .reg = EXYNOS5_CLKDIV_DISP1_0, .shift = 0, .size = 4 },
- };
- 
-+/* For ACLK_400_ISP */
-+static struct clksrc_clk exynos5_clk_mout_aclk_400_isp = {
-+	.clk    = {
-+		.name           = "mout_aclk_400_isp",
-+		.parent		= &exynos5_clk_mout_mpll_user.clk,
++#include <linux/bug.h>
++#include <linux/ctype.h>
++#include <linux/device.h>
++#include <linux/debugfs.h>
++#include <linux/delay.h>
++#include <linux/errno.h>
++#include <linux/firmware.h>
++#include <linux/fs.h>
++#include <linux/gpio.h>
++#include <plat/gpio-cfg.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/module.h>
++#include <linux/types.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/slab.h>
++#include <linux/videodev2.h>
++#include <linux/of.h>
++#include <linux/of_gpio.h>
++#include <linux/pinctrl/consumer.h>
++
++#include <media/v4l2-device.h>
++#include <media/v4l2-ioctl.h>
++#include <media/v4l2-mem2mem.h>
++#include <media/v4l2-of.h>
++#include <media/videobuf2-core.h>
++#include <media/videobuf2-dma-contig.h>
++
++#include "fimc-is.h"
++
++int fimc_is_debug;
++module_param(fimc_is_debug, int, S_IRUGO | S_IWUSR);
++MODULE_PARM_DESC(fimc_is_debug, "Debug level for exynos-fimc-is driver");
++
++static char *fimc_is_clock_name[] = {
++	[IS_CLK_GATE0]		= "fimc-is0",
++	[IS_CLK_GATE1]		= "fimc-is1",
++	[IS_CLK_266]		= "aclk_266_isp",
++	[IS_CLK_266_DIV0]	= "aclk_266_isp_div0",
++	[IS_CLK_266_DIV1]	= "aclk_266_isp_div1",
++	[IS_CLK_266_DIV_MPWM]	= "aclk_266_isp_divmpwm",
++	[IS_CLK_400]		= "aclk_400_isp",
++	[IS_CLK_400_DIV0]	= "aclk_400_isp_div0",
++	[IS_CLK_400_DIV1]	= "aclk_400_isp_div1",
++};
++
++static int fimc_is_create_sensor_subdevs(struct fimc_is *is)
++{
++	struct fimc_is_platdata *pdata = is->pdata;
++	int ret;
++
++	if (pdata->sensor_data[SENSOR_CAM0].enabled) {
++		/* Sensor0 */
++		ret = fimc_is_sensor_subdev_create(&is->sensor[SENSOR_CAM0],
++				&pdata->sensor_data[SENSOR_CAM0],
++				&is->pipeline);
++		if (ret < 0)
++			is_err("Error creating sensor0 subdev");
++	}
++
++	if (pdata->sensor_data[SENSOR_CAM1].enabled) {
++		/* Sensor1 */
++		ret = fimc_is_sensor_subdev_create(&is->sensor[SENSOR_CAM1],
++				&pdata->sensor_data[SENSOR_CAM1],
++				&is->pipeline);
++		if (ret < 0)
++			is_err("Error creating sensor1 subdev");
++	}
++
++	return 0;
++}
++
++static int fimc_is_unregister_sensor_subdevs(struct fimc_is *is)
++{
++	struct fimc_is_platdata *pdata = is->pdata;
++
++	if (pdata->sensor_data[SENSOR_CAM0].enabled)
++		fimc_is_sensor_subdev_destroy(&is->sensor[SENSOR_CAM0]);
++	if (pdata->sensor_data[SENSOR_CAM1].enabled)
++		fimc_is_sensor_subdev_destroy(&is->sensor[SENSOR_CAM1]);
++
++	return 0;
++}
++
++static struct fimc_is_platdata *fimc_is_parse_dt(struct device *dev)
++{
++	struct device_node *np = dev->of_node;
++	struct device_node *child, *ep, *port;
++	struct fimc_is_platdata *pdata;
++	struct fimc_is_sensor_data *sensor_data;
++	struct v4l2_of_endpoint endpoint;
++	unsigned int i, snum;
++	int num_gpios;
++
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata) {
++		is_err("Memory allocation for pdata failed\n");
++		return NULL;
++	}
++
++	/* Parse sensor properties */
++	for (snum = 0; snum < FIMC_IS_NUM_SENSORS; snum++) {
++
++		child = of_get_next_child(np, child);
++		if (!child) {
++			is_err("Child node not found\n");
++			continue;
++		}
++
++		sensor_data = &pdata->sensor_data[snum];
++		num_gpios = of_gpio_named_count(child, "gpios");
++		if (num_gpios < 0) {
++			is_err("Sensor gpio property not found\n");
++			of_node_put(child);
++			goto exit;
++		}
++		sensor_data->num_gpios = num_gpios;
++		of_property_read_string(child, "compatible",
++				(const char **)&sensor_data->name);
++		is_dbg(1, "Rear sensor name : %s\n", sensor_data->name);
++		for (i = 0; i < num_gpios; i++) {
++			sensor_data->gpios[i] =
++				of_get_named_gpio(child, "gpios", i);
++		}
++		sensor_data->enabled = 1;
++
++		/* Parse ports */
++		ep = child;
++		while ((ep = of_get_next_child(ep, NULL))) {
++			if (!of_node_cmp(ep->name, "endpoint"))
++				break;
++			of_node_put(ep);
++		};
++		if (!ep) {
++			is_err("Sensor end point not defined\n");
++			continue;
++		}
++		port = of_parse_phandle(ep, "remote-endpoint", 0);
++		if (port) {
++			v4l2_of_parse_endpoint(port, &endpoint);
++			sensor_data->csi_id = endpoint.port;
++		}
++
++		of_node_put(port);
++		of_node_put(ep);
++		of_node_put(child);
++	}
++exit:
++	return pdata;
++}
++
++static void fimc_is_clk_put(struct fimc_is *is)
++{
++	int i;
++
++	for (i = 0; i < IS_CLK_MAX_NUM; i++) {
++		if (IS_ERR_OR_NULL(is->clock[i]))
++			continue;
++		clk_unprepare(is->clock[i]);
++		clk_put(is->clock[i]);
++		is->clock[i] = NULL;
++	}
++}
++
++static int fimc_is_clk_get(struct fimc_is *is)
++{
++	struct device *dev = &is->pdev->dev;
++	int i, ret;
++
++	for (i = 0; i < IS_CLK_MAX_NUM; i++) {
++		is->clock[i] = clk_get(dev, fimc_is_clock_name[i]);
++		if (IS_ERR(is->clock[i]))
++			goto err;
++		ret = clk_prepare(is->clock[i]);
++		if (ret < 0) {
++			clk_put(is->clock[i]);
++			is->clock[i] = NULL;
++			goto err;
++		}
++	}
++	return 0;
++err:
++	fimc_is_clk_put(is);
++	is_err("Failed to get clock: %s\n", fimc_is_clock_name[i]);
++	return -ENXIO;
++}
++
++static int fimc_is_clk_cfg(struct fimc_is *is)
++{
++	int ret;
++
++	ret = fimc_is_clk_get(is);
++	if (ret)
++		return ret;
++
++	/* Set rates */
++	ret = clk_set_rate(is->clock[IS_CLK_400_DIV0], 200 * 1000000);
++	ret |= clk_set_rate(is->clock[IS_CLK_400_DIV1], 100 * 1000000);
++	ret |= clk_set_rate(is->clock[IS_CLK_266_DIV0], 134 * 1000000);
++	ret |= clk_set_rate(is->clock[IS_CLK_266_DIV1], 68 * 1000000);
++	ret |= clk_set_rate(is->clock[IS_CLK_266_DIV_MPWM], 34 * 1000000);
++
++	if (ret)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int __devinit fimc_is_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct fimc_is_platdata *pdata;
++	struct resource *res;
++	struct fimc_is *is;
++	struct pinctrl *pctrl;
++	void __iomem *regs;
++	int irq, ret;
++
++	pr_debug("FIMC-IS Probe Enter\n");
++
++	pctrl = devm_pinctrl_get_select_default(dev);
++	if (IS_ERR(pctrl)) {
++		dev_err(dev, "Pinctrl configuration failed\n");
++		return -EINVAL;
++	}
++
++	if (!pdev->dev.of_node) {
++		dev_err(dev, "Null platform data\n");
++		return -EINVAL;
++	}
++
++	pdata = fimc_is_parse_dt(dev);
++	if (!pdata) {
++		dev_err(dev, "Parse DT failed\n");
++		return -EINVAL;
++	}
++
++	is = devm_kzalloc(&pdev->dev, sizeof(*is), GFP_KERNEL);
++	if (!is)
++		return -ENOMEM;
++
++	is->pdev = pdev;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	regs = devm_request_and_ioremap(dev, res);
++	if (regs == NULL) {
++		dev_err(dev, "Failed to obtain io memory\n");
++		return -ENOENT;
++	}
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(dev, "Failed to get IRQ\n");
++		return irq;
++	}
++
++	ret = fimc_is_clk_cfg(is);
++	if (ret < 0) {
++		dev_err(dev, "Clock config failed\n");
++		goto err_clk;
++	}
++
++	platform_set_drvdata(pdev, is);
++	pm_runtime_enable(dev);
++
++	ret = pm_runtime_get_sync(dev);
++	if (ret < 0)
++		goto err_clk;
++
++	is->alloc_ctx = vb2_dma_contig_init_ctx(dev);
++	if (IS_ERR(is->alloc_ctx)) {
++		ret = PTR_ERR(is->alloc_ctx);
++		goto err_pm;
++	}
++
++	/* Create sensor subdevs */
++	is->pdata = pdata;
++	ret = fimc_is_create_sensor_subdevs(is);
++	if (ret < 0)
++		goto err_sensor_sd;
++
++	/* Init FIMC Pipeline */
++	ret = fimc_is_pipeline_init(&is->pipeline, 0, is);
++	if (ret < 0)
++		goto err_sd;
++
++	/* Init FIMC Interface */
++	ret = fimc_is_interface_init(&is->interface, regs, irq);
++	if (ret < 0)
++		goto err_sd;
++
++	dev_dbg(dev, "FIMC-IS registered successfully\n");
++
++	return 0;
++
++err_sd:
++	fimc_is_pipeline_destroy(&is->pipeline);
++err_sensor_sd:
++	fimc_is_unregister_sensor_subdevs(is);
++err_vb:
++	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
++err_pm:
++	pm_runtime_put(dev);
++err_clk:
++	fimc_is_clk_put(is);
++
++	return ret;
++}
++
++int fimc_is_clk_enable(struct fimc_is *is)
++{
++	clk_enable(is->clock[IS_CLK_GATE0]);
++	clk_enable(is->clock[IS_CLK_GATE1]);
++	return 0;
++}
++
++void fimc_is_clk_disable(struct fimc_is *is)
++{
++	clk_disable(is->clock[IS_CLK_GATE0]);
++	clk_disable(is->clock[IS_CLK_GATE1]);
++}
++
++static int fimc_is_pm_resume(struct device *dev)
++{
++	struct fimc_is *is = dev_get_drvdata(dev);
++	int ret;
++
++	ret = fimc_is_clk_enable(is);
++	if (ret < 0)
++		dev_err(dev, "Could not enable clocks\n");
++
++	return 0;
++}
++
++static int fimc_is_pm_suspend(struct device *dev)
++{
++	struct fimc_is *is = dev_get_drvdata(dev);
++
++	fimc_is_clk_disable(is);
++	return 0;
++}
++
++static int fimc_is_runtime_resume(struct device *dev)
++{
++	return fimc_is_pm_resume(dev);
++}
++
++static int fimc_is_runtime_suspend(struct device *dev)
++{
++	return fimc_is_pm_suspend(dev);
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int fimc_is_resume(struct device *dev)
++{
++	return fimc_is_pm_resume(dev);
++}
++
++static int fimc_is_suspend(struct device *dev)
++{
++	return fimc_is_pm_suspend(dev);
++}
++#endif /* CONFIG_PM_SLEEP */
++
++static int fimc_is_remove(struct platform_device *pdev)
++{
++	struct fimc_is *is = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++
++	pm_runtime_disable(dev);
++	pm_runtime_set_suspended(dev);
++	fimc_is_pipeline_destroy(&is->pipeline);
++	fimc_is_unregister_sensor_subdevs(is);
++	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
++	fimc_is_clk_put(is);
++
++	return 0;
++}
++
++static struct platform_device_id fimc_is_driver_ids[] = {
++	{
++		.name		= "exynos5-fimc-is",
++		.driver_data	= 0,
 +	},
-+	.sources = &exynos5_clkset_aclk,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP1, .shift = 24, .size = 1 },
++};
++MODULE_DEVICE_TABLE(platform, fimc_is_driver_ids);
++
++static const struct dev_pm_ops fimc_is_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(fimc_is_suspend, fimc_is_resume)
++	SET_RUNTIME_PM_OPS(fimc_is_runtime_suspend, fimc_is_runtime_resume,
++			   NULL)
 +};
 +
-+static struct clksrc_clk exynos5_clk_dout_aclk_400_isp = {
-+	.clk    = {
-+		.name           = "dout_aclk_400_isp",
-+		.parent         = &exynos5_clk_mout_aclk_400_isp.clk,
-+	},
-+	.reg_div = { .reg = EXYNOS5_CLKDIV_TOP1, .shift = 20, .size = 3 },
++static struct platform_driver fimc_is_driver = {
++	.probe		= fimc_is_probe,
++	.remove		= fimc_is_remove,
++	.id_table	= fimc_is_driver_ids,
++	.driver = {
++		.name	= FIMC_IS_DRV_NAME,
++		.owner	= THIS_MODULE,
++		.pm	= &fimc_is_pm_ops,
++	}
++};
++module_platform_driver(fimc_is_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Arun Kumar K <arun.kk@samsung.com>");
++MODULE_DESCRIPTION("Samsung Exynos5 (FIMC-IS) Imaging Subsystem driver");
+diff --git a/drivers/media/platform/exynos5-is/fimc-is-core.h b/drivers/media/platform/exynos5-is/fimc-is-core.h
+new file mode 100644
+index 0000000..9e09bea
+--- /dev/null
++++ b/drivers/media/platform/exynos5-is/fimc-is-core.h
+@@ -0,0 +1,140 @@
++/*
++ * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
++ *
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ *  Arun Kumar K <arun.kk@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#ifndef FIMC_IS_CORE_H_
++#define FIMC_IS_CORE_H_
++
++#include <linux/bug.h>
++#include <linux/clk.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/firmware.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/module.h>
++#include <linux/types.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/slab.h>
++#include <linux/videodev2.h>
++
++#include <asm/barrier.h>
++#include <linux/sizes.h>
++#include <linux/io.h>
++#include <linux/irqreturn.h>
++#include <linux/platform_device.h>
++#include <linux/sched.h>
++#include <linux/spinlock.h>
++
++#include <media/media-entity.h>
++#include <media/videobuf2-core.h>
++#include <media/v4l2-ctrls.h>
++#include <media/v4l2-device.h>
++#include <media/v4l2-mem2mem.h>
++#include <media/v4l2-mediabus.h>
++#include <media/s5p_fimc.h>
++
++#define FIMC_IS_DRV_NAME		"exynos5-fimc-is"
++#define FIMC_IS_CLK_NAME		"fimc_is"
++
++#define FIMC_IS_DEBUG_MSG		0x3f
++#define FIMC_IS_DEBUG_LEVEL		3
++
++#define FIMC_IS_COMMAND_TIMEOUT		(3*HZ)
++#define FIMC_IS_STARTUP_TIMEOUT		(3*HZ)
++#define FIMC_IS_SHUTDOWN_TIMEOUT	(10*HZ)
++
++#define FW_SHARED_OFFSET		(0x8C0000)
++#define DEBUG_CNT			(500*1024)
++#define DEBUG_OFFSET			(0x840000)
++#define DEBUGCTL_OFFSET			(0x8BD000)
++#define DEBUG_FCOUNT			(0x8C64C0)
++
++#define FIMC_IS_MAX_INSTANCES		1
++
++#define FIMC_IS_MAX_GPIOS		32
++#define FIMC_IS_NUM_SENSORS		2
++
++#define FIMC_IS_MAX_PLANES		3
++#define FIMC_IS_NUM_SCALERS		2
++
++enum fimc_is_clks {
++	IS_CLK_GATE0,
++	IS_CLK_GATE1,
++	IS_CLK_266,
++	IS_CLK_266_DIV0,
++	IS_CLK_266_DIV1,
++	IS_CLK_266_DIV_MPWM,
++	IS_CLK_400,
++	IS_CLK_400_DIV0,
++	IS_CLK_400_DIV1,
++	IS_CLK_MAX_NUM,
 +};
 +
-+static struct clk *exynos5_clkset_aclk_400_isp_list[] = {
-+	[0] = &clk_ext_xtal_mux,
-+	[1] = &exynos5_clk_dout_aclk_400_isp.clk,
++/* Video capture states */
++enum fimc_is_video_state {
++	STATE_INIT,
++	STATE_BUFS_ALLOCATED,
++	STATE_RUNNING,
 +};
 +
-+static struct clksrc_sources exynos5_clkset_aclk_400_isp = {
-+	.sources        = exynos5_clkset_aclk_400_isp_list,
-+	.nr_sources     = ARRAY_SIZE(exynos5_clkset_aclk_400_isp_list),
++enum fimc_is_scaler_id {
++	SCALER_SCC,
++	SCALER_SCP
 +};
 +
-+static struct clksrc_clk exynos5_clk_aclk_400_isp = {
-+	.clk    = {
-+		.name           = "aclk_400_isp",
-+		.devname	= FIMC_IS_NAME,
-+	},
-+	.sources = &exynos5_clkset_aclk_400_isp,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP3, .shift = 20, .size = 1 },
++enum fimc_is_sensor_pos {
++	SENSOR_CAM0,
++	SENSOR_CAM1
 +};
 +
-+static struct clksrc_clk exynos5_clk_aclk_266_isp = {
-+	.clk	= {
-+		.name		= "aclk_266_isp",
-+		.devname	= FIMC_IS_NAME,
-+
-+	},
-+	.sources = &clk_src_gscl_266,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP3, .shift = 16, .size = 1 },
++struct fimc_is_buf {
++	struct list_head list;
++	struct vb2_buffer *vb;
++	unsigned int paddr[FIMC_IS_MAX_PLANES];
 +};
 +
-+static struct clksrc_clk exynos5_clk_aclk_266_isp_div0 = {
-+	.clk	= {
-+		.name		= "aclk_266_isp_div0",
-+		.devname	= FIMC_IS_NAME,
-+		.parent		= &exynos5_clk_aclk_266_isp.clk,
-+	},
-+	.reg_div = { .reg = EXYNOS5_CLKDIV_ISP0, .shift = 0, .size = 3 },
++struct fimc_is_meminfo {
++	unsigned int fw_paddr;
++	unsigned int fw_vaddr;
++	unsigned int region_paddr;
++	unsigned int region_vaddr;
++	unsigned int shared_paddr;
++	unsigned int shared_vaddr;
 +};
 +
-+static struct clksrc_clk exynos5_clk_aclk_266_isp_div1 = {
-+	.clk	= {
-+		.name		= "aclk_266_isp_div1",
-+		.devname	= FIMC_IS_NAME,
-+		.parent		= &exynos5_clk_aclk_266_isp.clk,
-+	},
-+	.reg_div = { .reg = EXYNOS5_CLKDIV_ISP0, .shift = 4, .size = 3 },
++/**
++ * struct fimc_is_fmt - the driver's internal color format data
++ * @name: format description
++ * @fourcc: the fourcc code for this format
++ * @depth: number of bytes per pixel
++ * @num_planes: number of planes for this color format
++ */
++struct fimc_is_fmt {
++	char		*name;
++	unsigned int	fourcc;
++	unsigned int	depth[FIMC_IS_MAX_PLANES];
++	unsigned int	num_planes;
 +};
 +
-+static struct clksrc_clk exynos5_clk_aclk_266_isp_divmpwm = {
-+	.clk	= {
-+		.name		= "aclk_266_isp_divmpwm",
-+		.devname	= FIMC_IS_NAME,
-+		.parent		= &exynos5_clk_aclk_266_isp_div1.clk,
-+	},
-+	.reg_div = { .reg = EXYNOS5_CLKDIV_ISP2, .shift = 0, .size = 3 },
++struct fimc_is_sensor_data {
++	int enabled;
++	char *name;
++	unsigned int num_gpios;
++	int gpios[FIMC_IS_MAX_GPIOS];
++	unsigned int csi_id;
 +};
 +
-+static struct clksrc_clk exynos5_clk_aclk_400_isp_div0 = {
-+	.clk		= {
-+		.name		= "aclk_400_isp_div0",
-+		.devname	= FIMC_IS_NAME,
-+		.parent		= &exynos5_clk_aclk_400_isp.clk,
-+	},
-+	.reg_div = { .reg = EXYNOS5_CLKDIV_ISP1, .shift = 0, .size = 3 },
++struct fimc_is_platdata {
++	struct fimc_is_sensor_data sensor_data[FIMC_IS_NUM_SENSORS];
 +};
 +
-+static struct clksrc_clk exynos5_clk_aclk_400_isp_div1 = {
-+	.clk		= {
-+		.name		= "aclk_400_isp_div1",
-+		.devname	= FIMC_IS_NAME,
-+		.parent		= &exynos5_clk_aclk_400_isp.clk,
-+	},
-+	.reg_div = { .reg = EXYNOS5_CLKDIV_ISP1, .shift = 4, .size = 3 },
-+};
-+
-+static struct clksrc_clk exynos5_clk_aclk_266_gscl = {
-+	.clk	= {
-+		.name		= "aclk_266_gscl",
-+		.parent		= &exynos5_clk_aclk_266.clk,
-+	},
-+	.sources = &clk_src_gscl_266,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP3, .shift = 8, .size = 1 },
-+};
-+
- static struct clksrc_clk exynos5_clksrcs[] = {
- 	{
- 		.clk	= {
-@@ -1299,6 +1412,15 @@ static struct clksrc_clk exynos5_clksrcs[] = {
- 		.reg_div = { .reg = EXYNOS5_CLKDIV_GSCL, .shift = 28, .size = 4 },
- 	}, {
- 		.clk	= {
-+			.name		= "sclk_bayer",
-+			.enable		= exynos5_clksrc_mask_gscl_ctrl,
-+			.ctrlbit	= (1 << 12),
-+		},
-+		.sources = &exynos5_clkset_group,
-+		.reg_src = { .reg = EXYNOS5_CLKSRC_GSCL, .shift = 12, .size = 4 },
-+		.reg_div = { .reg = EXYNOS5_CLKDIV_GSCL, .shift = 12, .size = 4 },
-+	}, {
-+		.clk	= {
- 			.name		= "sclk_cam0",
- 			.enable		= exynos5_clksrc_mask_gscl_ctrl,
- 			.ctrlbit	= (1 << 16),
-@@ -1367,6 +1489,13 @@ static struct clksrc_clk *exynos5_sysclks[] = {
- 	&exynos5_clk_mdout_spi1,
- 	&exynos5_clk_mdout_spi2,
- 	&exynos5_clk_sclk_fimd1,
-+	&exynos5_clk_aclk_400_isp,
-+	&exynos5_clk_aclk_400_isp_div0,
-+	&exynos5_clk_aclk_400_isp_div1,
-+	&exynos5_clk_aclk_266_isp,
-+	&exynos5_clk_aclk_266_isp_div0,
-+	&exynos5_clk_aclk_266_isp_div1,
-+	&exynos5_clk_aclk_266_isp_divmpwm,
- };
- 
- static struct clk *exynos5_clk_cdev[] = {
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 5bfc744..64bd07d 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -125,6 +125,8 @@
- #define EXYNOS4_PA_SYSMMU_MFC_L		0x13620000
- #define EXYNOS4_PA_SYSMMU_MFC_R		0x13630000
- 
-+#define EXYNOS5_PA_FIMC_IS		0x13000000
-+
- #define EXYNOS5_PA_FIMC_LITE0           0x13C00000
- #define EXYNOS5_PA_FIMC_LITE1           0x13C10000
- #define EXYNOS5_PA_FIMC_LITE2           0x13C90000
-diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
-index d36ad76..2a09c9f 100644
---- a/arch/arm/mach-exynos/include/mach/regs-clock.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
-@@ -345,6 +345,13 @@
- 
- #define EXYNOS5_EPLL_LOCK			EXYNOS_CLKREG(0x10030)
- 
-+#define EXYNOS5_CLKDIV2_RATIO0                  EXYNOS_CLKREG(0x10590)
-+#define EXYNOS5_CLKDIV2_RATIO1                  EXYNOS_CLKREG(0x10594)
-+#define EXYNOS5_CLKDIV4_RATIO                   EXYNOS_CLKREG(0x105A0)
-+#define EXYNOS5_CLKDIV_ISP0                     EXYNOS_CLKREG(0x0C300)
-+#define EXYNOS5_CLKDIV_ISP1                     EXYNOS_CLKREG(0x0C304)
-+#define EXYNOS5_CLKDIV_ISP2                     EXYNOS_CLKREG(0x0C308)
-+
- #define EXYNOS5_EPLLCON0_LOCKED_SHIFT		(29)
- 
- #define PWR_CTRL1_CORE2_DOWN_RATIO		(7 << 28)
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index f6c3223..4df9929 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -114,6 +114,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"exynos5-fimc-lite.1", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos5250-fimc-lite", EXYNOS5_PA_FIMC_LITE2,
- 				"exynos5-fimc-lite.2", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos5250-fimc-is", EXYNOS5_PA_FIMC_IS,
-+				"exynos5-fimc-is", NULL),
- 	{},
- };
- 
++#endif
 -- 
 1.7.9.5
