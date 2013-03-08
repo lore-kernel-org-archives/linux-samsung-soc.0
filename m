@@ -1,54 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 00/23] RFC: exynos multiplatform support
-Date: Fri, 8 Mar 2013 12:52:28 +0000
-Message-ID: <201303081252.28321.arnd@arndb.de>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <20130307072203.GC3451@avionic-0098.mockup.avionic-design.de> <3271021.WsP8f9ZEBl@flatron>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: s3c24xx pinctrl help
+Date: Fri, 8 Mar 2013 15:38:04 +0100
+Message-ID: <201303081538.04877.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:60316 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757097Ab3CHMwr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Mar 2013 07:52:47 -0500
-In-Reply-To: <3271021.WsP8f9ZEBl@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-On Friday 08 March 2013, Tomasz Figa wrote:
-> I have a question regarding making this an MFD driver.
-> 
-> As you know, the main clocksource driver must be initialized early, from 
-> init_time callback of machine_desc. How does using the MFD subsystem fit 
-> into this scheme?
-> 
-> P.S. I'm still not convinced about any benefits of options 2 and 3 over 
-> option 1, which has the obvious advantage of requiring least amount of 
-> changes to existing code and not binding the PWM and clocksource drivers 
-> together (on Exynos SoCs only the PWM driver is used, clocksource is 
-> handled by different hardware block - MCT).
+Hi Thomas,
 
-I think the main motivation for the MFD here is that you have a shared
-register set, which would be described as a single device node in DT
-as its natural representation, but it's not easy to have two drivers
-be responsible for the same platform device. Similarly, the Linux
-resource handling tries hard to ensure that multiple device drivers
-do not share a single register set.
+taking you up on your offer of helping, I would be cool if you could simply
+give me a push in the right direction :-) .
 
-If you have an MFD driver, that could bind do the platform_device created
-from the DT device node, and provide a simple interface for both the
-timer and the pwm driver to talk to, without exposing those registers
-directly. Or you could use the syscon regmap approach to expose
-those registers in a more controlled way. With syscon, you don't actually
-have to write an MFD driver but could just use the one that is already
-there.
 
-Since you want the timer driver to be available really early, you could
-also make that timer driver the master and expose an interface for
-the PWM driver to use.
+>From what I've seen so far, the bank handling itself is very similar between
+exynos and s3c24xx as the underlying structures already handle multiple widths
+of the register contents. More interesting is the eint handling around which I 
+couldn't wrap my head yet.
 
-	Arnd
+The basic structure is again similar with special eint registers, but adds 
+some quirks. EINT banks are gpf (8 eints) and gpg (8 or 16 eints depending on
+the SoC).
+
+The current way on Exynos seems to be to mark the offset in the eint register
+and attach an irq_domain to the bank, which gets mapped to the eints starting
+at the offset. The eints seem to have a parent interrupt that is provided via
+the dt.
+
+On the S3C24xx the gpg bank is doing this similar but gpf is very strange.
+
+The first half of the bank (gpf0 to gpf3) is not handled in eintpend registers
+but in the main interrupt controller (bits 0 to 3), while the second
+half of gpf is handled in eintpend. The new interrupt declaration might show
+this better, which can be found at [0].
+
+An exception is the s3c2412 which adds still another quirk where each
+interrupt of gpf0 to gpf3 is represented in both the normal intc and eint
+registers, again for reference probably easier to see in [1].
+
+
+So I'm still quite stumped on how this could fit into the current framework
+and would be really glad for some small pointers :-)
+
+
+Thanks
+Heiko
+
+
+
+[0] https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/tree/arch/arm/mach-s3c24xx/irq.c?h=next/irq-s3c24xx-2&id=17453dd2e7df20612770ebbf1ab5d506a432210c#n574
+[1] https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/tree/arch/arm/mach-s3c24xx/irq.c?h=next/irq-s3c24xx-2&id=17453dd2e7df20612770ebbf1ab5d506a432210c#n712
