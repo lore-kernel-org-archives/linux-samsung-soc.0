@@ -1,547 +1,546 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [RFC 05/12] exynos-fimc-is: Adds the register definition and context
- header
-Date: Fri, 08 Mar 2013 09:59:18 -0500
-Message-ID: <1362754765-2651-6-git-send-email-arun.kk@samsung.com>
+Subject: [RFC 06/12] exynos-fimc-is: Adds the sensor subdev
+Date: Fri, 08 Mar 2013 09:59:19 -0500
+Message-ID: <1362754765-2651-7-git-send-email-arun.kk@samsung.com>
 References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59188 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757966Ab3CHOkc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Mar 2013 09:40:32 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 Cc: s.nawrocki@samsung.com, kgene.kim@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the register definition file for the fimc-is driver
-and also the header file containing the main context for the driver.
+FIMC-IS uses certain sensors which are exclusively controlled
+from the IS firmware. This patch adds the sensor subdev for the
+fimc-is sensors.
 
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
 ---
- drivers/media/platform/exynos5-is/fimc-is-regs.h |  352 ++++++++++++++++++++++
- drivers/media/platform/exynos5-is/fimc-is.h      |  151 ++++++++++
- 2 files changed, 503 insertions(+)
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-regs.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is.h
+ drivers/media/platform/exynos5-is/fimc-is-sensor.c |  337 ++++++++++++++++++++
+ drivers/media/platform/exynos5-is/fimc-is-sensor.h |  170 ++++++++++
+ 2 files changed, 507 insertions(+)
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.h
 
-diff --git a/drivers/media/platform/exynos5-is/fimc-is-regs.h b/drivers/media/platform/exynos5-is/fimc-is-regs.h
+diff --git a/drivers/media/platform/exynos5-is/fimc-is-sensor.c b/drivers/media/platform/exynos5-is/fimc-is-sensor.c
 new file mode 100644
-index 0000000..43ed011
+index 0000000..c031493
 --- /dev/null
-+++ b/drivers/media/platform/exynos5-is/fimc-is-regs.h
-@@ -0,0 +1,352 @@
++++ b/drivers/media/platform/exynos5-is/fimc-is-sensor.c
+@@ -0,0 +1,337 @@
 +/*
-+ * Samsung Exynos5 SoC series FIMC-IS driver
-+ *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef FIMC_IS_REGS_H
-+#define FIMC_IS_REGS_H
-+
-+#include <mach/map.h>
-+
-+/* WDT_ISP register */
-+#define WDT			0x00170000
-+/* MCUCTL register */
-+#define MCUCTL			0x00180000
-+/* MCU Controller Register */
-+#define MCUCTLR				(MCUCTL+0x00)
-+#define MCUCTLR_AXI_ISPX_AWCACHE(x)	((x) << 16)
-+#define MCUCTLR_AXI_ISPX_ARCACHE(x)	((x) << 12)
-+#define MCUCTLR_MSWRST			(1 << 0)
-+/* Boot Base OFfset Address Register */
-+#define BBOAR				(MCUCTL+0x04)
-+#define BBOAR_BBOA(x)			((x) << 0)
-+/* Interrupt Generation Register 0 from Host CPU to VIC */
-+#define INTGR0				(MCUCTL+0x08)
-+#define INTGR0_INTGC9			(1 << 25)
-+#define INTGR0_INTGC8			(1 << 24)
-+#define INTGR0_INTGC7			(1 << 23)
-+#define INTGR0_INTGC6			(1 << 22)
-+#define INTGR0_INTGC5			(1 << 21)
-+#define INTGR0_INTGC4			(1 << 20)
-+#define INTGR0_INTGC3			(1 << 19)
-+#define INTGR0_INTGC2			(1 << 18)
-+#define INTGR0_INTGC1			(1 << 17)
-+#define INTGR0_INTGC0			(1 << 16)
-+#define INTGR0_INTGD5			(1 << 5)
-+#define INTGR0_INTGD4			(1 << 4)
-+#define INTGR0_INTGD3			(1 << 3)
-+#define INTGR0_INTGD2			(1 << 2)
-+#define INTGR0_INTGD1			(1 << 1)
-+#define INTGR0_INTGD0			(1 << 0)
-+/* Interrupt Clear Register 0 from Host CPU to VIC */
-+#define INTCR0				(MCUCTL+0x0c)
-+#define INTCR0_INTCC9			(1 << 25)
-+#define INTCR0_INTCC8			(1 << 24)
-+#define INTCR0_INTCC7			(1 << 23)
-+#define INTCR0_INTCC6			(1 << 22)
-+#define INTCR0_INTCC5			(1 << 21)
-+#define INTCR0_INTCC4			(1 << 20)
-+#define INTCR0_INTCC3			(1 << 19)
-+#define INTCR0_INTCC2			(1 << 18)
-+#define INTCR0_INTCC1			(1 << 17)
-+#define INTCR0_INTCC0			(1 << 16)
-+#define INTCR0_INTCD5			(1 << 5)
-+#define INTCR0_INTCD4			(1 << 4)
-+#define INTCR0_INTCD3			(1 << 3)
-+#define INTCR0_INTCD2			(1 << 2)
-+#define INTCR0_INTCD1			(1 << 1)
-+#define INTCR0_INTCD0			(1 << 0)
-+/* Interrupt Mask Register 0 from Host CPU to VIC */
-+#define INTMR0				(MCUCTL+0x10)
-+#define INTMR0_INTMC9			(1 << 25)
-+#define INTMR0_INTMC8			(1 << 24)
-+#define INTMR0_INTMC7			(1 << 23)
-+#define INTMR0_INTMC6			(1 << 22)
-+#define INTMR0_INTMC5			(1 << 21)
-+#define INTMR0_INTMC4			(1 << 20)
-+#define INTMR0_INTMC3			(1 << 19)
-+#define INTMR0_INTMC2			(1 << 18)
-+#define INTMR0_INTMC1			(1 << 17)
-+#define INTMR0_INTMC0			(1 << 16)
-+#define INTMR0_INTMD5			(1 << 5)
-+#define INTMR0_INTMD4			(1 << 4)
-+#define INTMR0_INTMD3			(1 << 3)
-+#define INTMR0_INTMD2			(1 << 2)
-+#define INTMR0_INTMD1			(1 << 1)
-+#define INTMR0_INTMD0			(1 << 0)
-+/* Interrupt Status Register 0 from Host CPU to VIC */
-+#define INTSR0				(MCUCTL+0x14)
-+#define INTSR0_GET_INTSD0(x)		(((x) >> 0) & 0x1)
-+#define INTSR0_GET_INTSD1(x)		(((x) >> 1) & 0x1)
-+#define INTSR0_GET_INTSD2(x)		(((x) >> 2) & 0x1)
-+#define INTSR0_GET_INTSD3(x)		(((x) >> 3) & 0x1)
-+#define INTSR0_GET_INTSD4(x)		(((x) >> 4) & 0x1)
-+#define INTSR0_GET_INTSC0(x)		(((x) >> 16) & 0x1)
-+#define INTSR0_GET_INTSC1(x)		(((x) >> 17) & 0x1)
-+#define INTSR0_GET_INTSC2(x)		(((x) >> 18) & 0x1)
-+#define INTSR0_GET_INTSC3(x)		(((x) >> 19) & 0x1)
-+#define INTSR0_GET_INTSC4(x)		(((x) >> 20) & 0x1)
-+#define INTSR0_GET_INTSC5(x)		(((x) >> 21) & 0x1)
-+#define INTSR0_GET_INTSC6(x)		(((x) >> 22) & 0x1)
-+#define INTSR0_GET_INTSC7(x)		(((x) >> 23) & 0x1)
-+#define INTSR0_GET_INTSC8(x)		(((x) >> 24) & 0x1)
-+#define INTSR0_GET_INTSC9(x)		(((x) >> 25) & 0x1)
-+/* Interrupt Mask Status Register 0 from Host CPU to VIC */
-+#define INTMSR0				(MCUCTL+0x18)
-+#define INTMSR0_GET_INTMSD0(x)		(((x) >> 0) & 0x1)
-+#define INTMSR0_GET_INTMSD1(x)		(((x) >> 1) & 0x1)
-+#define INTMSR0_GET_INTMSD2(x)		(((x) >> 2) & 0x1)
-+#define INTMSR0_GET_INTMSD3(x)		(((x) >> 3) & 0x1)
-+#define INTMSR0_GET_INTMSD4(x)		(((x) >> 4) & 0x1)
-+#define INTMSR0_GET_INTMSC0(x)		(((x) >> 16) & 0x1)
-+#define INTMSR0_GET_INTMSC1(x)		(((x) >> 17) & 0x1)
-+#define INTMSR0_GET_INTMSC2(x)		(((x) >> 18) & 0x1)
-+#define INTMSR0_GET_INTMSC3(x)		(((x) >> 19) & 0x1)
-+#define INTMSR0_GET_INTMSC4(x)		(((x) >> 20) & 0x1)
-+#define INTMSR0_GET_INTMSC5(x)		(((x) >> 21) & 0x1)
-+#define INTMSR0_GET_INTMSC6(x)		(((x) >> 22) & 0x1)
-+#define INTMSR0_GET_INTMSC7(x)		(((x) >> 23) & 0x1)
-+#define INTMSR0_GET_INTMSC8(x)		(((x) >> 24) & 0x1)
-+#define INTMSR0_GET_INTMSC9(x)		(((x) >> 25) & 0x1)
-+/* Interrupt Generation Register 1 from ISP CPU to Host IC */
-+#define INTGR1				(MCUCTL+0x1c)
-+#define INTGR1_INTGC9			(1 << 9)
-+#define INTGR1_INTGC8			(1 << 8)
-+#define INTGR1_INTGC7			(1 << 7)
-+#define INTGR1_INTGC6			(1 << 6)
-+#define INTGR1_INTGC5			(1 << 5)
-+#define INTGR1_INTGC4			(1 << 4)
-+#define INTGR1_INTGC3			(1 << 3)
-+#define INTGR1_INTGC2			(1 << 2)
-+#define INTGR1_INTGC1			(1 << 1)
-+#define INTGR1_INTGC0			(1 << 0)
-+/* Interrupt Clear Register 1 from ISP CPU to Host IC */
-+#define INTCR1				(MCUCTL+0x20)
-+#define INTCR1_INTCC9			(1 << 9)
-+#define INTCR1_INTCC8			(1 << 8)
-+#define INTCR1_INTCC7			(1 << 7)
-+#define INTCR1_INTCC6			(1 << 6)
-+#define INTCR1_INTCC5			(1 << 5)
-+#define INTCR1_INTCC4			(1 << 4)
-+#define INTCR1_INTCC3			(1 << 3)
-+#define INTCR1_INTCC2			(1 << 2)
-+#define INTCR1_INTCC1			(1 << 1)
-+#define INTCR1_INTCC0			(1 << 0)
-+/* Interrupt Mask Register 1 from ISP CPU to Host IC */
-+#define INTMR1				(MCUCTL+0x24)
-+#define INTMR1_INTMC9			(1 << 9)
-+#define INTMR1_INTMC8			(1 << 8)
-+#define INTMR1_INTMC7			(1 << 7)
-+#define INTMR1_INTMC6			(1 << 6)
-+#define INTMR1_INTMC5			(1 << 5)
-+#define INTMR1_INTMC4			(1 << 4)
-+#define INTMR1_INTMC3			(1 << 3)
-+#define INTMR1_INTMC2			(1 << 2)
-+#define INTMR1_INTMC1			(1 << 1)
-+#define INTMR1_INTMC0			(1 << 0)
-+/* Interrupt Status Register 1 from ISP CPU to Host IC */
-+#define INTSR1				(MCUCTL+0x28)
-+/* Interrupt Mask Status Register 1 from ISP CPU to Host IC */
-+#define INTMSR1				(MCUCTL+0x2c)
-+/* Interrupt Clear Register 2 from ISP BLK's interrupts to Host IC */
-+#define INTCR2				(MCUCTL+0x30)
-+#define INTCR2_INTCC21			(1 << 21)
-+#define INTCR2_INTCC20			(1 << 20)
-+#define INTCR2_INTCC19			(1 << 19)
-+#define INTCR2_INTCC18			(1 << 18)
-+#define INTCR2_INTCC17			(1 << 17)
-+#define INTCR2_INTCC16			(1 << 16)
-+/* Interrupt Mask Register 2 from ISP BLK's interrupts to Host IC */
-+#define INTMR2				(MCUCTL+0x34)
-+#define INTMR2_INTMCIS25		(1 << 25)
-+#define INTMR2_INTMCIS24		(1 << 24)
-+#define INTMR2_INTMCIS23		(1 << 23)
-+#define INTMR2_INTMCIS22		(1 << 22)
-+#define INTMR2_INTMCIS21		(1 << 21)
-+#define INTMR2_INTMCIS20		(1 << 20)
-+#define INTMR2_INTMCIS19		(1 << 19)
-+#define INTMR2_INTMCIS18		(1 << 18)
-+#define INTMR2_INTMCIS17		(1 << 17)
-+#define INTMR2_INTMCIS16		(1 << 16)
-+#define INTMR2_INTMCIS15		(1 << 15)
-+#define INTMR2_INTMCIS14		(1 << 14)
-+#define INTMR2_INTMCIS13		(1 << 13)
-+#define INTMR2_INTMCIS12		(1 << 12)
-+#define INTMR2_INTMCIS11		(1 << 11)
-+#define INTMR2_INTMCIS10		(1 << 10)
-+#define INTMR2_INTMCIS9			(1 << 9)
-+#define INTMR2_INTMCIS8			(1 << 8)
-+#define INTMR2_INTMCIS7			(1 << 7)
-+#define INTMR2_INTMCIS6			(1 << 6)
-+#define INTMR2_INTMCIS5			(1 << 5)
-+#define INTMR2_INTMCIS4			(1 << 4)
-+#define INTMR2_INTMCIS3			(1 << 3)
-+#define INTMR2_INTMCIS2			(1 << 2)
-+#define INTMR2_INTMCIS1			(1 << 1)
-+#define INTMR2_INTMCIS0			(1 << 0)
-+/* Interrupt Status Register 2 from ISP BLK's interrupts to Host IC */
-+#define INTSR2				(MCUCTL+0x38)
-+/* Interrupt Mask Status Register 2 from ISP BLK's interrupts to Host IC */
-+#define INTMSR2				(MCUCTL+0x3c)
-+/* General Purpose Output Control Register (0~17) */
-+#define GPOCTLR				(MCUCTL+0x40)
-+#define GPOCTLR_GPOG17(x)		((x) << 17)
-+#define GPOCTLR_GPOG16(x)		((x) << 16)
-+#define GPOCTLR_GPOG15(x)		((x) << 15)
-+#define GPOCTLR_GPOG14(x)		((x) << 14)
-+#define GPOCTLR_GPOG13(x)		((x) << 13)
-+#define GPOCTLR_GPOG12(x)		((x) << 12)
-+#define GPOCTLR_GPOG11(x)		((x) << 11)
-+#define GPOCTLR_GPOG10(x)		((x) << 10)
-+#define GPOCTLR_GPOG9(x)		((x) << 9)
-+#define GPOCTLR_GPOG8(x)		((x) << 8)
-+#define GPOCTLR_GPOG7(x)		((x) << 7)
-+#define GPOCTLR_GPOG6(x)		((x) << 6)
-+#define GPOCTLR_GPOG5(x)		((x) << 5)
-+#define GPOCTLR_GPOG4(x)		((x) << 4)
-+#define GPOCTLR_GPOG3(x)		((x) << 3)
-+#define GPOCTLR_GPOG2(x)		((x) << 2)
-+#define GPOCTLR_GPOG1(x)		((x) << 1)
-+#define GPOCTLR_GPOG0(x)		((x) << 0)
-+/* General Purpose Pad Output Enable Register (0~17) */
-+#define GPOENCTLR			(MCUCTL+0x44)
-+#define GPOENCTLR_GPOEN17(x)		((x) << 17)
-+#define GPOENCTLR_GPOEN16(x)		((x) << 16)
-+#define GPOENCTLR_GPOEN15(x)		((x) << 15)
-+#define GPOENCTLR_GPOEN14(x)		((x) << 14)
-+#define GPOENCTLR_GPOEN13(x)		((x) << 13)
-+#define GPOENCTLR_GPOEN12(x)		((x) << 12)
-+#define GPOENCTLR_GPOEN11(x)		((x) << 11)
-+#define GPOENCTLR_GPOEN10(x)		((x) << 10)
-+#define GPOENCTLR_GPOEN9(x)		((x) << 9)
-+#define GPOENCTLR_GPOEN8(x)		((x) << 8)
-+#define GPOENCTLR_GPOEN7(x)		((x) << 7)
-+#define GPOENCTLR_GPOEN6(x)		((x) << 6)
-+#define GPOENCTLR_GPOEN5(x)		((x) << 5)
-+#define GPOENCTLR_GPOEN4(x)		((x) << 4)
-+#define GPOENCTLR_GPOEN3(x)		((x) << 3)
-+#define GPOENCTLR_GPOEN2(x)		((x) << 2)
-+#define GPOENCTLR_GPOEN1(x)		((x) << 1)
-+#define GPOENCTLR_GPOEN0(x)		((x) << 0)
-+/* General Purpose Input Control Register (0~17) */
-+#define GPICTLR				(MCUCTL+0x48)
-+/* IS Shared Register 0 between ISP CPU and HOST CPU */
-+#define ISSR0			(MCUCTL+0x80)
-+/* Command Host -> IS */
-+/* IS Shared Register 1 between ISP CPU and HOST CPU */
-+/* Sensor ID for Command */
-+#define ISSR1			(MCUCTL+0x84)
-+/* IS Shared Register 2 between ISP CPU and HOST CPU */
-+/* Parameter 1 */
-+#define ISSR2			(MCUCTL+0x88)
-+/* IS Shared Register 3 between ISP CPU and HOST CPU */
-+/* Parameter 2 */
-+#define ISSR3			(MCUCTL+0x8c)
-+/* IS Shared Register 4 between ISP CPU and HOST CPU */
-+/* Parameter 3 */
-+#define ISSR4			(MCUCTL+0x90)
-+/* IS Shared Register 5 between ISP CPU and HOST CPU */
-+/* Parameter 4 */
-+#define ISSR5			(MCUCTL+0x94)
-+#define ISSR6			(MCUCTL+0x98)
-+#define ISSR7			(MCUCTL+0x9c)
-+#define ISSR8			(MCUCTL+0xa0)
-+#define ISSR9			(MCUCTL+0xa4)
-+/* IS Shared Register 10 between ISP CPU and HOST CPU */
-+/* Command IS -> Host */
-+#define ISSR10			(MCUCTL+0xa8)
-+/* IS Shared Register 11 between ISP CPU and HOST CPU */
-+/* Sensor ID for Command */
-+#define ISSR11			(MCUCTL+0xac)
-+/* IS Shared Register 12 between ISP CPU and HOST CPU */
-+/* Parameter 1 */
-+#define ISSR12			(MCUCTL+0xb0)
-+/* IS Shared Register 13 between ISP CPU and HOST CPU */
-+/* Parameter 2 */
-+#define ISSR13			(MCUCTL+0xb4)
-+/* IS Shared Register 14 between ISP CPU and HOST CPU */
-+/* Parameter 3 */
-+#define ISSR14			(MCUCTL+0xb8)
-+/* IS Shared Register 15 between ISP CPU and HOST CPU */
-+/* Parameter 4 */
-+#define ISSR15			(MCUCTL+0xbc)
-+#define ISSR16			(MCUCTL+0xc0)
-+#define ISSR17			(MCUCTL+0xc4)
-+#define ISSR18			(MCUCTL+0xc8)
-+#define ISSR19			(MCUCTL+0xcc)
-+/* IS Shared Register 20 between ISP CPU and HOST CPU */
-+/* ISP_FRAME_DONE : SENSOR ID */
-+#define ISSR20			(MCUCTL+0xd0)
-+/* IS Shared Register 21 between ISP CPU and HOST CPU */
-+/* ISP_FRAME_DONE : PARAMETER 1 */
-+#define ISSR21			(MCUCTL+0xd4)
-+#define ISSR22			(MCUCTL+0xd8)
-+#define ISSR23			(MCUCTL+0xdc)
-+/* IS Shared Register 24 between ISP CPU and HOST CPU */
-+/* SCALERC_FRAME_DONE : SENSOR ID */
-+#define ISSR24			(MCUCTL+0xe0)
-+/* IS Shared Register 25 between ISP CPU and HOST CPU */
-+/* SCALERC_FRAME_DONE : PARAMETER 1 */
-+#define ISSR25			(MCUCTL+0xe4)
-+#define ISSR26			(MCUCTL+0xe8)
-+#define ISSR27			(MCUCTL+0xec)
-+/* IS Shared Register 28 between ISP CPU and HOST CPU */
-+/* 3DNR_FRAME_DONE : SENSOR ID */
-+#define ISSR28			(MCUCTL+0xf0)
-+/* IS Shared Register 29 between ISP CPU and HOST CPU */
-+/* 3DNR_FRAME_DONE : PARAMETER 1 */
-+#define ISSR29			(MCUCTL+0xf4)
-+#define ISSR30			(MCUCTL+0xf8)
-+#define ISSR31			(MCUCTL+0xfc)
-+/* IS Shared Register 32 between ISP CPU and HOST CPU */
-+/* SCALERP_FRAME_DONE : SENSOR ID */
-+#define ISSR32			(MCUCTL+0x100)
-+/* IS Shared Register 33 between ISP CPU and HOST CPU */
-+/* SCALERP_FRAME_DONE : PARAMETER 1 */
-+#define ISSR33			(MCUCTL+0x104)
-+#define ISSR34			(MCUCTL+0x108)
-+#define ISSR35			(MCUCTL+0x10c)
-+#define ISSR36			(MCUCTL+0x110)
-+#define ISSR37			(MCUCTL+0x114)
-+#define ISSR38			(MCUCTL+0x118)
-+#define ISSR39			(MCUCTL+0x11c)
-+#define ISSR40			(MCUCTL+0x120)
-+#define ISSR41			(MCUCTL+0x124)
-+#define ISSR42			(MCUCTL+0x128)
-+#define ISSR43			(MCUCTL+0x12c)
-+#define ISSR44			(MCUCTL+0x130)
-+#define ISSR45			(MCUCTL+0x134)
-+#define ISSR46			(MCUCTL+0x138)
-+#define ISSR47			(MCUCTL+0x13c)
-+#define ISSR48			(MCUCTL+0x140)
-+#define ISSR49			(MCUCTL+0x144)
-+#define ISSR50			(MCUCTL+0x148)
-+#define ISSR51			(MCUCTL+0x14c)
-+#define ISSR52			(MCUCTL+0x150)
-+#define ISSR53			(MCUCTL+0x154)
-+#define ISSR54			(MCUCTL+0x158)
-+#define ISSR55			(MCUCTL+0x15c)
-+#define ISSR56			(MCUCTL+0x160)
-+#define ISSR57			(MCUCTL+0x164)
-+#define ISSR58			(MCUCTL+0x168)
-+#define ISSR59			(MCUCTL+0x16c)
-+#define ISSR60			(MCUCTL+0x170)
-+#define ISSR61			(MCUCTL+0x174)
-+#define ISSR62			(MCUCTL+0x178)
-+#define ISSR63			(MCUCTL+0x17c)
-+
-+/* PMU for FIMC-IS*/
-+#define PMUREG_CMU_RESET_ISP_SYS_PWR_REG	(S5P_VA_PMU  + 0x1584)
-+#define PMUREG_ISP_ARM_CONFIGURATION		(S5P_VA_PMU  + 0x2280)
-+#define PMUREG_ISP_ARM_STATUS			(S5P_VA_PMU  + 0x2284)
-+#define PMUREG_ISP_ARM_OPTION			(S5P_VA_PMU  + 0x2288)
-+#define PMUREG_ISP_LOW_POWER_OFF		(S5P_VA_PMU  + 0x0004)
-+#define PMUREG_ISP_CONFIGURATION		(S5P_VA_PMU  + 0x4020)
-+#define PMUREG_ISP_STATUS				(S5P_VA_PMU  + 0x4024)
-+
-+#endif
-diff --git a/drivers/media/platform/exynos5-is/fimc-is.h b/drivers/media/platform/exynos5-is/fimc-is.h
-new file mode 100644
-index 0000000..3558d19
---- /dev/null
-+++ b/drivers/media/platform/exynos5-is/fimc-is.h
-@@ -0,0 +1,151 @@
-+/*
-+ * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
++ * Samsung EXYNOS5250 FIMC-IS (Imaging Subsystem) driver
 + *
 + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ *  Arun Kumar K <arun.kk@samsung.com>
++ * Arun Kumar K <arun.kk@samsung.com>
++ * Kil-yeon Lim <kilyeon.im@samsung.com>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 + */
 +
-+#ifndef FIMC_IS_H_
-+#define FIMC_IS_H_
++#include <linux/gpio.h>
++#include "fimc-is-sensor.h"
++#include "fimc-is.h"
 +
-+#include "fimc-is-err.h"
-+#include "fimc-is-core.h"
-+#include "fimc-is-param.h"
-+#include "fimc-is-pipeline.h"
-+#include "fimc-is-interface.h"
-+
-+extern int fimc_is_debug;
-+
-+#define is_dbg(level, fmt, args...)					\
-+	do {								\
-+		if (fimc_is_debug >= level)				\
-+			pr_debug("%s:%d: " fmt,				\
-+				__func__, __LINE__, ##args);		\
-+	} while (0)
-+#define is_err(fmt, args...)						\
-+		pr_err("%s:%d: " fmt, __func__, __LINE__, ##args);	\
-+
-+#define fimc_pipeline_to_is(p) container_of(p, struct fimc_is, pipeline)
-+#define fimc_interface_to_is(p) container_of(p, struct fimc_is, interface)
-+#define fimc_sensor_to_is(p) container_of(p, struct fimc_is, sensor)
-+#define fimc_isp_to_is(p) container_of(p, struct fimc_is, isp)
-+#define fimc_scp_to_is(p) container_of(p, struct fimc_is, scp)
-+
-+/* Macros used by media dev to get the subdev and vfd */
-+/* is --> driver data from pdev
-+ * pid --> pipeline index */
-+#define fimc_is_isp_get_sd(is, pid) (&is->pipeline.isp.subdev)
-+#define fimc_is_isp_get_vfd(is, pid) (&is->pipeline.isp.vfd)
-+#define fimc_is_scc_get_sd(is, pid) (&is->pipeline.scaler[SCALER_SCC].subdev)
-+#define fimc_is_scc_get_vfd(is, pid) (&is->pipeline.scaler[SCALER_SCC].vfd)
-+#define fimc_is_scp_get_sd(is, pid) (&is->pipeline.scaler[SCALER_SCP].subdev)
-+#define fimc_is_scp_get_vfd(is, pid) (&is->pipeline.scaler[SCALER_SCP].vfd)
-+/* is --> driver data from pdev
-+ * sid --> sensor index */
-+#define fimc_is_sensor_get_sd(is, sid) (&is->sensor[sid].subdev)
-+
-+
-+/**
-+ * struct fimc_is - fimc lite structure
-+ * @pdev: pointer to FIMC-IS platform device
-+ * @pdata: platform data for FIMC-IS
-+ * @alloc_ctx: videobuf2 memory allocator context
-+ * @clk: FIMC-IS clocks
-+ * @minfo: internal memory organization info
-+ * @sensor: FIMC-IS sensor context
-+ * @pipeline: hardware pipeline context
-+ * @interface: hardware interface context
-+ */
-+struct fimc_is {
-+	struct platform_device		*pdev;
-+
-+	struct fimc_is_platdata		*pdata;
-+	struct vb2_alloc_ctx		*alloc_ctx;
-+	struct clk			*clock[IS_CLK_MAX_NUM];
-+
-+	struct fimc_is_meminfo		minfo;
-+
-+	struct fimc_is_sensor		sensor[FIMC_IS_NUM_SENSORS];
-+	struct fimc_is_pipeline		pipeline;
-+	struct fimc_is_interface	interface;
++static char *sensor_clock_name[] = {
++	[SCLK_BAYER]	= "sclk_bayer",
++	[SCLK_CAM0]	= "sclk_cam0",
++	[SCLK_CAM1]	= "sclk_cam1",
 +};
 +
-+/* Queue operations for ISP */
-+static inline void fimc_is_isp_wait_queue_add(struct fimc_is_isp *isp,
-+		struct fimc_is_buf *buf)
++static struct fimc_is_sensor_info sensor_info[] = {
++	[SENSOR_S5K4E5] = {
++		.sensor_id = SENSOR_S5K4E5,
++		.sensor_name = "samsung,s5k4e5",
++		.pixel_width = SENSOR_4E5_WIDTH + 16,
++		.pixel_height = SENSOR_4E5_HEIGHT + 10,
++		.active_width = SENSOR_4E5_WIDTH,
++		.active_height = SENSOR_4E5_HEIGHT,
++		.max_framerate = 30,
++		.setfile_name = "setfile_4e5.bin",
++		.ext = {
++			.actuator_con = {
++				.product_name = ACTUATOR_NAME_DWXXXX,
++				.peri_type = SE_I2C,
++				.peri_setting.i2c.channel = SENSOR_CONTROL_I2C0,
++			},
++			.flash_con = {
++				.product_name = FLADRV_NAME_KTD267,
++				.peri_type = SE_GPIO,
++				.peri_setting.gpio.first_gpio_port_no = 1,
++				.peri_setting.gpio.second_gpio_port_no = 2,
++			},
++			.from_con.product_name = FROMDRV_NAME_NOTHING,
++			.mclk = 0,
++			.mipi_lane_num = 0,
++			.mipi_speed = 0,
++			.fast_open_sensor = 0,
++			.self_calibration_mode = 0,
++		},
++
++	},
++	[SENSOR_S5K6A3] = {
++		.sensor_id = SENSOR_S5K6A3,
++		.sensor_name = "samsung,s5k6a3",
++		.pixel_width = SENSOR_6A3_WIDTH + 16,
++		.pixel_height = SENSOR_6A3_HEIGHT + 10,
++		.active_width = SENSOR_6A3_WIDTH,
++		.active_height = SENSOR_6A3_HEIGHT,
++		.max_framerate = 30,
++		.setfile_name = "setfile_6a3.bin",
++	},
++};
++
++/* Sensor supported formats */
++static struct v4l2_mbus_framefmt sensor_formats[FIMC_IS_MAX_SENSORS] = {
++	[SENSOR_S5K4E5] = {
++		.width          = SENSOR_4E5_WIDTH + 16,
++		.height         = SENSOR_4E5_HEIGHT + 10,
++		.code           = V4L2_MBUS_FMT_SGRBG10_1X10,
++		.field          = V4L2_FIELD_NONE,
++		.colorspace     = V4L2_COLORSPACE_SRGB,
++	},
++	[SENSOR_S5K6A3] = {
++		.width          = SENSOR_6A3_WIDTH + 16,
++		.height         = SENSOR_6A3_HEIGHT + 10,
++		.code           = V4L2_MBUS_FMT_SGRBG10_1X10,
++		.field          = V4L2_FIELD_NONE,
++		.colorspace     = V4L2_COLORSPACE_SRGB,
++	},
++};
++
++static struct fimc_is_sensor *sd_to_fimc_is_sensor(struct v4l2_subdev *sd)
 +{
-+	list_add_tail(&buf->list, &isp->wait_queue);
-+	isp->wait_queue_cnt++;
++	return container_of(sd, struct fimc_is_sensor, subdev);
 +}
 +
-+static inline struct fimc_is_buf *fimc_is_isp_wait_queue_get(
-+		struct fimc_is_isp *isp)
++static void sensor_clk_put(struct fimc_is_sensor *sensor)
 +{
-+	struct fimc_is_buf *buf;
-+	buf = list_entry(isp->wait_queue.next,
-+			struct fimc_is_buf, list);
-+	list_del(&buf->list);
-+	isp->wait_queue_cnt--;
-+	return buf;
++	int i;
++
++	for (i = 0; i < SCLK_MAX_NUM; i++) {
++		if (IS_ERR_OR_NULL(sensor->clock[i]))
++			continue;
++		clk_unprepare(sensor->clock[i]);
++		clk_put(sensor->clock[i]);
++		sensor->clock[i] = NULL;
++	}
 +}
 +
-+static inline void fimc_is_isp_run_queue_add(struct fimc_is_isp *isp,
-+		struct fimc_is_buf *buf)
++static int sensor_clk_init(struct fimc_is_sensor *sensor)
 +{
-+	list_add_tail(&buf->list, &isp->run_queue);
-+	isp->run_queue_cnt++;
++	int i, ret;
++
++	/* Get CAM clocks */
++	for (i = 0; i < SCLK_MAX_NUM; i++) {
++		sensor->clock[i] = clk_get(NULL, sensor_clock_name[i]);
++		if (IS_ERR(sensor->clock[i]))
++			goto err;
++		ret = clk_prepare(sensor->clock[i]);
++		if (ret < 0) {
++			clk_put(sensor->clock[i]);
++			sensor->clock[i] = NULL;
++			goto err;
++		}
++	}
++
++	/* Set clock rates */
++	ret = clk_set_rate(sensor->clock[SCLK_CAM0], 24 * 1000000);
++	ret |= clk_set_rate(sensor->clock[SCLK_BAYER], 24 * 1000000);
++	if (ret) {
++		is_err("Failed to set cam clock rates\n");
++		goto err;
++	}
++	return 0;
++err:
++	sensor_clk_put(sensor);
++	is_err("Failed to init sensor clock\n");
++	return -ENXIO;
 +}
 +
-+static inline struct fimc_is_buf *fimc_is_isp_run_queue_get(
-+		struct fimc_is_isp *isp)
++static int sensor_enum_mbus_code(struct v4l2_subdev *sd,
++				  struct v4l2_subdev_fh *fh,
++				  struct v4l2_subdev_mbus_code_enum *code)
 +{
-+	struct fimc_is_buf *buf;
-+	buf = list_entry(isp->run_queue.next,
-+			struct fimc_is_buf, list);
-+	list_del(&buf->list);
-+	isp->run_queue_cnt--;
-+	return buf;
++	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
++	struct fimc_is_sensor_info *sinfo = sensor->sensor_info;
++
++	if (!code)
++		return -EINVAL;
++
++	code->code = sensor_formats[sinfo->sensor_id].code;
++	return 0;
 +}
 +
-+/* Queue operations for SCALER */
-+static inline void fimc_is_scaler_wait_queue_add(struct fimc_is_scaler *scp,
-+		struct fimc_is_buf *buf)
++static int sensor_set_fmt(struct v4l2_subdev *sd,
++			  struct v4l2_subdev_fh *fh,
++			  struct v4l2_subdev_format *fmt)
 +{
-+	list_add_tail(&buf->list, &scp->wait_queue);
-+	scp->wait_queue_cnt++;
++	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
++	struct fimc_is_sensor_info *sinfo = sensor->sensor_info;
++	struct v4l2_mbus_framefmt *sfmt = &fmt->format;
++
++	if ((sfmt->width != sensor_formats[sinfo->sensor_id].width) ||
++		(sfmt->height != sensor_formats[sinfo->sensor_id].height) ||
++		(sfmt->code != sensor_formats[sinfo->sensor_id].code))
++		return -EINVAL;
++
++	return 0;
 +}
 +
-+static inline struct fimc_is_buf *fimc_is_scaler_wait_queue_get(
-+		struct fimc_is_scaler *scp)
++static int sensor_get_fmt(struct v4l2_subdev *sd,
++			  struct v4l2_subdev_fh *fh,
++			  struct v4l2_subdev_format *fmt)
 +{
-+	struct fimc_is_buf *buf;
-+	buf = list_entry(scp->wait_queue.next,
-+			struct fimc_is_buf, list);
-+	list_del(&buf->list);
-+	scp->wait_queue_cnt--;
-+	return buf;
++	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
++	struct fimc_is_sensor_info *sinfo = sensor->sensor_info;
++
++	fmt->format = sensor_formats[sinfo->sensor_id];
++	return 0;
 +}
 +
-+static inline void fimc_is_scaler_run_queue_add(struct fimc_is_scaler *scp,
-+		struct fimc_is_buf *buf)
++static struct v4l2_subdev_pad_ops sensor_pad_ops = {
++	.enum_mbus_code		= sensor_enum_mbus_code,
++	.get_fmt		= sensor_get_fmt,
++	.set_fmt		= sensor_set_fmt,
++};
++
++static int sensor_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
 +{
-+	list_add_tail(&buf->list, &scp->run_queue);
-+	scp->run_queue_cnt++;
++	return 0;
 +}
 +
-+static inline struct fimc_is_buf *fimc_is_scaler_run_queue_get(
-+		struct fimc_is_scaler *scp)
++static const struct v4l2_subdev_internal_ops sensor_sd_internal_ops = {
++	.open = sensor_open,
++};
++
++static int sensor_s_power(struct v4l2_subdev *sd, int on)
 +{
-+	struct fimc_is_buf *buf;
-+	buf = list_entry(scp->run_queue.next,
-+			struct fimc_is_buf, list);
-+	list_del(&buf->list);
-+	scp->run_queue_cnt--;
-+	return buf;
++	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
++	struct fimc_is_sensor_data *sdata = sensor->sensor_data;
++
++	if (on) {
++		/* Power on sensor */
++		sensor_clk_init(sensor);
++		gpio_request(sdata->gpios[0], "fimc_is_sensor");
++		gpio_direction_output(sdata->gpios[0], 1);
++		gpio_free(sdata->gpios[0]);
++	} else {
++		/* Power off sensor */
++		gpio_request(sdata->gpios[0], "fimc_is_sensor");
++		gpio_direction_output(sdata->gpios[0], 0);
++		gpio_free(sdata->gpios[0]);
++		sensor_clk_put(sensor);
++	}
++	return 0;
 +}
 +
-+#endif
++static struct v4l2_subdev_core_ops sensor_core_ops = {
++	.s_power = sensor_s_power,
++};
++
++static int sensor_s_stream(struct v4l2_subdev *sd, int enable)
++{
++	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
++	int ret;
++
++	if (enable) {
++		is_dbg(3, "Stream ON\n");
++		/* Open pipeline */
++		ret = fimc_is_pipeline_open(sensor->pipeline, sensor);
++		if (ret < 0) {
++			is_err("Pipeline already opened.\n");
++			return -EBUSY;
++		}
++
++		/* Start IS pipeline */
++		ret = fimc_is_pipeline_start(sensor->pipeline);
++		if (ret < 0) {
++			is_err("Pipeline start failed.\n");
++			return -EINVAL;
++		}
++	} else {
++		is_dbg(3, "Stream OFF\n");
++		/* Stop IS pipeline */
++		ret = fimc_is_pipeline_stop(sensor->pipeline);
++		if (ret < 0) {
++			is_err("Pipeline stop failed.\n");
++			return -EINVAL;
++		}
++
++		/* Close pipeline */
++		ret = fimc_is_pipeline_close(sensor->pipeline);
++		if (ret < 0) {
++			is_err("Pipeline close failed\n");
++			return -EBUSY;
++		}
++	}
++
++	return 0;
++}
++
++static const struct v4l2_subdev_video_ops sensor_video_ops = {
++	.s_stream       = sensor_s_stream,
++};
++
++static struct v4l2_subdev_ops sensor_subdev_ops = {
++	.core = &sensor_core_ops,
++	.pad = &sensor_pad_ops,
++	.video = &sensor_video_ops,
++};
++
++static int sensor_init(struct fimc_is_sensor *sensor)
++{
++	struct fimc_is_sensor_data *sensor_data;
++
++	sensor_data = sensor->sensor_data;
++	if (strcmp(sensor_data->name,
++			sensor_info[SENSOR_S5K4E5].sensor_name) == 0)
++		sensor->sensor_info = &sensor_info[SENSOR_S5K4E5];
++	else if (strcmp(sensor_data->name,
++			sensor_info[SENSOR_S5K6A3].sensor_name) == 0)
++		sensor->sensor_info = &sensor_info[SENSOR_S5K6A3];
++	else
++		sensor->sensor_info = NULL;
++
++	if (!sensor->sensor_info)
++		return -EINVAL;
++
++	sensor->sensor_info->csi_ch = sensor->sensor_info->i2c_ch =
++		(sensor_data->csi_id >> 2) & 0x1;
++	is_dbg(3, "Sensor csi channel : %d\n", sensor->sensor_info->csi_ch);
++
++	return 0;
++}
++
++int fimc_is_sensor_subdev_create(struct fimc_is_sensor *sensor,
++		struct fimc_is_sensor_data *sensor_data,
++		struct fimc_is_pipeline *pipeline)
++{
++	struct v4l2_subdev *sd = &sensor->subdev;
++	int ret;
++
++	is_err("\n");
++	if (!sensor_data->enabled) {
++		/* Sensor not present */
++		return -EINVAL;
++	}
++
++	sensor->sensor_data = sensor_data;
++	sensor->pipeline = pipeline;
++
++	v4l2_subdev_init(sd, &sensor_subdev_ops);
++	sensor->subdev.owner = THIS_MODULE;
++	if (strcmp(sensor_data->name,
++			sensor_info[SENSOR_S5K4E5].sensor_name) == 0)
++		strlcpy(sd->name, "fimc-is-sensor-4e5", sizeof(sd->name));
++	else if (strcmp(sensor_data->name,
++			sensor_info[SENSOR_S5K6A3].sensor_name) == 0)
++		strlcpy(sd->name, "fimc-is-sensor-6a3", sizeof(sd->name));
++	else
++		strlcpy(sd->name, "fimc-is-sensor-???", sizeof(sd->name));
++	sensor->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
++	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
++	ret = media_entity_init(&sd->entity, 1, &sensor->pad, 0);
++	if (ret < 0)
++		goto exit;
++
++	v4l2_set_subdevdata(sd, sensor);
++
++	/* Init sensor data */
++	ret = sensor_init(sensor);
++	if (ret < 0) {
++		is_err("Sensor init failed.\n");
++		goto exit;
++	}
++
++	return 0;
++exit:
++	return ret;
++}
++
++void fimc_is_sensor_subdev_destroy(struct fimc_is_sensor *sensor)
++{
++	media_entity_cleanup(&sensor->subdev.entity);
++}
+diff --git a/drivers/media/platform/exynos5-is/fimc-is-sensor.h b/drivers/media/platform/exynos5-is/fimc-is-sensor.h
+new file mode 100644
+index 0000000..d147ff8
+--- /dev/null
++++ b/drivers/media/platform/exynos5-is/fimc-is-sensor.h
+@@ -0,0 +1,170 @@
++/*
++ * Samsung EXYNOS5250 FIMC-IS (Imaging Subsystem) driver
++ *
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Arun Kumar K <arun.kk@samsung.com>
++ * Kil-yeon Lim <kilyeon.im@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#ifndef FIMC_IS_SENSOR_H_
++#define FIMC_IS_SENSOR_H_
++
++#include <linux/clk.h>
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
++#include <linux/videodev2.h>
++#include <media/v4l2-subdev.h>
++
++#include "fimc-is-pipeline.h"
++
++#define FIMC_IS_MAX_CAMIF_CLIENTS	2
++#define FIMC_IS_MAX_NAME_LEN		32
++#define FIMC_IS_MAX_GPIO_NUM		32
++#define UART_ISP_SEL			0
++#define UART_ISP_RATIO			1
++
++#define FIMC_IS_MAX_SENSORS		4
++
++#define SENSOR_4E5_WIDTH		2560
++#define SENSOR_4E5_HEIGHT		1920
++#define SENSOR_6A3_WIDTH		1392
++#define SENSOR_6A3_HEIGHT		1392
++
++enum sensor_id {
++	SENSOR_S5K3H2	= 1,
++	SENSOR_S5K6A3	= 2,
++	SENSOR_S5K4E5	= 3,
++	SENSOR_S5K3H7	= 4,
++	SENSOR_CUSTOM	= 100,
++	SENSOR_END
++};
++
++enum sensor_channel {
++	SENSOR_CONTROL_I2C0	 = 0,
++	SENSOR_CONTROL_I2C1	 = 1
++};
++
++enum actuator_name {
++	ACTUATOR_NAME_AD5823	= 1,
++	ACTUATOR_NAME_DWXXXX	= 2,
++	ACTUATOR_NAME_AK7343	= 3,
++	ACTUATOR_NAME_HYBRIDVCA	= 4,
++	ACTUATOR_NAME_NOTHING	= 100,
++	ACTUATOR_NAME_END
++};
++
++enum flash_drv_name {
++	FLADRV_NAME_KTD267	= 1,
++	FLADRV_NAME_NOTHING	= 100,
++	FLADRV_NAME_END
++};
++
++enum from_name {
++	FROMDRV_NAME_W25Q80BW	= 1,
++	FROMDRV_NAME_NOTHING
++};
++
++enum sensor_peri_type {
++	SE_I2C,
++	SE_SPI,
++	SE_GPIO,
++	SE_MPWM,
++	SE_ADC,
++	SE_NULL
++};
++
++struct i2c_type {
++	u32 channel;
++	u32 slave_address;
++	u32 speed;
++};
++
++struct spi_type {
++	u32 channel;
++};
++
++struct gpio_type {
++	u32 first_gpio_port_no;
++	u32 second_gpio_port_no;
++};
++
++union sensor_peri_format {
++	struct i2c_type i2c;
++	struct spi_type spi;
++	struct gpio_type gpio;
++};
++
++struct sensor_protocol {
++	unsigned int product_name;
++	enum sensor_peri_type peri_type;
++	union sensor_peri_format peri_setting;
++};
++
++struct fimc_is_sensor_ext {
++	struct sensor_protocol actuator_con;
++	struct sensor_protocol flash_con;
++	struct sensor_protocol from_con;
++
++	unsigned int mclk;
++	unsigned int mipi_lane_num;
++	unsigned int mipi_speed;
++	unsigned int fast_open_sensor;
++	unsigned int self_calibration_mode;
++};
++
++struct fimc_is_sensor_info {
++	unsigned int	sensor_id;
++	char		*sensor_name;
++	unsigned int	pixel_width;
++	unsigned int	pixel_height;
++	unsigned int	active_width;
++	unsigned int	active_height;
++	unsigned int	max_framerate;
++	unsigned int	csi_ch;
++	unsigned int	flite_ch;
++	unsigned int	i2c_ch;
++	struct fimc_is_sensor_ext ext;
++	char		*setfile_name;
++};
++
++enum sensor_clks {
++	SCLK_BAYER,
++	SCLK_CAM0,
++	SCLK_CAM1,
++	SCLK_MAX_NUM,
++};
++
++struct sensor_pix_format {
++	enum v4l2_mbus_pixelcode code;
++};
++
++/**
++ * struct fimc_is_sensor - fimc-is sensor context
++ * @pad: media pad
++ * @subdev: sensor subdev
++ * @clock: sensor clocks array
++ * @pipeline: is pipeline context pointer
++ * @sensor_info: fimc-is sensor config information
++ * @sensor_data: platform data received for sensor
++ */
++struct fimc_is_sensor {
++	struct media_pad		pad;
++	struct v4l2_subdev		subdev;
++	struct clk			*clock[SCLK_MAX_NUM];
++
++	struct fimc_is_pipeline		*pipeline;
++	struct fimc_is_sensor_info	*sensor_info;
++	struct fimc_is_sensor_data	*sensor_data;
++};
++
++int fimc_is_sensor_subdev_create(struct fimc_is_sensor *sensor,
++		struct fimc_is_sensor_data *sensor_data,
++		struct fimc_is_pipeline *pipeline);
++void fimc_is_sensor_subdev_destroy(struct fimc_is_sensor *sensor);
++
++#endif /* FIMC_IS_SENSOR_H_ */
 -- 
 1.7.9.5
