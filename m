@@ -1,70 +1,65 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/5] ARM: S3C24XX: more fixes and enhancements for the
- s3c24xx irqs
-Date: Sat, 09 Mar 2013 18:14:28 +0900
-Message-ID: <042901ce1ca6$8054e800$80feb800$%kim@samsung.com>
-References: <201302262357.24544.heiko@sntech.de>
+Subject: RE: [PATCH v6 01/16] clk: samsung: add common clock framework helper
+ functions for Samsung platforms
+Date: Sat, 09 Mar 2013 18:15:08 +0900
+Message-ID: <042a01ce1ca6$98912140$c9b363c0$%kim@samsung.com>
+References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
+ <201303030208.49722.heiko@sntech.de> <51333149.1060105@gmail.com>
+ <2984153.Xctncej7hL@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10574 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757467Ab3CIJOa convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:62149 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757532Ab3CIJPL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 9 Mar 2013 04:14:30 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Sat, 9 Mar 2013 04:15:11 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJD00B41Z01T140@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 09 Mar 2013 18:14:28 +0900 (KST)
-In-reply-to: <201302262357.24544.heiko@sntech.de>
+ with ESMTP id <0MJD00E06Z196PB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 09 Mar 2013 18:15:09 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MJD00EJBZ18B950@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 09 Mar 2013 18:15:09 +0900 (KST)
+In-reply-to: 
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: 'Julia Lawall' <julia.lawall@lip6.fr>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, devicetree-discuss@lists.ozlabs.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, t.figa@samsung.com
 
-Heiko St=C3=BCbner wrote:
->=20
-> Asorted fixes and enhancements for the recent redo of the s3c24xx
-> interrupt controllers.
->=20
-> The only real error that gets fixed is the handling of 0-hwirq as
-> parent_irq on s3c2412 in patch 2. No other of the s3c24xx platforms
-> uses the bit0 of the parent controller as parent_irq.
->=20
-> Heiko Stuebner (5):
->   ARM: S3C24XX: fix redundant checks in the irq mapping function
->   ARM: S3C24XX: fix irq parent check
->   ARM: S3C24XX: move s3c24xx_init_irq to s3c2410_init_irq
->   ARM: S3C24XX: make s3c24xx_init_intc static
->   ARM: S3C24XX: add handle_irq function
->=20
->  arch/arm/Kconfig                                 |    1 +
->  arch/arm/mach-s3c24xx/common.h                   |    1 +
->  arch/arm/mach-s3c24xx/include/mach/entry-macro.S |   70 ---------
->  arch/arm/mach-s3c24xx/irq.c                      |  167 ++++++++++++=
-+--------
->  arch/arm/mach-s3c24xx/mach-amlm5900.c            |    2 +-
->  arch/arm/mach-s3c24xx/mach-bast.c                |    2 +-
->  arch/arm/mach-s3c24xx/mach-h1940.c               |    7 +-
->  arch/arm/mach-s3c24xx/mach-n30.c                 |    4 +-
->  arch/arm/mach-s3c24xx/mach-otom.c                |    2 +-
->  arch/arm/mach-s3c24xx/mach-qt2410.c              |    2 +-
->  arch/arm/mach-s3c24xx/mach-smdk2410.c            |    2 +-
->  arch/arm/mach-s3c24xx/mach-tct_hammer.c          |    2 +-
->  arch/arm/mach-s3c24xx/mach-vr1000.c              |    2 +-
->  arch/arm/plat-samsung/include/plat/cpu.h         |    1 -
->  14 files changed, 115 insertions(+), 150 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/entry-macro.S
->=20
-> --
-> 1.7.2.3
+Kukjin Kim wrote:
 
-Looks good to me, applied.
+[...]
 
-Thanks.
+Thomas,
+
+As I said, I applied this whole series into Samsung tree, following error
+happens with exynos4_defconfig(non-DT) though.
+
+drivers/clk/samsung/clk.c: In function 'samsung_clk_of_register_fixed_ext':
+drivers/clk/samsung/clk.c:251:2: error: implicit declaration of function
+'for_each_matching_node_and_match' [-Werror=implicit-function-declaration]
+drivers/clk/samsung/clk.c:251:60: error: expected ';' before '{' token
+drivers/clk/samsung/clk.c:249:6: warning: unused variable 'freq'
+[-Wunused-variable]
+cc1: some warnings being treated as errors
+make[3]: *** [drivers/clk/samsung/clk.o] Error 1
+make[2]: *** [drivers/clk/samsung] Error 2
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [drivers/clk] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [drivers] Error 2
+make: *** Waiting for unfinished jobs....
+
+I think, it's time to decide to support non-DT exynos continuously, above
+compilation error can be fixed though.
+
+Hey guys, how do you think?
 
 - Kukjin
