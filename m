@@ -1,85 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 0/4] Initial Device Tree support for S3C64xx
-Date: Sat, 09 Mar 2013 18:18:26 +0900
-Message-ID: <042b01ce1ca7$0e9ba2c0$2bd2e840$%kim@samsung.com>
-References: <1361036261-8315-1-git-send-email-tomasz.figa@gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V3 1/4] cpufreq: exynos: Adding cpufreq driver for exynos5440
+Date: Sat, 9 Mar 2013 18:47:26 +0800
+Message-ID: <CAKohpokJafWjXj8hYT6tgYMGSqgnFCc3MZmNFco2tTeNkOWDmQ@mail.gmail.com>
+References: <1362629627-10012-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:42176 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756052Ab3CIJS2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 9 Mar 2013 04:18:28 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJD00AFXZ6LOO90@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 09 Mar 2013 18:18:27 +0900 (KST)
-In-reply-to: <1361036261-8315-1-git-send-email-tomasz.figa@gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1362629627-10012-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, Inderpal Singh <inderpal.singh@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, 'Rob Herring' <robherring2@gmail.com>, 'Mark Rutland' <mark.rutland@arm.com>
 
-Tomasz Figa wrote:
-> 
-> This series adds Device Tree support for Samsung S3C64xx SoC series.
-> 
-> It fixes several problems preventing from booting an S3C64xx-based system
-> using Device Tree, adds all the infrastructure for Device Tree-based board
-> support, including mach-s3c64xx-dt and dts include files for S3C64xx SoCs, and
-> (very) basic device tree source for FriendlyARM Mini6410 board.
-> 
-> Current support is very limited and allows only basic bootup with UART and
-> SDHCI, but should be fine as a start and will be extended in future, hopefully
-> with help of S3C64xx board maintainers.
-> 
-> This series depends on my other series reworking samsung-time for
-> multiplatform:
-> [PATCH v2 00/12] ARM: samsung-time: Prepare for multiplatform support
-> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16158
-> 
-Tomasz, can you address comments from ml for above patches? So that this could
-be sent to upstream together :-)
+On 7 March 2013 12:13, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
+> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+> +struct exynos_dvfs_data {
+> +       void __iomem *base;
+> +       struct resource *mem;
+> +       int irq;
+> +       struct clk *cpu_clk;
+> +       unsigned int cur_frequency;
+> +       unsigned int latency;
+> +       struct cpufreq_frequency_table *freq_table;
+> +       unsigned int freq_count;
+> +       struct device *dev;
+> +       bool dvfs_enable;
 
-- Kukjin
+s/enable/enabled?
 
-> Changes since v2:
->  - Updated timer node for next version of samsung-time patches
-> 
-> Changes since v1:
->  - Dropped two VIC-related patches that are no longer necessary
->  - Added Device Tree-based instantation of system timers
->  - Corrected VIC interrupt specifiers
->  - Adjusted CPU compatible values and dropped @id
-> 
-> Tomasz Figa (4):
->   ARM: common: vic: Parse interrupt and resume masks from device tree
->   ARM: s3c64xx: Add board file for boot using Device Tree
->   ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
->   ARM: dts: Add dts file for S3C6410-based Mini6410 board
-> 
->  Documentation/devicetree/bindings/arm/vic.txt |   6 ++
->  arch/arm/boot/dts/Makefile                    |   1 +
->  arch/arm/boot/dts/s3c6400.dtsi                |  33 ++++++++
->  arch/arm/boot/dts/s3c6410-mini6410.dts        |  50 +++++++++++++
->  arch/arm/boot/dts/s3c6410.dtsi                |  33 ++++++++
->  arch/arm/boot/dts/s3c64xx.dtsi                | 104
-++++++++++++++++++++++++++
->  arch/arm/common/vic.c                         |   7 +-
->  arch/arm/mach-s3c64xx/Kconfig                 |  14 ++++
->  arch/arm/mach-s3c64xx/Makefile                |   1 +
->  arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c       |  94 +++++++++++++++++++++++
->  10 files changed, 342 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
->  create mode 100644 arch/arm/boot/dts/s3c6410-mini6410.dts
->  create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
->  create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
->  create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
-> 
-> --
-> 1.8.1.2
+> +static int exynos_cpufreq_probe(struct platform_device *pdev)
+
+> +       dvfs_info->cpu_clk = devm_clk_get(dvfs_info->dev, "armclk");
+> +       if (IS_ERR_OR_NULL(dvfs_info->cpu_clk)) {
+
+s/IS_ERR_OR_NULL/IS_ERR
+
+> +       if (devm_request_irq(dvfs_info->dev, dvfs_info->irq, exynos_cpufreq_irq,
+> +                               IRQF_TRIGGER_NONE, CPUFREQ_NAME, dvfs_info)) {
+> +               pr_err("Failed to register IRQ\n");
+> +               ret = -ENODEV;
+
+use the value returned from this function rather than creating your
+own.. true for all
+other calls too, unless they return NULL on error.
+
+> +}
