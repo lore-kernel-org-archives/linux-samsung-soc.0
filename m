@@ -1,19 +1,19 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: s3c24xx pinctrl help
-Date: Sat, 09 Mar 2013 14:31:53 +0100
-Message-ID: <1825121.bbMz1G1oeT@flatron>
+Date: Sat, 09 Mar 2013 14:44:29 +0100
+Message-ID: <46997515.mkKLqFWbgE@flatron>
 References: <201303081538.04877.heiko@sntech.de> <2034100.l6yoVjE7uo@flatron> <201303091356.25912.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:43989 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753590Ab3CINb4 convert rfc822-to-8bit (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:34180 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753590Ab3CINob convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 9 Mar 2013 08:31:56 -0500
-Received: by mail-wg0-f42.google.com with SMTP id 12so636306wgh.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Mar 2013 05:31:55 -0800 (PST)
+	Sat, 9 Mar 2013 08:44:31 -0500
+Received: by mail-wi0-f180.google.com with SMTP id hi8so206316wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Mar 2013 05:44:30 -0800 (PST)
 In-Reply-To: <201303091356.25912.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -111,81 +111,28 @@ ack
 >=20
 > 	return (virq) ? : -ENXIO;
 > }
->=20
-> The GPG bank could simply use the existing mechanisms, as it follows =
-the
-> generic paradigm, and for GPF the callback would handle the distincti=
-on
-> between eints handled in the eint regs or in the main interrupt
-> controller.
 
-Right, I checked how EINTs work on S3C2440A in documentation and indeed=
- it=20
-is a bit different than I initially thought.
+I forgot one more thing in my previous reply. Your solution would not=20
+allow GPIO bank-based specification of EINTs 0-3 in device tree.
 
-However this is still similar to S3C64xx in some aspects. On S3C64xx th=
-ere=20
-is following hierarchy of interrupts in EINT0 group:
+Consider following example:
 
-EINT0=20
-=2E..     -------> VIC0 INT0
-EINT3=20
+device-0 {
+	...
+	interrupt-parent =3D <&gpf>;
+	interrupts =3D <2 0>;
+	...
+};
 
-EINT4
-=2E..     -------> VIC0 INT1
-EINT11
+This would explicitly go through irq_create_mapping() without calling=20
+gpio_to_irq.
 
-EINT12
-=2E..     -------> VIC1 INT0
-EINT19
-
-EINT20
-=2E..     -------> VIC1 INT1
-EINT27
-
-On S3C24xx it would look like this:
-
-EINT0  -------> INT0
-
-EINT1  -------> INT1
-
-EINT2  -------> INT2
-
-EINT3  -------> INT3
-
-EINT4
-=2E..    -------> INT4
-EINT7
-
-EINT8
-=2E..    -------> INT5
-EINT23
-
-So you can look at all EINTs as being multiplexed, just with some group=
-s=20
-consisting only of single interrupt signal.
-
-The only thing that differs here is that, at least on S3C2440, there ar=
-e=20
-no pending and mask bits for EINTs 0-3. Missing pending bits are not a=20
-problem here, since receiving INT0 would mean receiving EINT0, but no m=
-ask=20
-bits means that masking would have to be handled on interrupt controlle=
+Of course you could say that this kind of specification is not valid fo=
 r=20
-level, probably by using enable_irq and disable_irq_nosync. This could =
-be=20
-solved by assigning different irq chip to EINTs 0-3 and EINTs 4-7 in=20
-domain map callback.
-
-Still, irq domain isn't really related with such low level things. As l=
-ong=20
-as you have a way to map domain hwirq to appropriate bitfields in contr=
-ol=20
-registers and received interrupts to proper domain and its hwirq, you c=
-an=20
-do whatever mapping you want.
+EINTs0-3 and interrupt contoller has to be specified in interrupt-paren=
+t=20
+specifier, not gpf bank. I guess it's just a matter of preference, thou=
+gh.
 
 Best regards,
 Tomasz
-
-P.S. Sorry for previous message, clicked Send accidentally...
