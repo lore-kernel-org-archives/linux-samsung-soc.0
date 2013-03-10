@@ -1,48 +1,106 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC 00/12] Adding media device driver for Exynos imaging subsystem
-Date: Sun, 10 Mar 2013 21:36:28 +0100
-Message-ID: <513CEECC.8050903@gmail.com>
-References: <1362570838-4737-1-git-send-email-shaik.ameer@samsung.com>
+Subject: Re: [RFC 02/12] fimc-lite: Adding Exynos5 compatibility to fimc-lite
+ driver
+Date: Sun, 10 Mar 2013 21:36:47 +0100
+Message-ID: <513CEEDF.4010304@gmail.com>
+References: <1362570838-4737-1-git-send-email-shaik.ameer@samsung.com> <1362570838-4737-3-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f171.google.com ([74.125.82.171]:37419 "EHLO
-	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751487Ab3CJUgd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Mar 2013 16:36:33 -0400
-In-Reply-To: <1362570838-4737-1-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1362570838-4737-3-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Shaik Ameer Basha <shaik.ameer@samsung.com>
 Cc: linux-media@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, shaik.samsung@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On 03/06/2013 12:53 PM, Shaik Ameer Basha wrote:
-> The following patchset features:
+> This patch adds the Exynos5 soc compatibility to the fimc-lite driver.
+> It also adds a version checking to deal with the changes between
+> different fimc-lite hardware versions.
+
+Is there really anything different between the Exynos4 and Exynos5
+FIMC-LITE IPs except the maximum number of buffer descriptors in
+the output DMA queue ?
+
+> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
+> ---
+>   drivers/media/platform/s5p-fimc/fimc-lite.c |   23 +++++++++++++++++++++++
+>   drivers/media/platform/s5p-fimc/fimc-lite.h |    7 ++++++-
+>   2 files changed, 29 insertions(+), 1 deletion(-)
 >
-> 1] Creating a common pipeline framework which can be used by all
-> Exynos series SoCs for developing media device drivers.
-> 2] Modified the existing fimc-mdevice for exynos4 to use the common
-> pipeline framework.
-> 3] Adding of media device driver for Exynos5 Imaging subsystem.
-> 4] Upgrading mipi-csis and fimc-lite drivers for Exynos5 SoCs.
-> 5] Adding DT support to m5mols driver and tested with Exynos5 media
-> device driver.
+> diff --git a/drivers/media/platform/s5p-fimc/fimc-lite.c b/drivers/media/platform/s5p-fimc/fimc-lite.c
+> index 122cf95..eb64f87 100644
+> --- a/drivers/media/platform/s5p-fimc/fimc-lite.c
+> +++ b/drivers/media/platform/s5p-fimc/fimc-lite.c
+> @@ -1653,6 +1653,16 @@ static struct flite_variant fimc_lite0_variant_exynos4 = {
+>   	.out_width_align	= 8,
+>   	.win_hor_offs_align	= 2,
+>   	.out_hor_offs_align	= 8,
+> +	.version		= FLITE_VER_EXYNOS4,
+> +};
+> +
+> +static struct flite_variant fimc_lite0_variant_exynos5 = {
+> +	.max_width		= 8192,
+> +	.max_height		= 8192,
+> +	.out_width_align	= 8,
+> +	.win_hor_offs_align	= 2,
+> +	.out_hor_offs_align	= 8,
+
+Please see my comment to patch 03/12.
+
+> +	.version		= FLITE_VER_EXYNOS5,
+>   };
 >
-> Current changes are not tested on exynos4 series SoCs. Current media
-> device driver only support one pipeline (pipeline0) which consists of
-> 	Sensor -->  MIPI-CSIS -->  FIMC-LITE
-> 	Sensor -->  FIMC-LITE
+>   /* EXYNOS4212, EXYNOS4412 */
+> @@ -1663,6 +1673,15 @@ static struct flite_drvdata fimc_lite_drvdata_exynos4 = {
+>   	},
+>   };
+>
+> +/* EXYNOS5250 */
+> +static struct flite_drvdata fimc_lite_drvdata_exynos5 = {
+> +	.variant = {
+> +		[0] =&fimc_lite0_variant_exynos5,
+> +		[1] =&fimc_lite0_variant_exynos5,
+> +		[2] =&fimc_lite0_variant_exynos5,
+> +	},
+> +};
+> +
+>   static struct platform_device_id fimc_lite_driver_ids[] = {
+>   	{
+>   		.name		= "exynos-fimc-lite",
+> @@ -1677,6 +1696,10 @@ static const struct of_device_id flite_of_match[] = {
+>   		.compatible = "samsung,exynos4212-fimc-lite",
+>   		.data =&fimc_lite_drvdata_exynos4,
+>   	},
+> +	{
+> +		.compatible = "samsung,exynos5250-fimc-lite",
+> +		.data =&fimc_lite_drvdata_exynos5,
+> +	},
+>   	{ /* sentinel */ },
+>   };
+>   MODULE_DEVICE_TABLE(of, flite_of_match);
+> diff --git a/drivers/media/platform/s5p-fimc/fimc-lite.h b/drivers/media/platform/s5p-fimc/fimc-lite.h
+> index 66d6eeb..ef43fe0 100644
+> --- a/drivers/media/platform/s5p-fimc/fimc-lite.h
+> +++ b/drivers/media/platform/s5p-fimc/fimc-lite.h
+> @@ -28,7 +28,7 @@
+>
+>   #define FIMC_LITE_DRV_NAME	"exynos-fimc-lite"
+>   #define FLITE_CLK_NAME		"flite"
+> -#define FIMC_LITE_MAX_DEVS	2
+> +#define FIMC_LITE_MAX_DEVS	3
+>   #define FLITE_REQ_BUFS_MIN	2
+>
+>   /* Bit index definitions for struct fimc_lite::state */
+> @@ -49,12 +49,17 @@ enum {
+>   #define FLITE_SD_PAD_SOURCE_ISP	2
+>   #define FLITE_SD_PADS_NUM	3
+>
+> +#define FLITE_VER_EXYNOS4	0
+> +#define FLITE_VER_EXYNOS5	1
 
-Thanks Shaik. My quick review to follow. I'll focus on most significant
-issues for now.
-
-And here is my updated patch series adding device tree support to
-s5p-fimc driver [1]. I hope it gets merged to v3.10 without significant
-changes. Sorry, for now we need to use that private branch.
-
-[1] http://git.linuxtv.org/snawrocki/samsung.git/devicetree-fimc
-
-Regards,
-Sylwester
+I would prefer not using explicit version and rather put each
+quirk in the driver data structure, so we can avoid those
+multiple if (version == ...) checks all over in the code, should
+more revision of this IP come in future SoCs.
