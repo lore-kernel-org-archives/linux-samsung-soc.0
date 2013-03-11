@@ -1,34 +1,42 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2] ARM: exynos: pl330: Add #dma-cells for generic dma binding support
-Date: Mon, 11 Mar 2013 21:02:36 +0000
-Message-ID: <201303112102.36909.arnd@arndb.de>
-References: <1362375268-29405-1-git-send-email-padma.v@samsung.com> <CAAgF-Bf+rqiFUaBD=aRqry6-2z4o0Ao2L2YRm8bu1x98TfPPyg@mail.gmail.com> <015901ce1ad3$6ea43540$4bec9fc0$%kim@samsung.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/4] clk: samsung: small fixes and enhancements
+Date: Tue, 12 Mar 2013 00:42:09 +0100
+Message-ID: <201303120042.09633.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="iso-8859-1"
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:52886 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754507Ab3CKVCq (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:39947 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754178Ab3CKXmS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Mar 2013 17:02:46 -0400
-In-Reply-To: <015901ce1ad3$6ea43540$4bec9fc0$%kim@samsung.com>
+	Mon, 11 Mar 2013 19:42:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Padma Venkat' <padma.kvr@gmail.com>, 'Padmavathi Venna' <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, jassisinghbrar@gmail.com, vinod.koul@intel.com, boojin.kim@samsung.com, robherring2@gmail.com, dinguyen@altera.com, 'Olof Johansson' <olof@lixom.net>
+Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-On Thursday 07 March 2013, Kukjin Kim wrote:
-> > Can you please take this patch in 3.9 rc2 ?
-> > 
-> Sure, I will.
-> 
-> BTW, Arnd, I'm not sure second one(socfpga.dtsi) can be handled in samsung
-> tree.
+Small fixes and enhancements that came up when implementing the
+common clock support for s3c2443, s3c2416 and s3c2450.
 
-I guess you're right, I've applied the second one to the fixes branch now.
+The 3rd and 4th patch enable the adding of separate aliases
+to previously defined clocks, as discussed with Sylwester Nawrocki.
 
-Thanks,
+This is often needed as some clocks need more than one alias. The hsmmc
+hclks on s3c2416 for example are both "hsmmc" and "mmc_busclk.0" .
 
-	Arnd
+These changes are required for the common clock conversion of s3c24xx SoCs.
+
+Heiko Stuebner (4):
+  clk: samsung: register clk_div_tables for divider clocks
+  clk: samsung: remove np check in clock init
+  clk: samsung: always allocate the clk_table
+  clk: samsung: add infrastructure to add separate aliases
+
+ drivers/clk/samsung/clk.c |   51 +++++++++++++++++++++++++++++++++++++++-----
+ drivers/clk/samsung/clk.h |   34 ++++++++++++++++++++++++++---
+ 2 files changed, 75 insertions(+), 10 deletions(-)
+
+-- 
+1.7.2.3
