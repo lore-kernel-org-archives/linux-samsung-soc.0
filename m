@@ -1,47 +1,63 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 00/11] s5p-fimc: Exynos4x12 FIMC-IS support prerequisite
-Date: Mon, 11 Mar 2013 20:00:15 +0100
-Message-ID: <1363028426-2771-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC 01/11] s5p-fimc: Added error checks for pipeline stream on
+ callbacks
+Date: Mon, 11 Mar 2013 20:00:16 +0100
+Message-ID: <1363028426-2771-2-git-send-email-s.nawrocki@samsung.com>
+References: <1363028426-2771-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1363028426-2771-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series contains couple fixes to the s5p-fimc driver
-and changes necessary for the Exynos4x12 FIMC-IS support.
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-Andrzej Hajda (1):
-  s5p-fimc: Added error checks for pipeline stream on callbacks
+set_stream error for pipelines is logged or reported to user
+space if possible.
 
-Sylwester Nawrocki (10):
-  s5p-fimc: Add parent clock setup
-  s5p-csis: Add parent clock setup
-  s5p-fimc: Update graph traversal for entities with multiple source
-    pads
-  s5p-fimc: Add support for PIXELASYNCMx clocks
-  s5p-fimc: Add the FIMC ISP writeback input support
-  s5p-fimc: Ensure CAMCLK clock can be enabled by FIMC-LITE devices
-  s5p-fimc: Ensure proper s_stream() call order in the ISP datapaths
-  s5p-fimc: Ensure proper s_power() call order in the ISP datapaths
-  s5p-fimc: Remove dependency on fimc-core.h in fimc-lite driver
-  V4L: Add MATRIX option to V4L2_CID_EXPOSURE_METERING control
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/platform/s5p-fimc/fimc-capture.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
- Documentation/DocBook/media/v4l/controls.xml   |    9 +-
- drivers/media/platform/s5p-fimc/fimc-capture.c |   46 +++++---
- drivers/media/platform/s5p-fimc/fimc-core.c    |   67 ++++++++----
- drivers/media/platform/s5p-fimc/fimc-core.h    |   42 ++------
- drivers/media/platform/s5p-fimc/fimc-lite.c    |    1 -
- drivers/media/platform/s5p-fimc/fimc-lite.h    |    3 +-
- drivers/media/platform/s5p-fimc/fimc-mdevice.c |  134 ++++++++++++++++++------
- drivers/media/platform/s5p-fimc/fimc-mdevice.h |   10 ++
- drivers/media/platform/s5p-fimc/fimc-reg.c     |   65 +++++++++++-
- drivers/media/platform/s5p-fimc/fimc-reg.h     |   10 ++
- drivers/media/platform/s5p-fimc/mipi-csis.c    |   66 ++++++++----
- drivers/media/v4l2-core/v4l2-ctrls.c           |    1 +
- include/media/s5p_fimc.h                       |   34 ++++++
- include/uapi/linux/v4l2-controls.h             |    1 +
- 14 files changed, 360 insertions(+), 129 deletions(-)
-
---
+diff --git a/drivers/media/platform/s5p-fimc/fimc-capture.c b/drivers/media/platform/s5p-fimc/fimc-capture.c
+index 2a1da4c..52abc9f 100644
+--- a/drivers/media/platform/s5p-fimc/fimc-capture.c
++++ b/drivers/media/platform/s5p-fimc/fimc-capture.c
+@@ -286,8 +286,8 @@ static int start_streaming(struct vb2_queue *q, unsigned int count)
+ 		fimc_activate_capture(ctx);
+ 
+ 		if (!test_and_set_bit(ST_CAPT_ISP_STREAM, &fimc->state))
+-			fimc_pipeline_call(fimc, set_stream,
+-					   &fimc->pipeline, 1);
++			return fimc_pipeline_call(fimc, set_stream,
++						  &fimc->pipeline, 1);
+ 	}
+ 
+ 	return 0;
+@@ -443,12 +443,17 @@ static void buffer_queue(struct vb2_buffer *vb)
+ 	if (vb2_is_streaming(&vid_cap->vbq) &&
+ 	    vid_cap->active_buf_cnt >= min_bufs &&
+ 	    !test_and_set_bit(ST_CAPT_STREAM, &fimc->state)) {
++		int ret;
++
+ 		fimc_activate_capture(ctx);
+ 		spin_unlock_irqrestore(&fimc->slock, flags);
+ 
+-		if (!test_and_set_bit(ST_CAPT_ISP_STREAM, &fimc->state))
+-			fimc_pipeline_call(fimc, set_stream,
+-					   &fimc->pipeline, 1);
++		if (test_and_set_bit(ST_CAPT_ISP_STREAM, &fimc->state))
++			return;
++
++		ret = fimc_pipeline_call(fimc, set_stream, &fimc->pipeline, 1);
++		if (ret < 0)
++			v4l2_err(&vid_cap->vfd, "stream on failed: %d\n", ret);
+ 		return;
+ 	}
+ 	spin_unlock_irqrestore(&fimc->slock, flags);
+-- 
 1.7.9.5
