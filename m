@@ -1,88 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] arm: plat-samsung: check processor type before cache
- restoration in resume
-Date: Mon, 11 Mar 2013 16:05:44 +0900
-Message-ID: <052201ce1e26$d9886bf0$8c9943d0$%kim@samsung.com>
-References: <1361961363-28412-1-git-send-email-inderpal.singh@linaro.org>
+Subject: RE: [PATCH] ARM: S3C24XX: drop "select MACH_NEO1973"
+Date: Mon, 11 Mar 2013 16:09:24 +0900
+Message-ID: <052301ce1e27$5cc9cd10$165d6730$%kim@samsung.com>
+References: <1362856081.3137.19.camel@x61.thuisdomein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:42883 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751392Ab3CKHFq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Mar 2013 03:05:46 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJH00BLAIDK8Z80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 11 Mar 2013 16:05:45 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MJH00EXBIDKCN60@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 11 Mar 2013 16:05:44 +0900 (KST)
-In-reply-to: <1361961363-28412-1-git-send-email-inderpal.singh@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1362856081.3137.19.camel@x61.thuisdomein>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Inderpal Singh' <inderpal.singh@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux@arm.linux.org.uk, patches@linaro.org
 
-Inderpal Singh wrote:
+Paul Bolle wrote:
 > 
-> Only cortex-a9 based samsung platforms have l2x0 cache controller. Hence check
-> the same before restoring the cache in resume.
+> The Kconfig entry for the Openmoko GTA02 / Freerunner phone selects
+> MACH_NEO1973. But there is no Kconfig symbol MACH_NEO1973. The select
+> statement for that symbol is a nop. It can safely be dropped.
 > 
-> This is needed for single kernel image.
-> 
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 > ---
-> changes in v2:
->         - check processor midr instead of checking all soc ids as
->         suggested by Kukjin
+> 0) Tested with "git grep".
 > 
-> changes in v3:
-> 	- simplify by reading midr in assembly as per Russell
+> 1) There appear to be repositories that carry a "config MACH_NEO1973" in
+> their tree. I guess it is used to collect functionality common to the
+> GTA01 and the GTA02. But except for this select statement, MACH_NEO1973
+> was never used in mainline. So if the GTA01 code ever gets merged into
+> mainline, this select statement might be added once more (if it is
+> actually needed then).
 > 
->  arch/arm/plat-samsung/s5p-sleep.S |    9 +++++++++
->  1 file changed, 9 insertions(+)
+>  arch/arm/mach-s3c24xx/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/arch/arm/plat-samsung/s5p-sleep.S b/arch/arm/plat-samsung/s5p-
-> sleep.S
-> index bdf6dad..6e15993 100644
-> --- a/arch/arm/plat-samsung/s5p-sleep.S
-> +++ b/arch/arm/plat-samsung/s5p-sleep.S
-> @@ -25,6 +25,9 @@
->  #include <asm/asm-offsets.h>
->  #include <asm/hardware/cache-l2x0.h>
-> 
-> +#define CPU_MASK	0xff0ffff0
-> +#define CPU_CORTEX_A9	0x410fc090
-> +
->  /*
->   *	 The following code is located into the .data section. This is to
->   *	 allow l2x0_regs_phys to be accessed with a relative load while we
-> @@ -51,6 +54,12 @@
-> 
->  ENTRY(s3c_cpu_resume)
->  #ifdef CONFIG_CACHE_L2X0
-> +	mrc     p15, 0, r0, c0, c0, 0
-> +	ldr	r1, =CPU_MASK
-> +	and	r0, r0, r1
-> +	ldr	r1, =CPU_CORTEX_A9
-> +	cmp	r0, r1
-> +	bne	resume_l2on
->  	adr	r0, l2x0_regs_phys
->  	ldr	r0, [r0]
->  	ldr	r1, [r0, #L2X0_R_PHY_BASE]
+> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+> index 7361b9d..bec43fe 100644
+> --- a/arch/arm/mach-s3c24xx/Kconfig
+> +++ b/arch/arm/mach-s3c24xx/Kconfig
+> @@ -641,7 +641,6 @@ comment "S3C2442 Boards"
+>  config MACH_NEO1973_GTA02
+>  	bool "Openmoko GTA02 / Freerunner phone"
+>  	select I2C
+> -	select MACH_NEO1973
+>  	select MFD_PCF50633
+>  	select PCF50633_GPIO
+>  	select POWER_SUPPLY
 > --
-> 1.7.9.5
+> 1.7.11.7
 
-Looks good to me, applied.
+Yeah, we don't need it.
 
-Thanks.
+Applied, thanks.
 
 - Kukjin
