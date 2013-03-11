@@ -1,191 +1,178 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 02/11] s5p-fimc: Add parent clock setup
-Date: Mon, 11 Mar 2013 20:00:17 +0100
-Message-ID: <1363028426-2771-3-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC 03/11] s5p-csis: Add parent clock setup
+Date: Mon, 11 Mar 2013 20:00:18 +0100
+Message-ID: <1363028426-2771-4-git-send-email-s.nawrocki@samsung.com>
 References: <1363028426-2771-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:58371 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754397Ab3CKTA7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Mar 2013 15:00:59 -0400
 In-reply-to: <1363028426-2771-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 With this patch the driver will set "parent" clock as a parent
 clock of "mux" clock. When the samsung clocks driver is reworked
 to use new composite clock type, the "mux" clock can be removed.
 
-"parent" clock should be set in related dtsi file and can be
+"parent" clock should be set in relevant dtsi file and can be
 overwritten in a board dts file. This way it is ensured the
-SCLK_FIMC clock has correct parent clock set, and the parent
-clock can be selected per each board if required.
+SCLK_CSIS has correct parent clock set, and the parent clock
+can be selected per each board if required.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/platform/s5p-fimc/fimc-core.c |   63 ++++++++++++++++++---------
- drivers/media/platform/s5p-fimc/fimc-core.h |    6 ++-
- 2 files changed, 46 insertions(+), 23 deletions(-)
+ drivers/media/platform/s5p-fimc/mipi-csis.c |   66 ++++++++++++++++++---------
+ 1 file changed, 45 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-fimc/fimc-core.c b/drivers/media/platform/s5p-fimc/fimc-core.c
-index d7fe332..c968e80 100644
---- a/drivers/media/platform/s5p-fimc/fimc-core.c
-+++ b/drivers/media/platform/s5p-fimc/fimc-core.c
-@@ -33,8 +33,8 @@
- #include "fimc-reg.h"
- #include "fimc-mdevice.h"
+diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.c b/drivers/media/platform/s5p-fimc/mipi-csis.c
+index 4673625..6854c9e 100644
+--- a/drivers/media/platform/s5p-fimc/mipi-csis.c
++++ b/drivers/media/platform/s5p-fimc/mipi-csis.c
+@@ -108,13 +108,17 @@ MODULE_PARM_DESC(debug, "Debug level (0-2)");
+ #define S5PCSIS_PKTDATA_SIZE		SZ_4K
  
--static char *fimc_clocks[MAX_FIMC_CLOCKS] = {
--	"sclk_fimc", "fimc"
-+static char *fimc_clocks[CLK_FIMC_MAX] = {
-+	"sclk_fimc", "fimc", "mux", "parent"
+ enum {
+-	CSIS_CLK_MUX,
++	CSIS_CLK_BUS,
+ 	CSIS_CLK_GATE,
++	CSIS_CLK_MUX,
++	CSIS_CLK_PARENT,
  };
  
- static struct fimc_fmt fimc_formats[] = {
-@@ -787,10 +787,10 @@ struct fimc_fmt *fimc_find_format(const u32 *pixelformat, const u32 *mbus_code,
- 	return def_fmt;
+ static char *csi_clock_name[] = {
+-	[CSIS_CLK_MUX]  = "sclk_csis",
++	[CSIS_CLK_BUS]  = "sclk_csis",
+ 	[CSIS_CLK_GATE] = "csis",
++	[CSIS_CLK_MUX] = "mux",
++	[CSIS_CLK_PARENT] = "parent",
+ };
+ #define NUM_CSIS_CLOCKS	ARRAY_SIZE(csi_clock_name)
+ #define DEFAULT_SCLK_CSIS_FREQ	166000000UL
+@@ -362,7 +366,7 @@ static void s5pcsis_set_params(struct csis_state *state)
+ 	s5pcsis_write(state, S5PCSIS_CTRL, val | S5PCSIS_CTRL_UPDATE_SHADOW);
  }
  
--static void fimc_clk_put(struct fimc_dev *fimc)
-+static void fimc_put_clocks(struct fimc_dev *fimc)
+-static void s5pcsis_clk_put(struct csis_state *state)
++static void s5pcsis_put_clocks(struct csis_state *state)
  {
  	int i;
--	for (i = 0; i < MAX_FIMC_CLOCKS; i++) {
-+	for (i = 0; i < CLK_FIMC_MAX; i++) {
- 		if (IS_ERR(fimc->clock[i]))
- 			continue;
- 		clk_unprepare(fimc->clock[i]);
-@@ -799,15 +799,21 @@ static void fimc_clk_put(struct fimc_dev *fimc)
+ 
+@@ -375,11 +379,16 @@ static void s5pcsis_clk_put(struct csis_state *state)
  	}
  }
  
--static int fimc_clk_get(struct fimc_dev *fimc)
-+static int fimc_get_clocks(struct fimc_dev *fimc)
+-static int s5pcsis_clk_get(struct csis_state *state)
++static int s5pcsis_get_clocks(struct csis_state *state)
  {
-+	struct device *dev = &fimc->pdev->dev;
-+	unsigned int num_clocks = CLK_FIMC_MAX;
+ 	struct device *dev = &state->pdev->dev;
++	unsigned int num_clocks = NUM_CSIS_CLOCKS;
  	int i, ret;
  
--	for (i = 0; i < MAX_FIMC_CLOCKS; i++)
 +	/* Skip parent and mux clocks for non-dt platforms */
 +	if (!dev->of_node)
 +		num_clocks -= 2;
 +
-+	for (i = 0; i < CLK_FIMC_MAX; i++)
- 		fimc->clock[i] = ERR_PTR(-EINVAL);
+ 	for (i = 0; i < NUM_CSIS_CLOCKS; i++)
+ 		state->clock[i] = ERR_PTR(-EINVAL);
  
--	for (i = 0; i < MAX_FIMC_CLOCKS; i++) {
--		fimc->clock[i] = clk_get(&fimc->pdev->dev, fimc_clocks[i]);
-+	for (i = 0; i < num_clocks; i++) {
-+		fimc->clock[i] = clk_get(dev, fimc_clocks[i]);
- 		if (IS_ERR(fimc->clock[i])) {
- 			ret = PTR_ERR(fimc->clock[i]);
- 			goto err;
-@@ -821,12 +827,32 @@ static int fimc_clk_get(struct fimc_dev *fimc)
+@@ -398,11 +407,32 @@ static int s5pcsis_clk_get(struct csis_state *state)
  	}
  	return 0;
  err:
--	fimc_clk_put(fimc);
--	dev_err(&fimc->pdev->dev, "failed to get clock: %s\n",
--		fimc_clocks[i]);
-+	fimc_put_clocks(fimc);
-+	dev_err(dev, "failed to get clock: %s\n", fimc_clocks[i]);
- 	return -ENXIO;
+-	s5pcsis_clk_put(state);
++	s5pcsis_put_clocks(state);
+ 	dev_err(dev, "failed to get clock: %s\n", csi_clock_name[i]);
+ 	return ret;
  }
  
-+static int fimc_setup_clocks(struct fimc_dev *fimc, unsigned long freq)
++static int s5pcsis_setup_clocks(struct csis_state *state)
 +{
 +	int ret;
 +
-+	if (!IS_ERR(fimc->clock[CLK_PARENT])) {
-+		ret = clk_set_parent(fimc->clock[CLK_MUX],
-+				     fimc->clock[CLK_PARENT]);
++	if (!IS_ERR(state->clock[CSIS_CLK_PARENT])) {
++		ret = clk_set_parent(state->clock[CSIS_CLK_MUX],
++				     state->clock[CSIS_CLK_PARENT]);
 +		if (ret < 0) {
-+			dev_err(&fimc->pdev->dev,
++			dev_err(&state->pdev->dev,
 +				"%s(): failed to set parent: %d\n",
 +				__func__, ret);
 +			return ret;
 +		}
 +	}
-+	ret = clk_set_rate(fimc->clock[CLK_BUS], freq);
++	ret = clk_set_rate(state->clock[CSIS_CLK_BUS],
++					state->clk_frequency);
 +	if (ret < 0)
 +		return ret;
-+
-+	return clk_enable(fimc->clock[CLK_BUS]);
++	return clk_enable(state->clock[CSIS_CLK_BUS]);
 +}
 +
- static int fimc_m2m_suspend(struct fimc_dev *fimc)
+ static void dump_regs(struct csis_state *state, const char *label)
  {
- 	unsigned long flags;
-@@ -968,18 +994,13 @@ static int fimc_probe(struct platform_device *pdev)
- 		return -ENXIO;
+ 	struct {
+@@ -725,8 +755,10 @@ static int s5pcsis_get_platform_data(struct platform_device *pdev,
+ 		dev_err(&pdev->dev, "Platform data not specified\n");
+ 		return -EINVAL;
  	}
- 
--	ret = fimc_clk_get(fimc);
--	if (ret)
-+	ret = fimc_get_clocks(fimc);
-+	if (ret < 0)
+-
+-	state->clk_frequency = pdata->clk_rate;
++	if (pdata->clk_rate)
++		state->clk_frequency = pdata->clk_rate;
++	else
++		state->clk_frequency = DEFAULT_SCLK_CSIS_FREQ;
+ 	state->num_lanes = pdata->lanes;
+ 	state->hs_settle = pdata->hs_settle;
+ 	state->index = max(0, pdev->id);
+@@ -830,19 +862,11 @@ static int s5pcsis_probe(struct platform_device *pdev)
+ 	if (ret)
  		return ret;
--
- 	if (lclk_freq == 0)
- 		lclk_freq = fimc->drv_data->lclk_frequency;
  
--	ret = clk_set_rate(fimc->clock[CLK_BUS], lclk_freq);
--	if (ret < 0)
--		return ret;
--
--	ret = clk_enable(fimc->clock[CLK_BUS]);
-+	ret = fimc_setup_clocks(fimc, lclk_freq);
+-	ret = s5pcsis_clk_get(state);
++	ret = s5pcsis_get_clocks(state);
  	if (ret < 0)
  		return ret;
  
-@@ -1016,7 +1037,7 @@ err_sd:
- 	fimc_unregister_capture_subdev(fimc);
- err_clk:
- 	clk_disable(fimc->clock[CLK_BUS]);
--	fimc_clk_put(fimc);
-+	fimc_put_clocks(fimc);
+-	if (state->clk_frequency)
+-		ret = clk_set_rate(state->clock[CSIS_CLK_MUX],
+-				   state->clk_frequency);
+-	else
+-		dev_WARN(dev, "No clock frequency specified!\n");
+-	if (ret < 0)
+-		goto e_clkput;
+-
+-	ret = clk_enable(state->clock[CSIS_CLK_MUX]);
++	ret = s5pcsis_setup_clocks(state);
+ 	if (ret < 0)
+ 		goto e_clkput;
+ 
+@@ -885,9 +909,9 @@ static int s5pcsis_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ e_clkdis:
+-	clk_disable(state->clock[CSIS_CLK_MUX]);
++	clk_disable(state->clock[CSIS_CLK_BUS]);
+ e_clkput:
+-	s5pcsis_clk_put(state);
++	s5pcsis_put_clocks(state);
  	return ret;
  }
  
-@@ -1103,7 +1124,7 @@ static int fimc_remove(struct platform_device *pdev)
- 	vb2_dma_contig_cleanup_ctx(fimc->alloc_ctx);
+@@ -990,9 +1014,9 @@ static int s5pcsis_remove(struct platform_device *pdev)
  
- 	clk_disable(fimc->clock[CLK_BUS]);
--	fimc_clk_put(fimc);
-+	fimc_put_clocks(fimc);
+ 	pm_runtime_disable(&pdev->dev);
+ 	s5pcsis_pm_suspend(&pdev->dev, false);
+-	clk_disable(state->clock[CSIS_CLK_MUX]);
++	clk_disable(state->clock[CSIS_CLK_BUS]);
+ 	pm_runtime_set_suspended(&pdev->dev);
+-	s5pcsis_clk_put(state);
++	s5pcsis_put_clocks(state);
  
- 	dev_info(&pdev->dev, "driver unloaded\n");
- 	return 0;
-diff --git a/drivers/media/platform/s5p-fimc/fimc-core.h b/drivers/media/platform/s5p-fimc/fimc-core.h
-index 58b674e..67e3201 100644
---- a/drivers/media/platform/s5p-fimc/fimc-core.h
-+++ b/drivers/media/platform/s5p-fimc/fimc-core.h
-@@ -32,7 +32,6 @@
+ 	media_entity_cleanup(&state->sd.entity);
  
- /* Time to wait for next frame VSYNC interrupt while stopping operation. */
- #define FIMC_SHUTDOWN_TIMEOUT	((100*HZ)/1000)
--#define MAX_FIMC_CLOCKS		2
- #define FIMC_MODULE_NAME	"s5p-fimc"
- #define FIMC_MAX_DEVS		4
- #define FIMC_MAX_OUT_BUFS	4
-@@ -51,6 +50,9 @@
- enum {
- 	CLK_BUS,
- 	CLK_GATE,
-+	CLK_MUX,
-+	CLK_PARENT,
-+	CLK_FIMC_MAX,
- };
- 
- enum fimc_dev_flags {
-@@ -446,7 +448,7 @@ struct fimc_dev {
- 	const struct fimc_variant	*variant;
- 	const struct fimc_drvdata	*drv_data;
- 	u16				id;
--	struct clk			*clock[MAX_FIMC_CLOCKS];
-+	struct clk			*clock[CLK_FIMC_MAX];
- 	void __iomem			*regs;
- 	wait_queue_head_t		irq_queue;
- 	struct v4l2_device		*v4l2_dev;
 -- 
 1.7.9.5
