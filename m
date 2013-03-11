@@ -1,27 +1,20 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] spi: s3c64xx: let device core setup the default pin configuration
-Date: Mon, 11 Mar 2013 10:36:42 -0700
-Message-ID: <CAD=FV=W++WXLOazKR=f6PHdzr=AVOwyT2i=swNtw6yMOJhJgmA@mail.gmail.com>
-References: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH] mmc: dwmmc: let device core setup the default pin configuration
+Date: Mon, 11 Mar 2013 10:53:19 -0700
+Message-ID: <CAD=FV=W8E=0C8_QZ3d44caq6EOvBpTkX0Ng86niQuN4B-cnHiw@mail.gmail.com>
+References: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:63339 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751247Ab3CKRgo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Mar 2013 13:36:44 -0400
-Received: by mail-la0-f51.google.com with SMTP id fo13so4136745lab.24
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Mar 2013 10:36:43 -0700 (PDT)
-In-Reply-To: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: spi-devel-general@lists.sourceforge.net, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, patches@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, patches@linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Thomas,
 
-On Wed, Mar 6, 2013 at 3:42 AM, Thomas Abraham
+On Wed, Mar 6, 2013 at 4:04 AM, Thomas Abraham
 <thomas.abraham@linaro.org> wrote:
 > With device core now able to setup the default pin configuration,
 > the pin configuration code based on the deprecated Samsung specific
@@ -29,14 +22,18 @@ On Wed, Mar 6, 2013 at 3:42 AM, Thomas Abraham
 >
 > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 > ---
->  .../devicetree/bindings/spi/spi-samsung.txt        |    8 +--
->  drivers/spi/spi-s3c64xx.c                          |   66 +------------------
->  2 files changed, 6 insertions(+), 68 deletions(-)
+>  drivers/mmc/host/dw_mmc-exynos.c |   38 --------------------------------------
+>  1 files changed, 0 insertions(+), 38 deletions(-)
+
+It would be good to address Seungwon Jeon's comments (change prefix to
+dw_mmc and remove setup_bus), but in general this looks good to me,
+so...
 
 With <https://patchwork.kernel.org/patch/2225151/> on exynos5250-snow
 (ARM Chromebook):
 
 Reviewed-by: Doug Anderson <dianders@chromium.org>
 Tested-by: Doug Anderson <dianders@chromium.org>
+
 
 -Doug
