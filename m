@@ -1,39 +1,47 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH] mmc: dwmmc: let device core setup the default pin configuration
-Date: Mon, 11 Mar 2013 10:53:19 -0700
-Message-ID: <CAD=FV=W8E=0C8_QZ3d44caq6EOvBpTkX0Ng86niQuN4B-cnHiw@mail.gmail.com>
-References: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, patches@linaro.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH RFC 00/11] s5p-fimc: Exynos4x12 FIMC-IS support prerequisite
+Date: Mon, 11 Mar 2013 20:00:15 +0100
+Message-ID: <1363028426-2771-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Thomas,
+This patch series contains couple fixes to the s5p-fimc driver
+and changes necessary for the Exynos4x12 FIMC-IS support.
 
-On Wed, Mar 6, 2013 at 4:04 AM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-> With device core now able to setup the default pin configuration,
-> the pin configuration code based on the deprecated Samsung specific
-> gpio bindings is removed.
->
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  drivers/mmc/host/dw_mmc-exynos.c |   38 --------------------------------------
->  1 files changed, 0 insertions(+), 38 deletions(-)
+Andrzej Hajda (1):
+  s5p-fimc: Added error checks for pipeline stream on callbacks
 
-It would be good to address Seungwon Jeon's comments (change prefix to
-dw_mmc and remove setup_bus), but in general this looks good to me,
-so...
+Sylwester Nawrocki (10):
+  s5p-fimc: Add parent clock setup
+  s5p-csis: Add parent clock setup
+  s5p-fimc: Update graph traversal for entities with multiple source
+    pads
+  s5p-fimc: Add support for PIXELASYNCMx clocks
+  s5p-fimc: Add the FIMC ISP writeback input support
+  s5p-fimc: Ensure CAMCLK clock can be enabled by FIMC-LITE devices
+  s5p-fimc: Ensure proper s_stream() call order in the ISP datapaths
+  s5p-fimc: Ensure proper s_power() call order in the ISP datapaths
+  s5p-fimc: Remove dependency on fimc-core.h in fimc-lite driver
+  V4L: Add MATRIX option to V4L2_CID_EXPOSURE_METERING control
 
-With <https://patchwork.kernel.org/patch/2225151/> on exynos5250-snow
-(ARM Chromebook):
+ Documentation/DocBook/media/v4l/controls.xml   |    9 +-
+ drivers/media/platform/s5p-fimc/fimc-capture.c |   46 +++++---
+ drivers/media/platform/s5p-fimc/fimc-core.c    |   67 ++++++++----
+ drivers/media/platform/s5p-fimc/fimc-core.h    |   42 ++------
+ drivers/media/platform/s5p-fimc/fimc-lite.c    |    1 -
+ drivers/media/platform/s5p-fimc/fimc-lite.h    |    3 +-
+ drivers/media/platform/s5p-fimc/fimc-mdevice.c |  134 ++++++++++++++++++------
+ drivers/media/platform/s5p-fimc/fimc-mdevice.h |   10 ++
+ drivers/media/platform/s5p-fimc/fimc-reg.c     |   65 +++++++++++-
+ drivers/media/platform/s5p-fimc/fimc-reg.h     |   10 ++
+ drivers/media/platform/s5p-fimc/mipi-csis.c    |   66 ++++++++----
+ drivers/media/v4l2-core/v4l2-ctrls.c           |    1 +
+ include/media/s5p_fimc.h                       |   34 ++++++
+ include/uapi/linux/v4l2-controls.h             |    1 +
+ 14 files changed, 360 insertions(+), 129 deletions(-)
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Tested-by: Doug Anderson <dianders@chromium.org>
-
-
--Doug
+--
+1.7.9.5
