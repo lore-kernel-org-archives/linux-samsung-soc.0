@@ -1,61 +1,58 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/7] Add G2D nodes to Exynos4 machines
-Date: Mon, 11 Mar 2013 15:54:23 +0900
-Message-ID: <052101ce1e25$4370c410$ca524c30$%kim@samsung.com>
-References: <1361163733-4338-1-git-send-email-sachin.kamat@linaro.org>
- <CAK9yfHyQ=2EjRKknhN7nKUygnryKfWZ2A61w1+WRtrzLaF3SBA@mail.gmail.com>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [RFC 04/12] s5p-csis: Adding Exynos5250 compatibility
+Date: Mon, 11 Mar 2013 12:28:02 +0530
+Message-ID: <CAOD6ATqa2QDsOmSe48zaOokdwb0cjuhoAigz1QBZm7hj-EE+rA@mail.gmail.com>
+References: <1362570838-4737-1-git-send-email-shaik.ameer@samsung.com>
+	<1362570838-4737-5-git-send-email-shaik.ameer@samsung.com>
+	<513CEFA1.3030809@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44631 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751392Ab3CKGyY (ORCPT
+Received: from mail-qa0-f42.google.com ([209.85.216.42]:60877 "EHLO
+	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750944Ab3CKG6E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Mar 2013 02:54:24 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJH00MDHHU32ZV0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 11 Mar 2013 15:54:23 +0900 (KST)
-In-reply-to: <CAK9yfHyQ=2EjRKknhN7nKUygnryKfWZ2A61w1+WRtrzLaF3SBA@mail.gmail.com>
-Content-language: ko
+	Mon, 11 Mar 2013 02:58:04 -0400
+In-Reply-To: <513CEFA1.3030809@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: s.nawrocki@samsung.com, patches@linaro.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: linux-media@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com
 
-Sachin Kamat wrote:
-> 
-> Hi Kukjin,
-> 
-> Can you please look into this series as it is pending since quite some time.
-> 
-Applied, I have another opinion about the compatible string though...
+Hi Sylwester,
 
-I think, it can be sorted out next time :-)
+On Mon, Mar 11, 2013 at 2:10 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> On 03/06/2013 12:53 PM, Shaik Ameer Basha wrote:
+>
+> Please don't leave the change log empty. I'll apply this patch.
+> I'm just wondering, if there aren't any further changes needed
+> to make the driver really working on exynos5250 ?
+>
 
-Thanks.
+There was nothing from driver side to change for making it work
+for Exynos5250. May be I need to update the S5P_INTMASK_EN_ALL
+to include all interrupts.
 
-- Kukjin
+Regards,
+Shaik Ameer Basha
 
-> On 18 February 2013 10:32, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> > This patch series is based on Kukjin Kim's next/dt-exynos branch of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > tree.
-> >
-> > Changes since v1:
-> > * Removed power-domain entry in patch 1/7 as the driver currently
-> >   does not use it.
-> > * Addressed review comments from Sylwester Nawrocki and Tomasz Figa
-> >   in patch 7/7.
-> >
-> > Sachin Kamat (7):
-> >   ARM: dts: Add G2D node to exynos4210.dtsi
-> >   ARM: dts: Add G2D node to SMDKV310
-> >   ARM: dts: Add G2D node to exynos4210-origen
-> >   ARM: dts: Add G2D node to exynos4x12.dtsi
-> >   ARM: dts: Add G2D node to SMDK4412
-> >   ARM: dts: Add G2D node to exynos4412-origen
-> >   ARM: dts: Add Samsung G2D DT bindings documentation
+>
+>> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
+>> ---
+>>   drivers/media/platform/s5p-fimc/mipi-csis.c |    1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.c
+>> b/drivers/media/platform/s5p-fimc/mipi-csis.c
+>> index df4411c..debda7c 100644
+>> --- a/drivers/media/platform/s5p-fimc/mipi-csis.c
+>> +++ b/drivers/media/platform/s5p-fimc/mipi-csis.c
+>> @@ -1002,6 +1002,7 @@ static const struct dev_pm_ops s5pcsis_pm_ops = {
+>>   static const struct of_device_id s5pcsis_of_match[] __devinitconst = {
+>>         { .compatible = "samsung,exynos3110-csis" },
+>>         { .compatible = "samsung,exynos4210-csis" },
+>> +       { .compatible = "samsung,exynos5250-csis" },
+>>         { /* sentinel */ },
+>>   };
+>>   MODULE_DEVICE_TABLE(of, s5pcsis_of_match);
