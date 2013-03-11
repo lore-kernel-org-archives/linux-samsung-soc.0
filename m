@@ -1,40 +1,98 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] watchdog: convert to devm_ioremap_resource()
-Date: Mon, 11 Mar 2013 15:53:31 +0530
-Message-ID: <CAK9yfHxJNtdYdx4pwfq_F2HBvOxvumt+XFsdQQjh2xHB9_s3sg@mail.gmail.com>
-References: <1362987503-6449-1-git-send-email-silviupopescu1990@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS: enable all secondary cores for exynos5440
+Date: Mon, 11 Mar 2013 16:27:01 +0530
+Message-ID: <1362999422-24655-1-git-send-email-amit.daniel@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:41390 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753212Ab3CKKXc (ORCPT
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:54015 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753735Ab3CKK5X (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Mar 2013 06:23:32 -0400
-Received: by mail-oa0-f42.google.com with SMTP id i18so4354753oag.29
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Mar 2013 03:23:32 -0700 (PDT)
-In-Reply-To: <1362987503-6449-1-git-send-email-silviupopescu1990@gmail.com>
+	Mon, 11 Mar 2013 06:57:23 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Silviu-Mihai Popescu <silviupopescu1990@gmail.com>
-Cc: linux-watchdog@vger.kernel.org, wim@iguana.be, ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi,
+This patch enables four cores on exynos5440. Also this patch skips the non
+exynos5440 pmu control changes.
 
-On 11 March 2013 13:08, Silviu-Mihai Popescu
-<silviupopescu1990@gmail.com> wrote:
-> Convert all uses of devm_request_and_ioremap() to the newly introduced
-> devm_ioremap_resource() which provides more consistent error handling.
->
-> devm_ioremap_resource() provides its own error messages so all explicit
-> error messages can be removed from the failure code paths.
->
-> Signed-off-by: Silviu-Mihai Popescu <silviupopescu1990@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
+ arch/arm/mach-exynos/platsmp.c |   44 ++++++++++++++++++++++-----------------
+ 1 files changed, 25 insertions(+), 19 deletions(-)
 
-I have already submitted a similar patchset to do this:
-http://www.spinics.net/lists/linux-watchdog/msg02101.html
-
-
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 60f7c5b..087b73f 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -40,6 +40,8 @@ static inline void __iomem *cpu_boot_reg_base(void)
+ {
+ 	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+ 		return S5P_INFORM5;
++	else if (soc_is_exynos5440())
++		return S5P_VA_CHIPID + 0x560;
+ 	return S5P_VA_SYSRAM;
+ }
+ 
+@@ -116,27 +118,29 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
+ 	 */
+ 	write_pen_release(phys_cpu);
+ 
+-	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
+-		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+-			     S5P_ARM_CORE1_CONFIGURATION);
+-
+-		timeout = 10;
+-
+-		/* wait max 10 ms until cpu1 is on */
+-		while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+-			& S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
+-			if (timeout-- == 0)
+-				break;
+-
+-			mdelay(1);
+-		}
+-
+-		if (timeout == 0) {
+-			printk(KERN_ERR "cpu1 power enable failed");
+-			spin_unlock(&boot_lock);
+-			return -ETIMEDOUT;
++	timeout = 10;
++	if (!soc_is_exynos5440()) {
++		if (!(__raw_readl(S5P_ARM_CORE1_STATUS) &
++					S5P_CORE_LOCAL_PWR_EN)) {
++
++			__raw_writel(S5P_CORE_LOCAL_PWR_EN,
++				     S5P_ARM_CORE1_CONFIGURATION);
++
++			/* wait max 10 ms until this cpu is on */
++			while (!(__raw_readl(S5P_ARM_CORE1_STATUS) &
++					S5P_CORE_LOCAL_PWR_EN)) {
++				if (timeout-- == 0)
++					break;
++				mdelay(1);
++			}
+ 		}
+ 	}
++	if (timeout == 0) {
++		pr_err("cpu%d power enable failed", cpu);
++		spin_unlock(&boot_lock);
++		return -ETIMEDOUT;
++	}
++
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+ 	 * the boot monitor to read the system wide flags register,
+@@ -178,6 +182,8 @@ static void __init exynos_smp_init_cpus(void)
+ 
+ 	if (soc_is_exynos5250())
+ 		ncores = 2;
++	else if (soc_is_exynos5440())
++		ncores = 4;
+ 	else
+ 		ncores = scu_base ? scu_get_core_count(scu_base) : 1;
+ 
 -- 
-With warm regards,
-Sachin
+1.7.1
