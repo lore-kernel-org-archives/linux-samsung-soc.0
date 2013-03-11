@@ -1,56 +1,88 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C24XX: drop "select MACH_NEO1973"
-Date: Mon, 11 Mar 2013 16:09:24 +0900
-Message-ID: <052301ce1e27$5cc9cd10$165d6730$%kim@samsung.com>
-References: <1362856081.3137.19.camel@x61.thuisdomein>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1362856081.3137.19.camel@x61.thuisdomein>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Silviu-Mihai Popescu <silviupopescu1990@gmail.com>
+Subject: [PATCH] watchdog: convert to devm_ioremap_resource()
+Date: Mon, 11 Mar 2013 09:38:23 +0200
+Message-ID: <1362987503-6449-1-git-send-email-silviupopescu1990@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:42727 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751167Ab3CKHi2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Mar 2013 03:38:28 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-watchdog@vger.kernel.org
+Cc: wim@iguana.be, ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Silviu-Mihai Popescu <silviupopescu1990@gmail.com>
 
-Paul Bolle wrote:
-> 
-> The Kconfig entry for the Openmoko GTA02 / Freerunner phone selects
-> MACH_NEO1973. But there is no Kconfig symbol MACH_NEO1973. The select
-> statement for that symbol is a nop. It can safely be dropped.
-> 
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
-> ---
-> 0) Tested with "git grep".
-> 
-> 1) There appear to be repositories that carry a "config MACH_NEO1973" in
-> their tree. I guess it is used to collect functionality common to the
-> GTA01 and the GTA02. But except for this select statement, MACH_NEO1973
-> was never used in mainline. So if the GTA01 code ever gets merged into
-> mainline, this select statement might be added once more (if it is
-> actually needed then).
-> 
->  arch/arm/mach-s3c24xx/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-> index 7361b9d..bec43fe 100644
-> --- a/arch/arm/mach-s3c24xx/Kconfig
-> +++ b/arch/arm/mach-s3c24xx/Kconfig
-> @@ -641,7 +641,6 @@ comment "S3C2442 Boards"
->  config MACH_NEO1973_GTA02
->  	bool "Openmoko GTA02 / Freerunner phone"
->  	select I2C
-> -	select MACH_NEO1973
->  	select MFD_PCF50633
->  	select PCF50633_GPIO
->  	select POWER_SUPPLY
-> --
-> 1.7.11.7
+Convert all uses of devm_request_and_ioremap() to the newly introduced
+devm_ioremap_resource() which provides more consistent error handling.
 
-Yeah, we don't need it.
+devm_ioremap_resource() provides its own error messages so all explicit
+error messages can be removed from the failure code paths.
 
-Applied, thanks.
+Signed-off-by: Silviu-Mihai Popescu <silviupopescu1990@gmail.com>
+---
+ drivers/watchdog/ath79_wdt.c   |    8 +++-----
+ drivers/watchdog/davinci_wdt.c |    8 +++-----
+ drivers/watchdog/s3c2410_wdt.c |    9 +++------
+ 3 files changed, 9 insertions(+), 16 deletions(-)
 
-- Kukjin
+diff --git a/drivers/watchdog/ath79_wdt.c b/drivers/watchdog/ath79_wdt.c
+index 8987990..d184c48 100644
+--- a/drivers/watchdog/ath79_wdt.c
++++ b/drivers/watchdog/ath79_wdt.c
+@@ -253,11 +253,9 @@ static int ath79_wdt_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	wdt_base = devm_request_and_ioremap(&pdev->dev, res);
+-	if (!wdt_base) {
+-		dev_err(&pdev->dev, "unable to remap memory region\n");
+-		return -ENOMEM;
+-	}
++	wdt_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(wdt_base))
++		return PTR_ERR(wdt_base);
+ 
+ 	wdt_clk = devm_clk_get(&pdev->dev, "wdt");
+ 	if (IS_ERR(wdt_clk))
+diff --git a/drivers/watchdog/davinci_wdt.c b/drivers/watchdog/davinci_wdt.c
+index 7df1fdc..005fd71 100644
+--- a/drivers/watchdog/davinci_wdt.c
++++ b/drivers/watchdog/davinci_wdt.c
+@@ -221,11 +221,9 @@ static int davinci_wdt_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+ 
+-	wdt_base = devm_request_and_ioremap(dev, wdt_mem);
+-	if (!wdt_base) {
+-		dev_err(dev, "ioremap failed\n");
+-		return -EADDRNOTAVAIL;
+-	}
++	wdt_base = devm_ioremap_resource(dev, wdt_mem);
++	if (IS_ERR(wdt_base))
++		return PTR_ERR(wdt_base);
+ 
+ 	ret = misc_register(&davinci_wdt_miscdev);
+ 	if (ret < 0) {
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index c1a221c..393496c 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -330,12 +330,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* get the memory region for the watchdog timer */
+-	wdt_base = devm_request_and_ioremap(dev, wdt_mem);
+-	if (wdt_base == NULL) {
+-		dev_err(dev, "failed to devm_request_and_ioremap() region\n");
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	wdt_base = devm_ioremap_resource(dev, wdt_mem);
++	if (IS_ERR(wdt_base))
++		return PTR_ERR(wdt_base);
+ 
+ 	DBG("probe: mapped wdt_base=%p\n", wdt_base);
+ 
+-- 
+1.7.9.5
