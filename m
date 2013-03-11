@@ -1,116 +1,84 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 05/11] s5p-fimc: Add support for PIXELASYNCMx clocks
-Date: Mon, 11 Mar 2013 20:00:20 +0100
-Message-ID: <1363028426-2771-6-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC 04/11] s5p-fimc: Update graph traversal for entities with
+ multiple source pads
+Date: Mon, 11 Mar 2013 20:00:19 +0100
+Message-ID: <1363028426-2771-5-git-send-email-s.nawrocki@samsung.com>
 References: <1363028426-2771-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:57325 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754427Ab3CKTBC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Mar 2013 15:01:02 -0400
 In-reply-to: <1363028426-2771-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch ads handling of clocks for the CAMBLK subsystem which
-is a glue logic for FIMC-IS or LCD controller and FIMC IP.
+We cannot assume that the passed entity the fimc_pipeline_prepare()
+function is supposed to start the media graph traversal from will
+always have its sink pad at pad index 0. Find the starting media
+entity's sink pad by iterating over its all pads and checking the
+pad flags. This ensures proper handling of FIMC, FIMC-LITE and
+FIMC-IS-ISP subdevs that have more than one sink and one source pad.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/platform/s5p-fimc/fimc-mdevice.c |   41 +++++++++++++++++++++++-
- drivers/media/platform/s5p-fimc/fimc-mdevice.h |    8 +++++
- 2 files changed, 48 insertions(+), 1 deletion(-)
+ drivers/media/platform/s5p-fimc/fimc-mdevice.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.c b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-index 0a7c95b..b9f9976 100644
+index 19cd628..0a7c95b 100644
 --- a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
 +++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-@@ -944,7 +944,7 @@ static int fimc_md_create_links(struct fimc_md *fmd)
- }
- 
- /*
-- * The peripheral sensor clock management.
-+ * The peripheral sensor and CAM_BLK (PIXELASYNCMx) clocks management.
-  */
- static void fimc_md_put_clocks(struct fimc_md *fmd)
+@@ -47,7 +47,6 @@ static int __fimc_md_set_camclk(struct fimc_md *fmd,
+ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
+ 				  struct media_entity *me)
  {
-@@ -957,6 +957,17 @@ static void fimc_md_put_clocks(struct fimc_md *fmd)
- 		clk_put(fmd->camclk[i].clock);
- 		fmd->camclk[i].clock = ERR_PTR(-EINVAL);
- 	}
-+
-+	/* Writeback (PIXELASYNCMx) clocks */
-+	for (i = 0; i < FIMC_MAX_WBCLKS; i++) {
-+		if (IS_ERR(fmd->wbclk[i]))
-+			continue;
-+		/* FIXME: find better place to disable this clock! */
-+		clk_disable(fmd->wbclk[i]);
-+		clk_unprepare(fmd->wbclk[i]);
-+		clk_put(fmd->wbclk[i]);
-+		fmd->wbclk[i] = ERR_PTR(-EINVAL);
-+	}
- }
- 
- static int fimc_md_get_clocks(struct fimc_md *fmd)
-@@ -993,6 +1004,34 @@ static int fimc_md_get_clocks(struct fimc_md *fmd)
- 	if (ret)
- 		fimc_md_put_clocks(fmd);
- 
-+	if (!fmd->use_isp)
-+		return 0;
-+	/*
-+	 * For now get only PIXELASYNCM1 clock (Writeback B/ISP),
-+	 * leave PIXELASYNCM0 out for the display driver.
-+	 */
-+	for (i = CLK_IDX_WB_B; i < FIMC_MAX_WBCLKS; i++) {
-+		snprintf(clk_name, sizeof(clk_name), "pxl_async%u", i);
-+		clock = clk_get(dev, clk_name);
-+		if (IS_ERR(clock)) {
-+			v4l2_err(&fmd->v4l2_dev, "Failed to get clock: %s\n",
-+				  clk_name);
-+			ret = PTR_ERR(clock);
-+			break;
-+		}
-+		ret = clk_prepare(clock);
-+		if (ret < 0) {
-+			clk_put(clock);
-+			fmd->wbclk[i] = ERR_PTR(-EINVAL);
-+			break;
-+		}
-+		fmd->wbclk[i] = clock;
-+		/* FIXME: find better place to enable this clock! */
-+		clk_enable(clock);
-+	}
-+	if (ret)
-+		fimc_md_put_clocks(fmd);
-+
- 	return ret;
- }
- 
-diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.h b/drivers/media/platform/s5p-fimc/fimc-mdevice.h
-index 5d6146e..91be5db 100644
---- a/drivers/media/platform/s5p-fimc/fimc-mdevice.h
-+++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.h
-@@ -41,6 +41,13 @@
- #define FIMC_MAX_SENSORS	8
- #define FIMC_MAX_CAMCLKS	2
- 
-+/* LCD/ISP Writeback clocks (PIXELASYNCMx) */
-+enum {
-+	CLK_IDX_WB_A,
-+	CLK_IDX_WB_B,
-+	FIMC_MAX_WBCLKS
-+};
-+
- struct fimc_csis_info {
+-	struct media_pad *pad = &me->pads[0];
  	struct v4l2_subdev *sd;
- 	int id;
-@@ -87,6 +94,7 @@ struct fimc_md {
- 	struct fimc_sensor_info sensor[FIMC_MAX_SENSORS];
- 	int num_sensors;
- 	struct fimc_camclk_info camclk[FIMC_MAX_CAMCLKS];
-+	struct clk *wbclk[FIMC_MAX_WBCLKS];
- 	struct fimc_lite *fimc_lite[FIMC_LITE_MAX_DEVS];
- 	struct fimc_dev *fimc[FIMC_MAX_DEVS];
- 	struct media_device media_dev;
+ 	int i;
+ 
+@@ -55,15 +54,21 @@ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
+ 		p->subdevs[i] = NULL;
+ 
+ 	while (1) {
+-		if (!(pad->flags & MEDIA_PAD_FL_SINK))
+-			break;
++		struct media_pad *pad = NULL;
++
++		/* Find remote source pad */
++		for (i = 0; i < me->num_pads; i++) {
++			struct media_pad *spad = &me->pads[i];
++			if (!(spad->flags & MEDIA_PAD_FL_SINK))
++				continue;
++			pad = media_entity_remote_source(spad);
++			if (pad)
++				break;
++		}
+ 
+-		/* source pad */
+-		pad = media_entity_remote_source(pad);
+ 		if (pad == NULL ||
+ 		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+ 			break;
+-
+ 		sd = media_entity_to_v4l2_subdev(pad->entity);
+ 
+ 		switch (sd->grp_id) {
+@@ -84,8 +89,9 @@ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
+ 			pr_warn("%s: Unknown subdev grp_id: %#x\n",
+ 				__func__, sd->grp_id);
+ 		}
+-		/* sink pad */
+-		pad = &sd->entity.pads[0];
++		me = &sd->entity;
++		if (me->num_pads == 1)
++			break;
+ 	}
+ }
+ 
 -- 
 1.7.9.5
