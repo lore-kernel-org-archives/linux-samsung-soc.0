@@ -1,39 +1,495 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [RFC PATCH 4/8] s5p-fimc: Add common FIMC-IS image sensor driver
-Date: Mon, 11 Mar 2013 20:44:48 +0100
-Message-ID: <1363031092-29950-5-git-send-email-s.nawrocki@samsung.com>
+Subject: [RFC PATCH 5/8] s5p-fimc: Add ISP video capture driver stubs
+Date: Mon, 11 Mar 2013 20:44:49 +0100
+Message-ID: <1363031092-29950-6-git-send-email-s.nawrocki@samsung.com>
 References: <1363031092-29950-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25929 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754455Ab3CKTp0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Mar 2013 15:45:26 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1363031092-29950-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This subdev driver currently only handles an image sensor's
-power supplies and reset signal. There is no any I2C communication
-here as it is handled by the ISP's firmware.
+This patch adds a video capture node for the FIMC-IS ISP IP block
+and Makefile/Kconfig to actually enable the driver's compilation.
+
+The ISP video capture driver is still a work in progress.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/platform/s5p-fimc/fimc-is-sensor.c |  308 ++++++++++++++++++++++
- drivers/media/platform/s5p-fimc/fimc-is-sensor.h |   80 ++++++
- 2 files changed, 388 insertions(+)
- create mode 100644 drivers/media/platform/s5p-fimc/fimc-is-sensor.c
- create mode 100644 drivers/media/platform/s5p-fimc/fimc-is-sensor.h
+ drivers/media/platform/s5p-fimc/Kconfig          |   13 +
+ drivers/media/platform/s5p-fimc/Makefile         |    4 +
+ drivers/media/platform/s5p-fimc/fimc-isp-video.c |  414 ++++++++++++++++++++++
+ drivers/media/platform/s5p-fimc/fimc-isp-video.h |   50 +++
+ 4 files changed, 481 insertions(+)
+ create mode 100644 drivers/media/platform/s5p-fimc/fimc-isp-video.c
+ create mode 100644 drivers/media/platform/s5p-fimc/fimc-isp-video.h
 
-diff --git a/drivers/media/platform/s5p-fimc/fimc-is-sensor.c b/drivers/media/platform/s5p-fimc/fimc-is-sensor.c
+diff --git a/drivers/media/platform/s5p-fimc/Kconfig b/drivers/media/platform/s5p-fimc/Kconfig
+index c16b20d..1253e25 100644
+--- a/drivers/media/platform/s5p-fimc/Kconfig
++++ b/drivers/media/platform/s5p-fimc/Kconfig
+@@ -46,4 +46,17 @@ config VIDEO_EXYNOS_FIMC_LITE
+ 	  module will be called exynos-fimc-lite.
+ endif
+ 
++if (SOC_EXYNOS4212 || SOC_EXYNOS4412) && OF && !ARCH_MULTIPLATFORM
++
++config VIDEO_EXYNOS4_FIMC_IS
++	tristate "EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver"
++	select VIDEOBUF2_DMA_CONTIG
++	help
++	  This is a V4L2 driver for Samsung EXYNOS4x12 SoC FIMC-IS
++	  (Imaging Subsystem).
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called exynos-fimc-is.
++endif
++
+ endif # VIDEO_SAMSUNG_S5P_FIMC
+diff --git a/drivers/media/platform/s5p-fimc/Makefile b/drivers/media/platform/s5p-fimc/Makefile
+index 4648514..55b171a 100644
+--- a/drivers/media/platform/s5p-fimc/Makefile
++++ b/drivers/media/platform/s5p-fimc/Makefile
+@@ -1,7 +1,11 @@
+ s5p-fimc-objs := fimc-core.o fimc-reg.o fimc-m2m.o fimc-capture.o fimc-mdevice.o
+ exynos-fimc-lite-objs += fimc-lite-reg.o fimc-lite.o
++exynos-fimc-is-objs := fimc-is.o fimc-isp.o fimc-is-sensor.o fimc-is-regs.o
++exynos-fimc-is-objs += fimc-is-param.o fimc-is-errno.o fimc-is-i2c.o
++exynos-fimc-is-objs += fimc-isp-video.o
+ s5p-csis-objs := mipi-csis.o
+ 
+ obj-$(CONFIG_VIDEO_S5P_MIPI_CSIS)	+= s5p-csis.o
+ obj-$(CONFIG_VIDEO_EXYNOS_FIMC_LITE)	+= exynos-fimc-lite.o
++obj-$(CONFIG_VIDEO_EXYNOS4_FIMC_IS)	+= exynos-fimc-is.o
+ obj-$(CONFIG_VIDEO_S5P_FIMC)		+= s5p-fimc.o
+diff --git a/drivers/media/platform/s5p-fimc/fimc-isp-video.c b/drivers/media/platform/s5p-fimc/fimc-isp-video.c
 new file mode 100644
-index 0000000..151915c
+index 0000000..bdeacaa
 --- /dev/null
-+++ b/drivers/media/platform/s5p-fimc/fimc-is-sensor.c
-@@ -0,0 +1,308 @@
++++ b/drivers/media/platform/s5p-fimc/fimc-isp-video.c
+@@ -0,0 +1,414 @@
++/*
++ * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
++ *
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Author: Sylwester Nawrocki <s.nawrocki@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/device.h>
++#include <linux/delay.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/types.h>
++#include <linux/printk.h>
++#include <linux/pm_runtime.h>
++#include <linux/slab.h>
++#include <linux/videodev2.h>
++
++#include <media/v4l2-device.h>
++#include <media/v4l2-ioctl.h>
++#include <media/videobuf2-core.h>
++#include <media/videobuf2-dma-contig.h>
++
++#include "fimc-mdevice.h"
++#include "fimc-core.h"
++#include "fimc-is.h"
++
++static int isp_video_capture_start_streaming(struct vb2_queue *q,
++					unsigned int count)
++{
++	/* TODO: start ISP output DMA */
++	return 0;
++}
++
++static int isp_video_capture_stop_streaming(struct vb2_queue *q)
++{
++	/* TODO: stop ISP output DMA */
++	return 0;
++}
++
++static int isp_video_capture_queue_setup(struct vb2_queue *vq,
++			const struct v4l2_format *pfmt,
++			unsigned int *num_buffers, unsigned int *num_planes,
++			unsigned int sizes[], void *allocators[])
++{
++	const struct v4l2_pix_format_mplane *pixm = NULL;
++	struct fimc_isp *isp = vq->drv_priv;
++	struct fimc_isp_frame *frame = &isp->out_frame;
++	const struct fimc_fmt *fmt = isp->video_capture_format;
++	unsigned long wh;
++	int i;
++
++	if (pfmt) {
++		pixm = &pfmt->fmt.pix_mp;
++		fmt = fimc_isp_find_format(&pixm->pixelformat, NULL, -1);
++		wh = pixm->width * pixm->height;
++	} else {
++		wh = frame->f_width * frame->f_height;
++	}
++
++	if (fmt == NULL)
++		return -EINVAL;
++
++	*num_planes = fmt->memplanes;
++
++	for (i = 0; i < fmt->memplanes; i++) {
++		unsigned int size = (wh * fmt->depth[i]) / 8;
++		if (pixm)
++			sizes[i] = max(size, pixm->plane_fmt[i].sizeimage);
++		else
++			sizes[i] = size;
++		allocators[i] = isp->alloc_ctx;
++	}
++
++	return 0;
++}
++
++static int isp_video_capture_buffer_prepare(struct vb2_buffer *vb)
++{
++	struct vb2_queue *vq = vb->vb2_queue;
++	struct fimc_isp *isp = vq->drv_priv;
++	int i;
++
++	if (isp->video_capture_format == NULL)
++		return -EINVAL;
++
++	for (i = 0; i < isp->video_capture_format->memplanes; i++) {
++		unsigned long size = isp->payload[i];
++
++		if (vb2_plane_size(vb, i) < size) {
++			v4l2_err(&isp->vfd,
++				 "User buffer too small (%ld < %ld)\n",
++				 vb2_plane_size(vb, i), size);
++			return -EINVAL;
++		}
++		vb2_set_plane_payload(vb, i, size);
++	}
++
++	return 0;
++}
++
++static void isp_video_capture_buffer_queue(struct vb2_buffer *vb)
++{
++	/* TODO: */
++}
++
++static void isp_video_lock(struct vb2_queue *vq)
++{
++	struct fimc_isp *isp = vb2_get_drv_priv(vq);
++	mutex_lock(&isp->video_lock);
++}
++
++static void isp_video_unlock(struct vb2_queue *vq)
++{
++	struct fimc_isp *isp = vb2_get_drv_priv(vq);
++	mutex_unlock(&isp->video_lock);
++}
++
++static const struct vb2_ops isp_video_capture_qops = {
++	.queue_setup	 = isp_video_capture_queue_setup,
++	.buf_prepare	 = isp_video_capture_buffer_prepare,
++	.buf_queue	 = isp_video_capture_buffer_queue,
++	.wait_prepare	 = isp_video_unlock,
++	.wait_finish	 = isp_video_lock,
++	.start_streaming = isp_video_capture_start_streaming,
++	.stop_streaming	 = isp_video_capture_stop_streaming,
++};
++
++static int isp_video_capture_open(struct file *file)
++{
++	struct fimc_isp *isp = video_drvdata(file);
++	int ret = 0;
++
++	if (mutex_lock_interruptible(&isp->video_lock))
++		return -ERESTARTSYS;
++
++	/* ret = pm_runtime_get_sync(&isp->pdev->dev); */
++	if (ret < 0)
++		goto done;
++
++	ret = v4l2_fh_open(file);
++	if (ret < 0)
++		goto done;
++
++	/* TODO: prepare video pipeline */
++done:
++	mutex_unlock(&isp->video_lock);
++	return ret;
++}
++
++static int isp_video_capture_close(struct file *file)
++{
++	struct fimc_isp *isp = video_drvdata(file);
++	int ret = 0;
++
++	mutex_lock(&isp->video_lock);
++
++	if (isp->out_path == FIMC_IO_DMA) {
++		/* TODO: stop capture, cleanup */
++	}
++
++	/* pm_runtime_put(&isp->pdev->dev); */
++
++	if (isp->ref_count == 0)
++		vb2_queue_release(&isp->capture_vb_queue);
++
++	ret = v4l2_fh_release(file);
++
++	mutex_unlock(&isp->video_lock);
++	return ret;
++}
++
++static unsigned int isp_video_capture_poll(struct file *file,
++				   struct poll_table_struct *wait)
++{
++	struct fimc_isp *isp = video_drvdata(file);
++	int ret;
++
++	mutex_lock(&isp->video_lock);
++	ret = vb2_poll(&isp->capture_vb_queue, file, wait);
++	mutex_unlock(&isp->video_lock);
++	return ret;
++}
++
++static int isp_video_capture_mmap(struct file *file, struct vm_area_struct *vma)
++{
++	struct fimc_isp *isp = video_drvdata(file);
++	int ret;
++
++	if (mutex_lock_interruptible(&isp->video_lock))
++		return -ERESTARTSYS;
++
++	ret = vb2_mmap(&isp->capture_vb_queue, vma);
++	mutex_unlock(&isp->video_lock);
++
++	return ret;
++}
++
++static const struct v4l2_file_operations isp_video_capture_fops = {
++	.owner		= THIS_MODULE,
++	.open		= isp_video_capture_open,
++	.release	= isp_video_capture_close,
++	.poll		= isp_video_capture_poll,
++	.unlocked_ioctl	= video_ioctl2,
++	.mmap		= isp_video_capture_mmap,
++};
++
++/*
++ * Video node ioctl operations
++ */
++static int fimc_isp_capture_querycap_capture(struct file *file, void *priv,
++					     struct v4l2_capability *cap)
++{
++
++	strlcpy(cap->driver, FIMC_IS_DRV_NAME, sizeof(cap->driver));
++	strlcpy(cap->card, FIMC_IS_DRV_NAME, sizeof(cap->card));
++	snprintf(cap->bus_info, sizeof(cap->bus_info),
++				"platform:exynos4x12-isp");
++
++	cap->device_caps = V4L2_CAP_STREAMING;
++	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
++
++	return 0;
++}
++
++static int fimc_isp_capture_enum_fmt_mplane(struct file *file, void *priv,
++					    struct v4l2_fmtdesc *f)
++{
++	const struct fimc_fmt *fmt;
++
++	if (f->index >= FIMC_ISP_NUM_FORMATS)
++		return -EINVAL;
++
++	fmt = fimc_isp_find_format(NULL, NULL, f->index);
++	if (WARN_ON(fmt == NULL))
++		return -EINVAL;
++
++	strlcpy(f->description, fmt->name, sizeof(f->description));
++	f->pixelformat = fmt->fourcc;
++
++	return 0;
++}
++
++static int fimc_isp_capture_g_fmt_mplane(struct file *file, void *fh,
++					 struct v4l2_format *f)
++{
++	/* TODO:  */
++	return 0;
++}
++
++static int fimc_isp_capture_try_fmt(struct fimc_isp *isp,
++				    struct v4l2_pix_format_mplane *pixm,
++				    const struct fimc_fmt **ffmt)
++{
++	/* TODO: */
++	return 0;
++}
++
++static int fimc_isp_capture_try_fmt_mplane(struct file *file, void *fh,
++					   struct v4l2_format *f)
++{
++	struct fimc_isp *isp = video_drvdata(file);
++	return fimc_isp_capture_try_fmt(isp, &f->fmt.pix_mp, NULL);
++}
++
++static int fimc_isp_capture_s_fmt_mplane(struct file *file, void *priv,
++					 struct v4l2_format *f)
++{
++	/* TODO: */
++	return 0;
++}
++
++static int fimc_isp_pipeline_validate(struct fimc_isp *isp)
++{
++	/* TODO: */
++	return 0;
++}
++
++static int fimc_isp_capture_streamon(struct file *file, void *priv,
++				     enum v4l2_buf_type type)
++{
++	struct fimc_isp *isp = video_drvdata(file);
++	struct v4l2_subdev *sensor = isp->pipeline.subdevs[IDX_SENSOR];
++	struct fimc_pipeline *p = &isp->pipeline;
++	int ret;
++
++	/* TODO: check if the OTF interface is not running */
++
++	ret = media_entity_pipeline_start(&sensor->entity, p->m_pipeline);
++	if (ret < 0)
++		return ret;
++
++	ret = fimc_isp_pipeline_validate(isp);
++	if (ret) {
++		media_entity_pipeline_stop(&sensor->entity);
++		return ret;
++	}
++
++	return vb2_streamon(&isp->capture_vb_queue, type);
++}
++
++static int fimc_isp_capture_streamoff(struct file *file, void *priv,
++				      enum v4l2_buf_type type)
++{
++	struct fimc_isp *isp = video_drvdata(file);
++	struct v4l2_subdev *sd = isp->pipeline.subdevs[IDX_SENSOR];
++	int ret;
++
++	ret = vb2_streamoff(&isp->capture_vb_queue, type);
++	if (ret == 0)
++		media_entity_pipeline_stop(&sd->entity);
++	return ret;
++}
++
++static int fimc_isp_capture_reqbufs(struct file *file, void *priv,
++				    struct v4l2_requestbuffers *reqbufs)
++{
++	struct fimc_isp *isp = video_drvdata(file);
++	int ret;
++
++	reqbufs->count = max_t(u32, FIMC_IS_REQ_BUFS_MIN, reqbufs->count);
++	ret = vb2_reqbufs(&isp->capture_vb_queue, reqbufs);
++	if (!ret < 0)
++		isp->reqbufs_count = reqbufs->count;
++
++	return ret;
++}
++
++static const struct v4l2_ioctl_ops isp_video_capture_ioctl_ops = {
++	.vidioc_querycap		= fimc_isp_capture_querycap_capture,
++	.vidioc_enum_fmt_vid_cap_mplane	= fimc_isp_capture_enum_fmt_mplane,
++	.vidioc_try_fmt_vid_cap_mplane	= fimc_isp_capture_try_fmt_mplane,
++	.vidioc_s_fmt_vid_cap_mplane	= fimc_isp_capture_s_fmt_mplane,
++	.vidioc_g_fmt_vid_cap_mplane	= fimc_isp_capture_g_fmt_mplane,
++	.vidioc_reqbufs			= fimc_isp_capture_reqbufs,
++	.vidioc_querybuf		= vb2_ioctl_querybuf,
++	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
++	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
++	.vidioc_qbuf			= vb2_ioctl_qbuf,
++	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
++	.vidioc_streamon		= fimc_isp_capture_streamon,
++	.vidioc_streamoff		= fimc_isp_capture_streamoff,
++};
++
++int fimc_isp_video_device_register(struct fimc_isp *isp,
++				   struct v4l2_device *v4l2_dev)
++{
++	struct vb2_queue *q = &isp->capture_vb_queue;
++	struct video_device *vfd = &isp->vfd;
++	int ret;
++
++	mutex_init(&isp->video_lock);
++	INIT_LIST_HEAD(&isp->pending_buf_q);
++	INIT_LIST_HEAD(&isp->active_buf_q);
++
++	memset(vfd, 0, sizeof(*vfd));
++	snprintf(vfd->name, sizeof(vfd->name), "fimc-is-isp.capture");
++
++	isp->video_capture_format = fimc_isp_find_format(NULL, NULL, 0);
++	isp->out_path = FIMC_IO_DMA;
++	isp->ref_count = 0;
++	isp->reqbufs_count = 0;
++
++	memset(q, 0, sizeof(*q));
++	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
++	q->io_modes = VB2_MMAP;
++	q->ops = &isp_video_capture_qops;
++	q->mem_ops = &vb2_dma_contig_memops;
++	q->buf_struct_size = sizeof(struct flite_buffer);
++	q->drv_priv = isp;
++	q->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
++
++	ret = vb2_queue_init(q);
++	if (ret < 0)
++		return ret;
++
++	vfd->queue = q;
++	vfd->fops = &isp_video_capture_fops;
++	vfd->ioctl_ops = &isp_video_capture_ioctl_ops;
++	vfd->v4l2_dev = v4l2_dev;
++	vfd->minor = -1;
++	vfd->release = video_device_release_empty;
++	vfd->lock = &isp->video_lock;
++
++	isp->vd_pad.flags = MEDIA_PAD_FL_SINK;
++	ret = media_entity_init(&vfd->entity, 1, &isp->vd_pad, 0);
++	if (ret < 0)
++		return ret;
++
++	video_set_drvdata(vfd, isp);
++
++	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
++	if (ret < 0) {
++		media_entity_cleanup(&vfd->entity);
++		return ret;
++	}
++
++	v4l2_info(v4l2_dev, "Registered %s as /dev/%s\n",
++		  vfd->name, video_device_node_name(vfd));
++
++	return 0;
++}
++
++void fimc_isp_video_device_unregister(struct fimc_isp *isp)
++{
++	if (isp && video_is_registered(&isp->vfd)) {
++		video_unregister_device(&isp->vfd);
++		media_entity_cleanup(&isp->vfd.entity);
++	}
++}
+diff --git a/drivers/media/platform/s5p-fimc/fimc-isp-video.h b/drivers/media/platform/s5p-fimc/fimc-isp-video.h
+new file mode 100644
+index 0000000..5378dd9
+--- /dev/null
++++ b/drivers/media/platform/s5p-fimc/fimc-isp-video.h
+@@ -0,0 +1,50 @@
 +/*
 + * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
 + *
@@ -44,389 +500,45 @@ index 0000000..151915c
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 + */
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/errno.h>
-+#include <linux/gpio.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/kernel.h>
-+#include <linux/memory.h>
-+#include <linux/module.h>
-+#include <linux/of_gpio.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+#include <media/v4l2-subdev.h>
++#ifndef FIMC_ISP_VIDEO__
++#define FIMC_ISP_VIDEO__
 +
-+#include "fimc-is.h"
-+#include "fimc-is-sensor.h"
++#include <media/videobuf2-core.h>
++#include "fimc-isp.h"
 +
-+#define DRIVER_NAME "FIMC-IS-SENSOR"
++int fimc_isp_video_device_register(struct fimc_isp *isp,
++				struct v4l2_device *v4l2_dev);
++void fimc_isp_video_device_unregister(struct fimc_isp *isp);
 +
-+static const char * const sensor_supply_names[] = {
-+	"svdda",
-+	"svddio",
-+};
-+
-+static const struct v4l2_mbus_framefmt fimc_is_sensor_formats[] = {
-+	{
-+		.code = V4L2_MBUS_FMT_SGRBG10_1X10,
-+		.colorspace = V4L2_COLORSPACE_SRGB,
-+		.field = V4L2_FIELD_NONE,
-+	}
-+};
-+
-+static struct fimc_is_sensor *sd_to_fimc_is_sensor(struct v4l2_subdev *sd)
++static inline void fimc_is_active_queue_add(struct fimc_isp *isp,
++					 struct fimc_isp_buffer *buf)
 +{
-+	return container_of(sd, struct fimc_is_sensor, subdev);
++	list_add_tail(&buf->list, &isp->active_buf_q);
 +}
 +
-+static const struct v4l2_mbus_framefmt *find_sensor_format(
-+	struct v4l2_mbus_framefmt *mf)
++static inline struct fimc_isp_buffer *fimc_is_active_queue_pop(
++					struct fimc_isp *isp)
 +{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(fimc_is_sensor_formats); i++)
-+		if (mf->code == fimc_is_sensor_formats[i].code)
-+			return &fimc_is_sensor_formats[i];
-+
-+	return &fimc_is_sensor_formats[0];
++	struct fimc_isp_buffer *buf = list_entry(isp->active_buf_q.next,
++					      struct fimc_isp_buffer, list);
++	list_del(&buf->list);
++	return buf;
 +}
 +
-+static int fimc_is_sensor_enum_mbus_code(struct v4l2_subdev *sd,
-+				  struct v4l2_subdev_fh *fh,
-+				  struct v4l2_subdev_mbus_code_enum *code)
++static inline void fimc_is_pending_queue_add(struct fimc_isp *isp,
++					struct fimc_isp_buffer *buf)
 +{
-+	if (code->index >= ARRAY_SIZE(fimc_is_sensor_formats))
-+		return -EINVAL;
-+
-+	code->code = fimc_is_sensor_formats[code->index].code;
-+	return 0;
++	list_add_tail(&buf->list, &isp->pending_buf_q);
 +}
 +
-+static void fimc_is_sensor_try_format(struct fimc_is_sensor *sensor,
-+				      struct v4l2_mbus_framefmt *mf)
++static inline struct fimc_isp_buffer *fimc_is_pending_queue_pop(
++					struct fimc_isp *isp)
 +{
-+	const struct sensor_drv_data *dd = sensor->drvdata;
-+	const struct v4l2_mbus_framefmt *fmt;
-+
-+	fmt = find_sensor_format(mf);
-+	mf->code = fmt->code;
-+	v4l_bound_align_image(&mf->width, 16 + 8, dd->width, 0,
-+			      &mf->height, 12 + 8, dd->height, 0, 0);
++	struct fimc_isp_buffer *buf = list_entry(isp->pending_buf_q.next,
++					      struct fimc_isp_buffer, list);
++	list_del(&buf->list);
++	return buf;
 +}
-+
-+static struct v4l2_mbus_framefmt *__fimc_is_sensor_get_format(
-+		struct fimc_is_sensor *sensor, struct v4l2_subdev_fh *fh,
-+		u32 pad, enum v4l2_subdev_format_whence which)
-+{
-+	if (which == V4L2_SUBDEV_FORMAT_TRY)
-+		return fh ? v4l2_subdev_get_try_format(fh, pad) : NULL;
-+
-+	return &sensor->format;
-+}
-+
-+static int fimc_is_sensor_set_fmt(struct v4l2_subdev *sd,
-+				  struct v4l2_subdev_fh *fh,
-+				  struct v4l2_subdev_format *fmt)
-+{
-+	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
-+	struct v4l2_mbus_framefmt *mf;
-+
-+	fimc_is_sensor_try_format(sensor, &fmt->format);
-+
-+	mf = __fimc_is_sensor_get_format(sensor, fh, fmt->pad, fmt->which);
-+	if (mf) {
-+		mutex_lock(&sensor->lock);
-+		if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE)
-+			sensor->format = *mf;
-+		mutex_unlock(&sensor->lock);
-+	}
-+	return 0;
-+}
-+
-+static int fimc_is_sensor_get_fmt(struct v4l2_subdev *sd,
-+				  struct v4l2_subdev_fh *fh,
-+				  struct v4l2_subdev_format *fmt)
-+{
-+	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
-+	struct v4l2_mbus_framefmt *mf;
-+
-+	mf = __fimc_is_sensor_get_format(sensor, fh, fmt->pad, fmt->which);
-+
-+	mutex_lock(&sensor->lock);
-+	fmt->format = *mf;
-+	mutex_unlock(&sensor->lock);
-+	return 0;
-+}
-+
-+static struct v4l2_subdev_pad_ops fimc_is_sensor_pad_ops = {
-+	.enum_mbus_code	= fimc_is_sensor_enum_mbus_code,
-+	.get_fmt	= fimc_is_sensor_get_fmt,
-+	.set_fmt	= fimc_is_sensor_set_fmt,
-+};
-+
-+static int fimc_is_sensor_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-+{
-+	struct v4l2_mbus_framefmt *format = v4l2_subdev_get_try_format(fh, 0);
-+
-+	*format		= fimc_is_sensor_formats[0];
-+	format->width	= FIMC_IS_SENSOR_DEF_PIX_WIDTH;
-+	format->height	= FIMC_IS_SENSOR_DEF_PIX_HEIGHT;
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_internal_ops fimc_is_sensor_sd_internal_ops = {
-+	.open = fimc_is_sensor_open,
-+};
-+
-+static int fimc_is_sensor_s_power(struct v4l2_subdev *sd, int on)
-+{
-+	struct fimc_is_sensor *sensor = v4l2_get_subdevdata(sd);
-+	int gpio = sensor->gpio_reset;
-+	int ret;
-+
-+	pr_debug("%s:%d: on: %d\n", __func__, __LINE__, on);
-+
-+	if (on) {
-+		ret = regulator_bulk_enable(SENSOR_NUM_SUPPLIES,
-+					    sensor->supplies);
-+		if (gpio_is_valid(gpio)) {
-+			gpio_set_value(gpio, 1);
-+			usleep_range(600, 800);
-+			gpio_set_value(gpio, 0);
-+			usleep_range(10000, 11000);
-+			gpio_set_value(gpio, 1);
-+		}
-+	} else {
-+		if (gpio_is_valid(gpio))
-+			gpio_set_value(gpio, 0);
-+
-+		ret = regulator_bulk_disable(SENSOR_NUM_SUPPLIES,
-+					     sensor->supplies);
-+	}
-+
-+	return ret;
-+}
-+
-+static struct v4l2_subdev_core_ops fimc_is_sensor_core_ops = {
-+	.s_power = fimc_is_sensor_s_power,
-+};
-+
-+static struct v4l2_subdev_ops fimc_is_sensor_subdev_ops = {
-+	.core = &fimc_is_sensor_core_ops,
-+	.pad = &fimc_is_sensor_pad_ops,
-+};
-+
-+static const struct of_device_id fimc_is_sensor_of_match[];
-+
-+static int fimc_is_sensor_probe(struct i2c_client *client,
-+				const struct i2c_device_id *id)
-+{
-+	struct device *dev = &client->dev;
-+	struct fimc_is_sensor *sensor;
-+	const struct of_device_id *of_id;
-+	struct v4l2_subdev *sd;
-+	int gpio, i, ret;
-+
-+	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
-+	if (!sensor)
-+		return -ENOMEM;
-+
-+	mutex_init(&sensor->lock);
-+	sensor->gpio_reset = -EINVAL;
-+
-+	gpio = of_get_gpio_flags(dev->of_node, 0, NULL); /* &of_flags); */
-+	if (gpio_is_valid(gpio)) {
-+		/* gpio->level = !(of_flags & OF_GPIO_ACTIVE_LOW); */
-+		ret = gpio_request_one(gpio, GPIOF_OUT_INIT_LOW, DRIVER_NAME);
-+		if (ret < 0)
-+			return ret;
-+	}
-+	sensor->gpio_reset = gpio;
-+
-+	for (i = 0; i < SENSOR_NUM_SUPPLIES; i++)
-+		sensor->supplies[i].supply = sensor_supply_names[i];
-+
-+	ret = devm_regulator_bulk_get(&client->dev, SENSOR_NUM_SUPPLIES,
-+				      sensor->supplies);
-+	if (ret < 0)
-+		goto err_gpio;
-+
-+	of_id = of_match_node(fimc_is_sensor_of_match, dev->of_node);
-+	if (!of_id) {
-+		ret = -ENODEV;
-+		goto err_reg;
-+	}
-+
-+	sensor->drvdata = of_id->data;
-+
-+	sd = &sensor->subdev;
-+	v4l2_i2c_subdev_init(sd, client, &fimc_is_sensor_subdev_ops);
-+	snprintf(sd->name, sizeof(sd->name), sensor->drvdata->subdev_name);
-+	sensor->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-+
-+	sensor->format.code = fimc_is_sensor_formats[0].code;
-+	sensor->format.width = FIMC_IS_SENSOR_DEF_PIX_WIDTH;
-+	sensor->format.height = FIMC_IS_SENSOR_DEF_PIX_HEIGHT;
-+
-+	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
-+	ret = media_entity_init(&sd->entity, 1, &sensor->pad, 0);
-+	if (ret < 0)
-+		goto err_reg;
-+
-+	v4l2_set_subdevdata(sd, sensor);
-+
-+	return 0;
-+err_reg:
-+	regulator_bulk_free(SENSOR_NUM_SUPPLIES, sensor->supplies);
-+err_gpio:
-+	if (gpio_is_valid(sensor->gpio_reset))
-+		gpio_free(sensor->gpio_reset);
-+	return ret;
-+}
-+
-+static int fimc_is_sensor_remove(struct i2c_client *client)
-+{
-+	struct fimc_is_sensor *sensor;
-+
-+	regulator_bulk_free(SENSOR_NUM_SUPPLIES, sensor->supplies);
-+	media_entity_cleanup(&sensor->subdev.entity);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id fimc_is_sensor_ids[] = {
-+	{ }
-+};
-+
-+static const struct sensor_drv_data s5k6a3_drvdata = {
-+	.id		= FIMC_IS_SENSOR_ID_S5K6A3,
-+	.subdev_name	= "S5K6A3",
-+	.width		= S5K6A3_SENSOR_WIDTH,
-+	.height		= S5K6A3_SENSOR_HEIGHT,
-+};
-+
-+static const struct of_device_id fimc_is_sensor_of_match[] = {
-+	{
-+		.compatible	= "samsung,s5k6a3",
-+		.data		= &s5k6a3_drvdata,
-+	},
-+	{  }
-+};
-+MODULE_DEVICE_TABLE(of, fimc_is_sensor_of_match);
-+
-+static struct i2c_driver fimc_is_sensor_driver = {
-+	.driver = {
-+		.of_match_table	= fimc_is_sensor_of_match,
-+		.name		= DRIVER_NAME,
-+		.owner		= THIS_MODULE,
-+	},
-+	.probe		= fimc_is_sensor_probe,
-+	.remove		= fimc_is_sensor_remove,
-+	.id_table	= fimc_is_sensor_ids,
-+};
-+
-+int fimc_is_register_sensor_driver(void)
-+{
-+	return i2c_add_driver(&fimc_is_sensor_driver);
-+}
-+
-+void fimc_is_unregister_sensor_driver(void)
-+{
-+	i2c_del_driver(&fimc_is_sensor_driver);
-+}
-+
-+MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
-+MODULE_DESCRIPTION("Exynos4x12 FIMC-IS image sensor subdev driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/media/platform/s5p-fimc/fimc-is-sensor.h b/drivers/media/platform/s5p-fimc/fimc-is-sensor.h
-new file mode 100644
-index 0000000..e80490e
---- /dev/null
-+++ b/drivers/media/platform/s5p-fimc/fimc-is-sensor.h
-@@ -0,0 +1,80 @@
-+/*
-+ * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
-+ *
-+ * Copyright (C) 2012 Samsung Electronics Co., Ltd.
-+ *  Younghwan Joo <yhwan.joo@samsung.com>
-+ *  Sylwester Nawrocki <s.nawrocki@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef FIMC_IS_SENSOR_H_
-+#define FIMC_IS_SENSOR_H_
-+
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/videodev2.h>
-+#include <media/v4l2-subdev.h>
-+
-+#define FIMC_IS_SENSOR_OPEN_TIMEOUT	2000 /* ms */
-+
-+#define FIMC_IS_SENSOR_DEF_PIX_WIDTH	1296
-+#define FIMC_IS_SENSOR_DEF_PIX_HEIGHT	732
-+
-+#define S5K6A3_SENSOR_WIDTH		1392
-+#define S5K6A3_SENSOR_HEIGHT		1392
-+
-+#define SENSOR_NUM_SUPPLIES		2
-+
-+enum fimc_is_sensor_id {
-+	FIMC_IS_SENSOR_ID_S5K3H2 = 1,
-+	FIMC_IS_SENSOR_ID_S5K6A3,
-+	FIMC_IS_SENSOR_ID_S5K4E5,
-+	FIMC_IS_SENSOR_ID_S5K3H7,
-+	FIMC_IS_SENSOR_ID_CUSTOM,
-+	FIMC_IS_SENSOR_ID_END
-+};
-+
-+#define IS_SENSOR_CTRL_BUS_I2C0		0
-+#define IS_SENSOR_CTRL_BUS_I2C1		1
-+
-+struct sensor_drv_data {
-+	enum fimc_is_sensor_id id;
-+	const char * const subdev_name;
-+	unsigned int width;
-+	unsigned int height;
-+};
-+
-+/**
-+ * struct fimc_is_sensor - fimc-is sensor data structure
-+ * @subdev: the image sensor's v4l2 subdev
-+ * @pad: subdev media source pad
-+ * @supplies: image sensor's voltage regulator supplies
-+ * @gpio_reset: GPIO connected to the sensor's reset pin
-+ * @drvdata: a pointer to the sensor's parameters data structure
-+ * @i2c_bus: ISP I2C bus index (0...1)
-+ * @test_pattern: true to enable video test pattern
-+ * @lock: mutex protecting the structure's members below
-+ * @format: media bus format at the sensor's source pad
-+ */
-+struct fimc_is_sensor {
-+	struct v4l2_subdev subdev;
-+	struct media_pad pad;
-+	struct regulator_bulk_data supplies[SENSOR_NUM_SUPPLIES];
-+	int gpio_reset;
-+	const struct sensor_drv_data *drvdata;
-+	unsigned int i2c_bus;
-+	bool test_pattern;
-+
-+	struct mutex lock;
-+	struct v4l2_mbus_framefmt format;
-+};
-+
-+int fimc_is_register_sensor_driver(void);
-+void fimc_is_unregister_sensor_driver(void);
-+
-+#endif /* FIMC_IS_SENSOR_H_ */
++#endif /* FIMC_ISP_VIDEO__ */
 -- 
 1.7.9.5
