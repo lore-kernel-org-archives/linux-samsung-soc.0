@@ -1,42 +1,103 @@
 From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 0/4] clk: samsung: small fixes and enhancements
-Date: Tue, 12 Mar 2013 00:42:09 +0100
-Message-ID: <201303120042.09633.heiko@sntech.de>
+Subject: [PATCH 1/4] clk: samsung: register clk_div_tables for divider clocks
+Date: Tue, 12 Mar 2013 00:43:24 +0100
+Message-ID: <201303120043.24557.heiko@sntech.de>
+References: <201303120042.09633.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:39947 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:39964 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754178Ab3CKXmS (ORCPT
+	id S1754178Ab3CKXn2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Mar 2013 19:42:18 -0400
+	Mon, 11 Mar 2013 19:43:28 -0400
+In-Reply-To: <201303120042.09633.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-Small fixes and enhancements that came up when implementing the
-common clock support for s3c2443, s3c2416 and s3c2450.
+On some Samsung platforms divider clocks only use specific divider combinations
+like the armdiv on s3c2443 and s3c2416. For these usecases the generic divider
+clock already provides the option of providing a lookup table mapping register
+values to divider values.
 
-The 3rd and 4th patch enable the adding of separate aliases
-to previously defined clocks, as discussed with Sylwester Nawrocki.
+Therefore add a new field to samsung_div_clock and if filled with a table,
+use clk_register_divider_table instead of clk_register_divider to register
+a divider clock
 
-This is often needed as some clocks need more than one alias. The hsmmc
-hclks on s3c2416 for example are both "hsmmc" and "mmc_busclk.0" .
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/samsung/clk.c |   14 +++++++++++---
+ drivers/clk/samsung/clk.h |   13 +++++++++----
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
-These changes are required for the common clock conversion of s3c24xx SoCs.
-
-Heiko Stuebner (4):
-  clk: samsung: register clk_div_tables for divider clocks
-  clk: samsung: remove np check in clock init
-  clk: samsung: always allocate the clk_table
-  clk: samsung: add infrastructure to add separate aliases
-
- drivers/clk/samsung/clk.c |   51 +++++++++++++++++++++++++++++++++++++++-----
- drivers/clk/samsung/clk.h |   34 ++++++++++++++++++++++++++---
- 2 files changed, 75 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 91d12f3..d36cdd5 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -183,9 +183,17 @@ void __init samsung_clk_register_div(struct samsung_div_clock *list,
+ 	unsigned int idx, ret;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+-		clk = clk_register_divider(NULL, list->name, list->parent_name,
+-			list->flags, reg_base + list->offset, list->shift,
+-			list->width, list->div_flags, &lock);
++		if (list->table)
++			clk = clk_register_divider_table(NULL, list->name,
++					list->parent_name, list->flags,
++					reg_base + list->offset, list->shift,
++					list->width, list->div_flags,
++					list->table, &lock);
++		else
++			clk = clk_register_divider(NULL, list->name,
++					list->parent_name, list->flags,
++					reg_base + list->offset, list->shift,
++					list->width, list->div_flags, &lock);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+ 				list->name);
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index 961192f..26a752b 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -150,9 +150,10 @@ struct samsung_div_clock {
+ 	u8			width;
+ 	u8			div_flags;
+ 	const char		*alias;
++	struct clk_div_table	*table;
+ };
+ 
+-#define __DIV(_id, dname, cname, pname, o, s, w, f, df, a)	\
++#define __DIV(_id, dname, cname, pname, o, s, w, f, df, a, t)	\
+ 	{							\
+ 		.id		= _id,				\
+ 		.dev_name	= dname,			\
+@@ -164,16 +165,20 @@ struct samsung_div_clock {
+ 		.width		= w,				\
+ 		.div_flags	= df,				\
+ 		.alias		= a,				\
++		.table		= t,				\
+ 	}
+ 
+ #define DIV(_id, cname, pname, o, s, w)				\
+-	__DIV(_id, NULL, cname, pname, o, s, w, 0, 0, NULL)
++	__DIV(_id, NULL, cname, pname, o, s, w, 0, 0, NULL, NULL)
+ 
+ #define DIV_A(_id, cname, pname, o, s, w, a)			\
+-	__DIV(_id, NULL, cname, pname, o, s, w, 0, 0, a)
++	__DIV(_id, NULL, cname, pname, o, s, w, 0, 0, a, NULL)
+ 
+ #define DIV_F(_id, cname, pname, o, s, w, f, df)		\
+-	__DIV(_id, NULL, cname, pname, o, s, w, f, df, NULL)
++	__DIV(_id, NULL, cname, pname, o, s, w, f, df, NULL, NULL)
++
++#define DIV_T(_id, cname, pname, o, s, w, t)			\
++	__DIV(_id, NULL, cname, pname, o, s, w, 0, 0, NULL, t)
+ 
+ /**
+  * struct samsung_gate_clock: information about gate clock
 -- 
 1.7.2.3
