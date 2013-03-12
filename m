@@ -1,58 +1,67 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC 12/12] mipi-csis: Enable all interrupts for fimc-is usage
-Date: Tue, 12 Mar 2013 17:01:53 +0100
-Message-ID: <513F5171.40603@samsung.com>
-References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
- <1362754765-2651-13-git-send-email-arun.kk@samsung.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2] iio: adc: exynos5_adc: fix compilation warnings
+Date: Tue, 12 Mar 2013 09:14:34 -0700
+Message-ID: <CAD=FV=W4yYZYBT5=PY2VUsdz-zNAm=jnnw_SZzwjWzm_FuViLQ@mail.gmail.com>
+References: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54714 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754947Ab3CLQB4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Mar 2013 12:01:56 -0400
-In-reply-to: <1362754765-2651-13-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1362625743-10401-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-Hi Arun,
+Naveen,
 
-On 03/08/2013 03:59 PM, Arun Kumar K wrote:
-> FIMC-IS firmware needs all the MIPI-CSIS interrupts to be enabled.
-> This patch enables all those MIPI interrupts.
-> 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  drivers/media/platform/s5p-fimc/mipi-csis.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.c b/drivers/media/platform/s5p-fimc/mipi-csis.c
-> index debda7c..11eef67 100644
-> --- a/drivers/media/platform/s5p-fimc/mipi-csis.c
-> +++ b/drivers/media/platform/s5p-fimc/mipi-csis.c
-> @@ -64,7 +64,7 @@ MODULE_PARM_DESC(debug, "Debug level (0-2)");
->  
->  /* Interrupt mask */
->  #define S5PCSIS_INTMSK			0x10
-> -#define S5PCSIS_INTMSK_EN_ALL		0xf000103f
-> +#define S5PCSIS_INTMSK_EN_ALL		0xfc00103f
+On Wed, Mar 6, 2013 at 7:09 PM, Naveen Krishna Chatradhi
+<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> -       unsigned int            version;
+> +       unsigned int            version;
 
-Do you know what interrupts are assigned to the CSIS_INTMSK
-bits 26, 27 ? In the documentation I have they are marked
-as reserved. I have tested this patch on Exynos4x12, it seems
-OK but you might want to merge it to the patch adding compatible
-property for exynos5.
+Given that you've changed exynos_adc_get_version() to return an int,
+shouldn't this be an int too (not unsigned)?
 
-It would be good to know what these bits are for. And how
-enabling the interrupts actually help without modifying the
-interrupt handler ? Is it enough to just acknowledge those
-interrupts ? Or how it works ?
 
---
+> -static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
+> +static inline int exynos_adc_get_version(struct platform_device *pdev)
+>  {
+>         const struct of_device_id *match;
+>
+>         match = of_match_node(exynos_adc_match, pdev->dev.of_node);
+> -       return (unsigned int)match->data;
+> +       return (int)match->data;
 
-Regards,
-Sylwester
+Given that you're now checking for an error code below it seems like
+you ought to generate one here.  ;)
+...AKA: return an error if match is NULL--don't dereference NULL.
+
+
+>  static int exynos_read_raw(struct iio_dev *indio_dev,
+> @@ -117,7 +117,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+>                                 long mask)
+>  {
+>         struct exynos_adc *info = iio_priv(indio_dev);
+> -       unsigned long timeout;
+> +       int timeout;
+
+Why change this to an "int" when
+wait_for_completion_interruptible_timeout() returns a long?  I agree
+with the removal of the "unsigned", though.
+
+
+> +       version = exynos_adc_get_version(pdev);
+> +       if (version < 0) {
+> +               dev_err(&pdev->dev, "no matching of_node, err = %d\n", version);
+> +               ret = version;
+> +               goto err_iio;
+> +       }
+> +
+> +       info->version = version;
+
+Optional (and perhaps a matter of preference): I'd eliminate the
+"version" variable here and just re-use "ret" for storing the result
+of exynos_adc_get_version().
+
+
+-Doug
