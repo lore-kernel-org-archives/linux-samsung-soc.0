@@ -1,148 +1,53 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 4/4] clk: samsung: add infrastructure to add separate aliases
-Date: Tue, 12 Mar 2013 15:27:30 +0530
-Message-ID: <CAJuYYwQ+-NhP+t-WEUhZxCN3AQFUzLSqt9aFWu5K0uwL_jO20A@mail.gmail.com>
-References: <201303120042.09633.heiko@sntech.de>
-	<201303120045.25824.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f175.google.com ([209.85.210.175]:60666 "EHLO
-	mail-ia0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932304Ab3CLJ5a convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Mar 2013 05:57:30 -0400
-Received: by mail-ia0-f175.google.com with SMTP id y26so535171iab.20
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2013 02:57:30 -0700 (PDT)
-In-Reply-To: <201303120045.25824.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH V4 0/4] cpufreq: exynos5440: support for cpufreq driver
+Date: Tue, 12 Mar 2013 15:28:15 +0530
+Message-ID: <1363082299-10561-1-git-send-email-amit.daniel@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, Inderpal Singh <inderpal.singh@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-On 12 March 2013 05:15, Heiko St=FCbner <heiko@sntech.de> wrote:
-> The current code adds aliases, if necessary, directly when adding the=
- clock,
-> limiting the number of possible aliases to one.
->
-> Some platforms need more than one alias, like the hsmmc pclocks on s3=
-c2416
-> which need a "hsmmc" and "mmc_busclk.0" alias for the s3c-sdhci drive=
-r.
->
-> Therefore add the possibility to separately add clock aliases for pre=
-viously
-> created clocks.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> change since the discussion: removed the list->alias check
->
->  drivers/clk/samsung/clk.c |   33 +++++++++++++++++++++++++++++++++
->  drivers/clk/samsung/clk.h |   21 +++++++++++++++++++++
->  2 files changed, 54 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index 7c943f8..20ec566 100644
-> --- a/drivers/clk/samsung/clk.c
-> +++ b/drivers/clk/samsung/clk.c
-> @@ -94,6 +94,39 @@ void samsung_clk_add_lookup(struct clk *clk, unsig=
-ned int id)
->                 clk_table[id] =3D clk;
->  }
->
-> +/* register a list of aliases */
-> +void __init samsung_clk_register_alias(struct samsung_clock_alias *l=
-ist,
-> +                                       unsigned int nr_clk)
-> +{
-> +       struct clk *clk;
-> +       unsigned int idx, ret;
-> +
-> +       if (!clk_table) {
-> +               pr_err("%s: clock table missing\n", __func__);
-> +               return;
-> +       }
-> +
-> +       for (idx =3D 0; idx < nr_clk; idx++, list++) {
-> +               if (!list->id) {
-> +                       pr_err("%s: clock id missing for index %d\n",=
- __func__,
-> +                               idx);
-> +                       continue;
-> +               }
-> +
-> +               clk =3D clk_table[list->id];
-> +               if (!clk) {
-> +                       pr_err("%s: failed to find clock %d\n", __fun=
-c__,
-> +                               list->id);
-> +                       continue;
-> +               }
-> +
-> +               ret =3D clk_register_clkdev(clk, list->alias, list->d=
-ev_name);
-> +               if (ret)
-> +                       pr_err("%s: failed to register lookup %s\n",
-> +                                       __func__, list->alias);
-> +       }
-> +}
-> +
->  /* register a list of fixed clocks */
->  void __init samsung_clk_register_fixed_rate(
->                 struct samsung_fixed_rate_clock *list, unsigned int n=
-r_clk)
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index 26a752b..6bacd6f 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -23,6 +23,25 @@
->  #include <mach/map.h>
->
->  /**
-> + * struct samsung_clock_alias: information about mux clock
-> + * @id: platform specific id of the clock.
-> + * @dev_name: name of the device to which this clock belongs.
-> + * @alias: optional clock alias name to be assigned to this clock.
-> + */
-> +struct samsung_clock_alias {
-> +       unsigned int            id;
-> +       const char              *dev_name;
-> +       const char              *alias;
-> +};
-> +
-> +#define ALIAS(_id, dname, a)   \
-> +       {                                                       \
-> +               .id             =3D _id,                          \
-> +               .dev_name       =3D dname,                        \
-> +               .alias          =3D a,                            \
-> +       }
-> +
-> +/**
->   * struct samsung_fixed_rate_clock: information about fixed-rate clo=
-ck
->   * @id: platform specific id of the clock.
->   * @name: name of this fixed-rate clock.
-> @@ -251,6 +270,8 @@ extern void __init samsung_clk_of_register_fixed_=
-ext(
->
->  extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id)=
-;
->
-> +extern void samsung_clk_register_alias(struct samsung_clock_alias *l=
-ist,
-> +               unsigned int nr_clk);
->  extern void __init samsung_clk_register_fixed_rate(
->                 struct samsung_fixed_rate_clock *clk_list, unsigned i=
-nt nr_clk);
->  extern void __init samsung_clk_register_fixed_factor(
-> --
-> 1.7.2.3
->
+Submitting the V4 version of exynos5440 cpufreq driver. This patchset addresses
+all the coding and design concerns raised especially by Viresh.
 
-This change looks fine but as discussed on 3/4 patch of this series,
-allocating clk_table for non-dt platforms would not be very helpful.
+Changes in V4:
+* Added dev_err logs instead of pr_err.
+* Used the devm_ioremap_resource API.
+* Implemented several coding guidelines and minor error comments from Sylwester,
+  Russell and Viresh.
 
-Thanks,
-Thomas.
+Changes in V3:
+* Converted the driver to probe based as suggested by Viresh. This is also
+  beneficial for multiplatform kernel.
+* Other coding guidelines related changes.
+* Moved the DT node outside cpu0 node as the driver is now a platform
+  driver.
+
+Changes in V2:
+* Added OPP library support to parse DT parameters.
+* Removed a hack to handle interrupts in bootup.
+* Implemented other review comments from Viresh and Inder.
+
+All these patches are dependent on Thomas Abraham common clock patches.
+(http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15860.html)
+This whole patch series is based on 3.9-rc2.
+
+Amit Daniel Kachhap (4):
+  cpufreq: exynos: Adding cpufreq driver for exynos5440
+  cpufreq: exynos: Remove error return even if no soc is found
+  arm: exynos: Enable OPP library support for exynos5440
+  dts: Add cpufreq controller node for Exynos5440 SoC
+
+ .../bindings/cpufreq/cpufreq-exynos5440.txt        |   29 ++
+ arch/arm/boot/dts/exynos5440.dtsi                  |   12 +
+ arch/arm/mach-exynos/Kconfig                       |    2 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
+ drivers/cpufreq/Kconfig.arm                        |    9 +
+ drivers/cpufreq/Makefile                           |    1 +
+ drivers/cpufreq/exynos-cpufreq.c                   |    2 +-
+ drivers/cpufreq/exynos5440-cpufreq.c               |  466 ++++++++++++++++++++
+ 8 files changed, 522 insertions(+), 1 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
+ create mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
+
