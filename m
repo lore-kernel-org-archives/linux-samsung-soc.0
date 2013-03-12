@@ -1,67 +1,148 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 3/4] clk: samsung: always allocate the clk_table
-Date: Tue, 12 Mar 2013 15:24:47 +0530
-Message-ID: <CAJuYYwT183EcZZ20P8D7AP34CwXfKYLzsmZdoJz1ny7XznzyAg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: samsung: add infrastructure to add separate aliases
+Date: Tue, 12 Mar 2013 15:27:30 +0530
+Message-ID: <CAJuYYwQ+-NhP+t-WEUhZxCN3AQFUzLSqt9aFWu5K0uwL_jO20A@mail.gmail.com>
 References: <201303120042.09633.heiko@sntech.de>
-	<201303120044.29499.heiko@sntech.de>
+	<201303120045.25824.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f170.google.com ([209.85.223.170]:45296 "EHLO
-	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755206Ab3CLJyr convert rfc822-to-8bit (ORCPT
+Received: from mail-ia0-f175.google.com ([209.85.210.175]:60666 "EHLO
+	mail-ia0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932304Ab3CLJ5a convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Mar 2013 05:54:47 -0400
-Received: by mail-ie0-f170.google.com with SMTP id c11so6106511ieb.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2013 02:54:47 -0700 (PDT)
-In-Reply-To: <201303120044.29499.heiko@sntech.de>
+	Tue, 12 Mar 2013 05:57:30 -0400
+Received: by mail-ia0-f175.google.com with SMTP id y26so535171iab.20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2013 02:57:30 -0700 (PDT)
+In-Reply-To: <201303120045.25824.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-On 12 March 2013 05:14, Heiko St=FCbner <heiko@sntech.de> wrote:
-> This is needed to allow looking up previous created clocks when
-> adding separate aliases to them.
+On 12 March 2013 05:15, Heiko St=FCbner <heiko@sntech.de> wrote:
+> The current code adds aliases, if necessary, directly when adding the=
+ clock,
+> limiting the number of possible aliases to one.
+>
+> Some platforms need more than one alias, like the hsmmc pclocks on s3=
+c2416
+> which need a "hsmmc" and "mmc_busclk.0" alias for the s3c-sdhci drive=
+r.
+>
+> Therefore add the possibility to separately add clock aliases for pre=
+viously
+> created clocks.
 >
 > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  drivers/clk/samsung/clk.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
+> change since the discussion: removed the list->alias check
+>
+>  drivers/clk/samsung/clk.c |   33 +++++++++++++++++++++++++++++++++
+>  drivers/clk/samsung/clk.h |   21 +++++++++++++++++++++
+>  2 files changed, 54 insertions(+), 0 deletions(-)
 >
 > diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index 1a5de69..7c943f8 100644
+> index 7c943f8..20ec566 100644
 > --- a/drivers/clk/samsung/clk.c
 > +++ b/drivers/clk/samsung/clk.c
-> @@ -58,11 +58,11 @@ void __init samsung_clk_init(struct device_node *=
-np, void __iomem *base,
->  {
->         reg_base =3D base;
+> @@ -94,6 +94,39 @@ void samsung_clk_add_lookup(struct clk *clk, unsig=
+ned int id)
+>                 clk_table[id] =3D clk;
+>  }
 >
-> -#ifdef CONFIG_OF
->         clk_table =3D kzalloc(sizeof(struct clk *) * nr_clks, GFP_KER=
-NEL);
->         if (!clk_table)
->                 panic("could not allocate clock lookup table\n");
-
-This change is fine but one point that should be considered is that on
-non-dt platforms, the memory allocation of clk_table cannot really be
-justified just because few clocks require two or more aliases.
-
-Instead, the optional alias passed for divider/mux register functions
-can actually be a list of alias names, the list being terminated by a
-zero-length string. The clock register helper functions can then loop
-through that list and register all the aliases.
-
-Thanks,
-Thomas.
-
+> +/* register a list of aliases */
+> +void __init samsung_clk_register_alias(struct samsung_clock_alias *l=
+ist,
+> +                                       unsigned int nr_clk)
+> +{
+> +       struct clk *clk;
+> +       unsigned int idx, ret;
+> +
+> +       if (!clk_table) {
+> +               pr_err("%s: clock table missing\n", __func__);
+> +               return;
+> +       }
+> +
+> +       for (idx =3D 0; idx < nr_clk; idx++, list++) {
+> +               if (!list->id) {
+> +                       pr_err("%s: clock id missing for index %d\n",=
+ __func__,
+> +                               idx);
+> +                       continue;
+> +               }
+> +
+> +               clk =3D clk_table[list->id];
+> +               if (!clk) {
+> +                       pr_err("%s: failed to find clock %d\n", __fun=
+c__,
+> +                               list->id);
+> +                       continue;
+> +               }
+> +
+> +               ret =3D clk_register_clkdev(clk, list->alias, list->d=
+ev_name);
+> +               if (ret)
+> +                       pr_err("%s: failed to register lookup %s\n",
+> +                                       __func__, list->alias);
+> +       }
+> +}
+> +
+>  /* register a list of fixed clocks */
+>  void __init samsung_clk_register_fixed_rate(
+>                 struct samsung_fixed_rate_clock *list, unsigned int n=
+r_clk)
+> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> index 26a752b..6bacd6f 100644
+> --- a/drivers/clk/samsung/clk.h
+> +++ b/drivers/clk/samsung/clk.h
+> @@ -23,6 +23,25 @@
+>  #include <mach/map.h>
 >
-> +#ifdef CONFIG_OF
->         clk_data.clks =3D clk_table;
->         clk_data.clk_num =3D nr_clks;
->         of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+>  /**
+> + * struct samsung_clock_alias: information about mux clock
+> + * @id: platform specific id of the clock.
+> + * @dev_name: name of the device to which this clock belongs.
+> + * @alias: optional clock alias name to be assigned to this clock.
+> + */
+> +struct samsung_clock_alias {
+> +       unsigned int            id;
+> +       const char              *dev_name;
+> +       const char              *alias;
+> +};
+> +
+> +#define ALIAS(_id, dname, a)   \
+> +       {                                                       \
+> +               .id             =3D _id,                          \
+> +               .dev_name       =3D dname,                        \
+> +               .alias          =3D a,                            \
+> +       }
+> +
+> +/**
+>   * struct samsung_fixed_rate_clock: information about fixed-rate clo=
+ck
+>   * @id: platform specific id of the clock.
+>   * @name: name of this fixed-rate clock.
+> @@ -251,6 +270,8 @@ extern void __init samsung_clk_of_register_fixed_=
+ext(
+>
+>  extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id)=
+;
+>
+> +extern void samsung_clk_register_alias(struct samsung_clock_alias *l=
+ist,
+> +               unsigned int nr_clk);
+>  extern void __init samsung_clk_register_fixed_rate(
+>                 struct samsung_fixed_rate_clock *clk_list, unsigned i=
+nt nr_clk);
+>  extern void __init samsung_clk_register_fixed_factor(
 > --
 > 1.7.2.3
 >
+
+This change looks fine but as discussed on 3/4 patch of this series,
+allocating clk_table for non-dt platforms would not be very helpful.
+
+Thanks,
+Thomas.
