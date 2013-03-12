@@ -1,63 +1,50 @@
-From: Nicola Johnsen <nicolajohnsen@yahoo.co.uk>
-Subject: Re: [edk2] message
-Date: Tue, 12 Mar 2013 19:05:47 +0000 (GMT)
-Message-ID: <1363115147.81833.YahooMailNeo@web133101.mail.ir2.yahoo.com>
-Reply-To: Nicola Johnsen <nicolajohnsen@yahoo.co.uk>,
-	edk2-devel@lists.sourceforge.net
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] ASoC: samsung: remove last traces of neo1973-gta01
+Date: Tue, 12 Mar 2013 23:09:35 +0100
+Message-ID: <1363126175.3137.160.camel@x61.thuisdomein>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3754890988203476811=="
-Return-path: <edk2-devel-bounces@lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/edk2-devel>,
-	<mailto:edk2-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=edk2-devel>
-List-Post: <mailto:edk2-devel@lists.sourceforge.net>
-List-Help: <mailto:edk2-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/edk2-devel>,
-	<mailto:edk2-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: edk2-devel-bounces@lists.sourceforge.net
-To: Marc Zyngier <Marc.Zyngier@arm.com>, linux samsung soc <linux-samsung-soc@vger.kernel.org>, Majordomo <Majordomo@vger.kernel.org>, edk2 devel <edk2-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cpsmtpb-ews10.kpnxchange.com ([213.75.39.15]:61199 "EHLO
+	cpsmtpb-ews10.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932065Ab3CLWJh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Mar 2013 18:09:37 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
---===============3754890988203476811==
-Content-Type: multipart/alternative;
-	boundary="-857615871-1492691320-1363115147=:81833"
+The (rudimentary) support for the Openmoko Neo1973 GTA01 got removed in
+commit 1ae5cbc52e7c6619a3f44b87809fd25370df31bb ("ASoC: neo1973_wm8753:
+remove references to the neo1973-gta01 machine"). Remove its last traces
+in the Kconfig file too.
 
----857615871-1492691320-1363115147=:81833
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+---
+Untested.
 
-http://www.reformasostenible.com/zpzlm/leiqr/njs =0A=0A=0A=0A 3/12/2013 8:0=
-5:47 PM =0A=0A=0ANicola Johnsen
----857615871-1492691320-1363115147=:81833
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+ sound/soc/samsung/Kconfig | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-<span><a href=3D"http://www.reformasostenible.com/zpzlm/leiqr/njs">http://w=
-ww.reformasostenible.com/zpzlm/leiqr/njs</a></span> <br><br><br><br> 3/12/2=
-013 8:05:47 PM <br><br><br>Nicola Johnsen
----857615871-1492691320-1363115147=:81833--
-
-
---===============3754890988203476811==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-Everyone hates slow websites. So do we.
-Make your web apps faster with AppDynamics
-Download AppDynamics Lite for free today:
-http://p.sf.net/sfu/appdyn_d2d_mar
---===============3754890988203476811==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-edk2-devel mailing list
-edk2-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/edk2-devel
-
---===============3754890988203476811==--
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 90e7e66..475fb0d 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -35,11 +35,10 @@ config SND_SAMSUNG_I2S
+ 	tristate
+ 
+ config SND_SOC_SAMSUNG_NEO1973_WM8753
+-	tristate "Audio support for Openmoko Neo1973 Smartphones (GTA01/GTA02)"
+-	depends on SND_SOC_SAMSUNG && (MACH_NEO1973_GTA01 || MACH_NEO1973_GTA02)
++	tristate "Audio support for Openmoko Neo1973 Smartphones (GTA02)"
++	depends on SND_SOC_SAMSUNG && MACH_NEO1973_GTA02
+ 	select SND_S3C24XX_I2S
+ 	select SND_SOC_WM8753
+-	select SND_SOC_LM4857 if MACH_NEO1973_GTA01
+ 	select SND_SOC_DFBMCS320
+ 	help
+ 	  Say Y here to enable audio support for the Openmoko Neo1973
+-- 
+1.7.11.7
