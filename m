@@ -1,318 +1,878 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 7/7] DO_NOT_APPLY: convert s3c2416 to use the common clock framework
-Date: Tue, 12 Mar 2013 01:46:14 +0100
-Message-ID: <201303120146.14592.heiko@sntech.de>
-References: <201303120141.31262.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] i2c: exynos5: add High Speed I2C controller driver
+Date: Tue, 12 Mar 2013 10:02:12 +0530
+Message-ID: <1363062732-27869-1-git-send-email-ch.naveen@samsung.com>
+References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:40486 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754467Ab3CLAqS (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:16482 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752776Ab3CLEea (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Mar 2013 20:46:18 -0400
-In-Reply-To: <201303120141.31262.heiko@sntech.de>
+	Tue, 12 Mar 2013 00:34:30 -0400
+In-reply-to: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
+To: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: w.sang@pengutronix.de, khali@linux-fr.org, ben-linux@fluff.org, grant.likely@secretlab.ca, devicetree-discuss@lists.ozlabs.org, sjg@chromium.org, grundler@chromium.org, naveen@chromium.org, broonie@opensource.wolfsonmicro.com
 
-Switch the s3c2416 and smdk2416 from using the Samsung clocks to
-the common clock framework. This is not meant to be the final result,
-as it uses the temporary pwm clocks and the clock init itself also
-needs changes, especially as the _init_time function stolen from exynos
-is currently board specific due to the xtal frequency which needs
-to be set.
+Adds support for High Speed I2C driver found in Exynos5 and later
+SoCs from Samsung. This driver currently supports Auto mode.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Driver only supports Device Tree method.
+Note: Added debugfs support for registers view, not tested.
+
+Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: R. Chandrasekar <rcsekar@samsung.com>
 ---
- arch/arm/mach-s3c24xx/Kconfig          |    2 +-
- arch/arm/mach-s3c24xx/Makefile         |    2 +-
- arch/arm/mach-s3c24xx/clock-s3c2416.c  |  173 --------------------------------
- arch/arm/mach-s3c24xx/common-s3c2443.c |   10 ++
- arch/arm/mach-s3c24xx/common.h         |    9 ++
- arch/arm/mach-s3c24xx/mach-smdk2416.c  |    9 ++-
- 6 files changed, 28 insertions(+), 177 deletions(-)
- delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
+Changes since v3: http://lkml.org/lkml/2012/12/28/46
+1. Added Documentation for DT bindings
+2. Removed the bus_num, as Doug's pick id from DT is merged in i2c/for-next
+3. Split the xfer function for better clarity.
+4. Streamlined code flow in isr, handled trans_status register in xfer_msg call.
 
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 0a8663c..351c198 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -54,7 +54,7 @@ config CPU_S3C2416
- 	select S3C2416_PM if PM
- 	select S3C2443_COMMON
- 	select S3C2443_DMA if S3C24XX_DMA
--	select SAMSUNG_CLKSRC
-+	select COMMON_CLK
- 	select SAMSUNG_HRT
- 	help
- 	  Support for the S3C2416 SoC from the S3C24XX line
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index be6e4d0..820524e 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -28,7 +28,7 @@ obj-$(CONFIG_S3C2412_DMA)	+= dma-s3c2412.o
- obj-$(CONFIG_S3C2412_PM)	+= pm-s3c2412.o
- obj-$(CONFIG_S3C2412_PM_SLEEP)	+= sleep-s3c2412.o
- 
--obj-$(CONFIG_CPU_S3C2416)	+= s3c2416.o clock-s3c2416.o
-+obj-$(CONFIG_CPU_S3C2416)	+= s3c2416.o
- obj-$(CONFIG_S3C2416_PM)	+= pm-s3c2416.o
- 
- obj-$(CONFIG_CPU_S3C2440)	+= s3c2440.o clock-s3c2440.o
-diff --git a/arch/arm/mach-s3c24xx/clock-s3c2416.c b/arch/arm/mach-s3c24xx/clock-s3c2416.c
-deleted file mode 100644
-index 036056ce..0000000
---- a/arch/arm/mach-s3c24xx/clock-s3c2416.c
-+++ /dev/null
-@@ -1,173 +0,0 @@
--/* linux/arch/arm/mach-s3c2416/clock.c
-- *
-- * Copyright (c) 2010 Simtec Electronics
-- * Copyright (c) 2010 Ben Dooks <ben-linux@fluff.org>
-- *
-- * S3C2416 Clock control support
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
--
--#include <linux/init.h>
--#include <linux/clk.h>
--
--#include <plat/clock.h>
--#include <plat/clock-clksrc.h>
--#include <plat/cpu.h>
--
--#include <plat/cpu-freq.h>
--#include <plat/pll.h>
--
--#include <asm/mach/map.h>
--
--#include <mach/regs-clock.h>
--#include <mach/regs-s3c2443-clock.h>
--
--/* armdiv
-- *
-- * this clock is sourced from msysclk and can have a number of
-- * divider values applied to it to then be fed into armclk.
-- * The real clock definition is done in s3c2443-clock.c,
-- * only the armdiv divisor table must be defined here.
--*/
--
--static unsigned int armdiv[8] = {
--	[0] = 1,
--	[1] = 2,
--	[2] = 3,
--	[3] = 4,
--	[5] = 6,
--	[7] = 8,
--};
--
--static struct clksrc_clk hsspi_eplldiv = {
--	.clk = {
--		.name	= "hsspi-eplldiv",
--		.parent	= &clk_esysclk.clk,
--		.ctrlbit = (1 << 14),
--		.enable = s3c2443_clkcon_enable_s,
--	},
--	.reg_div = { .reg = S3C2443_CLKDIV1, .size = 2, .shift = 24 },
--};
--
--static struct clk *hsspi_sources[] = {
--	[0] = &hsspi_eplldiv.clk,
--	[1] = NULL, /* to fix */
--};
--
--static struct clksrc_clk hsspi_mux = {
--	.clk	= {
--		.name	= "hsspi-if",
--	},
--	.sources = &(struct clksrc_sources) {
--		.sources = hsspi_sources,
--		.nr_sources = ARRAY_SIZE(hsspi_sources),
--	},
--	.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 18 },
--};
--
--static struct clksrc_clk hsmmc_div[] = {
--	[0] = {
--		.clk = {
--			.name	= "hsmmc-div",
--			.devname	= "s3c-sdhci.0",
--			.parent	= &clk_esysclk.clk,
--		},
--		.reg_div = { .reg = S3C2416_CLKDIV2, .size = 2, .shift = 6 },
--	},
--	[1] = {
--		.clk = {
--			.name	= "hsmmc-div",
--			.devname	= "s3c-sdhci.1",
--			.parent	= &clk_esysclk.clk,
--		},
--		.reg_div = { .reg = S3C2443_CLKDIV1, .size = 2, .shift = 6 },
--	},
--};
--
--static struct clksrc_clk hsmmc_mux0 = {
--	.clk	= {
--		.name		= "hsmmc-if",
--		.devname	= "s3c-sdhci.0",
--		.ctrlbit	= (1 << 6),
--		.enable		= s3c2443_clkcon_enable_s,
--	},
--	.sources	= &(struct clksrc_sources) {
--		.nr_sources	= 2,
--		.sources	= (struct clk * []) {
--			[0]	= &hsmmc_div[0].clk,
--			[1]	= NULL, /* to fix */
--		},
--	},
--	.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 16 },
--};
--
--static struct clksrc_clk hsmmc_mux1 = {
--	.clk	= {
--		.name		= "hsmmc-if",
--		.devname	= "s3c-sdhci.1",
--		.ctrlbit	= (1 << 12),
--		.enable		= s3c2443_clkcon_enable_s,
--	},
--	.sources	= &(struct clksrc_sources) {
--		.nr_sources	= 2,
--		.sources	= (struct clk * []) {
--			[0]	= &hsmmc_div[1].clk,
--			[1]	= NULL, /* to fix */
--		},
--	},
--	.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 17 },
--};
--
--static struct clk hsmmc0_clk = {
--	.name		= "hsmmc",
--	.devname	= "s3c-sdhci.0",
--	.parent		= &clk_h,
--	.enable		= s3c2443_clkcon_enable_h,
--	.ctrlbit	= S3C2416_HCLKCON_HSMMC0,
--};
--
--static struct clksrc_clk *clksrcs[] __initdata = {
--	&hsspi_eplldiv,
--	&hsspi_mux,
--	&hsmmc_div[0],
--	&hsmmc_div[1],
--	&hsmmc_mux0,
--	&hsmmc_mux1,
--};
--
--static struct clk_lookup s3c2416_clk_lookup[] = {
--	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.0", &hsmmc0_clk),
--	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &hsmmc_mux0.clk),
--	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &hsmmc_mux1.clk),
--	/* s3c2443-spi.0 is used on s3c2416 and s3c2450 as well */
--	CLKDEV_INIT("s3c2443-spi.0", "spi_busclk2", &hsspi_mux.clk),
--};
--
--void __init s3c2416_init_clocks(int xtal)
--{
--	u32 epllcon = __raw_readl(S3C2443_EPLLCON);
--	u32 epllcon1 = __raw_readl(S3C2443_EPLLCON+4);
--	int ptr;
--
--	/* s3c2416 EPLL compatible with s3c64xx */
--	clk_epll.rate = s3c_get_pll6553x(xtal, epllcon, epllcon1);
--
--	clk_epll.parent = &clk_epllref.clk;
--
--	s3c2443_common_init_clocks(xtal, s3c2416_get_pll,
--				   armdiv, ARRAY_SIZE(armdiv),
--				   S3C2416_CLKDIV0_ARMDIV_MASK);
--
--	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
--		s3c_register_clksrc(clksrcs[ptr], 1);
--
--	s3c24xx_register_clock(&hsmmc0_clk);
--	clkdev_add_table(s3c2416_clk_lookup, ARRAY_SIZE(s3c2416_clk_lookup));
--
--	s3c_pwmclk_init();
--
--}
-diff --git a/arch/arm/mach-s3c24xx/common-s3c2443.c b/arch/arm/mach-s3c24xx/common-s3c2443.c
-index b5bbeb7..d34b7ea 100644
---- a/arch/arm/mach-s3c24xx/common-s3c2443.c
-+++ b/arch/arm/mach-s3c24xx/common-s3c2443.c
-@@ -27,6 +27,7 @@
- 
- #include <plat/cpu-freq.h>
- 
-+#include "common.h"
- 
- #ifdef CONFIG_SAMSUNG_CLOCK
- static int s3c2443_gate(void __iomem *reg, struct clk *clk, int enable)
-@@ -675,3 +676,12 @@ void __init s3c2443_common_init_clocks(int xtal, pll_fn get_mpll,
- 	s3c2443_common_setup_clocks(get_mpll);
- }
- #endif
+ .../devicetree/bindings/i2c/i2c-exynos5.txt        |   50 ++
+ drivers/i2c/busses/Kconfig                         |    7 +
+ drivers/i2c/busses/Makefile                        |    1 +
+ drivers/i2c/busses/i2c-exynos5.c                   |  743 ++++++++++++++++++++
+ 4 files changed, 801 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+ create mode 100644 drivers/i2c/busses/i2c-exynos5.c
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+new file mode 100644
+index 0000000..0bc9347
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+@@ -0,0 +1,50 @@
++* Samsung's High Speed I2C controller
 +
-+#ifdef CONFIG_COMMON_CLK
-+void __init s3c2416_init_clocks(int xtal)
++The Samsung's High Speed I2C controller is used to interface with I2C devices
++at various speeds ranging from 100khz to 3.4Mhz.
++
++Required properties:
++  - compatible: value should be.
++      (a) "samsung,exynos5-hsi2c", for i2c compatible with exynos5 hsi2c.
++  - reg: physical base address of the controller and length of memory mapped
++    region.
++  - interrupts: interrupt number to the cpu.
++
++  - Samsung GPIO variant (deprecated):
++    - gpios: The order of the gpios should be the following: <SDA, SCL>.
++      The gpio specifier depends on the gpio controller.
++  - Pinctrl variant (preferred, if available):
++    - pinctrl-0: Pin control group to be used for this controller.
++    - pinctrl-names: Should contain only one value - "default".
++
++Optional properties:
++  - samsung,hs-mode: Mode of operation, High speed or Fast speed mode. If not
++    specified, default value is 0.
++  - samsung,hs-clock-freq: Desired operating frequency in Hz of the bus.
++    If not specified, the default value in Hz is 100000.
++  - samsung,fs-clock-freq: Desired operarting frequency in Hz of the bus.
++    If not specified, the default value in Hz is 100000.
++
++Example:
++
++	hsi2c@12ca0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12ca0000 0x100>;
++		interrupts = <56>;
++		samsung,fs-clock-freq = <100000>;
++		/* Samsung GPIO variant begins here */
++		gpios = <&gpd1 2 0 /* SDA */
++			 &gpd1 3 0 /* SCL */>;
++		/* Samsung GPIO variant ends here */
++		/* Pinctrl variant begins here */
++		pinctrl-0 = <&i2c4_bus>;
++		pinctrl-names = "default";
++		/* Pinctrl variant ends here */
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		s2mps11_pmic@66 {
++			compatible = "samsung,s2mps11-pmic";
++			reg = <0x66>;
++		};
++	};
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index a3725de..78b4936 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -434,6 +434,13 @@ config I2C_EG20T
+ 	  ML7213/ML7223/ML7831 is companion chip for Intel Atom E6xx series.
+ 	  ML7213/ML7223/ML7831 is completely compatible for Intel EG20T PCH.
+ 
++config I2C_EXYNOS5
++	tristate "Exynos5 high-speed I2C driver"
++	depends on ARCH_EXYNOS5 && OF
++	help
++	  Say Y here to include support for High-speed I2C controller in the
++	  Exynos5 based Samsung SoCs.
++
+ config I2C_GPIO
+ 	tristate "GPIO-based bitbanging I2C"
+ 	depends on GENERIC_GPIO
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 8f4fc23..b19366c 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -42,6 +42,7 @@ i2c-designware-platform-objs := i2c-designware-platdrv.o
+ obj-$(CONFIG_I2C_DESIGNWARE_PCI)	+= i2c-designware-pci.o
+ i2c-designware-pci-objs := i2c-designware-pcidrv.o
+ obj-$(CONFIG_I2C_EG20T)		+= i2c-eg20t.o
++obj-$(CONFIG_I2C_EXYNOS5)	+= i2c-exynos5.o
+ obj-$(CONFIG_I2C_GPIO)		+= i2c-gpio.o
+ obj-$(CONFIG_I2C_HIGHLANDER)	+= i2c-highlander.o
+ obj-$(CONFIG_I2C_IBM_IIC)	+= i2c-ibm_iic.o
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+new file mode 100644
+index 0000000..fe30b0b
+--- /dev/null
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -0,0 +1,743 @@
++/**
++ * i2c-exynos5.c - Samsung Exynos5 I2C Controller Driver
++ *
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/debugfs.h>
++
++#include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/time.h>
++#include <linux/interrupt.h>
++#include <linux/delay.h>
++#include <linux/errno.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/clk.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/of_gpio.h>
++#include <linux/of_irq.h>
++#include <linux/of_i2c.h>
++
++/* Register Map */
++#define HSI2C_CTL		0x00
++#define HSI2C_FIFO_CTL		0x04
++#define HSI2C_TRAILIG_CTL	0x08
++#define HSI2C_CLK_CTL		0x0C
++#define HSI2C_CLK_SLOT		0x10
++#define HSI2C_INT_ENABLE	0x20
++#define HSI2C_INT_STATUS	0x24
++#define HSI2C_ERR_STATUS	0x2C
++#define HSI2C_FIFO_STATUS	0x30
++#define HSI2C_TX_DATA		0x34
++#define HSI2C_RX_DATA		0x38
++#define HSI2C_CONF		0x40
++#define HSI2C_AUTO_CONF		0x44
++#define HSI2C_TIMEOUT		0x48
++#define HSI2C_MANUAL_CMD	0x4C
++#define HSI2C_TRANS_STATUS	0x50
++#define HSI2C_TIMING_HS1	0x54
++#define HSI2C_TIMING_HS2	0x58
++#define HSI2C_TIMING_HS3	0x5C
++#define HSI2C_TIMING_FS1	0x60
++#define HSI2C_TIMING_FS2	0x64
++#define HSI2C_TIMING_FS3	0x68
++#define HSI2C_TIMING_SLA	0x6C
++#define HSI2C_ADDR		0x70
++
++/* I2C_CTL Register bits */
++#define HSI2C_FUNC_MODE_I2C			(1u << 0)
++#define HSI2C_MASTER				(1u << 3)
++#define HSI2C_RXCHON				(1u << 6)
++#define HSI2C_TXCHON				(1u << 7)
++#define HSI2C_SW_RST				(1u << 31)
++
++/* I2C_FIFO_CTL Register bits */
++#define HSI2C_RXFIFO_EN				(1u << 0)
++#define HSI2C_TXFIFO_EN				(1u << 1)
++#define HSI2C_TXFIFO_TRIGGER_LEVEL		(0x20 << 16)
++#define HSI2C_RXFIFO_TRIGGER_LEVEL		(0x20 << 4)
++
++/* I2C_TRAILING_CTL Register bits */
++#define HSI2C_TRAILING_COUNT			(0xf)
++
++/* I2C_INT_EN Register bits */
++#define HSI2C_INT_TX_ALMOSTEMPTY_EN		(1u << 0)
++#define HSI2C_INT_RX_ALMOSTFULL_EN		(1u << 1)
++#define HSI2C_INT_TRAILING_EN			(1u << 6)
++#define HSI2C_INT_I2C_EN			(1u << 9)
++
++/* I2C_FIFO_STAT Register bits */
++#define HSI2C_RX_FIFO_EMPTY			(1u << 24)
++#define HSI2C_RX_FIFO_FULL			(1u << 23)
++#define HSI2C_TX_FIFO_EMPTY			(1u << 8)
++#define HSI2C_TX_FIFO_FULL			(1u << 7)
++
++#define HSI2C_RX_FIFO_EMPTY			(1u << 24)
++#define HSI2C_FIFO_EMPTY			(HSI2C_RX_FIFO_EMPTY |	\
++						HSI2C_TX_FIFO_EMPTY)
++
++/* I2C_CONF Register bits */
++#define HSI2C_AUTO_MODE				(1u << 31)
++#define HSI2C_10BIT_ADDR_MODE			(1u << 30)
++#define HSI2C_HS_MODE				(1u << 29)
++
++/* I2C_AUTO_CONF Register bits */
++#define HSI2C_READ_WRITE			(1u << 16)
++#define HSI2C_STOP_AFTER_TRANS			(1u << 17)
++#define HSI2C_MASTER_RUN			(1u << 31)
++
++/* I2C_TIMEOUT Register bits */
++#define HSI2C_TIMEOUT_EN			(1u << 31)
++
++/* I2C_TRANS_STATUS register bits */
++#define HSI2C_MASTER_BUSY			(1u << 17)
++#define HSI2C_SLAVE_BUSY			(1u << 16)
++#define HSI2C_NO_DEV				(1u << 3)
++#define HSI2C_NO_DEV_ACK			(1u << 2)
++#define HSI2C_TRANS_ABORT			(1u << 1)
++#define HSI2C_TRANS_DONE			(1u << 0)
++
++/* I2C_ADDR register bits */
++#define HSI2C_SLV_ADDR_SLV(x)			((x & 0x3ff) << 0)
++#define HSI2C_SLV_ADDR_MAS(x)			((x & 0x3ff) << 10)
++#define HSI2C_MASTER_ID(x)			((x & 0xff) << 24)
++
++/* Controller operating frequency, timing values for operation
++ * are calculated against this frequency
++ */
++#define HSI2C_HS_TX_CLOCK	1000000
++#define HSI2C_FS_TX_CLOCK	1000000
++#define HSI2C_HIGH_SPD		1
++#define HSI2C_FAST_SPD		0
++
++#define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(1000))
++
++/* timeout for pm runtime autosuspend */
++#define EXYNOS5_I2C_PM_TIMEOUT		1000	/* ms */
++
++struct exynos5_i2c {
++	struct i2c_adapter	adap;
++	unsigned int		suspended:1;
++
++	struct i2c_msg		*msg;
++	struct completion	msg_complete;
++	unsigned int		msg_ptr;
++
++	unsigned int		irq;
++
++	void __iomem		*regs;
++	struct clk		*clk;
++	struct device		*dev;
++
++	/* GPIO lines for SDA/SCL*/
++	int			gpios[2];
++
++	/* Controller operating frequency */
++	unsigned int		clock;
++
++	/* HSI2C Controller can operate in
++	 * 1. High speed upto 3.4Mbps
++	 * 2. Fast speed upto 1Mbps
++	 */
++	int			speed_mode;
++};
++
++static const struct of_device_id exynos5_i2c_match[] = {
++	{ .compatible = "samsung,exynos5-hsi2c" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
++
++static inline void exynos5_i2c_stop(struct exynos5_i2c *i2c)
 +{
-+	s3c2443_clk_init(NULL);
-+	s3c2443_clk_register_fixed_ext(xtal, 0, 0, 0);
-+	samsung_pwm_clk_init(NULL);
++	writel(0, i2c->regs + HSI2C_INT_ENABLE);
++
++	complete(&i2c->msg_complete);
 +}
-+#endif
-diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/common.h
-index 307c371..9e59a3e 100644
---- a/arch/arm/mach-s3c24xx/common.h
-+++ b/arch/arm/mach-s3c24xx/common.h
-@@ -107,4 +107,13 @@ extern void s3c2443_init_irq(void);
- 
- extern struct syscore_ops s3c24xx_irq_syscore_ops;
- 
-+#ifdef CONFIG_S3C2443_COMMON
-+extern void s3c2443_clk_register_fixed_ext(unsigned long xti_f,
-+				unsigned long ext_f, unsigned long i2s_f,
-+				unsigned long uart_f);
-+extern void __init s3c2443_clk_init(struct device_node *np);
-+#endif
 +
-+extern void __init samsung_pwm_clk_init(struct device_node *np);
-+
- #endif /* __ARCH_ARM_MACH_S3C24XX_COMMON_H */
-diff --git a/arch/arm/mach-s3c24xx/mach-smdk2416.c b/arch/arm/mach-s3c24xx/mach-smdk2416.c
-index cb46847..a0035f2 100644
---- a/arch/arm/mach-s3c24xx/mach-smdk2416.c
-+++ b/arch/arm/mach-s3c24xx/mach-smdk2416.c
-@@ -217,10 +217,15 @@ static struct platform_device *smdk2416_devices[] __initdata = {
- 	&s3c_device_usb_hsudc,
- };
- 
-+static void __init smdk2416_init_time(void)
++static void exynos5_i2c_en_timeout(struct exynos5_i2c *i2c)
 +{
-+	s3c24xx_init_clocks(12000000);
-+	samsung_timer_init();
++	u32 i2c_timeout = readl(i2c->regs + HSI2C_TIMEOUT);
++
++	/* Clear to enable Timeout */
++	i2c_timeout &= ~HSI2C_TIMEOUT_EN;
++	writel(i2c_timeout, i2c->regs + HSI2C_TIMEOUT);
 +}
 +
- static void __init smdk2416_map_io(void)
- {
- 	s3c24xx_init_io(smdk2416_iodesc, ARRAY_SIZE(smdk2416_iodesc));
--	s3c24xx_init_clocks(12000000);
- 	s3c24xx_init_uarts(smdk2416_uartcfgs, ARRAY_SIZE(smdk2416_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM3, SAMSUNG_PWM4);
- }
-@@ -255,6 +260,6 @@ MACHINE_START(SMDK2416, "SMDK2416")
- 	.init_irq	= s3c2416_init_irq,
- 	.map_io		= smdk2416_map_io,
- 	.init_machine	= smdk2416_machine_init,
--	.init_time	= samsung_timer_init,
-+	.init_time	= smdk2416_init_time,
- 	.restart	= s3c2416_restart,
- MACHINE_END
++static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c)
++{
++	u32 i2c_timing_s1;
++	u32 i2c_timing_s2;
++	u32 i2c_timing_s3;
++	u32 i2c_timing_sla;
++	unsigned int op_clk = i2c->clock;
++	unsigned int clkin = clk_get_rate(i2c->clk);
++	unsigned int n_clkdiv;
++	unsigned int t_start_su, t_start_hd;
++	unsigned int t_stop_su;
++	unsigned int t_data_su, t_data_hd;
++	unsigned int t_scl_l, t_scl_h;
++	unsigned int t_sr_release;
++	unsigned int t_ftl_cycle;
++	unsigned int i = 0, utemp0 = 0, utemp1 = 0, utemp2 = 0;
++
++	/* FPCLK / FI2C =
++	 * (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2) + 8 + 2 * FLT_CYCLE
++	 * uTemp0 = (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2)
++	 * uTemp1 = (TSCLK_L + TSCLK_H + 2)
++	 * uTemp2 = TSCLK_L + TSCLK_H
++	 */
++	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
++	utemp0 = (clkin / op_clk) - 8 - 2 * t_ftl_cycle;
++
++	/* CLK_DIV max is 256 */
++	for (i = 0; i < 256; i++) {
++		utemp1 = utemp0 / (i + 1);
++		/* SCLK_L/H max is 256 / 2 */
++		if (utemp1 < 128) {
++			utemp2 = utemp1 - 2;
++			break;
++		}
++	}
++
++	n_clkdiv = i;
++	t_scl_l = utemp2 / 2;
++	t_scl_h = utemp2 / 2;
++	t_start_su = t_scl_l;
++	t_start_hd = t_scl_l;
++	t_stop_su = t_scl_l;
++	t_data_su = t_scl_l / 2;
++	t_data_hd = t_scl_l / 2;
++	t_sr_release = utemp2;
++
++	i2c_timing_s1 = t_start_su << 24 | t_start_hd << 16 | t_stop_su << 8;
++	i2c_timing_s2 = t_data_su << 24 | t_scl_l << 8 | t_scl_h << 0;
++	i2c_timing_s3 = n_clkdiv << 16 | t_sr_release << 0;
++	i2c_timing_sla = t_data_hd << 0;
++
++	dev_dbg(i2c->dev, "tSTART_SU: %X, tSTART_HD: %X, tSTOP_SU: %X\n",
++		t_start_su, t_start_hd, t_stop_su);
++	dev_dbg(i2c->dev, "tDATA_SU: %X, tSCL_L: %X, tSCL_H: %X\n",
++		t_data_su, t_scl_l, t_scl_h);
++	dev_dbg(i2c->dev, "nClkDiv: %X, tSR_RELEASE: %X\n",
++		n_clkdiv, t_sr_release);
++	dev_dbg(i2c->dev, "tDATA_HD: %X\n", t_data_hd);
++
++	if (i2c->speed_mode == HSI2C_HIGH_SPD) {
++		writel(i2c_timing_s1, i2c->regs + HSI2C_TIMING_HS1);
++		writel(i2c_timing_s2, i2c->regs + HSI2C_TIMING_HS2);
++		writel(i2c_timing_s3, i2c->regs + HSI2C_TIMING_HS3);
++	} else {
++		writel(i2c_timing_s1, i2c->regs + HSI2C_TIMING_FS1);
++		writel(i2c_timing_s2, i2c->regs + HSI2C_TIMING_FS2);
++		writel(i2c_timing_s3, i2c->regs + HSI2C_TIMING_FS3);
++	}
++	writel(i2c_timing_sla, i2c->regs + HSI2C_TIMING_SLA);
++
++	return 0;
++}
++
++static void exynos5_i2c_init(struct exynos5_i2c *i2c)
++{
++	u32 i2c_conf = readl(i2c->regs + HSI2C_CONF);
++
++	writel((HSI2C_FUNC_MODE_I2C | HSI2C_MASTER),
++					i2c->regs + HSI2C_CTL);
++	writel(HSI2C_TRAILING_COUNT, i2c->regs + HSI2C_TRAILIG_CTL);
++
++	exynos5_i2c_set_timing(i2c);
++
++	if (i2c->speed_mode == HSI2C_HIGH_SPD)
++		i2c_conf |= HSI2C_HS_MODE;
++
++	writel(i2c_conf | HSI2C_AUTO_MODE, i2c->regs + HSI2C_CONF);
++}
++
++static void exynos5_i2c_reset(struct exynos5_i2c *i2c)
++{
++	u32 i2c_ctl;
++
++	/* Set and clear the bit for reset */
++	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
++	i2c_ctl |= HSI2C_SW_RST;
++	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
++
++	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
++	i2c_ctl &= ~HSI2C_SW_RST;
++	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
++
++	/* Initialize the configure registers */
++	exynos5_i2c_init(i2c);
++}
++
++static void exynos5_i2c_master_run(struct exynos5_i2c *i2c)
++{
++	/* Start data transfer in Master mode */
++	u32 i2c_auto_conf = readl(i2c->regs + HSI2C_AUTO_CONF);
++	i2c_auto_conf |= HSI2C_MASTER_RUN;
++	writel(i2c_auto_conf, i2c->regs + HSI2C_AUTO_CONF);
++}
++
++/**
++ * exynos5_i2c_irq: top level IRQ servicing routine
++*/
++static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
++{
++	struct exynos5_i2c *i2c = dev_id;
++	unsigned char byte;
++
++	if (i2c->msg->flags & I2C_M_RD) {
++		while (!(readl(i2c->regs + HSI2C_FIFO_STATUS) &
++						HSI2C_RX_FIFO_EMPTY)) {
++			byte = (unsigned char)readl(i2c->regs + HSI2C_RX_DATA);
++			i2c->msg->buf[i2c->msg_ptr++] = byte;
++		}
++	} else {
++		byte = i2c->msg->buf[i2c->msg_ptr++];
++		writel(byte, i2c->regs + HSI2C_TX_DATA);
++
++	}
++
++	if (i2c->msg_ptr >= i2c->msg->len)
++		exynos5_i2c_stop(i2c);
++
++	/* Set these bits to clear them */
++	writel(readl(i2c->regs + HSI2C_INT_STATUS),
++				i2c->regs + HSI2C_INT_STATUS);
++
++	return IRQ_HANDLED;
++}
++
++static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
++{
++	u32 i2c_ctl = readl(i2c->regs + HSI2C_CTL);
++	u32 int_en = HSI2C_INT_I2C_EN;
++	u32 i2c_auto_conf;
++	u32 fifo_ctl;
++
++	exynos5_i2c_en_timeout(i2c);
++
++	fifo_ctl = HSI2C_RXFIFO_EN | HSI2C_TXFIFO_EN |
++		HSI2C_TXFIFO_TRIGGER_LEVEL | HSI2C_RXFIFO_TRIGGER_LEVEL;
++	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
++
++	if (i2c->msg->flags & I2C_M_RD) {
++		i2c_ctl &= ~HSI2C_TXCHON;
++		i2c_ctl |= HSI2C_RXCHON;
++
++		i2c_auto_conf |= HSI2C_READ_WRITE;
++
++		int_en |= (HSI2C_INT_RX_ALMOSTFULL_EN |
++			HSI2C_INT_TRAILING_EN);
++	} else {
++		i2c_ctl &= ~HSI2C_RXCHON;
++		i2c_ctl |= HSI2C_TXCHON;
++
++		int_en |= HSI2C_INT_TX_ALMOSTEMPTY_EN;
++	}
++
++	if (stop == 1)
++		i2c_auto_conf |= HSI2C_STOP_AFTER_TRANS;
++
++	writel(HSI2C_SLV_ADDR_MAS(i2c->msg->addr), i2c->regs + HSI2C_ADDR);
++
++	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
++
++	/* In auto mode the length of xfer cannot be 0 */
++	if (i2c->msg->len <= 0)
++		i2c_auto_conf |= 0x1;
++	else
++		i2c_auto_conf |= i2c->msg->len;
++
++	writel(i2c_auto_conf, i2c->regs + HSI2C_AUTO_CONF);
++
++	exynos5_i2c_master_run(i2c);
++
++	writel(int_en, i2c->regs + HSI2C_INT_ENABLE);
++}
++
++static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
++			      struct i2c_msg *msgs, int stop)
++{
++	unsigned long timeout;
++	u32 trans_status;
++	u32 fifo_stat;
++	int ret = -EAGAIN, val;
++
++	i2c->msg = msgs;
++	i2c->msg_ptr = 0;
++
++	exynos5_i2c_message_start(i2c, stop);
++
++	val = wait_for_completion_interruptible_timeout
++		(&i2c->msg_complete, EXYNOS5_I2C_TIMEOUT);
++	if (val >= 0)
++		timeout = val;
++
++	if (msgs->flags & I2C_M_RD) {
++		if (timeout == 0) {
++			exynos5_i2c_reset(i2c);
++			dev_warn(i2c->dev, "rx timeout\n");
++			return ret;
++		}
++
++		ret = 0;
++	} else {
++		if (timeout == 0) {
++			exynos5_i2c_reset(i2c);
++			dev_warn(i2c->dev, "tx timeout\n");
++			return ret;
++		}
++
++		timeout = jiffies + timeout;
++
++		while (time_before(jiffies, timeout)) {
++			fifo_stat = readl(i2c->regs + HSI2C_FIFO_STATUS);
++			trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
++			if ((trans_status & HSI2C_NO_DEV) ||
++				(trans_status & HSI2C_NO_DEV_ACK &&
++				!(i2c->msg->flags & I2C_M_IGNORE_NAK))) {
++				exynos5_i2c_reset(i2c);
++				return -ENXIO;
++			}
++			if ((fifo_stat == HSI2C_FIFO_EMPTY) &&
++				((trans_status == 0) ||
++				((stop == 0) &&
++				(trans_status == HSI2C_MASTER_BUSY)))) {
++				ret = 0;
++				break;
++			}
++		}
++		if (ret == -EAGAIN) {
++			exynos5_i2c_reset(i2c);
++			dev_warn(i2c->dev, "xfer timeout\n");
++			return ret;
++		}
++	}
++
++	return ret;
++}
++
++static int exynos5_i2c_xfer(struct i2c_adapter *adap,
++			struct i2c_msg *msgs, int num)
++{
++	struct exynos5_i2c *i2c = (struct exynos5_i2c *)adap->algo_data;
++	int retry, i;
++	int ret, ret_pm;
++	int stop = 0;
++	struct i2c_msg *msgs_ptr = msgs;
++
++	if (i2c->suspended) {
++		dev_err(i2c->dev, "HS-I2C is not initialzed.\n");
++		return -EIO;
++	}
++
++	ret_pm = pm_runtime_get_sync(i2c->dev);
++	if (IS_ERR_VALUE(ret_pm)) {
++		ret = -EIO;
++		goto out;
++	}
++
++	clk_prepare_enable(i2c->clk);
++
++	for (retry = 0; retry < adap->retries; retry++) {
++		for (i = 0; i < num; i++) {
++			if (i == num - 1)
++				stop = 1;
++			ret = exynos5_i2c_xfer_msg(i2c, msgs_ptr, stop);
++			msgs_ptr++;
++
++			if (ret == -EAGAIN) {
++				msgs_ptr = msgs;
++				stop = 0;
++				break;
++			} else if (ret == -ENXIO)
++				goto out;
++		}
++		if (i == num) {
++			ret = num;
++			goto out;
++		}
++
++		dev_dbg(i2c->dev, "retrying transfer (%d)\n", retry);
++
++		udelay(100);
++	}
++
++	ret = -EREMOTEIO;
++ out:
++	clk_disable_unprepare(i2c->clk);
++	pm_runtime_mark_last_busy(i2c->dev);
++	pm_runtime_put_autosuspend(i2c->dev);
++	return ret;
++}
++
++static u32 exynos5_i2c_func(struct i2c_adapter *adap)
++{
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
++}
++
++static const struct i2c_algorithm exynos5_i2c_algorithm = {
++	.master_xfer		= exynos5_i2c_xfer,
++	.functionality		= exynos5_i2c_func,
++};
++
++/**
++ * Parse a list of GPIOs from a node property and request each one
++ *
++ * @param i2c		i2c driver data
++ * @return 0 on success, -EINVAL on error, in which case no GPIOs requested
++*/
++static int exynos5_i2c_parse_dt_gpio(struct exynos5_i2c *i2c)
++{
++	int idx, gpio, ret;
++
++	for (idx = 0; idx < 2; idx++) {
++		gpio = of_get_gpio(i2c->dev->of_node, idx);
++		if (!gpio_is_valid(gpio)) {
++			dev_err(i2c->dev, "invalid gpio[%d]: %d\n", idx, gpio);
++			return -EINVAL;
++		}
++		i2c->gpios[idx] = gpio;
++
++		ret = devm_gpio_request(i2c->dev, gpio, "i2c-bus");
++		if (ret) {
++			dev_err(i2c->dev, "gpio [%d] request failed\n", gpio);
++			return -EINVAL;
++		}
++	}
++	return 0;
++}
++
++#define HSI2C_REG(regname) {.name = #regname, .offset = regname}
++static struct debugfs_reg32 exynos5_hsi2c_regs[] = {
++	HSI2C_REG(HSI2C_CTL), HSI2C_REG(HSI2C_FIFO_CTL),
++	HSI2C_REG(HSI2C_TRAILIG_CTL), HSI2C_REG(HSI2C_CLK_CTL),
++	HSI2C_REG(HSI2C_CLK_SLOT), HSI2C_REG(HSI2C_INT_ENABLE),
++	HSI2C_REG(HSI2C_INT_STATUS), HSI2C_REG(HSI2C_ERR_STATUS),
++	HSI2C_REG(HSI2C_FIFO_STATUS), HSI2C_REG(HSI2C_TX_DATA),
++	HSI2C_REG(HSI2C_RX_DATA), HSI2C_REG(HSI2C_CONF),
++	HSI2C_REG(HSI2C_AUTO_CONF), HSI2C_REG(HSI2C_TIMEOUT),
++	HSI2C_REG(HSI2C_MANUAL_CMD), HSI2C_REG(HSI2C_TRANS_STATUS),
++	HSI2C_REG(HSI2C_TIMING_HS1), HSI2C_REG(HSI2C_TIMING_HS2),
++	HSI2C_REG(HSI2C_TIMING_HS3), HSI2C_REG(HSI2C_TIMING_FS1),
++	HSI2C_REG(HSI2C_TIMING_FS2), HSI2C_REG(HSI2C_TIMING_FS3),
++	HSI2C_REG(HSI2C_TIMING_SLA), HSI2C_REG(HSI2C_ADDR),
++};
++
++static struct debugfs_regset32 exynos5_hsi2c_regset = {
++	.regs = exynos5_hsi2c_regs,
++	.nregs = ARRAY_SIZE(exynos5_hsi2c_regs),
++};
++
++static struct dentry *exynos5_hsi2c_reg_debugfs;
++
++static int exynos5_i2c_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct exynos5_i2c *i2c;
++	int ret;
++
++	if (!np) {
++		dev_err(&pdev->dev, "no device node\n");
++		return -ENOENT;
++	}
++
++	i2c = devm_kzalloc(&pdev->dev, sizeof(struct exynos5_i2c), GFP_KERNEL);
++	if (!i2c) {
++		dev_err(&pdev->dev, "no memory for state\n");
++		return -ENOMEM;
++	}
++
++	/* Mode of operation High/Fast Speed mode */
++	if (of_get_property(np, "samsung,hs-mode", NULL)) {
++		i2c->speed_mode = 1;
++		if (of_property_read_u32(np, "samsung,hs-clock", &i2c->clock))
++			i2c->clock = HSI2C_HS_TX_CLOCK;
++	} else {
++		i2c->speed_mode = 0;
++		if (of_property_read_u32(np, "samsung,fs-clock", &i2c->clock))
++			i2c->clock = HSI2C_FS_TX_CLOCK;
++	}
++
++	strlcpy(i2c->adap.name, "exynos5-i2c", sizeof(i2c->adap.name));
++	i2c->adap.owner   = THIS_MODULE;
++	i2c->adap.algo    = &exynos5_i2c_algorithm;
++	i2c->adap.retries = 2;
++	i2c->adap.class   = I2C_CLASS_HWMON | I2C_CLASS_SPD;
++
++	i2c->dev = &pdev->dev;
++	i2c->clk = devm_clk_get(&pdev->dev, "hsi2c");
++	if (IS_ERR(i2c->clk)) {
++		dev_err(&pdev->dev, "cannot get clock\n");
++		return -ENOENT;
++	}
++
++	clk_prepare_enable(i2c->clk);
++
++	i2c->regs = of_iomap(np, 0);
++	if (!i2c->regs) {
++		dev_err(&pdev->dev, "cannot map HS-I2C IO\n");
++		ret = -EADDRNOTAVAIL;
++		goto err_clk;
++	}
++
++	i2c->adap.algo_data = i2c;
++	i2c->adap.dev.parent = &pdev->dev;
++
++	/* parse device tree and inititalise the gpio */
++	if (exynos5_i2c_parse_dt_gpio(i2c))
++		return -EINVAL;
++
++	init_completion(&i2c->msg_complete);
++
++	i2c->irq = ret = irq_of_parse_and_map(np, 0);
++	if (ret <= 0) {
++		dev_err(&pdev->dev, "cannot find HS-I2C IRQ\n");
++		goto err_iomap;
++	}
++
++	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
++				0, dev_name(&pdev->dev), i2c);
++
++	if (ret != 0) {
++		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
++		goto err_iomap;
++	}
++
++	/*
++	 * TODO: Use private lock to avoid race conditions as
++	 * mentioned in pm_runtime.txt
++	 */
++	pm_runtime_enable(i2c->dev);
++	pm_runtime_set_autosuspend_delay(i2c->dev, EXYNOS5_I2C_PM_TIMEOUT);
++	pm_runtime_use_autosuspend(i2c->dev);
++
++	ret = pm_runtime_get_sync(i2c->dev);
++	if (IS_ERR_VALUE(ret))
++		goto err_iomap;
++
++	exynos5_i2c_init(i2c);
++	i2c->adap.nr = -1;
++	i2c->adap.dev.of_node = np;
++
++	ret = i2c_add_numbered_adapter(&i2c->adap);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
++		goto err_pm;
++	}
++
++	of_i2c_register_devices(&i2c->adap);
++	platform_set_drvdata(pdev, i2c);
++
++	exynos5_hsi2c_reg_debugfs = debugfs_create_regset32("exynos5-hsi2c",
++						  S_IFREG | S_IRUGO,
++						  NULL, &exynos5_hsi2c_regset);
++	clk_disable_unprepare(i2c->clk);
++	pm_runtime_mark_last_busy(i2c->dev);
++	pm_runtime_put_autosuspend(i2c->dev);
++
++	return 0;
++
++ err_pm:
++	pm_runtime_put(i2c->dev);
++	pm_runtime_disable(&pdev->dev);
++ err_iomap:
++	iounmap(i2c->regs);
++ err_clk:
++	clk_disable_unprepare(i2c->clk);
++	return ret;
++}
++
++static int exynos5_i2c_remove(struct platform_device *pdev)
++{
++	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
++	int ret;
++
++	ret = pm_runtime_get_sync(&pdev->dev);
++	if (IS_ERR_VALUE(ret))
++		return ret;
++
++	clk_disable_unprepare(i2c->clk);
++	pm_runtime_put(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	i2c_del_adapter(&i2c->adap);
++
++	iounmap(i2c->regs);
++
++	return 0;
++}
++
++#ifdef CONFIG_PM
++static int exynos5_i2c_suspend_noirq(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
++
++	i2c->suspended = 1;
++
++	return 0;
++}
++
++static int exynos5_i2c_resume_noirq(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
++
++	clk_prepare_enable(i2c->clk);
++	exynos5_i2c_init(i2c);
++	clk_disable_unprepare(i2c->clk);
++	i2c->suspended = 0;
++
++	return 0;
++}
++
++static const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
++	.suspend_noirq	= exynos5_i2c_suspend_noirq,
++	.resume_noirq	= exynos5_i2c_resume_noirq,
++};
++
++#define EXYNOS5_DEV_PM_OPS (&exynos5_i2c_dev_pm_ops)
++#else
++#define EXYNOS5_DEV_PM_OPS NULL
++#endif
++
++static struct platform_driver exynos5_i2c_driver = {
++	.probe		= exynos5_i2c_probe,
++	.remove		= exynos5_i2c_remove,
++	.driver		= {
++		.owner	= THIS_MODULE,
++		.name	= "exynos5-hsi2c",
++		.pm	= EXYNOS5_DEV_PM_OPS,
++		.of_match_table = of_match_ptr(exynos5_i2c_match),
++	},
++};
++
++static int __init i2c_adap_exynos5_init(void)
++{
++	return platform_driver_register(&exynos5_i2c_driver);
++}
++subsys_initcall(i2c_adap_exynos5_init);
++
++static void __exit i2c_adap_exynos5_exit(void)
++{
++	platform_driver_unregister(&exynos5_i2c_driver);
++}
++module_exit(i2c_adap_exynos5_exit);
++
++MODULE_DESCRIPTION("Exynos5 HS-I2C Bus driver");
++MODULE_AUTHOR("Naveen Krishna Chatradhi, <ch.naveen@samsung.com>");
++MODULE_AUTHOR("Taekgyun Ko, <taeggyun.ko@samsung.com>");
++MODULE_LICENSE("GPL");
 -- 
-1.7.2.3
+1.7.9.5
