@@ -1,71 +1,53 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes for v3.9
-Date: Wed, 13 Mar 2013 14:06:26 +0900
-Message-ID: <093101ce1fa8$840c52d0$8c24f870$%kim@samsung.com>
+Subject: RE: [PATCH -next] ARM: EXYNOS: remove duplicated include from common.c
+Date: Wed, 13 Mar 2013 14:10:22 +0900
+Message-ID: <093201ce1fa9$109a12f0$31ce38d0$%kim@samsung.com>
+References: <CAPgLHd9eSiAne_f_8ctbXt8x+ET3v_1o=-gdO1D_11kxx2jo3g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36117 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932Ab3CMFG3 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:33974 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751353Ab3CMFKY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 01:06:29 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 13 Mar 2013 01:10:24 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJL00K1Y26HCCJ0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Mar 2013 14:06:27 +0900 (KST)
+ with ESMTP id <0MJL00IEZ2C379M0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Mar 2013 14:10:23 +0900 (KST)
+In-reply-to: <CAPgLHd9eSiAne_f_8ctbXt8x+ET3v_1o=-gdO1D_11kxx2jo3g@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Wei Yongjun' <weiyj.lk@gmail.com>, linux@arm.linux.org.uk
+Cc: yongjun_wei@trendmicro.com.cn, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Arnd, Olof,
+Wei Yongjun wrote:
+> 
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> 
+> Remove duplicated include.
+> 
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> ---
+>  arch/arm/mach-exynos/common.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index d63d399..01e4089 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -23,7 +23,6 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/export.h>
+>  #include <linux/irqdomain.h>
+> -#include <linux/irqchip.h>
+>  #include <linux/of_address.h>
+>  #include <linux/irqchip/arm-gic.h>
+> 
+Applied, thanks.
 
-Here is Samsung fixes for v3.9.
-
-Please pull from:
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.9-samsung-fixes-1
-
-There are two commits for fix pl330 dma clkdev entries on s5pv210 and generic
-dma binding support on exynos stuff.
-
-If any problems, please kindly let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit 6dbe51c251a327e012439c4772097a13df43c5b8:
-
-  Linux 3.9-rc1 (2013-03-03 15:11:05 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.9-samsung-fixes-1
-
-for you to fetch changes up to 0a96d4d36978c8aeebf5fce1f3041c2d60f23ac0:
-
-  ARM: EXYNOS: Add #dma-cells for generic dma binding support for PL330
-(2013-03-07 10:33:07 +0900)
-
-----------------------------------------------------------------
-Padmavathi Venna (1):
-      ARM: EXYNOS: Add #dma-cells for generic dma binding support for PL330
-
-Sylwester Nawrocki (1):
-      ARM: S5PV210: Fix PL330 DMA controller clkdev entries
-
- arch/arm/boot/dts/exynos4.dtsi    |    9 +++++++++
- arch/arm/boot/dts/exynos5440.dtsi |    6 ++++++
- arch/arm/mach-s5pv210/clock.c     |   36 ++++++++++++++++++------------------
- 3 files changed, 33 insertions(+), 18 deletions(-)
+- Kukjin
