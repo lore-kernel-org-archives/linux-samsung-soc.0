@@ -1,117 +1,71 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v3] iio: adc: exynos5_adc: fix compilation warnings
-Date: Wed, 13 Mar 2013 10:18:58 +0530
-Message-ID: <1363150138-20819-1-git-send-email-ch.naveen@samsung.com>
-References: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-iio@vger.kernel.org, dan.carpenter@oracle.com
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes for v3.9
+Date: Wed, 13 Mar 2013 14:06:26 +0900
+Message-ID: <093101ce1fa8$840c52d0$8c24f870$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:36117 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750932Ab3CMFG3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Mar 2013 01:06:29 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MJL00K1Y26HCCJ0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Mar 2013 14:06:27 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Fixes the compilation warnings and potential NULL pointer
-dereferencing pointed out by "Dan Carpenter".
+Hi Arnd, Olof,
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Series-To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
----
-Changes since v2:
-1. Timeout should be long not int
-2. Remove unnecessary variable version, use ret instead.
+Here is Samsung fixes for v3.9.
 
-Apologize me for top posting.
+Please pull from:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.9-samsung-fixes-1
 
-Doug, There was a comment from Lars regarding the match not
-being NULL, if driver depends on CONFIG_OF. So, i've removed
-the NULL check in v2 of this patch.
-	https://patchwork.kernel.org/patch/2222841/
+There are two commits for fix pl330 dma clkdev entries on s5pv210 and generic
+dma binding support on exynos stuff.
 
-I'm checking the return value of get_version() for -ve values before
-assigning to info->version. So, i left the (unsigned int) unchanged.
+If any problems, please kindly let me know.
 
-If required, I will resubmit with both these comments addressed.
+Thanks.
 
- drivers/iio/adc/Kconfig      |    1 +
- drivers/iio/adc/exynos_adc.c |   18 ++++++++++++------
- 2 files changed, 13 insertions(+), 6 deletions(-)
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 04311f8..da67626 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -93,6 +93,7 @@ config AT91_ADC
- 
- config EXYNOS_ADC
- 	bool "Exynos ADC driver support"
-+	depends on OF
- 	help
- 	  Core support for the ADC block found in the Samsung EXYNOS series
- 	  of SoCs for drivers such as the touchscreen and hwmon to use to share
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index ed6fdd7..2d41bb5 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -92,7 +92,7 @@ struct exynos_adc {
- 	struct completion	completion;
- 
- 	u32			value;
--	unsigned int            version;
-+	unsigned int		version;
- };
- 
- static const struct of_device_id exynos_adc_match[] = {
-@@ -102,12 +102,12 @@ static const struct of_device_id exynos_adc_match[] = {
- };
- MODULE_DEVICE_TABLE(of, exynos_adc_match);
- 
--static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
-+static inline int exynos_adc_get_version(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 
- 	match = of_match_node(exynos_adc_match, pdev->dev.of_node);
--	return (unsigned int)match->data;
-+	return (int)match->data;
- }
- 
- static int exynos_read_raw(struct iio_dev *indio_dev,
-@@ -117,7 +117,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				long mask)
- {
- 	struct exynos_adc *info = iio_priv(indio_dev);
--	unsigned long timeout;
-+	long timeout;
- 	u32 con1, con2;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
-@@ -268,6 +268,14 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 
- 	info = iio_priv(indio_dev);
- 
-+	ret = exynos_adc_get_version(pdev);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "no matching of_node, err = %d\n", ret);
-+		goto err_iio;
-+	}
-+
-+	info->version = ret;
-+
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
- 	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
-@@ -311,8 +319,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 		goto err_irq;
- 	}
- 
--	info->version = exynos_adc_get_version(pdev);
--
- 	platform_set_drvdata(pdev, indio_dev);
- 
- 	indio_dev->name = dev_name(&pdev->dev);
--- 
-1.7.9.5
+The following changes since commit 6dbe51c251a327e012439c4772097a13df43c5b8:
+
+  Linux 3.9-rc1 (2013-03-03 15:11:05 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.9-samsung-fixes-1
+
+for you to fetch changes up to 0a96d4d36978c8aeebf5fce1f3041c2d60f23ac0:
+
+  ARM: EXYNOS: Add #dma-cells for generic dma binding support for PL330
+(2013-03-07 10:33:07 +0900)
+
+----------------------------------------------------------------
+Padmavathi Venna (1):
+      ARM: EXYNOS: Add #dma-cells for generic dma binding support for PL330
+
+Sylwester Nawrocki (1):
+      ARM: S5PV210: Fix PL330 DMA controller clkdev entries
+
+ arch/arm/boot/dts/exynos4.dtsi    |    9 +++++++++
+ arch/arm/boot/dts/exynos5440.dtsi |    6 ++++++
+ arch/arm/mach-s5pv210/clock.c     |   36 ++++++++++++++++++------------------
+ 3 files changed, 33 insertions(+), 18 deletions(-)
