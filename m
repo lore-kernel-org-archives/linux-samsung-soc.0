@@ -1,93 +1,71 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v7 5/5] ARM: dts: Add FIMD DT binding Documentation
-Date: Wed, 13 Mar 2013 15:39:31 +0530
-Message-ID: <1363169371-310-6-git-send-email-vikas.sajjan@linaro.org>
-References: <1363169371-310-1-git-send-email-vikas.sajjan@linaro.org>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v6 0/2] Adding USB 3.0 DRD-phy support for exynos5250
+Date: Wed, 13 Mar 2013 15:41:15 +0530
+Message-ID: <CAFp+6iGon4sD4=qKpAVG-OGm9brwnz1O6sdCKmh8o9Wy1e_6ow@mail.gmail.com>
+References: <1361976229-16024-1-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:34060 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755022Ab3CMKKH (ORCPT
+Received: from mail-bk0-f52.google.com ([209.85.214.52]:49167 "EHLO
+	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754855Ab3CMKLR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 06:10:07 -0400
-Received: by mail-pb0-f51.google.com with SMTP id un15so860472pbc.38
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 03:10:07 -0700 (PDT)
-In-Reply-To: <1363169371-310-1-git-send-email-vikas.sajjan@linaro.org>
+	Wed, 13 Mar 2013 06:11:17 -0400
+In-Reply-To: <1361976229-16024-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-usb@vger.kernel.org, kgene.kim@samsung.com, p.paneri@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Doug Anderson <dianders@chromium.org>
 
-Adds FIMD DT binding documentation both Samsung SoC and Board, with an example
+Hi Felipe,
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
----
- .../devicetree/bindings/video/samsung-fimd.txt     |   58 ++++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/video/samsung-fimd.txt
 
-diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-new file mode 100644
-index 0000000..0bca1ca
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-@@ -0,0 +1,58 @@
-+Device-Tree bindings for Samsung SoC display controller (FIMD)
-+
-+FIMD stands for Fully Interactive Mobile Display, is the Display Controller for
-+the Samsung series of SoCs which transfers the image data from a video buffer
-+located in the system memory to an external LCD interface.
-+
-+Required properties:
-+- compatible : value should be one of the following
-+		"samsung,s3c2443-fimd"; /* for S3C24XX SoCs */
-+		"samsung,s3c6400-fimd"; /* for S3C64XX SoCs */
-+		"samsung,s5p6440-fimd"; /* for S5P64X0 SoCs */
-+		"samsung,s5pc100-fimd"; /* for S5PC100 SoC  */
-+		"samsung,s5pv210-fimd"; /* for S5PV210 SoC */
-+		"samsung,exynos4210-fimd"; /* for Exynos4 SoCs */
-+		"samsung,exynos5250-fimd"; /* for Exynos5 SoCs */
-+
-+- reg : physical base address of the FIMD and length of memory mapped region
-+
-+- interrupt-parent : a phandle to the interrupt combiner node
-+
-+- interrupts : should contain a list of all FIMD IP block interrupts:
-+  FIFO Level, VSYNC, LCD_SYSTEM. The interrupt specifier format depends
-+    on the interrupt controller used.
-+
-+- interrupt-names : should contain the interrupt names: "fifo", "vsync",
-+	"lcd_sys", in the same order as they were listed in the interrupts
-+        property.
-+
-+- pinctrl : property defining the pinctrl configurations with a phandle
-+
-+- pinctrl-names : "default" state needs to be specified in the fimd node
-+		The pinctrl bindings defined in
-+		../../../pinctrl/pinctrl-bindings.txt must be used to define a
-+		pinctrl state named "default".
-+
-+Optional Properties:
-+- samsung,power-domain := a phandle to FIMD power domain node
-+
-+Example:
-+
-+SoC specific DT Entry:
-+
-+	fimd@11c00000 {
-+		compatible = "samsung,exynos4210-fimd";
-+		interrupt-parent = <&combiner>;
-+		reg = <0x11c00000 0x20000>;
-+		interrupt-names = "fifo", "vsync", "lcd_sys";
-+		interrupts = <11 0>, <11 1>, <11 2>;
-+	};
-+
-+Board specific DT Entry:
-+
-+	fimd@11c00000 {
-+		samsung,power-domain = <&pd_lcd0>;
-+		pinctrl-0 = <&lcd_sync &lcd_clk &lcd_en &lcd0_data &pwm1_out>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
+On Wed, Feb 27, 2013 at 8:13 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> Based on 'usb-next'
+>
+> Changes from v5:
+>  - Squashed the following change from Felipe in this patch-set:
+>    [PATCH] usb: phy: samsung: let it be built as a module
+>  - Using EXPORT_SYMBOL_GPL() to export symbols in "samsung-usbphy.c"
+>    to allow module builds of these samsung PHY drivers.
+>
+> Vivek Gautam (2):
+>   usb: phy: samsung: Common out the generic stuff
+>   usb: phy: samsung: Add PHY support for USB 3.0 controller
+>
+
+I am rebasing this pach-set on top of your PHY driver changes in
+'testing' branch of your tree.
+I took first 194 patches ;) from top of testing branch (i could find
+these on top of 3.9 rc2 merge),
+and applied the same on 'usb-next' branch in my development tree in
+order to test further.
+
+I shall be posting these rebased patch-set, so that it will be easier
+for you to merge the changes in.
+Is there something you want to point out to me while i do this ?
+
+>  drivers/usb/phy/Kconfig           |   25 +-
+>  drivers/usb/phy/Makefile          |    2 +
+>  drivers/usb/phy/samsung-usb2phy.c |  511 ++++++++++++++++++++++++++
+>  drivers/usb/phy/samsung-usb3phy.c |  349 ++++++++++++++++++
+>  drivers/usb/phy/samsung-usbphy.c  |  722 +------------------------------------
+>  drivers/usb/phy/samsung-usbphy.h  |  328 +++++++++++++++++
+>  6 files changed, 1224 insertions(+), 713 deletions(-)
+>  create mode 100644 drivers/usb/phy/samsung-usb2phy.c
+>  create mode 100644 drivers/usb/phy/samsung-usb3phy.c
+>  create mode 100644 drivers/usb/phy/samsung-usbphy.h
+>
+> --
+> 1.7.6.5
+>
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss@lists.ozlabs.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+
+
 -- 
-1.7.9.5
+Thanks & Regards
+Vivek
