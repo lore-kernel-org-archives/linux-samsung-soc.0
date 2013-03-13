@@ -1,52 +1,117 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [RFC 12/12] mipi-csis: Enable all interrupts for fimc-is usage
-Date: Wed, 13 Mar 2013 09:39:19 +0530
-Message-ID: <CALt3h7_zXP9M5m+4VXFGhnfpaUO+6F20hTsnR8ATF8+=CNmcrA@mail.gmail.com>
-References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
-	<1362754765-2651-13-git-send-email-arun.kk@samsung.com>
-	<513F5171.40603@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f181.google.com ([209.85.215.181]:38300 "EHLO
-	mail-ea0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750860Ab3CMEJV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 00:09:21 -0400
-In-Reply-To: <513F5171.40603@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH v3] iio: adc: exynos5_adc: fix compilation warnings
+Date: Wed, 13 Mar 2013 10:18:58 +0530
+Message-ID: <1363150138-20819-1-git-send-email-ch.naveen@samsung.com>
+References: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-iio@vger.kernel.org, dan.carpenter@oracle.com
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kilyeon.im@samsung.com, shaik.ameer@samsung.com
 
-Hi Sylwester,
+Fixes the compilation warnings and potential NULL pointer
+dereferencing pointed out by "Dan Carpenter".
 
->>
->>  /* Interrupt mask */
->>  #define S5PCSIS_INTMSK                       0x10
->> -#define S5PCSIS_INTMSK_EN_ALL                0xf000103f
->> +#define S5PCSIS_INTMSK_EN_ALL                0xfc00103f
->
-> Do you know what interrupts are assigned to the CSIS_INTMSK
-> bits 26, 27 ? In the documentation I have they are marked
-> as reserved. I have tested this patch on Exynos4x12, it seems
-> OK but you might want to merge it to the patch adding compatible
-> property for exynos5.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Series-To: linux-iio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Changes since v2:
+1. Timeout should be long not int
+2. Remove unnecessary variable version, use ret instead.
 
-The bits 26 and 27 are for Frame start and Frame end interrupts.
-Yes this change can be merged with the MIPI-CSIS support for Exynos5.
-Shaik will pick it up and merge it along with his patch series in v2.
+Apologize me for top posting.
 
->
-> It would be good to know what these bits are for. And how
-> enabling the interrupts actually help without modifying the
-> interrupt handler ? Is it enough to just acknowledge those
-> interrupts ? Or how it works ?
->
+Doug, There was a comment from Lars regarding the match not
+being NULL, if driver depends on CONFIG_OF. So, i've removed
+the NULL check in v2 of this patch.
+	https://patchwork.kernel.org/patch/2222841/
 
-These interrupts are used by the FIMC-IS firmware possibly to check if the
-sensor is working. Without enabling these, I get the error from firmware
-on Sensor Open command.
+I'm checking the return value of get_version() for -ve values before
+assigning to info->version. So, i left the (unsigned int) unchanged.
 
-Regards
-Arun
+If required, I will resubmit with both these comments addressed.
+
+ drivers/iio/adc/Kconfig      |    1 +
+ drivers/iio/adc/exynos_adc.c |   18 ++++++++++++------
+ 2 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index 04311f8..da67626 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -93,6 +93,7 @@ config AT91_ADC
+ 
+ config EXYNOS_ADC
+ 	bool "Exynos ADC driver support"
++	depends on OF
+ 	help
+ 	  Core support for the ADC block found in the Samsung EXYNOS series
+ 	  of SoCs for drivers such as the touchscreen and hwmon to use to share
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index ed6fdd7..2d41bb5 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -92,7 +92,7 @@ struct exynos_adc {
+ 	struct completion	completion;
+ 
+ 	u32			value;
+-	unsigned int            version;
++	unsigned int		version;
+ };
+ 
+ static const struct of_device_id exynos_adc_match[] = {
+@@ -102,12 +102,12 @@ static const struct of_device_id exynos_adc_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, exynos_adc_match);
+ 
+-static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
++static inline int exynos_adc_get_version(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
+ 
+ 	match = of_match_node(exynos_adc_match, pdev->dev.of_node);
+-	return (unsigned int)match->data;
++	return (int)match->data;
+ }
+ 
+ static int exynos_read_raw(struct iio_dev *indio_dev,
+@@ -117,7 +117,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 				long mask)
+ {
+ 	struct exynos_adc *info = iio_priv(indio_dev);
+-	unsigned long timeout;
++	long timeout;
+ 	u32 con1, con2;
+ 
+ 	if (mask != IIO_CHAN_INFO_RAW)
+@@ -268,6 +268,14 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 
+ 	info = iio_priv(indio_dev);
+ 
++	ret = exynos_adc_get_version(pdev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "no matching of_node, err = %d\n", ret);
++		goto err_iio;
++	}
++
++	info->version = ret;
++
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	info->regs = devm_request_and_ioremap(&pdev->dev, mem);
+@@ -311,8 +319,6 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 		goto err_irq;
+ 	}
+ 
+-	info->version = exynos_adc_get_version(pdev);
+-
+ 	platform_set_drvdata(pdev, indio_dev);
+ 
+ 	indio_dev->name = dev_name(&pdev->dev);
+-- 
+1.7.9.5
