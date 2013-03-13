@@ -1,127 +1,75 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V2] DMA: PL330: Add check if device tree compatible
-Date: Wed, 13 Mar 2013 11:06:36 +0530
-Message-ID: <CAAgF-BfEsFyY7e1pTnn9eWeWo5yDq-6KfKoj0eASRJT+8N6j0A@mail.gmail.com>
-References: <1362475531-32260-1-git-send-email-padma.v@samsung.com>
-	<1362475531-32260-2-git-send-email-padma.v@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH] usb: dwc3: Set DWC3 context's mode based on selected mode.
+Date: Wed, 13 Mar 2013 14:42:22 +0530
+Message-ID: <CAFp+6iFjiOPbZhdpWCq0agWBeSC+Vc19Ff++_3vxa6r-MburWg@mail.gmail.com>
+References: <CAFp+6iGGAY=nMg03-bqHz=XuNP+1t9mQR=M53HGoqCXv=t+f0Q@mail.gmail.com>
+	<1362230724-21017-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f176.google.com ([209.85.210.176]:53981 "EHLO
-	mail-ia0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751333Ab3CMFgh (ORCPT
+Received: from mail-bk0-f50.google.com ([209.85.214.50]:33530 "EHLO
+	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754665Ab3CMJMY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 01:36:37 -0400
-Received: by mail-ia0-f176.google.com with SMTP id i18so639027iac.35
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2013 22:36:36 -0700 (PDT)
-In-Reply-To: <1362475531-32260-2-git-send-email-padma.v@samsung.com>
+	Wed, 13 Mar 2013 05:12:24 -0400
+In-Reply-To: <1362230724-21017-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, arnd@arndb.de, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, robherring2@gmail.com
+To: Felipe Balbi <balbi@ti.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hi,
+Hi Balbi,
 
-On Tue, Mar 5, 2013 at 2:55 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
-> This patch register the dma controller with generic dma helpers only
-> in DT case. This also adds some extra error handling in the driver.
+
+On Sat, Mar 2, 2013 at 6:55 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> Now that machines may select the mode of working of DWC3 (HOST only,
+> GADGET only or DUAL_ROLE), lets set DWC3 mode based on that
+> rather than fixing it to whatever DWC3 hardware says.
+> This way we can skip initializing Gadget/Host in case
+> we are using Host-only/Gadget-only mode respectively.
 >
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> Reported-by: Sachin Kamat <sachin.kamat@linaro.org>
+
+Hope this patch if fine, and mainlinable ?
+
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 > ---
 >
-> Based on Vinod Koul next branch.
+> Changes from RFC patch "usb: dwc3: Set GCTL.PrtCapDir based on selected mode"
+>  - Setting the mode in dwc3 context structure based on
+>    selected mode in machine, rather than programming PrtCapDir
 >
-> Changes since V1:
->         - return silently when of_dma_controller_register fails, as
->           suggested by Arnd.
+>  drivers/usb/dwc3/core.c |    7 ++++++-
+>  1 files changed, 6 insertions(+), 1 deletions(-)
 >
->  drivers/dma/pl330.c |   38 +++++++++++++++++++++++++++-----------
->  1 files changed, 27 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 7181531..5dbc594 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -2882,7 +2882,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->  {
->         struct dma_pl330_platdata *pdat;
->         struct dma_pl330_dmac *pdmac;
-> -       struct dma_pl330_chan *pch;
-> +       struct dma_pl330_chan *pch, *_p;
->         struct pl330_info *pi;
->         struct dma_device *pd;
->         struct resource *res;
-> @@ -2984,7 +2984,16 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->         ret = dma_async_device_register(pd);
->         if (ret) {
->                 dev_err(&adev->dev, "unable to register DMAC\n");
-> -               goto probe_err2;
-> +               goto probe_err3;
-> +       }
-> +
-> +       if (adev->dev.of_node) {
-> +               ret = of_dma_controller_register(adev->dev.of_node,
-> +                                        of_dma_pl330_xlate, pdmac);
-> +               if (ret) {
-> +                       dev_err(&adev->dev,
-> +                       "unable to register DMA to the generic DT DMA helpers\n");
-> +               }
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 79f335f..be0672f 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -478,7 +478,12 @@ static int dwc3_probe(struct platform_device *pdev)
+>                 goto err1;
 >         }
 >
->         dev_info(&adev->dev,
-> @@ -2995,16 +3004,21 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->                 pi->pcfg.data_bus_width / 8, pi->pcfg.num_chan,
->                 pi->pcfg.num_peri, pi->pcfg.num_events);
+> -       mode = DWC3_MODE(dwc->hwparams.hwparams0);
+> +       if (IS_ENABLED(CONFIG_USB_DWC3_HOST))
+> +               mode = DWC3_MODE_HOST;
+> +       else if (IS_ENABLED(CONFIG_USB_DWC3_GADGET))
+> +               mode = DWC3_MODE_DEVICE;
+> +       else
+> +               mode = DWC3_MODE_DRD;
 >
-> -       ret = of_dma_controller_register(adev->dev.of_node,
-> -                                        of_dma_pl330_xlate, pdmac);
-> -       if (ret) {
-> -               dev_err(&adev->dev,
-> -               "unable to register DMA to the generic DT DMA helpers\n");
-> -               goto probe_err2;
-> -       }
-> -
->         return 0;
-> +probe_err3:
-> +       amba_set_drvdata(adev, NULL);
->
-> +       /* Idle the DMAC */
-> +       list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
-> +                       chan.device_node) {
-> +
-> +               /* Remove the channel */
-> +               list_del(&pch->chan.device_node);
-> +
-> +               /* Flush the channel */
-> +               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
-> +               pl330_free_chan_resources(&pch->chan);
-> +       }
->  probe_err2:
->         pl330_del(pi);
->  probe_err1:
-> @@ -3023,8 +3037,10 @@ static int pl330_remove(struct amba_device *adev)
->         if (!pdmac)
->                 return 0;
->
-> -       of_dma_controller_free(adev->dev.of_node);
-> +       if (adev->dev.of_node)
-> +               of_dma_controller_free(adev->dev.of_node);
->
-> +       dma_async_device_unregister(&pdmac->ddma);
-
-Any comment on this patch?
-
-Vinod,
-
-Can you please take this patch into your tree?
-
->         amba_set_drvdata(adev, NULL);
->
->         /* Idle the DMAC */
+>         switch (mode) {
+>         case DWC3_MODE_DEVICE:
 > --
-> 1.7.4.4
+> 1.7.6.5
 >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-Thanks
-Padma
+
+
+-- 
+Thanks & Regards
+Vivek
