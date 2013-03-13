@@ -1,42 +1,40 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] USB: ehci-s5p: Fix phy reset
-Date: Wed, 13 Mar 2013 10:59:37 -0700
-Message-ID: <CAD=FV=W331nkdJJhXrXe739o+-iBSzGAS6anu+C_mmix0MbAUg@mail.gmail.com>
-References: <1363136988-3704-1-git-send-email-agraf@suse.de>
-	<CAD=FV=UXaZvZJOZwAguwi=iyYO1iMSvt8fdEsDhr96pgMXDYSg@mail.gmail.com>
-	<A763CC55-549D-4CCD-8EE8-2BCE17F84606@suse.de>
+Subject: Re: [PATCH v3] iio: adc: exynos5_adc: fix compilation warnings
+Date: Wed, 13 Mar 2013 11:01:03 -0700
+Message-ID: <CAD=FV=XoE6NCruDUv2UajaP+LWDCp+pgaZJsEKpkoxy3tZNeAw@mail.gmail.com>
+References: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
+	<1363150138-20819-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:45017 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933043Ab3CMR7j (ORCPT
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:54441 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933113Ab3CMSBF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 13:59:39 -0400
-Received: by mail-lb0-f175.google.com with SMTP id n3so1182656lbo.34
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 10:59:37 -0700 (PDT)
-In-Reply-To: <A763CC55-549D-4CCD-8EE8-2BCE17F84606@suse.de>
+	Wed, 13 Mar 2013 14:01:05 -0400
+Received: by mail-lb0-f176.google.com with SMTP id s4so1158448lbc.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 11:01:03 -0700 (PDT)
+In-Reply-To: <1363150138-20819-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Graf <agraf@suse.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dmueller@suse.de, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-iio <linux-iio@vger.kernel.org>, dan.carpenter@oracle.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>
 
-Alexander,
+Naveen,
 
-On Wed, Mar 13, 2013 at 10:45 AM, Alexander Graf <agraf@suse.de> wrote:
+On Tue, Mar 12, 2013 at 9:48 PM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> Doug, There was a comment from Lars regarding the match not
+> being NULL, if driver depends on CONFIG_OF. So, i've removed
+> the NULL check in v2 of this patch.
+>         https://patchwork.kernel.org/patch/2222841/
 >
->>> +       gpio_free(gpio);
->>
->> Freeing the gpio is a little on the iffy side since you actually care
->> about keeping the value.  Perhaps you can change this to
->> devm_gpio_request_one() and avoid the free?  I was about to submit a
->> patch to do just that (since otherwise you run into trouble if you
->> ever defer the probe) but then ran across your patch.
->
-> I could also just return it when the function exits and only free it when we exit the probe function with a negative value. The reason I put it in here was that on probe deferral, the pin simply gets blocked.
->
-> However, I could probably also just completely take the gpio_free() out of this patch and resubmit, as it should be pretty much unrelated. Then you can patch it properly.
+> I'm checking the return value of get_version() for -ve values before
+> assigning to info->version. So, i left the (unsigned int) unchanged.
 
-Sure, if you want to resubmit without the gpio_free() I'll submit a
-new patch atop yours with the change to devm and people can see if
-they like it...
+Hmmm, I guess this was the point that confused me.  I went back and
+agree with Lars--it can't be NULL.  ...but that means that
+exynos_adc_get_version() can't return an error, so why are we checking
+for an error?
+
+-Doug
