@@ -1,49 +1,38 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH] ARM: dts: add interrupt-names property to get interrupt resource by name
-Date: Wed, 13 Mar 2013 16:56:20 +0530
-Message-ID: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 0/4] clk: samsung: pm fixes and multiple aliases
+Date: Wed, 13 Mar 2013 14:58:18 +0100
+Message-ID: <201303131458.18671.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:44094 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754570Ab3CML0c (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:59096 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932295Ab3CMN6Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 07:26:32 -0400
-Received: by mail-pb0-f48.google.com with SMTP id wy12so916059pbc.21
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 04:26:32 -0700 (PDT)
+	Wed, 13 Mar 2013 09:58:24 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, linaro-kernel@lists.linaro.org, joshi@samsung.com, l.krishna@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-The FIMD driver expects the "vsync" interrupt to be mentioned as the 1st
-parameter in the FIMD DT node. So to meet this expectation of the driver,
-the FIMD DT node was forced to be made by keeping "vsync" as the 1st
-parameter.
+Second version of the fixes to address comments gathered from the first
+version, like not entering the dt code on non-dt platforms even if
+dt-support is present in the kernel.
 
-this resolves the above mentioned "hack" by introducing
-"interrupt-names", so that FIMD driver can get the interrupt resource by
-name as discussed at
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg16211.html
+Patch 1 and 3 got "Reviewed-by" tags but I only included the one for
+patch 1, because patch 3 changed due to the changes in patch 2.
 
-patch is dependent on https://patchwork.kernel.org/patch/2184981/
+Heiko Stuebner (4):
+  clk: samsung: register clk_div_tables for divider clocks
+  clk: samsung: fix pm init on non-dt platforms
+  clk: samsung: always allocate the clk_table
+  clk: samsung: add infrastructure to add separate aliases
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
----
- arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk.c |   72 +++++++++++++++++++++++++++++++++++---------
+ drivers/clk/samsung/clk.h |   34 ++++++++++++++++++--
+ 2 files changed, 87 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 0ee4706..76c8911 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -588,6 +588,7 @@
- 		compatible = "samsung,exynos5-fimd";
- 		interrupt-parent = <&combiner>;
- 		reg = <0x14400000 0x40000>;
--		interrupts = <18 5>, <18 4>, <18 6>;
-+		interrupt-names = "fifo", "vsync", "lcd_sys";
-+		interrupts = <18 4>, <18 5>, <18 6>;
- 	};
- };
 -- 
-1.7.9.5
+1.7.2.3
