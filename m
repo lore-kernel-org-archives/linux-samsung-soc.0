@@ -1,102 +1,127 @@
 From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V2] ARM: dts: Modify SPI nodes according generic DMA DT bindings
-Date: Wed, 13 Mar 2013 11:00:19 +0530
-Message-ID: <CAAgF-Bc53K57YzrCA=js_=f5v5ssvfSv0Nee4hLYMesGFTp9pg@mail.gmail.com>
-References: <1362480394-1064-1-git-send-email-padma.v@samsung.com>
+Subject: Re: [PATCH V2] DMA: PL330: Add check if device tree compatible
+Date: Wed, 13 Mar 2013 11:06:36 +0530
+Message-ID: <CAAgF-BfEsFyY7e1pTnn9eWeWo5yDq-6KfKoj0eASRJT+8N6j0A@mail.gmail.com>
+References: <1362475531-32260-1-git-send-email-padma.v@samsung.com>
+	<1362475531-32260-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f178.google.com ([209.85.210.178]:43690 "EHLO
-	mail-ia0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751333Ab3CMFaT (ORCPT
+Received: from mail-ia0-f176.google.com ([209.85.210.176]:53981 "EHLO
+	mail-ia0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751333Ab3CMFgh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 01:30:19 -0400
-Received: by mail-ia0-f178.google.com with SMTP id u20so565401iag.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2013 22:30:19 -0700 (PDT)
-In-Reply-To: <1362480394-1064-1-git-send-email-padma.v@samsung.com>
+	Wed, 13 Mar 2013 01:36:37 -0400
+Received: by mail-ia0-f176.google.com with SMTP id i18so639027iac.35
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2013 22:36:36 -0700 (PDT)
+In-Reply-To: <1362475531-32260-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, arnd@arndb.de, vinod.koul@intel.com, grant.likely@secretlab.ca
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, arnd@arndb.de, vinod.koul@intel.com, grant.likely@secretlab.ca, jon-hunter@ti.com, boojin.kim@samsung.com, robherring2@gmail.com
 
-Hi Kukjin,
+Hi,
 
-On Tue, Mar 5, 2013 at 4:16 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
-> This patch removes custom way of adding spi dma channels and
-> adds according to new generic DMA DT bindings on samsung exynos4
-> and exynos5440 platforms.
+On Tue, Mar 5, 2013 at 2:55 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
+> This patch register the dma controller with generic dma helpers only
+> in DT case. This also adds some extra error handling in the driver.
 >
 > Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> Reported-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
 >
+> Based on Vinod Koul next branch.
+>
 > Changes since V1:
->         - Corrected the pdma phandle in spi1 node.
+>         - return silently when of_dma_controller_register fails, as
+>           suggested by Arnd.
 >
->  arch/arm/boot/dts/exynos4.dtsi    |   15 +++++++++------
->  arch/arm/boot/dts/exynos5440.dtsi |    5 +++--
->  2 files changed, 12 insertions(+), 8 deletions(-)
+>  drivers/dma/pl330.c |   38 +++++++++++++++++++++++++++-----------
+>  1 files changed, 27 insertions(+), 11 deletions(-)
 >
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 1a62bcf..4521a72 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -235,8 +235,9 @@
->                 compatible = "samsung,exynos4210-spi";
->                 reg = <0x13920000 0x100>;
->                 interrupts = <0 66 0>;
-> -               tx-dma-channel = <&pdma0 7>; /* preliminary */
-> -               rx-dma-channel = <&pdma0 6>; /* preliminary */
-> +               dmas = <&pdma0 7
-> +                       &pdma0 6>;
-> +               dma-names = "tx", "rx";
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 status = "disabled";
-> @@ -246,8 +247,9 @@
->                 compatible = "samsung,exynos4210-spi";
->                 reg = <0x13930000 0x100>;
->                 interrupts = <0 67 0>;
-> -               tx-dma-channel = <&pdma1 7>; /* preliminary */
-> -               rx-dma-channel = <&pdma1 6>; /* preliminary */
-> +               dmas = <&pdma1 7
-> +                       &pdma1 6>;
-> +               dma-names = "tx", "rx";
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 status = "disabled";
-> @@ -257,8 +259,9 @@
->                 compatible = "samsung,exynos4210-spi";
->                 reg = <0x13940000 0x100>;
->                 interrupts = <0 68 0>;
-> -               tx-dma-channel = <&pdma0 9>; /* preliminary */
-> -               rx-dma-channel = <&pdma0 8>; /* preliminary */
-> +               dmas = <&pdma0 9
-> +                       &pdma0 8>;
-> +               dma-names = "tx", "rx";
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 status = "disabled";
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> index 9a99755..31a3626 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -79,8 +79,9 @@
->                 compatible = "samsung,exynos4210-spi";
->                 reg = <0xD0000 0x1000>;
->                 interrupts = <0 4 0>;
-> -               tx-dma-channel = <&pdma0 5>; /* preliminary */
-> -               rx-dma-channel = <&pdma0 4>; /* preliminary */
-> +               dmas = <&pdma0 5
-> +                       &pdma0 4>;
-> +               dma-names = "tx", "rx";
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->         };
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 7181531..5dbc594 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -2882,7 +2882,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>  {
+>         struct dma_pl330_platdata *pdat;
+>         struct dma_pl330_dmac *pdmac;
+> -       struct dma_pl330_chan *pch;
+> +       struct dma_pl330_chan *pch, *_p;
+>         struct pl330_info *pi;
+>         struct dma_device *pd;
+>         struct resource *res;
+> @@ -2984,7 +2984,16 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>         ret = dma_async_device_register(pd);
+>         if (ret) {
+>                 dev_err(&adev->dev, "unable to register DMAC\n");
+> -               goto probe_err2;
+> +               goto probe_err3;
+> +       }
+> +
+> +       if (adev->dev.of_node) {
+> +               ret = of_dma_controller_register(adev->dev.of_node,
+> +                                        of_dma_pl330_xlate, pdmac);
+> +               if (ret) {
+> +                       dev_err(&adev->dev,
+> +                       "unable to register DMA to the generic DT DMA helpers\n");
+> +               }
+>         }
+>
+>         dev_info(&adev->dev,
+> @@ -2995,16 +3004,21 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>                 pi->pcfg.data_bus_width / 8, pi->pcfg.num_chan,
+>                 pi->pcfg.num_peri, pi->pcfg.num_events);
+>
+> -       ret = of_dma_controller_register(adev->dev.of_node,
+> -                                        of_dma_pl330_xlate, pdmac);
+> -       if (ret) {
+> -               dev_err(&adev->dev,
+> -               "unable to register DMA to the generic DT DMA helpers\n");
+> -               goto probe_err2;
+> -       }
+> -
+>         return 0;
+> +probe_err3:
+> +       amba_set_drvdata(adev, NULL);
+>
+> +       /* Idle the DMAC */
+> +       list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
+> +                       chan.device_node) {
+> +
+> +               /* Remove the channel */
+> +               list_del(&pch->chan.device_node);
+> +
+> +               /* Flush the channel */
+> +               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
+> +               pl330_free_chan_resources(&pch->chan);
+> +       }
+>  probe_err2:
+>         pl330_del(pi);
+>  probe_err1:
+> @@ -3023,8 +3037,10 @@ static int pl330_remove(struct amba_device *adev)
+>         if (!pdmac)
+>                 return 0;
+>
+> -       of_dma_controller_free(adev->dev.of_node);
+> +       if (adev->dev.of_node)
+> +               of_dma_controller_free(adev->dev.of_node);
+>
+> +       dma_async_device_unregister(&pdmac->ddma);
 
-Any comment on this patch? If not can you please take this into your tree?
+Any comment on this patch?
 
-Thanks
-Padma
+Vinod,
+
+Can you please take this patch into your tree?
+
+>         amba_set_drvdata(adev, NULL);
+>
+>         /* Idle the DMAC */
 > --
 > 1.7.4.4
 >
+
+Thanks
+Padma
