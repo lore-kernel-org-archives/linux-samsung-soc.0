@@ -1,91 +1,56 @@
 From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v7 0/5] Add DRM FIMD DT support for Exynos4 DT Machines
-Date: Wed, 13 Mar 2013 15:39:26 +0530
-Message-ID: <1363169371-310-1-git-send-email-vikas.sajjan@linaro.org>
+Subject: [PATCH v7 2/5] ARM: dts: Add lcd pinctrl node entries for EXYNOS4412 SoC
+Date: Wed, 13 Mar 2013 15:39:28 +0530
+Message-ID: <1363169371-310-3-git-send-email-vikas.sajjan@linaro.org>
+References: <1363169371-310-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f51.google.com ([209.85.210.51]:43116 "EHLO
-	mail-da0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754061Ab3CMKJp (ORCPT
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:60793 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754061Ab3CMKJy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 06:09:45 -0400
-Received: by mail-da0-f51.google.com with SMTP id z17so348305dal.38
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 03:09:44 -0700 (PDT)
+	Wed, 13 Mar 2013 06:09:54 -0400
+Received: by mail-pb0-f48.google.com with SMTP id wy12so856611pbc.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 03:09:53 -0700 (PDT)
+In-Reply-To: <1363169371-310-1-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
 
-This patch series adds support for DRM FIMD DT for Exynos4 DT Machines,
-specifically for Exynos4412 SoC.
+From: Sachin Kamat <sachin.kamat@linaro.org>
 
-changes since v6:
-	- addressed comments and added interrupt-names = "fifo", "vsync", "lcd_sys"
-	in exynos4.dtsi and re-ordered the interrupt numbering to match the order in
-	interrupt combiner IP as suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>.
+This patch adds the lcd panel related picntrl nodes for Exynos4412 SoC
 
-changes since v5:
-	- renamed the fimd binding documentation file name as "samsung-fimd.txt",
-	since it not only talks about exynos display controller but also about
-	previous samsung display controllers.
-	- rephrased an abmigious statement about the interrupt combiner in the
-	fimd binding documentation as pointed out by 
-	Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+---
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-changes since v4:
-	- moved the fimd binding documentation to Documentation/devicetree/bindings/video/
-	as suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-
-	- added more fimd compatiblity strings in fimd documentation as
-	discussed at  https://patchwork.kernel.org/patch/2144861/ with
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com> and
-	Tomasz Figa <tomasz.figa@gmail.com>
-
-	- modified compatible string for exynos4 fimd as "exynos4210-fimd"
-	exynos5 fimd as "exynos5250-fimd" to stick to the rule that compatible
-	value should be named after first specific SoC model in which this
-	particular IP version was included as discussed at
-	https://patchwork.kernel.org/patch/2144861/
-
-	- documented more about the interrupt combiner and their order as 
-	suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-
-changes since v3:
-	- rebased on
-	http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=shortlog;h=refs/heads/for-next-next
-
-changes since v2:
-	- added alias to 'fimd@11c00000' node
-		(reported by: Rahul Sharma <r.sh.open@gmail.com>)
-	- removed 'lcd0_data' node as there was already a similar node lcd_data24
-		(reported by: Jingoo Han <jg1.han@samsung.com>
-	- replaced spaces with tabs in display-timing node
-
-changes since v1:
-	- added new patch to add FIMD DT binding Documentation
-	- removed patch enabling SAMSUNG_DEV_BACKLIGHT and SAMSUNG_DEV_PMW 
-	for mach-exynos4 DT
-	- added 'status' property to fimd DT node
-
-Is based on branch "for-next-next"
-http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=shortlog;h=refs/heads/for-next-next
-
-Sachin Kamat (1):
-  ARM: dts: Add lcd pinctrl node entries for EXYNOS4412 SoC
-
-Vikas Sajjan (4):
-  ARM: dts: Add FIMD node to exynos4
-  ARM: dts: Add FIMD node and display timing node to
-    exynos4412-origen.dts
-  ARM: dts: Add FIMD AUXDATA node entry for exynos4 DT
-  ARM: dts: Add FIMD DT binding Documentation
-
- .../devicetree/bindings/video/samsung-fimd.txt     |   58 ++++++++++++++++++++
- arch/arm/boot/dts/exynos4.dtsi                     |    8 +++
- arch/arm/boot/dts/exynos4412-origen.dts            |   22 ++++++++
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          |   14 +++++
- arch/arm/mach-exynos/mach-exynos4-dt.c             |    2 +
- 5 files changed, 104 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/video/samsung-fimd.txt
-
+diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+index 099cec7..a59d69c 100644
+--- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+@@ -354,6 +354,20 @@
+ 			samsung,pin-drv = <0>;
+ 		};
+ 
++		lcd_sync: lcd-sync {
++			samsung,pins = "gpf0-0", "gpf0-1";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
++		lcd_en: lcd-en {
++			samsung,pins = "gpf0-3";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
+ 		lcd_clk: lcd-clk {
+ 			samsung,pins = "gpf0-0", "gpf0-1", "gpf0-2", "gpf0-3";
+ 			samsung,pin-function = <2>;
 -- 
 1.7.9.5
