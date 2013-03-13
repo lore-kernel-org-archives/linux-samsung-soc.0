@@ -1,121 +1,69 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 4/4] clk: samsung: add infrastructure to add separate aliases
-Date: Wed, 13 Mar 2013 15:00:37 +0100
-Message-ID: <201303131500.37646.heiko@sntech.de>
-References: <201303131458.18671.heiko@sntech.de>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH] USB: ehci-s5p: Fix phy reset
+Date: Wed, 13 Mar 2013 10:29:25 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1303131028140.1705-100000@iolanthe.rowland.org>
+References: <1363136988-3704-1-git-send-email-agraf@suse.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:59169 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755526Ab3CMOAk (ORCPT
+Received: from iolanthe.rowland.org ([192.131.102.54]:33338 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755575Ab3CMO30 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 10:00:40 -0400
-In-Reply-To: <201303131458.18671.heiko@sntech.de>
+	Wed, 13 Mar 2013 10:29:26 -0400
+In-Reply-To: <1363136988-3704-1-git-send-email-agraf@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
+To: Alexander Graf <agraf@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dmueller@suse.de, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The current code adds aliases, if necessary, directly when adding the clock,
-limiting the number of possible aliases to one.
+On Wed, 13 Mar 2013, Alexander Graf wrote:
 
-Some platforms need more than one alias, like the hsmmc pclocks on s3c2416
-which need a "hsmmc" and "mmc_busclk.0" alias for the s3c-sdhci driver.
+> On my Exynos 5 based Arndale system, I need to pull the reset line down
+> and then let it go up again to actually perform a reset. Without that
+> reset, I can't find any USB hubs on my bus, rendering the USB controller
+> useless.
+> 
+> So this patch implements the above logic, making EHCI and OHCI work on
+> Arndale systems for me.
+> 
+> Signed-off-by: Alexander Graf <agraf@suse.de>
+> CC: Vivek Gautam <gautam.vivek@samsung.com>
+> CC: Jingoo Han <jg1.han@samsung.com>
+> CC: Alan Stern <stern@rowland.harvard.edu>
+> CC: Kukjin Kim <kgene.kim@samsung.com>
+> CC: Felipe Balbi <balbi@ti.com>
+> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+> 
+> As this affects 3.9, this patch should definitely be considered for inclusion
+> there.
+> ---
+>  drivers/usb/host/ehci-s5p.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+> index 20ebf6a..c6d67e4 100644
+> --- a/drivers/usb/host/ehci-s5p.c
+> +++ b/drivers/usb/host/ehci-s5p.c
+> @@ -103,9 +103,15 @@ static void s5p_setup_vbus_gpio(struct platform_device *pdev)
+>  	if (!gpio_is_valid(gpio))
+>  		return;
+>  
+> -	err = gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "ehci_vbus_gpio");
+> -	if (err)
+> +	/* reset pulls the line down, then up again */
+> +	err = gpio_request_one(gpio, GPIOF_OUT_INIT_LOW, "ehci_vbus_gpio");
+> +	if (err) {
+>  		dev_err(&pdev->dev, "can't request ehci vbus gpio %d", gpio);
+> +		return;
+> +	}
+> +	mdelay(1);
+> +	__gpio_set_value(gpio, 1);
+> +	gpio_free(gpio);
+>  }
+>  
+>  static u64 ehci_s5p_dma_mask = DMA_BIT_MASK(32);
 
-Therefore add the possibility to separately add clock aliases for previously
-created clocks.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/samsung/clk.c |   33 +++++++++++++++++++++++++++++++++
- drivers/clk/samsung/clk.h |   21 +++++++++++++++++++++
- 2 files changed, 54 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 1ed5716..82f27f6 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -97,6 +97,39 @@ void samsung_clk_add_lookup(struct clk *clk, unsigned int id)
- 		clk_table[id] = clk;
- }
- 
-+/* register a list of aliases */
-+void __init samsung_clk_register_alias(struct samsung_clock_alias *list,
-+					unsigned int nr_clk)
-+{
-+	struct clk *clk;
-+	unsigned int idx, ret;
-+
-+	if (!clk_table) {
-+		pr_err("%s: clock table missing\n", __func__);
-+		return;
-+	}
-+
-+	for (idx = 0; idx < nr_clk; idx++, list++) {
-+		if (!list->id) {
-+			pr_err("%s: clock id missing for index %d\n", __func__,
-+				idx);
-+			continue;
-+		}
-+
-+		clk = clk_table[list->id];
-+		if (!clk) {
-+			pr_err("%s: failed to find clock %d\n", __func__,
-+				list->id);
-+			continue;
-+		}
-+
-+		ret = clk_register_clkdev(clk, list->alias, list->dev_name);
-+		if (ret)
-+			pr_err("%s: failed to register lookup %s\n",
-+					__func__, list->alias);
-+	}
-+}
-+
- /* register a list of fixed clocks */
- void __init samsung_clk_register_fixed_rate(
- 		struct samsung_fixed_rate_clock *list, unsigned int nr_clk)
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 26a752b..6bacd6f 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -23,6 +23,25 @@
- #include <mach/map.h>
- 
- /**
-+ * struct samsung_clock_alias: information about mux clock
-+ * @id: platform specific id of the clock.
-+ * @dev_name: name of the device to which this clock belongs.
-+ * @alias: optional clock alias name to be assigned to this clock.
-+ */
-+struct samsung_clock_alias {
-+	unsigned int		id;
-+	const char		*dev_name;
-+	const char		*alias;
-+};
-+
-+#define ALIAS(_id, dname, a)	\
-+	{							\
-+		.id		= _id,				\
-+		.dev_name	= dname,			\
-+		.alias		= a,				\
-+	}
-+
-+/**
-  * struct samsung_fixed_rate_clock: information about fixed-rate clock
-  * @id: platform specific id of the clock.
-  * @name: name of this fixed-rate clock.
-@@ -251,6 +270,8 @@ extern void __init samsung_clk_of_register_fixed_ext(
- 
- extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id);
- 
-+extern void samsung_clk_register_alias(struct samsung_clock_alias *list,
-+		unsigned int nr_clk);
- extern void __init samsung_clk_register_fixed_rate(
- 		struct samsung_fixed_rate_clock *clk_list, unsigned int nr_clk);
- extern void __init samsung_clk_register_fixed_factor(
--- 
-1.7.2.3
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
