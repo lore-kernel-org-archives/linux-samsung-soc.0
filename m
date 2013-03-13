@@ -1,44 +1,52 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 3/4] clk: samsung: always allocate the clk_table
-Date: Wed, 13 Mar 2013 09:05:14 +0530
-Message-ID: <CAK9yfHwQreXt+tXLz7YsNqDXwaT19U2KJvqmd-tPTx_E6nKBsQ@mail.gmail.com>
-References: <201303120042.09633.heiko@sntech.de>
-	<201303120044.29499.heiko@sntech.de>
-	<CAJuYYwT183EcZZ20P8D7AP34CwXfKYLzsmZdoJz1ny7XznzyAg@mail.gmail.com>
-	<513F1037.3080107@samsung.com>
-	<CAJuYYwRDv4ULqXQOXmTsGfqVopt6XPR+XXb-pPZ35+pC7kUN3A@mail.gmail.com>
-	<513F321E.1020703@samsung.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC 12/12] mipi-csis: Enable all interrupts for fimc-is usage
+Date: Wed, 13 Mar 2013 09:39:19 +0530
+Message-ID: <CALt3h7_zXP9M5m+4VXFGhnfpaUO+6F20hTsnR8ATF8+=CNmcrA@mail.gmail.com>
+References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
+	<1362754765-2651-13-git-send-email-arun.kk@samsung.com>
+	<513F5171.40603@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f182.google.com ([209.85.210.182]:55665 "EHLO
-	mail-ia0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754993Ab3CMDfP (ORCPT
+Received: from mail-ea0-f181.google.com ([209.85.215.181]:38300 "EHLO
+	mail-ea0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750860Ab3CMEJV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Mar 2013 23:35:15 -0400
-Received: by mail-ia0-f182.google.com with SMTP id b35so561664iac.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2013 20:35:15 -0700 (PDT)
-In-Reply-To: <513F321E.1020703@samsung.com>
+	Wed, 13 Mar 2013 00:09:21 -0400
+In-Reply-To: <513F5171.40603@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kilyeon.im@samsung.com, shaik.ameer@samsung.com
+
+Hi Sylwester,
+
+>>
+>>  /* Interrupt mask */
+>>  #define S5PCSIS_INTMSK                       0x10
+>> -#define S5PCSIS_INTMSK_EN_ALL                0xf000103f
+>> +#define S5PCSIS_INTMSK_EN_ALL                0xfc00103f
+>
+> Do you know what interrupts are assigned to the CSIS_INTMSK
+> bits 26, 27 ? In the documentation I have they are marked
+> as reserved. I have tested this patch on Exynos4x12, it seems
+> OK but you might want to merge it to the patch adding compatible
+> property for exynos5.
+
+The bits 26 and 27 are for Frame start and Frame end interrupts.
+Yes this change can be merged with the MIPI-CSIS support for Exynos5.
+Shaik will pick it up and merge it along with his patch series in v2.
 
 >
-> So except Universal_c210 and Nuri the only ones not supporting booting
-> from DT are these two simple boards, which seem to be maintained by
-> Samsung:
+> It would be good to know what these bits are for. And how
+> enabling the interrupts actually help without modifying the
+> interrupt handler ? Is it enough to just acknowledge those
+> interrupts ? Or how it works ?
 >
-> arch/arm/mach-exynos/mach-smdk4x12.c
 
-SMDK4412 is already supported through DT (exynos4412-smdk4412.dts) as
-you already pointed out. I am not sure if anyone is using SMDK4212.
-Even if it is required, one can easily add a dts file for that board
-as DT support for 4x12 already exists.
+These interrupts are used by the FIMC-IS firmware possibly to check if the
+sensor is working. Without enabling these, I get the error from firmware
+on Sensor Open command.
 
-arch/arm/boot/dts/exynos4x12.dtsi
-arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-
--- 
-With warm regards,
-Sachin
+Regards
+Arun
