@@ -1,66 +1,66 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
- resource by name
-Date: Wed, 13 Mar 2013 09:39:53 -0500
-Message-ID: <51408FB9.90808@gmail.com>
-References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org>
+From: Pankaj Jangra <jangra.pankaj9@gmail.com>
+Subject: Re: [PATCH 6/7] ARM: SAMSUNG: use clk_prepare_enable in samsung-time
+Date: Wed, 13 Mar 2013 22:29:04 +0530
+Message-ID: <CADTbHxq-gxoN9HKkjPsZ5uBt7PhrvO8XdQdmAyscOA+xPy9Z7A@mail.gmail.com>
+References: <201303120141.31262.heiko@sntech.de>
+ <201303120145.21072.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:41965 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932162Ab3CMOjz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 10:39:55 -0400
-Received: by mail-ob0-f170.google.com with SMTP id wc20so1096814obb.15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 07:39:55 -0700 (PDT)
-In-Reply-To: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <201303120145.21072.heiko@sntech.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, t.figa@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org, sylvester.nawrocki@gmail.com
 
-The subject is completely misleading. Make it clear what the scope of
-this patch is.
+Hi,
 
-On 03/13/2013 06:26 AM, Vikas Sajjan wrote:
-> The FIMD driver expects the "vsync" interrupt to be mentioned as the 1st
-> parameter in the FIMD DT node. So to meet this expectation of the driver,
-> the FIMD DT node was forced to be made by keeping "vsync" as the 1st
-> parameter.
-> 
-> this resolves the above mentioned "hack" by introducing
-> "interrupt-names", so that FIMD driver can get the interrupt resource by
-> name as discussed at
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg16211.html
-
-I fail to see what the hack is. The order of interrupt properties must
-be defined by the binding. interrupt-names is auxiliary data and must
-not be required by an OS.
-
-> patch is dependent on https://patchwork.kernel.org/patch/2184981/
-
-Why the split? These should be combined.
-
-> 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+On Tue, Mar 12, 2013 at 6:15 AM, Heiko St=FCbner <heiko@sntech.de> wrote:
+> The common clock framework expects clocks to be prepared
+> before they are enabled.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 0ee4706..76c8911 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -588,6 +588,7 @@
->  		compatible = "samsung,exynos5-fimd";
->  		interrupt-parent = <&combiner>;
->  		reg = <0x14400000 0x40000>;
-> -		interrupts = <18 5>, <18 4>, <18 6>;
-> +		interrupt-names = "fifo", "vsync", "lcd_sys";
-> +		interrupts = <18 4>, <18 5>, <18 6>;
+>  arch/arm/plat-samsung/samsung-time.c |    6 +++---
+>  1 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/plat-samsung/samsung-time.c b/arch/arm/plat-samsung=
+/samsung-time.c
+> index f899cbc..6ebb851 100644
+> --- a/arch/arm/plat-samsung/samsung-time.c
+> +++ b/arch/arm/plat-samsung/samsung-time.c
+> @@ -355,7 +355,7 @@ static void __init samsung_timer_resources(void)
+>         if (IS_ERR(timerclk))
+>                 panic("failed to get timers clock for timer");
+>
+Also how about calling the clk_prepare_enable() only if the clk_get()
+call is a sucess? Though clk framework will take care of it. Just
+thinking even to avoid that call if clk_get() fails since you are
+modifying the code.
 
-There should be some documentation describing the order of the interrupts.
+> -       clk_enable(timerclk);
+> +       clk_prepare_enable(timerclk);
+>
+>         sprintf(devname, "s3c24xx-pwm.%lu", event_id);
+>         s3c_device_timer[event_id].id =3D event_id;
+> @@ -369,7 +369,7 @@ static void __init samsung_timer_resources(void)
+>         if (IS_ERR(tdiv_event))
+>                 panic("failed to get pwm-tdiv clock for event timer");
+>
+Same here...
+> -       clk_enable(tin_event);
+> +       clk_prepare_enable(tin_event);
+>
+>         sprintf(devname, "s3c24xx-pwm.%lu", source_id);
 
-Rob
+Regards,
+Pankaj Jangra
