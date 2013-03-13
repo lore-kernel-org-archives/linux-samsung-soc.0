@@ -1,50 +1,63 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] ASoC: samsung: remove last traces of neo1973-gta01
-Date: Tue, 12 Mar 2013 23:09:35 +0100
-Message-ID: <1363126175.3137.160.camel@x61.thuisdomein>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Alexander Graf <agraf@suse.de>
+Subject: [PATCH] USB: ehci-s5p: Fix phy reset
+Date: Wed, 13 Mar 2013 02:09:48 +0100
+Message-ID: <1363136988-3704-1-git-send-email-agraf@suse.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews10.kpnxchange.com ([213.75.39.15]:61199 "EHLO
-	cpsmtpb-ews10.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932065Ab3CLWJh (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:42710 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755509Ab3CMB4J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Mar 2013 18:09:37 -0400
+	Tue, 12 Mar 2013 21:56:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dmueller@suse.de, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The (rudimentary) support for the Openmoko Neo1973 GTA01 got removed in
-commit 1ae5cbc52e7c6619a3f44b87809fd25370df31bb ("ASoC: neo1973_wm8753:
-remove references to the neo1973-gta01 machine"). Remove its last traces
-in the Kconfig file too.
+On my Exynos 5 based Arndale system, I need to pull the reset line down
+and then let it go up again to actually perform a reset. Without that
+reset, I can't find any USB hubs on my bus, rendering the USB controller
+useless.
 
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+So this patch implements the above logic, making EHCI and OHCI work on
+Arndale systems for me.
+
+Signed-off-by: Alexander Graf <agraf@suse.de>
+CC: Vivek Gautam <gautam.vivek@samsung.com>
+CC: Jingoo Han <jg1.han@samsung.com>
+CC: Alan Stern <stern@rowland.harvard.edu>
+CC: Kukjin Kim <kgene.kim@samsung.com>
+CC: Felipe Balbi <balbi@ti.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
-Untested.
 
- sound/soc/samsung/Kconfig | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+As this affects 3.9, this patch should definitely be considered for inclusion
+there.
+---
+ drivers/usb/host/ehci-s5p.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 90e7e66..475fb0d 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -35,11 +35,10 @@ config SND_SAMSUNG_I2S
- 	tristate
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 20ebf6a..c6d67e4 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -103,9 +103,15 @@ static void s5p_setup_vbus_gpio(struct platform_device *pdev)
+ 	if (!gpio_is_valid(gpio))
+ 		return;
  
- config SND_SOC_SAMSUNG_NEO1973_WM8753
--	tristate "Audio support for Openmoko Neo1973 Smartphones (GTA01/GTA02)"
--	depends on SND_SOC_SAMSUNG && (MACH_NEO1973_GTA01 || MACH_NEO1973_GTA02)
-+	tristate "Audio support for Openmoko Neo1973 Smartphones (GTA02)"
-+	depends on SND_SOC_SAMSUNG && MACH_NEO1973_GTA02
- 	select SND_S3C24XX_I2S
- 	select SND_SOC_WM8753
--	select SND_SOC_LM4857 if MACH_NEO1973_GTA01
- 	select SND_SOC_DFBMCS320
- 	help
- 	  Say Y here to enable audio support for the Openmoko Neo1973
+-	err = gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "ehci_vbus_gpio");
+-	if (err)
++	/* reset pulls the line down, then up again */
++	err = gpio_request_one(gpio, GPIOF_OUT_INIT_LOW, "ehci_vbus_gpio");
++	if (err) {
+ 		dev_err(&pdev->dev, "can't request ehci vbus gpio %d", gpio);
++		return;
++	}
++	mdelay(1);
++	__gpio_set_value(gpio, 1);
++	gpio_free(gpio);
+ }
+ 
+ static u64 ehci_s5p_dma_mask = DMA_BIT_MASK(32);
 -- 
-1.7.11.7
+1.7.12.4
