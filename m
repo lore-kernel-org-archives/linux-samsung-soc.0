@@ -1,95 +1,47 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3] iio: adc: exynos5_adc: fix compilation warnings
-Date: Wed, 13 Mar 2013 13:12:25 -0700
-Message-ID: <CAD=FV=UBaVQyz-UJPVWy5fik+OfmeCZtF99qTMd0RPErugPdZw@mail.gmail.com>
-References: <1362625743-10401-1-git-send-email-ch.naveen@samsung.com>
-	<1363150138-20819-1-git-send-email-ch.naveen@samsung.com>
-	<CAD=FV=XoE6NCruDUv2UajaP+LWDCp+pgaZJsEKpkoxy3tZNeAw@mail.gmail.com>
-	<5140C155.2070507@metafoo.de>
-	<CAD=FV=XZMDrhQm+tZKL1RW35ZiT-JuDpmdGUXB9A6e9fG+54Fw@mail.gmail.com>
-	<5140C6EE.9080802@metafoo.de>
-	<5140C816.3090008@metafoo.de>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
+ resource by name
+Date: Wed, 13 Mar 2013 23:42:33 +0100
+Message-ID: <514100D9.1000603@gmail.com>
+References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org> <51408FB9.90808@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:58489 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932456Ab3CMUM1 (ORCPT
+Received: from mail-ea0-f175.google.com ([209.85.215.175]:53438 "EHLO
+	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755576Ab3CMWmh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 16:12:27 -0400
-Received: by mail-lb0-f171.google.com with SMTP id gg13so1288578lbb.30
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 13:12:25 -0700 (PDT)
-In-Reply-To: <5140C816.3090008@metafoo.de>
+	Wed, 13 Mar 2013 18:42:37 -0400
+Received: by mail-ea0-f175.google.com with SMTP id o10so677786eaj.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 15:42:36 -0700 (PDT)
+In-Reply-To: <51408FB9.90808@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio <linux-iio@vger.kernel.org>, dan.carpenter@oracle.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>
+To: Rob Herring <robherring2@gmail.com>
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
 
-Lars,
+Rob,
 
-On Wed, Mar 13, 2013 at 11:40 AM, Lars-Peter Clausen <lars@metafoo.de> wrote:
->> Yes, but that's a different issue and to be honest I didn't even realize
->> that the patch was trying to fix this as well. In my opinion it's best to
->> split this up into two patches one which fixes the OF dependency. The other
->> fixing the timeout issue. Cause there is more to it than just changing the type.
+On 03/13/2013 03:39 PM, Rob Herring wrote:
+> I fail to see what the hack is. The order of interrupt properties must
+> be defined by the binding. interrupt-names is auxiliary data and must
+> not be required by an OS.
 
-Sounds fair to split into two patches.  ;)
+It is clear that the order of the interrupts must be defined by the
+bindings. But how useful <resource>-names properties are when we
+cannot define them as required ? If an OS cannot rely on them then
+it must use some other, reliable, method to identify the resources,
+e.g. by hard coding the indexes. If we have to do it then why even
+bother with the <resource>-names properties ? I can see interrupt-names
+property specified as required in at least 2 bindings' documentation
+and all bindings having reg-names property define it as required.
+Are they wrong them ?
 
+Sorry to bother about perhaps obvious things, but I'm really confused
+now.
 
->> wait_for_completion_interruptible_timeout() may return
->>       1) 0, if there was a timeout, waiting for the completion
->>       2) > 0, if the completion was completeted, the returned value
->>          the  remaining time.
->>       3) < 0, If it was interrupt while waiting for the completion
->>
->> The code currently only handles 1) and 2), but it also needs to handle 3).
->> Since the completion has not been completed in case 3.
->>
->> E.g. something like this should work:
->>
->>       if (timeout == 0)
->>               return -ETIMEDOUT;
->>       else if(timeout < 0)
->>               return timeout;
->>       return 0;
+--
 
-Good catch.  Yes, that looks right to me.
-
-
-> I just saw, there is another issue related to this. The driver should call
-> INIT_COMPLETION(&info->completion) before starting the conversion. Otherwise
-> there may be a problem if we got interrupted while waiting for the
-> interrupt. E.g. imagine the following sequence.
->
-> 1) Start conversion
-> 2) Wait for completion
-> 3) Abort waiting
-> 4) Interrupt kicks in and marks the completion as done
->
-> Now if another conversion is started the completion will already be
-> completed and wait_for_completion_interruptible_timeout() will return right
-> away without waiting for the conversion to be finished.
-
-Another good catch.  ...but are you sure that your solution is enough?
- It seems like we'd also want to lock a spinlock in the ISR and to
-consider the completion protected by the lock.  If we don't do that it
-seems like you could get an interrupt _right_ after you re-init the
-completion.
-
-Notes:
-* I thought we could perhaps just disable the interrupt after
-wait_for_completion_interruptible_timeout() returns, but I'm not sure
-that's guaranteed to work in a multiprocessor environment.
-
-* I don't see any other iio/adc drivers using a spin_lock so maybe
-there's a better way to do it (or I'm misunderstanding).  A quick scan
-shows only two other iio/adc drivers even use request_irq().
-at91_adc.c appears to suffer from similar problems to what we're
-discussing here (only init the completion in probe).  ad_sigma_delta
-at lest calls INIT_COMPLETION before waiting but seems like it still
-has a small window of race (I'd have to dig more to be sure).
-
-
-Perhaps someone will tell me that I'm just confused.  ;)
-
--Doug
+Thanks,
+Sylwester
