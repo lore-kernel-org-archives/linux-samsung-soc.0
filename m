@@ -1,56 +1,34 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 3/3] ARM: EXYNOS5250: Register architected timers
-Date: Thu, 14 Mar 2013 23:07:06 +0400
-Message-ID: <51421FDA.8070507@cogentembedded.com>
-References: <1363222742-15220-1-git-send-email-agraf@suse.de> <1363222742-15220-4-git-send-email-agraf@suse.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung fixes for v3.9
+Date: Thu, 14 Mar 2013 22:59:21 +0000
+Message-ID: <201303142259.21663.arnd@arndb.de>
+References: <093101ce1fa8$840c52d0$8c24f870$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:37828 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752530Ab3CNTHx (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.10]:58350 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753175Ab3CNW7d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Mar 2013 15:07:53 -0400
-Received: by mail-lb0-f182.google.com with SMTP id gg6so2112766lbb.41
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Mar 2013 12:07:51 -0700 (PDT)
-In-Reply-To: <1363222742-15220-4-git-send-email-agraf@suse.de>
+	Thu, 14 Mar 2013 18:59:33 -0400
+In-Reply-To: <093101ce1fa8$840c52d0$8c24f870$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Graf <agraf@suse.de>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello.
+On Wednesday 13 March 2013, Kukjin Kim wrote:
+> Here is Samsung fixes for v3.9.
+> 
+> Please pull from:
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> v3.9-samsung-fixes-1
+> 
+> There are two commits for fix pl330 dma clkdev entries on s5pv210 and generic
+> dma binding support on exynos stuff.
 
-On 14-03-2013 4:59, Alexander Graf wrote:
+Pulled into the fixes branch, thanks!
 
-> When running on an exynos 5250 SoC, we don't initialize the architected
-> timers. The chip however supports architected timers.
-
-> When we don't initialize them, KVM will try to access them and run into
-> NULL pointer dereferences attempting to do so.
-
-> This patch is really more of a hack than a real fix, but does get me
-> working with KVM on Arndale.
-
-> Signed-off-by: Alexander Graf <agraf@suse.de>
-> ---
->   arch/arm/mach-exynos/mct.c |    4 ++++
->   1 file changed, 4 insertions(+)
-
-> diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-> index c9d6650..eefb8af 100644
-> --- a/arch/arm/mach-exynos/mct.c
-> +++ b/arch/arm/mach-exynos/mct.c
-> @@ -482,4 +482,8 @@ void __init exynos4_timer_init(void)
->   	exynos4_timer_resources();
->   	exynos4_clocksource_init();
->   	exynos4_clockevent_init();
-> +
-> +	if (soc_is_exynos5250()) {
-> +		arch_timer_of_register();
-> +	}
-
-    {} not needed here. scripts/checkpatch.pl should probabl;y warn about it.
-
-WBR, Sergei
+	Arnd
