@@ -1,87 +1,118 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 2/2] usb: dwc3: exynos: use clk_prepare_enable and
- clk_disable_unprepare
-Date: Thu, 14 Mar 2013 12:53:20 +0200
-Message-ID: <20130314105320.GH32369@arwen.pp.htv.fi>
-References: <1363257898-17504-1-git-send-email-gautam.vivek@samsung.com>
- <1363257898-17504-3-git-send-email-gautam.vivek@samsung.com>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6lXr1rPCNTf1w0X8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:54258 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757178Ab3CNKxe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Mar 2013 06:53:34 -0400
-Content-Disposition: inline
-In-Reply-To: <1363257898-17504-3-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alexander Graf <agraf@suse.de>
+Subject: Re: [PATCH v2] USB: ehci-s5p: Fix phy reset
+Date: Thu, 14 Mar 2013 13:01:38 +0100
+Message-ID: <6F88F86A-8C8E-4C2E-BD15-14C788FC6E48@suse.de>
+References: <1363219179-14900-1-git-send-email-agraf@suse.de> <CAJuYYwRYp0dvf=veg1UVAj8rJ2CdpFy32LUE6zeq1sH9FbZ=KQ@mail.gmail.com>
+Mime-Version: 1.0 (Apple Message framework v1278)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJuYYwRYp0dvf=veg1UVAj8rJ2CdpFy32LUE6zeq1sH9FbZ=KQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dmueller@suse.de, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Doug Anderson <dianders@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, dianders@chromium.org
 
---6lXr1rPCNTf1w0X8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 14.03.2013, at 05:19, Thomas Abraham wrote:
 
-On Thu, Mar 14, 2013 at 04:14:58PM +0530, Vivek Gautam wrote:
-> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
-> calls as required by common clock framework.
->=20
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> CC: Felipe Balbi <balbi@ti.com>
-> CC: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  drivers/usb/dwc3/dwc3-exynos.c |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exyno=
-s.c
-> index 66ca9ac..b03f609 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -129,7 +129,7 @@ static int dwc3_exynos_probe(struct platform_device *=
-pdev)
->  	exynos->dev	=3D dev;
->  	exynos->clk	=3D clk;
-> =20
-> -	clk_enable(exynos->clk);
-> +	clk_prepare_enable(exynos->clk);
+> On 14 March 2013 05:29, Alexander Graf <agraf@suse.de> wrote:
+>> On my Exynos 5 based Arndale system, I need to pull the reset line down
+>> and then let it go up again to actually perform a reset. Without that
+>> reset, I can't find any USB hubs on my bus, rendering the USB controller
+>> useless.
+>> 
+>> We also only need to reset the line after the phy node has been found.
+>> This way we don't accidently reserve the vbus GPIO pin, but later on
+>> defer the creation of our controller, because the phy device tree node
+>> hasn't been probed yet.
+>> 
+>> This patch implements the above logic, making EHCI and OHCI work on
+>> Arndale systems for me.
+>> 
+>> Signed-off-by: Alexander Graf <agraf@suse.de>
+>> CC: Vivek Gautam <gautam.vivek@samsung.com>
+>> CC: Jingoo Han <jg1.han@samsung.com>
+>> CC: Alan Stern <stern@rowland.harvard.edu>
+>> CC: Kukjin Kim <kgene.kim@samsung.com>
+>> CC: Felipe Balbi <balbi@ti.com>
+>> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> CC: Doug Anderson <dianders@chromium.org>
+>> 
+>> ---
+>> 
+>> v1 -> v2:
+>> 
+>>  - remove gpio_free call
+>>  - move reset logic after phy node search
+>> 
+>> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+>> index 20ebf6a..b29b2b8 100644
+>> --- a/drivers/usb/host/ehci-s5p.c
+>> +++ b/drivers/usb/host/ehci-s5p.c
+>> @@ -103,9 +103,14 @@ static void s5p_setup_vbus_gpio(struct platform_device *pdev)
+>>        if (!gpio_is_valid(gpio))
+>>                return;
+>> 
+>> -       err = gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "ehci_vbus_gpio");
+>> -       if (err)
+>> +       /* reset pulls the line down, then up again */
+>> +       err = gpio_request_one(gpio, GPIOF_OUT_INIT_LOW, "ehci_vbus_gpio");
+>> +       if (err) {
+>>                dev_err(&pdev->dev, "can't request ehci vbus gpio %d", gpio);
+>> +               return;
+>> +       }
+>> +       mdelay(1);
+>> +       __gpio_set_value(gpio, 1);
+>> }
+>> 
+>> static u64 ehci_s5p_dma_mask = DMA_BIT_MASK(32);
+>> @@ -131,8 +136,6 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+>>        if (!pdev->dev.coherent_dma_mask)
+>>                pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+>> 
+>> -       s5p_setup_vbus_gpio(pdev);
+>> -
+>>        s5p_ehci = devm_kzalloc(&pdev->dev, sizeof(struct s5p_ehci_hcd),
+>>                                GFP_KERNEL);
+>>        if (!s5p_ehci)
+>> @@ -152,6 +155,8 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+>>                s5p_ehci->otg = phy->otg;
+>>        }
+>> 
+>> +       s5p_setup_vbus_gpio(pdev);
+>> +
+>>        s5p_ehci->dev = &pdev->dev;
+>> 
+>>        hcd = usb_create_hcd(&s5p_ehci_hc_driver, &pdev->dev,
+> 
+> Hi Alexander,
+> 
+> This change, though it works for Exynos5250 based Arndale board, does
+> not actually seem correct. On Arndale board, the on-board 4-port usb
+> hub is self powered and hence the vbus 'enable' gpio line from
+> Exynos5250 SoC is instead used as a "reset" signal for the on-board
+> usb hub (and not as the vbus enable signal).
+> 
+> Whereas, the driver uses the gpio used in 's5p_setup_vbus_gpio'
+> function as just a mechanism to enable vbus for downstream devices. So
+> the driver should not be modified as above to handle the board
+> specific behavior.
+> 
+> Instead, what needs to be done is, remove the "samsung,vbus-gpio"
+> property from the usb2.0 node in dts files (this property is optional)
+> for Arndale board. Then, during the machine_init, perform the reset
+> sequencing as required.
+> 
+> Ideally, the reset sequencing for the on-board AX88760 usb hub should
+> have been handled in the driver for this device. I have not checked if
+> there is a driver for this in the kernel.
 
-eventually we need to pass this clock handling to dwc3/core.c. Just make
-sure it's optional since not all platforms need it.
+I can see your point, but as I mentioned earlier there seems to be some timing issue here. By simply doing the reset a few ms earlier (in the first probe, before the driver detects that it needs to defer probing), I already can't find the hub on the bus later.
 
-I guess the best way would be to handle clocks via
-->runtime_suspend()/->runtime_resume() ??
+So I'm assuming that the same thing would also happen if I put it even earlier in machine init.
 
---=20
-balbi
+The change in this patch actually does a reset even on non-Arndale boards. By taking away power and returning power to the line, the chip will most likely have reset :). So even on non-Arndale boards, this should get the USB phy into a clean state regardless of where the bootloader left it, right?
 
---6lXr1rPCNTf1w0X8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRQawgAAoJEIaOsuA1yqRERc8P/jGz7Czv57nw66tpzFV18XaX
-ckMJpC8gcdZYnSKxejFs6sPYkXrYgQajq9FqfAxRGIoYL1ki1DhdJRPCCKsTNBQq
-d42dsESXIFaX+F04SlZRQaDoxYnuNtNz76v9szcJyPiy1uyZgQiJq5h2BpTDWRzZ
-bQJqNKbCnZ3tsk1mJ3l81xmtJ9EpZ3jua+IWX04cARU/u7SaAFmL//eRZgmnx9Jz
-VEdudP/T37xhqeR1R1Q9D/OT8wWxpKtMNcvI9UC6EWBpqq/TuYGR22uc2TLW3Jpz
-Z4LYfdHn8rbvyS6Nz1fVQppm4XrZxCmm4rqS7g4GG5aaFqA5JcD9TZ57UYQTW+o2
-GN8rr74dSmVn8fPhiiOmuT7rX3/93YsdMtSKg+nJUasDL7Cp7TVSAQnG5r+mMccO
-11z+4RgttYNf8be3TUtXznZooGy88sZrZLc1flPcalsLps7xQ7SiQhDbMwQyFDvI
-J55FnStR4pa/tpaprr5sufFH65ul6bRRU49PyElvyq9r5ZaxlIt6YzqNOfrIRX0t
-S1+yX16jUxD918AlSmhKodFA6Vga6AN27RNHCXO1VZ8zXI51bZJvkYxebkwv5+Ip
-xf8pOCXm7j/BgCYEFz9iKAP0LNz5aVkpAGSLeboKjD7YZesv5AgE9CF21qnwqeVL
-x+Ttdo4qCETDN75/g+8v
-=6rTS
------END PGP SIGNATURE-----
-
---6lXr1rPCNTf1w0X8--
+Alex
