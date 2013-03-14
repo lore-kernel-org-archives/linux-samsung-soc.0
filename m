@@ -1,93 +1,285 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 6/7] ARM: SAMSUNG: use clk_prepare_enable in samsung-time
-Date: Thu, 14 Mar 2013 00:16:34 +0100
-Message-ID: <201303140016.35152.heiko@sntech.de>
-References: <201303120141.31262.heiko@sntech.de> <201303120145.21072.heiko@sntech.de> <CADTbHxq-gxoN9HKkjPsZ5uBt7PhrvO8XdQdmAyscOA+xPy9Z7A@mail.gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [RFC 01/12] media: s5p-fimc: modify existing mdev to use common
+ pipeline
+Date: Thu, 14 Mar 2013 01:01:32 +0100
+Message-ID: <5141135C.8010100@gmail.com>
+References: <1362570838-4737-1-git-send-email-shaik.ameer@samsung.com> <1362570838-4737-2-git-send-email-shaik.ameer@samsung.com> <513D027A.10004@gmail.com> <CAOD6ATo3vSCBN1u7wWBP22xDqVR1qEpae6ksg9Tj_ie=hoKOJw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:35329 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932166Ab3CMXQm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Mar 2013 19:16:42 -0400
-In-Reply-To: <CADTbHxq-gxoN9HKkjPsZ5uBt7PhrvO8XdQdmAyscOA+xPy9Z7A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <CAOD6ATo3vSCBN1u7wWBP22xDqVR1qEpae6ksg9Tj_ie=hoKOJw@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Jangra <jangra.pankaj9@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-Hi,
+Hi Shaik,
 
-Am Mittwoch, 13. M=E4rz 2013, 17:59:04 schrieb Pankaj Jangra:
-> Hi,
->=20
-> On Tue, Mar 12, 2013 at 6:15 AM, Heiko St=FCbner <heiko@sntech.de> wr=
-ote:
-> > The common clock framework expects clocks to be prepared
-> > before they are enabled.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >=20
-> >  arch/arm/plat-samsung/samsung-time.c |    6 +++---
-> >  1 files changed, 3 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/arch/arm/plat-samsung/samsung-time.c
-> > b/arch/arm/plat-samsung/samsung-time.c index f899cbc..6ebb851 10064=
-4
-> > --- a/arch/arm/plat-samsung/samsung-time.c
-> > +++ b/arch/arm/plat-samsung/samsung-time.c
-> > @@ -355,7 +355,7 @@ static void __init samsung_timer_resources(void=
-)
-> >=20
-> >         if (IS_ERR(timerclk))
-> >        =20
-> >                 panic("failed to get timers clock for timer");
->=20
-> Also how about calling the clk_prepare_enable() only if the clk_get()
-> call is a sucess? Though clk framework will take care of it. Just
-> thinking even to avoid that call if clk_get() fails since you are
-> modifying the code.
+On 03/11/2013 07:41 AM, Shaik Ameer Basha wrote:
+> Hi Sylwester,
+>
+> Thanks for the review.
+> Actually I know this is the important patch in this series and I
+> wanted us to have
+> enough time to discuss on this patch. That's why I posted this patch
+> series in hurry.
 
-I remember there was a discussion about panic vc error handling when th=
-is was=20
-introduced but I don't remember the specifics, but it seems they agreed=
- to do=20
-it this way with letting the kernel panic when the clock is missing.
+Sure, I'm glad it was posted early.
 
+> I will remove this patch from the exynos5-mdev series and will send this as a
+> separate patch from next time.
 
-Also the current plan seems to replace the clocksource and pwm drivers =
-that=20
-occupy the same register space with a driver handling both, making the =
-pwm=20
-specific clocks obsolete and only the timers clock will remain. So this=
- was=20
-merely meant as a fixup when using the clock changes with the current=20
-clocksource code.
+OK.
 
+> please find my review comments inline..
+>
+>
+> On Mon, Mar 11, 2013 at 3:30 AM, Sylwester Nawrocki
+> <sylvester.nawrocki@gmail.com>  wrote:
+>> On 03/06/2013 12:53 PM, Shaik Ameer Basha wrote:
+>>>
+>>> This patch modifies the current fimc_pipeline to exynos_pipeline,
+>>
+>> I think we could leave it as fimc_pipeline, exynos_pipeline seems
+>> too generic to me.
+>
+> no issues, if we are going to strict to this common pipeline implementation
+> definitely we can retain fimc_pipeline or we can use some other name which
+> is not too generic.
+...
+>>>    static int fimc_capture_hw_init(struct fimc_dev *fimc)
+>>>    {
+>>>          struct fimc_ctx *ctx = fimc->vid_cap.ctx;
+>>> -       struct fimc_pipeline *p =&fimc->pipeline;
+>>> +       struct exynos_pipeline *p =&fimc->pipeline;
+>>>
+>>>          struct fimc_sensor_info *sensor;
+>>>          unsigned long flags;
+>>> +       struct v4l2_subdev *sd;
+>>>          int ret = 0;
+>>>
+>>> -       if (p->subdevs[IDX_SENSOR] == NULL || ctx == NULL)
+>>> +       sd = exynos_pipeline_get_subdev(fimc->pipeline_ops,
+>>> +                                       get_subdev_sensor, p);
+>>
+>>
+>> Hmm, it feels it is going wrong path this way. I would keep changes
+>> to the s5p-fimc driver as small as possible. And the modules that
+>> are shared across the exynos4 and exynos5 driver should use generic
+>> media graph walking routines where possible.
+>
+> The only problem here is, the fimc_subdev_index enum is specific to
+> fimc-mdevice.
+> and why should we expose one particular media-device driver specific
+> enums to other drivers.
 
-> > -       clk_enable(timerclk);
-> > +       clk_prepare_enable(timerclk);
-> >=20
-> >         sprintf(devname, "s3c24xx-pwm.%lu", event_id);
-> >         s3c_device_timer[event_id].id =3D event_id;
-> >=20
-> > @@ -369,7 +369,7 @@ static void __init samsung_timer_resources(void=
-)
-> >=20
-> >         if (IS_ERR(tdiv_event))
-> >        =20
-> >                 panic("failed to get pwm-tdiv clock for event timer=
-");
->=20
-> Same here...
->=20
-> > -       clk_enable(tin_event);
-> > +       clk_prepare_enable(tin_event);
-> >=20
-> >         sprintf(devname, "s3c24xx-pwm.%lu", source_id);
->=20
-> Regards,
-> Pankaj Jangra
+OK, I missed the point this enum is in a public header that would be
+reused by other media drivers.
+
+> My Idea was to remove all media device specific structures, macros
+> from fimc, fimc-lite, mipi-csis and fimc-is drivers.
+
+Of course we cannot remove them all, as video node drivers need be
+able to control the pipeline. And I'm not very enthusiastic about
+creating more dependencies between exynos4 and exynos5 drivers.
+But I guess a common video pipeline object definition cannot be
+avoided as FIMC-LITE is reused by exynos4 and exynos5 subsystems.
+
+>>> +       if (sd == NULL || ctx == NULL)
+>>>                  return -ENXIO;
+>>>          if (ctx->s_frame.fmt == NULL)
+>>>                  return -EINVAL;
+>>>
+>>> -       sensor = v4l2_get_subdev_hostdata(p->subdevs[IDX_SENSOR]);
+>>> +       sensor = v4l2_get_subdev_hostdata(sd);
+>>>
+>>>          spin_lock_irqsave(&fimc->slock, flags);
+>>>          fimc_prepare_dma_offset(ctx,&ctx->d_frame);
+>>
+>> ...
+>>>
+>>> @@ -486,9 +491,12 @@ static struct vb2_ops fimc_capture_qops = {
+>>>    int fimc_capture_ctrls_create(struct fimc_dev *fimc)
+>>>    {
+>>>          struct fimc_vid_cap *vid_cap =&fimc->vid_cap;
+>>>
+>>> -       struct v4l2_subdev *sensor = fimc->pipeline.subdevs[IDX_SENSOR];
+>>> +       struct v4l2_subdev *sensor;
+>>>          int ret;
+>>>
+>>> +       sensor = exynos_pipeline_get_subdev(fimc->pipeline_ops,
+>>> +
+>>> get_subdev_sensor,&fimc->pipeline);
+>>>
+>>> +
+>>>          if (WARN_ON(vid_cap->ctx == NULL))
+>>>                  return -ENXIO;
+>>>          if (vid_cap->ctx->ctrls.ready)
+>>> @@ -513,7 +521,7 @@ static int fimc_capture_open(struct file *file)
+>>>
+>>>          dbg("pid: %d, state: 0x%lx", task_pid_nr(current), fimc->state);
+>>>
+>>> -       fimc_md_graph_lock(fimc);
+>>> +       exynos_pipeline_graph_lock(fimc->pipeline_ops,&fimc->pipeline);
+>>
+>>
+>> Hmm, this look pretty scary to me. But I suspect this change is not
+>> needed at all. The graph lock is _not_ the pipeline lock. It protects
+>> all media entities registered to the media device, and links between
+>> them. Not only entities linked into specific video processing pipeline
+>> at a moment.
+>
+> Sorry, here the function name doesn't suits its implementation.
+> Actually  exynos_pipeline_graph_lock() does what exactly
+> fimc_md_graph_lock() does.
+> I thought of having one common function across all the drivers to use
+> graph lock/unlock functionality.
+
+I'm not convinced we need something like this at the exynos drivers
+level. We could add something to the v4l2 core, e.g. functions taking
+struct media_entity as an argument. No need for adding extra levels
+of indirection.
+
+>>> -/* Called with the media graph mutex held */
+>>> -static struct v4l2_subdev *__find_remote_sensor(struct media_entity *me)
+>>> -{
+>>> -       struct media_pad *pad =&me->pads[0];
+>>>
+>>> -       struct v4l2_subdev *sd;
+>>> -
+>>> -       while (pad->flags&   MEDIA_PAD_FL_SINK) {
+>>>
+>>> -               /* source pad */
+>>> -               pad = media_entity_remote_source(pad);
+>>> -               if (pad == NULL ||
+>>> -                   media_entity_type(pad->entity) !=
+>>> MEDIA_ENT_T_V4L2_SUBDEV)
+>>> -                       break;
+>>> -
+>>> -               sd = media_entity_to_v4l2_subdev(pad->entity);
+>>> -
+>>> -               if (sd->grp_id == GRP_ID_FIMC_IS_SENSOR)
+>>> -                       return sd;
+>>> -               /* sink pad */
+>>> -               pad =&sd->entity.pads[0];
+>>>
+>>> -       }
+>>> -       return NULL;
+>>> -}
+>>
+>>
+>> What's wrong with this function ? Why doesn't it work for you ?
+>> I think we should drop direct usage of fimc->pipeline->subdevs[IDX_SENSOR]
+>> instead. The sensor group IDs should probably be moved to some common
+>> header file.
+>>
+>
+> In case of exynos4, fimc-lite only used with fimc-is. That means it only
+> uses the FIMC IS SENSOR. but in case of exynos5, fimc-lite can use both
+
+Not really, FIMC-LITE does work without FIMC-IS. I tested it with external
+sensors with an embedded ISP. So it is pretty much same as FIMC in terms
+of video capture from external sensors.
+
+The function above is only used when FIMC-LITE is used as a subdev, and
+the FIMC video node driver creates and owns the fimc_pipeline object.
+
+Accessing the pipeline->subdevs[] array from within FIMC-LITE would have
+been racy.
+
+> GRP_ID_SENSOR and GRP_ID_FIMC_IS_SENSOR. Even this group ID's are
+> specific to individual media device drivers.
+
+That's true. When a subdev is registered to v4l2_device its driver usually
+assigns grp_id as it sees fit.
+
+> Here the idea is driver need not know about which sensor is connected to the
+> pipeline, it can be IS sensor or normal sensor. It can use the common pipeline
+> api's to get the sensor sub-dev.
+>
+> Or as you suggested, we can move all this GRP_ID's to some common location
+> and change the checking in this function to
+>          -  if (sd->grp_id == GRP_ID_FIMC_IS_SENSOR)
+>          + if ((sd->grp_id == GRP_ID_FIMC_IS_SENSOR) || (sd->grp_id ==
+> GRP_ID_SENSOR))
+>
+> My only idea was to reuse the fimc pipeline structure (struct
+> fimc_pipeline) across
+> different media device drivers. Having a hard-coded max array index
+> which is specific to
+> one media device driver will not help it to be reused by multiple guys.
+>
+> I may be missing some details here. Can you please suggest a better
+> way to remove this dependency.
+
+OK, let's try with the get_subdev pipeline operation for now.
+
+>>> diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
+>>> b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
+>>> index fc93fad..938cc56 100644
+>>> --- a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
+>>> +++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
+>>> @@ -36,6 +36,8 @@
+>>>    #include "fimc-mdevice.h"
+>>>    #include "mipi-csis.h"
+>>>
+>>> +static struct fimc_md *g_fimc_mdev;
+>>
+>>
+>> Hm, this is pretty ugly. Can you explain why it is needed ?
+>
+> I was expecting this.
+> Actually i want to associate this fimc_mdev with this exynos_pipeline.
+> But as the pipeline init happens from the driver context (fimc,
+> fimc-lite), I should
+> have a way to access struct fimc_md in pipeline init function. That's
+> why I stored a
+> global reference of struct fimc_md here.
+> I think, I need to find a better way to achieve same functionality if needed. :)
+
+The struct fimc_pipeline was meant as a collection of subdevs only.
+Why do you need a back reference to struct fimc_md ? To be able to
+control one pipeline from within the other ?
+
+Single entities should be aware of the whole pipeline and the media
+device driver internals as little as possible.
+
+...
+>>> +       struct v4l2_subdev *(*get_subdev_sensor)(struct exynos_pipeline *p);
+>>> +       struct v4l2_subdev *(*get_subdev_csis)(struct exynos_pipeline *p);
+>>
+>> No, we should instead use generic media graph walking routines in the
+>> shared drivers (FIMC-LITE, MIPI-CSIS). FIMC driver could be making
+>> certain assumptions about it's related media device driver. These
+>> drivers are contained in a single module anyway.
+>
+> Cant we expose some macros for subdevs in a common header and implement a
+> get_subdev function in common pipeline to achieve this.
+>
+> enum in /include/media/s5p_fimc.h file. Something like
+>
+> EXYNOS_SD_SENSOR,
+> EXYNOS_SD_MIPI_CSIS,
+> ...
+> ... etc.
+>
+> pipeline_ops->get_subdev(pipeline, EXYNOS_SD_SENSOR);
+>
+> actually, the implementation of get_subdev uses the media device specific
+> structures which stored the subdev pointers internally by using  generic media
+> graph walking routines itself. so there should not be any issues with using the
+> common pipeline api's also.
+
+This option might cause less issues WRT locking. Let's try this and see how
+it looks. I suppose we could use GRP_IDs as the subdev identifiers, after
+adding EXYNOS_SD_* prefix or something similar.
+
+> [Or]
+>
+> as you already suggested, we can have some common group id's exposed
+> in a common header file, and use the generic media graph walking
+> routines in each driver to achieve this functionality.
+
+Regards,
+Sylwester
