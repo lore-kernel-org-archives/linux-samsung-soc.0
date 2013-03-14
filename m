@@ -1,22 +1,24 @@
-From: Alexander Graf <agraf@suse.de>
+From: Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>
 Subject: Re: [PATCH v2] USB: ehci-s5p: Fix phy reset
-Date: Thu, 14 Mar 2013 13:01:38 +0100
-Message-ID: <6F88F86A-8C8E-4C2E-BD15-14C788FC6E48@suse.de>
-References: <1363219179-14900-1-git-send-email-agraf@suse.de> <CAJuYYwRYp0dvf=veg1UVAj8rJ2CdpFy32LUE6zeq1sH9FbZ=KQ@mail.gmail.com>
+Date: Thu, 14 Mar 2013 13:04:00 +0100
+Message-ID: <0A9719D9-5957-44B8-8466-F0F454588B2C@suse.de>
+References: <1363219179-14900-1-git-send-email-agraf@suse.de> <CAD=FV=UyCUMZss36Fw3VZSGgi56CToewEaOjUo95z6=vJreysg@mail.gmail.com>
 Mime-Version: 1.0 (Apple Message framework v1278)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJuYYwRYp0dvf=veg1UVAj8rJ2CdpFy32LUE6zeq1sH9FbZ=KQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dmueller@suse.de, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=UyCUMZss36Fw3VZSGgi56CToewEaOjUo95z6=vJreysg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmueller-l3A5Bk7waGM@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
-On 14.03.2013, at 05:19, Thomas Abraham wrote:
+On 14.03.2013, at 04:38, Doug Anderson wrote:
 
-> On 14 March 2013 05:29, Alexander Graf <agraf@suse.de> wrote:
+> Alexander,
+> 
+> On Wed, Mar 13, 2013 at 4:59 PM, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org> wrote:
 >> On my Exynos 5 based Arndale system, I need to pull the reset line down
 >> and then let it go up again to actually perform a reset. Without that
 >> reset, I can't find any USB hubs on my bus, rendering the USB controller
@@ -30,14 +32,14 @@ On 14.03.2013, at 05:19, Thomas Abraham wrote:
 >> This patch implements the above logic, making EHCI and OHCI work on
 >> Arndale systems for me.
 >> 
->> Signed-off-by: Alexander Graf <agraf@suse.de>
->> CC: Vivek Gautam <gautam.vivek@samsung.com>
->> CC: Jingoo Han <jg1.han@samsung.com>
->> CC: Alan Stern <stern@rowland.harvard.edu>
->> CC: Kukjin Kim <kgene.kim@samsung.com>
->> CC: Felipe Balbi <balbi@ti.com>
->> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> CC: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>
+>> CC: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> CC: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> CC: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+>> CC: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> CC: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+>> CC: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+>> CC: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 >> 
 >> ---
 >> 
@@ -45,74 +47,46 @@ On 14.03.2013, at 05:19, Thomas Abraham wrote:
 >> 
 >>  - remove gpio_free call
 >>  - move reset logic after phy node search
->> 
->> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
->> index 20ebf6a..b29b2b8 100644
->> --- a/drivers/usb/host/ehci-s5p.c
->> +++ b/drivers/usb/host/ehci-s5p.c
->> @@ -103,9 +103,14 @@ static void s5p_setup_vbus_gpio(struct platform_device *pdev)
->>        if (!gpio_is_valid(gpio))
->>                return;
->> 
->> -       err = gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "ehci_vbus_gpio");
->> -       if (err)
->> +       /* reset pulls the line down, then up again */
->> +       err = gpio_request_one(gpio, GPIOF_OUT_INIT_LOW, "ehci_vbus_gpio");
->> +       if (err) {
->>                dev_err(&pdev->dev, "can't request ehci vbus gpio %d", gpio);
->> +               return;
->> +       }
->> +       mdelay(1);
->> +       __gpio_set_value(gpio, 1);
->> }
->> 
->> static u64 ehci_s5p_dma_mask = DMA_BIT_MASK(32);
->> @@ -131,8 +136,6 @@ static int s5p_ehci_probe(struct platform_device *pdev)
->>        if (!pdev->dev.coherent_dma_mask)
->>                pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
->> 
->> -       s5p_setup_vbus_gpio(pdev);
->> -
->>        s5p_ehci = devm_kzalloc(&pdev->dev, sizeof(struct s5p_ehci_hcd),
->>                                GFP_KERNEL);
->>        if (!s5p_ehci)
->> @@ -152,6 +155,8 @@ static int s5p_ehci_probe(struct platform_device *pdev)
->>                s5p_ehci->otg = phy->otg;
->>        }
->> 
->> +       s5p_setup_vbus_gpio(pdev);
->> +
->>        s5p_ehci->dev = &pdev->dev;
->> 
->>        hcd = usb_create_hcd(&s5p_ehci_hc_driver, &pdev->dev,
 > 
-> Hi Alexander,
-> 
-> This change, though it works for Exynos5250 based Arndale board, does
-> not actually seem correct. On Arndale board, the on-board 4-port usb
-> hub is self powered and hence the vbus 'enable' gpio line from
-> Exynos5250 SoC is instead used as a "reset" signal for the on-board
-> usb hub (and not as the vbus enable signal).
-> 
-> Whereas, the driver uses the gpio used in 's5p_setup_vbus_gpio'
-> function as just a mechanism to enable vbus for downstream devices. So
-> the driver should not be modified as above to handle the board
-> specific behavior.
-> 
-> Instead, what needs to be done is, remove the "samsung,vbus-gpio"
-> property from the usb2.0 node in dts files (this property is optional)
-> for Arndale board. Then, during the machine_init, perform the reset
-> sequencing as required.
-> 
-> Ideally, the reset sequencing for the on-board AX88760 usb hub should
-> have been handled in the driver for this device. I have not checked if
-> there is a driver for this in the kernel.
+> Seems fine to me.  I guess the earlier problem you wrote about was the
+> probe failure, then?  
 
-I can see your point, but as I mentioned earlier there seems to be some timing issue here. By simply doing the reset a few ms earlier (in the first probe, before the driver detects that it needs to defer probing), I already can't find the hub on the bus later.
+Well, the problem I wrote about was that when I do
 
-So I'm assuming that the same thing would also happen if I put it even earlier in machine init.
+  * probe
+    -> reset phy
+  * probe gets deferred
+  * deferred probe
+    -> can't reset phy because the pin is already in use
 
-The change in this patch actually does a reset even on non-Arndale boards. By taking away power and returning power to the line, the chip will most likely have reset :). So even on non-Arndale boards, this should get the USB phy into a clean state regardless of where the bootloader left it, right?
+Then I get the same breakage again. However, if I do
+
+  * probe
+  * probe gets deferred
+  * deferred probe
+    -> reset phy
+
+Then everything works just fine.
+
+> I think that the reason I don't tend to get the
+> probe failure is that I've got my device tree ordered differently so
+> that the phy gets initted in a different order.
+
+Odd - I get the deferral regardless of how I order my device tree :).
 
 
 Alex
+
+> 
+> I'll send up the devm_ patch atop this.
+> 
+> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> 
+> Thanks!  :)
+> 
+> -Doug
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
