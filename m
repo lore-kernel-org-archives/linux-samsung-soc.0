@@ -1,32 +1,46 @@
 From: Alexander Graf <agraf@suse.de>
-Subject: [PATCH 0/3] ARM: EXYNOS5250: Enable KVM support
-Date: Thu, 14 Mar 2013 01:58:59 +0100
-Message-ID: <1363222742-15220-1-git-send-email-agraf@suse.de>
+Subject: [PATCH 1/3] ARM: EXYNOS5250: dts: Declare the gic as a15 compatible
+Date: Thu, 14 Mar 2013 01:59:00 +0100
+Message-ID: <1363222742-15220-2-git-send-email-agraf@suse.de>
+References: <1363222742-15220-1-git-send-email-agraf@suse.de>
 Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <1363222742-15220-1-git-send-email-agraf@suse.de>
 Sender: kvm-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-While trying to run 3.9 on Arndale with KVM, I ran across a few minor
-issues. These patches resolve them, but I'm not 100% sure they are
-correct.
+The GIC in the exynos5250 SoC is A15 compliant. Show this through
+the device tree, so that we can use the GIC for KVM.
 
-I'd be very happy if someone who's deeply into the respective code
-paths could take a look here and either ack the patches or suggest
-alternative patches to fix the issues at hand.
+Also add the respective A15 memory regions and interrupt links.
 
-Alex
+Signed-off-by: Alexander Graf <agraf@suse.de>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Alexander Graf (3):
-  ARM: EXYNOS5250: dts: Declare the gic as a15 compatible
-  ARM: EXYNOS5250: dts: Add architected timer nodes
-  ARM: EXYNOS5250: Register architected timers
-
- arch/arm/boot/dts/exynos5250.dtsi |   18 +++++++++++++++---
- arch/arm/mach-exynos/mct.c        |    4 ++++
- 2 files changed, 19 insertions(+), 3 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index b1ac73e..768cb42 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -47,10 +47,14 @@
+ 	};
+ 
+ 	gic:interrupt-controller@10481000 {
+-		compatible = "arm,cortex-a9-gic";
++		compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+ 		#interrupt-cells = <3>;
+ 		interrupt-controller;
+-		reg = <0x10481000 0x1000>, <0x10482000 0x2000>;
++		reg = <0x10481000 0x1000>,
++		      <0x10482000 0x1000>,
++		      <0x10484000 0x2000>,
++		      <0x10486000 0x2000>;
++		interrupts = <1 9 0xf04>;
+ 	};
+ 
+ 	combiner:interrupt-controller@10440000 {
 -- 
 1.7.10.4
 
