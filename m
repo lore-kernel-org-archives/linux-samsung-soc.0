@@ -1,120 +1,40 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v2] USB: ehci-s5p: Fix phy reset
-Date: Thu, 14 Mar 2013 09:49:11 +0530
-Message-ID: <CAJuYYwRYp0dvf=veg1UVAj8rJ2CdpFy32LUE6zeq1sH9FbZ=KQ@mail.gmail.com>
-References: <1363219179-14900-1-git-send-email-agraf@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH 0/3] ARM: EXYNOS: cpuidle: Several fixes in exynos cpuidle/PM
+Date: Thu, 14 Mar 2013 11:32:56 +0530
+Message-ID: <1363240979-1939-1-git-send-email-amit.daniel@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:59182 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751015Ab3CNETM (ORCPT
+Received: from mail-ia0-f170.google.com ([209.85.210.170]:51731 "EHLO
+	mail-ia0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753399Ab3CNGDP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Mar 2013 00:19:12 -0400
-Received: by mail-ie0-f179.google.com with SMTP id k11so2477167iea.24
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 21:19:12 -0700 (PDT)
-In-Reply-To: <1363219179-14900-1-git-send-email-agraf@suse.de>
+	Thu, 14 Mar 2013 02:03:15 -0400
+Received: by mail-ia0-f170.google.com with SMTP id h8so1749141iaa.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Mar 2013 23:03:14 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexander Graf <agraf@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dmueller@suse.de, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Doug Anderson <dianders@chromium.org>
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On 14 March 2013 05:29, Alexander Graf <agraf@suse.de> wrote:
-> On my Exynos 5 based Arndale system, I need to pull the reset line down
-> and then let it go up again to actually perform a reset. Without that
-> reset, I can't find any USB hubs on my bus, rendering the USB controller
-> useless.
->
-> We also only need to reset the line after the phy node has been found.
-> This way we don't accidently reserve the vbus GPIO pin, but later on
-> defer the creation of our controller, because the phy device tree node
-> hasn't been probed yet.
->
-> This patch implements the above logic, making EHCI and OHCI work on
-> Arndale systems for me.
->
-> Signed-off-by: Alexander Graf <agraf@suse.de>
-> CC: Vivek Gautam <gautam.vivek@samsung.com>
-> CC: Jingoo Han <jg1.han@samsung.com>
-> CC: Alan Stern <stern@rowland.harvard.edu>
-> CC: Kukjin Kim <kgene.kim@samsung.com>
-> CC: Felipe Balbi <balbi@ti.com>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Doug Anderson <dianders@chromium.org>
->
-> ---
->
-> v1 -> v2:
->
->   - remove gpio_free call
->   - move reset logic after phy node search
->
-> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-> index 20ebf6a..b29b2b8 100644
-> --- a/drivers/usb/host/ehci-s5p.c
-> +++ b/drivers/usb/host/ehci-s5p.c
-> @@ -103,9 +103,14 @@ static void s5p_setup_vbus_gpio(struct platform_device *pdev)
->         if (!gpio_is_valid(gpio))
->                 return;
->
-> -       err = gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "ehci_vbus_gpio");
-> -       if (err)
-> +       /* reset pulls the line down, then up again */
-> +       err = gpio_request_one(gpio, GPIOF_OUT_INIT_LOW, "ehci_vbus_gpio");
-> +       if (err) {
->                 dev_err(&pdev->dev, "can't request ehci vbus gpio %d", gpio);
-> +               return;
-> +       }
-> +       mdelay(1);
-> +       __gpio_set_value(gpio, 1);
->  }
->
->  static u64 ehci_s5p_dma_mask = DMA_BIT_MASK(32);
-> @@ -131,8 +136,6 @@ static int s5p_ehci_probe(struct platform_device *pdev)
->         if (!pdev->dev.coherent_dma_mask)
->                 pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
->
-> -       s5p_setup_vbus_gpio(pdev);
-> -
->         s5p_ehci = devm_kzalloc(&pdev->dev, sizeof(struct s5p_ehci_hcd),
->                                 GFP_KERNEL);
->         if (!s5p_ehci)
-> @@ -152,6 +155,8 @@ static int s5p_ehci_probe(struct platform_device *pdev)
->                 s5p_ehci->otg = phy->otg;
->         }
->
-> +       s5p_setup_vbus_gpio(pdev);
-> +
->         s5p_ehci->dev = &pdev->dev;
->
->         hcd = usb_create_hcd(&s5p_ehci_hc_driver, &pdev->dev,
+This patch series contains a couple of fixes in cpuidle/PM due to
+1) clock migration in driver folder.
+2) exynos5440 platform which does not support cpuidle C1 state.
+3) Compilations error when generic PM options are enabled.
 
-Hi Alexander,
+All these patches are based on Samsung maintainer's for-next tree.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
 
-This change, though it works for Exynos5250 based Arndale board, does
-not actually seem correct. On Arndale board, the on-board 4-port usb
-hub is self powered and hence the vbus 'enable' gpio line from
-Exynos5250 SoC is instead used as a "reset" signal for the on-board
-usb hub (and not as the vbus enable signal).
+Amit Daniel Kachhap (3):
+  ARM: EXYNOS: Move arm core power down clock to exynos5250 common
+    clock
+  ARM: SAMSUNG: Add SAMSUNG_PM config option to select pm
+  ARM: EXYNOS: cpuidle: Allow C1 state only in supported SOC's.
 
-Whereas, the driver uses the gpio used in 's5p_setup_vbus_gpio'
-function as just a mechanism to enable vbus for downstream devices. So
-the driver should not be modified as above to handle the board
-specific behavior.
-
-Instead, what needs to be done is, remove the "samsung,vbus-gpio"
-property from the usb2.0 node in dts files (this property is optional)
-for Arndale board. Then, during the machine_init, perform the reset
-sequencing as required.
-
-Ideally, the reset sequencing for the on-board AX88760 usb hub should
-have been handled in the driver for this device. I have not checked if
-there is a driver for this in the kernel.
-
-Thanks,
-Thomas.
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ arch/arm/mach-exynos/Makefile           |    2 +-
+ arch/arm/mach-exynos/common.c           |    2 +-
+ arch/arm/mach-exynos/common.h           |    1 -
+ arch/arm/mach-exynos/cpuidle.c          |   40 +++--------------------------
+ arch/arm/plat-samsung/Kconfig           |    7 +++++
+ arch/arm/plat-samsung/Makefile          |    3 +-
+ arch/arm/plat-samsung/include/plat/pm.h |    8 +++---
+ drivers/clk/samsung/clk-exynos5250.c    |   42 +++++++++++++++++++++++++++++++
+ 8 files changed, 60 insertions(+), 45 deletions(-)
