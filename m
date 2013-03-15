@@ -1,105 +1,78 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [RFC: PATCH 2/2] iio: adc: exynos_adc: Handle timeout and race
- conditions
-Date: Fri, 15 Mar 2013 21:56:41 +0530
-Message-ID: <1363364801-23684-1-git-send-email-ch.naveen@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: exynos4210 not booting
+Date: Fri, 15 Mar 2013 17:31:59 +0100
+Message-ID: <51434CFF.3050806@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42361 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753802Ab3COQ3C (ORCPT
+Received: from mail-we0-f177.google.com ([74.125.82.177]:56588 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751502Ab3COQcF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Mar 2013 12:29:02 -0400
+	Fri, 15 Mar 2013 12:32:05 -0400
+Received: by mail-we0-f177.google.com with SMTP id d7so3340175wer.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Mar 2013 09:32:03 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de
+To: linux-samsung-soc@vger.kernel.org
 
-This patch does the following
-1. Handle the return values of wait_for_completion_interruptible_timeout
-2. Add spin locks to avoid race conditions during ISR.
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
----
-Discussion thread for this patch can be found at
-http://www.gossamer-threads.com/lists/linux/kernel/1693284?page=last
+Using the exynos4_defconfig and compiling the kernel from the samsung
+git tree at 3.9-rc1, I am stuck.
 
-I've not seen any reference to spin lock usage in IIO.
-Kindly, suggest me if there is a better way to avoid the race.
+Does anyone have any idea ?
 
-Thanks,
-Naveen
- drivers/iio/adc/exynos_adc.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Thanks !
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index ed6fdd7..4de28ae 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -91,6 +91,7 @@ struct exynos_adc {
- 
- 	struct completion	completion;
- 
-+	spinlock_t		reg_lock;
- 	u32			value;
- 	unsigned int            version;
- };
-@@ -117,7 +118,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				long mask)
- {
- 	struct exynos_adc *info = iio_priv(indio_dev);
--	unsigned long timeout;
-+	long timeout;
- 	u32 con1, con2;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
-@@ -143,15 +144,19 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				ADC_V1_CON(info->regs));
- 	}
- 
-+	INIT_COMPLETION(info->completion);
-+
- 	timeout = wait_for_completion_interruptible_timeout
- 			(&info->completion, EXYNOS_ADC_TIMEOUT);
-+
- 	*val = info->value;
- 
- 	mutex_unlock(&indio_dev->mlock);
- 
- 	if (timeout == 0)
- 		return -ETIMEDOUT;
--
-+	else if (timeout < 0)
-+		return timeout;
- 	return IIO_VAL_INT;
- }
- 
-@@ -159,6 +164,8 @@ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
- {
- 	struct exynos_adc *info = (struct exynos_adc *)dev_id;
- 
-+	spin_lock(&info->reg_lock);
-+
- 	/* Read value */
- 	info->value = readl(ADC_V1_DATX(info->regs)) &
- 						ADC_DATX_MASK;
-@@ -170,6 +177,8 @@ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
- 
- 	complete(&info->completion);
- 
-+	spin_unlock(&info->reg_lock);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -327,6 +336,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	else
- 		indio_dev->num_channels = MAX_ADC_V2_CHANNELS;
- 
-+	spin_lock_init(&info->reg_lock);
- 	ret = iio_device_register(indio_dev);
- 	if (ret)
- 		goto err_irq;
--- 
-1.7.9.5
+  -- Daniel
+
+--------------------------------------------------------
+
+U-Boot 2013.01.-rc1 (Dec 08 2012 - 12:15:17) for ORIGEN
+
+CPU:    Exynos4210@1000MHz
+
+Board: ORIGEN
+DRAM:  1 GiB
+WARNING: Caches not enabled
+MMC:   SAMSUNG SDHCI: 0
+In:    serial
+Out:   serial
+Err:   serial
+Hit any key to stop autoboot:  0
+reading uImage
+1385264 bytes read
+reading uInitrd
+3780878 bytes read
+reading board.dtb
+16717 bytes read
+## Booting kernel from Legacy Image at 40007000 ...
+   Image Name:   Linux-3.9.0-rc1
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    1385200 Bytes =3D 1.3 MiB
+   Load Address: 40008000
+   Entry Point:  40008000
+   Verifying Checksum ... OK
+## Loading init Ramdisk from Legacy Image at 42000000 ...
+   Image Name:   initramfs
+   Image Type:   ARM Linux RAMDisk Image (uncompressed)
+   Data Size:    3780814 Bytes =3D 3.6 MiB
+   Load Address: 00000000
+   Entry Point:  00000000
+   Verifying Checksum ... OK
+## Flattened Device Tree blob at 41f00000
+   Booting using the fdt blob at 0x41f00000
+   Loading Kernel Image ... OK
+OK
+   Using Device Tree in place at 41f00000, end 41f0714c
+
+Starting kernel ...
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
