@@ -1,79 +1,80 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
- resource by name
-Date: Fri, 15 Mar 2013 09:34:38 +0530
-Message-ID: <CAD025yT4w6QBpo+nShXu6+WCsy8MmJCychLtvE-TxuG-que97w@mail.gmail.com>
-References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org> <51408FB9.90808@gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH 2/2] usb: dwc3: exynos: use clk_prepare_enable and clk_disable_unprepare
+Date: Fri, 15 Mar 2013 11:36:00 +0530
+Message-ID: <CAFp+6iEHVi4W-be4t1k3K=Yz8OP150rtBmNKXR0xnFiA3Oa3qg@mail.gmail.com>
+References: <1363257898-17504-1-git-send-email-gautam.vivek@samsung.com>
+	<1363257898-17504-3-git-send-email-gautam.vivek@samsung.com>
+	<20130314105320.GH32369@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:49113 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750743Ab3COEE7 (ORCPT
+Received: from mail-bk0-f54.google.com ([209.85.214.54]:44221 "EHLO
+	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750903Ab3COGGD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Mar 2013 00:04:59 -0400
-Received: by mail-lb0-f181.google.com with SMTP id gm6so2410055lbb.26
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Mar 2013 21:04:58 -0700 (PDT)
-In-Reply-To: <51408FB9.90808@gmail.com>
+	Fri, 15 Mar 2013 02:06:03 -0400
+In-Reply-To: <20130314105320.GH32369@arwen.pp.htv.fi>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org, sylvester.nawrocki@gmail.com
+To: balbi@ti.com
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, gregkh@linuxfoundation.org, rob.herring@calxeda.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, dianders@chromium.org, kishon <kishon@ti.com>
 
 Hi,
 
-On 13 March 2013 20:09, Rob Herring <robherring2@gmail.com> wrote:
-> The subject is completely misleading. Make it clear what the scope of
-> this patch is.
+
+On Thu, Mar 14, 2013 at 4:23 PM, Felipe Balbi <balbi@ti.com> wrote:
+> Hi,
 >
-> On 03/13/2013 06:26 AM, Vikas Sajjan wrote:
->> The FIMD driver expects the "vsync" interrupt to be mentioned as the 1st
->> parameter in the FIMD DT node. So to meet this expectation of the driver,
->> the FIMD DT node was forced to be made by keeping "vsync" as the 1st
->> parameter.
+> On Thu, Mar 14, 2013 at 04:14:58PM +0530, Vivek Gautam wrote:
+>> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+>> calls as required by common clock framework.
 >>
->> this resolves the above mentioned "hack" by introducing
->> "interrupt-names", so that FIMD driver can get the interrupt resource by
->> name as discussed at
->> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg16211.html
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> CC: Felipe Balbi <balbi@ti.com>
+>> CC: Kukjin Kim <kgene.kim@samsung.com>
+>> ---
+>>  drivers/usb/dwc3/dwc3-exynos.c |    6 +++---
+>>  1 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+>> index 66ca9ac..b03f609 100644
+>> --- a/drivers/usb/dwc3/dwc3-exynos.c
+>> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+>> @@ -129,7 +129,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>>       exynos->dev     = dev;
+>>       exynos->clk     = clk;
+>>
+>> -     clk_enable(exynos->clk);
+>> +     clk_prepare_enable(exynos->clk);
 >
-> I fail to see what the hack is. The order of interrupt properties must
-> be defined by the binding. interrupt-names is auxiliary data and must
-> not be required by an OS.
+> eventually we need to pass this clock handling to dwc3/core.c. Just make
+> sure it's optional since not all platforms need it.
 >
->> patch is dependent on https://patchwork.kernel.org/patch/2184981/
->
-> Why the split? These should be combined.
-Sure, I shall ask Leela to merge this patch with
-https://patchwork.kernel.org/patch/2184981/
-and resend.
+True, as of now i could see only exynos platform getting a device
+clock for dwc3-glue.
+So, if not all platforms need to do this, why should we plan to move
+this to dwc3/core.c ?
+
+> I guess the best way would be to handle clocks via
+> ->runtime_suspend()/->runtime_resume() ??
+
+Right, but there was a doubt actually if you can please clear that.
+In device probe, after enabling runtime_pm we would need to
+'pm_runtime_get_sync' the device.
+Thereby, in runtime_resume the clocks will be enabled.
+Now as soon as the device probe finishes, the device will go in
+suspend state, calling runtime_suspend
+and the clocks would be disabled.
+Now would it be possible for the controller to detect any connect/disconnect.
+
+Pardon me if there is something very silly i am missing out.
 
 >
->>
->> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
->> ---
->>  arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
->> index 0ee4706..76c8911 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -588,6 +588,7 @@
->>               compatible = "samsung,exynos5-fimd";
->>               interrupt-parent = <&combiner>;
->>               reg = <0x14400000 0x40000>;
->> -             interrupts = <18 5>, <18 4>, <18 6>;
->> +             interrupt-names = "fifo", "vsync", "lcd_sys";
->> +             interrupts = <18 4>, <18 5>, <18 6>;
->
-> There should be some documentation describing the order of the interrupts.
->
-> Rob
->
+> --
+> balbi
 
 
 
 -- 
-Thanks and Regards
- Vikas Sajjan
+Thanks & Regards
+Vivek
