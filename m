@@ -1,52 +1,43 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 2/2] ARM: Exynos5250: Enabling samsung-usb3phy driver
-Date: Fri, 15 Mar 2013 13:26:11 +0530
-Message-ID: <1363334171-21812-3-git-send-email-gautam.vivek@samsung.com>
-References: <1363334171-21812-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1363334171-21812-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v5 0/3] ARM: Exynos5250: Enabling dwc3-exynos driver
+Date: Fri, 15 Mar 2013 13:32:11 +0530
+Message-ID: <1363334534-21901-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, grant.likely@secretlab.ca, dianders@chromium.org, jg1.han@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adding usb3.0 phy node for Exynos5250 along with the
-necessary device data to be parsed.
+This patch-set is in continuation with patch-series:
+[PATCH v4 0/4] Enable ehci, ohci and dwc3 devices on exynos5250
+out of which follwowing patches have been picked up:
+ARM: Exynos5250: Enabling ehci-s5p driver
+ARM: Exynos5250: Enabling ohci-exynos driver
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos5250.dtsi |   14 ++++++++++++++
- 1 files changed, 14 insertions(+), 0 deletions(-)
+Based on following patch-set for Samsung's usb PHY enablement:
+[PATCH v4 0/2] ARM: Exynos5250: Enabling samsung usb phy
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 5ef9c1e..5b6f8c8 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -398,6 +398,20 @@
- 		dma-names = "tx", "rx";
- 	};
- 
-+	usbphy@12100000 {
-+		compatible = "samsung,exynos5250-usb3phy";
-+		reg = <0x12100000 0x100>;
-+		clocks = <&clock 1>, <&clock 286>;
-+		clock-names = "ext_xtal", "usbdrd30";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		usbphy-sys {
-+			reg = <0x10040704 0x8>;
-+		};
-+	};
-+
- 	usb@12110000 {
- 		compatible = "samsung,exynos4210-ehci";
- 		reg = <0x12110000 0x100>;
+and further depends on dwc3-exynos driver patch-set:
+[PATCH 0/2] dwc3: exynos: Device tree fixes
+
+Changes from v4:
+ - Aligning with the recently merged common clock framework, thereby
+   no place for clock file changes. ;-)
+ - Adding proper binding documentation as per latest bindings changes in
+   dwc3 driver (dwc3/core.c as well as for dwc3-exynos.c change reflected
+   by above patch-set.
+ - Bifurcating the patch to separate our Documentation, arch and dts changes.
+
+Vivek Gautam (3):
+  usb: Add device tree bindings for dwc3-exynos
+  ARM: exynos5250: dts: Enabling dwc3-exynos driver
+  ARM: exynos5: Enable XHCI support on exynos5
+
+ .../devicetree/bindings/usb/exynos-usb.txt         |   34 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   20 ++++++++++-
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ 3 files changed, 53 insertions(+), 2 deletions(-)
+
 -- 
 1.7.6.5
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
