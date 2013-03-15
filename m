@@ -1,7 +1,7 @@
 From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v5 1/3] usb: Add device tree bindings for dwc3-exynos
-Date: Fri, 15 Mar 2013 13:32:12 +0530
-Message-ID: <1363334534-21901-2-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v5 2/3] ARM: exynos5250: dts: Enabling dwc3-exynos driver
+Date: Fri, 15 Mar 2013 13:32:13 +0530
+Message-ID: <1363334534-21901-3-git-send-email-gautam.vivek@samsung.com>
 References: <1363334534-21901-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,41 +22,23 @@ To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL
 Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Document device tree binding information as required by the
-Samsung' USB 3.0 controller.
+Adding DWC3 device tree node for Exynos5250 needed to
+parse device tree data.
 
 Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- .../devicetree/bindings/usb/exynos-usb.txt         |   34 ++++++++++++++++++++
- 1 files changed, 34 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/exynos5250.dtsi |   20 ++++++++++++++++++--
+ 1 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-index b3abde7..d967ba1 100644
---- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -48,3 +48,37 @@ Example:
- 		clocks = <&clock 285>;
- 		clock-names = "usbhost";
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 5b6f8c8..e0feedb 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -398,7 +398,23 @@
+ 		dma-names = "tx", "rx";
  	};
-+
-+DWC3
-+Required properties:
-+ - compatible: should be "samsung,exynos5250-dwusb3" for USB 3.0 DWC3
-+	       controller.
-+ - #address-cells, #size-cells : should be '1' if the device has sub-nodes
-+				 with 'reg' property.
-+ - ranges: allows valid 1:1 translation between child's address space and
-+	   parent's address space
-+ - clocks: Clock IDs array as required by the controller.
-+ - clock-names: names of clocks correseponding to IDs in the clock property
-+
-+Sub-nodes:
-+The dwc3 core should be added as subnode to Exynos dwc3 glue.
-+- dwc3 :
-+   The binding details of dwc3 can be found in:
-+   Documentation/devicetree/bindings/usb/dwc3.txt
-+
-+Example:
+ 
+-	usbphy@12100000 {
 +	usb@12000000 {
 +		compatible = "samsung,exynos5250-dwusb3";
 +		clocks = <&clock 286>;
@@ -72,5 +54,19 @@ index b3abde7..d967ba1 100644
 +			usb-phy = <&usb2_phy &usb3_phy>;
 +		};
 +	};
++
++	usb3_phy: usbphy@12100000 {
+ 		compatible = "samsung,exynos5250-usb3phy";
+ 		reg = <0x12100000 0x100>;
+ 		clocks = <&clock 1>, <&clock 286>;
+@@ -430,7 +446,7 @@
+ 		clock-names = "usbhost";
+ 	};
+ 
+-	usbphy@12130000 {
++	usb2_phy: usbphy@12130000 {
+ 		compatible = "samsung,exynos5250-usb2phy";
+ 		reg = <0x12130000 0x100>;
+ 		clocks = <&clock 1>, <&clock 285>;
 -- 
 1.7.6.5
