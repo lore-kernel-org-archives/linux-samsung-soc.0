@@ -1,121 +1,365 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: exynos4210 not booting
-Date: Sat, 16 Mar 2013 14:02:30 +0530
-Message-ID: <CAG17yqRi=BS95wzYcKiUWLyGaAH2raY6VWYWsWQKT9=HfaWgeQ@mail.gmail.com>
-References: <51434CFF.3050806@linaro.org>
-	<CAAgF-Bf8AJseo-i_Eb6SMJt_YO=O54gELbiv+PjXHYDkikiMzw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] clk: let mxs specific clk-div clock type be a generic clock type
+Date: Sat, 16 Mar 2013 18:20:01 +0530
+Message-ID: <1363438201-24938-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:45704 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750848Ab3CPIcb convert rfc822-to-8bit (ORCPT
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:55747 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755725Ab3CPMuM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Mar 2013 04:32:31 -0400
-Received: by mail-wg0-f43.google.com with SMTP id e12so3263430wge.34
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 16 Mar 2013 01:32:30 -0700 (PDT)
-In-Reply-To: <CAAgF-Bf8AJseo-i_Eb6SMJt_YO=O54gELbiv+PjXHYDkikiMzw@mail.gmail.com>
+	Sat, 16 Mar 2013 08:50:12 -0400
+Received: by mail-pb0-f43.google.com with SMTP id md12so4971827pbc.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 16 Mar 2013 05:50:12 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, shawn.guo@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-Hi Daniel,
+The mxs platform specific clk-div clock is an extended version of the
+basic integer divider clock type that supports checking the stability
+status of the divider clock output. This type of clock is found on
+some of the Samsung platforms as well. So let the mxs specfic clk-div
+clock type be a generic clock type that all platforms can utilize.
 
-On 16 March 2013 12:51, Padma Venkat <padma.kvr@gmail.com> wrote:
-> Hi,
->
-> On Fri, Mar 15, 2013 at 10:01 PM, Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->>
->> Using the exynos4_defconfig and compiling the kernel from the samsun=
-g
->> git tree at 3.9-rc1, I am stuck.
->>
->> Does anyone have any idea ?
->>
->> Thanks !
->>
->>   -- Daniel
->>
->> --------------------------------------------------------
->>
->> U-Boot 2013.01.-rc1 (Dec 08 2012 - 12:15:17) for ORIGEN
->>
->> CPU:    Exynos4210@1000MHz
->>
->> Board: ORIGEN
->> DRAM:  1 GiB
->> WARNING: Caches not enabled
->> MMC:   SAMSUNG SDHCI: 0
->> In:    serial
->> Out:   serial
->> Err:   serial
->> Hit any key to stop autoboot:  0
->> reading uImage
->> 1385264 bytes read
->> reading uInitrd
->> 3780878 bytes read
->> reading board.dtb
->> 16717 bytes read
->> ## Booting kernel from Legacy Image at 40007000 ...
->>    Image Name:   Linux-3.9.0-rc1
->>    Image Type:   ARM Linux Kernel Image (uncompressed)
->>    Data Size:    1385200 Bytes =3D 1.3 MiB
->>    Load Address: 40008000
->>    Entry Point:  40008000
->>    Verifying Checksum ... OK
->> ## Loading init Ramdisk from Legacy Image at 42000000 ...
->>    Image Name:   initramfs
->>    Image Type:   ARM Linux RAMDisk Image (uncompressed)
->>    Data Size:    3780814 Bytes =3D 3.6 MiB
->>    Load Address: 00000000
->>    Entry Point:  00000000
->>    Verifying Checksum ... OK
->> ## Flattened Device Tree blob at 41f00000
->>    Booting using the fdt blob at 0x41f00000
->>    Loading Kernel Image ... OK
->> OK
->>    Using Device Tree in place at 41f00000, end 41f0714c
->>
->> Starting kernel ...
->
-> Can you please try with below patches?
->
-> This is required for non-DT case and it is not yet merged.
-> https://patchwork.kernel.org/patch/2218321/
->
-> For DT case below patch is required and this got merged in kgene tree=
-=2E
-> https://patchwork.kernel.org/patch/2210621/
->
+Cc: Shawn Guo <shawn.guo@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/clk/Makefile             |    1 +
+ drivers/clk/clk-divider-status.c |  119 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/mxs/Makefile         |    2 +-
+ drivers/clk/mxs/clk-div.c        |  110 -----------------------------------
+ drivers/clk/mxs/clk.h            |   12 +++-
+ include/linux/clk-provider.h     |   21 +++++++
+ 6 files changed, 151 insertions(+), 114 deletions(-)
+ create mode 100644 drivers/clk/clk-divider-status.c
+ delete mode 100644 drivers/clk/mxs/clk-div.c
 
-Also check CONFIG_S3C_LOWLEVEL_UART_PORT, it needs to be 2 for origen.
-
-Hope it helps.
-
-Thanks,
-Inder
-
-> Thanks
-> Padma
->>
->> --
->>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software =
-for ARM SoCs
->>
->> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
->> <http://twitter.com/#!/linaroorg> Twitter |
->> <http://www.linaro.org/linaro-blog/> Blog
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 0147022..0ac851a 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-rate.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-gate.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
++obj-$(CONFIG_COMMON_CLK)	+= clk-divider-status.o
+ 
+ # SoCs specific
+ obj-$(CONFIG_ARCH_BCM2835)	+= clk-bcm2835.o
+diff --git a/drivers/clk/clk-divider-status.c b/drivers/clk/clk-divider-status.c
+new file mode 100644
+index 0000000..1d66059
+--- /dev/null
++++ b/drivers/clk/clk-divider-status.c
+@@ -0,0 +1,119 @@
++/*
++ * Copyright 2012 Freescale Semiconductor, Inc.
++ *
++ * The code contained herein is licensed under the GNU General Public
++ * License. You may obtain a copy of the GNU General Public License
++ * Version 2 or later at the following locations:
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ *
++ * Extension to the adjustable divider clock implementation with support for
++ * divider clock stability checks.
++ */
++
++#include <linux/clk.h>
++#include <linux/module.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/jiffies.h>
++
++/*
++ * DOC: Adjustable divider clock with support for divider stability check
++ *
++ * Traits of this clock:
++ * prepare - clk_prepare only ensures that parents are prepared
++ * enable - clk_enable only ensures that parents are enabled
++ * rate - rate is adjustable.  clk->rate = parent->rate / divisor
++ * parent - fixed parent.  No clk_set_parent support
++ */
++
++static inline struct clk_divider_status *to_clk_div(struct clk_hw *hw)
++{
++	struct clk_divider *divider = container_of(hw, struct clk_divider, hw);
++
++	return container_of(divider, struct clk_divider_status, divider);
++}
++
++static unsigned long clk_divider_status_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_divider_status *div = to_clk_div(hw);
++
++	return div->ops->recalc_rate(&div->divider.hw, parent_rate);
++}
++
++static long clk_divider_status_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	struct clk_divider_status *div = to_clk_div(hw);
++
++	return div->ops->round_rate(&div->divider.hw, rate, prate);
++}
++
++static int clk_divider_status_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_divider_status *div = to_clk_div(hw);
++	int ret;
++
++	ret = div->ops->set_rate(&div->divider.hw, rate, parent_rate);
++	if (!ret) {
++		unsigned long timeout = jiffies + msecs_to_jiffies(10);
++
++		while (readl_relaxed(div->reg) & (1 << div->busy)) {
++			if (time_after(jiffies, timeout))
++				return -ETIMEDOUT;
++		}
++	}
++
++	return ret;
++}
++
++static struct clk_ops clk_divider_status_ops = {
++	.recalc_rate = clk_divider_status_recalc_rate,
++	.round_rate = clk_divider_status_round_rate,
++	.set_rate = clk_divider_status_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_divider_status_ops);
++
++struct clk *clk_register_divider_status(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags, void __iomem *reg,
++		u8 shift, u8 width, u8 clk_divider_flags,
++		void __iomem *reg_status, u8 shift_status, spinlock_t *lock)
++{
++	struct clk_divider_status *div;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div) {
++		pr_err("%s: could not allocate divider-status clk\n", __func__);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	init.name = name;
++	init.ops = &clk_divider_status_ops;
++	init.flags = flags;
++	init.parent_names = (parent_name ? &parent_name : NULL);
++	init.num_parents = (parent_name ? 1 : 0);
++
++	div->reg = reg_status;
++	div->busy = shift_status;
++	div->ops = &clk_divider_ops;
++
++	div->divider.reg = reg;
++	div->divider.shift = shift;
++	div->divider.width = width;
++	div->divider.flags = clk_divider_flags;
++	div->divider.lock = lock;
++	div->divider.hw.init = &init;
++
++	clk = clk_register(NULL, &div->divider.hw);
++	if (IS_ERR(clk))
++		kfree(div);
++
++	return clk;
++}
+diff --git a/drivers/clk/mxs/Makefile b/drivers/clk/mxs/Makefile
+index a6a2223..8f8f1b3 100644
+--- a/drivers/clk/mxs/Makefile
++++ b/drivers/clk/mxs/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for mxs specific clk
+ #
+ 
+-obj-y += clk.o clk-pll.o clk-ref.o clk-div.o clk-frac.o clk-ssp.o
++obj-y += clk.o clk-pll.o clk-ref.o clk-frac.o clk-ssp.o
+ 
+ obj-$(CONFIG_SOC_IMX23) += clk-imx23.o
+ obj-$(CONFIG_SOC_IMX28) += clk-imx28.o
+diff --git a/drivers/clk/mxs/clk-div.c b/drivers/clk/mxs/clk-div.c
+deleted file mode 100644
+index 90e1da9..0000000
+--- a/drivers/clk/mxs/clk-div.c
++++ /dev/null
+@@ -1,110 +0,0 @@
+-/*
+- * Copyright 2012 Freescale Semiconductor, Inc.
+- *
+- * The code contained herein is licensed under the GNU General Public
+- * License. You may obtain a copy of the GNU General Public License
+- * Version 2 or later at the following locations:
+- *
+- * http://www.opensource.org/licenses/gpl-license.html
+- * http://www.gnu.org/copyleft/gpl.html
+- */
+-
+-#include <linux/clk.h>
+-#include <linux/clk-provider.h>
+-#include <linux/err.h>
+-#include <linux/slab.h>
+-#include "clk.h"
+-
+-/**
+- * struct clk_div - mxs integer divider clock
+- * @divider: the parent class
+- * @ops: pointer to clk_ops of parent class
+- * @reg: register address
+- * @busy: busy bit shift
+- *
+- * The mxs divider clock is a subclass of basic clk_divider with an
+- * addtional busy bit.
+- */
+-struct clk_div {
+-	struct clk_divider divider;
+-	const struct clk_ops *ops;
+-	void __iomem *reg;
+-	u8 busy;
+-};
+-
+-static inline struct clk_div *to_clk_div(struct clk_hw *hw)
+-{
+-	struct clk_divider *divider = container_of(hw, struct clk_divider, hw);
+-
+-	return container_of(divider, struct clk_div, divider);
+-}
+-
+-static unsigned long clk_div_recalc_rate(struct clk_hw *hw,
+-					 unsigned long parent_rate)
+-{
+-	struct clk_div *div = to_clk_div(hw);
+-
+-	return div->ops->recalc_rate(&div->divider.hw, parent_rate);
+-}
+-
+-static long clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+-			       unsigned long *prate)
+-{
+-	struct clk_div *div = to_clk_div(hw);
+-
+-	return div->ops->round_rate(&div->divider.hw, rate, prate);
+-}
+-
+-static int clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+-			    unsigned long parent_rate)
+-{
+-	struct clk_div *div = to_clk_div(hw);
+-	int ret;
+-
+-	ret = div->ops->set_rate(&div->divider.hw, rate, parent_rate);
+-	if (!ret)
+-		ret = mxs_clk_wait(div->reg, div->busy);
+-
+-	return ret;
+-}
+-
+-static struct clk_ops clk_div_ops = {
+-	.recalc_rate = clk_div_recalc_rate,
+-	.round_rate = clk_div_round_rate,
+-	.set_rate = clk_div_set_rate,
+-};
+-
+-struct clk *mxs_clk_div(const char *name, const char *parent_name,
+-			void __iomem *reg, u8 shift, u8 width, u8 busy)
+-{
+-	struct clk_div *div;
+-	struct clk *clk;
+-	struct clk_init_data init;
+-
+-	div = kzalloc(sizeof(*div), GFP_KERNEL);
+-	if (!div)
+-		return ERR_PTR(-ENOMEM);
+-
+-	init.name = name;
+-	init.ops = &clk_div_ops;
+-	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = (parent_name ? &parent_name: NULL);
+-	init.num_parents = (parent_name ? 1 : 0);
+-
+-	div->reg = reg;
+-	div->busy = busy;
+-
+-	div->divider.reg = reg;
+-	div->divider.shift = shift;
+-	div->divider.width = width;
+-	div->divider.flags = CLK_DIVIDER_ONE_BASED;
+-	div->divider.lock = &mxs_lock;
+-	div->divider.hw.init = &init;
+-	div->ops = &clk_divider_ops;
+-
+-	clk = clk_register(NULL, &div->divider.hw);
+-	if (IS_ERR(clk))
+-		kfree(div);
+-
+-	return clk;
+-}
+diff --git a/drivers/clk/mxs/clk.h b/drivers/clk/mxs/clk.h
+index 81421e2..865f495 100644
+--- a/drivers/clk/mxs/clk.h
++++ b/drivers/clk/mxs/clk.h
+@@ -29,9 +29,6 @@ struct clk *mxs_clk_pll(const char *name, const char *parent_name,
+ struct clk *mxs_clk_ref(const char *name, const char *parent_name,
+ 			void __iomem *reg, u8 idx);
+ 
+-struct clk *mxs_clk_div(const char *name, const char *parent_name,
+-			void __iomem *reg, u8 shift, u8 width, u8 busy);
+-
+ struct clk *mxs_clk_frac(const char *name, const char *parent_name,
+ 			 void __iomem *reg, u8 shift, u8 width, u8 busy);
+ 
+@@ -63,4 +60,13 @@ static inline struct clk *mxs_clk_fixed_factor(const char *name,
+ 					 CLK_SET_RATE_PARENT, mult, div);
+ }
+ 
++static inline struct clk *mxs_clk_div(const char *name,
++			const char *parent_name, void __iomem *reg, u8 shift,
++			u8 width, u8 busy)
++{
++	return clk_register_divider_status(NULL, name, parent_name,
++				CLK_SET_RATE_PARENT, reg, shift, width,
++				CLK_DIVIDER_ONE_BASED, reg, busy, &mxs_lock);
++}
++
+ #endif /* __MXS_CLK_H */
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7f197d7..6309335 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -268,6 +268,27 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		spinlock_t *lock);
+ 
+ /**
++ * struct clk_divider_status - integer divider clock with additional status bit
++ * @divider: the parent class
++ * @ops: pointer to clk_ops of parent class
++ * @reg: register containing the divider status bit
++ * @busy: divider busy bit shift
++ *
++ * This clock is a subclass of basic clk_divider with an addtional busy bit.
++ */
++struct clk_divider_status {
++	struct clk_divider divider;
++	const struct clk_ops *ops;
++	void __iomem *reg;
++	u8 busy;
++};
++
++struct clk *clk_register_divider_status(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags, void __iomem *reg,
++		u8 shift, u8 width, u8 clk_divider_flags,
++		void __iomem *reg_status, u8 shift_status, spinlock_t *lock);
++
++/**
+  * struct clk_mux - multiplexer clock
+  *
+  * @hw:		handle between common and hardware-specific interfaces
+-- 
+1.7.5.4
