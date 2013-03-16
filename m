@@ -1,54 +1,103 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [RFC: PATCH 2/2] iio: adc: exynos_adc: Handle timeout and race conditions
-Date: Fri, 15 Mar 2013 17:37:54 -0700
-Message-ID: <CAD=FV=V+-DwCjGoookySCazazBBYOoRO+=G5Q_WXAw+SrXNc-A@mail.gmail.com>
-References: <1363364801-23684-1-git-send-email-ch.naveen@samsung.com>
-	<51439846.9090201@metafoo.de>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: exynos4210 not booting
+Date: Sat, 16 Mar 2013 12:51:21 +0530
+Message-ID: <CAAgF-Bf8AJseo-i_Eb6SMJt_YO=O54gELbiv+PjXHYDkikiMzw@mail.gmail.com>
+References: <51434CFF.3050806@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:51790 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755302Ab3CPAh4 (ORCPT
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:59812 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751927Ab3CPHVW convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Mar 2013 20:37:56 -0400
-Received: by mail-la0-f54.google.com with SMTP id gw10so4381991lab.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Mar 2013 17:37:55 -0700 (PDT)
-In-Reply-To: <51439846.9090201@metafoo.de>
+	Sat, 16 Mar 2013 03:21:22 -0400
+Received: by mail-ie0-f180.google.com with SMTP id bn7so5195670ieb.39
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 16 Mar 2013 00:21:21 -0700 (PDT)
+In-Reply-To: <51434CFF.3050806@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 15, 2013 at 2:53 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
-> What exactly is the spinlock protecting against here? Concurrent runs of
-> exynos_adc_isr? This is probably not issue in the first place.
+Hi,
+
+On Fri, Mar 15, 2013 at 10:01 PM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
 >
-> What you want to protect against is that completion is completed between the
-> call to INIT_COMPLETION() and the start of a new conversion. So the sections
-> that need to be under the spinlock are the complete call here and the point
-> from INIT_COMPLETION until the transfer is started in exynos_read_raw(). Make
-> sure to use spin_lock_irq there.
+> Using the exynos4_defconfig and compiling the kernel from the samsung
+> git tree at 3.9-rc1, I am stuck.
+>
+> Does anyone have any idea ?
+>
+> Thanks !
+>
+>   -- Daniel
+>
+> --------------------------------------------------------
+>
+> U-Boot 2013.01.-rc1 (Dec 08 2012 - 12:15:17) for ORIGEN
+>
+> CPU:    Exynos4210@1000MHz
+>
+> Board: ORIGEN
+> DRAM:  1 GiB
+> WARNING: Caches not enabled
+> MMC:   SAMSUNG SDHCI: 0
+> In:    serial
+> Out:   serial
+> Err:   serial
+> Hit any key to stop autoboot:  0
+> reading uImage
+> 1385264 bytes read
+> reading uInitrd
+> 3780878 bytes read
+> reading board.dtb
+> 16717 bytes read
+> ## Booting kernel from Legacy Image at 40007000 ...
+>    Image Name:   Linux-3.9.0-rc1
+>    Image Type:   ARM Linux Kernel Image (uncompressed)
+>    Data Size:    1385200 Bytes =3D 1.3 MiB
+>    Load Address: 40008000
+>    Entry Point:  40008000
+>    Verifying Checksum ... OK
+> ## Loading init Ramdisk from Legacy Image at 42000000 ...
+>    Image Name:   initramfs
+>    Image Type:   ARM Linux RAMDisk Image (uncompressed)
+>    Data Size:    3780814 Bytes =3D 3.6 MiB
+>    Load Address: 00000000
+>    Entry Point:  00000000
+>    Verifying Checksum ... OK
+> ## Flattened Device Tree blob at 41f00000
+>    Booting using the fdt blob at 0x41f00000
+>    Loading Kernel Image ... OK
+> OK
+>    Using Device Tree in place at 41f00000, end 41f0714c
+>
+> Starting kernel ...
 
-...and at that point I _think_ you won't also need the mutex.
+Can you please try with below patches?
 
-A reasonable way to test to see if you've got this all correct would be to:
+This is required for non-DT case and it is not yet merged.
+https://patchwork.kernel.org/patch/2218321/
 
-* Start two processes that are reading from different ADCs that will
-report very different values (maybe add a device tree node for adc1 or
-adc7 and use those since they're not really connected to
-thermistors?).
+=46or DT case below patch is required and this got merged in kgene tree=
+=2E
+https://patchwork.kernel.org/patch/2210621/
 
-* Have your two processes read as fast as they can.  This could just
-be "while true; do cat /sys/class/hwmon/hwmon0/device/temp1_input;
-done"
-
-* Decrease your timeout and maybe(?) sprinkle some random udelays in
-the irq handler so that the timeouts happen sometimes but not others.
-
-* Periodically cancel one of the readers with Ctrl-C
-
-If all is working well then you should always get back the right value
-from the right reader (and get no crashes).
-
--Doug
+Thanks
+Padma
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software f=
+or ARM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
