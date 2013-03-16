@@ -1,44 +1,54 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 0/5] Samsung changes-1 for v3.10
-Date: Fri, 15 Mar 2013 21:57:15 +0000
-Message-ID: <201303152157.15580.arnd@arndb.de>
-References: <016501ce1ada$b8979e60$29c6db20$%kim@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [RFC: PATCH 2/2] iio: adc: exynos_adc: Handle timeout and race conditions
+Date: Fri, 15 Mar 2013 17:37:54 -0700
+Message-ID: <CAD=FV=V+-DwCjGoookySCazazBBYOoRO+=G5Q_WXAw+SrXNc-A@mail.gmail.com>
+References: <1363364801-23684-1-git-send-email-ch.naveen@samsung.com>
+	<51439846.9090201@metafoo.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:52239 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754610Ab3COV51 (ORCPT
+Received: from mail-la0-f54.google.com ([209.85.215.54]:51790 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755302Ab3CPAh4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Mar 2013 17:57:27 -0400
-In-Reply-To: <016501ce1ada$b8979e60$29c6db20$%kim@samsung.com>
+	Fri, 15 Mar 2013 20:37:56 -0400
+Received: by mail-la0-f54.google.com with SMTP id gw10so4381991lab.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Mar 2013 17:37:55 -0700 (PDT)
+In-Reply-To: <51439846.9090201@metafoo.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>
 
-On Thursday 07 March 2013, Kukjin Kim wrote:
-> Hi Arnd and Olof,
-> 
-> Here is 1st Samsung pull-request for v3.10
-> 
-> This is including cleanup some header files for s3c and s5p, and samsung-timer
-> for s3c and s5pc100 to support clocksource/clockevent api, and irq-rework for
-> s3cs4xx stuff, and support pinctrl for exynos5250.
-> 
-> Note, you know, there are some branches in samsung tree I missed to send to
-> upstream last time. I'm sorting them out and as I talked to Olof before, I will
-> send them in early time.
+On Fri, Mar 15, 2013 at 2:53 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> What exactly is the spinlock protecting against here? Concurrent runs of
+> exynos_adc_isr? This is probably not issue in the first place.
+>
+> What you want to protect against is that completion is completed between the
+> call to INIT_COMPLETION() and the start of a new conversion. So the sections
+> that need to be under the spinlock are the complete call here and the point
+> from INIT_COMPLETION until the transfer is started in exynos_read_raw(). Make
+> sure to use spin_lock_irq there.
 
-Pulled all five branches, the first two into next/cleanup and the other three
-into next/drivers. Please remember to use signed tags with a series description
-next time, since that makes life easier for me filling in a proper merge
-changelog.
+...and at that point I _think_ you won't also need the mutex.
 
-Regarding the irq-s3c24xx series, I wonder if the irq.c file should now
-get moved to drivers/irqchip/irq-s3c24xx.c as a follow-up. Have you considered
-that?
+A reasonable way to test to see if you've got this all correct would be to:
 
-	Arnd
+* Start two processes that are reading from different ADCs that will
+report very different values (maybe add a device tree node for adc1 or
+adc7 and use those since they're not really connected to
+thermistors?).
+
+* Have your two processes read as fast as they can.  This could just
+be "while true; do cat /sys/class/hwmon/hwmon0/device/temp1_input;
+done"
+
+* Decrease your timeout and maybe(?) sprinkle some random udelays in
+the irq handler so that the timeouts happen sometimes but not others.
+
+* Periodically cancel one of the readers with Ctrl-C
+
+If all is working well then you should always get back the right value
+from the right reader (and get no crashes).
+
+-Doug
