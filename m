@@ -1,66 +1,57 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: [PATCH v3 1/6] ARM: S3C24XX: move irq driver to drivers/irqchip
-Date: Sun, 17 Mar 2013 14:04:56 +0100
-Message-ID: <201303171404.57049.heiko@sntech.de>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v3 2/6] irqchip: s3c24xx: fix comments on some camera interrupts
+Date: Sun, 17 Mar 2013 14:05:58 +0100
+Message-ID: <201303171405.58570.heiko@sntech.de>
 References: <201303171404.06146.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <201303171404.06146.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:45126 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756244Ab3CQNGH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 17 Mar 2013 09:06:07 -0400
+In-Reply-To: <201303171404.06146.heiko@sntech.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This move is necessary to make use of the irqchip infrastructure
-for the following devicetree support for s3c24xx architectures.
+Might be confusing for people to read the code without having the
+datasheet nearby.
 
-Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- arch/arm/mach-s3c24xx/Makefile                     |    2 +-
- drivers/irqchip/Makefile                           |    1 +
- .../irq.c => drivers/irqchip/irq-s3c24xx.c         |    0
- 3 files changed, 2 insertions(+), 1 deletions(-)
- rename arch/arm/mach-s3c24xx/irq.c => drivers/irqchip/irq-s3c24xx.c (100%)
+ drivers/irqchip/irq-s3c24xx.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index be6e4d0..6f46ecf 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -14,7 +14,7 @@ obj-				:=
+diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
+index 5c9f8b7..84afbc1 100644
+--- a/drivers/irqchip/irq-s3c24xx.c
++++ b/drivers/irqchip/irq-s3c24xx.c
+@@ -916,8 +916,8 @@ static struct s3c_irq_data init_s3c2440subint[32] = {
+ 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-ERR */
+ 	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* TC */
+ 	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* ADC */
+-	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* TC */
+-	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* ADC */
++	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_C */
++	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_P */
+ 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 9 }, /* WDT */
+ 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 9 }, /* AC97 */
+ };
+@@ -991,8 +991,8 @@ static struct s3c_irq_data init_s3c2442subint[32] = {
+ 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-ERR */
+ 	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* TC */
+ 	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* ADC */
+-	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* TC */
+-	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* ADC */
++	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_C */
++	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_P */
+ };
  
- # core
- 
--obj-y				+= common.o irq.o
-+obj-y				+= common.o
- 
- obj-$(CONFIG_CPU_S3C2410)	+= s3c2410.o
- obj-$(CONFIG_S3C2410_CPUFREQ)	+= cpufreq-s3c2410.o
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 98e3b87..4d65a21 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -2,6 +2,7 @@ obj-$(CONFIG_IRQCHIP)			+= irqchip.o
- 
- obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
- obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
-+obj-$(CONFIG_ARCH_S3C24XX)		+= irq-s3c24xx.o
- obj-$(CONFIG_METAG)			+= irq-metag-ext.o
- obj-$(CONFIG_METAG_PERFCOUNTER_IRQS)	+= irq-metag.o
- obj-$(CONFIG_ARCH_SUNXI)		+= irq-sunxi.o
-diff --git a/arch/arm/mach-s3c24xx/irq.c b/drivers/irqchip/irq-s3c24xx.c
-similarity index 100%
-rename from arch/arm/mach-s3c24xx/irq.c
-rename to drivers/irqchip/irq-s3c24xx.c
+ void __init s3c2442_init_irq(void)
 -- 
 1.7.2.3
