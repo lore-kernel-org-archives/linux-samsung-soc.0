@@ -1,208 +1,195 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC PATCH 1/8] s5p-fimc: Add Exynos4x12 FIMC-IS driver
-Date: Sun, 17 Mar 2013 20:38:58 +0100
-Message-ID: <51461BD2.8080905@gmail.com>
-References: <1363031092-29950-1-git-send-email-s.nawrocki@samsung.com> <1363031092-29950-2-git-send-email-s.nawrocki@samsung.com> <201303121527.00571.hverkuil@xs4all.nl>
+Subject: Re: [RFC PATCH 5/8] s5p-fimc: Add ISP video capture driver stubs
+Date: Sun, 17 Mar 2013 22:03:38 +0100
+Message-ID: <51462FAA.1060400@gmail.com>
+References: <1363031092-29950-1-git-send-email-s.nawrocki@samsung.com> <1363031092-29950-6-git-send-email-s.nawrocki@samsung.com> <201303121544.45438.hverkuil@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <201303121527.00571.hverkuil@xs4all.nl>
+In-Reply-To: <201303121544.45438.hverkuil@xs4all.nl>
 Sender: linux-media-owner@vger.kernel.org
 To: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Hans,
-
-On 03/12/2013 03:27 PM, Hans Verkuil wrote:
-> On Mon 11 March 2013 20:44:45 Sylwester Nawrocki wrote:
+On 03/12/2013 03:44 PM, Hans Verkuil wrote:
+> On Mon 11 March 2013 20:44:49 Sylwester Nawrocki wrote:
 [...]
->> +
->> +/* Supported manual ISO values */
->> +static const s64 iso_qmenu[] = {
->> +	50, 100, 200, 400, 800,
->> +};
->> +
->> +static int __ctrl_set_iso(struct fimc_is *is, int value)
+>> +static int isp_video_capture_open(struct file *file)
 >> +{
->> +	unsigned int idx, iso;
+>> +	struct fimc_isp *isp = video_drvdata(file);
+>> +	int ret = 0;
 >> +
->> +	if (value == V4L2_ISO_SENSITIVITY_AUTO) {
->> +		__is_set_isp_iso(is, ISP_ISO_COMMAND_AUTO, 0);
->> +		return 0;
->> +	}
->> +	idx = is->isp.ctrls.iso->val;
->> +	if (idx>= ARRAY_SIZE(iso_qmenu))
->> +		return -EINVAL;
+>> +	if (mutex_lock_interruptible(&isp->video_lock))
+>> +		return -ERESTARTSYS;
 >> +
->> +	iso = iso_qmenu[idx];
->> +	__is_set_isp_iso(is, ISP_ISO_COMMAND_MANUAL, iso);
->> +	return 0;
+>> +	/* ret = pm_runtime_get_sync(&isp->pdev->dev); */
+>> +	if (ret<  0)
+>> +		goto done;
+>> +
+>> +	ret = v4l2_fh_open(file);
+>> +	if (ret<  0)
+>> +		goto done;
+>> +
+>> +	/* TODO: prepare video pipeline */
+>> +done:
+>> +	mutex_unlock(&isp->video_lock);
+>> +	return ret;
 >> +}
-[...]
->> +int fimc_isp_subdev_create(struct fimc_isp *isp)
+>> +
+>> +static int isp_video_capture_close(struct file *file)
 >> +{
->> +	const struct v4l2_ctrl_ops *ops =&fimc_isp_ctrl_ops;
->> +	struct v4l2_ctrl_handler *handler =&isp->ctrls.handler;
->> +	struct v4l2_subdev *sd =&isp->subdev;
->> +	struct fimc_isp_ctrls *ctrls =&isp->ctrls;
+>> +	struct fimc_isp *isp = video_drvdata(file);
+>> +	int ret = 0;
+>> +
+>> +	mutex_lock(&isp->video_lock);
+>> +
+>> +	if (isp->out_path == FIMC_IO_DMA) {
+>> +		/* TODO: stop capture, cleanup */
+>> +	}
+>> +
+>> +	/* pm_runtime_put(&isp->pdev->dev); */
+>> +
+>> +	if (isp->ref_count == 0)
+>> +		vb2_queue_release(&isp->capture_vb_queue);
+>> +
+>> +	ret = v4l2_fh_release(file);
+>> +
+>> +	mutex_unlock(&isp->video_lock);
+>> +	return ret;
+>> +}
+>> +
+>> +static unsigned int isp_video_capture_poll(struct file *file,
+>> +				   struct poll_table_struct *wait)
+>> +{
+>> +	struct fimc_isp *isp = video_drvdata(file);
 >> +	int ret;
 >> +
->> +	mutex_init(&isp->subdev_lock);
+>> +	mutex_lock(&isp->video_lock);
+>> +	ret = vb2_poll(&isp->capture_vb_queue, file, wait);
+>> +	mutex_unlock(&isp->video_lock);
+>> +	return ret;
+>> +}
 >> +
->> +	v4l2_subdev_init(sd,&fimc_is_subdev_ops);
->> +	sd->grp_id = GRP_ID_FIMC_IS;
->> +	sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
->> +	snprintf(sd->name, sizeof(sd->name), "FIMC-IS-ISP");
+>> +static int isp_video_capture_mmap(struct file *file, struct vm_area_struct *vma)
+>> +{
+>> +	struct fimc_isp *isp = video_drvdata(file);
+>> +	int ret;
 >> +
->> +	isp->subdev_pads[FIMC_IS_SD_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
->> +	isp->subdev_pads[FIMC_IS_SD_PAD_SRC_FIFO].flags = MEDIA_PAD_FL_SOURCE;
->> +	isp->subdev_pads[FIMC_IS_SD_PAD_SRC_DMA].flags = MEDIA_PAD_FL_SOURCE;
->> +	ret = media_entity_init(&sd->entity, FIMC_IS_SD_PADS_NUM,
->> +				isp->subdev_pads, 0);
->> +	if (ret)
+>> +	if (mutex_lock_interruptible(&isp->video_lock))
+>> +		return -ERESTARTSYS;
+>> +
+>> +	ret = vb2_mmap(&isp->capture_vb_queue, vma);
+>> +	mutex_unlock(&isp->video_lock);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct v4l2_file_operations isp_video_capture_fops = {
+>> +	.owner		= THIS_MODULE,
+>> +	.open		= isp_video_capture_open,
+>> +	.release	= isp_video_capture_close,
+>> +	.poll		= isp_video_capture_poll,
+>> +	.unlocked_ioctl	= video_ioctl2,
+>> +	.mmap		= isp_video_capture_mmap,
+>
+> Can't you use the helper functions vb2_fop_open/release/poll/mmap here?
+
+It seems vb2_fop_mmap/poll can be used directly, open(), release() are
+a bit more complicated as some media pipeline operations need to
+additionally be done within these callbacks. There is no vb2_fop_open(),
+and AFAICS v4l2_fh_open() is sufficient and intended as open() helper.
+For the next iteration I have used vb2_fop_release(), called indirectly,
+as it nicely simplifies things a bit.
+
+BTW, shouldn't vb2_fop_release() also be taking the lock ? Actually it is
+more useful for me in current form, but the drivers that directly assign
+it to struct v4l2_file_operations::open might be in trouble, unless I'm
+missing something.
+
+>> +};
+>> +
+>> +/*
+>> + * Video node ioctl operations
+>> + */
+[...]
+>> +static int fimc_isp_capture_streamon(struct file *file, void *priv,
+>> +				     enum v4l2_buf_type type)
+>> +{
+>> +	struct fimc_isp *isp = video_drvdata(file);
+>> +	struct v4l2_subdev *sensor = isp->pipeline.subdevs[IDX_SENSOR];
+>> +	struct fimc_pipeline *p =&isp->pipeline;
+>> +	int ret;
+>> +
+>> +	/* TODO: check if the OTF interface is not running */
+>> +
+>> +	ret = media_entity_pipeline_start(&sensor->entity, p->m_pipeline);
+>> +	if (ret<  0)
 >> +		return ret;
 >> +
->> +	v4l2_ctrl_handler_init(handler, 20);
->> +
->> +	ctrls->saturation = v4l2_ctrl_new_std(handler, ops, V4L2_CID_SATURATION,
->> +						-2, 2, 1, 0);
->> +	ctrls->brightness = v4l2_ctrl_new_std(handler, ops, V4L2_CID_BRIGHTNESS,
->> +						-4, 4, 1, 0);
->> +	ctrls->contrast = v4l2_ctrl_new_std(handler, ops, V4L2_CID_CONTRAST,
->> +						-2, 2, 1, 0);
->> +	ctrls->sharpness = v4l2_ctrl_new_std(handler, ops, V4L2_CID_SHARPNESS,
->> +						-2, 2, 1, 0);
->> +	ctrls->hue = v4l2_ctrl_new_std(handler, ops, V4L2_CID_HUE,
->> +						-2, 2, 1, 0);
->> +
->> +	ctrls->auto_wb = v4l2_ctrl_new_std_menu(handler, ops,
->> +					V4L2_CID_AUTO_N_PRESET_WHITE_BALANCE,
->> +					8, ~0x14e, V4L2_WHITE_BALANCE_AUTO);
->> +
->> +	ctrls->exposure = v4l2_ctrl_new_std(handler, ops,
->> +					V4L2_CID_EXPOSURE_ABSOLUTE,
->> +					-4, 4, 1, 0);
->> +
->> +	ctrls->exp_metering = v4l2_ctrl_new_std_menu(handler, ops,
->> +					V4L2_CID_EXPOSURE_METERING, 3,
->> +					~0xf, V4L2_EXPOSURE_METERING_AVERAGE);
->> +
->> +	v4l2_ctrl_new_std_menu(handler, ops, V4L2_CID_POWER_LINE_FREQUENCY,
->> +					V4L2_CID_POWER_LINE_FREQUENCY_AUTO, 0,
->> +					V4L2_CID_POWER_LINE_FREQUENCY_AUTO);
->> +	/* ISO sensitivity */
->> +	ctrls->auto_iso = v4l2_ctrl_new_std_menu(handler, ops,
->> +			V4L2_CID_ISO_SENSITIVITY_AUTO, 1, 0,
->> +			V4L2_ISO_SENSITIVITY_AUTO);
->> +
->> +	ctrls->iso = v4l2_ctrl_new_int_menu(handler, ops,
->> +			V4L2_CID_ISO_SENSITIVITY, ARRAY_SIZE(iso_qmenu) - 1,
->> +			ARRAY_SIZE(iso_qmenu)/2 - 1, iso_qmenu);
->> +
->> +	ctrls->aewb_lock = v4l2_ctrl_new_std(handler, ops,
->> +					V4L2_CID_3A_LOCK, 0, 0x3, 0, 0);
->> +
->> +	/* FIXME: Adjust the enabled controls mask according
->> +	   to the ISP capabilities */
->> +	v4l2_ctrl_new_std_menu(handler, ops, V4L2_CID_COLORFX,
->> +					V4L2_COLORFX_ANTIQUE,
->> +					0, V4L2_COLORFX_NONE);
->> +	if (handler->error) {
->> +		media_entity_cleanup(&sd->entity);
->> +		return handler->error;
+>> +	ret = fimc_isp_pipeline_validate(isp);
+>> +	if (ret) {
+>> +		media_entity_pipeline_stop(&sensor->entity);
+>> +		return ret;
 >> +	}
 >> +
->> +	ctrls->auto_iso->flags |= V4L2_CTRL_FLAG_VOLATILE |
->> +				  V4L2_CTRL_FLAG_UPDATE;
->
-> Why would auto_iso be volatile? I would expect the iso to be volatile
-> (in which case the 'false' argument below would be 'true'). Also,
-> v4l2_ctrl_auto_cluster already sets the UPDATE flag.
-
-Thanks for spotting this. I should have removed this flags set up
-since the g_volatile_ctrl op is not currently supported and as far
-as I know the firmware doesn't support reading actual ISO value in
-auto mode. I'll need to check if there are any commands available
-for that.
-
-Anyway auto_iso is not supposed to have the flags set up like this
-and that also tells me that I need to inspect my other driver where
-this code originally came from. :)
-
->> +	v4l2_ctrl_auto_cluster(2,&ctrls->auto_iso, 0, false);
->> +
->> +	sd->ctrl_handler = handler;
->> +	sd->internal_ops =&fimc_is_subdev_internal_ops;
->> +	sd->entity.ops =&fimc_is_subdev_media_ops;
->> +	v4l2_set_subdevdata(sd, isp);
->> +
->> +	return 0;
+>> +	return vb2_streamon(&isp->capture_vb_queue, type);
 >> +}
-
->> diff --git a/drivers/media/platform/s5p-fimc/fimc-isp.h b/drivers/media/platform/s5p-fimc/fimc-isp.h
->> new file mode 100644
->> index 0000000..654039e
->> --- /dev/null
->> +++ b/drivers/media/platform/s5p-fimc/fimc-isp.h
->> @@ -0,0 +1,205 @@
-[...]
->> +struct fimc_isp_ctrls {
->> +	struct v4l2_ctrl_handler handler;
->> +	/* Internal mode selection */
->> +	struct v4l2_ctrl *scenario;
->> +	/* Frame rate */
->> +	struct v4l2_ctrl *fps;
->> +	/* Touch AF position */
->> +	struct v4l2_ctrl *af_position_x;
->> +	struct v4l2_ctrl *af_position_y;
->> +	/* Auto white balance */
->> +	struct v4l2_ctrl *auto_wb;
->> +	/* ISO sensitivity */
->> +	struct v4l2_ctrl *auto_iso;
->> +	struct v4l2_ctrl *iso;
+>> +
+>> +static int fimc_isp_capture_streamoff(struct file *file, void *priv,
+>> +				      enum v4l2_buf_type type)
+>> +{
+>> +	struct fimc_isp *isp = video_drvdata(file);
+>> +	struct v4l2_subdev *sd = isp->pipeline.subdevs[IDX_SENSOR];
+>> +	int ret;
+>> +
+>> +	ret = vb2_streamoff(&isp->capture_vb_queue, type);
+>> +	if (ret == 0)
+>> +		media_entity_pipeline_stop(&sd->entity);
+>> +	return ret;
+>> +}
+>> +
+>> +static int fimc_isp_capture_reqbufs(struct file *file, void *priv,
+>> +				    struct v4l2_requestbuffers *reqbufs)
+>> +{
+>> +	struct fimc_isp *isp = video_drvdata(file);
+>> +	int ret;
+>> +
+>> +	reqbufs->count = max_t(u32, FIMC_IS_REQ_BUFS_MIN, reqbufs->count);
+>> +	ret = vb2_reqbufs(&isp->capture_vb_queue, reqbufs);
 >
-> I suggest putting this in an anonymous struct:
->
-> 	struct { /* Auto ISO control cluster */
-> 		struct v4l2_ctrl *auto_iso;
-> 		struct v4l2_ctrl *iso;
-> 	};
->
-> That way you visually emphasize that these belong together and that you
-> shouldn't move them around.
+> You probably want to call vb2_ioctl_reqbufs here since that does additional
+> ownership checks that vb2_reqbufs doesn't.
 
-Agreed. I'll make them grouped in separate structs wherever a cluster
-is used.
+Yes, thanks for the suggestion. That was actually helpful, previously
+it wasn't immediately clear to me one can still take advantage of those
+vb2_ioctl_* helpers, mainly have the ownership handling in the core,
+and have some handlers assigned directly to v4l2_ioctl_ops an some called
+indirectly from the driver's own callbacks, should they need something
+else that is done in the helpers.
 
->> +	struct v4l2_ctrl *contrast;
->> +	struct v4l2_ctrl *saturation;
->> +	struct v4l2_ctrl *sharpness;
->> +	/* Auto/manual exposure */
->> +	struct v4l2_ctrl *auto_exp;
->> +	/* Manual exposure value */
->> +	struct v4l2_ctrl *exposure;
->> +	/* Adjust - brightness */
->> +	struct v4l2_ctrl *brightness;
->> +	/* Adjust - hue */
->> +	struct v4l2_ctrl *hue;
->> +	/* Exposure metering mode */
->> +	struct v4l2_ctrl *exp_metering;
->> +	/* AFC */
->> +	struct v4l2_ctrl *afc;
->> +	/* AE/AWB lock/unlock */
->> +	struct v4l2_ctrl *aewb_lock;
->> +	/* AF */
->> +	struct v4l2_ctrl *focus_mode;
->> +	/* AF status */
->> +	struct v4l2_ctrl *af_status;
->> +};
-[...]
->
-> Otherwise this patch looks very clean and I really have no other comments.
+I found those helpers really useful, especially in drivers that need to
+support several video nodes. Lots of boilerplate can be eliminated. And
+also vb2_ops_wait_prepare/finish are a simple and nice improvement.
 
-Thanks a lot for a prompt review!
+> The same is true for vb2_ioctl_streamon/off, BTW.
+
+Indeed. I have already applied all possible helpers for the next iteration.
+
+I need to yet resolve an issue with locking order, as I previously missed
+that media_entity_pipeline_start/stop() also takes the graph mutex.
+
+And currently the driver is supposed to take the graph mutex first and
+then the video mutex. Since the link_notify callback of the media device
+is called with the graph mutex already held.
+
+The only solution I came up so far is to provide unlocked versions of
+media_entity_pipeline_start/stop().
+
+Ideally using video mutex in link_notify() callback should not be needed,
+but there are things done there needed for backward video device
+compatibility.
 
 --
 
