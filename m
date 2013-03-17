@@ -1,139 +1,210 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v3 6/6] irqchip: s3c24xx: add s3c2450 interrupt definitions
-Date: Sun, 17 Mar 2013 14:09:07 +0100
-Message-ID: <201303171409.07774.heiko@sntech.de>
-References: <201303171404.06146.heiko@sntech.de>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [RFC PATCH 1/8] s5p-fimc: Add Exynos4x12 FIMC-IS driver
+Date: Sun, 17 Mar 2013 20:38:58 +0100
+Message-ID: <51461BD2.8080905@gmail.com>
+References: <1363031092-29950-1-git-send-email-s.nawrocki@samsung.com> <1363031092-29950-2-git-send-email-s.nawrocki@samsung.com> <201303121527.00571.hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:45222 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754612Ab3CQNJR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 Mar 2013 09:09:17 -0400
-In-Reply-To: <201303171404.06146.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <201303121527.00571.hverkuil@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-The s3c2450 is special in that it shares the cpu identification with the
-s3c2416 but provides more interrupts for its additional components.
+Hi Hans,
 
-It also shares the layout of the main interrupt register with the s3c2443
-and therefore reuses this definition.
+On 03/12/2013 03:27 PM, Hans Verkuil wrote:
+> On Mon 11 March 2013 20:44:45 Sylwester Nawrocki wrote:
+[...]
+>> +
+>> +/* Supported manual ISO values */
+>> +static const s64 iso_qmenu[] = {
+>> +	50, 100, 200, 400, 800,
+>> +};
+>> +
+>> +static int __ctrl_set_iso(struct fimc_is *is, int value)
+>> +{
+>> +	unsigned int idx, iso;
+>> +
+>> +	if (value == V4L2_ISO_SENSITIVITY_AUTO) {
+>> +		__is_set_isp_iso(is, ISP_ISO_COMMAND_AUTO, 0);
+>> +		return 0;
+>> +	}
+>> +	idx = is->isp.ctrls.iso->val;
+>> +	if (idx>= ARRAY_SIZE(iso_qmenu))
+>> +		return -EINVAL;
+>> +
+>> +	iso = iso_qmenu[idx];
+>> +	__is_set_isp_iso(is, ISP_ISO_COMMAND_MANUAL, iso);
+>> +	return 0;
+>> +}
+[...]
+>> +int fimc_isp_subdev_create(struct fimc_isp *isp)
+>> +{
+>> +	const struct v4l2_ctrl_ops *ops =&fimc_isp_ctrl_ops;
+>> +	struct v4l2_ctrl_handler *handler =&isp->ctrls.handler;
+>> +	struct v4l2_subdev *sd =&isp->subdev;
+>> +	struct fimc_isp_ctrls *ctrls =&isp->ctrls;
+>> +	int ret;
+>> +
+>> +	mutex_init(&isp->subdev_lock);
+>> +
+>> +	v4l2_subdev_init(sd,&fimc_is_subdev_ops);
+>> +	sd->grp_id = GRP_ID_FIMC_IS;
+>> +	sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+>> +	snprintf(sd->name, sizeof(sd->name), "FIMC-IS-ISP");
+>> +
+>> +	isp->subdev_pads[FIMC_IS_SD_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
+>> +	isp->subdev_pads[FIMC_IS_SD_PAD_SRC_FIFO].flags = MEDIA_PAD_FL_SOURCE;
+>> +	isp->subdev_pads[FIMC_IS_SD_PAD_SRC_DMA].flags = MEDIA_PAD_FL_SOURCE;
+>> +	ret = media_entity_init(&sd->entity, FIMC_IS_SD_PADS_NUM,
+>> +				isp->subdev_pads, 0);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	v4l2_ctrl_handler_init(handler, 20);
+>> +
+>> +	ctrls->saturation = v4l2_ctrl_new_std(handler, ops, V4L2_CID_SATURATION,
+>> +						-2, 2, 1, 0);
+>> +	ctrls->brightness = v4l2_ctrl_new_std(handler, ops, V4L2_CID_BRIGHTNESS,
+>> +						-4, 4, 1, 0);
+>> +	ctrls->contrast = v4l2_ctrl_new_std(handler, ops, V4L2_CID_CONTRAST,
+>> +						-2, 2, 1, 0);
+>> +	ctrls->sharpness = v4l2_ctrl_new_std(handler, ops, V4L2_CID_SHARPNESS,
+>> +						-2, 2, 1, 0);
+>> +	ctrls->hue = v4l2_ctrl_new_std(handler, ops, V4L2_CID_HUE,
+>> +						-2, 2, 1, 0);
+>> +
+>> +	ctrls->auto_wb = v4l2_ctrl_new_std_menu(handler, ops,
+>> +					V4L2_CID_AUTO_N_PRESET_WHITE_BALANCE,
+>> +					8, ~0x14e, V4L2_WHITE_BALANCE_AUTO);
+>> +
+>> +	ctrls->exposure = v4l2_ctrl_new_std(handler, ops,
+>> +					V4L2_CID_EXPOSURE_ABSOLUTE,
+>> +					-4, 4, 1, 0);
+>> +
+>> +	ctrls->exp_metering = v4l2_ctrl_new_std_menu(handler, ops,
+>> +					V4L2_CID_EXPOSURE_METERING, 3,
+>> +					~0xf, V4L2_EXPOSURE_METERING_AVERAGE);
+>> +
+>> +	v4l2_ctrl_new_std_menu(handler, ops, V4L2_CID_POWER_LINE_FREQUENCY,
+>> +					V4L2_CID_POWER_LINE_FREQUENCY_AUTO, 0,
+>> +					V4L2_CID_POWER_LINE_FREQUENCY_AUTO);
+>> +	/* ISO sensitivity */
+>> +	ctrls->auto_iso = v4l2_ctrl_new_std_menu(handler, ops,
+>> +			V4L2_CID_ISO_SENSITIVITY_AUTO, 1, 0,
+>> +			V4L2_ISO_SENSITIVITY_AUTO);
+>> +
+>> +	ctrls->iso = v4l2_ctrl_new_int_menu(handler, ops,
+>> +			V4L2_CID_ISO_SENSITIVITY, ARRAY_SIZE(iso_qmenu) - 1,
+>> +			ARRAY_SIZE(iso_qmenu)/2 - 1, iso_qmenu);
+>> +
+>> +	ctrls->aewb_lock = v4l2_ctrl_new_std(handler, ops,
+>> +					V4L2_CID_3A_LOCK, 0, 0x3, 0, 0);
+>> +
+>> +	/* FIXME: Adjust the enabled controls mask according
+>> +	   to the ISP capabilities */
+>> +	v4l2_ctrl_new_std_menu(handler, ops, V4L2_CID_COLORFX,
+>> +					V4L2_COLORFX_ANTIQUE,
+>> +					0, V4L2_COLORFX_NONE);
+>> +	if (handler->error) {
+>> +		media_entity_cleanup(&sd->entity);
+>> +		return handler->error;
+>> +	}
+>> +
+>> +	ctrls->auto_iso->flags |= V4L2_CTRL_FLAG_VOLATILE |
+>> +				  V4L2_CTRL_FLAG_UPDATE;
+>
+> Why would auto_iso be volatile? I would expect the iso to be volatile
+> (in which case the 'false' argument below would be 'true'). Also,
+> v4l2_ctrl_auto_cluster already sets the UPDATE flag.
 
-As no non-dt boards are present, the s3c2450 irqs will only be
-accessible thru devicetree.
+Thanks for spotting this. I should have removed this flags set up
+since the g_volatile_ctrl op is not currently supported and as far
+as I know the firmware doesn't support reading actual ISO value in
+auto mode. I'll need to check if there are any commands available
+for that.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/irqchip/irq-s3c24xx.c |   62 +++++++++++++++++++++++++++++++++++++++-
- 1 files changed, 60 insertions(+), 2 deletions(-)
+Anyway auto_iso is not supposed to have the flags set up like this
+and that also tells me that I need to inspect my other driver where
+this code originally came from. :)
 
-diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
-index 55cb363..7ddf8e8 100644
---- a/drivers/irqchip/irq-s3c24xx.c
-+++ b/drivers/irqchip/irq-s3c24xx.c
-@@ -852,6 +852,51 @@ static struct s3c_irq_data init_s3c2416_second[32] = {
- 	{ .type = S3C_IRQTYPE_EDGE }, /* I2S0 */
- };
- 
-+static struct s3c_irq_data init_s3c2450subint[32] = {
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 28 }, /* UART0-RX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 28 }, /* UART0-TX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 28 }, /* UART0-ERR */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 23 }, /* UART1-RX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 23 }, /* UART1-TX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 23 }, /* UART1-ERR */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-RX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-TX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-ERR */
-+	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* TC */
-+	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* ADC */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_C */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_P */
-+	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
-+	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 16 }, /* LCD2 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 16 }, /* LCD3 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 16 }, /* LCD4 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 17 }, /* DMA0 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 17 }, /* DMA1 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 17 }, /* DMA2 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 17 }, /* DMA3 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 17 }, /* DMA4 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 17 }, /* DMA5 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 18 }, /* UART3-RX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 18 }, /* UART3-TX */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 18 }, /* UART3-ERR */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 9 }, /* WDT */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 9 }, /* AC97 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 17 }, /* DMA6 */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 17 }, /* DMA7 */
-+};
-+
-+static struct s3c_irq_data init_s3c2450second[32] = {
-+	{ .type = S3C_IRQTYPE_EDGE }, /* 2D */
-+	{ .type = S3C_IRQTYPE_EDGE }, /* IIC1 */
-+	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
-+	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
-+	{ .type = S3C_IRQTYPE_EDGE }, /* PCM0 */
-+	{ .type = S3C_IRQTYPE_EDGE }, /* PCM1 */
-+	{ .type = S3C_IRQTYPE_EDGE }, /* I2S0 */
-+	{ .type = S3C_IRQTYPE_EDGE }, /* I2S1 */
-+};
-+
- void __init s3c2416_init_irq(void)
- {
- 	struct s3c_irq_intc *main_intc;
-@@ -1024,7 +1069,7 @@ void __init s3c2442_init_irq(void)
- }
- #endif
- 
--#ifdef CONFIG_CPU_S3C2443
-+#if defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
- static struct s3c_irq_data init_s3c2443base[32] = {
- 	{ .type = S3C_IRQTYPE_EINT, }, /* EINT0 */
- 	{ .type = S3C_IRQTYPE_EINT, }, /* EINT1 */
-@@ -1059,8 +1104,9 @@ static struct s3c_irq_data init_s3c2443base[32] = {
- 	{ .type = S3C_IRQTYPE_EDGE, }, /* RTC */
- 	{ .type = S3C_IRQTYPE_LEVEL, }, /* ADCPARENT */
- };
-+#endif
- 
--
-+#ifdef CONFIG_CPU_S3C2443
- static struct s3c_irq_data init_s3c2443subint[32] = {
- 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 28 }, /* UART0-RX */
- 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 28 }, /* UART0-TX */
-@@ -1172,6 +1218,17 @@ struct s3c24xx_irq_of_data s3c2416_irq_data = {
- 	.irq_ctrl = s3c2416_ctrl,
- 	.num_ctrl = ARRAY_SIZE(s3c2416_ctrl),
- };
-+
-+static struct s3c24xx_irq_of_ctrl s3c2450_ctrl[] = {
-+	S3C24XX_IRQCTRL("intc", 0, init_s3c2443base, &main_intc, NULL),
-+	S3C24XX_IRQCTRL("subintc", 0x18, init_s3c2450subint, NULL, &main_intc),
-+	S3C24XX_IRQCTRL("intc2", 0x40, init_s3c2450second, &main_intc2, NULL),
-+};
-+
-+static struct s3c24xx_irq_of_data s3c2450_irq_data = {
-+	.irq_ctrl = s3c2450_ctrl,
-+	.num_ctrl = ARRAY_SIZE(s3c2450_ctrl),
-+};
- #endif
- 
- #ifdef CONFIG_CPU_S3C2440
-@@ -1219,6 +1276,7 @@ static const struct of_device_id intc_list[] = {
- #endif
- #ifdef CONFIG_CPU_S3C2416
- 	{ .compatible = "samsung,s3c2416-irq", .data = &s3c2416_irq_data },
-+	{ .compatible = "samsung,s3c2450-irq", .data = &s3c2450_irq_data },
- #endif
- #ifdef CONFIG_CPU_S3C2440
- 	{ .compatible = "samsung,s3c2440-irq", .data = &s3c2440_irq_data },
--- 
-1.7.2.3
+>> +	v4l2_ctrl_auto_cluster(2,&ctrls->auto_iso, 0, false);
+>> +
+>> +	sd->ctrl_handler = handler;
+>> +	sd->internal_ops =&fimc_is_subdev_internal_ops;
+>> +	sd->entity.ops =&fimc_is_subdev_media_ops;
+>> +	v4l2_set_subdevdata(sd, isp);
+>> +
+>> +	return 0;
+>> +}
+
+>> diff --git a/drivers/media/platform/s5p-fimc/fimc-isp.h b/drivers/media/platform/s5p-fimc/fimc-isp.h
+>> new file mode 100644
+>> index 0000000..654039e
+>> --- /dev/null
+>> +++ b/drivers/media/platform/s5p-fimc/fimc-isp.h
+>> @@ -0,0 +1,205 @@
+[...]
+>> +struct fimc_isp_ctrls {
+>> +	struct v4l2_ctrl_handler handler;
+>> +	/* Internal mode selection */
+>> +	struct v4l2_ctrl *scenario;
+>> +	/* Frame rate */
+>> +	struct v4l2_ctrl *fps;
+>> +	/* Touch AF position */
+>> +	struct v4l2_ctrl *af_position_x;
+>> +	struct v4l2_ctrl *af_position_y;
+>> +	/* Auto white balance */
+>> +	struct v4l2_ctrl *auto_wb;
+>> +	/* ISO sensitivity */
+>> +	struct v4l2_ctrl *auto_iso;
+>> +	struct v4l2_ctrl *iso;
+>
+> I suggest putting this in an anonymous struct:
+>
+> 	struct { /* Auto ISO control cluster */
+> 		struct v4l2_ctrl *auto_iso;
+> 		struct v4l2_ctrl *iso;
+> 	};
+>
+> That way you visually emphasize that these belong together and that you
+> shouldn't move them around.
+
+Agreed. I'll make them grouped in separate structs wherever a cluster
+is used.
+
+>> +	struct v4l2_ctrl *contrast;
+>> +	struct v4l2_ctrl *saturation;
+>> +	struct v4l2_ctrl *sharpness;
+>> +	/* Auto/manual exposure */
+>> +	struct v4l2_ctrl *auto_exp;
+>> +	/* Manual exposure value */
+>> +	struct v4l2_ctrl *exposure;
+>> +	/* Adjust - brightness */
+>> +	struct v4l2_ctrl *brightness;
+>> +	/* Adjust - hue */
+>> +	struct v4l2_ctrl *hue;
+>> +	/* Exposure metering mode */
+>> +	struct v4l2_ctrl *exp_metering;
+>> +	/* AFC */
+>> +	struct v4l2_ctrl *afc;
+>> +	/* AE/AWB lock/unlock */
+>> +	struct v4l2_ctrl *aewb_lock;
+>> +	/* AF */
+>> +	struct v4l2_ctrl *focus_mode;
+>> +	/* AF status */
+>> +	struct v4l2_ctrl *af_status;
+>> +};
+[...]
+>
+> Otherwise this patch looks very clean and I really have no other comments.
+
+Thanks a lot for a prompt review!
+
+--
+
+Regards,
+Sylwester
