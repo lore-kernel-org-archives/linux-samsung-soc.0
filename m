@@ -1,53 +1,100 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/6] pinctrl: samsung: Include pinctrl-exynos driver data conditionally
-Date: Mon, 18 Mar 2013 22:38:58 +0100
-Message-ID: <1733680.zsxXgkCci5@flatron>
-References: <1363642315-10331-1-git-send-email-tomasz.figa@gmail.com> <1363642315-10331-3-git-send-email-tomasz.figa@gmail.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 6/6] irqchip: s3c24xx: add s3c2450 interrupt definitions
+Date: Mon, 18 Mar 2013 17:14:52 -0500
+Message-ID: <514791DC.9070600@gmail.com>
+References: <201303171404.06146.heiko@sntech.de>
+ <201303171409.07774.heiko@sntech.de> <5147389B.5060105@gmail.com>
+ <201303181753.16547.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:56864 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933690Ab3CRVi7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Mar 2013 17:38:59 -0400
-Received: by mail-ee0-f46.google.com with SMTP id e49so2891964eek.33
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Mar 2013 14:38:57 -0700 (PDT)
-In-Reply-To: <1363642315-10331-3-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <201303181753.16547.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org
 
-On Monday 18 of March 2013 22:31:51 Tomasz Figa wrote:
-> Since pinctrl-samsung is a common part of the pin control support for
-> several Samsung SoCs, it can be compiled without Exynos support enabled.
-> 
-> This patch surrounds Exynos-specific driver data with ifdefs to include
-> them only when support for Exynos is enabled.
-> 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  drivers/pinctrl/pinctrl-samsung.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-samsung.c
-> b/drivers/pinctrl/pinctrl-samsung.c index b1d4ac8..f1fb562 100644
-> --- a/drivers/pinctrl/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/pinctrl-samsung.c
-> @@ -968,10 +968,12 @@ static int samsung_pinctrl_probe(struct
-> platform_device *pdev) }
-> 
->  static const struct of_device_id samsung_pinctrl_dt_match[] = {
-> +#ifdef CONFIG_PINCTRL_EXYNOS4
+On 03/18/2013 11:53 AM, Heiko St=FCbner wrote:
+> Hi Rob,
+> =
 
-Oops... This should be CONFIG_PINCTRL_EXYNOS. It used to be EXYNOS4 in 
-Kgene's tree (on which I usually base my patches) for some time, but it no 
-longer is, but I forgot to change this during rebae.
+> Am Montag, 18. M=E4rz 2013, 16:54:03 schrieb Rob Herring:
+>> On 03/17/2013 08:09 AM, Heiko St=FCbner wrote:
+>>> The s3c2450 is special in that it shares the cpu identification with the
+>>> s3c2416 but provides more interrupts for its additional components.
+>>>
+>>> It also shares the layout of the main interrupt register with the s3c24=
+43
+>>> and therefore reuses this definition.
+>>>
+>>> As no non-dt boards are present, the s3c2450 irqs will only be
+>>> accessible thru devicetree.
 
-Linus, if remaining patches turned out to be OK, would you fix this when 
-applying?
+[snip]
 
-Best regards,
-Tomasz
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 17 }, /* DMA4 */
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 17 }, /* DMA5 */
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 18 }, /* UART3-RX */
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 18 }, /* UART3-TX */
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 18 }, /* UART3-ERR */
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 9 }, /* WDT */
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 9 }, /* AC97 */
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 17 }, /* DMA6 */
+>>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 17 }, /* DMA7 */
+>>
+>> This all seems like information that should come from DT.
+> =
+
+> In the first iterations [0] of theis series it was done this way, but was =
+
+> suggested that these informations _might_ be implementation specific and =
+not =
+
+> describing the hardware.
+> =
+
+> As I didn't get any "final" feedback on the matter, I tried it this way t=
+his =
+
+> time. Personally I also did like the previous variant better, as the driv=
+er =
+
+> could loose all the declaration stuff when platforms move to dt.
+> =
+
+> I would be glad for a hint if the first approach was the correct one.
+> =
+
+> =
+
+> [0] "irqchip: irq-s3c24xx: add devicetree support" from 2013-02-18, also =
+with =
+
+> you in the recipient list
+
+I'm inclined to say the prior way is more in the right direction.
+However, I'm not really clear what you are trying to describe.
+
+> +		s3c24xx,irqlist =3D <2 0 /* 2D */
+> +				   2 0 /* IIC1 */
+> +				   0 0 /* reserved */
+> +				   0 0 /* reserved */
+> +				   2 0 /* PCM0 */
+> +				   2 0 /* PCM1 */
+> +				   2 0 /* I2S0 */
+> +				   2 0>; /* I2S1 */
+
+My first thought here is this information should not be centralized in
+the controller node, but placed with each source node (2D, I2C1, etc).
+
+Rob
