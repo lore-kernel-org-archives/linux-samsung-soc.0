@@ -1,406 +1,508 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v3 5/6] irqchip: s3c24xx: add devicetree support
-Date: Mon, 18 Mar 2013 13:59:16 -0500
-Message-ID: <51476404.9060602@gmail.com>
-References: <201303171404.06146.heiko@sntech.de> <201303171407.59128.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] [media] Add a V4L2 OF parser
+Date: Mon, 18 Mar 2013 20:58:54 +0100
+Message-ID: <1363636734-21128-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:53747 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752800Ab3CRS7T (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:63712 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753542Ab3CRT7N (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Mar 2013 14:59:19 -0400
-Received: by mail-ob0-f174.google.com with SMTP id 16so5681154obc.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Mar 2013 11:59:18 -0700 (PDT)
-In-Reply-To: <201303171407.59128.heiko@sntech.de>
+	Mon, 18 Mar 2013 15:59:13 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, linux-arm-kernel@lists.infradead.org
+To: g.liakhovetski@gmx.de, linux-media@vger.kernel.org
+Cc: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, prabhakar.lad@ti.com, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 03/17/2013 08:07 AM, Heiko St=FCbner wrote:
-> Add the necessary code to initialize the interrupt controller
-> thru devicetree data using the irqchip infrastructure.
->=20
-> On dt machines the eint-type interrupts in the main interrupt control=
-ler
-> get mapped as regular edge-types, as their wakeup and interrupt type
-> properties will be handled by the upcoming pinctrl driver.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../interrupt-controller/samsung,s3c24xx-irq.txt   |   54 +++++
->  drivers/irqchip/irq-s3c24xx.c                      |  222 ++++++++++=
-++++++++++
->  2 files changed, 276 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-contr=
-oller/samsung,s3c24xx-irq.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/s=
-amsung,s3c24xx-irq.txt b/Documentation/devicetree/bindings/interrupt-co=
-ntroller/samsung,s3c24xx-irq.txt
-> new file mode 100644
-> index 0000000..be5dead
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/samsung,=
-s3c24xx-irq.txt
-> @@ -0,0 +1,54 @@
-> +Samsung S3C24XX Interrupt Controllers
-> +
-> +The S3C24XX SoCs contain a custom set of interrupt controllers provi=
-ding a
-> +varying number of interrupt sources. The set consists of a main- and=
- sub-
-> +controller and on newer SoCs even a second main controller.
-> +
-> +Required properties:
-> +- compatible: Compatible property value should be one of "samsung,s3=
-c2410-irq",
-> +  "samsung,s3c2412-irq", "samsung,s3c2416-irq", "samsung,s3c2440-irq=
-",
-> +  "samsung,s3c2442-irq", "samsung,s3c2443-irq" depending on the SoC =
-variant.
-> +
-> +- reg: Physical base address of the controller and length of memory =
-mapped
-> +  region.
-> +
-> +- interrupt-controller : Identifies the node as an interrupt control=
-ler
-> +
-> +Sub-controllers as child nodes:
-> +  The interrupt controllers that should be referenced by device node=
-s are
-> +  represented by child nodes. Valid names are intc, subintc and intc=
-2.
-> +  The interrupt values in device nodes are then mapped directly to t=
-he
-> +  bit-numbers of the pending register of the named interrupt control=
-ler.
-> +
-> +Required properties:
-> +- interrupt-controller : Identifies the node as an interrupt control=
-ler
-> +
-> +- #interrupt-cells : Specifies the number of cells needed to encode =
-an
-> +  interrupt source. The value shall be 2.
-> +
-> +Example:
-> +
-> +	interrupt-controller@4a000000 {
-> +		compatible =3D "samsung,s3c2416-irq";
-> +		reg =3D <0x4a000000 0x100>;
-> +		interrupt-controller;
-> +
-> +		intc:intc {
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <2>;
-> +		};
-> +
-> +		subintc:subintc {
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <2>;
-> +		};
-> +	};
-> +
-> +	[...]
-> +
-> +	serial@50000000 {
-> +		compatible =3D "samsung,s3c2410-uart";
-> +		reg =3D <0x50000000 0x4000>;
-> +		interrupt-parent =3D <&subintc>;
-> +		interrupts =3D <0 0>, <1 0>;
-> +	};
-> diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c2=
-4xx.c
-> index 1eba289..55cb363 100644
-> --- a/drivers/irqchip/irq-s3c24xx.c
-> +++ b/drivers/irqchip/irq-s3c24xx.c
-> @@ -25,6 +25,9 @@
->  #include <linux/ioport.h>
->  #include <linux/device.h>
->  #include <linux/irqdomain.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_address.h>
-> =20
->  #include <asm/exception.h>
->  #include <asm/mach/irq.h>
-> @@ -36,6 +39,8 @@
->  #include <plat/regs-irqtype.h>
->  #include <plat/pm.h>
-> =20
-> +#include "irqchip.h"
-> +
->  #define S3C_IRQTYPE_NONE	0
->  #define S3C_IRQTYPE_EINT	1
->  #define S3C_IRQTYPE_EDGE	2
-> @@ -380,6 +385,10 @@ static int s3c24xx_irq_map(struct irq_domain *h,=
- unsigned int virq,
-> =20
->  	parent_intc =3D intc->parent;
-> =20
-> +	/* on dt platforms the extints get handled by the pinctrl driver */
-> +	if (h->of_node && irq_data->type =3D=3D S3C_IRQTYPE_EINT)
-> +		irq_data->type =3D S3C_IRQTYPE_EDGE;
-> +
->  	/* set handler and flags */
->  	switch (irq_data->type) {
->  	case S3C_IRQTYPE_NONE:
-> @@ -1104,3 +1113,216 @@ void __init s3c2443_init_irq(void)
->  	s3c24xx_init_intc(NULL, &init_s3c2443subint[0], main_intc, 0x4a0000=
-18);
->  }
->  #endif
-> +
-> +#ifdef CONFIG_OF
-> +struct s3c24xx_irq_of_ctrl {
-> +	char			*name;
-> +	unsigned long		offset;
-> +	struct s3c_irq_data	*irq_data;
-> +	struct s3c_irq_intc	**handle;
-> +	struct s3c_irq_intc	**parent;
-> +};
-> +
-> +#define S3C24XX_IRQCTRL(n, o, d, h, p)		\
-> +{						\
-> +	.name		=3D n,			\
-> +	.offset		=3D o,			\
-> +	.irq_data	=3D d,			\
-> +	.handle		=3D h,			\
-> +	.parent		=3D p,			\
-> +}
-> +
-> +struct s3c24xx_irq_of_data {
-> +	struct s3c24xx_irq_of_ctrl	*irq_ctrl;
-> +	int				num_ctrl;
-> +};
-> +
-> +#ifdef CONFIG_CPU_S3C2410
-> +static struct s3c24xx_irq_of_ctrl s3c2410_ctrl[] =3D {
-> +	S3C24XX_IRQCTRL("intc", 0, init_s3c2410base, &main_intc, NULL),
-> +	S3C24XX_IRQCTRL("subintc", 0x18, init_s3c2410subint, NULL, &main_in=
-tc),
-> +};
-> +
-> +static struct s3c24xx_irq_of_data s3c2410_irq_data =3D {
-> +	.irq_ctrl =3D s3c2410_ctrl,
-> +	.num_ctrl =3D ARRAY_SIZE(s3c2410_ctrl),
-> +};
-> +#endif
-> +
-> +#ifdef CONFIG_CPU_S3C2412
-> +static struct s3c24xx_irq_of_ctrl s3c2412_ctrl[] =3D {
-> +	S3C24XX_IRQCTRL("intc", 0, init_s3c2412base, &main_intc, NULL),
-> +	S3C24XX_IRQCTRL("subintc", 0x18, init_s3c2412subint, NULL, &main_in=
-tc),
-> +};
-> +
-> +static struct s3c24xx_irq_of_data s3c2412_irq_data =3D {
-> +	.irq_ctrl =3D s3c2412_ctrl,
-> +	.num_ctrl =3D ARRAY_SIZE(s3c2412_ctrl),
-> +};
-> +#endif
-> +
-> +#ifdef CONFIG_CPU_S3C2416
-> +static struct s3c24xx_irq_of_ctrl s3c2416_ctrl[] =3D {
-> +	S3C24XX_IRQCTRL("intc", 0, init_s3c2416base, &main_intc, NULL),
-> +	S3C24XX_IRQCTRL("subintc", 0x18, init_s3c2416subint, NULL, &main_in=
-tc),
-> +	S3C24XX_IRQCTRL("intc2", 0x40, init_s3c2416_second, &main_intc2, NU=
-LL),
-> +};
-> +
-> +static struct s3c24xx_irq_of_data s3c2416_irq_data =3D {
-> +	.irq_ctrl =3D s3c2416_ctrl,
-> +	.num_ctrl =3D ARRAY_SIZE(s3c2416_ctrl),
-> +};
-> +#endif
-> +
-> +#ifdef CONFIG_CPU_S3C2440
-> +static struct s3c24xx_irq_of_ctrl s3c2440_ctrl[] =3D {
-> +	S3C24XX_IRQCTRL("intc", 0, init_s3c2440base, &main_intc, NULL),
-> +	S3C24XX_IRQCTRL("subintc", 0x18, init_s3c2440subint, NULL, &main_in=
-tc),
-> +};
-> +
-> +static struct s3c24xx_irq_of_data s3c2440_irq_data =3D {
-> +	.irq_ctrl =3D s3c2440_ctrl,
-> +	.num_ctrl =3D ARRAY_SIZE(s3c2440_ctrl),
-> +};
-> +#endif
-> +
-> +#ifdef CONFIG_CPU_S3C2442
-> +static struct s3c24xx_irq_of_ctrl s3c2442_ctrl[] =3D {
-> +	S3C24XX_IRQCTRL("intc", 0, init_s3c2442base, &main_intc, NULL),
-> +	S3C24XX_IRQCTRL("subintc", 0x18, init_s3c2442subint, NULL, &main_in=
-tc),
-> +};
-> +
-> +static struct s3c24xx_irq_of_data s3c2442_irq_data =3D {
-> +	.irq_ctrl =3D s3c2442_ctrl,
-> +	.num_ctrl =3D ARRAY_SIZE(s3c2442_ctrl),
-> +};
-> +#endif
-> +
-> +#ifdef CONFIG_CPU_S3C2443
-> +static struct s3c24xx_irq_of_ctrl s3c2443_ctrl[] =3D {
-> +	S3C24XX_IRQCTRL("intc", 0, init_s3c2443base, &main_intc, NULL),
-> +	S3C24XX_IRQCTRL("subintc", 0x18, init_s3c2443subint, NULL, &main_in=
-tc),
-> +};
-> +
-> +static struct s3c24xx_irq_of_data s3c2443_irq_data =3D {
-> +	.irq_ctrl =3D s3c2443_ctrl,
-> +	.num_ctrl =3D ARRAY_SIZE(s3c2443_ctrl),
-> +};
-> +#endif
-> +
-> +static const struct of_device_id intc_list[] =3D {
-> +#ifdef CONFIG_CPU_S3C2410
-> +	{ .compatible =3D "samsung,s3c2410-irq", .data =3D &s3c2410_irq_dat=
-a },
-> +#endif
-> +#ifdef CONFIG_CPU_S3C2412
-> +	{ .compatible =3D "samsung,s3c2412-irq", .data =3D &s3c2412_irq_dat=
-a },
-> +#endif
-> +#ifdef CONFIG_CPU_S3C2416
-> +	{ .compatible =3D "samsung,s3c2416-irq", .data =3D &s3c2416_irq_dat=
-a },
-> +#endif
-> +#ifdef CONFIG_CPU_S3C2440
-> +	{ .compatible =3D "samsung,s3c2440-irq", .data =3D &s3c2440_irq_dat=
-a },
-> +#endif
-> +#ifdef CONFIG_CPU_S3C2442
-> +	{ .compatible =3D "samsung,s3c2442-irq", .data =3D &s3c2442_irq_dat=
-a },
-> +#endif
-> +#ifdef CONFIG_CPU_S3C2443
-> +	{ .compatible =3D "samsung,s3c2443-irq", .data =3D &s3c2443_irq_dat=
-a },
-> +#endif
-> +	{},
-> +};
-> +
-> +int __init s3c24xx_init_intc_of(struct device_node *np,
-> +				 struct device_node *interrupt_parent)
-> +{
-> +	const struct of_device_id *match;
-> +	const struct s3c24xx_irq_of_data *ctrl_data;
-> +	struct device_node *intc_node;
-> +	struct s3c24xx_irq_of_ctrl *ctrl;
-> +	struct s3c_irq_intc *intc;
-> +	void __iomem *reg_base;
-> +	int i;
-> +
-> +	match =3D of_match_node(intc_list, np);
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
-Rather than matching twice, create a wrapper function that passes in th=
-e
-necessary data pointer. Something like this:
+Add a V4L2 OF parser, implementing bindings documented in
+Documentation/devicetree/bindings/media/video-interfaces.txt.
 
-s3c2410_init_intc_of(struct device_node *np,
-				 struct device_node *interrupt_parent)
-{
-	return s3c24xx_init_intc_of(np, interrupt_parent, &s3c2410_irq_data);
-}
+Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+[s.nawrocki@samsung.com: various corrections and improvements
+since the initial version]
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-> +	if (!match) {
-> +		pr_err("irq-s3c24xx: could not find matching irqdata\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ctrl_data =3D match->data;
-> +
-> +	reg_base =3D of_iomap(np, 0);
-> +	if (!reg_base) {
-> +		pr_err("irq-s3c24xx: could not map irq memory\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (i =3D 0; i < ctrl_data->num_ctrl; i++) {
-> +		ctrl =3D &ctrl_data->irq_ctrl[i];
-> +
-> +		intc_node =3D of_find_node_by_name(np, ctrl->name);
-> +		if (!intc_node) {
-> +			pr_debug("irq: no device node for %s\n",
-> +				ctrl->name);
-> +			continue;
-> +		}
-> +
-> +		intc =3D kzalloc(sizeof(struct s3c_irq_intc), GFP_KERNEL);
-> +		if (!intc) {
-> +			of_node_put(intc_node);
-> +			return -ENOMEM;
-> +		}
-> +
-> +		pr_debug("irq: found controller %s\n", ctrl->name);
-> +
-> +		intc->irqs =3D ctrl->irq_data;
-> +
-> +		if (ctrl->parent) {
-> +			if (*(ctrl->parent)) {
-> +				intc->parent =3D *(ctrl->parent);
-> +			} else {
-> +				pr_warn("irq: parent of %s missing\n",
-> +					ctrl->name);
-> +				kfree(intc);
-> +				of_node_put(intc_node);
-> +				continue;
-> +			}
-> +		}
-> +
-> +		if (!ctrl->parent) {
-> +			intc->reg_pending =3D reg_base + ctrl->offset;
-> +			intc->reg_mask =3D reg_base + ctrl->offset + 0x08;
-> +			intc->reg_intpnd =3D reg_base + ctrl->offset + 0x10;
-> +		} else {
-> +			intc->reg_pending =3D reg_base + ctrl->offset;
-> +			intc->reg_mask =3D reg_base + ctrl->offset + 0x4;
-> +		}
+---
+Geunnadi,
 
-These if statements could be simplified some (move this else to the "if
-(ctrl->parent)" above).
+I have made couple further changes to this parsing library, mostly
+addressing your review comments. Hopefully it looks better now.
 
-> +
-> +		/* now that all the data is complete, init the irq-domain */
-> +		s3c24xx_clear_intc(intc);
-> +		intc->domain =3D irq_domain_add_linear(intc_node, 32,
-> +						     &s3c24xx_irq_ops, intc);
-> +		if (!intc->domain) {
-> +			pr_err("irq: could not create irq-domain\n");
-> +			kfree(intc);
-> +			of_node_put(intc_node);
-> +			continue;
-> +		}
-> +
-> +		if (ctrl->handle)
-> +			*(ctrl->handle) =3D intc;
-> +	}
-> +
-> +	set_handle_irq(s3c24xx_handle_irq);
-> +
-> +	return 0;
-> +}
-> +
-> +IRQCHIP_DECLARE(s3c2410_irq, "samsung,s3c2410-irq", s3c24xx_init_int=
-c_of);
-> +IRQCHIP_DECLARE(s3c2412_irq, "samsung,s3c2412-irq", s3c24xx_init_int=
-c_of);
-> +IRQCHIP_DECLARE(s3c2416_irq, "samsung,s3c2416-irq", s3c24xx_init_int=
-c_of);
-> +IRQCHIP_DECLARE(s3c2440_irq, "samsung,s3c2440-irq", s3c24xx_init_int=
-c_of);
-> +IRQCHIP_DECLARE(s3c2442_irq, "samsung,s3c2442-irq", s3c24xx_init_int=
-c_of);
-> +IRQCHIP_DECLARE(s3c2443_irq, "samsung,s3c2443-irq", s3c24xx_init_int=
-c_of);
-> +IRQCHIP_DECLARE(s3c2450_irq, "samsung,s3c2450-irq", s3c24xx_init_int=
-c_of);
-> +#endif
->=20
+It would be good to get more reviews and opinions of other media
+sub-maintainers. Any Acked/Tested-by are also of course most
+welcome.
+
+I have a feeling this is about ready for upstream ;-) We have
+used it in couple subsystems already and the overall design
+looks good and seems to be proving itself in practice.
+
+Thanks,
+Sylwester
+
+The last version of the bindings documentation patch can be found
+at: https://patchwork.kernel.org/patch/2074951
+
+Changes since v7 include mostly corrections of issues pointed
+out by Guennadi, and few others:
+
+ - v4l2_of_parse_parallel_bus() and v4l2_of_parse_csi_bus() are
+   made static and are not exported anymore;
+ - swapped order of parsing the serial and parallel bus properties
+   in v4l2_of_parse_endpoint() function; the rationale is that
+   MIPI CSI-2 has less properties and an overall number of searches
+   of non-existent properties is less this way;
+ - v4l2_mbus_mipi_csi2, v4l2_mbus_parallel structs renamed to
+   v4l2_of_bus_mipi_csi2, v4l2_of_bus_parallel respectively;
+ - added kernel-doc for the above two data structures;
+ - the flags field split into to fields - separate fields for the
+   parallel and serial bus, V4L2_MBUS_* bit flags are defined
+   separately for MIPI CSI-2 and parallel busses so they were
+   clashing when used together in single data structure member!;
+ - the head member of struct v4l2_endpoint made last member of
+   this data structure, it is now not cleared with memset() at the
+   beginning of v4l2_of_parse_endpoint() function; I believe
+   clearing list head in this function is not expected;
+ - fixed bug in v4l2_of_get_remote_port_parent() function;
+ - reworked first port node searching in v4l2_of_get_next_endpoint();
+ - moved code setting V4L2_MBUS_MASTER and V4L2_MBUS_CSI2_CONTINUOUS_CLOCK
+   out from v4l2_of_parse_endpoint() to v4l2_of_parse_mipi_csi2/
+   parallel_bus() functions;
+ - ensured we recognize presence of the clock-lanes property regardless
+   of the clock lane index being 0;
+ - added v4l2_of_get_remote_port() function.
+
+Changes since v6:
+ - minor v4l2_of_get_remote_port_parent() function cleanup.
+
+Changes since v5:
+ - renamed v4l2_of_parse_mipi_csi2 -> v4l2_of_parse_csi_bus;
+ - corrected v4l2_of_get_remote_port_parent() function declaration
+   for !CONFIG_OF;
+ - reworked v4l2_of_get_next_endpoint() function to consider the
+   'port' nodes can be grouped under optional 'ports' node;
+ - added kerneldoc description for v4l2_of_get_next_endpoint()
+   function.
+
+Changes since v4:
+ - reworked v4l2_of_get_remote_port() function to consider cases
+   where 'port' nodes are grouped in a parent 'ports' node;
+ - rearranged struct v4l2_of_endpoint and related changes added
+   in the parser code;
+ - added kerneldoc description for struct v4l2_of_endpoint;
+ - s/link/endpoint in the comments.
+---
+ drivers/media/v4l2-core/Makefile  |    3 +
+ drivers/media/v4l2-core/v4l2-of.c |  267 +++++++++++++++++++++++++++++++++++++
+ include/media/v4l2-of.h           |  111 +++++++++++++++
+ 3 files changed, 381 insertions(+)
+ create mode 100644 drivers/media/v4l2-core/v4l2-of.c
+ create mode 100644 include/media/v4l2-of.h
+
+diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
+index c2d61d4..00f64d6 100644
+--- a/drivers/media/v4l2-core/Makefile
++++ b/drivers/media/v4l2-core/Makefile
+@@ -9,6 +9,9 @@ videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
+ ifeq ($(CONFIG_COMPAT),y)
+   videodev-objs += v4l2-compat-ioctl32.o
+ endif
++ifeq ($(CONFIG_OF),y)
++  videodev-objs += v4l2-of.o
++endif
+
+ obj-$(CONFIG_VIDEO_DEV) += videodev.o v4l2-int-device.o
+ obj-$(CONFIG_VIDEO_V4L2) += v4l2-common.o
+diff --git a/drivers/media/v4l2-core/v4l2-of.c b/drivers/media/v4l2-core/v4l2-of.c
+new file mode 100644
+index 0000000..e38e210
+--- /dev/null
++++ b/drivers/media/v4l2-core/v4l2-of.c
+@@ -0,0 +1,267 @@
++/*
++ * V4L2 OF binding parsing library
++ *
++ * Copyright (C) 2012 - 2013 Samsung Electronics Co., Ltd.
++ * Sylwester Nawrocki <s.nawrocki@samsung.com>
++ *
++ * Copyright (C) 2012 Renesas Electronics Corp.
++ * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of version 2 of the GNU General Public License as
++ * published by the Free Software Foundation.
++ */
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/string.h>
++#include <linux/types.h>
++
++#include <media/v4l2-of.h>
++
++static void v4l2_of_parse_csi_bus(const struct device_node *node,
++				  struct v4l2_of_endpoint *endpoint)
++{
++	struct v4l2_of_bus_mipi_csi2 *bus = &endpoint->bus.mipi_csi2;
++	u32 data_lanes[ARRAY_SIZE(bus->data_lanes)];
++	struct property *prop;
++	bool have_clk_lane = false;
++	unsigned int flags = 0;
++	u32 v;
++
++	prop = of_find_property(node, "data-lanes", NULL);
++	if (prop) {
++		const __be32 *lane = NULL;
++		int i;
++
++		for (i = 0; i < ARRAY_SIZE(data_lanes); i++) {
++			lane = of_prop_next_u32(prop, lane, &data_lanes[i]);
++			if (!lane)
++				break;
++		}
++		bus->num_data_lanes = i;
++		while (i--)
++			bus->data_lanes[i] = data_lanes[i];
++	}
++
++	if (!of_property_read_u32(node, "clock-lanes", &v)) {
++		bus->clock_lane = v;
++		have_clk_lane = true;
++	}
++
++	if (of_get_property(node, "clock-noncontinuous", &v))
++		flags |= V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
++	else if (have_clk_lane || bus->num_data_lanes > 0)
++		flags |= V4L2_MBUS_CSI2_CONTINUOUS_CLOCK;
++
++	bus->flags = flags;
++	endpoint->bus_type = V4L2_MBUS_CSI2;
++}
++
++static void v4l2_of_parse_parallel_bus(const struct device_node *node,
++				       struct v4l2_of_endpoint *endpoint)
++{
++	struct v4l2_of_bus_parallel *bus = &endpoint->bus.parallel;
++	unsigned int flags = 0;
++	u32 v;
++
++	if (!of_property_read_u32(node, "hsync-active", &v))
++		flags |= v ? V4L2_MBUS_HSYNC_ACTIVE_HIGH :
++			V4L2_MBUS_HSYNC_ACTIVE_LOW;
++
++	if (!of_property_read_u32(node, "vsync-active", &v))
++		flags |= v ? V4L2_MBUS_VSYNC_ACTIVE_HIGH :
++			V4L2_MBUS_VSYNC_ACTIVE_LOW;
++
++	if (!of_property_read_u32(node, "pclk-sample", &v))
++		flags |= v ? V4L2_MBUS_PCLK_SAMPLE_RISING :
++			V4L2_MBUS_PCLK_SAMPLE_FALLING;
++
++	if (!of_property_read_u32(node, "field-even-active", &v))
++		flags |= v ? V4L2_MBUS_FIELD_EVEN_HIGH :
++			V4L2_MBUS_FIELD_EVEN_LOW;
++	if (flags)
++		endpoint->bus_type = V4L2_MBUS_PARALLEL;
++	else
++		endpoint->bus_type = V4L2_MBUS_BT656;
++
++	if (!of_property_read_u32(node, "data-active", &v))
++		flags |= v ? V4L2_MBUS_DATA_ACTIVE_HIGH :
++			V4L2_MBUS_DATA_ACTIVE_LOW;
++
++	if (of_get_property(node, "slave-mode", &v))
++		flags |= V4L2_MBUS_SLAVE;
++	else
++		flags |= V4L2_MBUS_MASTER;
++
++	if (!of_property_read_u32(node, "bus-width", &v))
++		bus->bus_width = v;
++
++	if (!of_property_read_u32(node, "data-shift", &v))
++		bus->data_shift = v;
++
++	bus->flags = flags;
++
++}
++EXPORT_SYMBOL(v4l2_of_parse_parallel_bus);
++
++/**
++ * v4l2_of_parse_endpoint() - parse all endpoint node properties
++ * @node: pointer to endpoint device_node
++ * @endpoint: pointer to the V4L2 OF endpoint data structure
++ *
++ * All properties are optional. If none are found, we don't set any flags.
++ * This means the port has a static configuration and no properties have
++ * to be specified explicitly.
++ * If any properties that identify the bus as parallel are found and
++ * slave-mode isn't set, we set V4L2_MBUS_MASTER. Similarly, if we recognise
++ * the bus as serial CSI-2 and clock-noncontinuous isn't set, we set the
++ * V4L2_MBUS_CSI2_CONTINUOUS_CLOCK flag.
++ * The caller should hold a reference to @node.
++ */
++void v4l2_of_parse_endpoint(const struct device_node *node,
++			    struct v4l2_of_endpoint *endpoint)
++{
++	struct device_node *port_node = of_get_parent(node);
++
++	memset(endpoint, 0, offsetof(struct v4l2_of_endpoint, head));
++
++	endpoint->local_node = node;
++	/*
++	 * It doesn't matter whether the two calls below succeed.
++	 * If they don't then the default value 0 is used.
++	 */
++	of_property_read_u32(port_node, "reg", &endpoint->port);
++	of_property_read_u32(node, "reg", &endpoint->id);
++
++	v4l2_of_parse_csi_bus(node, endpoint);
++	/*
++	 * Parse the parallel video bus properties only if none
++	 * of the MIPI CSI-2 specific properties were found.
++	 */
++	if (endpoint->bus.mipi_csi2.flags == 0)
++		v4l2_of_parse_parallel_bus(node, endpoint);
++
++	of_node_put(port_node);
++}
++EXPORT_SYMBOL(v4l2_of_parse_endpoint);
++
++/**
++ * v4l2_of_get_next_endpoint() - get next endpoint node
++ * @parent: pointer to the parent device node
++ * @prev: previous endpoint node, or NULL to get first
++ *
++ * Return: An 'endpoint' node pointer with refcount incremented. Refcount
++ * of the passed @prev node is not decremented, the caller have to use
++ * of_node_put() on it when done.
++ */
++struct device_node *v4l2_of_get_next_endpoint(const struct device_node *parent,
++					struct device_node *prev)
++{
++	struct device_node *endpoint;
++	struct device_node *port = NULL;
++
++	if (!parent)
++		return NULL;
++
++	if (!prev) {
++		struct device_node *node;
++		/*
++		 * It's the first call, we have to find a port subnode
++		 * within this node or within an optional 'ports' node.
++		 */
++		node = of_get_child_by_name(parent, "ports");
++		if (node)
++			parent = node;
++
++		for_each_child_of_node(parent, node) {
++			if (!of_node_cmp(node->name, "port")) {
++				port = node;
++				break;
++			}
++		}
++		if (port) {
++			/* Found a port, get an endpoint. */
++			endpoint = of_get_next_child(port, NULL);
++			of_node_put(port);
++		} else {
++			endpoint = NULL;
++		}
++
++		if (!endpoint)
++			pr_err("%s(): no endpoint nodes specified for %s\n",
++			       __func__, parent->full_name);
++	} else {
++		port = of_get_parent(prev);
++		if (!port)
++			/* Hm, has someone given us the root node ?... */
++			return NULL;
++
++		/* Avoid dropping prev node refcount to 0. */
++		of_node_get(prev);
++		endpoint = of_get_next_child(port, prev);
++		if (endpoint) {
++			of_node_put(port);
++			return endpoint;
++		}
++
++		/* No more endpoints under this port, try the next one. */
++		do {
++			port = of_get_next_child(parent, port);
++			if (!port)
++				return NULL;
++		} while (of_node_cmp(port->name, "port"));
++
++		/* Pick up the first endpoint in this port. */
++		endpoint = of_get_next_child(port, NULL);
++		of_node_put(port);
++	}
++
++	return endpoint;
++}
++EXPORT_SYMBOL(v4l2_of_get_next_endpoint);
++
++/**
++ * v4l2_of_get_remote_port_parent() - get remote port's parent node
++ * @node: pointer to a local endpoint device_node
++ *
++ * Return: Remote device node associated with remote endpoint node linked
++ *	   to @node. Use of_node_put() on it when done.
++ */
++struct device_node *v4l2_of_get_remote_port_parent(
++			       const struct device_node *node)
++{
++	struct device_node *np;
++	unsigned int depth;
++
++	/* Get remote endpoint node. */
++	np = of_parse_phandle(node, "remote-endpoint", 0);
++
++	/* Walk 3 levels up only if there is 'ports' node. */
++	for (depth = 3; depth && np; depth--) {
++		np = of_get_next_parent(np);
++		if (depth == 2 && of_node_cmp(np->name, "ports"))
++			break;
++	}
++	return np;
++}
++EXPORT_SYMBOL(v4l2_of_get_remote_port_parent);
++
++/**
++ * v4l2_of_get_remote_port() - get remote port node
++ * @node: pointer to a local endpoint device_node
++ *
++ * Return: Remote port node associated with remote endpoint node linked
++ *	   to @node. Use of_node_put() on it when done.
++ */
++struct device_node *v4l2_of_get_remote_port(const struct device_node *node)
++{
++	struct device_node *np;
++
++	/* Get remote endpoint node. */
++	np = of_parse_phandle(node, "remote-endpoint", 0);
++	if (!np)
++		return NULL;
++	return of_get_parent(np);
++}
++EXPORT_SYMBOL(v4l2_of_get_remote_port);
+diff --git a/include/media/v4l2-of.h b/include/media/v4l2-of.h
+new file mode 100644
+index 0000000..00f9147
+--- /dev/null
++++ b/include/media/v4l2-of.h
+@@ -0,0 +1,111 @@
++/*
++ * V4L2 OF binding parsing library
++ *
++ * Copyright (C) 2012 Renesas Electronics Corp.
++ * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
++ *
++ * Copyright (C) 2012 - 2013 Samsung Electronics Co., Ltd.
++ * Sylwester Nawrocki <s.nawrocki@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of version 2 of the GNU General Public License as
++ * published by the Free Software Foundation.
++ */
++#ifndef _V4L2_OF_H
++#define _V4L2_OF_H
++
++#include <linux/list.h>
++#include <linux/types.h>
++#include <linux/errno.h>
++
++#include <media/v4l2-mediabus.h>
++
++struct device_node;
++
++/**
++ * struct v4l2_of_bus_mipi_csi2 - MIPI CSI-2 bus data structure
++ * @flags: media bus (V4L2_MBUS_*) flags
++ * @data_lanes: an array of physical data lane indexes
++ * @clock_lane: physical lane index of the clock lane
++ * @num_data_lanes: number of data lanes
++ */
++struct v4l2_of_bus_mipi_csi2 {
++	unsigned int flags;
++	unsigned char data_lanes[4];
++	unsigned char clock_lane;
++	unsigned short num_data_lanes;
++};
++
++/**
++ * struct v4l2_of_bus_parallel - parallel data bus data structure
++ * @flags: media bus (V4L2_MBUS_*) flags
++ * @bus_width: bus width in bits
++ * @data_shift: data shift in bits
++ */
++struct v4l2_of_bus_parallel {
++	unsigned int flags;
++	unsigned char bus_width;
++	unsigned char data_shift;
++};
++
++/**
++ * struct v4l2_of_endpoint - the endpoint data structure
++ * @port: identifier (value of reg property) of a port this endpoint belongs to
++ * @id: identifier (value of reg property) of this endpoint
++ * @local_node: pointer to device_node of this endpoint
++ * @remote: phandle to remote endpoint node
++ * @bus_type: bus type
++ * @bus: bus configuration data structure
++ * @head: list head for this structure
++ */
++struct v4l2_of_endpoint {
++	unsigned int port;
++	unsigned int id;
++	const struct device_node *local_node;
++	const __be32 *remote;
++	enum v4l2_mbus_type bus_type;
++	union {
++		struct v4l2_of_bus_parallel parallel;
++		struct v4l2_of_bus_mipi_csi2 mipi_csi2;
++	} bus;
++	struct list_head head;
++};
++
++#ifdef CONFIG_OF
++void v4l2_of_parse_endpoint(const struct device_node *node,
++				struct v4l2_of_endpoint *link);
++struct device_node *v4l2_of_get_next_endpoint(const struct device_node *parent,
++					struct device_node *previous);
++struct device_node *v4l2_of_get_remote_port_parent(
++					const struct device_node *node);
++struct device_node *v4l2_of_get_remote_port(const struct device_node *node);
++#else /* CONFIG_OF */
++
++static inline int v4l2_of_parse_endpoint(const struct device_node *node,
++					struct v4l2_of_endpoint *link)
++{
++	return -ENOSYS;
++}
++
++static inline struct device_node *v4l2_of_get_next_endpoint(
++					const struct device_node *parent,
++					struct device_node *previous)
++{
++	return NULL;
++}
++
++static inline struct device_node *v4l2_of_get_remote_port_parent(
++					const struct device_node *node)
++{
++	return NULL;
++}
++
++static inline struct device_node *v4l2_of_get_remote_port(
++					const struct device_node *node)
++{
++	return NULL;
++}
++
++#endif /* CONFIG_OF */
++
++#endif /* _V4L2_OF_H */
+--
+1.7.9.5
