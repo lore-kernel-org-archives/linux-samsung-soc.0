@@ -1,53 +1,57 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 0/6] pinctrl: Add support for pin control on S3C64xx
-Date: Mon, 18 Mar 2013 22:31:49 +0100
-Message-ID: <1363642315-10331-1-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 5/6] pinctrl: samsung: Handle banks with two configuration registers
+Date: Mon, 18 Mar 2013 22:31:54 +0100
+Message-ID: <1363642315-10331-6-git-send-email-tomasz.figa@gmail.com>
+References: <1363642315-10331-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f175.google.com ([209.85.215.175]:36802 "EHLO
-	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755733Ab3CRVcJ (ORCPT
+Received: from mail-ee0-f49.google.com ([74.125.83.49]:58041 "EHLO
+	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757049Ab3CRVcR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Mar 2013 17:32:09 -0400
-Received: by mail-ea0-f175.google.com with SMTP id o10so2713313eaj.20
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Mar 2013 14:32:07 -0700 (PDT)
+	Mon, 18 Mar 2013 17:32:17 -0400
+Received: by mail-ee0-f49.google.com with SMTP id d41so2775334eek.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Mar 2013 14:32:16 -0700 (PDT)
+In-Reply-To: <1363642315-10331-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-This series makes necessary preparations to add support for pin controller
-available on Samsung S3C64xx using pinctrl-samsung driver and then adds
-pinctrl-s3c64xx driver which implements SoC-specific part of the code.
+This patch adds support for banks that have more than one function
+configuration registers, e.g. some of the banks of S3C64xx SoCs.
 
-It has been tested on a tiny6410 (mini6410-compatible) board with my patches
-for samsung-time cleanup and S3C64xx Device Tree support:
- - http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16664
- - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg16325.html
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ drivers/pinctrl/pinctrl-samsung.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Just the driver is added for now, as this is the part that can safely go
-through Linus' pinctrl tree. I will post appropriate enablement patches
-after all the dependencies get merged to Kgene's tree.
-
-See particular patches for more detailed description of all changes.
-
-Tomasz Figa (6):
-  pinctrl: samsung: Protect bank registers with a spinlock
-  pinctrl: samsung: Include pinctrl-exynos driver data conditionally
-  pinctrl: samsung: Split pin bank description into two structures
-  pinctrl: samsung: Remove hardcoded register offsets
-  pinctrl: samsung: Handle banks with two configuration registers
-  pinctrl: Add pinctrl-s3c64xx driver
-
- .../bindings/pinctrl/samsung-pinctrl.txt           |   3 +
- drivers/pinctrl/Kconfig                            |   5 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-exynos.c                   |  36 +-
- drivers/pinctrl/pinctrl-exynos.h                   |  16 +-
- drivers/pinctrl/pinctrl-s3c64xx.c                  | 817 +++++++++++++++++++++
- drivers/pinctrl/pinctrl-samsung.c                  |  99 ++-
- drivers/pinctrl/pinctrl-samsung.h                  |  42 +-
- 8 files changed, 947 insertions(+), 72 deletions(-)
- create mode 100644 drivers/pinctrl/pinctrl-s3c64xx.c
-
+diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+index 45a9939..b738b7b 100644
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@ -303,6 +303,11 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
+ 		type = bank->type;
+ 		mask = (1 << type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+ 		shift = pin_offset * type->fld_width[PINCFG_TYPE_FUNC];
++		if (shift >= 32) {
++			/* Some banks have two config registers */
++			shift -= 32;
++			reg += 4;
++		}
+ 
+ 		spin_lock_irqsave(&bank->slock, flags);
+ 
+@@ -356,6 +361,11 @@ static int samsung_pinmux_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 
+ 	mask = (1 << type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+ 	shift = pin_offset * type->fld_width[PINCFG_TYPE_FUNC];
++	if (shift >= 32) {
++		/* Some banks have two config registers */
++		shift -= 32;
++		reg += 4;
++	}
+ 
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 
 -- 
 1.8.1.5
