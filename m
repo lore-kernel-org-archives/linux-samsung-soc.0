@@ -1,47 +1,232 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
- resource by name
-Date: Mon, 18 Mar 2013 17:05:32 -0600
-Message-ID: <51479DBC.2080703@wwwdotorg.org>
-References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org> <51408FB9.90808@gmail.com> <514100D9.1000603@gmail.com> <514737D4.8080601@gmail.com> <514758C3.7070601@wwwdotorg.org> <514794D7.3060903@gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v3 6/6] irqchip: s3c24xx: add s3c2450 interrupt definitions
+Date: Tue, 19 Mar 2013 00:34:49 +0100
+Message-ID: <201303190034.49875.heiko@sntech.de>
+References: <201303171404.06146.heiko@sntech.de>
+ <201303181753.16547.heiko@sntech.de> <514791DC.9070600@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:34398 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752698Ab3CRXFg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Mar 2013 19:05:36 -0400
-In-Reply-To: <514794D7.3060903@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <514791DC.9070600-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, Grant Likely <grant.likely@secretlab.ca>
 
-On 03/18/2013 04:27 PM, Rob Herring wrote:
-> On 03/18/2013 01:11 PM, Stephen Warren wrote:
->> On 03/18/2013 09:50 AM, Rob Herring wrote:
->>> On 03/13/2013 05:42 PM, Sylwester Nawrocki wrote:
->>>> Rob,
->>>>
->>>> On 03/13/2013 03:39 PM, Rob Herring wrote:
->>>>> I fail to see what the hack is. The order of interrupt properties must
->>>>> be defined by the binding. interrupt-names is auxiliary data and must
->>>>> not be required by an OS.
->>
->> Is that true for all foo-names properties, or only for interrupt-names?
->> I was under the impression that foo-names was specifically invented so
->> that the order of the entries didn't matter, and instead they could be
->> requested by name.
-> 
-> I think it depends on the specific name the property is tied too. For
-> interrupt and reg properties which have a long history and convention,
-> the order should be defined. IIRC, this was Grant's position too. For
-> new bindings, perhaps we can be more lenient.
+Am Montag, 18. M=E4rz 2013, 23:14:52 schrieb Rob Herring:
+> On 03/18/2013 11:53 AM, Heiko St=FCbner wrote:
+> > Hi Rob,
+> > =
 
-OK, that makes sense for interrupts/reg. Can we decide that clock-namess
-are new-style and that order is not significant? I guess gpio-names too?
+> > Am Montag, 18. M=E4rz 2013, 16:54:03 schrieb Rob Herring:
+> >> On 03/17/2013 08:09 AM, Heiko St=FCbner wrote:
+> >>> The s3c2450 is special in that it shares the cpu identification with
+> >>> the s3c2416 but provides more interrupts for its additional
+> >>> components.
+> >>> =
 
-I guess this should be documented in whatever binding describes the core
-interrupts/reg-names/gpio-names/clock-names/dma-names properties.
+> >>> It also shares the layout of the main interrupt register with the
+> >>> s3c2443 and therefore reuses this definition.
+> >>> =
+
+> >>> As no non-dt boards are present, the s3c2450 irqs will only be
+> >>> accessible thru devicetree.
+> =
+
+> [snip]
+> =
+
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 17 }, /* DMA4 */
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 17 }, /* DMA5 */
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 18 }, /* UART3-RX */
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 18 }, /* UART3-TX */
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 18 }, /* UART3-ERR */
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 9 }, /* WDT */
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 9 }, /* AC97 */
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 17 }, /* DMA6 */
+> >>> +	{ .type =3D S3C_IRQTYPE_LEVEL, .parent_irq =3D 17 }, /* DMA7 */
+> >> =
+
+> >> This all seems like information that should come from DT.
+> > =
+
+> > In the first iterations [0] of theis series it was done this way, but w=
+as
+> > suggested that these informations _might_ be implementation specific and
+> > not describing the hardware.
+> > =
+
+> > As I didn't get any "final" feedback on the matter, I tried it this way
+> > this time. Personally I also did like the previous variant better, as
+> > the driver could loose all the declaration stuff when platforms move to
+> > dt.
+> > =
+
+> > I would be glad for a hint if the first approach was the correct one.
+> > =
+
+> > =
+
+> > [0] "irqchip: irq-s3c24xx: add devicetree support" from 2013-02-18, also
+> > with you in the recipient list
+> =
+
+> I'm inclined to say the prior way is more in the right direction.
+> However, I'm not really clear what you are trying to describe.
+> =
+
+> > +		s3c24xx,irqlist =3D <2 0 /* 2D */
+> > +				   2 0 /* IIC1 */
+> > +				   0 0 /* reserved */
+> > +				   0 0 /* reserved */
+> > +				   2 0 /* PCM0 */
+> > +				   2 0 /* PCM1 */
+> > +				   2 0 /* I2S0 */
+> > +				   2 0>; /* I2S1 */
+
+The s3c24xx SoCs contain one (or two) main interrupt controllers. That are =
+the =
+
+nodes that gets checked by handle_irq. Additionally they contain something =
+
+called a sub-register which provides more specific irq for some of them.
+
+The list you quoted, is meant to describe which bits of the interrupt regis=
+ter =
+
+contain a valid interrupt at all (!=3D 0), which handler should be used (2 =
+for =
+
+the edge handler, 3 for level handler). The second argument contains the bi=
+t =
+
+in the parent interrupt register that contains the parent interrupt, that g=
+ets =
+
+checked in the irq_entry function.
+
+The original code (which I reworked into this more declarative form) =
+
+distinguished very much between using the edge handler for some and the lev=
+el =
+
+handler for other interrupts.
+
+This list is essentially the same representation of the list you quoted abo=
+ve =
+
+and which also can be found in [0]
+
+Going this way makes it easy to map datasheet values to interrupt number. W=
+hen =
+
+I read the ac97 interrupt is in bit 28 of the sub-register I can simply =
+
+reference it as
+		interrupt-parent =3D <&subintc>;
+		interrupts =3D <28>;
+
+
+So these lists only desribe the internal structure of the interrupt control=
+ler =
+
+registers, which vary for each s3c24xx variant.
+
+
+> My first thought here is this information should not be centralized in
+> the controller node, but placed with each source node (2D, I2C1, etc).
+
+I'm not sure I can follow currently :-)
+
+I'll try an example:
+
+The s3c serial driver expects the interrupts for uart tx and rx and the dt =
+
+entry would look like:
+
+	serial@50000000 {
+		compatible =3D "samsung,s3c2410-uart";
+		reg =3D <0x50000000 0x4000>;
+		interrupt-parent =3D <&subintc>;
+		interrupts =3D <0>, <1>;
+	};
+
+the map for these in the subintc looks like
+               s3c24xx,irqlist =3D <3 28 /* UART0-RX */
+                                  3 28 /* UART0-TX */
+                                  3 28 /* UART0-ERR */
+
+marking them as using the level-handler and being children of the interrupt=
+ in =
+
+bit 28 of the intc handler.
+
+So the irq_entry would check the intc, see the waiting interrupt in bit 28, =
+
+jump to the demux function which would then handle which ever of rx,tx or e=
+rr =
+
+would be waiting, which then get sent to the serial driver.
+
+These mappings between sub- and parent irqs also vary very much between the =
+
+different s3c24xx variants, as can be seen by the multitude of lists in [0] =
+
+and the parent interrupts are only used for demuxing purposes.
+
+-----
+A notable speciality are the AC97 (sound) and watchdog interrupts (bits 27 =
+and =
+
+28 of the subregister), as they share a common parent interrupt (bit 9 of t=
+he =
+
+main interrupt register).
+
+So irq_entry checks the main register, sees bit 9 (ac97/watchdog), demuxes =
+it =
+
+to either coming from the ac97 or watchdog and sends it to the relevant =
+
+driver.
+
+I don't think this should be exposed to the drivers at all :-) .
+-------
+
+So I'm not sure, how this would be able to go in the driver nodes.
+
+
+The only thing I could think of, would be to make the handler adjustable vi=
+a =
+
+the regular interrupts properties (i.e. as two_cell) which would bring the =
+
+list down to only list the parent relationships.
+
+Hmm ... and this parent list might be doable via the regular interrupts =
+
+property, so the subintc would look like:
+
+subintc: subintc =3D {
+	interrupt-parent =3D <&intc>;
+	interrupts =3D <28 0>, <28 0>, <28 0>, <23 0>, <23 0>, .....
+	/*		     bit0    bit1    bit2    bit3    bit4   ..... */
+}
+
+i.e. naming the parent interrupt for each of the interrupt bits of the sub-
+controller. Would this be the right direction?
+
+
+
+[0] https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-
+samsung.git/tree/arch/arm/mach-s3c24xx/irq.c?h=3Dfor-next#n603
