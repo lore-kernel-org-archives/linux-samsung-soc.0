@@ -1,286 +1,225 @@
-From: amit kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH V4 1/4] cpufreq: exynos: Adding cpufreq driver for exynos5440
-Date: Mon, 18 Mar 2013 16:28:10 +0530
-Message-ID: <CADGdYn5eghg4yyvKJVY+cs0=5KVALxvcUEWYPp=NB4=ZChdqkA@mail.gmail.com>
-References: <1363082299-10561-1-git-send-email-amit.daniel@samsung.com>
-	<1363082299-10561-2-git-send-email-amit.daniel@samsung.com>
-	<CAOh2x=narPBYBNMMs5Qw_rGSgVsSNumb_jw_88C1PNGEc6sSEw@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [RFC PATCH 5/8] s5p-fimc: Add ISP video capture driver stubs
+Date: Mon, 18 Mar 2013 13:51:31 +0100
+Message-ID: <201303181351.31384.hverkuil@xs4all.nl>
+References: <1363031092-29950-1-git-send-email-s.nawrocki@samsung.com> <201303121544.45438.hverkuil@xs4all.nl> <51462FAA.1060400@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:50798 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753599Ab3CRK6L (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Mar 2013 06:58:11 -0400
-In-Reply-To: <CAOh2x=narPBYBNMMs5Qw_rGSgVsSNumb_jw_88C1PNGEc6sSEw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <51462FAA.1060400@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, Inderpal Singh <inderpal.singh@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 
-Hi Viresh,
+On Sun March 17 2013 22:03:38 Sylwester Nawrocki wrote:
+> On 03/12/2013 03:44 PM, Hans Verkuil wrote:
+> > On Mon 11 March 2013 20:44:49 Sylwester Nawrocki wrote:
+> [...]
+> >> +static int isp_video_capture_open(struct file *file)
+> >> +{
+> >> +	struct fimc_isp *isp = video_drvdata(file);
+> >> +	int ret = 0;
+> >> +
+> >> +	if (mutex_lock_interruptible(&isp->video_lock))
+> >> +		return -ERESTARTSYS;
+> >> +
+> >> +	/* ret = pm_runtime_get_sync(&isp->pdev->dev); */
+> >> +	if (ret<  0)
+> >> +		goto done;
+> >> +
+> >> +	ret = v4l2_fh_open(file);
+> >> +	if (ret<  0)
+> >> +		goto done;
+> >> +
+> >> +	/* TODO: prepare video pipeline */
+> >> +done:
+> >> +	mutex_unlock(&isp->video_lock);
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +static int isp_video_capture_close(struct file *file)
+> >> +{
+> >> +	struct fimc_isp *isp = video_drvdata(file);
+> >> +	int ret = 0;
+> >> +
+> >> +	mutex_lock(&isp->video_lock);
+> >> +
+> >> +	if (isp->out_path == FIMC_IO_DMA) {
+> >> +		/* TODO: stop capture, cleanup */
+> >> +	}
+> >> +
+> >> +	/* pm_runtime_put(&isp->pdev->dev); */
+> >> +
+> >> +	if (isp->ref_count == 0)
+> >> +		vb2_queue_release(&isp->capture_vb_queue);
+> >> +
+> >> +	ret = v4l2_fh_release(file);
+> >> +
+> >> +	mutex_unlock(&isp->video_lock);
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +static unsigned int isp_video_capture_poll(struct file *file,
+> >> +				   struct poll_table_struct *wait)
+> >> +{
+> >> +	struct fimc_isp *isp = video_drvdata(file);
+> >> +	int ret;
+> >> +
+> >> +	mutex_lock(&isp->video_lock);
+> >> +	ret = vb2_poll(&isp->capture_vb_queue, file, wait);
+> >> +	mutex_unlock(&isp->video_lock);
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +static int isp_video_capture_mmap(struct file *file, struct vm_area_struct *vma)
+> >> +{
+> >> +	struct fimc_isp *isp = video_drvdata(file);
+> >> +	int ret;
+> >> +
+> >> +	if (mutex_lock_interruptible(&isp->video_lock))
+> >> +		return -ERESTARTSYS;
+> >> +
+> >> +	ret = vb2_mmap(&isp->capture_vb_queue, vma);
+> >> +	mutex_unlock(&isp->video_lock);
+> >> +
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +static const struct v4l2_file_operations isp_video_capture_fops = {
+> >> +	.owner		= THIS_MODULE,
+> >> +	.open		= isp_video_capture_open,
+> >> +	.release	= isp_video_capture_close,
+> >> +	.poll		= isp_video_capture_poll,
+> >> +	.unlocked_ioctl	= video_ioctl2,
+> >> +	.mmap		= isp_video_capture_mmap,
+> >
+> > Can't you use the helper functions vb2_fop_open/release/poll/mmap here?
+> 
+> It seems vb2_fop_mmap/poll can be used directly, open(), release() are
+> a bit more complicated as some media pipeline operations need to
+> additionally be done within these callbacks. There is no vb2_fop_open(),
+> and AFAICS v4l2_fh_open() is sufficient and intended as open() helper.
 
-On Tue, Mar 12, 2013 at 4:19 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> This is what Russell told me a long time back:
-> "Don't use Adding, Fixing, etc words as this work is not something, which is
-> already done."
->
-> So your subject should have been: "cpufreq: exynos: Add cpufreq driver
-> for exynos5440"
-ok right.
->
-> Fix it if you need another version, which i believe you do :)
-yes no escape now :)
->
-> On Tue, Mar 12, 2013 at 5:58 PM, Amit Daniel Kachhap
-> <amit.daniel@samsung.com> wrote:
->> This patch adds dvfs support for exynos5440 SOC. This soc has 4 cores and
->> they scale at same frequency. The nature of exynos5440 clock controller is
->> different from previous exynos controllers so not using the common exynos
->> cpufreq framework. The major difference being interrupt notfication for
->
-> s/notfication/notification
-ok
->
->> frequency change. Also, OPP library is used for device tree parsing to get
->> different parameters like frequency, voltage etc. Since the opp library sorts
->> the frequency table in ascending order so they are again re-arranged in
->> descending order. This will have one-to-one mapping with the clock controller
->> state management logic.
->>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->> ---
->>  .../bindings/cpufreq/cpufreq-exynos5440.txt        |   29 ++
->>  drivers/cpufreq/Kconfig.arm                        |    9 +
->>  drivers/cpufreq/Makefile                           |    1 +
->>  drivers/cpufreq/exynos5440-cpufreq.c               |  466 ++++++++++++++++++++
->>  4 files changed, 505 insertions(+), 0 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
->>  create mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
->>
->> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
->> new file mode 100644
->> index 0000000..a0dbe0b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
->> @@ -0,0 +1,29 @@
->> +
->> +Exynos5440 cpufreq driver
->> +-------------------
->> +
->> +Exynos5440 SoC cpufreq driver for CPU frequency scaling.
->> +
->> +Required properties:
->> +- interrupts: Interrupt to know the completion of cpu frequency change.
->> +- operating-points: Table of frequencies and voltage CPU could be transitioned into,
->> +       in the decreasing order. Frequency should be in KHZ units and voltage
->
-> s/KHZ/KHz
-ok
->
->> +       should be in microvolts.
->
-> probably s/microvolts/micro-volts ??
->
->> +
->> +Optional properties:
->> +- clock-latency: Clock monitor latency in microsecond.
->> +
->> +All the required listed above must be defined under node cpufreq.
->> +
->> +Example:
->> +--------
->> +       cpufreq@160000 {
->> +               compatible = "samsung,exynos5440-cpufreq";
->> +               reg = <0x160000 0x1000>;
->> +               interrupts = <0 57 0>;
->> +               operating-points = <
->> +                               1000000 975000
->> +                               800000  925000>;
->> +               clock-latency = <100000>;
->> +       };
->> +
->
->> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
->> +static void exynos_enable_dvfs(void)
->> +{
->
->> +       /* Set initial performance index */
->> +       for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
->> +               if (freq_table[i].frequency == dvfs_info->cur_frequency)
->> +                       break;
->> +
->> +       if (freq_table[i].frequency == CPUFREQ_TABLE_END) {
->> +               dev_crit(dvfs_info->dev, "Boot up frequency not supported\n");
->> +               /* Assign the highest frequency */
->> +               i = 0;
->> +               dvfs_info->cur_frequency = freq_table[i].frequency;
->
-> What about:
->
-> dvfs_info->cur_frequency = freq_table[0].frequency;
->
-> as i don't see i being used again?
-No It is used below for frequency setting.
->
->> +       }
->
->> +}
->
->> +static int exynos_target(struct cpufreq_policy *policy,
->> +                         unsigned int target_freq,
->> +                         unsigned int relation)
->> +{
->
->> +       if (cpufreq_frequency_table_target(policy, freq_table,
->> +                                          target_freq, relation, &index)) {
->> +               ret = -EINVAL;
->
-> Use the error value returned by called functions, probably i gave this
-> comment last time too?
-yes my mistake.
->
->> +               goto out;
->> +       }
->
->> +}
->
->> +static void exynos_sort_descend_freq_table(void)
->> +{
->> +       struct cpufreq_frequency_table *freq_tbl = dvfs_info->freq_table;
->> +       int i = 0, index;
->> +       unsigned int tmp_freq;
->> +
->> +       /*
->> +        * Freq table is already in ascending order as it is created from
->> +        * OPP library, so just swap the elements to make it descending.
->
-> why??
-I explained this requirement in the patch commit. Will explain it here again.
->
->> +        */
->> +       for (i = 0; i < dvfs_info->freq_count / 2; i++) {
->> +               index = dvfs_info->freq_count - i - 1;
->> +               tmp_freq = freq_tbl[i].frequency;
->> +               freq_tbl[i].frequency = freq_tbl[index].frequency;
->> +               freq_tbl[index].frequency = tmp_freq;
->> +       }
->> +}
->> +
->
->> +static int exynos_cpufreq_probe(struct platform_device *pdev)
->> +{
->> +       int ret = -EINVAL;
->> +       struct device_node *np;
->> +       struct resource res;
->> +
->> +       np =  of_find_compatible_node(NULL, NULL, "samsung,exynos5440-cpufreq");
->> +       if (!np)
->> +               return -ENODEV;
->> +
->> +       dvfs_info = devm_kzalloc(&pdev->dev, sizeof(*dvfs_info), GFP_KERNEL);
->> +       if (!dvfs_info) {
->> +               ret = -ENOMEM;
->> +               goto err_put_node;
->> +       }
->> +
->> +       dvfs_info->dev = &pdev->dev;
->> +       dvfs_info->dev->of_node = np;
->> +
->> +       ret = of_address_to_resource(np, 0, &res);
->> +       if (ret)
->> +               goto err_put_node;
->> +
->> +       dvfs_info->base = devm_ioremap_resource(dvfs_info->dev, &res);
->> +       if (IS_ERR(dvfs_info->base)) {
->> +               ret = PTR_ERR(dvfs_info->base);
->> +               goto err_put_node;
->> +       }
->> +
->> +       dvfs_info->irq = irq_of_parse_and_map(np, 0);
->> +       if (dvfs_info->irq == 0) {
->
-> maybe, if (!dvfs_info->irq) {
-ok
+That's correct. Sorry for the misinformation about the non-existant
+vb2_fop_open.
 
-Thanks,
-Amit Daniel
->
->
->> +               dev_err(dvfs_info->dev, "No cpufreq irq found\n");
->> +               ret = -ENODEV;
->> +               goto err_put_node;
->> +       }
->> +
->> +       ret = of_init_opp_table(dvfs_info->dev);
->> +       if (ret) {
->> +               dev_err(dvfs_info->dev, "failed to init OPP table: %d\n", ret);
->> +               goto err_put_node;
->> +       }
->> +
->> +       ret = opp_init_cpufreq_table(dvfs_info->dev, &dvfs_info->freq_table);
->> +       if (ret) {
->> +               dev_err(dvfs_info->dev,
->> +                       "failed to init cpufreq table: %d\n", ret);
->> +               goto err_put_node;
->> +       }
->> +       dvfs_info->freq_count = opp_get_opp_count(dvfs_info->dev);
->> +       exynos_sort_descend_freq_table();
->> +
->> +       if (of_property_read_u32(np, "clock-latency", &dvfs_info->latency))
->> +               dvfs_info->latency = DEF_TRANS_LATENCY;
->> +
->> +       dvfs_info->cpu_clk = devm_clk_get(dvfs_info->dev, "armclk");
->> +       if (IS_ERR(dvfs_info->cpu_clk)) {
->> +               dev_err(dvfs_info->dev, "Failed to get cpu clock\n");
->> +               ret = PTR_ERR(dvfs_info->cpu_clk);
->> +               goto err_free_table;
->> +       }
->> +
->> +       dvfs_info->cur_frequency = clk_get_rate(dvfs_info->cpu_clk);
->> +       if (!dvfs_info->cur_frequency) {
->> +               dev_err(dvfs_info->dev, "Failed to get clock rate\n");
->> +               ret = -EINVAL;
->> +               goto err_free_table;
->> +       }
->> +       dvfs_info->cur_frequency /= 1000;
->> +
->> +       INIT_WORK(&dvfs_info->irq_work, exynos_cpufreq_work);
->> +       ret = devm_request_irq(dvfs_info->dev, dvfs_info->irq,
->> +                               exynos_cpufreq_irq, IRQF_TRIGGER_NONE,
->> +                               CPUFREQ_NAME, dvfs_info);
->> +       if (ret) {
->> +               dev_err(dvfs_info->dev, "Failed to register IRQ\n");
->> +               goto err_free_table;
->> +       }
->> +
->> +       ret = init_div_table();
->> +       if (ret) {
->> +               dev_err(dvfs_info->dev, "Failed to initialise div table\n");
->> +               goto err_free_table;
->> +       }
->> +
->> +       exynos_enable_dvfs();
->> +       ret = cpufreq_register_driver(&exynos_driver);
->> +       if (ret) {
->> +               dev_err(dvfs_info->dev,
->> +                       "%s: failed to register cpufreq driver\n", __func__);
->> +               goto err_free_table;
->> +       }
->> +
->> +       of_node_put(np);
->> +       dvfs_info->dvfs_enabled = true;
->> +       return 0;
->> +
->> +err_free_table:
->> +       opp_free_cpufreq_table(dvfs_info->dev, &dvfs_info->freq_table);
->> +err_put_node:
->> +       of_node_put(np);
->> +       dev_err(dvfs_info->dev, "%s: failed initialization\n", __func__);
->> +       return ret;
->> +}
+> For the next iteration I have used vb2_fop_release(), called indirectly,
+> as it nicely simplifies things a bit.
+> 
+> BTW, shouldn't vb2_fop_release() also be taking the lock ? Actually it is
+> more useful for me in current form, but the drivers that directly assign
+> it to struct v4l2_file_operations::open might be in trouble, unless I'm
+> missing something.
+
+I don't see where a lock would be needed. I don't see any concurrency here.
+Nobody else can mess with the queue as long as they are not the owner.
+
+> 
+> >> +};
+> >> +
+> >> +/*
+> >> + * Video node ioctl operations
+> >> + */
+> [...]
+> >> +static int fimc_isp_capture_streamon(struct file *file, void *priv,
+> >> +				     enum v4l2_buf_type type)
+> >> +{
+> >> +	struct fimc_isp *isp = video_drvdata(file);
+> >> +	struct v4l2_subdev *sensor = isp->pipeline.subdevs[IDX_SENSOR];
+> >> +	struct fimc_pipeline *p =&isp->pipeline;
+> >> +	int ret;
+> >> +
+> >> +	/* TODO: check if the OTF interface is not running */
+> >> +
+> >> +	ret = media_entity_pipeline_start(&sensor->entity, p->m_pipeline);
+> >> +	if (ret<  0)
+> >> +		return ret;
+> >> +
+> >> +	ret = fimc_isp_pipeline_validate(isp);
+> >> +	if (ret) {
+> >> +		media_entity_pipeline_stop(&sensor->entity);
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	return vb2_streamon(&isp->capture_vb_queue, type);
+> >> +}
+> >> +
+> >> +static int fimc_isp_capture_streamoff(struct file *file, void *priv,
+> >> +				      enum v4l2_buf_type type)
+> >> +{
+> >> +	struct fimc_isp *isp = video_drvdata(file);
+> >> +	struct v4l2_subdev *sd = isp->pipeline.subdevs[IDX_SENSOR];
+> >> +	int ret;
+> >> +
+> >> +	ret = vb2_streamoff(&isp->capture_vb_queue, type);
+> >> +	if (ret == 0)
+> >> +		media_entity_pipeline_stop(&sd->entity);
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +static int fimc_isp_capture_reqbufs(struct file *file, void *priv,
+> >> +				    struct v4l2_requestbuffers *reqbufs)
+> >> +{
+> >> +	struct fimc_isp *isp = video_drvdata(file);
+> >> +	int ret;
+> >> +
+> >> +	reqbufs->count = max_t(u32, FIMC_IS_REQ_BUFS_MIN, reqbufs->count);
+> >> +	ret = vb2_reqbufs(&isp->capture_vb_queue, reqbufs);
+> >
+> > You probably want to call vb2_ioctl_reqbufs here since that does additional
+> > ownership checks that vb2_reqbufs doesn't.
+> 
+> Yes, thanks for the suggestion. That was actually helpful, previously
+> it wasn't immediately clear to me one can still take advantage of those
+> vb2_ioctl_* helpers, mainly have the ownership handling in the core,
+> and have some handlers assigned directly to v4l2_ioctl_ops an some called
+> indirectly from the driver's own callbacks, should they need something
+> else that is done in the helpers.
+> 
+> I found those helpers really useful, especially in drivers that need to
+> support several video nodes. Lots of boilerplate can be eliminated. And
+> also vb2_ops_wait_prepare/finish are a simple and nice improvement.
+
+Glad to hear!
+
+I still think there are some more improvements that could be made with some
+helper functions and perhaps some more fields: most (all?) drivers need a
+list for their active buffers, so I really think adding a struct list to
+vb2_buffer and a list for active buffers + a spinlock to vb2_queue would
+help.
+
+Helper functions could then be added to handle that queue and also to set
+the timestamp and sequence fields. I would need to think more about the
+details, but after using vb2 for a while I see a lot of shared code between
+the various drivers.
+
+Regards,
+
+	Hans
+
+> > The same is true for vb2_ioctl_streamon/off, BTW.
+> 
+> Indeed. I have already applied all possible helpers for the next iteration.
+> 
+> I need to yet resolve an issue with locking order, as I previously missed
+> that media_entity_pipeline_start/stop() also takes the graph mutex.
+> 
+> And currently the driver is supposed to take the graph mutex first and
+> then the video mutex. Since the link_notify callback of the media device
+> is called with the graph mutex already held.
+> 
+> The only solution I came up so far is to provide unlocked versions of
+> media_entity_pipeline_start/stop().
+> 
+> Ideally using video mutex in link_notify() callback should not be needed,
+> but there are things done there needed for backward video device
+> compatibility.
+> 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Regards,
+> Sylwester
+> 
