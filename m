@@ -1,39 +1,44 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 6/6] irqchip: s3c24xx: add s3c2450 interrupt definitions
-Date: Mon, 18 Mar 2013 23:21:26 +0100
-Message-ID: <2341349.u4eE8qA54r@wuerfel>
-References: <201303171404.06146.heiko@sntech.de> <201303181753.16547.heiko@sntech.de> <514791DC.9070600@gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
+ resource by name
+Date: Mon, 18 Mar 2013 17:27:35 -0500
+Message-ID: <514794D7.3060903@gmail.com>
+References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org> <51408FB9.90808@gmail.com> <514100D9.1000603@gmail.com> <514737D4.8080601@gmail.com> <514758C3.7070601@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:55113 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754184Ab3CRWV3 (ORCPT
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:43521 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932075Ab3CRW1j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Mar 2013 18:21:29 -0400
-In-Reply-To: <514791DC.9070600@gmail.com>
+	Mon, 18 Mar 2013 18:27:39 -0400
+Received: by mail-oa0-f49.google.com with SMTP id j6so6142416oag.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Mar 2013 15:27:38 -0700 (PDT)
+In-Reply-To: <514758C3.7070601@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robherring2@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, Grant Likely <grant.likely@secretlab.ca>
 
-On Monday 18 March 2013 17:14:52 Rob Herring wrote:
+On 03/18/2013 01:11 PM, Stephen Warren wrote:
+> On 03/18/2013 09:50 AM, Rob Herring wrote:
+>> On 03/13/2013 05:42 PM, Sylwester Nawrocki wrote:
+>>> Rob,
+>>>
+>>> On 03/13/2013 03:39 PM, Rob Herring wrote:
+>>>> I fail to see what the hack is. The order of interrupt properties must
+>>>> be defined by the binding. interrupt-names is auxiliary data and must
+>>>> not be required by an OS.
 > 
-> > +             s3c24xx,irqlist = <2 0 /* 2D */
-> > +                                2 0 /* IIC1 */
-> > +                                0 0 /* reserved */
-> > +                                0 0 /* reserved */
-> > +                                2 0 /* PCM0 */
-> > +                                2 0 /* PCM1 */
-> > +                                2 0 /* I2S0 */
-> > +                                2 0>; /* I2S1 */
-> 
-> My first thought here is this information should not be centralized in
-> the controller node, but placed with each source node (2D, I2C1, etc).
+> Is that true for all foo-names properties, or only for interrupt-names?
+> I was under the impression that foo-names was specifically invented so
+> that the order of the entries didn't matter, and instead they could be
+> requested by name.
 
-Seconded. Let's do this the same way we have it for all other irq chips
-and put it all into the irq descriptor referring to the controller, not
-the controller.
+I think it depends on the specific name the property is tied too. For
+interrupt and reg properties which have a long history and convention,
+the order should be defined. IIRC, this was Grant's position too. For
+new bindings, perhaps we can be more lenient.
 
-	Arnd
+Rob
