@@ -1,51 +1,69 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Tue, 19 Mar 2013 22:35:05 +0100
-Message-ID: <201303192235.06137.marex@denx.de>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
- <201303192227.21717.marex@denx.de>
- <643E69AA4436674C8F39DCC2C05F7638629CD2FDF4@HQMAIL03.nvidia.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
+ resource by name
+Date: Tue, 19 Mar 2013 22:40:12 +0100
+Message-ID: <5148DB3C.8080402@gmail.com>
+References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org> <51408FB9.90808@gmail.com> <514100D9.1000603@gmail.com> <514737D4.8080601@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <643E69AA4436674C8F39DCC2C05F7638629CD2FDF4@HQMAIL03.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrew Chew <AChew@nvidia.com>
-Cc: "romain.naour@openwide.fr" <romain.naour@openwide.fr>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "gxt@mprc.pku.edu.cn" <gxt@mprc.pku.edu.cn>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "laforge@openezx.org" <laforge@openezx.org>, "openezx-devel@lists.openezx.org" <openezx-devel@lists.openezx.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "lost.distance@yahoo.com" <lost.distance@yahoo.com>, "drwyrm@gmail.com" <drwyrm@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Alex Courbot <acourbot@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-arm-kernel@lists.i
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f175.google.com ([209.85.215.175]:56167 "EHLO
+	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933741Ab3CSVkR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Mar 2013 17:40:17 -0400
+Received: by mail-ea0-f175.google.com with SMTP id o10so463776eaj.20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2013 14:40:16 -0700 (PDT)
+In-Reply-To: <514737D4.8080601@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
 
-Dear Andrew Chew,
+On 03/18/2013 04:50 PM, Rob Herring wrote:
+> On 03/13/2013 05:42 PM, Sylwester Nawrocki wrote:
+>> On 03/13/2013 03:39 PM, Rob Herring wrote:
+>>> I fail to see what the hack is. The order of interrupt properties must
+>>> be defined by the binding. interrupt-names is auxiliary data and must
+>>> not be required by an OS.
+>>
+>> It is clear that the order of the interrupts must be defined by the
+>> bindings. But how useful<resource>-names properties are when we
+>> cannot define them as required ? If an OS cannot rely on them then
+>> it must use some other, reliable, method to identify the resources,
+>> e.g. by hard coding the indexes. If we have to do it then why even
+>> bother with the<resource>-names properties ? I can see interrupt-names
+>> property specified as required in at least 2 bindings' documentation
+>> and all bindings having reg-names property define it as required.
+>> Are they wrong them ?
+>
+> You can require the name for a binding definition, but that does not
+> remove the requirement that the order and index of interrupts also be
+> defined by the binding. Then it is up to the OS to use names or
+> hard-coded indexes. Hard-coded indexes are not a hack. This is how FDT
+> and OF are defined to work.
 
-> > Dear Andrew Chew,
-> > 
-> > > The pwm-backlight driver now takes a mandatory regulator that is
-> > > gotten during driver probe.  Initialize a dummy regulator to satisfy
-> > > this requirement.
-> > > 
-> > > Signed-off-by: Andrew Chew <achew@nvidia.com>
-> > 
-> > Do we really need a mandatory regulator? Why can't it be optional?
-> > 
-> > Best regards,
-> > Marek Vasut
-> 
-> Because for those using board setup code (and not devicetree), it was
-> not possible to distinguish between opting out of the regulator, and
-> deferred probe, without adding something to the platform data that
-> board setup code needed to fill in anyway.
+OK, that makes it all crystal clear for me, thanks.
 
-Sure, but this adds a bit of overhead for the DT platforms, no?
+> I'm still not clear how changing the order of the interrupts removes a hack.
 
-Other than this curiosity, I have no problems with this stuff.
+Originally the binding in question was not specifying the interrupt
+order at all. And the drivers required order of the interrupt resources
+different than in what they were normally defined in the SoC interrupt
+combiner. So I suggested to use the interrupt-names property to make it
+all more explicit and less error prone. I once had to fix the order of
+the FIMD interrupts in the device tree to make the display work, since
+I used a patch where the interrupts were listed in the IRQ combiner order,
+and not the order expected by the driver.
 
-Best regards,
-Marek Vasut
+I wasn't really clear then whether the order of interrupts needs to be
+still fixed by the binding when the interrupt-names property was used.
+
+That said I don't think there was previously any hack there. Just an
+undocumented expected order of the interrupts in DT, different than the
+normal order in the IRQ combiner. So it is really hard to agree with
+what's written in the $subject patch description as it is now.
+
+Thanks,
+Sylwester
