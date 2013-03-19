@@ -1,58 +1,33 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH v6 00/16] clk: exynos4/5: migrate to common clock framework
-Date: Tue, 19 Mar 2013 22:12:16 +0100
-Message-ID: <201303192212.16877.heiko@sntech.de>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
- <20130319184938.8663.18115@quantum>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
+Date: Tue, 19 Mar 2013 22:27:21 +0100
+Message-ID: <201303192227.21717.marex@denx.de>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <1363719573-20926-7-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20130319184938.8663.18115@quantum>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:46301 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964889Ab3CSV1c (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Mar 2013 17:27:32 -0400
+In-Reply-To: <1363719573-20926-7-git-send-email-achew@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrew Chew <achew@nvidia.com>
+Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, shawn.guo@linaro.org, linux@prisktech.co.nz, swarren@wwwdotorg.org, thierry.reding@avionic-design.de, acourbot@nvidia.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 
-QW0gRGllbnN0YWcsIDE5LiBNw6RyeiAyMDEzLCAxOTo0OTozOCBzY2hyaWViIE1pa2UgVHVycXVl
-dHRlOgo+IFF1b3RpbmcgVGhvbWFzIEFicmFoYW0gKDIwMTMtMDItMTggMDA6MjE6MTApCj4gCj4g
-PiBDaGFuZ2VzIHNpbmNlIHY1Ogo+ID4gLSBTcXVhc2hlZCBzZXZlcmFsIEV4eW5vczQgZml4ZXMg
-cGF0Y2ggZnJvbSBUb21hc3ogRmlnYQo+ID4gLSBJbmNsdWRlZCBzdXBwb3J0IGZvciBFeHlub3M1
-MjUwIGFuZCBFeHlub3M1NDQwLCB0aHVzIGNvbnZlcnRpbmcgYWxsCj4gPiAKPiA+ICAgRXh5bm9z
-NCBhbmQgRXh5bm9zNSBwbGF0Zm9ybXMgdG8gY29tbW9uIGNsb2NrIGZyYW1ld29yay4KPiA+IAo+
-ID4gLSBEZXBlbmRzIG9uIHRoZSBmb2xsb3dpbmcgcGF0Y2ggc2VyaWVzLgo+ID4gCj4gPiAgIC0K
-PiA+ICAgaHR0cDovL3d3dy5tYWlsLWFyY2hpdmUuY29tL2xpbnV4LXNhbXN1bmctc29jQHZnZXIu
-a2VybmVsLm9yZy9tc2cxNTg0OQo+ID4gICAuaHRtbCAtCj4gPiAgIGh0dHA6Ly93d3cubWFpbC1h
-cmNoaXZlLmNvbS9saW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcvbXNnMTU4NTIKPiA+
-ICAgLmh0bWwKPiA+IAo+ID4gQ2hhbmdlcyBzaW5jZSB2NDoKPiA+IC0gUmViYXNlZCB0byBsaW51
-eC0zLjgtcmMxLgo+ID4gCj4gPiBDaGFuZ2VzIHNpbmNlIHYzOgo+ID4gLSBJbmNsdWRlcyBjaGFu
-Z2VzIHN1Z2dlc3RlZCBieSBUb21hc3ogRmlnYSA8dG9tYXN6LmZpZ2FAZ21haWwuY29tPgo+ID4g
-Cj4gPiBUaGlzIHBhdGNoIHNlcmllcyBtaWdyYXRlcyB0aGUgU2Ftc3VuZyBFeHlub3M0LzUgU29D
-IGNsb2NrIGNvZGUgdG8gYWRvcHQKPiA+IHRoZSBjb21tb24gY2xvY2sgZnJhbWV3b3JrLiBUaGUg
-dXNlIG9mIFNhbXN1bmcgc3BlY2lmaWMgY2xvY2sgc3RydWN0dXJlcwo+ID4gaGFzIGJlZW4gcmVt
-b3ZlZCBhbmQgYWxsIGJvYXJkIHN1cHBvcnQgY29kZSBoYXMgYmVlbiB1cGRhdGVkLiBpbXgtc3R5
-bGUKPiA+IG9mIGNsb2NrIHJlZ2lzdHJhdGlvbiBhbmQgbG9va3VwIGhhcyBiZWVuIGFkb3B0ZWQg
-Zm9yIGRldmljZSB0cmVlIGJhc2VkCj4gPiBleHlub3M0LzUgcGxhdGZvcm1zLgo+IAo+IFRob21h
-cywKPiAKPiBBcmUgeW91IHBsYW5uaW5nIGEgVjcgc2VyaWVzIHdoaWNoIGluY2x1ZGVzIHRoZSBj
-bG9jayBhbGlhcyBiaXRzIGZyb20KPiBwYXRjaCAjMT8KCkt1a2ppbiBoYXMgYWxyZWFkeSBhcHBs
-aWVkIHRoaXMgc2VyaWVzIGludG8gdGhlIGxpbnV4LXNhbXN1bmcgdHJlZSBbMF0uCgpUaGUgYWxp
-YXMgY2hhbmdlcyBhcmUgYXZhaWxhYmxlIGluIHRoZSBzZXJpZXMgImNsazogc2Ftc3VuZzogcG0g
-Zml4ZXMKYW5kIG11bHRpcGxlIGFsaWFzZXMiIGZyb20gbGFzdCB3ZWRuZXNkYXkgdG8gb24gdG9w
-LCB3aGljaCB5b3Ugc2hvdWxkCmhvcGVmdWxseSBhbHNvIGhhdmUgcmVjZWl2ZWQuCgpUaGlzIHYy
-IHNlcmllcyBpbXBsZW1lbnRzIHRoZSBjaGFuZ2VzIGRpc2N1c3NlZCBpbiB0aGUgcHJldmlvdXMg
-djEgCiJjbGs6IHNhbXN1bmc6IHNtYWxsIGZpeGVzIGFuZCBlbmhhbmNlbWVudHMiIGZyb20gMjAx
-My0wMy0xMiwgYnV0IGRpZG4ndApnZXQgYW55IHJlc3BvbnNlcyB5ZXQuCgoKSGVpa28KCgpbMF0g
-aHR0cHM6Ly9naXQua2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQva2dlbmUvbGludXgt
-c2Ftc3VuZy5naXQvbG9nLz9oPW5leHQvY2xrLWV4eW5vcwpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZpY2V0cmVlLWRpc2N1c3MgbWFpbGluZyBsaXN0
-CmRldmljZXRyZWUtZGlzY3Vzc0BsaXN0cy5vemxhYnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJz
-Lm9yZy9saXN0aW5mby9kZXZpY2V0cmVlLWRpc2N1c3MK
+Dear Andrew Chew,
+
+> The pwm-backlight driver now takes a mandatory regulator that is gotten
+> during driver probe.  Initialize a dummy regulator to satisfy this
+> requirement.
+> 
+> Signed-off-by: Andrew Chew <achew@nvidia.com>
+
+Do we really need a mandatory regulator? Why can't it be optional?
+
+Best regards,
+Marek Vasut
