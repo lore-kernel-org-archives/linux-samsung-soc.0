@@ -1,32 +1,54 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Tue, 19 Mar 2013 16:10:26 -0600
-Message-ID: <5148E252.9050900@wwwdotorg.org>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <1363719573-20926-7-git-send-email-achew@nvidia.com> <201303192227.21717.marex@denx.de>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
+ resource by name
+Date: Tue, 19 Mar 2013 23:31:54 +0100
+Message-ID: <5148E75A.5060409@gmail.com>
+References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org> <51408FB9.90808@gmail.com> <514100D9.1000603@gmail.com> <514737D4.8080601@gmail.com> <514758C3.7070601@wwwdotorg.org> <514794D7.3060903@gmail.com> <51479DBC.2080703@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201303192227.21717.marex-ynQEQJNshbs@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f54.google.com ([74.125.83.54]:52122 "EHLO
+	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752872Ab3CSWcD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Mar 2013 18:32:03 -0400
+Received: by mail-ee0-f54.google.com with SMTP id c41so485954eek.27
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2013 15:32:01 -0700 (PDT)
+In-Reply-To: <51479DBC.2080703@wwwdotorg.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Rob Herring <robherring2@gmail.com>, linux-samsung-soc@vger.kernel.org, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, Grant Likely <grant.likely@secretlab.ca>
 
-On 03/19/2013 03:27 PM, Marek Vasut wrote:
-> Dear Andrew Chew,
-> 
->> The pwm-backlight driver now takes a mandatory regulator that is gotten
->> during driver probe.  Initialize a dummy regulator to satisfy this
->> requirement.
+On 03/19/2013 12:05 AM, Stephen Warren wrote:
+> On 03/18/2013 04:27 PM, Rob Herring wrote:
+>> On 03/18/2013 01:11 PM, Stephen Warren wrote:
+>>> On 03/18/2013 09:50 AM, Rob Herring wrote:
+>>>> On 03/13/2013 05:42 PM, Sylwester Nawrocki wrote:
+>>>>> Rob,
+>>>>>
+>>>>> On 03/13/2013 03:39 PM, Rob Herring wrote:
+>>>>>> I fail to see what the hack is. The order of interrupt properties must
+>>>>>> be defined by the binding. interrupt-names is auxiliary data and must
+>>>>>> not be required by an OS.
+>>>
+>>> Is that true for all foo-names properties, or only for interrupt-names?
+>>> I was under the impression that foo-names was specifically invented so
+>>> that the order of the entries didn't matter, and instead they could be
+>>> requested by name.
 >>
->> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Do we really need a mandatory regulator? Why can't it be optional?
+>> I think it depends on the specific name the property is tied too. For
+>> interrupt and reg properties which have a long history and convention,
+>> the order should be defined. IIRC, this was Grant's position too. For
+>> new bindings, perhaps we can be more lenient.
+>
+> OK, that makes sense for interrupts/reg. Can we decide that clock-namess
+> are new-style and that order is not significant? I guess gpio-names too?
+>
+> I guess this should be documented in whatever binding describes the core
+> interrupts/reg-names/gpio-names/clock-names/dma-names properties.
 
-IIRC, the previous advice I've seen is that if a device (driver) uses a
-regulator, it must /require/ a regulator, and if a particular board
-doesn't actually have a SW-controlled regulator, then a fixed- or dummy-
-regulator should be provided to satisfy this requirement.
-
-CC'ing Mark Brown to make sure I really do Recall Correctly.
+It certainly would be useful to have it documented somewhere. Not sure if
+resource-names.txt would be a good place to have more information about the
+order for each property.
