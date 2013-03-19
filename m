@@ -1,47 +1,89 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] drm/exynos: enable FIMD clocks
-Date: Tue, 19 Mar 2013 15:31:50 +0530
-Message-ID: <CAKohpo=wJLq+wZ_yTB_q11440qfpfbA7RJX7OwmWVCGSRXJ4Sg@mail.gmail.com>
-References: <1363687193-30893-1-git-send-email-vikas.sajjan@linaro.org>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: [PATCH v6 1/7] media: V4L2: add temporary clock helpers
+Date: Tue, 19 Mar 2013 11:27:56 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.1303191103310.11768@axis700.grange>
+References: <1363382873-20077-1-git-send-email-g.liakhovetski@gmx.de>
+ <1363382873-20077-2-git-send-email-g.liakhovetski@gmx.de> <5147934D.2040908@gmail.com>
+ <Pine.LNX.4.64.1303190821470.10482@axis700.grange> <5148355D.5070806@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:56399 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758Ab3CSKBv (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.187]:64670 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754942Ab3CSK2O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Mar 2013 06:01:51 -0400
-Received: by mail-ob0-f182.google.com with SMTP id va7so233297obc.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2013 03:01:51 -0700 (PDT)
-In-Reply-To: <1363687193-30893-1-git-send-email-vikas.sajjan@linaro.org>
+	Tue, 19 Mar 2013 06:28:14 -0400
+In-Reply-To: <5148355D.5070806@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, jy0922.shim@samsung.com, joshi@samsung.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-media@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, Prabhakar Lad <prabhakar.lad@ti.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 19 March 2013 15:29, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
-> While migrating to common clock framework (CCF), found that the FIMD clocks
-> were pulled down by the CCF.
-> If CCF finds any clock(s) which has NOT been claimed by any of the
-> drivers, then such clock(s) are PULLed low by CCF.
->
-> By calling clk_prepare_enable() for FIMD clocks fixes the issue.
->
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c |    3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index 9537761..d93dd8a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -934,6 +934,9 @@ static int fimd_probe(struct platform_device *pdev)
->                 return ret;
->         }
->
-> +       clk_prepare_enable(ctx->lcd_clk);
-> +       clk_prepare_enable(ctx->bus_clk);
-> +
+On Tue, 19 Mar 2013, Sylwester Nawrocki wrote:
 
-Ideally you should check return values here.
+> >>> +	if (!IS_ERR(clk)&&  !try_module_get(clk->ops->owner))
+> >>> +		clk = ERR_PTR(-ENODEV);
+> >>> +	mutex_unlock(&clk_lock);
+> >>> +
+> >>> +	if (!IS_ERR(clk)) {
+> >>> +		clk->subdev = sd;
+> >>
+> >> Why is this needed ? It seems a strange addition that might potentially
+> >> make transition to the common clocks API more difficult.
+> > 
+> > We got rid of the v4l2_clk_bind() function and the .bind() callback. Now I 
+> > need a pointer to subdevice _before_ v4l2_clk_register() (former 
+> > v4l2_clk_bound()), that's why I have to store it here.
+> 
+> Hmm, sorry, I'm not following. How can we store a subdev pointer in the clock
+> data structure that has not been registered yet and thus cannot be found
+> with v4l2_clk_find() ?
+
+sorry, I meant v4l2_async_subdev_register(), not v4l2_clk_register(), my 
+mistake. And I meant v4l2_async_subdev_bind(), v4l2_async_subdev_unbind(). 
+Before we had in the subdev driver (see imx074 example)
+
+	/* Tell the bridge the subdevice is about to bind */
+	v4l2_async_subdev_bind();
+
+	/* get a clock */
+	clk = v4l2_clk_get();
+	if (IS_ERR(clk))
+		return -EPROBE_DEFER;
+
+	/*
+	 * enable the clock - this needs a subdev pointer, that we passed 
+	 * to the bridge with v4l2_async_subdev_bind() above
+	 */
+	v4l2_clk_enable(clk);
+	do_probe();
+	v4l2_clk_disable(clk);
+
+	/* inform the bridge: binding successful */
+	v4l2_async_subdev_bound();
+
+Now we have just
+
+	/* get a clock */
+	clk = v4l2_clk_get();
+	if (IS_ERR(clk))
+		return -EPROBE_DEFER;
+
+	/*
+	 * enable the clock - this needs a subdev pointer, that we stored 
+	 * in the clock object for the bridge driver to use with 
+	 * v4l2_clk_get() above
+	 */
+	v4l2_clk_enable(clk);
+	do_probe();
+	v4l2_clk_disable(clk);
+
+	/* inform the bridge: binding successful */
+	v4l2_async_subdev_bound();
+
+Thanks
+Guennadi
+---
+Guennadi Liakhovetski, Ph.D.
+Freelance Open-Source Software Developer
+http://www.open-technology.de/
