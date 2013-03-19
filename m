@@ -1,65 +1,32 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 00/16] clk: exynos4/5: migrate to common clock framework
-Date: Tue, 19 Mar 2013 14:50:38 -0700
-Message-ID: <20130319215038.8663.83548@quantum>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
- <20130319184938.8663.18115@quantum> <201303192212.16877.heiko@sntech.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
+Date: Tue, 19 Mar 2013 16:10:26 -0600
+Message-ID: <5148E252.9050900@wwwdotorg.org>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <1363719573-20926-7-git-send-email-achew@nvidia.com> <201303192227.21717.marex@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <201303192212.16877.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201303192227.21717.marex-ynQEQJNshbs@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-UXVvdGluZyBIZWlrbyBTdMO8Ym5lciAoMjAxMy0wMy0xOSAxNDoxMjoxNikKPiBBbSBEaWVuc3Rh
-ZywgMTkuIE3DpHJ6IDIwMTMsIDE5OjQ5OjM4IHNjaHJpZWIgTWlrZSBUdXJxdWV0dGU6Cj4gPiBR
-dW90aW5nIFRob21hcyBBYnJhaGFtICgyMDEzLTAyLTE4IDAwOjIxOjEwKQo+ID4gCj4gPiA+IENo
-YW5nZXMgc2luY2UgdjU6Cj4gPiA+IC0gU3F1YXNoZWQgc2V2ZXJhbCBFeHlub3M0IGZpeGVzIHBh
-dGNoIGZyb20gVG9tYXN6IEZpZ2EKPiA+ID4gLSBJbmNsdWRlZCBzdXBwb3J0IGZvciBFeHlub3M1
-MjUwIGFuZCBFeHlub3M1NDQwLCB0aHVzIGNvbnZlcnRpbmcgYWxsCj4gPiA+IAo+ID4gPiAgIEV4
-eW5vczQgYW5kIEV4eW5vczUgcGxhdGZvcm1zIHRvIGNvbW1vbiBjbG9jayBmcmFtZXdvcmsuCj4g
-PiA+IAo+ID4gPiAtIERlcGVuZHMgb24gdGhlIGZvbGxvd2luZyBwYXRjaCBzZXJpZXMuCj4gPiA+
-IAo+ID4gPiAgIC0KPiA+ID4gICBodHRwOi8vd3d3Lm1haWwtYXJjaGl2ZS5jb20vbGludXgtc2Ft
-c3VuZy1zb2NAdmdlci5rZXJuZWwub3JnL21zZzE1ODQ5Cj4gPiA+ICAgLmh0bWwgLQo+ID4gPiAg
-IGh0dHA6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9saW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5l
-bC5vcmcvbXNnMTU4NTIKPiA+ID4gICAuaHRtbAo+ID4gPiAKPiA+ID4gQ2hhbmdlcyBzaW5jZSB2
-NDoKPiA+ID4gLSBSZWJhc2VkIHRvIGxpbnV4LTMuOC1yYzEuCj4gPiA+IAo+ID4gPiBDaGFuZ2Vz
-IHNpbmNlIHYzOgo+ID4gPiAtIEluY2x1ZGVzIGNoYW5nZXMgc3VnZ2VzdGVkIGJ5IFRvbWFzeiBG
-aWdhIDx0b21hc3ouZmlnYUBnbWFpbC5jb20+Cj4gPiA+IAo+ID4gPiBUaGlzIHBhdGNoIHNlcmll
-cyBtaWdyYXRlcyB0aGUgU2Ftc3VuZyBFeHlub3M0LzUgU29DIGNsb2NrIGNvZGUgdG8gYWRvcHQK
-PiA+ID4gdGhlIGNvbW1vbiBjbG9jayBmcmFtZXdvcmsuIFRoZSB1c2Ugb2YgU2Ftc3VuZyBzcGVj
-aWZpYyBjbG9jayBzdHJ1Y3R1cmVzCj4gPiA+IGhhcyBiZWVuIHJlbW92ZWQgYW5kIGFsbCBib2Fy
-ZCBzdXBwb3J0IGNvZGUgaGFzIGJlZW4gdXBkYXRlZC4gaW14LXN0eWxlCj4gPiA+IG9mIGNsb2Nr
-IHJlZ2lzdHJhdGlvbiBhbmQgbG9va3VwIGhhcyBiZWVuIGFkb3B0ZWQgZm9yIGRldmljZSB0cmVl
-IGJhc2VkCj4gPiA+IGV4eW5vczQvNSBwbGF0Zm9ybXMuCj4gPiAKPiA+IFRob21hcywKPiA+IAo+
-ID4gQXJlIHlvdSBwbGFubmluZyBhIFY3IHNlcmllcyB3aGljaCBpbmNsdWRlcyB0aGUgY2xvY2sg
-YWxpYXMgYml0cyBmcm9tCj4gPiBwYXRjaCAjMT8KPiAKPiBLdWtqaW4gaGFzIGFscmVhZHkgYXBw
-bGllZCB0aGlzIHNlcmllcyBpbnRvIHRoZSBsaW51eC1zYW1zdW5nIHRyZWUgWzBdLgo+IAoKVGhh
-dCByZWFsbHkgaXMgdG9vIG11Y2ggY29kZSB0byBnbyBpbnRvIGRyaXZlcnMvY2xrIHdpdGhvdXQg
-bXkgQUNLLiAgSQpoYXZlIG5vdCBtYWRlIG11Y2ggbm9pc2UgYWJvdXQgdGhpcyBpbiB0aGUgcGFz
-dCBidXQgdGhlcmUgaGFzIGJlZW4gbW9yZQphbmQgbW9yZSAiYm9udXMiIGNvZGUgc2xpcHBpbmcg
-aW50byBkcml2ZXJzL2NsayBlYWNoIG1lcmdlIHdpbmRvdy4KTGV0J3Mgbm90IGRvIHRoYXQgYW55
-IG1vcmUuCgpSZWdhcmRzLApNaWtlCgo+IFRoZSBhbGlhcyBjaGFuZ2VzIGFyZSBhdmFpbGFibGUg
-aW4gdGhlIHNlcmllcyAiY2xrOiBzYW1zdW5nOiBwbSBmaXhlcwo+IGFuZCBtdWx0aXBsZSBhbGlh
-c2VzIiBmcm9tIGxhc3Qgd2VkbmVzZGF5IHRvIG9uIHRvcCwgd2hpY2ggeW91IHNob3VsZAo+IGhv
-cGVmdWxseSBhbHNvIGhhdmUgcmVjZWl2ZWQuCj4gCj4gVGhpcyB2MiBzZXJpZXMgaW1wbGVtZW50
-cyB0aGUgY2hhbmdlcyBkaXNjdXNzZWQgaW4gdGhlIHByZXZpb3VzIHYxIAo+ICJjbGs6IHNhbXN1
-bmc6IHNtYWxsIGZpeGVzIGFuZCBlbmhhbmNlbWVudHMiIGZyb20gMjAxMy0wMy0xMiwgYnV0IGRp
-ZG4ndAo+IGdldCBhbnkgcmVzcG9uc2VzIHlldC4KPiAKPiAKPiBIZWlrbwo+IAo+IAo+IFswXSBo
-dHRwczovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9rZ2VuZS9saW51eC1z
-YW1zdW5nLmdpdC9sb2cvP2g9bmV4dC9jbGstZXh5bm9zCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRldmljZXRyZWUtZGlzY3VzcyBtYWlsaW5nIGxpc3QK
-ZGV2aWNldHJlZS1kaXNjdXNzQGxpc3RzLm96bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMu
-b3JnL2xpc3RpbmZvL2RldmljZXRyZWUtZGlzY3Vzcwo=
+On 03/19/2013 03:27 PM, Marek Vasut wrote:
+> Dear Andrew Chew,
+> 
+>> The pwm-backlight driver now takes a mandatory regulator that is gotten
+>> during driver probe.  Initialize a dummy regulator to satisfy this
+>> requirement.
+>>
+>> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Do we really need a mandatory regulator? Why can't it be optional?
+
+IIRC, the previous advice I've seen is that if a device (driver) uses a
+regulator, it must /require/ a regulator, and if a particular board
+doesn't actually have a SW-controlled regulator, then a fixed- or dummy-
+regulator should be provided to satisfy this requirement.
+
+CC'ing Mark Brown to make sure I really do Recall Correctly.
