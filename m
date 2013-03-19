@@ -1,50 +1,84 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v6 00/16] clk: exynos4/5: migrate to common clock framework
-Date: Tue, 19 Mar 2013 11:49:38 -0700
-Message-ID: <20130319184938.8663.18115@quantum>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
+From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V4 4/9] ARM: EXYNOS: Provide regulator to pwm-backlight
+Date: Tue, 19 Mar 2013 11:59:28 -0700
+Message-ID: <1363719573-20926-5-git-send-email-achew@nvidia.com>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:39150 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756755Ab3CSSts convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Mar 2013 14:49:48 -0400
-Received: by mail-pb0-f41.google.com with SMTP id um15so672026pbc.14
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2013 11:49:48 -0700 (PDT)
-In-Reply-To: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363719573-20926-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-Quoting Thomas Abraham (2013-02-18 00:21:10)
-> Changes since v5:
-> - Squashed several Exynos4 fixes patch from Tomasz Figa
-> - Included support for Exynos5250 and Exynos5440, thus converting all
->   Exynos4 and Exynos5 platforms to common clock framework.
-> - Depends on the following patch series.
->   - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15849.html
->   - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15852.html
-> 
-> Changes since v4:
-> - Rebased to linux-3.8-rc1.
-> 
-> Changes since v3:
-> - Includes changes suggested by Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> This patch series migrates the Samsung Exynos4/5 SoC clock code to adopt the
-> common clock framework. The use of Samsung specific clock structures has
-> been removed and all board support code has been updated. imx-style of
-> clock registration and lookup has been adopted for device tree based
-> exynos4/5 platforms.
+The pwm-backlight driver now takes a mandatory regulator that is gotten
+during driver probe.  Initialize a dummy regulator to satisfy this
+requirement.
 
-Thomas,
+Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-exynos/mach-nuri.c      | 7 +++++++
+ arch/arm/plat-samsung/dev-backlight.c | 9 +++++++++
+ 2 files changed, 16 insertions(+)
 
-Are you planning a V7 series which includes the clock alias bits from
-patch #1?
-
-Regards,
-Mike
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 1ea7973..35e881e 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -294,6 +294,10 @@ static void nuri_bl_exit(struct device *dev)
+ 	gpio_free(EXYNOS4_GPE2(3));
+ }
+ 
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("enable", "pwm-backlight");
++
+ /* nuri pwm backlight */
+ static struct platform_pwm_backlight_data nuri_backlight_data = {
+ 	.pwm_id			= 0,
+@@ -1368,6 +1372,9 @@ static void __init nuri_machine_init(void)
+ 	nuri_ehci_init();
+ 	s3c_hsotg_set_platdata(&nuri_hsotg_pdata);
+ 
++	regulator_register_always_on(-1, "backlight-enable",
++				     &backlight_supply, 1, 0);
++
+ 	/* Last */
+ 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+ }
+diff --git a/arch/arm/plat-samsung/dev-backlight.c b/arch/arm/plat-samsung/dev-backlight.c
+index 5f197dc..7277821 100644
+--- a/arch/arm/plat-samsung/dev-backlight.c
++++ b/arch/arm/plat-samsung/dev-backlight.c
+@@ -14,12 +14,18 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/fixed.h>
+ #include <linux/pwm_backlight.h>
+ 
+ #include <plat/devs.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ 
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("enable", "pwm-backlight");
++
+ static int samsung_bl_init(struct device *dev)
+ {
+ 	int ret = 0;
+@@ -37,6 +43,9 @@ static int samsung_bl_init(struct device *dev)
+ 	/* Configure GPIO pin with specific GPIO function for PWM timer */
+ 	s3c_gpio_cfgpin(bl_gpio_info->no, bl_gpio_info->func);
+ 
++	regulator_register_always_on(-1, "backlight-enable",
++				     &backlight_supply, 1, 0);
++
+ 	return 0;
+ }
+ 
+-- 
+1.8.1.5
