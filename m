@@ -1,69 +1,65 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
- resource by name
-Date: Tue, 19 Mar 2013 22:40:12 +0100
-Message-ID: <5148DB3C.8080402@gmail.com>
-References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org> <51408FB9.90808@gmail.com> <514100D9.1000603@gmail.com> <514737D4.8080601@gmail.com>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 00/16] clk: exynos4/5: migrate to common clock framework
+Date: Tue, 19 Mar 2013 14:50:38 -0700
+Message-ID: <20130319215038.8663.83548@quantum>
+References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
+ <20130319184938.8663.18115@quantum> <201303192212.16877.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f175.google.com ([209.85.215.175]:56167 "EHLO
-	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933741Ab3CSVkR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Mar 2013 17:40:17 -0400
-Received: by mail-ea0-f175.google.com with SMTP id o10so463776eaj.20
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2013 14:40:16 -0700 (PDT)
-In-Reply-To: <514737D4.8080601@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <201303192212.16877.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
 
-On 03/18/2013 04:50 PM, Rob Herring wrote:
-> On 03/13/2013 05:42 PM, Sylwester Nawrocki wrote:
->> On 03/13/2013 03:39 PM, Rob Herring wrote:
->>> I fail to see what the hack is. The order of interrupt properties must
->>> be defined by the binding. interrupt-names is auxiliary data and must
->>> not be required by an OS.
->>
->> It is clear that the order of the interrupts must be defined by the
->> bindings. But how useful<resource>-names properties are when we
->> cannot define them as required ? If an OS cannot rely on them then
->> it must use some other, reliable, method to identify the resources,
->> e.g. by hard coding the indexes. If we have to do it then why even
->> bother with the<resource>-names properties ? I can see interrupt-names
->> property specified as required in at least 2 bindings' documentation
->> and all bindings having reg-names property define it as required.
->> Are they wrong them ?
->
-> You can require the name for a binding definition, but that does not
-> remove the requirement that the order and index of interrupts also be
-> defined by the binding. Then it is up to the OS to use names or
-> hard-coded indexes. Hard-coded indexes are not a hack. This is how FDT
-> and OF are defined to work.
-
-OK, that makes it all crystal clear for me, thanks.
-
-> I'm still not clear how changing the order of the interrupts removes a hack.
-
-Originally the binding in question was not specifying the interrupt
-order at all. And the drivers required order of the interrupt resources
-different than in what they were normally defined in the SoC interrupt
-combiner. So I suggested to use the interrupt-names property to make it
-all more explicit and less error prone. I once had to fix the order of
-the FIMD interrupts in the device tree to make the display work, since
-I used a patch where the interrupts were listed in the IRQ combiner order,
-and not the order expected by the driver.
-
-I wasn't really clear then whether the order of interrupts needs to be
-still fixed by the binding when the interrupt-names property was used.
-
-That said I don't think there was previously any hack there. Just an
-undocumented expected order of the interrupts in DT, different than the
-normal order in the IRQ combiner. So it is really hard to agree with
-what's written in the $subject patch description as it is now.
-
-Thanks,
-Sylwester
+UXVvdGluZyBIZWlrbyBTdMO8Ym5lciAoMjAxMy0wMy0xOSAxNDoxMjoxNikKPiBBbSBEaWVuc3Rh
+ZywgMTkuIE3DpHJ6IDIwMTMsIDE5OjQ5OjM4IHNjaHJpZWIgTWlrZSBUdXJxdWV0dGU6Cj4gPiBR
+dW90aW5nIFRob21hcyBBYnJhaGFtICgyMDEzLTAyLTE4IDAwOjIxOjEwKQo+ID4gCj4gPiA+IENo
+YW5nZXMgc2luY2UgdjU6Cj4gPiA+IC0gU3F1YXNoZWQgc2V2ZXJhbCBFeHlub3M0IGZpeGVzIHBh
+dGNoIGZyb20gVG9tYXN6IEZpZ2EKPiA+ID4gLSBJbmNsdWRlZCBzdXBwb3J0IGZvciBFeHlub3M1
+MjUwIGFuZCBFeHlub3M1NDQwLCB0aHVzIGNvbnZlcnRpbmcgYWxsCj4gPiA+IAo+ID4gPiAgIEV4
+eW5vczQgYW5kIEV4eW5vczUgcGxhdGZvcm1zIHRvIGNvbW1vbiBjbG9jayBmcmFtZXdvcmsuCj4g
+PiA+IAo+ID4gPiAtIERlcGVuZHMgb24gdGhlIGZvbGxvd2luZyBwYXRjaCBzZXJpZXMuCj4gPiA+
+IAo+ID4gPiAgIC0KPiA+ID4gICBodHRwOi8vd3d3Lm1haWwtYXJjaGl2ZS5jb20vbGludXgtc2Ft
+c3VuZy1zb2NAdmdlci5rZXJuZWwub3JnL21zZzE1ODQ5Cj4gPiA+ICAgLmh0bWwgLQo+ID4gPiAg
+IGh0dHA6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9saW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5l
+bC5vcmcvbXNnMTU4NTIKPiA+ID4gICAuaHRtbAo+ID4gPiAKPiA+ID4gQ2hhbmdlcyBzaW5jZSB2
+NDoKPiA+ID4gLSBSZWJhc2VkIHRvIGxpbnV4LTMuOC1yYzEuCj4gPiA+IAo+ID4gPiBDaGFuZ2Vz
+IHNpbmNlIHYzOgo+ID4gPiAtIEluY2x1ZGVzIGNoYW5nZXMgc3VnZ2VzdGVkIGJ5IFRvbWFzeiBG
+aWdhIDx0b21hc3ouZmlnYUBnbWFpbC5jb20+Cj4gPiA+IAo+ID4gPiBUaGlzIHBhdGNoIHNlcmll
+cyBtaWdyYXRlcyB0aGUgU2Ftc3VuZyBFeHlub3M0LzUgU29DIGNsb2NrIGNvZGUgdG8gYWRvcHQK
+PiA+ID4gdGhlIGNvbW1vbiBjbG9jayBmcmFtZXdvcmsuIFRoZSB1c2Ugb2YgU2Ftc3VuZyBzcGVj
+aWZpYyBjbG9jayBzdHJ1Y3R1cmVzCj4gPiA+IGhhcyBiZWVuIHJlbW92ZWQgYW5kIGFsbCBib2Fy
+ZCBzdXBwb3J0IGNvZGUgaGFzIGJlZW4gdXBkYXRlZC4gaW14LXN0eWxlCj4gPiA+IG9mIGNsb2Nr
+IHJlZ2lzdHJhdGlvbiBhbmQgbG9va3VwIGhhcyBiZWVuIGFkb3B0ZWQgZm9yIGRldmljZSB0cmVl
+IGJhc2VkCj4gPiA+IGV4eW5vczQvNSBwbGF0Zm9ybXMuCj4gPiAKPiA+IFRob21hcywKPiA+IAo+
+ID4gQXJlIHlvdSBwbGFubmluZyBhIFY3IHNlcmllcyB3aGljaCBpbmNsdWRlcyB0aGUgY2xvY2sg
+YWxpYXMgYml0cyBmcm9tCj4gPiBwYXRjaCAjMT8KPiAKPiBLdWtqaW4gaGFzIGFscmVhZHkgYXBw
+bGllZCB0aGlzIHNlcmllcyBpbnRvIHRoZSBsaW51eC1zYW1zdW5nIHRyZWUgWzBdLgo+IAoKVGhh
+dCByZWFsbHkgaXMgdG9vIG11Y2ggY29kZSB0byBnbyBpbnRvIGRyaXZlcnMvY2xrIHdpdGhvdXQg
+bXkgQUNLLiAgSQpoYXZlIG5vdCBtYWRlIG11Y2ggbm9pc2UgYWJvdXQgdGhpcyBpbiB0aGUgcGFz
+dCBidXQgdGhlcmUgaGFzIGJlZW4gbW9yZQphbmQgbW9yZSAiYm9udXMiIGNvZGUgc2xpcHBpbmcg
+aW50byBkcml2ZXJzL2NsayBlYWNoIG1lcmdlIHdpbmRvdy4KTGV0J3Mgbm90IGRvIHRoYXQgYW55
+IG1vcmUuCgpSZWdhcmRzLApNaWtlCgo+IFRoZSBhbGlhcyBjaGFuZ2VzIGFyZSBhdmFpbGFibGUg
+aW4gdGhlIHNlcmllcyAiY2xrOiBzYW1zdW5nOiBwbSBmaXhlcwo+IGFuZCBtdWx0aXBsZSBhbGlh
+c2VzIiBmcm9tIGxhc3Qgd2VkbmVzZGF5IHRvIG9uIHRvcCwgd2hpY2ggeW91IHNob3VsZAo+IGhv
+cGVmdWxseSBhbHNvIGhhdmUgcmVjZWl2ZWQuCj4gCj4gVGhpcyB2MiBzZXJpZXMgaW1wbGVtZW50
+cyB0aGUgY2hhbmdlcyBkaXNjdXNzZWQgaW4gdGhlIHByZXZpb3VzIHYxIAo+ICJjbGs6IHNhbXN1
+bmc6IHNtYWxsIGZpeGVzIGFuZCBlbmhhbmNlbWVudHMiIGZyb20gMjAxMy0wMy0xMiwgYnV0IGRp
+ZG4ndAo+IGdldCBhbnkgcmVzcG9uc2VzIHlldC4KPiAKPiAKPiBIZWlrbwo+IAo+IAo+IFswXSBo
+dHRwczovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9rZ2VuZS9saW51eC1z
+YW1zdW5nLmdpdC9sb2cvP2g9bmV4dC9jbGstZXh5bm9zCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRldmljZXRyZWUtZGlzY3VzcyBtYWlsaW5nIGxpc3QK
+ZGV2aWNldHJlZS1kaXNjdXNzQGxpc3RzLm96bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMu
+b3JnL2xpc3RpbmZvL2RldmljZXRyZWUtZGlzY3Vzcwo=
