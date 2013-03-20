@@ -1,97 +1,64 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: RE: [PATCH v6 00/16] clk: exynos4/5: migrate to common clock
- framework
-Date: Wed, 20 Mar 2013 13:50:05 +0900
-Message-ID: <11af01ce2526$63b0a8f0$2b11fad0$%kim@samsung.com>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
- <20130319184938.8663.18115@quantum> <201303192212.16877.heiko@sntech.de>
- <20130319215038.8663.83548@quantum>
- <116a01ce24fd$e32658b0$a9730a10$%kim@samsung.com>
- <20130320025656.11073.90469@quantum>
+From: Tony Prisk <linux@prisktech.co.nz>
+Subject: Re: [PATCH V4 0/9] Add mandatory regulator for all users of
+ pwm-backlight.
+Date: Wed, 20 Mar 2013 20:13:08 +1300
+Message-ID: <1363763588.30752.7.camel@gitbox>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
+ <20130320021442.GB20443@S2101-09.ap.freescale.net>
+ <51491DF0.10408@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51290 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752352Ab3CTEuH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Mar 2013 00:50:07 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJY00BL103C4W90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Mar 2013 13:50:05 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MJY00KJJ03H5PL0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Mar 2013 13:50:05 +0900 (KST)
-In-reply-to: <20130320025656.11073.90469@quantum>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <51491DF0.10408@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: "romain.naour@openwide.fr" <romain.naour@openwide.fr>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "gxt@mprc.pku.edu.cn" <gxt@mprc.pku.edu.cn>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "laforge@openezx.org" <laforge@openezx.org>, "openezx-devel@lists.openezx.org" <openezx-devel@lists.openezx.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "lost.distance@yahoo.com" <lost.distance@yahoo.com>, "drwyrm@gmail.com" <drwyrm@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, eric.
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mike Turquette' <mturquette@linaro.org>, =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-Mike Turquette wrote:
-> 
-> Quoting Kukjin Kim (2013-03-19 17:00:09)
-> > Mike Turquette wrote:
-> > >
+On Wed, 2013-03-20 at 11:24 +0900, Alex Courbot wrote:
+> On 03/20/2013 11:14 AM, Shawn Guo wrote:
+> > On Tue, Mar 19, 2013 at 11:59:24AM -0700, Andrew Chew wrote:
+> >> Many backlights are enabled via GPIO.  We can generalize the GPIO to a
+> >> fixed regulator.
+> >>
+> > I think we should push the series of "Runtime Interpreted Power
+> > Sequences" moving forward, which should be useful this case and many
+> > other cases as well.
 > >
-> > [...]
-> >
-> > > > > Thomas,
-> > > > >
-> > > > > Are you planning a V7 series which includes the clock alias bits from
-> > > > > patch #1?
-> > > >
-> > > > Kukjin has already applied this series into the linux-samsung tree [0].
-> > > >
-> > Thanks, Heiko.
-> >
-> > Mike, yes I did, as we discussed before. Since I missed in last window for
-> v3.9, so I merged every common clock stuff for exynos into samsung tree in the
-> early 3.9-rc time for v3.10.
-> > >
-> > > That really is too much code to go into drivers/clk without my ACK.  I
-> > > have not made much noise about this in the past but there has been more
-> > > and more "bonus" code slipping into drivers/clk each merge window.
-> > > Let's not do that any more.
-> > >
-> >
-> > Hmm, I remember you already agreed on previous version, and I thought if any
-> further codes are required, we could do it on top of that.
-> > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-
-> January/143429.html
-> >
+> > http://thread.gmane.org/gmane.linux.kernel/1395912
 > 
-> In the email you linked to my use of the word "merged" did not imply an
-> ACK.  I was asking about merging the two separate exynos4 and exynos5
-> ccf development efforts together.
+> That's still the medium-term plan. But doing this correctly requires 
+> some improvements to be done in the GPIO subsystem, which I am pushing 
+> at the moment.
 > 
-OK, I see.
-
-> Furthermore if I *had* agreed on the previous version it would still
-> have been appropriate to put my Acked-by on those patches, which is
-> clearly missing today.
+> Eventually power sequences should handle this kind of scenario, but by 
+> the meantime it cannot hurt to get the job done.
 > 
-BTW, how about following?
+> Alex.
 
-http://www.spinics.net/lists/arm-kernel/msg210266.html
+I don't mind this patch personally, so take this query as more of a
+'generalization' than a problem with this patch:
 
-In my understanding, it should be your agreement, it cannot be 'ack' though.
 
-> > However, if you don't want current codes to be sent to upstream, let me know,
-> but I don't think it would be better to us though.
-> 
-> No, I am not asking you to revert/drop the patches, but I am using this
-> as a public example.
-> 
-What's the 'public example'?
+This patch changes the binding for an already used device (by addition
+of a required property), which isn't so bad BUT, as Alex pointed out,
+the binding will probably end up being changed again once power
+sequencing is sorted out.
 
-As I linked, you already said 'sounds good to me' on my asking.
+I realise it's still early days and things need to be tried-and-tested
+first, but wasn't the point of the bindings that they should be
+finalized (as best as possible anyway) the first time, so we don't have
+to worry about incompatibilities between bindings and drivers?
 
-- Kukjin
+Regards
+
+Tony P
