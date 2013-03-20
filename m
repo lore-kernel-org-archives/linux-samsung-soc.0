@@ -1,65 +1,100 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Wed, 20 Mar 2013 11:13:26 +0800
-Message-ID: <20130320031324.GB26941@S2101-09.ap.freescale.net>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
- <1363719573-20926-7-git-send-email-achew@nvidia.com>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
+ resource by name
+Date: Wed, 20 Mar 2013 08:52:07 +0530
+Message-ID: <CAGm_ybhxMZeJrhHuCgLXdYVS_nmjmGzY3hTssbQzsHDKjuw7Fw@mail.gmail.com>
+References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org>
+	<51408FB9.90808@gmail.com>
+	<514100D9.1000603@gmail.com>
+	<514737D4.8080601@gmail.com>
+	<5148DB3C.8080402@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-db8lp0189.outbound.messaging.microsoft.com ([213.199.154.189]:9143
-	"EHLO db8outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932150Ab3CTDNX (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:65336 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752093Ab3CTDWJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Mar 2013 23:13:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1363719573-20926-7-git-send-email-achew@nvidia.com>
+	Tue, 19 Mar 2013 23:22:09 -0400
+Received: by mail-wg0-f52.google.com with SMTP id 15so952471wgd.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2013 20:22:08 -0700 (PDT)
+In-Reply-To: <5148DB3C.8080402@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Chew <achew@nvidia.com>
-Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, linux@prisktech.co.nz, swarren@wwwdotorg.org, thierry.reding@avionic-design.de, acourbot@nvidia.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Rob Herring <robherring2@gmail.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
 
-On Tue, Mar 19, 2013 at 11:59:30AM -0700, Andrew Chew wrote:
-> The pwm-backlight driver now takes a mandatory regulator that is gotten
-> during driver probe.  Initialize a dummy regulator to satisfy this
-> requirement.
-> 
-> Signed-off-by: Andrew Chew <achew@nvidia.com>
-> ---
->  arch/arm/boot/dts/imx23-evk.dts      | 6 ++++++
->  arch/arm/boot/dts/imx28-apf28dev.dts | 6 ++++++
->  arch/arm/boot/dts/imx28-cfa10049.dts | 6 ++++++
->  arch/arm/boot/dts/imx28-evk.dts      | 6 ++++++
->  arch/arm/boot/dts/imx28-tx28.dts     | 6 ++++++
->  5 files changed, 30 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx23-evk.dts b/arch/arm/boot/dts/imx23-evk.dts
-> index 035c13f..e48e36c 100644
-> --- a/arch/arm/boot/dts/imx23-evk.dts
-> +++ b/arch/arm/boot/dts/imx23-evk.dts
-> @@ -97,10 +97,16 @@
->  		};
->  	};
->  
-> +	bl_en: fixed-regulator {
+HI,
 
-The node name is too generic.  Very likely we have other fixed regulator
-in a dts.
+On Wed, Mar 20, 2013 at 3:10 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> On 03/18/2013 04:50 PM, Rob Herring wrote:
+>>
+>> On 03/13/2013 05:42 PM, Sylwester Nawrocki wrote:
+>>>
+>>> On 03/13/2013 03:39 PM, Rob Herring wrote:
+>>>>
+>>>> I fail to see what the hack is. The order of interrupt properties must
+>>>> be defined by the binding. interrupt-names is auxiliary data and must
+>>>> not be required by an OS.
+>>>
+>>>
+>>> It is clear that the order of the interrupts must be defined by the
+>>> bindings. But how useful<resource>-names properties are when we
+>>> cannot define them as required ? If an OS cannot rely on them then
+>>> it must use some other, reliable, method to identify the resources,
+>>> e.g. by hard coding the indexes. If we have to do it then why even
+>>> bother with the<resource>-names properties ? I can see interrupt-names
+>>> property specified as required in at least 2 bindings' documentation
+>>> and all bindings having reg-names property define it as required.
+>>> Are they wrong them ?
+>>
+>>
+>> You can require the name for a binding definition, but that does not
+>> remove the requirement that the order and index of interrupts also be
+>> defined by the binding. Then it is up to the OS to use names or
+>> hard-coded indexes. Hard-coded indexes are not a hack. This is how FDT
+>> and OF are defined to work.
+>
+>
+> OK, that makes it all crystal clear for me, thanks.
+>
+>
+>> I'm still not clear how changing the order of the interrupts removes a
+>> hack.
+>
+>
+> Originally the binding in question was not specifying the interrupt
+> order at all. And the drivers required order of the interrupt resources
+> different than in what they were normally defined in the SoC interrupt
+> combiner. So I suggested to use the interrupt-names property to make it
+> all more explicit and less error prone. I once had to fix the order of
+> the FIMD interrupts in the device tree to make the display work, since
+> I used a patch where the interrupts were listed in the IRQ combiner order,
+> and not the order expected by the driver.
+>
+> I wasn't really clear then whether the order of interrupts needs to be
+> still fixed by the binding when the interrupt-names property was used.
+>
+> That said I don't think there was previously any hack there. Just an
+> undocumented expected order of the interrupts in DT, different than the
+> normal order in the IRQ combiner. So it is really hard to agree with
+> what's written in the $subject patch description as it is now.
+>
 
-For mxs, we have all such board level regulators defined in node
-"regulators" as children.
+Yes, there was NO hack as such earlier, just the documentation was not clear.
+But IMO, as suggested by Sylwester using  "interrupt-names" property
+makes it more explicit and less error prone.
 
-Shawn
+Regarding this patch, it will be abandoned, Leela will post a single
+patch by squash this patch and
+https://patchwork.kernel.org/patch/2184981/
 
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "bl-en-supply";
-> +        };
-> +
->  	backlight {
->  		compatible = "pwm-backlight";
->  		pwms = <&pwm 2 5000000>;
->  		brightness-levels = <0 4 8 16 32 64 128 255>;
->  		default-brightness-level = <6>;
-> +		enable-supply = <&bl_en>;
->  	};
->  };
+> Thanks,
+> Sylwester
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
