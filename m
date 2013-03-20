@@ -1,91 +1,128 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Wed, 20 Mar 2013 09:23:18 +0100
-Message-ID: <20130320082318.GA28775@opensource.wolfsonmicro.com>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
- <1363719573-20926-7-git-send-email-achew@nvidia.com>
- <201303192227.21717.marex@denx.de> <5148E252.9050900@wwwdotorg.org>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH v2] mfd: remove twelve unused Kconfig symbols
+Date: Wed, 20 Mar 2013 10:09:39 +0100
+Message-ID: <1363770579.1390.82.camel@x61.thuisdomein>
+References: <1363732701.1390.45.camel@x61.thuisdomein>
+	 <20130320082427.GB28775@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6885556834544931844=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5148E252.9050900@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: romain.naour@openwide.fr, thierry.reding@avionic-design.de, philipp.zabel@gmail.com, gxt@mprc.pku.edu.cn, robert.jarzmik@free.fr, laforge@openezx.org, Marek Vasut <marex@denx.de>, kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, lost.distance@yahoo.com, drwyrm@gmail.com, haojian.zhuang@gmail.com, openezx-devel@lists.openezx.org, acourbot@nvidia.com, linux-tegra@vger.kernel.org, eric.y.miao@gmail.com, linux-arm-kernel@lists.infradead.org, stefan@openezx.org, Andrew Chew <achew@nvidia.com>, kyungmin.park@samsung.com, shawn.guo@linaro.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============6885556834544931844==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-Content-Disposition: inline
-
-
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Mar 19, 2013 at 04:10:26PM -0600, Stephen Warren wrote:
-> On 03/19/2013 03:27 PM, Marek Vasut wrote:
-
-> > Do we really need a mandatory regulator? Why can't it be optional?
-
-> IIRC, the previous advice I've seen is that if a device (driver) uses a
-> regulator, it must /require/ a regulator, and if a particular board
-> doesn't actually have a SW-controlled regulator, then a fixed- or dummy-
-> regulator should be provided to satisfy this requirement.
-
-> CC'ing Mark Brown to make sure I really do Recall Correctly.
-
-Yes, and it should be fixed rather than dummy.  The issue is partly that
-it's probably important that the device has power so we don't want to
-just ignore errors and partly that this is something which applies to
-essentially all devices so whatever we do for this case ought to be done
-by the core so all devices can benefit and we don't have to duplicate
-lots of code in individual drivers.
-
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRSXHaAAoJELSic+t+oim95cwP/RmgDDdz+rwCH+YppduQfcvK
-d9b9NrEoOhJ+vL2urIpFkc6bESDLc9ObNaisxxFQHS578izScMHSeTvbErEtUAUk
-1BejUpKHL5eF8s8vev1+VRGo8uKML5O5PJQ9yrVRif/Xd9jpHmuc64BriwAH7FVO
-iDMVQwMzeUmF0eWAmqYecn/kuiAfUJNatrGQvok+8Y81tanD4R1jaVRl0sIOqfpG
-QChAtMuiSn9ETY6MCmbGv1SDZCGTHVW3Y438qW7LRu6B5/2nyZYNMW3Iq3KgGm2T
-8oMAWnA9AqxFYF1dHwpfuNPwqGRnYqDloXWEgoVFPrEjfo0UpRM0WQ8VSYqlYNw5
-euryMoLnOPSjuKFX/CS0OBCojOVilxvWM4FTYbTb5N8ICqnKyYIyWcN4P96thYfp
-OereYXdzma5TaoQ3GykvYSIzZnsVItKVqnhd89F3pfzzjsfwdZ9Xt89OdOUEi7+1
-z2HvsVPnPaUcybZNlNVotMG9l7SRXhPO64PbAJ8B4ZdL7YHJTJ7GulIEV48uWPV+
-ZO4ywW7yZu2ypM1zNWZnz4i9aV4twLk9UfiWo4iEoZvEfZJmBF1Trr3P42DRfeuH
-67QmFDQmKCiP08BobQb+FOnZF4UF6GM3319DJRM1VFIMbdlyknxZ3QDQd9A46Ja2
-06tmbG6tkTIsb7DXQK42
-=Eci5
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
-
-
---===============6885556834544931844==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:53102 "EHLO
+	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750763Ab3CTJJo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 Mar 2013 05:09:44 -0400
+In-Reply-To: <20130320082427.GB28775@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Sascha Hauer <kernel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Twelve Kconfig symbols, all related to WM8350, WM8351, and WM8352, are
+unused. Commit 19d57ed5a308472a02e773f33c03ad4cb2ec6a9 ("mfd: Remove
+custom wm8350 cache implementation") removed all their (actual) users.
+Remove these symbols too.
 
---===============6885556834544931844==--
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+0) This version adds Mark's ACK. It is now also sent to the ARM
+maintainers, as Mark suggested.
+
+1) Still only eyeball tested.
+
+ arch/arm/mach-imx/Kconfig     |  2 --
+ arch/arm/mach-s3c64xx/Kconfig |  3 ---
+ drivers/mfd/Kconfig           | 48 -------------------------------------------
+ 3 files changed, 53 deletions(-)
+
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index 4c9c6f9..6d9ae09 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -481,8 +481,6 @@ config MACH_MX31ADS_WM1133_EV1
+ 	depends on MACH_MX31ADS
+ 	depends on MFD_WM8350_I2C
+ 	depends on REGULATOR_WM8350 = y
+-	select MFD_WM8350_CONFIG_MODE_0
+-	select MFD_WM8352_CONFIG_MODE_0
+ 	help
+ 	  Include support for the Wolfson Microelectronics 1133-EV1 PMU
+ 	  and audio module for the MX31ADS platform.
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 131c862..041da51 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -198,10 +198,7 @@ endchoice
+ config SMDK6410_WM1190_EV1
+ 	bool "Support Wolfson Microelectronics 1190-EV1 PMIC card"
+ 	depends on MACH_SMDK6410
+-	select MFD_WM8350_CONFIG_MODE_0
+-	select MFD_WM8350_CONFIG_MODE_3
+ 	select MFD_WM8350_I2C
+-	select MFD_WM8352_CONFIG_MODE_0
+ 	select REGULATOR
+ 	select REGULATOR_WM8350
+ 	select SAMSUNG_GPIO_EXTRA64
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index c346941..ebb1bed 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -687,54 +687,6 @@ config MFD_WM8350
+ 	bool
+ 	depends on GENERIC_HARDIRQS
+ 
+-config MFD_WM8350_CONFIG_MODE_0
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8350_CONFIG_MODE_1
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8350_CONFIG_MODE_2
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8350_CONFIG_MODE_3
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8351_CONFIG_MODE_0
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8351_CONFIG_MODE_1
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8351_CONFIG_MODE_2
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8351_CONFIG_MODE_3
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8352_CONFIG_MODE_0
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8352_CONFIG_MODE_1
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8352_CONFIG_MODE_2
+-	bool
+-	depends on MFD_WM8350
+-
+-config MFD_WM8352_CONFIG_MODE_3
+-	bool
+-	depends on MFD_WM8350
+-
+ config MFD_WM8350_I2C
+ 	bool "Support Wolfson Microelectronics WM8350 with I2C"
+ 	select MFD_WM8350
+-- 
+1.7.11.7
