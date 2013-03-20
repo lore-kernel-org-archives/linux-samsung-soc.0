@@ -1,32 +1,44 @@
-From: Shawn Guo <shawn.guo@linaro.org>
+From: Alex Courbot <acourbot@nvidia.com>
 Subject: Re: [PATCH V4 0/9] Add mandatory regulator for all users of
  pwm-backlight.
-Date: Wed, 20 Mar 2013 10:14:44 +0800
-Message-ID: <20130320021442.GB20443@S2101-09.ap.freescale.net>
+Date: Wed, 20 Mar 2013 11:24:48 +0900
+Message-ID: <51491DF0.10408@nvidia.com>
 References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
+ <20130320021442.GB20443@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ch1ehsobe006.messaging.microsoft.com ([216.32.181.186]:5040
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932528Ab3CTCPF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Mar 2013 22:15:05 -0400
-Content-Disposition: inline
-In-Reply-To: <1363719573-20926-1-git-send-email-achew@nvidia.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130320021442.GB20443@S2101-09.ap.freescale.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: "romain.naour@openwide.fr" <romain.naour@openwide.fr>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "gxt@mprc.pku.edu.cn" <gxt@mprc.pku.edu.cn>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "laforge@openezx.org" <laforge@openezx.org>, "openezx-devel@lists.openezx.org" <openezx-devel@lists.openezx.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "lost.distance@yahoo.com" <lost.distance@yahoo.com>, "drwyrm@gmail.com" <drwyrm@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, eric.
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Chew <achew@nvidia.com>
-Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, linux@prisktech.co.nz, swarren@wwwdotorg.org, thierry.reding@avionic-design.de, acourbot@nvidia.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 
-On Tue, Mar 19, 2013 at 11:59:24AM -0700, Andrew Chew wrote:
-> Many backlights are enabled via GPIO.  We can generalize the GPIO to a
-> fixed regulator.
-> 
-I think we should push the series of "Runtime Interpreted Power
-Sequences" moving forward, which should be useful this case and many
-other cases as well.
+On 03/20/2013 11:14 AM, Shawn Guo wrote:
+> On Tue, Mar 19, 2013 at 11:59:24AM -0700, Andrew Chew wrote:
+>> Many backlights are enabled via GPIO.  We can generalize the GPIO to a
+>> fixed regulator.
+>>
+> I think we should push the series of "Runtime Interpreted Power
+> Sequences" moving forward, which should be useful this case and many
+> other cases as well.
+>
+> http://thread.gmane.org/gmane.linux.kernel/1395912
 
-http://thread.gmane.org/gmane.linux.kernel/1395912
+That's still the medium-term plan. But doing this correctly requires 
+some improvements to be done in the GPIO subsystem, which I am pushing 
+at the moment.
 
-Shawn
+Eventually power sequences should handle this kind of scenario, but by 
+the meantime it cannot hurt to get the job done.
+
+Alex.
