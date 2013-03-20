@@ -1,100 +1,97 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH] ARM: dts: add interrupt-names property to get interrupt
- resource by name
-Date: Wed, 20 Mar 2013 08:52:07 +0530
-Message-ID: <CAGm_ybhxMZeJrhHuCgLXdYVS_nmjmGzY3hTssbQzsHDKjuw7Fw@mail.gmail.com>
-References: <1363173980-11428-1-git-send-email-vikas.sajjan@linaro.org>
-	<51408FB9.90808@gmail.com>
-	<514100D9.1000603@gmail.com>
-	<514737D4.8080601@gmail.com>
-	<5148DB3C.8080402@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: RE: [PATCH v6 00/16] clk: exynos4/5: migrate to common clock
+ framework
+Date: Wed, 20 Mar 2013 13:50:05 +0900
+Message-ID: <11af01ce2526$63b0a8f0$2b11fad0$%kim@samsung.com>
+References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
+ <20130319184938.8663.18115@quantum> <201303192212.16877.heiko@sntech.de>
+ <20130319215038.8663.83548@quantum>
+ <116a01ce24fd$e32658b0$a9730a10$%kim@samsung.com>
+ <20130320025656.11073.90469@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:65336 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752093Ab3CTDWJ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:51290 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752352Ab3CTEuH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Mar 2013 23:22:09 -0400
-Received: by mail-wg0-f52.google.com with SMTP id 15so952471wgd.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2013 20:22:08 -0700 (PDT)
-In-Reply-To: <5148DB3C.8080402@gmail.com>
+	Wed, 20 Mar 2013 00:50:07 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MJY00BL103C4W90@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Mar 2013 13:50:05 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MJY00KJJ03H5PL0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Mar 2013 13:50:05 +0900 (KST)
+In-reply-to: <20130320025656.11073.90469@quantum>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Rob Herring <robherring2@gmail.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, l.krishna@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
+To: 'Mike Turquette' <mturquette@linaro.org>, =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-HI,
+Mike Turquette wrote:
+> 
+> Quoting Kukjin Kim (2013-03-19 17:00:09)
+> > Mike Turquette wrote:
+> > >
+> >
+> > [...]
+> >
+> > > > > Thomas,
+> > > > >
+> > > > > Are you planning a V7 series which includes the clock alias bits from
+> > > > > patch #1?
+> > > >
+> > > > Kukjin has already applied this series into the linux-samsung tree [0].
+> > > >
+> > Thanks, Heiko.
+> >
+> > Mike, yes I did, as we discussed before. Since I missed in last window for
+> v3.9, so I merged every common clock stuff for exynos into samsung tree in the
+> early 3.9-rc time for v3.10.
+> > >
+> > > That really is too much code to go into drivers/clk without my ACK.  I
+> > > have not made much noise about this in the past but there has been more
+> > > and more "bonus" code slipping into drivers/clk each merge window.
+> > > Let's not do that any more.
+> > >
+> >
+> > Hmm, I remember you already agreed on previous version, and I thought if any
+> further codes are required, we could do it on top of that.
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-
+> January/143429.html
+> >
+> 
+> In the email you linked to my use of the word "merged" did not imply an
+> ACK.  I was asking about merging the two separate exynos4 and exynos5
+> ccf development efforts together.
+> 
+OK, I see.
 
-On Wed, Mar 20, 2013 at 3:10 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> On 03/18/2013 04:50 PM, Rob Herring wrote:
->>
->> On 03/13/2013 05:42 PM, Sylwester Nawrocki wrote:
->>>
->>> On 03/13/2013 03:39 PM, Rob Herring wrote:
->>>>
->>>> I fail to see what the hack is. The order of interrupt properties must
->>>> be defined by the binding. interrupt-names is auxiliary data and must
->>>> not be required by an OS.
->>>
->>>
->>> It is clear that the order of the interrupts must be defined by the
->>> bindings. But how useful<resource>-names properties are when we
->>> cannot define them as required ? If an OS cannot rely on them then
->>> it must use some other, reliable, method to identify the resources,
->>> e.g. by hard coding the indexes. If we have to do it then why even
->>> bother with the<resource>-names properties ? I can see interrupt-names
->>> property specified as required in at least 2 bindings' documentation
->>> and all bindings having reg-names property define it as required.
->>> Are they wrong them ?
->>
->>
->> You can require the name for a binding definition, but that does not
->> remove the requirement that the order and index of interrupts also be
->> defined by the binding. Then it is up to the OS to use names or
->> hard-coded indexes. Hard-coded indexes are not a hack. This is how FDT
->> and OF are defined to work.
->
->
-> OK, that makes it all crystal clear for me, thanks.
->
->
->> I'm still not clear how changing the order of the interrupts removes a
->> hack.
->
->
-> Originally the binding in question was not specifying the interrupt
-> order at all. And the drivers required order of the interrupt resources
-> different than in what they were normally defined in the SoC interrupt
-> combiner. So I suggested to use the interrupt-names property to make it
-> all more explicit and less error prone. I once had to fix the order of
-> the FIMD interrupts in the device tree to make the display work, since
-> I used a patch where the interrupts were listed in the IRQ combiner order,
-> and not the order expected by the driver.
->
-> I wasn't really clear then whether the order of interrupts needs to be
-> still fixed by the binding when the interrupt-names property was used.
->
-> That said I don't think there was previously any hack there. Just an
-> undocumented expected order of the interrupts in DT, different than the
-> normal order in the IRQ combiner. So it is really hard to agree with
-> what's written in the $subject patch description as it is now.
->
+> Furthermore if I *had* agreed on the previous version it would still
+> have been appropriate to put my Acked-by on those patches, which is
+> clearly missing today.
+> 
+BTW, how about following?
 
-Yes, there was NO hack as such earlier, just the documentation was not clear.
-But IMO, as suggested by Sylwester using  "interrupt-names" property
-makes it more explicit and less error prone.
+http://www.spinics.net/lists/arm-kernel/msg210266.html
 
-Regarding this patch, it will be abandoned, Leela will post a single
-patch by squash this patch and
-https://patchwork.kernel.org/patch/2184981/
+In my understanding, it should be your agreement, it cannot be 'ack' though.
 
-> Thanks,
-> Sylwester
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > However, if you don't want current codes to be sent to upstream, let me know,
+> but I don't think it would be better to us though.
+> 
+> No, I am not asking you to revert/drop the patches, but I am using this
+> as a public example.
+> 
+What's the 'public example'?
+
+As I linked, you already said 'sounds good to me' on my asking.
+
+- Kukjin
