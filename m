@@ -1,52 +1,73 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 9/9] pwm_bl: Add mandatory backlight enable regulator
-Date: Wed, 20 Mar 2013 12:00:10 -0600
-Message-ID: <5149F92A.3070004@wwwdotorg.org>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <1363719573-20926-10-git-send-email-achew@nvidia.com>
+From: Tony Prisk <linux@prisktech.co.nz>
+Subject: Re: [Bulk] [PATCH V4 7/9] ARM: vt8500: Provide regulator to
+ pwm-backlight
+Date: Thu, 21 Mar 2013 07:18:35 +1300
+Message-ID: <1363803515.4635.7.camel@gitbox>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
+	 <1363719573-20926-8-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363719573-20926-10-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from server.prisktech.co.nz ([115.188.14.127]:50707 "EHLO
+	server.prisktech.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752289Ab3CTSSY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 Mar 2013 14:18:24 -0400
+In-Reply-To: <1363719573-20926-8-git-send-email-achew@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrew Chew <achew@nvidia.com>
+Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, shawn.guo@linaro.org, swarren@wwwdotorg.org, linux-samsung-soc@vger.kernel.org, thierry.reding@avionic-design.de, openezx-devel@lists.openezx.org, acourbot@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 03/19/2013 12:59 PM, Andrew Chew wrote:
-> Many backlights need to be explicitly enabled.  Typically, this is done
-> with a GPIO.  For flexibility, we generalize the enable mechanism to a
-> regulator.
+On Tue, 2013-03-19 at 11:59 -0700, Andrew Chew wrote:
+> The pwm-backlight driver now takes a mandatory regulator that is gotten
+> during driver probe.  Initialize a dummy regulator to satisfy this
+> requirement.
 > 
-> If an enable regulator is not needed, then a dummy regulator can be given
-> to the backlight driver.  If a GPIO is used to enable the backlight,
-> then a fixed regulator can be instantiated to control the GPIO.
+> Signed-off-by: Andrew Chew <achew@nvidia.com>
+> ---
+>  arch/arm/boot/dts/wm8850-w70v2.dts | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> The backlight enable regulator can be specified in the device tree node
-> for the backlight, or can be done with legacy board setup code in the
-> usual way.
+> diff --git a/arch/arm/boot/dts/wm8850-w70v2.dts b/arch/arm/boot/dts/wm8850-w70v2.dts
+> index fcc660c..47a0b1a 100644
+> --- a/arch/arm/boot/dts/wm8850-w70v2.dts
+> +++ b/arch/arm/boot/dts/wm8850-w70v2.dts
+> @@ -37,11 +37,17 @@
+>  		};
+>  	};
+>  
+> +	bl_en: fixed-regulator {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "bl-en-supply";
+> +	};
+> +
+>  	backlight {
+>  		compatible = "pwm-backlight";
+>  		pwms = <&pwm 0 50000 1>;	/* duty inverted */
+>  
+>  		brightness-levels = <0 40 60 80 100 130 190 255>;
+>  		default-brightness-level = <5>;
+> +		enable-supply = <&bl_en>;
+>  	};
+>  };
 
-> diff --git a/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
-> index 1e4fc72..7e2e089 100644
-> --- a/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
-> +++ b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
-> @@ -10,6 +10,11 @@ Required properties:
->        last value in the array represents a 100% duty cycle (brightest).
->    - default-brightness-level: the default brightness level (index into the
->        array defined by the "brightness-levels" property)
-> +  - enable-supply: A phandle to the regulator device tree node. This
-> +      regulator will be turned on and off as the pwm is enabled and disabled.
-> +      Many backlights are enabled via a GPIO. In this case, we instantiate
-> +      a fixed regulator and give that to enable-supply. If a regulator
-> +      is not needed, then provide a dummy fixed regulator.
+This board will use either <&gpio 0 7 0> or <&pinctrl 7 0>, dependant on
+the pinctrl driver patchset going through.
 
-"enable" doesn't seem like the right name here; if this really is an
-"enable" input, then it's not a regulator. If you're calling it "enable"
-because the regulator is usually controlled by a GPIO that enables it,
-then what you really have is a regulator that provides power to the
-backlight, and the method that you enable that regulator is irrelevant.
+If you want it to 'work', feel free to add a regulator for the <&gpio 0
+7 0> case - otherwise just leave the dummy and I'll patch it later once
+the pinctrl driver is finished.
 
-Put another way, wouldn't "power" be a better name, thus making the
-property "power-supply"? Although that property name migth be considered
-to have some negative correlation with other concepts, so if people
-object to that, perhaps e.g. "vdd-supply"?
+I only know of one user who is disabling the backlight gpio at present,
+and he is doing it with a gpio-led node.
+
+The backlight is enabled by uboot on all boards with an LCD present, so
+this is just a power-saving feature for us - nothing breaks by having a
+dummy.
+
+Acked-by: Tony Prisk <linux@prisktech.co.nz>
+
+Regards
+Tony P
