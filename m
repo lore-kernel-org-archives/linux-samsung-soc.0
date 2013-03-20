@@ -1,64 +1,32 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v6 00/16] clk: exynos4/5: migrate to common clock framework
-Date: Wed, 20 Mar 2013 09:00:09 +0900
-Message-ID: <116a01ce24fd$e32658b0$a9730a10$%kim@samsung.com>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
- <20130319184938.8663.18115@quantum> <201303192212.16877.heiko@sntech.de>
- <20130319215038.8663.83548@quantum>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH V4 0/9] Add mandatory regulator for all users of
+ pwm-backlight.
+Date: Wed, 20 Mar 2013 10:14:44 +0800
+Message-ID: <20130320021442.GB20443@S2101-09.ap.freescale.net>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:38076 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754782Ab3CTAAL convert rfc822-to-8bit (ORCPT
+Received: from ch1ehsobe006.messaging.microsoft.com ([216.32.181.186]:5040
+	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932528Ab3CTCPF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Mar 2013 20:00:11 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJX001Y9MO9OJ70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Mar 2013 09:00:09 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MJX009ZRMO9SI00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Mar 2013 09:00:09 +0900 (KST)
-In-reply-to: <20130319215038.8663.83548@quantum>
-Content-language: ko
+	Tue, 19 Mar 2013 22:15:05 -0400
+Content-Disposition: inline
+In-Reply-To: <1363719573-20926-1-git-send-email-achew@nvidia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mike Turquette' <mturquette@linaro.org>, =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com
+To: Andrew Chew <achew@nvidia.com>
+Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, linux@prisktech.co.nz, swarren@wwwdotorg.org, thierry.reding@avionic-design.de, acourbot@nvidia.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 
-Mike Turquette wrote:
+On Tue, Mar 19, 2013 at 11:59:24AM -0700, Andrew Chew wrote:
+> Many backlights are enabled via GPIO.  We can generalize the GPIO to a
+> fixed regulator.
 > 
+I think we should push the series of "Runtime Interpreted Power
+Sequences" moving forward, which should be useful this case and many
+other cases as well.
 
-[...]
+http://thread.gmane.org/gmane.linux.kernel/1395912
 
-> > > Thomas,
-> > >
-> > > Are you planning a V7 series which includes the clock alias bits from
-> > > patch #1?
-> >
-> > Kukjin has already applied this series into the linux-samsung tree [0].
-> >
-Thanks, Heiko.
-
-Mike, yes I did, as we discussed before. Since I missed in last window for v3.9, so I merged every common clock stuff for exynos into samsung tree in the early 3.9-rc time for v3.10.
-> 
-> That really is too much code to go into drivers/clk without my ACK.  I
-> have not made much noise about this in the past but there has been more
-> and more "bonus" code slipping into drivers/clk each merge window.
-> Let's not do that any more.
-> 
-
-Hmm, I remember you already agreed on previous version, and I thought if any further codes are required, we could do it on top of that.
-http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/143429.html
-
-However, if you don't want current codes to be sent to upstream, let me know, but I don't think it would be better to us though.
-
-Thanks.
-
-- Kukjin
+Shawn
