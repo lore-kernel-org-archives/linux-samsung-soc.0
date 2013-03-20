@@ -1,54 +1,66 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] S3C24XX: remove unneeded "config SMDK2440_CPU2442"
-Date: Wed, 20 Mar 2013 12:13:31 +0100
-Message-ID: <1363778011.1390.96.camel@x61.thuisdomein>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews07.kpnxchange.com ([213.75.39.10]:55735 "EHLO
-	cpsmtpb-ews07.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752087Ab3CTLNd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Mar 2013 07:13:33 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v2] drm/exynos: enable FIMD clocks
+Date: Wed, 20 Mar 2013 17:01:59 +0530
+Message-ID: <1363779119-3255-1-git-send-email-vikas.sajjan@linaro.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The Kconfig entry for SMDK2440_CPU2442 was moved from one Kconfig file
-to another in commit acf2d41d8595829eb0ac7bf6891f4875a78d4d6e ("ARM:
-S3C24XX: Move mach-s3c2440/ pll into mach-s3c24xx/"). In that move it
-also lost its statement to select CPU_S3C2442. That was not needed
-anymore because it now depended on that same symbol.
+While migrating to common clock framework (CCF), found that the FIMD clocks
+were pulled down by the CCF.
+If CCF finds any clock(s) which has NOT been claimed by any of the
+drivers, then such clock(s) are PULLed low by CCF.
 
-But without its select this entry became a nop: enabling it has no
-effect, as it changes no code. It can safely be removed.
+By calling clk_prepare_enable() for FIMD clocks fixes the issue.
 
-Fix a related, and trivial, comment typo too.
+this patch also replaces clk_disable() with clk_disable_unprepare()
+during exit.
 
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
 ---
-Untested.
+Changes since v1:
+	- added error checking for clk_prepare_enable() and also replaced 
+	clk_disable() with clk_disable_unprepare() during exit.
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
- arch/arm/mach-s3c24xx/Kconfig | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 37f513d..92c07a2 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -663,10 +663,7 @@ config MACH_RX1950
- 	help
- 	   Say Y here if you're using HP iPAQ rx1950
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 9537761..014d750 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -934,6 +934,19 @@ static int fimd_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
--config SMDK2440_CPU2442
--	bool "SMDM2440 with S3C2442 CPU module"
--
--endif	# CPU_S3C2440
-+endif	# CPU_S3C2442
++	ret = clk_prepare_enable(ctx->lcd_clk);
++	if (ret) {
++		dev_err(dev, "failed to enable 'sclk_fimd' clock\n");
++		return ret;
++	}
++
++	ret = clk_prepare_enable(ctx->bus_clk);
++	if (ret) {
++		clk_disable_unprepare(ctx->lcd_clk);
++		dev_err(dev, "failed to enable 'fimd' clock\n");
++		return ret;
++	}
++
+ 	ctx->vidcon0 = pdata->vidcon0;
+ 	ctx->vidcon1 = pdata->vidcon1;
+ 	ctx->default_win = pdata->default_win;
+@@ -981,8 +994,8 @@ static int fimd_remove(struct platform_device *pdev)
+ 	if (ctx->suspended)
+ 		goto out;
  
- if CPU_S3C2443 || CPU_S3C2416
+-	clk_disable(ctx->lcd_clk);
+-	clk_disable(ctx->bus_clk);
++	clk_disable_unprepare(ctx->lcd_clk);
++	clk_disable_unprepare(ctx->bus_clk);
  
+ 	pm_runtime_set_suspended(dev);
+ 	pm_runtime_put_sync(dev);
 -- 
-1.7.11.7
+1.7.9.5
