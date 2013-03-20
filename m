@@ -1,63 +1,54 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V3 2/2] ARM: dts: Add display timing node to
- exynos5250-smdk5250.dts
-Date: Wed, 20 Mar 2013 06:22:35 -0400
-Message-ID: <1363774955-22784-3-git-send-email-l.krishna@samsung.com>
-References: <1363774955-22784-1-git-send-email-l.krishna@samsung.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] S3C24XX: remove unneeded "config SMDK2440_CPU2442"
+Date: Wed, 20 Mar 2013 12:13:31 +0100
+Message-ID: <1363778011.1390.96.camel@x61.thuisdomein>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41677 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751185Ab3CTKCk (ORCPT
+Received: from cpsmtpb-ews07.kpnxchange.com ([213.75.39.10]:55735 "EHLO
+	cpsmtpb-ews07.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752087Ab3CTLNd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Mar 2013 06:02:40 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MJY00DGLEJX3V30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Mar 2013 19:02:39 +0900 (KST)
-Received: from chrome-ubuntu.sisodomain.com ([107.108.73.106])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MJY00DPMEK4HJ70@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Mar 2013 19:02:38 +0900 (KST)
-In-reply-to: <1363774955-22784-1-git-send-email-l.krishna@samsung.com>
+	Wed, 20 Mar 2013 07:13:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add display timing node to exynos5250-smdk5250.dts
+The Kconfig entry for SMDK2440_CPU2442 was moved from one Kconfig file
+to another in commit acf2d41d8595829eb0ac7bf6891f4875a78d4d6e ("ARM:
+S3C24XX: Move mach-s3c2440/ pll into mach-s3c24xx/"). In that move it
+also lost its statement to select CPU_S3C2442. That was not needed
+anymore because it now depended on that same symbol.
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+But without its select this entry became a nop: enabling it has no
+effect, as it changes no code. It can safely be removed.
+
+Fix a related, and trivial, comment typo too.
+
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 ---
- arch/arm/boot/dts/exynos5250-smdk5250.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Untested.
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 872ae1f..9dbdc1e 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -251,4 +251,20 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
-+	display-timings {
-+		native-mode = <&timing0>;
-+		timing0: timing@0 {
-+			/* 1280x800 */
-+			clock-frequency = <50000>;
-+			hactive = <1280>;
-+			vactive = <800>;
-+			hfront-porch = <4>;
-+			hback-porch = <4>;
-+			hsync-len = <4>;
-+			vback-porch = <4>;
-+			vfront-porch = <4>;
-+			vsync-len = <4>;
-+		};
-+	};
- };
+ arch/arm/mach-s3c24xx/Kconfig | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+index 37f513d..92c07a2 100644
+--- a/arch/arm/mach-s3c24xx/Kconfig
++++ b/arch/arm/mach-s3c24xx/Kconfig
+@@ -663,10 +663,7 @@ config MACH_RX1950
+ 	help
+ 	   Say Y here if you're using HP iPAQ rx1950
+ 
+-config SMDK2440_CPU2442
+-	bool "SMDM2440 with S3C2442 CPU module"
+-
+-endif	# CPU_S3C2440
++endif	# CPU_S3C2442
+ 
+ if CPU_S3C2443 || CPU_S3C2416
+ 
 -- 
-1.8.0
+1.7.11.7
