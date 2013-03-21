@@ -1,60 +1,27 @@
-From: Alexander Graf <agraf@suse.de>
-Subject: Re: [PATCH 3/3] ARM: EXYNOS5250: Register architected timers
-Date: Thu, 21 Mar 2013 16:40:55 +0100
-Message-ID: <FA105342-1A3A-41E5-87B2-31E9802AD31D@suse.de>
-References: <1363222742-15220-1-git-send-email-agraf@suse.de> <1363222742-15220-4-git-send-email-agraf@suse.de> <51421FDA.8070507@cogentembedded.com>
-Mime-Version: 1.0 (Apple Message framework v1278)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V4 8/9] ARM: tegra: Provide regulator to pwm-backlight
+Date: Thu, 21 Mar 2013 14:01:54 -0600
+Message-ID: <514B6732.7020107@wwwdotorg.org>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <1363719573-20926-9-git-send-email-achew@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:38273 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753703Ab3CUPlA convert rfc822-to-8bit (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:32958 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752629Ab3CUUB7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Mar 2013 11:41:00 -0400
-In-Reply-To: <51421FDA.8070507@cogentembedded.com>
+	Thu, 21 Mar 2013 16:01:59 -0400
+In-Reply-To: <1363719573-20926-9-git-send-email-achew@nvidia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu
+To: Andrew Chew <achew@nvidia.com>
+Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, shawn.guo@linaro.org, linux@prisktech.co.nz, thierry.reding@avionic-design.de, acourbot@nvidia.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 
+On 03/19/2013 12:59 PM, Andrew Chew wrote:
+> The pwm-backlight driver now takes a mandatory regulator that is gotten
+> during driver probe.  Initialize a dummy regulator to satisfy this
+> requirement.
 
-On 14.03.2013, at 20:07, Sergei Shtylyov wrote:
-
-> Hello.
-> 
-> On 14-03-2013 4:59, Alexander Graf wrote:
-> 
->> When running on an exynos 5250 SoC, we don't initialize the architected
->> timers. The chip however supports architected timers.
-> 
->> When we don't initialize them, KVM will try to access them and run into
->> NULL pointer dereferences attempting to do so.
-> 
->> This patch is really more of a hack than a real fix, but does get me
->> working with KVM on Arndale.
-> 
->> Signed-off-by: Alexander Graf <agraf@suse.de>
->> ---
->>  arch/arm/mach-exynos/mct.c |    4 ++++
->>  1 file changed, 4 insertions(+)
-> 
->> diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
->> index c9d6650..eefb8af 100644
->> --- a/arch/arm/mach-exynos/mct.c
->> +++ b/arch/arm/mach-exynos/mct.c
->> @@ -482,4 +482,8 @@ void __init exynos4_timer_init(void)
->>  	exynos4_timer_resources();
->>  	exynos4_clocksource_init();
->>  	exynos4_clockevent_init();
->> +
->> +	if (soc_is_exynos5250()) {
->> +		arch_timer_of_register();
->> +	}
-> 
->   {} not needed here. scripts/checkpatch.pl should probabl;y warn about it.
-
-Yeah, I'd leave it to whoever wants to apply this patch to remove the braces :). IMHO it's not worth it to respin just for this.
-
-
-Alex
+I assume these patches will get merged through the PWM tree? If so,
+Acked-by: Stephen Warren <swarren@nvidia.com>
