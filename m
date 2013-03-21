@@ -1,105 +1,60 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v2 2/2] i2c: s3c2410: fixup the styling of the newly moved register definitions
-Date: Thu, 21 Mar 2013 15:10:13 +0100
-Message-ID: <201303211510.13547.heiko@sntech.de>
-References: <201303211509.25607.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Alexander Graf <agraf@suse.de>
+Subject: Re: [PATCH 3/3] ARM: EXYNOS5250: Register architected timers
+Date: Thu, 21 Mar 2013 16:40:55 +0100
+Message-ID: <FA105342-1A3A-41E5-87B2-31E9802AD31D@suse.de>
+References: <1363222742-15220-1-git-send-email-agraf@suse.de> <1363222742-15220-4-git-send-email-agraf@suse.de> <51421FDA.8070507@cogentembedded.com>
+Mime-Version: 1.0 (Apple Message framework v1278)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:57963 "EHLO gloria.sntech.de"
+Received: from cantor2.suse.de ([195.135.220.15]:38273 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752931Ab3CUOKU (ORCPT
+	id S1753703Ab3CUPlA convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Mar 2013 10:10:20 -0400
-In-Reply-To: <201303211509.25607.heiko@sntech.de>
+	Thu, 21 Mar 2013 11:41:00 -0400
+In-Reply-To: <51421FDA.8070507@cogentembedded.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu
 
-Make them conform more to established standards.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-changes since v1: none
+On 14.03.2013, at 20:07, Sergei Shtylyov wrote:
 
- drivers/i2c/busses/i2c-s3c2410.c |   50 ++++++++++++++++++-------------------
- 1 files changed, 24 insertions(+), 26 deletions(-)
+> Hello.
+> 
+> On 14-03-2013 4:59, Alexander Graf wrote:
+> 
+>> When running on an exynos 5250 SoC, we don't initialize the architected
+>> timers. The chip however supports architected timers.
+> 
+>> When we don't initialize them, KVM will try to access them and run into
+>> NULL pointer dereferences attempting to do so.
+> 
+>> This patch is really more of a hack than a real fix, but does get me
+>> working with KVM on Arndale.
+> 
+>> Signed-off-by: Alexander Graf <agraf@suse.de>
+>> ---
+>>  arch/arm/mach-exynos/mct.c |    4 ++++
+>>  1 file changed, 4 insertions(+)
+> 
+>> diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+>> index c9d6650..eefb8af 100644
+>> --- a/arch/arm/mach-exynos/mct.c
+>> +++ b/arch/arm/mach-exynos/mct.c
+>> @@ -482,4 +482,8 @@ void __init exynos4_timer_init(void)
+>>  	exynos4_timer_resources();
+>>  	exynos4_clocksource_init();
+>>  	exynos4_clockevent_init();
+>> +
+>> +	if (soc_is_exynos5250()) {
+>> +		arch_timer_of_register();
+>> +	}
+> 
+>   {} not needed here. scripts/checkpatch.pl should probabl;y warn about it.
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 216fea1..0a81f1f 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -46,35 +46,33 @@
- 
- /* see s3c2410x user guide, v1.1, section 9 (p447) for more info */
- 
--#define S3C2410_IICREG(x) (x)
--
--#define S3C2410_IICCON    S3C2410_IICREG(0x00)
--#define S3C2410_IICSTAT   S3C2410_IICREG(0x04)
--#define S3C2410_IICADD    S3C2410_IICREG(0x08)
--#define S3C2410_IICDS     S3C2410_IICREG(0x0C)
--#define S3C2440_IICLC	  S3C2410_IICREG(0x10)
--
--#define S3C2410_IICCON_ACKEN		(1<<7)
--#define S3C2410_IICCON_TXDIV_16		(0<<6)
--#define S3C2410_IICCON_TXDIV_512	(1<<6)
--#define S3C2410_IICCON_IRQEN		(1<<5)
--#define S3C2410_IICCON_IRQPEND		(1<<4)
--#define S3C2410_IICCON_SCALE(x)		((x)&15)
-+#define S3C2410_IICCON			0x00
-+#define S3C2410_IICSTAT			0x04
-+#define S3C2410_IICADD			0x08
-+#define S3C2410_IICDS			0x0C
-+#define S3C2440_IICLC			0x10
-+
-+#define S3C2410_IICCON_ACKEN		(1 << 7)
-+#define S3C2410_IICCON_TXDIV_16		(0 << 6)
-+#define S3C2410_IICCON_TXDIV_512	(1 << 6)
-+#define S3C2410_IICCON_IRQEN		(1 << 5)
-+#define S3C2410_IICCON_IRQPEND		(1 << 4)
-+#define S3C2410_IICCON_SCALE(x)		((x) & 0xf)
- #define S3C2410_IICCON_SCALEMASK	(0xf)
- 
--#define S3C2410_IICSTAT_MASTER_RX	(2<<6)
--#define S3C2410_IICSTAT_MASTER_TX	(3<<6)
--#define S3C2410_IICSTAT_SLAVE_RX	(0<<6)
--#define S3C2410_IICSTAT_SLAVE_TX	(1<<6)
--#define S3C2410_IICSTAT_MODEMASK	(3<<6)
-+#define S3C2410_IICSTAT_MASTER_RX	(2 << 6)
-+#define S3C2410_IICSTAT_MASTER_TX	(3 << 6)
-+#define S3C2410_IICSTAT_SLAVE_RX	(0 << 6)
-+#define S3C2410_IICSTAT_SLAVE_TX	(1 << 6)
-+#define S3C2410_IICSTAT_MODEMASK	(3 << 6)
- 
--#define S3C2410_IICSTAT_START		(1<<5)
--#define S3C2410_IICSTAT_BUSBUSY		(1<<5)
--#define S3C2410_IICSTAT_TXRXEN		(1<<4)
--#define S3C2410_IICSTAT_ARBITR		(1<<3)
--#define S3C2410_IICSTAT_ASSLAVE		(1<<2)
--#define S3C2410_IICSTAT_ADDR0		(1<<1)
--#define S3C2410_IICSTAT_LASTBIT		(1<<0)
-+#define S3C2410_IICSTAT_START		(1 << 5)
-+#define S3C2410_IICSTAT_BUSBUSY		(1 << 5)
-+#define S3C2410_IICSTAT_TXRXEN		(1 << 4)
-+#define S3C2410_IICSTAT_ARBITR		(1 << 3)
-+#define S3C2410_IICSTAT_ASSLAVE		(1 << 2)
-+#define S3C2410_IICSTAT_ADDR0		(1 << 1)
-+#define S3C2410_IICSTAT_LASTBIT		(1 << 0)
- 
- #define S3C2410_IICLC_SDA_DELAY0	(0 << 0)
- #define S3C2410_IICLC_SDA_DELAY5	(1 << 0)
-@@ -82,7 +80,7 @@
- #define S3C2410_IICLC_SDA_DELAY15	(3 << 0)
- #define S3C2410_IICLC_SDA_DELAY_MASK	(3 << 0)
- 
--#define S3C2410_IICLC_FILTER_ON		(1<<2)
-+#define S3C2410_IICLC_FILTER_ON		(1 << 2)
- 
- /* Treat S3C2410 as baseline hardware, anything else is supported via quirks */
- #define QUIRK_S3C2440		(1 << 0)
--- 
-1.7.2.3
+Yeah, I'd leave it to whoever wants to apply this patch to remove the braces :). IMHO it's not worth it to respin just for this.
+
+
+Alex
