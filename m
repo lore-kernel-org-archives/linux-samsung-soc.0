@@ -1,55 +1,25 @@
-From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
-Subject: Fwd: [PATCH] ARM: EXYNOS5440: DTS: Add virtual GIC DT bindings
-Date: Thu, 21 Mar 2013 15:13:17 +0530
-Message-ID: <CAHuqX+G=LhpO_WuOYSEwVGDOtKU-Nby2j--xt-bLk2P3jyEsyg@mail.gmail.com>
-References: <1363858839-13578-1-git-send-email-giridhar.maruthy@linaro.org>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH 1/2] i2c: s3c2410: move mach/regs-iic.h into i2c-s3c2410
+ device driver
+Date: Thu, 21 Mar 2013 10:57:58 +0100
+Message-ID: <20130321095758.GB19297@the-dreams.de>
+References: <201302080057.00664.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f45.google.com ([74.125.83.45]:60692 "EHLO
-	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756697Ab3CUJnT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Mar 2013 05:43:19 -0400
-Received: by mail-ee0-f45.google.com with SMTP id b57so1678610eek.32
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Mar 2013 02:43:18 -0700 (PDT)
-In-Reply-To: <1363858839-13578-1-git-send-email-giridhar.maruthy@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <201302080057.00664.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Heiko =?iso-8859-15?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, thomas.abraham@linaro.org, kvm@vger.kernel.org
 
-This patch is similar to the ones already submitted by Alexander Graf
-and also in Christoffer's tree in linux-kvm-arm for Arndale board,
-while this is required for exynos5440.
+On Fri, Feb 08, 2013 at 12:57:00AM +0100, Heiko St=FCbner wrote:
+> The register definitions are only used in the driver itself.
+> This also removes the last dependency on plat/ includes from the
+> i2c driver.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 
-
-
-
-Exynos5440 has GIC which has virtualization support
-in them. These are used by KVM.
-
-Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
----
- arch/arm/boot/dts/exynos5440.dtsi |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi
-b/arch/arm/boot/dts/exynos5440.dtsi
-index c374a31..25c6134 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -26,7 +26,11 @@
-                compatible = "arm,cortex-a15-gic";
-                #interrupt-cells = <3>;
-                interrupt-controller;
--               reg = <0x2E1000 0x1000>, <0x2E2000 0x1000>;
-+               reg =   <0x2E1000 0x1000>,
-+                       <0x2E2000 0x1000>,
-+                       <0x2E4000 0x2000>,
-+                       <0x2E6000 0x2000>;
-+               interrupts = <1 9 0xf04>;
-        };
-
-        cpus {
---
-1.7.9.5
+What tree is this against? I can't apply it on top of v3.8 or 3.9-rc3.
