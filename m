@@ -1,25 +1,55 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH 1/2] i2c: s3c2410: move mach/regs-iic.h into i2c-s3c2410
- device driver
-Date: Thu, 21 Mar 2013 10:57:58 +0100
-Message-ID: <20130321095758.GB19297@the-dreams.de>
-References: <201302080057.00664.heiko@sntech.de>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: s3c24xx: allow device core to setup default pin
+ configuration
+Date: Thu, 21 Mar 2013 11:00:32 +0100
+Message-ID: <20130321100032.GC19297@the-dreams.de>
+References: <1362404573-30406-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:48101 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754036Ab3CUKAf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Mar 2013 06:00:35 -0400
 Content-Disposition: inline
-In-Reply-To: <201302080057.00664.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiko =?iso-8859-15?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1362404573-30406-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, ben-linux@fluff.org, heiko@sntech.de, t.figa@samsung.com
 
-On Fri, Feb 08, 2013 at 12:57:00AM +0100, Heiko St=FCbner wrote:
-> The register definitions are only used in the driver itself.
-> This also removes the last dependency on plat/ includes from the
-> i2c driver.
->=20
-> Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+On Mon, Mar 04, 2013 at 07:12:53PM +0530, Thomas Abraham wrote:
+> With device core now able to setup the default pin configuration,
+> the call to devm_pinctrl_get_select_default can be removed. And
+> the pin configuration code based on the deprecated Samsung specific
+> gpio bindings is also removed.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+> 
+> Hi Heiko, Tomasz,
+> 
+> We have to make a choice on the path forward for pinctrl support
+> on Samsung platforms. We have three cases to deal with.
+> 
+> A. Samsung platforms without DT support.
+> B. Samsung platforms with DT support using old Samsung specific
+>    gpio bindings for pin-configuration (s3c24xx and s3x64xx).
+> C. Samsung platforms with DT support using using pinctrl based
+>    pin-configurations (Exynos4 and Exynos5).
+> 
+> For [A], we just let the platform specific callbacks handle the
+> pin setup. For [B] and [C], based on Linus Walleij's pin grab
+> by device core patch and subsequent discussions with him on the
+> mailing list, would it be acceptable that we discontinue support
+> for [B] in Samsung SoC device drivers. This will impact your
+> current DT work on s3c24xx and s3c64xx platforms. Pinctrl is
+> inevitable and we have to migrate to it. Instead of workarounds
+> to maintain support for [B], it might be better that we migrate
+> s3c24xx and s3c64xx platforms to pinctrl.
+> 
+> Please do let us know your opinion on this.
 
-What tree is this against? I can't apply it on top of v3.8 or 3.9-rc3.
+Dropping [B] sounds good, but I think it makes sense to wait with this
+patch until pinctrl support for s3c24xx is in place?
