@@ -1,141 +1,172 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH] ARM: convert arm/arm64 arch timer to use CLKSRC_OF init
-Date: Thu, 21 Mar 2013 07:52:45 -0500
-Message-ID: <514B029D.1010409@gmail.com>
-References: <1363818875-15978-1-git-send-email-robherring2@gmail.com> <20130321110646.GE15279@e106331-lin.cambridge.arm.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH v2 1/2] i2c: s3c2410: move mach/regs-iic.h into i2c-s3c2410 device driver
+Date: Thu, 21 Mar 2013 15:09:25 +0100
+Message-ID: <201303211509.25607.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:36046 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756438Ab3CUMws (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Mar 2013 08:52:48 -0400
-In-Reply-To: <20130321110646.GE15279@e106331-lin.cambridge.arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Catalin Marinas <Catalin.Marinas@arm.com>, Magnus Damm <magnus.damm@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, John Stultz <john.stultz@linaro.org>, Will Deacon <Will.Deacon@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
-On 03/21/2013 06:06 AM, Mark Rutland wrote:
-> Hi Rob,
-> 
-> (adding Marc to Cc as he may have comments).
-> 
-> On Wed, Mar 20, 2013 at 10:34:35PM +0000, Rob Herring wrote:
->> From: Rob Herring <rob.herring@calxeda.com>
->>
->> This converts arm and arm64 to use CLKSRC_OF DT based initialization for
->> the arch timer. A new function arch_timer_arch_init is added to allow for
->> arch specific setup.
->>
->> This has a side effect of enabling sched_clock on omap5 and exynos5. There
->> should not be any reason not to use the arch timers for sched_clock.
-> 
-> Nice! I was just about to post a (slightly updated) version of Thomas Abraham's
-> arch_timer clocksource_of_init patch, but this seems much more comprehensive.
-> 
-> I have some other arch_timer patches which may clash, but they could be rebased
-> atop of this.
+The register definitions are only used in the driver itself.
+This also removes the last dependency on plat/ includes from the
+i2c driver.
 
-[snip]
+Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+changes since v1: rebased against 3.9-rc3
 
->> @@ -446,10 +446,7 @@ static void __init v2m_dt_timer_init(void)
->>                                 irq_of_parse_and_map(node, 0));
->>         }
->>
->> -       arch_timer_of_register();
->> -
->> -       if (arch_timer_sched_clock_init() != 0)
->> -               versatile_sched_clock_init(vexpress_get_24mhz_clock_base(),
->> +       versatile_sched_clock_init(vexpress_get_24mhz_clock_base(),
->>                                 24000000);
->>  }
->>
-> 
-> On TC2 this series leads to using the vexpress 24MHz clock as the sched clock
-> in preference to the architected timer:
-> 
->   Architected local timer running at 24.00MHz (virt).
->   Switching to timer-based delay loop
->   Registered arch_counter_get_cntvct+0x0/0x14 as sched_clock source
->   sched_clock: 32 bits at 24MHz, resolution 41ns, wraps every 178956ms
->   Registered versatile_read_sched_clock+0x0/0x28 as sched_clock source
-> 
-> As they both have the same frequency, neither overrides the other, and
-> whichever gets registered last is used as the sched_clock. As accesses to the
-> architected timer are going to have a much lower overhead, this isn't very nice
-> (and it could be better to use it even if it had a lower frequency).
-> 
-> We could move the versatile_sched_clock_init call before the
-> clocksource_of_init, but that doesn't feel like an ideal solution. We may have
-> similar problems elsewhere.
+ arch/arm/mach-s3c24xx/mach-rx1950.c           |    1 -
+ arch/arm/plat-samsung/devs.c                  |    1 -
+ arch/arm/plat-samsung/include/plat/regs-iic.h |   56 -------------------------
+ drivers/i2c/busses/i2c-s3c2410.c              |   41 ++++++++++++++++++-
+ 4 files changed, 40 insertions(+), 59 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-iic.h
 
-The intention was that a 64-bit counter is preferred. This should fix 
-that. It would be nice if we could describe access overhead to make a decision. 
-For now, I think 32 vs. 64 bit is sufficient.
-
-diff --git a/arch/arm/kernel/sched_clock.c b/arch/arm/kernel/sched_clock.c
-index 1708357..aa18e45 100644
---- a/arch/arm/kernel/sched_clock.c
-+++ b/arch/arm/kernel/sched_clock.c
-@@ -115,7 +115,7 @@ void __init setup_sched_clock(u32 (*read)(void), int bits, unsigned long rate)
- 	u64 res, wrap;
- 	char r_unit;
+diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
+index 1f9ba2a..43f3ac5 100644
+--- a/arch/arm/mach-s3c24xx/mach-rx1950.c
++++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
+@@ -56,7 +56,6 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/pm.h>
+-#include <plat/regs-iic.h>
+ #include <plat/regs-serial.h>
  
--	if (cd.rate > rate)
-+	if (cd.rate > rate || read_sched_clock_64)
- 		return;
+ #include "common.h"
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 51afedd..76209c9 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -62,7 +62,6 @@
+ #include <linux/platform_data/usb-s3c2410_udc.h>
+ #include <linux/platform_data/usb-ohci-s3c2410.h>
+ #include <plat/usb-phy.h>
+-#include <plat/regs-iic.h>
+ #include <plat/regs-serial.h>
+ #include <plat/regs-spi.h>
+ #include <linux/platform_data/spi-s3c64xx.h>
+diff --git a/arch/arm/plat-samsung/include/plat/regs-iic.h b/arch/arm/plat-samsung/include/plat/regs-iic.h
+deleted file mode 100644
+index 2f7c17d..0000000
+--- a/arch/arm/plat-samsung/include/plat/regs-iic.h
++++ /dev/null
+@@ -1,56 +0,0 @@
+-/* arch/arm/mach-s3c2410/include/mach/regs-iic.h
+- *
+- * Copyright (c) 2004 Simtec Electronics <linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>
+- *		http://www.simtec.co.uk/products/SWLINUX/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * S3C2410 I2C Controller
+-*/
+-
+-#ifndef __ASM_ARCH_REGS_IIC_H
+-#define __ASM_ARCH_REGS_IIC_H __FILE__
+-
+-/* see s3c2410x user guide, v1.1, section 9 (p447) for more info */
+-
+-#define S3C2410_IICREG(x) (x)
+-
+-#define S3C2410_IICCON    S3C2410_IICREG(0x00)
+-#define S3C2410_IICSTAT   S3C2410_IICREG(0x04)
+-#define S3C2410_IICADD    S3C2410_IICREG(0x08)
+-#define S3C2410_IICDS     S3C2410_IICREG(0x0C)
+-#define S3C2440_IICLC	  S3C2410_IICREG(0x10)
+-
+-#define S3C2410_IICCON_ACKEN		(1<<7)
+-#define S3C2410_IICCON_TXDIV_16		(0<<6)
+-#define S3C2410_IICCON_TXDIV_512	(1<<6)
+-#define S3C2410_IICCON_IRQEN		(1<<5)
+-#define S3C2410_IICCON_IRQPEND		(1<<4)
+-#define S3C2410_IICCON_SCALE(x)		((x)&15)
+-#define S3C2410_IICCON_SCALEMASK	(0xf)
+-
+-#define S3C2410_IICSTAT_MASTER_RX	(2<<6)
+-#define S3C2410_IICSTAT_MASTER_TX	(3<<6)
+-#define S3C2410_IICSTAT_SLAVE_RX	(0<<6)
+-#define S3C2410_IICSTAT_SLAVE_TX	(1<<6)
+-#define S3C2410_IICSTAT_MODEMASK	(3<<6)
+-
+-#define S3C2410_IICSTAT_START		(1<<5)
+-#define S3C2410_IICSTAT_BUSBUSY		(1<<5)
+-#define S3C2410_IICSTAT_TXRXEN		(1<<4)
+-#define S3C2410_IICSTAT_ARBITR		(1<<3)
+-#define S3C2410_IICSTAT_ASSLAVE		(1<<2)
+-#define S3C2410_IICSTAT_ADDR0		(1<<1)
+-#define S3C2410_IICSTAT_LASTBIT		(1<<0)
+-
+-#define S3C2410_IICLC_SDA_DELAY0	(0 << 0)
+-#define S3C2410_IICLC_SDA_DELAY5	(1 << 0)
+-#define S3C2410_IICLC_SDA_DELAY10	(2 << 0)
+-#define S3C2410_IICLC_SDA_DELAY15	(3 << 0)
+-#define S3C2410_IICLC_SDA_DELAY_MASK	(3 << 0)
+-
+-#define S3C2410_IICLC_FILTER_ON		(1<<2)
+-
+-#endif /* __ASM_ARCH_REGS_IIC_H */
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index f6b880b..216fea1 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -42,9 +42,48 @@
  
- 	BUG_ON(bits > 32);
-@@ -168,7 +168,7 @@ void __init setup_sched_clock(u32 (*read)(void), int bits, unsigned long rate)
+ #include <asm/irq.h>
  
- void __init setup_sched_clock_64(u64 (*read)(void), unsigned long rate)
- {
--	if (cd.rate > rate)
-+	if (read_sched_clock_64 && (cd.rate > rate))
- 		return;
+-#include <plat/regs-iic.h>
+ #include <linux/platform_data/i2c-s3c2410.h>
  
- 	WARN_ON(!irqs_disabled());
-
-
->> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
->> index d7ad425..afb70aa 100644
->> --- a/drivers/clocksource/arm_arch_timer.c
->> +++ b/drivers/clocksource/arm_arch_timer.c
->> @@ -337,24 +337,11 @@ out:
->>         return err;
->>  }
->>
->> -static const struct of_device_id arch_timer_of_match[] __initconst = {
->> -       { .compatible   = "arm,armv7-timer",    },
->> -       { .compatible   = "arm,armv8-timer",    },
->> -       {},
->> -};
->> -
->> -int __init arch_timer_init(void)
->> +static void __init arch_timer_init(struct device_node *np)
->>  {
->> -       struct device_node *np;
->>         u32 freq;
->>         int i;
->>
-> 
-> If we the following here:
-> 
-> 	if (arch_timer_get_rate()) {
-> 		pr_warn("arch_timer: multiple nodes in dt, skipping\n");
-> 		return;
-> 	}
-> 
-> We may save ourselves a whole world of pain with dts which (erroneously) have
-> multiple timer nodes (though these are now disappearing). Otherwise we could
-> have a memory leak and multiple instances of the cpu0 timer registered, which
-> could lead to all sorts of weirdness. The existing code side-steps this issue
-> by only grabbing the first node, so this would keep things consistent.
-> 
-
-Okay, I'll add.
-
-Rob
++/* see s3c2410x user guide, v1.1, section 9 (p447) for more info */
++
++#define S3C2410_IICREG(x) (x)
++
++#define S3C2410_IICCON    S3C2410_IICREG(0x00)
++#define S3C2410_IICSTAT   S3C2410_IICREG(0x04)
++#define S3C2410_IICADD    S3C2410_IICREG(0x08)
++#define S3C2410_IICDS     S3C2410_IICREG(0x0C)
++#define S3C2440_IICLC	  S3C2410_IICREG(0x10)
++
++#define S3C2410_IICCON_ACKEN		(1<<7)
++#define S3C2410_IICCON_TXDIV_16		(0<<6)
++#define S3C2410_IICCON_TXDIV_512	(1<<6)
++#define S3C2410_IICCON_IRQEN		(1<<5)
++#define S3C2410_IICCON_IRQPEND		(1<<4)
++#define S3C2410_IICCON_SCALE(x)		((x)&15)
++#define S3C2410_IICCON_SCALEMASK	(0xf)
++
++#define S3C2410_IICSTAT_MASTER_RX	(2<<6)
++#define S3C2410_IICSTAT_MASTER_TX	(3<<6)
++#define S3C2410_IICSTAT_SLAVE_RX	(0<<6)
++#define S3C2410_IICSTAT_SLAVE_TX	(1<<6)
++#define S3C2410_IICSTAT_MODEMASK	(3<<6)
++
++#define S3C2410_IICSTAT_START		(1<<5)
++#define S3C2410_IICSTAT_BUSBUSY		(1<<5)
++#define S3C2410_IICSTAT_TXRXEN		(1<<4)
++#define S3C2410_IICSTAT_ARBITR		(1<<3)
++#define S3C2410_IICSTAT_ASSLAVE		(1<<2)
++#define S3C2410_IICSTAT_ADDR0		(1<<1)
++#define S3C2410_IICSTAT_LASTBIT		(1<<0)
++
++#define S3C2410_IICLC_SDA_DELAY0	(0 << 0)
++#define S3C2410_IICLC_SDA_DELAY5	(1 << 0)
++#define S3C2410_IICLC_SDA_DELAY10	(2 << 0)
++#define S3C2410_IICLC_SDA_DELAY15	(3 << 0)
++#define S3C2410_IICLC_SDA_DELAY_MASK	(3 << 0)
++
++#define S3C2410_IICLC_FILTER_ON		(1<<2)
++
+ /* Treat S3C2410 as baseline hardware, anything else is supported via quirks */
+ #define QUIRK_S3C2440		(1 << 0)
+ #define QUIRK_HDMIPHY		(1 << 1)
+-- 
+1.7.2.3
