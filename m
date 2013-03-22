@@ -1,52 +1,77 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v4 0/5] move s3c24xx-irq to drivers/irqchip and add dt
- support
-Date: Fri, 22 Mar 2013 21:04:54 +0000
-Message-ID: <201303222104.54225.arnd@arndb.de>
-References: <201303221843.37668.heiko@sntech.de>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v4 0/5] move s3c24xx-irq to drivers/irqchip and add dt support
+Date: Fri, 22 Mar 2013 22:21:17 +0100
+Message-ID: <201303222221.18605.heiko@sntech.de>
+References: <201303221843.37668.heiko@sntech.de> <201303222104.54225.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <201303221843.37668.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:44418 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1423269Ab3CVVVb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 Mar 2013 17:21:31 -0400
+In-Reply-To: <201303222104.54225.arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-T24gRnJpZGF5IDIyIE1hcmNoIDIwMTMsIEhlaWtvIFN0w7xibmVyIHdyb3RlOgo+IEFzIHN1Z2dl
-c3RlZCBieSBSb2IgSGVycmluZyBtb3ZlIGJhY2sgdG8gZ2V0IHRoZSBwYXJlbnQgcmVsZWF0aW9u
-c2hpcCBmcm9tIGR0Cj4gbGlrZSBpbiB0aGUgZmlyc3QgdmVyc2lvbnMsIGJ1dCBzZXQgdGhlIGhh
-bmRsZXIgZnJvbSB0aGUgaW50ZXJydXB0IHByb3BlcnR5Cj4gcmF0aGVyIHRoYW4gZnJvbSBhIHNw
-ZWNpZmljIGxpc3QuCj4gCj4gVGhpcyB2ZXJzaW9uIGFsc28gaW1wbGVtZW50cyAoaG9wZWZ1bGx5
-IGNvcnJlY3RseSkgYW4gaWRlYSBmcm9tIGhpbSBhbmQKPiBBcm5kIEJlcmdtYW5uIHRvIGhhdmUg
-dGhlIHBhcmVudCByZWxhdGlvbnNoaXAgbm90IGRlc2NyaWJlZCBpbiB0aGUgY29udHJvbGxlcgo+
-IG5vZGUgYnV0IHRoZSBkZXZpY2Ugbm9kZXMgaW5zdGVhZC4KPiAKPiBUaGVyZWZvcmUgdGhlIG1h
-aW4gY29udHJvbGxlciBjb250aW51ZXMgdG8gdXNlIGEgdHdvLWNlbGwgZGVzY3JpcHRvciB0byBz
-ZXQKPiBod2lycSBhbmQgdHJpZ2dlciB0eXBlIGJ1dCB0aGUgc3ViLWNvbnRyb2xsZXIgc3dpdGNo
-ZXMgdG8gYSB0aHJlZS1jZWxsCj4gZGVzY3JpcHRvciB3aGVyZSB0aGUgdGhpcmQgYml0IGRlc2Ny
-aWJlcyB0aGUgaHdpcnEgb2YgaXRzIHBhcmVudCBpcnEgaW4gdGhlCj4gbWFpbiBjb250cm9sbGVy
-Lgo+IAo+IEFzIGEgcmVzdWx0IGEgc2VyaWFsIG5vZGUgd291bGQgdGhlbiBsb29rIGxpa2U6Cj4g
-ICAgICAgICBzZXJpYWxANTAwMDAwMDAgewo+ICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0g
-InNhbXN1bmcsczNjMjQxMC11YXJ0IjsKPiAgICAgICAgICAgICAgICAgcmVnID0gPDB4NTAwMDAw
-MDAgMHg0MDAwPjsKPiAgICAgICAgICAgICAgICAgaW50ZXJydXB0LXBhcmVudCA9IDwmc3ViaW50
-Yz47Cj4gICAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8MCA0IDI4PiwgPDEgNCAyOD47Cj4g
-ICAgICAgICB9Owo+IAo+IFRlc3RlZCBvbiBhIHMzYzI0MTYtYmFzZWQgYm9hcmQuCj4gCj4gQXMg
-aXQgZGVwZW5kcyBvbiBjaGFuZ2VzIGFscmVhZHkgcGVuZGluZyBmb3IgMy4xMCBpdCBzaG91bGQg
-cHJvYmFibHkgZ28gdGhydQo+IHRoZSBzYW1zdW5nIHRyZWUuCgpIaSBIZWlrbywKCkkgc2hvdWxk
-IHByb2JhYmx5IHJlYWQgdGhlIG9yaWdpbmFsIGRpc2N1c3Npb24gdGhyZWFkIGFnYWluLiBJIGFs
-cmVhZHkgY29tbWVudGVkCm9uIHRoZSBiaW5kaW5nIGhlcmUsIGJ1dCBJIG1heSBoYXZlIG1pc3Nl
-ZCBzb21ldGhpbmcgaW1wb3J0YW50IHRoYXQgbGVkIHRvCml0IGJlaW5nIHRoZSB3YXkgaXQgaXMg
-bm93LgoKCUFybmQKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZGV2aWNldHJlZS1kaXNjdXNzIG1haWxpbmcgbGlzdApkZXZpY2V0cmVlLWRpc2N1c3NAbGlz
-dHMub3psYWJzLm9yZwpodHRwczovL2xpc3RzLm96bGFicy5vcmcvbGlzdGluZm8vZGV2aWNldHJl
-ZS1kaXNjdXNzCg==
+Am Freitag, 22. M=C3=A4rz 2013, 22:04:54 schrieb Arnd Bergmann:
+> On Friday 22 March 2013, Heiko St=C3=BCbner wrote:
+> > As suggested by Rob Herring move back to get the parent releationsh=
+ip
+> > from dt like in the first versions, but set the handler from the
+> > interrupt property rather than from a specific list.
+> >=20
+> > This version also implements (hopefully correctly) an idea from him=
+ and
+> > Arnd Bergmann to have the parent relationship not described in the
+> > controller node but the device nodes instead.
+> >=20
+> > Therefore the main controller continues to use a two-cell descripto=
+r to
+> > set hwirq and trigger type but the sub-controller switches to a
+> > three-cell descriptor where the third bit describes the hwirq of it=
+s
+> > parent irq in the main controller.
+> >=20
+> > As a result a serial node would then look like:
+> >         serial@50000000 {
+> >        =20
+> >                 compatible =3D "samsung,s3c2410-uart";
+> >                 reg =3D <0x50000000 0x4000>;
+> >                 interrupt-parent =3D <&subintc>;
+> >                 interrupts =3D <0 4 28>, <1 4 28>;
+> >        =20
+> >         };
+> >=20
+> > Tested on a s3c2416-based board.
+> >=20
+> > As it depends on changes already pending for 3.10 it should probabl=
+y go
+> > thru the samsung tree.
+>=20
+> Hi Heiko,
+>=20
+> I should probably read the original discussion thread again. I alread=
+y
+> commented on the binding here, but I may have missed something import=
+ant
+> that led to it being the way it is now.
+
+Hi Arnd,
+
+Not really ... it's only my current interpretation of your short sugges=
+tion to=20
+handle the parent relationship in the interrupt descriptor of the devic=
+e node=20
+and not in the controller node itself.
+
+Your other mail did contain a lot of interesting thoughts on how to imp=
+rove=20
+the current state - thanks for them.
+
+
+Heiko
