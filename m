@@ -1,77 +1,100 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH V4 8/9] ARM: tegra: Provide regulator to pwm-backlight
-Date: Fri, 22 Mar 2013 11:29:30 +0100
-Message-ID: <20130322102930.GA4567@avionic-0098.mockup.avionic-design.de>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
- <1363719573-20926-9-git-send-email-achew@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1363719573-20926-9-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v9 0/4] Add DRM FIMD DT support for Exynos4 DT Machines
+Date: Fri, 22 Mar 2013 19:26:44 +0530
+Message-ID: <1363960608-23825-1-git-send-email-vikas.sajjan@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:42912 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932361Ab3CVN5L (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 Mar 2013 09:57:11 -0400
+Received: by mail-pd0-f173.google.com with SMTP id v10so1619137pde.18
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Mar 2013 06:57:10 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
 
+This patch series adds support for DRM FIMD DT for Exynos4 DT Machines,
+specifically for Exynos4412 SoC.
 
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+changes since v8:
+	- addressed comments to add missing documentation for clock and clock-names
+	properties as pointed out by Sachin Kamat <sachin.kamat@linaro.org>
 
-On Tue, Mar 19, 2013 at 11:59:32AM -0700, Andrew Chew wrote:
-> The pwm-backlight driver now takes a mandatory regulator that is gotten
-> during driver probe.  Initialize a dummy regulator to satisfy this
-> requirement.
->=20
-> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra20-medcom-wide.dts | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dt=
-s/tegra20-medcom-wide.dts
-> index a2d6d65..bf7fdd7 100644
-> --- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
-> +++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-> @@ -26,12 +26,18 @@
->  		};
->  	};
-> =20
-> +	bl_en: fixed-regulator {
-> +		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "bl-en-supply";
-> +	};
+changes since v7:
+	- rebased to kgene's "for-next"
+	- Migrated to Common Clock Framework
+	- removed the patch "ARM: dts: Add FIMD AUXDATA node entry for exynos4 DT",
+	as migration to Common Clock Framework will NOT need this.
+	- addressed the comments raised by Sachin Kamat <sachin.kamat@linaro.org>
 
-This should go into the top-level regulators node which this DTS
-inherits from tegra20-tamonten.dtsi.
+changes since v6:
+	- addressed comments and added interrupt-names = "fifo", "vsync", "lcd_sys"
+	in exynos4.dtsi and re-ordered the interrupt numbering to match the order in
+	interrupt combiner IP as suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>.
 
-I think it'd be nice to rename it to something like backlight_reg for
-consistency with other regulators in that node.
+changes since v5:
+	- renamed the fimd binding documentation file name as "samsung-fimd.txt",
+	since it not only talks about exynos display controller but also about
+	previous samsung display controllers.
+	- rephrased an abmigious statement about the interrupt combiner in the
+	fimd binding documentation as pointed out by 
+	Sachin Kamat <sachin.kamat@linaro.org>
 
-Thierry
+changes since v4:
+	- moved the fimd binding documentation to Documentation/devicetree/bindings/video/
+	as suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
---cWoXeonUoKmBZSoM
-Content-Type: application/pgp-signature
+	- added more fimd compatiblity strings in fimd documentation as
+	discussed at  https://patchwork.kernel.org/patch/2144861/ with
+	Sylwester Nawrocki <sylvester.nawrocki@gmail.com> and
+	Tomasz Figa <tomasz.figa@gmail.com>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+	- modified compatible string for exynos4 fimd as "exynos4210-fimd"
+	exynos5 fimd as "exynos5250-fimd" to stick to the rule that compatible
+	value should be named after first specific SoC model in which this
+	particular IP version was included as discussed at
+	https://patchwork.kernel.org/patch/2144861/
 
-iQIcBAEBAgAGBQJRTDKKAAoJEN0jrNd/PrOhM5QP/2Dy8MQaBX+mjh8XByPcS3OB
-H++sro1E+TRMQdgSDFzCIZVv9l1JkyBv9ojPzNPLaG+LO+qsVML5zKUsfpId+r3K
-WRND2EfChR2fZNh5hA+HlmfxpBS+YbYSpxaYZNGSLo/KHyQPX5VxhciGRlDkCExw
-JhHgfl9SkvlppfxIfXoduxU+ueREfoRiFGG68ITPWcb7RizkOobMyTSYFdCCi2KS
-RmHv8Fg61ZqFsK8uyseClexXF7RuAAbltu4ogNLQLcBZ0Ip93C6LHTwkTjKD0tfV
-3Ptai2tWjPY7wQlv8F6tOSn+cCDH6Uq3eMpNdOsJIiIVEvcjb4NppcIwmkhlVYDp
-yjwdtiLB4pN1FPJB104F2gq5iwvkRfhr44Qae13YJnInFR/6fM2DSD0E7Tj8qg8X
-FCdxOhX8hsict4TBRhNZJb5sS4+Ygov65xWtMyT+SrsUg5I3TeZUJB0bGeK0F+eN
-+1IXVCKmgvzfE/5oIf3aP0X0MIRP4BviFssJu/Fwt58BgrJH7Vqd8k6/6wZgG/ZA
-pezCNZTX30mIyCyFUx3f65JjgIvvR6aITK7hH2twSZeJhNm0EL0Z81qWDupCHLzp
-EVi1xXYLeH++bJhle3gQZ7Q/RuX7AjTf5eknuTqyKcZarBsf6vBAkNfNYu1jS+dA
-gwHqxad1XjDsx0UuNMLv
-=Uy8W
------END PGP SIGNATURE-----
+	- documented more about the interrupt combiner and their order as 
+	suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
---cWoXeonUoKmBZSoM--
+changes since v3:
+	- rebased on
+	http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=shortlog;h=refs/heads/for-next-next
+
+changes since v2:
+	- added alias to 'fimd@11c00000' node
+		(reported by: Rahul Sharma <r.sh.open@gmail.com>)
+	- removed 'lcd0_data' node as there was already a similar node lcd_data24
+		(reported by: Jingoo Han <jg1.han@samsung.com>
+	- replaced spaces with tabs in display-timing node
+
+changes since v1:
+	- added new patch to add FIMD DT binding Documentation
+	- removed patch enabling SAMSUNG_DEV_BACKLIGHT and SAMSUNG_DEV_PMW 
+	for mach-exynos4 DT
+	- added 'status' property to fimd DT node
+
+Is based on branch kgene's "for-next"
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+
+Sachin Kamat (1):
+  ARM: dts: Add lcd pinctrl node entries for EXYNOS4412 SoC
+
+Vikas Sajjan (3):
+  ARM: dts: Add FIMD node to exynos4
+  ARM: dts: Add FIMD node and display timing node to
+    exynos4412-origen.dts
+  ARM: dts: Add FIMD DT binding Documentation
+
+ .../devicetree/bindings/video/samsung-fimd.txt     |   68 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos4.dtsi                     |   11 ++++
+ arch/arm/boot/dts/exynos4412-origen.dts            |   22 +++++++
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          |   14 ++++
+ 4 files changed, 115 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/video/samsung-fimd.txt
+
+-- 
+1.7.9.5
