@@ -1,80 +1,69 @@
-From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 12/12] ARM: dts: Add camera node to exynos5250-smdk5250.dts
-Date: Sat, 23 Mar 2013 13:18:02 +0100
-Message-ID: <514D9D7A.5060000@gmail.com>
-References: <1362570838-4737-1-git-send-email-shaik.ameer@samsung.com>
- <1362570838-4737-13-git-send-email-shaik.ameer@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 00/12] ARM: samsung-time: Prepare for multiplatform support
+Date: Sat, 23 Mar 2013 13:27:14 +0100
+Message-ID: <2168269.vA6FhJVPyl@flatron>
+References: <1362860601-18464-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1362570838-4737-13-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f173.google.com ([209.85.215.173]:42759 "EHLO
+	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750718Ab3CWM1R (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 23 Mar 2013 08:27:17 -0400
+Received: by mail-ea0-f173.google.com with SMTP id h14so1788990eak.32
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Mar 2013 05:27:15 -0700 (PDT)
+In-Reply-To: <1362860601-18464-1-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, Mark Rutland <mark.rutland@arm.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Rob Herring <robherring2@gmail.com>
 
-On 03/06/2013 12:53 PM, Shaik Ameer Basha wrote:
-> Signed-off-by: Shaik Ameer Basha<shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->   arch/arm/boot/dts/exynos5250-smdk5250.dts |   43 ++++++++++++++++++++++++++++-
->   1 file changed, 42 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 4b10744..7fbc236 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -85,9 +85,26 @@
->   	};
->
->   	i2c@12CA0000 {
-> -		status = "disabled";
-> +		samsung,i2c-sda-delay =<100>;
-> +		samsung,i2c-max-bus-freq =<100000>;
->   		pinctrl-0 =<&i2c4_bus>;
->   		pinctrl-names = "default";
-> +
-> +		m5mols@1f {
-> +			compatible = "fujitsu,m-5mols";
-> +			reg =<0x1F>;
-> +			gpios =<&gpx3 3 0xf>,<&gpx1 2 1>;
-> +			clock-frequency =<24000000>;
-> +			pinctrl-0 =<&cam_port_a_clk_active>;
-> +			pinctrl-names = "default";
+Hi,
 
-Ah, so it's that way... I don't think that is correct. What you're doing
-here is assigning an SoC clock output pin pinctrl node to pinctrl property
-of an image sensor device that is external to an SoC. Why don't you put
-this pinctrl properties in the common "camera" node ?
+On Saturday 09 of March 2013 21:23:09 Tomasz Figa wrote:
+> This series is an attempt to make the samsung-time clocksource driver
+> ready for multiplatform kernels. It moves the driver to
+> drivers/clocksource, cleans it up from uses of static platform-specific
+> definitions, simplifies timer interrupt handling and adds Device Tree
+> support.
+> 
+> Tested on a Tiny6410 board (Mini6410-compatible) both with and without
+> Devicee Tree (with my DT patches for S3C64xx). Compile tested for other
+> related SoCs.
+> 
+> Changes since v2:
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16158)
+>  - Addressed comments from Rob Herring and Mark Rutland
+>  - Removed unused register definitions
+>  - Replaced samsung,source-timer and samsung,event-timer properties
+>    with samsung,pwm-outputs property that defines which PWM channels
+>    are reserved for PWM outputs on particular platform
+>  - Split non-DT and DT initialization into two functions
+>  - Fixed a copy paste error
+> 
+> Changes since v1:
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16005)
+>  - Addressed comments from Mark Rutland
+>  - Documented struct samsung_timer_variant
+>  - Dropped inactive mail addresses from CC
+> 
+> Tomasz Figa (12):
+>   ARM: SAMSUNG: Move samsung-time to drivers/clocksource
+>   clocksource: samsung-time: Set platform-specific parameters at runtime
+> clocksource: samsung-time: Drop useless defines from public header ARM:
+> SAMSUNG: Move samsung-time.h header to inlude/clocksource clocksource:
+> samsung-time: Use local register definitions
+>   clocksource: samsung-time: Remove use of static register mapping
+>   clocksource: samsung-time: Use clk_get_sys for getting clocks
+>   ARM: SAMSUNG: devs: Drop unnecessary IRQ resources of timer devices
+>   clocksource: samsung-time: Do not use static IRQ definition
+>   clocksource: samsung-time: Move IRQ mask/ack handling to the driver
+>   ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
+>   clocksource: samsung-time: Add Device Tree support
 
-> +
-> +			port {
-> +				m5mols_ep: endpoint {
-> +					remote-endpoint =<&csis0_ep>;
-> +				};
-> +			};
-> +
-> +		};
->   	};
->
->   	i2c@12CB0000 {
-> @@ -214,4 +231,28 @@
->   		samsung,mfc-r =<0x43000000 0x800000>;
->   		samsung,mfc-l =<0x51000000 0x800000>;
->   	};
-> +
-> +	camera {
-> +		compatible = "samsung,exynos5-fimc", "simple-bus";
+Any comments for this series?
 
-Shouldn't it be "samsung,exynos5-is" (Imaging Subsystem), or something
-more relevant to exynos5 ? Or what would be reasons to use "fimc" for
-exynos5 ?
+Best regards,
+Tomasz
