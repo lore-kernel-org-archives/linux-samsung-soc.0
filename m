@@ -1,524 +1,412 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC 04/12] exynos-fimc-is: Adds common driver header files
-Date: Sat, 23 Mar 2013 15:05:43 +0100
-Message-ID: <514DB6B7.1050304@gmail.com>
-References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com> <1362754765-2651-5-git-send-email-arun.kk@samsung.com>
+Subject: Re: [RFC 05/12] exynos-fimc-is: Adds the register definition and
+ context header
+Date: Sat, 23 Mar 2013 15:20:15 +0100
+Message-ID: <514DBA1F.30307@gmail.com>
+References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com> <1362754765-2651-6-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f172.google.com ([209.85.215.172]:53261 "EHLO
-	mail-ea0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001Ab3CWOFt (ORCPT
+Received: from mail-ea0-f178.google.com ([209.85.215.178]:58138 "EHLO
+	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751026Ab3CWOUU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 23 Mar 2013 10:05:49 -0400
-In-Reply-To: <1362754765-2651-5-git-send-email-arun.kk@samsung.com>
+	Sat, 23 Mar 2013 10:20:20 -0400
+In-Reply-To: <1362754765-2651-6-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arun Kumar K <arun.kk@samsung.com>
 Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, s.nawrocki@samsung.com, kgene.kim@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
 On 03/08/2013 03:59 PM, Arun Kumar K wrote:
-> This patch adds all the common header files used by the fimc-is
-> driver. It includes the commands for interfacing with the firmware
-> and error codes from IS firmware, metadata and command parameter
-> definitions.
+> This patch adds the register definition file for the fimc-is driver
+> and also the header file containing the main context for the driver.
 >
 > Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
 > Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
 > ---
->   drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  211 ++
->   drivers/media/platform/exynos5-is/fimc-is-err.h    |  258 +++
->   .../media/platform/exynos5-is/fimc-is-metadata.h   |  771 +++++++
->   drivers/media/platform/exynos5-is/fimc-is-param.h  | 2163 ++++++++++++++++++++
->   4 files changed, 3403 insertions(+)
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
+>   drivers/media/platform/exynos5-is/fimc-is-regs.h |  352 ++++++++++++++++++++++
+>   drivers/media/platform/exynos5-is/fimc-is.h      |  151 ++++++++++
+>   2 files changed, 503 insertions(+)
+>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-regs.h
+>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is.h
 >
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-cmd.h b/drivers/media/platform/exynos5-is/fimc-is-cmd.h
+> diff --git a/drivers/media/platform/exynos5-is/fimc-is-regs.h b/drivers/media/platform/exynos5-is/fimc-is-regs.h
 > new file mode 100644
-> index 0000000..f117f41
+> index 0000000..43ed011
 > --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-cmd.h
-[...]
-> +#define HOST_SET_INT_BIT	0x00000001
-> +#define HOST_CLR_INT_BIT	0x00000001
-> +#define IS_SET_INT_BIT		0x00000001
-> +#define IS_CLR_INT_BIT		0x00000001
-> +
-> +#define HOST_SET_INTERRUPT(base)	(base->uiINTGR0 |= HOST_SET_INT_BIT)
-> +#define HOST_CLR_INTERRUPT(base)	(base->uiINTCR0 |= HOST_CLR_INT_BIT)
-> +#define IS_SET_INTERRUPT(base)		(base->uiINTGR1 |= IS_SET_INT_BIT)
-> +#define IS_CLR_INTERRUPT(base)		(base->uiINTCR1 |= IS_CLR_INT_BIT)
-
-These 8 appear to be all unused unused definitions. Probably can be removed.
-
-
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-err.h b/drivers/media/platform/exynos5-is/fimc-is-err.h
-> new file mode 100644
-> index 0000000..76472a9
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-err.h
-> @@ -0,0 +1,258 @@
+> +++ b/drivers/media/platform/exynos5-is/fimc-is-regs.h
+> @@ -0,0 +1,352 @@
 > +/*
 > + * Samsung Exynos5 SoC series FIMC-IS driver
 > + *
 > + * Copyright (c) 2013 Samsung Electronics Co., Ltd
-> + * Kil-yeon Lim<kilyeon.im@samsung.com>
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > + */
 > +
-> +#ifndef FIMC_IS_ERR_H
-> +#define FIMC_IS_ERR_H
+> +#ifndef FIMC_IS_REGS_H
+> +#define FIMC_IS_REGS_H
 > +
-> +#define IS_ERROR_VER 012 /* IS ERROR VERSION 0.07 */
+> +#include<mach/map.h>
 > +
-> +#define IS_ERROR_SUCCESS		0
-> +/* General 1 ~ 100 */
-> +#define IS_ERROR_INVALID_COMMAND        (IS_ERROR_SUCCESS+1)
-> +#define IS_ERROR_REQUEST_FAIL           (IS_ERROR_INVALID_COMMAND+1)
-> +#define IS_ERROR_INVALID_SCENARIO       (IS_ERROR_REQUEST_FAIL+1)
-> +#define IS_ERROR_INVALID_SENSORID       (IS_ERROR_INVALID_SCENARIO+1)
-> +#define IS_ERROR_INVALID_MODE_CHANGE    (IS_ERROR_INVALID_SENSORID+1)
-> +#define IS_ERROR_INVALID_MAGIC_NUMBER	(IS_ERROR_INVALID_MODE_CHANGE+1)
-> +#define IS_ERROR_INVALID_SETFILE_HDR	(IS_ERROR_INVALID_MAGIC_NUMBER+1)
-> +#define IS_ERROR_ISP_SETFILE_VERSION_MISMATCH	(IS_ERROR_INVALID_SETFILE_HDR+1)
-> +#define IS_ERROR_ISP_SETFILE_REVISION_MISMATCH\
-> +				(IS_ERROR_ISP_SETFILE_VERSION_MISMATCH+1)
-> +#define IS_ERROR_BUSY (IS_ERROR_ISP_SETFILE_REVISION_MISMATCH+1)
-> +#define IS_ERROR_SET_PARAMETER          (IS_ERROR_BUSY+1)
-> +#define IS_ERROR_INVALID_PATH           (IS_ERROR_SET_PARAMETER+1)
-> +#define IS_ERROR_OPEN_SENSOR_FAIL       (IS_ERROR_INVALID_PATH+1)
-> +#define IS_ERROR_ENTRY_MSG_THREAD_DOWN	(IS_ERROR_OPEN_SENSOR_FAIL+1)
-> +#define IS_ERROR_ISP_FRAME_END_NOT_DONE	(IS_ERROR_ENTRY_MSG_THREAD_DOWN+1)
-> +#define IS_ERROR_DRC_FRAME_END_NOT_DONE	(IS_ERROR_ISP_FRAME_END_NOT_DONE+1)
-> +#define IS_ERROR_SCALERC_FRAME_END_NOT_DONE (IS_ERROR_DRC_FRAME_END_NOT_DONE+1)
-> +#define IS_ERROR_ODC_FRAME_END_NOT_DONE (IS_ERROR_SCALERC_FRAME_END_NOT_DONE+1)
-> +#define IS_ERROR_DIS_FRAME_END_NOT_DONE (IS_ERROR_ODC_FRAME_END_NOT_DONE+1)
-> +#define IS_ERROR_TDNR_FRAME_END_NOT_DONE (IS_ERROR_DIS_FRAME_END_NOT_DONE+1)
-> +#define IS_ERROR_SCALERP_FRAME_END_NOT_DONE (IS_ERROR_TDNR_FRAME_END_NOT_DONE+1)
-> +#define IS_ERROR_WAIT_STREAM_OFF_NOT_DONE\
-> +				(IS_ERROR_SCALERP_FRAME_END_NOT_DONE+1)
-> +#define IS_ERROR_NO_MSG_IS_RECEIVED     (IS_ERROR_WAIT_STREAM_OFF_NOT_DONE+1)
-> +#define IS_ERROR_SENSOR_MSG_FAIL	    (IS_ERROR_NO_MSG_IS_RECEIVED+1)
-> +#define IS_ERROR_ISP_MSG_FAIL	        (IS_ERROR_SENSOR_MSG_FAIL+1)
-> +#define IS_ERROR_DRC_MSG_FAIL	        (IS_ERROR_ISP_MSG_FAIL+1)
-> +#define IS_ERROR_SCALERC_MSG_FAIL		(IS_ERROR_DRC_MSG_FAIL+1)
-> +#define IS_ERROR_ODC_MSG_FAIL	        (IS_ERROR_SCALERC_MSG_FAIL+1)
-> +#define IS_ERROR_DIS_MSG_FAIL	        (IS_ERROR_ODC_MSG_FAIL+1)
-> +#define IS_ERROR_TDNR_MSG_FAIL	        (IS_ERROR_DIS_MSG_FAIL+1)
-> +#define IS_ERROR_SCALERP_MSG_FAIL		(IS_ERROR_TDNR_MSG_FAIL+1)
-> +#define IS_ERROR_LHFD_MSG_FAIL	        (IS_ERROR_SCALERP_MSG_FAIL+1)
-> +#define IS_ERROR_INTERNAL_STOP          (IS_ERROR_LHFD_MSG_FAIL+1)
-> +#define IS_ERROR_UNKNOWN                1000
-> +#define IS_ERROR_TIME_OUT_FLAG          0x80000000
-> +
-> +/* Sensor 100 ~ 200 */
-> +#define IS_ERROR_SENSOR_PWRDN_FAIL	100
-> +#define IS_ERROR_SENSOR_STREAM_ON_FAIL	(IS_ERROR_SENSOR_PWRDN_FAIL+1)
-> +#define IS_ERROR_SENSOR_STREAM_OFF_FAIL	(IS_ERROR_SENSOR_STREAM_ON_FAIL+1)
-> +
-> +/* ISP 200 ~ 300 */
-> +#define IS_ERROR_ISP_PWRDN_FAIL		200
-> +#define IS_ERROR_ISP_MULTIPLE_INPUT	(IS_ERROR_ISP_PWRDN_FAIL+1)
-> +#define IS_ERROR_ISP_ABSENT_INPUT	(IS_ERROR_ISP_MULTIPLE_INPUT+1)
-> +#define IS_ERROR_ISP_ABSENT_OUTPUT	(IS_ERROR_ISP_ABSENT_INPUT+1)
-> +#define IS_ERROR_ISP_NONADJACENT_OUTPUT	(IS_ERROR_ISP_ABSENT_OUTPUT+1)
-> +#define IS_ERROR_ISP_FORMAT_MISMATCH	(IS_ERROR_ISP_NONADJACENT_OUTPUT+1)
-> +#define IS_ERROR_ISP_WIDTH_MISMATCH	(IS_ERROR_ISP_FORMAT_MISMATCH+1)
-> +#define IS_ERROR_ISP_HEIGHT_MISMATCH	(IS_ERROR_ISP_WIDTH_MISMATCH+1)
-> +#define IS_ERROR_ISP_BITWIDTH_MISMATCH	(IS_ERROR_ISP_HEIGHT_MISMATCH+1)
-> +#define IS_ERROR_ISP_FRAME_END_TIME_OUT	(IS_ERROR_ISP_BITWIDTH_MISMATCH+1)
-> +
-> +/* DRC 300 ~ 400 */
-> +#define IS_ERROR_DRC_PWRDN_FAIL		300
-> +#define IS_ERROR_DRC_MULTIPLE_INPUT	(IS_ERROR_DRC_PWRDN_FAIL+1)
-> +#define IS_ERROR_DRC_ABSENT_INPUT	(IS_ERROR_DRC_MULTIPLE_INPUT+1)
-> +#define IS_ERROR_DRC_NONADJACENT_INTPUT	(IS_ERROR_DRC_ABSENT_INPUT+1)
-> +#define IS_ERROR_DRC_ABSENT_OUTPUT	(IS_ERROR_DRC_NONADJACENT_INTPUT+1)
-> +#define IS_ERROR_DRC_NONADJACENT_OUTPUT	(IS_ERROR_DRC_ABSENT_OUTPUT+1)
-> +#define IS_ERROR_DRC_FORMAT_MISMATCH	(IS_ERROR_DRC_NONADJACENT_OUTPUT+1)
-> +#define IS_ERROR_DRC_WIDTH_MISMATCH	(IS_ERROR_DRC_FORMAT_MISMATCH+1)
-> +#define IS_ERROR_DRC_HEIGHT_MISMATCH	(IS_ERROR_DRC_WIDTH_MISMATCH+1)
-> +#define IS_ERROR_DRC_BITWIDTH_MISMATCH	(IS_ERROR_DRC_HEIGHT_MISMATCH+1)
-> +#define IS_ERROR_DRC_FRAME_END_TIME_OUT	(IS_ERROR_DRC_BITWIDTH_MISMATCH+1)
-> +
-> +/*SCALERC(400~500)*/
-> +#define IS_ERROR_SCALERC_PWRDN_FAIL     400
-> +
-> +/*ODC(500~600)*/
-> +#define IS_ERROR_ODC_PWRDN_FAIL         500
-> +
-> +/*DIS(600~700)*/
-> +#define IS_ERROR_DIS_PWRDN_FAIL         600
-> +
-> +/*TDNR(700~800)*/
-> +#define IS_ERROR_TDNR_PWRDN_FAIL        700
-> +
-> +/*SCALERP(800~900)*/
-> +#define IS_ERROR_SCALERP_PWRDN_FAIL     800
-> +
-> +/*FD(900~1000)*/
-> +#define IS_ERROR_FD_PWRDN_FAIL          900
-> +#define IS_ERROR_FD_MULTIPLE_INPUT	(IS_ERROR_FD_PWRDN_FAIL+1)
-> +#define IS_ERROR_FD_ABSENT_INPUT	(IS_ERROR_FD_MULTIPLE_INPUT+1)
-> +#define IS_ERROR_FD_NONADJACENT_INPUT	(IS_ERROR_FD_ABSENT_INPUT+1)
-> +#define IS_ERROR_LHFD_FRAME_END_TIME_OUT \
-> +					(IS_ERROR_FD_NONADJACENT_INPUT+1)
+> +/* WDT_ISP register */
+> +#define WDT			0x00170000
+> +/* MCUCTL register */
+> +#define MCUCTL			0x00180000
+> +/* MCU Controller Register */
+> +#define MCUCTLR				(MCUCTL+0x00)
+> +#define MCUCTLR_AXI_ISPX_AWCACHE(x)	((x)<<  16)
+> +#define MCUCTLR_AXI_ISPX_ARCACHE(x)	((x)<<  12)
+> +#define MCUCTLR_MSWRST			(1<<  0)
+> +/* Boot Base OFfset Address Register */
+> +#define BBOAR				(MCUCTL+0x04)
+> +#define BBOAR_BBOA(x)			((x)<<  0)
+> +/* Interrupt Generation Register 0 from Host CPU to VIC */
+> +#define INTGR0				(MCUCTL+0x08)
+> +#define INTGR0_INTGC9			(1<<  25)
+> +#define INTGR0_INTGC8			(1<<  24)
+> +#define INTGR0_INTGC7			(1<<  23)
+> +#define INTGR0_INTGC6			(1<<  22)
+> +#define INTGR0_INTGC5			(1<<  21)
+> +#define INTGR0_INTGC4			(1<<  20)
+> +#define INTGR0_INTGC3			(1<<  19)
+> +#define INTGR0_INTGC2			(1<<  18)
+> +#define INTGR0_INTGC1			(1<<  17)
+> +#define INTGR0_INTGC0			(1<<  16)
 
-nit: It feels an enum would be more appropriate for these.
+Why don't you define these as
 
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-param.h b/drivers/media/platform/exynos5-is/fimc-is-param.h
-> new file mode 100644
-> index 0000000..63eb8d9
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-param.h
-> @@ -0,0 +1,2163 @@
-> +/*
-> + * Samsung Exynos5 SoC series FIMC-IS driver
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd
-> + * Kil-yeon Lim<kilyeon.im@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef FIMC_IS_PARAM_H
-> +#define FIMC_IS_PARAM_H
-> +
-> +#define IS_REGION_VER 145  /* IS REGION VERSION 1.45 */
-> +
-> +/* MACROs */
-> +#define IS_SET_PARAM_BIT(dev, num) \
-> +	(num>= 32 ? set_bit((num-32),&dev->p_region_index2) \
-> +		: set_bit(num,&dev->p_region_index1))
-> +#define IS_INC_PARAM_NUM(dev)		atomic_inc(&dev->p_region_num)
-> +
-> +#define IS_PARAM_GLOBAL(dev)		(dev->is_p_region->parameter.global)
-> +#define IS_PARAM_ISP(dev)		(dev->is_p_region->parameter.isp)
-> +#define IS_PARAM_DRC(dev)		(dev->is_p_region->parameter.drc)
-> +#define IS_PARAM_FD(dev)		(dev->is_p_region->parameter.fd)
-> +#define IS_HEADER(dev)			(dev->is_p_region->header)
-> +#define IS_FACE(dev)			(dev->is_p_region->face)
-> +#define IS_SHARED(dev)			(dev->is_shared_region)
-> +#define IS_PARAM_SIZE			(FIMC_IS_REGION_SIZE + 1)
-> +
-> +/* Global control */
-> +#define IS_SET_PARAM_GLOBAL_SHOTMODE_CMD(dev, x) \
-> +		(dev->is_p_region->parameter.global.shotmode.cmd = x)
-> +#define IS_SET_PARAM_GLOBAL_SHOTMODE_SKIPFRAMES(dev, x) \
-> +		(dev->is_p_region->parameter.global.shotmode.skip_frames = x)
-> +
-> +/* Sensor control */
-> +#define IS_SENSOR_SET_FRAME_RATE(dev, x) \
-> +		(dev->is_p_region->parameter.sensor.frame_rate.frame_rate = x)
-> +
-> +/* ISP Macros */
-> +#define IS_ISP_SET_PARAM_CONTROL_CMD(dev, x) \
-> +		(dev->is_p_region->parameter.isp.control.cmd = x)
+#define INTGR0_INTGC(n)				(1 << ((n) + 16))
 
-Hmm, these macros look pretty ugly. They obfuscate what's really being done.
-I would try to rewrite the code so we use pointers to target data structures
-instead.
+? Tens of lines could be eliminated from this header file by using
+this method to other definitions as well.
 
-> +#ifndef BIT0
-> +#define  BIT0     0x00000001
-> +#define  BIT1     0x00000002
-> +#define  BIT2     0x00000004
-> +#define  BIT3     0x00000008
-> +#define  BIT4     0x00000010
-> +#define  BIT5     0x00000020
-> +#define  BIT6     0x00000040
-> +#define  BIT7     0x00000080
-> +#define  BIT8     0x00000100
-> +#define  BIT9     0x00000200
-> +#define  BIT10    0x00000400
-> +#define  BIT11    0x00000800
-> +#define  BIT12    0x00001000
-> +#define  BIT13    0x00002000
-> +#define  BIT14    0x00004000
-> +#define  BIT15    0x00008000
-> +#define  BIT16    0x00010000
-> +#define  BIT17    0x00020000
-> +#define  BIT18    0x00040000
-> +#define  BIT19    0x00080000
-> +#define  BIT20    0x00100000
-> +#define  BIT21    0x00200000
-> +#define  BIT22    0x00400000
-> +#define  BIT23    0x00800000
-> +#define  BIT24    0x01000000
-> +#define  BIT25    0x02000000
-> +#define  BIT26    0x04000000
-> +#define  BIT27    0x08000000
-> +#define  BIT28    0x10000000
-> +#define  BIT29    0x20000000
-> +#define  BIT30    0x40000000
-> +#define  BIT31    0x80000000
-> +#define  BIT32    0x0000000100000000ULL
-> +#define  BIT33    0x0000000200000000ULL
-> +#define  BIT34    0x0000000400000000ULL
-> +#define  BIT35    0x0000000800000000ULL
-> +#define  BIT36    0x0000001000000000ULL
-> +#define  BIT37    0x0000002000000000ULL
-> +#define  BIT38    0x0000004000000000ULL
-> +#define  BIT39    0x0000008000000000ULL
-> +#define  BIT40    0x0000010000000000ULL
-> +#define  BIT41    0x0000020000000000ULL
-> +#define  BIT42    0x0000040000000000ULL
-> +#define  BIT43    0x0000080000000000ULL
-> +#define  BIT44    0x0000100000000000ULL
-> +#define  BIT45    0x0000200000000000ULL
-> +#define  BIT46    0x0000400000000000ULL
-> +#define  BIT47    0x0000800000000000ULL
-> +#define  BIT48    0x0001000000000000ULL
-> +#define  BIT49    0x0002000000000000ULL
-> +#define  BIT50    0x0004000000000000ULL
-> +#define  BIT51    0x0008000000000000ULL
-> +#define  BIT52    0x0010000000000000ULL
-> +#define  BIT53    0x0020000000000000ULL
-> +#define  BIT54    0x0040000000000000ULL
-> +#define  BIT55    0x0080000000000000ULL
-> +#define  BIT56    0x0100000000000000ULL
-> +#define  BIT57    0x0200000000000000ULL
-> +#define  BIT58    0x0400000000000000ULL
-> +#define  BIT59    0x0800000000000000ULL
-> +#define  BIT60    0x1000000000000000ULL
-> +#define  BIT61    0x2000000000000000ULL
-> +#define  BIT62    0x4000000000000000ULL
-> +#define  BIT63    0x8000000000000000ULL
+> +#define INTGR0_INTGD5			(1<<  5)
+> +#define INTGR0_INTGD4			(1<<  4)
+> +#define INTGR0_INTGD3			(1<<  3)
+> +#define INTGR0_INTGD2			(1<<  2)
+> +#define INTGR0_INTGD1			(1<<  1)
+> +#define INTGR0_INTGD0			(1<<  0)
+> +/* Interrupt Clear Register 0 from Host CPU to VIC */
+> +#define INTCR0				(MCUCTL+0x0c)
+> +#define INTCR0_INTCC9			(1<<  25)
+> +#define INTCR0_INTCC8			(1<<  24)
+> +#define INTCR0_INTCC7			(1<<  23)
+> +#define INTCR0_INTCC6			(1<<  22)
+> +#define INTCR0_INTCC5			(1<<  21)
+> +#define INTCR0_INTCC4			(1<<  20)
+> +#define INTCR0_INTCC3			(1<<  19)
+> +#define INTCR0_INTCC2			(1<<  18)
+> +#define INTCR0_INTCC1			(1<<  17)
+> +#define INTCR0_INTCC0			(1<<  16)
+> +#define INTCR0_INTCD5			(1<<  5)
+> +#define INTCR0_INTCD4			(1<<  4)
+> +#define INTCR0_INTCD3			(1<<  3)
+> +#define INTCR0_INTCD2			(1<<  2)
+> +#define INTCR0_INTCD1			(1<<  1)
+> +#define INTCR0_INTCD0			(1<<  0)
+> +/* Interrupt Mask Register 0 from Host CPU to VIC */
+> +#define INTMR0				(MCUCTL+0x10)
+> +#define INTMR0_INTMC9			(1<<  25)
+> +#define INTMR0_INTMC8			(1<<  24)
+> +#define INTMR0_INTMC7			(1<<  23)
+> +#define INTMR0_INTMC6			(1<<  22)
+> +#define INTMR0_INTMC5			(1<<  21)
+> +#define INTMR0_INTMC4			(1<<  20)
+> +#define INTMR0_INTMC3			(1<<  19)
+> +#define INTMR0_INTMC2			(1<<  18)
+> +#define INTMR0_INTMC1			(1<<  17)
+> +#define INTMR0_INTMC0			(1<<  16)
+> +#define INTMR0_INTMD5			(1<<  5)
+> +#define INTMR0_INTMD4			(1<<  4)
+> +#define INTMR0_INTMD3			(1<<  3)
+> +#define INTMR0_INTMD2			(1<<  2)
+> +#define INTMR0_INTMD1			(1<<  1)
+> +#define INTMR0_INTMD0			(1<<  0)
+> +/* Interrupt Status Register 0 from Host CPU to VIC */
+> +#define INTSR0				(MCUCTL+0x14)
+> +#define INTSR0_GET_INTSD0(x)		(((x)>>  0)&  0x1)
+> +#define INTSR0_GET_INTSD1(x)		(((x)>>  1)&  0x1)
+> +#define INTSR0_GET_INTSD2(x)		(((x)>>  2)&  0x1)
+> +#define INTSR0_GET_INTSD3(x)		(((x)>>  3)&  0x1)
+> +#define INTSR0_GET_INTSD4(x)		(((x)>>  4)&  0x1)
+> +#define INTSR0_GET_INTSC0(x)		(((x)>>  16)&  0x1)
+> +#define INTSR0_GET_INTSC1(x)		(((x)>>  17)&  0x1)
+> +#define INTSR0_GET_INTSC2(x)		(((x)>>  18)&  0x1)
+> +#define INTSR0_GET_INTSC3(x)		(((x)>>  19)&  0x1)
+> +#define INTSR0_GET_INTSC4(x)		(((x)>>  20)&  0x1)
+> +#define INTSR0_GET_INTSC5(x)		(((x)>>  21)&  0x1)
+> +#define INTSR0_GET_INTSC6(x)		(((x)>>  22)&  0x1)
+> +#define INTSR0_GET_INTSC7(x)		(((x)>>  23)&  0x1)
+> +#define INTSR0_GET_INTSC8(x)		(((x)>>  24)&  0x1)
+> +#define INTSR0_GET_INTSC9(x)		(((x)>>  25)&  0x1)
+> +/* Interrupt Mask Status Register 0 from Host CPU to VIC */
+> +#define INTMSR0				(MCUCTL+0x18)
+> +#define INTMSR0_GET_INTMSD0(x)		(((x)>>  0)&  0x1)
+> +#define INTMSR0_GET_INTMSD1(x)		(((x)>>  1)&  0x1)
+> +#define INTMSR0_GET_INTMSD2(x)		(((x)>>  2)&  0x1)
+> +#define INTMSR0_GET_INTMSD3(x)		(((x)>>  3)&  0x1)
+> +#define INTMSR0_GET_INTMSD4(x)		(((x)>>  4)&  0x1)
+> +#define INTMSR0_GET_INTMSC0(x)		(((x)>>  16)&  0x1)
+> +#define INTMSR0_GET_INTMSC1(x)		(((x)>>  17)&  0x1)
+> +#define INTMSR0_GET_INTMSC2(x)		(((x)>>  18)&  0x1)
+> +#define INTMSR0_GET_INTMSC3(x)		(((x)>>  19)&  0x1)
+> +#define INTMSR0_GET_INTMSC4(x)		(((x)>>  20)&  0x1)
+> +#define INTMSR0_GET_INTMSC5(x)		(((x)>>  21)&  0x1)
+> +#define INTMSR0_GET_INTMSC6(x)		(((x)>>  22)&  0x1)
+> +#define INTMSR0_GET_INTMSC7(x)		(((x)>>  23)&  0x1)
+> +#define INTMSR0_GET_INTMSC8(x)		(((x)>>  24)&  0x1)
+> +#define INTMSR0_GET_INTMSC9(x)		(((x)>>  25)&  0x1)
+> +/* Interrupt Generation Register 1 from ISP CPU to Host IC */
+> +#define INTGR1				(MCUCTL+0x1c)
+> +#define INTGR1_INTGC9			(1<<  9)
+> +#define INTGR1_INTGC8			(1<<  8)
+> +#define INTGR1_INTGC7			(1<<  7)
+> +#define INTGR1_INTGC6			(1<<  6)
+> +#define INTGR1_INTGC5			(1<<  5)
+> +#define INTGR1_INTGC4			(1<<  4)
+> +#define INTGR1_INTGC3			(1<<  3)
+> +#define INTGR1_INTGC2			(1<<  2)
+> +#define INTGR1_INTGC1			(1<<  1)
+> +#define INTGR1_INTGC0			(1<<  0)
+> +/* Interrupt Clear Register 1 from ISP CPU to Host IC */
+> +#define INTCR1				(MCUCTL+0x20)
+> +#define INTCR1_INTCC9			(1<<  9)
+> +#define INTCR1_INTCC8			(1<<  8)
+> +#define INTCR1_INTCC7			(1<<  7)
+> +#define INTCR1_INTCC6			(1<<  6)
+> +#define INTCR1_INTCC5			(1<<  5)
+> +#define INTCR1_INTCC4			(1<<  4)
+> +#define INTCR1_INTCC3			(1<<  3)
+> +#define INTCR1_INTCC2			(1<<  2)
+> +#define INTCR1_INTCC1			(1<<  1)
+> +#define INTCR1_INTCC0			(1<<  0)
+> +/* Interrupt Mask Register 1 from ISP CPU to Host IC */
+> +#define INTMR1				(MCUCTL+0x24)
+> +#define INTMR1_INTMC9			(1<<  9)
+> +#define INTMR1_INTMC8			(1<<  8)
+> +#define INTMR1_INTMC7			(1<<  7)
+> +#define INTMR1_INTMC6			(1<<  6)
+> +#define INTMR1_INTMC5			(1<<  5)
+> +#define INTMR1_INTMC4			(1<<  4)
+> +#define INTMR1_INTMC3			(1<<  3)
+> +#define INTMR1_INTMC2			(1<<  2)
+> +#define INTMR1_INTMC1			(1<<  1)
+> +#define INTMR1_INTMC0			(1<<  0)
+> +/* Interrupt Status Register 1 from ISP CPU to Host IC */
+> +#define INTSR1				(MCUCTL+0x28)
+> +/* Interrupt Mask Status Register 1 from ISP CPU to Host IC */
+> +#define INTMSR1				(MCUCTL+0x2c)
+> +/* Interrupt Clear Register 2 from ISP BLK's interrupts to Host IC */
+> +#define INTCR2				(MCUCTL+0x30)
+> +#define INTCR2_INTCC21			(1<<  21)
+> +#define INTCR2_INTCC20			(1<<  20)
+> +#define INTCR2_INTCC19			(1<<  19)
+> +#define INTCR2_INTCC18			(1<<  18)
+> +#define INTCR2_INTCC17			(1<<  17)
+> +#define INTCR2_INTCC16			(1<<  16)
+> +/* Interrupt Mask Register 2 from ISP BLK's interrupts to Host IC */
+> +#define INTMR2				(MCUCTL+0x34)
+> +#define INTMR2_INTMCIS25		(1<<  25)
+> +#define INTMR2_INTMCIS24		(1<<  24)
+> +#define INTMR2_INTMCIS23		(1<<  23)
+> +#define INTMR2_INTMCIS22		(1<<  22)
+> +#define INTMR2_INTMCIS21		(1<<  21)
+> +#define INTMR2_INTMCIS20		(1<<  20)
+> +#define INTMR2_INTMCIS19		(1<<  19)
+> +#define INTMR2_INTMCIS18		(1<<  18)
+> +#define INTMR2_INTMCIS17		(1<<  17)
+> +#define INTMR2_INTMCIS16		(1<<  16)
+> +#define INTMR2_INTMCIS15		(1<<  15)
+> +#define INTMR2_INTMCIS14		(1<<  14)
+> +#define INTMR2_INTMCIS13		(1<<  13)
+> +#define INTMR2_INTMCIS12		(1<<  12)
+> +#define INTMR2_INTMCIS11		(1<<  11)
+> +#define INTMR2_INTMCIS10		(1<<  10)
+> +#define INTMR2_INTMCIS9			(1<<  9)
+> +#define INTMR2_INTMCIS8			(1<<  8)
+> +#define INTMR2_INTMCIS7			(1<<  7)
+> +#define INTMR2_INTMCIS6			(1<<  6)
+> +#define INTMR2_INTMCIS5			(1<<  5)
+> +#define INTMR2_INTMCIS4			(1<<  4)
+> +#define INTMR2_INTMCIS3			(1<<  3)
+> +#define INTMR2_INTMCIS2			(1<<  2)
+> +#define INTMR2_INTMCIS1			(1<<  1)
+> +#define INTMR2_INTMCIS0			(1<<  0)
+> +/* Interrupt Status Register 2 from ISP BLK's interrupts to Host IC */
+> +#define INTSR2				(MCUCTL+0x38)
+> +/* Interrupt Mask Status Register 2 from ISP BLK's interrupts to Host IC */
+> +#define INTMSR2				(MCUCTL+0x3c)
+> +/* General Purpose Output Control Register (0~17) */
+> +#define GPOCTLR				(MCUCTL+0x40)
+> +#define GPOCTLR_GPOG17(x)		((x)<<  17)
+> +#define GPOCTLR_GPOG16(x)		((x)<<  16)
+> +#define GPOCTLR_GPOG15(x)		((x)<<  15)
+> +#define GPOCTLR_GPOG14(x)		((x)<<  14)
+> +#define GPOCTLR_GPOG13(x)		((x)<<  13)
+> +#define GPOCTLR_GPOG12(x)		((x)<<  12)
+> +#define GPOCTLR_GPOG11(x)		((x)<<  11)
+> +#define GPOCTLR_GPOG10(x)		((x)<<  10)
+> +#define GPOCTLR_GPOG9(x)		((x)<<  9)
+> +#define GPOCTLR_GPOG8(x)		((x)<<  8)
+> +#define GPOCTLR_GPOG7(x)		((x)<<  7)
+> +#define GPOCTLR_GPOG6(x)		((x)<<  6)
+> +#define GPOCTLR_GPOG5(x)		((x)<<  5)
+> +#define GPOCTLR_GPOG4(x)		((x)<<  4)
+> +#define GPOCTLR_GPOG3(x)		((x)<<  3)
+> +#define GPOCTLR_GPOG2(x)		((x)<<  2)
+> +#define GPOCTLR_GPOG1(x)		((x)<<  1)
+> +#define GPOCTLR_GPOG0(x)		((x)<<  0)
+> +/* General Purpose Pad Output Enable Register (0~17) */
+> +#define GPOENCTLR			(MCUCTL+0x44)
+> +#define GPOENCTLR_GPOEN17(x)		((x)<<  17)
+> +#define GPOENCTLR_GPOEN16(x)		((x)<<  16)
+> +#define GPOENCTLR_GPOEN15(x)		((x)<<  15)
+> +#define GPOENCTLR_GPOEN14(x)		((x)<<  14)
+> +#define GPOENCTLR_GPOEN13(x)		((x)<<  13)
+> +#define GPOENCTLR_GPOEN12(x)		((x)<<  12)
+> +#define GPOENCTLR_GPOEN11(x)		((x)<<  11)
+> +#define GPOENCTLR_GPOEN10(x)		((x)<<  10)
+> +#define GPOENCTLR_GPOEN9(x)		((x)<<  9)
+> +#define GPOENCTLR_GPOEN8(x)		((x)<<  8)
+> +#define GPOENCTLR_GPOEN7(x)		((x)<<  7)
+> +#define GPOENCTLR_GPOEN6(x)		((x)<<  6)
+> +#define GPOENCTLR_GPOEN5(x)		((x)<<  5)
+> +#define GPOENCTLR_GPOEN4(x)		((x)<<  4)
+> +#define GPOENCTLR_GPOEN3(x)		((x)<<  3)
+> +#define GPOENCTLR_GPOEN2(x)		((x)<<  2)
+> +#define GPOENCTLR_GPOEN1(x)		((x)<<  1)
+> +#define GPOENCTLR_GPOEN0(x)		((x)<<  0)
+> +/* General Purpose Input Control Register (0~17) */
+> +#define GPICTLR				(MCUCTL+0x48)
 
-Are you sure this is a good idea ? What do you think BIT() macro available
-in bitops.h does ? And are all these BIT definitions really used anywhere ?
 
-> +#define  INC_BIT(bit) (bit<<1)
-> +#define  INC_NUM(bit) (bit + 1)
-> +#endif
-> +
-> +#define MAGIC_NUMBER 0x01020304
-> +
-> +#define PARAMETER_MAX_SIZE    128  /* in byte */
-> +#define PARAMETER_MAX_MEMBER  (PARAMETER_MAX_SIZE/4)
-> +
-> +enum is_entry {
-> +	ENTRY_GLOBAL,
-> +	ENTRY_BUFFER,
-> +	ENTRY_SENSOR,
-> +	ENTRY_ISP,
-> +	ENTRY_DRC,
-> +	ENTRY_SCALERC,
-> +	ENTRY_ODC,
-> +	ENTRY_DIS,
-> +	ENTRY_TDNR,
-> +	ENTRY_SCALERP,
-> +	ENTRY_LHFD, /* 10 */
-> +	ENTRY_END
+> +/* IS Shared Register 0 between ISP CPU and HOST CPU */
+> +#define ISSR0			(MCUCTL+0x80)
+> +/* Command Host ->  IS */
+> +/* IS Shared Register 1 between ISP CPU and HOST CPU */
+> +/* Sensor ID for Command */
+> +#define ISSR1			(MCUCTL+0x84)
+> +/* IS Shared Register 2 between ISP CPU and HOST CPU */
+> +/* Parameter 1 */
+> +#define ISSR2			(MCUCTL+0x88)
+> +/* IS Shared Register 3 between ISP CPU and HOST CPU */
+> +/* Parameter 2 */
+> +#define ISSR3			(MCUCTL+0x8c)
+> +/* IS Shared Register 4 between ISP CPU and HOST CPU */
+> +/* Parameter 3 */
+> +#define ISSR4			(MCUCTL+0x90)
+> +/* IS Shared Register 5 between ISP CPU and HOST CPU */
+> +/* Parameter 4 */
+> +#define ISSR5			(MCUCTL+0x94)
+> +#define ISSR6			(MCUCTL+0x98)
+> +#define ISSR7			(MCUCTL+0x9c)
+> +#define ISSR8			(MCUCTL+0xa0)
+> +#define ISSR9			(MCUCTL+0xa4)
+> +/* IS Shared Register 10 between ISP CPU and HOST CPU */
+> +/* Command IS ->  Host */
+> +#define ISSR10			(MCUCTL+0xa8)
+> +/* IS Shared Register 11 between ISP CPU and HOST CPU */
+> +/* Sensor ID for Command */
+> +#define ISSR11			(MCUCTL+0xac)
+> +/* IS Shared Register 12 between ISP CPU and HOST CPU */
+> +/* Parameter 1 */
+> +#define ISSR12			(MCUCTL+0xb0)
+> +/* IS Shared Register 13 between ISP CPU and HOST CPU */
+> +/* Parameter 2 */
+> +#define ISSR13			(MCUCTL+0xb4)
+> +/* IS Shared Register 14 between ISP CPU and HOST CPU */
+> +/* Parameter 3 */
+> +#define ISSR14			(MCUCTL+0xb8)
+> +/* IS Shared Register 15 between ISP CPU and HOST CPU */
+> +/* Parameter 4 */
+> +#define ISSR15			(MCUCTL+0xbc)
+> +#define ISSR16			(MCUCTL+0xc0)
+> +#define ISSR17			(MCUCTL+0xc4)
+> +#define ISSR18			(MCUCTL+0xc8)
+> +#define ISSR19			(MCUCTL+0xcc)
+> +/* IS Shared Register 20 between ISP CPU and HOST CPU */
+> +/* ISP_FRAME_DONE : SENSOR ID */
+> +#define ISSR20			(MCUCTL+0xd0)
+> +/* IS Shared Register 21 between ISP CPU and HOST CPU */
+> +/* ISP_FRAME_DONE : PARAMETER 1 */
+> +#define ISSR21			(MCUCTL+0xd4)
+> +#define ISSR22			(MCUCTL+0xd8)
+> +#define ISSR23			(MCUCTL+0xdc)
+> +/* IS Shared Register 24 between ISP CPU and HOST CPU */
+> +/* SCALERC_FRAME_DONE : SENSOR ID */
+> +#define ISSR24			(MCUCTL+0xe0)
+> +/* IS Shared Register 25 between ISP CPU and HOST CPU */
+> +/* SCALERC_FRAME_DONE : PARAMETER 1 */
+> +#define ISSR25			(MCUCTL+0xe4)
+> +#define ISSR26			(MCUCTL+0xe8)
+> +#define ISSR27			(MCUCTL+0xec)
+> +/* IS Shared Register 28 between ISP CPU and HOST CPU */
+> +/* 3DNR_FRAME_DONE : SENSOR ID */
+> +#define ISSR28			(MCUCTL+0xf0)
+> +/* IS Shared Register 29 between ISP CPU and HOST CPU */
+> +/* 3DNR_FRAME_DONE : PARAMETER 1 */
+> +#define ISSR29			(MCUCTL+0xf4)
+> +#define ISSR30			(MCUCTL+0xf8)
+> +#define ISSR31			(MCUCTL+0xfc)
+> +/* IS Shared Register 32 between ISP CPU and HOST CPU */
+> +/* SCALERP_FRAME_DONE : SENSOR ID */
+> +#define ISSR32			(MCUCTL+0x100)
+> +/* IS Shared Register 33 between ISP CPU and HOST CPU */
+> +/* SCALERP_FRAME_DONE : PARAMETER 1 */
+> +#define ISSR33			(MCUCTL+0x104)
+> +#define ISSR34			(MCUCTL+0x108)
+> +#define ISSR35			(MCUCTL+0x10c)
+> +#define ISSR36			(MCUCTL+0x110)
+> +#define ISSR37			(MCUCTL+0x114)
+> +#define ISSR38			(MCUCTL+0x118)
+> +#define ISSR39			(MCUCTL+0x11c)
+> +#define ISSR40			(MCUCTL+0x120)
+> +#define ISSR41			(MCUCTL+0x124)
+> +#define ISSR42			(MCUCTL+0x128)
+> +#define ISSR43			(MCUCTL+0x12c)
+> +#define ISSR44			(MCUCTL+0x130)
+> +#define ISSR45			(MCUCTL+0x134)
+> +#define ISSR46			(MCUCTL+0x138)
+> +#define ISSR47			(MCUCTL+0x13c)
+> +#define ISSR48			(MCUCTL+0x140)
+> +#define ISSR49			(MCUCTL+0x144)
+> +#define ISSR50			(MCUCTL+0x148)
+> +#define ISSR51			(MCUCTL+0x14c)
+> +#define ISSR52			(MCUCTL+0x150)
+> +#define ISSR53			(MCUCTL+0x154)
+> +#define ISSR54			(MCUCTL+0x158)
+> +#define ISSR55			(MCUCTL+0x15c)
+> +#define ISSR56			(MCUCTL+0x160)
+> +#define ISSR57			(MCUCTL+0x164)
+> +#define ISSR58			(MCUCTL+0x168)
+> +#define ISSR59			(MCUCTL+0x16c)
+> +#define ISSR60			(MCUCTL+0x170)
+> +#define ISSR61			(MCUCTL+0x174)
+> +#define ISSR62			(MCUCTL+0x178)
+> +#define ISSR63			(MCUCTL+0x17c)
 
-Are these used somewhere ?
+It should be safe to replace these 64 lines with this one
 
-> +};
-> +
-> +enum is_param_set_bit {
-> +	PARAM_GLOBAL_SHOTMODE = 0,
-> +	PARAM_SENSOR_CONTROL,
-> +	PARAM_SENSOR_OTF_INPUT,
-> +	PARAM_SENSOR_OTF_OUTPUT,
-> +	PARAM_SENSOR_FRAME_RATE,
-> +	PARAM_SENSOR_DMA_OUTPUT,
-> +	PARAM_BUFFER_CONTROL,
-> +	PARAM_BUFFER_OTF_INPUT,
-> +	PARAM_BUFFER_OTF_OUTPUT,
-> +	PARAM_ISP_CONTROL,
-> +	PARAM_ISP_OTF_INPUT = 10,
-> +	PARAM_ISP_DMA1_INPUT,
-> +	PARAM_ISP_DMA2_INPUT,
-> +	PARAM_ISP_AA,
-> +	PARAM_ISP_FLASH,
-> +	PARAM_ISP_AWB,
-> +	PARAM_ISP_IMAGE_EFFECT,
-> +	PARAM_ISP_ISO,
-> +	PARAM_ISP_ADJUST,
-> +	PARAM_ISP_METERING,
-> +	PARAM_ISP_AFC = 20,
-> +	PARAM_ISP_OTF_OUTPUT,
-> +	PARAM_ISP_DMA1_OUTPUT,
-> +	PARAM_ISP_DMA2_OUTPUT,
-> +	PARAM_DRC_CONTROL,
-> +	PARAM_DRC_OTF_INPUT,
-> +	PARAM_DRC_DMA_INPUT,
-> +	PARAM_DRC_OTF_OUTPUT,
-> +	PARAM_SCALERC_CONTROL,
-> +	PARAM_SCALERC_OTF_INPUT,
-> +	PARAM_SCALERC_IMAGE_EFFECT = 30,
-> +	PARAM_SCALERC_INPUT_CROP,
-> +	PARAM_SCALERC_OUTPUT_CROP,
-> +	PARAM_SCALERC_OTF_OUTPUT,
-> +	PARAM_SCALERC_DMA_OUTPUT = 34,
-> +	PARAM_ODC_CONTROL,
-> +	PARAM_ODC_OTF_INPUT,
-> +	PARAM_ODC_OTF_OUTPUT,
-> +	PARAM_DIS_CONTROL,
-> +	PARAM_DIS_OTF_INPUT,
-> +	PARAM_DIS_OTF_OUTPUT = 40,
-> +	PARAM_TDNR_CONTROL,
-> +	PARAM_TDNR_OTF_INPUT,
-> +	PARAM_TDNR_1ST_FRAME,
-> +	PARAM_TDNR_OTF_OUTPUT,
-> +	PARAM_TDNR_DMA_OUTPUT,
-> +	PARAM_SCALERP_CONTROL,
-> +	PARAM_SCALERP_OTF_INPUT,
-> +	PARAM_SCALERP_IMAGE_EFFECT,
-> +	PARAM_SCALERP_INPUT_CROP,
-> +	PARAM_SCALERP_OUTPUT_CROP = 50,
-> +	PARAM_SCALERP_ROTATION,
-> +	PARAM_SCALERP_FLIP,
-> +	PARAM_SCALERP_OTF_OUTPUT,
-> +	PARAM_SCALERP_DMA_OUTPUT,
-> +	PARAM_FD_CONTROL,
-> +	PARAM_FD_OTF_INPUT,
-> +	PARAM_FD_DMA_INPUT,
-> +	PARAM_FD_CONFIG = 58,
-> +	PARAM_END,
-> +};
-> +
-> +#define ADDRESS_TO_OFFSET(start, end)	((uint32)end - (uint32)start)
-> +#define OFFSET_TO_NUM(offset)		((offset)>>6)
-> +#define IS_OFFSET_LOWBIT(offset)	(OFFSET_TO_NUM(offset)>= \
-> +						32 ? false : true)
-> +#define OFFSET_TO_BIT(offset) \
-> +		{(IS_OFFSET_LOWBIT(offset) ? (1<<OFFSET_TO_NUM(offset)) \
-> +			: (1<<(OFFSET_TO_NUM(offset)-32))}
-> +#define LOWBIT_OF_NUM(num)		(num>= 32 ? 0 : BIT0<<num)
-> +#define HIGHBIT_OF_NUM(num)		(num>= 32 ? BIT0<<(num-32) : 0)
-> +
-> +/* 0~31 */
-> +#define PARAM_GLOBAL_SHOTMODE		0
-> +#define PARAM_SENSOR_CONTROL		INC_NUM(PARAM_GLOBAL_SHOTMODE)
-> +#define PARAM_SENSOR_OTF_INPUT		INC_NUM(PARAM_SENSOR_CONTROL)
-> +#define PARAM_SENSOR_OTF_OUTPUT		INC_NUM(PARAM_SENSOR_OTF_INPUT)
-> +#define PARAM_SENSOR_FRAME_RATE		INC_NUM(PARAM_SENSOR_OTF_OUTPUT)
-> +#define PARAM_SENSOR_DMA_OUTPUT		INC_NUM(PARAM_SENSOR_FRAME_RATE)
-> +#define PARAM_BUFFER_CONTROL		INC_NUM(PARAM_SENSOR_DMA_OUTPUT)
-> +#define PARAM_BUFFER_OTF_INPUT		INC_NUM(PARAM_BUFFER_CONTROL)
-> +#define PARAM_BUFFER_OTF_OUTPUT		INC_NUM(PARAM_BUFFER_OTF_INPUT)
-> +#define PARAM_ISP_CONTROL		INC_NUM(PARAM_BUFFER_OTF_OUTPUT)
-> +#define PARAM_ISP_OTF_INPUT		INC_NUM(PARAM_ISP_CONTROL)
-> +#define PARAM_ISP_DMA1_INPUT		INC_NUM(PARAM_ISP_OTF_INPUT)
-> +#define PARAM_ISP_DMA2_INPUT		INC_NUM(PARAM_ISP_DMA1_INPUT)
-> +#define PARAM_ISP_AA			INC_NUM(PARAM_ISP_DMA2_INPUT)
-> +#define PARAM_ISP_FLASH			INC_NUM(PARAM_ISP_AA)
-> +#define PARAM_ISP_AWB			INC_NUM(PARAM_ISP_FLASH)
-> +#define PARAM_ISP_IMAGE_EFFECT		INC_NUM(PARAM_ISP_AWB)
-> +#define PARAM_ISP_ISO			INC_NUM(PARAM_ISP_IMAGE_EFFECT)
-> +#define PARAM_ISP_ADJUST		INC_NUM(PARAM_ISP_ISO)
-> +#define PARAM_ISP_METERING		INC_NUM(PARAM_ISP_ADJUST)
-> +#define PARAM_ISP_AFC			INC_NUM(PARAM_ISP_METERING)
-> +#define PARAM_ISP_OTF_OUTPUT		INC_NUM(PARAM_ISP_AFC)
-> +#define PARAM_ISP_DMA1_OUTPUT		INC_NUM(PARAM_ISP_OTF_OUTPUT)
-> +#define PARAM_ISP_DMA2_OUTPUT		INC_NUM(PARAM_ISP_DMA1_OUTPUT)
-> +#define PARAM_DRC_CONTROL		INC_NUM(PARAM_ISP_DMA2_OUTPUT)
-> +#define PARAM_DRC_OTF_INPUT		INC_NUM(PARAM_DRC_CONTROL)
-> +#define PARAM_DRC_DMA_INPUT		INC_NUM(PARAM_DRC_OTF_INPUT)
-> +#define PARAM_DRC_OTF_OUTPUT		INC_NUM(PARAM_DRC_DMA_INPUT)
-> +#define PARAM_SCALERC_CONTROL		INC_NUM(PARAM_DRC_OTF_OUTPUT)
-> +#define PARAM_SCALERC_OTF_INPUT		INC_NUM(PARAM_SCALERC_CONTROL)
-> +#define PARAM_SCALERC_IMAGE_EFFECT	INC_NUM(PARAM_SCALERC_OTF_INPUT)
-> +#define PARAM_SCALERC_INPUT_CROP	INC_NUM(PARAM_SCALERC_IMAGE_EFFECT)
-> +#define PARAM_SCALERC_OUTPUT_CROP	INC_NUM(PARAM_SCALERC_INPUT_CROP)
-> +#define PARAM_SCALERC_OTF_OUTPUT	INC_NUM(PARAM_SCALERC_OUTPUT_CROP)
->
-> +/* 32~63 */
-> +#define PARAM_SCALERC_DMA_OUTPUT	INC_NUM(PARAM_SCALERC_OTF_OUTPUT)
-> +#define PARAM_ODC_CONTROL		INC_NUM(PARAM_SCALERC_DMA_OUTPUT)
-> +#define PARAM_ODC_OTF_INPUT		INC_NUM(PARAM_ODC_CONTROL)
-> +#define PARAM_ODC_OTF_OUTPUT		INC_NUM(PARAM_ODC_OTF_INPUT)
-> +#define PARAM_DIS_CONTROL		INC_NUM(PARAM_ODC_OTF_OUTPUT)
-> +#define PARAM_DIS_OTF_INPUT		INC_NUM(PARAM_DIS_CONTROL)
-> +#define PARAM_DIS_OTF_OUTPUT		INC_NUM(PARAM_DIS_OTF_INPUT)
-> +#define PARAM_TDNR_CONTROL		INC_NUM(PARAM_DIS_OTF_OUTPUT)
-> +#define PARAM_TDNR_OTF_INPUT		INC_NUM(PARAM_TDNR_CONTROL)
-> +#define PARAM_TDNR_1ST_FRAME		INC_NUM(PARAM_TDNR_OTF_INPUT)
-> +#define PARAM_TDNR_OTF_OUTPUT		INC_NUM(PARAM_TDNR_1ST_FRAME)
-> +#define PARAM_TDNR_DMA_OUTPUT		INC_NUM(PARAM_TDNR_OTF_OUTPUT)
-> +#define PARAM_SCALERP_CONTROL		INC_NUM(PARAM_TDNR_DMA_OUTPUT)
-> +#define PARAM_SCALERP_OTF_INPUT		INC_NUM(PARAM_SCALERP_CONTROL)
-> +#define PARAM_SCALERP_IMAGE_EFFECT	INC_NUM(PARAM_SCALERP_OTF_INPUT)
-> +#define PARAM_SCALERP_INPUT_CROP	INC_NUM(PARAM_SCALERP_IMAGE_EFFECT)
-> +#define PARAM_SCALERP_OUTPUT_CROP	INC_NUM(PARAM_SCALERP_INPUT_CROP)
-> +#define PARAM_SCALERP_ROTATION		INC_NUM(PARAM_SCALERP_OUTPUT_CROP)
-> +#define PARAM_SCALERP_FLIP		INC_NUM(PARAM_SCALERP_ROTATION)
-> +#define PARAM_SCALERP_OTF_OUTPUT	INC_NUM(PARAM_SCALERP_FLIP)
-> +#define PARAM_SCALERP_DMA_OUTPUT	INC_NUM(PARAM_SCALERP_OTF_OUTPUT)
-> +#define PARAM_FD_CONTROL		INC_NUM(PARAM_SCALERP_DMA_OUTPUT)
-> +#define PARAM_FD_OTF_INPUT		INC_NUM(PARAM_FD_CONTROL)
-> +#define PARAM_FD_DMA_INPUT		INC_NUM(PARAM_FD_OTF_INPUT)
-> +#define PARAM_FD_CONFIG			INC_NUM(PARAM_FD_DMA_INPUT)
-> +#define PARAM_END			INC_NUM(PARAM_FD_CONFIG)
+#define ISSR(n)				(MCUCTL + 0x80 + (n))
 
-Isn't it much easier to define these as enum ?
+Then users would need of course to be updated as well.
 
-> +#define PARAM_STRNUM_GLOBAL		(PARAM_GLOBAL_SHOTMODE)
-> +#define PARAM_RANGE_GLOBAL		1
-> +#define PARAM_STRNUM_SENSOR		(PARAM_SENSOR_BYPASS)
-> +#define PARAM_RANGE_SENSOR		5
-> +#define PARAM_STRNUM_BUFFER		(PARAM_BUFFER_BYPASS)
-> +#define PARAM_RANGE_BUFFER		3
-> +#define PARAM_STRNUM_ISP		(PARAM_ISP_BYPASS)
-> +#define PARAM_RANGE_ISP			15
-> +#define PARAM_STRNUM_DRC		(PARAM_DRC_BYPASS)
-> +#define PARAM_RANGE_DRC			4
-> +#define PARAM_STRNUM_SCALERC		(PARAM_SCALERC_BYPASS)
-> +#define PARAM_RANGE_SCALERC		7
-> +#define PARAM_STRNUM_ODC		(PARAM_ODC_BYPASS)
-> +#define PARAM_RANGE_ODC			3
-> +#define PARAM_STRNUM_DIS		(PARAM_DIS_BYPASS)
-> +#define PARAM_RANGE_DIS			3
-> +#define PARAM_STRNUM_TDNR		(PARAM_TDNR_BYPASS)
-> +#define PARAM_RANGE_TDNR		5
-> +#define PARAM_STRNUM_SCALERP		(PARAM_SCALERP_BYPASS)
-> +#define PARAM_RANGE_SCALERP		9
-> +#define PARAM_STRNUM_LHFD		(PARAM_FD_BYPASS)
-> +#define PARAM_RANGE_LHFD		4
+> +/* PMU for FIMC-IS*/
+> +#define PMUREG_CMU_RESET_ISP_SYS_PWR_REG	(S5P_VA_PMU  + 0x1584)
+> +#define PMUREG_ISP_ARM_CONFIGURATION		(S5P_VA_PMU  + 0x2280)
+> +#define PMUREG_ISP_ARM_STATUS			(S5P_VA_PMU  + 0x2284)
+> +#define PMUREG_ISP_ARM_OPTION			(S5P_VA_PMU  + 0x2288)
+> +#define PMUREG_ISP_LOW_POWER_OFF		(S5P_VA_PMU  + 0x0004)
+> +#define PMUREG_ISP_CONFIGURATION		(S5P_VA_PMU  + 0x4020)
+> +#define PMUREG_ISP_STATUS				(S5P_VA_PMU  + 0x4024)
 
-Are these definitions used anywhere ?
-
-> +#define PARAM_LOW_MASK		(0xFFFFFFFF)
-> +#define PARAM_HIGH_MASK		(0x07FFFFFF)
-> +
-[...]
-> +struct param_dma_input {
-> +	u32	cmd;
-> +	u32	width;
-> +	u32	height;
-> +	u32	format;
-> +	u32	bitwidth;
-> +	u32	plane;
-> +	u32	order;
-> +	u32	buffer_number;
-> +	u32	buffer_address;
-> +	u32	uibayercropoffsetx;
-> +	u32	uibayercropoffsety;
-> +	u32	uibayercropwidth;
-> +	u32	uibayercropheight;
-> +	u32	uidmacropoffsetx;
-> +	u32	uidmacropoffsety;
-> +	u32	uidmacropwidth;
-> +	u32	uidmacropheight;
-> +	u32	uiuserminframetime;
-> +	u32	uiusermaxframetime;
-
-That is really hard to read. Perhaps we can have some underscores
-added so it looks like ui_user_max_frametime ?
-
-> +	u32	uiwideframegap;
-> +	u32	uiframegap;
-> +	u32	uilinegap;
-> +	u32	uireserved[PARAMETER_MAX_MEMBER-23];
-> +	u32	err;
-> +};
+No more global statically mapped registers please. The better solution 
+could
+be to define a DT subnode for the ISP PMU registers, to pass the register
+memory region and then use offsets only with the mmaped region base. Please
+see pmureg_read/write() functions in my Exynos4x12 patch series.
