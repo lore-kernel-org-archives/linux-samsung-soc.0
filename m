@@ -1,386 +1,478 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC 06/12] exynos-fimc-is: Adds the sensor subdev
-Date: Sat, 23 Mar 2013 15:48:55 +0100
-Message-ID: <514DC0D7.8080401@gmail.com>
-References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com> <1362754765-2651-7-git-send-email-arun.kk@samsung.com>
+Subject: Re: [RFC 07/12] exynos-fimc-is: Adds isp subdev
+Date: Sat, 23 Mar 2013 19:38:11 +0100
+Message-ID: <514DF693.2080308@gmail.com>
+References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com> <1362754765-2651-8-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1362754765-2651-7-git-send-email-arun.kk@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f179.google.com ([209.85.215.179]:50384 "EHLO
+	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751655Ab3CWSiQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 23 Mar 2013 14:38:16 -0400
+In-Reply-To: <1362754765-2651-8-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Arun Kumar K <arun.kk@samsung.com>
 Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, s.nawrocki@samsung.com, kgene.kim@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
 On 03/08/2013 03:59 PM, Arun Kumar K wrote:
-> FIMC-IS uses certain sensors which are exclusively controlled
-> from the IS firmware. This patch adds the sensor subdev for the
-> fimc-is sensors.
+> fimc-is driver takes video data input from the ISP video node
+> which is added in this patch. This node accepts Bayer input
+> buffers which is given from the IS sensors.
 >
 > Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
 > Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
 > ---
->   drivers/media/platform/exynos5-is/fimc-is-sensor.c |  337 ++++++++++++++++++++
->   drivers/media/platform/exynos5-is/fimc-is-sensor.h |  170 ++++++++++
->   2 files changed, 507 insertions(+)
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.c
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.h
+>   drivers/media/platform/exynos5-is/fimc-is-isp.c |  546 +++++++++++++++++++++++
+>   drivers/media/platform/exynos5-is/fimc-is-isp.h |   88 ++++
+>   2 files changed, 634 insertions(+)
+>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.c
+>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.h
 >
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-sensor.c b/drivers/media/platform/exynos5-is/fimc-is-sensor.c
+> diff --git a/drivers/media/platform/exynos5-is/fimc-is-isp.c b/drivers/media/platform/exynos5-is/fimc-is-isp.c
 > new file mode 100644
-> index 0000000..c031493
+> index 0000000..e68e936
 > --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-sensor.c
-> @@ -0,0 +1,337 @@
+> +++ b/drivers/media/platform/exynos5-is/fimc-is-isp.c
+> @@ -0,0 +1,546 @@
 > +/*
 > + * Samsung EXYNOS5250 FIMC-IS (Imaging Subsystem) driver
 > + *
 > + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + * Arun Kumar K<arun.kk@samsung.com>
-> + * Kil-yeon Lim<kilyeon.im@samsung.com>
+> + *  Arun Kumar K<arun.kk@samsung.com>
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > + */
 > +
-> +#include<linux/gpio.h>
-> +#include "fimc-is-sensor.h"
+> +#include<media/v4l2-ioctl.h>
+> +#include<media/videobuf2-dma-contig.h>
+> +
 > +#include "fimc-is.h"
 > +
-> +static char *sensor_clock_name[] = {
-> +	[SCLK_BAYER]	= "sclk_bayer",
-> +	[SCLK_CAM0]	= "sclk_cam0",
+> +static struct fimc_is_fmt formats[] = {
 
-Aren't there any dependencies on other IP state for this clock ?
-For example up to Exynos4412 "fimc" clocks needs to be enabled
-to actually enable SCLK_CAM clocks through "sclk_cam0" and the
-CAM power domain needs to be enabled.
+static const ?
 
-> +/* Sensor supported formats */
-> +static struct v4l2_mbus_framefmt sensor_formats[FIMC_IS_MAX_SENSORS] = {
-> +	[SENSOR_S5K4E5] = {
-> +		.width          = SENSOR_4E5_WIDTH + 16,
-> +		.height         = SENSOR_4E5_HEIGHT + 10,
-> +		.code           = V4L2_MBUS_FMT_SGRBG10_1X10,
-> +		.field          = V4L2_FIELD_NONE,
-> +		.colorspace     = V4L2_COLORSPACE_SRGB,
+> +	{
+> +		.name           = "Bayer GR-BG 8bits",
+> +		.fourcc         = V4L2_PIX_FMT_SGRBG8,
+> +		.depth		= {8},
+
+nit:
+
+> +		.num_planes     = 1,
 > +	},
-> +	[SENSOR_S5K6A3] = {
-> +		.width          = SENSOR_6A3_WIDTH + 16,
-> +		.height         = SENSOR_6A3_HEIGHT + 10,
-> +		.code           = V4L2_MBUS_FMT_SGRBG10_1X10,
-> +		.field          = V4L2_FIELD_NONE,
-> +		.colorspace     = V4L2_COLORSPACE_SRGB,
+> +	{
+> +		.name           = "Bayer GR-BG 10bits",
+> +		.fourcc         = V4L2_PIX_FMT_SGRBG10,
+> +		.depth		= {10},
+> +		.num_planes     = 1,
+> +	},
+> +	{
+> +		.name           = "Bayer GR-BG 12bits",
+> +		.fourcc         = V4L2_PIX_FMT_SGRBG12,
+> +		.depth		= {12},
+> +		.num_planes     = 1,
 > +	},
 > +};
-> +
-> +static struct fimc_is_sensor *sd_to_fimc_is_sensor(struct v4l2_subdev *sd)
+> +#define NUM_FORMATS ARRAY_SIZE(formats)
+[...]
+> +static int isp_video_output_open(struct file *file)
 > +{
-> +	return container_of(sd, struct fimc_is_sensor, subdev);
-> +}
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	int ret = 0;
 > +
-> +static void sensor_clk_put(struct fimc_is_sensor *sensor)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i<  SCLK_MAX_NUM; i++) {
-> +		if (IS_ERR_OR_NULL(sensor->clock[i]))
-
-Please try to eliminate this IS_ERR_OR_NULL() usage, e.g. by filling
-clock[] array with ERR_PTR(-EINVAL) at the very beginning of the driver's
-initialization process.
-
-> +			continue;
-> +		clk_unprepare(sensor->clock[i]);
-> +		clk_put(sensor->clock[i]);
-> +		sensor->clock[i] = NULL;
-
-		sensor->clock[i] = ERR_PTR(-EINVAL);
-
-> +	}
-> +}
-> +
-> +static int sensor_clk_init(struct fimc_is_sensor *sensor)
-> +{
-> +	int i, ret;
-> +
-> +	/* Get CAM clocks */
-> +	for (i = 0; i<  SCLK_MAX_NUM; i++) {
-> +		sensor->clock[i] = clk_get(NULL, sensor_clock_name[i]);
-> +		if (IS_ERR(sensor->clock[i]))
-> +			goto err;
-> +		ret = clk_prepare(sensor->clock[i]);
-> +		if (ret<  0) {
-> +			clk_put(sensor->clock[i]);
-> +			sensor->clock[i] = NULL;
-
-			sensor->clock[i] = ERR_PTR(-EINVAL);
-
-> +			goto err;
-> +		}
+> +	/* Check if opened before */
+> +	if (isp->refcount>= FIMC_IS_MAX_INSTANCES) {
+> +		is_err("All instances are in use.\n");
+> +		return -EBUSY;
 > +	}
 > +
-> +	/* Set clock rates */
-> +	ret = clk_set_rate(sensor->clock[SCLK_CAM0], 24 * 1000000);
-> +	ret |= clk_set_rate(sensor->clock[SCLK_BAYER], 24 * 1000000);
-> +	if (ret) {
-> +		is_err("Failed to set cam clock rates\n");
-> +		goto err;
-> +	}
-> +	return 0;
-> +err:
-> +	sensor_clk_put(sensor);
-> +	is_err("Failed to init sensor clock\n");
-> +	return -ENXIO;
+> +	INIT_LIST_HEAD(&isp->wait_queue);
+> +	isp->wait_queue_cnt = 0;
+> +	INIT_LIST_HEAD(&isp->run_queue);
+> +	isp->run_queue_cnt = 0;
+> +
+> +	isp->refcount++;
+> +	return ret;
 > +}
 > +
-> +static int sensor_enum_mbus_code(struct v4l2_subdev *sd,
-> +				  struct v4l2_subdev_fh *fh,
-> +				  struct v4l2_subdev_mbus_code_enum *code)
+> +static int isp_video_output_close(struct file *file)
 > +{
-> +	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
-> +	struct fimc_is_sensor_info *sinfo = sensor->sensor_info;
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	int ret = 0;
 > +
-> +	if (!code)
-> +		return -EINVAL;
-> +
-> +	code->code = sensor_formats[sinfo->sensor_id].code;
-> +	return 0;
+> +	isp->refcount--;
+> +	vb2_queue_release(&isp->vbq);
+> +	isp->output_state = 0;
+> +	return ret;
 > +}
 > +
-> +static int sensor_set_fmt(struct v4l2_subdev *sd,
-> +			  struct v4l2_subdev_fh *fh,
-> +			  struct v4l2_subdev_format *fmt)
+> +static unsigned int isp_video_output_poll(struct file *file,
+> +				   struct poll_table_struct *wait)
 > +{
-> +	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
-> +	struct fimc_is_sensor_info *sinfo = sensor->sensor_info;
-> +	struct v4l2_mbus_framefmt *sfmt =&fmt->format;
-> +
-> +	if ((sfmt->width != sensor_formats[sinfo->sensor_id].width) ||
-> +		(sfmt->height != sensor_formats[sinfo->sensor_id].height) ||
-> +		(sfmt->code != sensor_formats[sinfo->sensor_id].code))
-> +		return -EINVAL;
-
-No, the driver should not return any errors here. Instead it should
-adjust passed frame format to its capabilities. So it should be more
-something like:
-
-	*sfmt = sensor_formats[sinfo->sensor_id];
-
-But even now it is not optimal, it would be useful to be able to
-set various resolutions at the sensor subdev, within supported range.
-Anyway I'm fine with have it fixed temporarily. It all depends
-on the firmware though, what sort of configuration is supported there.
-
-> +	return 0;
-> +}
-> +
-> +static int sensor_get_fmt(struct v4l2_subdev *sd,
-> +			  struct v4l2_subdev_fh *fh,
-> +			  struct v4l2_subdev_format *fmt)
-> +{
-> +	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
-> +	struct fimc_is_sensor_info *sinfo = sensor->sensor_info;
-> +
-> +	fmt->format = sensor_formats[sinfo->sensor_id];
-> +	return 0;
-> +}
-> +
-> +static struct v4l2_subdev_pad_ops sensor_pad_ops = {
-> +	.enum_mbus_code		= sensor_enum_mbus_code,
-> +	.get_fmt		= sensor_get_fmt,
-> +	.set_fmt		= sensor_set_fmt,
-> +};
-> +
-> +static int sensor_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-> +{
-> +	return 0;
-
-You should fill the TRY format data structure here, which is stored in fh.
-
-> +}
-> +
-> +static const struct v4l2_subdev_internal_ops sensor_sd_internal_ops = {
-> +	.open = sensor_open,
-> +};
-> +
-> +static int sensor_s_power(struct v4l2_subdev *sd, int on)
-> +{
-> +	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
-> +	struct fimc_is_sensor_data *sdata = sensor->sensor_data;
-> +
-> +	if (on) {
-> +		/* Power on sensor */
-> +		sensor_clk_init(sensor);
-
-Clocks should be initialized once. And here we only enable/disable them.
-
-> +		gpio_request(sdata->gpios[0], "fimc_is_sensor");
-> +		gpio_direction_output(sdata->gpios[0], 1);
-> +		gpio_free(sdata->gpios[0]);
-
-Similar mistake with the GPIO. Why don't you request GPIO in probe/remove
-functions ?
-
-And why gpio_direction_output() is used to set state of an GPIO output ?
-Are there some political reasons for which you choose to not use
-gpio_set_value() ?
-
-> +	} else {
-> +		/* Power off sensor */
-> +		gpio_request(sdata->gpios[0], "fimc_is_sensor");
-> +		gpio_direction_output(sdata->gpios[0], 0);
-> +		gpio_free(sdata->gpios[0]);
-> +		sensor_clk_put(sensor);
-> +	}
-> +	return 0;
-> +}
-> +
-> +static struct v4l2_subdev_core_ops sensor_core_ops = {
-> +	.s_power = sensor_s_power,
-> +};
-> +
-> +static int sensor_s_stream(struct v4l2_subdev *sd, int enable)
-> +{
-> +	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
+> +	struct fimc_is_isp *isp = video_drvdata(file);
 > +	int ret;
 > +
-> +	if (enable) {
-> +		is_dbg(3, "Stream ON\n");
-> +		/* Open pipeline */
-> +		ret = fimc_is_pipeline_open(sensor->pipeline, sensor);
-> +		if (ret<  0) {
-> +			is_err("Pipeline already opened.\n");
-> +			return -EBUSY;
-> +		}
+> +	if (mutex_lock_interruptible(&isp->video_lock))
+> +		return POLL_ERR;
 > +
-> +		/* Start IS pipeline */
-> +		ret = fimc_is_pipeline_start(sensor->pipeline);
-> +		if (ret<  0) {
-> +			is_err("Pipeline start failed.\n");
-> +			return -EINVAL;
-> +		}
-
-Hmm, because of those 2 pipelines dependent on each other :
-
-sensor -> mipi-csis -> fimc-lite -> memory
-
-memory -> is-isp -> scalerx -> memory
-
-You need to initiate streaming from sensor driver level ? Normally this
-is managed by /dev/video driver. I guess, it wouldn't work in your case ?
-
-> +	} else {
-> +		is_dbg(3, "Stream OFF\n");
-> +		/* Stop IS pipeline */
-> +		ret = fimc_is_pipeline_stop(sensor->pipeline);
-> +		if (ret<  0) {
-> +			is_err("Pipeline stop failed.\n");
-> +			return -EINVAL;
-> +		}
+> +	ret = vb2_poll(&isp->vbq, file, wait);
+> +	mutex_unlock(&isp->video_lock);
 > +
-> +		/* Close pipeline */
-> +		ret = fimc_is_pipeline_close(sensor->pipeline);
-> +		if (ret<  0) {
-> +			is_err("Pipeline close failed\n");
-> +			return -EBUSY;
-> +		}
+> +	return ret;
+> +}
+> +
+> +static int isp_video_output_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	int ret;
+> +
+> +	if (mutex_lock_interruptible(&isp->video_lock))
+> +		return -ERESTARTSYS;
+> +
+> +	ret = vb2_mmap(&isp->vbq, vma);
+> +	mutex_unlock(&isp->video_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct v4l2_file_operations isp_video_output_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= isp_video_output_open,
+> +	.release	= isp_video_output_close,
+> +	.poll		= isp_video_output_poll,
+> +	.unlocked_ioctl	= video_ioctl2,
+> +	.mmap		= isp_video_output_mmap,
+
+I suggest to use vb2_fop_poll/mmap/release, v4l2_fh_open where possible.
+
+> +};
+> +
+> +/*
+> + * Video node ioctl operations
+> + */
+> +static int isp_querycap_output(struct file *file, void *priv,
+> +					struct v4l2_capability *cap)
+> +{
+> +	strlcpy(cap->driver, "fimc-is-isp", sizeof(cap->driver));
+> +	cap->bus_info[0] = 0;
+
+bus_info must not be empty, it could be fimc-is platform device name.
+
+> +	cap->card[0] = 0;
+> +	cap->capabilities = V4L2_CAP_STREAMING;
+
+Please set cap->device_caps as well.
+
+> +	return 0;
+> +}
+
+> +static int isp_try_fmt_mplane(struct file *file, void *fh,
+> +		struct v4l2_format *f)
+> +{
+> +	struct fimc_is_fmt *fmt;
+> +
+> +	if (f->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+> +		return -EINVAL;
+
+This check is not needed.
+
+> +	fmt = find_format(f);
+> +	if (!fmt) {
+> +		is_err("Format not supported.\n");
+> +		return -EINVAL;
+
+Instead some default format should be picked, and no error returned here.
+
+> +	}
+> +
+> +	if (fmt->num_planes != f->fmt.pix_mp.num_planes) {
+
+Again, the kernel is supposed to adjust and fill in the format data
+structure with valid values. So you should just do
+
+	f->fmt.pix_mp.num_planes = fmt->num_planes;
+
+And no error must be returned.
+
+> +		is_err("Number of planes mismatch\n");
+> +		return -EINVAL;
 > +	}
 > +
 > +	return 0;
 > +}
 > +
-> +static const struct v4l2_subdev_video_ops sensor_video_ops = {
-> +	.s_stream       = sensor_s_stream,
-> +};
-> +
-> +static struct v4l2_subdev_ops sensor_subdev_ops = {
-> +	.core =&sensor_core_ops,
-> +	.pad =&sensor_pad_ops,
-> +	.video =&sensor_video_ops,
-> +};
-> +
-> +static int sensor_init(struct fimc_is_sensor *sensor)
+> +static int isp_s_fmt_mplane(struct file *file, void *priv,
+> +		struct v4l2_format *f)
 > +{
-> +	struct fimc_is_sensor_data *sensor_data;
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	struct fimc_is_pipeline *p = isp->pipeline;
+> +	struct fimc_is_fmt *fmt;
+> +	unsigned int sensor_width, sensor_height;
+> +	int ret;
 > +
-> +	sensor_data = sensor->sensor_data;
-> +	if (strcmp(sensor_data->name,
-> +			sensor_info[SENSOR_S5K4E5].sensor_name) == 0)
-> +		sensor->sensor_info =&sensor_info[SENSOR_S5K4E5];
-> +	else if (strcmp(sensor_data->name,
-> +			sensor_info[SENSOR_S5K6A3].sensor_name) == 0)
-> +		sensor->sensor_info =&sensor_info[SENSOR_S5K6A3];
-> +	else
-> +		sensor->sensor_info = NULL;
-
-I think such matching would better done through 'compatible' property.
-
-> +	if (!sensor->sensor_info)
+> +	ret = isp_try_fmt_mplane(file, priv, f);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Get format type */
+> +	fmt = find_format(f);
+> +	if (!fmt) {
+> +		is_err("Format not supported.\n");
 > +		return -EINVAL;
+
+Same as above, just pick some default format.
+
+> +	}
 > +
-> +	sensor->sensor_info->csi_ch = sensor->sensor_info->i2c_ch =
-> +		(sensor_data->csi_id>>  2)&  0x1;
-> +	is_dbg(3, "Sensor csi channel : %d\n", sensor->sensor_info->csi_ch);
+> +	/* Check if same as sensor width&  height */
+> +	sensor_width = p->sensor->sensor_info->pixel_width;
+> +	sensor_height = p->sensor->sensor_info->pixel_height;
+> +	if ((sensor_width != f->fmt.pix_mp.width) ||
+> +		(sensor_height != f->fmt.pix_mp.height)) {
+> +		is_err("ISP resolution should be same as sensor\n");
+
+If these resolutions need to match then you may want to do:
+
+f->fmt.pix_mp.width = sensor_width;
+f->fmt.pix_mp.height = sensor_height;
+
+> +		return -EINVAL;
+
+No, this is incorrect.
+
+> +	}
 > +
+> +	isp->fmt = fmt;
+> +	isp->width = f->fmt.pix_mp.width;
+> +	isp->height = f->fmt.pix_mp.height;
+> +	isp->size_image = f->fmt.pix_mp.plane_fmt[0].sizeimage;
+> +	set_bit(STATE_INIT,&isp->output_state);
+
+The driver should have some initial default values, so the configuration
+is valid right after initialization. rather than tracking which calls
+took place in user space.
+
 > +	return 0;
 > +}
 > +
-> +int fimc_is_sensor_subdev_create(struct fimc_is_sensor *sensor,
-> +		struct fimc_is_sensor_data *sensor_data,
+> +static int isp_streamon(struct file *file, void *priv,
+> +		enum v4l2_buf_type type)
+> +{
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	int ret;
+> +
+> +	ret = vb2_streamon(&isp->vbq, type);
+> +	return 0;
+> +}
+> +
+> +static int isp_streamoff(struct file *file, void *priv,
+> +		enum v4l2_buf_type type)
+> +{
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	int ret;
+> +
+> +	ret = vb2_streamoff(&isp->vbq, type);
+> +	return 0;
+> +}
+
+I suggest you to use vb2_ioctl_* helpers where possible. Lots of such
+boilerplate code can be removed when you switch to use those.
+
+> +static int isp_reqbufs(struct file *file, void *priv,
+> +		struct v4l2_requestbuffers *reqbufs)
+> +{
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	int ret;
+> +
+> +	if (!isp->fmt) {
+> +		is_err("Set format not done\n");
+> +		return -EINVAL;
+
+That's wrong. As mentioned above, there must be some initial valid
+configuration (image format), so you can call reqbufs ioctl right
+after opening /dev/video.
+
+Whether the whole processing pipeline is consistent or not should be 
+checked
+in streamon ioctl.
+
+> +	}
+> +
+> +	/* Check whether buffers are already allocated */
+> +	if (test_bit(STATE_BUFS_ALLOCATED,&isp->output_state)) {
+> +		is_err("Buffers already allocated\n");
+> +		return -EINVAL;
+
+What happens when reqbufs->count == 0 ? How is this code supposed to 
+allow to
+actually free buffers ?
+
+I don't think you need this kind of checks in this ioctl handler. videobuf2
+is supposed to handle that sort of things.
+
+> +	}
+> +
+> +	ret = vb2_reqbufs(&isp->vbq, reqbufs);
+> +	if (ret) {
+> +		is_err("vb2 req buffers failed\n");
+
+Would be better to use standard error logging APIs, e.g. v4l2_err().
+
+> +		return ret;
+> +	}
+> +
+> +	isp->num_buffers = reqbufs->count;
+> +	isp->out_buf_cnt = 0;
+> +	set_bit(STATE_BUFS_ALLOCATED,&isp->output_state);
+> +	return 0;
+> +}
+
+> +static int isp_querybuf(struct file *file, void *priv,
+> +		struct v4l2_buffer *buf)
+> +{
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	return vb2_querybuf(&isp->vbq, buf);
+> +}
+> +
+> +static int isp_qbuf(struct file *file, void *priv,
+> +		struct v4l2_buffer *buf)
+> +{
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	return vb2_qbuf(&isp->vbq, buf);
+> +}
+> +
+> +static int isp_dqbuf(struct file *file, void *priv,
+> +		struct v4l2_buffer *buf)
+> +{
+> +	struct fimc_is_isp *isp = video_drvdata(file);
+> +	return vb2_dqbuf(&isp->vbq, buf,
+> +			file->f_flags&  O_NONBLOCK);
+> +}
+
+These are all good candidates for replacing with vb2_ioctl_* helpers.
+
+> +static const struct v4l2_ioctl_ops isp_video_output_ioctl_ops = {
+> +	.vidioc_querycap		= isp_querycap_output,
+> +	.vidioc_enum_fmt_vid_out_mplane	= isp_enum_fmt_mplane,
+> +	.vidioc_try_fmt_vid_out_mplane	= isp_try_fmt_mplane,
+> +	.vidioc_s_fmt_vid_out_mplane	= isp_s_fmt_mplane,
+> +	.vidioc_g_fmt_vid_out_mplane	= isp_g_fmt_mplane,
+> +	.vidioc_reqbufs			= isp_reqbufs,
+> +	.vidioc_querybuf		= isp_querybuf,
+> +	.vidioc_qbuf			= isp_qbuf,
+> +	.vidioc_dqbuf			= isp_dqbuf,
+> +	.vidioc_streamon		= isp_streamon,
+> +	.vidioc_streamoff		= isp_streamoff,
+> +};
+> +
+> +static int isp_subdev_s_stream(struct v4l2_subdev *sd, int on)
+> +{
+> +	/* Nothing to do.*/
+> +	return 0;
+> +}
+> +
+> +static int isp_subdev_s_power(struct v4l2_subdev *sd, int on)
+> +{
+> +	/* Nothing to do here as everything is turned on from sensor */
+
+Then please remove these empty functions.
+
+> +	return 0;
+> +}
+> +
+[...]
+> +int fimc_is_isp_subdev_create(struct fimc_is_isp *isp,
+> +		struct vb2_alloc_ctx *alloc_ctx,
 > +		struct fimc_is_pipeline *pipeline)
 > +{
-> +	struct v4l2_subdev *sd =&sensor->subdev;
+> +	struct v4l2_ctrl_handler *handler =&isp->ctrl_handler;
+> +	struct v4l2_subdev *sd =&isp->subdev;
 > +	int ret;
 > +
-> +	is_err("\n");
-
-Might be some debugging leftover. I would also suggest to avoid
-custom driver-specific debug macros.
-
-> +	if (!sensor_data->enabled) {
-> +		/* Sensor not present */
-> +		return -EINVAL;
-> +	}
+> +	/* Init context vars */
+> +	isp->alloc_ctx = alloc_ctx;
+> +	isp->pipeline = pipeline;
+> +	isp->refcount = 0;
+> +	isp->fmt =&formats[1];
 > +
-> +	sensor->sensor_data = sensor_data;
-> +	sensor->pipeline = pipeline;
+> +	v4l2_subdev_init(sd,&isp_subdev_ops);
+> +	sd->owner = THIS_MODULE;
+> +	sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	snprintf(sd->name, sizeof(sd->name), "fimc-is-isp");
 > +
-> +	v4l2_subdev_init(sd,&sensor_subdev_ops);
-> +	sensor->subdev.owner = THIS_MODULE;
-> +	if (strcmp(sensor_data->name,
-> +			sensor_info[SENSOR_S5K4E5].sensor_name) == 0)
-> +		strlcpy(sd->name, "fimc-is-sensor-4e5", sizeof(sd->name));
-> +	else if (strcmp(sensor_data->name,
-> +			sensor_info[SENSOR_S5K6A3].sensor_name) == 0)
-> +		strlcpy(sd->name, "fimc-is-sensor-6a3", sizeof(sd->name));
-> +	else
-> +		strlcpy(sd->name, "fimc-is-sensor-???", sizeof(sd->name));
-> +	sensor->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
-> +	ret = media_entity_init(&sd->entity, 1,&sensor->pad, 0);
+> +	isp->subdev_pads[ISP_SD_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
+> +	isp->subdev_pads[ISP_SD_PAD_SRC].flags = MEDIA_PAD_FL_SOURCE;
+> +	ret = media_entity_init(&sd->entity, ISP_SD_PADS_NUM,
+> +			isp->subdev_pads, 0);
 > +	if (ret<  0)
-> +		goto exit;
+> +		return ret;
 > +
-> +	v4l2_set_subdevdata(sd, sensor);
+> +	v4l2_ctrl_handler_init(handler, 1);
+> +	if (handler->error)
+> +		return handler->error;
+
+Memory leak due to missing media_entity_cleanup() and 
+v4l2_ctrl_handler_free()
+calls.
+
 > +
-> +	/* Init sensor data */
-> +	ret = sensor_init(sensor);
-> +	if (ret<  0) {
-> +		is_err("Sensor init failed.\n");
-> +		goto exit;
-
-Just drop this goto...
-
-> +	}
+> +	sd->ctrl_handler = handler;
+> +	sd->internal_ops =&isp_subdev_internal_ops;
+> +	v4l2_set_subdevdata(sd, isp);
 > +
 > +	return 0;
+> +}
+> +
+> +void fimc_is_isp_subdev_destroy(struct fimc_is_isp *isp)
+> +{
+> +	struct v4l2_subdev *sd =&isp->subdev;
+> +
+> +	v4l2_device_unregister_subdev(sd);
+> +	media_entity_cleanup(&sd->entity);
+> +	v4l2_ctrl_handler_free(&isp->ctrl_handler);
+> +	v4l2_set_subdevdata(sd, NULL);
+> +}
+> +
+> diff --git a/drivers/media/platform/exynos5-is/fimc-is-isp.h b/drivers/media/platform/exynos5-is/fimc-is-isp.h
+> new file mode 100644
+> index 0000000..be6289f
+> --- /dev/null
+> +++ b/drivers/media/platform/exynos5-is/fimc-is-isp.h
+> @@ -0,0 +1,88 @@
+> +/*
+> + * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
+> + *
+> + * Copyright (C) 2012 Samsung Electronics Co., Ltd.
+> + *  Arun Kumar K<arun.kk@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +#ifndef FIMC_IS_ISP_H_
+> +#define FIMC_IS_ISP_H_
+> +
+> +#include "fimc-is-core.h"
+> +#include "fimc-is-pipeline.h"
+> +
+> +#define FIMC_IS_ISP_REQ_BUFS_MIN	2
+> +
+> +#define ISP_SD_PAD_SINK		0
+> +#define ISP_SD_PAD_SRC		1
+> +#define ISP_SD_PADS_NUM		2
 
-	return ret;
+What about the ISP video device entities ? To which ISP pads are these 
+connected ?
 
-> +exit:
-> +	return ret;
-
-And remove these 2 lines.
+For Exynos4x12 there are two additional pads where the ISP video output and
+capture entities are to be connected. Currently there are only SINK, 
+SRC_FIFO
+and SRC_DMA pads, but SINK_DMA and an output video device could be added in
+future if required.
