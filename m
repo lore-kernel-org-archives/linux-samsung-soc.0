@@ -1,60 +1,77 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: RE: RE: RE: [PATCH v6 00/16] clk: exynos4/5: migrate to common
- clock framework
-Date: Mon, 25 Mar 2013 10:05:57 +0900
-Message-ID: <16dd01ce28f4$e8256860$b8703920$%kim@samsung.com>
-References: <1361175686-19400-1-git-send-email-thomas.abraham@linaro.org>
- <20130319184938.8663.18115@quantum> <201303192212.16877.heiko@sntech.de>
- <20130319215038.8663.83548@quantum>
- <116a01ce24fd$e32658b0$a9730a10$%kim@samsung.com>
- <20130320025656.11073.90469@quantum>
- <11af01ce2526$63b0a8f0$2b11fad0$%kim@samsung.com>
- <20130320144000.11073.37741@quantum>
- <14d801ce268b$80a8d160$81fa7420$%kim@samsung.com>
- <20130322142739.834.2721@quantum>
+Subject: RE: [PATCH v4 0/4] Initial Device Tree support for S3C64xx
+Date: Mon, 25 Mar 2013 10:08:02 +0900
+Message-ID: <16de01ce28f5$32d3e850$987bb8f0$%kim@samsung.com>
+References: <1362860975-18635-1-git-send-email-tomasz.figa@gmail.com>
+ <2474214.PvUtMM3R7F@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:10010 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754996Ab3CYBF7 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:16800 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755017Ab3CYBIE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 24 Mar 2013 21:05:59 -0400
+	Sun, 24 Mar 2013 21:08:04 -0400
 Received: from epcpsbgr1.samsung.com
  (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MK60021IZ1VA270@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 10:05:57 +0900 (KST)
-In-reply-to: <20130322142739.834.2721@quantum>
+ with ESMTP id <0MK600IIYZ4AMD40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 10:08:02 +0900 (KST)
+In-reply-to: <2474214.PvUtMM3R7F@flatron>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mike Turquette' <mturquette@linaro.org>, =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, 'Rob Herring' <robherring2@gmail.com>, 'Mark Rutland' <mark.rutland@arm.com>
 
-Mike Turquette wrote:
-
-[...]
-
-> > Yeah, I know. So if you want to add your ack on drivers/clk stuff for
-> this series in samsung tree, please let me know.
+Tomasz Figa wrote:
+> 
+> Hi,
+> 
+> On Saturday 09 of March 2013 21:29:31 Tomasz Figa wrote:
+> > This series adds Device Tree support for Samsung S3C64xx SoC series.
 > >
+> > It fixes several problems preventing from booting an S3C64xx-based
+> > system using Device Tree, adds all the infrastructure for Device
+> > Tree-based board support, including mach-s3c64xx-dt and dts include
+> > files for S3C64xx SoCs, and (very) basic device tree source for
+> > FriendlyARM Mini6410 board.
+> >
+> > Current support is very limited and allows only basic bootup with UART
+> > and SDHCI, but should be fine as a start and will be extended in
+> > future, hopefully with help of S3C64xx board maintainers.
+> >
+> > This series depends on my other series reworking samsung-time for
+> > multiplatform: [PATCH v3 00/12] ARM: samsung-time: Prepare for
+> > multiplatform support
+> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16664
+> >
+> > Changes since v3:
+> >  - Rebased onto current for-next branch of Kgene's tree
+> >  - Updated timer node for next version of samsung-time patches
+> >  - Replaced local s3c64xx_dt_init_irq with irqchip_init
+> >
+> > Changes since v2:
+> >  - Updated timer node for next version of samsung-time patches
+> >
+> > Changes since v1:
+> >  - Dropped two VIC-related patches that are no longer necessary
+> >  - Added Device Tree-based instantation of system timers
+> >  - Corrected VIC interrupt specifiers
+> >  - Adjusted CPU compatible values and dropped @id
+> >
+> > Tomasz Figa (4):
+> >   ARM: common: vic: Parse interrupt and resume masks from device tree
+> >   ARM: s3c64xx: Add board file for boot using Device Tree
+> >   ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
+> >   ARM: dts: Add dts file for S3C6410-based Mini6410 board
 > 
-> The patches are in pretty good shape.  Please add my ack if you are able
-
-OK, I will.
-
-> to rebase comfortably.  But if rebasing causes you and your downstream
-> users a lot of pain then don't do it.
+> Any comments for this series?
 > 
-Yes it can be, but it can be handled easily because of no-changing codes.
-
-Note, please check Heiko's follow-up clk/samsung patches.
-<http://comments.gmane.org/gmane.linux.kernel.samsung-soc/16817>
-
-I'm fine on that and if you're ok, I'd like to take that with this series.
+Basically, looks good to me but I need to check your samsung-time patches,
+if any updates, let you know.
 
 Thanks.
 
