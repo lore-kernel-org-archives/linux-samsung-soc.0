@@ -1,60 +1,268 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/4] clk: samsung: pm fixes and multiple aliases
-Date: Mon, 25 Mar 2013 18:26:34 +0900
-Message-ID: <176601ce293a$d7a0e190$86e2a4b0$%kim@samsung.com>
-References: <201303131458.18671.heiko@sntech.de>
+Subject: RE: [PATCH v3] ARM: DTS: CROS5250: Add max77686 device tree support
+Date: Mon, 25 Mar 2013 18:54:58 +0900
+Message-ID: <177601ce293e$cfc4b790$6f4e26b0$%kim@samsung.com>
+References: <1354099900-24779-1-git-send-email-a.kesavan@samsung.com>
+ <1354677702-22669-1-git-send-email-a.kesavan@samsung.com>
+ <CAM4voande7QK7=TE5w+zdw-NY+7A243OrKG_YDbEDb9L=w_+uw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25458 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:29411 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757757Ab3CYJ0f convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1755418Ab3CYJzA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Mar 2013 05:26:35 -0400
+	Mon, 25 Mar 2013 05:55:00 -0400
 Received: from epcpsbgr3.samsung.com
  (u143.gpu120.samsung.co.kr [203.254.230.143])
  by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MK7009Q3M88PR10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 18:26:34 +0900 (KST)
-In-reply-to: <201303131458.18671.heiko@sntech.de>
+ with ESMTP id <0MK7004ZPNJ1O341@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 18:54:59 +0900 (KST)
+In-reply-to: <CAM4voande7QK7=TE5w+zdw-NY+7A243OrKG_YDbEDb9L=w_+uw@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
+To: 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org
+Cc: olof@lixom.net, 'Abhilash Kesavan' <a.kesavan@samsung.com>, thomas.abraham@linaro.org, rahul.sharma@samsung.com
 
-Heiko St=C3=BCbner wrote:
->=20
-> Second version of the fixes to address comments gathered from the fir=
-st
-> version, like not entering the dt code on non-dt platforms even if
-> dt-support is present in the kernel.
->=20
-> Patch 1 and 3 got "Reviewed-by" tags but I only included the one for
-> patch 1, because patch 3 changed due to the changes in patch 2.
->=20
-> Heiko Stuebner (4):
->   clk: samsung: register clk_div_tables for divider clocks
->   clk: samsung: fix pm init on non-dt platforms
->   clk: samsung: always allocate the clk_table
->   clk: samsung: add infrastructure to add separate aliases
->=20
->  drivers/clk/samsung/clk.c |   72 +++++++++++++++++++++++++++++++++++=
-------
-> ---
->  drivers/clk/samsung/clk.h |   34 ++++++++++++++++++--
->  2 files changed, 87 insertions(+), 19 deletions(-)
->=20
-> --
-> 1.7.2.3
-
-Looks good to me and applied into samsung tree based on samsung common =
-clock by Thomas P Abraham for testing.
-
-But would be helpful to me if I could get Mike's ack on this series.
+Abhilash Kesavan wrote:
+> 
+> Adding Kukjin Kim who was accidentally missed out in the re-worked
+patches.
+> 
+Abhilash, please re-send patch so that I could apply this into samsung tree.
 
 Thanks.
 
 - Kukjin
+
+> On Wed, Dec 5, 2012 at 8:51 AM, Abhilash Kesavan <a.kesavan@samsung.com>
+> wrote:
+> > The exynos5250 based chromebooks have a max77686 pmic on i2c channel 0.
+> > Add support for the pmic in the common cros5250 dts file.
+> > Tested after enabling cpufreq support for exynos5250 SoC and varying the
+> > arm frequency/voltage using the userspace governer.
+> >
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > Acked-by: Doug Anderson <dianders@chromium.org>
+> > ---
+> > Changes since v1:
+> > * Used generic names for the regulators
+> > * Changed BUCK5 as being default "ON"
+> > Changes since v2:
+> > * Fixed the LDO7 name from "P1.0V_LDO_OUT7" to "P1.1V_LDO_OUT7"
+> >
+> >  arch/arm/boot/dts/cros5250-common.dtsi |  138
+> ++++++++++++++++++++++++++++++++
+> >  1 files changed, 138 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/cros5250-common.dtsi
+> b/arch/arm/boot/dts/cros5250-common.dtsi
+> > index fddd174..8ab8394 100644
+> > --- a/arch/arm/boot/dts/cros5250-common.dtsi
+> > +++ b/arch/arm/boot/dts/cros5250-common.dtsi
+> > @@ -24,6 +24,144 @@
+> >                 samsung,i2c-max-bus-freq = <378000>;
+> >                 gpios = <&gpb3 0 2 3 0>,
+> >                         <&gpb3 1 2 3 0>;
+> > +
+> > +               max77686@09 {
+> > +                       compatible = "maxim,max77686";
+> > +                       reg = <0x09>;
+> > +
+> > +                       voltage-regulators {
+> > +                               ldo1_reg: LDO1 {
+> > +                                       regulator-name =
+"P1.0V_LDO_OUT1";
+> > +                                       regulator-min-microvolt =
+<1000000>;
+> > +                                       regulator-max-microvolt =
+<1000000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo2_reg: LDO2 {
+> > +                                       regulator-name =
+"P1.8V_LDO_OUT2";
+> > +                                       regulator-min-microvolt =
+<1800000>;
+> > +                                       regulator-max-microvolt =
+<1800000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo3_reg: LDO3 {
+> > +                                       regulator-name =
+"P1.8V_LDO_OUT3";
+> > +                                       regulator-min-microvolt =
+<1800000>;
+> > +                                       regulator-max-microvolt =
+<1800000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo7_reg: LDO7 {
+> > +                                       regulator-name =
+"P1.1V_LDO_OUT7";
+> > +                                       regulator-min-microvolt =
+<1100000>;
+> > +                                       regulator-max-microvolt =
+<1100000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo8_reg: LDO8 {
+> > +                                       regulator-name =
+"P1.0V_LDO_OUT8";
+> > +                                       regulator-min-microvolt =
+<1000000>;
+> > +                                       regulator-max-microvolt =
+<1000000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo10_reg: LDO10 {
+> > +                                       regulator-name =
+"P1.8V_LDO_OUT10";
+> > +                                       regulator-min-microvolt =
+<1800000>;
+> > +                                       regulator-max-microvolt =
+<1800000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo12_reg: LDO12 {
+> > +                                       regulator-name =
+"P3.0V_LDO_OUT12";
+> > +                                       regulator-min-microvolt =
+<3000000>;
+> > +                                       regulator-max-microvolt =
+<3000000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo14_reg: LDO14 {
+> > +                                       regulator-name =
+"P1.8V_LDO_OUT14";
+> > +                                       regulator-min-microvolt =
+<1800000>;
+> > +                                       regulator-max-microvolt =
+<1800000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo15_reg: LDO15 {
+> > +                                       regulator-name =
+"P1.0V_LDO_OUT15";
+> > +                                       regulator-min-microvolt =
+<1000000>;
+> > +                                       regulator-max-microvolt =
+<1000000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               ldo16_reg: LDO16 {
+> > +                                       regulator-name =
+"P1.8V_LDO_OUT16";
+> > +                                       regulator-min-microvolt =
+<1800000>;
+> > +                                       regulator-max-microvolt =
+<1800000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               buck1_reg: BUCK1 {
+> > +                                       regulator-name = "vdd_mif";
+> > +                                       regulator-min-microvolt =
+<950000>;
+> > +                                       regulator-max-microvolt =
+<1300000>;
+> > +                                       regulator-always-on;
+> > +                                       regulator-boot-on;
+> > +                               };
+> > +
+> > +                               buck2_reg: BUCK2 {
+> > +                                       regulator-name = "vdd_arm";
+> > +                                       regulator-min-microvolt =
+<850000>;
+> > +                                       regulator-max-microvolt =
+<1350000>;
+> > +                                       regulator-always-on;
+> > +                                       regulator-boot-on;
+> > +                               };
+> > +
+> > +                               buck3_reg: BUCK3 {
+> > +                                       regulator-name = "vdd_int";
+> > +                                       regulator-min-microvolt =
+<900000>;
+> > +                                       regulator-max-microvolt =
+<1200000>;
+> > +                                       regulator-always-on;
+> > +                                       regulator-boot-on;
+> > +                               };
+> > +
+> > +                               buck4_reg: BUCK4 {
+> > +                                       regulator-name = "vdd_g3d";
+> > +                                       regulator-min-microvolt =
+<850000>;
+> > +                                       regulator-max-microvolt =
+<1300000>;
+> > +                                       regulator-always-on;
+> > +                                       regulator-boot-on;
+> > +                               };
+> > +
+> > +                               buck5_reg: BUCK5 {
+> > +                                       regulator-name =
+"P1.8V_BUCK_OUT5";
+> > +                                       regulator-min-microvolt =
+<1800000>;
+> > +                                       regulator-max-microvolt =
+<1800000>;
+> > +                                       regulator-always-on;
+> > +                                       regulator-boot-on;
+> > +                               };
+> > +
+> > +                               buck6_reg: BUCK6 {
+> > +                                       regulator-name =
+"P1.35V_BUCK_OUT6";
+> > +                                       regulator-min-microvolt =
+<1350000>;
+> > +                                       regulator-max-microvolt =
+<1350000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               buck7_reg: BUCK7 {
+> > +                                       regulator-name =
+"P2.0V_BUCK_OUT7";
+> > +                                       regulator-min-microvolt =
+<2000000>;
+> > +                                       regulator-max-microvolt =
+<2000000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +
+> > +                               buck8_reg: BUCK8 {
+> > +                                       regulator-name =
+"P2.85V_BUCK_OUT8";
+> > +                                       regulator-min-microvolt =
+<2850000>;
+> > +                                       regulator-max-microvolt =
+<2850000>;
+> > +                                       regulator-always-on;
+> > +                               };
+> > +                       };
+> > +               };
+> >         };
+> >
+> >         i2c@12C70000 {
+> > --
+> > 1.6.6.1
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
