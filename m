@@ -1,70 +1,60 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v9 4/4] ARM: dts: Add FIMD DT binding Documentation
-Date: Mon, 25 Mar 2013 12:56:32 +0100
-Message-ID: <51503B70.8040506@samsung.com>
-References: <1363960608-23825-1-git-send-email-vikas.sajjan@linaro.org>
- <1363960608-23825-5-git-send-email-vikas.sajjan@linaro.org>
- <CAJuYYwQZKXXVNNbDS20d8i6mybzyRc_Y8BQs73NSw6mUVwsGwQ@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: EXYNOS will support only DT from v3.10
+Date: Mon, 25 Mar 2013 12:02:57 +0000
+Message-ID: <20130325120256.GM18316@opensource.wolfsonmicro.com>
+References: <17a501ce2948$17037610$450a6230$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Z1Z8UV8BNhgCynIS"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42455 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751772Ab3CYL4f (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:32928 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756946Ab3CYMDD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Mar 2013 07:56:35 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MK700AL5T33YI60@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 11:56:33 +0000 (GMT)
-Received: from [106.116.147.32] by eusync4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MK7003CZT685A90@eusync4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 11:56:33 +0000 (GMT)
-In-reply-to: <CAJuYYwQZKXXVNNbDS20d8i6mybzyRc_Y8BQs73NSw6mUVwsGwQ@mail.gmail.com>
+	Mon, 25 Mar 2013 08:03:03 -0400
+Content-Disposition: inline
+In-Reply-To: <17a501ce2948$17037610$450a6230$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, olof@lixom.net, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas P Abraham' <thomas.ab@samsung.com>, heiko@sntech.de, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
 
-On 03/25/2013 12:10 PM, Thomas Abraham wrote:
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
->> @@ -0,0 +1,68 @@
->> +Device-Tree bindings for Samsung SoC display controller (FIMD)
-[...]
->> +- interrupts : should contain a list of all FIMD IP block interrupts:
->> +  FIFO Level, VSYNC, LCD_SYSTEM. The interrupt specifier format depends
->> +    on the interrupt controller used.
 
-Since the interrupt order is supposed to be defined by the binding, perhaps
-it could be rephrased to something like:
+--Z1Z8UV8BNhgCynIS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-- interrupts : should contain a list of all FIMD IP block interrupts in
-  order: FIFO Level, VSYNC, LCD_SYSTEM. The interrupt specifier format
-  depends on the interrupt controller used.
+On Mon, Mar 25, 2013 at 08:01:23PM +0900, Kukjin Kim wrote:
 
->> +- interrupt-names : should contain the interrupt names: "fifo", "vsync",
->> +       "lcd_sys", in the same order as they were listed in the interrupts
->> +        property.
->> +
->> +- pinctrl : property defining the pinctrl configurations with a phandle
->> +
->> +- pinctrl-names : "default" state needs to be specified in the fimd node
->> +               The pinctrl bindings defined in
->> +               ../../../pinctrl/pinctrl-bindings.txt must be used to define a
->> +               pinctrl state named "default".
+> As we discussed before, it's time to decide to support non-DT for EXYNOS
+> SoCs.
 
-The path should be ../pinctrl/pinctrl-bindings.txt. It probably makes to sense
-to either have this one sentence or pinctrl/pinctrl-names properties listed
-with their description. So for example
+> If everybody else agrees to drop non-DT support from v3.10, I will. Feel
+> free to talk your opinion about that.
 
-- pinctrl : pin control group to be used for this controller;
-- pinctrl-names : should contain "default" entry;
+No problem for me on Exynos, though it would be a bit of an issue to
+loose it for s3c64xx right now.
 
-or
+--Z1Z8UV8BNhgCynIS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
-to define a pinctrl state named "default".
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRUDzYAAoJELSic+t+oim93LMP/iggyk2jNlpY+FTCcQV+LQsV
+L+uHyJpnnN2nuSHtOtX93v9fd4MeCf+Hs/4TsrBVX7exKNQkOwGQqdrjPk1dGt1+
+BMk+Iy9UcHduMfupNYxCiMeie0ijZwfs6wKbmVaTDaxV3jr3ZS7gOwqJ8DGOPVaP
+TQZn9DGPCvQxlxx6+lrCFwMj34l4o652G2Co/57EaiHxHKMfcxpzb3jHeKF8naDJ
+TBBuT9SyjrAYj+Pt1u7aR7Uuw/2GV1gTQVS3Gbk6b6xpQ/YYBAwhjaYcaEic5f91
+2SzQXZu3sGi7Aum8hWhSViOtmXrnYsHbGg2fpSWMNXdQyIxx2MsYMYUYfiz4jEf3
+zrnPDeNmAkrrZ+m9Boiw0HfKOxaK7xooPPKWSqxtI6O2lSrQC6qy2bKwsGAjT9BV
+24vUNBF2Z0pveGy7pJSZIRhVj3Jm4bfPTq/Fq2BR3Y5WhPcQ06Gh9DkxQqtT/byX
+lhJVBM8l9twpqwVtevTS9ZV827NOMgouax8FIASj2PcWndjpeglfQ4nSwRGEcC10
+NY1efAB2BUDZe9Yr2CwuaDQ2EXvLOMuajOCeOMYAWWN5jhjW6AzK9mRnhKyONidc
+ojGDppujeNQXhgFX7BiFBv89avLTQ2yNfE1SfDsp9QdSZD+QwFBRcNR0kn+Gw7Ns
+WgYViAyHwFycBINSA+Et
+=tXSB
+-----END PGP SIGNATURE-----
+
+--Z1Z8UV8BNhgCynIS--
