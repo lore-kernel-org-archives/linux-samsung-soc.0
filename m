@@ -1,54 +1,76 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: EXYNOS will support only DT from v3.10
-Date: Mon, 25 Mar 2013 12:37:38 +0000
-Message-ID: <201303251237.38782.arnd@arndb.de>
-References: <17a501ce2948$17037610$450a6230$%kim@samsung.com> <20130325120256.GM18316@opensource.wolfsonmicro.com>
+Date: Mon, 25 Mar 2013 13:09:52 +0000
+Message-ID: <20130325130951.GQ18316@opensource.wolfsonmicro.com>
+References: <17a501ce2948$17037610$450a6230$%kim@samsung.com>
+ <20130325120256.GM18316@opensource.wolfsonmicro.com>
+ <201303251237.38782.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Tcb1KvpfnM4LxW2s"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:60294 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757168Ab3CYMiB (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34814 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757277Ab3CYNKE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Mar 2013 08:38:01 -0400
-In-Reply-To: <20130325120256.GM18316@opensource.wolfsonmicro.com>
+	Mon, 25 Mar 2013 09:10:04 -0400
+Content-Disposition: inline
+In-Reply-To: <201303251237.38782.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, olof@lixom.net, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas P Abraham' <thomas.ab@samsung.com>, heiko@sntech.de, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
 
-On Monday 25 March 2013, Mark Brown wrote:
-> On Mon, Mar 25, 2013 at 08:01:23PM +0900, Kukjin Kim wrote:
-> 
-> > As we discussed before, it's time to decide to support non-DT for EXYNOS
-> > SoCs.
-> 
-> > If everybody else agrees to drop non-DT support from v3.10, I will. Feel
-> > free to talk your opinion about that.
-> 
-> No problem for me on Exynos, though it would be a bit of an issue to
-> loose it for s3c64xx right now.
 
-We don't have any DT support for S3C and S5P upstream yet, so I would
-certainly agree on that. I think we should plan at least one release of
-supporting both simultaneously in order to find bugs with the DT
-implementation before we can consider removing ATAGS support for any
-major platform.
+--Tcb1KvpfnM4LxW2s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-However, I also really want to see all ARMv6 and ARMv7 platforms
-get moved over to use ARCH_MULTIPLATFORM, and it probably makes sense
-to eventually move over all platforms that support ARCH_MULTIPLATFORM
-to be DT-only. I hope we do both for EXYNOS in 3.10, and then do at
-least MULTIPLATFORM support for S5P* in 3.11, possibly also for S3C64xx,
-in order to convert all ARMv6 and ARMv7 platforms to MULTIPLATFORM.
+On Mon, Mar 25, 2013 at 12:37:38PM +0000, Arnd Bergmann wrote:
 
-For the ARMv5 platforms (S3C24xx and others), we can be much more flexible
-with the timing, plus we can keep S3C and S5P in a state where they are
-DT-only in multiplatform configurations but allow ATAGS when configured
-as standalone like we do today, at least for a couple of releases after
-introducing multiplatform support, until we are comfortable with the DT
-support and don't break any working platforms.
+> We don't have any DT support for S3C and S5P upstream yet, so I would
+> certainly agree on that. I think we should plan at least one release of
+> supporting both simultaneously in order to find bugs with the DT
+> implementation before we can consider removing ATAGS support for any
+> major platform.
 
-	Arnd
+We really ought to look into fixing the bootloader protocol to allow
+ATAGS and DT simultaneously BTW, the current situation is a pain
+especially if you need uImage.
+
+> However, I also really want to see all ARMv6 and ARMv7 platforms
+> get moved over to use ARCH_MULTIPLATFORM, and it probably makes sense
+> to eventually move over all platforms that support ARCH_MULTIPLATFORM
+> to be DT-only. I hope we do both for EXYNOS in 3.10, and then do at
+> least MULTIPLATFORM support for S5P* in 3.11, possibly also for S3C64xx,
+> in order to convert all ARMv6 and ARMv7 platforms to MULTIPLATFORM.
+
+The pluggable modules on Cragganmore are going to be a problem for that,
+I have some ideas for a subsystem to handle the remapping generically
+but not had the time to actually do it yet.  The stuff the BeagleBone
+guys were pushing wasn't suitable as it seemed like it was basically
+just a wrapper around DT which excludes non-DT platofrms.
+
+--Tcb1KvpfnM4LxW2s
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRUEyYAAoJELSic+t+oim9c6QQAJZmu35aO7Ik3X3DMS7yRV9I
+VHnMCvnXEGgAGt322DBfd7RcnW946GfTjoc8CerrN+3cbmH8vMmLO+vsIx5bHVj/
+eQ6SM90aC17m48rdpOcce0ycWI0ZC7stmnjcMX96ZM5WfoxJ6L8bE3PFMLfGkzgJ
+G1iOuOgyK4veaIS/xUWaCYzrkI/XThmGetBpgVNsGX6zcRxDFF1VWn8VKIJWCKsO
+Q5dCHG0v/Qe241mcxuf0pkH2mirV/gruD9ou8yLUDIf1l+4ci0OaiDroxRQXTkag
+9bWScnVL8DpyEajtTZQLitxwrIakLqO4meG45pmIEMjSL/jBhAWT2ZCvsybv5ae3
+/N4jQmlGUomVlIjX8a9VKqGY1dUNSPRKBCU2fPh0jBlxkHWfS09Tv6YUoQQW4Yj5
+Pe/kWxRs558jiTDJGo6JZ8Mk2alV8cmxukFTSvcQ95/P8TGPu9ZhBO6DkJFyUNXe
+AsEvorSqi5TOqLrSV1HMLurFQisHJf3/R+svZOB0Qhb0cqykiFJ5o0NRgwWAO2yg
+tG3JiWAqVPdYAtRdSev5jHsLBLU1OEWBDJDTGRZcDu2qJK6Cqt5YoMHXW3AzV6Rj
+VJJ1BPBz079J8rh3vVedg7fk3QvXQx38ue/ULpbUUsiewlwIvLDcXkTmoHv6jnbK
+E6Ig5Q+uIgud9t3a38xd
+=CRaX
+-----END PGP SIGNATURE-----
+
+--Tcb1KvpfnM4LxW2s--
