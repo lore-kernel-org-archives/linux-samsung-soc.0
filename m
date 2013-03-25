@@ -1,58 +1,48 @@
-From: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 1/6] of/pci: Provide support for parsing PCI DT ranges
- property
-Date: Mon, 25 Mar 2013 10:21:06 +0000
-Message-ID: <20130325102106.GA20770@arm.com>
-References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com>
- <20130323104156.GL4977@n2100.arm.linux.org.uk>
- <20130323143704.5da5d20c@skate>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/2] ARM: dts: Add default pin states for client nodes on
+ Exynos4/5 platforms
+Date: Mon, 25 Mar 2013 19:36:10 +0900
+Message-ID: <17a201ce2944$91006440$b3012cc0$%kim@samsung.com>
+References: <1362573398-15126-1-git-send-email-thomas.abraham@linaro.org>
+ <CACRpkdbsCpV5_P=z44CMvsgps=AS9C62oprn6To6ExhoWZkvhA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130323143704.5da5d20c@skate>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:35304 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756301Ab3CYKgM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Mar 2013 06:36:12 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MK7009UTPG8AH40@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 19:36:10 +0900 (KST)
+In-reply-to: <CACRpkdbsCpV5_P=z44CMvsgps=AS9C62oprn6To6ExhoWZkvhA@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Linus Walleij' <linus.walleij@linaro.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, heiko@sntech.de, patches@linaro.org
 
-On Sat, Mar 23, 2013 at 01:37:04PM +0000, Thomas Petazzoni wrote:
+Linus Walleij wrote:
 > 
-> On Sat, 23 Mar 2013 10:41:56 +0000, Russell King - ARM Linux wrote:
+> On Wed, Mar 6, 2013 at 1:36 PM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
 > 
-> > Please look at how IORESOURCE_* stuff is defined:
-> > #define IORESOURCE_TYPE_BITS    0x00001f00      /* Resource type */
-> > #define IORESOURCE_IO           0x00000100      /* PCI/ISA I/O ports */
-> > #define IORESOURCE_MEM          0x00000200
-> > #define IORESOURCE_REG          0x00000300      /* Register offsets */
-> > #define IORESOURCE_IRQ          0x00000400
-> > #define IORESOURCE_DMA          0x00000800
-> > #define IORESOURCE_BUS          0x00001000
-> > 
-> > Notice that it's not an array of bits.
-> > 
-> > So this should be:
-> > 		if ((iter.flags & IORESOURCE_TYPE_BITS) == IORESOURCE_IO) {
+> > This patch series populates the default pin states in client nodes
+> > of Exynos4 and Exynos5 platforms. Exynos4/5 platforms are migrating
+> > to use pinctrl framework and having the default pin states listed
+> > in the client nodes allows the device core to setup the default
+> > pin configuration for all the controllers.
 > 
-> What I've done for the Marvell PCIe driver is:
+> The series:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > 
-> +	for_each_of_pci_range(&iter, np) {
-> +		unsigned long restype = iter.flags & IORESOURCE_TYPE_BITS;
-> +		if (restype == IORESOURCE_IO) {
-> [...]
-> +		if (restype == IORESOURCE_MEM) {
-> [...]
+Looks good to me, applied.
 
-OK I'll update this patch and also include Thierry's suggestions.
+Thanks.
 
-Andrew Murray
+- Kukjin
