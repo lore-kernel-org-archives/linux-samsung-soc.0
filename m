@@ -1,57 +1,51 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v5 2/7] irqchip: s3c24xx: fix comments on some camera interrupts
-Date: Mon, 25 Mar 2013 22:27:55 +0100
-Message-ID: <201303252227.55498.heiko@sntech.de>
-References: <201303252226.21402.heiko@sntech.de>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] ARM: convert arm/arm64 arch timer to use CLKSRC_OF init
+Date: Mon, 25 Mar 2013 16:28:10 -0500
+Message-ID: <5150C16A.3040208@gmail.com>
+References: <1363818875-15978-1-git-send-email-robherring2@gmail.com> <20130321110646.GE15279@e106331-lin.cambridge.arm.com> <20130325172633.GP30923@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:46957 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758935Ab3CYV1w (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Mar 2013 17:27:52 -0400
-In-Reply-To: <201303252226.21402.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20130325172633.GP30923@n2100.arm.linux.org.uk>
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Catalin Marinas <Catalin.Marinas@arm.com>, Magnus Damm <magnus.damm@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, John Stultz <john.stultz@linaro.org>, Will Deacon <Will.Deacon@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Might be confusing for people to read the code without having the
-datasheet nearby.
+On 03/25/2013 12:26 PM, Russell King - ARM Linux wrote:
+> On Thu, Mar 21, 2013 at 11:06:47AM +0000, Mark Rutland wrote:
+>> On TC2 this series leads to using the vexpress 24MHz clock as the sched clock
+>> in preference to the architected timer:
+>>
+>>   Architected local timer running at 24.00MHz (virt).
+>>   Switching to timer-based delay loop
+>>   Registered arch_counter_get_cntvct+0x0/0x14 as sched_clock source
+>>   sched_clock: 32 bits at 24MHz, resolution 41ns, wraps every 178956ms
+>>   Registered versatile_read_sched_clock+0x0/0x28 as sched_clock source
+>>
+>> As they both have the same frequency, neither overrides the other, and
+>> whichever gets registered last is used as the sched_clock. As accesses
+>> to the architected timer are going to have a much lower overhead, this
+>> isn't very nice (and it could be better to use it even if it had a lower
+>> frequency).
+> 
+> I'll remind people that sched_clock() is supposed to be functional at
+> the point in the boot sequence where the call to sched_init() is called.
+> That is after setup_arch() and *before* time_init() is called.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/irqchip/irq-s3c24xx.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I count integrator-cp, realview, versatile and non-DT VExpress that do
+this (not surprisingly) and 25 platforms or timer implementations plus
+arm64 that do sched_clock setup in time_init. What's broken by not
+moving these earlier?
 
-diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
-index 5c9f8b7..84afbc1 100644
---- a/drivers/irqchip/irq-s3c24xx.c
-+++ b/drivers/irqchip/irq-s3c24xx.c
-@@ -916,8 +916,8 @@ static struct s3c_irq_data init_s3c2440subint[32] = {
- 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-ERR */
- 	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* TC */
- 	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* ADC */
--	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* TC */
--	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* ADC */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_C */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_P */
- 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 9 }, /* WDT */
- 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 9 }, /* AC97 */
- };
-@@ -991,8 +991,8 @@ static struct s3c_irq_data init_s3c2442subint[32] = {
- 	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 15 }, /* UART2-ERR */
- 	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* TC */
- 	{ .type = S3C_IRQTYPE_EDGE, .parent_irq = 31 }, /* ADC */
--	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* TC */
--	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* ADC */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_C */
-+	{ .type = S3C_IRQTYPE_LEVEL, .parent_irq = 6 }, /* CAM_P */
- };
- 
- void __init s3c2442_init_irq(void)
--- 
-1.7.10.4
+We could probably fix arch timers relatively easily, but supporting the
+numerous memory-mapped timers will be harder. Most timers are also
+dependent on the clocks being initialized. That's really an orthogonal
+issue to what this patch series solves. This series is about selecting
+the best sched_clock when multiple timers are present. Perhaps one that
+is setup in init_early should be preferred over one setup in init_time.
+I'm not sure how to detect that.
+
+Rob
+
