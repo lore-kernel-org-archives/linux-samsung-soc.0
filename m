@@ -1,65 +1,114 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/2] ARM: dts: Add default pin states for client nodes on
- Exynos4/5 platforms
-Date: Mon, 25 Mar 2013 19:40:34 +0900
-Message-ID: <17a301ce2945$2dfc3a30$89f4ae90$%kim@samsung.com>
-References: <1362573398-15126-1-git-send-email-thomas.abraham@linaro.org>
- <CACRpkdbsCpV5_P=z44CMvsgps=AS9C62oprn6To6ExhoWZkvhA@mail.gmail.com>
- <514FF37F.7090405@linaro.org>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH v9 0/4] Add DRM FIMD DT support for Exynos4 DT Machines
+Date: Mon, 25 Mar 2013 16:19:39 +0530
+Message-ID: <CAGm_ybhxqzDJ8zNCEMnnaApVnfVzVzP_k6MSy7PA5NQZeYD5uw@mail.gmail.com>
+References: <1363960608-23825-1-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10564 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757175Ab3CYKkf (ORCPT
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:44383 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755671Ab3CYKtl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Mar 2013 06:40:35 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MK700HC0PNMRR41@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 19:40:34 +0900 (KST)
-In-reply-to: <514FF37F.7090405@linaro.org>
-Content-language: ko
+	Mon, 25 Mar 2013 06:49:41 -0400
+Received: by mail-wi0-f181.google.com with SMTP id hj8so2735632wib.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Mar 2013 03:49:39 -0700 (PDT)
+In-Reply-To: <1363960608-23825-1-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: 'Linus Walleij' <linus.walleij@linaro.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, heiko@sntech.de, patches@linaro.org
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, sunil joshi <joshi@samsung.com>, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
 
-Tushar Behera wrote:
-> 
-> On 03/07/2013 01:45 PM, Linus Walleij wrote:
-> > On Wed, Mar 6, 2013 at 1:36 PM, Thomas Abraham
-> > <thomas.abraham@linaro.org> wrote:
-> >
-> >> This patch series populates the default pin states in client nodes
-> >> of Exynos4 and Exynos5 platforms. Exynos4/5 platforms are migrating
-> >> to use pinctrl framework and having the default pin states listed
-> >> in the client nodes allows the device core to setup the default
-> >> pin configuration for all the controllers.
-> >
-> > The series:
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > Yours,
-> > Linus Walleij
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-
-> soc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >
-> 
-> Kukjin,
-> 
-> Would you be applying this patch-set to your tree? We need that to
-> rebase Arndale related patches for v3.10.
-> 
-Just note, you will see this series late tomorrow because I need to sort out
-samsung tree.
+Hi Kukjin Kim,
 
-Thanks for your reminder.
+Can you please apply these patches?
 
-- Kukjin
+On Fri, Mar 22, 2013 at 7:26 PM, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> This patch series adds support for DRM FIMD DT for Exynos4 DT Machines,
+> specifically for Exynos4412 SoC.
+>
+> changes since v8:
+>         - addressed comments to add missing documentation for clock and clock-names
+>         properties as pointed out by Sachin Kamat <sachin.kamat@linaro.org>
+>
+> changes since v7:
+>         - rebased to kgene's "for-next"
+>         - Migrated to Common Clock Framework
+>         - removed the patch "ARM: dts: Add FIMD AUXDATA node entry for exynos4 DT",
+>         as migration to Common Clock Framework will NOT need this.
+>         - addressed the comments raised by Sachin Kamat <sachin.kamat@linaro.org>
+>
+> changes since v6:
+>         - addressed comments and added interrupt-names = "fifo", "vsync", "lcd_sys"
+>         in exynos4.dtsi and re-ordered the interrupt numbering to match the order in
+>         interrupt combiner IP as suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>.
+>
+> changes since v5:
+>         - renamed the fimd binding documentation file name as "samsung-fimd.txt",
+>         since it not only talks about exynos display controller but also about
+>         previous samsung display controllers.
+>         - rephrased an abmigious statement about the interrupt combiner in the
+>         fimd binding documentation as pointed out by
+>         Sachin Kamat <sachin.kamat@linaro.org>
+>
+> changes since v4:
+>         - moved the fimd binding documentation to Documentation/devicetree/bindings/video/
+>         as suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+>
+>         - added more fimd compatiblity strings in fimd documentation as
+>         discussed at  https://patchwork.kernel.org/patch/2144861/ with
+>         Sylwester Nawrocki <sylvester.nawrocki@gmail.com> and
+>         Tomasz Figa <tomasz.figa@gmail.com>
+>
+>         - modified compatible string for exynos4 fimd as "exynos4210-fimd"
+>         exynos5 fimd as "exynos5250-fimd" to stick to the rule that compatible
+>         value should be named after first specific SoC model in which this
+>         particular IP version was included as discussed at
+>         https://patchwork.kernel.org/patch/2144861/
+>
+>         - documented more about the interrupt combiner and their order as
+>         suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+>
+> changes since v3:
+>         - rebased on
+>         http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=shortlog;h=refs/heads/for-next-next
+>
+> changes since v2:
+>         - added alias to 'fimd@11c00000' node
+>                 (reported by: Rahul Sharma <r.sh.open@gmail.com>)
+>         - removed 'lcd0_data' node as there was already a similar node lcd_data24
+>                 (reported by: Jingoo Han <jg1.han@samsung.com>
+>         - replaced spaces with tabs in display-timing node
+>
+> changes since v1:
+>         - added new patch to add FIMD DT binding Documentation
+>         - removed patch enabling SAMSUNG_DEV_BACKLIGHT and SAMSUNG_DEV_PMW
+>         for mach-exynos4 DT
+>         - added 'status' property to fimd DT node
+>
+> Is based on branch kgene's "for-next"
+> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+>
+> Sachin Kamat (1):
+>   ARM: dts: Add lcd pinctrl node entries for EXYNOS4412 SoC
+>
+> Vikas Sajjan (3):
+>   ARM: dts: Add FIMD node to exynos4
+>   ARM: dts: Add FIMD node and display timing node to
+>     exynos4412-origen.dts
+>   ARM: dts: Add FIMD DT binding Documentation
+>
+>  .../devicetree/bindings/video/samsung-fimd.txt     |   68 ++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4.dtsi                     |   11 ++++
+>  arch/arm/boot/dts/exynos4412-origen.dts            |   22 +++++++
+>  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          |   14 ++++
+>  4 files changed, 115 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/video/samsung-fimd.txt
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
