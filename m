@@ -1,36 +1,77 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: EXYNOS will support only DT from v3.10
-Date: Mon, 25 Mar 2013 20:01:23 +0900
-Message-ID: <17a501ce2948$17037610$450a6230$%kim@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v9 3/4] ARM: dts: Add FIMD node and display timing node to exynos4412-origen.dts
+Date: Mon, 25 Mar 2013 16:32:40 +0530
+Message-ID: <CAJuYYwTnE4_umPiXt5GNb_JYpKy+t5qkQBLscpYuhCry7t0Otw@mail.gmail.com>
+References: <1363960608-23825-1-git-send-email-vikas.sajjan@linaro.org>
+	<1363960608-23825-4-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23848 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755535Ab3CYLB0 (ORCPT
+Received: from mail-ia0-f173.google.com ([209.85.210.173]:49734 "EHLO
+	mail-ia0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756939Ab3CYLCl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Mar 2013 07:01:26 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MK700BB9QMCUH90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Mar 2013 20:01:24 +0900 (KST)
-Content-language: ko
+	Mon, 25 Mar 2013 07:02:41 -0400
+Received: by mail-ia0-f173.google.com with SMTP id h37so5391942iak.18
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Mar 2013 04:02:40 -0700 (PDT)
+In-Reply-To: <1363960608-23825-4-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, olof@lixom.net, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas P Abraham' <thomas.ab@samsung.com>, heiko@sntech.de, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, linaro-kernel@lists.linaro.org
 
-Hi all,
+On 22 March 2013 19:26, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> Adds FIMD DT support to Origen quad board
+>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4412-origen.dts |   22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+> index a5478bd..8953c92 100644
+> --- a/arch/arm/boot/dts/exynos4412-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
+> @@ -70,6 +70,28 @@
+>                 status = "okay";
+>         };
+>
+> +       fimd@11c00000 {
+> +               samsung,power-domain = <&pd_lcd0>;
+'
+Does the power-domain have be board specific. Can this be moved into
+SoC specific dtsi file?
 
-As we discussed before, it's time to decide to support non-DT for EXYNOS
-SoCs.
+Thanks,
+Thomas.
 
-If everybody else agrees to drop non-DT support from v3.10, I will. Feel
-free to talk your opinion about that.
-
-Thanks.
-
-- Kukjin
+> +               pinctrl-0 = <&lcd_sync &lcd_clk &lcd_en &lcd_data24 &pwm1_out>;
+> +               pinctrl-names = "default";
+> +               status = "okay";
+> +       };
+> +
+> +       display-timings {
+> +               native-mode = <&timing0>;
+> +               timing0: timing@0 {
+> +                       clock-frequency = <50000>;
+> +                       hactive = <1024>;
+> +                       vactive = <600>;
+> +                       hfront-porch = <64>;
+> +                       hback-porch = <16>;
+> +                       hsync-len = <48>;
+> +                       vback-porch = <64>;
+> +                       vfront-porch = <16>;
+> +                       vsync-len = <3>;
+> +               };
+> +       };
+> +
+>         serial@13800000 {
+>                 status = "okay";
+>         };
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
