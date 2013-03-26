@@ -1,41 +1,46 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 4/6] pci: Add PCIe driver for Samsung Exynos
-Date: Tue, 26 Mar 2013 16:33:21 -0500
-Message-ID: <51521421.9020906@gmail.com>
-References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com> <00c301ce277b$f2790080$d76b0180$%han@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH v6 0/7] move s3c24xx-irq to drivers/irqchip and add dt support
+Date: Tue, 26 Mar 2013 23:05:49 +0100
+Message-ID: <201303262305.49725.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <00c301ce277b$f2790080$d76b0180$%han@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:60954 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751761Ab3CZWFw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Mar 2013 18:05:52 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 03/22/2013 11:07 PM, Jingoo Han wrote:
-> Exynos5440 has a PCIe controller which can be used as Root Complex.
-> This driver supports a PCIe controller as Root Complex mode.
-> 
-> Signed-off-by: Surendranath Gurivireddy Balla <suren.reddy@samsung.com>
-> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  .../devicetree/bindings/pci/exynos-pcie.txt        |   56 +
->  drivers/pci/host/Kconfig                           |    5 +
->  drivers/pci/host/Makefile                          |    1 +
->  drivers/pci/host/pci-exynos.c                      | 1139 ++++++++++++++++++++
->  4 files changed, 1201 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/exynos-pcie.txt
->  create mode 100644 drivers/pci/host/Makefile
->  create mode 100644 drivers/pci/host/pci-exynos.c
+This v6 addresses more comments from Arnd Bergmann, setting the compatible
+property to the first supported SoC (s3c2410) instead of using the s3c24xx
+wildcard. It also switches the parent-irq and controller irq in the dt
+irq descriptor bringing it to a format of
 
-[...]
+  <ctrl_num parent_irq ctrl_irq type>
 
-> +
-> +/* synopsis specific PCIE configuration registers*/
 
-If this is a standard IP block, then the driver naming should reflect
-that. I suspect there are several others with the same IP block.
+Heiko Stuebner (7):
+  ARM: S3C24XX: move irq driver to drivers/irqchip
+  irqchip: s3c24xx: fix comments on some camera interrupts
+  irqchip: s3c24xx: fix irqlist of second s3c2416 controller
+  irqchip: s3c24xx: add irq_set_type callback for basic interrupt types
+  irqchip: s3c24xx: globally keep track of the created intc instances
+  irqchip: s3c24xx: make interrupt handling independent of irq_domain structure
+  irqchip: s3c24xx: add devicetree support
 
-Rob
+ .../interrupt-controller/samsung,s3c24xx-irq.txt   |   53 +++
+ arch/arm/mach-s3c24xx/Makefile                     |    2 +-
+ drivers/irqchip/Makefile                           |    1 +
+ .../irq.c => drivers/irqchip/irq-s3c24xx.c         |  388 ++++++++++++++++----
+ 4 files changed, 373 insertions(+), 71 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/samsung,s3c24xx-irq.txt
+ rename arch/arm/mach-s3c24xx/irq.c => drivers/irqchip/irq-s3c24xx.c (78%)
+
+-- 
+1.7.10.4
