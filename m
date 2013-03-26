@@ -1,167 +1,129 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH V5 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Tue, 26 Mar 2013 13:48:31 +0800
-Message-ID: <20130326054830.GD5148@S2101-09.ap.freescale.net>
-References: <1364260913-25490-1-git-send-email-achew@nvidia.com>
- <1364260913-25490-7-git-send-email-achew@nvidia.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: [Suggestion] kernel: 'now' may be used uninitialized in posix_cpu_timer_schedule
+ function
+Date: Tue, 26 Mar 2013 14:41:23 +0800
+Message-ID: <51514313.1070505@asianux.com>
+References: <51514202.2030504@asianux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from co1ehsobe002.messaging.microsoft.com ([216.32.180.185]:19147
-	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752940Ab3CZFsI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 01:48:08 -0400
-Content-Disposition: inline
-In-Reply-To: <1364260913-25490-7-git-send-email-achew@nvidia.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51514202.2030504@asianux.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: tglx@linutronix.de, Greg KH <gregkh@linuxfoundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Chew <achew@nvidia.com>
-Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, linux@prisktech.co.nz, thierry.reding@avionic-design.de, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 
-On Mon, Mar 25, 2013 at 06:21:50PM -0700, Andrew Chew wrote:
-> The pwm-backlight driver now takes a mandatory regulator that is gotten
-> during driver probe.  Initialize a dummy regulator to satisfy this
-> requirement.
-> 
-> Signed-off-by: Andrew Chew <achew@nvidia.com>
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> Moved backlight power regulator into top-level regulators node.
-> 
->  arch/arm/boot/dts/imx23-evk.dts      |  6 ++++++
->  arch/arm/boot/dts/imx28-apf28dev.dts |  6 ++++++
->  arch/arm/boot/dts/imx28-cfa10049.dts |  6 ++++++
->  arch/arm/boot/dts/imx28-evk.dts      |  6 ++++++
->  arch/arm/boot/dts/imx28-tx28.dts     | 11 +++++++++++
->  5 files changed, 35 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx23-evk.dts b/arch/arm/boot/dts/imx23-evk.dts
-> index 035c13f..ce5048e 100644
-> --- a/arch/arm/boot/dts/imx23-evk.dts
-> +++ b/arch/arm/boot/dts/imx23-evk.dts
-> @@ -95,6 +95,11 @@
->  			regulator-max-microvolt = <3300000>;
->  			gpio = <&gpio1 29 0>;
->  		};
-> +
-> +		reg_backlight_power: fixed-regulator {
 
-What I meant is the node name "fixed-regulator" is too generic.  But it
-shouldn't an issue right away, and we can fix that later.
+ oh, sorry, it seems better to let ARM folks know about it.
 
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
+ ;-)
 
-> +			compatible = "regulator-fixed";
-> +			regulator-name = "backlight-power";
-> +	        };
->  	};
->  
->  	backlight {
-> @@ -102,5 +107,6 @@
->  		pwms = <&pwm 2 5000000>;
->  		brightness-levels = <0 4 8 16 32 64 128 255>;
->  		default-brightness-level = <6>;
-> +		power-supply = <&reg_backlight_power>;
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/imx28-apf28dev.dts b/arch/arm/boot/dts/imx28-apf28dev.dts
-> index 6d8865b..e354dc5 100644
-> --- a/arch/arm/boot/dts/imx28-apf28dev.dts
-> +++ b/arch/arm/boot/dts/imx28-apf28dev.dts
-> @@ -132,6 +132,11 @@
->  			regulator-max-microvolt = <5000000>;
->  			gpio = <&gpio1 23 1>;
->  		};
-> +
-> +		reg_backlight_power: fixed-regulator {
-> +			compatible = "regulator-fixed";
-> +			regulator-name = "backlight-power";
-> +		};
->  	};
->  
->  	leds {
-> @@ -150,5 +155,6 @@
->  		pwms = <&pwm 3 191000>;
->  		brightness-levels = <0 4 8 16 32 64 128 255>;
->  		default-brightness-level = <6>;
-> +		power-supply = <&reg_backlight_power>;
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/imx28-cfa10049.dts b/arch/arm/boot/dts/imx28-cfa10049.dts
-> index a0d3e9f..a6eddd6 100644
-> --- a/arch/arm/boot/dts/imx28-cfa10049.dts
-> +++ b/arch/arm/boot/dts/imx28-cfa10049.dts
-> @@ -205,6 +205,11 @@
->  			regulator-max-microvolt = <5000000>;
->  			gpio = <&gpio0 7 1>;
->  		};
-> +
-> +		reg_backlight_power: fixed-regulator {
-> +			compatible = "regulator-fixed";
-> +			regulator-name = "backlight-power";
-> +		};
->  	};
->  
->  	ahb@80080000 {
-> @@ -304,5 +309,6 @@
->  		pwms = <&pwm 3 5000000>;
->  		brightness-levels = <0 4 8 16 32 64 128 255>;
->  		default-brightness-level = <6>;
-> +		power-supply = <&reg_backlight_power>;
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/imx28-evk.dts b/arch/arm/boot/dts/imx28-evk.dts
-> index 2da316e..7ba7216 100644
-> --- a/arch/arm/boot/dts/imx28-evk.dts
-> +++ b/arch/arm/boot/dts/imx28-evk.dts
-> @@ -285,6 +285,11 @@
->  			gpio = <&gpio3 8 0>;
->  			enable-active-high;
->  		};
-> +
-> +		reg_backlight_power: fixed-regulator {
-> +			compatible = "regulator-fixed";
-> +			regulator-name = "backlight-power";
-> +		};
->  	};
->  
->  	sound {
-> @@ -312,5 +317,6 @@
->  		pwms = <&pwm 2 5000000>;
->  		brightness-levels = <0 4 8 16 32 64 128 255>;
->  		default-brightness-level = <6>;
-> +		power-supply = <&reg_backlight_power>;
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/imx28-tx28.dts b/arch/arm/boot/dts/imx28-tx28.dts
-> index 37be532..7fa5a44 100644
-> --- a/arch/arm/boot/dts/imx28-tx28.dts
-> +++ b/arch/arm/boot/dts/imx28-tx28.dts
-> @@ -97,6 +97,16 @@
->  		};
->  	};
->  
-> +	regulators {
-> +		compatible = "simple-bus";
-> +
-> +		reg_backlight_power: fixed-regulator {
-> +			compatible = "regulator-fixed";
-> +			regulator-name = "backlight-power";
-> +		};
-> +	};
-> +
-> +
->  	leds {
->  		compatible = "gpio-leds";
->  
-> @@ -112,5 +122,6 @@
->  		pwms = <&pwm 0 5000000>;
->  		brightness-levels = <0 4 8 16 32 64 128 255>;
->  		default-brightness-level = <6>;
-> +		power-supply = <&reg_backlight_power>;
->  	};
->  };
-> -- 
-> 1.8.1.5
-> 
+
+On 2013=E5=B9=B403=E6=9C=8826=E6=97=A5 14:36, Chen Gang wrote:
+> Hello Maintainers:
+>=20
+>   compiling with EXTRA_CFLAGS=3D-W:
+>     make V=3D1 EXTRA_CFLAGS=3D-W ARCH=3Darm s3c2410_defconfig
+>     make V=3D1 EXTRA_CFLAGS=3D-W ARCH=3Darm menuconfig
+>       set 'arm-linux-gnu-' for cross chain prefix
+>     make V=3D1 EXTRA_CFLAGS=3D-W ARCH=3Darm
+>=20
+>   it will report:
+>     kernel/posix-cpu-timers.c:1065:19: warning: =E2=80=98now=E2=80=99=
+ may be used uninitialized in this function [-Wuninitialized]
+>=20
+>   it seems it is really a bug.
+>     can any member help to fix it ?
+>     or provide additional suggestion ?
+>       (it seems only "unsigned long long now =3D 0" is not enough).
+>=20
+>   :-)
+>=20
+>=20
+>=20
+> in kernel/posix-cpu-timers.c:
+>   for variable 'now' is defined without initialization (line 1029)
+>   it may be used without initialization (line 1066)
+>=20
+>=20
+> 1026 void posix_cpu_timer_schedule(struct k_itimer *timer)
+> 1027 {
+> 1028         struct task_struct *p =3D timer->it.cpu.task;
+> 1029         unsigned long long now;
+> 1030=20
+> 1031         if (unlikely(p =3D=3D NULL))
+> 1032                 /*
+> 1033                  * The task was cleaned up already, no future fi=
+rings.
+> 1034                  */
+> 1035                 goto out;
+> 1036=20
+> 1037         /*
+> 1038          * Fetch the current sample and update the timer's expir=
+y time.
+> 1039          */
+> 1040         if (CPUCLOCK_PERTHREAD(timer->it_clock)) {
+> 1041                 cpu_clock_sample(timer->it_clock, p, &now);
+> 1042                 bump_cpu_timer(timer, now);
+> 1043                 if (unlikely(p->exit_state)) {
+> 1044                         clear_dead_task(timer, now);
+> 1045                         goto out;
+> 1046                 }
+> 1047                 read_lock(&tasklist_lock); /* arm_timer needs it=
+=2E  */
+> 1048                 spin_lock(&p->sighand->siglock);
+> 1049         } else {
+> 1050                 read_lock(&tasklist_lock);
+> 1051                 if (unlikely(p->sighand =3D=3D NULL)) {
+> 1052                         /*
+> 1053                          * The process has been reaped.
+> 1054                          * We can't even collect a sample any mo=
+re.
+> 1055                          */
+> 1056                         put_task_struct(p);
+> 1057                         timer->it.cpu.task =3D p =3D NULL;
+> 1058                         timer->it.cpu.expires =3D 0;
+> 1059                         goto out_unlock;
+> 1060                 } else if (unlikely(p->exit_state) && thread_gro=
+up_empty(p)) {
+> 1061                         /*
+> 1062                          * We've noticed that the thread is dead=
+, but
+> 1063                          * not yet reaped.  Take this opportunit=
+y to
+> 1064                          * drop our task ref.
+> 1065                          */
+> 1066                         clear_dead_task(timer, now);
+> 1067                         goto out_unlock;
+> 1068                 }
+> 1069                 spin_lock(&p->sighand->siglock);
+> 1070                 cpu_timer_sample_group(timer->it_clock, p, &now)=
+;
+> 1071                 bump_cpu_timer(timer, now);
+> 1072                 /* Leave the tasklist_lock locked for the call b=
+elow.  */
+> 1073         }
+> 1074=20
+> 1075         /*
+> 1076          * Now re-arm for the new expiry time.
+> 1077          */
+> 1078         BUG_ON(!irqs_disabled());
+> 1079         arm_timer(timer);
+> 1080         spin_unlock(&p->sighand->siglock);
+> 1081=20
+> 1082 out_unlock:
+> 1083         read_unlock(&tasklist_lock);
+> 1084=20
+> 1085 out:
+> 1086         timer->it_overrun_last =3D timer->it_overrun;
+> 1087         timer->it_overrun =3D -1;
+> 1088         ++timer->it_requeue_pending;
+> 1089 }
+>=20
+
+
+--=20
+Chen Gang
+
+Asianux Corporation
