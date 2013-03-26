@@ -1,79 +1,87 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 08/10] s5p-fimc: Ensure proper s_power() call order in the
- ISP datapaths
-Date: Tue, 26 Mar 2013 18:29:50 +0100
-Message-ID: <1364318992-20562-9-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 03/10] s5p-fimc: Update graph traversal for entities with
+ multiple source pads
+Date: Tue, 26 Mar 2013 18:29:45 +0100
+Message-ID: <1364318992-20562-4-git-send-email-s.nawrocki@samsung.com>
 References: <1364318992-20562-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62517 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753209Ab3CZRag (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 13:30:36 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1364318992-20562-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Since the FIMC-IS firmware communicates with an image sensor directly
-through the ISP I2C bus controllers the sub-devices power supplies
-cannot be simply enabled from left to right or disabled from right
-to left along the processing pipeline. Thus a subdev index to call
-s_power() on is looked up from a table, rather than doing the op call
-based on increasing/decreasing indexes.
+We cannot assume that the passed entity the fimc_pipeline_prepare()
+function is supposed to start the media graph traversal from will
+always have its sink pad at pad index 0. Find the starting media
+entity's sink pad by iterating over its all pads and checking the
+pad flags. This ensures proper handling of FIMC, FIMC-LITE and
+FIMC-IS-ISP subdevs that have more than one sink and one source pad.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/platform/s5p-fimc/fimc-mdevice.c |   26 ++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ drivers/media/platform/s5p-fimc/fimc-mdevice.c |   24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.c b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-index 53bfd20..06d1eb4 100644
+index b689166..abd3ad3 100644
 --- a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
 +++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-@@ -128,23 +128,33 @@ static int __subdev_set_power(struct v4l2_subdev *sd, int on)
+@@ -40,14 +40,13 @@ static int __fimc_md_set_camclk(struct fimc_md *fmd,
+ 				bool on);
+ /**
+  * fimc_pipeline_prepare - update pipeline information with subdevice pointers
+- * @fimc: fimc device terminating the pipeline
++ * @me: media entity terminating the pipeline
   *
-  * Needs to be called with the graph mutex held.
+  * Caller holds the graph mutex.
   */
--static int fimc_pipeline_s_power(struct fimc_pipeline *p, bool state)
-+static int fimc_pipeline_s_power(struct fimc_pipeline *p, bool on)
+ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
+ 				  struct media_entity *me)
  {
--	unsigned int i;
--	int ret;
-+	static const u8 seq[2][IDX_MAX - 1] = {
-+		{ IDX_IS_ISP, IDX_SENSOR, IDX_CSIS, IDX_FLITE },
-+		{ IDX_CSIS, IDX_FLITE, IDX_SENSOR, IDX_IS_ISP },
-+	};
-+	int i, ret = 0;
+-	struct media_pad *pad = &me->pads[0];
+ 	struct v4l2_subdev *sd;
+ 	int i;
  
- 	if (p->subdevs[IDX_SENSOR] == NULL)
- 		return -ENXIO;
+@@ -55,15 +54,21 @@ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
+ 		p->subdevs[i] = NULL;
  
--	for (i = 0; i < IDX_MAX; i++) {
--		unsigned int idx = state ? (IDX_MAX - 1) - i : i;
-+	for (i = 0; i < IDX_MAX - 1; i++) {
-+		unsigned int idx = seq[on][i];
+ 	while (1) {
+-		if (!(pad->flags & MEDIA_PAD_FL_SINK))
+-			break;
++		struct media_pad *pad = NULL;
 +
-+		ret = __subdev_set_power(p->subdevs[idx], on);
-+
++		/* Find remote source pad */
++		for (i = 0; i < me->num_pads; i++) {
++			struct media_pad *spad = &me->pads[i];
++			if (!(spad->flags & MEDIA_PAD_FL_SINK))
++				continue;
++			pad = media_entity_remote_source(spad);
++			if (pad)
++				break;
++		}
  
--		ret = __subdev_set_power(p->subdevs[idx], state);
- 		if (ret < 0 && ret != -ENXIO)
--			return ret;
-+			goto error;
- 	}
+-		/* source pad */
+-		pad = media_entity_remote_source(pad);
+ 		if (pad == NULL ||
+ 		    media_entity_type(pad->entity) != MEDIA_ENT_T_V4L2_SUBDEV)
+ 			break;
 -
- 	return 0;
-+error:
-+	for (; i >= 0; i--) {
-+		unsigned int idx = seq[on][i];
-+		__subdev_set_power(p->subdevs[idx], !on);
-+	}
-+	return ret;
+ 		sd = media_entity_to_v4l2_subdev(pad->entity);
+ 
+ 		switch (sd->grp_id) {
+@@ -84,8 +89,9 @@ static void fimc_pipeline_prepare(struct fimc_pipeline *p,
+ 			pr_warn("%s: Unknown subdev grp_id: %#x\n",
+ 				__func__, sd->grp_id);
+ 		}
+-		/* sink pad */
+-		pad = &sd->entity.pads[0];
++		me = &sd->entity;
++		if (me->num_pads == 1)
++			break;
+ 	}
  }
  
- /**
 -- 
 1.7.9.5
