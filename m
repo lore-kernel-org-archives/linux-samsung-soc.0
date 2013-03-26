@@ -1,8 +1,8 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 2/5] exynos4-is: Use common driver data for all FIMC-LITE IP
+Subject: [PATCH v2 1/4] exynos4-is: Use common driver data for all FIMC-LITE IP
  instances
-Date: Tue, 26 Mar 2013 19:38:16 +0100
-Message-ID: <1364323101-22046-5-git-send-email-s.nawrocki@samsung.com>
+Date: Tue, 26 Mar 2013 19:38:14 +0100
+Message-ID: <1364323101-22046-3-git-send-email-s.nawrocki@samsung.com>
 References: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
