@@ -1,53 +1,79 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v6 3/7] irqchip: s3c24xx: fix irqlist of second s3c2416 controller
-Date: Tue, 26 Mar 2013 23:07:59 +0100
-Message-ID: <201303262307.59895.heiko@sntech.de>
+Subject: [PATCH v6 4/7] irqchip: s3c24xx: add irq_set_type callback for basic interrupt types
+Date: Tue, 26 Mar 2013 23:08:38 +0100
+Message-ID: <201303262308.38741.heiko@sntech.de>
 References: <201303262305.49725.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:32798 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:32818 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752529Ab3CZWHz (ORCPT
+	id S1751986Ab3CZWId (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 18:07:55 -0400
+	Tue, 26 Mar 2013 18:08:33 -0400
 In-Reply-To: <201303262305.49725.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-The list in used was from the s3c2450, a close cousin of the s3c2416.
-As it's not possible to distinguish between the s3c2416 and s3c2450
-the additional interrupts of the s3c2450 will only be available thru
-devicetree later.
+Enables post-init setting of the desired typehandler for the interrupt.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/irqchip/irq-s3c24xx.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-s3c24xx.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
-index 84afbc1..a565eb8 100644
+index a565eb8..7cba4f0 100644
 --- a/drivers/irqchip/irq-s3c24xx.c
 +++ b/drivers/irqchip/irq-s3c24xx.c
-@@ -835,13 +835,12 @@ static struct s3c_irq_data init_s3c2416subint[32] = {
+@@ -123,6 +123,28 @@ static inline void s3c_irq_ack(struct irq_data *data)
+ 		__raw_writel(bitval, intc->reg_intpnd);
+ }
  
- static struct s3c_irq_data init_s3c2416_second[32] = {
- 	{ .type = S3C_IRQTYPE_EDGE }, /* 2D */
--	{ .type = S3C_IRQTYPE_EDGE }, /* IIC1 */
-+	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
- 	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
- 	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
- 	{ .type = S3C_IRQTYPE_EDGE }, /* PCM0 */
--	{ .type = S3C_IRQTYPE_EDGE }, /* PCM1 */
-+	{ .type = S3C_IRQTYPE_NONE }, /* reserved */
- 	{ .type = S3C_IRQTYPE_EDGE }, /* I2S0 */
--	{ .type = S3C_IRQTYPE_EDGE }, /* I2S1 */
++static int s3c_irq_type(struct irq_data *data, unsigned int type)
++{
++	switch (type) {
++	case IRQ_TYPE_NONE:
++		break;
++	case IRQ_TYPE_EDGE_RISING:
++	case IRQ_TYPE_EDGE_FALLING:
++	case IRQ_TYPE_EDGE_BOTH:
++		irq_set_handler(data->irq, handle_edge_irq);
++		break;
++	case IRQ_TYPE_LEVEL_LOW:
++	case IRQ_TYPE_LEVEL_HIGH:
++		irq_set_handler(data->irq, handle_level_irq);
++		break;
++	default:
++		pr_err("No such irq type %d", type);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int s3c_irqext_type_set(void __iomem *gpcon_reg,
+ 			       void __iomem *extint_reg,
+ 			       unsigned long gpcon_offset,
+@@ -228,6 +250,7 @@ static struct irq_chip s3c_irq_chip = {
+ 	.irq_ack	= s3c_irq_ack,
+ 	.irq_mask	= s3c_irq_mask,
+ 	.irq_unmask	= s3c_irq_unmask,
++	.irq_set_type	= s3c_irq_type,
+ 	.irq_set_wake	= s3c_irq_wake
  };
  
- void __init s3c2416_init_irq(void)
+@@ -236,6 +259,7 @@ static struct irq_chip s3c_irq_level_chip = {
+ 	.irq_mask	= s3c_irq_mask,
+ 	.irq_unmask	= s3c_irq_unmask,
+ 	.irq_ack	= s3c_irq_ack,
++	.irq_set_type	= s3c_irq_type,
+ };
+ 
+ static struct irq_chip s3c_irqext_chip = {
 -- 
 1.7.10.4
