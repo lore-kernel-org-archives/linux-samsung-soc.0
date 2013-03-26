@@ -1,15 +1,15 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 4/4] exynos4-is: Ensure proper media pipeline state on
+Subject: [PATCH v2 5/5] exynos4-is: Ensure proper media pipeline state on
  device close
-Date: Tue, 26 Mar 2013 19:38:20 +0100
-Message-ID: <1364323101-22046-9-git-send-email-s.nawrocki@samsung.com>
+Date: Tue, 26 Mar 2013 19:38:21 +0100
+Message-ID: <1364323101-22046-10-git-send-email-s.nawrocki@samsung.com>
 References: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56499 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760098Ab3CZSjE (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:51566 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760098Ab3CZSjH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 14:39:04 -0400
+	Tue, 26 Mar 2013 14:39:07 -0400
 In-reply-to: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
