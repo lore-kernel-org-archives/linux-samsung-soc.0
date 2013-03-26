@@ -1,98 +1,55 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 6/6] usb: phy: samsung: Add support for USB 2.0 PHY on Exynos
- 4x12
-Date: Tue, 26 Mar 2013 15:53:15 +0100
-Message-ID: <1364309595-16102-7-git-send-email-t.figa@samsung.com>
-References: <1364309595-16102-1-git-send-email-t.figa@samsung.com>
+Subject: [PATCH] tty: serial: samsung: Disable interrupts in a suspend-friendly
+ way
+Date: Tue, 26 Mar 2013 15:57:35 +0100
+Message-ID: <1364309855-10391-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43210 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933632Ab3CZOxs (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:39421 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933674Ab3CZO5v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 10:53:48 -0400
-In-reply-to: <1364309595-16102-1-git-send-email-t.figa@samsung.com>
+	Tue, 26 Mar 2013 10:57:51 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-usb@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, p.paneri@samsung.com, gautam.vivek@samsung.com, m.szyprowski@samsung.com, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-serial@vger.kernel.org, gregkh@linuxfoundation.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-This patch adds driver data for Exynos 4x12 USB 2.0 PHY.
+Since the interrupt mask register is not preserved across system suspend
+and it defaults to all interrupts enabled, it is not enough to disable
+UART interrupt.
+
+This patch adds free_irq to port shutdown and mask setting to port
+startup to handle IRQ disabling in a suspend-friendly way. In addition,
+a bug caused by multiple request_irq calls in port startup callback is
+fixed.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/usb/phy/phy-samsung-usb.h  |  1 +
- drivers/usb/phy/phy-samsung-usb2.c | 18 ++++++++++++++++++
- 2 files changed, 19 insertions(+)
+ drivers/tty/serial/samsung.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/usb/phy/phy-samsung-usb.h b/drivers/usb/phy/phy-samsung-usb.h
-index 31e2ec3..585d12f 100644
---- a/drivers/usb/phy/phy-samsung-usb.h
-+++ b/drivers/usb/phy/phy-samsung-usb.h
-@@ -241,6 +241,7 @@
- enum samsung_cpu_type {
- 	TYPE_S3C64XX,
- 	TYPE_EXYNOS4210,
-+	TYPE_EXYNOS4X12,
- 	TYPE_EXYNOS5250,
- };
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 2769a38..b386fc8 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -446,6 +446,8 @@ static void s3c24xx_serial_shutdown(struct uart_port *port)
  
-diff --git a/drivers/usb/phy/phy-samsung-usb2.c b/drivers/usb/phy/phy-samsung-usb2.c
-index b81347b..381f8d4 100644
---- a/drivers/usb/phy/phy-samsung-usb2.c
-+++ b/drivers/usb/phy/phy-samsung-usb2.c
-@@ -177,6 +177,7 @@ static void samsung_usb2phy_enable(struct samsung_usbphy *sphy)
- 		rstcon |= RSTCON_SWRST;
- 		break;
- 	case TYPE_EXYNOS4210:
-+	case TYPE_EXYNOS4X12:
- 		phypwr &= ~PHYPWR_NORMAL_MASK_PHY0;
- 		rstcon |= RSTCON_SWRST;
- 	default:
-@@ -240,6 +241,7 @@ static void samsung_usb2phy_disable(struct samsung_usbphy *sphy)
- 		phypwr |= PHYPWR_NORMAL_MASK;
- 		break;
- 	case TYPE_EXYNOS4210:
-+	case TYPE_EXYNOS4X12:
- 		phypwr |= PHYPWR_NORMAL_MASK_PHY0;
- 	default:
- 		break;
-@@ -456,6 +458,16 @@ static const struct samsung_usbphy_drvdata usb2phy_exynos4 = {
- 	.phy_disable		= samsung_usb2phy_disable,
- };
- 
-+static const struct samsung_usbphy_drvdata usb2phy_exynos4x12 = {
-+	.cpu_type		= TYPE_EXYNOS4X12,
-+	.devphy_en_mask		= EXYNOS_USBPHY_ENABLE,
-+	.hostphy_en_mask	= EXYNOS_USBPHY_ENABLE,
-+	.rate_to_clksel		= samsung_usbphy_rate_to_clksel_4x12,
-+	.set_isolation		= samsung_usbphy_set_isolation_4210,
-+	.phy_enable		= samsung_usb2phy_enable,
-+	.phy_disable		= samsung_usb2phy_disable,
-+};
+ 	/* Clear pending interrupts and mask all interrupts */
+ 	if (s3c24xx_serial_has_interrupt_mask(port)) {
++		free_irq(port->irq, ourport);
 +
- static struct samsung_usbphy_drvdata usb2phy_exynos5 = {
- 	.cpu_type		= TYPE_EXYNOS5250,
- 	.hostphy_en_mask	= EXYNOS_USBPHY_ENABLE,
-@@ -475,6 +487,9 @@ static const struct of_device_id samsung_usbphy_dt_match[] = {
- 		.compatible = "samsung,exynos4210-usb2phy",
- 		.data = &usb2phy_exynos4,
- 	}, {
-+		.compatible = "samsung,exynos4x12-usb2phy",
-+		.data = &usb2phy_exynos4x12,
-+	}, {
- 		.compatible = "samsung,exynos5250-usb2phy",
- 		.data = &usb2phy_exynos5
- 	},
-@@ -491,6 +506,9 @@ static struct platform_device_id samsung_usbphy_driver_ids[] = {
- 		.name		= "exynos4210-usb2phy",
- 		.driver_data	= (unsigned long)&usb2phy_exynos4,
- 	}, {
-+		.name		= "exynos4x12-usb2phy",
-+		.driver_data	= (unsigned long)&usb2phy_exynos4x12,
-+	}, {
- 		.name		= "exynos5250-usb2phy",
- 		.driver_data	= (unsigned long)&usb2phy_exynos5,
- 	},
+ 		wr_regl(port, S3C64XX_UINTP, 0xf);
+ 		wr_regl(port, S3C64XX_UINTM, 0xf);
+ 	}
+@@ -505,6 +507,8 @@ static int s3c64xx_serial_startup(struct uart_port *port)
+ 	dbg("s3c64xx_serial_startup: port=%p (%08lx,%p)\n",
+ 	    port->mapbase, port->membase);
+ 
++	wr_regl(port, S3C64XX_UINTM, 0xf);
++
+ 	ret = request_irq(port->irq, s3c64xx_serial_handle_irq, IRQF_SHARED,
+ 			  s3c24xx_serial_portname(port), ourport);
+ 	if (ret) {
 -- 
 1.8.1.5
