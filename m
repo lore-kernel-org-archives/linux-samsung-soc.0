@@ -1,99 +1,83 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v5 7/7] irqchip: s3c24xx: add devicetree support
-Date: Tue, 26 Mar 2013 08:38:42 +0100
-Message-ID: <201303260838.42804.heiko@sntech.de>
-References: <201303252226.21402.heiko@sntech.de> <201303252234.21314.heiko@sntech.de> <201303252200.46258.arnd@arndb.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH V5 9/9] pwm_bl: Add mandatory backlight power regulator
+Date: Tue, 26 Mar 2013 08:37:09 +0100
+Message-ID: <20130326073709.GB31388@avionic-0098.mockup.avionic-design.de>
+References: <1364260913-25490-1-git-send-email-achew@nvidia.com>
+ <1364260913-25490-10-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:52099 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752825Ab3CZHin convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 03:38:43 -0400
-In-Reply-To: <201303252200.46258.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1364260913-25490-10-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-
-Hi Arnd,
-
-thanks again for taking the time to look at the changes.
 
 
-Am Montag, 25. M=E4rz 2013, 23:00:46 schrieb Arnd Bergmann:
-> On Monday 25 March 2013, Heiko St=FCbner wrote:
-> > Add the necessary code to initialize the interrupt controller
-> > thru devicetree data using the irqchip infrastructure.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->=20
-> The binding looks fine now. I have a few detail comments but am happy
-> with the series otherwise.
->=20
-> > +Required properties:
-> > +- compatible: Compatible property value should be "samsung,s3c24xx=
--irq"
-> > +  for non s3c2416 machines and "samsung,s3c2416-irq" for s3c2416
-> > machines
->=20
-> We try to avoid wildcards in the "compatible" properties. Better use
-> the name of the first SoC that had this controller, and let the other
-> ones mark themselves as compatible with that one.
->=20
-> I guess "samsung,s3c2410-irq" would be the right identifier here.
+--nVMJ2NtxeReIH9PS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ok, sounds sensible
+On Mon, Mar 25, 2013 at 06:21:53PM -0700, Andrew Chew wrote:
+[...]
+> diff --git a/Documentation/devicetree/bindings/video/backlight/pwm-backli=
+ght.txt b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.t=
+xt
+> index 1e4fc72..cb2d46a 100644
+> --- a/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
+> +++ b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
+> @@ -10,6 +10,11 @@ Required properties:
+>        last value in the array represents a 100% duty cycle (brightest).
+>    - default-brightness-level: the default brightness level (index into t=
+he
+>        array defined by the "brightness-levels" property)
+> +  - power-supply: A phandle to the regulator device tree node. This
+> +      regulator will be turned on and off as the pwm is enabled and disa=
+bled.
 
+Please use "PWM" instead of "pwm" in prose.
 
-> > +- #interrupt-cells : Specifies the number of cells needed to encod=
-e an
-> > +  interrupt source. The value shall be 4 and interrupt descriptor =
-shall
-> > +  have the following format:
-> > +      <ctrl_num ctrl_irq parent_irq type>
-> > +
-> > +  ctrl_num contains the controller to use:
-> > +      - 0 ... main controller
-> > +      - 1 ... sub controller
-> > +      - 2 ... second main controller on s3c2416 and s3c2450
-> > +  ctrl_irq contains the interrupt bit of the controller
-> > +  parent_irq contains the parent bit in the main controller and wi=
-ll be
-> > +             ignored in main controllers
->=20
-> I expected the second and third cell to be in the opposite order, so
-> the meaning of the second cell is always the same.
+>  Optional properties:
+>    - pwm-names: a list of names for the PWM devices specified in the
+> @@ -19,10 +24,19 @@ Optional properties:
+> =20
+>  Example:
+> =20
+> +	bl_en: fixed-regulator {
+> +                compatible =3D "regulator-fixed";
+> +                regulator-name =3D "bl-en-supply";
+> +                regulator-boot-on;
+> +                gpio =3D <&some_gpio>;
+> +                enable-active-high;
+> +	};
 
-ok, so we do <ctrl_num parent_irq ctrl_irq type>, right? ... As it only=
-=20
-involves exchanging the intspec values, that's easy :-)
+This uses a mix of tabs and spaces for indentation. Please stick to
+tabs.
 
+Thierry
 
-> > +	/* we're using individual domains for the non-dt case
-> > +	 * and one big domain for the dt case where the subintc
-> > +	 * starts at hwirq number 32.
-> > +	 */
-> > +	offset =3D (intc->domain->of_node) ? 32 : 0;
->=20
-> Wouldn't it be easier to always use the same setup for the domains he=
-re?
+--nVMJ2NtxeReIH9PS
+Content-Type: application/pgp-signature
 
-nope ... the non-dt domains are not uniform (different lengths and star=
-t-irqs)=20
-to recreate the static irq mappings that are still needed. For the non-=
-dt case=20
-it also implement the handling of the external interrupts that is not p=
-art of=20
-the interrupt-controller itself but comes from the gpio-registers and w=
-ill=20
-move to pinctrl for dt machines.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-My hope is still to move to dt in a "reasonable" time, so this stuff ca=
-n go=20
-away then altogether.
+iQIcBAEBAgAGBQJRUVAlAAoJEN0jrNd/PrOhMYoP/RfLpBFpwLUOpaBkJOP2GqZa
+mVzNmG2ZZkTt4MqAfauyToh0tuJ3Hi/g8BTF08O51zf4FAsvsFrTdGQrAY9Rkz4h
+13MVtOyH6kDVLru56K7xgzYcYJmOTGOSAl0elexhS9elVwnX73M75oWT4zuGj97g
+AQUNG7tKv9tAf5UJBQ+smmr3dheyKMVsXT3GLpVKkUKGK4Vf/fq1y80QjXJjO5nk
+BpiEOUsDq7uAS3lJY9LUb+opy82q/qZmhnHCX+CJXdVrSoPwjFEgMWTPmLB8rW4U
+v4gN86j8mm+wym7JRJXUwmvQT4lWx1PzbXp1+vKRydyJoX319J8R+iLmel5VpRGX
+PSjKmcKXkrrnr+3JaSaUc6C19iqGHp30/NDE4QR3zFj1xTjauwTZXiDKEXaexckh
++JcwLV6uQXh636PyCr+L21hb1JY29Y8LVzhPUfMwUPNXuwdYkxxnJ4k/dfjRinrI
+LWBwVBkEtZI/UX6lg93V/AOob1OlTape67Sq2MSmoUn4+U3Cq1InZ2wAosEYp+pL
+lOQqfbCAsHgb13ug66kCOoGcNtncHEvCuT0tB5mdZL7pDYf/gd92CZoFi62ttl7L
+ba/8sSKV8i4O/pXEpNMY/XM+b9z1d1JLs6PtY0IE0wWAGxPYXycd+iBxLYhHMBaI
+fmXjupyKZL+ug7eYG4tW
+=xLZg
+-----END PGP SIGNATURE-----
 
-
-Heiko
+--nVMJ2NtxeReIH9PS--
