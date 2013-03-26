@@ -1,106 +1,53 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Thu, 4 Apr 2013 12:26:16 +0300
-Message-ID: <20130404092616.GD30991@arwen.pp.htv.fi>
-References: <20130403141831.GJ14680@arwen.pp.htv.fi>
- <Pine.LNX.4.44L0.1304031410320.2027-100000@iolanthe.rowland.org>
- <20130404071832.GD30287@arwen.pp.htv.fi>
- <CAFp+6iF9VJ5EneyVA9c6ggEa_RiUw0ZRBTRgh_gy--5ubP=8=Q@mail.gmail.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u65IjBhB3TIa72Vp"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iF9VJ5EneyVA9c6ggEa_RiUw0ZRBTRgh_gy--5ubP=8=Q@mail.gmail.com>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sarah.a.sharp-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: fix compilation error introduced due to common clock migration
+Date: Wed, 27 Mar 2013 00:04:00 +0900
+Message-ID: <1364310240-3394-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:41559 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759426Ab3DDKcK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Apr 2013 06:32:10 -0400
+Received: by mail-pb0-f47.google.com with SMTP id rq13so1366521pbb.20
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2013 03:32:09 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
---u65IjBhB3TIa72Vp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-Hi,
+The functions exynos4_clk_init and exynos4_clk_register_fixed_ext are
+applicable only on Exynos4 non-dt platforms. But when building Exynos5
+platforms without including Exynos4 platforms, the following errors
+show up.
 
-On Thu, Apr 04, 2013 at 02:26:51PM +0530, Vivek Gautam wrote:
-> >> > > Lets suppose DWC3 enables runtime_pm on USB 2 type phy,
-> >> > > it will try to go into suspend state and thereby call runtime_susp=
-end(), if any.
-> >> > > And PHY will come to active state only when its consumer wakes it =
-up,
-> >> > > and this consumer is operational
-> >> > > only when its related PHY is in fully functional state.
-> >> > > So do we have a situation in which this PHY goes into low power st=
-ate
-> >> > > in its runtime_suspend(),
-> >> > > resulting in non-detection of devices on further attach (since PHY=
- is
-> >> > > in low power state) ?
-> >> > >
-> >> > > Will the controller (like EHCI/OHCI) be functional now ?
-> >> >
-> >> > ehci/ohci need to cope with that by calling usb_phy_autopm_get_sync(=
-),
-> >> > right ? (so does DWC3 :-)
-> >>
-> >> Maybe you guys have already got this all figured out -- if so, feel
-> >> free to ignore this email.
-> >>
-> >> Some subsystems handle this issue by calling pm_runtime_get_sync()
-> >> before probing a driver and pm_runtime_put_sync() after unbinding the
-> >> driver.  If the driver is runtime-PM-enabled, it then does its own
-> >> put_sync near the end of its probe routine and get_sync in its release
-> >> routine.
-> >
-> > sounds a bit 'fishy' to me... So a separate entity would call
-> > pm_runtime_get_sync(), even when we don't have registered dev_pm_ops,
-> > then drivers need to check if runtime_pm is enabled and call
-> > pm_runtime_put*() conditionally before returning from probe(). One
-> > remove, we might have another issue: device is already runtime_suspended
-> > (due to e.g. autosuspend) when module is removed, a call to
-> > pm_runtime_put_sync() will be unbalanced. No ?
->=20
-> May be i am misinterpreting !!
-> If PHYs are runtime-PM enabled (PHY probe calls *runtime_enable*),
-> then the consumers
-> need to call pm_runtime_get_sync whever they want to access PHY.
+arch/arm/mach-exynos/built-in.o: In function `exynos_init_time':
+arch/arm/mach-exynos/common.c:446: undefined reference to `exynos4_clk_init'
+arch/arm/mach-exynos/common.c:447: undefined reference to `exynos4_clk_register_fixed_ext'
 
-Alright, so here's my understanding:
+Fix this compilation errors by marking these calls as Exynos4 specific.
 
-I suggested letting e.g. DWC3 enable the PHY's runtime_pm; Alan said
-that it could be done before that so that DWC3 sees an enabled PHY
-during probe.
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/common.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
---=20
-balbi
-
---u65IjBhB3TIa72Vp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRXUc4AAoJEIaOsuA1yqREyrcP/joqz7ntl5jWu2qWDFdo73Oz
-Pz+JPP4UI7sRtIcdz+QajORhKYk0BTfc5J1uZAMbkjr9/DVfp2UN8YmEXSCOOMjM
-LTI5tyuEQNfMsucaWkveE2MytHk84jfTZKCE03cw6U/DCKnsMcWq+/cS8YGRz+rx
-7hGbSaMMmkLq+q7isY+PKz4VwixBT7kOLUCvrp6KXKKFoTrbg4ycgyCXIEL4hBg0
-sn4RJLThO+yNY6Bo35tJ2pVqutcLFtV3te0Q1BICYr5RK0kE5iOLJLC0Z3oJGFA3
-JzA1fy2ebJkc0MPJyAnqicdgwH4Q6QAKghSesp8hQ9QrHBMYIl+29LVyvBBODgDF
-EAZjHLVRUvGCkPyH/DwcrZ2MrUdifD6pQYuRG8qKxrcAPZdHzHybth9iLqdh3DC9
-IGR+QPGl6jAO6rHrF4iop7YbwEJbhDnRqBc3g0MYJk6VOtOhe+mHw1+HV11jJqV4
-JH6snQTYTLpm7BWqba9HkpDL4/Jdi+4yrvRqxQuHcR2Juq9oDDLLfN8pigwBymH2
-V25hLo8lFvWnL/WPFdjOUHagQQFGDXS3/uASYc+x+neshn9YY7i38fG2K2nPyVWI
-IztYpdjINSBGPkqLWY8ETf+8DgXKNcWPhsznH/Wf49BNyfzjJ5vpKllKldmOM6og
-HFXsU93ql1urJyXchzal
-=iDob
------END PGP SIGNATURE-----
-
---u65IjBhB3TIa72Vp--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 9cd857e..a8570bf 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -443,8 +443,10 @@ void __init exynos_init_time(void)
+ #endif
+ 	} else {
+ 		/* todo: remove after migrating legacy E4 platforms to dt */
++#ifdef CONFIG_ARCH_EXYNOS4
+ 		exynos4_clk_init(NULL);
+ 		exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
++#endif
+ 		mct_init();
+ 	}
+ }
+-- 
+1.7.4.4
