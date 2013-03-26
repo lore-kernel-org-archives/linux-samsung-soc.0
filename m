@@ -1,41 +1,167 @@
-From: Prasanna Kumar <prasanna.ps@samsung.com>
-Subject: [PATCH] [media] s5p-mfc: Change MFC clock reference w.r.t Common Clock
- Framework
-Date: Tue, 26 Mar 2013 10:50:51 +0530
-Message-ID: <1364275251-31394-1-git-send-email-prasanna.ps@samsung.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH V5 6/9] ARM: mxs: Provide regulator to pwm-backlight
+Date: Tue, 26 Mar 2013 13:48:31 +0800
+Message-ID: <20130326054830.GD5148@S2101-09.ap.freescale.net>
+References: <1364260913-25490-1-git-send-email-achew@nvidia.com>
+ <1364260913-25490-7-git-send-email-achew@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12601 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932862Ab3CZFOf (ORCPT
+Received: from co1ehsobe002.messaging.microsoft.com ([216.32.180.185]:19147
+	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752940Ab3CZFsI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 01:14:35 -0400
+	Tue, 26 Mar 2013 01:48:08 -0400
+Content-Disposition: inline
+In-Reply-To: <1364260913-25490-7-git-send-email-achew@nvidia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Prasanna Kumar <prasanna.ps@samsung.com>
+To: Andrew Chew <achew@nvidia.com>
+Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, linux@prisktech.co.nz, thierry.reding@avionic-design.de, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 
-From: Prasanna Kumar <prasanna.ps@samsung.com>
+On Mon, Mar 25, 2013 at 06:21:50PM -0700, Andrew Chew wrote:
+> The pwm-backlight driver now takes a mandatory regulator that is gotten
+> during driver probe.  Initialize a dummy regulator to satisfy this
+> requirement.
+> 
+> Signed-off-by: Andrew Chew <achew@nvidia.com>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> Moved backlight power regulator into top-level regulators node.
+> 
+>  arch/arm/boot/dts/imx23-evk.dts      |  6 ++++++
+>  arch/arm/boot/dts/imx28-apf28dev.dts |  6 ++++++
+>  arch/arm/boot/dts/imx28-cfa10049.dts |  6 ++++++
+>  arch/arm/boot/dts/imx28-evk.dts      |  6 ++++++
+>  arch/arm/boot/dts/imx28-tx28.dts     | 11 +++++++++++
+>  5 files changed, 35 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx23-evk.dts b/arch/arm/boot/dts/imx23-evk.dts
+> index 035c13f..ce5048e 100644
+> --- a/arch/arm/boot/dts/imx23-evk.dts
+> +++ b/arch/arm/boot/dts/imx23-evk.dts
+> @@ -95,6 +95,11 @@
+>  			regulator-max-microvolt = <3300000>;
+>  			gpio = <&gpio1 29 0>;
+>  		};
+> +
+> +		reg_backlight_power: fixed-regulator {
 
-According to Common Clock framework , modified the method of getting
-clock for MFC Block.
+What I meant is the node name "fixed-regulator" is too generic.  But it
+shouldn't an issue right away, and we can fix that later.
 
-Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc_pm.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-index 6aa38a5..b8ac8f6 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-@@ -50,7 +50,7 @@ int s5p_mfc_init_pm(struct s5p_mfc_dev *dev)
- 		goto err_p_ip_clk;
- 	}
- 
--	pm->clock = clk_get(&dev->plat_dev->dev, dev->variant->mclk_name);
-+	pm->clock = clk_get_parent(pm->clock_gate);
- 	if (IS_ERR(pm->clock)) {
- 		mfc_err("Failed to get MFC clock\n");
- 		ret = PTR_ERR(pm->clock);
--- 
-1.7.5.4
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +	        };
+>  	};
+>  
+>  	backlight {
+> @@ -102,5 +107,6 @@
+>  		pwms = <&pwm 2 5000000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/imx28-apf28dev.dts b/arch/arm/boot/dts/imx28-apf28dev.dts
+> index 6d8865b..e354dc5 100644
+> --- a/arch/arm/boot/dts/imx28-apf28dev.dts
+> +++ b/arch/arm/boot/dts/imx28-apf28dev.dts
+> @@ -132,6 +132,11 @@
+>  			regulator-max-microvolt = <5000000>;
+>  			gpio = <&gpio1 23 1>;
+>  		};
+> +
+> +		reg_backlight_power: fixed-regulator {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +		};
+>  	};
+>  
+>  	leds {
+> @@ -150,5 +155,6 @@
+>  		pwms = <&pwm 3 191000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/imx28-cfa10049.dts b/arch/arm/boot/dts/imx28-cfa10049.dts
+> index a0d3e9f..a6eddd6 100644
+> --- a/arch/arm/boot/dts/imx28-cfa10049.dts
+> +++ b/arch/arm/boot/dts/imx28-cfa10049.dts
+> @@ -205,6 +205,11 @@
+>  			regulator-max-microvolt = <5000000>;
+>  			gpio = <&gpio0 7 1>;
+>  		};
+> +
+> +		reg_backlight_power: fixed-regulator {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +		};
+>  	};
+>  
+>  	ahb@80080000 {
+> @@ -304,5 +309,6 @@
+>  		pwms = <&pwm 3 5000000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/imx28-evk.dts b/arch/arm/boot/dts/imx28-evk.dts
+> index 2da316e..7ba7216 100644
+> --- a/arch/arm/boot/dts/imx28-evk.dts
+> +++ b/arch/arm/boot/dts/imx28-evk.dts
+> @@ -285,6 +285,11 @@
+>  			gpio = <&gpio3 8 0>;
+>  			enable-active-high;
+>  		};
+> +
+> +		reg_backlight_power: fixed-regulator {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +		};
+>  	};
+>  
+>  	sound {
+> @@ -312,5 +317,6 @@
+>  		pwms = <&pwm 2 5000000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/imx28-tx28.dts b/arch/arm/boot/dts/imx28-tx28.dts
+> index 37be532..7fa5a44 100644
+> --- a/arch/arm/boot/dts/imx28-tx28.dts
+> +++ b/arch/arm/boot/dts/imx28-tx28.dts
+> @@ -97,6 +97,16 @@
+>  		};
+>  	};
+>  
+> +	regulators {
+> +		compatible = "simple-bus";
+> +
+> +		reg_backlight_power: fixed-regulator {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +		};
+> +	};
+> +
+> +
+>  	leds {
+>  		compatible = "gpio-leds";
+>  
+> @@ -112,5 +122,6 @@
+>  		pwms = <&pwm 0 5000000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> -- 
+> 1.8.1.5
+> 
