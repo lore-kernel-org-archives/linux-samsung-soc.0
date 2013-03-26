@@ -1,55 +1,25 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] tty: serial: samsung: Disable interrupts in a suspend-friendly
- way
-Date: Tue, 26 Mar 2013 15:57:35 +0100
-Message-ID: <1364309855-10391-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39421 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933674Ab3CZO5v (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 10:57:51 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [REVIEW PATCH 0/3] s5p-fimc driver updates
+Date: Tue, 26 Mar 2013 17:06:03 +0100
+Message-ID: <1364313966-18868-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-serial@vger.kernel.org, gregkh@linuxfoundation.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-Since the interrupt mask register is not preserved across system suspend
-and it defaults to all interrupts enabled, it is not enough to disable
-UART interrupt.
+This patch series contains mostly conversion of the video capture node
+drivers to videobuf2 ioctl/fop helpers.
 
-This patch adds free_irq to port shutdown and mask setting to port
-startup to handle IRQ disabling in a suspend-friendly way. In addition,
-a bug caused by multiple request_irq calls in port startup callback is
-fixed.
+Sylwester Nawrocki (3):
+  s5p-fimc: Use video entity for marking media pipeline as streaming
+  s5p-fimc: Use vb2 ioctl/fop helpers in FIMC capture driver
+  s5p-fimc: Use vb2 ioctl helpers in fimc-lite
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/tty/serial/samsung.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/platform/s5p-fimc/fimc-capture.c |  178 +++++++-----------------
+ drivers/media/platform/s5p-fimc/fimc-lite.c    |  177 +++++++----------------
+ drivers/media/platform/s5p-fimc/fimc-m2m.c     |    9 +-
+ 3 files changed, 100 insertions(+), 264 deletions(-)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 2769a38..b386fc8 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -446,6 +446,8 @@ static void s3c24xx_serial_shutdown(struct uart_port *port)
- 
- 	/* Clear pending interrupts and mask all interrupts */
- 	if (s3c24xx_serial_has_interrupt_mask(port)) {
-+		free_irq(port->irq, ourport);
-+
- 		wr_regl(port, S3C64XX_UINTP, 0xf);
- 		wr_regl(port, S3C64XX_UINTM, 0xf);
- 	}
-@@ -505,6 +507,8 @@ static int s3c64xx_serial_startup(struct uart_port *port)
- 	dbg("s3c64xx_serial_startup: port=%p (%08lx,%p)\n",
- 	    port->mapbase, port->membase);
- 
-+	wr_regl(port, S3C64XX_UINTM, 0xf);
-+
- 	ret = request_irq(port->irq, s3c64xx_serial_handle_irq, IRQF_SHARED,
- 			  s3c24xx_serial_portname(port), ourport);
- 	if (ret) {
--- 
-1.8.1.5
+--
+1.7.9.5
