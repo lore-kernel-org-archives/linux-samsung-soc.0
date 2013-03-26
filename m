@@ -1,14 +1,14 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 3/4] exynos4-is: Correct input DMA YUV order configuration
-Date: Tue, 26 Mar 2013 19:38:18 +0100
-Message-ID: <1364323101-22046-7-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 4/5] exynos4-is: Correct input DMA YUV order configuration
+Date: Tue, 26 Mar 2013 19:38:19 +0100
+Message-ID: <1364323101-22046-8-git-send-email-s.nawrocki@samsung.com>
 References: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51549 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:51556 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760098Ab3CZSi5 (ORCPT
+	with ESMTP id S1760098Ab3CZSjA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 14:38:57 -0400
+	Tue, 26 Mar 2013 14:39:00 -0400
 In-reply-to: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
