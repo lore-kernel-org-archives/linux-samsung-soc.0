@@ -1,82 +1,73 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 00/10] s5p-fimc: Exynos4x12 FIMC-IS support prerequisite
-Date: Tue, 26 Mar 2013 18:29:42 +0100
-Message-ID: <1364318992-20562-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 01/10] V4L: Add MATRIX option to V4L2_CID_EXPOSURE_METERING
+ control
+Date: Tue, 26 Mar 2013 18:29:43 +0100
+Message-ID: <1364318992-20562-2-git-send-email-s.nawrocki@samsung.com>
+References: <1364318992-20562-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.samsung.com ([203.254.224.24]:53839 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753131Ab3CZRaL (ORCPT
+	with ESMTP id S1753257Ab3CZRaM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 13:30:11 -0400
+	Tue, 26 Mar 2013 13:30:12 -0400
+In-reply-to: <1364318992-20562-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch series contains a few fixes to the s5p-fimc driver and changes
-necessary for the Exynos4x12 FIMC-IS support.
+This patch adds a menu option to the V4L2_CID_EXPOSURE_METERING
+control for multi-zone metering.
 
-The changes are listed at each patch, if there were any. I have removed
-two patches, adding support for setting parent clocks and added a patch
-changing the driver directory to drivers/media/platform/exynos4-is.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ Documentation/DocBook/media/v4l/controls.xml |    7 +++++++
+ drivers/media/v4l2-core/v4l2-ctrls.c         |    1 +
+ include/uapi/linux/v4l2-controls.h           |    1 +
+ 3 files changed, 9 insertions(+)
 
-This series, including dependencies, can be browsed at:
-http://git.linuxtv.org/snawrocki/samsung.git/exynos4-fimc-is-v2
-
-Andrzej Hajda (1):
-  s5p-fimc: Add error checks for pipeline stream on callbacks
-
-Sylwester Nawrocki (9):
-  V4L: Add MATRIX option to V4L2_CID_EXPOSURE_METERING control
-  s5p-fimc: Update graph traversal for entities with multiple source
-    pads
-  s5p-fimc: Add support for PIXELASYNCMx clocks
-  s5p-fimc: Add support for ISP Writeback data input bus type
-  s5p-fimc: Ensure CAMCLK clock can be enabled by FIMC-LITE devices
-  s5p-fimc: Ensure proper s_stream() call order in the ISP datapaths
-  s5p-fimc: Ensure proper s_power() call order in the ISP datapaths
-  s5p-fimc: Remove dependency on fimc-core.h in fimc-lite driver
-  s5p-fimc: Change the driver directory name to exynos4-is
-
- Documentation/DocBook/media/v4l/controls.xml       |    7 +
- drivers/media/platform/Kconfig                     |    2 +-
- drivers/media/platform/Makefile                    |    2 +-
- .../platform/{s5p-fimc => exynos4-is}/Kconfig      |    9 +-
- .../platform/{s5p-fimc => exynos4-is}/Makefile     |    2 +-
- .../{s5p-fimc => exynos4-is}/fimc-capture.c        |  194 +++++++++++++-------
- .../platform/{s5p-fimc => exynos4-is}/fimc-core.c  |   12 +-
- .../platform/{s5p-fimc => exynos4-is}/fimc-core.h  |   48 ++---
- .../{s5p-fimc => exynos4-is}/fimc-lite-reg.c       |    0
- .../{s5p-fimc => exynos4-is}/fimc-lite-reg.h       |    0
- .../platform/{s5p-fimc => exynos4-is}/fimc-lite.c  |    3 +-
- .../platform/{s5p-fimc => exynos4-is}/fimc-lite.h  |    3 +-
- .../platform/{s5p-fimc => exynos4-is}/fimc-m2m.c   |    3 +-
- .../platform/{s5p-fimc => exynos4-is}/fimc-reg.c   |   75 ++++++--
- .../platform/{s5p-fimc => exynos4-is}/fimc-reg.h   |   11 ++
- .../fimc-mdevice.c => exynos4-is/media-dev.c}      |  182 +++++++++++++-----
- .../fimc-mdevice.h => exynos4-is/media-dev.h}      |   12 ++
- .../platform/{s5p-fimc => exynos4-is}/mipi-csis.c  |    0
- .../platform/{s5p-fimc => exynos4-is}/mipi-csis.h  |    0
- drivers/media/v4l2-core/v4l2-ctrls.c               |    1 +
- include/media/s5p_fimc.h                           |   34 ++++
- include/uapi/linux/v4l2-controls.h                 |    1 +
- 22 files changed, 428 insertions(+), 173 deletions(-)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/Kconfig (86%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/Makefile (94%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-capture.c (93%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-core.c (99%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-core.h (94%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-lite-reg.c (100%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-lite-reg.h (100%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-lite.c (99%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-lite.h (99%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-m2m.c (99%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-reg.c (92%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/fimc-reg.h (96%)
- rename drivers/media/platform/{s5p-fimc/fimc-mdevice.c => exynos4-is/media-dev.c} (89%)
- rename drivers/media/platform/{s5p-fimc/fimc-mdevice.h => exynos4-is/media-dev.h} (92%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/mipi-csis.c (100%)
- rename drivers/media/platform/{s5p-fimc => exynos4-is}/mipi-csis.h (100%)
-
---
+diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
+index 7fe5be1..c5398ed 100644
+--- a/Documentation/DocBook/media/v4l/controls.xml
++++ b/Documentation/DocBook/media/v4l/controls.xml
+@@ -3159,6 +3159,13 @@ giving priority to the center of the metered area.</entry>
+ 		  <entry><constant>V4L2_EXPOSURE_METERING_SPOT</constant>&nbsp;</entry>
+ 		  <entry>Measure only very small area at the center of the frame.</entry>
+ 		</row>
++		<row>
++		  <entry><constant>V4L2_EXPOSURE_METERING_MATRIX</constant>&nbsp;</entry>
++		  <entry>A multi-zone metering. The light intensity is measured
++in several points of the frame and the the results are combined. The
++algorithm of the zones selection and their significance in calculating the
++final value is device dependant.</entry>
++		</row>
+ 	      </tbody>
+ 	    </entrytbl>
+ 	  </row>
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 4b45d49..6b56d7b 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -234,6 +234,7 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
+ 		"Average",
+ 		"Center Weighted",
+ 		"Spot",
++		"Matrix",
+ 		NULL
+ 	};
+ 	static const char * const camera_auto_focus_range[] = {
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index f56c945..22556a2 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -642,6 +642,7 @@ enum v4l2_exposure_metering {
+ 	V4L2_EXPOSURE_METERING_AVERAGE		= 0,
+ 	V4L2_EXPOSURE_METERING_CENTER_WEIGHTED	= 1,
+ 	V4L2_EXPOSURE_METERING_SPOT		= 2,
++	V4L2_EXPOSURE_METERING_MATRIX		= 3,
+ };
+ 
+ #define V4L2_CID_SCENE_MODE			(V4L2_CID_CAMERA_CLASS_BASE+26)
+-- 
 1.7.9.5
