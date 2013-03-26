@@ -1,19 +1,14 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 2/4] exynos4-is: Allow colorspace conversion at fimc-lite
-Date: Tue, 26 Mar 2013 19:38:15 +0100
-Message-ID: <1364323101-22046-4-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 3/5] exynos4-is: Allow colorspace conversion at fimc-lite
+Date: Tue, 26 Mar 2013 19:38:17 +0100
+Message-ID: <1364323101-22046-6-git-send-email-s.nawrocki@samsung.com>
 References: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56495 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759964Ab3CZSir (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 14:38:47 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 The FIMC-LITE output DMA allows to configure different YUV order
 than the order at the camera input interface. Thus there is some
