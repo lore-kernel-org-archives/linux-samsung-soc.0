@@ -1,488 +1,800 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v5 1/6] s5p-csis: Add device tree support
-Date: Tue, 26 Mar 2013 17:39:53 +0100
-Message-ID: <1364315998-19372-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v5 2/6] s5p-fimc: Add device tree support for FIMC device driver
+Date: Tue, 26 Mar 2013 17:39:54 +0100
+Message-ID: <1364315998-19372-3-git-send-email-s.nawrocki@samsung.com>
 References: <1364315998-19372-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16892 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:16897 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965733Ab3CZQkS (ORCPT
+	with ESMTP id S965733Ab3CZQkW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 12:40:18 -0400
+	Tue, 26 Mar 2013 12:40:22 -0400
 In-reply-to: <1364315998-19372-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch support for binding the driver to the MIPI-CSIS
-devices instantiated from device tree and parsing the SoC
-and board specific properties. The MIPI CSI-2 channel is
-determined by the value of reg property placed in csis'
-port subnode.
+This patch adds device tree support for FIMC driver on S5PV210
+and Exynos4 SoCs.
+
+The FIMC IP block's features and quirks encoded statically in
+the driver are now parsed from the device tree. Once all relevant
+platforms are converted to device tree based booting the FIMC
+variant data structures will all be removed from the driver.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
 
 Changes since v5:
- - added clocks/clock-names properties to the binding documentation.
+ - Added clocks/clock-names properties to the binding documentation.
 
 Changes since v4:
- - dropped node aliases, the IP instances are now identified
-   by the port's node reg property value; as a side effect this
-   introduces dependency on the s5p_fimc.h header,
- - re-added bus-width property, so the number of data lanes
-   supported per each IP instance can be specified in the
-   device tree,
+ - Added parsing of FIMC features and quirks for DT, the static
+   variant data removed for Exynos4x12 SoC which is a dt-only
+   platform upstream;
  - the bindings documentation moved to Documentation/
-   devicetree/bindings/media/samsung-mipi-csis.txt.
- - "samsung,exynos3110-csis" renamed to "samsung,s5pv210-csis",
-   updated the bindings documentation.
+   devicetree/bindings/media/samsung-fimc.txt
 
 Changes since v3:
- - dropped 'bus-width' property, hard coded the number of supported
-   data lanes per device also in dt case, it can be derived from the
-   compatible property if required;
- - "samsung,s5pv210-csis" renamed to "samsung,exynos3110-csis",
-   updated the bindings description.
----
- .../bindings/media/samsung-mipi-csis.txt           |   81 ++++++++++
- drivers/media/platform/s5p-fimc/mipi-csis.c        |  155 +++++++++++++++-----
- drivers/media/platform/s5p-fimc/mipi-csis.h        |    1 +
- include/media/s5p_fimc.h                           |   13 ++
- 4 files changed, 215 insertions(+), 35 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
+ - added optional clock-frequency property to specify local bus
+   (FIMCn_LCLK) clock frequency
 
-diff --git a/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt b/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
+fimc dt doc
+---
+ .../devicetree/bindings/media/samsung-fimc.txt     |  101 +++++++++
+ drivers/media/platform/s5p-fimc/fimc-capture.c     |    6 +-
+ drivers/media/platform/s5p-fimc/fimc-core.c        |  238 ++++++++++++--------
+ drivers/media/platform/s5p-fimc/fimc-core.h        |   21 +-
+ drivers/media/platform/s5p-fimc/fimc-m2m.c         |    2 +-
+ drivers/media/platform/s5p-fimc/fimc-reg.c         |    6 +-
+ 6 files changed, 260 insertions(+), 114 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-fimc.txt
+
+diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
 new file mode 100644
-index 0000000..5f8e28e
+index 0000000..22e2889
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
-@@ -0,0 +1,81 @@
-+Samsung S5P/EXYNOS SoC series MIPI CSI-2 receiver (MIPI CSIS)
-+-------------------------------------------------------------
++++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+@@ -0,0 +1,101 @@
++Samsung S5P/EXYNOS SoC Camera Subsystem (FIMC)
++----------------------------------------------
++
++The S5P/Exynos SoC Camera subsystem comprises of multiple sub-devices
++represented by separate device tree nodes. Currently this includes: FIMC (in
++the S5P SoCs series known as CAMIF), MIPI CSIS, FIMC-LITE and FIMC-IS (ISP).
++
++The sub-subdevices are defined as child nodes of the common 'camera' node which
++also includes common properties of the whole subsystem not really specific to
++any single sub-device, like common camera port pins or the CAMCLK clock outputs
++for external image sensors attached to an SoC.
++
++Common 'camera' node
++--------------------
 +
 +Required properties:
 +
-+- compatible	  : "samsung,s5pv210-csis" for S5PV210 (S5PC110),
-+		    "samsung,exynos4210-csis" for Exynos4210 (S5PC210),
-+		    "samsung,exynos4212-csis" for Exynos4212/Exynos4412
-+		    SoC series;
-+- reg		  : offset and length of the register set for the device;
-+- interrupts      : should contain MIPI CSIS interrupt; the format of the
-+		    interrupt specifier depends on the interrupt controller;
-+- bus-width	  : maximum number of data lanes supported (SoC specific);
-+- vddio-supply    : MIPI CSIS I/O and PLL voltage supply (e.g. 1.8V);
-+- vddcore-supply  : MIPI CSIS Core voltage supply (e.g. 1.1V);
-+- clocks	  : list of clock specifiers, corresponding to entries in
-+		    clock-names property;
-+- clock-names	  : must contain "csis", "sclk_csis" entries, matching entries
-+		    in the clocks property.
++- compatible	: must be "samsung,fimc", "simple-bus"
++- clocks	: list of clock specifiers, corresponding to entries in
++		  clock-names property;
++- clock-names	: must contain "fimc", "sclk_fimc" entries, matching entries
++		  in the clocks property.
++
++The 'camera' node must include at least one 'fimc' child node.
++
++
++'fimc' device nodes
++-------------------
++
++Required properties:
++
++- compatible: "samsung,s5pv210-fimc" for S5PV210, "samsung,exynos4210-fimc"
++  for Exynos4210 and "samsung,exynos4212-fimc" for Exynos4x12 SoCs;
++- reg: physical base address and length of the registers set for the device;
++- interrupts: should contain FIMC interrupt;
++- clocks: list of clock specifiers, must contain an entry for each required
++  entry in clock-names;
++- clock-names: must include "fimc", "sclk_fimc", "mux" entries and optionally
++  "parent" entry.
++- samsung,pix-limits: an array of maximum supported image sizes in pixels, for
++  details refer to Table 2-1 in the S5PV210 SoC User Manual; The meaning of
++  each cell is as follows:
++  0 - scaler input horizontal size,
++  1 - input horizontal size for the scaler bypassed,
++  2 - REAL_WIDTH without input rotation,
++  3 - REAL_HEIGHT with input rotation,
++- samsung,sysreg: a phandle to the SYSREG node.
++
++Each FIMC device should have an alias in the aliases node, in the form of
++fimc<n>, where <n> is an integer specifying the IP block instance.
 +
 +Optional properties:
 +
-+- clock-frequency : The IP's main (system bus) clock frequency in Hz, default
-+		    value when this property is not specified is 166 MHz;
-+- samsung,csis-wclk : CSI-2 wrapper clock selection. If this property is present
-+		    external clock from CMU will be used, or the bus clock if
-+		    if it's not specified.
-+
-+The device node should contain one 'port' child node with one child 'endpoint'
-+node, according to the bindings defined in Documentation/devicetree/bindings/
-+media/video-interfaces.txt. The following are properties specific to those nodes.
-+
-+port node
-+---------
-+
-+- reg		  : (required) must be 3 for camera C input (CSIS0) or 4 for
-+		    camera D input (CSIS1);
-+
-+endpoint node
-+-------------
-+
-+- data-lanes	  : (required) an array specifying active physical MIPI-CSI2
-+		    data input lanes and their mapping to logical lanes; the
-+		    array's content is unused, only its length is meaningful;
-+
-+- samsung,csis-hs-settle : (optional) differential receiver (HS-RX) settle time;
++- clock-frequency: maximum FIMC local clock (LCLK) frequency;
++- samsung,min-pix-sizes: an array specyfing minimum image size in pixels at
++  the FIMC input and output DMA, in the first and second cell respectively.
++  Default value when this property is not present is <16 16>;
++- samsung,min-pix-alignment: minimum supported image height alignment (first
++  cell) and the horizontal image offset (second cell). The values are in pixels
++  and default to <2 1> when this property is not present;
++- samsung,mainscaler-ext: a boolean property indicating whether the FIMC IP
++  supports extended image size and has CIEXTEN register;
++- samsung,rotators: a bitmask specifying whether this IP has the input and
++  the output rotator. Bits 4 and 0 correspond to input and output rotator
++  respectively. If a rotator is present its corresponding bit should be set.
++  Default value when this property is not specified is 0x11.
++- samsung,cam-if: a bolean property indicating whether the IP block includes
++  the camera input interface.
++- samsung,isp-wb: this property must be present if the IP block has the ISP
++  writeback input.
++- samsung,lcd-wb: this property must be present if the IP block has the LCD
++  writeback input.
 +
 +
 +Example:
 +
-+	reg0: regulator@0 {
++	aliases {
++		fimc0 = &fimc_0;
 +	};
 +
-+	reg1: regulator@1 {
-+	};
-+
-+/* SoC properties */
-+
-+	csis_0: csis@11880000 {
-+		compatible = "samsung,exynos4210-csis";
-+		reg = <0x11880000 0x1000>;
-+		interrupts = <0 78 0>;
++	camera {
++		compatible = "samsung,fimc", "simple-bus";
 +		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
++		#size-cells = <1>;
++		status = "okay";
 +
-+/* Board properties */
++		fimc_0: fimc@11800000 {
++			compatible = "samsung,exynos4210-fimc";
++			reg = <0x11800000 0x1000>;
++			interrupts = <0 85 0>;
++			status = "okay";
++		};
 +
-+	csis_0: csis@11880000 {
-+		clock-frequency = <166000000>;
-+		vddio-supply = <&reg0>;
-+		vddcore-supply = <&reg1>;
-+		port {
-+			reg = <3>; /* 3 - CSIS0, 4 - CSIS1 */
-+			csis0_ep: endpoint {
-+				remote-endpoint = <...>;
-+				data-lanes = <1>, <2>;
-+				samsung,csis-hs-settle = <12>;
-+			};
++		csis_0: csis@11880000 {
++			compatible = "samsung,exynos4210-csis";
++			reg = <0x11880000 0x1000>;
++			interrupts = <0 78 0>;
 +		};
 +	};
-diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.c b/drivers/media/platform/s5p-fimc/mipi-csis.c
-index 981863d..8636bcd 100644
---- a/drivers/media/platform/s5p-fimc/mipi-csis.c
-+++ b/drivers/media/platform/s5p-fimc/mipi-csis.c
-@@ -19,14 +19,18 @@
- #include <linux/kernel.h>
- #include <linux/memory.h>
- #include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_data/mipi-csis.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/videodev2.h>
-+#include <media/s5p_fimc.h>
-+#include <media/v4l2-of.h>
- #include <media/v4l2-subdev.h>
--#include <linux/platform_data/mipi-csis.h>
 +
- #include "mipi-csis.h"
- 
- static int debug;
-@@ -113,6 +117,7 @@ static char *csi_clock_name[] = {
- 	[CSIS_CLK_GATE] = "csis",
- };
- #define NUM_CSIS_CLOCKS	ARRAY_SIZE(csi_clock_name)
-+#define DEFAULT_SCLK_CSIS_FREQ	166000000UL
- 
- static const char * const csis_supply_name[] = {
- 	"vddcore",  /* CSIS Core (1.0V, 1.1V or 1.2V) suppply */
-@@ -167,6 +172,11 @@ struct csis_pktbuf {
-  * @clock: CSIS clocks
-  * @irq: requested s5p-mipi-csis irq number
-  * @flags: the state variable for power and streaming control
-+ * @clock_frequency: device bus clock frequency
-+ * @hs_settle: HS-RX settle time
-+ * @num_lanes: number of MIPI-CSI data lanes used
-+ * @max_num_lanes: maximum number of MIPI-CSI data lanes supported
-+ * @wclk_ext: CSI wrapper clock: 0 - bus clock, 1 - external SCLK_CAM
-  * @csis_fmt: current CSIS pixel format
-  * @format: common media bus format for the source and sink pad
-  * @slock: spinlock protecting structure members below
-@@ -184,6 +194,13 @@ struct csis_state {
- 	struct clk *clock[NUM_CSIS_CLOCKS];
- 	int irq;
- 	u32 flags;
-+
-+	u32 clk_frequency;
-+	u32 hs_settle;
-+	u32 num_lanes;
-+	u32 max_num_lanes;
-+	u8 wclk_ext;
-+
- 	const struct csis_pix_format *csis_fmt;
- 	struct v4l2_mbus_framefmt format;
- 
-@@ -273,7 +290,6 @@ static void s5pcsis_reset(struct csis_state *state)
- 
- static void s5pcsis_system_enable(struct csis_state *state, int on)
- {
--	struct s5p_platform_mipi_csis *pdata = state->pdev->dev.platform_data;
- 	u32 val, mask;
- 
- 	val = s5pcsis_read(state, S5PCSIS_CTRL);
-@@ -286,7 +302,7 @@ static void s5pcsis_system_enable(struct csis_state *state, int on)
- 	val = s5pcsis_read(state, S5PCSIS_DPHYCTRL);
- 	val &= ~S5PCSIS_DPHYCTRL_ENABLE;
- 	if (on) {
--		mask = (1 << (pdata->lanes + 1)) - 1;
-+		mask = (1 << (state->num_lanes + 1)) - 1;
- 		val |= (mask & S5PCSIS_DPHYCTRL_ENABLE);
++The MIPI-CSIS device binding is defined in samsung-mipi-csis.txt.
+diff --git a/drivers/media/platform/s5p-fimc/fimc-capture.c b/drivers/media/platform/s5p-fimc/fimc-capture.c
+index b05d97b..344e85e 100644
+--- a/drivers/media/platform/s5p-fimc/fimc-capture.c
++++ b/drivers/media/platform/s5p-fimc/fimc-capture.c
+@@ -65,7 +65,7 @@ static int fimc_capture_hw_init(struct fimc_dev *fimc)
+ 		fimc_hw_set_effect(ctx);
+ 		fimc_hw_set_output_path(ctx);
+ 		fimc_hw_set_out_dma(ctx);
+-		if (fimc->variant->has_alpha)
++		if (fimc->drv_data->alpha_color)
+ 			fimc_hw_set_rgb_alpha(ctx);
+ 		clear_bit(ST_CAPT_APPLY_CFG, &fimc->state);
  	}
- 	s5pcsis_write(state, S5PCSIS_DPHYCTRL, val);
-@@ -321,15 +337,14 @@ static void s5pcsis_set_hsync_settle(struct csis_state *state, int settle)
+@@ -168,7 +168,7 @@ static int fimc_capture_config_update(struct fimc_ctx *ctx)
+ 	fimc_hw_set_effect(ctx);
+ 	fimc_prepare_dma_offset(ctx, &ctx->d_frame);
+ 	fimc_hw_set_out_dma(ctx);
+-	if (fimc->variant->has_alpha)
++	if (fimc->drv_data->alpha_color)
+ 		fimc_hw_set_rgb_alpha(ctx);
  
- static void s5pcsis_set_params(struct csis_state *state)
+ 	clear_bit(ST_CAPT_APPLY_CFG, &fimc->state);
+@@ -1802,7 +1802,7 @@ int fimc_initialize_capture_subdev(struct fimc_dev *fimc)
+ 
+ 	v4l2_subdev_init(sd, &fimc_subdev_ops);
+ 	sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+-	snprintf(sd->name, sizeof(sd->name), "FIMC.%d", fimc->pdev->id);
++	snprintf(sd->name, sizeof(sd->name), "FIMC.%d", fimc->id);
+ 
+ 	fimc->vid_cap.sd_pads[FIMC_SD_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
+ 	fimc->vid_cap.sd_pads[FIMC_SD_PAD_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
+diff --git a/drivers/media/platform/s5p-fimc/fimc-core.c b/drivers/media/platform/s5p-fimc/fimc-core.c
+index e3916bd..d39e47a 100644
+--- a/drivers/media/platform/s5p-fimc/fimc-core.c
++++ b/drivers/media/platform/s5p-fimc/fimc-core.c
+@@ -21,6 +21,8 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/list.h>
+ #include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ #include <media/v4l2-ioctl.h>
+@@ -440,14 +442,14 @@ void fimc_set_yuv_order(struct fimc_ctx *ctx)
+ 
+ void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
  {
--	struct s5p_platform_mipi_csis *pdata = state->pdev->dev.platform_data;
- 	u32 val;
+-	const struct fimc_variant *variant = ctx->fimc_dev->variant;
++	bool pix_hoff = ctx->fimc_dev->drv_data->dma_pix_hoff;
+ 	u32 i, depth = 0;
  
- 	val = s5pcsis_read(state, S5PCSIS_CONFIG);
--	val = (val & ~S5PCSIS_CFG_NR_LANE_MASK) | (pdata->lanes - 1);
-+	val = (val & ~S5PCSIS_CFG_NR_LANE_MASK) | (state->num_lanes - 1);
- 	s5pcsis_write(state, S5PCSIS_CONFIG, val);
+ 	for (i = 0; i < f->fmt->colplanes; i++)
+ 		depth += f->fmt->depth[i];
  
- 	__s5pcsis_set_format(state);
--	s5pcsis_set_hsync_settle(state, pdata->hs_settle);
-+	s5pcsis_set_hsync_settle(state, state->hs_settle);
+ 	f->dma_offset.y_h = f->offs_h;
+-	if (!variant->pix_hoff)
++	if (!pix_hoff)
+ 		f->dma_offset.y_h *= (depth >> 3);
  
- 	val = s5pcsis_read(state, S5PCSIS_CTRL);
- 	if (state->csis_fmt->data_alignment == 32)
-@@ -338,7 +353,7 @@ static void s5pcsis_set_params(struct csis_state *state)
- 		val &= ~S5PCSIS_CTRL_ALIGN_32BIT;
+ 	f->dma_offset.y_v = f->offs_v;
+@@ -458,7 +460,7 @@ void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
+ 	f->dma_offset.cr_h = f->offs_h;
+ 	f->dma_offset.cr_v = f->offs_v;
  
- 	val &= ~S5PCSIS_CTRL_WCLK_EXTCLK;
--	if (pdata->wclk_source)
-+	if (state->wclk_ext)
- 		val |= S5PCSIS_CTRL_WCLK_EXTCLK;
- 	s5pcsis_write(state, S5PCSIS_CTRL, val);
+-	if (!variant->pix_hoff) {
++	if (!pix_hoff) {
+ 		if (f->fmt->colplanes == 3) {
+ 			f->dma_offset.cb_h >>= 1;
+ 			f->dma_offset.cr_h >>= 1;
+@@ -589,7 +591,6 @@ static const struct v4l2_ctrl_ops fimc_ctrl_ops = {
  
-@@ -701,52 +716,111 @@ static irqreturn_t s5pcsis_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
+ int fimc_ctrls_create(struct fimc_ctx *ctx)
+ {
+-	const struct fimc_variant *variant = ctx->fimc_dev->variant;
+ 	unsigned int max_alpha = fimc_get_alpha_mask(ctx->d_frame.fmt);
+ 	struct fimc_ctrls *ctrls = &ctx->ctrls;
+ 	struct v4l2_ctrl_handler *handler = &ctrls->handler;
+@@ -606,7 +607,7 @@ int fimc_ctrls_create(struct fimc_ctx *ctx)
+ 	ctrls->vflip = v4l2_ctrl_new_std(handler, &fimc_ctrl_ops,
+ 					V4L2_CID_VFLIP, 0, 1, 1, 0);
+ 
+-	if (variant->has_alpha)
++	if (ctx->fimc_dev->drv_data->alpha_color)
+ 		ctrls->alpha = v4l2_ctrl_new_std(handler, &fimc_ctrl_ops,
+ 					V4L2_CID_ALPHA_COMPONENT,
+ 					0, max_alpha, 1, 0);
+@@ -677,7 +678,7 @@ void fimc_alpha_ctrl_update(struct fimc_ctx *ctx)
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	struct v4l2_ctrl *ctrl = ctx->ctrls.alpha;
+ 
+-	if (ctrl == NULL || !fimc->variant->has_alpha)
++	if (ctrl == NULL || !fimc->drv_data->alpha_color)
+ 		return;
+ 
+ 	v4l2_ctrl_lock(ctrl);
+@@ -863,43 +864,109 @@ static int fimc_m2m_resume(struct fimc_dev *fimc)
+ 	return 0;
  }
  
-+static int s5pcsis_get_platform_data(struct platform_device *pdev,
-+				     struct csis_state *state)
++static const struct of_device_id fimc_of_match[];
++
++static int fimc_parse_dt(struct fimc_dev *fimc, u32 *clk_freq)
 +{
-+	struct s5p_platform_mipi_csis *pdata = pdev->dev.platform_data;
++	struct device *dev = &fimc->pdev->dev;
++	struct device_node *node = dev->of_node;
++	const struct of_device_id *of_id;
++	struct fimc_variant *v;
++	struct fimc_pix_limit *lim;
++	u32 args[FIMC_PIX_LIMITS_MAX];
++	int ret;
 +
-+	if (pdata == NULL) {
-+		dev_err(&pdev->dev, "Platform data not specified\n");
++	if (of_property_read_bool(node, "samsung,lcd-wb"))
++		return -ENODEV;
++
++	v = devm_kzalloc(dev, sizeof(*v) + sizeof(*lim), GFP_KERNEL);
++	if (!v)
++		return -ENOMEM;
++
++	of_id = of_match_node(fimc_of_match, node);
++	if (!of_id)
 +		return -EINVAL;
-+	}
-+
-+	state->clk_frequency = pdata->clk_rate;
-+	state->num_lanes = pdata->lanes;
-+	state->hs_settle = pdata->hs_settle;
-+	state->index = max(0, pdev->id);
-+	state->max_num_lanes = state->index ? CSIS1_MAX_LANES :
-+					      CSIS0_MAX_LANES;
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static int s5pcsis_parse_dt(struct platform_device *pdev,
-+			    struct csis_state *state)
-+{
-+	struct device_node *node = pdev->dev.of_node;
-+	struct v4l2_of_endpoint endpoint;
-+
-+	if (of_property_read_u32(node, "clock-frequency",
-+				 &state->clk_frequency))
-+		state->clk_frequency = DEFAULT_SCLK_CSIS_FREQ;
-+	if (of_property_read_u32(node, "bus-width",
-+				 &state->max_num_lanes))
-+		return -EINVAL;
-+
-+	node = v4l2_of_get_next_endpoint(node, NULL);
-+	if (!node) {
-+		dev_err(&pdev->dev, "No port node at %s\n",
-+					node->full_name);
-+		return -EINVAL;
-+	}
-+	/* Get port node and validate MIPI-CSI channel id. */
-+	v4l2_of_parse_endpoint(node, &endpoint);
-+
-+	state->index = endpoint.port - FIMC_INPUT_MIPI_CSI2_0;
-+	if (state->index < 0 || state->index >= CSIS_MAX_ENTITIES)
-+		return -ENXIO;
-+
-+	/* Get MIPI CSI-2 bus configration from the endpoint node. */
-+	of_property_read_u32(node, "samsung,csis-hs-settle",
-+					&state->hs_settle);
-+	state->wclk_ext = of_property_read_bool(node,
-+					"samsung,csis-wclk");
-+
-+	state->num_lanes = endpoint.bus.mipi_csi2.num_data_lanes;
-+
-+	of_node_put(node);
-+	return 0;
-+}
-+#else
-+#define s5pcsis_parse_dt(pdev, state) (-ENOSYS)
-+#endif
-+
- static int s5pcsis_probe(struct platform_device *pdev)
- {
--	struct s5p_platform_mipi_csis *pdata;
-+	struct device *dev = &pdev->dev;
- 	struct resource *mem_res;
- 	struct csis_state *state;
- 	int ret = -ENOMEM;
- 	int i;
- 
--	state = devm_kzalloc(&pdev->dev, sizeof(*state), GFP_KERNEL);
-+	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
- 	if (!state)
- 		return -ENOMEM;
- 
- 	mutex_init(&state->lock);
- 	spin_lock_init(&state->slock);
--
- 	state->pdev = pdev;
--	state->index = max(0, pdev->id);
- 
--	pdata = pdev->dev.platform_data;
--	if (pdata == NULL) {
--		dev_err(&pdev->dev, "Platform data not fully specified\n");
--		return -EINVAL;
--	}
-+	if (dev->of_node)
-+		ret = s5pcsis_parse_dt(pdev, state);
-+	else
-+		ret = s5pcsis_get_platform_data(pdev, state);
++	fimc->drv_data = of_id->data;
++	ret = of_property_read_u32_array(node, "samsung,pix-limits",
++					 args, FIMC_PIX_LIMITS_MAX);
 +	if (ret < 0)
 +		return ret;
++
++	lim = (struct fimc_pix_limit *)&v[1];
++
++	lim->scaler_en_w = args[0];
++	lim->scaler_dis_w = args[1];
++	lim->out_rot_en_w = args[2];
++	lim->out_rot_dis_w = args[3];
++	v->pix_limit = lim;
++
++	ret = of_property_read_u32_array(node, "samsung,min-pix-sizes",
++								args, 2);
++	v->min_inp_pixsize = ret ? FIMC_DEF_MIN_SIZE : args[0];
++	v->min_out_pixsize = ret ? FIMC_DEF_MIN_SIZE : args[1];
++	ret = of_property_read_u32_array(node, "samsung,min-pix-alignment",
++								args, 2);
++	v->min_vsize_align = ret ? FIMC_DEF_HEIGHT_ALIGN : args[0];
++	v->hor_offs_align = ret ? FIMC_DEF_HOR_OFFS_ALIGN : args[1];
++
++	ret = of_property_read_u32(node, "samsung,rotators", &args[1]);
++	v->has_inp_rot = ret ? 1 : args[1] & 0x01;
++	v->has_out_rot = ret ? 1 : args[1] & 0x10;
++	v->has_mainscaler_ext = of_property_read_bool(node,
++					"samsung,mainscaler-ext");
++
++	v->has_isp_wb = of_property_read_bool(node, "samsung,isp-wb");
++	v->has_cam_if = of_property_read_bool(node, "samsung,cam-if");
++	of_property_read_u32(node, "clock-frequency", clk_freq);
++	fimc->id = of_alias_get_id(node, "fimc");
++
++	fimc->variant = v;
++	return 0;
++}
++
+ static int fimc_probe(struct platform_device *pdev)
+ {
+-	const struct fimc_drvdata *drv_data = fimc_get_drvdata(pdev);
+-	struct s5p_platform_fimc *pdata;
++	struct device *dev = &pdev->dev;
++	u32 lclk_freq = 0;
+ 	struct fimc_dev *fimc;
+ 	struct resource *res;
+ 	int ret = 0;
  
--	if ((state->index == 1 && pdata->lanes > CSIS1_MAX_LANES) ||
--	    pdata->lanes > CSIS0_MAX_LANES) {
--		dev_err(&pdev->dev, "Unsupported number of data lanes: %d\n",
--			pdata->lanes);
-+	if (state->num_lanes == 0 || state->num_lanes > state->max_num_lanes) {
-+		dev_err(dev, "Unsupported number of data lanes: %d (max. %d)\n",
-+			state->num_lanes, state->max_num_lanes);
- 		return -EINVAL;
+-	if (pdev->id >= drv_data->num_entities) {
+-		dev_err(&pdev->dev, "Invalid platform device id: %d\n",
+-			pdev->id);
+-		return -EINVAL;
+-	}
+-
+-	fimc = devm_kzalloc(&pdev->dev, sizeof(*fimc), GFP_KERNEL);
++	fimc = devm_kzalloc(dev, sizeof(*fimc), GFP_KERNEL);
+ 	if (!fimc)
+ 		return -ENOMEM;
+ 
+-	fimc->id = pdev->id;
+-
+-	fimc->variant = drv_data->variant[fimc->id];
+ 	fimc->pdev = pdev;
+-	pdata = pdev->dev.platform_data;
+-	fimc->pdata = pdata;
++
++	if (dev->of_node) {
++		ret = fimc_parse_dt(fimc, &lclk_freq);
++		if (ret < 0)
++			return ret;
++	} else {
++		fimc->drv_data = fimc_get_drvdata(pdev);
++		fimc->id = pdev->id;
++	}
++	if (!fimc->drv_data || fimc->id >= fimc->drv_data->num_entities ||
++	    fimc->id < 0) {
++		dev_err(dev, "Invalid driver data or device id (%d/%d)\n",
++			fimc->id, fimc->drv_data->num_entities);
++		return -EINVAL;
++	}
++	if (!dev->of_node)
++		fimc->variant = fimc->drv_data->variant[fimc->id];
+ 
+ 	init_waitqueue_head(&fimc->irq_queue);
+ 	spin_lock_init(&fimc->slock);
+ 	mutex_init(&fimc->lock);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	fimc->regs = devm_ioremap_resource(&pdev->dev, res);
++	fimc->regs = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(fimc->regs))
+ 		return PTR_ERR(fimc->regs);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (res == NULL) {
+-		dev_err(&pdev->dev, "Failed to get IRQ resource\n");
++		dev_err(dev, "Failed to get IRQ resource\n");
+ 		return -ENXIO;
  	}
  
- 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	state->regs = devm_ioremap_resource(&pdev->dev, mem_res);
-+	state->regs = devm_ioremap_resource(dev, mem_res);
- 	if (IS_ERR(state->regs))
- 		return PTR_ERR(state->regs);
- 
- 	state->irq = platform_get_irq(pdev, 0);
- 	if (state->irq < 0) {
--		dev_err(&pdev->dev, "Failed to get irq\n");
-+		dev_err(dev, "Failed to get irq\n");
- 		return state->irq;
- 	}
- 
- 	for (i = 0; i < CSIS_NUM_SUPPLIES; i++)
- 		state->supplies[i].supply = csis_supply_name[i];
- 
--	ret = devm_regulator_bulk_get(&pdev->dev, CSIS_NUM_SUPPLIES,
-+	ret = devm_regulator_bulk_get(dev, CSIS_NUM_SUPPLIES,
- 				 state->supplies);
+@@ -907,7 +974,10 @@ static int fimc_probe(struct platform_device *pdev)
  	if (ret)
  		return ret;
-@@ -755,11 +829,11 @@ static int s5pcsis_probe(struct platform_device *pdev)
+ 
+-	ret = clk_set_rate(fimc->clock[CLK_BUS], drv_data->lclk_frequency);
++	if (lclk_freq == 0)
++		lclk_freq = fimc->drv_data->lclk_frequency;
++
++	ret = clk_set_rate(fimc->clock[CLK_BUS], lclk_freq);
  	if (ret < 0)
  		return ret;
  
--	if (pdata->clk_rate)
-+	if (state->clk_frequency)
- 		ret = clk_set_rate(state->clock[CSIS_CLK_MUX],
--				   pdata->clk_rate);
-+				   state->clk_frequency);
- 	else
--		dev_WARN(&pdev->dev, "No clock frequency specified!\n");
-+		dev_WARN(dev, "No clock frequency specified!\n");
+@@ -915,10 +985,10 @@ static int fimc_probe(struct platform_device *pdev)
  	if (ret < 0)
- 		goto e_clkput;
+ 		return ret;
  
-@@ -767,16 +841,17 @@ static int s5pcsis_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto e_clkput;
- 
--	ret = devm_request_irq(&pdev->dev, state->irq, s5pcsis_irq_handler,
--			       0, dev_name(&pdev->dev), state);
-+	ret = devm_request_irq(dev, state->irq, s5pcsis_irq_handler,
-+			       0, dev_name(dev), state);
+-	ret = devm_request_irq(&pdev->dev, res->start, fimc_irq_handler,
+-			       0, dev_name(&pdev->dev), fimc);
++	ret = devm_request_irq(dev, res->start, fimc_irq_handler,
++			       0, dev_name(dev), fimc);
  	if (ret) {
--		dev_err(&pdev->dev, "Interrupt request failed\n");
-+		dev_err(dev, "Interrupt request failed\n");
- 		goto e_clkdis;
+-		dev_err(&pdev->dev, "failed to install irq (%d)\n", ret);
++		dev_err(dev, "failed to install irq (%d)\n", ret);
+ 		goto err_clk;
  	}
  
- 	v4l2_subdev_init(&state->sd, &s5pcsis_subdev_ops);
- 	state->sd.owner = THIS_MODULE;
--	strlcpy(state->sd.name, dev_name(&pdev->dev), sizeof(state->sd.name));
-+	snprintf(state->sd.name, sizeof(state->sd.name), "%s.%d",
-+		 CSIS_SUBDEV_NAME, state->index);
- 	state->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
- 	state->csis_fmt = &s5pcsis_formats[0];
+@@ -927,23 +997,23 @@ static int fimc_probe(struct platform_device *pdev)
+ 		goto err_clk;
  
-@@ -796,10 +871,12 @@ static int s5pcsis_probe(struct platform_device *pdev)
- 
- 	/* .. and a pointer to the subdev. */
- 	platform_set_drvdata(pdev, &state->sd);
--
- 	memcpy(state->events, s5pcsis_events, sizeof(state->events));
-+	pm_runtime_enable(dev);
- 
+ 	platform_set_drvdata(pdev, fimc);
 -	pm_runtime_enable(&pdev->dev);
-+	dev_info(&pdev->dev, "lanes: %d, hs_settle: %d, wclk: %d, freq: %u\n",
-+		 state->num_lanes, state->hs_settle, state->wclk_ext,
-+		 state->clk_frequency);
- 	return 0;
+-	ret = pm_runtime_get_sync(&pdev->dev);
++	pm_runtime_enable(dev);
++	ret = pm_runtime_get_sync(dev);
+ 	if (ret < 0)
+ 		goto err_sd;
+ 	/* Initialize contiguous memory allocator */
+-	fimc->alloc_ctx = vb2_dma_contig_init_ctx(&pdev->dev);
++	fimc->alloc_ctx = vb2_dma_contig_init_ctx(dev);
+ 	if (IS_ERR(fimc->alloc_ctx)) {
+ 		ret = PTR_ERR(fimc->alloc_ctx);
+ 		goto err_pm;
+ 	}
  
- e_clkdis:
-@@ -923,13 +1000,21 @@ static const struct dev_pm_ops s5pcsis_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(s5pcsis_suspend, s5pcsis_resume)
+-	dev_dbg(&pdev->dev, "FIMC.%d registered successfully\n", fimc->id);
++	dev_dbg(dev, "FIMC.%d registered successfully\n", fimc->id);
+ 
+-	pm_runtime_put(&pdev->dev);
++	pm_runtime_put(dev);
+ 	return 0;
+ err_pm:
+-	pm_runtime_put(&pdev->dev);
++	pm_runtime_put(dev);
+ err_sd:
+ 	fimc_unregister_capture_subdev(fimc);
+ err_clk:
+@@ -1046,24 +1116,18 @@ static const struct fimc_pix_limit s5p_pix_limit[4] = {
+ 	[0] = {
+ 		.scaler_en_w	= 3264,
+ 		.scaler_dis_w	= 8192,
+-		.in_rot_en_h	= 1920,
+-		.in_rot_dis_w	= 8192,
+ 		.out_rot_en_w	= 1920,
+ 		.out_rot_dis_w	= 4224,
+ 	},
+ 	[1] = {
+ 		.scaler_en_w	= 4224,
+ 		.scaler_dis_w	= 8192,
+-		.in_rot_en_h	= 1920,
+-		.in_rot_dis_w	= 8192,
+ 		.out_rot_en_w	= 1920,
+ 		.out_rot_dis_w	= 4224,
+ 	},
+ 	[2] = {
+ 		.scaler_en_w	= 1920,
+ 		.scaler_dis_w	= 8192,
+-		.in_rot_en_h	= 1280,
+-		.in_rot_dis_w	= 8192,
+ 		.out_rot_en_w	= 1280,
+ 		.out_rot_dis_w	= 1920,
+ 	},
+@@ -1085,7 +1149,6 @@ static const struct fimc_variant fimc0_variant_s5p = {
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 8,
+ 	.min_vsize_align = 16,
+-	.out_buf_count	 = 4,
+ 	.pix_limit	 = &s5p_pix_limit[0],
  };
  
-+static const struct of_device_id s5pcsis_of_match[] = {
-+	{ .compatible = "samsung,s5pv210-csis" },
-+	{ .compatible = "samsung,exynos4210-csis" },
+@@ -1095,12 +1158,10 @@ static const struct fimc_variant fimc2_variant_s5p = {
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 8,
+ 	.min_vsize_align = 16,
+-	.out_buf_count	 = 4,
+ 	.pix_limit	 = &s5p_pix_limit[1],
+ };
+ 
+ static const struct fimc_variant fimc0_variant_s5pv210 = {
+-	.pix_hoff	 = 1,
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
+ 	.has_cam_if	 = 1,
+@@ -1108,12 +1169,10 @@ static const struct fimc_variant fimc0_variant_s5pv210 = {
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 8,
+ 	.min_vsize_align = 16,
+-	.out_buf_count	 = 4,
+ 	.pix_limit	 = &s5p_pix_limit[1],
+ };
+ 
+ static const struct fimc_variant fimc1_variant_s5pv210 = {
+-	.pix_hoff	 = 1,
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
+ 	.has_cam_if	 = 1,
+@@ -1122,80 +1181,39 @@ static const struct fimc_variant fimc1_variant_s5pv210 = {
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 1,
+ 	.min_vsize_align = 1,
+-	.out_buf_count	 = 4,
+ 	.pix_limit	 = &s5p_pix_limit[2],
+ };
+ 
+ static const struct fimc_variant fimc2_variant_s5pv210 = {
+ 	.has_cam_if	 = 1,
+-	.pix_hoff	 = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 8,
+ 	.min_vsize_align = 16,
+-	.out_buf_count	 = 4,
+ 	.pix_limit	 = &s5p_pix_limit[2],
+ };
+ 
+ static const struct fimc_variant fimc0_variant_exynos4210 = {
+-	.pix_hoff	 = 1,
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
+ 	.has_cam_if	 = 1,
+-	.has_cistatus2	 = 1,
+ 	.has_mainscaler_ext = 1,
+-	.has_alpha	 = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 2,
+ 	.min_vsize_align = 1,
+-	.out_buf_count	 = 32,
+ 	.pix_limit	 = &s5p_pix_limit[1],
+ };
+ 
+ static const struct fimc_variant fimc3_variant_exynos4210 = {
+-	.pix_hoff	 = 1,
+-	.has_cistatus2	 = 1,
+ 	.has_mainscaler_ext = 1,
+-	.has_alpha	 = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 2,
+ 	.min_vsize_align = 1,
+-	.out_buf_count	 = 32,
+ 	.pix_limit	 = &s5p_pix_limit[3],
+ };
+ 
+-static const struct fimc_variant fimc0_variant_exynos4x12 = {
+-	.pix_hoff		= 1,
+-	.has_inp_rot		= 1,
+-	.has_out_rot		= 1,
+-	.has_cam_if		= 1,
+-	.has_isp_wb		= 1,
+-	.has_cistatus2		= 1,
+-	.has_mainscaler_ext	= 1,
+-	.has_alpha		= 1,
+-	.min_inp_pixsize	= 16,
+-	.min_out_pixsize	= 16,
+-	.hor_offs_align		= 2,
+-	.min_vsize_align	= 1,
+-	.out_buf_count		= 32,
+-	.pix_limit		= &s5p_pix_limit[1],
+-};
+-
+-static const struct fimc_variant fimc3_variant_exynos4x12 = {
+-	.pix_hoff		= 1,
+-	.has_cistatus2		= 1,
+-	.has_mainscaler_ext	= 1,
+-	.has_alpha		= 1,
+-	.min_inp_pixsize	= 16,
+-	.min_out_pixsize	= 16,
+-	.hor_offs_align		= 2,
+-	.min_vsize_align	= 1,
+-	.out_buf_count		= 32,
+-	.pix_limit		= &s5p_pix_limit[3],
+-};
+-
+ /* S5PC100 */
+ static const struct fimc_drvdata fimc_drvdata_s5p = {
+ 	.variant = {
+@@ -1203,8 +1221,9 @@ static const struct fimc_drvdata fimc_drvdata_s5p = {
+ 		[1] = &fimc0_variant_s5p,
+ 		[2] = &fimc2_variant_s5p,
+ 	},
+-	.num_entities = 3,
++	.num_entities	= 3,
+ 	.lclk_frequency = 133000000UL,
++	.out_buf_count	= 4,
+ };
+ 
+ /* S5PV210, S5PC110 */
+@@ -1214,8 +1233,10 @@ static const struct fimc_drvdata fimc_drvdata_s5pv210 = {
+ 		[1] = &fimc1_variant_s5pv210,
+ 		[2] = &fimc2_variant_s5pv210,
+ 	},
+-	.num_entities = 3,
+-	.lclk_frequency = 166000000UL,
++	.num_entities	= 3,
++	.lclk_frequency	= 166000000UL,
++	.out_buf_count	= 4,
++	.dma_pix_hoff	= 1,
+ };
+ 
+ /* EXYNOS4210, S5PV310, S5PC210 */
+@@ -1226,20 +1247,22 @@ static const struct fimc_drvdata fimc_drvdata_exynos4210 = {
+ 		[2] = &fimc0_variant_exynos4210,
+ 		[3] = &fimc3_variant_exynos4210,
+ 	},
+-	.num_entities = 4,
++	.num_entities	= 4,
+ 	.lclk_frequency = 166000000UL,
++	.dma_pix_hoff	= 1,
++	.cistatus2	= 1,
++	.alpha_color	= 1,
++	.out_buf_count	= 32,
+ };
+ 
+ /* EXYNOS4212, EXYNOS4412 */
+ static const struct fimc_drvdata fimc_drvdata_exynos4x12 = {
+-	.variant = {
+-		[0] = &fimc0_variant_exynos4x12,
+-		[1] = &fimc0_variant_exynos4x12,
+-		[2] = &fimc0_variant_exynos4x12,
+-		[3] = &fimc3_variant_exynos4x12,
+-	},
+-	.num_entities = 4,
+-	.lclk_frequency = 166000000UL,
++	.num_entities	= 4,
++	.lclk_frequency	= 166000000UL,
++	.dma_pix_hoff	= 1,
++	.cistatus2	= 1,
++	.alpha_color	= 1,
++	.out_buf_count	= 32,
+ };
+ 
+ static const struct platform_device_id fimc_driver_ids[] = {
+@@ -1256,10 +1279,24 @@ static const struct platform_device_id fimc_driver_ids[] = {
+ 		.name		= "exynos4x12-fimc",
+ 		.driver_data	= (unsigned long)&fimc_drvdata_exynos4x12,
+ 	},
+-	{},
++	{ },
+ };
+ MODULE_DEVICE_TABLE(platform, fimc_driver_ids);
+ 
++static const struct of_device_id fimc_of_match[] = {
++	{
++		.compatible = "samsung,s5pv210-fimc",
++		.data = &fimc_drvdata_s5pv210,
++	}, {
++		.compatible = "samsung,exynos4210-fimc",
++		.data = &fimc_drvdata_exynos4210,
++	}, {
++		.compatible = "samsung,exynos4212-fimc",
++		.data = &fimc_drvdata_exynos4x12,
++	},
 +	{ /* sentinel */ },
 +};
-+MODULE_DEVICE_TABLE(of, s5pcsis_of_match);
 +
- static struct platform_driver s5pcsis_driver = {
- 	.probe		= s5pcsis_probe,
- 	.remove		= s5pcsis_remove,
- 	.driver		= {
--		.name	= CSIS_DRIVER_NAME,
+ static const struct dev_pm_ops fimc_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(fimc_suspend, fimc_resume)
+ 	SET_RUNTIME_PM_OPS(fimc_runtime_suspend, fimc_runtime_resume, NULL)
+@@ -1270,9 +1307,10 @@ static struct platform_driver fimc_driver = {
+ 	.remove		= fimc_remove,
+ 	.id_table	= fimc_driver_ids,
+ 	.driver = {
+-		.name	= FIMC_MODULE_NAME,
 -		.owner	= THIS_MODULE,
--		.pm	= &s5pcsis_pm_ops,
-+		.of_match_table = s5pcsis_of_match,
-+		.name		= CSIS_DRIVER_NAME,
+-		.pm     = &fimc_pm_ops,
++		.of_match_table = fimc_of_match,
++		.name		= FIMC_MODULE_NAME,
 +		.owner		= THIS_MODULE,
-+		.pm		= &s5pcsis_pm_ops,
- 	},
++		.pm     	= &fimc_pm_ops,
+ 	}
  };
  
-diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.h b/drivers/media/platform/s5p-fimc/mipi-csis.h
-index 2709286..28c11c4 100644
---- a/drivers/media/platform/s5p-fimc/mipi-csis.h
-+++ b/drivers/media/platform/s5p-fimc/mipi-csis.h
-@@ -11,6 +11,7 @@
- #define S5P_MIPI_CSIS_H_
+diff --git a/drivers/media/platform/s5p-fimc/fimc-core.h b/drivers/media/platform/s5p-fimc/fimc-core.h
+index 412d507..145b8cc 100644
+--- a/drivers/media/platform/s5p-fimc/fimc-core.h
++++ b/drivers/media/platform/s5p-fimc/fimc-core.h
+@@ -42,6 +42,10 @@
+ #define FIMC_CAMIF_MAX_HEIGHT	0x2000
+ #define FIMC_MAX_JPEG_BUF_SIZE	(10 * SZ_1M)
+ #define FIMC_MAX_PLANES		3
++#define FIMC_PIX_LIMITS_MAX	4
++#define FIMC_DEF_MIN_SIZE	16
++#define FIMC_DEF_HEIGHT_ALIGN	2
++#define FIMC_DEF_HOR_OFFS_ALIGN	1
  
- #define CSIS_DRIVER_NAME	"s5p-mipi-csis"
-+#define CSIS_SUBDEV_NAME	CSIS_DRIVER_NAME
- #define CSIS_MAX_ENTITIES	2
- #define CSIS0_MAX_LANES		4
- #define CSIS1_MAX_LANES		2
-diff --git a/include/media/s5p_fimc.h b/include/media/s5p_fimc.h
-index 28f3590..d6dbb79 100644
---- a/include/media/s5p_fimc.h
-+++ b/include/media/s5p_fimc.h
-@@ -15,6 +15,19 @@
- #include <media/media-entity.h>
+ /* indices to the clocks array */
+ enum {
+@@ -365,10 +369,8 @@ struct fimc_pix_limit {
  
- /*
-+ * Enumeration of data inputs to the camera subsystem.
-+ */
-+enum fimc_input {
-+	FIMC_INPUT_PARALLEL_0	= 1,
-+	FIMC_INPUT_PARALLEL_1,
-+	FIMC_INPUT_MIPI_CSI2_0	= 3,
-+	FIMC_INPUT_MIPI_CSI2_1,
-+	FIMC_INPUT_WRITEBACK_A	= 5,
-+	FIMC_INPUT_WRITEBACK_B,
-+	FIMC_INPUT_WRITEBACK_ISP = 5,
-+};
-+
-+/*
-  * Enumeration of the FIMC data bus types.
+ /**
+  * struct fimc_variant - FIMC device variant information
+- * @pix_hoff: indicate whether horizontal offset is in pixels or in bytes
+  * @has_inp_rot: set if has input rotator
+  * @has_out_rot: set if has output rotator
+- * @has_cistatus2: 1 if CISTATUS2 register is present in this IP revision
+  * @has_mainscaler_ext: 1 if extended mainscaler ratios in CIEXTEN register
+  *			 are present in this IP revision
+  * @has_cam_if: set if this instance has a camera input interface
+@@ -378,23 +380,18 @@ struct fimc_pix_limit {
+  * @min_out_pixsize: minimum output pixel size
+  * @hor_offs_align: horizontal pixel offset aligment
+  * @min_vsize_align: minimum vertical pixel size alignment
+- * @out_buf_count: the number of buffers in output DMA sequence
   */
- enum fimc_bus_type {
+ struct fimc_variant {
+-	unsigned int	pix_hoff:1;
+ 	unsigned int	has_inp_rot:1;
+ 	unsigned int	has_out_rot:1;
+-	unsigned int	has_cistatus2:1;
+ 	unsigned int	has_mainscaler_ext:1;
+ 	unsigned int	has_cam_if:1;
+ 	unsigned int	has_isp_wb:1;
+-	unsigned int	has_alpha:1;
+ 	const struct fimc_pix_limit *pix_limit;
+ 	u16		min_inp_pixsize;
+ 	u16		min_out_pixsize;
+ 	u16		hor_offs_align;
+ 	u16		min_vsize_align;
+-	u16		out_buf_count;
+ };
+ 
+ /**
+@@ -402,11 +399,20 @@ struct fimc_variant {
+  * @variant: variant information for this device
+  * @num_entities: number of fimc instances available in a SoC
+  * @lclk_frequency: local bus clock frequency
++ * @cistatus2: 1 if the FIMC IPs have CISTATUS2 register
++ * @dma_pix_hoff: the horizontal DMA offset unit: 1 - pixels, 0 - bytes
++ * @alpha_color: 1 if alpha color component is supported
++ * @out_buf_count: maximum number of output DMA buffers supported
+  */
+ struct fimc_drvdata {
+ 	const struct fimc_variant *variant[FIMC_MAX_DEVS];
+ 	int num_entities;
+ 	unsigned long lclk_frequency;
++	/* Fields common to all FIMC IP instances */
++	u8 cistatus2;
++	u8 dma_pix_hoff;
++	u8 alpha_color;
++	u8 out_buf_count;
+ };
+ 
+ #define fimc_get_drvdata(_pdev) \
+@@ -438,6 +444,7 @@ struct fimc_dev {
+ 	struct platform_device		*pdev;
+ 	struct s5p_platform_fimc	*pdata;
+ 	const struct fimc_variant	*variant;
++	const struct fimc_drvdata	*drv_data;
+ 	u16				id;
+ 	struct clk			*clock[MAX_FIMC_CLOCKS];
+ 	void __iomem			*regs;
+diff --git a/drivers/media/platform/s5p-fimc/fimc-m2m.c b/drivers/media/platform/s5p-fimc/fimc-m2m.c
+index 163584d..daaaf91 100644
+--- a/drivers/media/platform/s5p-fimc/fimc-m2m.c
++++ b/drivers/media/platform/s5p-fimc/fimc-m2m.c
+@@ -154,7 +154,7 @@ static void fimc_device_run(void *priv)
+ 		fimc_hw_set_rotation(ctx);
+ 		fimc_hw_set_effect(ctx);
+ 		fimc_hw_set_out_dma(ctx);
+-		if (fimc->variant->has_alpha)
++		if (fimc->drv_data->alpha_color)
+ 			fimc_hw_set_rgb_alpha(ctx);
+ 		fimc_hw_set_output_path(ctx);
+ 	}
+diff --git a/drivers/media/platform/s5p-fimc/fimc-reg.c b/drivers/media/platform/s5p-fimc/fimc-reg.c
+index 50b97c7..4d2fc69 100644
+--- a/drivers/media/platform/s5p-fimc/fimc-reg.c
++++ b/drivers/media/platform/s5p-fimc/fimc-reg.c
+@@ -35,7 +35,7 @@ void fimc_hw_reset(struct fimc_dev *dev)
+ 	cfg &= ~FIMC_REG_CIGCTRL_SWRST;
+ 	writel(cfg, dev->regs + FIMC_REG_CIGCTRL);
+ 
+-	if (dev->variant->out_buf_count > 4)
++	if (dev->drv_data->out_buf_count > 4)
+ 		fimc_hw_set_dma_seq(dev, 0xF);
+ }
+ 
+@@ -747,7 +747,7 @@ s32 fimc_hw_get_frame_index(struct fimc_dev *dev)
+ {
+ 	s32 reg;
+ 
+-	if (dev->variant->has_cistatus2) {
++	if (dev->drv_data->cistatus2) {
+ 		reg = readl(dev->regs + FIMC_REG_CISTATUS2) & 0x3f;
+ 		return reg - 1;
+ 	}
+@@ -763,7 +763,7 @@ s32 fimc_hw_get_prev_frame_index(struct fimc_dev *dev)
+ {
+ 	s32 reg;
+ 
+-	if (!dev->variant->has_cistatus2)
++	if (!dev->drv_data->cistatus2)
+ 		return -1;
+ 
+ 	reg = readl(dev->regs + FIMC_REG_CISTATUS2);
 -- 
 1.7.9.5
