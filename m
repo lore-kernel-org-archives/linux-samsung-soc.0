@@ -1,60 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: convert arm/arm64 arch timer to use CLKSRC_OF init
-Date: Tue, 26 Mar 2013 09:56:28 +0000
-Message-ID: <201303260956.28784.arnd@arndb.de>
-References: <1363818875-15978-1-git-send-email-robherring2@gmail.com> <201303252236.23270.arnd@arndb.de> <5150D54D.1070004@linaro.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] clk: samsung: Fix compilation error
+Date: Tue, 26 Mar 2013 16:18:18 +0530
+Message-ID: <1364294898-22618-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:53791 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753912Ab3CZJ4o (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 05:56:44 -0400
-In-Reply-To: <5150D54D.1070004@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: thomas.abraham@linaro.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, sachin.kamat@linaro.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: John Stultz <john.stultz@linaro.org>
-Cc: Rob Herring <robherring2@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Catalin Marinas <Catalin.Marinas@arm.com>, Magnus Damm <magnus.damm@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Will Deacon <Will.Deacon@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
-On Monday 25 March 2013, John Stultz wrote:
-> On 03/25/2013 03:36 PM, Arnd Bergmann wrote:
-> > On Monday 25 March 2013, Rob Herring wrote:
-> >> I count integrator-cp, realview, versatile and non-DT VExpress that do
-> >> this (not surprisingly) and 25 platforms or timer implementations plus
-> >> arm64 that do sched_clock setup in time_init. What's broken by not
-> >> moving these earlier?
-> > timekeeping_init() will leave the persistent_clock_exist variable as "false",
-> > which is read in rtc_suspend() and timekeeping_inject_sleeptime().
-> 
-> Are you mixing up the persistent_clock and sched_clock here? From a 
-> generic stand-point they have different requirements.
+=46ixes the below compilation error during non-dt build.
+drivers/clk/samsung/clk.c: In function =E2=80=98samsung_clk_of_register=
+_fixed_ext=E2=80=99:
+drivers/clk/samsung/clk.c:252:2: error:
+implicit declaration of function =E2=80=98for_each_matching_node_and_ma=
+tch=E2=80=99
+[-Werror=3Dimplicit-function-declaration]
+drivers/clk/samsung/clk.c:252:60: error: expected =E2=80=98;=E2=80=99 b=
+efore =E2=80=98{=E2=80=99 token
 
-Ah, sorry about that. I had stumbled over the persistent_clock
-issue earlier and was confusing the two.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/clk/samsung/clk.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-> > For all I can tell, you will get a little jitter every time you
-> > do a suspend in that case. Or perhaps it means the system clock
-> > will be forwarded by the amount of time spent in suspend twice
-> > after wakeup, but I'm probably misreading the code for that case.
-> 
-> No, you shouldn't see timekeeping being incremented twice, we check in 
-> rtc_resume code if the persistent clock is present if so we won't inject 
-> any measured suspend time there. But you're probably right that we're 
-> being a little overly paranoid checking the same value twice.
-
-Well, the point is that has_persistent_clock() returns false because
-it is not yet active when the flag gets set in timekeeping_init(),
-but when we call read_persistent_clock() in timekeeping_suspend(),
-it will actually return a non-zero time.
- 
-> As far as the benefit to the persistent clock: it is just a little 
-> better to use, since we can access it earlier in resume, prior to 
-> interrupts being enabled. So we should see less time error introduced 
-> each suspend.
-
-Ok.
-
-	Arnd
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 91d12f3..78615dd 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -239,6 +239,7 @@ void __init samsung_clk_register_gate(struct samsun=
+g_gate_clock *list,
+  * obtain the clock speed of all external fixed clock sources from dev=
+ice
+  * tree and register it
+  */
++#ifdef CONFIG_OF
+ void __init samsung_clk_of_register_fixed_ext(
+ 			struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 			unsigned int nr_fixed_rate_clk,
+@@ -255,6 +256,7 @@ void __init samsung_clk_of_register_fixed_ext(
+ 	}
+ 	samsung_clk_register_fixed_rate(fixed_rate_clk, nr_fixed_rate_clk);
+ }
++#endif
+=20
+ /* utility function to get the rate of a specified clock */
+ unsigned long _get_rate(const char *clk_name)
+--=20
+1.7.4.1
