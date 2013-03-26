@@ -1,63 +1,55 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 0/7] Add G2D nodes to Exynos4 machines
-Date: Tue, 26 Mar 2013 22:08:54 +0530
-Message-ID: <CAK9yfHwTkPWy5i-NcK3oYYzr_L6kAwXAwky+n6T4NptcokTPFg@mail.gmail.com>
-References: <1361163733-4338-1-git-send-email-sachin.kamat@linaro.org>
-	<CAK9yfHyQ=2EjRKknhN7nKUygnryKfWZ2A61w1+WRtrzLaF3SBA@mail.gmail.com>
-	<052101ce1e25$4370c410$ca524c30$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v5 0/6] Device tree support for Exynos SoC camera subsystem
+Date: Tue, 26 Mar 2013 17:39:52 +0100
+Message-ID: <1364315998-19372-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:54009 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754864Ab3CZQiz (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:50784 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965689Ab3CZQkN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 12:38:55 -0400
-Received: by mail-ob0-f180.google.com with SMTP id wo10so4851036obc.25
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2013 09:38:54 -0700 (PDT)
-In-Reply-To: <052101ce1e25$4370c410$ca524c30$%kim@samsung.com>
+	Tue, 26 Mar 2013 12:40:13 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 11 March 2013 12:24, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Sachin Kamat wrote:
->>
->> Hi Kukjin,
->>
->> Can you please look into this series as it is pending since quite some time.
->>
-> Applied, I have another opinion about the compatible string though...
+Changes in this iteration include mostly adaptation to changes at the
+V4L2 OF parser lib and an addition of clocks/clock-names properties
+in the bindings of the IP blocks.
 
-Couldn't find this series in your latest for-next. Please let me know
-which branch this is applied to.
+If there is no more comments I intend to send a pull request including
+the DT bindings documentation, the V4L2 OF parser and these patches at
+end of this week.
 
+This patch series with all dependencies can be found at:
+http://git.linuxtv.org/snawrocki/samsung.git/devicetree-fimc-v5
 
+Sylwester Nawrocki (6):
+  s5p-csis: Add device tree support
+  s5p-fimc: Add device tree support for FIMC device driver
+  s5p-fimc: Add device tree support for FIMC-LITE device driver
+  s5p-fimc: Add device tree support for the media device driver
+  s5p-fimc: Add device tree based sensors registration
+  s5p-fimc: Use pinctrl API for camera ports configuration
 
->> On 18 February 2013 10:32, Sachin Kamat <sachin.kamat@linaro.org> wrote:
->> > This patch series is based on Kukjin Kim's next/dt-exynos branch of
->> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->> > tree.
->> >
->> > Changes since v1:
->> > * Removed power-domain entry in patch 1/7 as the driver currently
->> >   does not use it.
->> > * Addressed review comments from Sylwester Nawrocki and Tomasz Figa
->> >   in patch 7/7.
->> >
->> > Sachin Kamat (7):
->> >   ARM: dts: Add G2D node to exynos4210.dtsi
->> >   ARM: dts: Add G2D node to SMDKV310
->> >   ARM: dts: Add G2D node to exynos4210-origen
->> >   ARM: dts: Add G2D node to exynos4x12.dtsi
->> >   ARM: dts: Add G2D node to SMDK4412
->> >   ARM: dts: Add G2D node to exynos4412-origen
->> >   ARM: dts: Add Samsung G2D DT bindings documentation
->
+ .../devicetree/bindings/media/exynos-fimc-lite.txt |   14 +
+ .../devicetree/bindings/media/samsung-fimc.txt     |  200 +++++++++++
+ .../bindings/media/samsung-mipi-csis.txt           |   81 +++++
+ drivers/media/platform/s5p-fimc/fimc-capture.c     |    6 +-
+ drivers/media/platform/s5p-fimc/fimc-core.c        |  239 +++++++------
+ drivers/media/platform/s5p-fimc/fimc-core.h        |   21 +-
+ drivers/media/platform/s5p-fimc/fimc-lite.c        |   63 +++-
+ drivers/media/platform/s5p-fimc/fimc-m2m.c         |    2 +-
+ drivers/media/platform/s5p-fimc/fimc-mdevice.c     |  370 +++++++++++++++++---
+ drivers/media/platform/s5p-fimc/fimc-mdevice.h     |   16 +
+ drivers/media/platform/s5p-fimc/fimc-reg.c         |    6 +-
+ drivers/media/platform/s5p-fimc/mipi-csis.c        |  155 ++++++--
+ drivers/media/platform/s5p-fimc/mipi-csis.h        |    1 +
+ include/media/s5p_fimc.h                           |   17 +
+ 14 files changed, 982 insertions(+), 209 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos-fimc-lite.txt
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-fimc.txt
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
 
-
-
--- 
-With warm regards,
-Sachin
+--
+1.7.9.5
