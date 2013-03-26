@@ -1,43 +1,106 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: [PATCH] ARM:s3c24xx: beautify code, data->hwirq is unsigned long
- which is always >= 0
-Date: Tue, 26 Mar 2013 14:54:40 +0800
-Message-ID: <51514630.6090906@asianux.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH V5 8/9] ARM: tegra: Provide regulator to pwm-backlight
+Date: Tue, 26 Mar 2013 08:26:13 +0100
+Message-ID: <20130326072613.GA31388@avionic-0098.mockup.avionic-design.de>
+References: <1364260913-25490-1-git-send-email-achew@nvidia.com>
+ <1364260913-25490-9-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:22292 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753695Ab3CZGzN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 02:55:13 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1364260913-25490-9-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org >>
-	\"linux-samsung-soc@vger.kernel.org\"" <linux-samsung-soc@vger.kernel.org>
 
 
-  data->hwirq is unsigned long which is always >= 0
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Chen Gang <gang.chen@asianux.com>
----
- arch/arm/mach-s3c24xx/irq.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+On Mon, Mar 25, 2013 at 06:21:52PM -0700, Andrew Chew wrote:
+> The pwm-backlight driver now takes a mandatory regulator that is gotten
+> during driver probe.  Initialize a dummy regulator to satisfy this
+> requirement.
+>=20
+> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra20-medcom-wide.dts | 1 +
+>  arch/arm/boot/dts/tegra20-tamonten.dtsi   | 5 +++++
+>  2 files changed, 6 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dt=
+s/tegra20-medcom-wide.dts
+> index a2d6d65..90d665e 100644
+> --- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
+> +++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+> @@ -32,6 +32,7 @@
+> =20
+>  		brightness-levels =3D <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level =3D <6>;
+> +		power-supply =3D <&backlight_power_reg>;
+>  	};
+> =20
+>  	sound {
+> diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/=
+tegra20-tamonten.dtsi
+> index 6e9d91f..2d8e7f2 100644
+> --- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+> @@ -485,5 +485,10 @@
+>  			regulator-max-microvolt =3D <5000000>;
+>  			regulator-always-on;
+>  		};
+> +
+> +		backlight_power_reg: regulator@1 {
+> +			compatible =3D "regulator-fixed";
+> +			regulator-name =3D "backlight-power";
+> +		};
 
-diff --git a/arch/arm/mach-s3c24xx/irq.c b/arch/arm/mach-s3c24xx/irq.c
-index 5c9f8b7..143f57b 100644
---- a/arch/arm/mach-s3c24xx/irq.c
-+++ b/arch/arm/mach-s3c24xx/irq.c
-@@ -210,7 +210,7 @@ static int s3c_irqext0_type(struct irq_data *data, unsigned int type)
- 	void __iomem *gpcon_reg;
- 	unsigned long gpcon_offset, extint_offset;
- 
--	if ((data->hwirq >= 0) && (data->hwirq <= 3)) {
-+	if (data->hwirq <= 3) {
- 		gpcon_reg = S3C2410_GPFCON;
- 		extint_reg = S3C24XX_EXTINT0;
- 		gpcon_offset = (data->hwirq) * 2;
--- 
-1.7.7.6
+This is missing a reg property to mirror the unit address "@1". I've
+just checked the schematics and there is indeed a physical pin that
+can be used to enable backlight power on Tamonten. It just happens to
+not be connected on Medcom-Wide for some reason.
+
+The physical pin is Tegra's GPIO PB5 and the schematic calls the supply
+"lcd_bl_en", so I think a more accurate description of this would be:
+
+	backlight_power_reg: regulator@1 {
+		compatible =3D "regulator-fixed";
+		reg =3D <1>;
+		regulator-name =3D "lcd_bl_en";
+		regulator-min-microvolt =3D <3300000>;
+		regulator-max-microvolt =3D <3300000>;
+		gpio =3D <&gpio 13 0>; /* gpio PB5 */
+		enable-active-high;
+	};
+
+Thierry
+
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRUU2VAAoJEN0jrNd/PrOh++8QALQEfL2zD6mXhJiREp+4lMw2
+ggcqxBlOZu3kYkFJKcOfc7MpG27p08eqSyJjFOvcBITlQwrShRQOyd7sULeUa6gR
+doMLgfQwQ3BUERf1ugUKJ4v+W7+UWLNUBQSfQIoBDbPT1TTxq+nq4pGcAWjo+nrP
++ZaarSiStgvX7wUK+nD53FixTWCCu8TfbtH0IqmwQjV1NuYcaysWQufmWCCfTZrf
+d65VYjfCC8A1wc55N1SAQWe4TB1jklZIj+kC1qepNyIxbzQTjU/3V5PamMkNjxfc
+fGjwqZ4OCeq60zkig6H363vfuxMvvvpn9+x0ncUogaaYhwA2qUKeuoXQcyKbQeN5
+HUd22sW8ltxKENRQNuwC2XIGdgVXzCwfWVa89em8K/y0NgiUPU3KC8nv5ziZN0Gp
+41bfrK4LQiSKOabaFg7LFA3Yt/6U9SghHtBjDVXXTfseFLJvicX7aGOWcOP5t04A
+oQIKOIPqKXmKxSvqcclJBe+SSpEfYVpDSt2cT4T4D1sLg0xFEe1B1pzM39uBEcgp
+NJBlIEy1/HSFtzhWF436Bn+fMPdfNhNM3zc8MeKRmJKD4OlPGd6Ev2v0hTrUeRPv
+yORlwVcDnDbWNtVhgBYmdY3LXTrQvCdwNZZ+faKfghRd/Cod3XDLew61tO3/Jdwp
+FMFUxg7kBfUf/T6pbhVx
+=VuzH
+-----END PGP SIGNATURE-----
+
+--SUOF0GtieIMvvwua--
