@@ -1,40 +1,41 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 0/4] exynos4-is updates
-Date: Tue, 26 Mar 2013 19:57:48 +0100
-Message-ID: <5151EFAC.2040002@samsung.com>
-References: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 4/6] pci: Add PCIe driver for Samsung Exynos
+Date: Tue, 26 Mar 2013 16:33:21 -0500
+Message-ID: <51521421.9020906@gmail.com>
+References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com> <00c301ce277b$f2790080$d76b0180$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:27062 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751146Ab3CZS5x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 14:57:53 -0400
-In-reply-to: <1364323101-22046-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <00c301ce277b$f2790080$d76b0180$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, shaik.samsung@gmail.com, arun.kk@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org
 
-On 03/26/2013 07:38 PM, Sylwester Nawrocki wrote:
-> This patch series includes YUV order handling fix for the FIMC
-> and FIMC-LITE, a fix for media entity ref_count issue, minor
-> refactoring and removal of some static data that will no longer
-> be needed since starting from 3.10 Exynos platform is going to
-> be DT only.
+On 03/22/2013 11:07 PM, Jingoo Han wrote:
+> Exynos5440 has a PCIe controller which can be used as Root Complex.
+> This driver supports a PCIe controller as Root Complex mode.
+> 
+> Signed-off-by: Surendranath Gurivireddy Balla <suren.reddy@samsung.com>
+> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+>  .../devicetree/bindings/pci/exynos-pcie.txt        |   56 +
+>  drivers/pci/host/Kconfig                           |    5 +
+>  drivers/pci/host/Makefile                          |    1 +
+>  drivers/pci/host/pci-exynos.c                      | 1139 ++++++++++++++++++++
+>  4 files changed, 1201 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/exynos-pcie.txt
+>  create mode 100644 drivers/pci/host/Makefile
+>  create mode 100644 drivers/pci/host/pci-exynos.c
 
-Sorry for spamming with this double patch series. Will try to
-be more careful next time.
+[...]
 
-> Sylwester Nawrocki (5):
->   exynos4-is: Remove static driver data for Exynos4210 FIMC variants
->   exynos4-is: Use common driver data for all FIMC-LITE IP instances
->   exynos4-is: Allow colorspace conversion at fimc-lite
->   exynos4-is: Correct input DMA YUV order configuration
->   exynos4-is: Ensure proper media pipeline state on device close
+> +
+> +/* synopsis specific PCIE configuration registers*/
 
--- 
-Thanks,
-Sylwester
+If this is a standard IP block, then the driver naming should reflect
+that. I suspect there are several others with the same IP block.
+
+Rob
