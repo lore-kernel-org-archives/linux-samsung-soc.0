@@ -1,146 +1,92 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 3/6] usb: phy: samsung: Consolidate reference clock rate
- handling
-Date: Wed, 27 Mar 2013 15:43:22 +0200
-Message-ID: <20130327134322.GL4626@arwen.pp.htv.fi>
-References: <1364309595-16102-1-git-send-email-t.figa@samsung.com>
- <1418529.52pdDLWkRZ@amdc1227>
- <20130327133149.GI4626@arwen.pp.htv.fi>
- <3457341.kfl8pm1NLi@amdc1227>
-Reply-To: <balbi@ti.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFC 01/12] exynos-fimc-is: Adding device tree nodes
+Date: Wed, 27 Mar 2013 14:47:03 +0100
+Message-ID: <5152F857.6010409@samsung.com>
+References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
+ <1362754765-2651-2-git-send-email-arun.kk@samsung.com>
+ <514DAAC3.4050202@gmail.com>
+ <CALt3h7_nXSd6A2t55fi3PD+BkpZh5Lo4suWcg-ZF=jDq+V3NXA@mail.gmail.com>
+ <51522671.5080706@gmail.com>
+ <CALt3h7_nFQdRCJJA0n4i9_CnRJAeYvu8xCkwzDsfdqBZgf_NNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BHMq0+oGliEfCAkH"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:50327 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751142Ab3C0Nn1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Mar 2013 09:43:27 -0400
-Content-Disposition: inline
-In-Reply-To: <3457341.kfl8pm1NLi@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <CALt3h7_nFQdRCJJA0n4i9_CnRJAeYvu8xCkwzDsfdqBZgf_NNw@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arunkk.samsung@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kilyeon.im@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: balbi@ti.com, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, p.paneri@samsung.com, gautam.vivek@samsung.com, m.szyprowski@samsung.com
 
---BHMq0+oGliEfCAkH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/27/2013 05:31 AM, Arun Kumar K wrote:
+> On Wed, Mar 27, 2013 at 4:21 AM, Sylwester Nawrocki
+> <sylvester.nawrocki@gmail.com> wrote:
+>> On 03/26/2013 01:17 PM, Arun Kumar K wrote:
+[...]
+> Only issue is with the context sharing.
+> Right now you can see that the fimc-is context is shared between all
+> the subdevs.
+> As all of them are part of the same driver, it is possible.
+> If sensor is made as an independent i2c device, a separate probe will
+> be called for it.
+> For ISP sensor subdev to work independently, it needs to call the
+> fimc_is_pipeline_* calls
+> for FW initialization and other configurations for which it needs the
+> fimc-is main context.
+> 
+> Now there is a workaround here by calling a get_context() macro in
+> sensor's probe
+> to get the fimc-is context. This will cause the same context to be
+> shared and updated by
+> 2 drivers though both are part of fimc-is.
+> Is this acceptable? Or am I missing some other simple solution of implementing
+> it in a better way?
 
-Hi,
+OK, thanks for the explanation.
 
-On Wed, Mar 27, 2013 at 02:39:08PM +0100, Tomasz Figa wrote:
-> On Wednesday 27 of March 2013 15:31:49 Felipe Balbi wrote:
-> > Hi,
-> >=20
-> > On Wed, Mar 27, 2013 at 02:26:08PM +0100, Tomasz Figa wrote:
-> > > Hi Felipe,
-> > >=20
-> > > On Wednesday 27 of March 2013 15:19:58 Felipe Balbi wrote:
-> > > > Hi,
-> > > >=20
-> > > > On Tue, Mar 26, 2013 at 03:53:12PM +0100, Tomasz Figa wrote:
-> > > > > @@ -307,6 +310,7 @@ static int samsung_usb3phy_remove(struct
-> > > > > platform_device *pdev)>
-> > > > >=20
-> > > > >  static struct samsung_usbphy_drvdata usb3phy_exynos5 =3D {
-> > > > > =20
-> > > > >  	.cpu_type		=3D TYPE_EXYNOS5250,
-> > > > >  	.devphy_en_mask		=3D EXYNOS_USBPHY_ENABLE,
-> > > > >=20
-> > > > > +	.rate_to_clksel		=3D samsung_usbphy_rate_to_clksel_4x12,
-> > > >=20
-> > > > why isn't this just a clk_get_rate() ???
-> > >=20
-> > > As the name suggests, this is a function to get appropriate CLKSEL va=
-lue
-> > > to
-> > > write into PHYCLK register for reference clock rate on particular pla=
-tform
-> > > (clk_get_rate is used inside to get the rate).
-> >=20
-> > alright, then you don't need this function pointer at all, look at both
-> >=20
-> > your rate_to_clksel functions (quoted below):
-> > | +int samsung_usbphy_rate_to_clksel_64xx(struct samsung_usbphy *sphy,
-> > | +                                                       unsigned long
-> > | rate)
-> > | +{
-> > | +       unsigned int clksel;
-> > | +
-> > | +       switch (rate) {
-> > | +       case 12 * MHZ:
-> > | +               clksel =3D PHYCLK_CLKSEL_12M;
->=20
-> Please note the PHYCLK_CLKSEL_ prefix here...
->=20
-> > | +               break;
-> > | +       case 24 * MHZ:
-> > | +               clksel =3D PHYCLK_CLKSEL_24M;
-> > | +               break;
-> > | +       case 48 * MHZ:
-> > | +               clksel =3D PHYCLK_CLKSEL_48M;
-> > | +               break;
-> > | +       default:
-> > | +               dev_err(sphy->dev,
-> > | +                       "Invalid reference clock frequency: %lu\n", r=
-ate);
-> > | +               return -EINVAL;
-> > | +       }
-> > | +
-> > | +       return clksel;
-> > | +}
-> > | +EXPORT_SYMBOL_GPL(samsung_usbphy_rate_to_clksel_64xx);
-> > | +
-> > | +int samsung_usbphy_rate_to_clksel_4x12(struct samsung_usbphy *sphy,
-> > | +                                                       unsigned long
-> > | rate)
-> > | +{
-> > | +       unsigned int clksel;
-> > | +
-> > | +       switch (rate) {
-> > | +       case 9600 * KHZ:
-> > | +               clksel =3D FSEL_CLKSEL_9600K;
-> > | +               break;
-> > | +       case 10 * MHZ:
-> > | +               clksel =3D FSEL_CLKSEL_10M;
-> > | +               break;
-> > | +       case 12 * MHZ:
-> > | +               clksel =3D FSEL_CLKSEL_12M;
->=20
-> ..and then FSEL_CLKSEL_ here. They have different values. (Their names ar=
-e a=20
-> bit unfortunate, though...)
+I can think of at least one possible way to get hold of the fimc-is
+context in the subdev. For instance, in subdev's .registered callback
+you get a pointer to struct v4l2_device, which is normally embedded
+in a top level driver's private data. Then with container_of()
+you could get hold of required data at the fimc-is driver.
 
-indeed, my eyes failed there. So I agree with the patch :-)
+But... to make the subdev drivers reuse possible subdevs should
+normally not be required to know the internals of a host driver they
+are registered to. And it looks a bit unusual to have fimc_pipeline_*
+calls in the sensor's operation handlers.
 
-sorry for the noise.
+I thought that the subdevs could provide basic methods and it would
+be the top level media driver that would resolve any dependencies
+in calling required subdev ops, according to media graph configuration
+done by the user on /dev/media?.
 
---=20
-balbi
+The media driver has a list of media entities (subdevices and video
+nodes) and I though it could coordinate any requests involving whole
+video/image processing pipeline originating from /dev/video ioctls/fops.
 
---BHMq0+oGliEfCAkH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+So for instance if /dev/video in this pipeline is opened
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+sensor (sd) -> mipi-csis (sd) -> fimc-lite (sd) -> memory (/dev/video)
 
-iQIcBAEBAgAGBQJRUvd5AAoJEIaOsuA1yqREH/0P/jT0FyE3jRJ4JR2eo56TSWta
-YPT/QrWE0KXlMNX96qfiYbgZnupyoGLBlEotnm0jw7GOTldZ0LmiQCSzNQS+gVem
-LLBWtWJ6xM7q4a2uUq9lBmioF/XNRoGue+1Ti1ROUFqqyKtiCCrZkxRIZGYH2dLp
-D5VR9m/U0fKKHzE/pyLoAMUjGme6YZA24CVMiK/F391kdkJk7IQrgT/lKRnwvG4X
-VRnoz9VKVpJgYiC0i4mRz1T6ty9XV9QC+vKNuNt98E9F71+cYU+3pHFmpe+S456j
-Fu6cDFgcHGOGl0r5aJKDH0BlgoyDhzJ2cN2rB+OKePPJhxQdsJrAZ3/gVG39qqFM
-6Fq/hVdax76kuLo917NC4pNETm7OLKqlO+mVuyJ27TBr9wwYrHCYmWOowNjMhX6J
-r+u+cWss6ndw6yaeLcPEVggQRlGIHP2yt3VxmLQsm5dQJKET+Y3dpMBNvOSUd99w
-J81hsiOIeE0+vcEAa320G4NULjTuMorj5ThhkM8CUYfXXrRUN3iGRnPpbKHrppry
-qJt7tR5LWvOVn9uiMEqWrgy8QgusYHsU47F2C11gdE6gQHQrgJrVcLhnnqh7s3ve
-1mcju66pGTzgJ/QF0OcNCYZAL2R6INK5ovjz8yml8JUmx4nrzvxlpiPgKHwha2Nc
-LXhBFixoXxj6VRoi3a1s
-=1RJq
------END PGP SIGNATURE-----
+it would call s_power operation on the above subdevs and additionally
+on e.g. the isp subdev (or any other we choose as a main subdev
+implementing the FIMC-IS slave interface).
 
---BHMq0+oGliEfCAkH--
+Then couldn't it be done that video node ioctls invoke pipeline
+operations, and the media device resolves any dependencies/calls
+order, as in case of the exynos4 driver ?
+
+As a side note, I'm working on adding a generic method to get any
+v4l2_subdev/video_device from a struct media_entity instance, so
+it is easier to handle link_notify events, power/streaming enable/
+disable sequences, etc.  Currently I have a data structure like:
+
+struct exynos_iss_entity {
+	struct video_device vdev;
+	struct v4l2_subdev subdev;
+	struct exynos_iss_pipeline pipe;
+};
+
+
+Regards,
+Sylwester
