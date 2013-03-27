@@ -1,79 +1,67 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: linux-next build failures with ARCH_EXYNOS
-Date: Wed, 27 Mar 2013 14:10:08 +0100
-Message-ID: <1531058.rMXo5ayaeE@amdc1227>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 3/6] usb: phy: samsung: Consolidate reference clock rate
+ handling
+Date: Wed, 27 Mar 2013 15:19:58 +0200
+Message-ID: <20130327131958.GH4626@arwen.pp.htv.fi>
+References: <1364309595-16102-1-git-send-email-t.figa@samsung.com>
+ <1364309595-16102-4-git-send-email-t.figa@samsung.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="boAH8PqvUi1v1f55"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:13558 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751972Ab3C0NKT (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:49181 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750977Ab3C0NUE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Mar 2013 09:10:19 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MKB008BTLWUB6S0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Mar 2013 22:10:17 +0900 (KST)
+	Wed, 27 Mar 2013 09:20:04 -0400
+Content-Disposition: inline
+In-Reply-To: <1364309595-16102-4-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, p.paneri@samsung.com, gautam.vivek@samsung.com, m.szyprowski@samsung.com
+
+--boAH8PqvUi1v1f55
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-I'm experiencing several kernel build failures when building linux-next 
-(next-20130327) for ARCH_EXYNOS.
+On Tue, Mar 26, 2013 at 03:53:12PM +0100, Tomasz Figa wrote:
+> @@ -307,6 +310,7 @@ static int samsung_usb3phy_remove(struct platform_dev=
+ice *pdev)
+>  static struct samsung_usbphy_drvdata usb3phy_exynos5 =3D {
+>  	.cpu_type		=3D TYPE_EXYNOS5250,
+>  	.devphy_en_mask		=3D EXYNOS_USBPHY_ENABLE,
+> +	.rate_to_clksel		=3D samsung_usbphy_rate_to_clksel_4x12,
 
-Using unmodified exynos_defconfig:
+why isn't this just a clk_get_rate() ???
 
-  CC      drivers/clocksource/exynos_mct.o
-drivers/clocksource/exynos_mct.c:557:1: warning: comparison of distinct 
-pointer types lacks a cast
-drivers/clocksource/exynos_mct.c:558:1: error: expected ',' or ';' before 
-'static'
-make[2]: *** [drivers/clocksource/exynos_mct.o] Error 1
-make[1]: *** [drivers/clocksource] Error 2
-make: *** [drivers] Error 2
+--=20
+balbi
 
-Mentioned lines are introduced by commit 9fbf0c85a1 .
+--boAH8PqvUi1v1f55
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-In addition, after enabling CONFIG_ARM_EXYNOS_CPUFREQ I'm getting following 
-compilation errors:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-  CC      drivers/cpufreq/exynos5250-cpufreq.o
-drivers/cpufreq/exynos5250-cpufreq.c: In function 'set_clkdiv':
-drivers/cpufreq/exynos5250-cpufreq.c:91:20: error: 'EXYNOS5_CLKDIV_CPU0' 
-undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c:91:20: note: each undeclared identifier is 
-reported only once for each function it appears in
-drivers/cpufreq/exynos5250-cpufreq.c:93:21: error: 'EXYNOS5_CLKDIV_STATCPU0' 
-undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c:99:20: error: 'EXYNOS5_CLKDIV_CPU1' 
-undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c:101:21: error: 'EXYNOS5_CLKDIV_STATCPU1' 
-undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c: In function 'set_apll':
-drivers/cpufreq/exynos5250-cpufreq.c:115:22: error: 'EXYNOS5_CLKMUX_STATCPU' 
-undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c:122:29: error: 'EXYNOS5_APLL_LOCK' 
-undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c:125:20: error: 'EXYNOS5_APLL_CON0' 
-undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c: In function 'exynos5250_set_frequency':
-drivers/cpufreq/exynos5250-cpufreq.c:165:22: error: 'EXYNOS5_APLL_CON0' 
-undeclared (first use in this function)
-make[2]: *** [drivers/cpufreq/exynos5250-cpufreq.o] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [drivers/cpufreq] Error 2
-make: *** [drivers] Error 2
+iQIcBAEBAgAGBQJRUvH+AAoJEIaOsuA1yqRE+b0P/0hE+pZc9a5vGQqnuGrdHQ6/
+o6dCNVP10XK0qXtzBi3VcsDP0vl25V3qCvaw4nD838SXm4L1qoc43oDF4Z3k5Aud
+PwLZrNm/BzZmN2Vo+Mdxv2h3vGbnHwbvXFwjHxDeIQlyMHji9NRhiLpfsgZ4LOBy
+JfMRpMqMmAbPQMrvE8bICOnGzMaj2H7l6mTDmW1cGTMlDTGoYdHQEfUrcG8+dLKW
+5KxYBWdFHsYUHqYaJ2Z1gASeJcAB4SJ5B02fCNYVbBP4XPP74XFVDDhrTe6n0vc7
+8HaJuuRtaGgPKz+tJxaoE+sySs8BFgGb5Bj7ErWM0CneoL2pW9zuJQLlM4tS44xQ
+aXe3JjcFpVgk/IqaoGOZT/IiaHV9PXh98B+hHdSPTzzoviZ8GmCeKY3lIEMd4ryM
+8ZQ7bMRLIyPd9Q/96ZJFGtoXEKSnKGBmXy1T0nLaKxIkw4BOLSc9Vel1Ehx1V7Hk
+A9u9Rg4O43QFbMIsZQ+jcoWhRBWA/CvbCBxWRBxH/z2fEmAx6NkT/Zih0uIZy4AW
+8sZ56BYaO5HEv19W9tEuZOva7ELd+yJ1CogxVAgL7tzB3R3P+K+b5RWfDycd2psS
+mGFXakJO1egtbMm3aO85UM7uA/0Ao/8wec/pKNv333GEYlXUbY2dc7vEP2HK8M9d
+JCVTii8LbB6T/VFZ2UyQ
+=toS1
+-----END PGP SIGNATURE-----
 
-This seems to be caused by commit 6e6aac7590 removing definitions of mentioned 
-registers from arch/arm/mach-exynos/include/mach/regs-clock.h header.
-
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+--boAH8PqvUi1v1f55--
