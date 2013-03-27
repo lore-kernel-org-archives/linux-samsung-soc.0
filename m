@@ -1,53 +1,149 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 4/6] pci: Add PCIe driver for Samsung Exynos
-Date: Wed, 27 Mar 2013 10:29:51 +0900
-Message-ID: <005401ce2a8a$943cf780$bcb6e680$%han@samsung.com>
-References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com>
- <00c301ce277b$f2790080$d76b0180$%han@samsung.com> <51521421.9020906@gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] arm:exynos5250: Restore CLK_SRC_TOP3 register via CCF
+Date: Tue, 26 Mar 2013 18:45:48 -0700
+Message-ID: <20130327014548.4014.47225@quantum>
+References: <1364272935-30607-1-git-send-email-prasanna.ps@samsung.com>
+ <2280810.4mfMsDOM0e@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <51521421.9020906@gmail.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Rob Herring' <robherring2@gmail.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:41663 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751274Ab3C0Bpz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Mar 2013 21:45:55 -0400
+Received: by mail-pb0-f46.google.com with SMTP id uo1so1171363pbc.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2013 18:45:54 -0700 (PDT)
+In-Reply-To: <2280810.4mfMsDOM0e@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Prasanna Kumar <prasanna.ps@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On Wednesday, March 27, 2013 6:33 AM, Rob Herring wrote:
+Quoting Tomasz Figa (2013-03-26 04:28:13)
+> Hi Prasanna,
 > 
-> On 03/22/2013 11:07 PM, Jingoo Han wrote:
-> > Exynos5440 has a PCIe controller which can be used as Root Complex.
-> > This driver supports a PCIe controller as Root Complex mode.
-> >
-> > Signed-off-by: Surendranath Gurivireddy Balla <suren.reddy@samsung.com>
-> > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> On Tuesday 26 of March 2013 10:12:15 Prasanna Kumar wrote:
+> > From: Prasanna Kumar <prasanna.ps@samsung.com>
+> > 
+> > This patch adds support for restoring CLK_SRC_TOP3 register
+> > which gets modified while powergating corresponding power domains
+> > after a cycle of Suspend-to-Resume.
+> > 
+> > Please refer below URL to know the background of this issue.
+> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg14347.html.
+> > 
+> > This is based on Common Clock Framework defined for exynos5250 and
+> > patch mentioned here
+> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg16739.html
+> > 
+> > Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
 > > ---
-> >  .../devicetree/bindings/pci/exynos-pcie.txt        |   56 +
-> >  drivers/pci/host/Kconfig                           |    5 +
-> >  drivers/pci/host/Makefile                          |    1 +
-> >  drivers/pci/host/pci-exynos.c                      | 1139 ++++++++++++++++++++
-> >  4 files changed, 1201 insertions(+), 0 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/pci/exynos-pcie.txt
-> >  create mode 100644 drivers/pci/host/Makefile
-> >  create mode 100644 drivers/pci/host/pci-exynos.c
+> >  arch/arm/mach-exynos/pm_domains.c |   43
+> > +++++++++++++++++++++++++++++++++++++ 1 files changed, 43 insertions(+), 0
+> > deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-exynos/pm_domains.c
+> > b/arch/arm/mach-exynos/pm_domains.c index 9f1351d..b5ed384 100644
+> > --- a/arch/arm/mach-exynos/pm_domains.c
+> > +++ b/arch/arm/mach-exynos/pm_domains.c
 > 
-> [...]
+> First of all, why this is happening in power domain driver? It does not (and 
+> should not) know anything about clocks. I'm sure you can find a better place 
+> for this.
 > 
+> > @@ -21,8 +21,11 @@
+> >  #include <linux/of_address.h>
+> >  #include <linux/of_platform.h>
+> >  #include <linux/sched.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-private.h>
+> 
+> This header is _not_ supposed included outside clock core and clock drivers.
+> 
+
+Yeah, big NACK on usage of clk-private.h.
+
+Regards,
+Mike
+
+> > 
+> >  #include <mach/regs-pmu.h>
+> > +#include <plat/cpu.h>
+> >  #include <plat/devs.h>
+> > 
+> >  /*
+> > @@ -35,6 +38,43 @@ struct exynos_pm_domain {
+> >       struct generic_pm_domain pd;
+> >  };
+> > +static int exynos_pdclk_restore(struct exynos_pm_domain *domain)
+> > +{
+> > +     int i = 0;
+> > +     struct clk *p_clk;
+> > +     struct clk_hw *hw_clk;
+> > +     const struct clk_ops *p_ops;
 > > +
-> > +/* synopsis specific PCIE configuration registers*/
+> > +     const char *pdclks[][2] = {
+> > +                                     { "gsc-power-domain",
+> > +                                             "m_sub_aclk266" },
+> > +                                     { "gsc-power-domain",
+> > +                                             "m_sub_aclk300" },
+> > +                                     { "mfc-power-domain",
+> > +                                             "m_sub_aclk333" },
+> > +                             };
+> > +
+> > +     for (i = 0; i < ARRAY_SIZE(pdclks); i++) {
+> > +             if (!strcmp(domain->name, pdclks[i][0])) {
+> > +                     p_clk = clk_get(NULL, pdclks[i][1]);
+> > +                     if (IS_ERR(p_clk)) {
+> > +                             pr_err("failed to get base clk\n");
+> > +                             return PTR_ERR(p_clk);
+> > +                     }
+> > +
+> > +                     hw_clk = __clk_get_hw(p_clk);
+> > +                     if (IS_ERR(hw_clk)) {
+> > +                             pr_err("failed to get hw_clk\n");
+> > +                             return PTR_ERR(hw_clk);
+> > +                     }
 > 
-> If this is a standard IP block, then the driver naming should reflect
-> that. I suspect there are several others with the same IP block.
-
-Sorry, I don't think so.
-Only core block is a standard IP block, other parts are Exynos-specific.
-So, it is hard to share with other PCIe IPs using synopsis core.
-
-Best regards,
-Jingoo Han
-
+> This is completely wrong: hw_clk is an internal structure that should be used 
+> only inside the driver of this particular clock and clock core, nowhere else.
 > 
-> Rob
+> > +                     p_ops = p_clk->ops;
+> > +                     if (p_ops != NULL && p_ops->set_parent != NULL)
+> > +                             p_clk->ops->set_parent(hw_clk, 1);
+> 
+> Same goes here: p_clk is an opaque pointer to something that can _not_ be 
+> dereferenced outside clock core.
+> 
+> > +             }
+> > +     }
+> > +     return 0;
+> > +}
+> > +
+> 
+> NAK.
+> 
+> This code contains so many Linux kernel development antipatterns, that it's 
+> missing only IS_ERR_OR_NULL to be placed on top of hall of fame of such, if 
+> one exists.
+> 
+> >  static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+> > {
+> >       struct exynos_pm_domain *pd;
+> > @@ -61,6 +101,9 @@ static int exynos_pd_power(struct generic_pm_domain
+> > *domain, bool power_on) cpu_relax();
+> >               usleep_range(80, 100);
+> >       }
+> > +
+> > +     if (!power_on && soc_is_exynos5250())
+> > +             exynos_pdclk_restore(pd);
+> >       return 0;
+> >  }
+> 
+> Best regards,
+> -- 
+> Tomasz Figa
+> Samsung Poland R&D Center
+> SW Solution Development, Kernel and System Framework
