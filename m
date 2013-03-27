@@ -1,166 +1,130 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 10/21] clk: samsung: exynos4: Add camera related clock
- definitions
-Date: Wed, 27 Mar 2013 12:02:47 +0100
-Message-ID: <1364382178-25248-11-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 11/21] clk: samsung: exynos4: Add G3D clocks
+Date: Wed, 27 Mar 2013 12:02:48 +0100
+Message-ID: <1364382178-25248-12-git-send-email-t.figa@samsung.com>
 References: <1364382178-25248-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59741 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751950Ab3C0LG3 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:43967 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751950Ab3C0LGm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Mar 2013 07:06:29 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
+	Wed, 27 Mar 2013 07:06:42 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MKB00792G6SMTQ0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Mar 2013 20:06:28 +0900 (KST)
+ 17 2011)) with ESMTP id <0MKB00GHHG759SR0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Mar 2013 20:06:41 +0900 (KST)
 In-reply-to: <1364382178-25248-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, a.hajda@samsung.com, l.majewski@samsung.com
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This patch adds clocks needed for G3D block present on Exynos 4 SoCs.
 
-This patch adds several gate and mux clocks related to camera and ISP
-blocks.
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/clock/exynos4-clock.txt    | 20 +++++++++
- drivers/clk/samsung/clk-exynos4.c                  | 50 ++++++++++++++--------
- 2 files changed, 53 insertions(+), 17 deletions(-)
+ .../devicetree/bindings/clock/exynos4-clock.txt    |  4 ++++
+ drivers/clk/samsung/clk-exynos4.c                  | 22 ++++++++++++++--------
+ 2 files changed, 18 insertions(+), 8 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-index 51c572a..657b889 100644
+index 657b889..1863032 100644
 --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
 +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-@@ -198,6 +198,26 @@ Exynos4 SoC and this is specified where applicable.
-   audss               348
-   mipi_hsi            349     Exynos4210
-   mdma2               350     Exynos4210
-+  pixelasyncm0        351
-+  pixelasyncm1        352
-+  fimc_lite0          353     Exynos4x12
-+  fimc_lite1          354     Exynos4x12
-+  ppmuispx            355     Exynos4x12
-+  ppmuispmx           356     Exynos4x12
-+
-+			[Mux Clocks]
-+
-+	Clock		ID	SoC (if specific)
-+	-----------------------------------------------
-+
-+	mout_fimc0	384
-+	mout_fimc1	385
-+	mout_fimc2	386
-+	mout_fimc3	387
-+	mout_cam0	388
-+	mout_cam1	389
-+	mout_csis0	390
-+	mout_csis1	391
+@@ -97,6 +97,7 @@ Exynos4 SoC and this is specified where applicable.
+   sclk_mipihsi        169     Exynos4412
+   sclk_mfc            170
+   sclk_pcm0           171
++  sclk_g3d            172
+ 
+ 	      [Peripheral Clock Gates]
+ 
+@@ -218,6 +219,9 @@ Exynos4 SoC and this is specified where applicable.
+ 	mout_cam1	389
+ 	mout_csis0	390
+ 	mout_csis1	391
++	mout_g3d0	392
++	mout_g3d1	393
++	mout_g3d	394
  
  Example 1: An example of a clock controller node is listed below.
  
 diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 8c4cffb..728ffaf 100644
+index 728ffaf..694b890 100644
 --- a/drivers/clk/samsung/clk-exynos4.c
 +++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -87,6 +87,7 @@
- #define E4210_MPLL_CON0		0x14108
- #define SRC_CPU			0x14200
- #define DIV_CPU0		0x14500
-+#define E4X12_GATE_ISP0		0x18800
+@@ -124,7 +124,7 @@ enum exynos4_clks {
+ 	sclk_sata, sclk_uart0, sclk_uart1, sclk_uart2, sclk_uart3, sclk_uart4,
+ 	sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
+ 	sclk_slimbus, sclk_fimd1, sclk_mipi1, sclk_pcm1, sclk_pcm2, sclk_i2s1,
+-	sclk_i2s2, sclk_mipihsi, sclk_mfc, sclk_pcm0,
++	sclk_i2s2, sclk_mipihsi, sclk_mfc, sclk_pcm0, sclk_g3d,
  
- /* the exynos4 soc type */
- enum exynos4_soc {
-@@ -136,7 +137,12 @@ enum exynos4_clks {
- 	uart4, i2c0, i2c1, i2c2, i2c3, i2c4, i2c5, i2c6, i2c7, i2c_hdmi, tsadc,
- 	spi0, spi1, spi2, i2s1, i2s2, pcm0, i2s0, pcm1, pcm2, pwm, slimbus,
- 	spdif, ac97, modemif, chipid, sysreg, hdmi_cec, mct, wdt, rtc, keyif,
--	audss, mipi_hsi, mdma2,
-+	audss, mipi_hsi, mdma2, pixelasyncm0, pixelasyncm1, fimc_lite0,
-+	fimc_lite1, ppmuispx, ppmuispmx,
-+
-+	/* mux clocks */
-+	mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
-+	mout_cam1, mout_csis0, mout_csis1,
+ 	/* gate clocks */
+ 	fimc0 = 256, fimc1, fimc2, fimc3, csis0, csis1, jpeg, smmu_fimc0,
+@@ -142,7 +142,7 @@ enum exynos4_clks {
+ 
+ 	/* mux clocks */
+ 	mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
+-	mout_cam1, mout_csis0, mout_csis1,
++	mout_cam1, mout_csis0, mout_csis1, mout_g3d0, mout_g3d1, mout_g3d,
  
  	nr_clks,
  };
-@@ -314,14 +320,14 @@ struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
- 	MUX_A(mout_core, "mout_core", mout_core_p4210, SRC_CPU, 16, 1, "mout_core"),
- 	MUX_A(sclk_vpll, "sclk_vpll", sclk_vpll_p4210,
- 			SRC_TOP0, 8, 1, "sclk_vpll"),
--	MUX(none, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
--	MUX(none, "mout_fimc1", group1_p4210, SRC_CAM, 4, 4),
--	MUX(none, "mout_fimc2", group1_p4210, SRC_CAM, 8, 4),
--	MUX(none, "mout_fimc3", group1_p4210, SRC_CAM, 12, 4),
--	MUX(none, "mout_cam0", group1_p4210, SRC_CAM, 16, 4),
--	MUX(none, "mout_cam1", group1_p4210, SRC_CAM, 20, 4),
--	MUX(none, "mout_csis0", group1_p4210, SRC_CAM, 24, 4),
--	MUX(none, "mout_csis1", group1_p4210, SRC_CAM, 28, 4),
-+	MUX(mout_fimc0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
-+	MUX(mout_fimc1, "mout_fimc1", group1_p4210, SRC_CAM, 4, 4),
-+	MUX(mout_fimc2, "mout_fimc2", group1_p4210, SRC_CAM, 8, 4),
-+	MUX(mout_fimc3, "mout_fimc3", group1_p4210, SRC_CAM, 12, 4),
-+	MUX(mout_cam0, "mout_cam0", group1_p4210, SRC_CAM, 16, 4),
-+	MUX(mout_cam1, "mout_cam1", group1_p4210, SRC_CAM, 20, 4),
-+	MUX(mout_csis0, "mout_csis0", group1_p4210, SRC_CAM, 24, 4),
-+	MUX(mout_csis1, "mout_csis1", group1_p4210, SRC_CAM, 28, 4),
- 	MUX(none, "mout_mfc0", sclk_ampll_p4210, SRC_MFC, 0, 1),
- 	MUX(none, "mout_g3d0", sclk_ampll_p4210, SRC_G3D, 0, 1),
- 	MUX(none, "mout_fimd0", group1_p4210, SRC_LCD0, 0, 4),
-@@ -365,14 +371,14 @@ struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
- 	MUX_A(sclk_vpll, "sclk_vpll", mout_vpll_p,
- 			SRC_TOP0, 8, 1, "sclk_vpll"),
- 	MUX(mout_core, "mout_core", mout_core_p4x12, SRC_CPU, 16, 1),
--	MUX(none, "mout_fimc0", group1_p4x12, SRC_CAM, 0, 4),
--	MUX(none, "mout_fimc1", group1_p4x12, SRC_CAM, 4, 4),
--	MUX(none, "mout_fimc2", group1_p4x12, SRC_CAM, 8, 4),
--	MUX(none, "mout_fimc3", group1_p4x12, SRC_CAM, 12, 4),
--	MUX(none, "mout_cam0", group1_p4x12, SRC_CAM, 16, 4),
--	MUX(none, "mout_cam1", group1_p4x12, SRC_CAM, 20, 4),
--	MUX(none, "mout_csis0", group1_p4x12, SRC_CAM, 24, 4),
--	MUX(none, "mout_csis1", group1_p4x12, SRC_CAM, 28, 4),
-+	MUX(mout_fimc0, "mout_fimc0", group1_p4x12, SRC_CAM, 0, 4),
-+	MUX(mout_fimc1, "mout_fimc1", group1_p4x12, SRC_CAM, 4, 4),
-+	MUX(mout_fimc2, "mout_fimc2", group1_p4x12, SRC_CAM, 8, 4),
-+	MUX(mout_fimc3, "mout_fimc3", group1_p4x12, SRC_CAM, 12, 4),
-+	MUX(mout_cam0, "mout_cam0", group1_p4x12, SRC_CAM, 16, 4),
-+	MUX(mout_cam1, "mout_cam1", group1_p4x12, SRC_CAM, 20, 4),
-+	MUX(mout_csis0, "mout_csis0", group1_p4x12, SRC_CAM, 24, 4),
-+	MUX(mout_csis1, "mout_csis1", group1_p4x12, SRC_CAM, 28, 4),
- 	MUX(none, "mout_mfc0", sclk_ampll_p4x12, SRC_MFC, 0, 1),
- 	MUX(none, "mout_g3d0", sclk_ampll_p4x12, SRC_G3D, 0, 1),
- 	MUX(none, "mout_fimd0", group1_p4x12, SRC_LCD0, 0, 4),
-@@ -587,6 +593,8 @@ struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
- 			GATE_IP_CAM, 10, 0, 0, "sysmmu"),
- 	GATE_DA(smmu_jpeg, "exynos-sysmmu.3", "smmu_jpeg", "aclk160",
- 			GATE_IP_CAM, 11, 0, 0, "sysmmu"),
-+	GATE(pixelasyncm0, "pxl_async0", "aclk160", GATE_IP_CAM, 17, 0, 0),
-+	GATE(pixelasyncm1, "pxl_async1", "aclk160", GATE_IP_CAM, 18, 0, 0),
- 	GATE_DA(smmu_tv, "exynos-sysmmu.2", "smmu_tv", "aclk160",
- 			GATE_IP_TV, 4, 0, 0, "sysmmu"),
- 	GATE_DA(mfc, "s5p-mfc", "mfc", "aclk100", GATE_IP_MFC, 0, 0, 0, "mfc"),
-@@ -721,6 +729,14 @@ struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 			E4X12_GATE_IP_MAUDIO, 2, 0, 0, "pcm"),
- 	GATE_DA(i2s0, "samsung-i2s.0", "i2s0", "aclk100",
- 			E4X12_GATE_IP_MAUDIO, 3, 0, 0, "iis"),
-+	GATE(fimc_lite0, "lite0", "aclk200", E4X12_GATE_ISP0, 3,
-+			CLK_IGNORE_UNUSED, 0),
-+	GATE(fimc_lite1, "lite1", "aclk200", E4X12_GATE_ISP0, 4,
-+			CLK_IGNORE_UNUSED, 0),
-+	GATE(ppmuispmx, "ppmuispmx", "aclk200", E4X12_GATE_ISP0, 20,
-+			CLK_IGNORE_UNUSED, 0),
-+	GATE(ppmuispx, "ppmuispx", "aclk200", E4X12_GATE_ISP0, 21,
-+			CLK_IGNORE_UNUSED, 0),
+@@ -296,8 +296,10 @@ struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
+ 	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
+ 	MUX(none, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
+ 	MUX(none, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
+-	MUX(none, "mout_g3d1", sclk_evpll_p, SRC_G3D, 4, 1),
+-	MUX(none, "mout_g3d", mout_g3d_p, SRC_G3D, 8, 1),
++	MUX_F(mout_g3d1, "mout_g3d1", sclk_evpll_p, SRC_G3D, 4, 1,
++			CLK_SET_RATE_PARENT, 0),
++	MUX_F(mout_g3d, "mout_g3d", mout_g3d_p, SRC_G3D, 8, 1,
++			CLK_SET_RATE_PARENT, 0),
+ 	MUX(none, "mout_spdif", mout_spdif_p, SRC_PERIL1, 8, 2),
+ 	MUX_A(sclk_epll, "sclk_epll", mout_epll_p, SRC_TOP0, 4, 1, "sclk_epll"),
  };
- 
- #ifdef CONFIG_OF
+@@ -329,7 +331,8 @@ struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
+ 	MUX(mout_csis0, "mout_csis0", group1_p4210, SRC_CAM, 24, 4),
+ 	MUX(mout_csis1, "mout_csis1", group1_p4210, SRC_CAM, 28, 4),
+ 	MUX(none, "mout_mfc0", sclk_ampll_p4210, SRC_MFC, 0, 1),
+-	MUX(none, "mout_g3d0", sclk_ampll_p4210, SRC_G3D, 0, 1),
++	MUX_F(mout_g3d0, "mout_g3d0", sclk_ampll_p4210, SRC_G3D, 0, 1,
++			CLK_SET_RATE_PARENT, 0),
+ 	MUX(none, "mout_fimd0", group1_p4210, SRC_LCD0, 0, 4),
+ 	MUX(none, "mout_mipi0", group1_p4210, SRC_LCD0, 12, 4),
+ 	MUX(none, "mout_audio0", mout_audio0_p4210, SRC_MAUDIO, 0, 4),
+@@ -380,7 +383,8 @@ struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
+ 	MUX(mout_csis0, "mout_csis0", group1_p4x12, SRC_CAM, 24, 4),
+ 	MUX(mout_csis1, "mout_csis1", group1_p4x12, SRC_CAM, 28, 4),
+ 	MUX(none, "mout_mfc0", sclk_ampll_p4x12, SRC_MFC, 0, 1),
+-	MUX(none, "mout_g3d0", sclk_ampll_p4x12, SRC_G3D, 0, 1),
++	MUX_F(mout_g3d0, "mout_g3d0", sclk_ampll_p4x12, SRC_G3D, 0, 1,
++			CLK_SET_RATE_PARENT, 0),
+ 	MUX(none, "mout_fimd0", group1_p4x12, SRC_LCD0, 0, 4),
+ 	MUX(none, "mout_mipi0", group1_p4x12, SRC_LCD0, 12, 4),
+ 	MUX(none, "mout_audio0", mout_audio0_p4x12, SRC_MAUDIO, 0, 4),
+@@ -415,7 +419,8 @@ struct samsung_div_clock exynos4_div_clks[] __initdata = {
+ 	DIV(none, "div_csis0", "mout_csis0", DIV_CAM, 24, 4),
+ 	DIV(none, "div_csis1", "mout_csis1", DIV_CAM, 28, 4),
+ 	DIV(sclk_mfc, "sclk_mfc", "mout_mfc", DIV_MFC, 0, 4),
+-	DIV(none, "div_g3d", "mout_g3d", DIV_G3D, 0, 4),
++	DIV_F(none, "div_g3d", "mout_g3d", DIV_G3D, 0, 4,
++			CLK_SET_RATE_PARENT, 0),
+ 	DIV(none, "div_fimd0", "mout_fimd0", DIV_LCD0, 0, 4),
+ 	DIV(none, "div_mipi0", "mout_mipi0", DIV_LCD0, 16, 4),
+ 	DIV(none, "div_audio0", "mout_audio0", DIV_MAUDIO, 0, 4),
+@@ -501,7 +506,8 @@ struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
+ 	GATE(smmu_fimd1, "smmu_fimd1", "aclk160", GATE_IP_LCD1, 4, 0, 0),
+ 	GATE(tsi, "tsi", "aclk133", GATE_IP_FSYS, 4, 0, 0),
+ 	GATE(sromc, "sromc", "aclk133", GATE_IP_FSYS, 11, 0, 0),
+-	GATE(g3d, "g3d", "aclk200", GATE_IP_G3D, 0, 0, 0),
++	GATE(sclk_g3d, "sclk_g3d", "div_g3d", GATE_IP_G3D, 0,
++			CLK_SET_RATE_PARENT, 0),
+ 	GATE(usb_device, "usb_device", "aclk133", GATE_IP_FSYS, 13, 0, 0),
+ 	GATE(onenand, "onenand", "aclk133", GATE_IP_FSYS, 15, 0, 0),
+ 	GATE(nfcon, "nfcon", "aclk133", GATE_IP_FSYS, 16, 0, 0),
 -- 
 1.8.1.5
