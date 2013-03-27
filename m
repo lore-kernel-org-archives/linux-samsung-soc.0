@@ -1,103 +1,65 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH v2] drm/exynos: enable FIMD clocks
-Date: Wed, 27 Mar 2013 16:17:35 +0530
-Message-ID: <CAD025yTMPR=0n3ur3KiHEDrxaOh1snC7m0VAGjArP0hz5WL4ug@mail.gmail.com>
-References: <1363779119-3255-1-git-send-email-vikas.sajjan@linaro.org> <CAAQKjZNOKu0RxYfuOBj8Fg3OfV8hXsA-QF7mgqQeFW6c4B2xgQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH 00/21] Various fixes and extensions to Exynos4 clock driver
+Date: Wed, 27 Mar 2013 12:02:37 +0100
+Message-ID: <1364382178-25248-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f50.google.com ([209.85.215.50]:53498 "EHLO
-	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755491Ab3C0Kr5 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:43649 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751683Ab3C0LDZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Mar 2013 06:47:57 -0400
-Received: by mail-la0-f50.google.com with SMTP id ec20so15420709lab.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2013 03:47:56 -0700 (PDT)
-In-Reply-To: <CAAQKjZNOKu0RxYfuOBj8Fg3OfV8hXsA-QF7mgqQeFW6c4B2xgQ@mail.gmail.com>
+	Wed, 27 Mar 2013 07:03:25 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MKB00B5TG1KCYU0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Mar 2013 20:03:23 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linaro-kernel@lists.linaro.org, linux-media@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, a.hajda@samsung.com, l.majewski@samsung.com
 
-Hi,
+This series is a collection of various fixes and extensions to Exynos4
+clock driver, which improve coverage of clocks present on Exynos4 SoCs
+and fix problems discovered during our internal work and testing.
 
-On 27 March 2013 15:53, Inki Dae <inki.dae@samsung.com> wrote:
-> 2013/3/20 Vikas Sajjan <vikas.sajjan@linaro.org>:
->> While migrating to common clock framework (CCF), found that the FIMD clocks
->> were pulled down by the CCF.
->> If CCF finds any clock(s) which has NOT been claimed by any of the
->> drivers, then such clock(s) are PULLed low by CCF.
->>
->> By calling clk_prepare_enable() for FIMD clocks fixes the issue.
->>
->> this patch also replaces clk_disable() with clk_disable_unprepare()
->> during exit.
->>
->> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
->> ---
->> Changes since v1:
->>         - added error checking for clk_prepare_enable() and also replaced
->>         clk_disable() with clk_disable_unprepare() during exit.
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   17 +++++++++++++++--
->>  1 file changed, 15 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> index 9537761..014d750 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> @@ -934,6 +934,19 @@ static int fimd_probe(struct platform_device *pdev)
->>                 return ret;
->>         }
->>
->> +       ret = clk_prepare_enable(ctx->lcd_clk);
->> +       if (ret) {
->> +               dev_err(dev, "failed to enable 'sclk_fimd' clock\n");
->> +               return ret;
->> +       }
->> +
->> +       ret = clk_prepare_enable(ctx->bus_clk);
->> +       if (ret) {
->> +               clk_disable_unprepare(ctx->lcd_clk);
->> +               dev_err(dev, "failed to enable 'fimd' clock\n");
->> +               return ret;
->> +       }
->> +
->
-> Please remove the above two clk_prepare_enable function calls and use
-> them in fimd_clock() instead of clk_enable/disable(). When probed,
-> fimd clock will be enabled by runtime pm.
->
+Andrzej Hajda (1):
+  clk: samsung: exynos4: Add missing CMU_TOP and ISP clocks
 
-Sure, will modify and resend.
+Lukasz Majewski (1):
+  clk: samsung: exynos4: Export clocks used by exynos cpufreq drivers
 
-> Thanks,
-> Inki Dae
->
->>         ctx->vidcon0 = pdata->vidcon0;
->>         ctx->vidcon1 = pdata->vidcon1;
->>         ctx->default_win = pdata->default_win;
->> @@ -981,8 +994,8 @@ static int fimd_remove(struct platform_device *pdev)
->>         if (ctx->suspended)
->>                 goto out;
->>
->> -       clk_disable(ctx->lcd_clk);
->> -       clk_disable(ctx->bus_clk);
->> +       clk_disable_unprepare(ctx->lcd_clk);
->> +       clk_disable_unprepare(ctx->bus_clk);
->>
->>         pm_runtime_set_suspended(dev);
->>         pm_runtime_put_sync(dev);
->> --
->> 1.7.9.5
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Sylwester Nawrocki (2):
+  clk: samsung: exynos4: Correct sclk_mfc clock definition
+  clk: samsung: exynos4: Add camera related clock definitions
 
+Tomasz Figa (17):
+  clk: samsung: exynos4: Use mout_mpll_user_* on Exynos4x12
+  clk: samsung: exynos4: Add missing mout_mipihsi clock
+  clk: samsung: exynos4: Add missing sclk_audio0 clock
+  clk: samsung: exynos4: Export sclk_pcm0
+  clk: samsung: exynos4: Move dac and mixer to Exynos4210-specific
+    clocks
+  clk: samsung: pll: Remove unimplemented ops
+  clk: samsung: exynos4: Export mout_core clock of Exynos4210
+  clk: samsung: exynos4: Add G3D clocks
+  clk: samsung: exynos4: Add missing mout_sata on Exynos4210
+  clk: samsung: exynos4: Define {E,V}PLL registers
+  clk: samsung: exynos4: Use SRC_MASK_PERIL{0,1} definitions
+  clk: samsung: exynos4: Remove SoC-specific registers from save list
+  clk: samsung: exynos4: Add E4210 prefix to LCD1 clock registers
+  clk: samsung: exynos4: Add E4210 prefix to GATE_IP_PERIR register
+  clk: samsung: exynos4: Remove E4X12 prefix from SRC_DMC register
+  clk: samsung: exynos4: Add missing registers to suspend save list
+  clk: samsung: exynos4: Add support for SoC-specific register save list
 
+ .../devicetree/bindings/clock/exynos4-clock.txt    |  61 ++-
+ drivers/clk/samsung/clk-exynos4.c                  | 491 +++++++++++++++------
+ drivers/clk/samsung/clk-exynos5250.c               |   3 +-
+ drivers/clk/samsung/clk-exynos5440.c               |   2 +-
+ drivers/clk/samsung/clk-pll.c                      |  80 ----
+ drivers/clk/samsung/clk.c                          |   9 +-
+ drivers/clk/samsung/clk.h                          |   3 +-
+ 7 files changed, 437 insertions(+), 212 deletions(-)
 
 -- 
-Thanks and Regards
- Vikas Sajjan
+1.8.1.5
