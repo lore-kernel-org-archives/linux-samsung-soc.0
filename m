@@ -1,92 +1,88 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC 01/12] exynos-fimc-is: Adding device tree nodes
-Date: Wed, 27 Mar 2013 14:47:03 +0100
-Message-ID: <5152F857.6010409@samsung.com>
-References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
- <1362754765-2651-2-git-send-email-arun.kk@samsung.com>
- <514DAAC3.4050202@gmail.com>
- <CALt3h7_nXSd6A2t55fi3PD+BkpZh5Lo4suWcg-ZF=jDq+V3NXA@mail.gmail.com>
- <51522671.5080706@gmail.com>
- <CALt3h7_nFQdRCJJA0n4i9_CnRJAeYvu8xCkwzDsfdqBZgf_NNw@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: linux-next build failures with ARCH_EXYNOS
+Date: Wed, 27 Mar 2013 19:26:53 +0530
+Message-ID: <CAJuYYwQw0_hiJrdRZGEDX=rKEbAUo1dsKmufrTWgm9gXkv22Qw@mail.gmail.com>
+References: <1531058.rMXo5ayaeE@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CALt3h7_nFQdRCJJA0n4i9_CnRJAeYvu8xCkwzDsfdqBZgf_NNw@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Kumar K <arunkk.samsung@gmail.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kilyeon.im@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ia0-f173.google.com ([209.85.210.173]:61656 "EHLO
+	mail-ia0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750798Ab3C0N4x (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Mar 2013 09:56:53 -0400
+Received: by mail-ia0-f173.google.com with SMTP id h37so7409745iak.18
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2013 06:56:53 -0700 (PDT)
+In-Reply-To: <1531058.rMXo5ayaeE@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com
 
-On 03/27/2013 05:31 AM, Arun Kumar K wrote:
-> On Wed, Mar 27, 2013 at 4:21 AM, Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com> wrote:
->> On 03/26/2013 01:17 PM, Arun Kumar K wrote:
-[...]
-> Only issue is with the context sharing.
-> Right now you can see that the fimc-is context is shared between all
-> the subdevs.
-> As all of them are part of the same driver, it is possible.
-> If sensor is made as an independent i2c device, a separate probe will
-> be called for it.
-> For ISP sensor subdev to work independently, it needs to call the
-> fimc_is_pipeline_* calls
-> for FW initialization and other configurations for which it needs the
-> fimc-is main context.
-> 
-> Now there is a workaround here by calling a get_context() macro in
-> sensor's probe
-> to get the fimc-is context. This will cause the same context to be
-> shared and updated by
-> 2 drivers though both are part of fimc-is.
-> Is this acceptable? Or am I missing some other simple solution of implementing
-> it in a better way?
+Hi Tomasz,
 
-OK, thanks for the explanation.
+On 27 March 2013 18:40, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi,
+>
+> I'm experiencing several kernel build failures when building linux-next
+> (next-20130327) for ARCH_EXYNOS.
+>
+> Using unmodified exynos_defconfig:
+>
+>   CC      drivers/clocksource/exynos_mct.o
+> drivers/clocksource/exynos_mct.c:557:1: warning: comparison of distinct
+> pointer types lacks a cast
+> drivers/clocksource/exynos_mct.c:558:1: error: expected ',' or ';' before
+> 'static'
+> make[2]: *** [drivers/clocksource/exynos_mct.o] Error 1
+> make[1]: *** [drivers/clocksource] Error 2
+> make: *** [drivers] Error 2
+>
+> Mentioned lines are introduced by commit 9fbf0c85a1 .
+>
+> In addition, after enabling CONFIG_ARM_EXYNOS_CPUFREQ I'm getting following
+> compilation errors:
+>
+>   CC      drivers/cpufreq/exynos5250-cpufreq.o
+> drivers/cpufreq/exynos5250-cpufreq.c: In function 'set_clkdiv':
+> drivers/cpufreq/exynos5250-cpufreq.c:91:20: error: 'EXYNOS5_CLKDIV_CPU0'
+> undeclared (first use in this function)
+> drivers/cpufreq/exynos5250-cpufreq.c:91:20: note: each undeclared identifier is
+> reported only once for each function it appears in
+> drivers/cpufreq/exynos5250-cpufreq.c:93:21: error: 'EXYNOS5_CLKDIV_STATCPU0'
+> undeclared (first use in this function)
+> drivers/cpufreq/exynos5250-cpufreq.c:99:20: error: 'EXYNOS5_CLKDIV_CPU1'
+> undeclared (first use in this function)
+> drivers/cpufreq/exynos5250-cpufreq.c:101:21: error: 'EXYNOS5_CLKDIV_STATCPU1'
+> undeclared (first use in this function)
+> drivers/cpufreq/exynos5250-cpufreq.c: In function 'set_apll':
+> drivers/cpufreq/exynos5250-cpufreq.c:115:22: error: 'EXYNOS5_CLKMUX_STATCPU'
+> undeclared (first use in this function)
+> drivers/cpufreq/exynos5250-cpufreq.c:122:29: error: 'EXYNOS5_APLL_LOCK'
+> undeclared (first use in this function)
+> drivers/cpufreq/exynos5250-cpufreq.c:125:20: error: 'EXYNOS5_APLL_CON0'
+> undeclared (first use in this function)
+> drivers/cpufreq/exynos5250-cpufreq.c: In function 'exynos5250_set_frequency':
+> drivers/cpufreq/exynos5250-cpufreq.c:165:22: error: 'EXYNOS5_APLL_CON0'
+> undeclared (first use in this function)
+> make[2]: *** [drivers/cpufreq/exynos5250-cpufreq.o] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [drivers/cpufreq] Error 2
+> make: *** [drivers] Error 2
+>
+> This seems to be caused by commit 6e6aac7590 removing definitions of mentioned
+> registers from arch/arm/mach-exynos/include/mach/regs-clock.h header.
 
-I can think of at least one possible way to get hold of the fimc-is
-context in the subdev. For instance, in subdev's .registered callback
-you get a pointer to struct v4l2_device, which is normally embedded
-in a top level driver's private data. Then with container_of()
-you could get hold of required data at the fimc-is driver.
+I apologize for over looking this. I am working on preparing a fix to
+resolve these errors.
 
-But... to make the subdev drivers reuse possible subdevs should
-normally not be required to know the internals of a host driver they
-are registered to. And it looks a bit unusual to have fimc_pipeline_*
-calls in the sensor's operation handlers.
+Thanks,
+Thomas.
 
-I thought that the subdevs could provide basic methods and it would
-be the top level media driver that would resolve any dependencies
-in calling required subdev ops, according to media graph configuration
-done by the user on /dev/media?.
-
-The media driver has a list of media entities (subdevices and video
-nodes) and I though it could coordinate any requests involving whole
-video/image processing pipeline originating from /dev/video ioctls/fops.
-
-So for instance if /dev/video in this pipeline is opened
-
-sensor (sd) -> mipi-csis (sd) -> fimc-lite (sd) -> memory (/dev/video)
-
-it would call s_power operation on the above subdevs and additionally
-on e.g. the isp subdev (or any other we choose as a main subdev
-implementing the FIMC-IS slave interface).
-
-Then couldn't it be done that video node ioctls invoke pipeline
-operations, and the media device resolves any dependencies/calls
-order, as in case of the exynos4 driver ?
-
-As a side note, I'm working on adding a generic method to get any
-v4l2_subdev/video_device from a struct media_entity instance, so
-it is easier to handle link_notify events, power/streaming enable/
-disable sequences, etc.  Currently I have a data structure like:
-
-struct exynos_iss_entity {
-	struct video_device vdev;
-	struct v4l2_subdev subdev;
-	struct exynos_iss_pipeline pipe;
-};
-
-
-Regards,
-Sylwester
+>
+> Best regards,
+> --
+> Tomasz Figa
+> Samsung Poland R&D Center
+> SW Solution Development, Kernel and System Framework
+>
