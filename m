@@ -1,124 +1,161 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 20/21] clk: samsung: exynos4: Add missing registers to suspend
- save list
-Date: Wed, 27 Mar 2013 12:02:57 +0100
-Message-ID: <1364382178-25248-21-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 21/21] clk: samsung: exynos4: Add support for SoC-specific
+ register save list
+Date: Wed, 27 Mar 2013 12:02:58 +0100
+Message-ID: <1364382178-25248-22-git-send-email-t.figa@samsung.com>
 References: <1364382178-25248-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60045 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751696Ab3C0LJH (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:33180 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752805Ab3C0LJ0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Mar 2013 07:09:07 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
+	Wed, 27 Mar 2013 07:09:26 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MKB008CNGATB6P0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Mar 2013 20:09:07 +0900 (KST)
+ 17 2011)) with ESMTP id <0MKB00IX1GB24BI0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Mar 2013 20:09:21 +0900 (KST)
 In-reply-to: <1364382178-25248-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, a.hajda@samsung.com, l.majewski@samsung.com
 
-This patch adds missing clock control registers to the list of registers
-that should be saved across system suspend.
+This patch extends suspend/resume support for SoC-specific registers to
+handle differences in register sets on particular SoCs.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos4.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/clk/samsung/clk-exynos4.c    | 30 ++++++++++++++++++++++++++++--
+ drivers/clk/samsung/clk-exynos5250.c |  3 ++-
+ drivers/clk/samsung/clk-exynos5440.c |  2 +-
+ drivers/clk/samsung/clk.c            |  9 ++++++---
+ drivers/clk/samsung/clk.h            |  3 ++-
+ 5 files changed, 39 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 571b7e3..279c435 100644
+index 279c435..607ff3a 100644
 --- a/drivers/clk/samsung/clk-exynos4.c
 +++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -22,7 +22,11 @@
- 
- /* Exynos4 clock controller register offsets */
- #define SRC_LEFTBUS		0x4200
-+#define DIV_LEFTBUS		0x4500
-+#define GATE_IP_LEFTBUS		0x4800
- #define E4X12_GATE_IP_IMAGE	0x4930
-+#define SRC_RIGHTBUS		0x8200
-+#define DIV_RIGHTBUS		0x8500
- #define GATE_IP_RIGHTBUS	0x8800
- #define E4X12_GATE_IP_PERIR	0x8960
- #define EPLL_LOCK		0xc010
-@@ -48,6 +52,7 @@
- #define SRC_PERIL0		0xc250
- #define SRC_PERIL1		0xc254
- #define E4X12_SRC_CAM1		0xc258
-+#define SRC_MASK_TOP		0xc310
- #define SRC_MASK_CAM		0xc320
- #define SRC_MASK_TV		0xc324
- #define SRC_MASK_LCD0		0xc334
-@@ -92,12 +97,20 @@
- #define GATE_IP_GPS		0xc94c
- #define GATE_IP_PERIL		0xc950
- #define E4210_GATE_IP_PERIR	0xc960
-+#define GATE_BLOCK		0xc970
- #define E4X12_MPLL_CON0		0x10108
- #define SRC_DMC			0x10200
-+#define SRC_MASK_DMC		0x10300
-+#define DIV_DMC0		0x10500
-+#define DIV_DMC1		0x10504
-+#define GATE_IP_DMC		0x10900
- #define APLL_CON0		0x14100
- #define E4210_MPLL_CON0		0x14108
- #define SRC_CPU			0x14200
- #define DIV_CPU0		0x14500
-+#define DIV_CPU1		0x14504
-+#define GATE_SCLK_CPU		0x14800
-+#define GATE_IP_CPU		0x14900
- #define E4X12_DIV_ISP0		0x18300
- #define E4X12_DIV_ISP1		0x18304
- #define E4X12_GATE_ISP0		0x18800
-@@ -172,7 +185,17 @@ enum exynos4_clks {
+@@ -183,6 +183,26 @@ enum exynos4_clks {
+  * list of controller registers to be saved and restored during a
+  * suspend/resume cycle.
   */
++static __initdata unsigned long exynos4210_clk_save[] = {
++	E4210_SRC_IMAGE,
++	E4210_SRC_LCD1,
++	E4210_SRC_MASK_LCD1,
++	E4210_DIV_LCD1,
++	E4210_GATE_IP_IMAGE,
++	E4210_GATE_IP_LCD1,
++	E4210_GATE_IP_PERIR,
++	E4210_MPLL_CON0,
++};
++
++static __initdata unsigned long exynos4x12_clk_save[] = {
++	E4X12_GATE_IP_IMAGE,
++	E4X12_GATE_IP_PERIR,
++	E4X12_SRC_CAM1,
++	E4X12_DIV_ISP,
++	E4X12_DIV_CAM1,
++	E4X12_MPLL_CON0,
++};
++
  static __initdata unsigned long exynos4_clk_regs[] = {
  	SRC_LEFTBUS,
-+	DIV_LEFTBUS,
-+	GATE_IP_LEFTBUS,
-+	SRC_RIGHTBUS,
-+	DIV_RIGHTBUS,
- 	GATE_IP_RIGHTBUS,
-+	EPLL_CON0,
-+	EPLL_CON1,
-+	EPLL_CON2,
-+	VPLL_CON0,
-+	VPLL_CON1,
-+	VPLL_CON2,
- 	SRC_TOP0,
- 	SRC_TOP1,
- 	SRC_CAM,
-@@ -184,6 +207,7 @@ static __initdata unsigned long exynos4_clk_regs[] = {
- 	SRC_FSYS,
- 	SRC_PERIL0,
- 	SRC_PERIL1,
-+	SRC_MASK_TOP,
- 	SRC_MASK_CAM,
- 	SRC_MASK_TV,
- 	SRC_MASK_LCD0,
-@@ -218,9 +242,18 @@ static __initdata unsigned long exynos4_clk_regs[] = {
- 	GATE_IP_FSYS,
- 	GATE_IP_GPS,
- 	GATE_IP_PERIL,
-+	GATE_BLOCK,
-+	SRC_MASK_DMC,
-+	SRC_DMC,
-+	DIV_DMC0,
-+	DIV_DMC1,
-+	GATE_IP_DMC,
- 	APLL_CON0,
- 	SRC_CPU,
- 	DIV_CPU0,
-+	DIV_CPU1,
-+	GATE_SCLK_CPU,
-+	GATE_IP_CPU,
- };
+ 	DIV_LEFTBUS,
+@@ -985,8 +1005,14 @@ void __init exynos4_clk_init(struct device_node *np)
+ 			panic("%s: unable to determine soc\n", __func__);
+ 	}
  
- /* list of all parent clock list */
+-	samsung_clk_init(np, reg_base, nr_clks,
+-		exynos4_clk_regs, ARRAY_SIZE(exynos4_clk_regs));
++	if (exynos4_soc == EXYNOS4210)
++		samsung_clk_init(np, reg_base, nr_clks,
++			exynos4_clk_regs, ARRAY_SIZE(exynos4_clk_regs),
++			exynos4210_clk_save, ARRAY_SIZE(exynos4210_clk_save));
++	else
++		samsung_clk_init(np, reg_base, nr_clks,
++			exynos4_clk_regs, ARRAY_SIZE(exynos4_clk_regs),
++			exynos4x12_clk_save, ARRAY_SIZE(exynos4x12_clk_save));
+ 
+ 	if (np)
+ 		samsung_clk_of_register_fixed_ext(exynos4_fixed_rate_ext_clks,
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 1152125..5cd9a0c 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -477,7 +477,8 @@ void __init exynos5250_clk_init(struct device_node *np)
+ 	}
+ 
+ 	samsung_clk_init(np, reg_base, nr_clks,
+-			exynos5250_clk_regs, ARRAY_SIZE(exynos5250_clk_regs));
++			exynos5250_clk_regs, ARRAY_SIZE(exynos5250_clk_regs),
++			NULL, 0);
+ 	samsung_clk_of_register_fixed_ext(exynos5250_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_rate_ext_clks),
+ 			ext_clk_match);
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index d588e93..a0a094c 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -115,7 +115,7 @@ void __init exynos5440_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, nr_clks, NULL, 0);
++	samsung_clk_init(np, reg_base, nr_clks, NULL, 0, NULL, 0);
+ 	samsung_clk_of_register_fixed_ext(exynos5440_fixed_rate_ext_clks,
+ 		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
+ 
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 82f27f6..3a50d4f 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -54,7 +54,8 @@ static struct syscore_ops samsung_clk_syscore_ops = {
+ /* setup the essentials required to support clock lookup using ccf */
+ void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+ 		unsigned long nr_clks, unsigned long *rdump,
+-		unsigned long nr_rdump)
++		unsigned long nr_rdump, unsigned long *soc_rdump,
++		unsigned long nr_soc_rdump)
+ {
+ 	reg_base = base;
+ 
+@@ -62,7 +63,7 @@ void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+ 	if (rdump && nr_rdump) {
+ 		unsigned int idx;
+ 		reg_dump = kzalloc(sizeof(struct samsung_clk_reg_dump)
+-					* nr_rdump, GFP_KERNEL);
++				* (nr_rdump + nr_soc_rdump), GFP_KERNEL);
+ 		if (!reg_dump) {
+ 			pr_err("%s: memory alloc for register dump failed\n",
+ 					__func__);
+@@ -71,7 +72,9 @@ void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+ 
+ 		for (idx = 0; idx < nr_rdump; idx++)
+ 			reg_dump[idx].offset = rdump[idx];
+-		nr_reg_dump = nr_rdump;
++		for (idx = 0; idx < nr_soc_rdump; idx++)
++			reg_dump[nr_rdump + idx].offset = soc_rdump[idx];
++		nr_reg_dump = nr_rdump + nr_soc_rdump;
+ 		register_syscore_ops(&samsung_clk_syscore_ops);
+ 	}
+ #endif
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index 6bacd6f..10b2111 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -262,7 +262,8 @@ struct samsung_clk_reg_dump {
+ 
+ extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+ 		unsigned long nr_clks, unsigned long *rdump,
+-		unsigned long nr_rdump);
++		unsigned long nr_rdump, unsigned long *soc_rdump,
++		unsigned long nr_soc_rdump);
+ extern void __init samsung_clk_of_register_fixed_ext(
+ 		struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 		unsigned int nr_fixed_rate_clk,
 -- 
 1.8.1.5
