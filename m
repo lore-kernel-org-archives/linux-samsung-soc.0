@@ -1,428 +1,87 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v6 7/7] irqchip: s3c24xx: add devicetree support
-Date: Wed, 27 Mar 2013 16:58:29 -0500
-Message-ID: <51536B85.1070205@gmail.com>
-References: <201303262305.49725.heiko@sntech.de> <201303262310.35354.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Michael Spang <spang@chromium.org>
+Subject: [PATCH] serial: samsung: Use printk instead of printascii for S3C_PMDBG
+Date: Wed, 27 Mar 2013 19:39:58 -0400
+Message-ID: <1364427598-17899-1-git-send-email-spang@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:45627 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751174Ab3C0V6d (ORCPT
+Received: from mail-qa0-f74.google.com ([209.85.216.74]:54551 "EHLO
+	mail-qa0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753941Ab3C0XkD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Mar 2013 17:58:33 -0400
-Received: by mail-oa0-f44.google.com with SMTP id h1so9438775oag.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2013 14:58:32 -0700 (PDT)
-In-Reply-To: <201303262310.35354.heiko@sntech.de>
+	Wed, 27 Mar 2013 19:40:03 -0400
+Received: by mail-qa0-f74.google.com with SMTP id k4so208633qaq.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2013 16:40:02 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Spang <spang@chromium.org>
 
-On 03/26/2013 05:10 PM, Heiko St=FCbner wrote:
-> Add the necessary code to initialize the interrupt controller
-> thru devicetree data using the irqchip infrastructure.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Users should use no_console_suspend if they want output during
+suspend, rather than relying on DEBUG_LL. Using DEBUG_LL has two
+disadvantages:
 
-Acked-by: Rob Herring <rob.herring@calxeda.com>
+1. It doesn't respect power management. When the UART is suspended
+   the clock is stopped, and trying to use DEBUG_LL will just hang.
 
-> ---
->  .../interrupt-controller/samsung,s3c24xx-irq.txt   |   53 +++++
->  drivers/irqchip/irq-s3c24xx.c                      |  231 ++++++++++=
-+++++++++-
->  2 files changed, 278 insertions(+), 6 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-contr=
-oller/samsung,s3c24xx-irq.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/s=
-amsung,s3c24xx-irq.txt b/Documentation/devicetree/bindings/interrupt-co=
-ntroller/samsung,s3c24xx-irq.txt
-> new file mode 100644
-> index 0000000..c54c5a9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/samsung,=
-s3c24xx-irq.txt
-> @@ -0,0 +1,53 @@
-> +Samsung S3C24XX Interrupt Controllers
-> +
-> +The S3C24XX SoCs contain a custom set of interrupt controllers provi=
-ding a
-> +varying number of interrupt sources. The set consists of a main- and=
- sub-
-> +controller and on newer SoCs even a second main controller.
-> +
-> +Required properties:
-> +- compatible: Compatible property value should be "samsung,s3c2410-i=
-rq"
-> +  for machines before s3c2416 and "samsung,s3c2416-irq" for s3c2416 =
-and later.
-> +
-> +- reg: Physical base address of the controller and length of memory =
-mapped
-> +  region.
-> +
-> +- interrupt-controller : Identifies the node as an interrupt control=
-ler
-> +
-> +- #interrupt-cells : Specifies the number of cells needed to encode =
-an
-> +  interrupt source. The value shall be 4 and interrupt descriptor sh=
-all
-> +  have the following format:
-> +      <ctrl_num parent_irq ctrl_irq type>
-> +
-> +  ctrl_num contains the controller to use:
-> +      - 0 ... main controller
-> +      - 1 ... sub controller
-> +      - 2 ... second main controller on s3c2416 and s3c2450
-> +  parent_irq contains the parent bit in the main controller and will=
- be
-> +             ignored in main controllers
-> +  ctrl_irq contains the interrupt bit of the controller
-> +  type contains the trigger type to use
-> +
-> +Example:
-> +
-> +	interrupt-controller@4a000000 {
-> +		compatible =3D "samsung,s3c2410-irq";
-> +		reg =3D <0x4a000000 0x100>;
-> +		interrupt-controller;
-> +		#interrupt-cells=3D<4>;
-> +	};
-> +
-> +	[...]
-> +
-> +	serial@50000000 {
-> +		compatible =3D "samsung,s3c2410-uart";
-> +		reg =3D <0x50000000 0x4000>;
-> +		interrupt-parent =3D <&subintc>;
-> +		interrupts =3D <1 28 0 4>, <1 28 1 4>;
-> +	};
-> +
-> +	rtc@57000000 {
-> +		compatible =3D "samsung,s3c2410-rtc";
-> +		reg =3D <0x57000000 0x100>;
-> +		interrupt-parent =3D <&intc>;
-> +		interrupts =3D <0 30 0 3>, <0 8 0 3>;
-> +	};
-> diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c2=
-4xx.c
-> index 02b82db..5e40b34 100644
-> --- a/drivers/irqchip/irq-s3c24xx.c
-> +++ b/drivers/irqchip/irq-s3c24xx.c
-> @@ -25,6 +25,9 @@
->  #include <linux/ioport.h>
->  #include <linux/device.h>
->  #include <linux/irqdomain.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_address.h>
-> =20
->  #include <asm/exception.h>
->  #include <asm/mach/irq.h>
-> @@ -36,6 +39,8 @@
->  #include <plat/regs-irqtype.h>
->  #include <plat/pm.h>
-> =20
-> +#include "irqchip.h"
-> +
->  #define S3C_IRQTYPE_NONE	0
->  #define S3C_IRQTYPE_EINT	1
->  #define S3C_IRQTYPE_EDGE	2
-> @@ -94,7 +99,10 @@ static void s3c_irq_mask(struct irq_data *data)
->  	if (parent_intc) {
->  		parent_data =3D &parent_intc->irqs[irq_data->parent_irq];
-> =20
-> -		/* check to see if we need to mask the parent IRQ */
-> +		/* check to see if we need to mask the parent IRQ
-> +		 * The parent_irq is always in main_intc, so the hwirq
-> +		 * for find_mapping does not need an offset in any case.
-> +		 */
->  		if ((mask & parent_data->sub_bits) =3D=3D parent_data->sub_bits) {
->  			irqno =3D irq_find_mapping(parent_intc->domain,
->  					 irq_data->parent_irq);
-> @@ -294,10 +302,18 @@ static void s3c_irq_demux(unsigned int irq, str=
-uct irq_desc *desc)
->  {
->  	struct irq_chip *chip =3D irq_desc_get_chip(desc);
->  	struct s3c_irq_data *irq_data =3D irq_desc_get_chip_data(desc);
-> +	struct s3c_irq_intc *intc =3D irq_data->intc;
->  	struct s3c_irq_intc *sub_intc =3D irq_data->sub_intc;
->  	unsigned long src;
->  	unsigned long msk;
->  	unsigned int n;
-> +	unsigned int offset;
-> +
-> +	/* we're using individual domains for the non-dt case
-> +	 * and one big domain for the dt case where the subintc
-> +	 * starts at hwirq number 32.
-> +	 */
-> +	offset =3D (intc->domain->of_node) ? 32 : 0;
-> =20
->  	chained_irq_enter(chip, desc);
-> =20
-> @@ -310,14 +326,15 @@ static void s3c_irq_demux(unsigned int irq, str=
-uct irq_desc *desc)
->  	while (src) {
->  		n =3D __ffs(src);
->  		src &=3D ~(1 << n);
-> -		generic_handle_irq(irq_find_mapping(sub_intc->domain, n));
-> +		irq =3D irq_find_mapping(sub_intc->domain, offset + n);
-> +		generic_handle_irq(irq);
->  	}
-> =20
->  	chained_irq_exit(chip, desc);
->  }
-> =20
->  static inline int s3c24xx_handle_intc(struct s3c_irq_intc *intc,
-> -				      struct pt_regs *regs)
-> +				      struct pt_regs *regs, int intc_offset)
->  {
->  	int pnd;
->  	int offset;
-> @@ -327,6 +344,10 @@ static inline int s3c24xx_handle_intc(struct s3c=
-_irq_intc *intc,
->  	if (!pnd)
->  		return false;
-> =20
-> +	/* non-dt machines use individual domains */
-> +	if (!intc->domain->of_node)
-> +		intc_offset =3D 0;
-> +
->  	/* We have a problem that the INTOFFSET register does not always
->  	 * show one interrupt. Occasionally we get two interrupts through
->  	 * the prioritiser, and this causes the INTOFFSET register to show
-> @@ -343,7 +364,7 @@ static inline int s3c24xx_handle_intc(struct s3c_=
-irq_intc *intc,
->  	if (!(pnd & (1 << offset)))
->  		offset =3D  __ffs(pnd);
-> =20
-> -	irq =3D irq_find_mapping(intc->domain, offset);
-> +	irq =3D irq_find_mapping(intc->domain, intc_offset + offset);
->  	handle_IRQ(irq, regs);
->  	return true;
->  }
-> @@ -352,11 +373,11 @@ asmlinkage void __exception_irq_entry s3c24xx_h=
-andle_irq(struct pt_regs *regs)
->  {
->  	do {
->  		if (likely(s3c_intc[0]))
-> -			if (s3c24xx_handle_intc(s3c_intc[0], regs))
-> +			if (s3c24xx_handle_intc(s3c_intc[0], regs, 0))
->  				continue;
-> =20
->  		if (s3c_intc[2])
-> -			if (s3c24xx_handle_intc(s3c_intc[2], regs))
-> +			if (s3c24xx_handle_intc(s3c_intc[2], regs, 64))
->  				continue;
-> =20
->  		break;
-> @@ -1134,3 +1155,201 @@ void __init s3c2443_init_irq(void)
->  					s3c_intc[0], 0x4a000018);
->  }
->  #endif
-> +
-> +#ifdef CONFIG_OF
-> +static int s3c24xx_irq_map_of(struct irq_domain *h, unsigned int vir=
-q,
-> +							irq_hw_number_t hw)
-> +{
-> +	unsigned int ctrl_num =3D hw / 32;
-> +	unsigned int intc_hw =3D hw % 32;
-> +	struct s3c_irq_intc *intc =3D s3c_intc[ctrl_num];
-> +	struct s3c_irq_intc *parent_intc =3D intc->parent;
-> +	struct s3c_irq_data *irq_data =3D &intc->irqs[intc_hw];
-> +
-> +	/* attach controller pointer to irq_data */
-> +	irq_data->intc =3D intc;
-> +	irq_data->offset =3D intc_hw;
-> +
-> +	if (!parent_intc)
-> +		irq_set_chip_and_handler(virq, &s3c_irq_chip, handle_edge_irq);
-> +	else
-> +		irq_set_chip_and_handler(virq, &s3c_irq_level_chip,
-> +					 handle_edge_irq);
-> +
-> +	irq_set_chip_data(virq, irq_data);
-> +
-> +	set_irq_flags(virq, IRQF_VALID);
-> +
-> +	return 0;
-> +}
-> +
-> +/* Translate our of irq notation
-> + * format: <ctrl_num ctrl_irq parent_irq type>
-> + */
-> +static int s3c24xx_irq_xlate_of(struct irq_domain *d, struct device_=
-node *n,
-> +			const u32 *intspec, unsigned int intsize,
-> +			irq_hw_number_t *out_hwirq, unsigned int *out_type)
-> +{
-> +	struct s3c_irq_intc *intc;
-> +	struct s3c_irq_intc *parent_intc;
-> +	struct s3c_irq_data *irq_data;
-> +	struct s3c_irq_data *parent_irq_data;
-> +	int irqno;
-> +
-> +	if (WARN_ON(intsize < 4))
-> +		return -EINVAL;
-> +
-> +	if (intspec[0] > 2 || !s3c_intc[intspec[0]]) {
-> +		pr_err("controller number %d invalid\n", intspec[0]);
-> +		return -EINVAL;
-> +	}
-> +	intc =3D s3c_intc[intspec[0]];
-> +
-> +	*out_hwirq =3D intspec[0] * 32 + intspec[2];
-> +	*out_type =3D intspec[3] & IRQ_TYPE_SENSE_MASK;
-> +
-> +	parent_intc =3D intc->parent;
-> +	if (parent_intc) {
-> +		irq_data =3D &intc->irqs[intspec[2]];
-> +		irq_data->parent_irq =3D intspec[1];
-> +		parent_irq_data =3D &parent_intc->irqs[irq_data->parent_irq];
-> +		parent_irq_data->sub_intc =3D intc;
-> +		parent_irq_data->sub_bits |=3D (1UL << intspec[2]);
-> +
-> +		/* parent_intc is always s3c_intc[0], so no offset */
-> +		irqno =3D irq_create_mapping(parent_intc->domain, intspec[1]);
-> +		if (irqno < 0) {
-> +			pr_err("irq: could not map parent interrupt\n");
-> +			return irqno;
-> +		}
-> +
-> +		irq_set_chained_handler(irqno, s3c_irq_demux);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static struct irq_domain_ops s3c24xx_irq_ops_of =3D {
-> +	.map =3D s3c24xx_irq_map_of,
-> +	.xlate =3D s3c24xx_irq_xlate_of,
-> +};
-> +
-> +struct s3c24xx_irq_of_ctrl {
-> +	char			*name;
-> +	unsigned long		offset;
-> +	struct s3c_irq_intc	**handle;
-> +	struct s3c_irq_intc	**parent;
-> +	struct irq_domain_ops	*ops;
-> +};
-> +
-> +static int __init s3c_init_intc_of(struct device_node *np,
-> +			struct device_node *interrupt_parent,
-> +			struct s3c24xx_irq_of_ctrl *s3c_ctrl, int num_ctrl)
-> +{
-> +	struct s3c_irq_intc *intc;
-> +	struct s3c24xx_irq_of_ctrl *ctrl;
-> +	struct irq_domain *domain;
-> +	void __iomem *reg_base;
-> +	int i;
-> +
-> +	reg_base =3D of_iomap(np, 0);
-> +	if (!reg_base) {
-> +		pr_err("irq-s3c24xx: could not map irq registers\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	domain =3D irq_domain_add_linear(np, num_ctrl * 32,
-> +						     &s3c24xx_irq_ops_of, NULL);
-> +	if (!domain) {
-> +		pr_err("irq: could not create irq-domain\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (i =3D 0; i < num_ctrl; i++) {
-> +		ctrl =3D &s3c_ctrl[i];
-> +
-> +		pr_debug("irq: found controller %s\n", ctrl->name);
-> +
-> +		intc =3D kzalloc(sizeof(struct s3c_irq_intc), GFP_KERNEL);
-> +		if (!intc)
-> +			return -ENOMEM;
-> +
-> +		intc->domain =3D domain;
-> +		intc->irqs =3D kzalloc(sizeof(struct s3c_irq_data) * 32,
-> +				     GFP_KERNEL);
-> +		if (!intc->irqs) {
-> +			kfree(intc);
-> +			return -ENOMEM;
-> +		}
-> +
-> +		if (ctrl->parent) {
-> +			intc->reg_pending =3D reg_base + ctrl->offset;
-> +			intc->reg_mask =3D reg_base + ctrl->offset + 0x4;
-> +
-> +			if (*(ctrl->parent)) {
-> +				intc->parent =3D *(ctrl->parent);
-> +			} else {
-> +				pr_warn("irq: parent of %s missing\n",
-> +					ctrl->name);
-> +				kfree(intc->irqs);
-> +				kfree(intc);
-> +				continue;
-> +			}
-> +		} else {
-> +			intc->reg_pending =3D reg_base + ctrl->offset;
-> +			intc->reg_mask =3D reg_base + ctrl->offset + 0x08;
-> +			intc->reg_intpnd =3D reg_base + ctrl->offset + 0x10;
-> +		}
-> +
-> +		s3c24xx_clear_intc(intc);
-> +		s3c_intc[i] =3D intc;
-> +	}
-> +
-> +	set_handle_irq(s3c24xx_handle_irq);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct s3c24xx_irq_of_ctrl s3c2410_ctrl[] =3D {
-> +	{
-> +		.name =3D "intc",
-> +		.offset =3D 0,
-> +	}, {
-> +		.name =3D "subintc",
-> +		.offset =3D 0x18,
-> +		.parent =3D &s3c_intc[0],
-> +	}
-> +};
-> +
-> +int __init s3c2410_init_intc_of(struct device_node *np,
-> +			struct device_node *interrupt_parent,
-> +			struct s3c24xx_irq_of_ctrl *ctrl, int num_ctrl)
-> +{
-> +	return s3c_init_intc_of(np, interrupt_parent,
-> +				s3c2410_ctrl, ARRAY_SIZE(s3c2410_ctrl));
-> +}
-> +IRQCHIP_DECLARE(s3c2410_irq, "samsung,s3c2410-irq", s3c2410_init_int=
-c_of);
-> +
-> +static struct s3c24xx_irq_of_ctrl s3c2416_ctrl[] =3D {
-> +	{
-> +		.name =3D "intc",
-> +		.offset =3D 0,
-> +	}, {
-> +		.name =3D "subintc",
-> +		.offset =3D 0x18,
-> +		.parent =3D &s3c_intc[0],
-> +	}, {
-> +		.name =3D "intc2",
-> +		.offset =3D 0x40,
-> +	}
-> +};
-> +
-> +int __init s3c2416_init_intc_of(struct device_node *np,
-> +			struct device_node *interrupt_parent,
-> +			struct s3c24xx_irq_of_ctrl *ctrl, int num_ctrl)
-> +{
-> +	return s3c_init_intc_of(np, interrupt_parent,
-> +				s3c2416_ctrl, ARRAY_SIZE(s3c2416_ctrl));
-> +}
-> +IRQCHIP_DECLARE(s3c2416_irq, "samsung,s3c2416-irq", s3c2416_init_int=
-c_of);
-> +#endif
->=20
+   This means if the user selects CONFIG_SAMSUNG_PM_DEBUG but does
+   NOT disable console suspend, the system will hang during suspend.
+
+2. It skips syslog and other console devices such as pstore.
+
+Signed-off-by: Michael Spang <spang@chromium.org>
+---
+ arch/arm/plat-samsung/include/plat/pm.h | 14 --------------
+ arch/arm/plat-samsung/pm.c              | 13 -------------
+ 2 files changed, 27 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
+index f6fcade..6d6e2a8 100644
+--- a/arch/arm/plat-samsung/include/plat/pm.h
++++ b/arch/arm/plat-samsung/include/plat/pm.h
+@@ -116,21 +116,7 @@ extern int s3c_irqext_wake(struct irq_data *data, unsigned int state);
+ 
+ /* PM debug functions */
+ 
+-#ifdef CONFIG_SAMSUNG_PM_DEBUG
+-/**
+- * s3c_pm_dbg() - low level debug function for use in suspend/resume.
+- * @msg: The message to print.
+- *
+- * This function is used mainly to debug the resume process before the system
+- * can rely on printk/console output. It uses the low-level debugging output
+- * routine printascii() to do its work.
+- */
+-extern void s3c_pm_dbg(const char *msg, ...);
+-
+-#define S3C_PMDBG(fmt...) s3c_pm_dbg(fmt)
+-#else
+ #define S3C_PMDBG(fmt...) printk(KERN_DEBUG fmt)
+-#endif
+ 
+ #ifdef CONFIG_S3C_PM_DEBUG_LED_SMDK
+ /**
+diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
+index 002b147..7459fc6 100644
+--- a/arch/arm/plat-samsung/pm.c
++++ b/arch/arm/plat-samsung/pm.c
+@@ -43,19 +43,6 @@ unsigned long s3c_pm_flags;
+ */
+ 
+ #ifdef CONFIG_SAMSUNG_PM_DEBUG
+-extern void printascii(const char *);
+-
+-void s3c_pm_dbg(const char *fmt, ...)
+-{
+-	va_list va;
+-	char buff[256];
+-
+-	va_start(va, fmt);
+-	vsnprintf(buff, sizeof(buff), fmt, va);
+-	va_end(va);
+-
+-	printascii(buff);
+-}
+ 
+ static inline void s3c_pm_debug_init(void)
+ {
+-- 
+1.8.1.3
