@@ -1,87 +1,61 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v6 1/7] media: V4L2: add temporary clock helpers
-Date: Wed, 27 Mar 2013 00:09:15 +0100
-Message-ID: <2434380.WAg9HcVhPF@avalon>
-References: <1363382873-20077-1-git-send-email-g.liakhovetski@gmx.de> <5148355D.5070806@samsung.com> <Pine.LNX.4.64.1303191103310.11768@axis700.grange>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: RE: [PATCH v2 0/4] clk: samsung: pm fixes and multiple aliases
+Date: Tue, 26 Mar 2013 17:59:12 -0700
+Message-ID: <20130327005912.4014.60318@quantum>
+References: <201303131458.18671.heiko@sntech.de>
+ <176601ce293a$d7a0e190$86e2a4b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.1303191103310.11768@axis700.grange>
-Sender: linux-sh-owner@vger.kernel.org
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, Prabhakar Lad <prabhakar.lad@ti.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f51.google.com ([209.85.210.51]:35867 "EHLO
+	mail-da0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752772Ab3C0A7X convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Mar 2013 20:59:23 -0400
+Received: by mail-da0-f51.google.com with SMTP id g27so3784237dan.38
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2013 17:59:22 -0700 (PDT)
+In-Reply-To: <176601ce293a$d7a0e190$86e2a4b0$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, =?utf-8?q?=27Heiko_St=C3=BCbner=27?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-Hi Guennadi,
+Quoting Kukjin Kim (2013-03-25 02:26:34)
+> Heiko St=C3=BCbner wrote:
+> >=20
+> > Second version of the fixes to address comments gathered from the f=
+irst
+> > version, like not entering the dt code on non-dt platforms even if
+> > dt-support is present in the kernel.
+> >=20
+> > Patch 1 and 3 got "Reviewed-by" tags but I only included the one fo=
+r
+> > patch 1, because patch 3 changed due to the changes in patch 2.
+> >=20
+> > Heiko Stuebner (4):
+> >   clk: samsung: register clk_div_tables for divider clocks
+> >   clk: samsung: fix pm init on non-dt platforms
+> >   clk: samsung: always allocate the clk_table
+> >   clk: samsung: add infrastructure to add separate aliases
+> >=20
+> >  drivers/clk/samsung/clk.c |   72 +++++++++++++++++++++++++++++++++=
+++------
+> > ---
+> >  drivers/clk/samsung/clk.h |   34 ++++++++++++++++++--
+> >  2 files changed, 87 insertions(+), 19 deletions(-)
+> >=20
+> > --
+> > 1.7.2.3
+>=20
+> Looks good to me and applied into samsung tree based on samsung commo=
+n clock by Thomas P Abraham for testing.
+>=20
+> But would be helpful to me if I could get Mike's ack on this series.
+>=20
 
-On Tuesday 19 March 2013 11:27:56 Guennadi Liakhovetski wrote:
-> On Tue, 19 Mar 2013, Sylwester Nawrocki wrote:
-> > >>> +	if (!IS_ERR(clk)&&  !try_module_get(clk->ops->owner))
-> > >>> +		clk = ERR_PTR(-ENODEV);
-> > >>> +	mutex_unlock(&clk_lock);
-> > >>> +
-> > >>> +	if (!IS_ERR(clk)) {
-> > >>> +		clk->subdev = sd;
-> > >> 
-> > >> Why is this needed ? It seems a strange addition that might potentially
-> > >> make transition to the common clocks API more difficult.
-> > > 
-> > > We got rid of the v4l2_clk_bind() function and the .bind() callback. Now
-> > > I need a pointer to subdevice _before_ v4l2_clk_register() (former
-> > > v4l2_clk_bound()), that's why I have to store it here.
-> > 
-> > Hmm, sorry, I'm not following. How can we store a subdev pointer in the
-> > clock data structure that has not been registered yet and thus cannot be
-> > found with v4l2_clk_find() ?
-> 
-> sorry, I meant v4l2_async_subdev_register(), not v4l2_clk_register(), my
-> mistake. And I meant v4l2_async_subdev_bind(), v4l2_async_subdev_unbind().
-> Before we had in the subdev driver (see imx074 example)
-> 
-> 	/* Tell the bridge the subdevice is about to bind */
-> 	v4l2_async_subdev_bind();
-> 
-> 	/* get a clock */
-> 	clk = v4l2_clk_get();
-> 	if (IS_ERR(clk))
-> 		return -EPROBE_DEFER;
-> 
-> 	/*
-> 	 * enable the clock - this needs a subdev pointer, that we passed
-> 	 * to the bridge with v4l2_async_subdev_bind() above
-> 	 */
-> 	v4l2_clk_enable(clk);
-> 	do_probe();
-> 	v4l2_clk_disable(clk);
-> 
-> 	/* inform the bridge: binding successful */
-> 	v4l2_async_subdev_bound();
-> 
-> Now we have just
-> 
-> 	/* get a clock */
-> 	clk = v4l2_clk_get();
-> 	if (IS_ERR(clk))
-> 		return -EPROBE_DEFER;
-> 
-> 	/*
-> 	 * enable the clock - this needs a subdev pointer, that we stored
-> 	 * in the clock object for the bridge driver to use with
-> 	 * v4l2_clk_get() above
-> 	 */
-> 	v4l2_clk_enable(clk);
-> 	do_probe();
-> 	v4l2_clk_disable(clk);
+Acked-by: Mike Turquette <mturquette@linaro.org>
 
-I'm sorry, but I still don't understand why you need a pointer to the subdev 
-in the clock provider implementation of v4l2_clk_enable/disable() :-)
-
-> 	/* inform the bridge: binding successful */
-> 	v4l2_async_subdev_bound();
-
--- 
-Regards,
-
-Laurent Pinchart
-
+> Thanks.
+>=20
+> - Kukjin
