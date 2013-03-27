@@ -1,179 +1,122 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: exynos5250: Added MUX,
- DIV and GATE clocks for Gscaler and MFC
-Date: Tue, 26 Mar 2013 19:04:39 -0700
-Message-ID: <20130327020439.4014.58491@quantum>
-References: <1364271986-30491-1-git-send-email-prasanna.ps@samsung.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC 01/12] exynos-fimc-is: Adding device tree nodes
+Date: Wed, 27 Mar 2013 10:01:00 +0530
+Message-ID: <CALt3h7_nFQdRCJJA0n4i9_CnRJAeYvu8xCkwzDsfdqBZgf_NNw@mail.gmail.com>
+References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
+	<1362754765-2651-2-git-send-email-arun.kk@samsung.com>
+	<514DAAC3.4050202@gmail.com>
+	<CALt3h7_nXSd6A2t55fi3PD+BkpZh5Lo4suWcg-ZF=jDq+V3NXA@mail.gmail.com>
+	<51522671.5080706@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:53589 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751212Ab3C0CEq convert rfc822-to-8bit (ORCPT
+Received: from mail-vb0-f42.google.com ([209.85.212.42]:60216 "EHLO
+	mail-vb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751842Ab3C0EbB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Mar 2013 22:04:46 -0400
-Received: by mail-pb0-f53.google.com with SMTP id un1so5001928pbc.40
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2013 19:04:46 -0700 (PDT)
-In-Reply-To: <1364271986-30491-1-git-send-email-prasanna.ps@samsung.com>
+	Wed, 27 Mar 2013 00:31:01 -0400
+In-Reply-To: <51522671.5080706@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
-Cc: Prasanna Kumar <prasanna.ps@samsung.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, kgene.kim@samsung.com, kilyeon.im@samsung.com
 
-Quoting Prasanna Kumar (2013-03-25 21:26:26)
-> From: Prasanna Kumar <prasanna.ps@samsung.com>
+On Wed, Mar 27, 2013 at 4:21 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> On 03/26/2013 01:17 PM, Arun Kumar K wrote:
+>>>>
+>>>> +Sensor sub-nodes:
+>>>> +
+>>>> +FIMC-IS IP supports custom built sensors to be controlled exclusively
+>>>> by
+>>>> +the FIMC-IS firmware. These sensor properties are to be defined here.
+>>
+>>
+>> [snip]
+>>
+>>> Defining image sensor nodes in a standard way as ISP I2C bus controller
+>>> nodes has an disadvantage that we need dummy I2C bus controller driver,
+>>> at least this is how I have written the driver for Exynos4x12. In some
+>>> version of it I had sensor nodes put in a isp-i2c fimc-is sub-node, but
+>>> then there was an issue that this was not a fully specified I2C bus
+>>> controller node.
+>>>
+>>> You can refer to my exynos4 fimc-is patch series for details on how this
+>>> is now implemented.
+>>>
+>>> Handling the image sensor in a standard way, as regular I2C client
+>>> devices
+>>> has an advantage that we can put pinctrl properties in relevant device
+>>> nodes,
+>>> where available, which more closely describes the hardware structure.
+>>>
+>>> I'm not really sure in 100% if all this complication is required. It
+>>> would
+>>> allow to use same DT blob for different Imaging Subsystem SW
+>>> architecture.
+>>> For example some parts of functionality handled currently by FIMC-IS (ARM
+>>> Cortex-A5) could be moved to host CPU, without any change in the device
+>>> tree structure. The kernel could decide e.g. if it uses image sensor
+>>> driver
+>>> implemented in the ISP firmware, or a driver run on the host CPU.
+>>>
+>>> What do you think ?
+>>
+>>
+>> I have seen your Exynos4 FIMC-IS patchset and you have made a dummy
+>> I2C sensor driver there.
+>> That mode would work fine in Exynos4 since the sensor and ISP will be used
+>> by the same media controller pipeline. So the ISP component in the
+>> pipeline
+>> will ensure that the HW is initialized and sensor is working.
+>>
+>> But in Exynos5, we are using sensor in pipeline0 and ISP in pipeline1.
+>> So there is a possibility of using sensor subdev independently
+>> without using pipeline1 ISP components.
+>>
+>> So with the driver I sent, the pipeline0 can still work like this -->
+>>
+>> ISP sensor --->  MIPI-CSIS --->  FIMC-LITE --->  Memory
+>>
+>> This cannot be done if a dummy I2C driver is made for ISP sensor.
+>
+>
+> Why not ? I'm not sure what the problem is here.
+>
+> I realize that describing image sensors in DT as standard I2C slave devices
+> is not helpful with current firmware architecture. It adds some unnecessary
+> complication, OTOH it could simplify the sensors registration and media
+> graph
+> initialization code, by unifying it for the firmware based ISP specific
+> sensors and the external ones with a built-in ISP. Also we could avoid
+> having
+> the bindings defined by current architecture of the driver.
+>
+> Nevertheless, coming back to your question, the I2C controller driver would
+> be in same module as the FIMC-IS driver. From user space perspective nothing
+> changes when you add I2C bus driver and register the sensor in a standard
+> way.
+> What exactly couldn't be done in the kernel ?
 
-No need for the above line.
 
-> 
-> Gscaler :
-> 
->   1. For "aclk_300_gscl",following clocks are added
->           Mux clocks
->                 mout_aclk_300_gscl_mid,
->                 mout_aclk_300_gscl_mid1,
->                 mout_aclk_300_gscl
->           Divider clock
->                 div_aclk300_gscl
->           Sub-Mux clock ( driven from output of divider clock)
->                 mout_sub_aclk300
->   2. For "aclk_266_gscl",
->            Sub-Mux clock "mout_sub_aclk266" added
->            Divider clock has been modified to refer Sub-Mux clock
-> 
-> MFC :
->    For "aclk_333"
->         Sub-Mux clock "mout_sub_aclk333" added
->            Divider clock has been modified to refer Sub-Mux clock
-> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+Only issue is with the context sharing.
+Right now you can see that the fimc-is context is shared between all
+the subdevs.
+As all of them are part of the same driver, it is possible.
+If sensor is made as an independent i2c device, a separate probe will
+be called for it.
+For ISP sensor subdev to work independently, it needs to call the
+fimc_is_pipeline_* calls
+for FW initialization and other configurations for which it needs the
+fimc-is main context.
 
-The changelog above is not very human-readable.  Can you include some
-explanation of why you are making this change (e.g. enables some
-device)?
+Now there is a workaround here by calling a get_context() macro in
+sensor's probe
+to get the fimc-is context. This will cause the same context to be
+shared and updated by
+2 drivers though both are part of fimc-is.
+Is this acceptable? Or am I missing some other simple solution of implementing
+it in a better way?
 
-Thanks,
-Mike
-
-> ---
->  drivers/clk/samsung/clk-exynos5250.c |   57 +++++++++++++++++++++++++--------
->  1 files changed, 43 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-> index e40d6af..40dff9d 100644
-> --- a/drivers/clk/samsung/clk-exynos5250.c
-> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -24,7 +24,9 @@
->  #define DIV_CPU0               0x500
->  #define SRC_CORE1              0x4204
->  #define SRC_TOP0               0x10210
-> +#define SRC_TOP1               0x10214
->  #define SRC_TOP2               0x10218
-> +#define SRC_TOP3               0x1021C
->  #define SRC_GSCL               0x10220
->  #define SRC_DISP1_0            0x1022c
->  #define SRC_MAU                        0x10240
-> @@ -112,7 +114,9 @@ static __initdata unsigned long exynos5250_clk_regs[] = {
->         DIV_CPU0,
->         SRC_CORE1,
->         SRC_TOP0,
-> +       SRC_TOP1,
->         SRC_TOP2,
-> +       SRC_TOP3,
->         SRC_GSCL,
->         SRC_DISP1_0,
->         SRC_MAU,
-> @@ -167,6 +171,13 @@ PNAME(mout_mpll_user_p)    = { "fin_pll", "sclk_mpll" };
->  PNAME(mout_bpll_user_p)        = { "fin_pll", "sclk_bpll" };
->  PNAME(mout_aclk166_p)  = { "sclk_cpll", "sclk_mpll_user" };
->  PNAME(mout_aclk200_p)  = { "sclk_mpll_user", "sclk_bpll_user" };
-> +PNAME(mout_sub_aclk266_p) = { "fin_pll", "div_aclk266" };
-> +PNAME(mout_aclk_300_gscl_mid_p) = { "sclk_mpll_user", "sclk_bpll_user"};
-> +PNAME(mout_aclk_300_gscl_mid1_p) = { "sclk_vpll", "sclk_cpll"};
-> +PNAME(mout_aclk_300_gscl_p) = { "mout_aclk_300_gscl_mid",
-> +                                       "mout_aclk_300_gscl_mid1" };
-> +PNAME(mout_sub_aclk300_p) = { "fin_pll", "div_aclk300_gscl" };
-> +PNAME(mout_sub_aclk333_p) = { "fin_pll", "div_aclk333" };
->  PNAME(mout_hdmi_p)     = { "div_hdmi_pixel", "sclk_hdmiphy" };
->  PNAME(mout_usb3_p)     = { "sclk_mpll_user", "sclk_cpll" };
->  PNAME(mout_group1_p)   = { "fin_pll", "fin_pll", "sclk_hdmi27m",
-> @@ -220,8 +231,20 @@ struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
->         MUX(none, "sclk_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
->         MUX(none, "sclk_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
->         MUX(none, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
-> -       MUX(none, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
->         MUX(none, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
-> +       MUX_A(none, "mout_sub_aclk266", mout_sub_aclk266_p,
-> +                                       SRC_TOP3, 8, 1, "m_sub_aclk266"),
-> +       MUX(none, "mout_aclk_300_gscl", mout_aclk_300_gscl_p,
-> +                                               SRC_TOP0, 25, 1),
-> +       MUX(none, "mout_aclk_300_gscl_mid", mout_aclk_300_gscl_mid_p,
-> +                                               SRC_TOP0, 24, 1),
-> +       MUX(none, "mout_aclk_300_gscl_mid1", mout_aclk_300_gscl_mid1_p,
-> +                                               SRC_TOP1, 12, 1),
-> +       MUX_A(none, "mout_sub_aclk300", mout_sub_aclk300_p,
-> +                                       SRC_TOP3, 10, 1, "m_sub_aclk300"),
-> +       MUX(none, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
-> +       MUX_A(none, "mout_sub_aclk333", mout_sub_aclk333_p,
-> +                                       SRC_TOP3, 24, 1, "m_sub_aclk333"),
->         MUX(none, "mout_cam_bayer", mout_group1_p, SRC_GSCL, 12, 4),
->         MUX(none, "mout_cam0", mout_group1_p, SRC_GSCL, 16, 4),
->         MUX(none, "mout_cam1", mout_group1_p, SRC_GSCL, 20, 4),
-> @@ -257,10 +280,12 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->         DIV(none, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
->         DIV(none, "aclk66_pre", "sclk_mpll_user", DIV_TOP1, 24, 3),
->         DIV(none, "aclk66", "aclk66_pre", DIV_TOP0, 0, 3),
-> -       DIV(none, "aclk266", "sclk_mpll_user", DIV_TOP0, 16, 3),
->         DIV(none, "aclk166", "mout_aclk166", DIV_TOP0, 8, 3),
-> -       DIV(none, "aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
->         DIV(none, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
-> +       DIV(none, "div_aclk266", "sclk_mpll_user", DIV_TOP0, 16, 3),
-> +       DIV(none, "div_aclk300_gscl", "mout_aclk_300_gscl",
-> +                                               DIV_TOP1, 14, 3),
-> +       DIV(none, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
->         DIV(none, "div_cam_bayer", "mout_cam_bayer", DIV_GSCL, 12, 4),
->         DIV(none, "div_cam0", "mout_cam0", DIV_GSCL, 16, 4),
->         DIV(none, "div_cam1", "mout_cam1", DIV_GSCL, 20, 4),
-> @@ -313,19 +338,23 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->  };
->  
->  struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
-> -       GATE(gscl0, "gscl0", "none", GATE_IP_GSCL, 0, 0, 0),
-> -       GATE(gscl1, "gscl1", "none", GATE_IP_GSCL, 1, 0, 0),
-> -       GATE(gscl2, "gscl2", "aclk266", GATE_IP_GSCL, 2, 0, 0),
-> -       GATE(gscl3, "gscl3", "aclk266", GATE_IP_GSCL, 3, 0, 0),
-> +       GATE(gscl0, "gscl0", "mout_sub_aclk266", GATE_IP_GSCL, 0, 0, 0),
-> +       GATE(gscl1, "gscl1", "mout_sub_aclk266", GATE_IP_GSCL, 1, 0, 0),
-> +       GATE(gscl2, "gscl2", "mout_sub_aclk266", GATE_IP_GSCL, 2, 0, 0),
-> +       GATE(gscl3, "gscl3", "mout_sub_aclk266", GATE_IP_GSCL, 3, 0, 0),
->         GATE(gscl_wa, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
->         GATE(gscl_wb, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
-> -       GATE(smmu_gscl0, "smmu_gscl0", "aclk266", GATE_IP_GSCL, 7, 0, 0),
-> -       GATE(smmu_gscl1, "smmu_gscl1", "aclk266", GATE_IP_GSCL, 8, 0, 0),
-> -       GATE(smmu_gscl2, "smmu_gscl2", "aclk266", GATE_IP_GSCL, 9, 0, 0),
-> -       GATE(smmu_gscl3, "smmu_gscl3", "aclk266", GATE_IP_GSCL, 10, 0, 0),
-> -       GATE(mfc, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
-> -       GATE(smmu_mfcl, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
-> -       GATE(smmu_mfcr, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
-> +       GATE(smmu_gscl0, "smmu_gscl0", "mout_sub_aclk266",
-> +                                               GATE_IP_GSCL, 7, 0, 0),
-> +       GATE(smmu_gscl1, "smmu_gscl1", "mout_sub_aclk266",
-> +                                               GATE_IP_GSCL, 8, 0, 0),
-> +       GATE(smmu_gscl2, "smmu_gscl2", "mout_sub_aclk266",
-> +                                               GATE_IP_GSCL, 9, 0, 0),
-> +       GATE(smmu_gscl3, "smmu_gscl3", "mout_sub_aclk266",
-> +                                               GATE_IP_GSCL, 10, 0, 0),
-> +       GATE(mfc, "mfc", "mout_sub_aclk333", GATE_IP_MFC, 0, 0, 0),
-> +       GATE(smmu_mfcl, "smmu_mfcl", "mout_sub_aclk333", GATE_IP_MFC, 1, 0, 0),
-> +       GATE(smmu_mfcr, "smmu_mfcr", "mout_sub_aclk333", GATE_IP_MFC, 2, 0, 0),
->         GATE(rotator, "rotator", "aclk266", GATE_IP_GEN, 1, 0, 0),
->         GATE(jpeg, "jpeg", "aclk166", GATE_IP_GEN, 2, 0, 0),
->         GATE(mdma1, "mdma1", "aclk266", GATE_IP_GEN, 4, 0, 0),
-> -- 
-> 1.7.5.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards
+Arun
