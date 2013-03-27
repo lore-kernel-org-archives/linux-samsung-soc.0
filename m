@@ -1,93 +1,79 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH v3] of/pci: Provide support for parsing PCI DT ranges
- property
-Date: Wed, 27 Mar 2013 14:04:18 +0100
-Message-ID: <20130327130418.GA10480@avionic-0098.mockup.avionic-design.de>
-References: <20130326162022.GA25625@arm.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: linux-next build failures with ARCH_EXYNOS
+Date: Wed, 27 Mar 2013 14:10:08 +0100
+Message-ID: <1531058.rMXo5ayaeE@amdc1227>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:51184 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750843Ab3C0NEf (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13558 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751972Ab3C0NKT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Mar 2013 09:04:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20130326162022.GA25625@arm.com>
+	Wed, 27 Mar 2013 09:10:19 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MKB008BTLWUB6S0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Mar 2013 22:10:17 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Murray <Andrew.Murray@arm.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, 'Grant Likely' <grant.likely@secretlab.ca>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jingoo Han <jg1.han@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Liviu Dudau <Liviu.Dudau@a>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org
 
+Hi,
 
---Q68bSM7Ycu6FN28Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm experiencing several kernel build failures when building linux-next 
+(next-20130327) for ARCH_EXYNOS.
 
-On Tue, Mar 26, 2013 at 04:20:23PM +0000, Andrew Murray wrote:
-> This patch factors out common implementation patterns to reduce overall k=
-ernel
-> code and provide a means for host bridge drivers to directly obtain struct
-> resources from the DT's ranges property without relying on architecture s=
-pecific
-> DT handling. This will make it easier to write archiecture independent ho=
-st bridge
-> drivers and mitigate against further duplication of DT parsing code.
->=20
-> This patch can be used in the following way:
->=20
-> 	struct of_pci_range_parser parser;
-> 	struct of_pci_range range;
->=20
-> 	if (of_pci_range_parser(&parser, np))
-> 		; //no ranges property
->=20
-> 	for_each_of_pci_range(&parser, &range) {
->=20
-> 		/*
-> 			directly access properties of the address range, e.g.:
-> 			range.pci_space, range.pci_addr, range.cpu_addr,
-> 			range.size, range.flags
->=20
-> 			alternatively obtain a struct resource, e.g.:
-> 			struct resource res;
-> 			of_pci_range_to_resource(&range, np, &res);
-> 		*/
-> 	}
->=20
-> Additionally the implementation takes care of adjacent ranges and merges =
-them
-> into a single range (as was the case with powerpc and microblaze).
->=20
-> The modifications to microblaze, mips and powerpc have not been tested.
->=20
-> Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
-> Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Using unmodified exynos_defconfig:
 
-Tested-by: Thierry Reding <thierry.reding@avionic-design.de>
+  CC      drivers/clocksource/exynos_mct.o
+drivers/clocksource/exynos_mct.c:557:1: warning: comparison of distinct 
+pointer types lacks a cast
+drivers/clocksource/exynos_mct.c:558:1: error: expected ',' or ';' before 
+'static'
+make[2]: *** [drivers/clocksource/exynos_mct.o] Error 1
+make[1]: *** [drivers/clocksource] Error 2
+make: *** [drivers] Error 2
 
---Q68bSM7Ycu6FN28Q
-Content-Type: application/pgp-signature
+Mentioned lines are introduced by commit 9fbf0c85a1 .
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+In addition, after enabling CONFIG_ARM_EXYNOS_CPUFREQ I'm getting following 
+compilation errors:
 
-iQIcBAEBAgAGBQJRUu5SAAoJEN0jrNd/PrOhIg8QAK7GeB7tx8qPNJKxD4qKD6mi
-mBWePcVpcS0nG4OZkVH7p4/8n09krshGJW8lUg4YG8BjGipZcrYdOiExSY0ZpW7m
-sd5Zs+P6OKtVVkjn0nRdfwctXmwSl70N4ofo/MzIcI6mXyDsQCSgOoiieE2wm9zd
-aCiU7gHm3NP9vZBY5Z2aKLFsgeEiA3GASSWGw4MWU16t+zWCTbp0Kv1X1quVCE8r
-0Fqp5tIVX7Xx/1S+DAjyntlPs0EMFPCuBlNTB5U0dRUabxT8RORcRDWEQ+3FKpcM
-mZY7u6jkqZQxP8WnYjC8Upb8OefMK7RUXIOukvsmRVZECoUbcWBpbaAElbZk3qNw
-ytJiR9bBhQBS/z+txUq2ZG1lpe9IYPERruCoUAx3nJlJ8KxUGQUf6z/zei/qwp8a
-7fuUVVi8FuMT29P5dYn40DV4fgytI/x5dATR85g/xO5KkFvAL7CbPJEvekGmMKVU
-tNeOEpmw6K249XUCSLthGvh7Imh6hIBK9IEROnBUnKtgApCKVPtpVLrq1aTliVZc
-D9euw7Wknl+9Yl8ionY5+fE6nzrYIjcGbn+CYNIyz9gSURh+Evxs05tXLmSOACss
-4W32IIqrvZ2YwhiMNumCdLh+ovhzeW5hvdbIZ9lTSDQ3VypXIu76OE5Xcq2Q9mdD
-mfhblBZA86XCTC4xKbUB
-=FbDu
------END PGP SIGNATURE-----
+  CC      drivers/cpufreq/exynos5250-cpufreq.o
+drivers/cpufreq/exynos5250-cpufreq.c: In function 'set_clkdiv':
+drivers/cpufreq/exynos5250-cpufreq.c:91:20: error: 'EXYNOS5_CLKDIV_CPU0' 
+undeclared (first use in this function)
+drivers/cpufreq/exynos5250-cpufreq.c:91:20: note: each undeclared identifier is 
+reported only once for each function it appears in
+drivers/cpufreq/exynos5250-cpufreq.c:93:21: error: 'EXYNOS5_CLKDIV_STATCPU0' 
+undeclared (first use in this function)
+drivers/cpufreq/exynos5250-cpufreq.c:99:20: error: 'EXYNOS5_CLKDIV_CPU1' 
+undeclared (first use in this function)
+drivers/cpufreq/exynos5250-cpufreq.c:101:21: error: 'EXYNOS5_CLKDIV_STATCPU1' 
+undeclared (first use in this function)
+drivers/cpufreq/exynos5250-cpufreq.c: In function 'set_apll':
+drivers/cpufreq/exynos5250-cpufreq.c:115:22: error: 'EXYNOS5_CLKMUX_STATCPU' 
+undeclared (first use in this function)
+drivers/cpufreq/exynos5250-cpufreq.c:122:29: error: 'EXYNOS5_APLL_LOCK' 
+undeclared (first use in this function)
+drivers/cpufreq/exynos5250-cpufreq.c:125:20: error: 'EXYNOS5_APLL_CON0' 
+undeclared (first use in this function)
+drivers/cpufreq/exynos5250-cpufreq.c: In function 'exynos5250_set_frequency':
+drivers/cpufreq/exynos5250-cpufreq.c:165:22: error: 'EXYNOS5_APLL_CON0' 
+undeclared (first use in this function)
+make[2]: *** [drivers/cpufreq/exynos5250-cpufreq.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [drivers/cpufreq] Error 2
+make: *** [drivers] Error 2
 
---Q68bSM7Ycu6FN28Q--
+This seems to be caused by commit 6e6aac7590 removing definitions of mentioned 
+registers from arch/arm/mach-exynos/include/mach/regs-clock.h header.
+
+Best regards,
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Kernel and System Framework
