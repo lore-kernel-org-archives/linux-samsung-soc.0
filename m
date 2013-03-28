@@ -1,68 +1,207 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 00/12] ARM: samsung-time: Prepare for multiplatform
- support
-Date: Thu, 28 Mar 2013 13:02:42 +0000
-Message-ID: <20130328130242.GZ18316@opensource.wolfsonmicro.com>
-References: <1362860601-18464-1-git-send-email-tomasz.figa@gmail.com>
+From: Prasanna Kumar <prasannapadubidri@gmail.com>
+Subject: Re: [PATCH] clk: exynos5250: Added MUX, DIV and GATE clocks for
+ Gscaler and MFC
+Date: Thu, 28 Mar 2013 19:53:27 +0530
+Message-ID: <CAPmaG0t1180AHij9WoFDPATUnCy=jYu_POc-=j5suM08wOsReQ@mail.gmail.com>
+References: <1364271986-30491-1-git-send-email-prasanna.ps@samsung.com>
+	<20130327020439.4014.58491@quantum>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="b93tKFax9ARJHhqA"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54265 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754669Ab3C1NCp (ORCPT
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:43258 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756223Ab3C1OX2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Mar 2013 09:02:45 -0400
-Content-Disposition: inline
-In-Reply-To: <1362860601-18464-1-git-send-email-tomasz.figa@gmail.com>
+	Thu, 28 Mar 2013 10:23:28 -0400
+Received: by mail-vc0-f169.google.com with SMTP id kw10so7799460vcb.28
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2013 07:23:27 -0700 (PDT)
+In-Reply-To: <20130327020439.4014.58491@quantum>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, kyungmin.park@samsung.com, linux@simtec.co.uk, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, Mark Rutland <mark.rutland@arm.com>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Rob Herring <robherring2@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Prasanna Kumar <prasanna.ps@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+
+Hi,
+
+Current clock driver of exynos5250 does not contain sub mux clock
+definition for aclk_266  and aclk_333. These sub mux clocks are driven by
+output of divider clocks. These sub mux clocks drive the gate clocks
+of Gscaler and MFC. Currently Gscaler and MFC gate clocks are
+referring to divider
+clocks instead of sub mux clocks. Hence these  clocks are added.
+
+In addition, gscaler block is also driven aclk_300. The entire clock
+tree is added
+for this.
+
+I will add above information in Changelog and resend the patch
 
 
---b93tKFax9ARJHhqA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 27, 2013 at 7:34 AM, Mike Turquette <mturquette@linaro.org> wrote:
+> Quoting Prasanna Kumar (2013-03-25 21:26:26)
+>> From: Prasanna Kumar <prasanna.ps@samsung.com>
+>
+> No need for the above line.
+>
+>>
+>> Gscaler :
+>>
+>>   1. For "aclk_300_gscl",following clocks are added
+>>           Mux clocks
+>>                 mout_aclk_300_gscl_mid,
+>>                 mout_aclk_300_gscl_mid1,
+>>                 mout_aclk_300_gscl
+>>           Divider clock
+>>                 div_aclk300_gscl
+>>           Sub-Mux clock ( driven from output of divider clock)
+>>                 mout_sub_aclk300
+>>   2. For "aclk_266_gscl",
+>>            Sub-Mux clock "mout_sub_aclk266" added
+>>            Divider clock has been modified to refer Sub-Mux clock
+>>
+>> MFC :
+>>    For "aclk_333"
+>>         Sub-Mux clock "mout_sub_aclk333" added
+>>            Divider clock has been modified to refer Sub-Mux clock
+>> Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+>
+> The changelog above is not very human-readable.  Can you include some
+> explanation of why you are making this change (e.g. enables some
+> device)?
+>
+> Thanks,
+> Mike
+>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5250.c |   57 +++++++++++++++++++++++++--------
+>>  1 files changed, 43 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+>> index e40d6af..40dff9d 100644
+>> --- a/drivers/clk/samsung/clk-exynos5250.c
+>> +++ b/drivers/clk/samsung/clk-exynos5250.c
+>> @@ -24,7 +24,9 @@
+>>  #define DIV_CPU0               0x500
+>>  #define SRC_CORE1              0x4204
+>>  #define SRC_TOP0               0x10210
+>> +#define SRC_TOP1               0x10214
+>>  #define SRC_TOP2               0x10218
+>> +#define SRC_TOP3               0x1021C
+>>  #define SRC_GSCL               0x10220
+>>  #define SRC_DISP1_0            0x1022c
+>>  #define SRC_MAU                        0x10240
+>> @@ -112,7 +114,9 @@ static __initdata unsigned long exynos5250_clk_regs[] = {
+>>         DIV_CPU0,
+>>         SRC_CORE1,
+>>         SRC_TOP0,
+>> +       SRC_TOP1,
+>>         SRC_TOP2,
+>> +       SRC_TOP3,
+>>         SRC_GSCL,
+>>         SRC_DISP1_0,
+>>         SRC_MAU,
+>> @@ -167,6 +171,13 @@ PNAME(mout_mpll_user_p)    = { "fin_pll", "sclk_mpll" };
+>>  PNAME(mout_bpll_user_p)        = { "fin_pll", "sclk_bpll" };
+>>  PNAME(mout_aclk166_p)  = { "sclk_cpll", "sclk_mpll_user" };
+>>  PNAME(mout_aclk200_p)  = { "sclk_mpll_user", "sclk_bpll_user" };
+>> +PNAME(mout_sub_aclk266_p) = { "fin_pll", "div_aclk266" };
+>> +PNAME(mout_aclk_300_gscl_mid_p) = { "sclk_mpll_user", "sclk_bpll_user"};
+>> +PNAME(mout_aclk_300_gscl_mid1_p) = { "sclk_vpll", "sclk_cpll"};
+>> +PNAME(mout_aclk_300_gscl_p) = { "mout_aclk_300_gscl_mid",
+>> +                                       "mout_aclk_300_gscl_mid1" };
+>> +PNAME(mout_sub_aclk300_p) = { "fin_pll", "div_aclk300_gscl" };
+>> +PNAME(mout_sub_aclk333_p) = { "fin_pll", "div_aclk333" };
+>>  PNAME(mout_hdmi_p)     = { "div_hdmi_pixel", "sclk_hdmiphy" };
+>>  PNAME(mout_usb3_p)     = { "sclk_mpll_user", "sclk_cpll" };
+>>  PNAME(mout_group1_p)   = { "fin_pll", "fin_pll", "sclk_hdmi27m",
+>> @@ -220,8 +231,20 @@ struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+>>         MUX(none, "sclk_mpll_user", mout_mpll_user_p, SRC_TOP2, 20, 1),
+>>         MUX(none, "sclk_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
+>>         MUX(none, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+>> -       MUX(none, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
+>>         MUX(none, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
+>> +       MUX_A(none, "mout_sub_aclk266", mout_sub_aclk266_p,
+>> +                                       SRC_TOP3, 8, 1, "m_sub_aclk266"),
+>> +       MUX(none, "mout_aclk_300_gscl", mout_aclk_300_gscl_p,
+>> +                                               SRC_TOP0, 25, 1),
+>> +       MUX(none, "mout_aclk_300_gscl_mid", mout_aclk_300_gscl_mid_p,
+>> +                                               SRC_TOP0, 24, 1),
+>> +       MUX(none, "mout_aclk_300_gscl_mid1", mout_aclk_300_gscl_mid1_p,
+>> +                                               SRC_TOP1, 12, 1),
+>> +       MUX_A(none, "mout_sub_aclk300", mout_sub_aclk300_p,
+>> +                                       SRC_TOP3, 10, 1, "m_sub_aclk300"),
+>> +       MUX(none, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
+>> +       MUX_A(none, "mout_sub_aclk333", mout_sub_aclk333_p,
+>> +                                       SRC_TOP3, 24, 1, "m_sub_aclk333"),
+>>         MUX(none, "mout_cam_bayer", mout_group1_p, SRC_GSCL, 12, 4),
+>>         MUX(none, "mout_cam0", mout_group1_p, SRC_GSCL, 16, 4),
+>>         MUX(none, "mout_cam1", mout_group1_p, SRC_GSCL, 20, 4),
+>> @@ -257,10 +280,12 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+>>         DIV(none, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
+>>         DIV(none, "aclk66_pre", "sclk_mpll_user", DIV_TOP1, 24, 3),
+>>         DIV(none, "aclk66", "aclk66_pre", DIV_TOP0, 0, 3),
+>> -       DIV(none, "aclk266", "sclk_mpll_user", DIV_TOP0, 16, 3),
+>>         DIV(none, "aclk166", "mout_aclk166", DIV_TOP0, 8, 3),
+>> -       DIV(none, "aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+>>         DIV(none, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+>> +       DIV(none, "div_aclk266", "sclk_mpll_user", DIV_TOP0, 16, 3),
+>> +       DIV(none, "div_aclk300_gscl", "mout_aclk_300_gscl",
+>> +                                               DIV_TOP1, 14, 3),
+>> +       DIV(none, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+>>         DIV(none, "div_cam_bayer", "mout_cam_bayer", DIV_GSCL, 12, 4),
+>>         DIV(none, "div_cam0", "mout_cam0", DIV_GSCL, 16, 4),
+>>         DIV(none, "div_cam1", "mout_cam1", DIV_GSCL, 20, 4),
+>> @@ -313,19 +338,23 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+>>  };
+>>
+>>  struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+>> -       GATE(gscl0, "gscl0", "none", GATE_IP_GSCL, 0, 0, 0),
+>> -       GATE(gscl1, "gscl1", "none", GATE_IP_GSCL, 1, 0, 0),
+>> -       GATE(gscl2, "gscl2", "aclk266", GATE_IP_GSCL, 2, 0, 0),
+>> -       GATE(gscl3, "gscl3", "aclk266", GATE_IP_GSCL, 3, 0, 0),
+>> +       GATE(gscl0, "gscl0", "mout_sub_aclk266", GATE_IP_GSCL, 0, 0, 0),
+>> +       GATE(gscl1, "gscl1", "mout_sub_aclk266", GATE_IP_GSCL, 1, 0, 0),
+>> +       GATE(gscl2, "gscl2", "mout_sub_aclk266", GATE_IP_GSCL, 2, 0, 0),
+>> +       GATE(gscl3, "gscl3", "mout_sub_aclk266", GATE_IP_GSCL, 3, 0, 0),
+>>         GATE(gscl_wa, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
+>>         GATE(gscl_wb, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
+>> -       GATE(smmu_gscl0, "smmu_gscl0", "aclk266", GATE_IP_GSCL, 7, 0, 0),
+>> -       GATE(smmu_gscl1, "smmu_gscl1", "aclk266", GATE_IP_GSCL, 8, 0, 0),
+>> -       GATE(smmu_gscl2, "smmu_gscl2", "aclk266", GATE_IP_GSCL, 9, 0, 0),
+>> -       GATE(smmu_gscl3, "smmu_gscl3", "aclk266", GATE_IP_GSCL, 10, 0, 0),
+>> -       GATE(mfc, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
+>> -       GATE(smmu_mfcl, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
+>> -       GATE(smmu_mfcr, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
+>> +       GATE(smmu_gscl0, "smmu_gscl0", "mout_sub_aclk266",
+>> +                                               GATE_IP_GSCL, 7, 0, 0),
+>> +       GATE(smmu_gscl1, "smmu_gscl1", "mout_sub_aclk266",
+>> +                                               GATE_IP_GSCL, 8, 0, 0),
+>> +       GATE(smmu_gscl2, "smmu_gscl2", "mout_sub_aclk266",
+>> +                                               GATE_IP_GSCL, 9, 0, 0),
+>> +       GATE(smmu_gscl3, "smmu_gscl3", "mout_sub_aclk266",
+>> +                                               GATE_IP_GSCL, 10, 0, 0),
+>> +       GATE(mfc, "mfc", "mout_sub_aclk333", GATE_IP_MFC, 0, 0, 0),
+>> +       GATE(smmu_mfcl, "smmu_mfcl", "mout_sub_aclk333", GATE_IP_MFC, 1, 0, 0),
+>> +       GATE(smmu_mfcr, "smmu_mfcr", "mout_sub_aclk333", GATE_IP_MFC, 2, 0, 0),
+>>         GATE(rotator, "rotator", "aclk266", GATE_IP_GEN, 1, 0, 0),
+>>         GATE(jpeg, "jpeg", "aclk166", GATE_IP_GEN, 2, 0, 0),
+>>         GATE(mdma1, "mdma1", "aclk266", GATE_IP_GEN, 4, 0, 0),
+>> --
+>> 1.7.5.4
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-On Sat, Mar 09, 2013 at 09:23:09PM +0100, Tomasz Figa wrote:
-> This series is an attempt to make the samsung-time clocksource driver rea=
-dy
-> for multiplatform kernels. It moves the driver to drivers/clocksource, cl=
-eans
-> it up from uses of static platform-specific definitions, simplifies timer
-> interrupt handling and adds Device Tree support.
->=20
-> Tested on a Tiny6410 board (Mini6410-compatible) both with and without De=
-vicee
-> Tree (with my DT patches for S3C64xx). Compile tested for other related S=
-oCs.
 
-With current -next this seems to break my s3c64xx based system in a
-non-DT configuration - this may be due to other work on the clocksources
-in -next, I've not really made much effort to investigate.
 
---b93tKFax9ARJHhqA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRVD9PAAoJELSic+t+oim94TIP/ib5Klqg8Raub+QgysMOoxjk
-4ZE3Rl9EJTkl1S6bEVlB0FplQzYA7HGZE0XXa6zk8PNGkGokTQFEJ5/gg8hqNgsA
-gbJDuG1IIygmJNOLnDdXV+R3zAR0lW8lA924bEP/DNG3hjevm4IRn70iNNAIR+s9
-jcIquMROqpbvKAvDibpCk4TONHXGgnTVO+2uhCjgSdrZWiAZrJRWXB7eAhzDr89H
-IV9zwZzfPIPawMmeb6SKQjM7bOR/Gzxpi1BmFKnCtp8QLo4W+rzHliC97bAorkLV
-en7Qv9x95mm/agIA5ms1wMECc1IRRVnMrQIoDuoTMUjG3oodFsm8dAqgsWE3gWPW
-wQN/c/h3CfANT+cZ8yA9RO6HB3tznJ5LF2bGd42hnLb2mto/gYvPv6y4owQGZjVV
-CbMTvdnZqKD2iayiisFhjd/N01ZqxgYjqZ1+kAzLfw2mU4nwCtdQb7z8HT+nIrZd
-F4xTgeUT2cY6tD9PdyibvkeRqtrwrtVfbRugQOAKXUvqrdtbVOSvXlie2ryVttrM
-FVy/Td6/3DI2tUOSGlT8QhyKfYwe7RUFm9dBjh75+OjoWUsmDR9NMM9gTbRrfrva
-bS7T07LSz0nTZclVKQgf4qhS+wzZZmN8dOU7CVavSDV/mIXZc0r9c0FL/LVSwdRG
-wSKvvDUbIEB7oM5pCWl5
-=P+7y
------END PGP SIGNATURE-----
-
---b93tKFax9ARJHhqA--
+-- 
+Thanks
+Prasanna Kumar
