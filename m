@@ -1,74 +1,41 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH V5 1/4] cpufreq: exynos: Add cpufreq driver for exynos5440
-Date: Thu, 28 Mar 2013 14:23:53 +0530
-Message-ID: <CAKohpo=uZxCv6wFJFQx_zrPKujukW9d6_2GihwPpN6BkBAFNwA@mail.gmail.com>
-References: <1364457923-8499-1-git-send-email-amit.daniel@samsung.com>
-	<1364457923-8499-2-git-send-email-amit.daniel@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1364457923-8499-2-git-send-email-amit.daniel@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, Inderpal Singh <inderpal.singh@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH 1/2] ARM: S3C64XX: Clear DMA flags on channel request
+Date: Thu, 28 Mar 2013 11:22:25 +0000
+Message-ID: <1364469746-5026-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50316 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752588Ab3C1LWc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 Mar 2013 07:22:32 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On 28 March 2013 13:35, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
-> This patch adds dvfs support for exynos5440 SOC. This soc has 4 cores and
-> they scale at same frequency. The nature of exynos5440 clock controller is
-> different from previous exynos controllers so not using the common exynos
-> cpufreq framework. The major difference being interrupt notification for
-> frequency change. Also, OPP library is used for device tree parsing to get
-> different parameters like frequency, voltage etc. Since the opp library sorts
-> the frequency table in ascending order so they are again re-arranged in
-> descending order. This will have one-to-one mapping with the clock controller
-> state management logic.
->
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-Mostly okay now, just minor comments:
+This patch clears the DMA flags when a DMA channel is requested. This is
+necessary because otherwise the channel may inherit incompatible
+settings from its last usage.
 
-> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
-> +static void exynos_cpufreq_work(struct work_struct *work)
-> +{
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ arch/arm/mach-s3c64xx/dma.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-> +       if (likely(index < dvfs_info->freq_count)) {
-> +               freqs.new = freq_table[index].frequency;
-> +               for_each_cpu(freqs.cpu, policy->cpus)
-> +                       cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-> +               dvfs_info->cur_frequency = freqs.new;
-> +       } else {
-> +               dev_crit(dvfs_info->dev, "New frequency out of range\n");
-> +       }
-
-I believe there is something wrong here. For failure cases too
-we need to issue cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-with the old frequency.
-
-> +static int exynos_cpufreq_probe(struct platform_device *pdev)
-> +{
-
-> +       ret = cpufreq_register_driver(&exynos_driver);
-> +       if (ret) {
-> +               dev_err(dvfs_info->dev,
-> +                       "%s: failed to register cpufreq driver\n", __func__);
-> +               goto err_free_table;
-> +       }
-> +
-> +       of_node_put(np);
-
-Don't we need to put node everytime?
-
-> +       dvfs_info->dvfs_enabled = true;
-> +       return 0;
-> +
-> +err_free_table:
-> +       opp_free_cpufreq_table(dvfs_info->dev, &dvfs_info->freq_table);
-> +err_put_node:
-> +       of_node_put(np);
-> +       dev_err(dvfs_info->dev, "%s: failed initialization\n", __func__);
-> +       return ret;
-> +}
-
---
-viresh
+diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+index 6af1aa1..759846c 100644
+--- a/arch/arm/mach-s3c64xx/dma.c
++++ b/arch/arm/mach-s3c64xx/dma.c
+@@ -509,6 +509,7 @@ int s3c2410_dma_request(enum dma_ch channel,
+ 	chan->client = client;
+ 	chan->in_use = 1;
+ 	chan->peripheral = channel;
++	chan->flags = 0;
+ 
+ 	local_irq_restore(flags);
+ 
+-- 
+1.7.10.4
