@@ -1,106 +1,45 @@
-From: <ning.n.jiang@gmail.com>
-Subject: [PATCH] ARM: timer: Shutdown clock event device when stopping local timer
-Date: Fri, 29 Mar 2013 17:24:09 +0800
-Message-ID: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] ARM: Fix typo "CONFIG_SAMSUNG_DEV_RTC"
+Date: Fri, 29 Mar 2013 16:20:35 +0100
+Message-ID: <1364570435.1345.82.camel@x61.thuisdomein>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: linux@arm.linux.org.uk, kgene.kim@samsung.com, davidb@codeaurora.org, dwalker@fifo99.com, bryanh@codeaurora.org, john.stultz@linaro.org, tglx@linutronix.de, linus.walleij@linaro.org, shawn.guo@linaro.org, rob.herring@calxeda.com, arnd@arndb.de
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Ning Jiang <ning.n.jiang@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Ning Jiang <ning.n.jiang@gmail.com>
+s3c_rtc_setname() tests for CONFIG_SAMSUNG_DEV_RTC or
+CONFIG_PLAT_S3C24XX. But of these two macros only CONFIG_PLAT_S3C24XX
+actually exists. Now we can see that s3c_device_rtc is only defined if
+either CONFIG_PLAT_S3C24XX or CONFIG_S3C_DEV_RTC are defined. So,
+apparently, it was intended to use CONFIG_S3C_DEV_RTC here.
 
-Currently there are two problems when we try to stop local timer.
-First, it calls set_mode function directly so mode state is not
-updated for the clock event device. Second, it makes the device
-unused instead of shutdown.
-
-A subtle error will happen because of it. When a cpu is plugged out
-it will stop the local timer. It will call tick_nohz_idle_enter()
-in idle thread afterwards. It will cancel the sched timer and try
-to reprogram the next event. This is wrong since the local timer
-is supposed to be stopped.
-
-The right way to stop the local timer is to shutdown it by calling
-clockevents_set_mode(). Thus when we try to reprogram the clock
-event device, it will return directly without doing anything since
-the clock mode is CLOCK_EVT_MODE_SHUTDOWN.
-
-Signed-off-by: Ning Jiang <ning.n.jiang@gmail.com>
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 ---
- arch/arm/kernel/smp_twd.c                |    2 +-
- arch/arm/mach-exynos/mct.c               |    2 +-
- arch/arm/mach-msm/timer.c                |    2 +-
- drivers/clocksource/arm_arch_timer.c     |    2 +-
- drivers/clocksource/time-armada-370-xp.c |    2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+0) Untested.
 
-diff --git a/arch/arm/kernel/smp_twd.c b/arch/arm/kernel/smp_twd.c
-index 3f25650..c1d4ab4 100644
---- a/arch/arm/kernel/smp_twd.c
-+++ b/arch/arm/kernel/smp_twd.c
-@@ -92,7 +92,7 @@ static int twd_timer_ack(void)
- 
- static void twd_timer_stop(struct clock_event_device *clk)
+1) Introduced in commit commit b2994d318dc78c9a4a43605629f00217335ada28
+("ARM: S3C2443/S3C2416: add s3c_rtc_setname and rename rtc devices"),
+which shipped in v3.4. Should this go to stable too (after testing)?
+
+ arch/arm/plat-samsung/include/plat/rtc-core.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/plat-samsung/include/plat/rtc-core.h b/arch/arm/plat-samsung/include/plat/rtc-core.h
+index 21d8594..7b542f7 100644
+--- a/arch/arm/plat-samsung/include/plat/rtc-core.h
++++ b/arch/arm/plat-samsung/include/plat/rtc-core.h
+@@ -19,7 +19,7 @@
+ /* re-define device name depending on support. */
+ static inline void s3c_rtc_setname(char *name)
  {
--	twd_set_mode(CLOCK_EVT_MODE_UNUSED, clk);
-+	clockevents_set_mode(clk, CLOCK_EVT_MODE_SHUTDOWN);
- 	disable_percpu_irq(clk->irq);
+-#if defined(CONFIG_SAMSUNG_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
++#if defined(CONFIG_S3C_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
+ 	s3c_device_rtc.name = name;
+ #endif
  }
- 
-diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-index c9d6650..b2d0d46 100644
---- a/arch/arm/mach-exynos/mct.c
-+++ b/arch/arm/mach-exynos/mct.c
-@@ -429,7 +429,7 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
- static void exynos4_local_timer_stop(struct clock_event_device *evt)
- {
- 	unsigned int cpu = smp_processor_id();
--	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-+	clockevents_set_mode(evt, CLOCK_EVT_MODE_SHUTDOWN);
- 	if (mct_int_type == MCT_INT_SPI)
- 		if (cpu == 0)
- 			remove_irq(evt->irq, &mct_tick0_event_irq);
-diff --git a/arch/arm/mach-msm/timer.c b/arch/arm/mach-msm/timer.c
-index 2969027..9b0cc66 100644
---- a/arch/arm/mach-msm/timer.c
-+++ b/arch/arm/mach-msm/timer.c
-@@ -152,7 +152,7 @@ static int __cpuinit msm_local_timer_setup(struct clock_event_device *evt)
- 
- static void msm_local_timer_stop(struct clock_event_device *evt)
- {
--	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-+	clockevents_set_mode(evt, CLOCK_EVT_MODE_SHUTDOWN);
- 	disable_percpu_irq(evt->irq);
- }
- 
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index d7ad425..beecb26 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -242,7 +242,7 @@ static void __cpuinit arch_timer_stop(struct clock_event_device *clk)
- 			disable_percpu_irq(arch_timer_ppi[PHYS_NONSECURE_PPI]);
- 	}
- 
--	clk->set_mode(CLOCK_EVT_MODE_UNUSED, clk);
-+	clockevents_set_mode(clk, CLOCK_EVT_MODE_SHUTDOWN);
- }
- 
- static int __cpuinit arch_timer_cpu_notify(struct notifier_block *self,
-diff --git a/drivers/clocksource/time-armada-370-xp.c b/drivers/clocksource/time-armada-370-xp.c
-index 47a6730..bfb2971 100644
---- a/drivers/clocksource/time-armada-370-xp.c
-+++ b/drivers/clocksource/time-armada-370-xp.c
-@@ -201,7 +201,7 @@ static int __cpuinit armada_370_xp_timer_setup(struct clock_event_device *evt)
- 
- static void  armada_370_xp_timer_stop(struct clock_event_device *evt)
- {
--	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-+	clockevents_set_mode(evt, CLOCK_EVT_MODE_SHUTDOWN);
- 	disable_percpu_irq(evt->irq);
- }
- 
 -- 
-1.7.1
+1.7.11.7
