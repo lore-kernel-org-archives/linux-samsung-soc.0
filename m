@@ -1,45 +1,63 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] ARM: Fix typo "CONFIG_SAMSUNG_DEV_RTC"
-Date: Fri, 29 Mar 2013 16:20:35 +0100
-Message-ID: <1364570435.1345.82.camel@x61.thuisdomein>
+From: Phillip Williams <p.williams@americanmediadistributioninc.com>
+Subject: Offer to Attend Events for AMD
+Date: Fri, 29 Mar 2013 11:28:34 -0400
+Message-ID: <e5262ad0e025411cbc1139c1a9b2a19d@www.americanmediadistributioninc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from [204.12.61.126] ([204.12.61.126]:45331 "EHLO
+	s1051440.instanturl.net" rhost-flags-FAIL-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1755953Ab3C2PgH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 29 Mar 2013 11:36:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-s3c_rtc_setname() tests for CONFIG_SAMSUNG_DEV_RTC or
-CONFIG_PLAT_S3C24XX. But of these two macros only CONFIG_PLAT_S3C24XX
-actually exists. Now we can see that s3c_device_rtc is only defined if
-either CONFIG_PLAT_S3C24XX or CONFIG_S3C_DEV_RTC are defined. So,
-apparently, it was intended to use CONFIG_S3C_DEV_RTC here.
+I would like to know if you would have any interest in covering some
+events for us in your area?
 
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
----
-0) Untested.
+There would be NO COST at all for admission, and it would not be
+necessary for you to be an experienced reporter.
 
-1) Introduced in commit commit b2994d318dc78c9a4a43605629f00217335ada28
-("ARM: S3C2443/S3C2416: add s3c_rtc_setname and rename rtc devices"),
-which shipped in v3.4. Should this go to stable too (after testing)?
+We are looking for members of the public to cover events such as Music
+Concerts, Sporting Events, Restaurant Openings, Movies, Gallery
+Openings, Shows, and others.
 
- arch/arm/plat-samsung/include/plat/rtc-core.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since AMD has different pools relevant to experience (beginners up to
+experienced working reporters) should you not be familiar with our
+company, please take a moment to look into American Media Distribution
+with any source you deem trusted.
 
-diff --git a/arch/arm/plat-samsung/include/plat/rtc-core.h b/arch/arm/plat-samsung/include/plat/rtc-core.h
-index 21d8594..7b542f7 100644
---- a/arch/arm/plat-samsung/include/plat/rtc-core.h
-+++ b/arch/arm/plat-samsung/include/plat/rtc-core.h
-@@ -19,7 +19,7 @@
- /* re-define device name depending on support. */
- static inline void s3c_rtc_setname(char *name)
- {
--#if defined(CONFIG_SAMSUNG_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
-+#if defined(CONFIG_S3C_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
- 	s3c_device_rtc.name = name;
- #endif
- }
--- 
-1.7.11.7
+Here is a link to the AMD BBB page for your convenience.
+
+http://www.bbb.org/new-jersey/business-reviews/news-service/american-media-distribution-in-howell-nj-90096055
+
+There is compensation for the events you would attend and again, there
+is no cost for admission to any of the events, and no obligation is
+required. 
+
+We will be accepting only a few people from your area so let us know
+if you are interested in obtaining any further information. 
+
+Phil Williams
+AMD Event Coverage Coordinator
+American Media Distribution(.com) or americanmediadist.com
+4057 US Hwy 9 North Howell NJ 07731
+888.319.6336 x714(by appointment only please)
+
+-This e-mail and any accompanying attachments are confidential. This
+information is intended solely for the use of the individual to whom
+it is addressed. Any review, disclosure, copying, distribution, or use
+of this e-mail communication by others is strictly prohibited. THERE
+WILL BE NO FOLLOWING EMAILS SENT - If you are not the intended
+recipient, please notify us immediately by returning this message to
+the sender and delete all copies. Thank you for your cooperation.
+-MacAfee Virus Checked - Virus Free-
+
+-- no more reporter/event updates reply w NO MORE in subject
+
+
+
+--
