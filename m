@@ -1,63 +1,132 @@
-From: Phillip Williams <p.williams@americanmediadistributioninc.com>
-Subject: Offer to Attend Events for AMD
-Date: Fri, 29 Mar 2013 11:28:34 -0400
-Message-ID: <e5262ad0e025411cbc1139c1a9b2a19d@www.americanmediadistributioninc.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 0/7] V4L2 driver for Exynos4x12 Imaging Subsystem
+Date: Fri, 29 Mar 2013 17:18:03 +0100
+Message-ID: <1364573890-31536-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from [204.12.61.126] ([204.12.61.126]:45331 "EHLO
-	s1051440.instanturl.net" rhost-flags-FAIL-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1755953Ab3C2PgH (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:20565 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755129Ab3C2QS1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Mar 2013 11:36:07 -0400
+	Fri, 29 Mar 2013 12:18:27 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, t.figa@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-I would like to know if you would have any interest in covering some
-events for us in your area?
+This patch series includes mostly changes in the clocks handling, fix of
+coding style issues found with checkpatch.pl and an improvement of the
+DT binding documentation.
 
-There would be NO COST at all for admission, and it would not be
-necessary for you to be an experienced reporter.
+There is an issue that the ISP clocks (MCU_ISP block clocks) are in the
+ISP power domain and the clock registers should not be touched when this
+power domain is inactive. At least this applies to part of the CMU_ISP
+clocks, as our investigation shows. That is mainly the reason why all ISP
+clocks have CLK_IGNORE_UNUSED flag set in patch [1]. That's most likely
+not the right solution to this problem. But I'm not sure what could be
+other options, probably it would help to make the CMU_ISP clocks provider
+aware of the ISP domain. But I can't tell state of which clock registers
+is persistent over the ISP power domain on/off cycles.
+Without the CLK_IGNORE_UNUSED flags set the system hangs when the clock
+core disables unused clocks.
 
-We are looking for members of the public to cover events such as Music
-Concerts, Sporting Events, Restaurant Openings, Movies, Gallery
-Openings, Shows, and others.
+Changes since v2:
+ - Improved clocks handling, all required clocks should now be explicitly
+   enabled/disabled by the driver as needed. In addition a frequency of
+   selected clocks is now being set to ensure the FIMC-IS ISP chain an
+   the MCU core clocks frequency is valid, before starting the ISP
+   firmware.
+ - Added ISP I2C bus clock handling in the dummy I2C bus controller driver.
+ - Clock properties added at the DT binding description.
 
-Since AMD has different pools relevant to experience (beginners up to
-experienced working reporters) should you not be familiar with our
-company, please take a moment to look into American Media Distribution
-with any source you deem trusted.
+This patch series with all dependencies can be found at:
+git://linuxtv.org/snawrocki/samsung.git exynos4-fimc-is-v3
 
-Here is a link to the AMD BBB page for your convenience.
+[1] http://www.spinics.net/lists/arm-kernel/msg233534.html
 
-http://www.bbb.org/new-jersey/business-reviews/news-service/american-media-distribution-in-howell-nj-90096055
+Below is a cover letter of the initial version of this patch series.
 
-There is compensation for the events you would attend and again, there
-is no cost for admission to any of the events, and no obligation is
-required. 
+                       -------
+This patch series is an initial version of a driver for the camera ISP
+subsystem (FIMC-IS) found in Samsung Exynos4x12 SoCs.
 
-We will be accepting only a few people from your area so let us know
-if you are interested in obtaining any further information. 
+The FIMC-IS subsystem is build around a ARM Cortex-A5 CPU that controls
+its dedicated peripherals, like I2C, SPI, UART, PWM, ADC,...  and the
+ISP chain. There are 3 hardware image processing blocks: ISP, DRC
+(dynamic range compression) and FD (face detection) that are normally
+controlled by the Cortex-A5 firmware.
 
-Phil Williams
-AMD Event Coverage Coordinator
-American Media Distribution(.com) or americanmediadist.com
-4057 US Hwy 9 North Howell NJ 07731
-888.319.6336 x714(by appointment only please)
+The driver currently exposes two additional sub-devices to user space:
+the image sensor and FIMC-IS-ISP sub-device. Another one might be
+added in future for the FD features.
 
--This e-mail and any accompanying attachments are confidential. This
-information is intended solely for the use of the individual to whom
-it is addressed. Any review, disclosure, copying, distribution, or use
-of this e-mail communication by others is strictly prohibited. THERE
-WILL BE NO FOLLOWING EMAILS SENT - If you are not the intended
-recipient, please notify us immediately by returning this message to
-the sender and delete all copies. Thank you for your cooperation.
--MacAfee Virus Checked - Virus Free-
+The FIMC-IS has various data inputs, it can capture data from memory
+or from other SoC IP blocks (FIMC-LITE). It is currently plugged
+between FIMC-LITE and FIMC (post-processor)  IP blocks, so there is
+a processing chain like:
 
--- no more reporter/event updates reply w NO MORE in subject
+sensor -> MIPI-CSIS -> FIMC-LITE -> FIMC-IS-ISP -> FIMC -> memory
 
+A raw Bayer image data can be captured from the ISP block which has
+it's own DMA engines. Support for this is not really included in
+this series, only a video capture node driver stubs are added.
 
+This is a bit complicated code, nevertheless I would really appreciate
+any review comments you might have.
+
+And this is just a basic set of futures this patch series addresses.
+Others include input/output DMA support for the DRC and FD blocks,
+support for more ISP controls, etc.
+
+Full git tree with all dependencies can be found at:
+http://git.linuxtv.org/snawrocki/samsung.git/exynos4-fimc-is-v2
+                      ----------
+
+Sylwester Nawrocki (7):
+  exynos4-is: Add Exynos4x12 FIMC-IS driver
+  exynos4-is: Add FIMC-IS ISP I2C bus driver
+  exynos4-is: Add FIMC-IS parameter region definitions
+  exynos4-is: Add common FIMC-IS image sensor driver
+  exynos4-is: Add Exynos4x12 FIMC-IS device tree binding documentation
+  exynos4-is: Add FIMC-IS subdevs registration
+  exynos4-is: Create media links for the FIMC-IS entities
+
+ .../devicetree/bindings/media/exynos4-fimc-is.txt  |   46 +
+ .../media/platform/exynos4-is/fimc-is-command.h    |  147 +++
+ drivers/media/platform/exynos4-is/fimc-is-errno.c  |  272 ++++++
+ drivers/media/platform/exynos4-is/fimc-is-errno.h  |  248 +++++
+ drivers/media/platform/exynos4-is/fimc-is-i2c.c    |  122 +++
+ drivers/media/platform/exynos4-is/fimc-is-i2c.h    |   15 +
+ drivers/media/platform/exynos4-is/fimc-is-param.c  |  971 +++++++++++++++++++
+ drivers/media/platform/exynos4-is/fimc-is-param.h  | 1022 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/fimc-is-regs.c   |  242 +++++
+ drivers/media/platform/exynos4-is/fimc-is-regs.h   |  164 ++++
+ drivers/media/platform/exynos4-is/fimc-is-sensor.c |  324 +++++++
+ drivers/media/platform/exynos4-is/fimc-is-sensor.h |   83 ++
+ drivers/media/platform/exynos4-is/fimc-is.c        | 1018 +++++++++++++++++++
+ drivers/media/platform/exynos4-is/fimc-is.h        |  366 +++++++
+ drivers/media/platform/exynos4-is/fimc-isp.c       |  708 ++++++++++++++
+ drivers/media/platform/exynos4-is/fimc-isp.h       |  181 ++++
+ drivers/media/platform/s5p-fimc/Kconfig            |   11 +
+ drivers/media/platform/s5p-fimc/Makefile           |    3 +
+ drivers/media/platform/s5p-fimc/fimc-mdevice.c     |  116 ++-
+ drivers/media/platform/s5p-fimc/fimc-mdevice.h     |   13 +
+ 20 files changed, 6050 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-command.h
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-errno.c
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-errno.h
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-i2c.c
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-i2c.h
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-param.c
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-param.h
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-regs.c
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-regs.h
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-sensor.c
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is-sensor.h
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is.c
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-is.h
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-isp.c
+ create mode 100644 drivers/media/platform/exynos4-is/fimc-isp.h
 
 --
+1.7.9.5
