@@ -1,187 +1,87 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 7/7] exynos4-is: Create media links for the FIMC-IS entities
-Date: Fri, 29 Mar 2013 17:18:10 +0100
-Message-ID: <1364573890-31536-8-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 5/7] exynos4-is: Add Exynos4x12 FIMC-IS device tree binding
+ documentation
+Date: Fri, 29 Mar 2013 17:18:08 +0100
+Message-ID: <1364573890-31536-6-git-send-email-s.nawrocki@samsung.com>
 References: <1364573890-31536-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:20590 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755518Ab3C2QTU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 29 Mar 2013 12:19:20 -0400
 In-reply-to: <1364573890-31536-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, t.figa@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Create disabled links from the FIMC-LITE subdevs to the FIMC-IS-ISP
-subdev and from FIMC-IS-ISP to all FIMC subdevs.
+This patch adds DT binding documentaton for the Imaging Subsystem
+(camera ISP) found on Samsung Exynos4x12 SoCs.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
 
 Changes since v2:
- - none.
+ - added missing clocks at the binding documentation;
+ - added clocks/clock-names properties to isp-i2c node.
 ---
- drivers/media/platform/s5p-fimc/fimc-mdevice.c |   79 ++++++++++++++++++------
- 1 file changed, 60 insertions(+), 19 deletions(-)
+ .../devicetree/bindings/media/exynos4-fimc-is.txt  |   46 ++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
 
-diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.c b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-index b00144e..c648f5e 100644
---- a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-+++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-@@ -836,12 +836,19 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- 					    struct v4l2_subdev *sensor,
- 					    int pad, int link_mask)
- {
--	struct fimc_sensor_info *s_info = NULL;
-+	struct fimc_sensor_info *si = NULL;
- 	struct media_entity *sink;
- 	unsigned int flags = 0;
--	int ret, i;
-+	int i, ret = 0;
- 
--	for (i = 0; i < FIMC_MAX_DEVS; i++) {
-+	if (sensor) {
-+		si = v4l2_get_subdev_hostdata(sensor);
-+		/* Skip direct FIMC links in the logical FIMC-IS sensor path */
-+		if (si && si->pdata.fimc_bus_type == FIMC_BUS_TYPE_ISP_WRITEBACK)
-+			ret = 1;
-+	}
+diff --git a/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+new file mode 100644
+index 0000000..2660cd1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+@@ -0,0 +1,46 @@
++Exynos4x12 SoC series Imaging Subsystem (FIMC-IS)
 +
-+	for (i = 0; !ret && i < FIMC_MAX_DEVS; i++) {
- 		if (!fmd->fimc[i])
- 			continue;
- 		/*
-@@ -870,11 +877,11 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- 
- 		if (flags == 0 || sensor == NULL)
- 			continue;
--		s_info = v4l2_get_subdev_hostdata(sensor);
--		if (!WARN_ON(s_info == NULL)) {
++The FIMC-IS is a subsystem for processing image signal from an image sensor.
++The Exynos4x12 SoC series FIMC-IS V1.5 comprises of a dedicated ARM Cortex-A5
++processor, ISP, DRC and FD IP blocks and peripheral devices such as UART, I2C
++and SPI bus controllers, PWM and ADC.
 +
-+		if (!WARN_ON(si == NULL)) {
- 			unsigned long irq_flags;
- 			spin_lock_irqsave(&fmd->slock, irq_flags);
--			s_info->host = fmd->fimc[i];
-+			si->host = fmd->fimc[i];
- 			spin_unlock_irqrestore(&fmd->slock, irq_flags);
- 		}
- 	}
-@@ -883,25 +890,20 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- 		if (!fmd->fimc_lite[i])
- 			continue;
- 
--		if (link_mask & (1 << (i + FIMC_MAX_DEVS)))
--			flags = MEDIA_LNK_FL_ENABLED;
--		else
--			flags = 0;
--
- 		sink = &fmd->fimc_lite[i]->subdev.entity;
- 		ret = media_entity_create_link(source, pad, sink,
--					       FLITE_SD_PAD_SINK, flags);
-+					       FLITE_SD_PAD_SINK, 0);
- 		if (ret)
- 			return ret;
- 
- 		/* Notify FIMC-LITE subdev entity */
- 		ret = media_entity_call(sink, link_setup, &sink->pads[0],
--					&source->pads[pad], flags);
-+					&source->pads[pad], 0);
- 		if (ret)
- 			break;
- 
--		v4l2_info(&fmd->v4l2_dev, "created link [%s] %c> [%s]\n",
--			  source->name, flags ? '=' : '-', sink->name);
-+		v4l2_info(&fmd->v4l2_dev, "created link [%s] -> [%s]\n",
-+			  source->name, sink->name);
- 	}
- 	return 0;
- }
-@@ -910,21 +912,50 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- static int __fimc_md_create_flite_source_links(struct fimc_md *fmd)
- {
- 	struct media_entity *source, *sink;
--	unsigned int flags = MEDIA_LNK_FL_ENABLED;
- 	int i, ret = 0;
- 
- 	for (i = 0; i < FIMC_LITE_MAX_DEVS; i++) {
- 		struct fimc_lite *fimc = fmd->fimc_lite[i];
++fimc-is node
++------------
 +
- 		if (fimc == NULL)
- 			continue;
++Required properties:
++- compatible	: should be "samsung,exynos4212-fimc-is" for Exynos4212 and
++		  Exynos4412 SoCs;
++- reg		: physical base address and size of the device memory mapped
++		  registers;
++- interrupts	: must contain FIMC-IS interrupts;
++- clocks	: list of clock specifiers, corresponding to entries in
++		  clock-names property;
++- clock-names	: must contain "ppmuispx", "ppmuispx", "lite0", "lite1"
++		  "mpll", "sysreg", "isp", "drc", "fd", "mcuisp", "uart",
++		  "ispdiv0", "ispdiv1", "mcuispdiv0", "mcuispdiv1", "aclk200",
++		  "div_aclk200", "aclk400mcuisp", "div_aclk400mcuisp" entries,
++		  matching entries in the clocks property.
++pmu subnode
++-----------
 +
- 		source = &fimc->subdev.entity;
- 		sink = &fimc->vfd.entity;
- 		/* FIMC-LITE's subdev and video node */
- 		ret = media_entity_create_link(source, FLITE_SD_PAD_SOURCE_DMA,
--					       sink, 0, flags);
-+					       sink, 0, 0);
-+		if (ret)
-+			break;
-+		/* Link from FIMC-LITE to IS-ISP subdev */
-+		sink = &fmd->fimc_is->isp.subdev.entity;
-+		ret = media_entity_create_link(source, FLITE_SD_PAD_SOURCE_ISP,
-+					       sink, 0, 0);
- 		if (ret)
- 			break;
--		/* TODO: create links to other entities */
-+	}
++Required properties:
++ - reg	: must contain PMU physical base address and size of the register set.
 +
-+	return ret;
-+}
++The following are the FIMC-IS peripheral device nodes and can be specified
++either standalone or as the fimc-is node child nodes.
 +
-+/* Create FIMC-IS links */
-+static int __fimc_md_create_fimc_is_links(struct fimc_md *fmd)
-+{
-+	struct media_entity *source, *sink;
-+	int i, ret;
++i2c-isp (ISP I2C bus controller) nodes
++------------------------------------------
 +
-+	source = &fmd->fimc_is->isp.subdev.entity;
++Required properties:
 +
-+	for (i = 0; i < FIMC_MAX_DEVS; i++) {
-+		if (fmd->fimc[i] == NULL)
-+			continue;
++- compatible	: should be "samsung,exynos4212-i2c-isp" for Exynos4212 and
++		  Exynos4412 SoCs;
++- reg		: physical base address and size of the device memory mapped
++		  registers;
++- clocks	: must contain gate clock specifier for this controller;
++- clock-names	: must contain "i2c_isp" entry.
 +
-+		/* Link from IS-ISP subdev to FIMC */
-+		sink = &fmd->fimc[i]->vid_cap.subdev.entity;
-+		ret = media_entity_create_link(source, FIMC_ISP_SD_PAD_SRC_FIFO,
-+					       sink, FIMC_SD_PAD_SINK_FIFO, 0);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return ret;
-@@ -1012,6 +1043,7 @@ static int fimc_md_create_links(struct fimc_md *fmd)
- 	for (i = 0; i < CSIS_MAX_ENTITIES; i++) {
- 		if (fmd->csis[i].sd == NULL)
- 			continue;
-+
- 		source = &fmd->csis[i].sd->entity;
- 		pad = CSIS_PAD_SOURCE;
- 		sensor = csi_sensors[i];
-@@ -1026,15 +1058,24 @@ static int fimc_md_create_links(struct fimc_md *fmd)
- 	for (i = 0; i < FIMC_MAX_DEVS; i++) {
- 		if (!fmd->fimc[i])
- 			continue;
-+
- 		source = &fmd->fimc[i]->vid_cap.subdev.entity;
- 		sink = &fmd->fimc[i]->vid_cap.vfd.entity;
-+
- 		ret = media_entity_create_link(source, FIMC_SD_PAD_SOURCE,
- 					      sink, 0, flags);
- 		if (ret)
- 			break;
- 	}
- 
--	return __fimc_md_create_flite_source_links(fmd);
-+	ret = __fimc_md_create_flite_source_links(fmd);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (fmd->use_isp)
-+		ret = __fimc_md_create_fimc_is_links(fmd);
-+
-+	return ret;
- }
- 
- /*
++For the above nodes it is required to specify a pinctrl state named "default",
++according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
 -- 
 1.7.9.5
