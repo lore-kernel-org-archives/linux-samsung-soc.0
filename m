@@ -1,87 +1,55 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 5/7] exynos4-is: Add Exynos4x12 FIMC-IS device tree binding
- documentation
-Date: Fri, 29 Mar 2013 17:18:08 +0100
-Message-ID: <1364573890-31536-6-git-send-email-s.nawrocki@samsung.com>
-References: <1364573890-31536-1-git-send-email-s.nawrocki@samsung.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] ARM: timer: Shutdown clock event device when stopping
+ local timer
+Date: Fri, 29 Mar 2013 11:32:35 -0700
+Message-ID: <5155DE43.4000601@codeaurora.org>
+References: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20590 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755518Ab3C2QTU (ORCPT
+Received: from wolverine02.qualcomm.com ([199.106.114.251]:52707 "EHLO
+	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754007Ab3C2Scg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Mar 2013 12:19:20 -0400
-In-reply-to: <1364573890-31536-1-git-send-email-s.nawrocki@samsung.com>
+	Fri, 29 Mar 2013 14:32:36 -0400
+In-Reply-To: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, t.figa@samsung.com, myungjoo.ham@samsung.com, dh09.lee@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: ning.n.jiang@gmail.com
+Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, davidb@codeaurora.org, dwalker@fifo99.com, bryanh@codeaurora.org, john.stultz@linaro.org, tglx@linutronix.de, linus.walleij@linaro.org, shawn.guo@linaro.org, rob.herring@calxeda.com, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 
-This patch adds DT binding documentaton for the Imaging Subsystem
-(camera ISP) found on Samsung Exynos4x12 SoCs.
+On 03/29/13 02:24, ning.n.jiang@gmail.com wrote:
+> From: Ning Jiang <ning.n.jiang@gmail.com>
+>
+> Currently there are two problems when we try to stop local timer.
+> First, it calls set_mode function directly so mode state is not
+> updated for the clock event device. Second, it makes the device
+> unused instead of shutdown.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
+What device is this a problem on? I believe this only matters to drivers
+which enable their timer in their set_next_event() callback? But even
+then, does anything actually happen because the interrupt should have
+been disabled in the local timer stop callback.
 
-Changes since v2:
- - added missing clocks at the binding documentation;
- - added clocks/clock-names properties to isp-i2c node.
----
- .../devicetree/bindings/media/exynos4-fimc-is.txt  |   46 ++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
+>
+> A subtle error will happen because of it. When a cpu is plugged out
+> it will stop the local timer. It will call tick_nohz_idle_enter()
+> in idle thread afterwards. It will cancel the sched timer and try
+> to reprogram the next event. This is wrong since the local timer
+> is supposed to be stopped.
+>
+> The right way to stop the local timer is to shutdown it by calling
+> clockevents_set_mode(). Thus when we try to reprogram the clock
+> event device, it will return directly without doing anything since
+> the clock mode is CLOCK_EVT_MODE_SHUTDOWN.
 
-diff --git a/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
-new file mode 100644
-index 0000000..2660cd1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/exynos4-fimc-is.txt
-@@ -0,0 +1,46 @@
-+Exynos4x12 SoC series Imaging Subsystem (FIMC-IS)
-+
-+The FIMC-IS is a subsystem for processing image signal from an image sensor.
-+The Exynos4x12 SoC series FIMC-IS V1.5 comprises of a dedicated ARM Cortex-A5
-+processor, ISP, DRC and FD IP blocks and peripheral devices such as UART, I2C
-+and SPI bus controllers, PWM and ADC.
-+
-+fimc-is node
-+------------
-+
-+Required properties:
-+- compatible	: should be "samsung,exynos4212-fimc-is" for Exynos4212 and
-+		  Exynos4412 SoCs;
-+- reg		: physical base address and size of the device memory mapped
-+		  registers;
-+- interrupts	: must contain FIMC-IS interrupts;
-+- clocks	: list of clock specifiers, corresponding to entries in
-+		  clock-names property;
-+- clock-names	: must contain "ppmuispx", "ppmuispx", "lite0", "lite1"
-+		  "mpll", "sysreg", "isp", "drc", "fd", "mcuisp", "uart",
-+		  "ispdiv0", "ispdiv1", "mcuispdiv0", "mcuispdiv1", "aclk200",
-+		  "div_aclk200", "aclk400mcuisp", "div_aclk400mcuisp" entries,
-+		  matching entries in the clocks property.
-+pmu subnode
-+-----------
-+
-+Required properties:
-+ - reg	: must contain PMU physical base address and size of the register set.
-+
-+The following are the FIMC-IS peripheral device nodes and can be specified
-+either standalone or as the fimc-is node child nodes.
-+
-+i2c-isp (ISP I2C bus controller) nodes
-+------------------------------------------
-+
-+Required properties:
-+
-+- compatible	: should be "samsung,exynos4212-i2c-isp" for Exynos4212 and
-+		  Exynos4412 SoCs;
-+- reg		: physical base address and size of the device memory mapped
-+		  registers;
-+- clocks	: must contain gate clock specifier for this controller;
-+- clock-names	: must contain "i2c_isp" entry.
-+
-+For the above nodes it is required to specify a pinctrl state named "default",
-+according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
+While this prevents the set_next_event() callback from being called on a
+dying CPU, wouldn't it be better to fix this problem in the core code
+once instead of fixing it many times in each local timer driver? It
+doesn't seem to make much sense to program an event on a CPU that is
+about to die, so why do we do that?
+
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
