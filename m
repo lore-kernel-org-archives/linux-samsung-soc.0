@@ -1,55 +1,48 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] ARM: timer: Shutdown clock event device when stopping
- local timer
-Date: Fri, 29 Mar 2013 11:32:35 -0700
-Message-ID: <5155DE43.4000601@codeaurora.org>
-References: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] ARM: S3C64XX: remove obsolete Makefile line
+Date: Fri, 29 Mar 2013 23:51:42 +0100
+Message-ID: <1364597502.1345.103.camel@x61.thuisdomein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wolverine02.qualcomm.com ([199.106.114.251]:52707 "EHLO
-	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754007Ab3C2Scg (ORCPT
+Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:57101 "EHLO
+	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757234Ab3C2Wvp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Mar 2013 14:32:36 -0400
-In-Reply-To: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
+	Fri, 29 Mar 2013 18:51:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ning.n.jiang@gmail.com
-Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, davidb@codeaurora.org, dwalker@fifo99.com, bryanh@codeaurora.org, john.stultz@linaro.org, tglx@linutronix.de, linus.walleij@linaro.org, shawn.guo@linaro.org, rob.herring@calxeda.com, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/29/13 02:24, ning.n.jiang@gmail.com wrote:
-> From: Ning Jiang <ning.n.jiang@gmail.com>
->
-> Currently there are two problems when we try to stop local timer.
-> First, it calls set_mode function directly so mode state is not
-> updated for the clock event device. Second, it makes the device
-> unused instead of shutdown.
+Commit a07613a54d700a974f3a4a657da78ef5d097315d ("Merge branch
+'samsung/dt' into samsung/cleanup") added this line to
+arch/arm/mach-s3c64xx/Makefile:
+    obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
 
-What device is this a problem on? I believe this only matters to drivers
-which enable their timer in their set_next_event() callback? But even
-then, does anything actually happen because the interrupt should have
-been disabled in the local timer stop callback.
+But at that time CONFIG_S3C64XX_DEV_SPI wasn't a valid Kconfig macro
+anymore and arch/arm/mach-s3c64xx/dev-spi.c was already removed. So we
+can remove this line.
 
->
-> A subtle error will happen because of it. When a cpu is plugged out
-> it will stop the local timer. It will call tick_nohz_idle_enter()
-> in idle thread afterwards. It will cancel the sched timer and try
-> to reprogram the next event. This is wrong since the local timer
-> is supposed to be stopped.
->
-> The right way to stop the local timer is to shutdown it by calling
-> clockevents_set_mode(). Thus when we try to reprogram the clock
-> event device, it will return directly without doing anything since
-> the clock mode is CLOCK_EVT_MODE_SHUTDOWN.
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+---
+Untested.
 
-While this prevents the set_next_event() callback from being called on a
-dying CPU, wouldn't it be better to fix this problem in the core code
-once instead of fixing it many times in each local timer driver? It
-doesn't seem to make much sense to program an event on a CPU that is
-about to die, so why do we do that?
+ arch/arm/mach-s3c64xx/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
+index f9ce1dc..31d0c91 100644
+--- a/arch/arm/mach-s3c64xx/Makefile
++++ b/arch/arm/mach-s3c64xx/Makefile
+@@ -32,7 +32,6 @@ obj-$(CONFIG_S3C64XX_DMA)	+= dma.o
+ 
+ obj-y				+= dev-uart.o
+ obj-y				+= dev-audio.o
+-obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+ 
+ # Device setup
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+1.7.11.7
