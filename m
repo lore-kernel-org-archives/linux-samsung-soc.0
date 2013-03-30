@@ -1,48 +1,56 @@
 From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] ARM: S3C64XX: remove obsolete Makefile line
-Date: Fri, 29 Mar 2013 23:51:42 +0100
-Message-ID: <1364597502.1345.103.camel@x61.thuisdomein>
+Subject: [PATCH] ARM: S5P64X0: Fix typo "CONFIG_S5P64X0_SETUP_SDHCI"
+Date: Sat, 30 Mar 2013 10:54:39 +0100
+Message-ID: <1364637279.1345.115.camel@x61.thuisdomein>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:57101 "EHLO
-	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757234Ab3C2Wvp (ORCPT
+Received: from cpsmtpb-ews04.kpnxchange.com ([213.75.39.7]:51377 "EHLO
+	cpsmtpb-ews04.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755400Ab3C3Jyo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Mar 2013 18:51:45 -0400
+	Sat, 30 Mar 2013 05:54:44 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Commit a07613a54d700a974f3a4a657da78ef5d097315d ("Merge branch
-'samsung/dt' into samsung/cleanup") added this line to
-arch/arm/mach-s3c64xx/Makefile:
-    obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
-
-But at that time CONFIG_S3C64XX_DEV_SPI wasn't a valid Kconfig macro
-anymore and arch/arm/mach-s3c64xx/dev-spi.c was already removed. So we
-can remove this line.
+Commit ebc433c2890f8ecad2da39fe2dbf2b6e7b309afa ("ARM: S5P64X0: Add
+HSMMC setup for host Controller") added the Kconfig symbol
+S5P64X0_SETUP_SDHCI_GPIO. By accident it also used a macro
+CONFIG_S5P64X0_SETUP_SDHCI. Fix that typo.
 
 Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 ---
-Untested.
+Untested. Since this typo has been in the tree since v3.3, and some code
+has therefore (basically) been compiled out ever since, this does need
+testing.
 
- arch/arm/mach-s3c64xx/Makefile | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/plat-samsung/include/plat/sdhci.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index f9ce1dc..31d0c91 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -32,7 +32,6 @@ obj-$(CONFIG_S3C64XX_DMA)	+= dma.o
+diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
+index 9b87f38..5560586 100644
+--- a/arch/arm/plat-samsung/include/plat/sdhci.h
++++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+@@ -206,7 +206,7 @@ static inline void s3c6400_default_sdhci2(void) { }
  
- obj-y				+= dev-uart.o
- obj-y				+= dev-audio.o
--obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+ /* S5P64X0 SDHCI setup */
  
- # Device setup
+-#ifdef CONFIG_S5P64X0_SETUP_SDHCI
++#ifdef CONFIG_S5P64X0_SETUP_SDHCI_GPIO
+ static inline void s5p64x0_default_sdhci0(void)
+ {
+ #ifdef CONFIG_S3C_DEV_HSMMC
+@@ -241,7 +241,7 @@ static inline void s5p64x0_default_sdhci1(void) { }
+ static inline void s5p6440_default_sdhci2(void) { }
+ static inline void s5p6450_default_sdhci2(void) { }
+ 
+-#endif /* CONFIG_S5P64X0_SETUP_SDHCI */
++#endif /* CONFIG_S5P64X0_SETUP_SDHCI_GPIO */
+ 
+ /* S5PC100 SDHCI setup */
  
 -- 
 1.7.11.7
