@@ -1,56 +1,79 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] ARM: S5P64X0: Fix typo "CONFIG_S5P64X0_SETUP_SDHCI"
-Date: Sat, 30 Mar 2013 10:54:39 +0100
-Message-ID: <1364637279.1345.115.camel@x61.thuisdomein>
+From: Ning Jiang <ning.n.jiang@gmail.com>
+Subject: Re: [PATCH] ARM: timer: Shutdown clock event device when stopping
+ local timer
+Date: Sat, 30 Mar 2013 17:57:38 +0800
+Message-ID: <CAH3Oq6QA0DCEDc-Yh+k=3bgUH7xzKxHSC1aWSoL4NzaYCZZHbg@mail.gmail.com>
+References: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
+	<5155DE43.4000601@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews04.kpnxchange.com ([213.75.39.7]:51377 "EHLO
-	cpsmtpb-ews04.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755400Ab3C3Jyo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 30 Mar 2013 05:54:44 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <5155DE43.4000601@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, davidb@codeaurora.org, dwalker@fifo99.com, bryanh@codeaurora.org, john.stultz@linaro.org, tglx@linutronix.de, linus.walleij@linaro.org, shawn.guo@linaro.org, rob.herring@calxeda.com, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Commit ebc433c2890f8ecad2da39fe2dbf2b6e7b309afa ("ARM: S5P64X0: Add
-HSMMC setup for host Controller") added the Kconfig symbol
-S5P64X0_SETUP_SDHCI_GPIO. By accident it also used a macro
-CONFIG_S5P64X0_SETUP_SDHCI. Fix that typo.
+2013/3/30 Stephen Boyd <sboyd@codeaurora.org>:
+> On 03/29/13 02:24, ning.n.jiang@gmail.com wrote:
+>> From: Ning Jiang <ning.n.jiang@gmail.com>
+>>
+>> Currently there are two problems when we try to stop local timer.
+>> First, it calls set_mode function directly so mode state is not
+>> updated for the clock event device. Second, it makes the device
+>> unused instead of shutdown.
+>
+> What device is this a problem on? I believe this only matters to drivers
+> which enable their timer in their set_next_event() callback? But even
+> then, does anything actually happen because the interrupt should have
+> been disabled in the local timer stop callback.
+>
 
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
----
-Untested. Since this typo has been in the tree since v3.3, and some code
-has therefore (basically) been compiled out ever since, this does need
-testing.
+Right. Drivers which enable timer in set_next_event() will have this problem.
+It will not have functional problem in my case. But my device cannot enter
+low power mode with a pending interrupt even if it is disabled.
 
- arch/arm/plat-samsung/include/plat/sdhci.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> A subtle error will happen because of it. When a cpu is plugged out
+>> it will stop the local timer. It will call tick_nohz_idle_enter()
+>> in idle thread afterwards. It will cancel the sched timer and try
+>> to reprogram the next event. This is wrong since the local timer
+>> is supposed to be stopped.
+>>
+>> The right way to stop the local timer is to shutdown it by calling
+>> clockevents_set_mode(). Thus when we try to reprogram the clock
+>> event device, it will return directly without doing anything since
+>> the clock mode is CLOCK_EVT_MODE_SHUTDOWN.
+>
+> While this prevents the set_next_event() callback from being called on a
+> dying CPU, wouldn't it be better to fix this problem in the core code
+> once instead of fixing it many times in each local timer driver? It
+> doesn't seem to make much sense to program an event on a CPU that is
+> about to die, so why do we do that?
+>
 
-diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
-index 9b87f38..5560586 100644
---- a/arch/arm/plat-samsung/include/plat/sdhci.h
-+++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-@@ -206,7 +206,7 @@ static inline void s3c6400_default_sdhci2(void) { }
- 
- /* S5P64X0 SDHCI setup */
- 
--#ifdef CONFIG_S5P64X0_SETUP_SDHCI
-+#ifdef CONFIG_S5P64X0_SETUP_SDHCI_GPIO
- static inline void s5p64x0_default_sdhci0(void)
- {
- #ifdef CONFIG_S3C_DEV_HSMMC
-@@ -241,7 +241,7 @@ static inline void s5p64x0_default_sdhci1(void) { }
- static inline void s5p6440_default_sdhci2(void) { }
- static inline void s5p6450_default_sdhci2(void) { }
- 
--#endif /* CONFIG_S5P64X0_SETUP_SDHCI */
-+#endif /* CONFIG_S5P64X0_SETUP_SDHCI_GPIO */
- 
- /* S5PC100 SDHCI setup */
- 
--- 
-1.7.11.7
+Actually, I was trying to fix it in the core code like this, but I
+thought it is not
+that good and we still need to fix the local timer driver problem even
+with this fix.
+
+diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
+index c6d6400..e22e268 100644
+--- a/kernel/time/clockevents.c
++++ b/kernel/time/clockevents.c
+@@ -210,6 +210,9 @@ int clockevents_program_event(struct
+clock_event_device *dev, ktime_t expires,
+                return -ETIME;
+        }
+
++       if (cpu_is_offline(smp_processor_id()))
++               return 0;
++
+        dev->next_event = expires;
+
+        if (dev->mode == CLOCK_EVT_MODE_SHUTDOWN)
+
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> hosted by The Linux Foundation
+>
