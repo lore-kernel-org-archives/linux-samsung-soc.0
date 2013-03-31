@@ -1,63 +1,49 @@
-From: Romain Naour <romain.naour@openwide.fr>
-Subject: Re: GENERIC_GPIO considered deprecated
-Date: Sat, 30 Mar 2013 23:07:16 +0100
-Message-ID: <51576214.8010307@openwide.fr>
-References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 8/9] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
+Date: Sun, 31 Mar 2013 09:23:25 +0530
+Message-ID: <CAKohpon+wk_F0E2oJ_VOj7EKZ0mVbis1-gPSr-T9zLsMC_XohA@mail.gmail.com>
+References: <cover.1364205812.git.viresh.kumar@linaro.org>
+	<918ff6cc407525d682817cf736347ec572e0316d.1364205812.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from zimbra3.corp.accelance.fr ([213.162.49.233]:43913 "EHLO
-	zimbra3.corp.accelance.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753585Ab3C3WOh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 30 Mar 2013 18:14:37 -0400
-In-Reply-To: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <918ff6cc407525d682817cf736347ec572e0316d.1364205812.git.viresh.kumar@linaro.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: arvind.chauhan@arm.com, robin.randhawa@arm.com, Steve.Bannister@arm.com, Liviu.Dudau@arm.com, charles.garcia-tobin@arm.com, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, arnd.bergmann@linaro.org, linux@arm.linux.org.uk, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, tomasz.figa@gmail.com, kgene.kim@samsung.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org
 
-Le 21/03/2013 03:15, Alexandre Courbot a =C3=A9crit :
-> Hi Romain,
+On 25 March 2013 15:41, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> This patch moves cpufreq driver of Samsung's ARM based s3c24xx platform to
+> drivers/cpufreq.
 >
-> I have submitted a series of patches that deprecates the use of
-> GENERIC_GPIO as a first step towards the consolidation of GPIO around
-> gpiolib. The goal of this set of to remove all "select GENERIC_GPIO"
-> instances and it should be merged into linux-next starting from today=
-=2E
->
-> I noticed that your patch "ARM: S3C24XX: Add samsung-time support for
-> s3c24xx" adds two new selections of GENERIC_GPIO - would you mind
-> changing them to "select ARCH_REQUIRE_GPIOLIB" for consistency with m=
-y
-> change? The result should be the same on your side.
->
-> Thanks,
-> Alex.
->
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  arch/arm/Kconfig                                   | 46 ---------------
+>  arch/arm/mach-s3c24xx/Kconfig                      | 66 +++++++++-------------
+>  arch/arm/mach-s3c24xx/Makefile                     |  6 --
+>  arch/arm/mach-s3c24xx/{ => include/mach}/s3c2412.h |  0
+>  arch/arm/mach-s3c24xx/iotiming-s3c2412.c           |  2 +-
+>  arch/arm/plat-samsung/include/plat/cpu-freq-core.h | 10 ++--
+>  arch/arm/plat-samsung/include/plat/cpu-freq.h      |  6 +-
+>  drivers/cpufreq/Kconfig.arm                        | 58 +++++++++++++++++++
+>  drivers/cpufreq/Makefile                           |  5 ++
+>  .../cpufreq/s3c2410-cpufreq.c                      |  0
+>  .../cpufreq/s3c2412-cpufreq.c                      |  3 +-
+>  .../cpufreq/s3c2440-cpufreq.c                      |  0
+>  .../cpufreq/s3c24xx-cpufreq-debugfs.c              |  0
+>  .../cpufreq.c => drivers/cpufreq/s3c24xx-cpufreq.c |  0
+>  14 files changed, 100 insertions(+), 102 deletions(-)
+>  rename arch/arm/mach-s3c24xx/{ => include/mach}/s3c2412.h (100%)
+>  rename arch/arm/mach-s3c24xx/cpufreq-s3c2410.c => drivers/cpufreq/s3c2410-cpufreq.c (100%)
+>  rename arch/arm/mach-s3c24xx/cpufreq-s3c2412.c => drivers/cpufreq/s3c2412-cpufreq.c (99%)
+>  rename arch/arm/mach-s3c24xx/cpufreq-s3c2440.c => drivers/cpufreq/s3c2440-cpufreq.c (100%)
+>  rename arch/arm/mach-s3c24xx/cpufreq-debugfs.c => drivers/cpufreq/s3c24xx-cpufreq-debugfs.c (100%)
+>  rename arch/arm/mach-s3c24xx/cpufreq.c => drivers/cpufreq/s3c24xx-cpufreq.c (100%)
 
-Hi Alex,
+Ben/Kukjin,
 
-When I read your mail, I was surprised that you were speaking about=20
-GPIOs, my pathes for samsung CPUs are intended for timer sub-system.
-
-As you can see in this thread, when I send my patches "ARM: S3C24XX: Ad=
-d=20
-samsung-time support for s3c24xx" and "Add samsung-time support for=20
-s5pc100". They didn't add "select GENERIC_GPIO".
-http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=3D14=
-980
-http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=3D14=
-982
-
-There is something wrong with the commit, I see that "select=20
-GENERIC_GPIO" was added in my patches by mistake.
-
-I recommend you to speak directly with samsung's kernel maintainer that=
-=20
-I CC in this mail.
-
-Regards,
-Romain Naour
+Can i have your View or Ack for this patch?
