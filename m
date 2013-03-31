@@ -1,46 +1,68 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: GENERIC_GPIO considered deprecated
-Date: Sun, 31 Mar 2013 15:18:33 -0700
-Message-ID: <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
-References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
- <51576214.8010307@openwide.fr>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] ARM: timer: Shutdown clock event device when stopping
+ local timer
+Date: Mon, 01 Apr 2013 01:41:44 +0200
+Message-ID: <5158C9B8.3070208@linaro.org>
+References: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:49360 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755718Ab3CaWSy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 31 Mar 2013 18:18:54 -0400
-In-Reply-To: <51576214.8010307@openwide.fr>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: ning.n.jiang@gmail.com
+Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, davidb@codeaurora.org, dwalker@fifo99.com, bryanh@codeaurora.org, john.stultz@linaro.org, tglx@linutronix.de, linus.walleij@linaro.org, shawn.guo@linaro.org, rob.herring@calxeda.com, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Romain Naour <romain.naour@openwide.fr>, kgene.kim@samsung.com
-Cc: linux-next <linux-next@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, tomasz.figa@gmail.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org
 
-Hi Romain,
+On 03/29/2013 10:24 AM, ning.n.jiang@gmail.com wrote:
+> From: Ning Jiang <ning.n.jiang@gmail.com>
+>=20
+> Currently there are two problems when we try to stop local timer.
+> First, it calls set_mode function directly so mode state is not
+> updated for the clock event device. Second, it makes the device
+> unused instead of shutdown.
+>=20
+> A subtle error will happen because of it. When a cpu is plugged out
+> it will stop the local timer. It will call tick_nohz_idle_enter()
+> in idle thread afterwards. It will cancel the sched timer and try
+> to reprogram the next event. This is wrong since the local timer
+> is supposed to be stopped.
+>=20
+> The right way to stop the local timer is to shutdown it by calling
+> clockevents_set_mode(). Thus when we try to reprogram the clock
+> event device, it will return directly without doing anything since
+> the clock mode is CLOCK_EVT_MODE_SHUTDOWN.
+>=20
+> Signed-off-by: Ning Jiang <ning.n.jiang@gmail.com>
+> ---
+>  arch/arm/kernel/smp_twd.c                |    2 +-
+>  arch/arm/mach-exynos/mct.c               |    2 +-
+>  arch/arm/mach-msm/timer.c                |    2 +-
+>  drivers/clocksource/arm_arch_timer.c     |    2 +-
+>  drivers/clocksource/time-armada-370-xp.c |    2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/arch/arm/kernel/smp_twd.c b/arch/arm/kernel/smp_twd.c
+> index 3f25650..c1d4ab4 100644
+> --- a/arch/arm/kernel/smp_twd.c
+> +++ b/arch/arm/kernel/smp_twd.c
+> @@ -92,7 +92,7 @@ static int twd_timer_ack(void)
+> =20
+>  static void twd_timer_stop(struct clock_event_device *clk)
+>  {
+> -	twd_set_mode(CLOCK_EVT_MODE_UNUSED, clk);
+> +	clockevents_set_mode(clk, CLOCK_EVT_MODE_SHUTDOWN);
+>  	disable_percpu_irq(clk->irq);
 
-On Sat, Mar 30, 2013 at 3:07 PM, Romain Naour <romain.naour@openwide.fr> wrote:
-> Hi Alex,
->
-> When I read your mail, I was surprised that you were speaking about GPIOs, my pathes for samsung CPUs are intended for timer sub-system.
->
-> As you can see in this thread, when I send my patches "ARM: S3C24XX: Add samsung-time support for s3c24xx" and "Add samsung-time support for s5pc100". They didn't add "select GENERIC_GPIO".
-> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14980
-> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14982
->
-> There is something wrong with the commit, I see that "select GENERIC_GPIO" was added in my patches by mistake.
->
-> I recommend you to speak directly with samsung's kernel maintainer that I CC in this mail.
+Wouldn't be clockevents_shutdown more adequate here ? The next event
+will be also set.
 
-Indeed, it seems like these "select GENERIC_GPIO" have been added
-during the merge of your patches, since I can see the line is here in
-your patch (but not added by it). Kim, on the current next there are
-two of these "select GENERIC_GPIO" that are added from your branch,
-could you amend the patches that adds them such as they get changed
-into "select ARCH_REQUIRE_GPIOLIB" instead? You can grep for "select
-GENERIC_GPIO" in arch/arm to find the offending lines. We are removing
-GENERIC_GPIO and this work cannot be merged until you do this since it
-would break ARM builds. Thanks!
 
-Alex.
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
