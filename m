@@ -1,599 +1,490 @@
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V6 3/9] ARM: pxa: Provide regulator to pwm-backlight
-Date: Mon, 1 Apr 2013 14:53:22 -0700
-Message-ID: <1364853208-32503-4-git-send-email-achew@nvidia.com>
-References: <1364853208-32503-1-git-send-email-achew@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1364853208-32503-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org
-Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Rob Herring <robherring2@gmail.com>
+Subject: [PATCH v2 02/13] ARM: convert arm/arm64 arch timer to use CLKSRC_OF init
+Date: Mon,  1 Apr 2013 17:21:12 -0500
+Message-ID: <1364854883-5961-3-git-send-email-robherring2@gmail.com>
+References: <1364854883-5961-1-git-send-email-robherring2@gmail.com>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1364854883-5961-1-git-send-email-robherring2@gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, John Stultz <john.stultz@linaro.org>, arm@kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The pwm-backlight driver now takes a mandatory regulator that is gotten
-during driver probe.  Initialize a dummy regulator to satisfy this
-requirement.
+From: Rob Herring <rob.herring@calxeda.com>
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
+This converts arm and arm64 to use CLKSRC_OF DT based initialization for
+the arch timer. A new function arch_timer_arch_init is added to allow for
+arch specific setup.
+
+This has a side effect of enabling sched_clock on omap5 and exynos5. There
+should not be any reason not to use the arch timers for sched_clock.
+
+Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
 ---
- arch/arm/mach-pxa/cm-x300.c               |  7 +++++++
- arch/arm/mach-pxa/colibri-pxa270-income.c |  8 ++++++++
- arch/arm/mach-pxa/ezx.c                   |  9 +++++++++
- arch/arm/mach-pxa/hx4700.c                |  8 ++++++++
- arch/arm/mach-pxa/lpd270.c                |  9 +++++++++
- arch/arm/mach-pxa/magician.c              |  8 ++++++++
- arch/arm/mach-pxa/mainstone.c             | 13 ++++++++++++-
- arch/arm/mach-pxa/mioa701.c               |  8 ++++++++
- arch/arm/mach-pxa/palm27x.c               |  8 ++++++++
- arch/arm/mach-pxa/palmtc.c                |  8 ++++++++
- arch/arm/mach-pxa/palmte2.c               |  9 +++++++++
- arch/arm/mach-pxa/pcm990-baseboard.c      |  8 ++++++++
- arch/arm/mach-pxa/raumfeld.c              |  6 ++++++
- arch/arm/mach-pxa/tavorevb.c              | 11 +++++++++++
- arch/arm/mach-pxa/viper.c                 |  8 ++++++++
- arch/arm/mach-pxa/z2.c                    | 10 ++++++++++
- arch/arm/mach-pxa/zylonite.c              |  7 +++++++
- 17 files changed, 144 insertions(+), 1 deletion(-)
+ arch/arm/include/asm/arch_timer.h            |   13 +------------
+ arch/arm/kernel/arch_timer.c                 |   17 +++--------------
+ arch/arm/mach-exynos/mach-exynos5-dt.c       |    1 -
+ arch/arm/mach-exynos/mct.c                   |    6 ------
+ arch/arm/mach-highbank/highbank.c            |    5 +----
+ arch/arm/mach-omap2/timer.c                  |    5 +----
+ arch/arm/mach-shmobile/board-kzm9d.c         |    1 -
+ arch/arm/mach-shmobile/include/mach/common.h |    1 -
+ arch/arm/mach-shmobile/setup-emev2.c         |    1 -
+ arch/arm/mach-shmobile/setup-r8a7740.c       |    1 -
+ arch/arm/mach-shmobile/setup-sh7372.c        |    1 -
+ arch/arm/mach-shmobile/setup-sh73a0.c        |    1 -
+ arch/arm/mach-shmobile/timer.c               |    6 ------
+ arch/arm/mach-vexpress/v2m.c                 |    7 ++-----
+ arch/arm/mach-virt/virt.c                    |    9 ---------
+ arch/arm64/include/asm/arch_timer.h          |    5 +++++
+ arch/arm64/kernel/time.c                     |    6 ++++--
+ drivers/clocksource/Kconfig                  |    1 +
+ drivers/clocksource/arm_arch_timer.c         |   23 +++++++++--------------
+ include/clocksource/arm_arch_timer.h         |    6 ------
+ 20 files changed, 27 insertions(+), 89 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
-index 8091aac..7e1887a 100644
---- a/arch/arm/mach-pxa/cm-x300.c
-+++ b/arch/arm/mach-pxa/cm-x300.c
-@@ -34,6 +34,7 @@
+diff --git a/arch/arm/include/asm/arch_timer.h b/arch/arm/include/asm/arch_timer.h
+index 7ade91d..7c1bfc0 100644
+--- a/arch/arm/include/asm/arch_timer.h
++++ b/arch/arm/include/asm/arch_timer.h
+@@ -10,8 +10,7 @@
+ #include <clocksource/arm_arch_timer.h>
  
- #include <linux/mfd/da903x.h>
- #include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/power_supply.h>
- #include <linux/apm-emulation.h>
+ #ifdef CONFIG_ARM_ARCH_TIMER
+-int arch_timer_of_register(void);
+-int arch_timer_sched_clock_init(void);
++int arch_timer_arch_init(void);
  
-@@ -305,6 +306,10 @@ static inline void cm_x300_init_lcd(void) {}
+ /*
+  * These register accessors are marked inline so the compiler can
+@@ -110,16 +109,6 @@ static inline void __cpuinit arch_counter_set_user_access(void)
+ 
+ 	asm volatile("mcr p15, 0, %0, c14, c1, 0" : : "r" (cntkctl));
+ }
+-#else
+-static inline int arch_timer_of_register(void)
+-{
+-	return -ENXIO;
+-}
+-
+-static inline int arch_timer_sched_clock_init(void)
+-{
+-	return -ENXIO;
+-}
  #endif
  
- #if defined(CONFIG_BACKLIGHT_PWM) || defined(CONFIG_BACKLIGHT_PWM_MODULE)
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data cm_x300_backlight_data = {
- 	.pwm_id		= 2,
- 	.max_brightness	= 100,
-@@ -322,6 +327,8 @@ static struct platform_device cm_x300_backlight_device = {
+ #endif
+diff --git a/arch/arm/kernel/arch_timer.c b/arch/arm/kernel/arch_timer.c
+index a7536d4..dc74048 100644
+--- a/arch/arm/kernel/arch_timer.c
++++ b/arch/arm/kernel/arch_timer.c
+@@ -39,26 +39,15 @@ static void __init arch_timer_delay_timer_register(void)
+ 	register_current_timer_delay(&arch_delay_timer);
+ }
  
- static void cm_x300_init_bl(void)
+-int __init arch_timer_of_register(void)
+-{
+-	int ret;
+-
+-	ret = arch_timer_init();
+-	if (ret)
+-		return ret;
+-
+-	arch_timer_delay_timer_register();
+-
+-	return 0;
+-}
+-
+-int __init arch_timer_sched_clock_init(void)
++int __init arch_timer_arch_init(void)
  {
-+	regulator_register_always_on(-1, "backlight-power",
-+		&backlight_supply, 1, 0);
- 	platform_device_register(&cm_x300_backlight_device);
- }
- #else
-diff --git a/arch/arm/mach-pxa/colibri-pxa270-income.c b/arch/arm/mach-pxa/colibri-pxa270-income.c
-index 2d4a7b4..108f2a7 100644
---- a/arch/arm/mach-pxa/colibri-pxa270-income.c
-+++ b/arch/arm/mach-pxa/colibri-pxa270-income.c
-@@ -20,6 +20,8 @@
- #include <linux/ioport.h>
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- #include <linux/i2c/pxa-i2c.h>
+         u32 arch_timer_rate = arch_timer_get_rate();
  
-@@ -184,6 +186,10 @@ static inline void income_lcd_init(void) {}
-  * Backlight
-  ******************************************************************************/
- #if defined(CONFIG_BACKLIGHT_PWM) || defined(CONFIG_BACKLIGHT_PWM_MODULE)
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
+ 	if (arch_timer_rate == 0)
+ 		return -ENXIO;
+ 
++	arch_timer_delay_timer_register();
 +
- static struct platform_pwm_backlight_data income_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 0x3ff,
-@@ -201,6 +207,8 @@ static struct platform_device income_backlight = {
+ 	/* Cache the sched_clock multiplier to save a divide in the hot path. */
+ 	sched_clock_mult = NSEC_PER_SEC / arch_timer_rate;
+ 	sched_clock_func = arch_timer_sched_clock;
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index acaeb14..4d97b43 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -216,7 +216,6 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+ 	.map_io		= exynos5_dt_map_io,
+ 	.init_machine	= exynos5_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos4_timer_init,
+ 	.dt_compat	= exynos5_dt_compat,
+ 	.restart        = exynos5_restart,
+ 	.reserve	= exynos5_reserve,
+diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+index c9d6650..04aff6a 100644
+--- a/arch/arm/mach-exynos/mct.c
++++ b/arch/arm/mach-exynos/mct.c
+@@ -21,7 +21,6 @@
+ #include <linux/percpu.h>
+ #include <linux/of.h>
  
- static void __init income_pwm_init(void)
+-#include <asm/arch_timer.h>
+ #include <asm/localtimer.h>
+ 
+ #include <plat/cpu.h>
+@@ -469,11 +468,6 @@ static void __init exynos4_timer_resources(void)
+ 
+ void __init exynos4_timer_init(void)
  {
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
- 	platform_device_register(&income_backlight);
- }
- #else
-diff --git a/arch/arm/mach-pxa/ezx.c b/arch/arm/mach-pxa/ezx.c
-index dca1070..2b39d5f 100644
---- a/arch/arm/mach-pxa/ezx.c
-+++ b/arch/arm/mach-pxa/ezx.c
-@@ -15,6 +15,8 @@
- #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/delay.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- #include <linux/input.h>
- #include <linux/gpio.h>
-@@ -49,6 +51,10 @@
- #define GPIO19_GEN1_CAM_RST		19
- #define GPIO28_GEN2_CAM_RST		28
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data ezx_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 1023,
-@@ -792,6 +798,9 @@ static void __init a780_init(void)
- 		platform_device_register(&a780_camera);
- 	}
- 
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
-+
- 	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
- 	platform_add_devices(ARRAY_AND_SIZE(a780_devices));
- }
-diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-index 133109e..b2f444a 100644
---- a/arch/arm/mach-pxa/hx4700.c
-+++ b/arch/arm/mach-pxa/hx4700.c
-@@ -33,6 +33,7 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/gpio-regulator.h>
- #include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/regulator/max1586.h>
- #include <linux/spi/ads7846.h>
- #include <linux/spi/spi.h>
-@@ -556,6 +557,10 @@ static struct platform_device hx4700_lcd = {
-  * Backlight
+-	if (soc_is_exynos5440()) {
+-		arch_timer_of_register();
+-		return;
+-	}
+-
+ 	if ((soc_is_exynos4210()) || (soc_is_exynos5250()))
+ 		mct_int_type = MCT_INT_SPI;
+ 	else
+diff --git a/arch/arm/mach-highbank/highbank.c b/arch/arm/mach-highbank/highbank.c
+index 76c1170..758150e 100644
+--- a/arch/arm/mach-highbank/highbank.c
++++ b/arch/arm/mach-highbank/highbank.c
+@@ -15,6 +15,7 @@
   */
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight");
-+
- static struct platform_pwm_backlight_data backlight_data = {
- 	.pwm_id         = -1,	/* Superseded by pwm_lookup */
- 	.max_brightness = 200,
-@@ -876,6 +881,9 @@ static void __init hx4700_init(void)
- 	pxa_set_btuart_info(NULL);
- 	pxa_set_stuart_info(NULL);
- 
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
-+
- 	platform_add_devices(devices, ARRAY_SIZE(devices));
- 	pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
- 
-diff --git a/arch/arm/mach-pxa/lpd270.c b/arch/arm/mach-pxa/lpd270.c
-index 1255ee0..985f622 100644
---- a/arch/arm/mach-pxa/lpd270.c
-+++ b/arch/arm/mach-pxa/lpd270.c
-@@ -23,6 +23,8 @@
- #include <linux/ioport.h>
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/partitions.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- 
- #include <asm/types.h>
-@@ -264,6 +266,10 @@ static struct platform_device lpd270_flash_device[2] = {
- 	},
- };
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data lpd270_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 1,
-@@ -466,6 +472,9 @@ static void __init lpd270_init(void)
- 	 */
- 	ARB_CNTRL = ARB_CORE_PARK | 0x234;
- 
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
-+
- 	platform_add_devices(platform_devices, ARRAY_SIZE(platform_devices));
- 
- 	pxa_set_ac97_info(NULL);
-diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
-index f44532f..dcae8cc 100644
---- a/arch/arm/mach-pxa/magician.c
-+++ b/arch/arm/mach-pxa/magician.c
-@@ -27,6 +27,7 @@
- #include <linux/pwm_backlight.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/gpio-regulator.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/regulator/machine.h>
- #include <linux/usb/gpio_vbus.h>
- #include <linux/i2c/pxa-i2c.h>
-@@ -373,6 +374,10 @@ static void magician_backlight_exit(struct device *dev)
- 	gpio_free_array(ARRAY_AND_SIZE(magician_bl_gpios));
- }
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight");
-+
- static struct platform_pwm_backlight_data backlight_data = {
- 	.pwm_id         = 0,
- 	.max_brightness = 272,
-@@ -742,6 +747,9 @@ static void __init magician_init(void)
- 	pxa_set_btuart_info(NULL);
- 	pxa_set_stuart_info(NULL);
- 
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
-+
- 	platform_add_devices(ARRAY_AND_SIZE(devices));
- 
- 	pxa_set_ficp_info(&magician_ficp_info);
-diff --git a/arch/arm/mach-pxa/mainstone.c b/arch/arm/mach-pxa/mainstone.c
-index 7a12c1b..c7b13be 100644
---- a/arch/arm/mach-pxa/mainstone.c
-+++ b/arch/arm/mach-pxa/mainstone.c
-@@ -25,6 +25,8 @@
- #include <linux/mtd/partitions.h>
- #include <linux/input.h>
- #include <linux/gpio_keys.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- #include <linux/smc91x.h>
- #include <linux/i2c/pxa-i2c.h>
-@@ -333,6 +335,10 @@ static struct platform_device mst_flash_device[2] = {
- };
- 
- #if defined(CONFIG_FB_PXA) || defined(CONFIG_FB_PXA_MODULE)
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data mainstone_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 1023,
-@@ -350,7 +356,12 @@ static struct platform_device mainstone_backlight_device = {
- 
- static void __init mainstone_backlight_register(void)
- {
--	int ret = platform_device_register(&mainstone_backlight_device);
-+	int ret;
-+
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
-+
-+	ret = platform_device_register(&mainstone_backlight_device);
- 	if (ret)
- 		printk(KERN_ERR "mainstone: failed to register backlight device: %d\n", ret);
- }
-diff --git a/arch/arm/mach-pxa/mioa701.c b/arch/arm/mach-pxa/mioa701.c
-index f8979b9..ba9e1cb 100644
---- a/arch/arm/mach-pxa/mioa701.c
-+++ b/arch/arm/mach-pxa/mioa701.c
-@@ -37,6 +37,8 @@
- #include <linux/wm97xx.h>
- #include <linux/mtd/physmap.h>
- #include <linux/usb/gpio_vbus.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/regulator/max1586.h>
- #include <linux/slab.h>
- #include <linux/i2c/pxa-i2c.h>
-@@ -179,6 +181,10 @@ static unsigned long mioa701_pin_config[] = {
- 	MFP_CFG_OUT(GPIO116, AF0, DRIVE_HIGH),
- };
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight");
-+
- /* LCD Screen and Backlight */
- static struct platform_pwm_backlight_data mioa701_backlight_data = {
- 	.pwm_id		= 0,
-@@ -739,6 +745,8 @@ static void __init mioa701_machine_init(void)
- 	pxa_set_udc_info(&mioa701_udc_info);
- 	pxa_set_ac97_info(&mioa701_ac97_info);
- 	pm_power_off = mioa701_poweroff;
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
- 	platform_add_devices(devices, ARRAY_SIZE(devices));
- 	gsm_init();
- 
-diff --git a/arch/arm/mach-pxa/palm27x.c b/arch/arm/mach-pxa/palm27x.c
-index 17d4c53..fc34f2b 100644
---- a/arch/arm/mach-pxa/palm27x.c
-+++ b/arch/arm/mach-pxa/palm27x.c
-@@ -20,6 +20,8 @@
- #include <linux/wm97xx.h>
- #include <linux/power_supply.h>
- #include <linux/usb/gpio_vbus.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/regulator/max1586.h>
- #include <linux/i2c/pxa-i2c.h>
- 
-@@ -317,6 +319,10 @@ static void palm27x_backlight_exit(struct device *dev)
- 		gpio_free(palm_lcd_power);
- }
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data palm27x_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 0xfe,
-@@ -339,6 +345,8 @@ void __init palm27x_pwm_init(int bl, int lcd)
- {
- 	palm_bl_power	= bl;
- 	palm_lcd_power	= lcd;
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
- 	platform_device_register(&palm27x_backlight);
- }
- #endif
-diff --git a/arch/arm/mach-pxa/palmtc.c b/arch/arm/mach-pxa/palmtc.c
-index 100b176f..b6b241c 100644
---- a/arch/arm/mach-pxa/palmtc.c
-+++ b/arch/arm/mach-pxa/palmtc.c
-@@ -18,6 +18,8 @@
- #include <linux/delay.h>
- #include <linux/irq.h>
- #include <linux/input.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- #include <linux/gpio.h>
- #include <linux/input/matrix_keypad.h>
-@@ -197,6 +199,10 @@ static void palmtc_backlight_exit(struct device *dev)
- 	gpio_free(GPIO_NR_PALMTC_BL_POWER);
- }
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data palmtc_backlight_data = {
- 	.pwm_id		= 1,
- 	.max_brightness	= PALMTC_MAX_INTENSITY,
-@@ -217,6 +223,8 @@ static struct platform_device palmtc_backlight = {
- 
- static void __init palmtc_pwm_init(void)
- {
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
- 	platform_device_register(&palmtc_backlight);
- }
- #else
-diff --git a/arch/arm/mach-pxa/palmte2.c b/arch/arm/mach-pxa/palmte2.c
-index 0742721..d181f65 100644
---- a/arch/arm/mach-pxa/palmte2.c
-+++ b/arch/arm/mach-pxa/palmte2.c
-@@ -21,6 +21,8 @@
- #include <linux/gpio_keys.h>
- #include <linux/input.h>
- #include <linux/pda_power.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- #include <linux/gpio.h>
- #include <linux/wm97xx.h>
-@@ -160,6 +162,10 @@ static void palmte2_backlight_exit(struct device *dev)
- 	gpio_free_array(ARRAY_AND_SIZE(palmte_bl_gpios));
- }
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data palmte2_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= PALMTE2_MAX_INTENSITY,
-@@ -354,6 +360,9 @@ static void __init palmte2_init(void)
- 	pxa_set_ac97_info(&palmte2_ac97_pdata);
- 	pxa_set_ficp_info(&palmte2_ficp_platform_data);
- 
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
-+
- 	platform_add_devices(devices, ARRAY_SIZE(devices));
- }
- 
-diff --git a/arch/arm/mach-pxa/pcm990-baseboard.c b/arch/arm/mach-pxa/pcm990-baseboard.c
-index fb7f1d1..25c480d 100644
---- a/arch/arm/mach-pxa/pcm990-baseboard.c
-+++ b/arch/arm/mach-pxa/pcm990-baseboard.c
-@@ -24,6 +24,8 @@
- #include <linux/platform_device.h>
- #include <linux/i2c.h>
- #include <linux/i2c/pxa-i2c.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- 
- #include <media/mt9v022.h>
-@@ -148,6 +150,10 @@ static struct pxafb_mach_info pcm990_fbinfo __initdata = {
- };
- #endif
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data pcm990_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 1023,
-@@ -539,6 +545,8 @@ void __init pcm990_baseboard_init(void)
- #ifndef CONFIG_PCM990_DISPLAY_NONE
- 	pxa_set_fb_info(NULL, &pcm990_fbinfo);
- #endif
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
- 	platform_device_register(&pcm990_backlight_device);
- 
- 	/* MMC */
-diff --git a/arch/arm/mach-pxa/raumfeld.c b/arch/arm/mach-pxa/raumfeld.c
-index af41888..aff0947 100644
---- a/arch/arm/mach-pxa/raumfeld.c
-+++ b/arch/arm/mach-pxa/raumfeld.c
-@@ -531,6 +531,10 @@ static void __init raumfeld_w1_init(void)
-  * Framebuffer device
-  */
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- /* PWM controlled backlight */
- static struct platform_pwm_backlight_data raumfeld_pwm_backlight_data = {
- 	.pwm_id		= 0,
-@@ -617,6 +621,8 @@ static void __init raumfeld_lcd_init(void)
- 	} else {
- 		mfp_cfg_t raumfeld_pwm_pin_config = GPIO17_PWM0_OUT;
- 		pxa3xx_mfp_config(&raumfeld_pwm_pin_config, 1);
-+		regulator_register_always_on(-1, "backlight-power",
-+					     &backlight_supply, 1, 0);
- 		platform_device_register(&raumfeld_pwm_backlight_device);
- 	}
- 
-diff --git a/arch/arm/mach-pxa/tavorevb.c b/arch/arm/mach-pxa/tavorevb.c
-index f55979c..db61de5 100644
---- a/arch/arm/mach-pxa/tavorevb.c
-+++ b/arch/arm/mach-pxa/tavorevb.c
-@@ -18,6 +18,8 @@
  #include <linux/clk.h>
- #include <linux/gpio.h>
- #include <linux/smc91x.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
+ #include <linux/clkdev.h>
++#include <linux/clocksource.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -28,7 +29,6 @@
+ #include <linux/amba/bus.h>
+ #include <linux/clk-provider.h>
  
- #include <asm/mach-types.h>
-@@ -164,6 +166,12 @@ static inline void tavorevb_init_keypad(void) {}
- #endif /* CONFIG_KEYBOARD_PXA27x || CONFIG_KEYBOARD_PXA27x_MODULE */
+-#include <asm/arch_timer.h>
+ #include <asm/cacheflush.h>
+ #include <asm/cputype.h>
+ #include <asm/smp_plat.h>
+@@ -118,9 +118,6 @@ static void __init highbank_timer_init(void)
+ 	sp804_clocksource_and_sched_clock_init(timer_base + 0x20, "timer1");
+ 	sp804_clockevents_init(timer_base, irq, "timer0");
  
- #if defined(CONFIG_FB_PXA) || defined(CONFIG_FB_PXA_MODULE)
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply[] = {
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0"),
-+	REGULATOR_SUPPLY("power", "pwm-backlight.1"),
-+};
-+
- static struct platform_pwm_backlight_data tavorevb_backlight_data[] = {
- 	[0] = {
- 		/* primary backlight */
-@@ -464,6 +472,9 @@ static struct pxafb_mach_info tavorevb_lcd_info = {
- 
- static void __init tavorevb_init_lcd(void)
- {
-+	regulator_register_always_on(-1, "backlight-power",
-+				     backlight_supply,
-+				     ARRAY_SIZE(backlight_supply), 0);
- 	platform_device_register(&tavorevb_backlight_devices[0]);
- 	platform_device_register(&tavorevb_backlight_devices[1]);
- 	pxa_set_fb_info(NULL, &tavorevb_lcd_info);
-diff --git a/arch/arm/mach-pxa/viper.c b/arch/arm/mach-pxa/viper.c
-index 9c363c0..ed625d9 100644
---- a/arch/arm/mach-pxa/viper.c
-+++ b/arch/arm/mach-pxa/viper.c
-@@ -39,6 +39,8 @@
- #include <linux/i2c/pxa-i2c.h>
- #include <linux/serial_8250.h>
- #include <linux/smc91x.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- #include <linux/usb/isp116x.h>
- #include <linux/mtd/mtd.h>
-@@ -396,6 +398,10 @@ static void viper_backlight_exit(struct device *dev)
- 	gpio_free(VIPER_BCKLIGHT_EN_GPIO);
+-	arch_timer_of_register();
+-	arch_timer_sched_clock_init();
+-
+ 	clocksource_of_init();
  }
  
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data viper_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 100,
-@@ -940,6 +946,8 @@ static void __init viper_init(void)
- 		smc91x_device.num_resources--;
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index 4fd8025..7dd6453 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -46,7 +46,6 @@
+ #include <asm/smp_twd.h>
+ #include <asm/sched_clock.h>
  
- 	pxa_set_i2c_info(NULL);
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
- 	platform_add_devices(viper_devs, ARRAY_SIZE(viper_devs));
+-#include <asm/arch_timer.h>
+ #include "omap_hwmod.h"
+ #include "omap_device.h"
+ #include <plat/counter-32k.h>
+@@ -624,9 +623,7 @@ void __init omap5_realtime_timer_init(void)
+ 	omap5_sync32k_timer_init();
+ 	realtime_counter_init();
  
- 	viper_init_vcore_gpios();
-diff --git a/arch/arm/mach-pxa/z2.c b/arch/arm/mach-pxa/z2.c
-index 989903a..a7ff8a8 100644
---- a/arch/arm/mach-pxa/z2.c
-+++ b/arch/arm/mach-pxa/z2.c
-@@ -29,6 +29,7 @@
- #include <linux/gpio_keys.h>
- #include <linux/delay.h>
+-	err = arch_timer_of_register();
+-	if (err)
+-		pr_err("%s: arch_timer_register failed %d\n", __func__, err);
++        clocksource_of_init();
+ }
+ #endif /* CONFIG_SOC_OMAP5 */
+ 
+diff --git a/arch/arm/mach-shmobile/board-kzm9d.c b/arch/arm/mach-shmobile/board-kzm9d.c
+index c254782..c016ccd 100644
+--- a/arch/arm/mach-shmobile/board-kzm9d.c
++++ b/arch/arm/mach-shmobile/board-kzm9d.c
+@@ -90,6 +90,5 @@ DT_MACHINE_START(KZM9D_DT, "kzm9d")
+ 	.init_irq	= emev2_init_irq,
+ 	.init_machine	= kzm9d_add_standard_devices,
+ 	.init_late	= shmobile_init_late,
+-	.init_time	= shmobile_timer_init,
+ 	.dt_compat	= kzm9d_boards_compat_dt,
+ MACHINE_END
+diff --git a/arch/arm/mach-shmobile/include/mach/common.h b/arch/arm/mach-shmobile/include/mach/common.h
+index e48606d..5efc0f0 100644
+--- a/arch/arm/mach-shmobile/include/mach/common.h
++++ b/arch/arm/mach-shmobile/include/mach/common.h
+@@ -2,7 +2,6 @@
+ #define __ARCH_MACH_COMMON_H
+ 
+ extern void shmobile_earlytimer_init(void);
+-extern void shmobile_timer_init(void);
+ extern void shmobile_setup_delay(unsigned int max_cpu_core_mhz,
+ 			 unsigned int mult, unsigned int div);
+ struct twd_local_timer;
+diff --git a/arch/arm/mach-shmobile/setup-emev2.c b/arch/arm/mach-shmobile/setup-emev2.c
+index 47662a5..4e38a66 100644
+--- a/arch/arm/mach-shmobile/setup-emev2.c
++++ b/arch/arm/mach-shmobile/setup-emev2.c
+@@ -456,7 +456,6 @@ DT_MACHINE_START(EMEV2_DT, "Generic Emma Mobile EV2 (Flattened Device Tree)")
+ 	.nr_irqs	= NR_IRQS_LEGACY,
+ 	.init_irq	= irqchip_init,
+ 	.init_machine	= emev2_add_standard_devices_dt,
+-	.init_time	= shmobile_timer_init,
+ 	.dt_compat	= emev2_boards_compat_dt,
+ MACHINE_END
+ 
+diff --git a/arch/arm/mach-shmobile/setup-r8a7740.c b/arch/arm/mach-shmobile/setup-r8a7740.c
+index 8b85d4d..104b474 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7740.c
++++ b/arch/arm/mach-shmobile/setup-r8a7740.c
+@@ -906,7 +906,6 @@ DT_MACHINE_START(R8A7740_DT, "Generic R8A7740 (Flattened Device Tree)")
+ 	.init_irq	= r8a7740_init_irq,
+ 	.handle_irq	= shmobile_handle_irq_intc,
+ 	.init_machine	= r8a7740_add_standard_devices_dt,
+-	.init_time	= shmobile_timer_init,
+ 	.dt_compat	= r8a7740_boards_compat_dt,
+ MACHINE_END
+ 
+diff --git a/arch/arm/mach-shmobile/setup-sh7372.c b/arch/arm/mach-shmobile/setup-sh7372.c
+index 59c7146..5502d62 100644
+--- a/arch/arm/mach-shmobile/setup-sh7372.c
++++ b/arch/arm/mach-shmobile/setup-sh7372.c
+@@ -1175,7 +1175,6 @@ DT_MACHINE_START(SH7372_DT, "Generic SH7372 (Flattened Device Tree)")
+ 	.init_irq	= sh7372_init_irq,
+ 	.handle_irq	= shmobile_handle_irq_intc,
+ 	.init_machine	= sh7372_add_standard_devices_dt,
+-	.init_time	= shmobile_timer_init,
+ 	.dt_compat	= sh7372_boards_compat_dt,
+ MACHINE_END
+ 
+diff --git a/arch/arm/mach-shmobile/setup-sh73a0.c b/arch/arm/mach-shmobile/setup-sh73a0.c
+index bdab575..ea66316 100644
+--- a/arch/arm/mach-shmobile/setup-sh73a0.c
++++ b/arch/arm/mach-shmobile/setup-sh73a0.c
+@@ -923,7 +923,6 @@ DT_MACHINE_START(SH73A0_DT, "Generic SH73A0 (Flattened Device Tree)")
+ 	.nr_irqs	= NR_IRQS_LEGACY,
+ 	.init_irq	= sh73a0_init_irq_dt,
+ 	.init_machine	= sh73a0_add_standard_devices_dt,
+-	.init_time	= shmobile_timer_init,
+ 	.dt_compat	= sh73a0_boards_compat_dt,
+ MACHINE_END
+ #endif /* CONFIG_USE_OF */
+diff --git a/arch/arm/mach-shmobile/timer.c b/arch/arm/mach-shmobile/timer.c
+index 3d16d4d..add2f15 100644
+--- a/arch/arm/mach-shmobile/timer.c
++++ b/arch/arm/mach-shmobile/timer.c
+@@ -60,9 +60,3 @@ void __init shmobile_earlytimer_init(void)
+ {
+ 	late_time_init = shmobile_late_time_init;
+ }
+-
+-void __init shmobile_timer_init(void)
+-{
+-	arch_timer_of_register();
+-	arch_timer_sched_clock_init();
+-}
+diff --git a/arch/arm/mach-vexpress/v2m.c b/arch/arm/mach-vexpress/v2m.c
+index d0ad789..6215717 100644
+--- a/arch/arm/mach-vexpress/v2m.c
++++ b/arch/arm/mach-vexpress/v2m.c
+@@ -1,6 +1,7 @@
+ /*
+  * Versatile Express V2M Motherboard Support
+  */
++#include <linux/clocksource.h>
+ #include <linux/device.h>
+ #include <linux/amba/bus.h>
+ #include <linux/amba/mmci.h>
+@@ -23,7 +24,6 @@
  #include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/i2c/pxa-i2c.h>
+ #include <linux/vexpress.h>
  
+-#include <asm/arch_timer.h>
  #include <asm/mach-types.h>
-@@ -199,6 +200,12 @@ static inline void z2_nor_init(void) {}
-  * Backlight
-  ******************************************************************************/
- #if defined(CONFIG_BACKLIGHT_PWM) || defined(CONFIG_BACKLIGHT_PWM_MODULE)
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply[] = {
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0"),
-+	REGULATOR_SUPPLY("power", "pwm-backlight.1"),
-+};
-+
- static struct platform_pwm_backlight_data z2_backlight_data[] = {
- 	[0] = {
- 		/* Keypad Backlight */
-@@ -234,6 +241,9 @@ static struct platform_device z2_backlight_devices[2] = {
- };
- static void __init z2_pwm_init(void)
- {
-+	regulator_register_always_on(-1, "backlight-power",
-+				     backlight_supply,
-+				     ARRAY_SIZE(backlight_supply), 0);
- 	platform_device_register(&z2_backlight_devices[0]);
- 	platform_device_register(&z2_backlight_devices[1]);
+ #include <asm/sizes.h>
+ #include <asm/mach/arch.h>
+@@ -446,10 +446,7 @@ static void __init v2m_dt_timer_init(void)
+ 				irq_of_parse_and_map(node, 0));
+ 	}
+ 
+-	arch_timer_of_register();
+-
+-	if (arch_timer_sched_clock_init() != 0)
+-		versatile_sched_clock_init(vexpress_get_24mhz_clock_base(),
++	versatile_sched_clock_init(vexpress_get_24mhz_clock_base(),
+ 				24000000);
  }
-diff --git a/arch/arm/mach-pxa/zylonite.c b/arch/arm/mach-pxa/zylonite.c
-index 1f00d65..04409f1 100644
---- a/arch/arm/mach-pxa/zylonite.c
-+++ b/arch/arm/mach-pxa/zylonite.c
-@@ -120,6 +120,10 @@ static inline void zylonite_init_leds(void) {}
- #endif
  
- #if defined(CONFIG_FB_PXA) || defined(CONFIG_FB_PXA_MODULE)
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight.0");
-+
- static struct platform_pwm_backlight_data zylonite_backlight_data = {
- 	.pwm_id		= 3,
- 	.max_brightness	= 100,
-@@ -205,6 +209,9 @@ static struct pxafb_mach_info zylonite_sharp_lcd_info = {
+diff --git a/arch/arm/mach-virt/virt.c b/arch/arm/mach-virt/virt.c
+index 31666f6..adc0945 100644
+--- a/arch/arm/mach-virt/virt.c
++++ b/arch/arm/mach-virt/virt.c
+@@ -23,21 +23,13 @@
+ #include <linux/of_platform.h>
+ #include <linux/smp.h>
  
- static void __init zylonite_init_lcd(void)
+-#include <asm/arch_timer.h>
+ #include <asm/mach/arch.h>
+-#include <asm/mach/time.h>
+ 
+ static void __init virt_init(void)
  {
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
-+
- 	platform_device_register(&zylonite_backlight_device);
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
  
- 	if (lcd_id & 0x20) {
+-static void __init virt_timer_init(void)
+-{
+-	WARN_ON(arch_timer_of_register() != 0);
+-	WARN_ON(arch_timer_sched_clock_init() != 0);
+-}
+-
+ static const char *virt_dt_match[] = {
+ 	"linux,dummy-virt",
+ 	NULL
+@@ -47,7 +39,6 @@ extern struct smp_operations virt_smp_ops;
+ 
+ DT_MACHINE_START(VIRT, "Dummy Virtual Machine")
+ 	.init_irq	= irqchip_init,
+-	.init_time	= virt_timer_init,
+ 	.init_machine	= virt_init,
+ 	.smp		= smp_ops(virt_smp_ops),
+ 	.dt_compat	= virt_dt_match,
+diff --git a/arch/arm64/include/asm/arch_timer.h b/arch/arm64/include/asm/arch_timer.h
+index 91e2a6a..bf6ab242 100644
+--- a/arch/arm64/include/asm/arch_timer.h
++++ b/arch/arm64/include/asm/arch_timer.h
+@@ -130,4 +130,9 @@ static inline u64 arch_counter_get_cntvct(void)
+ 	return cval;
+ }
+ 
++static inline int arch_timer_arch_init(void)
++{
++	return 0;
++}
++
+ #endif
+diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
+index b0ef18d..a551f88 100644
+--- a/arch/arm64/kernel/time.c
++++ b/arch/arm64/kernel/time.c
+@@ -32,6 +32,7 @@
+ #include <linux/timer.h>
+ #include <linux/irq.h>
+ #include <linux/delay.h>
++#include <linux/clocksource.h>
+ 
+ #include <clocksource/arm_arch_timer.h>
+ 
+@@ -77,10 +78,11 @@ void __init time_init(void)
+ {
+ 	u32 arch_timer_rate;
+ 
+-	if (arch_timer_init())
+-		panic("Unable to initialise architected timer.\n");
++	clocksource_of_init();
+ 
+ 	arch_timer_rate = arch_timer_get_rate();
++	if (!arch_timer_rate)
++		panic("Unable to initialise architected timer.\n");
+ 
+ 	/* Cache the sched_clock multiplier to save a divide in the hot path. */
+ 	sched_clock_mult = NSEC_PER_SEC / arch_timer_rate;
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index e507ab7..d98e7e1 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -62,6 +62,7 @@ config CLKSRC_DBX500_PRCMU_SCHED_CLOCK
+ 
+ config ARM_ARCH_TIMER
+ 	bool
++	select CLKSRC_OF if OF
+ 
+ config CLKSRC_METAG_GENERIC
+ 	def_bool y if METAG
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index d7ad425..122ff05 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -337,22 +337,14 @@ out:
+ 	return err;
+ }
+ 
+-static const struct of_device_id arch_timer_of_match[] __initconst = {
+-	{ .compatible	= "arm,armv7-timer",	},
+-	{ .compatible	= "arm,armv8-timer",	},
+-	{},
+-};
+-
+-int __init arch_timer_init(void)
++static void __init arch_timer_init(struct device_node *np)
+ {
+-	struct device_node *np;
+ 	u32 freq;
+ 	int i;
+ 
+-	np = of_find_matching_node(NULL, arch_timer_of_match);
+-	if (!np) {
+-		pr_err("arch_timer: can't find DT node\n");
+-		return -ENODEV;
++	if (arch_timer_get_rate()) {
++		pr_warn("arch_timer: multiple nodes in dt, skipping\n");
++		return;
+ 	}
+ 
+ 	/* Try to determine the frequency from the device tree or CNTFRQ */
+@@ -378,7 +370,7 @@ int __init arch_timer_init(void)
+ 		if (!arch_timer_ppi[PHYS_SECURE_PPI] ||
+ 		    !arch_timer_ppi[PHYS_NONSECURE_PPI]) {
+ 			pr_warn("arch_timer: No interrupt available, giving up\n");
+-			return -EINVAL;
++			return;
+ 		}
+ 	}
+ 
+@@ -387,5 +379,8 @@ int __init arch_timer_init(void)
+ 	else
+ 		arch_timer_read_counter = arch_counter_get_cntpct;
+ 
+-	return arch_timer_register();
++	arch_timer_register();
++	arch_timer_arch_init();
+ }
++CLOCKSOURCE_OF_DECLARE(armv7_arch_timer, "arm,armv7-timer", arch_timer_init);
++CLOCKSOURCE_OF_DECLARE(armv8_arch_timer, "arm,armv8-timer", arch_timer_init);
+diff --git a/include/clocksource/arm_arch_timer.h b/include/clocksource/arm_arch_timer.h
+index 2603267..e6c9c4c 100644
+--- a/include/clocksource/arm_arch_timer.h
++++ b/include/clocksource/arm_arch_timer.h
+@@ -31,18 +31,12 @@
+ 
+ #ifdef CONFIG_ARM_ARCH_TIMER
+ 
+-extern int arch_timer_init(void);
+ extern u32 arch_timer_get_rate(void);
+ extern u64 (*arch_timer_read_counter)(void);
+ extern struct timecounter *arch_timer_get_timecounter(void);
+ 
+ #else
+ 
+-static inline int arch_timer_init(void)
+-{
+-	return -ENXIO;
+-}
+-
+ static inline u32 arch_timer_get_rate(void)
+ {
+ 	return 0;
 -- 
-1.8.1.5
+1.7.10.4
+
