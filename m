@@ -1,32 +1,131 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH] mmc: dwmmc: let device core setup the default pin configuration
-Date: Mon, 1 Apr 2013 11:42:31 -0700
-Message-ID: <CAD=FV=Vxh9+qpAmoLuALCOZJCLTfga0WdCf=P+heOmbkDY=Aww@mail.gmail.com>
-References: <1362571461-14570-1-git-send-email-thomas.abraham@linaro.org>
-	<CAD=FV=W8E=0C8_QZ3d44caq6EOvBpTkX0Ng86niQuN4B-cnHiw@mail.gmail.com>
-	<CAD=FV=Uy1dQMAxgh_ncxfsQVMDp4Da3inLTvgbJFhyhFLjVWrg@mail.gmail.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH V2] DMA: PL330: Add check if device tree compatible
+Date: Mon, 1 Apr 2013 23:51:51 +0530
+Message-ID: <20130401182151.GH10326@intel.com>
+References: <1362475531-32260-1-git-send-email-padma.v@samsung.com>
+ <1362475531-32260-2-git-send-email-padma.v@samsung.com>
+ <20130321093906.GL10326@intel.com>
+ <CAL_Jsq+3bJDiA=rXS=WY3BGuRh5X+nyxxosrqtSD9fx-asbCKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=Uy1dQMAxgh_ncxfsQVMDp4Da3inLTvgbJFhyhFLjVWrg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olofj@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, patches@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:13276 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757996Ab3DAStd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Apr 2013 14:49:33 -0400
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+3bJDiA=rXS=WY3BGuRh5X+nyxxosrqtSD9fx-asbCKQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, padma.kvr@gmail.com, sbkim73@samsung.com, "Mark Brown (broonie@opensource.wolfsonmicro.com)" <broonie@opensource.wolfsonmicro.com>, kgene.kim@samsung.com, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@secretlab.ca>, jon-hunter@ti.com, boojin.kim@samsung.com
 
-Thomas,
+On Mon, Apr 01, 2013 at 08:13:31AM -0500, Rob Herring wrote:
+> On Thu, Mar 21, 2013 at 4:39 AM, Vinod Koul <vinod.koul@intel.com> wrote:
+> > On Tue, Mar 05, 2013 at 02:55:31PM +0530, Padmavathi Venna wrote:
+> >> This patch register the dma controller with generic dma helpers only
+> >> in DT case. This also adds some extra error handling in the driver.
+> >>
+> >> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> >> Reported-by: Sachin Kamat <sachin.kamat@linaro.org>
+> 
+> What's the status on this? It is needed for 3.9 to fix pl330 on highbank.
+Well the status is that submitter has been rude. I had few questions and
+comments on this patch and they are yet to be addressed.
 
-On Mon, Mar 25, 2013 at 9:56 AM, Doug Anderson <dianders@google.com> wrote:
-> Are you planning on doing this?  I noticed that Chris pulled your
-> sdhci-s3c change in recently but apparently skipped this one since it
-> had outstanding comments.  Can you address comments and re-send?  This
-> is blocking pinmux dts stuff from landing (I think) and that blocks a
-> lot of other things from landing.
->
-> The comments are pretty trivial, so I could always fix them and
-> re-send myself, but it would be better if you could do it...  :)
-
-I didn't hear anything last week and it's getting pretty late in the
-process.  I'll post something tomorrow if I don't hear from you...
-
--Doug
+--
+~Vinod
+> 
+> Rob
+> 
+> >> ---
+> >>
+> >> Based on Vinod Koul next branch.
+> >>
+> >> Changes since V1:
+> >>       - return silently when of_dma_controller_register fails, as
+> >>         suggested by Arnd.
+> >>
+> >>  drivers/dma/pl330.c |   38 +++++++++++++++++++++++++++-----------
+> >>  1 files changed, 27 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> >> index 7181531..5dbc594 100644
+> >> --- a/drivers/dma/pl330.c
+> >> +++ b/drivers/dma/pl330.c
+> >> @@ -2882,7 +2882,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+> >>  {
+> >>       struct dma_pl330_platdata *pdat;
+> >>       struct dma_pl330_dmac *pdmac;
+> >> -     struct dma_pl330_chan *pch;
+> >> +     struct dma_pl330_chan *pch, *_p;
+> >>       struct pl330_info *pi;
+> >>       struct dma_device *pd;
+> >>       struct resource *res;
+> >> @@ -2984,7 +2984,16 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+> >>       ret = dma_async_device_register(pd);
+> >>       if (ret) {
+> >>               dev_err(&adev->dev, "unable to register DMAC\n");
+> >> -             goto probe_err2;
+> >> +             goto probe_err3;
+> >> +     }
+> >> +
+> >> +     if (adev->dev.of_node) {
+> >> +             ret = of_dma_controller_register(adev->dev.of_node,
+> >> +                                      of_dma_pl330_xlate, pdmac);
+> >> +             if (ret) {
+> >> +                     dev_err(&adev->dev,
+> >> +                     "unable to register DMA to the generic DT DMA helpers\n");
+> > Indent?
+> >> +             }
+> >>       }
+> >>
+> >>       dev_info(&adev->dev,
+> >> @@ -2995,16 +3004,21 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+> >>               pi->pcfg.data_bus_width / 8, pi->pcfg.num_chan,
+> >>               pi->pcfg.num_peri, pi->pcfg.num_events);
+> >>
+> >> -     ret = of_dma_controller_register(adev->dev.of_node,
+> >> -                                      of_dma_pl330_xlate, pdmac);
+> >> -     if (ret) {
+> >> -             dev_err(&adev->dev,
+> >> -             "unable to register DMA to the generic DT DMA helpers\n");
+> >> -             goto probe_err2;
+> >> -     }
+> >> -
+> >>       return 0;
+> >> +probe_err3:
+> >> +     amba_set_drvdata(adev, NULL);
+> >>
+> >> +     /* Idle the DMAC */
+> >> +     list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
+> >> +                     chan.device_node) {
+> >> +
+> >> +             /* Remove the channel */
+> >> +             list_del(&pch->chan.device_node);
+> >> +
+> >> +             /* Flush the channel */
+> >> +             pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
+> >> +             pl330_free_chan_resources(&pch->chan);
+> > free_chan for error handling in probe?
+> >
+> >> +     }
+> >>  probe_err2:
+> >>       pl330_del(pi);
+> >>  probe_err1:
+> >> @@ -3023,8 +3037,10 @@ static int pl330_remove(struct amba_device *adev)
+> >>       if (!pdmac)
+> >>               return 0;
+> >>
+> >> -     of_dma_controller_free(adev->dev.of_node);
+> >> +     if (adev->dev.of_node)
+> >> +             of_dma_controller_free(adev->dev.of_node);
+> >>
+> >> +     dma_async_device_unregister(&pdmac->ddma);
+> >>       amba_set_drvdata(adev, NULL);
+> >>
+> >>       /* Idle the DMAC */
+> >> --
+> >> 1.7.4.4
+> >>
