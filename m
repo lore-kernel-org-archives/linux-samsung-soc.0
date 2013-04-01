@@ -1,125 +1,63 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH V2] DMA: PL330: Add check if device tree compatible
-Date: Mon, 1 Apr 2013 08:13:31 -0500
-Message-ID: <CAL_Jsq+3bJDiA=rXS=WY3BGuRh5X+nyxxosrqtSD9fx-asbCKQ@mail.gmail.com>
-References: <1362475531-32260-1-git-send-email-padma.v@samsung.com>
-	<1362475531-32260-2-git-send-email-padma.v@samsung.com>
-	<20130321093906.GL10326@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f48.google.com ([209.85.128.48]:35652 "EHLO
-	mail-qe0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756788Ab3DANNc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Apr 2013 09:13:32 -0400
-Received: by mail-qe0-f48.google.com with SMTP id 2so1179628qea.35
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Apr 2013 06:13:32 -0700 (PDT)
-In-Reply-To: <20130321093906.GL10326@intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v3 00/11] usb: dwc3/xhci/phy: Enable runtime power management
+Date: Mon, 01 Apr 2013 19:23:59 +0530
+Message-ID: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, padma.kvr@gmail.com, sbkim73@samsung.com, "Mark Brown (broonie@opensource.wolfsonmicro.com)" <broonie@opensource.wolfsonmicro.com>, kgene.kim@samsung.com, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@secretlab.ca>, jon-hunter@ti.com, boojin.kim@samsung.com
 
-On Thu, Mar 21, 2013 at 4:39 AM, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Tue, Mar 05, 2013 at 02:55:31PM +0530, Padmavathi Venna wrote:
->> This patch register the dma controller with generic dma helpers only
->> in DT case. This also adds some extra error handling in the driver.
->>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->> Reported-by: Sachin Kamat <sachin.kamat@linaro.org>
+This patch-series enables runtime power management on xhci-plat,
+dwc3-core, dwc3-exynos as well as on Samsung's USB 2.0 type and
+USB 3.0 type PHYs.
 
-What's the status on this? It is needed for 3.9 to fix pl330 on highbank.
+Based on 'next' branch of Felipe Balbi's USB tree.
 
-Rob
+Changes from v2:
+ - Using separate functions for USB PHY runtime power management, instead of
+   using macros.
+ - Adding 'pm_runtime_set_suspended()' api call in dwc3 core layer before
+   enabling runtime pm. (Ideally, we should be explicitly make device
+   'suspended' or 'active' before enabling runtime pm on it).
+ - Checking return code for 'put_sync' and 'get_sync' of USB-PHYs when
+   waking up or suspending them from dwc3 core's runtime_pm callbacks.
+ - Removed buggy pm_runtime_put() calls from driver's (xhci, dwc3 and PHY)
+   remove functions.
+ - Adding a patch to enable runtime power management of Samsung's USB 2.0 PHY
+   (usb: phy: samsung: Enable runtime power management on usb2phy)
 
->> ---
->>
->> Based on Vinod Koul next branch.
->>
->> Changes since V1:
->>       - return silently when of_dma_controller_register fails, as
->>         suggested by Arnd.
->>
->>  drivers/dma/pl330.c |   38 +++++++++++++++++++++++++++-----------
->>  1 files changed, 27 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
->> index 7181531..5dbc594 100644
->> --- a/drivers/dma/pl330.c
->> +++ b/drivers/dma/pl330.c
->> @@ -2882,7 +2882,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->>  {
->>       struct dma_pl330_platdata *pdat;
->>       struct dma_pl330_dmac *pdmac;
->> -     struct dma_pl330_chan *pch;
->> +     struct dma_pl330_chan *pch, *_p;
->>       struct pl330_info *pi;
->>       struct dma_device *pd;
->>       struct resource *res;
->> @@ -2984,7 +2984,16 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->>       ret = dma_async_device_register(pd);
->>       if (ret) {
->>               dev_err(&adev->dev, "unable to register DMAC\n");
->> -             goto probe_err2;
->> +             goto probe_err3;
->> +     }
->> +
->> +     if (adev->dev.of_node) {
->> +             ret = of_dma_controller_register(adev->dev.of_node,
->> +                                      of_dma_pl330_xlate, pdmac);
->> +             if (ret) {
->> +                     dev_err(&adev->dev,
->> +                     "unable to register DMA to the generic DT DMA helpers\n");
-> Indent?
->> +             }
->>       }
->>
->>       dev_info(&adev->dev,
->> @@ -2995,16 +3004,21 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->>               pi->pcfg.data_bus_width / 8, pi->pcfg.num_chan,
->>               pi->pcfg.num_peri, pi->pcfg.num_events);
->>
->> -     ret = of_dma_controller_register(adev->dev.of_node,
->> -                                      of_dma_pl330_xlate, pdmac);
->> -     if (ret) {
->> -             dev_err(&adev->dev,
->> -             "unable to register DMA to the generic DT DMA helpers\n");
->> -             goto probe_err2;
->> -     }
->> -
->>       return 0;
->> +probe_err3:
->> +     amba_set_drvdata(adev, NULL);
->>
->> +     /* Idle the DMAC */
->> +     list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
->> +                     chan.device_node) {
->> +
->> +             /* Remove the channel */
->> +             list_del(&pch->chan.device_node);
->> +
->> +             /* Flush the channel */
->> +             pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
->> +             pl330_free_chan_resources(&pch->chan);
-> free_chan for error handling in probe?
->
->> +     }
->>  probe_err2:
->>       pl330_del(pi);
->>  probe_err1:
->> @@ -3023,8 +3037,10 @@ static int pl330_remove(struct amba_device *adev)
->>       if (!pdmac)
->>               return 0;
->>
->> -     of_dma_controller_free(adev->dev.of_node);
->> +     if (adev->dev.of_node)
->> +             of_dma_controller_free(adev->dev.of_node);
->>
->> +     dma_async_device_unregister(&pdmac->ddma);
->>       amba_set_drvdata(adev, NULL);
->>
->>       /* Idle the DMAC */
->> --
->> 1.7.4.4
->>
+Changes from v1:
+ - Adding required PHY APIs to handle runtime power management
+   instead of directly twiddling with phy->dev.
+ - Handling runtime power management of usb PHYs in dwc3 core
+   driver instead of in any glue layer.
+ - Splitting the patch:
+   [PATCH 4/4] usb: phy: samsung: Enable runtime power management on samsung-usb
+   into required number to bifurcate functionality.
+
+Vivek Gautam (11):
+  usb: phy: Add APIs for runtime power management
+  USB: dwc3: Adjust runtime pm to allow autosuspend
+  usb: dwc3: Enable runtime pm only after PHYs are initialized
+  usb: dwc3: Add runtime power management callbacks
+  usb: dwc3: exynos: Enable runtime power management
+  usb: xhci: Enable runtime pm in xhci-plat
+  usb: phy: samsung: Enable runtime power management on usb2phy
+  usb: phy: samsung: Enable runtime power management on usb3phy
+  usb: phy: samsung: Add support for external reference clock
+  usb: phy: samsung: Add support for PHY ref_clk gpio
+  usb: phy: samsung: Add support for PHY refclk switching
+
+ drivers/usb/dwc3/core.c            |   59 ++++++++++++++--
+ drivers/usb/dwc3/dwc3-exynos.c     |   12 +++
+ drivers/usb/host/xhci-plat.c       |    6 ++
+ drivers/usb/phy/phy-samsung-usb.c  |   26 +++++++
+ drivers/usb/phy/phy-samsung-usb.h  |    1 +
+ drivers/usb/phy/phy-samsung-usb2.c |    5 ++
+ drivers/usb/phy/phy-samsung-usb3.c |  119 +++++++++++++++++++++++++++++--
+ include/linux/usb/phy.h            |  141 ++++++++++++++++++++++++++++++++++++
+ 8 files changed, 358 insertions(+), 11 deletions(-)
+
+-- 
+1.7.6.5
