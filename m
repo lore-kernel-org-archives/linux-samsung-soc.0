@@ -1,100 +1,40 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v10 3/3] ARM: dts: Add FIMD DT binding Documentation
-Date: Mon,  1 Apr 2013 19:52:32 +0530
-Message-ID: <1364826153-8925-4-git-send-email-vikas.sajjan@linaro.org>
-References: <1364826153-8925-1-git-send-email-vikas.sajjan@linaro.org>
+From: Edward Smietana <edward.smietana@gmx.com>
+Subject: [PATCH] [drm] exynos: hdmi: Remove fecal color
+Date: Mon,  1 Apr 2013 19:07:39 +0200
+Message-ID: <1364836059-8929-1-git-send-email-edward.smietana@gmx.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:46897 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758232Ab3DAOXB (ORCPT
+Received: from mout.gmx.net ([212.227.15.19]:54957 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751719Ab3DARH5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Apr 2013 10:23:01 -0400
-Received: by mail-pb0-f51.google.com with SMTP id rr4so1208167pbb.24
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Apr 2013 07:23:01 -0700 (PDT)
-In-Reply-To: <1364826153-8925-1-git-send-email-vikas.sajjan@linaro.org>
+	Mon, 1 Apr 2013 13:07:57 -0400
+Received: from mailout-eu.gmx.com ([10.1.101.212]) by mrigmx.server.lan
+ (mrigmx001) with ESMTP (Nemesis) id 0LmxXe-1UqF4Y2oeq-00h2pW for
+ <linux-samsung-soc@vger.kernel.org>; Mon, 01 Apr 2013 19:07:54 +0200
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, Edward Smietana <edward.smietana@gmx.com>
 
-Add DT binding documentation for the FIMD IP block found in Samsung SoCs.
+This patch makes the driver less shitty.
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+Signed-off-by: Edward Smietana <edward.smietana@gmx.com>
 ---
- .../devicetree/bindings/video/samsung-fimd.txt     |   65 ++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/video/samsung-fimd.txt
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-new file mode 100644
-index 0000000..1984dbb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-@@ -0,0 +1,65 @@
-+Device-Tree bindings for Samsung SoC display controller (FIMD)
-+
-+FIMD (Fully Interactive Mobile Display) is the Display Controller for the
-+Samsung series of SoCs which transfers the image data from a video memory buffer
-+to an external LCD interface.
-+
-+Required properties:
-+- compatible: value should be one of the following
-+		"samsung,s3c2443-fimd"; /* for S3C24XX SoCs */
-+		"samsung,s3c6400-fimd"; /* for S3C64XX SoCs */
-+		"samsung,s5p6440-fimd"; /* for S5P64X0 SoCs */
-+		"samsung,s5pc100-fimd"; /* for S5PC100 SoC  */
-+		"samsung,s5pv210-fimd"; /* for S5PV210 SoC */
-+		"samsung,exynos4210-fimd"; /* for Exynos4 SoCs */
-+		"samsung,exynos5250-fimd"; /* for Exynos5 SoCs */
-+
-+- reg: physical base address of the FIMD and length of memory mapped region
-+
-+- interrupt-parent: should be the phandle of the fimd controller's
-+		parent interrupt controller.
-+
-+- interrupts: should contain a list of all FIMD IP block interrupts in the
-+		 order: FIFO Level, VSYNC, LCD_SYSTEM. The interrupt specifier
-+		 format depends on the interrupt controller used.
-+
-+- interrupt-names: should contain the interrupt names: "fifo", "vsync",
-+	"lcd_sys", in the same order as they were listed in the interrupts
-+        property.
-+
-+- pinctrl-0: pin control group to be used for this controller.
-+
-+- pinctrl-names: must contain a "default" entry.
-+
-+- clocks: must include clock specifiers corresponding to entries in the
-+         clock-names properties.
-+
-+- clock-names: List of clock names sorted in the same order as the clocks
-+               property. Must contain "sclk_fimd" and "fimd".
-+
-+Optional Properties:
-+- samsung,power-domain: a phandle to FIMD power domain node
-+
-+Example:
-+
-+SoC specific DT entry:
-+
-+	fimd@11c00000 {
-+		compatible = "samsung,exynos4210-fimd";
-+		interrupt-parent = <&combiner>;
-+		reg = <0x11c00000 0x20000>;
-+		interrupt-names = "fifo", "vsync", "lcd_sys";
-+		interrupts = <11 0>, <11 1>, <11 2>;
-+		clocks = <&clock 140>, <&clock 283>;
-+		clock-names = "sclk_fimd", "fimd";
-+		samsung,power-domain = <&pd_lcd0>;
-+		status = "disabled";
-+	};
-+
-+Board specific DT entry:
-+
-+	fimd@11c00000 {
-+		pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 6d63f90..e11372c 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1269,7 +1269,7 @@ static void hdmi_conf_init(struct hdmi_context *hdata)
+ 	}
+ 
+ 	if (hdata->type == HDMI_TYPE13) {
+-		/* choose bluescreen (fecal) color */
++		/* choose bluescreen (brown) color */
+ 		hdmi_reg_writeb(hdata, HDMI_V13_BLUE_SCREEN_0, 0x12);
+ 		hdmi_reg_writeb(hdata, HDMI_V13_BLUE_SCREEN_1, 0x34);
+ 		hdmi_reg_writeb(hdata, HDMI_V13_BLUE_SCREEN_2, 0x56);
 -- 
-1.7.9.5
+1.8.1.5
