@@ -1,40 +1,76 @@
-From: Edward Smietana <edward.smietana@gmx.com>
-Subject: [PATCH] [drm] exynos: hdmi: Remove fecal color
-Date: Mon,  1 Apr 2013 19:07:39 +0200
-Message-ID: <1364836059-8929-1-git-send-email-edward.smietana@gmx.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v10 2/3] ARM: dts: Add FIMD node and display timing node
+ to exynos4412-origen.dts
+Date: Mon, 01 Apr 2013 20:37:16 +0200
+Message-ID: <5159D3DC.4070507@gmail.com>
+References: <1364826153-8925-1-git-send-email-vikas.sajjan@linaro.org> <1364826153-8925-3-git-send-email-vikas.sajjan@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.19]:54957 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751719Ab3DARH5 (ORCPT
+Received: from mail-ea0-f175.google.com ([209.85.215.175]:59290 "EHLO
+	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758903Ab3DAShW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Apr 2013 13:07:57 -0400
-Received: from mailout-eu.gmx.com ([10.1.101.212]) by mrigmx.server.lan
- (mrigmx001) with ESMTP (Nemesis) id 0LmxXe-1UqF4Y2oeq-00h2pW for
- <linux-samsung-soc@vger.kernel.org>; Mon, 01 Apr 2013 19:07:54 +0200
+	Mon, 1 Apr 2013 14:37:22 -0400
+Received: by mail-ea0-f175.google.com with SMTP id r16so1121407ead.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Apr 2013 11:37:21 -0700 (PDT)
+In-Reply-To: <1364826153-8925-3-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com, jy0922.shim@samsung.com, Edward Smietana <edward.smietana@gmx.com>
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-This patch makes the driver less shitty.
+On 04/01/2013 04:22 PM, Vikas Sajjan wrote:
+> This patch adds FIMD related nodes for the Origen Quad board.
+>
+> Signed-off-by: Vikas Sajjan<vikas.sajjan@linaro.org>
+> ---
+>   arch/arm/boot/dts/exynos4412-origen.dts |   21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+> index a5478bd..cb0c507 100644
+> --- a/arch/arm/boot/dts/exynos4412-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
+> @@ -70,6 +70,27 @@
+>   		status = "okay";
+>   	};
+>
+> +	fimd@11c00000 {
+> +		pinctrl-0 =<&lcd_clk&lcd_data24&pwm1_out>;
+> +		pinctrl-names = "default";
+> +		status = "okay";
+> +	};
+> +
+> +	display-timings {
+> +		native-mode =<&timing0>;
+> +		timing0: timing@0 {
 
-Signed-off-by: Edward Smietana <edward.smietana@gmx.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think you could leave out '@0' part, since there is only one node.
+And if you decide to keep it, then this node should contain 'reg'
+property AFAICT.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 6d63f90..e11372c 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1269,7 +1269,7 @@ static void hdmi_conf_init(struct hdmi_context *hdata)
- 	}
- 
- 	if (hdata->type == HDMI_TYPE13) {
--		/* choose bluescreen (fecal) color */
-+		/* choose bluescreen (brown) color */
- 		hdmi_reg_writeb(hdata, HDMI_V13_BLUE_SCREEN_0, 0x12);
- 		hdmi_reg_writeb(hdata, HDMI_V13_BLUE_SCREEN_1, 0x34);
- 		hdmi_reg_writeb(hdata, HDMI_V13_BLUE_SCREEN_2, 0x56);
--- 
-1.8.1.5
+Otherwise the series looks good to me. With the above issue addressed
+feel free to add
+
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+> +			clock-frequency =<50000>;
+> +			hactive =<1024>;
+> +			vactive =<600>;
+> +			hfront-porch =<64>;
+> +			hback-porch =<16>;
+> +			hsync-len =<48>;
+> +			vback-porch =<64>;
+> +			vfront-porch =<16>;
+> +			vsync-len =<3>;
+> +		};
+> +	};
+> +
+>   	serial@13800000 {
+>   		status = "okay";
+>   	};
+
+Thanks,
+Sylwester
