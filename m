@@ -1,97 +1,73 @@
-From: Ning Jiang <ning.n.jiang@gmail.com>
-Subject: Re: [PATCH] ARM: timer: Shutdown clock event device when stopping
- local timer
-Date: Mon, 1 Apr 2013 10:05:03 +0800
-Message-ID: <CAH3Oq6ThE1RevjWsiWvApi9Z2vvcA9A8utX6LjEWcm=uMPx2jw@mail.gmail.com>
-References: <1364549049-29278-1-git-send-email-ning.n.jiang@gmail.com>
-	<5158CF79.2060702@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5158CF79.2060702@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, davidb@codeaurora.org, dwalker@fifo99.com, bryanh@codeaurora.org, john.stultz@linaro.org, tglx@linutronix.de, linus.walleij@linaro.org, shawn.guo@linaro.org, rob.herring@calxeda.com, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v3] drm/exynos: enable FIMD clocks
+Date: Mon,  1 Apr 2013 14:13:50 +0530
+Message-ID: <1364805830-6129-1-git-send-email-vikas.sajjan@linaro.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, linaro-kernel@lists.linaro.org, jy0922.shim@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2013/4/1 Daniel Lezcano <daniel.lezcano@linaro.org>:
-> On 03/29/2013 10:24 AM, ning.n.jiang@gmail.com wrote:
->> From: Ning Jiang <ning.n.jiang@gmail.com>
->>
->> Currently there are two problems when we try to stop local timer.
->> First, it calls set_mode function directly so mode state is not
->> updated for the clock event device. Second, it makes the device
->> unused instead of shutdown.
->>
->> A subtle error will happen because of it. When a cpu is plugged out
->> it will stop the local timer. It will call tick_nohz_idle_enter()
->> in idle thread afterwards. It will cancel the sched timer and try
->> to reprogram the next event. This is wrong since the local timer
->> is supposed to be stopped.
->>
->> The right way to stop the local timer is to shutdown it by calling
->> clockevents_set_mode(). Thus when we try to reprogram the clock
->> event device, it will return directly without doing anything since
->> the clock mode is CLOCK_EVT_MODE_SHUTDOWN.
->>
->> Signed-off-by: Ning Jiang <ning.n.jiang@gmail.com>
->> ---
->
->
-> Don't you see a kernel BUG with this patch ?
->
-> In the clockevents code, there is:
->
-> /**
->  * clockevents_notify - notification about relevant events
->  */
-> void clockevents_notify(unsigned long reason, void *arg)
-> {
->         ...
->         case CLOCK_EVT_NOTIFY_CPU_DEAD:
->         ...
->                 cpu = *((int *)arg);
->                 list_for_each_entry_safe(dev, tmp, &clockevent_devices,
->                                         list) {
->                        if (cpumask_test_cpu(cpu, dev->cpumask) &&
->                             cpumask_weight(dev->cpumask) == 1 &&
->                             !tick_is_broadcast_device(dev)) {
->                                 BUG_ON(dev->mode !=
->                                         CLOCK_EVT_MODE_UNUSED);
->
->                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->
->                                 list_del(&dev->list);
->                         }
->                 }
->                 break;
->         ...
-> }
->
-> This is called triggered from hrtimer_cpu_notify with the CPU_DEAD event.
->
+While migrating to common clock framework (CCF), found that the FIMD clocks
+were pulled down by the CCF.
+If CCF finds any clock(s) which has NOT been claimed by any of the
+drivers, then such clock(s) are PULLed low by CCF.
 
-The clockevents_do_notify() in clockevents_notify() will call
-tick_notify() which will call tick_shutdown() in turn. tick_shutdown()
-will set clock event device mode to UNUSED. So no panic afterwards.
+By calling clk_prepare_enable() for FIMD clocks fixes the issue.
 
-void clockevents_notify(unsigned long reason, void *arg)
-{
-        ...
-        clockevents_do_notify(reason, arg);
+this patch also replaces clk_disable() with clk_disable_unprepare()
+during exit.
 
-        switch (reason) {
-        case CLOCK_EVT_NOTIFY_CPU_DEAD:
-                ...
-                list_for_each_entry_safe(dev, tmp, &clockevent_devices, list) {
-                        if (cpumask_test_cpu(cpu, dev->cpumask) &&
-                            cpumask_weight(dev->cpumask) == 1 &&
-                            !tick_is_broadcast_device(dev)) {
-                                BUG_ON(dev->mode != CLOCK_EVT_MODE_UNUSED);
-                                list_del(&dev->list);
-                        }
-                }
-                ....
-        }
-        raw_spin_unlock_irqrestore(&clockevents_lock, flags);
-}
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+---
+Changes since v2:
+	- moved clk_prepare_enable() and clk_disable_unprepare() from 
+	fimd_probe() to fimd_clock() as suggested by Inki Dae <inki.dae@samsung.com>
+Changes since v1:
+	- added error checking for clk_prepare_enable() and also replaced 
+	clk_disable() with clk_disable_unprepare() during exit.
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 9537761..f2400c8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -799,18 +799,18 @@ static int fimd_clock(struct fimd_context *ctx, bool enable)
+ 	if (enable) {
+ 		int ret;
+ 
+-		ret = clk_enable(ctx->bus_clk);
++		ret = clk_prepare_enable(ctx->bus_clk);
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		ret = clk_enable(ctx->lcd_clk);
++		ret = clk_prepare_enable(ctx->lcd_clk);
+ 		if  (ret < 0) {
+-			clk_disable(ctx->bus_clk);
++			clk_disable_unprepare(ctx->bus_clk);
+ 			return ret;
+ 		}
+ 	} else {
+-		clk_disable(ctx->lcd_clk);
+-		clk_disable(ctx->bus_clk);
++		clk_disable_unprepare(ctx->lcd_clk);
++		clk_disable_unprepare(ctx->bus_clk);
+ 	}
+ 
+ 	return 0;
+@@ -981,8 +981,8 @@ static int fimd_remove(struct platform_device *pdev)
+ 	if (ctx->suspended)
+ 		goto out;
+ 
+-	clk_disable(ctx->lcd_clk);
+-	clk_disable(ctx->bus_clk);
++	clk_disable_unprepare(ctx->lcd_clk);
++	clk_disable_unprepare(ctx->bus_clk);
+ 
+ 	pm_runtime_set_suspended(dev);
+ 	pm_runtime_put_sync(dev);
+-- 
+1.7.9.5
