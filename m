@@ -1,131 +1,85 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH V2] DMA: PL330: Add check if device tree compatible
-Date: Mon, 1 Apr 2013 23:51:51 +0530
-Message-ID: <20130401182151.GH10326@intel.com>
-References: <1362475531-32260-1-git-send-email-padma.v@samsung.com>
- <1362475531-32260-2-git-send-email-padma.v@samsung.com>
- <20130321093906.GL10326@intel.com>
- <CAL_Jsq+3bJDiA=rXS=WY3BGuRh5X+nyxxosrqtSD9fx-asbCKQ@mail.gmail.com>
+From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V6 4/9] ARM: EXYNOS: Provide regulator to pwm-backlight
+Date: Mon, 1 Apr 2013 14:53:23 -0700
+Message-ID: <1364853208-32503-5-git-send-email-achew@nvidia.com>
+References: <1364853208-32503-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:13276 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757996Ab3DAStd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Apr 2013 14:49:33 -0400
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+3bJDiA=rXS=WY3BGuRh5X+nyxxosrqtSD9fx-asbCKQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364853208-32503-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org
+Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, padma.kvr@gmail.com, sbkim73@samsung.com, "Mark Brown (broonie@opensource.wolfsonmicro.com)" <broonie@opensource.wolfsonmicro.com>, kgene.kim@samsung.com, Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@secretlab.ca>, jon-hunter@ti.com, boojin.kim@samsung.com
 
-On Mon, Apr 01, 2013 at 08:13:31AM -0500, Rob Herring wrote:
-> On Thu, Mar 21, 2013 at 4:39 AM, Vinod Koul <vinod.koul@intel.com> wrote:
-> > On Tue, Mar 05, 2013 at 02:55:31PM +0530, Padmavathi Venna wrote:
-> >> This patch register the dma controller with generic dma helpers only
-> >> in DT case. This also adds some extra error handling in the driver.
-> >>
-> >> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> >> Reported-by: Sachin Kamat <sachin.kamat@linaro.org>
-> 
-> What's the status on this? It is needed for 3.9 to fix pl330 on highbank.
-Well the status is that submitter has been rude. I had few questions and
-comments on this patch and they are yet to be addressed.
+The pwm-backlight driver now takes a mandatory regulator that is gotten
+during driver probe.  Initialize a dummy regulator to satisfy this
+requirement.
 
---
-~Vinod
-> 
-> Rob
-> 
-> >> ---
-> >>
-> >> Based on Vinod Koul next branch.
-> >>
-> >> Changes since V1:
-> >>       - return silently when of_dma_controller_register fails, as
-> >>         suggested by Arnd.
-> >>
-> >>  drivers/dma/pl330.c |   38 +++++++++++++++++++++++++++-----------
-> >>  1 files changed, 27 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> >> index 7181531..5dbc594 100644
-> >> --- a/drivers/dma/pl330.c
-> >> +++ b/drivers/dma/pl330.c
-> >> @@ -2882,7 +2882,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
-> >>  {
-> >>       struct dma_pl330_platdata *pdat;
-> >>       struct dma_pl330_dmac *pdmac;
-> >> -     struct dma_pl330_chan *pch;
-> >> +     struct dma_pl330_chan *pch, *_p;
-> >>       struct pl330_info *pi;
-> >>       struct dma_device *pd;
-> >>       struct resource *res;
-> >> @@ -2984,7 +2984,16 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
-> >>       ret = dma_async_device_register(pd);
-> >>       if (ret) {
-> >>               dev_err(&adev->dev, "unable to register DMAC\n");
-> >> -             goto probe_err2;
-> >> +             goto probe_err3;
-> >> +     }
-> >> +
-> >> +     if (adev->dev.of_node) {
-> >> +             ret = of_dma_controller_register(adev->dev.of_node,
-> >> +                                      of_dma_pl330_xlate, pdmac);
-> >> +             if (ret) {
-> >> +                     dev_err(&adev->dev,
-> >> +                     "unable to register DMA to the generic DT DMA helpers\n");
-> > Indent?
-> >> +             }
-> >>       }
-> >>
-> >>       dev_info(&adev->dev,
-> >> @@ -2995,16 +3004,21 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
-> >>               pi->pcfg.data_bus_width / 8, pi->pcfg.num_chan,
-> >>               pi->pcfg.num_peri, pi->pcfg.num_events);
-> >>
-> >> -     ret = of_dma_controller_register(adev->dev.of_node,
-> >> -                                      of_dma_pl330_xlate, pdmac);
-> >> -     if (ret) {
-> >> -             dev_err(&adev->dev,
-> >> -             "unable to register DMA to the generic DT DMA helpers\n");
-> >> -             goto probe_err2;
-> >> -     }
-> >> -
-> >>       return 0;
-> >> +probe_err3:
-> >> +     amba_set_drvdata(adev, NULL);
-> >>
-> >> +     /* Idle the DMAC */
-> >> +     list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
-> >> +                     chan.device_node) {
-> >> +
-> >> +             /* Remove the channel */
-> >> +             list_del(&pch->chan.device_node);
-> >> +
-> >> +             /* Flush the channel */
-> >> +             pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
-> >> +             pl330_free_chan_resources(&pch->chan);
-> > free_chan for error handling in probe?
-> >
-> >> +     }
-> >>  probe_err2:
-> >>       pl330_del(pi);
-> >>  probe_err1:
-> >> @@ -3023,8 +3037,10 @@ static int pl330_remove(struct amba_device *adev)
-> >>       if (!pdmac)
-> >>               return 0;
-> >>
-> >> -     of_dma_controller_free(adev->dev.of_node);
-> >> +     if (adev->dev.of_node)
-> >> +             of_dma_controller_free(adev->dev.of_node);
-> >>
-> >> +     dma_async_device_unregister(&pdmac->ddma);
-> >>       amba_set_drvdata(adev, NULL);
-> >>
-> >>       /* Idle the DMAC */
-> >> --
-> >> 1.7.4.4
-> >>
+Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-exynos/mach-nuri.c      | 7 +++++++
+ arch/arm/plat-samsung/dev-backlight.c | 9 +++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 1ea7973..0223863 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -294,6 +294,10 @@ static void nuri_bl_exit(struct device *dev)
+ 	gpio_free(EXYNOS4_GPE2(3));
+ }
+ 
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("power", "pwm-backlight");
++
+ /* nuri pwm backlight */
+ static struct platform_pwm_backlight_data nuri_backlight_data = {
+ 	.pwm_id			= 0,
+@@ -1368,6 +1372,9 @@ static void __init nuri_machine_init(void)
+ 	nuri_ehci_init();
+ 	s3c_hsotg_set_platdata(&nuri_hsotg_pdata);
+ 
++	regulator_register_always_on(-1, "backlight-power",
++				     &backlight_supply, 1, 0);
++
+ 	/* Last */
+ 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+ }
+diff --git a/arch/arm/plat-samsung/dev-backlight.c b/arch/arm/plat-samsung/dev-backlight.c
+index 5f197dc..23ce16b 100644
+--- a/arch/arm/plat-samsung/dev-backlight.c
++++ b/arch/arm/plat-samsung/dev-backlight.c
+@@ -14,12 +14,18 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/fixed.h>
+ #include <linux/pwm_backlight.h>
+ 
+ #include <plat/devs.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ 
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("power", "pwm-backlight");
++
+ static int samsung_bl_init(struct device *dev)
+ {
+ 	int ret = 0;
+@@ -37,6 +43,9 @@ static int samsung_bl_init(struct device *dev)
+ 	/* Configure GPIO pin with specific GPIO function for PWM timer */
+ 	s3c_gpio_cfgpin(bl_gpio_info->no, bl_gpio_info->func);
+ 
++	regulator_register_always_on(-1, "backlight-power",
++				     &backlight_supply, 1, 0);
++
+ 	return 0;
+ }
+ 
+-- 
+1.8.1.5
