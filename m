@@ -1,67 +1,115 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/6] pinctrl: Add support for pin control on S3C64xx
-Date: Tue, 02 Apr 2013 10:00:03 +0200
-Message-ID: <1441305.zvZX7Ed4lY@flatron>
-References: <1363642315-10331-1-git-send-email-tomasz.figa@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] clk: exynos5250: register display block gate clocks to
+ common clock framework
+Date: Tue, 02 Apr 2013 17:15:37 +0900
+Message-ID: <22c701ce2f7a$42012550$c6036ff0$%kim@samsung.com>
+References: <1363773968-17433-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f171.google.com ([209.85.215.171]:65082 "EHLO
-	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757101Ab3DBIAH (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:41343 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761050Ab3DBIPk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 04:00:07 -0400
-Received: by mail-ea0-f171.google.com with SMTP id b15so67600eae.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Apr 2013 01:00:06 -0700 (PDT)
-In-Reply-To: <1363642315-10331-1-git-send-email-tomasz.figa@gmail.com>
+	Tue, 2 Apr 2013 04:15:40 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MKM00A41C9UMLI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 17:15:39 +0900 (KST)
+In-reply-to: <1363773968-17433-1-git-send-email-l.krishna@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: thomas.abraham@linaro.org, s.nawrocki@samsung.com
 
-Hi,
+Leela Krishna Amudala wrote:
+> 
+> Add gate clocks for fimd, mie, dsim, dp, mixer and hdmi.
+> Register it to common clock framework.
+> 
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/clock/exynos5250-clock.txt |  6 ++++++
+>  drivers/clk/samsung/clk-exynos5250.c                         | 10
++++++++++-
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> index 7104f02..781a627 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> @@ -149,6 +149,12 @@ clock which they consume.
+>    wdt			336
+>    rtc			337
+>    tmu			338
+> +  fimd1			339
+> +  mie1			340
+> +  dsim0			341
+> +  dp			342
+> +  mixer			343
+> +  hdmi			345
+> 
+>  Example 1: An example of a clock controller node is listed below.
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c
+> b/drivers/clk/samsung/clk-exynos5250.c
+> index 1152125..5c1583a 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -62,6 +62,7 @@
+>  #define GATE_IP_PERIS		0x10960
+>  #define SRC_CDREX		0x20200
+>  #define PLL_DIV2_SEL		0x20a24
+> +#define GATE_IP_DISP1		0x10928
+> 
+>  /*
+>   * Let each supported clock get a unique id. This id is used to lookup
+> the clock
+> @@ -98,7 +99,7 @@ enum exynos5250_clks {
+>  	spi2, i2s1, i2s2, pcm1, pcm2, pwm, spdif, ac97, hsi2c0, hsi2c1,
+> hsi2c2,
+>  	hsi2c3, chipid, sysreg, pmu, cmu_top, cmu_core, cmu_mem, tzpc0,
+> tzpc1,
+>  	tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec,
+> mct,
+> -	wdt, rtc, tmu,
+> +	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi,
+> 
+>  	nr_clks,
+>  };
+> @@ -150,6 +151,7 @@ static __initdata unsigned long exynos5250_clk_regs[]
+> = {
+>  	GATE_IP_PERIS,
+>  	SRC_CDREX,
+>  	PLL_DIV2_SEL,
+> +	GATE_IP_DISP1,
+>  };
+> 
+>  /* list of all parent clock list */
+> @@ -455,6 +457,12 @@ struct samsung_gate_clock exynos5250_gate_clks[]
+> __initdata = {
+>  			SRC_MASK_PERIC1, 20, CLK_SET_RATE_PARENT, 0),
+>  	GATE(sclk_spi2, "sclk_spi2", "div_spi_pre2",
+>  			SRC_MASK_PERIC1, 24, CLK_SET_RATE_PARENT, 0),
+> +	GATE(fimd1, "fimd1", "aclk200", GATE_IP_DISP1, 0, 0, 0),
+> +	GATE(mie1, "mie1", "aclk200", GATE_IP_DISP1, 1, 0, 0),
+> +	GATE(dsim0, "dsim0", "aclk200", GATE_IP_DISP1, 3, 0, 0),
+> +	GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
+> +	GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
+> +	GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
+>  };
+> 
+>  static __initdata struct of_device_id ext_clk_match[] = {
+> --
+> 1.8.0
 
-On Monday 18 of March 2013 22:31:49 Tomasz Figa wrote:
-> This series makes necessary preparations to add support for pin
-> controller available on Samsung S3C64xx using pinctrl-samsung driver
-> and then adds pinctrl-s3c64xx driver which implements SoC-specific part
-> of the code.
-> 
-> It has been tested on a tiny6410 (mini6410-compatible) board with my
-> patches for samsung-time cleanup and S3C64xx Device Tree support:
->  - http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16664
->  -
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg16325.
-> html
-> 
-> Just the driver is added for now, as this is the part that can safely go
-> through Linus' pinctrl tree. I will post appropriate enablement patches
-> after all the dependencies get merged to Kgene's tree.
-> 
-> See particular patches for more detailed description of all changes.
-> 
-> Tomasz Figa (6):
->   pinctrl: samsung: Protect bank registers with a spinlock
->   pinctrl: samsung: Include pinctrl-exynos driver data conditionally
->   pinctrl: samsung: Split pin bank description into two structures
->   pinctrl: samsung: Remove hardcoded register offsets
->   pinctrl: samsung: Handle banks with two configuration registers
->   pinctrl: Add pinctrl-s3c64xx driver
-> 
->  .../bindings/pinctrl/samsung-pinctrl.txt           |   3 +
->  drivers/pinctrl/Kconfig                            |   5 +
->  drivers/pinctrl/Makefile                           |   1 +
->  drivers/pinctrl/pinctrl-exynos.c                   |  36 +-
->  drivers/pinctrl/pinctrl-exynos.h                   |  16 +-
->  drivers/pinctrl/pinctrl-s3c64xx.c                  | 817
-> +++++++++++++++++++++ drivers/pinctrl/pinctrl-samsung.c                
->  |  99 ++-
->  drivers/pinctrl/pinctrl-samsung.h                  |  42 +-
->  8 files changed, 947 insertions(+), 72 deletions(-)
->  create mode 100644 drivers/pinctrl/pinctrl-s3c64xx.c
+Looks OK to me, applied.
 
-Any comments about this series?
+Thanks.
 
-Best regards,
-Tomasz
+- Kukjin
