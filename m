@@ -1,86 +1,59 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v3 05/11] usb: dwc3: exynos: Enable runtime power
- management
-Date: Tue, 2 Apr 2013 11:33:27 +0300
-Message-ID: <20130402083326.GI30286@arwen.pp.htv.fi>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
- <1364824448-14732-6-git-send-email-gautam.vivek@samsung.com>
-Reply-To: <balbi@ti.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: S3C64XX: Clear DMA flags on channel request
+Date: Tue, 02 Apr 2013 18:39:14 +0900
+Message-ID: <234801ce2f85$efe2d820$cfa88860$%kim@samsung.com>
+References: <1364469746-5026-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="e5GLnnZ8mDMEwH4V"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1364824448-14732-6-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
---e5GLnnZ8mDMEwH4V
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:30138 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760555Ab3DBJjX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Apr 2013 05:39:23 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MKM00IU9G4QNE30@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 18:39:14 +0900 (KST)
+In-reply-to: <1364469746-5026-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Charles Keepax' <ckeepax@opensource.wolfsonmicro.com>
 
-On Mon, Apr 01, 2013 at 07:24:04PM +0530, Vivek Gautam wrote:
-> Enabling runtime power management on dwc3-exynos
-> letting dwc3 controller to be autosuspended on exynos
-> platform when not in use.
->=20
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Mark Brown wrote:
+> 
+> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> 
+> This patch clears the DMA flags when a DMA channel is requested. This is
+> necessary because otherwise the channel may inherit incompatible
+> settings from its last usage.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 > ---
->  drivers/usb/dwc3/dwc3-exynos.c |   12 ++++++++++++
->  1 files changed, 12 insertions(+), 0 deletions(-)
->=20
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exyno=
-s.c
-> index 1ea7bd8..1ae81a0 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -19,6 +19,7 @@
->  #include <linux/platform_data/dwc3-exynos.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/clk.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/usb/otg.h>
->  #include <linux/usb/nop-usb-xceiv.h>
->  #include <linux/of.h>
-> @@ -138,6 +139,11 @@ static int dwc3_exynos_probe(struct platform_device =
-*pdev)
->  	exynos->dev	=3D dev;
->  	exynos->clk	=3D clk;
-> =20
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
-> +	pm_runtime_get_sync(dev);
-> +	pm_runtime_forbid(dev);
+>  arch/arm/mach-s3c64xx/dma.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+> index 6af1aa1..759846c 100644
+> --- a/arch/arm/mach-s3c64xx/dma.c
+> +++ b/arch/arm/mach-s3c64xx/dma.c
+> @@ -509,6 +509,7 @@ int s3c2410_dma_request(enum dma_ch channel,
+>  	chan->client = client;
+>  	chan->in_use = 1;
+>  	chan->peripheral = channel;
+> +	chan->flags = 0;
+> 
+>  	local_irq_restore(flags);
+> 
+> --
+> 1.7.10.4
 
-don't you want to use autosuspend() to avoid consecutive suspend/resume
-calls when controller is under use ?
+Applied, thanks.
 
---=20
-balbi
-
---e5GLnnZ8mDMEwH4V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRWpfWAAoJEIaOsuA1yqRE/ecP/jaogkFFALSZKOGLPHt3+pj1
-mmiYf2UDYTBfjg7IPBOh8IR5aebLk2TqaytzxCE0Uf3N9hkmsi4i53ucHHqebPRD
-fK7EwPnzPq0IzuF70OUtPAOcBZ9Y6RGe1lhogLOK8b1ivWRNqm2jOOmYLhmHBbEf
-pnhvrFCHlf5tXRyuXWOXiFMpPF5ivDQyylM9yBja+FWOGaCMLoUXNi5KL+j/E3S6
-NKtRiWmiTLdOxiSjnPyQ0PcniB0K87dzLSg8Edcj0mu+jrNyhCLOeKuaLyGsDXkN
-LgS1FJK56+qpHLCpDa/yfWEBxV93vlP+alLhTul1ipNQhOviIy94AQb6wGb3LKRW
-T6BIZTp7G0BzrjJDGXwm4LLBACUeT+4B7D8JK7uLizqmaXF8kE8lKF+VctoYhFte
-qixZpUIluzm9f1Mv320+8wHSU9PiJZ6rXmBBUvPWkrwH0b6UQIWMD6LHKyHdcBr5
-aIUt81j/skbqtNcC7MTqY75ekzcMwvW91QvwUKvNc+A1IxTsAFi4MbdgeifEbbGx
-GS6z0RJYthyW8hT6o2BcXnM/FstLvV4dO6qu3yYnjG13wLlpsks6dNG2seEEqLtr
-L3J++e7oSzMzC067tj8FHwnyM/7JyFFTehcHPKyJ7PTFdLvSf5MxR97vIVlxCMtH
-ijKV+uMjgK1Y8F95NPtW
-=iuwz
------END PGP SIGNATURE-----
-
---e5GLnnZ8mDMEwH4V--
+- Kukjin
