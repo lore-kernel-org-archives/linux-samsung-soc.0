@@ -1,60 +1,56 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Tue, 2 Apr 2013 16:04:01 +0530
-Message-ID: <CAFp+6iFW9-fOCgCfpfQzS9PZyjb9_NahjSxzbrS0AhVeNngyXw@mail.gmail.com>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
-	<1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
-	<20130402082342.GF30286@arwen.pp.htv.fi>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS5440: DTS: Add virtual GIC DT bindings
+Date: Tue, 02 Apr 2013 19:37:32 +0900
+Message-ID: <239601ce2f8e$154b9720$3fe2c560$%kim@samsung.com>
+References: <1363858839-13578-1-git-send-email-giridhar.maruthy@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130402082342.GF30286@arwen.pp.htv.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:9104 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760938Ab3DBKhe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Apr 2013 06:37:34 -0400
+In-reply-to: <1363858839-13578-1-git-send-email-giridhar.maruthy@linaro.org>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Giridhar Maruthy' <giridhar.maruthy@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, thomas.abraham@linaro.org, kvm@vger.kernel.org
 
-Hi,
+Giridhar Maruthy wrote:
+> 
+> Exynos5440 has GIC which has virtualization support
+> in them. These are used by KVM.
+> 
+> Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5440.dtsi |    6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5440.dtsi
+> b/arch/arm/boot/dts/exynos5440.dtsi
+> index c374a31..25c6134 100644
+> --- a/arch/arm/boot/dts/exynos5440.dtsi
+> +++ b/arch/arm/boot/dts/exynos5440.dtsi
+> @@ -26,7 +26,11 @@
+>  		compatible = "arm,cortex-a15-gic";
+>  		#interrupt-cells = <3>;
+>  		interrupt-controller;
+> -		reg = <0x2E1000 0x1000>, <0x2E2000 0x1000>;
+> +		reg =	<0x2E1000 0x1000>,
+> +			<0x2E2000 0x1000>,
+> +			<0x2E4000 0x2000>,
+> +			<0x2E6000 0x2000>;
+> +		interrupts = <1 9 0xf04>;
+>  	};
+> 
+>  	cpus {
+> --
+> 1.7.9.5
 
+Looks ok to me, applied.
 
-On Tue, Apr 2, 2013 at 1:53 PM, Felipe Balbi <balbi@ti.com> wrote:
-> On Mon, Apr 01, 2013 at 07:24:00PM +0530, Vivek Gautam wrote:
->> Adding  APIs to handle runtime power management on PHY
->> devices. PHY consumers may need to wake-up/suspend PHYs
->> when they work across autosuspend.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> ---
->>  include/linux/usb/phy.h |  141 +++++++++++++++++++++++++++++++++++++++++++++++
->>  1 files changed, 141 insertions(+), 0 deletions(-)
->>
->> diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
->> index 6b5978f..01bf9c1 100644
->> --- a/include/linux/usb/phy.h
->> +++ b/include/linux/usb/phy.h
->> @@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(enum usb_phy_type type)
->>               return "UNKNOWN PHY TYPE";
->>       }
->>  }
->> +
->> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
->> +{
->> +     if (!x || !x->dev) {
->> +             dev_err(x->dev, "no PHY or attached device available\n");
->> +             return;
->> +             }
->
-> wrong indentation, also, I'm not sure we should allow calls with NULL
-> pointers. Perhaps a WARN() so we get API offenders early enough ?
+Thanks.
 
-True, bad coding style :-(
-We should be handling dev_err with a NULL pointer.
-Will just keep here:
-if (WARN_ON(!x->dev))
-      return .... ;
-
-
-
--- 
-Thanks & Regards
-Vivek
+- Kukjin
