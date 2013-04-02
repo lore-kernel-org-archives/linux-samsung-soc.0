@@ -1,84 +1,60 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v3 02/11] USB: dwc3: Adjust runtime pm to allow
- autosuspend
-Date: Tue, 2 Apr 2013 11:29:52 +0300
-Message-ID: <20130402082952.GG30286@arwen.pp.htv.fi>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
- <1364824448-14732-3-git-send-email-gautam.vivek@samsung.com>
-Reply-To: <balbi@ti.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 00/21] Various fixes and extensions to Exynos4 clock driver
+Date: Tue, 02 Apr 2013 17:30:39 +0900
+Message-ID: <22e101ce2f7c$5b6a0cd0$123e2670$%kim@samsung.com>
+References: <1364382178-25248-1-git-send-email-t.figa@samsung.com>
+ <CAJuYYwQap4pZ6qTgBPGeSWbMFm-ZhqLfv7wBMVYjK1v0YHr_kQ@mail.gmail.com>
+ <1496108.NDegb7PXrt@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xjyYRNSh/RebjC6o"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1364824448-14732-3-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
---xjyYRNSh/RebjC6o
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:63117 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760054Ab3DBIal (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Apr 2013 04:30:41 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MKM00LPUCZ3RNL0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 17:30:40 +0900 (KST)
+In-reply-to: <1496108.NDegb7PXrt@flatron>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, mturquette@linaro.org, a.hajda@samsung.com, l.majewski@samsung.com
 
-On Mon, Apr 01, 2013 at 07:24:01PM +0530, Vivek Gautam wrote:
-> The current code in the dwc3 probe effectively disables runtime pm
-> from ever working because it calls a get() that was never put() until
-> device removal.  Change the runtime pm code to match the standard
-> formula and allow runtime pm to function.
->=20
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> CC: Doug Anderson <dianders@chromium.org>
-> ---
->  drivers/usb/dwc3/core.c |    8 +++++++-
->  1 files changed, 7 insertions(+), 1 deletions(-)
->=20
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index e2325ad..3a6993c 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -491,6 +491,11 @@ static int dwc3_probe(struct platform_device *pdev)
-> =20
->  	dwc->needs_fifo_resize =3D of_property_read_bool(node, "tx-fifo-resize"=
-);
-> =20
-> +	/* Setting device state as 'suspended' initially,
+Tomasz Figa wrote:
+> 
+> On Saturday 30 of March 2013 15:33:00 Thomas Abraham wrote:
+> > Hi Tomasz,
+> >
+> > On 27 March 2013 16:32, Tomasz Figa <t.figa@samsung.com> wrote:
+> > > This series is a collection of various fixes and extensions to Exynos4
+> > > clock driver, which improve coverage of clocks present on Exynos4 SoCs
+> > > and fix problems discovered during our internal work and testing.
+> >
+> > Nice series. Thanks for the improvements and fixes. Looking at the
+> > second patch in this series, I crossed checked again with the
+> > Exynos4412 user manual that I have. Your modifications are different
+> > from what the manual has listed. I suspect, you have a newer copy of
+> > the manual.
+> 
+> Right. I have checked revisions 0.0, 0.1 and 1.1 of the manual and indeed
+> there are differences in clock layout between 0.1 and 1.1. My patches are
+> based on revision 1.1.
+> 
+Correct...hmm...
 
-wrong comment style.
+> > For this series:
+> > Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+> 
+Yes, looks good to me but would be better if I could get Mike's ack on this
+series.
 
-> +	 * to make sure we know device state prior to
-> +	 * pm_runtime_enable
-> +	 */
-> +	pm_runtime_set_suspended(dev);
+Thanks.
 
-didn't Alan mention this should be done at the Bus level ? In that case,
-shouldn't you have call pm_runtime_set_active/suspended() based on
-DT's status=3Dokay or status=3Ddisabled ? Or something similar ?
-
---=20
-balbi
-
---xjyYRNSh/RebjC6o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRWpcAAAoJEIaOsuA1yqRE7w8P/0tYBYCbwk6MH2R8R8r27NyU
-FJEcTw0DIhca4LZgXE/iVUtHiov+BufaelYt5GMLEkdTFR+0NGz7WPpGtEZdnscH
-tFIFlPa+RVED5ug+8emP4i4DQeuuSNChzojGX2+RgkWtbgSB1T5o+Zr+v5g9Q550
-2dyESBkcDjI/pArcZMjgXZCaAb/tdRJ9Dv8dzv0Da4+lQWKTb20HRRbB80OhKfnc
-EoAywUiMNIbhuEn08C41rnNz7WcYqAQ6IbImiRzc7rfqK7Lhu2lzi38gpCrTRJMR
-35q5v4OxRt+3inTAGIdH+d4Sq/HwoX2DVRUTjQ1Pp9V/KeOtTrbtMGDwPvJHnu6h
-zOYSZaoNTTCYzJKHrvS7+BnFZxCTe1ogJnbUeF/wlnHm6txRTC4koSS+jTb338Ys
-IhjAYxHMFYNxOzZgXfGv5xrbJyYwCxPhuOqQ8LY77vPA2Ri64+QUHW+1BURWYACb
-AFBrUBhX++Y3OqrUScZbMwXSzWN0pvHQsMgwe+PhDBEgTvUPtrmm6SXgkcDbP3ni
-W0UpylczpwOI5P3osDlwyvm+COY3wyJeomcESgp6FfpLXAG78JHv27HtSVOQilgf
-pYsUSSlaClr0X6Ghv3giuatx0+i/hTJgiHPafFlJuTTYUcXfD0i3pNligWc/4z6U
-THmn6TxkxNY4nWbzyNeQ
-=vauX
------END PGP SIGNATURE-----
-
---xjyYRNSh/RebjC6o--
+- Kukjin
