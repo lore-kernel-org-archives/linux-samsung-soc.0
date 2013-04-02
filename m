@@ -1,67 +1,89 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH V3 1/7] ARM: dts: Add pin-control related changes for Arndale board
-Date: Tue,  2 Apr 2013 13:45:01 +0530
-Message-ID: <1364890507-19261-2-git-send-email-tushar.behera@linaro.org>
+Subject: [PATCH V3 3/7] ARM: dts: Add gpio-button entries for Arndale board
+Date: Tue,  2 Apr 2013 13:45:03 +0530
+Message-ID: <1364890507-19261-4-git-send-email-tushar.behera@linaro.org>
 References: <1364890507-19261-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f47.google.com ([209.85.210.47]:60151 "EHLO
-	mail-da0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932234Ab3DBI0v (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:54756 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760798Ab3DBI1A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 04:26:51 -0400
-Received: by mail-da0-f47.google.com with SMTP id s35so91783dak.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Apr 2013 01:26:51 -0700 (PDT)
+	Tue, 2 Apr 2013 04:27:00 -0400
+Received: by mail-pd0-f182.google.com with SMTP id 3so112618pdj.27
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Apr 2013 01:26:59 -0700 (PDT)
 In-Reply-To: <1364890507-19261-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 Cc: kgene.kim@samsung.com, patches@linaro.org
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
-This is a new patch in the patch-set.
+Added GPIO buttons DT node to Arndale board file.
 
- arch/arm/boot/dts/exynos5250-arndale.dts |   13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+Changes for V3:
+* Removed redundant #address-cells and #size-cells
+* Pin-control related modifications.
+
+
+ arch/arm/boot/dts/exynos5250-arndale.dts |   46 ++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 5de019c..7e7a61e 100644
+index d07a21f..03c9ad5 100644
 --- a/arch/arm/boot/dts/exynos5250-arndale.dts
 +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -69,15 +69,12 @@
- 		samsung,dw-mshc-ciu-div = <3>;
- 		samsung,dw-mshc-sdr-timing = <2 3>;
- 		samsung,dw-mshc-ddr-timing = <1 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
- 
- 		slot@0 {
- 			reg = <0>;
- 			bus-width = <8>;
--			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
--				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
--				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>,
--				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
--				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>;
+@@ -122,4 +122,50 @@
+ 			clock-frequency = <24000000>;
  		};
  	};
- 
-@@ -93,14 +90,12 @@
- 		samsung,dw-mshc-ciu-div = <3>;
- 		samsung,dw-mshc-sdr-timing = <2 3>;
- 		samsung,dw-mshc-ddr-timing = <1 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
- 
- 		slot@0 {
- 			reg = <0>;
- 			bus-width = <4>;
--			samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
--			gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
--				<&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
--				<&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>;
- 		};
- 	};
- 
++
++	gpio_keys {
++		compatible = "gpio-keys";
++
++		menu {
++			label = "SW-TACT2";
++			gpios = <&gpx1 4 1>;
++			linux,code = <139>;
++			gpio-key,wakeup;
++		};
++
++		home {
++			label = "SW-TACT3";
++			gpios = <&gpx1 5 1>;
++			linux,code = <102>;
++			gpio-key,wakeup;
++		};
++
++		up {
++			label = "SW-TACT4";
++			gpios = <&gpx1 6 1>;
++			linux,code = <103>;
++			gpio-key,wakeup;
++		};
++
++		down {
++			label = "SW-TACT5";
++			gpios = <&gpx1 7 1>;
++			linux,code = <108>;
++			gpio-key,wakeup;
++		};
++
++		back {
++			label = "SW-TACT6";
++			gpios = <&gpx2 0 1>;
++			linux,code = <158>;
++			gpio-key,wakeup;
++		};
++
++		wakeup {
++			label = "SW-TACT7";
++			gpios = <&gpx2 1 1>;
++			linux,code = <143>;
++			gpio-key,wakeup;
++		};
++	};
+ };
 -- 
 1.7.9.5
