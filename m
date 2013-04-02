@@ -1,65 +1,45 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: Fix typo "CONFIG_SAMSUNG_DEV_RTC"
-Date: Tue, 02 Apr 2013 19:04:35 +0900
-Message-ID: <237b01ce2f89$7af00b60$70d02220$%kim@samsung.com>
-References: <1364570435.1345.82.camel@x61.thuisdomein>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: EXYNOS will support only DT from v3.10
+Date: Tue, 02 Apr 2013 12:15:57 +0200
+Message-ID: <515AAFDD.1060204@samsung.com>
+References: <17a501ce2948$17037610$450a6230$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62015 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755434Ab3DBKEh convert rfc822-to-8bit (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:63772 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760893Ab3DBKQE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 06:04:37 -0400
-In-reply-to: <1364570435.1345.82.camel@x61.thuisdomein>
-Content-language: ko
+	Tue, 2 Apr 2013 06:16:04 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MKM008GMHRVP150@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 11:16:01 +0100 (BST)
+In-reply-to: <17a501ce2948$17037610$450a6230$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, olof@lixom.net, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas P Abraham' <thomas.ab@samsung.com>, heiko@sntech.de, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
 
-Paul Bolle wrote:
+On 03/25/2013 12:01 PM, Kukjin Kim wrote:
+> Hi all,
 > 
-> s3c_rtc_setname() tests for CONFIG_SAMSUNG_DEV_RTC or
-> CONFIG_PLAT_S3C24XX. But of these two macros only CONFIG_PLAT_S3C24XX
-> actually exists. Now we can see that s3c_device_rtc is only defined if
-> either CONFIG_PLAT_S3C24XX or CONFIG_S3C_DEV_RTC are defined. So,
-> apparently, it was intended to use CONFIG_S3C_DEV_RTC here.
+> As we discussed before, it's time to decide to support non-DT for EXYNOS
+> SoCs.
 > 
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
-> ---
-> 0) Untested.
-> 
-> 1) Introduced in commit commit b2994d318dc78c9a4a43605629f00217335ada28
-> ("ARM: S3C2443/S3C2416: add s3c_rtc_setname and rename rtc devices"),
-> which shipped in v3.4. Should this go to stable too (after testing)?
-> 
-Let me check again, and if required, I will add Cc to stable.
+> If everybody else agrees to drop non-DT support from v3.10, I will. Feel
+> free to talk your opinion about that.
 
->  arch/arm/plat-samsung/include/plat/rtc-core.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/rtc-core.h
-> b/arch/arm/plat-samsung/include/plat/rtc-core.h
-> index 21d8594..7b542f7 100644
-> --- a/arch/arm/plat-samsung/include/plat/rtc-core.h
-> +++ b/arch/arm/plat-samsung/include/plat/rtc-core.h
-> @@ -19,7 +19,7 @@
->  /* re-define device name depending on support. */
->  static inline void s3c_rtc_setname(char *name)
->  {
-> -#if defined(CONFIG_SAMSUNG_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
-> +#if defined(CONFIG_S3C_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
+I'm fine with supporting Exynos as dt-only from 3.10. We just need to
+resolve some issues with samsung pwm/timers to get DT board support for
+Universal_c210 working. Currently Tomasz Figa is working on it. Hopefully
+it all can be finished this week.
 
-Yes, according to devs.c file in plat-samsung, SAMSUNG_DEV_RTC should be changed to S3C_DEV_RTC.
+I'll see if I can find some spare time and help out with porting S5PV210
+to DT.
 
->  	s3c_device_rtc.name = name;
->  #endif
->  }
-> --
-> 1.7.11.7
 
-Will apply after checking about stable, thanks.
-
-- Kukjin
+Regards,
+Sylwester
