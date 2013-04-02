@@ -1,68 +1,48 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] exynos4-is: Correct clock properties description at the DT
- binding documentation
-Date: Tue, 02 Apr 2013 15:32:10 +0200
-Message-ID: <1364909530-25392-1-git-send-email-s.nawrocki@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2] mmc: dwmmc: let device core setup the default pin configuration
+Date: Tue, 2 Apr 2013 08:37:35 -0700
+Message-ID: <CAD=FV=Xck5XW3LPmvkMfP=dfmnDH+kG4VYkRetW+SJ-bAz7SqQ@mail.gmail.com>
+References: <1364882999-31670-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45247 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760860Ab3DBNc0 (ORCPT
+Received: from mail-la0-f53.google.com ([209.85.215.53]:44240 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932377Ab3DBPhh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 09:32:26 -0400
+	Tue, 2 Apr 2013 11:37:37 -0400
+Received: by mail-la0-f53.google.com with SMTP id fr10so520700lab.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Apr 2013 08:37:35 -0700 (PDT)
+In-Reply-To: <1364882999-31670-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, patches@linaro.org
 
-The 'camera' DT node needs to have sclk_cam0/1 and pxl_async0/1 clocks
-specified, while 'fimc' nodes should have only "fimc" and "sclk_fimc".
-"mux" and "parent" are leftovers from early versions of patches adding
-DT support, when the IP bus clock parent clock was being set by the
-driver. A better solution is needed to have e.g. clocks driver setting
-all required parent clocks, before clock consumers start using the
-clocks. Currently this binding doesn't describe the parent clocks setup,
-it needs to be specified and handled somewhere else.
+Thomas,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- .../devicetree/bindings/media/samsung-fimc.txt     |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+On Mon, Apr 1, 2013 at 11:09 PM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
+> With device core now able to setup the default pin configuration,
+> the pin configuration code based on the deprecated Samsung specific
+> gpio bindings is removed.
+>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Tested-by: Doug Anderson <dianders@chromium.org>
 
-diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-index 2a63ddd..51c776b 100644
---- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-+++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-@@ -17,9 +17,9 @@ Required properties:
+You missed Seungwon's other feedback.  Please change the title from
+"mmc: dwmmc: let device core setup the default pin configuration" to
+"mmc: dw_mmc: let device core setup the default pin configuration".
+He requested that the tag have the underscore in it for consistency.
 
- - compatible	: must be "samsung,fimc", "simple-bus"
- - clocks	: list of clock specifiers, corresponding to entries in
--		  clock-names property;
--- clock-names	: must contain "fimc", "sclk_fimc" entries, matching entries
--		  in the clocks property.
-+		  the clock-names property;
-+- clock-names	: must contain "sclk_cam0", "sclk_cam1", "pxl_async0",
-+		  "pxl_async1" entries, matching entries in the clocks property.
+If you're resending, it also seems like it might be nice to rebase this atop:
 
- The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
- to define a required pinctrl state named "default" and optional pinctrl states:
-@@ -32,7 +32,6 @@ way around.
+0f6e73d mmc: dw_mmc: Add MSHC compatible for Exynos4412
 
- The 'camera' node must include at least one 'fimc' child node.
+...just to avoid the simple merge conflict when applying?
 
--
- 'fimc' device nodes
- -------------------
+Otherwise everything here looks great...
 
-@@ -44,8 +43,7 @@ Required properties:
- - interrupts: should contain FIMC interrupt;
- - clocks: list of clock specifiers, must contain an entry for each required
-   entry in clock-names;
--- clock-names: must include "fimc", "sclk_fimc", "mux" entries and optionally
--  "parent" entry.
-+- clock-names: must contain "fimc", "sclk_fimc" entries.
- - samsung,pix-limits: an array of maximum supported image sizes in pixels, for
-   details refer to Table 2-1 in the S5PV210 SoC User Manual; The meaning of
-   each cell is as follows:
---
-1.7.9.5
+-Doug
