@@ -1,71 +1,84 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Use wfi macro in platform_do_lowpower
-Date: Tue, 02 Apr 2013 13:59:36 +0530
-Message-ID: <515A96F0.2090504@linaro.org>
-References: <1362740988-16483-1-git-send-email-tushar.behera@linaro.org>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v3 02/11] USB: dwc3: Adjust runtime pm to allow
+ autosuspend
+Date: Tue, 2 Apr 2013 11:29:52 +0300
+Message-ID: <20130402082952.GG30286@arwen.pp.htv.fi>
+References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+ <1364824448-14732-3-git-send-email-gautam.vivek@samsung.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:48120 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761313Ab3DBI3l (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 04:29:41 -0400
-Received: by mail-pb0-f41.google.com with SMTP id mc17so117430pbc.14
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Apr 2013 01:29:41 -0700 (PDT)
-In-Reply-To: <1362740988-16483-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xjyYRNSh/RebjC6o"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1364824448-14732-3-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, patches@linaro.org
 
-Ping !!!
+--xjyYRNSh/RebjC6o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 03/08/2013 04:39 PM, Tushar Behera wrote:
-> As per commit b3377d186572 ("ARM: 7064/1: vexpress: Use wfi macro
-> in platform_do_lowpower."), wfi macro should be used instead
-> of the hardcoded WFI instruction.
-> 
-> This fixes following oops when the kernel is compiled in Thumb-2 mode
-> on EXYNOS5. (Tested on EXYNOS5250 based Arndale board)
-> 
-> $ reboot
-> Disabling non-boot CPUs ...
-> IRQ153 no longer affine to CPU1
-> CPU1: shutdown
-> Internal error: Oops - undefined instruction: 0 [#1] PREEMPT SMP THUMB2
-> Modules linked in:
-> CPU: 1    Not tainted  (3.9.0-rc1-00015-gce76372 #1)
-> PC is at 0xc065858e
-> LR is at exynos_cpu_die+0x53/0xc0
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+On Mon, Apr 01, 2013 at 07:24:01PM +0530, Vivek Gautam wrote:
+> The current code in the dwc3 probe effectively disables runtime pm
+> from ever working because it calls a get() that was never put() until
+> device removal.  Change the runtime pm code to match the standard
+> formula and allow runtime pm to function.
+>=20
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> CC: Doug Anderson <dianders@chromium.org>
 > ---
->  arch/arm/mach-exynos/hotplug.c |    8 +-------
->  1 files changed, 1 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-> index c3f825b..d9712fe 100644
-> --- a/arch/arm/mach-exynos/hotplug.c
-> +++ b/arch/arm/mach-exynos/hotplug.c
-> @@ -99,13 +99,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
->  		if (cpu == 1)
->  			__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
->  
-> -		/*
-> -		 * here's the WFI
-> -		 */
-> -		asm(".word	0xe320f003\n"
-> -		    :
-> -		    :
-> -		    : "memory", "cc");
-> +		wfi();
->  
->  		if (pen_release == cpu_logical_map(cpu)) {
->  			/*
-> 
+>  drivers/usb/dwc3/core.c |    8 +++++++-
+>  1 files changed, 7 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index e2325ad..3a6993c 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -491,6 +491,11 @@ static int dwc3_probe(struct platform_device *pdev)
+> =20
+>  	dwc->needs_fifo_resize =3D of_property_read_bool(node, "tx-fifo-resize"=
+);
+> =20
+> +	/* Setting device state as 'suspended' initially,
 
+wrong comment style.
 
--- 
-Tushar Behera
+> +	 * to make sure we know device state prior to
+> +	 * pm_runtime_enable
+> +	 */
+> +	pm_runtime_set_suspended(dev);
+
+didn't Alan mention this should be done at the Bus level ? In that case,
+shouldn't you have call pm_runtime_set_active/suspended() based on
+DT's status=3Dokay or status=3Ddisabled ? Or something similar ?
+
+--=20
+balbi
+
+--xjyYRNSh/RebjC6o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRWpcAAAoJEIaOsuA1yqRE7w8P/0tYBYCbwk6MH2R8R8r27NyU
+FJEcTw0DIhca4LZgXE/iVUtHiov+BufaelYt5GMLEkdTFR+0NGz7WPpGtEZdnscH
+tFIFlPa+RVED5ug+8emP4i4DQeuuSNChzojGX2+RgkWtbgSB1T5o+Zr+v5g9Q550
+2dyESBkcDjI/pArcZMjgXZCaAb/tdRJ9Dv8dzv0Da4+lQWKTb20HRRbB80OhKfnc
+EoAywUiMNIbhuEn08C41rnNz7WcYqAQ6IbImiRzc7rfqK7Lhu2lzi38gpCrTRJMR
+35q5v4OxRt+3inTAGIdH+d4Sq/HwoX2DVRUTjQ1Pp9V/KeOtTrbtMGDwPvJHnu6h
+zOYSZaoNTTCYzJKHrvS7+BnFZxCTe1ogJnbUeF/wlnHm6txRTC4koSS+jTb338Ys
+IhjAYxHMFYNxOzZgXfGv5xrbJyYwCxPhuOqQ8LY77vPA2Ri64+QUHW+1BURWYACb
+AFBrUBhX++Y3OqrUScZbMwXSzWN0pvHQsMgwe+PhDBEgTvUPtrmm6SXgkcDbP3ni
+W0UpylczpwOI5P3osDlwyvm+COY3wyJeomcESgp6FfpLXAG78JHv27HtSVOQilgf
+pYsUSSlaClr0X6Ghv3giuatx0+i/hTJgiHPafFlJuTTYUcXfD0i3pNligWc/4z6U
+THmn6TxkxNY4nWbzyNeQ
+=vauX
+-----END PGP SIGNATURE-----
+
+--xjyYRNSh/RebjC6o--
