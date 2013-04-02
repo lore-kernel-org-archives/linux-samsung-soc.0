@@ -1,114 +1,68 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] clk: exynos5250: register display block gate clocks to
- common clock framework
-Date: Tue, 02 Apr 2013 17:15:37 +0900
-Message-ID: <22c701ce2f7a$42012550$c6036ff0$%kim@samsung.com>
-References: <1363773968-17433-1-git-send-email-l.krishna@samsung.com>
+Subject: RE: [PATCH V4 0/2] Add FIMD DT support for Exynos5 DT Machines
+Date: Tue, 02 Apr 2013 17:16:03 +0900
+Message-ID: <22c801ce2f7a$5181f4f0$f485ded0$%kim@samsung.com>
+References: <1363936479-4905-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:41343 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761050Ab3DBIPk (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:60020 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757878Ab3DBIQF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 04:15:40 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Tue, 2 Apr 2013 04:16:05 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKM00A41C9UMLI0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 17:15:39 +0900 (KST)
-In-reply-to: <1363773968-17433-1-git-send-email-l.krishna@samsung.com>
+ with ESMTP id <0MKM005KTCAQ8MF0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 17:16:04 +0900 (KST)
+In-reply-to: <1363936479-4905-1-git-send-email-l.krishna@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: thomas.abraham@linaro.org, s.nawrocki@samsung.com
+Cc: inki.dae@samsung.com, s.nawrocki@samsung.com
 
 Leela Krishna Amudala wrote:
 > 
-> Add gate clocks for fimd, mie, dsim, dp, mixer and hdmi.
-> Register it to common clock framework.
+> This patch series adds support for FIMD DT for Exynos5 DT Machines
+> Adds display timing node for smdk5250 board.
 > 
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  Documentation/devicetree/bindings/clock/exynos5250-clock.txt |  6 ++++++
->  drivers/clk/samsung/clk-exynos5250.c                         | 10
-+++++++++-
->  2 files changed, 15 insertions(+), 1 deletion(-)
+> changes since V3:
+> 	- changed the clock names "sclk_fimd1" and "fimd1" to "sclk_fimd"
+> and "fimd"
+> 	  in the exynos5250.dtsi file
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> index 7104f02..781a627 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> @@ -149,6 +149,12 @@ clock which they consume.
->    wdt			336
->    rtc			337
->    tmu			338
-> +  fimd1			339
-> +  mie1			340
-> +  dsim0			341
-> +  dp			342
-> +  mixer			343
-> +  hdmi			345
+> changes since V2:
+> 	- added interrupt-names = "fifo", "vsync", "lcd_sys"
+> 	- removed the patch "ARM: Exynos5: add FIMD AUXDATA entry for
+> exynos5 DT",
+>           as migration to Common Clock Framework will NOT need this.
 > 
->  Example 1: An example of a clock controller node is listed below.
+> changes since v1:
+>         - modified compatible string for exynos5 fimd as "exynos5250-fimd"
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5250.c
-> b/drivers/clk/samsung/clk-exynos5250.c
-> index 1152125..5c1583a 100644
-> --- a/drivers/clk/samsung/clk-exynos5250.c
-> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -62,6 +62,7 @@
->  #define GATE_IP_PERIS		0x10960
->  #define SRC_CDREX		0x20200
->  #define PLL_DIV2_SEL		0x20a24
-> +#define GATE_IP_DISP1		0x10928
+> This series is rebased on branch
+> http://git.kernel.org/?p=linux/kernel/git/kgene/linux-
+> samsung.git;a=shortlog;h=refs/heads/for-next
 > 
->  /*
->   * Let each supported clock get a unique id. This id is used to lookup
-> the clock
-> @@ -98,7 +99,7 @@ enum exynos5250_clks {
->  	spi2, i2s1, i2s2, pcm1, pcm2, pwm, spdif, ac97, hsi2c0, hsi2c1,
-> hsi2c2,
->  	hsi2c3, chipid, sysreg, pmu, cmu_top, cmu_core, cmu_mem, tzpc0,
-> tzpc1,
->  	tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec,
-> mct,
-> -	wdt, rtc, tmu,
-> +	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi,
+> This series depends on
+> https://patchwork.kernel.org/patch/2306391/
 > 
->  	nr_clks,
->  };
-> @@ -150,6 +151,7 @@ static __initdata unsigned long exynos5250_clk_regs[]
-> = {
->  	GATE_IP_PERIS,
->  	SRC_CDREX,
->  	PLL_DIV2_SEL,
-> +	GATE_IP_DISP1,
->  };
+> Leela Krishna Amudala (2):
+>   ARM: dts: Add FIMD node to exynos5
+>   ARM: dts: Add display timing node to exynos5250-smdk5250.dts
 > 
->  /* list of all parent clock list */
-> @@ -455,6 +457,12 @@ struct samsung_gate_clock exynos5250_gate_clks[]
-> __initdata = {
->  			SRC_MASK_PERIC1, 20, CLK_SET_RATE_PARENT, 0),
->  	GATE(sclk_spi2, "sclk_spi2", "div_spi_pre2",
->  			SRC_MASK_PERIC1, 24, CLK_SET_RATE_PARENT, 0),
-> +	GATE(fimd1, "fimd1", "aclk200", GATE_IP_DISP1, 0, 0, 0),
-> +	GATE(mie1, "mie1", "aclk200", GATE_IP_DISP1, 1, 0, 0),
-> +	GATE(dsim0, "dsim0", "aclk200", GATE_IP_DISP1, 3, 0, 0),
-> +	GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
-> +	GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
-> +	GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
->  };
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts | 16 ++++++++++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi         | 10 ++++++++++
+>  2 files changed, 26 insertions(+)
 > 
->  static __initdata struct of_device_id ext_clk_match[] = {
 > --
 > 1.8.0
 
-Looks OK to me, applied.
+OK, applied this series.
 
 Thanks.
 
