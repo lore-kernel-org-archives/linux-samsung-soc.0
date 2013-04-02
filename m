@@ -1,80 +1,51 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Tue, 2 Apr 2013 11:23:42 +0300
-Message-ID: <20130402082342.GF30286@arwen.pp.htv.fi>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
- <1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xaMk4Io5JJdpkLEb"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH V3 0/7] Update Arndale board support
+Date: Tue,  2 Apr 2013 13:45:00 +0530
+Message-ID: <1364890507-19261-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f53.google.com ([209.85.210.53]:58899 "EHLO
+	mail-da0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932234Ab3DBI0r (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Apr 2013 04:26:47 -0400
+Received: by mail-da0-f53.google.com with SMTP id n34so91570dal.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Apr 2013 01:26:47 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, patches@linaro.org
 
---xaMk4Io5JJdpkLEb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Arndale board support has been updated using pin-control and
+common clock framework.
 
-On Mon, Apr 01, 2013 at 07:24:00PM +0530, Vivek Gautam wrote:
-> Adding  APIs to handle runtime power management on PHY
-> devices. PHY consumers may need to wake-up/suspend PHYs
-> when they work across autosuspend.
->=20
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> ---
->  include/linux/usb/phy.h |  141 +++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 files changed, 141 insertions(+), 0 deletions(-)
->=20
-> diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
-> index 6b5978f..01bf9c1 100644
-> --- a/include/linux/usb/phy.h
-> +++ b/include/linux/usb/phy.h
-> @@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(enum =
-usb_phy_type type)
->  		return "UNKNOWN PHY TYPE";
->  	}
->  }
-> +
-> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
-> +{
-> +	if (!x || !x->dev) {
-> +		dev_err(x->dev, "no PHY or attached device available\n");
-> +		return;
-> +		}
+The patchset is based on Kukjin's for-next.
+commit d58f6a153f40 ("Merge branch 'next/clk-exynos-2' into for-next")
 
-wrong indentation, also, I'm not sure we should allow calls with NULL
-pointers. Perhaps a WARN() so we get API offenders early enough ?
+It depends on following patchset.
 
---=20
-balbi
+[PATCH 0/2] ARM: dts: Add default pin states for client nodes on Exynos4/5 platforms
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/16559
 
---xaMk4Io5JJdpkLEb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Following 2 patches have been newly added in this patchset because
+of changes during 3.9 merge window.
+1/7: ARM: dts: Add pin-control related changes for Arndale board
+2/7: ARM: dts: Add disable-wp for card slot on exynos5250-arndale
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Amit Daniel Kachhap (1):
+  ARM: dts: Add PMIC node entry for Arndale board
 
-iQIcBAEBAgAGBQJRWpWOAAoJEIaOsuA1yqREzcMQAJkqx8O1xjqU7ukdheuiNosY
-agYaXVJr2Z121Ma4+wJnHaYPli6aK7akMiejDWbjliF/FmWQXoxnL9V4xN92Gjkl
-5VVche6xTykVBYv+bjrw7EbWvxlYDDanSLIVWyhYrHMtMJsnRA+7NRGrAfjC7jfx
-K08F0e6hQ7HUYGy2UDjw2RaJUyuWfeaOyGJ/wa1NrmzZGFTNwV+StlGPaq0RlFHR
-9UPFWBx10QQBx047aj4UL13442NzxHeKHKQwVk7ijJzWsx4DIi2BoKDoPjCnedUl
-Y7ml8T9qcbo5xfvtfD/BLu6NXVM4qqs2FyoIkJhwrMKHW1y11kc/5JV1/c47QhGF
-ky09mnui2hS9MXNVGGRnzRJzOFVdsKgC3ZMwaP2/93FcI7SkInuBklM7eFh6x7BH
-geXO1ymDnzJwvAjoIFv81FjPC8BEDWqrEuKoi0Vof3A0kINzYA+Uw8gCt+cHo2dz
-obBq21oIhspBEbvWUdgKrDYKrQcCIOFP6KYRsCksWWa4Zawd3bvgOoLzgL7sixPX
-5gYwZFqzzGP/ZqYpYN2jAGOGu6M55xbFk3HuOGXTMM75p7elKNahV60NVjMyGwnd
-DrVeUneLmn2t+voHiaPXwVEcxGo30WHP0mh8HphDBHelGU1qn2VLImktKMNm5Y7f
-iaSGVA7B75D/oasvY+kh
-=389A
------END PGP SIGNATURE-----
+Sachin Kamat (4):
+  ARM: dts: Add disable-wp for card slot on exynos5250-arndale
+  ARM: dts: Add vmmc regulator support for Arndale board
+  ARM: dts: Add MFC codec support for Arndale board
+  ARM: dts: Add HDMI HPD and regulator node for Arndale board
 
---xaMk4Io5JJdpkLEb--
+Tushar Behera (2):
+  ARM: dts: Add pin-control related changes for Arndale board
+  ARM: dts: Add gpio-button entries for Arndale board
+
+ arch/arm/boot/dts/exynos5250-arndale.dts |  343 +++++++++++++++++++++++++++++-
+ 1 file changed, 333 insertions(+), 10 deletions(-)
+
+-- 
+1.7.9.5
