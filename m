@@ -1,35 +1,103 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH 0/2] Support device_prep_dma_sg for pl330
-Date: Tue, 02 Apr 2013 21:01:14 +0900
-Message-ID: <1364904076-3130-1-git-send-email-chanho61.park@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
+Date: Tue, 2 Apr 2013 15:10:48 +0300
+Message-ID: <20130402121048.GA9488@arwen.pp.htv.fi>
+References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+ <1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
+ <20130402082342.GF30286@arwen.pp.htv.fi>
+ <CAFp+6iFW9-fOCgCfpfQzS9PZyjb9_NahjSxzbrS0AhVeNngyXw@mail.gmail.com>
+Reply-To: <balbi@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:18305 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754730Ab3DBMC2 (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:55451 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759764Ab3DBMLM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 08:02:28 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKM00B9GMRREYR0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 21:02:26 +0900 (KST)
+	Tue, 2 Apr 2013 08:11:12 -0400
+Content-Disposition: inline
+In-Reply-To: <CAFp+6iFW9-fOCgCfpfQzS9PZyjb9_NahjSxzbrS0AhVeNngyXw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: vinod.koul@intel.com, djbw@fb.com
-Cc: boojin.kim@samsung.com, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, Chanho Park <chanho61.park@samsung.com>
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 
-This patchset support device_prep_dma_sg functionality for pl330 dmaengine
-driver. The prep_dma_sg function prepares descriptors to transfer between src
-and dest memory which consists of scatter/gather list. The patchset contains
-code clean-up to eliminate duplications.
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Chanho Park (2):
-  dma: pl330: split off common code to give back descriptors
-  dma: pl330: add pl330_prep_dma_sg to transfer from sglist to sglist
+Hi,
 
- drivers/dma/pl330.c |  209 ++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 157 insertions(+), 52 deletions(-)
+On Tue, Apr 02, 2013 at 04:04:01PM +0530, Vivek Gautam wrote:
+> > On Mon, Apr 01, 2013 at 07:24:00PM +0530, Vivek Gautam wrote:
+> >> Adding  APIs to handle runtime power management on PHY
+> >> devices. PHY consumers may need to wake-up/suspend PHYs
+> >> when they work across autosuspend.
+> >>
+> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> >> ---
+> >>  include/linux/usb/phy.h |  141 ++++++++++++++++++++++++++++++++++++++=
++++++++++
+> >>  1 files changed, 141 insertions(+), 0 deletions(-)
+> >>
+> >> diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
+> >> index 6b5978f..01bf9c1 100644
+> >> --- a/include/linux/usb/phy.h
+> >> +++ b/include/linux/usb/phy.h
+> >> @@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(en=
+um usb_phy_type type)
+> >>               return "UNKNOWN PHY TYPE";
+> >>       }
+> >>  }
+> >> +
+> >> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
+> >> +{
+> >> +     if (!x || !x->dev) {
+> >> +             dev_err(x->dev, "no PHY or attached device available\n");
+> >> +             return;
+> >> +             }
+> >
+> > wrong indentation, also, I'm not sure we should allow calls with NULL
+> > pointers. Perhaps a WARN() so we get API offenders early enough ?
+>=20
+> True, bad coding style :-(
+> We should be handling dev_err with a NULL pointer.
+> Will just keep here:
+> if (WARN_ON(!x->dev))
+>       return .... ;
 
--- 
-1.7.9.5
+right, but I guess:
+
+if (WARN(!x || !x->dev, "Invalid parameters\n"))
+	return -EINVAL;
+
+would be better ??
+
+--=20
+balbi
+
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRWsrIAAoJEIaOsuA1yqREQqUQAKVLfkvAYQg/Q9ep74qIhTyL
+k+51stxin27zlsaK2Bzeoscd/PzQPhz2wTk3vvkOeMgo94+NL+ILr9ZOUzmMWX2W
+P9TRTwO+IaX/FMiRpBp30ybgNosxH8xnF5zWJBBuutiS7gKpoTKqz8iA4GVcmjq1
+PQohxxKr8CaM6Pm+aI5N6Op+xt1KnvvNennTwQxfq3ddj8sF5X5lXQ/iIZjwupJC
+AzRADhr0IXLu3bVFuUPkeBeienn7q3rp2PcnPbo0X1FGO7YyuI3JSOjyt3AjoqJe
+r7UsvXcmobRSoa1XWnvRgwlcZIFlhesT1JaFOzd4FzFbuChzBS15cPYEWphHBABt
+Vy+S8iJfAt6FpVZXnQ8DGhWy/MVOo7c7Remyvb2zQQ+J97HoduSlRrGiNyLR100H
+PMphFt6O0gMmh1dFXehgVotzkDYFMf/1goGW5KptE+iYO4MJCnJHJpEyJfn8b6e6
+Bm716Mu/SZaBQVkdHaDWqXfBESwTLw97m3Y9G4bw7zQpoe7fM55ndS7OA2gDLnSq
+1cBG9d8MrjoSD3njKU7ZXr90aNthefHDM/OMI5PnvQc8Sp0I+Q24U4cNXiRAznTY
+dMeVGhGRikp3+J7aeTblALYMS8xlVAXsuh0Mpu9kR+UgA8voCF3+J/tN89ENCEIT
+Lj5qpcvzP2rwopMNQLUb
+=+8UT
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
