@@ -1,114 +1,50 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH RESEND] ARM: SAMSUNG: dma: Remove unnecessary code
-Date: Tue, 02 Apr 2013 17:00:39 +0530
-Message-ID: <1364902239-16704-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:15314 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759941Ab3DBLb4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 07:31:56 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKM00AJ0LD4W2Q0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 20:31:54 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alexander Graf <agraf@suse.de>
+Subject: Re: [PATCH 3/3] ARM: EXYNOS5250: Register architected timers
+Date: Tue, 02 Apr 2013 13:45:39 +0200
+Message-ID: <515AC4E3.2070508@suse.de>
+References: <1363222742-15220-1-git-send-email-agraf@suse.de> <1363222742-15220-4-git-send-email-agraf@suse.de> <239701ce2f8f$093a2f40$1bae8dc0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: 7bit
+Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <239701ce2f8f$093a2f40$1bae8dc0$%kim@samsung.com>
+Sender: kvm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, =?EUC-KR?B?IlRIT01BUyBQIEFCUkFIQU0vU1JJLUJhbmdhbG9yZS1TTEcvLi+777y6wPzA2g==?= =?EUC-KR?B?Ig==?= <thomas.ab@samsung.com>, 'Giridhar BM' <giridhar.m@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, arnd@arndb.de, vinod.koul@intel.com, boojin.kim@samsung.com, thomas.abraham@linaro.org
 
-This patch removes the usage of DMACH_DT_PROP and dt_dmach_prop
-from dma code as the new generic dma dt binding support has been
-added.
+On 04/02/2013 12:44 PM, Kukjin Kim wrote:
+> Alexander Graf wrote:
+>> When running on an exynos 5250 SoC, we don't initialize the architected
+>> timers. The chip however supports architected timers.
+>>
+> Yes, exynos5250 can support, mct(multi core timer) is used though.
+>
+>> When we don't initialize them, KVM will try to access them and run into
+>> NULL pointer dereferences attempting to do so.
+>>
+> Yes, right.
+>
+>> This patch is really more of a hack than a real fix, but does get me
+>> working with KVM on Arndale.
+>>
+> Hmm, if you think, this is _really_ a hack, you need to add some comments
+> about that for clearance, and since the mct.c file has been moved into
+> drivers/clocksource/, this should be re-worked.
+>
+> BTW, I discussed about this with Thomas and Giridhar just now, we reached
+> this 3rd patch could be dropped because the correct way is to add a dts
+> node for arch timer which patch 2nd is already doing after 3.9-rc1 because
+> of CLOCKSOURCE_OF_DECLARE macro.
+>
+> So if you' OK above, let me know so that I can take only 1st and 2nd
+> patches to support KVM on exynos5250.
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-s3c24xx/include/mach/dma.h       |    1 -
- arch/arm/mach-s3c64xx/include/mach/dma.h       |    1 -
- arch/arm/plat-samsung/dma-ops.c                |   10 +---------
- arch/arm/plat-samsung/include/plat/dma-ops.h   |    1 -
- arch/arm/plat-samsung/include/plat/dma-pl330.h |    1 -
- 5 files changed, 1 insertions(+), 13 deletions(-)
+I'd say go ahead and take them and I'll verify whether things work on
+your tree :).
 
-diff --git a/arch/arm/mach-s3c24xx/include/mach/dma.h b/arch/arm/mach-s3c24xx/include/mach/dma.h
-index 6b72d5a..b55da1d 100644
---- a/arch/arm/mach-s3c24xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/dma.h
-@@ -24,7 +24,6 @@
- */
- 
- enum dma_ch {
--	DMACH_DT_PROP = -1,	/* not yet supported, do not use */
- 	DMACH_XD0 = 0,
- 	DMACH_XD1,
- 	DMACH_SDI,
-diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
-index 57b1ff4..fe1a98c 100644
---- a/arch/arm/mach-s3c64xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
-@@ -21,7 +21,6 @@
-  */
- enum dma_ch {
- 	/* DMA0/SDMA0 */
--	DMACH_DT_PROP = -1, /* not yet supported, do not use */
- 	DMACH_UART0 = 0,
- 	DMACH_UART0_SRC2,
- 	DMACH_UART1,
-diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-index 71d58dd..ec0d731 100644
---- a/arch/arm/plat-samsung/dma-ops.c
-+++ b/arch/arm/plat-samsung/dma-ops.c
-@@ -23,23 +23,15 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
- 				struct device *dev, char *ch_name)
- {
- 	dma_cap_mask_t mask;
--	void *filter_param;
- 
- 	dma_cap_zero(mask);
- 	dma_cap_set(param->cap, mask);
- 
--	/*
--	 * If a dma channel property of a device node from device tree is
--	 * specified, use that as the fliter parameter.
--	 */
--	filter_param = (dma_ch == DMACH_DT_PROP) ?
--		(void *)param->dt_dmach_prop : (void *)dma_ch;
--
- 	if (dev->of_node)
- 		return (unsigned)dma_request_slave_channel(dev, ch_name);
- 	else
- 		return (unsigned)dma_request_channel(mask, pl330_filter,
--							filter_param);
-+							(void *)dma_ch);
- }
- 
- static int samsung_dmadev_release(unsigned ch, void *param)
-diff --git a/arch/arm/plat-samsung/include/plat/dma-ops.h b/arch/arm/plat-samsung/include/plat/dma-ops.h
-index 1141782..ce6d763 100644
---- a/arch/arm/plat-samsung/include/plat/dma-ops.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-ops.h
-@@ -18,7 +18,6 @@
- 
- struct samsung_dma_req {
- 	enum dma_transaction_type cap;
--	struct property *dt_dmach_prop;
- 	struct s3c2410_dma_client *client;
- };
- 
-diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-index d384a80..abe07fa 100644
---- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-@@ -21,7 +21,6 @@
-  * use these just as IDs.
-  */
- enum dma_ch {
--	DMACH_DT_PROP = -1,
- 	DMACH_UART0_RX = 0,
- 	DMACH_UART0_TX,
- 	DMACH_UART1_RX,
--- 
-1.7.4.4
+What's the git repo of your branch?
+
+
+Alex
+
