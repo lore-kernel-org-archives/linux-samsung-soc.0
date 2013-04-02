@@ -1,66 +1,62 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5P64X0: Fix typo "CONFIG_S5P64X0_SETUP_SDHCI"
-Date: Tue, 02 Apr 2013 18:50:29 +0900
-Message-ID: <237901ce2f87$826635b0$8732a110$%kim@samsung.com>
-References: <1364637279.1345.115.camel@x61.thuisdomein>
+Subject: RE: [PATCH] ARM: S3C64XX: remove obsolete Makefile line
+Date: Tue, 02 Apr 2013 18:55:08 +0900
+Message-ID: <237a01ce2f88$28edbd90$7ac938b0$%kim@samsung.com>
+References: <1364597502.1345.103.camel@x61.thuisdomein>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59917 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:60512 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761778Ab3DBJuw (ORCPT
+	with ESMTP id S1760676Ab3DBJzK convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 05:50:52 -0400
-In-reply-to: <1364637279.1345.115.camel@x61.thuisdomein>
+	Tue, 2 Apr 2013 05:55:10 -0400
+In-reply-to: <1364597502.1345.103.camel@x61.thuisdomein>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Paul Bolle wrote:
 > 
-> Commit ebc433c2890f8ecad2da39fe2dbf2b6e7b309afa ("ARM: S5P64X0: Add
-> HSMMC setup for host Controller") added the Kconfig symbol
-> S5P64X0_SETUP_SDHCI_GPIO. By accident it also used a macro
-> CONFIG_S5P64X0_SETUP_SDHCI. Fix that typo.
+> Commit a07613a54d700a974f3a4a657da78ef5d097315d ("Merge branch
+> 'samsung/dt' into samsung/cleanup") added this line to
+> arch/arm/mach-s3c64xx/Makefile:
+>     obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
 > 
+> But at that time CONFIG_S3C64XX_DEV_SPI wasn't a valid Kconfig macro
+> anymore and arch/arm/mach-s3c64xx/dev-spi.c was already removed. So we
+> can remove this line.
+> 
+Yes, the dev-spi.c has been removed with Consolidation work of SPI platform devices.
+
 > Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 > ---
-> Untested. Since this typo has been in the tree since v3.3, and some code
-> has therefore (basically) been compiled out ever since, this does need
-> testing.
+> Untested.
 > 
->  arch/arm/plat-samsung/include/plat/sdhci.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm/mach-s3c64xx/Makefile | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-
-> samsung/include/plat/sdhci.h
-> index 9b87f38..5560586 100644
-> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
-> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-> @@ -206,7 +206,7 @@ static inline void s3c6400_default_sdhci2(void) { }
+> diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-
+> s3c64xx/Makefile
+> index f9ce1dc..31d0c91 100644
+> --- a/arch/arm/mach-s3c64xx/Makefile
+> +++ b/arch/arm/mach-s3c64xx/Makefile
+> @@ -32,7 +32,6 @@ obj-$(CONFIG_S3C64XX_DMA)	+= dma.o
 > 
->  /* S5P64X0 SDHCI setup */
+>  obj-y				+= dev-uart.o
+>  obj-y				+= dev-audio.o
+> -obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
 > 
-> -#ifdef CONFIG_S5P64X0_SETUP_SDHCI
-> +#ifdef CONFIG_S5P64X0_SETUP_SDHCI_GPIO
->  static inline void s5p64x0_default_sdhci0(void)
->  {
->  #ifdef CONFIG_S3C_DEV_HSMMC
-> @@ -241,7 +241,7 @@ static inline void s5p64x0_default_sdhci1(void) { }
->  static inline void s5p6440_default_sdhci2(void) { }
->  static inline void s5p6450_default_sdhci2(void) { }
-> 
-> -#endif /* CONFIG_S5P64X0_SETUP_SDHCI */
-> +#endif /* CONFIG_S5P64X0_SETUP_SDHCI_GPIO */
-> 
->  /* S5PC100 SDHCI setup */
+>  # Device setup
 > 
 > --
 > 1.7.11.7
+> 
+Looks OK to me, applied.
 
-Applied, thanks.
+Thanks.
 
 - Kukjin
