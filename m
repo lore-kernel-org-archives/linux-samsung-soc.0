@@ -1,74 +1,73 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Tue, 2 Apr 2013 18:10:35 +0530
-Message-ID: <CAFp+6iEqHOc6G+4UpUGneQ43FGf11DOH_LignFiXJxVJnjry2w@mail.gmail.com>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
-	<1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
-	<20130402082342.GF30286@arwen.pp.htv.fi>
-	<CAFp+6iFW9-fOCgCfpfQzS9PZyjb9_NahjSxzbrS0AhVeNngyXw@mail.gmail.com>
-	<20130402121048.GA9488@arwen.pp.htv.fi>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 10/23] [media] exynos: remove unnecessary header inclusions
+Date: Tue, 02 Apr 2013 15:08:07 +0200
+Message-ID: <515AD837.1060106@samsung.com>
+References: <1362505353-8873-1-git-send-email-arnd@arndb.de>
+ <1362505353-8873-11-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130402121048.GA9488@arwen.pp.htv.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:17491 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760072Ab3DBNIL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Apr 2013 09:08:11 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MKM00C99PK6R880@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Apr 2013 14:08:08 +0100 (BST)
+In-reply-to: <1362505353-8873-11-git-send-email-arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-Hi,
+On 03/05/2013 06:42 PM, Arnd Bergmann wrote:
+> In multiplatform configurations, we cannot include headers
+> provided by only the exynos platform. Fortunately a number
+> of drivers that include those headers do not actually need
+> them, so we can just remove the inclusions.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/media/platform/exynos-gsc/gsc-regs.c | 1 -
+>  drivers/media/platform/s5p-tv/sii9234_drv.c  | 3 ---
 
+Cc: linux-media@vger.kernel.org
 
-On Tue, Apr 2, 2013 at 5:40 PM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> On Tue, Apr 02, 2013 at 04:04:01PM +0530, Vivek Gautam wrote:
->> > On Mon, Apr 01, 2013 at 07:24:00PM +0530, Vivek Gautam wrote:
->> >> Adding  APIs to handle runtime power management on PHY
->> >> devices. PHY consumers may need to wake-up/suspend PHYs
->> >> when they work across autosuspend.
->> >>
->> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> >> ---
->> >>  include/linux/usb/phy.h |  141 +++++++++++++++++++++++++++++++++++++++++++++++
->> >>  1 files changed, 141 insertions(+), 0 deletions(-)
->> >>
->> >> diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
->> >> index 6b5978f..01bf9c1 100644
->> >> --- a/include/linux/usb/phy.h
->> >> +++ b/include/linux/usb/phy.h
->> >> @@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(enum usb_phy_type type)
->> >>               return "UNKNOWN PHY TYPE";
->> >>       }
->> >>  }
->> >> +
->> >> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
->> >> +{
->> >> +     if (!x || !x->dev) {
->> >> +             dev_err(x->dev, "no PHY or attached device available\n");
->> >> +             return;
->> >> +             }
->> >
->> > wrong indentation, also, I'm not sure we should allow calls with NULL
->> > pointers. Perhaps a WARN() so we get API offenders early enough ?
->>
->> True, bad coding style :-(
->> We should be handling dev_err with a NULL pointer.
->> Will just keep here:
->> if (WARN_ON(!x->dev))
->>       return .... ;
->
-> right, but I guess:
->
-> if (WARN(!x || !x->dev, "Invalid parameters\n"))
->         return -EINVAL;
->
-> would be better ??
+Thanks Arnd. I have applied this patch to my tree for 3.10.
 
-Yea, better. Thanks
-Will amend this accordingly.
+>  2 files changed, 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-regs.c b/drivers/media/platform/exynos-gsc/gsc-regs.c
+> index 6f5b5a4..e22d147 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-regs.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-regs.c
+> @@ -12,7 +12,6 @@
+>  
+>  #include <linux/io.h>
+>  #include <linux/delay.h>
+> -#include <mach/map.h>
+>  
+>  #include "gsc-core.h"
+>  
+> diff --git a/drivers/media/platform/s5p-tv/sii9234_drv.c b/drivers/media/platform/s5p-tv/sii9234_drv.c
+> index d90d228..39b77d2 100644
+> --- a/drivers/media/platform/s5p-tv/sii9234_drv.c
+> +++ b/drivers/media/platform/s5p-tv/sii9234_drv.c
+> @@ -23,9 +23,6 @@
+>  #include <linux/regulator/machine.h>
+>  #include <linux/slab.h>
+>  
+> -#include <mach/gpio.h>
+> -#include <plat/gpio-cfg.h>
+> -
+>  #include <media/sii9234.h>
+>  #include <media/v4l2-subdev.h>
 
+--
 
--- 
-Thanks & Regards
-Vivek
+Regards,
+Sylwester
