@@ -1,50 +1,69 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/2] These two patches to s3c_pm_arch_prepare_irqs() were
- part of the work
-Date: Wed, 03 Apr 2013 11:16:37 +0900
-Message-ID: <24b501ce3011$454d3c70$cfe7b550$%kim@samsung.com>
-References: <1363711900-25560-1-git-send-email-dianders@chromium.org>
- <24b401ce300f$5a767b40$0f6371c0$%kim@samsung.com>
+Subject: RE: [PATCH 3/3] ARM: EXYNOS5250: Register architected timers
+Date: Wed, 03 Apr 2013 13:56:07 +0900
+Message-ID: <24db01ce3027$8d457400$a7d05c00$%kim@samsung.com>
+References: <1363222742-15220-1-git-send-email-agraf@suse.de>
+ <1363222742-15220-4-git-send-email-agraf@suse.de>
+ <239701ce2f8f$093a2f40$1bae8dc0$%kim@samsung.com> <515AC4E3.2070508@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ks_c_5601-1987
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:62892 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:32255 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754429Ab3DCCQj (ORCPT
+	with ESMTP id S1761102Ab3DCE4J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 22:16:39 -0400
-In-reply-to: <24b401ce300f$5a767b40$0f6371c0$%kim@samsung.com>
+	Wed, 3 Apr 2013 00:56:09 -0400
+In-reply-to: <515AC4E3.2070508@suse.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Doug Anderson' <dianders@chromium.org>
-Cc: 'Jongpill Lee' <boyko.lee@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Olof Johansson' <olof@lixom.net>, 'Jonathan Kliegman' <kliegs@chromium.org>, 'Michael Spang' <spang@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: 'Alexander Graf' <agraf@suse.de>
+Cc: linux-samsung-soc@vger.kernel.org, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, =?ks_c_5601-1987?B?JyJUSE9NQVMgUCBBQlJBSEFNL1NSSS1CYW5nYWxvcmUtU0xHLy4=?= =?ks_c_5601-1987?B?L7vvvLrA/MDaIic=?= <thomas.ab@samsung.com>, 'Giridhar BM' <giridhar.m@samsung.com>
 
-Kukjin Kim wrote:
+Alexander Graf wrote:
 > 
-> Doug Anderson wrote:
+> On 04/02/2013 12:44 PM, Kukjin Kim wrote:
+> > Alexander Graf wrote:
+> >> When running on an exynos 5250 SoC, we don't initialize the architected
+> >> timers. The chip however supports architected timers.
+> >>
+> > Yes, exynos5250 can support, mct(multi core timer) is used though.
 > >
-> > to make suspend/resume reliable on the ARM Chromebook
-> > (exynos5250-snow).
+> >> When we don't initialize them, KVM will try to access them and run into
+> >> NULL pointer dereferences attempting to do so.
+> >>
+> > Yes, right.
 > >
-> > A few more details:
-> > - The first patch is not strictly needed but was a nice cleanup.  Our
-> >   understanding was that EINT0 was originally turned on for exynos
-> >   evt0 silicon and not needed for evt1.
-> 
-> Looks good to me, applied, thanks.
-> 
-> > - The second patch is more important and (also) more obvious.  The
-> >   function was modifying the S5P_WAKEUP_MASK register and then
-> >   clobbering its own modifications.
+> >> This patch is really more of a hack than a real fix, but does get me
+> >> working with KVM on Arndale.
+> >>
+> > Hmm, if you think, this is _really_ a hack, you need to add some
+> comments
+> > about that for clearance, and since the mct.c file has been moved into
+> > drivers/clocksource/, this should be re-worked.
 > >
-> Applied with 1st one, BTW, do you want to send this for stable tree?
+> > BTW, I discussed about this with Thomas and Giridhar just now, we
+> reached
+> > this 3rd patch could be dropped because the correct way is to add a dts
+> > node for arch timer which patch 2nd is already doing after 3.9-rc1
+> because
+> > of CLOCKSOURCE_OF_DECLARE macro.
+> >
+> > So if you' OK above, let me know so that I can take only 1st and 2nd
+> > patches to support KVM on exynos5250.
 > 
-One more note, just now I discussed Jaecheol Lee about the bit,
-ENABLE_WAKEUP_SW, as the patch fixed, it should be cleared but used to be
-set s3c_irqwake_intmask. Let me check again, then if any updates I'll let
-you know.
+> I'd say go ahead and take them and I'll verify whether things work on
+> your tree :).
+> 
+OK, I will.
+
+> What's the git repo of your branch?
+> 
+You can test with my for-next branch but this series can be seen tomorrow
+night(KST) in my public tree.
+
+Any problems, please let me know.
 
 Thanks.
 
