@@ -1,69 +1,117 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC 12/12] mipi-csis: Enable all interrupts for fimc-is usage
-Date: Wed, 03 Apr 2013 14:31:11 +0200
-Message-ID: <515C210F.8030806@samsung.com>
-References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
- <1362754765-2651-13-git-send-email-arun.kk@samsung.com>
- <513F5171.40603@samsung.com>
- <CALt3h7_zXP9M5m+4VXFGhnfpaUO+6F20hTsnR8ATF8+=CNmcrA@mail.gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
+Date: Wed, 3 Apr 2013 18:42:48 +0530
+Message-ID: <CAFp+6iHXW8z2sc44c1hq2au_UnUyVZEr9D0t5BM4mfqcQKZgbA@mail.gmail.com>
+References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+	<1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
+	<515BB951.40702@ti.com>
+	<CAFp+6iG8WdWHXVCANx77OiTXLeZ-4qE4jySWqPLhfR1KOEP4fw@mail.gmail.com>
+	<20130403081532.GE25837@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <CALt3h7_zXP9M5m+4VXFGhnfpaUO+6F20hTsnR8ATF8+=CNmcrA@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Kumar K <arunkk.samsung@gmail.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kilyeon.im@samsung.com, shaik.ameer@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:45186 "EHLO
+	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759224Ab3DCNMu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Apr 2013 09:12:50 -0400
+In-Reply-To: <20130403081532.GE25837@arwen.pp.htv.fi>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: balbi@ti.com
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 
-Hi Arun,
+Hi Felipe,
 
-On 03/13/2013 05:09 AM, Arun Kumar K wrote:
-> Hi Sylwester,
-> 
->>>
->>>  /* Interrupt mask */
->>>  #define S5PCSIS_INTMSK                       0x10
->>> -#define S5PCSIS_INTMSK_EN_ALL                0xf000103f
->>> +#define S5PCSIS_INTMSK_EN_ALL                0xfc00103f
+
+On Wed, Apr 3, 2013 at 1:45 PM, Felipe Balbi <balbi@ti.com> wrote:
+> Hi,
+>
+> On Wed, Apr 03, 2013 at 11:48:39AM +0530, Vivek Gautam wrote:
+>> >> Adding  APIs to handle runtime power management on PHY
+>> >> devices. PHY consumers may need to wake-up/suspend PHYs
+>> >> when they work across autosuspend.
+>> >>
+>> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> >> ---
+>> >>   include/linux/usb/phy.h |  141
+>> >> +++++++++++++++++++++++++++++++++++++++++++++++
+>> >>   1 files changed, 141 insertions(+), 0 deletions(-)
+>> >>
+>> >> diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
+>> >> index 6b5978f..01bf9c1 100644
+>> >> --- a/include/linux/usb/phy.h
+>> >> +++ b/include/linux/usb/phy.h
+>> >> @@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(enum
+>> >> usb_phy_type type)
+>> >>                 return "UNKNOWN PHY TYPE";
+>> >>         }
+>> >>   }
+>> >> +
+>> >> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
+>> >> +{
+>> >> +       if (!x || !x->dev) {
+>> >> +               dev_err(x->dev, "no PHY or attached device available\n");
+>> >> +               return;
+>> >> +               }
+>> >> +
+>> >> +       pm_runtime_enable(x->dev);
+>> >> +}
+>> >
+>> >
+>> > IMO we need not have wrapper APIs for runtime_enable and runtime_disable
+>> > here. Generally runtime_enable and runtime_disable is done in probe and
+>> > remove of a driver respectively. So it's better to leave the
+>> > runtime_enable/runtime_disable to be done in *phy provider* driver than
+>> > having an API for it to be done by *phy user* driver. Felipe, what do you
+>> > think?
 >>
->> Do you know what interrupts are assigned to the CSIS_INTMSK
->> bits 26, 27 ? In the documentation I have they are marked
->> as reserved. I have tested this patch on Exynos4x12, it seems
->> OK but you might want to merge it to the patch adding compatible
->> property for exynos5.
-> 
-> The bits 26 and 27 are for Frame start and Frame end interrupts.
-> Yes this change can be merged with the MIPI-CSIS support for Exynos5.
-> Shaik will pick it up and merge it along with his patch series in v2.
+>> Thanks!!
+>> That's very true, runtime_enable() and runtime_disable() calls are made by
+>> *phy_provider* only. But a querry here.
+>> Wouldn't in any case a PHY consumer might want to disable runtime_pm on PHY ?
+>> Say, when consumer failed to suspend the PHY properly
+>> (*put_sync(phy->dev)* fails), how much sure is the consumer about the
+>> state of PHY ?
+>
+> no no, wait a minute. We might not want to enable runtime pm for the PHY
+> until the UDC says it can handle runtime pm, no ? I guess this makes a
+> bit of sense (at least in my head :-p).
+>
+> Imagine if PHY is runtime suspended but e.g. DWC3 isn't runtime pm
+> enabled... Does it make sense to leave that control to the USB
+> controller drivers ?
+>
+> I'm open for suggestions
 
-OK, thanks a lot for the clarification. I tested this patch on
-Exynos4x12 and I could see twice as many interrupts from MIPI-CSIS as
-there was captured frames from the sensor. Certainly we don't want to
-see these interrupts when they are not needed. I have been thinking of
-some interface that the MIPI-CSIS subdev would provide to the media
-driver, so it can enable the interrupts when needed. I suppose a
-private subdev ioctl might be good for that. But first I think there
-is e.g. a subdev flag needed so a subdev driver can decide that it
-doesn't want to have its non-standard ioctls called from user space.
+Of course unless the PHY consumer can handle runtime PM for PHY,
+PHY should not ideally be going into runtime_suspend.
 
-I'll see if I can address those issues.
+Actually trying out few things, here are my observations
 
->> It would be good to know what these bits are for. And how
->> enabling the interrupts actually help without modifying the
->> interrupt handler ? Is it enough to just acknowledge those
->> interrupts ? Or how it works ?
->>
-> 
-> These interrupts are used by the FIMC-IS firmware possibly to check if the
-> sensor is working. Without enabling these, I get the error from firmware
-> on Sensor Open command.
+Enabling runtime_pm on PHY pushes PHY to go into runtime_suspend state.
+But a device detection wakes up DWC3 controller, and if i don't wake
+up PHY (using get_sync(phy->dev)) here
+in runtime_resume() callback of DWC3, i don't get PHY back in active state.
+So it becomes the duty of DWC3 controller to handle PHY's sleep and wake-up.
+Thereby it becomes logical that DWC3 controller has the right to
+enable runtime_pm
+of PHY.
 
-Hm, interesting... Looks like the MIPI-CSIS interrupts get routed to the
-FIMC-IS GIC. I was also wondering how the FIMC-IS receives Embedded Data
-from the MIPI CSIS IP, which is sent by an image sensor. Presumably
-FIMC-IS can memory map the Embedded Data buffer at the MIPI CSIS internal
-memory, and then it reads from there. It's just a guess though.
+But there's a catch here. if there are multiple consumers of PHY (like
+USB2 type PHY can
+have DWC3 controller as well as EHCI/OHCI or even HSGadget) then in that case,
+only one of the consumer can enable runtime_pm on PHY. So who decides this.
 
-Regards,
-Sylwester
+Aargh!! lot of confusion here :-(
+
+
+>
+> --
+> balbi
+
+
+
+-- 
+Thanks & Regards
+Vivek
