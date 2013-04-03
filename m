@@ -1,81 +1,46 @@
-From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Subject: Re: [PATCH v3 00/11] usb: dwc3/xhci/phy: Enable runtime power
- management
-Date: Wed, 3 Apr 2013 10:27:51 -0700
-Message-ID: <20130403172751.GC10089@xanatos>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
+Date: Wed, 3 Apr 2013 14:14:02 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1304031410320.2027-100000@iolanthe.rowland.org>
+References: <20130403141831.GJ14680@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20130403141831.GJ14680@arwen.pp.htv.fi>
+Sender: linux-omap-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Vivek Gautam <gautamvivek1987@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Question: Do you still need this patch for 3.10?
+On Wed, 3 Apr 2013, Felipe Balbi wrote:
 
-http://marc.info/?l=linux-usb&m=136057666911621&w=2
+> > Lets suppose DWC3 enables runtime_pm on USB 2 type phy,
+> > it will try to go into suspend state and thereby call runtime_suspend(), if any.
+> > And PHY will come to active state only when its consumer wakes it up,
+> > and this consumer is operational
+> > only when its related PHY is in fully functional state.
+> > So do we have a situation in which this PHY goes into low power state
+> > in its runtime_suspend(),
+> > resulting in non-detection of devices on further attach (since PHY is
+> > in low power state) ?
+> > 
+> > Will the controller (like EHCI/OHCI) be functional now ?
+> 
+> ehci/ohci need to cope with that by calling usb_phy_autopm_get_sync(),
+> right ? (so does DWC3 :-)
 
-Does this patchset build on top of that?
+Maybe you guys have already got this all figured out -- if so, feel 
+free to ignore this email.
 
-I'm really behind on my patches for 3.10, sorry.
+Some subsystems handle this issue by calling pm_runtime_get_sync() 
+before probing a driver and pm_runtime_put_sync() after unbinding the 
+driver.  If the driver is runtime-PM-enabled, it then does its own 
+put_sync near the end of its probe routine and get_sync in its release 
+routine.
 
-Sarah Sharp
+With PHYs you don't have probing and releasing, but you do have 
+consumers registering and unregistering themselves, which is about the 
+same thing.
 
-On Mon, Apr 01, 2013 at 07:23:59PM +0530, Vivek Gautam wrote:
-> This patch-series enables runtime power management on xhci-plat,
-> dwc3-core, dwc3-exynos as well as on Samsung's USB 2.0 type and
-> USB 3.0 type PHYs.
-> 
-> Based on 'next' branch of Felipe Balbi's USB tree.
-> 
-> Changes from v2:
->  - Using separate functions for USB PHY runtime power management, instead of
->    using macros.
->  - Adding 'pm_runtime_set_suspended()' api call in dwc3 core layer before
->    enabling runtime pm. (Ideally, we should be explicitly make device
->    'suspended' or 'active' before enabling runtime pm on it).
->  - Checking return code for 'put_sync' and 'get_sync' of USB-PHYs when
->    waking up or suspending them from dwc3 core's runtime_pm callbacks.
->  - Removed buggy pm_runtime_put() calls from driver's (xhci, dwc3 and PHY)
->    remove functions.
->  - Adding a patch to enable runtime power management of Samsung's USB 2.0 PHY
->    (usb: phy: samsung: Enable runtime power management on usb2phy)
-> 
-> Changes from v1:
->  - Adding required PHY APIs to handle runtime power management
->    instead of directly twiddling with phy->dev.
->  - Handling runtime power management of usb PHYs in dwc3 core
->    driver instead of in any glue layer.
->  - Splitting the patch:
->    [PATCH 4/4] usb: phy: samsung: Enable runtime power management on samsung-usb
->    into required number to bifurcate functionality.
-> 
-> Vivek Gautam (11):
->   usb: phy: Add APIs for runtime power management
->   USB: dwc3: Adjust runtime pm to allow autosuspend
->   usb: dwc3: Enable runtime pm only after PHYs are initialized
->   usb: dwc3: Add runtime power management callbacks
->   usb: dwc3: exynos: Enable runtime power management
->   usb: xhci: Enable runtime pm in xhci-plat
->   usb: phy: samsung: Enable runtime power management on usb2phy
->   usb: phy: samsung: Enable runtime power management on usb3phy
->   usb: phy: samsung: Add support for external reference clock
->   usb: phy: samsung: Add support for PHY ref_clk gpio
->   usb: phy: samsung: Add support for PHY refclk switching
-> 
->  drivers/usb/dwc3/core.c            |   59 ++++++++++++++--
->  drivers/usb/dwc3/dwc3-exynos.c     |   12 +++
->  drivers/usb/host/xhci-plat.c       |    6 ++
->  drivers/usb/phy/phy-samsung-usb.c  |   26 +++++++
->  drivers/usb/phy/phy-samsung-usb.h  |    1 +
->  drivers/usb/phy/phy-samsung-usb2.c |    5 ++
->  drivers/usb/phy/phy-samsung-usb3.c |  119 +++++++++++++++++++++++++++++--
->  include/linux/usb/phy.h            |  141 ++++++++++++++++++++++++++++++++++++
->  8 files changed, 358 insertions(+), 11 deletions(-)
-> 
-> -- 
-> 1.7.6.5
-> 
+Alan Stern
+
