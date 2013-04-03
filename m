@@ -1,36 +1,56 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 07/23] i2c: s3c2410: make header file local
-Date: Tue, 2 Apr 2013 22:36:32 +0200
-Message-ID: <201304022236.32629.heiko@sntech.de>
-References: <1362505353-8873-1-git-send-email-arnd@arndb.de> <1362505353-8873-8-git-send-email-arnd@arndb.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/2] These two patches to s3c_pm_arch_prepare_irqs() were
+ part of the work
+Date: Wed, 03 Apr 2013 11:02:53 +0900
+Message-ID: <24b401ce300f$5a767b40$0f6371c0$%kim@samsung.com>
+References: <1363711900-25560-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:38473 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1761463Ab3DBUgc convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:53905 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754449Ab3DCCDF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Apr 2013 16:36:32 -0400
-In-Reply-To: <1362505353-8873-8-git-send-email-arnd@arndb.de>
+	Tue, 2 Apr 2013 22:03:05 -0400
+In-reply-to: <1363711900-25560-1-git-send-email-dianders@chromium.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Deepak Saxena <dsaxena@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: 'Doug Anderson' <dianders@chromium.org>
+Cc: 'Jongpill Lee' <boyko.lee@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Olof Johansson' <olof@lixom.net>, 'Jonathan Kliegman' <kliegs@chromium.org>, 'Michael Spang' <spang@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-Am Dienstag, 5. M=C3=A4rz 2013, 18:42:17 schrieb Arnd Bergmann:
-> No other file in the kernel besides i2c-s3c2410.c uses
-> the current plat/regs-iic.h, so we can simply move the
-> header file to live in the same directory as the driver,
-> as a preparation to multiplatform builds.
+Doug Anderson wrote:
+> 
+> to make suspend/resume reliable on the ARM Chromebook
+> (exynos5250-snow).
+> 
+> A few more details:
+> - The first patch is not strictly needed but was a nice cleanup.  Our
+>   understanding was that EINT0 was originally turned on for exynos
+>   evt0 silicon and not needed for evt1.
 
-A patch doing the same is already sitting in the i2c for-next branch [0=
-].
+Looks good to me, applied, thanks.
 
+> - The second patch is more important and (also) more obvious.  The
+>   function was modifying the S5P_WAKEUP_MASK register and then
+>   clobbering its own modifications.
+> 
+Applied with 1st one, BTW, do you want to send this for stable tree?
 
-Heiko
+- Kukjin
 
-
-
-[0] https://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/commit/?=
-h=3Di2c/for-next&id=3De636602ac2613da8c1777cb42443223994be4107
+> For some history, see:
+> - https://gerrit.chromium.org/gerrit/31337
+> - https://gerrit.chromium.org/gerrit/31341
+> 
+> 
+> Jonathan Kliegman (2):
+>   arm: exynos: Remove hardcode wakeup unmask for EINT_0
+>   arm: exynos: Clear ENABLE_WAKEUP_SW bit when entering suspend
+> 
+>  arch/arm/mach-exynos/include/mach/pm-core.h | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> --
+> 1.8.1.3
