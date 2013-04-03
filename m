@@ -1,159 +1,75 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Wed, 3 Apr 2013 20:12:29 +0530
-Message-ID: <CAFp+6iGqmUK1r2CN-0jwoEhCuzVhxaRS1W3CMm0JhTPvDyh_rw@mail.gmail.com>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
-	<1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
-	<515BB951.40702@ti.com>
-	<CAFp+6iG8WdWHXVCANx77OiTXLeZ-4qE4jySWqPLhfR1KOEP4fw@mail.gmail.com>
-	<20130403081532.GE25837@arwen.pp.htv.fi>
-	<CAFp+6iHXW8z2sc44c1hq2au_UnUyVZEr9D0t5BM4mfqcQKZgbA@mail.gmail.com>
-	<20130403135414.GG14680@arwen.pp.htv.fi>
-	<20130403135659.GH14680@arwen.pp.htv.fi>
-	<CAFp+6iEmJtS2vxz8YHXP+FbNsxK2bR94rDrrSiKbGRRuUhBA5g@mail.gmail.com>
-	<20130403141831.GJ14680@arwen.pp.htv.fi>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/2] ASoC: Samsung: return error if drvdata
+	is not set
+Date: Wed, 3 Apr 2013 17:57:02 +0100
+Message-ID: <20130403165702.GB11305@opensource.wolfsonmicro.com>
+References: <1364901782-16619-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f53.google.com ([209.85.214.53]:36772 "EHLO
-	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758541Ab3DCOmb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Apr 2013 10:42:31 -0400
-In-Reply-To: <20130403141831.GJ14680@arwen.pp.htv.fi>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============7363932495793427481=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1364901782-16619-1-git-send-email-padma.v@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Prathyush K <prathyush.k@samsung.com>, sbkim73@samsung.com, kgene.kim@samsung.com, padma.kvr@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
-
-On Wed, Apr 3, 2013 at 7:48 PM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> On Wed, Apr 03, 2013 at 07:40:44PM +0530, Vivek Gautam wrote:
->> >> > >> >> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
->> >> > >> >> +{
->> >> > >> >> +       if (!x || !x->dev) {
->> >> > >> >> +               dev_err(x->dev, "no PHY or attached device available\n");
->> >> > >> >> +               return;
->> >> > >> >> +               }
->> >> > >> >> +
->> >> > >> >> +       pm_runtime_enable(x->dev);
->> >> > >> >> +}
->> >> > >> >
->> >> > >> >
->> >> > >> > IMO we need not have wrapper APIs for runtime_enable and runtime_disable
->> >> > >> > here. Generally runtime_enable and runtime_disable is done in probe and
->> >> > >> > remove of a driver respectively. So it's better to leave the
->> >> > >> > runtime_enable/runtime_disable to be done in *phy provider* driver than
->> >> > >> > having an API for it to be done by *phy user* driver. Felipe, what do you
->> >> > >> > think?
->> >> > >>
->> >> > >> Thanks!!
->> >> > >> That's very true, runtime_enable() and runtime_disable() calls are made by
->> >> > >> *phy_provider* only. But a querry here.
->> >> > >> Wouldn't in any case a PHY consumer might want to disable runtime_pm on PHY ?
->> >> > >> Say, when consumer failed to suspend the PHY properly
->> >> > >> (*put_sync(phy->dev)* fails), how much sure is the consumer about the
->> >> > >> state of PHY ?
->> >> > >
->> >> > > no no, wait a minute. We might not want to enable runtime pm for the PHY
->> >> > > until the UDC says it can handle runtime pm, no ? I guess this makes a
->> >> > > bit of sense (at least in my head :-p).
->> >> > >
->> >> > > Imagine if PHY is runtime suspended but e.g. DWC3 isn't runtime pm
->> >> > > enabled... Does it make sense to leave that control to the USB
->> >> > > controller drivers ?
->> >> > >
->> >> > > I'm open for suggestions
->> >> >
->> >> > Of course unless the PHY consumer can handle runtime PM for PHY,
->> >> > PHY should not ideally be going into runtime_suspend.
->> >> >
->> >> > Actually trying out few things, here are my observations
->> >> >
->> >> > Enabling runtime_pm on PHY pushes PHY to go into runtime_suspend state.
->> >> > But a device detection wakes up DWC3 controller, and if i don't wake
->> >> > up PHY (using get_sync(phy->dev)) here
->> >> > in runtime_resume() callback of DWC3, i don't get PHY back in active state.
->> >> > So it becomes the duty of DWC3 controller to handle PHY's sleep and wake-up.
->> >> > Thereby it becomes logical that DWC3 controller has the right to
->> >> > enable runtime_pm
->> >> > of PHY.
->> >> >
->> >> > But there's a catch here. if there are multiple consumers of PHY (like
->> >> > USB2 type PHY can
->> >> > have DWC3 controller as well as EHCI/OHCI or even HSGadget) then in that case,
->> >> > only one of the consumer can enable runtime_pm on PHY. So who decides this.
->> >> >
->> >> > Aargh!! lot of confusion here :-(
->> >>
->> >>
->> >> hmmm, maybe add a flag to struct usb_phy and check it on
->> >> usb_phy_autopm_enable() ??
->> >>
->> >> How does usbcore handle it ? They request class drivers to pass
->> >> supports_autosuspend, but while we should have a similar flag, that's
->> >> not enough. We also need a flag to tell us when pm_runtime has already
->> >> been enabled.
->>
->> True
->>
->> >>
->> >> So how about:
->> >>
->> >> usb_phy_autopm_enable()
->> >> {
->> >>       if (!phy->suports_autosuspend)
->> >>               return -ENOSYS;
->> >>
->> >>       if (phy->autosuspend_enabled)
->> >>               return 0;
->> >>
->> >>       phy->autosuspend_enabled = true;
->> >>       return pm_runtime_enable(phy->dev);
->> >> }
->> >>
->> >> ???
->>
->> Great
->>
->> >
->> > and of course I missed the fact that pm_runtime_enable returns nothing
->> > :-) But you got my point.
->>
->> Yea, this is a way around this. :-)
->>
->> Just one more query :-)
->>
->> Lets suppose DWC3 enables runtime_pm on USB 2 type phy,
->> it will try to go into suspend state and thereby call runtime_suspend(), if any.
->> And PHY will come to active state only when its consumer wakes it up,
->> and this consumer is operational
->> only when its related PHY is in fully functional state.
->> So do we have a situation in which this PHY goes into low power state
->> in its runtime_suspend(),
->> resulting in non-detection of devices on further attach (since PHY is
->> in low power state) ?
->>
->> Will the controller (like EHCI/OHCI) be functional now ?
->
-> ehci/ohci need to cope with that by calling usb_phy_autopm_get_sync(),
-> right ? (so does DWC3 :-)
-
-Yes ofcourse.
-So PHYs (in their runtime_suspend) should not be pulled into a state
-wherein even the controllers become in-operational.
-Thereby no attach-detection, and controller doesn't wake up to be able
-to usb_phy_autopm_get_sync()
-
-Sorry for so much noise, i am acting like slow study ;-)
-
->
-> --
-> balbi
 
 
+--===============7363932495793427481==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ADZbWkCsHQ7r3kzd"
+Content-Disposition: inline
 
--- 
-Thanks & Regards
-Vivek
+
+--ADZbWkCsHQ7r3kzd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Apr 02, 2013 at 04:53:01PM +0530, Padmavathi Venna wrote:
+> From: Prathyush K <prathyush.k@samsung.com>
+>=20
+> This patch fixes a possible crash in case drvdata for the secondary
+> device is not set.
+
+Applied both, thanks.
+
+--ADZbWkCsHQ7r3kzd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRXF9WAAoJELSic+t+oim9JF4QAILGq86Pcmzn84cEmm0Ha+Eq
+z7IsM7dAgJeXJplp41qTpJMG7hm8pwHWuT7J+KIw/XnSRchlgcDvyMdC1Vt9iXsU
+scRaIpNVNGaHwYUi6pGxYVT+OPVFd3zb2McsQ3Fqr/hhFX0cdybwm/j9C+docQ+B
+b7FXA0uJt+l0j+rjoJlGo4q1mRQjFTFozVvvki6rH12kwFIEKBIESG3asgGMy7dq
+Kt0j8VouBuJiOAsV1kkeXAd6FtpxR3ACkLmCBL0RcJoG1k/ewZ5mAm3jzOeKOgZS
++h7O0+NEGbqdNAE2dJDXJniXrBUE8M3FXGI8Ioqi5IKVavwSu93X1ujW7bNFr8ps
+lN1KaVf1R4TCXdclx5aGcOh2kreO3oZGYZVsbOP/YskbdVYB0HqjVURuWf3rxawP
+YYHwA+h9Iicx2/tvZcPoLN0SrDAbnDUPRFsETEHMlInHAOLcOYPeVmr6IV9OleNw
+zGC1JJGTSFyOwapdbdRUtM9CDZa5VBDBek9FCUqqBclEhJGPSkvAkfUMk6KaiXyJ
+wi/K5OE51LKtZasACLvGWQWFEl8+2DlZ7Sy3yEpEpNXAPL+v6n3ZNMwL3npZ7+Xu
+UwlFyf44Uzn2pOVTMS9z8Q2Jp5HDkGKNW4bLbyVci4OlcY4+NRDNGtll8Bqw3Dp6
+u3cTiyIpvRpLcPZVikDe
+=eLl3
+-----END PGP SIGNATURE-----
+
+--ADZbWkCsHQ7r3kzd--
+
+--===============7363932495793427481==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7363932495793427481==--
