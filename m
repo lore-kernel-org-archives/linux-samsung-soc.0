@@ -1,117 +1,175 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
+From: Felipe Balbi <balbi@ti.com>
 Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Wed, 3 Apr 2013 18:42:48 +0530
-Message-ID: <CAFp+6iHXW8z2sc44c1hq2au_UnUyVZEr9D0t5BM4mfqcQKZgbA@mail.gmail.com>
+Date: Wed, 3 Apr 2013 16:54:14 +0300
+Message-ID: <20130403135414.GG14680@arwen.pp.htv.fi>
 References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
-	<1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
-	<515BB951.40702@ti.com>
-	<CAFp+6iG8WdWHXVCANx77OiTXLeZ-4qE4jySWqPLhfR1KOEP4fw@mail.gmail.com>
-	<20130403081532.GE25837@arwen.pp.htv.fi>
+ <1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
+ <515BB951.40702@ti.com>
+ <CAFp+6iG8WdWHXVCANx77OiTXLeZ-4qE4jySWqPLhfR1KOEP4fw@mail.gmail.com>
+ <20130403081532.GE25837@arwen.pp.htv.fi>
+ <CAFp+6iHXW8z2sc44c1hq2au_UnUyVZEr9D0t5BM4mfqcQKZgbA@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="N8NGGaQn1mzfvaPg"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f48.google.com ([209.85.214.48]:45186 "EHLO
-	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759224Ab3DCNMu (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:38627 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757497Ab3DCNyh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Apr 2013 09:12:50 -0400
-In-Reply-To: <20130403081532.GE25837@arwen.pp.htv.fi>
+	Wed, 3 Apr 2013 09:54:37 -0400
+Content-Disposition: inline
+In-Reply-To: <CAFp+6iHXW8z2sc44c1hq2au_UnUyVZEr9D0t5BM4mfqcQKZgbA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: balbi@ti.com, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 
-Hi Felipe,
+--N8NGGaQn1mzfvaPg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+HI,
+
+On Wed, Apr 03, 2013 at 06:42:48PM +0530, Vivek Gautam wrote:
+> >> >> Adding  APIs to handle runtime power management on PHY
+> >> >> devices. PHY consumers may need to wake-up/suspend PHYs
+> >> >> when they work across autosuspend.
+> >> >>
+> >> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> >> >> ---
+> >> >>   include/linux/usb/phy.h |  141
+> >> >> +++++++++++++++++++++++++++++++++++++++++++++++
+> >> >>   1 files changed, 141 insertions(+), 0 deletions(-)
+> >> >>
+> >> >> diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
+> >> >> index 6b5978f..01bf9c1 100644
+> >> >> --- a/include/linux/usb/phy.h
+> >> >> +++ b/include/linux/usb/phy.h
+> >> >> @@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string=
+(enum
+> >> >> usb_phy_type type)
+> >> >>                 return "UNKNOWN PHY TYPE";
+> >> >>         }
+> >> >>   }
+> >> >> +
+> >> >> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
+> >> >> +{
+> >> >> +       if (!x || !x->dev) {
+> >> >> +               dev_err(x->dev, "no PHY or attached device availabl=
+e\n");
+> >> >> +               return;
+> >> >> +               }
+> >> >> +
+> >> >> +       pm_runtime_enable(x->dev);
+> >> >> +}
+> >> >
+> >> >
+> >> > IMO we need not have wrapper APIs for runtime_enable and runtime_dis=
+able
+> >> > here. Generally runtime_enable and runtime_disable is done in probe =
+and
+> >> > remove of a driver respectively. So it's better to leave the
+> >> > runtime_enable/runtime_disable to be done in *phy provider* driver t=
+han
+> >> > having an API for it to be done by *phy user* driver. Felipe, what d=
+o you
+> >> > think?
+> >>
+> >> Thanks!!
+> >> That's very true, runtime_enable() and runtime_disable() calls are mad=
+e by
+> >> *phy_provider* only. But a querry here.
+> >> Wouldn't in any case a PHY consumer might want to disable runtime_pm o=
+n PHY ?
+> >> Say, when consumer failed to suspend the PHY properly
+> >> (*put_sync(phy->dev)* fails), how much sure is the consumer about the
+> >> state of PHY ?
+> >
+> > no no, wait a minute. We might not want to enable runtime pm for the PHY
+> > until the UDC says it can handle runtime pm, no ? I guess this makes a
+> > bit of sense (at least in my head :-p).
+> >
+> > Imagine if PHY is runtime suspended but e.g. DWC3 isn't runtime pm
+> > enabled... Does it make sense to leave that control to the USB
+> > controller drivers ?
+> >
+> > I'm open for suggestions
+>=20
+> Of course unless the PHY consumer can handle runtime PM for PHY,
+> PHY should not ideally be going into runtime_suspend.
+>=20
+> Actually trying out few things, here are my observations
+>=20
+> Enabling runtime_pm on PHY pushes PHY to go into runtime_suspend state.
+> But a device detection wakes up DWC3 controller, and if i don't wake
+> up PHY (using get_sync(phy->dev)) here
+> in runtime_resume() callback of DWC3, i don't get PHY back in active stat=
+e.
+> So it becomes the duty of DWC3 controller to handle PHY's sleep and wake-=
+up.
+> Thereby it becomes logical that DWC3 controller has the right to
+> enable runtime_pm
+> of PHY.
+>=20
+> But there's a catch here. if there are multiple consumers of PHY (like
+> USB2 type PHY can
+> have DWC3 controller as well as EHCI/OHCI or even HSGadget) then in that =
+case,
+> only one of the consumer can enable runtime_pm on PHY. So who decides thi=
+s.
+>=20
+> Aargh!! lot of confusion here :-(
 
 
-On Wed, Apr 3, 2013 at 1:45 PM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> On Wed, Apr 03, 2013 at 11:48:39AM +0530, Vivek Gautam wrote:
->> >> Adding  APIs to handle runtime power management on PHY
->> >> devices. PHY consumers may need to wake-up/suspend PHYs
->> >> when they work across autosuspend.
->> >>
->> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> >> ---
->> >>   include/linux/usb/phy.h |  141
->> >> +++++++++++++++++++++++++++++++++++++++++++++++
->> >>   1 files changed, 141 insertions(+), 0 deletions(-)
->> >>
->> >> diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
->> >> index 6b5978f..01bf9c1 100644
->> >> --- a/include/linux/usb/phy.h
->> >> +++ b/include/linux/usb/phy.h
->> >> @@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(enum
->> >> usb_phy_type type)
->> >>                 return "UNKNOWN PHY TYPE";
->> >>         }
->> >>   }
->> >> +
->> >> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
->> >> +{
->> >> +       if (!x || !x->dev) {
->> >> +               dev_err(x->dev, "no PHY or attached device available\n");
->> >> +               return;
->> >> +               }
->> >> +
->> >> +       pm_runtime_enable(x->dev);
->> >> +}
->> >
->> >
->> > IMO we need not have wrapper APIs for runtime_enable and runtime_disable
->> > here. Generally runtime_enable and runtime_disable is done in probe and
->> > remove of a driver respectively. So it's better to leave the
->> > runtime_enable/runtime_disable to be done in *phy provider* driver than
->> > having an API for it to be done by *phy user* driver. Felipe, what do you
->> > think?
->>
->> Thanks!!
->> That's very true, runtime_enable() and runtime_disable() calls are made by
->> *phy_provider* only. But a querry here.
->> Wouldn't in any case a PHY consumer might want to disable runtime_pm on PHY ?
->> Say, when consumer failed to suspend the PHY properly
->> (*put_sync(phy->dev)* fails), how much sure is the consumer about the
->> state of PHY ?
->
-> no no, wait a minute. We might not want to enable runtime pm for the PHY
-> until the UDC says it can handle runtime pm, no ? I guess this makes a
-> bit of sense (at least in my head :-p).
->
-> Imagine if PHY is runtime suspended but e.g. DWC3 isn't runtime pm
-> enabled... Does it make sense to leave that control to the USB
-> controller drivers ?
->
-> I'm open for suggestions
+hmmm, maybe add a flag to struct usb_phy and check it on
+usb_phy_autopm_enable() ??
 
-Of course unless the PHY consumer can handle runtime PM for PHY,
-PHY should not ideally be going into runtime_suspend.
+How does usbcore handle it ? They request class drivers to pass
+supports_autosuspend, but while we should have a similar flag, that's
+not enough. We also need a flag to tell us when pm_runtime has already
+been enabled.
 
-Actually trying out few things, here are my observations
+So how about:
 
-Enabling runtime_pm on PHY pushes PHY to go into runtime_suspend state.
-But a device detection wakes up DWC3 controller, and if i don't wake
-up PHY (using get_sync(phy->dev)) here
-in runtime_resume() callback of DWC3, i don't get PHY back in active state.
-So it becomes the duty of DWC3 controller to handle PHY's sleep and wake-up.
-Thereby it becomes logical that DWC3 controller has the right to
-enable runtime_pm
-of PHY.
+usb_phy_autopm_enable()
+{
+	if (!phy->suports_autosuspend)
+		return -ENOSYS;
 
-But there's a catch here. if there are multiple consumers of PHY (like
-USB2 type PHY can
-have DWC3 controller as well as EHCI/OHCI or even HSGadget) then in that case,
-only one of the consumer can enable runtime_pm on PHY. So who decides this.
+	if (phy->autosuspend_enabled)
+		return 0;
 
-Aargh!! lot of confusion here :-(
+	phy->autosuspend_enabled =3D true;
+	return pm_runtime_enable(phy->dev);
+}
 
+???
 
->
-> --
-> balbi
+--=20
+balbi
 
+--N8NGGaQn1mzfvaPg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
--- 
-Thanks & Regards
-Vivek
+iQIcBAEBAgAGBQJRXDSGAAoJEIaOsuA1yqREVDQQAIr+4rqnr5SvAfNJTzELP4a/
+A42ZFuDjrFIrIMPtqGZZkjXGkQ98sTAaIER0D+rXXDeV7bJLNN+8g2yfszO2jrAF
+bATNzFLfA6PH3zl2OpAXwMe/Hk6b0uzndBmSwrr7IeeEvBy5v7myFp7TSf4e4lKF
+Ki4dumLXOl4p1HBsmm7QpF6jH2+MIvCS9oWXwvqSfL6apFakLasYO+CVtvZmhXy7
+BCbzL361pHm/JhwOnoTgIWy7lySNxdLloAfQ4vqzemI16/oTlev1wnIL8iZDG9u1
+ANTimhXCE9z0RZSj2SRsqugAppULeZkYsmrYMX5DQMEK0CDr5OGSuV0QQMvhkLi/
+wjTmOosajail3pT7Gr4AUMhi+wXcGHtiKZAl68Rv42W8M0s2Jpc4Ho2jlIVOFdlA
+gzQZw1juLW+qKycx20IsK8WWghHaM8tQ56rvlyI94d90mbuwnEeDLGCaoHVMFT2D
+AlicnpsWFrNUqRQIzx8uvbrXdQJcUkpaWPV/9BA9KlwgSXtoB1TI/9pmjjvx9xWI
+kzikaLMG21IVee7ymmsGbB88K515tOyIU9+P5RT7YKGMgow22brs9dZP64GBJ2CS
+ZlePYZaWagQNwV1FSUrDZ58BN/O8xy/8KhM2tn84dq07JeSEDTUScYW3GqnSHwRZ
+3obrP50rqiKKG8oXfhKB
+=WX/N
+-----END PGP SIGNATURE-----
+
+--N8NGGaQn1mzfvaPg--
