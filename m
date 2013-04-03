@@ -1,53 +1,95 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 8/9] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
-Date: Wed, 3 Apr 2013 14:57:17 +0530
-Message-ID: <CAKohpom_W8cTA3L80ozcq4HkFaHuuPSNrrFKSFmocorfPra_Cw@mail.gmail.com>
-References: <cover.1364205812.git.viresh.kumar@linaro.org>
-	<918ff6cc407525d682817cf736347ec572e0316d.1364205812.git.viresh.kumar@linaro.org>
-	<CAKohpon+wk_F0E2oJ_VOj7EKZ0mVbis1-gPSr-T9zLsMC_XohA@mail.gmail.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: [Suggestion] ARM:S5pv210: compiling issue for s5pv210 by using
+ randconfig
+Date: Wed, 03 Apr 2013 17:46:53 +0800
+Message-ID: <515BFA8D.2000204@asianux.com>
+References: <514FB202.3040807@asianux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAKohpon+wk_F0E2oJ_VOj7EKZ0mVbis1-gPSr-T9zLsMC_XohA@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: arvind.chauhan@arm.com, robin.randhawa@arm.com, Steve.Bannister@arm.com, Liviu.Dudau@arm.com, charles.garcia-tobin@arm.com, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, arnd.bergmann@linaro.org, linux@arm.linux.org.uk, Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:15309 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757815Ab3DCJrZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Apr 2013 05:47:25 -0400
+In-Reply-To: <514FB202.3040807@asianux.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, dhowells@redhat.com, plagnioj@jcrosoft.com, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 31 March 2013 09:23, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 25 March 2013 15:41, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->> This patch moves cpufreq driver of Samsung's ARM based s3c24xx platform to
->> drivers/cpufreq.
->>
->> Cc: Ben Dooks <ben-linux@fluff.org>
->> Cc: Kukjin Kim <kgene.kim@samsung.com>
->> Cc: linux-samsung-soc@vger.kernel.org
->> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->> ---
->>  arch/arm/Kconfig                                   | 46 ---------------
->>  arch/arm/mach-s3c24xx/Kconfig                      | 66 +++++++++-------------
->>  arch/arm/mach-s3c24xx/Makefile                     |  6 --
->>  arch/arm/mach-s3c24xx/{ => include/mach}/s3c2412.h |  0
->>  arch/arm/mach-s3c24xx/iotiming-s3c2412.c           |  2 +-
->>  arch/arm/plat-samsung/include/plat/cpu-freq-core.h | 10 ++--
->>  arch/arm/plat-samsung/include/plat/cpu-freq.h      |  6 +-
->>  drivers/cpufreq/Kconfig.arm                        | 58 +++++++++++++++++++
->>  drivers/cpufreq/Makefile                           |  5 ++
->>  .../cpufreq/s3c2410-cpufreq.c                      |  0
->>  .../cpufreq/s3c2412-cpufreq.c                      |  3 +-
->>  .../cpufreq/s3c2440-cpufreq.c                      |  0
->>  .../cpufreq/s3c24xx-cpufreq-debugfs.c              |  0
->>  .../cpufreq.c => drivers/cpufreq/s3c24xx-cpufreq.c |  0
->>  14 files changed, 100 insertions(+), 102 deletions(-)
->>  rename arch/arm/mach-s3c24xx/{ => include/mach}/s3c2412.h (100%)
->>  rename arch/arm/mach-s3c24xx/cpufreq-s3c2410.c => drivers/cpufreq/s3c2410-cpufreq.c (100%)
->>  rename arch/arm/mach-s3c24xx/cpufreq-s3c2412.c => drivers/cpufreq/s3c2412-cpufreq.c (99%)
->>  rename arch/arm/mach-s3c24xx/cpufreq-s3c2440.c => drivers/cpufreq/s3c2440-cpufreq.c (100%)
->>  rename arch/arm/mach-s3c24xx/cpufreq-debugfs.c => drivers/cpufreq/s3c24xx-cpufreq-debugfs.c (100%)
->>  rename arch/arm/mach-s3c24xx/cpufreq.c => drivers/cpufreq/s3c24xx-cpufreq.c (100%)
->
-> Ben/Kukjin,
->
-> Can i have your View or Ack for this patch?
+Hello Maintainers:
 
-Ping!!
+  when you have time, could you help to check this suggestion ?
+
+  if we really need treat it as an issue, and also no one have time to
+fix it, I should try.
+
+
+  thanks.
+
+gchen.
+
+On 2013=E5=B9=B403=E6=9C=8825=E6=97=A5 10:10, Chen Gang wrote:
+> Hello Maintainers:
+>=20
+>   is it an issue that need solving ?
+>=20
+>   :-)
+>=20
+>=20
+> details:
+>=20
+>   make:
+>     make V=3D1 EXTRA_CFLAGS=3D-W ARCH=3Darm randconfig
+>     make V=3D1 EXTRA_CFLAGS=3D-W ARCH=3Darm menuconfig
+>       set arm-linux-gnu-  for "Cross-compiler tool prefix"
+>       set "Samsung S5PV210/S5PC210" for "ARM system type"
+>     make V=3D1 EXTRA_CFLAGS=3D-W ARCH=3Darm
+>=20
+>=20
+>   err:
+>     arch/arm/kernel/entry-armv.S: Assembler messages:
+>     arch/arm/kernel/entry-armv.S:207: Error: selected processor does =
+not support ARM mode `clrex'
+>     arch/arm/kernel/entry-armv.S:231: Error: selected processor does =
+not support ARM mode `clrex'
+>     arch/arm/kernel/entry-armv.S:314: Error: selected processor does =
+not support ARM mode `clrex'
+>     arch/arm/kernel/entry-armv.S:335: Error: selected processor does =
+not support ARM mode `clrex'
+>     arch/arm/kernel/entry-armv.S:813: Error: selected processor does =
+not support ARM mode `ldrd r4,r5,[r0]'
+>     arch/arm/kernel/entry-armv.S:814: Error: selected processor does =
+not support ARM mode `ldrd r6,r7,[r1]'
+>     arch/arm/kernel/entry-armv.S:816: Error: selected processor does =
+not support ARM mode `ldrexd r0,r1,[r2]'
+>     arch/arm/kernel/entry-armv.S:819: Error: selected processor does =
+not support ARM mode `strexdeq r3,r6,r7,[r2]'
+>     make[1]: *** [arch/arm/kernel/entry-armv.o] Error 1
+>     make: *** [arch/arm/kernel] Error 2
+>=20
+>   related gcc command:
+> arm-linux-gnu-gcc -Wp,-MD,arch/arm/kernel/.entry-armv.o.d  -nostdinc =
+-isystem /usr/lib/gcc/arm-linux-gnueabi/4.7.1/include -I/android/public=
+-kernel/linux-next/arch/arm/include -Iarch/arm/include/generated  -Iinc=
+lude -I/android/public-kernel/linux-next/arch/arm/include/uapi -Iarch/a=
+rm/include/generated/uapi -I/android/public-kernel/linux-next/include/u=
+api -Iinclude/generated/uapi -include /android/public-kernel/linux-next=
+/include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-s=
+5pv210/include -Iarch/arm/plat-samsung/include  -D__ASSEMBLY__ -mabi=3D=
+apcs-gnu -mno-thumb-interwork -marm -D__LINUX_ARM_ARCH__=3D4 -march=3Da=
+rmv4t -mtune=3Darm9tdmi -include asm/unified.h -msoft-float          -c=
+ -o arch/arm/kernel/entry-armv.o arch/arm/kernel/entry-armv.S
+>=20
+>=20
+>=20
+>   thanks.
+>=20
+
+
+--=20
+Chen Gang
+
+Asianux Corporation
