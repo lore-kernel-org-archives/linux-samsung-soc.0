@@ -1,45 +1,81 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 0/2] These two patches to s3c_pm_arch_prepare_irqs() were
- part of the work
-Date: Wed, 3 Apr 2013 10:20:56 -0700
-Message-ID: <CAD=FV=XTMbs9q5FvsFUTmCDrFu7q-ngnS3F94cHNnCRmN3UNLg@mail.gmail.com>
-References: <1363711900-25560-1-git-send-email-dianders@chromium.org>
-	<24b401ce300f$5a767b40$0f6371c0$%kim@samsung.com>
-	<24b501ce3011$454d3c70$cfe7b550$%kim@samsung.com>
+From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Subject: Re: [PATCH v3 00/11] usb: dwc3/xhci/phy: Enable runtime power
+ management
+Date: Wed, 3 Apr 2013 10:27:51 -0700
+Message-ID: <20130403172751.GC10089@xanatos>
+References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:33010 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762765Ab3DCRU5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Apr 2013 13:20:57 -0400
-Received: by mail-la0-f46.google.com with SMTP id fq12so1676701lab.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Apr 2013 10:20:56 -0700 (PDT)
-In-Reply-To: <24b501ce3011$454d3c70$cfe7b550$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Jongpill Lee <boyko.lee@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Olof Johansson <olof@lixom.net>, Jonathan Kliegman <kliegs@chromium.org>, Michael Spang <spang@chromium.org>, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Kukjin,
+Question: Do you still need this patch for 3.10?
 
-On Tue, Apr 2, 2013 at 7:16 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> Applied with 1st one, BTW, do you want to send this for stable tree?
+http://marc.info/?l=linux-usb&m=136057666911621&w=2
 
-I don't have any need for it to be in stable tree.  The ARM Chromebook
-hasn't reached critical functionality on any released/upstram Linux
-versions so it doesn't make much sense to backport fixes.  If someone
-else wants it in stable (and can confirm that it helps them) then I
-certainly wouldn't object!
+Does this patchset build on top of that?
 
+I'm really behind on my patches for 3.10, sorry.
 
-> One more note, just now I discussed Jaecheol Lee about the bit,
-> ENABLE_WAKEUP_SW, as the patch fixed, it should be cleared but used to be
-> set s3c_irqwake_intmask. Let me check again, then if any updates I'll let
-> you know.
+Sarah Sharp
 
-OK, thanks.  If there is a reason that ENABLE_WAKEUP_SW needs to be
-set then it would be good to understand that case.  :)
-
--Doug
+On Mon, Apr 01, 2013 at 07:23:59PM +0530, Vivek Gautam wrote:
+> This patch-series enables runtime power management on xhci-plat,
+> dwc3-core, dwc3-exynos as well as on Samsung's USB 2.0 type and
+> USB 3.0 type PHYs.
+> 
+> Based on 'next' branch of Felipe Balbi's USB tree.
+> 
+> Changes from v2:
+>  - Using separate functions for USB PHY runtime power management, instead of
+>    using macros.
+>  - Adding 'pm_runtime_set_suspended()' api call in dwc3 core layer before
+>    enabling runtime pm. (Ideally, we should be explicitly make device
+>    'suspended' or 'active' before enabling runtime pm on it).
+>  - Checking return code for 'put_sync' and 'get_sync' of USB-PHYs when
+>    waking up or suspending them from dwc3 core's runtime_pm callbacks.
+>  - Removed buggy pm_runtime_put() calls from driver's (xhci, dwc3 and PHY)
+>    remove functions.
+>  - Adding a patch to enable runtime power management of Samsung's USB 2.0 PHY
+>    (usb: phy: samsung: Enable runtime power management on usb2phy)
+> 
+> Changes from v1:
+>  - Adding required PHY APIs to handle runtime power management
+>    instead of directly twiddling with phy->dev.
+>  - Handling runtime power management of usb PHYs in dwc3 core
+>    driver instead of in any glue layer.
+>  - Splitting the patch:
+>    [PATCH 4/4] usb: phy: samsung: Enable runtime power management on samsung-usb
+>    into required number to bifurcate functionality.
+> 
+> Vivek Gautam (11):
+>   usb: phy: Add APIs for runtime power management
+>   USB: dwc3: Adjust runtime pm to allow autosuspend
+>   usb: dwc3: Enable runtime pm only after PHYs are initialized
+>   usb: dwc3: Add runtime power management callbacks
+>   usb: dwc3: exynos: Enable runtime power management
+>   usb: xhci: Enable runtime pm in xhci-plat
+>   usb: phy: samsung: Enable runtime power management on usb2phy
+>   usb: phy: samsung: Enable runtime power management on usb3phy
+>   usb: phy: samsung: Add support for external reference clock
+>   usb: phy: samsung: Add support for PHY ref_clk gpio
+>   usb: phy: samsung: Add support for PHY refclk switching
+> 
+>  drivers/usb/dwc3/core.c            |   59 ++++++++++++++--
+>  drivers/usb/dwc3/dwc3-exynos.c     |   12 +++
+>  drivers/usb/host/xhci-plat.c       |    6 ++
+>  drivers/usb/phy/phy-samsung-usb.c  |   26 +++++++
+>  drivers/usb/phy/phy-samsung-usb.h  |    1 +
+>  drivers/usb/phy/phy-samsung-usb2.c |    5 ++
+>  drivers/usb/phy/phy-samsung-usb3.c |  119 +++++++++++++++++++++++++++++--
+>  include/linux/usb/phy.h            |  141 ++++++++++++++++++++++++++++++++++++
+>  8 files changed, 358 insertions(+), 11 deletions(-)
+> 
+> -- 
+> 1.7.6.5
+> 
