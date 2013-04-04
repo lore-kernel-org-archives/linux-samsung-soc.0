@@ -1,26 +1,54 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 0/4] ARM: dts: update device tree for exynos5440
-Date: Thu,  4 Apr 2013 19:46:43 +0900
-Message-ID: <1365072407-4320-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 1/4] ARM: dts: Add node for GMAC for exynos5440
+Date: Thu,  4 Apr 2013 19:46:44 +0900
+Message-ID: <1365072407-4320-2-git-send-email-kgene.kim@samsung.com>
+References: <1365072407-4320-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:51160 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757619Ab3DDKrE (ORCPT
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:52756 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757679Ab3DDKrH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Apr 2013 06:47:04 -0400
-Received: by mail-pd0-f181.google.com with SMTP id y10so1356231pdj.26
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2013 03:47:03 -0700 (PDT)
+	Thu, 4 Apr 2013 06:47:07 -0400
+Received: by mail-pb0-f43.google.com with SMTP id md4so1367947pbc.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2013 03:47:06 -0700 (PDT)
+In-Reply-To: <1365072407-4320-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org
+Cc: Byungho An <bh74.an@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch updates device tree for exynos5440 including for PMU, PDMA0 and GMAC.
+From: Byungho An <bh74.an@samsung.com>
 
- arch/arm/boot/dts/exynos5440-ssdk5440.dts |    6 +----
- arch/arm/boot/dts/exynos5440.dtsi         |   35 ++++++++++++++++++++++------
- 2 files changed, 28 insertions(+), 13 deletions(-)
+This patch adds node for GMAC for exynos5440
+EXYNOS5440 SoC supported by GMAC driver.
 
-[PATCH 1/4] ARM: dts: Add node for GMAC for exynos5440
-[PATCH 2/4] ARM: dts: add PDMA0 changes for exynos5440
-[PATCH 3/4] ARM: dts: add PMU support in exynos5440
-[PATCH 4/4] ARM: dts: update bootargs to boot from sda2 for
+Signed-off-by: Byungho An <bh74.an@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/boot/dts/exynos5440.dtsi |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index 7132358..7bd1f3b 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -147,6 +147,17 @@
+ 		clock-names = "watchdog";
+ 	};
+ 
++	gmac: ethernet@00230000 {
++		compatible = "snps,dwmac-3.70a";
++		reg = <0x00230000 0x8000>;
++		interrupt-parent = <&gic>;
++		interrupts = <0 31 4>;
++		interrupt-names = "macirq";
++		phy-mode = "sgmii";
++		clocks = <&clock 12>;
++		clock-names = "stmmaceth";
++	};
++
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-- 
+1.7.4.4
