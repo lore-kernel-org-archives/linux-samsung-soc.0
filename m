@@ -1,145 +1,73 @@
-From: Naveen Krishna Chatradhi <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] iio: adc: exynos_adc: Handle timeout issues
-Date: Wed,  3 Apr 2013 21:06:28 -0700
-Message-ID: <1365048389-6364-1-git-send-email-naveenkrishna.ch@gmail.com>
-References: <1363364801-23684-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363364801-23684-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: RE: [PATCH v2 0/4] clk: samsung: pm fixes and multiple aliases
+Date: Thu, 04 Apr 2013 13:06:35 +0900
+Message-ID: <272701ce30e9$cc816b70$65844250$%kim@samsung.com>
+References: <201303131458.18671.heiko@sntech.de>
+ <176601ce293a$d7a0e190$86e2a4b0$%kim@samsung.com>
+ <20130327005912.4014.60318@quantum>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:21868 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750699Ab3DDEGh convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Apr 2013 00:06:37 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MKP00CT4Q2TNIH0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 13:06:36 +0900 (KST)
+In-reply-to: <20130327005912.4014.60318@quantum>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mike Turquette' <mturquette@linaro.org>, =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Mike Turquette wrote:
+>=20
+> Quoting Kukjin Kim (2013-03-25 02:26:34)
+> > Heiko St=C3=BCbner wrote:
+> > >
+> > > Second version of the fixes to address comments gathered from the
+> first
+> > > version, like not entering the dt code on non-dt platforms even i=
+f
+> > > dt-support is present in the kernel.
+> > >
+> > > Patch 1 and 3 got "Reviewed-by" tags but I only included the one =
+for
+> > > patch 1, because patch 3 changed due to the changes in patch 2.
+> > >
+> > > Heiko Stuebner (4):
+> > >   clk: samsung: register clk_div_tables for divider clocks
+> > >   clk: samsung: fix pm init on non-dt platforms
+> > >   clk: samsung: always allocate the clk_table
+> > >   clk: samsung: add infrastructure to add separate aliases
+> > >
+> > >  drivers/clk/samsung/clk.c |   72 +++++++++++++++++++++++++++++++=
+++++--
+> ----
+> > > ---
+> > >  drivers/clk/samsung/clk.h |   34 ++++++++++++++++++--
+> > >  2 files changed, 87 insertions(+), 19 deletions(-)
+> > >
+> > > --
+> > > 1.7.2.3
+> >
+> > Looks good to me and applied into samsung tree based on samsung com=
+mon
+> clock by Thomas P Abraham for testing.
+> >
+> > But would be helpful to me if I could get Mike's ack on this series=
+=2E
+> >
+>=20
+> Acked-by: Mike Turquette <mturquette@linaro.org>
+>=20
+Applied, thanks.
 
-This patch does the following
-1. Handle the return values of wait_for_completion_interruptible_timeout
-2. Reset software if a timeout happes.
-
-Note: submitted for review at https://patchwork.kernel.org/patch/2279591/
-
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
----
-As per the comments from Doug at
-http://marc.info/?l=linux-kernel&m=136500878406955&w=3
-
-Changes since v1:
-1. Remove the spin lock implememtation and the INIT_COMPLETION
-2. Rearrange the code and reset the ADC in cases of timeout.
-
- drivers/iio/adc/exynos_adc.c | 73 ++++++++++++++++++++++++++------------------
- 1 file changed, 43 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 5ab0dfd..a6c4df5 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -111,6 +111,35 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
- 	return (unsigned int)match->data;
- }
- 
-+static void exynos_adc_hw_init(struct exynos_adc *info)
-+{
-+	u32 con1, con2;
-+	int delay;
-+
-+	if (info->version == ADC_V2) {
-+		con1 = ADC_V2_CON1_SOFT_RESET;
-+		writel(con1, ADC_V2_CON1(info->regs));
-+
-+		/* ADC H/W requires 25PCLKs before other register access */
-+		delay = DIV_ROUND_UP(25 * 1000000, clk_get_rate(info->clk));
-+		udelay(delay);
-+
-+		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
-+			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
-+		writel(con2, ADC_V2_CON2(info->regs));
-+
-+		/* Enable interrupts */
-+		writel(1, ADC_V2_INT_EN(info->regs));
-+	} else {
-+		/* set default prescaler values and Enable prescaler */
-+		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-+
-+		/* Enable 12-bit ADC resolution */
-+		con1 |= ADC_V1_CON_RES;
-+		writel(con1, ADC_V1_CON(info->regs));
-+	}
-+}
-+
- static int exynos_read_raw(struct iio_dev *indio_dev,
- 				struct iio_chan_spec const *chan,
- 				int *val,
-@@ -118,8 +147,9 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				long mask)
- {
- 	struct exynos_adc *info = iio_priv(indio_dev);
--	unsigned long timeout;
-+	long timeout;
- 	u32 con1, con2;
-+	int ret;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
- 		return -EINVAL;
-@@ -146,14 +176,21 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 
- 	timeout = wait_for_completion_interruptible_timeout
- 			(&info->completion, EXYNOS_ADC_TIMEOUT);
--	*val = info->value;
- 
--	mutex_unlock(&indio_dev->mlock);
-+	if (timeout == 0) {
-+		dev_warn(&indio_dev->dev, "Conversion timed out reseting\n");
-+		exynos_adc_hw_init(info);
-+		ret = -ETIMEDOUT;
-+	} else if (timeout < 0) {
-+		ret = timeout;
-+	} else {
-+		*val = info->value;
-+		ret = IIO_VAL_INT;
-+	}
- 
--	if (timeout == 0)
--		return -ETIMEDOUT;
-+	mutex_unlock(&indio_dev->mlock);
- 
--	return IIO_VAL_INT;
-+	return ret;
- }
- 
- static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
-@@ -225,30 +262,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
- 	return 0;
- }
- 
--static void exynos_adc_hw_init(struct exynos_adc *info)
--{
--	u32 con1, con2;
--
--	if (info->version == ADC_V2) {
--		con1 = ADC_V2_CON1_SOFT_RESET;
--		writel(con1, ADC_V2_CON1(info->regs));
--
--		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
--			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
--		writel(con2, ADC_V2_CON2(info->regs));
--
--		/* Enable interrupts */
--		writel(1, ADC_V2_INT_EN(info->regs));
--	} else {
--		/* set default prescaler values and Enable prescaler */
--		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
--
--		/* Enable 12-bit ADC resolution */
--		con1 |= ADC_V1_CON_RES;
--		writel(con1, ADC_V1_CON(info->regs));
--	}
--}
--
- static int exynos_adc_probe(struct platform_device *pdev)
- {
- 	struct exynos_adc *info = NULL;
--- 
-1.7.12.4
+- Kukjin
