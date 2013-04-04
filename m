@@ -1,109 +1,48 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/3] ARM: dts: Remove keypad entries from exynos4x12-pinctrl.dtsi
-Date: Thu, 4 Apr 2013 12:10:48 +0530
-Message-ID: <CAK9yfHwLjTFJF-qJd8ucmq8Smy05ETxV61B4R3PJAYUiLcbR+Q@mail.gmail.com>
-References: <1363151289-685-1-git-send-email-sachin.kamat@linaro.org>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v4 0/2] ARM: Exynos5250: Enabling samsung usb phy
+Date: Thu, 4 Apr 2013 12:16:26 +0530
+Message-ID: <CAFp+6iHZxeLxwz-RA52AaoS7jD3EfrySwmNH4GhHhQiVtrd51Q@mail.gmail.com>
+References: <1363334171-21812-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:49887 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1763428Ab3DDGkt (ORCPT
+Received: from mail-bk0-f42.google.com ([209.85.214.42]:35441 "EHLO
+	mail-bk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1763781Ab3DDGq1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Apr 2013 02:40:49 -0400
-Received: by mail-ob0-f178.google.com with SMTP id wd20so2209782obb.37
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Apr 2013 23:40:48 -0700 (PDT)
-In-Reply-To: <1363151289-685-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 4 Apr 2013 02:46:27 -0400
+In-Reply-To: <1363334171-21812-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, balbi@ti.com, rob.herring@calxeda.com, thomas.abraham@linaro.org, grant.likely@secretlab.ca, dianders@chromium.org, jg1.han@samsung.com, p.paneri@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Kukjin,
-Please check this series.
+Hi Kukjin,
 
-On 13 March 2013 10:38, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Keypad pins/lines are board specific and should be added to respective
-> board dts files.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   56 -----------------------------
->  1 files changed, 0 insertions(+), 56 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> index 099cec7..704290f 100644
-> --- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> @@ -778,62 +778,6 @@
->                         samsung,pin-drv = <3>;
->                 };
->
-> -               keypad_col0: keypad-col0 {
-> -                       samsung,pins = "gpl2-0";
-> -                       samsung,pin-function = <3>;
-> -                       samsung,pin-pud = <0>;
-> -                       samsung,pin-drv = <0>;
-> -               };
-> -
-> -               keypad_col1: keypad-col1 {
-> -                       samsung,pins = "gpl2-1";
-> -                       samsung,pin-function = <3>;
-> -                       samsung,pin-pud = <0>;
-> -                       samsung,pin-drv = <0>;
-> -               };
-> -
-> -               keypad_col2: keypad-col2 {
-> -                       samsung,pins = "gpl2-2";
-> -                       samsung,pin-function = <3>;
-> -                       samsung,pin-pud = <0>;
-> -                       samsung,pin-drv = <0>;
-> -               };
-> -
-> -               keypad_col3: keypad-col3 {
-> -                       samsung,pins = "gpl2-3";
-> -                       samsung,pin-function = <3>;
-> -                       samsung,pin-pud = <0>;
-> -                       samsung,pin-drv = <0>;
-> -               };
-> -
-> -               keypad_col4: keypad-col4 {
-> -                       samsung,pins = "gpl2-4";
-> -                       samsung,pin-function = <3>;
-> -                       samsung,pin-pud = <0>;
-> -                       samsung,pin-drv = <0>;
-> -               };
-> -
-> -               keypad_col5: keypad-col5 {
-> -                       samsung,pins = "gpl2-5";
-> -                       samsung,pin-function = <3>;
-> -                       samsung,pin-pud = <0>;
-> -                       samsung,pin-drv = <0>;
-> -               };
-> -
-> -               keypad_col6: keypad-col6 {
-> -                       samsung,pins = "gpl2-6";
-> -                       samsung,pin-function = <3>;
-> -                       samsung,pin-pud = <0>;
-> -                       samsung,pin-drv = <0>;
-> -               };
-> -
-> -               keypad_col7: keypad-col7 {
-> -                       samsung,pins = "gpl2-7";
-> -                       samsung,pin-function = <3>;
-> -                       samsung,pin-pud = <0>;
-> -                       samsung,pin-drv = <0>;
-> -               };
-> -
->                 cam_port_b: cam-port-b {
->                         samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
->                                         "gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
-> --
-> 1.7.4.1
->
 
+On Fri, Mar 15, 2013 at 1:26 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> Based on 'for-next' of linux-samsung tree with following patches
+> from Doug on top:
+> usb: Document clocks in samsung, exynos4210-ehci/ohci bindings
+> ARM: dts: add usb 2.0 clock references to exynos5250 device tree
+>
+> Also depending upon following patch-series for Samsung-usb-phy driver:
+> [PATCH v7 0/2] Adding USB 3.0 DRD-phy support for exynos5250
+>
+> Changes from v3:
+> Added 'clocks' and 'clock-names' entry also in device nodes, aligning
+> with common clock framework for Samsung's SoCs.
+>
+> Vivek Gautam (2):
+>   ARM: Exynos5250: Enabling samsung-usb2phy driver
+>   ARM: Exynos5250: Enabling samsung-usb3phy driver
+>
+>  arch/arm/boot/dts/exynos5250.dtsi |   29 +++++++++++++++++++++++++++++
+>  1 files changed, 29 insertions(+), 0 deletions(-)
+
+Waiting for your review on this patch-set. :-)
 
 
 -- 
-With warm regards,
-Sachin
+Thanks & Regards
+Vivek
