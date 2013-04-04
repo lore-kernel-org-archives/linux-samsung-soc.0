@@ -1,101 +1,69 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3 00/11] usb: dwc3/xhci/phy: Enable runtime power management
-Date: Thu, 4 Apr 2013 10:34:57 +0530
-Message-ID: <CAFp+6iGnDUSOjVgu9ZCAPF9rUDWD5r9ZttBtTo864Q2ACvKFrA@mail.gmail.com>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
-	<20130403172751.GC10089@xanatos>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V3 0/7] Update Arndale board support
+Date: Thu, 04 Apr 2013 14:24:57 +0900
+Message-ID: <276401ce30f4$beff29f0$3cfd7dd0$%kim@samsung.com>
+References: <1364890507-19261-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130403172751.GC10089@xanatos>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:35467 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752414Ab3DDFY7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Apr 2013 01:24:59 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MKP00MR8TPLY180@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 14:24:57 +0900 (KST)
+In-reply-to: <1364890507-19261-1-git-send-email-tushar.behera@linaro.org>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: patches@linaro.org
 
-Hi Sarah,
+Tushar Behera wrote:
+> 
+> Arndale board support has been updated using pin-control and
+> common clock framework.
+> 
+> The patchset is based on Kukjin's for-next.
+> commit d58f6a153f40 ("Merge branch 'next/clk-exynos-2' into for-next")
+> 
+> It depends on following patchset.
+> 
+> [PATCH 0/2] ARM: dts: Add default pin states for client nodes on Exynos4/5
+> platforms
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/16559
+> 
+> Following 2 patches have been newly added in this patchset because
+> of changes during 3.9 merge window.
+> 1/7: ARM: dts: Add pin-control related changes for Arndale board
+> 2/7: ARM: dts: Add disable-wp for card slot on exynos5250-arndale
+> 
+> Amit Daniel Kachhap (1):
+>   ARM: dts: Add PMIC node entry for Arndale board
+> 
+> Sachin Kamat (4):
+>   ARM: dts: Add disable-wp for card slot on exynos5250-arndale
+>   ARM: dts: Add vmmc regulator support for Arndale board
+>   ARM: dts: Add MFC codec support for Arndale board
+>   ARM: dts: Add HDMI HPD and regulator node for Arndale board
+> 
+> Tushar Behera (2):
+>   ARM: dts: Add pin-control related changes for Arndale board
+>   ARM: dts: Add gpio-button entries for Arndale board
+> 
+>  arch/arm/boot/dts/exynos5250-arndale.dts |  343
+> +++++++++++++++++++++++++++++-
+>  1 file changed, 333 insertions(+), 10 deletions(-)
+> 
+> --
+> 1.7.9.5
 
+Applied this whole series, thanks.
 
-On Wed, Apr 3, 2013 at 10:57 PM, Sarah Sharp
-<sarah.a.sharp@linux.intel.com> wrote:
-> Question: Do you still need this patch for 3.10?
-
-Felipe's 'next' is closed for 3.10, so this series won't be making it
-to 3.10 now, as a whole. :-(
-
->
-> http://marc.info/?l=linux-usb&m=136057666911621&w=2
->
-> Does this patchset build on top of that?
-
-Yea, it builds fine on top of the above mentioned patch.
-I would suggest that we pull the xhci-plat patch in this series when the
-complete patch-set getting in.
-btw, its your decision ;-)
-
->
-> I'm really behind on my patches for 3.10, sorry.
->
-> Sarah Sharp
->
-> On Mon, Apr 01, 2013 at 07:23:59PM +0530, Vivek Gautam wrote:
->> This patch-series enables runtime power management on xhci-plat,
->> dwc3-core, dwc3-exynos as well as on Samsung's USB 2.0 type and
->> USB 3.0 type PHYs.
->>
->> Based on 'next' branch of Felipe Balbi's USB tree.
->>
->> Changes from v2:
->>  - Using separate functions for USB PHY runtime power management, instead of
->>    using macros.
->>  - Adding 'pm_runtime_set_suspended()' api call in dwc3 core layer before
->>    enabling runtime pm. (Ideally, we should be explicitly make device
->>    'suspended' or 'active' before enabling runtime pm on it).
->>  - Checking return code for 'put_sync' and 'get_sync' of USB-PHYs when
->>    waking up or suspending them from dwc3 core's runtime_pm callbacks.
->>  - Removed buggy pm_runtime_put() calls from driver's (xhci, dwc3 and PHY)
->>    remove functions.
->>  - Adding a patch to enable runtime power management of Samsung's USB 2.0 PHY
->>    (usb: phy: samsung: Enable runtime power management on usb2phy)
->>
->> Changes from v1:
->>  - Adding required PHY APIs to handle runtime power management
->>    instead of directly twiddling with phy->dev.
->>  - Handling runtime power management of usb PHYs in dwc3 core
->>    driver instead of in any glue layer.
->>  - Splitting the patch:
->>    [PATCH 4/4] usb: phy: samsung: Enable runtime power management on samsung-usb
->>    into required number to bifurcate functionality.
->>
->> Vivek Gautam (11):
->>   usb: phy: Add APIs for runtime power management
->>   USB: dwc3: Adjust runtime pm to allow autosuspend
->>   usb: dwc3: Enable runtime pm only after PHYs are initialized
->>   usb: dwc3: Add runtime power management callbacks
->>   usb: dwc3: exynos: Enable runtime power management
->>   usb: xhci: Enable runtime pm in xhci-plat
->>   usb: phy: samsung: Enable runtime power management on usb2phy
->>   usb: phy: samsung: Enable runtime power management on usb3phy
->>   usb: phy: samsung: Add support for external reference clock
->>   usb: phy: samsung: Add support for PHY ref_clk gpio
->>   usb: phy: samsung: Add support for PHY refclk switching
->>
->>  drivers/usb/dwc3/core.c            |   59 ++++++++++++++--
->>  drivers/usb/dwc3/dwc3-exynos.c     |   12 +++
->>  drivers/usb/host/xhci-plat.c       |    6 ++
->>  drivers/usb/phy/phy-samsung-usb.c  |   26 +++++++
->>  drivers/usb/phy/phy-samsung-usb.h  |    1 +
->>  drivers/usb/phy/phy-samsung-usb2.c |    5 ++
->>  drivers/usb/phy/phy-samsung-usb3.c |  119 +++++++++++++++++++++++++++++--
->>  include/linux/usb/phy.h            |  141 ++++++++++++++++++++++++++++++++++++
->>  8 files changed, 358 insertions(+), 11 deletions(-)
->>
->> --
->> 1.7.6.5
->>
-
-
-
--- 
-Thanks & Regards
-Vivek
+- Kukjin
