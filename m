@@ -1,69 +1,52 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V3 0/7] Update Arndale board support
-Date: Thu, 04 Apr 2013 14:24:57 +0900
-Message-ID: <276401ce30f4$beff29f0$3cfd7dd0$%kim@samsung.com>
-References: <1364890507-19261-1-git-send-email-tushar.behera@linaro.org>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v2] mmc: dwmmc: let device core setup the default pin
+ configuration
+Date: Thu, 04 Apr 2013 14:47:02 +0900
+Message-ID: <004201ce30f7$d4beea20$7e3cbe60$%jun@samsung.com>
+References: <1364882999-31670-1-git-send-email-thomas.abraham@linaro.org>
+ <CAD=FV=Xck5XW3LPmvkMfP=dfmnDH+kG4VYkRetW+SJ-bAz7SqQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35467 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752414Ab3DDFY7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Apr 2013 01:24:59 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKP00MR8TPLY180@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 14:24:57 +0900 (KST)
-In-reply-to: <1364890507-19261-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAD=FV=Xck5XW3LPmvkMfP=dfmnDH+kG4VYkRetW+SJ-bAz7SqQ@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Doug Anderson' <dianders@chromium.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Girish Shivananjappa' <girish.shivananjappa@linaro.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Tomasz Figa' <t.figa@samsung.com>, =?windows-1252?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Linus Walleij' <linus.walleij@linaro.org>, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: patches@linaro.org
 
-Tushar Behera wrote:
+On Wednesday, April 03, 2013, Doug Anderson wrote:
+> Thomas,
 > 
-> Arndale board support has been updated using pin-control and
-> common clock framework.
+> On Mon, Apr 1, 2013 at 11:09 PM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
+> > With device core now able to setup the default pin configuration,
+> > the pin configuration code based on the deprecated Samsung specific
+> > gpio bindings is removed.
+> >
+> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > Reviewed-by: Doug Anderson <dianders@chromium.org>
+> > Tested-by: Doug Anderson <dianders@chromium.org>
 > 
-> The patchset is based on Kukjin's for-next.
-> commit d58f6a153f40 ("Merge branch 'next/clk-exynos-2' into for-next")
+> You missed Seungwon's other feedback.  Please change the title from
+> "mmc: dwmmc: let device core setup the default pin configuration" to
+> "mmc: dw_mmc: let device core setup the default pin configuration".
+> He requested that the tag have the underscore in it for consistency.
 > 
-> It depends on following patchset.
+> If you're resending, it also seems like it might be nice to rebase this atop:
 > 
-> [PATCH 0/2] ARM: dts: Add default pin states for client nodes on Exynos4/5
-> platforms
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/16559
+> 0f6e73d mmc: dw_mmc: Add MSHC compatible for Exynos4412
 > 
-> Following 2 patches have been newly added in this patchset because
-> of changes during 3.9 merge window.
-> 1/7: ARM: dts: Add pin-control related changes for Arndale board
-> 2/7: ARM: dts: Add disable-wp for card slot on exynos5250-arndale
+> ...just to avoid the simple merge conflict when applying?
 > 
-> Amit Daniel Kachhap (1):
->   ARM: dts: Add PMIC node entry for Arndale board
+> Otherwise everything here looks great...
 > 
-> Sachin Kamat (4):
->   ARM: dts: Add disable-wp for card slot on exynos5250-arndale
->   ARM: dts: Add vmmc regulator support for Arndale board
->   ARM: dts: Add MFC codec support for Arndale board
->   ARM: dts: Add HDMI HPD and regulator node for Arndale board
-> 
-> Tushar Behera (2):
->   ARM: dts: Add pin-control related changes for Arndale board
->   ARM: dts: Add gpio-button entries for Arndale board
-> 
->  arch/arm/boot/dts/exynos5250-arndale.dts |  343
-> +++++++++++++++++++++++++++++-
->  1 file changed, 333 insertions(+), 10 deletions(-)
-> 
-> --
-> 1.7.9.5
+> -Doug
+Thomas,
+It's a conflict to merge. Please do rebase the patch.
 
-Applied this whole series, thanks.
+Thanks,
+Seungwon Jeon
 
-- Kukjin
