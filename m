@@ -1,43 +1,51 @@
-From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Subject: Re: [PATCH v3 00/11] usb: dwc3/xhci/phy: Enable runtime power
- management
-Date: Thu, 4 Apr 2013 09:40:21 -0700
-Message-ID: <20130404164021.GB15489@xanatos>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
- <20130403172751.GC10089@xanatos>
- <CAFp+6iGnDUSOjVgu9ZCAPF9rUDWD5r9ZttBtTo864Q2ACvKFrA@mail.gmail.com>
- <20130404071015.GB30287@arwen.pp.htv.fi>
- <CAFp+6iGqDFPhNjktD3WA4ZJuEdcX1C7Ma3hsSZieuW-b4_wpLA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iGqDFPhNjktD3WA4ZJuEdcX1C7Ma3hsSZieuW-b4_wpLA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH 1/3] ARM: dts: exynos4: Add node for PWM device
+Date: Thu, 04 Apr 2013 18:51:13 +0200
+Message-ID: <1365094275-4811-2-git-send-email-t.figa@samsung.com>
+References: <1365094275-4811-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:55682 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1763129Ab3DDQve (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Apr 2013 12:51:34 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MKQ0091PPHTFFG0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Apr 2013 01:51:33 +0900 (KST)
+In-reply-to: <1365094275-4811-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-On Thu, Apr 04, 2013 at 01:02:45PM +0530, Vivek Gautam wrote:
-> On Thu, Apr 4, 2013 at 12:40 PM, Felipe Balbi <balbi@ti.com> wrote:
-> > On Thu, Apr 04, 2013 at 10:34:57AM +0530, Vivek Gautam wrote:
-> >> Hi Sarah,
-> >>
-> >>
-> >> On Wed, Apr 3, 2013 at 10:57 PM, Sarah Sharp
-> >> <sarah.a.sharp@linux.intel.com> wrote:
-> >> > Question: Do you still need this patch for 3.10?
-> >>
-> >> Felipe's 'next' is closed for 3.10, so this series won't be making it
-> >> to 3.10 now, as a whole. :-(
-> >
-> > right, besides we're still discussing what to do with the whole PHY
-> > part, right ?
-> 
-> Right ofcourse. :-)
+This patch adds device tree node for PWM block present on Exynos 4 SoCs.
 
-Ok, so it sounds like I shouldn't merge that patch for 3.10.  Please
-include that patch in your next round of revisions instead.  And now I'm
-glad I'm slow. :)
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Sarah Sharp
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 800ff11..d1bedd4 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -331,6 +331,14 @@
+ 		status = "disabled";
+ 	};
+ 
++	pwm@139D0000 {
++		compatible = "samsung,s5pc100-pwm";
++		reg = <0x139D0000 0x1000>;
++		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
++		#pwm-cells = <2>;
++		status = "disabled";
++	};
++
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-- 
+1.8.1.5
