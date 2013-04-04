@@ -1,63 +1,48 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: exynos5250: Fix divider values for sclk_mmc{0,1,2,3}
-Date: Thu, 04 Apr 2013 14:33:31 -0700
-Message-ID: <20130404213331.8665.7028@quantum>
-References: <1364890840-20052-1-git-send-email-tushar.behera@linaro.org>
+From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v4 00/14] ARM: samsung-time: Prepare for multiplatform support
+Date: Fri, 5 Apr 2013 01:15:02 +0200
+Message-ID: <201304050115.03879.heiko@sntech.de>
+References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1364890840-20052-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org, Thomas Abraham <thomas.abraham@linaro.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:35615 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1764883Ab3DDXPR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Apr 2013 19:15:17 -0400
+In-Reply-To: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, sameo@linux.intel.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, sylvester.nawrocki@gmail.com, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, mark.rutland@arm.com, tomasz.figa@gmail.com, robherring2@gmail.com, m.szyprowski@samsung.com, arnd@arndb.de, john.stultz@linaro.org, tglx@linutronix.de
 
-Quoting Tushar Behera (2013-04-02 01:20:40)
-> In legacy setup, sclk_mmc{0,1,2,3} used PRE_RATIO bit-field (8-bit wide)
-> instead of RATIO bit-field (4-bit wide) for dividing clock rate.
+Am Donnerstag, 4. April 2013, 18:36:57 schrieb Tomasz Figa:
+> This series is an attempt to make the samsung-time clocksource driver ready
+> for multiplatform kernels. It moves the driver to drivers/clocksource,
+> cleans it up from uses of static platform-specific definitions, simplifies
+> timer interrupt handling and adds Device Tree support.
 > 
-> With current common clock setup, we are using RATIO bit-field which
-> is creating FIFO read errors while accessing eMMC. Changing over to
-> use PRE_RATIO bit-field fixes this issue.
+> Only samsung-time driver is reworked to use the master driver at this time,
+> since the PWM driver can be already considered broken at the moment and
+> needs separate series of several patches to fix and clean it up, which
+> I am already working on.
 > 
-> dwmmc_exynos 12200000.dwmmc0: data FIFO error (status=00008020)
-> mmcblk0: error -5 transferring data, sector 1, nr 7, cmd response 0x900, card status 0x0
-> end_request: I/O error, dev mmcblk0, sector 1
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> CC: Thomas Abraham <thomas.abraham@linaro.org>
+> Tested on Universal C210 board with Device Tree. Not tested without
+> Device Tree, since it has been already broken before this series.
+> Compile tested for other related SoCs.
 
-I guess this will be applied through the samsung tree, so:
+Looks nice.
 
-Acked-by: Mike Turquette <mturquette@linaro.org>
+On a non-DT S3C2416 board:
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-> ---
-> 
-> Based on Kukjin's for-next branch.
-> commit d58f6a153f40 ("Merge branch 'next/clk-exynos-2' into for-next")
-> 
->  drivers/clk/samsung/clk-exynos5250.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-> index 1152125..2c46fbd 100644
-> --- a/drivers/clk/samsung/clk-exynos5250.c
-> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -274,10 +274,10 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->         DIV(none, "div_pcm0", "sclk_audio0", DIV_MAU, 4, 8),
->         DIV(none, "div_sata", "mout_sata", DIV_FSYS0, 20, 4),
->         DIV(none, "div_usb3", "mout_usb3", DIV_FSYS0, 24, 4),
-> -       DIV(none, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
-> -       DIV(none, "div_mmc1", "mout_mmc1", DIV_FSYS1, 16, 4),
-> -       DIV(none, "div_mmc2", "mout_mmc2", DIV_FSYS2, 0, 4),
-> -       DIV(none, "div_mmc3", "mout_mmc3", DIV_FSYS2, 16, 4),
-> +       DIV(none, "div_mmc0", "mout_mmc0", DIV_FSYS1, 8, 8),
-> +       DIV(none, "div_mmc1", "mout_mmc1", DIV_FSYS1, 24, 8),
-> +       DIV(none, "div_mmc2", "mout_mmc2", DIV_FSYS2, 8, 8),
-> +       DIV(none, "div_mmc3", "mout_mmc3", DIV_FSYS2, 24, 8),
->         DIV(none, "div_uart0", "mout_uart0", DIV_PERIC0, 0, 4),
->         DIV(none, "div_uart1", "mout_uart1", DIV_PERIC0, 4, 4),
->         DIV(none, "div_uart2", "mout_uart2", DIV_PERIC0, 8, 4),
-> -- 
-> 1.7.9.5
+
+And just so I don't search myself silly, am I right in thinking that the 
+driver does not use the generic clocksource registration yet and dt machines 
+must still use samsung_timer_init at this point?
+
+
+Heiko
