@@ -1,73 +1,101 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: RE: [PATCH v2 0/4] clk: samsung: pm fixes and multiple aliases
-Date: Thu, 04 Apr 2013 13:06:35 +0900
-Message-ID: <272701ce30e9$cc816b70$65844250$%kim@samsung.com>
-References: <201303131458.18671.heiko@sntech.de>
- <176601ce293a$d7a0e190$86e2a4b0$%kim@samsung.com>
- <20130327005912.4014.60318@quantum>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v3 00/11] usb: dwc3/xhci/phy: Enable runtime power management
+Date: Thu, 4 Apr 2013 10:34:57 +0530
+Message-ID: <CAFp+6iGnDUSOjVgu9ZCAPF9rUDWD5r9ZttBtTo864Q2ACvKFrA@mail.gmail.com>
+References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+	<20130403172751.GC10089@xanatos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21868 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750699Ab3DDEGh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Apr 2013 00:06:37 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKP00CT4Q2TNIH0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 13:06:36 +0900 (KST)
-In-reply-to: <20130327005912.4014.60318@quantum>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130403172751.GC10089@xanatos>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mike Turquette' <mturquette@linaro.org>, =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, t.figa@samsung.com
 
-Mike Turquette wrote:
->=20
-> Quoting Kukjin Kim (2013-03-25 02:26:34)
-> > Heiko St=C3=BCbner wrote:
-> > >
-> > > Second version of the fixes to address comments gathered from the
-> first
-> > > version, like not entering the dt code on non-dt platforms even i=
-f
-> > > dt-support is present in the kernel.
-> > >
-> > > Patch 1 and 3 got "Reviewed-by" tags but I only included the one =
-for
-> > > patch 1, because patch 3 changed due to the changes in patch 2.
-> > >
-> > > Heiko Stuebner (4):
-> > >   clk: samsung: register clk_div_tables for divider clocks
-> > >   clk: samsung: fix pm init on non-dt platforms
-> > >   clk: samsung: always allocate the clk_table
-> > >   clk: samsung: add infrastructure to add separate aliases
-> > >
-> > >  drivers/clk/samsung/clk.c |   72 +++++++++++++++++++++++++++++++=
-++++--
-> ----
-> > > ---
-> > >  drivers/clk/samsung/clk.h |   34 ++++++++++++++++++--
-> > >  2 files changed, 87 insertions(+), 19 deletions(-)
-> > >
-> > > --
-> > > 1.7.2.3
-> >
-> > Looks good to me and applied into samsung tree based on samsung com=
-mon
-> clock by Thomas P Abraham for testing.
-> >
-> > But would be helpful to me if I could get Mike's ack on this series=
-=2E
-> >
->=20
-> Acked-by: Mike Turquette <mturquette@linaro.org>
->=20
-Applied, thanks.
+Hi Sarah,
 
-- Kukjin
+
+On Wed, Apr 3, 2013 at 10:57 PM, Sarah Sharp
+<sarah.a.sharp@linux.intel.com> wrote:
+> Question: Do you still need this patch for 3.10?
+
+Felipe's 'next' is closed for 3.10, so this series won't be making it
+to 3.10 now, as a whole. :-(
+
+>
+> http://marc.info/?l=linux-usb&m=136057666911621&w=2
+>
+> Does this patchset build on top of that?
+
+Yea, it builds fine on top of the above mentioned patch.
+I would suggest that we pull the xhci-plat patch in this series when the
+complete patch-set getting in.
+btw, its your decision ;-)
+
+>
+> I'm really behind on my patches for 3.10, sorry.
+>
+> Sarah Sharp
+>
+> On Mon, Apr 01, 2013 at 07:23:59PM +0530, Vivek Gautam wrote:
+>> This patch-series enables runtime power management on xhci-plat,
+>> dwc3-core, dwc3-exynos as well as on Samsung's USB 2.0 type and
+>> USB 3.0 type PHYs.
+>>
+>> Based on 'next' branch of Felipe Balbi's USB tree.
+>>
+>> Changes from v2:
+>>  - Using separate functions for USB PHY runtime power management, instead of
+>>    using macros.
+>>  - Adding 'pm_runtime_set_suspended()' api call in dwc3 core layer before
+>>    enabling runtime pm. (Ideally, we should be explicitly make device
+>>    'suspended' or 'active' before enabling runtime pm on it).
+>>  - Checking return code for 'put_sync' and 'get_sync' of USB-PHYs when
+>>    waking up or suspending them from dwc3 core's runtime_pm callbacks.
+>>  - Removed buggy pm_runtime_put() calls from driver's (xhci, dwc3 and PHY)
+>>    remove functions.
+>>  - Adding a patch to enable runtime power management of Samsung's USB 2.0 PHY
+>>    (usb: phy: samsung: Enable runtime power management on usb2phy)
+>>
+>> Changes from v1:
+>>  - Adding required PHY APIs to handle runtime power management
+>>    instead of directly twiddling with phy->dev.
+>>  - Handling runtime power management of usb PHYs in dwc3 core
+>>    driver instead of in any glue layer.
+>>  - Splitting the patch:
+>>    [PATCH 4/4] usb: phy: samsung: Enable runtime power management on samsung-usb
+>>    into required number to bifurcate functionality.
+>>
+>> Vivek Gautam (11):
+>>   usb: phy: Add APIs for runtime power management
+>>   USB: dwc3: Adjust runtime pm to allow autosuspend
+>>   usb: dwc3: Enable runtime pm only after PHYs are initialized
+>>   usb: dwc3: Add runtime power management callbacks
+>>   usb: dwc3: exynos: Enable runtime power management
+>>   usb: xhci: Enable runtime pm in xhci-plat
+>>   usb: phy: samsung: Enable runtime power management on usb2phy
+>>   usb: phy: samsung: Enable runtime power management on usb3phy
+>>   usb: phy: samsung: Add support for external reference clock
+>>   usb: phy: samsung: Add support for PHY ref_clk gpio
+>>   usb: phy: samsung: Add support for PHY refclk switching
+>>
+>>  drivers/usb/dwc3/core.c            |   59 ++++++++++++++--
+>>  drivers/usb/dwc3/dwc3-exynos.c     |   12 +++
+>>  drivers/usb/host/xhci-plat.c       |    6 ++
+>>  drivers/usb/phy/phy-samsung-usb.c  |   26 +++++++
+>>  drivers/usb/phy/phy-samsung-usb.h  |    1 +
+>>  drivers/usb/phy/phy-samsung-usb2.c |    5 ++
+>>  drivers/usb/phy/phy-samsung-usb3.c |  119 +++++++++++++++++++++++++++++--
+>>  include/linux/usb/phy.h            |  141 ++++++++++++++++++++++++++++++++++++
+>>  8 files changed, 358 insertions(+), 11 deletions(-)
+>>
+>> --
+>> 1.7.6.5
+>>
+
+
+
+-- 
+Thanks & Regards
+Vivek
