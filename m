@@ -1,53 +1,145 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: Re[2]: [PATCH 1/4] ARM: s3c24xx: Removed unneeded dependency on
- ARCH_S3C24XX for boards
-Date: Thu, 04 Apr 2013 10:02:00 +0900
-Message-ID: <26f101ce30d0$0374a530$0a5def90$%kim@samsung.com>
-References: <1362216174-10478-1-git-send-email-shc_work@mail.ru>
- <201303021143.38390.arnd@arndb.de> <1362225644.599345374@f82.mail.ru>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:18507 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932245Ab3DDBCC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Apr 2013 21:02:02 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKP00BTLHJDIR70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 10:02:01 +0900 (KST)
-In-reply-to: <1362225644.599345374@f82.mail.ru>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] iio: adc: exynos_adc: Handle timeout issues
+Date: Wed,  3 Apr 2013 21:06:28 -0700
+Message-ID: <1365048389-6364-1-git-send-email-naveenkrishna.ch@gmail.com>
+References: <1363364801-23684-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363364801-23684-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Alexander Shiyan' <shc_work@mail.ru>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
 
-Alexander Shiyan wrote:
-> 
-> > On Saturday 02 March 2013, Alexander Shiyan wrote:
-> > > Board options are already under "if ARCH_S3C24XX" condition, so
-> > > additional dependencies on this symbol can be removed.
-> > >
-> > > Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
-> >
-> > Hi Alexander,
-> >
-> > Is this just a cosmetic change that has no other consequences, or do you
-> > have other follow-up patches that depend on patches 1-3?
-> 
-> Hello Arnd.
-> Nothing more yet. Perhaps I'll do a merging some parts of the code for
-> different versions of the CPU into one unit and some future changes
-> may remove some Kconfig symbols, so it is only initial Kconfig cleaning.
-> Thanks.
-> 
-Looks good to me on patches 1-3 but for 4th patch, see my comments on that.
+From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Applied 1-3 patches, thanks.
+This patch does the following
+1. Handle the return values of wait_for_completion_interruptible_timeout
+2. Reset software if a timeout happes.
 
-- Kukjin
+Note: submitted for review at https://patchwork.kernel.org/patch/2279591/
+
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+---
+As per the comments from Doug at
+http://marc.info/?l=linux-kernel&m=136500878406955&w=3
+
+Changes since v1:
+1. Remove the spin lock implememtation and the INIT_COMPLETION
+2. Rearrange the code and reset the ADC in cases of timeout.
+
+ drivers/iio/adc/exynos_adc.c | 73 ++++++++++++++++++++++++++------------------
+ 1 file changed, 43 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index 5ab0dfd..a6c4df5 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -111,6 +111,35 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
+ 	return (unsigned int)match->data;
+ }
+ 
++static void exynos_adc_hw_init(struct exynos_adc *info)
++{
++	u32 con1, con2;
++	int delay;
++
++	if (info->version == ADC_V2) {
++		con1 = ADC_V2_CON1_SOFT_RESET;
++		writel(con1, ADC_V2_CON1(info->regs));
++
++		/* ADC H/W requires 25PCLKs before other register access */
++		delay = DIV_ROUND_UP(25 * 1000000, clk_get_rate(info->clk));
++		udelay(delay);
++
++		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
++			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
++		writel(con2, ADC_V2_CON2(info->regs));
++
++		/* Enable interrupts */
++		writel(1, ADC_V2_INT_EN(info->regs));
++	} else {
++		/* set default prescaler values and Enable prescaler */
++		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
++
++		/* Enable 12-bit ADC resolution */
++		con1 |= ADC_V1_CON_RES;
++		writel(con1, ADC_V1_CON(info->regs));
++	}
++}
++
+ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 				struct iio_chan_spec const *chan,
+ 				int *val,
+@@ -118,8 +147,9 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 				long mask)
+ {
+ 	struct exynos_adc *info = iio_priv(indio_dev);
+-	unsigned long timeout;
++	long timeout;
+ 	u32 con1, con2;
++	int ret;
+ 
+ 	if (mask != IIO_CHAN_INFO_RAW)
+ 		return -EINVAL;
+@@ -146,14 +176,21 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+ 
+ 	timeout = wait_for_completion_interruptible_timeout
+ 			(&info->completion, EXYNOS_ADC_TIMEOUT);
+-	*val = info->value;
+ 
+-	mutex_unlock(&indio_dev->mlock);
++	if (timeout == 0) {
++		dev_warn(&indio_dev->dev, "Conversion timed out reseting\n");
++		exynos_adc_hw_init(info);
++		ret = -ETIMEDOUT;
++	} else if (timeout < 0) {
++		ret = timeout;
++	} else {
++		*val = info->value;
++		ret = IIO_VAL_INT;
++	}
+ 
+-	if (timeout == 0)
+-		return -ETIMEDOUT;
++	mutex_unlock(&indio_dev->mlock);
+ 
+-	return IIO_VAL_INT;
++	return ret;
+ }
+ 
+ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+@@ -225,30 +262,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
+ 	return 0;
+ }
+ 
+-static void exynos_adc_hw_init(struct exynos_adc *info)
+-{
+-	u32 con1, con2;
+-
+-	if (info->version == ADC_V2) {
+-		con1 = ADC_V2_CON1_SOFT_RESET;
+-		writel(con1, ADC_V2_CON1(info->regs));
+-
+-		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
+-			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
+-		writel(con2, ADC_V2_CON2(info->regs));
+-
+-		/* Enable interrupts */
+-		writel(1, ADC_V2_INT_EN(info->regs));
+-	} else {
+-		/* set default prescaler values and Enable prescaler */
+-		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+-
+-		/* Enable 12-bit ADC resolution */
+-		con1 |= ADC_V1_CON_RES;
+-		writel(con1, ADC_V1_CON(info->regs));
+-	}
+-}
+-
+ static int exynos_adc_probe(struct platform_device *pdev)
+ {
+ 	struct exynos_adc *info = NULL;
+-- 
+1.7.12.4
