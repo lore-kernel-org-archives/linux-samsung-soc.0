@@ -1,59 +1,65 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/2] ARM: Exynos: Add DT based I/O mapping for Chip-ID
- controller
-Date: Thu, 04 Apr 2013 15:57:23 +0900
-Message-ID: <27ea01ce3101$a8dae850$fa90b8f0$%kim@samsung.com>
-References: <1361174099-18749-1-git-send-email-thomas.abraham@linaro.org>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v3 00/11] usb: dwc3/xhci/phy: Enable runtime power
+ management
+Date: Thu, 4 Apr 2013 10:10:15 +0300
+Message-ID: <20130404071015.GB30287@arwen.pp.htv.fi>
+References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+ <20130403172751.GC10089@xanatos>
+ <CAFp+6iGnDUSOjVgu9ZCAPF9rUDWD5r9ZttBtTo864Q2ACvKFrA@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24320 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756111Ab3DDG5Z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Apr 2013 02:57:25 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKP00IH2XXQ9EL0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 15:57:24 +0900 (KST)
-In-reply-to: <1361174099-18749-1-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SkvwRMAIpAhPCcCJ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAFp+6iGnDUSOjVgu9ZCAPF9rUDWD5r9ZttBtTo864Q2ACvKFrA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: Sarah Sharp <sarah.a.sharp@linux.intel.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, sylvester.nawrocki@gmail.com
 
-Thomas Abraham wrote:
-> 
-> This patch series allows device tree enabled platforms to setup a runtime
-> I/O mapping for the chip-id controller. This helps to remove statically
-> defined I/O mapping for the Chip-ID controller.
-> 
-> Thomas Abraham (2):
->   ARM: Exynos: Create virtual I/O mapping for Chip-ID controller using
-> device tree
->   ARM: dts: Add chip-id controller node on Exynos4/5 SoC
-> 
->  .../arm/samsung/samsung,exynos4210-chipid.txt      |   15 ++++++
->  arch/arm/boot/dts/exynos4.dtsi                     |    5 ++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    5 ++
->  arch/arm/mach-exynos/common.c                      |   53
-+++++++++++---------
->  arch/arm/mach-exynos/include/mach/map.h            |    1 -
->  5 files changed, 55 insertions(+), 24 deletions(-)
->  create mode 100644
-> Documentation/devicetree/bindings/arm/samsung/samsung,exynos4210-
-> chipid.txt
-> 
-> --
-> 1.7.5.4
+--SkvwRMAIpAhPCcCJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thomas,
+On Thu, Apr 04, 2013 at 10:34:57AM +0530, Vivek Gautam wrote:
+> Hi Sarah,
+>=20
+>=20
+> On Wed, Apr 3, 2013 at 10:57 PM, Sarah Sharp
+> <sarah.a.sharp@linux.intel.com> wrote:
+> > Question: Do you still need this patch for 3.10?
+>=20
+> Felipe's 'next' is closed for 3.10, so this series won't be making it
+> to 3.10 now, as a whole. :-(
 
-Can you update this series can support exynos5440 as well? It should be done
-together.
+right, besides we're still discussing what to do with the whole PHY
+part, right ?
 
-- Kukjin
+--=20
+balbi
+
+--SkvwRMAIpAhPCcCJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRXSdXAAoJEIaOsuA1yqREQ3oQALQFs7jQxY9jOwkdN8Y6mUPg
+yE08Ai/PXU+nGrfgYRMQMl4g1ONZEfYkbiJ6NyklhlnkhuY6iTpiAn3sPreuQoCF
+QexIgfQQUav0IkaiQZlYmvOY6jLk+ZBJ79azSOv9h/JYjdBFxM9ONkD4KziJuPup
+fpImLBnjwwRyXiTayi/GXaN/YL6HQdYWO4ZpUeo4LFBBTDZh4WmA3FDKDGUGTz0N
+9Mzz+p97ylT3d3gEhb8BjklvLriSSNcWL3WpgPJ0avTXvDaTLbS0ue8FBHsWXDWe
++9KGKWOUQf6hvft0VJiiKjxtGcV1D2iQYDSpBWFE+42nDlR/UB07WIDkIcQTanXP
+Hh0lgJ6ZK60NVzNe6UmwKV4Y+YA1ck4zuHllIEiHGF19sREcLLImVCVlq6BfOH5e
+Gv+zbe69imlLi0je5BMv86t9M+DzSZcI/xT07g8UEluV95/zcDU8RmqYkNwtlusi
+Jr9Fi4edaWVSbaYxeSHWQhV2AjGbjmn2bClrnR0jI9GyipLu3omi7xWd4V5De/vg
+AnRXogS105c59YSdqyJJTqFWv1M971tQDy0zETLJJ6rbkf+WuOnMI3Ax2P/QoZ7o
+Tf25e1PmWhDxLGOtVtQ8JHUUoGuwoZfanFIEJkTYb2zIF0rwcxvXp3NE1yURfbBC
+4WUPrYblfwMxVoPuZ3jm
+=LJzP
+-----END PGP SIGNATURE-----
+
+--SkvwRMAIpAhPCcCJ--
