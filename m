@@ -1,111 +1,73 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: GENERIC_GPIO considered deprecated
-Date: Thu, 04 Apr 2013 09:35:58 +0900
-Message-ID: <26e401ce30cc$602e45f0$208ad1d0$%kim@samsung.com>
-References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com>
- <51576214.8010307@openwide.fr>
- <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
+Subject: RE: RE: [PATCH 00/21] Various fixes and extensions to Exynos4 clock
+ driver
+Date: Thu, 04 Apr 2013 09:36:48 +0900
+Message-ID: <26e501ce30cc$7e4d4d60$7ae7e820$%kim@samsung.com>
+References: <1364382178-25248-1-git-send-email-t.figa@samsung.com>
+ <CAJuYYwQap4pZ6qTgBPGeSWbMFm-ZhqLfv7wBMVYjK1v0YHr_kQ@mail.gmail.com>
+ <1496108.NDegb7PXrt@flatron> <22e101ce2f7c$5b6a0cd0$123e2670$%kim@samsung.com>
+ <20130403220118.3383.10734@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-In-reply-to: <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:49032 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761262Ab3DDAgu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Apr 2013 20:36:50 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MKP00MZRGCVFLD0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 09:36:49 +0900 (KST)
+In-reply-to: <20130403220118.3383.10734@quantum>
 Content-language: ko
-Sender: linux-next-owner@vger.kernel.org
-To: 'Alexandre Courbot' <gnurou@gmail.com>, 'Romain Naour' <romain.naour@openwide.fr>
-Cc: 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, tomasz.figa@gmail.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mike Turquette' <mturquette@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, a.hajda@samsung.com, l.majewski@samsung.com
 
-Alexandre Courbot wrote:
+Mike Turquette wrote:
 > 
-> Hi Romain,
+> Quoting Kukjin Kim (2013-04-02 01:30:39)
+> > Tomasz Figa wrote:
+> > >
+> > > On Saturday 30 of March 2013 15:33:00 Thomas Abraham wrote:
+> > > > Hi Tomasz,
+> > > >
+> > > > On 27 March 2013 16:32, Tomasz Figa <t.figa@samsung.com> wrote:
+> > > > > This series is a collection of various fixes and extensions to
+> Exynos4
+> > > > > clock driver, which improve coverage of clocks present on Exynos4
+> SoCs
+> > > > > and fix problems discovered during our internal work and testing.
+> > > >
+> > > > Nice series. Thanks for the improvements and fixes. Looking at the
+> > > > second patch in this series, I crossed checked again with the
+> > > > Exynos4412 user manual that I have. Your modifications are different
+> > > > from what the manual has listed. I suspect, you have a newer copy of
+> > > > the manual.
+> > >
+> > > Right. I have checked revisions 0.0, 0.1 and 1.1 of the manual and
+> indeed
+> > > there are differences in clock layout between 0.1 and 1.1. My patches
+> are
+> > > based on revision 1.1.
+> > >
+> > Correct...hmm...
+> >
+> > > > For this series:
+> > > > Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > >
+> > Yes, looks good to me but would be better if I could get Mike's ack on
+> this
+> > series.
+> >
 > 
-> On Sat, Mar 30, 2013 at 3:07 PM, Romain Naour <romain.naour@openwide.fr>
-> wrote:
-> > Hi Alex,
-> >
-> > When I read your mail, I was surprised that you were speaking about
-> GPIOs, my pathes for samsung CPUs are intended for timer sub-system.
-> >
-> > As you can see in this thread, when I send my patches "ARM: S3C24XX: Add
-> samsung-time support for s3c24xx" and "Add samsung-time support for
-> s5pc100". They didn't add "select GENERIC_GPIO".
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14980
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13432/focus=14982
-> >
-> > There is something wrong with the commit, I see that "select
-> GENERIC_GPIO" was added in my patches by mistake.
-
-Oops, sorry about that.
-
-> >
-> > I recommend you to speak directly with samsung's kernel maintainer that
-> I CC in this mail.
+> Acked-by: Mike Turquette <mturquette@linaro.org>
 > 
-Thanks...
+Thanks, applied.
 
-> Indeed, it seems like these "select GENERIC_GPIO" have been added
-> during the merge of your patches, since I can see the line is here in
-> your patch (but not added by it). Kim, on the current next there are
-> two of these "select GENERIC_GPIO" that are added from your branch,
-
-OK, I see.
-
-> could you amend the patches that adds them such as they get changed
-> into "select ARCH_REQUIRE_GPIOLIB" instead? You can grep for "select
-
-I can do it for my tree but the branch already included in arm-soc tree so I think, it should be fixed with another patch. And 
-
-> GENERIC_GPIO" in arch/arm to find the offending lines. We are removing
-> GENERIC_GPIO and this work cannot be merged until you do this since it
-> would break ARM builds. Thanks!
-> 
-So how about following? If you are OK, let me take into samsung tree.
-
---------8<----------------8<--------
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: change GENERIC_GPIO to ARCH_REQUIRE_GPIOLIB
-
-When I applied regarding samsung-time patches, the "select GENERIC_GPIO"
-has been added wrong, so this patch fixes that.
-And since the GENERIC_GPIO in arch/arm/ will be gone away, this adds
-ARCH_REQUIRE_GPIOLIB for S3C24XX and S5PC100 instead.
-
-Reported-by: Alexandre Courbot <gnurou@gmail.com>
-Cc: Romain Naour <romain.naour@openwide.fr>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 46fcfa8..a239c7e 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -770,10 +770,10 @@ config ARCH_SA1100
- config ARCH_S3C24XX
- 	bool "Samsung S3C24XX SoCs"
- 	select ARCH_HAS_CPUFREQ
-+	select ARCH_REQUIRE_GPIOLIB
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select GENERIC_CLOCKEVENTS
--	select GENERIC_GPIO
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-@@ -828,11 +828,11 @@ config ARCH_S5P64X0
- 
- config ARCH_S5PC100
- 	bool "Samsung S5PC100"
-+	select ARCH_REQUIRE_GPIOLIB
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
--	select GENERIC_GPIO
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
--- 
-1.7.10.4
+- Kukjin
