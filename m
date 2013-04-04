@@ -1,62 +1,83 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Add MFC clock entries for exynos4
-Date: Thu, 04 Apr 2013 12:49:24 +0200
-Message-ID: <515D5AB4.5000501@samsung.com>
-References: <1365056815-28000-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS: Add a platform bus notifier to set dma masks for Exynos5440
+Date: Thu,  4 Apr 2013 19:51:43 +0900
+Message-ID: <1365072704-4568-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28823 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753303Ab3DDKt1 (ORCPT
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:33153 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755454Ab3DDKwE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Apr 2013 06:49:27 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MKQ00ELF8P5ZL60@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 11:49:25 +0100 (BST)
-In-reply-to: <1365056815-28000-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 4 Apr 2013 06:52:04 -0400
+Received: by mail-pb0-f49.google.com with SMTP id um15so1352486pbc.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2013 03:52:03 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, rob.herring@calxeda.com, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 04/04/2013 08:26 AM, Sachin Kamat wrote:
-> Added MFC related clock entries in exynos4.dtsi file.
->=20
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Use a platform bus notifier callback function to set the correct dma_mask and
+coherent_dma_mask for every device registered on Exynos5440 based machine.
 
-> ---
-> Based on Kukjin's for-next.
-> Dependent on the below patch:
-> https://patchwork.kernel.org/patch/2349361/
-> ---
->  arch/arm/boot/dts/exynos4.dtsi |    2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exyno=
-s4.dtsi
-> index 59e6730..4061f48 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -150,6 +150,8 @@
->  		reg =3D <0x13400000 0x10000>;
->  		interrupts =3D <0 94 0>;
->  		samsung,power-domain =3D <&pd_mfc>;
-> +		clocks =3D <&clock 170>, <&clock 273>;
-> +		clock-names =3D "sclk_mfc", "mfc";
->  		status =3D "disabled";
->  	};
-> =20
->=20
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/mach-exynos5-dt.c |   23 +++++++++++++++++++++++
+ 1 files changed, 23 insertions(+), 0 deletions(-)
 
-
---=20
-Sylwester Nawrocki
-=EC=8B=A4=EB=B2=A0=EC=8A=A4=ED=84=B0 =EB=82=98=EB=B8=8C=EB=A1=9C=EC=B8=A0=
-=ED=82=A4
-Samsung Poland R&D Center
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index 753b94f..e47c2a5 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -14,6 +14,7 @@
+ #include <linux/memblock.h>
+ #include <linux/io.h>
+ #include <linux/clocksource.h>
++#include <linux/dma-mapping.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <mach/regs-pmu.h>
+@@ -23,11 +24,30 @@
+ 
+ #include "common.h"
+ 
++static u64 dma_mask64 = DMA_BIT_MASK(64);
++
+ static void __init exynos5_dt_map_io(void)
+ {
+ 	exynos_init_io(NULL, 0);
+ }
+ 
++static int exynos5440_platform_notifier(struct notifier_block *nb,
++				  unsigned long event, void *__dev)
++{
++	struct device *dev = __dev;
++
++	if (event != BUS_NOTIFY_ADD_DEVICE)
++		return NOTIFY_DONE;
++
++	dev->dma_mask = &dma_mask64;
++	dev->coherent_dma_mask = DMA_BIT_MASK(64);
++	return NOTIFY_OK;
++}
++
++static struct notifier_block exynos5440_platform_nb = {
++	.notifier_call = exynos5440_platform_notifier,
++};
++
+ static void __init exynos5_dt_machine_init(void)
+ {
+ 	struct device_node *i2c_np;
+@@ -52,6 +72,9 @@ static void __init exynos5_dt_machine_init(void)
+ 		}
+ 	}
+ 
++	if (of_machine_is_compatible("samsung,exynos5440"))
++		bus_register_notifier(&platform_bus_type, &exynos5440_platform_nb);
++
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+ 
+-- 
+1.7.4.4
