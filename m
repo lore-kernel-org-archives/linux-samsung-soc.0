@@ -1,110 +1,248 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v4 05/14] ARM: SAMSUNG: Unify base address definitions of timer
- block
-Date: Thu, 04 Apr 2013 18:37:02 +0200
-Message-ID: <1365093431-30621-6-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v4 07/14] ARM: SAMSUNG: Set PWM platform data
+Date: Thu, 04 Apr 2013 18:37:04 +0200
+Message-ID: <1365093431-30621-8-git-send-email-t.figa@samsung.com>
 References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:52997 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762995Ab3DDQi3 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:28280 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1762995Ab3DDQir (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Apr 2013 12:38:29 -0400
+	Thu, 4 Apr 2013 12:38:47 -0400
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MKQ0048YOW4SGP0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 05 Apr 2013 01:38:28 +0900 (KST)
+ 17 2011)) with ESMTP id <0MKQ001SKOWKN280@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Apr 2013 01:38:46 +0900 (KST)
 In-reply-to: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, sameo@linux.intel.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, sylvester.nawrocki@gmail.com, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, mark.rutland@arm.com, tomasz.figa@gmail.com, heiko@sntech.de, robherring2@gmail.com, m.szyprowski@samsung.com, arnd@arndb.de, john.stultz@linaro.org, tglx@linutronix.de, Tomasz Figa <t.figa@samsung.com>
 
-This patch makes all defintions of timer block base address use the same
-prefix to allow using the common name to define platform device
-resource.
+This patch adds PWM platform data needed for legacy (non-DT) platforms
+to handle SoC-specific bits of the PWM/timer block.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/include/mach/map.h  | 1 +
- arch/arm/mach-s3c24xx/include/mach/map.h | 2 ++
- arch/arm/mach-s3c64xx/include/mach/map.h | 1 +
- arch/arm/mach-s5p64x0/include/mach/map.h | 1 +
- arch/arm/mach-s5pc100/include/mach/map.h | 1 +
- arch/arm/mach-s5pv210/include/mach/map.h | 1 +
- 6 files changed, 7 insertions(+)
+ arch/arm/mach-exynos/common.c  | 10 ++++++++++
+ arch/arm/mach-s3c24xx/common.c | 10 ++++++++++
+ arch/arm/mach-s3c64xx/common.c | 10 ++++++++++
+ arch/arm/mach-s5p64x0/common.c | 10 ++++++++++
+ arch/arm/mach-s5pc100/common.c | 10 ++++++++++
+ arch/arm/mach-s5pv210/common.c | 10 ++++++++++
+ 6 files changed, 60 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 99e0a79..7167aba 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -272,6 +272,7 @@
- #define SAMSUNG_PA_ADC			EXYNOS4_PA_ADC
- #define SAMSUNG_PA_ADC1			EXYNOS4_PA_ADC1
- #define SAMSUNG_PA_KEYPAD		EXYNOS4_PA_KEYPAD
-+#define SAMSUNG_PA_TIMER		EXYNOS4_PA_TIMER
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 9cd857e..2b1ef98 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -16,6 +16,7 @@
+ #include <linux/io.h>
+ #include <linux/device.h>
+ #include <linux/gpio.h>
++#include <linux/platform_data/samsung-pwm.h>
+ #include <linux/sched.h>
+ #include <linux/serial_core.h>
+ #include <linux/of.h>
+@@ -378,6 +379,13 @@ void __init exynos_init_io(struct map_desc *mach_desc, int size)
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
+ }
  
- /* Compatibility UART */
- 
-diff --git a/arch/arm/mach-s3c24xx/include/mach/map.h b/arch/arm/mach-s3c24xx/include/mach/map.h
-index 8ba381f..444793f 100644
---- a/arch/arm/mach-s3c24xx/include/mach/map.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/map.h
-@@ -167,4 +167,6 @@
- #define S3C_PA_SPI0		S3C2443_PA_SPI0
- #define S3C_PA_SPI1		S3C2443_PA_SPI1
- 
-+#define SAMSUNG_PA_TIMER	S3C2410_PA_TIMER
++static struct samsung_pwm_variant exynos4_pwm_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= (1 << 5),
++};
 +
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-s3c64xx/include/mach/map.h b/arch/arm/mach-s3c64xx/include/mach/map.h
-index 8e2097b..f55ccb1 100644
---- a/arch/arm/mach-s3c64xx/include/mach/map.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/map.h
-@@ -121,5 +121,6 @@
- #define SAMSUNG_PA_ADC		S3C64XX_PA_ADC
- #define SAMSUNG_PA_CFCON	S3C64XX_PA_CFCON
- #define SAMSUNG_PA_KEYPAD	S3C64XX_PA_KEYPAD
-+#define SAMSUNG_PA_TIMER	S3C64XX_PA_TIMER
+ static void __init exynos4_map_io(void)
+ {
+ 	iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+@@ -419,6 +427,8 @@ static void __init exynos4_map_io(void)
+ 	s5p_hdmi_setname("exynos4-hdmi");
  
- #endif /* __ASM_ARCH_6400_MAP_H */
-diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/mach-s5p64x0/include/mach/map.h
-index 0c0175d..50a6e96 100644
---- a/arch/arm/mach-s5p64x0/include/mach/map.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/map.h
-@@ -76,6 +76,7 @@
- #define S5P_PA_TIMER		S5P64X0_PA_TIMER
+ 	s3c64xx_spi_setname("exynos4210-spi");
++
++	samsung_device_pwm.dev.platform_data = &exynos4_pwm_variant;
+ }
  
- #define SAMSUNG_PA_ADC		S5P64X0_PA_ADC
-+#define SAMSUNG_PA_TIMER	S5P64X0_PA_TIMER
+ static void __init exynos5_map_io(void)
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index d97533d..c09c6ba 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -27,6 +27,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/ioport.h>
+ #include <linux/serial_core.h>
++#include <linux/platform_data/samsung-pwm.h>
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
+@@ -216,6 +217,13 @@ static void s3c24xx_default_idle(void)
+ 		     S3C2410_CLKCON);
+ }
  
- /* UART */
++static struct samsung_pwm_variant s3c24xx_pwm_variant = {
++	.bits		= 16,
++	.div_base	= 1,
++	.has_tint_cstat	= false,
++	.tclk_mask	= (1 << 4),
++};
++
+ void __init s3c24xx_init_io(struct map_desc *mach_desc, int size)
+ {
+ 	arm_pm_idle = s3c24xx_default_idle;
+@@ -232,6 +240,8 @@ void __init s3c24xx_init_io(struct map_desc *mach_desc, int size)
+ 	s3c24xx_init_cpu();
  
-diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
-index 54bc4f8..2550b61 100644
---- a/arch/arm/mach-s5pc100/include/mach/map.h
-+++ b/arch/arm/mach-s5pc100/include/mach/map.h
-@@ -116,6 +116,7 @@
- #define SAMSUNG_PA_ADC			S5PC100_PA_TSADC
- #define SAMSUNG_PA_CFCON		S5PC100_PA_CFCON
- #define SAMSUNG_PA_KEYPAD		S5PC100_PA_KEYPAD
-+#define SAMSUNG_PA_TIMER		S5PC100_PA_TIMER
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
++
++	samsung_device_pwm.dev.platform_data = &s3c24xx_pwm_variant;
+ }
  
- #define S5PC100_VA_OTHERS		(S3C_VA_SYS + 0x10000)
+ /* Serial port registrations */
+diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
+index 0b9c0ba..526b45e 100644
+--- a/arch/arm/mach-s3c64xx/common.c
++++ b/arch/arm/mach-s3c64xx/common.c
+@@ -26,6 +26,7 @@
+ #include <linux/irq.h>
+ #include <linux/gpio.h>
+ #include <linux/irqchip/arm-vic.h>
++#include <linux/platform_data/samsung-pwm.h>
  
-diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-index b7c8a19..763929a 100644
---- a/arch/arm/mach-s5pv210/include/mach/map.h
-+++ b/arch/arm/mach-s5pv210/include/mach/map.h
-@@ -139,6 +139,7 @@
- #define SAMSUNG_PA_ADC			S5PV210_PA_ADC
- #define SAMSUNG_PA_CFCON		S5PV210_PA_CFCON
- #define SAMSUNG_PA_KEYPAD		S5PV210_PA_KEYPAD
-+#define SAMSUNG_PA_TIMER		S5PV210_PA_TIMER
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -148,6 +149,13 @@ static struct device s3c64xx_dev = {
+ 	.bus	= &s3c64xx_subsys,
+ };
  
- /* UART */
++static struct samsung_pwm_variant s3c64xx_pwm_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= (1 << 7) | (1 << 6) | (1 << 5),
++};
++
+ /* read cpu identification code */
  
+ void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
+@@ -160,6 +168,8 @@ void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
+ 	s3c64xx_init_cpu();
+ 
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
++
++	samsung_device_pwm.dev.platform_data = &s3c64xx_pwm_variant;
+ }
+ 
+ static __init int s3c64xx_dev_init(void)
+diff --git a/arch/arm/mach-s5p64x0/common.c b/arch/arm/mach-s5p64x0/common.c
+index 8ae5800..5cd3048 100644
+--- a/arch/arm/mach-s5p64x0/common.c
++++ b/arch/arm/mach-s5p64x0/common.c
+@@ -19,6 +19,7 @@
+ #include <linux/io.h>
+ #include <linux/device.h>
+ #include <linux/serial_core.h>
++#include <linux/platform_data/samsung-pwm.h>
+ #include <linux/platform_device.h>
+ #include <linux/sched.h>
+ #include <linux/dma-mapping.h>
+@@ -156,6 +157,13 @@ static void s5p64x0_idle(void)
+ 	cpu_do_idle();
+ }
+ 
++static struct samsung_pwm_variant s5p64x0_pwm_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= 0,
++};
++
+ /*
+  * s5p64x0_map_io
+  *
+@@ -173,6 +181,8 @@ void __init s5p64x0_init_io(struct map_desc *mach_desc, int size)
+ 	s5p_init_cpu(S5P64X0_SYS_ID);
+ 
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
++
++	samsung_device_pwm.dev.platform_data = &s5p64x0_pwm_variant;
+ }
+ 
+ void __init s5p6440_map_io(void)
+diff --git a/arch/arm/mach-s5pc100/common.c b/arch/arm/mach-s5pc100/common.c
+index cc6e561..d21938e 100644
+--- a/arch/arm/mach-s5pc100/common.c
++++ b/arch/arm/mach-s5pc100/common.c
+@@ -22,6 +22,7 @@
+ #include <linux/io.h>
+ #include <linux/device.h>
+ #include <linux/serial_core.h>
++#include <linux/platform_data/samsung-pwm.h>
+ #include <linux/platform_device.h>
+ #include <linux/sched.h>
+ 
+@@ -131,6 +132,13 @@ static struct map_desc s5pc100_iodesc[] __initdata = {
+ 	}
+ };
+ 
++static struct samsung_pwm_variant s5pc100_pwm_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= (1 << 5),
++};
++
+ /*
+  * s5pc100_map_io
+  *
+@@ -148,6 +156,8 @@ void __init s5pc100_init_io(struct map_desc *mach_desc, int size)
+ 	s5p_init_cpu(S5P_VA_CHIPID);
+ 
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
++
++	samsung_device_pwm.dev.platform_data = &s5pc100_pwm_variant;
+ }
+ 
+ void __init s5pc100_map_io(void)
+diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/common.c
+index 9dfe93e..a3fc208 100644
+--- a/arch/arm/mach-s5pv210/common.c
++++ b/arch/arm/mach-s5pv210/common.c
+@@ -19,6 +19,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/device.h>
++#include <linux/platform_data/samsung-pwm.h>
+ #include <linux/platform_device.h>
+ #include <linux/sched.h>
+ #include <linux/dma-mapping.h>
+@@ -148,6 +149,13 @@ void s5pv210_restart(char mode, const char *cmd)
+ 	__raw_writel(0x1, S5P_SWRESET);
+ }
+ 
++static struct samsung_pwm_variant s5pv210_pwm_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= (1 << 5),
++};
++
+ /*
+  * s5pv210_map_io
+  *
+@@ -165,6 +173,8 @@ void __init s5pv210_init_io(struct map_desc *mach_desc, int size)
+ 	s5p_init_cpu(S5P_VA_CHIPID);
+ 
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
++
++	samsung_device_pwm.dev.platform_data = &s5pv210_pwm_variant;
+ }
+ 
+ void __init s5pv210_map_io(void)
 -- 
 1.8.1.5
