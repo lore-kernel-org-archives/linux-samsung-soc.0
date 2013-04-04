@@ -1,56 +1,53 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 4/4] ARM: s3c24xx: Fix switching FIFO in
- arch_enable_uart_fifo function
-Date: Thu, 04 Apr 2013 10:01:48 +0900
-Message-ID: <26f001ce30cf$fbfb3170$f3f19450$%kim@samsung.com>
+Subject: RE: Re[2]: [PATCH 1/4] ARM: s3c24xx: Removed unneeded dependency on
+ ARCH_S3C24XX for boards
+Date: Thu, 04 Apr 2013 10:02:00 +0900
+Message-ID: <26f101ce30d0$0374a530$0a5def90$%kim@samsung.com>
 References: <1362216174-10478-1-git-send-email-shc_work@mail.ru>
- <1362216174-10478-4-git-send-email-shc_work@mail.ru>
+ <201303021143.38390.arnd@arndb.de> <1362225644.599345374@f82.mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50021 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932245Ab3DDBBu (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:18507 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932245Ab3DDBCC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Apr 2013 21:01:50 -0400
+	Wed, 3 Apr 2013 21:02:02 -0400
 Received: from epcpsbgr4.samsung.com
  (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKP00CFNHH0NI90@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 10:01:48 +0900 (KST)
-In-reply-to: <1362216174-10478-4-git-send-email-shc_work@mail.ru>
+ with ESMTP id <0MKP00BTLHJDIR70@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 04 Apr 2013 10:02:01 +0900 (KST)
+In-reply-to: <1362225644.599345374@f82.mail.ru>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Alexander Shiyan' <shc_work@mail.ru>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, 'Arnd Bergmann' <arnd@arndb.de>
+To: 'Alexander Shiyan' <shc_work@mail.ru>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
 
 Alexander Shiyan wrote:
 > 
-> When CONFIG_S3C_BOOT_UART_FORCE_FIFO symbol is set, we should
-> enable FIFO but actually switch command is missing in the code.
-> This patch adds this switch.
+> > On Saturday 02 March 2013, Alexander Shiyan wrote:
+> > > Board options are already under "if ARCH_S3C24XX" condition, so
+> > > additional dependencies on this symbol can be removed.
+> > >
+> > > Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+> >
+> > Hi Alexander,
+> >
+> > Is this just a cosmetic change that has no other consequences, or do you
+> > have other follow-up patches that depend on patches 1-3?
 > 
-> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
-> ---
->  arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
->  1 file changed, 2 insertions(+)
+> Hello Arnd.
+> Nothing more yet. Perhaps I'll do a merging some parts of the code for
+> different versions of the CPU into one unit and some future changes
+> may remove some Kconfig symbols, so it is only initial Kconfig cleaning.
+> Thanks.
 > 
-> diff --git a/arch/arm/plat-samsung/include/plat/uncompress.h
-> b/arch/arm/plat-samsung/include/plat/uncompress.h
-> index 438b248..30fedd9 100644
-> --- a/arch/arm/plat-samsung/include/plat/uncompress.h
-> +++ b/arch/arm/plat-samsung/include/plat/uncompress.h
-> @@ -130,6 +130,8 @@ static inline void arch_enable_uart_fifo(void)
->  			if (!(fifocon & S3C2410_UFCON_RESETBOTH))
->  				break;
->  		}
-> +
-> +		uart_wr(S3C2410_UFCON, S3C2410_UFCON_FIFOMODE);
+Looks good to me on patches 1-3 but for 4th patch, see my comments on that.
 
-Well, I think, if required, this should be moved into 'if (!(fifocon &
-S3C2410_UFCON_FIFOMODE))'.
+Applied 1-3 patches, thanks.
 
 - Kukjin
