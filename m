@@ -1,61 +1,123 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v11 2/3] ARM: dts: Add FIMD node and display timing node to exynos4412-origen.dts
-Date: Fri,  5 Apr 2013 15:47:41 +0530
-Message-ID: <1365157062-8669-3-git-send-email-vikas.sajjan@linaro.org>
-References: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f44.google.com ([209.85.210.44]:35263 "EHLO
-	mail-da0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161094Ab3DEKSH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Apr 2013 06:18:07 -0400
-Received: by mail-da0-f44.google.com with SMTP id z20so1537231dae.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Apr 2013 03:18:06 -0700 (PDT)
-In-Reply-To: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 0/3] clk: Exynos: Register audio subsytem clocks using
+ common clk framework
+Date: Fri, 05 Apr 2013 14:54:46 +0200
+Message-ID: <515EC996.8030904@samsung.com>
+References: <1365144043-17101-1-git-send-email-padma.v@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1365144043-17101-1-git-send-email-padma.v@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, padma.kvr@gmail.com, sangsu4u.park@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-This patch adds FIMD related nodes for the Origen Quad board.
+Hi Padmavathi,
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4412-origen.dts |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+On 04/05/2013 08:40 AM, Padmavathi Venna wrote:
+> Samsung Exynos SoC has a separate subsystem for audio. This subsystem
+> has a internal clock controller which controls i2s0 and pcm0 clocks.
+> This patch series adds the Samsung Exynos SoC audio subsytem clock code
+> to the common clock framework and provides the I2S0 clock information in
+> the dtsi file.
+> 
+> Padmavathi Venna (3):
+>   clk: exynos: register audio subsystem clocks using common clock
+>     framework
+>   ARM: dts: add Exynos audio subsystem clock controller node
+>   ARM: dts: add clock provider information for i2s0 controller in
+>     Exynos5250
+> 
+>  arch/arm/boot/dts/exynos5250.dtsi      |    8 ++
+>  drivers/clk/samsung/Makefile           |    1 +
+>  drivers/clk/samsung/clk-exynos-audss.c |  139 ++++++++++++++++++++++++++++++++
+>  3 files changed, 148 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/clk/samsung/clk-exynos-audss.c
 
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index a5478bd..b39bffc 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -70,6 +70,27 @@
- 		status = "okay";
- 	};
- 
-+	fimd@11c00000 {
-+		pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
-+
-+	display-timings {
-+		native-mode = <&timing0>;
-+		timing0: timing {
-+			clock-frequency = <50000>;
-+			hactive = <1024>;
-+			vactive = <600>;
-+			hfront-porch = <64>;
-+			hback-porch = <16>;
-+			hsync-len = <48>;
-+			vback-porch = <64>;
-+			vfront-porch = <16>;
-+			vsync-len = <3>;
-+		};
-+	};
-+
- 	serial@13800000 {
- 		status = "okay";
- 	};
--- 
-1.7.9.5
+It looks good, it's very similar what we have written recently for Exynos4.
+It seems the binding documentation is missing in this patch set. I've included
+below content of our .../bindings/clock/exynos4-audss-clock.txt file. Feel free
+to reuse any parts of it. 
+
+>From a brief look Exynos4 and Exynos5 Audio Subsystem CLKCON very similar.
+I've just found bit 2 of 0x0381_0008 register is not used on Exynos5250.
+
+Additionally the Audio Subsystem Clock controller is present on S5PV210
+SoCs and IMO compatible property you used is too generic. I would propose
+to use at least:
+
+"samsung,s5pv210-audss-clock"    - for S5PV210 
+"samsung,exynos4210-audss-clock" - for Exynos4
+"samsung,exynos5250-audss-clock" - for Exynos5
+
+
+8<---------------------------------------------------------------------------
+* Samsung Exynos4 Audio Subsystem Clock Controller
+
+The Exynos4 Audio Subsystem clock controller generates and supplies clocks
+to Audio Subsystem block available in the Exynos4 SoCs. The clock binding
+described here is applicable to all SoC's in the Exynos4 family.
+
+Required Properties:
+
+- compatible: should be one of the following:
+  - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
+
+- reg: physical base address and length of the controller's register set.
+
+- #clock-cells: should be 1.
+
+The following is the list of clocks generated by the controller. Each clock is
+assigned an identifier and client nodes use this identifier to specify the
+clock which they consume. Some of the clocks are available only on a particular
+Exynos4 SoC and this is specified where applicable.
+
+Provided clocks:
+
+Clock		ID	SoC (if specific)
+-----------------------------------------------
+
+mout_audss	0
+dout_rp		1
+dout_aud_bus	2
+mout_i2s	3
+dout_i2sclk0	4
+clk_i2s0	5
+clk_pcm0	6
+
+
+Example 1: An example of a clock controller node is listed below.
+
+clock_audss: clock-controller@03810000 {
+	compatible = "samsung,exynos4-audss-clock";
+	reg = <0x03810000 0x0C>;
+	#clock-cells = <1>;
+};
+
+Example 2: I2S controller node that consumes the clock generated by the clock
+	   controller. Refer to the standard clock bindings for information
+	   about 'clocks' and 'clock-names' property.
+
+i2s0: i2s@03830000 {
+	compatible = "samsung,i2s-v5";
+	reg = <0x03830000 0x100>;
+	clocks = <&clock_audss 0>, <&clock_audss 3>, <&clock_audss 1>,
+		<&clock_audss 2>, <&clock_audss 4>, <&clock_audss 2>;
+	clock-names = "mout_audss", "mout_i2s", "dout_srp",
+		"dout_bus", "dout_i2s", "i2s_opclk0";
+};
+
+8<---------------------------------------------------------------------------
+
+Thanks,
+Sylwester
