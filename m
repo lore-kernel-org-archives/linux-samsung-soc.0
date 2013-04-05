@@ -1,14 +1,11 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 04/14] mfd: Add Samsung PWM/timer master driver
-Date: Sat, 06 Apr 2013 00:24:18 +0200
-Message-ID: <2359597.ofbj7Kvioz@flatron>
-References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
- <19231120.yHlZtTPUMd@amdc1227> <201304052154.21361.arnd@arndb.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: exynos4: export clocks required for fimc-is
+Date: Fri, 05 Apr 2013 19:49:45 +0200
+Message-ID: <1365184185-23794-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <201304052154.21361.arnd@arndb.de>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,73 +15,134 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: mark.rutland@arm.com, heiko@sntech.de, Tomasz Figa <t.figa@samsung.com>, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, Samuel Ortiz <sameo@linux.intel.com>, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, t.figa@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday 05 of April 2013 21:54:21 Arnd Bergmann wrote:
-> On Friday 05 April 2013, Tomasz Figa wrote:
-> > > I don't think anyone ever suggested using a private API though.
-> > 
-> > I must have gotten the last paragraph of
-> > http://article.gmane.org/gmane.linux.kernel.samsung-soc/16638
-> > wrong then. For me it seemed like the timer driver would expose a
-> > private API to the PWM driver.
-> 
-> Yes, sorry I wasn't clear enough. I meant a register-level interface
-> exposed from the base driver, not a high-level interface like you
-> did.
+This patch adds clock indexes for ACLK_DIV0, ACLK_DIV1,
+ACLK_400_MCUISP, ACLK_MCUISP_DIV0, ACLK_MCUISP_DIV1,
+DIVACLK_400_MCUISP and DIVACLK_200 so these clocks are
+available to the consumers (Exynos4x12 FIMC-IS subsystem).
+While at it, indentation of the mux clocks table is
+corrected.
 
-I'm not sure what you mean by a register-level interface. Something like 
-samsung_pwm_update_reg(reg, mask, val), which modifies bitfields according 
-to the mask and value with appropriate synchronization? If yes, this 
-solves only the problem of access to shared registers.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+Rebased onto git://git.kernel.org/pub/scm/linux/kernel/git/
+kgene/linux-samsung.git for-next
 
-The other problems that remain:
+ .../devicetree/bindings/clock/exynos4-clock.txt    |   42 +++++++++++++-------
+ drivers/clk/samsung/clk-exynos4.c                  |   20 ++++++----
+ 2 files changed, 41 insertions(+), 21 deletions(-)
 
-- negotiation of PWM channels to use for clock source and clock events,
-  because each board can use different channels for PWM outputs,
+diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+index 662007e..ea5e26f 100644
+--- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+@@ -236,22 +236,36 @@ Exynos4 SoC and this is specified where applicable.
+   spi1_isp_sclk       381     Exynos4x12
+   uart_isp_sclk       382     Exynos4x12
 
-- code duplication caused by both of the drivers doing mostly the same
-  things and or having to parse the same data from device tree,
+-			[Mux Clocks]
++		[Mux Clocks]
 
-- both non-DT and DT platforms must be supported,
+-	Clock		ID	SoC (if specific)
+-	-----------------------------------------------
++  Clock			ID	SoC (if specific)
++  -----------------------------------------------
++
++  mout_fimc0		384
++  mout_fimc1		385
++  mout_fimc2		386
++  mout_fimc3		387
++  mout_cam0		388
++  mout_cam1		389
++  mout_csis0		390
++  mout_csis1		391
++  mout_g3d0		392
++  mout_g3d1		393
++  mout_g3d		394
++  aclk400_mcuisp	395	Exynos4x12
++
++		[Div Clocks]
++
++  Clock			ID	SoC (if specific)
++  -----------------------------------------------
++
++  div_isp0		450	Exynos4x12
++  div_isp1		451	Exynos4x12
++  div_mcuisp0		452	Exynos4x12
++  div_mcuisp1		453	Exynos4x12
++  div_aclk200		454	Exynos4x12
++  div_aclk400_mcuisp	455	Exynos4x12
 
-- how to keep the ability to load PWM driver as a module (or not load it
-  at all when PWM is not used on particular board), while retaining
-  everything that is needed for the clocksource driver in kernel,
+-	mout_fimc0	384
+-	mout_fimc1	385
+-	mout_fimc2	386
+-	mout_fimc3	387
+-	mout_cam0	388
+-	mout_cam1	389
+-	mout_csis0	390
+-	mout_csis1	391
+-	mout_g3d0	392
+-	mout_g3d1	393
+-	mout_g3d	394
 
-- some platforms can't use PWM timers as system clocksources, while on
-  others this is the only timekeeping hardware available.
+ Example 1: An example of a clock controller node is listed below.
 
-> > > I think
-> > > it's ok if the driver lives in drivers/mfd when it doesn't fit
-> > > anywhere
-> > > else easily, but you should really register it to the pwm subsystem
-> > > to
-> > > expose that functionality, not export functions that can be used by
-> > > a pwm shim driver, which even seems to be missing from the series.
-> > 
-> > Anyway, using PWM API in a clocksource driver that needs to be running
-> > very early (before any initcalls get called) seems a bit weird for
-> > me, especially when PWM API doesn't provide such fine grained control
-> > over PWM timers that is required in the clocksource drivers.
-> 
-> Exactly, that's why you should have a regular PWM driver that gets
-> loaded at a convenient time and just uses an interface exported by the
-> base driver to access the common registers.
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 17674da..7104669 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -175,6 +175,11 @@ enum exynos4_clks {
+ 	/* mux clocks */
+ 	mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
+ 	mout_cam1, mout_csis0, mout_csis1, mout_g3d0, mout_g3d1, mout_g3d,
++	aclk400_mcuisp,
++
++	/* div clocks */
++	div_isp0 = 450, div_isp1, div_mcuisp0, div_mcuisp1, div_aclk200,
++	div_aclk400_mcuisp,
 
-Well, this is basically what my patches do, except that the PWM driver 
-isn't reworked to use the base driver yet.
+ 	nr_clks,
+ };
+@@ -429,7 +434,7 @@ struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
+ 	MUX(none, "mout_user_aclk266_gps", mout_user_aclk266_gps_p4x12,
+ 			SRC_TOP1, 16, 1),
+ 	MUX(aclk200, "aclk200", mout_user_aclk200_p4x12, SRC_TOP1, 20, 1),
+-	MUX(none, "aclk400_mcuisp", mout_user_aclk400_mcuisp_p4x12,
++	MUX(aclk400_mcuisp, "aclk400_mcuisp", mout_user_aclk400_mcuisp_p4x12,
+ 			SRC_TOP1, 24, 1),
+ 	MUX(none, "mout_aclk200", aclk_p4412, SRC_TOP0, 12, 1),
+ 	MUX(none, "mout_aclk100", aclk_p4412, SRC_TOP0, 16, 1),
+@@ -563,20 +568,21 @@ struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
+ 	DIV(none, "div_mdnie_pwm_pre0", "div_mdnie_pwm0", DIV_LCD0, 12, 4),
+ 	DIV(none, "div_mipihsi", "mout_mipihsi", DIV_FSYS0, 20, 4),
+ 	DIV(none, "div_jpeg", "mout_jpeg", E4X12_DIV_CAM1, 0, 4),
+-	DIV(none, "div_aclk200", "mout_aclk200", DIV_TOP, 0, 3),
++	DIV(div_aclk200, "div_aclk200", "mout_aclk200", DIV_TOP, 0, 3),
+ 	DIV(none, "div_aclk266_gps", "mout_aclk266_gps", DIV_TOP, 20, 3),
+-	DIV(none, "div_aclk400_mcuisp", "mout_aclk400_mcuisp", DIV_TOP, 24, 3),
++	DIV(div_aclk400_mcuisp, "div_aclk400_mcuisp", "mout_aclk400_mcuisp",
++						DIV_TOP, 24, 3),
+ 	DIV(none, "div_pwm_isp", "mout_pwm_isp", E4X12_DIV_ISP, 0, 4),
+ 	DIV(none, "div_spi0_isp", "mout_spi0_isp", E4X12_DIV_ISP, 4, 4),
+ 	DIV(none, "div_spi0_isp_pre", "div_spi0_isp", E4X12_DIV_ISP, 8, 8),
+ 	DIV(none, "div_spi1_isp", "mout_spi1_isp", E4X12_DIV_ISP, 16, 4),
+ 	DIV(none, "div_spi1_isp_pre", "div_spi1_isp", E4X12_DIV_ISP, 20, 8),
+ 	DIV(none, "div_uart_isp", "mout_uart_isp", E4X12_DIV_ISP, 28, 4),
+-	DIV(none, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
+-	DIV(none, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
++	DIV(div_isp0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
++	DIV(div_isp1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
+ 	DIV(none, "div_mpwm", "div_isp1", E4X12_DIV_ISP1, 0, 3),
+-	DIV(none, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
+-	DIV(none, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
++	DIV(div_mcuisp0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
++	DIV(div_mcuisp1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
+ };
 
-The private API exported to the samsung-time and pwm-samsung drivers isn't 
-maybe the most fortunate one, but it clearly has the advantage of solving 
-all the problems I mentioned before.
-
-Same goes for calling this an MFD driver. It doesn't even use the MFD 
-core, but there seems to be no better place to put it. Maybe 
-drivers/platform/arm would be better, if it existed, just as currently 
-available drivers/platform/x86?
-
-Best regards,
-Tomasz
+ /* list of gate clocks supported in all exynos4 soc's */
+--
+1.7.9.5
