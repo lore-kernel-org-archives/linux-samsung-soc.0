@@ -1,15 +1,14 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH 0/3] clk: Exynos: Register audio subsytem clocks using
- common clk framework
-Date: Sat, 6 Apr 2013 15:46:16 +0530
-Message-ID: <CAAgF-Be1Hvkt=BDK913KTu66M4izxbuOuORQ8hyT-GZR1+ABnQ@mail.gmail.com>
-References: <1365144043-17101-1-git-send-email-padma.v@samsung.com>
- <515EC996.8030904@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 04/14] mfd: Add Samsung PWM/timer master driver
+Date: Fri, 5 Apr 2013 19:05:24 +0200
+Message-ID: <201304051905.24644.arnd@arndb.de>
+References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
+ <20130405163958.GP17363@zurbaran> <5507947.WEhmSUi7vd@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <515EC996.8030904@samsung.com>
+In-Reply-To: <5507947.WEhmSUi7vd@amdc1227>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,128 +18,34 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, SangSu Park <sangsu4u.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: mark.rutland@arm.com, heiko@sntech.de, tomasz.figa@gmail.com, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, Samuel Ortiz <sameo@linux.intel.com>, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+On Friday 05 April 2013, Tomasz Figa wrote:
+> On Friday 05 of April 2013 18:39:58 Samuel Ortiz wrote:
+> > Hi Tomasz,
+> > 
+> > On Thu, Apr 04, 2013 at 06:37:01PM +0200, Tomasz Figa wrote:
+> > > This patch adds master driver for PWM/timer block available on many
+> > > Samsung SoCs providing clocksource and PWM output capabilities.
+>
+> > Why is that an MFD driver, and why aren't you using the PWM APIs for it ?
+> > Also, you probably want to look at using the regmap APIs for your IO.
+> 
+> The case of Samsung PWM timers is rather complicated. It is a hardware block 
+> that can be used at the same time to generate PWM signal and as a system 
+> clocksource.
+> 
+> There was a discussion on how to solve the problem of sharing the hardware:
+> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16480/focus=16500
+> (see the linked post and replies to it).
+> 
 
-On Fri, Apr 5, 2013 at 6:24 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> Hi Padmavathi,
->
-> On 04/05/2013 08:40 AM, Padmavathi Venna wrote:
->> Samsung Exynos SoC has a separate subsystem for audio. This subsystem
->> has a internal clock controller which controls i2s0 and pcm0 clocks.
->> This patch series adds the Samsung Exynos SoC audio subsytem clock code
->> to the common clock framework and provides the I2S0 clock information in
->> the dtsi file.
->>
->> Padmavathi Venna (3):
->>   clk: exynos: register audio subsystem clocks using common clock
->>     framework
->>   ARM: dts: add Exynos audio subsystem clock controller node
->>   ARM: dts: add clock provider information for i2s0 controller in
->>     Exynos5250
->>
->>  arch/arm/boot/dts/exynos5250.dtsi      |    8 ++
->>  drivers/clk/samsung/Makefile           |    1 +
->>  drivers/clk/samsung/clk-exynos-audss.c |  139 ++++++++++++++++++++++++++++++++
->>  3 files changed, 148 insertions(+), 0 deletions(-)
->>  create mode 100644 drivers/clk/samsung/clk-exynos-audss.c
->
-> It looks good, it's very similar what we have written recently for Exynos4.
-> It seems the binding documentation is missing in this patch set. I've included
-> below content of our .../bindings/clock/exynos4-audss-clock.txt file. Feel free
-> to reuse any parts of it.
+I don't think anyone ever suggested using a private API though. I think
+it's ok if the driver lives in drivers/mfd when it doesn't fit anywhere
+else easily, but you should really register it to the pwm subsystem to
+expose that functionality, not export functions that can be used by
+a pwm shim driver, which even seems to be missing from the series.
 
-Thanks for your review and help. I forgot to include documentation
-file. I will reuse your's.
-
->
-> From a brief look Exynos4 and Exynos5 Audio Subsystem CLKCON very similar.
-> I've just found bit 2 of 0x0381_0008 register is not used on Exynos5250.
-
-I added bit 2 as i2s_bus gate clock or you are pointing to something else?
-
->
-> Additionally the Audio Subsystem Clock controller is present on S5PV210
-> SoCs and IMO compatible property you used is too generic. I would propose
-> to use at least:
->
-> "samsung,s5pv210-audss-clock"    - for S5PV210
-> "samsung,exynos4210-audss-clock" - for Exynos4
-> "samsung,exynos5250-audss-clock" - for Exynos5
-
-Different compatible names means different driver files for exynos4 and 5??
-I haven't seen any difference between Exynos4 and Exynos5 audio subsystem.
-Can't we maintain one for both? If any extra clock instance is added
-on newer SoCs
-anyway it gets added at the end of the list of clocks. Please correct
-me if I am wrong.
-
->
->
-> 8<---------------------------------------------------------------------------
-> * Samsung Exynos4 Audio Subsystem Clock Controller
->
-> The Exynos4 Audio Subsystem clock controller generates and supplies clocks
-> to Audio Subsystem block available in the Exynos4 SoCs. The clock binding
-> described here is applicable to all SoC's in the Exynos4 family.
->
-> Required Properties:
->
-> - compatible: should be one of the following:
->   - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
->
-> - reg: physical base address and length of the controller's register set.
->
-> - #clock-cells: should be 1.
->
-> The following is the list of clocks generated by the controller. Each clock is
-> assigned an identifier and client nodes use this identifier to specify the
-> clock which they consume. Some of the clocks are available only on a particular
-> Exynos4 SoC and this is specified where applicable.
->
-> Provided clocks:
->
-> Clock           ID      SoC (if specific)
-> -----------------------------------------------
->
-> mout_audss      0
-> dout_rp         1
-> dout_aud_bus    2
-> mout_i2s        3
-> dout_i2sclk0    4
-> clk_i2s0        5
-> clk_pcm0        6
->
->
-> Example 1: An example of a clock controller node is listed below.
->
-> clock_audss: clock-controller@03810000 {
->         compatible = "samsung,exynos4-audss-clock";
->         reg = <0x03810000 0x0C>;
->         #clock-cells = <1>;
-> };
->
-> Example 2: I2S controller node that consumes the clock generated by the clock
->            controller. Refer to the standard clock bindings for information
->            about 'clocks' and 'clock-names' property.
->
-> i2s0: i2s@03830000 {
->         compatible = "samsung,i2s-v5";
->         reg = <0x03830000 0x100>;
->         clocks = <&clock_audss 0>, <&clock_audss 3>, <&clock_audss 1>,
->                 <&clock_audss 2>, <&clock_audss 4>, <&clock_audss 2>;
->         clock-names = "mout_audss", "mout_i2s", "dout_srp",
->                 "dout_bus", "dout_i2s", "i2s_opclk0";
-> };
->
-> 8<---------------------------------------------------------------------------
->
-> Thanks,
-> Sylwester
-
-Thanks
-Padma
+	Arnd
