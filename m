@@ -1,59 +1,72 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] regulator: max8952: Add Device Tree support
-Date: Fri, 5 Apr 2013 11:22:21 +0100
-Message-ID: <20130405102221.GE6597@opensource.wolfsonmicro.com>
-References: <1365092240-8956-1-git-send-email-t.figa@samsung.com>
- <1365092240-8956-3-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v4 00/14] ARM: samsung-time: Prepare for multiplatform
+ support
+Date: Fri, 05 Apr 2013 12:33:12 +0200
+Message-ID: <2744467.M5ElrZXicK@amdc1227>
+References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
+ <201304050115.03879.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DqhR8hV3EnoxUkKN"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:45031 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1765935Ab3DEKWX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Apr 2013 06:22:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1365092240-8956-3-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <201304050115.03879.heiko@sntech.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: mark.rutland@arm.com, tomasz.figa@gmail.com, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, sameo@linux.intel.com, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, arnd@arndb.de, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, lrg@ti.com, myungjoo.ham@samsung.com, kgene.kim@samsung.com
 
+Hi Heiko,
 
---DqhR8hV3EnoxUkKN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Friday 05 of April 2013 01:15:02 Heiko St=FCbner wrote:
+> Am Donnerstag, 4. April 2013, 18:36:57 schrieb Tomasz Figa:
+> > This series is an attempt to make the samsung-time clocksource driver
+> > ready
+> > for multiplatform kernels. It moves the driver to drivers/clocksource,
+> > cleans it up from uses of static platform-specific definitions, simplif=
+ies
+> > timer interrupt handling and adds Device Tree support.
+> > =
 
-On Thu, Apr 04, 2013 at 06:17:20PM +0200, Tomasz Figa wrote:
+> > Only samsung-time driver is reworked to use the master driver at this
+> > time,
+> > since the PWM driver can be already considered broken at the moment and
+> > needs separate series of several patches to fix and clean it up, which
+> > I am already working on.
+> > =
 
-> +	if (of_property_read_u32(np, "max8952,ramp-speed", &pd->ramp_speed))
-> +		dev_warn(dev, "max8952,ramp-speed property not specified, defaulting to 32mV/us\n");
+> > Tested on Universal C210 board with Device Tree. Not tested without
+> > Device Tree, since it has been already broken before this series.
+> > Compile tested for other related SoCs.
+> =
 
-Applied both, though the above warning seems a bit harsh - it seems like
-assuming a worst case ramp rate ought to be totally safe and just a
-minor performance issue so silently accepted.
+> Looks nice.
+> =
 
---DqhR8hV3EnoxUkKN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> On a non-DT S3C2416 board:
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Thanks for testing.
 
-iQIcBAEBAgAGBQJRXqXUAAoJELSic+t+oim9qjMP/RcN/I75yaRvGz5361wf3kMk
-jogmGn59Rj1S9MmpLqw6cBGa0yDh253Rv8rHAHBgw9R8hK1KE8xc3zF+qoaSDMT+
-i2BSpbgC9fC882BzOdWxoqljlwa3LVtw4uqC0eDPYeC0aV9Y8EgQ4gIx8kw5EZa2
-607murpSy7hDYMA091leJUJwuQ0snAuo5LWFO+m6GJ11XdwN5pordVE7aYhq/R+C
-anrQEfCtuIok1M4gEoWn8kf/bcceZKEfkvIm9MKhO7zscmw9rOUWYKs3LiE71mdz
-b9NYsZKtqBdE4sgTcpFtqwOZIXylcsADbq241qemfbi0tBkEoivOGsghhxG9ohnp
-F8rhR6j9alFpGqN751H7VxCk6Ntag1gEwJUWiO4NWSNAPzjeyNEeJ/kpLZG/EjQn
-2YwT6jOsXIlbapl6WQKohYIB23JswkE3BIbIXkKu29H+ufz5jKAMBwNhT86u+F09
-5e6jxM6ZVFEcB5nMXf/U5mUmAny5VpOcKS3x09cS5YQ3GOu4ZIoo2c5TbRZiA3SZ
-4sYnUBvso8nCJgpGAyG7s3TJ3FDeiydZcUYE241vBEBrtizA/Fl+DXJnCxpGhJ0h
-At7eFpkGWBi9ResksVOdpTP6+tGPVqkrgUSSBmN4AC0S4GV+ejoxO94CfoU/wrNB
-HsOCIkUmJ19j94J4Rq2c
-=uoC8
------END PGP SIGNATURE-----
+> And just so I don't search myself silly, am I right in thinking that the
+> driver does not use the generic clocksource registration yet and dt machi=
+nes
+> must still use samsung_timer_init at this point?
 
---DqhR8hV3EnoxUkKN--
+Yes. Because of the build failures it caused recently I have decided not to =
+
+use it yet. It can be added with a small patch later, though.
+
+Best regards,
+-- =
+
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Kernel and System Framework
