@@ -1,69 +1,101 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 04/14] mfd: Add Samsung PWM/timer master driver
-Date: Fri, 05 Apr 2013 18:53:31 +0200
-Message-ID: <5507947.WEhmSUi7vd@amdc1227>
-References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
- <1365093431-30621-5-git-send-email-t.figa@samsung.com>
- <20130405163958.GP17363@zurbaran>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20130405163958.GP17363@zurbaran>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: mark.rutland@arm.com, heiko@sntech.de, tomasz.figa@gmail.com, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, arnd@arndb.de, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v11 3/3] ARM: dts: Add FIMD DT binding Documentation
+Date: Fri,  5 Apr 2013 15:47:42 +0530
+Message-ID: <1365157062-8669-4-git-send-email-vikas.sajjan@linaro.org>
+References: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f41.google.com ([209.85.210.41]:45971 "EHLO
+	mail-da0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161142Ab3DEKSL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 5 Apr 2013 06:18:11 -0400
+Received: by mail-da0-f41.google.com with SMTP id w4so1545913dam.14
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Apr 2013 03:18:11 -0700 (PDT)
+In-Reply-To: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Hi Samuel,
+Add DT binding documentation for the FIMD IP block found in Samsung SoCs.
 
-On Friday 05 of April 2013 18:39:58 Samuel Ortiz wrote:
-> Hi Tomasz,
-> 
-> On Thu, Apr 04, 2013 at 06:37:01PM +0200, Tomasz Figa wrote:
-> > This patch adds master driver for PWM/timer block available on many
-> > Samsung SoCs providing clocksource and PWM output capabilities.
-> > 
-> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> > 
-> >  .../devicetree/bindings/pwm/pwm-samsung.txt        |  37 ++
-> >  drivers/clocksource/Kconfig                        |   1 +
-> >  drivers/mfd/Kconfig                                |   3 +
-> >  drivers/mfd/Makefile                               |   1 +
-> >  drivers/mfd/samsung-pwm.c                          | 439
-> >  +++++++++++++++++++++ drivers/pwm/Kconfig                               
-> >  |   1 +
-> >  include/linux/mfd/samsung-pwm.h                    |  49 +++
-> >  include/linux/platform_data/samsung-pwm.h          |  28 ++
-> >  8 files changed, 559 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
-> >  create mode 100644 drivers/mfd/samsung-pwm.c
-> >  create mode 100644 include/linux/mfd/samsung-pwm.h
-> >  create mode 100644 include/linux/platform_data/samsung-pwm.h
-> 
-> Why is that an MFD driver, and why aren't you using the PWM APIs for it ?
-> Also, you probably want to look at using the regmap APIs for your IO.
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ .../devicetree/bindings/video/samsung-fimd.txt     |   65 ++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/video/samsung-fimd.txt
 
-The case of Samsung PWM timers is rather complicated. It is a hardware block 
-that can be used at the same time to generate PWM signal and as a system 
-clocksource.
-
-There was a discussion on how to solve the problem of sharing the hardware:
-http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16480/focus=16500
-(see the linked post and replies to it).
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+new file mode 100644
+index 0000000..1984dbb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+@@ -0,0 +1,65 @@
++Device-Tree bindings for Samsung SoC display controller (FIMD)
++
++FIMD (Fully Interactive Mobile Display) is the Display Controller for the
++Samsung series of SoCs which transfers the image data from a video memory
++buffer to an external LCD interface.
++
++Required properties:
++- compatible: value should be one of the following
++		"samsung,s3c2443-fimd"; /* for S3C24XX SoCs */
++		"samsung,s3c6400-fimd"; /* for S3C64XX SoCs */
++		"samsung,s5p6440-fimd"; /* for S5P64X0 SoCs */
++		"samsung,s5pc100-fimd"; /* for S5PC100 SoC  */
++		"samsung,s5pv210-fimd"; /* for S5PV210 SoC */
++		"samsung,exynos4210-fimd"; /* for Exynos4 SoCs */
++		"samsung,exynos5250-fimd"; /* for Exynos5 SoCs */
++
++- reg: physical base address and length of the FIMD registers set.
++
++- interrupt-parent: should be the phandle of the fimd controller's
++		parent interrupt controller.
++
++- interrupts: should contain a list of all FIMD IP block interrupts in the
++		 order: FIFO Level, VSYNC, LCD_SYSTEM. The interrupt specifier
++		 format depends on the interrupt controller used.
++
++- interrupt-names: should contain the interrupt names: "fifo", "vsync",
++	"lcd_sys", in the same order as they were listed in the interrupts
++        property.
++
++- pinctrl-0: pin control group to be used for this controller.
++
++- pinctrl-names: must contain a "default" entry.
++
++- clocks: must include clock specifiers corresponding to entries in the
++         clock-names property.
++
++- clock-names: list of clock names sorted in the same order as the clocks
++               property. Must contain "sclk_fimd" and "fimd".
++
++Optional Properties:
++- samsung,power-domain: a phandle to FIMD power domain node.
++
++Example:
++
++SoC specific DT entry:
++
++	fimd@11c00000 {
++		compatible = "samsung,exynos4210-fimd";
++		interrupt-parent = <&combiner>;
++		reg = <0x11c00000 0x20000>;
++		interrupt-names = "fifo", "vsync", "lcd_sys";
++		interrupts = <11 0>, <11 1>, <11 2>;
++		clocks = <&clock 140>, <&clock 283>;
++		clock-names = "sclk_fimd", "fimd";
++		samsung,power-domain = <&pd_lcd0>;
++		status = "disabled";
++	};
++
++Board specific DT entry:
++
++	fimd@11c00000 {
++		pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+1.7.9.5
