@@ -1,12 +1,14 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v3] mmc: dw_mmc: let device core setup the default pin
- configuration
-Date: Fri, 05 Apr 2013 19:23:35 +0530
-Message-ID: <1365170015-3009-1-git-send-email-thomas.abraham@linaro.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 04/14] mfd: Add Samsung PWM/timer master driver
+Date: Sat, 06 Apr 2013 00:24:18 +0200
+Message-ID: <2359597.ofbj7Kvioz@flatron>
+References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
+ <19231120.yHlZtTPUMd@amdc1227> <201304052154.21361.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <201304052154.21361.arnd@arndb.de>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,137 +18,73 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-mmc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, heiko@sntech.de, patches@linaro.org, tgih.jun@samsung.com, t.figa@samsung.com, jh80.chung@samsung.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, cjb@laptop.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: mark.rutland@arm.com, heiko@sntech.de, Tomasz Figa <t.figa@samsung.com>, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, Samuel Ortiz <sameo@linux.intel.com>, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-With device core now able to setup the default pin configuration,
-the pin configuration code based on the deprecated Samsung specific
-gpio bindings is removed.
+On Friday 05 of April 2013 21:54:21 Arnd Bergmann wrote:
+> On Friday 05 April 2013, Tomasz Figa wrote:
+> > > I don't think anyone ever suggested using a private API though.
+> > 
+> > I must have gotten the last paragraph of
+> > http://article.gmane.org/gmane.linux.kernel.samsung-soc/16638
+> > wrong then. For me it seemed like the timer driver would expose a
+> > private API to the PWM driver.
+> 
+> Yes, sorry I wasn't clear enough. I meant a register-level interface
+> exposed from the base driver, not a high-level interface like you
+> did.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
-Changes since v2:
-- Changed patch subject from "mmc: dwmmc: let..." to "mmc: dw_mmc: let..."
-- Rebased to Chris's latest mmc-next branch.
+I'm not sure what you mean by a register-level interface. Something like 
+samsung_pwm_update_reg(reg, mask, val), which modifies bitfields according 
+to the mask and value with appropriate synchronization? If yes, this 
+solves only the problem of access to shared registers.
 
- drivers/mmc/host/dw_mmc-exynos.c |   38 --------------------------------------
- drivers/mmc/host/dw_mmc.c        |   12 ++----------
- drivers/mmc/host/dw_mmc.h        |    3 ---
- 3 files changed, 2 insertions(+), 51 deletions(-)
+The other problems that remain:
 
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index c7f0976..f013e7e 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -152,43 +152,6 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
- 	return 0;
- }
- 
--static int dw_mci_exynos_setup_bus(struct dw_mci *host,
--				struct device_node *slot_np, u8 bus_width)
--{
--	int idx, gpio, ret;
--
--	if (!slot_np)
--		return -EINVAL;
--
--	/* cmd + clock + bus-width pins */
--	for (idx = 0; idx < NUM_PINS(bus_width); idx++) {
--		gpio = of_get_gpio(slot_np, idx);
--		if (!gpio_is_valid(gpio)) {
--			dev_err(host->dev, "invalid gpio: %d\n", gpio);
--			return -EINVAL;
--		}
--
--		ret = devm_gpio_request(host->dev, gpio, "dw-mci-bus");
--		if (ret) {
--			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
--			return -EBUSY;
--		}
--	}
--
--	if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
--		return 0;
--
--	gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
--	if (gpio_is_valid(gpio)) {
--		if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
--			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
--	} else {
--		dev_info(host->dev, "cd gpio not available");
--	}
--
--	return 0;
--}
--
- /* Common capabilities of Exynos4/Exynos5 SoC */
- static unsigned long exynos_dwmmc_caps[4] = {
- 	MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
-@@ -205,7 +168,6 @@ static const struct dw_mci_drv_data exynos_drv_data = {
- 	.prepare_command	= dw_mci_exynos_prepare_command,
- 	.set_ios		= dw_mci_exynos_set_ios,
- 	.parse_dt		= dw_mci_exynos_parse_dt,
--	.setup_bus		= dw_mci_exynos_setup_bus,
- };
- 
- static const struct of_device_id dw_mci_exynos_match[] = {
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index a443820..2ed9989 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1945,14 +1945,6 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
- 	else
- 		bus_width = 1;
- 
--	if (drv_data && drv_data->setup_bus) {
--		struct device_node *slot_np;
--		slot_np = dw_mci_of_find_slot_node(host->dev, slot->id);
--		ret = drv_data->setup_bus(host, slot_np, bus_width);
--		if (ret)
--			goto err_setup_bus;
--	}
--
- 	switch (bus_width) {
- 	case 8:
- 		mmc->caps |= MMC_CAP_8_BIT_DATA;
-@@ -2002,7 +1994,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
- 
- 	ret = mmc_add_host(mmc);
- 	if (ret)
--		goto err_setup_bus;
-+		goto err_add_host;
- 
- #if defined(CONFIG_DEBUG_FS)
- 	dw_mci_init_debugfs(slot);
-@@ -2019,7 +2011,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
- 
- 	return 0;
- 
--err_setup_bus:
-+err_add_host:
- 	mmc_free_host(mmc);
- 	return -EINVAL;
- }
-diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-index 53b8fd9..0b74189 100644
---- a/drivers/mmc/host/dw_mmc.h
-+++ b/drivers/mmc/host/dw_mmc.h
-@@ -190,7 +190,6 @@ extern int dw_mci_resume(struct dw_mci *host);
-  * @prepare_command: handle CMD register extensions.
-  * @set_ios: handle bus specific extensions.
-  * @parse_dt: parse implementation specific device tree properties.
-- * @setup_bus: initialize io-interface
-  *
-  * Provide controller implementation specific extensions. The usage of this
-  * data structure is fully optional and usage of each member in this structure
-@@ -203,7 +202,5 @@ struct dw_mci_drv_data {
- 	void		(*prepare_command)(struct dw_mci *host, u32 *cmdr);
- 	void		(*set_ios)(struct dw_mci *host, struct mmc_ios *ios);
- 	int		(*parse_dt)(struct dw_mci *host);
--	int		(*setup_bus)(struct dw_mci *host,
--				struct device_node *slot_np, u8 bus_width);
- };
- #endif /* _DW_MMC_H_ */
--- 
-1.6.6.rc2
+- negotiation of PWM channels to use for clock source and clock events,
+  because each board can use different channels for PWM outputs,
+
+- code duplication caused by both of the drivers doing mostly the same
+  things and or having to parse the same data from device tree,
+
+- both non-DT and DT platforms must be supported,
+
+- how to keep the ability to load PWM driver as a module (or not load it
+  at all when PWM is not used on particular board), while retaining
+  everything that is needed for the clocksource driver in kernel,
+
+- some platforms can't use PWM timers as system clocksources, while on
+  others this is the only timekeeping hardware available.
+
+> > > I think
+> > > it's ok if the driver lives in drivers/mfd when it doesn't fit
+> > > anywhere
+> > > else easily, but you should really register it to the pwm subsystem
+> > > to
+> > > expose that functionality, not export functions that can be used by
+> > > a pwm shim driver, which even seems to be missing from the series.
+> > 
+> > Anyway, using PWM API in a clocksource driver that needs to be running
+> > very early (before any initcalls get called) seems a bit weird for
+> > me, especially when PWM API doesn't provide such fine grained control
+> > over PWM timers that is required in the clocksource drivers.
+> 
+> Exactly, that's why you should have a regular PWM driver that gets
+> loaded at a convenient time and just uses an interface exported by the
+> base driver to access the common registers.
+
+Well, this is basically what my patches do, except that the PWM driver 
+isn't reworked to use the base driver yet.
+
+The private API exported to the samsung-time and pwm-samsung drivers isn't 
+maybe the most fortunate one, but it clearly has the advantage of solving 
+all the problems I mentioned before.
+
+Same goes for calling this an MFD driver. It doesn't even use the MFD 
+core, but there seems to be no better place to put it. Maybe 
+drivers/platform/arm would be better, if it existed, just as currently 
+available drivers/platform/x86?
+
+Best regards,
+Tomasz
