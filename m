@@ -1,15 +1,13 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 00/14] ARM: samsung-time: Prepare for multiplatform
- support
-Date: Fri, 05 Apr 2013 12:33:12 +0200
-Message-ID: <2744467.M5ElrZXicK@amdc1227>
-References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
- <201304050115.03879.heiko@sntech.de>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: exynos4: export clocks required for fimc-is
+Date: Fri, 05 Apr 2013 11:32:21 -0700
+Message-ID: <20130405183221.7302.97946@quantum>
+References: <1365184185-23794-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <201304050115.03879.heiko@sntech.de>
+In-Reply-To: <1365184185-23794-1-git-send-email-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,54 +17,138 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: mark.rutland@arm.com, tomasz.figa@gmail.com, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, sameo@linux.intel.com, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, arnd@arndb.de, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Heiko,
+Quoting Sylwester Nawrocki (2013-04-05 10:49:45)
+> This patch adds clock indexes for ACLK_DIV0, ACLK_DIV1,
+> ACLK_400_MCUISP, ACLK_MCUISP_DIV0, ACLK_MCUISP_DIV1,
+> DIVACLK_400_MCUISP and DIVACLK_200 so these clocks are
+> available to the consumers (Exynos4x12 FIMC-IS subsystem).
+> While at it, indentation of the mux clocks table is
+> corrected.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-On Friday 05 of April 2013 01:15:02 Heiko St=FCbner wrote:
-> Am Donnerstag, 4. April 2013, 18:36:57 schrieb Tomasz Figa:
-> > This series is an attempt to make the samsung-time clocksource driver
-> > ready
-> > for multiplatform kernels. It moves the driver to drivers/clocksource,
-> > cleans it up from uses of static platform-specific definitions, simplif=
-ies
-> > timer interrupt handling and adds Device Tree support.
-> > =
+Acked-by: Mike Turquette <mturquette@linaro.org>
 
-> > Only samsung-time driver is reworked to use the master driver at this
-> > time,
-> > since the PWM driver can be already considered broken at the moment and
-> > needs separate series of several patches to fix and clean it up, which
-> > I am already working on.
-> > =
-
-> > Tested on Universal C210 board with Device Tree. Not tested without
-> > Device Tree, since it has been already broken before this series.
-> > Compile tested for other related SoCs.
-> =
-
-> Looks nice.
-> =
-
-> On a non-DT S3C2416 board:
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-
-Thanks for testing.
-
-> And just so I don't search myself silly, am I right in thinking that the
-> driver does not use the generic clocksource registration yet and dt machi=
-nes
-> must still use samsung_timer_init at this point?
-
-Yes. Because of the build failures it caused recently I have decided not to =
-
-use it yet. It can be added with a small patch later, though.
-
-Best regards,
--- =
-
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+> ---
+> Rebased onto git://git.kernel.org/pub/scm/linux/kernel/git/
+> kgene/linux-samsung.git for-next
+> 
+>  .../devicetree/bindings/clock/exynos4-clock.txt    |   42 +++++++++++++-------
+>  drivers/clk/samsung/clk-exynos4.c                  |   20 ++++++----
+>  2 files changed, 41 insertions(+), 21 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> index 662007e..ea5e26f 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> @@ -236,22 +236,36 @@ Exynos4 SoC and this is specified where applicable.
+>    spi1_isp_sclk       381     Exynos4x12
+>    uart_isp_sclk       382     Exynos4x12
+> 
+> -                       [Mux Clocks]
+> +               [Mux Clocks]
+> 
+> -       Clock           ID      SoC (if specific)
+> -       -----------------------------------------------
+> +  Clock                        ID      SoC (if specific)
+> +  -----------------------------------------------
+> +
+> +  mout_fimc0           384
+> +  mout_fimc1           385
+> +  mout_fimc2           386
+> +  mout_fimc3           387
+> +  mout_cam0            388
+> +  mout_cam1            389
+> +  mout_csis0           390
+> +  mout_csis1           391
+> +  mout_g3d0            392
+> +  mout_g3d1            393
+> +  mout_g3d             394
+> +  aclk400_mcuisp       395     Exynos4x12
+> +
+> +               [Div Clocks]
+> +
+> +  Clock                        ID      SoC (if specific)
+> +  -----------------------------------------------
+> +
+> +  div_isp0             450     Exynos4x12
+> +  div_isp1             451     Exynos4x12
+> +  div_mcuisp0          452     Exynos4x12
+> +  div_mcuisp1          453     Exynos4x12
+> +  div_aclk200          454     Exynos4x12
+> +  div_aclk400_mcuisp   455     Exynos4x12
+> 
+> -       mout_fimc0      384
+> -       mout_fimc1      385
+> -       mout_fimc2      386
+> -       mout_fimc3      387
+> -       mout_cam0       388
+> -       mout_cam1       389
+> -       mout_csis0      390
+> -       mout_csis1      391
+> -       mout_g3d0       392
+> -       mout_g3d1       393
+> -       mout_g3d        394
+> 
+>  Example 1: An example of a clock controller node is listed below.
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 17674da..7104669 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -175,6 +175,11 @@ enum exynos4_clks {
+>         /* mux clocks */
+>         mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
+>         mout_cam1, mout_csis0, mout_csis1, mout_g3d0, mout_g3d1, mout_g3d,
+> +       aclk400_mcuisp,
+> +
+> +       /* div clocks */
+> +       div_isp0 = 450, div_isp1, div_mcuisp0, div_mcuisp1, div_aclk200,
+> +       div_aclk400_mcuisp,
+> 
+>         nr_clks,
+>  };
+> @@ -429,7 +434,7 @@ struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
+>         MUX(none, "mout_user_aclk266_gps", mout_user_aclk266_gps_p4x12,
+>                         SRC_TOP1, 16, 1),
+>         MUX(aclk200, "aclk200", mout_user_aclk200_p4x12, SRC_TOP1, 20, 1),
+> -       MUX(none, "aclk400_mcuisp", mout_user_aclk400_mcuisp_p4x12,
+> +       MUX(aclk400_mcuisp, "aclk400_mcuisp", mout_user_aclk400_mcuisp_p4x12,
+>                         SRC_TOP1, 24, 1),
+>         MUX(none, "mout_aclk200", aclk_p4412, SRC_TOP0, 12, 1),
+>         MUX(none, "mout_aclk100", aclk_p4412, SRC_TOP0, 16, 1),
+> @@ -563,20 +568,21 @@ struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
+>         DIV(none, "div_mdnie_pwm_pre0", "div_mdnie_pwm0", DIV_LCD0, 12, 4),
+>         DIV(none, "div_mipihsi", "mout_mipihsi", DIV_FSYS0, 20, 4),
+>         DIV(none, "div_jpeg", "mout_jpeg", E4X12_DIV_CAM1, 0, 4),
+> -       DIV(none, "div_aclk200", "mout_aclk200", DIV_TOP, 0, 3),
+> +       DIV(div_aclk200, "div_aclk200", "mout_aclk200", DIV_TOP, 0, 3),
+>         DIV(none, "div_aclk266_gps", "mout_aclk266_gps", DIV_TOP, 20, 3),
+> -       DIV(none, "div_aclk400_mcuisp", "mout_aclk400_mcuisp", DIV_TOP, 24, 3),
+> +       DIV(div_aclk400_mcuisp, "div_aclk400_mcuisp", "mout_aclk400_mcuisp",
+> +                                               DIV_TOP, 24, 3),
+>         DIV(none, "div_pwm_isp", "mout_pwm_isp", E4X12_DIV_ISP, 0, 4),
+>         DIV(none, "div_spi0_isp", "mout_spi0_isp", E4X12_DIV_ISP, 4, 4),
+>         DIV(none, "div_spi0_isp_pre", "div_spi0_isp", E4X12_DIV_ISP, 8, 8),
+>         DIV(none, "div_spi1_isp", "mout_spi1_isp", E4X12_DIV_ISP, 16, 4),
+>         DIV(none, "div_spi1_isp_pre", "div_spi1_isp", E4X12_DIV_ISP, 20, 8),
+>         DIV(none, "div_uart_isp", "mout_uart_isp", E4X12_DIV_ISP, 28, 4),
+> -       DIV(none, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
+> -       DIV(none, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
+> +       DIV(div_isp0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
+> +       DIV(div_isp1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
+>         DIV(none, "div_mpwm", "div_isp1", E4X12_DIV_ISP1, 0, 3),
+> -       DIV(none, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
+> -       DIV(none, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
+> +       DIV(div_mcuisp0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
+> +       DIV(div_mcuisp1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
+>  };
+> 
+>  /* list of gate clocks supported in all exynos4 soc's */
+> --
+> 1.7.9.5
