@@ -1,45 +1,61 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to
- drivers/cpufreq
-Date: Fri, 05 Apr 2013 13:36:29 +0200
-Message-ID: <1769336.FkfMpuXqqb@vostro.rjw.lan>
-References: <cover.1365079581.git.viresh.kumar@linaro.org>
- <2a5901ce31c9$95160980$bf421c80$%kim@samsung.com>
- <CAKohpokk1Q+0gRpeW=ts0a8D+rGAUpHu62X+7ejdpfom_B6FYA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAKohpokk1Q+0gRpeW=ts0a8D+rGAUpHu62X+7ejdpfom_B6FYA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: robin.randhawa@arm.com, Ben Dooks <ben-linux@fluff.org>, linux-pm@vger.kernel.org, patches@linaro.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, charles.garcia-tobin@arm.com
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v11 2/3] ARM: dts: Add FIMD node and display timing node to exynos4412-origen.dts
+Date: Fri,  5 Apr 2013 15:47:41 +0530
+Message-ID: <1365157062-8669-3-git-send-email-vikas.sajjan@linaro.org>
+References: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f44.google.com ([209.85.210.44]:35263 "EHLO
+	mail-da0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161094Ab3DEKSH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 5 Apr 2013 06:18:07 -0400
+Received: by mail-da0-f44.google.com with SMTP id z20so1537231dae.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Apr 2013 03:18:06 -0700 (PDT)
+In-Reply-To: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-On Friday, April 05, 2013 12:36:34 PM Viresh Kumar wrote:
-> On 5 April 2013 12:18, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Basically, this moving looks good to me, but should be re-worked based on
-> > for-next of samsung tree because this touches too many samsung stuff so this
-> > should be sent to upstream via samsung tree.
-> 
-> Hmm... Its already applied in Rafael's tree. But it doesn't mean that
-> it can't be
-> moved to your tree if there is a issue.
+This patch adds FIMD related nodes for the Origen Quad board.
 
-Well, I'm dropping it.  Please merge via the Samsung tree.
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-origen.dts |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Thanks,
-Rafael
-
-
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index a5478bd..b39bffc 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -70,6 +70,27 @@
+ 		status = "okay";
+ 	};
+ 
++	fimd@11c00000 {
++		pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++
++	display-timings {
++		native-mode = <&timing0>;
++		timing0: timing {
++			clock-frequency = <50000>;
++			hactive = <1024>;
++			vactive = <600>;
++			hfront-porch = <64>;
++			hback-porch = <16>;
++			hsync-len = <48>;
++			vback-porch = <64>;
++			vfront-porch = <16>;
++			vsync-len = <3>;
++		};
++	};
++
+ 	serial@13800000 {
+ 		status = "okay";
+ 	};
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+1.7.9.5
