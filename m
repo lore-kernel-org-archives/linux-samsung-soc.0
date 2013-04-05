@@ -1,13 +1,14 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH V5 0/4] cpufreq: exynos5440: support for cpufreq driver
-Date: Fri, 05 Apr 2013 14:38:26 +0200
-Message-ID: <2949363.nNl2A6XIoS@vostro.rjw.lan>
-References: <1364457923-8499-1-git-send-email-amit.daniel@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 00/14] ARM: samsung-time: Prepare for multiplatform
+ support
+Date: Sat, 06 Apr 2013 00:57:04 +0200
+Message-ID: <3831330.gb4oupANR9@flatron>
+References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1364457923-8499-1-git-send-email-amit.daniel@samsung.com>
+In-Reply-To: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,66 +18,71 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Inderpal Singh <inderpal.singh@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: mark.rutland@arm.com, heiko@sntech.de, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, sameo@linux.intel.com, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, arnd@arndb.de, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday, March 28, 2013 01:35:18 PM Amit Daniel Kachhap wrote:
-> Submitting the V5 version of exynos5440 cpufreq driver. This patchset addresses
-> all the coding and design concerns raised especially by Viresh.
+On Thursday 04 of April 2013 18:36:57 Tomasz Figa wrote:
+> This series is an attempt to make the samsung-time clocksource driver
+> ready for multiplatform kernels. It moves the driver to
+> drivers/clocksource, cleans it up from uses of static platform-specific
+> definitions, simplifies timer interrupt handling and adds Device Tree
+> support.
 > 
-> Changes in V5:
-> * Removed the unnecessary DT look up entry from mach-exynos5-dt.c.
-> * Fixed all coding and comments issue raised by Viresh.
+> Only samsung-time driver is reworked to use the master driver at this
+> time, since the PWM driver can be already considered broken at the
+> moment and needs separate series of several patches to fix and clean it
+> up, which I am already working on.
 > 
-> Changes in V4:
-> * Added dev_err logs instead of pr_err.
-> * Used the devm_ioremap_resource API.
-> * Implemented several coding guidelines and minor error comments from Sylwester,
->   Russell and Viresh.
+> Tested on Universal C210 board with Device Tree. Not tested without
+> Device Tree, since it has been already broken before this series.
+> Compile tested for other related SoCs.
 > 
-> Changes in V3:
-> * Converted the driver to probe based as suggested by Viresh. This is also
->   beneficial for multiplatform kernel.
-> * Other coding guidelines related changes.
-> * Moved the DT node outside cpu0 node as the driver is now a platform
->   driver.
+> Changes since v3:
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16664/)
+>  - Changed the design to use common (master) driver for operations that
+>    can be done from both clocksource and PWM drivers (as suggested by
+>    Arnd Bergmann) - needed to properly synchronize access to PWM
+> registers - Moved handling of PWM prescaler and divider to master
+> driver
 > 
-> Changes in V2:
-> * Added OPP library support to parse DT parameters.
-> * Removed a hack to handle interrupts in bootup.
-> * Implemented other review comments from Viresh and Inder.
+> Changes since v2:
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16158)
+>  - Addressed comments from Rob Herring and Mark Rutland
+>  - Removed unused register definitions
+>  - Replaced samsung,source-timer and samsung,event-timer properties
+>    with samsung,pwm-outputs property that defines which PWM channels
+>    are reserved for PWM outputs on particular platform
+>  - Split non-DT and DT initialization into two functions
+>  - Fixed a copy paste error
 > 
-> All these patches are dependent on Thomas Abraham common clock patches.
-> (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15860.html)
-> This whole patch series is based on 3.9-rc4.
+> Changes since v1:
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16005)
+>  - Addressed comments from Mark Rutland
+>  - Documented struct samsung_timer_variant
+>  - Dropped inactive mail addresses from CC
 > 
-> Amit Daniel Kachhap (4):
->   cpufreq: exynos: Add cpufreq driver for exynos5440
->   cpufreq: exynos: Remove error return even if no soc is found
->   arm: exynos: Enable OPP library support for exynos5440
->   arm: dts: Add cpufreq controller node for Exynos5440 SoC
-> 
->  .../bindings/cpufreq/cpufreq-exynos5440.txt        |   28 ++
->  arch/arm/boot/dts/exynos5440.dtsi                  |   12 +
->  arch/arm/mach-exynos/Kconfig                       |    2 +
->  drivers/cpufreq/Kconfig.arm                        |    9 +
->  drivers/cpufreq/Makefile                           |    1 +
->  drivers/cpufreq/exynos-cpufreq.c                   |    2 +-
->  drivers/cpufreq/exynos5440-cpufreq.c               |  474 ++++++++++++++++++++
->  7 files changed, 527 insertions(+), 1 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
->  create mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
+> Tomasz Figa (14):
+>   ARM: SAMSUNG: Move samsung-time to drivers/clocksource
+>   clocksource: samsung-time: Drop useless defines from public header
+>   clocksource: samsung-time: Use local register definitions
+>   mfd: Add Samsung PWM/timer master driver
+>   ARM: SAMSUNG: Unify base address definitions of timer block
+>   ARM: SAMSUNG: Add new PWM platform device
+>   ARM: SAMSUNG: Set PWM platform data
+>   clocksource: samsung-time: Use Samsung PWM/timer master driver
+>   clocksource: samsung-time: Use variant data to get SoC-specific bits
+>   clocksource: samsung-time: Use master driver to configure dividers
+>   clocksource: samsung-time: Use clk_prepare_enable
+>   clocksource: samsung-time: Use master driver to control PWM channels
+>   clocksource: samsung-time: Move IRQ mask/ack handling to the driver
+>   ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
 
-Is this for me or the Samsung tree?
+On FriendlyARM's Tiny6410 board (Mini6410-compatible), both with (using my 
+patches adding S3C64xx Device Tree and pinctrl support) and without Device 
+Tree:
 
-If it's for me, I need ACKs from the Samsung tree maintainers.  Also, please
-address the Viresh's comments.
+Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Thanks,
-Rafael
-
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Best regards,
+Tomasz
