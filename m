@@ -1,50 +1,59 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v11 1/3] ARM: dts: Add FIMD node to exynos4
-Date: Fri,  5 Apr 2013 15:47:40 +0530
-Message-ID: <1365157062-8669-2-git-send-email-vikas.sajjan@linaro.org>
-References: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/2] regulator: max8952: Add Device Tree support
+Date: Fri, 5 Apr 2013 11:22:21 +0100
+Message-ID: <20130405102221.GE6597@opensource.wolfsonmicro.com>
+References: <1365092240-8956-1-git-send-email-t.figa@samsung.com>
+ <1365092240-8956-3-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DqhR8hV3EnoxUkKN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:37572 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754855Ab3DEKSD (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:45031 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1765935Ab3DEKWX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Apr 2013 06:18:03 -0400
-Received: by mail-pb0-f43.google.com with SMTP id md4so1953492pbc.30
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Apr 2013 03:18:02 -0700 (PDT)
-In-Reply-To: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
+	Fri, 5 Apr 2013 06:22:23 -0400
+Content-Disposition: inline
+In-Reply-To: <1365092240-8956-3-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, lrg@ti.com, myungjoo.ham@samsung.com, kgene.kim@samsung.com
 
-This patch adds a common FIMD device node for all Exynos4 SoCs.
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+--DqhR8hV3EnoxUkKN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 800ff11..b8771c5 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -371,4 +371,16 @@
- 			#dma-requests = <1>;
- 		};
- 	};
-+
-+	fimd: fimd@11c00000 {
-+		compatible = "samsung,exynos4210-fimd";
-+		interrupt-parent = <&combiner>;
-+		reg = <0x11c00000 0x20000>;
-+		interrupt-names = "fifo", "vsync", "lcd_sys";
-+		interrupts = <11 0>, <11 1>, <11 2>;
-+		clocks = <&clock 140>, <&clock 283>;
-+		clock-names = "sclk_fimd", "fimd";
-+		samsung,power-domain = <&pd_lcd0>;
-+		status = "disabled";
-+	};
- };
--- 
-1.7.9.5
+On Thu, Apr 04, 2013 at 06:17:20PM +0200, Tomasz Figa wrote:
+
+> +	if (of_property_read_u32(np, "max8952,ramp-speed", &pd->ramp_speed))
+> +		dev_warn(dev, "max8952,ramp-speed property not specified, defaulting to 32mV/us\n");
+
+Applied both, though the above warning seems a bit harsh - it seems like
+assuming a worst case ramp rate ought to be totally safe and just a
+minor performance issue so silently accepted.
+
+--DqhR8hV3EnoxUkKN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRXqXUAAoJELSic+t+oim9qjMP/RcN/I75yaRvGz5361wf3kMk
+jogmGn59Rj1S9MmpLqw6cBGa0yDh253Rv8rHAHBgw9R8hK1KE8xc3zF+qoaSDMT+
+i2BSpbgC9fC882BzOdWxoqljlwa3LVtw4uqC0eDPYeC0aV9Y8EgQ4gIx8kw5EZa2
+607murpSy7hDYMA091leJUJwuQ0snAuo5LWFO+m6GJ11XdwN5pordVE7aYhq/R+C
+anrQEfCtuIok1M4gEoWn8kf/bcceZKEfkvIm9MKhO7zscmw9rOUWYKs3LiE71mdz
+b9NYsZKtqBdE4sgTcpFtqwOZIXylcsADbq241qemfbi0tBkEoivOGsghhxG9ohnp
+F8rhR6j9alFpGqN751H7VxCk6Ntag1gEwJUWiO4NWSNAPzjeyNEeJ/kpLZG/EjQn
+2YwT6jOsXIlbapl6WQKohYIB23JswkE3BIbIXkKu29H+ufz5jKAMBwNhT86u+F09
+5e6jxM6ZVFEcB5nMXf/U5mUmAny5VpOcKS3x09cS5YQ3GOu4ZIoo2c5TbRZiA3SZ
+4sYnUBvso8nCJgpGAyG7s3TJ3FDeiydZcUYE241vBEBrtizA/Fl+DXJnCxpGhJ0h
+At7eFpkGWBi9ResksVOdpTP6+tGPVqkrgUSSBmN4AC0S4GV+ejoxO94CfoU/wrNB
+HsOCIkUmJ19j94J4Rq2c
+=uoC8
+-----END PGP SIGNATURE-----
+
+--DqhR8hV3EnoxUkKN--
