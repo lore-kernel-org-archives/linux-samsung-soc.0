@@ -1,69 +1,43 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 04/14] mfd: Add Samsung PWM/timer master driver
-Date: Fri, 05 Apr 2013 19:35:41 +0200
-Message-ID: <19231120.yHlZtTPUMd@amdc1227>
-References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
- <5507947.WEhmSUi7vd@amdc1227> <201304051905.24644.arnd@arndb.de>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [RFC: PATCH 2/2] iio: adc: exynos_adc: Handle timeout and race conditions
+Date: Fri, 5 Apr 2013 07:56:14 -0700
+Message-ID: <CAD=FV=XHKn_vqv7-rqpraJy_V2kyBfo98WdMsAJ5eXhADc_rmA@mail.gmail.com>
+References: <1363364801-23684-1-git-send-email-ch.naveen@samsung.com>
+	<51439846.9090201@metafoo.de>
+	<CAD=FV=V+-DwCjGoookySCazazBBYOoRO+=G5Q_WXAw+SrXNc-A@mail.gmail.com>
+	<5144849A.8050907@metafoo.de>
+	<CAD=FV=VBYHyD6yXBrM1BV3gazDFT0oHgvJM0+5LU1w4AO16Yzg@mail.gmail.com>
+	<515E90FD.10006@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <201304051905.24644.arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: mark.rutland@arm.com, heiko@sntech.de, tomasz.figa@gmail.com, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, Samuel Ortiz <sameo@linux.intel.com>, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <515E90FD.10006-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday 05 of April 2013 19:05:24 Arnd Bergmann wrote:
-> On Friday 05 April 2013, Tomasz Figa wrote:
-> > On Friday 05 of April 2013 18:39:58 Samuel Ortiz wrote:
-> > > Hi Tomasz,
-> > > 
-> > > On Thu, Apr 04, 2013 at 06:37:01PM +0200, Tomasz Figa wrote:
-> > > > This patch adds master driver for PWM/timer block available on many
-> > > > Samsung SoCs providing clocksource and PWM output capabilities.
-> > > 
-> > > Why is that an MFD driver, and why aren't you using the PWM APIs for it
-> > > ?
-> > > Also, you probably want to look at using the regmap APIs for your IO.
-> > 
-> > The case of Samsung PWM timers is rather complicated. It is a hardware
-> > block that can be used at the same time to generate PWM signal and as a
-> > system clocksource.
-> > 
-> > There was a discussion on how to solve the problem of sharing the
-> > hardware:
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16480/focus=16500
-> > (see the linked post and replies to it).
-> 
-> I don't think anyone ever suggested using a private API though.
+Lars,
 
-I must have gotten the last paragraph of
-http://article.gmane.org/gmane.linux.kernel.samsung-soc/16638
-wrong then. For me it seemed like the timer driver would expose a private API 
-to the PWM driver.
+On Fri, Apr 5, 2013 at 1:53 AM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
+> Since we sleep inside the protected section we need to use a mutex.
 
-> I think
-> it's ok if the driver lives in drivers/mfd when it doesn't fit anywhere
-> else easily, but you should really register it to the pwm subsystem to
-> expose that functionality, not export functions that can be used by
-> a pwm shim driver, which even seems to be missing from the series.
+Ah, good point.
 
-Anyway, using PWM API in a clocksource driver that needs to be running very 
-early (before any initcalls get called) seems a bit weird for me, especially 
-when PWM API doesn't provide such fine grained control over PWM timers that is 
-required in the clocksource drivers.
+> It's not the timeout case I'm worried about, but the case where the transfer
+> is interrupted by the user. Even though it is rather unlikely for the
+> problem to occur we should still try to avoid it, this is one of these
+> annoying heisenbugs that happen once in a while and nobody is able to
+> reproduce them.
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+Yes, of course.  Then we can also get extra confidence that the reset
+logic works well by stressing out this case...  :)
+
+This makes me think, though.  Given how fast we expect the ADC
+transaction to finish, would there be any benefit to making the wait
+non-interruptible and then shortening the timeout a whole lot.  If we
+shortened to 1ms then we're really not "non-interruptible" for very
+long and there's less chance of subtle bugs in the way that reset
+works.
+
+-Doug
