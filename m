@@ -1,11 +1,15 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] clk: exynos4: export clocks required for fimc-is
-Date: Fri, 05 Apr 2013 19:49:45 +0200
-Message-ID: <1365184185-23794-1-git-send-email-s.nawrocki@samsung.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH 0/3] clk: Exynos: Register audio subsytem clocks using
+ common clk framework
+Date: Sat, 6 Apr 2013 15:46:16 +0530
+Message-ID: <CAAgF-Be1Hvkt=BDK913KTu66M4izxbuOuORQ8hyT-GZR1+ABnQ@mail.gmail.com>
+References: <1365144043-17101-1-git-send-email-padma.v@samsung.com>
+ <515EC996.8030904@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <515EC996.8030904@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -15,134 +19,128 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, t.figa@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, SangSu Park <sangsu4u.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds clock indexes for ACLK_DIV0, ACLK_DIV1,
-ACLK_400_MCUISP, ACLK_MCUISP_DIV0, ACLK_MCUISP_DIV1,
-DIVACLK_400_MCUISP and DIVACLK_200 so these clocks are
-available to the consumers (Exynos4x12 FIMC-IS subsystem).
-While at it, indentation of the mux clocks table is
-corrected.
+Hi Sylwester,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
-Rebased onto git://git.kernel.org/pub/scm/linux/kernel/git/
-kgene/linux-samsung.git for-next
+On Fri, Apr 5, 2013 at 6:24 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi Padmavathi,
+>
+> On 04/05/2013 08:40 AM, Padmavathi Venna wrote:
+>> Samsung Exynos SoC has a separate subsystem for audio. This subsystem
+>> has a internal clock controller which controls i2s0 and pcm0 clocks.
+>> This patch series adds the Samsung Exynos SoC audio subsytem clock code
+>> to the common clock framework and provides the I2S0 clock information in
+>> the dtsi file.
+>>
+>> Padmavathi Venna (3):
+>>   clk: exynos: register audio subsystem clocks using common clock
+>>     framework
+>>   ARM: dts: add Exynos audio subsystem clock controller node
+>>   ARM: dts: add clock provider information for i2s0 controller in
+>>     Exynos5250
+>>
+>>  arch/arm/boot/dts/exynos5250.dtsi      |    8 ++
+>>  drivers/clk/samsung/Makefile           |    1 +
+>>  drivers/clk/samsung/clk-exynos-audss.c |  139 ++++++++++++++++++++++++++++++++
+>>  3 files changed, 148 insertions(+), 0 deletions(-)
+>>  create mode 100644 drivers/clk/samsung/clk-exynos-audss.c
+>
+> It looks good, it's very similar what we have written recently for Exynos4.
+> It seems the binding documentation is missing in this patch set. I've included
+> below content of our .../bindings/clock/exynos4-audss-clock.txt file. Feel free
+> to reuse any parts of it.
 
- .../devicetree/bindings/clock/exynos4-clock.txt    |   42 +++++++++++++-------
- drivers/clk/samsung/clk-exynos4.c                  |   20 ++++++----
- 2 files changed, 41 insertions(+), 21 deletions(-)
+Thanks for your review and help. I forgot to include documentation
+file. I will reuse your's.
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-index 662007e..ea5e26f 100644
---- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-@@ -236,22 +236,36 @@ Exynos4 SoC and this is specified where applicable.
-   spi1_isp_sclk       381     Exynos4x12
-   uart_isp_sclk       382     Exynos4x12
+>
+> From a brief look Exynos4 and Exynos5 Audio Subsystem CLKCON very similar.
+> I've just found bit 2 of 0x0381_0008 register is not used on Exynos5250.
 
--			[Mux Clocks]
-+		[Mux Clocks]
+I added bit 2 as i2s_bus gate clock or you are pointing to something else?
 
--	Clock		ID	SoC (if specific)
--	-----------------------------------------------
-+  Clock			ID	SoC (if specific)
-+  -----------------------------------------------
-+
-+  mout_fimc0		384
-+  mout_fimc1		385
-+  mout_fimc2		386
-+  mout_fimc3		387
-+  mout_cam0		388
-+  mout_cam1		389
-+  mout_csis0		390
-+  mout_csis1		391
-+  mout_g3d0		392
-+  mout_g3d1		393
-+  mout_g3d		394
-+  aclk400_mcuisp	395	Exynos4x12
-+
-+		[Div Clocks]
-+
-+  Clock			ID	SoC (if specific)
-+  -----------------------------------------------
-+
-+  div_isp0		450	Exynos4x12
-+  div_isp1		451	Exynos4x12
-+  div_mcuisp0		452	Exynos4x12
-+  div_mcuisp1		453	Exynos4x12
-+  div_aclk200		454	Exynos4x12
-+  div_aclk400_mcuisp	455	Exynos4x12
+>
+> Additionally the Audio Subsystem Clock controller is present on S5PV210
+> SoCs and IMO compatible property you used is too generic. I would propose
+> to use at least:
+>
+> "samsung,s5pv210-audss-clock"    - for S5PV210
+> "samsung,exynos4210-audss-clock" - for Exynos4
+> "samsung,exynos5250-audss-clock" - for Exynos5
 
--	mout_fimc0	384
--	mout_fimc1	385
--	mout_fimc2	386
--	mout_fimc3	387
--	mout_cam0	388
--	mout_cam1	389
--	mout_csis0	390
--	mout_csis1	391
--	mout_g3d0	392
--	mout_g3d1	393
--	mout_g3d	394
+Different compatible names means different driver files for exynos4 and 5??
+I haven't seen any difference between Exynos4 and Exynos5 audio subsystem.
+Can't we maintain one for both? If any extra clock instance is added
+on newer SoCs
+anyway it gets added at the end of the list of clocks. Please correct
+me if I am wrong.
 
- Example 1: An example of a clock controller node is listed below.
+>
+>
+> 8<---------------------------------------------------------------------------
+> * Samsung Exynos4 Audio Subsystem Clock Controller
+>
+> The Exynos4 Audio Subsystem clock controller generates and supplies clocks
+> to Audio Subsystem block available in the Exynos4 SoCs. The clock binding
+> described here is applicable to all SoC's in the Exynos4 family.
+>
+> Required Properties:
+>
+> - compatible: should be one of the following:
+>   - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
+>
+> - reg: physical base address and length of the controller's register set.
+>
+> - #clock-cells: should be 1.
+>
+> The following is the list of clocks generated by the controller. Each clock is
+> assigned an identifier and client nodes use this identifier to specify the
+> clock which they consume. Some of the clocks are available only on a particular
+> Exynos4 SoC and this is specified where applicable.
+>
+> Provided clocks:
+>
+> Clock           ID      SoC (if specific)
+> -----------------------------------------------
+>
+> mout_audss      0
+> dout_rp         1
+> dout_aud_bus    2
+> mout_i2s        3
+> dout_i2sclk0    4
+> clk_i2s0        5
+> clk_pcm0        6
+>
+>
+> Example 1: An example of a clock controller node is listed below.
+>
+> clock_audss: clock-controller@03810000 {
+>         compatible = "samsung,exynos4-audss-clock";
+>         reg = <0x03810000 0x0C>;
+>         #clock-cells = <1>;
+> };
+>
+> Example 2: I2S controller node that consumes the clock generated by the clock
+>            controller. Refer to the standard clock bindings for information
+>            about 'clocks' and 'clock-names' property.
+>
+> i2s0: i2s@03830000 {
+>         compatible = "samsung,i2s-v5";
+>         reg = <0x03830000 0x100>;
+>         clocks = <&clock_audss 0>, <&clock_audss 3>, <&clock_audss 1>,
+>                 <&clock_audss 2>, <&clock_audss 4>, <&clock_audss 2>;
+>         clock-names = "mout_audss", "mout_i2s", "dout_srp",
+>                 "dout_bus", "dout_i2s", "i2s_opclk0";
+> };
+>
+> 8<---------------------------------------------------------------------------
+>
+> Thanks,
+> Sylwester
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 17674da..7104669 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -175,6 +175,11 @@ enum exynos4_clks {
- 	/* mux clocks */
- 	mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
- 	mout_cam1, mout_csis0, mout_csis1, mout_g3d0, mout_g3d1, mout_g3d,
-+	aclk400_mcuisp,
-+
-+	/* div clocks */
-+	div_isp0 = 450, div_isp1, div_mcuisp0, div_mcuisp1, div_aclk200,
-+	div_aclk400_mcuisp,
-
- 	nr_clks,
- };
-@@ -429,7 +434,7 @@ struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
- 	MUX(none, "mout_user_aclk266_gps", mout_user_aclk266_gps_p4x12,
- 			SRC_TOP1, 16, 1),
- 	MUX(aclk200, "aclk200", mout_user_aclk200_p4x12, SRC_TOP1, 20, 1),
--	MUX(none, "aclk400_mcuisp", mout_user_aclk400_mcuisp_p4x12,
-+	MUX(aclk400_mcuisp, "aclk400_mcuisp", mout_user_aclk400_mcuisp_p4x12,
- 			SRC_TOP1, 24, 1),
- 	MUX(none, "mout_aclk200", aclk_p4412, SRC_TOP0, 12, 1),
- 	MUX(none, "mout_aclk100", aclk_p4412, SRC_TOP0, 16, 1),
-@@ -563,20 +568,21 @@ struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
- 	DIV(none, "div_mdnie_pwm_pre0", "div_mdnie_pwm0", DIV_LCD0, 12, 4),
- 	DIV(none, "div_mipihsi", "mout_mipihsi", DIV_FSYS0, 20, 4),
- 	DIV(none, "div_jpeg", "mout_jpeg", E4X12_DIV_CAM1, 0, 4),
--	DIV(none, "div_aclk200", "mout_aclk200", DIV_TOP, 0, 3),
-+	DIV(div_aclk200, "div_aclk200", "mout_aclk200", DIV_TOP, 0, 3),
- 	DIV(none, "div_aclk266_gps", "mout_aclk266_gps", DIV_TOP, 20, 3),
--	DIV(none, "div_aclk400_mcuisp", "mout_aclk400_mcuisp", DIV_TOP, 24, 3),
-+	DIV(div_aclk400_mcuisp, "div_aclk400_mcuisp", "mout_aclk400_mcuisp",
-+						DIV_TOP, 24, 3),
- 	DIV(none, "div_pwm_isp", "mout_pwm_isp", E4X12_DIV_ISP, 0, 4),
- 	DIV(none, "div_spi0_isp", "mout_spi0_isp", E4X12_DIV_ISP, 4, 4),
- 	DIV(none, "div_spi0_isp_pre", "div_spi0_isp", E4X12_DIV_ISP, 8, 8),
- 	DIV(none, "div_spi1_isp", "mout_spi1_isp", E4X12_DIV_ISP, 16, 4),
- 	DIV(none, "div_spi1_isp_pre", "div_spi1_isp", E4X12_DIV_ISP, 20, 8),
- 	DIV(none, "div_uart_isp", "mout_uart_isp", E4X12_DIV_ISP, 28, 4),
--	DIV(none, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
--	DIV(none, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
-+	DIV(div_isp0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
-+	DIV(div_isp1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
- 	DIV(none, "div_mpwm", "div_isp1", E4X12_DIV_ISP1, 0, 3),
--	DIV(none, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
--	DIV(none, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
-+	DIV(div_mcuisp0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
-+	DIV(div_mcuisp1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
- };
-
- /* list of gate clocks supported in all exynos4 soc's */
---
-1.7.9.5
+Thanks
+Padma
