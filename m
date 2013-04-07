@@ -1,40 +1,61 @@
-From: Mike Dyer <mike.dyer@md-soft.co.uk>
-Subject: Samsung S5PV210 I2S DMA
-Date: Sun, 07 Apr 2013 12:36:05 +0100
-Message-ID: <1365334565.5261.4.camel@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:43791 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933278Ab3DGLgJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 7 Apr 2013 07:36:09 -0400
-Received: by mail-wi0-f171.google.com with SMTP id hn17so1769696wib.10
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Apr 2013 04:36:08 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: [PATCH] ARM: Samsung: Select ARM_CPU_SUSPEND when required
+Date: Sun,  7 Apr 2013 22:27:22 +0200
+Message-ID: <1365366442-16025-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: alsa-devel@alsa-project.org
 
-Hi All,
+The power management code of S3C24XX, S3C64XX, S5PV210 platform in
+arch/arm/plat-samsung/, arch/arm/mach-s3c24xx/, arch/arm/mach-s3c64xx/
+directories uses generic cpu_suspend routine. Make sure it is compiled
+in when building with power management support. Without this patch
+compilation fails with errors as below. It can be reproduced by using
+default config files with CONFIG_SUSPEND disabled and CONFIG_PM_RUNTIME
+enabled.
 
-I'm attempting to play audio into a WM8960 codec attached to I2S 0 on a
-Samsung S5PV210.
+ - s5pv210_defconfig
+ arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
+ arch/arm/plat-samsung/pm.c:304: undefined reference to `cpu_suspend'
+ arch/arm/plat-samsung/built-in.o: In function `s3c_cpu_resume':
+ arch/arm/plat-samsung/s5p-sleep.S:74: undefined reference to `cpu_resume'
 
-The DMA engine emits a lot of messages complaining of (I think) a read
-fault:
+ - s3c24xx_defconfig
+ arch/arm/mach-s3c24xx/built-in.o: In function `s3c_cpu_resume':
+ arch/arm/mach-s3c24xx/sleep.S:83: undefined reference to `cpu_resume'
+ arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
+ arch/arm/plat-samsung/pm.c:304: undefined reference to `cpu_suspend'
 
-dma-pl330 dma-pl330.0: Reset Channel-0 CS-20000f FTC-40000
-dma-pl330 dma-pl330.0: Reset Channel-0 CS-20000f FTC-40000
-...
+ - s3c64xx_defconfig
+ arch/arm/mach-s3c64xx/built-in.o: In function `s3c_cpu_resume':
+ arch/arm/mach-s3c64xx/sleep.S:72: undefined reference to `cpu_resume'
+ arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
+ arch/arm/plat-samsung/pm.c:304: undefined reference to `cpu_suspend'
 
-I've had audio playing using the I2S idma driver, so I know clocks +
-mixer settings are OK.  I'd like to get the external DMA working because
-I also need to do capture.
+To fix this issue select ARM_CPU_SUSPEND for PLAT_SAMSUNG when PM is set.
 
-Any suggestions on how to debug?
+The build break occurs for kernels at least back to v3.0, however this
+patch applies without conflicts only back to v3.7.
 
-Cheers,
-Mike
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: stable@vger.kernel.org
+---
+ arch/arm/plat-samsung/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 54d1861..02355ba 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -10,6 +10,7 @@ config PLAT_SAMSUNG
+ 	default y
+ 	select GENERIC_IRQ_CHIP
+ 	select NO_IOPORT
++	select ARM_CPU_SUSPEND if PM
+ 	help
+ 	  Base platform code for all Samsung SoC based systems
+ 
+-- 
+1.7.4.1
