@@ -1,48 +1,35 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [RFC: PATCH 2/2] iio: adc: exynos_adc: Handle timeout and race
- conditions
-Date: Fri, 05 Apr 2013 18:38:36 +0200
-Message-ID: <515EFE0C.2030401@metafoo.de>
-References: <1363364801-23684-1-git-send-email-ch.naveen@samsung.com> <51439846.9090201@metafoo.de> <CAD=FV=V+-DwCjGoookySCazazBBYOoRO+=G5Q_WXAw+SrXNc-A@mail.gmail.com> <5144849A.8050907@metafoo.de> <CAD=FV=VBYHyD6yXBrM1BV3gazDFT0oHgvJM0+5LU1w4AO16Yzg@mail.gmail.com> <515E90FD.10006@metafoo.de> <CAD=FV=XHKn_vqv7-rqpraJy_V2kyBfo98WdMsAJ5eXhADc_rmA@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 0/2] Support device_prep_dma_sg for pl330
+Date: Sun, 7 Apr 2013 15:20:54 +0530
+Message-ID: <CABb+yY1NA0VDwuHYtoGSA6L80cyjL2TP_kWP89EdMqvA6fQHiw@mail.gmail.com>
+References: <1364904076-3130-1-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-out-239.synserver.de ([212.40.185.239]:1077 "EHLO
-	smtp-out-221.synserver.de" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755664Ab3DEPjT (ORCPT
+Received: from mail-da0-f54.google.com ([209.85.210.54]:50371 "EHLO
+	mail-da0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933049Ab3DGJuz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Apr 2013 11:39:19 -0400
-In-Reply-To: <CAD=FV=XHKn_vqv7-rqpraJy_V2kyBfo98WdMsAJ5eXhADc_rmA@mail.gmail.com>
+	Sun, 7 Apr 2013 05:50:55 -0400
+Received: by mail-da0-f54.google.com with SMTP id p1so2192562dad.13
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Apr 2013 02:50:54 -0700 (PDT)
+In-Reply-To: <1364904076-3130-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, djbw@fb.com, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, Boojin Kim <boojin.kim@samsung.com>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 04/05/2013 04:56 PM, Doug Anderson wrote:
-> Lars,
-> 
-> On Fri, Apr 5, 2013 at 1:53 AM, Lars-Peter Clausen <lars@metafoo.de> wrote:
->> Since we sleep inside the protected section we need to use a mutex.
-> 
-> Ah, good point.
-> 
->> It's not the timeout case I'm worried about, but the case where the transfer
->> is interrupted by the user. Even though it is rather unlikely for the
->> problem to occur we should still try to avoid it, this is one of these
->> annoying heisenbugs that happen once in a while and nobody is able to
->> reproduce them.
-> 
-> Yes, of course.  Then we can also get extra confidence that the reset
-> logic works well by stressing out this case...  :)
-> 
-> This makes me think, though.  Given how fast we expect the ADC
-> transaction to finish, would there be any benefit to making the wait
-> non-interruptible and then shortening the timeout a whole lot.  If we
-> shortened to 1ms then we're really not "non-interruptible" for very
-> long and there's less chance of subtle bugs in the way that reset
-> works.
-
-Yes, that could also work.
-
-- Lars
+On Tue, Apr 2, 2013 at 5:31 PM, Chanho Park <chanho61.park@samsung.com> wrote:
+> This patchset support device_prep_dma_sg functionality for pl330 dmaengine
+> driver. The prep_dma_sg function prepares descriptors to transfer between src
+> and dest memory which consists of scatter/gather list. The patchset contains
+> code clean-up to eliminate duplications.
+>
+> Chanho Park (2):
+>   dma: pl330: split off common code to give back descriptors
+>   dma: pl330: add pl330_prep_dma_sg to transfer from sglist to sglist
+>
+>  drivers/dma/pl330.c |  209 ++++++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 157 insertions(+), 52 deletions(-)
+>
+Acked-by : Jassi Brar <jassisinghbrar@gmail.com>
