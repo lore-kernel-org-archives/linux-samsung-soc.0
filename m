@@ -1,44 +1,28 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to
- drivers/cpufreq
-Date: Mon, 08 Apr 2013 18:15:09 +0900
-Message-ID: <2ccd01ce3439$911b51b0$b351f510$%kim@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
+Date: Mon, 8 Apr 2013 14:48:08 +0530
+Message-ID: <CAKohpomcSF-o3piHeOONZuFubJ0xkBjHJRG7j7FN=NaXBiJPiw@mail.gmail.com>
 References: <cover.1365079581.git.viresh.kumar@linaro.org>
- <2a5901ce31c9$95160980$bf421c80$%kim@samsung.com>
- <CAKohpokk1Q+0gRpeW=ts0a8D+rGAUpHu62X+7ejdpfom_B6FYA@mail.gmail.com>
- <1769336.FkfMpuXqqb@vostro.rjw.lan>
+	<2a5901ce31c9$95160980$bf421c80$%kim@samsung.com>
+	<CAKohpokk1Q+0gRpeW=ts0a8D+rGAUpHu62X+7ejdpfom_B6FYA@mail.gmail.com>
+	<1769336.FkfMpuXqqb@vostro.rjw.lan>
+	<2ccd01ce3439$911b51b0$b351f510$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1769336.FkfMpuXqqb@vostro.rjw.lan>
-Content-language: ko
-Sender: linux-pm-owner@vger.kernel.org
-To: "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Viresh Kumar' <viresh.kumar@linaro.org>
-Cc: robin.randhawa@arm.com, Steve.Bannister@arm.com, Liviu.Dudau@arm.com, charles.garcia-tobin@arm.com, arvind.chauhan@arm.com, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, patches@linaro.org, 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <2ccd01ce3439$911b51b0$b351f510$%kim@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, robin.randhawa@arm.com, Steve.Bannister@arm.com, Liviu.Dudau@arm.com, charles.garcia-tobin@arm.com, arvind.chauhan@arm.com, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, patches@linaro.org, Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Rafael J. Wysocki wrote:
-> 
-> On Friday, April 05, 2013 12:36:34 PM Viresh Kumar wrote:
-> > On 5 April 2013 12:18, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > > Basically, this moving looks good to me, but should be re-worked based
-> on
-> > > for-next of samsung tree because this touches too many samsung stuff
-> so this
-> > > should be sent to upstream via samsung tree.
-> >
-> > Hmm... Its already applied in Rafael's tree. But it doesn't mean that
-> > it can't be
-> > moved to your tree if there is a issue.
-> 
-> Well, I'm dropping it.  Please merge via the Samsung tree.
-> 
-OK, I will.
+On 8 April 2013 14:45, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Rafael J. Wysocki wrote:
+>> Well, I'm dropping it.  Please merge via the Samsung tree.
+>>
+> OK, I will.
+>
+> I got patch file from Viresh, and there is a sign from Rafael, but it should be ack. So Rafael, let me use your ack on this patch when I apply. If any problems, please let me know.
 
-I got patch file from Viresh, and there is a sign from Rafael, but it should be ack. So Rafael, let me use your ack on this patch when I apply. If any problems, please let me know.
-
-Thanks.
-
-- Kukjin
-
+Ahh.. I forgot to remove it. I picked the initial patch from Rafael's tree.
+But yes, you need it anyway :)
