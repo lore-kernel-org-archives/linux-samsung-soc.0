@@ -1,47 +1,56 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] ARM: S3C24XX: Correct NR_IRQS definition for s3c2440
-Date: Sun, 07 Apr 2013 23:42:58 +0200
-Message-ID: <5161E862.9060905@gmail.com>
-References: <1365366170-9682-1-git-send-email-s.nawrocki@samsung.com> <201304072235.02218.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH v2 2/2] ARM: dts: Update MFC documentation for clock entries
+Date: Mon,  8 Apr 2013 11:44:17 +0530
+Message-ID: <1365401657-5428-2-git-send-email-sachin.kamat@linaro.org>
+References: <1365401657-5428-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f177.google.com ([209.85.215.177]:57277 "EHLO
-	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762304Ab3DGVnE (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:42403 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934769Ab3DHG0Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 7 Apr 2013 17:43:04 -0400
-Received: by mail-ea0-f177.google.com with SMTP id q14so1963435eaj.36
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Apr 2013 14:43:02 -0700 (PDT)
-In-Reply-To: <201304072235.02218.heiko@sntech.de>
+	Mon, 8 Apr 2013 02:26:24 -0400
+Received: by mail-pa0-f50.google.com with SMTP id bg2so3119963pad.37
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Apr 2013 23:26:23 -0700 (PDT)
+In-Reply-To: <1365401657-5428-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-On 04/07/2013 10:35 PM, Heiko St=C3=BCbner wrote:
-> Am Sonntag, 7. April 2013, 22:22:50 schrieb Sylwester Nawrocki:
-[...]
-> Thanks for testing the irq changes on another subarchitecture and fix=
-ing the
-> glitch.
+Added clock entry definitions to MFC bindings document.
 
-And thanks for your effort in adding DT support for s3c24xx!
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v1:
+Updated "clock-names" description as suggested by
+Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ .../devicetree/bindings/media/s5p-mfc.txt          |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-I'm still debugging one more issue, which prevents the ethernet control=
-ler
-from working properly. I.e. currently booting stops on starting network=
-=20
-interfaces.
-There is some problem with the external interrupts handling on s3c2440.=
-=20
-In my
-case EINT7 does not trigger any interrupts, even though gpcon_reg and=20
-extint_reg
-seem to be configured properly.
-
-
-Regards,
-Sylwester
+diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+index bf0182d..df37b02 100644
+--- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
++++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+@@ -15,6 +15,9 @@ Required properties:
+ 	  mapped region.
+ 
+   - interrupts : MFC interrupt number to the CPU.
++  - clocks : from common clock binding: handle to mfc clocks.
++  - clock-names : from common clock binding: must contain "sclk_mfc" and "mfc",
++		  corresponding to entries in the clocks property.
+ 
+   - samsung,mfc-r : Base address of the first memory bank used by MFC
+ 		    for DMA contiguous memory allocation and its size.
+@@ -34,6 +37,8 @@ mfc: codec@13400000 {
+ 	reg = <0x13400000 0x10000>;
+ 	interrupts = <0 94 0>;
+ 	samsung,power-domain = <&pd_mfc>;
++	clocks = <&clock 170>, <&clock 273>;
++	clock-names = "sclk_mfc", "mfc";
+ };
+ 
+ Board specific DT entry:
+-- 
+1.7.9.5
