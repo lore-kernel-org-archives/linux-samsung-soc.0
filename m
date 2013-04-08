@@ -1,35 +1,113 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH V6 1/4] cpufreq: exynos: Add cpufreq driver for exynos5440
-Date: Mon, 8 Apr 2013 14:46:33 +0530
-Message-ID: <CAKohpo=t_YTCTRCfnwQ+GPF=frsTGDigT3RZHJuVQ+R+YZU7Hg@mail.gmail.com>
-References: <1365409058-32643-1-git-send-email-amit.daniel@samsung.com>
-	<1365409058-32643-2-git-send-email-amit.daniel@samsung.com>
-	<CAKohpo=CFTo2UCnECeeuKdz34cuedV_tqn7zGA9bzU_PiJ46qg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: Samsung: Select ARM_CPU_SUSPEND when required
+Date: Mon, 08 Apr 2013 18:57:33 +0900
+Message-ID: <2cd601ce343f$7d6aac50$784004f0$%kim@samsung.com>
+References: <1365366442-16025-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAKohpo=CFTo2UCnECeeuKdz34cuedV_tqn7zGA9bzU_PiJ46qg@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, Inderpal Singh <inderpal.singh@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:30517 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935672Ab3DHJ5e (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Apr 2013 05:57:34 -0400
+In-reply-to: <1365366442-16025-1-git-send-email-s.nawrocki@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, stable@vger.kernel.org
 
-On 8 April 2013 14:17, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 8 April 2013 13:47, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
->
->> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->> index f3f3b14..bce2195 100644
->> --- a/drivers/cpufreq/Kconfig.arm
->> +++ b/drivers/cpufreq/Kconfig.arm
->> @@ -42,6 +42,15 @@ config ARM_EXYNOS5250_CPUFREQ
->>           This adds the CPUFreq driver for Samsung EXYNOS5250
->>           SoC.
->>
->> +config ARM_EXYNOS5440_CPUFREQ
->> +       def_bool SOC_EXYNOS5440
->> +       depends on HAVE_CLK && PM_OPP && OF
->
-> Don't you need a depend on your Soc or mach or arch? Don't send another
-> version for this now.. Just send a new patch over this patchset.
+Sylwester Nawrocki wrote:
+> 
+> The power management code of S3C24XX, S3C64XX, S5PV210 platform in
+> arch/arm/plat-samsung/, arch/arm/mach-s3c24xx/, arch/arm/mach-s3c64xx/
+> directories uses generic cpu_suspend routine. Make sure it is compiled
+> in when building with power management support. Without this patch
+> compilation fails with errors as below. It can be reproduced by using
+> default config files with CONFIG_SUSPEND disabled and CONFIG_PM_RUNTIME
+> enabled.
+> 
+>  - s5pv210_defconfig
+>  arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
+>  arch/arm/plat-samsung/pm.c:304: undefined reference to `cpu_suspend'
+>  arch/arm/plat-samsung/built-in.o: In function `s3c_cpu_resume':
+>  arch/arm/plat-samsung/s5p-sleep.S:74: undefined reference to `cpu_resume'
+> 
+>  - s3c24xx_defconfig
+>  arch/arm/mach-s3c24xx/built-in.o: In function `s3c_cpu_resume':
+>  arch/arm/mach-s3c24xx/sleep.S:83: undefined reference to `cpu_resume'
+>  arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
+>  arch/arm/plat-samsung/pm.c:304: undefined reference to `cpu_suspend'
+> 
+>  - s3c64xx_defconfig
+>  arch/arm/mach-s3c64xx/built-in.o: In function `s3c_cpu_resume':
+>  arch/arm/mach-s3c64xx/sleep.S:72: undefined reference to `cpu_resume'
+>  arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
+>  arch/arm/plat-samsung/pm.c:304: undefined reference to `cpu_suspend'
+> 
+> To fix this issue select ARM_CPU_SUSPEND for PLAT_SAMSUNG when PM is set.
+> 
+> The build break occurs for kernels at least back to v3.0, however this
+> patch applies without conflicts only back to v3.7.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  arch/arm/plat-samsung/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index 54d1861..02355ba 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -10,6 +10,7 @@ config PLAT_SAMSUNG
+>  	default y
+>  	select GENERIC_IRQ_CHIP
+>  	select NO_IOPORT
+> +	select ARM_CPU_SUSPEND if PM
+>  	help
+>  	  Base platform code for all Samsung SoC based systems
+> 
+> --
+> 1.7.4.1
 
-Sorry, i overlooked def_bool... This comments stands invalid.
+Yes, right. The pm.c in plat-samsung should be built with
+arch/arm/kernel/sleep.S and suspend.c.
+
+BTW it should be shown in alphabetical order and we don't need more
+following in mach-exynos.
+
+--------8<----------------8<--------
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 2f45906..bc0a8b2 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -31,7 +31,6 @@ config CPU_EXYNOS4210
+ 	bool "SAMSUNG EXYNOS4210"
+ 	default y
+ 	depends on ARCH_EXYNOS4
+-	select ARM_CPU_SUSPEND if PM
+ 	select PM_GENERIC_DOMAINS
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index b708b3e..30a976d 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -8,6 +8,7 @@ config PLAT_SAMSUNG
+ 	Bool
+ 	depends on PLAT_S3C24XX || ARCH_S3C64XX || PLAT_S5P
+	default y
++	select ARM_CPU_SUSPEND if PM
+ 	select GENERIC_IRQ_CHIP
+ 	select NO_IOPORT
+ 	help
+--------8<----------------8<--------
+
+If you have any objections, let me know.
+
+Thanks.
+
+- Kukjin
