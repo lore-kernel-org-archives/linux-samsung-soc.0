@@ -1,92 +1,44 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V5 0/4] cpufreq: exynos5440: support for cpufreq driver
-Date: Mon, 8 Apr 2013 14:06:38 +0530
-Message-ID: <CADGdYn7ZRCSymU7k3Sn4mbS6B=dxy1N+vhQuyiFnhOQLLzrTbw@mail.gmail.com>
-References: <1364457923-8499-1-git-send-email-amit.daniel@samsung.com>
-	<2949363.nNl2A6XIoS@vostro.rjw.lan>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to
+ drivers/cpufreq
+Date: Mon, 08 Apr 2013 18:15:09 +0900
+Message-ID: <2ccd01ce3439$911b51b0$b351f510$%kim@samsung.com>
+References: <cover.1365079581.git.viresh.kumar@linaro.org>
+ <2a5901ce31c9$95160980$bf421c80$%kim@samsung.com>
+ <CAKohpokk1Q+0gRpeW=ts0a8D+rGAUpHu62X+7ejdpfom_B6FYA@mail.gmail.com>
+ <1769336.FkfMpuXqqb@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2949363.nNl2A6XIoS@vostro.rjw.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, Inderpal Singh <inderpal.singh@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1769336.FkfMpuXqqb@vostro.rjw.lan>
+Content-language: ko
+Sender: linux-pm-owner@vger.kernel.org
+To: "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Viresh Kumar' <viresh.kumar@linaro.org>
+Cc: robin.randhawa@arm.com, Steve.Bannister@arm.com, Liviu.Dudau@arm.com, charles.garcia-tobin@arm.com, arvind.chauhan@arm.com, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, patches@linaro.org, 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Apr 5, 2013 at 6:08 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> On Thursday, March 28, 2013 01:35:18 PM Amit Daniel Kachhap wrote:
->> Submitting the V5 version of exynos5440 cpufreq driver. This patchset addresses
->> all the coding and design concerns raised especially by Viresh.
->>
->> Changes in V5:
->> * Removed the unnecessary DT look up entry from mach-exynos5-dt.c.
->> * Fixed all coding and comments issue raised by Viresh.
->>
->> Changes in V4:
->> * Added dev_err logs instead of pr_err.
->> * Used the devm_ioremap_resource API.
->> * Implemented several coding guidelines and minor error comments from Sylwester,
->>   Russell and Viresh.
->>
->> Changes in V3:
->> * Converted the driver to probe based as suggested by Viresh. This is also
->>   beneficial for multiplatform kernel.
->> * Other coding guidelines related changes.
->> * Moved the DT node outside cpu0 node as the driver is now a platform
->>   driver.
->>
->> Changes in V2:
->> * Added OPP library support to parse DT parameters.
->> * Removed a hack to handle interrupts in bootup.
->> * Implemented other review comments from Viresh and Inder.
->>
->> All these patches are dependent on Thomas Abraham common clock patches.
->> (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg15860.html)
->> This whole patch series is based on 3.9-rc4.
->>
->> Amit Daniel Kachhap (4):
->>   cpufreq: exynos: Add cpufreq driver for exynos5440
->>   cpufreq: exynos: Remove error return even if no soc is found
->>   arm: exynos: Enable OPP library support for exynos5440
->>   arm: dts: Add cpufreq controller node for Exynos5440 SoC
->>
->>  .../bindings/cpufreq/cpufreq-exynos5440.txt        |   28 ++
->>  arch/arm/boot/dts/exynos5440.dtsi                  |   12 +
->>  arch/arm/mach-exynos/Kconfig                       |    2 +
->>  drivers/cpufreq/Kconfig.arm                        |    9 +
->>  drivers/cpufreq/Makefile                           |    1 +
->>  drivers/cpufreq/exynos-cpufreq.c                   |    2 +-
->>  drivers/cpufreq/exynos5440-cpufreq.c               |  474 ++++++++++++++++++++
->>  7 files changed, 527 insertions(+), 1 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
->>  create mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
->
-> Is this for me or the Samsung tree?
->
-> If it's for me, I need ACKs from the Samsung tree maintainers.  Also, please
-> address the Viresh's comments.
->
-> Thanks,
-> Rafael
->
-Hi Rafael,
+Rafael J. Wysocki wrote:
+> 
+> On Friday, April 05, 2013 12:36:34 PM Viresh Kumar wrote:
+> > On 5 April 2013 12:18, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > > Basically, this moving looks good to me, but should be re-worked based
+> on
+> > > for-next of samsung tree because this touches too many samsung stuff
+> so this
+> > > should be sent to upstream via samsung tree.
+> >
+> > Hmm... Its already applied in Rafael's tree. But it doesn't mean that
+> > it can't be
+> > moved to your tree if there is a issue.
+> 
+> Well, I'm dropping it.  Please merge via the Samsung tree.
+> 
+OK, I will.
 
-I submitted the V6 version with all comments from Viresh addressed.
+I got patch file from Viresh, and there is a sign from Rafael, but it should be ack. So Rafael, let me use your ack on this patch when I apply. If any problems, please let me know.
 
-Hi Kukjin Kim,
+Thanks.
 
-Any suggestion on how this patch should be merged. In my opinion it
-should go via Rafael's tree as this patch uses some fixes present in
-Rafael's tree like modified cpufreq_notify_transition API.
+- Kukjin
 
-Thanks,
-Amit Daniel
->
-> --
-> I speak only for myself.
-> Rafael J. Wysocki, Intel Open Source Technology Center.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
