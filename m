@@ -1,56 +1,39 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Fix build error in exynos5250-smdk5250.dts
-Date: Tue, 09 Apr 2013 03:33:16 +0900
-Message-ID: <51630D6C.6030809@samsung.com>
-References: <1365397281-32217-1-git-send-email-sachin.kamat@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: dts: fix bad merge of display timing node to exynos5250-smdk5250.dts
+Date: Mon, 8 Apr 2013 12:21:32 -0700
+Message-ID: <CAD=FV=UcKTBjKtyQFY4odTpBDKbNQEAHjyahqgNCsD570zq=pw@mail.gmail.com>
+References: <1365439879-3398-1-git-send-email-dianders@chromium.org>
+	<51630B26.1000102@samsung.com>
+	<CAD=FV=Ui2C49Z=39qboo9CdETrea2z+_+Wc77pjfDWX26XtxJg@mail.gmail.com>
+	<51630C7C.9040003@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:35323 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935501Ab3DHSdY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 14:33:24 -0400
-Received: by mail-pa0-f43.google.com with SMTP id hz11so3414621pad.30
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Apr 2013 11:33:24 -0700 (PDT)
-In-Reply-To: <1365397281-32217-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51630C7C.9040003@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Leela Krishna Amudala <l.krishna@samsung.com>, Jingoo Han <jg1.han@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On 04/08/13 14:01, Sachin Kamat wrote:
-> Fixes the following build error:
-> Error: arch/arm/boot/dts/exynos5250-smdk5250.dts:250.3-251.1 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[1]: *** [arch/arm/boot/dts/exynos5250-smdk5250.dtb] Error 1
-> make: *** [dtbs] Error 2
->
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> ---
-> Based on Kukjin's for-next tree.
-> ---
->   arch/arm/boot/dts/exynos5250-smdk5250.dts |    1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 4be14df..26d856b 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -239,6 +239,7 @@
->   			vback-porch =<4>;
->   			vfront-porch =<4>;
->   			vsync-len =<4>;
-> +		};
->   	};
->
->   	fixed-rate-clocks {
+Kukjin,
 
-Current for-next has no problem with re-sorting out the branch.
+On Mon, Apr 8, 2013 at 11:29 AM, Kukjin Kim <kgene.kim@gmail.com> wrote:
+> BTW, if any problems on current for-next, please kindly let me know.
 
-Anyway, thanks for your checking and if any problems, please let me know.
+I usually try to check linux-next at least once a week, but sometimes
+it's more or less often.  At the moment I'm trying to track something
+weird down but it seems like it has some userspace component to it.
+I'll post a separate thread if I find a kernel problem there.
 
-Thanks.
+Aside from the RTC, my biggest problem right now is that reboot
+stopped working at the same time as the common clock.  The
+exynos5_restart() function is essentially behaving as a no-op since
+the clock to the IP block that handles reset has been gated.  :(  The
+bit "CLK_PMU_APBIF" is gated in "CLK_GATE_IP_PERIS". This used to be
+ungated in exynos5_clk_ip_peris_ctrl().
 
-- Kukjin
+I'm happy to test a patch that fixes this but I haven't yet had time
+to try to fix it cleanly myself.
+
+
+-Doug
