@@ -1,971 +1,514 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v3] of/pci: Provide support for parsing PCI DT ranges
- property
-Date: Mon, 08 Apr 2013 11:58:58 -0500
-Message-ID: <5162F752.4000008@gmail.com>
-References: <20130408143320.GA24277@arm.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 0/10] Samsung stuff for v3.10
+Date: Tue, 09 Apr 2013 03:17:40 +0900
+Message-ID: <516309C4.3000008@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:41650 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935131Ab3DHQ7D (ORCPT
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:47981 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935110Ab3DHSRq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 12:59:03 -0400
-In-Reply-To: <20130408143320.GA24277@arm.com>
+	Mon, 8 Apr 2013 14:17:46 -0400
+Received: by mail-ie0-f175.google.com with SMTP id c12so7416837ieb.34
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Apr 2013 11:17:46 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Murray <Andrew.Murray@arm.com>
-Cc: rob.herring@calxeda.com, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Jingoo Han <jg1.han@samsung.com>, Liviu Dudau <Liviu.Dudau@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Michal Simek <monstr@monstr.eu>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Adding PPC and Microblaze maintainers.
+Hi Arnd, Olof
 
-On 04/08/2013 09:33 AM, Andrew Murray wrote:
-> This patch factors out common implementation patterns to reduce overall kernel
-> code and provide a means for host bridge drivers to directly obtain struct
-> resources from the DT's ranges property without relying on architecture specific
-> DT handling. This will make it easier to write archiecture independent host bridge
-> drivers and mitigate against further duplication of DT parsing code.
-> 
-> This patch can be used in the following way:
-> 
-> 	struct of_pci_range_parser parser;
-> 	struct of_pci_range range;
-> 
-> 	if (of_pci_range_parser(&parser, np))
-> 		; //no ranges property
-> 
-> 	for_each_of_pci_range(&parser, &range) {
-> 
-> 		/*
-> 			directly access properties of the address range, e.g.:
-> 			range.pci_space, range.pci_addr, range.cpu_addr,
-> 			range.size, range.flags
-> 
-> 			alternatively obtain a struct resource, e.g.:
-> 			struct resource res;
-> 			of_pci_range_to_resource(&range, np, &res);
-> 		*/
-> 	}
-> 
-> Additionally the implementation takes care of adjacent ranges and merges them
-> into a single range (as was the case with powerpc and microblaze).
-> 
-> The modifications to microblaze, mips and powerpc have not been tested.
-> 
-> Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
-> Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
-> Compared to the v3 sent by Andrew Murray, the following changes have
-> been made:
-> 
->  * Unify and move duplicate pci_process_bridge_OF_ranges functions to
->    drivers/of/of_pci.c as suggested by Rob Herring
+This is 2nd pull-request for Samsung stuff for v3.10.
 
-This part should really be a separate patch with just the move and
-should have acks from PPC and Microblaze maintainers.
+If any problems, please kindly let me know.
 
-Otherwise it looks okay to me.
 
-Rob
+-- 
+Thanks.
 
->  * Fix potential build errors with Microblaze/MIPS
-> 
-> Compared to "[PATCH v5 01/17] of/pci: Provide support for parsing PCI DT
-> ranges property", the following changes have been made:
-> 
->  * Correct use of IORESOURCE_* as suggested by Russell King
-> 
->  * Improved interface and naming as suggested by Thierry Reding
-> 
-> Compared to the v2 sent by Andrew Murray, Thomas Petazzoni did:
-> 
->  * Add a memset() on the struct of_pci_range_iter when starting the
->    for loop in for_each_pci_range(). Otherwise, with an uninitialized
->    of_pci_range_iter, of_pci_process_ranges() may crash.
-> 
->  * Add parenthesis around 'res', 'np' and 'iter' in the
->    for_each_of_pci_range macro definitions. Otherwise, passing
->    something like &foobar as 'res' didn't work.
-> 
->  * Rebased on top of 3.9-rc2, which required fixing a few conflicts in
->    the Microblaze code.
-> 
-> v2:
->   This follows on from suggestions made by Grant Likely
->   (marc.info/?l=linux-kernel&m=136079602806328)
-> ---
->  arch/microblaze/include/asm/pci-bridge.h |    5 +-
->  arch/microblaze/pci/pci-common.c         |  192 ------------------------------
->  arch/mips/pci/pci.c                      |   50 +++------
->  arch/powerpc/include/asm/pci-bridge.h    |    5 +-
->  arch/powerpc/kernel/pci-common.c         |  192 ------------------------------
->  drivers/of/address.c                     |   63 ++++++++++
->  drivers/of/of_pci.c                      |  168 ++++++++++++++++++++++++++
->  include/linux/of_address.h               |   42 +++++++
->  include/linux/of_pci.h                   |    3 +
->  9 files changed, 294 insertions(+), 426 deletions(-)
-> 
-> diff --git a/arch/microblaze/include/asm/pci-bridge.h b/arch/microblaze/include/asm/pci-bridge.h
-> index cb5d397..5783cd6 100644
-> --- a/arch/microblaze/include/asm/pci-bridge.h
-> +++ b/arch/microblaze/include/asm/pci-bridge.h
-> @@ -10,6 +10,7 @@
->  #include <linux/pci.h>
->  #include <linux/list.h>
->  #include <linux/ioport.h>
-> +#include <linux/of_pci.h>
->  
->  struct device_node;
->  
-> @@ -132,10 +133,6 @@ extern void setup_indirect_pci(struct pci_controller *hose,
->  extern struct pci_controller *pci_find_hose_for_OF_device(
->  			struct device_node *node);
->  
-> -/* Fill up host controller resources from the OF node */
-> -extern void pci_process_bridge_OF_ranges(struct pci_controller *hose,
-> -			struct device_node *dev, int primary);
-> -
->  /* Allocate & free a PCI host bridge structure */
->  extern struct pci_controller *pcibios_alloc_controller(struct device_node *dev);
->  extern void pcibios_free_controller(struct pci_controller *phb);
-> diff --git a/arch/microblaze/pci/pci-common.c b/arch/microblaze/pci/pci-common.c
-> index 9ea521e..2735ad9 100644
-> --- a/arch/microblaze/pci/pci-common.c
-> +++ b/arch/microblaze/pci/pci-common.c
-> @@ -622,198 +622,6 @@ void pci_resource_to_user(const struct pci_dev *dev, int bar,
->  	*end = rsrc->end - offset;
->  }
->  
-> -/**
-> - * pci_process_bridge_OF_ranges - Parse PCI bridge resources from device tree
-> - * @hose: newly allocated pci_controller to be setup
-> - * @dev: device node of the host bridge
-> - * @primary: set if primary bus (32 bits only, soon to be deprecated)
-> - *
-> - * This function will parse the "ranges" property of a PCI host bridge device
-> - * node and setup the resource mapping of a pci controller based on its
-> - * content.
-> - *
-> - * Life would be boring if it wasn't for a few issues that we have to deal
-> - * with here:
-> - *
-> - *   - We can only cope with one IO space range and up to 3 Memory space
-> - *     ranges. However, some machines (thanks Apple !) tend to split their
-> - *     space into lots of small contiguous ranges. So we have to coalesce.
-> - *
-> - *   - We can only cope with all memory ranges having the same offset
-> - *     between CPU addresses and PCI addresses. Unfortunately, some bridges
-> - *     are setup for a large 1:1 mapping along with a small "window" which
-> - *     maps PCI address 0 to some arbitrary high address of the CPU space in
-> - *     order to give access to the ISA memory hole.
-> - *     The way out of here that I've chosen for now is to always set the
-> - *     offset based on the first resource found, then override it if we
-> - *     have a different offset and the previous was set by an ISA hole.
-> - *
-> - *   - Some busses have IO space not starting at 0, which causes trouble with
-> - *     the way we do our IO resource renumbering. The code somewhat deals with
-> - *     it for 64 bits but I would expect problems on 32 bits.
-> - *
-> - *   - Some 32 bits platforms such as 4xx can have physical space larger than
-> - *     32 bits so we need to use 64 bits values for the parsing
-> - */
-> -void pci_process_bridge_OF_ranges(struct pci_controller *hose,
-> -				  struct device_node *dev, int primary)
-> -{
-> -	const u32 *ranges;
-> -	int rlen;
-> -	int pna = of_n_addr_cells(dev);
-> -	int np = pna + 5;
-> -	int memno = 0, isa_hole = -1;
-> -	u32 pci_space;
-> -	unsigned long long pci_addr, cpu_addr, pci_next, cpu_next, size;
-> -	unsigned long long isa_mb = 0;
-> -	struct resource *res;
-> -
-> -	pr_info("PCI host bridge %s %s ranges:\n",
-> -	       dev->full_name, primary ? "(primary)" : "");
-> -
-> -	/* Get ranges property */
-> -	ranges = of_get_property(dev, "ranges", &rlen);
-> -	if (ranges == NULL)
-> -		return;
-> -
-> -	/* Parse it */
-> -	pr_debug("Parsing ranges property...\n");
-> -	while ((rlen -= np * 4) >= 0) {
-> -		/* Read next ranges element */
-> -		pci_space = ranges[0];
-> -		pci_addr = of_read_number(ranges + 1, 2);
-> -		cpu_addr = of_translate_address(dev, ranges + 3);
-> -		size = of_read_number(ranges + pna + 3, 2);
-> -
-> -		pr_debug("pci_space: 0x%08x pci_addr:0x%016llx ",
-> -				pci_space, pci_addr);
-> -		pr_debug("cpu_addr:0x%016llx size:0x%016llx\n",
-> -					cpu_addr, size);
-> -
-> -		ranges += np;
-> -
-> -		/* If we failed translation or got a zero-sized region
-> -		 * (some FW try to feed us with non sensical zero sized regions
-> -		 * such as power3 which look like some kind of attempt
-> -		 * at exposing the VGA memory hole)
-> -		 */
-> -		if (cpu_addr == OF_BAD_ADDR || size == 0)
-> -			continue;
-> -
-> -		/* Now consume following elements while they are contiguous */
-> -		for (; rlen >= np * sizeof(u32);
-> -		     ranges += np, rlen -= np * 4) {
-> -			if (ranges[0] != pci_space)
-> -				break;
-> -			pci_next = of_read_number(ranges + 1, 2);
-> -			cpu_next = of_translate_address(dev, ranges + 3);
-> -			if (pci_next != pci_addr + size ||
-> -			    cpu_next != cpu_addr + size)
-> -				break;
-> -			size += of_read_number(ranges + pna + 3, 2);
-> -		}
-> -
-> -		/* Act based on address space type */
-> -		res = NULL;
-> -		switch ((pci_space >> 24) & 0x3) {
-> -		case 1:		/* PCI IO space */
-> -			pr_info("  IO 0x%016llx..0x%016llx -> 0x%016llx\n",
-> -			       cpu_addr, cpu_addr + size - 1, pci_addr);
-> -
-> -			/* We support only one IO range */
-> -			if (hose->pci_io_size) {
-> -				pr_info(" \\--> Skipped (too many) !\n");
-> -				continue;
-> -			}
-> -			/* On 32 bits, limit I/O space to 16MB */
-> -			if (size > 0x01000000)
-> -				size = 0x01000000;
-> -
-> -			/* 32 bits needs to map IOs here */
-> -			hose->io_base_virt = ioremap(cpu_addr, size);
-> -
-> -			/* Expect trouble if pci_addr is not 0 */
-> -			if (primary)
-> -				isa_io_base =
-> -					(unsigned long)hose->io_base_virt;
-> -			/* pci_io_size and io_base_phys always represent IO
-> -			 * space starting at 0 so we factor in pci_addr
-> -			 */
-> -			hose->pci_io_size = pci_addr + size;
-> -			hose->io_base_phys = cpu_addr - pci_addr;
-> -
-> -			/* Build resource */
-> -			res = &hose->io_resource;
-> -			res->flags = IORESOURCE_IO;
-> -			res->start = pci_addr;
-> -			break;
-> -		case 2:		/* PCI Memory space */
-> -		case 3:		/* PCI 64 bits Memory space */
-> -			pr_info(" MEM 0x%016llx..0x%016llx -> 0x%016llx %s\n",
-> -			       cpu_addr, cpu_addr + size - 1, pci_addr,
-> -			       (pci_space & 0x40000000) ? "Prefetch" : "");
-> -
-> -			/* We support only 3 memory ranges */
-> -			if (memno >= 3) {
-> -				pr_info(" \\--> Skipped (too many) !\n");
-> -				continue;
-> -			}
-> -			/* Handles ISA memory hole space here */
-> -			if (pci_addr == 0) {
-> -				isa_mb = cpu_addr;
-> -				isa_hole = memno;
-> -				if (primary || isa_mem_base == 0)
-> -					isa_mem_base = cpu_addr;
-> -				hose->isa_mem_phys = cpu_addr;
-> -				hose->isa_mem_size = size;
-> -			}
-> -
-> -			/* We get the PCI/Mem offset from the first range or
-> -			 * the, current one if the offset came from an ISA
-> -			 * hole. If they don't match, bugger.
-> -			 */
-> -			if (memno == 0 ||
-> -			    (isa_hole >= 0 && pci_addr != 0 &&
-> -			     hose->pci_mem_offset == isa_mb))
-> -				hose->pci_mem_offset = cpu_addr - pci_addr;
-> -			else if (pci_addr != 0 &&
-> -				 hose->pci_mem_offset != cpu_addr - pci_addr) {
-> -				pr_info(" \\--> Skipped (offset mismatch) !\n");
-> -				continue;
-> -			}
-> -
-> -			/* Build resource */
-> -			res = &hose->mem_resources[memno++];
-> -			res->flags = IORESOURCE_MEM;
-> -			if (pci_space & 0x40000000)
-> -				res->flags |= IORESOURCE_PREFETCH;
-> -			res->start = cpu_addr;
-> -			break;
-> -		}
-> -		if (res != NULL) {
-> -			res->name = dev->full_name;
-> -			res->end = res->start + size - 1;
-> -			res->parent = NULL;
-> -			res->sibling = NULL;
-> -			res->child = NULL;
-> -		}
-> -	}
-> -
-> -	/* If there's an ISA hole and the pci_mem_offset is -not- matching
-> -	 * the ISA hole offset, then we need to remove the ISA hole from
-> -	 * the resource list for that brige
-> -	 */
-> -	if (isa_hole >= 0 && hose->pci_mem_offset != isa_mb) {
-> -		unsigned int next = isa_hole + 1;
-> -		pr_info(" Removing ISA hole at 0x%016llx\n", isa_mb);
-> -		if (next < memno)
-> -			memmove(&hose->mem_resources[isa_hole],
-> -				&hose->mem_resources[next],
-> -				sizeof(struct resource) * (memno - next));
-> -		hose->mem_resources[--memno].flags = 0;
-> -	}
-> -}
-> -
->  /* Decide whether to display the domain number in /proc */
->  int pci_proc_domain(struct pci_bus *bus)
->  {
-> diff --git a/arch/mips/pci/pci.c b/arch/mips/pci/pci.c
-> index 0872f12..bee49a4 100644
-> --- a/arch/mips/pci/pci.c
-> +++ b/arch/mips/pci/pci.c
-> @@ -122,51 +122,33 @@ static void pcibios_scanbus(struct pci_controller *hose)
->  #ifdef CONFIG_OF
->  void pci_load_of_ranges(struct pci_controller *hose, struct device_node *node)
->  {
-> -	const __be32 *ranges;
-> -	int rlen;
-> -	int pna = of_n_addr_cells(node);
-> -	int np = pna + 5;
-> +	struct of_pci_range_range range;
-> +	struct of_pci_range_parser parser;
-> +	u32 res_type;
->  
->  	pr_info("PCI host bridge %s ranges:\n", node->full_name);
-> -	ranges = of_get_property(node, "ranges", &rlen);
-> -	if (ranges == NULL)
-> -		return;
->  	hose->of_node = node;
->  
-> -	while ((rlen -= np * 4) >= 0) {
-> -		u32 pci_space;
-> +	if (of_pci_range_parser(&parser, node))
-> +		return;
-> +
-> +	for_each_of_pci_range(&parser, &range) {
->  		struct resource *res = NULL;
-> -		u64 addr, size;
-> -
-> -		pci_space = be32_to_cpup(&ranges[0]);
-> -		addr = of_translate_address(node, ranges + 3);
-> -		size = of_read_number(ranges + pna + 3, 2);
-> -		ranges += np;
-> -		switch ((pci_space >> 24) & 0x3) {
-> -		case 1:		/* PCI IO space */
-> +
-> +		res_type = range.flags & IORESOURCE_TYPE_BITS;
-> +		if (res_type == IORESOURCE_IO) {
->  			pr_info("  IO 0x%016llx..0x%016llx\n",
-> -					addr, addr + size - 1);
-> +				range.addr, range.addr + range.size - 1);
->  			hose->io_map_base =
-> -				(unsigned long)ioremap(addr, size);
-> +				(unsigned long)ioremap(range.addr, range.size);
->  			res = hose->io_resource;
-> -			res->flags = IORESOURCE_IO;
-> -			break;
-> -		case 2:		/* PCI Memory space */
-> -		case 3:		/* PCI 64 bits Memory space */
-> +		} else if (res_type == IORESOURCE_MEM) {
->  			pr_info(" MEM 0x%016llx..0x%016llx\n",
-> -					addr, addr + size - 1);
-> +				range.addr, range.addr + range.size - 1);
->  			res = hose->mem_resource;
-> -			res->flags = IORESOURCE_MEM;
-> -			break;
-> -		}
-> -		if (res != NULL) {
-> -			res->start = addr;
-> -			res->name = node->full_name;
-> -			res->end = res->start + size - 1;
-> -			res->parent = NULL;
-> -			res->sibling = NULL;
-> -			res->child = NULL;
->  		}
-> +		if (res != NULL)
-> +			of_pci_range_to_resource(&range, node, res);
->  	}
->  }
->  #endif
-> diff --git a/arch/powerpc/include/asm/pci-bridge.h b/arch/powerpc/include/asm/pci-bridge.h
-> index 025a130..205bfba 100644
-> --- a/arch/powerpc/include/asm/pci-bridge.h
-> +++ b/arch/powerpc/include/asm/pci-bridge.h
-> @@ -10,6 +10,7 @@
->  #include <linux/pci.h>
->  #include <linux/list.h>
->  #include <linux/ioport.h>
-> +#include <linux/of_pci.h>
->  #include <asm-generic/pci-bridge.h>
->  
->  struct device_node;
-> @@ -231,10 +232,6 @@ extern int pcibios_map_io_space(struct pci_bus *bus);
->  extern struct pci_controller *pci_find_hose_for_OF_device(
->  			struct device_node* node);
->  
-> -/* Fill up host controller resources from the OF node */
-> -extern void pci_process_bridge_OF_ranges(struct pci_controller *hose,
-> -			struct device_node *dev, int primary);
-> -
->  /* Allocate & free a PCI host bridge structure */
->  extern struct pci_controller *pcibios_alloc_controller(struct device_node *dev);
->  extern void pcibios_free_controller(struct pci_controller *phb);
-> diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-> index fa12ae4..6edf396 100644
-> --- a/arch/powerpc/kernel/pci-common.c
-> +++ b/arch/powerpc/kernel/pci-common.c
-> @@ -640,198 +640,6 @@ void pci_resource_to_user(const struct pci_dev *dev, int bar,
->  	*end = rsrc->end - offset;
->  }
->  
-> -/**
-> - * pci_process_bridge_OF_ranges - Parse PCI bridge resources from device tree
-> - * @hose: newly allocated pci_controller to be setup
-> - * @dev: device node of the host bridge
-> - * @primary: set if primary bus (32 bits only, soon to be deprecated)
-> - *
-> - * This function will parse the "ranges" property of a PCI host bridge device
-> - * node and setup the resource mapping of a pci controller based on its
-> - * content.
-> - *
-> - * Life would be boring if it wasn't for a few issues that we have to deal
-> - * with here:
-> - *
-> - *   - We can only cope with one IO space range and up to 3 Memory space
-> - *     ranges. However, some machines (thanks Apple !) tend to split their
-> - *     space into lots of small contiguous ranges. So we have to coalesce.
-> - *
-> - *   - We can only cope with all memory ranges having the same offset
-> - *     between CPU addresses and PCI addresses. Unfortunately, some bridges
-> - *     are setup for a large 1:1 mapping along with a small "window" which
-> - *     maps PCI address 0 to some arbitrary high address of the CPU space in
-> - *     order to give access to the ISA memory hole.
-> - *     The way out of here that I've chosen for now is to always set the
-> - *     offset based on the first resource found, then override it if we
-> - *     have a different offset and the previous was set by an ISA hole.
-> - *
-> - *   - Some busses have IO space not starting at 0, which causes trouble with
-> - *     the way we do our IO resource renumbering. The code somewhat deals with
-> - *     it for 64 bits but I would expect problems on 32 bits.
-> - *
-> - *   - Some 32 bits platforms such as 4xx can have physical space larger than
-> - *     32 bits so we need to use 64 bits values for the parsing
-> - */
-> -void pci_process_bridge_OF_ranges(struct pci_controller *hose,
-> -				  struct device_node *dev, int primary)
-> -{
-> -	const u32 *ranges;
-> -	int rlen;
-> -	int pna = of_n_addr_cells(dev);
-> -	int np = pna + 5;
-> -	int memno = 0, isa_hole = -1;
-> -	u32 pci_space;
-> -	unsigned long long pci_addr, cpu_addr, pci_next, cpu_next, size;
-> -	unsigned long long isa_mb = 0;
-> -	struct resource *res;
-> -
-> -	printk(KERN_INFO "PCI host bridge %s %s ranges:\n",
-> -	       dev->full_name, primary ? "(primary)" : "");
-> -
-> -	/* Get ranges property */
-> -	ranges = of_get_property(dev, "ranges", &rlen);
-> -	if (ranges == NULL)
-> -		return;
-> -
-> -	/* Parse it */
-> -	while ((rlen -= np * 4) >= 0) {
-> -		/* Read next ranges element */
-> -		pci_space = ranges[0];
-> -		pci_addr = of_read_number(ranges + 1, 2);
-> -		cpu_addr = of_translate_address(dev, ranges + 3);
-> -		size = of_read_number(ranges + pna + 3, 2);
-> -		ranges += np;
-> -
-> -		/* If we failed translation or got a zero-sized region
-> -		 * (some FW try to feed us with non sensical zero sized regions
-> -		 * such as power3 which look like some kind of attempt at exposing
-> -		 * the VGA memory hole)
-> -		 */
-> -		if (cpu_addr == OF_BAD_ADDR || size == 0)
-> -			continue;
-> -
-> -		/* Now consume following elements while they are contiguous */
-> -		for (; rlen >= np * sizeof(u32);
-> -		     ranges += np, rlen -= np * 4) {
-> -			if (ranges[0] != pci_space)
-> -				break;
-> -			pci_next = of_read_number(ranges + 1, 2);
-> -			cpu_next = of_translate_address(dev, ranges + 3);
-> -			if (pci_next != pci_addr + size ||
-> -			    cpu_next != cpu_addr + size)
-> -				break;
-> -			size += of_read_number(ranges + pna + 3, 2);
-> -		}
-> -
-> -		/* Act based on address space type */
-> -		res = NULL;
-> -		switch ((pci_space >> 24) & 0x3) {
-> -		case 1:		/* PCI IO space */
-> -			printk(KERN_INFO
-> -			       "  IO 0x%016llx..0x%016llx -> 0x%016llx\n",
-> -			       cpu_addr, cpu_addr + size - 1, pci_addr);
-> -
-> -			/* We support only one IO range */
-> -			if (hose->pci_io_size) {
-> -				printk(KERN_INFO
-> -				       " \\--> Skipped (too many) !\n");
-> -				continue;
-> -			}
-> -#ifdef CONFIG_PPC32
-> -			/* On 32 bits, limit I/O space to 16MB */
-> -			if (size > 0x01000000)
-> -				size = 0x01000000;
-> -
-> -			/* 32 bits needs to map IOs here */
-> -			hose->io_base_virt = ioremap(cpu_addr, size);
-> -
-> -			/* Expect trouble if pci_addr is not 0 */
-> -			if (primary)
-> -				isa_io_base =
-> -					(unsigned long)hose->io_base_virt;
-> -#endif /* CONFIG_PPC32 */
-> -			/* pci_io_size and io_base_phys always represent IO
-> -			 * space starting at 0 so we factor in pci_addr
-> -			 */
-> -			hose->pci_io_size = pci_addr + size;
-> -			hose->io_base_phys = cpu_addr - pci_addr;
-> -
-> -			/* Build resource */
-> -			res = &hose->io_resource;
-> -			res->flags = IORESOURCE_IO;
-> -			res->start = pci_addr;
-> -			break;
-> -		case 2:		/* PCI Memory space */
-> -		case 3:		/* PCI 64 bits Memory space */
-> -			printk(KERN_INFO
-> -			       " MEM 0x%016llx..0x%016llx -> 0x%016llx %s\n",
-> -			       cpu_addr, cpu_addr + size - 1, pci_addr,
-> -			       (pci_space & 0x40000000) ? "Prefetch" : "");
-> -
-> -			/* We support only 3 memory ranges */
-> -			if (memno >= 3) {
-> -				printk(KERN_INFO
-> -				       " \\--> Skipped (too many) !\n");
-> -				continue;
-> -			}
-> -			/* Handles ISA memory hole space here */
-> -			if (pci_addr == 0) {
-> -				isa_mb = cpu_addr;
-> -				isa_hole = memno;
-> -				if (primary || isa_mem_base == 0)
-> -					isa_mem_base = cpu_addr;
-> -				hose->isa_mem_phys = cpu_addr;
-> -				hose->isa_mem_size = size;
-> -			}
-> -
-> -			/* We get the PCI/Mem offset from the first range or
-> -			 * the, current one if the offset came from an ISA
-> -			 * hole. If they don't match, bugger.
-> -			 */
-> -			if (memno == 0 ||
-> -			    (isa_hole >= 0 && pci_addr != 0 &&
-> -			     hose->pci_mem_offset == isa_mb))
-> -				hose->pci_mem_offset = cpu_addr - pci_addr;
-> -			else if (pci_addr != 0 &&
-> -				 hose->pci_mem_offset != cpu_addr - pci_addr) {
-> -				printk(KERN_INFO
-> -				       " \\--> Skipped (offset mismatch) !\n");
-> -				continue;
-> -			}
-> -
-> -			/* Build resource */
-> -			res = &hose->mem_resources[memno++];
-> -			res->flags = IORESOURCE_MEM;
-> -			if (pci_space & 0x40000000)
-> -				res->flags |= IORESOURCE_PREFETCH;
-> -			res->start = cpu_addr;
-> -			break;
-> -		}
-> -		if (res != NULL) {
-> -			res->name = dev->full_name;
-> -			res->end = res->start + size - 1;
-> -			res->parent = NULL;
-> -			res->sibling = NULL;
-> -			res->child = NULL;
-> -		}
-> -	}
-> -
-> -	/* If there's an ISA hole and the pci_mem_offset is -not- matching
-> -	 * the ISA hole offset, then we need to remove the ISA hole from
-> -	 * the resource list for that brige
-> -	 */
-> -	if (isa_hole >= 0 && hose->pci_mem_offset != isa_mb) {
-> -		unsigned int next = isa_hole + 1;
-> -		printk(KERN_INFO " Removing ISA hole at 0x%016llx\n", isa_mb);
-> -		if (next < memno)
-> -			memmove(&hose->mem_resources[isa_hole],
-> -				&hose->mem_resources[next],
-> -				sizeof(struct resource) * (memno - next));
-> -		hose->mem_resources[--memno].flags = 0;
-> -	}
-> -}
-> -
->  /* Decide whether to display the domain number in /proc */
->  int pci_proc_domain(struct pci_bus *bus)
->  {
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index 04da786..e87f45e 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -227,6 +227,69 @@ int of_pci_address_to_resource(struct device_node *dev, int bar,
->  	return __of_address_to_resource(dev, addrp, size, flags, NULL, r);
->  }
->  EXPORT_SYMBOL_GPL(of_pci_address_to_resource);
-> +
-> +int of_pci_range_parser(struct of_pci_range_parser *parser,
-> +			struct device_node *node)
-> +{
-> +	const int na = 3, ns = 2;
-> +	int rlen;
-> +
-> +	parser->node = node;
-> +	parser->pna = of_n_addr_cells(node);
-> +	parser->np = parser->pna + na + ns;
-> +
-> +	parser->range = of_get_property(node, "ranges", &rlen);
-> +	if (parser->range == NULL)
-> +		return -ENOENT;
-> +
-> +	parser->end = parser->range + rlen / sizeof(__be32);
-> +
-> +	return 0;
-> +}
-> +
-> +struct of_pci_range *of_pci_process_ranges(struct of_pci_range_parser *parser,
-> +						struct of_pci_range *range)
-> +{
-> +	const int na = 3, ns = 2;
-> +
-> +	if (!parser->range || parser->range + parser->np > parser->end)
-> +		return NULL;
-> +
-> +	range->pci_space = be32_to_cpup(parser->range);
-> +	range->flags = of_bus_pci_get_flags(parser->range);
-> +	range->pci_addr = of_read_number(parser->range + 1, ns);
-> +	range->cpu_addr = of_translate_address(parser->node,
-> +				parser->range + na);
-> +	range->size = of_read_number(parser->range + parser->pna + na, ns);
-> +
-> +	parser->range += parser->np;
-> +
-> +	/* Now consume following elements while they are contiguous */
-> +	while (parser->range + parser->np <= parser->end) {
-> +		u32 flags, pci_space;
-> +		u64 pci_addr, cpu_addr, size;
-> +
-> +		pci_space = be32_to_cpup(parser->range);
-> +		flags = of_bus_pci_get_flags(parser->range);
-> +		pci_addr = of_read_number(parser->range + 1, ns);
-> +		cpu_addr = of_translate_address(parser->node,
-> +				parser->range + na);
-> +		size = of_read_number(parser->range + parser->pna + na, ns);
-> +
-> +		if (flags != range->flags)
-> +			break;
-> +		if (pci_addr != range->pci_addr + range->size ||
-> +		    cpu_addr != range->cpu_addr + range->size)
-> +			break;
-> +
-> +		range->size += size;
-> +		parser->range += parser->np;
-> +	}
-> +
-> +	return range;
-> +}
-> +EXPORT_SYMBOL_GPL(of_pci_process_ranges);
-> +
->  #endif /* CONFIG_PCI */
->  
->  /*
-> diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
-> index 13e37e2..f88bd18 100644
-> --- a/drivers/of/of_pci.c
-> +++ b/drivers/of/of_pci.c
-> @@ -4,6 +4,10 @@
->  #include <linux/of_pci.h>
->  #include <asm/prom.h>
->  
-> +#if defined(CONFIG_PPC32) || defined(CONFIG_PPC64) || defined(CONFIG_MICROBLAZE)
-> +#include <asm/pci-bridge.h>
-> +#endif
-> +
->  static inline int __of_pci_pci_compare(struct device_node *node,
->  				       unsigned int devfn)
->  {
-> @@ -40,3 +44,167 @@ struct device_node *of_pci_find_child_device(struct device_node *parent,
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(of_pci_find_child_device);
-> +
-> +/**
-> + * pci_process_bridge_OF_ranges - Parse PCI bridge resources from device tree
-> + * @hose: newly allocated pci_controller to be setup
-> + * @dev: device node of the host bridge
-> + * @primary: set if primary bus (32 bits only, soon to be deprecated)
-> + *
-> + * This function will parse the "ranges" property of a PCI host bridge device
-> + * node and setup the resource mapping of a pci controller based on its
-> + * content.
-> + *
-> + * Life would be boring if it wasn't for a few issues that we have to deal
-> + * with here:
-> + *
-> + *   - We can only cope with one IO space range and up to 3 Memory space
-> + *     ranges. However, some machines (thanks Apple !) tend to split their
-> + *     space into lots of small contiguous ranges. So we have to coalesce.
-> + *
-> + *   - We can only cope with all memory ranges having the same offset
-> + *     between CPU addresses and PCI addresses. Unfortunately, some bridges
-> + *     are setup for a large 1:1 mapping along with a small "window" which
-> + *     maps PCI address 0 to some arbitrary high address of the CPU space in
-> + *     order to give access to the ISA memory hole.
-> + *     The way out of here that I've chosen for now is to always set the
-> + *     offset based on the first resource found, then override it if we
-> + *     have a different offset and the previous was set by an ISA hole.
-> + *
-> + *   - Some busses have IO space not starting at 0, which causes trouble with
-> + *     the way we do our IO resource renumbering. The code somewhat deals with
-> + *     it for 64 bits but I would expect problems on 32 bits.
-> + *
-> + *   - Some 32 bits platforms such as 4xx can have physical space larger than
-> + *     32 bits so we need to use 64 bits values for the parsing
-> + */
-> +#if defined(CONFIG_PPC32) || defined(CONFIG_PPC64) || defined(CONFIG_MICROBLAZE)
-> +void pci_process_bridge_OF_ranges(struct pci_controller *hose,
-> +				  struct device_node *dev, int primary)
-> +{
-> +	int memno = 0, isa_hole = -1;
-> +	unsigned long long isa_mb = 0;
-> +	struct resource *res;
-> +	struct of_pci_range range;
-> +	struct of_pci_range_parser parser;
-> +	u32 res_type;
-> +
-> +	pr_info("PCI host bridge %s %s ranges:\n",
-> +	       dev->full_name, primary ? "(primary)" : "");
-> +
-> +	/* Check for ranges property */
-> +	if (of_pci_range_parser(&parser, dev))
-> +		return;
-> +
-> +	pr_debug("Parsing ranges property...\n");
-> +	for_each_of_pci_range(&parser, &range) {
-> +		/* Read next ranges element */
-> +		pr_debug("pci_space: 0x%08x pci_addr: 0x%016llx ",
-> +				range.pci_space, range.pci_addr);
-> +		pr_debug("cpu_addr: 0x%016llx size: 0x%016llx\n",
-> +				range.cpu_addr, range.size);
-> +
-> +		/* If we failed translation or got a zero-sized region
-> +		 * (some FW try to feed us with non sensical zero sized regions
-> +		 * such as power3 which look like some kind of attempt at
-> +		 * exposing the VGA memory hole)
-> +		 */
-> +		if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
-> +			continue;
-> +
-> +		/* Act based on address space type */
-> +		res = NULL;
-> +		res_type = range.flags & IORESOURCE_TYPE_BITS;
-> +		if (res_type == IORESOURCE_IO) {
-> +			pr_info("  IO 0x%016llx..0x%016llx -> 0x%016llx\n",
-> +				range.cpu_addr, range.cpu_addr + range.size - 1,
-> +				range.pci_addr);
-> +
-> +			/* We support only one IO range */
-> +			if (hose->pci_io_size) {
-> +				pr_info(" \\--> Skipped (too many) !\n");
-> +				continue;
-> +			}
-> +#if defined(CONFIG_PPC32) || defined(CONFIG_MICROBLAZE)
-> +			/* On 32 bits, limit I/O space to 16MB */
-> +			if (range.size > 0x01000000)
-> +				range.size = 0x01000000;
-> +
-> +			/* 32 bits needs to map IOs here */
-> +			hose->io_base_virt = ioremap(range.cpu_addr,
-> +						range.size);
-> +
-> +			/* Expect trouble if pci_addr is not 0 */
-> +			if (primary)
-> +				isa_io_base =
-> +					(unsigned long)hose->io_base_virt;
-> +#endif /* CONFIG_PPC32 || CONFIG_MICROBLAZE */
-> +			/* pci_io_size and io_base_phys always represent IO
-> +			 * space starting at 0 so we factor in pci_addr
-> +			 */
-> +			hose->pci_io_size = range.pci_addr + range.size;
-> +			hose->io_base_phys = range.cpu_addr - range.pci_addr;
-> +
-> +			/* Build resource */
-> +			res = &hose->io_resource;
-> +			range.cpu_addr = range.pci_addr;
-> +		} else if (res_type == IORESOURCE_MEM) {
-> +			pr_info(" MEM 0x%016llx..0x%016llx -> 0x%016llx %s\n",
-> +				range.cpu_addr, range.cpu_addr + range.size - 1,
-> +				range.pci_addr,
-> +				(range.pci_space & 0x40000000) ?
-> +				"Prefetch" : "");
-> +
-> +			/* We support only 3 memory ranges */
-> +			if (memno >= 3) {
-> +				pr_info(" \\--> Skipped (too many) !\n");
-> +				continue;
-> +			}
-> +			/* Handles ISA memory hole space here */
-> +			if (range.pci_addr == 0) {
-> +				isa_mb = range.cpu_addr;
-> +				isa_hole = memno;
-> +				if (primary || isa_mem_base == 0)
-> +					isa_mem_base = range.cpu_addr;
-> +				hose->isa_mem_phys = range.cpu_addr;
-> +				hose->isa_mem_size = range.size;
-> +			}
-> +
-> +			/* We get the PCI/Mem offset from the first range or
-> +			 * the, current one if the offset came from an ISA
-> +			 * hole. If they don't match, bugger.
-> +			 */
-> +			if (memno == 0 ||
-> +			(isa_hole >= 0 && range.pci_addr != 0 &&
-> +			     hose->pci_mem_offset == isa_mb))
-> +				hose->pci_mem_offset = range.cpu_addr -
-> +							range.pci_addr;
-> +			else if (range.pci_addr != 0 &&
-> +				hose->pci_mem_offset != range.cpu_addr -
-> +							range.pci_addr) {
-> +				pr_info(" \\--> Skipped (offset mismatch) !\n");
-> +				continue;
-> +			}
-> +
-> +			/* Build resource */
-> +			res = &hose->mem_resources[memno++];
-> +		}
-> +		if (res != NULL)
-> +			of_pci_range_to_resource(&range, dev, res);
-> +	}
-> +
-> +	/* If there's an ISA hole and the pci_mem_offset is -not- matching
-> +	 * the ISA hole offset, then we need to remove the ISA hole from
-> +	 * the resource list for that brige
-> +	 */
-> +	if (isa_hole >= 0 && hose->pci_mem_offset != isa_mb) {
-> +		unsigned int next = isa_hole + 1;
-> +		pr_info(" Removing ISA hole at 0x%016llx\n", isa_mb);
-> +		if (next < memno)
-> +			memmove(&hose->mem_resources[isa_hole],
-> +				&hose->mem_resources[next],
-> +				sizeof(struct resource) * (memno - next));
-> +		hose->mem_resources[--memno].flags = 0;
-> +	}
-> +}
-> +#endif
-> diff --git a/include/linux/of_address.h b/include/linux/of_address.h
-> index 0506eb5..c7003a3 100644
-> --- a/include/linux/of_address.h
-> +++ b/include/linux/of_address.h
-> @@ -4,6 +4,32 @@
->  #include <linux/errno.h>
->  #include <linux/of.h>
->  
-> +struct of_pci_range_parser {
-> +	struct device_node *node;
-> +	const __be32 *range, *end;
-> +	int np, pna;
-> +};
-> +
-> +struct of_pci_range {
-> +	u32 pci_space;
-> +	u64 pci_addr;
-> +	u64 cpu_addr;
-> +	u64 size;
-> +	u32 flags;
-> +};
-> +
-> +#define for_each_of_pci_range(parser, range) \
-> +	for (; of_pci_process_ranges(parser, range);)
-> +
-> +#define of_pci_range_to_resource(range, np, res) \
-> +	do { \
-> +		(res)->flags = (range)->flags; \
-> +		(res)->start = (range)->cpu_addr; \
-> +		(res)->end = (range)->cpu_addr + (range)->size - 1; \
-> +		(res)->parent = (res)->child = (res)->sibling = NULL; \
-> +		(res)->name = (np)->full_name; \
-> +	} while (0)
-> +
->  #ifdef CONFIG_OF_ADDRESS
->  extern u64 of_translate_address(struct device_node *np, const __be32 *addr);
->  extern bool of_can_translate_address(struct device_node *dev);
-> @@ -27,6 +53,10 @@ static inline unsigned long pci_address_to_pio(phys_addr_t addr) { return -1; }
->  #define pci_address_to_pio pci_address_to_pio
->  #endif
->  
-> +int of_pci_range_parser(struct of_pci_range_parser *parser,
-> +			struct device_node *node);
-> +struct of_pci_range *of_pci_process_ranges(struct of_pci_range_parser *parser,
-> +						struct of_pci_range *range);
->  #else /* CONFIG_OF_ADDRESS */
->  #ifndef of_address_to_resource
->  static inline int of_address_to_resource(struct device_node *dev, int index,
-> @@ -53,6 +83,18 @@ static inline const __be32 *of_get_address(struct device_node *dev, int index,
->  {
->  	return NULL;
->  }
-> +
-> +int of_pci_range_parser(struct of_pci_range_parser *parser,
-> +			struct device_noed *node)
-> +{
-> +	return -1;
-> +}
-> +
-> +struct of_pci_range *of_pci_process_ranges(struct of_pci_range_parser *parser,
-> +						struct of_pci_range *range)
-> +{
-> +	return NULL;
-> +}
->  #endif /* CONFIG_OF_ADDRESS */
->  
->  
-> diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
-> index bb115de..6852481 100644
-> --- a/include/linux/of_pci.h
-> +++ b/include/linux/of_pci.h
-> @@ -11,4 +11,7 @@ struct device_node;
->  struct device_node *of_pci_find_child_device(struct device_node *parent,
->  					     unsigned int devfn);
->  
-> +void pci_process_bridge_OF_ranges(struct pci_controller *hose,
-> +			struct device_node *dev, int primary);
-> +
->  #endif
-> 
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+
+The following changes since commit 347394370cbd68ab440564357eaf3d0a5b8bddeb:
+
+   Merge branch 'next/pinctrl-exynos-1' into for-next-next (2013-04-09 
+01:07:43 +0900)
+
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+for-next
+
+Abhilash Kesavan (1):
+       ARM: dts: Add max77686 device tree support for CROS5250
+
+Alexander Graf (2):
+       ARM: dts: Declare the gic as a15 compatible for exynos5250
+       ARM: dts: Add architected timer nodes for exynos5250
+
+Alexander Shiyan (3):
+       ARM: S3C24XX: Removed unneeded dependency on ARCH_S3C24XX for boards
+       ARM: S3C24XX: Removed unneeded dependency on CPU_S3C2410
+       ARM: S3C24XX: Removed unneeded dependency on CPU_S3C2412
+
+Amit Daniel Kachhap (2):
+       ARM: dts: Add PMIC node entry for Arndale board
+       ARM: dts: Add cpufreq controller node for Exynos5440 SoC
+
+Andrzej Hajda (1):
+       clk: exynos4: Add missing CMU_TOP and ISP clocks
+
+Axel Lin (1):
+       clocksource: mct: Add terminating entry for exynos_mct_ids table
+
+Byungho An (1):
+       ARM: dts: Add node for GMAC for exynos5440
+
+Chanho Park (5):
+       irqchip: exynos-combiner: Add set_irq_affinity function for 
+combiner_irq
+       irqchip: exynos-combiner: Correct combined IRQs for exynos4
+       ARM: EXYNOS: Enable PMUs for exynos4
+       ARM: EXYNOS: Add arm-pmu DT binding for exynos5250
+       ARM: EXYNOS: Add arm-pmu DT binding for exynos421x
+
+Charles Keepax (2):
+       ARM: S3C64XX: Clear DMA flags on channel request
+       ARM: S3C64XX: Slow down mic detection rate for wm5102
+
+Daniel Lezcano (3):
+       ARM: EXYNOS: factor out the idle states
+       ARM: EXYNOS: handle properly the return values
+       ARM: EXYNOS: replace cpumask by the corresponding macro
+
+Dongjin Kim (3):
+       ARM: dts: Add board dts file for ODROID-X
+       ARM: dts: Fix the timing property of MSHC controller for 
+exynos4412-odroidx
+       ARM: dts: enable RTC device node for exynos4412-odroidx
+
+Doug Anderson (3):
+       clocksource: mct: Add missing semicolons in exynos_mct.c
+       ARM: dts: add usb 2.0 clock references to exynos5250 device tree
+       ARM: dts: Document usb clocks in samsung,exynos4210-ehci/ohci 
+bindings
+
+Giridhar Maruthy (4):
+       ARM: dts: remove disabled status from watchdog node for 
+exynos5440-ssdk5440
+       ARM: dts: remove disabled status from RTC node for 
+exynos5440-ssdk5440
+       ARM: dts: change compatible value for exynos5440 i2c
+       ARM: dts: Add virtual GIC DT bindings for exynos5440
+
+Girish K S (2):
+       ARM: dts: Add initial board support file for exynos5250-arndale
+       ARM: EXYNOS: force MAC ip to 32bit DMA
+
+Heiko Stueber (1):
+       clk: samsung: fix pm init on non-dt platforms
+
+Heiko Stuebner (15):
+       ARM: S3C24XX: fix redundant checks in the irq mapping function
+       ARM: S3C24XX: fix irq parent check
+       ARM: S3C24XX: move s3c24xx_init_irq to s3c2410_init_irq
+       ARM: S3C24XX: make s3c24xx_init_intc static
+       ARM: S3C24XX: add handle_irq function
+       clk: samsung: register clk_div_tables for divider clocks
+       clk: samsung: always allocate the clk_table
+       clk: samsung: add infrastructure to add separate aliases
+       ARM: S3C24XX: move irq driver to drivers/irqchip
+       irqchip: s3c24xx: fix comments on some camera interrupts
+       irqchip: s3c24xx: fix irqlist of second s3c2416 controller
+       irqchip: s3c24xx: add irq_set_type callback for basic interrupt types
+       irqchip: s3c24xx: globally keep track of the created intc instances
+       irqchip: s3c24xx: make interrupt handling independent of 
+irq_domain structure
+       irqchip: s3c24xx: add devicetree support
+
+Inderpal Singh (2):
+       ARM: EXYNOS: Add support for rtc wakeup
+       ARM: SAMSUNG: check processor type before cache restoration in resume
+
+Jingoo Han (3):
+       ARM: EXYNOS: Add AUXDATA for DP controller
+       ARM: dts: Add device tree node for DP controller for exynos5250
+       ARM: EXYNOS: change the name of USB ohci header
+
+Jonathan Kliegman (2):
+       ARM: EXYNOS: Remove hardcode wakeup unmask for EINT_0
+       ARM: EXYNOS: Clear ENABLE_WAKEUP_SW bit when entering suspend
+
+Kukjin Kim (17):
+       ARM: dts: cleanup exynos5440.dtsi
+       ARM: dts: re-organized cpu node for exynos5440
+       Merge branch 'next/timer-samsung' into next/clk-exynos
+       Merge branch 'next/mct-exynos' into next/clk-exynos
+       ARM: SAMSUNG: change GENERIC_GPIO to ARCH_REQUIRE_GPIOLIB
+       Merge branch 'next/cleanup-samsung' into for-next-next
+       Merge branch 'next/irq-s3c24xx' into for-next-next
+       Merge branch 'next/mct-exynos' into for-next-next
+       Merge commit 'v3.9-rc5' into next/clk-exynos
+       Merge branch 'next/clk-exynos' into for-next-next
+       ARM: dts: add device tree file for SD5v1 board
+       Merge branch 'next/dt-exynos' into for-next-next
+       Merge branch 'next/pinctrl-exynos' into for-next-next
+       Merge branch 'next/pmu-exynos' into for-next-next
+       Merge branch 'next/secure-exynos' into for-next-next
+       Merge branch 'next/timer-samsung' into for-next-next
+       Merge branch 'next/devel-samsung' into for-next-next
+
+Leela Krishna Amudala (3):
+       clk: exynos5250: register display block gate clocks to common 
+clock framework
+       ARM: dts: Add FIMD node to exynos5
+       ARM: dts: Add display timing node to exynos5250-smdk5250.dts
+
+Lukasz Majewski (1):
+       clk: exynos4: Export clocks used by exynos cpufreq drivers
+
+Padmavathi Venna (1):
+       ARM: SAMSUNG: Remove unnecessary code for dma
+
+Paul Bolle (11):
+       ARM: S3C24XX: drop "select MACH_N35"
+       ARM: S3C24XX: drop "select MACH_NEO1973"
+       ARM: EXYNOS: drop "select HAVE_SCHED_CLOCK"
+       ARM: EXYNOS: change HAVE_SAMSUNG_KEYPAD to KEYBOARD_SAMSUNG
+       ARM: SAMSUNG: remove "config S3C_BOOT_WATCHDOG"
+       ARM: SAMSUNG: Remove useless Samsung GPIO related CONFIG
+       ARM: S3C24XX: remove unneeded "config SMDK2440_CPU2442"
+       ARM: S3C64XX: remove obsolete Makefile line
+       ARM: S5P64X0: Fix typo "CONFIG_S5P64X0_SETUP_SDHCI"
+       ARM: SAMSUNG: Fix typo "CONFIG_SAMSUNG_DEV_RTC"
+       ARM: EXYNOS: remove "config EXYNOS_DEV_DRM"
+
+Prasanna Kumar (1):
+       ARM: dts: Set up power domain for MFC and G-scaler for exynos5250
+
+Sachin Kamat (23):
+       ARM: dts: Add vmmc regulator node in exynos4412-origen.dts
+       ARM: dts: Add sdhci node for exynos4412-origen
+       ARM: dts: Update MFC DT binding documentation
+       ARM: dts: Add MFC codec support for EXYNOS4 DT machines
+       ARM: dts: Add MFC codec support to SMDKV310 DT
+       ARM: dts: Add MFC codec support to Origen DT
+       ARM: dts: Add MFC codec entry to exynos4412-origen DT
+       ARM: dts: Add MFC codec entry to exynos4412-smdk4412 DT
+       ARM: dts: Add MSHC node for exynos4412-origen DT
+       ARM: dts: Add s5m8767 PMIC node to exynos4412-origen DT
+       ARM: dts: Add sdhci node for exynos4412-smdk4412
+       clk: samsung: Fix compilation error
+       ARM: dts: Add G2D node to exynos4210.dtsi
+       ARM: dts: Add G2D node to SMDKV310
+       ARM: dts: Add G2D node to exynos4210-origen
+       ARM: dts: Add G2D node to exynos4x12.dtsi
+       ARM: dts: Add G2D node to SMDK4412
+       ARM: dts: Add G2D node to exynos4412-origen
+       ARM: dts: Add Samsung G2D DT bindings documentation
+       ARM: dts: Add disable-wp for card slot on exynos5250-arndale
+       ARM: dts: Add vmmc regulator support for Arndale board
+       ARM: dts: Add MFC codec support for Arndale board
+       ARM: dts: Add HDMI HPD and regulator node for Arndale board
+
+Subash Patel (3):
+       ARM: dts: add PMU support in exynos5440
+       ARM: dts: update bootargs to boot from sda2 for exynos5440-ssdk5440
+       ARM: dts: add PDMA0 changes for exynos5440
+
+Sylwester Nawrocki (7):
+       ARM: SAMSUNG: Export MIPI CSIS/DSIM PHY control functions
+       clk: exynos4: Correct sclk_mfc clock definition
+       clk: exynos4: Add camera related clock definitions
+       ARM: S3C24XX: Remove unused GPIO drive strength register definitions
+       clk: exynos4: export clocks required for fimc-is
+       ARM: S3C24XX: Correct NR_IRQS definition for s3c2440
+       ARM: dts: Add SYSREG block node for S5P/Exynos4 SoC series
+
+Thomas Abraham (32):
+       ARM: dts: add board dts file for EXYNOS4412 based Origen board
+       ARM: EXYNOS: add a register base address variable in mct 
+controller driver
+       ARM: EXYNOS: prepare an array of MCT interrupt numbers and use it
+       ARM: EXYNOS: add device tree support for MCT controller driver
+       ARM: EXYNOS: allow dt based discovery of mct controller using 
+clocksource_of_init
+       ARM: dts: add mct device tree node for all supported Exynos SoC's
+       ARM: EXYNOS: remove static io-remapping of mct registers for Exynos5
+       ARM: EXYNOS: move mct driver to drivers/clocksource
+       clk: samsung: add common clock framework helper functions for 
+Samsung platforms
+       clk: samsung: add pll clock registration helper functions
+       clk: exynos4: register clocks using common clock framework
+       clk: exynos5250: register clocks using common clock framework
+       clk: exynos5440: register clocks using common clock framework
+       ARM: EXYNOS: Migrate clock support to common clock framework
+       ARM: EXYNOS: Initialize the clocks prior to timer initialization
+       ARM: EXYNOS: allow legacy board support to specify xxti and 
+xusbxti clock speed
+       ARM: EXYNOS: remove auxdata table from exynos4/5 dt machine file
+       clocksource: mct: use fin_pll clock as the tick clock source for mct
+       clocksource: mct: add support for mct clock setup
+       ARM: dts: add Exynos4 and Exynos5 clock controller nodes
+       ARM: dts: add clock provider information for all controllers in 
+Exynos4 SoCs
+       ARM: dts: add clock provider information for all controllers in 
+Exynos5250 SoC
+       ARM: dts: add clock provider information for all controllers in 
+Exynos5440 SoC
+       ARM: dts: add board specific fixed rate clock nodes for Exynos 
+based platforms
+       ARM: EXYNOS: fix compilation error introduced due to common clock 
+migration
+       pinctrl: exynos5440: fix probe failure due to missing pin-list in 
+config nodes
+       pinctrl: exynos5440: add gpio interrupt support
+       ARM: dts: add pin state information in client nodes for Exynos4 
+platforms
+       ARM: dts: add pin state information in client nodes for Exynos5 
+platforms
+       ARM: dts: list the interrupts generated by pin-controller on 
+Exynos5440
+       ARM: dts: Fix gmac clock ids due to changes in Exynos5440
+       ARM: EXYNOS: Add a platform bus notifier to set dma masks for 
+Exynos5440
+
+Tomasz Figa (22):
+       clk: exynos4: Use mout_mpll_user_* on Exynos4x12
+       clk: exynos4: Add missing mout_mipihsi clock
+       clk: exynos4: Add missing sclk_audio0 clock
+       clk: exynos4: Export sclk_pcm0
+       clk: exynos4: Move dac and mixer to Exynos4210-specific clocks
+       clk: samsung: Remove unimplemented ops for pll
+       clk: exynos4: Export mout_core clock of Exynos4210
+       clk: exynos4: Add G3D clocks
+       clk: exynos4: Add missing mout_sata on Exynos4210
+       clk: exynos4: Define {E,V}PLL registers
+       clk: exynos4: Use SRC_MASK_PERIL{0,1} definitions
+       clk: exynos4: Remove SoC-specific registers from save list
+       clk: exynos4: Add E4210 prefix to LCD1 clock registers
+       clk: exynos4: Add E4210 prefix to GATE_IP_PERIR register
+       clk: exynos4: Remove E4X12 prefix from SRC_DMC register
+       clk: exynos4: Add missing registers to suspend save list
+       clk: exynos4: Add support for SoC-specific register save list
+       ARM: Add interface for registering and calling firmware-specific 
+operations
+       ARM: EXYNOS: Add support for secure monitor calls
+       ARM: EXYNOS: Add support for Exynos secure firmware
+       ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
+       ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
+
+Tushar Behera (3):
+       clk: exynos5250: Fix divider values for sclk_mmc{0,1,2,3}
+       ARM: dts: Add pin-control related changes for Arndale board
+       ARM: dts: Add gpio-button entries for Arndale board
+
+Vikas Sajjan (3):
+       ARM: dts: Add FIMD node to exynos4
+       ARM: dts: Add FIMD node and display timing node to 
+exynos4412-origen.dts
+       ARM: dts: Add FIMD DT binding Documentation
+
+Viresh Kumar (1):
+       cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
+
+Vivek Gautam (2):
+       ARM: dts: Enabling ehci-s5p driver for EXYNOS5250
+       ARM: dts: Enabling ohci-exynos driver for EXYNOS5250
+
+Wei Yongjun (1):
+       ARM: EXYNOS: remove duplicated include from common.c
+
+  Documentation/arm/firmware.txt                     |   88 ++
+  .../devicetree/bindings/arm/samsung-boards.txt     |   10 +
+  .../devicetree/bindings/arm/samsung/sysreg.txt     |    7 +
+  .../devicetree/bindings/clock/exynos4-clock.txt    |  288 ++++
+  .../devicetree/bindings/clock/exynos5250-clock.txt |  177 +++
+  .../devicetree/bindings/clock/exynos5440-clock.txt |   61 +
+  .../devicetree/bindings/gpu/samsung-g2d.txt        |   20 +
+  .../interrupt-controller/samsung,s3c24xx-irq.txt   |   53 +
+  .../devicetree/bindings/media/s5p-mfc.txt          |   21 +
+  .../bindings/timer/samsung,exynos4210-mct.txt      |   68 +
+  .../devicetree/bindings/usb/exynos-usb.txt         |   50 +
+  .../devicetree/bindings/video/samsung-fimd.txt     |   65 +
+  arch/arm/Kconfig                                   |   56 +-
+  arch/arm/boot/dts/Makefile                         |    4 +
+  arch/arm/boot/dts/cros5250-common.dtsi             |  189 ++-
+  arch/arm/boot/dts/exynos4.dtsi                     |   85 +
+  arch/arm/boot/dts/exynos4210-origen.dts            |   22 +
+  arch/arm/boot/dts/exynos4210-smdkv310.dts          |   75 +-
+  arch/arm/boot/dts/exynos4210-trats.dts             |   12 +
+  arch/arm/boot/dts/exynos4210.dtsi                  |   43 +
+  arch/arm/boot/dts/exynos4212.dtsi                  |   22 +
+  arch/arm/boot/dts/exynos4412-odroidx.dts           |  109 ++
+  arch/arm/boot/dts/exynos4412-origen.dts            |  451 ++++++
+  arch/arm/boot/dts/exynos4412-smdk4412.dts          |   33 +
+  arch/arm/boot/dts/exynos4412.dtsi                  |   26 +
+  arch/arm/boot/dts/exynos4x12.dtsi                  |   13 +
+  arch/arm/boot/dts/exynos5250-arndale.dts           |  452 ++++++
+  arch/arm/boot/dts/exynos5250-pinctrl.dtsi          |  783 ++++++++++
+  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   69 +-
+  arch/arm/boot/dts/exynos5250-snow.dts              |   33 +-
+  arch/arm/boot/dts/exynos5250.dtsi                  |  489 +++---
+  arch/arm/boot/dts/exynos5440-sd5v1.dts             |   39 +
+  arch/arm/boot/dts/exynos5440-ssdk5440.dts          |   25 +-
+  arch/arm/boot/dts/exynos5440.dtsi                  |  115 +-
+  arch/arm/common/Makefile                           |    2 +
+  arch/arm/common/firmware.c                         |   18 +
+  arch/arm/include/asm/firmware.h                    |   66 +
+  arch/arm/mach-exynos/Kconfig                       |   23 +-
+  arch/arm/mach-exynos/Makefile                      |   12 +-
+  arch/arm/mach-exynos/clock-exynos4.c               | 1601 
+-------------------
+  arch/arm/mach-exynos/clock-exynos4.h               |   35 -
+  arch/arm/mach-exynos/clock-exynos4210.c            |  187 ---
+  arch/arm/mach-exynos/clock-exynos4212.c            |  201 ---
+  arch/arm/mach-exynos/clock-exynos5.c               | 1645 
+--------------------
+  arch/arm/mach-exynos/common.c                      |  123 +-
+  arch/arm/mach-exynos/common.h                      |   12 +-
+  arch/arm/mach-exynos/cpuidle.c                     |   58 +-
+  arch/arm/mach-exynos/dev-ohci.c                    |    2 +-
+  arch/arm/mach-exynos/exynos-smc.S                  |   22 +
+  arch/arm/mach-exynos/firmware.c                    |   70 +
+  arch/arm/mach-exynos/include/mach/irqs.h           |   19 +-
+  arch/arm/mach-exynos/include/mach/map.h            |    4 +-
+  arch/arm/mach-exynos/include/mach/pm-core.h        |    9 +-
+  arch/arm/mach-exynos/include/mach/regs-clock.h     |  107 --
+  arch/arm/mach-exynos/include/mach/regs-mct.h       |   53 -
+  arch/arm/mach-exynos/mach-armlex4210.c             |    3 +-
+  arch/arm/mach-exynos/mach-exynos4-dt.c             |  123 +--
+  arch/arm/mach-exynos/mach-exynos5-dt.c             |  165 +--
+  arch/arm/mach-exynos/mach-nuri.c                   |    5 +-
+  arch/arm/mach-exynos/mach-origen.c                 |    7 +-
+  arch/arm/mach-exynos/mach-smdk4x12.c               |    5 +-
+  arch/arm/mach-exynos/mach-smdkv310.c               |    9 +-
+  arch/arm/mach-exynos/mach-universal_c210.c         |    3 +-
+  arch/arm/mach-exynos/platsmp.c                     |   32 +-
+  arch/arm/mach-exynos/smc.h                         |   31 +
+  arch/arm/mach-s3c24xx/Kconfig                      |   84 +-
+  arch/arm/mach-s3c24xx/Makefile                     |    8 +-
+  arch/arm/mach-s3c24xx/common.h                     |    1 +
+  arch/arm/mach-s3c24xx/include/mach/dma.h           |    1 -
+  arch/arm/mach-s3c24xx/include/mach/entry-macro.S   |   70 -
+  arch/arm/mach-s3c24xx/include/mach/irqs.h          |    4 +-
+  arch/arm/mach-s3c24xx/{ => include/mach}/s3c2412.h |    0
+  arch/arm/mach-s3c24xx/iotiming-s3c2412.c           |    2 +-
+  arch/arm/mach-s3c24xx/mach-amlm5900.c              |    2 +-
+  arch/arm/mach-s3c24xx/mach-bast.c                  |    2 +-
+  arch/arm/mach-s3c24xx/mach-h1940.c                 |    7 +-
+  arch/arm/mach-s3c24xx/mach-n30.c                   |    4 +-
+  arch/arm/mach-s3c24xx/mach-otom.c                  |    2 +-
+  arch/arm/mach-s3c24xx/mach-qt2410.c                |    2 +-
+  arch/arm/mach-s3c24xx/mach-smdk2410.c              |    2 +-
+  arch/arm/mach-s3c24xx/mach-tct_hammer.c            |    2 +-
+  arch/arm/mach-s3c24xx/mach-vr1000.c                |    2 +-
+  arch/arm/mach-s3c24xx/regs-dsc.h                   |  203 +---
+  arch/arm/mach-s3c64xx/Makefile                     |    1 -
+  arch/arm/mach-s3c64xx/dma.c                        |    1 +
+  arch/arm/mach-s3c64xx/include/mach/dma.h           |    1 -
+  arch/arm/mach-s3c64xx/mach-crag6410-module.c       |    1 +
+  arch/arm/plat-samsung/Kconfig                      |   18 +-
+  arch/arm/plat-samsung/devs.c                       |    2 +-
+  arch/arm/plat-samsung/dma-ops.c                    |   10 +-
+  arch/arm/plat-samsung/include/plat/cpu-freq-core.h |   10 +-
+  arch/arm/plat-samsung/include/plat/cpu-freq.h      |    6 +-
+  arch/arm/plat-samsung/include/plat/cpu.h           |    1 -
+  arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 -
+  arch/arm/plat-samsung/include/plat/dma-pl330.h     |    1 -
+  arch/arm/plat-samsung/include/plat/map-s5p.h       |    1 +
+  arch/arm/plat-samsung/include/plat/rtc-core.h      |    2 +-
+  arch/arm/plat-samsung/include/plat/sdhci.h         |    4 +-
+  arch/arm/plat-samsung/s5p-sleep.S                  |    9 +
+  arch/arm/plat-samsung/setup-mipiphy.c              |    3 +
+  drivers/clk/Makefile                               |    1 +
+  drivers/clk/samsung/Makefile                       |    8 +
+  drivers/clk/samsung/clk-exynos4.c                  | 1091 +++++++++++++
+  drivers/clk/samsung/clk-exynos5250.c               |  523 +++++++
+  drivers/clk/samsung/clk-exynos5440.c               |  139 ++
+  drivers/clk/samsung/clk-pll.c                      |  419 +++++
+  drivers/clk/samsung/clk-pll.h                      |   41 +
+  drivers/clk/samsung/clk.c                          |  320 ++++
+  drivers/clk/samsung/clk.h                          |  289 ++++
+  drivers/clocksource/Kconfig                        |    5 +
+  drivers/clocksource/Makefile                       |    1 +
+  .../mct.c => drivers/clocksource/exynos_mct.c      |  210 ++-
+  drivers/cpufreq/Kconfig.arm                        |   58 +
+  drivers/cpufreq/Makefile                           |    9 +-
+  .../cpufreq/s3c2410-cpufreq.c                      |    0
+  .../cpufreq/s3c2412-cpufreq.c                      |    3 +-
+  .../cpufreq/s3c2440-cpufreq.c                      |    0
+  .../cpufreq/s3c24xx-cpufreq-debugfs.c              |    0
+  .../cpufreq.c => drivers/cpufreq/s3c24xx-cpufreq.c |    0
+  drivers/irqchip/Makefile                           |    1 +
+  drivers/irqchip/exynos-combiner.c                  |   80 +-
+  .../irq.c => drivers/irqchip/irq-s3c24xx.c         |  523 +++++--
+  drivers/pinctrl/pinctrl-exynos5440.c               |  151 ++-
+  drivers/usb/host/ohci-exynos.c                     |    3 +-
+  .../{usb-exynos.h => usb-ohci-exynos.h}            |    0
+  125 files changed, 7801 insertions(+), 5249 deletions(-)
+  create mode 100644 Documentation/arm/firmware.txt
+  create mode 100644 
+Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+  create mode 100644 
+Documentation/devicetree/bindings/clock/exynos4-clock.txt
+  create mode 100644 
+Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+  create mode 100644 
+Documentation/devicetree/bindings/clock/exynos5440-clock.txt
+  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+  create mode 100644 
+Documentation/devicetree/bindings/interrupt-controller/samsung,s3c24xx-irq.txt
+  create mode 100644 
+Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+  create mode 100644 Documentation/devicetree/bindings/usb/exynos-usb.txt
+  create mode 100644 
+Documentation/devicetree/bindings/video/samsung-fimd.txt
+  create mode 100644 arch/arm/boot/dts/exynos4412-odroidx.dts
+  create mode 100644 arch/arm/boot/dts/exynos4412-origen.dts
+  create mode 100644 arch/arm/boot/dts/exynos5250-arndale.dts
+  create mode 100644 arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+  create mode 100644 arch/arm/boot/dts/exynos5440-sd5v1.dts
+  create mode 100644 arch/arm/common/firmware.c
+  create mode 100644 arch/arm/include/asm/firmware.h
+  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.c
+  delete mode 100644 arch/arm/mach-exynos/clock-exynos4.h
+  delete mode 100644 arch/arm/mach-exynos/clock-exynos4210.c
+  delete mode 100644 arch/arm/mach-exynos/clock-exynos4212.c
+  delete mode 100644 arch/arm/mach-exynos/clock-exynos5.c
+  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
+  create mode 100644 arch/arm/mach-exynos/firmware.c
+  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-mct.h
+  create mode 100644 arch/arm/mach-exynos/smc.h
+  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/entry-macro.S
+  rename arch/arm/mach-s3c24xx/{ => include/mach}/s3c2412.h (100%)
+  create mode 100644 drivers/clk/samsung/Makefile
+  create mode 100644 drivers/clk/samsung/clk-exynos4.c
+  create mode 100644 drivers/clk/samsung/clk-exynos5250.c
+  create mode 100644 drivers/clk/samsung/clk-exynos5440.c
+  create mode 100644 drivers/clk/samsung/clk-pll.c
+  create mode 100644 drivers/clk/samsung/clk-pll.h
+  create mode 100644 drivers/clk/samsung/clk.c
+  create mode 100644 drivers/clk/samsung/clk.h
+  rename arch/arm/mach-exynos/mct.c => drivers/clocksource/exynos_mct.c 
+(64%)
+  rename arch/arm/mach-s3c24xx/cpufreq-s3c2410.c => 
+drivers/cpufreq/s3c2410-cpufreq.c (100%)
+  rename arch/arm/mach-s3c24xx/cpufreq-s3c2412.c => 
+drivers/cpufreq/s3c2412-cpufreq.c (99%)
+  rename arch/arm/mach-s3c24xx/cpufreq-s3c2440.c => 
+drivers/cpufreq/s3c2440-cpufreq.c (100%)
+  rename arch/arm/mach-s3c24xx/cpufreq-debugfs.c => 
+drivers/cpufreq/s3c24xx-cpufreq-debugfs.c (100%)
+  rename arch/arm/mach-s3c24xx/cpufreq.c => 
+drivers/cpufreq/s3c24xx-cpufreq.c (100%)
+  rename arch/arm/mach-s3c24xx/irq.c => drivers/irqchip/irq-s3c24xx.c (75%)
+  rename include/linux/platform_data/{usb-exynos.h => usb-ohci-exynos.h} 
+(100%)
