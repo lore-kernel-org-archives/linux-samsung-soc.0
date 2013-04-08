@@ -1,139 +1,100 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: Samsung: Select ARM_CPU_SUSPEND when required
-Date: Mon, 08 Apr 2013 17:05:50 +0200
-Message-ID: <5162DCCE.8090909@samsung.com>
-References: <1365366442-16025-1-git-send-email-s.nawrocki@samsung.com>
- <2cd601ce343f$7d6aac50$784004f0$%kim@samsung.com>
- <51629B96.9050504@samsung.com> <20130408110032.GK17995@n2100.arm.linux.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: GENERIC_GPIO considered deprecated
+Date: Mon, 08 Apr 2013 10:11:30 -0600
+Message-ID: <5162EC32.2030602@wwwdotorg.org>
+References: <CAAVeFu+QUw1WmzwaJDfjyw75PrStd3p3PHs1MU5BC7_WXMB7kw@mail.gmail.com> <51576214.8010307@openwide.fr> <CAAVeFu++8YOOSxPbAaTudxSGcBomkGrakBjiVyD+XSee54TrWw@mail.gmail.com> <26e401ce30cc$602e45f0$208ad1d0$%kim@samsung.com> <CAAVeFuJcAgFma6wxmyoUN4Kfp-+y-gj3QMWvVYsCK_D8q0gSXQ@mail.gmail.com> <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <20130408110032.GK17995@n2100.arm.linux.org.uk>
-Sender: stable-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, stable@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:55503 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934843Ab3DHQLh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Apr 2013 12:11:37 -0400
+In-Reply-To: <2c9501ce342b$1535d290$3fa177b0$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Alexandre Courbot' <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc: 'Romain Naour' <romain.naour@openwide.fr>, 'linux-next' <linux-next@vger.kernel.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, =?UTF-8?B?J0hlaWtvIFN0w7xibmVyJw==?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
 
-On 04/08/2013 01:00 PM, Russell King - ARM Linux wrote:
-> On Mon, Apr 08, 2013 at 12:27:34PM +0200, Sylwester Nawrocki wrote:
->> On 04/08/2013 11:57 AM, Kukjin Kim wrote:
-[...]
+On 04/08/2013 01:31 AM, Kukjin Kim wrote:
+> Alexandre Courbot wrote:
+>>
+>> On Wed, Apr 3, 2013 at 5:35 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>>>> could you amend the patches that adds them such as they get changed
+>>>> into "select ARCH_REQUIRE_GPIOLIB" instead? You can grep for "select
+>>>
+>>> I can do it for my tree but the branch already included in arm-soc tree
+>> so I think, it should be fixed with another patch. And
+>>>
+>>>> GENERIC_GPIO" in arch/arm to find the offending lines. We are removing
+>>>> GENERIC_GPIO and this work cannot be merged until you do this since it
+>>>> would break ARM builds. Thanks!
+>>>>
+>>> So how about following? If you are OK, let me take into samsung tree.
+>>>
+>>> --------8<----------------8<--------
+>>> From: Kukjin Kim <kgene.kim@samsung.com>
+>>> Subject: [PATCH] ARM: SAMSUNG: change GENERIC_GPIO to
+>> ARCH_REQUIRE_GPIOLIB
+>>>
+>>> When I applied regarding samsung-time patches, the "select GENERIC_GPIO"
+>>> has been added wrong, so this patch fixes that.
+>>> And since the GENERIC_GPIO in arch/arm/ will be gone away, this adds
+>>> ARCH_REQUIRE_GPIOLIB for S3C24XX and S5PC100 instead.
+>>>
+>>> Reported-by: Alexandre Courbot <gnurou@gmail.com>
+>>> Cc: Romain Naour <romain.naour@openwide.fr>
+>>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>>> ---
+>>>  arch/arm/Kconfig |    4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>>> index 46fcfa8..a239c7e 100644
+>>> --- a/arch/arm/Kconfig
+>>> +++ b/arch/arm/Kconfig
+>>> @@ -770,10 +770,10 @@ config ARCH_SA1100
+>>>  config ARCH_S3C24XX
+>>>         bool "Samsung S3C24XX SoCs"
+>>>         select ARCH_HAS_CPUFREQ
+>>> +       select ARCH_REQUIRE_GPIOLIB
+>>>         select CLKDEV_LOOKUP
+>>>         select CLKSRC_MMIO
+>>>         select GENERIC_CLOCKEVENTS
+>>> -       select GENERIC_GPIO
+>>>         select HAVE_CLK
+>>>         select HAVE_S3C2410_I2C if I2C
+>>>         select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>>> @@ -828,11 +828,11 @@ config ARCH_S5P64X0
+>>>
+>>>  config ARCH_S5PC100
+>>>         bool "Samsung S5PC100"
+>>> +       select ARCH_REQUIRE_GPIOLIB
+>>>         select CLKDEV_LOOKUP
+>>>         select CLKSRC_MMIO
+>>>         select CPU_V7
+>>>         select GENERIC_CLOCKEVENTS
+>>> -       select GENERIC_GPIO
+>>>         select HAVE_CLK
+>>>         select HAVE_S3C2410_I2C if I2C
+>>>         select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>>> --
+>>> 1.7.10.4
+>>
+>> Should do the trick, if we can make sure that your tree is merged
+>> prior to my patches.
 > 
-> Sigh.  This stuff looks rather screwed up now:
+> I'm not sure but I think, arm-soc tree should be merged into mainline before others...
 > 
-> $ grep -B1 'ENTRY.*do_suspend' arch/arm/mm/proc*.S
-> arch/arm/mm/proc-arm920.S-#ifdef CONFIG_PM_SLEEP
-> arch/arm/mm/proc-arm920.S:ENTRY(cpu_arm920_do_suspend)
-> --
-> arch/arm/mm/proc-arm926.S-#ifdef CONFIG_PM_SLEEP
-> arch/arm/mm/proc-arm926.S:ENTRY(cpu_arm926_do_suspend)
-> --
-> arch/arm/mm/proc-mohawk.S-#ifdef CONFIG_PM_SLEEP
-> arch/arm/mm/proc-mohawk.S:ENTRY(cpu_mohawk_do_suspend)
-> --
-> arch/arm/mm/proc-sa1100.S-#ifdef CONFIG_PM_SLEEP
-> arch/arm/mm/proc-sa1100.S:ENTRY(cpu_sa1100_do_suspend)
-> --
-> arch/arm/mm/proc-v6.S-#ifdef CONFIG_PM_SLEEP
-> arch/arm/mm/proc-v6.S:ENTRY(cpu_v6_do_suspend)
-> --
-> arch/arm/mm/proc-v7.S-#ifdef CONFIG_ARM_CPU_SUSPEND
-> arch/arm/mm/proc-v7.S:ENTRY(cpu_v7_do_suspend)
-> --
-> arch/arm/mm/proc-xsc3.S-#ifdef CONFIG_PM_SLEEP
-> arch/arm/mm/proc-xsc3.S:ENTRY(cpu_xsc3_do_suspend)
-> --
-> arch/arm/mm/proc-xscale.S-#ifdef CONFIG_PM_SLEEP
-> arch/arm/mm/proc-xscale.S:ENTRY(cpu_xscale_do_suspend)
+>> Can you put it into your tree for 3.10?
+>>
+> I did, so it should be fine.
 > 
-> Now, CONFIG_PM_SLEEP is fine if this stuff only ever gets used when PM_SLEEP
-> is enabled - that's what it was designed for in the first place.  However,
-> as we can see from the earlier patches in this thread, the cpu_suspend
-> stuff is being selected when PM is enabled (which is arguably wrong), and
+> Thanks.
+> 
+> - Kukjin
 
-Yes, presumably this needs to be cleaned up. I was considering replacing
-CONFIG_PM with CONFIG_PM_SLEEP, but that might involve some not trivial
-changes. I'm going to have a look at it eventually.
-
-> also in some cases when CPU_IDLE is enabled.
-> 
-> Therefore, making this code depend on ARM_CPU_SUSPEND seems sensible.
-> However, So, how did proc-v7.S and only that file end up doing something
-> different?
-> 
-> commit 15e0d9e37c7fe9711b60f47221c394d45553ad8c
-> Author: Arnd Bergmann <arnd@arndb.de>
-> Date:   Sat Oct 1 21:09:39 2011 +0200
-> 
->     ARM: pm: let platforms select cpu_suspend support
-> 
->     Support for the cpu_suspend functions is only built-in
->     when CONFIG_PM_SLEEP is enabled, but omap3/4, exynos4
->     and pxa always call cpu_suspend when CONFIG_PM is enabled.
-> 
->     Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> ...
-> diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
-> index a30e785..591accd 100644
-> --- a/arch/arm/mm/proc-v7.S
-> +++ b/arch/arm/mm/proc-v7.S
-> @@ -217,7 +217,7 @@ ENDPROC(cpu_v7_set_pte_ext)
->  /* Suspend/resume support: derived from arch/arm/mach-s5pv210/sleep.S */
->  .globl cpu_v7_suspend_size
->  .equ   cpu_v7_suspend_size, 4 * 9
-> -#ifdef CONFIG_PM_SLEEP
-> +#ifdef CONFIG_ARM_CPU_SUSPEND
->  ENTRY(cpu_v7_do_suspend)
-> ...
-> 
-> As far as this commit goes, it looks sane at the time that it was written,
-> but as soon as we have *any* other selections of ARM_CPU_SUSPEND, the
-> whole idea becomes extremely fragile - hence the reason for your build
-> errors.
-> 
-> Moreover, with the above commit, there is _no_ sense what so ever in not
-> applying the same change to all proc-*.S files, thereby entirely avoiding
-> this fragility.  I would argue that the original commit should have made
-> the same change to _all_ proc-*.S files.
-> 
-> Let's do the job properly - hence this is now queued for -rc:
-
-Thanks, that seems a most reasonable fix. I was considering something like
-that, just was afraid a bit to do this wide change and that it might cause
-some other issues. Anyway that looks fine.
-
-> 8<===
-> From: Russell King <rmk+kernel@arm.linux.org.uk>
-> Subject: [PATCH] ARM: Do 15e0d9e37c (ARM: pm: let platforms select cpu_suspend support) properly
-> 
-> Let's do the changes properly and fix the same problem everywhere, not
-> just for one case.
-> 
-> Cc: <stable@vger.kernel.org> # kernels containing 15e0d9e37c7fe or equivalent
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->  arch/arm/mm/proc-arm920.S |    2 +-
->  arch/arm/mm/proc-arm926.S |    2 +-
->  arch/arm/mm/proc-mohawk.S |    2 +-
->  arch/arm/mm/proc-sa1100.S |    2 +-
->  arch/arm/mm/proc-v6.S     |    2 +-
->  arch/arm/mm/proc-xsc3.S   |    2 +-
->  arch/arm/mm/proc-xscale.S |    2 +-
->  7 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm/mm/proc-arm920.S b/arch/arm/mm/proc-arm920.S
-> index 2c3b942..2556cf1 100644
-> --- a/arch/arm/mm/proc-arm920.S
-> +++ b/arch/arm/mm/proc-arm920.S
-> @@ -387,7 +387,7 @@ ENTRY(cpu_arm920_set_pte_ext)
->  /* Suspend/resume support: taken from arch/arm/plat-s3c24xx/sleep.S */
->  .globl	cpu_arm920_suspend_size
->  .equ	cpu_arm920_suspend_size, 4 * 3
-> -#ifdef CONFIG_PM_SLEEP
-> +#ifdef CONFIG_ARM_CPU_SUSPEND
->  ENTRY(cpu_arm920_do_suspend)
->  	stmfd	sp!, {r4 - r6, lr}
->  	mrc	p15, 0, r4, c13, c0, 0	@ PID
-[...]
+You may want to discuss how to handle this dependency with the arm-soc
+maintainers (CC'd).
