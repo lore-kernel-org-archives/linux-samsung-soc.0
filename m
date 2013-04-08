@@ -1,109 +1,46 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH V5 0/4] cpufreq: exynos5440: support for cpufreq driver
-Date: Mon, 08 Apr 2013 21:49:33 +0200
-Message-ID: <1403255.89Vcuzrghk@vostro.rjw.lan>
-References: <1364457923-8499-1-git-send-email-amit.daniel@samsung.com> <CADGdYn7ZRCSymU7k3Sn4mbS6B=dxy1N+vhQuyiFnhOQLLzrTbw@mail.gmail.com> <2d0501ce3450$fac4e9c0$f04ebd40$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <2d0501ce3450$fac4e9c0$f04ebd40$%kim@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'amit daniel kachhap' <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, 'Inderpal Singh' <inderpal.singh@linaro.org>, 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: [PATCH] ARM: S3C24XX: Fix interrupt pending register offset of the EINT controller
+Date: Mon,  8 Apr 2013 21:53:07 +0200
+Message-ID: <1365450787-14473-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f42.google.com ([74.125.83.42]:59518 "EHLO
+	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935775Ab3DHTxS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Apr 2013 15:53:18 -0400
+Received: by mail-ee0-f42.google.com with SMTP id d4so1740208eek.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Apr 2013 12:53:17 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Monday, April 08, 2013 09:02:44 PM Kukjin Kim wrote:
-> amit daniel kachhap wrote:
-> > 
-> > On Fri, Apr 5, 2013 at 6:08 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> > > On Thursday, March 28, 2013 01:35:18 PM Amit Daniel Kachhap wrote:
-> > >> Submitting the V5 version of exynos5440 cpufreq driver. This patchset
-> > addresses
-> > >> all the coding and design concerns raised especially by Viresh.
-> > >>
-> > >> Changes in V5:
-> > >> * Removed the unnecessary DT look up entry from mach-exynos5-dt.c.
-> > >> * Fixed all coding and comments issue raised by Viresh.
-> > >>
-> > >> Changes in V4:
-> > >> * Added dev_err logs instead of pr_err.
-> > >> * Used the devm_ioremap_resource API.
-> > >> * Implemented several coding guidelines and minor error comments from
-> > Sylwester,
-> > >>   Russell and Viresh.
-> > >>
-> > >> Changes in V3:
-> > >> * Converted the driver to probe based as suggested by Viresh. This is
-> > also
-> > >>   beneficial for multiplatform kernel.
-> > >> * Other coding guidelines related changes.
-> > >> * Moved the DT node outside cpu0 node as the driver is now a platform
-> > >>   driver.
-> > >>
-> > >> Changes in V2:
-> > >> * Added OPP library support to parse DT parameters.
-> > >> * Removed a hack to handle interrupts in bootup.
-> > >> * Implemented other review comments from Viresh and Inder.
-> > >>
-> > >> All these patches are dependent on Thomas Abraham common clock patches.
-> > >> (http://www.mail-archive.com/linux-samsung-
-> > soc@vger.kernel.org/msg15860.html)
-> > >> This whole patch series is based on 3.9-rc4.
-> > >>
-> > >> Amit Daniel Kachhap (4):
-> > >>   cpufreq: exynos: Add cpufreq driver for exynos5440
-> > >>   cpufreq: exynos: Remove error return even if no soc is found
-> > >>   arm: exynos: Enable OPP library support for exynos5440
-> > >>   arm: dts: Add cpufreq controller node for Exynos5440 SoC
-> > >>
-> > >>  .../bindings/cpufreq/cpufreq-exynos5440.txt        |   28 ++
-> > >>  arch/arm/boot/dts/exynos5440.dtsi                  |   12 +
-> > >>  arch/arm/mach-exynos/Kconfig                       |    2 +
-> > >>  drivers/cpufreq/Kconfig.arm                        |    9 +
-> > >>  drivers/cpufreq/Makefile                           |    1 +
-> > >>  drivers/cpufreq/exynos-cpufreq.c                   |    2 +-
-> > >>  drivers/cpufreq/exynos5440-cpufreq.c               |  474
-> > ++++++++++++++++++++
-> > >>  7 files changed, 527 insertions(+), 1 deletions(-)
-> > >>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-
-> > exynos5440.txt
-> > >>  create mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
-> > >
-> > > Is this for me or the Samsung tree?
-> > >
-> > > If it's for me, I need ACKs from the Samsung tree maintainers.  Also,
-> > please
-> > > address the Viresh's comments.
-> > >
-> > > Thanks,
-> > > Rafael
-> > >
-> > Hi Rafael,
-> > 
-> > I submitted the V6 version with all comments from Viresh addressed.
-> > 
-> > Hi Kukjin Kim,
-> > 
-> > Any suggestion on how this patch should be merged. In my opinion it
-> > should go via Rafael's tree as this patch uses some fixes present in
-> > Rafael's tree like modified cpufreq_notify_transition API.
-> > 
-> Yes, I agree. The v6 series including resending 1/4 patch looks good to me.
-> But the patch V6 4/4 would be sent to upstream via samsung tree to avoid
-> useless merge conflicts and I think, it's possible.
-> 
-> So Rafael, please take 1/4 ~ 3/4 patches in your tree with my ack.
-> 
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> If any problems, please let me know.
+The external pending interrupt register address (EINTPEND) offset is
+0xa8, not 0x08. Without this patch the external interrupts are not
+properly acknowledged, which may lead to an interrupt storm and the
+system hang as soon as any external interrupt is requested.
 
-I will, thank you!
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
 
-Rafael
+This patch is for _3.9_. I'm going to send a similar patch for 3.10-rc2
+for drivers/irqchip/irq-s3c24xx.c.
+---
+ arch/arm/mach-s3c24xx/irq.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
+diff --git a/arch/arm/mach-s3c24xx/irq.c b/arch/arm/mach-s3c24xx/irq.c
+index cb9f5e0..d8ba9be 100644
+--- a/arch/arm/mach-s3c24xx/irq.c
++++ b/arch/arm/mach-s3c24xx/irq.c
+@@ -500,7 +500,7 @@ struct s3c_irq_intc *s3c24xx_init_intc(struct device_node *np,
+ 		base = (void *)0xfd000000;
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+ 		intc->reg_mask = base + 0xa4;
+-		intc->reg_pending = base + 0x08;
++		intc->reg_pending = base + 0xa8;
+ 		irq_num = 20;
+ 		irq_start = S3C2410_IRQ(32);
+ 		irq_offset = 4;
+--
+1.7.4.1
