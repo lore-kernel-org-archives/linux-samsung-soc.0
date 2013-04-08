@@ -1,44 +1,63 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: dts: Fix build error in exynos5250-smdk5250.dts
-Date: Mon,  8 Apr 2013 10:31:21 +0530
-Message-ID: <1365397281-32217-1-git-send-email-sachin.kamat@linaro.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
+Date: Mon, 8 Apr 2013 10:24:38 +0530
+Message-ID: <CAKohpomgqWi9jfpqtW8cxu7BeJQCEySqbdDNVK=4Fh1ji1FyMg@mail.gmail.com>
+References: <cover.1365079581.git.viresh.kumar@linaro.org>
+	<927100d30bf40d4fec477cc7d8d464669a22d167.1365079581.git.viresh.kumar@linaro.org>
+	<2a5901ce31c9$95160980$bf421c80$%kim@samsung.com>
+	<CAKohpokk1Q+0gRpeW=ts0a8D+rGAUpHu62X+7ejdpfom_B6FYA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:54145 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751098Ab3DHFNQ (ORCPT
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:48889 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752025Ab3DHEyi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 01:13:16 -0400
-Received: by mail-pa0-f50.google.com with SMTP id bg2so3088663pad.37
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Apr 2013 22:13:15 -0700 (PDT)
+	Mon, 8 Apr 2013 00:54:38 -0400
+Received: by mail-ob0-f171.google.com with SMTP id v19so2237351obq.30
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Apr 2013 21:54:38 -0700 (PDT)
+In-Reply-To: <CAKohpokk1Q+0gRpeW=ts0a8D+rGAUpHu62X+7ejdpfom_B6FYA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: rjw@sisk.pl, robin.randhawa@arm.com, Steve.Bannister@arm.com, Liviu.Dudau@arm.com, charles.garcia-tobin@arm.com, arvind.chauhan@arm.com, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, patches@linaro.org, Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Fixes the following build error:
-Error: arch/arm/boot/dts/exynos5250-smdk5250.dts:250.3-251.1 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [arch/arm/boot/dts/exynos5250-smdk5250.dtb] Error 1
-make: *** [dtbs] Error 2
+On 5 April 2013 12:36, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 5 April 2013 12:18, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> Basically, this moving looks good to me, but should be re-worked based on
+>> for-next of samsung tree because this touches too many samsung stuff so this
+>> should be sent to upstream via samsung tree.
+>
+> Hmm... Its already applied in Rafael's tree. But it doesn't mean that
+> it can't be
+> moved to your tree if there is a issue.
+>
+> What tree/branch? I used:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
+>
+>> Applying: cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
+>> error: patch failed: arch/arm/Kconfig:2166
+>> error: arch/arm/Kconfig: patch does not apply
+>
+> above two are obvious as you haven't applied other patches in this series.
+>
+>> error: patch failed: arch/arm/mach-s3c24xx/Kconfig:28
+>> error: arch/arm/mach-s3c24xx/Kconfig: patch does not apply
+>> error: patch failed: arch/arm/mach-s3c24xx/Makefile:17
+>> error: arch/arm/mach-s3c24xx/Makefile: patch does not apply
+>> error: patch failed: drivers/cpufreq/Makefile:63
+>> error: drivers/cpufreq/Makefile: patch does not apply
+>
+> Same here.
+>
+>> error: drivers/cpufreq/s3c2412-cpufreq.c: does not exist in index
+>
+> I can still see it in for-next.
+>
+> Attached is my patch based of your for-next
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Based on Kukjin's for-next tree.
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    1 +
- 1 file changed, 1 insertion(+)
+Kukjin,
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 4be14df..26d856b 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -239,6 +239,7 @@
- 			vback-porch = <4>;
- 			vfront-porch = <4>;
- 			vsync-len = <4>;
-+		};
- 	};
- 
- 	fixed-rate-clocks {
--- 
-1.7.9.5
+As Rafael has already dropped it, can you apply it at your end and make sure
+it doesn't miss the merge cycle?
