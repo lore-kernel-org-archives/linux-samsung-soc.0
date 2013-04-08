@@ -1,101 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: Samsung: Select ARM_CPU_SUSPEND when required
-Date: Mon, 08 Apr 2013 12:27:34 +0200
-Message-ID: <51629B96.9050504@samsung.com>
-References: <1365366442-16025-1-git-send-email-s.nawrocki@samsung.com>
- <2cd601ce343f$7d6aac50$784004f0$%kim@samsung.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
+Date: Mon, 08 Apr 2013 12:46:38 +0200
+Message-ID: <2166815.0SZ6SYhSDN@vostro.rjw.lan>
+References: <cover.1365079581.git.viresh.kumar@linaro.org> <1769336.FkfMpuXqqb@vostro.rjw.lan> <2ccd01ce3439$911b51b0$b351f510$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <2cd601ce343f$7d6aac50$784004f0$%kim@samsung.com>
-Sender: stable-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <2ccd01ce3439$911b51b0$b351f510$%kim@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, stable@vger.kernel.org
+Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>, robin.randhawa@arm.com, Steve.Bannister@arm.com, Liviu.Dudau@arm.com, charles.garcia-tobin@arm.com, arvind.chauhan@arm.com, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, patches@linaro.org, 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/08/2013 11:57 AM, Kukjin Kim wrote:
-> Sylwester Nawrocki wrote:
-[...]
-> Yes, right. The pm.c in plat-samsung should be built with
-> arch/arm/kernel/sleep.S and suspend.c.
+On Monday, April 08, 2013 06:15:09 PM Kukjin Kim wrote:
+> Rafael J. Wysocki wrote:
+> > 
+> > On Friday, April 05, 2013 12:36:34 PM Viresh Kumar wrote:
+> > > On 5 April 2013 12:18, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > > > Basically, this moving looks good to me, but should be re-worked based
+> > on
+> > > > for-next of samsung tree because this touches too many samsung stuff
+> > so this
+> > > > should be sent to upstream via samsung tree.
+> > >
+> > > Hmm... Its already applied in Rafael's tree. But it doesn't mean that
+> > > it can't be
+> > > moved to your tree if there is a issue.
+> > 
+> > Well, I'm dropping it.  Please merge via the Samsung tree.
+> > 
+> OK, I will.
 > 
-> BTW it should be shown in alphabetical order and we don't need more
-> following in mach-exynos.
-> 
-> --------8<----------------8<--------
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 2f45906..bc0a8b2 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -31,7 +31,6 @@ config CPU_EXYNOS4210
->  	bool "SAMSUNG EXYNOS4210"
->  	default y
->  	depends on ARCH_EXYNOS4
-> -	select ARM_CPU_SUSPEND if PM
->  	select PM_GENERIC_DOMAINS
->  	select S5P_PM if PM
->  	select S5P_SLEEP if PM
-> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-> index b708b3e..30a976d 100644
-> --- a/arch/arm/plat-samsung/Kconfig
-> +++ b/arch/arm/plat-samsung/Kconfig
-> @@ -8,6 +8,7 @@ config PLAT_SAMSUNG
->  	Bool
->  	depends on PLAT_S3C24XX || ARCH_S3C64XX || PLAT_S5P
-> 	default y
-> +	select ARM_CPU_SUSPEND if PM
->  	select GENERIC_IRQ_CHIP
->  	select NO_IOPORT
->  	help
-> --------8<----------------8<--------
-> 
-> If you have any objections, let me know.
+> I got patch file from Viresh, and there is a sign from Rafael,
+> but it should be ack. So Rafael, let me use your ack on this patch when
+> I apply. If any problems, please let me know.
 
-Yes, this looks better. However after posting this patch I noticed linker
-errors in some builds due to undefined cpu_arm920_do_suspend,
-cpu_arm920_do_resume routines.
-
-It seems it is because various cpu_*_do_suspend routines are selected by
-CONFIG_PM_SLEEP.  And the PM code in arch/arm/mach-s3c24xx, arch/arm/mach-
-s3c64xx is selected by CONFIG_PM.
-
-$ git grep -1 "ENTRY(cpu_.*_do_suspend"
-arch/arm/mm/proc-arm920.S-#ifdef CONFIG_PM_SLEEP
-arch/arm/mm/proc-arm920.S:ENTRY(cpu_arm920_do_suspend)
-arch/arm/mm/proc-arm920.S-      stmfd   sp!, {r4 - r6, lr}
---
-arch/arm/mm/proc-arm926.S-#ifdef CONFIG_PM_SLEEP
-arch/arm/mm/proc-arm926.S:ENTRY(cpu_arm926_do_suspend)
-arch/arm/mm/proc-arm926.S-      stmfd   sp!, {r4 - r6, lr}
---
-arch/arm/mm/proc-mohawk.S-#ifdef CONFIG_PM_SLEEP
-arch/arm/mm/proc-mohawk.S:ENTRY(cpu_mohawk_do_suspend)
-arch/arm/mm/proc-mohawk.S-      stmfd   sp!, {r4 - r9, lr}
---
-arch/arm/mm/proc-sa1100.S-#ifdef CONFIG_PM_SLEEP
-arch/arm/mm/proc-sa1100.S:ENTRY(cpu_sa1100_do_suspend)
-arch/arm/mm/proc-sa1100.S-      stmfd   sp!, {r4 - r6, lr}
---
-arch/arm/mm/proc-v6.S-#ifdef CONFIG_PM_SLEEP
-arch/arm/mm/proc-v6.S:ENTRY(cpu_v6_do_suspend)
-arch/arm/mm/proc-v6.S-  stmfd   sp!, {r4 - r9, lr}
---
-arch/arm/mm/proc-v7.S-#ifdef CONFIG_ARM_CPU_SUSPEND
-arch/arm/mm/proc-v7.S:ENTRY(cpu_v7_do_suspend)
-arch/arm/mm/proc-v7.S-  stmfd   sp!, {r4 - r10, lr}
---
-arch/arm/mm/proc-xsc3.S-#ifdef CONFIG_PM_SLEEP
-arch/arm/mm/proc-xsc3.S:ENTRY(cpu_xsc3_do_suspend)
-arch/arm/mm/proc-xsc3.S-        stmfd   sp!, {r4 - r9, lr}
---
-arch/arm/mm/proc-xscale.S-#ifdef CONFIG_PM_SLEEP
-arch/arm/mm/proc-xscale.S:ENTRY(cpu_xscale_do_suspend)
-arch/arm/mm/proc-xscale.S-      stmfd   sp!, {r4 - r9, lr}
-
-However I can't reproduce it now :-/ Anyway the $subject patch fixes
-the main issue, which I can easily reproduce here as well. So I'll
-prepare another patch if needed when I get back to this later.
+Since it was signed-off by me before, you can assume it's been ACKed as well.
 
 Thanks,
-Sylwester
+Rafael
+
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
