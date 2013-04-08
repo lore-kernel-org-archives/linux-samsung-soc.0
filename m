@@ -1,144 +1,62 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v11 0/3] Add DRM FIMD DT support for Exynos4 DT Machines
-Date: Mon, 08 Apr 2013 16:23:07 +0900
-Message-ID: <2c9101ce3429$ea91f2e0$bfb5d8a0$%kim@samsung.com>
-References: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
+Subject: RE: [PATCH] ARM: SAMSUNG: Set clock parent if provided
+Date: Mon, 08 Apr 2013 16:23:26 +0900
+Message-ID: <2c9201ce3429$f61a8640$e24f92c0$%kim@samsung.com>
+References: <1362634301-9706-1-git-send-email-shaik.ameer@samsung.com>
+ <5138B3BA.9040303@samsung.com>
+ <CAOD6ATqK5crLc2nzz1rf856Lw48j2hOw_YRpjS4y8g7OzaLgSQ@mail.gmail.com>
+ <5146DEF5.1070608@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:8943 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934433Ab3DHHXI (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:27414 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753646Ab3DHHX2 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 03:23:08 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Mon, 8 Apr 2013 03:23:28 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKX00DFGDRUN4O0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Apr 2013 16:23:07 +0900 (KST)
-In-reply-to: <1365157062-8669-1-git-send-email-vikas.sajjan@linaro.org>
+ with ESMTP id <0MKX00GOODV1ZZ40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 08 Apr 2013 16:23:27 +0900 (KST)
+In-reply-to: <5146DEF5.1070608@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vikas Sajjan' <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: sylvester.nawrocki@gmail.com, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Shaik Ameer Basha' <shaik.samsung@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Vikas Sajjan wrote:
+Sylwester Nawrocki wrote:
 > 
-> This patch series adds support for DRM FIMD DT for Exynos4 DT Machines,
-> specifically for Exynos4412 SoC.
+> Hi Shaik,
 > 
-> changes since v10:
-> 	- addressed comments from Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com>
+> On 03/15/2013 10:00 AM, Shaik Ameer Basha wrote:
+> > On Thu, Mar 7, 2013 at 9:05 PM, Sylwester Nawrocki
+> > <s.nawrocki@samsung.com> wrote:
+> ...
+> >> May I ask what do you need this for ? This code won't be used for
+> >> Exynos4 and Exynos5 SoCs starting from 3.10. And it is going to be
+> >> removed once other platforms are converted to the new Samsung clocks
+> >> driver.
+> >
+> > I had some issues in exynos5 with out this implementation.
+> > But yes... you are right, once we move to common clock framework (CCF)
+> > we don't require this change, as CCF doesn't use this (for exynos 4/5).
+> >
+> > What about all old non-dt based platforms?
+> > Cant they use this change until they move to DT and CCF?
 > 
-> changes since v9:
-> 	- dropped the patch "ARM: dts: Add lcd pinctrl node entries for
-> EXYNOS4412 SoC"
-> 	as the gpios in the newly added nodes "lcd_en" and "lcd_sync" in
-> this patch
-> 	were already PULLed high by existing "lcd_clk" node.
-> 	- addressed comments from Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com>
-> 	and Thomas Abraham <thomas.abraham@linaro.org>
+> I have nothing against the patch, I was just curious if you need
+> it for the new SOCs where the new clocks driver is supposed to be used.
+> Of course other Samsung platforms could switch to CCF before having
+> support for the device tree.
 > 
-> changes since v8:
-> 	- addressed comments to add missing documentation for clock and
-> clock-names
-> 	properties as pointed out by Sachin Kamat <sachin.kamat@linaro.org>
-> 
-> changes since v7:
-> 	- rebased to kgene's "for-next"
-> 	- Migrated to Common Clock Framework
-> 	- removed the patch "ARM: dts: Add FIMD AUXDATA node entry for
-> exynos4 DT",
-> 	as migration to Common Clock Framework will NOT need this.
-> 	- addressed the comments raised by Sachin Kamat
-> <sachin.kamat@linaro.org>
-> 
-> changes since v6:
-> 	- addressed comments and added interrupt-names = "fifo", "vsync",
-> "lcd_sys"
-> 	in exynos4.dtsi and re-ordered the interrupt numbering to match the
-> order in
-> 	interrupt combiner IP as suggested by Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com>.
-> 
-> changes since v5:
-> 	- renamed the fimd binding documentation file name as "samsung-
-> fimd.txt",
-> 	since it not only talks about exynos display controller but also
-> about
-> 	previous samsung display controllers.
-> 	- rephrased an abmigious statement about the interrupt combiner in
-> the
-> 	fimd binding documentation as pointed out by
-> 	Sachin Kamat <sachin.kamat@linaro.org>
-> 
-> changes since v4:
-> 	- moved the fimd binding documentation to
-> Documentation/devicetree/bindings/video/
-> 	as suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-> 
-> 	- added more fimd compatiblity strings in fimd documentation as
-> 	discussed at  https://patchwork.kernel.org/patch/2144861/ with
-> 	Sylwester Nawrocki <sylvester.nawrocki@gmail.com> and
-> 	Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> 	- modified compatible string for exynos4 fimd as "exynos4210-fimd"
-> 	exynos5 fimd as "exynos5250-fimd" to stick to the rule that
-> compatible
-> 	value should be named after first specific SoC model in which this
-> 	particular IP version was included as discussed at
-> 	https://patchwork.kernel.org/patch/2144861/
-> 
-> 	- documented more about the interrupt combiner and their order as
-> 	suggested by Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-> 
-> changes since v3:
-> 	- rebased on
-> 	http://git.kernel.org/?p=linux/kernel/git/kgene/linux-
-> samsung.git;a=shortlog;h=refs/heads/for-next-next
-> 
-> changes since v2:
-> 	- added alias to 'fimd@11c00000' node
-> 		(reported by: Rahul Sharma <r.sh.open@gmail.com>)
-> 	- removed 'lcd0_data' node as there was already a similar node
-> lcd_data24
-> 		(reported by: Jingoo Han <jg1.han@samsung.com>
-> 	- replaced spaces with tabs in display-timing node
-> 
-> changes since v1:
-> 	- added new patch to add FIMD DT binding Documentation
-> 	- removed patch enabling SAMSUNG_DEV_BACKLIGHT and SAMSUNG_DEV_PMW
-> 	for mach-exynos4 DT
-> 	- added 'status' property to fimd DT node
-> 
-> Is based on branch kgene's "for-next"
-> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-
-> samsung.git/log/?h=for-next
-> 
-> Vikas Sajjan (3):
->   ARM: dts: Add FIMD node to exynos4
->   ARM: dts: Add FIMD node and display timing node to
->     exynos4412-origen.dts
->   ARM: dts: Add FIMD DT binding Documentation
-> 
->  .../devicetree/bindings/video/samsung-fimd.txt     |   65
-> ++++++++++++++++++++
->  arch/arm/boot/dts/exynos4.dtsi                     |   12 ++++
->  arch/arm/boot/dts/exynos4412-origen.dts            |   21 +++++++
->  3 files changed, 98 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/video/samsung-
-> fimd.txt
-> 
-> --
-> 1.7.9.5
+Sorry for late response on this...
 
-Looks good to me, applied.
+Yes, I think, as many guys said, this is not required for now for exynos4/5.
 
-Thanks.
+But the reason is different, I think, because the parent clock should be set depends on each board. That's why there are many parent clocks hardware providing. Sometimes just one parent clock can be used as a default though.
 
 - Kukjin
