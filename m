@@ -1,69 +1,35 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C24XX: Correct NR_IRQS definition for s3c2440
-Date: Mon, 08 Apr 2013 18:45:20 +0900
-Message-ID: <2cd501ce343d$c8efc810$5acf5830$%kim@samsung.com>
-References: <1365366170-9682-1-git-send-email-s.nawrocki@samsung.com>
- <201304072235.02218.heiko@sntech.de>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V6 1/4] cpufreq: exynos: Add cpufreq driver for exynos5440
+Date: Mon, 8 Apr 2013 14:46:33 +0530
+Message-ID: <CAKohpo=t_YTCTRCfnwQ+GPF=frsTGDigT3RZHJuVQ+R+YZU7Hg@mail.gmail.com>
+References: <1365409058-32643-1-git-send-email-amit.daniel@samsung.com>
+	<1365409058-32643-2-git-send-email-amit.daniel@samsung.com>
+	<CAKohpo=CFTo2UCnECeeuKdz34cuedV_tqn7zGA9bzU_PiJ46qg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:28587 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935325Ab3DHJpY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 05:45:24 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKX004XRKFJY9T0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Apr 2013 18:45:23 +0900 (KST)
-In-reply-to: <201304072235.02218.heiko@sntech.de>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAKohpo=CFTo2UCnECeeuKdz34cuedV_tqn7zGA9bzU_PiJ46qg@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, Inderpal Singh <inderpal.singh@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
 
-Heiko St=C3=BCbner wrote:
->=20
-> Am Sonntag, 7. April 2013, 22:22:50 schrieb Sylwester Nawrocki:
-> > Due to NR_IRQS being incorrectly defined not all IRQ domains can
-> > be registered for S3C2440. It causes following errors on a s3c2440
-> > SoC based board:
-> >
-> > NR_IRQS:89
-> > S3C2440: IRQ Support
-> > irq: clearing pending status 00000002
-> > ------------[ cut here ]------------
-> > WARNING: at kernel/irq/irqdomain.c:234 0xc0056ed0()
-> > ...
-> > irq: could not create irq-domain
-> > ...
-> > s3c2410-wdt s3c2410-wdt: failed to install irq (-22)
-> > s3c2410-wdt: probe of s3c2410-wdt failed with error -22
-> > ...
-> > samsung-uart s3c2440-uart.0: cannot get irq 74
-> >
-> > Fix this by increasing NR_IRQS to at least (IRQ_S3C2443_AC97 + 1)
-> > if CPU_S3C2440 is selected, so the subintc IRQ domain gets properly
-> > registered.
-> >
-> > Cc: Heiko St=C3=BCbner <heiko@sntech.de>
-> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->=20
-> Thanks for testing the irq changes on another subarchitecture and fix=
-ing
-> the
-> glitch.
->=20
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
->=20
->=20
-Thanks for you guys' effort.
+On 8 April 2013 14:17, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 8 April 2013 13:47, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
+>
+>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>> index f3f3b14..bce2195 100644
+>> --- a/drivers/cpufreq/Kconfig.arm
+>> +++ b/drivers/cpufreq/Kconfig.arm
+>> @@ -42,6 +42,15 @@ config ARM_EXYNOS5250_CPUFREQ
+>>           This adds the CPUFreq driver for Samsung EXYNOS5250
+>>           SoC.
+>>
+>> +config ARM_EXYNOS5440_CPUFREQ
+>> +       def_bool SOC_EXYNOS5440
+>> +       depends on HAVE_CLK && PM_OPP && OF
+>
+> Don't you need a depend on your Soc or mach or arch? Don't send another
+> version for this now.. Just send a new patch over this patchset.
 
-Applied.
-
-- Kukjin
+Sorry, i overlooked def_bool... This comments stands invalid.
