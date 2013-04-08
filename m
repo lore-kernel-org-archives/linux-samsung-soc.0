@@ -1,73 +1,48 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 08/10] secure-exynos for v3.10
-Date: Tue, 09 Apr 2013 03:19:34 +0900
-Message-ID: <51630A36.6030505@samsung.com>
+Subject: [GIT PULL 09/10] 2nd timer-samsung for v3.10
+Date: Tue, 09 Apr 2013 03:19:52 +0900
+Message-ID: <51630A48.1060401@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f51.google.com ([209.85.210.51]:49234 "EHLO
-	mail-da0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935491Ab3DHSTs (ORCPT
+Received: from mail-ia0-f179.google.com ([209.85.210.179]:41635 "EHLO
+	mail-ia0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935491Ab3DHSUD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 14:19:48 -0400
-Received: by mail-da0-f51.google.com with SMTP id g27so2699342dan.24
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Apr 2013 11:19:47 -0700 (PDT)
+	Mon, 8 Apr 2013 14:20:03 -0400
+Received: by mail-ia0-f179.google.com with SMTP id x24so5479064iak.38
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Apr 2013 11:19:59 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The following changes since commit da821eb7d42935b0f7056d98c75fd1150f6636f4:
+The following changes since commit ad38bdd15d5b97dcb1ffc46ea77c237e30312fbb:
 
-   Merge commit 'v3.9-rc5' into next/clk-exynos (2013-04-09 01:10:13 +0900)
+   ARM: SAMSUNG: Remove unused plat-samsung/time.c (2013-03-05 20:19:54 
++0900)
 
 are available in the git repository at:
 
-
    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/secure-exynos-for-v3.10
+tags/timer-samsung-for-v3.10
 
-for you to fetch changes up to beddf63fc8e01f06799bd6d7a2dd879885bbc9c6:
+for you to fetch changes up to 536504309c3c2da5a755263c7179ffe1b2e5b3dd:
 
-   ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up 
-(2013-04-09 01:52:30 +0900)
-
-----------------------------------------------------------------
-add support secure firmware for exynos
+   ARM: SAMSUNG: change GENERIC_GPIO to ARCH_REQUIRE_GPIOLIB (2013-04-04 
+09:36:24 +0900)
 
 ----------------------------------------------------------------
-Tomasz Figa (5):
-       ARM: Add interface for registering and calling firmware-specific 
-operations
-       ARM: EXYNOS: Add support for secure monitor calls
-       ARM: EXYNOS: Add support for Exynos secure firmware
-       ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
-       ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
+including fix for GENERIC_GPIO based on previous pull-request for 
+timer-samsung
 
-  Documentation/arm/firmware.txt                     | 88 
-++++++++++++++++++++++
-  .../devicetree/bindings/arm/samsung-boards.txt     | 10 +++
-  arch/arm/common/Makefile                           |  2 +
-  arch/arm/common/firmware.c                         | 18 +++++
-  arch/arm/include/asm/firmware.h                    | 66 ++++++++++++++++
-  arch/arm/mach-exynos/Makefile                      |  6 ++
-  arch/arm/mach-exynos/common.c                      | 35 +++++++++
-  arch/arm/mach-exynos/common.h                      |  2 +
-  arch/arm/mach-exynos/exynos-smc.S                  | 22 ++++++
-  arch/arm/mach-exynos/firmware.c                    | 70 +++++++++++++++++
-  arch/arm/mach-exynos/include/mach/map.h            |  3 +
-  arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
-  arch/arm/mach-exynos/platsmp.c                     | 32 ++++++--
-  arch/arm/mach-exynos/smc.h                         | 31 ++++++++
-  arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
-  15 files changed, 382 insertions(+), 5 deletions(-)
-  create mode 100644 Documentation/arm/firmware.txt
-  create mode 100644 arch/arm/common/firmware.c
-  create mode 100644 arch/arm/include/asm/firmware.h
-  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
-  create mode 100644 arch/arm/mach-exynos/firmware.c
-  create mode 100644 arch/arm/mach-exynos/smc.h
+----------------------------------------------------------------
+Kukjin Kim (1):
+       ARM: SAMSUNG: change GENERIC_GPIO to ARCH_REQUIRE_GPIOLIB
+
+  arch/arm/Kconfig | 4 ++--
+  1 file changed, 2 insertions(+), 2 deletions(-)
 
 -- 
 Thanks.
