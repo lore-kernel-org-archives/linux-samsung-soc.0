@@ -1,36 +1,55 @@
-From: Kukjin Kim <kgene.kim@gmail.com>
-Subject: Re: [PATCH] ARM: dts: fix bad merge of display timing node to exynos5250-smdk5250.dts
-Date: Tue, 09 Apr 2013 03:29:16 +0900
-Message-ID: <51630C7C.9040003@gmail.com>
-References: <1365439879-3398-1-git-send-email-dianders@chromium.org>	<51630B26.1000102@samsung.com> <CAD=FV=Ui2C49Z=39qboo9CdETrea2z+_+Wc77pjfDWX26XtxJg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Fix build error in exynos5250-smdk5250.dts
+Date: Tue, 09 Apr 2013 03:33:16 +0900
+Message-ID: <51630D6C.6030809@samsung.com>
+References: <1365397281-32217-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:42695 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935106Ab3DHS3X (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:35323 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935501Ab3DHSdY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 14:29:23 -0400
-In-Reply-To: <CAD=FV=Ui2C49Z=39qboo9CdETrea2z+_+Wc77pjfDWX26XtxJg@mail.gmail.com>
+	Mon, 8 Apr 2013 14:33:24 -0400
+Received: by mail-pa0-f43.google.com with SMTP id hz11so3414621pad.30
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Apr 2013 11:33:24 -0700 (PDT)
+In-Reply-To: <1365397281-32217-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Leela Krishna Amudala <l.krishna@samsung.com>, Jingoo Han <jg1.han@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On 04/09/13 03:25, Doug Anderson wrote:
-> Kukjin,
+On 04/08/13 14:01, Sachin Kamat wrote:
+> Fixes the following build error:
+> Error: arch/arm/boot/dts/exynos5250-smdk5250.dts:250.3-251.1 syntax error
+> FATAL ERROR: Unable to parse input tree
+> make[1]: *** [arch/arm/boot/dts/exynos5250-smdk5250.dtb] Error 1
+> make: *** [dtbs] Error 2
 >
-> On Mon, Apr 8, 2013 at 11:23 AM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->> Thanks for your pointing out. But it should be fixed with re-sorting out the
->> branch.
+> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+> ---
+> Based on Kukjin's for-next tree.
+> ---
+>   arch/arm/boot/dts/exynos5250-smdk5250.dts |    1 +
+>   1 file changed, 1 insertion(+)
 >
-> No problem with however you want to solve it.  ;)  Seemed that the
-> patch was the easiest way to report the problem in any case...
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index 4be14df..26d856b 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -239,6 +239,7 @@
+>   			vback-porch =<4>;
+>   			vfront-porch =<4>;
+>   			vsync-len =<4>;
+> +		};
+>   	};
 >
-Makes sense :-)
+>   	fixed-rate-clocks {
 
-BTW, if any problems on current for-next, please kindly let me know.
+Current for-next has no problem with re-sorting out the branch.
+
+Anyway, thanks for your checking and if any problems, please let me know.
 
 Thanks.
 
