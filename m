@@ -1,71 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 0/3] clk: Exynos: Register audio subsytem clocks using
- common clk framework
-Date: Mon, 08 Apr 2013 12:48:41 +0200
-Message-ID: <5162A089.4030405@samsung.com>
-References: <1365144043-17101-1-git-send-email-padma.v@samsung.com>
- <515EC996.8030904@samsung.com>
- <CAAgF-Be1Hvkt=BDK913KTu66M4izxbuOuORQ8hyT-GZR1+ABnQ@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to
+ drivers/cpufreq
+Date: Mon, 08 Apr 2013 19:41:29 +0900
+Message-ID: <2cf001ce3445$a115eec0$e341cc40$%kim@samsung.com>
+References: <cover.1365079581.git.viresh.kumar@linaro.org>
+ <1769336.FkfMpuXqqb@vostro.rjw.lan>
+ <2ccd01ce3439$911b51b0$b351f510$%kim@samsung.com>
+ <2166815.0SZ6SYhSDN@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:64422 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935287Ab3DHKsr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 06:48:47 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MKX00KUVNAI3K70@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Apr 2013 11:48:45 +0100 (BST)
-In-reply-to: <CAAgF-Be1Hvkt=BDK913KTu66M4izxbuOuORQ8hyT-GZR1+ABnQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <2166815.0SZ6SYhSDN@vostro.rjw.lan>
+Content-language: ko
+Sender: linux-pm-owner@vger.kernel.org
+To: "'Rafael J. Wysocki'" <rjw@sisk.pl>
+Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>, robin.randhawa@arm.com, Steve.Bannister@arm.com, Liviu.Dudau@arm.com, charles.garcia-tobin@arm.com, arvind.chauhan@arm.com, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, patches@linaro.org, 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, SangSu Park <sangsu4u.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi,
+Rafael J. Wysocki wrote:
 
-On 04/06/2013 12:16 PM, Padma Venkat wrote:
-> On Fri, Apr 5, 2013 at 6:24 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->>
->> From a brief look Exynos4 and Exynos5 Audio Subsystem CLKCON very similar.
->> I've just found bit 2 of 0x0381_0008 register is not used on Exynos5250.
+[...]
+
+> > >
+> > > Well, I'm dropping it.  Please merge via the Samsung tree.
+> > >
+> > OK, I will.
+> >
+> > I got patch file from Viresh, and there is a sign from Rafael,
+> > but it should be ack. So Rafael, let me use your ack on this patch when
+> > I apply. If any problems, please let me know.
 > 
-> I added bit 2 as i2s_bus gate clock or you are pointing to something else?
-
-Sorry, I should have written "bit 1".
-
->> Additionally the Audio Subsystem Clock controller is present on S5PV210
->> SoCs and IMO compatible property you used is too generic. I would propose
->> to use at least:
->>
->> "samsung,s5pv210-audss-clock"    - for S5PV210
->> "samsung,exynos4210-audss-clock" - for Exynos4
->> "samsung,exynos5250-audss-clock" - for Exynos5
+> Since it was signed-off by me before, you can assume it's been ACKed as
+> well.
 > 
-> Different compatible names means different driver files for exynos4 and 5??
+Thanks.
 
-No, it would be same driver but with multiple entries in the of_match_table.
+- Kukjin
 
-> I haven't seen any difference between Exynos4 and Exynos5 audio subsystem.
-> Can't we maintain one for both? If any extra clock instance is added
-> on newer SoCs
-> anyway it gets added at the end of the list of clocks. Please correct
-> me if I am wrong.
-
-Sure, the differences between Exynos4 and Exynos5 audio subsystem are very
-minor ones. So we could easily use one clock driver for those. Probably same
-driver can be used for S5PV210, an any differences could be handled in the
-driver based on the compatible property.
-
-
-Thanks,
-Sylwester
-
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
