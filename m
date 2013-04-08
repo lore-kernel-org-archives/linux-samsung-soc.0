@@ -1,107 +1,104 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V5 0/4] cpufreq: exynos5440: support for cpufreq driver
-Date: Mon, 08 Apr 2013 21:02:44 +0900
-Message-ID: <2d0501ce3450$fac4e9c0$f04ebd40$%kim@samsung.com>
-References: <1364457923-8499-1-git-send-email-amit.daniel@samsung.com>
- <2949363.nNl2A6XIoS@vostro.rjw.lan>
- <CADGdYn7ZRCSymU7k3Sn4mbS6B=dxy1N+vhQuyiFnhOQLLzrTbw@mail.gmail.com>
+Subject: RE: [PATCH 9/9] ARM: dts: Add device tree node for exynos5440 TMU
+ controller
+Date: Mon, 08 Apr 2013 21:24:59 +0900
+Message-ID: <2d0d01ce3454$166aac70$43400550$%kim@samsung.com>
+References: <1364297642-2746-1-git-send-email-amit.daniel@samsung.com>
+ <1364297642-2746-10-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CADGdYn7ZRCSymU7k3Sn4mbS6B=dxy1N+vhQuyiFnhOQLLzrTbw@mail.gmail.com>
+In-reply-to: <1364297642-2746-10-git-send-email-amit.daniel@samsung.com>
 Content-language: ko
 Sender: linux-pm-owner@vger.kernel.org
-To: 'amit daniel kachhap' <amit.daniel@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, cpufreq@vger.kernel.org, 'Inderpal Singh' <inderpal.singh@linaro.org>, 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+To: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-pm@vger.kernel.org
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Zhang Rui' <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-amit daniel kachhap wrote:
+Amit Daniel Kachhap wrote:
 > 
-> On Fri, Apr 5, 2013 at 6:08 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> > On Thursday, March 28, 2013 01:35:18 PM Amit Daniel Kachhap wrote:
-> >> Submitting the V5 version of exynos5440 cpufreq driver. This patchset
-> addresses
-> >> all the coding and design concerns raised especially by Viresh.
-> >>
-> >> Changes in V5:
-> >> * Removed the unnecessary DT look up entry from mach-exynos5-dt.c.
-> >> * Fixed all coding and comments issue raised by Viresh.
-> >>
-> >> Changes in V4:
-> >> * Added dev_err logs instead of pr_err.
-> >> * Used the devm_ioremap_resource API.
-> >> * Implemented several coding guidelines and minor error comments from
-> Sylwester,
-> >>   Russell and Viresh.
-> >>
-> >> Changes in V3:
-> >> * Converted the driver to probe based as suggested by Viresh. This is
-> also
-> >>   beneficial for multiplatform kernel.
-> >> * Other coding guidelines related changes.
-> >> * Moved the DT node outside cpu0 node as the driver is now a platform
-> >>   driver.
-> >>
-> >> Changes in V2:
-> >> * Added OPP library support to parse DT parameters.
-> >> * Removed a hack to handle interrupts in bootup.
-> >> * Implemented other review comments from Viresh and Inder.
-> >>
-> >> All these patches are dependent on Thomas Abraham common clock patches.
-> >> (http://www.mail-archive.com/linux-samsung-
-> soc@vger.kernel.org/msg15860.html)
-> >> This whole patch series is based on 3.9-rc4.
-> >>
-> >> Amit Daniel Kachhap (4):
-> >>   cpufreq: exynos: Add cpufreq driver for exynos5440
-> >>   cpufreq: exynos: Remove error return even if no soc is found
-> >>   arm: exynos: Enable OPP library support for exynos5440
-> >>   arm: dts: Add cpufreq controller node for Exynos5440 SoC
-> >>
-> >>  .../bindings/cpufreq/cpufreq-exynos5440.txt        |   28 ++
-> >>  arch/arm/boot/dts/exynos5440.dtsi                  |   12 +
-> >>  arch/arm/mach-exynos/Kconfig                       |    2 +
-> >>  drivers/cpufreq/Kconfig.arm                        |    9 +
-> >>  drivers/cpufreq/Makefile                           |    1 +
-> >>  drivers/cpufreq/exynos-cpufreq.c                   |    2 +-
-> >>  drivers/cpufreq/exynos5440-cpufreq.c               |  474
-> ++++++++++++++++++++
-> >>  7 files changed, 527 insertions(+), 1 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-
-> exynos5440.txt
-> >>  create mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
-> >
-> > Is this for me or the Samsung tree?
-> >
-> > If it's for me, I need ACKs from the Samsung tree maintainers.  Also,
-> please
-> > address the Viresh's comments.
-> >
-> > Thanks,
-> > Rafael
-> >
-> Hi Rafael,
+> This patch adds device node for TMU controller. There are 3
+> instances of the controllers so 3 nodes are created.
 > 
-> I submitted the V6 version with all comments from Viresh addressed.
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5440.dtsi |   43
+> +++++++++++++++++++++++++++++++++++++
+>  1 files changed, 43 insertions(+), 0 deletions(-)
 > 
-> Hi Kukjin Kim,
+> diff --git a/arch/arm/boot/dts/exynos5440.dtsi
+> b/arch/arm/boot/dts/exynos5440.dtsi
+> index 5f3562a..b74ce9f 100644
+> --- a/arch/arm/boot/dts/exynos5440.dtsi
+> +++ b/arch/arm/boot/dts/exynos5440.dtsi
+> @@ -16,6 +16,12 @@
 > 
-> Any suggestion on how this patch should be merged. In my opinion it
-> should go via Rafael's tree as this patch uses some fixes present in
-> Rafael's tree like modified cpufreq_notify_transition API.
+>  	interrupt-parent = <&gic>;
 > 
-Yes, I agree. The v6 series including resending 1/4 patch looks good to me.
-But the patch V6 4/4 would be sent to upstream via samsung tree to avoid
-useless merge conflicts and I think, it's possible.
+> +	aliases {
+> +		tmuctrl0 = &tmuctrl_0;
+> +		tmuctrl1 = &tmuctrl_1;
+> +		tmuctrl2 = &tmuctrl_2;
+> +	};
+> +
+>  	gic:interrupt-controller@2E0000 {
+>  		compatible = "arm,cortex-a15-gic";
+>  		#interrupt-cells = <3>;
+> @@ -156,4 +162,41 @@
+>  		reg = <0x130000 0x1000>;
+>  		interrupts = <0 17 0>, <0 16 0>;
+>  	};
+> +
+> +	tmu_ctrl_info: tmu-ctrl-info {
+> +		gain = <5>;
+> +		reference-voltage = <16>;
+> +		noise-cancel-mode = <4>;
+> +		cal-type = <2>;
+> +		cal-mode = <0>;
+> +		efuse-value = <0x5b2c>;
+> +		threshold-falling = <5>;
+> +	};
+> +
+> +	tmuctrl_0: tmuctrl@160118 {
+> +		compatible = "samsung,exynos5440-tmu";
+> +		reg = <0x160118 0x300>;
+> +		interrupts = <0 58 0>;
+> +		clocks = <&clock 8>;
 
-So Rafael, please take 1/4 ~ 3/4 patches in your tree with my ack.
+Should be:
++		clocks = <&clock 21>;
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> +		clock-names = "tmu_apbif";
+> +		tmu-ctrl-data = <&tmu_ctrl_info>;
+> +	};
+> +
+> +	tmuctrl_1: tmuctrl@16011C {
+> +		compatible = "samsung,exynos5440-tmu";
+> +		reg = <0x16011C 0x300>;
+> +		interrupts = <0 58 0>;
+> +		clocks = <&clock 8>;
 
-If any problems, please let me know.
++		clocks = <&clock 21>;
 
-Thanks.
+> +		clock-names = "tmu_apbif";
+> +		tmu-ctrl-data = <&tmu_ctrl_info>;
+> +	};
+> +
+> +	tmuctrl_2: tmuctrl@160120 {
+> +		compatible = "samsung,exynos5440-tmu";
+> +		reg = <0x160120 0x300>;
+> +		interrupts = <0 58 0>;
+> +		clocks = <&clock 8>;
+
++		clocks = <&clock 21>;
+
+> +		clock-names = "tmu_apbif";
+> +		tmu-ctrl-data = <&tmu_ctrl_info>;
+> +	};
+>  };
+> --
+> 1.7.1
 
 - Kukjin
 
