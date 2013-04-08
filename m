@@ -1,43 +1,51 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v2 1/2] ARM: dts: Add MFC clock entries for exynos4
-Date: Mon,  8 Apr 2013 11:44:16 +0530
-Message-ID: <1365401657-5428-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 0/7] Add G2D nodes to Exynos4 machines
+Date: Mon, 08 Apr 2013 16:20:13 +0900
+Message-ID: <2c8e01ce3429$8311ac00$89350400$%kim@samsung.com>
+References: <1361163733-4338-1-git-send-email-sachin.kamat@linaro.org>
+ <CAK9yfHyQ=2EjRKknhN7nKUygnryKfWZ2A61w1+WRtrzLaF3SBA@mail.gmail.com>
+ <052101ce1e25$4370c410$ca524c30$%kim@samsung.com>
+ <CAK9yfHwTkPWy5i-NcK3oYYzr_L6kAwXAwky+n6T4NptcokTPFg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f49.google.com ([209.85.210.49]:56055 "EHLO
-	mail-da0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934769Ab3DHG0U (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:8209 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934362Ab3DHHUP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 02:26:20 -0400
-Received: by mail-da0-f49.google.com with SMTP id t11so2454236daj.8
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Apr 2013 23:26:19 -0700 (PDT)
+	Mon, 8 Apr 2013 03:20:15 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MKX00DBGDP4N4O0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 08 Apr 2013 16:20:14 +0900 (KST)
+In-reply-to: <CAK9yfHwTkPWy5i-NcK3oYYzr_L6kAwXAwky+n6T4NptcokTPFg@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-Added MFC related clock entries in exynos4.dtsi file.
+Sachin Kamat wrote:
+> 
+> On 11 March 2013 12:24, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Sachin Kamat wrote:
+> >>
+> >> Hi Kukjin,
+> >>
+> >> Can you please look into this series as it is pending since quite some
+> time.
+> >>
+> > Applied, I have another opinion about the compatible string though...
+> 
+> Couldn't find this series in your latest for-next. Please let me know
+> which branch this is applied to.
+> 
+Please check again then if any problems, let me know. I think, it should be
+fine :-)
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Based on Kukjin's for-next tree.
-No change since v1 (except added reviewed-by tag).
----
- arch/arm/boot/dts/exynos4.dtsi |    2 ++
- 1 file changed, 2 insertions(+)
+Thanks for your gentle reminder.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 800ff11..74f18d2 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -155,6 +155,8 @@
- 		reg = <0x13400000 0x10000>;
- 		interrupts = <0 94 0>;
- 		samsung,power-domain = <&pd_mfc>;
-+		clocks = <&clock 170>, <&clock 273>;
-+		clock-names = "sclk_mfc", "mfc";
- 		status = "disabled";
- 	};
- 
--- 
-1.7.9.5
+- Kukjin
