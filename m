@@ -1,43 +1,101 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C24XX: Remove unused GPIO drive strength register
- definitions
-Date: Mon, 08 Apr 2013 19:01:02 +0900
-Message-ID: <2cd801ce343f$fa20a330$ee61e990$%kim@samsung.com>
-References: <1365366588-19517-1-git-send-email-s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ARM: Samsung: Select ARM_CPU_SUSPEND when required
+Date: Mon, 08 Apr 2013 12:27:34 +0200
+Message-ID: <51629B96.9050504@samsung.com>
+References: <1365366442-16025-1-git-send-email-s.nawrocki@samsung.com>
+ <2cd601ce343f$7d6aac50$784004f0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:31080 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934889Ab3DHKBD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Apr 2013 06:01:03 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MKX005QYL5HMWS0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Apr 2013 19:01:02 +0900 (KST)
-In-reply-to: <1365366588-19517-1-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <2cd601ce343f$7d6aac50$784004f0$%kim@samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
 
-Sylwester Nawrocki wrote:
+On 04/08/2013 11:57 AM, Kukjin Kim wrote:
+> Sylwester Nawrocki wrote:
+[...]
+> Yes, right. The pm.c in plat-samsung should be built with
+> arch/arm/kernel/sleep.S and suspend.c.
 > 
-> There is currently no users of these definitions so remove them.
+> BTW it should be shown in alphabetical order and we don't need more
+> following in mach-exynos.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  arch/arm/mach-s3c24xx/regs-dsc.h |  203 +--------------------------------
-> -----
->  1 files changed, 4 insertions(+), 199 deletions(-)
+> --------8<----------------8<--------
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 2f45906..bc0a8b2 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -31,7 +31,6 @@ config CPU_EXYNOS4210
+>  	bool "SAMSUNG EXYNOS4210"
+>  	default y
+>  	depends on ARCH_EXYNOS4
+> -	select ARM_CPU_SUSPEND if PM
+>  	select PM_GENERIC_DOMAINS
+>  	select S5P_PM if PM
+>  	select S5P_SLEEP if PM
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index b708b3e..30a976d 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -8,6 +8,7 @@ config PLAT_SAMSUNG
+>  	Bool
+>  	depends on PLAT_S3C24XX || ARCH_S3C64XX || PLAT_S5P
+> 	default y
+> +	select ARM_CPU_SUSPEND if PM
+>  	select GENERIC_IRQ_CHIP
+>  	select NO_IOPORT
+>  	help
+> --------8<----------------8<--------
 > 
-Thanks for your cleanup ;-)
+> If you have any objections, let me know.
 
-Applied.
+Yes, this looks better. However after posting this patch I noticed linker
+errors in some builds due to undefined cpu_arm920_do_suspend,
+cpu_arm920_do_resume routines.
 
-- Kukjin
+It seems it is because various cpu_*_do_suspend routines are selected by
+CONFIG_PM_SLEEP.  And the PM code in arch/arm/mach-s3c24xx, arch/arm/mach-
+s3c64xx is selected by CONFIG_PM.
+
+$ git grep -1 "ENTRY(cpu_.*_do_suspend"
+arch/arm/mm/proc-arm920.S-#ifdef CONFIG_PM_SLEEP
+arch/arm/mm/proc-arm920.S:ENTRY(cpu_arm920_do_suspend)
+arch/arm/mm/proc-arm920.S-      stmfd   sp!, {r4 - r6, lr}
+--
+arch/arm/mm/proc-arm926.S-#ifdef CONFIG_PM_SLEEP
+arch/arm/mm/proc-arm926.S:ENTRY(cpu_arm926_do_suspend)
+arch/arm/mm/proc-arm926.S-      stmfd   sp!, {r4 - r6, lr}
+--
+arch/arm/mm/proc-mohawk.S-#ifdef CONFIG_PM_SLEEP
+arch/arm/mm/proc-mohawk.S:ENTRY(cpu_mohawk_do_suspend)
+arch/arm/mm/proc-mohawk.S-      stmfd   sp!, {r4 - r9, lr}
+--
+arch/arm/mm/proc-sa1100.S-#ifdef CONFIG_PM_SLEEP
+arch/arm/mm/proc-sa1100.S:ENTRY(cpu_sa1100_do_suspend)
+arch/arm/mm/proc-sa1100.S-      stmfd   sp!, {r4 - r6, lr}
+--
+arch/arm/mm/proc-v6.S-#ifdef CONFIG_PM_SLEEP
+arch/arm/mm/proc-v6.S:ENTRY(cpu_v6_do_suspend)
+arch/arm/mm/proc-v6.S-  stmfd   sp!, {r4 - r9, lr}
+--
+arch/arm/mm/proc-v7.S-#ifdef CONFIG_ARM_CPU_SUSPEND
+arch/arm/mm/proc-v7.S:ENTRY(cpu_v7_do_suspend)
+arch/arm/mm/proc-v7.S-  stmfd   sp!, {r4 - r10, lr}
+--
+arch/arm/mm/proc-xsc3.S-#ifdef CONFIG_PM_SLEEP
+arch/arm/mm/proc-xsc3.S:ENTRY(cpu_xsc3_do_suspend)
+arch/arm/mm/proc-xsc3.S-        stmfd   sp!, {r4 - r9, lr}
+--
+arch/arm/mm/proc-xscale.S-#ifdef CONFIG_PM_SLEEP
+arch/arm/mm/proc-xscale.S:ENTRY(cpu_xscale_do_suspend)
+arch/arm/mm/proc-xscale.S-      stmfd   sp!, {r4 - r9, lr}
+
+However I can't reproduce it now :-/ Anyway the $subject patch fixes
+the main issue, which I can easily reproduce here as well. So I'll
+prepare another patch if needed when I get back to this later.
+
+Thanks,
+Sylwester
