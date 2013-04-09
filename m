@@ -1,43 +1,63 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH RFC] rtc: rtc-s3c: use clk_prepare_enable and clk_disable_unprepare
-Date: Tue, 9 Apr 2013 19:50:45 +0530
-Message-ID: <CAFp+6iH1+dtfijt2Hf6k7jT8irgS63_32oUpPaOZ=CPNa88tUA@mail.gmail.com>
-References: <1365500744-14839-1-git-send-email-gautam.vivek@samsung.com>
-	<5163E8EB.1050803@samsung.com>
-	<CAFp+6iE-ZYSNHZBntTcX8fESLB2FXOr6idM8_Q3Rd7T3s_c4Dw@mail.gmail.com>
-	<CAFp+6iGS-4iv-PKTKP4OhwVvTsDoPnc-9N-6AAr5x=Bz9r=vTw@mail.gmail.com>
-	<51641ED3.1090603@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f45.google.com ([209.85.214.45]:52741 "EHLO
-	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1765085Ab3DIOUr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Apr 2013 10:20:47 -0400
-In-Reply-To: <51641ED3.1090603@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH] rtc: rtc-s3c: use clk_prepare_enable and clk_disable_unprepare
+Date: Tue, 09 Apr 2013 19:57:40 +0530
+Message-ID: <1365517660-9322-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, dianders@chromium.org, Thomas Abraham <thomas.abraham@linaro.org>, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, kgene.kim@samsung.com, dianders@chromium.org, Thomas Abraham <thomas.ab@samsung.com>
 
-On Tue, Apr 9, 2013 at 7:29 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 04/09/2013 03:34 PM, Vivek Gautam wrote:
->>> Aah !! actually missed a similar patch from Thomas Abraham :(
->>> > doing the same as suggested by you.
->>> > Its available at:
->>> > http://patchwork.ozlabs.org/patch/188687/
->> There's a change required in the above mentioned patch, so possibly
->> Thomas can go ahead and post the next version
->> of that.
->
-> Why not make that change yourself if you need it ? That patch is
-> really old, maybe Thomas is busy with other things now.
+From: Thomas Abraham <thomas.abraham@linaro.org>
 
-Sure, will post a patch fixing this. :-)
+Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+calls as required by common clock framework.
 
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+---
 
+The v1 of this patch is pretty old, but the change needs to be merged to
+avoid getting those needless WARN_ON() dumps on console.
+
+Changes from v1:
+ - Not using clk_disable_unprepare() at the end of s3c_rtc_probe(), since
+   this will unprepare the rtc clock which is again getting used in other
+   funtions later.
+ - Using clk_unprepare() at the remove() instead to fix things up.
+
+ drivers/rtc/rtc-s3c.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index fb994e9..e3528c9 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -430,6 +430,7 @@ static int s3c_rtc_remove(struct platform_device *dev)
+ 
+ 	s3c_rtc_setaie(&dev->dev, 0);
+ 
++	clk_unprepare(rtc_clk);
+ 	rtc_clk = NULL;
+ 
+ 	return 0;
+@@ -498,7 +499,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	clk_enable(rtc_clk);
++	clk_prepare_enable(rtc_clk);
+ 
+ 	/* check to see if everything is setup correctly */
+ 
+@@ -578,7 +579,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+ 
+  err_nortc:
+ 	s3c_rtc_enable(pdev, 0);
+-	clk_disable(rtc_clk);
++	clk_disable_unprepare(rtc_clk);
+ 
+ 	return ret;
+ }
 -- 
-Thanks & Regards
-Vivek
+1.7.6.5
