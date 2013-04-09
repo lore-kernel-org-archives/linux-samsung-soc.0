@@ -1,50 +1,74 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH v2] mfd: remove twelve unused Kconfig symbols
-Date: Tue, 9 Apr 2013 10:14:40 +0200
-Message-ID: <20130409081440.GI24058@zurbaran>
-References: <1363732701.1390.45.camel@x61.thuisdomein>
- <20130320082427.GB28775@opensource.wolfsonmicro.com>
- <1363770579.1390.82.camel@x61.thuisdomein>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] pinctrl: exynos5440: add gpio interrupt support
+Date: Tue, 9 Apr 2013 10:23:03 +0200
+Message-ID: <CACRpkdbEUe1NkOY7wR2FU+0Y=D5Qd=Lu2Zvv=TPBBCbWja0HMQ@mail.gmail.com>
+References: <1364310754-3692-1-git-send-email-kgene.kim@samsung.com>
+	<1364310754-3692-3-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:49599 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935136Ab3DIIPD (ORCPT
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:46243 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935334Ab3DIIXF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Apr 2013 04:15:03 -0400
-Content-Disposition: inline
-In-Reply-To: <1363770579.1390.82.camel@x61.thuisdomein>
+	Tue, 9 Apr 2013 04:23:05 -0400
+Received: by mail-ie0-f172.google.com with SMTP id c10so8219703ieb.31
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Apr 2013 01:23:04 -0700 (PDT)
+In-Reply-To: <1364310754-3692-3-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Abraham <thomas.ab@samsung.com>
 
-Hi Paul,
+On Tue, Mar 26, 2013 at 4:12 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-On Wed, Mar 20, 2013 at 10:09:39AM +0100, Paul Bolle wrote:
-> Twelve Kconfig symbols, all related to WM8350, WM8351, and WM8352, are
-> unused. Commit 19d57ed5a308472a02e773f33c03ad4cb2ec6a9 ("mfd: Remove
-> custom wm8350 cache implementation") removed all their (actual) users.
-> Remove these symbols too.
-> 
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
-> Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
-> 0) This version adds Mark's ACK. It is now also sent to the ARM
-> maintainers, as Mark suggested.
-> 
-> 1) Still only eyeball tested.
-> 
->  arch/arm/mach-imx/Kconfig     |  2 --
->  arch/arm/mach-s3c64xx/Kconfig |  3 ---
->  drivers/mfd/Kconfig           | 48 -------------------------------------------
->  3 files changed, 53 deletions(-)
-Applied to my mfd-next tree, thanks.
+> From: Thomas Abraham <thomas.ab@samsung.com>
+>
+> Exynos5440 supports gpio interrupts on gpios 16 to 23. The eight interrupt lines
+> originating from the pin-controller are connected to the gic. Add irq-chip support
+> for these interrupts.
+>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Cheers,
-Samuel.
+Basically really nice. Patch has been applied, but some comments
+for future reference:
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+> +/* gpiolib gpio_to_irq callback function */
+> +static int exynos5440_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+> +{
+> +       struct exynos5440_pinctrl_priv_data *priv = dev_get_drvdata(gc->dev);
+> +       unsigned int virq;
+
+I'm a bit annoyed by use of the abbreviation "virq" as if the IRQs were
+"virtual", they are not - this implies that the Linux IRQ numbers are not
+"real" or something.
+
+I use the nomenclature:
+
+irq = Linux IRQ
+hwirq = whatever offset that IRQ has in the hardware IRQ controller.
+
+virq I think is confusing...
+
+> +static irqreturn_t exynos5440_gpio_irq(int irq, void *data)
+> +{
+> +       struct exynos5440_gpio_intr_data *intd = data;
+> +       struct exynos5440_pinctrl_priv_data *d = intd->priv;
+> +       int virq;
+> +
+> +       virq = irq_linear_revmap(d->irq_domain, intd->gpio_int);
+> +       if (!virq)
+> +               return IRQ_NONE;
+> +       generic_handle_irq(virq);
+> +       return IRQ_HANDLED;
+> +}
+
+Same here. Actually, I guess irq_linear_revmap works here,
+but irq_find_mapping(domain, hwirq) is more archaic, could
+you test if that works as well and make a follow-up patch to
+change it?
+
+Yours,
+Linus Walleij
