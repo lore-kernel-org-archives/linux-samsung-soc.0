@@ -1,63 +1,59 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH] rtc: rtc-s3c: use clk_prepare_enable and clk_disable_unprepare
-Date: Tue, 09 Apr 2013 19:57:40 +0530
-Message-ID: <1365517660-9322-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, dianders@chromium.org, Thomas Abraham <thomas.abraham@linaro.org>, Vivek Gautam <gautam.vivek@samsung.com>
+From: Kukjin Kim <kgene.kim@gmail.com>
+Subject: Re: [GIT PULL 06/10] 2nd pinctrl-exynos for v3.10
+Date: Tue, 09 Apr 2013 23:55:08 +0900
+Message-ID: <51642BCC.6000200@gmail.com>
+References: <51630A18.6010801@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f53.google.com ([209.85.210.53]:52016 "EHLO
+	mail-da0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S936265Ab3DIOzN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Apr 2013 10:55:13 -0400
+Received: by mail-da0-f53.google.com with SMTP id n34so3067943dal.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Apr 2013 07:55:13 -0700 (PDT)
+In-Reply-To: <51630A18.6010801@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-From: Thomas Abraham <thomas.abraham@linaro.org>
+On 04/09/13 03:19, Kukjin Kim wrote:
+> The following changes since commit
+> 97916777d6904e24b86eac77da58ef7cb09d539d:
+>
+> ARM: EXYNOS: skip wakeup interrupt registration for exynos5250 if
+> pinctrl is enabled (2013-03-05 20:59:12 +0900)
+>
+> are available in the git repository at:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/pinctrl-exynos-for-v3.10
+>
+> for you to fetch changes up to 790af0a51bdcbf504814be2673f96facfdd74981:
+>
+> pinctrl: exynos5440: add gpio interrupt support (2013-04-08 23:55:41 +0900)
+>
+> ----------------------------------------------------------------
+> add support gpio interrupt for exynos5440
+>
+> ----------------------------------------------------------------
+> Thomas Abraham (2):
+> pinctrl: exynos5440: fix probe failure due to missing pin-list in config
+> nodes
+> pinctrl: exynos5440: add gpio interrupt support
+>
+> drivers/pinctrl/pinctrl-exynos5440.c | 151
+> ++++++++++++++++++++++++++++++++++-
+> 1 file changed, 148 insertions(+), 3 deletions(-)
+>
 
-Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
-calls as required by common clock framework.
+Hi Arnd, Olof
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
+Please hold on this pulling because this already merged into pinctrl tree.
 
-The v1 of this patch is pretty old, but the change needs to be merged to
-avoid getting those needless WARN_ON() dumps on console.
+Thanks.
 
-Changes from v1:
- - Not using clk_disable_unprepare() at the end of s3c_rtc_probe(), since
-   this will unprepare the rtc clock which is again getting used in other
-   funtions later.
- - Using clk_unprepare() at the remove() instead to fix things up.
-
- drivers/rtc/rtc-s3c.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index fb994e9..e3528c9 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -430,6 +430,7 @@ static int s3c_rtc_remove(struct platform_device *dev)
- 
- 	s3c_rtc_setaie(&dev->dev, 0);
- 
-+	clk_unprepare(rtc_clk);
- 	rtc_clk = NULL;
- 
- 	return 0;
-@@ -498,7 +499,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	clk_enable(rtc_clk);
-+	clk_prepare_enable(rtc_clk);
- 
- 	/* check to see if everything is setup correctly */
- 
-@@ -578,7 +579,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 
-  err_nortc:
- 	s3c_rtc_enable(pdev, 0);
--	clk_disable(rtc_clk);
-+	clk_disable_unprepare(rtc_clk);
- 
- 	return ret;
- }
--- 
-1.7.6.5
+- Kukjin
