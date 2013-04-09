@@ -1,58 +1,96 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 0/10] Samsung stuff for v3.10
-Date: Tue, 9 Apr 2013 23:20:06 +0200
-Message-ID: <201304092320.06222.arnd@arndb.de>
-References: <516309C4.3000008@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [GIT PULL 08/10] secure-exynos for v3.10
+Date: Tue, 9 Apr 2013 16:43:48 -0500
+Message-ID: <CAL_JsqJLVae44Sr2qf0=YE0DokkeetHFnyFEMKhYpY8sv58Mjw@mail.gmail.com>
+References: <51630A36.6030505@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:61320 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935572Ab3DIVUS (ORCPT
+Received: from mail-qa0-f44.google.com ([209.85.216.44]:52866 "EHLO
+	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935227Ab3DIVnt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Apr 2013 17:20:18 -0400
-In-Reply-To: <516309C4.3000008@samsung.com>
+	Tue, 9 Apr 2013 17:43:49 -0400
+Received: by mail-qa0-f44.google.com with SMTP id o13so1996888qaj.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Apr 2013 14:43:49 -0700 (PDT)
+In-Reply-To: <51630A36.6030505@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Monday 08 April 2013, Kukjin Kim wrote:
-> 
-> Hi Arnd, Olof
-> 
-> This is 2nd pull-request for Samsung stuff for v3.10.
-> 
-> If any problems, please kindly let me know.
+On Mon, Apr 8, 2013 at 1:19 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> The following changes since commit da821eb7d42935b0f7056d98c75fd1150f6636f4:
+>
+>   Merge commit 'v3.9-rc5' into next/clk-exynos (2013-04-09 01:10:13 +0900)
+>
+> are available in the git repository at:
+>
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/secure-exynos-for-v3.10
+>
+> for you to fetch changes up to beddf63fc8e01f06799bd6d7a2dd879885bbc9c6:
+>
+>   ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
+> (2013-04-09 01:52:30 +0900)
+>
+> ----------------------------------------------------------------
+> add support secure firmware for exynos
+>
+> ----------------------------------------------------------------
+> Tomasz Figa (5):
+>       ARM: Add interface for registering and calling firmware-specific
+> operations
 
-I managed to pull them all in, aside from the 6/10, since you asked us
-to defer that one. There were a lot more small mistakes, and I think
-I've managed to fix them all up, but please check if the for-next
-branch now actually works.
+I missed the original series, but looking at this patch now I'm not
+convinced this is all that generic despite the name. Should PSCI be
+using this for example?
 
-A few more requests for the future:
+Also, a comment from Barry Song that "firmware_ops" is too generic for
+global name was not addressed.
 
-* Please send branches earlier. You already sent a number of them
-very early, but then we saw very little until now. I'd rather
-get a number of follow-on pull requests than getting everything
-at once, which has lead to stuff getting rejected in the past
-when things break, as you remember. I've been waiting for
-ages now to rebase my multiplatform series on the things you
-have in your tree, I hope we can still make it in time.
+Rob
 
-* Half a sentence of tag description is not really enough for
-a long series. Please explain in the tag what the purpose of
-the series is, as you do for a patch.
-
-* Mention interdependencies between branches explicitly. It
-causes us a lot of extra work having to find out what patches
-are actually new in a series when you have based them on earlier
-patches.
-
-* Look at the patches that are already merged and test them.
-I've had to fix up build errors now that have been present
-in linux-next for multiple weeks.
-
-	Arnd
+>       ARM: EXYNOS: Add support for secure monitor calls
+>       ARM: EXYNOS: Add support for Exynos secure firmware
+>       ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
+>       ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
+>
+>  Documentation/arm/firmware.txt                     | 88
+> ++++++++++++++++++++++
+>  .../devicetree/bindings/arm/samsung-boards.txt     | 10 +++
+>  arch/arm/common/Makefile                           |  2 +
+>  arch/arm/common/firmware.c                         | 18 +++++
+>  arch/arm/include/asm/firmware.h                    | 66 ++++++++++++++++
+>  arch/arm/mach-exynos/Makefile                      |  6 ++
+>  arch/arm/mach-exynos/common.c                      | 35 +++++++++
+>  arch/arm/mach-exynos/common.h                      |  2 +
+>  arch/arm/mach-exynos/exynos-smc.S                  | 22 ++++++
+>  arch/arm/mach-exynos/firmware.c                    | 70 +++++++++++++++++
+>  arch/arm/mach-exynos/include/mach/map.h            |  3 +
+>  arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
+>  arch/arm/mach-exynos/platsmp.c                     | 32 ++++++--
+>  arch/arm/mach-exynos/smc.h                         | 31 ++++++++
+>  arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
+>  15 files changed, 382 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/arm/firmware.txt
+>  create mode 100644 arch/arm/common/firmware.c
+>  create mode 100644 arch/arm/include/asm/firmware.h
+>  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
+>  create mode 100644 arch/arm/mach-exynos/firmware.c
+>  create mode 100644 arch/arm/mach-exynos/smc.h
+>
+> --
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
