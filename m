@@ -1,93 +1,157 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH 0/9] thermal: exynos: Add thermal driver for exynos5440
-Date: Tue, 9 Apr 2013 10:54:17 +0530
-Message-ID: <CADGdYn7_DP-8q8ERAFLQ74YUm0V+DST5+1ntH900Tka5K0n6fQ@mail.gmail.com>
-References: <1364297642-2746-1-git-send-email-amit.daniel@samsung.com>
-	<237c01ce2f8c$92eb8ac0$b8c2a040$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:34810 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751813Ab3DIFYS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Apr 2013 01:24:18 -0400
-In-Reply-To: <237c01ce2f8c$92eb8ac0$b8c2a040$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v4] mmc: dw_mmc: let device core setup the default pin
+ configuration
+Date: Tue, 09 Apr 2013 11:29:46 +0530
+Message-ID: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, heiko@sntech.de, linus.walleij@linaro.org, dianders@chromium.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-pm@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Rui,
+With device core now able to setup the default pin configuration,
+the pin configuration code based on the deprecated Samsung specific
+gpio bindings is removed.
 
-On Tue, Apr 2, 2013 at 3:56 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Amit Daniel Kachhap wrote:
->>
->> This patchset adds TMU(Thermal management Unit) driver support for
->> exynos5440 platform. There are 3 instances of the TMU controllers so
->> necessary cleanup is done to handle multiple thermal zone.
->>
->> Patch 1 [thermal: exynos: Adapt to temperature emulation core thermal]
->> is a re-post of the earlier posted patch,
->> https://patchwork.kernel.org/patch/2123131/.
->>
->
-> Looks OK to me on whole series, there is my ack only on 1st patch though.
->
-> So if you want to add my ack, feel free:
->
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->
-> Thanks.
->
-> - Kukjin
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Tested-by: Doug Anderson <dianders@chromium.org>
+Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+Changes since v3:
+- Rebased to the latest mmc-next branch, resolving the compilation
+  error with this patch due to changes in commit f2f942ce
+  "mmc: dw_mmc: Check return value of regulator_enable".
+  Thanks to Doug for pointing out this issue with the v3 patch.
 
-Any comment on this patchset? I know this patch series involves quite
-lot of changes but these are important for this merge window. Also
-they are now acked by Samsung platform maintainer.
+ drivers/mmc/host/dw_mmc-exynos.c |   38 --------------------------------------
+ drivers/mmc/host/dw_mmc.c        |   14 +++-----------
+ drivers/mmc/host/dw_mmc.h        |    3 ---
+ 3 files changed, 3 insertions(+), 52 deletions(-)
 
-Regards,
-Amit Daniel
->
->> All these patches are based on thermal maintainers git tree,
->> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next.
->>
->> Amit Daniel Kachhap (9):
->>   thermal: exynos: Adapt to temperature emulation core thermal
->>     framework
->>   thermal: exynos: Add support for instance based register/unregister
->>   thermal: exynos: Moving into samsung directory for easy maintenance.
->>   thermal: exynos: Bifurcate exynos thermal common and tmu controller
->>     code
->>   thermal: exynos: Make the zone handling dependent on trip count
->>   thermal: exynos: small cleanups to prepare for adding exynos5440
->>     driver
->>   thermal: exynos: Add support for exynos5440 TMU sensor.
->>   thermal: exynos: Parse the platform data from the device tree.
->>   ARM: dts: Add device tree node for exynos5440 TMU controller
->>
->>  .../bindings/thermal/exynos5440-thermal.txt        |   93 ++
->>  Documentation/thermal/exynos_thermal_emulation     |    8 +-
->>  arch/arm/boot/dts/exynos5440.dtsi                  |   43 +
->>  drivers/thermal/Kconfig                            |   22 +-
->>  drivers/thermal/Makefile                           |    2 +-
->>  drivers/thermal/exynos_thermal.c                   | 1112
-> --------------------
->>  drivers/thermal/samsung/Kconfig                    |   32 +
->>  drivers/thermal/samsung/Makefile                   |    6 +
->>  drivers/thermal/samsung/exynos4210_thermal.c       |  658 ++++++++++++
->>  drivers/thermal/samsung/exynos5440_thermal.c       |  712 +++++++++++++
->>  drivers/thermal/samsung/exynos_common.c            |  515 +++++++++
->>  drivers/thermal/samsung/exynos_common.h            |   74 ++
->>  include/linux/platform_data/exynos_thermal.h       |   37 +-
->>  13 files changed, 2163 insertions(+), 1151 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/thermal/exynos5440-
->> thermal.txt
->>  delete mode 100644 drivers/thermal/exynos_thermal.c
->>  create mode 100644 drivers/thermal/samsung/Kconfig
->>  create mode 100644 drivers/thermal/samsung/Makefile
->>  create mode 100644 drivers/thermal/samsung/exynos4210_thermal.c
->>  create mode 100644 drivers/thermal/samsung/exynos5440_thermal.c
->>  create mode 100644 drivers/thermal/samsung/exynos_common.c
->>  create mode 100644 drivers/thermal/samsung/exynos_common.h
->
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index c7f0976..f013e7e 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -152,43 +152,6 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+ 	return 0;
+ }
+ 
+-static int dw_mci_exynos_setup_bus(struct dw_mci *host,
+-				struct device_node *slot_np, u8 bus_width)
+-{
+-	int idx, gpio, ret;
+-
+-	if (!slot_np)
+-		return -EINVAL;
+-
+-	/* cmd + clock + bus-width pins */
+-	for (idx = 0; idx < NUM_PINS(bus_width); idx++) {
+-		gpio = of_get_gpio(slot_np, idx);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(host->dev, "invalid gpio: %d\n", gpio);
+-			return -EINVAL;
+-		}
+-
+-		ret = devm_gpio_request(host->dev, gpio, "dw-mci-bus");
+-		if (ret) {
+-			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
+-			return -EBUSY;
+-		}
+-	}
+-
+-	if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
+-		return 0;
+-
+-	gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
+-	if (gpio_is_valid(gpio)) {
+-		if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
+-			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
+-	} else {
+-		dev_info(host->dev, "cd gpio not available");
+-	}
+-
+-	return 0;
+-}
+-
+ /* Common capabilities of Exynos4/Exynos5 SoC */
+ static unsigned long exynos_dwmmc_caps[4] = {
+ 	MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
+@@ -205,7 +168,6 @@ static const struct dw_mci_drv_data exynos_drv_data = {
+ 	.prepare_command	= dw_mci_exynos_prepare_command,
+ 	.set_ios		= dw_mci_exynos_set_ios,
+ 	.parse_dt		= dw_mci_exynos_parse_dt,
+-	.setup_bus		= dw_mci_exynos_setup_bus,
+ };
+ 
+ static const struct of_device_id dw_mci_exynos_match[] = {
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 45d9216..5dcef43 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1952,14 +1952,6 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 	else
+ 		bus_width = 1;
+ 
+-	if (drv_data && drv_data->setup_bus) {
+-		struct device_node *slot_np;
+-		slot_np = dw_mci_of_find_slot_node(host->dev, slot->id);
+-		ret = drv_data->setup_bus(host, slot_np, bus_width);
+-		if (ret)
+-			goto err_setup_bus;
+-	}
+-
+ 	switch (bus_width) {
+ 	case 8:
+ 		mmc->caps |= MMC_CAP_8_BIT_DATA;
+@@ -2002,7 +1994,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 		if (ret) {
+ 			dev_err(host->dev,
+ 				"failed to enable regulator: %d\n", ret);
+-			goto err_setup_bus;
++			return ret;
+ 		}
+ 	}
+ 
+@@ -2015,7 +2007,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 
+ 	ret = mmc_add_host(mmc);
+ 	if (ret)
+-		goto err_setup_bus;
++		goto err_add_host;
+ 
+ #if defined(CONFIG_DEBUG_FS)
+ 	dw_mci_init_debugfs(slot);
+@@ -2032,7 +2024,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 
+ 	return 0;
+ 
+-err_setup_bus:
++err_add_host:
+ 	mmc_free_host(mmc);
+ 	return -EINVAL;
+ }
+diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+index 53b8fd9..0b74189 100644
+--- a/drivers/mmc/host/dw_mmc.h
++++ b/drivers/mmc/host/dw_mmc.h
+@@ -190,7 +190,6 @@ extern int dw_mci_resume(struct dw_mci *host);
+  * @prepare_command: handle CMD register extensions.
+  * @set_ios: handle bus specific extensions.
+  * @parse_dt: parse implementation specific device tree properties.
+- * @setup_bus: initialize io-interface
+  *
+  * Provide controller implementation specific extensions. The usage of this
+  * data structure is fully optional and usage of each member in this structure
+@@ -203,7 +202,5 @@ struct dw_mci_drv_data {
+ 	void		(*prepare_command)(struct dw_mci *host, u32 *cmdr);
+ 	void		(*set_ios)(struct dw_mci *host, struct mmc_ios *ios);
+ 	int		(*parse_dt)(struct dw_mci *host);
+-	int		(*setup_bus)(struct dw_mci *host,
+-				struct device_node *slot_np, u8 bus_width);
+ };
+ #endif /* _DW_MMC_H_ */
+-- 
+1.6.6.rc2
+
