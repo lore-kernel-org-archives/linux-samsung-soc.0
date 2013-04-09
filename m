@@ -1,40 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] usb: ehci-s5p: fix: Fix null pointer dereferencing
-Date: Tue, 9 Apr 2013 12:26:58 +0200
-Message-ID: <201304091226.58822.arnd@arndb.de>
-References: <1365499312-14232-1-git-send-email-gautam.vivek@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 10/10] devel-samsung for v3.10
+Date: Tue, 09 Apr 2013 20:20:12 +0900
+Message-ID: <2f2f01ce3514$33d10f00$9b732d00$%kim@samsung.com>
+References: <51630A55.6030703@samsung.com> <51632451.3050801@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:64289 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935762Ab3DIK1S (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:46683 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934801Ab3DILUO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Apr 2013 06:27:18 -0400
-In-Reply-To: <1365499312-14232-1-git-send-email-gautam.vivek@samsung.com>
+	Tue, 9 Apr 2013 07:20:14 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MKZ003HEJHMZIL0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Apr 2013 20:20:12 +0900 (KST)
+In-reply-to: <51632451.3050801@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, Manjunath Goudar <manjunath.goudar@linaro.org>, Jingoo Han <jg1.han@samsung.com>
+To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Tuesday 09 April 2013, Vivek Gautam wrote:
+Sylwester Nawrocki wrote:
+
+[...]
+
+> > Sylwester Nawrocki (2):
+> > ARM: SAMSUNG: Export MIPI CSIS/DSIM PHY control functions
 > 
-> 7edb3da makes ehci-s5p as a separate driver. But,
-> it raised an issue with its driver data.
-> Now that 's5p_ehci_hcd' doesn't maintain pointer to 'usb_hcd'
-> and s5p_ehci is nothing but a pointer to hcd->priv;
-> add hcd to the driver data rather than s5p_ehci.
+> This one was supposed to be a fix for 3.8-rc IIRC. But anyway the whole
+
+If so, this should be sent to stable 3.8 tree, but I'm not sure this is
+really bug fix.
+
+> file this patch touches is going to be removed in 3.11.
 > 
-> This fixes issues with null pointer dereferencing in
-> s5p_ehci_shutdown(), s5p_ehci_suspend(), s5p_ehci_resume().
+It means it is still needed for v3.10 :-)
 
-Right, sorry for not spotting this during review.
+> > ARM: S3C24XX: Correct NR_IRQS definition for s3c2440
+> 
+> And this one is needed for 3.9, sorry for not mentioning it in the patch's
+> description. Together with [1] it makes my s3c2440 SoC based test board
+> booting again with 3.9-rc6.
+> 
+> [1] http://www.spinics.net/lists/arm-kernel/msg236643.html
+> 
+OK, let me drop it in this branch.
 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> CC: Manjunath Goudar <manjunath.goudar@linaro.org>
-> CC: Arnd Bergmann <arnd@arndb.de>
-> CC: Jingoo Han <jg1.han@samsung.com>
+Arnd and Olof, please hold on pulling for this branch. I will sort out soon.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Thanks.
+
+- Kukjin
