@@ -1,63 +1,40 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v3] mmc: dw_mmc: let device core setup the default pin configuration
-Date: Tue, 9 Apr 2013 11:38:27 +0530
-Message-ID: <CAJuYYwTAUnjwGsxfHho2jQXvkQfV2Kcvx-QfqCDqq7D7Fu0x7g@mail.gmail.com>
-References: <1365170015-3009-1-git-send-email-thomas.abraham@linaro.org>
-	<CAD=FV=U7kf_b92w7rDFkZN8Wr4sDTq5_=pMHaP948dT5CZbHsg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/6] pinctrl: samsung: Protect bank registers with a spinlock
+Date: Tue, 9 Apr 2013 09:37:40 +0200
+Message-ID: <CACRpkdb9JUzTtxQa++jVJHCPM_ZaWUnO1pfi9=7oNpMuGnc+LQ@mail.gmail.com>
+References: <1363642315-10331-1-git-send-email-tomasz.figa@gmail.com>
+	<1363642315-10331-2-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=U7kf_b92w7rDFkZN8Wr4sDTq5_=pMHaP948dT5CZbHsg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, Patch Tracking <patches@linaro.org>, Olof Johansson <olof@lixom.net>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:50237 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935254Ab3DIHhk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Apr 2013 03:37:40 -0400
+Received: by mail-ie0-f170.google.com with SMTP id c11so8154304ieb.15
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Apr 2013 00:37:40 -0700 (PDT)
+In-Reply-To: <1363642315-10331-2-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
 
-On 8 April 2013 21:38, Doug Anderson <dianders@google.com> wrote:
-> Thomas,
+On Mon, Mar 18, 2013 at 10:31 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+
+> Certain pin control registers can be accessed from different contexts,
+> i.e. pinctrl, gpio and irq functions. This makes the locking provided by
+> pin control core insufficient.
 >
-> Since I commented on previous versions of this patch, I would have
-> loved to have been CCed on this new version.  ;)
-
-Hi Doug,
-
-Sorry for missing out on CC'ing you in the v3 patch. It just slipped my mind.
-
+> This patch adds necessary locking using a per bank spinlock as it was
+> done in the old Samsung GPIO driver.
 >
-> On Fri, Apr 5, 2013 at 6:53 AM, Thomas Abraham
-> <thomas.abraham@linaro.org> wrote:
->> With device core now able to setup the default pin configuration,
->> the pin configuration code based on the deprecated Samsung specific
->> gpio bindings is removed.
->>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->> Changes since v2:
->> - Changed patch subject from "mmc: dwmmc: let..." to "mmc: dw_mmc: let..."
->> - Rebased to Chris's latest mmc-next branch.
->>
->>  drivers/mmc/host/dw_mmc-exynos.c |   38 --------------------------------------
->>  drivers/mmc/host/dw_mmc.c        |   12 ++----------
->>  drivers/mmc/host/dw_mmc.h        |    3 ---
->>  3 files changed, 2 insertions(+), 51 deletions(-)
->
-> This patch applies fine but fails to compile on linux-next
-> "next-20130408".  You lost the race with:
->    f2f942c mmc: dw_mmc: Check return value of regulator_enable
->
-> ...that patch adds a "goto err_setup_bus" and you've renamed that
-> label.  I guess you get another fun rebase.
->
-> NOTE: this patch is even more urgent than it was before.  It looks
-> like pincontrol stuff has now landed in linux-next which means that
-> Exynos5 devices that need eMMC/SD will no longer boot until this patch
-> goes in.
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Ok. I have posted the v4 version of this patch taking care of this.
-Thanks for pointing this out.
+OK no reaction from the other Samsung maintainers so now I start
+applying these...
 
-Regards,
-Thomas.
+Patch applied!
 
->
-> -Doug
+Yours,
+Linus Walleij
