@@ -1,59 +1,36 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH] thermal: exynos: fix handling of invalid frequency table entries
-Date: Tue,  9 Apr 2013 14:59:18 -0700
-Message-ID: <1365544758-15245-1-git-send-email-abrestic@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v4] mmc: dw_mmc: let device core setup the default pin configuration
+Date: Tue, 9 Apr 2013 16:30:09 -0700
+Message-ID: <CAD=FV=VJ-ykDNqYKQ=fqxeOD6bRNLW02VT4bjsRHRAuXLcCpQQ@mail.gmail.com>
+References: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f73.google.com ([209.85.219.73]:51645 "EHLO
-	mail-oa0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761010Ab3DIV7V (ORCPT
+Received: from mail-la0-f48.google.com ([209.85.215.48]:52528 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935022Ab3DIXaM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Apr 2013 17:59:21 -0400
-Received: by mail-oa0-f73.google.com with SMTP id o6so1888527oag.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Apr 2013 14:59:21 -0700 (PDT)
+	Tue, 9 Apr 2013 19:30:12 -0400
+Received: by mail-la0-f48.google.com with SMTP id fq13so6889229lab.21
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Apr 2013 16:30:10 -0700 (PDT)
+In-Reply-To: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, patches@linaro.org
 
-Similar to the error described in "thermal: cpu_cooling: fix handling
-of invalid frequency table entries," exynos_get_frequency_level() will
-enter an infinite loop if any CPU frequency table entries are invalid.
-This patch fixes the handling of invalid frequency entries so that
-there is no infinite loop and the correct level is returned.
+Thomas,
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
----
- drivers/thermal/exynos_thermal.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Mon, Apr 8, 2013 at 10:59 PM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
+> @@ -2002,7 +1994,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>                 if (ret) {
+>                         dev_err(host->dev,
+>                                 "failed to enable regulator: %d\n", ret);
+> -                       goto err_setup_bus;
+> +                       return ret;
 
-diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-index d5e6267..524b2a0 100644
---- a/drivers/thermal/exynos_thermal.c
-+++ b/drivers/thermal/exynos_thermal.c
-@@ -237,7 +237,7 @@ static int exynos_get_crit_temp(struct thermal_zone_device *thermal,
- 
- static int exynos_get_frequency_level(unsigned int cpu, unsigned int freq)
- {
--	int i = 0, ret = -EINVAL;
-+	int i, level = 0, ret = -EINVAL;
- 	struct cpufreq_frequency_table *table = NULL;
- #ifdef CONFIG_CPU_FREQ
- 	table = cpufreq_frequency_get_table(cpu);
-@@ -245,12 +245,12 @@ static int exynos_get_frequency_level(unsigned int cpu, unsigned int freq)
- 	if (!table)
- 		return ret;
- 
--	while (table[i].frequency != CPUFREQ_TABLE_END) {
-+	for (i = 0; table[i].frequency != CPUFREQ_TABLE_END; i++) {
- 		if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
- 			continue;
- 		if (table[i].frequency == freq)
--			return i;
--		i++;
-+			return level;
-+		level++;
- 	}
- 	return ret;
- }
--- 
-1.8.1.3
+It seems like you'd need a "mmc_free_host(mmc);" in this case don't
+you?  AKA: this should be a goto and not a return.
+
+-Doug
