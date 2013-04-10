@@ -1,48 +1,44 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH RESEND] ARM: EXYNOS: no more support non-DT for EXYNOS
- SoCs
-Date: Wed, 10 Apr 2013 23:05:48 +0900
-Message-ID: <516571BC.9030909@samsung.com>
-References: <51642dab.e844440a.0ad1.ffffc13f@mx.google.com> <201304101459.07263.arnd@arndb.de> <51656D2D.7060004@samsung.com> <201304101555.27984.arnd@arndb.de>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v4] mmc: dw_mmc: let device core setup the default pin configuration
+Date: Wed, 10 Apr 2013 07:55:25 -0700
+Message-ID: <CAD=FV=WyPbkYvq9udPzQtVnaXZR3jzXTPnBrrdxpUuX3CZT=Og@mail.gmail.com>
+References: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org>
+	<CAD=FV=VJ-ykDNqYKQ=fqxeOD6bRNLW02VT4bjsRHRAuXLcCpQQ@mail.gmail.com>
+	<CAJuYYwQT=povqiutVHXkF5jxTAnjpwTMQ5G0Z6xKGnnM7qYADQ@mail.gmail.com>
+	<CAD=FV=UddWM=yc5N9=jwbMDpZ7Bpg7o3Z714CnBSg=iHhmPxWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:45174 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759722Ab3DJOFy (ORCPT
+Received: from mail-la0-f48.google.com ([209.85.215.48]:55777 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760636Ab3DJOz1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 10:05:54 -0400
-Received: by mail-pd0-f179.google.com with SMTP id x11so286357pdj.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Apr 2013 07:05:54 -0700 (PDT)
-In-Reply-To: <201304101555.27984.arnd@arndb.de>
+	Wed, 10 Apr 2013 10:55:27 -0400
+Received: by mail-la0-f48.google.com with SMTP id fq12so509609lab.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Apr 2013 07:55:25 -0700 (PDT)
+In-Reply-To: <CAD=FV=UddWM=yc5N9=jwbMDpZ7Bpg7o3Z714CnBSg=iHhmPxWw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Olof Johansson' <olof@lixom.net>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, Patch Tracking <patches@linaro.org>
 
-On 04/10/13 22:55, Arnd Bergmann wrote:
-> On Wednesday 10 April 2013, Sylwester Nawrocki wrote:
->> Hmm, it turns out we are still actively using some boards based on
->> Exynos4210 EVT0 SoCs. And since it seems unlikely the patches from
->> Tomasz [1] adding basic DT support for those will get merged for
->> 3.10, it would be a bit inconvenient to remove the ATAGS support
->> now, leaving Exynos4210 Rev. 0 not supported at all.
->
-> I still have hope to get those included.
->
-I agree and I asked Tomasz to re-send universal dt patch.
+Thomas,
 
->> Not sure what's others opinion on that, and what would be an advantage
->> of removing non-dt support for Exynos now, rather than in 3.11, vs. any
->> possible inconvenience and regressions this could cause.
+On Wed, Apr 10, 2013 at 6:56 AM, Doug Anderson <dianders@chromium.org> wrote:
+> On Wed, Apr 10, 2013 at 5:48 AM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
+>> The call to regulator_enable() is prior to the call to mmc_add_host().
+>> Hence, call to mmc_fre_host is not required in this case. So the above
+>> change should be right.
 >
-> A multiplatform kernel will not work on an ATAGS based Exynos platform,
-> but I think we can have it both ways and allow either multiplatform
-> DT-only or single-platform with both DT and ATAGS in 3.10.
+> Are you sure that mmc_free_host() is the opposite of mmc_add_host()
+> and not mmc_alloc_host()?
 >
-I think, if possible, keeping both way would be nice to us.
+> I'll double-check myself in a few hours when I'm in front of a computer.
 
-Thanks.
+OK, I double checked and I'm still convinced that the free is needed
+because we've already called mmc_alloc_host().  Current code always
+makes sure to free when it returns an error and that seems right to
+me.
 
-- Kukjin
+-Doug
