@@ -1,65 +1,69 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 04/10] clk-exynos for v3.10
-Date: Wed, 10 Apr 2013 17:42:59 +0900
-Message-ID: <30be01ce35c7$68eab7a0$3ac026e0$%kim@samsung.com>
-References: <51630A02.4080905@samsung.com> <201304092231.18314.arnd@arndb.de>
- <CAK9yfHzMOmrRMKdc2fUJHnbrOC_-=AR3BnHBDjtvPeinvxOcLg@mail.gmail.com>
+Subject: RE: [GIT PULL 0/10] Samsung stuff for v3.10
+Date: Wed, 10 Apr 2013 17:59:34 +0900
+Message-ID: <30bf01ce35c9$b9120e70$2b362b50$%kim@samsung.com>
+References: <516309C4.3000008@samsung.com> <201304092320.06222.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:31939 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S936088Ab3DJInN (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:50320 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751287Ab3DJI7g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 04:43:13 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 10 Apr 2013 04:59:36 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0ML100K5B6V7ZK50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 10 Apr 2013 17:43:02 +0900 (KST)
-In-reply-to: <CAK9yfHzMOmrRMKdc2fUJHnbrOC_-=AR3BnHBDjtvPeinvxOcLg@mail.gmail.com>
+ with ESMTP id <0ML10032X7NB96R0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 10 Apr 2013 17:59:35 +0900 (KST)
+In-reply-to: <201304092320.06222.arnd@arndb.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Arnd Bergmann' <arnd@arndb.de>
+To: 'Arnd Bergmann' <arnd@arndb.de>
 Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Sachin Kamat wrote:
+Arnd Bergmann wrote:
 > 
-> On 10 April 2013 02:01, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Monday 08 April 2013, Kukjin Kim wrote:
-> >> The following changes since commit
-> 07961ac7c0ee8b546658717034fe692fd12eefa9:
-> >>
-> >>    Linux 3.9-rc5 (2013-03-31 15:12:43 -0700)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> >> tags/clk-exynos-for-v3.10
-> >>
-> >> for you to fetch changes up to
-da821eb7d42935b0f7056d98c75fd1150f6636f4:
-> >>
-> >>    Merge commit 'v3.9-rc5' into next/clk-exynos (2013-04-09 01:10:13
-> +0900)
-> >>
-> >> ----------------------------------------------------------------
-> >>
-> >> add suppport common clock framework for exynos
+> On Monday 08 April 2013, Kukjin Kim wrote:
 > >
-> > I got a build warning, probably because of this patch:
+> > Hi Arnd, Olof
+> >
+> > This is 2nd pull-request for Samsung stuff for v3.10.
+> >
+> > If any problems, please kindly let me know.
 > 
+> I managed to pull them all in, aside from the 6/10, since you asked us
+> to defer that one. There were a lot more small mistakes, and I think
+> I've managed to fix them all up, but please check if the for-next
+> branch now actually works.
 > 
-> IIRC, the patch at [1] was supposed to fix the build warning. Kukjin
-> had mentioned it was applied [1].
+> A few more requests for the future:
 > 
-> [1] https://patchwork.kernel.org/patch/2010691/
+> * Please send branches earlier. You already sent a number of them
+> very early, but then we saw very little until now. I'd rather
+> get a number of follow-on pull requests than getting everything
+> at once, which has lead to stuff getting rejected in the past
+> when things break, as you remember. I've been waiting for
+> ages now to rebase my multiplatform series on the things you
+> have in your tree, I hope we can still make it in time.
 > 
-Oops, probably the patch missed :-( Let me fix it.
+> * Half a sentence of tag description is not really enough for
+> a long series. Please explain in the tag what the purpose of
+> the series is, as you do for a patch.
+> 
+> * Mention interdependencies between branches explicitly. It
+> causes us a lot of extra work having to find out what patches
+> are actually new in a series when you have based them on earlier
+> patches.
+> 
+> * Look at the patches that are already merged and test them.
+> I've had to fix up build errors now that have been present
+> in linux-next for multiple weeks.
+> 
+OK, I see. I will do carefully as per your suggestion.
 
 Thanks.
 
