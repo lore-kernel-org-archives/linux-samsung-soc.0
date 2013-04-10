@@ -1,352 +1,499 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/7] exynos4-is: Make fimc-lite independent on struct
- fimc_sensor_info
-Date: Wed, 10 Apr 2013 12:42:38 +0200
-Message-ID: <1365590562-5747-4-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 4/7] exynos4-is: Improve the ISP chain parameter count
+ calculation
+Date: Wed, 10 Apr 2013 12:42:39 +0200
+Message-ID: <1365590562-5747-5-git-send-email-s.nawrocki@samsung.com>
 References: <1365590562-5747-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9954 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751746Ab3DJKn6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 06:43:58 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1365590562-5747-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, shaik.samsung@gmail.com, arun.kk@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Make the sensor subdevs host_data hold a pointer to struct fimc_source_info,
-which is defined in the driver's public header, rather than a pointer to
-struct fimc_sensor_info which is specific to exynos4-is media device driver.
-
-The purpose of this change is to allow easier reuse of the fimc-lite module
-in the exynos5-is driver, which should similarly store a pointer to struct
-fimc_source_info instance in the sensor's subdev host_data.
+Instead of incrementing p_region_num field each time we set a bit
+in the parameter mask calculate the number of bits set only when
+this information is needed.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/platform/exynos4-is/fimc-capture.c |    7 +-
- drivers/media/platform/exynos4-is/fimc-lite.c    |   10 ++-
- drivers/media/platform/exynos4-is/media-dev.c    |   74 +++++++++++-----------
- drivers/media/platform/exynos4-is/media-dev.h    |    6 ++
- 4 files changed, 54 insertions(+), 43 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-is-param.c |   86 +++++++--------------
+ drivers/media/platform/exynos4-is/fimc-is-param.h |    4 +-
+ drivers/media/platform/exynos4-is/fimc-is-regs.c  |    3 +-
+ drivers/media/platform/exynos4-is/fimc-is.c       |    2 -
+ drivers/media/platform/exynos4-is/fimc-is.h       |    1 -
+ drivers/media/platform/exynos4-is/fimc-isp.c      |    7 +-
+ 6 files changed, 34 insertions(+), 69 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-index 28c6b26..72c516a 100644
---- a/drivers/media/platform/exynos4-is/fimc-capture.c
-+++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-@@ -1450,7 +1450,7 @@ static const struct media_entity_operations fimc_sd_media_ops = {
- void fimc_sensor_notify(struct v4l2_subdev *sd, unsigned int notification,
- 			void *arg)
- {
--	struct fimc_sensor_info	*sensor;
-+	struct fimc_source_info	*si;
- 	struct fimc_vid_buffer *buf;
- 	struct fimc_md *fmd;
- 	struct fimc_dev *fimc;
-@@ -1459,11 +1459,12 @@ void fimc_sensor_notify(struct v4l2_subdev *sd, unsigned int notification,
- 	if (sd == NULL)
- 		return;
- 
--	sensor = v4l2_get_subdev_hostdata(sd);
-+	si = v4l2_get_subdev_hostdata(sd);
- 	fmd = entity_to_fimc_mdev(&sd->entity);
- 
- 	spin_lock_irqsave(&fmd->slock, flags);
--	fimc = sensor ? sensor->host : NULL;
-+
-+	fimc = si ? source_to_sensor_info(si)->host : NULL;
- 
- 	if (fimc && arg && notification == S5P_FIMC_TX_END_NOTIFY &&
- 	    test_bit(ST_CAPT_PEND, &fimc->state)) {
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index 3ea4fc7..661d0d1 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -11,6 +11,7 @@
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-param.c b/drivers/media/platform/exynos4-is/fimc-is-param.c
+index 37fd5fe..58123e3 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-param.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-param.c
+@@ -12,14 +12,15 @@
+  */
  #define pr_fmt(fmt) "%s:%d " fmt, __func__, __LINE__
  
++#include <linux/bitops.h>
  #include <linux/bug.h>
-+#include <linux/clk.h>
  #include <linux/device.h>
  #include <linux/errno.h>
- #include <linux/interrupt.h>
-@@ -31,7 +32,7 @@
- #include <media/videobuf2-dma-contig.h>
- #include <media/s5p_fimc.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/types.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <linux/types.h>
+ #include <linux/videodev2.h>
  
--#include "media-dev.h"
-+#include "fimc-core.h"
- #include "fimc-lite.h"
- #include "fimc-lite-reg.h"
- 
-@@ -156,7 +157,7 @@ static struct v4l2_subdev *__find_remote_sensor(struct media_entity *me)
- 
- static int fimc_lite_hw_init(struct fimc_lite *fimc, bool isp_output)
- {
--	struct fimc_sensor_info *si;
-+	struct fimc_source_info *si;
- 	unsigned long flags;
- 
- 	if (fimc->sensor == NULL)
-@@ -167,9 +168,12 @@ static int fimc_lite_hw_init(struct fimc_lite *fimc, bool isp_output)
- 
- 	/* Get sensor configuration data from the sensor subdev */
- 	si = v4l2_get_subdev_hostdata(fimc->sensor);
-+	if (!si)
-+		return -EINVAL;
-+
- 	spin_lock_irqsave(&fimc->slock, flags);
- 
--	flite_hw_set_camera_bus(fimc, &si->pdata);
-+	flite_hw_set_camera_bus(fimc, si);
- 	flite_hw_set_source_format(fimc, &fimc->inp_frame);
- 	flite_hw_set_window_offset(fimc, &fimc->inp_frame);
- 	flite_hw_set_output_dma(fimc, &fimc->out_frame, !isp_output);
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 44d6c1d..1dbd554 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -37,7 +37,7 @@
- #include "mipi-csis.h"
- 
- static int __fimc_md_set_camclk(struct fimc_md *fmd,
--				struct fimc_sensor_info *s_info,
-+				struct fimc_source_info *si,
- 				bool on);
- /**
-  * fimc_pipeline_prepare - update pipeline information with subdevice pointers
-@@ -281,36 +281,36 @@ static const struct fimc_pipeline_ops fimc_pipeline_ops = {
-  * Sensor subdevice helper functions
-  */
- static struct v4l2_subdev *fimc_md_register_sensor(struct fimc_md *fmd,
--				   struct fimc_sensor_info *s_info)
-+						struct fimc_source_info *si)
- {
- 	struct i2c_adapter *adapter;
- 	struct v4l2_subdev *sd = NULL;
- 
--	if (!s_info || !fmd)
-+	if (!si || !fmd)
- 		return NULL;
- 	/*
- 	 * If FIMC bus type is not Writeback FIFO assume it is same
- 	 * as sensor_bus_type.
- 	 */
--	s_info->pdata.fimc_bus_type = s_info->pdata.sensor_bus_type;
-+	si->fimc_bus_type = si->sensor_bus_type;
- 
--	adapter = i2c_get_adapter(s_info->pdata.i2c_bus_num);
-+	adapter = i2c_get_adapter(si->i2c_bus_num);
- 	if (!adapter) {
- 		v4l2_warn(&fmd->v4l2_dev,
- 			  "Failed to get I2C adapter %d, deferring probe\n",
--			  s_info->pdata.i2c_bus_num);
-+			  si->i2c_bus_num);
- 		return ERR_PTR(-EPROBE_DEFER);
- 	}
- 	sd = v4l2_i2c_new_subdev_board(&fmd->v4l2_dev, adapter,
--				       s_info->pdata.board_info, NULL);
-+						si->board_info, NULL);
- 	if (IS_ERR_OR_NULL(sd)) {
- 		i2c_put_adapter(adapter);
- 		v4l2_warn(&fmd->v4l2_dev,
- 			  "Failed to acquire subdev %s, deferring probe\n",
--			  s_info->pdata.board_info->type);
-+			  si->board_info->type);
- 		return ERR_PTR(-EPROBE_DEFER);
- 	}
--	v4l2_set_subdev_hostdata(sd, s_info);
-+	v4l2_set_subdev_hostdata(sd, si);
- 	sd->grp_id = GRP_ID_SENSOR;
- 
- 	v4l2_info(&fmd->v4l2_dev, "Registered sensor subdevice %s\n",
-@@ -365,17 +365,17 @@ static int fimc_md_of_add_sensor(struct fimc_md *fmd,
- 	}
- 
- 	/* Enable sensor's master clock */
--	ret = __fimc_md_set_camclk(fmd, si, true);
-+	ret = __fimc_md_set_camclk(fmd, &si->pdata, true);
- 	if (ret < 0)
- 		goto mod_put;
- 	sd = i2c_get_clientdata(client);
- 
- 	ret = v4l2_device_register_subdev(&fmd->v4l2_dev, sd);
--	__fimc_md_set_camclk(fmd, si, false);
-+	__fimc_md_set_camclk(fmd, &si->pdata, false);
- 	if (ret < 0)
- 		goto mod_put;
- 
--	v4l2_set_subdev_hostdata(sd, si);
-+	v4l2_set_subdev_hostdata(sd, &si->pdata);
- 	if (si->pdata.fimc_bus_type == FIMC_BUS_TYPE_ISP_WRITEBACK)
- 		sd->grp_id = GRP_ID_FIMC_IS_SENSOR;
- 	else
-@@ -559,21 +559,22 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
- 		fmd->num_sensors = num_clients;
- 
- 		for (i = 0; i < num_clients; i++) {
-+			struct fimc_sensor_info *si = &fmd->sensor[i];
- 			struct v4l2_subdev *sd;
- 
--			fmd->sensor[i].pdata = pdata->source_info[i];
--			ret = __fimc_md_set_camclk(fmd, &fmd->sensor[i], true);
-+			si->pdata = pdata->source_info[i];
-+			ret = __fimc_md_set_camclk(fmd, &si->pdata, true);
- 			if (ret)
- 				break;
--			sd = fimc_md_register_sensor(fmd, &fmd->sensor[i]);
--			ret = __fimc_md_set_camclk(fmd, &fmd->sensor[i], false);
-+			sd = fimc_md_register_sensor(fmd, &si->pdata);
-+			ret = __fimc_md_set_camclk(fmd, &si->pdata, false);
- 
- 			if (IS_ERR(sd)) {
--				fmd->sensor[i].subdev = NULL;
-+				si->subdev = NULL;
- 				ret = PTR_ERR(sd);
- 				break;
- 			}
--			fmd->sensor[i].subdev = sd;
-+			si->subdev = sd;
- 			if (ret)
- 				break;
- 		}
-@@ -838,7 +839,7 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- 					    struct v4l2_subdev *sensor,
- 					    int pad, int link_mask)
- {
--	struct fimc_sensor_info *si = NULL;
-+	struct fimc_source_info *si = NULL;
- 	struct media_entity *sink;
- 	unsigned int flags = 0;
- 	int i, ret = 0;
-@@ -846,7 +847,7 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- 	if (sensor) {
- 		si = v4l2_get_subdev_hostdata(sensor);
- 		/* Skip direct FIMC links in the logical FIMC-IS sensor path */
--		if (si && si->pdata.fimc_bus_type == FIMC_BUS_TYPE_ISP_WRITEBACK)
-+		if (si && si->fimc_bus_type == FIMC_BUS_TYPE_ISP_WRITEBACK)
- 			ret = 1;
- 	}
- 
-@@ -882,8 +883,10 @@ static int __fimc_md_create_fimc_sink_links(struct fimc_md *fmd,
- 
- 		if (!WARN_ON(si == NULL)) {
- 			unsigned long irq_flags;
-+			struct fimc_sensor_info *inf = source_to_sensor_info(si);
-+
- 			spin_lock_irqsave(&fmd->slock, irq_flags);
--			si->host = fmd->fimc[i];
-+			inf->host = fmd->fimc[i];
- 			spin_unlock_irqrestore(&fmd->slock, irq_flags);
- 		}
- 	}
-@@ -980,7 +983,6 @@ static int fimc_md_create_links(struct fimc_md *fmd)
- 	struct v4l2_subdev *csi_sensors[CSIS_MAX_ENTITIES] = { NULL };
- 	struct v4l2_subdev *sensor, *csis;
- 	struct fimc_source_info *pdata;
--	struct fimc_sensor_info *s_info;
- 	struct media_entity *source, *sink;
- 	int i, pad, fimc_id = 0, ret = 0;
- 	u32 flags, link_mask = 0;
-@@ -990,12 +992,11 @@ static int fimc_md_create_links(struct fimc_md *fmd)
- 			continue;
- 
- 		sensor = fmd->sensor[i].subdev;
--		s_info = v4l2_get_subdev_hostdata(sensor);
--		if (!s_info)
-+		pdata = v4l2_get_subdev_hostdata(sensor);
-+		if (!pdata)
- 			continue;
- 
- 		source = NULL;
--		pdata = &s_info->pdata;
- 
- 		switch (pdata->sensor_bus_type) {
- 		case FIMC_BUS_TYPE_MIPI_CSI2:
-@@ -1164,34 +1165,33 @@ static int fimc_md_get_clocks(struct fimc_md *fmd)
+ #include <media/v4l2-device.h>
+@@ -160,6 +161,20 @@ int __fimc_is_hw_update_param(struct fimc_is *is, u32 offset)
+ 	return 0;
  }
  
- static int __fimc_md_set_camclk(struct fimc_md *fmd,
--				struct fimc_sensor_info *s_info,
-+				struct fimc_source_info *si,
- 				bool on)
- {
--	struct fimc_source_info *pdata = &s_info->pdata;
- 	struct fimc_camclk_info *camclk;
- 	int ret = 0;
- 
--	if (WARN_ON(pdata->clk_id >= FIMC_MAX_CAMCLKS) || !fmd || !fmd->pmf)
-+	if (WARN_ON(si->clk_id >= FIMC_MAX_CAMCLKS) || !fmd || !fmd->pmf)
- 		return -EINVAL;
- 
--	camclk = &fmd->camclk[pdata->clk_id];
-+	camclk = &fmd->camclk[si->clk_id];
- 
- 	dbg("camclk %d, f: %lu, use_count: %d, on: %d",
--	    pdata->clk_id, pdata->clk_frequency, camclk->use_count, on);
-+	    si->clk_id, si->clk_frequency, camclk->use_count, on);
- 
- 	if (on) {
- 		if (camclk->use_count > 0 &&
--		    camclk->frequency != pdata->clk_frequency)
-+		    camclk->frequency != si->clk_frequency)
- 			return -EINVAL;
- 
- 		if (camclk->use_count++ == 0) {
--			clk_set_rate(camclk->clock, pdata->clk_frequency);
--			camclk->frequency = pdata->clk_frequency;
-+			clk_set_rate(camclk->clock, si->clk_frequency);
-+			camclk->frequency = si->clk_frequency;
- 			ret = pm_runtime_get_sync(fmd->pmf);
- 			if (ret < 0)
- 				return ret;
- 			ret = clk_enable(camclk->clock);
--			dbg("Enabled camclk %d: f: %lu", pdata->clk_id,
-+			dbg("Enabled camclk %d: f: %lu", si->clk_id,
- 			    clk_get_rate(camclk->clock));
- 		}
- 		return ret;
-@@ -1203,7 +1203,7 @@ static int __fimc_md_set_camclk(struct fimc_md *fmd,
- 	if (--camclk->use_count == 0) {
- 		clk_disable(camclk->clock);
- 		pm_runtime_put(fmd->pmf);
--		dbg("Disabled camclk %d", pdata->clk_id);
-+		dbg("Disabled camclk %d", si->clk_id);
- 	}
- 	return ret;
- }
-@@ -1222,10 +1222,10 @@ static int __fimc_md_set_camclk(struct fimc_md *fmd,
-  */
- int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on)
- {
--	struct fimc_sensor_info *s_info = v4l2_get_subdev_hostdata(sd);
-+	struct fimc_source_info *si = v4l2_get_subdev_hostdata(sd);
- 	struct fimc_md *fmd = entity_to_fimc_mdev(&sd->entity);
- 
--	return __fimc_md_set_camclk(fmd, s_info, on);
-+	return __fimc_md_set_camclk(fmd, si, on);
- }
- 
- static int fimc_md_link_notify(struct media_pad *source,
-diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-index 7f126c3..44d86b6 100644
---- a/drivers/media/platform/exynos4-is/media-dev.h
-+++ b/drivers/media/platform/exynos4-is/media-dev.h
-@@ -115,6 +115,12 @@ struct fimc_md {
- 
- #define subdev_has_devnode(__sd) (__sd->flags & V4L2_SUBDEV_FL_HAS_DEVNODE)
- 
-+static inline
-+struct fimc_sensor_info *source_to_sensor_info(struct fimc_source_info *si)
++unsigned int __get_pending_param_count(struct fimc_is *is)
 +{
-+	return container_of(si, struct fimc_sensor_info, pdata);
++	struct is_config_param *config = &is->cfg_param[is->scenario_id];
++	unsigned long flags;
++	unsigned int count;
++
++	spin_lock_irqsave(&is->slock, flags);
++	count = hweight32(config->p_region_index1);
++	count += hweight32(config->p_region_index2);
++	spin_unlock_irqrestore(&is->slock, flags);
++
++	return count;
 +}
 +
- static inline struct fimc_md *entity_to_fimc_mdev(struct media_entity *me)
+ int __is_hw_update_params(struct fimc_is *is)
  {
- 	return me->parent == NULL ? NULL :
+ 	unsigned long *p_index1, *p_index2;
+@@ -234,15 +249,10 @@ void __is_set_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf)
+ 
+ 	/* Update field */
+ 	fimc_is_set_param_bit(is, PARAM_ISP_OTF_INPUT);
+-	fimc_is_inc_param_num(is);
+ 	fimc_is_set_param_bit(is, PARAM_ISP_OTF_OUTPUT);
+-	fimc_is_inc_param_num(is);
+ 	fimc_is_set_param_bit(is, PARAM_DRC_OTF_INPUT);
+-	fimc_is_inc_param_num(is);
+ 	fimc_is_set_param_bit(is, PARAM_DRC_OTF_OUTPUT);
+-	fimc_is_inc_param_num(is);
+ 	fimc_is_set_param_bit(is, PARAM_FD_OTF_INPUT);
+-	fimc_is_inc_param_num(is);
+ }
+ 
+ int fimc_is_hw_get_sensor_max_framerate(struct fimc_is *is)
+@@ -277,14 +287,11 @@ void __is_set_sensor(struct fimc_is *is, int fps)
+ 		isp->otf_input.frametime_max = (u32)1000000 / fps;
+ 	}
+ 
+-	if (!test_bit(PARAM_SENSOR_FRAME_RATE, p_index)) {
++	if (!test_bit(PARAM_SENSOR_FRAME_RATE, p_index))
+ 		fimc_is_set_param_bit(is, PARAM_SENSOR_FRAME_RATE);
+-		fimc_is_inc_param_num(is);
+-	}
+-	if (!test_bit(PARAM_ISP_OTF_INPUT, p_index)) {
++
++	if (!test_bit(PARAM_ISP_OTF_INPUT, p_index))
+ 		fimc_is_set_param_bit(is, PARAM_ISP_OTF_INPUT);
+-		fimc_is_inc_param_num(is);
+-	}
+ }
+ 
+ void __is_set_init_isp_aa(struct fimc_is *is)
+@@ -306,7 +313,6 @@ void __is_set_init_isp_aa(struct fimc_is *is)
+ 	isp->aa.err = ISP_AF_ERROR_NONE;
+ 
+ 	fimc_is_set_param_bit(is, PARAM_ISP_AA);
+-	fimc_is_inc_param_num(is);
+ }
+ 
+ void __is_set_isp_flash(struct fimc_is *is, u32 cmd, u32 redeye)
+@@ -319,10 +325,8 @@ void __is_set_isp_flash(struct fimc_is *is, u32 cmd, u32 redeye)
+ 	isp->flash.redeye = redeye;
+ 	isp->flash.err = ISP_FLASH_ERROR_NONE;
+ 
+-	if (!test_bit(PARAM_ISP_FLASH, &cfg->p_region_index1)) {
++	if (!test_bit(PARAM_ISP_FLASH, &cfg->p_region_index1))
+ 		fimc_is_set_param_bit(is, PARAM_ISP_FLASH);
+-		fimc_is_inc_param_num(is);
+-	}
+ }
+ 
+ void __is_set_isp_awb(struct fimc_is *is, u32 cmd, u32 val)
+@@ -338,10 +342,8 @@ void __is_set_isp_awb(struct fimc_is *is, u32 cmd, u32 val)
+ 	isp->awb.illumination = val;
+ 	isp->awb.err = ISP_AWB_ERROR_NONE;
+ 
+-	if (!test_bit(PARAM_ISP_AWB, p_index)) {
++	if (!test_bit(PARAM_ISP_AWB, p_index))
+ 		fimc_is_set_param_bit(is, PARAM_ISP_AWB);
+-		fimc_is_inc_param_num(is);
+-	}
+ }
+ 
+ void __is_set_isp_effect(struct fimc_is *is, u32 cmd)
+@@ -356,10 +358,8 @@ void __is_set_isp_effect(struct fimc_is *is, u32 cmd)
+ 	isp->effect.cmd = cmd;
+ 	isp->effect.err = ISP_IMAGE_EFFECT_ERROR_NONE;
+ 
+-	if (!test_bit(PARAM_ISP_IMAGE_EFFECT, p_index)) {
++	if (!test_bit(PARAM_ISP_IMAGE_EFFECT, p_index))
+ 		fimc_is_set_param_bit(is, PARAM_ISP_IMAGE_EFFECT);
+-		fimc_is_inc_param_num(is);
+-	}
+ }
+ 
+ void __is_set_isp_iso(struct fimc_is *is, u32 cmd, u32 val)
+@@ -375,10 +375,8 @@ void __is_set_isp_iso(struct fimc_is *is, u32 cmd, u32 val)
+ 	isp->iso.value = val;
+ 	isp->iso.err = ISP_ISO_ERROR_NONE;
+ 
+-	if (!test_bit(PARAM_ISP_ISO, p_index)) {
++	if (!test_bit(PARAM_ISP_ISO, p_index))
+ 		fimc_is_set_param_bit(is, PARAM_ISP_ISO);
+-		fimc_is_inc_param_num(is);
+-	}
+ }
+ 
+ void __is_set_isp_adjust(struct fimc_is *is, u32 cmd, u32 val)
+@@ -423,7 +421,6 @@ void __is_set_isp_adjust(struct fimc_is *is, u32 cmd, u32 val)
+ 		isp->adjust.cmd = cmd;
+ 		isp->adjust.err = ISP_ADJUST_ERROR_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_ISP_ADJUST);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		isp->adjust.cmd |= cmd;
+ 	}
+@@ -461,7 +458,6 @@ void __is_set_isp_metering(struct fimc_is *is, u32 id, u32 val)
+ 	if (!test_bit(PARAM_ISP_METERING, p_index)) {
+ 		isp->metering.err = ISP_METERING_ERROR_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_ISP_METERING);
+-		fimc_is_inc_param_num(is);
+ 	}
+ }
+ 
+@@ -478,10 +474,8 @@ void __is_set_isp_afc(struct fimc_is *is, u32 cmd, u32 val)
+ 	isp->afc.manual = val;
+ 	isp->afc.err = ISP_AFC_ERROR_NONE;
+ 
+-	if (!test_bit(PARAM_ISP_AFC, p_index)) {
++	if (!test_bit(PARAM_ISP_AFC, p_index))
+ 		fimc_is_set_param_bit(is, PARAM_ISP_AFC);
+-		fimc_is_inc_param_num(is);
+-	}
+ }
+ 
+ void __is_set_drc_control(struct fimc_is *is, u32 val)
+@@ -495,10 +489,8 @@ void __is_set_drc_control(struct fimc_is *is, u32 val)
+ 
+ 	drc->control.bypass = val;
+ 
+-	if (!test_bit(PARAM_DRC_CONTROL, p_index)) {
++	if (!test_bit(PARAM_DRC_CONTROL, p_index))
+ 		fimc_is_set_param_bit(is, PARAM_DRC_CONTROL);
+-		fimc_is_inc_param_num(is);
+-	}
+ }
+ 
+ void __is_set_fd_control(struct fimc_is *is, u32 val)
+@@ -512,10 +504,8 @@ void __is_set_fd_control(struct fimc_is *is, u32 val)
+ 
+ 	fd->control.cmd = val;
+ 
+-	if (!test_bit((PARAM_FD_CONFIG - 32), p_index)) {
++	if (!test_bit((PARAM_FD_CONFIG - 32), p_index))
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONTROL);
+-		fimc_is_inc_param_num(is);
+-	}
+ }
+ 
+ void __is_set_fd_config_maxface(struct fimc_is *is, u32 val)
+@@ -533,7 +523,6 @@ void __is_set_fd_config_maxface(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_MAXIMUM_NUMBER;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_MAXIMUM_NUMBER;
+ 	}
+@@ -554,7 +543,6 @@ void __is_set_fd_config_rollangle(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_ROLL_ANGLE;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_ROLL_ANGLE;
+ 	}
+@@ -575,7 +563,6 @@ void __is_set_fd_config_yawangle(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_YAW_ANGLE;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_YAW_ANGLE;
+ 	}
+@@ -596,7 +583,6 @@ void __is_set_fd_config_smilemode(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_SMILE_MODE;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_SMILE_MODE;
+ 	}
+@@ -617,7 +603,6 @@ void __is_set_fd_config_blinkmode(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_BLINK_MODE;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_BLINK_MODE;
+ 	}
+@@ -638,7 +623,6 @@ void __is_set_fd_config_eyedetect(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_EYES_DETECT;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_EYES_DETECT;
+ 	}
+@@ -659,7 +643,6 @@ void __is_set_fd_config_mouthdetect(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_MOUTH_DETECT;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_MOUTH_DETECT;
+ 	}
+@@ -680,7 +663,6 @@ void __is_set_fd_config_orientation(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_ORIENTATION;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_ORIENTATION;
+ 	}
+@@ -701,7 +683,6 @@ void __is_set_fd_config_orientation_val(struct fimc_is *is, u32 val)
+ 		fd->config.cmd = FD_CONFIG_COMMAND_ORIENTATION_VALUE;
+ 		fd->config.err = ERROR_FD_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_FD_CONFIG);
+-		fimc_is_inc_param_num(is);
+ 	} else {
+ 		fd->config.cmd |= FD_CONFIG_COMMAND_ORIENTATION_VALUE;
+ 	}
+@@ -729,21 +710,18 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 	/* Global */
+ 	global->shotmode.cmd = 1;
+ 	fimc_is_set_param_bit(is, PARAM_GLOBAL_SHOTMODE);
+-	fimc_is_inc_param_num(is);
+ 
+ 	/* ISP */
+ 	isp->control.cmd = CONTROL_COMMAND_START;
+ 	isp->control.bypass = CONTROL_BYPASS_DISABLE;
+ 	isp->control.err = CONTROL_ERROR_NONE;
+ 	fimc_is_set_param_bit(is, PARAM_ISP_CONTROL);
+-	fimc_is_inc_param_num(is);
+ 
+ 	isp->otf_input.cmd = OTF_INPUT_COMMAND_ENABLE;
+ 	if (!test_bit(PARAM_ISP_OTF_INPUT, p_index1)) {
+ 		isp->otf_input.width = DEFAULT_PREVIEW_STILL_WIDTH;
+ 		isp->otf_input.height = DEFAULT_PREVIEW_STILL_HEIGHT;
+ 		fimc_is_set_param_bit(is, PARAM_ISP_OTF_INPUT);
+-		fimc_is_inc_param_num(is);
+ 	}
+ 	if (is->sensor->test_pattern)
+ 		isp->otf_input.format = OTF_INPUT_FORMAT_STRGEN_COLORBAR_BAYER;
+@@ -766,7 +744,6 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 	isp->dma1_input.width = 0;
+ 	isp->dma1_input.err = DMA_INPUT_ERROR_NONE;
+ 	fimc_is_set_param_bit(is, PARAM_ISP_DMA1_INPUT);
+-	fimc_is_inc_param_num(is);
+ 
+ 	isp->dma2_input.cmd = DMA_INPUT_COMMAND_DISABLE;
+ 	isp->dma2_input.width = 0;
+@@ -779,12 +756,10 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 	isp->dma2_input.width = 0;
+ 	isp->dma2_input.err = DMA_INPUT_ERROR_NONE;
+ 	fimc_is_set_param_bit(is, PARAM_ISP_DMA2_INPUT);
+-	fimc_is_inc_param_num(is);
+ 
+ 	isp->aa.cmd = ISP_AA_COMMAND_START;
+ 	isp->aa.target = ISP_AA_TARGET_AE | ISP_AA_TARGET_AWB;
+ 	fimc_is_set_param_bit(is, PARAM_ISP_AA);
+-	fimc_is_inc_param_num(is);
+ 
+ 	if (!test_bit(PARAM_ISP_FLASH, p_index1))
+ 		__is_set_isp_flash(is, ISP_FLASH_COMMAND_DISABLE,
+@@ -826,7 +801,6 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 		isp->otf_output.width = DEFAULT_PREVIEW_STILL_WIDTH;
+ 		isp->otf_output.height = DEFAULT_PREVIEW_STILL_HEIGHT;
+ 		fimc_is_set_param_bit(is, PARAM_ISP_OTF_OUTPUT);
+-		fimc_is_inc_param_num(is);
+ 	}
+ 	isp->otf_output.format = OTF_OUTPUT_FORMAT_YUV444;
+ 	isp->otf_output.bitwidth = 12;
+@@ -847,7 +821,6 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 		isp->dma1_output.dma_out_mask = 0;
+ 		isp->dma1_output.err = DMA_OUTPUT_ERROR_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_ISP_DMA1_OUTPUT);
+-		fimc_is_inc_param_num(is);
+ 	}
+ 
+ 	if (!test_bit(PARAM_ISP_DMA2_OUTPUT, p_index1)) {
+@@ -864,7 +837,6 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 		isp->dma2_output.dma_out_mask = 0;
+ 		isp->dma2_output.err = DMA_OUTPUT_ERROR_NONE;
+ 		fimc_is_set_param_bit(is, PARAM_ISP_DMA2_OUTPUT);
+-		fimc_is_inc_param_num(is);
+ 	}
+ 
+ 	/* Sensor */
+@@ -882,7 +854,6 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 		drc->otf_input.width = DEFAULT_PREVIEW_STILL_WIDTH;
+ 		drc->otf_input.height = DEFAULT_PREVIEW_STILL_HEIGHT;
+ 		fimc_is_set_param_bit(is, PARAM_DRC_OTF_INPUT);
+-		fimc_is_inc_param_num(is);
+ 	}
+ 	drc->otf_input.format = OTF_INPUT_FORMAT_YUV444;
+ 	drc->otf_input.bitwidth = 12;
+@@ -900,14 +871,12 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 	drc->dma_input.width = 0;
+ 	drc->dma_input.err = DMA_INPUT_ERROR_NONE;
+ 	fimc_is_set_param_bit(is, PARAM_DRC_DMA_INPUT);
+-	fimc_is_inc_param_num(is);
+ 
+ 	drc->otf_output.cmd = OTF_OUTPUT_COMMAND_ENABLE;
+ 	if (!test_bit(PARAM_DRC_OTF_OUTPUT, p_index1)) {
+ 		drc->otf_output.width = DEFAULT_PREVIEW_STILL_WIDTH;
+ 		drc->otf_output.height = DEFAULT_PREVIEW_STILL_HEIGHT;
+ 		fimc_is_set_param_bit(is, PARAM_DRC_OTF_OUTPUT);
+-		fimc_is_inc_param_num(is);
+ 	}
+ 	drc->otf_output.format = OTF_OUTPUT_FORMAT_YUV444;
+ 	drc->otf_output.bitwidth = 8;
+@@ -923,8 +892,8 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 		fd->otf_input.width = DEFAULT_PREVIEW_STILL_WIDTH;
+ 		fd->otf_input.height = DEFAULT_PREVIEW_STILL_HEIGHT;
+ 		fimc_is_set_param_bit(is, PARAM_FD_OTF_INPUT);
+-		fimc_is_inc_param_num(is);
+ 	}
++
+ 	fd->otf_input.format = OTF_INPUT_FORMAT_YUV444;
+ 	fd->otf_input.bitwidth = 8;
+ 	fd->otf_input.order = 0;
+@@ -941,7 +910,6 @@ void fimc_is_set_initial_params(struct fimc_is *is)
+ 	fd->dma_input.width = 0;
+ 	fd->dma_input.err = DMA_INPUT_ERROR_NONE;
+ 	fimc_is_set_param_bit(is, PARAM_FD_DMA_INPUT);
+-	fimc_is_inc_param_num(is);
+ 
+ 	__is_set_fd_config_maxface(is, 5);
+ 	__is_set_fd_config_rollangle(is, FD_CONFIG_ROLL_ANGLE_FULL);
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-param.h b/drivers/media/platform/exynos4-is/fimc-is-param.h
+index 71464a5..f9358c2 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-param.h
++++ b/drivers/media/platform/exynos4-is/fimc-is-param.h
+@@ -985,13 +985,11 @@ struct sensor_open_extended {
+ 	u32 i2c_sclk;
+ };
+ 
+-#define fimc_is_inc_param_num(is) \
+-	atomic_inc(&(is)->cfg_param[(is)->scenario_id].p_region_num)
+-
+ struct fimc_is;
+ 
+ int fimc_is_hw_get_sensor_max_framerate(struct fimc_is *is);
+ void fimc_is_set_initial_params(struct fimc_is *is);
++unsigned int __get_pending_param_count(struct fimc_is *is);
+ 
+ int  __is_hw_update_params(struct fimc_is *is);
+ void __is_get_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf);
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+index efb9da0..f59a289 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+@@ -80,6 +80,7 @@ int fimc_is_hw_wait_intmsr0_intmsd0(struct fimc_is *is)
+ int fimc_is_hw_set_param(struct fimc_is *is)
+ {
+ 	struct is_config_param *cfg = &is->cfg_param[is->scenario_id];
++	unsigned int param_count = __get_pending_param_count(is);
+ 
+ 	fimc_is_hw_wait_intmsr0_intmsd0(is);
+ 
+@@ -87,7 +88,7 @@ int fimc_is_hw_set_param(struct fimc_is *is)
+ 	mcuctl_write(is->sensor_index, is, MCUCTL_REG_ISSR(1));
+ 	mcuctl_write(is->scenario_id, is, MCUCTL_REG_ISSR(2));
+ 
+-	mcuctl_write(atomic_read(&cfg->p_region_num), is, MCUCTL_REG_ISSR(3));
++	mcuctl_write(param_count, is, MCUCTL_REG_ISSR(3));
+ 	mcuctl_write(cfg->p_region_index1, is, MCUCTL_REG_ISSR(4));
+ 	mcuctl_write(cfg->p_region_index2, is, MCUCTL_REG_ISSR(5));
+ 
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index c5e4c53..10ec173 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -532,7 +532,6 @@ static void fimc_is_general_irq_handler(struct fimc_is *is)
+ 		case HIC_SET_PARAMETER:
+ 			is->cfg_param[is->scenario_id].p_region_index1 = 0;
+ 			is->cfg_param[is->scenario_id].p_region_index2 = 0;
+-			atomic_set(&is->cfg_param[is->scenario_id].p_region_num, 0);
+ 			set_bit(IS_ST_BLOCK_CMD_CLEARED, &is->state);
+ 			pr_debug("HIC_SET_PARAMETER\n");
+ 			break;
+@@ -593,7 +592,6 @@ static void fimc_is_general_irq_handler(struct fimc_is *is)
+ 		case HIC_SET_PARAMETER:
+ 			is->cfg_param[is->scenario_id].p_region_index1 = 0;
+ 			is->cfg_param[is->scenario_id].p_region_index2 = 0;
+-			atomic_set(&is->cfg_param[is->scenario_id].p_region_num, 0);
+ 			set_bit(IS_ST_BLOCK_CMD_CLEARED, &is->state);
+ 			break;
+ 		}
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.h b/drivers/media/platform/exynos4-is/fimc-is.h
+index 936e2ca..9406894 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.h
++++ b/drivers/media/platform/exynos4-is/fimc-is.h
+@@ -226,7 +226,6 @@ struct is_config_param {
+ 	struct drc_param	drc;
+ 	struct fd_param		fd;
+ 
+-	atomic_t		p_region_num;
+ 	unsigned long		p_region_index1;
+ 	unsigned long		p_region_index2;
+ };
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
+index 59502b1..b11c001 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp.c
+@@ -229,8 +229,11 @@ static int fimc_isp_subdev_s_stream(struct v4l2_subdev *sd, int on)
+ 	fimc_is_mem_barrier();
+ 
+ 	if (on) {
+-		if (atomic_read(&is->cfg_param[is->scenario_id].p_region_num))
++		if (__get_pending_param_count(is)) {
+ 			ret = fimc_is_itf_s_param(is, true);
++			if (ret < 0)
++				return ret;
++		}
+ 
+ 		v4l2_dbg(1, debug, sd, "changing mode to %d\n",
+ 						is->scenario_id);
+@@ -414,7 +417,6 @@ static int __ctrl_set_aewb_lock(struct fimc_is *is,
+ 	isp->aa.cmd = cmd;
+ 	isp->aa.target = ISP_AA_TARGET_AE;
+ 	fimc_is_set_param_bit(is, PARAM_ISP_AA);
+-	fimc_is_inc_param_num(is);
+ 	is->af.ae_lock_state = ae_lock;
+ 	wmb();
+ 
+@@ -426,7 +428,6 @@ static int __ctrl_set_aewb_lock(struct fimc_is *is,
+ 	isp->aa.cmd = cmd;
+ 	isp->aa.target = ISP_AA_TARGET_AE;
+ 	fimc_is_set_param_bit(is, PARAM_ISP_AA);
+-	fimc_is_inc_param_num(is);
+ 	is->af.awb_lock_state = awb_lock;
+ 	wmb();
+ 
 -- 
 1.7.9.5
