@@ -1,94 +1,52 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Subject: [PATCH] I2C: EXYNOS5: Set up the TX FIFO and RX FIFO for HSI2C
-Date: Wed, 10 Apr 2013 16:00:20 +0530
-Message-ID: <1365589820-28440-1-git-send-email-yuvaraj.cd@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:39041 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S936239Ab3DJKai (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 06:30:38 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v4 0/2] ARM: Exynos5250: Enabling samsung usb phy
+Date: Wed, 10 Apr 2013 19:31:29 +0900
+Message-ID: <310001ce35d6$901546b0$b03fd410$%kim@samsung.com>
+References: <1363334171-21812-1-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <1363334171-21812-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-language: ko
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, wsa@the-dreams.de, ch.naveen@samsung.com, taeggyun.ko@samsung.com
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-This patch, set up TX FIFO and RX FIFO of HSI2C controller based
-on i2c message length.If we configure TX and RX FIFO for a default
-value,the ALMOST_EMPTY and ALMOST_FULL will rise the interrupts
-unnecessary.
+Vivek Gautam wrote:
+> 
+> Based on 'for-next' of linux-samsung tree with following patches
+> from Doug on top:
+> usb: Document clocks in samsung, exynos4210-ehci/ohci bindings
+> ARM: dts: add usb 2.0 clock references to exynos5250 device tree
+> 
+> Also depending upon following patch-series for Samsung-usb-phy driver:
+> [PATCH v7 0/2] Adding USB 3.0 DRD-phy support for exynos5250
+> 
+> Changes from v3:
+> Added 'clocks' and 'clock-names' entry also in device nodes, aligning
+> with common clock framework for Samsung's SoCs.
+> 
+> Vivek Gautam (2):
+>   ARM: Exynos5250: Enabling samsung-usb2phy driver
+>   ARM: Exynos5250: Enabling samsung-usb3phy driver
+> 
+>  arch/arm/boot/dts/exynos5250.dtsi |   29 +++++++++++++++++++++++++++++
+>  1 files changed, 29 insertions(+), 0 deletions(-)
+> 
+> --
+> 1.7.6.5
 
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
----
- drivers/i2c/busses/i2c-exynos5.c |   21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+OK, applied, thanks.
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index a38c616..b25c717 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -77,9 +77,9 @@
- /* I2C_FIFO_CTL Register bits */
- #define HSI2C_RXFIFO_EN				(1u << 0)
- #define HSI2C_TXFIFO_EN				(1u << 1)
--#define HSI2C_TXFIFO_TRIGGER_LEVEL		(0x30 << 16)
--#define HSI2C_RXFIFO_TRIGGER_LEVEL		(0x30 << 4)
--
-+#define HSI2C_FIFO_MAX				(0x40)
-+#define HSI2C_RXFIFO_TRIGGER_LEVEL(x)		((x) << 4)
-+#define HSI2C_TXFIFO_TRIGGER_LEVEL(x)		((x) << 16)
- /* I2C_TRAILING_CTL Register bits */
- #define HSI2C_TRAILING_COUNT			(0xf)
- 
-@@ -400,10 +400,9 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
- 			goto stop;
- 		}
- 
--		/* 0x30 is the default trigger level for TX FIFO */
--		len = 48 - fifo_level;
--
--		if (len > i2c->msg->len)
-+		if (i2c->msg->len > HSI2C_FIFO_MAX)
-+			len = HSI2C_FIFO_MAX;
-+		else
- 			len = i2c->msg->len;
- 
- 		i2c->msg_len += len;
-@@ -492,10 +491,11 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	u32 i2c_auto_conf = 0;
- 	u32 fifo_ctl;
- 
-+	unsigned short len = (i2c->msg->len > HSI2C_FIFO_MAX) ?
-+					HSI2C_FIFO_MAX : i2c->msg->len;
- 	exynos5_i2c_en_timeout(i2c);
- 
--	fifo_ctl = HSI2C_RXFIFO_EN | HSI2C_TXFIFO_EN |
--		HSI2C_TXFIFO_TRIGGER_LEVEL | HSI2C_RXFIFO_TRIGGER_LEVEL;
-+	fifo_ctl = HSI2C_RXFIFO_EN | HSI2C_TXFIFO_EN;
- 	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
- 
- 	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
-@@ -506,11 +506,13 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 
- 		i2c_auto_conf |= HSI2C_READ_WRITE;
- 
-+		fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(len);
- 		int_en |= (HSI2C_INT_RX_ALMOSTFULL_EN |
- 			HSI2C_INT_TRAILING_EN);
- 	} else {
- 		i2c_ctl |= HSI2C_TXCHON;
- 
-+		fifo_ctl |= HSI2C_TXFIFO_TRIGGER_LEVEL(len);
- 		int_en |= HSI2C_INT_TX_ALMOSTEMPTY_EN;
- 	}
- 
-@@ -519,6 +521,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 
- 	writel(HSI2C_SLV_ADDR_MAS(i2c->msg->addr), i2c->regs + HSI2C_ADDR);
- 
-+	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
- 	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
- 
- 	/* In auto mode the length of xfer cannot be 0 */
--- 
-1.7.9.5
+- Kukjin
