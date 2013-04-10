@@ -1,48 +1,41 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v4] mmc: dw_mmc: let device core setup the default pin configuration
-Date: Wed, 10 Apr 2013 18:18:37 +0530
-Message-ID: <CAJuYYwQT=povqiutVHXkF5jxTAnjpwTMQ5G0Z6xKGnnM7qYADQ@mail.gmail.com>
-References: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org>
-	<CAD=FV=VJ-ykDNqYKQ=fqxeOD6bRNLW02VT4bjsRHRAuXLcCpQQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH RESEND] ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
+Date: Wed, 10 Apr 2013 14:59:07 +0200
+Message-ID: <201304101459.07263.arnd@arndb.de>
+References: <51642dab.e844440a.0ad1.ffffc13f@mx.google.com> <310101ce35d7$00e7e000$02b7a000$%kim@samsung.com> <516541EB.8080404@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f170.google.com ([209.85.210.170]:48770 "EHLO
-	mail-ia0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756843Ab3DJMsh (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.9]:65212 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750975Ab3DJM7Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 08:48:37 -0400
-Received: by mail-ia0-f170.google.com with SMTP id j38so378250iad.29
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Apr 2013 05:48:37 -0700 (PDT)
-In-Reply-To: <CAD=FV=VJ-ykDNqYKQ=fqxeOD6bRNLW02VT4bjsRHRAuXLcCpQQ@mail.gmail.com>
+	Wed, 10 Apr 2013 08:59:16 -0400
+In-Reply-To: <516541EB.8080404@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, Patch Tracking <patches@linaro.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Olof Johansson' <olof@lixom.net>
 
-On 10 April 2013 05:00, Doug Anderson <dianders@chromium.org> wrote:
-> Thomas,
->
-> On Mon, Apr 8, 2013 at 10:59 PM, Thomas Abraham
-> <thomas.abraham@linaro.org> wrote:
->> @@ -2002,7 +1994,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
->>                 if (ret) {
->>                         dev_err(host->dev,
->>                                 "failed to enable regulator: %d\n", ret);
->> -                       goto err_setup_bus;
->> +                       return ret;
->
-> It seems like you'd need a "mmc_free_host(mmc);" in this case don't
-> you?  AKA: this should be a goto and not a return.
+On Wednesday 10 April 2013, Sylwester Nawrocki wrote:
+> On 04/10/2013 12:34 PM, Kukjin Kim wrote:
+> > Kukjin Kim wrote:
+> >>
+> >> From: Kukjin Kim <kgene.kim@samsung.com>
+> >>
+> >> As we discussed in mailing list, non-DT for EXYNOS SoCs will not be
+> >> supported from v3.10. This patch removes regarding files for non-DT
+> >> including board files.
+> >>
+> >> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> It looks OK to me.
 
-Hi Doug,
+Ok. I am currently rebuilding my exynos multiplatform series on top of the
+branches merged yesterday, but keeping ATAGS support alive there.
 
-The call to regulator_enable() is prior to the call to mmc_add_host().
-Hence, call to mmc_fre_host is not required in this case. So the above
-change should be right.
+Should I rebase on top of this patch instead?
 
-Thanks,
-Thomas.
-
->
-> -Doug
+	Arnd
