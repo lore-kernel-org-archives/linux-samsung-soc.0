@@ -1,53 +1,151 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [GIT PULL 04/10] clk-exynos for v3.10
-Date: Wed, 10 Apr 2013 09:18:42 +0530
-Message-ID: <CAK9yfHzMOmrRMKdc2fUJHnbrOC_-=AR3BnHBDjtvPeinvxOcLg@mail.gmail.com>
-References: <51630A02.4080905@samsung.com>
-	<201304092231.18314.arnd@arndb.de>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC 01/12] exynos-fimc-is: Adding device tree nodes
+Date: Wed, 10 Apr 2013 10:02:23 +0530
+Message-ID: <CALt3h79HjEObqiZ5-mE05D0ohikNETM03QG4+gp+XoeZtrN0Aw@mail.gmail.com>
+References: <1362754765-2651-1-git-send-email-arun.kk@samsung.com>
+	<1362754765-2651-2-git-send-email-arun.kk@samsung.com>
+	<514DAAC3.4050202@gmail.com>
+	<CALt3h7_nXSd6A2t55fi3PD+BkpZh5Lo4suWcg-ZF=jDq+V3NXA@mail.gmail.com>
+	<51522671.5080706@gmail.com>
+	<CALt3h7_nFQdRCJJA0n4i9_CnRJAeYvu8xCkwzDsfdqBZgf_NNw@mail.gmail.com>
+	<5152F857.6010409@samsung.com>
+	<CALt3h7-Hi4E6wL-Scd-45k0SGJnhrwZ7Ks_unmwU5ognyY-nmw@mail.gmail.com>
+	<5154E09B.1050601@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:41323 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750713Ab3DJDsp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Apr 2013 23:48:45 -0400
-Received: by mail-oa0-f41.google.com with SMTP id f4so32609oah.14
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Apr 2013 20:48:45 -0700 (PDT)
-In-Reply-To: <201304092231.18314.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <5154E09B.1050601@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kilyeon.im@samsung.com, shaik.ameer@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 10 April 2013 02:01, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Monday 08 April 2013, Kukjin Kim wrote:
->> The following changes since commit 07961ac7c0ee8b546658717034fe692fd12eefa9:
+Hi Sylwester,
+
+Sorry for the late reply.
+
+>>>
+>>> OK, thanks for the explanation.
+>>>
+>>> I can think of at least one possible way to get hold of the fimc-is
+>>> context in the subdev. For instance, in subdev's .registered callback
+>>> you get a pointer to struct v4l2_device, which is normally embedded
+>>> in a top level driver's private data. Then with container_of()
+>>> you could get hold of required data at the fimc-is driver.
 >>
->>    Linux 3.9-rc5 (2013-03-31 15:12:43 -0700)
 >>
->> are available in the git repository at:
->>
->>    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->> tags/clk-exynos-for-v3.10
->>
->> for you to fetch changes up to da821eb7d42935b0f7056d98c75fd1150f6636f4:
->>
->>    Merge commit 'v3.9-rc5' into next/clk-exynos (2013-04-09 01:10:13 +0900)
->>
->> ----------------------------------------------------------------
->>
->> add suppport common clock framework for exynos
+>> But as per current implementation, it is not the fimc-is driver that is
+>> registering the ISP subdevs. It will be registered from the
+>> media controller driver. So fimc-is context cannot be obtained by
+>> just using container_of().
 >
-> I got a build warning, probably because of this patch:
+>
+> I guess best option would be to have a function to get the IS slave
+> interface driver context at the sensor subdev exported by the IS driver
+> module, as you suggested previously.
+
+Ok I will make the sensor as i2c device and check what is the best
+way to get the IS context in sensor subdev.
+
+>
+> You still could obtain the fimc-is object from the media device private
+> data structure, since the media device has normally a list of its all
+> entities in one form or the other. But the sensor would need to know
+> details of the media device, which makes it a bit pointless.
+>
+> Nevertheless, my main concern is the DT binding. Sharing the sensor
+> subdev driver might not be that important at the moment, we are talking
+> about 300..500 lines of code per ISP driver currently anyway.
+>
+> More important is to have the hardware described in a standard way, so
+> when the firmware changes there is no need to change the DT bindings.
+>
+
+Yes that's right. Need to define the hardware in a generic way regardless
+of what the firmware is doing.
 
 
-IIRC, the patch at [1] was supposed to fix the build warning. Kukjin
-had mentioned it was applied [1].
+>>>
+>>
+>> In case of ISP subdevs (isp, scc and scp), there is not much configuration
+>> that the media device can do. Only control possible is to turn on/off
+>> specific scaler DMA outputs which can be done via the video node ioctls.
+>> The role of media device here is mostly to convey the pipeline structure
+>> to the user. For eg. it is not possible to directly connect isp (sd)
+>> -->  scp (sd).
+>> In the media controller pipeline1 implementation, we were planning to
+>> put immutable links between these subdevs. Is that acceptable?
+>
+>
+> Not sure I understand which links you mean exactly. Could you post the
+> media graph generated by media-ctl (--print-dot) ?
+>
+> If you're talking about the on-the-fly (FIFO) links, then it probably
+> makes sense. The media device driver should respond to the link_notify
+> events and not to allow data links unsupported in the hardware. If you
+> create immutable OTF links, then how would you switch between DMA and
+> OTF interfaces ? Or can all processing blocks of the ISP chain work
+> simultaneously with the DMA and OTF ? The FD block, for instance, can fed
+> data from memory _or_ from previous processing block in the chain, right ?
+> You will need a user interface to control which input is used and the
+> links configuration seems most natural here.
 
-[1] https://patchwork.kernel.org/patch/2010691/
+Yes I agree to that. Though in the current driver, there are no subdevs which
+can change between DMA <-> OTF inputs, in future versions we might add it.
+So link configuration option will be provided.
 
 
--- 
-With warm regards,
-Sachin
+>
+>
+>>> The media driver has a list of media entities (subdevices and video
+>>> nodes) and I though it could coordinate any requests involving whole
+>>> video/image processing pipeline originating from /dev/video ioctls/fops.
+>>>
+>>> So for instance if /dev/video in this pipeline is opened
+>>>
+>>> sensor (sd) ->  mipi-csis (sd) ->  fimc-lite (sd) ->  memory (/dev/video)
+>>>
+>>> it would call s_power operation on the above subdevs and additionally
+>>> on e.g. the isp subdev (or any other we choose as a main subdev
+>>> implementing the FIMC-IS slave interface).
+>>>
+>>> Then couldn't it be done that video node ioctls invoke pipeline
+>>> operations, and the media device resolves any dependencies/calls
+>>> order, as in case of the exynos4 driver ?
+>>
+>>
+>> On Exynos4 subdevs, it is well and good since all the subdevs are
+>> independent IPs. Here in ISP since the same IP can take one input and
+>
+>
+> Not really, there are going to be 2 subdevs exposed by the fimc-is: ISP
+> and FD. However FD is still not supported in my last patch series. I was
+> planning this for a subsequent kernel release.
+>
+>
+>> provide multiple outputs, we designed them as separate subdevs. So
+>> here we cannot make the subdevs independent of each other where only
+>> the sequence / dependencies is controlled from the media device.
+>
+>
+> I'm not asking you to make the FIMC-IS subdevs more self-contained,
+> it's of course perfectly fine to have multiple (logical) subdevs exposed
+> by a complex device like that. I have been thinking only about the
+> sensor driver, since the sensors are normally shared across ISPs from
+> various chip manufacturers. But let us leave this topic for now.
+>
+> BTW, in my interpretation FIMC-IS is a collection of IPs/peripheral
+> devices, not a single black box, including an image sensor. And the
+> firmware should not be the most significant factor how we expose
+> the whole subsystem to the user. All elements of the ISP chain, i.e.
+> an IP control registers are visible to both, the main CPU and the
+> FIMC-IS (Cortex-A5) MCU. Still, it would be possible to create v4l2
+> subdevs dynamically, depending on the firmware architecture.
+>
+
+Ok. I will address all these comments and work on v2 patchset.
+
+Thanks for the excellent help :)
+
+Regards
+Arun
