@@ -1,41 +1,73 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RESEND] ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
-Date: Wed, 10 Apr 2013 14:59:07 +0200
-Message-ID: <201304101459.07263.arnd@arndb.de>
-References: <51642dab.e844440a.0ad1.ffffc13f@mx.google.com> <310101ce35d7$00e7e000$02b7a000$%kim@samsung.com> <516541EB.8080404@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v5 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
+ Microblaze and PowerPC
+Date: Wed, 10 Apr 2013 08:13:54 -0500
+Message-ID: <51656592.7070806@gmail.com>
+References: <1365578969-30966-1-git-send-email-Andrew.Murray@arm.com> <1365578969-30966-2-git-send-email-Andrew.Murray@arm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:65212 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750975Ab3DJM7Q (ORCPT
+Received: from mail-qe0-f50.google.com ([209.85.128.50]:48863 "EHLO
+	mail-qe0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751746Ab3DJNOE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 08:59:16 -0400
-In-Reply-To: <516541EB.8080404@samsung.com>
+	Wed, 10 Apr 2013 09:14:04 -0400
+In-Reply-To: <1365578969-30966-2-git-send-email-Andrew.Murray@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Olof Johansson' <olof@lixom.net>
+To: Andrew Murray <Andrew.Murray@arm.com>
+Cc: rob.herring@calxeda.com, siva.kallam@samsung.com, linux-pci@vger.kernel.org, Liviu.Dudau@arm.com, paulus@samba.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, jg1.han@samsung.com, jgunthorpe@obsidianresearch.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, bhelgaas@google.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, suren.reddy@samsung.com, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michal Simek <monstr@monstr.eu>
 
-On Wednesday 10 April 2013, Sylwester Nawrocki wrote:
-> On 04/10/2013 12:34 PM, Kukjin Kim wrote:
-> > Kukjin Kim wrote:
-> >>
-> >> From: Kukjin Kim <kgene.kim@samsung.com>
-> >>
-> >> As we discussed in mailing list, non-DT for EXYNOS SoCs will not be
-> >> supported from v3.10. This patch removes regarding files for non-DT
-> >> including board files.
-> >>
-> >> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Adding Ben H and Michal...
+
+On 04/10/2013 02:29 AM, Andrew Murray wrote:
+> The pci_process_bridge_OF_ranges function, used to parse the "ranges"
+> property of a PCI host device, is found in both Microblaze and PowerPC
+> architectures. These implementations are nearly identical. This patch
+> moves this common code to a common place.
 > 
-> It looks OK to me.
+> Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
+> Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
 
-Ok. I am currently rebuilding my exynos multiplatform series on top of the
-branches merged yesterday, but keeping ATAGS support alive there.
+One comment below. Otherwise,
 
-Should I rebase on top of this patch instead?
+Reviewed-by: Rob Herring <rob.herring@calxeda.com>
 
-	Arnd
+You need also need acks from Ben and Michal.
+
+[...]
+
+> +		/* Act based on address space type */
+> +		res = NULL;
+> +		switch ((pci_space >> 24) & 0x3) {
+> +		case 1:		/* PCI IO space */
+> +			pr_info("  IO 0x%016llx..0x%016llx -> 0x%016llx\n",
+> +			       cpu_addr, cpu_addr + size - 1, pci_addr);
+> +
+> +			/* We support only one IO range */
+> +			if (hose->pci_io_size) {
+> +				pr_info(" \\--> Skipped (too many) !\n");
+> +				continue;
+> +			}
+> +#if defined(CONFIG_PPC32) || defined(CONFIG_MICROBLAZE)
+
+How about "if (!IS_ENABLED(CONFIG_64BIT))" instead.
+
+> +			/* On 32 bits, limit I/O space to 16MB */
+> +			if (size > 0x01000000)
+> +				size = 0x01000000;
+> +
+> +			/* 32 bits needs to map IOs here */
+> +			hose->io_base_virt = ioremap(cpu_addr, size);
+> +
+> +			/* Expect trouble if pci_addr is not 0 */
+> +			if (primary)
+> +				isa_io_base =
+> +					(unsigned long)hose->io_base_virt;
+> +#endif /* CONFIG_PPC32 || CONFIG_MICROBLAZE */
+> +			/* pci_io_size and io_base_phys always represent IO
+> +			 * space starting at 0 so we factor in pci_addr
+> +			 */
+> +			hose->pci_io_size = pci_addr + size;
+> +			hose->io_base_phys = cpu_addr - pci_addr;
