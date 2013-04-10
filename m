@@ -1,112 +1,94 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/3] ARM: S3C24XX: Add devicetree support for s3c2416
-Date: Wed, 10 Apr 2013 19:15:48 +0900
-Message-ID: <30ff01ce35d4$5f4920d0$1ddb6270$%kim@samsung.com>
-References: <201302180103.53084.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH] I2C: EXYNOS5: Set up the TX FIFO and RX FIFO for HSI2C
+Date: Wed, 10 Apr 2013 16:00:20 +0530
+Message-ID: <1365589820-28440-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48026 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752546Ab3DJKPv convert rfc822-to-8bit (ORCPT
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:39041 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S936239Ab3DJKai (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 06:15:51 -0400
-In-reply-to: <201302180103.53084.heiko@sntech.de>
-Content-language: ko
+	Wed, 10 Apr 2013 06:30:38 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Rob Herring' <rob.herring@calxeda.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, wsa@the-dreams.de, ch.naveen@samsung.com, taeggyun.ko@samsung.com
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Heiko St=C3=BCbner wrote:
->=20
-> This is the second installment of beginning devicetree support the
-> Samsung S3C24xx architectures and focuses on the s3c2416 for now.
->=20
-> Included is the devicetree support for the s3c24xx irq controller and
-> basic support for smdk2416 boards, which can sucessfully boot.
->=20
->=20
-> After the discussion with Thomas Abraham on v1 and staring to long at=
- all
-> of
-> this, I'm not even sure if having the interrupt mapping in the bindin=
-g
-> is the correct way to go anymore.
->=20
-> The key positive aspect of this solution is, that after everything is
-> running
-> via dt all the SoC specific mapping tables in the driver can go away,
-> cutting
-> its length in half.
->=20
-> The other option would be as Thomas suggested to define specific irq-
-> controller
-> types (i.e. s3c2416-intc, s3c2443-intc, ... resulting in 16 types) an=
-d
-> keep
-> the mapping data in the code, as it is now.
->=20
-> So I would be very thankful for a bit of guidance on what is the bett=
-er
-> way.
->=20
->=20
-> The series depends on the finalized s3c24xx irq rework, which probabl=
-y
-> won't
-> make it into 3.9 and also the clocksource dt support by Tomasz Figa, =
-which
-> are not in any tree yet.
->=20
->=20
-> Changes since v1:
-> - adapt to changes in the underlying s3c24xx irq rework
->   =3D more shared init code
-> - use irqchip infrastructure
-> - limit number of possible irq-types to not encode implementation det=
-ails
->   into the binding
-> - include new samsung-clocksource
->=20
-> Heiko Stuebner (3):
->   ARM: S3C24XX: move irq driver to drivers/irqchip
->   irqchip: irq-s3c24xx: add devicetree support
->   ARM: S3C24XX: Add devicetree support and dt-board file for s3c2416 =
-SoCs
->=20
->  .../interrupt-controller/samsung,s3c24xx-irq.txt   |   53 ++++++
->  arch/arm/boot/dts/Makefile                         |    1 +
->  arch/arm/boot/dts/s3c2416-smdk2416.dts             |   79 ++++++++
->  arch/arm/boot/dts/s3c2416.dtsi                     |  193 ++++++++++=
-++++++++++
->  arch/arm/boot/dts/s3c24xx.dtsi                     |  165 ++++++++++=
-+++++++
->  arch/arm/mach-s3c24xx/Kconfig                      |   10 +
->  arch/arm/mach-s3c24xx/Makefile                     |    3 +-
->  arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   91 +++++++++
->  drivers/irqchip/Makefile                           |    1 +
->  .../irq.c =3D> drivers/irqchip/irq-s3c24xx.c         |  128 ++++++++=
-+++++
->  10 files changed, 723 insertions(+), 1 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-
-> controller/samsung,s3c24xx-irq.txt
->  create mode 100644 arch/arm/boot/dts/s3c2416-smdk2416.dts
->  create mode 100644 arch/arm/boot/dts/s3c2416.dtsi
->  create mode 100644 arch/arm/boot/dts/s3c24xx.dtsi
->  create mode 100644 arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
->  rename arch/arm/mach-s3c24xx/irq.c =3D> drivers/irqchip/irq-s3c24xx.=
-c (92%)
->=20
-> --
-> 1.7.2.3
+This patch, set up TX FIFO and RX FIFO of HSI2C controller based
+on i2c message length.If we configure TX and RX FIFO for a default
+value,the ALMOST_EMPTY and ALMOST_FULL will rise the interrupts
+unnecessary.
 
-Basically, looks good to me and thanks for your effort.
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-BTW, if you don't mind, would be better to send to upstream next time. =
-Because I need to consider other s3c24xx SoCs for DT...
-
-Thanks.
-
-- Kukjin
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index a38c616..b25c717 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -77,9 +77,9 @@
+ /* I2C_FIFO_CTL Register bits */
+ #define HSI2C_RXFIFO_EN				(1u << 0)
+ #define HSI2C_TXFIFO_EN				(1u << 1)
+-#define HSI2C_TXFIFO_TRIGGER_LEVEL		(0x30 << 16)
+-#define HSI2C_RXFIFO_TRIGGER_LEVEL		(0x30 << 4)
+-
++#define HSI2C_FIFO_MAX				(0x40)
++#define HSI2C_RXFIFO_TRIGGER_LEVEL(x)		((x) << 4)
++#define HSI2C_TXFIFO_TRIGGER_LEVEL(x)		((x) << 16)
+ /* I2C_TRAILING_CTL Register bits */
+ #define HSI2C_TRAILING_COUNT			(0xf)
+ 
+@@ -400,10 +400,9 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+ 			goto stop;
+ 		}
+ 
+-		/* 0x30 is the default trigger level for TX FIFO */
+-		len = 48 - fifo_level;
+-
+-		if (len > i2c->msg->len)
++		if (i2c->msg->len > HSI2C_FIFO_MAX)
++			len = HSI2C_FIFO_MAX;
++		else
+ 			len = i2c->msg->len;
+ 
+ 		i2c->msg_len += len;
+@@ -492,10 +491,11 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 	u32 i2c_auto_conf = 0;
+ 	u32 fifo_ctl;
+ 
++	unsigned short len = (i2c->msg->len > HSI2C_FIFO_MAX) ?
++					HSI2C_FIFO_MAX : i2c->msg->len;
+ 	exynos5_i2c_en_timeout(i2c);
+ 
+-	fifo_ctl = HSI2C_RXFIFO_EN | HSI2C_TXFIFO_EN |
+-		HSI2C_TXFIFO_TRIGGER_LEVEL | HSI2C_RXFIFO_TRIGGER_LEVEL;
++	fifo_ctl = HSI2C_RXFIFO_EN | HSI2C_TXFIFO_EN;
+ 	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
+ 
+ 	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
+@@ -506,11 +506,13 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 
+ 		i2c_auto_conf |= HSI2C_READ_WRITE;
+ 
++		fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(len);
+ 		int_en |= (HSI2C_INT_RX_ALMOSTFULL_EN |
+ 			HSI2C_INT_TRAILING_EN);
+ 	} else {
+ 		i2c_ctl |= HSI2C_TXCHON;
+ 
++		fifo_ctl |= HSI2C_TXFIFO_TRIGGER_LEVEL(len);
+ 		int_en |= HSI2C_INT_TX_ALMOSTEMPTY_EN;
+ 	}
+ 
+@@ -519,6 +521,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 
+ 	writel(HSI2C_SLV_ADDR_MAS(i2c->msg->addr), i2c->regs + HSI2C_ADDR);
+ 
++	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
+ 	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
+ 
+ 	/* In auto mode the length of xfer cannot be 0 */
+-- 
+1.7.9.5
