@@ -1,74 +1,39 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 4/4] dt-exynos 2 for v3.10
-Date: Wed, 10 Apr 2013 22:53:27 +0900
-Message-ID: <51656ED7.90506@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH RESEND] ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
+Date: Wed, 10 Apr 2013 15:55:27 +0200
+Message-ID: <201304101555.27984.arnd@arndb.de>
+References: <51642dab.e844440a.0ad1.ffffc13f@mx.google.com> <201304101459.07263.arnd@arndb.de> <51656D2D.7060004@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:57566 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935153Ab3DJNxc (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.171]:55480 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760323Ab3DJNzd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 09:53:32 -0400
-Received: by mail-pa0-f49.google.com with SMTP id kp14so324965pab.22
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Apr 2013 06:53:32 -0700 (PDT)
+	Wed, 10 Apr 2013 09:55:33 -0400
+In-Reply-To: <51656D2D.7060004@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Olof Johansson' <olof@lixom.net>
 
-Hi Arnd, Olof,
+On Wednesday 10 April 2013, Sylwester Nawrocki wrote:
+> Hmm, it turns out we are still actively using some boards based on
+> Exynos4210 EVT0 SoCs. And since it seems unlikely the patches from
+> Tomasz [1] adding basic DT support for those will get merged for
+> 3.10, it would be a bit inconvenient to remove the ATAGS support
+> now, leaving Exynos4210 Rev. 0 not supported at all.
 
-This is one more pull-request for exynos dt update for v3.10.
-Please pull.
+I still have hope to get those included.
 
-Thanks.
+> Not sure what's others opinion on that, and what would be an advantage
+> of removing non-dt support for Exynos now, rather than in 3.11, vs. any
+> possible inconvenience and regressions this could cause.
 
-- Kukjin
-----------------------------------------------------------------
+A multiplatform kernel will not work on an ATAGS based Exynos platform,
+but I think we can have it both ways and allow either multiplatform
+DT-only or single-platform with both DT and ATAGS in 3.10.
 
-The following changes since commit 31d39248810072dec3279463d5fda0001721c01c:
-
-   ARM: dts: add mshc controller node for Exynos4x12 SoCs (2013-04-10 
-17:51:32 +0900)
-
-are available in the git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/dt-exynos-2-for-v3.10
-
-for you to fetch changes up to 9251646b7a36059f8667f87fa00361a776bf19a2:
-
-   ARM: EXYNOS: Enable XHCI support on exynos5 (2013-04-10 19:38:41 +0900)
-
-----------------------------------------------------------------
-This updates device tree for keypad for smdk4412 and origen4412 boards 
-and adds mfc clock entries for exynos4 and enables usb2phy and usb3phy 
-and dwc3-exynos for exynos5250
-
-----------------------------------------------------------------
-Sachin Kamat (5):
-       ARM: dts: Remove keypad entries from exynos4x12-pinctrl.dtsi
-       ARM: dts: Add keypad entries to Exynos4412 based Origen
-       ARM: dts: Add keypad entries to SMDK4412
-       ARM: dts: Add MFC clock entries for exynos4
-       ARM: dts: Update MFC documentation for clock entries
-
-Vivek Gautam (5):
-       ARM: dts: Enabling samsung-usb2phy driver for exynos5250
-       ARM: dts: Enabling samsung-usb3phy driver for exynos5250
-       ARM: dts: Add device tree bindings for dwc3-exynos
-       ARM: dts: Enabling dwc3-exynos driver for exynos5250
-       ARM: EXYNOS: Enable XHCI support on exynos5
-
-  .../devicetree/bindings/media/s5p-mfc.txt          |  5 ++
-  .../devicetree/bindings/usb/exynos-usb.txt         | 34 +++++++++
-  arch/arm/boot/dts/exynos4.dtsi                     |  2 +
-  arch/arm/boot/dts/exynos4412-origen.dts            | 62 +++++++++++++++
-  arch/arm/boot/dts/exynos4412-smdk4412.dts          | 87 
-++++++++++++++++++++++
-  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          | 56 --------------
-  arch/arm/boot/dts/exynos5250.dtsi                  | 45 +++++++++++
-  arch/arm/mach-exynos/Kconfig                       |  1 +
-  8 files changed, 236 insertions(+), 56 deletions(-)
+	Arnd
