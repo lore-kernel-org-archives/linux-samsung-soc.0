@@ -1,197 +1,128 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 18/30] ASoC: samsung: move plat/ headers to
-	local directory
-Date: Thu, 11 Apr 2013 02:05:00 +0200
-Message-ID: <1365638712-1028578-19-git-send-email-arnd@arndb.de>
+Subject: [PATCH 26/30] irqchip: exynos: allocate combiner_data dynamically
+Date: Thu, 11 Apr 2013 02:05:08 +0200
+Message-ID: <1365638712-1028578-27-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The plat/iis.h and plat/ac97.h files in the samsung platform are
-only needed by the ASoC drivers, so they can be moved into the
-same directory, as one more step towards a multiplatform build.
+The number of combiners on a given SoC is a platform specific
+constant, and we cannot encode this number on a multiplatform
+kernel since the header file defining it is not available.
+
+Allocating the structure dynamically ends up cleaner anyway
+since we keep all the data local.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: alsa-devel@alsa-project.org
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/arm/mach-s3c24xx/dma-s3c2410.c                                   | 2 --
- arch/arm/mach-s3c24xx/dma-s3c2412.c                                   | 2 --
- arch/arm/mach-s3c24xx/dma-s3c2440.c                                   | 2 --
- arch/arm/mach-s3c24xx/dma-s3c2443.c                                   | 2 --
- sound/soc/samsung/ac97.c                                              | 2 +-
- sound/soc/samsung/h1940_uda1380.c                                     | 2 +-
- sound/soc/samsung/neo1973_wm8753.c                                    | 2 +-
- {arch/arm/plat-samsung/include/plat => sound/soc/samsung}/regs-ac97.h | 0
- {arch/arm/plat-samsung/include/plat => sound/soc/samsung}/regs-iis.h  | 0
- sound/soc/samsung/rx1950_uda1380.c                                    | 2 +-
- sound/soc/samsung/s3c24xx-i2s.c                                       | 2 +-
- sound/soc/samsung/s3c24xx_uda134x.c                                   | 2 +-
- 12 files changed, 6 insertions(+), 14 deletions(-)
- rename {arch/arm/plat-samsung/include/plat => sound/soc/samsung}/regs-ac97.h (100%)
- rename {arch/arm/plat-samsung/include/plat => sound/soc/samsung}/regs-iis.h (100%)
+ drivers/irqchip/exynos-combiner.c | 36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/dma-s3c2410.c b/arch/arm/mach-s3c24xx/dma-s3c2410.c
-index a6c94b8..30aa53f 100644
---- a/arch/arm/mach-s3c24xx/dma-s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/dma-s3c2410.c
-@@ -25,10 +25,8 @@
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index e7aef59..ffb10aa 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -12,6 +12,7 @@
+ #include <linux/export.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/slab.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/of_address.h>
+@@ -38,7 +39,6 @@ struct combiner_chip_data {
+ };
  
- #include <plat/regs-serial.h>
- #include <mach/regs-gpio.h>
--#include <plat/regs-ac97.h>
- #include <plat/regs-dma.h>
- #include <mach/regs-lcd.h>
--#include <plat/regs-iis.h>
- #include <plat/regs-spi.h>
+ static struct irq_domain *combiner_irq_domain;
+-static struct combiner_chip_data combiner_data[MAX_COMBINER_NR];
  
- static struct s3c24xx_dma_map __initdata s3c2410_dma_mappings[] = {
-diff --git a/arch/arm/mach-s3c24xx/dma-s3c2412.c b/arch/arm/mach-s3c24xx/dma-s3c2412.c
-index c0e8c3f..ab1700e 100644
---- a/arch/arm/mach-s3c24xx/dma-s3c2412.c
-+++ b/arch/arm/mach-s3c24xx/dma-s3c2412.c
-@@ -25,10 +25,8 @@
+ static inline void __iomem *combiner_base(struct irq_data *data)
+ {
+@@ -115,26 +115,26 @@ static struct irq_chip combiner_chip = {
+ #endif
+ };
  
- #include <plat/regs-serial.h>
- #include <mach/regs-gpio.h>
--#include <plat/regs-ac97.h>
- #include <plat/regs-dma.h>
- #include <mach/regs-lcd.h>
--#include <plat/regs-iis.h>
- #include <plat/regs-spi.h>
+-static void __init combiner_cascade_irq(unsigned int combiner_nr,
++static void __init combiner_cascade_irq(struct combiner_chip_data *combiner_data,
+ 					unsigned int irq)
+ {
+-	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
++	if (irq_set_handler_data(irq, combiner_data) != 0)
+ 		BUG();
+ 	irq_set_chained_handler(irq, combiner_handle_cascade_irq);
+ }
  
- #define MAP(x) { (x)| DMA_CH_VALID, (x)| DMA_CH_VALID, (x)| DMA_CH_VALID, (x)| DMA_CH_VALID }
-diff --git a/arch/arm/mach-s3c24xx/dma-s3c2440.c b/arch/arm/mach-s3c24xx/dma-s3c2440.c
-index 1c08eccd..cd25de2 100644
---- a/arch/arm/mach-s3c24xx/dma-s3c2440.c
-+++ b/arch/arm/mach-s3c24xx/dma-s3c2440.c
-@@ -25,10 +25,8 @@
+-static void __init combiner_init_one(unsigned int combiner_nr,
++static void __init combiner_init_one(struct combiner_chip_data *combiner_data,
++				     unsigned int combiner_nr,
+ 				     void __iomem *base, unsigned int irq)
+ {
+-	combiner_data[combiner_nr].base = base;
+-	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
++	combiner_data->base = base;
++	combiner_data->irq_offset = irq_find_mapping(
+ 		combiner_irq_domain, combiner_nr * IRQ_IN_COMBINER);
+-	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
+-	combiner_data[combiner_nr].parent_irq = irq;
++	combiner_data->irq_mask = 0xff << ((combiner_nr % 4) << 3);
++	combiner_data->parent_irq = irq;
  
- #include <plat/regs-serial.h>
- #include <mach/regs-gpio.h>
--#include <plat/regs-ac97.h>
- #include <plat/regs-dma.h>
- #include <mach/regs-lcd.h>
--#include <plat/regs-iis.h>
- #include <plat/regs-spi.h>
+ 	/* Disable all interrupts */
+-	__raw_writel(combiner_data[combiner_nr].irq_mask,
+-		     base + COMBINER_ENABLE_CLEAR);
++	__raw_writel(combiner_data->irq_mask, base + COMBINER_ENABLE_CLEAR);
+ }
  
- static struct s3c24xx_dma_map __initdata s3c2440_dma_mappings[] = {
-diff --git a/arch/arm/mach-s3c24xx/dma-s3c2443.c b/arch/arm/mach-s3c24xx/dma-s3c2443.c
-index 000e4c6..5fe3539 100644
---- a/arch/arm/mach-s3c24xx/dma-s3c2443.c
-+++ b/arch/arm/mach-s3c24xx/dma-s3c2443.c
-@@ -25,10 +25,8 @@
+ #ifdef CONFIG_OF
+@@ -169,6 +169,8 @@ static int combiner_irq_domain_xlate(struct irq_domain *d,
+ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 				   irq_hw_number_t hw)
+ {
++	struct combiner_chip_data *combiner_data = d->host_data;
++
+ 	irq_set_chip_and_handler(irq, &combiner_chip, handle_level_irq);
+ 	irq_set_chip_data(irq, &combiner_data[hw >> 3]);
+ 	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
+@@ -203,6 +205,7 @@ void __init combiner_init(void __iomem *combiner_base,
+ {
+ 	int i, irq, irq_base;
+ 	unsigned int nr_irq;
++	struct combiner_chip_data *combiner_data;
  
- #include <plat/regs-serial.h>
- #include <mach/regs-gpio.h>
--#include <plat/regs-ac97.h>
- #include <plat/regs-dma.h>
- #include <mach/regs-lcd.h>
--#include <plat/regs-iis.h>
- #include <plat/regs-spi.h>
+ 	nr_irq = max_nr * IRQ_IN_COMBINER;
  
- #define MAP(x) { \
-diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
-index 0df3c56..c76abdf 100644
---- a/sound/soc/samsung/ac97.c
-+++ b/sound/soc/samsung/ac97.c
-@@ -20,7 +20,7 @@
- #include <sound/soc.h>
+@@ -212,8 +215,14 @@ void __init combiner_init(void __iomem *combiner_base,
+ 		pr_warning("%s: irq desc alloc failed. Continuing with %d as linux irq base\n", __func__, irq_base);
+ 	}
  
- #include <mach/dma.h>
--#include <plat/regs-ac97.h>
-+#include "regs-ac97.h"
- #include <linux/platform_data/asoc-s3c.h>
- 
- #include "dma.h"
-diff --git a/sound/soc/samsung/h1940_uda1380.c b/sound/soc/samsung/h1940_uda1380.c
-index 15a3817..fa91376 100644
---- a/sound/soc/samsung/h1940_uda1380.c
-+++ b/sound/soc/samsung/h1940_uda1380.c
-@@ -20,7 +20,7 @@
- #include <sound/soc.h>
- #include <sound/jack.h>
- 
--#include <plat/regs-iis.h>
-+#include "regs-iis.h"
- #include <asm/mach-types.h>
- 
- #include "s3c24xx-i2s.h"
-diff --git a/sound/soc/samsung/neo1973_wm8753.c b/sound/soc/samsung/neo1973_wm8753.c
-index a301d8c..ccc601d 100644
---- a/sound/soc/samsung/neo1973_wm8753.c
-+++ b/sound/soc/samsung/neo1973_wm8753.c
-@@ -21,7 +21,7 @@
- #include <sound/soc.h>
- 
- #include <asm/mach-types.h>
--#include <plat/regs-iis.h>
-+#include "regs-iis.h"
- #include <mach/gta02.h>
- 
- #include "../codecs/wm8753.h"
-diff --git a/arch/arm/plat-samsung/include/plat/regs-ac97.h b/sound/soc/samsung/regs-ac97.h
-similarity index 100%
-rename from arch/arm/plat-samsung/include/plat/regs-ac97.h
-rename to sound/soc/samsung/regs-ac97.h
-diff --git a/arch/arm/plat-samsung/include/plat/regs-iis.h b/sound/soc/samsung/regs-iis.h
-similarity index 100%
-rename from arch/arm/plat-samsung/include/plat/regs-iis.h
-rename to sound/soc/samsung/regs-iis.h
-diff --git a/sound/soc/samsung/rx1950_uda1380.c b/sound/soc/samsung/rx1950_uda1380.c
-index a5826ea..704460a 100644
---- a/sound/soc/samsung/rx1950_uda1380.c
-+++ b/sound/soc/samsung/rx1950_uda1380.c
-@@ -24,7 +24,7 @@
- #include <sound/soc.h>
- #include <sound/jack.h>
- 
--#include <plat/regs-iis.h>
-+#include "regs-iis.h"
- #include <asm/mach-types.h>
- 
- #include "s3c24xx-i2s.h"
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index 13f6dd1..a7b17c1 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -24,7 +24,7 @@
- #include <sound/pcm_params.h>
- 
- #include <mach/dma.h>
--#include <plat/regs-iis.h>
-+#include "regs-iis.h"
- 
- #include "dma.h"
- #include "s3c24xx-i2s.h"
-diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
-index 333e1b7..1b7b52b 100644
---- a/sound/soc/samsung/s3c24xx_uda134x.c
-+++ b/sound/soc/samsung/s3c24xx_uda134x.c
-@@ -18,7 +18,7 @@
- #include <sound/soc.h>
- #include <sound/s3c24xx_uda134x.h>
- 
--#include <plat/regs-iis.h>
-+#include "regs-iis.h"
- 
- #include "s3c24xx-i2s.h"
++	combiner_data = kcalloc(max_nr, sizeof (*combiner_data), GFP_KERNEL);
++	if (!combiner_data) {
++		pr_warning("%s: could not allocate combiner data\n", __func__);
++		return;
++	}
++
+ 	combiner_irq_domain = irq_domain_add_legacy(np, nr_irq, irq_base, 0,
+-				&combiner_irq_domain_ops, &combiner_data);
++				&combiner_irq_domain_ops, combiner_data);
+ 	if (WARN_ON(!combiner_irq_domain)) {
+ 		pr_warning("%s: irq domain init failed\n", __func__);
+ 		return;
+@@ -228,8 +237,9 @@ void __init combiner_init(void __iomem *combiner_base,
+ 		if (np)
+ 			irq = irq_of_parse_and_map(np, i);
+ #endif
+-		combiner_init_one(i, combiner_base + (i >> 2) * 0x10, irq);
+-		combiner_cascade_irq(i, irq);
++		combiner_init_one(&combiner_data[i], i,
++				  combiner_base + (i >> 2) * 0x10, irq);
++		combiner_cascade_irq(&combiner_data[i], irq);
+ 	}
+ }
  
 -- 
 1.8.1.2
