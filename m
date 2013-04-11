@@ -1,83 +1,73 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3] pinctrl: Add pinctrl-s3c24xx driver
-Date: Thu, 11 Apr 2013 14:12:57 +0200
-Message-ID: <1706031.H7t4gja446@amdc1227>
-References: <201304111409.01983.heiko@sntech.de>
+From: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v5 2/3] of/pci: Provide support for parsing PCI DT
+ ranges property
+Date: Thu, 11 Apr 2013 14:11:34 +0100
+Message-ID: <20130411131134.GC28981@arm.com>
+References: <1365578969-30966-1-git-send-email-Andrew.Murray@arm.com>
+ <1365578969-30966-3-git-send-email-Andrew.Murray@arm.com>
+ <5165AEBA.7000803@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:17142 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753885Ab3DKMNP convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Apr 2013 08:13:15 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0ML300CGWBA0M520@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Apr 2013 21:13:14 +0900 (KST)
-In-reply-to: <201304111409.01983.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5165AEBA.7000803-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org" <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org" <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Heiko,
+On Wed, Apr 10, 2013 at 07:26:02PM +0100, Rob Herring wrote:
+> On 04/10/2013 02:29 AM, Andrew Murray wrote:
+> > This patch factors out common implementation patterns to reduce overall kernel
+> > code and provide a means for host bridge drivers to directly obtain struct
+> > resources from the DT's ranges property without relying on architecture specific
+> > DT handling. This will make it easier to write archiecture independent host bridge
+> > drivers and mitigate against further duplication of DT parsing code.
+> >
+> > This patch can be used in the following way:
+> >
+> >       struct of_pci_range_parser parser;
+> >       struct of_pci_range range;
+> >
+> >       if (of_pci_range_parser(&parser, np))
+> >               ; //no ranges property
+> >
+> >       for_each_of_pci_range(&parser, &range) {
+> >
+> >               /*
+> >                       directly access properties of the address range, e.g.:
+> >                       range.pci_space, range.pci_addr, range.cpu_addr,
+> >                       range.size, range.flags
+> >
+> >                       alternatively obtain a struct resource, e.g.:
+> >                       struct resource res;
+> >                       of_pci_range_to_resource(&range, np, &res);
+> >               */
+> >       }
+> >
+> > Additionally the implementation takes care of adjacent ranges and merges them
+> > into a single range (as was the case with powerpc and microblaze).
+> >
+> > Signed-off-by: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
+> > Signed-off-by: Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>
+> > Signed-off-by: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > ---
+> 
+> A few minor things below, otherwise:
+> 
+> Reviewed-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+> 
 
-On Thursday 11 of April 2013 14:09:01 Heiko St=FCbner wrote:
-> The s3c24xx pins follow a similar pattern as the other Samsung SoCs a=
-nd
-> can therefore reuse the already introduced infrastructure.
->=20
-> The s3c24xx SoCs have one design oddity in that the first 4 external
-> interrupts do not reside in the eint pending register but in the main
-> interrupt controller instead. We solve this by forwarding the externa=
-l
-> interrupt from the main controller into the irq domain of the pin ban=
-k.
-> The masking/acking of these interrupts is handled in the same way.
->=20
-> Furthermore the S3C2412/2413 SoCs contain another oddity in that they
-> keep the same 4 eints in the main interrupt controller and eintpend
-> register and requiring ack operations to happen in both. This is solv=
-ed
-> by using different compatible properties for the wakeup eint node whi=
-ch
-> set a property accordingly.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> changes since v2:
-> - address more comments from Tomasz Figa:
->   * remove obsolete ctrl_type references
->   * remove redundant check for parent_chip
->   * update docs and commit message
->=20
-> changes since v1:
-> - address comments from Tomasz Figa:
->   * split handling functions for eints 0-3 for s3c2412 and all others
->   * change the handling for s3c2412 eints 0-3 in that they now use
->     chained_irq_* for the outer parent interrupt
->=20
->  .../bindings/pinctrl/samsung-pinctrl.txt           |    8 +
->  drivers/gpio/gpio-samsung.c                        |    4 +
->  drivers/pinctrl/Kconfig                            |    5 +
->  drivers/pinctrl/Makefile                           |    1 +
->  drivers/pinctrl/pinctrl-s3c24xx.c                  |  664
-> ++++++++++++++++++++ drivers/pinctrl/pinctrl-samsung.c               =
-   | =20
-> 10 +
->  drivers/pinctrl/pinctrl-samsung.h                  |    4 +
->  7 files changed, 696 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/pinctrl/pinctrl-s3c24xx.c
+Thanks for the feedback, I've included this in my next spin.
 
-Looks good to me, thanks for the patch.
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
-Best regards,
---=20
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+Andrew Murray
