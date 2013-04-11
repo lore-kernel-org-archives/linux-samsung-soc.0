@@ -1,252 +1,79 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 23/30] clk: exynos: prepare for multiplatform
-Date: Thu, 11 Apr 2013 02:05:05 +0200
-Message-ID: <1365638712-1028578-24-git-send-email-arnd@arndb.de>
+Subject: [PATCH 15/30] mtd: onenand/samsung: make regs-onenand.h file local
+Date: Thu, 11 Apr 2013 02:04:57 +0200
+Message-ID: <1365638712-1028578-16-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mike Turquette <mturquette@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The new common clock drivers for exynos are using compile
-time constants and soc_is_exynos* macros to provide backwards
-compatibility for pre-DT systems, which is not possible with
-multiplatform kernels. This moves all the necessary
-information back into platform code and removes the mach/*
-header inclusions.
+Nothing uses the NAND register definitions other than the
+actual driver, so we can move the header file into the
+same local directory, which lets us build it in a multiplatform
+configuration.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Mike Turquette <mturquette@linaro.org>
+Cc: linux-mtd@lists.infradead.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 ---
- arch/arm/mach-exynos/common.c        |  2 +-
- arch/arm/mach-exynos/common.h        |  2 +-
- drivers/clk/samsung/clk-exynos4.c    | 93 ++++++++++++++++--------------------
- drivers/clk/samsung/clk-exynos5250.c |  1 -
- drivers/clk/samsung/clk-exynos5440.c |  1 -
- drivers/clk/samsung/clk.h            |  2 -
- 6 files changed, 44 insertions(+), 57 deletions(-)
+ drivers/mtd/onenand/samsung.c                                         | 4 ++--
+ .../include/plat/regs-onenand.h => drivers/mtd/onenand/samsung.h      | 2 --
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+ rename arch/arm/plat-samsung/include/plat/regs-onenand.h => drivers/mtd/onenand/samsung.h (98%)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 46089fe..87b2e06 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -445,7 +445,7 @@ void __init exynos_init_time(void)
- 	} else {
- 		/* todo: remove after migrating legacy E4 platforms to dt */
- #ifdef CONFIG_ARCH_EXYNOS4
--		exynos4_clk_init(NULL);
-+		exynos4_clk_init(NULL, !soc_is_exynos4210(), S5P_VA_CMU, readl(S5P_VA_CHIPID + 8) & 1);
- 		exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
- #endif
- 		mct_init();
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index b17448c..9832e03 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -27,7 +27,7 @@ void exynos5_restart(char mode, const char *cmd);
- void exynos_init_late(void);
+diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
+index 33f2a8f..2cf7408 100644
+--- a/drivers/mtd/onenand/samsung.c
++++ b/drivers/mtd/onenand/samsung.c
+@@ -23,11 +23,11 @@
+ #include <linux/mtd/partitions.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/interrupt.h>
++#include <linux/io.h>
  
- /* ToDo: remove these after migrating legacy exynos4 platforms to dt */
--void exynos4_clk_init(struct device_node *np);
-+void exynos4_clk_init(struct device_node *np, int is_exynos4210, void __iomem *reg_base, unsigned long xom);
- void exynos4_clk_register_fixed_ext(unsigned long, unsigned long);
+ #include <asm/mach/flash.h>
+-#include <plat/regs-onenand.h>
  
- void exynos_firmware_init(void);
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 7104669..d0940e6 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -16,7 +16,6 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
+-#include <linux/io.h>
++#include "samsung.h"
  
--#include <plat/cpu.h>
- #include "clk.h"
- #include "clk-pll.h"
+ enum soc_type {
+ 	TYPE_S3C6400,
+diff --git a/arch/arm/plat-samsung/include/plat/regs-onenand.h b/drivers/mtd/onenand/samsung.h
+similarity index 98%
+rename from arch/arm/plat-samsung/include/plat/regs-onenand.h
+rename to drivers/mtd/onenand/samsung.h
+index 930ea8b..c4a80e6 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-onenand.h
++++ b/drivers/mtd/onenand/samsung.h
+@@ -11,8 +11,6 @@
+ #ifndef __SAMSUNG_ONENAND_H__
+ #define __SAMSUNG_ONENAND_H__
  
-@@ -910,16 +909,6 @@ struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 			CLK_IGNORE_UNUSED, 0),
- };
- 
--#ifdef CONFIG_OF
--static struct of_device_id exynos4_clk_ids[] __initdata = {
--	{ .compatible = "samsung,exynos4210-clock",
--			.data = (void *)EXYNOS4210, },
--	{ .compatible = "samsung,exynos4412-clock",
--			.data = (void *)EXYNOS4X12, },
--	{ },
--};
--#endif
+-#include <mach/hardware.h>
 -
  /*
-  * The parent of the fin_pll clock is selected by the XOM[0] bit. This bit
-  * resides in chipid register space, outside of the clock controller memory
-@@ -927,33 +916,40 @@ static struct of_device_id exynos4_clk_ids[] __initdata = {
-  * controller is first remapped and the value of XOM[0] bit is read to
-  * determine the parent clock.
+  * OneNAND Controller
   */
--static void __init exynos4_clk_register_finpll(void)
-+static unsigned long exynos4_get_xom(void)
- {
--	struct samsung_fixed_rate_clock fclk;
-+	unsigned long xom = 0;
-+	void __iomem *chipid_base;
- 	struct device_node *np;
--	struct clk *clk;
--	void __iomem *chipid_base = S5P_VA_CHIPID;
--	unsigned long xom, finpll_f = 24000000;
--	char *parent_name;
- 
- 	np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
--	if (np)
-+	if (np) {
- 		chipid_base = of_iomap(np, 0);
- 
--	if (chipid_base) {
--		xom = readl(chipid_base + 8);
--		parent_name = xom & 1 ? "xusbxti" : "xxti";
--		clk = clk_get(NULL, parent_name);
--		if (IS_ERR(clk)) {
--			pr_err("%s: failed to lookup parent clock %s, assuming "
--				"fin_pll clock frequency is 24MHz\n", __func__,
--				parent_name);
--		} else {
--			finpll_f = clk_get_rate(clk);
--		}
-+		if (chipid_base)
-+			xom = readl(chipid_base + 8);
-+
-+		iounmap(chipid_base);
-+	}
-+
-+	return xom;
-+}
-+
-+static void __init exynos4_clk_register_finpll(unsigned long xom)
-+{
-+	struct samsung_fixed_rate_clock fclk;
-+	struct clk *clk;
-+	unsigned long finpll_f = 24000000;
-+	char *parent_name;
-+
-+	parent_name = xom & 1 ? "xusbxti" : "xxti";
-+	clk = clk_get(NULL, parent_name);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to lookup parent clock %s, assuming "
-+			"fin_pll clock frequency is 24MHz\n", __func__,
-+			parent_name);
- 	} else {
--		pr_err("%s: failed to map chipid registers, assuming "
--			"fin_pll clock frequency is 24MHz\n", __func__);
-+		finpll_f = clk_get_rate(clk);
- 	}
- 
- 	fclk.id = fin_pll;
-@@ -963,8 +959,6 @@ static void __init exynos4_clk_register_finpll(void)
- 	fclk.fixed_rate = finpll_f;
- 	samsung_clk_register_fixed_rate(&fclk, 1);
- 
--	if (np)
--		iounmap(chipid_base);
- }
- 
- /*
-@@ -988,28 +982,14 @@ static __initdata struct of_device_id ext_clk_match[] = {
- };
- 
- /* register exynos4 clocks */
--void __init exynos4_clk_init(struct device_node *np)
-+void __init exynos4_clk_init(struct device_node *np, enum exynos4_soc exynos4_soc, void __iomem *reg_base, unsigned long xom)
- {
--	void __iomem *reg_base;
- 	struct clk *apll, *mpll, *epll, *vpll;
--	u32 exynos4_soc;
- 
- 	if (np) {
--		const struct of_device_id *match;
--		match = of_match_node(exynos4_clk_ids, np);
--		exynos4_soc = (u32)match->data;
--
- 		reg_base = of_iomap(np, 0);
- 		if (!reg_base)
- 			panic("%s: failed to map registers\n", __func__);
--	} else {
--		reg_base = S5P_VA_CMU;
--		if (soc_is_exynos4210())
--			exynos4_soc = EXYNOS4210;
--		else if (soc_is_exynos4212() || soc_is_exynos4412())
--			exynos4_soc = EXYNOS4X12;
--		else
--			panic("%s: unable to determine soc\n", __func__);
- 	}
- 
- 	if (exynos4_soc == EXYNOS4210)
-@@ -1026,7 +1006,7 @@ void __init exynos4_clk_init(struct device_node *np)
- 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
- 			ext_clk_match);
- 
--	exynos4_clk_register_finpll();
-+	exynos4_clk_register_finpll(xom);
- 
- 	if (exynos4_soc == EXYNOS4210) {
- 		apll = samsung_clk_register_pll45xx("fout_apll", "fin_pll",
-@@ -1087,5 +1067,16 @@ void __init exynos4_clk_init(struct device_node *np)
- 		_get_rate("sclk_epll"), _get_rate("sclk_vpll"),
- 		_get_rate("arm_clk"));
- }
--CLK_OF_DECLARE(exynos4210_clk, "samsung,exynos4210-clock", exynos4_clk_init);
--CLK_OF_DECLARE(exynos4412_clk, "samsung,exynos4412-clock", exynos4_clk_init);
-+
-+
-+static void __init exynos4210_clk_init(struct device_node *np)
-+{
-+	exynos4_clk_init(np, EXYNOS4210, NULL, exynos4_get_xom());
-+}
-+CLK_OF_DECLARE(exynos4210_clk, "samsung,exynos4210-clock", exynos4210_clk_init);
-+
-+static void __init exynos4412_clk_init(struct device_node *np)
-+{
-+	exynos4_clk_init(np, EXYNOS4X12, NULL, exynos4_get_xom());
-+}
-+CLK_OF_DECLARE(exynos4412_clk, "samsung,exynos4412-clock", exynos4412_clk_init);
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 7290faa..61068cd 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -16,7 +16,6 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
--#include <plat/cpu.h>
- #include "clk.h"
- #include "clk-pll.h"
- 
-diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-index a0a094c..7d54341 100644
---- a/drivers/clk/samsung/clk-exynos5440.c
-+++ b/drivers/clk/samsung/clk-exynos5440.c
-@@ -15,7 +15,6 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
--#include <plat/cpu.h>
- #include "clk.h"
- #include "clk-pll.h"
- 
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 10b2111..e4ad6ea 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -20,8 +20,6 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
--#include <mach/map.h>
--
- /**
-  * struct samsung_clock_alias: information about mux clock
-  * @id: platform specific id of the clock.
 -- 
 1.8.1.2
+
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
