@@ -1,59 +1,67 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 01/30] ARM: exynos: introduce EXYNOS_ATAGS symbol
-Date: Thu, 11 Apr 2013 02:04:43 +0200
-Message-ID: <1365638712-1028578-2-git-send-email-arnd@arndb.de>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: [PATCH 11/30] [media] exynos: remove unnecessary header
+ inclusions
+Date: Wed, 10 Apr 2013 21:13:54 -0300
+Message-ID: <20130410211354.397d5689@redhat.com>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+	<1365638712-1028578-12-git-send-email-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1365638712-1028578-12-git-send-email-arnd@arndb.de>
+Sender: linux-media-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-As a preparation for multiplatform support, this introduces
-a new Kconfig symbol to split the ATAGS based EXYNOS platforms
-from the DT based ones. Turning off CONFIG_EXYNOS_ATAGS disables
-all platforms that are not yet converted to DT, and we can
-have code that relies on DT checking for this symbol being
-disabled.
+Em Thu, 11 Apr 2013 02:04:53 +0200
+Arnd Bergmann <arnd@arndb.de> escreveu:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-exynos/Kconfig | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> In multiplatform configurations, we cannot include headers
+> provided by only the exynos platform. Fortunately a number
+> of drivers that include those headers do not actually need
+> them, so we can just remove the inclusions.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-media@vger.kernel.org
+> Cc: Mauro Carvalho Chehab <mchehab@redhat.com>
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index a62cfa0..e815057 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -82,6 +82,19 @@ config SOC_EXYNOS5440
- 	help
- 	  Enable EXYNOS5440 SoC support
- 
-+config EXYNOS_ATAGS
-+	bool "ATAGS based boot for EXYNOS (deprecated)"
-+	depends on ARCH_EXYNOS_SINGLE
-+	depends on ATAGS
-+	default y
-+	help
-+	  The EXYNOS platform is moving towards being completely probed
-+	  through device tree. This enables support for board files using
-+	  the traditional ATAGS boot format.
-+	  Note that this option is not available for multiplatform builds.
-+
-+if EXYNOS_ATAGS
-+
- config EXYNOS_DEV_DMA
- 	bool
- 	help
-@@ -386,6 +399,8 @@ config MACH_SMDK4412
- 	  Machine support for Samsung SMDK4412
- endif
- 
-+endif
-+
- comment "Flattened Device Tree based board for EXYNOS SoCs"
- 
- config MACH_EXYNOS4_DT
+Acked-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+> ---
+>  drivers/media/platform/exynos-gsc/gsc-regs.c | 1 -
+>  drivers/media/platform/s5p-tv/sii9234_drv.c  | 3 ---
+>  2 files changed, 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-regs.c b/drivers/media/platform/exynos-gsc/gsc-regs.c
+> index 6f5b5a4..e22d147 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-regs.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-regs.c
+> @@ -12,7 +12,6 @@
+>  
+>  #include <linux/io.h>
+>  #include <linux/delay.h>
+> -#include <mach/map.h>
+>  
+>  #include "gsc-core.h"
+>  
+> diff --git a/drivers/media/platform/s5p-tv/sii9234_drv.c b/drivers/media/platform/s5p-tv/sii9234_drv.c
+> index d90d228..39b77d2 100644
+> --- a/drivers/media/platform/s5p-tv/sii9234_drv.c
+> +++ b/drivers/media/platform/s5p-tv/sii9234_drv.c
+> @@ -23,9 +23,6 @@
+>  #include <linux/regulator/machine.h>
+>  #include <linux/slab.h>
+>  
+> -#include <mach/gpio.h>
+> -#include <plat/gpio-cfg.h>
+> -
+>  #include <media/sii9234.h>
+>  #include <media/v4l2-subdev.h>
+>  
+
+
 -- 
-1.8.1.2
+
+Cheers,
+Mauro
