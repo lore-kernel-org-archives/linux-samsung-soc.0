@@ -1,86 +1,70 @@
-From: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v5 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
- Microblaze and PowerPC
-Date: Thu, 11 Apr 2013 13:03:22 +0100
-Message-ID: <20130411120322.GA28981@arm.com>
-References: <1365578969-30966-1-git-send-email-Andrew.Murray@arm.com>
- <1365578969-30966-2-git-send-email-Andrew.Murray@arm.com>
- <51656592.7070806@gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v4] mmc: dw_mmc: let device core setup the default pin configuration
+Date: Thu, 11 Apr 2013 17:36:32 +0530
+Message-ID: <CAJuYYwQaO1dArYPAbr3mW3gJQjK4bSWGYvgT_t+aUsZTxDgnUg@mail.gmail.com>
+References: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org>
+	<CAD=FV=VJ-ykDNqYKQ=fqxeOD6bRNLW02VT4bjsRHRAuXLcCpQQ@mail.gmail.com>
+	<CAJuYYwQT=povqiutVHXkF5jxTAnjpwTMQ5G0Z6xKGnnM7qYADQ@mail.gmail.com>
+	<CAD=FV=UddWM=yc5N9=jwbMDpZ7Bpg7o3Z714CnBSg=iHhmPxWw@mail.gmail.com>
+	<CAD=FV=WyPbkYvq9udPzQtVnaXZR3jzXTPnBrrdxpUuX3CZT=Og@mail.gmail.com>
+	<001101ce3662$7ecb9850$7c62c8f0$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51656592.7070806-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org" <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org" <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ia0-f178.google.com ([209.85.210.178]:45279 "EHLO
+	mail-ia0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935483Ab3DKMGd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Apr 2013 08:06:33 -0400
+Received: by mail-ia0-f178.google.com with SMTP id f27so1368469iae.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Apr 2013 05:06:32 -0700 (PDT)
+In-Reply-To: <001101ce3662$7ecb9850$7c62c8f0$%jun@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, arm-linux <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, Patch Tracking <patches@linaro.org>
 
-On Wed, Apr 10, 2013 at 02:13:54PM +0100, Rob Herring wrote:
-> Adding Ben H and Michal...
-> 
-> On 04/10/2013 02:29 AM, Andrew Murray wrote:
-> > The pci_process_bridge_OF_ranges function, used to parse the "ranges"
-> > property of a PCI host device, is found in both Microblaze and PowerPC
-> > architectures. These implementations are nearly identical. This patch
-> > moves this common code to a common place.
-> > 
-> > Signed-off-by: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
-> > Signed-off-by: Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>
-> 
-> One comment below. Otherwise,
-> 
-> Reviewed-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-> 
-> You need also need acks from Ben and Michal.
-> 
-> [...]
-> 
-> > +		/* Act based on address space type */
-> > +		res = NULL;
-> > +		switch ((pci_space >> 24) & 0x3) {
-> > +		case 1:		/* PCI IO space */
-> > +			pr_info("  IO 0x%016llx..0x%016llx -> 0x%016llx\n",
-> > +			       cpu_addr, cpu_addr + size - 1, pci_addr);
-> > +
-> > +			/* We support only one IO range */
-> > +			if (hose->pci_io_size) {
-> > +				pr_info(" \\--> Skipped (too many) !\n");
-> > +				continue;
-> > +			}
-> > +#if defined(CONFIG_PPC32) || defined(CONFIG_MICROBLAZE)
-> 
-> How about "if (!IS_ENABLED(CONFIG_64BIT))" instead.
+On 11 April 2013 08:43, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> On Wednesday, April 10, 2013, Doug Anderson wrote:
+>> Thomas,
+>>
+>> On Wed, Apr 10, 2013 at 6:56 AM, Doug Anderson <dianders@chromium.org> wrote:
+>> > On Wed, Apr 10, 2013 at 5:48 AM, Thomas Abraham
+>> > <thomas.abraham@linaro.org> wrote:
+>> >> The call to regulator_enable() is prior to the call to mmc_add_host().
+>> >> Hence, call to mmc_fre_host is not required in this case. So the above
+>> >> change should be right.
+>> >
+>> > Are you sure that mmc_free_host() is the opposite of mmc_add_host()
+>> > and not mmc_alloc_host()?
+>> >
+>> > I'll double-check myself in a few hours when I'm in front of a computer.
+>>
+>> OK, I double checked and I'm still convinced that the free is needed
+>> because we've already called mmc_alloc_host().  Current code always
+>> makes sure to free when it returns an error and that seems right to
+>> me.
+> mmc_alloc_host corresponds to mmc_free_host. And mmc_add_host matches
+> with mmc_remove_host. Let's focus on mmc_alloc_host.
+> mmc_alloc_host is called prior to regulator_enable.
+> So, if regulator_enable is failed, call of mmc_free_host makes sense.
+>
 
-OK I'll add in my next re-spin. Would "#ifndef CONFIG_64BIT" suffice?
+Hi Doug, Seungwon,
 
-> 
-> > +			/* On 32 bits, limit I/O space to 16MB */
-> > +			if (size > 0x01000000)
-> > +				size = 0x01000000;
-> > +
-> > +			/* 32 bits needs to map IOs here */
-> > +			hose->io_base_virt = ioremap(cpu_addr, size);
-> > +
-> > +			/* Expect trouble if pci_addr is not 0 */
-> > +			if (primary)
-> > +				isa_io_base =
-> > +					(unsigned long)hose->io_base_virt;
-> > +#endif /* CONFIG_PPC32 || CONFIG_MICROBLAZE */
-> > +			/* pci_io_size and io_base_phys always represent IO
-> > +			 * space starting at 0 so we factor in pci_addr
-> > +			 */
-> > +			hose->pci_io_size = pci_addr + size;
-> > +			hose->io_base_phys = cpu_addr - pci_addr;
-> 
-> 
+Ok, I got it wrong again. Thanks for letting me know. I will fix this
+and send the v5 of this patch.
+
+Thanks,
+Thomas.
+
+
+> Thanks,
+> Seungwon Jeon
+>>
+>> -Doug
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
