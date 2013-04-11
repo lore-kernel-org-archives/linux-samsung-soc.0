@@ -1,153 +1,170 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v3] usb: exynos: do not include plat/usb-phy.h
-Date: Thu, 11 Apr 2013 22:49:39 +0200
-Message-ID: <201304112249.39549.arnd@arndb.de>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
- <1365638712-1028578-11-git-send-email-arnd@arndb.de>
- <20130411202540.GA32047@kroah.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [6/9] thermal: exynos: small cleanups to prepare for adding exynos5440
+ driver
+Date: Thu, 11 Apr 2013 16:54:28 -0400
+Message-ID: <51672304.2060600@ti.com>
+References: <1364297642-2746-7-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20130411202540.GA32047@kroah.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1364297642-2746-7-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, eduardo.valentin@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The definitions have moved to include/linux/usb/samsung-usb-phy.h,
-and plat/usb-phy.h is unavailable from drivers in a multiplatform
-configuration.
+Amit,
 
-Also fix up the plat/usb-phy.h header file to use the definitions
-from the new header instead of providing a separate copy.
+On 26-03-2013 07:33, Amit Daniel Kachhap wrote:
+> Add calib mode, trigger types and trigger_enable array. This is needed
+> for adding exynos5440 TMU driver.
+>
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-usb@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>
----
-v3: rebase to usb-next (2871782ae1)
+I dont think the above are small cleanups. I d rather split this patch 
+into three, one per change and describe them properly.
 
-v2: rebase whole series on top of arm-soc for testing
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>
+> ---
+> drivers/thermal/samsung/exynos4210_thermal.c |   30 ++++++++++++------------
+>   include/linux/platform_data/exynos_thermal.h |   32 +++++++++++++-------------
+>   2 files changed, 31 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos4210_thermal.c b/drivers/thermal/samsung/exynos4210_thermal.c
+> index 09ea8c8..58d16ac 100644
+> --- a/drivers/thermal/samsung/exynos4210_thermal.c
+> +++ b/drivers/thermal/samsung/exynos4210_thermal.c
+> @@ -276,10 +276,10 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
+>
+>   	if (on) {
+>   		con |= EXYNOS_TMU_CORE_ON;
+> -		interrupt_en = pdata->trigger_level3_en << 12 |
+> -			pdata->trigger_level2_en << 8 |
+> -			pdata->trigger_level1_en << 4 |
+> -			pdata->trigger_level0_en;
+> +		interrupt_en = pdata->trigger_enable[3] << 12 |
+> +			pdata->trigger_enable[2] << 8 |
+> +			pdata->trigger_enable[1] << 4 |
+> +			pdata->trigger_enable[0];
+>   		if (pdata->threshold_falling)
+>   			interrupt_en |= interrupt_en << 16;
+>   	} else {
+> @@ -394,10 +394,10 @@ static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
+>   	.trigger_levels[0] = 5,
+>   	.trigger_levels[1] = 20,
+>   	.trigger_levels[2] = 30,
+> -	.trigger_level0_en = 1,
+> -	.trigger_level1_en = 1,
+> -	.trigger_level2_en = 1,
+> -	.trigger_level3_en = 0,
+> +	.trigger_enable[0] = 1,
+> +	.trigger_enable[1] = 1,
+> +	.trigger_enable[2] = 1,
+> +	.trigger_enable[3] = 0,
+>   	.gain = 15,
+>   	.reference_voltage = 7,
+>   	.cal_type = TYPE_ONE_POINT_TRIMMING,
+> @@ -423,10 +423,10 @@ static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
+>   	.trigger_levels[0] = 85,
+>   	.trigger_levels[1] = 103,
+>   	.trigger_levels[2] = 110,
+> -	.trigger_level0_en = 1,
+> -	.trigger_level1_en = 1,
+> -	.trigger_level2_en = 1,
+> -	.trigger_level3_en = 0,
+> +	.trigger_enable[0] = 1,
+> +	.trigger_enable[1] = 1,
+> +	.trigger_enable[2] = 1,
+> +	.trigger_enable[3] = 0,
+>   	.gain = 8,
+>   	.reference_voltage = 16,
+>   	.noise_cancel_mode = 4,
+> @@ -566,9 +566,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>
+>   	/* Register the sensor with thermal management interface */
+>   	(&exynos_sensor_conf)->driver_data = data;
+> -	exynos_sensor_conf.trip_data.trip_count = pdata->trigger_level0_en +
+> -			pdata->trigger_level1_en + pdata->trigger_level2_en +
+> -			pdata->trigger_level3_en;
+> +	exynos_sensor_conf.trip_data.trip_count = pdata->trigger_enable[0] +
+> +			pdata->trigger_enable[1] + pdata->trigger_enable[2] +
+> +			pdata->trigger_enable[3];
+>
+>   	for (i = 0; i < exynos_sensor_conf.trip_data.trip_count; i++)
+>   		exynos_sensor_conf.trip_data.trip_val[i] =
+> diff --git a/include/linux/platform_data/exynos_thermal.h b/include/linux/platform_data/exynos_thermal.h
+> index 893b758..1090f48 100644
+> --- a/include/linux/platform_data/exynos_thermal.h
+> +++ b/include/linux/platform_data/exynos_thermal.h
+> @@ -31,6 +31,17 @@ enum calibration_type {
+>   	TYPE_NONE,
+>   };
+>
+> +enum calibration_mode {
+> +	SW_MODE,
+> +	HW_MODE,
+> +};
+> +
+> +enum trigger_type {
+> +	ACTIVE,
+> +	CRITICAL,
+> +	HW_TRIP,
+> +};
+> +
+>   enum soc_type {
+>   	SOC_ARCH_EXYNOS4210 = 1,
+>   	SOC_ARCH_EXYNOS,
+> @@ -71,18 +82,9 @@ struct freq_clip_table {
+>    *	3: temperature for trigger_level3 interrupt
+>    *	   condition for trigger_level3 interrupt:
+>    *		current temperature > threshold + trigger_levels[3]
+> - * @trigger_level0_en:
+> + * @trigger_enable[]: array to denote which trigger levels are enabled.
+>    *	1 = enable trigger_level0 interrupt,
+>    *	0 = disable trigger_level0 interrupt
+> - * @trigger_level1_en:
+> - *	1 = enable trigger_level1 interrupt,
+> - *	0 = disable trigger_level1 interrupt
+> - * @trigger_level2_en:
+> - *	1 = enable trigger_level2 interrupt,
+> - *	0 = disable trigger_level2 interrupt
+> - * @trigger_level3_en:
+> - *	1 = enable trigger_level3 interrupt,
+> - *	0 = disable trigger_level3 interrupt
+>    * @gain: gain of amplifier in the positive-TC generator block
+>    *	0 <= gain <= 15
+>    * @reference_voltage: reference voltage of amplifier
+> @@ -93,6 +95,7 @@ struct freq_clip_table {
+>    * @type: determines the type of SOC
+>    * @efuse_value: platform defined fuse value
+>    * @cal_type: calibration type for temperature
+> + * @cal_mode: calibration mode for temperature
 
-diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
-index b81cc56..6af4066 100644
---- a/arch/arm/mach-exynos/setup-usb-phy.c
-+++ b/arch/arm/mach-exynos/setup-usb-phy.c
-@@ -204,9 +204,9 @@ static int exynos4210_usb_phy1_exit(struct platform_device *pdev)
- 
- int s5p_usb_phy_init(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return exynos4210_usb_phy0_init(pdev);
--	else if (type == S5P_USB_PHY_HOST)
-+	else if (type == USB_PHY_TYPE_HOST)
- 		return exynos4210_usb_phy1_init(pdev);
- 
- 	return -EINVAL;
-@@ -214,9 +214,9 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
- 
- int s5p_usb_phy_exit(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return exynos4210_usb_phy0_exit(pdev);
--	else if (type == S5P_USB_PHY_HOST)
-+	else if (type == USB_PHY_TYPE_HOST)
- 		return exynos4210_usb_phy1_exit(pdev);
- 
- 	return -EINVAL;
-diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-index c8174d9..ca960bd 100644
---- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
-+++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-@@ -76,7 +76,7 @@ static int s3c_usb_otgphy_exit(struct platform_device *pdev)
- 
- int s5p_usb_phy_init(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return s3c_usb_otgphy_init(pdev);
- 
- 	return -EINVAL;
-@@ -84,7 +84,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
- 
- int s5p_usb_phy_exit(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return s3c_usb_otgphy_exit(pdev);
- 
- 	return -EINVAL;
-diff --git a/arch/arm/mach-s5pv210/setup-usb-phy.c b/arch/arm/mach-s5pv210/setup-usb-phy.c
-index 356a090..b2ee533 100644
---- a/arch/arm/mach-s5pv210/setup-usb-phy.c
-+++ b/arch/arm/mach-s5pv210/setup-usb-phy.c
-@@ -80,7 +80,7 @@ static int s5pv210_usb_otgphy_exit(struct platform_device *pdev)
- 
- int s5p_usb_phy_init(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return s5pv210_usb_otgphy_init(pdev);
- 
- 	return -EINVAL;
-@@ -88,7 +88,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
- 
- int s5p_usb_phy_exit(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
-+	if (type == USB_PHY_TYPE_DEVICE)
- 		return s5pv210_usb_otgphy_exit(pdev);
- 
- 	return -EINVAL;
-diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
-index 959bcdb..ab34dfa 100644
---- a/arch/arm/plat-samsung/include/plat/usb-phy.h
-+++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
-@@ -11,10 +11,7 @@
- #ifndef __PLAT_SAMSUNG_USB_PHY_H
- #define __PLAT_SAMSUNG_USB_PHY_H __FILE__
- 
--enum s5p_usb_phy_type {
--	S5P_USB_PHY_DEVICE,
--	S5P_USB_PHY_HOST,
--};
-+#include <linux/usb/samsung_usb_phy.h>
- 
- extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
- extern int s5p_usb_phy_exit(struct platform_device *pdev, int type);
-diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-index 580548a..6357752 100644
---- a/drivers/usb/host/ehci-s5p.c
-+++ b/drivers/usb/host/ehci-s5p.c
-@@ -23,7 +23,6 @@
- #include <linux/platform_data/usb-ehci-s5p.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
--#include <plat/usb-phy.h>
- #include <linux/usb.h>
- #include <linux/usb/hcd.h>
- #include <linux/usb/otg.h>
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 509fa51..114583a 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -17,7 +17,6 @@
- #include <linux/platform_data/usb-exynos.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
--#include <plat/usb-phy.h>
- 
- struct exynos_ohci_hcd {
- 	struct device *dev;
+How about trigger_type?
+>    * @freq_clip_table: Table representing frequency reduction percentage.
+>    * @freq_tab_count: Count of the above table as frequency reduction may
+>    *	applicable to only some of the trigger levels.
+> @@ -103,18 +106,15 @@ struct exynos_tmu_platform_data {
+>   	u8 threshold;
+>   	u8 threshold_falling;
+>   	u8 trigger_levels[MAX_TRIP];
+> -	bool trigger_level0_en;
+> -	bool trigger_level1_en;
+> -	bool trigger_level2_en;
+> -	bool trigger_level3_en;
+> -	bool trigger_level4_en;
+> -
+> +	enum trigger_type trigger_type[MAX_TRIP];
+> +	bool trigger_enable[MAX_TRIP];
+>   	u8 gain;
+>   	u8 reference_voltage;
+>   	u8 noise_cancel_mode;
+>   	u32 efuse_value;
+>
+>   	enum calibration_type cal_type;
+> +	enum calibration_mode cal_mode;
+>   	enum soc_type type;
+>   	struct freq_clip_table freq_tab[MAX_TRIP];
+>   	unsigned int freq_tab_count;
+>
