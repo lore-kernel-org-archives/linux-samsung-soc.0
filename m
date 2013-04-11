@@ -1,94 +1,141 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [9/9] ARM: dts: Add device tree node for exynos5440 TMU controller
-Date: Thu, 11 Apr 2013 17:15:50 -0400
-Message-ID: <51672806.5040501@ti.com>
-References: <1364297642-2746-10-git-send-email-amit.daniel@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1364297642-2746-10-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, grant.likely@secretlab.ca, eduardo.valentin@ti.com
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v3 04/10] ARM: samsung: move mfc device definition to s5p-dev-mfc.c
+Date: Thu, 11 Apr 2013 23:37:19 +0200
+Message-ID: <1365716245-99231-5-git-send-email-arnd@arndb.de>
+References: <1365716245-99231-1-git-send-email-arnd@arndb.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.8]:49471 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752142Ab3DKVhk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Apr 2013 17:37:40 -0400
+In-Reply-To: <1365716245-99231-1-git-send-email-arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-Amit,
+For a DT-only build we don't want to compile devs.c, but we do need
+the mfc device, which is also referenced by the DT based platforms,
+so move it all into one place.
 
-Copying Grant for DT.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/plat-samsung/devs.c        | 45 -------------------------------------
+ arch/arm/plat-samsung/s5p-dev-mfc.c | 42 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 46 deletions(-)
 
-On 26-03-2013 07:34, Amit Daniel Kachhap wrote:
-> This patch adds device node for TMU controller. There are 3
-> instances of the controllers so 3 nodes are created.
->
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->
-> ---
-> arch/arm/boot/dts/exynos5440.dtsi |   43 +++++++++++++++++++++++++++++++++++++
->   1 files changed, 43 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> index 5f3562a..b74ce9f 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -16,6 +16,12 @@
->
->   	interrupt-parent = <&gic>;
->
-> +	aliases {
-> +		tmuctrl0 = &tmuctrl_0;
-> +		tmuctrl1 = &tmuctrl_1;
-> +		tmuctrl2 = &tmuctrl_2;
-> +	};
-> +
->   	gic:interrupt-controller@2E0000 {
->   		compatible = "arm,cortex-a15-gic";
->   		#interrupt-cells = <3>;
-> @@ -156,4 +162,41 @@
->   		reg = <0x130000 0x1000>;
->   		interrupts = <0 17 0>, <0 16 0>;
->   	};
-> +
-> +	tmu_ctrl_info: tmu-ctrl-info {
-> +		gain = <5>;
-> +		reference-voltage = <16>;
-> +		noise-cancel-mode = <4>;
-> +		cal-type = <2>;
-> +		cal-mode = <0>;
-> +		efuse-value = <0x5b2c>;
-> +		threshold-falling = <5>;
-> +	};
-> +
-> +	tmuctrl_0: tmuctrl@160118 {
-> +		compatible = "samsung,exynos5440-tmu";
-> +		reg = <0x160118 0x300>;
-> +		interrupts = <0 58 0>;
-> +		clocks = <&clock 8>;
-> +		clock-names = "tmu_apbif";
-> +		tmu-ctrl-data = <&tmu_ctrl_info>;
-> +	};
-> +
-> +	tmuctrl_1: tmuctrl@16011C {
-> +		compatible = "samsung,exynos5440-tmu";
-> +		reg = <0x16011C 0x300>;
-> +		interrupts = <0 58 0>;
-> +		clocks = <&clock 8>;
-> +		clock-names = "tmu_apbif";
-> +		tmu-ctrl-data = <&tmu_ctrl_info>;
-> +	};
-> +
-> +	tmuctrl_2: tmuctrl@160120 {
-> +		compatible = "samsung,exynos5440-tmu";
-> +		reg = <0x160120 0x300>;
-> +		interrupts = <0 58 0>;
-> +		clocks = <&clock 8>;
-> +		clock-names = "tmu_apbif";
-> +		tmu-ctrl-data = <&tmu_ctrl_info>;
-> +	};
-
-Grant, how the above thermal data must be handled in DT? Is it fine to 
-create private phandles like that?
-
->   };
->
-Please consider the comments on patch 8.
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 51afedd..de9ad27 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -878,51 +878,6 @@ void __init s3c24xx_fb_set_platdata(struct s3c2410fb_mach_info *pd)
+ }
+ #endif /* CONFIG_PLAT_S3C24XX */
+ 
+-/* MFC */
+-
+-#ifdef CONFIG_S5P_DEV_MFC
+-static struct resource s5p_mfc_resource[] = {
+-	[0] = DEFINE_RES_MEM(S5P_PA_MFC, SZ_64K),
+-	[1] = DEFINE_RES_IRQ(IRQ_MFC),
+-};
+-
+-struct platform_device s5p_device_mfc = {
+-	.name		= "s5p-mfc",
+-	.id		= -1,
+-	.num_resources	= ARRAY_SIZE(s5p_mfc_resource),
+-	.resource	= s5p_mfc_resource,
+-};
+-
+-/*
+- * MFC hardware has 2 memory interfaces which are modelled as two separate
+- * platform devices to let dma-mapping distinguish between them.
+- *
+- * MFC parent device (s5p_device_mfc) must be registered before memory
+- * interface specific devices (s5p_device_mfc_l and s5p_device_mfc_r).
+- */
+-
+-struct platform_device s5p_device_mfc_l = {
+-	.name		= "s5p-mfc-l",
+-	.id		= -1,
+-	.dev		= {
+-		.parent			= &s5p_device_mfc.dev,
+-		.dma_mask		= &samsung_device_dma_mask,
+-		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-	},
+-};
+-
+-struct platform_device s5p_device_mfc_r = {
+-	.name		= "s5p-mfc-r",
+-	.id		= -1,
+-	.dev		= {
+-		.parent			= &s5p_device_mfc.dev,
+-		.dma_mask		= &samsung_device_dma_mask,
+-		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-	},
+-};
+-
+-#endif /* CONFIG_S5P_DEV_MFC */
+-
+ /* MIPI CSIS */
+ 
+ #ifdef CONFIG_S5P_DEV_CSIS0
+diff --git a/arch/arm/plat-samsung/s5p-dev-mfc.c b/arch/arm/plat-samsung/s5p-dev-mfc.c
+index 5ec104b..a93fb6f 100644
+--- a/arch/arm/plat-samsung/s5p-dev-mfc.c
++++ b/arch/arm/plat-samsung/s5p-dev-mfc.c
+@@ -18,10 +18,50 @@
+ #include <linux/of.h>
+ 
+ #include <mach/map.h>
++#include <mach/irqs.h>
+ #include <plat/devs.h>
+-#include <plat/irqs.h>
+ #include <plat/mfc.h>
+ 
++static struct resource s5p_mfc_resource[] = {
++	[0] = DEFINE_RES_MEM(S5P_PA_MFC, SZ_64K),
++	[1] = DEFINE_RES_IRQ(IRQ_MFC),
++};
++
++struct platform_device s5p_device_mfc = {
++	.name		= "s5p-mfc",
++	.id		= -1,
++	.num_resources	= ARRAY_SIZE(s5p_mfc_resource),
++	.resource	= s5p_mfc_resource,
++};
++
++/*
++ * MFC hardware has 2 memory interfaces which are modelled as two separate
++ * platform devices to let dma-mapping distinguish between them.
++ *
++ * MFC parent device (s5p_device_mfc) must be registered before memory
++ * interface specific devices (s5p_device_mfc_l and s5p_device_mfc_r).
++ */
++
++struct platform_device s5p_device_mfc_l = {
++	.name		= "s5p-mfc-l",
++	.id		= -1,
++	.dev		= {
++		.parent			= &s5p_device_mfc.dev,
++		.dma_mask		= &s5p_device_mfc_l.dev.coherent_dma_mask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++	},
++};
++
++struct platform_device s5p_device_mfc_r = {
++	.name		= "s5p-mfc-r",
++	.id		= -1,
++	.dev		= {
++		.parent			= &s5p_device_mfc.dev,
++		.dma_mask		= &s5p_device_mfc_r.dev.coherent_dma_mask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++	},
++};
++
+ struct s5p_mfc_reserved_mem {
+ 	phys_addr_t	base;
+ 	unsigned long	size;
+-- 
+1.8.1.2
