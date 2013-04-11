@@ -1,259 +1,197 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 02/30] ARM: exynos: prepare for sparse IRQ
-Date: Thu, 11 Apr 2013 02:04:44 +0200
-Message-ID: <1365638712-1028578-3-git-send-email-arnd@arndb.de>
+Subject: [PATCH 18/30] ASoC: samsung: move plat/ headers to
+	local directory
+Date: Thu, 11 Apr 2013 02:05:00 +0200
+Message-ID: <1365638712-1028578-19-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When we enable CONFIG_SPARSE_IRQ, we have to set the value of NR_IRQS in
-the machine_desc for legacy IRQ domains, and any file referring to the
-number of interrupts or a specific number must include the mach/irqs.h
-header file explicitly.
+The plat/iis.h and plat/ac97.h files in the samsung platform are
+only needed by the ASoC drivers, so they can be moved into the
+same directory, as one more step towards a multiplatform build.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: alsa-devel@alsa-project.org
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
 ---
- arch/arm/mach-exynos/dev-uart.c          | 1 +
- arch/arm/mach-exynos/include/mach/irqs.h | 5 ++++-
- arch/arm/mach-exynos/mach-armlex4210.c   | 2 ++
- arch/arm/mach-exynos/mach-exynos4-dt.c   | 3 +++
- arch/arm/mach-exynos/mach-exynos5-dt.c   | 2 ++
- arch/arm/mach-exynos/mach-nuri.c         | 2 ++
- arch/arm/mach-exynos/mach-origen.c       | 2 ++
- arch/arm/mach-exynos/mach-smdk4x12.c     | 2 ++
- arch/arm/mach-exynos/mach-smdkv310.c     | 3 +++
- arch/arm/plat-samsung/irq-vic-timer.c    | 1 +
- arch/arm/plat-samsung/pm.c               | 1 +
- arch/arm/plat-samsung/s5p-irq.c          | 1 +
- 12 files changed, 24 insertions(+), 1 deletion(-)
+ arch/arm/mach-s3c24xx/dma-s3c2410.c                                   | 2 --
+ arch/arm/mach-s3c24xx/dma-s3c2412.c                                   | 2 --
+ arch/arm/mach-s3c24xx/dma-s3c2440.c                                   | 2 --
+ arch/arm/mach-s3c24xx/dma-s3c2443.c                                   | 2 --
+ sound/soc/samsung/ac97.c                                              | 2 +-
+ sound/soc/samsung/h1940_uda1380.c                                     | 2 +-
+ sound/soc/samsung/neo1973_wm8753.c                                    | 2 +-
+ {arch/arm/plat-samsung/include/plat => sound/soc/samsung}/regs-ac97.h | 0
+ {arch/arm/plat-samsung/include/plat => sound/soc/samsung}/regs-iis.h  | 0
+ sound/soc/samsung/rx1950_uda1380.c                                    | 2 +-
+ sound/soc/samsung/s3c24xx-i2s.c                                       | 2 +-
+ sound/soc/samsung/s3c24xx_uda134x.c                                   | 2 +-
+ 12 files changed, 6 insertions(+), 14 deletions(-)
+ rename {arch/arm/plat-samsung/include/plat => sound/soc/samsung}/regs-ac97.h (100%)
+ rename {arch/arm/plat-samsung/include/plat => sound/soc/samsung}/regs-iis.h (100%)
 
-diff --git a/arch/arm/mach-exynos/dev-uart.c b/arch/arm/mach-exynos/dev-uart.c
-index 7c42f4b..c48aff0 100644
---- a/arch/arm/mach-exynos/dev-uart.c
-+++ b/arch/arm/mach-exynos/dev-uart.c
-@@ -20,6 +20,7 @@
- #include <asm/mach/irq.h>
- #include <mach/hardware.h>
- #include <mach/map.h>
-+#include <mach/irqs.h>
+diff --git a/arch/arm/mach-s3c24xx/dma-s3c2410.c b/arch/arm/mach-s3c24xx/dma-s3c2410.c
+index a6c94b8..30aa53f 100644
+--- a/arch/arm/mach-s3c24xx/dma-s3c2410.c
++++ b/arch/arm/mach-s3c24xx/dma-s3c2410.c
+@@ -25,10 +25,8 @@
  
- #include <plat/devs.h>
- 
-diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
-index 35fe6d5..c72f59d 100644
---- a/arch/arm/mach-exynos/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos/include/mach/irqs.h
-@@ -467,7 +467,10 @@
- #define IRQ_TIMER_BASE			(IRQ_GPIO_END + 64)
- 
- /* Set the default NR_IRQS */
-+#define EXYNOS_NR_IRQS			(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
- 
--#define NR_IRQS				(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
-+#ifndef CONFIG_SPARSE_IRQ
-+#define NR_IRQS				EXYNOS_NR_IRQS
-+#endif
- 
- #endif /* __ASM_ARCH_IRQS_H */
-diff --git a/arch/arm/mach-exynos/mach-armlex4210.c b/arch/arm/mach-exynos/mach-armlex4210.c
-index 2c23b65..a503e02 100644
---- a/arch/arm/mach-exynos/mach-armlex4210.c
-+++ b/arch/arm/mach-exynos/mach-armlex4210.c
-@@ -25,6 +25,7 @@
- #include <plat/regs-srom.h>
- #include <plat/sdhci.h>
- 
-+#include <mach/irqs.h>
- #include <mach/map.h>
- 
- #include "common.h"
-@@ -196,6 +197,7 @@ static void __init armlex4210_machine_init(void)
- MACHINE_START(ARMLEX4210, "ARMLEX4210")
- 	/* Maintainer: Alim Akhtar <alim.akhtar@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= armlex4210_map_io,
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index b9ed834..5f23682 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -20,6 +20,8 @@
- 
- #include <asm/mach/arch.h>
- #include <plat/mfc.h>
-+#include <mach/irqs.h>
-+
- 
- #include "common.h"
- 
-@@ -54,6 +56,7 @@ static void __init exynos4_reserve(void)
- }
- DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= exynos4_dt_map_io,
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 753b94f..8b7456a 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -16,6 +16,7 @@
- #include <linux/clocksource.h>
- 
- #include <asm/mach/arch.h>
-+#include <mach/irqs.h>
- #include <mach/regs-pmu.h>
- 
- #include <plat/cpu.h>
-@@ -76,6 +77,7 @@ static void __init exynos5_reserve(void)
- 
- DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.init_irq	= exynos5_init_irq,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.map_io		= exynos5_dt_map_io,
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 0c10852..fbae331 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -53,6 +53,7 @@
- #include <plat/fimc-core.h>
- #include <plat/camport.h>
- 
-+#include <mach/irqs.h>
- #include <mach/map.h>
- 
- #include "common.h"
-@@ -1376,6 +1377,7 @@ static void __init nuri_machine_init(void)
- MACHINE_START(NURI, "NURI")
- 	/* Maintainer: Kyungmin Park <kyungmin.park@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= nuri_map_io,
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index f662345..a3ee06a 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -46,6 +46,7 @@
- #include <plat/hdmi.h>
- 
- #include <mach/map.h>
-+#include <mach/irqs.h>
- 
- #include <drm/exynos_drm.h>
- #include "common.h"
-@@ -811,6 +812,7 @@ static void __init origen_machine_init(void)
- MACHINE_START(ORIGEN, "ORIGEN")
- 	/* Maintainer: JeongHyeon Kim <jhkim@insignal.co.kr> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= origen_map_io,
-diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
-index 184faa3..3ebd5e4 100644
---- a/arch/arm/mach-exynos/mach-smdk4x12.c
-+++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-@@ -39,6 +39,7 @@
  #include <plat/regs-serial.h>
- #include <plat/sdhci.h>
+ #include <mach/regs-gpio.h>
+-#include <plat/regs-ac97.h>
+ #include <plat/regs-dma.h>
+ #include <mach/regs-lcd.h>
+-#include <plat/regs-iis.h>
+ #include <plat/regs-spi.h>
  
-+#include <mach/irqs.h>
- #include <mach/map.h>
+ static struct s3c24xx_dma_map __initdata s3c2410_dma_mappings[] = {
+diff --git a/arch/arm/mach-s3c24xx/dma-s3c2412.c b/arch/arm/mach-s3c24xx/dma-s3c2412.c
+index c0e8c3f..ab1700e 100644
+--- a/arch/arm/mach-s3c24xx/dma-s3c2412.c
++++ b/arch/arm/mach-s3c24xx/dma-s3c2412.c
+@@ -25,10 +25,8 @@
  
- #include <drm/exynos_drm.h>
-@@ -384,6 +385,7 @@ MACHINE_START(SMDK4412, "SMDK4412")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	/* Maintainer: Changhwan Youn <chaos.youn@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= smdk4x12_map_io,
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index ee815a7..5527a28 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -43,6 +43,7 @@
- #include <plat/clock.h>
- #include <plat/hdmi.h>
- 
-+#include <mach/irqs.h>
- #include <mach/map.h>
- 
- #include <drm/exynos_drm.h>
-@@ -420,6 +421,7 @@ MACHINE_START(SMDKV310, "SMDKV310")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	/* Maintainer: Changhwan Youn <chaos.youn@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= smdkv310_map_io,
-@@ -432,6 +434,7 @@ MACHINE_END
- MACHINE_START(SMDKC210, "SMDKC210")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	.atag_offset	= 0x100,
-+	.nr_irqs	= EXYNOS_NR_IRQS,
- 	.smp		= smp_ops(exynos_smp_ops),
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= smdkv310_map_io,
-diff --git a/arch/arm/plat-samsung/irq-vic-timer.c b/arch/arm/plat-samsung/irq-vic-timer.c
-index 5d205e7..0fceb42 100644
---- a/arch/arm/plat-samsung/irq-vic-timer.c
-+++ b/arch/arm/plat-samsung/irq-vic-timer.c
-@@ -20,6 +20,7 @@
- #include <linux/io.h>
- 
- #include <mach/map.h>
-+#include <mach/irqs.h>
- #include <plat/cpu.h>
- #include <plat/irq-vic-timer.h>
- #include <plat/regs-timer.h>
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 002b147..53210ec 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -27,6 +27,7 @@
  #include <plat/regs-serial.h>
- #include <mach/regs-clock.h>
- #include <mach/regs-irq.h>
-+#include <mach/irqs.h>
- #include <asm/irq.h>
+ #include <mach/regs-gpio.h>
+-#include <plat/regs-ac97.h>
+ #include <plat/regs-dma.h>
+ #include <mach/regs-lcd.h>
+-#include <plat/regs-iis.h>
+ #include <plat/regs-spi.h>
  
- #include <plat/pm.h>
-diff --git a/arch/arm/plat-samsung/s5p-irq.c b/arch/arm/plat-samsung/s5p-irq.c
-index 103e371..ff1a760 100644
---- a/arch/arm/plat-samsung/s5p-irq.c
-+++ b/arch/arm/plat-samsung/s5p-irq.c
-@@ -15,6 +15,7 @@
- #include <linux/io.h>
- #include <linux/irqchip/arm-vic.h>
+ #define MAP(x) { (x)| DMA_CH_VALID, (x)| DMA_CH_VALID, (x)| DMA_CH_VALID, (x)| DMA_CH_VALID }
+diff --git a/arch/arm/mach-s3c24xx/dma-s3c2440.c b/arch/arm/mach-s3c24xx/dma-s3c2440.c
+index 1c08eccd..cd25de2 100644
+--- a/arch/arm/mach-s3c24xx/dma-s3c2440.c
++++ b/arch/arm/mach-s3c24xx/dma-s3c2440.c
+@@ -25,10 +25,8 @@
  
-+#include <mach/irqs.h>
- #include <mach/map.h>
- #include <plat/regs-timer.h>
- #include <plat/cpu.h>
+ #include <plat/regs-serial.h>
+ #include <mach/regs-gpio.h>
+-#include <plat/regs-ac97.h>
+ #include <plat/regs-dma.h>
+ #include <mach/regs-lcd.h>
+-#include <plat/regs-iis.h>
+ #include <plat/regs-spi.h>
+ 
+ static struct s3c24xx_dma_map __initdata s3c2440_dma_mappings[] = {
+diff --git a/arch/arm/mach-s3c24xx/dma-s3c2443.c b/arch/arm/mach-s3c24xx/dma-s3c2443.c
+index 000e4c6..5fe3539 100644
+--- a/arch/arm/mach-s3c24xx/dma-s3c2443.c
++++ b/arch/arm/mach-s3c24xx/dma-s3c2443.c
+@@ -25,10 +25,8 @@
+ 
+ #include <plat/regs-serial.h>
+ #include <mach/regs-gpio.h>
+-#include <plat/regs-ac97.h>
+ #include <plat/regs-dma.h>
+ #include <mach/regs-lcd.h>
+-#include <plat/regs-iis.h>
+ #include <plat/regs-spi.h>
+ 
+ #define MAP(x) { \
+diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+index 0df3c56..c76abdf 100644
+--- a/sound/soc/samsung/ac97.c
++++ b/sound/soc/samsung/ac97.c
+@@ -20,7 +20,7 @@
+ #include <sound/soc.h>
+ 
+ #include <mach/dma.h>
+-#include <plat/regs-ac97.h>
++#include "regs-ac97.h"
+ #include <linux/platform_data/asoc-s3c.h>
+ 
+ #include "dma.h"
+diff --git a/sound/soc/samsung/h1940_uda1380.c b/sound/soc/samsung/h1940_uda1380.c
+index 15a3817..fa91376 100644
+--- a/sound/soc/samsung/h1940_uda1380.c
++++ b/sound/soc/samsung/h1940_uda1380.c
+@@ -20,7 +20,7 @@
+ #include <sound/soc.h>
+ #include <sound/jack.h>
+ 
+-#include <plat/regs-iis.h>
++#include "regs-iis.h"
+ #include <asm/mach-types.h>
+ 
+ #include "s3c24xx-i2s.h"
+diff --git a/sound/soc/samsung/neo1973_wm8753.c b/sound/soc/samsung/neo1973_wm8753.c
+index a301d8c..ccc601d 100644
+--- a/sound/soc/samsung/neo1973_wm8753.c
++++ b/sound/soc/samsung/neo1973_wm8753.c
+@@ -21,7 +21,7 @@
+ #include <sound/soc.h>
+ 
+ #include <asm/mach-types.h>
+-#include <plat/regs-iis.h>
++#include "regs-iis.h"
+ #include <mach/gta02.h>
+ 
+ #include "../codecs/wm8753.h"
+diff --git a/arch/arm/plat-samsung/include/plat/regs-ac97.h b/sound/soc/samsung/regs-ac97.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/regs-ac97.h
+rename to sound/soc/samsung/regs-ac97.h
+diff --git a/arch/arm/plat-samsung/include/plat/regs-iis.h b/sound/soc/samsung/regs-iis.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/regs-iis.h
+rename to sound/soc/samsung/regs-iis.h
+diff --git a/sound/soc/samsung/rx1950_uda1380.c b/sound/soc/samsung/rx1950_uda1380.c
+index a5826ea..704460a 100644
+--- a/sound/soc/samsung/rx1950_uda1380.c
++++ b/sound/soc/samsung/rx1950_uda1380.c
+@@ -24,7 +24,7 @@
+ #include <sound/soc.h>
+ #include <sound/jack.h>
+ 
+-#include <plat/regs-iis.h>
++#include "regs-iis.h"
+ #include <asm/mach-types.h>
+ 
+ #include "s3c24xx-i2s.h"
+diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+index 13f6dd1..a7b17c1 100644
+--- a/sound/soc/samsung/s3c24xx-i2s.c
++++ b/sound/soc/samsung/s3c24xx-i2s.c
+@@ -24,7 +24,7 @@
+ #include <sound/pcm_params.h>
+ 
+ #include <mach/dma.h>
+-#include <plat/regs-iis.h>
++#include "regs-iis.h"
+ 
+ #include "dma.h"
+ #include "s3c24xx-i2s.h"
+diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
+index 333e1b7..1b7b52b 100644
+--- a/sound/soc/samsung/s3c24xx_uda134x.c
++++ b/sound/soc/samsung/s3c24xx_uda134x.c
+@@ -18,7 +18,7 @@
+ #include <sound/soc.h>
+ #include <sound/s3c24xx_uda134x.h>
+ 
+-#include <plat/regs-iis.h>
++#include "regs-iis.h"
+ 
+ #include "s3c24xx-i2s.h"
+ 
 -- 
 1.8.1.2
