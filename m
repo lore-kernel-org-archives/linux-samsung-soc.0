@@ -1,85 +1,82 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 08/30] i2c: s3c2410: make header file local
-Date: Thu, 11 Apr 2013 02:04:50 +0200
-Message-ID: <1365638712-1028578-9-git-send-email-arnd@arndb.de>
+Subject: [PATCH 27/30] irqchip: exynos: localize irq lookup for ATAGS
+Date: Thu, 11 Apr 2013 02:05:09 +0200
+Message-ID: <1365638712-1028578-28-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-i2c@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@arnd.de>, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-No other file in the kernel besides i2c-s3c2410.c uses the current
-plat/regs-iic.h, so we can simply move the header file to live in the
-same directory as the driver, as a preparation to multiplatform builds.
+The IRQ_SPI() macro is not available in the driver when building with sparse
+IRQs or multiplatform, so let's move all users of this into one function
+that we can leave out when building DT-only.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-i2c@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Ben Dooks <ben-linux@fluff.org>
+Signed-off-by: Arnd Bergmann <arnd@arnd.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/arm/mach-s3c24xx/mach-rx1950.c                                    | 1 -
- arch/arm/plat-samsung/devs.c                                           | 1 -
- drivers/i2c/busses/i2c-s3c2410.c                                       | 3 ++-
- .../include/plat/regs-iic.h => drivers/i2c/busses/i2c-s3c2410.h        | 0
- 4 files changed, 2 insertions(+), 3 deletions(-)
- rename arch/arm/plat-samsung/include/plat/regs-iic.h => drivers/i2c/busses/i2c-s3c2410.h (100%)
+ drivers/irqchip/exynos-combiner.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
-index e4d67a3..44ca018 100644
---- a/arch/arm/mach-s3c24xx/mach-rx1950.c
-+++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-@@ -56,7 +56,6 @@
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index ffb10aa..31a4e96 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -19,7 +19,9 @@
+ #include <linux/of_irq.h>
+ #include <asm/mach/irq.h>
+ 
++#ifdef CONFIG_EXYNOS_ATAGS
  #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/pm.h>
--#include <plat/regs-iic.h>
- #include <plat/regs-serial.h>
- #include <plat/samsung-time.h>
++#endif
  
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 4cf660e..78be9c0 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -62,7 +62,6 @@
- #include <linux/platform_data/usb-s3c2410_udc.h>
- #include <linux/platform_data/usb-ohci-s3c2410.h>
- #include <plat/usb-phy.h>
--#include <plat/regs-iic.h>
- #include <plat/regs-serial.h>
- #include <plat/regs-spi.h>
- #include <linux/platform_data/spi-s3c64xx.h>
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index f6b880b..d042ad0 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -42,9 +42,10 @@
+ #include "irqchip.h"
  
- #include <asm/irq.h>
+@@ -183,8 +185,12 @@ static struct irq_domain_ops combiner_irq_domain_ops = {
+ 	.map	= combiner_irq_domain_map,
+ };
  
--#include <plat/regs-iic.h>
- #include <linux/platform_data/i2c-s3c2410.h>
- 
-+#include "i2c-s3c2410.h"
+-static unsigned int exynos4x12_combiner_extra_irq(int group)
++static unsigned int combiner_lookup_irq(int group)
+ {
++#ifdef CONFIG_EXYNOS_ATAGS
++	if (group < EXYNOS4210_MAX_COMBINER_NR || soc_is_exynos5250())
++		return IRQ_SPI(group);
 +
- /* Treat S3C2410 as baseline hardware, anything else is supported via quirks */
- #define QUIRK_S3C2440		(1 << 0)
- #define QUIRK_HDMIPHY		(1 << 1)
-diff --git a/arch/arm/plat-samsung/include/plat/regs-iic.h b/drivers/i2c/busses/i2c-s3c2410.h
-similarity index 100%
-rename from arch/arm/plat-samsung/include/plat/regs-iic.h
-rename to drivers/i2c/busses/i2c-s3c2410.h
+ 	switch (group) {
+ 	case 16:
+ 		return IRQ_SPI(107);
+@@ -194,9 +200,9 @@ static unsigned int exynos4x12_combiner_extra_irq(int group)
+ 		return IRQ_SPI(48);
+ 	case 19:
+ 		return IRQ_SPI(42);
+-	default:
+-		return 0;
+ 	}
++#endif
++	return 0;
+ }
+ 
+ void __init combiner_init(void __iomem *combiner_base,
+@@ -229,14 +235,13 @@ void __init combiner_init(void __iomem *combiner_base,
+ 	}
+ 
+ 	for (i = 0; i < max_nr; i++) {
+-		if (i < EXYNOS4210_MAX_COMBINER_NR || soc_is_exynos5250())
+-			irq = IRQ_SPI(i);
+-		else
+-			irq = exynos4x12_combiner_extra_irq(i);
+ #ifdef CONFIG_OF
+ 		if (np)
+ 			irq = irq_of_parse_and_map(np, i);
++		else
+ #endif
++			irq = combiner_lookup_irq(i);
++
+ 		combiner_init_one(&combiner_data[i], i,
+ 				  combiner_base + (i >> 2) * 0x10, irq);
+ 		combiner_cascade_irq(&combiner_data[i], irq);
 -- 
 1.8.1.2
