@@ -1,106 +1,289 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 04/14] mfd: Add Samsung PWM/timer master driver
-Date: Thu, 11 Apr 2013 23:08:13 +0200
-Message-ID: <201304112308.14181.arnd@arndb.de>
-References: <1365093431-30621-1-git-send-email-t.figa@samsung.com>
- <201304110035.47776.arnd@arndb.de> <1718887.H9vPuvORKd@amdc1227>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [8/9] thermal: exynos: Parse the platform data from the device
+ tree.
+Date: Thu, 11 Apr 2013 17:13:19 -0400
+Message-ID: <5167276F.2080308@ti.com>
+References: <1364297642-2746-9-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1718887.H9vPuvORKd@amdc1227>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: mark.rutland@arm.com, heiko@sntech.de, Tomasz Figa <tomasz.figa@gmail.com>, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, Samuel Ortiz <sameo@linux.intel.com>, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1364297642-2746-9-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, grant.likely@secretlab.ca, eduardo.valentin@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday 11 April 2013, Tomasz Figa wrote:
-> On Thursday 11 of April 2013 00:35:47 Arnd Bergmann wrote:
-> > On Monday 08 April 2013, Tomasz Figa wrote:
-> > > On Saturday 06 of April 2013 00:24:18 Tomasz Figa wrote:
-> > > > On Friday 05 of April 2013 21:54:21 Arnd Bergmann wrote:
-> > > > > On Friday 05 April 2013, Tomasz Figa wrote:
-> > 
-> > Sorry for not replying earlier. My idea for the register level interface
-> > was to create a platform_device for each PWM, e.g. using the mfd_cell
-> > infrastructure. You can then pass a "struct regmap" as the platform
-> > data for each child of the timer node, and all the DT handling code
-> > can stay in the parent driver.
-> 
-> Hmm. As I said, I'm completely fine with using a regmap for sharing registers 
-> between subdrivers. However the clocksource can not be registered as an MFD 
-> cell, because it's needed very early.
-> 
-> I can imagine a solution alternative to my original one, where the MFD cells 
-> would be registered from the clocksource driver. This would mean that 
-> platforms that don't need (and can't use) the PWM clocksource would have to 
-> enable the driver anyway.
+Amit,
 
-Sounds ok to me. The main part I want to avoid is having two separate device
-nodes in the DT for one physical device, but there are multiple ways to get
-there.
+Copying Grant for the DT part discussion.
 
-> Another thing is that I don't see a need to create one cell per PWM channel. 
-> The PWM core is designed in a way that supports multiple channels per PWM 
-> controller and so is the generic PWM DT specifier (<&controller channel period 
-> flags>), so I'd rather see a single cell for all PWM channels.
+On 26-03-2013 07:34, Amit Daniel Kachhap wrote:
+> This patch adds code to parse the DT based platform data like threshold temp,
+> sensor configuration parameters like gain, reference voltages, calibration
+> modes etc.
+>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>
+> ---
+> .../bindings/thermal/exynos5440-thermal.txt        |   93 ++++++++++++++++++++
+>   drivers/thermal/samsung/exynos5440_thermal.c       |    5 +-
+>   drivers/thermal/samsung/exynos_common.c            |   92 +++++++++++++++++++
+>   drivers/thermal/samsung/exynos_common.h            |    2 +
+>   4 files changed, 189 insertions(+), 3 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/thermal/exynos5440-thermal.txt
+>
+> diff --git a/Documentation/devicetree/bindings/thermal/exynos5440-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos5440-thermal.txt
+> new file mode 100644
+> index 0000000..1ad2dee
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/thermal/exynos5440-thermal.txt
+> @@ -0,0 +1,93 @@
+> +
+> +Exynos5440 TMU driver
+> +-------------------
+> +
+> +Exynos5440 SoC Thermal Sensor driver for CPU temperature measurement and
+> +performing cooling actions.
+> +
+> +Required properties:
+> +- interrupts: Interrupt to know the threshold change interrupts.
+> +- clocks: phandle of the clock from common clock binding. More description can
+> +	be found in Documentation/devicetree/bindings/clock/clock-bindings.txt.
+> +- clock-name: clock name as used in the clock fetch.
+> +- tmu-ctrl-data: phandle of the TMU controller configuration data. Its member
+> +	description is shown below,
+> +- gain: A factor describing the gain of amplifier. The value varies between
+> +	0-15.
+> +- reference-voltage: A factor describing the reference volt to amplifier. The
+> +	value varies between 0-31.
+> +- noise-cancel-mode: This value selects thermal tripping mode. The possible
+> +	values can be,
+> +		0: Use current temp.
+> +		4: Use current temp and past 4 temp values.
+> +		5: Use current temp and past 8 temp values.
+> +		6: Use current temp and past 12 temp values.
+> +		7: Use current temp and past 16 temp values.
+> +-cal-type: This value selects temperature calibration mode. The possible values
+> +	can be,
+> +		0: No calibration.
+> +		1: 1 point trimming method at 25 C.
+> +		2: 1 point trimming method at 85 C.
+> +		3: 2 point trimming method.
+> +-cal-mode: This value selects hw/sw mode calibration. The possible values can be,
+> +		0: Software calibration.
+> +		1: Hardware calibration.
+> +
+> +Optional properties:
+> +-efuse-value: This value should be used when the controller does not contain
+> +	valid fused temperature data needed for calibration. This is a 16 bit
+> +	value.
+> +-threshold-falling: This value defines the falling threshold when it is added to
+> +	trip threshold. If this value is not supplied then rising and falling
+> +	threshold are same.
+> +
+> +-trip@: This node is added to define the trip properties. The trip members are
+> +	shown below,
+> +-trip: This field defines the trip ID. Exynos5440 has 5 trip ID.
+> +-trigger-temp: Temperature at which threshold trigger is fired. Its unit is
+> +	celsius.
+> +-type: This denotes the type of trigger. The possible values are,
+> +	0: active trip type
+> +	1: critical
+> +	2: hw system trip
+> +-frequency-max: cpu frequency when this trip is reached.
+> +
+> +Example:
+> +--------
+> +	tmu_ctrl_info: tmu-ctrl-info {
+Shouldnt this be named something like samsung,tmu_ctrl_info?
 
-Sure, no problem with that.
+> +		gain = <8>;
+> +		reference-voltage = <16>;
+> +		noise-cancel-mode = <4>;
+> +		cal-type = <0>;
+> +		cal-mode = <0>;
+> +		efuse-value = <0xabcd>;
+> +		threshold-falling = <5>;
+> +
 
-> So, to summarize this alternative concept:
->  - two drivers:
->    1) clocksource driver - registering clocksource and PWM MFD cell
->    2) PWM driver - handling the PWM MFD cell
+ditto for the prefix of the above,
 
-Ok. Don't be too tied to the MFD concept though if it causes problems.
-In many cases calling platform_device_register_resndata or similar is
-actually easier than MFD, especially if you only want a single child
-device. Either way is fine though.
+> +		trip@0{
+> +			trip = <0>;
+> +			trigger-temp = <80>;
+> +			type = <0>;
+> +			frequency-max = <1200000>;
+> +		};
+> +
+> +		trip@3{
+> +			trip = <3>;
+> +			trigger-temp = <110>;
+> +			type = <1>;
+> +		};
+> +
+> +		trip@4{
+> +			trip = <4>;
+> +			trigger-temp = <120>;
+> +			type = <2>;
+> +		};
+> +	};
+> +
+> +	tmuctrl_0: tmuctrl@160118 {
+> +		compatible = "samsung,exynos5440-tmu";
+> +		reg = <0x160118 0x300>;
+> +		interrupts = <0 58 0>;
+> +		clocks = <&clock 8>;
+> +		clock-names = "tmu_apbif";
+> +		tmu-ctrl-data = <&tmu_ctrl_info>;
 
->  - both drivers would share registers using a regmap with custom lock/unlock 
->    callbacks (using spin_lock_irqsave/spin_unlock_irqrestore, because the 
->    clocksource needs to access PWM registers in IRQ context)
+ditto.
 
-Ok.
+Grant,
 
->  - the clocksource/master driver would have a samsung_time_init function which 
->    would set up the driver early and initialize the clocksource
+In fact I believe we must talk about how to standardize the thermal 
+description under DT.
 
-Right. If you want to use the clocksource_of_init() infratstructure for this
-(which is probably a good idea), please base your series on top of the
-clksrc/cleanup branch in arm-soc.
+> +	};
+> diff --git a/drivers/thermal/samsung/exynos5440_thermal.c b/drivers/thermal/samsung/exynos5440_thermal.c
+> index a3c75d3..c140e8c 100644
+> --- a/drivers/thermal/samsung/exynos5440_thermal.c
+> +++ b/drivers/thermal/samsung/exynos5440_thermal.c
+> @@ -564,9 +564,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>   		return -ENOMEM;
+>   	}
+>
+> -	pdata = (struct exynos_tmu_platform_data *)
+> -				platform_get_device_id(pdev)->driver_data;
+> -	if (!pdata) {
+> +	pdata = exynos_parse_tmu_dt_data(pdev);
+> +	if (!pdata || IS_ERR(pdata)) {
+>   		dev_err(&pdev->dev, "No platform init data supplied.\n");
+>   		return -ENODEV;
+>   	}
+> diff --git a/drivers/thermal/samsung/exynos_common.c b/drivers/thermal/samsung/exynos_common.c
+> index 0c0098d..345284c 100644
+> --- a/drivers/thermal/samsung/exynos_common.c
+> +++ b/drivers/thermal/samsung/exynos_common.c
+> @@ -27,7 +27,9 @@
+>   #include <linux/kernel.h>
+>   #include <linux/kobject.h>
+>   #include <linux/mutex.h>
+> +#include <linux/of.h>
+>   #include <linux/platform_data/exynos_thermal.h>
+> +#include <linux/platform_device.h>
+>   #include <linux/slab.h>
+>   #include <linux/thermal.h>
+>   #include "exynos_common.h"
+> @@ -421,3 +423,93 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf)
+>   	kfree(th_zone);
+>   	pr_info("Exynos: Kernel Thermal[%d] management unregistered\n", id);
+>   }
+> +
+> +struct exynos_tmu_platform_data *
+> +	exynos_parse_tmu_dt_data(struct platform_device *pdev)
+> +{
+> +	int ret;
+> +	struct device_node *np, *cn;
+> +	struct exynos_tmu_platform_data *pdata;
+> +	unsigned int val, trip;
+> +
+> +	if (!pdev->dev.of_node)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+> +	if (!pdata)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	np = of_parse_phandle(pdev->dev.of_node, "tmu-ctrl-data", 0);
+> +	if (!np) {
+> +		ret = -ENODEV;
+> +		goto err_parse_dt;
+> +	}
+> +
+> +	/* Parse compulsory parameters */
+> +	ret = of_property_read_u32(np, "gain", &val);
+> +	if (ret)
+> +		goto err_parse_dt;
+> +	pdata->gain = val;
+> +
+> +	ret = of_property_read_u32(np, "reference-voltage", &val);
+> +	if (ret)
+> +		goto err_parse_dt;
+> +	pdata->reference_voltage = val;
+> +
+> +	ret = of_property_read_u32(np, "noise-cancel-mode", &val);
+> +	if (ret)
+> +		goto err_parse_dt;
+> +	pdata->noise_cancel_mode = val;
+> +
+> +	ret = of_property_read_u32(np, "cal-type", &val);
+> +	if (ret)
+> +		goto err_parse_dt;
+> +	pdata->cal_type = val;
+> +
+> +	ret = of_property_read_u32(np, "cal-mode", &val);
+> +	if (ret)
+> +		goto err_parse_dt;
+> +	pdata->cal_mode = val;
+> +
+> +	/* Parse optional parameters */
+> +	ret = of_property_read_u32(np, "efuse-value", &val);
+> +	if (!ret)
+> +		pdata->efuse_value = val;
+> +
+> +	ret = of_property_read_u32(np, "threshold-falling", &val);
+> +	if (!ret)
+> +		pdata->threshold_falling = val;
+> +
+> +	for (cn = NULL ; (cn = of_get_next_child(np, cn));) {
+> +		/* Parse compulsory child parameters */
+> +		ret = of_property_read_u32(cn, "trip", &trip);
+> +		if (ret || trip > MAX_TRIP)
+> +			goto err_parse_dt;
+> +
+> +		ret = of_property_read_u32(cn, "trigger-temp", &val);
+> +		if (ret || !val)
+> +			goto err_parse_dt;
+> +		pdata->trigger_levels[trip] = val;
+> +
+> +		ret = of_property_read_u32(cn, "type", &val);
+> +		if (ret || val > HW_TRIP)
+> +			goto err_parse_dt;
+> +		pdata->trigger_type[trip] = val;
+> +
+> +		/* Parse optional child parameters */
+> +		ret = of_property_read_u32(cn, "frequency-max", &val);
+> +		if (!ret && val) {
+> +			pdata->freq_tab[pdata->freq_tab_count].freq_clip_max
+> +				= val;
+> +			pdata->freq_tab[pdata->freq_tab_count].temp_level
+> +				= pdata->trigger_levels[trip];
+> +			pdata->freq_tab_count++;
+> +		}
+> +		pdata->trigger_enable[trip] = true;
+> +	}
+> +	return pdata;
+> +
+> +err_parse_dt:
+> +	dev_err(&pdev->dev, "Parsing TMU device tree data error.\n");
+> +	return ERR_PTR(ret);
+> +}
+> diff --git a/drivers/thermal/samsung/exynos_common.h b/drivers/thermal/samsung/exynos_common.h
+> index 453e09a..5ca640b 100644
+> --- a/drivers/thermal/samsung/exynos_common.h
+> +++ b/drivers/thermal/samsung/exynos_common.h
+> @@ -69,4 +69,6 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf);
+>   int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf);
+>   void exynos_report_trigger(struct thermal_sensor_conf *sensor_conf);
+>   int exynos_get_frequency_level(unsigned int cpu, unsigned int freq);
+> +struct exynos_tmu_platform_data *
+> +	exynos_parse_tmu_dt_data(struct platform_device *pdev);
 
->  - a platform driver would be registered by the clocksource/master driver
->    which would register the PWM MFD cell in its probe.
+This patch again generates a linking error while compiling as module
+ERROR: "exynos_parse_tmu_dt_data" 
+[drivers/thermal/samsung/exynos5440_thermal.ko] undefined!
 
-This seems unnecessary, if the only purpose of the platform driver is to
-export the MFD cell. In that case, I would actually suggest a simpler model
-where the PWM driver registers the main platform driver directly and
-calls a function exported by the clocksource driver to get the regmap
-structure and anything else it may need (possibly initializing the driver
-in the case where it is not used as the clocksource but only provides
-the registers for PWM).
 
->  - MFD cell platform data would contain struct regmap * and variant data
->    (parsed from DT or received from platform code - as in my original version)
-
-Yes, either the MFD cell, or the exported symbol, whichever ends up easier.
-
-> This should indeed work, assuming that I find a solution to make 
-> clocksource_of_init not initialize the PWM clocksource (from PWM DT node) on 
-> platforms that can't use it.
-
-Right. If anything else comes up, I'd suggest we discuss it on IRC (#armlinux
-on irc.freenode.net) tomorrow for faster round-trip, or I can call you on
-the phone if you like. I'm available all day tomorrow, just send me your
-(landline) phone number by private email.
-
-	Arnd.
+>   #endif /* _LINUX_EXYNOS_COMMON_H */
+>
