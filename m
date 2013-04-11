@@ -1,80 +1,38 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 15/30] mtd: onenand/samsung: make regs-onenand.h file local
-Date: Thu, 11 Apr 2013 09:18:32 +0900
-Message-ID: <CAH9JG2UK2KuX6c7YL8Mva+T+HmAH8F39oUbrK9eZkMO1KzPKFg@mail.gmail.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH 09/30] mmc: sdhci-s3c: remove platform dependencies
+Date: Wed, 10 Apr 2013 21:06:18 -0400
+Message-ID: <877gk9j2ph.fsf@octavius.laptop.org>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-	<1365638712-1028578-16-git-send-email-arnd@arndb.de>
+	<1365638712-1028578-10-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:57793 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935719Ab3DKASc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 20:18:32 -0400
-In-Reply-To: <1365638712-1028578-16-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1365638712-1028578-10-git-send-email-arnd@arndb.de> (Arnd
+	Bergmann's message of "Thu, 11 Apr 2013 02:04:51 +0200")
+Sender: linux-mmc-owner@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Thanks Arnd.
+Hi,
 
-On Thu, Apr 11, 2013 at 9:04 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> Nothing uses the NAND register definitions other than the
-> actual driver, so we can move the header file into the
-> same local directory, which lets us build it in a multiplatform
-> configuration.
+On Wed, Apr 10 2013, Arnd Bergmann wrote:
+> plat/regs-sdhci.h is not used anywhere but in the sdhci-s3c
+> driver, so it can become a local file there and all other
+> inclusions removed.
+>
+> plat/sdhci.h is used only to define the platform devices,
+> and with the exception of the platform_data structure not
+> needed by the driver, so we can split out the platform_data
+> definition instead and leave the rest to platform code.
 >
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-mtd@lists.infradead.org
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> ---
->  drivers/mtd/onenand/samsung.c                                         | 4 ++--
->  .../include/plat/regs-onenand.h => drivers/mtd/onenand/samsung.h      | 2 --
->  2 files changed, 2 insertions(+), 4 deletions(-)
->  rename arch/arm/plat-samsung/include/plat/regs-onenand.h => drivers/mtd/onenand/samsung.h (98%)
->
-> diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-> index 33f2a8f..2cf7408 100644
-> --- a/drivers/mtd/onenand/samsung.c
-> +++ b/drivers/mtd/onenand/samsung.c
-> @@ -23,11 +23,11 @@
->  #include <linux/mtd/partitions.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/interrupt.h>
-> +#include <linux/io.h>
->
->  #include <asm/mach/flash.h>
-> -#include <plat/regs-onenand.h>
->
-> -#include <linux/io.h>
-> +#include "samsung.h"
->
->  enum soc_type {
->         TYPE_S3C6400,
-> diff --git a/arch/arm/plat-samsung/include/plat/regs-onenand.h b/drivers/mtd/onenand/samsung.h
-> similarity index 98%
-> rename from arch/arm/plat-samsung/include/plat/regs-onenand.h
-> rename to drivers/mtd/onenand/samsung.h
-> index 930ea8b..c4a80e6 100644
-> --- a/arch/arm/plat-samsung/include/plat/regs-onenand.h
-> +++ b/drivers/mtd/onenand/samsung.h
-> @@ -11,8 +11,6 @@
->  #ifndef __SAMSUNG_ONENAND_H__
->  #define __SAMSUNG_ONENAND_H__
->
-> -#include <mach/hardware.h>
-> -
->  /*
->   * OneNAND Controller
->   */
-> --
-> 1.8.1.2
->
->
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+> Cc: linux-mmc@vger.kernel.org
+> Cc: Chris Ball <cjb@laptop.org>
+
+Acked-by: Chris Ball <cjb@laptop.org>
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
