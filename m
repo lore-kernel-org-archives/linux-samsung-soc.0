@@ -1,196 +1,363 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 03/30] ARM: exynos: move debug-macro.S to include/debug/
-Date: Thu, 11 Apr 2013 02:04:45 +0200
-Message-ID: <1365638712-1028578-4-git-send-email-arnd@arndb.de>
+Subject: [PATCH 20/30] ASoC: samsung: convert to dmaengine API
+Date: Thu, 11 Apr 2013 02:05:02 +0200
+Message-ID: <1365638712-1028578-21-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:63566 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S937451Ab3DKAG5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 20:06:57 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The move is necessary to support early debug output on exynos
-with multiplatform configurations. This implies also moving the
-plat/debug-macro.S file, but we are leaving the remaining users of that
-file in place, to avoid adding large numbers of extra configuration
-options to Kconfig.debug
+In order to build the exynos kernel with CONFIG_ARCH_MULTIPLATFORM,
+we must convert all users of the Samsung private DMA interface to
+the generic dmaengine API. This version of the patch adds the
+generic dmaengine API as an alternative to the existing samsung
+specific one. Once all the older platforms provide support for
+the common dmaengine interfaces, we can remove the old code.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: alsa-devel@alsa-project.org
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
 ---
- arch/arm/Kconfig.debug                                       |  8 ++++++++
- .../include/mach/debug-macro.S => include/debug/exynos.S}    | 12 ++++++------
- .../include/plat/debug-macro.S => include/debug/samsung.S}   |  2 +-
- arch/arm/mach-s3c24xx/include/mach/debug-macro.S             |  2 +-
- arch/arm/mach-s3c64xx/include/mach/debug-macro.S             |  2 +-
- arch/arm/mach-s5p64x0/include/mach/debug-macro.S             |  2 +-
- arch/arm/mach-s5pc100/include/mach/debug-macro.S             |  2 +-
- arch/arm/mach-s5pv210/include/mach/debug-macro.S             |  2 +-
- 8 files changed, 20 insertions(+), 12 deletions(-)
- rename arch/arm/{mach-exynos/include/mach/debug-macro.S => include/debug/exynos.S} (84%)
- rename arch/arm/{plat-samsung/include/plat/debug-macro.S => include/debug/samsung.S} (98%)
+ sound/soc/samsung/dma.c   | 219 ++++++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/samsung/dma.h   |  15 +++-
+ sound/soc/samsung/i2s.c   |   2 -
+ sound/soc/samsung/pcm.c   |   1 -
+ sound/soc/samsung/spdif.c |   1 -
+ 5 files changed, 232 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index e00bd4d..54d6fdc 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -348,6 +348,7 @@ choice
+diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+index 21b7926..9fd53df 100644
+--- a/sound/soc/samsung/dma.c
++++ b/sound/soc/samsung/dma.c
+@@ -22,8 +22,14 @@
+ #include <sound/pcm_params.h>
  
- 	config DEBUG_S3C_UART0
- 		depends on PLAT_SAMSUNG
-+		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
- 		bool "Use S3C UART 0 for low-level debug"
- 		help
- 		  Say Y here if you want the debug print routines to direct
-@@ -359,6 +360,7 @@ choice
- 
- 	config DEBUG_S3C_UART1
- 		depends on PLAT_SAMSUNG
-+		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
- 		bool "Use S3C UART 1 for low-level debug"
- 		help
- 		  Say Y here if you want the debug print routines to direct
-@@ -370,6 +372,7 @@ choice
- 
- 	config DEBUG_S3C_UART2
- 		depends on PLAT_SAMSUNG
-+		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
- 		bool "Use S3C UART 2 for low-level debug"
- 		help
- 		  Say Y here if you want the debug print routines to direct
-@@ -381,6 +384,7 @@ choice
- 
- 	config DEBUG_S3C_UART3
- 		depends on PLAT_SAMSUNG && ARCH_EXYNOS
-+		select DEBUG_EXYNOS_UART
- 		bool "Use S3C UART 3 for low-level debug"
- 		help
- 		  Say Y here if you want the debug print routines to direct
-@@ -510,6 +514,9 @@ choice
- 
- endchoice
- 
-+config DEBUG_EXYNOS_UART
-+	bool
+ #include <asm/dma.h>
 +
- config DEBUG_IMX_UART_PORT
- 	int "i.MX Debug UART Port Selection" if DEBUG_IMX1_UART || \
- 						DEBUG_IMX25_UART || \
-@@ -607,6 +614,7 @@ config DEBUG_LL_INCLUDE
- 	string
- 	default "debug/bcm2835.S" if DEBUG_BCM2835
- 	default "debug/cns3xxx.S" if DEBUG_CNS3XXX
-+	default "debug/exynos.S" if DEBUG_EXYNOS_UART
- 	default "debug/icedcc.S" if DEBUG_ICEDCC
- 	default "debug/imx.S" if DEBUG_IMX1_UART || \
- 				 DEBUG_IMX25_UART || \
-diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S b/arch/arm/include/debug/exynos.S
-similarity index 84%
-rename from arch/arm/mach-exynos/include/mach/debug-macro.S
-rename to arch/arm/include/debug/exynos.S
-index e0c86ea..b17fdb7 100644
---- a/arch/arm/mach-exynos/include/mach/debug-macro.S
-+++ b/arch/arm/include/debug/exynos.S
-@@ -1,10 +1,7 @@
--/* linux/arch/arm/mach-exynos4/include/mach/debug-macro.S
-- *
-+/*
-  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
++#ifdef CONFIG_SAMSUNG_DMADEV
+ #include <mach/hardware.h>
+ #include <mach/dma.h>
++#else
++#include <linux/dmaengine.h>
++#include <linux/amba/pl330.h>
++#endif
+ 
+ #include "dma.h"
+ 
+@@ -62,11 +68,13 @@ struct runtime_data {
+ 
+ static void audio_buffdone(void *data);
+ 
++#ifdef CONFIG_SAMSUNG_DMADEV
+ /* dma_enqueue
   *
-- * Based on arch/arm/mach-s3c6400/include/mach/debug-macro.S
-- *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-@@ -12,7 +9,10 @@
- 
- /* pull in the relevant register and map files. */
- 
--#include <mach/map.h>
-+#define S3C_ADDR_BASE   0xF6000000
-+#define S3C_VA_UART	S3C_ADDR_BASE + 0x01000000
-+#define EXYNOS4_PA_UART	0x13800000
-+#define EXYNOS5_PA_UART	0x12C00000
- 
- 	/* note, for the boot process to work we have to keep the UART
- 	 * virtual address aligned to an 1MiB boundary for the L1
-@@ -36,4 +36,4 @@
- #define fifo_full fifo_full_s5pv210
- #define fifo_level fifo_level_s5pv210
- 
--#include <plat/debug-macro.S>
-+#include <debug/samsung.S>
-diff --git a/arch/arm/plat-samsung/include/plat/debug-macro.S b/arch/arm/include/debug/samsung.S
-similarity index 98%
-rename from arch/arm/plat-samsung/include/plat/debug-macro.S
-rename to arch/arm/include/debug/samsung.S
-index f3a9cff..8d8d922 100644
---- a/arch/arm/plat-samsung/include/plat/debug-macro.S
-+++ b/arch/arm/include/debug/samsung.S
-@@ -9,7 +9,7 @@
-  * published by the Free Software Foundation.
- */
- 
--#include <plat/regs-serial.h>
-+#include <linux/serial_s3c.h>
- 
- /* The S5PV210/S5PC110 implementations are as belows. */
- 
-diff --git a/arch/arm/mach-s3c24xx/include/mach/debug-macro.S b/arch/arm/mach-s3c24xx/include/mach/debug-macro.S
-index 13ed33c..2558952 100644
---- a/arch/arm/mach-s3c24xx/include/mach/debug-macro.S
-+++ b/arch/arm/mach-s3c24xx/include/mach/debug-macro.S
-@@ -98,4 +98,4 @@
- 
- /* include the reset of the code which will do the work */
- 
--#include <plat/debug-macro.S>
-+#include <debug/samsung.S>
-diff --git a/arch/arm/mach-s3c64xx/include/mach/debug-macro.S b/arch/arm/mach-s3c64xx/include/mach/debug-macro.S
-index c0c076a..dd9ccca 100644
---- a/arch/arm/mach-s3c64xx/include/mach/debug-macro.S
-+++ b/arch/arm/mach-s3c64xx/include/mach/debug-macro.S
-@@ -35,4 +35,4 @@
-  * will be fine with us.
+  * place a dma buffer onto the queue for the dma system
+  * to handle.
   */
++
+ static void dma_enqueue(struct snd_pcm_substream *substream)
+ {
+ 	struct runtime_data *prtd = substream->runtime->private_data;
+@@ -265,6 +273,217 @@ static int dma_trigger(struct snd_pcm_substream *substream, int cmd)
  
--#include <plat/debug-macro.S>
-+#include <debug/samsung.S>
-diff --git a/arch/arm/mach-s5p64x0/include/mach/debug-macro.S b/arch/arm/mach-s5p64x0/include/mach/debug-macro.S
-index e80ba3c..5e2916f 100644
---- a/arch/arm/mach-s5p64x0/include/mach/debug-macro.S
-+++ b/arch/arm/mach-s5p64x0/include/mach/debug-macro.S
-@@ -30,4 +30,4 @@
- #endif
- 	.endm
+ 	return ret;
+ }
++#else
++/* dma_enqueue
++ *
++ * place a dma buffer onto the queue for the dma system
++ * to handle.
++ */
++
++static void dma_enqueue(struct snd_pcm_substream *substream)
++{
++	struct runtime_data *prtd = substream->runtime->private_data;
++	dma_addr_t pos = prtd->dma_pos;
++	unsigned long period = prtd->dma_period;
++	unsigned int limit;
++	enum dma_transfer_direction direction;
++	struct dma_chan *chan = prtd->params->ch;
++	struct dma_async_tx_descriptor *desc;
++
++	pr_debug("Entered %s\n", __func__);
++
++	limit = (prtd->dma_end - prtd->dma_start) / prtd->dma_period;
++
++	pr_debug("%s: loaded %d, limit %d\n",
++				__func__, prtd->dma_loaded, limit);
++
++	direction = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK
++		     ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM);
++
++	while (prtd->dma_loaded < limit) {
++		pr_debug("dma_loaded: %d\n", prtd->dma_loaded);
++
++		if ((pos + period) > prtd->dma_end) {
++			period  = prtd->dma_end - pos;
++			pr_debug("%s: corrected dma len %ld\n",
++					__func__, period);
++		}
++
++		desc = dmaengine_prep_dma_cyclic(chan, pos,
++			 prtd->dma_period*limit, period, direction,
++			DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
++
++		if (desc) {
++			desc->callback = audio_buffdone;
++			desc->callback_param = substream;
++			dmaengine_submit(desc);
++		}
++
++		prtd->dma_loaded++;
++		pos += period;
++		if (pos >= prtd->dma_end)
++			pos = prtd->dma_start;
++	}
++
++	prtd->dma_pos = pos;
++}
++
++static void audio_buffdone(void *data)
++{
++	struct snd_pcm_substream *substream = data;
++	struct runtime_data *prtd = substream->runtime->private_data;
++
++	pr_debug("Entered %s\n", __func__);
++
++	if (prtd->state & ST_RUNNING) {
++		prtd->dma_pos += prtd->dma_period;
++		if (prtd->dma_pos >= prtd->dma_end)
++			prtd->dma_pos = prtd->dma_start;
++
++		if (substream)
++			snd_pcm_period_elapsed(substream);
++	}
++}
++
++static int dma_hw_params(struct snd_pcm_substream *substream,
++	struct snd_pcm_hw_params *params)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct runtime_data *prtd = runtime->private_data;
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	unsigned long totbytes = params_buffer_bytes(params);
++	struct s3c_dma_params *dma =
++		snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
++
++	pr_debug("Entered %s\n", __func__);
++
++	/* return if this is a bufferless transfer e.g.
++	 * codec <--> BT codec or GSM modem -- lg FIXME */
++	if (!dma)
++		return 0;
++
++	/* this may get called several times by oss emulation
++	 * with different params -HW */
++	if (prtd->params == NULL) {
++		struct dma_slave_config config;
++		dma_cap_mask_t mask;
++
++		/* prepare DMA */
++		prtd->params = dma;
++
++		pr_debug("params %p, channel %d\n", prtd->params,
++			 prtd->params->channel);
++
++		dma_cap_zero(mask);
++		dma_cap_set(DMA_CYCLIC, mask);
++
++		prtd->params->ch = dma_request_slave_channel_compat(mask,
++			pl330_filter, (void *)prtd->params->channel,
++			rtd->cpu_dai->dev, prtd->params->ch_name);
++
++		memset(&config, 0, sizeof(struct dma_slave_config));
++
++		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
++			config.direction = DMA_MEM_TO_DEV;
++			config.dst_addr = prtd->params->dma_addr;
++			config.dst_addr_width = prtd->params->dma_size;
++			config.dst_maxburst = 1;
++			dmaengine_slave_config(prtd->params->ch, &config);
++		} else {
++			config.direction = DMA_DEV_TO_MEM;
++			config.src_addr = prtd->params->dma_addr;
++			config.src_addr_width = prtd->params->dma_size;
++			config.src_maxburst = 1;
++			dmaengine_slave_config(prtd->params->ch, &config);
++		}
++	}
++
++	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
++
++	runtime->dma_bytes = totbytes;
++
++	spin_lock_irq(&prtd->lock);
++	prtd->dma_loaded = 0;
++	prtd->dma_period = params_period_bytes(params);
++	prtd->dma_start = runtime->dma_addr;
++	prtd->dma_pos = prtd->dma_start;
++	prtd->dma_end = prtd->dma_start + totbytes;
++	spin_unlock_irq(&prtd->lock);
++
++	return 0;
++}
++
++static int dma_hw_free(struct snd_pcm_substream *substream)
++{
++	struct runtime_data *prtd = substream->runtime->private_data;
++
++	pr_debug("Entered %s\n", __func__);
++
++	snd_pcm_set_runtime_buffer(substream, NULL);
++
++	if (prtd->params) {
++		dmaengine_terminate_all(prtd->params->ch);
++		dma_release_channel(prtd->params->ch);
++		prtd->params = NULL;
++	}
++
++	return 0;
++}
++
++static int dma_prepare(struct snd_pcm_substream *substream)
++{
++	struct runtime_data *prtd = substream->runtime->private_data;
++	int ret = 0;
++
++	pr_debug("Entered %s\n", __func__);
++
++	/* return if this is a bufferless transfer e.g.
++	 * codec <--> BT codec or GSM modem -- lg FIXME */
++	if (!prtd->params)
++		return 0;
++
++	/* flush the DMA channel */
++	dmaengine_terminate_all(prtd->params->ch);
++
++	prtd->dma_loaded = 0;
++	prtd->dma_pos = prtd->dma_start;
++
++	/* enqueue dma buffers */
++	dma_enqueue(substream);
++
++	return ret;
++}
++
++static int dma_trigger(struct snd_pcm_substream *substream, int cmd)
++{
++	struct runtime_data *prtd = substream->runtime->private_data;
++	int ret = 0;
++
++	pr_debug("Entered %s\n", __func__);
++
++	spin_lock(&prtd->lock);
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++		prtd->state |= ST_RUNNING;
++		dma_async_issue_pending(prtd->params->ch);
++		break;
++
++	case SNDRV_PCM_TRIGGER_STOP:
++		prtd->state &= ~ST_RUNNING;
++		dmaengine_terminate_all(prtd->params->ch);
++		break;
++
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	spin_unlock(&prtd->lock);
++
++	return ret;
++}
++#endif
  
--#include <plat/debug-macro.S>
-+#include <debug/samsung.S>
-diff --git a/arch/arm/mach-s5pc100/include/mach/debug-macro.S b/arch/arm/mach-s5pc100/include/mach/debug-macro.S
-index 694f759..66cb7f1 100644
---- a/arch/arm/mach-s5pc100/include/mach/debug-macro.S
-+++ b/arch/arm/mach-s5pc100/include/mach/debug-macro.S
-@@ -36,4 +36,4 @@
-  * will be fine with us.
-  */
+ static snd_pcm_uframes_t
+ dma_pointer(struct snd_pcm_substream *substream)
+diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
+index 189a7a6..6bd1857 100644
+--- a/sound/soc/samsung/dma.h
++++ b/sound/soc/samsung/dma.h
+@@ -12,13 +12,24 @@
+ #ifndef _S3C_AUDIO_H
+ #define _S3C_AUDIO_H
  
--#include <plat/debug-macro.S>
-+#include <debug/samsung.S>
-diff --git a/arch/arm/mach-s5pv210/include/mach/debug-macro.S b/arch/arm/mach-s5pv210/include/mach/debug-macro.S
-index 79e5559..80c2199 100644
---- a/arch/arm/mach-s5pv210/include/mach/debug-macro.S
-+++ b/arch/arm/mach-s5pv210/include/mach/debug-macro.S
-@@ -38,4 +38,4 @@
-  * will be fine with us.
-  */
++#ifdef CONFIG_SAMSUNG_DMADEV
++#include <mach/dma.h>
++#endif
++
+ struct s3c_dma_params {
++#ifdef CONFIG_SAMSUNG_DMADEV
+ 	struct s3c2410_dma_client *client;	/* stream identifier */
++	unsigned ch;
++	struct samsung_dma_ops *ops;
++#else
++	struct s3c2410_dma_client {
++		char *name;			/* unused */
++	} *client;
++	struct dma_chan *ch;
++#endif
+ 	int channel;				/* Channel ID */
+ 	dma_addr_t dma_addr;
+ 	int dma_size;			/* Size of the DMA transfer */
+-	unsigned ch;
+-	struct samsung_dma_ops *ops;
+ 	char *ch_name;
+ };
  
--#include <plat/debug-macro.S>
-+#include <debug/samsung.S>
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index d7231e3..61f2622 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -22,8 +22,6 @@
+ #include <sound/soc.h>
+ #include <sound/pcm_params.h>
+ 
+-#include <mach/dma.h>
+-
+ #include <linux/platform_data/asoc-s3c.h>
+ 
+ #include "dma.h"
+diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+index 13bab79..b5f267c 100644
+--- a/sound/soc/samsung/pcm.c
++++ b/sound/soc/samsung/pcm.c
+@@ -20,7 +20,6 @@
+ #include <sound/pcm_params.h>
+ 
+ #include <linux/platform_data/asoc-s3c.h>
+-#include <mach/dma.h>
+ 
+ #include "dma.h"
+ #include "pcm.h"
+diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
+index 5008e5b..ee792aa 100644
+--- a/sound/soc/samsung/spdif.c
++++ b/sound/soc/samsung/spdif.c
+@@ -18,7 +18,6 @@
+ #include <sound/pcm_params.h>
+ 
+ #include <linux/platform_data/asoc-s3c.h>
+-#include <mach/dma.h>
+ 
+ #include "dma.h"
+ #include "spdif.h"
 -- 
 1.8.1.2
