@@ -1,166 +1,146 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 13/30] video/s3c: move platform_data out of arch/arm
-Date: Thu, 11 Apr 2013 02:04:55 +0200
-Message-ID: <1365638712-1028578-14-git-send-email-arnd@arndb.de>
+Subject: [PATCH 10/30] usb: exynos: do not include plat/usb-phy.h
+Date: Thu, 11 Apr 2013 02:04:52 +0200
+Message-ID: <1365638712-1028578-11-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The s3c-fb driver requires header files from the samsung platforms
-to find its platform_data definition, but this no longer works on
-multiplatform kernels, so let's move the data into a new header
-file under include/linux/platform_data.
+The definitions have moved to include/linux/usb/samsung-usb-phy.h,
+and plat/usb-phy.h is unavailable from drivers in a multiplatform
+configuration.
+
+Also fix up the plat/usb-phy.h header file to use the definitions
+from the new header instead of providing a separate copy.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-fbdev@vger.kernel.org
-Cc: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-usb@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>
 ---
- arch/arm/plat-samsung/include/plat/fb.h | 50 +-----------------------------
- drivers/video/s3c-fb.c                  |  3 +-
- include/linux/platform_data/video_s3c.h | 54 +++++++++++++++++++++++++++++++++
- 3 files changed, 56 insertions(+), 51 deletions(-)
- create mode 100644 include/linux/platform_data/video_s3c.h
+ arch/arm/mach-exynos/setup-usb-phy.c         | 8 ++++----
+ arch/arm/mach-s3c64xx/setup-usb-phy.c        | 4 ++--
+ arch/arm/mach-s5pv210/setup-usb-phy.c        | 4 ++--
+ arch/arm/plat-samsung/include/plat/usb-phy.h | 5 +----
+ drivers/usb/host/ehci-s5p.c                  | 1 -
+ drivers/usb/host/ohci-exynos.c               | 1 -
+ 6 files changed, 9 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-index b885322..9ae5072 100644
---- a/arch/arm/plat-samsung/include/plat/fb.h
-+++ b/arch/arm/plat-samsung/include/plat/fb.h
-@@ -15,55 +15,7 @@
- #ifndef __PLAT_S3C_FB_H
- #define __PLAT_S3C_FB_H __FILE__
+diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
+index b81cc56..6af4066 100644
+--- a/arch/arm/mach-exynos/setup-usb-phy.c
++++ b/arch/arm/mach-exynos/setup-usb-phy.c
+@@ -204,9 +204,9 @@ static int exynos4210_usb_phy1_exit(struct platform_device *pdev)
  
--/* S3C_FB_MAX_WIN
-- * Set to the maximum number of windows that any of the supported hardware
-- * can use. Since the platform data uses this for an array size, having it
-- * set to the maximum of any version of the hardware can do is safe.
-- */
--#define S3C_FB_MAX_WIN	(5)
--
--/**
-- * struct s3c_fb_pd_win - per window setup data
-- * @xres     : The window X size.
-- * @yres     : The window Y size.
-- * @virtual_x: The virtual X size.
-- * @virtual_y: The virtual Y size.
-- */
--struct s3c_fb_pd_win {
--	unsigned short		default_bpp;
--	unsigned short		max_bpp;
--	unsigned short		xres;
--	unsigned short		yres;
--	unsigned short		virtual_x;
--	unsigned short		virtual_y;
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return exynos4210_usb_phy0_init(pdev);
+-	else if (type == S5P_USB_PHY_HOST)
++	else if (type == USB_PHY_TYPE_HOST)
+ 		return exynos4210_usb_phy1_init(pdev);
+ 
+ 	return -EINVAL;
+@@ -214,9 +214,9 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return exynos4210_usb_phy0_exit(pdev);
+-	else if (type == S5P_USB_PHY_HOST)
++	else if (type == USB_PHY_TYPE_HOST)
+ 		return exynos4210_usb_phy1_exit(pdev);
+ 
+ 	return -EINVAL;
+diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+index c8174d9..ca960bd 100644
+--- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
++++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+@@ -76,7 +76,7 @@ static int s3c_usb_otgphy_exit(struct platform_device *pdev)
+ 
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s3c_usb_otgphy_init(pdev);
+ 
+ 	return -EINVAL;
+@@ -84,7 +84,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s3c_usb_otgphy_exit(pdev);
+ 
+ 	return -EINVAL;
+diff --git a/arch/arm/mach-s5pv210/setup-usb-phy.c b/arch/arm/mach-s5pv210/setup-usb-phy.c
+index 356a090..b2ee533 100644
+--- a/arch/arm/mach-s5pv210/setup-usb-phy.c
++++ b/arch/arm/mach-s5pv210/setup-usb-phy.c
+@@ -80,7 +80,7 @@ static int s5pv210_usb_otgphy_exit(struct platform_device *pdev)
+ 
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s5pv210_usb_otgphy_init(pdev);
+ 
+ 	return -EINVAL;
+@@ -88,7 +88,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s5pv210_usb_otgphy_exit(pdev);
+ 
+ 	return -EINVAL;
+diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
+index 959bcdb..ab34dfa 100644
+--- a/arch/arm/plat-samsung/include/plat/usb-phy.h
++++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
+@@ -11,10 +11,7 @@
+ #ifndef __PLAT_SAMSUNG_USB_PHY_H
+ #define __PLAT_SAMSUNG_USB_PHY_H __FILE__
+ 
+-enum s5p_usb_phy_type {
+-	S5P_USB_PHY_DEVICE,
+-	S5P_USB_PHY_HOST,
 -};
--
--/**
-- * struct s3c_fb_platdata -  S3C driver platform specific information
-- * @setup_gpio: Setup the external GPIO pins to the right state to transfer
-- *		the data from the display system to the connected display
-- *		device.
-- * @vidcon0: The base vidcon0 values to control the panel data format.
-- * @vidcon1: The base vidcon1 values to control the panel data output.
-- * @vtiming: Video timing when connected to a RGB type panel.
-- * @win: The setup data for each hardware window, or NULL for unused.
-- * @display_mode: The LCD output display mode.
-- *
-- * The platform data supplies the video driver with all the information
-- * it requires to work with the display(s) attached to the machine. It
-- * controls the initial mode, the number of display windows (0 is always
-- * the base framebuffer) that are initialised etc.
-- *
-- */
--struct s3c_fb_platdata {
--	void	(*setup_gpio)(void);
--
--	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
--	struct fb_videomode     *vtiming;
--
--	u32			 vidcon0;
--	u32			 vidcon1;
--};
-+#include <linux/platform_data/video_s3c.h>
++#include <linux/usb/samsung_usb_phy.h>
  
- /**
-  * s3c_fb_set_platdata() - Setup the FB device with platform data.
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 968a625..2e7991c 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -24,10 +24,9 @@
- #include <linux/uaccess.h>
- #include <linux/interrupt.h>
- #include <linux/pm_runtime.h>
-+#include <linux/platform_data/video_s3c.h>
+ extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
+ extern int s5p_usb_phy_exit(struct platform_device *pdev, int type);
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 20ebf6a..7dc9c15 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -19,7 +19,6 @@
+ #include <linux/platform_data/usb-ehci-s5p.h>
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
+-#include <plat/usb-phy.h>
  
- #include <video/samsung_fimd.h>
--#include <mach/map.h>
--#include <plat/fb.h>
+ #define EHCI_INSNREG00(base)			(base + 0x90)
+ #define EHCI_INSNREG00_ENA_INCR16		(0x1 << 25)
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 0bd6f47..0792bfd 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -18,7 +18,6 @@
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
  
- /* This driver will export a number of framebuffer interfaces depending
-  * on the configuration passed in via the platform data. Each fb instance
-diff --git a/include/linux/platform_data/video_s3c.h b/include/linux/platform_data/video_s3c.h
-new file mode 100644
-index 0000000..fa40f96
---- /dev/null
-+++ b/include/linux/platform_data/video_s3c.h
-@@ -0,0 +1,54 @@
-+#ifndef __PLATFORM_DATA_VIDEO_S3C
-+#define __PLATFORM_DATA_VIDEO_S3C
-+
-+/* S3C_FB_MAX_WIN
-+ * Set to the maximum number of windows that any of the supported hardware
-+ * can use. Since the platform data uses this for an array size, having it
-+ * set to the maximum of any version of the hardware can do is safe.
-+ */
-+#define S3C_FB_MAX_WIN	(5)
-+
-+/**
-+ * struct s3c_fb_pd_win - per window setup data
-+ * @xres     : The window X size.
-+ * @yres     : The window Y size.
-+ * @virtual_x: The virtual X size.
-+ * @virtual_y: The virtual Y size.
-+ */
-+struct s3c_fb_pd_win {
-+	unsigned short		default_bpp;
-+	unsigned short		max_bpp;
-+	unsigned short		xres;
-+	unsigned short		yres;
-+	unsigned short		virtual_x;
-+	unsigned short		virtual_y;
-+};
-+
-+/**
-+ * struct s3c_fb_platdata -  S3C driver platform specific information
-+ * @setup_gpio: Setup the external GPIO pins to the right state to transfer
-+ *		the data from the display system to the connected display
-+ *		device.
-+ * @vidcon0: The base vidcon0 values to control the panel data format.
-+ * @vidcon1: The base vidcon1 values to control the panel data output.
-+ * @vtiming: Video timing when connected to a RGB type panel.
-+ * @win: The setup data for each hardware window, or NULL for unused.
-+ * @display_mode: The LCD output display mode.
-+ *
-+ * The platform data supplies the video driver with all the information
-+ * it requires to work with the display(s) attached to the machine. It
-+ * controls the initial mode, the number of display windows (0 is always
-+ * the base framebuffer) that are initialised etc.
-+ *
-+ */
-+struct s3c_fb_platdata {
-+	void	(*setup_gpio)(void);
-+
-+	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
-+	struct fb_videomode     *vtiming;
-+
-+	u32			 vidcon0;
-+	u32			 vidcon1;
-+};
-+ 
-+#endif
+-#include <plat/usb-phy.h>
+ 
+ struct exynos_ohci_hcd {
+ 	struct device *dev;
 -- 
 1.8.1.2
