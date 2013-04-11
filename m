@@ -1,95 +1,53 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v3 05/10] i2c: s3c2410: make header file local
-Date: Thu, 11 Apr 2013 23:43:34 +0200
-Message-ID: <201304112343.34534.heiko@sntech.de>
-References: <1365716245-99231-1-git-send-email-arnd@arndb.de> <1365716245-99231-6-git-send-email-arnd@arndb.de>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [RESEND PATCH V6 1/4] cpufreq: exynos: Add cpufreq driver for exynos5440
+Date: Thu, 11 Apr 2013 18:23:52 -0500
+Message-ID: <CAGo_u6oZM0K8XDMtmXKFyoGy2qf+-HSPvU0EMangM5Jj_prKsA@mail.gmail.com>
+References: <CAKohpo=t_YTCTRCfnwQ+GPF=frsTGDigT3RZHJuVQ+R+YZU7Hg@mail.gmail.com>
+	<1365415054-30771-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:34184 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753021Ab3DKVnn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Apr 2013 17:43:43 -0400
-In-Reply-To: <1365716245-99231-6-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <1365415054-30771-1-git-send-email-amit.daniel@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Viresh Kumar <viresh.kumar@linaro.org>, lkml <linux-kernel@vger.kernel.org>, cpufreq@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Inderpal Singh <inderpal.singh@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Ben Dooks <ben-linux@fluff.org>
 
-Hi Arnd,
-
-Am Donnerstag, 11. April 2013, 23:37:20 schrieb Arnd Bergmann:
-> No other file in the kernel besides i2c-s3c2410.c uses the current
-> plat/regs-iic.h, so we can simply move the header file to live in the
-> same directory as the driver, as a preparation to multiplatform builds.
-
-There is already a patch doing similar changes [0] in the i2c tree for 3.10
-
-
-Heiko
-
-
-[0] 
-https://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/commit/?h=i2c/for-
-next&id=e636602ac2613da8c1777cb42443223994be4107
-
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-i2c@vger.kernel.org
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c                                    | 1
-> - arch/arm/plat-samsung/devs.c                                           |
-> 1 - drivers/i2c/busses/i2c-s3c2410.c                                      
-> | 3 ++- .../include/plat/regs-iic.h => drivers/i2c/busses/i2c-s3c2410.h   
->     | 0 4 files changed, 2 insertions(+), 3 deletions(-)
->  rename arch/arm/plat-samsung/include/plat/regs-iic.h =>
-> drivers/i2c/busses/i2c-s3c2410.h (100%)
-> 
-> diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c
-> b/arch/arm/mach-s3c24xx/mach-rx1950.c index 1f9ba2a..43f3ac5 100644
-> --- a/arch/arm/mach-s3c24xx/mach-rx1950.c
-> +++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-> @@ -56,7 +56,6 @@
->  #include <plat/cpu.h>
->  #include <plat/devs.h>
->  #include <plat/pm.h>
-> -#include <plat/regs-iic.h>
->  #include <plat/regs-serial.h>
-> 
->  #include "common.h"
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index de9ad27..5e37051 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -62,7 +62,6 @@
->  #include <linux/platform_data/usb-s3c2410_udc.h>
->  #include <linux/platform_data/usb-ohci-s3c2410.h>
->  #include <plat/usb-phy.h>
-> -#include <plat/regs-iic.h>
->  #include <plat/regs-serial.h>
->  #include <plat/regs-spi.h>
->  #include <linux/platform_data/spi-s3c64xx.h>
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c
-> b/drivers/i2c/busses/i2c-s3c2410.c index f6b880b..d042ad0 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -42,9 +42,10 @@
-> 
->  #include <asm/irq.h>
-> 
-> -#include <plat/regs-iic.h>
->  #include <linux/platform_data/i2c-s3c2410.h>
-> 
-> +#include "i2c-s3c2410.h"
+Hi,
+On Mon, Apr 8, 2013 at 4:57 AM, Amit Daniel Kachhap
+<amit.daniel@samsung.com> wrote:
 > +
->  /* Treat S3C2410 as baseline hardware, anything else is supported via
-> quirks */ #define QUIRK_S3C2440		(1 << 0)
->  #define QUIRK_HDMIPHY		(1 << 1)
-> diff --git a/arch/arm/plat-samsung/include/plat/regs-iic.h
-> b/drivers/i2c/busses/i2c-s3c2410.h similarity index 100%
-> rename from arch/arm/plat-samsung/include/plat/regs-iic.h
-> rename to drivers/i2c/busses/i2c-s3c2410.h
+> +static int init_div_table(void)
+> +{
+> +       struct cpufreq_frequency_table *freq_tbl = dvfs_info->freq_table;
+> +       unsigned int tmp, clk_div, ema_div, freq, volt_id;
+> +       int i = 0;
+> +       struct opp *opp;
+> +
+> +       for (i = 0; freq_tbl[i].frequency != CPUFREQ_TABLE_END; i++) {
+> +
+> +               opp = opp_find_freq_exact(dvfs_info->dev,
+> +                                       freq_tbl[i].frequency * 1000, true);
+> +               if (IS_ERR(opp)) {
+> +                       dev_err(dvfs_info->dev,
+> +                               "failed to find valid OPP for %u KHZ\n",
+> +                               freq_tbl[i].frequency);
+> +                       return PTR_ERR(opp);
+> +               }
+please use RCU read locks.
+
+> +
+> +               freq = freq_tbl[i].frequency / 1000; /* In MHZ */
+> +               clk_div = ((freq / CPU_DIV_FREQ_MAX) & P0_7_CPUCLKDEV_MASK)
+> +                                       << P0_7_CPUCLKDEV_SHIFT;
+> +               clk_div |= ((freq / CPU_ATB_FREQ_MAX) & P0_7_ATBCLKDEV_MASK)
+> +                                       << P0_7_ATBCLKDEV_SHIFT;
+> +               clk_div |= ((freq / CPU_DBG_FREQ_MAX) & P0_7_CSCLKDEV_MASK)
+> +                                       << P0_7_CSCLKDEV_SHIFT;
+> +
+> +               /* Calculate EMA */
+> +               volt_id = opp_get_voltage(opp);
+Please use RCU read locks as documented for OPP library.
+
+Regards,
+Nishanth Menon
