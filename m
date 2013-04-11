@@ -1,38 +1,41 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH 09/30] mmc: sdhci-s3c: remove platform dependencies
-Date: Wed, 10 Apr 2013 21:06:18 -0400
-Message-ID: <877gk9j2ph.fsf@octavius.laptop.org>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-	<1365638712-1028578-10-git-send-email-arnd@arndb.de>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH 14/30] thermal/exynos: remove unnecessary header inclusions
+Date: Wed, 10 Apr 2013 21:19:01 -0400
+Message-ID: <51660F85.4000105@ti.com>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <1365638712-1028578-15-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1365638712-1028578-10-git-send-email-arnd@arndb.de> (Arnd
-	Bergmann's message of "Thu, 11 Apr 2013 02:04:51 +0200")
-Sender: linux-mmc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:48144 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1762769Ab3DKBT1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Apr 2013 21:19:27 -0400
+In-Reply-To: <1365638712-1028578-15-git-send-email-arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, eduardo.valentin@ti.com
 
-Hi,
+Rui, Arnd,
 
-On Wed, Apr 10 2013, Arnd Bergmann wrote:
-> plat/regs-sdhci.h is not used anywhere but in the sdhci-s3c
-> driver, so it can become a local file there and all other
-> inclusions removed.
->
-> plat/sdhci.h is used only to define the platform devices,
-> and with the exception of the platform_data structure not
-> needed by the driver, so we can split out the platform_data
-> definition instead and leave the rest to platform code.
+As agreed in [1], I will be helping on the thermal maintenance.
+
+On 10-04-2013 20:04, Arnd Bergmann wrote:
+> In multiplatform configurations, we cannot include headers
+> provided by only the exynos platform. Fortunately a number
+> of drivers that include those headers do not actually need
+> them, so we can just remove the inclusions.
 >
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-mmc@vger.kernel.org
-> Cc: Chris Ball <cjb@laptop.org>
+> Cc: linux-pm@vger.kernel.org
+> Cc: Zhang Rui <rui.zhang@intel.com>
 
-Acked-by: Chris Ball <cjb@laptop.org>
+This patch looks good to me.
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+You can add my:
+Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
+
+
+[1] - http://marc.info/?l=linux-pm&m=136560509922173&w=2
