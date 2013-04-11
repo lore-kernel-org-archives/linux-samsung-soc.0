@@ -1,115 +1,57 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 28/30] irqchip: exynos: pass irq_base from platform
-Date: Thu, 11 Apr 2013 02:05:10 +0200
-Message-ID: <1365638712-1028578-29-git-send-email-arnd@arndb.de>
+Subject: [PATCH 16/30] rtc: s3c: make header file local
+Date: Thu, 11 Apr 2013 02:04:58 +0200
+Message-ID: <1365638712-1028578-17-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, rtc-linux@googlegroups.com, Alessandro Zummo <a.zummo@towertech.it>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The platform code knows the IRQ base, while the irqchip driver
-should really not. This is a littly hacky because we still
-hardwire the IRQ base to 160 for the combiner in the DT case,
-when we should really use -1. Removing that line will cause
-a linear IRQ domain to be use, as we should.
+Nothing outside of the rtc driver includes plat/regs-rtc.h,
+so we can simply move the file into the same directory,
+which allows us to build the file as platform-independent
+code.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: rtc-linux@googlegroups.com
+Cc: Alessandro Zummo <a.zummo@towertech.it>
 ---
- arch/arm/mach-exynos/common.c     |  3 ++-
- arch/arm/mach-exynos/common.h     |  2 +-
- drivers/irqchip/exynos-combiner.c | 23 +++++++++++++----------
- 3 files changed, 16 insertions(+), 12 deletions(-)
+ drivers/rtc/rtc-s3c.c                                                  | 3 +--
+ arch/arm/plat-samsung/include/plat/regs-rtc.h => drivers/rtc/rtc-s3c.h | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+ rename arch/arm/plat-samsung/include/plat/regs-rtc.h => drivers/rtc/rtc-s3c.h (97%)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index b0e0b41..0634f99 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -479,7 +479,8 @@ void __init exynos4_init_irq(void)
- #endif
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index fb994e9..7995f79 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -29,9 +29,8 @@
+ #include <linux/uaccess.h>
+ #include <linux/io.h>
  
- 	if (!of_have_populated_dt())
--		combiner_init(S5P_VA_COMBINER_BASE, NULL, max_combiner_nr());
-+		combiner_init(S5P_VA_COMBINER_BASE, NULL,
-+			      max_combiner_nr(), COMBINER_IRQ(0, 0));
+-#include <mach/hardware.h>
+ #include <asm/irq.h>
+-#include <plat/regs-rtc.h>
++#include "rtc-s3c.h"
  
- 	/*
- 	 * The parameters of s5p_init_irq() are for VIC init.
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 49bebd1..60dd35c 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -72,7 +72,7 @@ void exynos4212_register_clocks(void);
- 
- struct device_node;
- void combiner_init(void __iomem *combiner_base, struct device_node *np,
--			unsigned int max_nr);
-+			unsigned int max_nr, int irq_base);
- 
- extern struct smp_operations exynos_smp_ops;
- 
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-index 31a4e96..7e876b5 100644
---- a/drivers/irqchip/exynos-combiner.c
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -207,27 +207,22 @@ static unsigned int combiner_lookup_irq(int group)
- 
- void __init combiner_init(void __iomem *combiner_base,
- 			  struct device_node *np,
--			  unsigned int max_nr)
-+			  unsigned int max_nr,
-+			  int irq_base)
- {
--	int i, irq, irq_base;
-+	int i, irq;
- 	unsigned int nr_irq;
- 	struct combiner_chip_data *combiner_data;
- 
- 	nr_irq = max_nr * IRQ_IN_COMBINER;
- 
--	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
--	if (IS_ERR_VALUE(irq_base)) {
--		irq_base = COMBINER_IRQ(0, 0);
--		pr_warning("%s: irq desc alloc failed. Continuing with %d as linux irq base\n", __func__, irq_base);
--	}
--
- 	combiner_data = kcalloc(max_nr, sizeof (*combiner_data), GFP_KERNEL);
- 	if (!combiner_data) {
- 		pr_warning("%s: could not allocate combiner data\n", __func__);
- 		return;
- 	}
- 
--	combiner_irq_domain = irq_domain_add_legacy(np, nr_irq, irq_base, 0,
-+	combiner_irq_domain = irq_domain_add_simple(np, nr_irq, irq_base,
- 				&combiner_irq_domain_ops, combiner_data);
- 	if (WARN_ON(!combiner_irq_domain)) {
- 		pr_warning("%s: irq domain init failed\n", __func__);
-@@ -254,6 +249,7 @@ static int __init combiner_of_init(struct device_node *np,
- {
- 	void __iomem *combiner_base;
- 	unsigned int max_nr;
-+	int irq_base = -1;
- 
- 	combiner_base = of_iomap(np, 0);
- 	if (!combiner_base) {
-@@ -267,7 +263,14 @@ static int __init combiner_of_init(struct device_node *np,
- 			__func__, max_nr);
- 	}
- 
--	combiner_init(combiner_base, np, max_nr);
-+	/* 
-+	 * FIXME: This is a hardwired COMBINER_IRQ(0,0). Once all devices
-+	 * get their IRQ from DT, remove this in order to get dynamic
-+	 * allocation.
-+	 */
-+	irq_base = 160;
-+
-+	combiner_init(combiner_base, np, max_nr, irq_base);
- 
- 	return 0;
- }
+ enum s3c_cpu_type {
+ 	TYPE_S3C2410,
+diff --git a/arch/arm/plat-samsung/include/plat/regs-rtc.h b/drivers/rtc/rtc-s3c.h
+similarity index 97%
+rename from arch/arm/plat-samsung/include/plat/regs-rtc.h
+rename to drivers/rtc/rtc-s3c.h
+index 0f8263e..004b61a 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-rtc.h
++++ b/drivers/rtc/rtc-s3c.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/mach-s3c2410/include/mach/regs-rtc.h
+- *
++/*
+  * Copyright (c) 2003 Simtec Electronics <linux@simtec.co.uk>
+  *		      http://www.simtec.co.uk/products/SWLINUX/
+  *
 -- 
 1.8.1.2
