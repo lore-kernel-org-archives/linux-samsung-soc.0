@@ -1,253 +1,97 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 09/30] mmc: sdhci-s3c: remove platform dependencies
-Date: Thu, 11 Apr 2013 02:04:51 +0200
-Message-ID: <1365638712-1028578-10-git-send-email-arnd@arndb.de>
+Subject: [PATCH 24/30] clocksource: exynos_mct: remove platform header dependency
+Date: Thu, 11 Apr 2013 02:05:06 +0200
+Message-ID: <1365638712-1028578-25-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, John Stultz <john.stultz@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-plat/regs-sdhci.h is not used anywhere but in the sdhci-s3c
-driver, so it can become a local file there and all other
-inclusions removed.
+For the non-DT case, the mct_init() function requires access
+to a couple of platform specific constants, but cannot include
+the header files in case we are building for multiplatform.
 
-plat/sdhci.h is used only to define the platform devices,
-and with the exception of the platform_data structure not
-needed by the driver, so we can split out the platform_data
-definition instead and leave the rest to platform code.
+This changes the interface to the platform so we pass all
+the necessary data as arguments to mct_init.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-mmc@vger.kernel.org
-Cc: Chris Ball <cjb@laptop.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
 ---
- arch/arm/mach-exynos/setup-sdhci-gpio.c            |  2 +-
- arch/arm/mach-s5pc100/setup-sdhci-gpio.c           |  1 -
- arch/arm/mach-s5pv210/setup-sdhci-gpio.c           |  1 -
- arch/arm/plat-samsung/include/plat/sdhci.h         | 56 +---------------------
- drivers/mmc/host/Kconfig                           |  2 +-
- .../mmc/host/sdhci-s3c-regs.h                      |  0
- drivers/mmc/host/sdhci-s3c.c                       |  5 +-
- include/linux/platform_data/mmc-sdhci-s3c.h        | 56 ++++++++++++++++++++++
- 8 files changed, 61 insertions(+), 62 deletions(-)
- rename arch/arm/plat-samsung/include/plat/regs-sdhci.h => drivers/mmc/host/sdhci-s3c-regs.h (100%)
- create mode 100644 include/linux/platform_data/mmc-sdhci-s3c.h
+ arch/arm/mach-exynos/common.c    |  2 +-
+ arch/arm/mach-exynos/common.h    |  2 +-
+ drivers/clocksource/exynos_mct.c | 21 ++++++---------------
+ 3 files changed, 8 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/setup-sdhci-gpio.c b/arch/arm/mach-exynos/setup-sdhci-gpio.c
-index e8d08bf..d5b98c8 100644
---- a/arch/arm/mach-exynos/setup-sdhci-gpio.c
-+++ b/arch/arm/mach-exynos/setup-sdhci-gpio.c
-@@ -19,8 +19,8 @@
- #include <linux/mmc/host.h>
- #include <linux/mmc/card.h>
- 
-+#include <mach/gpio.h>
- #include <plat/gpio-cfg.h>
--#include <plat/regs-sdhci.h>
- #include <plat/sdhci.h>
- 
- void exynos4_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
-diff --git a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-index 03c02d0..6010c03 100644
---- a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-+++ b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-@@ -19,7 +19,6 @@
- #include <linux/mmc/card.h>
- 
- #include <plat/gpio-cfg.h>
--#include <plat/regs-sdhci.h>
- #include <plat/sdhci.h>
- 
- void s5pc100_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
-diff --git a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
-index 3e3ac05..0512ada 100644
---- a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
-+++ b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
-@@ -20,7 +20,6 @@
- #include <linux/mmc/card.h>
- 
- #include <plat/gpio-cfg.h>
--#include <plat/regs-sdhci.h>
- #include <plat/sdhci.h>
- 
- void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
-diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
-index 5560586..ce1d0f7 100644
---- a/arch/arm/plat-samsung/include/plat/sdhci.h
-+++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-@@ -18,62 +18,9 @@
- #ifndef __PLAT_S3C_SDHCI_H
- #define __PLAT_S3C_SDHCI_H __FILE__
- 
-+#include <linux/platform_data/mmc-sdhci-s3c.h>
- #include <plat/devs.h>
- 
--struct platform_device;
--struct mmc_host;
--struct mmc_card;
--struct mmc_ios;
--
--enum cd_types {
--	S3C_SDHCI_CD_INTERNAL,	/* use mmc internal CD line */
--	S3C_SDHCI_CD_EXTERNAL,	/* use external callback */
--	S3C_SDHCI_CD_GPIO,	/* use external gpio pin for CD line */
--	S3C_SDHCI_CD_NONE,	/* no CD line, use polling to detect card */
--	S3C_SDHCI_CD_PERMANENT,	/* no CD line, card permanently wired to host */
--};
--
--/**
-- * struct s3c_sdhci_platdata() - Platform device data for Samsung SDHCI
-- * @max_width: The maximum number of data bits supported.
-- * @host_caps: Standard MMC host capabilities bit field.
-- * @host_caps2: The second standard MMC host capabilities bit field.
-- * @cd_type: Type of Card Detection method (see cd_types enum above)
-- * @ext_cd_init: Initialize external card detect subsystem. Called on
-- *		 sdhci-s3c driver probe when cd_type == S3C_SDHCI_CD_EXTERNAL.
-- *		 notify_func argument is a callback to the sdhci-s3c driver
-- *		 that triggers the card detection event. Callback arguments:
-- *		 dev is pointer to platform device of the host controller,
-- *		 state is new state of the card (0 - removed, 1 - inserted).
-- * @ext_cd_cleanup: Cleanup external card detect subsystem. Called on
-- *		 sdhci-s3c driver remove when cd_type == S3C_SDHCI_CD_EXTERNAL.
-- *		 notify_func argument is the same callback as for ext_cd_init.
-- * @ext_cd_gpio: gpio pin used for external CD line, valid only if
-- *		 cd_type == S3C_SDHCI_CD_GPIO
-- * @ext_cd_gpio_invert: invert values for external CD gpio line
-- * @cfg_gpio: Configure the GPIO for a specific card bit-width
-- *
-- * Initialisation data specific to either the machine or the platform
-- * for the device driver to use or call-back when configuring gpio or
-- * card speed information.
--*/
--struct s3c_sdhci_platdata {
--	unsigned int	max_width;
--	unsigned int	host_caps;
--	unsigned int	host_caps2;
--	unsigned int	pm_caps;
--	enum cd_types	cd_type;
--
--	int		ext_cd_gpio;
--	bool		ext_cd_gpio_invert;
--	int	(*ext_cd_init)(void (*notify_func)(struct platform_device *,
--						   int state));
--	int	(*ext_cd_cleanup)(void (*notify_func)(struct platform_device *,
--						      int state));
--
--	void	(*cfg_gpio)(struct platform_device *dev, int width);
--};
--
- /* s3c_sdhci_set_platdata() - common helper for setting SDHCI platform data
-  * @pd: The default platform data for this device.
-  * @set: Pointer to the platform data to fill in.
-@@ -378,5 +325,4 @@ static inline void s3c_sdhci_setname(int id, char *name)
- 		break;
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 87b2e06..8e85d6c 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -448,7 +448,7 @@ void __init exynos_init_time(void)
+ 		exynos4_clk_init(NULL, !soc_is_exynos4210(), S5P_VA_CMU, readl(S5P_VA_CHIPID + 8) & 1);
+ 		exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
+ #endif
+-		mct_init();
++		mct_init(S5P_VA_SYSTIMER, EXYNOS4_IRQ_MCT_G0, EXYNOS4_IRQ_MCT_L0, EXYNOS4_IRQ_MCT_L1);
  	}
  }
+ 
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 9832e03..f426a5b 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -14,7 +14,7 @@
+ 
+ #include <linux/of.h>
+ 
+-extern void mct_init(void);
++void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+ void exynos_init_time(void);
+ extern unsigned long xxti_f, xusbxti_f;
+ 
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 020ba55..88ff404 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -26,11 +26,6 @@
+ 
+ #include <asm/arch_timer.h>
+ #include <asm/localtimer.h>
 -
- #endif /* __PLAT_S3C_SDHCI_H */
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index d88219e..d054744 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -180,7 +180,7 @@ config MMC_SDHCI_TEGRA
- 
- config MMC_SDHCI_S3C
- 	tristate "SDHCI support on Samsung S3C SoC"
--	depends on MMC_SDHCI && PLAT_SAMSUNG
-+	depends on MMC_SDHCI && PLAT_SAMSUNG_SINGLE
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  often referrered to as the HSMMC block in some of the Samsung S3C
-diff --git a/arch/arm/plat-samsung/include/plat/regs-sdhci.h b/drivers/mmc/host/sdhci-s3c-regs.h
-similarity index 100%
-rename from arch/arm/plat-samsung/include/plat/regs-sdhci.h
-rename to drivers/mmc/host/sdhci-s3c-regs.h
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 7363efe..e4f52b5 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -15,6 +15,7 @@
- #include <linux/delay.h>
- #include <linux/dma-mapping.h>
- #include <linux/platform_device.h>
-+#include <linux/platform_data/mmc-sdhci-s3c.h>
- #include <linux/slab.h>
- #include <linux/clk.h>
- #include <linux/io.h>
-@@ -28,9 +29,7 @@
- 
- #include <linux/mmc/host.h>
- 
--#include <plat/sdhci.h>
--#include <plat/regs-sdhci.h>
+-#include <plat/cpu.h>
 -
-+#include "sdhci-s3c-regs.h"
- #include "sdhci.h"
+-#include <mach/map.h>
+-#include <mach/irqs.h>
+ #include <asm/mach/time.h>
  
- #define MAX_BUS_CLK	(4)
-diff --git a/include/linux/platform_data/mmc-sdhci-s3c.h b/include/linux/platform_data/mmc-sdhci-s3c.h
-new file mode 100644
-index 0000000..249f023
---- /dev/null
-+++ b/include/linux/platform_data/mmc-sdhci-s3c.h
-@@ -0,0 +1,56 @@
-+#ifndef __PLATFORM_DATA_SDHCI_S3C_H
-+#define __PLATFORM_DATA_SDHCI_S3C_H
-+
-+struct platform_device;
-+
-+enum cd_types {
-+	S3C_SDHCI_CD_INTERNAL,	/* use mmc internal CD line */
-+	S3C_SDHCI_CD_EXTERNAL,	/* use external callback */
-+	S3C_SDHCI_CD_GPIO,	/* use external gpio pin for CD line */
-+	S3C_SDHCI_CD_NONE,	/* no CD line, use polling to detect card */
-+	S3C_SDHCI_CD_PERMANENT,	/* no CD line, card permanently wired to host */
-+};
-+
-+/**
-+ * struct s3c_sdhci_platdata() - Platform device data for Samsung SDHCI
-+ * @max_width: The maximum number of data bits supported.
-+ * @host_caps: Standard MMC host capabilities bit field.
-+ * @host_caps2: The second standard MMC host capabilities bit field.
-+ * @cd_type: Type of Card Detection method (see cd_types enum above)
-+ * @ext_cd_init: Initialize external card detect subsystem. Called on
-+ *		 sdhci-s3c driver probe when cd_type == S3C_SDHCI_CD_EXTERNAL.
-+ *		 notify_func argument is a callback to the sdhci-s3c driver
-+ *		 that triggers the card detection event. Callback arguments:
-+ *		 dev is pointer to platform device of the host controller,
-+ *		 state is new state of the card (0 - removed, 1 - inserted).
-+ * @ext_cd_cleanup: Cleanup external card detect subsystem. Called on
-+ *		 sdhci-s3c driver remove when cd_type == S3C_SDHCI_CD_EXTERNAL.
-+ *		 notify_func argument is the same callback as for ext_cd_init.
-+ * @ext_cd_gpio: gpio pin used for external CD line, valid only if
-+ *		 cd_type == S3C_SDHCI_CD_GPIO
-+ * @ext_cd_gpio_invert: invert values for external CD gpio line
-+ * @cfg_gpio: Configure the GPIO for a specific card bit-width
-+ *
-+ * Initialisation data specific to either the machine or the platform
-+ * for the device driver to use or call-back when configuring gpio or
-+ * card speed information.
-+*/
-+struct s3c_sdhci_platdata {
-+	unsigned int	max_width;
-+	unsigned int	host_caps;
-+	unsigned int	host_caps2;
-+	unsigned int	pm_caps;
-+	enum cd_types	cd_type;
-+
-+	int		ext_cd_gpio;
-+	bool		ext_cd_gpio_invert;
-+	int	(*ext_cd_init)(void (*notify_func)(struct platform_device *,
-+						   int state));
-+	int	(*ext_cd_cleanup)(void (*notify_func)(struct platform_device *,
-+						      int state));
-+
-+	void	(*cfg_gpio)(struct platform_device *dev, int width);
-+};
-+
-+
-+#endif /* __PLATFORM_DATA_SDHCI_S3C_H */
+ #define EXYNOS4_MCTREG(x)		(x)
+@@ -511,18 +506,14 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
+ #endif /* CONFIG_LOCAL_TIMERS */
+ }
+ 
+-void __init mct_init(void)
++void __init mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1)
+ {
+-	if (soc_is_exynos4210()) {
+-		mct_irqs[MCT_G0_IRQ] = EXYNOS4_IRQ_MCT_G0;
+-		mct_irqs[MCT_L0_IRQ] = EXYNOS4_IRQ_MCT_L0;
+-		mct_irqs[MCT_L1_IRQ] = EXYNOS4_IRQ_MCT_L1;
+-		mct_int_type = MCT_INT_SPI;
+-	} else {
+-		panic("unable to determine mct controller type\n");
+-	}
++	mct_irqs[MCT_G0_IRQ] = irq_g0;
++	mct_irqs[MCT_L0_IRQ] = irq_l0;
++	mct_irqs[MCT_L1_IRQ] = irq_l1;
++	mct_int_type = MCT_INT_SPI;
+ 
+-	exynos4_timer_resources(NULL, S5P_VA_SYSTIMER);
++	exynos4_timer_resources(NULL, base);
+ 	exynos4_clocksource_init();
+ 	exynos4_clockevent_init();
+ }
 -- 
 1.8.1.2
