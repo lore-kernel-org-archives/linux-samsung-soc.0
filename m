@@ -1,97 +1,83 @@
-From: Andrew Murray <andrew.murray@arm.com>
-Subject: Re: [PATCH v5 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
- Microblaze and PowerPC
-Date: Thu, 11 Apr 2013 13:12:42 +0100
-Message-ID: <20130411121242.GB28981@arm.com>
-References: <1365578969-30966-1-git-send-email-Andrew.Murray@arm.com>
- <1365578969-30966-2-git-send-email-Andrew.Murray@arm.com>
- <20130410233330.4e9479b0@skate>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v3] pinctrl: Add pinctrl-s3c24xx driver
+Date: Thu, 11 Apr 2013 14:12:57 +0200
+Message-ID: <1706031.H7t4gja446@amdc1227>
+References: <201304111409.01983.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20130410233330.4e9479b0@skate>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: "jg1.han@samsung.com" <jg1.han@samsung.com>, "monstr@monstr.eu" <monstr@monstr.eu>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, Liviu Dudau <Liviu.Dudau@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "paulus@samba.org" <paulus@samba.org>, "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "bhelgaas@google.com" <bhelgaa>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:17142 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753885Ab3DKMNP convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Apr 2013 08:13:15 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0ML300CGWBA0M520@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Apr 2013 21:13:14 +0900 (KST)
+In-reply-to: <201304111409.01983.heiko@sntech.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Wed, Apr 10, 2013 at 10:33:30PM +0100, Thomas Petazzoni wrote:
-> Dear Andrew Murray,
-> 
-> On Wed, 10 Apr 2013 08:29:26 +0100, Andrew Murray wrote:
-> 
-> > diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
-> > index bb115de..6852481 100644
-> > --- a/include/linux/of_pci.h
-> > +++ b/include/linux/of_pci.h
-> > @@ -11,4 +11,7 @@ struct device_node;
-> >  struct device_node *of_pci_find_child_device(struct device_node *parent,
-> >  					     unsigned int devfn);
-> >  
-> > +void pci_process_bridge_OF_ranges(struct pci_controller *hose,
-> > +			struct device_node *dev, int primary);
-> > +
-> >  #endif
-> 
-> In this file, 'struct pci_controller' is not defined anywhere, and not
-> in any header file that is included. So I get a warning at compile time
-> when <linux/of_pci.h> is included, but nothing has defined 'struct
-> pci_controller' beforehand. So I think this file should carry a change
-> like:
-> 
-> +struct pci_controller;
-> 
-> In my version of the patch I added it, see:
-> 
-> diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
-> index bb115de..e56182f 100644
-> --- a/include/linux/of_pci.h
-> +++ b/include/linux/of_pci.h
-> @@ -4,6 +4,7 @@
->  #include <linux/pci.h>
->  
->  struct pci_dev;
-> +struct pci_controller;
->  struct of_irq;
->  int of_irq_map_pci(const struct pci_dev *pdev, struct of_irq *out_irq);
->  
-> @@ -11,4 +12,7 @@ struct device_node;
->  struct device_node *of_pci_find_child_device(struct device_node *parent,
->  					     unsigned int devfn);
->  
-> +void pci_process_bridge_OF_ranges(struct pci_controller *hose,
-> +			struct device_node *dev, int primary);
-> +
->  #endif
-> 
-> But otherwise, for PATCH 1/3 and 2/3,
+Hi Heiko,
 
-Thanks - I somehow missed this.
+On Thursday 11 of April 2013 14:09:01 Heiko St=FCbner wrote:
+> The s3c24xx pins follow a similar pattern as the other Samsung SoCs a=
+nd
+> can therefore reuse the already introduced infrastructure.
+>=20
+> The s3c24xx SoCs have one design oddity in that the first 4 external
+> interrupts do not reside in the eint pending register but in the main
+> interrupt controller instead. We solve this by forwarding the externa=
+l
+> interrupt from the main controller into the irq domain of the pin ban=
+k.
+> The masking/acking of these interrupts is handled in the same way.
+>=20
+> Furthermore the S3C2412/2413 SoCs contain another oddity in that they
+> keep the same 4 eints in the main interrupt controller and eintpend
+> register and requiring ack operations to happen in both. This is solv=
+ed
+> by using different compatible properties for the wakeup eint node whi=
+ch
+> set a property accordingly.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> changes since v2:
+> - address more comments from Tomasz Figa:
+>   * remove obsolete ctrl_type references
+>   * remove redundant check for parent_chip
+>   * update docs and commit message
+>=20
+> changes since v1:
+> - address comments from Tomasz Figa:
+>   * split handling functions for eints 0-3 for s3c2412 and all others
+>   * change the handling for s3c2412 eints 0-3 in that they now use
+>     chained_irq_* for the outer parent interrupt
+>=20
+>  .../bindings/pinctrl/samsung-pinctrl.txt           |    8 +
+>  drivers/gpio/gpio-samsung.c                        |    4 +
+>  drivers/pinctrl/Kconfig                            |    5 +
+>  drivers/pinctrl/Makefile                           |    1 +
+>  drivers/pinctrl/pinctrl-s3c24xx.c                  |  664
+> ++++++++++++++++++++ drivers/pinctrl/pinctrl-samsung.c               =
+   | =20
+> 10 +
+>  drivers/pinctrl/pinctrl-samsung.h                  |    4 +
+>  7 files changed, 696 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/pinctrl/pinctrl-s3c24xx.c
 
-I've included this change in my next respin - but I've put
-'struct pci_controller' immediately before 'pci_process_bridge_OF_ranges'
-rather than above of_irq_map_pci to be consistent with the rest of the file.
+Looks good to me, thanks for the patch.
 
-Andrew Murray
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-
-> 
-> Tested-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> 
-> Thomas
-> -- 
-> Thomas Petazzoni, Free Electrons
-> Kernel, drivers, real-time and embedded Linux
-> development, consulting, training and support.
-> http://free-electrons.com
-> 
+Best regards,
+--=20
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Kernel and System Framework
