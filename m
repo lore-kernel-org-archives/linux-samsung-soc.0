@@ -1,224 +1,153 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [5/9] thermal: exynos: Make the zone handling dependent on trip
- count
-Date: Thu, 11 Apr 2013 16:48:03 -0400
-Message-ID: <51672183.3030109@ti.com>
-References: <1364297642-2746-6-git-send-email-amit.daniel@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v3] usb: exynos: do not include plat/usb-phy.h
+Date: Thu, 11 Apr 2013 22:49:39 +0200
+Message-ID: <201304112249.39549.arnd@arndb.de>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
+ <1365638712-1028578-11-git-send-email-arnd@arndb.de>
+ <20130411202540.GA32047@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:41673 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752355Ab3DKUsZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Apr 2013 16:48:25 -0400
-In-Reply-To: <1364297642-2746-6-git-send-email-amit.daniel@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130411202540.GA32047@kroah.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, eduardo.valentin@ti.com
 
-On 26-03-2013 07:33, Amit Daniel Kachhap wrote:
-> This code changes the zone handling to use the trip count passed
-> by the TMU driver. This also helps in adding more zone support.
->
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->
-> ---
-> drivers/thermal/samsung/exynos_common.c      |   56 +++++++++++++------------
->   drivers/thermal/samsung/exynos_common.h      |   13 +++---
->   include/linux/platform_data/exynos_thermal.h |    7 ++-
->   3 files changed, 40 insertions(+), 36 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_common.c b/drivers/thermal/samsung/exynos_common.c
-> index 649d67c..0c0098d 100644
-> --- a/drivers/thermal/samsung/exynos_common.c
-> +++ b/drivers/thermal/samsung/exynos_common.c
-> @@ -84,17 +84,16 @@ static int exynos_set_mode(struct thermal_zone_device *thermal,
->   static int exynos_get_trip_type(struct thermal_zone_device *thermal, int trip,
->   				 enum thermal_trip_type *type)
->   {
-> -	switch (GET_ZONE(trip)) {
-> -	case MONITOR_ZONE:
-> -	case WARN_ZONE:
-> -		*type = THERMAL_TRIP_ACTIVE;
-> -		break;
-> -	case PANIC_ZONE:
-> -		*type = THERMAL_TRIP_CRITICAL;
-> -		break;
-> -	default:
-> +	struct exynos_thermal_zone *th_zone = thermal->devdata;
-> +	int max_trip = th_zone->sensor_conf->trip_data.trip_count;
-> +
-> +	if (trip < 0 || trip >= max_trip)
->   		return -EINVAL;
-> -	}
-> +	else if (trip == (max_trip - 1))
-> +		*type = THERMAL_TRIP_CRITICAL;
-> +	else
-> +		*type = THERMAL_TRIP_ACTIVE;
-> +
->   	return 0;
->   }
->
-> @@ -103,8 +102,9 @@ static int exynos_get_trip_temp(struct thermal_zone_device *thermal, int trip,
->   				unsigned long *temp)
->   {
->   	struct exynos_thermal_zone *th_zone = thermal->devdata;
-> +	int max_trip = th_zone->sensor_conf->trip_data.trip_count;
->
-> -	if (trip < GET_TRIP(MONITOR_ZONE) || trip > GET_TRIP(PANIC_ZONE))
-> +	if (trip < 0 || trip >= max_trip)
->   		return -EINVAL;
->
->   	*temp = th_zone->sensor_conf->trip_data.trip_val[trip];
-> @@ -118,10 +118,10 @@ static int exynos_get_trip_temp(struct thermal_zone_device *thermal, int trip,
->   static int exynos_get_crit_temp(struct thermal_zone_device *thermal,
->   				unsigned long *temp)
->   {
-> -	int ret;
-> -	/* Panic zone */
-> -	ret = exynos_get_trip_temp(thermal, GET_TRIP(PANIC_ZONE), temp);
-> -	return ret;
-> +	struct exynos_thermal_zone *th_zone = thermal->devdata;
-> +	int max_trip = th_zone->sensor_conf->trip_data.trip_count;
-> +	/* Get the temp of highest trip*/
-> +	return exynos_get_trip_temp(thermal, max_trip - 1, temp);
->   }
->
->   int exynos_get_frequency_level(unsigned int cpu, unsigned int freq)
-> @@ -157,7 +157,7 @@ static int exynos_bind(struct thermal_zone_device *thermal,
->   	tab_size = data->cooling_data.freq_clip_count;
->
->   	if (tab_ptr == NULL || tab_size == 0)
-> -		return -EINVAL;
-> +		return 0;
->
->   	/* find the cooling device registered*/
->   	for (i = 0; i < th_zone->cool_dev_size; i++)
-> @@ -206,7 +206,7 @@ static int exynos_unbind(struct thermal_zone_device *thermal,
->   	tab_size = data->cooling_data.freq_clip_count;
->
->   	if (tab_size == 0)
-> -		return -EINVAL;
-> +		return 0;
->
->   	/* find the cooling device registered*/
->   	for (i = 0; i < th_zone->cool_dev_size; i++)
+The definitions have moved to include/linux/usb/samsung-usb-phy.h,
+and plat/usb-phy.h is unavailable from drivers in a multiplatform
+configuration.
 
-The above two chunks are confusing. I dont understand how they are now 
-supposed to be valid settings.
+Also fix up the plat/usb-phy.h header file to use the definitions
+from the new header instead of providing a separate copy.
 
-> @@ -366,19 +366,21 @@ int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf)
->   		return -ENOMEM;
->
->   	th_zone->sensor_conf = sensor_conf;
-> -	cpumask_set_cpu(0, &mask_val);
-> -	th_zone->cool_dev[0] = cpufreq_cooling_register(&mask_val);
-> -	if (IS_ERR(th_zone->cool_dev[0])) {
-> -		pr_err("Failed to register cpufreq cooling device\n");
-> -		ret = -EINVAL;
-> -		goto err_unregister;
-> +	if (sensor_conf->cooling_data.freq_clip_count > 0) {
-> +		cpumask_set_cpu(0, &mask_val);
-> +		th_zone->cool_dev[0] = cpufreq_cooling_register(&mask_val);
-> +		if (IS_ERR(th_zone->cool_dev[0])) {
-> +			pr_err("Failed to register cpufreq cooling device\n");
-> +			ret = -EINVAL;
-> +			goto err_unregister;
-> +		}
-> +		th_zone->cool_dev_size++;
->   	}
-> -	th_zone->cool_dev_size++;
->
->   	th_zone->therm_dev = thermal_zone_device_register(sensor_conf->name,
-> -			EXYNOS_ZONE_COUNT, 0, th_zone, &exynos_dev_ops, NULL, 0,
-> -			sensor_conf->trip_data.trigger_falling ?
-> -			0 : IDLE_INTERVAL);
-> +		sensor_conf->trip_data.trip_count, 0, th_zone, &exynos_dev_ops,
-> +		NULL, 0, sensor_conf->trip_data.trigger_falling ?
-> +		0 : IDLE_INTERVAL);
->
->   	if (IS_ERR(th_zone->therm_dev)) {
->   		pr_err("Failed to register thermal zone device\n");
-> diff --git a/drivers/thermal/samsung/exynos_common.h b/drivers/thermal/samsung/exynos_common.h
-> index b8d289e..453e09a 100644
-> --- a/drivers/thermal/samsung/exynos_common.h
-> +++ b/drivers/thermal/samsung/exynos_common.h
-> @@ -27,23 +27,22 @@
->   #define SENSOR_NAME_LEN	16
->   #define MAX_TRIP_COUNT	8
->   #define MAX_COOLING_DEVICE 4
-> -#define MAX_THRESHOLD_LEVS 4
-> +#define MAX_THRESHOLD_LEVS 5
->
->   #define ACTIVE_INTERVAL 500
->   #define IDLE_INTERVAL 10000
->   #define MCELSIUS	1000
->
->   /* CPU Zone information */
-> -#define PANIC_ZONE      4
-> -#define WARN_ZONE       3
-> -#define MONITOR_ZONE    2
-> -#define SAFE_ZONE       1
-> +#define PANIC_ZONE	5
-> +#define ALARM_ZONE	4
-> +#define WARN_ZONE	3
-> +#define MONITOR_ZONE	2
-> +#define SAFE_ZONE	1
->
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-usb@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+---
+v3: rebase to usb-next (2871782ae1)
 
+v2: rebase whole series on top of arm-soc for testing
 
-Updating this does not seam to be part of the intent of this patch. You 
-probably want to send a separate patch for this.
-
->   #define GET_ZONE(trip) (trip + 2)
->   #define GET_TRIP(zone) (zone - 2)
->
-> -#define EXYNOS_ZONE_COUNT	3
-> -
->   struct	thermal_trip_point_conf {
->   	int trip_val[MAX_TRIP_COUNT];
->   	int trip_count;
-> diff --git a/include/linux/platform_data/exynos_thermal.h b/include/linux/platform_data/exynos_thermal.h
-> index da7e627..893b758 100644
-> --- a/include/linux/platform_data/exynos_thermal.h
-> +++ b/include/linux/platform_data/exynos_thermal.h
-> @@ -23,6 +23,8 @@
->   #define _LINUX_EXYNOS_THERMAL_H
->   #include <linux/cpu_cooling.h>
->
-> +#define MAX_TRIP	5
-> +
-
-
-Should MAX_TRIP/THRESHOLD_LEVEL/PANIC_ZONE be somewhat same
-
->   enum calibration_type {
->   	TYPE_ONE_POINT_TRIMMING,
->   	TYPE_TWO_POINT_TRIMMING,
-> @@ -100,11 +102,12 @@ struct freq_clip_table {
->   struct exynos_tmu_platform_data {
->   	u8 threshold;
->   	u8 threshold_falling;
-> -	u8 trigger_levels[4];
-> +	u8 trigger_levels[MAX_TRIP];
->   	bool trigger_level0_en;
->   	bool trigger_level1_en;
->   	bool trigger_level2_en;
->   	bool trigger_level3_en;
-> +	bool trigger_level4_en;
->
->   	u8 gain;
->   	u8 reference_voltage;
-> @@ -113,7 +116,7 @@ struct exynos_tmu_platform_data {
->
->   	enum calibration_type cal_type;
->   	enum soc_type type;
-> -	struct freq_clip_table freq_tab[4];
-> +	struct freq_clip_table freq_tab[MAX_TRIP];
->   	unsigned int freq_tab_count;
->   };
->   #endif /* _LINUX_EXYNOS_THERMAL_H */
->
+diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
+index b81cc56..6af4066 100644
+--- a/arch/arm/mach-exynos/setup-usb-phy.c
++++ b/arch/arm/mach-exynos/setup-usb-phy.c
+@@ -204,9 +204,9 @@ static int exynos4210_usb_phy1_exit(struct platform_device *pdev)
+ 
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return exynos4210_usb_phy0_init(pdev);
+-	else if (type == S5P_USB_PHY_HOST)
++	else if (type == USB_PHY_TYPE_HOST)
+ 		return exynos4210_usb_phy1_init(pdev);
+ 
+ 	return -EINVAL;
+@@ -214,9 +214,9 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return exynos4210_usb_phy0_exit(pdev);
+-	else if (type == S5P_USB_PHY_HOST)
++	else if (type == USB_PHY_TYPE_HOST)
+ 		return exynos4210_usb_phy1_exit(pdev);
+ 
+ 	return -EINVAL;
+diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+index c8174d9..ca960bd 100644
+--- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
++++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+@@ -76,7 +76,7 @@ static int s3c_usb_otgphy_exit(struct platform_device *pdev)
+ 
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s3c_usb_otgphy_init(pdev);
+ 
+ 	return -EINVAL;
+@@ -84,7 +84,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s3c_usb_otgphy_exit(pdev);
+ 
+ 	return -EINVAL;
+diff --git a/arch/arm/mach-s5pv210/setup-usb-phy.c b/arch/arm/mach-s5pv210/setup-usb-phy.c
+index 356a090..b2ee533 100644
+--- a/arch/arm/mach-s5pv210/setup-usb-phy.c
++++ b/arch/arm/mach-s5pv210/setup-usb-phy.c
+@@ -80,7 +80,7 @@ static int s5pv210_usb_otgphy_exit(struct platform_device *pdev)
+ 
+ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s5pv210_usb_otgphy_init(pdev);
+ 
+ 	return -EINVAL;
+@@ -88,7 +88,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 
+ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+-	if (type == S5P_USB_PHY_DEVICE)
++	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s5pv210_usb_otgphy_exit(pdev);
+ 
+ 	return -EINVAL;
+diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
+index 959bcdb..ab34dfa 100644
+--- a/arch/arm/plat-samsung/include/plat/usb-phy.h
++++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
+@@ -11,10 +11,7 @@
+ #ifndef __PLAT_SAMSUNG_USB_PHY_H
+ #define __PLAT_SAMSUNG_USB_PHY_H __FILE__
+ 
+-enum s5p_usb_phy_type {
+-	S5P_USB_PHY_DEVICE,
+-	S5P_USB_PHY_HOST,
+-};
++#include <linux/usb/samsung_usb_phy.h>
+ 
+ extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
+ extern int s5p_usb_phy_exit(struct platform_device *pdev, int type);
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 580548a..6357752 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -23,7 +23,6 @@
+ #include <linux/platform_data/usb-ehci-s5p.h>
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
+-#include <plat/usb-phy.h>
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
+ #include <linux/usb/otg.h>
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 509fa51..114583a 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -17,7 +17,6 @@
+ #include <linux/platform_data/usb-exynos.h>
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
+-#include <plat/usb-phy.h>
+ 
+ struct exynos_ohci_hcd {
+ 	struct device *dev;
