@@ -1,25 +1,44 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH] thermal: exynos: fix handling of invalid frequency table entries
-Date: Thu, 11 Apr 2013 11:40:04 -0700
-Message-ID: <CAL1qeaEjmtwTZ4QRaDyD9Mb5Rko39uSN6NrjwyOT7_43NaH+Vw@mail.gmail.com>
-References: <1365544758-15245-1-git-send-email-abrestic@chromium.org>
-	<1365559613.2183.7.camel@rzhang1-mobl4>
+From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH] ASoC: samsung: fix neo1973-wm8753 compilation
+Date: Thu, 11 Apr 2013 21:02:43 +0200
+Message-ID: <201304112102.43896.heiko@sntech.de>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <201304111908.42532.arnd@arndb.de> <20130411171938.GS9243@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1365559613.2183.7.camel@rzhang1-mobl4>
-Sender: linux-pm-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:60921 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751711Ab3DKTCx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Apr 2013 15:02:53 -0400
+In-Reply-To: <20130411171938.GS9243@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>
 
-> can you please verify
-> commit  fc35b35cbe24ef021ea9acfba21e54da958df747
-> commit 57df8106932b57427df1eaaa13871857f75b1194
-> at
-> http://git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/log/?h=thermal
-> fixes the problem for you?
+Commit b2ca78717cea (ARM: S3C24XX: make gta02.h local) already replaced
+the GTA02_GPIO_* constants in neo1973-wm8753.c but forgot to remove the
+inclusion of mach/gta02.h before moving the file out of mach/.
 
-It does.  Thanks!
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ sound/soc/samsung/neo1973_wm8753.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
--Andrew
+diff --git a/sound/soc/samsung/neo1973_wm8753.c b/sound/soc/samsung/neo1973_wm8753.c
+index a301d8c..68675dd 100644
+--- a/sound/soc/samsung/neo1973_wm8753.c
++++ b/sound/soc/samsung/neo1973_wm8753.c
+@@ -22,7 +22,6 @@
+ 
+ #include <asm/mach-types.h>
+ #include <plat/regs-iis.h>
+-#include <mach/gta02.h>
+ 
+ #include "../codecs/wm8753.h"
+ #include "s3c24xx-i2s.h"
+-- 
+1.7.2.3
