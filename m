@@ -1,41 +1,58 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH 14/30] thermal/exynos: remove unnecessary header inclusions
-Date: Wed, 10 Apr 2013 21:19:01 -0400
-Message-ID: <51660F85.4000105@ti.com>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <1365638712-1028578-15-git-send-email-arnd@arndb.de>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v4] mmc: dw_mmc: let device core setup the default pin
+ configuration
+Date: Thu, 11 Apr 2013 12:13:09 +0900
+Message-ID: <001101ce3662$7ecb9850$7c62c8f0$%jun@samsung.com>
+References: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org>
+ <CAD=FV=VJ-ykDNqYKQ=fqxeOD6bRNLW02VT4bjsRHRAuXLcCpQQ@mail.gmail.com>
+ <CAJuYYwQT=povqiutVHXkF5jxTAnjpwTMQ5G0Z6xKGnnM7qYADQ@mail.gmail.com>
+ <CAD=FV=UddWM=yc5N9=jwbMDpZ7Bpg7o3Z714CnBSg=iHhmPxWw@mail.gmail.com>
+ <CAD=FV=WyPbkYvq9udPzQtVnaXZR3jzXTPnBrrdxpUuX3CZT=Og@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=Windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:48144 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762769Ab3DKBT1 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:37827 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754525Ab3DKDNM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 21:19:27 -0400
-In-Reply-To: <1365638712-1028578-15-git-send-email-arnd@arndb.de>
+	Wed, 10 Apr 2013 23:13:12 -0400
+In-reply-to: <CAD=FV=WyPbkYvq9udPzQtVnaXZR3jzXTPnBrrdxpUuX3CZT=Og@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, eduardo.valentin@ti.com
+To: 'Doug Anderson' <dianders@chromium.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Girish Shivananjappa' <girish.shivananjappa@linaro.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Tomasz Figa' <t.figa@samsung.com>, =?Windows-1252?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Patch Tracking' <patches@linaro.org>
 
-Rui, Arnd,
+On Wednesday, April 10, 2013, Doug Anderson wrote:
+> Thomas,
+> 
+> On Wed, Apr 10, 2013 at 6:56 AM, Doug Anderson <dianders@chromium.org> wrote:
+> > On Wed, Apr 10, 2013 at 5:48 AM, Thomas Abraham
+> > <thomas.abraham@linaro.org> wrote:
+> >> The call to regulator_enable() is prior to the call to mmc_add_host().
+> >> Hence, call to mmc_fre_host is not required in this case. So the above
+> >> change should be right.
+> >
+> > Are you sure that mmc_free_host() is the opposite of mmc_add_host()
+> > and not mmc_alloc_host()?
+> >
+> > I'll double-check myself in a few hours when I'm in front of a computer.
+> 
+> OK, I double checked and I'm still convinced that the free is needed
+> because we've already called mmc_alloc_host().  Current code always
+> makes sure to free when it returns an error and that seems right to
+> me.
+mmc_alloc_host corresponds to mmc_free_host. And mmc_add_host matches
+with mmc_remove_host. Let's focus on mmc_alloc_host.
+mmc_alloc_host is called prior to regulator_enable.
+So, if regulator_enable is failed, call of mmc_free_host makes sense.
 
-As agreed in [1], I will be helping on the thermal maintenance.
-
-On 10-04-2013 20:04, Arnd Bergmann wrote:
-> In multiplatform configurations, we cannot include headers
-> provided by only the exynos platform. Fortunately a number
-> of drivers that include those headers do not actually need
-> them, so we can just remove the inclusions.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-pm@vger.kernel.org
-> Cc: Zhang Rui <rui.zhang@intel.com>
-
-This patch looks good to me.
-
-You can add my:
-Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
-
-
-[1] - http://marc.info/?l=linux-pm&m=136560509922173&w=2
+Thanks,
+Seungwon Jeon
+> 
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
