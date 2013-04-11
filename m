@@ -1,53 +1,46 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [RESEND PATCH V6 1/4] cpufreq: exynos: Add cpufreq driver for exynos5440
-Date: Thu, 11 Apr 2013 18:23:52 -0500
-Message-ID: <CAGo_u6oZM0K8XDMtmXKFyoGy2qf+-HSPvU0EMangM5Jj_prKsA@mail.gmail.com>
-References: <CAKohpo=t_YTCTRCfnwQ+GPF=frsTGDigT3RZHJuVQ+R+YZU7Hg@mail.gmail.com>
-	<1365415054-30771-1-git-send-email-amit.daniel@samsung.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 14/30] thermal/exynos: remove unnecessary header
+ inclusions
+Date: Fri, 12 Apr 2013 07:26:01 +0800
+Message-ID: <1365722761.2183.7.camel@rzhang1-mobl4>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
+	 <1365638712-1028578-15-git-send-email-arnd@arndb.de>
+	 <51660F85.4000105@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1365415054-30771-1-git-send-email-amit.daniel@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Viresh Kumar <viresh.kumar@linaro.org>, lkml <linux-kernel@vger.kernel.org>, cpufreq@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Inderpal Singh <inderpal.singh@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51660F85.4000105@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-On Mon, Apr 8, 2013 at 4:57 AM, Amit Daniel Kachhap
-<amit.daniel@samsung.com> wrote:
-> +
-> +static int init_div_table(void)
-> +{
-> +       struct cpufreq_frequency_table *freq_tbl = dvfs_info->freq_table;
-> +       unsigned int tmp, clk_div, ema_div, freq, volt_id;
-> +       int i = 0;
-> +       struct opp *opp;
-> +
-> +       for (i = 0; freq_tbl[i].frequency != CPUFREQ_TABLE_END; i++) {
-> +
-> +               opp = opp_find_freq_exact(dvfs_info->dev,
-> +                                       freq_tbl[i].frequency * 1000, true);
-> +               if (IS_ERR(opp)) {
-> +                       dev_err(dvfs_info->dev,
-> +                               "failed to find valid OPP for %u KHZ\n",
-> +                               freq_tbl[i].frequency);
-> +                       return PTR_ERR(opp);
-> +               }
-please use RCU read locks.
+On Wed, 2013-04-10 at 21:19 -0400, Eduardo Valentin wrote:
+> Rui, Arnd,
+> 
+> As agreed in [1], I will be helping on the thermal maintenance.
+> 
+> On 10-04-2013 20:04, Arnd Bergmann wrote:
+> > In multiplatform configurations, we cannot include headers
+> > provided by only the exynos platform. Fortunately a number
+> > of drivers that include those headers do not actually need
+> > them, so we can just remove the inclusions.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > Cc: linux-pm@vger.kernel.org
+> > Cc: Zhang Rui <rui.zhang@intel.com>
+> 
+> This patch looks good to me.
+> 
+> You can add my:
+> Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
+> 
+applied to thermal thermal branch.
 
-> +
-> +               freq = freq_tbl[i].frequency / 1000; /* In MHZ */
-> +               clk_div = ((freq / CPU_DIV_FREQ_MAX) & P0_7_CPUCLKDEV_MASK)
-> +                                       << P0_7_CPUCLKDEV_SHIFT;
-> +               clk_div |= ((freq / CPU_ATB_FREQ_MAX) & P0_7_ATBCLKDEV_MASK)
-> +                                       << P0_7_ATBCLKDEV_SHIFT;
-> +               clk_div |= ((freq / CPU_DBG_FREQ_MAX) & P0_7_CSCLKDEV_MASK)
-> +                                       << P0_7_CSCLKDEV_SHIFT;
-> +
-> +               /* Calculate EMA */
-> +               volt_id = opp_get_voltage(opp);
-Please use RCU read locks as documented for OPP library.
+thanks,
+rui
+> 
+> [1] - http://marc.info/?l=linux-pm&m=136560509922173&w=2
 
-Regards,
-Nishanth Menon
+
