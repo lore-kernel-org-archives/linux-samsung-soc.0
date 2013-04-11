@@ -1,71 +1,86 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 12/30] video/exynos: remove unnecessary header inclusions
-Date: Thu, 11 Apr 2013 14:51:55 +0300
-Message-ID: <5166A3DB.6060700@ti.com>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <1365638712-1028578-13-git-send-email-arnd@arndb.de>
+From: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v5 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
+ Microblaze and PowerPC
+Date: Thu, 11 Apr 2013 13:03:22 +0100
+Message-ID: <20130411120322.GA28981@arm.com>
+References: <1365578969-30966-1-git-send-email-Andrew.Murray@arm.com>
+ <1365578969-30966-2-git-send-email-Andrew.Murray@arm.com>
+ <51656592.7070806@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="------------enigAB4BA7E4E18BE84D4AFF1829"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1365638712-1028578-13-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51656592.7070806-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org" <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org" <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---------------enigAB4BA7E4E18BE84D4AFF1829
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Wed, Apr 10, 2013 at 02:13:54PM +0100, Rob Herring wrote:
+> Adding Ben H and Michal...
+> 
+> On 04/10/2013 02:29 AM, Andrew Murray wrote:
+> > The pci_process_bridge_OF_ranges function, used to parse the "ranges"
+> > property of a PCI host device, is found in both Microblaze and PowerPC
+> > architectures. These implementations are nearly identical. This patch
+> > moves this common code to a common place.
+> > 
+> > Signed-off-by: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
+> > Signed-off-by: Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>
+> 
+> One comment below. Otherwise,
+> 
+> Reviewed-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+> 
+> You need also need acks from Ben and Michal.
+> 
+> [...]
+> 
+> > +		/* Act based on address space type */
+> > +		res = NULL;
+> > +		switch ((pci_space >> 24) & 0x3) {
+> > +		case 1:		/* PCI IO space */
+> > +			pr_info("  IO 0x%016llx..0x%016llx -> 0x%016llx\n",
+> > +			       cpu_addr, cpu_addr + size - 1, pci_addr);
+> > +
+> > +			/* We support only one IO range */
+> > +			if (hose->pci_io_size) {
+> > +				pr_info(" \\--> Skipped (too many) !\n");
+> > +				continue;
+> > +			}
+> > +#if defined(CONFIG_PPC32) || defined(CONFIG_MICROBLAZE)
+> 
+> How about "if (!IS_ENABLED(CONFIG_64BIT))" instead.
 
-Hi,
+OK I'll add in my next re-spin. Would "#ifndef CONFIG_64BIT" suffice?
 
-On 2013-04-11 03:04, Arnd Bergmann wrote:
-> In multiplatform configurations, we cannot include headers
-> provided by only the exynos platform. Fortunately a number
-> of drivers that include those headers do not actually need
-> them, so we can just remove the inclusions.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: Jingoo Han <jg1.han@samsung.com>
-> ---
->  drivers/video/exynos/exynos_mipi_dsi.c          | 2 --
->  drivers/video/exynos/exynos_mipi_dsi_common.c   | 2 --
->  drivers/video/exynos/exynos_mipi_dsi_lowlevel.c | 2 --
->  3 files changed, 6 deletions(-)
-
-I've applied this and the next patch ([PATCH 13/30] video/s3c: move
-platform_data out of arch/arm) to fbdev.
-
-I also fixed the extra space mentioned by Jingoo.
-
- Tomi
-
-
-
---------------enigAB4BA7E4E18BE84D4AFF1829
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with undefined - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJRZqPbAAoJEPo9qoy8lh71PlAQAJ1DaLc2zDE6qQNWqKoOPjrm
-GU1dYSGqqXsiR9YaZy9zzTzS0kB+VhUchrBvrixvHVIdZyaxGR5VzqS2eeg5Iqh9
-fHDcHpzN/gngg3DmDVcP1rmqltP6Wayhv3Der/1YfQXe2NukpY/Y+BOy+H5cNc2U
-WCIom6Lu18g0BfWLCnYr594izyE3hrk1DsbOZdUq5DKQuL8UfrMC45GlzLx2T3GT
-rhNG5WwcORxOq4odSlxI7GWrHv3FclqpLNqzc7nDGRZWTHHRmiPf+GrGHrPWYTRZ
-5YhiNwGB6EdjKvMmyXiIOwqDGASYIU9Q5zNt9lucT2ppYkHfe4up+Bquuf7awR/6
-U1lT5Gy6VwowAiWediyGsVMp/1YeOtpbp6Dnwz1RcLZ/lms/VaSDowWfpM6JjMgc
-YdBT4yUfs9GH+iytaAWgZiBLqqWagTroPSHoRhUurt0N2lB+MsDLwYRtnib/pXvi
-agrRCIC4ZNUCGdtRLKamB1zYenigEqg9OjbDXnKi0kCMu3TF8b4L9qrGiTDVM3H5
-iNr7aGTOIzjODwj6xCiYFd037rzAdqb/pm1B0Nvvf+EJ1yaW/wtsyZ7nYzGEC1A6
-VhcbxBkS9SbqqnZ1XWyT+mr4tSLhjH7N6jqrfLglhTSJyBuXkJyuXVjxf+OqUqjb
-4xeyZlsS03PTiuPZumF0
-=QPWV
------END PGP SIGNATURE-----
-
---------------enigAB4BA7E4E18BE84D4AFF1829--
+> 
+> > +			/* On 32 bits, limit I/O space to 16MB */
+> > +			if (size > 0x01000000)
+> > +				size = 0x01000000;
+> > +
+> > +			/* 32 bits needs to map IOs here */
+> > +			hose->io_base_virt = ioremap(cpu_addr, size);
+> > +
+> > +			/* Expect trouble if pci_addr is not 0 */
+> > +			if (primary)
+> > +				isa_io_base =
+> > +					(unsigned long)hose->io_base_virt;
+> > +#endif /* CONFIG_PPC32 || CONFIG_MICROBLAZE */
+> > +			/* pci_io_size and io_base_phys always represent IO
+> > +			 * space starting at 0 so we factor in pci_addr
+> > +			 */
+> > +			hose->pci_io_size = pci_addr + size;
+> > +			hose->io_base_phys = cpu_addr - pci_addr;
+> 
+> 
