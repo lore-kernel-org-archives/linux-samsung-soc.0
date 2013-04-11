@@ -1,41 +1,38 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 13/30] video/s3c: move platform_data out of arch/arm
-Date: Thu, 11 Apr 2013 13:34:34 +0900
-Message-ID: <003001ce366d$de38c280$9aaa4780$%han@samsung.com>
+Subject: Re: [PATCH 12/30] video/exynos: remove unnecessary header inclusions
+Date: Thu, 11 Apr 2013 14:07:02 +0900
+Message-ID: <003201ce3672$66f72e50$34e58af0$%han@samsung.com>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
- <1365638712-1028578-14-git-send-email-arnd@arndb.de>
+ <1365638712-1028578-13-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50558 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753088Ab3DKEeg (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:9150 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751225Ab3DKFHE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Apr 2013 00:34:36 -0400
-In-reply-to: <1365638712-1028578-14-git-send-email-arnd@arndb.de>
+	Thu, 11 Apr 2013 01:07:04 -0400
+In-reply-to: <1365638712-1028578-13-git-send-email-arnd@arndb.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+Cc: 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
 On Thursday, April 11, 2013 9:05 AM, Arnd Bergmann wrote:
 > 
-> The s3c-fb driver requires header files from the samsung platforms
-> to find its platform_data definition, but this no longer works on
-> multiplatform kernels, so let's move the data into a new header
-> file under include/linux/platform_data.
+> In multiplatform configurations, we cannot include headers
+> provided by only the exynos platform. Fortunately a number
+> of drivers that include those headers do not actually need
+> them, so we can just remove the inclusions.
 > 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > Cc: linux-fbdev@vger.kernel.org
 > Cc: Jingoo Han <jg1.han@samsung.com>
 
-CC'ed Tomi Valkeinen.
+CC'ed Tomi Valkeinen, Inki Dae, Donghwa Lee, Kyungmin Park
 
-
-Hi Arnd,
-It looks good. Thank you for your patch. :)
 
 Acked-by: Jingoo Han <jg1.han@samsung.com>
 
@@ -43,148 +40,51 @@ Best regards,
 Jingoo Han
 
 > ---
->  arch/arm/plat-samsung/include/plat/fb.h | 50 +-----------------------------
->  drivers/video/s3c-fb.c                  |  3 +-
->  include/linux/platform_data/video_s3c.h | 54 +++++++++++++++++++++++++++++++++
->  3 files changed, 56 insertions(+), 51 deletions(-)
->  create mode 100644 include/linux/platform_data/video_s3c.h
+>  drivers/video/exynos/exynos_mipi_dsi.c          | 2 --
+>  drivers/video/exynos/exynos_mipi_dsi_common.c   | 2 --
+>  drivers/video/exynos/exynos_mipi_dsi_lowlevel.c | 2 --
+>  3 files changed, 6 deletions(-)
 > 
-> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-> index b885322..9ae5072 100644
-> --- a/arch/arm/plat-samsung/include/plat/fb.h
-> +++ b/arch/arm/plat-samsung/include/plat/fb.h
-> @@ -15,55 +15,7 @@
->  #ifndef __PLAT_S3C_FB_H
->  #define __PLAT_S3C_FB_H __FILE__
+> diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
+> index fac7df6..3dd43ca 100644
+> --- a/drivers/video/exynos/exynos_mipi_dsi.c
+> +++ b/drivers/video/exynos/exynos_mipi_dsi.c
+> @@ -35,8 +35,6 @@
 > 
-> -/* S3C_FB_MAX_WIN
-> - * Set to the maximum number of windows that any of the supported hardware
-> - * can use. Since the platform data uses this for an array size, having it
-> - * set to the maximum of any version of the hardware can do is safe.
-> - */
-> -#define S3C_FB_MAX_WIN	(5)
-> -
-> -/**
-> - * struct s3c_fb_pd_win - per window setup data
-> - * @xres     : The window X size.
-> - * @yres     : The window Y size.
-> - * @virtual_x: The virtual X size.
-> - * @virtual_y: The virtual Y size.
-> - */
-> -struct s3c_fb_pd_win {
-> -	unsigned short		default_bpp;
-> -	unsigned short		max_bpp;
-> -	unsigned short		xres;
-> -	unsigned short		yres;
-> -	unsigned short		virtual_x;
-> -	unsigned short		virtual_y;
-> -};
-> -
-> -/**
-> - * struct s3c_fb_platdata -  S3C driver platform specific information
-> - * @setup_gpio: Setup the external GPIO pins to the right state to transfer
-> - *		the data from the display system to the connected display
-> - *		device.
-> - * @vidcon0: The base vidcon0 values to control the panel data format.
-> - * @vidcon1: The base vidcon1 values to control the panel data output.
-> - * @vtiming: Video timing when connected to a RGB type panel.
-> - * @win: The setup data for each hardware window, or NULL for unused.
-> - * @display_mode: The LCD output display mode.
-> - *
-> - * The platform data supplies the video driver with all the information
-> - * it requires to work with the display(s) attached to the machine. It
-> - * controls the initial mode, the number of display windows (0 is always
-> - * the base framebuffer) that are initialised etc.
-> - *
-> - */
-> -struct s3c_fb_platdata {
-> -	void	(*setup_gpio)(void);
-> -
-> -	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
-> -	struct fb_videomode     *vtiming;
-> -
-> -	u32			 vidcon0;
-> -	u32			 vidcon1;
-> -};
-> +#include <linux/platform_data/video_s3c.h>
+>  #include <video/exynos_mipi_dsim.h>
 > 
->  /**
->   * s3c_fb_set_platdata() - Setup the FB device with platform data.
-> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-> index 968a625..2e7991c 100644
-> --- a/drivers/video/s3c-fb.c
-> +++ b/drivers/video/s3c-fb.c
-> @@ -24,10 +24,9 @@
->  #include <linux/uaccess.h>
->  #include <linux/interrupt.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/platform_data/video_s3c.h>
-> 
->  #include <video/samsung_fimd.h>
-> -#include <mach/map.h>
 > -#include <plat/fb.h>
+> -
+>  #include "exynos_mipi_dsi_common.h"
+>  #include "exynos_mipi_dsi_lowlevel.h"
 > 
->  /* This driver will export a number of framebuffer interfaces depending
->   * on the configuration passed in via the platform data. Each fb instance
-> diff --git a/include/linux/platform_data/video_s3c.h b/include/linux/platform_data/video_s3c.h
-> new file mode 100644
-> index 0000000..fa40f96
-> --- /dev/null
-> +++ b/include/linux/platform_data/video_s3c.h
-> @@ -0,0 +1,54 @@
-> +#ifndef __PLATFORM_DATA_VIDEO_S3C
-> +#define __PLATFORM_DATA_VIDEO_S3C
-> +
-> +/* S3C_FB_MAX_WIN
-> + * Set to the maximum number of windows that any of the supported hardware
-> + * can use. Since the platform data uses this for an array size, having it
-> + * set to the maximum of any version of the hardware can do is safe.
-> + */
-> +#define S3C_FB_MAX_WIN	(5)
-> +
-> +/**
-> + * struct s3c_fb_pd_win - per window setup data
-> + * @xres     : The window X size.
-> + * @yres     : The window Y size.
-> + * @virtual_x: The virtual X size.
-> + * @virtual_y: The virtual Y size.
-> + */
-> +struct s3c_fb_pd_win {
-> +	unsigned short		default_bpp;
-> +	unsigned short		max_bpp;
-> +	unsigned short		xres;
-> +	unsigned short		yres;
-> +	unsigned short		virtual_x;
-> +	unsigned short		virtual_y;
-> +};
-> +
-> +/**
-> + * struct s3c_fb_platdata -  S3C driver platform specific information
-> + * @setup_gpio: Setup the external GPIO pins to the right state to transfer
-> + *		the data from the display system to the connected display
-> + *		device.
-> + * @vidcon0: The base vidcon0 values to control the panel data format.
-> + * @vidcon1: The base vidcon1 values to control the panel data output.
-> + * @vtiming: Video timing when connected to a RGB type panel.
-> + * @win: The setup data for each hardware window, or NULL for unused.
-> + * @display_mode: The LCD output display mode.
-> + *
-> + * The platform data supplies the video driver with all the information
-> + * it requires to work with the display(s) attached to the machine. It
-> + * controls the initial mode, the number of display windows (0 is always
-> + * the base framebuffer) that are initialised etc.
-> + *
-> + */
-> +struct s3c_fb_platdata {
-> +	void	(*setup_gpio)(void);
-> +
-> +	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
-> +	struct fb_videomode     *vtiming;
-> +
-> +	u32			 vidcon0;
-> +	u32			 vidcon1;
-> +};
-> +
-> +#endif
+> diff --git a/drivers/video/exynos/exynos_mipi_dsi_common.c
+> b/drivers/video/exynos/exynos_mipi_dsi_common.c
+> index c70cb89..520fc9b 100644
+> --- a/drivers/video/exynos/exynos_mipi_dsi_common.c
+> +++ b/drivers/video/exynos/exynos_mipi_dsi_common.c
+> @@ -31,8 +31,6 @@
+>  #include <video/mipi_display.h>
+>  #include <video/exynos_mipi_dsim.h>
+> 
+> -#include <mach/map.h>
+> -
+>  #include "exynos_mipi_dsi_regs.h"
+>  #include "exynos_mipi_dsi_lowlevel.h"
+>  #include "exynos_mipi_dsi_common.h"
+> diff --git a/drivers/video/exynos/exynos_mipi_dsi_lowlevel.c
+> b/drivers/video/exynos/exynos_mipi_dsi_lowlevel.c
+> index 95cb99a..15c5abd 100644
+> --- a/drivers/video/exynos/exynos_mipi_dsi_lowlevel.c
+> +++ b/drivers/video/exynos/exynos_mipi_dsi_lowlevel.c
+> @@ -26,8 +26,6 @@
+> 
+>  #include <video/exynos_mipi_dsim.h>
+> 
+> -#include <mach/map.h>
+> -
+>  #include "exynos_mipi_dsi_regs.h"
+> 
+>  void exynos_mipi_dsi_func_reset(struct mipi_dsim_device *dsim)
 > --
 > 1.8.1.2
