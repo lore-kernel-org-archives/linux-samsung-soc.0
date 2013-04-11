@@ -1,58 +1,92 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH v4] mmc: dw_mmc: let device core setup the default pin
- configuration
-Date: Thu, 11 Apr 2013 12:13:09 +0900
-Message-ID: <001101ce3662$7ecb9850$7c62c8f0$%jun@samsung.com>
-References: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org>
- <CAD=FV=VJ-ykDNqYKQ=fqxeOD6bRNLW02VT4bjsRHRAuXLcCpQQ@mail.gmail.com>
- <CAJuYYwQT=povqiutVHXkF5jxTAnjpwTMQ5G0Z6xKGnnM7qYADQ@mail.gmail.com>
- <CAD=FV=UddWM=yc5N9=jwbMDpZ7Bpg7o3Z714CnBSg=iHhmPxWw@mail.gmail.com>
- <CAD=FV=WyPbkYvq9udPzQtVnaXZR3jzXTPnBrrdxpUuX3CZT=Og@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] rtc: rtc-s3c: use clk_prepare_enable and
+ clk_disable_unprepare
+Date: Thu, 11 Apr 2013 13:09:01 +0900
+Message-ID: <002e01ce366a$4c9f1390$e5dd3ab0$%han@samsung.com>
+References: <1365517660-9322-1-git-send-email-gautam.vivek@samsung.com>
+ <516535E4.5060308@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37827 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754525Ab3DKDNM (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:40118 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752475Ab3DKEJK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 23:13:12 -0400
-In-reply-to: <CAD=FV=WyPbkYvq9udPzQtVnaXZR3jzXTPnBrrdxpUuX3CZT=Og@mail.gmail.com>
+	Thu, 11 Apr 2013 00:09:10 -0400
+In-reply-to: <516535E4.5060308@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Girish Shivananjappa' <girish.shivananjappa@linaro.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Tomasz Figa' <t.figa@samsung.com>, =?Windows-1252?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Patch Tracking' <patches@linaro.org>
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Andrew Morton' <akpm@linuxfoundation.org>
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, kgene.kim@samsung.com, thomas.ab@samsung.com, dianders@chromium.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Wednesday, April 10, 2013, Doug Anderson wrote:
-> Thomas,
-> 
-> On Wed, Apr 10, 2013 at 6:56 AM, Doug Anderson <dianders@chromium.org> wrote:
-> > On Wed, Apr 10, 2013 at 5:48 AM, Thomas Abraham
-> > <thomas.abraham@linaro.org> wrote:
-> >> The call to regulator_enable() is prior to the call to mmc_add_host().
-> >> Hence, call to mmc_fre_host is not required in this case. So the above
-> >> change should be right.
+On Wednesday, April 10, 2013 6:50 PM, Sylwester Nawrocki wrote:
+> On 04/09/2013 04:27 PM, Vivek Gautam wrote:
+> > From: Thomas Abraham <thomas.abraham@linaro.org>
 > >
-> > Are you sure that mmc_free_host() is the opposite of mmc_add_host()
-> > and not mmc_alloc_host()?
+> > Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+> > calls as required by common clock framework.
 > >
-> > I'll double-check myself in a few hours when I'm in front of a computer.
+> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 > 
-> OK, I double checked and I'm still convinced that the free is needed
-> because we've already called mmc_alloc_host().  Current code always
-> makes sure to free when it returns an error and that seems right to
-> me.
-mmc_alloc_host corresponds to mmc_free_host. And mmc_add_host matches
-with mmc_remove_host. Let's focus on mmc_alloc_host.
-mmc_alloc_host is called prior to regulator_enable.
-So, if regulator_enable is failed, call of mmc_free_host makes sense.
+> Thanks Vivek.
+> 
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Thanks,
-Seungwon Jeon
+CC'ed Andrew Morton
+
+It looks good.
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+
 > 
-> -Doug
+> > ---
+> >
+> > The v1 of this patch is pretty old, but the change needs to be merged to
+> > avoid getting those needless WARN_ON() dumps on console.
+> >
+> > Changes from v1:
+> >  - Not using clk_disable_unprepare() at the end of s3c_rtc_probe(), since
+> >    this will unprepare the rtc clock which is again getting used in other
+> >    funtions later.
+> >  - Using clk_unprepare() at the remove() instead to fix things up.
+> >
+> >  drivers/rtc/rtc-s3c.c |    5 +++--
+> >  1 files changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> > index fb994e9..e3528c9 100644
+> > --- a/drivers/rtc/rtc-s3c.c
+> > +++ b/drivers/rtc/rtc-s3c.c
+> > @@ -430,6 +430,7 @@ static int s3c_rtc_remove(struct platform_device *dev)
+> >
+> >  	s3c_rtc_setaie(&dev->dev, 0);
+> >
+> > +	clk_unprepare(rtc_clk);
+> >  	rtc_clk = NULL;
+> >
+> >  	return 0;
+> > @@ -498,7 +499,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+> >  		return ret;
+> >  	}
+> >
+> > -	clk_enable(rtc_clk);
+> > +	clk_prepare_enable(rtc_clk);
+> >
+> >  	/* check to see if everything is setup correctly */
+> >
+> > @@ -578,7 +579,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+> >
+> >   err_nortc:
+> >  	s3c_rtc_enable(pdev, 0);
+> > -	clk_disable(rtc_clk);
+> > +	clk_disable_unprepare(rtc_clk);
+> >
+> >  	return ret;
+> >  }
+> 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
