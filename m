@@ -1,76 +1,148 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 05/30] tty: serial/samsung: prepare for common clock API
-Date: Thu, 11 Apr 2013 02:04:47 +0200
-Message-ID: <1365638712-1028578-6-git-send-email-arnd@arndb.de>
+Subject: [PATCH 04/30] ARM: samsung: move mfc device definition to
+ s5p-dev-mfc.c
+Date: Thu, 11 Apr 2013 02:04:46 +0200
+Message-ID: <1365638712-1028578-5-git-send-email-arnd@arndb.de>
 References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:53425 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933361Ab3DKAGs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Apr 2013 20:06:48 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-With the common clock interface, there is no way to provide the
-"clock_source" sysfs attribute for the samsung serial ports. Given that
-this file was purely informational and had fixed contents, we have reason
-to believe that no user space programs were relying on it.
-
-The sysfs file is not documented in the ABI docs.
+For a DT-only build we don't want to compile devs.c, but we do need
+the mfc device, which is also referenced by the DT based platforms,
+so move it all into one place.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-serial@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/samsung.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/plat-samsung/devs.c        | 45 -------------------------------------
+ arch/arm/plat-samsung/s5p-dev-mfc.c | 42 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 2769a38..603f3f3 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1179,6 +1179,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
- 	return 0;
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index e1124d9..4cf660e 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -878,51 +878,6 @@ void __init s3c24xx_fb_set_platdata(struct s3c2410fb_mach_info *pd)
  }
+ #endif /* CONFIG_PLAT_S3C24XX */
  
-+#ifdef CONFIG_SAMSUNG_CLOCK
- static ssize_t s3c24xx_serial_show_clksrc(struct device *dev,
- 					  struct device_attribute *attr,
- 					  char *buf)
-@@ -1194,7 +1195,7 @@ static ssize_t s3c24xx_serial_show_clksrc(struct device *dev,
- }
- 
- static DEVICE_ATTR(clock_source, S_IRUGO, s3c24xx_serial_show_clksrc, NULL);
+-/* MFC */
 -
-+#endif
+-#ifdef CONFIG_S5P_DEV_MFC
+-static struct resource s5p_mfc_resource[] = {
+-	[0] = DEFINE_RES_MEM(S5P_PA_MFC, SZ_64K),
+-	[1] = DEFINE_RES_IRQ(IRQ_MFC),
+-};
+-
+-struct platform_device s5p_device_mfc = {
+-	.name		= "s5p-mfc",
+-	.id		= -1,
+-	.num_resources	= ARRAY_SIZE(s5p_mfc_resource),
+-	.resource	= s5p_mfc_resource,
+-};
+-
+-/*
+- * MFC hardware has 2 memory interfaces which are modelled as two separate
+- * platform devices to let dma-mapping distinguish between them.
+- *
+- * MFC parent device (s5p_device_mfc) must be registered before memory
+- * interface specific devices (s5p_device_mfc_l and s5p_device_mfc_r).
+- */
+-
+-struct platform_device s5p_device_mfc_l = {
+-	.name		= "s5p-mfc-l",
+-	.id		= -1,
+-	.dev		= {
+-		.parent			= &s5p_device_mfc.dev,
+-		.dma_mask		= &samsung_device_dma_mask,
+-		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-	},
+-};
+-
+-struct platform_device s5p_device_mfc_r = {
+-	.name		= "s5p-mfc-r",
+-	.id		= -1,
+-	.dev		= {
+-		.parent			= &s5p_device_mfc.dev,
+-		.dma_mask		= &samsung_device_dma_mask,
+-		.coherent_dma_mask	= DMA_BIT_MASK(32),
+-	},
+-};
+-
+-#endif /* CONFIG_S5P_DEV_MFC */
+-
+ /* MIPI CSIS */
  
- /* Device driver serial port probe */
+ #ifdef CONFIG_S5P_DEV_CSIS0
+diff --git a/arch/arm/plat-samsung/s5p-dev-mfc.c b/arch/arm/plat-samsung/s5p-dev-mfc.c
+index 5ec104b..a93fb6f 100644
+--- a/arch/arm/plat-samsung/s5p-dev-mfc.c
++++ b/arch/arm/plat-samsung/s5p-dev-mfc.c
+@@ -18,10 +18,50 @@
+ #include <linux/of.h>
  
-@@ -1252,9 +1253,11 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 	uart_add_one_port(&s3c24xx_uart_drv, &ourport->port);
- 	platform_set_drvdata(pdev, &ourport->port);
+ #include <mach/map.h>
++#include <mach/irqs.h>
+ #include <plat/devs.h>
+-#include <plat/irqs.h>
+ #include <plat/mfc.h>
  
-+#ifdef CONFIG_SAMSUNG_CLOCK
- 	ret = device_create_file(&pdev->dev, &dev_attr_clock_source);
- 	if (ret < 0)
- 		dev_err(&pdev->dev, "failed to add clock source attr.\n");
-+#endif
- 
- 	ret = s3c24xx_serial_cpufreq_register(ourport);
- 	if (ret < 0)
-@@ -1272,7 +1275,9 @@ static int s3c24xx_serial_remove(struct platform_device *dev)
- 
- 	if (port) {
- 		s3c24xx_serial_cpufreq_deregister(to_ourport(port));
-+#ifdef CONFIG_SAMSUNG_CLOCK
- 		device_remove_file(&dev->dev, &dev_attr_clock_source);
-+#endif
- 		uart_remove_one_port(&s3c24xx_uart_drv, port);
- 	}
- 
++static struct resource s5p_mfc_resource[] = {
++	[0] = DEFINE_RES_MEM(S5P_PA_MFC, SZ_64K),
++	[1] = DEFINE_RES_IRQ(IRQ_MFC),
++};
++
++struct platform_device s5p_device_mfc = {
++	.name		= "s5p-mfc",
++	.id		= -1,
++	.num_resources	= ARRAY_SIZE(s5p_mfc_resource),
++	.resource	= s5p_mfc_resource,
++};
++
++/*
++ * MFC hardware has 2 memory interfaces which are modelled as two separate
++ * platform devices to let dma-mapping distinguish between them.
++ *
++ * MFC parent device (s5p_device_mfc) must be registered before memory
++ * interface specific devices (s5p_device_mfc_l and s5p_device_mfc_r).
++ */
++
++struct platform_device s5p_device_mfc_l = {
++	.name		= "s5p-mfc-l",
++	.id		= -1,
++	.dev		= {
++		.parent			= &s5p_device_mfc.dev,
++		.dma_mask		= &s5p_device_mfc_l.dev.coherent_dma_mask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++	},
++};
++
++struct platform_device s5p_device_mfc_r = {
++	.name		= "s5p-mfc-r",
++	.id		= -1,
++	.dev		= {
++		.parent			= &s5p_device_mfc.dev,
++		.dma_mask		= &s5p_device_mfc_r.dev.coherent_dma_mask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++	},
++};
++
+ struct s5p_mfc_reserved_mem {
+ 	phys_addr_t	base;
+ 	unsigned long	size;
 -- 
 1.8.1.2
