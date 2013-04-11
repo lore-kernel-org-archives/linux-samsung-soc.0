@@ -1,52 +1,60 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v5 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
- Microblaze and PowerPC
-Date: Thu, 11 Apr 2013 17:28:54 +0200
-Message-ID: <20130411172854.61f5728e@skate>
-References: <1365578969-30966-1-git-send-email-Andrew.Murray@arm.com>
- <1365578969-30966-2-git-send-email-Andrew.Murray@arm.com>
- <20130410233330.4e9479b0@skate> <20130411121242.GB28981@arm.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 20/30] ASoC: samsung: convert to dmaengine API
+Date: Thu, 11 Apr 2013 16:42:16 +0100
+Message-ID: <20130411154216.GE9243@opensource.wolfsonmicro.com>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
+ <1365638712-1028578-21-git-send-email-arnd@arndb.de>
+ <20130411142706.GB24971@opensource.wolfsonmicro.com>
+ <201304111647.17796.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20130411121242.GB28981-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Cc: "jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org" <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org" <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qABWltju4eaUXBmg"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54145 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932840Ab3DKPmU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Apr 2013 11:42:20 -0400
+Content-Disposition: inline
+In-Reply-To: <201304111647.17796.arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>
 
-Dear Andrew Murray,
 
-On Thu, 11 Apr 2013 13:12:42 +0100, Andrew Murray wrote:
+--qABWltju4eaUXBmg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Thanks - I somehow missed this.
-> 
-> I've included this change in my next respin - but I've put
-> 'struct pci_controller' immediately before
-> 'pci_process_bridge_OF_ranges' rather than above of_irq_map_pci to be
-> consistent with the rest of the file.
+On Thu, Apr 11, 2013 at 04:47:17PM +0200, Arnd Bergmann wrote:
 
-Right, sounds good.
+> Can you have a look at the other three ASoC patches in the series? I think
+> it would still be useful to merge them.
 
-Do we have some news from the PowerPC and Microblaze maintainers about
-their acceptance of PATCH 1/3 ? This of/pci thing is the only last
-remaining patch for which I need a Ack to get the Marvell PCIe merged.
+Yeah, they looked fine - just waiting for me to do a patch run.  Should
+get to it shortly.
 
-Thanks!
+--qABWltju4eaUXBmg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Thomas
--- 
-Thomas Petazzoni, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRZtmvAAoJELSic+t+oim9eksQAIHss4c1H2YE7gZ0Owmqj5t1
+utbi6FdVD+K5XfrHqRIF0fFuCYAhpX0BwQ1PB6pA9YAjsqJ3V36F/0ikpsnhZlTj
+EwPEJX1Uq/8nO4rPTWxGOHWz9D4ZpG4SCLFUgvp8ZhKCeek4eVqnXN0OA5y17j4I
+lDMEqKVy9bRbWEi2prdq0uYO8P21OPlwVLd5pL05DpJ8BEA/a6ppGjIcKmDYfsko
+pk4CJkZTyUp1wFaCVP25zj1+dC3d7vycUduQ/iB5tuy1GGDnv8zEqWCHGoNDOtuu
+nl2QeUUgP/f5fKE6P9UTtYidDbCkl1a6nFEniVjPTyIs49ql4iAcC1bx7piMSOvl
+RHkvWpYF672+2FtzqPByE8ivqyUw4zhxsZoW8Uz/ZEkUKF7EHoQYS50hNyCXWClG
+pVbfL6Fk/5spyNipvcDqZR+D9S29+AAL0PXK5Ve0yCF07dG/3NmosTOZi/Up3GOE
+FdR3u7qOLZNj9hjry8diesmhRalUyBGO2lEWkuSPfyFnrG+raNWMaQpdxpMSrA4y
+p/mJt7/LDV8HFqSRBFQ/Z1uxP+TpnvO2NlIh6AyO6HKUBLfn8iB+MtY4nQf5lwyV
+yrTqp/X1RwhYSD+0JYlctRS7gxxwnQGysIxRHLD1oi+JZdyWKOYnaZVhfXaMjB6S
+hXE1F/MsVCDdOHFaiuT/
+=l4br
+-----END PGP SIGNATURE-----
+
+--qABWltju4eaUXBmg--
