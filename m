@@ -1,49 +1,40 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [alsa-devel] [PATCH 20/30] ASoC: samsung: convert to dmaengine
- API
-Date: Fri, 12 Apr 2013 21:27:27 +0200
-Message-ID: <5168601F.2070409@metafoo.de>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <1365638712-1028578-21-git-send-email-arnd@arndb.de> <20130411142706.GB24971@opensource.wolfsonmicro.com> <201304111647.17796.arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 03/14] clocksource: samsung-pwm: Add infrastructure to share PWM hardware
+Date: Fri, 12 Apr 2013 22:42:36 +0200
+Message-ID: <201304122242.36801.arnd@arndb.de>
+References: <1365794250-14436-1-git-send-email-t.figa@samsung.com> <1365794250-14436-4-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-out-226.synserver.de ([212.40.185.226]:1076 "EHLO
-	smtp-out-226.synserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752680Ab3DLT2X (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.10]:60123 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751504Ab3DLUnB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Apr 2013 15:28:23 -0400
-In-Reply-To: <201304111647.17796.arnd@arndb.de>
+	Fri, 12 Apr 2013 16:43:01 -0400
+In-Reply-To: <1365794250-14436-4-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, sylvester.nawrocki@gmail.com, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, mark.rutland@arm.com, tomasz.figa@gmail.com, heiko@sntech.de, robherring2@gmail.com, m.szyprowski@samsung.com, john.stultz@linaro.org, tglx@linutronix.de
 
-On 04/11/2013 04:47 PM, Arnd Bergmann wrote:
-> On Thursday 11 April 2013, Mark Brown wrote:
->>
->> On Thu, Apr 11, 2013 at 02:05:02AM +0200, Arnd Bergmann wrote:
->>> In order to build the exynos kernel with CONFIG_ARCH_MULTIPLATFORM,
->>> we must convert all users of the Samsung private DMA interface to
->>> the generic dmaengine API. This version of the patch adds the
->>> generic dmaengine API as an alternative to the existing samsung
->>> specific one. Once all the older platforms provide support for
->>> the common dmaengine interfaces, we can remove the old code.
->>
->> There's generic ASoC dmaengine code which should be used instead of open
->> coding this.  Lars-Peter Clausen and Lee Jones have been working on
->> making this a totally generic driver, right now it's a library.
-> 
-> Ok, I see. I'll drop this patch from my series then and will let someone
-> else handle this driver in 3.11. We can probably live without sound support
-> in 3.10 when running a multiplatform kernel, and it will keep working
-> for exynos-only kernels without the patch.
+On Friday 12 April 2013, Tomasz Figa wrote:
+> +
+> +Samsung SoCs contain PWM timer blocks which can be used for system clock source
+> +and clock event timers, as well as to drive SoC outputs with PWM signal. Each
+> +PWM timer block provides 5 PWM channels (not all of them can drive physical
+> +outputs - see SoC and board manual).
+> +
+...
+> +Optional properties:
+> +- samsung,pwm-outputs: list of PWM channels used as PWM outputs on particular
+> +    platform - an array of up to 5 elements being indices of PWM channels
+> +    (from 0 to 4), the order does not matter.
+> +
 
-I actually had a look at how the Samsung PCM driver a couple of days back,
-but I didn't fully grasp how things work with the secondary TX channel for
-the i2s driver and to make it work with the generic dmaengine PCM driver.
-The code handling this in the i2s driver seems to be rather messy with lots
-of ifs and elses. Also things would have would be a lot easier if the dt
-bindings had used two subnodes each with their own 'dmas' property.
+There is probably a good reason, but can you explain why this is actually required
+to be a property? Wouldn't it be enough to just not refer to the PWM outputs from
+other devices when they are not used?
 
-- Lars
+	Arnd
