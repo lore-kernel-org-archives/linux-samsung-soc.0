@@ -1,39 +1,50 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v5 01/14] ARM: SAMSUNG: Move samsung-time to
- drivers/clocksource
-Date: Fri, 12 Apr 2013 22:44:03 +0200
-Message-ID: <201304122244.03964.arnd@arndb.de>
-References: <1365794250-14436-1-git-send-email-t.figa@samsung.com>
- <1365794250-14436-2-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v5 03/14] clocksource: samsung-pwm: Add infrastructure to share PWM hardware
+Date: Fri, 12 Apr 2013 22:47:16 +0200
+Message-ID: <2367229.enzT7IXUEQ@flatron>
+References: <1365794250-14436-1-git-send-email-t.figa@samsung.com> <1365794250-14436-4-git-send-email-t.figa@samsung.com> <201304122242.36801.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1365794250-14436-2-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, buserror-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, augulis.darius-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, christer-rKHMIqA5R6gwFerOooGFRg@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, kwangwoo.lee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ghcstop-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, jekhor-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f53.google.com ([74.125.83.53]:53116 "EHLO
+	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753538Ab3DLUrT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Apr 2013 16:47:19 -0400
+Received: by mail-ee0-f53.google.com with SMTP id c13so1474921eek.40
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Apr 2013 13:47:18 -0700 (PDT)
+In-Reply-To: <201304122242.36801.arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, sylvester.nawrocki@gmail.com, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, mark.rutland@arm.com, heiko@sntech.de, robherring2@gmail.com, m.szyprowski@samsung.com, john.stultz@linaro.org, tglx@linutronix.de
 
-On Friday 12 April 2013, Tomasz Figa wrote:
-> ---
->  arch/arm/plat-samsung/Kconfig        |   8 -
->  arch/arm/plat-samsung/Makefile       |   1 -
->  arch/arm/plat-samsung/samsung-time.c | 394 -----------------------------------
->  drivers/clocksource/Kconfig          |   7 +
->  drivers/clocksource/Makefile         |   1 +
->  drivers/clocksource/samsung_pwm.c    | 394 +++++++++++++++++++++++++++++++++++
+Hi Arnd,
 
-In general, please send patches generated with 'git format-patch -M'. You can
-set that as a default using 'git config diff.renames true'.
+On Friday 12 of April 2013 22:42:36 Arnd Bergmann wrote:
+> On Friday 12 April 2013, Tomasz Figa wrote:
+> > +
+> > +Samsung SoCs contain PWM timer blocks which can be used for system
+> > clock source +and clock event timers, as well as to drive SoC outputs
+> > with PWM signal. Each +PWM timer block provides 5 PWM channels (not
+> > all of them can drive physical +outputs - see SoC and board manual).
+> > +
+> 
+> ...
+> 
+> > +Optional properties:
+> > +- samsung,pwm-outputs: list of PWM channels used as PWM outputs on
+> > particular +    platform - an array of up to 5 elements being indices
+> > of PWM channels +    (from 0 to 4), the order does not matter.
+> > +
+> 
+> There is probably a good reason, but can you explain why this is
+> actually required to be a property? Wouldn't it be enough to just not
+> refer to the PWM outputs from other devices when they are not used?
 
-	Arnd
+It is needed for the clocksource driver, to select unused channels for 
+clocksource and clock event purposes.
+
+Best regards,
+Tomasz
