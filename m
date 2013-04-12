@@ -1,82 +1,257 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3/7] ARM: exynos: add missing properties for combiner IRQs
-Date: Fri, 12 Apr 2013 16:03:21 +0200
-Message-ID: <1365775405-115297-4-git-send-email-arnd@arndb.de>
+Subject: [PATCH 1/7] clk: exynos: prepare for multiplatform
+Date: Fri, 12 Apr 2013 16:03:19 +0200
+Message-ID: <1365775405-115297-2-git-send-email-arnd@arndb.de>
 References: <1365775405-115297-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:60357 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.8]:60021 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810Ab3DLODj (ORCPT
+	with ESMTP id S1751290Ab3DLODp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Apr 2013 10:03:39 -0400
+	Fri, 12 Apr 2013 10:03:45 -0400
 In-Reply-To: <1365775405-115297-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Mike Turquette <mturquette@linaro.org>
 
-The exynos combiner irqchip needs to find the parent interrupts
-and needs to know their number, so add the missing properties
-for exynos4 as they were already present for exynos5.
+The new common clock drivers for exynos are using compile
+time constants and soc_is_exynos* macros to provide backwards
+compatibility for pre-DT systems, which is not possible with
+multiplatform kernels. This moves all the necessary
+information back into platform code and removes the mach/*
+header inclusions.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Mike Turquette <mturquette@linaro.org>
 ---
- arch/arm/boot/dts/exynos4210.dtsi | 1 +
- arch/arm/boot/dts/exynos4212.dtsi | 9 +++++++++
- arch/arm/boot/dts/exynos4412.dtsi | 9 +++++++++
- 3 files changed, 19 insertions(+)
+ arch/arm/mach-exynos/common.c        |  2 +-
+ arch/arm/mach-exynos/common.h        |  2 +-
+ drivers/clk/samsung/clk-exynos4.c    | 93 ++++++++++++++++--------------------
+ drivers/clk/samsung/clk-exynos5250.c |  1 -
+ drivers/clk/samsung/clk-exynos5440.c |  1 -
+ drivers/clk/samsung/clk.h            |  2 -
+ 6 files changed, 44 insertions(+), 57 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 15143bd..c102869 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -41,6 +41,7 @@
- 	};
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 939bda7..42f399a 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -410,7 +410,7 @@ void __init exynos_init_time(void)
+ 	} else {
+ 		/* todo: remove after migrating legacy E4 platforms to dt */
+ #ifdef CONFIG_ARCH_EXYNOS4
+-		exynos4_clk_init(NULL);
++		exynos4_clk_init(NULL, !soc_is_exynos4210(), S5P_VA_CMU, readl(S5P_VA_CHIPID + 8) & 1);
+ 		exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
+ #endif
+ 		mct_init();
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index cb89ab8..4ed8eef 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -27,7 +27,7 @@ void exynos5_restart(char mode, const char *cmd);
+ void exynos_init_late(void);
  
- 	combiner:interrupt-controller@10440000 {
-+		combiner-nr = <16>;
- 		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
- 			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
- 			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-index 36d4299..f83c3c1 100644
---- a/arch/arm/boot/dts/exynos4212.dtsi
-+++ b/arch/arm/boot/dts/exynos4212.dtsi
-@@ -26,6 +26,15 @@
- 		cpu-offset = <0x8000>;
- 	};
+ /* ToDo: remove these after migrating legacy exynos4 platforms to dt */
+-void exynos4_clk_init(struct device_node *np);
++void exynos4_clk_init(struct device_node *np, int is_exynos4210, void __iomem *reg_base, unsigned long xom);
+ void exynos4_clk_register_fixed_ext(unsigned long, unsigned long);
  
-+	interrupt-controller@10440000 {
-+                combiner-nr = <18>;
-+		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-+			     <0 107 0>, <0 108 0>;
-+	};
+ #ifdef CONFIG_PM_GENERIC_DOMAINS
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 7104669..d0940e6 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -16,7 +16,6 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
+-#include <plat/cpu.h>
+ #include "clk.h"
+ #include "clk-pll.h"
+ 
+@@ -910,16 +909,6 @@ struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 			CLK_IGNORE_UNUSED, 0),
+ };
+ 
+-#ifdef CONFIG_OF
+-static struct of_device_id exynos4_clk_ids[] __initdata = {
+-	{ .compatible = "samsung,exynos4210-clock",
+-			.data = (void *)EXYNOS4210, },
+-	{ .compatible = "samsung,exynos4412-clock",
+-			.data = (void *)EXYNOS4X12, },
+-	{ },
+-};
+-#endif
+-
+ /*
+  * The parent of the fin_pll clock is selected by the XOM[0] bit. This bit
+  * resides in chipid register space, outside of the clock controller memory
+@@ -927,33 +916,40 @@ static struct of_device_id exynos4_clk_ids[] __initdata = {
+  * controller is first remapped and the value of XOM[0] bit is read to
+  * determine the parent clock.
+  */
+-static void __init exynos4_clk_register_finpll(void)
++static unsigned long exynos4_get_xom(void)
+ {
+-	struct samsung_fixed_rate_clock fclk;
++	unsigned long xom = 0;
++	void __iomem *chipid_base;
+ 	struct device_node *np;
+-	struct clk *clk;
+-	void __iomem *chipid_base = S5P_VA_CHIPID;
+-	unsigned long xom, finpll_f = 24000000;
+-	char *parent_name;
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
+-	if (np)
++	if (np) {
+ 		chipid_base = of_iomap(np, 0);
+ 
+-	if (chipid_base) {
+-		xom = readl(chipid_base + 8);
+-		parent_name = xom & 1 ? "xusbxti" : "xxti";
+-		clk = clk_get(NULL, parent_name);
+-		if (IS_ERR(clk)) {
+-			pr_err("%s: failed to lookup parent clock %s, assuming "
+-				"fin_pll clock frequency is 24MHz\n", __func__,
+-				parent_name);
+-		} else {
+-			finpll_f = clk_get_rate(clk);
+-		}
++		if (chipid_base)
++			xom = readl(chipid_base + 8);
 +
- 	mct@10050000 {
- 		compatible = "samsung,exynos4412-mct";
- 		reg = <0x10050000 0x800>;
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index d75c047..4cb657e 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -26,6 +26,15 @@
- 		cpu-offset = <0x4000>;
- 	};
- 
-+	interrupt-controller@10440000 {
-+		combiner-nr = <20>;
-+		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-+			     <0 107 0>, <0 108 0>>, <0 48 0>, <0 42 0>;
-+	};
++		iounmap(chipid_base);
++	}
 +
- 	mct@10050000 {
- 		compatible = "samsung,exynos4412-mct";
- 		reg = <0x10050000 0x800>;
++	return xom;
++}
++
++static void __init exynos4_clk_register_finpll(unsigned long xom)
++{
++	struct samsung_fixed_rate_clock fclk;
++	struct clk *clk;
++	unsigned long finpll_f = 24000000;
++	char *parent_name;
++
++	parent_name = xom & 1 ? "xusbxti" : "xxti";
++	clk = clk_get(NULL, parent_name);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to lookup parent clock %s, assuming "
++			"fin_pll clock frequency is 24MHz\n", __func__,
++			parent_name);
+ 	} else {
+-		pr_err("%s: failed to map chipid registers, assuming "
+-			"fin_pll clock frequency is 24MHz\n", __func__);
++		finpll_f = clk_get_rate(clk);
+ 	}
+ 
+ 	fclk.id = fin_pll;
+@@ -963,8 +959,6 @@ static void __init exynos4_clk_register_finpll(void)
+ 	fclk.fixed_rate = finpll_f;
+ 	samsung_clk_register_fixed_rate(&fclk, 1);
+ 
+-	if (np)
+-		iounmap(chipid_base);
+ }
+ 
+ /*
+@@ -988,28 +982,14 @@ static __initdata struct of_device_id ext_clk_match[] = {
+ };
+ 
+ /* register exynos4 clocks */
+-void __init exynos4_clk_init(struct device_node *np)
++void __init exynos4_clk_init(struct device_node *np, enum exynos4_soc exynos4_soc, void __iomem *reg_base, unsigned long xom)
+ {
+-	void __iomem *reg_base;
+ 	struct clk *apll, *mpll, *epll, *vpll;
+-	u32 exynos4_soc;
+ 
+ 	if (np) {
+-		const struct of_device_id *match;
+-		match = of_match_node(exynos4_clk_ids, np);
+-		exynos4_soc = (u32)match->data;
+-
+ 		reg_base = of_iomap(np, 0);
+ 		if (!reg_base)
+ 			panic("%s: failed to map registers\n", __func__);
+-	} else {
+-		reg_base = S5P_VA_CMU;
+-		if (soc_is_exynos4210())
+-			exynos4_soc = EXYNOS4210;
+-		else if (soc_is_exynos4212() || soc_is_exynos4412())
+-			exynos4_soc = EXYNOS4X12;
+-		else
+-			panic("%s: unable to determine soc\n", __func__);
+ 	}
+ 
+ 	if (exynos4_soc == EXYNOS4210)
+@@ -1026,7 +1006,7 @@ void __init exynos4_clk_init(struct device_node *np)
+ 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
+ 			ext_clk_match);
+ 
+-	exynos4_clk_register_finpll();
++	exynos4_clk_register_finpll(xom);
+ 
+ 	if (exynos4_soc == EXYNOS4210) {
+ 		apll = samsung_clk_register_pll45xx("fout_apll", "fin_pll",
+@@ -1087,5 +1067,16 @@ void __init exynos4_clk_init(struct device_node *np)
+ 		_get_rate("sclk_epll"), _get_rate("sclk_vpll"),
+ 		_get_rate("arm_clk"));
+ }
+-CLK_OF_DECLARE(exynos4210_clk, "samsung,exynos4210-clock", exynos4_clk_init);
+-CLK_OF_DECLARE(exynos4412_clk, "samsung,exynos4412-clock", exynos4_clk_init);
++
++
++static void __init exynos4210_clk_init(struct device_node *np)
++{
++	exynos4_clk_init(np, EXYNOS4210, NULL, exynos4_get_xom());
++}
++CLK_OF_DECLARE(exynos4210_clk, "samsung,exynos4210-clock", exynos4210_clk_init);
++
++static void __init exynos4412_clk_init(struct device_node *np)
++{
++	exynos4_clk_init(np, EXYNOS4X12, NULL, exynos4_get_xom());
++}
++CLK_OF_DECLARE(exynos4412_clk, "samsung,exynos4412-clock", exynos4412_clk_init);
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 7290faa..61068cd 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -16,7 +16,6 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
+-#include <plat/cpu.h>
+ #include "clk.h"
+ #include "clk-pll.h"
+ 
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index a0a094c..7d54341 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -15,7 +15,6 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
+-#include <plat/cpu.h>
+ #include "clk.h"
+ #include "clk-pll.h"
+ 
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index 10b2111..e4ad6ea 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -20,8 +20,6 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
+-#include <mach/map.h>
+-
+ /**
+  * struct samsung_clock_alias: information about mux clock
+  * @id: platform specific id of the clock.
 -- 
 1.8.1.2
