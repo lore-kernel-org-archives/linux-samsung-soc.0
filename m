@@ -1,65 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5 00/14] ARM: samsung-time: Prepare for multiplatform support
-Date: Sat, 13 Apr 2013 00:26:43 +0200
-Message-ID: <7765249.PbghLduf67@wuerfel>
-References: <1365794250-14436-1-git-send-email-t.figa@samsung.com> <201304130022.49987.heiko@sntech.de>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v5 00/14] ARM: samsung-time: Prepare for multiplatform
+ support
+Date: Sat, 13 Apr 2013 00:39:24 +0200
+Message-ID: <201304130039.24872.heiko@sntech.de>
+References: <1365794250-14436-1-git-send-email-t.figa@samsung.com>
+ <201304130022.49987.heiko@sntech.de> <7765249.PbghLduf67@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:51672 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750974Ab3DLW1M convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Apr 2013 18:27:12 -0400
-In-Reply-To: <201304130022.49987.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <7765249.PbghLduf67@wuerfel>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: mark.rutland@arm.com, Tomasz Figa <t.figa@samsung.com>, tomasz.figa@gmail.com, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, sylvester.nawrocki@gmail.com, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, mark.rutland@arm.com, tomasz.figa@gmail.com, robherring2@gmail.com, m.szyprowski@samsung.com, john.stultz@linaro.org, tglx@linutronix.de
 
-On Saturday 13 April 2013 00:22:48 Heiko St=C3=BCbner wrote:
->=20
-> Without dt support, you get this:
->=20
->   CC      drivers/clocksource/samsung_pwm.o
-> drivers/clocksource/samsung_pwm.c:620: warning: =E2=80=98samsung_pwm_=
-clocksource_init_of=E2=80=99 defined but not used
->=20
-> So, something like the following might be necessary
-
-That patch should not be required any more with the definition
-
-#ifdef CONFIG_CLKSRC_OF
-extern void clocksource_of_init(void);
-
-#define CLOCKSOURCE_OF_DECLARE(name, compat, fn)                       =
- \
-        static const struct of_device_id __clksrc_of_table_##name      =
- \
-                __used __section(__clksrc_of_table)                    =
- \
-                 =3D { .compatible =3D compat,                         =
-     \
-                     .data =3D (fn =3D=3D (clocksource_of_init_fn)NULL)=
- ? fn : fn }
-#else
-static inline void clocksource_of_init(void) {}
-#define CLOCKSOURCE_OF_DECLARE(name, compat, fn)                       =
- \
-        static const struct of_device_id __clksrc_of_table_##name      =
- \
-                __attribute__((unused))                                =
- \
-                 =3D { .compatible =3D compat,                         =
-     \
-                     .data =3D (fn =3D=3D (clocksource_of_init_fn)NULL)=
- ? fn : fn }
-#endif
-
-which turns the =E2=80=98samsung_pwm_clocksource_init_of=E2=80=99 funct=
-ion into an unused
-symbol that gets silently dropped by gcc, at least in theory. Are you
-using the latest clksrc/cleanup branch as a base?
-
-	Arnd
+QW0gU2Ftc3RhZywgMTMuIEFwcmlsIDIwMTMsIDAwOjI2OjQzIHNjaHJpZWIgQXJuZCBCZXJnbWFu
+bjoKPiBPbiBTYXR1cmRheSAxMyBBcHJpbCAyMDEzIDAwOjIyOjQ4IEhlaWtvIFN0w7xibmVyIHdy
+b3RlOgo+ID4gV2l0aG91dCBkdCBzdXBwb3J0LCB5b3UgZ2V0IHRoaXM6Cj4gPiAgIENDICAgICAg
+ZHJpdmVycy9jbG9ja3NvdXJjZS9zYW1zdW5nX3B3bS5vCj4gPiAKPiA+IGRyaXZlcnMvY2xvY2tz
+b3VyY2Uvc2Ftc3VuZ19wd20uYzo2MjA6IHdhcm5pbmc6Cj4gPiDigJhzYW1zdW5nX3B3bV9jbG9j
+a3NvdXJjZV9pbml0X29m4oCZIGRlZmluZWQgYnV0IG5vdCB1c2VkCj4gPiAKPiA+IFNvLCBzb21l
+dGhpbmcgbGlrZSB0aGUgZm9sbG93aW5nIG1pZ2h0IGJlIG5lY2Vzc2FyeQo+IAo+IFRoYXQgcGF0
+Y2ggc2hvdWxkIG5vdCBiZSByZXF1aXJlZCBhbnkgbW9yZSB3aXRoIHRoZSBkZWZpbml0aW9uCj4g
+Cj4gI2lmZGVmIENPTkZJR19DTEtTUkNfT0YKPiBleHRlcm4gdm9pZCBjbG9ja3NvdXJjZV9vZl9p
+bml0KHZvaWQpOwo+IAo+ICNkZWZpbmUgQ0xPQ0tTT1VSQ0VfT0ZfREVDTEFSRShuYW1lLCBjb21w
+YXQsIGZuKSAgICAgICAgICAgICAgICAgICAgICAgIFwKPiAgICAgICAgIHN0YXRpYyBjb25zdCBz
+dHJ1Y3Qgb2ZfZGV2aWNlX2lkIF9fY2xrc3JjX29mX3RhYmxlXyMjbmFtZSAgICAgICBcCj4gICAg
+ICAgICAgICAgICAgIF9fdXNlZCBfX3NlY3Rpb24oX19jbGtzcmNfb2ZfdGFibGUpICAgICAgICAg
+ICAgICAgICAgICAgXAo+ICAgICAgICAgICAgICAgICAgPSB7IC5jb21wYXRpYmxlID0gY29tcGF0
+LCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwKPiAgICAgICAgICAgICAgICAgICAgICAu
+ZGF0YSA9IChmbiA9PSAoY2xvY2tzb3VyY2Vfb2ZfaW5pdF9mbilOVUxMKSA/IGZuIDogZm4KPiB9
+ICNlbHNlCj4gc3RhdGljIGlubGluZSB2b2lkIGNsb2Nrc291cmNlX29mX2luaXQodm9pZCkge30K
+PiAjZGVmaW5lIENMT0NLU09VUkNFX09GX0RFQ0xBUkUobmFtZSwgY29tcGF0LCBmbikgICAgICAg
+ICAgICAgICAgICAgICAgICBcCj4gICAgICAgICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldmlj
+ZV9pZCBfX2Nsa3NyY19vZl90YWJsZV8jI25hbWUgICAgICAgXAo+ICAgICAgICAgICAgICAgICBf
+X2F0dHJpYnV0ZV9fKCh1bnVzZWQpKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwK
+PiAgICAgICAgICAgICAgICAgID0geyAuY29tcGF0aWJsZSA9IGNvbXBhdCwgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBcCj4gICAgICAgICAgICAgICAgICAgICAgLmRhdGEgPSAoZm4gPT0g
+KGNsb2Nrc291cmNlX29mX2luaXRfZm4pTlVMTCkgPyBmbiA6IGZuCj4gfSAjZW5kaWYKPiAKPiB3
+aGljaCB0dXJucyB0aGUg4oCYc2Ftc3VuZ19wd21fY2xvY2tzb3VyY2VfaW5pdF9vZuKAmSBmdW5j
+dGlvbiBpbnRvIGFuIHVudXNlZAo+IHN5bWJvbCB0aGF0IGdldHMgc2lsZW50bHkgZHJvcHBlZCBi
+eSBnY2MsIGF0IGxlYXN0IGluIHRoZW9yeS4gQXJlIHlvdQo+IHVzaW5nIHRoZSBsYXRlc3QgY2xr
+c3JjL2NsZWFudXAgYnJhbmNoIGFzIGEgYmFzZT8KCk5vcGUsIEkganVzdCBwdXQgdGhlIHN0dWZm
+IG9uIHRvcCBvZiBhbGwgdGhlIG90aGVyIGNoYW5nZXMuIFNvIGl0IHNlZW1zIApldmVyeXRoaW5n
+IGlzIGZpbmUgYW5kIHdvcmtpbmcgLi4uIHZlcnkgbmljZSA6LSkKCgpIZWlrbwoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBt
+YWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9s
+aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
