@@ -1,77 +1,49 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v5 14/14] clocksource: samsung-pwm: Prepare for
- clocksource_of_init
-Date: Fri, 12 Apr 2013 21:17:30 +0200
-Message-ID: <1365794250-14436-15-git-send-email-t.figa@samsung.com>
-References: <1365794250-14436-1-git-send-email-t.figa@samsung.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [alsa-devel] [PATCH 20/30] ASoC: samsung: convert to dmaengine
+ API
+Date: Fri, 12 Apr 2013 21:27:27 +0200
+Message-ID: <5168601F.2070409@metafoo.de>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <1365638712-1028578-21-git-send-email-arnd@arndb.de> <20130411142706.GB24971@opensource.wolfsonmicro.com> <201304111647.17796.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55028 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752491Ab3DLTTo (ORCPT
+Received: from smtp-out-226.synserver.de ([212.40.185.226]:1076 "EHLO
+	smtp-out-226.synserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752680Ab3DLT2X (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Apr 2013 15:19:44 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0ML500BZ4POV9DC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 13 Apr 2013 04:19:43 +0900 (KST)
-In-reply-to: <1365794250-14436-1-git-send-email-t.figa@samsung.com>
+	Fri, 12 Apr 2013 15:28:23 -0400
+In-Reply-To: <201304111647.17796.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, sylvester.nawrocki@gmail.com, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, mark.rutland@arm.com, tomasz.figa@gmail.com, heiko@sntech.de, robherring2@gmail.com, m.szyprowski@samsung.com, arnd@arndb.de, john.stultz@linaro.org, tglx@linutronix.de, Tomasz Figa <t.figa@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-This patch adds support for clocksource instantiation using
-clocksource_of_init, by declaring OF clocksources with
-CLOCKSOURCE_OF_DECLARE() macro.
+On 04/11/2013 04:47 PM, Arnd Bergmann wrote:
+> On Thursday 11 April 2013, Mark Brown wrote:
+>>
+>> On Thu, Apr 11, 2013 at 02:05:02AM +0200, Arnd Bergmann wrote:
+>>> In order to build the exynos kernel with CONFIG_ARCH_MULTIPLATFORM,
+>>> we must convert all users of the Samsung private DMA interface to
+>>> the generic dmaengine API. This version of the patch adds the
+>>> generic dmaengine API as an alternative to the existing samsung
+>>> specific one. Once all the older platforms provide support for
+>>> the common dmaengine interfaces, we can remove the old code.
+>>
+>> There's generic ASoC dmaengine code which should be used instead of open
+>> coding this.  Lars-Peter Clausen and Lee Jones have been working on
+>> making this a totally generic driver, right now it's a library.
+> 
+> Ok, I see. I'll drop this patch from my series then and will let someone
+> else handle this driver in 3.11. We can probably live without sound support
+> in 3.10 when running a multiplatform kernel, and it will keep working
+> for exynos-only kernels without the patch.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/clocksource/samsung_pwm.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+I actually had a look at how the Samsung PCM driver a couple of days back,
+but I didn't fully grasp how things work with the secondary TX channel for
+the i2s driver and to make it work with the generic dmaengine PCM driver.
+The code handling this in the i2s driver seems to be rather messy with lots
+of ifs and elses. Also things would have would be a lot easier if the dt
+bindings had used two subnodes each with their own 'dmas' property.
 
-diff --git a/drivers/clocksource/samsung_pwm.c b/drivers/clocksource/samsung_pwm.c
-index b816b65..a12ee08 100644
---- a/drivers/clocksource/samsung_pwm.c
-+++ b/drivers/clocksource/samsung_pwm.c
-@@ -590,12 +590,13 @@ static void __init samsung_timer_resources(void)
- 	}
- }
- 
--void __init samsung_pwm_clocksource_init(struct platform_device *pdev)
-+static void __init __samsung_pwm_clocksource_init(
-+			struct platform_device *pdev, struct device_node *np)
- {
- 	u8 mask;
- 	int channel;
- 
--	pwm = samsung_pwm_get(pdev, NULL);
-+	pwm = samsung_pwm_get(pdev, np);
- 	if (IS_ERR(pwm))
- 		panic("failed to get PWM device");
- 
-@@ -615,3 +616,21 @@ void __init samsung_pwm_clocksource_init(struct platform_device *pdev)
- 	samsung_clockevent_init();
- 	samsung_clocksource_init();
- }
-+
-+static void __init samsung_pwm_clocksource_init_of(struct device_node *np)
-+{
-+	__samsung_pwm_clocksource_init(NULL, np);
-+}
-+CLOCKSOURCE_OF_DECLARE(s3c2410_pwm, "samsung,s3c2410-pwm",
-+					samsung_pwm_clocksource_init_of);
-+CLOCKSOURCE_OF_DECLARE(s3c6400_pwm, "samsung,s3c6400-pwm",
-+					samsung_pwm_clocksource_init_of);
-+CLOCKSOURCE_OF_DECLARE(s5p6440_pwm, "samsung,s5p6440-pwm",
-+					samsung_pwm_clocksource_init_of);
-+CLOCKSOURCE_OF_DECLARE(s5pc100_pwm, "samsung,s5pc100-pwm",
-+					samsung_pwm_clocksource_init_of);
-+
-+void __init samsung_pwm_clocksource_init(struct platform_device *pdev)
-+{
-+	__samsung_pwm_clocksource_init(pdev, NULL);
-+}
--- 
-1.8.1.5
+- Lars
