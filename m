@@ -1,60 +1,159 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ASoC: samsung: fix neo1973-wm8753 compilation
-Date: Fri, 12 Apr 2013 13:13:36 +0100
-Message-ID: <20130412121320.GX9243@opensource.wolfsonmicro.com>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
- <201304111908.42532.arnd@arndb.de>
- <20130411171938.GS9243@opensource.wolfsonmicro.com>
- <201304112102.43896.heiko@sntech.de>
+From: Alexander Varnin <fenixk19@mail.ru>
+Subject: sdhci-s3c suspends immediately
+Date: Fri, 12 Apr 2013 16:20:45 +0400
+Message-ID: <5167FC1D.7020601@mail.ru>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zAIN9dnKNiFxaW1E"
+Content-Type: multipart/mixed;
+ boundary="------------020500040000000202040401"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35232 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752878Ab3DLMNi (ORCPT
+Received: from fallback5.mail.ru ([94.100.176.59]:53410 "EHLO
+	fallback5.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753612Ab3DLMVN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Apr 2013 08:13:38 -0400
-Content-Disposition: inline
-In-Reply-To: <201304112102.43896.heiko@sntech.de>
+	Fri, 12 Apr 2013 08:21:13 -0400
+Received: from smtp49.i.mail.ru (smtp49.i.mail.ru [94.100.177.109])
+	by fallback5.mail.ru (mPOP.Fallback_MX) with ESMTP id 16657DC29F00
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Apr 2013 16:21:09 +0400 (MSK)
+Received: from [46.28.89.34] (port=52105 helo=[10.1.1.191])
+	by smtp49.i.mail.ru with esmtpa (envelope-from <fenixk19@mail.ru>)
+	id 1UQcyF-0006QA-G8
+	for linux-samsung-soc@vger.kernel.org; Fri, 12 Apr 2013 16:20:47 +0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+
+This is a multi-part message in MIME format.
+--------------020500040000000202040401
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hello. I'm trying to bring up sdhci-s3c driver on S3C2443 SOC.
+It seems to initialize correctly, but immediately after that it get 
+suspended by some force. This turns off all interrupts, so SD controller 
+doesn't work. I don't know, where suspend command comes from, but whole 
+system stay in working state.
+I've recorded some boot log with extended verbose for a driver. It is 
+attached.
+
+I want to understand, why and where does this command come from. And how 
+to turn it off. Now there is no suspend support working on my board, but 
+i don't want to turn suspend (PM runtime) off at all, because it may be 
+need to set it up in future.
+Please, help.
 
 
---zAIN9dnKNiFxaW1E
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--------------020500040000000202040401
+Content-Type: text/plain; charset=UTF-8;
+ name="boot-log-part"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="boot-log-part"
 
-On Thu, Apr 11, 2013 at 09:02:43PM +0200, Heiko St=FCbner wrote:
-> Commit b2ca78717cea (ARM: S3C24XX: make gta02.h local) already replaced
-> the GTA02_GPIO_* constants in neo1973-wm8753.c but forgot to remove the
-> inclusion of mach/gta02.h before moving the file out of mach/.
-
-Applied, thanks.
-
---zAIN9dnKNiFxaW1E
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRZ/poAAoJELSic+t+oim9e0AP/R3Lu5s4gScu+xJ0G8nvLVAl
-YLNjq7WzVqz5m0gOzj9gYxCTxEnixXm2RvDyjkhif1QbTn68TGtWaxaiADOzwtEu
-c8BVVUGs/77WZhIBZj0rYLeQCO0W+46LmImbQXf5buToGxJzF/wEvdWiYR9HYOjU
-8assej7avGF4oDD2CjmmVxH+v35ygZmvKTb8nvx2aBiAHVuELnHfN0sM8lOYDQY6
-jynA+FkNjWUpK0u9agcblyflFHxOEcNpHdgEJk1ANV88FFYyLTjy3VR1hECE6Ha7
-jY7I6S2FAhs47a/C4nxmSGCU5Wjpf4Ucrcsygti5Dc01zui5EUTQZjp0sUkG1kcp
-OCBqwbV4K39ej0s5rDv0u5LZQEC+HOek1vg5SIwMuLP6wu3ss+W9H7mD5o/BVv2k
-7XNEe/myhvIsnNGjxSql1DLlUEDNQjXG6fPezbqgoNkRtWGg5D3FedGuRfmpGQnC
-pOuMg2T3bXwXmUrzKVov09fV/sVOR3v5Nxe46ej5YKr0MMDCnYjIq0H4dIz5gg2I
-4fCMJMPZzYHgclJN9osnWTqaR6hviGC402mLaP/3rsYVc8DIrSd53thnap/qhPFp
-lKxfQAXJIsCm0c2zBV3rUeKqaLwm4Ysj9OKhkiUP0Wp5CHwswwGQ12oqy66Dd8bh
-cLOtL0lrcYb3ccHLEDMJ
-=bWTJ
------END PGP SIGNATURE-----
-
---zAIN9dnKNiFxaW1E--
+c2RoY2k6IFNlY3VyZSBEaWdpdGFsIEhvc3QgQ29udHJvbGxlciBJbnRlcmZhY2UgZHJpdmVy
+CnNkaGNpOiBDb3B5cmlnaHQoYykgUGllcnJlIE9zc21hbgpzM2Mtc2RoY2kgczNjLXNkaGNp
+LjE6IGNsb2NrIHNvdXJjZSAwOiBtbWNfYnVzY2xrLjAgKDEzMzUwMDAwMCBIeikKczNjLXNk
+aGNpIHMzYy1zZGhjaS4xOiBjbG9jayBzb3VyY2UgMjogbW1jX2J1c2Nsay4yICg5NjAwMDAw
+MCBIeikKc2RoY2lfYWRkX2hvc3QKc2RoY2lfY2xlYXJfc2V0X2lycXMgY2xlYXIgLTEgc2V0
+IDE2NzExNjgzCnNkaGNpX2NsZWFyX3NldF9pcnFzIGNsZWFyIC0xIHNldCAxNjcxMTY4Mwpz
+ZGhjaV9zZXRfY2FyZF9kZXRlY3Rpb24gMQpzZGhjaV9jbGVhcl9zZXRfaXJxcyBjbGVhciAw
+IHNldCA2NAptbWMwOiBTREhDSSBjb250cm9sbGVyIG9uIHNhbXN1bmctaHNtbWMgW3MzYy1z
+ZGhjaS4xXSB1c2luZyBQSU8Kc2RoY2lfc2V0X2NhcmRfZGV0ZWN0aW9uIDEKc2RoY2lfY2xl
+YXJfc2V0X2lycXMgY2xlYXIgMCBzZXQgNjQKc2RoY2lfcnVudGltZV9zdXNwZW5kX2hvc3QK
+WzxjMDAwZTgyMD5dICh1bndpbmRfYmFja3RyYWNlKzB4MC8weDEyYykgZnJvbSBbPGMwMzk0
+OGY0Pl0gKGR1bXBfc3RhY2srMHgyMC8weDI0KQpbPGMwMzk0OGY0Pl0gKGR1bXBfc3RhY2sr
+MHgyMC8weDI0KSBmcm9tIFs8YzAyYjBhOGM+XSAoc2RoY2lfcnVudGltZV9zdXNwZW5kX2hv
+c3QrMHgyNC8weDkwKQpbPGMwMmIwYThjPl0gKHNkaGNpX3J1bnRpbWVfc3VzcGVuZF9ob3N0
+KzB4MjQvMHg5MCkgZnJvbSBbPGMwMmIyNGEwPl0gKHNkaGNpX3MzY19ydW50aW1lX3N1c3Bl
+bmQrMHgyNC8weDQ4KQpbPGMwMmIyNGEwPl0gKHNkaGNpX3MzY19ydW50aW1lX3N1c3BlbmQr
+MHgyNC8weDQ4KSBmcm9tIFs8YzAxZjQ1NjA+XSAocG1fZ2VuZXJpY19ydW50aW1lX3N1c3Bl
+bmQrMHg0MC8weDU0KQpbPGMwMWY0NTYwPl0gKHBtX2dlbmVyaWNfcnVudGltZV9zdXNwZW5k
+KzB4NDAvMHg1NCkgZnJvbSBbPGMwMWY4NWMwPl0gKF9fcnBtX2NhbGxiYWNrKzB4NDAvMHg1
+YykKWzxjMDFmODVjMD5dIChfX3JwbV9jYWxsYmFjaysweDQwLzB4NWMpIGZyb20gWzxjMDFm
+OGMzOD5dIChycG1fc3VzcGVuZCsweDJiMC8weDQ5OCkKWzxjMDFmOGMzOD5dIChycG1fc3Vz
+cGVuZCsweDJiMC8weDQ5OCkgZnJvbSBbPGMwMWY5YjA4Pl0gKF9fcG1fcnVudGltZV9zdXNw
+ZW5kKzB4NTAvMHg2MCkKWzxjMDFmOWIwOD5dIChfX3BtX3J1bnRpbWVfc3VzcGVuZCsweDUw
+LzB4NjApIGZyb20gWzxjMDFmNGMwOD5dIChwbV9nZW5lcmljX3J1bnRpbWVfaWRsZSsweDU4
+LzB4NjApCls8YzAxZjRjMDg+XSAocG1fZ2VuZXJpY19ydW50aW1lX2lkbGUrMHg1OC8weDYw
+KSBmcm9tIFs8YzAxZjg1YzA+XSAoX19ycG1fY2FsbGJhY2srMHg0MC8weDVjKQpbPGMwMWY4
+NWMwPl0gKF9fcnBtX2NhbGxiYWNrKzB4NDAvMHg1YykgZnJvbSBbPGMwMWY5MDJjPl0gKHJw
+bV9pZGxlKzB4MWE0LzB4MjNjKQpbPGMwMWY5MDJjPl0gKHJwbV9pZGxlKzB4MWE0LzB4MjNj
+KSBmcm9tIFs8YzAxZjkxODA+XSAoX19wbV9ydW50aW1lX2lkbGUrMHg1MC8weDYwKQpbPGMw
+MWY5MTgwPl0gKF9fcG1fcnVudGltZV9pZGxlKzB4NTAvMHg2MCkgZnJvbSBbPGMwMWVmOTFj
+Pl0gKGRyaXZlcl9wcm9iZV9kZXZpY2UrMHgyZjAvMHgzNGMpCls8YzAxZWY5MWM+XSAoZHJp
+dmVyX3Byb2JlX2RldmljZSsweDJmMC8weDM0YykgZnJvbSBbPGMwMWVmOWU0Pl0gKF9fZHJp
+dmVyX2F0dGFjaCsweDZjLzB4OGMpCls8YzAxZWY5ZTQ+XSAoX19kcml2ZXJfYXR0YWNoKzB4
+NmMvMHg4YykgZnJvbSBbPGMwMWVkY2NjPl0gKGJ1c19mb3JfZWFjaF9kZXYrMHg2NC8weDk0
+KQpbPGMwMWVkY2NjPl0gKGJ1c19mb3JfZWFjaF9kZXYrMHg2NC8weDk0KSBmcm9tIFs8YzAx
+ZWYyNjA+XSAoZHJpdmVyX2F0dGFjaCsweDI4LzB4MzApCls8YzAxZWYyNjA+XSAoZHJpdmVy
+X2F0dGFjaCsweDI4LzB4MzApIGZyb20gWzxjMDFlZWM0MD5dIChidXNfYWRkX2RyaXZlcisw
+eGQwLzB4MjRjKQpbPGMwMWVlYzQwPl0gKGJ1c19hZGRfZHJpdmVyKzB4ZDAvMHgyNGMpIGZy
+b20gWzxjMDFlZmY5Yz5dIChkcml2ZXJfcmVnaXN0ZXIrMHhhYy8weDEzYykKWzxjMDFlZmY5
+Yz5dIChkcml2ZXJfcmVnaXN0ZXIrMHhhYy8weDEzYykgZnJvbSBbPGMwMWYxMTEwPl0gKHBs
+YXRmb3JtX2RyaXZlcl9yZWdpc3RlcisweDU0LzB4NjgpCls8YzAxZjExMTA+XSAocGxhdGZv
+cm1fZHJpdmVyX3JlZ2lzdGVyKzB4NTQvMHg2OCkgZnJvbSBbPGMwNTE3ZmMwPl0gKHNkaGNp
+X3MzY19kcml2ZXJfaW5pdCsweDE0LzB4MWMpCls8YzA1MTdmYzA+XSAoc2RoY2lfczNjX2Ry
+aXZlcl9pbml0KzB4MTQvMHgxYykgZnJvbSBbPGMwMDA4NWM4Pl0gKGRvX29uZV9pbml0Y2Fs
+bCsweGI4LzB4MTg4KQpbPGMwMDA4NWM4Pl0gKGRvX29uZV9pbml0Y2FsbCsweGI4LzB4MTg4
+KSBmcm9tIFs8YzAzOTEyMjg+XSAoa2VybmVsX2luaXQrMHhmYy8weDJhNCkKWzxjMDM5MTIy
+OD5dIChrZXJuZWxfaW5pdCsweGZjLzB4MmE0KSBmcm9tIFs8YzAwMDkyNTA+XSAocmV0X2Zy
+b21fZm9yaysweDE0LzB4MjApCnNkaGNpX2NsZWFyX3NldF9pcnFzIGNsZWFyIC0xIHNldCAw
+CnVzYmNvcmU6IHJlZ2lzdGVyZWQgbmV3IGludGVyZmFjZSBkcml2ZXIgdXNiaGlkCnVzYmhp
+ZDogVVNCIEhJRCBjb3JlIGRyaXZlcgpzZGhjaV9jbGVhcl9zZXRfaXJxcyBjbGVhciAtMSBz
+ZXQgMTY3MTE2ODMKc2RoY2lfc2V0X2NhcmRfZGV0ZWN0aW9uIDEKc2RoY2lfY2xlYXJfc2V0
+X2lycXMgY2xlYXIgMCBzZXQgNjQKb3Byb2ZpbGU6IGhhcmR3YXJlIGNvdW50ZXJzIG5vdCBh
+dmFpbGFibGUKb3Byb2ZpbGU6IHVzaW5nIHRpbWVyIGludGVycnVwdC4KVENQOiBjdWJpYyBy
+ZWdpc3RlcmVkCk5FVDogUmVnaXN0ZXJlZCBwcm90b2NvbCBmYW1pbHkgMTcKcnRjLWRzMTMw
+NyAwLTAwNjg6IHNldHRpbmcgc3lzdGVtIGNsb2NrIHRvIDIwMTMtMDQtMTIgMTE6NTY6MjMg
+VVRDICgxMzY1NzY3NzgzKQpBTFNBIGRldmljZSBsaXN0OgogIE5vIHNvdW5kY2FyZHMgZm91
+bmQuClJBTURJU0s6IGNyYW1mcyBmaWxlc3lzdGVtIGZvdW5kIGF0IGJsb2NrIDAKUkFNRElT
+SzogTG9hZGluZyAxMTQ2OEtpQiBbMSBkaXNrXSBpbnRvIHJhbSBkaXNrLi4uIHNkaGNpX3J1
+bnRpbWVfc3VzcGVuZF9ob3N0Cls8YzAwMGU4MjA+XSAodW53aW5kX2JhY2t0cmFjZSsweDAv
+MHgxMmMpIGZyb20gWzxjMDM5NDhmND5dIChkdW1wX3N0YWNrKzB4MjAvMHgyNCkKWzxjMDM5
+NDhmND5dIChkdW1wX3N0YWNrKzB4MjAvMHgyNCkgZnJvbSBbPGMwMmIwYThjPl0gKHNkaGNp
+X3J1bnRpbWVfc3VzcGVuZF9ob3N0KzB4MjQvMHg5MCkKWzxjMDJiMGE4Yz5dIChzZGhjaV9y
+dW50aW1lX3N1c3BlbmRfaG9zdCsweDI0LzB4OTApIGZyb20gWzxjMDJiMjRhMD5dIChzZGhj
+aV9zM2NfcnVudGltZV9zdXNwZW5kKzB4MjQvMHg0OCkKWzxjMDJiMjRhMD5dIChzZGhjaV9z
+M2NfcnVudGltZV9zdXNwZW5kKzB4MjQvMHg0OCkgZnJvbSBbPGMwMWY0NTYwPl0gKHBtX2dl
+bmVyaWNfcnVudGltZV9zdXNwZW5kKzB4NDAvMHg1NCkKWzxjMDFmNDU2MD5dIChwbV9nZW5l
+cmljX3J1bnRpbWVfc3VzcGVuZCsweDQwLzB4NTQpIGZyb20gWzxjMDFmODVjMD5dIChfX3Jw
+bV9jYWxsYmFjaysweDQwLzB4NWMpCls8YzAxZjg1YzA+XSAoX19ycG1fY2FsbGJhY2srMHg0
+MC8weDVjKSBmcm9tIFs8YzAxZjhjMzg+XSAocnBtX3N1c3BlbmQrMHgyYjAvMHg0OTgpCls8
+YzAxZjhjMzg+XSAocnBtX3N1c3BlbmQrMHgyYjAvMHg0OTgpIGZyb20gWzxjMDFmOWMzOD5d
+IChwbV9ydW50aW1lX3dvcmsrMHg4MC8weDljKQpbPGMwMWY5YzM4Pl0gKHBtX3J1bnRpbWVf
+d29yaysweDgwLzB4OWMpIGZyb20gWzxjMDAzMmZjMD5dIChwcm9jZXNzX29uZV93b3JrKzB4
+MjZjLzB4M2U4KQpbPGMwMDMyZmMwPl0gKHByb2Nlc3Nfb25lX3dvcmsrMHgyNmMvMHgzZTgp
+IGZyb20gWzxjMDAzNDlkOD5dICh3b3JrZXJfdGhyZWFkKzB4MjkwLzB4Mzk0KQpbPGMwMDM0
+OWQ4Pl0gKHdvcmtlcl90aHJlYWQrMHgyOTAvMHgzOTQpIGZyb20gWzxjMDAzOTQ0ND5dIChr
+dGhyZWFkKzB4YjgvMHhjNCkKWzxjMDAzOTQ0ND5dIChrdGhyZWFkKzB4YjgvMHhjNCkgZnJv
+bSBbPGMwMDA5MjUwPl0gKHJldF9mcm9tX2ZvcmsrMHgxNC8weDIwKQpzZGhjaV9jbGVhcl9z
+ZXRfaXJxcyBjbGVhciAtMSBzZXQgMAp1c2IgMS0xOiBuZXcgZnVsbC1zcGVlZCBVU0IgZGV2
+aWNlIG51bWJlciAyIHVzaW5nIHMzYzI0MTAtb2hjaQpzZGhjaV9jbGVhcl9zZXRfaXJxcyBj
+bGVhciAtMSBzZXQgMTY3MTE2ODMKc2RoY2lfc2V0X2NhcmRfZGV0ZWN0aW9uIDEKc2RoY2lf
+Y2xlYXJfc2V0X2lycXMgY2xlYXIgMCBzZXQgNjQKc2RoY2lfY2xlYXJfc2V0X2lycXMgY2xl
+YXIgLTEgc2V0IDE2NzExNjgzCnNkaGNpX3NldF9jYXJkX2RldGVjdGlvbiAxCnNkaGNpX2Ns
+ZWFyX3NldF9pcnFzIGNsZWFyIDAgc2V0IDY0CnNkaGNpX2NsZWFyX3NldF9pcnFzIGNsZWFy
+IC0xIHNldCAxNjcxMTY4MwpzZGhjaV9zZXRfY2FyZF9kZXRlY3Rpb24gMQpzZGhjaV9jbGVh
+cl9zZXRfaXJxcyBjbGVhciAwIHNldCA2NAp1c2IgMS0xOiBOZXcgVVNCIGRldmljZSBmb3Vu
+ZCwgaWRWZW5kb3I9MDQ1MSwgaWRQcm9kdWN0PTIwNDYKdXNiIDEtMTogTmV3IFVTQiBkZXZp
+Y2Ugc3RyaW5nczogTWZyPTAsIFByb2R1Y3Q9MCwgU2VyaWFsTnVtYmVyPTAKc2RoY2lfcnVu
+dGltZV9zdXNwZW5kX2hvc3QKWzxjMDAwZTgyMD5dICh1bndpbmRfYmFja3RyYWNlKzB4MC8w
+eDEyYykgZnJvbSBbPGMwMzk0OGY0Pl0gKGR1bXBfc3RhY2srMHgyMC8weDI0KQpbPGMwMzk0
+OGY0Pl0gKGR1bXBfc3RhY2srMHgyMC8weDI0KSBmcm9tIFs8YzAyYjBhOGM+XSAoc2RoY2lf
+cnVudGltZV9zdXNwZW5kX2hvc3QrMHgyNC8weDkwKQpbPGMwMmIwYThjPl0gKHNkaGNpX3J1
+bnRpbWVfc3VzcGVuZF9ob3N0KzB4MjQvMHg5MCkgZnJvbSBbPGMwMmIyNGEwPl0gKHNkaGNp
+X3MzY19ydW50aW1lX3N1c3BlbmQrMHgyNC8weDQ4KQpbPGMwMmIyNGEwPl0gKHNkaGNpX3Mz
+Y19ydW50aW1lX3N1c3BlbmQrMHgyNC8weDQ4KSBmcm9tIFs8YzAxZjQ1NjA+XSAocG1fZ2Vu
+ZXJpY19ydW50aW1lX3N1c3BlbmQrMHg0MC8weDU0KQpbPGMwMWY0NTYwPl0gKHBtX2dlbmVy
+aWNfcnVudGltZV9zdXNwZW5kKzB4NDAvMHg1NCkgZnJvbSBbPGMwMWY4NWMwPl0gKF9fcnBt
+X2NhbGxiYWNrKzB4NDAvMHg1YykKWzxjMDFmODVjMD5dIChfX3JwbV9jYWxsYmFjaysweDQw
+LzB4NWMpIGZyb20gWzxjMDFmOGMzOD5dIChycG1fc3VzcGVuZCsweDJiMC8weDQ5OCkKWzxj
+MDFmOGMzOD5dIChycG1fc3VzcGVuZCsweDJiMC8weDQ5OCkgZnJvbSBbPGMwMWY5YzM4Pl0g
+KHBtX3J1bnRpbWVfd29yaysweDgwLzB4OWMpCls8YzAxZjljMzg+XSAocG1fcnVudGltZV93
+b3JrKzB4ODAvMHg5YykgZnJvbSBbPGMwMDMyZmMwPl0gKHByb2Nlc3Nfb25lX3dvcmsrMHgy
+NmMvMHgzZTgpCls8YzAwMzJmYzA+XSAocHJvY2Vzc19vbmVfd29yaysweDI2Yy8weDNlOCkg
+ZnJvbSBbPGMwMDM0OWQ4Pl0gKHdvcmtlcl90aHJlYWQrMHgyOTAvMHgzOTQpCls8YzAwMzQ5
+ZDg+XSAod29ya2VyX3RocmVhZCsweDI5MC8weDM5NCkgZnJvbSBbPGMwMDM5NDQ0Pl0gKGt0
+aHJlYWQrMHhiOC8weGM0KQpbPGMwMDM5NDQ0Pl0gKGt0aHJlYWQrMHhiOC8weGM0KSBmcm9t
+IFs8YzAwMDkyNTA+XSAocmV0X2Zyb21fZm9yaysweDE0LzB4MjApCnNkaGNpX2NsZWFyX3Nl
+dF9pcnFzIGNsZWFyIC0xIHNldCAwCgo=
+--------------020500040000000202040401--
