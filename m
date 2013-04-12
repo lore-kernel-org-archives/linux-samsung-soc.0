@@ -1,186 +1,38 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4/7] irqchip: exynos: pass max combiner number to combiner_init
-Date: Fri, 12 Apr 2013 16:03:22 +0200
-Message-ID: <1365775405-115297-5-git-send-email-arnd@arndb.de>
-References: <1365775405-115297-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:49298 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751556Ab3DLODz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Apr 2013 10:03:55 -0400
-In-Reply-To: <1365775405-115297-1-git-send-email-arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH v5] mmc: dw_mmc: let device core setup the default pin configuration
+Date: Fri, 12 Apr 2013 14:19:15 -0400
+Message-ID: <87y5cnehng.fsf@octavius.laptop.org>
+References: <1365683047-8829-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1365683047-8829-1-git-send-email-thomas.abraham@linaro.org>
+	(Thomas Abraham's message of "Thu, 11 Apr 2013 17:54:07 +0530")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, heiko@sntech.de, linus.walleij@linaro.org, dianders@chromium.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>
 
-We can find out the number of combined IRQs from the device
-tree, but in case of ATAGS boot, the driver currently uses
-hardcoded values based on the SoC type. We can't do that
-in general for a multiplatform kernel, so let's instead pass
-this information from platform code directly in case of
-ATAGS boot.
+Hi,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- arch/arm/mach-exynos/common.c     | 15 ++++++++++++-
- arch/arm/mach-exynos/common.h     |  3 ++-
- drivers/irqchip/exynos-combiner.c | 46 ++++++++++++++-------------------------
- 3 files changed, 32 insertions(+), 32 deletions(-)
+On Thu, Apr 11 2013, Thomas Abraham wrote:
+> With device core now able to setup the default pin configuration,
+> the pin configuration code based on the deprecated Samsung specific
+> gpio bindings is removed.
+>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Tested-by: Doug Anderson <dianders@chromium.org>
+> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+> Changes since v4:
+> - Fixed the incorrecr return path after error in enabling vmmc regulator
+>   as pointed out by Doug.
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 59cb8fe..ecdd212 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -417,6 +417,19 @@ void __init exynos_init_time(void)
- 	}
- }
- 
-+static unsigned int max_combiner_nr(void)
-+{
-+	if (soc_is_exynos5250())
-+		return EXYNOS5_MAX_COMBINER_NR;
-+	else if (soc_is_exynos4412())
-+		return EXYNOS4412_MAX_COMBINER_NR;
-+	else if (soc_is_exynos4212())
-+		return EXYNOS4212_MAX_COMBINER_NR;
-+	else
-+		return EXYNOS4210_MAX_COMBINER_NR;
-+}
-+
-+
- void __init exynos4_init_irq(void)
- {
- 	unsigned int gic_bank_offset;
-@@ -431,7 +444,7 @@ void __init exynos4_init_irq(void)
- #endif
- 
- 	if (!of_have_populated_dt())
--		combiner_init(S5P_VA_COMBINER_BASE, NULL);
-+		combiner_init(S5P_VA_COMBINER_BASE, NULL, max_combiner_nr());
- 
- 	/*
- 	 * The parameters of s5p_init_irq() are for VIC init.
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 9717d0f..4ba8cbe 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -69,7 +69,8 @@ void exynos4212_register_clocks(void);
- #endif
- 
- struct device_node;
--void combiner_init(void __iomem *combiner_base, struct device_node *np);
-+void combiner_init(void __iomem *combiner_base, struct device_node *np,
-+			unsigned int max_nr);
- 
- extern struct smp_operations exynos_smp_ops;
- 
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-index e8501db..d868383 100644
---- a/drivers/irqchip/exynos-combiner.c
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -25,6 +25,8 @@
- #define COMBINER_ENABLE_CLEAR	0x4
- #define COMBINER_INT_STATUS	0xC
- 
-+#define IRQ_IN_COMBINER		8
-+
- static DEFINE_SPINLOCK(irq_controller_lock);
- 
- struct combiner_chip_data {
-@@ -112,23 +114,9 @@ static struct irq_chip combiner_chip = {
- #endif
- };
- 
--static unsigned int max_combiner_nr(void)
--{
--	if (soc_is_exynos5250())
--		return EXYNOS5_MAX_COMBINER_NR;
--	else if (soc_is_exynos4412())
--		return EXYNOS4412_MAX_COMBINER_NR;
--	else if (soc_is_exynos4212())
--		return EXYNOS4212_MAX_COMBINER_NR;
--	else
--		return EXYNOS4210_MAX_COMBINER_NR;
--}
--
- static void __init combiner_cascade_irq(unsigned int combiner_nr,
- 					unsigned int irq)
- {
--	if (combiner_nr >= max_combiner_nr())
--		BUG();
- 	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
- 		BUG();
- 	irq_set_chained_handler(irq, combiner_handle_cascade_irq);
-@@ -139,7 +127,7 @@ static void __init combiner_init_one(unsigned int combiner_nr,
- {
- 	combiner_data[combiner_nr].base = base;
- 	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
--		combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
-+		combiner_irq_domain, combiner_nr * IRQ_IN_COMBINER);
- 	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
- 	combiner_data[combiner_nr].parent_irq = irq;
- 
-@@ -161,7 +149,7 @@ static int combiner_irq_domain_xlate(struct irq_domain *d,
- 	if (intsize < 2)
- 		return -EINVAL;
- 
--	*out_hwirq = intspec[0] * MAX_IRQ_IN_COMBINER + intspec[1];
-+	*out_hwirq = intspec[0] * IRQ_IN_COMBINER + intspec[1];
- 	*out_type = 0;
- 
- 	return 0;
-@@ -209,22 +197,13 @@ static unsigned int exynos4x12_combiner_extra_irq(int group)
- }
- 
- void __init combiner_init(void __iomem *combiner_base,
--			  struct device_node *np)
-+			  struct device_node *np,
-+			  unsigned int max_nr)
- {
- 	int i, irq, irq_base;
--	unsigned int max_nr, nr_irq;
-+	unsigned int nr_irq;
- 
--	max_nr = max_combiner_nr();
--
--	if (np) {
--		if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
--			pr_info("%s: number of combiners not specified, "
--				"setting default as %d.\n",
--				__func__, max_nr);
--		}
--	}
--
--	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
-+	nr_irq = max_nr * IRQ_IN_COMBINER;
- 
- 	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
- 	if (IS_ERR_VALUE(irq_base)) {
-@@ -258,6 +237,7 @@ static int __init combiner_of_init(struct device_node *np,
- 				   struct device_node *parent)
- {
- 	void __iomem *combiner_base;
-+	unsigned int max_nr = 20;
- 
- 	combiner_base = of_iomap(np, 0);
- 	if (!combiner_base) {
-@@ -265,7 +245,13 @@ static int __init combiner_of_init(struct device_node *np,
- 		return -ENXIO;
- 	}
- 
--	combiner_init(combiner_base, np);
-+	if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
-+		pr_info("%s: number of combiners not specified, "
-+			"setting default as %d.\n",
-+			__func__, max_nr);
-+	}
-+
-+	combiner_init(combiner_base, np, max_nr);
- 
- 	return 0;
- }
+Thanks, pushed to mmc-next for 3.10.
+
+- Chris.
 -- 
-1.8.1.2
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
