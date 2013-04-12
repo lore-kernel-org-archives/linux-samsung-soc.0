@@ -1,22 +1,20 @@
 From: amit daniel kachhap <amit.daniel@samsung.com>
 Subject: Re: [4/9] thermal: exynos: Bifurcate exynos thermal common and tmu
  controller code
-Date: Fri, 12 Apr 2013 16:36:55 +0530
-Message-ID: <CADGdYn6ccGPqag8nLy+f0FqwJnP-UFY_bBPqWZsA4zf3UHrNNw@mail.gmail.com>
+Date: Fri, 12 Apr 2013 16:39:13 +0530
+Message-ID: <CADGdYn7SGW+HC4JU1SN=Am8FSjFUm_GZTJJoKf6kV3imduxozg@mail.gmail.com>
 References: <1364297642-2746-5-git-send-email-amit.daniel@samsung.com>
-	<51671D77.1020504@ti.com>
+	<51672052.2060908@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <51671D77.1020504@ti.com>
+In-Reply-To: <51672052.2060908@ti.com>
 Sender: linux-pm-owner@vger.kernel.org
 To: Eduardo Valentin <eduardo.valentin@ti.com>
 Cc: linux-pm@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Eduardo,
-
-On Fri, Apr 12, 2013 at 2:00 AM, Eduardo Valentin
+On Fri, Apr 12, 2013 at 2:12 AM, Eduardo Valentin
 <eduardo.valentin@ti.com> wrote:
 > Amit,
 >
@@ -47,21 +45,6 @@ On Fri, Apr 12, 2013 at 2:00 AM, Eduardo Valentin
 >>   create mode 100644 drivers/thermal/samsung/exynos_common.h
 >>   delete mode 100644 drivers/thermal/samsung/exynos_thermal.c
 >>
->
-> Same comment as in patch 3. Can you please use --find-renames?
-Ok
->
-> Besides, it would be interesting if you easier the review process by
-> splitting this patch into 2 at least. One for creating the _common.* and
-> another to rename the remaining to 4210_thermal.
-Ok
->
-> BTW, This follow same design pattern as under
-> drivers/stating/ti-soc-thermal/ :-). I had to do similar design by having
-> common and specific split so that I could afford the support for IPs with
-> several sensors. Like OMAP5.
-Ok sure.
->
 >> diff --git a/drivers/thermal/samsung/Kconfig
 >> b/drivers/thermal/samsung/Kconfig
 >> index 5737b85..cefe693 100644
@@ -114,6 +97,29 @@ Ok sure.
 >> -
 >> +obj-$(CONFIG_EXYNOS_COMMON)            += exynos_common.o
 >> +obj-$(CONFIG_EXYNOS4210_THERMAL)       += exynos4210_thermal.o
+>
+>
+> Are you sure you want separated modules?
+>
+> If yes you have to review this patch and export the symbols from common to
+> exynos4210. Saying that because it generates a compilation error:
+> ERROR: "exynos_report_trigger"
+> [drivers/thermal/samsung/exynos4210_thermal.ko] undefined!
+> ERROR: "exynos_register_thermal"
+> [drivers/thermal/samsung/exynos4210_thermal.ko] undefined!
+> ERROR: "exynos_unregister_thermal"
+> [drivers/thermal/samsung/exynos4210_thermal.ko] undefined!
+>
+> If you want separate modules, you have to EXPORT_SYMBOL those.
+Ok. looks like I missed this test.
+>
+> You can also do what I have done for TI SoC thermal (check linux-next
+> drivers/staging/ti-soc-thermal/Makefile)
+ok sure.
+
+Thanks,
+Amit D
+>>
 >> diff --git a/drivers/thermal/samsung/exynos4210_thermal.c
 >> b/drivers/thermal/samsung/exynos4210_thermal.c
 >> new file mode 100644
@@ -1875,7 +1881,3 @@ Ok sure.
 >> -
 >> -       if (th_zone->therm_dev)
 >> -               thermal_zone_device_unregister(th_zone->therm_dev);
->> -
->> -       for (i = 0; i < th_zone->cool_dev_size; i++) {
->> -               if (th_zone->cool_dev[i])
->> -                       cpufreq_cooling_unregister(th_zone->cool_dev[i]);
