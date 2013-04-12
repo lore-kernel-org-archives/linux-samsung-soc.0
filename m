@@ -1,76 +1,60 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [RESEND PATCH V6 1/4] cpufreq: exynos: Add cpufreq driver for exynos5440
-Date: Fri, 12 Apr 2013 17:21:40 +0530
-Message-ID: <CADGdYn4qJRuLz8=PoXNRRwaNpKO92UshuiQTaK6W6Jj4p79T1A@mail.gmail.com>
-References: <CAKohpo=t_YTCTRCfnwQ+GPF=frsTGDigT3RZHJuVQ+R+YZU7Hg@mail.gmail.com>
-	<1365415054-30771-1-git-send-email-amit.daniel@samsung.com>
-	<CAGo_u6oZM0K8XDMtmXKFyoGy2qf+-HSPvU0EMangM5Jj_prKsA@mail.gmail.com>
-	<1586707.acL064pYmb@vostro.rjw.lan>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ASoC: samsung: fix neo1973-wm8753 compilation
+Date: Fri, 12 Apr 2013 13:13:36 +0100
+Message-ID: <20130412121320.GX9243@opensource.wolfsonmicro.com>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
+ <201304111908.42532.arnd@arndb.de>
+ <20130411171938.GS9243@opensource.wolfsonmicro.com>
+ <201304112102.43896.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1586707.acL064pYmb@vostro.rjw.lan>
-Sender: cpufreq-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Nishanth Menon <nm@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, lkml <linux-kernel@vger.kernel.org>, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Inderpal Singh <inderpal.singh@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zAIN9dnKNiFxaW1E"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35232 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752878Ab3DLMNi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Apr 2013 08:13:38 -0400
+Content-Disposition: inline
+In-Reply-To: <201304112102.43896.heiko@sntech.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>
 
-Hi Rafael,
 
-On Fri, Apr 12, 2013 at 4:49 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> On Thursday, April 11, 2013 06:23:52 PM Nishanth Menon wrote:
->> Hi,
->> On Mon, Apr 8, 2013 at 4:57 AM, Amit Daniel Kachhap
->> <amit.daniel@samsung.com> wrote:
->> > +
->> > +static int init_div_table(void)
->> > +{
->> > +       struct cpufreq_frequency_table *freq_tbl = dvfs_info->freq_table;
->> > +       unsigned int tmp, clk_div, ema_div, freq, volt_id;
->> > +       int i = 0;
->> > +       struct opp *opp;
->> > +
->> > +       for (i = 0; freq_tbl[i].frequency != CPUFREQ_TABLE_END; i++) {
->> > +
->> > +               opp = opp_find_freq_exact(dvfs_info->dev,
->> > +                                       freq_tbl[i].frequency * 1000, true);
->> > +               if (IS_ERR(opp)) {
->> > +                       dev_err(dvfs_info->dev,
->> > +                               "failed to find valid OPP for %u KHZ\n",
->> > +                               freq_tbl[i].frequency);
->> > +                       return PTR_ERR(opp);
->> > +               }
->> please use RCU read locks.
->>
->> > +
->> > +               freq = freq_tbl[i].frequency / 1000; /* In MHZ */
->> > +               clk_div = ((freq / CPU_DIV_FREQ_MAX) & P0_7_CPUCLKDEV_MASK)
->> > +                                       << P0_7_CPUCLKDEV_SHIFT;
->> > +               clk_div |= ((freq / CPU_ATB_FREQ_MAX) & P0_7_ATBCLKDEV_MASK)
->> > +                                       << P0_7_ATBCLKDEV_SHIFT;
->> > +               clk_div |= ((freq / CPU_DBG_FREQ_MAX) & P0_7_CSCLKDEV_MASK)
->> > +                                       << P0_7_CSCLKDEV_SHIFT;
->> > +
->> > +               /* Calculate EMA */
->> > +               volt_id = opp_get_voltage(opp);
->> Please use RCU read locks as documented for OPP library.
->
-> Argh.  I overlooked that and the series has been applied already.  Care to send
-> a fix against linux-pm.git/linux-next?
+--zAIN9dnKNiFxaW1E
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Will submit a patch with RCU lock changes.
+On Thu, Apr 11, 2013 at 09:02:43PM +0200, Heiko St=FCbner wrote:
+> Commit b2ca78717cea (ARM: S3C24XX: make gta02.h local) already replaced
+> the GTA02_GPIO_* constants in neo1973-wm8753.c but forgot to remove the
+> inclusion of mach/gta02.h before moving the file out of mach/.
 
-Thanks,
-Amit Daniel
->
-> Rafael
->
->
-> --
-> I speak only for myself.
-> Rafael J. Wysocki, Intel Open Source Technology Center.
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Applied, thanks.
+
+--zAIN9dnKNiFxaW1E
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRZ/poAAoJELSic+t+oim9e0AP/R3Lu5s4gScu+xJ0G8nvLVAl
+YLNjq7WzVqz5m0gOzj9gYxCTxEnixXm2RvDyjkhif1QbTn68TGtWaxaiADOzwtEu
+c8BVVUGs/77WZhIBZj0rYLeQCO0W+46LmImbQXf5buToGxJzF/wEvdWiYR9HYOjU
+8assej7avGF4oDD2CjmmVxH+v35ygZmvKTb8nvx2aBiAHVuELnHfN0sM8lOYDQY6
+jynA+FkNjWUpK0u9agcblyflFHxOEcNpHdgEJk1ANV88FFYyLTjy3VR1hECE6Ha7
+jY7I6S2FAhs47a/C4nxmSGCU5Wjpf4Ucrcsygti5Dc01zui5EUTQZjp0sUkG1kcp
+OCBqwbV4K39ej0s5rDv0u5LZQEC+HOek1vg5SIwMuLP6wu3ss+W9H7mD5o/BVv2k
+7XNEe/myhvIsnNGjxSql1DLlUEDNQjXG6fPezbqgoNkRtWGg5D3FedGuRfmpGQnC
+pOuMg2T3bXwXmUrzKVov09fV/sVOR3v5Nxe46ej5YKr0MMDCnYjIq0H4dIz5gg2I
+4fCMJMPZzYHgclJN9osnWTqaR6hviGC402mLaP/3rsYVc8DIrSd53thnap/qhPFp
+lKxfQAXJIsCm0c2zBV3rUeKqaLwm4Ysj9OKhkiUP0Wp5CHwswwGQ12oqy66Dd8bh
+cLOtL0lrcYb3ccHLEDMJ
+=bWTJ
+-----END PGP SIGNATURE-----
+
+--zAIN9dnKNiFxaW1E--
