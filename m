@@ -1,97 +1,631 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v5 00/14] ARM: samsung-time: Prepare for multiplatform support
-Date: Sat, 13 Apr 2013 14:28:18 +0200
-Message-ID: <14380521.emfIF6y4Om@flatron>
-References: <1365794250-14436-1-git-send-email-t.figa@samsung.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v2] ARM: S3C24XX: add devicetree support for smdk2416
+Date: Sat, 13 Apr 2013 16:06:47 +0200
+Message-ID: <201304131606.48278.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f172.google.com ([209.85.215.172]:49473 "EHLO
-	mail-ea0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752784Ab3DMM2W (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:51356 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753311Ab3DMOG5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Apr 2013 08:28:22 -0400
-Received: by mail-ea0-f172.google.com with SMTP id z7so1625024eaf.31
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Apr 2013 05:28:21 -0700 (PDT)
-In-Reply-To: <1365794250-14436-1-git-send-email-t.figa@samsung.com>
+	Sat, 13 Apr 2013 10:06:57 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, sylvester.nawrocki@gmail.com, buserror@gmail.com, christer@weinigel.se, jekhor@gmail.com, ghcstop@gmail.com, mark.rutland@arm.com, heiko@sntech.de, robherring2@gmail.com, m.szyprowski@samsung.com, arnd@arndb.de, john.stultz@linaro.org, tglx@linutronix.de
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On Friday 12 of April 2013 21:17:16 Tomasz Figa wrote:
-> This series is an attempt to make the samsung-time clocksource driver
-> ready for multiplatform kernels. It moves the driver to
-> drivers/clocksource, cleans it up from uses of static platform-specific
-> definitions, simplifies timer interrupt handling and adds Device Tree
-> support.
-> 
-> The samsung_pwm clocksource driver is made the master driver, which
-> exposes a single function to the PWM driver to get required data. Only
-> samsung-time driver is reworked to use the master driver at this time,
-> since the PWM driver can be already considered broken at the moment and
-> needs separate series of several patches to fix and clean it up, which
-> I am already working on.
-> 
-> Tested on Universal C210 board with Device Tree. Not tested without
-> Device Tree, since it has been already broken before this series.
-> Compile tested for other related SoCs.
-> 
-> Changes since v4:
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/17464)
->  - Changed the design again - now clocksource driver is considered the
-> master and exports a single function to get access to things like base
-> address, hardware variant information, shared spinlock for register
-> access synchronization and interrupt numbers
->  - Renamed the clocksource driver to samsung_pwm
->  - Cleaned up the code a bit more
->  - Added clocksource_of_init support
-> 
-> Changes since v3:
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16664/)
->  - Changed the design to use common (master) driver for operations that
->    can be done from both clocksource and PWM drivers (as suggested by
->    Arnd Bergmann) - needed to properly synchronize access to PWM
-> registers - Moved handling of PWM prescaler and divider to master
-> driver
-> 
-> Changes since v2:
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16158)
->  - Addressed comments from Rob Herring and Mark Rutland
->  - Removed unused register definitions
->  - Replaced samsung,source-timer and samsung,event-timer properties
->    with samsung,pwm-outputs property that defines which PWM channels
->    are reserved for PWM outputs on particular platform
->  - Split non-DT and DT initialization into two functions
->  - Fixed a copy paste error
-> 
-> Changes since v1:
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16005)
->  - Addressed comments from Mark Rutland
->  - Documented struct samsung_timer_variant
->  - Dropped inactive mail addresses from CC
-> 
-> Tomasz Figa (14):
->   ARM: SAMSUNG: Move samsung-time to drivers/clocksource
->   clocksource: samsung-pwm: Clean up platform header
->   clocksource: samsung-pwm: Add infrastructure to share PWM hardware
->   ARM: SAMSUNG: Unify base address definitions of timer block
->   ARM: SAMSUNG: Add new PWM platform device
->   ARM: SAMSUNG: Set PWM platform data
->   clocksource: samsung-pwm: Use platform data to setup the clocksource
->   clocksource: samsung-pwm: Synchronize register accesses
->   clocksource: samsung-pwm: Move IRQ mask/ack handling to the driver
->   ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
->   clocksource: samsung-pwm: Configure dividers directly
->   clocksource: samsung-pwm: Do not use static mapping of registers
->   clocksource: samsung-pwm: Drop unnecessary includes
->   clocksource: samsung-pwm: Prepare for clocksource_of_init
+Definitions in s3c24xx.dtsi are usable for all s3c24xx SoCs, but some
+need to be extended with proper compatible properties, as can be seen
+in s3c2416.dtsi .
 
-On S3C6410-based Tiny6410 (Mini6410-compatible) board, both with and 
-without Device Tree:
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+changes since v1:
+  fix compatible property of default irq controller
+  (the correct one is samsung,s3c2410-irq)
 
-Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
+ arch/arm/boot/dts/Makefile              |    1 +
+ arch/arm/boot/dts/s3c2416-pinctrl.dtsi  |  173 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/s3c2416-smdk2416.dts  |   72 +++++++++++++
+ arch/arm/boot/dts/s3c2416.dtsi          |   79 ++++++++++++++
+ arch/arm/boot/dts/s3c24xx.dtsi          |   92 ++++++++++++++++
+ arch/arm/mach-s3c24xx/Kconfig           |   12 ++
+ arch/arm/mach-s3c24xx/Makefile          |    1 +
+ arch/arm/mach-s3c24xx/mach-s3c2416-dt.c |   91 ++++++++++++++++
+ 8 files changed, 521 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/s3c2416-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c2416-smdk2416.dts
+ create mode 100644 arch/arm/boot/dts/s3c2416.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c24xx.dtsi
+ create mode 100644 arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
 
-Best regards,
-Tomasz
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index d3cd880..4296353 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -137,6 +137,7 @@ dtb-$(CONFIG_ARCH_U8500) += snowball.dtb \
+ 	hrefprev60.dtb \
+ 	hrefv60plus.dtb \
+ 	ccu9540.dtb
++dtb-$(CONFIG_ARCH_S3C24XX) += s3c2416-smdk2416.dtb
+ dtb-$(CONFIG_ARCH_SHMOBILE) += emev2-kzm9d.dtb \
+ 	r8a7740-armadillo800eva.dtb \
+ 	sh73a0-kzm9g.dtb \
+diff --git a/arch/arm/boot/dts/s3c2416-pinctrl.dtsi b/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
+new file mode 100644
+index 0000000..527e319
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
+@@ -0,0 +1,173 @@
++/*
++ * Samsung S3C2416 pinctrl settings
++ *
++ * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++&pinctrl_0 {
++	/*
++	 * Pin banks
++	 */
++
++	gpa: gpa {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpb: gpb {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpc: gpc {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpd: gpd {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpe: gpe {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpf: gpf {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpg: gpg {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gph: gph {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpj: gpj {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpk: gpk {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpl: gpl {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpm: gpm {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	/*
++	 * Pin groups
++	 */
++
++	uart0_data: uart0-data {
++		samsung,pins = "gph-0", "gph-1";
++		samsung,pin-function = <2>;
++	};
++
++	uart0_fctl: uart0-fctl {
++		samsung,pins = "gph-8", "gph-9";
++		samsung,pin-function = <2>;
++	};
++
++	uart1_data: uart1-data {
++		samsung,pins = "gph-2", "gph-3";
++		samsung,pin-function = <2>;
++	};
++
++	uart1_fctl: uart1-fctl {
++		samsung,pins = "gph-10", "gph-11";
++		samsung,pin-function = <2>;
++	};
++
++	uart2_data: uart2-data {
++		samsung,pins = "gph-4", "gph-5";
++		samsung,pin-function = <2>;
++	};
++
++	uart2_fctl: uart2-fctl {
++		samsung,pins = "gph-6", "gph-7";
++		samsung,pin-function = <2>;
++	};
++
++	uart3_data: uart3-data {
++		samsung,pins = "gph-6", "gph-7";
++		samsung,pin-function = <2>;
++	};
++
++	extuart_clk: extuart-clk {
++		samsung,pins = "gph-12";
++		samsung,pin-function = <2>;
++	};
++
++	i2c0_bus: i2c0-bus {
++		samsung,pins = "gpe-14", "gpe-15";
++		samsung,pin-function = <2>;
++	};
++
++	spi0_bus: spi0-bus {
++		samsung,pins = "gpe-11", "gpe-12", "gpe-13";
++		samsung,pin-function = <2>;
++	};
++
++	sd0_clk: sd0-clk {
++		samsung,pins = "gpe-5";
++		samsung,pin-function = <2>;
++	};
++
++	sd0_cmd: sd0-cmd {
++		samsung,pins = "gpe-6";
++		samsung,pin-function = <2>;
++	};
++
++	sd0_bus1: sd0-bus1 {
++		samsung,pins = "gpe-7";
++		samsung,pin-function = <2>;
++	};
++
++	sd0_bus4: sd0-bus4 {
++		samsung,pins = "gpe-8", "gpe-9", "gpe-10";
++		samsung,pin-function = <2>;
++	};
++
++	sd1_cmd: sd1-cmd {
++		samsung,pins = "gpl-8";
++		samsung,pin-function = <2>;
++	};
++
++	sd1_clk: sd1-clk {
++		samsung,pins = "gpl-9";
++		samsung,pin-function = <2>;
++	};
++
++	sd1_bus1: sd1-bus1 {
++		samsung,pins = "gpl-0";
++		samsung,pin-function = <2>;
++	};
++
++	sd1_bus4: sd1-bus4 {
++		samsung,pins = "gpl-1", "gpl-2", "gpl-3";
++		samsung,pin-function = <2>;
++	};
++};
+diff --git a/arch/arm/boot/dts/s3c2416-smdk2416.dts b/arch/arm/boot/dts/s3c2416-smdk2416.dts
+new file mode 100644
+index 0000000..ad1dd09
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c2416-smdk2416.dts
+@@ -0,0 +1,72 @@
++/*
++ * SAMSUNG SMDK2416 board device tree source
++ *
++ * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++/dts-v1/;
++/include/ "s3c2416.dtsi"
++
++/ {
++	model = "SMDK2416";
++	compatible = "samsung,s3c2416";
++
++	memory {
++		reg =  <0x30000000 0x4000000>;
++	};
++
++	serial@50000000 {
++		status = "okay";
++		pinctrl-names = "default";
++		pinctrl-0 = <&uart0_data>, <&uart0_fctl>;
++	};
++
++	serial@50004000 {
++		status = "okay";
++		pinctrl-names = "default";
++		pinctrl-0 = <&uart1_data>, <&uart1_fctl>;
++	};
++
++	serial@50008000 {
++		status = "okay";
++		pinctrl-names = "default";
++		pinctrl-0 = <&uart2_data>;
++	};
++
++	serial@5000C000 {
++		status = "okay";
++		pinctrl-names = "default";
++		pinctrl-0 = <&uart3_data>;
++	};
++
++	watchdog@53000000 {
++		status = "okay";
++	};
++
++	rtc@57000000 {
++		status = "okay";
++	};
++
++	sdhci@4AC00000 {
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk>, <&sd0_cmd>,
++				<&sd0_bus1>, <&sd0_bus4>;
++		bus-width = <4>;
++		cd-gpios = <&gpf 1 0>;
++		cd-inverted;
++		status = "okay";
++	};
++
++	sdhci@4A800000 {
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd1_clk>, <&sd1_cmd>,
++				<&sd1_bus1>, <&sd1_bus4>;
++		bus-width = <4>;
++		broken-cd;
++		status = "okay";
++	};
++};
+diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
+new file mode 100644
+index 0000000..6809324
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c2416.dtsi
+@@ -0,0 +1,79 @@
++/*
++ * Samsung's S3C2416 SoC device tree source
++ *
++ * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++/include/ "s3c24xx.dtsi"
++/include/ "s3c2416-pinctrl.dtsi"
++
++/ {
++	model = "Samsung S3C2416 SoC";
++	compatible = "samsung,s3c2416";
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu {
++			compatible = "arm,arm926ejs";
++		};
++	};
++
++	interrupt-controller@4a000000 {
++		compatible = "samsung,s3c2416-irq";
++	};
++
++	pinctrl@56000000 {
++		compatible = "samsung,s3c2416-pinctrl";
++	};
++
++	serial@50000000 {
++		compatible = "samsung,s3c2440-uart";
++	};
++
++	serial@50004000 {
++		compatible = "samsung,s3c2440-uart";
++	};
++
++	serial@50008000 {
++		compatible = "samsung,s3c2440-uart";
++	};
++
++	serial@5000C000 {
++		compatible = "samsung,s3c2440-uart";
++		reg = <0x5000C000 0x4000>;
++		interrupts = <1 18 24 4>, <1 18 25 4>;
++		status = "disabled";
++	};
++
++	sdhci@4AC00000 {
++		compatible = "samsung,s3c6410-sdhci";
++		reg = <0x4AC00000 0x100>;
++		interrupts = <0 0 21 3>;
++		status = "disabled";
++	};
++
++	sdhci@4A800000 {
++		compatible = "samsung,s3c6410-sdhci";
++		reg = <0x4A800000 0x100>;
++		interrupts = <0 0 20 3>;
++		status = "disabled";
++	};
++
++	watchdog@53000000 {
++		interrupts = <1 9 27 3>;
++	};
++
++	rtc@57000000 {
++		compatible = "samsung,s3c2416-rtc";
++	};
++
++	i2c@54000000 {
++		compatible = "samsung,s3c2440-i2c";
++	};
++};
+diff --git a/arch/arm/boot/dts/s3c24xx.dtsi b/arch/arm/boot/dts/s3c24xx.dtsi
+new file mode 100644
+index 0000000..cab46ff
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c24xx.dtsi
+@@ -0,0 +1,92 @@
++/*
++ * Samsung's S3C24XX family device tree source
++ *
++ * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++/include/ "skeleton.dtsi"
++
++/ {
++	compatible = "samsung,s3c24xx";
++	interrupt-parent = <&intc>;
++
++	aliases {
++		pinctrl0 = &pinctrl_0;
++	};
++
++	intc:interrupt-controller@4a000000 {
++		compatible = "samsung,s3c2410-irq";
++		reg = <0x4a000000 0x100>;
++		interrupt-controller;
++		#interrupt-cells = <4>;
++	};
++
++	pinctrl_0: pinctrl@56000000 {
++		reg = <0x56000000 0x1000>;
++
++		wakeup-interrupt-controller {
++			compatible = "samsung,s3c2410-wakeup-eint";
++			interrupts = <0 0 0 3>,
++				     <0 0 1 3>,
++				     <0 0 2 3>,
++				     <0 0 3 3>,
++				     <0 0 4 4>,
++				     <0 0 5 4>;
++		};
++	};
++
++	timer@51000000 {
++		compatible = "samsung,s3c2410-pwm";
++		reg = <0x51000000 0x1000>;
++		interrupts = <0 0 10 3>, <0 0 11 3>, <0 0 12 3>, <0 0 13 3>, <0 0 14 3>;
++		#pwm-cells = <4>;
++	};
++
++	serial@50000000 {
++		compatible = "samsung,s3c2410-uart";
++		reg = <0x50000000 0x4000>;
++		interrupts = <1 28 0 4>, <1 28 1 4>;
++		status = "disabled";
++	};
++
++	serial@50004000 {
++		compatible = "samsung,s3c2410-uart";
++		reg = <0x50004000 0x4000>;
++		interrupts = <1 23 3 4>, <1 23 4 4>;
++		status = "disabled";
++	};
++
++	serial@50008000 {
++		compatible = "samsung,s3c2410-uart";
++		reg = <0x50008000 0x4000>;
++		interrupts = <1 15 6 4>, <1 15 7 4>;
++		status = "disabled";
++	};
++
++	watchdog@53000000 {
++		compatible = "samsung,s3c2410-wdt";
++		reg = <0x53000000 0x100>;
++		interrupts = <0 0 9 3>;
++		status = "disabled";
++	};
++
++	rtc@57000000 {
++		compatible = "samsung,s3c2410-rtc";
++		reg = <0x57000000 0x100>;
++		interrupts = <0 0 30 3>, <0 0 8 3>;
++		status = "disabled";
++	};
++
++	i2c@54000000 {
++		compatible = "samsung,s3c2410-i2c";
++		reg = <0x54000000 0x100>;
++		interrupts = <0 0 27 3>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++};
+diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+index 0a8663c..f842e3e 100644
+--- a/arch/arm/mach-s3c24xx/Kconfig
++++ b/arch/arm/mach-s3c24xx/Kconfig
+@@ -496,6 +496,18 @@ config MACH_SMDK2416
+ 	help
+ 	  Say Y here if you are using an SMDK2416
+ 
++config MACH_S3C2416_DT
++	bool "Samsung S3C2416 machine using devicetree"
++	select CLKSRC_OF
++	select USE_OF
++	select PINCTRL
++	select PINCTRL_S3C24XX
++	help
++	  Machine support for Samsung S3C2416 machines with device tree enabled.
++	  Select this if a fdt blob is available for the S3C2416 SoC based board.
++	  Note: This is under development and not all peripherals can be supported
++	  with this machine file.
++
+ endif	# CPU_S3C2416
+ 
+ if CPU_S3C2440
+diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
+index 6f46ecf..6de730b 100644
+--- a/arch/arm/mach-s3c24xx/Makefile
++++ b/arch/arm/mach-s3c24xx/Makefile
+@@ -85,6 +85,7 @@ obj-$(CONFIG_MACH_SMDK2413)		+= mach-smdk2413.o
+ obj-$(CONFIG_MACH_VSTMS)		+= mach-vstms.o
+ 
+ obj-$(CONFIG_MACH_SMDK2416)		+= mach-smdk2416.o
++obj-$(CONFIG_MACH_S3C2416_DT)		+= mach-s3c2416-dt.o
+ 
+ obj-$(CONFIG_MACH_ANUBIS)		+= mach-anubis.o
+ obj-$(CONFIG_MACH_AT2440EVB)		+= mach-at2440evb.o
+diff --git a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+new file mode 100644
+index 0000000..f5c9072
+--- /dev/null
++++ b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+@@ -0,0 +1,91 @@
++/*
++ * Samsung's S3C2416 flattened device tree enabled machine
++ *
++ * Copyright (c) 2012 Heiko Stuebner <heiko@sntech.de>
++ *
++ * based on mach-exynos/mach-exynos4-dt.c
++ *
++ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Copyright (c) 2010-2011 Linaro Ltd.
++ *		www.linaro.org
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/clocksource.h>
++#include <linux/irqchip.h>
++#include <linux/of_platform.h>
++#include <linux/serial_core.h>
++
++#include <asm/mach/arch.h>
++#include <mach/map.h>
++
++#include <plat/cpu.h>
++#include <plat/pm.h>
++#include <plat/regs-serial.h>
++
++#include "common.h"
++
++/*
++ * The following lookup table is used to override device names when devices
++ * are registered from device tree. This is temporarily added to enable
++ * device tree support addition for the S3C2416 architecture.
++ *
++ * For drivers that require platform data to be provided from the machine
++ * file, a platform data pointer can also be supplied along with the
++ * devices names. Usually, the platform data elements that cannot be parsed
++ * from the device tree by the drivers (example: function pointers) are
++ * supplied. But it should be noted that this is a temporary mechanism and
++ * at some point, the drivers should be capable of parsing all the platform
++ * data from the device tree.
++ */
++static const struct of_dev_auxdata s3c2416_auxdata_lookup[] __initconst = {
++	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART0,
++				"s3c2440-uart.0", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART1,
++				"s3c2440-uart.1", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART2,
++				"s3c2440-uart.2", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2443_PA_UART3,
++				"s3c2440-uart.3", NULL),
++	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", S3C_PA_HSMMC0,
++				"s3c-sdhci.0", NULL),
++	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", S3C_PA_HSMMC1,
++				"s3c-sdhci.1", NULL),
++	OF_DEV_AUXDATA("samsung,s3c2440-i2c", S3C_PA_IIC,
++				"s3c2440-i2c.0", NULL),
++	{},
++};
++
++static void __init s3c2416_dt_map_io(void)
++{
++	s3c24xx_init_io(NULL, 0);
++	s3c24xx_init_clocks(12000000);
++}
++
++static void __init s3c2416_dt_machine_init(void)
++{
++	of_platform_populate(NULL, of_default_bus_match_table,
++				s3c2416_auxdata_lookup, NULL);
++
++	s3c_pm_init();
++}
++
++static char const *s3c2416_dt_compat[] __initdata = {
++	"samsung,s3c2416",
++	"samsung,s3c2450",
++	NULL
++};
++
++DT_MACHINE_START(S3C2416_DT, "Samsung S3C2416 (Flattened Device Tree)")
++	/* Maintainer: Heiko Stuebner <heiko@sntech.de> */
++	.dt_compat	= s3c2416_dt_compat,
++	.map_io		= s3c2416_dt_map_io,
++	.init_irq	= irqchip_init,
++	.init_machine	= s3c2416_dt_machine_init,
++	 .init_time	= clocksource_of_init,
++	.restart	= s3c2416_restart,
++MACHINE_END
+-- 
+1.7.2.3
