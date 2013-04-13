@@ -1,631 +1,827 @@
 From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v2] ARM: S3C24XX: add devicetree support for smdk2416
-Date: Sat, 13 Apr 2013 16:06:47 +0200
-Message-ID: <201304131606.48278.heiko@sntech.de>
+Subject: [PATCH v4] pinctrl: Add pinctrl-s3c24xx driver
+Date: Sun, 14 Apr 2013 01:38:39 +0200
+Message-ID: <201304140138.40142.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:51356 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:55748 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753311Ab3DMOG5 (ORCPT
+	id S1754021Ab3DMXiq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Apr 2013 10:06:57 -0400
+	Sat, 13 Apr 2013 19:38:46 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-Definitions in s3c24xx.dtsi are usable for all s3c24xx SoCs, but some
-need to be extended with proper compatible properties, as can be seen
-in s3c2416.dtsi .
+The s3c24xx pins follow a similar pattern as the other Samsung SoCs and
+can therefore reuse the already introduced infrastructure.
+
+The s3c24xx SoCs have one design oddity in that the first 4 external
+interrupts do not reside in the eint pending register but in the main
+interrupt controller instead. We solve this by forwarding the external
+interrupt from the main controller into the irq domain of the pin bank.
+The masking/acking of these interrupts is handled in the same way.
+
+Furthermore the S3C2412/2413 SoCs contain another oddity in that they
+keep the same 4 eints in the main interrupt controller and eintpend
+register and requiring ack operations to happen in both. This is solved
+by using different compatible properties for the wakeup eint node which
+set a property accordingly.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
+changes since v3:
+- address comments from Sylwester Nawrocki:
+  (typos, wrong comments, etc)
+changes since v2:
+- address more comments from Tomasz Figa:
+  * remove obsolete ctrl_type references
+  * remove redundant check for parent_chip
+  * update docs and commit message
+
 changes since v1:
-  fix compatible property of default irq controller
-  (the correct one is samsung,s3c2410-irq)
+- address comments from Tomasz Figa:
+  * split handling functions for eints 0-3 for s3c2412 and all others
+  * change the handling for s3c2412 eints 0-3 in that they now use
+    chained_irq_* for the outer parent interrupt
 
- arch/arm/boot/dts/Makefile              |    1 +
- arch/arm/boot/dts/s3c2416-pinctrl.dtsi  |  173 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/s3c2416-smdk2416.dts  |   72 +++++++++++++
- arch/arm/boot/dts/s3c2416.dtsi          |   79 ++++++++++++++
- arch/arm/boot/dts/s3c24xx.dtsi          |   92 ++++++++++++++++
- arch/arm/mach-s3c24xx/Kconfig           |   12 ++
- arch/arm/mach-s3c24xx/Makefile          |    1 +
- arch/arm/mach-s3c24xx/mach-s3c2416-dt.c |   91 ++++++++++++++++
- 8 files changed, 521 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/s3c2416-pinctrl.dtsi
- create mode 100644 arch/arm/boot/dts/s3c2416-smdk2416.dts
- create mode 100644 arch/arm/boot/dts/s3c2416.dtsi
- create mode 100644 arch/arm/boot/dts/s3c24xx.dtsi
- create mode 100644 arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    8 +
+ drivers/gpio/gpio-samsung.c                        |    4 +
+ drivers/pinctrl/Kconfig                            |    5 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-s3c24xx.c                  |  652 ++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.c                  |   10 +
+ drivers/pinctrl/pinctrl-samsung.h                  |    4 +
+ 7 files changed, 684 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/pinctrl/pinctrl-s3c24xx.c
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index d3cd880..4296353 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -137,6 +137,7 @@ dtb-$(CONFIG_ARCH_U8500) += snowball.dtb \
- 	hrefprev60.dtb \
- 	hrefv60plus.dtb \
- 	ccu9540.dtb
-+dtb-$(CONFIG_ARCH_S3C24XX) += s3c2416-smdk2416.dtb
- dtb-$(CONFIG_ARCH_SHMOBILE) += emev2-kzm9d.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	sh73a0-kzm9g.dtb \
-diff --git a/arch/arm/boot/dts/s3c2416-pinctrl.dtsi b/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+index c70fca1..dc50c7e 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+@@ -7,6 +7,10 @@ on-chip controllers onto these pads.
+ 
+ Required Properties:
+ - compatible: should be one of the following.
++  - "samsung,s3c2413-pinctrl": for S3C2413-compatible pin-controller,
++  - "samsung,s3c2416-pinctrl": for S3C2416-compatible pin-controller,
++  - "samsung,s3c2440-pinctrl": for S3C2440-compatible pin-controller,
++  - "samsung,s3c2450-pinctrl": for S3C2450-compatible pin-controller,
+   - "samsung,s3c64xx-pinctrl": for S3C64xx-compatible pin-controller,
+   - "samsung,exynos4210-pinctrl": for Exynos4210 compatible pin-controller.
+   - "samsung,exynos4x12-pinctrl": for Exynos4x12 compatible pin-controller.
+@@ -106,6 +110,10 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
+ 
+    - compatible: identifies the type of the external wakeup interrupt controller
+      The possible values are:
++     - samsung,s3c2410-wakeup-eint: represents wakeup interrupt controller
++       found on Samsung S3C24xx SoCs except S3C2412 and S3C2413,
++     - samsung,s3c2412-wakeup-eint: represents wakeup interrupt controller
++       found on Samsung S3C2412 and S3C2413 SoCs,
+      - samsung,s3c64xx-wakeup-eint: represents wakeup interrupt controller
+        found on Samsung S3C64xx SoCs,
+      - samsung,exynos4210-wakeup-eint: represents wakeup interrupt controller
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index dc06a6f..73017b9 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -3026,6 +3026,10 @@ static __init int samsung_gpiolib_init(void)
+ 	*/
+ 	struct device_node *pctrl_np;
+ 	static const struct of_device_id exynos_pinctrl_ids[] = {
++		{ .compatible = "samsung,s3c2413-pinctrl", },
++		{ .compatible = "samsung,s3c2416-pinctrl", },
++		{ .compatible = "samsung,s3c2440-pinctrl", },
++		{ .compatible = "samsung,s3c2450-pinctrl", },
+ 		{ .compatible = "samsung,s3c64xx-pinctrl", },
+ 		{ .compatible = "samsung,exynos4210-pinctrl", },
+ 		{ .compatible = "samsung,exynos4x12-pinctrl", },
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 7402ac9..58d73ac 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -226,6 +226,11 @@ config PINCTRL_EXYNOS5440
+ 	select PINMUX
+ 	select PINCONF
+ 
++config PINCTRL_S3C24XX
++	bool "Samsung S3C24XX SoC pinctrl driver"
++	depends on ARCH_S3C24XX
++	select PINCTRL_SAMSUNG
++
+ config PINCTRL_S3C64XX
+ 	bool "Samsung S3C64XX SoC pinctrl driver"
+ 	depends on ARCH_S3C64XX
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 21d34c2..1ccdfd8 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -45,6 +45,7 @@ obj-$(CONFIG_PINCTRL_COH901)	+= pinctrl-coh901.o
+ obj-$(CONFIG_PINCTRL_SAMSUNG)	+= pinctrl-samsung.o
+ obj-$(CONFIG_PINCTRL_EXYNOS)	+= pinctrl-exynos.o
+ obj-$(CONFIG_PINCTRL_EXYNOS5440)	+= pinctrl-exynos5440.o
++obj-$(CONFIG_PINCTRL_S3C24XX)	+= pinctrl-s3c24xx.o
+ obj-$(CONFIG_PINCTRL_S3C64XX)	+= pinctrl-s3c64xx.o
+ obj-$(CONFIG_PINCTRL_XWAY)	+= pinctrl-xway.o
+ obj-$(CONFIG_PINCTRL_LANTIQ)	+= pinctrl-lantiq.o
+diff --git a/drivers/pinctrl/pinctrl-s3c24xx.c b/drivers/pinctrl/pinctrl-s3c24xx.c
 new file mode 100644
-index 0000000..527e319
+index 0000000..efd0908
 --- /dev/null
-+++ b/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
-@@ -0,0 +1,173 @@
++++ b/drivers/pinctrl/pinctrl-s3c24xx.c
+@@ -0,0 +1,652 @@
 +/*
-+ * Samsung S3C2416 pinctrl settings
++ * S3C24XX specific support for Samsung pinctrl/gpiolib driver.
 + *
 + * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
 + *
 + * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This file contains the SamsungS3C24XX specific information required by the
++ * Samsung pinctrl/gpiolib driver. It also includes the implementation of
++ * external gpio and wakeup interrupt support.
 + */
 +
-+&pinctrl_0 {
-+	/*
-+	 * Pin banks
-+	 */
++#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/interrupt.h>
++#include <linux/irqdomain.h>
++#include <linux/irq.h>
++#include <linux/of_irq.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/err.h>
 +
-+	gpa: gpa {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
++#include <asm/mach/irq.h>
 +
-+	gpb: gpb {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
++#include "pinctrl-samsung.h"
 +
-+	gpc: gpc {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
++#define NUM_EINT	24
++#define NUM_EINT_IRQ	6
++#define EINT_MAX_PER_GROUP	8
 +
-+	gpd: gpd {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
++#define EINTPEND_REG	0xa8
++#define EINTMASK_REG	0xa4
 +
-+	gpe: gpe {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
++#define EINT_GROUP(i)		((int)((i) / EINT_MAX_PER_GROUP))
++#define EINT_REG(i)		((EINT_GROUP(i) * 4) + 0x88)
++#define EINT_OFFS(i)		((i) % EINT_MAX_PER_GROUP * 4)
 +
-+	gpf: gpf {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
++#define EINT_LEVEL_LOW		0
++#define EINT_LEVEL_HIGH		1
++#define EINT_EDGE_FALLING	2
++#define EINT_EDGE_RISING	4
++#define EINT_EDGE_BOTH		6
++#define EINT_MASK		0xf
 +
-+	gpg: gpg {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gph: gph {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	gpj: gpj {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	gpk: gpk {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	gpl: gpl {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	gpm: gpm {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	/*
-+	 * Pin groups
-+	 */
-+
-+	uart0_data: uart0-data {
-+		samsung,pins = "gph-0", "gph-1";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	uart0_fctl: uart0-fctl {
-+		samsung,pins = "gph-8", "gph-9";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	uart1_data: uart1-data {
-+		samsung,pins = "gph-2", "gph-3";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	uart1_fctl: uart1-fctl {
-+		samsung,pins = "gph-10", "gph-11";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	uart2_data: uart2-data {
-+		samsung,pins = "gph-4", "gph-5";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	uart2_fctl: uart2-fctl {
-+		samsung,pins = "gph-6", "gph-7";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	uart3_data: uart3-data {
-+		samsung,pins = "gph-6", "gph-7";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	extuart_clk: extuart-clk {
-+		samsung,pins = "gph-12";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	i2c0_bus: i2c0-bus {
-+		samsung,pins = "gpe-14", "gpe-15";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	spi0_bus: spi0-bus {
-+		samsung,pins = "gpe-11", "gpe-12", "gpe-13";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	sd0_clk: sd0-clk {
-+		samsung,pins = "gpe-5";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	sd0_cmd: sd0-cmd {
-+		samsung,pins = "gpe-6";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	sd0_bus1: sd0-bus1 {
-+		samsung,pins = "gpe-7";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	sd0_bus4: sd0-bus4 {
-+		samsung,pins = "gpe-8", "gpe-9", "gpe-10";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	sd1_cmd: sd1-cmd {
-+		samsung,pins = "gpl-8";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	sd1_clk: sd1-clk {
-+		samsung,pins = "gpl-9";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	sd1_bus1: sd1-bus1 {
-+		samsung,pins = "gpl-0";
-+		samsung,pin-function = <2>;
-+	};
-+
-+	sd1_bus4: sd1-bus4 {
-+		samsung,pins = "gpl-1", "gpl-2", "gpl-3";
-+		samsung,pin-function = <2>;
-+	};
++static struct samsung_pin_bank_type bank_type_1bit = {
++	.fld_width = { 1, 1, },
++	.reg_offset = { 0x00, 0x04, },
 +};
-diff --git a/arch/arm/boot/dts/s3c2416-smdk2416.dts b/arch/arm/boot/dts/s3c2416-smdk2416.dts
-new file mode 100644
-index 0000000..ad1dd09
---- /dev/null
-+++ b/arch/arm/boot/dts/s3c2416-smdk2416.dts
-@@ -0,0 +1,72 @@
-+/*
-+ * SAMSUNG SMDK2416 board device tree source
-+ *
-+ * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++
++static struct samsung_pin_bank_type bank_type_2bit = {
++	.fld_width = { 2, 1, 2, },
++	.reg_offset = { 0x00, 0x04, 0x08, },
++};
++
++#define PIN_BANK_A(pins, reg, id)		\
++	{						\
++		.type		= &bank_type_1bit,	\
++		.pctl_offset	= reg,			\
++		.nr_pins	= pins,			\
++		.eint_type	= EINT_TYPE_NONE,	\
++		.name		= id			\
++	}
++
++#define PIN_BANK_2BIT(pins, reg, id)		\
++	{						\
++		.type		= &bank_type_2bit,	\
++		.pctl_offset	= reg,			\
++		.nr_pins	= pins,			\
++		.eint_type	= EINT_TYPE_NONE,	\
++		.name		= id			\
++	}
++
++#define PIN_BANK_2BIT_EINTW(pins, reg, id, eoffs, emask)\
++	{						\
++		.type		= &bank_type_2bit,	\
++		.pctl_offset	= reg,			\
++		.nr_pins	= pins,			\
++		.eint_type	= EINT_TYPE_WKUP,	\
++		.eint_func	= 2,			\
++		.eint_mask	= emask,		\
++		.eint_offset	= eoffs,		\
++		.name		= id			\
++	}
++
++/**
++ * struct s3c24xx_eint_data: EINT common data
++ * @drvdata: pin controller driver data
++ * @domains: IRQ domains of particular EINT interrupts
++ * @parents: mapped parent irqs in the main interrupt controller
 + */
-+
-+/dts-v1/;
-+/include/ "s3c2416.dtsi"
-+
-+/ {
-+	model = "SMDK2416";
-+	compatible = "samsung,s3c2416";
-+
-+	memory {
-+		reg =  <0x30000000 0x4000000>;
-+	};
-+
-+	serial@50000000 {
-+		status = "okay";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&uart0_data>, <&uart0_fctl>;
-+	};
-+
-+	serial@50004000 {
-+		status = "okay";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&uart1_data>, <&uart1_fctl>;
-+	};
-+
-+	serial@50008000 {
-+		status = "okay";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&uart2_data>;
-+	};
-+
-+	serial@5000C000 {
-+		status = "okay";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&uart3_data>;
-+	};
-+
-+	watchdog@53000000 {
-+		status = "okay";
-+	};
-+
-+	rtc@57000000 {
-+		status = "okay";
-+	};
-+
-+	sdhci@4AC00000 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_clk>, <&sd0_cmd>,
-+				<&sd0_bus1>, <&sd0_bus4>;
-+		bus-width = <4>;
-+		cd-gpios = <&gpf 1 0>;
-+		cd-inverted;
-+		status = "okay";
-+	};
-+
-+	sdhci@4A800000 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd1_clk>, <&sd1_cmd>,
-+				<&sd1_bus1>, <&sd1_bus4>;
-+		bus-width = <4>;
-+		broken-cd;
-+		status = "okay";
-+	};
++struct s3c24xx_eint_data {
++	struct samsung_pinctrl_drv_data *drvdata;
++	struct irq_domain *domains[NUM_EINT];
++	int parents[NUM_EINT_IRQ];
 +};
-diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
-new file mode 100644
-index 0000000..6809324
---- /dev/null
-+++ b/arch/arm/boot/dts/s3c2416.dtsi
-@@ -0,0 +1,79 @@
-+/*
-+ * Samsung's S3C2416 SoC device tree source
-+ *
-+ * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++
++/**
++ * struct s3c24xx_eint_domain_data: per irq-domain data
++ * @bank: pin bank related to the domain
++ * @eint_data: common data
++ * eint0_3_parent_only: live eints 0-3 only in the main intc
 + */
-+
-+/include/ "s3c24xx.dtsi"
-+/include/ "s3c2416-pinctrl.dtsi"
-+
-+/ {
-+	model = "Samsung S3C2416 SoC";
-+	compatible = "samsung,s3c2416";
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu {
-+			compatible = "arm,arm926ejs";
-+		};
-+	};
-+
-+	interrupt-controller@4a000000 {
-+		compatible = "samsung,s3c2416-irq";
-+	};
-+
-+	pinctrl@56000000 {
-+		compatible = "samsung,s3c2416-pinctrl";
-+	};
-+
-+	serial@50000000 {
-+		compatible = "samsung,s3c2440-uart";
-+	};
-+
-+	serial@50004000 {
-+		compatible = "samsung,s3c2440-uart";
-+	};
-+
-+	serial@50008000 {
-+		compatible = "samsung,s3c2440-uart";
-+	};
-+
-+	serial@5000C000 {
-+		compatible = "samsung,s3c2440-uart";
-+		reg = <0x5000C000 0x4000>;
-+		interrupts = <1 18 24 4>, <1 18 25 4>;
-+		status = "disabled";
-+	};
-+
-+	sdhci@4AC00000 {
-+		compatible = "samsung,s3c6410-sdhci";
-+		reg = <0x4AC00000 0x100>;
-+		interrupts = <0 0 21 3>;
-+		status = "disabled";
-+	};
-+
-+	sdhci@4A800000 {
-+		compatible = "samsung,s3c6410-sdhci";
-+		reg = <0x4A800000 0x100>;
-+		interrupts = <0 0 20 3>;
-+		status = "disabled";
-+	};
-+
-+	watchdog@53000000 {
-+		interrupts = <1 9 27 3>;
-+	};
-+
-+	rtc@57000000 {
-+		compatible = "samsung,s3c2416-rtc";
-+	};
-+
-+	i2c@54000000 {
-+		compatible = "samsung,s3c2440-i2c";
-+	};
-+};
-diff --git a/arch/arm/boot/dts/s3c24xx.dtsi b/arch/arm/boot/dts/s3c24xx.dtsi
-new file mode 100644
-index 0000000..cab46ff
---- /dev/null
-+++ b/arch/arm/boot/dts/s3c24xx.dtsi
-@@ -0,0 +1,92 @@
-+/*
-+ * Samsung's S3C24XX family device tree source
-+ *
-+ * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/include/ "skeleton.dtsi"
-+
-+/ {
-+	compatible = "samsung,s3c24xx";
-+	interrupt-parent = <&intc>;
-+
-+	aliases {
-+		pinctrl0 = &pinctrl_0;
-+	};
-+
-+	intc:interrupt-controller@4a000000 {
-+		compatible = "samsung,s3c2410-irq";
-+		reg = <0x4a000000 0x100>;
-+		interrupt-controller;
-+		#interrupt-cells = <4>;
-+	};
-+
-+	pinctrl_0: pinctrl@56000000 {
-+		reg = <0x56000000 0x1000>;
-+
-+		wakeup-interrupt-controller {
-+			compatible = "samsung,s3c2410-wakeup-eint";
-+			interrupts = <0 0 0 3>,
-+				     <0 0 1 3>,
-+				     <0 0 2 3>,
-+				     <0 0 3 3>,
-+				     <0 0 4 4>,
-+				     <0 0 5 4>;
-+		};
-+	};
-+
-+	timer@51000000 {
-+		compatible = "samsung,s3c2410-pwm";
-+		reg = <0x51000000 0x1000>;
-+		interrupts = <0 0 10 3>, <0 0 11 3>, <0 0 12 3>, <0 0 13 3>, <0 0 14 3>;
-+		#pwm-cells = <4>;
-+	};
-+
-+	serial@50000000 {
-+		compatible = "samsung,s3c2410-uart";
-+		reg = <0x50000000 0x4000>;
-+		interrupts = <1 28 0 4>, <1 28 1 4>;
-+		status = "disabled";
-+	};
-+
-+	serial@50004000 {
-+		compatible = "samsung,s3c2410-uart";
-+		reg = <0x50004000 0x4000>;
-+		interrupts = <1 23 3 4>, <1 23 4 4>;
-+		status = "disabled";
-+	};
-+
-+	serial@50008000 {
-+		compatible = "samsung,s3c2410-uart";
-+		reg = <0x50008000 0x4000>;
-+		interrupts = <1 15 6 4>, <1 15 7 4>;
-+		status = "disabled";
-+	};
-+
-+	watchdog@53000000 {
-+		compatible = "samsung,s3c2410-wdt";
-+		reg = <0x53000000 0x100>;
-+		interrupts = <0 0 9 3>;
-+		status = "disabled";
-+	};
-+
-+	rtc@57000000 {
-+		compatible = "samsung,s3c2410-rtc";
-+		reg = <0x57000000 0x100>;
-+		interrupts = <0 0 30 3>, <0 0 8 3>;
-+		status = "disabled";
-+	};
-+
-+	i2c@54000000 {
-+		compatible = "samsung,s3c2410-i2c";
-+		reg = <0x54000000 0x100>;
-+		interrupts = <0 0 27 3>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+};
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 0a8663c..f842e3e 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -496,6 +496,18 @@ config MACH_SMDK2416
- 	help
- 	  Say Y here if you are using an SMDK2416
- 
-+config MACH_S3C2416_DT
-+	bool "Samsung S3C2416 machine using devicetree"
-+	select CLKSRC_OF
-+	select USE_OF
-+	select PINCTRL
-+	select PINCTRL_S3C24XX
-+	help
-+	  Machine support for Samsung S3C2416 machines with device tree enabled.
-+	  Select this if a fdt blob is available for the S3C2416 SoC based board.
-+	  Note: This is under development and not all peripherals can be supported
-+	  with this machine file.
-+
- endif	# CPU_S3C2416
- 
- if CPU_S3C2440
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index 6f46ecf..6de730b 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_MACH_SMDK2413)		+= mach-smdk2413.o
- obj-$(CONFIG_MACH_VSTMS)		+= mach-vstms.o
- 
- obj-$(CONFIG_MACH_SMDK2416)		+= mach-smdk2416.o
-+obj-$(CONFIG_MACH_S3C2416_DT)		+= mach-s3c2416-dt.o
- 
- obj-$(CONFIG_MACH_ANUBIS)		+= mach-anubis.o
- obj-$(CONFIG_MACH_AT2440EVB)		+= mach-at2440evb.o
-diff --git a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
-new file mode 100644
-index 0000000..f5c9072
---- /dev/null
-+++ b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
-@@ -0,0 +1,91 @@
-+/*
-+ * Samsung's S3C2416 flattened device tree enabled machine
-+ *
-+ * Copyright (c) 2012 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * based on mach-exynos/mach-exynos4-dt.c
-+ *
-+ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2010-2011 Linaro Ltd.
-+ *		www.linaro.org
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/clocksource.h>
-+#include <linux/irqchip.h>
-+#include <linux/of_platform.h>
-+#include <linux/serial_core.h>
-+
-+#include <asm/mach/arch.h>
-+#include <mach/map.h>
-+
-+#include <plat/cpu.h>
-+#include <plat/pm.h>
-+#include <plat/regs-serial.h>
-+
-+#include "common.h"
-+
-+/*
-+ * The following lookup table is used to override device names when devices
-+ * are registered from device tree. This is temporarily added to enable
-+ * device tree support addition for the S3C2416 architecture.
-+ *
-+ * For drivers that require platform data to be provided from the machine
-+ * file, a platform data pointer can also be supplied along with the
-+ * devices names. Usually, the platform data elements that cannot be parsed
-+ * from the device tree by the drivers (example: function pointers) are
-+ * supplied. But it should be noted that this is a temporary mechanism and
-+ * at some point, the drivers should be capable of parsing all the platform
-+ * data from the device tree.
-+ */
-+static const struct of_dev_auxdata s3c2416_auxdata_lookup[] __initconst = {
-+	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART0,
-+				"s3c2440-uart.0", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART1,
-+				"s3c2440-uart.1", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART2,
-+				"s3c2440-uart.2", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2443_PA_UART3,
-+				"s3c2440-uart.3", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", S3C_PA_HSMMC0,
-+				"s3c-sdhci.0", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", S3C_PA_HSMMC1,
-+				"s3c-sdhci.1", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c2440-i2c", S3C_PA_IIC,
-+				"s3c2440-i2c.0", NULL),
-+	{},
++struct s3c24xx_eint_domain_data {
++	struct samsung_pin_bank *bank;
++	struct s3c24xx_eint_data *eint_data;
++	bool eint0_3_parent_only;
 +};
 +
-+static void __init s3c2416_dt_map_io(void)
++static int s3c24xx_eint_get_trigger(unsigned int type)
 +{
-+	s3c24xx_init_io(NULL, 0);
-+	s3c24xx_init_clocks(12000000);
++	switch (type) {
++	case IRQ_TYPE_EDGE_RISING:
++		return EINT_EDGE_RISING;
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		return EINT_EDGE_FALLING;
++		break;
++	case IRQ_TYPE_EDGE_BOTH:
++		return EINT_EDGE_BOTH;
++		break;
++	case IRQ_TYPE_LEVEL_HIGH:
++		return EINT_LEVEL_HIGH;
++		break;
++	case IRQ_TYPE_LEVEL_LOW:
++		return EINT_LEVEL_LOW;
++		break;
++	default:
++		return -EINVAL;
++	}
 +}
 +
-+static void __init s3c2416_dt_machine_init(void)
++static void s3c24xx_eint_set_handler(unsigned int irq, unsigned int type)
 +{
-+	of_platform_populate(NULL, of_default_bus_match_table,
-+				s3c2416_auxdata_lookup, NULL);
-+
-+	s3c_pm_init();
++	/* Edge- and level-triggered interrupts need different handlers */
++	if (type & IRQ_TYPE_EDGE_BOTH)
++		__irq_set_handler_locked(irq, handle_edge_irq);
++	else
++		__irq_set_handler_locked(irq, handle_level_irq);
 +}
 +
-+static char const *s3c2416_dt_compat[] __initdata = {
-+	"samsung,s3c2416",
-+	"samsung,s3c2450",
-+	NULL
++static void s3c24xx_eint_set_function(struct samsung_pinctrl_drv_data *d,
++					struct samsung_pin_bank *bank, int pin)
++{
++	struct samsung_pin_bank_type *bank_type = bank->type;
++	unsigned long flags;
++	void __iomem *reg;
++	u8 shift;
++	u32 mask;
++	u32 val;
++
++	/* Make sure that pin is configured as interrupt */
++	reg = d->virt_base + bank->pctl_offset;
++	shift = pin * bank_type->fld_width[PINCFG_TYPE_FUNC];
++	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
++
++	spin_lock_irqsave(&bank->slock, flags);
++
++	val = readl(reg);
++	val &= ~(mask << shift);
++	val |= bank->eint_func << shift;
++	writel(val, reg);
++
++	spin_unlock_irqrestore(&bank->slock, flags);
++}
++
++static int s3c24xx_eint_type(struct irq_data *data, unsigned int type)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
++	int index = bank->eint_offset + data->hwirq;
++	void __iomem *reg;
++	int trigger;
++	u8 shift;
++	u32 val;
++
++	trigger = s3c24xx_eint_get_trigger(type);
++	if (trigger < 0) {
++		dev_err(d->dev, "unsupported external interrupt type\n");
++		return -EINVAL;
++	}
++
++	s3c24xx_eint_set_handler(data->irq, type);
++
++	/* Set up interrupt trigger */
++	reg = d->virt_base + EINT_REG(index);
++	shift = EINT_OFFS(index);
++
++	val = readl(reg);
++	val &= ~(EINT_MASK << shift);
++	val |= trigger << shift;
++	writel(val, reg);
++
++	s3c24xx_eint_set_function(d, bank, data->hwirq);
++
++	return 0;
++}
++
++/* Handling of EINTs 0-3 on all except S3C2412 and S3C2413 */
++
++static void s3c2410_eint0_3_ack(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct s3c24xx_eint_domain_data *ddata = bank->irq_domain->host_data;
++	struct s3c24xx_eint_data *eint_data = ddata->eint_data;
++	int parent_irq = eint_data->parents[data->hwirq];
++	struct irq_chip *parent_chip = irq_get_chip(parent_irq);
++
++	parent_chip->irq_ack(irq_get_irq_data(parent_irq));
++}
++
++static void s3c2410_eint0_3_mask(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct s3c24xx_eint_domain_data *ddata = bank->irq_domain->host_data;
++	struct s3c24xx_eint_data *eint_data = ddata->eint_data;
++	int parent_irq = eint_data->parents[data->hwirq];
++	struct irq_chip *parent_chip = irq_get_chip(parent_irq);
++
++	parent_chip->irq_mask(irq_get_irq_data(parent_irq));
++}
++
++static void s3c2410_eint0_3_unmask(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct s3c24xx_eint_domain_data *ddata = bank->irq_domain->host_data;
++	struct s3c24xx_eint_data *eint_data = ddata->eint_data;
++	int parent_irq = eint_data->parents[data->hwirq];
++	struct irq_chip *parent_chip = irq_get_chip(parent_irq);
++
++	parent_chip->irq_unmask(irq_get_irq_data(parent_irq));
++}
++
++static struct irq_chip s3c2410_eint0_3_chip = {
++	.name		= "s3c2410-eint0_3",
++	.irq_ack	= s3c2410_eint0_3_ack,
++	.irq_mask	= s3c2410_eint0_3_mask,
++	.irq_unmask	= s3c2410_eint0_3_unmask,
++	.irq_set_type	= s3c24xx_eint_type,
 +};
 +
-+DT_MACHINE_START(S3C2416_DT, "Samsung S3C2416 (Flattened Device Tree)")
-+	/* Maintainer: Heiko Stuebner <heiko@sntech.de> */
-+	.dt_compat	= s3c2416_dt_compat,
-+	.map_io		= s3c2416_dt_map_io,
-+	.init_irq	= irqchip_init,
-+	.init_machine	= s3c2416_dt_machine_init,
-+	 .init_time	= clocksource_of_init,
-+	.restart	= s3c2416_restart,
-+MACHINE_END
++static void s3c2410_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
++{
++	struct irq_data *data = irq_desc_get_irq_data(desc);
++	struct s3c24xx_eint_data *eint_data = irq_get_handler_data(irq);
++	unsigned int virq;
++
++	/* the first 4 eints have a simple 1 to 1 mapping */
++	virq = irq_linear_revmap(eint_data->domains[data->hwirq], data->hwirq);
++	/* Something must be really wrong if an unmapped EINT is unmasked */
++	BUG_ON(!virq);
++
++	generic_handle_irq(virq);
++}
++
++/* Handling of EINTs 0-3 on S3C2412 and S3C2413 */
++
++static void s3c2412_eint0_3_ack(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
++
++	unsigned long bitval = 1UL << data->hwirq;
++	writel(bitval, d->virt_base + EINTPEND_REG);
++}
++
++static void s3c2412_eint0_3_mask(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
++	unsigned long mask;
++
++	mask = readl(d->virt_base + EINTMASK_REG);
++	mask |= (1UL << data->hwirq);
++	writel(mask, d->virt_base + EINTMASK_REG);
++}
++
++static void s3c2412_eint0_3_unmask(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
++	unsigned long mask;
++
++	mask = readl(d->virt_base + EINTMASK_REG);
++	mask &= ~(1UL << data->hwirq);
++	writel(mask, d->virt_base + EINTMASK_REG);
++}
++
++static struct irq_chip s3c2412_eint0_3_chip = {
++	.name		= "s3c2412-eint0_3",
++	.irq_ack	= s3c2412_eint0_3_ack,
++	.irq_mask	= s3c2412_eint0_3_mask,
++	.irq_unmask	= s3c2412_eint0_3_unmask,
++	.irq_set_type	= s3c24xx_eint_type,
++};
++
++static void s3c2412_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
++{
++	struct irq_chip *chip = irq_get_chip(irq);
++	struct irq_data *data = irq_desc_get_irq_data(desc);
++	struct s3c24xx_eint_data *eint_data = irq_get_handler_data(irq);
++	unsigned int virq;
++
++	chained_irq_enter(chip, desc);
++
++	/* the first 4 eints have a simple 1 to 1 mapping */
++	virq = irq_linear_revmap(eint_data->domains[data->hwirq], data->hwirq);
++	/* Something must be really wrong if an unmapped EINT is unmasked */
++	BUG_ON(!virq);
++
++	generic_handle_irq(virq);
++
++	chained_irq_exit(chip, desc);
++}
++
++/* Handling of all other eints */
++
++static void s3c24xx_eint_ack(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
++	unsigned char index = bank->eint_offset + data->hwirq;
++
++	writel(1UL << index, d->virt_base + EINTPEND_REG);
++}
++
++static void s3c24xx_eint_mask(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
++	unsigned char index = bank->eint_offset + data->hwirq;
++	unsigned long mask;
++
++	mask = readl(d->virt_base + EINTMASK_REG);
++	mask |= (1UL << index);
++	writel(mask, d->virt_base + EINTMASK_REG);
++}
++
++static void s3c24xx_eint_unmask(struct irq_data *data)
++{
++	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
++	unsigned char index = bank->eint_offset + data->hwirq;
++	unsigned long mask;
++
++	mask = readl(d->virt_base + EINTMASK_REG);
++	mask &= ~(1UL << index);
++	writel(mask, d->virt_base + EINTMASK_REG);
++}
++
++static struct irq_chip s3c24xx_eint_chip = {
++	.name		= "s3c-eint",
++	.irq_ack	= s3c24xx_eint_ack,
++	.irq_mask	= s3c24xx_eint_mask,
++	.irq_unmask	= s3c24xx_eint_unmask,
++	.irq_set_type	= s3c24xx_eint_type,
++};
++
++static inline void s3c24xx_demux_eint(unsigned int irq, struct irq_desc *desc,
++				      u32 offset, u32 range)
++{
++	struct irq_chip *chip = irq_get_chip(irq);
++	struct s3c24xx_eint_data *data = irq_get_handler_data(irq);
++	struct samsung_pinctrl_drv_data *d = data->drvdata;
++	unsigned int pend, mask;
++
++	chained_irq_enter(chip, desc);
++
++	pend = readl(d->virt_base + EINTPEND_REG);
++	mask = readl(d->virt_base + EINTMASK_REG);
++
++	pend &= ~mask;
++	pend &= range;
++
++	while (pend) {
++		unsigned int virq;
++
++		irq = __ffs(pend);
++		pend &= ~(1 << irq);
++		virq = irq_linear_revmap(data->domains[irq], irq - offset);
++		/* Something is really wrong if an unmapped EINT is unmasked */
++		BUG_ON(!virq);
++
++		generic_handle_irq(virq);
++	}
++
++	chained_irq_exit(chip, desc);
++}
++
++static void s3c24xx_demux_eint4_7(unsigned int irq, struct irq_desc *desc)
++{
++	s3c24xx_demux_eint(irq, desc, 0, 0xf0);
++}
++
++static void s3c24xx_demux_eint8_23(unsigned int irq, struct irq_desc *desc)
++{
++	s3c24xx_demux_eint(irq, desc, 8, 0xffff00);
++}
++
++static irq_flow_handler_t s3c2410_eint_handlers[NUM_EINT_IRQ] = {
++	s3c2410_demux_eint0_3,
++	s3c2410_demux_eint0_3,
++	s3c2410_demux_eint0_3,
++	s3c2410_demux_eint0_3,
++	s3c24xx_demux_eint4_7,
++	s3c24xx_demux_eint8_23,
++};
++
++static irq_flow_handler_t s3c2412_eint_handlers[NUM_EINT_IRQ] = {
++	s3c2412_demux_eint0_3,
++	s3c2412_demux_eint0_3,
++	s3c2412_demux_eint0_3,
++	s3c2412_demux_eint0_3,
++	s3c24xx_demux_eint4_7,
++	s3c24xx_demux_eint8_23,
++};
++
++static int s3c24xx_gpf_irq_map(struct irq_domain *h, unsigned int virq,
++					irq_hw_number_t hw)
++{
++	struct s3c24xx_eint_domain_data *ddata = h->host_data;
++	struct samsung_pin_bank *bank = ddata->bank;
++
++	if (!(bank->eint_mask & (1 << (bank->eint_offset + hw))))
++		return -EINVAL;
++
++	if (hw <= 3) {
++		if (ddata->eint0_3_parent_only)
++			irq_set_chip_and_handler(virq, &s3c2410_eint0_3_chip,
++						 handle_edge_irq);
++		else
++			irq_set_chip_and_handler(virq, &s3c2412_eint0_3_chip,
++						 handle_edge_irq);
++	} else {
++		irq_set_chip_and_handler(virq, &s3c24xx_eint_chip,
++					 handle_edge_irq);
++	}
++	irq_set_chip_data(virq, bank);
++	set_irq_flags(virq, IRQF_VALID);
++	return 0;
++}
++
++static const struct irq_domain_ops s3c24xx_gpf_irq_ops = {
++	.map	= s3c24xx_gpf_irq_map,
++	.xlate	= irq_domain_xlate_twocell,
++};
++
++static int s3c24xx_gpg_irq_map(struct irq_domain *h, unsigned int virq,
++					irq_hw_number_t hw)
++{
++	struct s3c24xx_eint_domain_data *ddata = h->host_data;
++	struct samsung_pin_bank *bank = ddata->bank;
++
++	if (!(bank->eint_mask & (1 << (bank->eint_offset + hw))))
++		return -EINVAL;
++
++	irq_set_chip_and_handler(virq, &s3c24xx_eint_chip, handle_edge_irq);
++	irq_set_chip_data(virq, bank);
++	set_irq_flags(virq, IRQF_VALID);
++	return 0;
++}
++
++static const struct irq_domain_ops s3c24xx_gpg_irq_ops = {
++	.map	= s3c24xx_gpg_irq_map,
++	.xlate	= irq_domain_xlate_twocell,
++};
++
++static const struct of_device_id s3c24xx_eint_irq_ids[] = {
++	{ .compatible = "samsung,s3c2410-wakeup-eint", .data = (void *)1 },
++	{ .compatible = "samsung,s3c2412-wakeup-eint", .data = (void *)0 },
++	{ }
++};
++
++static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
++{
++	struct device *dev = d->dev;
++	const struct of_device_id *match;
++	struct device_node *eint_np = NULL;
++	struct device_node *np;
++	struct samsung_pin_bank *bank;
++	struct s3c24xx_eint_data *eint_data;
++	const struct irq_domain_ops *ops;
++	unsigned int i;
++	bool eint0_3_parent_only;
++	irq_flow_handler_t *handlers;
++
++	for_each_child_of_node(dev->of_node, np) {
++		match = of_match_node(s3c24xx_eint_irq_ids, np);
++		if (match) {
++			eint_np = np;
++			eint0_3_parent_only = (bool)match->data;
++			break;
++		}
++	}
++	if (!eint_np)
++		return -ENODEV;
++
++	eint_data = devm_kzalloc(dev, sizeof(*eint_data), GFP_KERNEL);
++	if (!eint_data)
++		return -ENOMEM;
++
++	eint_data->drvdata = d;
++
++	handlers = eint0_3_parent_only ? s3c2410_eint_handlers
++				       : s3c2412_eint_handlers;
++	for (i = 0; i < NUM_EINT_IRQ; ++i) {
++		unsigned int irq;
++
++		irq = irq_of_parse_and_map(eint_np, i);
++		if (!irq) {
++			dev_err(dev, "failed to get wakeup EINT IRQ %d\n", i);
++			return -ENXIO;
++		}
++
++		eint_data->parents[i] = irq;
++		irq_set_chained_handler(irq, handlers[i]);
++		irq_set_handler_data(irq, eint_data);
++	}
++
++	bank = d->ctrl->pin_banks;
++	for (i = 0; i < d->ctrl->nr_banks; ++i, ++bank) {
++		struct s3c24xx_eint_domain_data *ddata;
++		unsigned int mask;
++		unsigned int irq;
++		unsigned int pin;
++
++		if (bank->eint_type != EINT_TYPE_WKUP)
++			continue;
++
++		ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
++		if (!ddata)
++			return -ENOMEM;
++
++		ddata->bank = bank;
++		ddata->eint_data = eint_data;
++		ddata->eint0_3_parent_only = eint0_3_parent_only;
++
++		ops = (bank->eint_offset == 0) ? &s3c24xx_gpf_irq_ops
++					       : &s3c24xx_gpg_irq_ops;
++
++		bank->irq_domain = irq_domain_add_linear(bank->of_node,
++				bank->nr_pins, ops, ddata);
++		if (!bank->irq_domain) {
++			dev_err(dev, "wkup irq domain add failed\n");
++			return -ENXIO;
++		}
++
++		irq = bank->eint_offset;
++		mask = bank->eint_mask;
++		for (pin = 0; mask; ++pin, mask >>= 1) {
++			if (irq > NUM_EINT)
++				break;
++			if (!(mask & 1))
++				continue;
++			eint_data->domains[irq] = bank->irq_domain;
++			++irq;
++		}
++	}
++
++	return 0;
++}
++
++static struct samsung_pin_bank s3c2413_pin_banks[] = {
++	PIN_BANK_A(23, 0x000, "gpa"),
++	PIN_BANK_2BIT(11, 0x010, "gpb"),
++	PIN_BANK_2BIT(16, 0x020, "gpc"),
++	PIN_BANK_2BIT(16, 0x030, "gpd"),
++	PIN_BANK_2BIT(16, 0x040, "gpe"),
++	PIN_BANK_2BIT_EINTW(8, 0x050, "gpf", 0, 0xff),
++	PIN_BANK_2BIT_EINTW(16, 0x060, "gpg", 8, 0xffff00),
++	PIN_BANK_2BIT(11, 0x070, "gph"),
++	PIN_BANK_2BIT(13, 0x080, "gpj"),
++};
++
++struct samsung_pin_ctrl s3c2413_pin_ctrl[] = {
++	{
++		.pin_banks	= s3c2413_pin_banks,
++		.nr_banks	= ARRAY_SIZE(s3c2413_pin_banks),
++		.eint_wkup_init = s3c24xx_eint_init,
++		.label		= "S3C2413-GPIO",
++	},
++};
++
++static struct samsung_pin_bank s3c2416_pin_banks[] = {
++	PIN_BANK_A(27, 0x000, "gpa"),
++	PIN_BANK_2BIT(11, 0x010, "gpb"),
++	PIN_BANK_2BIT(16, 0x020, "gpc"),
++	PIN_BANK_2BIT(16, 0x030, "gpd"),
++	PIN_BANK_2BIT(16, 0x040, "gpe"),
++	PIN_BANK_2BIT_EINTW(8, 0x050, "gpf", 0, 0xff),
++	PIN_BANK_2BIT_EINTW(8, 0x060, "gpg", 8, 0xff00),
++	PIN_BANK_2BIT(15, 0x070, "gph"),
++	PIN_BANK_2BIT(16, 0x0e0, "gpk"),
++	PIN_BANK_2BIT(14, 0x0f0, "gpl"),
++	PIN_BANK_2BIT(2, 0x100, "gpm"),
++};
++
++struct samsung_pin_ctrl s3c2416_pin_ctrl[] = {
++	{
++		.pin_banks	= s3c2416_pin_banks,
++		.nr_banks	= ARRAY_SIZE(s3c2416_pin_banks),
++		.eint_wkup_init = s3c24xx_eint_init,
++		.label		= "S3C2416-GPIO",
++	},
++};
++
++static struct samsung_pin_bank s3c2440_pin_banks[] = {
++	PIN_BANK_A(25, 0x000, "gpa"),
++	PIN_BANK_2BIT(11, 0x010, "gpb"),
++	PIN_BANK_2BIT(16, 0x020, "gpc"),
++	PIN_BANK_2BIT(16, 0x030, "gpd"),
++	PIN_BANK_2BIT(16, 0x040, "gpe"),
++	PIN_BANK_2BIT_EINTW(8, 0x050, "gpf", 0, 0xff),
++	PIN_BANK_2BIT_EINTW(16, 0x060, "gpg", 8, 0xffff00),
++	PIN_BANK_2BIT(11, 0x070, "gph"),
++	PIN_BANK_2BIT(13, 0x0d0, "gpj"),
++};
++
++struct samsung_pin_ctrl s3c2440_pin_ctrl[] = {
++	{
++		.pin_banks	= s3c2440_pin_banks,
++		.nr_banks	= ARRAY_SIZE(s3c2440_pin_banks),
++		.eint_wkup_init = s3c24xx_eint_init,
++		.label		= "S3C2440-GPIO",
++	},
++};
++
++static struct samsung_pin_bank s3c2450_pin_banks[] = {
++	PIN_BANK_A(28, 0x000, "gpa"),
++	PIN_BANK_2BIT(11, 0x010, "gpb"),
++	PIN_BANK_2BIT(16, 0x020, "gpc"),
++	PIN_BANK_2BIT(16, 0x030, "gpd"),
++	PIN_BANK_2BIT(16, 0x040, "gpe"),
++	PIN_BANK_2BIT_EINTW(8, 0x050, "gpf", 0, 0xff),
++	PIN_BANK_2BIT_EINTW(16, 0x060, "gpg", 8, 0xffff00),
++	PIN_BANK_2BIT(15, 0x070, "gph"),
++	PIN_BANK_2BIT(16, 0x0d0, "gpj"),
++	PIN_BANK_2BIT(16, 0x0e0, "gpk"),
++	PIN_BANK_2BIT(15, 0x0f0, "gpl"),
++	PIN_BANK_2BIT(2, 0x100, "gpm"),
++};
++
++struct samsung_pin_ctrl s3c2450_pin_ctrl[] = {
++	{
++		.pin_banks	= s3c2450_pin_banks,
++		.nr_banks	= ARRAY_SIZE(s3c2450_pin_banks),
++		.eint_wkup_init = s3c24xx_eint_init,
++		.label		= "S3C2450-GPIO",
++	},
++};
+diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+index e836135..234c32f 100644
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@ -977,6 +977,16 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ 	{ .compatible = "samsung,s3c64xx-pinctrl",
+ 		.data = s3c64xx_pin_ctrl },
+ #endif
++#ifdef CONFIG_PINCTRL_S3C24XX
++	{ .compatible = "samsung,s3c2413-pinctrl",
++		.data = s3c2413_pin_ctrl },
++	{ .compatible = "samsung,s3c2416-pinctrl",
++		.data = s3c2416_pin_ctrl },
++	{ .compatible = "samsung,s3c2440-pinctrl",
++		.data = s3c2440_pin_ctrl },
++	{ .compatible = "samsung,s3c2450-pinctrl",
++		.data = s3c2450_pin_ctrl },
++#endif
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
+diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
+index 7c7f9eb..c79d634 100644
+--- a/drivers/pinctrl/pinctrl-samsung.h
++++ b/drivers/pinctrl/pinctrl-samsung.h
+@@ -246,5 +246,9 @@ extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+ extern struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
++extern struct samsung_pin_ctrl s3c2413_pin_ctrl[];
++extern struct samsung_pin_ctrl s3c2416_pin_ctrl[];
++extern struct samsung_pin_ctrl s3c2440_pin_ctrl[];
++extern struct samsung_pin_ctrl s3c2450_pin_ctrl[];
+ 
+ #endif /* __PINCTRL_SAMSUNG_H */
 -- 
 1.7.2.3
