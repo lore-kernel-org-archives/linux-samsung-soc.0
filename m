@@ -1,41 +1,51 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 08/30] i2c: s3c2410: make header file local
-Date: Sun, 14 Apr 2013 19:01:31 +0200
-Message-ID: <201304141901.32286.heiko@sntech.de>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <1365638712-1028578-9-git-send-email-arnd@arndb.de> <20130414122035.GB9013@the-dreams.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:33458 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752240Ab3DNRBk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Apr 2013 13:01:40 -0400
-In-Reply-To: <20130414122035.GB9013@the-dreams.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH] cpufreq: exynos5440: Protect opp search calls with rcu lock
+Date: Mon, 15 Apr 2013 11:54:47 +0530
+Message-ID: <1366007087-12090-1-git-send-email-amit.daniel@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, cpufreq@vger.kernel.org, Nishanth Menon <nm@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
 
-Am Sonntag, 14. April 2013, 14:20:35 schrieb Wolfram Sang:
-> On Thu, Apr 11, 2013 at 02:04:50AM +0200, Arnd Bergmann wrote:
-> > No other file in the kernel besides i2c-s3c2410.c uses the current
-> > plat/regs-iic.h, so we can simply move the header file to live in the
-> > same directory as the driver, as a preparation to multiplatform builds.
-> 
-> What about putting the regs in the driver itself?
+As per the OPP library documentation(Documentation/power/opp.txt) all
+opp find/get calls should be protected by rcu locks.
 
-they already are :-) [0] and Arnd will drop this patch in his next iteration 
-[1].
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
 
+This patch is created against linux-next tree and is suggested by
+Nishanth Menon. (https://lkml.org/lkml/2013/4/12/119)
 
-Heiko
+ drivers/cpufreq/exynos5440-cpufreq.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
+diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+index ead7ed4..0c74018 100644
+--- a/drivers/cpufreq/exynos5440-cpufreq.c
++++ b/drivers/cpufreq/exynos5440-cpufreq.c
+@@ -120,11 +120,13 @@ static int init_div_table(void)
+ 	int i = 0;
+ 	struct opp *opp;
+ 
++	rcu_read_lock();
+ 	for (i = 0; freq_tbl[i].frequency != CPUFREQ_TABLE_END; i++) {
+ 
+ 		opp = opp_find_freq_exact(dvfs_info->dev,
+ 					freq_tbl[i].frequency * 1000, true);
+ 		if (IS_ERR(opp)) {
++			rcu_read_unlock();
+ 			dev_err(dvfs_info->dev,
+ 				"failed to find valid OPP for %u KHZ\n",
+ 				freq_tbl[i].frequency);
+@@ -159,6 +161,7 @@ static int init_div_table(void)
+ 		__raw_writel(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 * i);
+ 	}
+ 
++	rcu_read_unlock();
+ 	return 0;
+ }
+ 
+-- 
+1.7.1
 
-[0] 
-https://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/commit/?h=i2c/for-
-next&id=e636602ac2613da8c1777cb42443223994be4107
-
-[1] Message-Id: <201304121011.13028.arnd@arndb.de>
