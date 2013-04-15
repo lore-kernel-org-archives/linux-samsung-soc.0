@@ -1,45 +1,70 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v2 02/13] ARM: convert arm/arm64 arch timer to use
- CLKSRC_OF init
-Date: Mon, 15 Apr 2013 10:39:58 +0100
-Message-ID: <20130415093958.GA29528@arm.com>
-References: <1364854883-5961-1-git-send-email-robherring2@gmail.com>
- <1364854883-5961-3-git-send-email-robherring2@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [alsa-devel] [PATCH 20/30] ASoC: samsung: convert to dmaengine
+ API
+Date: Mon, 15 Apr 2013 12:04:23 +0100
+Message-ID: <20130415110422.GA15837@opensource.wolfsonmicro.com>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
+ <1365638712-1028578-21-git-send-email-arnd@arndb.de>
+ <20130411142706.GB24971@opensource.wolfsonmicro.com>
+ <201304111647.17796.arnd@arndb.de>
+ <5168601F.2070409@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:57314 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S933036Ab3DOLEv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 15 Apr 2013 07:04:51 -0400
 Content-Disposition: inline
-In-Reply-To: <1364854883-5961-3-git-send-email-robherring2@gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <Mark.Rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, John Stultz <john.stultz@linaro.org>, "arm@kernel.org" <arm@kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Will Deacon <Will.Deacon@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+In-Reply-To: <5168601F.2070409@metafoo.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Mon, Apr 01, 2013 at 11:21:12PM +0100, Rob Herring wrote:
-> From: Rob Herring <rob.herring@calxeda.com>
-> 
-> This converts arm and arm64 to use CLKSRC_OF DT based initialization for
-> the arch timer. A new function arch_timer_arch_init is added to allow for
-> arch specific setup.
-> 
-> This has a side effect of enabling sched_clock on omap5 and exynos5. There
-> should not be any reason not to use the arch timers for sched_clock.
-> 
-> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Simon Horman <horms@verge.net.au>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-sh@vger.kernel.org
 
-Unless you pushed the patches already (I've been away for two weeks),
-for arm64:
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+On Fri, Apr 12, 2013 at 09:27:27PM +0200, Lars-Peter Clausen wrote:
+
+> I actually had a look at how the Samsung PCM driver a couple of days back,
+> but I didn't fully grasp how things work with the secondary TX channel for
+> the i2s driver and to make it work with the generic dmaengine PCM driver.
+> The code handling this in the i2s driver seems to be rather messy with lots
+> of ifs and elses. Also things would have would be a lot easier if the dt
+> bindings had used two subnodes each with their own 'dmas' property.
+
+Yeah, it's quite messy at the minute as it predates any subsystem
+support for things like multiple DMA channels going into a single DAI on
+an AP so it was having to do things it really shouldn't have done.  What
+ought to happen is that the driver gets refactored to use soc-pcm or
+change to represent the mixer block as a CODEC, I think if that happens
+then things ought to get easier.
+
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRa9tpAAoJELSic+t+oim9DLEP/19t3Inijm3BvaAQZ3bDV/Dd
+1aMM9yZDg5fUxb70/7wOVAXTcjVbuiWF0yGYq6OEZoAiJo3z6trivv7YZfQkLK4K
+QuZWXlGOzPIHjJy0GP+WT5/K23jAeV+tv8Np8W3auChNgfSmXCg3dGSnhECXewTM
+juaT1OGmdy8KD8uijDuR+odsAnUF7F93NFlCrCBtlhO74on2JnA5eT2+qd7V0MAT
+ryMmGlURlL4a113SQztU8pSbbJhGED0/6FPPnvBGuXpk0l1BIzR4JJiQJ2Rtj6Rz
+h1oGtnCPD0/mKoZqLZipxSxz+MvxeRgRbqft2K+Qjj0v7JeYI0xDrXeq93XyoIrq
+bpQnJdsYVgHOPmvXWbOzxytQwibBYBFqjcelCqAFkx3FChNslek0BHPFtN/ncDip
+IKBjOUP5OammxNaBZ/NHnjyUpu16PFdWgzI5r4v4KfodR4snq+bKP60q1dr3ZG8h
+WQevjfdnfI8uJlma2zKl801NYtKE4oLHGiDa/s2tfLzxuzfiGKD4G8ZeW9vv+Za6
+WyLx4tgln5nsnK6wW30cZJ+275XDI5oAxiz7dipiIlwJ3116PL4EWJoXmh4TgPt7
+iz24HRfgwNjxL2g7V1Ybg5S5rkcvTY0ASa8j3BwJUh1n6uJWKPOrgziCNVqix7AD
+XkBU9ywCTio05cVTLSmL
+=xjig
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
