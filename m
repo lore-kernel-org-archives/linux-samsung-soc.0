@@ -1,35 +1,86 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 0/3] of/pci: Provide common support for PCI DT parsing
-Date: Mon, 15 Apr 2013 20:29:06 +0200
-Message-ID: <CACRpkdbSd8pRG5pUS0ymqXDSp=ZhoQa2ctVuRA0cCmUcX5qFAA@mail.gmail.com>
-References: <1365693969-23907-1-git-send-email-Andrew.Murray@arm.com>
- <20130415175641.GM28693@titan.lakedaemon.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20130415175641.GM28693-u4khhh1J0LxI1Ri9qeTfzeTW4wlIGRCZ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
-Cc: siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu.Dudau-5wv7dgnIgG8@public.gmane.org, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH v5 0/6] Initial Device Tree support for S3C64xx
+Date: Mon, 15 Apr 2013 23:14:37 +0200
+Message-ID: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f172.google.com ([209.85.215.172]:44045 "EHLO
+	mail-ea0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754989Ab3DOVPz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 15 Apr 2013 17:15:55 -0400
+Received: by mail-ea0-f172.google.com with SMTP id z7so2381645eaf.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Apr 2013 14:15:54 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Rob Herring <robherring2@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Mon, Apr 15, 2013 at 7:56 PM, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org> wrote:
+This series adds Device Tree support for Samsung S3C64xx SoC series.
 
-> As agreed with Rob Herring, series applied to mvebu/drivers to support
-> mvebu pcie driver.
+It fixes several problems preventing from booting an S3C64xx-based system
+using Device Tree, adds all the infrastructure for Device Tree-based board
+support, including mach-s3c64xx-dt and dts include files for S3C64xx SoCs,
+and basic device tree source for FriendlyARM Mini6410 board.
 
-Will this hit ARM SoC soon-ish so I can base a pull request for the Integrator
-on this stuff as well?
+Current support is very limited and allows only basic bootup with UART and
+SDHCI, but should be fine as a start and will be extended in future,
+hopefully with help of S3C64xx board maintainers.
 
-Yours,
-Linus Walleij
+This series depends on my other series reworking samsung-time for
+multiplatform:
+[PATCH v5 00/14] ARM: samsung-time: Prepare for multiplatform support
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/17864
+
+Changes since v4:
+ - Rebased onto current for-next branch of Kgene's tree
+ - Added support for pinctrl (driver merged through pinctrl tree)
+ - Added labels to all nodes that can be overridden from board dts
+ - Modified board dts to use the &label syntax to reference device nodes
+
+Changes since v3:
+ - Rebased onto current for-next branch of Kgene's tree
+ - Updated timer node for next version of samsung-time patches
+ - Replaced local s3c64xx_dt_init_irq with irqchip_init
+
+Changes since v2:
+ - Updated timer node for next version of samsung-time patches
+
+Changes since v1:
+ - Dropped two VIC-related patches that are no longer necessary
+ - Added Device Tree-based instantation of system timers
+ - Corrected VIC interrupt specifiers
+ - Adjusted CPU compatible values and dropped @id
+
+Tomasz Figa (6):
+  ARM: common: vic: Parse interrupt and resume masks from device tree
+  ARM: s3c64xx: Skip legacy EINT setup if pinctrl-s3c64xx driver is
+    present
+  gpio: samsung: Skip legacy GPIO registration if pinctrl-s3c64xx is
+    present
+  ARM: s3c64xx: Add board file for boot using Device Tree
+  ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
+  ARM: dts: Add dts file for S3C6410-based Mini6410 board
+
+ Documentation/devicetree/bindings/arm/vic.txt |   6 +
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/s3c6400.dtsi                |  33 ++
+ arch/arm/boot/dts/s3c6410-mini6410.dts        | 168 +++++++
+ arch/arm/boot/dts/s3c6410.dtsi                |  33 ++
+ arch/arm/boot/dts/s3c64xx-pinctrl.dtsi        | 683 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/s3c64xx.dtsi                | 136 +++++
+ arch/arm/mach-s3c64xx/Kconfig                 |  16 +
+ arch/arm/mach-s3c64xx/Makefile                |   1 +
+ arch/arm/mach-s3c64xx/common.c                |  20 +-
+ arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c       |  83 ++++
+ drivers/gpio/gpio-samsung.c                   |   4 +-
+ drivers/irqchip/irq-vic.c                     |   7 +-
+ 13 files changed, 1188 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c6410-mini6410.dts
+ create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
+ create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+
+-- 
+1.8.1.5
