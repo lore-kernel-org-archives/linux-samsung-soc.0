@@ -1,39 +1,29 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] iio: adc: exynos_adc: Handle timeout issues
-Date: Mon, 15 Apr 2013 09:01:39 -0700
-Message-ID: <CAD=FV=XnpWPFcDoQ1Pi+SkuWiemiY+6Z6ecQN+eDpfs4fW8+qw@mail.gmail.com>
-References: <1363364801-23684-1-git-send-email-ch.naveen@samsung.com>
-	<1365048389-6364-1-git-send-email-naveenkrishna.ch@gmail.com>
-	<CAHfPSqAVUVdFwtMxJYCGaPv_+iO_GEc9_UGNXwuSj9uu_fB81g@mail.gmail.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH] i2c: s3c2410: Add SMBus emulation for block read
+Date: Mon, 15 Apr 2013 18:06:51 +0200
+Message-ID: <20130415160651.GA6286@the-dreams.de>
+References: <1364308196-10101-1-git-send-email-prasanna.ps@samsung.com>
+ <20130409122313.GD4913@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHfPSqAVUVdFwtMxJYCGaPv_+iO_GEc9_UGNXwuSj9uu_fB81g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130409122313.GD4913-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Prasanna Kumar <prasanna.ps-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jaemin Yoo <jmin.yoo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Naveen,
 
-On Fri, Apr 12, 2013 at 9:36 PM, Naveen Krishna Ch
-<naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Can some one review this and get this fix into the tree.
+> I don't know if that can happen, but if the block has length 0 (that is,
+> only consists of a single byte that is read as 0) the is_msglast() test
+> returns 0 which might be wrong. Maybe even if it cannot regularily
+> happen handle it in a sane way?
 
-I think the ball is in your court.  Lars responded to your RFC patch
-here and requested that you do a reset of the bus in the case of being
-interrupted.
+Length of 0 is illegal according to the specs, but a check won't hurt.
 
-https://lkml.org/lkml/2013/4/5/91
+> Also I wonder if error checking for byte > I2C_SMBUS_BLOCK_MAX would be
+> needed to prevent a buffer overrun?
 
-I made a comment about perhaps just using non-interruptable and then
-shortening the timeout and Lars thought that would be OK.  ...but I've
-since thought about it and I think Lars' suggestion is best.
-
-The reason I no longer like my suggestion of just using a 1ms
-non-interruptable tiemout is that I'm slightly worried about running
-into some case where the interrupt gets blocked for a while and then
-we get timeouts for no reasons.  Perhaps I'm worrying over nothing,
-but Lars' suggestion doesn't have this issue.
-
--Doug
+Yes. Although I have seen devices able to send more than that, yet
+adding support for that is a seperate issue.
