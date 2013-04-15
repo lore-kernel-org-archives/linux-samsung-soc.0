@@ -1,60 +1,67 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 0/3] regulator: max8998: Add support for Device Tree
-Date: Mon, 15 Apr 2013 14:42:08 +0200
-Message-ID: <1884769.9OL2jLgc2r@amdc1227>
-References: <1365092363-12763-1-git-send-email-t.figa@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 3/7] ARM: exynos: add missing properties for combiner IRQs
+Date: Mon, 15 Apr 2013 18:15:28 +0530
+Message-ID: <CAK9yfHz7X5CA+CfYajtVOBL1r17V0YcFz1BfuZ1PSE0qFiSFEA@mail.gmail.com>
+References: <1365775405-115297-1-git-send-email-arnd@arndb.de>
+	<201304151041.44805.arnd@arndb.de>
+	<CAK9yfHwXYRqo2yG1moWvMnEmNWXCVL7a9eKzi2we=QmdpVsz-w@mail.gmail.com>
+	<201304151420.35843.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:63648 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753638Ab3DOMmd (ORCPT
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:58113 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933777Ab3DOMp3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Apr 2013 08:42:33 -0400
-In-reply-to: <1365092363-12763-1-git-send-email-t.figa@samsung.com>
+	Mon, 15 Apr 2013 08:45:29 -0400
+Received: by mail-oa0-f53.google.com with SMTP id m6so831650oag.40
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Apr 2013 05:45:28 -0700 (PDT)
+In-Reply-To: <201304151420.35843.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@opensource.wolfsonmicro.com
-Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, lrg@ti.com, m.szyprowski@samsung.com, kgene.kim@samsung.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Mark,
+On 15 April 2013 17:50, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Monday 15 April 2013, Sachin Kamat wrote:
+>> >> > diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+>> >> > index 36d4299..f83c3c1 100644
+>> >> > --- a/arch/arm/boot/dts/exynos4212.dtsi
+>> >> > +++ b/arch/arm/boot/dts/exynos4212.dtsi
+>> >> > @@ -26,6 +26,15 @@
+>> >> >                 cpu-offset = <0x8000>;
+>> >> >         };
+>> >> >
+>> >> > +       interrupt-controller@10440000 {
+>> >>
+>> >> Don't we need a node name here (combiner:interrupt-controller@10440000)?
+>> >
+>> > Why?
+>>
+>> Since it is being referenced as "&combiner" by other bindings, i
+>> thought that was required.
+>
+> The original definition actually comes from exynos4.dtsi. It's enough
+> to have the label in one place.
 
-On Thursday 04 of April 2013 18:19:20 Tomasz Figa wrote:
-> This series adds Device Tree support to max8998 MFD driver.
-> 
-> First patch reworks max8998-irq driver to use IRQ domains. Second patch
-> prepares platform data structure to ease generating it at runtime from
-> data parsed from device tree. Third patch implements Device Tree
-> binding and adds necessary documentation.
-> 
-> Tested on Universal C210 board.
-> 
-> Tomasz Figa (3):
->   mfd: Add irq domain support for max8998 interrupts
->   regulator: max8998: Use arrays for specifying voltages in platform
->     data
->   mfd: max8998: Add support for Device Tree
-> 
->  Documentation/devicetree/bindings/mfd/max8998.txt | 111 ++++++++++
->  arch/arm/mach-exynos/mach-universal_c210.c        |   8 +-
->  arch/arm/mach-s5pv210/mach-aquila.c               |   8 +-
->  arch/arm/mach-s5pv210/mach-goni.c                 |   8 +-
->  drivers/mfd/Kconfig                               |   1 +
->  drivers/mfd/max8998-irq.c                         |  61 +++---
->  drivers/mfd/max8998.c                             |  76 ++++++-
->  drivers/regulator/max8998.c                       | 254
-> ++++++++++++++++------ drivers/rtc/rtc-max8998.c                         | 
-> 17 +-
->  include/linux/mfd/max8998-private.h               |   6 +-
->  include/linux/mfd/max8998.h                       |  20 +-
->  11 files changed, 435 insertions(+), 135 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/max8998.txt
+Yes, right. I overlooked that.
 
-Any chance to still have this series merged for 3.10?
+>
+>> >> We have a combiner node defined in exynos4x12.dtsi. With the bindings
+>> >> now defined separately in 4212 and 4412 dtsi files, probably the one
+>> >> in 4x12 could be dropped?
+>> >
+>> > I did not see that one, but it seems to have the wrong numbers in the last
+>> > four interrupt specifiers. I think it would be better to just fix that one
+>> > and keep using it.
+>>
+>> OK. Do you want me to fix it and send as a patch or would you like to do it?
+>
+> If you have a patch that works, you could just send it out, oetherwise I'd
+> do it.
 
-Best regards,
+Not ATM, so please go ahead.
+
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+With warm regards,
+Sachin
