@@ -1,194 +1,90 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [REPOST PATCH] spi: s3c64xx: let device core setup the default pin configuration
-Date: Mon, 15 Apr 2013 20:42:57 -0700
-Message-ID: <1366083777-9118-1-git-send-email-dianders@chromium.org>
-References: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH] cpufreq: exynos5440: Protect opp search calls with rcu lock
+Date: Tue, 16 Apr 2013 12:21:41 +0530
+Message-ID: <CADGdYn6FJFWgx=8PGNwjmxVpsBU=QrvMKpPQMANuBwOHUPmt8w@mail.gmail.com>
+References: <1366007087-12090-1-git-send-email-amit.daniel@samsung.com>
+	<CAGo_u6qD5hO7x0fYwe+cZ5GHRA6tRG+vmhnf4GFjt9G0inQ0xA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f202.google.com ([209.85.128.202]:32784 "EHLO
-	mail-ve0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935452Ab3DPDn6 (ORCPT
+Received: from mail-ia0-f171.google.com ([209.85.210.171]:46357 "EHLO
+	mail-ia0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754120Ab3DPGvm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Apr 2013 23:43:58 -0400
-Received: by mail-ve0-f202.google.com with SMTP id 14so4995vea.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Apr 2013 20:43:57 -0700 (PDT)
-In-Reply-To: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org>
+	Tue, 16 Apr 2013 02:51:42 -0400
+In-Reply-To: <CAGo_u6qD5hO7x0fYwe+cZ5GHRA6tRG+vmhnf4GFjt9G0inQ0xA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, heiko@sntech.de, Jaswinder Singh <jaswinder.singh@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, Doug Anderson <dianders@chromium.org>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@kernel.org>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, cpufreq@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-From: Thomas Abraham <thomas.abraham@linaro.org>
+Hi Nishanth,
 
-With device core now able to setup the default pin configuration,
-the pin configuration code based on the deprecated Samsung specific
-gpio bindings is removed.
+Thanks for reviewing this patch.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Tested-by: Doug Anderson <dianders@chromium.org>
----
- .../devicetree/bindings/spi/spi-samsung.txt        |  8 +--
- drivers/spi/spi-s3c64xx.c                          | 66 ++--------------------
- 2 files changed, 6 insertions(+), 68 deletions(-)
+On Mon, Apr 15, 2013 at 7:40 PM, Nishanth Menon <nm@ti.com> wrote:
+> Daniel,
+> On Mon, Apr 15, 2013 at 1:24 AM, Amit Daniel Kachhap
+> <amit.daniel@samsung.com> wrote:
+>> As per the OPP library documentation(Documentation/power/opp.txt) all
+>> opp find/get calls should be protected by rcu locks.
+>>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>
+>> This patch is created against linux-next tree and is suggested by
+>> Nishanth Menon. (https://lkml.org/lkml/2013/4/12/119)
+>>
+>>  drivers/cpufreq/exynos5440-cpufreq.c |    3 +++
+>>  1 files changed, 3 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
+>> index ead7ed4..0c74018 100644
+>> --- a/drivers/cpufreq/exynos5440-cpufreq.c
+>> +++ b/drivers/cpufreq/exynos5440-cpufreq.c
+>> @@ -120,11 +120,13 @@ static int init_div_table(void)
+>>         int i = 0;
+>>         struct opp *opp;
+>>
+>> +       rcu_read_lock();
+>>         for (i = 0; freq_tbl[i].frequency != CPUFREQ_TABLE_END; i++) {
+>>
+>>                 opp = opp_find_freq_exact(dvfs_info->dev,
+>>                                         freq_tbl[i].frequency * 1000, true);
+>>                 if (IS_ERR(opp)) {
+>> +                       rcu_read_unlock();
+>>                         dev_err(dvfs_info->dev,
+>>                                 "failed to find valid OPP for %u KHZ\n",
+>>                                 freq_tbl[i].frequency);
+>> @@ -159,6 +161,7 @@ static int init_div_table(void)
+>>                 __raw_writel(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 * i);
+>>         }
+>>
+>> +       rcu_read_unlock();
+>
+> Is it not possible to reduce the amount of code protected by RCU lock?
+> something like this:
+Yes it is possible but then this part of code is a loop of max 8
+iteration so rcu_read_lock will be called those many times.
+Also this code blocks are just register writes and not doing any time
+consuming operations.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index a15ffed..86aa061 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -31,9 +31,6 @@ Required Board Specific Properties:
- 
- - #address-cells: should be 1.
- - #size-cells: should be 0.
--- gpios: The gpio specifier for clock, mosi and miso interface lines (in the
--  order specified). The format of the gpio specifier depends on the gpio
--  controller.
- 
- Optional Board Specific Properties:
- 
-@@ -86,9 +83,8 @@ Example:
- 	spi_0: spi@12d20000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		gpios = <&gpa2 4 2 3 0>,
--			<&gpa2 6 2 3 0>,
--			<&gpa2 7 2 3 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&spi0_bus>;
- 
- 		w25q80bw@0 {
- 			#address-cells = <1>;
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 4989aeb..4ab992b 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1148,41 +1148,6 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
- }
- 
- #ifdef CONFIG_OF
--static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
--{
--	struct device *dev = &sdd->pdev->dev;
--	int idx, gpio, ret;
--
--	/* find gpios for mosi, miso and clock lines */
--	for (idx = 0; idx < 3; idx++) {
--		gpio = of_get_gpio(dev->of_node, idx);
--		if (!gpio_is_valid(gpio)) {
--			dev_err(dev, "invalid gpio[%d]: %d\n", idx, gpio);
--			goto free_gpio;
--		}
--		sdd->gpios[idx] = gpio;
--		ret = gpio_request(gpio, "spi-bus");
--		if (ret) {
--			dev_err(dev, "gpio [%d] request failed: %d\n",
--				gpio, ret);
--			goto free_gpio;
--		}
--	}
--	return 0;
--
--free_gpio:
--	while (--idx >= 0)
--		gpio_free(sdd->gpios[idx]);
--	return -EINVAL;
--}
--
--static void s3c64xx_spi_dt_gpio_free(struct s3c64xx_spi_driver_data *sdd)
--{
--	unsigned int idx;
--	for (idx = 0; idx < 3; idx++)
--		gpio_free(sdd->gpios[idx]);
--}
--
- static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
- {
- 	struct s3c64xx_spi_info *sci;
-@@ -1215,15 +1180,6 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
- {
- 	return dev->platform_data;
- }
--
--static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
--{
--	return -EINVAL;
--}
--
--static void s3c64xx_spi_dt_gpio_free(struct s3c64xx_spi_driver_data *sdd)
--{
--}
- #endif
- 
- static const struct of_device_id s3c64xx_spi_dt_match[];
-@@ -1344,10 +1300,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		goto err0;
- 	}
- 
--	if (!sci->cfg_gpio && pdev->dev.of_node) {
--		if (s3c64xx_spi_parse_dt_gpio(sdd))
--			return -EBUSY;
--	} else if (sci->cfg_gpio == NULL || sci->cfg_gpio()) {
-+	if (sci->cfg_gpio && sci->cfg_gpio()) {
- 		dev_err(&pdev->dev, "Unable to config gpio\n");
- 		ret = -EBUSY;
- 		goto err0;
-@@ -1358,13 +1311,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (IS_ERR(sdd->clk)) {
- 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
- 		ret = PTR_ERR(sdd->clk);
--		goto err1;
-+		goto err0;
- 	}
- 
- 	if (clk_prepare_enable(sdd->clk)) {
- 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
- 		ret = -EBUSY;
--		goto err1;
-+		goto err0;
- 	}
- 
- 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-@@ -1421,9 +1374,6 @@ err3:
- 	clk_disable_unprepare(sdd->src_clk);
- err2:
- 	clk_disable_unprepare(sdd->clk);
--err1:
--	if (!sdd->cntrlr_info->cfg_gpio && pdev->dev.of_node)
--		s3c64xx_spi_dt_gpio_free(sdd);
- err0:
- 	platform_set_drvdata(pdev, NULL);
- 	spi_master_put(master);
-@@ -1446,9 +1396,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(sdd->clk);
- 
--	if (!sdd->cntrlr_info->cfg_gpio && pdev->dev.of_node)
--		s3c64xx_spi_dt_gpio_free(sdd);
--
- 	platform_set_drvdata(pdev, NULL);
- 	spi_master_put(master);
- 
-@@ -1467,9 +1414,6 @@ static int s3c64xx_spi_suspend(struct device *dev)
- 	clk_disable_unprepare(sdd->src_clk);
- 	clk_disable_unprepare(sdd->clk);
- 
--	if (!sdd->cntrlr_info->cfg_gpio && dev->of_node)
--		s3c64xx_spi_dt_gpio_free(sdd);
--
- 	sdd->cur_speed = 0; /* Output Clock is stopped */
- 
- 	return 0;
-@@ -1481,9 +1425,7 @@ static int s3c64xx_spi_resume(struct device *dev)
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
- 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
- 
--	if (!sci->cfg_gpio && dev->of_node)
--		s3c64xx_spi_parse_dt_gpio(sdd);
--	else
-+	if (sci->cfg_gpio)
- 		sci->cfg_gpio();
- 
- 	/* Enable the clock */
--- 
-1.8.1.3
+Thanks,
+Amit Daniel
+> +               rcu_read_lock();
+>                 opp = opp_find_freq_exact(dvfs_info->dev,
+>                                         freq_tbl[i].frequency * 1000, true);
+>                 if (IS_ERR(opp)) {
+> +                       rcu_read_unlock();
+>                         dev_err(dvfs_info->dev,
+>                                 "failed to find valid OPP for %u KHZ\n",
+>                                 freq_tbl[i].frequency);
+>                         return PTR_ERR(opp);
+>                 }
+> +               volt_id = opp_get_voltage(opp);
+> +               rcu_unlock();
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
