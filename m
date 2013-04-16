@@ -1,41 +1,194 @@
-From: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
-Subject: Re: [PATCH v6 0/3] of/pci: Provide common support for PCI DT parsing
-Date: Mon, 15 Apr 2013 14:37:45 -0400
-Message-ID: <20130415183745.GP28693@titan.lakedaemon.net>
-References: <1365693969-23907-1-git-send-email-Andrew.Murray@arm.com>
- <20130415175641.GM28693@titan.lakedaemon.net>
- <CACRpkdbSd8pRG5pUS0ymqXDSp=ZhoQa2ctVuRA0cCmUcX5qFAA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbSd8pRG5pUS0ymqXDSp=ZhoQa2ctVuRA0cCmUcX5qFAA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu.Dudau-5wv7dgnIgG8@public.gmane.org, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: [REPOST PATCH] spi: s3c64xx: let device core setup the default pin configuration
+Date: Mon, 15 Apr 2013 20:42:57 -0700
+Message-ID: <1366083777-9118-1-git-send-email-dianders@chromium.org>
+References: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f202.google.com ([209.85.128.202]:32784 "EHLO
+	mail-ve0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935452Ab3DPDn6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 15 Apr 2013 23:43:58 -0400
+Received: by mail-ve0-f202.google.com with SMTP id 14so4995vea.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Apr 2013 20:43:57 -0700 (PDT)
+In-Reply-To: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, heiko@sntech.de, Jaswinder Singh <jaswinder.singh@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, Doug Anderson <dianders@chromium.org>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@kernel.org>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 15, 2013 at 08:29:06PM +0200, Linus Walleij wrote:
-> On Mon, Apr 15, 2013 at 7:56 PM, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org> wrote:
-> 
-> > As agreed with Rob Herring, series applied to mvebu/drivers to support
-> > mvebu pcie driver.
-> 
-> Will this hit ARM SoC soon-ish so I can base a pull request for the Integrator
-> on this stuff as well?
+From: Thomas Abraham <thomas.abraham@linaro.org>
 
-PR just sent, I'll defer to our kind overlords ;-)
+With device core now able to setup the default pin configuration,
+the pin configuration code based on the deprecated Samsung specific
+gpio bindings is removed.
 
-thx,
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Tested-by: Doug Anderson <dianders@chromium.org>
+---
+ .../devicetree/bindings/spi/spi-samsung.txt        |  8 +--
+ drivers/spi/spi-s3c64xx.c                          | 66 ++--------------------
+ 2 files changed, 6 insertions(+), 68 deletions(-)
 
-Jason.
+diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+index a15ffed..86aa061 100644
+--- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
++++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+@@ -31,9 +31,6 @@ Required Board Specific Properties:
+ 
+ - #address-cells: should be 1.
+ - #size-cells: should be 0.
+-- gpios: The gpio specifier for clock, mosi and miso interface lines (in the
+-  order specified). The format of the gpio specifier depends on the gpio
+-  controller.
+ 
+ Optional Board Specific Properties:
+ 
+@@ -86,9 +83,8 @@ Example:
+ 	spi_0: spi@12d20000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		gpios = <&gpa2 4 2 3 0>,
+-			<&gpa2 6 2 3 0>,
+-			<&gpa2 7 2 3 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&spi0_bus>;
+ 
+ 		w25q80bw@0 {
+ 			#address-cells = <1>;
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 4989aeb..4ab992b 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1148,41 +1148,6 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
+ }
+ 
+ #ifdef CONFIG_OF
+-static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
+-{
+-	struct device *dev = &sdd->pdev->dev;
+-	int idx, gpio, ret;
+-
+-	/* find gpios for mosi, miso and clock lines */
+-	for (idx = 0; idx < 3; idx++) {
+-		gpio = of_get_gpio(dev->of_node, idx);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(dev, "invalid gpio[%d]: %d\n", idx, gpio);
+-			goto free_gpio;
+-		}
+-		sdd->gpios[idx] = gpio;
+-		ret = gpio_request(gpio, "spi-bus");
+-		if (ret) {
+-			dev_err(dev, "gpio [%d] request failed: %d\n",
+-				gpio, ret);
+-			goto free_gpio;
+-		}
+-	}
+-	return 0;
+-
+-free_gpio:
+-	while (--idx >= 0)
+-		gpio_free(sdd->gpios[idx]);
+-	return -EINVAL;
+-}
+-
+-static void s3c64xx_spi_dt_gpio_free(struct s3c64xx_spi_driver_data *sdd)
+-{
+-	unsigned int idx;
+-	for (idx = 0; idx < 3; idx++)
+-		gpio_free(sdd->gpios[idx]);
+-}
+-
+ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
+ {
+ 	struct s3c64xx_spi_info *sci;
+@@ -1215,15 +1180,6 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
+ {
+ 	return dev->platform_data;
+ }
+-
+-static int s3c64xx_spi_parse_dt_gpio(struct s3c64xx_spi_driver_data *sdd)
+-{
+-	return -EINVAL;
+-}
+-
+-static void s3c64xx_spi_dt_gpio_free(struct s3c64xx_spi_driver_data *sdd)
+-{
+-}
+ #endif
+ 
+ static const struct of_device_id s3c64xx_spi_dt_match[];
+@@ -1344,10 +1300,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err0;
+ 	}
+ 
+-	if (!sci->cfg_gpio && pdev->dev.of_node) {
+-		if (s3c64xx_spi_parse_dt_gpio(sdd))
+-			return -EBUSY;
+-	} else if (sci->cfg_gpio == NULL || sci->cfg_gpio()) {
++	if (sci->cfg_gpio && sci->cfg_gpio()) {
+ 		dev_err(&pdev->dev, "Unable to config gpio\n");
+ 		ret = -EBUSY;
+ 		goto err0;
+@@ -1358,13 +1311,13 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Unable to acquire clock 'spi'\n");
+ 		ret = PTR_ERR(sdd->clk);
+-		goto err1;
++		goto err0;
+ 	}
+ 
+ 	if (clk_prepare_enable(sdd->clk)) {
+ 		dev_err(&pdev->dev, "Couldn't enable clock 'spi'\n");
+ 		ret = -EBUSY;
+-		goto err1;
++		goto err0;
+ 	}
+ 
+ 	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
+@@ -1421,9 +1374,6 @@ err3:
+ 	clk_disable_unprepare(sdd->src_clk);
+ err2:
+ 	clk_disable_unprepare(sdd->clk);
+-err1:
+-	if (!sdd->cntrlr_info->cfg_gpio && pdev->dev.of_node)
+-		s3c64xx_spi_dt_gpio_free(sdd);
+ err0:
+ 	platform_set_drvdata(pdev, NULL);
+ 	spi_master_put(master);
+@@ -1446,9 +1396,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(sdd->clk);
+ 
+-	if (!sdd->cntrlr_info->cfg_gpio && pdev->dev.of_node)
+-		s3c64xx_spi_dt_gpio_free(sdd);
+-
+ 	platform_set_drvdata(pdev, NULL);
+ 	spi_master_put(master);
+ 
+@@ -1467,9 +1414,6 @@ static int s3c64xx_spi_suspend(struct device *dev)
+ 	clk_disable_unprepare(sdd->src_clk);
+ 	clk_disable_unprepare(sdd->clk);
+ 
+-	if (!sdd->cntrlr_info->cfg_gpio && dev->of_node)
+-		s3c64xx_spi_dt_gpio_free(sdd);
+-
+ 	sdd->cur_speed = 0; /* Output Clock is stopped */
+ 
+ 	return 0;
+@@ -1481,9 +1425,7 @@ static int s3c64xx_spi_resume(struct device *dev)
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+ 
+-	if (!sci->cfg_gpio && dev->of_node)
+-		s3c64xx_spi_parse_dt_gpio(sdd);
+-	else
++	if (sci->cfg_gpio)
+ 		sci->cfg_gpio();
+ 
+ 	/* Enable the clock */
+-- 
+1.8.1.3
