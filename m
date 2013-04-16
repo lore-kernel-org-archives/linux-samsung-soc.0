@@ -1,90 +1,41 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH] cpufreq: exynos5440: Protect opp search calls with rcu lock
-Date: Tue, 16 Apr 2013 12:21:41 +0530
-Message-ID: <CADGdYn6FJFWgx=8PGNwjmxVpsBU=QrvMKpPQMANuBwOHUPmt8w@mail.gmail.com>
-References: <1366007087-12090-1-git-send-email-amit.daniel@samsung.com>
-	<CAGo_u6qD5hO7x0fYwe+cZ5GHRA6tRG+vmhnf4GFjt9G0inQ0xA@mail.gmail.com>
+From: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH v6 0/3] of/pci: Provide common support for PCI DT parsing
+Date: Tue, 16 Apr 2013 09:12:41 +0200
+Message-ID: <1366096361.24994.49.camel@pasglop>
+References: <1365693969-23907-1-git-send-email-Andrew.Murray@arm.com>
+ <20130415175641.GM28693@titan.lakedaemon.net>
+ <CACRpkdbSd8pRG5pUS0ymqXDSp=ZhoQa2ctVuRA0cCmUcX5qFAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f171.google.com ([209.85.210.171]:46357 "EHLO
-	mail-ia0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754120Ab3DPGvm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Apr 2013 02:51:42 -0400
-In-Reply-To: <CAGo_u6qD5hO7x0fYwe+cZ5GHRA6tRG+vmhnf4GFjt9G0inQ0xA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CACRpkdbSd8pRG5pUS0ymqXDSp=ZhoQa2ctVuRA0cCmUcX5qFAA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu.Dudau-5wv7dgnIgG8@public.gmane.org, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, cpufreq@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Nishanth,
+On Mon, 2013-04-15 at 20:29 +0200, Linus Walleij wrote:
+> > As agreed with Rob Herring, series applied to mvebu/drivers to
+> support
+> > mvebu pcie driver.
+> 
+> Will this hit ARM SoC soon-ish so I can base a pull request for the
+> Integrator on this stuff as well?
 
-Thanks for reviewing this patch.
+Do not send this series upstream (or even in -next) until it has been at
+least build-tested and acked by the affected architectures. AFAIK it
+breaks microblaze build (simple missing #include) and isn't yet tested
+on powerpc (I'm on vacation, maybe somebody else on linuxppc-dev can do
+it though).
 
-On Mon, Apr 15, 2013 at 7:40 PM, Nishanth Menon <nm@ti.com> wrote:
-> Daniel,
-> On Mon, Apr 15, 2013 at 1:24 AM, Amit Daniel Kachhap
-> <amit.daniel@samsung.com> wrote:
->> As per the OPP library documentation(Documentation/power/opp.txt) all
->> opp find/get calls should be protected by rcu locks.
->>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->> ---
->>
->> This patch is created against linux-next tree and is suggested by
->> Nishanth Menon. (https://lkml.org/lkml/2013/4/12/119)
->>
->>  drivers/cpufreq/exynos5440-cpufreq.c |    3 +++
->>  1 files changed, 3 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
->> index ead7ed4..0c74018 100644
->> --- a/drivers/cpufreq/exynos5440-cpufreq.c
->> +++ b/drivers/cpufreq/exynos5440-cpufreq.c
->> @@ -120,11 +120,13 @@ static int init_div_table(void)
->>         int i = 0;
->>         struct opp *opp;
->>
->> +       rcu_read_lock();
->>         for (i = 0; freq_tbl[i].frequency != CPUFREQ_TABLE_END; i++) {
->>
->>                 opp = opp_find_freq_exact(dvfs_info->dev,
->>                                         freq_tbl[i].frequency * 1000, true);
->>                 if (IS_ERR(opp)) {
->> +                       rcu_read_unlock();
->>                         dev_err(dvfs_info->dev,
->>                                 "failed to find valid OPP for %u KHZ\n",
->>                                 freq_tbl[i].frequency);
->> @@ -159,6 +161,7 @@ static int init_div_table(void)
->>                 __raw_writel(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 * i);
->>         }
->>
->> +       rcu_read_unlock();
->
-> Is it not possible to reduce the amount of code protected by RCU lock?
-> something like this:
-Yes it is possible but then this part of code is a loop of max 8
-iteration so rcu_read_lock will be called those many times.
-Also this code blocks are just register writes and not doing any time
-consuming operations.
-
-Thanks,
-Amit Daniel
-> +               rcu_read_lock();
->                 opp = opp_find_freq_exact(dvfs_info->dev,
->                                         freq_tbl[i].frequency * 1000, true);
->                 if (IS_ERR(opp)) {
-> +                       rcu_read_unlock();
->                         dev_err(dvfs_info->dev,
->                                 "failed to find valid OPP for %u KHZ\n",
->                                 freq_tbl[i].frequency);
->                         return PTR_ERR(opp);
->                 }
-> +               volt_id = opp_get_voltage(opp);
-> +               rcu_unlock();
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Ben.
