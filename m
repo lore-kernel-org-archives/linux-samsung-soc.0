@@ -1,96 +1,35 @@
-From: Andrew Murray <Andrew.Murray@arm.com>
-Subject: [PATCH v7 3/3] of/pci: mips: convert to common of_pci_range_parser
-Date: Tue, 16 Apr 2013 11:18:28 +0100
-Message-ID: <1366107508-12672-4-git-send-email-Andrew.Murray@arm.com>
-References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org
-Cc: rob.herring@calxeda.com, jgunthorpe@obsidianresearch.com, linux@arm.linux.org.uk, siva.kallam@samsung.com, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, jg1.han@samsung.com, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, bhelgaas@google.com, suren.reddy@samsung.com, linux-arm-kernel@lists.infradead.org, monstr@monstr.eu, benh@kernel.crashing.org, paulus@samba.org, grant.likely@secretlab.ca, thomas.petazzoni@free-electrons.com, thierry.reding@avionic-design.de, thomas.abraham@linaro.org, arnd@arndb.de, linus.walleij@linaro.org, Andrew Murray <Andrew.Murray@arm.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [REPOST PATCH] spi: s3c64xx: let device core setup the default pin configuration
+Date: Tue, 16 Apr 2013 11:24:02 +0100
+Message-ID: <20130416102402.DF3493E14C0@localhost>
+References: <1362570130-14084-1-git-send-email-thomas.abraham@linaro.org> <1366083777-9118-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f170.google.com ([74.125.82.170]:58663 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752550Ab3DPKYI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Apr 2013 06:24:08 -0400
+Received: by mail-we0-f170.google.com with SMTP id z2so236035wey.29
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Apr 2013 03:24:06 -0700 (PDT)
+In-Reply-To: <1366083777-9118-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, heiko@sntech.de, Jaswinder Singh <jaswinder.singh@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, Doug Anderson <dianders@chromium.org>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@kernel.org>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch converts the pci_load_of_ranges function to use the new common
-of_pci_range_parser.
+On Mon, 15 Apr 2013 20:42:57 -0700, Doug Anderson <dianders@chromium.org> wrote:
+> From: Thomas Abraham <thomas.abraham@linaro.org>
+> 
+> With device core now able to setup the default pin configuration,
+> the pin configuration code based on the deprecated Samsung specific
+> gpio bindings is removed.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Tested-by: Doug Anderson <dianders@chromium.org>
 
-Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
-Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
-Reviewed-by: Rob Herring <rob.herring@calxeda.com>
----
- arch/mips/pci/pci.c |   50 ++++++++++++++++----------------------------------
- 1 files changed, 16 insertions(+), 34 deletions(-)
+Applied, thanks.
 
-diff --git a/arch/mips/pci/pci.c b/arch/mips/pci/pci.c
-index 0872f12..bee49a4 100644
---- a/arch/mips/pci/pci.c
-+++ b/arch/mips/pci/pci.c
-@@ -122,51 +122,33 @@ static void pcibios_scanbus(struct pci_controller *hose)
- #ifdef CONFIG_OF
- void pci_load_of_ranges(struct pci_controller *hose, struct device_node *node)
- {
--	const __be32 *ranges;
--	int rlen;
--	int pna = of_n_addr_cells(node);
--	int np = pna + 5;
-+	struct of_pci_range_range range;
-+	struct of_pci_range_parser parser;
-+	u32 res_type;
- 
- 	pr_info("PCI host bridge %s ranges:\n", node->full_name);
--	ranges = of_get_property(node, "ranges", &rlen);
--	if (ranges == NULL)
--		return;
- 	hose->of_node = node;
- 
--	while ((rlen -= np * 4) >= 0) {
--		u32 pci_space;
-+	if (of_pci_range_parser(&parser, node))
-+		return;
-+
-+	for_each_of_pci_range(&parser, &range) {
- 		struct resource *res = NULL;
--		u64 addr, size;
--
--		pci_space = be32_to_cpup(&ranges[0]);
--		addr = of_translate_address(node, ranges + 3);
--		size = of_read_number(ranges + pna + 3, 2);
--		ranges += np;
--		switch ((pci_space >> 24) & 0x3) {
--		case 1:		/* PCI IO space */
-+
-+		res_type = range.flags & IORESOURCE_TYPE_BITS;
-+		if (res_type == IORESOURCE_IO) {
- 			pr_info("  IO 0x%016llx..0x%016llx\n",
--					addr, addr + size - 1);
-+				range.addr, range.addr + range.size - 1);
- 			hose->io_map_base =
--				(unsigned long)ioremap(addr, size);
-+				(unsigned long)ioremap(range.addr, range.size);
- 			res = hose->io_resource;
--			res->flags = IORESOURCE_IO;
--			break;
--		case 2:		/* PCI Memory space */
--		case 3:		/* PCI 64 bits Memory space */
-+		} else if (res_type == IORESOURCE_MEM) {
- 			pr_info(" MEM 0x%016llx..0x%016llx\n",
--					addr, addr + size - 1);
-+				range.addr, range.addr + range.size - 1);
- 			res = hose->mem_resource;
--			res->flags = IORESOURCE_MEM;
--			break;
--		}
--		if (res != NULL) {
--			res->start = addr;
--			res->name = node->full_name;
--			res->end = res->start + size - 1;
--			res->parent = NULL;
--			res->sibling = NULL;
--			res->child = NULL;
- 		}
-+		if (res != NULL)
-+			of_pci_range_to_resource(&range, node, res);
- 	}
- }
- #endif
--- 
-1.7.0.4
+g.
