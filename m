@@ -1,65 +1,157 @@
-From: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v6 0/3] of/pci: Provide common support for PCI DT parsing
-Date: Tue, 16 Apr 2013 12:59:29 +0100
-Message-ID: <20130416115929.GB13259@arm.com>
-References: <1365693969-23907-1-git-send-email-Andrew.Murray@arm.com>
- <20130415175641.GM28693@titan.lakedaemon.net>
- <CACRpkdbSd8pRG5pUS0ymqXDSp=ZhoQa2ctVuRA0cCmUcX5qFAA@mail.gmail.com>
- <1366096361.24994.49.camel@pasglop>
- <20130416112951.GZ28693@titan.lakedaemon.net>
- <20130416133140.7de24c89@skate>
- <20130416113727.GA28693@titan.lakedaemon.net>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v5 5/6] ARM: dts: Add basic dts include files for Samsung
+ S3C64xx SoCs
+Date: Tue, 16 Apr 2013 08:09:10 -0500
+Message-ID: <516D4D76.2010409@gmail.com>
+References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com> <1366060483-20342-6-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130416113727.GA28693-u4khhh1J0LxI1Ri9qeTfzeTW4wlIGRCZ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
-Cc: "siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f54.google.com ([209.85.216.54]:32953 "EHLO
+	mail-qa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932863Ab3DPNJh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Apr 2013 09:09:37 -0400
+Received: by mail-qa0-f54.google.com with SMTP id j8so255798qah.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Apr 2013 06:09:36 -0700 (PDT)
+In-Reply-To: <1366060483-20342-6-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Mark Rutland <mark.rutland@arm.com>
 
-On Tue, Apr 16, 2013 at 12:37:27PM +0100, Jason Cooper wrote:
-> On Tue, Apr 16, 2013 at 01:31:40PM +0200, Thomas Petazzoni wrote:
-> > Dear Jason Cooper,
-> > 
-> > On Tue, 16 Apr 2013 07:29:51 -0400, Jason Cooper wrote:
-> > 
-> > > > Do not send this series upstream (or even in -next) until it has been at
-> > > > least build-tested and acked by the affected architectures. AFAIK it
-> > > > breaks microblaze build (simple missing #include) and isn't yet tested
-> > > > on powerpc (I'm on vacation, maybe somebody else on linuxppc-dev can do
-> > > > it though).
-> > > 
-> > > I added the missing include reference by Michal Simek for the branch at
-> > > mvebu/drivers.
-> > 
-> > Some other build issues were reported on x86 during the night (thanks
-> > to automated build tests), and Andrew Murray has just sent a new
-> > version v7 of the patch set addressing those issues, as well as the
-> > missing include.
-> > 
-> > Also, please note that Andrew's patch set contains three patches, but
-> > the Marvell PCIe driver only requires PATCH 1/3 and PATCH 2/3.
+On 04/15/2013 04:14 PM, Tomasz Figa wrote:
+> This patch adds basic device tree definitions for Samsung S3C64xx SoCs.
 > 
-> Ok.  Thanks Andrew!  Do you (AndrewM) want me to keep the series
-> together?  Or drop 3/3 from my tree?  I can do either, I just need to
-> know.
+> Since all the SoCs in the series are very similar, the files are created
+> hierarchically - one file for the whole series and then separate files
+> for particular SoCs including the common one.
+> 
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  arch/arm/boot/dts/s3c6400.dtsi         |  33 ++
+>  arch/arm/boot/dts/s3c6410.dtsi         |  33 ++
+>  arch/arm/boot/dts/s3c64xx-pinctrl.dtsi | 683 +++++++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/s3c64xx.dtsi         | 136 +++++++
+>  4 files changed, 885 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
+>  create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
+>  create mode 100644 arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
+>  create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
+> 
 
-Patch 1 has an ack from Microblaze but not yet from PowerPC, it probably needs
-an ack from both of these before moving upwards.
+[...]
 
-Patch 3 is awaiting feedback from Mips, ideally all three patches could stay
-together but if feedback blocks this then I guess it could go alone later.
+> +
+> +	vic0: interrupt-controller@71200000 {
 
-Andrew Murray
+These nodes should be off a "simple-bus" node.
+
+Rob
+
+> +		compatible = "arm,pl192-vic";
+> +		interrupt-controller;
+> +		reg = <0x71200000 0x1000>;
+> +		#interrupt-cells = <1>;
+> +	};
+> +
+> +	vic1: interrupt-controller@71300000 {
+> +		compatible = "arm,pl192-vic";
+> +		interrupt-controller;
+> +		reg = <0x71300000 0x1000>;
+> +		#interrupt-cells = <1>;
+> +	};
+> +
+> +	pinctrl0: pinctrl@7f008000 {
+> +		compatible = "samsung,s3c64xx-pinctrl";
+> +		reg = <0x7f008000 0x1000>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <21>;
+> +
+> +		pctrl_int_map: pinctrl-interrupt-map {
+> +			interrupt-map = <0 &vic0 0>,
+> +					<1 &vic0 1>,
+> +					<2 &vic1 0>,
+> +					<3 &vic1 1>;
+> +			#address-cells = <0>;
+> +			#size-cells = <0>;
+> +			#interrupt-cells = <1>;
+> +		};
+> +
+> +		wakeup-interrupt-controller {
+> +			compatible = "samsung,s3c64xx-wakeup-eint";
+> +			interrupts = <0>, <1>, <2>, <3>;
+> +			interrupt-parent = <&pctrl_int_map>;
+> +		};
+> +	};
+> +
+> +	pwm: pwm@7f006000 {
+> +		compatible = "samsung,s3c6400-pwm";
+> +		reg = <0x7f006000 0x1000>;
+> +		interrupt-parent = <&vic0>;
+> +		interrupts = <23>, <24>, <25>, <27>, <28>;
+> +		samsung,pwm-outputs = <0>, <1>;
+> +		#pwm-cells = <3>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart0: serial@7f005000 {
+> +		compatible = "samsung,s3c6400-uart";
+> +		reg = <0x7f005000 0x100>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <5>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart1: serial@7f005400 {
+> +		compatible = "samsung,s3c6400-uart";
+> +		reg = <0x7f005400 0x100>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <6>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart2: serial@7f005800 {
+> +		compatible = "samsung,s3c6400-uart";
+> +		reg = <0x7f005800 0x100>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <7>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart3: serial@7f005c00 {
+> +		compatible = "samsung,s3c6400-uart";
+> +		reg = <0x7f005c00 0x100>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <8>;
+> +		status = "disabled";
+> +	};
+> +
+> +	sdhci0: sdhci@7c200000 {
+> +		compatible = "samsung,s3c6410-sdhci";
+> +		reg = <0x7c200000 0x100>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <24>;
+> +		status = "disabled";
+> +	};
+> +
+> +	sdhci1: sdhci@7c300000 {
+> +		compatible = "samsung,s3c6410-sdhci";
+> +		reg = <0x7c300000 0x100>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <25>;
+> +		status = "disabled";
+> +	};
+> +
+> +	sdhci2: sdhci@7c400000 {
+> +		compatible = "samsung,s3c6410-sdhci";
+> +		reg = <0x7c400000 0x100>;
+> +		interrupt-parent = <&vic1>;
+> +		interrupts = <17>;
+> +		status = "disabled";
+> +	};
+> +};
+> +
+> +/include/ "s3c64xx-pinctrl.dtsi"
+> 
