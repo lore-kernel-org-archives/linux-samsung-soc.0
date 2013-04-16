@@ -1,19 +1,12 @@
 From: Girish K S <girishks2000@gmail.com>
-Subject: [PATCH 2/2] ARM: dts: add dts node for the ahci sata exynos5440
-Date: Tue, 16 Apr 2013 14:28:53 +0530
-Message-ID: <1366102733-3570-2-git-send-email-ks.giri@samsung.com>
-References: <1366102733-3570-1-git-send-email-ks.giri@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:51834 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754673Ab3DPI7K (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Apr 2013 04:59:10 -0400
-In-Reply-To: <1366102733-3570-1-git-send-email-ks.giri@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH V2 2/2] ARM: dts: add dts node for the ahci sata exynos5440
+Date: Tue, 16 Apr 2013 15:00:11 +0530
+Message-ID: <1366104611-14315-1-git-send-email-ks.giri@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 This patch adds dts support for the sata controller
 
@@ -32,7 +25,7 @@ index 7c5dc38..2dc4ffa 100644
  	};
 +
 +	sata@210000 {
-+		compatible = "samsung,exynos5440-ahci";
++		compatible = "snps,exynos5440-ahci";
 +		reg = <0x210000 0x10000>;
 +		interrupts = <0 30 0>;
 +		clocks = <&clock 10>;
