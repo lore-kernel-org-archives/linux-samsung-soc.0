@@ -1,62 +1,62 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v5 0/6] Initial Device Tree support for S3C64xx
-Date: Wed, 17 Apr 2013 14:08:24 +0100
-Message-ID: <20130417130824.GB13687@opensource.wolfsonmicro.com>
-References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2] spi: s3c64xx: move to generic dmaengine API
+Date: Wed, 17 Apr 2013 15:46:37 +0100
+Message-ID: <20130417144637.GW13687@opensource.wolfsonmicro.com>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
+ <1365638712-1028578-30-git-send-email-arnd@arndb.de>
+ <20130411165536.GO9243@opensource.wolfsonmicro.com>
+ <201304112242.03252.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
+	protocol="application/pgp-signature"; boundary="c7rykKtsZvepKFKR"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38241 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40540 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965132Ab3DQNI0 (ORCPT
+	by vger.kernel.org with ESMTP id S966602Ab3DQOqk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Apr 2013 09:08:26 -0400
+	Wed, 17 Apr 2013 10:46:40 -0400
 Content-Disposition: inline
-In-Reply-To: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
+In-Reply-To: <201304112242.03252.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, linux@arm.linux.org.uk, Rob Herring <robherring2@gmail.com>, Mark Rutland <mark.rutland@arm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, Grant Likely <grant.likely@secretlab.ca>, Padma Venkat <padma.kvr@gmail.com>
 
 
---7iMSBzlTiPOCCT2k
+--c7rykKtsZvepKFKR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 15, 2013 at 11:14:37PM +0200, Tomasz Figa wrote:
-> This series adds Device Tree support for Samsung S3C64xx SoC series.
->=20
-> It fixes several problems preventing from booting an S3C64xx-based system
-> using Device Tree, adds all the infrastructure for Device Tree-based board
-> support, including mach-s3c64xx-dt and dts include files for S3C64xx SoCs,
-> and basic device tree source for FriendlyARM Mini6410 board.
+On Thu, Apr 11, 2013 at 10:42:03PM +0200, Arnd Bergmann wrote:
+> The spi-s3c64xx uses a Samsung proprietary interface for
+> talking to the DMA engine, which does not work with
+> multiplatform kernels.
 
-Tested-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Actually it seems that this patch is causing issues for bulk SPI
+transfers on s3c64xx, especially when they're driven quickly one after
+another.  I've only just found the problem so I've not been able to
+debug yet but a revert fixes it...
 
-in the non-DT case :P
-
---7iMSBzlTiPOCCT2k
+--c7rykKtsZvepKFKR
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRbp7BAAoJELSic+t+oim9egMP/1CmxcpXWPzLP4la+nfRPCBK
-PoS2Ps5ursdxMGESMSE3KnPZzbDXoIuil8P4PqrL0TQAzZfn7EogWjheoY3mWB9J
-IQzSzJ+RAhNGR8ewh7uJGDEwBdHl1MlM4n79nDqyOX24j+6tnEuuLkiH8roT6xQP
-sUDyZzQNSMQFhPSWPUdsMWidjmi+F2veFwIoP79ckUR6etrznao+/vlB2Z1e5n76
-bN+/Gdu3LovAT6UHCQaNX/3ab0pfLsUw6jgC3XgS0/k03mQwgCnkMtvg4Z9tZEH6
-PFpLtB298uA9yBfdT+ktlz/WUbBa6DtSALwL5HzAdeStImGky60+kq7wlWwvOcs1
-edq80p+RHBhwzpQbiTO99yu9GqJX+Bk4CP/lH9XCdWrF36rcAXOtxhYWpD8sX1yg
-o8gR4nx1yHphktj62Dlkx0Qst4xEZ1dWSSiHfX5hZKw3T8rCHkZSt6uOYKCJVGRl
-09LjWMVgDUkS66eFTjVUHC24539Z0YgSzz7ORw/CZWGVNiN3+e47kM3KiuLuzyL4
-ouEOf0xlOm1RV/eEA/vz1aA/3zEa5DiXj77DQApFmg650hVSVTPktRylikp5MYel
-lXH6Wk6cRQs0WqR1i86ve2XZJGVJ/Q+no5yHOLy47yo4WP1JQBJBAzrIa4m4kXPk
-X3CtflyyrxnOx+Ue/xo4
-=Urp8
+iQIcBAEBAgAGBQJRbrXEAAoJELSic+t+oim99AAP/RdAeszwwW1PpsUnQSv2oCKj
+xFmUUIhOsZLWes0/FutEIZiriu5OOXpjsUnF8efnOw82uz4W68IHlyKDwKmjTluN
+Af2azRFigkd7L4BLJpBl5M9Q1uBJ4oXAw3Z/FtSPGDT7a5hkH0+DU4MYLCV2vRp0
+dKI8AD0B2jQL0HrEShnFpYw2NulgzMemrWcK8hDZU4Ya4AdRxue2bBfoO4+utkBJ
+vZndujoun+YHymAYbO2+oZx0SeCkRZWzd9V05QWhqkGpMFIZIWhviFOrip0ajYFy
+B+47dJWHPqxifui0Ni0Q64j7XUxjzfpQvdsypX1Wl5PQYQW/DFqqOSwbQHFhOY1v
+4849GsKs1yzy10VHQ6sKJiTwq8148+KPrTL9EIZtL5s65pqM5uH4TF27R1eOsS+a
+w2UvIWE5rjWnCVGUm3HiTF4pbhnXq3s1C7CZBZeaFv9+cTf9bQ8BXzaJCScyDoMe
+yYSIjxq5N6hURl9WyOMtY5YejO7ERIvHpxZc1JkY1PnLUXyc9+vkUBNU3KTVDL2j
+Q3OM7q4gMARrqj+k5weK15E2eq1AFKarpLK8mWFj8frOLW6ZysMQOufNSqOoibZV
+/yfcT0s2+NiGSXCN13nt2QOyUIkZn6/JZsRtE6lUzUJDyLbB5O1zohd2xd//WtFz
+pjNsLG2usYvdWS+ps9iM
+=roxK
 -----END PGP SIGNATURE-----
 
---7iMSBzlTiPOCCT2k--
+--c7rykKtsZvepKFKR--
