@@ -1,102 +1,92 @@
-From: Chen Gang <gang.chen@asianux.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [Suggestion] ARM:S5pv210: compiling issue for s5pv210 by using
  randconfig
-Date: Wed, 17 Apr 2013 18:17:32 +0800
-Message-ID: <516E76BC.7090704@asianux.com>
-References: <514FB202.3040807@asianux.com> <515BFA8D.2000204@asianux.com> <20130403101018.GE11040@mudshark.cambridge.arm.com> <515C047A.9010906@asianux.com> <516E6A8E.3000001@asianux.com> <20130417100243.GV14496@n2100.arm.linux.org.uk>
+Date: Wed, 17 Apr 2013 12:53:20 +0200
+Message-ID: <201304171253.20284.arnd@arndb.de>
+References: <514FB202.3040807@asianux.com> <516E6A8E.3000001@asianux.com>
+ <20130417100136.GB19492@mudshark.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:50770 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755133Ab3DQKSO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Apr 2013 06:18:14 -0400
-In-Reply-To: <20130417100243.GV14496@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130417100136.GB19492@mudshark.cambridge.arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Chen Gang <gang.chen@asianux.com>, "dhowells@redhat.com" <dhowells@redhat.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Will Deacon <will.deacon@arm.com>, "dhowells@redhat.com" <dhowells@redhat.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 2013=E5=B9=B404=E6=9C=8817=E6=97=A5 18:02, Russell King - ARM Linux =
-wrote:
-> On Wed, Apr 17, 2013 at 05:25:34PM +0800, Chen Gang wrote:
->> > CONFIG_CPU_ARM7TDMI=3Dy
->> > CONFIG_CPU_ARM9TDMI=3Dy
->> > CONFIG_CPU_V7=3Dy
->> > CONFIG_CPU_32v4T=3Dy
->> > CONFIG_CPU_32v6K=3Dy
->> > CONFIG_CPU_32v7=3Dy
-> This is an invalid configuration.  A single kernel can not support AR=
-Mv7
-> and ARMv4T simultaneously.
->=20
-> The problem is caused by MMU=3Dn, which exposes the CPU_ARM7TDMI and
-> CPU_ARM9TDMI options, which in turn select 32v4T.  This is in turn
-> caused by the incomplete integration of uclinux.
->=20
-> I think the only thing which can be done is to remove the ARM9TDMI
-> support code, which doesn't seem to be used by anything, and adjust
-> ARM7TDMI so that it isn't visible, but is selected by ARCH_AT91X40
-> (which seems to be its only user.)
->=20
-> Here's the slightly smaller version of that:
->=20
+On Wednesday 17 April 2013, Will Deacon wrote:
+> > arm-linux-gnu-gcc -Wp,-MD,arch/arm/vfp/.vfphw.o.d  -nostdinc -isystem /usr/lib/gcc/arm-linux-gnueabi/4.7.1/include -I/root/linux-next/arch/arm/include -Iarch/arm/include/generated  -Iinclude -I/root/linux-next/arch/arm/include/uapi -Iarch/arm/include/generated/uapi -I/root/linux-next/include/uapi -Iinclude/generated/uapi -include /root/linux-next/include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-s5pv210/include -Iarch/arm/plat-samsung/include  -D__ASSEMBLY__ -mabi=apcs-gnu -mno-thumb-interwork -marm -D__LINUX_ARM_ARCH__=4 -march=armv4t -mtune=arm9tdmi -include asm/unified.h -Wa,-mfpu=softvfp+vfp -mfloat-abi=soft        -c -o arch/arm/vfp/vfphw.o arch/arm/vfp/vfphw.S
+> > 
+> > 
+> >   compiling err:
+> > 
+> > arch/arm/vfp/vfphw.S: Assembler messages:
+> > arch/arm/vfp/vfphw.S:295: Error: selected processor does not support ARM mode `mrrc p11,3,r0,r1,c0'
+> > arch/arm/vfp/vfphw.S:295: Error: selected processor does not support ARM mode `mrrc p11,3,r0,r1,c1'
+> 
+> The problem here is that you've ended up targetting a platform (s5pv210)
+> that selects CPU_V7. VFP is then subsequently selected, but CONFIG_MMU=n, so
+> 7TDMI and 9TDMI (v4 CPUs, no VFP) are selectable. Selecting either of those,
+> causes these warnings.
+> 
+> Unfortunately, I'm not sure how best to fix this. Most of the !MMU CPUs are
+> tied to a particular board (lots of `if ARCH_INTEGRATOR' predicates), but we
+> don't want to do that for 7tdmi.
+> 
+> If we could enforce the strict exclusion of {<= ARMv5} and {ARMv6+} in the
+> Kconfig, that would solve your problem.
 
-  thank you very much for your analysing.
+I have not tried to get no-MMU kernels to build in general. I think the way
+it should be done is to not offer any user-selectable CPU types at all but
+always select the CPU from the board.
 
-  should I do something for it next ?
-    (at least, I should learn the information both of yours)
-    is it suitable to integrate the patch below to next-* tree ?
-      if it it suitable, need I do something for it ?
+For randconfig tests, I would recommend turning on CONFIG_MMU unconditionally
+using an appropriate KCONFIG_ALLCONFIG= file.
 
-  thanks.
+The alternative is to use the patch below, but it may be incomplete: I could
+not find anything other than AT91x40 in the kernel that actually has an
+ARM7TDMI or ARM9TDMI.
 
-  :-)
+	Arnd
 
-
-> diff --git a/arch/arm/mach-at91/Kconfig.non_dt b/arch/arm/mach-at91/K=
-config.non_dt
-> index 6c24985..dc972e1 100644
-> --- a/arch/arm/mach-at91/Kconfig.non_dt
-> +++ b/arch/arm/mach-at91/Kconfig.non_dt
-> @@ -47,6 +47,7 @@ config ARCH_AT91X40
->  	select ARCH_USES_GETTIMEOFFSET
->  	select MULTI_IRQ_HANDLER
->  	select SPARSE_IRQ
-> +	select CPU_ARM7TDMI
-> =20
->  endchoice
-> =20
-> diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-> index cb812a1..deb6c6a 100644
-> --- a/arch/arm/mm/Kconfig
-> +++ b/arch/arm/mm/Kconfig
-> @@ -6,7 +6,7 @@ comment "Processor Type"
-> =20
->  # ARM7TDMI
->  config CPU_ARM7TDMI
-> -	bool "Support ARM7TDMI processor"
-> +	bool
->  	depends on !MMU
->  	select CPU_32v4T
->  	select CPU_ABRT_LV4T
-> @@ -56,7 +56,7 @@ config CPU_ARM740T
-> =20
->  # ARM9TDMI
->  config CPU_ARM9TDMI
-> -	bool "Support ARM9TDMI processor"
-> +	bool
->  	depends on !MMU
->  	select CPU_32v4T
->  	select CPU_ABRT_NOMMU
->=20
->=20
->=20
-
-
---=20
-Chen Gang
-
-Asianux Corporation
+diff --git a/arch/arm/mach-at91/Kconfig.non_dt b/arch/arm/mach-at91/Kconfig.non_dt
+index 6c24985..dc972e1 100644
+--- a/arch/arm/mach-at91/Kconfig.non_dt
++++ b/arch/arm/mach-at91/Kconfig.non_dt
+@@ -47,6 +47,7 @@ config ARCH_AT91X40
+ 	select ARCH_USES_GETTIMEOFFSET
+ 	select MULTI_IRQ_HANDLER
+ 	select SPARSE_IRQ
++	select CPU_ARM7TDMI
+ 
+ endchoice
+ 
+diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+index 84af266..c5e4ef0 100644
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -6,7 +6,6 @@ comment "Processor Type"
+ 
+ # ARM7TDMI
+ config CPU_ARM7TDMI
+-	bool "Support ARM7TDMI processor"
+ 	depends on !MMU
+ 	select CPU_32v4T
+ 	select CPU_ABRT_LV4T
+@@ -56,7 +55,6 @@ config CPU_ARM740T
+ 
+ # ARM9TDMI
+ config CPU_ARM9TDMI
+-	bool "Support ARM9TDMI processor"
+ 	depends on !MMU
+ 	select CPU_32v4T
+ 	select CPU_ABRT_NOMMU
