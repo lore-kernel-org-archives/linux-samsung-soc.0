@@ -1,81 +1,77 @@
-From: Will Deacon <will.deacon@arm.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: [Suggestion] ARM:S5pv210: compiling issue for s5pv210 by using
- randconfig
-Date: Wed, 17 Apr 2013 11:01:36 +0100
-Message-ID: <20130417100136.GB19492@mudshark.cambridge.arm.com>
-References: <514FB202.3040807@asianux.com>
- <515BFA8D.2000204@asianux.com>
- <20130403101018.GE11040@mudshark.cambridge.arm.com>
- <515C047A.9010906@asianux.com>
- <516E6A8E.3000001@asianux.com>
+	randconfig
+Date: Wed, 17 Apr 2013 11:02:43 +0100
+Message-ID: <20130417100243.GV14496@n2100.arm.linux.org.uk>
+References: <514FB202.3040807@asianux.com> <515BFA8D.2000204@asianux.com> <20130403101018.GE11040@mudshark.cambridge.arm.com> <515C047A.9010906@asianux.com> <516E6A8E.3000001@asianux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:40710 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757991Ab3DQKCT (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:60282 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758011Ab3DQKDO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Apr 2013 06:02:19 -0400
+	Wed, 17 Apr 2013 06:03:14 -0400
 Content-Disposition: inline
 In-Reply-To: <516E6A8E.3000001@asianux.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Chen Gang <gang.chen@asianux.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "dhowells@redhat.com" <dhowells@redhat.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, arnd@arndb.de
+Cc: Will Deacon <will.deacon@arm.com>, "dhowells@redhat.com" <dhowells@redhat.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-[adding Arnd, as he plays with randconfig too]
+On Wed, Apr 17, 2013 at 05:25:34PM +0800, Chen Gang wrote:
+> CONFIG_CPU_ARM7TDMI=y
+> CONFIG_CPU_ARM9TDMI=y
+> CONFIG_CPU_V7=y
+> CONFIG_CPU_32v4T=y
+> CONFIG_CPU_32v6K=y
+> CONFIG_CPU_32v7=y
 
-On Wed, Apr 17, 2013 at 10:25:34AM +0100, Chen Gang wrote:
-> On 2013=E5=B9=B404=E6=9C=8803=E6=97=A5 18:29, Chen Gang wrote:
->   I repeat it again (but it report another location), and put the con=
-fig as attachment.
+This is an invalid configuration.  A single kernel can not support ARMv7
+and ARMv4T simultaneously.
 
-Thanks.
+The problem is caused by MMU=n, which exposes the CPU_ARM7TDMI and
+CPU_ARM9TDMI options, which in turn select 32v4T.  This is in turn
+caused by the incomplete integration of uclinux.
 
->   when you have time, please help check (if you have no time, I shoul=
-d try)
->=20
->   the below is the new related information:
+I think the only thing which can be done is to remove the ARM9TDMI
+support code, which doesn't seem to be used by anything, and adjust
+ARM7TDMI so that it isn't visible, but is selected by ARCH_AT91X40
+(which seems to be its only user.)
 
-[...]
+Here's the slightly smaller version of that:
 
-> arm-linux-gnu-gcc -Wp,-MD,arch/arm/vfp/.vfphw.o.d  -nostdinc -isystem=
- /usr/lib/gcc/arm-linux-gnueabi/4.7.1/include -I/root/linux-next/arch/a=
-rm/include -Iarch/arm/include/generated  -Iinclude -I/root/linux-next/a=
-rch/arm/include/uapi -Iarch/arm/include/generated/uapi -I/root/linux-ne=
-xt/include/uapi -Iinclude/generated/uapi -include /root/linux-next/incl=
-ude/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-s5pv21=
-0/include -Iarch/arm/plat-samsung/include  -D__ASSEMBLY__ -mabi=3Dapcs-=
-gnu -mno-thumb-interwork -marm -D__LINUX_ARM_ARCH__=3D4 -march=3Darmv4t=
- -mtune=3Darm9tdmi -include asm/unified.h -Wa,-mfpu=3Dsoftvfp+vfp -mflo=
-at-abi=3Dsoft        -c -o arch/arm/vfp/vfphw.o arch/arm/vfp/vfphw.S
->=20
->=20
->   compiling err:
->=20
-> arch/arm/vfp/vfphw.S: Assembler messages:
-> arch/arm/vfp/vfphw.S:295: Error: selected processor does not support =
-ARM mode `mrrc p11,3,r0,r1,c0'
-> arch/arm/vfp/vfphw.S:295: Error: selected processor does not support =
-ARM mode `mrrc p11,3,r0,r1,c1'
-
-The problem here is that you've ended up targetting a platform (s5pv210=
-)
-that selects CPU_V7. VFP is then subsequently selected, but CONFIG_MMU=3D=
-n, so
-7TDMI and 9TDMI (v4 CPUs, no VFP) are selectable. Selecting either of t=
-hose,
-causes these warnings.
-
-Unfortunately, I'm not sure how best to fix this. Most of the !MMU CPUs=
- are
-tied to a particular board (lots of `if ARCH_INTEGRATOR' predicates), b=
-ut we
-don't want to do that for 7tdmi.
-
-If we could enforce the strict exclusion of {<=3D ARMv5} and {ARMv6+} i=
-n the
-Kconfig, that would solve your problem.
-
-Will
+diff --git a/arch/arm/mach-at91/Kconfig.non_dt b/arch/arm/mach-at91/Kconfig.non_dt
+index 6c24985..dc972e1 100644
+--- a/arch/arm/mach-at91/Kconfig.non_dt
++++ b/arch/arm/mach-at91/Kconfig.non_dt
+@@ -47,6 +47,7 @@ config ARCH_AT91X40
+ 	select ARCH_USES_GETTIMEOFFSET
+ 	select MULTI_IRQ_HANDLER
+ 	select SPARSE_IRQ
++	select CPU_ARM7TDMI
+ 
+ endchoice
+ 
+diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+index cb812a1..deb6c6a 100644
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -6,7 +6,7 @@ comment "Processor Type"
+ 
+ # ARM7TDMI
+ config CPU_ARM7TDMI
+-	bool "Support ARM7TDMI processor"
++	bool
+ 	depends on !MMU
+ 	select CPU_32v4T
+ 	select CPU_ABRT_LV4T
+@@ -56,7 +56,7 @@ config CPU_ARM740T
+ 
+ # ARM9TDMI
+ config CPU_ARM9TDMI
+-	bool "Support ARM9TDMI processor"
++	bool
+ 	depends on !MMU
+ 	select CPU_32v4T
+ 	select CPU_ABRT_NOMMU
