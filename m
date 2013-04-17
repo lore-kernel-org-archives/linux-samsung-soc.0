@@ -1,81 +1,67 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH v7 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
- Microblaze and PowerPC
-Date: Wed, 17 Apr 2013 12:22:23 -0400
-Message-ID: <20130417162223.GC27197@titan.lakedaemon.net>
-References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
- <1366107508-12672-2-git-send-email-Andrew.Murray@arm.com>
- <20130416103005.GB12726@arm.com>
- <20130417160015.777453E2B73@localhost>
- <20130417161036.GB27197@titan.lakedaemon.net>
- <CACxGe6sNk=wNinTcMHbJa5o-56Tyh=0CnFSEW+Hk-ujpjeg2gQ@mail.gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v5 5/6] ARM: dts: Add basic dts include files for Samsung
+ S3C64xx SoCs
+Date: Wed, 17 Apr 2013 12:46:43 -0500
+Message-ID: <CAL_JsqL_i-5SDCsGZCrsxMehLVMGoLO1s_V3R-H6Oa5ff16dEQ@mail.gmail.com>
+References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
+	<1366060483-20342-6-git-send-email-tomasz.figa@gmail.com>
+	<516D4D76.2010409@gmail.com>
+	<1829212.6niSeTsyIU@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <CACxGe6sNk=wNinTcMHbJa5o-56Tyh=0CnFSEW+Hk-ujpjeg2gQ@mail.gmail.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, Liviu Dudau <Liviu.Dudau@arm.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, "paulus@samba.org" <paulus@samba.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "jg1.han@samsung.com" <jg1.han@samsung.com>, "jgunthorpe@obsidianresearch.com" <jgunthorpe@obsidianresearch.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f42.google.com ([209.85.216.42]:61376 "EHLO
+	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966211Ab3DQRqo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 17 Apr 2013 13:46:44 -0400
+Received: by mail-qa0-f42.google.com with SMTP id dx4so1615999qab.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Apr 2013 10:46:43 -0700 (PDT)
+In-Reply-To: <1829212.6niSeTsyIU@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, "Mark Brown (broonie@opensource.wolfsonmicro.com)" <broonie@opensource.wolfsonmicro.com>, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>
 
-On Wed, Apr 17, 2013 at 05:17:48PM +0100, Grant Likely wrote:
-> On Wed, Apr 17, 2013 at 5:10 PM, Jason Cooper <jason@lakedaemon.net> wrote:
-> > On Wed, Apr 17, 2013 at 05:00:15PM +0100, Grant Likely wrote:
-> >> On Tue, 16 Apr 2013 11:30:06 +0100, Andrew Murray <andrew.murray@arm.com> wrote:
-> >> > On Tue, Apr 16, 2013 at 11:18:26AM +0100, Andrew Murray wrote:
-> >> > > The pci_process_bridge_OF_ranges function, used to parse the "ranges"
-> >> > > property of a PCI host device, is found in both Microblaze and PowerPC
-> >> > > architectures. These implementations are nearly identical. This patch
-> >> > > moves this common code to a common place.
-> >> > >
-> >> > > Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
-> >> > > Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
-> >> > > Reviewed-by: Rob Herring <rob.herring@calxeda.com>
-> >> > > Tested-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> >> > > Tested-by: Linus Walleij <linus.walleij@linaro.org>
-> >> > > Acked-by: Michal Simek <monstr@monstr.eu>
-> >> > > ---
-> >> > >  arch/microblaze/include/asm/pci-bridge.h |    5 +-
-> >> > >  arch/microblaze/pci/pci-common.c         |  192 ----------------------------
-> >> > >  arch/powerpc/include/asm/pci-bridge.h    |    5 +-
-> >> > >  arch/powerpc/kernel/pci-common.c         |  192 ----------------------------
-> >> >
-> >> > Is there anyone on linuxppc-dev/linux-mips that can help test this patchset?
-> >> >
-> >> > I've tested that it builds on powerpc with a variety of configs (some which
-> >> > include fsl_pci.c implementation). Though I don't have hardware to verify that
-> >> > it works.
-> >> >
-> >> > I haven't tested this builds or runs on MIPS.
-> >> >
-> >> > You shouldn't see any difference in behaviour or new warnings and PCI devices
-> >> > should continue to operate as before.
-> >>
-> >> I've got through a line-by-line comparison between powerpc, microblaze,
-> >> and then new code. The differences are purely cosmetic, so I have
-> >> absolutely no concerns about this patch. I've applied it to my tree.
-> >
-> > oops.  Due to the number of dependencies the mvebu-pcie series has (this
-> > being one of them, we (arm-soc/mvebu) asked if we could take this
-> > through our tree.  Rob Herring agreed to this several days ago.  Is this
-> > a problem for you?
-> >
-> > It would truly (dogs and cats living together) upset the apple cart for
-> > us at this stage to pipe these through a different tree...
-> 
-> Not a problem at all. I'll drop it.
+On Tue, Apr 16, 2013 at 8:19 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+> On Tuesday 16 of April 2013 08:09:10 Rob Herring wrote:
+>> On 04/15/2013 04:14 PM, Tomasz Figa wrote:
+>> > This patch adds basic device tree definitions for Samsung S3C64xx SoCs.
+>> >
+>> > Since all the SoCs in the series are very similar, the files are created
+>> > hierarchically - one file for the whole series and then separate files
+>> > for particular SoCs including the common one.
+>> >
+>> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> > ---
+>> >
+>> >  arch/arm/boot/dts/s3c6400.dtsi         |  33 ++
+>> >  arch/arm/boot/dts/s3c6410.dtsi         |  33 ++
+>> >  arch/arm/boot/dts/s3c64xx-pinctrl.dtsi | 683
+>> >  +++++++++++++++++++++++++++++++++ arch/arm/boot/dts/s3c64xx.dtsi
+>> >  | 136 +++++++
+>> >  4 files changed, 885 insertions(+)
+>> >  create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
+>> >  create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
+>> >  create mode 100644 arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
+>> >  create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
+>>
+>> [...]
+>>
+>> > +
+>> > +   vic0: interrupt-controller@71200000 {
+>>
+>> These nodes should be off a "simple-bus" node.
+>
+> Hmm, is there any reason behind it?
+>
+> I thought simple bus was just a convenient helper to represent hierarchical
+> bus structures if one has a need to do so.
 
-Great!  Thanks.
+No. The DT should reflect the bus structure of the chip. How
+accurately it is done is up to you and the information available, but
+you have to have a bus of some sort.
 
-Jason.
+There's obvious examples that don't follow this, but I'd like to not have more.
+
+Rob
