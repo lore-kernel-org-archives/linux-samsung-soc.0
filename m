@@ -1,67 +1,42 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v5 5/6] ARM: dts: Add basic dts include files for Samsung
- S3C64xx SoCs
-Date: Wed, 17 Apr 2013 12:46:43 -0500
-Message-ID: <CAL_JsqL_i-5SDCsGZCrsxMehLVMGoLO1s_V3R-H6Oa5ff16dEQ@mail.gmail.com>
-References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
-	<1366060483-20342-6-git-send-email-tomasz.figa@gmail.com>
-	<516D4D76.2010409@gmail.com>
-	<1829212.6niSeTsyIU@amdc1227>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 29/30] spi: s3c64xx: move to generic dmaengine API
+Date: Wed, 17 Apr 2013 22:05:35 +0200
+Message-ID: <201304172205.35526.arnd@arndb.de>
+References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <1365638712-1028578-30-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f42.google.com ([209.85.216.42]:61376 "EHLO
-	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966211Ab3DQRqo (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.187]:55387 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935448Ab3DQUFn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Apr 2013 13:46:44 -0400
-Received: by mail-qa0-f42.google.com with SMTP id dx4so1615999qab.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Apr 2013 10:46:43 -0700 (PDT)
-In-Reply-To: <1829212.6niSeTsyIU@amdc1227>
+	Wed, 17 Apr 2013 16:05:43 -0400
+In-Reply-To: <1365638712-1028578-30-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, "Mark Brown (broonie@opensource.wolfsonmicro.com)" <broonie@opensource.wolfsonmicro.com>, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Padma Venkat <padma.kvr@gmail.com>
 
-On Tue, Apr 16, 2013 at 8:19 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> On Tuesday 16 of April 2013 08:09:10 Rob Herring wrote:
->> On 04/15/2013 04:14 PM, Tomasz Figa wrote:
->> > This patch adds basic device tree definitions for Samsung S3C64xx SoCs.
->> >
->> > Since all the SoCs in the series are very similar, the files are created
->> > hierarchically - one file for the whole series and then separate files
->> > for particular SoCs including the common one.
->> >
->> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
->> > ---
->> >
->> >  arch/arm/boot/dts/s3c6400.dtsi         |  33 ++
->> >  arch/arm/boot/dts/s3c6410.dtsi         |  33 ++
->> >  arch/arm/boot/dts/s3c64xx-pinctrl.dtsi | 683
->> >  +++++++++++++++++++++++++++++++++ arch/arm/boot/dts/s3c64xx.dtsi
->> >  | 136 +++++++
->> >  4 files changed, 885 insertions(+)
->> >  create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
->> >  create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
->> >  create mode 100644 arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
->> >  create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
->>
->> [...]
->>
->> > +
->> > +   vic0: interrupt-controller@71200000 {
->>
->> These nodes should be off a "simple-bus" node.
->
-> Hmm, is there any reason behind it?
->
-> I thought simple bus was just a convenient helper to represent hierarchical
-> bus structures if one has a need to do so.
+On Thursday 11 April 2013, Arnd Bergmann wrote:
+> @@ -713,9 +836,9 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
+>                 }
+>  
+>                 /* Polling method for xfers not bigger than FIFO capacity */
+> -               if (xfer->len <= ((FIFO_LVL_MASK(sdd) >> 1) + 1))
+> -                       use_dma = 0;
+> -               else
+> +               use_dma = 0;
+> +               if (sdd->rx_dma.ch && sdd->tx_dma.ch &&
+> +                   (xfer->len > ((FIFO_LVL_MASK(sdd) >> 1) + 1)))
+>                         use_dma = 1;
+>  
+>                 spin_lock_irqsave(&sdd->lock, flags);
 
-No. The DT should reflect the bus structure of the chip. How
-accurately it is done is up to you and the information available, but
-you have to have a bus of some sort.
+Can you try just reverting this hunk? It's actually not required and
+comes from an earlier version of the patch. I assumed it was harmless,
+but it's the only think I see that should actually make a difference
+in my patch for the case of !CONFIG_SAMSUNG_DMADEV.
 
-There's obvious examples that don't follow this, but I'd like to not have more.
-
-Rob
+	Arnd
