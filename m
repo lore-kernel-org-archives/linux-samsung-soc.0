@@ -1,62 +1,67 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2] spi: s3c64xx: move to generic dmaengine API
-Date: Wed, 17 Apr 2013 15:46:37 +0100
-Message-ID: <20130417144637.GW13687@opensource.wolfsonmicro.com>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de>
- <1365638712-1028578-30-git-send-email-arnd@arndb.de>
- <20130411165536.GO9243@opensource.wolfsonmicro.com>
- <201304112242.03252.arnd@arndb.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4] pinctrl: Add pinctrl-s3c24xx driver
+Date: Wed, 17 Apr 2013 17:20:48 +0200
+Message-ID: <CACRpkdYaKpDtWM5N1NNnWch5m+KYB-2HQgNNddTYiiF1pQ4S_A@mail.gmail.com>
+References: <201304140138.40142.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="c7rykKtsZvepKFKR"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40540 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S966602Ab3DQOqk (ORCPT
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:42845 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752415Ab3DQPUt convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Apr 2013 10:46:40 -0400
-Content-Disposition: inline
-In-Reply-To: <201304112242.03252.arnd@arndb.de>
+	Wed, 17 Apr 2013 11:20:49 -0400
+Received: by mail-ie0-f179.google.com with SMTP id 16so2014172iea.38
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Apr 2013 08:20:49 -0700 (PDT)
+In-Reply-To: <201304140138.40142.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, Grant Likely <grant.likely@secretlab.ca>, Padma Venkat <padma.kvr@gmail.com>
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
+On Sun, Apr 14, 2013 at 1:38 AM, Heiko St=FCbner <heiko@sntech.de> wrot=
+e:
 
---c7rykKtsZvepKFKR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> The s3c24xx pins follow a similar pattern as the other Samsung SoCs a=
+nd
+> can therefore reuse the already introduced infrastructure.
+>
+> The s3c24xx SoCs have one design oddity in that the first 4 external
+> interrupts do not reside in the eint pending register but in the main
+> interrupt controller instead. We solve this by forwarding the externa=
+l
+> interrupt from the main controller into the irq domain of the pin ban=
+k.
+> The masking/acking of these interrupts is handled in the same way.
+>
+> Furthermore the S3C2412/2413 SoCs contain another oddity in that they
+> keep the same 4 eints in the main interrupt controller and eintpend
+> register and requiring ack operations to happen in both. This is solv=
+ed
+> by using different compatible properties for the wakeup eint node whi=
+ch
+> set a property accordingly.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu, Apr 11, 2013 at 10:42:03PM +0200, Arnd Bergmann wrote:
-> The spi-s3c64xx uses a Samsung proprietary interface for
-> talking to the DMA engine, which does not work with
-> multiplatform kernels.
+Looking good, Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Actually it seems that this patch is causing issues for bulk SPI
-transfers on s3c64xx, especially when they're driven quickly one after
-another.  I've only just found the problem so I've not been able to
-debug yet but a revert fixes it...
+I prefer this:
 
---c7rykKtsZvepKFKR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+#include <linux/bitops.h>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+int foo =3D BIT(7);
 
-iQIcBAEBAgAGBQJRbrXEAAoJELSic+t+oim99AAP/RdAeszwwW1PpsUnQSv2oCKj
-xFmUUIhOsZLWes0/FutEIZiriu5OOXpjsUnF8efnOw82uz4W68IHlyKDwKmjTluN
-Af2azRFigkd7L4BLJpBl5M9Q1uBJ4oXAw3Z/FtSPGDT7a5hkH0+DU4MYLCV2vRp0
-dKI8AD0B2jQL0HrEShnFpYw2NulgzMemrWcK8hDZU4Ya4AdRxue2bBfoO4+utkBJ
-vZndujoun+YHymAYbO2+oZx0SeCkRZWzd9V05QWhqkGpMFIZIWhviFOrip0ajYFy
-B+47dJWHPqxifui0Ni0Q64j7XUxjzfpQvdsypX1Wl5PQYQW/DFqqOSwbQHFhOY1v
-4849GsKs1yzy10VHQ6sKJiTwq8148+KPrTL9EIZtL5s65pqM5uH4TF27R1eOsS+a
-w2UvIWE5rjWnCVGUm3HiTF4pbhnXq3s1C7CZBZeaFv9+cTf9bQ8BXzaJCScyDoMe
-yYSIjxq5N6hURl9WyOMtY5YejO7ERIvHpxZc1JkY1PnLUXyc9+vkUBNU3KTVDL2j
-Q3OM7q4gMARrqj+k5weK15E2eq1AFKarpLK8mWFj8frOLW6ZysMQOufNSqOoibZV
-/yfcT0s2+NiGSXCN13nt2QOyUIkZn6/JZsRtE6lUzUJDyLbB5O1zohd2xd//WtFz
-pjNsLG2usYvdWS+ps9iM
-=roxK
------END PGP SIGNATURE-----
+over
 
---c7rykKtsZvepKFKR--
+int foo =3D (1 << 7);
+
+But no big deal.
+
+Are you taking this through the Samsung tree?
+
+Yours,
+Linus Walleij
