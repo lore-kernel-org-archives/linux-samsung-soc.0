@@ -1,57 +1,253 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 3/5] ARM: dts: Add clock entries to G2D node for exynos4210
-Date: Thu, 18 Apr 2013 15:27:47 +0200
-Message-ID: <516FF4D3.8030906@samsung.com>
-References: <1366283719-9615-1-git-send-email-sachin.kamat@linaro.org>
- <1366283719-9615-3-git-send-email-sachin.kamat@linaro.org>
- <516FDB1D.3050302@samsung.com>
- <CAK9yfHxDe6=FysOM4v+iGZqLeafKAP=E86NxMNKK_atJpdRF=A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:40957 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755554Ab3DRN1u (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Apr 2013 09:27:50 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MLG00BN9DD5AD00@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 18 Apr 2013 14:27:48 +0100 (BST)
-In-reply-to: <CAK9yfHxDe6=FysOM4v+iGZqLeafKAP=E86NxMNKK_atJpdRF=A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH v7 2/3] of/pci: Provide support for parsing PCI DT ranges property
+Date: Thu, 18 Apr 2013 14:44:01 +0100
+Message-ID: <20130418134401.84AEE3E1319@localhost>
+References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com> <1366107508-12672-3-git-send-email-Andrew.Murray@arm.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1366107508-12672-3-git-send-email-Andrew.Murray@arm.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org
+Cc: rob.herring@calxeda.com, jgunthorpe@obsidianresearch.com, linux@arm.linux.org.uk, siva.kallam@samsung.com, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, jg1.han@samsung.com, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, bhelgaas@google.com, suren.reddy@samsung.com, linux-arm-kernel@lists.infradead.org, monstr@monstr.eu, benh@kernel.crashing.org, paulus@samba.org, thomas.petazzoni@free-electrons.com, thierry.reding@avionic-design.de, thomas.abraham@linaro.org, arnd@arndb.de, linus.walleij@linaro.org, Andrew Murray <Andrew.Murray@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On 04/18/2013 01:54 PM, Sachin Kamat wrote:
->>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
->>> index 66e6b03..50ab9d4 100644
->>> --- a/arch/arm/boot/dts/exynos4210.dtsi
->>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
->>> @@ -117,6 +117,8 @@
->>>               compatible = "samsung,s5pv210-g2d";
->>>               reg = <0x12800000 0x1000>;
->>>               interrupts = <0 89 0>;
->>> +             clocks = <&clock 177>, <&clock 277>;
->>> +             clock-names = "sclk_fimg2d", "fimg2d";
->>
->> Same clocks are used for exynos4210 and exynos4212/4412. Wouldn't
->> it work if you have added those properties to exynos4.dtsi, instead
->> of having same entries in exynos4210.dtsi and exynos4x12.dtsi  ?
+On Tue, 16 Apr 2013 11:18:27 +0100, Andrew Murray <Andrew.Murray@arm.com> wrote:
+> This patch factors out common implementation patterns to reduce overall kernel
+> code and provide a means for host bridge drivers to directly obtain struct
+> resources from the DT's ranges property without relying on architecture specific
+> DT handling. This will make it easier to write archiecture independent host bridge
+> drivers and mitigate against further duplication of DT parsing code.
 > 
-> The clocks are the same. However, base address of register is
-> different for 4210 and 4x12.
-> That was the reason 2 separate nodes were created. Do you want me to
-> create a common node in exynos4.dtsi with all the common properties
-> and separate nodes in exynos4210.dtsi and exynos4x12.dtsi with just
-> the 'reg' property?
+> This patch can be used in the following way:
+> 
+> 	struct of_pci_range_parser parser;
+> 	struct of_pci_range range;
+> 
+> 	if (of_pci_range_parser(&parser, np))
+> 		; //no ranges property
+> 
+> 	for_each_of_pci_range(&parser, &range) {
+> 
+> 		/*
+> 			directly access properties of the address range, e.g.:
+> 			range.pci_space, range.pci_addr, range.cpu_addr,
+> 			range.size, range.flags
+> 
+> 			alternatively obtain a struct resource, e.g.:
+> 			struct resource res;
+> 			of_pci_range_to_resource(&range, np, &res);
+> 		*/
+> 	}
+> 
+> Additionally the implementation takes care of adjacent ranges and merges them
+> into a single range (as was the case with powerpc and microblaze).
+> 
+> Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
+> Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Reviewed-by: Rob Herring <rob.herring@calxeda.com>
+> Tested-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Tested-by: Linus Walleij <linus.walleij@linaro.org>
 
-Ah, ok then. I'm fine either way. The compatible strings are also
-different so it's probably better to leave exynos4.dtsi out and
-have full nodes listed in both exynos4210/4x12.dtsi.
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
-Thanks,
-Sylwester
+But comments below...
+
+> ---
+>  drivers/of/address.c       |   67 ++++++++++++++++++++++++++
+>  drivers/of/of_pci.c        |  113 ++++++++++++++++----------------------------
+>  include/linux/of_address.h |   46 ++++++++++++++++++
+>  3 files changed, 154 insertions(+), 72 deletions(-)
+> 
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index 04da786..6eec70c 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -227,6 +227,73 @@ int of_pci_address_to_resource(struct device_node *dev, int bar,
+>  	return __of_address_to_resource(dev, addrp, size, flags, NULL, r);
+>  }
+>  EXPORT_SYMBOL_GPL(of_pci_address_to_resource);
+> +
+> +int of_pci_range_parser(struct of_pci_range_parser *parser,
+> +			struct device_node *node)
+> +{
+> +	const int na = 3, ns = 2;
+> +	int rlen;
+> +
+> +	parser->node = node;
+> +	parser->pna = of_n_addr_cells(node);
+> +	parser->np = parser->pna + na + ns;
+> +
+> +	parser->range = of_get_property(node, "ranges", &rlen);
+> +	if (parser->range == NULL)
+> +		return -ENOENT;
+> +
+> +	parser->end = parser->range + rlen / sizeof(__be32);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(of_pci_range_parser);
+
+"of_pci_range_parser_init" would be a clearer name
+
+> +struct of_pci_range *of_pci_process_ranges(struct of_pci_range_parser *parser,
+> +						struct of_pci_range *range)
+
+Similarly, "of_pci_range_parser_one" would be more consistent.
+
+> +{
+> +	const int na = 3, ns = 2;
+> +
+> +	if (!range)
+> +		return NULL;
+> +
+> +	if (!parser->range || parser->range + parser->np > parser->end)
+> +		return NULL;
+> +
+> +	range->pci_space = parser->range[0];
+> +	range->flags = of_bus_pci_get_flags(parser->range);
+> +	range->pci_addr = of_read_number(parser->range + 1, ns);
+> +	range->cpu_addr = of_translate_address(parser->node,
+> +				parser->range + na);
+> +	range->size = of_read_number(parser->range + parser->pna + na, ns);
+> +
+> +	parser->range += parser->np;
+> +
+> +	/* Now consume following elements while they are contiguous */
+> +	while (parser->range + parser->np <= parser->end) {
+> +		u32 flags, pci_space;
+> +		u64 pci_addr, cpu_addr, size;
+> +
+> +		pci_space = be32_to_cpup(parser->range);
+> +		flags = of_bus_pci_get_flags(parser->range);
+> +		pci_addr = of_read_number(parser->range + 1, ns);
+> +		cpu_addr = of_translate_address(parser->node,
+> +				parser->range + na);
+> +		size = of_read_number(parser->range + parser->pna + na, ns);
+> +
+> +		if (flags != range->flags)
+> +			break;
+> +		if (pci_addr != range->pci_addr + range->size ||
+> +		    cpu_addr != range->cpu_addr + range->size)
+> +			break;
+> +
+> +		range->size += size;
+> +		parser->range += parser->np;
+> +	}
+> +
+> +	return range;
+> +}
+> +EXPORT_SYMBOL_GPL(of_pci_process_ranges);
+> +
+>  #endif /* CONFIG_PCI */
+>  
+>  /*
+> diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
+> index 1626172..e5ab604 100644
+> --- a/drivers/of/of_pci.c
+> +++ b/drivers/of/of_pci.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/export.h>
+>  #include <linux/of.h>
+>  #include <linux/of_pci.h>
+> +#include <linux/of_address.h>
+>  #include <asm/prom.h>
+>  
+>  #if defined(CONFIG_PPC32) || defined(CONFIG_PPC64) || defined(CONFIG_MICROBLAZE)
+> @@ -82,67 +83,43 @@ EXPORT_SYMBOL_GPL(of_pci_find_child_device);
+>  void pci_process_bridge_OF_ranges(struct pci_controller *hose,
+>  				  struct device_node *dev, int primary)
+>  {
+> -	const u32 *ranges;
+> -	int rlen;
+> -	int pna = of_n_addr_cells(dev);
+> -	int np = pna + 5;
+>  	int memno = 0, isa_hole = -1;
+> -	u32 pci_space;
+> -	unsigned long long pci_addr, cpu_addr, pci_next, cpu_next, size;
+>  	unsigned long long isa_mb = 0;
+>  	struct resource *res;
+> +	struct of_pci_range range;
+> +	struct of_pci_range_parser parser;
+> +	u32 res_type;
+>  
+>  	pr_info("PCI host bridge %s %s ranges:\n",
+>  	       dev->full_name, primary ? "(primary)" : "");
+>  
+> -	/* Get ranges property */
+> -	ranges = of_get_property(dev, "ranges", &rlen);
+> -	if (ranges == NULL)
+> +	/* Check for ranges property */
+> +	if (of_pci_range_parser(&parser, dev))
+>  		return;
+>  
+> -	/* Parse it */
+>  	pr_debug("Parsing ranges property...\n");
+> -	while ((rlen -= np * 4) >= 0) {
+> +	for_each_of_pci_range(&parser, &range) {
+>  		/* Read next ranges element */
+> -		pci_space = ranges[0];
+> -		pci_addr = of_read_number(ranges + 1, 2);
+> -		cpu_addr = of_translate_address(dev, ranges + 3);
+> -		size = of_read_number(ranges + pna + 3, 2);
+
+Tip: the diff on this function would be a whole lot simpler if the
+above locals were kept, but updated from the ranges structure. Not at
+all a big problem, but it is something that makes changes like this
+easier to review. The removal of the locals could also be split into a
+separate patch to end up with the same result.
+
+> -
+> -		pr_debug("pci_space: 0x%08x pci_addr:0x%016llx ",
+> -				pci_space, pci_addr);
+> -		pr_debug("cpu_addr:0x%016llx size:0x%016llx\n",
+> -					cpu_addr, size);
+> -
+> -		ranges += np;
+> +		pr_debug("pci_space: 0x%08x pci_addr: 0x%016llx ",
+> +				range.pci_space, range.pci_addr);
+> +		pr_debug("cpu_addr: 0x%016llx size: 0x%016llx\n",
+> +				range.cpu_addr, range.size);
+
+Nit: the patch changed whitespace on the pr_debug() statements, so even
+though the first line of each is identical, they look different in the
+patch.
+
+>  
+>  		/* If we failed translation or got a zero-sized region
+>  		 * (some FW try to feed us with non sensical zero sized regions
+>  		 * such as power3 which look like some kind of attempt
+>  		 * at exposing the VGA memory hole)
+>  		 */
+> -		if (cpu_addr == OF_BAD_ADDR || size == 0)
+> +		if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
+>  			continue;
+
+Can this also be rolled into the parsing iterator?
+
+>  
+> -		/* Now consume following elements while they are contiguous */
+> -		for (; rlen >= np * sizeof(u32);
+> -		     ranges += np, rlen -= np * 4) {
+> -			if (ranges[0] != pci_space)
+> -				break;
+> -			pci_next = of_read_number(ranges + 1, 2);
+> -			cpu_next = of_translate_address(dev, ranges + 3);
+> -			if (pci_next != pci_addr + size ||
+> -			    cpu_next != cpu_addr + size)
+> -				break;
+> -			size += of_read_number(ranges + pna + 3, 2);
+> -		}
+> -
+>  		/* Act based on address space type */
+>  		res = NULL;
+> -		switch ((pci_space >> 24) & 0x3) {
+> -		case 1:		/* PCI IO space */
+> +		res_type = range.flags & IORESOURCE_TYPE_BITS;
+> +		if (res_type == IORESOURCE_IO) {
+
+Why the change from switch() to an if/else if sequence?
+
+But those are mostly nitpicks. If this is deferred to v3.10 then I would
+suggest fixing them up and posting for another round of review.
+
+g.
