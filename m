@@ -1,42 +1,99 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 29/30] spi: s3c64xx: move to generic dmaengine API
-Date: Wed, 17 Apr 2013 22:05:35 +0200
-Message-ID: <201304172205.35526.arnd@arndb.de>
-References: <1365638712-1028578-1-git-send-email-arnd@arndb.de> <1365638712-1028578-30-git-send-email-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/5] clk: exynos4: Add additional G2D clocks
+Date: Thu, 18 Apr 2013 16:45:15 +0530
+Message-ID: <1366283719-9615-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:55387 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935448Ab3DQUFn (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:50809 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755314Ab3DRL1p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Apr 2013 16:05:43 -0400
-In-Reply-To: <1365638712-1028578-30-git-send-email-arnd@arndb.de>
+	Thu, 18 Apr 2013 07:27:45 -0400
+Received: by mail-pa0-f50.google.com with SMTP id bg2so1538774pad.37
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Apr 2013 04:27:45 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Padma Venkat <padma.kvr@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Thomas Abraham <thomas.abraham@linaro.org>, Mike Turquette <mturquette@linaro.org>
 
-On Thursday 11 April 2013, Arnd Bergmann wrote:
-> @@ -713,9 +836,9 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
->                 }
->  
->                 /* Polling method for xfers not bigger than FIFO capacity */
-> -               if (xfer->len <= ((FIFO_LVL_MASK(sdd) >> 1) + 1))
-> -                       use_dma = 0;
-> -               else
-> +               use_dma = 0;
-> +               if (sdd->rx_dma.ch && sdd->tx_dma.ch &&
-> +                   (xfer->len > ((FIFO_LVL_MASK(sdd) >> 1) + 1)))
->                         use_dma = 1;
->  
->                 spin_lock_irqsave(&sdd->lock, flags);
+Add G2D clocks for Exynos4x12 SoC and sclk_fimg2d required by G2D
+IP.
 
-Can you try just reverting this hunk? It's actually not required and
-comes from an earlier version of the patch. I assumed it was harmless,
-but it's the only think I see that should actually make a difference
-in my patch for the case of !CONFIG_SAMSUNG_DMADEV.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>
+---
+ .../devicetree/bindings/clock/exynos4-clock.txt    |    3 ++-
+ drivers/clk/samsung/clk-exynos4.c                  |    9 +++++++--
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
-	Arnd
+diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+index ea5e26f..14d5c2a 100644
+--- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+@@ -102,6 +102,7 @@ Exynos4 SoC and this is specified where applicable.
+   sclk_spi0_isp       174     Exynos4x12
+   sclk_spi1_isp       175     Exynos4x12
+   sclk_uart_isp       176     Exynos4x12
++  sclk_fimg2d         177
+ 
+ 	      [Peripheral Clock Gates]
+ 
+@@ -129,7 +130,7 @@ Exynos4 SoC and this is specified where applicable.
+   smmu_mfcl           274
+   smmu_mfcr           275
+   g3d                 276
+-  g2d                 277     Exynos4210
++  g2d                 277
+   rotator             278     Exynos4210
+   mdma                279     Exynos4210
+   smmu_g2d            280     Exynos4210
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 26f2a85..09cf161 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -152,7 +152,7 @@ enum exynos4_clks {
+ 	sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
+ 	sclk_slimbus, sclk_fimd1, sclk_mipi1, sclk_pcm1, sclk_pcm2, sclk_i2s1,
+ 	sclk_i2s2, sclk_mipihsi, sclk_mfc, sclk_pcm0, sclk_g3d, sclk_pwm_isp,
+-	sclk_spi0_isp, sclk_spi1_isp, sclk_uart_isp,
++	sclk_spi0_isp, sclk_spi1_isp, sclk_uart_isp, sclk_fimg2d,
+ 
+ 	/* gate clocks */
+ 	fimc0 = 256, fimc1, fimc2, fimc3, csis0, csis1, jpeg, smmu_fimc0,
+@@ -487,6 +487,9 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
+ 	MUX(none, "mout_spi0_isp", group1_p4x12, E4X12_SRC_ISP, 4, 4),
+ 	MUX(none, "mout_spi1_isp", group1_p4x12, E4X12_SRC_ISP, 8, 4),
+ 	MUX(none, "mout_uart_isp", group1_p4x12, E4X12_SRC_ISP, 12, 4),
++	MUX(none, "mout_g2d0", sclk_ampll_p4210, SRC_DMC, 20, 1),
++	MUX(none, "mout_g2d1", sclk_evpll_p, SRC_DMC, 24, 1),
++	MUX(none, "mout_g2d", mout_g2d_p, SRC_DMC, 28, 1),
+ };
+ 
+ /* list of divider clocks supported in all exynos4 soc's */
+@@ -555,7 +558,7 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
+ /* list of divider clocks supported in exynos4210 soc */
+ static struct samsung_div_clock exynos4210_div_clks[] __initdata = {
+ 	DIV(aclk200, "aclk200", "mout_aclk200", DIV_TOP, 0, 3),
+-	DIV(none, "div_g2d", "mout_g2d", DIV_IMAGE, 0, 4),
++	DIV(sclk_fimg2d, "sclk_fimg2d", "mout_g2d", DIV_IMAGE, 0, 4),
+ 	DIV(none, "div_fimd1", "mout_fimd1", E4210_DIV_LCD1, 0, 4),
+ 	DIV(none, "div_mipi1", "mout_mipi1", E4210_DIV_LCD1, 16, 4),
+ 	DIV(none, "div_sata", "mout_sata", DIV_FSYS0, 20, 4),
+@@ -585,6 +588,7 @@ static struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
+ 	DIV(none, "div_mpwm", "div_isp1", E4X12_DIV_ISP1, 0, 3),
+ 	DIV(div_mcuisp0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
+ 	DIV(div_mcuisp1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
++	DIV(sclk_fimg2d, "sclk_fimg2d", "mout_g2d", DIV_DMC1, 0, 4),
+ };
+ 
+ /* list of gate clocks supported in all exynos4 soc's */
+@@ -910,6 +914,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 			CLK_IGNORE_UNUSED, 0),
+ 	GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
+ 			CLK_IGNORE_UNUSED, 0),
++	GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
+ };
+ 
+ #ifdef CONFIG_OF
+-- 
+1.7.9.5
