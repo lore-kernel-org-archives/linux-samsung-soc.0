@@ -1,58 +1,47 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add a platform bus notifier to set
-	dma masks for Exynos5440
-Date: Thu, 18 Apr 2013 16:30:03 +0100
-Message-ID: <20130418153003.GW14496@n2100.arm.linux.org.uk>
-References: <1365072704-4568-1-git-send-email-kgene.kim@samsung.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH v7 2/3] of/pci: Provide support for parsing PCI DT ranges
+ property
+Date: Thu, 18 Apr 2013 16:29:54 +0100
+Message-ID: <CACxGe6u7yoecyTR2r-EzpcRxLuSw-p9KC7jA12wEQZs4of3vFA@mail.gmail.com>
+References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
+ <1366107508-12672-3-git-send-email-Andrew.Murray@arm.com>
+ <20130418134401.84AEE3E1319@localhost>
+ <20130418142434.GA18881@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:34151 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966982Ab3DRPaQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Apr 2013 11:30:16 -0400
-Content-Disposition: inline
-In-Reply-To: <1365072704-4568-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130418142434.GA18881@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Murray <andrew.murray@arm.com>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, Liviu Dudau <Liviu.Dudau@arm.com>, "paulus@samba.org" <paulus@samba.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "jg1.han@samsung.com" <jg1.han@samsung.com>, "jgunthorpe@obsidianresearch.com" <jgunthorpe@obsidianresearch.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "arnd@arndb.de" <arnd@arndb.de>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.ab@samsung.com>
 
-On Thu, Apr 04, 2013 at 07:51:43PM +0900, Kukjin Kim wrote:
-> +static u64 dma_mask64 = DMA_BIT_MASK(64);
-...
-> +	if (event != BUS_NOTIFY_ADD_DEVICE)
-> +		return NOTIFY_DONE;
-> +
-> +	dev->dma_mask = &dma_mask64;
+On Thu, Apr 18, 2013 at 3:24 PM, Andrew Murray <andrew.murray@arm.com> wrote:
+> On Thu, Apr 18, 2013 at 02:44:01PM +0100, Grant Likely wrote:
+>> On Tue, 16 Apr 2013 11:18:27 +0100, Andrew Murray <Andrew.Murray@arm.com> wrote:
+>> >             /* Act based on address space type */
+>> >             res = NULL;
+>> > -           switch ((pci_space >> 24) & 0x3) {
+>> > -           case 1:         /* PCI IO space */
+>> > +           res_type = range.flags & IORESOURCE_TYPE_BITS;
+>> > +           if (res_type == IORESOURCE_IO) {
+>>
+>> Why the change from switch() to an if/else if sequence?
+>
+> Russell King suggested this change - see
+> https://patchwork.kernel.org/patch/2323941/
 
-Sharing the dma mask in this way is a potential issue should you have a
-device driver use dma_set_mask() - which can write to this value.
+Umm, that isn't what that link shows. That link shows the patch
+already changing to an if/else if construct, and rmk is commenting on
+that.
 
-A better solution would be:
-
-diff --git a/arch/arm/include/asm/device.h b/arch/arm/include/asm/device.h
-index dc662fc..51bb740 100644
---- a/arch/arm/include/asm/device.h
-+++ b/arch/arm/include/asm/device.h
-@@ -22,6 +22,7 @@ struct dev_archdata {
- struct omap_device;
- 
- struct pdev_archdata {
-+	u64 dma_mask;
- #ifdef CONFIG_ARCH_OMAP
- 	struct omap_device *od;
- #endif
-
-and then in your function do:
-
-	struct platform_device *pdev = to_platform_device(dev);
-...
-	pdev->dev.dma_mask = &pdev->arch_data.dma_mask;
-	pdev->arch_data.dma_mask = DMA_BIT_MASK(64);
-
-However... are all your devices really DMA capable?  Normally on a SoC,
-it's only the DMA engine which is DMA capable and everything else is not,
-and in that case you really only want to set the DMA masks up for the
-DMA capable devices.
+g.
