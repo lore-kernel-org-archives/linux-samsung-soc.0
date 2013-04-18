@@ -1,48 +1,59 @@
-From: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v7 3/3] of/pci: mips: convert to common of_pci_range_parser
-Date: Thu, 18 Apr 2013 15:26:35 +0100
-Message-ID: <20130418142635.GB18881@arm.com>
-References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
- <1366107508-12672-4-git-send-email-Andrew.Murray@arm.com>
- <20130418134535.5189E3E1319@localhost>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 3/5] ARM: dts: Add clock entries to G2D node for exynos4210
+Date: Thu, 18 Apr 2013 20:04:30 +0530
+Message-ID: <CAK9yfHy6WkDrKHCrNJo7iar_6f0raCsDXLdvK89rgaTT+fyuiA@mail.gmail.com>
+References: <1366283719-9615-1-git-send-email-sachin.kamat@linaro.org>
+	<1366283719-9615-3-git-send-email-sachin.kamat@linaro.org>
+	<516FDB1D.3050302@samsung.com>
+	<CAK9yfHxDe6=FysOM4v+iGZqLeafKAP=E86NxMNKK_atJpdRF=A@mail.gmail.com>
+	<516FF4D3.8030906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130418134535.5189E3E1319@localhost>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: "linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>, "paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org" <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org" <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <suren.redd>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:51873 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966832Ab3DROea (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Apr 2013 10:34:30 -0400
+Received: by mail-pa0-f53.google.com with SMTP id bh4so1627161pad.26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Apr 2013 07:34:30 -0700 (PDT)
+In-Reply-To: <516FF4D3.8030906@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On Thu, Apr 18, 2013 at 02:45:35PM +0100, Grant Likely wrote:
-> On Tue, 16 Apr 2013 11:18:28 +0100, Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org> wrote:
-> > This patch converts the pci_load_of_ranges function to use the new common
-> > of_pci_range_parser.
-> > 
-> > Signed-off-by: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
-> > Signed-off-by: Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>
-> > Reviewed-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-> 
-> Looks okay to me, and thank you very much for doing the legwork to merge
-> the common code.
+On 18 April 2013 18:57, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> On 04/18/2013 01:54 PM, Sachin Kamat wrote:
+>>>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+>>>> index 66e6b03..50ab9d4 100644
+>>>> --- a/arch/arm/boot/dts/exynos4210.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+>>>> @@ -117,6 +117,8 @@
+>>>>               compatible = "samsung,s5pv210-g2d";
+>>>>               reg = <0x12800000 0x1000>;
+>>>>               interrupts = <0 89 0>;
+>>>> +             clocks = <&clock 177>, <&clock 277>;
+>>>> +             clock-names = "sclk_fimg2d", "fimg2d";
+>>>
+>>> Same clocks are used for exynos4210 and exynos4212/4412. Wouldn't
+>>> it work if you have added those properties to exynos4.dtsi, instead
+>>> of having same entries in exynos4210.dtsi and exynos4x12.dtsi  ?
+>>
+>> The clocks are the same. However, base address of register is
+>> different for 4210 and 4x12.
+>> That was the reason 2 separate nodes were created. Do you want me to
+>> create a common node in exynos4.dtsi with all the common properties
+>> and separate nodes in exynos4210.dtsi and exynos4x12.dtsi with just
+>> the 'reg' property?
+>
+> Ah, ok then. I'm fine either way. The compatible strings are also
+> different so it's probably better to leave exynos4.dtsi out and
+> have full nodes listed in both exynos4210/4x12.dtsi.
 
-No problem, though I think there is more than can be done in this area -
-there is a lot of similar PCI code floating about.
+Yes. I will leave it the way it is.
 
-> 
-> Reviewed-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-Thanks for the review.
-
-Andrew Murray
+-- 
+With warm regards,
+Sachin
