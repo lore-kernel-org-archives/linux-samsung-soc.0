@@ -1,74 +1,62 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Thu, 18 Apr 2013 17:20:11 +0530
-Message-ID: <516FDDF3.30507@ti.com>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com> <1364824448-14732-2-git-send-email-gautam.vivek@samsung.com> <20130402082342.GF30286@arwen.pp.htv.fi> <CAFp+6iFW9-fOCgCfpfQzS9PZyjb9_NahjSxzbrS0AhVeNngyXw@mail.gmail.com> <20130402121048.GA9488@arwen.pp.htv.fi> <CAFp+6iEqHOc6G+4UpUGneQ43FGf11DOH_LignFiXJxVJnjry2w@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 3/5] ARM: dts: Add clock entries to G2D node for exynos4210
+Date: Thu, 18 Apr 2013 17:24:47 +0530
+Message-ID: <CAK9yfHxDe6=FysOM4v+iGZqLeafKAP=E86NxMNKK_atJpdRF=A@mail.gmail.com>
+References: <1366283719-9615-1-git-send-email-sachin.kamat@linaro.org>
+	<1366283719-9615-3-git-send-email-sachin.kamat@linaro.org>
+	<516FDB1D.3050302@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:45295 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S967170Ab3DRLud (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:62252 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754953Ab3DRLys (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Apr 2013 07:50:33 -0400
-In-Reply-To: <CAFp+6iEqHOc6G+4UpUGneQ43FGf11DOH_LignFiXJxVJnjry2w@mail.gmail.com>
+	Thu, 18 Apr 2013 07:54:48 -0400
+Received: by mail-pa0-f41.google.com with SMTP id kx1so1560825pab.28
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Apr 2013 04:54:48 -0700 (PDT)
+In-Reply-To: <516FDB1D.3050302@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On Tuesday 02 April 2013 06:10 PM, Vivek Gautam wrote:
-> Hi,
+Hi Sylwester,
+
+On 18 April 2013 17:08, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> Hi Sachin,
 >
+> On 04/18/2013 01:15 PM, Sachin Kamat wrote:
+>> Added clock entries to G2D node.
+>>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/exynos4210.dtsi |    2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+>> index 66e6b03..50ab9d4 100644
+>> --- a/arch/arm/boot/dts/exynos4210.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+>> @@ -117,6 +117,8 @@
+>>               compatible = "samsung,s5pv210-g2d";
+>>               reg = <0x12800000 0x1000>;
+>>               interrupts = <0 89 0>;
+>> +             clocks = <&clock 177>, <&clock 277>;
+>> +             clock-names = "sclk_fimg2d", "fimg2d";
 >
-> On Tue, Apr 2, 2013 at 5:40 PM, Felipe Balbi <balbi@ti.com> wrote:
->> Hi,
->>
->> On Tue, Apr 02, 2013 at 04:04:01PM +0530, Vivek Gautam wrote:
->>>> On Mon, Apr 01, 2013 at 07:24:00PM +0530, Vivek Gautam wrote:
->>>>> Adding  APIs to handle runtime power management on PHY
->>>>> devices. PHY consumers may need to wake-up/suspend PHYs
->>>>> when they work across autosuspend.
->>>>>
->>>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->>>>> ---
->>>>>   include/linux/usb/phy.h |  141 +++++++++++++++++++++++++++++++++++++++++++++++
->>>>>   1 files changed, 141 insertions(+), 0 deletions(-)
->>>>>
->>>>> diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
->>>>> index 6b5978f..01bf9c1 100644
->>>>> --- a/include/linux/usb/phy.h
->>>>> +++ b/include/linux/usb/phy.h
->>>>> @@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(enum usb_phy_type type)
->>>>>                return "UNKNOWN PHY TYPE";
->>>>>        }
->>>>>   }
->>>>> +
->>>>> +static inline void usb_phy_autopm_enable(struct usb_phy *x)
->>>>> +{
->>>>> +     if (!x || !x->dev) {
->>>>> +             dev_err(x->dev, "no PHY or attached device available\n");
->>>>> +             return;
->>>>> +             }
->>>>
->>>> wrong indentation, also, I'm not sure we should allow calls with NULL
->>>> pointers. Perhaps a WARN() so we get API offenders early enough ?
->>>
->>> True, bad coding style :-(
->>> We should be handling dev_err with a NULL pointer.
->>> Will just keep here:
->>> if (WARN_ON(!x->dev))
->>>        return .... ;
->>
->> right, but I guess:
->>
->> if (WARN(!x || !x->dev, "Invalid parameters\n"))
->>          return -EINVAL;
->>
->> would be better ??
+> Same clocks are used for exynos4210 and exynos4212/4412. Wouldn't
+> it work if you have added those properties to exynos4.dtsi, instead
+> of having same entries in exynos4210.dtsi and exynos4x12.dtsi  ?
 
-btw, shouldn't it be IS_ERR(x)?
+The clocks are the same. However, base address of register is
+different for 4210 and 4x12.
+That was the reason 2 separate nodes were created. Do you want me to
+create a common node in exynos4.dtsi with all the common properties
+and separate nodes in exynos4210.dtsi and exynos4x12.dtsi with just
+the 'reg' property?
 
-Thanks
-Kishon
+
+-- 
+With warm regards,
+Sachin
