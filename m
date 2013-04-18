@@ -1,57 +1,42 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: S3C64xx serial broken in -next
-Date: Thu, 18 Apr 2013 13:56:26 +0100
-Message-ID: <20130418125625.GF13687@opensource.wolfsonmicro.com>
+From: Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH v7 3/3] of/pci: mips: convert to common
+ of_pci_range_parser
+Date: Thu, 18 Apr 2013 13:59:10 +0100
+Message-ID: <20130418125910.GA17128@arm.com>
+References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
+ <1366107508-12672-4-git-send-email-Andrew.Murray@arm.com>
+ <CACRpkdbBaT1OKr5t8HW4+8y_wSDmGxmewAyVMekx8S-K9s3K8Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qpqR4wE1CEr+Roqx"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54449 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755624Ab3DRM4b (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Apr 2013 08:56:31 -0400
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-mips-bounce@linux-mips.org>
 Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <CACRpkdbBaT1OKr5t8HW4+8y_wSDmGxmewAyVMekx8S-K9s3K8Q@mail.gmail.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Jingoo Han <jg1.han@samsung.com>, Liviu Dudau <Liviu.Dudau@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "suren.reddy@samsung.com" <suren.reddy>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Michael Spang <spang@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de
 
+On Wed, Apr 17, 2013 at 04:42:48PM +0100, Linus Walleij wrote:
+> On Tue, Apr 16, 2013 at 12:18 PM, Andrew Murray <Andrew.Murray@arm.com> wrote:
+> 
+> > This patch converts the pci_load_of_ranges function to use the new common
+> > of_pci_range_parser.
+> >
+> > Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
+> > Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
+> > Reviewed-by: Rob Herring <rob.herring@calxeda.com>
+> 
+> Tested-by: Linus Walleij <linus.walleij@linaro.org>
 
---qpqR4wE1CEr+Roqx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Jason - you may not have seen this, but here (Linus Walleij) is another Tested-by
+to add to this patch in your tree (if you can).
 
-I'm seeing lots of dropped characters from the s3c64xx serial driver in
-something closely resmbling -next today, it seemed fine yesterday.  Not
-100% sure that this is the serial driver itself but reverting 38adbc
-(serial: samsung: Avoid waiting forever for TX ready) seems to improve
-things a bit.
-
-I'm not seeing any obvious changes in the arch code recently, the serial
-driver looks like the most recently updated thing though that wasn't
-today either.
-
---qpqR4wE1CEr+Roqx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRb+1yAAoJELSic+t+oim9abcP/0fBoa/WgSRQ9i73SmbHC7z9
-59hPzbRjses6lH3788EPARKT6KHUzh3tsXVzC2y7T6MVNVok/GLrvXo05TBYSH0j
-XPA0fC5bSjGgXHAGSQkaey2YfCyIyuHw8+eaiJ8D29E3kyQJqME14xrfe1LEVmTs
-+EvkH0eh+vUnLC/JZxNycm1yi40m4tQAB+tM0Y6fY/o9kuCZKZVhjk3N+JKa+lNV
-RxfW993/4Gf8Zs/U8gZaWptAbInwXc7CBHHBohJjZNCrMerS/z/fxbyt/Dt/vu5D
-N8n/N1uE3YQgx4uWgRBBtVvfkuqPC01E5wMimWljkC+PKAQ9JdoDIHiexdkAlB0a
-qAX4v8Uy40bjFIPYkOOqI66w9WzNB1wQzO5OasWkFNjYSZM3/BwNJHeb6D2aAm6e
-lGSGA/DnIvcs5fuhYXk7ktTtVY139teFBQuvtEkiMuZxvHsWNG1KjmtyBKTQYIYg
-NAId5i+dtp2EvPZ/AdH9Qbsv0r2B+n5T6M0/lbNOefg+nJpi0c9jq4oXdimfkyya
-pTLRvbovv7wtEnOtPvU1eiCNupNV4vddcu9ToFpTPQH6Dc8LzhT0qjaBbzNETAbt
-bYS5cRfm3Z6MSsgng/EAlQ7QEU9S0UodP9WmtwM0tud0kxoSxBcBpV9bs3d8lj99
-4q84iGYUlvpAXmresb8+
-=IF14
------END PGP SIGNATURE-----
-
---qpqR4wE1CEr+Roqx--
+Andrew Murray
