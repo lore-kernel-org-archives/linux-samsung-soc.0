@@ -1,58 +1,61 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH 6/6] thermal:exynos4: Add documentation for Exynos SoC thermal
- bindings
-Date: Fri, 19 Apr 2013 18:38:13 +0200
-Message-ID: <1366389493-8239-7-git-send-email-l.majewski@samsung.com>
-References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] cpufreq: exynos: allow disabling cpufreq drivers
+Date: Fri, 19 Apr 2013 18:51:47 +0200
+Message-ID: <51717623.2060709@samsung.com>
+References: <201304191554.29679.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:19762 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030932Ab3DSQio (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:11056 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750846Ab3DSQvu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Apr 2013 12:38:44 -0400
-In-reply-to: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
+	Fri, 19 Apr 2013 12:51:50 -0400
+In-reply-to: <201304191554.29679.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Zhang Rui <rui.zhang@intel.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: cpufreq@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
 
-Proper description for Exynos4 bindings added to Documentation/devicetree/
-bindings
+On 04/19/2013 03:54 PM, Arnd Bergmann wrote:
+> Commit 6e6aac7590 "ARM: EXYNOS: Migrate clock support to common
+> clock framework" broke support for the exynos cpufreq drivers.
+> While we're waiting for a fix for this, let's get back to a state
+> where the kernel builds again with the cpufreq subsystem enabled
+> but ARM_EXYNOS_CPUFREQ disabled. I assume that this was the intention
+> behind this Kconfig symbol anyway.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: cpufreq@vger.kernel.org
+> Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> ---
+> Rafael, I'm putting this patch into the arm-soc tree now to avoid
+> a bug based on a patch that I got from Kukjin. If you have any
+> objections, please let me know so I can revert it again.
+> 
+> Everyone else: Why does 6e6aac7590 have your "Tested-by" and
+> "Signed-off-by" tags on it when it's obviously broken? Who is
+> fixing this? Having no working exynos cpufreq support in 3.10
+> would be a serious regression.
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- .../devicetree/bindings/thermal/exynos-thermal.txt |   22 ++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+Not sure what happened here, but my and Tomasz's Tested-by were given 
+for v5 of the patch series including 6e6aac7590, while it seems v6 
+has been applied. And the patch is not same in both series.
 
-diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-new file mode 100644
-index 0000000..e994e1e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-@@ -0,0 +1,22 @@
-+* Exynos Thermal
-+
-+Required properties:
-+- compatible : "samsung,exynos4412-tmu"
-+- interrupts-parent : The phandle for the interrupt controller
-+- reg : Address range of the thermal registers
-+- interrupts : Should contain interrupt for thermal system
-+- clocks : The main clock for TMU device
-+- clocks-names : Thermal system clock name
-+- status : Initial state of the device
-+
-+Example:
-+
-+	tmu@100C0000 {
-+		compatible = "samsung,exynos4412-tmu";
-+		interrupt-parent = <&combiner>;
-+		reg = <0x100C0000 0x100>;
-+		interrupts = <2 4>;
-+		clocks = <&clock 383>;
-+		clock-names = "tmu_apbif";
-+		status = "disabled";
-+	};
--- 
-1.7.10.4
+There could be some differences in the base tree I used when testing 
+this [1] series, as it was hard to determine against what tag it was 
+created exactly. Also I didn't test in on all platforms, only 
+Exynos4412.
+
+And the cpufreq really needs to get fixed, as it now modifies registers
+which belong to the clock driver...
+
+[1] http://www.spinics.net/lists/arm-kernel/msg214149.html
+
+Thanks,
+Sylwester
