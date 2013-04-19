@@ -1,39 +1,36 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] I2C: EXYNOS: High speed mode clock setting for HSI2C
-Date: Fri, 19 Apr 2013 20:35:08 +0200
-Message-ID: <20130419183508.GC3702@the-dreams.de>
-References: <1366372583-7584-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] cpufreq: exynos: allow disabling cpufreq drivers
+Date: Fri, 19 Apr 2013 20:59:38 +0200
+Message-ID: <201304192059.38606.arnd@arndb.de>
+References: <201304191554.29679.arnd@arndb.de> <51717623.2060709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:33151 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753203Ab3DSSfK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Apr 2013 14:35:10 -0400
-Content-Disposition: inline
-In-Reply-To: <1366372583-7584-1-git-send-email-yuvaraj.cd@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <51717623.2060709@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, cpufreq@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ch.naveen@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On Fri, Apr 19, 2013 at 05:26:23PM +0530, Yuvaraj Kumar C D wrote:
-> This patch configure the High speed mode timing register using the
-> clock speed mentioned in the dts file.Also it configure the MASTER_ID
-> for High speed i2c transfer.
-> For i2c high speed transaction, tarnsaction initially starts with the
-> fast mode i,e 400Kbits/sec and then switches to high speed mode.For this
-> purpose it requires to set up timing value for fast mode and high speed
-> mode.
-> 
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+On Friday 19 April 2013, Sylwester Nawrocki wrote:
+> Not sure what happened here, but my and Tomasz's Tested-by were given 
+> for v5 of the patch series including 6e6aac7590, while it seems v6 
+> has been applied. And the patch is not same in both series.
 
-Since the exynos5 driver needs to be resent anyhow, I assume this will
-be included in the next version? Please note that I had comments
-regarding the bindings of the bus speed. We have a generic binding for
-that already.
+I see.
 
-Thanks,
+> There could be some differences in the base tree I used when testing 
+> this [1] series, as it was hard to determine against what tag it was 
+> created exactly. Also I didn't test in on all platforms, only 
+> Exynos4412.
 
-   Wolfram
+Maybe you just didn't have CPUFREQ enabled? I also didn't notice this
+bug at first because it is turned off in the defconfigs.
+
+It could also be working by chance on EXYNOS4, since the register
+definitions were not actually removed from the regs-clk.h header
+for those.
+
+	Arnd
