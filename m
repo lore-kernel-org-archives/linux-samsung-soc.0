@@ -1,56 +1,43 @@
-From: Gabor Juhos <juhosg@openwrt.org>
-Subject: Re: [PATCH v7 3/3] of/pci: mips: convert to common of_pci_range_parser
-Date: Fri, 19 Apr 2013 09:19:50 +0200
-Message-ID: <5170F016.6050502@openwrt.org>
-References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
- <1366107508-12672-4-git-send-email-Andrew.Murray@arm.com>
- <CACRpkdbBaT1OKr5t8HW4+8y_wSDmGxmewAyVMekx8S-K9s3K8Q@mail.gmail.com>
- <20130418125910.GA17128@arm.com>
- <20130418130919.GI27197@titan.lakedaemon.net>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v4] mmc: dw_mmc: let device core setup the default pin
+	configuration
+Date: Fri, 19 Apr 2013 11:11:31 +0100
+Message-ID: <20130419101131.GH14496@n2100.arm.linux.org.uk>
+References: <1365487186-4587-1-git-send-email-thomas.abraham@linaro.org> <CAD=FV=VJ-ykDNqYKQ=fqxeOD6bRNLW02VT4bjsRHRAuXLcCpQQ@mail.gmail.com> <CAJuYYwQT=povqiutVHXkF5jxTAnjpwTMQ5G0Z6xKGnnM7qYADQ@mail.gmail.com> <CAD=FV=UddWM=yc5N9=jwbMDpZ7Bpg7o3Z714CnBSg=iHhmPxWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20130418130919.GI27197@titan.lakedaemon.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, Liviu Dudau <Liviu.Dudau@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Paul Mackerras <paulus@samba.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Abraham <thomas.abraham@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Arnd Bergmann <arnd@arndb.de>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>"bhelgaas@google.com" <b>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:34647 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757087Ab3DSKLr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 19 Apr 2013 06:11:47 -0400
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=UddWM=yc5N9=jwbMDpZ7Bpg7o3Z714CnBSg=iHhmPxWw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Patch Tracking <patches@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Girish Shivananjappa <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-2013.04.18. 15:09 keltez=E9ssel, Jason Cooper =EDrta:
-> On Thu, Apr 18, 2013 at 01:59:10PM +0100, Andrew Murray wrote:
->> On Wed, Apr 17, 2013 at 04:42:48PM +0100, Linus Walleij wrote:
->>> On Tue, Apr 16, 2013 at 12:18 PM, Andrew Murray <Andrew.Murray@arm.com>=
- wrote:
->>>
->>>> This patch converts the pci_load_of_ranges function to use the new com=
-mon
->>>> of_pci_range_parser.
->>>>
->>>> Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
->>>> Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
->>>> Reviewed-by: Rob Herring <rob.herring@calxeda.com>
->>>
->>> Tested-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> Jason - you may not have seen this, but here (Linus Walleij) is another =
-Tested-by
->> to add to this patch in your tree (if you can).
-> =
+On Wed, Apr 10, 2013 at 06:56:48AM -0700, Doug Anderson wrote:
+> Thomas,
+> 
+> On Wed, Apr 10, 2013 at 5:48 AM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
+> > The call to regulator_enable() is prior to the call to mmc_add_host().
+> > Hence, call to mmc_fre_host is not required in this case. So the above
+> > change should be right.
+> 
+> Are you sure that mmc_free_host() is the opposite of mmc_add_host()
+> and not mmc_alloc_host()?
 
-> Thanks, I saw it.  Unfortunately, the PR was already sent, and the branch
-> is now pulled into arm-soc.
+mmc_free_host() undoes mmc_alloc_host().  mmc_remove_host() undoes
+mmc_add_host().
 
-Sorry I had no time earlier, but I have tested this now on MIPS. The patch
-causes build errors unfortunately. Given the fact that this has been merged
-already, I will send a fixup patch.
+alloc
+add
+remove
+free
 
--Gabor
+is pretty standard terminology, standard ordering.  If add fails, then
+free is the right thing to call to clean up after the alloc.
