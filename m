@@ -1,61 +1,82 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] cpufreq: exynos: allow disabling cpufreq drivers
-Date: Fri, 19 Apr 2013 18:51:47 +0200
-Message-ID: <51717623.2060709@samsung.com>
-References: <201304191554.29679.arnd@arndb.de>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH 4/6] thermal: Support for TMU regulator defined at device
+ tree
+Date: Fri, 19 Apr 2013 13:23:21 -0400
+Message-ID: <51717D89.3090303@ti.com>
+References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com> <1366389493-8239-5-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11056 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750846Ab3DSQvu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Apr 2013 12:51:50 -0400
-In-reply-to: <201304191554.29679.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1366389493-8239-5-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Zhang Rui <rui.zhang@intel.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, eduardo.valentin@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: cpufreq@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
 
-On 04/19/2013 03:54 PM, Arnd Bergmann wrote:
-> Commit 6e6aac7590 "ARM: EXYNOS: Migrate clock support to common
-> clock framework" broke support for the exynos cpufreq drivers.
-> While we're waiting for a fix for this, let's get back to a state
-> where the kernel builds again with the cpufreq subsystem enabled
-> but ARM_EXYNOS_CPUFREQ disabled. I assume that this was the intention
-> behind this Kconfig symbol anyway.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: cpufreq@vger.kernel.org
-> Cc: Rafael J. Wysocki <rjw@sisk.pl>
+On 19-04-2013 12:38, Lukasz Majewski wrote:
+> TMU probe function now checks for a device tree defined regulator.
+> For compatibility reasons it is allowed to probe driver even without
+> this regulator defined.
+>
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
-> Rafael, I'm putting this patch into the arm-soc tree now to avoid
-> a bug based on a patch that I got from Kukjin. If you have any
-> objections, please let me know so I can revert it again.
-> 
-> Everyone else: Why does 6e6aac7590 have your "Tested-by" and
-> "Signed-off-by" tags on it when it's obviously broken? Who is
-> fixing this? Having no working exynos cpufreq support in 3.10
-> would be a serious regression.
+>   drivers/thermal/exynos_thermal.c |   19 +++++++++++++++++++
+>   1 file changed, 19 insertions(+)
+>
+> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
+> index ba6094c..e922fa4 100644
+> --- a/drivers/thermal/exynos_thermal.c
+> +++ b/drivers/thermal/exynos_thermal.c
+> @@ -38,6 +38,7 @@
+>   #include <linux/cpufreq.h>
+>   #include <linux/cpu_cooling.h>
+>   #include <linux/of.h>
+> +#include <linux/regulator/consumer.h>
+>
+>   #include <plat/cpu.h>
+>
+> @@ -119,6 +120,8 @@
+>
+>   #define EXYNOS_ZONE_COUNT	3
+>
+> +#define EXYNOS_TMU_REGULATOR "vdd_ts"
+> +
+>   struct exynos_tmu_data {
+>   	struct exynos_tmu_platform_data *pdata;
+>   	struct resource *mem;
+> @@ -944,6 +947,7 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>   {
+>   	struct exynos_tmu_data *data;
+>   	struct exynos_tmu_platform_data *pdata = pdev->dev.platform_data;
+> +	struct regulator *reg;
+>   	int ret, i;
+>
+>   	if (!pdata)
+> @@ -953,6 +957,21 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>   		dev_err(&pdev->dev, "No platform init data supplied.\n");
+>   		return -ENODEV;
+>   	}
+> +
+> +	reg = regulator_get(&pdev->dev, EXYNOS_TMU_REGULATOR);
+> +	if (!IS_ERR(reg)) {
+> +		ret = regulator_enable(reg);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "Regulator %s not enabled.\n",
+> +				EXYNOS_TMU_REGULATOR);
+> +			return ret;
+> +		}
+> +	} else {
+> +		dev_info(&pdev->dev,
+> +			 "Regulator %s not defined at device tree.\n",
+> +			 EXYNOS_TMU_REGULATOR);
+Maybe a dev_warn would fit better?
 
-Not sure what happened here, but my and Tomasz's Tested-by were given 
-for v5 of the patch series including 6e6aac7590, while it seems v6 
-has been applied. And the patch is not same in both series.
+> +	}
+> +
+>   	data = devm_kzalloc(&pdev->dev, sizeof(struct exynos_tmu_data),
+>   					GFP_KERNEL);
+>   	if (!data) {
+>
 
-There could be some differences in the base tree I used when testing 
-this [1] series, as it was hard to determine against what tag it was 
-created exactly. Also I didn't test in on all platforms, only 
-Exynos4412.
-
-And the cpufreq really needs to get fixed, as it now modifies registers
-which belong to the clock driver...
-
-[1] http://www.spinics.net/lists/arm-kernel/msg214149.html
-
-Thanks,
-Sylwester
