@@ -1,75 +1,56 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] clk: exynos4: Add clock entries for TMU
-Date: Fri, 19 Apr 2013 11:46:06 +0530
-Message-ID: <1366352166-20967-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:47478 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756330Ab3DSG2a (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Apr 2013 02:28:30 -0400
-Received: by mail-pa0-f52.google.com with SMTP id fb10so2079798pad.39
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Apr 2013 23:28:30 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Gabor Juhos <juhosg@openwrt.org>
+Subject: Re: [PATCH v7 3/3] of/pci: mips: convert to common of_pci_range_parser
+Date: Fri, 19 Apr 2013 09:19:50 +0200
+Message-ID: <5170F016.6050502@openwrt.org>
+References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
+ <1366107508-12672-4-git-send-email-Andrew.Murray@arm.com>
+ <CACRpkdbBaT1OKr5t8HW4+8y_wSDmGxmewAyVMekx8S-K9s3K8Q@mail.gmail.com>
+ <20130418125910.GA17128@arm.com>
+ <20130418130919.GI27197@titan.lakedaemon.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130418130919.GI27197@titan.lakedaemon.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, Liviu Dudau <Liviu.Dudau@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Paul Mackerras <paulus@samba.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Abraham <thomas.abraham@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Arnd Bergmann <arnd@arndb.de>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>"bhelgaas@google.com" <b>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Thomas Abraham <thomas.abraham@linaro.org>, Mike Turquette <mturquette@linaro.org>
 
-Added clock entries for thermal management unit (TMU) for
-Exynos4 SoCs.
+2013.04.18. 15:09 keltez=E9ssel, Jason Cooper =EDrta:
+> On Thu, Apr 18, 2013 at 01:59:10PM +0100, Andrew Murray wrote:
+>> On Wed, Apr 17, 2013 at 04:42:48PM +0100, Linus Walleij wrote:
+>>> On Tue, Apr 16, 2013 at 12:18 PM, Andrew Murray <Andrew.Murray@arm.com>=
+ wrote:
+>>>
+>>>> This patch converts the pci_load_of_ranges function to use the new com=
+mon
+>>>> of_pci_range_parser.
+>>>>
+>>>> Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
+>>>> Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
+>>>> Reviewed-by: Rob Herring <rob.herring@calxeda.com>
+>>>
+>>> Tested-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> Jason - you may not have seen this, but here (Linus Walleij) is another =
+Tested-by
+>> to add to this patch in your tree (if you can).
+> =
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>
----
-Should be applied on top of the below patches:
-https://patchwork.kernel.org/patch/2448711/
-https://patchwork.kernel.org/patch/2459831/
----
- .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
- drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+> Thanks, I saw it.  Unfortunately, the PR was already sent, and the branch
+> is now pulled into arm-soc.
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-index 14d5c2a..5b17c4d 100644
---- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-@@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
-   spi0_isp_sclk       380     Exynos4x12
-   spi1_isp_sclk       381     Exynos4x12
-   uart_isp_sclk       382     Exynos4x12
-+  tmu		      383
- 
- 		[Mux Clocks]
- 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 09cf161..fc4f662 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -170,7 +170,7 @@ enum exynos4_clks {
- 	gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1, mcuctl_isp,
- 	mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp, uart_isp,
- 	asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk, spi0_isp_sclk,
--	spi1_isp_sclk, uart_isp_sclk,
-+	spi1_isp_sclk, uart_isp_sclk, tmu,
- 
- 	/* mux clocks */
- 	mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
-@@ -815,6 +815,7 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
- 	GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0, "keypad"),
- 	GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
- 			E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
-+	GATE(tmu, "tmu", "aclk100", E4210_GATE_IP_PERIR, 17, 0, 0),
- };
- 
- /* list of gate clocks supported in exynos4x12 soc */
-@@ -915,6 +916,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 	GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
- 			CLK_IGNORE_UNUSED, 0),
- 	GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
-+	GATE(tmu, "tmu", "aclk100", E4X12_GATE_IP_PERIR, 17, 0, 0),
- };
- 
- #ifdef CONFIG_OF
--- 
-1.7.9.5
+Sorry I had no time earlier, but I have tested this now on MIPS. The patch
+causes build errors unfortunately. Given the fact that this has been merged
+already, I will send a fixup patch.
+
+-Gabor
