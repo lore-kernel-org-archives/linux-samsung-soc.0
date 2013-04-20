@@ -1,650 +1,617 @@
-From: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 3/3] drm/exynos: Add device tree support for fimc ipp
- driver
-Date: Sun, 21 Apr 2013 01:21:08 +0900
-Message-ID: <CAAQKjZM_WmKHSrUgN9_PxoFt5BemTp113JEXzj1huu5B-V32=A@mail.gmail.com>
-References: <1366133486-22973-1-git-send-email-s.nawrocki@samsung.com>
- <1366133486-22973-4-git-send-email-s.nawrocki@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] clocksource: add samsung pwm timer driver
+Date: Sun, 21 Apr 2013 00:01:59 +0200
+Message-ID: <201304210002.00125.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4877827129283162131=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1366133486-22973-4-git-send-email-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, DRI mailing list <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============4877827129283162131==
-Content-Type: multipart/alternative; boundary=047d7b3a8436200f1304dacd3959
-
---047d7b3a8436200f1304dacd3959
-Content-Type: text/plain; charset=ISO-8859-1
-
-2013/4/17 Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
-> This patch adds OF initialization support for the FIMC driver.
-> The binding documentation can be found at Documentation/devicetree/
-> bindings/media/samsung-fimc.txt.
->
-> The syscon regmap interface is used to serialize access to the
-> shared CAMBLK registers from within the V4L2 FIMC-IS and the DRM
-> FIMC drivers. The DRM driver uses this interface for setting up
-> the FIFO data link between FIMD and FIMC IP blocks, while the V4L2
-> one for setting up a data link between the camera ISP and FIMC for
-> camera capture. The CAMBLK registers are not accessed any more
-> through a statically mapped IO. Synchronized access to these
-> registers is required for simultaneous operation of the camera
-> ISP and the DRM IPP on Exynos4x12.
->
-> Exynos4 is going to be a dt-only platform since 3.10, thus the
-> driver data and driver_ids static data structures are removed.
->
-> Camera input signal polarities are not currently parsed from the
-> device tree.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/gpu/drm/exynos/Kconfig           |    2 +-
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c |  101
-> +++++++++++++++---------------
->  drivers/gpu/drm/exynos/regs-fimc.h       |    7 +--
->  3 files changed, 53 insertions(+), 57 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/Kconfig
-> b/drivers/gpu/drm/exynos/Kconfig
-> index 406f32a..5c4be2a 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -56,7 +56,7 @@ config DRM_EXYNOS_IPP
->
->  config DRM_EXYNOS_FIMC
->         bool "Exynos DRM FIMC"
-> -       depends on DRM_EXYNOS_IPP
-> +       depends on DRM_EXYNOS_IPP && MFD_SYSCON && OF
->         help
->           Choose this option if you want to use Exynos FIMC for DRM.
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> index 9bea585..f25801e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -12,11 +12,12 @@
->   *
->   */
->  #include <linux/kernel.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->  #include <linux/clk.h>
->  #include <linux/pm_runtime.h>
-> -#include <plat/map-base.h>
->
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
-> @@ -140,15 +141,6 @@ struct fimc_capability {
->  };
->
->  /*
-> - * A structure of fimc driver data.
-> - *
-> - * @parent_clk: name of parent clock.
-> - */
-> -struct fimc_driverdata {
-> -       char    *parent_clk;
-> -};
-> -
-> -/*
->   * A structure of fimc context.
->   *
->   * @ippdrv: prepare initialization using ippdrv.
-> @@ -158,6 +150,7 @@ struct fimc_driverdata {
->   * @lock: locking of operations.
->   * @clocks: fimc clocks.
->   * @clk_frequency: LCLK clock frequency.
-> + * @sysreg: handle to SYSREG block regmap.
->   * @sc: scaler infomations.
->   * @pol: porarity of writeback.
->   * @id: fimc id.
-> @@ -172,8 +165,8 @@ struct fimc_context {
->         struct mutex    lock;
->         struct clk      *clocks[FIMC_CLKS_MAX];
->         u32             clk_frequency;
-> +       struct regmap   *sysreg;
->         struct fimc_scaler      sc;
-> -       struct fimc_driverdata  *ddata;
->         struct exynos_drm_ipp_pol       pol;
->         int     id;
->         int     irq;
-> @@ -217,17 +210,13 @@ static void fimc_sw_reset(struct fimc_context *ctx)
->         fimc_write(0x0, EXYNOS_CIFCNTSEQ);
->  }
->
-> -static void fimc_set_camblk_fimd0_wb(struct fimc_context *ctx)
-> +static int fimc_set_camblk_fimd0_wb(struct fimc_context *ctx)
->  {
-> -       u32 camblk_cfg;
-> -
->         DRM_DEBUG_KMS("%s\n", __func__);
->
-> -       camblk_cfg = readl(SYSREG_CAMERA_BLK);
-> -       camblk_cfg &= ~(SYSREG_FIMD0WB_DEST_MASK);
-> -       camblk_cfg |= ctx->id << (SYSREG_FIMD0WB_DEST_SHIFT);
-> -
-> -       writel(camblk_cfg, SYSREG_CAMERA_BLK);
-> +       return regmap_update_bits(ctx->sysreg, SYSREG_CAMERA_BLK,
-> +                                 SYSREG_FIMD0WB_DEST_MASK,
-> +                                 ctx->id << SYSREG_FIMD0WB_DEST_SHIFT);
->  }
->
->  static void fimc_set_type_ctrl(struct fimc_context *ctx, enum fimc_wb wb)
-> @@ -1628,7 +1617,9 @@ static int fimc_ippdrv_start(struct device *dev,
-> enum drm_exynos_ipp_cmd cmd)
->                 fimc_handle_lastend(ctx, true);
->
->                 /* setup FIMD */
-> -               fimc_set_camblk_fimd0_wb(ctx);
-> +               ret = fimc_set_camblk_fimd0_wb(ctx);
-> +               if (ret < 0)
-> +                       return ret;
->
->                 set_wb.enable = 1;
->                 set_wb.refresh = property->refresh_rate;
-> @@ -1784,26 +1775,50 @@ e_clk_free:
->         return ret;
->  }
->
-> +static int fimc_parse_dt(struct fimc_context *ctx)
-> +{
-> +       struct device_node *node = ctx->dev->of_node;
-> +
-> +       if (!of_property_read_bool(node, "samsung,lcd-wb"))
-> +               return -ENODEV;
->
-
-
-Isn't the above property really needed? This makes the use of write-back
-feature to be forced. I think some machines might not need this feature so
-their dts files have no that property.
- So in this case, drm fimc driver probing will be failed. is that correct
-action and your intention?
-
-
-> +
-> +       if (of_property_read_u32(node, "clock-frequency",
-> +                                       &ctx->clk_frequency))
-> +               ctx->clk_frequency = FIMC_DEFAULT_LCLK_FREQUENCY;
-> +
-> +       ctx->id = of_alias_get_id(node, "fimc");
-> +       if (ctx->id < 0)
-> +               return -EINVAL;
-> +
-> +       return 0;
-> +}
-> +
->  static int fimc_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
->         struct fimc_context *ctx;
->         struct resource *res;
->         struct exynos_drm_ippdrv *ippdrv;
-> -       struct exynos_drm_fimc_pdata *pdata;
-> -       struct fimc_driverdata *ddata;
->         int ret;
->
-> -       pdata = pdev->dev.platform_data;
-> -       if (!pdata) {
-> -               dev_err(dev, "no platform data specified.\n");
-> -               return -EINVAL;
-> -       }
-> +       if (!dev->of_node)
-> +               return -ENODEV;
->
->         ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
->         if (!ctx)
->                 return -ENOMEM;
->
-> +       ctx->dev = dev;
-> +
-> +       ret = fimc_parse_dt(ctx);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       ctx->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
-> +                                               "samsung,sysreg");
-> +       if (IS_ERR(ctx->sysreg))
-> +               return PTR_ERR(ctx->sysreg);
-> +
->         /* resource memory */
->         ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
-> @@ -1828,10 +1843,6 @@ static int fimc_probe(struct platform_device *pdev)
->         ret = fimc_setup_clocks(ctx);
->         if (ret < 0)
->                 goto err_free_irq;
-> -       /* context initailization */
-> -       ctx->id = pdev->id;
-> -       ctx->pol = pdata->pol;
-> -       ctx->ddata = ddata;
->
->         ippdrv = &ctx->ippdrv;
->         ippdrv->dev = dev;
-> @@ -1941,36 +1952,22 @@ static int fimc_runtime_resume(struct device *dev)
->  }
->  #endif
->
-> -static struct fimc_driverdata exynos4210_fimc_data = {
-> -       .parent_clk = "mout_mpll",
-> -};
-> -
-> -static struct fimc_driverdata exynos4410_fimc_data = {
-> -       .parent_clk = "mout_mpll_user",
-> -};
-> -
-> -static struct platform_device_id fimc_driver_ids[] = {
-> -       {
-> -               .name           = "exynos4210-fimc",
-> -               .driver_data    = (unsigned long)&exynos4210_fimc_data,
-> -       }, {
-> -               .name           = "exynos4412-fimc",
-> -               .driver_data    = (unsigned long)&exynos4410_fimc_data,
-> -       },
-> -       {},
-> -};
-> -MODULE_DEVICE_TABLE(platform, fimc_driver_ids);
-> -
->  static const struct dev_pm_ops fimc_pm_ops = {
->         SET_SYSTEM_SLEEP_PM_OPS(fimc_suspend, fimc_resume)
->         SET_RUNTIME_PM_OPS(fimc_runtime_suspend, fimc_runtime_resume, NULL)
->  };
->
-> +static const struct of_device_id fimc_of_match[] = {
-> +       { .compatible = "samsung,exynos4210-fimc" },
-> +       { .compatible = "samsung,exynos4212-fimc" },
-> +       { },
-> +};
-> +
->  struct platform_driver fimc_driver = {
->         .probe          = fimc_probe,
->         .remove         = fimc_remove,
-> -       .id_table       = fimc_driver_ids,
->         .driver         = {
-> +               .of_match_table = fimc_of_match,
->                 .name   = "exynos-drm-fimc",
->                 .owner  = THIS_MODULE,
->                 .pm     = &fimc_pm_ops,
-> diff --git a/drivers/gpu/drm/exynos/regs-fimc.h
-> b/drivers/gpu/drm/exynos/regs-fimc.h
-> index b4f9ca1..3049613 100644
-> --- a/drivers/gpu/drm/exynos/regs-fimc.h
-> +++ b/drivers/gpu/drm/exynos/regs-fimc.h
-> @@ -661,9 +661,8 @@
->  #define EXYNOS_CLKSRC_SCLK                             (1 << 1)
->
->  /* SYSREG for FIMC writeback */
-> -#define SYSREG_CAMERA_BLK                      (S3C_VA_SYS + 0x0218)
-> -#define SYSREG_ISP_BLK                         (S3C_VA_SYS + 0x020c)
-> -#define SYSREG_FIMD0WB_DEST_MASK       (0x3 << 23)
-> -#define SYSREG_FIMD0WB_DEST_SHIFT      23
-> +#define SYSREG_CAMERA_BLK                      (0x0218)
-> +#define SYSREG_FIMD0WB_DEST_MASK               (0x3 << 23)
-> +#define SYSREG_FIMD0WB_DEST_SHIFT              23
->
->  #endif /* EXYNOS_REGS_FIMC_H */
-> --
-> 1.7.9.5
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
-
---047d7b3a8436200f1304dacd3959
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><br><div class=3D"gmail=
-_quote">2013/4/17 Sylwester Nawrocki <span dir=3D"ltr">&lt;<a href=3D"mailt=
-o:s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" target=3D"_blank">s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;<=
-/span><br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">This patch adds OF initialization support fo=
-r the FIMC driver.<br>
-The binding documentation can be found at Documentation/devicetree/<br>
-bindings/media/samsung-fimc.txt.<br>
-<br>
-The syscon regmap interface is used to serialize access to the<br>
-shared CAMBLK registers from within the V4L2 FIMC-IS and the DRM<br>
-FIMC drivers. The DRM driver uses this interface for setting up<br>
-the FIFO data link between FIMD and FIMC IP blocks, while the V4L2<br>
-one for setting up a data link between the camera ISP and FIMC for<br>
-camera capture. The CAMBLK registers are not accessed any more<br>
-through a statically mapped IO. Synchronized access to these<br>
-registers is required for simultaneous operation of the camera<br>
-ISP and the DRM IPP on Exynos4x12.<br>
-<br>
-Exynos4 is going to be a dt-only platform since 3.10, thus the<br>
-driver data and driver_ids static data structures are removed.<br>
-<br>
-Camera input signal polarities are not currently parsed from the<br>
-device tree.<br>
-<br>
-Signed-off-by: Sylwester Nawrocki &lt;<a href=3D"mailto:s.nawrocki@samsung.=
-com">s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;<br>
-Signed-off-by: Kyungmin Park &lt;<a href=3D"mailto:kyungmin.park-Sze3O3UU22KIwRZHo2/mJg@public.gmane.org=
-m">kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;<br>
----<br>
-=A0drivers/gpu/drm/exynos/Kconfig =A0 =A0 =A0 =A0 =A0 | =A0 =A02 +-<br>
-=A0drivers/gpu/drm/exynos/exynos_drm_fimc.c | =A0101 +++++++++++++++-------=
---------<br>
-=A0drivers/gpu/drm/exynos/regs-fimc.h =A0 =A0 =A0 | =A0 =A07 +--<br>
-=A03 files changed, 53 insertions(+), 57 deletions(-)<br>
-<br>
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfi=
-g<br>
-index 406f32a..5c4be2a 100644<br>
---- a/drivers/gpu/drm/exynos/Kconfig<br>
-+++ b/drivers/gpu/drm/exynos/Kconfig<br>
-@@ -56,7 +56,7 @@ config DRM_EXYNOS_IPP<br>
-<br>
-=A0config DRM_EXYNOS_FIMC<br>
-=A0 =A0 =A0 =A0 bool &quot;Exynos DRM FIMC&quot;<br>
-- =A0 =A0 =A0 depends on DRM_EXYNOS_IPP<br>
-+ =A0 =A0 =A0 depends on DRM_EXYNOS_IPP &amp;&amp; MFD_SYSCON &amp;&amp; OF=
-<br>
-=A0 =A0 =A0 =A0 help<br>
-=A0 =A0 =A0 =A0 =A0 Choose this option if you want to use Exynos FIMC for D=
-RM.<br>
-<br>
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exy=
-nos/exynos_drm_fimc.c<br>
-index 9bea585..f25801e 100644<br>
---- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c<br>
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c<br>
-@@ -12,11 +12,12 @@<br>
-=A0 *<br>
-=A0 */<br>
-=A0#include &lt;linux/kernel.h&gt;<br>
-+#include &lt;linux/mfd/syscon.h&gt;<br>
-=A0#include &lt;linux/module.h&gt;<br>
-=A0#include &lt;linux/platform_device.h&gt;<br>
-+#include &lt;linux/regmap.h&gt;<br>
-=A0#include &lt;linux/clk.h&gt;<br>
-=A0#include &lt;linux/pm_runtime.h&gt;<br>
--#include &lt;plat/map-base.h&gt;<br>
-<br>
-=A0#include &lt;drm/drmP.h&gt;<br>
-=A0#include &lt;drm/exynos_drm.h&gt;<br>
-@@ -140,15 +141,6 @@ struct fimc_capability {<br>
-=A0};<br>
-<br>
-=A0/*<br>
-- * A structure of fimc driver data.<br>
-- *<br>
-- * @parent_clk: name of parent clock.<br>
-- */<br>
--struct fimc_driverdata {<br>
-- =A0 =A0 =A0 char =A0 =A0*parent_clk;<br>
--};<br>
--<br>
--/*<br>
-=A0 * A structure of fimc context.<br>
-=A0 *<br>
-=A0 * @ippdrv: prepare initialization using ippdrv.<br>
-@@ -158,6 +150,7 @@ struct fimc_driverdata {<br>
-=A0 * @lock: locking of operations.<br>
-=A0 * @clocks: fimc clocks.<br>
-=A0 * @clk_frequency: LCLK clock frequency.<br>
-+ * @sysreg: handle to SYSREG block regmap.<br>
-=A0 * @sc: scaler infomations.<br>
-=A0 * @pol: porarity of writeback.<br>
-=A0 * @id: fimc id.<br>
-@@ -172,8 +165,8 @@ struct fimc_context {<br>
-=A0 =A0 =A0 =A0 struct mutex =A0 =A0lock;<br>
-=A0 =A0 =A0 =A0 struct clk =A0 =A0 =A0*clocks[FIMC_CLKS_MAX];<br>
-=A0 =A0 =A0 =A0 u32 =A0 =A0 =A0 =A0 =A0 =A0 clk_frequency;<br>
-+ =A0 =A0 =A0 struct regmap =A0 *sysreg;<br>
-=A0 =A0 =A0 =A0 struct fimc_scaler =A0 =A0 =A0sc;<br>
-- =A0 =A0 =A0 struct fimc_driverdata =A0*ddata;<br>
-=A0 =A0 =A0 =A0 struct exynos_drm_ipp_pol =A0 =A0 =A0 pol;<br>
-=A0 =A0 =A0 =A0 int =A0 =A0 id;<br>
-=A0 =A0 =A0 =A0 int =A0 =A0 irq;<br>
-@@ -217,17 +210,13 @@ static void fimc_sw_reset(struct fimc_context *ctx)<b=
-r>
-=A0 =A0 =A0 =A0 fimc_write(0x0, EXYNOS_CIFCNTSEQ);<br>
-=A0}<br>
-<br>
--static void fimc_set_camblk_fimd0_wb(struct fimc_context *ctx)<br>
-+static int fimc_set_camblk_fimd0_wb(struct fimc_context *ctx)<br>
-=A0{<br>
-- =A0 =A0 =A0 u32 camblk_cfg;<br>
--<br>
-=A0 =A0 =A0 =A0 DRM_DEBUG_KMS(&quot;%s\n&quot;, __func__);<br>
-<br>
-- =A0 =A0 =A0 camblk_cfg =3D readl(SYSREG_CAMERA_BLK);<br>
-- =A0 =A0 =A0 camblk_cfg &amp;=3D ~(SYSREG_FIMD0WB_DEST_MASK);<br>
-- =A0 =A0 =A0 camblk_cfg |=3D ctx-&gt;id &lt;&lt; (SYSREG_FIMD0WB_DEST_SHIF=
-T);<br>
--<br>
-- =A0 =A0 =A0 writel(camblk_cfg, SYSREG_CAMERA_BLK);<br>
-+ =A0 =A0 =A0 return regmap_update_bits(ctx-&gt;sysreg, SYSREG_CAMERA_BLK,<=
-br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 SYSREG_FI=
-MD0WB_DEST_MASK,<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ctx-&gt;i=
-d &lt;&lt; SYSREG_FIMD0WB_DEST_SHIFT);<br>
-=A0}<br>
-<br>
-=A0static void fimc_set_type_ctrl(struct fimc_context *ctx, enum fimc_wb wb=
-)<br>
-@@ -1628,7 +1617,9 @@ static int fimc_ippdrv_start(struct device *dev, enum=
- drm_exynos_ipp_cmd cmd)<br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 fimc_handle_lastend(ctx, true);<br>
-<br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* setup FIMD */<br>
-- =A0 =A0 =A0 =A0 =A0 =A0 =A0 fimc_set_camblk_fimd0_wb(ctx);<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D fimc_set_camblk_fimd0_wb(ctx);<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (ret &lt; 0)<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return ret;<br>
-<br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 set_wb.enable =3D 1;<br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 set_wb.refresh =3D property-&gt;refresh_rat=
-e;<br>
-@@ -1784,26 +1775,50 @@ e_clk_free:<br>
-=A0 =A0 =A0 =A0 return ret;<br>
-=A0}<br>
-<br>
-+static int fimc_parse_dt(struct fimc_context *ctx)<br>
-+{<br>
-+ =A0 =A0 =A0 struct device_node *node =3D ctx-&gt;dev-&gt;of_node;<br>
-+<br>
-+ =A0 =A0 =A0 if (!of_property_read_bool(node, &quot;samsung,lcd-wb&quot;))=
-<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;<br></blockquote><div><br><br>=
-Isn&#39;t the above property really needed? This makes the use of write-bac=
-k feature to be forced. I think some machines might not need this feature s=
-o their dts files have no that property.<br>
-</div><div>=A0So in this case, drm fimc driver probing will be failed. is t=
-hat correct action and your intention?<br></div><div>=A0</div><blockquote c=
-lass=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;=
-padding-left:1ex">
-
-+<br>
-+ =A0 =A0 =A0 if (of_property_read_u32(node, &quot;clock-frequency&quot;,<b=
-r>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 &amp;ctx-&gt;clk_frequency))<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 ctx-&gt;clk_frequency =3D FIMC_DEFAULT_LCLK_F=
-REQUENCY;<br>
-+<br>
-+ =A0 =A0 =A0 ctx-&gt;id =3D of_alias_get_id(node, &quot;fimc&quot;);<br>
-+ =A0 =A0 =A0 if (ctx-&gt;id &lt; 0)<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;<br>
-+<br>
-+ =A0 =A0 =A0 return 0;<br>
-+}<br>
-+<br>
-=A0static int fimc_probe(struct platform_device *pdev)<br>
-=A0{<br>
-=A0 =A0 =A0 =A0 struct device *dev =3D &amp;pdev-&gt;dev;<br>
-=A0 =A0 =A0 =A0 struct fimc_context *ctx;<br>
-=A0 =A0 =A0 =A0 struct resource *res;<br>
-=A0 =A0 =A0 =A0 struct exynos_drm_ippdrv *ippdrv;<br>
-- =A0 =A0 =A0 struct exynos_drm_fimc_pdata *pdata;<br>
-- =A0 =A0 =A0 struct fimc_driverdata *ddata;<br>
-=A0 =A0 =A0 =A0 int ret;<br>
-<br>
-- =A0 =A0 =A0 pdata =3D pdev-&gt;dev.platform_data;<br>
-- =A0 =A0 =A0 if (!pdata) {<br>
-- =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(dev, &quot;no platform data specified=
-.\n&quot;);<br>
-- =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;<br>
-- =A0 =A0 =A0 }<br>
-+ =A0 =A0 =A0 if (!dev-&gt;of_node)<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;<br>
-<br>
-=A0 =A0 =A0 =A0 ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);<br>
-=A0 =A0 =A0 =A0 if (!ctx)<br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENOMEM;<br>
-<br>
-+ =A0 =A0 =A0 ctx-&gt;dev =3D dev;<br>
-+<br>
-+ =A0 =A0 =A0 ret =3D fimc_parse_dt(ctx);<br>
-+ =A0 =A0 =A0 if (ret &lt; 0)<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 return ret;<br>
-+<br>
-+ =A0 =A0 =A0 ctx-&gt;sysreg =3D syscon_regmap_lookup_by_phandle(dev-&gt;of=
-_node,<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 &quot;samsung,sysreg&quot;);<br>
-+ =A0 =A0 =A0 if (IS_ERR(ctx-&gt;sysreg))<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 return PTR_ERR(ctx-&gt;sysreg);<br>
-+<br>
-=A0 =A0 =A0 =A0 /* resource memory */<br>
-=A0 =A0 =A0 =A0 ctx-&gt;regs_res =3D platform_get_resource(pdev, IORESOURCE=
-_MEM, 0);<br>
-=A0 =A0 =A0 =A0 ctx-&gt;regs =3D devm_ioremap_resource(dev, ctx-&gt;regs_re=
-s);<br>
-@@ -1828,10 +1843,6 @@ static int fimc_probe(struct platform_device *pdev)<=
-br>
-=A0 =A0 =A0 =A0 ret =3D fimc_setup_clocks(ctx);<br>
-=A0 =A0 =A0 =A0 if (ret &lt; 0)<br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_free_irq;<br>
-- =A0 =A0 =A0 /* context initailization */<br>
-- =A0 =A0 =A0 ctx-&gt;id =3D pdev-&gt;id;<br>
-- =A0 =A0 =A0 ctx-&gt;pol =3D pdata-&gt;pol;<br>
-- =A0 =A0 =A0 ctx-&gt;ddata =3D ddata;<br>
-<br>
-=A0 =A0 =A0 =A0 ippdrv =3D &amp;ctx-&gt;ippdrv;<br>
-=A0 =A0 =A0 =A0 ippdrv-&gt;dev =3D dev;<br>
-@@ -1941,36 +1952,22 @@ static int fimc_runtime_resume(struct device *dev)<=
-br>
-=A0}<br>
-=A0#endif<br>
-<br>
--static struct fimc_driverdata exynos4210_fimc_data =3D {<br>
-- =A0 =A0 =A0 .parent_clk =3D &quot;mout_mpll&quot;,<br>
--};<br>
--<br>
--static struct fimc_driverdata exynos4410_fimc_data =3D {<br>
-- =A0 =A0 =A0 .parent_clk =3D &quot;mout_mpll_user&quot;,<br>
--};<br>
--<br>
--static struct platform_device_id fimc_driver_ids[] =3D {<br>
-- =A0 =A0 =A0 {<br>
-- =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D &quot;exynos421=
-0-fimc&quot;,<br>
-- =A0 =A0 =A0 =A0 =A0 =A0 =A0 .driver_data =A0 =A0=3D (unsigned long)&amp;e=
-xynos4210_fimc_data,<br>
-- =A0 =A0 =A0 }, {<br>
-- =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D &quot;exynos441=
-2-fimc&quot;,<br>
-- =A0 =A0 =A0 =A0 =A0 =A0 =A0 .driver_data =A0 =A0=3D (unsigned long)&amp;e=
-xynos4410_fimc_data,<br>
-- =A0 =A0 =A0 },<br>
-- =A0 =A0 =A0 {},<br>
--};<br>
--MODULE_DEVICE_TABLE(platform, fimc_driver_ids);<br>
--<br>
-=A0static const struct dev_pm_ops fimc_pm_ops =3D {<br>
-=A0 =A0 =A0 =A0 SET_SYSTEM_SLEEP_PM_OPS(fimc_suspend, fimc_resume)<br>
-=A0 =A0 =A0 =A0 SET_RUNTIME_PM_OPS(fimc_runtime_suspend, fimc_runtime_resum=
-e, NULL)<br>
-=A0};<br>
-<br>
-+static const struct of_device_id fimc_of_match[] =3D {<br>
-+ =A0 =A0 =A0 { .compatible =3D &quot;samsung,exynos4210-fimc&quot; },<br>
-+ =A0 =A0 =A0 { .compatible =3D &quot;samsung,exynos4212-fimc&quot; },<br>
-+ =A0 =A0 =A0 { },<br>
-+};<br>
-+<br>
-=A0struct platform_driver fimc_driver =3D {<br>
-=A0 =A0 =A0 =A0 .probe =A0 =A0 =A0 =A0 =A0=3D fimc_probe,<br>
-=A0 =A0 =A0 =A0 .remove =A0 =A0 =A0 =A0 =3D fimc_remove,<br>
-- =A0 =A0 =A0 .id_table =A0 =A0 =A0 =3D fimc_driver_ids,<br>
-=A0 =A0 =A0 =A0 .driver =A0 =A0 =A0 =A0 =3D {<br>
-+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 .of_match_table =3D fimc_of_match,<br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =3D &quot;exynos-drm-fimc&quot;,<=
-br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .owner =A0=3D THIS_MODULE,<br>
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pm =A0 =A0 =3D &amp;fimc_pm_ops,<br>
-diff --git a/drivers/gpu/drm/exynos/regs-fimc.h b/drivers/gpu/drm/exynos/re=
-gs-fimc.h<br>
-index b4f9ca1..3049613 100644<br>
---- a/drivers/gpu/drm/exynos/regs-fimc.h<br>
-+++ b/drivers/gpu/drm/exynos/regs-fimc.h<br>
-@@ -661,9 +661,8 @@<br>
-=A0#define EXYNOS_CLKSRC_SCLK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 (1 &lt;&lt; 1)<br>
-<br>
-=A0/* SYSREG for FIMC writeback */<br>
--#define SYSREG_CAMERA_BLK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(S3C_=
-VA_SYS + 0x0218)<br>
--#define SYSREG_ISP_BLK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (S3=
-C_VA_SYS + 0x020c)<br>
--#define SYSREG_FIMD0WB_DEST_MASK =A0 =A0 =A0 (0x3 &lt;&lt; 23)<br>
--#define SYSREG_FIMD0WB_DEST_SHIFT =A0 =A0 =A023<br>
-+#define SYSREG_CAMERA_BLK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x02=
-18)<br>
-+#define SYSREG_FIMD0WB_DEST_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0 (0x3 &lt;&lt;=
- 23)<br>
-+#define SYSREG_FIMD0WB_DEST_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 =A023<br>
-<br>
-=A0#endif /* EXYNOS_REGS_FIMC_H */<br>
-<span class=3D"HOEnZb"><font color=3D"#888888">--<br>
-1.7.9.5<br>
-<br>
-_______________________________________________<br>
-dri-devel mailing list<br>
-<a href=3D"mailto:dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org">dri-devel-PD4FTy7X32lzq7FAFJ/aeQ@public.gmane.org=
-top.org</a><br>
-<a href=3D"http://lists.freedesktop.org/mailman/listinfo/dri-devel" target=
-=3D"_blank">http://lists.freedesktop.org/mailman/listinfo/dri-devel</a><br>
-</font></span></blockquote></div><br></div></div>
-
---047d7b3a8436200f1304dacd3959--
-
---===============4877827129283162131==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.187]:64588 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755420Ab3DTWCk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 20 Apr 2013 18:02:40 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
+From: Tomasz Figa <t.figa@samsung.com>
 
---===============4877827129283162131==--
+This adds a new clocksource driver for the PWM timer that is
+present in most Samsung SoCs, based on the existing driver in
+arch/arm/plat-samsung/samsung-time.c and many changes implemented by
+Tomasz Figa.
+
+Originally, the conversion of all Samsung machines to the new driver was
+planned for 3.10, but that work ended up being too late and too invasive
+just before the merge window.
+
+Unfortunately, other changes in the Exynos platform resulted in some
+Exynos4 setups, particularly the Universal C210 board to be broken. In
+order to fix that with minimum risk, so we now leave the existing pwm
+clocksource driver in place for all older platforms and use the new
+driver only for device tree enabled boards. This way, we can get the
+broken machines running again using DT descriptions.
+
+All clocksource changes were implemented by Tomasz, while the DT
+registration was rewritten by Arnd.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <t.figa@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+---
+This is my final attempt to fix the Exynos4 regressions we have, since
+Tomasz put a lot of work into getting this running, and I gave him a
+hard time about some of the earlier patches.
+
+Tomasz, can you have a look at this to see if it would actually help?
+I have removed all the non-DT registration from your code, as well
+as the interface to the pwm subsystem, since I assume the existing
+code will work for all users we care about.
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 73fcddb..5b8ba91 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -75,3 +75,13 @@ config CLKSRC_EXYNOS_MCT
+ 	def_bool y if ARCH_EXYNOS
+ 	help
+ 	  Support for Multi Core Timer controller on Exynos SoCs.
++
++config CLKSRC_SAMSUNG_PWM
++	def_bool ARCH_EXYNOS4
++	depends on OF
++	select CLKSRC_MMIO
++	help
++	  This is a new clocksource driver for the PWM timer found in
++	  Samsung S3C, S5P and Exynos SoCs, replacing an earlier driver
++	  for all devicetree enabled platforms. This driver will be
++	  needed only on systems that do not have the Exynos MCT available.
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index cd1f09c..2289f0c 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_ARCH_TEGRA)	+= tegra20_timer.o
+ obj-$(CONFIG_VT8500_TIMER)	+= vt8500_timer.o
+ obj-$(CONFIG_CADENCE_TTC_TIMER)	+= cadence_ttc_timer.o
+ obj-$(CONFIG_CLKSRC_EXYNOS_MCT)	+= exynos_mct.o
++obj-$(CONFIG_CLKSRC_SAMSUNG_PWM)	+= samsung_pwm_timer.o
+ 
+ obj-$(CONFIG_ARM_ARCH_TIMER)		+= arm_arch_timer.o
+ obj-$(CONFIG_CLKSRC_METAG_GENERIC)	+= metag_generic.o
+diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
+new file mode 100644
+index 0000000..1752457
+--- /dev/null
++++ b/drivers/clocksource/samsung_pwm_timer.c
+@@ -0,0 +1,477 @@
++/*
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * samsung - Common hr-timer support (s3c and s5p)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/err.h>
++#include <linux/clk.h>
++#include <linux/clockchips.h>
++#include <linux/list.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#include <clocksource/samsung_pwm.h>
++
++#include <asm/sched_clock.h>
++
++/*
++ * Clocksource driver
++ */
++
++#define REG_TCFG0			0x00
++#define REG_TCFG1			0x04
++#define REG_TCON			0x08
++#define REG_TINT_CSTAT			0x44
++
++#define REG_TCNTB(chan)			(0x0c + 12 * (chan))
++#define REG_TCMPB(chan)			(0x10 + 12 * (chan))
++
++#define TCFG0_PRESCALER_MASK		0xff
++#define TCFG0_PRESCALER1_SHIFT		8
++
++#define TCFG1_SHIFT(x)	  		((x) * 4)
++#define TCFG1_MUX_MASK	  		0xf
++
++#define TCON_START(chan)		(1 << (4 * (chan) + 0))
++#define TCON_MANUALUPDATE(chan)		(1 << (4 * (chan) + 1))
++#define TCON_INVERT(chan)		(1 << (4 * (chan) + 2))
++#define TCON_AUTORELOAD(chan)		(1 << (4 * (chan) + 3))
++
++struct samsung_timer_source {
++	unsigned int event_id;
++	unsigned int source_id;
++	unsigned int tcnt_max;
++	unsigned int tscaler_div;
++	unsigned int tdiv;
++};
++
++static struct samsung_pwm *pwm;
++static struct clk *timerclk;
++static struct samsung_timer_source timer_source;
++static unsigned long clock_count_per_tick;
++
++static void samsung_timer_set_prescale(struct samsung_pwm *pwm,
++					unsigned int channel, u16 prescale)
++{
++	unsigned long flags;
++	u8 shift = 0;
++	u32 reg;
++
++	if (channel >= 2)
++		shift = TCFG0_PRESCALER1_SHIFT;
++
++	spin_lock_irqsave(&pwm->slock, flags);
++
++	reg = readl(pwm->base + REG_TCFG0);
++	reg &= ~(TCFG0_PRESCALER_MASK << shift);
++	reg |= (prescale - 1) << shift;
++	writel(reg, pwm->base + REG_TCFG0);
++
++	spin_unlock_irqrestore(&pwm->slock, flags);
++}
++
++static void samsung_timer_set_divisor(struct samsung_pwm *pwm,
++					unsigned int channel, u8 divisor)
++{
++	u8 shift = TCFG1_SHIFT(channel);
++	unsigned long flags;
++	u32 reg;
++	u8 bits;
++
++	bits = (fls(divisor) - 1) - pwm->variant.div_base;
++
++	spin_lock_irqsave(&pwm->slock, flags);
++
++	reg = readl(pwm->base + REG_TCFG1);
++	reg &= ~(TCFG1_MUX_MASK << shift);
++	reg |= bits << shift;
++	writel(reg, pwm->base + REG_TCFG1);
++
++	spin_unlock_irqrestore(&pwm->slock, flags);
++}
++
++static void samsung_time_stop(unsigned int channel)
++{
++	unsigned long tcon;
++	unsigned long flags;
++
++	if (channel > 0)
++		++channel;
++
++	spin_lock_irqsave(&pwm->slock, flags);
++
++	tcon = __raw_readl(pwm->base + REG_TCON);
++	tcon &= ~TCON_START(channel);
++	__raw_writel(tcon, pwm->base + REG_TCON);
++
++	spin_unlock_irqrestore(&pwm->slock, flags);
++}
++
++static void samsung_time_setup(unsigned int channel, unsigned long tcnt)
++{
++	unsigned long tcon;
++	unsigned long flags;
++	unsigned int tcon_chan = channel;
++
++	if (tcon_chan > 0)
++		++tcon_chan;
++
++	spin_lock_irqsave(&pwm->slock, flags);
++
++	tcon = __raw_readl(pwm->base + REG_TCON);
++
++	tcnt--;
++
++	tcon &= ~(TCON_START(tcon_chan) | TCON_AUTORELOAD(tcon_chan));
++	tcon |= TCON_MANUALUPDATE(tcon_chan);
++
++	__raw_writel(tcnt, pwm->base + REG_TCNTB(channel));
++	__raw_writel(tcnt, pwm->base + REG_TCMPB(channel));
++	__raw_writel(tcon, pwm->base + REG_TCON);
++
++	spin_unlock_irqrestore(&pwm->slock, flags);
++}
++
++static void samsung_time_start(unsigned int channel, bool periodic)
++{
++	unsigned long tcon;
++	unsigned long flags;
++
++	if (channel > 0)
++		++channel;
++
++	spin_lock_irqsave(&pwm->slock, flags);
++
++	tcon = __raw_readl(pwm->base + REG_TCON);
++
++	tcon &= ~TCON_MANUALUPDATE(channel);
++	tcon |= TCON_START(channel);
++
++	if (periodic)
++		tcon |= TCON_AUTORELOAD(channel);
++	else
++		tcon &= ~TCON_AUTORELOAD(channel);
++
++	__raw_writel(tcon, pwm->base + REG_TCON);
++
++	spin_unlock_irqrestore(&pwm->slock, flags);
++}
++
++static int samsung_set_next_event(unsigned long cycles,
++				struct clock_event_device *evt)
++{
++	samsung_time_setup(timer_source.event_id, cycles);
++	samsung_time_start(timer_source.event_id, false);
++
++	return 0;
++}
++
++static void samsung_timer_resume(void)
++{
++	/* event timer restart */
++	samsung_time_setup(timer_source.event_id, clock_count_per_tick);
++	samsung_time_start(timer_source.event_id, true);
++
++	/* source timer restart */
++	samsung_time_setup(timer_source.source_id, timer_source.tcnt_max);
++	samsung_time_start(timer_source.source_id, true);
++}
++
++static void samsung_set_mode(enum clock_event_mode mode,
++				struct clock_event_device *evt)
++{
++	samsung_time_stop(timer_source.event_id);
++
++	switch (mode) {
++	case CLOCK_EVT_MODE_PERIODIC:
++		samsung_time_setup(timer_source.event_id, clock_count_per_tick);
++		samsung_time_start(timer_source.event_id, true);
++		break;
++
++	case CLOCK_EVT_MODE_ONESHOT:
++		break;
++
++	case CLOCK_EVT_MODE_UNUSED:
++	case CLOCK_EVT_MODE_SHUTDOWN:
++		break;
++
++	case CLOCK_EVT_MODE_RESUME:
++		samsung_timer_resume();
++		break;
++	}
++}
++
++static struct clock_event_device time_event_device = {
++	.name		= "samsung_event_timer",
++	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
++	.rating		= 200,
++	.set_next_event	= samsung_set_next_event,
++	.set_mode	= samsung_set_mode,
++};
++
++static irqreturn_t samsung_clock_event_isr(int irq, void *dev_id)
++{
++	struct clock_event_device *evt = dev_id;
++
++	if (pwm->variant.has_tint_cstat) {
++		u32 mask = (1 << timer_source.event_id);
++		writel(mask | (mask << 5), pwm->base + REG_TINT_CSTAT);
++	}
++
++	evt->event_handler(evt);
++
++	return IRQ_HANDLED;
++}
++
++static struct irqaction samsung_clock_event_irq = {
++	.name		= "samsung_time_irq",
++	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
++	.handler	= samsung_clock_event_isr,
++	.dev_id		= &time_event_device,
++};
++
++static void __init samsung_clockevent_init(void)
++{
++	unsigned long pclk;
++	unsigned long clock_rate;
++	unsigned int irq_number;
++
++	pclk = clk_get_rate(timerclk);
++
++	samsung_timer_set_prescale(pwm, timer_source.event_id,
++						timer_source.tscaler_div);
++	samsung_timer_set_divisor(pwm, timer_source.event_id,
++						timer_source.tdiv);
++
++	clock_rate = pclk / (timer_source.tscaler_div * timer_source.tdiv);
++	clock_count_per_tick = clock_rate / HZ;
++
++	time_event_device.cpumask = cpumask_of(0);
++	clockevents_config_and_register(&time_event_device, clock_rate, 1, -1);
++
++	irq_number = pwm->irq[timer_source.event_id];
++	setup_irq(irq_number, &samsung_clock_event_irq);
++
++	if (pwm->variant.has_tint_cstat) {
++		u32 mask = (1 << timer_source.event_id);
++		writel(mask | (mask << 5), pwm->base + REG_TINT_CSTAT);
++	}
++}
++
++static void __iomem *samsung_timer_reg(void)
++{
++	switch (timer_source.source_id) {
++	case 0:
++	case 1:
++	case 2:
++	case 3:
++		return pwm->base + timer_source.source_id * 0x0c + 0x14;
++
++	case 4:
++		return pwm->base + 0x40;
++
++	default:
++		BUG();
++	}
++}
++
++/*
++ * Override the global weak sched_clock symbol with this
++ * local implementation which uses the clocksource to get some
++ * better resolution when scheduling the kernel. We accept that
++ * this wraps around for now, since it is just a relative time
++ * stamp. (Inspired by U300 implementation.)
++ */
++static u32 notrace samsung_read_sched_clock(void)
++{
++	void __iomem *reg = samsung_timer_reg();
++
++	if (!reg)
++		return 0;
++
++	return ~__raw_readl(reg);
++}
++
++static void __init samsung_clocksource_init(void)
++{
++	void __iomem *reg = samsung_timer_reg();
++	unsigned long pclk;
++	unsigned long clock_rate;
++	int ret;
++
++	pclk = clk_get_rate(timerclk);
++
++	samsung_timer_set_prescale(pwm, timer_source.source_id,
++						timer_source.tscaler_div);
++	samsung_timer_set_divisor(pwm, timer_source.source_id,
++						timer_source.tdiv);
++
++	clock_rate = pclk / (timer_source.tscaler_div * timer_source.tdiv);
++
++	samsung_time_setup(timer_source.source_id, timer_source.tcnt_max);
++	samsung_time_start(timer_source.source_id, true);
++
++	setup_sched_clock(samsung_read_sched_clock,
++						pwm->variant.bits, clock_rate);
++
++	ret = clocksource_mmio_init(reg, "samsung_clocksource_timer",
++					clock_rate, 250, pwm->variant.bits,
++					clocksource_mmio_readl_down);
++	if (ret)
++		panic("samsung_clocksource_timer: can't register clocksource\n");
++}
++
++static void __init samsung_timer_resources(void)
++{
++	timerclk = clk_get(NULL, "timers");
++	if (IS_ERR(timerclk))
++		panic("failed to get timers clock for timer");
++
++	clk_prepare_enable(timerclk);
++
++	timer_source.tcnt_max = (1UL << pwm->variant.bits) - 1;
++	if (pwm->variant.bits == 16) {
++		timer_source.tscaler_div = 25;
++		timer_source.tdiv = 2;
++	} else {
++		timer_source.tscaler_div = 2;
++		timer_source.tdiv = 1;
++	}
++}
++
++/*
++ * PWM master driver
++ */
++static void __init samsung_pwm_clocksource_init(void)
++{
++	u8 mask;
++	int channel;
++
++	if (!pwm)
++		panic("no pwm clocksource device found");
++
++	mask = ~pwm->variant.output_mask & ((1 << SAMSUNG_PWM_NUM) - 1);
++	channel = fls(mask) - 1;
++	if (channel < 0)
++		panic("failed to find PWM channel for clocksource");
++	timer_source.source_id = channel;
++
++	mask &= ~(1 << channel);
++	channel = fls(mask) - 1;
++	if (channel < 0)
++		panic("failed to find PWM channel for clock event");
++	timer_source.event_id = channel;
++
++	samsung_timer_resources();
++	samsung_clockevent_init();
++	samsung_clocksource_init();
++}
++
++static void __init samsung_pwm_alloc(struct device_node *np,
++				     const struct samsung_pwm_variant *variant)
++{
++	struct resource res;
++	struct property *prop;
++	const __be32 *cur;
++	u32 val;
++	int i;
++
++	pwm = kzalloc(sizeof(*pwm), GFP_KERNEL);
++	if (!pwm) {
++		pr_err("%s: could not allocate PWM device struct\n", __func__);
++		return;
++	}
++	memcpy(&pwm->variant, variant, sizeof(pwm->variant));
++	spin_lock_init(&pwm->slock);
++	for (i = 0; i < SAMSUNG_PWM_NUM; ++i)
++		pwm->irq[i] = irq_of_parse_and_map(np, i);
++
++	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, val) {
++		if (val >= SAMSUNG_PWM_NUM) {
++			pr_warning("%s: invalid channel index in samsung,pwm-outputs property\n",
++								__func__);
++			continue;
++		}
++		pwm->variant.output_mask |= 1 << val;
++	}
++
++	of_address_to_resource(np, 0, &res);
++	if (!request_mem_region(res.start,
++				resource_size(&res), "samsung-pwm")) {
++		pr_err("%s: failed to request IO mem region\n", __func__);
++		return;
++	}
++
++	pwm->base = ioremap(res.start, resource_size(&res));
++	if (!pwm->base) {
++		pr_err("%s: failed to map PWM registers\n", __func__);
++		release_mem_region(res.start, resource_size(&res));
++		return;
++	}
++
++	samsung_pwm_clocksource_init();
++}
++
++static const struct samsung_pwm_variant s3c24xx_variant = {
++	.bits		= 16,
++	.div_base	= 1,
++	.has_tint_cstat	= false,
++	.tclk_mask	= (1 << 4),
++};
++
++static void __init s3c2410_pwm_clocksource_init(struct device_node *np)
++{
++	samsung_pwm_alloc(np, &s3c24xx_variant);
++}
++CLOCKSOURCE_OF_DECLARE(s3c2410_pwm, "samsung,s3c2410-pwm", s3c2410_pwm_clocksource_init);
++
++static const struct samsung_pwm_variant s3c64xx_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= (1 << 7) | (1 << 6) | (1 << 5),
++};
++
++static void __init s3c64xx_pwm_clocksource_init(struct device_node *np)
++{
++	samsung_pwm_alloc(np, &s3c64xx_variant);
++}
++CLOCKSOURCE_OF_DECLARE(s3c6400_pwm, "samsung,s3c6400-pwm", s3c64xx_pwm_clocksource_init);
++
++static const struct samsung_pwm_variant s5p64x0_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= 0,
++};
++
++static void __init s5p64x0_pwm_clocksource_init(struct device_node *np)
++{
++	samsung_pwm_alloc(np, &s5p64x0_variant);
++}
++CLOCKSOURCE_OF_DECLARE(s5p6440_pwm, "samsung,s5p6440-pwm", s5p64x0_pwm_clocksource_init);
++
++static const struct samsung_pwm_variant s5p_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= (1 << 5),
++};
++
++static void __init s5p_pwm_clocksource_init(struct device_node *np)
++{
++	samsung_pwm_alloc(np, &s5p_variant);
++}
++CLOCKSOURCE_OF_DECLARE(s5pc100_pwm, "samsung,s5pc100-pwm", s5p_pwm_clocksource_init);
+diff --git a/include/clocksource/samsung_pwm.h b/include/clocksource/samsung_pwm.h
+new file mode 100644
+index 0000000..eff8668
+--- /dev/null
++++ b/include/clocksource/samsung_pwm.h
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++#ifndef __CLOCKSOURCE_SAMSUNG_PWM_H
++#define __CLOCKSOURCE_SAMSUNG_PWM_H
++
++#include <linux/spinlock.h>
++
++#define SAMSUNG_PWM_NUM		5
++
++struct platform_device;
++struct device_node;
++
++struct samsung_pwm_variant {
++	u8 bits;
++	u8 div_base;
++	u8 tclk_mask;
++	u8 output_mask;
++	bool has_tint_cstat;
++};
++
++struct samsung_pwm {
++	struct samsung_pwm_variant variant;
++	spinlock_t slock;
++	void __iomem *base;
++	int irq[SAMSUNG_PWM_NUM];
++};
++
++#endif /* __CLOCKSOURCE_SAMSUNG_PWM_H */
