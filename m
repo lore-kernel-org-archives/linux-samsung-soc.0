@@ -1,74 +1,236 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: [PATCH v4] drm/exynos: prepare FIMD clocks
-Date: Sun, 21 Apr 2013 16:15:09 +0200
-Message-ID: <13400811.6r9KW3KpPk@flatron>
-References: <1365419265-21238-1-git-send-email-vikas.sajjan@linaro.org> <2021753.aZ0KODlsRB@flatron> <CAAQKjZN78+WTO+Q3eWDAS2iF3zPxo7tjysAd3nwbGEKXmz8zUQ@mail.gmail.com>
+Date: Sun, 21 Apr 2013 16:43:28 +0200
+Message-ID: <3109033.iP2qIPD33v@flatron>
+References: <1365419265-21238-1-git-send-email-vikas.sajjan@linaro.org> <56942397.CYxnWkv4Nb@flatron> <CAAQKjZOg+H=Dnd3HWEWKjQq6e2UGZvX6s0waBdqsxx=CEAXtQw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:41163 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753538Ab3DUOPP (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:42134 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753534Ab3DUOne (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 21 Apr 2013 10:15:15 -0400
-Received: by mail-wi0-f181.google.com with SMTP id c10so3002683wiw.14
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Apr 2013 07:15:14 -0700 (PDT)
-In-Reply-To: <CAAQKjZN78+WTO+Q3eWDAS2iF3zPxo7tjysAd3nwbGEKXmz8zUQ@mail.gmail.com>
+	Sun, 21 Apr 2013 10:43:34 -0400
+In-Reply-To: <CAAQKjZOg+H=Dnd3HWEWKjQq6e2UGZvX6s0waBdqsxx=CEAXtQw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <daeinki@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-samsung-soc@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, sunil joshi <joshi@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "patches@linaro.org" <patches@linaro.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 
 Hi Inki,
 
-On Sunday 21 of April 2013 23:05:45 Inki Dae wrote:
+On Sunday 21 of April 2013 22:36:08 Inki Dae wrote:
 > 2013/4/21 Tomasz Figa <tomasz.figa@gmail.com>
 > 
-> > On Sunday 21 of April 2013 13:23:10 Viresh Kumar wrote:
-> > > On 20 April 2013 20:56, Inki Dae <inki.dae@samsung.com> wrote:
-> > > > Sorry for being late. I think clk_prepare/unprepare are nothing to
-> > > > do
-> > > > yet in case of Exynos but those might be used for in the future so
-> > > > your patch looks good to me as is.
+> > Hi,
+> > 
+> > On Monday 08 of April 2013 16:41:54 Viresh Kumar wrote:
+> > > On 8 April 2013 16:37, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> > > > While migrating to common clock framework (CCF), I found that the
+> > > > FIMD
+> > > > clocks were pulled down by the CCF.
+> > > > If CCF finds any clock(s) which has NOT been claimed by any of the
+> > > > drivers, then such clock(s) are PULLed low by CCF.
 > > > > 
-> > > > Applied. :)
+> > > > Calling clk_prepare() for FIMD clocks fixes the issue.
+> > > > 
+> > > > This patch also replaces clk_disable() with clk_unprepare() during
+> > > > exit, since clk_prepare() is called in fimd_probe().
+> > > 
+> > > I asked you about fixing your commit log too.. It still looks
+> > > incorrect
+> > > to me.
+> > > 
+> > > This patch doesn't have anything to do with CCF pulling clocks down,
+> > > but calling clk_prepare() before clk_enable() is must now.. that's
+> > > it.. nothing more.
 > > 
-> > Hmm. Now, after searching for this thread in dri-devel archives, I'm
-> > wondering why I haven't received some of messages from this thread
-> > through linux-samsung-soc mailing list...
+> > I fully agree.
 > > 
-> > I believe linux-samsung-soc list exists to collect all threads related
-> > to Samsung SoCs for people that don't want to subscribe to lists like
-> > dri- devel, on which there is a lot of threads irrelevant to them,
-> > with the risk of missing the important ones.
+> > The message should be something like:
 > > 
-> > Please always make sure that any discussion about Samsung SoCs
-> > (patches in particular) is going through linux-samsung-soc as well.
+> > Common Clock Framework introduced the need to prepare clocks before
+> > enabling them, otherwise clk_enable() fails. This patch adds
+> > clk_prepare calls to the driver.
+> > 
+> > and that's all.
+> > 
+> > What you are observing as "CCF pulling clocks down" is the fact that
+> > clk_enable() fails if the clock is not prepared and so the clock is
+> > not
+> > enabled in result.
+> > 
+> > Another thing is that CCF is not pulling anything down. GPIO pins can
+> > be pulled down (or up or not pulled), but clocks can be masked, gated
+> > or simply disabled - this does not imply their signal level.
+> > 
+> > > > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> > > > ---
+> > > > 
+> > > > Changes since v3:
+> > > >         - added clk_prepare() in fimd_probe() and clk_unprepare()
+> > > >         in
+> > > >         fimd_remove()>
+> > > >         
+> > > >          as suggested by Viresh Kumar <viresh.kumar@linaro.org>
+> > > > 
+> > > > Changes since v2:
+> > > >         - moved clk_prepare_enable() and clk_disable_unprepare()
+> > > >         from
+> > > >         fimd_probe() to fimd_clock() as suggested by Inki Dae
+> > > >         <inki.dae@samsung.com>>
+> > > > 
+> > > > Changes since v1:
+> > > >         - added error checking for clk_prepare_enable() and also
+> > > >         replaced
+> > > >         clk_disable() with clk_disable_unprepare() during exit.
+> > > > 
+> > > > ---
+> > > > 
+> > > >  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   14 ++++++++++++--
+> > > >  1 file changed, 12 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > > > b/drivers/gpu/drm/exynos/exynos_drm_fimd.c index 9537761..aa22370
+> > > > 100644
+> > > > --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > > > +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > > > @@ -934,6 +934,16 @@ static int fimd_probe(struct platform_device
+> > > > *pdev)>
+> > > > 
+> > > >                 return ret;
+> > > >         
+> > > >         }
+> > > > 
+> > > > +       ret = clk_prepare(ctx->bus_clk);
+> > > > +       if (ret < 0)
+> > > > +               return ret;
+> > > > +
+> > > > +       ret = clk_prepare(ctx->lcd_clk);
+> > > > +       if  (ret < 0) {
+> > > > +               clk_unprepare(ctx->bus_clk);
+> > > > +               return ret;
+> > > > +       }
+> > > > +
+> > 
+> > Why not just simply use clk_prepare_enable() instead of all calls to
+> > clk_enable() in the driver?
+> > 
+> > Same goes for s/clk_disable/clk_disable_unprepare/ .
 > 
-> Thanks for your advice. As you said, some people might not want to
-> subscribe to some mainling lists they don't want. And I think that the
-> main mailing list on this patch is dri-devel so you must receive this
-> email thread if you subscribed to the dri-devel.
+> I agree with you. Using clk_prepare_enable() is more clear. Actually I
+> had already commented on this. Please see the patch v2. But this way
+> also looks good to me.
 
-I agree that dri-devel is the target mailing list for DRM patches, but 
-AFAIK all threads related to Samsung SoCs should be sent to linux-samsung-
-soc as well.
+Well, both versions are technically correct and will have the same effect 
+for Exynos SoC clocks, since only enable/disable ops change hardware 
+state.
 
-For example, I don't subscribe dri-devel, but I do linux-samsung-soc, 
-because all I want to follow is all the works related to Samsung SoCs.
-Remaining threads on dri-devel are outside of my competencies.
+However if we look at general meaning of those generic ops, the clock will 
+remain prepared for all the time the driver is loaded, even if the device 
+is runtime suspended. Again on Exynos SoCs this won't have any effect, but 
+I think we should respect general Common Clock Framework semantics anyway.
 
-> Anyway it would be
-> best to share this all mailing lists included in this email thread but
-> if so, I have no doubt to receive email bumb. :(
+> > > >         ctx->vidcon0 = pdata->vidcon0;
+> > > >         ctx->vidcon1 = pdata->vidcon1;
+> > > >         ctx->default_win = pdata->default_win;
+> > > > 
+> > > > @@ -981,8 +991,8 @@ static int fimd_remove(struct platform_device
+> > > > *pdev)>
+> > > > 
+> > > >         if (ctx->suspended)
+> > > >         
+> > > >                 goto out;
+> > > > 
+> > > > -       clk_disable(ctx->lcd_clk);
+> > > > -       clk_disable(ctx->bus_clk);
+> > > > +       clk_unprepare(ctx->lcd_clk);
+> > > > +       clk_unprepare(ctx->bus_clk);
+> > > 
+> > > This looks wrong again.. You still need to call clk_disable() to
+> > > make
+> > > clk enabled
+> > > count zero...
+> > 
+> > Viresh is right again here.
+> 
+> Ok, you two guys say together this looks wrong so I'd like to take more
+> checking. I thought that clk->clk_enable is 1 at here and it would be 0
+> by pm_runtimg_put_sync(). Is there any my missing point?
 
-Hmm, you don't have to subscribe to a mailing list to post to it.
+You're reasoning is correct, but only assuming that runtime PM is enabled. 
+When it is disabled, pm_runtime_put_sync() is a no-op.
 
-Actually I'm wondering if the fact that your previous messages did not get 
-to the linux-samsung-soc list was not caused by presence of HTML part in 
-your messages, which is strongly discouraged on all mailing lists and 
-actually blocked on vger.kernel.org where linux-samsung-soc is hosted.
+Well, after digging into the exynos_drm_fimd driver a bit more, it seems 
+like its power management code needs a serious rework, because I was able 
+to find more problems:
 
+1) fimd_activate() does not get called at all if CONFIG_PM_RUNTIME is not 
+enabled (except in system-wide suspend callbacks, but this is irrelevant 
+to this point) - this means that the hardware is not properly initialized 
+without CONFIG_PM_RUNTIME - at least clocks does not get enabled.
+
+2) pm_runtime_set_suspended() can be used only when runtime PM is disabled 
+for the device (i.e. by calling pm_runtime_disable() or not calling 
+pm_runtime_enable() at all) - when runtime PM is enabled it is basically a 
+no-op returning -EAGAIN error.
+
+So here's my proposed solution:
+
+1) call fimd_activate() and pm_runtime_set_active() explicitly in 
+fimd_probe(), before calling pm_runtime_enable():
+
+ 	mutex_init(&ctx->lock);
+ 
+ 	platform_set_drvdata(pdev, ctx);
++
++	fimd_activate(ctx, true);
+ 
++	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
+
+This would power up the device even if CONFIG_PM_RUNTIME is not enabled. 
+Note that pm_runtime_get_sync() after marking the device as active with 
+pm_runtime_set_active() won't result in calling fimd_runtime_resume(), 
+because the device is considered already resumed.
+
+2) in fimd_remove():
+
++	pm_runtime_disable(dev);
++
+ 	if (ctx->suspended)
+-		goto out;
++		return 0;
+ 
+-	clk_disable(ctx->lcd_clk);
+-	clk_disable(ctx->bus_clk);
++	fimd_activate(ctx, false);
+ 
++	pm_runtime_put_noidle(dev);
+ 	pm_runtime_set_suspended(dev);
+-	pm_runtime_put_sync(dev);
+-
+-out:
+-	pm_runtime_disable(dev);
+
+First, pm_runtime_disable() will prevent any further runtime PM operations 
+that could change ctx->suspended state. Then, if ctx->suspended is true, 
+there is no need to suspend anything and we can leave. Otherwise, we power 
+down the hardware manually - which will work with both CONFIG_PM_RUNTIME 
+enabled and disabled, and then mark the hardware as suspended and free 
+remaining reference in runtime PM core. Note that pm_runtime_put_noidle 
+just decreases the reference counter and nothing else.
+
+3) after those two changes, all that remains is to fix compliance with 
+Common Clock Framework, in other words:
+
+s/clk_enable/clk_prepare_enable/
+
+and
+
+s/clk_disable/clk_disable_unprepare/
+ 
 Best regards,
 Tomasz
