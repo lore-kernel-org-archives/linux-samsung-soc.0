@@ -1,105 +1,150 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [Suggestion] ARM:S5pv210: compiling issue for s5pv210 by using
- randconfig
-Date: Mon, 22 Apr 2013 14:13:14 +0800
-Message-ID: <5174D4FA.70404@asianux.com>
-References: <514FB202.3040807@asianux.com> <515BFA8D.2000204@asianux.com> <20130403101018.GE11040@mudshark.cambridge.arm.com> <515C047A.9010906@asianux.com> <516E6A8E.3000001@asianux.com> <20130417100243.GV14496@n2100.arm.linux.org.uk>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH] MAINTAINERS: Add linux-samsung-soc list to
+	all related entries
+Date: Mon, 22 Apr 2013 15:23:29 +0900
+Message-ID: <CAH9JG2U7Qdq_xQbuqHu6PXzURS2fWwBC=HJmyrXT5n3n_pAa0w@mail.gmail.com>
+References: <1366572050-626-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:62481 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667Ab3DVGOA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 02:14:00 -0400
-In-Reply-To: <20130417100243.GV14496@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1366572050-626-1-git-send-email-tomasz.figa@gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: t.stanislaws@samsung.com, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, jy0922.shim@samsung.com, k.debski@samsung.com, sbkim73@samsung.com, linux-mmc@vger.kernel.org, jg1.han@samsung.com, sw0312.kim@samsung.com, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, jtp.park@samsung.com, dh09.lee@samsung.com, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Will Deacon <will.deacon@arm.com>, "dhowells@redhat.com" <dhowells@redhat.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>"plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>
 
-On 2013=E5=B9=B404=E6=9C=8817=E6=97=A5 18:02, Russell King - ARM Linux =
-wrote:
-> On Wed, Apr 17, 2013 at 05:25:34PM +0800, Chen Gang wrote:
->> CONFIG_CPU_ARM7TDMI=3Dy
->> CONFIG_CPU_ARM9TDMI=3Dy
->> CONFIG_CPU_V7=3Dy
->> CONFIG_CPU_32v4T=3Dy
->> CONFIG_CPU_32v6K=3Dy
->> CONFIG_CPU_32v7=3Dy
->=20
-> This is an invalid configuration.  A single kernel can not support AR=
-Mv7
-> and ARMv4T simultaneously.
->=20
-> The problem is caused by MMU=3Dn, which exposes the CPU_ARM7TDMI and
-> CPU_ARM9TDMI options, which in turn select 32v4T.  This is in turn
-> caused by the incomplete integration of uclinux.
->=20
-> I think the only thing which can be done is to remove the ARM9TDMI
-> support code, which doesn't seem to be used by anything, and adjust
-> ARM7TDMI so that it isn't visible, but is selected by ARCH_AT91X40
-> (which seems to be its only user.)
->=20
-> Here's the slightly smaller version of that:
->=20
+Hi,
 
-  I apply your patch below.
-  and also let CONFIG_MMU=3Dy in menuconfig (just Arnd suggested).
-  it passes compilation.
+I don't think it's not required, each tree has each own mailing list. don't
+need to post all patches to samsung-soc list.
 
-  I prefer to let the patch below to integrate into next-tree.
-  if I should do it (e.g. need send the patch again in normal way), I
-should try.
+Thank you,
+Kyungmin Park
 
-  thanks.
+On Mon, Apr 22, 2013 at 4:20 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-
-gchen.
-
-
-> diff --git a/arch/arm/mach-at91/Kconfig.non_dt b/arch/arm/mach-at91/K=
-config.non_dt
-> index 6c24985..dc972e1 100644
-> --- a/arch/arm/mach-at91/Kconfig.non_dt
-> +++ b/arch/arm/mach-at91/Kconfig.non_dt
-> @@ -47,6 +47,7 @@ config ARCH_AT91X40
->  	select ARCH_USES_GETTIMEOFFSET
->  	select MULTI_IRQ_HANDLER
->  	select SPARSE_IRQ
-> +	select CPU_ARM7TDMI
-> =20
->  endchoice
-> =20
-> diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-> index cb812a1..deb6c6a 100644
-> --- a/arch/arm/mm/Kconfig
-> +++ b/arch/arm/mm/Kconfig
-> @@ -6,7 +6,7 @@ comment "Processor Type"
-> =20
->  # ARM7TDMI
->  config CPU_ARM7TDMI
-> -	bool "Support ARM7TDMI processor"
-> +	bool
->  	depends on !MMU
->  	select CPU_32v4T
->  	select CPU_ABRT_LV4T
-> @@ -56,7 +56,7 @@ config CPU_ARM740T
-> =20
->  # ARM9TDMI
->  config CPU_ARM9TDMI
-> -	bool "Support ARM9TDMI processor"
-> +	bool
->  	depends on !MMU
->  	select CPU_32v4T
->  	select CPU_ABRT_NOMMU
->=20
->=20
->=20
-
-
---=20
-Chen Gang
-
-Asianux Corporation
+> Several entries in MAINTAINERS file related to Samsung SoCs do not point
+> to linux-samsung-soc mailing list, which is supposed to collect all
+> Samsung SoC-related threads, to ease following of Samsung SoC-related
+> work. This leads to a problem with people skipping this mailing list in
+> their posts, even though they are related to Samsung SoCs.
+>
+> This patch adds pointers to linux-samsung-soc mailing list to affected
+> entries of MAINTAINERS file.
+>
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  MAINTAINERS | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6c0d68b..07cb8da 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1139,6 +1139,7 @@ F:        arch/arm/mach-exynos*/
+>  ARM/SAMSUNG MOBILE MACHINE SUPPORT
+>  M:     Kyungmin Park <kyungmin.park@samsung.com>
+>  L:     linux-arm-kernel@lists.infradead.org (moderated for
+> non-subscribers)
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     arch/arm/mach-s5pv210/mach-aquila.c
+>  F:     arch/arm/mach-s5pv210/mach-goni.c
+> @@ -1150,6 +1151,7 @@ M:        Kyungmin Park <kyungmin.park@samsung.com>
+>  M:     Kamil Debski <k.debski@samsung.com>
+>  L:     linux-arm-kernel@lists.infradead.org
+>  L:     linux-media@vger.kernel.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     drivers/media/platform/s5p-g2d/
+>
+> @@ -1158,6 +1160,7 @@ M:        Kyungmin Park <kyungmin.park@samsung.com>
+>  M:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+>  L:     linux-arm-kernel@lists.infradead.org
+>  L:     linux-media@vger.kernel.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     arch/arm/plat-samsung/include/plat/*fimc*
+>  F:     drivers/media/platform/s5p-fimc/
+> @@ -1168,6 +1171,7 @@ M:        Kamil Debski <k.debski@samsung.com>
+>  M:     Jeongtae Park <jtp.park@samsung.com>
+>  L:     linux-arm-kernel@lists.infradead.org
+>  L:     linux-media@vger.kernel.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     arch/arm/plat-samsung/s5p-dev-mfc.c
+>  F:     drivers/media/platform/s5p-mfc/
+> @@ -1177,6 +1181,7 @@ M:        Kyungmin Park <kyungmin.park@samsung.com>
+>  M:     Tomasz Stanislawski <t.stanislaws@samsung.com>
+>  L:     linux-arm-kernel@lists.infradead.org
+>  L:     linux-media@vger.kernel.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     drivers/media/platform/s5p-tv/
+>
+> @@ -2679,6 +2684,7 @@ M:        Joonyoung Shim <jy0922.shim@samsung.com>
+>  M:     Seung-Woo Kim <sw0312.kim@samsung.com>
+>  M:     Kyungmin Park <kyungmin.park@samsung.com>
+>  L:     dri-devel@lists.freedesktop.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  T:     git git://
+> git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+>  S:     Supported
+>  F:     drivers/gpu/drm/exynos
+> @@ -3142,6 +3148,7 @@ F:        Documentation/extcon/
+>  EXYNOS DP DRIVER
+>  M:     Jingoo Han <jg1.han@samsung.com>
+>  L:     linux-fbdev@vger.kernel.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     drivers/video/exynos/exynos_dp*
+>  F:     include/video/exynos_dp*
+> @@ -3151,6 +3158,7 @@ M:        Inki Dae <inki.dae@samsung.com>
+>  M:     Donghwa Lee <dh09.lee@samsung.com>
+>  M:     Kyungmin Park <kyungmin.park@samsung.com>
+>  L:     linux-fbdev@vger.kernel.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     drivers/video/exynos/exynos_mipi*
+>  F:     include/video/exynos_mipi*
+> @@ -6892,12 +6900,14 @@ F:      drivers/platform/x86/samsung-laptop.c
+>  SAMSUNG AUDIO (ASoC) DRIVERS
+>  M:     Sangbeom Kim <sbkim73@samsung.com>
+>  L:     alsa-devel@alsa-project.org (moderated for non-subscribers)
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Supported
+>  F:     sound/soc/samsung
+>
+>  SAMSUNG FRAMEBUFFER DRIVER
+>  M:     Jingoo Han <jg1.han@samsung.com>
+>  L:     linux-fbdev@vger.kernel.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     drivers/video/s3c-fb.c
+>
+> @@ -7087,6 +7097,7 @@ F:        drivers/mmc/host/sdhci-pltfm.[ch]
+>  SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
+>  M:     Ben Dooks <ben-linux@fluff.org>
+>  L:     linux-mmc@vger.kernel.org
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     drivers/mmc/host/sdhci-s3c.c
+>
+> --
+> 1.8.2.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
