@@ -1,67 +1,60 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4] drm/exynos: prepare FIMD clocks
-Date: Mon, 22 Apr 2013 14:30:10 +0200
-Message-ID: <1939043.4I27nO6WDE@amdc1227>
-References: <1365419265-21238-1-git-send-email-vikas.sajjan@linaro.org>
- <1731019.P1JXV7Hkkn@amdc1227> <51750B7D.3050401@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 00/10] ARM: exynos multiplatform series, part 1
+Date: Mon, 22 Apr 2013 15:12:25 +0200
+Message-ID: <201304221512.25920.arnd@arndb.de>
+References: <1365716245-99231-1-git-send-email-arnd@arndb.de> <201304191536.17796.arnd@arndb.de> <CAK9yfHwEZUPs70j3rS7V44RWxpZShEP8uxo3fFW54=L3NG-bDA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16876 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753128Ab3DVMaW (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.8]:61452 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751435Ab3DVNMj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 08:30:22 -0400
-In-reply-to: <51750B7D.3050401@samsung.com>
+	Mon, 22 Apr 2013 09:12:39 -0400
+In-Reply-To: <CAK9yfHwEZUPs70j3rS7V44RWxpZShEP8uxo3fFW54=L3NG-bDA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, "patches@linaro.org" <patches@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, mturquette@linaro.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>
 
-On Monday 22 of April 2013 12:05:49 Sylwester Nawrocki wrote:
-> On 04/22/2013 11:56 AM, Tomasz Figa wrote:
-> > On Monday 22 of April 2013 10:44:00 Viresh Kumar wrote:
-> >> On 21 April 2013 20:13, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> >>> 3) after those two changes, all that remains is to fix compliance with
-> >>> Common Clock Framework, in other words:
-> >>> 
-> >>> s/clk_enable/clk_prepare_enable/
-> >>> 
-> >>> and
-> >>> 
-> >>> s/clk_disable/clk_disable_unprepare/
-> >> 
-> >> We don't have to call  clk_{un}prepare() everytime for your platform as
-> >> you aren't doing anything in it. So just call them once at probe/remove
-> >> and
-> >> call clk_enable/disable everywhere else.
+On Monday 22 April 2013, Sachin Kamat wrote:
 > 
-> Yes, I agree with that. Additionally clk_(un)prepare must not be called in
-> atomic context, so some drivers will have to work like this anyway.
-> Or the clocks could be prepared/unprepared in the device open/close file op
-> for instance.
+> With this branch now available (merged) in linux-next (20130422),
+> looks like exynos4 DT support is broken on it. Tested on Origen 4210
+> and 4412 and I get the following warnings on 4412 Origen board with
+> exynos_defconfig (Note that clocks are all 0). However, it boots fine
+> on Arndale board.
 
-Well, I don't think drivers should make any assumptions how particular clk ops 
-are implemented on particular platform.
+I think this issue should be fixed with the patch that Thomas Abraham
+just sent. Thomas, can you confirm?
 
-Instead, generic semantics of Common Clock Framework should be obeyed, which 
-AFAIK are:
-1) Each clock must be prepared before enabling.
-2) clk_prepare() can not be called from atomic contexts.
-3) clk_prepare_enable() can be used instead of clk_prepare() + clk_enable() 
-when the driver does not need to enable the clock from atomic context.
+> SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+> Preemptible hierarchical RCU implementation.
+> NR_IRQS:549
+> Exynos4x12 clocks: sclk_apll = 0, sclk_mpll = 0
+>         sclk_epll = 0, sclk_vpll = 0, arm_clk = 0
+> Division by zero in kernel.
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted
+> 3.9.0-rc8-next-20130422-00038-g20ff84f #50
+> [<c0013fc8>] (unwind_backtrace+0x0/0xf8) from [<c0010ee4>]
+> (show_stack+0x10/0x14)
+> [<c0010ee4>] (show_stack+0x10/0x14) from [<c0190704>] (Ldiv0_64+0x8/0x18)
+> [<c0190704>] (Ldiv0_64+0x8/0x18) from [<c00549c4>]
+> (__clocksource_updatefreq_scale+0x44/0x19c)
+> [<c00549c4>] (__clocksource_updatefreq_scale+0x44/0x19c) from
+> [<c0054b28>] (__clocksource_register_scale+0xc/0x44)
+> [<c0054b28>] (__clocksource_register_scale+0xc/0x44) from [<c04895b0>]
+> (exynos4_clocksource_init+0x20/0x40)
+> [<c04895b0>] (exynos4_clocksource_init+0x20/0x40) from [<c0489638>]
+> (mct_init_dt+0x68/0x74)
+> [<c0489638>] (mct_init_dt+0x68/0x74) from [<c0489384>]
+> (clocksource_of_init+0x30/0x58)
+> [<c0489384>] (clocksource_of_init+0x30/0x58) from [<c0473ae0>]
+> (time_init+0x1c/0x30)
+> [<c0473ae0>] (time_init+0x1c/0x30) from [<c04706a0>] (start_kernel+0x1a0/0x37c)
+> [<c04706a0>] (start_kernel+0x1a0/0x37c) from [<40008074>] (0x40008074)
+> Division by zero in kernel.
 
-Since the Exynos DRM FIMD driver does not need to do call any clock operations 
-in atomic contexts, the approach keeping the clock handling as simple as 
-possible would be to just replace all clk_{enable,disable} with 
-clk_{prepare_enable,disable_unprepare}, as I suggested.
-
-CCing Mike, the maintainer of Common Clock Framework, since he's the right 
-person to pass any judgements when it is about clocks.
-
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+	Arnd
