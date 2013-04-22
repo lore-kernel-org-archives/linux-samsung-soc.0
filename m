@@ -1,64 +1,78 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] cpufreq: exynos5440: Protect opp search calls with rcu lock
-Date: Mon, 22 Apr 2013 01:32:17 +0200
-Message-ID: <27334831.finUCxlqRS@vostro.rjw.lan>
-References: <1366007087-12090-1-git-send-email-amit.daniel@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1366007087-12090-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, cpufreq@vger.kernel.org, Nishanth Menon <nm@ti.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH v2] clk: exynos4: Add clock entries for TMU
+Date: Mon, 22 Apr 2013 09:25:46 +0530
+Message-ID: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:53888 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750706Ab3DVEIQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Apr 2013 00:08:16 -0400
+Received: by mail-pd0-f170.google.com with SMTP id 10so3275064pdi.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Apr 2013 21:08:15 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Thomas Abraham <thomas.abraham@linaro.org>, Mike Turquette <mturquette@linaro.org>
 
-On Monday, April 15, 2013 11:54:47 AM Amit Daniel Kachhap wrote:
-> As per the OPP library documentation(Documentation/power/opp.txt) all
-> opp find/get calls should be protected by rcu locks.
-> 
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
-> 
-> This patch is created against linux-next tree and is suggested by
-> Nishanth Menon. (https://lkml.org/lkml/2013/4/12/119)
+Added clock entries for thermal management unit (TMU) for
+Exynos4 SoCs.
 
-Applied.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Mike Turquette <mturquette@linaro.org>
+---
+Should be applied on top of the below patches:
+https://patchwork.kernel.org/patch/2448711/
+https://patchwork.kernel.org/patch/2459831/
 
-Thanks,
-Rafael
+Changes since v1:
+Changed clock name 'tmu' to 'tmu_apbif' as per the SoC user manual.
+---
+ .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
+ drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-
->  drivers/cpufreq/exynos5440-cpufreq.c |    3 +++
->  1 files changed, 3 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
-> index ead7ed4..0c74018 100644
-> --- a/drivers/cpufreq/exynos5440-cpufreq.c
-> +++ b/drivers/cpufreq/exynos5440-cpufreq.c
-> @@ -120,11 +120,13 @@ static int init_div_table(void)
->  	int i = 0;
->  	struct opp *opp;
->  
-> +	rcu_read_lock();
->  	for (i = 0; freq_tbl[i].frequency != CPUFREQ_TABLE_END; i++) {
->  
->  		opp = opp_find_freq_exact(dvfs_info->dev,
->  					freq_tbl[i].frequency * 1000, true);
->  		if (IS_ERR(opp)) {
-> +			rcu_read_unlock();
->  			dev_err(dvfs_info->dev,
->  				"failed to find valid OPP for %u KHZ\n",
->  				freq_tbl[i].frequency);
-> @@ -159,6 +161,7 @@ static int init_div_table(void)
->  		__raw_writel(tmp, dvfs_info->base + XMU_PMU_P0_7 + 4 * i);
->  	}
->  
-> +	rcu_read_unlock();
->  	return 0;
->  }
->  
-> 
+diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+index 14d5c2a..8fc1151 100644
+--- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+@@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
+   spi0_isp_sclk       380     Exynos4x12
+   spi1_isp_sclk       381     Exynos4x12
+   uart_isp_sclk       382     Exynos4x12
++  tmu_apbif	      383
+ 
+ 		[Mux Clocks]
+ 
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 09cf161..0be7d05 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -170,7 +170,7 @@ enum exynos4_clks {
+ 	gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1, mcuctl_isp,
+ 	mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp, uart_isp,
+ 	asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk, spi0_isp_sclk,
+-	spi1_isp_sclk, uart_isp_sclk,
++	spi1_isp_sclk, uart_isp_sclk, tmu_apbif,
+ 
+ 	/* mux clocks */
+ 	mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
+@@ -815,6 +815,7 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
+ 	GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0, "keypad"),
+ 	GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
+ 			E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
++	GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0, 0),
+ };
+ 
+ /* list of gate clocks supported in exynos4x12 soc */
+@@ -915,6 +916,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 	GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
+ 			CLK_IGNORE_UNUSED, 0),
+ 	GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
++	GATE(tmu_apbif, "tmu_apbif", "aclk100", E4X12_GATE_IP_PERIR, 17, 0, 0),
+ };
+ 
+ #ifdef CONFIG_OF
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+1.7.9.5
