@@ -1,60 +1,50 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v5 00/14] ARM: samsung-time: Prepare for multiplatform support
-Date: Mon, 22 Apr 2013 21:21:05 +0200
-Message-ID: <8994400.x1JqGELAnV@flatron>
-References: <1365794250-14436-1-git-send-email-t.figa@samsung.com> <201304122251.41393.arnd@arndb.de> <5175755D.20305@samsung.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] ARM: dts: exynos4: Add node for PWM device
+Date: Mon, 22 Apr 2013 23:08:24 +0200
+Message-ID: <201304222308.24226.arnd@arndb.de>
+References: <1366036922-4103-1-git-send-email-t.figa@samsung.com>
+ <1366036922-4103-2-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f171.google.com ([74.125.82.171]:60060 "EHLO
-	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754727Ab3DVTVK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 15:21:10 -0400
-Received: by mail-we0-f171.google.com with SMTP id i48so6944220wef.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 12:21:09 -0700 (PDT)
-In-Reply-To: <5175755D.20305@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1366036922-4103-2-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, mark.rutland@arm.com, heiko@sntech.de, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, linux@arm.linux.org.uk, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de, olof@lixom.net
 
-On Tuesday 23 of April 2013 02:37:33 Kukjin Kim wrote:
-> On 04/13/13 05:51, Arnd Bergmann wrote:
-> > On Friday 12 April 2013, Tomasz Figa wrote:
-> >> This series is an attempt to make the samsung-time clocksource driver
-> >> ready for multiplatform kernels. It moves the driver to
-> >> drivers/clocksource, cleans it up from uses of static
-> >> platform-specific definitions, simplifies timer interrupt handling
-> >> and adds Device Tree support.
-> >> 
-> >> The samsung_pwm clocksource driver is made the master driver, which
-> >> exposes a single function to the PWM driver to get required data.
-> >> Only
-> >> samsung-time driver is reworked to use the master driver at this
-> >> time,
-> >> since the PWM driver can be already considered broken at the moment
-> >> and
-> >> needs separate series of several patches to fix and clean it up,
-> >> which
-> >> I am already working on.
-> >> 
-> >> Tested on Universal C210 board with Device Tree. Not tested without
-> >> Device Tree, since it has been already broken before this series.
-> >> Compile tested for other related SoCs.
-> > 
-> > Acked-by: Arnd Bergmann<arnd@arndb.de>
+On Monday 15 April 2013, Tomasz Figa wrote:
+> This patch adds device tree node for PWM block present on Exynos 4 SoCs.
 > 
-> Applied, this whole series.
+> Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index d73eaa1..d7058c1 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -333,6 +333,14 @@
+>                 status = "disabled";
+>         };
+>  
+> +       pwm@139D0000 {
+> +               compatible = "samsung,exynos4210-pwm";
+> +               reg = <0x139D0000 0x1000>;
+> +               interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
+> +               #pwm-cells = <2>;
+> +               status = "disabled";
+> +       };
 
-It would be nice if we could still get this for 3.10, but AFAIK it is 
-already much too late.
-
-I've discussed this matter with Arnd and the solution that can be accepted 
-by arm-soc maintainers is to send a subset of this series, like in the 
-patch sent by Arnd (clocksource: add samsung pwm timer driver; it needs 
-additional fixes, though.).
-
-Best regards,
-Tomasz
+Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
