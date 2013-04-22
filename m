@@ -1,58 +1,59 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 0/3] ARM: EXYNOS: DT-enabled support for Universal
- C210
-Date: Tue, 23 Apr 2013 02:40:45 +0900
-Message-ID: <5175761D.9030906@samsung.com>
-References: <1366036922-4103-1-git-send-email-t.figa@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH RESEND] ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
+Date: Mon, 22 Apr 2013 21:11:45 +0200
+Message-ID: <201304222111.45653.arnd@arndb.de>
+References: <51642dab.e844440a.0ad1.ffffc13f@mx.google.com> <516571BC.9030909@samsung.com> <51756E98.9040606@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:50885 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753214Ab3DVRku (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.186]:49670 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754641Ab3DVTMC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 13:40:50 -0400
-Received: by mail-pd0-f175.google.com with SMTP id g10so3733256pdj.34
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 10:40:50 -0700 (PDT)
-In-Reply-To: <1366036922-4103-1-git-send-email-t.figa@samsung.com>
+	Mon, 22 Apr 2013 15:12:02 -0400
+In-Reply-To: <51756E98.9040606@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arnd@arndb.de, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Olof Johansson' <olof@lixom.net>
 
-On 04/15/13 23:41, Tomasz Figa wrote:
-> This series intends to add support for Universal C210 board using Device
-> Tree. Main difference from other boards based on Exynos 4210 is that
-> hardware revision of the SoC used on Universal C210 does not support MCT
-> timers and legacy PWM timers must be used instead.
->
-> First patch adds device tree node for PWM block available on Exynos4 SoCs,
-> second patch adds support for Exynos4210 rev0 SoC in exynos_init_time()
-> and third patch introduces initial device tree for Universal C210 board.
->
-> Depends on my series for PWM timers rework:
-> [PATCH v5 00/14] ARM: samsung-time: Prepare for multiplatform support
-> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/17864)
->
-> On Universal C210 board:
->
-> Tested-by: Tomasz Figa<t.figa@samsung.com>
->
-> Tomasz Figa (3):
->    ARM: dts: exynos4: Add node for PWM device
->    ARM: EXYNOS: Fix support of Exynos4210 rev0 SoC
->    ARM: dts: exynos4210: Add basic dts file for universal_c210 board
->
->   arch/arm/boot/dts/Makefile                      |   1 +
->   arch/arm/boot/dts/exynos4.dtsi                  |   8 +
->   arch/arm/boot/dts/exynos4210-universal_c210.dts | 352 ++++++++++++++++++++++++
->   arch/arm/mach-exynos/common.c                   |   6 +-
->   arch/arm/mach-exynos/mach-universal_c210.c      |   2 +-
->   5 files changed, 367 insertions(+), 2 deletions(-)
->   create mode 100644 arch/arm/boot/dts/exynos4210-universal_c210.dts
->
+On Monday 22 April 2013, Kukjin Kim wrote:
+> On 04/10/13 23:05, Kukjin Kim wrote:
+> > On 04/10/13 22:55, Arnd Bergmann wrote:
+> >> On Wednesday 10 April 2013, Sylwester Nawrocki wrote:
+> >>> Hmm, it turns out we are still actively using some boards based on
+> >>> Exynos4210 EVT0 SoCs. And since it seems unlikely the patches from
+> >>> Tomasz [1] adding basic DT support for those will get merged for
+> >>> 3.10, it would be a bit inconvenient to remove the ATAGS support
+> >>> now, leaving Exynos4210 Rev. 0 not supported at all.
+> >>
+> >> I still have hope to get those included.
+> >>
+> > I agree and I asked Tomasz to re-send universal dt patch.
+> >
+> Hi Arnd and Olof,
+> 
+> Is it possible to send one more pull-request for this and something like 
+> dt patches for exynos?
 
-Applied, thanks.
+I think it's too late for that now, let's just fix the broken pieces
+now and do the minimum amount of patches on top of what we have:
 
-- Kukjin
+* Thomas Abraham's fix for the clk code
+* Tomasz Figa's patch to restore Universal C210
+* Whatever is needed to get USB working again on Arndale
+* Anything else that comes up that is really a bug fix.
+* Getting the PWM and ADC drivers working with DT, that can
+  easily be done.
+* Possibly a patch to mark CONFIG_EXYNOS_ATAGS as broken,
+  if you think that helps.
+
+but not:
+
+* The entire series to rework the PWM clock from Tomasz
+* The entire series to remove ATAGS support on Exynos
+* Any other non-bugfix patches
+
+	Arnd
