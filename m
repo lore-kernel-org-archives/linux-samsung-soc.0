@@ -1,78 +1,70 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v2] clk: exynos4: Add clock entries for TMU
-Date: Mon, 22 Apr 2013 09:25:46 +0530
-Message-ID: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 3/6] thermal:exynos4: TMU device tree support for
+ Exynos4412 targets
+Date: Mon, 22 Apr 2013 09:49:18 +0530
+Message-ID: <CAK9yfHyD3KxO1J-Au8wxibjnUoLk+3MjSB_OvY2r44cHBiropg@mail.gmail.com>
+References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
+	<1366389493-8239-4-git-send-email-l.majewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:53888 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750706Ab3DVEIQ (ORCPT
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:51986 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750824Ab3DVETT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 00:08:16 -0400
-Received: by mail-pd0-f170.google.com with SMTP id 10so3275064pdi.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Apr 2013 21:08:15 -0700 (PDT)
+	Mon, 22 Apr 2013 00:19:19 -0400
+Received: by mail-oa0-f46.google.com with SMTP id k3so2860753oag.33
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Apr 2013 21:19:18 -0700 (PDT)
+In-Reply-To: <1366389493-8239-4-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Thomas Abraham <thomas.abraham@linaro.org>, Mike Turquette <mturquette@linaro.org>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Zhang Rui <rui.zhang@intel.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Added clock entries for thermal management unit (TMU) for
-Exynos4 SoCs.
+Hi Lukasz,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>
----
-Should be applied on top of the below patches:
-https://patchwork.kernel.org/patch/2448711/
-https://patchwork.kernel.org/patch/2459831/
+On 19 April 2013 22:08, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Device tree support for TMU at Exynos4x12 targets.
+>
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-Changes since v1:
-Changed clock name 'tmu' to 'tmu_apbif' as per the SoC user manual.
----
- .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
- drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+nit: Subject for these kind of patches should start with "ARM: dts: ..."
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-index 14d5c2a..8fc1151 100644
---- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-@@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
-   spi0_isp_sclk       380     Exynos4x12
-   spi1_isp_sclk       381     Exynos4x12
-   uart_isp_sclk       382     Exynos4x12
-+  tmu_apbif	      383
- 
- 		[Mux Clocks]
- 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 09cf161..0be7d05 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -170,7 +170,7 @@ enum exynos4_clks {
- 	gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1, mcuctl_isp,
- 	mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp, uart_isp,
- 	asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk, spi0_isp_sclk,
--	spi1_isp_sclk, uart_isp_sclk,
-+	spi1_isp_sclk, uart_isp_sclk, tmu_apbif,
- 
- 	/* mux clocks */
- 	mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
-@@ -815,6 +815,7 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
- 	GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0, "keypad"),
- 	GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
- 			E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
-+	GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0, 0),
- };
- 
- /* list of gate clocks supported in exynos4x12 soc */
-@@ -915,6 +916,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 	GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
- 			CLK_IGNORE_UNUSED, 0),
- 	GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
-+	GATE(tmu_apbif, "tmu_apbif", "aclk100", E4X12_GATE_IP_PERIR, 17, 0, 0),
- };
- 
- #ifdef CONFIG_OF
+Otherwise looks good to me.
+> ---
+>  arch/arm/boot/dts/exynos4x12.dtsi |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> index e3380a7..ee920b3 100644
+> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> @@ -79,4 +79,14 @@
+>                 interrupts = <0 89 0>;
+>                 status = "disabled";
+>         };
+> +
+> +       tmu@100C0000 {
+> +               compatible = "samsung,exynos4412-tmu";
+> +               interrupt-parent = <&combiner>;
+> +               reg = <0x100C0000 0x100>;
+> +               interrupts = <2 4>;
+> +               clocks = <&clock 383>;
+> +               clock-names = "tmu_apbif";
+> +               status = "disabled";
+> +       };
+>  };
+> --
+> 1.7.10.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
 -- 
-1.7.9.5
+With warm regards,
+Sachin
