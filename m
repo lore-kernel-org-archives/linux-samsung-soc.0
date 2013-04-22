@@ -1,412 +1,375 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: enable FIMD clocks
-Date: Mon, 22 Apr 2013 22:53:09 +0900
-Message-ID: <CAAQKjZOWeQSGP_optz2g9ujfWgbW6v8xDHt+RFJWv9DqQttxtA@mail.gmail.com>
-References: <1364805830-6129-1-git-send-email-vikas.sajjan@linaro.org>
-	<CAKohpo=az=FS6-jfjN0WR=eKSAZ=MSo90Qc91kK-PEWOH3tzsQ@mail.gmail.com>
-	<07b501ce3f1d$359f5900$a0de0b00$%dae@samsung.com>
-	<CAD025yRyZTL4rOJJkpWgS-pUhG8bKYmfNS6_Zor8VizCbiy+Vg@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 2/3] drm/exynos: Rework fimc clocks handling
+Date: Mon, 22 Apr 2013 17:07:46 +0200
+Message-ID: <51755242.9090304@samsung.com>
+References: <1366192384-18829-1-git-send-email-s.nawrocki@samsung.com>
+ <1366192384-18829-3-git-send-email-s.nawrocki@samsung.com>
+ <517129FD.5040603@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0209961349=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <CAD025yRyZTL4rOJJkpWgS-pUhG8bKYmfNS6_Zor8VizCbiy+Vg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============0209961349==
-Content-Type: multipart/alternative; boundary=089e0160ba4691ef8904daf3639a
-
---089e0160ba4691ef8904daf3639a
 Content-Type: text/plain; charset=ISO-8859-1
-
-2013/4/22 Vikas Sajjan <vikas.sajjan@linaro.org>
-
->
-> Hi Mr Dae,
->
-> On 22 April 2013 11:19, Inki Dae <inki.dae@samsung.com> wrote:
->
->> Hi, Mr. Vikas
->>
->> Please fix the below typos Viresh pointed out and my comments.
->>
->> > -----Original Message-----
->> > From: Viresh Kumar [mailto:viresh.kumar@linaro.org]
->> > Sent: Monday, April 01, 2013 5:51 PM
->> > To: Vikas Sajjan
->> > Cc: dri-devel@lists.freedesktop.org; linux-samsung-soc@vger.kernel.org;
->> > jy0922.shim@samsung.com; inki.dae@samsung.com; kgene.kim@samsung.com;
->> > linaro-kernel@lists.linaro.org; linux-media@vger.kernel.org
->> > Subject: Re: [PATCH v3] drm/exynos: enable FIMD clocks
->> >
->> > On 1 April 2013 14:13, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
->> > > While migrating to common clock framework (CCF), found that the FIMD
->> > clocks
->> >
->> > s/found/we found/
->> >
->> > > were pulled down by the CCF.
->> > > If CCF finds any clock(s) which has NOT been claimed by any of the
->> > > drivers, then such clock(s) are PULLed low by CCF.
->> > >
->> > > By calling clk_prepare_enable() for FIMD clocks fixes the issue.
->> >
->> > s/By calling/Calling/
->> >
->> > and
->> >
->> > s/the/this
->> >
->> > > this patch also replaces clk_disable() with clk_disable_unprepare()
->> >
->> > s/this/This
->> >
->> > > during exit.
->> >
->> > Sorry but your log doesn't say what you are doing. You are just adding
->> > relevant calls to clk_prepare/unprepare() before calling
->> > clk_enable/disable.
->> >
->>
->
->   I shall modify the commit message as below as suggested by tomaz figa,
->
->   " Common Clock Framework introduced the need to prepare clocks before
-> enabling them, otherwise clk_enable() fails. This patch adds clk_prepare
-> calls to the driver. This patch also removes clk_disable() from
-> fimd_remove() as it will be done by pm_runtime_put_sync".
->
->
->>  > > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
->> > > ---
->> > > Changes since v2:
->> > >         - moved clk_prepare_enable() and clk_disable_unprepare() from
->> > >         fimd_probe() to fimd_clock() as suggested by Inki Dae
->> > <inki.dae@samsung.com>
->> > > Changes since v1:
->> > >         - added error checking for clk_prepare_enable() and also
->> replaced
->> > >         clk_disable() with clk_disable_unprepare() during exit.
->> > > ---
->> > >  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   14 +++++++-------
->> > >  1 file changed, 7 insertions(+), 7 deletions(-)
->> > >
->> > > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> > b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> > > index 9537761..f2400c8 100644
->> > > --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> > > +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> > > @@ -799,18 +799,18 @@ static int fimd_clock(struct fimd_context *ctx,
->> > bool enable)
->> > >         if (enable) {
->> > >                 int ret;
->> > >
->> > > -               ret = clk_enable(ctx->bus_clk);
->> > > +               ret = clk_prepare_enable(ctx->bus_clk);
->> > >                 if (ret < 0)
->> > >                         return ret;
->> > >
->> > > -               ret = clk_enable(ctx->lcd_clk);
->> > > +               ret = clk_prepare_enable(ctx->lcd_clk);
->> > >                 if  (ret < 0) {
->> > > -                       clk_disable(ctx->bus_clk);
->> > > +                       clk_disable_unprepare(ctx->bus_clk);
->> > >                         return ret;
->> > >                 }
->> > >         } else {
->> > > -               clk_disable(ctx->lcd_clk);
->> > > -               clk_disable(ctx->bus_clk);
->> > > +               clk_disable_unprepare(ctx->lcd_clk);
->> > > +               clk_disable_unprepare(ctx->bus_clk);
->> > >         }
->> > >
->> > >         return 0;
->> > > @@ -981,8 +981,8 @@ static int fimd_remove(struct platform_device
->> *pdev)
->> > >         if (ctx->suspended)
->> > >                 goto out;
->> > >
->> > > -       clk_disable(ctx->lcd_clk);
->> > > -       clk_disable(ctx->bus_clk);
->> > > +       clk_disable_unprepare(ctx->lcd_clk);
->> > > +       clk_disable_unprepare(ctx->bus_clk);
->>
->> Just remove the above codes. It seems that clk_disable(also
->> clk_disable_unprepare) isn't needed because it will be done by
->> pm_runtime_put_sync and please re-post it(probably patch v5??)
->>
->>    So you mean I should work on v3 version, and keep  the
-> clk_prepare_enable() code as is in fimd_clock() and just remove the
-> clk_disable_unprepare() and also clk_disable() from fimd_remove(), right?
->
->
-Right, please post it. And adding clk_enable() to probe() is another issue
-so this could be discussed later. As is this patch is needed for CCF
-support.
-
-
-
-> Viresh and Tomaz Figa, let me know if these changes are fine with you guys.
->
-> Thanks,
->> Inki Dae
->>
->> >
->> > You are doing things at the right place but i have a suggestion. Are you
->> > doing
->> > anything in your clk_prepare() atleast for this device? Probably not.
->> >
->> > If not, then its better to call clk_prepare/unprepare only once at
->> > probe/remove
->> > and keep clk_enable/disable calls as is.
->> >
->> > --
->> > viresh
->>
->>
->
->
-> --
-> Thanks and Regards
->  Vikas Sajjan
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
-
---089e0160ba4691ef8904daf3639a
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><br><div class=3D"gmail=
-_quote">2013/4/22 Vikas Sajjan <span dir=3D"ltr">&lt;<a href=3D"mailto:vika=
-s.sajjan@linaro.org" target=3D"_blank">vikas.sajjan@linaro.org</a>&gt;</spa=
-n><br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-l=
-eft:1px #ccc solid;padding-left:1ex">
-<div dir=3D"ltr"><br><div class=3D"gmail_extra">Hi Mr Dae,<br></div><div cl=
-ass=3D"gmail_extra"><br><div class=3D"gmail_quote"><div><div class=3D"h5">O=
-n 22 April 2013 11:19, Inki Dae <span dir=3D"ltr">&lt;<a href=3D"mailto:ink=
-i.dae@samsung.com" target=3D"_blank">inki.dae@samsung.com</a>&gt;</span> wr=
-ote:<br>
-
-
-<blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-=
-left:1px solid rgb(204,204,204);padding-left:1ex">Hi, Mr. Vikas<br>
-<br>
-Please fix the below typos Viresh pointed out and my comments.<br>
-<div><div><br>
-&gt; -----Original Message-----<br>
-&gt; From: Viresh Kumar [mailto:<a href=3D"mailto:viresh.kumar@linaro.org" =
-target=3D"_blank">viresh.kumar@linaro.org</a>]<br>
-&gt; Sent: Monday, April 01, 2013 5:51 PM<br>
-&gt; To: Vikas Sajjan<br>
-&gt; Cc: <a href=3D"mailto:dri-devel@lists.freedesktop.org" target=3D"_blan=
-k">dri-devel@lists.freedesktop.org</a>; <a href=3D"mailto:linux-samsung-soc=
-@vger.kernel.org" target=3D"_blank">linux-samsung-soc@vger.kernel.org</a>;<=
-br>
-
-&gt; <a href=3D"mailto:jy0922.shim@samsung.com" target=3D"_blank">jy0922.sh=
-im@samsung.com</a>; <a href=3D"mailto:inki.dae@samsung.com" target=3D"_blan=
-k">inki.dae@samsung.com</a>; <a href=3D"mailto:kgene.kim@samsung.com" targe=
-t=3D"_blank">kgene.kim@samsung.com</a>;<br>
-
-&gt; <a href=3D"mailto:linaro-kernel@lists.linaro.org" target=3D"_blank">li=
-naro-kernel@lists.linaro.org</a>; <a href=3D"mailto:linux-media@vger.kernel=
-.org" target=3D"_blank">linux-media@vger.kernel.org</a><br>
-&gt; Subject: Re: [PATCH v3] drm/exynos: enable FIMD clocks<br>
-&gt;<br>
-&gt; On 1 April 2013 14:13, Vikas Sajjan &lt;<a href=3D"mailto:vikas.sajjan=
-@linaro.org" target=3D"_blank">vikas.sajjan@linaro.org</a>&gt; wrote:<br>
-&gt; &gt; While migrating to common clock framework (CCF), found that the F=
-IMD<br>
-&gt; clocks<br>
-&gt;<br>
-&gt; s/found/we found/<br>
-&gt;<br>
-&gt; &gt; were pulled down by the CCF.<br>
-&gt; &gt; If CCF finds any clock(s) which has NOT been claimed by any of th=
-e<br>
-&gt; &gt; drivers, then such clock(s) are PULLed low by CCF.<br>
-&gt; &gt;<br>
-&gt; &gt; By calling clk_prepare_enable() for FIMD clocks fixes the issue.<=
-br>
-&gt;<br>
-&gt; s/By calling/Calling/<br>
-&gt;<br>
-&gt; and<br>
-&gt;<br>
-&gt; s/the/this<br>
-&gt;<br>
-&gt; &gt; this patch also replaces clk_disable() with clk_disable_unprepare=
-()<br>
-&gt;<br>
-&gt; s/this/This<br>
-&gt;<br>
-&gt; &gt; during exit.<br>
-&gt;<br>
-&gt; Sorry but your log doesn&#39;t say what you are doing. You are just ad=
-ding<br>
-&gt; relevant calls to clk_prepare/unprepare() before calling<br>
-&gt; clk_enable/disable.<br>
-&gt;<br></div></div></blockquote><div><br></div></div></div><div>=A0 I shal=
-l modify the commit message as below as suggested by tomaz figa,<br><br>=A0=
- &quot; Common Clock Framework introduced the need to prepare clocks before=
-<br>
-
-enabling them, otherwise clk_enable() fails. This patch adds clk_prepare<br=
->
-calls to the driver. This patch also removes clk_disable() from fimd_remove=
-() as it will be done by pm_runtime_put_sync&quot;.<br>=A0 <br></div><div><=
-div class=3D"h5"><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
-0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-
-
-<div><div>
-&gt; &gt; Signed-off-by: Vikas Sajjan &lt;<a href=3D"mailto:vikas.sajjan@li=
-naro.org" target=3D"_blank">vikas.sajjan@linaro.org</a>&gt;<br>
-&gt; &gt; ---<br>
-&gt; &gt; Changes since v2:<br>
-&gt; &gt; =A0 =A0 =A0 =A0 - moved clk_prepare_enable() and clk_disable_unpr=
-epare() from<br>
-&gt; &gt; =A0 =A0 =A0 =A0 fimd_probe() to fimd_clock() as suggested by Inki=
- Dae<br>
-&gt; &lt;<a href=3D"mailto:inki.dae@samsung.com" target=3D"_blank">inki.dae=
-@samsung.com</a>&gt;<br>
-&gt; &gt; Changes since v1:<br>
-&gt; &gt; =A0 =A0 =A0 =A0 - added error checking for clk_prepare_enable() a=
-nd also<br>
-replaced<br>
-&gt; &gt; =A0 =A0 =A0 =A0 clk_disable() with clk_disable_unprepare() during=
- exit.<br>
-&gt; &gt; ---<br>
-&gt; &gt; =A0drivers/gpu/drm/exynos/exynos_drm_fimd.c | =A0 14 +++++++-----=
---<br>
-&gt; &gt; =A01 file changed, 7 insertions(+), 7 deletions(-)<br>
-&gt; &gt;<br>
-&gt; &gt; diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c<br>
-&gt; b/drivers/gpu/drm/exynos/exynos_drm_fimd.c<br>
-&gt; &gt; index 9537761..f2400c8 100644<br>
-&gt; &gt; --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c<br>
-&gt; &gt; +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c<br>
-&gt; &gt; @@ -799,18 +799,18 @@ static int fimd_clock(struct fimd_context *=
-ctx,<br>
-&gt; bool enable)<br>
-&gt; &gt; =A0 =A0 =A0 =A0 if (enable) {<br>
-&gt; &gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 int ret;<br>
-&gt; &gt;<br>
-&gt; &gt; - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D clk_enable(ctx-&gt;bus_clk)=
-;<br>
-&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D clk_prepare_enable(ctx-&gt;=
-bus_clk);<br>
-&gt; &gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (ret &lt; 0)<br>
-&gt; &gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return ret;<br>
-&gt; &gt;<br>
-&gt; &gt; - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D clk_enable(ctx-&gt;lcd_clk)=
-;<br>
-&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D clk_prepare_enable(ctx-&gt;=
-lcd_clk);<br>
-&gt; &gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if =A0(ret &lt; 0) {<br>
-&gt; &gt; - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_disable(ctx-&gt=
-;bus_clk);<br>
-&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_disable_unprepa=
-re(ctx-&gt;bus_clk);<br>
-&gt; &gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return ret;<br>
-&gt; &gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 }<br>
-&gt; &gt; =A0 =A0 =A0 =A0 } else {<br>
-&gt; &gt; - =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_disable(ctx-&gt;lcd_clk);<br>
-&gt; &gt; - =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_disable(ctx-&gt;bus_clk);<br>
-&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_disable_unprepare(ctx-&gt;lcd_c=
-lk);<br>
-&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_disable_unprepare(ctx-&gt;bus_c=
-lk);<br>
-&gt; &gt; =A0 =A0 =A0 =A0 }<br>
-&gt; &gt;<br>
-&gt; &gt; =A0 =A0 =A0 =A0 return 0;<br>
-&gt; &gt; @@ -981,8 +981,8 @@ static int fimd_remove(struct platform_device=
- *pdev)<br>
-&gt; &gt; =A0 =A0 =A0 =A0 if (ctx-&gt;suspended)<br>
-&gt; &gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out;<br>
-&gt; &gt;<br>
-&gt; &gt; - =A0 =A0 =A0 clk_disable(ctx-&gt;lcd_clk);<br>
-&gt; &gt; - =A0 =A0 =A0 clk_disable(ctx-&gt;bus_clk);<br>
-&gt; &gt; + =A0 =A0 =A0 clk_disable_unprepare(ctx-&gt;lcd_clk);<br>
-&gt; &gt; + =A0 =A0 =A0 clk_disable_unprepare(ctx-&gt;bus_clk);<br>
-<br>
-</div></div>Just remove the above codes. It seems that clk_disable(also<br>
-clk_disable_unprepare) isn&#39;t needed because it will be done by<br>
-pm_runtime_put_sync and please re-post it(probably patch v5??)<br>
-<br></blockquote></div></div><div>=A0=A0 So you mean I should work on v3 ve=
-rsion, and keep=A0 the clk_prepare_enable() code as is in fimd_clock() and =
-just remove the clk_disable_unprepare() and also clk_disable() from fimd_re=
-move(), right? <br>
-
-
-</div><div><br></div></div></div></div></blockquote><div><br></div><div>Rig=
-ht, please post it. And adding clk_enable() to probe() is another issue so =
-this could be discussed later. As is this patch is needed for CCF support.<=
-br>
-<br></div><div>=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0=
- 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><div dir=3D"ltr"><di=
-v class=3D"gmail_extra"><div class=3D"gmail_quote"><div>Viresh and Tomaz Fi=
-ga, let me know if these changes are fine with you guys.<br>
-</div><div class=3D"im"><div><br></div><blockquote class=3D"gmail_quote" st=
-yle=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padd=
-ing-left:1ex">
-
-
-Thanks,<br>
-Inki Dae<br>
-<div><div><br>
-&gt;<br>
-&gt; You are doing things at the right place but i have a suggestion. Are y=
-ou<br>
-&gt; doing<br>
-&gt; anything in your clk_prepare() atleast for this device? Probably not.<=
-br>
-&gt;<br>
-&gt; If not, then its better to call clk_prepare/unprepare only once at<br>
-&gt; probe/remove<br>
-&gt; and keep clk_enable/disable calls as is.<br>
-&gt;<br>
-&gt; --<br>
-&gt; viresh<br>
-<br>
-</div></div></blockquote></div></div><span class=3D"HOEnZb"><font color=3D"=
-#888888"><br><br clear=3D"all"><br>-- <br>Thanks and Regards<div>=A0Vikas S=
-ajjan</div>
-</font></span></div></div>
-<br>_______________________________________________<br>
-dri-devel mailing list<br>
-<a href=3D"mailto:dri-devel@lists.freedesktop.org">dri-devel@lists.freedesk=
-top.org</a><br>
-<a href=3D"http://lists.freedesktop.org/mailman/listinfo/dri-devel" target=
-=3D"_blank">http://lists.freedesktop.org/mailman/listinfo/dri-devel</a><br>
-<br></blockquote></div><br></div></div>
-
---089e0160ba4691ef8904daf3639a--
-
---===============0209961349==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:17546 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752531Ab3DVPHt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Apr 2013 11:07:49 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MLN0062PWN6KTD0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Apr 2013 16:07:47 +0100 (BST)
+In-reply-to: <517129FD.5040603@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Eunchul Kim <chulspro.kim@samsung.com>
+Cc: inki.dae@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, jaejoon.seo@samsung.com, jmock.shin@samsung.com, jy0.jeon@samsung.com, th908.kim@samsung.com, lsmin.lee@samsung.com
 
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Hi,
 
---===============0209961349==--
+On 04/19/2013 01:26 PM, Eunchul Kim wrote:
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> index d812c57..bc8411a 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> @@ -76,6 +76,27 @@ enum fimc_wb {
+>>       FIMC_WB_B,
+>>   };
+>>
+>> +enum {
+>> +    FIMC_CLK_LCLK,
+>> +    FIMC_CLK_GATE,
+>> +    FIMC_CLK_WB_A,
+>> +    FIMC_CLK_WB_B,
+>> +    FIMC_CLK_MUX,
+>> +    FIMC_CLK_PARENT,
+> 
+> - What is MUX, PARENT ?
+> 
+>> +    FIMC_CLKS_MAX
+>> +};
+>> +
+>> +static const char * fimc_clock_names[] = {
+>> +    [FIMC_CLK_LCLK]   = "sclk_fimc",
+>> +    [FIMC_CLK_GATE]   = "fimc",
+>> +    [FIMC_CLK_WB_A]   = "pxl_async0",
+>> +    [FIMC_CLK_WB_B]   = "pxl_async1",
+>> +    [FIMC_CLK_MUX]    = "mux",
+>> +    [FIMC_CLK_PARENT] = "parent",
+> 
+> 
+> - How can I get "mux", "parent" clock information ?
+>   Normally we are using "mout_mpll" in exynos4210, "mout_mpll_user" in  exynos
+> 4412. I want to get this two kind of clock name information.
+
+The issue is that this driver is driver is setting parent clock, which
+really belongs to other layers, like platform code or the clocks driver.
+
+It I think it was a bad idea in the first place to code platform clock
+names in this driver. The driver should use generic clock (consumer)
+names for all platforms, and association with platform clocks is created
+by platform code (CLKDEV_INIT()) or the device tree binding.
+So for example in your dts file you might have:
+
+fimc_2: fimc@11820000 {
+	compatible = "samsung,exynos4212-fimc";
+
+	clocks = <&clock 258>, <&clock 130>, <&clock 386>, <&clock 17>;
+	clock-names = "fimc", "sclk_fimc", "mux", "parent";
+};
+
+And the clock indexes are described in Documentation/devicetree/bindings/
+clock/exynos4-clock.txt. As a side note, the plain numbers should be soon
+replaced with symbolic identifiers, once there is pre-processor support
+in dtc.
+
+The additional "mux" clocks comes from the fact that struct clk_clksrc
+is now represented by 2 generic clocks: a gate and a mux clock.
+Probably "sclk_mux" would be more clear.
+
+>> +#define FIMC_DEFAULT_LCLK_FREQUENCY 133000000UL
+> 
+> 
+> - When do I use this value in the patch ?
+>   If not use. please remove this macro. If you want to use this value.
+>   please use platform data instead of macro.
+
+Sorry, no good news. Since Exynos platform becomes dt-only the platform_data
+is no more supposed to be used. We parse clock frequency from the device tree,
+and FIMC_DEFAULT_LCLK_FREQUENCY is just a fallback value, that the driver will
+use if there is no "clock-frequency" specified in device tree.
+
+>>   /*
+>>    * A structure of scaler.
+>>    *
+>> @@ -132,15 +153,12 @@ struct fimc_driverdata {
+>>    *
+>>    * @ippdrv: prepare initialization using ippdrv.
+>>    * @regs_res: register resources.
+>> + * @dev: pointer to the fimc device structure.
+> 
+> 
+> - We already set the dev information in ippdrv structure.
+>   I think this value is duplicated value.
+
+OK, I've overlooked it. Will remove that.
+
+>>    * @regs: memory mapped io registers.
+>>    * @lock: locking of operations.
+>> - * @sclk_fimc_clk: fimc source clock.
+>> - * @fimc_clk: fimc clock.
+>> - * @wb_clk: writeback a clock.
+>> - * @wb_b_clk: writeback b clock.
+>> + * @clocks: fimc clocks.
+>> + * @clk_frequency: LCLK clock frequency.
+>>    * @sc: scaler infomations.
+>> - * @odr: ordering of YUV.
+>> - * @ver: fimc version.
+>>    * @pol: porarity of writeback.
+>>    * @id: fimc id.
+>>    * @irq: irq number.
+>> @@ -148,13 +166,12 @@ struct fimc_driverdata {
+>>    */
+>>   struct fimc_context {
+>>       struct exynos_drm_ippdrv    ippdrv;
+>> +    struct device    *dev;
+> 
+> - please check this value about really need ?
+
+Ok, I'll remove it.
+
+>>       struct resource    *regs_res;
+>>       void __iomem    *regs;
+>>       struct mutex    lock;
+>> -    struct clk    *sclk_fimc_clk;
+>> -    struct clk    *fimc_clk;
+>> -    struct clk    *wb_clk;
+>> -    struct clk    *wb_b_clk;
+>> +    struct clk    *clocks[FIMC_CLKS_MAX];
+>> +    u32        clk_frequency;
+>>       struct fimc_scaler    sc;
+>>       struct fimc_driverdata    *ddata;
+>>       struct exynos_drm_ipp_pol    pol;
+>> @@ -1301,14 +1318,12 @@ static int fimc_clk_ctrl(struct fimc_context *ctx,
+>> bool enable)
+>>       DRM_DEBUG_KMS("%s:enable[%d]\n", __func__, enable);
+>>
+>>       if (enable) {
+>> -        clk_enable(ctx->sclk_fimc_clk);
+>> -        clk_enable(ctx->fimc_clk);
+>> -        clk_enable(ctx->wb_clk);
+>> +        clk_prepare_enable(ctx->clocks[FIMC_CLK_GATE]);
+>> +        clk_prepare_enable(ctx->clocks[FIMC_CLK_WB_A]);
+>>           ctx->suspended = false;
+>>       } else {
+>> -        clk_disable(ctx->sclk_fimc_clk);
+>> -        clk_disable(ctx->fimc_clk);
+>> -        clk_disable(ctx->wb_clk);
+>> +        clk_disable_unprepare(ctx->clocks[FIMC_CLK_GATE]);
+>> +        clk_disable_unprepare(ctx->clocks[FIMC_CLK_WB_A]);
+>>           ctx->suspended = true;
+>>       }
+>>
+>> @@ -1713,11 +1728,66 @@ static void fimc_ippdrv_stop(struct device *dev, enum
+>> drm_exynos_ipp_cmd cmd)
+>>       fimc_write(cfg, EXYNOS_CIGCTRL);
+>>   }
+>>
+>> +static void fimc_put_clocks(struct fimc_context *ctx)
+>> +{
+>> +    int i;
+>> +
+>> +    for (i = 0; i < FIMC_CLKS_MAX; i++) {
+>> +        if (IS_ERR(ctx->clocks[i]))
+>> +            continue;
+>> +        clk_put(ctx->clocks[i]);
+>> +        ctx->clocks[i] = ERR_PTR(-EINVAL);
+>> +    }
+>> +}
+>> +
+>> +static int fimc_setup_clocks(struct fimc_context *ctx)
+>> +{
+>> +    struct device *dev;
+>> +    int ret, i;
+>> +
+>> +    for (i = 0; i < FIMC_CLKS_MAX; i++)
+>> +        ctx->clocks[i] = ERR_PTR(-EINVAL);
+>> +
+>> +    for (i = 0; i < FIMC_CLKS_MAX; i++) {
+>> +        if (i == FIMC_CLK_WB_A || i == FIMC_CLK_WB_B)
+>> +            dev = ctx->dev->parent;
+>> +        else
+>> +            dev = ctx->dev;
+>> +
+>> +        ctx->clocks[i] = clk_get(dev, fimc_clock_names[i]);
+>> +        if (IS_ERR(ctx->clocks[i])) {
+>> +            if (i >= FIMC_CLK_MUX)
+>> +                break;
+>> +            ret = PTR_ERR(ctx->clocks[i]);
+>> +            goto e_clk_free;
+>> +        }
+>> +    }
+>> +
+>> +    if (!IS_ERR(ctx->clocks[FIMC_CLK_PARENT])) {
+>> +        ret = clk_set_parent(ctx->clocks[FIMC_CLK_MUX],
+>> +                     ctx->clocks[FIMC_CLK_PARENT]);
+> 
+> 
+> - I can't review this code.
+
+Since parent clock setting is optional (it shouldn't really be done here
+in the driver) the parent clock is set only if FIMC_CLK_PARENT is found,
+e.g. it was specified in the device tree.
+
+I'm going to add a short comment above explaining that.
+
+>> +        if (ret < 0) {
+>> +            dev_err(ctx->dev, "failed to set parent: %d\n", ret);
+>> +            return ret;
+>> +        }
+>> +    }
+>> +
+>> +    ret = clk_set_rate(ctx->clocks[FIMC_CLK_LCLK], ctx->clk_frequency);
+> 
+> 
+> - When do I set clk_frequency value ? and why doesn't use pdata->clk_rate ?
+
+It's parsed from device tree. I removed pdata since Exynos becomes dt-only
+and there is no board in mainline that uses struct exynos_drm_fimc_pdata.
+
+>> +    if (ret < 0)
+>> +        return ret;
+>> +
+>> +    return clk_prepare_enable(ctx->clocks[FIMC_CLK_LCLK]);
+>> +
+>> +e_clk_free:
+>> +    dev_err(ctx->dev, "failed to get clock: %s\n", fimc_clock_names[i]);
+>> +    fimc_put_clocks(ctx);
+>> +    return ret;
+>> +}
+>> +
+>>   static int fimc_probe(struct platform_device *pdev)
+>>   {
+>>       struct device *dev = &pdev->dev;
+>>       struct fimc_context *ctx;
+>> -    struct clk    *parent_clk;
+>>       struct resource *res;
+>>       struct exynos_drm_ippdrv *ippdrv;
+>>       struct exynos_drm_fimc_pdata *pdata;
+>> @@ -1734,55 +1804,6 @@ static int fimc_probe(struct platform_device *pdev)
+>>       if (!ctx)
+>>           return -ENOMEM;
+>>
+>> -    ddata = (struct fimc_driverdata *)
+>> -        platform_get_device_id(pdev)->driver_data;
+>> -
+>> -    /* clock control */
+>> -    ctx->sclk_fimc_clk = devm_clk_get(dev, "sclk_fimc");
+>> -    if (IS_ERR(ctx->sclk_fimc_clk)) {
+>> -        dev_err(dev, "failed to get src fimc clock.\n");
+>> -        return PTR_ERR(ctx->sclk_fimc_clk);
+>> -    }
+>> -    clk_enable(ctx->sclk_fimc_clk);
+>> -
+>> -    ctx->fimc_clk = devm_clk_get(dev, "fimc");
+>> -    if (IS_ERR(ctx->fimc_clk)) {
+>> -        dev_err(dev, "failed to get fimc clock.\n");
+>> -        clk_disable(ctx->sclk_fimc_clk);
+>> -        return PTR_ERR(ctx->fimc_clk);
+>> -    }
+>> -
+>> -    ctx->wb_clk = devm_clk_get(dev, "pxl_async0");
+>> -    if (IS_ERR(ctx->wb_clk)) {
+>> -        dev_err(dev, "failed to get writeback a clock.\n");
+>> -        clk_disable(ctx->sclk_fimc_clk);
+>> -        return PTR_ERR(ctx->wb_clk);
+>> -    }
+>> -
+>> -    ctx->wb_b_clk = devm_clk_get(dev, "pxl_async1");
+>> -    if (IS_ERR(ctx->wb_b_clk)) {
+>> -        dev_err(dev, "failed to get writeback b clock.\n");
+>> -        clk_disable(ctx->sclk_fimc_clk);
+>> -        return PTR_ERR(ctx->wb_b_clk);
+>> -    }
+>> -
+>> -    parent_clk = devm_clk_get(dev, ddata->parent_clk);
+>> -
+>> -    if (IS_ERR(parent_clk)) {
+>> -        dev_err(dev, "failed to get parent clock.\n");
+>> -        clk_disable(ctx->sclk_fimc_clk);
+>> -        return PTR_ERR(parent_clk);
+>> -    }
+>> -
+>> -    if (clk_set_parent(ctx->sclk_fimc_clk, parent_clk)) {
+>> -        dev_err(dev, "failed to set parent.\n");
+>> -        clk_disable(ctx->sclk_fimc_clk);
+>> -        return -EINVAL;
+>> -    }
+>> -
+>> -    devm_clk_put(dev, parent_clk);
+>> -    clk_set_rate(ctx->sclk_fimc_clk, pdata->clk_rate);
+>> -
+>>       /* resource memory */
+>>       ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>       ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
+>> @@ -1804,6 +1825,9 @@ static int fimc_probe(struct platform_device *pdev)
+>>           return ret;
+>>       }
+>>
+>> +    ret = fimc_setup_clocks(ctx);
+>> +    if (ret < 0)
+>> +        goto err_free_irq;
+> 
+> - please blank line and error log.
+
+There is already error logging in the fimc_setup_clocks() function,
+plus you get logs from the driver core. So I don't think there is
+need for any more. In general I find this driver overly stuffed with
+error logs. If you feel it is necessary to add more logs, please
+write a patch for it.
+
+>>       /* context initailization */
+>>       ctx->id = pdev->id;
+>>       ctx->pol = pdata->pol;
+>> @@ -1820,7 +1844,7 @@ static int fimc_probe(struct platform_device *pdev)
+>>       ret = fimc_init_prop_list(ippdrv);
+>>       if (ret < 0) {
+>>           dev_err(dev, "failed to init property list.\n");
+>> -        goto err_get_irq;
+>> +        goto err_put_clk;
+>>       }
+>>
+>>       DRM_DEBUG_KMS("%s:id[%d]ippdrv[0x%x]\n", __func__, ctx->id,
+>> @@ -1835,16 +1859,18 @@ static int fimc_probe(struct platform_device *pdev)
+>>       ret = exynos_drm_ippdrv_register(ippdrv);
+>>       if (ret < 0) {
+>>           dev_err(dev, "failed to register drm fimc device.\n");
+>> -        goto err_ippdrv_register;
+>> +        goto err_pm_dis;
+>>       }
+>>
+>>       dev_info(&pdev->dev, "drm fimc registered successfully.\n");
+>>
+>>       return 0;
+>>
+>> -err_ippdrv_register:
+>> +err_pm_dis:
+>>       pm_runtime_disable(dev);
+>> -err_get_irq:
+>> +err_put_clk:
+>> +    fimc_put_clocks(ctx);
+>> +err_free_irq:
+>>       free_irq(ctx->irq, ctx);
+>>
+>>       return ret;
+>> @@ -1859,6 +1885,7 @@ static int fimc_remove(struct platform_device *pdev)
+>>       exynos_drm_ippdrv_unregister(ippdrv);
+>>       mutex_destroy(&ctx->lock);
+>>
+>> +    fimc_put_clocks(ctx);
+>>       pm_runtime_set_suspended(dev);
+>>       pm_runtime_disable(dev);
+
+Thanks,
+Sylwester
