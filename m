@@ -1,32 +1,75 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Tomasz Figa <t.figa@samsung.com>
 Subject: Re: [PATCH v4] drm/exynos: prepare FIMD clocks
-Date: Mon, 22 Apr 2013 15:56:35 +0530
-Message-ID: <CAKohpokRzQLhmdi7o=ytuw9M62TvDGqp2TSmAnEE5AM3E2nq5g@mail.gmail.com>
+Date: Mon, 22 Apr 2013 12:37:36 +0200
+Message-ID: <2218256.k8DNv9nCJl@amdc1227>
 References: <1365419265-21238-1-git-send-email-vikas.sajjan@linaro.org>
-	<3109033.iP2qIPD33v@flatron>
-	<CAKohpok+tNxCmy-TMRweObPLSVHECZzdgJxRh2iDWyXQCiJuqg@mail.gmail.com>
-	<1731019.P1JXV7Hkkn@amdc1227>
+ <CAAQKjZPT8pMQtY4ud=mMwgw7MYGf-JdqXePCt=yvcNcM1XgxoA@mail.gmail.com>
+ <51750E43.1050602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:56930 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754218Ab3DVK0g (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:41964 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754591Ab3DVKiQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 06:26:36 -0400
-Received: by mail-oa0-f49.google.com with SMTP id j1so3236081oag.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 03:26:35 -0700 (PDT)
-In-Reply-To: <1731019.P1JXV7Hkkn@amdc1227>
+	Mon, 22 Apr 2013 06:38:16 -0400
+In-reply-to: <51750E43.1050602@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, "patches@linaro.org" <patches@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "patches@linaro.org" <patches@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, khilman@deeprootsystems.com, rjw@sisk.pl
 
-On 22 April 2013 15:26, Tomasz Figa <t.figa@samsung.com> wrote:
-> Can you assure that in future SoCs, on which this driver will be used, this
-> assumption will still hold true or even that in current Exynos driver this
-> behavior won't be changed?
+On Monday 22 of April 2013 12:17:39 Sylwester Nawrocki wrote:
+> On 04/22/2013 12:03 PM, Inki Dae wrote:
+> >     > Also looks good to me. But what if power domain was disabled without
+> >     > pm
+> >     > runtime? In this case, you must enable the power domain at machine
+> >     > code or
+> >     > bootloader somewhere. This way would not only need some hard codes
+> >     > to turn
+> >     > the power domain on but also not manage power management fully. This
+> >     > is same as only the use of pm runtime interface(needing some hard
+> >     > codes without pm runtime) so I don't prefer to add
+> >     > clk_enable/disable to fimd probe(). I quite tend to force only the
+> >     > use of pm runtime as possible. So please add the hard codes to
+> >     > machine code or bootloader like you did for power domain if you
+> >     > want to use drm fimd without pm runtime.
+> >     
+> >     That's not how the runtime PM, clock subsystems work:
+> >     
+> >     1) When CONFIG_PM_RUNTIME is disabled, all the used hardware must be
+> >     kept
+> >     powered on all the time.
+> >     
+> >     2) Common Clock Framework will always gate all clocks that have zero
+> >     enable_count. Note that CCF support for Exynos is already merged for
+> >     3.10 and it will be the only available clock support method for
+> >     Exynos.
+> >     
+> >     AFAIK, drivers must work correctly in both cases, with
+> >     CONFIG_PM_RUNTIME
+> >     enabled and disabled.
+> > 
+> > Then is the driver worked correctly if the power domain to this device was
+> > disabled at bootloader without CONFIG_PM_RUNTIME and with clk_enable()?  I
+> > think, in this case, the device wouldn't be worked correctly because the
+> > power of the device remains off. So you must enable the power domain
+> > somewhere. What is the difference between these two cases?
+> 
+> How about making the driver dependant on PM_RUNTIME and making it always
+> use pm_runtime_* API, regardless if the platform actually implements runtime
+> PM or not ? Is there any issue in using the Runtime PM core always, rather
+> than coding any workarounds in drivers when PM_RUNTIME is disabled ?
 
-Probably yes.. Registers for enabling/disabling these clocks should always
-be on AMBA bus and not on SPI/I2C, i.e. on-soc... and so this will hold
-true.
+I don't think this is a good idea. This would mean that any user that from 
+some reasons don't want to use PM_RUNTIME, would not be able to use the driver 
+anymore.
+
+Rafael, Kevin, do you have any opinion on this?
+
+Best regards,
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
+SW Solution Development, Kernel and System Framework
