@@ -1,160 +1,50 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH v8 0/3] of/pci: Provide common support for PCI DT
- parsing
-Date: Mon, 22 Apr 2013 12:53:43 -0400
-Message-ID: <20130422165343.GE25724@titan.lakedaemon.net>
-References: <1366627295-16964-1-git-send-email-Andrew.Murray@arm.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: dts: Add TMU clock entries to exynos4210.dtsi
+Date: Tue, 23 Apr 2013 01:55:40 +0900
+Message-ID: <51756B8C.5080705@samsung.com>
+References: <1366605175-19161-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:17533 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753642Ab3DVQy3 (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:62975 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753863Ab3DVQzp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 12:54:29 -0400
-Content-Disposition: inline
-In-Reply-To: <1366627295-16964-1-git-send-email-Andrew.Murray@arm.com>
+	Mon, 22 Apr 2013 12:55:45 -0400
+Received: by mail-pa0-f48.google.com with SMTP id lj1so3733916pab.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 09:55:45 -0700 (PDT)
+In-Reply-To: <1366605175-19161-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Murray <Andrew.Murray@arm.com>
-Cc: linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org, siva.kallam@samsung.com, linux-pci@vger.kernel.org, linus.walleij@linaro.org, thierry.reding@avionic-design.de, Liviu.Dudau@arm.com, grant.likely@secretlab.ca, juhosg@openwrt.org, paulus@samba.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, jg1.han@samsung.com, jgunthorpe@obsidianresearch.com, thomas.abraham@linaro.org, benh@kernel.crashing.org, arnd@arndb.de, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, kgene.kim@samsung.com, bhelgaas@google.com, linux-arm-kernel@lists.infradead.org, thomas.petazzoni@free-electrons.com, monstr@monstr.eu, linux-kernel@vger.kernel.org, suren.reddy@samsung.com
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On Mon, Apr 22, 2013 at 11:41:32AM +0100, Andrew Murray wrote:
-> This patchset factors out duplicated code associated with parsing PCI
-> DT "ranges" properties across the architectures and introduces a
-> "ranges" parser. This parser "of_pci_range_parser" can be used directly
-> by ARM host bridge drivers enabling them to obtain ranges from device
-> trees.
-> 
-> I've included the Reviewed-by, Tested-by and Acked-by's received from v5/v6/v7
-> in this patchset, earlier versions of this patchset (v3) have been tested-by:
-> 
-> Thierry Reding <thierry.reding@avionic-design.de>
-> Jingoo Han <jg1.han@samsung.com>
-> 
-> I've tested that this patchset builds and runs on ARM and that it builds on
-> PowerPC, x86_64 and MIPS.
+On 04/22/13 13:32, Sachin Kamat wrote:
+> Adds TMU clock entries to exynos4210.dtsi file.
+>
+> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+> ---
+>   arch/arm/boot/dts/exynos4210.dtsi |    3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+> index 50ab9d4..53654c4 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -111,6 +111,9 @@
+>   		interrupt-parent =<&combiner>;
+>   		reg =<0x100C0000 0x100>;
+>   		interrupts =<2 4>;
+> +		clocks =<&clock 383>;
+> +		clock-names = "tmu_apbif";
+> +		status = "disabled";
+>   	};
+>
+>   	g2d@12800000 {
 
-Andrew,
+Applied 1st and 2nd patches.
 
-Unfortunately, the mvebu/drivers branch containing your series had to be
-dropped from arm-soc for v3.10.  This was not due to your series, but
-since arm-soc's granularity is branches, your series was caught in the
-drop.
+Thanks.
 
-As the mvebu-pcie driver is now v3.11 material, I have taken the
-opportunity to upgrade from your v7 patchset to v8.  You can find the
-whole branch at mvebu-next/pcie.
-
-mvebu-next/pcie *will* be rebased onto v3.9 once it drops.  Several
-dependencies will be removed (since they will have been merged into
-v3.9).
-
-Once the rebase is done, I'll send a pull request to Arnd and Olof so we
-can get as many cycles on -next as possible.
-
-thx,
-
-Jason.
-
-> 
-> Compared to the v7 sent by Andrew Murray, the following changes have been made
-> (please note that the first patch is unchanged from v7):
-> 
->  * Rename of_pci_range_parser to of_pci_range_parser_init and
->    of_pci_process_ranges to of_pci_range_parser_one as suggested by Grant
->    Likely.
-> 
->  * Reverted back to using a switch statement instead of if/else in
->    pci_process_bridge_OF_ranges. Grant Likely highlighted this change from
->    the original code which was unnecessary.
-> 
->  * Squashed in a patch provided by Gabor Juhos which fixes build errors on
->    MIPS found in the last patchset.
-> 
-> Compared to the v6 sent by Andrew Murray, the following changes have
-> been made in response to build errors/warnings:
-> 
->  * Inclusion of linux/of_address.h in of_pci.c as suggested by Michal
->    Simek to prevent compilation failures on Microblaze (and others) and his
->    ack.
-> 
->  * Use of externs, static inlines and a typo in linux/of_address.h in response
->    to linker errors (multiple defination) on x86_64 as spotted by a kbuild test
->    robot on (jcooper/linux.git mvebu/drivers)
-> 
->  * Add EXPORT_SYMBOL_GPL to of_pci_range_parser function to be consistent
->    with of_pci_process_ranges function
-> 
-> Compared to the v5 sent by Andrew Murray, the following changes have
-> been made:
-> 
->  * Use of CONFIG_64BIT instead of CONFIG_[a32bitarch] as suggested by
->    Rob Herring in drivers/of/of_pci.c
-> 
->  * Added forward declaration of struct pci_controller in linux/of_pci.h
->    to prevent compiler warning as suggested by Thomas Petazzoni
-> 
->  * Improved error checking (!range check), removal of unnecessary be32_to_cpup
->    call, improved formatting of struct of_pci_range_parser layout and
->    replacement of macro with a static inline. All suggested by Rob Herring.
-> 
-> Compared to the v4 (incorrectly labelled v3) sent by Andrew Murray,
-> the following changes have been made:
-> 
->  * Split the patch as suggested by Rob Herring
-> 
-> Compared to the v3 sent by Andrew Murray, the following changes have
-> been made:
-> 
->  * Unify and move duplicate pci_process_bridge_OF_ranges functions to
->    drivers/of/of_pci.c as suggested by Rob Herring
-> 
->  * Fix potential build errors with Microblaze/MIPS
-> 
-> Compared to "[PATCH v5 01/17] of/pci: Provide support for parsing PCI DT
-> ranges property", the following changes have been made:
-> 
->  * Correct use of IORESOURCE_* as suggested by Russell King
-> 
->  * Improved interface and naming as suggested by Thierry Reding
-> 
-> Compared to the v2 sent by Andrew Murray, Thomas Petazzoni did:
-> 
->  * Add a memset() on the struct of_pci_range_iter when starting the
->    for loop in for_each_pci_range(). Otherwise, with an uninitialized
->    of_pci_range_iter, of_pci_process_ranges() may crash.
-> 
->  * Add parenthesis around 'res', 'np' and 'iter' in the
->    for_each_of_pci_range macro definitions. Otherwise, passing
->    something like &foobar as 'res' didn't work.
-> 
->  * Rebased on top of 3.9-rc2, which required fixing a few conflicts in
->    the Microblaze code.
-> 
-> v2:
->   This follows on from suggestions made by Grant Likely
->   (marc.info/?l=linux-kernel&m=136079602806328)
-> 
-> Andrew Murray (3):
->   of/pci: Unify pci_process_bridge_OF_ranges from Microblaze and
->     PowerPC
->   of/pci: Provide support for parsing PCI DT ranges property
->   of/pci: mips: convert to common of_pci_range_parser
-> 
->  arch/microblaze/include/asm/pci-bridge.h |    5 +-
->  arch/microblaze/pci/pci-common.c         |  192 ------------------------------
->  arch/mips/pci/pci.c                      |   51 +++-----
->  arch/powerpc/include/asm/pci-bridge.h    |    5 +-
->  arch/powerpc/kernel/pci-common.c         |  192 ------------------------------
->  drivers/of/address.c                     |   67 +++++++++++
->  drivers/of/of_pci.c                      |  173 +++++++++++++++++++++++++++
->  include/linux/of_address.h               |   48 ++++++++
->  include/linux/of_pci.h                   |    4 +
->  9 files changed, 313 insertions(+), 424 deletions(-)
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+- Kukjin
