@@ -1,36 +1,65 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 3/3] ARM: dts: exynos4210: Add basic dts file for universal_c210 board
-Date: Mon, 22 Apr 2013 23:11:06 +0200
-Message-ID: <201304222311.06845.arnd@arndb.de>
-References: <1366036922-4103-1-git-send-email-t.figa@samsung.com> <1366036922-4103-4-git-send-email-t.figa@samsung.com>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH v8 0/3] of/pci: Provide common support for PCI DT parsing
+Date: Mon, 22 Apr 2013 19:02:51 -0400
+Message-ID: <20130422230251.GL25724@titan.lakedaemon.net>
+References: <1366627295-16964-1-git-send-email-Andrew.Murray@arm.com>
+ <20130422165343.GE25724@titan.lakedaemon.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:53848 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751210Ab3DVVLU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 17:11:20 -0400
-In-Reply-To: <1366036922-4103-4-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20130422165343.GE25724@titan.lakedaemon.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Murray <Andrew.Murray@arm.com>
+Cc: linux-mips@linux-mips.org, siva.kallam@samsung.com, linux-pci@vger.kernel.org, linus.walleij@linaro.org, thierry.reding@avionic-design.de, Liviu.Dudau@arm.com, grant.likely@secretlab.ca, juhosg@openwrt.org, paulus@samba.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, jg1.han@samsung.com, jgunthorpe@obsidianresearch.com, thomas.abraham@linaro.org, benh@kernel.crashing.org, arnd@arndb.de, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, kgene.kim@samsung.com, bhelgaas@google.com, linux-arm-kernel@lists.infradead.org, thomas.petazzoni@free-electrons.com, monstr@monstr.eu, linux-kernel@vger.kernel.org, suren.reddy@samsung.com, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org
 
-On Monday 15 April 2013, Tomasz Figa wrote:
+On Mon, Apr 22, 2013 at 12:53:43PM -0400, Jason Cooper wrote:
+> On Mon, Apr 22, 2013 at 11:41:32AM +0100, Andrew Murray wrote:
+> > This patchset factors out duplicated code associated with parsing PCI
+> > DT "ranges" properties across the architectures and introduces a
+> > "ranges" parser. This parser "of_pci_range_parser" can be used directly
+> > by ARM host bridge drivers enabling them to obtain ranges from device
+> > trees.
+> > 
+> > I've included the Reviewed-by, Tested-by and Acked-by's received from v5/v6/v7
+> > in this patchset, earlier versions of this patchset (v3) have been tested-by:
+> > 
+> > Thierry Reding <thierry.reding@avionic-design.de>
+> > Jingoo Han <jg1.han@samsung.com>
+> > 
+> > I've tested that this patchset builds and runs on ARM and that it builds on
+> > PowerPC, x86_64 and MIPS.
 > 
-> This patch adds basic device tree sources for Universal C210 board.
+> Andrew,
 > 
-> Currently support includes:
-> - eMMC
-> - serial
-> - max8952 and max8998 voltage regulators.
-> - gpio-keys
+> Unfortunately, the mvebu/drivers branch containing your series had to be
+> dropped from arm-soc for v3.10.  This was not due to your series, but
+> since arm-soc's granularity is branches, your series was caught in the
+> drop.
 > 
-> More support will be added in further patches.
+> As the mvebu-pcie driver is now v3.11 material, I have taken the
+> opportunity to upgrade from your v7 patchset to v8.  You can find the
+> whole branch at mvebu-next/pcie.
 > 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> mvebu-next/pcie *will* be rebased onto v3.9 once it drops.  Several
+> dependencies will be removed (since they will have been merged into
+> v3.9).
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+s/v3.9/v3.10-rc1/g  :)
+
+> Once the rebase is done, I'll send a pull request to Arnd and Olof so we
+> can get as many cycles on -next as possible.
+
+thx,
+
+Jason.
