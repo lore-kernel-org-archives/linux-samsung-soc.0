@@ -1,50 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/4] ARM: dts: Add TMU clock entries to exynos4210.dtsi
-Date: Tue, 23 Apr 2013 01:55:40 +0900
-Message-ID: <51756B8C.5080705@samsung.com>
-References: <1366605175-19161-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 0/3] ARM: S3C24XX: dma cleanups for s3c2412 and s3c2443
+Date: Tue, 23 Apr 2013 01:59:25 +0900
+Message-ID: <51756C6D.9020500@samsung.com>
+References: <201304212002.31082.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:62975 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753863Ab3DVQzp (ORCPT
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:33141 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753763Ab3DVQ7a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 12:55:45 -0400
-Received: by mail-pa0-f48.google.com with SMTP id lj1so3733916pab.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 09:55:45 -0700 (PDT)
-In-Reply-To: <1366605175-19161-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 22 Apr 2013 12:59:30 -0400
+Received: by mail-pd0-f178.google.com with SMTP id w11so3728211pde.37
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 09:59:29 -0700 (PDT)
+In-Reply-To: <201304212002.31082.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 04/22/13 13:32, Sachin Kamat wrote:
-> Adds TMU clock entries to exynos4210.dtsi file.
+On 04/22/13 03:02, Heiko St=C3=BCbner wrote:
+> The s3c2412 uses the same dma channel selection-type as the s3c2443 a=
+nd later
+> but introduced the notion of a receive channel to keep the spi channe=
+ls,
+> together that are separate in hardware.
 >
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> ---
->   arch/arm/boot/dts/exynos4210.dtsi |    3 +++
->   1 file changed, 3 insertions(+)
+> This series split the spi channels like later socs do (the s3c24xx-sp=
+i driver
+> does not use dma at all) and removes this type of special handling.
 >
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index 50ab9d4..53654c4 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -111,6 +111,9 @@
->   		interrupt-parent =<&combiner>;
->   		reg =<0x100C0000 0x100>;
->   		interrupts =<2 4>;
-> +		clocks =<&clock 383>;
-> +		clock-names = "tmu_apbif";
-> +		status = "disabled";
->   	};
+> Heiko Stuebner (3):
+>    ARM: S3C24XX: split s3c2412 spi dma channels
+>    ARM: S3C24XX: dma-s3c2443 - do not write into arbitary bits
+>    ARM: S3C24XX: remove obsolete s3c2412 specific dma settings
 >
->   	g2d@12800000 {
-
-Applied 1st and 2nd patches.
-
-Thanks.
+>   arch/arm/mach-s3c24xx/dma-s3c2412.c              |   56 ++++++-----=
+-----------
+>   arch/arm/mach-s3c24xx/dma-s3c2443.c              |    3 +-
+>   arch/arm/mach-s3c24xx/dma.c                      |    3 -
+>   arch/arm/plat-samsung/include/plat/dma-s3c24xx.h |    5 --
+>   4 files changed, 17 insertions(+), 50 deletions(-)
+>
+Applied, thanks.
 
 - Kukjin
