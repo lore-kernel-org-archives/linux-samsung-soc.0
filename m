@@ -1,37 +1,129 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4] drm/exynos: prepare FIMD clocks
-Date: Mon, 22 Apr 2013 10:44:00 +0530
-Message-ID: <CAKohpok+tNxCmy-TMRweObPLSVHECZzdgJxRh2iDWyXQCiJuqg@mail.gmail.com>
-References: <1365419265-21238-1-git-send-email-vikas.sajjan@linaro.org>
-	<56942397.CYxnWkv4Nb@flatron>
-	<CAAQKjZOg+H=Dnd3HWEWKjQq6e2UGZvX6s0waBdqsxx=CEAXtQw@mail.gmail.com>
-	<3109033.iP2qIPD33v@flatron>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: RE: [PATCH v3] drm/exynos: enable FIMD clocks
+Date: Mon, 22 Apr 2013 14:49:52 +0900
+Message-ID: <07b501ce3f1d$359f5900$a0de0b00$%dae@samsung.com>
+References: <1364805830-6129-1-git-send-email-vikas.sajjan@linaro.org>
+ <CAKohpo=az=FS6-jfjN0WR=eKSAZ=MSo90Qc91kK-PEWOH3tzsQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:42534 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751446Ab3DVFOB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 01:14:01 -0400
-Received: by mail-ob0-f169.google.com with SMTP id tb18so915205obb.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Apr 2013 22:14:00 -0700 (PDT)
-In-Reply-To: <3109033.iP2qIPD33v@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <CAKohpo=az=FS6-jfjN0WR=eKSAZ=MSo90Qc91kK-PEWOH3tzsQ@mail.gmail.com>
+Content-language: ko
+Sender: linux-media-owner@vger.kernel.org
+To: 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Vikas Sajjan' <vikas.sajjan@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, kgene.kim@samsung.com, linaro-kernel@lists.linaro.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "patches@linaro.org" <patches@linaro.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 
-On 21 April 2013 20:13, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> 3) after those two changes, all that remains is to fix compliance with
-> Common Clock Framework, in other words:
->
-> s/clk_enable/clk_prepare_enable/
->
+Hi, Mr. Vikas
+
+Please fix the below typos Viresh pointed out and my comments.
+
+> -----Original Message-----
+> From: Viresh Kumar [mailto:viresh.kumar@linaro.org]
+> Sent: Monday, April 01, 2013 5:51 PM
+> To: Vikas Sajjan
+> Cc: dri-devel@lists.freedesktop.org; linux-samsung-soc@vger.kernel.org;
+> jy0922.shim@samsung.com; inki.dae@samsung.com; kgene.kim@samsung.com;
+> linaro-kernel@lists.linaro.org; linux-media@vger.kernel.org
+> Subject: Re: [PATCH v3] drm/exynos: enable FIMD clocks
+> 
+> On 1 April 2013 14:13, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> > While migrating to common clock framework (CCF), found that the FIMD
+> clocks
+> 
+> s/found/we found/
+> 
+> > were pulled down by the CCF.
+> > If CCF finds any clock(s) which has NOT been claimed by any of the
+> > drivers, then such clock(s) are PULLed low by CCF.
+> >
+> > By calling clk_prepare_enable() for FIMD clocks fixes the issue.
+> 
+> s/By calling/Calling/
+> 
 > and
->
-> s/clk_disable/clk_disable_unprepare/
+> 
+> s/the/this
+> 
+> > this patch also replaces clk_disable() with clk_disable_unprepare()
+> 
+> s/this/This
+> 
+> > during exit.
+> 
+> Sorry but your log doesn't say what you are doing. You are just adding
+> relevant calls to clk_prepare/unprepare() before calling
+> clk_enable/disable.
+> 
+> > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> > ---
+> > Changes since v2:
+> >         - moved clk_prepare_enable() and clk_disable_unprepare() from
+> >         fimd_probe() to fimd_clock() as suggested by Inki Dae
+> <inki.dae@samsung.com>
+> > Changes since v1:
+> >         - added error checking for clk_prepare_enable() and also
+replaced
+> >         clk_disable() with clk_disable_unprepare() during exit.
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > index 9537761..f2400c8 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> > @@ -799,18 +799,18 @@ static int fimd_clock(struct fimd_context *ctx,
+> bool enable)
+> >         if (enable) {
+> >                 int ret;
+> >
+> > -               ret = clk_enable(ctx->bus_clk);
+> > +               ret = clk_prepare_enable(ctx->bus_clk);
+> >                 if (ret < 0)
+> >                         return ret;
+> >
+> > -               ret = clk_enable(ctx->lcd_clk);
+> > +               ret = clk_prepare_enable(ctx->lcd_clk);
+> >                 if  (ret < 0) {
+> > -                       clk_disable(ctx->bus_clk);
+> > +                       clk_disable_unprepare(ctx->bus_clk);
+> >                         return ret;
+> >                 }
+> >         } else {
+> > -               clk_disable(ctx->lcd_clk);
+> > -               clk_disable(ctx->bus_clk);
+> > +               clk_disable_unprepare(ctx->lcd_clk);
+> > +               clk_disable_unprepare(ctx->bus_clk);
+> >         }
+> >
+> >         return 0;
+> > @@ -981,8 +981,8 @@ static int fimd_remove(struct platform_device *pdev)
+> >         if (ctx->suspended)
+> >                 goto out;
+> >
+> > -       clk_disable(ctx->lcd_clk);
+> > -       clk_disable(ctx->bus_clk);
+> > +       clk_disable_unprepare(ctx->lcd_clk);
+> > +       clk_disable_unprepare(ctx->bus_clk);
 
-We don't have to call  clk_{un}prepare() everytime for your platform as
-you aren't doing anything in it. So just call them once at probe/remove and
-call clk_enable/disable everywhere else.
+Just remove the above codes. It seems that clk_disable(also
+clk_disable_unprepare) isn't needed because it will be done by
+pm_runtime_put_sync and please re-post it(probably patch v5??)
+
+Thanks,
+Inki Dae
+
+> 
+> You are doing things at the right place but i have a suggestion. Are you
+> doing
+> anything in your clk_prepare() atleast for this device? Probably not.
+> 
+> If not, then its better to call clk_prepare/unprepare only once at
+> probe/remove
+> and keep clk_enable/disable calls as is.
+> 
+> --
+> viresh
