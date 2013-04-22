@@ -1,69 +1,58 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] clk: exynos5250: Fix divider values for sclk_mmc{0,1,2,3}
-Date: Mon, 22 Apr 2013 10:40:09 -0700
-Message-ID: <CAOesGMj-wfWNwvP7iAyr0nB0HE_PBzj3DGeE-ixNc3MqtCH9Qg@mail.gmail.com>
-References: <1364890840-20052-1-git-send-email-tushar.behera@linaro.org>
-	<20130404213331.8665.7028@quantum>
-	<2c9001ce3429$e5989a50$b0c9cef0$%kim@samsung.com>
-	<CAD=FV=UUg9Apb0o+zLdidDUmkLZt1phgo80bxug=o6JmANCPfw@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 0/3] ARM: EXYNOS: DT-enabled support for Universal
+ C210
+Date: Tue, 23 Apr 2013 02:40:45 +0900
+Message-ID: <5175761D.9030906@samsung.com>
+References: <1366036922-4103-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=UUg9Apb0o+zLdidDUmkLZt1phgo80bxug=o6JmANCPfw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>
-Cc: Mike Turquette <mturquette@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Patch Tracking <patches@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olofj@chromium.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:50885 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753214Ab3DVRku (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Apr 2013 13:40:50 -0400
+Received: by mail-pd0-f175.google.com with SMTP id g10so3733256pdj.34
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 10:40:50 -0700 (PDT)
+In-Reply-To: <1366036922-4103-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arnd@arndb.de, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com
 
-Hi,
-
-On Tue, Apr 16, 2013 at 12:35 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Hi,
+On 04/15/13 23:41, Tomasz Figa wrote:
+> This series intends to add support for Universal C210 board using Device
+> Tree. Main difference from other boards based on Exynos 4210 is that
+> hardware revision of the SoC used on Universal C210 does not support MCT
+> timers and legacy PWM timers must be used instead.
 >
-> On Mon, Apr 8, 2013 at 12:22 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> Mike Turquette wrote:
->>>
->>> Quoting Tushar Behera (2013-04-02 01:20:40)
->>> > In legacy setup, sclk_mmc{0,1,2,3} used PRE_RATIO bit-field (8-bit wide)
->>> > instead of RATIO bit-field (4-bit wide) for dividing clock rate.
->>> >
->>> > With current common clock setup, we are using RATIO bit-field which
->>> > is creating FIFO read errors while accessing eMMC. Changing over to
->>> > use PRE_RATIO bit-field fixes this issue.
->>> >
->>> > dwmmc_exynos 12200000.dwmmc0: data FIFO error (status=00008020)
->>> > mmcblk0: error -5 transferring data, sector 1, nr 7, cmd response 0x900,
->>> card status 0x0
->>> > end_request: I/O error, dev mmcblk0, sector 1
->>> >
->>> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->>> > CC: Thomas Abraham <thomas.abraham@linaro.org>
->>>
->>> I guess this will be applied through the samsung tree, so:
->>>
->>> Acked-by: Mike Turquette <mturquette@linaro.org>
->>>
->> Thanks, applied.
+> First patch adds device tree node for PWM block available on Exynos4 SoCs,
+> second patch adds support for Exynos4210 rev0 SoC in exynos_init_time()
+> and third patch introduces initial device tree for Universal C210 board.
 >
-> I haven't yet had time to dig / track down why, but this patch totally
-> messes up access to the eMMC on the ARM Chromebook (exynos5250-snow).
-> I suddenly start getting FIFO errors like you show above.  When I
-> revert your change then I'm all happy.
+> Depends on my series for PWM timers rework:
+> [PATCH v5 00/14] ARM: samsung-time: Prepare for multiplatform support
+> (http://thread.gmane.org/gmane.linux.kernel.samsung-soc/17864)
 >
-> Perhaps I need a device tree setting change as well?  I always forget
-> how the "samsung,dw-mshc-ciu-div" / "samsung,dw-mshc-sdr-timing"
-> properties work...
+> On Universal C210 board:
 >
-> For the short term I'm going to revert locally since I've got a few
-> other things to do over the next few days.  If nobody else gets around
-> to it then I'll try to find time to dig further.
+> Tested-by: Tomasz Figa<t.figa@samsung.com>
+>
+> Tomasz Figa (3):
+>    ARM: dts: exynos4: Add node for PWM device
+>    ARM: EXYNOS: Fix support of Exynos4210 rev0 SoC
+>    ARM: dts: exynos4210: Add basic dts file for universal_c210 board
+>
+>   arch/arm/boot/dts/Makefile                      |   1 +
+>   arch/arm/boot/dts/exynos4.dtsi                  |   8 +
+>   arch/arm/boot/dts/exynos4210-universal_c210.dts | 352 ++++++++++++++++++++++++
+>   arch/arm/mach-exynos/common.c                   |   6 +-
+>   arch/arm/mach-exynos/mach-universal_c210.c      |   2 +-
+>   5 files changed, 367 insertions(+), 2 deletions(-)
+>   create mode 100644 arch/arm/boot/dts/exynos4210-universal_c210.dts
+>
 
-Unless I hear differently within 24 hours, I am going to revert this
-in arm-soc (since that is where it is merged right now).
+Applied, thanks.
 
-It is obviously causing regressions on existing platforms. I am _NOT_
-happy to see dead silence about this for 6 days. Tushar??
-
-
-
--Olof
+- Kukjin
