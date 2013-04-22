@@ -1,61 +1,48 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2] usb: ehci-s5p: fix: Fix null pointer dereferencing
-Date: Tue, 23 Apr 2013 02:16:48 +0900
-Message-ID: <51757080.3070203@samsung.com>
-References: <CAFp+6iE1Ei=B7+XfZghVivwQ5zdbCnuG+F=qdLX3P19Xo9QdYg@mail.gmail.com> <1365513131-27691-1-git-send-email-gautam.vivek@samsung.com>
+Subject: Re: [PATCH v5 00/14] ARM: samsung-time: Prepare for multiplatform
+ support
+Date: Tue, 23 Apr 2013 02:37:33 +0900
+Message-ID: <5175755D.20305@samsung.com>
+References: <1365794250-14436-1-git-send-email-t.figa@samsung.com> <201304122251.41393.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:40220 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753695Ab3DVRQx (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:38419 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752417Ab3DVRhl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 13:16:53 -0400
-In-Reply-To: <1365513131-27691-1-git-send-email-gautam.vivek@samsung.com>
+	Mon, 22 Apr 2013 13:37:41 -0400
+Received: by mail-pd0-f182.google.com with SMTP id 3so3731271pdj.27
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 10:37:40 -0700 (PDT)
+In-Reply-To: <201304122251.41393.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, Manjunath Goudar <manjunath.goudar@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Jingoo Han <jg1.han@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <t.figa@samsung.com>, mark.rutland@arm.com, heiko@sntech.de, tomasz.figa@gmail.com, buserror@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, christer@weinigel.se, sylvester.nawrocki@gmail.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, kwangwoo.lee@gmail.com, mcuelenaere@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, john.stultz@linaro.org, ghcstop@gmail.com, linux@simtec.co.uk, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com, jekhor@gmail.com, kyungmin.park@samsung.com, tglx@linutronix.de
 
-On 04/09/13 22:12, Vivek Gautam wrote:
-> 7edb3da: (USB: EHCI: make ehci-s5p a separate driver)
-> raised an issue with ehci-s5p's driver data.
-> Now that 's5p_ehci_hcd' doesn't maintain pointer to 'usb_hcd'
-> and s5p_ehci is nothing but a pointer to hcd->priv;
-> add hcd to the driver data rather than s5p_ehci.
+On 04/13/13 05:51, Arnd Bergmann wrote:
+> On Friday 12 April 2013, Tomasz Figa wrote:
+>> This series is an attempt to make the samsung-time clocksource driver ready
+>> for multiplatform kernels. It moves the driver to drivers/clocksource, cleans
+>> it up from uses of static platform-specific definitions, simplifies timer
+>> interrupt handling and adds Device Tree support.
+>>
+>> The samsung_pwm clocksource driver is made the master driver, which
+>> exposes a single function to the PWM driver to get required data. Only
+>> samsung-time driver is reworked to use the master driver at this time,
+>> since the PWM driver can be already considered broken at the moment and
+>> needs separate series of several patches to fix and clean it up, which
+>> I am already working on.
+>>
+>> Tested on Universal C210 board with Device Tree. Not tested without
+>> Device Tree, since it has been already broken before this series.
+>> Compile tested for other related SoCs.
 >
-> This fixes issues with null pointer dereferencing in
-> s5p_ehci_shutdown(), s5p_ehci_suspend(), s5p_ehci_resume().
->
-> Signed-off-by: Vivek Gautam<gautam.vivek@samsung.com>
-> CC: Manjunath Goudar<manjunath.goudar@linaro.org>
-> CC: Arnd Bergmann<arnd@arndb.de>
-> CC: Jingoo Han<jg1.han@samsung.com>
+> Acked-by: Arnd Bergmann<arnd@arndb.de>
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+Applied, this whole series.
 
 Thanks.
 
 - Kukjin
-
-> ---
->
-> Based on 'usb-next'
->
->   drivers/usb/host/ehci-s5p.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-> index d8cb0ca..580548a 100644
-> --- a/drivers/usb/host/ehci-s5p.c
-> +++ b/drivers/usb/host/ehci-s5p.c
-> @@ -173,7 +173,7 @@ static int s5p_ehci_probe(struct platform_device *pdev)
->   		goto fail_add_hcd;
->   	}
->
-> -	platform_set_drvdata(pdev, s5p_ehci);
-> +	platform_set_drvdata(pdev, hcd);
->
->   	return 0;
->
