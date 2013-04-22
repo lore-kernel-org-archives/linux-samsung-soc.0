@@ -1,59 +1,108 @@
-From: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v7 3/3] of/pci: mips: convert to common of_pci_range_parser
-Date: Mon, 22 Apr 2013 11:49:16 +0100
-Message-ID: <20130422104916.GA17007@arm.com>
+From: Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH v7 2/3] of/pci: Provide support for parsing PCI DT
+ ranges property
+Date: Mon, 22 Apr 2013 11:57:24 +0100
+Message-ID: <20130422105724.GB17007@arm.com>
 References: <1366107508-12672-1-git-send-email-Andrew.Murray@arm.com>
- <1366107508-12672-4-git-send-email-Andrew.Murray@arm.com>
- <CACRpkdbBaT1OKr5t8HW4+8y_wSDmGxmewAyVMekx8S-K9s3K8Q@mail.gmail.com>
- <20130418125910.GA17128@arm.com>
- <20130418130919.GI27197@titan.lakedaemon.net>
- <5170F016.6050502@openwrt.org>
- <20130420223343.GB25724@titan.lakedaemon.net>
- <517394C6.2060407@openwrt.org>
+ <1366107508-12672-3-git-send-email-Andrew.Murray@arm.com>
+ <20130418134401.84AEE3E1319@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-mips-bounce@linux-mips.org>
 Content-Disposition: inline
-In-Reply-To: <517394C6.2060407-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Gabor Juhos <juhosg-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
-Cc: "linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org" <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linuxppc
+In-Reply-To: <20130418134401.84AEE3E1319@localhost>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "jgunthorpe@obsidianresearch.com" <jgunthorpe@obsidianresearch.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "jg1.han@samsung.com" <jg1.han@samsung.com>, Liviu Dudau <Liviu.Dudau@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "bhelgaas@google.com" <bhel>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Apr 21, 2013 at 08:27:02AM +0100, Gabor Juhos wrote:
-> Hi Jason,
-> 
-> >> Sorry I had no time earlier, but I have tested this now on MIPS. The patch
-> >> causes build errors unfortunately. Given the fact that this has been merged
-> >> already, I will send a fixup patch.
-> > 
-> > Olof has dropped this branch from arm-soc, plase post the build error
-> > and fix here so that it can be included in this series.
-> 
-> I have posted the patch to Olof two days ago. It has been CC'd to you as well
-> but In case that it does not exists in your mailbox the patch can be found here:
-> 
-> https://patchwork.linux-mips.org/patch/5196/
-> 
-> However I can re-post the patch as a reply to this thread if you prefer that.
+On Thu, Apr 18, 2013 at 02:44:01PM +0100, Grant Likely wrote:
+> On Tue, 16 Apr 2013 11:18:27 +0100, Andrew Murray <Andrew.Murray@arm.com> wrote:
 
-As this branch was dropped I have updated my patchset to include Grant's recent
-feedback - I've also included Gabor's fixes to this patchset (and his sign-off).
+> 
+> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> 
+> But comments below...
+> 
 
-If you include this new patchset in your branch the drivers that depend on it
-will need to be updated to reflect the new naming of functions as suggested by
-Grant.
+I've updated the patchset (now v8) to reflect your feedback, after a closer
+look...
 
-Thanks,
+> > -
+> > -		pr_debug("pci_space: 0x%08x pci_addr:0x%016llx ",
+> > -				pci_space, pci_addr);
+> > -		pr_debug("cpu_addr:0x%016llx size:0x%016llx\n",
+> > -					cpu_addr, size);
+> > -
+> > -		ranges += np;
+> > +		pr_debug("pci_space: 0x%08x pci_addr: 0x%016llx ",
+> > +				range.pci_space, range.pci_addr);
+> > +		pr_debug("cpu_addr: 0x%016llx size: 0x%016llx\n",
+> > +				range.cpu_addr, range.size);
+> 
+> Nit: the patch changed whitespace on the pr_debug() statements, so even
+> though the first line of each is identical, they look different in the
+> patch.
+> 
+
+Actually the first line isn't identical, the original file was inconsistent
+with its use of spaces between ':' and '0x%0' - my patch ensured that there
+was always a space. I guess this could have been done as a separate patch.
+
+> >  
+> >  		/* If we failed translation or got a zero-sized region
+> >  		 * (some FW try to feed us with non sensical zero sized regions
+> >  		 * such as power3 which look like some kind of attempt
+> >  		 * at exposing the VGA memory hole)
+> >  		 */
+> > -		if (cpu_addr == OF_BAD_ADDR || size == 0)
+> > +		if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
+> >  			continue;
+> 
+> Can this also be rolled into the parsing iterator?
+> 
+
+I decided not to do this. Mainly because ARM drivers use the parser directly
+(instead of pci_process_bridge_OF_ranges function) and it seemed perfectly
+valid for the parser to return a range of size 0 if that is what was present in
+the DT.
+
+> >  
+> > -		/* Now consume following elements while they are contiguous */
+> > -		for (; rlen >= np * sizeof(u32);
+> > -		     ranges += np, rlen -= np * 4) {
+> > -			if (ranges[0] != pci_space)
+> > -				break;
+> > -			pci_next = of_read_number(ranges + 1, 2);
+> > -			cpu_next = of_translate_address(dev, ranges + 3);
+> > -			if (pci_next != pci_addr + size ||
+> > -			    cpu_next != cpu_addr + size)
+> > -				break;
+> > -			size += of_read_number(ranges + pna + 3, 2);
+> > -		}
+> > -
+> >  		/* Act based on address space type */
+> >  		res = NULL;
+> > -		switch ((pci_space >> 24) & 0x3) {
+> > -		case 1:		/* PCI IO space */
+> > +		res_type = range.flags & IORESOURCE_TYPE_BITS;
+> > +		if (res_type == IORESOURCE_IO) {
+> 
+> Why the change from switch() to an if/else if sequence?
+
+I think this was an artifact of the patches evolution, I've reverted back to
+the switch.
+
+> 
+> But those are mostly nitpicks. If this is deferred to v3.10 then I would
+> suggest fixing them up and posting for another round of review.
 
 Andrew Murray
