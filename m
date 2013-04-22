@@ -1,42 +1,88 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH RESEND] ARM: EXYNOS: no more support non-DT for EXYNOS
- SoCs
-Date: Tue, 23 Apr 2013 02:08:40 +0900
-Message-ID: <51756E98.9040606@samsung.com>
-References: <51642dab.e844440a.0ad1.ffffc13f@mx.google.com> <201304101459.07263.arnd@arndb.de> <51656D2D.7060004@samsung.com> <201304101555.27984.arnd@arndb.de> <516571BC.9030909@samsung.com>
+Subject: Re: [PATCH] rtc: rtc-s3c: use clk_prepare_enable and clk_disable_unprepare
+Date: Tue, 23 Apr 2013 02:10:25 +0900
+Message-ID: <51756F01.20408@samsung.com>
+References: <1365517660-9322-1-git-send-email-gautam.vivek@samsung.com> <516535E4.5060308@samsung.com> <002e01ce366a$4c9f1390$e5dd3ab0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:63515 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753076Ab3DVRIp (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:63870 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753214Ab3DVRKa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 13:08:45 -0400
-Received: by mail-pa0-f42.google.com with SMTP id kl13so24424pab.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 10:08:44 -0700 (PDT)
-In-Reply-To: <516571BC.9030909@samsung.com>
+	Mon, 22 Apr 2013 13:10:30 -0400
+In-Reply-To: <002e01ce366a$4c9f1390$e5dd3ab0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Olof Johansson' <olof@lixom.net>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Andrew Morton' <akpm@linuxfoundation.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, kgene.kim@samsung.com, thomas.ab@samsung.com, dianders@chromium.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-On 04/10/13 23:05, Kukjin Kim wrote:
-> On 04/10/13 22:55, Arnd Bergmann wrote:
->> On Wednesday 10 April 2013, Sylwester Nawrocki wrote:
->>> Hmm, it turns out we are still actively using some boards based on
->>> Exynos4210 EVT0 SoCs. And since it seems unlikely the patches from
->>> Tomasz [1] adding basic DT support for those will get merged for
->>> 3.10, it would be a bit inconvenient to remove the ATAGS support
->>> now, leaving Exynos4210 Rev. 0 not supported at all.
+On 04/11/13 13:09, Jingoo Han wrote:
+> On Wednesday, April 10, 2013 6:50 PM, Sylwester Nawrocki wrote:
+>> On 04/09/2013 04:27 PM, Vivek Gautam wrote:
+>>> From: Thomas Abraham<thomas.abraham@linaro.org>
+>>>
+>>> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+>>> calls as required by common clock framework.
+>>>
+>>> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+>>> Signed-off-by: Vivek Gautam<gautam.vivek@samsung.com>
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
 >>
->> I still have hope to get those included.
+>> Thanks Vivek.
 >>
-> I agree and I asked Tomasz to re-send universal dt patch.
+>> Reviewed-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
 >
-Hi Arnd and Olof,
-
-Is it possible to send one more pull-request for this and something like 
-dt patches for exynos?
-
-- Kukjin
+> CC'ed Andrew Morton
+>
+> It looks good.
+> Reviewed-by: Jingoo Han<jg1.han@samsung.com>
+>
+>>
+>>> ---
+>>>
+>>> The v1 of this patch is pretty old, but the change needs to be merged to
+>>> avoid getting those needless WARN_ON() dumps on console.
+>>>
+>>> Changes from v1:
+>>>   - Not using clk_disable_unprepare() at the end of s3c_rtc_probe(), since
+>>>     this will unprepare the rtc clock which is again getting used in other
+>>>     funtions later.
+>>>   - Using clk_unprepare() at the remove() instead to fix things up.
+>>>
+>>>   drivers/rtc/rtc-s3c.c |    5 +++--
+>>>   1 files changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+>>> index fb994e9..e3528c9 100644
+>>> --- a/drivers/rtc/rtc-s3c.c
+>>> +++ b/drivers/rtc/rtc-s3c.c
+>>> @@ -430,6 +430,7 @@ static int s3c_rtc_remove(struct platform_device *dev)
+>>>
+>>>   	s3c_rtc_setaie(&dev->dev, 0);
+>>>
+>>> +	clk_unprepare(rtc_clk);
+>>>   	rtc_clk = NULL;
+>>>
+>>>   	return 0;
+>>> @@ -498,7 +499,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+>>>   		return ret;
+>>>   	}
+>>>
+>>> -	clk_enable(rtc_clk);
+>>> +	clk_prepare_enable(rtc_clk);
+>>>
+>>>   	/* check to see if everything is setup correctly */
+>>>
+>>> @@ -578,7 +579,7 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+>>>
+>>>    err_nortc:
+>>>   	s3c_rtc_enable(pdev, 0);
+>>> -	clk_disable(rtc_clk);
+>>> +	clk_disable_unprepare(rtc_clk);
+>>>
+>>>   	return ret;
+>>>   }
