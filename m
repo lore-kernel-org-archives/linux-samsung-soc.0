@@ -1,75 +1,114 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4] drm/exynos: prepare FIMD clocks
-Date: Mon, 22 Apr 2013 12:37:36 +0200
-Message-ID: <2218256.k8DNv9nCJl@amdc1227>
-References: <1365419265-21238-1-git-send-email-vikas.sajjan@linaro.org>
- <CAAQKjZPT8pMQtY4ud=mMwgw7MYGf-JdqXePCt=yvcNcM1XgxoA@mail.gmail.com>
- <51750E43.1050602@samsung.com>
+From: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
+Subject: [PATCH v8 3/3] of/pci: mips: convert to common of_pci_range_parser
+Date: Mon, 22 Apr 2013 11:41:35 +0100
+Message-ID: <1366627295-16964-4-git-send-email-Andrew.Murray@arm.com>
+References: <1366627295-16964-1-git-send-email-Andrew.Murray@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41964 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754591Ab3DVKiQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Apr 2013 06:38:16 -0400
-In-reply-to: <51750E43.1050602@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1366627295-16964-1-git-send-email-Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu.Dudau-5wv7dgnIgG8@public.gmane.org, juhosg-p3rKhJxN3npAfugRpC6u6w@public.gmane.org, paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "patches@linaro.org" <patches@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, khilman@deeprootsystems.com, rjw@sisk.pl
 
-On Monday 22 of April 2013 12:17:39 Sylwester Nawrocki wrote:
-> On 04/22/2013 12:03 PM, Inki Dae wrote:
-> >     > Also looks good to me. But what if power domain was disabled without
-> >     > pm
-> >     > runtime? In this case, you must enable the power domain at machine
-> >     > code or
-> >     > bootloader somewhere. This way would not only need some hard codes
-> >     > to turn
-> >     > the power domain on but also not manage power management fully. This
-> >     > is same as only the use of pm runtime interface(needing some hard
-> >     > codes without pm runtime) so I don't prefer to add
-> >     > clk_enable/disable to fimd probe(). I quite tend to force only the
-> >     > use of pm runtime as possible. So please add the hard codes to
-> >     > machine code or bootloader like you did for power domain if you
-> >     > want to use drm fimd without pm runtime.
-> >     
-> >     That's not how the runtime PM, clock subsystems work:
-> >     
-> >     1) When CONFIG_PM_RUNTIME is disabled, all the used hardware must be
-> >     kept
-> >     powered on all the time.
-> >     
-> >     2) Common Clock Framework will always gate all clocks that have zero
-> >     enable_count. Note that CCF support for Exynos is already merged for
-> >     3.10 and it will be the only available clock support method for
-> >     Exynos.
-> >     
-> >     AFAIK, drivers must work correctly in both cases, with
-> >     CONFIG_PM_RUNTIME
-> >     enabled and disabled.
-> > 
-> > Then is the driver worked correctly if the power domain to this device was
-> > disabled at bootloader without CONFIG_PM_RUNTIME and with clk_enable()?  I
-> > think, in this case, the device wouldn't be worked correctly because the
-> > power of the device remains off. So you must enable the power domain
-> > somewhere. What is the difference between these two cases?
-> 
-> How about making the driver dependant on PM_RUNTIME and making it always
-> use pm_runtime_* API, regardless if the platform actually implements runtime
-> PM or not ? Is there any issue in using the Runtime PM core always, rather
-> than coding any workarounds in drivers when PM_RUNTIME is disabled ?
+This patch converts the pci_load_of_ranges function to use the new common
+of_pci_range_parser.
 
-I don't think this is a good idea. This would mean that any user that from 
-some reasons don't want to use PM_RUNTIME, would not be able to use the driver 
-anymore.
+Signed-off-by: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
+Signed-off-by: Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>
+Signed-off-by: Gabor Juhos <juhosg-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
+Reviewed-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Tested-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+ arch/mips/pci/pci.c |   51 +++++++++++++++++++--------------------------------
+ 1 files changed, 19 insertions(+), 32 deletions(-)
 
-Rafael, Kevin, do you have any opinion on this?
-
-Best regards,
+diff --git a/arch/mips/pci/pci.c b/arch/mips/pci/pci.c
+index 0872f12..4b09ca8 100644
+--- a/arch/mips/pci/pci.c
++++ b/arch/mips/pci/pci.c
+@@ -122,51 +122,38 @@ static void pcibios_scanbus(struct pci_controller *hose)
+ #ifdef CONFIG_OF
+ void pci_load_of_ranges(struct pci_controller *hose, struct device_node *node)
+ {
+-	const __be32 *ranges;
+-	int rlen;
+-	int pna = of_n_addr_cells(node);
+-	int np = pna + 5;
++	struct of_pci_range range;
++	struct of_pci_range_parser parser;
++	u32 res_type;
+ 
+ 	pr_info("PCI host bridge %s ranges:\n", node->full_name);
+-	ranges = of_get_property(node, "ranges", &rlen);
+-	if (ranges == NULL)
+-		return;
+ 	hose->of_node = node;
+ 
+-	while ((rlen -= np * 4) >= 0) {
+-		u32 pci_space;
++	if (of_pci_range_parser_init(&parser, node))
++		return;
++
++	for_each_of_pci_range(&parser, &range) {
+ 		struct resource *res = NULL;
+-		u64 addr, size;
+-
+-		pci_space = be32_to_cpup(&ranges[0]);
+-		addr = of_translate_address(node, ranges + 3);
+-		size = of_read_number(ranges + pna + 3, 2);
+-		ranges += np;
+-		switch ((pci_space >> 24) & 0x3) {
+-		case 1:		/* PCI IO space */
++
++		switch (range.flags & IORESOURCE_TYPE_BITS) {
++		case IORESOURCE_IO:
+ 			pr_info("  IO 0x%016llx..0x%016llx\n",
+-					addr, addr + size - 1);
++				range.cpu_addr,
++				range.cpu_addr + range.size - 1);
+ 			hose->io_map_base =
+-				(unsigned long)ioremap(addr, size);
++				(unsigned long)ioremap(range.cpu_addr,
++						       range.size);
+ 			res = hose->io_resource;
+-			res->flags = IORESOURCE_IO;
+ 			break;
+-		case 2:		/* PCI Memory space */
+-		case 3:		/* PCI 64 bits Memory space */
++		case IORESOURCE_MEM:
+ 			pr_info(" MEM 0x%016llx..0x%016llx\n",
+-					addr, addr + size - 1);
++				range.cpu_addr,
++				range.cpu_addr + range.size - 1);
+ 			res = hose->mem_resource;
+-			res->flags = IORESOURCE_MEM;
+ 			break;
+ 		}
+-		if (res != NULL) {
+-			res->start = addr;
+-			res->name = node->full_name;
+-			res->end = res->start + size - 1;
+-			res->parent = NULL;
+-			res->sibling = NULL;
+-			res->child = NULL;
+-		}
++		if (res != NULL)
++			of_pci_range_to_resource(&range, node, res);
+ 	}
+ }
+ #endif
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+1.7.0.4
