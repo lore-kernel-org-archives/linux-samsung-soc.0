@@ -1,49 +1,56 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v3 00/10] ARM: exynos multiplatform series, part 1
-Date: Tue, 23 Apr 2013 09:32:30 +0530
-Message-ID: <CAK9yfHxR_NE2R8qzx4p2DinJHqZoOK-4g6EtiAg6fecjy_Vd5A@mail.gmail.com>
-References: <1365716245-99231-1-git-send-email-arnd@arndb.de>
-	<201304191536.17796.arnd@arndb.de>
-	<CAK9yfHwEZUPs70j3rS7V44RWxpZShEP8uxo3fFW54=L3NG-bDA@mail.gmail.com>
-	<201304221512.25920.arnd@arndb.de>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH 2/6] thermal:exynos4: TMU Common clock framework support
+ for TMU (Thermal Monitoring Unit)
+Date: Tue, 23 Apr 2013 08:17:24 +0200
+Message-ID: <20130423081724.03b3b422@amdc308.digital.local>
+References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
+ <1366389493-8239-3-git-send-email-l.majewski@samsung.com>
+ <CAK9yfHxWq5CrhY=A2HMZnH3SQww2sPTBM_zQ9hoinyk1zger7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:37945 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751469Ab3DWECa (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:59713 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751366Ab3DWGRh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 00:02:30 -0400
-Received: by mail-oa0-f51.google.com with SMTP id k14so168637oag.24
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 21:02:30 -0700 (PDT)
-In-Reply-To: <201304221512.25920.arnd@arndb.de>
+	Tue, 23 Apr 2013 02:17:37 -0400
+In-reply-to: <CAK9yfHxWq5CrhY=A2HMZnH3SQww2sPTBM_zQ9hoinyk1zger7g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Zhang Rui <rui.zhang@intel.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "eduardo.valentin@ti.com" <eduardo.valentin@ti.com>
 
-On 22 April 2013 18:42, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Monday 22 April 2013, Sachin Kamat wrote:
->>
->> With this branch now available (merged) in linux-next (20130422),
->> looks like exynos4 DT support is broken on it. Tested on Origen 4210
->> and 4412 and I get the following warnings on 4412 Origen board with
->> exynos_defconfig (Note that clocks are all 0). However, it boots fine
->> on Arndale board.
->
-> I think this issue should be fixed with the patch that Thomas Abraham
-> just sent. Thomas, can you confirm?
+Hi Sachin,
 
-Boot tested Origen 4210, 4412 and Arndale boards after applying Thomas
-Abraham's chip-id dt support patches.
-They all boot fine.
+> On 19 April 2013 22:08, Lukasz Majewski <l.majewski@samsung.com>
+> wrote:
+> > This patch modifies exynos_thermal.c file to use
+> > clk_disable_unprepare() and clk_prepare_enable() instead of
+> > clk_{enable|disable}.
+> >
+> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> 
+> I have already submitted a similar patch for this:
+> http://permalink.gmane.org/gmane.linux.power-management.general/33310
+> 
+> 
 
-However I could not see multiplatform support for Exynos in
-exynos_defconfig (i.e., CONFIG_ARCH_EXYNOS and
-CONFIG_ARCH_MULTIPLATFORM are not set together). This was available in
-your 'samsung/exynos-multiplatform' branch. Has this been disabled in
-next?
+Thanks for pointing to the correct patch.
 
----
-With warm regards,
-Sachin
+However, I've got a question:
+
+The patch only changes clock names at exynos_tmu_{probe|remove}.
+
+Correct me if I'm wrong, but shouldn't we also change clock_enable to
+clk_prepare_enable at exynos_tmu_read()? (Are we guaranteed, that we
+will NOT sleep there?)
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Poland (SRPOL) | Linux Platform Group
