@@ -1,85 +1,44 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Tue, 23 Apr 2013 14:12:29 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1304231408370.1679-100000@iolanthe.rowland.org>
-References: <CAFp+6iECumogLo9Tf+4pMqRhtkGHf1CqA52YjL1tACTRyGO7jw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: OMAP: remove unused variable
+Date: Tue, 23 Apr 2013 23:23:27 +0200
+Message-ID: <201304232323.27751.arnd@arndb.de>
+References: <1363818875-15978-1-git-send-email-robherring2@gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <CAFp+6iECumogLo9Tf+4pMqRhtkGHf1CqA52YjL1tACTRyGO7jw@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1363818875-15978-1-git-send-email-robherring2@gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 23 Apr 2013, Vivek Gautam wrote:
+ARM: OMAP: remove unused variable
+    
+Commit 0583fe478a7 "ARM: convert arm/arm64 arch timer to use CLKSRC_OF init"
+has left the omap5_realtime_timer_init() function with a stale variable and
+broken whitespace. This fixes both.
+    
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I've applied this patch on top of the timer cleanup series
 
-> Hi,
-> 
-> 
-> On Tue, Apr 23, 2013 at 10:23 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> > On Tue, 23 Apr 2013, Vivek Gautam wrote:
-> >
-> >> >> Alright, so here's my understanding:
-> >> >>
-> >> >> I suggested letting e.g. DWC3 enable the PHY's runtime_pm; Alan said
-> >> >> that it could be done before that so that DWC3 sees an enabled PHY
-> >> >> during probe.
-> >> >
-> >> > Basically right.  Help me to understand the overall situation a little
-> >> > better:
-> >> >
-> >> >         What code registers the PHY initially?
-> >>            PHY is added to global list by PHY drivers (like
-> >> phy-samsung-usb2.c/phy-omap-usb2.c)
-> >>            by usb_add_phy() API
-> >
-> > Then this routine should initialize the PHY.  The initialized state
-> > could be either active or suspended, your choice.  Suspended would be
-> > best, in case the PHY never gets used.
-> 
-> Fair enough.
-> 
-> >
-> >> >         What routine does the DWC3 driver call to register itself
-> >> >         as a consumer of the PHY?
-> >>            I think DWC3 doesn't registers itself as consumer of PHY,
-> >> rather it gets that PHY from
-> >>            the list using devm_usb_get_phy()/devm_usb_get_phy_by_phandle() API.
-> >>            DWC3 can now call PHY's initialization sequence using usb_phy_init().
-> >>            So, before DWC3 initializes the PHY, PHYs should be in active state.
-> >
-> > Then usb_phy_init should make sure the PHY is in the active state.  If
-> > usb_add_phy() left the PHY suspended, then this routine should call
-> > pm_runtime_get_sync().
-> 
-> Right
-> 
-> >
-> > After DWC3 (or any other driver) has acquired the PHY, it can call
-> > pm_runtime_put/get() however it likes, so long as the calls balance
-> > properly.  If the driver isn't runtime-PM aware then it won't use any
-> > of these calls, and the PHY will remain active the entire time.
-> 
-> Alright, so DWC3 (or any other consumer of PHY) should do minimal to
-> handle runtime state of PHYs; get() when accessing PHY and put() when it's done
-> with it.
-
-Yes.  The first operation will generally be a put, because
-usb_phy_init() will leave the PHY in an active state.
-
-> >> >         Likewise, what routine does it call to unregister itself?
-> >>            Once DWC3's remove() is called PHYs are put.
-> >
-> > Is there a routine analogous to usb_phy_init() that gets called when
-> > PHY is released?  That routine would do the opposite of usb_phy_init(),
-> > putting the PHY back into its initialized state.
-> 
-> Yes, ofcourse there's a routine usb_phy_shutdown(). So this will be
-> calling put_sync()
-> to put PHYs back to its initialized state. Right ?
-
-Correct.
-
-Alan Stern
-
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index 7dd6453..686e498 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -618,12 +618,10 @@ OMAP_SYS_32K_TIMER_INIT(5, 1, OMAP4_32K_SOURCE, "ti,timer-alwon",
+ 			2, OMAP4_MPU_SOURCE);
+ void __init omap5_realtime_timer_init(void)
+ {
+-	int err;
+-
+ 	omap5_sync32k_timer_init();
+ 	realtime_counter_init();
+ 
+-        clocksource_of_init();
++	clocksource_of_init();
+ }
+ #endif /* CONFIG_SOC_OMAP5 */
+ 
