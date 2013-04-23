@@ -1,50 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 00/10] ARM: exynos multiplatform series, part 1
-Date: Tue, 23 Apr 2013 11:09:46 +0200
-Message-ID: <3631184.UZH7PcBe14@wuerfel>
-References: <1365716245-99231-1-git-send-email-arnd@arndb.de> <201304221512.25920.arnd@arndb.de> <CAK9yfHxR_NE2R8qzx4p2DinJHqZoOK-4g6EtiAg6fecjy_Vd5A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: Remove combiner IRQ node from exynos4x12.dtsi
+Date: Tue, 23 Apr 2013 15:24:48 +0530
+Message-ID: <1366710888-11059-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:60654 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755925Ab3DWJJs (ORCPT
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:49856 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755020Ab3DWKHV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 05:09:48 -0400
-In-Reply-To: <CAK9yfHxR_NE2R8qzx4p2DinJHqZoOK-4g6EtiAg6fecjy_Vd5A@mail.gmail.com>
+	Tue, 23 Apr 2013 06:07:21 -0400
+Received: by mail-pb0-f41.google.com with SMTP id ma3so123039pbc.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 03:07:20 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org, patches@linaro.org
 
-On Tuesday 23 April 2013 09:32:30 Sachin Kamat wrote:
-> On 22 April 2013 18:42, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Monday 22 April 2013, Sachin Kamat wrote:
-> >>
-> >> With this branch now available (merged) in linux-next (20130422),
-> >> looks like exynos4 DT support is broken on it. Tested on Origen 4210
-> >> and 4412 and I get the following warnings on 4412 Origen board with
-> >> exynos_defconfig (Note that clocks are all 0). However, it boots fine
-> >> on Arndale board.
-> >
-> > I think this issue should be fixed with the patch that Thomas Abraham
-> > just sent. Thomas, can you confirm?
-> 
-> Boot tested Origen 4210, 4412 and Arndale boards after applying Thomas
-> Abraham's chip-id dt support patches.
-> They all boot fine.
-> 
-> However I could not see multiplatform support for Exynos in
-> exynos_defconfig (i.e., CONFIG_ARCH_EXYNOS and
-> CONFIG_ARCH_MULTIPLATFORM are not set together). This was available in
-> your 'samsung/exynos-multiplatform' branch. Has this been disabled in
-> next?
+These nodes have separately been added to 4212 and 4412 dtsi
+files by commit 30269ddff1 ("ARM: exynos: add missing properties
+for combiner IRQs"). The existing node also contained a few
+incorrect entries.
 
-Yes, you have to remove the "depends on BROKEN" part in
-arch/arm/mach-exynos/Kconfig. The problem is that multiplatform support
-on Exynos only works when you have many the patches that are in
-linux-next at the moment, but it does not work with arm-soc alone,
-so I cannot enable it yet.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+Patch based on linux-next tree (20130423)
+---
+ arch/arm/boot/dts/exynos4x12.dtsi |    8 --------
+ 1 file changed, 8 deletions(-)
 
-	Arnd
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index ede3f9b..675c221 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -28,14 +28,6 @@
+ 		pinctrl3 = &pinctrl_3;
+ 	};
+ 
+-	combiner:interrupt-controller@10440000 {
+-		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+-			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+-			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+-			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+-			     <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>;
+-	};
+-
+ 	clock: clock-controller@0x10030000 {
+ 		compatible = "samsung,exynos4412-clock";
+ 		reg = <0x10030000 0x20000>;
+-- 
+1.7.9.5
