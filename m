@@ -1,79 +1,49 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] clk: exynos5250: Fix divider values for sclk_mmc{0,1,2,3}
-Date: Tue, 23 Apr 2013 08:22:14 +0530
-Message-ID: <5175F75E.105@linaro.org>
-References: <1364890840-20052-1-git-send-email-tushar.behera@linaro.org> <20130404213331.8665.7028@quantum> <2c9001ce3429$e5989a50$b0c9cef0$%kim@samsung.com> <CAD=FV=UUg9Apb0o+zLdidDUmkLZt1phgo80bxug=o6JmANCPfw@mail.gmail.com> <CAOesGMj-wfWNwvP7iAyr0nB0HE_PBzj3DGeE-ixNc3MqtCH9Qg@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v3 00/10] ARM: exynos multiplatform series, part 1
+Date: Tue, 23 Apr 2013 09:32:30 +0530
+Message-ID: <CAK9yfHxR_NE2R8qzx4p2DinJHqZoOK-4g6EtiAg6fecjy_Vd5A@mail.gmail.com>
+References: <1365716245-99231-1-git-send-email-arnd@arndb.de>
+	<201304191536.17796.arnd@arndb.de>
+	<CAK9yfHwEZUPs70j3rS7V44RWxpZShEP8uxo3fFW54=L3NG-bDA@mail.gmail.com>
+	<201304221512.25920.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMj-wfWNwvP7iAyr0nB0HE_PBzj3DGeE-ixNc3MqtCH9Qg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Patch Tracking <patches@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olofj@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:37945 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751469Ab3DWECa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Apr 2013 00:02:30 -0400
+Received: by mail-oa0-f51.google.com with SMTP id k14so168637oag.24
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 21:02:30 -0700 (PDT)
+In-Reply-To: <201304221512.25920.arnd@arndb.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>
 
-On 04/22/2013 11:10 PM, Olof Johansson wrote:
-> Hi,
-> 
-> On Tue, Apr 16, 2013 at 12:35 PM, Doug Anderson <dianders@chromium.org> wrote:
->> Hi,
+On 22 April 2013 18:42, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Monday 22 April 2013, Sachin Kamat wrote:
 >>
->> On Mon, Apr 8, 2013 at 12:22 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->>> Mike Turquette wrote:
->>>>
->>>> Quoting Tushar Behera (2013-04-02 01:20:40)
->>>>> In legacy setup, sclk_mmc{0,1,2,3} used PRE_RATIO bit-field (8-bit wide)
->>>>> instead of RATIO bit-field (4-bit wide) for dividing clock rate.
->>>>>
->>>>> With current common clock setup, we are using RATIO bit-field which
->>>>> is creating FIFO read errors while accessing eMMC. Changing over to
->>>>> use PRE_RATIO bit-field fixes this issue.
->>>>>
->>>>> dwmmc_exynos 12200000.dwmmc0: data FIFO error (status=00008020)
->>>>> mmcblk0: error -5 transferring data, sector 1, nr 7, cmd response 0x900,
->>>> card status 0x0
->>>>> end_request: I/O error, dev mmcblk0, sector 1
->>>>>
->>>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->>>>> CC: Thomas Abraham <thomas.abraham@linaro.org>
->>>>
->>>> I guess this will be applied through the samsung tree, so:
->>>>
->>>> Acked-by: Mike Turquette <mturquette@linaro.org>
->>>>
->>> Thanks, applied.
->>
->> I haven't yet had time to dig / track down why, but this patch totally
->> messes up access to the eMMC on the ARM Chromebook (exynos5250-snow).
->> I suddenly start getting FIFO errors like you show above.  When I
->> revert your change then I'm all happy.
->>
->> Perhaps I need a device tree setting change as well?  I always forget
->> how the "samsung,dw-mshc-ciu-div" / "samsung,dw-mshc-sdr-timing"
->> properties work...
->>
->> For the short term I'm going to revert locally since I've got a few
->> other things to do over the next few days.  If nobody else gets around
->> to it then I'll try to find time to dig further.
-> 
-> Unless I hear differently within 24 hours, I am going to revert this
-> in arm-soc (since that is where it is merged right now).
-> 
+>> With this branch now available (merged) in linux-next (20130422),
+>> looks like exynos4 DT support is broken on it. Tested on Origen 4210
+>> and 4412 and I get the following warnings on 4412 Origen board with
+>> exynos_defconfig (Note that clocks are all 0). However, it boots fine
+>> on Arndale board.
+>
+> I think this issue should be fixed with the patch that Thomas Abraham
+> just sent. Thomas, can you confirm?
 
-I will have a look at it today.
+Boot tested Origen 4210, 4412 and Arndale boards after applying Thomas
+Abraham's chip-id dt support patches.
+They all boot fine.
 
-> It is obviously causing regressions on existing platforms. I am _NOT_
-> happy to see dead silence about this for 6 days. Tushar??
-> 
+However I could not see multiplatform support for Exynos in
+exynos_defconfig (i.e., CONFIG_ARCH_EXYNOS and
+CONFIG_ARCH_MULTIPLATFORM are not set together). This was available in
+your 'samsung/exynos-multiplatform' branch. Has this been disabled in
+next?
 
-Apologies.
-
-> 
-> 
-> -Olof
-> 
-
-
--- 
-Tushar Behera
+---
+With warm regards,
+Sachin
