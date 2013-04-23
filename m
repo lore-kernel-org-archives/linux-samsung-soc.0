@@ -1,350 +1,119 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v4] drm/exynos: prepare FIMD clocks
-Date: Tue, 23 Apr 2013 21:09:55 +0900
-Message-ID: <CAAQKjZN5QurcMg67OFGHj1POEZfM82H510iHrQ4ghRgeBQ2mAQ@mail.gmail.com>
-References: <1365419265-21238-1-git-send-email-vikas.sajjan@linaro.org>
-	<51750E43.1050602@samsung.com> <2218256.k8DNv9nCJl@amdc1227>
-	<1789889.I0NQprXLsB@vostro.rjw.lan>
-	<CAAQKjZOpuPw6XZJj198uwJ-WsBHwK6oSKHfYz5zoNivVcbwQng@mail.gmail.com>
-	<00b401ce4018$f620a390$e261eab0$@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
+Date: Tue, 23 Apr 2013 18:12:06 +0530
+Message-ID: <CAFp+6iHWMqNQjKV_EQH-Zm6qKbuFwvPJZeswzNFVSSdH-VDB3Q@mail.gmail.com>
+References: <20130404092616.GD30991@arwen.pp.htv.fi>
+	<Pine.LNX.4.44L0.1304041022260.1324-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1703852589=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <00b401ce4018$f620a390$e261eab0$@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: "myungjoo.ham" <myungjoo.ham@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "patches@linaro.org" <patches@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linaro-kernel@lists.linaro.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44L0.1304041022260.1324-100000@iolanthe.rowland.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============1703852589==
-Content-Type: multipart/alternative; boundary=089e01182dd440c06c04db061049
+Hi,
 
---089e01182dd440c06c04db061049
-Content-Type: text/plain; charset=ISO-8859-1
 
-2013/4/23 myungjoo.ham <myungjoo.ham@samsung.com>
+On Thu, Apr 4, 2013 at 8:16 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
 
-> 2013/4/22 Inki Dae
-> > 2013/4/22 Rafael J. Wysocki <rjw@sisk.pl>
-> > > On Monday, April 22, 2013 12:37:36 PM Tomasz Figa wrote:
-> > > > On Monday 22 of April 2013 12:17:39 Sylwester Nawrocki wrote:
-> > > > > On 04/22/2013 12:03 PM, Inki Dae wrote:
-> > > > > >     > Also looks good to me. But what if power domain was
-> disabled
-> without
-> > > > > >     > pm
-> > > > > >     > runtime? In this case, you must enable the power domain at
-> machine
-> > > > > >     > code or
-> > > > > >     > bootloader somewhere. This way would not only need some
-> hard
-> codes
-> > > > > >     > to turn
-> > > > > >     > the power domain on but also not manage power management
-> fully. This
-> > > > > >     > is same as only the use of pm runtime interface(needing
-> some
-> hard
-> > > > > >     > codes without pm runtime) so I don't prefer to add
-> > > > > >     > clk_enable/disable to fimd probe(). I quite tend to force
-> only the
-> > > > > >     > use of pm runtime as possible. So please add the hard codes
-> to
-> > > > > >     > machine code or bootloader like you did for power domain if
-> you
-> > > > > >     > want to use drm fimd without pm runtime.
-> > > > > >
-> > > > > >     That's not how the runtime PM, clock subsystems work:
-> > > > > >
-> > > > > >     1) When CONFIG_PM_RUNTIME is disabled, all the used hardware
-> must be
-> > > > > >     kept
-> > > > > >     powered on all the time.
-> > > > > >
-> > > > > >     2) Common Clock Framework will always gate all clocks that
-> have zero
-> > > > > >     enable_count. Note that CCF support for Exynos is already
-> merged for
-> > > > > >     3.10 and it will be the only available clock support method
-> for
-> > > > > >     Exynos.
-> > > > > >
-> > > > > >     AFAIK, drivers must work correctly in both cases, with
-> > > > > >     CONFIG_PM_RUNTIME
-> > > > > >     enabled and disabled.
-> > > > > >
-> > > > > > Then is the driver worked correctly if the power domain to this
-> device was
-> > > > > > disabled at bootloader without CONFIG_PM_RUNTIME and with
-> clk_enable()?  I
-> > > > > > think, in this case, the device wouldn't be worked correctly
-> because the
-> > > > > > power of the device remains off. So you must enable the power
-> domain
-> > > > > > somewhere. What is the difference between these two cases?
-> > > > >
-> > > > > How about making the driver dependant on PM_RUNTIME and making it
-> always
-> > > > > use pm_runtime_* API, regardless if the platform actually
-> implements
-> runtime
-> > > > > PM or not ? Is there any issue in using the Runtime PM core always,
-> rather
-> > > > > than coding any workarounds in drivers when PM_RUNTIME is disabled
-> ?
-> > > >
-> > > > I don't think this is a good idea. This would mean that any user that
-> from
-> > > > some reasons don't want to use PM_RUNTIME, would not be able to use
-> the driver
-> > > > anymore.
-> > > >
-> > > > Rafael, Kevin, do you have any opinion on this?
-> > > I agree.
-> > >
-> > > Drivers should work for CONFIG_PM_RUNTIME unset too and static inline
-> stubs for
-> > > all runtime PM helpers are available in that case.
-> > >
-> > Hi Rafael,
-> > The embedded system, at least Exynos SoC case, has the power domain
-> device
-> and this device could be enabled only by pm runtime interface. So the
-> device
-> couldn't be worked correctly without turning the power domain on only
-> calling clk_enable(). In this case, the power domain must be enabled at
-> machine code or bootloader. And the machine without CONFIG_PM_RUNTIME would
-> assume that their own drivers always are enabled so the devices would be
-> worked correctly. Is there any my missing point?
->
->
-> - Power domain: not controlled if !CONFIG_PM_RUNTIME. Thus, we may
-> assume that every power domain is kept ON from boot time if
-> !CONFIG_PM_RUNTIME.
-> If power domain is kept OFF from boot time (machine init code or
-> bootloader)
-> with !CONFIG_PM_RUNTIME, then it's simple a mistake at BSP writer.
->
-> - Yes, the clock is still controlled while !CONFIG_PM_RUNTIME.
->
-> My opinion is also to let probe do clk-enables though I don't want it
-> to have #ifdef or "clk_enable()" in the probe function.
-> Thus, implementing "power_on()"-like function in the driver and let probe()
-> and
-> runtime_pm_get callback call it seems appropriate to me.
-> (that "fimd_active(ctx, true)" is "power-on" to itself, right?)
->
->
-I thought that it should assume the power domain and relevant clocks are
-enabled without CONFIG_PM_RUNTIME. So could anyone please tell me about
-that? If only the power domain , I think Tomasz's proposal is good solution.
+Apologies for delay in replying.
 
-Thanks,
-Inki Dae
-
+> On Thu, 4 Apr 2013, Felipe Balbi wrote:
+>
+>> > >> Some subsystems handle this issue by calling pm_runtime_get_sync()
+>> > >> before probing a driver and pm_runtime_put_sync() after unbinding the
+>> > >> driver.  If the driver is runtime-PM-enabled, it then does its own
+>> > >> put_sync near the end of its probe routine and get_sync in its release
+>> > >> routine.
+>> > >
+>> > > sounds a bit 'fishy' to me... So a separate entity would call
+>> > > pm_runtime_get_sync(), even when we don't have registered dev_pm_ops,
+>
+> I don't know what you mean by "separate entity".  The PHY's subsystem
+> would handle this.  After all, the subsystem has to handle registering
+> the PHY in the first place.
+>
+> If the PHY doesn't have a dev_pm_ops, why are you talking about doing
+> runtime PM on it?  That doesn't make any sense.
+>
+>> > > then drivers need to check if runtime_pm is enabled and call
+>> > > pm_runtime_put*() conditionally before returning from probe(). One
+>
+> They don't have to check.  If CONFIG_PM_RUNTIME isn't set or the target
+> is runtime-PM-disabled then pm_runtime_put* is essentially a no-op (in
+> the disabled case it decrements the usage counter but doesn't do
+> anything else).
+>
+> One possible complication I did not mention: The scheme described above
+> assumes the device that uses the PHY will always be registered on the
+> same type of bus.  If the device can be used on multiple bus types (and
+> hence in multiple subsystems) then things aren't so simple, because
+> some of the subsystems might support runtime PM and others might not.
+> (You may very well run into this problem with USB controllers that are
+> sometimes on a PCI bus and sometimes on a platform bus.)  In this case,
+> the driver needs to adapt to the subsystem's capabilities.  Presumably
+> the bus-glue part of the driver takes care of this.
+>
+>> > > remove, we might have another issue: device is already runtime_suspended
+>> > > (due to e.g. autosuspend) when module is removed, a call to
+>> > > pm_runtime_put_sync() will be unbalanced. No ?
+>
+> No.  I left out some of the details.  For one thing, the subsystem is
+> careful to do a runtime resume before calling the driver's remove
+> method.  (Also, if you look over my original description carefully,
+> you'll see that there are no unbalanced calls -- even if the device is
+> already runtime suspended when the driver is unbound.)
+>
+> For another, the subsystem needs to check before calling the driver's
+> runtime-PM methods.  There are two brief windows during which the
+> driver isn't in charge of the device even though dev->driver is set.
+> Those windows occur in the subsystem's probe routine (before it calls
+> the driver's probe method) and in the subsystem's remove routine
+> (after it calls the driver's remove method).  At such times, the
+> subsystem's runtime-PM handlers must be careful _not_ to call the
+> driver's runtime-PM routines.
+>
+>> > May be i am misinterpreting !!
+>> > If PHYs are runtime-PM enabled (PHY probe calls *runtime_enable*),
+>> > then the consumers
+>> > need to call pm_runtime_get_sync whever they want to access PHY.
+>
+> No, because in addition to being runtime-PM enabled, the PHY should
+> automatically be runtime resumed when the consumer registers itself as
+> a user of the PHY.  Therefore the consumer doesn't need to do anything
+> at all -- which is good for consumers that aren't runtime-PM aware.
+>
+>> Alright, so here's my understanding:
+>>
+>> I suggested letting e.g. DWC3 enable the PHY's runtime_pm; Alan said
+>> that it could be done before that so that DWC3 sees an enabled PHY
+>> during probe.
+>
+> Basically right.  Help me to understand the overall situation a little
+> better:
+>
+>         What code registers the PHY initially?
+           PHY is added to global list by PHY drivers (like
+phy-samsung-usb2.c/phy-omap-usb2.c)
+           by usb_add_phy() API
 
 >
-> Cheers,
-> MyungJoo
+>         What routine does the DWC3 driver call to register itself
+>         as a consumer of the PHY?
+           I think DWC3 doesn't registers itself as consumer of PHY,
+rather it gets that PHY from
+           the list using devm_usb_get_phy()/devm_usb_get_phy_by_phandle() API.
+           DWC3 can now call PHY's initialization sequence using usb_phy_init().
+           So, before DWC3 initializes the PHY, PHYs should be in active state.
+
 >
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+>         Likewise, what routine does it call to unregister itself?
+           Once DWC3's remove() is called PHYs are put.
 
---089e01182dd440c06c04db061049
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><br><div class=3D"gmail=
-_quote">2013/4/23 myungjoo.ham <span dir=3D"ltr">&lt;<a href=3D"mailto:myun=
-gjoo.ham@samsung.com" target=3D"_blank">myungjoo.ham@samsung.com</a>&gt;</s=
-pan><br><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border=
--left:1px #ccc solid;padding-left:1ex">
-2013/4/22 Inki Dae<br>
-<div><div class=3D"h5">&gt; 2013/4/22 Rafael J. Wysocki &lt;<a href=3D"mail=
-to:rjw@sisk.pl">rjw@sisk.pl</a>&gt;<br>
-&gt; &gt; On Monday, April 22, 2013 12:37:36 PM Tomasz Figa wrote:<br>
-&gt; &gt; &gt; On Monday 22 of April 2013 12:17:39 Sylwester Nawrocki wrote=
-:<br>
-&gt; &gt; &gt; &gt; On 04/22/2013 12:03 PM, Inki Dae wrote:<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; Also looks good to me. But what if po=
-wer domain was disabled<br>
-without<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; pm<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; runtime? In this case, you must enabl=
-e the power domain at<br>
-machine<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; code or<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; bootloader somewhere. This way would =
-not only need some hard<br>
-codes<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; to turn<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; the power domain on but also not mana=
-ge power management<br>
-fully. This<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; is same as only the use of pm runtime=
- interface(needing some<br>
-hard<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; codes without pm runtime) so I don&#3=
-9;t prefer to add<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; clk_enable/disable to fimd probe(). I=
- quite tend to force<br>
-only the<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; use of pm runtime as possible. So ple=
-ase add the hard codes<br>
-to<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; machine code or bootloader like you d=
-id for power domain if<br>
-you<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 &gt; want to use drm fimd without pm runti=
-me.<br>
-&gt; &gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 That&#39;s not how the runtime PM, clock s=
-ubsystems work:<br>
-&gt; &gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 1) When CONFIG_PM_RUNTIME is disabled, all=
- the used hardware<br>
-must be<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 kept<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 powered on all the time.<br>
-&gt; &gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 2) Common Clock Framework will always gate=
- all clocks that<br>
-have zero<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 enable_count. Note that CCF support for Ex=
-ynos is already<br>
-merged for<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 3.10 and it will be the only available clo=
-ck support method<br>
-for<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 Exynos.<br>
-&gt; &gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 AFAIK, drivers must work correctly in both=
- cases, with<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 CONFIG_PM_RUNTIME<br>
-&gt; &gt; &gt; &gt; &gt; =A0 =A0 enabled and disabled.<br>
-&gt; &gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; &gt; Then is the driver worked correctly if the power d=
-omain to this<br>
-device was<br>
-&gt; &gt; &gt; &gt; &gt; disabled at bootloader without CONFIG_PM_RUNTIME a=
-nd with<br>
-clk_enable()? =A0I<br>
-&gt; &gt; &gt; &gt; &gt; think, in this case, the device wouldn&#39;t be wo=
-rked correctly<br>
-because the<br>
-&gt; &gt; &gt; &gt; &gt; power of the device remains off. So you must enabl=
-e the power<br>
-domain<br>
-&gt; &gt; &gt; &gt; &gt; somewhere. What is the difference between these tw=
-o cases?<br>
-&gt; &gt; &gt; &gt;<br>
-&gt; &gt; &gt; &gt; How about making the driver dependant on PM_RUNTIME and=
- making it<br>
-always<br>
-&gt; &gt; &gt; &gt; use pm_runtime_* API, regardless if the platform actual=
-ly implements<br>
-runtime<br>
-&gt; &gt; &gt; &gt; PM or not ? Is there any issue in using the Runtime PM =
-core always,<br>
-rather<br>
-&gt; &gt; &gt; &gt; than coding any workarounds in drivers when PM_RUNTIME =
-is disabled ?<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; I don&#39;t think this is a good idea. This would mean that =
-any user that<br>
-from<br>
-&gt; &gt; &gt; some reasons don&#39;t want to use PM_RUNTIME, would not be =
-able to use<br>
-the driver<br>
-&gt; &gt; &gt; anymore.<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; Rafael, Kevin, do you have any opinion on this?<br>
-&gt; &gt; I agree.<br>
-&gt; &gt;<br>
-&gt; &gt; Drivers should work for CONFIG_PM_RUNTIME unset too and static in=
-line<br>
-stubs for<br>
-&gt; &gt; all runtime PM helpers are available in that case.<br>
-&gt; &gt;<br>
-&gt; Hi Rafael,<br>
-&gt; The embedded system, at least Exynos SoC case, has the power domain de=
-vice<br>
-and this device could be enabled only by pm runtime interface. So the devic=
-e<br>
-couldn&#39;t be worked correctly without turning the power domain on only<b=
-r>
-calling clk_enable(). In this case, the power domain must be enabled at<br>
-machine code or bootloader. And the machine without CONFIG_PM_RUNTIME would=
-<br>
-assume that their own drivers always are enabled so the devices would be<br=
->
-worked correctly. Is there any my missing point?<br>
-<br>
-<br>
-</div></div>- Power domain: not controlled if !CONFIG_PM_RUNTIME. Thus, we =
-may<br>
-assume that every power domain is kept ON from boot time if<br>
-!CONFIG_PM_RUNTIME.<br>
-If power domain is kept OFF from boot time (machine init code or bootloader=
-)<br>
-with !CONFIG_PM_RUNTIME, then it&#39;s simple a mistake at BSP writer.<br>
-<br>
-- Yes, the clock is still controlled while !CONFIG_PM_RUNTIME.<br>
-<br>
-My opinion is also to let probe do clk-enables though I don&#39;t want it<b=
-r>
-to have #ifdef or &quot;clk_enable()&quot; in the probe function.<br>
-Thus, implementing &quot;power_on()&quot;-like function in the driver and l=
-et probe()<br>
-and<br>
-runtime_pm_get callback call it seems appropriate to me.<br>
-(that &quot;fimd_active(ctx, true)&quot; is &quot;power-on&quot; to itself,=
- right?)<br>
-<br></blockquote><div><br></div><div>I thought that it should assume the po=
-wer domain and relevant clocks are enabled without CONFIG_PM_RUNTIME. So co=
-uld anyone please tell me about that? If only the power domain , I think To=
-masz&#39;s proposal is good solution.<br>
-<br></div><div>Thanks,<br>Inki Dae<br></div><div>=A0</div><blockquote class=
-=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
-ing-left:1ex">
-<br>
-Cheers,<br>
-MyungJoo<br>
-<div class=3D"HOEnZb"><div class=3D"h5"><br>
-<br>
---<br>
-To unsubscribe from this list: send the line &quot;unsubscribe linux-samsun=
-g-soc&quot; in<br>
-the body of a message to <a href=3D"mailto:majordomo@vger.kernel.org">major=
-domo@vger.kernel.org</a><br>
-More majordomo info at =A0<a href=3D"http://vger.kernel.org/majordomo-info.=
-html" target=3D"_blank">http://vger.kernel.org/majordomo-info.html</a><br>
-</div></div></blockquote></div><br></div></div>
 
---089e01182dd440c06c04db061049--
-
---===============1703852589==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1703852589==--
+-- 
+Best Regards
+Vivek
