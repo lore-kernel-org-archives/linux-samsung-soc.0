@@ -1,100 +1,100 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Late Exynos stuff for v3.10
-Date: Wed, 24 Apr 2013 01:19:37 +0900
-Message-ID: <5176B499.1000208@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: exynos5250: Fix parent clock for sclk_mmc{0,1,2,3}
+Date: Tue, 23 Apr 2013 09:23:49 -0700
+Message-ID: <20130423162349.17530.35976@quantum>
+References: <CAD=FV=UUg9Apb0o+zLdidDUmkLZt1phgo80bxug=o6JmANCPfw@mail.gmail.com>
+ <1366698711-15470-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f45.google.com ([209.85.210.45]:44662 "EHLO
-	mail-da0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756452Ab3DWQTn (ORCPT
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:50951 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756315Ab3DWQXz convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 12:19:43 -0400
-Received: by mail-da0-f45.google.com with SMTP id v40so415355dad.32
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 09:19:43 -0700 (PDT)
+	Tue, 23 Apr 2013 12:23:55 -0400
+Received: by mail-pd0-f172.google.com with SMTP id 4so539434pdd.31
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 09:23:55 -0700 (PDT)
+In-Reply-To: <1366698711-15470-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dianders@chromium.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, olofj@chromium.org, patches@linaro.org
 
-The following changes since commit 58a7bbf75442ea439a4d3b7993ad87023e406063:
+Quoting Tushar Behera (2013-04-22 23:31:51)
+> commit 688f7d8c9fef ("clk: exynos5250: Fix divider values for
+> sclk_mmc{0,1,2,3}") incorrectly sets the divider for sclk_mmc{0,1,2,3}
+> to fix the wrong clock value. Though this fixed issue with Arndale,
+> it created regressions for other boards like Snow.
+> 
+> On Exynos5250, sclk_mmc<n> is generated like below (as per the clock
+> names in drivers/clk/samsung/clk-exynos5250.c)
+> 
+> mout_group1_p ==> mout_mmc<n> ==>
+>                 div_mmc<n> ==> div_mmc_pre<n> => sclk_mmc<n>
+> 
+> Earlier div_mmc<n> was set as the parent for sclk_mmc<n>, hence
+> div_mmc_pre<n> was not getting referred in kernel code and depending
+> on its value set during preboot, sclk_mmc<n> value was different for
+> various boards.
+> 
+> Setting the correct clock generation path should fix the issues
+> reported in above referenced commit. The changes committed during the
+> earlier patch has also been reverted here.
+> 
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> CC: Doug Anderson <dianders@chromium.org>
 
-   ARM: dts: add PDMA0 changes for exynos5440 (2013-04-09 01:39:27 +0900)
+Change looks good to me.
 
-are available in the git repository at:
+Regards,
+Mike
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/late-exynos-for-v3.10
-
-for you to fetch changes up to 9007025f3438ec3bdea02439e760585345102b8d:
-
-   ARM: dts: Disable the RTC by default on exynos5 (2013-04-24 00:32:28 
-+0900)
-
-----------------------------------------------------------------
-This includes late exynos stuff for v3.10 1) keypad for smdk4412 and 
-origen4412 boards 2) adds mfc clock entries for exynos4 3) enables 
-usb2phy, usb3phy and dwc3-exynos for exynos5250 4) enables tmu for 
-exynos4210 5) support chip id with dt
-
-----------------------------------------------------------------
-Doug Anderson (1):
-       ARM: dts: Disable the RTC by default on exynos5
-
-Girish K S (1):
-       ARM: EXYNOS: force MAC ip to 32bit DMA
-
-Sachin Kamat (7):
-       ARM: dts: Remove keypad entries from exynos4x12-pinctrl.dtsi
-       ARM: dts: Add keypad entries to Exynos4412 based Origen
-       ARM: dts: Add keypad entries to SMDK4412
-       ARM: dts: Add MFC clock entries for exynos4
-       ARM: dts: Update MFC documentation for clock entries
-       ARM: dts: Add TMU clock entries to exynos4210.dtsi
-       ARM: dts: Enable TMU on Origen4210 board
-
-Thomas Abraham (4):
-       ARM: dts: add mshc controller node for Exynos4x12 SoCs
-       ARM: EXYNOS: Add a platform bus notifier to set dma masks for 
-Exynos5440
-       ARM: EXYNOS: Create virtual I/O mapping for Chip-ID controller 
-using device tree
-       ARM: dts: Add chip-id controller node on Exynos4/5 SoC
-
-Vivek Gautam (5):
-       ARM: dts: Enabling samsung-usb2phy driver for exynos5250
-       ARM: dts: Enabling samsung-usb3phy driver for exynos5250
-       ARM: dts: Add device tree bindings for dwc3-exynos
-       ARM: dts: Enabling dwc3-exynos driver for exynos5250
-       ARM: EXYNOS: Enable XHCI support on exynos5
-
-  .../devicetree/bindings/media/s5p-mfc.txt          |  5 ++
-  .../devicetree/bindings/usb/exynos-usb.txt         | 34 +++++++++
-  arch/arm/boot/dts/exynos4.dtsi                     |  7 ++
-  arch/arm/boot/dts/exynos4210-origen.dts            |  4 +
-  arch/arm/boot/dts/exynos4210.dtsi                  |  3 +
-  arch/arm/boot/dts/exynos4412-origen.dts            | 62 +++++++++++++++
-  arch/arm/boot/dts/exynos4412-smdk4412.dts          | 87 
-++++++++++++++++++++++
-  arch/arm/boot/dts/exynos4412.dtsi                  |  8 ++
-  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi          | 56 --------------
-  arch/arm/boot/dts/exynos5250.dtsi                  | 51 +++++++++++++
-  arch/arm/boot/dts/exynos5440.dtsi                  |  1 +
-  arch/arm/mach-exynos/Kconfig                       |  1 +
-  arch/arm/mach-exynos/common.c                      | 53 +++++++------
-  arch/arm/mach-exynos/include/mach/map.h            |  1 -
-  arch/arm/mach-exynos/mach-exynos5-dt.c             | 28 +++++++
-  15 files changed, 321 insertions(+), 80 deletions(-)
-
-Hi Arnd and Olof,
-
-As I said, last my pull-request at 4/10 included most of above changes. 
-So would be nice if you could pull this and small patches added on top 
-of that though.
-
-If any problems, please kindly let me know.
-
-Thanks.
-
-- Kukjin
+> ---
+> Doug,
+> 
+> Would you please test whether this patch works for Snow?
+> 
+> 
+>  drivers/clk/samsung/clk-exynos5250.c |   16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index 7290faa..bb54606 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -276,10 +276,10 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+>         DIV(none, "div_pcm0", "sclk_audio0", DIV_MAU, 4, 8),
+>         DIV(none, "div_sata", "mout_sata", DIV_FSYS0, 20, 4),
+>         DIV(none, "div_usb3", "mout_usb3", DIV_FSYS0, 24, 4),
+> -       DIV(none, "div_mmc0", "mout_mmc0", DIV_FSYS1, 8, 8),
+> -       DIV(none, "div_mmc1", "mout_mmc1", DIV_FSYS1, 24, 8),
+> -       DIV(none, "div_mmc2", "mout_mmc2", DIV_FSYS2, 8, 8),
+> -       DIV(none, "div_mmc3", "mout_mmc3", DIV_FSYS2, 24, 8),
+> +       DIV(none, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+> +       DIV(none, "div_mmc1", "mout_mmc1", DIV_FSYS1, 16, 4),
+> +       DIV(none, "div_mmc2", "mout_mmc2", DIV_FSYS2, 0, 4),
+> +       DIV(none, "div_mmc3", "mout_mmc3", DIV_FSYS2, 16, 4),
+>         DIV(none, "div_uart0", "mout_uart0", DIV_PERIC0, 0, 4),
+>         DIV(none, "div_uart1", "mout_uart1", DIV_PERIC0, 4, 4),
+>         DIV(none, "div_uart2", "mout_uart2", DIV_PERIC0, 8, 4),
+> @@ -421,13 +421,13 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+>                         SRC_MASK_DISP1_0, 20, 0, 0),
+>         GATE(sclk_audio0, "sclk_audio0", "div_audio0",
+>                         SRC_MASK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+> -       GATE(sclk_mmc0, "sclk_mmc0", "div_mmc0",
+> +       GATE(sclk_mmc0, "sclk_mmc0", "div_mmc_pre0",
+>                         SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
+> -       GATE(sclk_mmc1, "sclk_mmc1", "div_mmc1",
+> +       GATE(sclk_mmc1, "sclk_mmc1", "div_mmc_pre1",
+>                         SRC_MASK_FSYS, 4, CLK_SET_RATE_PARENT, 0),
+> -       GATE(sclk_mmc2, "sclk_mmc2", "div_mmc2",
+> +       GATE(sclk_mmc2, "sclk_mmc2", "div_mmc_pre2",
+>                         SRC_MASK_FSYS, 8, CLK_SET_RATE_PARENT, 0),
+> -       GATE(sclk_mmc3, "sclk_mmc3", "div_mmc3",
+> +       GATE(sclk_mmc3, "sclk_mmc3", "div_mmc_pre3",
+>                         SRC_MASK_FSYS, 12, CLK_SET_RATE_PARENT, 0),
+>         GATE(sclk_sata, "sclk_sata", "div_sata",
+>                         SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
+> -- 
+> 1.7.9.5
