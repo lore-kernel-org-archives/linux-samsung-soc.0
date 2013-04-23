@@ -1,122 +1,57 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH 4/6] thermal: Support for TMU regulator defined at device
- tree
-Date: Tue, 23 Apr 2013 11:01:36 -0400
-Message-ID: <5176A250.40209@ti.com>
-References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com> <1366389493-8239-5-git-send-email-l.majewski@samsung.com> <51717D89.3090303@ti.com> <20130423082312.3caf60e0@amdc308.digital.local>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 2/3] ARM: EXYNOS: Fix support of Exynos4210 rev0 SoC
+Date: Wed, 24 Apr 2013 00:02:29 +0900
+Message-ID: <5176A285.9030009@samsung.com>
+References: <1366036922-4103-1-git-send-email-t.figa@samsung.com> <201304222310.34775.arnd@arndb.de> <517692FD.9080005@samsung.com> <1696892.zdvbYPFFr0@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:48154 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755730Ab3DWPB5 (ORCPT
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:63634 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755261Ab3DWPCj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 11:01:57 -0400
-In-Reply-To: <20130423082312.3caf60e0@amdc308.digital.local>
+	Tue, 23 Apr 2013 11:02:39 -0400
+Received: by mail-pd0-f173.google.com with SMTP id v10so491973pde.32
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 08:02:38 -0700 (PDT)
+In-Reply-To: <1696892.zdvbYPFFr0@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Zhang Rui <rui.zhang@intel.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org
 
-On 23-04-2013 02:23, Lukasz Majewski wrote:
-> Hi Eduardo,
->
->> On 19-04-2013 12:38, Lukasz Majewski wrote:
->>> TMU probe function now checks for a device tree defined regulator.
->>> For compatibility reasons it is allowed to probe driver even without
->>> this regulator defined.
->>>
->>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>>    drivers/thermal/exynos_thermal.c |   19 +++++++++++++++++++
->>>    1 file changed, 19 insertions(+)
->>>
->>> diff --git a/drivers/thermal/exynos_thermal.c
->>> b/drivers/thermal/exynos_thermal.c index ba6094c..e922fa4 100644
->>> --- a/drivers/thermal/exynos_thermal.c
->>> +++ b/drivers/thermal/exynos_thermal.c
->>> @@ -38,6 +38,7 @@
->>>    #include <linux/cpufreq.h>
->>>    #include <linux/cpu_cooling.h>
->>>    #include <linux/of.h>
->>> +#include <linux/regulator/consumer.h>
->>>
->>>    #include <plat/cpu.h>
->>>
->>> @@ -119,6 +120,8 @@
->>>
->>>    #define EXYNOS_ZONE_COUNT	3
->>>
->>> +#define EXYNOS_TMU_REGULATOR "vdd_ts"
->>> +
->>>    struct exynos_tmu_data {
->>>    	struct exynos_tmu_platform_data *pdata;
->>>    	struct resource *mem;
->>> @@ -944,6 +947,7 @@ static int exynos_tmu_probe(struct
->>> platform_device *pdev) {
->>>    	struct exynos_tmu_data *data;
->>>    	struct exynos_tmu_platform_data *pdata =
->>> pdev->dev.platform_data;
->>> +	struct regulator *reg;
->>>    	int ret, i;
->>>
->>>    	if (!pdata)
->>> @@ -953,6 +957,21 @@ static int exynos_tmu_probe(struct
->>> platform_device *pdev) dev_err(&pdev->dev, "No platform init data
->>> supplied.\n"); return -ENODEV;
->>>    	}
->>> +
->>> +	reg = regulator_get(&pdev->dev, EXYNOS_TMU_REGULATOR);
->>> +	if (!IS_ERR(reg)) {
->>> +		ret = regulator_enable(reg);
->>> +		if (ret) {
->>> +			dev_err(&pdev->dev, "Regulator %s not
->>> enabled.\n",
->>> +				EXYNOS_TMU_REGULATOR);
->>> +			return ret;
->>> +		}
->>> +	} else {
->>> +		dev_info(&pdev->dev,
->>> +			 "Regulator %s not defined at device
->>> tree.\n",
->>> +			 EXYNOS_TMU_REGULATOR);
->> Maybe a dev_warn would fit better?
->
-> This is a bit tricky. I first wanted to return -ENODEV when regulator
-> is not available. Then I understood, that some other SoCs (e.g.
-> Exynos5) will not work.
->
-> The info here shall give a clear warn signal, that providing a
-> regulator for VDD_TS is crucial (since by default it can be connected
-> to other PMIC outputs and when other device puts down this regulator
-> the TMU will crash and shut down a system).
+On 04/23/13 23:26, Tomasz Figa wrote:
+> Hi Kukjin,
 
-OK. I understand your point. Well, it depends on how you want to design 
-your driver. This is a clear case for having some sort of required 
-feature set bitmap, for instance. Each supported soc for your driver 
-would then have a bitmap indicating which features it actually supports. 
-Based on the bitmap you make it mandatory on your regulator_get 
-treatment. If it is mandatory, then you must clearly return an error 
-code. I have done a similar thing for the ti-soc-thermal driver 
-(drivers/staging/ti-soc-thermal/).
+[...]
 
-But again, this is your call, not sure if you want to go for that design 
-just for this item,
-
-Still, if you keep the code the way it is, I d request to change your 
-message level to dev_warn. And in case you have a way to determine it is 
-a mandatory entry, then to dev_err
-
->
+>>> Acked-by: Arnd Bergmann<arnd@arndb.de>
+>>>
+>>> Note that it would be helpful to mention here that this is required for
+>>> the calling samsung_timer_init from the exynos4-dt.c file.
 >>
->>> +	}
->>> +
->>>    	data = devm_kzalloc(&pdev->dev, sizeof(struct
->>> exynos_tmu_data), GFP_KERNEL);
->>>    	if (!data) {
->>>
+>> I did 'amend' as per your suggestion and added your ack on this series.
+>>
+>> Thanks.
+>>
+>> - Kukjin
 >
+> Since the samsung-time rework patches were replaced with a non-invasive subset
+> with different semantics (going to send them in a while), this patch should be
+> replaced with new version I'm going to send (in a while as well).
 >
->
+Oh, OK. You want to replace with new patches you will send. I dropped 
+this series in my late dt branch.
+
+BTW, the series should depend on your samsung-time patches, right?
+
+One more note, this makes following build error.
+
+arch/arm/mach-exynos/built-in.o: In function `exynos_init_time':
+arch/arm/mach-exynos/common.c:424: undefined reference to 
+`samsung_timer_init'
+make: *** [vmlinux] Error 1
+
+Thanks.
+
+- Kukjin
