@@ -1,68 +1,89 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 0/6] thermal:exynos4: Thermal Measurement Unit fixes for
- Samsung SoCs
-Date: Tue, 23 Apr 2013 08:26:08 +0200
-Message-ID: <20130423082608.2d163140@amdc308.digital.local>
-References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
- <51756AA6.3000906@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] clk: exynos5250: Fix parent clock for sclk_mmc{0,1,2,3}
+Date: Tue, 23 Apr 2013 12:01:51 +0530
+Message-ID: <1366698711-15470-1-git-send-email-tushar.behera@linaro.org>
+References: <CAD=FV=UUg9Apb0o+zLdidDUmkLZt1phgo80bxug=o6JmANCPfw@mail.gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23289 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755017Ab3DWG02 (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:62361 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754897Ab3DWGo0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 02:26:28 -0400
-In-reply-to: <51756AA6.3000906@samsung.com>
+	Tue, 23 Apr 2013 02:44:26 -0400
+Received: by mail-pd0-f171.google.com with SMTP id t12so232305pdi.16
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2013 23:44:26 -0700 (PDT)
+In-Reply-To: <CAD=FV=UUg9Apb0o+zLdidDUmkLZt1phgo80bxug=o6JmANCPfw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Zhang Rui <rui.zhang@intel.com>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dianders@chromium.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, olofj@chromium.org, patches@linaro.org
 
-Hi Kukjin,
+commit 688f7d8c9fef ("clk: exynos5250: Fix divider values for
+sclk_mmc{0,1,2,3}") incorrectly sets the divider for sclk_mmc{0,1,2,3}
+to fix the wrong clock value. Though this fixed issue with Arndale,
+it created regressions for other boards like Snow.
 
-> On 04/20/13 01:38, Lukasz Majewski wrote:
-> > This patch series provide various fixes for TMU block.
-> > Namely, support for common clock framework and proper regulator
-> > VDD_TS has been added.
-> > Moreover device tree definitions and documentation entry are now in
-> > place.
-> >
-> > Lukasz Majewski (6):
-> >    clk:exynos4:TMU Thermal Measurement Unit clock added to common
-> > clock framework
-> >    thermal:exynos4: TMU Common clock framework support for TMU
-> > (Thermal Monitoring Unit)
-> >    thermal:exynos4: TMU device tree support for Exynos4412 targets
-> >    thermal: Support for TMU regulator defined at device tree
-> >    thermal:exynos4: Enable support for Exynos4412 SoCs
-> >    thermal:exynos4: Add documentation for Exynos SoC thermal
-> > bindings
-> >
-> >   .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
-> >   .../devicetree/bindings/thermal/exynos-thermal.txt |   22
-> > +++++++++++ arch/arm/boot/dts/exynos4x12.dtsi                  |
-> > 10 +++++ drivers/clk/samsung/clk-exynos4.c                  |    6
-> > ++- drivers/thermal/exynos_thermal.c                   |   41
-> > +++++++++++++++----- 5 files changed, 70 insertions(+), 10
-> > deletions(-) create mode 100644
-> > Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> >
-> Lukasz, please address comments from ml.
-> 
+On Exynos5250, sclk_mmc<n> is generated like below (as per the clock
+names in drivers/clk/samsung/clk-exynos5250.c)
 
-Ok. I'm going to prepare v2
+mout_group1_p ==> mout_mmc<n> ==>
+		div_mmc<n> ==> div_mmc_pre<n> => sclk_mmc<n>
 
-> Others looks good to me.
-> 
-> - Kukjin
+Earlier div_mmc<n> was set as the parent for sclk_mmc<n>, hence
+div_mmc_pre<n> was not getting referred in kernel code and depending
+on its value set during preboot, sclk_mmc<n> value was different for
+various boards.
+
+Setting the correct clock generation path should fix the issues
+reported in above referenced commit. The changes committed during the
+earlier patch has also been reverted here.
+
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+CC: Doug Anderson <dianders@chromium.org>
+---
+Doug,
+
+Would you please test whether this patch works for Snow?
 
 
+ drivers/clk/samsung/clk-exynos5250.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 7290faa..bb54606 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -276,10 +276,10 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+ 	DIV(none, "div_pcm0", "sclk_audio0", DIV_MAU, 4, 8),
+ 	DIV(none, "div_sata", "mout_sata", DIV_FSYS0, 20, 4),
+ 	DIV(none, "div_usb3", "mout_usb3", DIV_FSYS0, 24, 4),
+-	DIV(none, "div_mmc0", "mout_mmc0", DIV_FSYS1, 8, 8),
+-	DIV(none, "div_mmc1", "mout_mmc1", DIV_FSYS1, 24, 8),
+-	DIV(none, "div_mmc2", "mout_mmc2", DIV_FSYS2, 8, 8),
+-	DIV(none, "div_mmc3", "mout_mmc3", DIV_FSYS2, 24, 8),
++	DIV(none, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
++	DIV(none, "div_mmc1", "mout_mmc1", DIV_FSYS1, 16, 4),
++	DIV(none, "div_mmc2", "mout_mmc2", DIV_FSYS2, 0, 4),
++	DIV(none, "div_mmc3", "mout_mmc3", DIV_FSYS2, 16, 4),
+ 	DIV(none, "div_uart0", "mout_uart0", DIV_PERIC0, 0, 4),
+ 	DIV(none, "div_uart1", "mout_uart1", DIV_PERIC0, 4, 4),
+ 	DIV(none, "div_uart2", "mout_uart2", DIV_PERIC0, 8, 4),
+@@ -421,13 +421,13 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 			SRC_MASK_DISP1_0, 20, 0, 0),
+ 	GATE(sclk_audio0, "sclk_audio0", "div_audio0",
+ 			SRC_MASK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+-	GATE(sclk_mmc0, "sclk_mmc0", "div_mmc0",
++	GATE(sclk_mmc0, "sclk_mmc0", "div_mmc_pre0",
+ 			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0),
+-	GATE(sclk_mmc1, "sclk_mmc1", "div_mmc1",
++	GATE(sclk_mmc1, "sclk_mmc1", "div_mmc_pre1",
+ 			SRC_MASK_FSYS, 4, CLK_SET_RATE_PARENT, 0),
+-	GATE(sclk_mmc2, "sclk_mmc2", "div_mmc2",
++	GATE(sclk_mmc2, "sclk_mmc2", "div_mmc_pre2",
+ 			SRC_MASK_FSYS, 8, CLK_SET_RATE_PARENT, 0),
+-	GATE(sclk_mmc3, "sclk_mmc3", "div_mmc3",
++	GATE(sclk_mmc3, "sclk_mmc3", "div_mmc_pre3",
+ 			SRC_MASK_FSYS, 12, CLK_SET_RATE_PARENT, 0),
+ 	GATE(sclk_sata, "sclk_sata", "div_sata",
+ 			SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Poland (SRPOL) | Linux Platform Group
+1.7.9.5
