@@ -1,54 +1,151 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] ARM: OMAP: remove unused variable
-Date: Tue, 23 Apr 2013 14:26:07 -0700
-Message-ID: <20130423212607.GL10155@atomide.com>
-References: <1363818875-15978-1-git-send-email-robherring2@gmail.com>
- <201304232323.27751.arnd@arndb.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [GIT PULL] Late Exynos stuff for v3.10
+Date: Wed, 24 Apr 2013 07:09:27 +0900
+Message-ID: <51770697.7080504@samsung.com>
+References: <5176B499.1000208@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:19955 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752410Ab3DWV0P (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:53508 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756290Ab3DWWVV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 17:26:15 -0400
-Content-Disposition: inline
-In-Reply-To: <201304232323.27751.arnd@arndb.de>
+	Tue, 23 Apr 2013 18:21:21 -0400
+Received: by mail-pa0-f52.google.com with SMTP id fb1so764333pad.25
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 15:21:20 -0700 (PDT)
+In-Reply-To: <5176B499.1000208@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Rob Herring <robherring2@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, John Stultz <john.stultz@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-* Arnd Bergmann <arnd@arndb.de> [130423 14:28]:
-> ARM: OMAP: remove unused variable
->     
-> Commit 0583fe478a7 "ARM: convert arm/arm64 arch timer to use CLKSRC_OF init"
-> has left the omap5_realtime_timer_init() function with a stale variable and
-> broken whitespace. This fixes both.
->     
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I've applied this patch on top of the timer cleanup series
+On 04/24/13 01:19, Kukjin Kim wrote:
+> The following changes since commit
+> 58a7bbf75442ea439a4d3b7993ad87023e406063:
+>
+> ARM: dts: add PDMA0 changes for exynos5440 (2013-04-09 01:39:27 +0900)
+>
+> are available in the git repository at:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/late-exynos-for-v3.10
+>
+> for you to fetch changes up to 9007025f3438ec3bdea02439e760585345102b8d:
+>
+> ARM: dts: Disable the RTC by default on exynos5 (2013-04-24 00:32:28 +0900)
+>
+> ----------------------------------------------------------------
+> This includes late exynos stuff for v3.10 1) keypad for smdk4412 and
+> origen4412 boards 2) adds mfc clock entries for exynos4 3) enables
+> usb2phy, usb3phy and dwc3-exynos for exynos5250 4) enables tmu for
+> exynos4210 5) support chip id with dt
+>
+> ----------------------------------------------------------------
+> Doug Anderson (1):
+> ARM: dts: Disable the RTC by default on exynos5
+>
+> Girish K S (1):
+> ARM: EXYNOS: force MAC ip to 32bit DMA
+>
+> Sachin Kamat (7):
+> ARM: dts: Remove keypad entries from exynos4x12-pinctrl.dtsi
+> ARM: dts: Add keypad entries to Exynos4412 based Origen
+> ARM: dts: Add keypad entries to SMDK4412
+> ARM: dts: Add MFC clock entries for exynos4
+> ARM: dts: Update MFC documentation for clock entries
+> ARM: dts: Add TMU clock entries to exynos4210.dtsi
+> ARM: dts: Enable TMU on Origen4210 board
+>
+> Thomas Abraham (4):
+> ARM: dts: add mshc controller node for Exynos4x12 SoCs
+> ARM: EXYNOS: Add a platform bus notifier to set dma masks for Exynos5440
+> ARM: EXYNOS: Create virtual I/O mapping for Chip-ID controller using
+> device tree
+> ARM: dts: Add chip-id controller node on Exynos4/5 SoC
+>
+> Vivek Gautam (5):
+> ARM: dts: Enabling samsung-usb2phy driver for exynos5250
+> ARM: dts: Enabling samsung-usb3phy driver for exynos5250
+> ARM: dts: Add device tree bindings for dwc3-exynos
+> ARM: dts: Enabling dwc3-exynos driver for exynos5250
+> ARM: EXYNOS: Enable XHCI support on exynos5
+>
+> .../devicetree/bindings/media/s5p-mfc.txt | 5 ++
+> .../devicetree/bindings/usb/exynos-usb.txt | 34 +++++++++
+> arch/arm/boot/dts/exynos4.dtsi | 7 ++
+> arch/arm/boot/dts/exynos4210-origen.dts | 4 +
+> arch/arm/boot/dts/exynos4210.dtsi | 3 +
+> arch/arm/boot/dts/exynos4412-origen.dts | 62 +++++++++++++++
+> arch/arm/boot/dts/exynos4412-smdk4412.dts | 87 ++++++++++++++++++++++
+> arch/arm/boot/dts/exynos4412.dtsi | 8 ++
+> arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 56 --------------
+> arch/arm/boot/dts/exynos5250.dtsi | 51 +++++++++++++
+> arch/arm/boot/dts/exynos5440.dtsi | 1 +
+> arch/arm/mach-exynos/Kconfig | 1 +
+> arch/arm/mach-exynos/common.c | 53 +++++++------
+> arch/arm/mach-exynos/include/mach/map.h | 1 -
+> arch/arm/mach-exynos/mach-exynos5-dt.c | 28 +++++++
+> 15 files changed, 321 insertions(+), 80 deletions(-)
+>
+> Hi Arnd and Olof,
+>
+> As I said, last my pull-request at 4/10 included most of above changes.
+> So would be nice if you could pull this and small patches added on top
+> of that though.
+>
+> If any problems, please kindly let me know.
+>
+Arnd, Olof,
 
-OK thanks.
+Since above request should be too late, so I did sort out like 
+following. I think, it should be fine to you ;-) Sorry for noise.
 
-Tony
- 
-> diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
-> index 7dd6453..686e498 100644
-> --- a/arch/arm/mach-omap2/timer.c
-> +++ b/arch/arm/mach-omap2/timer.c
-> @@ -618,12 +618,10 @@ OMAP_SYS_32K_TIMER_INIT(5, 1, OMAP4_32K_SOURCE, "ti,timer-alwon",
->  			2, OMAP4_MPU_SOURCE);
->  void __init omap5_realtime_timer_init(void)
->  {
-> -	int err;
-> -
->  	omap5_sync32k_timer_init();
->  	realtime_counter_init();
->  
-> -        clocksource_of_init();
-> +	clocksource_of_init();
->  }
->  #endif /* CONFIG_SOC_OMAP5 */
->  
+Note that others will be queued for v3.11.
+
+Thanks.
+
+- Kukjin
+
+  The following changes since commit 
+58a7bbf75442ea439a4d3b7993ad87023e406063:
+
+    ARM: dts: add PDMA0 changes for exynos5440 (2013-04-09 01:39:27 +0900)
+
+  are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+  tags/late-exynos-v2-for-v3.10
+
+  for you to fetch changes up to 1ec583759692013c4576d557904b595e9f3953dd:
+
+    ARM: dts: Disable the RTC by default on exynos5 (2013-04-24 06:58:21 
++0900)
+
+  ----------------------------------------------------------------
+  This includes late exynos stuff for v3.10 and 2nd version for pull 
+request 1) enables usb2phy, usb3phy and dwc3-exynos for exynos5250 2) 
+support chip id with dt
+
+  ----------------------------------------------------------------
+  Doug Anderson (1):
+        ARM: dts: Disable the RTC by default on exynos5
+
+  Thomas Abraham (3):
+        ARM: dts: add mshc controller node for Exynos4x12 SoCs
+        ARM: EXYNOS: Create virtual I/O mapping for Chip-ID controller 
+using device tree
+        ARM: dts: Add chip-id controller node on Exynos4/5 SoC
+
+  Vivek Gautam (5):
+        ARM: dts: Enabling samsung-usb2phy driver for exynos5250
+        ARM: dts: Enabling samsung-usb3phy driver for exynos5250
+        ARM: dts: Add device tree bindings for dwc3-exynos
+        ARM: dts: Enabling dwc3-exynos driver for exynos5250
+        ARM: EXYNOS: Enable XHCI support on exynos5
+
+   .../devicetree/bindings/usb/exynos-usb.txt         | 34 ++++++++++++++
+   arch/arm/boot/dts/exynos4.dtsi                     |  5 ++
+   arch/arm/boot/dts/exynos4412.dtsi                  |  8 ++++
+   arch/arm/boot/dts/exynos5250.dtsi                  | 51 
++++++++++++++++++++++
