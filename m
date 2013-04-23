@@ -1,106 +1,50 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Tue, 23 Apr 2013 14:15:41 +0300
-Message-ID: <20130423111541.GY15177@arwen.pp.htv.fi>
-References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
- <1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
- <20130402082342.GF30286@arwen.pp.htv.fi>
- <CAFp+6iFW9-fOCgCfpfQzS9PZyjb9_NahjSxzbrS0AhVeNngyXw@mail.gmail.com>
- <20130402121048.GA9488@arwen.pp.htv.fi>
- <CAFp+6iEqHOc6G+4UpUGneQ43FGf11DOH_LignFiXJxVJnjry2w@mail.gmail.com>
- <516FDDF3.30507@ti.com>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="edESjMboOAwUFn6i"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <516FDDF3.30507@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Vivek Gautam <gautamvivek1987@gmail.com>, balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 0/3] drm/exynos: Add device tree support for IPP driver
+Date: Tue, 23 Apr 2013 13:34:35 +0200
+Message-ID: <1366716878-5692-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:32450 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755332Ab3DWLfG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Apr 2013 07:35:06 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MLP00NROHIE4N11@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Apr 2013 20:35:04 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
---edESjMboOAwUFn6i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To: inki.dae@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, sw0312.kim@samsung.com, chulspro.kim@samsung.com, jaejoon.seo@samsung.com, jmock.shin@samsung.com, jy0.jeon@samsung.com, th908.kim@samsung.com, lsmin.lee@samsung.com, dri-devel@lists.freedesktop.org, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
 Hi,
 
-On Thu, Apr 18, 2013 at 05:20:11PM +0530, Kishon Vijay Abraham I wrote:
-> >>>>>Adding  APIs to handle runtime power management on PHY
-> >>>>>devices. PHY consumers may need to wake-up/suspend PHYs
-> >>>>>when they work across autosuspend.
-> >>>>>
-> >>>>>Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> >>>>>---
-> >>>>>  include/linux/usb/phy.h |  141 +++++++++++++++++++++++++++++++++++=
-++++++++++++
-> >>>>>  1 files changed, 141 insertions(+), 0 deletions(-)
-> >>>>>
-> >>>>>diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
-> >>>>>index 6b5978f..01bf9c1 100644
-> >>>>>--- a/include/linux/usb/phy.h
-> >>>>>+++ b/include/linux/usb/phy.h
-> >>>>>@@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(=
-enum usb_phy_type type)
-> >>>>>               return "UNKNOWN PHY TYPE";
-> >>>>>       }
-> >>>>>  }
-> >>>>>+
-> >>>>>+static inline void usb_phy_autopm_enable(struct usb_phy *x)
-> >>>>>+{
-> >>>>>+     if (!x || !x->dev) {
-> >>>>>+             dev_err(x->dev, "no PHY or attached device available\n=
-");
-> >>>>>+             return;
-> >>>>>+             }
-> >>>>
-> >>>>wrong indentation, also, I'm not sure we should allow calls with NULL
-> >>>>pointers. Perhaps a WARN() so we get API offenders early enough ?
-> >>>
-> >>>True, bad coding style :-(
-> >>>We should be handling dev_err with a NULL pointer.
-> >>>Will just keep here:
-> >>>if (WARN_ON(!x->dev))
-> >>>       return .... ;
-> >>
-> >>right, but I guess:
-> >>
-> >>if (WARN(!x || !x->dev, "Invalid parameters\n"))
-> >>         return -EINVAL;
-> >>
-> >>would be better ??
->=20
-> btw, shouldn't it be IS_ERR(x)?
+This small patch series adds device tree support for the DRM FIMC driver.
+The binding documentation can be found in -next at Documentation/devicetree/
+bindings/media/samsung-fimc.txt.
 
-not in this case, since we're trying to catch users passing NULL to as
-the phy argument.
+Changes since v2:
+ - dropped addition of 'dev' field to struct fimc_context,
+ - added more error logs and comments,
+ - fixed error paths in fimc_setup_clocks() function.
 
---=20
-balbi
+Changes since v1:
+ - removed devm_kfree() that got erroneously re-added in patch 2/3 during
+   rebase.
 
---edESjMboOAwUFn6i
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Thanks,
+Sylwester
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Sylwester Nawrocki (3):
+  drm/exynos: remove redundant devm_kfree()
+  drm/exynos: rework fimc clocks handling
+  drm/exynos: add device tree support for fimc ipp driver
 
-iQIcBAEBAgAGBQJRdm1dAAoJEIaOsuA1yqREaOYP/ilMFJ7fBdvCqCIMnDWmjeF9
-m7aiur+xk0TGPYKaxl9jTgEyA8AISPxwM76XVOB4PGpKu2fQP2ltpVVvOOW2wR4l
-oADNYNEYqugkEqBW7tzB8S/VX0cJNy+yTVEFoY/Xlj7DkLFyB7lvMqAx7X+L/8lf
-MrxmyQGOniIxg4aBB425nM6yLGH6PJ2heWLDc9a+XfGd8R2zpnVqM9lZOB4H6pzP
-A75RSaIuj/RSGWZ6hhIyf/yC+EcH4AJX9SYICKOLDLU8bNhGhsJHt15eNV2tVzHJ
-75hszKM8p7ekivIQJr29poT7HQvz7P1+ST6SR5XujB12DAJV6kVJwmZZ6Qx6uqrw
-nK8kk1XCi73ZxJh9bycxWmPSkzE2g6EofK6kGilwU6/I03nknSOMTMicK2c+p8dU
-Ej2l2rPTPi+KyVzNH60GbRPVa1xoYc9F97dPoiRsDdtzdPvXsKGz5uAexao+8pHl
-kAAyCkMqZ3cOCpsVwnfQyWUYMgOEadWcs+6Eksw+gagTLNaHaNuAaFEUMWaMQ2NE
-AoHWHTAp29l8cCt+wHHB1u42lxRO2rljr951nM/XvLx4I6OFssUr3ntREZZN5bMA
-gFUFTQhwYtvIeQvotMDEjOypoqE9flebOfYdEyk9DyGvdeGH6mN1sLtsBTLHROvT
-E+Nn1pRhwk/4P0HvS4mi
-=yds5
------END PGP SIGNATURE-----
+ drivers/gpu/drm/exynos/Kconfig           |    2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c |  273 +++++++++++++++++-------------
+ drivers/gpu/drm/exynos/regs-fimc.h       |    7 +-
+ 3 files changed, 157 insertions(+), 125 deletions(-)
 
---edESjMboOAwUFn6i--
+--
+1.7.9.5
