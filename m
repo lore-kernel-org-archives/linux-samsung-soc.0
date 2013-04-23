@@ -1,56 +1,52 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 2/3] ARM: EXYNOS: Fix support of Exynos4210 rev0 SoC
-Date: Wed, 24 Apr 2013 00:02:29 +0900
-Message-ID: <5176A285.9030009@samsung.com>
-References: <1366036922-4103-1-git-send-email-t.figa@samsung.com> <201304222310.34775.arnd@arndb.de> <517692FD.9080005@samsung.com> <1696892.zdvbYPFFr0@amdc1227>
+Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to
+ drivers/cpufreq
+Date: Wed, 24 Apr 2013 00:25:59 +0900
+Message-ID: <5176A807.2090005@samsung.com>
+References: <cover.1365079581.git.viresh.kumar@linaro.org>
+ <2a5901ce31c9$95160980$bf421c80$%kim@samsung.com>
+ <CAKohpokk1Q+0gRpeW=ts0a8D+rGAUpHu62X+7ejdpfom_B6FYA@mail.gmail.com>
+ <1769336.FkfMpuXqqb@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:63634 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755261Ab3DWPCj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 11:02:39 -0400
-Received: by mail-pd0-f173.google.com with SMTP id v10so491973pde.32
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 08:02:38 -0700 (PDT)
-In-Reply-To: <1696892.zdvbYPFFr0@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1769336.FkfMpuXqqb@vostro.rjw.lan>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: robin.randhawa@arm.com, patches@linaro.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Steve.Bannister@arm.com, Kukjin Kim <kgene.kim@samsung.com>, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, charles.garcia-tobin@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, thomas.abraham@linaro.org
 
-On 04/23/13 23:26, Tomasz Figa wrote:
-> Hi Kukjin,
-
-[...]
-
->>> Acked-by: Arnd Bergmann<arnd@arndb.de>
->>>
->>> Note that it would be helpful to mention here that this is required for
->>> the calling samsung_timer_init from the exynos4-dt.c file.
+On 04/05/13 20:36, Rafael J. Wysocki wrote:
+> On Friday, April 05, 2013 12:36:34 PM Viresh Kumar wrote:
+>> On 5 April 2013 12:18, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>>> Basically, this moving looks good to me, but should be re-worked based on
+>>> for-next of samsung tree because this touches too many samsung stuff so this
+>>> should be sent to upstream via samsung tree.
 >>
->> I did 'amend' as per your suggestion and added your ack on this series.
->>
->> Thanks.
->>
->> - Kukjin
+>> Hmm... Its already applied in Rafael's tree. But it doesn't mean that
+>> it can't be
+>> moved to your tree if there is a issue.
 >
-> Since the samsung-time rework patches were replaced with a non-invasive subset
-> with different semantics (going to send them in a while), this patch should be
-> replaced with new version I'm going to send (in a while as well).
+> Well, I'm dropping it.  Please merge via the Samsung tree.
 >
-Oh, OK. You want to replace with new patches you will send. I dropped 
-this series in my late dt branch.
 
-BTW, the series should depend on your samsung-time patches, right?
+Oops, I missed, maybe I have no more chance to send this to upstream for 
+upcoming merge window :-(
 
-One more note, this makes following build error.
+Rafael, please take this patch with my ack in your tree, sorry for noise.
 
-arch/arm/mach-exynos/built-in.o: In function `exynos_init_time':
-arch/arm/mach-exynos/common.c:424: undefined reference to 
-`samsung_timer_init'
-make: *** [vmlinux] Error 1
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+If any problems, please kindly let me know.
 
 Thanks.
 
