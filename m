@@ -1,39 +1,122 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v5 5/6] ARM: dts: Add basic dts include files for Samsung
- S3C64xx SoCs
-Date: Tue, 23 Apr 2013 23:48:46 +0900
-Message-ID: <51769F4E.3010602@samsung.com>
-References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com> <CAL_JsqL_i-5SDCsGZCrsxMehLVMGoLO1s_V3R-H6Oa5ff16dEQ@mail.gmail.com> <51769ACC.4070706@samsung.com> <3174365.tBvafCFyal@amdc1227>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH 4/6] thermal: Support for TMU regulator defined at device
+ tree
+Date: Tue, 23 Apr 2013 11:01:36 -0400
+Message-ID: <5176A250.40209@ti.com>
+References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com> <1366389493-8239-5-git-send-email-l.majewski@samsung.com> <51717D89.3090303@ti.com> <20130423082312.3caf60e0@amdc308.digital.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:58912 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754167Ab3DWOsy (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:48154 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755730Ab3DWPB5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 10:48:54 -0400
-Received: by mail-pd0-f170.google.com with SMTP id 10so482832pdi.29
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 07:48:53 -0700 (PDT)
-In-Reply-To: <3174365.tBvafCFyal@amdc1227>
+	Tue, 23 Apr 2013 11:01:57 -0400
+In-Reply-To: <20130423082312.3caf60e0@amdc308.digital.local>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robherring2@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "Mark Brown (broonie@opensource.wolfsonmicro.com)" <broonie@opensource.wolfsonmicro.com>, kwangwoo.lee@gmail.com, jacmet@sunsite.dk, augulis.darius@gmail.com, mcuelenaere@gmail.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Zhang Rui <rui.zhang@intel.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 04/23/13 23:44, Tomasz Figa wrote:
-
->> Tomasz, can you address comments?
+On 23-04-2013 02:23, Lukasz Majewski wrote:
+> Hi Eduardo,
 >
-> Please discard this series for now.
+>> On 19-04-2013 12:38, Lukasz Majewski wrote:
+>>> TMU probe function now checks for a device tree defined regulator.
+>>> For compatibility reasons it is allowed to probe driver even without
+>>> this regulator defined.
+>>>
+>>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>    drivers/thermal/exynos_thermal.c |   19 +++++++++++++++++++
+>>>    1 file changed, 19 insertions(+)
+>>>
+>>> diff --git a/drivers/thermal/exynos_thermal.c
+>>> b/drivers/thermal/exynos_thermal.c index ba6094c..e922fa4 100644
+>>> --- a/drivers/thermal/exynos_thermal.c
+>>> +++ b/drivers/thermal/exynos_thermal.c
+>>> @@ -38,6 +38,7 @@
+>>>    #include <linux/cpufreq.h>
+>>>    #include <linux/cpu_cooling.h>
+>>>    #include <linux/of.h>
+>>> +#include <linux/regulator/consumer.h>
+>>>
+>>>    #include <plat/cpu.h>
+>>>
+>>> @@ -119,6 +120,8 @@
+>>>
+>>>    #define EXYNOS_ZONE_COUNT	3
+>>>
+>>> +#define EXYNOS_TMU_REGULATOR "vdd_ts"
+>>> +
+>>>    struct exynos_tmu_data {
+>>>    	struct exynos_tmu_platform_data *pdata;
+>>>    	struct resource *mem;
+>>> @@ -944,6 +947,7 @@ static int exynos_tmu_probe(struct
+>>> platform_device *pdev) {
+>>>    	struct exynos_tmu_data *data;
+>>>    	struct exynos_tmu_platform_data *pdata =
+>>> pdev->dev.platform_data;
+>>> +	struct regulator *reg;
+>>>    	int ret, i;
+>>>
+>>>    	if (!pdata)
+>>> @@ -953,6 +957,21 @@ static int exynos_tmu_probe(struct
+>>> platform_device *pdev) dev_err(&pdev->dev, "No platform init data
+>>> supplied.\n"); return -ENODEV;
+>>>    	}
+>>> +
+>>> +	reg = regulator_get(&pdev->dev, EXYNOS_TMU_REGULATOR);
+>>> +	if (!IS_ERR(reg)) {
+>>> +		ret = regulator_enable(reg);
+>>> +		if (ret) {
+>>> +			dev_err(&pdev->dev, "Regulator %s not
+>>> enabled.\n",
+>>> +				EXYNOS_TMU_REGULATOR);
+>>> +			return ret;
+>>> +		}
+>>> +	} else {
+>>> +		dev_info(&pdev->dev,
+>>> +			 "Regulator %s not defined at device
+>>> tree.\n",
+>>> +			 EXYNOS_TMU_REGULATOR);
+>> Maybe a dev_warn would fit better?
 >
-OK.
-
-> I've decided to post it for 3.11, including a driver for Common Clock
-> Framework and several cleanup patches, which I have ready and waiting.
+> This is a bit tricky. I first wanted to return -ENODEV when regulator
+> is not available. Then I understood, that some other SoCs (e.g.
+> Exynos5) will not work.
 >
-Sounds good.
+> The info here shall give a clear warn signal, that providing a
+> regulator for VDD_TS is crucial (since by default it can be connected
+> to other PMIC outputs and when other device puts down this regulator
+> the TMU will crash and shut down a system).
 
-Thanks.
+OK. I understand your point. Well, it depends on how you want to design 
+your driver. This is a clear case for having some sort of required 
+feature set bitmap, for instance. Each supported soc for your driver 
+would then have a bitmap indicating which features it actually supports. 
+Based on the bitmap you make it mandatory on your regulator_get 
+treatment. If it is mandatory, then you must clearly return an error 
+code. I have done a similar thing for the ti-soc-thermal driver 
+(drivers/staging/ti-soc-thermal/).
 
-- Kukjin
+But again, this is your call, not sure if you want to go for that design 
+just for this item,
+
+Still, if you keep the code the way it is, I d request to change your 
+message level to dev_warn. And in case you have a way to determine it is 
+a mandatory entry, then to dev_err
+
+>
+>>
+>>> +	}
+>>> +
+>>>    	data = devm_kzalloc(&pdev->dev, sizeof(struct
+>>> exynos_tmu_data), GFP_KERNEL);
+>>>    	if (!data) {
+>>>
+>
+>
+>
