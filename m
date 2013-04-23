@@ -1,413 +1,62 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v3 13/13] ARM: dts: exynos4210: Add basic dts file for
- universal_c210 board
-Date: Tue, 23 Apr 2013 17:46:34 +0200
-Message-ID: <1366731994-7478-14-git-send-email-t.figa@samsung.com>
-References: <1366731994-7478-1-git-send-email-t.figa@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] clk: exynos5250: Fix parent clock for sclk_mmc{0,1,2,3}
+Date: Tue, 23 Apr 2013 08:59:03 -0700
+Message-ID: <CAD=FV=X6Gy_we+C0VH3keqEY=v4uW_wmS3HdHQvqY-Jfwcsi5w@mail.gmail.com>
+References: <CAD=FV=UUg9Apb0o+zLdidDUmkLZt1phgo80bxug=o6JmANCPfw@mail.gmail.com>
+	<1366698711-15470-1-git-send-email-tushar.behera@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:26494 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756673Ab3DWPto (ORCPT
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:35121 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757098Ab3DWP7E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 11:49:44 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MLP0087MTAQPH60@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 24 Apr 2013 00:49:43 +0900 (KST)
-In-reply-to: <1366731994-7478-1-git-send-email-t.figa@samsung.com>
+	Tue, 23 Apr 2013 11:59:04 -0400
+Received: by mail-lb0-f175.google.com with SMTP id o10so815081lbi.34
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 08:59:03 -0700 (PDT)
+In-Reply-To: <1366698711-15470-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, tomasz.figa@gmail.com, m.szyprowski@samsung.com, arnd@arndb.de, john.stultz@linaro.org, tglx@linutronix.de, olof@lixom.net, ben-linux@fluff.org, thomas.abraham@linaro.org, Tomasz Figa <t.figa@samsung.com>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olofj@chromium.org>, Patch Tracking <patches@linaro.org>
 
-This patch adds basic device tree sources for Universal C210 board.
+Tushar,
 
-Currently support includes:
-- eMMC
-- serial
-- max8952 and max8998 voltage regulators.
-- gpio-keys
+Thanks for tracking this down.
 
-More support will be added in further patches.
+On Mon, Apr 22, 2013 at 11:31 PM, Tushar Behera
+<tushar.behera@linaro.org> wrote:
+> commit 688f7d8c9fef ("clk: exynos5250: Fix divider values for
+> sclk_mmc{0,1,2,3}") incorrectly sets the divider for sclk_mmc{0,1,2,3}
+> to fix the wrong clock value. Though this fixed issue with Arndale,
+> it created regressions for other boards like Snow.
+>
+> On Exynos5250, sclk_mmc<n> is generated like below (as per the clock
+> names in drivers/clk/samsung/clk-exynos5250.c)
+>
+> mout_group1_p ==> mout_mmc<n> ==>
+>                 div_mmc<n> ==> div_mmc_pre<n> => sclk_mmc<n>
+>
+> Earlier div_mmc<n> was set as the parent for sclk_mmc<n>, hence
+> div_mmc_pre<n> was not getting referred in kernel code and depending
+> on its value set during preboot, sclk_mmc<n> value was different for
+> various boards.
+>
+> Setting the correct clock generation path should fix the issues
+> reported in above referenced commit. The changes committed during the
+> earlier patch has also been reverted here.
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> CC: Doug Anderson <dianders@chromium.org>
+> ---
+> Doug,
+>
+> Would you please test whether this patch works for Snow?
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/Makefile                      |   1 +
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 352 ++++++++++++++++++++++++
- 2 files changed, 353 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos4210-universal_c210.dts
+Yup, it works for me.  I did the basic testing of installing to eMMC
+with this and then booting from eMMC.  I saw no errors in the console.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 8fd41b3..6647274 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -49,6 +49,7 @@ dtb-$(CONFIG_ARCH_DOVE) += dove-cm-a510.dtb \
- dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos4210-smdkv310.dtb \
- 	exynos4210-trats.dtb \
-+	exynos4210-universal_c210.dtb \
- 	exynos4412-odroidx.dtb \
- 	exynos4412-smdk4412.dtb \
- 	exynos4412-origen.dtb \
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-new file mode 100644
-index 0000000..345cdb5
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -0,0 +1,352 @@
-+/*
-+ * Samsung's Exynos4210 based Universal C210 board device tree source
-+ *
-+ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Device tree source file for Samsung's Universal C210 board which is based on
-+ * Samsung's Exynos4210 rev0 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+/include/ "exynos4210.dtsi"
-+
-+/ {
-+	model = "Samsung Universal C210 based on Exynos4210 rev0";
-+	compatible = "samsung,universal_c210", "samsung,exynos4210";
-+
-+	memory {
-+		reg =  <0x40000000 0x10000000
-+			0x50000000 0x10000000>;
-+	};
-+
-+	chosen {
-+		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
-+	};
-+
-+	mct@10050000 {
-+		compatible = "none";
-+	};
-+
-+	fixed-rate-clocks {
-+		xxti {
-+			compatible = "samsung,clock-xxti";
-+			clock-frequency = <0>;
-+		};
-+
-+		xusbxti {
-+			compatible = "samsung,clock-xusbxti";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	vemmc_reg: voltage-regulator {
-+	        compatible = "regulator-fixed";
-+		regulator-name = "VMEM_VDD_2_8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpe1 3 0>;
-+		enable-active-high;
-+	};
-+
-+	sdhci_emmc: sdhci@12510000 {
-+		bus-width = <8>;
-+		non-removable;
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus8>;
-+		pinctrl-names = "default";
-+		vmmc-supply = <&vemmc_reg>;
-+		status = "okay";
-+	};
-+
-+	serial@13800000 {
-+		status = "okay";
-+	};
-+
-+	serial@13810000 {
-+		status = "okay";
-+	};
-+
-+	serial@13820000 {
-+		status = "okay";
-+	};
-+
-+	serial@13830000 {
-+		status = "okay";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		vol-up-key {
-+			gpios = <&gpx2 0 1>;
-+			linux,code = <115>;
-+			label = "volume up";
-+			debounce-interval = <1>;
-+		};
-+
-+		vol-down-key {
-+			gpios = <&gpx2 1 1>;
-+			linux,code = <114>;
-+			label = "volume down";
-+			debounce-interval = <1>;
-+		};
-+
-+		config-key {
-+			gpios = <&gpx2 2 1>;
-+			linux,code = <171>;
-+			label = "config";
-+			debounce-interval = <1>;
-+			gpio-key,wakeup;
-+		};
-+
-+		camera-key {
-+			gpios = <&gpx2 3 1>;
-+			linux,code = <212>;
-+			label = "camera";
-+			debounce-interval = <1>;
-+		};
-+
-+		power-key {
-+			gpios = <&gpx2 7 1>;
-+			linux,code = <116>;
-+			label = "power";
-+			debounce-interval = <1>;
-+			gpio-key,wakeup;
-+		};
-+
-+		ok-key {
-+			gpios = <&gpx3 5 1>;
-+			linux,code = <352>;
-+			label = "ok";
-+			debounce-interval = <1>;
-+		};
-+	};
-+
-+	tsp_reg: voltage-regulator {
-+	        compatible = "regulator-fixed";
-+		regulator-name = "TSP_2_8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpe2 3 0>;
-+		enable-active-high;
-+	};
-+
-+	i2c@13890000 {
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-slave-addr = <0x10>;
-+		samsung,i2c-max-bus-freq = <100000>;
-+		pinctrl-0 = <&i2c3_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+
-+		tsp@4a {
-+			/* TBD: Atmel maXtouch touchscreen */
-+			reg = <0x4a>;
-+		};
-+	};
-+
-+	i2c@138B0000 {
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-slave-addr = <0x10>;
-+		samsung,i2c-max-bus-freq = <100000>;
-+		pinctrl-0 = <&i2c5_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+
-+		vdd_arm_reg: pmic@60 {
-+			compatible = "maxim,max8952";
-+			reg = <0x60>;
-+
-+			max8952,vid-gpios = <&gpx0 3 0>, <&gpx0 4 0>;
-+			max8952,default-mode = <0>;
-+			max8952,dvs-mode-microvolt = <1250000>, <1200000>,
-+							<1050000>, <950000>;
-+			max8952,sync-freq = <0>;
-+			max8952,ramp-speed = <0>;
-+
-+			regulator-name = "vdd_arm";
-+			regulator-min-microvolt = <770000>;
-+			regulator-max-microvolt = <1400000>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+		};
-+
-+		pmic@66 {
-+			compatible = "national,lp3974";
-+			reg = <0x66>;
-+
-+			max8998,pmic-buck1-default-dvs-idx = <0>;
-+			max8998,pmic-buck1-dvs-gpios = <&gpx0 5 0>,
-+							<&gpx0 6 0>;
-+			max8998,pmic-buck1-dvs-voltage = <1100000>, <1000000>,
-+							<1100000>, <1000000>;
-+
-+			max8998,pmic-buck2-default-dvs-idx = <0>;
-+			max8998,pmic-buck2-dvs-gpio = <&gpe2 0 0>;
-+			max8998,pmic-buck2-dvs-voltage = <1200000>, <1100000>;
-+
-+			regulators {
-+				ldo2_reg: LDO2 {
-+					regulator-name = "VALIVE_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo3_reg: LDO3 {
-+					regulator-name = "VUSB+MIPI_1.1V";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+				};
-+
-+				ldo4_reg: LDO4 {
-+					regulator-name = "VADC_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldo5_reg: LDO5 {
-+					regulator-name = "VTF_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo6_reg: LDO6 {
-+					regulator-name = "LDO6";
-+					regulator-min-microvolt = <2000000>;
-+					regulator-max-microvolt = <2000000>;
-+				};
-+
-+				ldo7_reg: LDO7 {
-+					regulator-name = "VLCD+VMIPI_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				ldo8_reg: LDO8 {
-+					regulator-name = "VUSB+VDAC_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldo9_reg: LDO9 {
-+					regulator-name = "VCC_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo10_reg: LDO10 {
-+					regulator-name = "VPLL_1.1V";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-boot-on;
-+					regulator-always-on;
-+				};
-+
-+				ldo11_reg: LDO11 {
-+					regulator-name = "CAM_AF_3.3V";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldo12_reg: LDO12 {
-+					regulator-name = "PS_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo13_reg: LDO13 {
-+					regulator-name = "VHIC_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+				};
-+
-+				ldo14_reg: LDO14 {
-+					regulator-name = "CAM_I_HOST_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				ldo15_reg: LDO15 {
-+					regulator-name = "CAM_S_DIG+FM33_CORE_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+				};
-+
-+				ldo16_reg: LDO16 {
-+					regulator-name = "CAM_S_ANA_2.8V";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo17_reg: LDO17 {
-+					regulator-name = "VCC_3.0V_LCD";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+				};
-+
-+				buck1_reg: BUCK1 {
-+					regulator-name = "VINT_1.1V";
-+					regulator-min-microvolt = <750000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-boot-on;
-+					regulator-always-on;
-+				};
-+
-+				buck2_reg: BUCK2 {
-+					regulator-name = "VG3D_1.1V";
-+					regulator-min-microvolt = <750000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-boot-on;
-+				};
-+
-+				buck3_reg: BUCK3 {
-+					regulator-name = "VCC_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				buck4_reg: BUCK4 {
-+					regulator-name = "VMEM_1.2V";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				ap32khz_reg: EN32KHz-AP {
-+					regulator-name = "32KHz AP";
-+					regulator-always-on;
-+				};
-+
-+				cp32khz_reg: EN32KHz-CP {
-+					regulator-name = "32KHz CP";
-+				};
-+
-+				vichg_reg: ENVICHG {
-+					regulator-name = "VICHG";
-+				};
-+
-+				safeout1_reg: ESAFEOUT1 {
-+					regulator-name = "SAFEOUT1";
-+					regulator-always-on;
-+				};
-+
-+				safeout2_reg: ESAFEOUT2 {
-+					regulator-name = "SAFEOUT2";
-+					regulator-boot-on;
-+				};
-+			};
-+		};
-+	};
-+
-+	pwm@139D0000 {
-+		compatible = "samsung,s5p6440-pwm";
-+		status = "okay";
-+	};
-+};
--- 
-1.8.2.1
+I glanced over the patch and it looks reasonable to me.  :)
+
+Reported-by: Doug Anderson <dianders@chromium.org>
+Tested-by: Doug Anderson <dianders@chromium.org>
