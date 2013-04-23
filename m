@@ -1,50 +1,106 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: dts: Remove combiner IRQ node from exynos4x12.dtsi
-Date: Tue, 23 Apr 2013 15:24:48 +0530
-Message-ID: <1366710888-11059-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:49856 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755020Ab3DWKHV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Apr 2013 06:07:21 -0400
-Received: by mail-pb0-f41.google.com with SMTP id ma3so123039pbc.28
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2013 03:07:20 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
+Date: Tue, 23 Apr 2013 14:15:41 +0300
+Message-ID: <20130423111541.GY15177@arwen.pp.htv.fi>
+References: <1364824448-14732-1-git-send-email-gautam.vivek@samsung.com>
+ <1364824448-14732-2-git-send-email-gautam.vivek@samsung.com>
+ <20130402082342.GF30286@arwen.pp.htv.fi>
+ <CAFp+6iFW9-fOCgCfpfQzS9PZyjb9_NahjSxzbrS0AhVeNngyXw@mail.gmail.com>
+ <20130402121048.GA9488@arwen.pp.htv.fi>
+ <CAFp+6iEqHOc6G+4UpUGneQ43FGf11DOH_LignFiXJxVJnjry2w@mail.gmail.com>
+ <516FDDF3.30507@ti.com>
+Reply-To: <balbi@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="edESjMboOAwUFn6i"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <516FDDF3.30507@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Vivek Gautam <gautamvivek1987@gmail.com>, balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org, patches@linaro.org
 
-These nodes have separately been added to 4212 and 4412 dtsi
-files by commit 30269ddff1 ("ARM: exynos: add missing properties
-for combiner IRQs"). The existing node also contained a few
-incorrect entries.
+--edESjMboOAwUFn6i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Patch based on linux-next tree (20130423)
----
- arch/arm/boot/dts/exynos4x12.dtsi |    8 --------
- 1 file changed, 8 deletions(-)
+Hi,
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index ede3f9b..675c221 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -28,14 +28,6 @@
- 		pinctrl3 = &pinctrl_3;
- 	};
- 
--	combiner:interrupt-controller@10440000 {
--		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
--			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
--			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
--			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
--			     <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>;
--	};
--
- 	clock: clock-controller@0x10030000 {
- 		compatible = "samsung,exynos4412-clock";
- 		reg = <0x10030000 0x20000>;
--- 
-1.7.9.5
+On Thu, Apr 18, 2013 at 05:20:11PM +0530, Kishon Vijay Abraham I wrote:
+> >>>>>Adding  APIs to handle runtime power management on PHY
+> >>>>>devices. PHY consumers may need to wake-up/suspend PHYs
+> >>>>>when they work across autosuspend.
+> >>>>>
+> >>>>>Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> >>>>>---
+> >>>>>  include/linux/usb/phy.h |  141 +++++++++++++++++++++++++++++++++++=
+++++++++++++
+> >>>>>  1 files changed, 141 insertions(+), 0 deletions(-)
+> >>>>>
+> >>>>>diff --git a/include/linux/usb/phy.h b/include/linux/usb/phy.h
+> >>>>>index 6b5978f..01bf9c1 100644
+> >>>>>--- a/include/linux/usb/phy.h
+> >>>>>+++ b/include/linux/usb/phy.h
+> >>>>>@@ -297,4 +297,145 @@ static inline const char *usb_phy_type_string(=
+enum usb_phy_type type)
+> >>>>>               return "UNKNOWN PHY TYPE";
+> >>>>>       }
+> >>>>>  }
+> >>>>>+
+> >>>>>+static inline void usb_phy_autopm_enable(struct usb_phy *x)
+> >>>>>+{
+> >>>>>+     if (!x || !x->dev) {
+> >>>>>+             dev_err(x->dev, "no PHY or attached device available\n=
+");
+> >>>>>+             return;
+> >>>>>+             }
+> >>>>
+> >>>>wrong indentation, also, I'm not sure we should allow calls with NULL
+> >>>>pointers. Perhaps a WARN() so we get API offenders early enough ?
+> >>>
+> >>>True, bad coding style :-(
+> >>>We should be handling dev_err with a NULL pointer.
+> >>>Will just keep here:
+> >>>if (WARN_ON(!x->dev))
+> >>>       return .... ;
+> >>
+> >>right, but I guess:
+> >>
+> >>if (WARN(!x || !x->dev, "Invalid parameters\n"))
+> >>         return -EINVAL;
+> >>
+> >>would be better ??
+>=20
+> btw, shouldn't it be IS_ERR(x)?
+
+not in this case, since we're trying to catch users passing NULL to as
+the phy argument.
+
+--=20
+balbi
+
+--edESjMboOAwUFn6i
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRdm1dAAoJEIaOsuA1yqREaOYP/ilMFJ7fBdvCqCIMnDWmjeF9
+m7aiur+xk0TGPYKaxl9jTgEyA8AISPxwM76XVOB4PGpKu2fQP2ltpVVvOOW2wR4l
+oADNYNEYqugkEqBW7tzB8S/VX0cJNy+yTVEFoY/Xlj7DkLFyB7lvMqAx7X+L/8lf
+MrxmyQGOniIxg4aBB425nM6yLGH6PJ2heWLDc9a+XfGd8R2zpnVqM9lZOB4H6pzP
+A75RSaIuj/RSGWZ6hhIyf/yC+EcH4AJX9SYICKOLDLU8bNhGhsJHt15eNV2tVzHJ
+75hszKM8p7ekivIQJr29poT7HQvz7P1+ST6SR5XujB12DAJV6kVJwmZZ6Qx6uqrw
+nK8kk1XCi73ZxJh9bycxWmPSkzE2g6EofK6kGilwU6/I03nknSOMTMicK2c+p8dU
+Ej2l2rPTPi+KyVzNH60GbRPVa1xoYc9F97dPoiRsDdtzdPvXsKGz5uAexao+8pHl
+kAAyCkMqZ3cOCpsVwnfQyWUYMgOEadWcs+6Eksw+gagTLNaHaNuAaFEUMWaMQ2NE
+AoHWHTAp29l8cCt+wHHB1u42lxRO2rljr951nM/XvLx4I6OFssUr3ntREZZN5bMA
+gFUFTQhwYtvIeQvotMDEjOypoqE9flebOfYdEyk9DyGvdeGH6mN1sLtsBTLHROvT
+E+Nn1pRhwk/4P0HvS4mi
+=yds5
+-----END PGP SIGNATURE-----
+
+--edESjMboOAwUFn6i--
