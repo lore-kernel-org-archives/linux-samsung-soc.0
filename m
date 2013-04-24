@@ -1,103 +1,46 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
-Date: Wed, 24 Apr 2013 18:42:57 +0530
-Message-ID: <CAFp+6iE72VRaBC3_AKGvD3XA5meYSsuUYuQivj3_719OZKGpVg@mail.gmail.com>
-References: <CAFp+6iECumogLo9Tf+4pMqRhtkGHf1CqA52YjL1tACTRyGO7jw@mail.gmail.com>
-	<Pine.LNX.4.44L0.1304231408370.1679-100000@iolanthe.rowland.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: Fix link error with
+ CONFIG_PINCTRL_EXYNOS disabled
+Date: Wed, 24 Apr 2013 16:27:09 +0200
+Message-ID: <CACRpkdZmSj-AqUA9kd7NMN6cL2Nxa0EaKoSVkwQSrxhcWEeQtg@mail.gmail.com>
+References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
+	<1398545.9FqHoC0WZW@flatron>
+	<CACRpkdbJj9Newk+sCTvJzxA4V2cmJ3hzuQELv7t1wFMhd_Y8+Q@mail.gmail.com>
+	<6940961.67Lk2axxPL@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:39198 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753877Ab3DXNNA (ORCPT
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:32955 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755963Ab3DXO1J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Apr 2013 09:13:00 -0400
-In-Reply-To: <Pine.LNX.4.44L0.1304231408370.1679-100000@iolanthe.rowland.org>
+	Wed, 24 Apr 2013 10:27:09 -0400
+Received: by mail-ie0-f172.google.com with SMTP id c12so2155425ieb.31
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Apr 2013 07:27:09 -0700 (PDT)
+In-Reply-To: <6940961.67Lk2axxPL@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kwangwoo LEE <kwangwoo.lee@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>, Darius Augulis <augulis.darius@gmail.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Rob Herring <robherring2@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Thomas Abraham <thomas.abraham@linaro.org>
 
-On Tue, Apr 23, 2013 at 11:42 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Tue, 23 Apr 2013, Vivek Gautam wrote:
+On Tue, Apr 23, 2013 at 2:09 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> On Tuesday 23 of April 2013 14:03:12 Linus Walleij wrote:
+
+>> This does not apply to my "devel" branch in the pinctrl tree.
+>>
+>> Could you rebase it on that branch?
+>>
+>> Or is the error not even in my tree?
 >
->> Hi,
->>
->>
->> On Tue, Apr 23, 2013 at 10:23 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
->> > On Tue, 23 Apr 2013, Vivek Gautam wrote:
->> >
->> >> >> Alright, so here's my understanding:
->> >> >>
->> >> >> I suggested letting e.g. DWC3 enable the PHY's runtime_pm; Alan said
->> >> >> that it could be done before that so that DWC3 sees an enabled PHY
->> >> >> during probe.
->> >> >
->> >> > Basically right.  Help me to understand the overall situation a little
->> >> > better:
->> >> >
->> >> >         What code registers the PHY initially?
->> >>            PHY is added to global list by PHY drivers (like
->> >> phy-samsung-usb2.c/phy-omap-usb2.c)
->> >>            by usb_add_phy() API
->> >
->> > Then this routine should initialize the PHY.  The initialized state
->> > could be either active or suspended, your choice.  Suspended would be
->> > best, in case the PHY never gets used.
->>
->> Fair enough.
->>
->> >
->> >> >         What routine does the DWC3 driver call to register itself
->> >> >         as a consumer of the PHY?
->> >>            I think DWC3 doesn't registers itself as consumer of PHY,
->> >> rather it gets that PHY from
->> >>            the list using devm_usb_get_phy()/devm_usb_get_phy_by_phandle() API.
->> >>            DWC3 can now call PHY's initialization sequence using usb_phy_init().
->> >>            So, before DWC3 initializes the PHY, PHYs should be in active state.
->> >
->> > Then usb_phy_init should make sure the PHY is in the active state.  If
->> > usb_add_phy() left the PHY suspended, then this routine should call
->> > pm_runtime_get_sync().
->>
->> Right
->>
->> >
->> > After DWC3 (or any other driver) has acquired the PHY, it can call
->> > pm_runtime_put/get() however it likes, so long as the calls balance
->> > properly.  If the driver isn't runtime-PM aware then it won't use any
->> > of these calls, and the PHY will remain active the entire time.
->>
->> Alright, so DWC3 (or any other consumer of PHY) should do minimal to
->> handle runtime state of PHYs; get() when accessing PHY and put() when it's done
->> with it.
+> This one got sent incorrectly due to my mistake. Please try the correct
+> version:
 >
-> Yes.  The first operation will generally be a put, because
-> usb_phy_init() will leave the PHY in an active state.
+> [PATCH RESEND 2/2] pinctrl: samsung: Fix link error with CONFIG_PINCTRL_EXYNOS
+> disabled
 
-Alright.
+This does not apply either.
 
->
->> >> >         Likewise, what routine does it call to unregister itself?
->> >>            Once DWC3's remove() is called PHYs are put.
->> >
->> > Is there a routine analogous to usb_phy_init() that gets called when
->> > PHY is released?  That routine would do the opposite of usb_phy_init(),
->> > putting the PHY back into its initialized state.
->>
->> Yes, ofcourse there's a routine usb_phy_shutdown(). So this will be
->> calling put_sync()
->> to put PHYs back to its initialized state. Right ?
->
-> Correct.
+Can you please test against the "devel" branch in the pinctrl tree?
 
-Hmm.
-
-Thanks for explaining things here and keeping patience to my queries :-)
-
-Felipe, thanks to you too for the discussion :-)
-I shall update the patchset asap.
-
--- 
-Best Regards
-Vivek
+Yours,
+Linus Walleij
