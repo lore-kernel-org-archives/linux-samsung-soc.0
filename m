@@ -1,61 +1,103 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH v2] ARM: S5pv210: compiling issue, ARM_S5PV210_CPUFREQ need CONFIG_CPU_FREQ_TABLE=y
-Date: Wed, 24 Apr 2013 14:09:24 +0200
-Message-ID: <1486501.MMr8zrpiDO@vostro.rjw.lan>
-References: <5177B562.40400@asianux.com> <5177BC50.6050402@asianux.com> <CAOh2x==g96h5UhvBjtyrBTjxdkno3WBv5JEsqyT3jqv7x69V6A@mail.gmail.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v3 01/11] usb: phy: Add APIs for runtime power management
+Date: Wed, 24 Apr 2013 18:42:57 +0530
+Message-ID: <CAFp+6iE72VRaBC3_AKGvD3XA5meYSsuUYuQivj3_719OZKGpVg@mail.gmail.com>
+References: <CAFp+6iECumogLo9Tf+4pMqRhtkGHf1CqA52YjL1tACTRyGO7jw@mail.gmail.com>
+	<Pine.LNX.4.44L0.1304231408370.1679-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOh2x==g96h5UhvBjtyrBTjxdkno3WBv5JEsqyT3jqv7x69V6A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Chen Gang <gang.chen@asianux.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f47.google.com ([209.85.214.47]:39198 "EHLO
+	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753877Ab3DXNNA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Apr 2013 09:13:00 -0400
+In-Reply-To: <Pine.LNX.4.44L0.1304231408370.1679-100000@iolanthe.rowland.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, sarah.a.sharp@linux.intel.com, rob.herring@calxeda.com, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, p.paneri@samsung.com
 
-On Wednesday, April 24, 2013 04:40:38 PM Viresh Kumar wrote:
-> On Wed, Apr 24, 2013 at 4:34 PM, Chen Gang <gang.chen@asianux.com> wrote:
-> >
-> > For arm S5pv210 with allmodconfig, ARM_S5PV210_CPUFREQ need
-> > CONFIG_CPU_FREQ_TABLE=y, or will cause compiling issue.
-> >
-> > The related operation:
-> > + arm-linux-gnu-ld -EL -p --no-undefined -X --build-id -X -o .tmp_vmlinux1 -T /root/linux-next/arch/arm/kernel/vmlinux.lds arch/arm/kernel/head.o init/built-in.o --start-group usr/built-in.o arch/arm/nwfpe/built-in.o arch/arm/vfp/built-in.o arch/arm/kernel/built-in.o arch/arm/mm/built-in.o arch/arm/common/built-in.o arch/arm/net/built-in.o arch/arm/crypto/built-in.o arch/arm/mach-s5pv210/built-in.o arch/arm/plat-samsung/built-in.o kernel/built-in.o mm/built-in.o fs/built-in.o ipc/built-in.o security/built-in.o crypto/built-in.o block/built-in.o arch/arm/lib/lib.a lib/lib.a arch/arm/lib/built-in.o lib/built-in.o drivers/built-in.o sound/built-in.o firmware/built-in.o net/built-in.o --end-group
-> >
-> > The related errors:
-> > drivers/built-in.o: In function `s5pv210_target':
-> > drivers/cpufreq/s5pv210-cpufreq.c:225: undefined reference to `cpufreq_frequency_table_target'
-> > drivers/cpufreq/s5pv210-cpufreq.c:237: undefined reference to `cpufreq_frequency_table_target'
-> > drivers/built-in.o: In function `s5pv210_verify_speed':
-> > drivers/cpufreq/s5pv210-cpufreq.c:182: undefined reference to `cpufreq_frequency_table_verify'
-> > drivers/built-in.o: In function `s5pv210_cpu_init':
-> > drivers/cpufreq/s5pv210-cpufreq.c:556: undefined reference to `cpufreq_frequency_table_get_attr'
-> > drivers/cpufreq/s5pv210-cpufreq.c:560: undefined reference to `cpufreq_frequency_table_cpuinfo'
-> > make: *** [vmlinux] Error 1
-> >
-> > Signed-off-by: Chen Gang <gang.chen@asianux.com>
-> > ---
-> >  drivers/cpufreq/Kconfig.arm |    1 +
-> >  1 files changed, 1 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> > index bce2195..bbcd719 100644
-> > --- a/drivers/cpufreq/Kconfig.arm
-> > +++ b/drivers/cpufreq/Kconfig.arm
-> > @@ -187,6 +187,7 @@ config ARM_S3C64XX_CPUFREQ
-> >  config ARM_S5PV210_CPUFREQ
-> >         bool "Samsung S5PV210 and S5PC110"
-> >         depends on CPU_S5PV210
-> > +       select CPU_FREQ_TABLE
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+On Tue, Apr 23, 2013 at 11:42 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Tue, 23 Apr 2013, Vivek Gautam wrote:
+>
+>> Hi,
+>>
+>>
+>> On Tue, Apr 23, 2013 at 10:23 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+>> > On Tue, 23 Apr 2013, Vivek Gautam wrote:
+>> >
+>> >> >> Alright, so here's my understanding:
+>> >> >>
+>> >> >> I suggested letting e.g. DWC3 enable the PHY's runtime_pm; Alan said
+>> >> >> that it could be done before that so that DWC3 sees an enabled PHY
+>> >> >> during probe.
+>> >> >
+>> >> > Basically right.  Help me to understand the overall situation a little
+>> >> > better:
+>> >> >
+>> >> >         What code registers the PHY initially?
+>> >>            PHY is added to global list by PHY drivers (like
+>> >> phy-samsung-usb2.c/phy-omap-usb2.c)
+>> >>            by usb_add_phy() API
+>> >
+>> > Then this routine should initialize the PHY.  The initialized state
+>> > could be either active or suspended, your choice.  Suspended would be
+>> > best, in case the PHY never gets used.
+>>
+>> Fair enough.
+>>
+>> >
+>> >> >         What routine does the DWC3 driver call to register itself
+>> >> >         as a consumer of the PHY?
+>> >>            I think DWC3 doesn't registers itself as consumer of PHY,
+>> >> rather it gets that PHY from
+>> >>            the list using devm_usb_get_phy()/devm_usb_get_phy_by_phandle() API.
+>> >>            DWC3 can now call PHY's initialization sequence using usb_phy_init().
+>> >>            So, before DWC3 initializes the PHY, PHYs should be in active state.
+>> >
+>> > Then usb_phy_init should make sure the PHY is in the active state.  If
+>> > usb_add_phy() left the PHY suspended, then this routine should call
+>> > pm_runtime_get_sync().
+>>
+>> Right
+>>
+>> >
+>> > After DWC3 (or any other driver) has acquired the PHY, it can call
+>> > pm_runtime_put/get() however it likes, so long as the calls balance
+>> > properly.  If the driver isn't runtime-PM aware then it won't use any
+>> > of these calls, and the PHY will remain active the entire time.
+>>
+>> Alright, so DWC3 (or any other consumer of PHY) should do minimal to
+>> handle runtime state of PHYs; get() when accessing PHY and put() when it's done
+>> with it.
+>
+> Yes.  The first operation will generally be a put, because
+> usb_phy_init() will leave the PHY in an active state.
 
-Applied.
+Alright.
 
-Thanks,
-Rafael
+>
+>> >> >         Likewise, what routine does it call to unregister itself?
+>> >>            Once DWC3's remove() is called PHYs are put.
+>> >
+>> > Is there a routine analogous to usb_phy_init() that gets called when
+>> > PHY is released?  That routine would do the opposite of usb_phy_init(),
+>> > putting the PHY back into its initialized state.
+>>
+>> Yes, ofcourse there's a routine usb_phy_shutdown(). So this will be
+>> calling put_sync()
+>> to put PHYs back to its initialized state. Right ?
+>
+> Correct.
 
+Hmm.
+
+Thanks for explaining things here and keeping patience to my queries :-)
+
+Felipe, thanks to you too for the discussion :-)
+I shall update the patchset asap.
 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Best Regards
+Vivek
