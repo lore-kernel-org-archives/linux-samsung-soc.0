@@ -1,58 +1,67 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 2/2] pinctrl: samsung: Fix link error with
- CONFIG_PINCTRL_EXYNOS disabled
-Date: Wed, 24 Apr 2013 16:47:08 +0200
-Message-ID: <2113989.KXXvDDhnMa@amdc1227>
-References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
- <6940961.67Lk2axxPL@amdc1227>
- <CACRpkdZmSj-AqUA9kd7NMN6cL2Nxa0EaKoSVkwQSrxhcWEeQtg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: Exynos regressions w.r.t. config and debuggability due to multiplatform
+Date: Wed, 24 Apr 2013 17:03:49 +0200
+Message-ID: <201304241703.49864.arnd@arndb.de>
+References: <CAOesGMgRsa-AvbEZCc1=_ovaZMaG0S-CDok2MDp_zu5yderAYw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35315 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752450Ab3DXOrV (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.171]:49883 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755927Ab3DXPD4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Apr 2013 10:47:21 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MLR008Q4L2VRV10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 24 Apr 2013 23:47:20 +0900 (KST)
-In-reply-to: <CACRpkdZmSj-AqUA9kd7NMN6cL2Nxa0EaKoSVkwQSrxhcWEeQtg@mail.gmail.com>
+	Wed, 24 Apr 2013 11:03:56 -0400
+In-Reply-To: <CAOesGMgRsa-AvbEZCc1=_ovaZMaG0S-CDok2MDp_zu5yderAYw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kwangwoo LEE <kwangwoo.lee@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>, Darius Augulis <augulis.darius@gmail.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Rob Herring <robherring2@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Wednesday 24 of April 2013 16:27:09 Linus Walleij wrote:
-> On Tue, Apr 23, 2013 at 2:09 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > On Tuesday 23 of April 2013 14:03:12 Linus Walleij wrote:
-> >> This does not apply to my "devel" branch in the pinctrl tree.
-> >> 
-> >> Could you rebase it on that branch?
-> >> 
-> >> Or is the error not even in my tree?
-> > 
-> > This one got sent incorrectly due to my mistake. Please try the correct
-> > version:
-> > 
-> > [PATCH RESEND 2/2] pinctrl: samsung: Fix link error with
-> > CONFIG_PINCTRL_EXYNOS disabled
+On Wednesday 24 April 2013, Olof Johansson wrote:
+> I think we should hold off on multiplatform for exynos until it works
+> better, i.e. 3.11.
 > 
-> This does not apply either.
-> 
-> Can you please test against the "devel" branch in the pinctrl tree?
+> First, the defconfig we have in our out-of-tree build system now
+> builds a broken kernel since it doesn't set ARCH_EXYNOS_SINGLE. As a
+> result, exynos gets turned off. It's quite awkward to switch between
+> pre- and post-multiplatform configs, which makes bisecting and other
+> error finding hard. I'm sure this will hit other downstream users too.
 
-Right, it does not apply.
+Hmm, good. point. The idea of the naming was that you actually
+/can/ go back and forth across that commit since ARCH_EXYNOS exists
+at all times, either as a standalone symbol or as part of multiplatform.
 
-Well, actually it does with git am -3, but it is incorrect, since the problem 
-it intends to fix is not present in your tree, but rather is a merge error in 
-linux-next in a merge of Kgene's and your tree...
+Unfortunately, I did not consider that this stops working for
+bisection if we do the change and only make ARCH_EXYNOS_SINGLE
+work correctly but leave ARCH_EXYNOS as "depends on BROKEN"
+initially. I think you are right that we need to revert bd51de53e1b
+"ARM: exynos: enable multiplatform support" in the next/multiplatform
+branch, although I don't see a problem with the other commits there.
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+> What's even more frustrating is that I can't turn on DEBUG_LL, since
+> serial drivers depend on PLAT_SAMSUNG, and that is no longer set.
+
+Are you sure? I don't see that problem. PLAT_SAMSUNG should still
+get set in both single- and multiplatform configurations, along with
+PLAT_SAMSUNG_SINGLE in the case of single-platform exynos.
+I've testing DEBUG_LL both in single and multi configurations on
+linux-next.
+
+> Seems like we'll have a really broken 3.10 if we merge what we have
+> now. More bake time is definitely needed. :(
+
+I think the problems with exynos are elsewhere at the moment, and
+Kukjin, Thomas, Tomasz and others have worked hard on getting those
+problems fixed. I would suggest we leave the "samsung/exynos-multiplatform"
+preparation series scheduled for the first set of pull requests in
+next/multiplatform but revert the bd51de53e1b commit in it.
+
+Once the dust settles in the merge window and the exynos multiplatform
+patches that are queued up in other trees (serial, spi, video, ...)
+have made it upstream, we can decide if the late/multiplatform
+series still looks scary or not. If you feel strongly about it and know
+that you don't want to merge it then, we can also drop the first part now.
+
+	Arnd
