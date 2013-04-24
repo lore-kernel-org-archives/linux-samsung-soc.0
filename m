@@ -1,96 +1,162 @@
 From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [RFC v2 2/6] fimc-lite: Adding Exynos5 compatibility to fimc-lite driver
-Date: Wed, 24 Apr 2013 13:11:09 +0530
-Message-ID: <1366789273-30184-3-git-send-email-shaik.ameer@samsung.com>
+Subject: [RFC v2 3/6] media: fimc-lite: Adding support for Exynos5
+Date: Wed, 24 Apr 2013 13:11:10 +0530
+Message-ID: <1366789273-30184-4-git-send-email-shaik.ameer@samsung.com>
 References: <1366789273-30184-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:41463 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757931Ab3DXHmV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Apr 2013 03:42:21 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1366789273-30184-1-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
 Cc: s.nawrocki@samsung.com, shaik.samsung@gmail.com, arunkk.samsung@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds,
-1] Exynos5 soc compatibility to the fimc-lite driver
-2] Multiple dma output buffer support as from Exynos5 onwards,
-   fimc-lite h/w ip supports multiple dma buffers.
+FIMC-LITE supports multiple DMA shadow registers from Exynos5 onwards.
+This patch adds the functionality of using shadow registers by
+checking the driver data.
 
 Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 ---
- drivers/media/platform/exynos4-is/fimc-lite.c |   19 ++++++++++++++++++-
- drivers/media/platform/exynos4-is/fimc-lite.h |    4 +++-
- 2 files changed, 21 insertions(+), 2 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-lite-reg.c |   13 +++++++
+ drivers/media/platform/exynos4-is/fimc-lite-reg.h |   41 ++++++++++++++++++++-
+ drivers/media/platform/exynos4-is/fimc-lite.c     |   12 ++++--
+ 3 files changed, 60 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite-reg.c b/drivers/media/platform/exynos4-is/fimc-lite-reg.c
+index 8cc0d39..a1d566a 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite-reg.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite-reg.c
+@@ -215,6 +215,18 @@ void flite_hw_set_camera_bus(struct fimc_lite *dev,
+ 	flite_hw_set_camera_port(dev, si->mux_id);
+ }
+ 
++static void flite_hw_set_pack12(struct fimc_lite *dev, int on)
++{
++	u32 cfg = readl(dev->regs + FLITE_REG_CIODMAFMT);
++
++	cfg &= ~FLITE_REG_CIODMAFMT_PACK12;
++
++	if (on)
++		cfg |= FLITE_REG_CIODMAFMT_PACK12;
++
++	writel(cfg, dev->regs + FLITE_REG_CIODMAFMT);
++}
++
+ static void flite_hw_set_out_order(struct fimc_lite *dev, struct flite_frame *f)
+ {
+ 	static const u32 pixcode[4][2] = {
+@@ -267,6 +279,7 @@ void flite_hw_set_output_dma(struct fimc_lite *dev, struct flite_frame *f,
+ 
+ 	flite_hw_set_out_order(dev, f);
+ 	flite_hw_set_dma_window(dev, f);
++	flite_hw_set_pack12(dev, 0);
+ }
+ 
+ void flite_hw_dump_regs(struct fimc_lite *dev, const char *label)
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite-reg.h b/drivers/media/platform/exynos4-is/fimc-lite-reg.h
+index 3903839..8e57e7a 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite-reg.h
++++ b/drivers/media/platform/exynos4-is/fimc-lite-reg.h
+@@ -120,6 +120,10 @@
+ /* b0: 1 - camera B, 0 - camera A */
+ #define FLITE_REG_CIGENERAL_CAM_B		(1 << 0)
+ 
++
++#define FLITE_REG_CIFCNTSEQ			0x100
++#define FLITE_REG_CIOSAN(x)			(0x200 + (4 * (x)))
++
+ /* ----------------------------------------------------------------------------
+  * Function declarations
+  */
+@@ -143,8 +147,41 @@ void flite_hw_set_dma_window(struct fimc_lite *dev, struct flite_frame *f);
+ void flite_hw_set_test_pattern(struct fimc_lite *dev, bool on);
+ void flite_hw_dump_regs(struct fimc_lite *dev, const char *label);
+ 
+-static inline void flite_hw_set_output_addr(struct fimc_lite *dev, u32 paddr)
++static inline void flite_hw_set_output_addr(struct fimc_lite *dev,
++	u32 paddr, u32 index)
++{
++	u32 config;
++
++	/* FLITE in EXYNOS4 has only one DMA register */
++	if (!dev->dd->support_multi_dma_buf)
++		index = 0;
++
++	config = readl(dev->regs + FLITE_REG_CIFCNTSEQ);
++	config |= 1 << index;
++	writel(config, dev->regs + FLITE_REG_CIFCNTSEQ);
++
++	if (index == 0)
++		writel(paddr, dev->regs + FLITE_REG_CIOSA);
++	else
++		writel(paddr, dev->regs + FLITE_REG_CIOSAN(index-1));
++}
++
++static inline void flite_hw_clear_output_addr(struct fimc_lite *dev, u32 index)
+ {
+-	writel(paddr, dev->regs + FLITE_REG_CIOSA);
++	u32 config;
++
++	/* FLITE in EXYNOS4 has only one DMA register */
++	if (!dev->dd->support_multi_dma_buf)
++		index = 0;
++
++	config = readl(dev->regs + FLITE_REG_CIFCNTSEQ);
++	config &= ~(1 << index);
++	writel(config, dev->regs + FLITE_REG_CIFCNTSEQ);
+ }
++
++static inline void flite_hw_clear_output_index(struct fimc_lite *dev)
++{
++	writel(0, dev->regs + FLITE_REG_CIFCNTSEQ);
++}
++
+ #endif /* FIMC_LITE_REG_H */
 diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index 4878089..cb173ec 100644
+index cb173ec..1b12ea8 100644
 --- a/drivers/media/platform/exynos4-is/fimc-lite.c
 +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -1467,7 +1467,7 @@ static int fimc_lite_probe(struct platform_device *pdev)
- 		fimc->index = pdev->id;
- 	}
- 
--	if (!drv_data || fimc->index < 0 || fimc->index >= FIMC_LITE_MAX_DEVS)
-+	if (!drv_data || fimc->index < 0 || fimc->index >= drv_data->num_devs)
+@@ -166,6 +166,8 @@ static int fimc_lite_hw_init(struct fimc_lite *fimc, bool isp_output)
+ 	if (fimc->inp_frame.fmt == NULL || fimc->out_frame.fmt == NULL)
  		return -EINVAL;
  
- 	fimc->dd = drv_data;
-@@ -1625,6 +1625,19 @@ static struct flite_drvdata fimc_lite_drvdata_exynos4 = {
- 	.out_width_align	= 8,
- 	.win_hor_offs_align	= 2,
- 	.out_hor_offs_align	= 8,
-+	.support_multi_dma_buf	= false,
-+	.num_devs = 2,
-+};
++	flite_hw_clear_output_index(fimc);
 +
-+/* EXYNOS5250 */
-+static struct flite_drvdata fimc_lite_drvdata_exynos5 = {
-+	.max_width		= 8192,
-+	.max_height		= 8192,
-+	.out_width_align	= 8,
-+	.win_hor_offs_align	= 2,
-+	.out_hor_offs_align	= 8,
-+	.support_multi_dma_buf	= true,
-+	.num_devs = 3,
- };
+ 	/* Get sensor configuration data from the sensor subdev */
+ 	si = v4l2_get_subdev_hostdata(fimc->sensor);
+ 	if (!si)
+@@ -307,11 +309,12 @@ static irqreturn_t flite_irq_handler(int irq, void *priv)
+ 		tv->tv_sec = ts.tv_sec;
+ 		tv->tv_usec = ts.tv_nsec / NSEC_PER_USEC;
+ 		vbuf->vb.v4l2_buf.sequence = fimc->frame_count++;
++		flite_hw_clear_output_addr(fimc, vbuf->vb.v4l2_buf.index);
+ 		vb2_buffer_done(&vbuf->vb, VB2_BUF_STATE_DONE);
  
- static struct platform_device_id fimc_lite_driver_ids[] = {
-@@ -1641,6 +1654,10 @@ static const struct of_device_id flite_of_match[] = {
- 		.compatible = "samsung,exynos4212-fimc-lite",
- 		.data = &fimc_lite_drvdata_exynos4,
- 	},
-+	{
-+		.compatible = "samsung,exynos5250-fimc-lite",
-+		.data = &fimc_lite_drvdata_exynos5,
-+	},
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, flite_of_match);
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.h b/drivers/media/platform/exynos4-is/fimc-lite.h
-index 71fed51..a35f29e 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.h
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.h
-@@ -27,7 +27,7 @@
+ 		vbuf = fimc_lite_pending_queue_pop(fimc);
+-		flite_hw_set_output_addr(fimc, vbuf->paddr);
+-		fimc_lite_active_queue_add(fimc, vbuf);
++		flite_hw_set_output_addr(fimc, vbuf->paddr,
++					vbuf->vb.v4l2_buf.index);
+ 	}
  
- #define FIMC_LITE_DRV_NAME	"exynos-fimc-lite"
- #define FLITE_CLK_NAME		"flite"
--#define FIMC_LITE_MAX_DEVS	2
-+#define FIMC_LITE_MAX_DEVS	3
- #define FLITE_REQ_BUFS_MIN	2
+ 	if (test_bit(ST_FLITE_CONFIG, &fimc->state))
+@@ -439,7 +442,8 @@ static void buffer_queue(struct vb2_buffer *vb)
+ 	if (!test_bit(ST_FLITE_SUSPENDED, &fimc->state) &&
+ 	    !test_bit(ST_FLITE_STREAM, &fimc->state) &&
+ 	    list_empty(&fimc->active_buf_q)) {
+-		flite_hw_set_output_addr(fimc, buf->paddr);
++		flite_hw_set_output_addr(fimc, buf->paddr,
++					buf->vb.v4l2_buf.index);
+ 		fimc_lite_active_queue_add(fimc, buf);
+ 	} else {
+ 		fimc_lite_pending_queue_add(fimc, buf);
+@@ -643,7 +647,7 @@ static int fimc_vidioc_querycap_capture(struct file *file, void *priv,
+ 	strlcpy(cap->driver, FIMC_LITE_DRV_NAME, sizeof(cap->driver));
+ 	cap->bus_info[0] = 0;
+ 	cap->card[0] = 0;
+-	cap->capabilities = V4L2_CAP_STREAMING;
++	cap->capabilities = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE_MPLANE;
+ 	return 0;
+ }
  
- /* Bit index definitions for struct fimc_lite::state */
-@@ -54,6 +54,8 @@ struct flite_drvdata {
- 	unsigned short out_width_align;
- 	unsigned short win_hor_offs_align;
- 	unsigned short out_hor_offs_align;
-+	unsigned short support_multi_dma_buf;
-+	unsigned short num_devs;
- };
- 
- #define fimc_lite_get_drvdata(_pdev) \
 -- 
 1.7.9.5
