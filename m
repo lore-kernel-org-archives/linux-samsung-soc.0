@@ -1,44 +1,75 @@
 From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [RFC v2 5/6] media: s5p-csis: Adding Exynos5250 compatibility
-Date: Wed, 24 Apr 2013 13:11:12 +0530
-Message-ID: <1366789273-30184-6-git-send-email-shaik.ameer@samsung.com>
+Subject: [RFC v2 4/6] media: fimc-lite: Fix for DMA output corruption
+Date: Wed, 24 Apr 2013 13:11:11 +0530
+Message-ID: <1366789273-30184-5-git-send-email-shaik.ameer@samsung.com>
 References: <1366789273-30184-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f44.google.com ([209.85.210.44]:62635 "EHLO
+	mail-da0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757951Ab3DXHm1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Apr 2013 03:42:27 -0400
 In-Reply-To: <1366789273-30184-1-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
 Cc: s.nawrocki@samsung.com, shaik.samsung@gmail.com, arunkk.samsung@gmail.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
-FIMC-IS firmware needs all the MIPI-CSIS interrupts to be enabled.
-This patch enables all those MIPI interrupts and adds the Exynos5
-compatible string.
+Fixes Buffer corruption on DMA output from fimc-lite
 
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 ---
- drivers/media/platform/exynos4-is/mipi-csis.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/platform/exynos4-is/fimc-lite-reg.c |    3 ++-
+ drivers/media/platform/exynos4-is/fimc-lite.c     |   14 +++++++++-----
+ 2 files changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index 8636bcd..51ad9b2 100644
---- a/drivers/media/platform/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-@@ -66,7 +66,7 @@ MODULE_PARM_DESC(debug, "Debug level (0-2)");
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite-reg.c b/drivers/media/platform/exynos4-is/fimc-lite-reg.c
+index a1d566a..46eda5b 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite-reg.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite-reg.c
+@@ -68,7 +68,8 @@ void flite_hw_set_interrupt_mask(struct fimc_lite *dev)
+ 	if (atomic_read(&dev->out_path) == FIMC_IO_DMA) {
+ 		intsrc = FLITE_REG_CIGCTRL_IRQ_OVFEN |
+ 			 FLITE_REG_CIGCTRL_IRQ_LASTEN |
+-			 FLITE_REG_CIGCTRL_IRQ_STARTEN;
++			 FLITE_REG_CIGCTRL_IRQ_STARTEN |
++			 FLITE_REG_CIGCTRL_IRQ_ENDEN;
+ 	} else {
+ 		/* An output to the FIMC-IS */
+ 		intsrc = FLITE_REG_CIGCTRL_IRQ_OVFEN |
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index 1b12ea8..5de2dd4 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -301,8 +301,16 @@ static irqreturn_t flite_irq_handler(int irq, void *priv)
  
- /* Interrupt mask */
- #define S5PCSIS_INTMSK			0x10
--#define S5PCSIS_INTMSK_EN_ALL		0xf000103f
-+#define S5PCSIS_INTMSK_EN_ALL		0xfc00103f
- #define S5PCSIS_INTMSK_EVEN_BEFORE	(1 << 31)
- #define S5PCSIS_INTMSK_EVEN_AFTER	(1 << 30)
- #define S5PCSIS_INTMSK_ODD_BEFORE	(1 << 29)
-@@ -1003,6 +1003,7 @@ static const struct dev_pm_ops s5pcsis_pm_ops = {
- static const struct of_device_id s5pcsis_of_match[] = {
- 	{ .compatible = "samsung,s5pv210-csis" },
- 	{ .compatible = "samsung,exynos4210-csis" },
-+	{ .compatible = "samsung,exynos5250-csis" },
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, s5pcsis_of_match);
+ 	if ((intsrc & FLITE_REG_CISTATUS_IRQ_SRC_FRMSTART) &&
+ 	    test_bit(ST_FLITE_RUN, &fimc->state) &&
+-	    !list_empty(&fimc->active_buf_q) &&
+ 	    !list_empty(&fimc->pending_buf_q)) {
++		vbuf = fimc_lite_pending_queue_pop(fimc);
++		flite_hw_set_output_addr(fimc, vbuf->paddr,
++					vbuf->vb.v4l2_buf.index);
++		fimc_lite_active_queue_add(fimc, vbuf);
++	}
++
++	if ((intsrc & FLITE_REG_CISTATUS_IRQ_SRC_FRMEND) &&
++	    test_bit(ST_FLITE_RUN, &fimc->state) &&
++	    !list_empty(&fimc->active_buf_q)) {
+ 		vbuf = fimc_lite_active_queue_pop(fimc);
+ 		ktime_get_ts(&ts);
+ 		tv = &vbuf->vb.v4l2_buf.timestamp;
+@@ -311,10 +319,6 @@ static irqreturn_t flite_irq_handler(int irq, void *priv)
+ 		vbuf->vb.v4l2_buf.sequence = fimc->frame_count++;
+ 		flite_hw_clear_output_addr(fimc, vbuf->vb.v4l2_buf.index);
+ 		vb2_buffer_done(&vbuf->vb, VB2_BUF_STATE_DONE);
+-
+-		vbuf = fimc_lite_pending_queue_pop(fimc);
+-		flite_hw_set_output_addr(fimc, vbuf->paddr,
+-					vbuf->vb.v4l2_buf.index);
+ 	}
+ 
+ 	if (test_bit(ST_FLITE_CONFIG, &fimc->state))
 -- 
 1.7.9.5
