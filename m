@@ -1,32 +1,36 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
-Date: Fri, 26 Apr 2013 01:48:19 +0900
-Message-ID: <51795E53.5030908@samsung.com>
-References: <cover.1365079581.git.viresh.kumar@linaro.org> <1769336.FkfMpuXqqb@vostro.rjw.lan> <5176A807.2090005@samsung.com> <2264237.NUtkmvZG3W@vostro.rjw.lan>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: Exynos regressions w.r.t. config and debuggability due to multiplatform
+Date: Thu, 25 Apr 2013 19:31:24 +0200
+Message-ID: <201304251931.25028.arnd@arndb.de>
+References: <CAOesGMgRsa-AvbEZCc1=_ovaZMaG0S-CDok2MDp_zu5yderAYw@mail.gmail.com> <201304241703.49864.arnd@arndb.de> <51794CD3.4080807@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <2264237.NUtkmvZG3W@vostro.rjw.lan>
-Sender: cpufreq-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, robin.randhawa@arm.com, Ben Dooks <ben-linux@fluff.org>, linux-pm@vger.kernel.org, patches@linaro.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, charles.garcia-tobin@arm.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.171]:50089 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932766Ab3DYRbg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 25 Apr 2013 13:31:36 -0400
+In-Reply-To: <51794CD3.4080807@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 04/24/13 07:59, Rafael J. Wysocki wrote:
+On Thursday 25 April 2013, Kukjin Kim wrote:
+> 
+> On 04/25/13 00:03, Arnd Bergmann wrote:
+> > On Wednesday 24 April 2013, Olof Johansson wrote:
+> >> I think we should hold off on multiplatform for exynos until it works
+> >> better, i.e. 3.11.
+> >>
+> I think, this would be better choice for now if it's not urgent...
+> 
 
-[...]
+I spent a lot of time on it because it's a priority for Linaro, but
+that means I'm biased in the question of whether to merge it or not.
+It should only get in if you and Olof think it's a good idea.
 
->> Rafael, please take this patch with my ack in your tree, sorry for noise.
->>
->> Acked-by: Kukjin Kim<kgene.kim@samsung.com>
->>
->> If any problems, please kindly let me know.
->
-> Well, I suppose I can take the original patch, but then it will conflict with
-> your tree during merge.  Is that not a problem?
->
-I think, some conflicts can be occurred but if so, we can fix it before 
-merge window.
-
-- Kukjin
+	Arnd
