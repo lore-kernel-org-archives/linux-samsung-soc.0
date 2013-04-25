@@ -1,104 +1,55 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH v2 2/4] Thermal: exynos: Support for TMU regulator defined
- at device tree
-Date: Thu, 25 Apr 2013 18:39:14 +0530
-Message-ID: <CADGdYn6g5Lggkcbq9WMMfbqN-NBb_14_b1bfcd=7+CJrxJcquA@mail.gmail.com>
-References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
-	<1366893045-31586-1-git-send-email-l.majewski@samsung.com>
-	<1366893045-31586-3-git-send-email-l.majewski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: Fix link error with
+ CONFIG_PINCTRL_EXYNOS disabled
+Date: Thu, 25 Apr 2013 15:26:05 +0200
+Message-ID: <CACRpkdY61h-H14QYHhADnAz1JRa=8Wbi0aYKSRW21xm4WHOHGA@mail.gmail.com>
+References: <1366060483-20342-1-git-send-email-tomasz.figa@gmail.com>
+	<6940961.67Lk2axxPL@amdc1227>
+	<CACRpkdZmSj-AqUA9kd7NMN6cL2Nxa0EaKoSVkwQSrxhcWEeQtg@mail.gmail.com>
+	<2113989.KXXvDDhnMa@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f176.google.com ([209.85.210.176]:59914 "EHLO
-	mail-ia0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757958Ab3DYNJP (ORCPT
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:51250 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756342Ab3DYN0G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Apr 2013 09:09:15 -0400
-In-Reply-To: <1366893045-31586-3-git-send-email-l.majewski@samsung.com>
+	Thu, 25 Apr 2013 09:26:06 -0400
+Received: by mail-oa0-f47.google.com with SMTP id n9so2840096oag.34
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2013 06:26:06 -0700 (PDT)
+In-Reply-To: <2113989.KXXvDDhnMa@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, t.figa@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kwangwoo LEE <kwangwoo.lee@gmail.com>, Peter Korsgaard <jacmet@sunsite.dk>, Darius Augulis <augulis.darius@gmail.com>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Rob Herring <robherring2@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-Hi Lukasz Majewski,
+On Wed, Apr 24, 2013 at 4:47 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> On Wednesday 24 of April 2013 16:27:09 Linus Walleij wrote:
+>> On Tue, Apr 23, 2013 at 2:09 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> > On Tuesday 23 of April 2013 14:03:12 Linus Walleij wrote:
+>> >> This does not apply to my "devel" branch in the pinctrl tree.
+>> >>
+>> >> Could you rebase it on that branch?
+>> >>
+>> >> Or is the error not even in my tree?
+>> >
+>> > This one got sent incorrectly due to my mistake. Please try the correct
+>> > version:
+>> >
+>> > [PATCH RESEND 2/2] pinctrl: samsung: Fix link error with
+>> > CONFIG_PINCTRL_EXYNOS disabled
+>>
+>> This does not apply either.
+>>
+>> Can you please test against the "devel" branch in the pinctrl tree?
+>
+> Right, it does not apply.
+>
+> Well, actually it does with git am -3, but it is incorrect, since the problem
+> it intends to fix is not present in your tree, but rather is a merge error in
+> linux-next in a merge of Kgene's and your tree...
 
-Sorry for late review but I am currently working on restructuring the
-whole exynos thermal driver and this support of LDO can be added as
-feature as not all socs support this. This is also suggested by
-Eduardo. All your other patches looks fine.
+Oh. Then you have to send the patch to Stephen Rothwell.
 
-Thanks,
-Amit Daniel
-
-On Thu, Apr 25, 2013 at 6:00 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> TMU probe function now checks for a device tree defined regulator.
-> For compatibility reasons it is allowed to probe driver even without
-> this regulator defined.
->
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> Changes for v2:
-> - Change dev_info() to dev_warn()
-> ---
->  drivers/thermal/exynos_thermal.c |   19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->
-> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-> index 3d6e32a..328fe7e 100644
-> --- a/drivers/thermal/exynos_thermal.c
-> +++ b/drivers/thermal/exynos_thermal.c
-> @@ -38,6 +38,7 @@
->  #include <linux/cpufreq.h>
->  #include <linux/cpu_cooling.h>
->  #include <linux/of.h>
-> +#include <linux/regulator/consumer.h>
->
->  #include <plat/cpu.h>
->
-> @@ -119,6 +120,8 @@
->
->  #define EXYNOS_ZONE_COUNT      3
->
-> +#define EXYNOS_TMU_REGULATOR "vdd_ts"
-> +
->  struct exynos_tmu_data {
->         struct exynos_tmu_platform_data *pdata;
->         struct resource *mem;
-> @@ -948,6 +951,7 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  {
->         struct exynos_tmu_data *data;
->         struct exynos_tmu_platform_data *pdata = pdev->dev.platform_data;
-> +       struct regulator *reg;
->         int ret, i;
->
->         if (!pdata)
-> @@ -957,6 +961,21 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->                 dev_err(&pdev->dev, "No platform init data supplied.\n");
->                 return -ENODEV;
->         }
-> +
-> +       reg = regulator_get(&pdev->dev, EXYNOS_TMU_REGULATOR);
-> +       if (!IS_ERR(reg)) {
-> +               ret = regulator_enable(reg);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev, "Regulator %s not enabled.\n",
-> +                               EXYNOS_TMU_REGULATOR);
-> +                       return ret;
-> +               }
-> +       } else {
-> +               dev_warn(&pdev->dev,
-> +                        "Regulator %s not defined at device tree.\n",
-> +                        EXYNOS_TMU_REGULATOR);
-> +       }
-> +
->         data = devm_kzalloc(&pdev->dev, sizeof(struct exynos_tmu_data),
->                                         GFP_KERNEL);
->         if (!data) {
-> --
-> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
