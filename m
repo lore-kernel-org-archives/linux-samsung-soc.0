@@ -1,61 +1,49 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v2 2/4] Thermal: exynos: Support for TMU regulator defined
- at device tree
-Date: Thu, 25 Apr 2013 18:29:41 +0200
-Message-ID: <20130425182941.63ecff30@amdc308.digital.local>
-References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
- <1366893045-31586-1-git-send-email-l.majewski@samsung.com>
- <1366893045-31586-3-git-send-email-l.majewski@samsung.com>
- <CADGdYn6g5Lggkcbq9WMMfbqN-NBb_14_b1bfcd=7+CJrxJcquA@mail.gmail.com>
- <20130425152934.5041cc98@amdc308.digital.local> <51794F48.5040401@ti.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes-1 for v3.10
+Date: Fri, 26 Apr 2013 01:40:02 +0900
+Message-ID: <51795C62.8070500@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21322 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757966Ab3DYQ3t (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:59468 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755921Ab3DYQkH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Apr 2013 12:29:49 -0400
-In-reply-to: <51794F48.5040401@ti.com>
+	Thu, 25 Apr 2013 12:40:07 -0400
+Received: by mail-pd0-f175.google.com with SMTP id g12so78342pdj.20
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2013 09:40:06 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: amit daniel kachhap <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, t.figa@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Eduardo,
+The following changes since commit 58a7bbf75442ea439a4d3b7993ad87023e406063:
 
-> Amit, Lukasz,
-> 
-> On 25-04-2013 09:29, Lukasz Majewski wrote:
-> > Hi Amit,
-> >  
-> >> Hi Lukasz Majewski,
-> >>
-> >> Sorry for late review but I am currently working on restructuring
-> >> the whole exynos thermal driver and this support of LDO can be
-> >> added as feature as not all socs support this. This is also
-> >> suggested by Eduardo. All your other patches looks fine.  
-> >
-> > But this is how it is already done. The VDD_TS is optional, so
-> > Exynos5440 and Exynos4210 will not be broken.
-> >
-> > This shall preserve the correct behavior of the thermal driver.
-> >  
-> 
-> If you guys plan to move to feature based approach, like suggested in 
-> V1, then Id recommend adding a /* TODO: */ entry in your driver.
+   ARM: dts: add PDMA0 changes for exynos5440 (2013-04-09 01:39:27 +0900)
 
-Ok, nice idea.
+are available in the git repository at:
 
-> 
-> Amit, are you including this LDO support on your rework?
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-fixes-1-for-v3.10
 
+for you to fetch changes up to bf49cd7f8d560497cf39065a537f4c722e456cbb:
 
+   ARM: dts: Disable the RTC by default on exynos5 (2013-04-26 01:26:54 
++0900)
 
--- 
-Best regards,
+----------------------------------------------------------------
+Disables the RTC by default on exynos5 to remove lots of warnings in the 
+kernel boot log and Fixes build warning on exynos4x12
 
-Lukasz Majewski
+----------------------------------------------------------------
+Doug Anderson (1):
+       ARM: dts: Disable the RTC by default on exynos5
 
-Samsung R&D Poland (SRPOL) | Linux Platform Group
+Thomas Abraham (1):
+       ARM: dts: add mshc controller node for Exynos4x12 SoCs
+
+  arch/arm/boot/dts/exynos4412.dtsi | 8 ++++++++
+  arch/arm/boot/dts/exynos5250.dtsi | 1 +
+  arch/arm/boot/dts/exynos5440.dtsi | 1 +
+  3 files changed, 10 insertions(+)
