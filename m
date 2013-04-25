@@ -1,59 +1,96 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL] Late Exynos stuff for v3.10
-Date: Fri, 26 Apr 2013 00:38:56 +0900
-Message-ID: <51794E10.1010205@samsung.com>
-References: <5176B499.1000208@samsung.com> <51770697.7080504@samsung.com> <20130424000638.GA9067@quad.lixom.net>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH v2 4/4] ARM:TMU:fix: Avoid lockup when first frequency
+ table entry is CPUFREQ_ENTRY_INVALID
+Date: Thu, 25 Apr 2013 11:39:12 -0400
+Message-ID: <51794E20.9010107@ti.com>
+References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com> <1366893045-31586-1-git-send-email-l.majewski@samsung.com> <1366893045-31586-5-git-send-email-l.majewski@samsung.com> <51794785.6090406@ti.com> <20130425172246.2143525e@amdc308.digital.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f47.google.com ([209.85.210.47]:64485 "EHLO
-	mail-da0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758286Ab3DYPjB (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:44923 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757914Ab3DYPje (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Apr 2013 11:39:01 -0400
-Received: by mail-da0-f47.google.com with SMTP id p1so1477146dad.34
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2013 08:39:00 -0700 (PDT)
-In-Reply-To: <20130424000638.GA9067@quad.lixom.net>
+	Thu, 25 Apr 2013 11:39:34 -0400
+In-Reply-To: <20130425172246.2143525e@amdc308.digital.local>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 04/24/13 09:06, Olof Johansson wrote:
-> Hi,
+On 25-04-2013 11:22, Lukasz Majewski wrote:
+> Hi Eduardo,
 >
-Hi Olof,
+>> Lukasz,
+>>
+>> On 25-04-2013 08:30, Lukasz Majewski wrote:
+>>> With the while loop, when i=0 and first entry in the frequency
+>>> table is CPUFREQ_ENTRY_INVALID, the code results in an endless loop
+>>> (since i is not incremented).
+>>>
+>>> To fix this problem the for loop has been chosen. Incrementing i in
+>>> the for end block solves the problem.
+>>>
+>>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>> Changes for v2:
+>>> - New in v2
+>>
+>> This patch wont apply on Rui's tree.
+>>
+>> I believe this has been already fixed on Rui's tree (next branch).
+>> Could you please check if the commit below fix your issue:
+>> git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/commit/?h=thermal&id=fc35b35cbe24ef021ea9acfba21e54da958df747
+>>
+>> commit fc35b35cbe24ef021ea9acfba21e54da958df747
+>> Author: Zhang Rui <rui.zhang@intel.com>
+>> Date:   Fri Feb 8 13:09:32 2013 +0800
+>>
+>>       Thermal: cpufreq cooling: fix parsing per_cpu
+>> cpufreq_frequency_table
+>>
+>
+> Thanks for pointing out. It seems, that this function fixes this
+> problem.
 
-> Can I please ask you to make our life a little easier by telling us what the
-> specific problems these patches solve are? What I am looking for is something
-> along the lines of:
->
-> --
->
-> This branch includes some last-minute enablements of DT contents for features
-> that are queued for 3.10:
->   - USB PHY drivers on Exynos 5250
->   - MMC (mshc) on Exynos 4x12
->   - XCHI (USB 3.0) on Exynos 5250
->
-> It also contains a fix to disable RTC on exynos [because ... you fill in this
-> part].
->
-> --
->
-> It doesn't have to be something super-elaborate, but I'd like it to be sort of
-> self-documenting in a way that I don't have to look through the series of
-> patches to get an overview of what's in the branch. Of course we'll also do
-> that to review the code, but having the description there makes things easier
-> for us to tell if we should even be looking at it, etc.
->
->
-OK, I see. Let me do it more carefully.
+OK.
 
-And let me send pull-request again for fix and late dt branch with 
-separated branches in a couple of hours not including usb stuff...
+>
+> As a side note, is this problem fixed at stable kernels?
 
-Thanks.
+Good question, probably not!
 
-- Kukjin
+>
+>>
+>>
+>>> ---
+>>>    drivers/thermal/cpu_cooling.c |    3 +--
+>>>    1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/thermal/cpu_cooling.c
+>>> b/drivers/thermal/cpu_cooling.c index 8dc44cb..df79f5e8 100644
+>>> --- a/drivers/thermal/cpu_cooling.c
+>>> +++ b/drivers/thermal/cpu_cooling.c
+>>> @@ -124,7 +124,7 @@ static unsigned int get_cpu_frequency(unsigned
+>>> int cpu, unsigned long level) if (!table)
+>>>    		return ret;
+>>>
+>>> -	while (table[i].frequency != CPUFREQ_TABLE_END) {
+>>> +	for (; table[i].frequency != CPUFREQ_TABLE_END; i++) {
+>>>    		if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
+>>>    			continue;
+>>>
+>>> @@ -138,7 +138,6 @@ static unsigned int get_cpu_frequency(unsigned
+>>> int cpu, unsigned long level) /*return if level matched and table
+>>> in descending order*/ if (descend && i == level)
+>>>    			return table[i].frequency;
+>>> -		i++;
+>>>    	}
+>>>    	i--;
+>>>
+>>>
+>
+>
+>
