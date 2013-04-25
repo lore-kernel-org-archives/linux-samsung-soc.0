@@ -1,86 +1,221 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH v2] ARM: S5pv210: compiling issue, ARM_S5PV210_CPUFREQ
- need CONFIG_CPU_FREQ_TABLE=y
-Date: Thu, 25 Apr 2013 09:21:34 +0800
-Message-ID: <5178851E.3090204@asianux.com>
-References: <5177B562.40400@asianux.com> <5177BC50.6050402@asianux.com> <CAOh2x==g96h5UhvBjtyrBTjxdkno3WBv5JEsqyT3jqv7x69V6A@mail.gmail.com> <1486501.MMr8zrpiDO@vostro.rjw.lan>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH] ARM: dts: add pinctrl nodes for Exynos5250 SoC
+Date: Thu, 25 Apr 2013 13:08:43 +0530
+Message-ID: <CAJuYYwTwbYhRO7z8J79g-GM-44Y6A6trkF_z72Kqp+MoBF==+w@mail.gmail.com>
+References: <1355403978-388-1-git-send-email-thomas.abraham@linaro.org>
+	<20130424233348.GA6603@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:60467 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758665Ab3DYBWV (ORCPT
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:54479 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755207Ab3DYHio (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Apr 2013 21:22:21 -0400
-In-Reply-To: <1486501.MMr8zrpiDO@vostro.rjw.lan>
+	Thu, 25 Apr 2013 03:38:44 -0400
+Received: by mail-ie0-f180.google.com with SMTP id to1so3181973ieb.25
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2013 00:38:43 -0700 (PDT)
+In-Reply-To: <20130424233348.GA6603@quad.lixom.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: arm-linux <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Patch Tracking <patches@linaro.org>
 
-On 2013=E5=B9=B404=E6=9C=8824=E6=97=A5 20:09, Rafael J. Wysocki wrote:
-> On Wednesday, April 24, 2013 04:40:38 PM Viresh Kumar wrote:
->> > On Wed, Apr 24, 2013 at 4:34 PM, Chen Gang <gang.chen@asianux.com>=
- wrote:
->>> > >
->>> > > For arm S5pv210 with allmodconfig, ARM_S5PV210_CPUFREQ need
->>> > > CONFIG_CPU_FREQ_TABLE=3Dy, or will cause compiling issue.
->>> > >
->>> > > The related operation:
->>> > > + arm-linux-gnu-ld -EL -p --no-undefined -X --build-id -X -o .t=
-mp_vmlinux1 -T /root/linux-next/arch/arm/kernel/vmlinux.lds arch/arm/ke=
-rnel/head.o init/built-in.o --start-group usr/built-in.o arch/arm/nwfpe=
-/built-in.o arch/arm/vfp/built-in.o arch/arm/kernel/built-in.o arch/arm=
-/mm/built-in.o arch/arm/common/built-in.o arch/arm/net/built-in.o arch/=
-arm/crypto/built-in.o arch/arm/mach-s5pv210/built-in.o arch/arm/plat-sa=
-msung/built-in.o kernel/built-in.o mm/built-in.o fs/built-in.o ipc/buil=
-t-in.o security/built-in.o crypto/built-in.o block/built-in.o arch/arm/=
-lib/lib.a lib/lib.a arch/arm/lib/built-in.o lib/built-in.o drivers/buil=
-t-in.o sound/built-in.o firmware/built-in.o net/built-in.o --end-group
->>> > >
->>> > > The related errors:
->>> > > drivers/built-in.o: In function `s5pv210_target':
->>> > > drivers/cpufreq/s5pv210-cpufreq.c:225: undefined reference to `=
-cpufreq_frequency_table_target'
->>> > > drivers/cpufreq/s5pv210-cpufreq.c:237: undefined reference to `=
-cpufreq_frequency_table_target'
->>> > > drivers/built-in.o: In function `s5pv210_verify_speed':
->>> > > drivers/cpufreq/s5pv210-cpufreq.c:182: undefined reference to `=
-cpufreq_frequency_table_verify'
->>> > > drivers/built-in.o: In function `s5pv210_cpu_init':
->>> > > drivers/cpufreq/s5pv210-cpufreq.c:556: undefined reference to `=
-cpufreq_frequency_table_get_attr'
->>> > > drivers/cpufreq/s5pv210-cpufreq.c:560: undefined reference to `=
-cpufreq_frequency_table_cpuinfo'
->>> > > make: *** [vmlinux] Error 1
->>> > >
->>> > > Signed-off-by: Chen Gang <gang.chen@asianux.com>
->>> > > ---
->>> > >  drivers/cpufreq/Kconfig.arm |    1 +
->>> > >  1 files changed, 1 insertions(+), 0 deletions(-)
->>> > >
->>> > > diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kcon=
-fig.arm
->>> > > index bce2195..bbcd719 100644
->>> > > --- a/drivers/cpufreq/Kconfig.arm
->>> > > +++ b/drivers/cpufreq/Kconfig.arm
->>> > > @@ -187,6 +187,7 @@ config ARM_S3C64XX_CPUFREQ
->>> > >  config ARM_S5PV210_CPUFREQ
->>> > >         bool "Samsung S5PV210 and S5PC110"
->>> > >         depends on CPU_S5PV210
->>> > > +       select CPU_FREQ_TABLE
->> >=20
->> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Applied.
->=20
-> Thanks,
-> Rafael
+On 25 April 2013 05:03, Olof Johansson <olof@lixom.net> wrote:
+> On Thu, Dec 13, 2012 at 06:36:18PM +0530, Thomas Abraham wrote:
+>> Add pinctrl device nodes for Exynos5250 SoC.
+>>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>
+> Replying to an old email of a patch that has been merged because it seems
+> horribly broken.
+>
+>
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 581e57a..eb8d610 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -18,6 +18,7 @@
+>>  */
+>>
+>>  /include/ "skeleton.dtsi"
+>> +/include/ "exynos5250-pinctrl.dtsi"
+>>
+>>  / {
+>>       compatible = "samsung,exynos5250";
+>> @@ -48,6 +49,8 @@
+>>               mshc1 = &dwmmc_1;
+>>               mshc2 = &dwmmc_2;
+>>               mshc3 = &dwmmc_3;
+>> +             pinctrl0 = &pinctrl_0;
+>> +             pinctrl3 = &pinctrl_3;
+>>       };
+>>
+>>       gic:interrupt-controller@10481000 {
+>> @@ -79,6 +82,24 @@
+>>               interrupts = <0 42 0>;
+>>       };
+>>
+>> +     pinctrl_0: pinctrl@11400000 {
+>> +             compatible = "samsung,pinctrl-exynos5250";
+>> +             reg = <0x11400000 0x1000>;
+>> +             interrupts = <0 46 0>;
+>> +
+>> +             wakup_eint: wakeup-interrupt-controller {
+>> +                     compatible = "samsung,exynos4210-wakeup-eint";
+>> +                     interrupt-parent = <&gic>;
+>> +                     interrupts = <0 32 0>;
+>> +             };
+>
+> Typo, should be "wakeup_eint". And what happened to #interrupt-cells? And the
+> interrupt map?
 
-Thanks, too.
+Hi Olof,
 
+With the pinctrl driver, there is change in the way the wakeup
+interrupts are handled. Each of the four wakeup banks (GPX0 to GPX3)
+are now individual interrupt controllers (introduced by Tomasz Figa).
+The wakeup interrupts generated by GPX2 and GPX3 are muxed into the <0
+32 0> interrupt of GIC.
 
---=20
-Chen Gang
+So the interrupts-cells and interrupt map are not required in the
+above node. The label "wakup_eint" can actually to dropped and
+probably the node name "wakeup-interrupt-controller" should be renamed
+to avoid interpreting it as a interrupt controller node.
 
-Asianux Corporation
+>
+> Do you have an example of a tested user or a testcase for this? I'm
+> trying to get interrupts going on these pins, and it's not looking like
+> it's even close to working.
+
+The following is a rudimentary patch with which I have tested wakeup
+interrupts GPX0[0] and GPX3[7] on smdk5250 board. The gpio number in
+the dts file can be changed to test wakeup interrupt on pins other
+than EINT31 (GPX3[7]).
+
+Thanks,
+Thomas.
+
+simple patch to test wakeup interrupts on smdk5250 board.
+Note: some of the smdk5250 boards may have a faulty SW8 button
+(for EINT31) and so EINT31 might not work on those smdk5250
+boards.
+
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |    5 ++
+ arch/arm/mach-exynos/Makefile             |    2 +-
+ arch/arm/mach-exynos/button-smdk5250.c    |   72 +++++++++++++++++++++++++++++
+ 3 files changed, 78 insertions(+), 1 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/button-smdk5250.c
+
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 26d856b..eedec6a 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -248,4 +248,9 @@
+                        clock-frequency = <24000000>;
+                };
+        };
++
++       test-wkup {
++               compatible = "test_wkup";
++               gpios = <&gpx3 7 0>;
++       };
+ };
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index ef6860b..d7640e3 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -44,7 +44,7 @@ obj-$(CONFIG_MACH_SMDK4212)           += mach-smdk4x12.o
+ obj-$(CONFIG_MACH_SMDK4412)            += mach-smdk4x12.o
+
+ obj-$(CONFIG_MACH_EXYNOS4_DT)          += mach-exynos4-dt.o
+-obj-$(CONFIG_MACH_EXYNOS5_DT)          += mach-exynos5-dt.o
++obj-$(CONFIG_MACH_EXYNOS5_DT)          += mach-exynos5-dt.o button-smdk5250.o
+
+ # device support
+
+diff --git a/arch/arm/mach-exynos/button-smdk5250.c
+b/arch/arm/mach-exynos/button-smdk5250.c
+new file mode 100644
+index 0000000..2dbb5b4
+--- /dev/null
++++ b/arch/arm/mach-exynos/button-smdk5250.c
+@@ -0,0 +1,72 @@
++/* linux/arch/arm/mach-s5pv310/button-smdkv310.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *             http://www.samsung.com/
++ *
++ * Button Driver
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/ioport.h>
++#include <linux/delay.h>
++#include <linux/serial_core.h>
++#include <linux/io.h>
++#include <linux/platform_device.h>
++#include <linux/irq.h>
++#include <linux/gpio.h>
++#include <linux/of.h>
++#include <linux/of_gpio.h>
++
++#include <plat/map-base.h>
++#include <plat/gpio-cfg.h>
++
++#include <mach/regs-gpio.h>
++#include <mach/regs-irq.h>
++
++static irqreturn_t
++s3c_button_interrupt(int irq, void *dev_id)
++{
++       printk("\n %d irq occured \n", irq);
++       return IRQ_HANDLED;
++}
++
++static struct irqaction s3c_button_irq = {
++       .name           = "s3c button Tick",
++       .flags          = IRQF_SHARED ,
++       .handler        = s3c_button_interrupt,
++};
++
++static int __init smdk5250_button_test(void)
++{
++       struct device_node *np;
++       unsigned long gpio;
++       int gpio_irq;
++
++       printk(KERN_INFO "\n\n SMDKV5250 Button init function\n");
++
++       np = of_find_compatible_node(NULL, NULL, "test_wkup");
++       if (!np) {
++               printk("could not find test node.. stopping.\n");
++               return -EINVAL;
++       }
++
++       gpio = of_get_gpio(np, 0);
++       if (!gpio_is_valid(gpio)) {
++               printk("\n gpio_weint_mux gpio is invalid\n");
++               return -EINVAL;
++       }
++
++       gpio_irq = gpio_to_irq(gpio);
++
++       irq_set_irq_type(gpio_irq, IRQ_TYPE_EDGE_BOTH);
++       setup_irq(gpio_irq, &s3c_button_irq);
++
++       return 0;
++}
++late_initcall(smdk5250_button_test);
+
+>
+>
+> -Olof
