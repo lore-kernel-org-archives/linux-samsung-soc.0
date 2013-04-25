@@ -1,50 +1,73 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 00/13] ARM: EXYNOS: Fix Universal C210 support
-Date: Thu, 25 Apr 2013 16:46:27 +0200
-Message-ID: <201304251646.28026.arnd@arndb.de>
-References: <1366731994-7478-1-git-send-email-t.figa@samsung.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH v2 4/4] ARM:TMU:fix: Avoid lockup when first frequency
+ table entry is CPUFREQ_ENTRY_INVALID
+Date: Thu, 25 Apr 2013 11:11:01 -0400
+Message-ID: <51794785.6090406@ti.com>
+References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com> <1366893045-31586-1-git-send-email-l.majewski@samsung.com> <1366893045-31586-5-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:61200 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757471Ab3DYOqf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Apr 2013 10:46:35 -0400
-In-Reply-To: <1366731994-7478-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1366893045-31586-5-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, t.figa@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, eduardo.valentin@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, tomasz.figa@gmail.com, m.szyprowski@samsung.com, john.stultz@linaro.org, tglx@linutronix.de, olof@lixom.net, ben-linux@fluff.org, thomas.abraham@linaro.org
 
-On Tuesday 23 April 2013, Tomasz Figa wrote:
-> This series intends to fix support for Universal C210 board in mainline.
-> Main difference from other boards based on Exynos 4210 is that hardware
-> revision of the SoC used on Universal C210 does not support MCT timers
-> and legacy PWM timers must be used instead.
-> 
-> First (and the biggest) part of the series deals with cleaning up and
-> fixing the samsung_pwm_timer clocksource driver, that was posted
-> recently by Arnd. In addition the driver is prepared to share the
-> hardware with PWM driver that will be reworked later, since it is not
-> a component crucial for system operation.
-> 
-> Second part fixes ATAGS support of Exynos 4210 rev0 SoC, which needs
-> different timer initialization, using the new samsung_pwm_timer driver.
-> 
-> Third and last part adds Device Tree-based support for Universal C210
-> board by providing device tree sources for it.
-> 
-> On Universal C210 board, both with and without DT:
-> 
-> Tested-by: Tomasz Figa <t.figa@samsung.com>
+Lukasz,
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+On 25-04-2013 08:30, Lukasz Majewski wrote:
+> With the while loop, when i=0 and first entry in the frequency table is
+> CPUFREQ_ENTRY_INVALID, the code results in an endless loop (since i is not
+> incremented).
+>
+> To fix this problem the for loop has been chosen. Incrementing i in the for
+> end block solves the problem.
+>
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> Changes for v2:
+> - New in v2
 
-Olof, Kgene, I think we should have this one in 3.10 since it fixes
-a regression. It looks bigger than it really is because I asked Tomasz
-to do small patches rather than a single combined patch.
+This patch wont apply on Rui's tree.
 
-	Arnd
+I believe this has been already fixed on Rui's tree (next branch).
+Could you please check if the commit below fix your issue:
+git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/commit/?h=thermal&id=fc35b35cbe24ef021ea9acfba21e54da958df747
+
+commit fc35b35cbe24ef021ea9acfba21e54da958df747
+Author: Zhang Rui <rui.zhang@intel.com>
+Date:   Fri Feb 8 13:09:32 2013 +0800
+
+     Thermal: cpufreq cooling: fix parsing per_cpu cpufreq_frequency_table
+
+
+
+> ---
+>   drivers/thermal/cpu_cooling.c |    3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+> index 8dc44cb..df79f5e8 100644
+> --- a/drivers/thermal/cpu_cooling.c
+> +++ b/drivers/thermal/cpu_cooling.c
+> @@ -124,7 +124,7 @@ static unsigned int get_cpu_frequency(unsigned int cpu, unsigned long level)
+>   	if (!table)
+>   		return ret;
+>
+> -	while (table[i].frequency != CPUFREQ_TABLE_END) {
+> +	for (; table[i].frequency != CPUFREQ_TABLE_END; i++) {
+>   		if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
+>   			continue;
+>
+> @@ -138,7 +138,6 @@ static unsigned int get_cpu_frequency(unsigned int cpu, unsigned long level)
+>   		/*return if level matched and table in descending order*/
+>   		if (descend && i == level)
+>   			return table[i].frequency;
+> -		i++;
+>   	}
+>   	i--;
+>
+>
+
