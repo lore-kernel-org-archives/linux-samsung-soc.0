@@ -1,72 +1,38 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH v2 3/4] ARM: dts: thermal: exynos4: Add documentation
- for Exynos SoC thermal bindings
-Date: Thu, 25 Apr 2013 11:46:56 -0400
-Message-ID: <51794FF0.2050406@ti.com>
-References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com> <1366893045-31586-1-git-send-email-l.majewski@samsung.com> <1366893045-31586-4-git-send-email-l.majewski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3 00/13] ARM: EXYNOS: Fix Universal C210 support
+Date: Fri, 26 Apr 2013 00:48:46 +0900
+Message-ID: <5179505E.8070200@samsung.com>
+References: <1366731994-7478-1-git-send-email-t.figa@samsung.com> <201304251646.28026.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:40650 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757840Ab3DYPrN (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:49360 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758529Ab3DYPsw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Apr 2013 11:47:13 -0400
-In-Reply-To: <1366893045-31586-4-git-send-email-l.majewski@samsung.com>
+	Thu, 25 Apr 2013 11:48:52 -0400
+Received: by mail-pb0-f52.google.com with SMTP id mc17so616264pbc.25
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2013 08:48:52 -0700 (PDT)
+In-Reply-To: <201304251646.28026.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, t.figa@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, eduardo.valentin@ti.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, tomasz.figa@gmail.com, m.szyprowski@samsung.com, john.stultz@linaro.org, tglx@linutronix.de, olof@lixom.net, ben-linux@fluff.org, thomas.abraham@linaro.org
 
-On 25-04-2013 08:30, Lukasz Majewski wrote:
-> Proper description for Exynos4 bindings added to Documentation/devicetree/
-> bindings
+On 04/25/13 23:46, Arnd Bergmann wrote:
+
+>> On Universal C210 board, both with and without DT:
+>>
+>> Tested-by: Tomasz Figa<t.figa@samsung.com>
 >
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-
-I am fine with this one too.
-
-Reviewed-by: Eduardo Valentin <eduardo.valentin@ti.com>
-
-> ---
-> Changes for v2:
-> - Documentation extension according to ML feedback
-> ---
->   .../devicetree/bindings/thermal/exynos-thermal.txt |   25 ++++++++++++++++++++
->   1 file changed, 25 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> Reviewed-by: Arnd Bergmann<arnd@arndb.de>
 >
-> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> new file mode 100644
-> index 0000000..535fd0e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> @@ -0,0 +1,25 @@
-> +* Exynos Thermal Management Unit (TMU)
-> +
-> +** Required properties:
-> +
-> +- compatible : One of the following:
-> +	       "samsung,exynos4412-tmu"
-> +	       "samsung,exynos4210-tmu"
-> +	       "samsung,exynos5250-tmu"
-> +- interrupt-parent : The phandle for the interrupt controller
-> +- reg : Address range of the thermal registers
-> +- interrupts : Should contain interrupt for thermal system
-> +- clocks : The main clock for TMU device
-> +- clock-names : Thermal system clock name
-> +
-> +Example:
-> +
-> +	tmu@100C0000 {
-> +		compatible = "samsung,exynos4412-tmu";
-> +		interrupt-parent = <&combiner>;
-> +		reg = <0x100C0000 0x100>;
-> +		interrupts = <2 4>;
-> +		clocks = <&clock 383>;
-> +		clock-names = "tmu_apbif";
-> +		status = "disabled";
-> +	};
+> Olof, Kgene, I think we should have this one in 3.10 since it fixes
+> a regression. It looks bigger than it really is because I asked Tomasz
+> to do small patches rather than a single combined patch.
 >
+Basically, I have no objection, I think, dt for universal_c210 is not 
+urgent in v3.10 though, because non-dt will be still supported...
+
+K-Gene
