@@ -1,112 +1,43 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH V2 04/20] thermal: exynos: Move exynos_thermal.h from include/* to driver/* folder
-Date: Fri, 26 Apr 2013 16:07:35 +0530
-Message-ID: <1366972671-9227-5-git-send-email-amit.daniel@samsung.com>
-References: <1366972671-9227-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1366972671-9227-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 1/2] ARM: s3c64xx: cpuidle: use init/exit common routine
+Date: Fri, 26 Apr 2013 14:03:56 +0200
+Message-ID: <2024174.Hoa4RbDIF3@vostro.rjw.lan>
+References: <1366728077-18988-1-git-send-email-daniel.lezcano@linaro.org> <5178F8E0.6010606@linaro.org> <51794C35.6070400@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51794C35.6070400@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linaro-kernel@lists.linaro.org, patches@linaro.org, linux-pm@vger.kernel.org, lethal@linux-sh.org, ben-linux@fluff.org, horms+renesas@verge.net.au, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch renames and moves  include/linux/platform_data/exynos_thermal.h to
-drivers/thermal/samsung/exynos_tmu.h. This file movement is needed as exynos
-SOC's are not supporting non-DT based platforms. Also the rename is needed as this
-file now just contains exynos tmu driver related definations.
+On Friday, April 26, 2013 12:31:01 AM Kukjin Kim wrote:
+> On 04/25/13 18:35, Daniel Lezcano wrote:
+> > On 04/23/2013 04:41 PM, Daniel Lezcano wrote:
+> >> Remove the duplicated code and use the cpuidle common code for initialization.
+> >>
+> >> Signed-off-by: Daniel Lezcano<daniel.lezcano@linaro.org>
+> >> ---
+> >
+> > Hi Kim and Ben,
+> >
+> > It is the last patch in the series which was not acked-by.
+> > Rafael is willing to take it in its tree if you ack it.
+> >
+> > Are you ok if this patch ?
+> >
+> Looks OK to me, please go ahead with my ack if you want:
+> 
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
- drivers/thermal/samsung/exynos_thermal_common.c    |    1 -
- drivers/thermal/samsung/exynos_thermal_common.h    |   15 +++++++++++++++
- drivers/thermal/samsung/exynos_tmu.c               |    2 +-
- .../thermal/samsung/exynos_tmu.h                   |   15 ---------------
- 4 files changed, 16 insertions(+), 17 deletions(-)
- rename include/linux/platform_data/exynos_thermal.h => drivers/thermal/samsung/exynos_tmu.h (88%)
+Applied.
 
-diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
-index 9a57606..dae5476 100644
---- a/drivers/thermal/samsung/exynos_thermal_common.c
-+++ b/drivers/thermal/samsung/exynos_thermal_common.c
-@@ -27,7 +27,6 @@
- #include <linux/kernel.h>
- #include <linux/kobject.h>
- #include <linux/mutex.h>
--#include <linux/platform_data/exynos_thermal.h>
- #include <linux/slab.h>
- #include <linux/thermal.h>
- #include "exynos_thermal_common.h"
-diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
-index 165401f..985b848 100644
---- a/drivers/thermal/samsung/exynos_thermal_common.h
-+++ b/drivers/thermal/samsung/exynos_thermal_common.h
-@@ -44,6 +44,21 @@
- 
- #define EXYNOS_ZONE_COUNT	3
- 
-+/**
-+ * struct freq_clip_table
-+ * @freq_clip_max: maximum frequency allowed for this cooling state.
-+ * @temp_level: Temperature level at which the temperature clipping will
-+ *	happen.
-+ * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
-+ *
-+ * This structure is required to be filled and passed to the
-+ * cpufreq_cooling_unregister function.
-+ */
-+struct freq_clip_table {
-+	unsigned int freq_clip_max;
-+	unsigned int temp_level;
-+	const struct cpumask *mask_val;
-+};
- struct	thermal_trip_point_conf {
- 	int trip_val[MAX_TRIP_COUNT];
- 	int trip_count;
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 3de3e61..a02f2c9 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -30,10 +30,10 @@
- #include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
--#include <linux/platform_data/exynos_thermal.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- #include "exynos_thermal_common.h"
-+#include "exynos_tmu.h"
- 
- /* Exynos generic registers */
- #define EXYNOS_TMU_REG_TRIMINFO		0x0
-diff --git a/include/linux/platform_data/exynos_thermal.h b/drivers/thermal/samsung/exynos_tmu.h
-similarity index 88%
-rename from include/linux/platform_data/exynos_thermal.h
-rename to drivers/thermal/samsung/exynos_tmu.h
-index da7e627..342fb1f 100644
---- a/include/linux/platform_data/exynos_thermal.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -33,21 +33,6 @@ enum soc_type {
- 	SOC_ARCH_EXYNOS4210 = 1,
- 	SOC_ARCH_EXYNOS,
- };
--/**
-- * struct freq_clip_table
-- * @freq_clip_max: maximum frequency allowed for this cooling state.
-- * @temp_level: Temperature level at which the temperature clipping will
-- *	happen.
-- * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
-- *
-- * This structure is required to be filled and passed to the
-- * cpufreq_cooling_unregister function.
-- */
--struct freq_clip_table {
--	unsigned int freq_clip_max;
--	unsigned int temp_level;
--	const struct cpumask *mask_val;
--};
- 
- /**
-  * struct exynos_tmu_platform_data
+Thanks,
+Rafael
+
+
 -- 
-1.7.1
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
