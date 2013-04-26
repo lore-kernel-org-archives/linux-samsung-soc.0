@@ -1,409 +1,292 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH 1/9] s3c2410fb: Move platform data declarations to include/linux/platform_data
-Date: Fri, 26 Apr 2013 22:02:15 +0200
-Message-ID: <1367006543-5458-2-git-send-email-sylvester.nawrocki@gmail.com>
+Subject: [PATCH 2/9] s3c2410fb: Make most of register definitions local
+Date: Fri, 26 Apr 2013 22:02:16 +0200
+Message-ID: <1367006543-5458-3-git-send-email-sylvester.nawrocki@gmail.com>
 References: <1367006543-5458-1-git-send-email-sylvester.nawrocki@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:42338 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754292Ab3DZUDd (ORCPT
+Received: from mail-ea0-f182.google.com ([209.85.215.182]:44087 "EHLO
+	mail-ea0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754441Ab3DZUEO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Apr 2013 16:03:33 -0400
+	Fri, 26 Apr 2013 16:04:14 -0400
 In-Reply-To: <1367006543-5458-1-git-send-email-sylvester.nawrocki@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, FlorianSchandinat@gmx.de
 Cc: linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-Move the platform data structure declarations to include/linux/platform_data
-where it's supposed to be placed, rather than in platform specific directories.
+Move most of the register definitions to the driver's private header file.
+Some of the register bit field definitions are used in the platform data
+structure and will be moved to include/linux/platform_data/fb-s3c2410.h
+in subsequent patch.
 
 Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 ---
- arch/arm/mach-s3c24xx/include/mach/fb.h         |    1 -
- arch/arm/mach-s3c24xx/mach-at2440evb.c          |    2 +-
- arch/arm/mach-s3c24xx/mach-bast.c               |    2 +-
- arch/arm/mach-s3c24xx/mach-gta02.c              |    2 +-
- arch/arm/mach-s3c24xx/mach-h1940.c              |    2 +-
- arch/arm/mach-s3c24xx/mach-jive.c               |    2 +-
- arch/arm/mach-s3c24xx/mach-mini2440.c           |    2 +-
- arch/arm/mach-s3c24xx/mach-n30.c                |    2 +-
- arch/arm/mach-s3c24xx/mach-qt2410.c             |    2 +-
- arch/arm/mach-s3c24xx/mach-rx1950.c             |    2 +-
- arch/arm/mach-s3c24xx/mach-smdk2413.c           |    2 +-
- arch/arm/mach-s3c24xx/mach-smdk2440.c           |    2 +-
- arch/arm/mach-s3c24xx/mach-smdk2443.c           |    2 +-
- arch/arm/mach-s3c24xx/mach-vstms.c              |    3 +-
- arch/arm/plat-samsung/devs.c                    |    2 +-
- arch/arm/plat-samsung/include/plat/fb-s3c2410.h |   72 -----------------------
- drivers/video/s3c2410fb.c                       |    2 +-
- include/linux/platform_data/fb-s3c2410.h        |   72 +++++++++++++++++++++++
- 18 files changed, 87 insertions(+), 89 deletions(-)
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/fb.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/fb-s3c2410.h
- create mode 100644 include/linux/platform_data/fb-s3c2410.h
+ arch/arm/mach-s3c24xx/include/mach/regs-lcd.h |  110 ------------------------
+ drivers/video/s3c2410fb.h                     |  114 ++++++++++++++++++++++++-
+ 2 files changed, 112 insertions(+), 112 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/include/mach/fb.h b/arch/arm/mach-s3c24xx/include/mach/fb.h
-deleted file mode 100644
-index a957bc8e..0000000
---- a/arch/arm/mach-s3c24xx/include/mach/fb.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <plat/fb-s3c2410.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-at2440evb.c b/arch/arm/mach-s3c24xx/mach-at2440evb.c
-index 6dfeeb7..e4d71d5 100644
---- a/arch/arm/mach-s3c24xx/mach-at2440evb.c
-+++ b/arch/arm/mach-s3c24xx/mach-at2440evb.c
-@@ -29,7 +29,7 @@
- #include <asm/mach/irq.h>
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-lcd.h b/arch/arm/mach-s3c24xx/include/mach/regs-lcd.h
+index ee8f040..369511f 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-lcd.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-lcd.h
+@@ -12,16 +12,6 @@
+ #ifndef ___ASM_ARCH_REGS_LCD_H
+ #define ___ASM_ARCH_REGS_LCD_H
  
- #include <mach/hardware.h>
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <asm/irq.h>
- #include <asm/mach-types.h>
- 
-diff --git a/arch/arm/mach-s3c24xx/mach-bast.c b/arch/arm/mach-s3c24xx/mach-bast.c
-index 22d6ae9..4402741 100644
---- a/arch/arm/mach-s3c24xx/mach-bast.c
-+++ b/arch/arm/mach-s3c24xx/mach-bast.c
-@@ -44,7 +44,7 @@
- #include <asm/mach/irq.h>
- #include <asm/mach-types.h>
- 
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <mach/hardware.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-gta02.c b/arch/arm/mach-s3c24xx/mach-gta02.c
-index 13d8d07..cdad542 100644
---- a/arch/arm/mach-s3c24xx/mach-gta02.c
-+++ b/arch/arm/mach-s3c24xx/mach-gta02.c
-@@ -71,7 +71,7 @@
- #include <linux/platform_data/usb-ohci-s3c2410.h>
- #include <linux/platform_data/usb-s3c2410_udc.h>
- 
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <mach/hardware.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-irq.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index af4334d..39ce53a 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -49,7 +49,7 @@
- 
- #include <sound/uda1380.h>
- 
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <mach/hardware.h>
- #include <mach/regs-clock.h>
- #include <mach/regs-gpio.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
-index a45fcd8..81e8e8c 100644
---- a/arch/arm/mach-s3c24xx/mach-jive.c
-+++ b/arch/arm/mach-s3c24xx/mach-jive.c
-@@ -37,7 +37,7 @@
- 
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- 
- #include <asm/mach-types.h>
- 
-diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-index a83db46..aa59f48 100644
---- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-@@ -34,7 +34,7 @@
- #include <asm/mach/map.h>
- 
- #include <mach/hardware.h>
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <asm/mach-types.h>
- 
- #include <plat/regs-serial.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-n30.c b/arch/arm/mach-s3c24xx/mach-n30.c
-index 2cb46c3..3a32a75 100644
---- a/arch/arm/mach-s3c24xx/mach-n30.c
-+++ b/arch/arm/mach-s3c24xx/mach-n30.c
-@@ -32,7 +32,7 @@
- #include <asm/irq.h>
- #include <asm/mach-types.h>
- 
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <linux/platform_data/leds-s3c24xx.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-qt2410.c b/arch/arm/mach-s3c24xx/mach-qt2410.c
-index f8feaea..65be582 100644
---- a/arch/arm/mach-s3c24xx/mach-qt2410.c
-+++ b/arch/arm/mach-s3c24xx/mach-qt2410.c
-@@ -50,7 +50,7 @@
- #include <linux/platform_data/leds-s3c24xx.h>
- #include <mach/regs-lcd.h>
- #include <plat/regs-serial.h>
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <linux/platform_data/mtd-nand-s3c2410.h>
- #include <linux/platform_data/usb-s3c2410_udc.h>
- #include <linux/platform_data/i2c-s3c2410.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
-index e4d67a3..17fad4b 100644
---- a/arch/arm/mach-s3c24xx/mach-rx1950.c
-+++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-@@ -48,7 +48,7 @@
- 
- #include <sound/uda1380.h>
- 
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
- 
-diff --git a/arch/arm/mach-s3c24xx/mach-smdk2413.c b/arch/arm/mach-s3c24xx/mach-smdk2413.c
-index 8146e92..d504272 100644
---- a/arch/arm/mach-s3c24xx/mach-smdk2413.c
-+++ b/arch/arm/mach-s3c24xx/mach-smdk2413.c
-@@ -39,7 +39,7 @@
- 
- #include <linux/platform_data/usb-s3c2410_udc.h>
- #include <linux/platform_data/i2c-s3c2410.h>
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- 
- #include <plat/clock.h>
- #include <plat/devs.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-smdk2440.c b/arch/arm/mach-s3c24xx/mach-smdk2440.c
-index de2e5d3..8546941 100644
---- a/arch/arm/mach-s3c24xx/mach-smdk2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-smdk2440.c
-@@ -35,7 +35,7 @@
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
- 
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <linux/platform_data/i2c-s3c2410.h>
- 
- #include <plat/clock.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-smdk2443.c b/arch/arm/mach-s3c24xx/mach-smdk2443.c
-index 9435c3b..5baa2e2 100644
---- a/arch/arm/mach-s3c24xx/mach-smdk2443.c
-+++ b/arch/arm/mach-s3c24xx/mach-smdk2443.c
-@@ -35,7 +35,7 @@
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
- 
--#include <mach/fb.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <linux/platform_data/i2c-s3c2410.h>
- 
- #include <plat/clock.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-vstms.c b/arch/arm/mach-s3c24xx/mach-vstms.c
-index b665884..86c9199 100644
---- a/arch/arm/mach-s3c24xx/mach-vstms.c
-+++ b/arch/arm/mach-s3c24xx/mach-vstms.c
-@@ -36,8 +36,7 @@
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
- 
--#include <mach/fb.h>
+-#define S3C2410_LCDREG(x)	(x)
 -
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <linux/platform_data/i2c-s3c2410.h>
- #include <linux/platform_data/mtd-nand-s3c2410.h>
+-/* LCD control registers */
+-#define S3C2410_LCDCON1	    S3C2410_LCDREG(0x00)
+-#define S3C2410_LCDCON2	    S3C2410_LCDREG(0x04)
+-#define S3C2410_LCDCON3	    S3C2410_LCDREG(0x08)
+-#define S3C2410_LCDCON4	    S3C2410_LCDREG(0x0C)
+-#define S3C2410_LCDCON5	    S3C2410_LCDREG(0x10)
+-
+-#define S3C2410_LCDCON1_CLKVAL(x)  ((x) << 8)
+ #define S3C2410_LCDCON1_MMODE	   (1<<7)
+ #define S3C2410_LCDCON1_DSCAN4	   (0<<5)
+ #define S3C2410_LCDCON1_STN4	   (1<<5)
+@@ -45,32 +35,6 @@
  
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index e1124d9..33c39bb 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -50,7 +50,7 @@
- #include <linux/platform_data/ata-samsung_cf.h>
- #include <linux/platform_data/usb-ehci-s5p.h>
- #include <plat/fb.h>
--#include <plat/fb-s3c2410.h>
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <plat/hdmi.h>
- #include <linux/platform_data/hwmon-s3c.h>
- #include <linux/platform_data/i2c-s3c2410.h>
-diff --git a/arch/arm/plat-samsung/include/plat/fb-s3c2410.h b/arch/arm/plat-samsung/include/plat/fb-s3c2410.h
-deleted file mode 100644
-index 4e5d958..0000000
---- a/arch/arm/plat-samsung/include/plat/fb-s3c2410.h
-+++ /dev/null
-@@ -1,72 +0,0 @@
--/* arch/arm/plat-samsung/include/plat/fb-s3c2410.h
+ #define S3C2410_LCDCON1_MODEMASK    0x1E
+ 
+-#define S3C2410_LCDCON2_VBPD(x)	    ((x) << 24)
+-#define S3C2410_LCDCON2_LINEVAL(x)  ((x) << 14)
+-#define S3C2410_LCDCON2_VFPD(x)	    ((x) << 6)
+-#define S3C2410_LCDCON2_VSPW(x)	    ((x) << 0)
+-
+-#define S3C2410_LCDCON2_GET_VBPD(x) ( ((x) >> 24) & 0xFF)
+-#define S3C2410_LCDCON2_GET_VFPD(x) ( ((x) >>  6) & 0xFF)
+-#define S3C2410_LCDCON2_GET_VSPW(x) ( ((x) >>  0) & 0x3F)
+-
+-#define S3C2410_LCDCON3_HBPD(x)	    ((x) << 19)
+-#define S3C2410_LCDCON3_WDLY(x)	    ((x) << 19)
+-#define S3C2410_LCDCON3_HOZVAL(x)   ((x) << 8)
+-#define S3C2410_LCDCON3_HFPD(x)	    ((x) << 0)
+-#define S3C2410_LCDCON3_LINEBLANK(x)((x) << 0)
+-
+-#define S3C2410_LCDCON3_GET_HBPD(x) ( ((x) >> 19) & 0x7F)
+-#define S3C2410_LCDCON3_GET_HFPD(x) ( ((x) >>  0) & 0xFF)
+-
+-/* LDCCON4 changes for STN mode on the S3C2412 */
+-
+-#define S3C2410_LCDCON4_MVAL(x)	    ((x) << 8)
+-#define S3C2410_LCDCON4_HSPW(x)	    ((x) << 0)
+-#define S3C2410_LCDCON4_WLH(x)	    ((x) << 0)
+-
+-#define S3C2410_LCDCON4_GET_HSPW(x) ( ((x) >>  0) & 0xFF)
+-
+ #define S3C2410_LCDCON5_BPP24BL	    (1<<12)
+ #define S3C2410_LCDCON5_FRM565	    (1<<11)
+ #define S3C2410_LCDCON5_INVVCLK	    (1<<10)
+@@ -85,78 +49,4 @@
+ #define S3C2410_LCDCON5_BSWP	    (1<<1)
+ #define S3C2410_LCDCON5_HWSWP	    (1<<0)
+ 
+-/* framebuffer start addressed */
+-#define S3C2410_LCDSADDR1   S3C2410_LCDREG(0x14)
+-#define S3C2410_LCDSADDR2   S3C2410_LCDREG(0x18)
+-#define S3C2410_LCDSADDR3   S3C2410_LCDREG(0x1C)
+-
+-#define S3C2410_LCDBANK(x)	((x) << 21)
+-#define S3C2410_LCDBASEU(x)	(x)
+-
+-#define S3C2410_OFFSIZE(x)	((x) << 11)
+-#define S3C2410_PAGEWIDTH(x)	(x)
+-
+-/* colour lookup and miscellaneous controls */
+-
+-#define S3C2410_REDLUT	   S3C2410_LCDREG(0x20)
+-#define S3C2410_GREENLUT   S3C2410_LCDREG(0x24)
+-#define S3C2410_BLUELUT	   S3C2410_LCDREG(0x28)
+-
+-#define S3C2410_DITHMODE   S3C2410_LCDREG(0x4C)
+-#define S3C2410_TPAL	   S3C2410_LCDREG(0x50)
+-
+-#define S3C2410_TPAL_EN		(1<<24)
+-
+-/* interrupt info */
+-#define S3C2410_LCDINTPND  S3C2410_LCDREG(0x54)
+-#define S3C2410_LCDSRCPND  S3C2410_LCDREG(0x58)
+-#define S3C2410_LCDINTMSK  S3C2410_LCDREG(0x5C)
+-#define S3C2410_LCDINT_FIWSEL	(1<<2)
+-#define	S3C2410_LCDINT_FRSYNC	(1<<1)
+-#define S3C2410_LCDINT_FICNT	(1<<0)
+-
+-/* s3c2442 extra stn registers */
+-
+-#define S3C2442_REDLUT		S3C2410_LCDREG(0x20)
+-#define S3C2442_GREENLUT	S3C2410_LCDREG(0x24)
+-#define S3C2442_BLUELUT		S3C2410_LCDREG(0x28)
+-#define S3C2442_DITHMODE	S3C2410_LCDREG(0x20)
+-
+-#define S3C2410_LPCSEL	   S3C2410_LCDREG(0x60)
+-
+-#define S3C2410_TFTPAL(x)  S3C2410_LCDREG((0x400 + (x)*4))
+-
+-/* S3C2412 registers */
+-
+-#define S3C2412_TPAL		S3C2410_LCDREG(0x20)
+-
+-#define S3C2412_LCDINTPND	S3C2410_LCDREG(0x24)
+-#define S3C2412_LCDSRCPND	S3C2410_LCDREG(0x28)
+-#define S3C2412_LCDINTMSK	S3C2410_LCDREG(0x2C)
+-
+-#define S3C2412_TCONSEL		S3C2410_LCDREG(0x30)
+-
+-#define S3C2412_LCDCON6		S3C2410_LCDREG(0x34)
+-#define S3C2412_LCDCON7		S3C2410_LCDREG(0x38)
+-#define S3C2412_LCDCON8		S3C2410_LCDREG(0x3C)
+-#define S3C2412_LCDCON9		S3C2410_LCDREG(0x40)
+-
+-#define S3C2412_REDLUT(x)	S3C2410_LCDREG(0x44 + ((x)*4))
+-#define S3C2412_GREENLUT(x)	S3C2410_LCDREG(0x60 + ((x)*4))
+-#define S3C2412_BLUELUT(x)	S3C2410_LCDREG(0x98 + ((x)*4))
+-
+-#define S3C2412_FRCPAT(x)	S3C2410_LCDREG(0xB4 + ((x)*4))
+-
+-/* general registers */
+-
+-/* base of the LCD registers, where INTPND, INTSRC and then INTMSK
+- * are available. */
+-
+-#define S3C2410_LCDINTBASE	S3C2410_LCDREG(0x54)
+-#define S3C2412_LCDINTBASE	S3C2410_LCDREG(0x24)
+-
+-#define S3C24XX_LCDINTPND	(0x00)
+-#define S3C24XX_LCDSRCPND	(0x04)
+-#define S3C24XX_LCDINTMSK	(0x08)
+-
+ #endif /* ___ASM_ARCH_REGS_LCD_H */
+diff --git a/drivers/video/s3c2410fb.h b/drivers/video/s3c2410fb.h
+index 47a17bd..4e56b77 100644
+--- a/drivers/video/s3c2410fb.h
++++ b/drivers/video/s3c2410fb.h
+@@ -7,12 +7,122 @@
+  * This file is subject to the terms and conditions of the GNU General Public
+  * License.  See the file COPYING in the main directory of this archive for
+  * more details.
 - *
-- * Copyright (c) 2004 Arnaud Patard <arnaud.patard@rtp-net.org>
-- *
-- * Inspired by pxafb.h
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
 -*/
--
--#ifndef __ASM_PLAT_FB_S3C2410_H
--#define __ASM_PLAT_FB_S3C2410_H __FILE__
--
--struct s3c2410fb_hw {
--	unsigned long	lcdcon1;
--	unsigned long	lcdcon2;
--	unsigned long	lcdcon3;
--	unsigned long	lcdcon4;
--	unsigned long	lcdcon5;
--};
--
--/* LCD description */
--struct s3c2410fb_display {
--	/* LCD type */
--	unsigned type;
--
--	/* Screen size */
--	unsigned short width;
--	unsigned short height;
--
--	/* Screen info */
--	unsigned short xres;
--	unsigned short yres;
--	unsigned short bpp;
--
--	unsigned pixclock;		/* pixclock in picoseconds */
--	unsigned short left_margin;  /* value in pixels (TFT) or HCLKs (STN) */
--	unsigned short right_margin; /* value in pixels (TFT) or HCLKs (STN) */
--	unsigned short hsync_len;    /* value in pixels (TFT) or HCLKs (STN) */
--	unsigned short upper_margin;	/* value in lines (TFT) or 0 (STN) */
--	unsigned short lower_margin;	/* value in lines (TFT) or 0 (STN) */
--	unsigned short vsync_len;	/* value in lines (TFT) or 0 (STN) */
--
--	/* lcd configuration registers */
--	unsigned long	lcdcon5;
--};
--
--struct s3c2410fb_mach_info {
--
--	struct s3c2410fb_display *displays;	/* attached diplays info */
--	unsigned num_displays;			/* number of defined displays */
--	unsigned default_display;
--
--	/* GPIOs */
--
--	unsigned long	gpcup;
--	unsigned long	gpcup_mask;
--	unsigned long	gpccon;
--	unsigned long	gpccon_mask;
--	unsigned long	gpdup;
--	unsigned long	gpdup_mask;
--	unsigned long	gpdcon;
--	unsigned long	gpdcon_mask;
--
--	/* lpc3600 control register */
--	unsigned long	lpcsel;
--};
--
--extern void __init s3c24xx_fb_set_platdata(struct s3c2410fb_mach_info *);
--
--#endif /* __ASM_PLAT_FB_S3C2410_H */
-diff --git a/drivers/video/s3c2410fb.c b/drivers/video/s3c2410fb.c
-index 76a0e7f..dc10dbe 100644
---- a/drivers/video/s3c2410fb.c
-+++ b/drivers/video/s3c2410fb.c
-@@ -32,10 +32,10 @@
++ */
  
- #include <asm/div64.h>
+ #ifndef __S3C2410FB_H
+ #define __S3C2410FB_H
  
-+#include <linux/platform_data/fb-s3c2410.h>
- #include <asm/mach/map.h>
- #include <mach/regs-lcd.h>
- #include <mach/regs-gpio.h>
--#include <mach/fb.h>
- 
- #ifdef CONFIG_PM
- #include <linux/pm.h>
-diff --git a/include/linux/platform_data/fb-s3c2410.h b/include/linux/platform_data/fb-s3c2410.h
-new file mode 100644
-index 0000000..dbebc62
---- /dev/null
-+++ b/include/linux/platform_data/fb-s3c2410.h
-@@ -0,0 +1,72 @@
-+/* arch/arm/plat-samsung/include/plat/fb-s3c2410.h
-+ *
-+ * Copyright (c) 2004 Arnaud Patard <arnaud.patard@rtp-net.org>
-+ *
-+ * Inspired by pxafb.h
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
++/* LCD control registers */
++#define S3C2410_LCDCON1			0x00
++#define S3C2410_LCDCON1_CLKVAL(x)	((x) << 8)
++#define S3C2410_LCDCON1_ENVID		1
++#define S3C2410_LCDCON1_MODEMASK	0x1e
++#define S3C2410_LCDCON1_MMODE		(1 << 7)
 +
-+#ifndef __FB_S3C2410_H
-+#define __FB_S3C2410_H __FILE__
++#define S3C2410_LCDCON2			0x04
++#define S3C2410_LCDCON2_VBPD(x)		((x) << 24)
++#define S3C2410_LCDCON2_LINEVAL(x)	((x) << 14)
++#define S3C2410_LCDCON2_VFPD(x)		((x) << 6)
++#define S3C2410_LCDCON2_VSPW(x)		((x) << 0)
 +
-+struct s3c2410fb_hw {
-+	unsigned long	lcdcon1;
-+	unsigned long	lcdcon2;
-+	unsigned long	lcdcon3;
-+	unsigned long	lcdcon4;
-+	unsigned long	lcdcon5;
-+};
++#define S3C2410_LCDCON2_GET_VBPD(x)	(((x) >> 24) & 0xff)
++#define S3C2410_LCDCON2_GET_VFPD(x)	(((x) >>  6) & 0xff)
++#define S3C2410_LCDCON2_GET_VSPW(x)	(((x) >>  0) & 0x3f)
 +
-+/* LCD description */
-+struct s3c2410fb_display {
-+	/* LCD type */
-+	unsigned type;
++#define S3C2410_LCDCON3			0x08
++#define S3C2410_LCDCON3_HBPD(x)		((x) << 19)
++#define S3C2410_LCDCON3_WDLY(x)		((x) << 19)
++#define S3C2410_LCDCON3_HOZVAL(x)	((x) << 8)
++#define S3C2410_LCDCON3_HFPD(x)		((x) << 0)
++#define S3C2410_LCDCON3_LINEBLANK(x)	((x) << 0)
 +
-+	/* Screen size */
-+	unsigned short width;
-+	unsigned short height;
++#define S3C2410_LCDCON3_GET_HBPD(x)	(((x) >> 19) & 0x7f)
++#define S3C2410_LCDCON3_GET_HFPD(x)	(((x) >>  0) & 0xff)
 +
-+	/* Screen info */
-+	unsigned short xres;
-+	unsigned short yres;
-+	unsigned short bpp;
++/* LDCCON4 changes for STN mode on the S3C2412 */
 +
-+	unsigned pixclock;		/* pixclock in picoseconds */
-+	unsigned short left_margin;  /* value in pixels (TFT) or HCLKs (STN) */
-+	unsigned short right_margin; /* value in pixels (TFT) or HCLKs (STN) */
-+	unsigned short hsync_len;    /* value in pixels (TFT) or HCLKs (STN) */
-+	unsigned short upper_margin;	/* value in lines (TFT) or 0 (STN) */
-+	unsigned short lower_margin;	/* value in lines (TFT) or 0 (STN) */
-+	unsigned short vsync_len;	/* value in lines (TFT) or 0 (STN) */
++#define S3C2410_LCDCON4			0x0c
++#define S3C2410_LCDCON4_MVAL(x)		((x) << 8)
++#define S3C2410_LCDCON4_HSPW(x)		((x) << 0)
++#define S3C2410_LCDCON4_WLH(x)		((x) << 0)
++#define S3C2410_LCDCON4_GET_HSPW(x)	(((x) >>  0) & 0xff)
 +
-+	/* lcd configuration registers */
-+	unsigned long	lcdcon5;
-+};
++#define S3C2410_LCDCON5			0x10
 +
-+struct s3c2410fb_mach_info {
++/* framebuffer start addressed */
++#define S3C2410_LCDSADDR1		0x14
++#define S3C2410_LCDSADDR2		0x18
++#define S3C2410_LCDSADDR3		0x1c
 +
-+	struct s3c2410fb_display *displays;	/* attached diplays info */
-+	unsigned num_displays;			/* number of defined displays */
-+	unsigned default_display;
++#define S3C2410_LCDBANK(x)		((x) << 21)
++#define S3C2410_LCDBASEU(x)		(x)
 +
-+	/* GPIOs */
++#define S3C2410_OFFSIZE(x)		((x) << 11)
++#define S3C2410_PAGEWIDTH(x)		(x)
 +
-+	unsigned long	gpcup;
-+	unsigned long	gpcup_mask;
-+	unsigned long	gpccon;
-+	unsigned long	gpccon_mask;
-+	unsigned long	gpdup;
-+	unsigned long	gpdup_mask;
-+	unsigned long	gpdcon;
-+	unsigned long	gpdcon_mask;
++/* colour lookup and miscellaneous controls */
 +
-+	/* lpc3600 control register */
-+	unsigned long	lpcsel;
-+};
++#define S3C2410_REDLUT			0x20
++#define S3C2410_GREENLUT		0x24
++#define S3C2410_BLUELUT			0x28
 +
-+extern void __init s3c24xx_fb_set_platdata(struct s3c2410fb_mach_info *);
++#define S3C2410_DITHMODE		0x4c
++#define S3C2410_TPAL			0x50
 +
-+#endif /* __FB_S3C2410_H */
++#define S3C2410_TPAL_EN			(1 << 24)
++
++/* interrupt info */
++#define S3C2410_LCDINTPND		0x54
++#define S3C2410_LCDSRCPND		0x58
++#define S3C2410_LCDINTMSK		0x5c
++#define S3C2410_LCDINT_FIWSEL		(1 << 2)
++#define S3C2410_LCDINT_FRSYNC		(1 << 1)
++#define S3C2410_LCDINT_FICNT		(1 << 0)
++
++/* s3c2442 extra stn registers */
++
++#define S3C2442_REDLUT			0x20
++#define S3C2442_GREENLUT		0x24
++#define S3C2442_BLUELUT			0x28
++#define S3C2442_DITHMODE		0x20
++
++#define S3C2410_LPCSEL			0x60
++
++#define S3C2410_TFTPAL(x)		(0x400 + ((x) * 4))
++
++/* S3C2412 registers */
++
++#define S3C2412_TPAL			0x20
++
++#define S3C2412_LCDINTPND		0x24
++#define S3C2412_LCDSRCPND		0x28
++#define S3C2412_LCDINTMSK		0x2c
++#define S3C2412_TCONSEL			0x30
++#define S3C2412_LCDCON6			0x34
++#define S3C2412_LCDCON7			0x38
++#define S3C2412_LCDCON8			0x3c
++#define S3C2412_LCDCON9			0x40
++
++#define S3C2412_REDLUT(x)		(0x44 + ((x) * 4))
++#define S3C2412_GREENLUT(x)		(0x60 + ((x) * 4))
++#define S3C2412_BLUELUT(x)		(0x98 + ((x) * 4))
++
++#define S3C2412_FRCPAT(x)		(0xb4 + ((x)*4))
++
++/* General registers. */
++
++/*
++ * Base of the LCD registers, where INTPND, INTSRC and then INTMSK
++ * are available.
++ */
++#define S3C2410_LCDINTBASE		0x54
++#define S3C2412_LCDINTBASE		0x24
++
++#define S3C24XX_LCDINTPND		0x00
++#define S3C24XX_LCDSRCPND		0x04
++#define S3C24XX_LCDINTMSK		0x08
++
++
+ enum s3c_drv_type {
+ 	DRV_S3C2410,
+ 	DRV_S3C2412,
 -- 
 1.7.4.1
