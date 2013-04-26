@@ -1,50 +1,84 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to
- drivers/cpufreq
-Date: Thu, 25 Apr 2013 20:12:29 +0200
-Message-ID: <1615834.7iOsapYTqY@vostro.rjw.lan>
-References: <cover.1365079581.git.viresh.kumar@linaro.org>
- <2264237.NUtkmvZG3W@vostro.rjw.lan> <51795E53.5030908@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 0/4] Thermal:exynos: Thermal Measurement Unit fix and
+ Samsung SoCs support
+Date: Fri, 26 Apr 2013 10:35:21 +0530
+Message-ID: <CAK9yfHz63uGH+HwpmGQ9gzsqa4AsKEQ47QR8TrfJ4joUP2kZYw@mail.gmail.com>
+References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
+	<1366893045-31586-1-git-send-email-l.majewski@samsung.com>
+	<51794E3A.10009@ti.com>
+	<20130425182843.70a2d7d3@amdc308.digital.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <51795E53.5030908@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: robin.randhawa@arm.com, patches@linaro.org, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, charles.garcia-tobin@arm.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:46115 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751175Ab3DZFFW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 26 Apr 2013 01:05:22 -0400
+Received: by mail-oa0-f51.google.com with SMTP id k14so3624066oag.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2013 22:05:22 -0700 (PDT)
+In-Reply-To: <20130425182843.70a2d7d3@amdc308.digital.local>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, t.figa@samsung.com, Myungjoo Ham <myungjoo.ham@samsung.com>
 
-On Friday, April 26, 2013 01:48:19 AM Kukjin Kim wrote:
-> On 04/24/13 07:59, Rafael J. Wysocki wrote:
-> 
-> [...]
-> 
-> >> Rafael, please take this patch with my ack in your tree, sorry for noise.
-> >>
-> >> Acked-by: Kukjin Kim<kgene.kim@samsung.com>
-> >>
-> >> If any problems, please kindly let me know.
-> >
-> > Well, I suppose I can take the original patch, but then it will conflict with
-> > your tree during merge.  Is that not a problem?
-> >
-> I think, some conflicts can be occurred but if so, we can fix it before 
-> merge window.
+ Hi Eduardo,
 
-Well, how exactly would you like to address them?
+On 25 April 2013 21:58, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Hi Eduardo,
+>
+>> Hello Lukasz,
+>>
+>> On 25-04-2013 08:30, Lukasz Majewski wrote:
+>> > This patch series provide various fixes for TMU block.
+>> > First of all it fixes a problem with get_cpu_frequency() lockup at
+>> > cpu_cooling.c.
+>> >
+>> > Secondly a proper regulator definition (VDD_TS) has been added.
+>> > Moreover device tree definitions and documentation entry are now in
+>> > place.
+>> >
+>> > Dependencies (those patches shall be applied on top of):
+>> > - "clk: exynos4: Add clock entries for TMU"
+>>
+>> Is this one same as  [1/6] clk:exynos4:TMU Thermal Measurement Unit
+>> clock added to common clock framework in your previous series?
 
-Rafael
+The one sent by Lukasz has been dropped as an equivalent patch sent by
+me is already under review.
 
+>
+> Yes, this is a similar patch. However I've changed more clocks to
+> clk_prepare_enable (clk_unprepare_disable). I've spoken about this with
+> Sachin recently.
+
+The above description is actually for the below patch. Lukasz will
+test and see if additional changes are needed.
+If so he will send an incremental patch to address it.
+
+>
+>>
+>> > - "Thermal: exynos: Add clk_{un}prepare APIs"
+>> Same as
+>> thermal:exynos4: TMU Common clock framework support for TMU (Thermal
+>> Monitoring Unit)
+>> in your previous series?
+>
+
+>
+>>
+>> > - "Thermal: exynos: Add compatible string for exynos4412"
+
+These 2 have been merged in the thermal next tree.
+
+>> >
+>> This should be same as thermal:exynos4: Enable support for Exynos4412
+>> SoCs in your previous series?
+>
+> Yes.
+>
 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+With warm regards,
+Sachin
