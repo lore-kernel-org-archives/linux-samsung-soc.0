@@ -1,110 +1,43 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: dts: add pinctrl nodes for Exynos5250 SoC
-Date: Fri, 26 Apr 2013 11:15:23 -0700
-Message-ID: <CAOesGMhbKAynrCoMyOaOf2UG-H8XL=Uk6PKiW78XSWW+BV=VkQ@mail.gmail.com>
-References: <1355403978-388-1-git-send-email-thomas.abraham@linaro.org>
-	<20130424233348.GA6603@quad.lixom.net>
-	<CAJuYYwTwbYhRO7z8J79g-GM-44Y6A6trkF_z72Kqp+MoBF==+w@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] drm/exynos: fix multiple definition build error
+Date: Fri, 26 Apr 2013 21:42:06 +0200
+Message-ID: <4121004.exzbXa8F0p@flatron>
+References: <1366952590-11652-1-git-send-email-inki.dae@samsung.com> <CAAQKjZPQ4LWTka0rfgPypsh+a-B5gzBv5hEbRYdkrry_C5J6Hg@mail.gmail.com> <517A4D82.8010306@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:40660 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755385Ab3DZSP0 (ORCPT
+Received: from mail-ea0-f181.google.com ([209.85.215.181]:36843 "EHLO
+	mail-ea0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932121Ab3DZTmN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Apr 2013 14:15:26 -0400
-Received: by mail-wi0-f171.google.com with SMTP id l13so925669wie.16
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2013 11:15:23 -0700 (PDT)
-In-Reply-To: <CAJuYYwTwbYhRO7z8J79g-GM-44Y6A6trkF_z72Kqp+MoBF==+w@mail.gmail.com>
+	Fri, 26 Apr 2013 15:42:13 -0400
+Received: by mail-ea0-f181.google.com with SMTP id a11so1771803eae.26
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2013 12:42:11 -0700 (PDT)
+In-Reply-To: <517A4D82.8010306@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: arm-linux <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Patch Tracking <patches@linaro.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>
 
-Hi,
+On Friday 26 of April 2013 11:48:50 Sylwester Nawrocki wrote:
+> On 04/26/2013 10:20 AM, Inki Dae wrote:
+> > Exactly right. it's my mistake. But now it seems that
+> > __mode_of_device_table is multi defined at fimd and g2d side so there
+> > still is module build error. :(
+> Since all drivers seem to be linked into single a single module, you
+> likely need to create a separate table of struct of_device_id just for
+> the purpose of MODULE_DEVICE_TABLE(of, ...). This table would contain
+> 'compatible' strings for all devices. Or choose of_device_id for just
+> one device and define MODULE_DEVICE_TABLE() for it in some common place,
+> e.g. exynos_drm_drv.c. I believe all devices should be listed though.
 
-On Thu, Apr 25, 2013 at 12:38 AM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-> On 25 April 2013 05:03, Olof Johansson <olof@lixom.net> wrote:
->> On Thu, Dec 13, 2012 at 06:36:18PM +0530, Thomas Abraham wrote:
->>> Add pinctrl device nodes for Exynos5250 SoC.
->>>
->>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->>
->> Replying to an old email of a patch that has been merged because it seems
->> horribly broken.
->>
->>
->>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
->>> index 581e57a..eb8d610 100644
->>> --- a/arch/arm/boot/dts/exynos5250.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->>> @@ -18,6 +18,7 @@
->>>  */
->>>
->>>  /include/ "skeleton.dtsi"
->>> +/include/ "exynos5250-pinctrl.dtsi"
->>>
->>>  / {
->>>       compatible = "samsung,exynos5250";
->>> @@ -48,6 +49,8 @@
->>>               mshc1 = &dwmmc_1;
->>>               mshc2 = &dwmmc_2;
->>>               mshc3 = &dwmmc_3;
->>> +             pinctrl0 = &pinctrl_0;
->>> +             pinctrl3 = &pinctrl_3;
->>>       };
->>>
->>>       gic:interrupt-controller@10481000 {
->>> @@ -79,6 +82,24 @@
->>>               interrupts = <0 42 0>;
->>>       };
->>>
->>> +     pinctrl_0: pinctrl@11400000 {
->>> +             compatible = "samsung,pinctrl-exynos5250";
->>> +             reg = <0x11400000 0x1000>;
->>> +             interrupts = <0 46 0>;
->>> +
->>> +             wakup_eint: wakeup-interrupt-controller {
->>> +                     compatible = "samsung,exynos4210-wakeup-eint";
->>> +                     interrupt-parent = <&gic>;
->>> +                     interrupts = <0 32 0>;
->>> +             };
->>
->> Typo, should be "wakeup_eint". And what happened to #interrupt-cells? And the
->> interrupt map?
->
-> Hi Olof,
->
-> With the pinctrl driver, there is change in the way the wakeup
-> interrupts are handled. Each of the four wakeup banks (GPX0 to GPX3)
-> are now individual interrupt controllers (introduced by Tomasz Figa).
-> The wakeup interrupts generated by GPX2 and GPX3 are muxed into the <0
-> 32 0> interrupt of GIC.
->
-> So the interrupts-cells and interrupt map are not required in the
-> above node. The label "wakup_eint" can actually to dropped and
-> probably the node name "wakeup-interrupt-controller" should be renamed
-> to avoid interpreting it as a interrupt controller node.
+IMHO, the most proper solution would be to split the module into parent 
+exynos_drm module and per-device submodules, which would depend on the 
+parent module.
 
-Yep, I was completely misled by the remaining existence of the
-wakup_eint [sic] label. I'll submit a patch to remove those.
+This way you would be able to load dynamically any submodule you want, 
+without recompiling the modules.
 
-Seems that things are working as appropriate with the gpio/pinctrl
-binding. It's a little trickier to find out which interrupt specifier
-to use since it requires one more lookup in the user manual, but
-that's alright.
-
-
->> Do you have an example of a tested user or a testcase for this? I'm
->> trying to get interrupts going on these pins, and it's not looking like
->> it's even close to working.
->
-> The following is a rudimentary patch with which I have tested wakeup
-> interrupts GPX0[0] and GPX3[7] on smdk5250 board. The gpio number in
-> the dts file can be changed to test wakeup interrupt on pins other
-> than EINT31 (GPX3[7]).
-
-Thanks!
-
--Olof
+Best regards,
+Tomasz
