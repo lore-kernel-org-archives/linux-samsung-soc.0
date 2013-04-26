@@ -1,19 +1,19 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH] drm/exynos: hdmi: move hdmiphy related code to hdmiphy driver
-Date: Fri, 26 Apr 2013 18:52:38 +0530
-Message-ID: <1366982558-505-1-git-send-email-rahul.sharma@samsung.com>
+Subject: [RFC v2] drm/exynos: hdmi: move hdmiphy related code to hdmiphy driver
+Date: Fri, 26 Apr 2013 18:56:06 +0530
+Message-ID: <1366982766-603-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39923 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751387Ab3DZM6w (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:19821 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755014Ab3DZNBw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Apr 2013 08:58:52 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Fri, 26 Apr 2013 09:01:52 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MLV00EHH5E1U1I0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Apr 2013 21:58:50 +0900 (KST)
+ with ESMTP id <0MLV00MDN5J2YJJ0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Apr 2013 22:01:50 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
@@ -26,18 +26,18 @@ different devices and should be instantiated independently.
 In terms of versions/mapping/configurations Hdmi and hdmiphy are independent
 of each other. It seems logical to isolate them and maintained independently.
 
+v2:
+1) Moved hdmi subsystem registration to drm-common-hdmi.
+2) removed __func__ as DRM_DEBUG_KMS print it by default.
+3) removed devname from "hdmiphy" clock as it needs to be accessed by hdmi
+and hdmiphy driver.
+
 This implementations is tested for:
 1) Resolutions supported by exynos4 and 5 hdmi.
 2) Runtime PM and S2R scenarions for exynos5.
 
 This patch is dependent on the patch, posted at
 http://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg34861.html
-
-v2:
-1) Moved hdmi subsystem registration to drm-common-hdmi.
-2) removed __func__ as DRM_DEBUG_KMS print it by default.
-3) removed devname from "hdmiphy" clock as it needs to be accessed by hdmi
-and hdmiphy driver.
 
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
