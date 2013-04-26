@@ -1,49 +1,94 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 0/4] Thermal:exynos: Thermal Measurement Unit fix and
- Samsung SoCs support
-Date: Fri, 26 Apr 2013 12:15:50 +0530
-Message-ID: <CAK9yfHzup+_HfJo49xDO=Ne_P66WoCvwu8aan-KVEtnhh9EkTQ@mail.gmail.com>
-References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
-	<1366893045-31586-1-git-send-email-l.majewski@samsung.com>
-	<51794E3A.10009@ti.com>
-	<20130425182843.70a2d7d3@amdc308.digital.local>
-	<CAK9yfHz63uGH+HwpmGQ9gzsqa4AsKEQ47QR8TrfJ4joUP2kZYw@mail.gmail.com>
-	<20130426083917.0b40adda@amdc308.digital.local>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] drm/exynos: fix multiple definition build error
+Date: Fri, 26 Apr 2013 10:00:31 +0200
+Message-ID: <1835608.J1o7g8oiCZ@flatron>
+References: <1366952590-11652-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:53950 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753207Ab3DZGpu (ORCPT
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:40208 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754073Ab3DZIAg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Apr 2013 02:45:50 -0400
-Received: by mail-oa0-f52.google.com with SMTP id n12so3584065oag.25
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2013 23:45:50 -0700 (PDT)
-In-Reply-To: <20130426083917.0b40adda@amdc308.digital.local>
+	Fri, 26 Apr 2013 04:00:36 -0400
+Received: by mail-ea0-f174.google.com with SMTP id g14so170249eak.33
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2013 01:00:35 -0700 (PDT)
+In-Reply-To: <1366952590-11652-1-git-send-email-inki.dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, t.figa@samsung.com, Myungjoo Ham <myungjoo.ham@samsung.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Inki Dae <inki.dae@samsung.com>, airlied@linux.ie, kyungmin.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-Hi Lukasz,
+Hi Inki,
 
-On 26 April 2013 12:09, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> Hi Sachin,
->
->> >
->> > Yes, this is a similar patch. However I've changed more clocks to
->> > clk_prepare_enable (clk_unprepare_disable). I've spoken about this
->> > with Sachin recently.
->>
->> The above description is actually for the below patch. Lukasz will
->> test and see if additional changes are needed.
->> If so he will send an incremental patch to address it.
->
-> From tests, which I've done so far, TMU is working correctly.
+On Friday 26 of April 2013 14:03:10 Inki Dae wrote:
+> This patch fixes multiple definition error like below when building it
+> as moudle with device tree support.
+> 
+> drivers/gpu/drm/exynos/exynos_drm_g2d.o: In function `.LANCHOR1':
+> exynos_drm_g2d.c:(.rodata+0x6c): multiple definition of
+> `__mod_of_device_table'
+> drivers/gpu/drm/exynos/exynos_drm_fimd.o:exynos_drm_fimd.c:(.rodata+0x1
+> 44): first defined here
+> 
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |    2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_g2d.c  |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c index 746b282..1e02d13
+> 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -117,7 +117,7 @@ static const struct of_device_id
+> fimd_driver_dt_match[] = { .data = &exynos5_fimd_driver_data },
+>  	{},
+>  };
+> -MODULE_DEVICE_TABLE(of, fimd_driver_dt_match);
+> +MODULE_DEVICE_TABLE(of_fimd, fimd_driver_dt_match);
 
-Thanks for the confirmation.
+I wonder if this change wouldn't break the purpose of having 
+MODULE_DEVICE_TABLE at all.
 
+As far as I remember, this is used to create a symbol with well known name 
+that userspace tools can use to identify what devices are handled in this 
+module. For example
 
--- 
-With warm regards,
-Sachin
+MODULE_DEVICE_TABLE(of, fimd_driver_dt_match);
+
+results in creation of __mod_of_device_table symbol, of which tools, such 
+as depmod are aware and can build a list of supported devices.
+
+Your change will result in creation of __mod_of_fimd_device_table, which 
+is unknown and won't be of any use.
+
+By the way, looking at the definition of MODULE_DEVICE_TABLE, which is
+
+139 #define MODULE_DEVICE_TABLE(type,name)          \
+140   MODULE_GENERIC_TABLE(type##_device,name)
+
+and then MODULE_GENERIC_TABLE
+
+ 85 #ifdef MODULE
+ 86 #define MODULE_GENERIC_TABLE(gtype,name)                        \
+ 87 extern const struct gtype##_id __mod_##gtype##_table            \
+ 88   __attribute__ ((unused, alias(__stringify(name))))
+ 89 
+ 90 #else  /* !MODULE */
+ 91 #define MODULE_GENERIC_TABLE(gtype,name)
+ 92 #endif
+
+it seems like the exact line that will be generated after your change, 
+will be
+
+extern const struct of_fimd_device_id __mod_of_fimd_device_table
+	__attribute__ ((unused, alias(__stringify(name))));
+
+which seems wrong, because of_fimd_device_id is not a correct struct type.
+
+Best regards,
+Tomasz
