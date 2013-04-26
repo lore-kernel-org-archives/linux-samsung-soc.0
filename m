@@ -1,49 +1,75 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] drm/exynos: fix multiple definition build error
-Date: Fri, 26 Apr 2013 22:00:27 +0200
-Message-ID: <517ADCDB.3040101@gmail.com>
-References: <1366952590-11652-1-git-send-email-inki.dae@samsung.com> <CAAQKjZPQ4LWTka0rfgPypsh+a-B5gzBv5hEbRYdkrry_C5J6Hg@mail.gmail.com> <517A4D82.8010306@samsung.com> <4121004.exzbXa8F0p@flatron>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 0/9] s3c24xx LCD controller driver cleanup
+Date: Fri, 26 Apr 2013 22:02:14 +0200
+Message-ID: <1367006543-5458-1-git-send-email-sylvester.nawrocki@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f54.google.com ([74.125.83.54]:59802 "EHLO
-	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756097Ab3DZUAc (ORCPT
+Received: from mail-ee0-f51.google.com ([74.125.83.51]:48560 "EHLO
+	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756869Ab3DZUCh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Apr 2013 16:00:32 -0400
-Received: by mail-ee0-f54.google.com with SMTP id e49so739251eek.27
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2013 13:00:30 -0700 (PDT)
-In-Reply-To: <4121004.exzbXa8F0p@flatron>
+	Fri, 26 Apr 2013 16:02:37 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>
+To: kgene.kim@samsung.com, FlorianSchandinat@gmx.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On 04/26/2013 09:42 PM, Tomasz Figa wrote:
-> On Friday 26 of April 2013 11:48:50 Sylwester Nawrocki wrote:
->> On 04/26/2013 10:20 AM, Inki Dae wrote:
->>> Exactly right. it's my mistake. But now it seems that
->>> __mode_of_device_table is multi defined at fimd and g2d side so there
->>> still is module build error. :(
->> Since all drivers seem to be linked into single a single module, you
->> likely need to create a separate table of struct of_device_id just for
->> the purpose of MODULE_DEVICE_TABLE(of, ...). This table would contain
->> 'compatible' strings for all devices. Or choose of_device_id for just
->> one device and define MODULE_DEVICE_TABLE() for it in some common place,
->> e.g. exynos_drm_drv.c. I believe all devices should be listed though.
->
-> IMHO, the most proper solution would be to split the module into parent
-> exynos_drm module and per-device submodules, which would depend on the
-> parent module.
->
-> This way you would be able to load dynamically any submodule you want,
-> without recompiling the modules.
+This patch series moves the s3c2410fb driver header files from 
+arch/arm/mach-s3c24xx to the driver specific directories. It 
+also includes couple cleanups to the driver itself and a patch 
+actually enabling the display during initialization, so it works
+with FRAMEBUFFER_CONSOLE disabled.
 
-Yes, this is how it would have been in a perfect world. Probably something
-worth to consider for the future, it likely implies a lot of work.
+Patches 6...9 have no dependencies on rest of the series.
 
-OTOH if there is one device for which the driver will always be present
-in the main module it should be enough to make a single entry
-MODULE_DEVICE_TABLE including its compatible string to ensure the driver
-is properly loaded, shouldn't it ?
+The whole series is also available at:
+git://github.com/snawrocki/linux.git cleanup/s3c2410fb
+
+It has been tested on the Micro2440 board.
+
+Sylwester Nawrocki (9):
+  s3c2410fb: Move platform data declarations to
+    include/linux/platform_data
+  s3c2410fb: Make most of register definitions local
+  ARM: S3C24XX: Remove include/mach/regs-lcd.h header file
+  s3c2410fb: Register single platform driver
+  s3c2410fb: Use dev_pm_ops
+  s3c2410fb: Enable display by default
+  s3c2410fb: Use devm_ioremap_resource()
+  s3c2410fb: Remove redundant platform_set_drvdata()
+  s3c2410fb: Use module parameter instead of a sysfs entry
+
+ arch/arm/mach-s3c24xx/dma-s3c2410.c             |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2412.c             |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2440.c             |    1 -
+ arch/arm/mach-s3c24xx/dma-s3c2443.c             |    1 -
+ arch/arm/mach-s3c24xx/include/mach/fb.h         |    1 -
+ arch/arm/mach-s3c24xx/include/mach/regs-lcd.h   |  162 ----------------------
+ arch/arm/mach-s3c24xx/mach-anubis.c             |    1 -
+ arch/arm/mach-s3c24xx/mach-at2440evb.c          |    3 +-
+ arch/arm/mach-s3c24xx/mach-bast.c               |    3 +-
+ arch/arm/mach-s3c24xx/mach-gta02.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-h1940.c              |    3 +-
+ arch/arm/mach-s3c24xx/mach-jive.c               |    3 +-
+ arch/arm/mach-s3c24xx/mach-mini2440.c           |    3 +-
+ arch/arm/mach-s3c24xx/mach-n30.c                |    3 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c             |    1 -
+ arch/arm/mach-s3c24xx/mach-qt2410.c             |    3 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c             |    3 +-
+ arch/arm/mach-s3c24xx/mach-smdk2413.c           |    3 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c           |    1 -
+ arch/arm/mach-s3c24xx/mach-smdk2440.c           |    3 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c           |    3 +-
+ arch/arm/mach-s3c24xx/mach-vstms.c              |    4 +-
+ arch/arm/plat-samsung/devs.c                    |    2 +-
+ arch/arm/plat-samsung/include/plat/fb-s3c2410.h |   72 ----------
+ drivers/video/s3c2410fb.c                       |  165 ++++++-----------------
+ drivers/video/s3c2410fb.h                       |  114 +++++++++++++++-
+ include/linux/platform_data/fb-s3c2410.h        |  106 +++++++++++++++
+ 27 files changed, 272 insertions(+), 396 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/fb.h
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-lcd.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/fb-s3c2410.h
+ create mode 100644 include/linux/platform_data/fb-s3c2410.h
+
+-- 
+1.7.4.1
