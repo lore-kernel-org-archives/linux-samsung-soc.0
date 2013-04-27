@@ -1,66 +1,37 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH v2 2/4] Thermal: exynos: Support for TMU regulator
- defined at device tree
-Date: Sat, 27 Apr 2013 08:50:52 +0800
-Message-ID: <1367023852.2196.2.camel@rzhang1-mobl4>
-References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
-	 <1366893045-31586-1-git-send-email-l.majewski@samsung.com>
-	 <1366893045-31586-3-git-send-email-l.majewski@samsung.com>
-	 <CADGdYn6g5Lggkcbq9WMMfbqN-NBb_14_b1bfcd=7+CJrxJcquA@mail.gmail.com>
-	 <20130425152934.5041cc98@amdc308.digital.local> <51794F48.5040401@ti.com>
-	 <20130425182941.63ecff30@amdc308.digital.local>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Samsung fixes-1 for v3.10
+Date: Fri, 26 Apr 2013 18:01:37 -0700
+Message-ID: <20130427010137.GD2350@quad.lixom.net>
+References: <51795C62.8070500@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:46750 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755775Ab3D0Au5 (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:44445 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754719Ab3D0BBm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Apr 2013 20:50:57 -0400
-In-Reply-To: <20130425182941.63ecff30@amdc308.digital.local>
+	Fri, 26 Apr 2013 21:01:42 -0400
+Received: by mail-pb0-f52.google.com with SMTP id mc17so1100386pbc.39
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2013 18:01:42 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <51795C62.8070500@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, amit daniel kachhap <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, t.figa@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi, all,
+On Fri, Apr 26, 2013 at 01:40:02AM +0900, Kukjin Kim wrote:
+> The following changes since commit 58a7bbf75442ea439a4d3b7993ad87023e406063:
+> 
+>   ARM: dts: add PDMA0 changes for exynos5440 (2013-04-09 01:39:27 +0900)
 
-what is the status now?
-which one is preferred, this one or the one from Amit's patch set?
+So these are fixes based on code that's already staged. We normally
+don't do that -- if you have a fix for a specific branch that introduced
+something, send a fresh pull request for that branch.
 
-thanks,
-rui
+Looks like Doug's fix is for the common clock framework branch, so I'll apply
+it to next/drivers. Thomas' is for the dt branch. I'll cherry-pick it onto
+next/dt2.
 
 
-On Thu, 2013-04-25 at 18:29 +0200, Lukasz Majewski wrote:
-> Hi Eduardo,
-> 
-> > Amit, Lukasz,
-> > 
-> > On 25-04-2013 09:29, Lukasz Majewski wrote:
-> > > Hi Amit,
-> > >  
-> > >> Hi Lukasz Majewski,
-> > >>
-> > >> Sorry for late review but I am currently working on restructuring
-> > >> the whole exynos thermal driver and this support of LDO can be
-> > >> added as feature as not all socs support this. This is also
-> > >> suggested by Eduardo. All your other patches looks fine.  
-> > >
-> > > But this is how it is already done. The VDD_TS is optional, so
-> > > Exynos5440 and Exynos4210 will not be broken.
-> > >
-> > > This shall preserve the correct behavior of the thermal driver.
-> > >  
-> > 
-> > If you guys plan to move to feature based approach, like suggested in 
-> > V1, then Id recommend adding a /* TODO: */ entry in your driver.
-> 
-> Ok, nice idea.
-> 
-> > 
-> > Amit, are you including this LDO support on your rework?
-> 
-> 
-> 
+-Olof
