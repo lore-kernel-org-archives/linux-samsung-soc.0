@@ -1,47 +1,66 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: Exynos regressions w.r.t. config and debuggability due to
- multiplatform
-Date: Fri, 26 Apr 2013 17:37:17 -0700
-Message-ID: <20130427003717.GC2350@quad.lixom.net>
-References: <CAOesGMgRsa-AvbEZCc1=_ovaZMaG0S-CDok2MDp_zu5yderAYw@mail.gmail.com>
- <201304241703.49864.arnd@arndb.de>
- <51794CD3.4080807@samsung.com>
- <201304251931.25028.arnd@arndb.de>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH v2 2/4] Thermal: exynos: Support for TMU regulator
+ defined at device tree
+Date: Sat, 27 Apr 2013 08:50:52 +0800
+Message-ID: <1367023852.2196.2.camel@rzhang1-mobl4>
+References: <1366389493-8239-1-git-send-email-l.majewski@samsung.com>
+	 <1366893045-31586-1-git-send-email-l.majewski@samsung.com>
+	 <1366893045-31586-3-git-send-email-l.majewski@samsung.com>
+	 <CADGdYn6g5Lggkcbq9WMMfbqN-NBb_14_b1bfcd=7+CJrxJcquA@mail.gmail.com>
+	 <20130425152934.5041cc98@amdc308.digital.local> <51794F48.5040401@ti.com>
+	 <20130425182941.63ecff30@amdc308.digital.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:45030 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752675Ab3D0AhW (ORCPT
+Received: from mga03.intel.com ([143.182.124.21]:46750 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755775Ab3D0Au5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Apr 2013 20:37:22 -0400
-Received: by mail-pb0-f47.google.com with SMTP id uo1so401397pbc.20
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2013 17:37:21 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <201304251931.25028.arnd@arndb.de>
+	Fri, 26 Apr 2013 20:50:57 -0400
+In-Reply-To: <20130425182941.63ecff30@amdc308.digital.local>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, amit daniel kachhap <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, t.figa@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Thu, Apr 25, 2013 at 07:31:24PM +0200, Arnd Bergmann wrote:
-> On Thursday 25 April 2013, Kukjin Kim wrote:
-> > 
-> > On 04/25/13 00:03, Arnd Bergmann wrote:
-> > > On Wednesday 24 April 2013, Olof Johansson wrote:
-> > >> I think we should hold off on multiplatform for exynos until it works
-> > >> better, i.e. 3.11.
-> > >>
-> > I think, this would be better choice for now if it's not urgent...
-> > 
+Hi, all,
+
+what is the status now?
+which one is preferred, this one or the one from Amit's patch set?
+
+thanks,
+rui
+
+
+On Thu, 2013-04-25 at 18:29 +0200, Lukasz Majewski wrote:
+> Hi Eduardo,
 > 
-> I spent a lot of time on it because it's a priority for Linaro, but
-> that means I'm biased in the question of whether to merge it or not.
-> It should only get in if you and Olof think it's a good idea.
-
-I've reverted the commit you pointed out as the problematic one now,
-and with that I get a working setup. That means most of the base patches are
-in, just not the final Kconfig shuffling. 3.11 seems more realistic for that.
-
-
--Olof
+> > Amit, Lukasz,
+> > 
+> > On 25-04-2013 09:29, Lukasz Majewski wrote:
+> > > Hi Amit,
+> > >  
+> > >> Hi Lukasz Majewski,
+> > >>
+> > >> Sorry for late review but I am currently working on restructuring
+> > >> the whole exynos thermal driver and this support of LDO can be
+> > >> added as feature as not all socs support this. This is also
+> > >> suggested by Eduardo. All your other patches looks fine.  
+> > >
+> > > But this is how it is already done. The VDD_TS is optional, so
+> > > Exynos5440 and Exynos4210 will not be broken.
+> > >
+> > > This shall preserve the correct behavior of the thermal driver.
+> > >  
+> > 
+> > If you guys plan to move to feature based approach, like suggested in 
+> > V1, then Id recommend adding a /* TODO: */ entry in your driver.
+> 
+> Ok, nice idea.
+> 
+> > 
+> > Amit, are you including this LDO support on your rework?
+> 
+> 
+> 
