@@ -1,278 +1,421 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC v2 6/6] media: exynos5-is: Adding media device driver for
- exynos5
-Date: Mon, 29 Apr 2013 18:09:50 +0200
-Message-ID: <517E9B4E.3080004@samsung.com>
-References: <1366789273-30184-1-git-send-email-shaik.ameer@samsung.com>
- <1366789273-30184-7-git-send-email-shaik.ameer@samsung.com>
+From: Sean Paul <seanpaul@google.com>
+Subject: Re: [PATCH v4] drm/exynos: hdmi: use drm_display_mode to check the
+ supported modes
+Date: Mon, 29 Apr 2013 12:24:25 -0400
+Message-ID: <CAOw6vbL3kEw8k+5WARyz7OXZ9TG1UFHhaknEBNoiFuk0q+h2dA@mail.gmail.com>
+References: <1367234048-14677-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1366789273-30184-7-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: linux-media@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, shaik.samsung@gmail.com, arunkk.samsung@gmail.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f52.google.com ([209.85.215.52]:41598 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757250Ab3D2QYs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 29 Apr 2013 12:24:48 -0400
+Received: by mail-la0-f52.google.com with SMTP id fd20so5534210lab.25
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Apr 2013 09:24:46 -0700 (PDT)
+In-Reply-To: <1367234048-14677-1-git-send-email-rahul.sharma@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, InKi Dae <inki.dae@samsung.com>, "r.sh.open" <r.sh.open@gmail.com>, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>
 
-On 04/24/2013 09:41 AM, Shaik Ameer Basha wrote:
-> This patch adds support for media device for EXYNOS5 SoCs.
-> The current media device supports the following ips to connect
-> through the media controller framework.
+On Mon, Apr 29, 2013 at 7:14 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> Exynos hdmi driver is using drm_display_mode for setting timing values
+> for a supported resolution. Conversion to fb_videomode and then comparing
+> with the mixer/hdmi/phy limits is not required. Instead, drm_display_mode
+> fields cane be directly compared.
+>
 
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+it seems like you have 2 patches here, one which renames check_timing
+to check_mode, and another which removes the fb_videomode usage. I
+think it should probably be split.
+
+If you don't split it, I think you could simplify the commit message to:
+
+This patch renames check_timing to check_mode and removes the
+unnecessary conversion of drm_display_mode to/from fb_videomode in the
+hdmi driver.
+
+
+
+> v4:
+> 1) Removed __func__ from DRM_DEBUG_KMS.
+>
+> v3:
+> 1) Replaced check_timing callbacks with check_mode.
+> 2) Change the type of second parameter of check_mode callback from void
+> pointer paramenter to struct drm_display_mode pointer.
+>
+> v2:
+> 1) Removed convert_to_video_timing().
+> 2) Corrected DRM_DEBUG_KMS to print the resolution properly.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 > ---
->  .../devicetree/bindings/media/exynos5-mdev.txt     |  153 +++
->  drivers/media/platform/Kconfig                     |    1 +
->  drivers/media/platform/Makefile                    |    1 +
->  drivers/media/platform/exynos5-is/Kconfig          |    7 +
->  drivers/media/platform/exynos5-is/Makefile         |    4 +
->  drivers/media/platform/exynos5-is/exynos5-mdev.c   | 1131 ++++++++++++++++++++
->  drivers/media/platform/exynos5-is/exynos5-mdev.h   |  120 +++
->  7 files changed, 1417 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/exynos5-mdev.txt
->  create mode 100644 drivers/media/platform/exynos5-is/Kconfig
->  create mode 100644 drivers/media/platform/exynos5-is/Makefile
->  create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.c
->  create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.h
-> 
-> diff --git a/Documentation/devicetree/bindings/media/exynos5-mdev.txt b/Documentation/devicetree/bindings/media/exynos5-mdev.txt
-> new file mode 100644
-> index 0000000..d7d419b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5-mdev.txt
-> @@ -0,0 +1,153 @@
-> +Samsung EXYNOS5 SoC Camera Subsystem (FIMC)
-> +----------------------------------------------
+>  drivers/gpu/drm/exynos/exynos_drm_connector.c |   38 ++-----------------------
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h       |    4 +--
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c      |    4 +--
+>  drivers/gpu/drm/exynos/exynos_drm_hdmi.c      |   17 +++++------
+>  drivers/gpu/drm/exynos/exynos_drm_hdmi.h      |    6 ++--
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c      |    4 +--
+>  drivers/gpu/drm/exynos/exynos_hdmi.c          |   29 +++++++++----------
+>  drivers/gpu/drm/exynos/exynos_mixer.c         |   17 +++++------
+>  8 files changed, 43 insertions(+), 76 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> index 8bcc13a..ab3c6d4 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> @@ -58,37 +58,6 @@ convert_to_display_mode(struct drm_display_mode *mode,
+>                 mode->flags |= DRM_MODE_FLAG_DBLSCAN;
+>  }
+>
+> -/* convert drm_display_mode to exynos_video_timings */
+> -static inline void
+> -convert_to_video_timing(struct fb_videomode *timing,
+> -                       struct drm_display_mode *mode)
+> -{
+> -       DRM_DEBUG_KMS("%s\n", __FILE__);
+> -
+> -       memset(timing, 0, sizeof(*timing));
+> -
+> -       timing->pixclock = mode->clock * 1000;
+> -       timing->refresh = drm_mode_vrefresh(mode);
+> -
+> -       timing->xres = mode->hdisplay;
+> -       timing->right_margin = mode->hsync_start - mode->hdisplay;
+> -       timing->hsync_len = mode->hsync_end - mode->hsync_start;
+> -       timing->left_margin = mode->htotal - mode->hsync_end;
+> -
+> -       timing->yres = mode->vdisplay;
+> -       timing->lower_margin = mode->vsync_start - mode->vdisplay;
+> -       timing->vsync_len = mode->vsync_end - mode->vsync_start;
+> -       timing->upper_margin = mode->vtotal - mode->vsync_end;
+> -
+> -       if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+> -               timing->vmode = FB_VMODE_INTERLACED;
+> -       else
+> -               timing->vmode = FB_VMODE_NONINTERLACED;
+> -
+> -       if (mode->flags & DRM_MODE_FLAG_DBLSCAN)
+> -               timing->vmode |= FB_VMODE_DOUBLE;
+> -}
+> -
+>  static int exynos_drm_connector_get_modes(struct drm_connector *connector)
+>  {
+>         struct exynos_drm_connector *exynos_connector =
+> @@ -168,15 +137,12 @@ static int exynos_drm_connector_mode_valid(struct drm_connector *connector,
+>                                         to_exynos_connector(connector);
+>         struct exynos_drm_manager *manager = exynos_connector->manager;
+>         struct exynos_drm_display_ops *display_ops = manager->display_ops;
+> -       struct fb_videomode timing;
+>         int ret = MODE_BAD;
+>
+>         DRM_DEBUG_KMS("%s\n", __FILE__);
+>
+> -       convert_to_video_timing(&timing, mode);
+> -
+> -       if (display_ops && display_ops->check_timing)
+> -               if (!display_ops->check_timing(manager->dev, (void *)&timing))
+> +       if (display_ops && display_ops->check_mode)
+> +               if (!display_ops->check_mode(manager->dev, mode))
+>                         ret = MODE_OK;
+>
+>         return ret;
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> index 4606fac..9650b3b 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> @@ -142,7 +142,7 @@ struct exynos_drm_overlay {
+>   * @is_connected: check for that display is connected or not.
+>   * @get_edid: get edid modes from display driver.
+>   * @get_panel: get panel object from display driver.
+> - * @check_timing: check if timing is valid or not.
+> + * @check_mode: check if mode is valid or not.
+>   * @power_on: display device on or off.
+>   */
+>  struct exynos_drm_display_ops {
+> @@ -151,7 +151,7 @@ struct exynos_drm_display_ops {
+>         struct edid *(*get_edid)(struct device *dev,
+>                         struct drm_connector *connector);
+>         void *(*get_panel)(struct device *dev);
+> -       int (*check_timing)(struct device *dev, void *timing);
+> +       int (*check_mode)(struct device *dev, struct drm_display_mode *mode);
+>         int (*power_on)(struct device *dev, int mode);
+>  };
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 15e58f5..98bbe1e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -153,7 +153,7 @@ static void *fimd_get_panel(struct device *dev)
+>         return ctx->panel;
+>  }
+>
+> -static int fimd_check_timing(struct device *dev, void *timing)
+> +static int fimd_check_mode(struct device *dev, struct drm_display_mode *mode)
+>  {
+>         DRM_DEBUG_KMS("%s\n", __FILE__);
+>
+> @@ -175,7 +175,7 @@ static struct exynos_drm_display_ops fimd_display_ops = {
+>         .type = EXYNOS_DISPLAY_TYPE_LCD,
+>         .is_connected = fimd_display_is_connected,
+>         .get_panel = fimd_get_panel,
+> -       .check_timing = fimd_check_timing,
+> +       .check_mode = fimd_check_mode,
+>         .power_on = fimd_display_power_on,
+>  };
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.c b/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
+> index 5285509..8a07e8b 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
+> @@ -121,7 +121,8 @@ static struct edid *drm_hdmi_get_edid(struct device *dev,
+>         return NULL;
+>  }
+>
+> -static int drm_hdmi_check_timing(struct device *dev, void *timing)
+> +static int drm_hdmi_check_mode(struct device *dev,
+> +               struct drm_display_mode *mode)
+>  {
+>         struct drm_hdmi_context *ctx = to_context(dev);
+>         int ret = 0;
+> @@ -133,14 +134,14 @@ static int drm_hdmi_check_timing(struct device *dev, void *timing)
+>         * If any of the two fails, return mode as BAD.
+>         */
+>
+> -       if (mixer_ops && mixer_ops->check_timing)
+> -               ret = mixer_ops->check_timing(ctx->mixer_ctx->ctx, timing);
+> +       if (mixer_ops && mixer_ops->check_mode)
+> +               ret = mixer_ops->check_mode(ctx->mixer_ctx->ctx, mode);
+>
+>         if (ret)
+>                 return ret;
+>
+> -       if (hdmi_ops && hdmi_ops->check_timing)
+> -               return hdmi_ops->check_timing(ctx->hdmi_ctx->ctx, timing);
+> +       if (hdmi_ops && hdmi_ops->check_mode)
+> +               return hdmi_ops->check_mode(ctx->hdmi_ctx->ctx, mode);
+>
+>         return 0;
+>  }
+> @@ -161,7 +162,7 @@ static struct exynos_drm_display_ops drm_hdmi_display_ops = {
+>         .type = EXYNOS_DISPLAY_TYPE_HDMI,
+>         .is_connected = drm_hdmi_is_connected,
+>         .get_edid = drm_hdmi_get_edid,
+> -       .check_timing = drm_hdmi_check_timing,
+> +       .check_mode = drm_hdmi_check_mode,
+>         .power_on = drm_hdmi_power_on,
+>  };
+>
+> @@ -212,7 +213,7 @@ static void drm_hdmi_mode_fixup(struct device *subdrv_dev,
+>
+>         drm_mode_set_crtcinfo(adjusted_mode, 0);
+>
+> -       mode_ok = drm_hdmi_check_timing(subdrv_dev, adjusted_mode);
+> +       mode_ok = drm_hdmi_check_mode(subdrv_dev, adjusted_mode);
+>
+>         /* just return if user desired mode exists. */
+>         if (mode_ok == 0)
+> @@ -223,7 +224,7 @@ static void drm_hdmi_mode_fixup(struct device *subdrv_dev,
+>          * to adjusted_mode.
+>          */
+>         list_for_each_entry(m, &connector->modes, head) {
+> -               mode_ok = drm_hdmi_check_timing(subdrv_dev, m);
+> +               mode_ok = drm_hdmi_check_mode(subdrv_dev, m);
+>
+>                 if (mode_ok == 0) {
+>                         struct drm_mode_object base;
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> index 6b70944..724cab1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> @@ -32,11 +32,11 @@ struct exynos_hdmi_ops {
+>         bool (*is_connected)(void *ctx);
+>         struct edid *(*get_edid)(void *ctx,
+>                         struct drm_connector *connector);
+> -       int (*check_timing)(void *ctx, struct fb_videomode *timing);
+> +       int (*check_mode)(void *ctx, struct drm_display_mode *mode);
+>         int (*power_on)(void *ctx, int mode);
+>
+>         /* manager */
+> -       void (*mode_set)(void *ctx, void *mode);
+> +       void (*mode_set)(void *ctx, struct drm_display_mode *mode);
+>         void (*get_max_resol)(void *ctx, unsigned int *width,
+>                                 unsigned int *height);
+>         void (*commit)(void *ctx);
+> @@ -57,7 +57,7 @@ struct exynos_mixer_ops {
+>         void (*win_disable)(void *ctx, int zpos);
+>
+>         /* display */
+> -       int (*check_timing)(void *ctx, struct fb_videomode *timing);
+> +       int (*check_mode)(void *ctx, struct drm_display_mode *mode);
+>  };
+>
+>  void exynos_hdmi_drv_attach(struct exynos_drm_hdmi_context *ctx);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> index 9504b0c..6043700 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> @@ -135,7 +135,7 @@ static void *vidi_get_panel(struct device *dev)
+>         return NULL;
+>  }
+>
+> -static int vidi_check_timing(struct device *dev, void *timing)
+> +static int vidi_check_mode(struct device *dev, struct drm_display_mode *mode)
+>  {
+>         DRM_DEBUG_KMS("%s\n", __FILE__);
+>
+> @@ -158,7 +158,7 @@ static struct exynos_drm_display_ops vidi_display_ops = {
+>         .is_connected = vidi_display_is_connected,
+>         .get_edid = vidi_get_edid,
+>         .get_panel = vidi_get_panel,
+> -       .check_timing = vidi_check_timing,
+> +       .check_mode = vidi_check_mode,
+>         .power_on = vidi_display_power_on,
+>  };
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 93b70e9..4b99dcd 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -796,18 +796,17 @@ static int hdmi_find_phy_conf(struct hdmi_context *hdata, u32 pixel_clock)
+>         return -EINVAL;
+>  }
+>
+> -static int hdmi_check_timing(void *ctx, struct fb_videomode *timing)
+> +static int hdmi_check_mode(void *ctx, struct drm_display_mode *mode)
+>  {
+>         struct hdmi_context *hdata = ctx;
+>         int ret;
+>
+> -       DRM_DEBUG_KMS("[%d] %s\n", __LINE__, __func__);
+> -
+> -       DRM_DEBUG_KMS("[%d]x[%d] [%d]Hz [%x]\n", timing->xres,
+> -                       timing->yres, timing->refresh,
+> -                       timing->vmode);
+> +       DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d clock=%d\n",
+> +               mode->hdisplay, mode->vdisplay, mode->vrefresh,
+> +               (mode->flags & DRM_MODE_FLAG_INTERLACE) ? true :
+> +               false, mode->clock * 1000);
+
+Why print a bool here? If you're interpreting the value, you might as
+well use a string. Alternatively, just print flags directly.
+
+>
+> -       ret = hdmi_find_phy_conf(hdata, timing->pixclock);
+> +       ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
+>         if (ret < 0)
+>                 return ret;
+>         return 0;
+> @@ -1042,7 +1041,7 @@ static void hdmi_conf_init(struct hdmi_context *hdata)
+>         }
+>  }
+>
+> -static void hdmi_v13_timing_apply(struct hdmi_context *hdata)
+> +static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+>  {
+>         const struct hdmi_tg_regs *tg = &hdata->mode_conf.conf.v13_conf.tg;
+>         const struct hdmi_v13_core_regs *core =
+> @@ -1131,7 +1130,7 @@ static void hdmi_v13_timing_apply(struct hdmi_context *hdata)
+>                 hdmi_reg_writemask(hdata, HDMI_TG_CMD, ~0, HDMI_TG_EN);
+>  }
+>
+> -static void hdmi_v14_timing_apply(struct hdmi_context *hdata)
+> +static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+>  {
+>         const struct hdmi_tg_regs *tg = &hdata->mode_conf.conf.v14_conf.tg;
+>         const struct hdmi_v14_core_regs *core =
+> @@ -1298,12 +1297,12 @@ static void hdmi_v14_timing_apply(struct hdmi_context *hdata)
+>                 hdmi_reg_writemask(hdata, HDMI_TG_CMD, ~0, HDMI_TG_EN);
+>  }
+>
+> -static void hdmi_timing_apply(struct hdmi_context *hdata)
+> +static void hdmi_mode_apply(struct hdmi_context *hdata)
+>  {
+>         if (hdata->type == HDMI_TYPE13)
+> -               hdmi_v13_timing_apply(hdata);
+> +               hdmi_v13_mode_apply(hdata);
+>         else
+> -               hdmi_v14_timing_apply(hdata);
+> +               hdmi_v14_mode_apply(hdata);
+>  }
+>
+>  static void hdmiphy_conf_reset(struct hdmi_context *hdata)
+> @@ -1424,7 +1423,7 @@ static void hdmi_conf_apply(struct hdmi_context *hdata)
+>         hdmi_audio_init(hdata);
+>
+>         /* setting core registers */
+> -       hdmi_timing_apply(hdata);
+> +       hdmi_mode_apply(hdata);
+>         hdmi_audio_control(hdata, true);
+>
+>         hdmi_regs_dump(hdata, "start");
+> @@ -1643,7 +1642,7 @@ static void hdmi_v14_mode_set(struct hdmi_context *hdata,
+>         hdmi_set_reg(tg->tg_3d, 1, 0x0);
+>  }
+>
+> -static void hdmi_mode_set(void *ctx, void *mode)
+> +static void hdmi_mode_set(void *ctx, struct drm_display_mode *mode)
+>  {
+>         struct hdmi_context *hdata = ctx;
+>         struct drm_display_mode *m = mode;
+> @@ -1767,7 +1766,7 @@ static struct exynos_hdmi_ops hdmi_ops = {
+>         /* display */
+>         .is_connected   = hdmi_is_connected,
+>         .get_edid       = hdmi_get_edid,
+> -       .check_timing   = hdmi_check_timing,
+> +       .check_mode     = hdmi_check_mode,
+>
+>         /* manager */
+>         .mode_set       = hdmi_mode_set,
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index f08e251..ffcc690 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -818,17 +818,17 @@ static void mixer_win_disable(void *ctx, int win)
+>         mixer_ctx->win_data[win].enabled = false;
+>  }
+>
+> -static int mixer_check_timing(void *ctx, struct fb_videomode *timing)
+> +static int mixer_check_mode(void *ctx, struct drm_display_mode *mode)
+>  {
+>         u32 w, h;
+>
+> -       w = timing->xres;
+> -       h = timing->yres;
+> +       w = mode->hdisplay;
+> +       h = mode->vdisplay;
+>
+> -       DRM_DEBUG_KMS("%s : xres=%d, yres=%d, refresh=%d, intl=%d\n",
+> -               __func__, timing->xres, timing->yres,
+> -               timing->refresh, (timing->vmode &
+> -               FB_VMODE_INTERLACED) ? true : false);
+> +       DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d\n",
+> +               mode->hdisplay, mode->vdisplay, mode->vrefresh,
+> +               (mode->flags & DRM_MODE_FLAG_INTERLACE) ? true :
+> +               false);
+>
+>         if ((w >= 464 && w <= 720 && h >= 261 && h <= 576) ||
+>                 (w >= 1024 && w <= 1280 && h >= 576 && h <= 720) ||
+> @@ -837,6 +837,7 @@ static int mixer_check_timing(void *ctx, struct fb_videomode *timing)
+>
+>         return -EINVAL;
+>  }
 > +
-> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
-> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
-> +MIPI CSIS and FIMC-IS.
-> +
-> +The sub-subdevices are defined as child nodes of the common 'camera' node which
-> +also includes common properties of the whole subsystem not really specific to
-> +any single sub-device, like common camera port pins or the CAMCLK clock outputs
-> +for external image sensors attached to an SoC.
-> +
-> +Common 'camera' node
-> +--------------------
-> +
-> +Required properties:
-> +
-> +- compatible	: must be "samsung,exynos5-fimc", "simple-bus"
-> +- clocks	: list of clock specifiers, corresponding to entries in
-> +		  the clock-names property;
-> +- clock-names	: must contain "sclk_cam0", "sclk_cam1" entries,
-> +		  matching entries in the clocks property.
-> +
-> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
-> +to define a required pinctrl state named "default" and optional pinctrl states:
-> +"idle", "active-a", active-b". These optional states can be used to switch the
-> +camera port pinmux at runtime. The "idle" state should configure both the camera
-> +ports A and B into high impedance state, especially the CAMCLK clock output
-> +should be inactive. For the "active-a" state the camera port A must be activated
-> +and the port B deactivated and for the state "active-b" it should be the other
-> +way around.
-> +
-> +The 'camera' node must include at least one 'fimc-lite' child node.
-
-Why such a restriction ? Still you could have a valid video capture pipeline
-using Gscaler, couldn't you ? 
-
-> +'parallel-ports' node
-> +---------------------
-> +
-> +This node should contain child 'port' nodes specifying active parallel video
-> +input ports. It includes camera A and camera B inputs. 'reg' property in the
-> +port nodes specifies data input - 0, 1 indicates input A, B respectively.
-> +
-> +Optional properties
-> +
-> +- samsung,camclk-out : specifies clock output for remote sensor,
-> +		       0 - CAM_A_CLKOUT, 1 - CAM_B_CLKOUT;
-
-I think with this driver we should try to start using the asynchronous subdev
-registration API and the clock bindings right from the beginning, so the
-above property would become unnecessary.
-
-> +Image sensor nodes
-> +------------------
-> +
-> +The sensor device nodes should be added to their control bus controller (e.g.
-> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
-> +using the common video interfaces bindings, defined in video-interfaces.txt.
-> +The implementation of this bindings requires clock-frequency property to be
-> +present in the sensor device nodes.
-> +
-> +Example:
-> +
-> +	aliases {
-> +		fimc-lite0 = &fimc_lite_0
-> +	};
-> +
-> +	/* Parallel bus IF sensor */
-> +	i2c_0: i2c@13860000 {
-> +		s5k6aa: sensor@3c {
-> +			compatible = "samsung,s5k6aafx";
-> +			reg = <0x3c>;
-> +			vddio-supply = <...>;
-> +
-> +			clock-frequency = <24000000>;
-> +			clocks = <...>;
-> +			clock-names = "mclk";
-> +
-> +			port {
-> +				s5k6aa_ep: endpoint {
-> +					remote-endpoint = <&fimc0_ep>;
-> +					bus-width = <8>;
-> +					hsync-active = <0>;
-> +					vsync-active = <1>;
-> +					pclk-sample = <1>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	/* MIPI CSI-2 bus IF sensor */
-> +	s5c73m3: sensor@0x1a {
-
-This node should be off some I2C bus controller node, e.g. be child node of
-the i2c@13860000 node. 
-
-I realise a similar issue is in Documentation/devicetree/bindings/media/
-samsung-fimc.txt. And nobody pointed it out... :P
-
-> +		compatible = "samsung,s5c73m3";
-> +		reg = <0x1a>;
-> +		vddio-supply = <...>;
-> +
-> +		clock-frequency = <24000000>;
-> +		clocks = <...>;
-> +		clock-names = "mclk";
-> +
-> +		port {
-> +			s5c73m3_1: endpoint {
-> +				data-lanes = <1 2 3 4>;
-> +				remote-endpoint = <&csis0_ep>;
-> +			};
-> +		};
-> +	};
-
-> diff --git a/drivers/media/platform/exynos5-is/exynos5-mdev.c b/drivers/media/platform/exynos5-is/exynos5-mdev.c
-> new file mode 100644
-> index 0000000..ac3e85e
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/exynos5-mdev.c
-> @@ -0,0 +1,1131 @@
-> +/*
-> + * EXYNOS5 SoC series camera host interface media device driver
-> + *
-> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + * Shaik Ameer Basha <shaik.ameer@samsung.com>
-> + *
-> + * This driver is based on exynos4-is media device driver developed by
-
-s/developed/written ?
-
-> + * Sylwester Nawrocki <s.nawrocki@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published
-> + * by the Free Software Foundation, either version 2 of the License,
-> + * or (at your option) any later version.
-> + */
-
-> +static void fimc_md_unregister_entities(struct fimc_md *fmd)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < FIMC_LITE_MAX_DEVS; i++) {
-> +		if (fmd->fimc_lite[i] == NULL)
-> +			continue;
-> +		v4l2_device_unregister_subdev(&fmd->fimc_lite[i]->subdev);
-> +		fmd->fimc_lite[i]->pipeline_ops = NULL;
-> +		fmd->fimc_lite[i] = NULL;
-> +	}
-> +	for (i = 0; i < CSIS_MAX_ENTITIES; i++) {
-> +		if (fmd->csis[i].sd == NULL)
-> +			continue;
-> +		v4l2_device_unregister_subdev(fmd->csis[i].sd);
-> +		module_put(fmd->csis[i].sd->owner);
-
-This module_put() call needs to be removed.
-
-> +		fmd->csis[i].sd = NULL;
-> +	}
-> +	for (i = 0; i < fmd->num_sensors; i++) {
-> +		if (fmd->sensor[i].subdev == NULL)
-> +			continue;
-> +		v4l2_device_unregister_subdev(fmd->sensor[i].subdev);
-> +		fmd->sensor[i].subdev = NULL;
-> +	}
-> +	v4l2_info(&fmd->v4l2_dev, "Unregistered all entities\n");
-> +}
-
-> +static struct platform_device_id fimc_driver_ids[] __always_unused = {
-> +	{ .name = "exynos5-fimc-md" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, fimc_driver_ids);
-
-This table is not used, you can remove it.
-
-> +static const struct of_device_id fimc_md_of_match[] = {
-> +	{ .compatible = "samsung,exynos5-fimc" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, fimc_md_of_match);
-> +
-> +static struct platform_driver fimc_md_driver = {
-> +	.probe		= fimc_md_probe,
-> +	.remove		= fimc_md_remove,
-> +	.driver = {
-> +		.of_match_table = fimc_md_of_match,
-> +		.name		= "exynos5-fimc-md",
-> +		.owner		= THIS_MODULE,
-> +	}
-> +};
-
-> +MODULE_AUTHOR("Shaik Ameer Basha <shaik.ameer@samsung.com>");
-> +MODULE_DESCRIPTION("EXYNOS5 FIMC media device driver");
-
-Perhaps "EXYNOS5 SoC camera subsystem media device driver" ?
-
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/media/platform/exynos5-is/exynos5-mdev.h b/drivers/media/platform/exynos5-is/exynos5-mdev.h
-> new file mode 100644
-> index 0000000..43621b6
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/exynos5-mdev.h
-> @@ -0,0 +1,120 @@
-
-> +#include <media/s5p_fimc.h>
-
-> +/* Group IDs of sensor, MIPI-CSIS, FIMC-LITE and the writeback subdevs. */
-> +#define GRP_ID_SENSOR		(1 << 8)
-> +#define GRP_ID_FIMC_IS_SENSOR	(1 << 9)
-> +#define GRP_ID_WRITEBACK	(1 << 10)
-> +#define GRP_ID_CSIS		(1 << 11)
-> +#define GRP_ID_FLITE		(1 << 13)
-> +#define GRP_ID_FIMC_IS		(1 << 14)
-
-You are re-defining these constants third time now ;-)
-
-> +struct exynos5_pipeline0 {
-
-How is going struct exynos5_pipeline1 to look like ? Why do you need 
-multiple video pipeline data structures ? Couldn't one be designed 
-for exynos5 to cover all cases ?
-
-> +	int is_init;
-> +	struct fimc_md *fmd;
-> +	struct v4l2_subdev *subdevs[IDX_MAX];
-> +	void (*sensor_notify)(struct v4l2_subdev *sd,
-> +			unsigned int notification, void *arg);
-> +};
-
-Regards,
-Sylwester
+>  static void mixer_wait_for_vblank(void *ctx)
+>  {
+>         struct mixer_context *mixer_ctx = ctx;
+> @@ -976,7 +977,7 @@ static struct exynos_mixer_ops mixer_ops = {
+>         .win_disable            = mixer_win_disable,
+>
+>         /* display */
+> -       .check_timing           = mixer_check_timing,
+> +       .check_mode             = mixer_check_mode,
+>  };
+>
+>  static irqreturn_t mixer_irq_handler(int irq, void *arg)
+> --
+> 1.7.10.4
+>
