@@ -1,417 +1,92 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 2/4] drm/exynos: hdmi: register hdmiphy driver from common
- drm hdmi
-Date: Mon, 29 Apr 2013 12:58:32 -0400
-Message-ID: <CAOw6vbL5yaHo9E9v8aTM8XK9du0NQ9gFd1fwbCySDdCE=CoGjw@mail.gmail.com>
-References: <1367247053-17105-1-git-send-email-rahul.sharma@samsung.com> <1367247053-17105-3-git-send-email-rahul.sharma@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2] clk: exynos4: Add clock entries for TMU
+Date: Mon, 29 Apr 2013 10:00:52 -0700
+Message-ID: <20130429170052.8923.66455@quantum>
+References: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:46082 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757536Ab3D2Q65 (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:34185 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757025Ab3D2RA6 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Apr 2013 12:58:57 -0400
-Received: by mail-la0-f54.google.com with SMTP id fm20so1270008lab.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Apr 2013 09:58:55 -0700 (PDT)
-Received: from mail-lb0-f175.google.com (mail-lb0-f175.google.com [209.85.217.175])
-        by mx.google.com with ESMTPSA id t20sm9749924lbi.5.2013.04.29.09.58.53
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
-        Mon, 29 Apr 2013 09:58:54 -0700 (PDT)
-Received: by mail-lb0-f175.google.com with SMTP id w20so5058946lbh.34
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Apr 2013 09:58:52 -0700 (PDT)
-In-Reply-To: <1367247053-17105-3-git-send-email-rahul.sharma@samsung.com>
+	Mon, 29 Apr 2013 13:00:58 -0400
+Received: by mail-pb0-f45.google.com with SMTP id ro2so2072089pbb.32
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Apr 2013 10:00:58 -0700 (PDT)
+In-Reply-To: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, InKi Dae <inki.dae@samsung.com>, "r.sh.open" <r.sh.open@gmail.com>, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Thomas Abraham <thomas.abraham@linaro.org>
 
-On Mon, Apr 29, 2013 at 10:50 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> hdmiphy hardware block is a physically separate device. Hdmiphy driver
-> is glued inside hdmi driver and acessed through hdmi callbacks. With
-> increasing diversities in the hdmiphy mapping and configurations, hdmi
-> driver is expanding with un-related changes.
->
-> This patch registers hdmiphy as a independent driver, having own set
-> of requried callbacks which are called by common drm hdmi, parallel to
-> hdmi and mixer driver.
->
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Quoting Sachin Kamat (2013-04-21 20:55:46)
+> Added clock entries for thermal management unit (TMU) for
+> Exynos4 SoCs.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Mike Turquette <mturquette@linaro.org>
+
+This has my Ack if you plan to take it through the Samsung tree.
+If you want it to go through the clk tree then I can take it in after
+3.10-rc1.
+
+Regards,
+Mike
+
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_hdmi.c |   61 +++++++++++++++++++++++++++---
->  drivers/gpu/drm/exynos/exynos_drm_hdmi.h |   17 +++++++++
->  drivers/gpu/drm/exynos/exynos_hdmi.c     |   26 ++-----------
->  drivers/gpu/drm/exynos/exynos_hdmi.h     |    1 -
->  drivers/gpu/drm/exynos/exynos_hdmiphy.c  |   13 ++++++-
->  5 files changed, 87 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.c b/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
-> index 7ab5f9f..25fe012 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
-> @@ -32,12 +32,14 @@
->  /* platform device pointer for common drm hdmi device. */
->  static struct platform_device *exynos_drm_hdmi_pdev;
->
-> -/* Common hdmi subdrv needs to access the hdmi and mixer though context.
-> -* These should be initialied by the repective drivers */
-> +/* Common hdmi subdrv needs to access the hdmi, hdmiphy and mixer though
-> +*  context. These should be initialied by the repective drivers */
-
-Doesn't conform with Documentation/CodingStyle &
-s/initialied/initialized/ & s/repective/respective/
-
-> +static struct exynos_drm_hdmi_context *hdmiphy_ctx;
->  static struct exynos_drm_hdmi_context *hdmi_ctx;
->  static struct exynos_drm_hdmi_context *mixer_ctx;
->
->  /* these callback points shoud be set by specific drivers. */
-> +static struct exynos_hdmiphy_ops *hdmiphy_ops;
->  static struct exynos_hdmi_ops *hdmi_ops;
->  static struct exynos_mixer_ops *mixer_ops;
->
-> @@ -45,6 +47,7 @@ struct platform_driver exynos_drm_common_hdmi_driver;
->
->  struct drm_hdmi_context {
->         struct exynos_drm_subdrv        subdrv;
-> +       struct exynos_drm_hdmi_context  *hdmiphy_ctx;
->         struct exynos_drm_hdmi_context  *hdmi_ctx;
->         struct exynos_drm_hdmi_context  *mixer_ctx;
->
-> @@ -59,6 +62,10 @@ int exynos_common_hdmi_register(void)
->         if (exynos_drm_hdmi_pdev)
->                 return -EEXIST;
->
-> +       ret = exynos_hdmiphy_driver_register();
-> +       if (ret < 0)
-> +               goto out_hdmiphy;
-
-This isn't consistent with your last patch. In that patch, you exposed
-the driver directly through exynos_drm_hdmi.h and registered the
-driver directly. Here, you expose a helper function to do it for you.
-These should at least work the same way.
-
-> +
->         ret = platform_driver_register(&hdmi_driver);
->         if (ret < 0)
->                 goto out_hdmi;
-> @@ -88,6 +95,8 @@ out_common_hdmi:
->  out_mixer:
->         platform_driver_unregister(&hdmi_driver);
->  out_hdmi:
-> +       exynos_hdmiphy_driver_unregister();
-> +out_hdmiphy:
->         return ret;
->  }
->
-> @@ -99,9 +108,16 @@ void exynos_common_hdmi_unregister(void)
->         platform_driver_unregister(&exynos_drm_common_hdmi_driver);
->         platform_driver_unregister(&mixer_driver);
->         platform_driver_unregister(&hdmi_driver);
-> +       exynos_hdmiphy_driver_unregister();
->         exynos_drm_hdmi_pdev = NULL;
->  }
->
-> +void exynos_hdmiphy_drv_attach(struct exynos_drm_hdmi_context *ctx)
-> +{
-> +       if (ctx)
-> +               hdmiphy_ctx = ctx;
-> +}
-> +
-
-I think I've said this before, but in case I haven't, here it goes. If
-you didn't platform_driverize all of this stuff, and instead
-encapsulated the various functionality in callbacks central to one drm
-driver, you wouldn't need to do this kind of thing.
-
->  void exynos_hdmi_drv_attach(struct exynos_drm_hdmi_context *ctx)
->  {
->         if (ctx)
-> @@ -114,6 +130,14 @@ void exynos_mixer_drv_attach(struct exynos_drm_hdmi_context *ctx)
->                 mixer_ctx = ctx;
->  }
->
-> +void exynos_hdmiphy_ops_register(struct exynos_hdmiphy_ops *ops)
-> +{
-> +       DRM_DEBUG_KMS("%s\n", __FILE__);
-> +
-> +       if (ops)
-> +               hdmiphy_ops = ops;
-> +}
-> +
->  void exynos_hdmi_ops_register(struct exynos_hdmi_ops *ops)
->  {
->         DRM_DEBUG_KMS("%s\n", __FILE__);
-> @@ -164,8 +188,8 @@ static int drm_hdmi_check_mode(struct device *dev,
->         DRM_DEBUG_KMS("%s\n", __FILE__);
->
->         /*
-> -       * Both, mixer and hdmi should be able to handle the requested mode.
-> -       * If any of the two fails, return mode as BAD.
-> +       * Mixer, hdmi and hdmiphy should be able to handle the requested mode.
-> +       * If any of the them fails, return mode as BAD.
->         */
->
->         if (mixer_ops && mixer_ops->check_mode)
-> @@ -175,7 +199,13 @@ static int drm_hdmi_check_mode(struct device *dev,
->                 return ret;
->
->         if (hdmi_ops && hdmi_ops->check_mode)
-> -               return hdmi_ops->check_mode(ctx->hdmi_ctx->ctx, mode);
-> +               ret = hdmi_ops->check_mode(ctx->hdmi_ctx->ctx, mode);
-> +
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (hdmiphy_ops && hdmiphy_ops->check_mode)
-> +               return hdmiphy_ops->check_mode(ctx->hdmiphy_ctx->ctx, mode);
->
->         return 0;
->  }
-> @@ -289,6 +319,9 @@ static void drm_hdmi_mode_set(struct device *subdrv_dev, void *mode)
->
->         if (hdmi_ops && hdmi_ops->mode_set)
->                 hdmi_ops->mode_set(ctx->hdmi_ctx->ctx, mode);
-> +
-> +       if (hdmiphy_ops && hdmiphy_ops->mode_set)
-> +               hdmiphy_ops->mode_set(ctx->hdmiphy_ctx->ctx, mode);
->  }
->
->  static void drm_hdmi_get_max_resol(struct device *subdrv_dev,
-> @@ -308,6 +341,15 @@ static void drm_hdmi_commit(struct device *subdrv_dev)
->
->         DRM_DEBUG_KMS("%s\n", __FILE__);
->
-> +       if (hdmiphy_ops && hdmiphy_ops->prepare)
-> +               hdmiphy_ops->prepare(ctx->hdmiphy_ctx->ctx);
-> +
-> +       if (hdmi_ops && hdmi_ops->prepare)
-> +               hdmi_ops->prepare(ctx->hdmi_ctx->ctx);
-> +
-
-This is a hack. You have a stubbed out exynos_drm_encoder_prepare
-function in exynos_drm_connector.c that exists entirely for this
-purpose.
-
-> +       if (hdmiphy_ops && hdmiphy_ops->config_apply)
-> +               hdmiphy_ops->config_apply(ctx->hdmiphy_ctx->ctx);
-
-Why name it config_apply instead of commit?
-
-> +
->         if (hdmi_ops && hdmi_ops->commit)
->                 hdmi_ops->commit(ctx->hdmi_ctx->ctx);
->  }
-> @@ -323,6 +365,9 @@ static void drm_hdmi_dpms(struct device *subdrv_dev, int mode)
->
->         if (hdmi_ops && hdmi_ops->dpms)
->                 hdmi_ops->dpms(ctx->hdmi_ctx->ctx, mode);
-> +
-> +       if (hdmiphy_ops && hdmiphy_ops->dpms)
-> +               hdmiphy_ops->dpms(ctx->hdmiphy_ctx->ctx, mode);
-
-
-Shouldn't the order of this be dependent on dpms mode?
-
-ie for DPMS_ON do hdmi->dpms then phy->dpms and for DPMS_OFF do
-phy->dpms then hdmi->dpms
-
->  }
->
->  static void drm_hdmi_apply(struct device *subdrv_dev)
-> @@ -428,6 +473,11 @@ static int hdmi_subdrv_probe(struct drm_device *drm_dev,
->                 return -EFAULT;
->         }
->
-> +       if (!hdmiphy_ctx) {
-> +               DRM_ERROR("hdmiphy context not initialized.\n");
-> +               return -EFAULT;
-
-EFAULT is the wrong error to return here. ENODEV would be more appropriate, IMO.
-
-> +       }
-> +
->         if (!mixer_ctx) {
->                 DRM_ERROR("mixer context not initialized.\n");
->                 return -EFAULT;
-> @@ -441,6 +491,7 @@ static int hdmi_subdrv_probe(struct drm_device *drm_dev,
->         }
->
->         ctx->hdmi_ctx = hdmi_ctx;
-> +       ctx->hdmiphy_ctx = hdmiphy_ctx;
->         ctx->mixer_ctx = mixer_ctx;
->
->         ctx->hdmi_ctx->drm_dev = drm_dev;
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
-> index 8861b90..8c8974f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
-> @@ -39,10 +39,19 @@ struct exynos_hdmi_ops {
->         void (*mode_set)(void *ctx, struct drm_display_mode *mode);
->         void (*get_max_resol)(void *ctx, unsigned int *width,
->                                 unsigned int *height);
-> +       void (*prepare)(void *ctx);
->         void (*commit)(void *ctx);
->         void (*dpms)(void *ctx, int mode);
+> Should be applied on top of the below patches:
+> https://patchwork.kernel.org/patch/2448711/
+> https://patchwork.kernel.org/patch/2459831/
+> 
+> Changes since v1:
+> Changed clock name 'tmu' to 'tmu_apbif' as per the SoC user manual.
+> ---
+>  .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
+>  drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> index 14d5c2a..8fc1151 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> @@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
+>    spi0_isp_sclk       380     Exynos4x12
+>    spi1_isp_sclk       381     Exynos4x12
+>    uart_isp_sclk       382     Exynos4x12
+> +  tmu_apbif          383
+>  
+>                 [Mux Clocks]
+>  
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 09cf161..0be7d05 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -170,7 +170,7 @@ enum exynos4_clks {
+>         gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1, mcuctl_isp,
+>         mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp, uart_isp,
+>         asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk, spi0_isp_sclk,
+> -       spi1_isp_sclk, uart_isp_sclk,
+> +       spi1_isp_sclk, uart_isp_sclk, tmu_apbif,
+>  
+>         /* mux clocks */
+>         mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
+> @@ -815,6 +815,7 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
+>         GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0, "keypad"),
+>         GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
+>                         E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
+> +       GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0, 0),
 >  };
->
-> +struct exynos_hdmiphy_ops {
-> +       int (*check_mode)(void *ctx, struct drm_display_mode *mode);
-> +       void (*mode_set)(void *ctx, struct drm_display_mode *mode);
-> +       void (*prepare)(void *ctx);
-> +       int (*config_apply)(void *ctx);
-> +       void (*dpms)(void *ctx, int mode);
-> +};
-> +
->  struct exynos_mixer_ops {
->         /* manager */
->         int (*iommu_on)(void *ctx, bool enable);
-> @@ -63,8 +72,16 @@ struct exynos_mixer_ops {
->  extern struct platform_driver hdmi_driver;
->  extern struct platform_driver mixer_driver;
->
-> +/*
-> + * these functions registers/unregisters exynos drm hdmiphy driver.
-> + */
-
-I think this comment is kind of obvious and unneeded, but if you think
-it's useful, it should only take up one line.
-
-
-> +extern int exynos_hdmiphy_driver_register(void);
-> +extern void exynos_hdmiphy_driver_unregister(void);
-> +
-> +void exynos_hdmiphy_drv_attach(struct exynos_drm_hdmi_context *ctx);
->  void exynos_hdmi_drv_attach(struct exynos_drm_hdmi_context *ctx);
->  void exynos_mixer_drv_attach(struct exynos_drm_hdmi_context *ctx);
-> +void exynos_hdmiphy_ops_register(struct exynos_hdmiphy_ops *ops);
->  void exynos_hdmi_ops_register(struct exynos_hdmi_ops *ops);
->  void exynos_mixer_ops_register(struct exynos_mixer_ops *ops);
->  #endif
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index 6bcd7fc..520c4af 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -1856,7 +1856,7 @@ fail:
->         return -ENODEV;
->  }
->
-> -static struct i2c_client *hdmi_ddc, *hdmi_hdmiphy;
-> +static struct i2c_client *hdmi_ddc;
->
->  void hdmi_attach_ddc_client(struct i2c_client *ddc)
->  {
-> @@ -1864,12 +1864,6 @@ void hdmi_attach_ddc_client(struct i2c_client *ddc)
->                 hdmi_ddc = ddc;
->  }
->
-> -void hdmi_attach_hdmiphy_client(struct i2c_client *hdmiphy)
-> -{
-> -       if (hdmiphy)
-> -               hdmi_hdmiphy = hdmiphy;
-> -}
-> -
+>  
+>  /* list of gate clocks supported in exynos4x12 soc */
+> @@ -915,6 +916,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>         GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
+>                         CLK_IGNORE_UNUSED, 0),
+>         GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
+> +       GATE(tmu_apbif, "tmu_apbif", "aclk100", E4X12_GATE_IP_PERIR, 17, 0, 0),
+>  };
+>  
 >  #ifdef CONFIG_OF
->  static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
->                                         (struct device *dev)
-> @@ -2027,20 +2021,11 @@ static int hdmi_probe(struct platform_device *pdev)
->
->         hdata->ddc_port = hdmi_ddc;
->
-> -       /* hdmiphy i2c driver */
-> -       if (i2c_add_driver(&hdmiphy_driver)) {
-> -               DRM_ERROR("failed to register hdmiphy i2c driver\n");
-> -               ret = -ENOENT;
-> -               goto err_ddc;
-> -       }
-> -
-> -       hdata->hdmiphy_port = hdmi_hdmiphy;
-> -
->         hdata->irq = gpio_to_irq(hdata->hpd_gpio);
->         if (hdata->irq < 0) {
->                 DRM_ERROR("failed to get GPIO irq\n");
->                 ret = hdata->irq;
-> -               goto err_hdmiphy;
-> +               goto err_ddc;
->         }
->
->         hdata->hpd = gpio_get_value(hdata->hpd_gpio);
-> @@ -2051,7 +2036,7 @@ static int hdmi_probe(struct platform_device *pdev)
->                         "hdmi", drm_hdmi_ctx);
->         if (ret) {
->                 DRM_ERROR("failed to register hdmi interrupt\n");
-> -               goto err_hdmiphy;
-> +               goto err_ddc;
->         }
->
->         /* Attach HDMI Driver to common hdmi. */
-> @@ -2064,8 +2049,6 @@ static int hdmi_probe(struct platform_device *pdev)
->
->         return 0;
->
-> -err_hdmiphy:
-> -       i2c_del_driver(&hdmiphy_driver);
->  err_ddc:
->         i2c_del_driver(&ddc_driver);
->         return ret;
-> @@ -2083,9 +2066,6 @@ static int hdmi_remove(struct platform_device *pdev)
->
->         free_irq(hdata->irq, hdata);
->
-> -
-> -       /* hdmiphy i2c driver */
-> -       i2c_del_driver(&hdmiphy_driver);
->         /* DDC i2c driver */
->         i2c_del_driver(&ddc_driver);
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.h b/drivers/gpu/drm/exynos/exynos_hdmi.h
-> index 0ddf395..6595d7b 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.h
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.h
-> @@ -15,7 +15,6 @@
->  #define _EXYNOS_HDMI_H_
->
->  void hdmi_attach_ddc_client(struct i2c_client *ddc);
-> -void hdmi_attach_hdmiphy_client(struct i2c_client *hdmiphy);
->
->  extern struct i2c_driver hdmiphy_driver;
-
-This can be removed if you're using the register/unregister helpers.
-
->  extern struct i2c_driver ddc_driver;
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> index ea49d13..eee2510 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> @@ -24,8 +24,6 @@
->  static int hdmiphy_probe(struct i2c_client *client,
->         const struct i2c_device_id *id)
->  {
-> -       hdmi_attach_hdmiphy_client(client);
-> -
->         dev_info(&client->adapter->dev, "attached s5p_hdmiphy "
->                 "into i2c adapter successfully\n");
->
-> @@ -67,4 +65,15 @@ struct i2c_driver hdmiphy_driver = {
->         .remove         = hdmiphy_remove,
->         .command                = NULL,
->  };
-> +
-> +extern int exynos_hdmiphy_driver_register(void)
-> +{
-> +       return i2c_add_driver(&hdmiphy_driver);
-> +}
-> +
-> +extern void exynos_hdmiphy_driver_unregister(void)
-> +{
-> +       i2c_del_driver(&hdmiphy_driver);
-> +}
-> +
->  EXPORT_SYMBOL(hdmiphy_driver);
-
-You don't need to export it if you're using these helpers.
-
-> --
-> 1.7.10.4
->
+> -- 
+> 1.7.9.5
