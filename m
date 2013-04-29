@@ -1,99 +1,60 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC v2 2/6] fimc-lite: Adding Exynos5 compatibility to fimc-lite
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH 0/4] drm/exynos: hdmi: move hdmiphy related code to hdmiphy
  driver
-Date: Mon, 29 Apr 2013 14:08:37 +0200
-Message-ID: <517E62C5.8030207@samsung.com>
-References: <1366789273-30184-1-git-send-email-shaik.ameer@samsung.com>
- <1366789273-30184-3-git-send-email-shaik.ameer@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Date: Mon, 29 Apr 2013 20:20:49 +0530
+Message-ID: <1367247053-17105-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:26291 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752873Ab3D2MIm (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:35003 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753940Ab3D2O1V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Apr 2013 08:08:42 -0400
-In-reply-to: <1366789273-30184-3-git-send-email-shaik.ameer@samsung.com>
+	Mon, 29 Apr 2013 10:27:21 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MM000KV8THJ0G20@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 29 Apr 2013 23:27:19 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: linux-media@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, shaik.samsung@gmail.com, arunkk.samsung@gmail.com
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, r.sh.open@gmail.com, sw0312.kim@samsung.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 04/24/2013 09:41 AM, Shaik Ameer Basha wrote:
-> This patch adds,
-> 1] Exynos5 soc compatibility to the fimc-lite driver
-> 2] Multiple dma output buffer support as from Exynos5 onwards,
->    fimc-lite h/w ip supports multiple dma buffers.
-> 
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> ---
->  drivers/media/platform/exynos4-is/fimc-lite.c |   19 ++++++++++++++++++-
->  drivers/media/platform/exynos4-is/fimc-lite.h |    4 +++-
->  2 files changed, 21 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-> index 4878089..cb173ec 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-> @@ -1467,7 +1467,7 @@ static int fimc_lite_probe(struct platform_device *pdev)
->  		fimc->index = pdev->id;
->  	}
->  
-> -	if (!drv_data || fimc->index < 0 || fimc->index >= FIMC_LITE_MAX_DEVS)
-> +	if (!drv_data || fimc->index < 0 || fimc->index >= drv_data->num_devs)
->  		return -EINVAL;
->  
->  	fimc->dd = drv_data;
-> @@ -1625,6 +1625,19 @@ static struct flite_drvdata fimc_lite_drvdata_exynos4 = {
->  	.out_width_align	= 8,
->  	.win_hor_offs_align	= 2,
->  	.out_hor_offs_align	= 8,
-> +	.support_multi_dma_buf	= false,
-> +	.num_devs = 2,
-> +};
+Right now hdmiphy operations and configs are kept inside hdmi driver. hdmiphy
+related code is tightly coupled with hdmi ip driver. Physicaly they are
+different devices and should be instantiated independently.
 
-Could you include this in your patch:
+In terms of versions/mapping/configurations Hdmi and hdmiphy are independent
+of each other. It seems logical to isolate them and maintained independently.
 
-/**
- * struct flite_drvdata - FIMC-LITE IP variant data structure
- * @max_width: maximum camera interface input width in pixels
- * @max_height: maximum camera interface input height in pixels
- * @out_width_align: minimum output width alignment in pixels
- * @win_hor_offs_align: minimum camera interface crop window horizontal
- * 			offset alignment in pixels
- * @out_hor_offs_align: minimum output DMA compose rectangle horizontal
- * 			offset alignment in pixels
- * @num_out_dma_bufs: number of output DMA buffer start address registers
- */
-?
-> +/* EXYNOS5250 */
-> +static struct flite_drvdata fimc_lite_drvdata_exynos5 = {
-> +	.max_width		= 8192,
-> +	.max_height		= 8192,
-> +	.out_width_align	= 8,
-> +	.win_hor_offs_align	= 2,
-> +	.out_hor_offs_align	= 8,
-> +	.support_multi_dma_buf	= true,
+This implementation is tested for:
+1) Resolutions supported by exynos4 and 5 hdmi.
+2) Runtime PM and S2R scenarions for exynos5.
 
-How about changing it to 'num_out_dma_bufs' ? And instead of
+This patch set is dependent on the patch, posted at
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg17905.html
 
-if (dd->support_multi_dma_buf)
+This series is based on exynos-drm-next branch at
+git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 
-having
+Rahul Sharma (4):
+  drm/exynos: hdmi: move hdmi subsystem registration to drm common hdmi
+  drm/exynos: hdmi: register hdmiphy driver from common drm hdmi
+  drm/exynos: hdmi: move hdmiphy callbacks to hdmiphy driver
+  ARM: EXYNOS: remove parent device for hdmiphy clock
 
-if (dd->num_out_dma_bufs > 1)
+ arch/arm/mach-exynos/clock-exynos4.c     |    1 -
+ arch/arm/mach-exynos/clock-exynos5.c     |    1 -
+ drivers/gpu/drm/exynos/exynos_drm_drv.c  |   25 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |   14 +-
+ drivers/gpu/drm/exynos/exynos_drm_hdmi.c |  107 +++++-
+ drivers/gpu/drm/exynos/exynos_drm_hdmi.h |   20 +
+ drivers/gpu/drm/exynos/exynos_hdmi.c     |  371 ++-----------------
+ drivers/gpu/drm/exynos/exynos_hdmi.h     |    1 -
+ drivers/gpu/drm/exynos/exynos_hdmiphy.c  |  585 +++++++++++++++++++++++++++++-
+ drivers/gpu/drm/exynos/regs-hdmiphy.h    |   61 ++++
+ 10 files changed, 780 insertions(+), 406 deletions(-)
+ create mode 100644 drivers/gpu/drm/exynos/regs-hdmiphy.h
 
-?
-
-Otherwise the patch looks good to me. I will make a separate patch
-to update the binding documentation.
-
-I've found there is a mistake in the compatible property's documentation.
-I would like to fix it in the 3.10-rc cycle, I'm not 100% sure if it
-qualifies as the -rc material, but having kernel released with wrongly
-documented compatible property would have been bad I think.
-
-
-Thanks,
-Sylwester
+-- 
+1.7.10.4
