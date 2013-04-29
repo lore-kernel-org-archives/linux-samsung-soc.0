@@ -1,91 +1,402 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2] clk: exynos4: Add clock entries for TMU
-Date: Mon, 29 Apr 2013 16:04:37 +0530
-Message-ID: <CAK9yfHw1AcnDrQXm5U7ECaq4dVC2Ln5viSR-RaJE0+R0=1dzMw@mail.gmail.com>
-References: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v4] drm/exynos: hdmi: use drm_display_mode to check the
+ supported modes
+Date: Mon, 29 Apr 2013 16:44:08 +0530
+Message-ID: <1367234048-14677-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:39036 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757065Ab3D2Keh (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:18024 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751382Ab3D2Ku1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Apr 2013 06:34:37 -0400
-Received: by mail-ob0-f177.google.com with SMTP id ef5so5194239obb.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Apr 2013 03:34:37 -0700 (PDT)
-In-Reply-To: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 29 Apr 2013 06:50:27 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MM000CBRJG25AY0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 29 Apr 2013 19:50:26 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Thomas Abraham <thomas.abraham@linaro.org>, Mike Turquette <mturquette@linaro.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, r.sh.open@gmail.com, sw0312.kim@samsung.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 22 April 2013 09:25, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Added clock entries for thermal management unit (TMU) for
-> Exynos4 SoCs.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> Cc: Mike Turquette <mturquette@linaro.org>
-> ---
-> Should be applied on top of the below patches:
-> https://patchwork.kernel.org/patch/2448711/
-> https://patchwork.kernel.org/patch/2459831/
->
-> Changes since v1:
-> Changed clock name 'tmu' to 'tmu_apbif' as per the SoC user manual.
-> ---
->  .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
->  drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-> index 14d5c2a..8fc1151 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-> @@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
->    spi0_isp_sclk       380     Exynos4x12
->    spi1_isp_sclk       381     Exynos4x12
->    uart_isp_sclk       382     Exynos4x12
-> +  tmu_apbif          383
->
->                 [Mux Clocks]
->
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 09cf161..0be7d05 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -170,7 +170,7 @@ enum exynos4_clks {
->         gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1, mcuctl_isp,
->         mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp, uart_isp,
->         asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk, spi0_isp_sclk,
-> -       spi1_isp_sclk, uart_isp_sclk,
-> +       spi1_isp_sclk, uart_isp_sclk, tmu_apbif,
->
->         /* mux clocks */
->         mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
-> @@ -815,6 +815,7 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
->         GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0, "keypad"),
->         GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
->                         E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
-> +       GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0, 0),
->  };
->
->  /* list of gate clocks supported in exynos4x12 soc */
-> @@ -915,6 +916,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->         GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
->                         CLK_IGNORE_UNUSED, 0),
->         GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
-> +       GATE(tmu_apbif, "tmu_apbif", "aclk100", E4X12_GATE_IP_PERIR, 17, 0, 0),
->  };
->
->  #ifdef CONFIG_OF
-> --
-> 1.7.9.5
->
+Exynos hdmi driver is using drm_display_mode for setting timing values
+for a supported resolution. Conversion to fb_videomode and then comparing
+with the mixer/hdmi/phy limits is not required. Instead, drm_display_mode
+fields cane be directly compared.
 
-Ping...
+v4:
+1) Removed __func__ from DRM_DEBUG_KMS.
 
+v3:
+1) Replaced check_timing callbacks with check_mode.
+2) Change the type of second parameter of check_mode callback from void
+pointer paramenter to struct drm_display_mode pointer.
 
+v2:
+1) Removed convert_to_video_timing().
+2) Corrected DRM_DEBUG_KMS to print the resolution properly.
+
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_connector.c |   38 ++-----------------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |    4 +--
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |    4 +--
+ drivers/gpu/drm/exynos/exynos_drm_hdmi.c      |   17 +++++------
+ drivers/gpu/drm/exynos/exynos_drm_hdmi.h      |    6 ++--
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      |    4 +--
+ drivers/gpu/drm/exynos/exynos_hdmi.c          |   29 +++++++++----------
+ drivers/gpu/drm/exynos/exynos_mixer.c         |   17 +++++------
+ 8 files changed, 43 insertions(+), 76 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+index 8bcc13a..ab3c6d4 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+@@ -58,37 +58,6 @@ convert_to_display_mode(struct drm_display_mode *mode,
+ 		mode->flags |= DRM_MODE_FLAG_DBLSCAN;
+ }
+ 
+-/* convert drm_display_mode to exynos_video_timings */
+-static inline void
+-convert_to_video_timing(struct fb_videomode *timing,
+-			struct drm_display_mode *mode)
+-{
+-	DRM_DEBUG_KMS("%s\n", __FILE__);
+-
+-	memset(timing, 0, sizeof(*timing));
+-
+-	timing->pixclock = mode->clock * 1000;
+-	timing->refresh = drm_mode_vrefresh(mode);
+-
+-	timing->xres = mode->hdisplay;
+-	timing->right_margin = mode->hsync_start - mode->hdisplay;
+-	timing->hsync_len = mode->hsync_end - mode->hsync_start;
+-	timing->left_margin = mode->htotal - mode->hsync_end;
+-
+-	timing->yres = mode->vdisplay;
+-	timing->lower_margin = mode->vsync_start - mode->vdisplay;
+-	timing->vsync_len = mode->vsync_end - mode->vsync_start;
+-	timing->upper_margin = mode->vtotal - mode->vsync_end;
+-
+-	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+-		timing->vmode = FB_VMODE_INTERLACED;
+-	else
+-		timing->vmode = FB_VMODE_NONINTERLACED;
+-
+-	if (mode->flags & DRM_MODE_FLAG_DBLSCAN)
+-		timing->vmode |= FB_VMODE_DOUBLE;
+-}
+-
+ static int exynos_drm_connector_get_modes(struct drm_connector *connector)
+ {
+ 	struct exynos_drm_connector *exynos_connector =
+@@ -168,15 +137,12 @@ static int exynos_drm_connector_mode_valid(struct drm_connector *connector,
+ 					to_exynos_connector(connector);
+ 	struct exynos_drm_manager *manager = exynos_connector->manager;
+ 	struct exynos_drm_display_ops *display_ops = manager->display_ops;
+-	struct fb_videomode timing;
+ 	int ret = MODE_BAD;
+ 
+ 	DRM_DEBUG_KMS("%s\n", __FILE__);
+ 
+-	convert_to_video_timing(&timing, mode);
+-
+-	if (display_ops && display_ops->check_timing)
+-		if (!display_ops->check_timing(manager->dev, (void *)&timing))
++	if (display_ops && display_ops->check_mode)
++		if (!display_ops->check_mode(manager->dev, mode))
+ 			ret = MODE_OK;
+ 
+ 	return ret;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 4606fac..9650b3b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -142,7 +142,7 @@ struct exynos_drm_overlay {
+  * @is_connected: check for that display is connected or not.
+  * @get_edid: get edid modes from display driver.
+  * @get_panel: get panel object from display driver.
+- * @check_timing: check if timing is valid or not.
++ * @check_mode: check if mode is valid or not.
+  * @power_on: display device on or off.
+  */
+ struct exynos_drm_display_ops {
+@@ -151,7 +151,7 @@ struct exynos_drm_display_ops {
+ 	struct edid *(*get_edid)(struct device *dev,
+ 			struct drm_connector *connector);
+ 	void *(*get_panel)(struct device *dev);
+-	int (*check_timing)(struct device *dev, void *timing);
++	int (*check_mode)(struct device *dev, struct drm_display_mode *mode);
+ 	int (*power_on)(struct device *dev, int mode);
+ };
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 15e58f5..98bbe1e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -153,7 +153,7 @@ static void *fimd_get_panel(struct device *dev)
+ 	return ctx->panel;
+ }
+ 
+-static int fimd_check_timing(struct device *dev, void *timing)
++static int fimd_check_mode(struct device *dev, struct drm_display_mode *mode)
+ {
+ 	DRM_DEBUG_KMS("%s\n", __FILE__);
+ 
+@@ -175,7 +175,7 @@ static struct exynos_drm_display_ops fimd_display_ops = {
+ 	.type = EXYNOS_DISPLAY_TYPE_LCD,
+ 	.is_connected = fimd_display_is_connected,
+ 	.get_panel = fimd_get_panel,
+-	.check_timing = fimd_check_timing,
++	.check_mode = fimd_check_mode,
+ 	.power_on = fimd_display_power_on,
+ };
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.c b/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
+index 5285509..8a07e8b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
+@@ -121,7 +121,8 @@ static struct edid *drm_hdmi_get_edid(struct device *dev,
+ 	return NULL;
+ }
+ 
+-static int drm_hdmi_check_timing(struct device *dev, void *timing)
++static int drm_hdmi_check_mode(struct device *dev,
++		struct drm_display_mode *mode)
+ {
+ 	struct drm_hdmi_context *ctx = to_context(dev);
+ 	int ret = 0;
+@@ -133,14 +134,14 @@ static int drm_hdmi_check_timing(struct device *dev, void *timing)
+ 	* If any of the two fails, return mode as BAD.
+ 	*/
+ 
+-	if (mixer_ops && mixer_ops->check_timing)
+-		ret = mixer_ops->check_timing(ctx->mixer_ctx->ctx, timing);
++	if (mixer_ops && mixer_ops->check_mode)
++		ret = mixer_ops->check_mode(ctx->mixer_ctx->ctx, mode);
+ 
+ 	if (ret)
+ 		return ret;
+ 
+-	if (hdmi_ops && hdmi_ops->check_timing)
+-		return hdmi_ops->check_timing(ctx->hdmi_ctx->ctx, timing);
++	if (hdmi_ops && hdmi_ops->check_mode)
++		return hdmi_ops->check_mode(ctx->hdmi_ctx->ctx, mode);
+ 
+ 	return 0;
+ }
+@@ -161,7 +162,7 @@ static struct exynos_drm_display_ops drm_hdmi_display_ops = {
+ 	.type = EXYNOS_DISPLAY_TYPE_HDMI,
+ 	.is_connected = drm_hdmi_is_connected,
+ 	.get_edid = drm_hdmi_get_edid,
+-	.check_timing = drm_hdmi_check_timing,
++	.check_mode = drm_hdmi_check_mode,
+ 	.power_on = drm_hdmi_power_on,
+ };
+ 
+@@ -212,7 +213,7 @@ static void drm_hdmi_mode_fixup(struct device *subdrv_dev,
+ 
+ 	drm_mode_set_crtcinfo(adjusted_mode, 0);
+ 
+-	mode_ok = drm_hdmi_check_timing(subdrv_dev, adjusted_mode);
++	mode_ok = drm_hdmi_check_mode(subdrv_dev, adjusted_mode);
+ 
+ 	/* just return if user desired mode exists. */
+ 	if (mode_ok == 0)
+@@ -223,7 +224,7 @@ static void drm_hdmi_mode_fixup(struct device *subdrv_dev,
+ 	 * to adjusted_mode.
+ 	 */
+ 	list_for_each_entry(m, &connector->modes, head) {
+-		mode_ok = drm_hdmi_check_timing(subdrv_dev, m);
++		mode_ok = drm_hdmi_check_mode(subdrv_dev, m);
+ 
+ 		if (mode_ok == 0) {
+ 			struct drm_mode_object base;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+index 6b70944..724cab1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+@@ -32,11 +32,11 @@ struct exynos_hdmi_ops {
+ 	bool (*is_connected)(void *ctx);
+ 	struct edid *(*get_edid)(void *ctx,
+ 			struct drm_connector *connector);
+-	int (*check_timing)(void *ctx, struct fb_videomode *timing);
++	int (*check_mode)(void *ctx, struct drm_display_mode *mode);
+ 	int (*power_on)(void *ctx, int mode);
+ 
+ 	/* manager */
+-	void (*mode_set)(void *ctx, void *mode);
++	void (*mode_set)(void *ctx, struct drm_display_mode *mode);
+ 	void (*get_max_resol)(void *ctx, unsigned int *width,
+ 				unsigned int *height);
+ 	void (*commit)(void *ctx);
+@@ -57,7 +57,7 @@ struct exynos_mixer_ops {
+ 	void (*win_disable)(void *ctx, int zpos);
+ 
+ 	/* display */
+-	int (*check_timing)(void *ctx, struct fb_videomode *timing);
++	int (*check_mode)(void *ctx, struct drm_display_mode *mode);
+ };
+ 
+ void exynos_hdmi_drv_attach(struct exynos_drm_hdmi_context *ctx);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 9504b0c..6043700 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -135,7 +135,7 @@ static void *vidi_get_panel(struct device *dev)
+ 	return NULL;
+ }
+ 
+-static int vidi_check_timing(struct device *dev, void *timing)
++static int vidi_check_mode(struct device *dev, struct drm_display_mode *mode)
+ {
+ 	DRM_DEBUG_KMS("%s\n", __FILE__);
+ 
+@@ -158,7 +158,7 @@ static struct exynos_drm_display_ops vidi_display_ops = {
+ 	.is_connected = vidi_display_is_connected,
+ 	.get_edid = vidi_get_edid,
+ 	.get_panel = vidi_get_panel,
+-	.check_timing = vidi_check_timing,
++	.check_mode = vidi_check_mode,
+ 	.power_on = vidi_display_power_on,
+ };
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 93b70e9..4b99dcd 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -796,18 +796,17 @@ static int hdmi_find_phy_conf(struct hdmi_context *hdata, u32 pixel_clock)
+ 	return -EINVAL;
+ }
+ 
+-static int hdmi_check_timing(void *ctx, struct fb_videomode *timing)
++static int hdmi_check_mode(void *ctx, struct drm_display_mode *mode)
+ {
+ 	struct hdmi_context *hdata = ctx;
+ 	int ret;
+ 
+-	DRM_DEBUG_KMS("[%d] %s\n", __LINE__, __func__);
+-
+-	DRM_DEBUG_KMS("[%d]x[%d] [%d]Hz [%x]\n", timing->xres,
+-			timing->yres, timing->refresh,
+-			timing->vmode);
++	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d clock=%d\n",
++		mode->hdisplay, mode->vdisplay, mode->vrefresh,
++		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? true :
++		false, mode->clock * 1000);
+ 
+-	ret = hdmi_find_phy_conf(hdata, timing->pixclock);
++	ret = hdmi_find_phy_conf(hdata, mode->clock * 1000);
+ 	if (ret < 0)
+ 		return ret;
+ 	return 0;
+@@ -1042,7 +1041,7 @@ static void hdmi_conf_init(struct hdmi_context *hdata)
+ 	}
+ }
+ 
+-static void hdmi_v13_timing_apply(struct hdmi_context *hdata)
++static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+ {
+ 	const struct hdmi_tg_regs *tg = &hdata->mode_conf.conf.v13_conf.tg;
+ 	const struct hdmi_v13_core_regs *core =
+@@ -1131,7 +1130,7 @@ static void hdmi_v13_timing_apply(struct hdmi_context *hdata)
+ 		hdmi_reg_writemask(hdata, HDMI_TG_CMD, ~0, HDMI_TG_EN);
+ }
+ 
+-static void hdmi_v14_timing_apply(struct hdmi_context *hdata)
++static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ {
+ 	const struct hdmi_tg_regs *tg = &hdata->mode_conf.conf.v14_conf.tg;
+ 	const struct hdmi_v14_core_regs *core =
+@@ -1298,12 +1297,12 @@ static void hdmi_v14_timing_apply(struct hdmi_context *hdata)
+ 		hdmi_reg_writemask(hdata, HDMI_TG_CMD, ~0, HDMI_TG_EN);
+ }
+ 
+-static void hdmi_timing_apply(struct hdmi_context *hdata)
++static void hdmi_mode_apply(struct hdmi_context *hdata)
+ {
+ 	if (hdata->type == HDMI_TYPE13)
+-		hdmi_v13_timing_apply(hdata);
++		hdmi_v13_mode_apply(hdata);
+ 	else
+-		hdmi_v14_timing_apply(hdata);
++		hdmi_v14_mode_apply(hdata);
+ }
+ 
+ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
+@@ -1424,7 +1423,7 @@ static void hdmi_conf_apply(struct hdmi_context *hdata)
+ 	hdmi_audio_init(hdata);
+ 
+ 	/* setting core registers */
+-	hdmi_timing_apply(hdata);
++	hdmi_mode_apply(hdata);
+ 	hdmi_audio_control(hdata, true);
+ 
+ 	hdmi_regs_dump(hdata, "start");
+@@ -1643,7 +1642,7 @@ static void hdmi_v14_mode_set(struct hdmi_context *hdata,
+ 	hdmi_set_reg(tg->tg_3d, 1, 0x0);
+ }
+ 
+-static void hdmi_mode_set(void *ctx, void *mode)
++static void hdmi_mode_set(void *ctx, struct drm_display_mode *mode)
+ {
+ 	struct hdmi_context *hdata = ctx;
+ 	struct drm_display_mode *m = mode;
+@@ -1767,7 +1766,7 @@ static struct exynos_hdmi_ops hdmi_ops = {
+ 	/* display */
+ 	.is_connected	= hdmi_is_connected,
+ 	.get_edid	= hdmi_get_edid,
+-	.check_timing	= hdmi_check_timing,
++	.check_mode	= hdmi_check_mode,
+ 
+ 	/* manager */
+ 	.mode_set	= hdmi_mode_set,
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index f08e251..ffcc690 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -818,17 +818,17 @@ static void mixer_win_disable(void *ctx, int win)
+ 	mixer_ctx->win_data[win].enabled = false;
+ }
+ 
+-static int mixer_check_timing(void *ctx, struct fb_videomode *timing)
++static int mixer_check_mode(void *ctx, struct drm_display_mode *mode)
+ {
+ 	u32 w, h;
+ 
+-	w = timing->xres;
+-	h = timing->yres;
++	w = mode->hdisplay;
++	h = mode->vdisplay;
+ 
+-	DRM_DEBUG_KMS("%s : xres=%d, yres=%d, refresh=%d, intl=%d\n",
+-		__func__, timing->xres, timing->yres,
+-		timing->refresh, (timing->vmode &
+-		FB_VMODE_INTERLACED) ? true : false);
++	DRM_DEBUG_KMS("xres=%d, yres=%d, refresh=%d, intl=%d\n",
++		mode->hdisplay, mode->vdisplay, mode->vrefresh,
++		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? true :
++		false);
+ 
+ 	if ((w >= 464 && w <= 720 && h >= 261 && h <= 576) ||
+ 		(w >= 1024 && w <= 1280 && h >= 576 && h <= 720) ||
+@@ -837,6 +837,7 @@ static int mixer_check_timing(void *ctx, struct fb_videomode *timing)
+ 
+ 	return -EINVAL;
+ }
++
+ static void mixer_wait_for_vblank(void *ctx)
+ {
+ 	struct mixer_context *mixer_ctx = ctx;
+@@ -976,7 +977,7 @@ static struct exynos_mixer_ops mixer_ops = {
+ 	.win_disable		= mixer_win_disable,
+ 
+ 	/* display */
+-	.check_timing		= mixer_check_timing,
++	.check_mode		= mixer_check_mode,
+ };
+ 
+ static irqreturn_t mixer_irq_handler(int irq, void *arg)
 -- 
-With warm regards,
-Sachin
+1.7.10.4
