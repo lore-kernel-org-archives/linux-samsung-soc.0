@@ -1,92 +1,99 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS5: Fix kernel dump in AFTR idle mode
-Date: Mon, 29 Apr 2013 17:24:34 +0530
-Message-ID: <CANuQgHEkbs1m+Q1XEy0_rZyd+qeTyGcXdq3sw0GBOLBDRaNKew@mail.gmail.com>
-References: <1367235107-31328-1-git-send-email-inderpal.singh@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFC v2 2/6] fimc-lite: Adding Exynos5 compatibility to fimc-lite
+ driver
+Date: Mon, 29 Apr 2013 14:08:37 +0200
+Message-ID: <517E62C5.8030207@samsung.com>
+References: <1366789273-30184-1-git-send-email-shaik.ameer@samsung.com>
+ <1366789273-30184-3-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:34497 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753363Ab3D2Lyf (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:26291 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752873Ab3D2MIm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Apr 2013 07:54:35 -0400
-Received: by mail-oa0-f42.google.com with SMTP id i10so6006189oag.29
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Apr 2013 04:54:34 -0700 (PDT)
-In-Reply-To: <1367235107-31328-1-git-send-email-inderpal.singh@linaro.org>
+	Mon, 29 Apr 2013 08:08:42 -0400
+In-reply-to: <1366789273-30184-3-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arnd@arndb.de, olof@lixom.net, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Patch Tracking <patches@linaro.org>
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Cc: linux-media@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, shaik.samsung@gmail.com, arunkk.samsung@gmail.com
 
-On 29 April 2013 17:01, Inderpal Singh <inderpal.singh@linaro.org> wrote:
->
-> The kernel crashes while resuming from AFTR idle mode. It happens
-> because L2 cache was not going into retention state.
->
-> This patch configures the USE_RETENTION bit of ARM_L2_OPTION register
-> so that it does not depend on MANUAL_L2RSTDISABLE_CONTROL of
-> ARM_COMMON_OPTION register for L2RSTDISABLE signal.
->
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+On 04/24/2013 09:41 AM, Shaik Ameer Basha wrote:
+> This patch adds,
+> 1] Exynos5 soc compatibility to the fimc-lite driver
+> 2] Multiple dma output buffer support as from Exynos5 onwards,
+>    fimc-lite h/w ip supports multiple dma buffers.
+> 
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 > ---
->
-> Tested on arndale board on arm-soc next/soc branch.
->
->  arch/arm/mach-exynos/include/mach/regs-pmu.h |    1 +
->  arch/arm/mach-exynos/pmu.c                   |    5 ++---
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-> index 3f30aa1..57344b7 100644
-> --- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
-> +++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-> @@ -344,6 +344,7 @@
->  #define EXYNOS5_FSYS_ARM_OPTION                                        S5P_PMUREG(0x2208)
->  #define EXYNOS5_ISP_ARM_OPTION                                 S5P_PMUREG(0x2288)
->  #define EXYNOS5_ARM_COMMON_OPTION                              S5P_PMUREG(0x2408)
-> +#define EXYNOS5_ARM_L2_OPTION                                  S5P_PMUREG(0x2608)
->  #define EXYNOS5_TOP_PWR_OPTION                                 S5P_PMUREG(0x2C48)
->  #define EXYNOS5_TOP_PWR_SYSMEM_OPTION                          S5P_PMUREG(0x2CC8)
->  #define EXYNOS5_JPEG_MEM_OPTION                                        S5P_PMUREG(0x2F48)
-> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-> index daebc1a..97d6885 100644
-> --- a/arch/arm/mach-exynos/pmu.c
-> +++ b/arch/arm/mach-exynos/pmu.c
-> @@ -228,6 +228,7 @@ static struct exynos_pmu_conf exynos5250_pmu_config[] = {
->         { EXYNOS5_DIS_IRQ_ISP_ARM_CENTRAL_SYS_PWR_REG,  { 0x0, 0x0, 0x0} },
->         { EXYNOS5_ARM_COMMON_SYS_PWR_REG,               { 0x0, 0x0, 0x2} },
->         { EXYNOS5_ARM_L2_SYS_PWR_REG,                   { 0x3, 0x3, 0x3} },
-> +       { EXYNOS5_ARM_L2_OPTION,                        { 0x10, 0x10, 0x0 } },
->         { EXYNOS5_CMU_ACLKSTOP_SYS_PWR_REG,             { 0x1, 0x0, 0x1} },
->         { EXYNOS5_CMU_SCLKSTOP_SYS_PWR_REG,             { 0x1, 0x0, 0x1} },
->         { EXYNOS5_CMU_RESET_SYS_PWR_REG,                { 0x1, 0x1, 0x0} },
-> @@ -353,11 +354,9 @@ static void exynos5_init_pmu(void)
->
->         /*
->          * SKIP_DEACTIVATE_ACEACP_IN_PWDN_BITFIELD Enable
-> -        * MANUAL_L2RSTDISABLE_CONTROL_BITFIELD Enable
->          */
->         tmp = __raw_readl(EXYNOS5_ARM_COMMON_OPTION);
-> -       tmp |= (EXYNOS5_MANUAL_L2RSTDISABLE_CONTROL |
-> -               EXYNOS5_SKIP_DEACTIVATE_ACEACP_IN_PWDN);
-> +       tmp |= EXYNOS5_SKIP_DEACTIVATE_ACEACP_IN_PWDN;
->         __raw_writel(tmp, EXYNOS5_ARM_COMMON_OPTION);
->
->         /*
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  drivers/media/platform/exynos4-is/fimc-lite.c |   19 ++++++++++++++++++-
+>  drivers/media/platform/exynos4-is/fimc-lite.h |    4 +++-
+>  2 files changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+> index 4878089..cb173ec 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> @@ -1467,7 +1467,7 @@ static int fimc_lite_probe(struct platform_device *pdev)
+>  		fimc->index = pdev->id;
+>  	}
+>  
+> -	if (!drv_data || fimc->index < 0 || fimc->index >= FIMC_LITE_MAX_DEVS)
+> +	if (!drv_data || fimc->index < 0 || fimc->index >= drv_data->num_devs)
+>  		return -EINVAL;
+>  
+>  	fimc->dd = drv_data;
+> @@ -1625,6 +1625,19 @@ static struct flite_drvdata fimc_lite_drvdata_exynos4 = {
+>  	.out_width_align	= 8,
+>  	.win_hor_offs_align	= 2,
+>  	.out_hor_offs_align	= 8,
+> +	.support_multi_dma_buf	= false,
+> +	.num_devs = 2,
+> +};
 
-working fine.
-Tested-by: Chander Kashyap <chander.kashyap@linaro.org>
+Could you include this in your patch:
+
+/**
+ * struct flite_drvdata - FIMC-LITE IP variant data structure
+ * @max_width: maximum camera interface input width in pixels
+ * @max_height: maximum camera interface input height in pixels
+ * @out_width_align: minimum output width alignment in pixels
+ * @win_hor_offs_align: minimum camera interface crop window horizontal
+ * 			offset alignment in pixels
+ * @out_hor_offs_align: minimum output DMA compose rectangle horizontal
+ * 			offset alignment in pixels
+ * @num_out_dma_bufs: number of output DMA buffer start address registers
+ */
+?
+> +/* EXYNOS5250 */
+> +static struct flite_drvdata fimc_lite_drvdata_exynos5 = {
+> +	.max_width		= 8192,
+> +	.max_height		= 8192,
+> +	.out_width_align	= 8,
+> +	.win_hor_offs_align	= 2,
+> +	.out_hor_offs_align	= 8,
+> +	.support_multi_dma_buf	= true,
+
+How about changing it to 'num_out_dma_bufs' ? And instead of
+
+if (dd->support_multi_dma_buf)
+
+having
+
+if (dd->num_out_dma_bufs > 1)
+
+?
+
+Otherwise the patch looks good to me. I will make a separate patch
+to update the binding documentation.
+
+I've found there is a mistake in the compatible property's documentation.
+I would like to fix it in the 3.10-rc cycle, I'm not 100% sure if it
+qualifies as the -rc material, but having kernel released with wrongly
+documented compatible property would have been bad I think.
 
 
-
---
-with warm regards,
-Chander Kashyap
+Thanks,
+Sylwester
