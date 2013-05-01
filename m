@@ -1,67 +1,79 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 4/4] drm/exynos: fimd: Add support for S3C64xx SoCs
-Date: Wed,  1 May 2013 21:02:29 +0200
-Message-ID: <1367434949-14838-5-git-send-email-tomasz.figa@gmail.com>
-References: <1367434949-14838-1-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH] drm/exynos: fimd: Get signal polarities from device tree
+Date: Wed,  1 May 2013 21:06:09 +0200
+Message-ID: <1367435169-15025-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f178.google.com ([209.85.215.178]:57993 "EHLO
-	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756051Ab3EATCr (ORCPT
+Received: from mail-ee0-f52.google.com ([74.125.83.52]:41110 "EHLO
+	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756120Ab3EATGg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 May 2013 15:02:47 -0400
-Received: by mail-ea0-f178.google.com with SMTP id o10so790640eaj.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 May 2013 12:02:45 -0700 (PDT)
-In-Reply-To: <1367434949-14838-1-git-send-email-tomasz.figa@gmail.com>
+	Wed, 1 May 2013 15:06:36 -0400
+Received: by mail-ee0-f52.google.com with SMTP id d41so761566eek.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 May 2013 12:06:35 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org
 Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, jy0922.shim@samsung.com, t.figa@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>
 
-The FIMD block present on S3C6400/S3C6410 SoCs is compatible with this
-driver, so it can be supported by it as well.
+This patch modifies the driver to perform two stage parsing of video
+timings from device tree, to get timing information as struct videomode,
+which contains more data than struct fb_videomode.
 
-This patch adds appropriate device IDs and driver data to enable this
-driver for S3C64xx SoCs.
+Thanks to this change, information about polarity of control signals
+(VSYNC, HSYNC, VDEN, VCLK) can be retrieved, in addition to standard
+video timings.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index a2e385d..a1669d4 100644
+index a1669d4..9023efa 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -68,6 +68,11 @@ struct fimd_driver_data {
- 	unsigned int has_clksel:1;
- };
+@@ -21,7 +21,9 @@
+ #include <linux/pm_runtime.h>
  
-+static struct fimd_driver_data s3c64xx_fimd_driver_data = {
-+	.timing_base = 0x0,
-+	.has_clksel = 1,
-+};
+ #include <video/of_display_timing.h>
++#include <video/of_videomode.h>
+ #include <video/samsung_fimd.h>
++#include <video/videomode.h>
+ #include <drm/exynos_drm.h>
+ 
+ #include "exynos_drm_drv.h"
+@@ -928,18 +930,30 @@ static int fimd_probe(struct platform_device *pdev)
+ 	DRM_DEBUG_KMS("%s\n", __FILE__);
+ 
+ 	if (pdev->dev.of_node) {
++		struct videomode vm;
 +
- static struct fimd_driver_data exynos4_fimd_driver_data = {
- 	.timing_base = 0x0,
- 	.has_shadowcon = 1,
-@@ -117,6 +122,8 @@ struct fimd_context {
+ 		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+ 		if (!pdata) {
+ 			DRM_ERROR("memory allocation for pdata failed\n");
+ 			return -ENOMEM;
+ 		}
  
- #ifdef CONFIG_OF
- static const struct of_device_id fimd_driver_dt_match[] = {
-+	{ .compatible = "samsung,s3c6400-fimd",
-+	  .data = &s3c64xx_fimd_driver_data },
- 	{ .compatible = "samsung,exynos4210-fimd",
- 	  .data = &exynos4_fimd_driver_data },
- 	{ .compatible = "samsung,exynos5250-fimd",
-@@ -1108,6 +1115,9 @@ static int fimd_runtime_resume(struct device *dev)
- 
- static struct platform_device_id fimd_driver_ids[] = {
- 	{
-+		.name		= "s3c64xx-fb",
-+		.driver_data	= (unsigned long)&s3c64xx_fimd_driver_data,
-+	}, {
- 		.name		= "exynos4-fb",
- 		.driver_data	= (unsigned long)&exynos4_fimd_driver_data,
- 	}, {
+-		ret = of_get_fb_videomode(dev->of_node, &pdata->panel.timing,
+-					OF_USE_NATIVE_MODE);
++		ret = of_get_videomode(dev->of_node, &vm, OF_USE_NATIVE_MODE);
+ 		if (ret) {
+ 			DRM_ERROR("failed: of_get_fb_videomode() : %d\n", ret);
+ 			return ret;
+ 		}
++
++		fb_videomode_from_videomode(&vm, &pdata->panel.timing);
++
++		if (vm.flags & DISPLAY_FLAGS_VSYNC_LOW)
++			pdata->vidcon1 |= VIDCON1_INV_VSYNC;
++		if (vm.flags & DISPLAY_FLAGS_HSYNC_LOW)
++			pdata->vidcon1 |= VIDCON1_INV_HSYNC;
++		if (vm.flags & DISPLAY_FLAGS_DE_LOW)
++			pdata->vidcon1 |= VIDCON1_INV_VDEN;
++		if (vm.flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
++			pdata->vidcon1 |= VIDCON1_INV_VCLK;
+ 	} else {
+ 		pdata = pdev->dev.platform_data;
+ 		if (!pdata) {
 -- 
 1.8.2.1
