@@ -1,44 +1,62 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 0/4] drm/exynos: fimd: Add support for S3C6400/S3C6410
-Date: Wed,  1 May 2013 21:02:25 +0200
-Message-ID: <1367434949-14838-1-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 1/4] drm/exynos: fimd: Hold pointer to driver data in context struct
+Date: Wed,  1 May 2013 21:02:26 +0200
+Message-ID: <1367434949-14838-2-git-send-email-tomasz.figa@gmail.com>
+References: <1367434949-14838-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f173.google.com ([209.85.215.173]:36596 "EHLO
-	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755858Ab3EATCj (ORCPT
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:64936 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755978Ab3EATCm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 May 2013 15:02:39 -0400
-Received: by mail-ea0-f173.google.com with SMTP id m14so756530eaj.18
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 May 2013 12:02:38 -0700 (PDT)
+	Wed, 1 May 2013 15:02:42 -0400
+Received: by mail-ee0-f47.google.com with SMTP id b57so764723eek.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 May 2013 12:02:40 -0700 (PDT)
+In-Reply-To: <1367434949-14838-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org
 Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, jy0922.shim@samsung.com, t.figa@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>
 
-Much of the code in Exynos DRM subsystem is generic enough to use
-it for older (non-Exynos) Samsung SoCs as well, after minor modifications.
+This patch adds pointer to driver data to fimd_context structure, to
+remove the need to call drm_fimd_get_driver_data() each time access to
+driver data is necessary.
 
-This series starts adding support for previous SoCs to Exynos DRM by
-introducing S3C64xx support to exynos_drm_fimd driver.
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Adding support for remaining SoCs between S3C64xx and Exynos4 (S5PC100,
-S5P64x0 and S5PV210) should be rather straightforward, but at the moment
-I can test only on S3C6410, so I limited my changes only to this SoC.
-
-On Tiny6410 (Mini6410-compatible) board based on Samsung S3C6410 SoC,
-using my to-be-resubmitted patches for Device Tree support:
-
-Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Tomasz Figa (4):
-  drm/exynos: fimd: Hold pointer to driver data in context struct
-  drm/exynos: fimd: Add support for FIMD versions without SHADOWCON
-    register
-  drm/exynos: fimd: Add support for FIMD variants with clock selection
-  drm/exynos: fimd: Add support for S3C64xx SoCs
-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 90 ++++++++++++++++++++++++--------
- 1 file changed, 68 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 746b282..264434f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -107,6 +107,7 @@ struct fimd_context {
+ 	atomic_t			wait_vsync_event;
+ 
+ 	struct exynos_drm_panel_info *panel;
++	struct fimd_driver_data *driver_data;
+ };
+ 
+ #ifdef CONFIG_OF
+@@ -239,10 +240,9 @@ static void fimd_commit(struct device *dev)
+ 	struct exynos_drm_panel_info *panel = ctx->panel;
+ 	struct fb_videomode *timing = &panel->timing;
+ 	struct fimd_driver_data *driver_data;
+-	struct platform_device *pdev = to_platform_device(dev);
+ 	u32 val;
+ 
+-	driver_data = drm_fimd_get_driver_data(pdev);
++	driver_data = ctx->driver_data;
+ 	if (ctx->suspended)
+ 		return;
+ 
+@@ -949,6 +949,7 @@ static int fimd_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	ctx->driver_data = drm_fimd_get_driver_data(pdev);
+ 	ctx->vidcon0 = pdata->vidcon0;
+ 	ctx->vidcon1 = pdata->vidcon1;
+ 	ctx->default_win = pdata->default_win;
 -- 
 1.8.2.1
