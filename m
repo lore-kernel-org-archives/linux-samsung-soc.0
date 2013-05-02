@@ -1,70 +1,120 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 8/9] s3c2410fb: Remove redundant platform_set_drvdata()
-Date: Thu, 02 May 2013 14:31:43 +0900
-Message-ID: <000001ce46f6$54f27cc0$fed77640$@samsung.com>
-References: <1367006543-5458-1-git-send-email-sylvester.nawrocki@gmail.com>
- <1367006543-5458-9-git-send-email-sylvester.nawrocki@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH] thermal: exynos: Support for TMU regulator defined at device tree
+Date: Thu,  2 May 2013 11:07:41 +0530
+Message-ID: <1367473061-28863-1-git-send-email-amit.daniel@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44474 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751077Ab3EBFbu (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:45990 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751397Ab3EBFj3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 May 2013 01:31:50 -0400
-In-reply-to: <1367006543-5458-9-git-send-email-sylvester.nawrocki@gmail.com>
-Content-language: ko
+	Thu, 2 May 2013 01:39:29 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, kgene.kim@samsung.com, FlorianSchandinat@gmx.de
-Cc: linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+To: linux-pm@vger.kernel.org
+Cc: Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
 
-On Saturday, April 27, 2013 5:02 AM, Sylwester Nawrocki wrote:
-> driver_data field is being cleared by the driver core since
-> commit 0998d0631001288a5974afc0b2a5f568bcdecb4d
-> device-core: Ensure drvdata = NULL when no driver is bound
-> hence there is no need to do it in the driver's remove() callback.
-> 
-> Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-> ---
->  drivers/video/s3c2410fb.c |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/video/s3c2410fb.c b/drivers/video/s3c2410fb.c
-> index 11f98ca..0439ed0 100644
-> --- a/drivers/video/s3c2410fb.c
-> +++ b/drivers/video/s3c2410fb.c
-> @@ -1013,7 +1013,6 @@ static int s3c2410fb_remove(struct platform_device *pdev)
->  	irq = platform_get_irq(pdev, 0);
->  	free_irq(irq, info);
-> 
-> -	platform_set_drvdata(pdev, NULL);
->  	framebuffer_release(fbinfo);
+TMU probe function now checks for a device tree defined regulator.
+For compatibility reasons it is allowed to probe driver even without
+this regulator defined.
 
-Hi Sylwester,
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
 
-How about eliminating platform_set_drvdata(pdev, NULL)
-in s3c24xxfb_probe() as well as s3c2410fb_remove()?
+This patch is repost of the patch posted by Lukasz Majewski
+(https://patchwork.kernel.org/patch/2488211/). I have rebased this
+patch on top of my TMU re-structured patch series
+(http://lwn.net/Articles/548634/). Although I thought of handling
+regulator as one type of feature (newly added) but could not do
+so as regulator is a board/platform property and not SOC property so
+leaving the device tree to define and handle it.
 
-@@ -1005,7 +1005,6 @@ release_regs:
- release_mem:
-        release_mem_region(res->start, size);
- dealloc_fb:
--       platform_set_drvdata(pdev, NULL);
-        framebuffer_release(fbinfo);
-        return ret;
- }
+ .../devicetree/bindings/thermal/exynos-thermal.txt |    4 ++++
+ drivers/thermal/samsung/exynos_tmu.c               |   17 +++++++++++++++++
+ 2 files changed, 21 insertions(+), 0 deletions(-)
 
-Best regards,
-Jingoo Han
-
-> 
->  	return 0;
-> --
-> 1.7.4.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+index 970eeba..ff62f7a 100644
+--- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+@@ -14,6 +14,9 @@
+ - interrupts : Should contain interrupt for thermal system
+ - clocks : The main clock for TMU device
+ - clock-names : Thermal system clock name
++- vtmu-supply: This entry is optional and provides the regulator node supplying
++		voltage to TMU. If needed this entry can be placed inside
++		board/platform specific dts file.
+ 
+ Example 1):
+ 
+@@ -25,6 +28,7 @@ Example 1):
+ 		clocks = <&clock 383>;
+ 		clock-names = "tmu_apbif";
+ 		status = "disabled";
++		vtmu-supply = <&tmu_regulator_node>;
+ 	};
+ 
+ Example 2):
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 72446c9..45b50c1 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -32,6 +32,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
+ #include "exynos_thermal_common.h"
+@@ -52,6 +53,7 @@
+  * @clk: pointer to the clock structure.
+  * @temp_error1: fused value of the first point trim.
+  * @temp_error2: fused value of the second point trim.
++ * @regulator: pointer to the TMU regulator structure.
+  * @reg_conf: pointer to structure to register with core thermal.
+  */
+ struct exynos_tmu_data {
+@@ -65,6 +67,7 @@ struct exynos_tmu_data {
+ 	struct mutex lock;
+ 	struct clk *clk;
+ 	u8 temp_error1, temp_error2;
++	struct regulator *regulator;
+ 	struct thermal_sensor_conf *reg_conf;
+ };
+ 
+@@ -501,10 +504,21 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 	struct resource res;
++	int ret;
+ 
+ 	if (!data)
+ 		return -ENODEV;
+ 
++	/* Try enabling the regulator if found */
++	data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
++	if (!IS_ERR(data->regulator)) {
++		ret = regulator_enable(data->regulator);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to enable vtmu\n");
++			return ret;
++		}
++	}
++
+ 	data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
+ 	if (data->id < 0)
+ 		data->id = 0;
+@@ -669,6 +683,9 @@ static int exynos_tmu_remove(struct platform_device *pdev)
+ 
+ 	clk_unprepare(data->clk);
+ 
++	if (data->regulator)
++		regulator_disable(data->regulator);
++
+ 	platform_set_drvdata(pdev, NULL);
+ 
+ 	return 0;
+-- 
+1.7.1
