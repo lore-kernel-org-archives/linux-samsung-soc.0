@@ -1,121 +1,76 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH V2] thermal: exynos: Support for TMU regulator defined at device tree
-Date: Thu,  2 May 2013 15:48:57 +0530
-Message-ID: <1367489937-30725-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: Fwd: [PATCH v7] i2c: exynos5: add High Speed I2C controller
+ driver
+Date: Thu, 2 May 2013 13:27:21 +0200
+Message-ID: <20130502112721.GA7309@the-dreams.de>
+References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
+ <1365137521-31187-1-git-send-email-naveenkrishna.ch@gmail.com>
+ <20130416102902.GE16978@the-dreams.de>
+ <CAHfPSqCe_VJMeH3oCDc0CfcmpawMj0hN7_b3ngHDFtDUsPJLsA@mail.gmail.com>
+ <CAHfPSqC0E42+-oRfLoFCEe6CbV08fJQdkagvVYHaer4pJAU6pg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:59841 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751443Ab3EBL1n (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 May 2013 07:27:43 -0400
+Content-Disposition: inline
+In-Reply-To: <CAHfPSqC0E42+-oRfLoFCEe6CbV08fJQdkagvVYHaer4pJAU6pg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: linux-i2c@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca, devicetree-discuss@lists.ozlabs.org, sjg@chromium.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 
-TMU probe function now checks for a device tree defined regulator.
-For compatibility reasons it is allowed to probe driver even without
-this regulator defined.
+Hi,
 
-Signed-off-by: Luk asz Majewski <l.majewski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
+> >> +  - Samsung GPIO variant (deprecated):
+> >> +    - gpios: The order of the gpios should be the following: <SDA, SCL>.
+> >> +      The gpio specifier depends on the gpio controller.
+> >
+> > Huh? Why should we support a deprecated method with a new driver?
+> >
 
-Changes in V2:
-* Added log message in regulator_get failure as suggested by Sylwester.
-* Used IS_ERR for checking regulator pointer as suggested by Sylwester.
+This was left unanswered. I am curious.
 
-This patch is repost of the patch posted by Lukasz Majewski
-(https://patchwork.kernel.org/patch/2488211/). I have rebased this
-patch on top of my TMU re-structured patch series
-(http://lwn.net/Articles/548634/). Although I thought of handling
-regulator as one type of feature (newly added) but could not do
-so as regulator is a board/platform property and not SOC property so
-leaving the device tree to define and handle it.
+> >> +Optional properties:
+> >> +  - samsung,hs-mode: Mode of operation, High speed or Fast speed mode. If not
+> >> +    specified, default value is 0.
+> >> +  - samsung,hs-clock-freq: Desired operating frequency in Hz of the bus.
+> >> +    If not specified, the default value in Hz is 100000.
+> >> +  - samsung,fs-clock-freq: Desired operarting frequency in Hz of the bus.
+> >> +    If not specified, the default value in Hz is 100000.
+> >
+> > NACK! We have a generic binding for defining the bus speed. And
+> > shouldn't hs-mode be set depending on the bus speed?
 
- .../devicetree/bindings/thermal/exynos-thermal.txt |    4 ++++
- drivers/thermal/samsung/exynos_tmu.c               |   19 +++++++++++++++++++
- 2 files changed, 23 insertions(+), 0 deletions(-)
+Please use "clock-frequency" here, like other drivers do.
 
-diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-index 970eeba..ff62f7a 100644
---- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-@@ -14,6 +14,9 @@
- - interrupts : Should contain interrupt for thermal system
- - clocks : The main clock for TMU device
- - clock-names : Thermal system clock name
-+- vtmu-supply: This entry is optional and provides the regulator node supplying
-+		voltage to TMU. If needed this entry can be placed inside
-+		board/platform specific dts file.
- 
- Example 1):
- 
-@@ -25,6 +28,7 @@ Example 1):
- 		clocks = <&clock 383>;
- 		clock-names = "tmu_apbif";
- 		status = "disabled";
-+		vtmu-supply = <&tmu_regulator_node>;
- 	};
- 
- Example 2):
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 72446c9..b7c609a 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -32,6 +32,7 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- #include "exynos_thermal_common.h"
-@@ -52,6 +53,7 @@
-  * @clk: pointer to the clock structure.
-  * @temp_error1: fused value of the first point trim.
-  * @temp_error2: fused value of the second point trim.
-+ * @regulator: pointer to the TMU regulator structure.
-  * @reg_conf: pointer to structure to register with core thermal.
-  */
- struct exynos_tmu_data {
-@@ -65,6 +67,7 @@ struct exynos_tmu_data {
- 	struct mutex lock;
- 	struct clk *clk;
- 	u8 temp_error1, temp_error2;
-+	struct regulator *regulator;
- 	struct thermal_sensor_conf *reg_conf;
- };
- 
-@@ -501,10 +504,23 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 	struct exynos_tmu_platform_data *pdata = data->pdata;
- 	struct resource res;
-+	int ret;
- 
- 	if (!data)
- 		return -ENODEV;
- 
-+	/* Try enabling the regulator if found */
-+	data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
-+	if (!IS_ERR(data->regulator)) {
-+		ret = regulator_enable(data->regulator);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to enable vtmu\n");
-+			return ret;
-+		}
-+	} else {
-+		dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
-+	}
-+
- 	data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
- 	if (data->id < 0)
- 		data->id = 0;
-@@ -669,6 +685,9 @@ static int exynos_tmu_remove(struct platform_device *pdev)
- 
- 	clk_unprepare(data->clk);
- 
-+	if (!IS_ERR(data->regulator))
-+		regulator_disable(data->regulator);
-+
- 	platform_set_drvdata(pdev, NULL);
- 
- 	return 0;
--- 
-1.7.1
+> >> +     /* In auto mode the length of xfer cannot be 0 */
+> >> +     if (i2c->msg->len == 0)
+> >> +             i2c_auto_conf |= 0x1;
+> >
+> > So you send some byte then? Why not reject the message?
+> This is to support the probing the devices (i2cdetect cases)
+
+No! This is not a proper SMBUS_QUICK if you send a byte! If it doesn't
+work without sending data, then your device does not support it. This is
+not uncommon. Please check the smbus specs if you are unsure.
+
+> >> +     i2c->regs = of_iomap(np, 0);
+> >
+> > devm_ioremap_resource()
+> This was a comment from Thomas on v1.
+> https://lkml.org/lkml/2012/11/27/264
+> 
+> Kindly, suggest me which one is more optimal in this case.
+
+"Optimal" is difficult here, but devm_* has momentum and I prefer
+consistency.
+
+> Thanks for your valuable time and comments
+
+You're welcome! Thanks for the submission.
+
+   Wolfram
