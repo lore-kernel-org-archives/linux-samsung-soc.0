@@ -1,836 +1,278 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v5] pinctrl: Add pinctrl-s3c24xx driver
-Date: Fri, 3 May 2013 15:52:45 +0200
-Message-ID: <201305031552.45410.heiko@sntech.de>
+From: Sean Paul <seanpaul@google.com>
+Subject: Re: [PATCH 1/4] drm/exynos: hdmi: move hdmi subsystem registration to
+ drm common hdmi
+Date: Fri, 3 May 2013 12:30:12 -0400
+Message-ID: <CAOw6vb+NBTd5x+B=NLu07vb4HnkiocMk9DD2nQVZBPmYSr=kFA@mail.gmail.com>
+References: <1367247053-17105-1-git-send-email-rahul.sharma@samsung.com>
+ <1367247053-17105-2-git-send-email-rahul.sharma@samsung.com>
+ <CAOw6vb+zHA4sHyKSrcUaDQAnQkQh=WC3Zbyz_VC4uXWbymv=jA@mail.gmail.com> <CAPdUM4MUOnViLbPAse4nQx_J2doTiphz+Wwn6A8OQ68=v3Xcqw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:45242 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762035Ab3ECNwz (ORCPT
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:36668 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932481Ab3ECQad (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 May 2013 09:52:55 -0400
+	Fri, 3 May 2013 12:30:33 -0400
+Received: by mail-oa0-f51.google.com with SMTP id g12so1826667oah.38
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 May 2013 09:30:33 -0700 (PDT)
+In-Reply-To: <CAPdUM4MUOnViLbPAse4nQx_J2doTiphz+Wwn6A8OQ68=v3Xcqw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linus.walleij@linaro.org, thomas.abraham@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <r.sh.open@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, InKi Dae <inki.dae@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>
 
-The s3c24xx pins follow a similar pattern as the other Samsung SoCs and
-can therefore reuse the already introduced infrastructure.
+On Fri, May 3, 2013 at 2:04 AM, Rahul Sharma <r.sh.open@gmail.com> wrote:
+> On Mon, Apr 29, 2013 at 10:06 PM, Sean Paul <seanpaul@google.com> wrote:
+>> On Mon, Apr 29, 2013 at 10:50 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>>> Exynos hdmi sub-system consists of mixer, hdmi ip, hdmi-phy and hdmi-ddc
+>>> components. Currently, drivers for these components are getting registered
+>>> in exynos_drm_drv.c, which is meant for registration of drm sub-drivers.
+>>>
+>>> In this patch, registration of drm hdmi sub-driver and device, drivers for
+>>> hdmi sub-system components are moved to exynos_drm_hdmi.c. This ensures
+>>> limited & relevant exposure of hdmi-sub-system components to exynos_drm_drv.c.
+>>> It will also help in handling the hdmi-sub-system diversities within the
+>>> exynos-common-hdmi.
+>>>
+>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>>> ---
+>>>  drivers/gpu/drm/exynos/exynos_drm_drv.c  |   25 ++--------------
+>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h  |   14 ++++-----
+>>>  drivers/gpu/drm/exynos/exynos_drm_hdmi.c |   46 ++++++++++++++++++++++++------
+>>>  drivers/gpu/drm/exynos/exynos_drm_hdmi.h |    3 ++
+>>>  4 files changed, 49 insertions(+), 39 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>>> index ba6d995..4eabb6e 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>>> @@ -331,19 +331,9 @@ static int __init exynos_drm_init(void)
+>>>  #endif
+>>>
+>>>  #ifdef CONFIG_DRM_EXYNOS_HDMI
+>>> -       ret = platform_driver_register(&hdmi_driver);
+>>> +       ret = exynos_common_hdmi_register();
+>>>         if (ret < 0)
+>>>                 goto out_hdmi;
+>>> -       ret = platform_driver_register(&mixer_driver);
+>>> -       if (ret < 0)
+>>> -               goto out_mixer;
+>>> -       ret = platform_driver_register(&exynos_drm_common_hdmi_driver);
+>>> -       if (ret < 0)
+>>> -               goto out_common_hdmi;
+>>> -
+>>> -       ret = exynos_platform_device_hdmi_register();
+>>> -       if (ret < 0)
+>>> -               goto out_common_hdmi_dev;
+>>>  #endif
+>>>
+>>>  #ifdef CONFIG_DRM_EXYNOS_VIDI
+>>> @@ -436,13 +426,7 @@ out_vidi:
+>>>  #endif
+>>>
+>>>  #ifdef CONFIG_DRM_EXYNOS_HDMI
+>>> -       exynos_platform_device_hdmi_unregister();
+>>> -out_common_hdmi_dev:
+>>> -       platform_driver_unregister(&exynos_drm_common_hdmi_driver);
+>>> -out_common_hdmi:
+>>> -       platform_driver_unregister(&mixer_driver);
+>>> -out_mixer:
+>>> -       platform_driver_unregister(&hdmi_driver);
+>>> +       exynos_common_hdmi_unregister();
+>>>  out_hdmi:
+>>>  #endif
+>>>
+>>> @@ -483,10 +467,7 @@ static void __exit exynos_drm_exit(void)
+>>>  #endif
+>>>
+>>>  #ifdef CONFIG_DRM_EXYNOS_HDMI
+>>> -       exynos_platform_device_hdmi_unregister();
+>>> -       platform_driver_unregister(&exynos_drm_common_hdmi_driver);
+>>> -       platform_driver_unregister(&mixer_driver);
+>>> -       platform_driver_unregister(&hdmi_driver);
+>>> +       exynos_common_hdmi_unregister();
+>>>  #endif
+>>>
+>>>  #ifdef CONFIG_DRM_EXYNOS_VIDI
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> index eaa1966..34aa36d 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+>>> @@ -319,15 +319,16 @@ int exynos_drm_subdrv_open(struct drm_device *dev, struct drm_file *file);
+>>>  void exynos_drm_subdrv_close(struct drm_device *dev, struct drm_file *file);
+>>>
+>>>  /*
+>>> - * this function registers exynos drm hdmi platform device. It ensures only one
+>>> - * instance of the device is created.
+>>> + * this function registers exynos drm hdmi platform driver and singleton
+>>> + * device. It also registers subdrivers like mixer, hdmi and hdmiphy.
+>>>   */
+>>> -int exynos_platform_device_hdmi_register(void);
+>>> +int exynos_common_hdmi_register(void);
+>>>
+>>>  /*
+>>> - * this function unregisters exynos drm hdmi platform device if it exists.
+>>> + * this function unregisters exynos drm hdmi platform driver and device,
+>>> + * subdrivers for mixer, hdmi and hdmiphy.
+>>>   */
+>>> -void exynos_platform_device_hdmi_unregister(void);
+>>> +void exynos_common_hdmi_unregister(void);
+>>>
+>>>  /*
+>>>   * this function registers exynos drm ipp platform device.
+>>> @@ -340,9 +341,6 @@ int exynos_platform_device_ipp_register(void);
+>>>  void exynos_platform_device_ipp_unregister(void);
+>>>
+>>>  extern struct platform_driver fimd_driver;
+>>> -extern struct platform_driver hdmi_driver;
+>>> -extern struct platform_driver mixer_driver;
+>>> -extern struct platform_driver exynos_drm_common_hdmi_driver;
+>>>  extern struct platform_driver vidi_driver;
+>>>  extern struct platform_driver g2d_driver;
+>>>  extern struct platform_driver fimc_driver;
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.c b/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
+>>> index 060fbe8..7ab5f9f 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.c
+>>> @@ -41,6 +41,8 @@ static struct exynos_drm_hdmi_context *mixer_ctx;
+>>>  static struct exynos_hdmi_ops *hdmi_ops;
+>>>  static struct exynos_mixer_ops *mixer_ops;
+>>>
+>>> +struct platform_driver exynos_drm_common_hdmi_driver;
+>>
+>> What's the point of even having this driver? It doesn't do anything.
+>> You call exynos_common_hdmi_register/unregister in drm_drv anyways.
+>> Why not just register the mixer/hdmi/hdmiphy drivers and exynos subdrv
+>> in those functions directly?
+>>
+>
+> Hi Sean,
+>
+> We need this driver to route call to hdmi/mixer/hdmiphy drivers.
+> All these IP drivers (due to hardware design) cannot independently
+> implement display / manager / overlay callbacks. This dummy driver
+> cleanly abstracts these implicit hardware requirements. Please
+> suggest if you have any better idea to handle this.
+>
+> Idea behind moving HDMI subsystem registration to this driver is to
+> keep these details with in the driver which manages hdmi/mixer/
+> hdmiphy. Keeping it local to common-drm-hdmi seems logical wrt
+> hierarchy "exynos-drm" -> "exynos-drm-hdmi" ->
+> (hdmi / mixer / hdmiphy / ddc). Funcionally, both are same.
+>
 
-The s3c24xx SoCs have one design oddity in that the first 4 external
-interrupts do not reside in the eint pending register but in the main
-interrupt controller instead. We solve this by forwarding the external
-interrupt from the main controller into the irq domain of the pin bank.
-The masking/acking of these interrupts is handled in the same way.
+I understand the abstraction, I don't agree with it (since it
+contradicts the decision to keep DP out of drm), but I understand what
+you're trying to do and I'm not disputing that here. What I'm taking
+exception with is spinning off a platform driver whose only purpose is
+to spin off other platform drivers.
 
-Furthermore the S3C2412/2413 SoCs contain another oddity in that they
-keep the same 4 eints in the main interrupt controller and eintpend
-register and requiring ack operations to happen in both. This is solved
-by using different compatible properties for the wakeup eint node which
-set a property accordingly.
+As far as I can tell, the only useful thing this driver does is give
+you a device pointer that you can use to get at the context in the
+subdrv callbacks. I guess that's something, but it's silly. If the
+subdrv callbacks passed subdrv instead of dev (since the first thing
+each callback does is get subdrv from dev), you wouldn't need to do
+this.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
-changes since v4:
-- fix wrong s3c2413 naming
-  between s3c2412 and s3c2413, the s3c2412 is the base type. Till v4 the
-  naming was mixed up, with parts being labeled as s3c2412* and others
-  as s3c2413*. Fix this by renaming the s3c2413* parts to s3c2412.
-  No functional changes.
+Ideally, I think the better way to do this would be to allocate and
+register your subdrv and register the hdmi/mixer/hdmiphy drivers in
+exynos_common_hdmi_register and just forget about this middle layer
+driver.
 
-changes since v3:
-- address comments from Sylwester Nawrocki:
-  (typos, wrong comments, etc)
+I think I'll take a stab at making this stuff coherent in a separate patch set.
 
-changes since v2:
-- address more comments from Tomasz Figa:
-  * remove obsolete ctrl_type references
-  * remove redundant check for parent_chip
-  * update docs and commit message
+Sean
 
-changes since v1:
-- address comments from Tomasz Figa:
-  * split handling functions for eints 0-3 for s3c2412 and all others
-  * change the handling for s3c2412 eints 0-3 in that they now use
-    chained_irq_* for the outer parent interrupt
 
- .../bindings/pinctrl/samsung-pinctrl.txt           |    8 +
- drivers/gpio/gpio-samsung.c                        |    4 +
- drivers/pinctrl/Kconfig                            |    5 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/pinctrl-s3c24xx.c                  |  652 ++++++++++++++++++++
- drivers/pinctrl/pinctrl-samsung.c                  |   10 +
- drivers/pinctrl/pinctrl-samsung.h                  |    4 +
- 7 files changed, 684 insertions(+), 0 deletions(-)
- create mode 100644 drivers/pinctrl/pinctrl-s3c24xx.c
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index c70fca1..dc50c7e 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -7,6 +7,10 @@ on-chip controllers onto these pads.
- 
- Required Properties:
- - compatible: should be one of the following.
-+  - "samsung,s3c2412-pinctrl": for S3C2412-compatible pin-controller,
-+  - "samsung,s3c2416-pinctrl": for S3C2416-compatible pin-controller,
-+  - "samsung,s3c2440-pinctrl": for S3C2440-compatible pin-controller,
-+  - "samsung,s3c2450-pinctrl": for S3C2450-compatible pin-controller,
-   - "samsung,s3c64xx-pinctrl": for S3C64xx-compatible pin-controller,
-   - "samsung,exynos4210-pinctrl": for Exynos4210 compatible pin-controller.
-   - "samsung,exynos4x12-pinctrl": for Exynos4x12 compatible pin-controller.
-@@ -106,6 +110,10 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
- 
-    - compatible: identifies the type of the external wakeup interrupt controller
-      The possible values are:
-+     - samsung,s3c2410-wakeup-eint: represents wakeup interrupt controller
-+       found on Samsung S3C24xx SoCs except S3C2412 and S3C2413,
-+     - samsung,s3c2412-wakeup-eint: represents wakeup interrupt controller
-+       found on Samsung S3C2412 and S3C2413 SoCs,
-      - samsung,s3c64xx-wakeup-eint: represents wakeup interrupt controller
-        found on Samsung S3C64xx SoCs,
-      - samsung,exynos4210-wakeup-eint: represents wakeup interrupt controller
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index dc06a6f..73017b9 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -3026,6 +3026,10 @@ static __init int samsung_gpiolib_init(void)
- 	*/
- 	struct device_node *pctrl_np;
- 	static const struct of_device_id exynos_pinctrl_ids[] = {
-+		{ .compatible = "samsung,s3c2412-pinctrl", },
-+		{ .compatible = "samsung,s3c2416-pinctrl", },
-+		{ .compatible = "samsung,s3c2440-pinctrl", },
-+		{ .compatible = "samsung,s3c2450-pinctrl", },
- 		{ .compatible = "samsung,s3c64xx-pinctrl", },
- 		{ .compatible = "samsung,exynos4210-pinctrl", },
- 		{ .compatible = "samsung,exynos4x12-pinctrl", },
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 7402ac9..58d73ac 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -226,6 +226,11 @@ config PINCTRL_EXYNOS5440
- 	select PINMUX
- 	select PINCONF
- 
-+config PINCTRL_S3C24XX
-+	bool "Samsung S3C24XX SoC pinctrl driver"
-+	depends on ARCH_S3C24XX
-+	select PINCTRL_SAMSUNG
-+
- config PINCTRL_S3C64XX
- 	bool "Samsung S3C64XX SoC pinctrl driver"
- 	depends on ARCH_S3C64XX
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 21d34c2..1ccdfd8 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_PINCTRL_COH901)	+= pinctrl-coh901.o
- obj-$(CONFIG_PINCTRL_SAMSUNG)	+= pinctrl-samsung.o
- obj-$(CONFIG_PINCTRL_EXYNOS)	+= pinctrl-exynos.o
- obj-$(CONFIG_PINCTRL_EXYNOS5440)	+= pinctrl-exynos5440.o
-+obj-$(CONFIG_PINCTRL_S3C24XX)	+= pinctrl-s3c24xx.o
- obj-$(CONFIG_PINCTRL_S3C64XX)	+= pinctrl-s3c64xx.o
- obj-$(CONFIG_PINCTRL_XWAY)	+= pinctrl-xway.o
- obj-$(CONFIG_PINCTRL_LANTIQ)	+= pinctrl-lantiq.o
-diff --git a/drivers/pinctrl/pinctrl-s3c24xx.c b/drivers/pinctrl/pinctrl-s3c24xx.c
-new file mode 100644
-index 0000000..efd0908
---- /dev/null
-+++ b/drivers/pinctrl/pinctrl-s3c24xx.c
-@@ -0,0 +1,652 @@
-+/*
-+ * S3C24XX specific support for Samsung pinctrl/gpiolib driver.
-+ *
-+ * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This file contains the SamsungS3C24XX specific information required by the
-+ * Samsung pinctrl/gpiolib driver. It also includes the implementation of
-+ * external gpio and wakeup interrupt support.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/interrupt.h>
-+#include <linux/irqdomain.h>
-+#include <linux/irq.h>
-+#include <linux/of_irq.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <linux/err.h>
-+
-+#include <asm/mach/irq.h>
-+
-+#include "pinctrl-samsung.h"
-+
-+#define NUM_EINT	24
-+#define NUM_EINT_IRQ	6
-+#define EINT_MAX_PER_GROUP	8
-+
-+#define EINTPEND_REG	0xa8
-+#define EINTMASK_REG	0xa4
-+
-+#define EINT_GROUP(i)		((int)((i) / EINT_MAX_PER_GROUP))
-+#define EINT_REG(i)		((EINT_GROUP(i) * 4) + 0x88)
-+#define EINT_OFFS(i)		((i) % EINT_MAX_PER_GROUP * 4)
-+
-+#define EINT_LEVEL_LOW		0
-+#define EINT_LEVEL_HIGH		1
-+#define EINT_EDGE_FALLING	2
-+#define EINT_EDGE_RISING	4
-+#define EINT_EDGE_BOTH		6
-+#define EINT_MASK		0xf
-+
-+static struct samsung_pin_bank_type bank_type_1bit = {
-+	.fld_width = { 1, 1, },
-+	.reg_offset = { 0x00, 0x04, },
-+};
-+
-+static struct samsung_pin_bank_type bank_type_2bit = {
-+	.fld_width = { 2, 1, 2, },
-+	.reg_offset = { 0x00, 0x04, 0x08, },
-+};
-+
-+#define PIN_BANK_A(pins, reg, id)		\
-+	{						\
-+		.type		= &bank_type_1bit,	\
-+		.pctl_offset	= reg,			\
-+		.nr_pins	= pins,			\
-+		.eint_type	= EINT_TYPE_NONE,	\
-+		.name		= id			\
-+	}
-+
-+#define PIN_BANK_2BIT(pins, reg, id)		\
-+	{						\
-+		.type		= &bank_type_2bit,	\
-+		.pctl_offset	= reg,			\
-+		.nr_pins	= pins,			\
-+		.eint_type	= EINT_TYPE_NONE,	\
-+		.name		= id			\
-+	}
-+
-+#define PIN_BANK_2BIT_EINTW(pins, reg, id, eoffs, emask)\
-+	{						\
-+		.type		= &bank_type_2bit,	\
-+		.pctl_offset	= reg,			\
-+		.nr_pins	= pins,			\
-+		.eint_type	= EINT_TYPE_WKUP,	\
-+		.eint_func	= 2,			\
-+		.eint_mask	= emask,		\
-+		.eint_offset	= eoffs,		\
-+		.name		= id			\
-+	}
-+
-+/**
-+ * struct s3c24xx_eint_data: EINT common data
-+ * @drvdata: pin controller driver data
-+ * @domains: IRQ domains of particular EINT interrupts
-+ * @parents: mapped parent irqs in the main interrupt controller
-+ */
-+struct s3c24xx_eint_data {
-+	struct samsung_pinctrl_drv_data *drvdata;
-+	struct irq_domain *domains[NUM_EINT];
-+	int parents[NUM_EINT_IRQ];
-+};
-+
-+/**
-+ * struct s3c24xx_eint_domain_data: per irq-domain data
-+ * @bank: pin bank related to the domain
-+ * @eint_data: common data
-+ * eint0_3_parent_only: live eints 0-3 only in the main intc
-+ */
-+struct s3c24xx_eint_domain_data {
-+	struct samsung_pin_bank *bank;
-+	struct s3c24xx_eint_data *eint_data;
-+	bool eint0_3_parent_only;
-+};
-+
-+static int s3c24xx_eint_get_trigger(unsigned int type)
-+{
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		return EINT_EDGE_RISING;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		return EINT_EDGE_FALLING;
-+		break;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		return EINT_EDGE_BOTH;
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		return EINT_LEVEL_HIGH;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		return EINT_LEVEL_LOW;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static void s3c24xx_eint_set_handler(unsigned int irq, unsigned int type)
-+{
-+	/* Edge- and level-triggered interrupts need different handlers */
-+	if (type & IRQ_TYPE_EDGE_BOTH)
-+		__irq_set_handler_locked(irq, handle_edge_irq);
-+	else
-+		__irq_set_handler_locked(irq, handle_level_irq);
-+}
-+
-+static void s3c24xx_eint_set_function(struct samsung_pinctrl_drv_data *d,
-+					struct samsung_pin_bank *bank, int pin)
-+{
-+	struct samsung_pin_bank_type *bank_type = bank->type;
-+	unsigned long flags;
-+	void __iomem *reg;
-+	u8 shift;
-+	u32 mask;
-+	u32 val;
-+
-+	/* Make sure that pin is configured as interrupt */
-+	reg = d->virt_base + bank->pctl_offset;
-+	shift = pin * bank_type->fld_width[PINCFG_TYPE_FUNC];
-+	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
-+
-+	spin_lock_irqsave(&bank->slock, flags);
-+
-+	val = readl(reg);
-+	val &= ~(mask << shift);
-+	val |= bank->eint_func << shift;
-+	writel(val, reg);
-+
-+	spin_unlock_irqrestore(&bank->slock, flags);
-+}
-+
-+static int s3c24xx_eint_type(struct irq_data *data, unsigned int type)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+	int index = bank->eint_offset + data->hwirq;
-+	void __iomem *reg;
-+	int trigger;
-+	u8 shift;
-+	u32 val;
-+
-+	trigger = s3c24xx_eint_get_trigger(type);
-+	if (trigger < 0) {
-+		dev_err(d->dev, "unsupported external interrupt type\n");
-+		return -EINVAL;
-+	}
-+
-+	s3c24xx_eint_set_handler(data->irq, type);
-+
-+	/* Set up interrupt trigger */
-+	reg = d->virt_base + EINT_REG(index);
-+	shift = EINT_OFFS(index);
-+
-+	val = readl(reg);
-+	val &= ~(EINT_MASK << shift);
-+	val |= trigger << shift;
-+	writel(val, reg);
-+
-+	s3c24xx_eint_set_function(d, bank, data->hwirq);
-+
-+	return 0;
-+}
-+
-+/* Handling of EINTs 0-3 on all except S3C2412 and S3C2413 */
-+
-+static void s3c2410_eint0_3_ack(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct s3c24xx_eint_domain_data *ddata = bank->irq_domain->host_data;
-+	struct s3c24xx_eint_data *eint_data = ddata->eint_data;
-+	int parent_irq = eint_data->parents[data->hwirq];
-+	struct irq_chip *parent_chip = irq_get_chip(parent_irq);
-+
-+	parent_chip->irq_ack(irq_get_irq_data(parent_irq));
-+}
-+
-+static void s3c2410_eint0_3_mask(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct s3c24xx_eint_domain_data *ddata = bank->irq_domain->host_data;
-+	struct s3c24xx_eint_data *eint_data = ddata->eint_data;
-+	int parent_irq = eint_data->parents[data->hwirq];
-+	struct irq_chip *parent_chip = irq_get_chip(parent_irq);
-+
-+	parent_chip->irq_mask(irq_get_irq_data(parent_irq));
-+}
-+
-+static void s3c2410_eint0_3_unmask(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct s3c24xx_eint_domain_data *ddata = bank->irq_domain->host_data;
-+	struct s3c24xx_eint_data *eint_data = ddata->eint_data;
-+	int parent_irq = eint_data->parents[data->hwirq];
-+	struct irq_chip *parent_chip = irq_get_chip(parent_irq);
-+
-+	parent_chip->irq_unmask(irq_get_irq_data(parent_irq));
-+}
-+
-+static struct irq_chip s3c2410_eint0_3_chip = {
-+	.name		= "s3c2410-eint0_3",
-+	.irq_ack	= s3c2410_eint0_3_ack,
-+	.irq_mask	= s3c2410_eint0_3_mask,
-+	.irq_unmask	= s3c2410_eint0_3_unmask,
-+	.irq_set_type	= s3c24xx_eint_type,
-+};
-+
-+static void s3c2410_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
-+{
-+	struct irq_data *data = irq_desc_get_irq_data(desc);
-+	struct s3c24xx_eint_data *eint_data = irq_get_handler_data(irq);
-+	unsigned int virq;
-+
-+	/* the first 4 eints have a simple 1 to 1 mapping */
-+	virq = irq_linear_revmap(eint_data->domains[data->hwirq], data->hwirq);
-+	/* Something must be really wrong if an unmapped EINT is unmasked */
-+	BUG_ON(!virq);
-+
-+	generic_handle_irq(virq);
-+}
-+
-+/* Handling of EINTs 0-3 on S3C2412 and S3C2413 */
-+
-+static void s3c2412_eint0_3_ack(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+
-+	unsigned long bitval = 1UL << data->hwirq;
-+	writel(bitval, d->virt_base + EINTPEND_REG);
-+}
-+
-+static void s3c2412_eint0_3_mask(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+	unsigned long mask;
-+
-+	mask = readl(d->virt_base + EINTMASK_REG);
-+	mask |= (1UL << data->hwirq);
-+	writel(mask, d->virt_base + EINTMASK_REG);
-+}
-+
-+static void s3c2412_eint0_3_unmask(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+	unsigned long mask;
-+
-+	mask = readl(d->virt_base + EINTMASK_REG);
-+	mask &= ~(1UL << data->hwirq);
-+	writel(mask, d->virt_base + EINTMASK_REG);
-+}
-+
-+static struct irq_chip s3c2412_eint0_3_chip = {
-+	.name		= "s3c2412-eint0_3",
-+	.irq_ack	= s3c2412_eint0_3_ack,
-+	.irq_mask	= s3c2412_eint0_3_mask,
-+	.irq_unmask	= s3c2412_eint0_3_unmask,
-+	.irq_set_type	= s3c24xx_eint_type,
-+};
-+
-+static void s3c2412_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_get_chip(irq);
-+	struct irq_data *data = irq_desc_get_irq_data(desc);
-+	struct s3c24xx_eint_data *eint_data = irq_get_handler_data(irq);
-+	unsigned int virq;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	/* the first 4 eints have a simple 1 to 1 mapping */
-+	virq = irq_linear_revmap(eint_data->domains[data->hwirq], data->hwirq);
-+	/* Something must be really wrong if an unmapped EINT is unmasked */
-+	BUG_ON(!virq);
-+
-+	generic_handle_irq(virq);
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+/* Handling of all other eints */
-+
-+static void s3c24xx_eint_ack(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+	unsigned char index = bank->eint_offset + data->hwirq;
-+
-+	writel(1UL << index, d->virt_base + EINTPEND_REG);
-+}
-+
-+static void s3c24xx_eint_mask(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+	unsigned char index = bank->eint_offset + data->hwirq;
-+	unsigned long mask;
-+
-+	mask = readl(d->virt_base + EINTMASK_REG);
-+	mask |= (1UL << index);
-+	writel(mask, d->virt_base + EINTMASK_REG);
-+}
-+
-+static void s3c24xx_eint_unmask(struct irq_data *data)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
-+	unsigned char index = bank->eint_offset + data->hwirq;
-+	unsigned long mask;
-+
-+	mask = readl(d->virt_base + EINTMASK_REG);
-+	mask &= ~(1UL << index);
-+	writel(mask, d->virt_base + EINTMASK_REG);
-+}
-+
-+static struct irq_chip s3c24xx_eint_chip = {
-+	.name		= "s3c-eint",
-+	.irq_ack	= s3c24xx_eint_ack,
-+	.irq_mask	= s3c24xx_eint_mask,
-+	.irq_unmask	= s3c24xx_eint_unmask,
-+	.irq_set_type	= s3c24xx_eint_type,
-+};
-+
-+static inline void s3c24xx_demux_eint(unsigned int irq, struct irq_desc *desc,
-+				      u32 offset, u32 range)
-+{
-+	struct irq_chip *chip = irq_get_chip(irq);
-+	struct s3c24xx_eint_data *data = irq_get_handler_data(irq);
-+	struct samsung_pinctrl_drv_data *d = data->drvdata;
-+	unsigned int pend, mask;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	pend = readl(d->virt_base + EINTPEND_REG);
-+	mask = readl(d->virt_base + EINTMASK_REG);
-+
-+	pend &= ~mask;
-+	pend &= range;
-+
-+	while (pend) {
-+		unsigned int virq;
-+
-+		irq = __ffs(pend);
-+		pend &= ~(1 << irq);
-+		virq = irq_linear_revmap(data->domains[irq], irq - offset);
-+		/* Something is really wrong if an unmapped EINT is unmasked */
-+		BUG_ON(!virq);
-+
-+		generic_handle_irq(virq);
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static void s3c24xx_demux_eint4_7(unsigned int irq, struct irq_desc *desc)
-+{
-+	s3c24xx_demux_eint(irq, desc, 0, 0xf0);
-+}
-+
-+static void s3c24xx_demux_eint8_23(unsigned int irq, struct irq_desc *desc)
-+{
-+	s3c24xx_demux_eint(irq, desc, 8, 0xffff00);
-+}
-+
-+static irq_flow_handler_t s3c2410_eint_handlers[NUM_EINT_IRQ] = {
-+	s3c2410_demux_eint0_3,
-+	s3c2410_demux_eint0_3,
-+	s3c2410_demux_eint0_3,
-+	s3c2410_demux_eint0_3,
-+	s3c24xx_demux_eint4_7,
-+	s3c24xx_demux_eint8_23,
-+};
-+
-+static irq_flow_handler_t s3c2412_eint_handlers[NUM_EINT_IRQ] = {
-+	s3c2412_demux_eint0_3,
-+	s3c2412_demux_eint0_3,
-+	s3c2412_demux_eint0_3,
-+	s3c2412_demux_eint0_3,
-+	s3c24xx_demux_eint4_7,
-+	s3c24xx_demux_eint8_23,
-+};
-+
-+static int s3c24xx_gpf_irq_map(struct irq_domain *h, unsigned int virq,
-+					irq_hw_number_t hw)
-+{
-+	struct s3c24xx_eint_domain_data *ddata = h->host_data;
-+	struct samsung_pin_bank *bank = ddata->bank;
-+
-+	if (!(bank->eint_mask & (1 << (bank->eint_offset + hw))))
-+		return -EINVAL;
-+
-+	if (hw <= 3) {
-+		if (ddata->eint0_3_parent_only)
-+			irq_set_chip_and_handler(virq, &s3c2410_eint0_3_chip,
-+						 handle_edge_irq);
-+		else
-+			irq_set_chip_and_handler(virq, &s3c2412_eint0_3_chip,
-+						 handle_edge_irq);
-+	} else {
-+		irq_set_chip_and_handler(virq, &s3c24xx_eint_chip,
-+					 handle_edge_irq);
-+	}
-+	irq_set_chip_data(virq, bank);
-+	set_irq_flags(virq, IRQF_VALID);
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops s3c24xx_gpf_irq_ops = {
-+	.map	= s3c24xx_gpf_irq_map,
-+	.xlate	= irq_domain_xlate_twocell,
-+};
-+
-+static int s3c24xx_gpg_irq_map(struct irq_domain *h, unsigned int virq,
-+					irq_hw_number_t hw)
-+{
-+	struct s3c24xx_eint_domain_data *ddata = h->host_data;
-+	struct samsung_pin_bank *bank = ddata->bank;
-+
-+	if (!(bank->eint_mask & (1 << (bank->eint_offset + hw))))
-+		return -EINVAL;
-+
-+	irq_set_chip_and_handler(virq, &s3c24xx_eint_chip, handle_edge_irq);
-+	irq_set_chip_data(virq, bank);
-+	set_irq_flags(virq, IRQF_VALID);
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops s3c24xx_gpg_irq_ops = {
-+	.map	= s3c24xx_gpg_irq_map,
-+	.xlate	= irq_domain_xlate_twocell,
-+};
-+
-+static const struct of_device_id s3c24xx_eint_irq_ids[] = {
-+	{ .compatible = "samsung,s3c2410-wakeup-eint", .data = (void *)1 },
-+	{ .compatible = "samsung,s3c2412-wakeup-eint", .data = (void *)0 },
-+	{ }
-+};
-+
-+static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
-+{
-+	struct device *dev = d->dev;
-+	const struct of_device_id *match;
-+	struct device_node *eint_np = NULL;
-+	struct device_node *np;
-+	struct samsung_pin_bank *bank;
-+	struct s3c24xx_eint_data *eint_data;
-+	const struct irq_domain_ops *ops;
-+	unsigned int i;
-+	bool eint0_3_parent_only;
-+	irq_flow_handler_t *handlers;
-+
-+	for_each_child_of_node(dev->of_node, np) {
-+		match = of_match_node(s3c24xx_eint_irq_ids, np);
-+		if (match) {
-+			eint_np = np;
-+			eint0_3_parent_only = (bool)match->data;
-+			break;
-+		}
-+	}
-+	if (!eint_np)
-+		return -ENODEV;
-+
-+	eint_data = devm_kzalloc(dev, sizeof(*eint_data), GFP_KERNEL);
-+	if (!eint_data)
-+		return -ENOMEM;
-+
-+	eint_data->drvdata = d;
-+
-+	handlers = eint0_3_parent_only ? s3c2410_eint_handlers
-+				       : s3c2412_eint_handlers;
-+	for (i = 0; i < NUM_EINT_IRQ; ++i) {
-+		unsigned int irq;
-+
-+		irq = irq_of_parse_and_map(eint_np, i);
-+		if (!irq) {
-+			dev_err(dev, "failed to get wakeup EINT IRQ %d\n", i);
-+			return -ENXIO;
-+		}
-+
-+		eint_data->parents[i] = irq;
-+		irq_set_chained_handler(irq, handlers[i]);
-+		irq_set_handler_data(irq, eint_data);
-+	}
-+
-+	bank = d->ctrl->pin_banks;
-+	for (i = 0; i < d->ctrl->nr_banks; ++i, ++bank) {
-+		struct s3c24xx_eint_domain_data *ddata;
-+		unsigned int mask;
-+		unsigned int irq;
-+		unsigned int pin;
-+
-+		if (bank->eint_type != EINT_TYPE_WKUP)
-+			continue;
-+
-+		ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-+		if (!ddata)
-+			return -ENOMEM;
-+
-+		ddata->bank = bank;
-+		ddata->eint_data = eint_data;
-+		ddata->eint0_3_parent_only = eint0_3_parent_only;
-+
-+		ops = (bank->eint_offset == 0) ? &s3c24xx_gpf_irq_ops
-+					       : &s3c24xx_gpg_irq_ops;
-+
-+		bank->irq_domain = irq_domain_add_linear(bank->of_node,
-+				bank->nr_pins, ops, ddata);
-+		if (!bank->irq_domain) {
-+			dev_err(dev, "wkup irq domain add failed\n");
-+			return -ENXIO;
-+		}
-+
-+		irq = bank->eint_offset;
-+		mask = bank->eint_mask;
-+		for (pin = 0; mask; ++pin, mask >>= 1) {
-+			if (irq > NUM_EINT)
-+				break;
-+			if (!(mask & 1))
-+				continue;
-+			eint_data->domains[irq] = bank->irq_domain;
-+			++irq;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static struct samsung_pin_bank s3c2412_pin_banks[] = {
-+	PIN_BANK_A(23, 0x000, "gpa"),
-+	PIN_BANK_2BIT(11, 0x010, "gpb"),
-+	PIN_BANK_2BIT(16, 0x020, "gpc"),
-+	PIN_BANK_2BIT(16, 0x030, "gpd"),
-+	PIN_BANK_2BIT(16, 0x040, "gpe"),
-+	PIN_BANK_2BIT_EINTW(8, 0x050, "gpf", 0, 0xff),
-+	PIN_BANK_2BIT_EINTW(16, 0x060, "gpg", 8, 0xffff00),
-+	PIN_BANK_2BIT(11, 0x070, "gph"),
-+	PIN_BANK_2BIT(13, 0x080, "gpj"),
-+};
-+
-+struct samsung_pin_ctrl s3c2412_pin_ctrl[] = {
-+	{
-+		.pin_banks	= s3c2412_pin_banks,
-+		.nr_banks	= ARRAY_SIZE(s3c2412_pin_banks),
-+		.eint_wkup_init = s3c24xx_eint_init,
-+		.label		= "S3C2412-GPIO",
-+	},
-+};
-+
-+static struct samsung_pin_bank s3c2416_pin_banks[] = {
-+	PIN_BANK_A(27, 0x000, "gpa"),
-+	PIN_BANK_2BIT(11, 0x010, "gpb"),
-+	PIN_BANK_2BIT(16, 0x020, "gpc"),
-+	PIN_BANK_2BIT(16, 0x030, "gpd"),
-+	PIN_BANK_2BIT(16, 0x040, "gpe"),
-+	PIN_BANK_2BIT_EINTW(8, 0x050, "gpf", 0, 0xff),
-+	PIN_BANK_2BIT_EINTW(8, 0x060, "gpg", 8, 0xff00),
-+	PIN_BANK_2BIT(15, 0x070, "gph"),
-+	PIN_BANK_2BIT(16, 0x0e0, "gpk"),
-+	PIN_BANK_2BIT(14, 0x0f0, "gpl"),
-+	PIN_BANK_2BIT(2, 0x100, "gpm"),
-+};
-+
-+struct samsung_pin_ctrl s3c2416_pin_ctrl[] = {
-+	{
-+		.pin_banks	= s3c2416_pin_banks,
-+		.nr_banks	= ARRAY_SIZE(s3c2416_pin_banks),
-+		.eint_wkup_init = s3c24xx_eint_init,
-+		.label		= "S3C2416-GPIO",
-+	},
-+};
-+
-+static struct samsung_pin_bank s3c2440_pin_banks[] = {
-+	PIN_BANK_A(25, 0x000, "gpa"),
-+	PIN_BANK_2BIT(11, 0x010, "gpb"),
-+	PIN_BANK_2BIT(16, 0x020, "gpc"),
-+	PIN_BANK_2BIT(16, 0x030, "gpd"),
-+	PIN_BANK_2BIT(16, 0x040, "gpe"),
-+	PIN_BANK_2BIT_EINTW(8, 0x050, "gpf", 0, 0xff),
-+	PIN_BANK_2BIT_EINTW(16, 0x060, "gpg", 8, 0xffff00),
-+	PIN_BANK_2BIT(11, 0x070, "gph"),
-+	PIN_BANK_2BIT(13, 0x0d0, "gpj"),
-+};
-+
-+struct samsung_pin_ctrl s3c2440_pin_ctrl[] = {
-+	{
-+		.pin_banks	= s3c2440_pin_banks,
-+		.nr_banks	= ARRAY_SIZE(s3c2440_pin_banks),
-+		.eint_wkup_init = s3c24xx_eint_init,
-+		.label		= "S3C2440-GPIO",
-+	},
-+};
-+
-+static struct samsung_pin_bank s3c2450_pin_banks[] = {
-+	PIN_BANK_A(28, 0x000, "gpa"),
-+	PIN_BANK_2BIT(11, 0x010, "gpb"),
-+	PIN_BANK_2BIT(16, 0x020, "gpc"),
-+	PIN_BANK_2BIT(16, 0x030, "gpd"),
-+	PIN_BANK_2BIT(16, 0x040, "gpe"),
-+	PIN_BANK_2BIT_EINTW(8, 0x050, "gpf", 0, 0xff),
-+	PIN_BANK_2BIT_EINTW(16, 0x060, "gpg", 8, 0xffff00),
-+	PIN_BANK_2BIT(15, 0x070, "gph"),
-+	PIN_BANK_2BIT(16, 0x0d0, "gpj"),
-+	PIN_BANK_2BIT(16, 0x0e0, "gpk"),
-+	PIN_BANK_2BIT(15, 0x0f0, "gpl"),
-+	PIN_BANK_2BIT(2, 0x100, "gpm"),
-+};
-+
-+struct samsung_pin_ctrl s3c2450_pin_ctrl[] = {
-+	{
-+		.pin_banks	= s3c2450_pin_banks,
-+		.nr_banks	= ARRAY_SIZE(s3c2450_pin_banks),
-+		.eint_wkup_init = s3c24xx_eint_init,
-+		.label		= "S3C2450-GPIO",
-+	},
-+};
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index e836135..234c32f 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -977,6 +977,16 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 	{ .compatible = "samsung,s3c64xx-pinctrl",
- 		.data = s3c64xx_pin_ctrl },
- #endif
-+#ifdef CONFIG_PINCTRL_S3C24XX
-+	{ .compatible = "samsung,s3c2412-pinctrl",
-+		.data = s3c2412_pin_ctrl },
-+	{ .compatible = "samsung,s3c2416-pinctrl",
-+		.data = s3c2416_pin_ctrl },
-+	{ .compatible = "samsung,s3c2440-pinctrl",
-+		.data = s3c2440_pin_ctrl },
-+	{ .compatible = "samsung,s3c2450-pinctrl",
-+		.data = s3c2450_pin_ctrl },
-+#endif
- 	{},
- };
- MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
-diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-index 7c7f9eb..c79d634 100644
---- a/drivers/pinctrl/pinctrl-samsung.h
-+++ b/drivers/pinctrl/pinctrl-samsung.h
-@@ -246,5 +246,9 @@ extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
-+extern struct samsung_pin_ctrl s3c2412_pin_ctrl[];
-+extern struct samsung_pin_ctrl s3c2416_pin_ctrl[];
-+extern struct samsung_pin_ctrl s3c2440_pin_ctrl[];
-+extern struct samsung_pin_ctrl s3c2450_pin_ctrl[];
- 
- #endif /* __PINCTRL_SAMSUNG_H */
--- 
-1.7.2.3
+
+> regards,
+> Rahul Sharma.
+>
+>>> +
+>>>  struct drm_hdmi_context {
+>>>         struct exynos_drm_subdrv        subdrv;
+>>>         struct exynos_drm_hdmi_context  *hdmi_ctx;
+>>> @@ -49,29 +51,55 @@ struct drm_hdmi_context {
+>>>         bool    enabled[MIXER_WIN_NR];
+>>>  };
+>>>
+>>> -int exynos_platform_device_hdmi_register(void)
+>>> +int exynos_common_hdmi_register(void)
+>>>  {
+>>>         struct platform_device *pdev;
+>>> +       int ret;
+>>>
+>>>         if (exynos_drm_hdmi_pdev)
+>>>                 return -EEXIST;
+>>>
+>>> +       ret = platform_driver_register(&hdmi_driver);
+>>> +       if (ret < 0)
+>>> +               goto out_hdmi;
+>>> +
+>>> +       ret = platform_driver_register(&mixer_driver);
+>>> +       if (ret < 0)
+>>> +               goto out_mixer;
+>>> +
+>>> +       ret = platform_driver_register(&exynos_drm_common_hdmi_driver);
+>>> +       if (ret < 0)
+>>> +               goto out_common_hdmi;
+>>> +
+>>>         pdev = platform_device_register_simple(
+>>>                         "exynos-drm-hdmi", -1, NULL, 0);
+>>> -       if (IS_ERR(pdev))
+>>> -               return PTR_ERR(pdev);
+>>> +       if (IS_ERR(pdev)) {
+>>> +               ret = PTR_ERR(pdev);
+>>> +               goto out_common_hdmi_dev;
+>>> +       }
+>>>
+>>>         exynos_drm_hdmi_pdev = pdev;
+>>> -
+>>>         return 0;
+>>> +
+>>> +out_common_hdmi_dev:
+>>> +       platform_driver_unregister(&exynos_drm_common_hdmi_driver);
+>>> +out_common_hdmi:
+>>> +       platform_driver_unregister(&mixer_driver);
+>>> +out_mixer:
+>>> +       platform_driver_unregister(&hdmi_driver);
+>>> +out_hdmi:
+>>> +       return ret;
+>>>  }
+>>>
+>>> -void exynos_platform_device_hdmi_unregister(void)
+>>> +void exynos_common_hdmi_unregister(void)
+>>>  {
+>>> -       if (exynos_drm_hdmi_pdev) {
+>>> -               platform_device_unregister(exynos_drm_hdmi_pdev);
+>>> -               exynos_drm_hdmi_pdev = NULL;
+>>> -       }
+>>> +       if (!exynos_drm_hdmi_pdev)
+>>> +               return;
+>>> +       platform_device_unregister(exynos_drm_hdmi_pdev);
+>>> +       platform_driver_unregister(&exynos_drm_common_hdmi_driver);
+>>> +       platform_driver_unregister(&mixer_driver);
+>>> +       platform_driver_unregister(&hdmi_driver);
+>>> +       exynos_drm_hdmi_pdev = NULL;
+>>>  }
+>>>
+>>>  void exynos_hdmi_drv_attach(struct exynos_drm_hdmi_context *ctx)
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+>>> index 724cab1..8861b90 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+>>> @@ -60,6 +60,9 @@ struct exynos_mixer_ops {
+>>>         int (*check_mode)(void *ctx, struct drm_display_mode *mode);
+>>>  };
+>>>
+>>> +extern struct platform_driver hdmi_driver;
+>>> +extern struct platform_driver mixer_driver;
+>>> +
+>>>  void exynos_hdmi_drv_attach(struct exynos_drm_hdmi_context *ctx);
+>>>  void exynos_mixer_drv_attach(struct exynos_drm_hdmi_context *ctx);
+>>>  void exynos_hdmi_ops_register(struct exynos_hdmi_ops *ops);
+>>> --
+>>> 1.7.10.4
+>>>
