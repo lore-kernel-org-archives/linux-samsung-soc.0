@@ -1,127 +1,58 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: DMA mapping API abuse in exynos-drm
-Date: Sat, 04 May 2013 21:28:20 +0200
-Message-ID: <2146981.l1bUpBI0CH@flatron>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v8 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
+ Microblaze and PowerPC
+Date: Sun, 05 May 2013 12:41:49 +1000
+Message-ID: <1367721709.11982.37.camel@pasglop>
+References: <1366627295-16964-1-git-send-email-Andrew.Murray@arm.com>
+         <1366627295-16964-2-git-send-email-Andrew.Murray@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f181.google.com ([209.85.215.181]:47953 "EHLO
-	mail-ea0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752449Ab3EDT20 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 4 May 2013 15:28:26 -0400
-Received: by mail-ea0-f181.google.com with SMTP id a11so1207002eae.40
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 May 2013 12:28:24 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1366627295-16964-2-git-send-email-Andrew.Murray@arm.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Andrew Murray <Andrew.Murray@arm.com>
+Cc: linux-mips@linux-mips.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, jgunthorpe@obsidianresearch.com, linux@arm.linux.org.uk, siva.kallam@samsung.com, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, jg1.han@samsung.com, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, bhelgaas@google.com, suren.reddy@samsung.com, linux-arm-kernel@lists.infradead.org, monstr@monstr.eu, paulus@samba.org, thomas.petazzoni@free-electrons.com, thierry.reding@avionic-design.de, thomas.abraham@linaro.org, arnd@arndb.de, linus.walleij@linaro.org, juhosg@openwrt.org, grant.likely@linaro.org, Rob Herring <robherring2@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, inki.dae@samsung.com, airlied@gmail.com, m.szyprowski@samsung.com
 
-Hi,
+On Mon, 2013-04-22 at 11:41 +0100, Andrew Murray wrote:
+> The pci_process_bridge_OF_ranges function, used to parse the "ranges"
+> property of a PCI host device, is found in both Microblaze and PowerPC
+> architectures. These implementations are nearly identical. This patch
+> moves this common code to a common place.
 
-Recently I've been working a bit on a DRM driver for the GPU of Samsung 
-S3C6410 SoCs, which required me to familiarize a bit with exynos-drm, as 
-it already contains a KMS driver which is compatible with the SoC I'm 
-working with, making it a good place to put my driver in.
+What's happening with this ? I'd like to avoid that patch for now
+as I'm doing some changes to pci_process_bridge_OF_ranges
+which are fairly urgent (I might even stick them in the current
+merge window) to deal with memory windows having separate offsets.
 
-Reading through exynos_drm_buf.c I stumbled across following (a bit long) 
-piece of code:
+There's also a few hacks in there that are really ppc specific...
 
-        dma_set_attr(DMA_ATTR_NO_KERNEL_MAPPING, &buf->dma_attrs);
+I think the right long term approach is to change the way powerpc
+(and microblaze ?) initializes PCI host bridges. Move it away from
+setup_arch() (which is a PITA anyway since it's way too early) to
+an early init call of some sort, and encapsulate the new struct
+pci_host_bridge.
 
-        nr_pages = buf->size >> PAGE_SHIFT;
+We can then directly configure the host bridge windows rather
+than having this "intermediary" set of resources in our pci_controller
+and in fact move most of the fields from pci_controller to
+pci_host_bridge to the point where the former can remain as a
+simple platform specific wrapper if needed.
 
-        if (!is_drm_iommu_supported(dev)) {
-                dma_addr_t start_addr;
-                unsigned int i = 0;
+So for new stuff (hint: DT based ARM PCI) or stuff that has to deal with
+a lot less archaic platforms (hint: Microblaze), I'd recommend going
+straight for that approach rather than perpetuating the PowerPC code
+which I'll try to deal with in the next few monthes.
 
-                buf->pages = kzalloc(sizeof(struct page) * nr_pages,
-                                        GFP_KERNEL);
-                if (!buf->pages) {
-                        DRM_ERROR("failed to allocate pages.\n");
-                        return -ENOMEM;
-                }
-
-                buf->kvaddr = dma_alloc_attrs(dev->dev, buf->size,
-                                        &buf->dma_addr, GFP_KERNEL,
-                                        &buf->dma_attrs);
-                if (!buf->kvaddr) {
-                        DRM_ERROR("failed to allocate buffer.\n");
-                        kfree(buf->pages);
-                        return -ENOMEM;
-                }
-
-                start_addr = buf->dma_addr;
-                while (i < nr_pages) {
-                        buf->pages[i] = phys_to_page(start_addr);
-                        start_addr += PAGE_SIZE;
-                        i++;
-                }
-        } else {
-
-                buf->pages = dma_alloc_attrs(dev->dev, buf->size,
-                                        &buf->dma_addr, GFP_KERNEL,
-                                        &buf->dma_attrs);
-                if (!buf->pages) {
-                        DRM_ERROR("failed to allocate buffer.\n");
-                        return -ENOMEM;
-                }
-        }
-
-        buf->sgt = drm_prime_pages_to_sg(buf->pages, nr_pages);
-        if (!buf->sgt) {
-                DRM_ERROR("failed to get sg table.\n");
-                ret = -ENOMEM;
-                goto err_free_attrs;
-        }
-
-Notice that the value returned by dma_alloc_attrs() is assumed by this 
-code to be either a kernel virtual address (in !is_drm_iommu_supported() 
-case) or struct pages ** (in is_drm_iommu_supported() case), which seemed 
-a bit worrying to me, making me do a more in depth research on how 
-dma_alloc_attrs works.
-
-This, in turn, led me to following excerpt of Documentation/DMA-
-attributes.txt :
-
-DMA_ATTR_NO_KERNEL_MAPPING
---------------------------
-
-DMA_ATTR_NO_KERNEL_MAPPING lets the platform to avoid creating a kernel
-virtual mapping for the allocated buffer. On some architectures creating
-such mapping is non-trivial task and consumes very limited resources
-(like kernel virtual address space or dma consistent address space).
-Buffers allocated with this attribute can be only passed to user space
-by calling dma_mmap_attrs(). By using this API, you are guaranteeing
-that you won't dereference the pointer returned by dma_alloc_attr(). You
-can threat it as a cookie that must be passed to dma_mmap_attrs() and
-dma_free_attrs(). Make sure that both of these also get this attribute
-set on each call.
-
-of which the following sentence is the most relevant:
-
-By using this API, you are guaranteeing that you won't dereference the 
-pointer returned by dma_alloc_attr().
-
-This statement is obviously ignored by buffer allocation code of exynos-
-drm.
-
-A simple git blame revealed that this brokenness has been introduced by 
-commit:
-
-4744ad2 drm/exynos: use DMA_ATTR_NO_KERNEL_MAPPING attribute
-
-
-and later fixed a bit by following depending patches (because the original 
-patch apparently broke any allocations without IOMMU):
-
-c704f1b drm/exynos: consider no iommu support to console framebuffer
-694be45 drm/exynos: consider buffer allocation without iommu
-
-
-Now, the real question is whether my reasoning is incorrect (sorry for the 
-noise then) or this is really a bug which needs to be fixed?
-
-Best regards,
-Tomasz
+Cheers,
+Ben.
+ 
