@@ -1,153 +1,78 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V2 01/20] thermal: exynos: Moving exynos thermal files into
- samsung directory
-Date: Tue, 07 May 2013 12:21:42 +0200
-Message-ID: <1927845.etOFu5Zfbm@amdc1227>
-References: <1366972671-9227-1-git-send-email-amit.daniel@samsung.com>
- <1366972671-9227-2-git-send-email-amit.daniel@samsung.com>
- <1367852706.2079.57.camel@rzhang1-mobl4>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH] ASoC: Samsung: i2s: Fix crash in i2s driver
+Date: Tue, 7 May 2013 16:42:40 +0530
+Message-ID: <CAAgF-BcgtjKPoSy8SPsk3WnS8T3P9f=5U2tt3WHb0fFM=M61+w@mail.gmail.com>
+References: <1367897941-18439-1-git-send-email-padma.v@samsung.com>
+	<2286960.PxJxnETVLS@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48436 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756497Ab3EGKWF (ORCPT
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:64372 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755550Ab3EGLMl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 May 2013 06:22:05 -0400
-In-reply-to: <1367852706.2079.57.camel@rzhang1-mobl4>
+	Tue, 7 May 2013 07:12:41 -0400
+Received: by mail-ie0-f179.google.com with SMTP id c13so685901ieb.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 May 2013 04:12:40 -0700 (PDT)
+In-Reply-To: <2286960.PxJxnETVLS@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, alim.akhtar@samsung.com, thomas.ab@samsung.com
 
-On Monday 06 of May 2013 23:05:06 Zhang Rui wrote:
-> On Fri, 2013-04-26 at 16:07 +0530, Amit Daniel Kachhap wrote:
-> > This movement of files is done for easy maintenance and adding more
-> > new sensor's support for exynos platform easily . This will also help in
-> > bifurcating exynos common, sensor driver and sensor data related parts.
-> > 
-> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> > Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> > ---
-> > 
-> >  drivers/thermal/Kconfig                        |   13 +++++--------
-> >  drivers/thermal/Makefile                       |    2 +-
-> >  drivers/thermal/samsung/Kconfig                |    9 +++++++++
-> >  drivers/thermal/samsung/Makefile               |    4 ++++
-> >  drivers/thermal/{ => samsung}/exynos_thermal.c |    0
-> >  5 files changed, 19 insertions(+), 9 deletions(-)
-> >  create mode 100644 drivers/thermal/samsung/Kconfig
-> >  create mode 100644 drivers/thermal/samsung/Makefile
-> >  rename drivers/thermal/{ => samsung}/exynos_thermal.c (100%)
-> > 
-> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> > index 5e3c025..081ddc5 100644
-> > --- a/drivers/thermal/Kconfig
-> > +++ b/drivers/thermal/Kconfig
-> > @@ -114,14 +114,6 @@ config KIRKWOOD_THERMAL
-> > 
-> >  	  Support for the Kirkwood thermal sensor driver into the Linux thermal
-> >  	  framework. Only kirkwood 88F6282 and 88F6283 have this sensor.
-> > 
-> > -config EXYNOS_THERMAL
-> > -	tristate "Temperature sensor on Samsung EXYNOS"
-> > -	depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5)
-> > -	depends on CPU_THERMAL
-> > -	help
-> > -	  If you say yes here you get support for TMU (Thermal Management
-> > -	  Unit) on SAMSUNG EXYNOS series of SoC.
-> > -
-> > 
-> >  config DOVE_THERMAL
-> >  
-> >  	tristate "Temperature sensor on Marvell Dove SoCs"
-> >  	depends on ARCH_DOVE
-> > 
-> > @@ -169,4 +161,9 @@ config INTEL_POWERCLAMP
-> > 
-> >  	  enforce idle time which results in more package C-state residency. The
-> >  	  user interface is exposed via generic thermal framework.
-> > 
-> > +menu "Exynos thermal drivers"
-> 
-> would it be more proper to use "Samsung thermal drivers" or "Samsung
-> Exynos thermal drivers" instead?
+Hi Tomasz,
 
-+1
+On Tue, May 7, 2013 at 3:20 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Padmavathi,
+>
+> On Tuesday 07 of May 2013 09:09:01 Padmavathi Venna wrote:
+>> This patch fixes a null pointer deference in i2s driver in DT
+>> case
+>>
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> ---
+>>
+>> This patch is dependent on below patch posted by Thomas Abraham.
+>> https://patchwork.kernel.org/patch/2224801/
+>>
+>>  sound/soc/samsung/i2s.c |    2 +-
+>>  1 files changed, 1 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+>> index 7ce7c50..eaf6439 100644
+>> --- a/sound/soc/samsung/i2s.c
+>> +++ b/sound/soc/samsung/i2s.c
+>> @@ -1182,7 +1182,7 @@ static int samsung_i2s_probe(struct platform_device
+>> *pdev) pri_dai->sec_dai = sec_dai;
+>>       }
+>>
+>> -     if (i2s_pdata->cfg_gpio && i2s_pdata->cfg_gpio(pdev)) {
+>> +     if (i2s_pdata && i2s_pdata->cfg_gpio && i2s_pdata->cfg_gpio(pdev)) {
+>
+> This is a problem that needs to be fixed indeed. However the same problem
+> exists in samsung_i2s_remove() as well (at least in latest linux-next).
 
-Still, I wonder if it really makes sense to create a separate directory and 
-submenu for this.
+This will go off once Thomas "ASoC: samsung: let device core setup the
+default pin configuration"
+patch get merged.
 
-> > +depends on PLAT_SAMSUNG
-> > +source "drivers/thermal/samsung/Kconfig"
-> > +endmenu
-> > +
-> 
-> sorry I know few about arm,
-> could you tell me the difference between
-> CONFIG_ARCH_EXYNOS4/CONFIG_ARCH_EXYNOS5 and CONFIG_PLAT_SAMSUNG please,
-> I do not see the dependency between these in Kconfig file?
+>
+> This makes me wonder what happens with i2s_pdata in DT case. Most of drivers
+> allocate a pdata struct anyway and fill it with data parsed from device tree.
+> This allows rest of the code to remain unmodified and consider DT and non-DT
+> cases equal.
 
-If those files were kept at thermal/, there would be no need for this check. 
-Just particular drivers would depend on platform they are for.
+This driver doesn't allocate the i2s_pdata in DT case. It directly
+parse the information form DT file
+and assign that information to i2s_dai.
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
-> 
-> >  endif
-> > 
-> > diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> > index c054d41..b3063a9 100644
-> > --- a/drivers/thermal/Makefile
-> > +++ b/drivers/thermal/Makefile
-> > @@ -17,7 +17,7 @@ thermal_sys-$(CONFIG_CPU_THERMAL)	+= cpu_cooling.o
-> > 
-> >  obj-$(CONFIG_SPEAR_THERMAL)	+= spear_thermal.o
-> >  obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
-> >  obj-$(CONFIG_KIRKWOOD_THERMAL)  += kirkwood_thermal.o
-> > 
-> > -obj-$(CONFIG_EXYNOS_THERMAL)	+= exynos_thermal.o
-> > +obj-y				+= samsung/
-> > 
-> >  obj-$(CONFIG_DOVE_THERMAL)  	+= dove_thermal.o
-> >  obj-$(CONFIG_DB8500_THERMAL)	+= db8500_thermal.o
-> >  obj-$(CONFIG_ARMADA_THERMAL)	+= armada_thermal.o
-> > 
-> > diff --git a/drivers/thermal/samsung/Kconfig
-> > b/drivers/thermal/samsung/Kconfig new file mode 100644
-> > index 0000000..2d3d9dc
-> > --- /dev/null
-> > +++ b/drivers/thermal/samsung/Kconfig
-> > @@ -0,0 +1,9 @@
-> > +config EXYNOS_THERMAL
-> > +	tristate "Temperature sensor on Samsung EXYNOS"
-> > +	depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5)
-> > +	depends on CPU_THERMAL
-> > +	help
-> > +	  If you say yes here you get support for TMU (Thermal Management
-> > +	  Unit) on SAMSUNG EXYNOS series of SoC. This helps in registering
-> > +	  the exynos thermal driver with the core thermal layer and cpu
-> > +	  cooling API's.
-> > diff --git a/drivers/thermal/samsung/Makefile
-> > b/drivers/thermal/samsung/Makefile new file mode 100644
-> > index 0000000..1fe6d93
-> > --- /dev/null
-> > +++ b/drivers/thermal/samsung/Makefile
-> > @@ -0,0 +1,4 @@
-> > +#
-> > +# Samsung thermal specific Makefile
-> > +#
-> > +obj-$(CONFIG_EXYNOS_THERMAL)	+= exynos_thermal.o
-> > diff --git a/drivers/thermal/exynos_thermal.c
-> > b/drivers/thermal/samsung/exynos_thermal.c similarity index 100%
-> > rename from drivers/thermal/exynos_thermal.c
-> > rename to drivers/thermal/samsung/exynos_thermal.c
-> 
+Thanks
+Padma
+
+>
+> Best regards,
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Tomasz Figa
+> Samsung Poland R&D Center
+> SW Solution Development, Kernel and System Framework
+>
