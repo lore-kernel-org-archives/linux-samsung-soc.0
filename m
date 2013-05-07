@@ -1,46 +1,175 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Correct the base address of pinctrl_3
-Date: Tue, 7 May 2013 11:11:15 +0530
-Message-ID: <CAAgF-Bc4c7CEuOZQFo9Ar7zo+jHOx0re6_Un5xzWSxw5oojjNQ@mail.gmail.com>
-References: <1367897853-18403-1-git-send-email-padma.v@samsung.com>
-	<20130507045813.GN32299@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: giridhar.maruthy@linaro.org
+Subject: [RFC PATCH V2] ARM: EXYNOS: Fix hotplug when CPUs boot in HYP mode
+Date: Tue,  7 May 2013 11:21:50 +0530
+Message-ID: <1367905910-30913-1-git-send-email-giridhar.m@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ia0-f180.google.com ([209.85.210.180]:53775 "EHLO
-	mail-ia0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751463Ab3EGFlQ (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:49064 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753962Ab3EGFwS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 May 2013 01:41:16 -0400
-Received: by mail-ia0-f180.google.com with SMTP id 21so214119iay.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 May 2013 22:41:15 -0700 (PDT)
-In-Reply-To: <20130507045813.GN32299@pengutronix.de>
+	Tue, 7 May 2013 01:52:18 -0400
+Received: by mail-pa0-f43.google.com with SMTP id hz10so239383pad.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 May 2013 22:52:17 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, thomas.ab@samsung.com, alim.akhtar@samsung.com
+To: kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu, cdall@cs.columbia.edu, marc.zyngier@arm.com
+Cc: Giridhar Maruthy <giridhar.maruthy@linaro.org>
 
-Hi,
+From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
 
-On Tue, May 7, 2013 at 10:28 AM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> Hi,
->
-> On Tue, May 07, 2013 at 09:07:33AM +0530, Padmavathi Venna wrote:
->> This patch corrects the base address of pinctrl_3 on Exynos5250
->> platform.
->
-> Exynos5250 should be part of the subject so that other people can know
-> whether this patch is interesting for them or not.
+In intial boot-up, u-boot commit "3d28a181aab5e... arndale5250: Boot in Hyp
+mode and enable architected timers" puts the CPUs in HYP mode.
 
-Okey. I will resend the patch.
+Hence, the CPUs need to be put in HYP mode when they are hot plugged out and
+plugged in back.
 
-Thanks
-Padma
->
-> Sascha
->
-> --
-> Pengutronix e.K.                           |                             |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+This patch is almost same as above u-boot patch, it additionally takes care
+if the kernel is compiled with thumb-2 option.
+
+Signed-off-by: Giridhar Maruthy <giridhar.m@samsung.com>
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+ arch/arm/mach-exynos/headsmp.S |  114 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+
+diff --git a/arch/arm/mach-exynos/headsmp.S b/arch/arm/mach-exynos/headsmp.S
+index 5364d4b..a837941 100644
+--- a/arch/arm/mach-exynos/headsmp.S
++++ b/arch/arm/mach-exynos/headsmp.S
+@@ -12,6 +12,7 @@
+  */
+ #include <linux/linkage.h>
+ #include <linux/init.h>
++#include <asm/assembler.h>
+ 
+ 	__CPUINIT
+ 
+@@ -20,6 +21,98 @@
+  * a "holding pen" into which all secondary cores are held until we're
+  * ready for them to initialise.
+  */
++
++.arch_extension sec
++.arch_extension virt
++.text
++
++.align 5
++/* We use the same vector table for Hyp and Monitor mode, since
++ * we will only use each once and they don't overlap.
++ */
++mon_vectors:
++	W(b)	.	/* reset */
++	W(b)	.	/* undef */
++	W(b)	2f	/* smc */
++	W(b)	.	/* pabt */
++	W(b)	.	/* dabt */
++	W(b)	1f	/* hyp */
++	W(b)	.	/* irq */
++	W(b)	.	/* fiq */
++
++/* Return directly back to the caller without leaving Hyp mode: */
++1:	mrs	lr, elr_hyp
++	mov	pc, lr
++
++/* In monitor mode, set up HVBAR and SCR then return to caller in NS-SVC. */
++2:
++	mrc	p15, 0, r1, c1, c1, 0		@ SCR
++	/*
++	 * Set SCR.NS=1(needed for setting HVBAR and also returning to NS state)
++	 *        .IRQ,FIQ,EA=0 (don't take aborts/exceptions to Monitor mode)
++	 *        .FW,AW=1 (CPSR.A,F modifiable in NS state)
++	 *        .nET=0 (early termination OK)
++	 *        .SCD=0 (SMC in NS mode OK, so we can call secure firmware)
++	 *        .HCE=1 (HVC does Hyp call)
++	 */
++	bic	r1, r1, #0x07f
++	ldr	r2, =0x131
++	orr	r1, r1, r2
++	mcr	p15, 0, r2, c1, c1, 0		@ SCR
++	isb
++	ldr	r2, =mon_vectors
++
++
++	adr	r4, 1f
++	ldmia	r4, {r5}
++	sub	r4, r4, r5
++	add	r2, r2, r4
++
++	mcr	p15, 4, r2, c12, c0, 0		@ set HVBAR
++
++ THUMB(	mrc	p15, 4, r2, c1, c0, 0 )		@ ctrl register
++ THUMB(	orr	r2, r2, #1 << 30 )		@ HSCTLR.TE (Thumb exceptions)
++ THUMB(	mcr	p15, 4, r2, c1, c0, 0 )
++ THUMB(	isb)
++
++	/* ...and return to calling code in NS state */
++	movs	pc, lr
++
++
++	.globl monitor_init
++monitor_init:
++	ldr	ip, =mon_vectors
++
++	adr	r4, 1f
++	ldmia	r4, {r5}
++	sub	r4, r4, r5
++	add	ip, ip, r4
++	mcr	p15, 0, ip, c12, c0, 1
++
++ THUMB(	mrc     p15, 0, r1, c1, c0, 0 )		@ ctrl register
++ THUMB( orr     r1, r1, #1 << 30 )		@ SCTLR.TE (Thumb exceptions)
++ THUMB( mcr     p15, 0, r1, c1, c0, 0 )
++ THUMB( isb )
++
++	mov	pc, lr
++
++	/* Try to go into NS-SVC: void enter_ns(void); */
++	.globl enter_ns
++enter_ns:
++	smc	#0
++	mov	pc, lr
++
++	/* void enter_hyp(void); */
++	.globl enter_hyp
++enter_hyp:
++	/* Now we're in NS-SVC, make a Hyp call to get into Hyp mode */
++	mov	r0, lr
++	mov	r1, sp
++	hvc	#0
++	/* We will end up here in NS-Hyp. */
++	mov	sp, r1
++	mov	pc, r0
++
+ ENTRY(exynos4_secondary_startup)
+ 	mrc	p15, 0, r0, c0, c0, 5
+ 	and	r0, r0, #15
+@@ -31,6 +124,27 @@ pen:	ldr	r7, [r6]
+ 	cmp	r7, r0
+ 	bne	pen
+ 
++	ldr	r1, =__boot_cpu_mode
++	add	r1, r1, r4
++	ldr	r2, [r1]
++	mrs     r0, cpsr
++	ands	r0, r0, #MODE_MASK
++	subs	r1, r0, r2
++	beq	3f
++	subs	r2, r2, #HYP_MODE
++	bne	3f
++
++	/* Setting NSACR to allow coprocessor access from non-secure mode */
++	mrc	p15, 0, r0, c1, c1, 2
++	movw	r1, #0x3fff
++	orr	r0, r0, r1
++	mcr	p15, 0, r0, c1, c1, 2
++5:
++	bl	monitor_init
++	bl	enter_ns
++	bl	enter_hyp
++
++3:
+ 	/*
+ 	 * we've been released from the holding pen: secondary_stack
+ 	 * should now contain the SVC stack for this core
+-- 
+1.7.9.5
