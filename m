@@ -1,73 +1,58 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH] ASoC: Samsung: i2s: Fix crash in i2s driver
-Date: Tue, 7 May 2013 16:42:40 +0530
-Message-ID: <CAAgF-BcgtjKPoSy8SPsk3WnS8T3P9f=5U2tt3WHb0fFM=M61+w@mail.gmail.com>
-References: <1367897941-18439-1-git-send-email-padma.v@samsung.com>
-	<2286960.PxJxnETVLS@amdc1227>
+From: Padma Venkat <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 2/3] ARM: dts: add Exynos audio subsystem clock
+ controller node
+Date: Tue, 7 May 2013 16:44:03 +0530
+Message-ID: <CAAgF-BdJK9oEVj2fBHTCN5VoGa7eZceW4w=yMMrjnDSdy=P0rA@mail.gmail.com>
+References: <1367909016-19657-1-git-send-email-padma.v@samsung.com>
+ <1367909016-19657-3-git-send-email-padma.v@samsung.com>
+ <2829319.bZPJnVErnQ@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f179.google.com ([209.85.223.179]:64372 "EHLO
-	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755550Ab3EGLMl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 May 2013 07:12:41 -0400
-Received: by mail-ie0-f179.google.com with SMTP id c13so685901ieb.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 May 2013 04:12:40 -0700 (PDT)
-In-Reply-To: <2286960.PxJxnETVLS@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <2829319.bZPJnVErnQ@amdc1227>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, alim.akhtar@samsung.com, thomas.ab@samsung.com
 
 Hi Tomasz,
 
-On Tue, May 7, 2013 at 3:20 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+On Tue, May 7, 2013 at 3:24 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
 > Hi Padmavathi,
 >
-> On Tuesday 07 of May 2013 09:09:01 Padmavathi Venna wrote:
->> This patch fixes a null pointer deference in i2s driver in DT
->> case
+> On Tuesday 07 of May 2013 12:13:35 Padmavathi Venna wrote:
+>> Audio subsystem introduced in s5pv210 and exynos platforms
+>> which has a internal clock controller. This patch adds a node
+>> for the same on exynos5250.
 >>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >> ---
+>>  arch/arm/boot/dts/exynos5250.dtsi |    6 ++++++
+>>  1 files changed, 6 insertions(+), 0 deletions(-)
 >>
->> This patch is dependent on below patch posted by Thomas Abraham.
->> https://patchwork.kernel.org/patch/2224801/
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> b/arch/arm/boot/dts/exynos5250.dtsi index 36c9d8d..7026de0 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -72,6 +72,12 @@
+>>               #clock-cells = <1>;
+>>       };
 >>
->>  sound/soc/samsung/i2s.c |    2 +-
->>  1 files changed, 1 insertions(+), 1 deletions(-)
->>
->> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
->> index 7ce7c50..eaf6439 100644
->> --- a/sound/soc/samsung/i2s.c
->> +++ b/sound/soc/samsung/i2s.c
->> @@ -1182,7 +1182,7 @@ static int samsung_i2s_probe(struct platform_device
->> *pdev) pri_dai->sec_dai = sec_dai;
->>       }
->>
->> -     if (i2s_pdata->cfg_gpio && i2s_pdata->cfg_gpio(pdev)) {
->> +     if (i2s_pdata && i2s_pdata->cfg_gpio && i2s_pdata->cfg_gpio(pdev)) {
+>> +     clock_audss: audss-clock-controller@0x03810000 {
 >
-> This is a problem that needs to be fixed indeed. However the same problem
-> exists in samsung_i2s_remove() as well (at least in latest linux-next).
+> Just a nitpick: this should be @3810000, without the 0x and leading zeroes.
 
-This will go off once Thomas "ASoC: samsung: let device core setup the
-default pin configuration"
-patch get merged.
-
->
-> This makes me wonder what happens with i2s_pdata in DT case. Most of drivers
-> allocate a pdata struct anyway and fill it with data parsed from device tree.
-> This allows rest of the code to remain unmodified and consider DT and non-DT
-> cases equal.
-
-This driver doesn't allocate the i2s_pdata in DT case. It directly
-parse the information form DT file
-and assign that information to i2s_dai.
-
-Thanks
-Padma
+Okey. I will change this.
 
 >
 > Best regards,
@@ -76,3 +61,14 @@ Padma
 > Samsung Poland R&D Center
 > SW Solution Development, Kernel and System Framework
 >
+>> +             compatible = "samsung,exynos5250-audss-clock";
+>> +             reg = <0x03810000 0x0C>;
+>> +             #clock-cells = <1>;
+>> +     };
+>> +
+>>       gic:interrupt-controller@10481000 {
+>>               compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+>>               #interrupt-cells = <3>;
+>
+Thanks
+Padma
