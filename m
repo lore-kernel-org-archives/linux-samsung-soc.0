@@ -1,65 +1,71 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V2 2/3] ARM: dts: add Exynos audio subsystem clock
- controller node
-Date: Tue, 07 May 2013 11:54:20 +0200
-Message-ID: <2829319.bZPJnVErnQ@amdc1227>
-References: <1367909016-19657-1-git-send-email-padma.v@samsung.com>
- <1367909016-19657-3-git-send-email-padma.v@samsung.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v8 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
+ Microblaze and PowerPC
+Date: Tue, 07 May 2013 20:19:18 +1000
+Message-ID: <1367921958.25488.8.camel@pasglop>
+References: <1366627295-16964-1-git-send-email-Andrew.Murray@arm.com>
+         <1366627295-16964-2-git-send-email-Andrew.Murray@arm.com>
+         <1367721709.11982.37.camel@pasglop> <20130507080142.GA8808@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:12203 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751365Ab3EGJym (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 May 2013 05:54:42 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MMF00EJWA6GZIR0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 07 May 2013 18:54:40 +0900 (KST)
-In-reply-to: <1367909016-19657-3-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20130507080142.GA8808@arm.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Andrew Murray <andrew.murray@arm.com>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, "jgunthorpe@obsidianresearch.com" <jgunthorpe@obsidianresearch.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "jg1.han@samsung.com" <jg1.han@samsung.com>, Liviu Dudau <Liviu.Dudau@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "suren.reddy@samsung.com" <suren.reddy@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org
 
-Hi Padmavathi,
-
-On Tuesday 07 of May 2013 12:13:35 Padmavathi Venna wrote:
-> Audio subsystem introduced in s5pv210 and exynos platforms
-> which has a internal clock controller. This patch adds a node
-> for the same on exynos5250.
+On Tue, 2013-05-07 at 09:01 +0100, Andrew Murray wrote:
 > 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |    6 ++++++
->  1 files changed, 6 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi index 36c9d8d..7026de0 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -72,6 +72,12 @@
->  		#clock-cells = <1>;
->  	};
-> 
-> +	clock_audss: audss-clock-controller@0x03810000 {
+> There were no objections to this latest revision until now and it is
+> currently sitting with Jason Cooper (mvebu-next/pcie). [1]
 
-Just a nitpick: this should be @3810000, without the 0x and leading zeroes.
+Ok, well I've just sent Linus a pull request for my changes so at least
+drop the powerpc changes from your tree for the time being.
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+> This is a view that was also shared by Bjorn [2] when I attempted to
+> submit a patchset which moves struct pci_controller to asm-generic.
 
-> +		compatible = "samsung,exynos5250-audss-clock";
-> +		reg = <0x03810000 0x0C>;
-> +		#clock-cells = <1>;
-> +	};
-> +
->  	gic:interrupt-controller@10481000 {
->  		compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
->  		#interrupt-cells = <3>;
+Right, it's the logical way to go
+
+> The motativation for my patchsets were to give a way for ARM PCI host
+> bridge drivers to parse the DT ranges property, but this snow-balled
+> into unifying pci_process_bridge_OF_ranges.
+
+Which I understand, I would probably have done the same thing in your
+shoes :-)
+
+> My v8 patchset provides a of_pci_range_parser which is used directly
+> by a few ARM PCI DT host bridge drivers, this has been generally
+> accepted and tested. I don't see why this can't remain and so I'd
+> really like to keep this around. 
+
+Sure, no objection, in fact I should/could probably update my new code
+to use it as well.
+
+> Grant, Benjamin would you be happy for me to resubmit this series
+> which provides the of_pci_range_parser which will be used by the
+> separate implementations of pci_process_bridge_OF_ranges in
+> PowerPC/Microblaze?
+
+Sure, in fact feel free to update my new code if you have more bandwidth
+than I do, it should hit Linus tree soon hopefully unless he objects to
+me having a second pull request this merge window...
+
+> Benjamin are you able to still use of_pci_range_parser in your
+> 'Support per-aperture memory offset' patch?
+
+I see no reason why not. I just haven't looked into it much, I admit,
+being bogged down with a pile of new HW bringup in the lab etc...
+
+Cheers,
+Ben.
