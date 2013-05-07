@@ -1,75 +1,94 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V2 3/3] ARM: dts: add clock provider information for i2s
- controllers in Exynos5250
-Date: Tue, 07 May 2013 12:13:36 +0530
-Message-ID: <1367909016-19657-4-git-send-email-padma.v@samsung.com>
-References: <1367909016-19657-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:12476 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757115Ab3EGGlv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 May 2013 02:41:51 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MMF00DPQ19O02A0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 07 May 2013 15:41:50 +0900 (KST)
-In-reply-to: <1367909016-19657-1-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH v8 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
+ Microblaze and PowerPC
+Date: Tue, 7 May 2013 09:01:42 +0100
+Message-ID: <20130507080142.GA8808@arm.com>
+References: <1366627295-16964-1-git-send-email-Andrew.Murray@arm.com>
+ <1366627295-16964-2-git-send-email-Andrew.Murray@arm.com>
+ <1367721709.11982.37.camel@pasglop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-mips-bounce@linux-mips.org>
+Content-Disposition: inline
+In-Reply-To: <1367721709.11982.37.camel@pasglop>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, "jgunthorpe@obsidianresearch.com" <jgunthorpe@obsidianresearch.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "jg1.han@samsung.com" <jg1.han@samsung.com>, Liviu Dudau <Liviu.Dudau@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "suren.reddy@samsung.com" <suren.reddy@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org
 
-Add clock lookup information for i2s controllers on exynos5250 SoC.
+On Sun, May 05, 2013 at 03:41:49AM +0100, Benjamin Herrenschmidt wrote:
+> On Mon, 2013-04-22 at 11:41 +0100, Andrew Murray wrote:
+> > The pci_process_bridge_OF_ranges function, used to parse the "ranges"
+> > property of a PCI host device, is found in both Microblaze and PowerPC
+> > architectures. These implementations are nearly identical. This patch
+> > moves this common code to a common place.
+> 
+> What's happening with this ? I'd like to avoid that patch for now
+> as I'm doing some changes to pci_process_bridge_OF_ranges
+> which are fairly urgent (I might even stick them in the current
+> merge window) to deal with memory windows having separate offsets.
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+There were no objections to this latest revision until now and it is
+currently sitting with Jason Cooper (mvebu-next/pcie). [1]
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 7026de0..13305b9 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -20,6 +20,8 @@
- #include "skeleton.dtsi"
- #include "exynos5250-pinctrl.dtsi"
- 
-+#include <dt-bindings/clk/samsung-audss-clk.h>
-+
- / {
- 	compatible = "samsung,exynos5250";
- 	interrupt-parent = <&gic>;
-@@ -457,6 +459,10 @@
- 			&pdma0 9
- 			&pdma0 8>;
- 		dma-names = "tx", "rx", "tx-sec";
-+		clocks = <&clock_audss SAMSUNG_I2S_BUS>,
-+			<&clock_audss SAMSUNG_I2S_BUS>,
-+			<&clock_audss SAMSUNG_SCLK_I2S>;
-+		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
- 		samsung,supports-6ch;
- 		samsung,supports-rstclr;
- 		samsung,supports-secdai;
-@@ -471,6 +477,8 @@
- 		dmas = <&pdma1 12
- 			&pdma1 11>;
- 		dma-names = "tx", "rx";
-+		clocks = <&clock 307>;
-+		clock-names = "iis";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s1_bus>;
- 	};
-@@ -481,6 +489,8 @@
- 		dmas = <&pdma0 12
- 			&pdma0 11>;
- 		dma-names = "tx", "rx";
-+		clocks = <&clock 308>;
-+		clock-names = "iis";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2s2_bus>;
- 	};
--- 
-1.7.4.4
+> 
+> There's also a few hacks in there that are really ppc specific...
+> 
+> I think the right long term approach is to change the way powerpc
+> (and microblaze ?) initializes PCI host bridges. Move it away from
+> setup_arch() (which is a PITA anyway since it's way too early) to
+> an early init call of some sort, and encapsulate the new struct
+> pci_host_bridge.
+> 
+> We can then directly configure the host bridge windows rather
+> than having this "intermediary" set of resources in our pci_controller
+> and in fact move most of the fields from pci_controller to
+> pci_host_bridge to the point where the former can remain as a
+> simple platform specific wrapper if needed.
+
+This is a view that was also shared by Bjorn [2] when I attempted to
+submit a patchset which moves struct pci_controller to asm-generic.
+
+> 
+> So for new stuff (hint: DT based ARM PCI) or stuff that has to deal with
+> a lot less archaic platforms (hint: Microblaze), I'd recommend going
+> straight for that approach rather than perpetuating the PowerPC code
+> which I'll try to deal with in the next few monthes.
+
+The motativation for my patchsets were to give a way for ARM PCI host
+bridge drivers to parse the DT ranges property, but this snow-balled into
+unifying pci_process_bridge_OF_ranges.
+
+My v8 patchset provides a of_pci_range_parser which is used directly by a
+few ARM PCI DT host bridge drivers, this has been generally accepted and
+tested. I don't see why this can't remain and so I'd really like to keep this
+around. 
+
+Grant, Benjamin would you be happy for me to resubmit this series which provides
+the of_pci_range_parser which will be used by the separate implementations of
+pci_process_bridge_OF_ranges in PowerPC/Microblaze?
+
+Benjamin are you able to still use of_pci_range_parser in your
+'Support per-aperture memory offset' patch?
+
+Thanks,
+
+Andrew Murray
+
+[1] https://lkml.org/lkml/2013/4/22/505
+[2] https://patchwork.kernel.org/patch/2487671
+
+> 
+> Cheers,
+> Ben.
+>  
+> 
+> 
