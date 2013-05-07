@@ -1,94 +1,47 @@
-From: Andrew Murray <andrew.murray@arm.com>
-Subject: Re: [PATCH v8 1/3] of/pci: Unify pci_process_bridge_OF_ranges from
- Microblaze and PowerPC
-Date: Tue, 7 May 2013 09:01:42 +0100
-Message-ID: <20130507080142.GA8808@arm.com>
-References: <1366627295-16964-1-git-send-email-Andrew.Murray@arm.com>
- <1366627295-16964-2-git-send-email-Andrew.Murray@arm.com>
- <1367721709.11982.37.camel@pasglop>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [RFC PATCH V2] ARM: EXYNOS: Fix hotplug when CPUs boot in HYP
+ mode
+Date: Tue, 07 May 2013 09:55:41 +0100
+Message-ID: <5188C18D.10103@arm.com>
+References: <1367905910-30913-1-git-send-email-giridhar.m@samsung.com> <CAHuqX+HUWcX_sTXKCjSQ9pR1K8obLc+T7vYK_zTn_gqO8ULPVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <1367721709.11982.37.camel@pasglop>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, "jgunthorpe@obsidianresearch.com" <jgunthorpe@obsidianresearch.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "siva.kallam@samsung.com" <siva.kallam@samsung.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "jg1.han@samsung.com" <jg1.han@samsung.com>, Liviu Dudau <Liviu.Dudau@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "suren.reddy@samsung.com" <suren.reddy@samsung.com>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:58506 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759016Ab3EGIzp convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 May 2013 04:55:45 -0400
+In-Reply-To: <CAHuqX+HUWcX_sTXKCjSQ9pR1K8obLc+T7vYK_zTn_gqO8ULPVQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Christoffer Dall <cdall@cs.columbia.edu>
 
-On Sun, May 05, 2013 at 03:41:49AM +0100, Benjamin Herrenschmidt wrote:
-> On Mon, 2013-04-22 at 11:41 +0100, Andrew Murray wrote:
-> > The pci_process_bridge_OF_ranges function, used to parse the "ranges"
-> > property of a PCI host device, is found in both Microblaze and PowerPC
-> > architectures. These implementations are nearly identical. This patch
-> > moves this common code to a common place.
+On 07/05/13 06:54, Giridhar Maruthy wrote:
+> This patch is a modification from the Christoffer Dall's u-boot
+> patch. This is required to put the secondary processors in hyp
+> mode during cpu hotplug when u-boot is no longer alive.
 > 
-> What's happening with this ? I'd like to avoid that patch for now
-> as I'm doing some changes to pci_process_bridge_OF_ranges
-> which are fairly urgent (I might even stick them in the current
-> merge window) to deal with memory windows having separate offsets.
-
-There were no objections to this latest revision until now and it is
-currently sitting with Jason Cooper (mvebu-next/pcie). [1]
-
+> Marc Zyngier suggested this logic to go into firmware or, u-boot
+> putting a trampoline code into a page /memreserve/d by DT. But
+> this seemed to have a problem. Once the cpu is hotplugged in
+> runtime, the control is in ROM code and waits for event.
+> Kernel provides a return address in kernel to which the processor
+> jumps once it gets an event. If the control branches to the
+> trampoline code here, this trampoline code has no kernel return
+> address.
 > 
-> There's also a few hacks in there that are really ppc specific...
-> 
-> I think the right long term approach is to change the way powerpc
-> (and microblaze ?) initializes PCI host bridges. Move it away from
-> setup_arch() (which is a PITA anyway since it's way too early) to
-> an early init call of some sort, and encapsulate the new struct
-> pci_host_bridge.
-> 
-> We can then directly configure the host bridge windows rather
-> than having this "intermediary" set of resources in our pci_controller
-> and in fact move most of the fields from pci_controller to
-> pci_host_bridge to the point where the former can remain as a
-> simple platform specific wrapper if needed.
+> Someone with better logic or better placement of this logic
+> elsewhere is welcome.
 
-This is a view that was also shared by Bjorn [2] when I attempted to
-submit a patchset which moves struct pci_controller to asm-generic.
+What prevents you from writing the kernel address in the memreserved
+page? Some obvious location, like the last word of the page? You only
+have to do it once (from the boot CPU, for example).
 
-> 
-> So for new stuff (hint: DT based ARM PCI) or stuff that has to deal with
-> a lot less archaic platforms (hint: Microblaze), I'd recommend going
-> straight for that approach rather than perpetuating the PowerPC code
-> which I'll try to deal with in the next few monthes.
+Or did I miss something else?
 
-The motativation for my patchsets were to give a way for ARM PCI host
-bridge drivers to parse the DT ranges property, but this snow-balled into
-unifying pci_process_bridge_OF_ranges.
-
-My v8 patchset provides a of_pci_range_parser which is used directly by a
-few ARM PCI DT host bridge drivers, this has been generally accepted and
-tested. I don't see why this can't remain and so I'd really like to keep this
-around. 
-
-Grant, Benjamin would you be happy for me to resubmit this series which provides
-the of_pci_range_parser which will be used by the separate implementations of
-pci_process_bridge_OF_ranges in PowerPC/Microblaze?
-
-Benjamin are you able to still use of_pci_range_parser in your
-'Support per-aperture memory offset' patch?
-
-Thanks,
-
-Andrew Murray
-
-[1] https://lkml.org/lkml/2013/4/22/505
-[2] https://patchwork.kernel.org/patch/2487671
-
-> 
-> Cheers,
-> Ben.
->  
-> 
-> 
+	M.
+-- 
+Jazz is not dead. It just smells funny...
