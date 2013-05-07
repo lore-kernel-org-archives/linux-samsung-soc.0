@@ -1,47 +1,67 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [RFC PATCH V2] ARM: EXYNOS: Fix hotplug when CPUs boot in HYP
- mode
-Date: Tue, 07 May 2013 09:55:41 +0100
-Message-ID: <5188C18D.10103@arm.com>
-References: <1367905910-30913-1-git-send-email-giridhar.m@samsung.com> <CAHuqX+HUWcX_sTXKCjSQ9pR1K8obLc+T7vYK_zTn_gqO8ULPVQ@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: Samsung: i2s: Fix crash in i2s driver
+Date: Tue, 7 May 2013 10:03:36 +0100
+Message-ID: <20130507090336.GP7478@sirena.org.uk>
+References: <1367897941-18439-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6sj9mcRtP+pTWLOo"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:58506 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759016Ab3EGIzp convert rfc822-to-8bit (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:49720 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759198Ab3EGJDk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 May 2013 04:55:45 -0400
-In-Reply-To: <CAHuqX+HUWcX_sTXKCjSQ9pR1K8obLc+T7vYK_zTn_gqO8ULPVQ@mail.gmail.com>
+	Tue, 7 May 2013 05:03:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1367897941-18439-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Giridhar Maruthy <giridhar.maruthy@linaro.org>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Christoffer Dall <cdall@cs.columbia.edu>
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, sbkim73@samsung.com, kgene.kim@samsung.com, alim.akhtar@samsung.com, thomas.ab@samsung.com
 
-On 07/05/13 06:54, Giridhar Maruthy wrote:
-> This patch is a modification from the Christoffer Dall's u-boot
-> patch. This is required to put the secondary processors in hyp
-> mode during cpu hotplug when u-boot is no longer alive.
-> 
-> Marc Zyngier suggested this logic to go into firmware or, u-boot
-> putting a trampoline code into a page /memreserve/d by DT. But
-> this seemed to have a problem. Once the cpu is hotplugged in
-> runtime, the control is in ROM code and waits for event.
-> Kernel provides a return address in kernel to which the processor
-> jumps once it gets an event. If the control branches to the
-> trampoline code here, this trampoline code has no kernel return
-> address.
-> 
-> Someone with better logic or better placement of this logic
-> elsewhere is welcome.
 
-What prevents you from writing the kernel address in the memreserved
-page? Some obvious location, like the last word of the page? You only
-have to do it once (from the boot CPU, for example).
+--6sj9mcRtP+pTWLOo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Or did I miss something else?
+On Tue, May 07, 2013 at 09:09:01AM +0530, Padmavathi Venna wrote:
+> This patch fixes a null pointer deference in i2s driver in DT
+> case
+>=20
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> ---
+>=20
+> This patch is dependent on below patch posted by Thomas Abraham.
+> https://patchwork.kernel.org/patch/2224801/
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Please don't submit patches that can't be applied, the two patches need
+to be submitted together.  Please also remember to include human
+readable descriptions of patches in e-mails for the benefit of human
+readers, commit IDs and URLs aren't immediately comprehensible.
+
+Please further note my new e-mail address.
+
+--6sj9mcRtP+pTWLOo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRiMNlAAoJELSic+t+oim9DQsP/A1kjHtUC3/7k05NK/il11Ym
+zqUkzOi7PTll5Gfj2v+C5i4rRBjwycUJVVDyev53EP9kmcPDWvEDOuSeSvejRozS
+YHteVVV58SC+BgSf3MR0LVmfIWFswCzJ61Xm1L1QDYkPft/6FnnhRvgcMhcnkJBo
+TDb3HzmSwjVxYfttzVkP6sNrUkSuHc3VWxxeO3HbsYfph/wcffWnw7k3UJE+NKdP
+p3+zhL/RjioY3AE/gnVHbHmx7XhRs3LEOD8p4j/h2VcraMLckXTv3kRrt0lgXRvp
+U9xOOM9uUJWGDBNlSSSTCCOiUQiZQLvtb6Z+ibVYUTIotp8riqXj5t9M2jIK5sbj
+FBBVs5tCe+x/Fl+O9DOwiw+eACJTENYpMwSWachkRugl9LYq6AVMuRtjJTVl96vV
+z+Jpw20V4rdyC13zUcX1Yr+e0t+waFFW/CZgO265ysQNN6RJ28ZaTxc0N9Hi4h/Y
+fKjCMbRs8lXTLUwzijMsS+v3QLEwj12zNsvkXNiyvmiLcVwnSmsTVuyKkTuPt5Ww
+KwXxUxrTf3RgNM1fqdML7QEPnBOAlsC/5Q6SayzCWqyC4xcJ6Lsjf99zLRQLMDDh
+/eWu4uxqxpz2wyANo19VlYGzdAEpsoKKfk+OUEwaxW8CsiWsoxMu3F93aHXB5vq8
+lfCLEwJbJY65NzsQd1/L
+=LIG1
+-----END PGP SIGNATURE-----
+
+--6sj9mcRtP+pTWLOo--
