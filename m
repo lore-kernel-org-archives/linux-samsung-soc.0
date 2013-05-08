@@ -1,181 +1,52 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: DMA mapping API abuse in exynos-drm
-Date: Wed, 08 May 2013 11:44:02 +0200
-Message-ID: <518A1E62.6070109@samsung.com>
-References: <2146981.l1bUpBI0CH@flatron>
- <CAAQKjZONxDcHzKD3V+sJcM1+mSwqKg+y0Ak9g0ip0P4H937P6Q@mail.gmail.com>
+From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Subject: Re: [RFC PATCH V2] ARM: EXYNOS: Fix hotplug when CPUs boot in HYP mode
+Date: Wed, 8 May 2013 17:53:04 +0530
+Message-ID: <CAHuqX+GOLO_H81B3bwcqF7Sp0srctBn+6J9mbRF_kbPRTXC-ng@mail.gmail.com>
+References: <1367905910-30913-1-git-send-email-giridhar.m@samsung.com>
+	<CAHuqX+HUWcX_sTXKCjSQ9pR1K8obLc+T7vYK_zTn_gqO8ULPVQ@mail.gmail.com>
+	<5188C18D.10103@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35059 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753371Ab3EHJoL (ORCPT
+Received: from mail-ea0-f176.google.com ([209.85.215.176]:57421 "EHLO
+	mail-ea0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755252Ab3EHMXT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 May 2013 05:44:11 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MMH006I149HD1B0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 May 2013 10:44:08 +0100 (BST)
-In-reply-to: <CAAQKjZONxDcHzKD3V+sJcM1+mSwqKg+y0Ak9g0ip0P4H937P6Q@mail.gmail.com>
+	Wed, 8 May 2013 08:23:19 -0400
+Received: by mail-ea0-f176.google.com with SMTP id h14so921209eak.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 May 2013 05:23:18 -0700 (PDT)
+In-Reply-To: <5188C18D.10103@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Christoffer Dall <cdall@cs.columbia.edu>
 
-Hello,
+On 7 May 2013 14:25, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 07/05/13 06:54, Giridhar Maruthy wrote:
+>> This patch is a modification from the Christoffer Dall's u-boot
+>> patch. This is required to put the secondary processors in hyp
+>> mode during cpu hotplug when u-boot is no longer alive.
+>>
+>> Marc Zyngier suggested this logic to go into firmware or, u-boot
+>> putting a trampoline code into a page /memreserve/d by DT. But
+>> this seemed to have a problem. Once the cpu is hotplugged in
+>> runtime, the control is in ROM code and waits for event.
+>> Kernel provides a return address in kernel to which the processor
+>> jumps once it gets an event. If the control branches to the
+>> trampoline code here, this trampoline code has no kernel return
+>> address.
+>>
+>> Someone with better logic or better placement of this logic
+>> elsewhere is welcome.
+>
+> What prevents you from writing the kernel address in the memreserved
+> page? Some obvious location, like the last word of the page? You only
+> have to do it once (from the boot CPU, for example).
+>
+> Or did I miss something else?
 
-On 5/6/2013 7:59 AM, Inki Dae wrote:
-> 2013/5/5 Tomasz Figa <tomasz.figa@gmail.com 
-> <mailto:tomasz.figa@gmail.com>>
->
->     Hi,
->
->     Recently I've been working a bit on a DRM driver for the GPU of
->     Samsung
->     S3C6410 SoCs, which required me to familiarize a bit with
->     exynos-drm, as
->     it already contains a KMS driver which is compatible with the SoC I'm
->     working with, making it a good place to put my driver in.
->
->     Reading through exynos_drm_buf.c I stumbled across following (a
->     bit long)
->     piece of code:
->
->             dma_set_attr(DMA_ATTR_NO_KERNEL_MAPPING, &buf->dma_attrs);
->
->             nr_pages = buf->size >> PAGE_SHIFT;
->
->             if (!is_drm_iommu_supported(dev)) {
->                     dma_addr_t start_addr;
->                     unsigned int i = 0;
->
->                     buf->pages = kzalloc(sizeof(struct page) * nr_pages,
->                                             GFP_KERNEL);
->                     if (!buf->pages) {
->                             DRM_ERROR("failed to allocate pages.\n");
->                             return -ENOMEM;
->                     }
->
->                     buf->kvaddr = dma_alloc_attrs(dev->dev, buf->size,
->     &buf->dma_addr, GFP_KERNEL,
->     &buf->dma_attrs);
->                     if (!buf->kvaddr) {
->                             DRM_ERROR("failed to allocate buffer.\n");
->                             kfree(buf->pages);
->                             return -ENOMEM;
->                     }
->
->                     start_addr = buf->dma_addr;
->                     while (i < nr_pages) {
->                             buf->pages[i] = phys_to_page(start_addr);
->                             start_addr += PAGE_SIZE;
->                             i++;
->                     }
->             } else {
->
->                     buf->pages = dma_alloc_attrs(dev->dev, buf->size,
->     &buf->dma_addr, GFP_KERNEL,
->     &buf->dma_attrs);
->                     if (!buf->pages) {
->                             DRM_ERROR("failed to allocate buffer.\n");
->                             return -ENOMEM;
->                     }
->             }
->
->             buf->sgt = drm_prime_pages_to_sg(buf->pages, nr_pages);
->             if (!buf->sgt) {
->                     DRM_ERROR("failed to get sg table.\n");
->                     ret = -ENOMEM;
->                     goto err_free_attrs;
->             }
->
->     Notice that the value returned by dma_alloc_attrs() is assumed by this
->     code to be either a kernel virtual address (in
->     !is_drm_iommu_supported()
->     case) or struct pages ** (in is_drm_iommu_supported() case), which
->     seemed
->     a bit worrying to me, making me do a more in depth research on how
->     dma_alloc_attrs works.
->
->     This, in turn, led me to following excerpt of Documentation/DMA-
->     attributes.txt :
->
->     DMA_ATTR_NO_KERNEL_MAPPING
->     --------------------------
->
->     DMA_ATTR_NO_KERNEL_MAPPING lets the platform to avoid creating a
->     kernel
->     virtual mapping for the allocated buffer. On some architectures
->     creating
->     such mapping is non-trivial task and consumes very limited resources
->     (like kernel virtual address space or dma consistent address space).
->     Buffers allocated with this attribute can be only passed to user space
->     by calling dma_mmap_attrs(). By using this API, you are guaranteeing
->     that you won't dereference the pointer returned by
->     dma_alloc_attr(). You
->     can threat it as a cookie that must be passed to dma_mmap_attrs() and
->     dma_free_attrs(). Make sure that both of these also get this attribute
->     set on each call.
->
->     of which the following sentence is the most relevant:
->
->     By using this API, you are guaranteeing that you won't dereference the
->     pointer returned by dma_alloc_attr().
->
->     This statement is obviously ignored by buffer allocation code of
->     exynos-
->     drm.
->
->     A simple git blame revealed that this brokenness has been
->     introduced by
->     commit:
->
->     4744ad2 drm/exynos: use DMA_ATTR_NO_KERNEL_MAPPING attribute
->
->
->     and later fixed a bit by following depending patches (because the
->     original
->     patch apparently broke any allocations without IOMMU):
->
->     c704f1b drm/exynos: consider no iommu support to console framebuffer
->     694be45 drm/exynos: consider buffer allocation without iommu
->
->
->     Now, the real question is whether my reasoning is incorrect (sorry
->     for the
->     noise then) or this is really a bug which needs to be fixed?
->
->
-> Hi Tomasz,
->
-> Your question is reasonable to me. And below is my opinion,
->
-> First, also the below attribute says like below,
->
-> DMA_ATTR_NO_KERNEL_MAPPING
-> --------------------------
-> ...
-> Since it is optional for platforms to implement
-> DMA_ATTR_NO_KERNEL_MAPPING, those that do not will simply ignore the
-> attribute and exhibit default behavior.
->
->
-> In case of ARM SoC, it seems like that it just ignores the attribute
-> without iommu: in case of no iommu, dma_alloc_attr() always maps pages
-> allocated from highmem with kernel space. So I think we make sure that
-> exynos drm driver sets the attribute only with iommu to avoid such
-> confusing. For this, will post it soon.
+Thanks Marc, I think I understand now.
 
-IMHO this case simply shows that ExynosDRM driver should manage IO address
-space on it's own, because DMA-mapping api is too limited. ExynosDRM is
-unlikely to be used on a hardware other than Samsung Exynos, so it can
-better use hardware if it access IOMMU and CMA subsystems directly and
-have its own address space manager to avoid hacking in internal structures
-of dma-mapping.
+I guess I also need to put the primary cpu boot mode into a temporary location.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+-Giridhar
