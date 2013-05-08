@@ -1,56 +1,146 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [RFC PATCH V2] ARM: EXYNOS: Fix hotplug when CPUs boot in HYP
- mode
-Date: Wed, 08 May 2013 13:57:26 +0100
-Message-ID: <518A4BB6.5020801@arm.com>
-References: <1367905910-30913-1-git-send-email-giridhar.m@samsung.com> <CAHuqX+HUWcX_sTXKCjSQ9pR1K8obLc+T7vYK_zTn_gqO8ULPVQ@mail.gmail.com> <5188C18D.10103@arm.com> <CAHuqX+GOLO_H81B3bwcqF7Sp0srctBn+6J9mbRF_kbPRTXC-ng@mail.gmail.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [RESEND PATCH V3 01/21] thermal: exynos: Moving exynos thermal
+ files into samsung directory
+Date: Wed, 8 May 2013 11:49:36 -0400
+Message-ID: <518A7410.3090605@ti.com>
+References: <1367931671-3906-2-git-send-email-amit.daniel@samsung.com> <1367932062-3974-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:45763 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754502Ab3EHM53 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 May 2013 08:57:29 -0400
-In-Reply-To: <CAHuqX+GOLO_H81B3bwcqF7Sp0srctBn+6J9mbRF_kbPRTXC-ng@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="----enig2XAPAEQIDJQMSFXIAWWGK"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1367932062-3974-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Giridhar Maruthy <giridhar.maruthy@linaro.org>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, Christoffer Dall <cdall@cs.columbia.edu>
 
-On 08/05/13 13:23, Giridhar Maruthy wrote:
-> On 7 May 2013 14:25, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> On 07/05/13 06:54, Giridhar Maruthy wrote:
->>> This patch is a modification from the Christoffer Dall's u-boot
->>> patch. This is required to put the secondary processors in hyp
->>> mode during cpu hotplug when u-boot is no longer alive.
->>>
->>> Marc Zyngier suggested this logic to go into firmware or, u-boot
->>> putting a trampoline code into a page /memreserve/d by DT. But
->>> this seemed to have a problem. Once the cpu is hotplugged in
->>> runtime, the control is in ROM code and waits for event.
->>> Kernel provides a return address in kernel to which the processor
->>> jumps once it gets an event. If the control branches to the
->>> trampoline code here, this trampoline code has no kernel return
->>> address.
->>>
->>> Someone with better logic or better placement of this logic
->>> elsewhere is welcome.
->>
->> What prevents you from writing the kernel address in the memreserved
->> page? Some obvious location, like the last word of the page? You only
->> have to do it once (from the boot CPU, for example).
->>
->> Or did I miss something else?
-> 
-> Thanks Marc, I think I understand now.
-> 
-> I guess I also need to put the primary cpu boot mode into a temporary location.
+------enig2XAPAEQIDJQMSFXIAWWGK
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Indeed. You'll need that for your secondaries to enter in the same mode
-as the primary.
+On 07-05-2013 09:07, Amit Daniel Kachhap wrote:
+> This movement of files is done for easy maintenance and adding more
+> new sensor's support for exynos platform easily . This will also help i=
+n
+> bifurcating exynos common, sensor driver and sensor data related parts.=
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+>=20
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+>  drivers/thermal/Kconfig                        |   13 +++++--------
+>  drivers/thermal/Makefile                       |    2 +-
+>  drivers/thermal/samsung/Kconfig                |    9 +++++++++
+>  drivers/thermal/samsung/Makefile               |    4 ++++
+>  drivers/thermal/{ =3D> samsung}/exynos_thermal.c |    0
+>  5 files changed, 19 insertions(+), 9 deletions(-)
+>  create mode 100644 drivers/thermal/samsung/Kconfig
+>  create mode 100644 drivers/thermal/samsung/Makefile
+>  rename drivers/thermal/{ =3D> samsung}/exynos_thermal.c (100%)
+>=20
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 5e3c025..081ddc5 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -114,14 +114,6 @@ config KIRKWOOD_THERMAL
+>  	  Support for the Kirkwood thermal sensor driver into the Linux therm=
+al
+>  	  framework. Only kirkwood 88F6282 and 88F6283 have this sensor.
+> =20
+> -config EXYNOS_THERMAL
+> -	tristate "Temperature sensor on Samsung EXYNOS"
+> -	depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5)
+> -	depends on CPU_THERMAL
+> -	help
+> -	  If you say yes here you get support for TMU (Thermal Management
+> -	  Unit) on SAMSUNG EXYNOS series of SoC.
+> -
+>  config DOVE_THERMAL
+>  	tristate "Temperature sensor on Marvell Dove SoCs"
+>  	depends on ARCH_DOVE
+> @@ -169,4 +161,9 @@ config INTEL_POWERCLAMP
+>  	  enforce idle time which results in more package C-state residency. =
+The
+>  	  user interface is exposed via generic thermal framework.
+> =20
+> +menu "Samsung thermal drivers"
+> +depends on PLAT_SAMSUNG
+> +source "drivers/thermal/samsung/Kconfig"
+> +endmenu
+> +
+>  endif
+> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+> index c054d41..b3063a9 100644
+> --- a/drivers/thermal/Makefile
+> +++ b/drivers/thermal/Makefile
+> @@ -17,7 +17,7 @@ thermal_sys-$(CONFIG_CPU_THERMAL)	+=3D cpu_cooling.o
+>  obj-$(CONFIG_SPEAR_THERMAL)	+=3D spear_thermal.o
+>  obj-$(CONFIG_RCAR_THERMAL)	+=3D rcar_thermal.o
+>  obj-$(CONFIG_KIRKWOOD_THERMAL)  +=3D kirkwood_thermal.o
+> -obj-$(CONFIG_EXYNOS_THERMAL)	+=3D exynos_thermal.o
+> +obj-y				+=3D samsung/
+>  obj-$(CONFIG_DOVE_THERMAL)  	+=3D dove_thermal.o
+>  obj-$(CONFIG_DB8500_THERMAL)	+=3D db8500_thermal.o
+>  obj-$(CONFIG_ARMADA_THERMAL)	+=3D armada_thermal.o
+> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/=
+Kconfig
+> new file mode 100644
+> index 0000000..2d3d9dc
+> --- /dev/null
+> +++ b/drivers/thermal/samsung/Kconfig
+> @@ -0,0 +1,9 @@
+> +config EXYNOS_THERMAL
+> +	tristate "Temperature sensor on Samsung EXYNOS"
+> +	depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5)
+
+Do you really want to keep a list of Kconfig dependency here?
+
+I was suggested to have a config entry (like ARCH_HAS_BANDBAP) and then
+in the driver use:
+	depends on ARCH_HAS_BANDGAP
+
+And the arch/ code would just selects ARCH_HAS_BANDGAP (like
+ARCH_HAS_CPUFREQ).
+
+> +	depends on CPU_THERMAL
+> +	help
+> +	  If you say yes here you get support for TMU (Thermal Management
+> +	  Unit) on SAMSUNG EXYNOS series of SoC. This helps in registering
+> +	  the exynos thermal driver with the core thermal layer and cpu
+> +	  cooling API's.
+> diff --git a/drivers/thermal/samsung/Makefile b/drivers/thermal/samsung=
+/Makefile
+> new file mode 100644
+> index 0000000..1fe6d93
+> --- /dev/null
+> +++ b/drivers/thermal/samsung/Makefile
+> @@ -0,0 +1,4 @@
+> +#
+> +# Samsung thermal specific Makefile
+> +#
+> +obj-$(CONFIG_EXYNOS_THERMAL)	+=3D exynos_thermal.o
+> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/samsung=
+/exynos_thermal.c
+> similarity index 100%
+> rename from drivers/thermal/exynos_thermal.c
+> rename to drivers/thermal/samsung/exynos_thermal.c
+>=20
+
+
+
+------enig2XAPAEQIDJQMSFXIAWWGK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlGKdBAACgkQCXcVR3XQvP0vxgEA/iFAjqB6otozvdK7/Aay+Q/Q
++XwNxEL1w3sdgWgyWk4A/2rTc7TUDleayct1tQSrfpXxGaScMyqxwNDl/tEq3Bdp
+=vhzK
+-----END PGP SIGNATURE-----
+
+------enig2XAPAEQIDJQMSFXIAWWGK--
