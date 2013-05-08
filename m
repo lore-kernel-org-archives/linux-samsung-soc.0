@@ -1,75 +1,65 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] ARM: exynos: Select PINCTRL_EXYNOS for exynos4/5 at arch level
-Date: Wed,  8 May 2013 11:52:48 -0700
-Message-ID: <1368039168-24447-1-git-send-email-dianders@chromium.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: exynos: Select PINCTRL_EXYNOS for exynos5
+Date: Wed, 8 May 2013 12:33:34 -0700
+Message-ID: <CAOesGMi=K4iJKjSk3RoynhiCMPPT98v5jADnqZ__TwX_YLw65Q@mail.gmail.com>
 References: <1368034349-15091-1-git-send-email-dianders@chromium.org>
+	<CAOesGMia9kLGh6B6QJZAKS1UpBg86v32S2um+0fjx5HYjje3cw@mail.gmail.com>
+	<CAD=FV=X2n+zHZ3frorwW7L1yybnWWK1=-rWMQJQFus3eNiFFeQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f73.google.com ([209.85.216.73]:43520 "EHLO
-	mail-qa0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751852Ab3EHSw4 (ORCPT
+Received: from mail-we0-f175.google.com ([74.125.82.175]:42260 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754314Ab3EHTdh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 May 2013 14:52:56 -0400
-Received: by mail-qa0-f73.google.com with SMTP id bs12so234559qab.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 May 2013 11:52:55 -0700 (PDT)
-In-Reply-To: <1368034349-15091-1-git-send-email-dianders@chromium.org>
+	Wed, 8 May 2013 15:33:37 -0400
+Received: by mail-we0-f175.google.com with SMTP id p57so2167340wes.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 May 2013 12:33:35 -0700 (PDT)
+In-Reply-To: <CAD=FV=X2n+zHZ3frorwW7L1yybnWWK1=-rWMQJQFus3eNiFFeQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Doug Anderson <dianders@chromium.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Previously if you had MACH_EXYNOS5_DT but not MACH_EXYNOS4_DT you'd be
-missing the pincontrol definitions.  Move PINCTRL selects to the arch
-level since we should be enabling the code for all exynos variants.
+Hi,
 
-It's expected that eventually exynos5440 (which seems to have its own
-pinctrl code) will eventually move over to the common code.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v2:
-- Moved to the arch level as suggested by Olof.
+On Wed, May 8, 2013 at 11:48 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Olof,
+>
+> On Wed, May 8, 2013 at 11:19 AM, Olof Johansson <olof@lixom.net> wrote:
+>> Seems like this should be selected by the SoC (ARCH_EXYNOS5) instead
+>> of the board. Actually, I'm not sure we need the board Kconfig entry
+>> long-term; all boards will be dt-only.
+>
+> Good point.  Hopefully someone at Samsung can work on removing the
+> board itself?  If you'd like me to take this on then let me know and I
+> can put it on my list.
 
- arch/arm/mach-exynos/Kconfig | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Nothing stops you from doing that on your own. I tend to push back
+onto the maintainers to get them engaged in their own housekeeping,
+but anyone is free to :)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 6e77432..7ee58b0 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -17,6 +17,8 @@ config ARCH_EXYNOS4
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_SMP
- 	select MIGHT_HAVE_CACHE_L2X0
-+	select PINCTRL
-+	select PINCTRL_EXYNOS
- 	help
- 	  Samsung EXYNOS4 SoCs based systems
- 
-@@ -24,6 +26,8 @@ config ARCH_EXYNOS5
- 	bool "SAMSUNG EXYNOS5"
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_SMP
-+	select PINCTRL
-+	select PINCTRL_EXYNOS
- 	help
- 	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
- 
-@@ -78,7 +82,6 @@ config SOC_EXYNOS5440
- 	select ARCH_HAS_OPP
- 	select ARM_ARCH_TIMER
- 	select AUTO_ZRELADDR
--	select PINCTRL
- 	select PINCTRL_EXYNOS5440
- 	select PM_OPP
- 	help
-@@ -412,8 +415,6 @@ config MACH_EXYNOS4_DT
- 	select CLKSRC_OF
- 	select CPU_EXYNOS4210
- 	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
--	select PINCTRL
--	select PINCTRL_EXYNOS
- 	select S5P_DEV_MFC
- 	select USE_OF
- 	help
--- 
-1.8.2.1
+> I'm happy to resubmit my patch under ARCH_EXYNOS5.  I'll move the
+> exynos4 one at the same time.
+
+Great.
+
+> I'm going to make the assumption that PINCTRL_EXYNOS and
+> PINCTRL_EXYNOS5440 can happily coexist.  Certainly I've got both
+> defined in my tree right now and nothing blows up.  I haven't tested
+> on 5440 but things ought to be handled by "compatible" checks, right?
+
+Yes, if they can't coexist then that's a bug.
+
+> I'll also assume that eventually someone will move PINCTRL_EXYNOS5440
+> into PINCTRL_EXYNOS.  If PINCTRL_EXYNOS5440 won't eventually move
+> under PINCTRL_EXYNOS then it makes less sense to define PINCTRL_EXYNOS
+> for all exynos parts.
+
+Yeah, it should -- this is just in transition since 5440 was first out
+of the gate with pinctrl.
+
+
+
+-Olof
