@@ -1,53 +1,42 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH 3/3] ARM: dts: Add display timing node to exynos5250-arndale.dts
-Date: Wed,  8 May 2013 11:31:34 +0530
-Message-ID: <1367992894-20198-4-git-send-email-vikas.sajjan@linaro.org>
-References: <1367992894-20198-1-git-send-email-vikas.sajjan@linaro.org>
+From: "John P. Goldman" <gliceaga@mendoza-conicet.gob.ar>
+Subject: dringender Vorschlag
+Date: Wed, 8 May 2013 05:46:28 -0300 (ART)
+Message-ID: <351326728.69416.1368002788604.JavaMail.root__11422.6198442795$1368004088$gmane$org@correo.mendoza-conicet.gob.ar>
+Reply-To: "John P. Goldman" <johnp.goldman@yahoo.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:37158 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881Ab3EHGCI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 May 2013 02:02:08 -0400
-Received: by mail-pb0-f47.google.com with SMTP id uo1so969301pbc.34
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 May 2013 23:02:07 -0700 (PDT)
-In-Reply-To: <1367992894-20198-1-git-send-email-vikas.sajjan@linaro.org>
+Received: from mx2.mendoza-conicet.gob.ar ([200.69.149.90]:40948 "EHLO
+	mx2.mendoza-conicet.gob.ar" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751190Ab3EHJG6 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 May 2013 05:06:58 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Adds display timing node for a DP panel to Arndale Board DTS file
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
----
- arch/arm/boot/dts/exynos5250-arndale.dts |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index f68b820..c831a5c 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -459,4 +459,20 @@
- 		samsung,lane-count = <4>;
- 	};
- 
-+	display-timings {
-+		native-mode = <&timing0>;
-+		timing0: timing@0 {
-+			/* 2560x1600 DP panel */
-+			clock-frequency = <50000>;
-+			hactive = <2560>;
-+			vactive = <1600>;
-+			hfront-porch = <48>;
-+			hback-porch = <80>;
-+			hsync-len = <32>;
-+			vback-porch = <16>;
-+			vfront-porch = <8>;
-+			vsync-len = <6>;
-+		};
-+	};
-+
- };
--- 
-1.7.9.5
+Entschuldigungen f=C3=BCr kommen in Ihre Privatsph=C3=A4re! Ich bin Rec=
+htsanwalt
+Werner Erich Zeller; Ich habe einen meiner einflussreichen und
+wohlhabenden Kunden zum Tode; und er hatte eine sehr geheime und privat=
+e
+Investitionen von =E2=82=AC15,000,000.00 bei einer privaten Bank in Gro=
+=C3=9Fbritannien
+hier zu Lebzeiten. Diese Investition wurde ohne einen deklarierten
+n=C3=A4chsten Angeh=C3=B6rigen und beg=C3=BCnstigte. Jetzt brauche ich =
+Sie arbeiten mit
+mir als mein Partner zu erholen und zu je 50 % Aktienfonds. Alle Dokume=
+nte
+werden rechtlich beantragt und beschafft, und in 5 Werktage, wird diese
+Transaktion auftreten. Aber ich brauche einen ernsten, treuen und
+glaubw=C3=BCrdigen Partner.
+
+Bitte senden Sie mir eine vertrauliche Antwort, wenn Sie denken, Sie
+vertraut werden k=C3=B6nnen und sind von den Qualit=C3=A4ten! Ich warte=
+ auf Ihre
+schnelle Antwort.
+
+Werner Erich Zeller (Rechtsanwalt)
+Rufen Sie + 44-702-409-0820 (Office)
