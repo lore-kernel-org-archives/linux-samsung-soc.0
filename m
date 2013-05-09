@@ -1,37 +1,70 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: EXYNOS5: Fix kernel dump in AFTR idle mode
-Date: Thu, 9 May 2013 13:22:08 -0700
-Message-ID: <20130509202208.GA21831@quad.lixom.net>
-References: <1367235107-31328-1-git-send-email-inderpal.singh@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: exynos: Select PINCTRL_EXYNOS for exynos5
+Date: Fri, 10 May 2013 08:29:40 +0900
+Message-ID: <044901ce4d0d$142a8e90$3c7fabb0$%kim@samsung.com>
+References: <1368034349-15091-1-git-send-email-dianders@chromium.org>
+ <CAD=FV=X2n+zHZ3frorwW7L1yybnWWK1=-rWMQJQFus3eNiFFeQ@mail.gmail.com>
+ <CAOesGMi=K4iJKjSk3RoynhiCMPPT98v5jADnqZ__TwX_YLw65Q@mail.gmail.com>
+ <1614776.P66h1VoFPp@amdc1227>
+ <CAD=FV=X1XL++O43GBcJK5Js=ci8pfoj=uSADMcqq_jGJEvhXdQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:58023 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753389Ab3EIUWI (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:19539 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753676Ab3EIX3m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 May 2013 16:22:08 -0400
-Received: by mail-pb0-f41.google.com with SMTP id jt11so352308pbb.28
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 May 2013 13:22:07 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1367235107-31328-1-git-send-email-inderpal.singh@linaro.org>
+	Thu, 9 May 2013 19:29:42 -0400
+In-reply-to: <CAD=FV=X1XL++O43GBcJK5Js=ci8pfoj=uSADMcqq_jGJEvhXdQ@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arnd@arndb.de, lorenzo.pieralisi@arm.com, patches@linaro.org
+To: 'Doug Anderson' <dianders@chromium.org>, 'Tomasz Figa' <t.figa@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Simon Glass' <sjg@chromium.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 29, 2013 at 05:01:47PM +0530, Inderpal Singh wrote:
-> The kernel crashes while resuming from AFTR idle mode. It happens
-> because L2 cache was not going into retention state.
+Doug Anderson wrote:
 > 
-> This patch configures the USE_RETENTION bit of ARM_L2_OPTION register
-> so that it does not depend on MANUAL_L2RSTDISABLE_CONTROL of
-> ARM_COMMON_OPTION register for L2RSTDISABLE signal.
+> Tomasz / Olof,
 > 
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+Hi Doug, Tomasz and Olof
 
-I haven't seen any activity from Kgene on this, but it seems reasonably bad
-(and the fix is self-contained). Applying to arm-soc fixes branch.
+> On Thu, May 9, 2013 at 2:45 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+> >> Nothing stops you from doing that on your own. I tend to push back
+> >> onto the maintainers to get them engaged in their own housekeeping,
+> >> but anyone is free to :)
+> 
+> I will probably leave this to the maintainers at this point...  ;)
+> 
 
 
--Olof
+> >> Yeah, it should -- this is just in transition since 5440 was first out
+> >> of the gate with pinctrl.
+> >
+> > AFAIK, Exynos5440 contains a completely different pin controller block,
+> which
+> > is not compatible with pinctrl-samsung driver, so I don't see any point
+> of
+> > moving it under PINCTRL_EXYNOS, which is currently used for Exynos 4210,
+> 4x12
+> > and 5250, but will be also extended with driver data for S5PV210 as
+well.
+> >
+> > I'd say that CPU_EXYNOS4210, SOC_EXYNOS4212, SOC_EXYNOS4412 and
+> SOC_EXYNOS5250
+> > should select PINCTRL_EXYNOS and SOC_EXYNOS5440 should be left as is,
+> > selecting PINCTRL_EXYNOS5440.
+> 
+> OK, sounds reasonable.  I didn't dig into all of the details of the
+> 5440 pin control driver and don't have a user manual in front of me.
+> I will do as you say.
+> 
+Tomasz is right. The current exynos pinctrl stuff is quite different with
+exynos5440 pinctrl, it means there is no reason to move exynos5440 pinctrl
+under exynos pinctrl. Of course, both can be built together without problem.
+
+> New patch coming shortly.
+> 
+Thanks, the PINCTRL_EXYNOS can be moved into under SoC condition not board.
+
+- Kukjin
