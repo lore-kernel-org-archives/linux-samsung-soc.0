@@ -1,45 +1,136 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: exynos: Select PINCTRL_EXYNOS for exynos5
-Date: Thu, 9 May 2013 11:11:10 -0700
-Message-ID: <CAD=FV=X1XL++O43GBcJK5Js=ci8pfoj=uSADMcqq_jGJEvhXdQ@mail.gmail.com>
-References: <1368034349-15091-1-git-send-email-dianders@chromium.org>
-	<CAD=FV=X2n+zHZ3frorwW7L1yybnWWK1=-rWMQJQFus3eNiFFeQ@mail.gmail.com>
-	<CAOesGMi=K4iJKjSk3RoynhiCMPPT98v5jADnqZ__TwX_YLw65Q@mail.gmail.com>
-	<1614776.P66h1VoFPp@amdc1227>
+Subject: [PATCH v3] ARM: exynos: Select PINCTRL_EXYNOS for exynos4/5 at chip
+ level
+Date: Thu,  9 May 2013 11:12:50 -0700
+Message-ID: <1368123170-22906-1-git-send-email-dianders@chromium.org>
+References: <1368039168-24447-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1614776.P66h1VoFPp@amdc1227>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1368039168-24447-1-git-send-email-dianders@chromium.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, Simon Glass <sjg@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Olof Johansson <olof@lixom.net>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Tomasz / Olof,
+Previously if you had MACH_EXYNOS5_DT but not MACH_EXYNOS4_DT you'd be
+missing the pincontrol definitions.  Move PINCTRL selects to the arch
+level since we should be enabling the code for all exynos variants.
 
-On Thu, May 9, 2013 at 2:45 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->> Nothing stops you from doing that on your own. I tend to push back
->> onto the maintainers to get them engaged in their own housekeeping,
->> but anyone is free to :)
+Update the PINCTRL descriptions to indicate that PINCTRL_EXYNOS is not
+for exynos5440.  Also add basic dependencies for the PINCTRL_EXYNOS
+kernel config.
 
-I will probably leave this to the maintainers at this point...  ;)
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Changes in v3:
+- Moved to chip level as per Tomasz.
+- Update PINCTRL Kconfig for exynos.
 
->> Yeah, it should -- this is just in transition since 5440 was first out
->> of the gate with pinctrl.
->
-> AFAIK, Exynos5440 contains a completely different pin controller block, which
-> is not compatible with pinctrl-samsung driver, so I don't see any point of
-> moving it under PINCTRL_EXYNOS, which is currently used for Exynos 4210, 4x12
-> and 5250, but will be also extended with driver data for S5PV210 as well.
->
-> I'd say that CPU_EXYNOS4210, SOC_EXYNOS4212, SOC_EXYNOS4412 and SOC_EXYNOS5250
-> should select PINCTRL_EXYNOS and SOC_EXYNOS5440 should be left as is,
-> selecting PINCTRL_EXYNOS5440.
+Changes in v2:
+- Moved to the arch level as suggested by Olof.
 
-OK, sounds reasonable.  I didn't dig into all of the details of the
-5440 pin control driver and don't have a user manual in front of me.
-I will do as you say.
+ arch/arm/mach-exynos/Kconfig | 9 ++++++---
+ drivers/pinctrl/Kconfig      | 5 +++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-New patch coming shortly.
-
--Doug
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 6e77432..4139d7f 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -17,6 +17,7 @@ config ARCH_EXYNOS4
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_SMP
+ 	select MIGHT_HAVE_CACHE_L2X0
++	select PINCTRL
+ 	help
+ 	  Samsung EXYNOS4 SoCs based systems
+ 
+@@ -24,6 +25,7 @@ config ARCH_EXYNOS5
+ 	bool "SAMSUNG EXYNOS5"
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_SMP
++	select PINCTRL
+ 	help
+ 	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
+ 
+@@ -34,6 +36,7 @@ config CPU_EXYNOS4210
+ 	default y
+ 	depends on ARCH_EXYNOS4
+ 	select ARM_CPU_SUSPEND if PM
++	select PINCTRL_EXYNOS
+ 	select PM_GENERIC_DOMAINS
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+@@ -45,6 +48,7 @@ config SOC_EXYNOS4212
+ 	bool "SAMSUNG EXYNOS4212"
+ 	default y
+ 	depends on ARCH_EXYNOS4
++	select PINCTRL_EXYNOS
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+ 	select SAMSUNG_DMADEV
+@@ -55,6 +59,7 @@ config SOC_EXYNOS4412
+ 	bool "SAMSUNG EXYNOS4412"
+ 	default y
+ 	depends on ARCH_EXYNOS4
++	select PINCTRL_EXYNOS
+ 	select SAMSUNG_DMADEV
+ 	help
+ 	  Enable EXYNOS4412 SoC support
+@@ -63,6 +68,7 @@ config SOC_EXYNOS5250
+ 	bool "SAMSUNG EXYNOS5250"
+ 	default y
+ 	depends on ARCH_EXYNOS5
++	select PINCTRL_EXYNOS
+ 	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+@@ -78,7 +84,6 @@ config SOC_EXYNOS5440
+ 	select ARCH_HAS_OPP
+ 	select ARM_ARCH_TIMER
+ 	select AUTO_ZRELADDR
+-	select PINCTRL
+ 	select PINCTRL_EXYNOS5440
+ 	select PM_OPP
+ 	help
+@@ -412,8 +417,6 @@ config MACH_EXYNOS4_DT
+ 	select CLKSRC_OF
+ 	select CPU_EXYNOS4210
+ 	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
+-	select PINCTRL
+-	select PINCTRL_EXYNOS
+ 	select S5P_DEV_MFC
+ 	select USE_OF
+ 	help
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 8f66924..a1c6dd3 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -207,12 +207,13 @@ config PINCTRL_SAMSUNG
+ 	select PINCONF
+ 
+ config PINCTRL_EXYNOS
+-	bool "Pinctrl driver data for Samsung EXYNOS SoCs"
+-	depends on OF && GPIOLIB
++	bool "Pinctrl driver data for Samsung EXYNOS SoCs other than 5440"
++	depends on OF && GPIOLIB && ARCH_EXYNOS
+ 	select PINCTRL_SAMSUNG
+ 
+ config PINCTRL_EXYNOS5440
+ 	bool "Samsung EXYNOS5440 SoC pinctrl driver"
++	depends on SOC_EXYNOS5440
+ 	select PINMUX
+ 	select PINCONF
+ 
+-- 
+1.8.2.1
