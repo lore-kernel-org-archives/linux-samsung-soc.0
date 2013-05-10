@@ -1,100 +1,141 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v5] pinctrl: Add pinctrl-s3c24xx driver
-Date: Fri, 10 May 2013 09:32:05 +0900
-Message-ID: <046401ce4d15$ccba0c80$662e2580$%kim@samsung.com>
-References: <201305031552.45410.heiko@sntech.de>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V3 04/21] thermal: exynos: Move exynos_thermal.h from
+ include/* to driver/* folder
+Date: Fri, 10 May 2013 07:23:43 +0530
+Message-ID: <CADGdYn5ps6zqgPUEvf40+z3P17Y4tXxK+KqxPGu2y75vjVTmrA@mail.gmail.com>
+References: <1367931671-3906-1-git-send-email-amit.daniel@samsung.com>
+	<1367931671-3906-5-git-send-email-amit.daniel@samsung.com>
+	<518BA478.5050706@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:29621 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755483Ab3EJAcN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 May 2013 20:32:13 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MMK0099V45IPX20@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 May 2013 09:32:07 +0900 (KST)
-In-reply-to: <201305031552.45410.heiko@sntech.de>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <518BA478.5050706@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
-Cc: linus.walleij@linaro.org, thomas.abraham@linaro.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Heiko St=C3=BCbner wrote:
->=20
-> The s3c24xx pins follow a similar pattern as the other Samsung SoCs a=
-nd
-> can therefore reuse the already introduced infrastructure.
->=20
-> The s3c24xx SoCs have one design oddity in that the first 4 external
-> interrupts do not reside in the eint pending register but in the main
-> interrupt controller instead. We solve this by forwarding the externa=
-l
-> interrupt from the main controller into the irq domain of the pin ban=
-k.
-> The masking/acking of these interrupts is handled in the same way.
->=20
-> Furthermore the S3C2412/2413 SoCs contain another oddity in that they
-> keep the same 4 eints in the main interrupt controller and eintpend
-> register and requiring ack operations to happen in both. This is solv=
-ed
-> by using different compatible properties for the wakeup eint node whi=
-ch
-> set a property accordingly.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Hi,
 
-Looks good to me.
+On Thu, May 9, 2013 at 6:58 PM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> Hello Amit,
+>
+> On 07-05-2013 09:00, Amit Daniel Kachhap wrote:
+>> This patch renames and moves  include/linux/platform_data/exynos_thermal.h to
+>> drivers/thermal/samsung/exynos_tmu.h. This file movement is needed as exynos
+>> SOC's are not supporting non-DT based platforms. Also the rename is needed as this
+>> file now just contains exynos tmu driver related definations.
+>>
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  drivers/thermal/samsung/exynos_thermal_common.c    |    1 -
+>>  drivers/thermal/samsung/exynos_thermal_common.h    |   15 +++++++++++++++
+>>  drivers/thermal/samsung/exynos_tmu.c               |    2 +-
+>>  .../thermal/samsung/exynos_tmu.h                   |   15 ---------------
+>>  4 files changed, 16 insertions(+), 17 deletions(-)
+>>  rename include/linux/platform_data/exynos_thermal.h => drivers/thermal/samsung/exynos_tmu.h (88%)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
+>> index 9a57606..dae5476 100644
+>> --- a/drivers/thermal/samsung/exynos_thermal_common.c
+>> +++ b/drivers/thermal/samsung/exynos_thermal_common.c
+>> @@ -27,7 +27,6 @@
+>>  #include <linux/kernel.h>
+>>  #include <linux/kobject.h>
+>>  #include <linux/mutex.h>
+>> -#include <linux/platform_data/exynos_thermal.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/thermal.h>
+>>  #include "exynos_thermal_common.h"
+>> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
+>> index da2add0..1c3f8b7 100644
+>> --- a/drivers/thermal/samsung/exynos_thermal_common.h
+>> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
+>> @@ -44,6 +44,21 @@
+>>
+>>  #define EXYNOS_ZONE_COUNT    3
+>>
+>> +/**
+>> + * struct freq_clip_table
+>> + * @freq_clip_max: maximum frequency allowed for this cooling state.
+>> + * @temp_level: Temperature level at which the temperature clipping will
+>> + *   happen.
+>> + * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
+>> + *
+>> + * This structure is required to be filled and passed to the
+>> + * cpufreq_cooling_unregister function.
+>> + */
+>> +struct freq_clip_table {
+>> +     unsigned int freq_clip_max;
+>> +     unsigned int temp_level;
+>> +     const struct cpumask *mask_val;
+>> +};
+>>  struct       thermal_trip_point_conf {
+>>       int trip_val[MAX_TRIP_COUNT];
+>>       int trip_count;
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>> index 3de3e61..a02f2c9 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -30,10 +30,10 @@
+>>  #include <linux/mutex.h>
+>>  #include <linux/of.h>
+>>  #include <linux/platform_device.h>
+>> -#include <linux/platform_data/exynos_thermal.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/workqueue.h>
+>>  #include "exynos_thermal_common.h"
+>> +#include "exynos_tmu.h"
+>>
+>>  /* Exynos generic registers */
+>>  #define EXYNOS_TMU_REG_TRIMINFO              0x0
+>> diff --git a/include/linux/platform_data/exynos_thermal.h b/drivers/thermal/samsung/exynos_tmu.h
+>> similarity index 88%
+>> rename from include/linux/platform_data/exynos_thermal.h
+>> rename to drivers/thermal/samsung/exynos_tmu.h
+>> index da7e627..342fb1f 100644
+>> --- a/include/linux/platform_data/exynos_thermal.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>> @@ -33,21 +33,6 @@ enum soc_type {
+>>       SOC_ARCH_EXYNOS4210 = 1,
+>>       SOC_ARCH_EXYNOS,
+>>  };
+>> -/**
+>> - * struct freq_clip_table
+>> - * @freq_clip_max: maximum frequency allowed for this cooling state.
+>> - * @temp_level: Temperature level at which the temperature clipping will
+>> - *   happen.
+>> - * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
+>> - *
+>> - * This structure is required to be filled and passed to the
+>> - * cpufreq_cooling_unregister function.
+>> - */
+>> -struct freq_clip_table {
+>> -     unsigned int freq_clip_max;
+>> -     unsigned int temp_level;
+>> -     const struct cpumask *mask_val;
+>> -};
+>>
+>
+> You explain why you need to rename the header, and thats what you do in
+> this patch. On the other hand, you also move the freq_clip_table
+> structure definition. This change is present in this patch, I dont see
+> the connection with the file rename, and you also do not explain why it
+> is needed. Can you please consider, either split this change to other
+> (new) patch or explain it also in this patch?
+Yes I forgot to add explanation here. This is done to fix compilation
+issue when this header is moved. Basically struct freq_clip_table is a
+candidate of common header and I have not included exynos_tmu.h into
+exynos_thermal_common.h. Will provide a detailed explanation.
 
-Linus, if you want me to take into samsung tree, please let me know.
-
-Thanks.
-
-- Kukjin
-
-> ---
-> changes since v4:
-> - fix wrong s3c2413 naming
->   between s3c2412 and s3c2413, the s3c2412 is the base type. Till v4 =
-the
->   naming was mixed up, with parts being labeled as s3c2412* and other=
-s
->   as s3c2413*. Fix this by renaming the s3c2413* parts to s3c2412.
->   No functional changes.
->=20
-> changes since v3:
-> - address comments from Sylwester Nawrocki:
->   (typos, wrong comments, etc)
->=20
-> changes since v2:
-> - address more comments from Tomasz Figa:
->   * remove obsolete ctrl_type references
->   * remove redundant check for parent_chip
->   * update docs and commit message
->=20
-> changes since v1:
-> - address comments from Tomasz Figa:
->   * split handling functions for eints 0-3 for s3c2412 and all others
->   * change the handling for s3c2412 eints 0-3 in that they now use
->     chained_irq_* for the outer parent interrupt
->=20
->  .../bindings/pinctrl/samsung-pinctrl.txt           |    8 +
->  drivers/gpio/gpio-samsung.c                        |    4 +
->  drivers/pinctrl/Kconfig                            |    5 +
->  drivers/pinctrl/Makefile                           |    1 +
->  drivers/pinctrl/pinctrl-s3c24xx.c                  |  652 ++++++++++=
-++++++++++
->  drivers/pinctrl/pinctrl-samsung.c                  |   10 +
->  drivers/pinctrl/pinctrl-samsung.h                  |    4 +
->  7 files changed, 684 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/pinctrl/pinctrl-s3c24xx.c
->=20
-[...]
+Thanks,
+Amit
+>
+>
+>>  /**
+>>   * struct exynos_tmu_platform_data
+>>
+>
+>
