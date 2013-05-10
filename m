@@ -1,320 +1,198 @@
-From: Vikas Sajjan <vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dts: Add display timing node to
- exynos5250-arndale.dts
-Date: Fri, 10 May 2013 13:45:27 +0530
-Message-ID: <CAD025ySqUpGRpx0J61gsjKE_JPa+Mu444ETpd2USyikrNWj71w@mail.gmail.com>
-References: <1367992894-20198-1-git-send-email-vikas.sajjan@linaro.org>
- <CAD025yQ+vnNc1RqoqoBw9JqYUp6aAY2wTowhVyV+zoDZq9sJ6g@mail.gmail.com>
- <CAD025ySx39kOphk3BNrnM+i7-9KHQr607cRYZXKa7uJ6GBXSiA@mail.gmail.com>
- <1853757.ubr759t9No@flatron>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2144475363372547759=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1853757.ubr759t9No@flatron>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, s.trumtrar-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, InKi Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "kgene.kim" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [RFC 09/42] drivers/i2c/busses: don't check resource with devm_ioremap_resource
+Date: Fri, 10 May 2013 10:16:54 +0200
+Message-ID: <1368173847-5661-10-git-send-email-wsa@the-dreams.de>
+References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Tony Lindgren <tony@atomide.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Barry Song <baohua.song@csr.com>, Stephen Warren <swarren@wwwdotorg.org>, davinci-linux-open-source@linux.davincidsp.com, linux-i2c@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============2144475363372547759==
-Content-Type: multipart/alternative; boundary=089e01494164311b4b04dc58c605
+devm_ioremap_resource does sanity checks on the given resource. No need to
+duplicate this in the driver.
 
---089e01494164311b4b04dc58c605
-Content-Type: text/plain; charset=ISO-8859-1
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+---
+ drivers/i2c/busses/i2c-davinci.c            |    6 +-----
+ drivers/i2c/busses/i2c-designware-platdrv.c |    6 +-----
+ drivers/i2c/busses/i2c-imx.c                |    6 +-----
+ drivers/i2c/busses/i2c-omap.c               |    6 +-----
+ drivers/i2c/busses/i2c-rcar.c               |    7 +------
+ drivers/i2c/busses/i2c-s3c2410.c            |    5 -----
+ drivers/i2c/busses/i2c-sirf.c               |    6 ------
+ drivers/i2c/busses/i2c-tegra.c              |    5 -----
+ 8 files changed, 5 insertions(+), 42 deletions(-)
 
-HI Tomasz,
-
-
-On 10 May 2013 13:03, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-
-> On Friday 10 of May 2013 11:57:34 Vikas Sajjan wrote:
-> > Hi Olof,
-> >
-> > On 10 May 2013 11:51, Vikas Sajjan <vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> > > Hi Olof,
-> > >
-> > > On 10 May 2013 11:08, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
-> > >> On Thu, May 9, 2013 at 7:55 PM, Vikas Sajjan
-> > >> <vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > >>
-> > >> wrote:
-> > >> > Hi Tomasz,
-> > >> >
-> > >> > On 10 May 2013 05:35, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > >> >> Hi Vikas,
-> > >> >>
-> > >> >> On Wednesday 08 of May 2013 11:31:34 Vikas Sajjan wrote:
-> > >> >> > Adds display timing node for a DP panel to Arndale Board DTS
-> > >> >> > file
-> > >> >> >
-> > >> >> > Signed-off-by: Vikas Sajjan <vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > >> >> > ---
-> > >> >> >
-> > >> >> >  arch/arm/boot/dts/exynos5250-arndale.dts |   16
-> > >> >> >  ++++++++++++++++
-> > >> >> >  1 file changed, 16 insertions(+)
-> > >> >> >
-> > >> >> > diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
-> > >> >> > b/arch/arm/boot/dts/exynos5250-arndale.dts index
-> > >> >> > f68b820..c831a5c
-> > >> >> > 100644
-> > >> >> > --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> > >> >> > +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> > >> >> > @@ -459,4 +459,20 @@
-> > >> >> >
-> > >> >> >               samsung,lane-count = <4>;
-> > >> >> >
-> > >> >> >       };
-> > >> >> >
-> > >> >> > +     display-timings {
-> > >> >> > +             native-mode = <&timing0>;
-> > >> >> > +             timing0: timing@0 {
-> > >> >> > +                     /* 2560x1600 DP panel */
-> > >> >> > +                     clock-frequency = <50000>;
-> > >> >> > +                     hactive = <2560>;
-> > >> >> > +                     vactive = <1600>;
-> > >> >> > +                     hfront-porch = <48>;
-> > >> >> > +                     hback-porch = <80>;
-> > >> >> > +                     hsync-len = <32>;
-> > >> >> > +                     vback-porch = <16>;
-> > >> >> > +                     vfront-porch = <8>;
-> > >> >> > +                     vsync-len = <6>;
-> > >> >> > +             };
-> > >> >> > +     };
-> > >> >>
-> > >> >> What display are those timings used for? Shouldn't they be placed
-> > >>
-> > >> inside
-> > >>
-> > >> >> node of that display?
-> > >> >
-> > >> > This timing information will be used parsed by the FIMD probe with
-> > >> > the
-> > >>
-> > >> help
-> > >>
-> > >> > of "Video Helper function"  as done in this link
-> > >>
-> > >> https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/c
-> > >> ommit/?h=exynos-drm-next&id=7f4596f4aebcc9fcf2d50d3fe398508d710c4dd0
-> > >>
-> > >> That function passes in a device node pointer to the FIMD device
-> > >> node,
-> > >> and only looks for a display-timings node under there. Tomasz is
-> > >> right, as far as I can tell.
-> > >>
-> > >> Placing display timings at the root of the device tree seems
-> > >> completely
-> > >> wrong.
-> > >>
-> > >>         I referred this "
-> >
-> > Documentation/devicetree/bindings/video/display-timing.txt" for example
-> >
-> >             here it dosen't mention about whether display timings node
-> > can be placed at the root of the device tree or NOT.
-> >  Not sure how we should be placing the node then.
->
-> I think this is pretty obvious.
->
-> Imagine a bit more complex case: a board has two video outputs (let's say
-> FIMD0 and FIMD1), each connected to a completely different display. This
-> means that each display needs different timings.
->
-> How would you know which timings to use if all of them were be placed
-> under the root node?
->
->     so what do you think, how  should we modify this patch so that it
-belongs to a specific video outputs.
-
-Best regards,
-> Tomasz
->
->
-
-
+diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
+index cf20e06..2ed3e7b 100644
+--- a/drivers/i2c/busses/i2c-davinci.c
++++ b/drivers/i2c/busses/i2c-davinci.c
+@@ -647,11 +647,6 @@ static int davinci_i2c_probe(struct platform_device *pdev)
+ 	int r;
+ 
+ 	/* NOTE: driver uses the static register mapping */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "no mem resource?\n");
+-		return -ENODEV;
+-	}
+ 
+ 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!irq) {
+@@ -697,6 +692,7 @@ static int davinci_i2c_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	clk_prepare_enable(dev->clk);
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dev->base = devm_ioremap_resource(&pdev->dev, mem);
+ 	if (IS_ERR(dev->base)) {
+ 		r = PTR_ERR(dev->base);
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 8ec9133..6f3c612 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -87,11 +87,6 @@ static int dw_i2c_probe(struct platform_device *pdev)
+ 	int irq, r;
+ 
+ 	/* NOTE: driver uses the static register mapping */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "no mem resource?\n");
+-		return -EINVAL;
+-	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+@@ -103,6 +98,7 @@ static int dw_i2c_probe(struct platform_device *pdev)
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dev->base = devm_ioremap_resource(&pdev->dev, mem);
+ 	if (IS_ERR(dev->base))
+ 		return PTR_ERR(dev->base);
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 82f20c6..b274ca1 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -500,17 +500,13 @@ static int __init i2c_imx_probe(struct platform_device *pdev)
+ 
+ 	dev_dbg(&pdev->dev, "<%s>\n", __func__);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "can't get device resources\n");
+-		return -ENOENT;
+-	}
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "can't get irq number\n");
+ 		return -ENOENT;
+ 	}
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index e02f9e3..8498ab7 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -1085,11 +1085,6 @@ omap_i2c_probe(struct platform_device *pdev)
+ 	u16 minor, major, scheme;
+ 
+ 	/* NOTE: driver uses the static register mapping */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "no mem resource?\n");
+-		return -ENODEV;
+-	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+@@ -1103,6 +1098,7 @@ omap_i2c_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dev->base = devm_ioremap_resource(&pdev->dev, mem);
+ 	if (IS_ERR(dev->base))
+ 		return PTR_ERR(dev->base);
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 4ba4a95..0fc5858 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -623,12 +623,6 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 	u32 bus_speed;
+ 	int ret;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "no mmio resources\n");
+-		return -ENODEV;
+-	}
+-
+ 	priv = devm_kzalloc(dev, sizeof(struct rcar_i2c_priv), GFP_KERNEL);
+ 	if (!priv) {
+ 		dev_err(dev, "no mem for private data\n");
+@@ -642,6 +636,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->io = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(priv->io))
+ 		return PTR_ERR(priv->io);
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 6e8ee92..cab1c91 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1082,11 +1082,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	/* map the registers */
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "cannot find IO resource\n");
+-		return -ENOENT;
+-	}
+-
+ 	i2c->regs = devm_ioremap_resource(&pdev->dev, res);
+ 
+ 	if (IS_ERR(i2c->regs))
+diff --git a/drivers/i2c/busses/i2c-sirf.c b/drivers/i2c/busses/i2c-sirf.c
+index 5a7ad24..a63c7d5 100644
+--- a/drivers/i2c/busses/i2c-sirf.c
++++ b/drivers/i2c/busses/i2c-sirf.c
+@@ -303,12 +303,6 @@ static int i2c_sirfsoc_probe(struct platform_device *pdev)
+ 	adap->class = I2C_CLASS_HWMON;
+ 
+ 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (mem_res == NULL) {
+-		dev_err(&pdev->dev, "Unable to get MEM resource\n");
+-		err = -EINVAL;
+-		goto out;
+-	}
+-
+ 	siic->base = devm_ioremap_resource(&pdev->dev, mem_res);
+ 	if (IS_ERR(siic->base)) {
+ 		err = PTR_ERR(siic->base);
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index b60ff90..9aa1b60 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -714,11 +714,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	int ret = 0;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no mem resource\n");
+-		return -EINVAL;
+-	}
+-
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
 -- 
-Thanks and Regards
- Vikas Sajjan
-
---089e01494164311b4b04dc58c605
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">HI Tomasz,<br><div class=3D"gmail_extra"><br><br><div clas=
-s=3D"gmail_quote">On 10 May 2013 13:03, Tomasz Figa <span dir=3D"ltr">&lt;<=
-a href=3D"mailto:tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" target=3D"_blank">tomasz.figa@gmail=
-.com</a>&gt;</span> wrote:<br>
-
-<blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-=
-left:1px solid rgb(204,204,204);padding-left:1ex"><div class=3D""><div clas=
-s=3D"h5">On Friday 10 of May 2013 11:57:34 Vikas Sajjan wrote:<br>
-&gt; Hi Olof,<br>
-&gt;<br>
-&gt; On 10 May 2013 11:51, Vikas Sajjan &lt;<a href=3D"mailto:vikas.sajjan@=
-linaro.org">vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org</a>&gt; wrote:<br>
-&gt; &gt; Hi Olof,<br>
-&gt; &gt;<br>
-&gt; &gt; On 10 May 2013 11:08, Olof Johansson &lt;<a href=3D"mailto:olof@l=
-ixom.net">olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org</a>&gt; wrote:<br>
-&gt; &gt;&gt; On Thu, May 9, 2013 at 7:55 PM, Vikas Sajjan<br>
-&gt; &gt;&gt; &lt;<a href=3D"mailto:vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org">vikas.sajjan@l=
-inaro.org</a>&gt;<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; wrote:<br>
-&gt; &gt;&gt; &gt; Hi Tomasz,<br>
-&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt; On 10 May 2013 05:35, Tomasz Figa &lt;<a href=3D"mailto:=
-tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org">tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org</a>&gt; wrote:<br>
-&gt; &gt;&gt; &gt;&gt; Hi Vikas,<br>
-&gt; &gt;&gt; &gt;&gt;<br>
-&gt; &gt;&gt; &gt;&gt; On Wednesday 08 of May 2013 11:31:34 Vikas Sajjan wr=
-ote:<br>
-&gt; &gt;&gt; &gt;&gt; &gt; Adds display timing node for a DP panel to Arnd=
-ale Board DTS<br>
-&gt; &gt;&gt; &gt;&gt; &gt; file<br>
-&gt; &gt;&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; Signed-off-by: Vikas Sajjan &lt;<a href=3D"mail=
-to:vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org">vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org</a>&gt;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; ---<br>
-&gt; &gt;&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; =A0arch/arm/boot/dts/exynos5250-arndale.dts | =
-=A0 16<br>
-&gt; &gt;&gt; &gt;&gt; &gt; =A0++++++++++++++++<br>
-&gt; &gt;&gt; &gt;&gt; &gt; =A01 file changed, 16 insertions(+)<br>
-&gt; &gt;&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; diff --git a/arch/arm/boot/dts/exynos5250-arnda=
-le.dts<br>
-&gt; &gt;&gt; &gt;&gt; &gt; b/arch/arm/boot/dts/exynos5250-arndale.dts inde=
-x<br>
-&gt; &gt;&gt; &gt;&gt; &gt; f68b820..c831a5c<br>
-&gt; &gt;&gt; &gt;&gt; &gt; 100644<br>
-&gt; &gt;&gt; &gt;&gt; &gt; --- a/arch/arm/boot/dts/exynos5250-arndale.dts<=
-br>
-&gt; &gt;&gt; &gt;&gt; &gt; +++ b/arch/arm/boot/dts/exynos5250-arndale.dts<=
-br>
-&gt; &gt;&gt; &gt;&gt; &gt; @@ -459,4 +459,20 @@<br>
-&gt; &gt;&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,lane-count =
-=3D &lt;4&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; =A0 =A0 =A0 };<br>
-&gt; &gt;&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 display-timings {<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 native-mode =3D &lt;&=
-amp;timing0&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 timing0: timing@0 {<b=
-r>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* 25=
-60x1600 DP panel */<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 clock=
--frequency =3D &lt;50000&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hacti=
-ve =3D &lt;2560&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 vacti=
-ve =3D &lt;1600&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hfron=
-t-porch =3D &lt;48&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hback=
--porch =3D &lt;80&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hsync=
--len =3D &lt;32&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 vback=
--porch =3D &lt;16&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 vfron=
-t-porch =3D &lt;8&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 vsync=
--len =3D &lt;6&gt;;<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 =A0 =A0 =A0 =A0 };<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + =A0 =A0 };<br>
-&gt; &gt;&gt; &gt;&gt;<br>
-&gt; &gt;&gt; &gt;&gt; What display are those timings used for? Shouldn&#39=
-;t they be placed<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; inside<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; &gt;&gt; node of that display?<br>
-&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt; This timing information will be used parsed by the FIMD =
-probe with<br>
-&gt; &gt;&gt; &gt; the<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; help<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; &gt; of &quot;Video Helper function&quot; =A0as done in this =
-link<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; <a href=3D"https://git.kernel.org/cgit/linux/kernel/git/daein=
-ki/drm-exynos.git/c" target=3D"_blank">https://git.kernel.org/cgit/linux/ke=
-rnel/git/daeinki/drm-exynos.git/c</a><br>
-&gt; &gt;&gt; ommit/?h=3Dexynos-drm-next&amp;id=3D7f4596f4aebcc9fcf2d50d3fe=
-398508d710c4dd0<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; That function passes in a device node pointer to the FIMD dev=
-ice<br>
-&gt; &gt;&gt; node,<br>
-&gt; &gt;&gt; and only looks for a display-timings node under there. Tomasz=
- is<br>
-&gt; &gt;&gt; right, as far as I can tell.<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; Placing display timings at the root of the device tree seems<=
-br>
-&gt; &gt;&gt; completely<br>
-&gt; &gt;&gt; wrong.<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; =A0 =A0 =A0 =A0 I referred this &quot;<br>
-&gt;<br>
-&gt; Documentation/devicetree/bindings/video/display-timing.txt&quot; for e=
-xample<br>
-&gt;<br>
-&gt; =A0 =A0 =A0 =A0 =A0 =A0 here it dosen&#39;t mention about whether disp=
-lay timings node<br>
-&gt; can be placed at the root of the device tree or NOT.<br>
-&gt; =A0Not sure how we should be placing the node then.<br>
-<br>
-</div></div>I think this is pretty obvious.<br>
-<br>
-Imagine a bit more complex case: a board has two video outputs (let&#39;s s=
-ay<br>
-FIMD0 and FIMD1), each connected to a completely different display. This<br=
->
-means that each display needs different timings.<br>
-<br>
-How would you know which timings to use if all of them were be placed<br>
-under the root node?<br>
-<br></blockquote><div>=A0 =A0 so what do you think, how=A0 should we modify=
- this patch so that it belongs to a specific video outputs.<br><br></div><b=
-lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
-ft:1px solid rgb(204,204,204);padding-left:1ex">
-
-
-Best regards,<br>
-Tomasz<br>
-<br>
-</blockquote></div><br><br clear=3D"all"><br>-- <br>Thanks and Regards<div>=
-=A0Vikas Sajjan</div>
-</div></div>
-
---089e01494164311b4b04dc58c605--
-
---===============2144475363372547759==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============2144475363372547759==--
+1.7.10.4
