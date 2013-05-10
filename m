@@ -1,50 +1,62 @@
-From: "banker-07" <m.seiter@praxis-waldspirale.de>
-Subject: =?koi8-r?B?zc/Nxc7UwczYzs8g0MXSxdfP0MzP1MnU2CDJzMzA2snA?=
-	=?koi8-r?B?INcgydPUyc7Oz9PU2A==?=
-Date: Fri, 10 May 2013 02:49:24 +0300
-Message-ID: <7E2600C1D7E64C6BB23AC275DFE61E05@bvwdn>
-Reply-To: "banker-07" <banker-07@comvita.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: Add display timing node to exynos5250-arndale.dts
+Date: Fri, 10 May 2013 02:05:42 +0200
+Message-ID: <4212940.hYf2k9NPUY@flatron>
+References: <1367992894-20198-1-git-send-email-vikas.sajjan@linaro.org> <1367992894-20198-4-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bug-server-02-02.root.lrnc.net ([77.232.230.142]:46321 "EHLO
-	bug-server-02-02.root.lrnc.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755725Ab3EIX4H convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 May 2013 19:56:07 -0400
+Received: from mail-ea0-f179.google.com ([209.85.215.179]:35677 "EHLO
+	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755397Ab3EJAFs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 May 2013 20:05:48 -0400
+Received: by mail-ea0-f179.google.com with SMTP id h14so1857470eaj.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 May 2013 17:05:46 -0700 (PDT)
+In-Reply-To: <1367992894-20198-4-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: belousow@rambler.ru, linux-samsung-soc@vger.kernel.org, single_lady88@mail.ru, amr@abonement.net, suhin.d@yandex.ru
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-=ED=D9 =D0=D2=C5=C4=D7=C9=C4=C9=CD =CB=C1=CB =D0=CF=D3=D0=CF=D3=CF=C2=D3=
-=D4=D7=CF=D7=C1=D4=D8 =F7=C1=CD =C4=CF=D3=D4=C9=DE=D8 =D5=D3=D0=C5=C8=C1=
-! =C9 =CE=C5 =D3=D5=DD=C5=D3=D4=D7=C5=CE=CE=CF, =CB=C1=CB=D5=C0-=CC=C9=C2=
-=CF =C3=C5=CC=D8 =F7=D9 =D0=C5=D2=C5=C4 =D3=CF=C2=CF=CA =CE=C1=DA=CE=C1=
-=DE=C1=C5=D4=C5 - =D0=CF=CD=C5=CE=D1=D4=D8 =D7=C1=CB=C1=CE=D3=C9=C0, =D5=
-=DE=D2=C5=C4=C9=D4=D8 =D3=D7=CF=C5 =CC=C9=C2=CF =C9=D3=C8=D5=C4=C1=D4=D8=
- =CE=C1 1=EF =CB=C7. =ED=D9 =D0=D2=C5=C4=D3=D4=C1=D7=CC=D1=C5=CD =D7=C1=
-=DB=C5=CD=D5 =CC=C0=C2=CF=D0=D9=D4=D3=D4=D7=D5 =CE=CF=D7=C5=CA=DB=D5=C0=
- =C2=C9=DA=CE=C5=D3-=D0=D2=CF=C7=D2=C1=CD=CD=D5 =CC=C0=C4=D1=CD, =CB=C1=
-=CB=C9=C5 =D3=CC=C5=C4=D5=C0=D4 =CB =D3=D7=CF=C9=CD =C3=C5=CC=D1=CD! =CF=
-=CE=C1 =D0=CF=D3=CF=C4=C5=CA=D3=D4=D7=D5=C5=D4 =F7=C1=CD <<=D2=C1=DA=CC=
-=CF=D6=C9=D4=D8 =C3=C5=CC=C9=CB=CF=CD =D0=CF =D0=CF=CC=CF=DE=CB=C1=CD>>=
- =C9 =D3=C6=CF=CB=D5=D3=C9=D2=CF=D7=C1=D4=D8 =D7=CE=D5=D4=D2=C5=CE=CE=C9=
-=C5 =D0=CF=D4=C5=CE=C3=C9=C1=CC=D9 =CE=C1 =D0=C5=D2=D7=C5=CA=DB=C5=CD -=
- =CE=C1 =F7=C1=DB=C5=CA =C3=C5=CC=C9! =F0=CF =D3=D3=D9=CC=CB=C5: http:/=
-/bit.ly/ZRtIIx =F7=C1=CD =CB=CF=C7=C4=C1 - =CE=C9=C2=D5=C4=D8 =D0=D2=C9=
-=C8=CF=C4=C9=CC=CF=D3=D8 =D0=D2=C9=D3=D5=D4=D3=D4=D7=CF=D7=C1=D4=D8 =D7=
- =DC=C4=C1=CB=CF=CA =D3=C9=D4=D5=C1=C3=C9=C9, =C8=CF=D4=D8-=CB=CF=C7=C4=
-=C1 =F7=D9 =CE=C5 =DA=CE=C1=D7=C1=CC=C9 =CB=C1=CB =D7=D9=CA=D4=C9 =C9=DA=
- =D4=D2=D5=C4=CE=CF=CA =D3=C9=D4=D5=C1=C3=C9=C9, =CB=C1=CB =CF=D3=C9=CC=
-=C9=D4=D8 =D0=D2=C5=D0=D1=D4=D3=D4=D7=C9=C5. =CE=C1=DE=C9=CE=C1=CC=C9 =D0=
-=CF=D3=D4=D5=D0=C1=D4=D8, =CE=CF =CF=D0=D1=D4=D8 =D3=D4=CF=D0=CF=D2=C9=CC=
-=C9=D3=D8, =CE=C1=DE=C9=CE=C1=CC=C9 =D2=C1=DA=C4=D5=CD=D9=D7=C1=D4=D8 =C1=
-=CC=C9 - =D5=D0=D5=D3=CB=C1=CC=C9 =C9=CE=D4=C5=D2=C5=D3. =CF=D2=C9=C5=CE=
-=D4=C9=D2=CF=D7=C1=CC=C9=D3=D8, =DE=D4=CF =CE=C1=C4=CF =FC=D4=CF =CE=C1=
-=D7=C5=D2=CE=D1=CB=C1 =CF=D3=D5=DD=C5=D3=D4=D7=C9=D4=D8, =C1 =D2=C1=D3=D4=
-=C5=D2=C9=D7=C1=CC=C1=D3=D8 =CD=CF=D4=C9=D7=C1=C3=C9=D1. =EF=C2=CE=C1=D2=
-=D5=D6=C9=D7=C1=CC=C9 , =CB=C1=CB =C4=D2=D5=C7=C9=C5 =DA=C1 =DC=D4=CF =D7=
-=D2=C5=CD=D1 =CF=D4=D0=D2=C1=D7=C9=CC=C9=D3=D8 =C4=C1=CC=C5=CB=CF =D7=D0=
-=C5=D2=C5=C4 =C9 =DA=CC=C9=CC=C9=D3=D8 =CE=C1 =D3=C5=C2=D1 =C9=DA - =DA=
-=C1 =D3=C5=C7=CF.
+Hi Vikas,
+
+On Wednesday 08 of May 2013 11:31:34 Vikas Sajjan wrote:
+> Adds display timing node for a DP panel to Arndale Board DTS file
+> 
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos5250-arndale.dts |   16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
+> b/arch/arm/boot/dts/exynos5250-arndale.dts index f68b820..c831a5c
+> 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -459,4 +459,20 @@
+>  		samsung,lane-count = <4>;
+>  	};
+> 
+> +	display-timings {
+> +		native-mode = <&timing0>;
+> +		timing0: timing@0 {
+> +			/* 2560x1600 DP panel */
+> +			clock-frequency = <50000>;
+> +			hactive = <2560>;
+> +			vactive = <1600>;
+> +			hfront-porch = <48>;
+> +			hback-porch = <80>;
+> +			hsync-len = <32>;
+> +			vback-porch = <16>;
+> +			vfront-porch = <8>;
+> +			vsync-len = <6>;
+> +		};
+> +	};
+
+What display are those timings used for? Shouldn't they be placed inside 
+node of that display?
+
+Best regards,
+Tomasz
