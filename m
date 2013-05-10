@@ -1,93 +1,36 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V3 03/21] thermal: exynos: Rename exynos_thermal.c to
- exynos_tmu.c
-Date: Fri, 10 May 2013 11:12:51 -0400
-Message-ID: <518D0E73.9040207@ti.com>
-References: <1367931671-3906-1-git-send-email-amit.daniel@samsung.com> <1367931671-3906-4-git-send-email-amit.daniel@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen board
+Date: Fri, 10 May 2013 08:31:05 -0700
+Message-ID: <CAD=FV=UUaZZj0=B7335pReyeQp3V2UvckH-jy-k4SqAop7C2gw@mail.gmail.com>
+References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2OWHXNGATSMSPVIOFMABX"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1367931671-3906-4-git-send-email-amit.daniel@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Patch Tracking <patches@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-------enig2OWHXNGATSMSPVIOFMABX
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Tushar,
 
-On 07-05-2013 09:00, Amit Daniel Kachhap wrote:
-> This patch renames exynos_thermal.c to exynos_tmu.c. This change is nee=
-ded as
-> this file now just contains exynos tmu driver related codes and thermal=
- zone
-> or cpufreq cooling registration related changes are not there anymore.
->=20
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-
-This one looks fine to me.
-
-Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
-
+On Thu, May 9, 2013 at 11:49 PM, Tushar Behera <tushar.behera@linaro.org> wrote:
+> It updates following drivers for EXYNOS based DT platform.
+>
+> * S5M8767 driver
+> * MAX8997 driver
+> * MMC SDHCI driver
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > ---
->  drivers/thermal/samsung/Makefile                   |    6 +++---
->  .../samsung/{exynos_thermal.c =3D> exynos_tmu.c}     |    2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
->  rename drivers/thermal/samsung/{exynos_thermal.c =3D> exynos_tmu.c} (9=
-9%)
->=20
-> diff --git a/drivers/thermal/samsung/Makefile b/drivers/thermal/samsung=
-/Makefile
-> index 6227d4f..22528d6 100644
-> --- a/drivers/thermal/samsung/Makefile
-> +++ b/drivers/thermal/samsung/Makefile
-> @@ -1,6 +1,6 @@
->  #
->  # Samsung thermal specific Makefile
->  #
-> -obj-$(CONFIG_EXYNOS_THERMAL)			+=3D exynos_soc_thermal.o
-> -exynos_soc_thermal-y				:=3D exynos_thermal.o
-> -exynos_soc_thermal-$(CONFIG_EXYNOS_THERMAL_CORE) +=3D exynos_thermal_c=
-ommon.o
-> +obj-$(CONFIG_EXYNOS_THERMAL)			+=3D exynos_thermal.o
-> +exynos_thermal-y				:=3D exynos_tmu.o
-> +exynos_thermal-$(CONFIG_EXYNOS_THERMAL_CORE)	+=3D exynos_thermal_commo=
-n.o
-> diff --git a/drivers/thermal/samsung/exynos_thermal.c b/drivers/thermal=
-/samsung/exynos_tmu.c
-> similarity index 99%
-> rename from drivers/thermal/samsung/exynos_thermal.c
-> rename to drivers/thermal/samsung/exynos_tmu.c
-> index 4c85945..3de3e61 100644
-> --- a/drivers/thermal/samsung/exynos_thermal.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * exynos_thermal.c - Samsung EXYNOS TMU (Thermal Management Unit)
-> + * exynos_tmu.c - Samsung EXYNOS TMU (Thermal Management Unit)
->   *
->   *  Copyright (C) 2011 Samsung Electronics
->   *  Donggeun Kim <dg77.kim@samsung.com>
->=20
+>
+> This patch is based on Olof's following patch.
+> "[PATCH] ARM: exynos: defconfig update"
+> https://lkml.org/lkml/2013/5/9/455
+>
+>  arch/arm/configs/exynos_defconfig |    6 ++++++
+>  1 file changed, 6 insertions(+)
 
+Your changes also look good to me.
 
-
-------enig2OWHXNGATSMSPVIOFMABX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlGNDnMACgkQCXcVR3XQvP3cNQD/XSuRBKNYuRpnrwa8AjcwA5cl
-xX+3gOem5LCywPtIICsBAKmY5eQz5NH8ibJTQ/Npy88Da61Qus7L1KWcPE/C/Hnc
-=f28/
------END PGP SIGNATURE-----
-
-------enig2OWHXNGATSMSPVIOFMABX--
+Reviewed-by: Doug Anderson <dianders@chromium.org>
