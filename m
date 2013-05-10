@@ -1,264 +1,202 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V3 15/21] thermal: exynos: Add support to handle many
- instances of TMU
-Date: Fri, 10 May 2013 08:02:18 +0530
-Message-ID: <CADGdYn43B2AeJ+OLkH9=3R_6G_rWToy_2ws1WNWbcucxtxeV4Q@mail.gmail.com>
-References: <1367931671-3906-1-git-send-email-amit.daniel@samsung.com>
-	<1367931671-3906-16-git-send-email-amit.daniel@samsung.com>
-	<518BB852.6080400@ti.com>
+From: Vikas Sajjan <vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dts: Add display timing node to
+ exynos5250-arndale.dts
+Date: Fri, 10 May 2013 08:25:33 +0530
+Message-ID: <CAD025yRnuk2oK1B40p5XTQ7n+aX+ta2PTdEuceCbvRUEvRgzSg@mail.gmail.com>
+References: <1367992894-20198-1-git-send-email-vikas.sajjan@linaro.org>
+ <1367992894-20198-4-git-send-email-vikas.sajjan@linaro.org>
+ <4212940.hYf2k9NPUY@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <518BB852.6080400@ti.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: multipart/mixed; boundary="===============7946656014511352876=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <4212940.hYf2k9NPUY@flatron>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "kgene.kim" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Patch Tracking <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 9, 2013 at 8:23 PM, Eduardo Valentin
-<eduardo.valentin@ti.com> wrote:
-> On 07-05-2013 09:01, Amit Daniel Kachhap wrote:
->> This patch adds support to handle multiple instances of the TMU controllers.
->> This is done by removing the static structure to register with the core thermal
->> and creating it dynamically for each instance of the TMU controller. The
->> interrupt is made shared type to handle interrupts for all the TMU. Also
->> the identifier of the TMU controller is extracted from device tree alias.
->>
->> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->> ---
->>  drivers/thermal/samsung/exynos_tmu.c |  125 +++++++++++++++++++++++-----------
->>  1 files changed, 84 insertions(+), 41 deletions(-)
->>
->> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->> index bdf40ef..94d6e8e 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.c
->> +++ b/drivers/thermal/samsung/exynos_tmu.c
->> @@ -29,6 +29,8 @@
->>  #include <linux/module.h>
->>  #include <linux/mutex.h>
->>  #include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_irq.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/slab.h>
->>  #include <linux/workqueue.h>
->> @@ -36,9 +38,24 @@
->>  #include "exynos_tmu.h"
->>  #include "exynos_tmu_data.h"
->>
->> +/**
->> + * struct exynos_tmu_data : A structure to hold the private data of the TMU
->> +     driver
->> + * @id: identifier of the one instance of the TMU controller.
->> + * @pdata: pointer to the tmu platform/configuration data
->> + * @base: base address of the single instance of the TMU controller.
->> + * @irq: irq number of the TMU controller.
->> + * @soc: id of the SOC type.
->> + * @irq_work: pointer to the irq work structure.
->> + * @lock: lock to implement synchronization.
->> + * @clk: pointer to the clock structure.
->> + * @temp_error1: fused value of the first point trim.
->> + * @temp_error2: fused value of the second point trim.
->> + * @reg_conf: pointer to structure to register with core thermal.
->> + */
->>  struct exynos_tmu_data {
->> +     int id;
->>       struct exynos_tmu_platform_data *pdata;
->> -     struct resource *mem;
->>       void __iomem *base;
->>       int irq;
->>       enum soc_type soc;
->> @@ -46,6 +63,7 @@ struct exynos_tmu_data {
->>       struct mutex lock;
->>       struct clk *clk;
->>       u8 temp_error1, temp_error2;
->> +     struct thermal_sensor_conf *reg_conf;
->>  };
->>
->>  /*
->> @@ -319,12 +337,6 @@ static int exynos_tmu_set_emulation(void *drv_data,      unsigned long temp)
->>       { return -EINVAL; }
->>  #endif/*CONFIG_THERMAL_EMULATION*/
->>
->> -static struct thermal_sensor_conf exynos_sensor_conf = {
->> -     .name                   = "exynos-therm",
->> -     .read_temperature       = (int (*)(void *))exynos_tmu_read,
->> -     .write_emul_temp        = exynos_tmu_set_emulation,
->> -};
->> -
->>  static void exynos_tmu_work(struct work_struct *work)
->>  {
->>       struct exynos_tmu_data *data = container_of(work,
->> @@ -333,7 +345,7 @@ static void exynos_tmu_work(struct work_struct *work)
->>       struct exynos_tmu_registers *reg = pdata->registers;
->>       unsigned int val_irq;
->>
->> -     exynos_report_trigger(&exynos_sensor_conf);
->> +     exynos_report_trigger(data->reg_conf);
->>       mutex_lock(&data->lock);
->>       clk_enable(data->clk);
->>
->> @@ -405,10 +417,42 @@ static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
->>                       platform_get_device_id(pdev)->driver_data;
->>  }
->>
->> +static int exynos_map_dt_data(struct platform_device *pdev)
->> +{
->> +     struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->> +     struct resource res;
->> +
->> +     if (!data)
->> +             return -ENODEV;
->> +
->> +     data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
->> +     if (data->id < 0)
->> +             data->id = 0;
->> +
->> +     data->irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
->> +     if (data->irq <= 0) {
->> +             dev_err(&pdev->dev, "failed to get IRQ\n");
->> +             return -ENODEV;
->> +     }
->> +
->> +     if (of_address_to_resource(pdev->dev.of_node, 0, &res)) {
->> +             dev_err(&pdev->dev, "failed to get Resource\n");
->> +             return -ENODEV;
->> +     }
->> +
->> +     data->base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
->> +     if (!data->base) {
->> +             dev_err(&pdev->dev, "Failed to ioremap memory\n");
->> +             return -ENOMEM;
->
-> looks like the statement below fits better here:
->                 return ERR_PTR(-EADDRNOTAVAIL);
+--===============7946656014511352876==
+Content-Type: multipart/alternative; boundary=001a11c379fa22400c04dc544ede
 
-Ok.
+--001a11c379fa22400c04dc544ede
+Content-Type: text/plain; charset=ISO-8859-1
+
+Hi Tomasz,
+
+
+On 10 May 2013 05:35, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+
+> Hi Vikas,
 >
->> +     }
+> On Wednesday 08 of May 2013 11:31:34 Vikas Sajjan wrote:
+> > Adds display timing node for a DP panel to Arndale Board DTS file
+> >
+> > Signed-off-by: Vikas Sajjan <vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> > ---
+> >  arch/arm/boot/dts/exynos5250-arndale.dts |   16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
+> > b/arch/arm/boot/dts/exynos5250-arndale.dts index f68b820..c831a5c
+> > 100644
+> > --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> > +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> > @@ -459,4 +459,20 @@
+> >               samsung,lane-count = <4>;
+> >       };
+> >
+> > +     display-timings {
+> > +             native-mode = <&timing0>;
+> > +             timing0: timing@0 {
+> > +                     /* 2560x1600 DP panel */
+> > +                     clock-frequency = <50000>;
+> > +                     hactive = <2560>;
+> > +                     vactive = <1600>;
+> > +                     hfront-porch = <48>;
+> > +                     hback-porch = <80>;
+> > +                     hsync-len = <32>;
+> > +                     vback-porch = <16>;
+> > +                     vfront-porch = <8>;
+> > +                     vsync-len = <6>;
+> > +             };
+> > +     };
 >
-> blank line?
-Ok.
->
->> +     return 0;
->> +}
->> +
->>  static int exynos_tmu_probe(struct platform_device *pdev)
->>  {
->>       struct exynos_tmu_data *data;
->>       struct exynos_tmu_platform_data *pdata = pdev->dev.platform_data;
->> +     struct thermal_sensor_conf *sensor_conf;
->>       int ret, i;
->>
->>       if (!pdata)
->> @@ -425,26 +469,17 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->>               return -ENOMEM;
->>       }
->>
->> -     data->irq = platform_get_irq(pdev, 0);
->> -     if (data->irq < 0) {
->> -             dev_err(&pdev->dev, "Failed to get platform irq\n");
->> -             return data->irq;
->> -     }
->> -
->> -     INIT_WORK(&data->irq_work, exynos_tmu_work);
->> -
->> -     data->mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> -     if (!data->mem) {
->> -             dev_err(&pdev->dev, "Failed to get platform resource\n");
->> -             return -ENOENT;
->> -     }
->> +     data->pdata = pdata;
->> +     platform_set_drvdata(pdev, data);
->> +     mutex_init(&data->lock);
->>
->> -     data->base = devm_ioremap_resource(&pdev->dev, data->mem);
->> -     if (IS_ERR(data->base))
->> -             return PTR_ERR(data->base);
->> +     ret = exynos_map_dt_data(pdev);
->> +     if (ret)
->> +             return ret;
->>
->> +     INIT_WORK(&data->irq_work, exynos_tmu_work);
->>       ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
->> -             IRQF_TRIGGER_RISING, "exynos-tmu", data);
->> +             IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
->>       if (ret) {
->>               dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
->>               return ret;
->> @@ -469,10 +504,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->>               goto err_clk;
->>       }
->>
->> -     data->pdata = pdata;
->> -     platform_set_drvdata(pdev, data);
->> -     mutex_init(&data->lock);
->> -
->>       ret = exynos_tmu_initialize(pdev);
->>       if (ret) {
->>               dev_err(&pdev->dev, "Failed to initialize TMU\n");
->> @@ -481,28 +512,40 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->>
->>       exynos_tmu_control(pdev, true);
->>
->> -     /* Register the sensor with thermal management interface */
->> -     (&exynos_sensor_conf)->driver_data = data;
->> -     exynos_sensor_conf.trip_data.trip_count = pdata->trigger_enable[0] +
->> +     /* Allocate a structure to register with the exynos core thermal */
->> +     sensor_conf = devm_kzalloc(&pdev->dev,
->> +                             sizeof(struct thermal_sensor_conf), GFP_KERNEL);
->> +     if (!sensor_conf) {
->> +             dev_err(&pdev->dev, "Failed to allocate registration struct\n");
->> +             ret = -ENOMEM;
->> +             goto err_clk;
->> +     }
->> +     data->reg_conf = sensor_conf;
->> +     sprintf(sensor_conf->name, "therm_zone%d", data->id);
->> +     sensor_conf->read_temperature = (int (*)(void *))exynos_tmu_read;
->> +     sensor_conf->write_emul_temp =
->> +             (int (*)(void *, unsigned long))exynos_tmu_set_emulation;
->> +     sensor_conf->driver_data = data;
->> +     sensor_conf->trip_data.trip_count = pdata->trigger_enable[0] +
->>                       pdata->trigger_enable[1] + pdata->trigger_enable[2]+
->>                       pdata->trigger_enable[3];
->>
->> -     for (i = 0; i < exynos_sensor_conf.trip_data.trip_count; i++)
->> -             exynos_sensor_conf.trip_data.trip_val[i] =
->> +     for (i = 0; i < sensor_conf->trip_data.trip_count; i++)
->> +             sensor_conf->trip_data.trip_val[i] =
->>                       pdata->threshold + pdata->trigger_levels[i];
->>
->> -     exynos_sensor_conf.trip_data.trigger_falling = pdata->threshold_falling;
->> +     sensor_conf->trip_data.trigger_falling = pdata->threshold_falling;
->>
->> -     exynos_sensor_conf.cooling_data.freq_clip_count =
->> -                                             pdata->freq_tab_count;
->> +     sensor_conf->cooling_data.freq_clip_count = pdata->freq_tab_count;
->>       for (i = 0; i < pdata->freq_tab_count; i++) {
->> -             exynos_sensor_conf.cooling_data.freq_data[i].freq_clip_max =
->> +             sensor_conf->cooling_data.freq_data[i].freq_clip_max =
->>                                       pdata->freq_tab[i].freq_clip_max;
->> -             exynos_sensor_conf.cooling_data.freq_data[i].temp_level =
->> +             sensor_conf->cooling_data.freq_data[i].temp_level =
->>                                       pdata->freq_tab[i].temp_level;
->>       }
->>
->> -     ret = exynos_register_thermal(&exynos_sensor_conf);
->> +     /* Register the sensor with thermal management interface */
->> +     ret = exynos_register_thermal(sensor_conf);
->>       if (ret) {
->>               dev_err(&pdev->dev, "Failed to register thermal interface\n");
->>               goto err_clk;
->> @@ -521,7 +564,7 @@ static int exynos_tmu_remove(struct platform_device *pdev)
->>
->>       exynos_tmu_control(pdev, false);
->>
->> -     exynos_unregister_thermal(&exynos_sensor_conf);
->> +     exynos_unregister_thermal(data->reg_conf);
->>
->>       clk_unprepare(data->clk);
->>
->>
+> What display are those timings used for? Shouldn't they be placed inside
+> node of that display?
 >
 >
+This timing information will be used parsed by the FIMD probe with the help
+of "Video Helper function"  as done in this link
+
+https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/commit/?h=exynos-drm-next&id=7f4596f4aebcc9fcf2d50d3fe398508d710c4dd0
+
+Please refer to this patch which is used for exynos4412-origen and
+exynos5250-smdk5250 respectively in similar way
+
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/commit/?h=for-next&id=0207775d6ff7e6a6eddb9931f9328f0f0173a338
+
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/commit/?h=for-next&id=06c460b73f75894cabfb1f5277f27cddbc92745c
+
+
+
+Best regards,
+> Tomasz
+>
+>
+
+
+-- 
+Thanks and Regards
+ Vikas Sajjan
+
+--001a11c379fa22400c04dc544ede
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Tomasz,<br><div class=3D"gmail_extra"><br><br><div clas=
+s=3D"gmail_quote">On 10 May 2013 05:35, Tomasz Figa <span dir=3D"ltr">&lt;<=
+a href=3D"mailto:tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" target=3D"_blank">tomasz.figa@gmail=
+.com</a>&gt;</span> wrote:<br>
+
+<blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-=
+left:1px solid rgb(204,204,204);padding-left:1ex">Hi Vikas,<br>
+<div><div class=3D"h5"><br>
+On Wednesday 08 of May 2013 11:31:34 Vikas Sajjan wrote:<br>
+&gt; Adds display timing node for a DP panel to Arndale Board DTS file<br>
+&gt;<br>
+&gt; Signed-off-by: Vikas Sajjan &lt;<a href=3D"mailto:vikas.sajjan@linaro.=
+org">vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org</a>&gt;<br>
+&gt; ---<br>
+&gt; =A0arch/arm/boot/dts/exynos5250-arndale.dts | =A0 16 ++++++++++++++++<=
+br>
+&gt; =A01 file changed, 16 insertions(+)<br>
+&gt;<br>
+&gt; diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts<br>
+&gt; b/arch/arm/boot/dts/exynos5250-arndale.dts index f68b820..c831a5c<br>
+&gt; 100644<br>
+&gt; --- a/arch/arm/boot/dts/exynos5250-arndale.dts<br>
+&gt; +++ b/arch/arm/boot/dts/exynos5250-arndale.dts<br>
+&gt; @@ -459,4 +459,20 @@<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,lane-count =3D &lt;4&gt;;<br>
+&gt; =A0 =A0 =A0 };<br>
+&gt;<br>
+&gt; + =A0 =A0 display-timings {<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 native-mode =3D &lt;&amp;timing0&gt;;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 timing0: timing@0 {<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* 2560x1600 DP panel */<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 clock-frequency =3D &lt;5000=
+0&gt;;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hactive =3D &lt;2560&gt;;<br=
+>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 vactive =3D &lt;1600&gt;;<br=
+>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hfront-porch =3D &lt;48&gt;;=
+<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hback-porch =3D &lt;80&gt;;<=
+br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hsync-len =3D &lt;32&gt;;<br=
+>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 vback-porch =3D &lt;16&gt;;<=
+br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 vfront-porch =3D &lt;8&gt;;<=
+br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 vsync-len =3D &lt;6&gt;;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 };<br>
+&gt; + =A0 =A0 };<br>
+<br>
+</div></div>What display are those timings used for? Shouldn&#39;t they be =
+placed inside<br>
+node of that display?<br>
+<br></blockquote><div><br>This timing information will be used parsed by th=
+e FIMD probe with the help of &quot;Video Helper function&quot;=A0 as done =
+in this link <br><br><a href=3D"https://git.kernel.org/cgit/linux/kernel/gi=
+t/daeinki/drm-exynos.git/commit/?h=3Dexynos-drm-next&amp;id=3D7f4596f4aebcc=
+9fcf2d50d3fe398508d710c4dd0">https://git.kernel.org/cgit/linux/kernel/git/d=
+aeinki/drm-exynos.git/commit/?h=3Dexynos-drm-next&amp;id=3D7f4596f4aebcc9fc=
+f2d50d3fe398508d710c4dd0</a><br>
+
+<br>Please refer to this patch which is used for exynos4412-origen and exyn=
+os5250-smdk5250 respectively in similar way<br><br><a href=3D"https://git.k=
+ernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/commit/?h=3Dfor-nex=
+t&amp;id=3D0207775d6ff7e6a6eddb9931f9328f0f0173a338">https://git.kernel.org=
+/cgit/linux/kernel/git/kgene/linux-samsung.git/commit/?h=3Dfor-next&amp;id=
+=3D0207775d6ff7e6a6eddb9931f9328f0f0173a338</a><br>
+
+<br><a href=3D"https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-sam=
+sung.git/commit/?h=3Dfor-next&amp;id=3D06c460b73f75894cabfb1f5277f27cddbc92=
+745c">https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/=
+commit/?h=3Dfor-next&amp;id=3D06c460b73f75894cabfb1f5277f27cddbc92745c</a><=
+br>
+
+=A0<br><br><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px =
+0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+Best regards,<br>
+Tomasz<br>
+<br>
+</blockquote></div><br><br clear=3D"all"><br>-- <br>Thanks and Regards<div>=
+=A0Vikas Sajjan</div>
+</div></div>
+
+--001a11c379fa22400c04dc544ede--
+
+--===============7946656014511352876==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============7946656014511352876==--
