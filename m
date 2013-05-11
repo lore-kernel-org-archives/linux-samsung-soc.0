@@ -1,59 +1,64 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH V2 1/3] clk: samsung: register audio subsystem clocks
- using common clock framework
-Date: Sat, 11 May 2013 13:42:11 +0200
-Message-ID: <518E2E93.7030104@gmail.com>
-References: <1367909016-19657-1-git-send-email-padma.v@samsung.com> <1367909016-19657-2-git-send-email-padma.v@samsung.com> <1730722.Al2EYiRntt@flatron> <CAAgF-BfeCZn8-_W-QxXw1QhU-Day-TEMtApiykw1mr7_aA=qTQ@mail.gmail.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v5] pinctrl: Add pinctrl-s3c24xx driver
+Date: Sat, 11 May 2013 17:26:49 +0200
+Message-ID: <201305111726.49491.heiko@sntech.de>
+References: <201305031552.45410.heiko@sntech.de> <046401ce4d15$ccba0c80$662e2580$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f48.google.com ([74.125.83.48]:62264 "EHLO
-	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751627Ab3EKLmR (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:53141 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752950Ab3EKP05 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 May 2013 07:42:17 -0400
-Received: by mail-ee0-f48.google.com with SMTP id c4so2264128eek.21
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 May 2013 04:42:16 -0700 (PDT)
-In-Reply-To: <CAAgF-BfeCZn8-_W-QxXw1QhU-Day-TEMtApiykw1mr7_aA=qTQ@mail.gmail.com>
+	Sat, 11 May 2013 11:26:57 -0400
+In-Reply-To: <046401ce4d15$ccba0c80$662e2580$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linus.walleij@linaro.org, thomas.abraham@linaro.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
+Am Freitag, 10. Mai 2013, 02:32:05 schrieb Kukjin Kim:
+> Heiko St=C3=BCbner wrote:
+> > The s3c24xx pins follow a similar pattern as the other Samsung SoCs=
+ and
+> > can therefore reuse the already introduced infrastructure.
+> >=20
+> > The s3c24xx SoCs have one design oddity in that the first 4 externa=
+l
+> > interrupts do not reside in the eint pending register but in the ma=
+in
+> > interrupt controller instead. We solve this by forwarding the exter=
+nal
+> > interrupt from the main controller into the irq domain of the pin b=
+ank.
+> > The masking/acking of these interrupts is handled in the same way.
+> >=20
+> > Furthermore the S3C2412/2413 SoCs contain another oddity in that th=
+ey
+> > keep the same 4 eints in the main interrupt controller and eintpend
+> > register and requiring ack operations to happen in both. This is so=
+lved
+> > by using different compatible properties for the wakeup eint node w=
+hich
+> > set a property accordingly.
+> >=20
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>=20
+> Looks good to me.
+>=20
+> Linus, if you want me to take into samsung tree, please let me know.
 
-On 05/11/2013 12:13 PM, Padma Venkat wrote:
->>> +CLK_OF_DECLARE(exynos4210_audss_clk, "samsung,exynos4210-audss-clock",
->>> >>  +             samsung_audss_clk_init);
->>> >>  +CLK_OF_DECLARE(exynos5250_audss_clk, "samsung,exynos5250-audss-clock",
->>> >>  +             samsung_audss_clk_init);
->> >
->> >  Also if both Exynos4210 and Exynos5250 have exactly the same audss clock
->> >  layout, there is no reason to have two compatibles for them - the
->> >  convention is that just the first model that had this hardware is enough -
->> >  in this case Exynos4210.
->> >
->> >  Having two different compatibles suggests that those two SoCs differ in a
->> >  way that needs special handling, which is misleading, based on the fact
->> >  that there is no such special handling in the driver.
->
-> There is only one difference between Exynos4 and Exynos5 is bit 1 of
-> CLK_GATE register where in Exynos5 it is reserved and Exynos4 it is
-> gate to IntMEM. I am not sure if we use this bit some where? So is it
-> okey to have same compatible with this diff?
+in v4 Linus said:
 
-I think such difference warrants separate compatible properties, as 
-Exynos5250
-seems to be not compatible with Exynos4210 in that case. Reserved bits 
-should
-be left untouched.
+"Are you taking this through the Samsung tree?"
 
-I wouldn't be surprised to see more differences we might be overlooking 
-now.
-IMHO it's better to be save than sorry, keeping both 'compatible' 
-strings as
-they are now.
+This would also enable me to put the s3c2416 devicetree support on top =
+of it=20
+in this cycle, which of course needs the pinctrl driver.
 
-Regards,
-Sylwester
+
+Heiko
