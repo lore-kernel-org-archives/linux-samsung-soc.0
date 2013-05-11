@@ -1,61 +1,62 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] exynos4-is: Remove "sysreg" clock handling
-Date: Fri, 10 May 2013 18:46:35 +0200
-Message-ID: <1368204395-12732-1-git-send-email-s.nawrocki@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [RFC 39/42] arch/arm/plat-samsung: don't check resource with
+ devm_ioremap_resource
+Date: Sat, 11 May 2013 14:15:05 +0900
+Message-ID: <002601ce4e06$7f68fbc0$7e3af340$@samsung.com>
+References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
+ <1368173847-5661-40-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:13839 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754459Ab3EJQrG (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:25615 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751247Ab3EKFPH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 May 2013 12:47:06 -0400
+	Sat, 11 May 2013 01:15:07 -0400
+In-reply-to: <1368173847-5661-40-git-send-email-wsa@the-dreams.de>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: 'Wolfram Sang' <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-The "sysreg" clock is required by multiple subsystems and none of the
-other drivers handles this clock explicitly. It is currently assumed
-that this clock is always on, left in its default state after system
-reset.
+On Friday, May 10, 2013 5:17 PM, Wolfram Sang wrote:
+> 
+> devm_ioremap_resource does sanity checks on the given resource. No need to
+> duplicate this in the driver.
+> 
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
-Remove handling of this clock from the FIMC-IS driver to avoid breaking
-other subsystems.
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
+Best regards,
+Jingoo Han
 
-This patch should be applied after:
-[PATCH] clk: samsung: Add CLK_IGNORE_UNUSED flag for the sysreg clocks
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg18076.html
-
- drivers/media/platform/exynos4-is/fimc-is.c |    1 -
- drivers/media/platform/exynos4-is/fimc-is.h |    1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index 47c6363..a094bb6 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -48,7 +48,6 @@ static char *fimc_is_clocks[ISS_CLKS_MAX] = {
- 	[ISS_CLK_LITE0]			= "lite0",
- 	[ISS_CLK_LITE1]			= "lite1",
- 	[ISS_CLK_MPLL]			= "mpll",
--	[ISS_CLK_SYSREG]		= "sysreg",
- 	[ISS_CLK_ISP]			= "isp",
- 	[ISS_CLK_DRC]			= "drc",
- 	[ISS_CLK_FD]			= "fd",
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.h b/drivers/media/platform/exynos4-is/fimc-is.h
-index f5275a5..606a7c9 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.h
-+++ b/drivers/media/platform/exynos4-is/fimc-is.h
-@@ -73,7 +73,6 @@ enum {
- 	ISS_CLK_LITE0,
- 	ISS_CLK_LITE1,
- 	ISS_CLK_MPLL,
--	ISS_CLK_SYSREG,
- 	ISS_CLK_ISP,
- 	ISS_CLK_DRC,
- 	ISS_CLK_FD,
---
-1.7.9.5
+> ---
+>  arch/arm/plat-samsung/adc.c |    5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+> index ca07cb1..79690f2 100644
+> --- a/arch/arm/plat-samsung/adc.c
+> +++ b/arch/arm/plat-samsung/adc.c
+> @@ -381,11 +381,6 @@ static int s3c_adc_probe(struct platform_device *pdev)
+>  	}
+> 
+>  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!regs) {
+> -		dev_err(dev, "failed to find registers\n");
+> -		return -ENXIO;
+> -	}
+> -
+>  	adc->regs = devm_ioremap_resource(dev, regs);
+>  	if (IS_ERR(adc->regs))
+>  		return PTR_ERR(adc->regs);
+> --
+> 1.7.10.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
