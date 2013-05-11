@@ -1,39 +1,37 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/2] ARM: dts: add DP clock reference to exynos5250 device tree
-Date: Sat, 11 May 2013 14:25:15 -0700
-Message-ID: <CAD=FV=V=exRoo1VAF5W7May_DFOWb6h_KL7BkqK3G2qmBQgUeA@mail.gmail.com>
-References: <003001ce4e1b$24a28fc0$6de7af40$@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: Document DP clock in samsung,exynos5-dp binding
+Date: Sat, 11 May 2013 14:26:07 -0700
+Message-ID: <CAD=FV=UjohPBxChbE2R4b8JWCbxZRXVx_9WuMYPgHTehMP6vvg@mail.gmail.com>
+References: <003101ce4e1b$4acc0050$e06400f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:57701 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754427Ab3EKVZR (ORCPT
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:53805 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754060Ab3EKV0I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 May 2013 17:25:17 -0400
-Received: by mail-lb0-f179.google.com with SMTP id d10so5280917lbj.38
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 May 2013 14:25:15 -0700 (PDT)
-In-Reply-To: <003001ce4e1b$24a28fc0$6de7af40$@samsung.com>
+	Sat, 11 May 2013 17:26:08 -0400
+Received: by mail-lb0-f171.google.com with SMTP id u10so5272205lbi.30
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 May 2013 14:26:07 -0700 (PDT)
+In-Reply-To: <003101ce4e1b$4acc0050$e06400f0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Jingoo Han <jg1.han@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?St=E9phane_Marchesin?= <marcheu@chromium.org>, Sean Paul <seanpaul@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, =?ISO-8859-1?Q?St=E9phane_Marchesin?= <marcheu@chromium.org>
 
 Jingoo,
 
-On Sat, May 11, 2013 at 12:42 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> The transition to common clock happened; however, DP (Display Port)
-> clock node was not added. Thus, DP (Display Port) clock node should
-> be added to the device tree.
+On Sat, May 11, 2013 at 12:43 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> The exynos5-dp node needs a clock specified using the common clock
+> framework.
 >
 > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 > ---
 > Tested on Exynos5250
 >
->  arch/arm/boot/dts/exynos5250.dtsi |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
+>  .../devicetree/bindings/video/exynos_dp.txt        |    6 ++++++
+>  1 files changed, 6 insertions(+), 0 deletions(-)
 
-Clock number matches clock bindings for 5250 and clock name matches dp
-driver, so this looks good.
+Thanks for updating the bindings.  This looks good.
 
 Reviewed-by: Doug Anderson <dianders@chromium.org>
