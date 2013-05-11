@@ -1,72 +1,224 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [RFC 23/42] drivers/spi: don't check resource with
- devm_ioremap_resource
-Date: Sat, 11 May 2013 14:24:35 +0900
-Message-ID: <002b01ce4e07$d3087ed0$79197c70$@samsung.com>
-References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
- <1368173847-5661-24-git-send-email-wsa@the-dreams.de>
+From: Libo Chen <chenlibo.3@gmail.com>
+Subject: [PATCH] usb: gadget: s3c2410: fix clk resource leak and update
+Date: Sat, 11 May 2013 14:28:15 +0800
+Message-ID: <518DE4FF.1000702@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=GB2312
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1368173847-5661-24-git-send-email-wsa@the-dreams.de>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Wolfram Sang' <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
-Cc: 'Mark Brown' <broonie@kernel.org>, 'Grant Likely' <grant.likely@linaro.org>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Barry Song' <baohua.song@csr.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:49305 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753380Ab3EKG15 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 11 May 2013 02:27:57 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ben-linux@fluff.org, kgene.kim@samsung.com, balbi@ti.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, lizefan@huawei.com, libo.chen@huawei.com, stern@rowland.harvard.edu, akpm@linux-foundation.org
 
-On Friday, May 10, 2013 5:17 PM, Wolfram Sang wrote:
-> 
-> devm_ioremap_resource does sanity checks on the given resource. No need to
-> duplicate this in the driver.
-> 
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> ---
->  drivers/spi/spi-bcm63xx.c        |    8 +-------
->  drivers/spi/spi-ep93xx.c         |    8 +-------
->  drivers/spi/spi-omap2-mcspi.c    |    7 +------
->  drivers/spi/spi-s3c64xx.c        |    7 +------
->  drivers/spi/spi-sirf.c           |    7 +------
->  drivers/spi/spi-tegra114.c       |    7 +------
->  drivers/spi/spi-tegra20-sflash.c |    5 -----
->  drivers/spi/spi-tegra20-slink.c  |    7 +------
->  8 files changed, 7 insertions(+), 49 deletions(-)
-> 
+From: Libo Chen <libo.chen@huawei.com>
 
-[.....]
+currently, when clk_get(NULL,"usb-device") fail, it does not
+disable && put usb_bus_clock. It is incorrect.
 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 5000586..fd763cc 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1243,12 +1243,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  	}
-> 
-> -	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (mem_res == NULL) {
-> -		dev_err(&pdev->dev, "Unable to get SPI MEM resource\n");
-> -		return -ENXIO;
-> -	}
-> -
+this patch use new interface devm_xxx instead of xxx then
+we no need to care about cleanup resource in err case that is boring
+and reduce code size.
 
-It breaks 'sdd->sfr_start' assignment as below:
+Signed-off-by: Libo Chen <libo.chen@huawei.com>
+---
+ drivers/usb/gadget/s3c2410_udc.c | 85
+++++++++++++----------------------------
+ 1 file changed, 25 insertions(+), 60 deletions(-)
 
-1272         sdd->sfr_start = mem_res->start;
+diff --git a/drivers/usb/gadget/s3c2410_udc.c
+b/drivers/usb/gadget/s3c2410_udc.c
+old mode 100644
+new mode 100755
+index d0e75e1..0c573a8
+--- a/drivers/usb/gadget/s3c2410_udc.c
++++ b/drivers/usb/gadget/s3c2410_udc.c
+@@ -1780,7 +1780,7 @@ static int s3c2410_udc_probe(struct
+platform_device *pdev)
 
+ 	dev_dbg(dev, "%s()\n", __func__);
 
-Best regards,
-Jingoo Han
+-	usb_bus_clock = clk_get(NULL, "usb-bus-gadget");
++	usb_bus_clock = devm_clk_get(NULL, "usb-bus-gadget");
+ 	if (IS_ERR(usb_bus_clock)) {
+ 		dev_err(dev, "failed to get usb bus clock source\n");
+ 		return PTR_ERR(usb_bus_clock);
+@@ -1788,8 +1788,9 @@ static int s3c2410_udc_probe(struct
+platform_device *pdev)
 
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq < 0) {
->  		dev_warn(&pdev->dev, "Failed to get IRQ: %d\n", irq);
-> @@ -1318,6 +1312,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  	/* the spi->mode bits understood by this driver: */
->  	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
-> 
-> +	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
->  	if (IS_ERR(sdd->regs)) {
->  		ret = PTR_ERR(sdd->regs);
+ 	clk_enable(usb_bus_clock);
+
+-	udc_clock = clk_get(NULL, "usb-device");
++	udc_clock = devm_clk_get(NULL, "usb-device");
+ 	if (IS_ERR(udc_clock)) {
++		clk_disable(usb_bus_clock);
+ 		dev_err(dev, "failed to get udc clock source\n");
+ 		return PTR_ERR(udc_clock);
+ 	}
+@@ -1814,13 +1815,15 @@ static int s3c2410_udc_probe(struct
+platform_device *pdev)
+ 	rsrc_start = S3C2410_PA_USBDEV;
+ 	rsrc_len   = S3C24XX_SZ_USBDEV;
+
+-	if (!request_mem_region(rsrc_start, rsrc_len, gadget_name))
+-		return -EBUSY;
++	if (!devm_request_mem_region(rsrc_start, rsrc_len, gadget_name)) {
++		retval = -EBUSY;
++		goto out;
++	}
+
+-	base_addr = ioremap(rsrc_start, rsrc_len);
++	base_addr = devm_ioremap(rsrc_start, rsrc_len);
+ 	if (!base_addr) {
+ 		retval = -ENOMEM;
+-		goto err_mem;
++		goto out;
+ 	}
+
+ 	the_controller = udc;
+@@ -1830,31 +1833,31 @@ static int s3c2410_udc_probe(struct
+platform_device *pdev)
+ 	s3c2410_udc_reinit(udc);
+
+ 	/* irq setup after old hardware state is cleaned up */
+-	retval = request_irq(IRQ_USBD, s3c2410_udc_irq,
++	retval = devm_request_irq(IRQ_USBD, s3c2410_udc_irq,
+ 			     0, gadget_name, udc);
+
+ 	if (retval != 0) {
+ 		dev_err(dev, "cannot get irq %i, err %d\n", IRQ_USBD, retval);
+ 		retval = -EBUSY;
+-		goto err_map;
++		goto out;
+ 	}
+
+ 	dev_dbg(dev, "got irq %i\n", IRQ_USBD);
+
+ 	if (udc_info && udc_info->vbus_pin > 0) {
+-		retval = gpio_request(udc_info->vbus_pin, "udc vbus");
++		retval = devm_gpio_request(udc_info->vbus_pin, "udc vbus");
+ 		if (retval < 0) {
+ 			dev_err(dev, "cannot claim vbus pin\n");
+-			goto err_int;
++			goto out;
+ 		}
+
+ 		irq = gpio_to_irq(udc_info->vbus_pin);
+ 		if (irq < 0) {
+ 			dev_err(dev, "no irq for gpio vbus pin\n");
+-			goto err_gpio_claim;
++			goto out;
+ 		}
+
+-		retval = request_irq(irq, s3c2410_udc_vbus_irq,
++		retval = devm_request_irq(irq, s3c2410_udc_vbus_irq,
+ 				     IRQF_TRIGGER_RISING
+ 				     | IRQF_TRIGGER_FALLING | IRQF_SHARED,
+ 				     gadget_name, udc);
+@@ -1863,7 +1866,7 @@ static int s3c2410_udc_probe(struct
+platform_device *pdev)
+ 			dev_err(dev, "can't get vbus irq %d, err %d\n",
+ 				irq, retval);
+ 			retval = -EBUSY;
+-			goto err_gpio_claim;
++			goto out;
+ 		}
+
+ 		dev_dbg(dev, "got irq %i\n", irq);
+@@ -1874,17 +1877,17 @@ static int s3c2410_udc_probe(struct
+platform_device *pdev)
+ 	if (udc_info && !udc_info->udc_command &&
+ 		gpio_is_valid(udc_info->pullup_pin)) {
+
+-		retval = gpio_request_one(udc_info->pullup_pin,
++		retval = devm_gpio_request_one(udc_info->pullup_pin,
+ 				udc_info->vbus_pin_inverted ?
+ 				GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW,
+ 				"udc pullup");
+ 		if (retval)
+-			goto err_vbus_irq;
++			goto out;
+ 	}
+
+ 	retval = usb_add_gadget_udc(&pdev->dev, &udc->gadget);
+ 	if (retval)
+-		goto err_add_udc;
++		goto out;
+
+ 	if (s3c2410_udc_debugfs_root) {
+ 		udc->regs_info = debugfs_create_file("registers", S_IRUGO,
+@@ -1898,22 +1901,9 @@ static int s3c2410_udc_probe(struct
+platform_device *pdev)
+
+ 	return 0;
+
+-err_add_udc:
+-	if (udc_info && !udc_info->udc_command &&
+-			gpio_is_valid(udc_info->pullup_pin))
+-		gpio_free(udc_info->pullup_pin);
+-err_vbus_irq:
+-	if (udc_info && udc_info->vbus_pin > 0)
+-		free_irq(gpio_to_irq(udc_info->vbus_pin), udc);
+-err_gpio_claim:
+-	if (udc_info && udc_info->vbus_pin > 0)
+-		gpio_free(udc_info->vbus_pin);
+-err_int:
+-	free_irq(IRQ_USBD, udc);
+-err_map:
+-	iounmap(base_addr);
+-err_mem:
+-	release_mem_region(rsrc_start, rsrc_len);
++out:
++	clk_disable(udc_clock);
++	clk_disable(usb_bus_clock);
+
+ 	return retval;
+ }
+@@ -1931,36 +1921,11 @@ static int s3c2410_udc_remove(struct
+platform_device *pdev)
+ 	if (udc->driver)
+ 		return -EBUSY;
+
+-	usb_del_gadget_udc(&udc->gadget);
+ 	debugfs_remove(udc->regs_info);
++	usb_del_gadget_udc(&udc->gadget);
+
+-	if (udc_info && !udc_info->udc_command &&
+-		gpio_is_valid(udc_info->pullup_pin))
+-		gpio_free(udc_info->pullup_pin);
+-
+-	if (udc_info && udc_info->vbus_pin > 0) {
+-		irq = gpio_to_irq(udc_info->vbus_pin);
+-		free_irq(irq, udc);
+-	}
+-
+-	free_irq(IRQ_USBD, udc);
+-
+-	iounmap(base_addr);
+-	release_mem_region(rsrc_start, rsrc_len);
+-
+-	platform_set_drvdata(pdev, NULL);
+-
+-	if (!IS_ERR(udc_clock) && udc_clock != NULL) {
+-		clk_disable(udc_clock);
+-		clk_put(udc_clock);
+-		udc_clock = NULL;
+-	}
+-
+-	if (!IS_ERR(usb_bus_clock) && usb_bus_clock != NULL) {
+-		clk_disable(usb_bus_clock);
+-		clk_put(usb_bus_clock);
+-		usb_bus_clock = NULL;
+-	}
++	clk_disable(udc_clock);
++	clk_disable(usb_bus_clock);
+
+ 	dev_dbg(&pdev->dev, "%s: remove ok\n", __func__);
+ 	return 0;
+-- 
+1.8.1.2
