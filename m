@@ -1,66 +1,26 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: dts: add pin state information for DP HPD support to Exynos5250
-Date: Sat, 11 May 2013 14:40:34 -0700
-Message-ID: <CAD=FV=V9oBR1ZAEsMs5-x7NaD1fiHJO=9dn1mPAMg0MX6tnxYA@mail.gmail.com>
-References: <000001ce4e1e$d1cc5de0$756519a0$@samsung.com>
+From: "Gulnara-ulianA" <ahmed.abubaker@sme-pal.ps>
+Subject: =?windows-1251?Q?=CF=EE=F2=E5=F8=FC=F2=E5_=F7=F3=E4=E5=F1?=
+	=?windows-1251?Q?=ED=E5=E9=F8=E8=EC?=
+Date: Sun, 12 May 2013 16:42:32 +0300
+Message-ID: <6F3CF3D89B5D4ABE8114AAE3C193EECD@nwvfinm>
+Reply-To: "Gulnara-ulianA" <Gulnara-ulianA@servint.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000001ce4e1e$d1cc5de0$756519a0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, =?ISO-8859-1?Q?St=E9phane_Marchesin?= <marcheu@chromium.org>, Andrew Bresticker <abrestic@chromium.org>
+Content-Type: text/plain; charset=windows-1251
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from nscp2.intertech-pal.com ([46.43.66.107]:43731 "EHLO
+	cpanel4.mada.ps" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752839Ab3ELPKQ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 12 May 2013 11:10:16 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ater@ivc.nnov.ru, setenergotrans@gmail.com, lniaaduit@mail.ru, belousow@rambler.ru, linux-samsung-soc@vger.kernel.org
 
-Jingoo,
-
-On Sat, May 11, 2013 at 1:09 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> Add pin state information for DP HPD support that requires
-> pin configuration support using pinctrl interface.
->
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
-> Tested on Exynos5250
->
->  arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts |    3 +++
->  2 files changed, 10 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> index d1650fb..e9cdee3 100644
-> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> @@ -553,6 +553,13 @@
->                         samsung,pin-pud = <0>;
->                         samaung,pin-drv = <0>;
->                 };
-> +
-> +               dp_hpd: dp_hpd {
-> +                       samsung,pins = "gpx0-7";
-> +                       samsung,pin-function = <3>;
-> +                       samsung,pin-pud = <0>;
-> +                       samaung,pin-drv = <0>;
-> +               };
->         };
->
->         pinctrl@13400000 {
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 3e0c792..d53ea34 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -224,6 +224,9 @@
->                 samsung,color-depth = <1>;
->                 samsung,link-rate = <0x0a>;
->                 samsung,lane-count = <4>;
-> +
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&dp_hpd>;
-
-I was going to suggest moving this to exynos5250.dtsi but then
-realized that I saw a board recently that used a non-standard HPD pin
-recently!  ...so keeping it in the board file (like you've done) is
-good.
-
-...so looks good to me.
-
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+   =CA=F3=EF=E8=F2=FC =EC=EE=E6=ED=EE =E7=E4=E5=F1=FC: http://bit.ly/16=
+lvKVs =D1=F2=EE=EF=F0=EE=F6=E5=ED=F2=ED=FB=E9 =F5=E8=F2 =EF=F0=EE=E4=E0=
+=E6. =D8=EE=EA=E8=F0=EE=E2=E0=ED=FB =E1=F3=E4=F3=F2 =ED=E5 =F2=EE=EB=FC=
+=EA=EE-=F2=EE=EB=FC=EA=EE =EC=E0=EB=FC=F7=E0=F2=E0 =ED=EE =E8 =F1=F2=E0=
+=F0=F8=E8=E5.=20
+=20
+=20
