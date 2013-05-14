@@ -1,55 +1,46 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v2 3/3] ARM: dts: Add display timing node to exynos5250-arndale.dts
-Date: Tue, 14 May 2013 19:42:46 +0530
-Message-ID: <1368540766-9818-4-git-send-email-vikas.sajjan@linaro.org>
-References: <1368540766-9818-1-git-send-email-vikas.sajjan@linaro.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/2] video: exynos_dp: Add parsing of gpios pins to
+ exynos-dp driver
+Date: Tue, 14 May 2013 16:16:38 +0200
+Message-ID: <1528008.HgBKZQmFTy@amdc1227>
+References: <1368536152-13370-1-git-send-email-vikas.sajjan@linaro.org>
+ <1368536152-13370-2-git-send-email-vikas.sajjan@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:56039 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755848Ab3ENONL (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:43527 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757609Ab3ENOQ4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 May 2013 10:13:11 -0400
-Received: by mail-pb0-f42.google.com with SMTP id up7so466843pbc.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 May 2013 07:13:10 -0700 (PDT)
-In-Reply-To: <1368540766-9818-1-git-send-email-vikas.sajjan@linaro.org>
+	Tue, 14 May 2013 10:16:56 -0400
+In-reply-to: <1368536152-13370-2-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: jg1.han@samsung.com, s.trumtrar@pengutronix.de, tomasz.figa@gmail.com, olof@lixom.net, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: jg1.han@samsung.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, patches@linaro.org, linaro-kernel@lists.linaro.org, rpurdie@rpsys.net, FlorianSchandinat@gmx.de, linux-fbdev@vger.kernel.org
 
-Adds display timing node for a DP panel to Arndale Board DTS file
+Hi Vikas,
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
----
- arch/arm/boot/dts/exynos5250-arndale.dts |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+On Tuesday 14 of May 2013 18:25:51 Vikas Sajjan wrote:
+>  Adds GPIO parsing functionality for "LCD backlight" and "LCD enable"
+>  GPIO pins of exynos dp controller.
+> 
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  drivers/video/exynos/exynos_dp_core.c |   45
+> +++++++++++++++++++++++++++++++++ 1 file changed, 45 insertions(+)
+> 
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index f68b820..c371f7c 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -459,4 +459,22 @@
- 		samsung,lane-count = <4>;
- 	};
- 
-+	fimd: fimd@14400000 {
-+		display-timings {
-+			native-mode = <&timing0>;
-+			timing0: timing@0 {
-+				/* 2560x1600 DP panel */
-+				clock-frequency = <50000>;
-+				hactive = <2560>;
-+				vactive = <1600>;
-+				hfront-porch = <48>;
-+				hback-porch = <80>;
-+				hsync-len = <32>;
-+				vback-porch = <16>;
-+				vfront-porch = <8>;
-+				vsync-len = <6>;
-+			};
-+		};
-+	};
-+
- };
--- 
-1.7.9.5
+I don't think that Exynos DP driver is right place for such code. Backlight 
+and LCD drivers are responsible for backlight and LCD power control using 
+backlight and LCD subsystems.
+
+IMHO the correct solution would be to either extend existing backlight/lcd 
+drivers found in drivers/video/backlight to support direct GPIO control and 
+parse GPIO pins from device tree or create new gpio_bl and gpio_lcd drivers.
+
+CCing Richard, Florian and linux-fbdev.
+
+Best regards,
+Tomasz
