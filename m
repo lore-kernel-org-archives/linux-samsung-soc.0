@@ -1,57 +1,39 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Late Exynos stuff for v3.10
-Date: Tue, 14 May 2013 21:31:09 +0900
-Message-ID: <093801ce509e$e98b2bf0$bca183d0$%kim@samsung.com>
-References: <5176B499.1000208@samsung.com> <51770697.7080504@samsung.com>
- <20130424000638.GA9067@quad.lixom.net> <51794E10.1010205@samsung.com>
- <CAOesGMjA5_XUXMcCL3roZiLC1S=ypMoVHn2tF7bzUuKr+eLw2A@mail.gmail.com>
- <046301ce4d15$ac1592b0$0440b810$%kim@samsung.com> <5191CE53.5050902@linaro.org>
+Subject: RE: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to
+ drivers/cpufreq
+Date: Tue, 14 May 2013 21:36:42 +0900
+Message-ID: <093901ce509f$afe92f40$0fbb8dc0$%kim@samsung.com>
+References: <cover.1365079581.git.viresh.kumar@linaro.org>
+ <5176A807.2090005@samsung.com>
+ <CAKohpomV9-JEbuHWdmp6N+bKYt+83hXXcqg4aKXSY1a5zwpW9Q@mail.gmail.com>
+ <105283277.osOpfTKkgk@vostro.rjw.lan>
+ <CAKohponkFB7ND38jv5oGnQLx8cq0b=uHTCmL3EERe6P54ijYhw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:20798 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757258Ab3ENMbK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 May 2013 08:31:10 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MMS00GI1G3X6OA0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 May 2013 21:31:09 +0900 (KST)
-In-reply-to: <5191CE53.5050902@linaro.org>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <CAKohponkFB7ND38jv5oGnQLx8cq0b=uHTCmL3EERe6P54ijYhw@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: cpufreq-owner@vger.kernel.org
+To: 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@sisk.pl>
+Cc: robin.randhawa@arm.com, 'Ben Dooks' <ben-linux@fluff.org>, linux-pm@vger.kernel.org, patches@linaro.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, charles.garcia-tobin@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Tushar Behera wrote:
+Viresh Kumar wrote:
 > 
-> >> Refresh my memory here, what was the reason for dropping the USB DTS
-> >> updates? (Yes, I am aware it might because I asked you not to send
-> >> them in but I don't remember :-).
-> >>
-> > Hmm...let me see, yeah, the USB DTS updates dropped because of late
-> > pull-request stuff as you concerned.
-> > http://www.spinics.net/lists/arm-kernel/msg240105.html
-> >
-> > Since I didn't want to make a noise at that time, so I dropped for
-v3.10,
-> it
-> > has been included in my tree for some time though.
-> >
+> On 13 May 2013 16:21, Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> > That doesn't matter I suppose.  I can take it, but please rebase it on
+> top
+> > of current linux-next.
 > 
-> Will it be possible to queue them up for one of the RC releases? They
-> are only DTS entries, the drivers have already been merged.
+> I have already done that (attached). But i wasn't sure what Kukjin wants
+> as
+> he may report conflicts again and i will ask the same question for 3.12 :)
 > 
-Well, I think, it's possible to send the usb phy node for usb2 for v3.10
-because it's critical at this moment.
+Since this missed last time, this would be sent to upstream via samsung tree
+again. It means the conflicts should be handled by myself.
 
-Others should be queued for v3.11.
-
-Thanks.
+Rafael, if you don't mind, let me take this into Samsung tree for v3.11.
 
 - Kukjin
+
