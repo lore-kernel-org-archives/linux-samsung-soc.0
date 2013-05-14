@@ -1,142 +1,61 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH V4 06/30] thermal: exynos: Move exynos_thermal.h from include/* to driver/* folder
-Date: Tue, 14 May 2013 15:28:36 +0530
-Message-ID: <1368525540-15034-7-git-send-email-amit.daniel@samsung.com>
-References: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+From: George Joseph <george.jp@samsung.com>
+Subject: [RFC PATCH 0/3] [media] s5p-jpeg: Add support for Exynos4x12 and 5250
+Date: Tue, 14 May 2013 17:23:37 +0530
+Message-ID: <1368532420-21555-1-git-send-email-george.jp@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, a.hajda@samsung.com, ym.song@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch renames and moves include/linux/platform_data/exynos_thermal.h to
-drivers/thermal/samsung/exynos_tmu.h. This file movement is needed as exynos
-SOC's are not supporting non-DT based platforms and this file now just contains
-exynos tmu driver related definations.
-Also struct freq_clip_table is now moved to exynos_thermal_common.c as it fixes
-the compilation issue occuring because now this new tmu header file is included
-in tmu driver c file and not in the common thermal header file.
+From: George Joseph Palathingal <george.jp@samsung.com>
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
- drivers/thermal/samsung/exynos_thermal_common.c    |    1 -
- drivers/thermal/samsung/exynos_thermal_common.h    |   15 ++++++++++++
- drivers/thermal/samsung/exynos_tmu.c               |    2 +-
- .../thermal/samsung/exynos_tmu.h                   |   24 ++++---------------
- 4 files changed, 21 insertions(+), 21 deletions(-)
- rename include/linux/platform_data/exynos_thermal.h => drivers/thermal/samsung/exynos_tmu.h (84%)
+This patch series refactors the JPEG driver to add code to support Exynos4x12
+and Exynos5250 JPEG IPs and makes the driver DT and CCF compliant.
 
-diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
-index 92e50bc..dd49c9f 100644
---- a/drivers/thermal/samsung/exynos_thermal_common.c
-+++ b/drivers/thermal/samsung/exynos_thermal_common.c
-@@ -21,7 +21,6 @@
-  */
- 
- #include <linux/cpu_cooling.h>
--#include <linux/platform_data/exynos_thermal.h>
- #include <linux/slab.h>
- #include <linux/thermal.h>
- 
-diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
-index 8df1848..068f56c 100644
---- a/drivers/thermal/samsung/exynos_thermal_common.h
-+++ b/drivers/thermal/samsung/exynos_thermal_common.h
-@@ -44,6 +44,21 @@
- 
- #define EXYNOS_ZONE_COUNT	3
- 
-+/**
-+ * struct freq_clip_table
-+ * @freq_clip_max: maximum frequency allowed for this cooling state.
-+ * @temp_level: Temperature level at which the temperature clipping will
-+ *	happen.
-+ * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
-+ *
-+ * This structure is required to be filled and passed to the
-+ * cpufreq_cooling_unregister function.
-+ */
-+struct freq_clip_table {
-+	unsigned int freq_clip_max;
-+	unsigned int temp_level;
-+	const struct cpumask *mask_val;
-+};
- struct	thermal_trip_point_conf {
- 	int trip_val[MAX_TRIP_COUNT];
- 	int trip_count;
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 5948f3c..50952e2 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -27,9 +27,9 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
--#include <linux/platform_data/exynos_thermal.h>
- 
- #include "exynos_thermal_common.h"
-+#include "exynos_tmu.h"
- 
- /* Exynos generic registers */
- #define EXYNOS_TMU_REG_TRIMINFO		0x0
-diff --git a/include/linux/platform_data/exynos_thermal.h b/drivers/thermal/samsung/exynos_tmu.h
-similarity index 84%
-rename from include/linux/platform_data/exynos_thermal.h
-rename to drivers/thermal/samsung/exynos_tmu.h
-index da7e627..9e0f887 100644
---- a/include/linux/platform_data/exynos_thermal.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -1,8 +1,9 @@
- /*
-- * exynos_thermal.h - Samsung EXYNOS TMU (Thermal Management Unit)
-+ * exynos_tmu.h - Samsung EXYNOS TMU (Thermal Management Unit)
-  *
-  *  Copyright (C) 2011 Samsung Electronics
-  *  Donggeun Kim <dg77.kim@samsung.com>
-+ *  Amit Daniel Kachhap <amit.daniel@samsung.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -19,8 +20,8 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
--#ifndef _LINUX_EXYNOS_THERMAL_H
--#define _LINUX_EXYNOS_THERMAL_H
-+#ifndef _EXYNOS_TMU_H
-+#define _EXYNOS_TMU_H
- #include <linux/cpu_cooling.h>
- 
- enum calibration_type {
-@@ -33,21 +34,6 @@ enum soc_type {
- 	SOC_ARCH_EXYNOS4210 = 1,
- 	SOC_ARCH_EXYNOS,
- };
--/**
-- * struct freq_clip_table
-- * @freq_clip_max: maximum frequency allowed for this cooling state.
-- * @temp_level: Temperature level at which the temperature clipping will
-- *	happen.
-- * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
-- *
-- * This structure is required to be filled and passed to the
-- * cpufreq_cooling_unregister function.
-- */
--struct freq_clip_table {
--	unsigned int freq_clip_max;
--	unsigned int temp_level;
--	const struct cpumask *mask_val;
--};
- 
- /**
-  * struct exynos_tmu_platform_data
-@@ -116,4 +102,4 @@ struct exynos_tmu_platform_data {
- 	struct freq_clip_table freq_tab[4];
- 	unsigned int freq_tab_count;
- };
--#endif /* _LINUX_EXYNOS_THERMAL_H */
-+#endif /* _EXYNOS_TMU_H */
+Exynos4210 JPEG driver supports only single planar image formats.
+The JPEG IP on Exynos4412 and 5250 supports multiplanar image formats as well.
+So the existing JPEG driver is refactored to support the JPEG h/w on all
+the three SoCs. The encoder/decoder functionalities are separated to
+two different files for better modularity.
+
+The encoder/decoder functionalities have been tested on Origen 4210, 4412 and SMDK 5250
+boards. There is currently an issue with the Exynos 4210 JPEG encoder which will be
+fixed in subsequent patches.
+
+The patch series is based on linux-next tree (20130514).
+
+George Joseph Palathingal (2):
+  [media] s5p-jpeg: Add support for Exynos4x12 and 5250
+  [media] s5p-jpeg: Add DT support to JPEG driver
+
+Sylwester Nawrocki (1):
+  ARM: dts: Add documentation for Samsung JPEG driver bindings
+
+ .../devicetree/bindings/media/samsung-s5p-jpeg.txt |   21 +
+ drivers/media/platform/s5p-jpeg/Makefile           |    4 +-
+ drivers/media/platform/s5p-jpeg/jpeg-core.c        | 2041 +++++++++-----------
+ drivers/media/platform/s5p-jpeg/jpeg-core.h        |  428 ++--
+ drivers/media/platform/s5p-jpeg/jpeg-dec.c         |  489 +++++
+ drivers/media/platform/s5p-jpeg/jpeg-enc.c         |  521 +++++
+ drivers/media/platform/s5p-jpeg/jpeg-hw-v1.h       |  528 +++++
+ drivers/media/platform/s5p-jpeg/jpeg-hw-v2.c       |  614 ++++++
+ drivers/media/platform/s5p-jpeg/jpeg-hw-v2.h       |   47 +
+ drivers/media/platform/s5p-jpeg/jpeg-hw.h          |  357 ----
+ drivers/media/platform/s5p-jpeg/jpeg-regs-v1.h     |  171 ++
+ drivers/media/platform/s5p-jpeg/jpeg-regs-v2.h     |  191 ++
+ drivers/media/platform/s5p-jpeg/jpeg-regs.h        |  170 --
+ 13 files changed, 3787 insertions(+), 1795 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5p-jpeg.txt
+ create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-dec.c
+ create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-enc.c
+ create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-hw-v1.h
+ create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-hw-v2.c
+ create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-hw-v2.h
+ delete mode 100644 drivers/media/platform/s5p-jpeg/jpeg-hw.h
+ create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-regs-v1.h
+ create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-regs-v2.h
+ delete mode 100644 drivers/media/platform/s5p-jpeg/jpeg-regs.h
+
 -- 
-1.7.1
+1.7.9.5
