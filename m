@@ -1,39 +1,40 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to
- drivers/cpufreq
-Date: Tue, 14 May 2013 21:36:42 +0900
-Message-ID: <093901ce509f$afe92f40$0fbb8dc0$%kim@samsung.com>
-References: <cover.1365079581.git.viresh.kumar@linaro.org>
- <5176A807.2090005@samsung.com>
- <CAKohpomV9-JEbuHWdmp6N+bKYt+83hXXcqg4aKXSY1a5zwpW9Q@mail.gmail.com>
- <105283277.osOpfTKkgk@vostro.rjw.lan>
- <CAKohponkFB7ND38jv5oGnQLx8cq0b=uHTCmL3EERe6P54ijYhw@mail.gmail.com>
+Subject: RE: [PATCH RESEND] ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
+Date: Tue, 14 May 2013 21:40:47 +0900
+Message-ID: <093a01ce50a0$42702bc0$c7508340$%kim@samsung.com>
+References: <51642dab.e844440a.0ad1.ffffc13f@mx.google.com>
+ <516571BC.9030909@samsung.com> <51756E98.9040606@samsung.com>
+ <201304222111.45653.arnd@arndb.de> <5176975E.5000802@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-reply-to: <CAKohponkFB7ND38jv5oGnQLx8cq0b=uHTCmL3EERe6P54ijYhw@mail.gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:21834 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757270Ab3ENMkt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 14 May 2013 08:40:49 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MMS00E6ZGK0Z1D0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 14 May 2013 21:40:48 +0900 (KST)
+In-reply-to: <5176975E.5000802@samsung.com>
 Content-language: ko
-Sender: cpufreq-owner@vger.kernel.org
-To: 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@sisk.pl>
-Cc: robin.randhawa@arm.com, 'Ben Dooks' <ben-linux@fluff.org>, linux-pm@vger.kernel.org, patches@linaro.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, charles.garcia-tobin@arm.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Olof Johansson' <olof@lixom.net>
 
-Viresh Kumar wrote:
+Kukjin Kim wrote:
 > 
-> On 13 May 2013 16:21, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> > That doesn't matter I suppose.  I can take it, but please rebase it on
-> top
-> > of current linux-next.
-> 
-> I have already done that (attached). But i wasn't sure what Kukjin wants
-> as
-> he may report conflicts again and i will ask the same question for 3.12 :)
-> 
-Since this missed last time, this would be sent to upstream via samsung tree
-again. It means the conflicts should be handled by myself.
 
-Rafael, if you don't mind, let me take this into Samsung tree for v3.11.
+[...]
+
+> Note that I will send this removing non-DT exynos support patch to
+> arm-soc tree after release v3.10-rc1.
+
+Just note that, as we discussed, this patch will be queued for v3.11.
 
 - Kukjin
-
