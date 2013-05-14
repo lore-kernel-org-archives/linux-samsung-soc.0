@@ -1,62 +1,39 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen
- board
-Date: Tue, 14 May 2013 08:37:53 +0530
-Message-ID: <5191AA89.6010901@linaro.org>
-References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org> <87sj1qzaov.fsf@linaro.org>
+Subject: Re: [GIT PULL] Late Exynos stuff for v3.10
+Date: Tue, 14 May 2013 11:10:35 +0530
+Message-ID: <5191CE53.5050902@linaro.org>
+References: <5176B499.1000208@samsung.com> <51770697.7080504@samsung.com> <20130424000638.GA9067@quad.lixom.net> <51794E10.1010205@samsung.com> <CAOesGMjA5_XUXMcCL3roZiLC1S=ypMoVHn2tF7bzUuKr+eLw2A@mail.gmail.com> <046301ce4d15$ac1592b0$0440b810$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:59819 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755376Ab3ENDH7 (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:47264 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750979Ab3ENFkm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 May 2013 23:07:59 -0400
-Received: by mail-pa0-f45.google.com with SMTP id lj1so106098pab.18
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 May 2013 20:07:59 -0700 (PDT)
-In-Reply-To: <87sj1qzaov.fsf@linaro.org>
+	Tue, 14 May 2013 01:40:42 -0400
+Received: by mail-pa0-f50.google.com with SMTP id fb10so194975pad.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 May 2013 22:40:42 -0700 (PDT)
+In-Reply-To: <046301ce4d15$ac1592b0$0440b810$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, olof@lixom.net, dianders@chromium.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 05/14/2013 05:36 AM, Kevin Hilman wrote:
-> Tushar Behera <tushar.behera@linaro.org> writes:
-> 
->> It updates following drivers for EXYNOS based DT platform.
+>> Refresh my memory here, what was the reason for dropping the USB DTS
+>> updates? (Yes, I am aware it might because I asked you not to send
+>> them in but I don't remember :-).
 >>
->> * S5M8767 driver
->> * MAX8997 driver
->> * MMC SDHCI driver
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> Hmm...let me see, yeah, the USB DTS updates dropped because of late
+> pull-request stuff as you concerned.
+> http://www.spinics.net/lists/arm-kernel/msg240105.html
 > 
-> I tested this using v3.10-rc1 on Arndale, but still don't get any
-> support for the wired network.  Do you know if this is a Kconfig issue,
-> or a missing driver?
-> 
-> I suspect it may be related to the various "unable to find transceiver
-> of type USB2 PHY" messages I'm seeing?
+> Since I didn't want to make a noise at that time, so I dropped for v3.10, it
+> has been included in my tree for some time though.
 > 
 
-Yes, right. The missing USB-PHY components are one of the issues (they
-were there in linux-next when I last tested).
-
-Also, on Arndale board, we need to reset the USB hub during EHCI
-initialization (a couple of those patches are required, which I am not
-sure if we would be able to upstream).
-
-I am collecting a minimal set of patches that would enable USB and wired
-network on Arndale with 3.10-rc1 kernel. Once done, I will let you know.
-
-> Thanks,
-> 
-> Kevin
-> 
-
-Thanks for testing.
-
+Will it be possible to queue them up for one of the RC releases? They
+are only DTS entries, the drivers have already been merged.
 
 -- 
 Tushar Behera
