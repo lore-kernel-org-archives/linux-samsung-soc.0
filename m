@@ -1,41 +1,36 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
-Date: Tue, 14 May 2013 15:00:59 +0200
-Message-ID: <2001452.Fn2HjLbNED@vostro.rjw.lan>
-References: <cover.1365079581.git.viresh.kumar@linaro.org> <CAKohponkFB7ND38jv5oGnQLx8cq0b=uHTCmL3EERe6P54ijYhw@mail.gmail.com> <093901ce509f$afe92f40$0fbb8dc0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <093901ce509f$afe92f40$0fbb8dc0$%kim@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>, robin.randhawa@arm.com, 'Ben Dooks' <ben-linux@fluff.org>, linux-pm@vger.kernel.org, patches@linaro.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, charles.garcia-tobin@arm.com
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH 0/2] Add LCD backlight and LCD enable gpios pins to dp-controller DT node
+Date: Tue, 14 May 2013 18:25:50 +0530
+Message-ID: <1368536152-13370-1-git-send-email-vikas.sajjan@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:37736 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756701Ab3ENM4Y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 14 May 2013 08:56:24 -0400
+Received: by mail-pa0-f45.google.com with SMTP id lj1so494829pab.18
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 May 2013 05:56:23 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: jg1.han@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-On Tuesday, May 14, 2013 09:36:42 PM Kukjin Kim wrote:
-> Viresh Kumar wrote:
-> > 
-> > On 13 May 2013 16:21, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> > > That doesn't matter I suppose.  I can take it, but please rebase it on
-> > top
-> > > of current linux-next.
-> > 
-> > I have already done that (attached). But i wasn't sure what Kukjin wants
-> > as
-> > he may report conflicts again and i will ask the same question for 3.12 :)
-> > 
-> Since this missed last time, this would be sent to upstream via samsung tree
-> again. It means the conflicts should be handled by myself.
-> 
-> Rafael, if you don't mind, let me take this into Samsung tree for v3.11.
+This patch series adds LCD backlight and LCD enable gpios pins to dp-controller
+DT node of exynos5250-smdk5250 and parsing of these gpio pins in exynos-dp driver
 
-Sure, please go ahead.
+tested on exynos5250-smdk5250 Board.
 
-Thanks,
-Rafael
+rebased on kgene-next branch of 
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/
 
+Vikas Sajjan (2):
+  video: exynos_dp: Add parsing of gpios pins to exynos-dp driver
+  ARM: dts: Add LCD backlight and LCD enable gpios pins to
+    dp-controller DT node
+
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |    3 ++
+ drivers/video/exynos/exynos_dp_core.c     |   45 +++++++++++++++++++++++++++++
+ 2 files changed, 48 insertions(+)
 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+1.7.9.5
