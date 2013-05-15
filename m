@@ -1,62 +1,55 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
-Date: Wed, 15 May 2013 23:48:31 +0200
-Message-ID: <201305152348.32171.heiko@sntech.de>
-References: <201305111330.05046.heiko@sntech.de> <201305152231.52423.heiko@sntech.de> <5193FC08.5040002@gmail.com>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: Pulls and drive strengths in the pinctrl world
+Date: Wed, 15 May 2013 14:57:43 -0700
+Message-ID: <CAD=FV=WSa9BBDKu8jE43ZG+NS1ZSZYQE5Z2n2ts7BmmbTUnSWg@mail.gmail.com>
+References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com>
+	<2016052.zneaYHvtGE@flatron>
+	<CAD=FV=VQ3X=xGhQapcDM6kMRSz0_06wWj7Oxn8hU-zPcajTZDg@mail.gmail.com>
+	<2019038.uIdiqCOAdU@flatron>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:42129 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752486Ab3EOVso (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:54626 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752262Ab3EOV5p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 17:48:44 -0400
-In-Reply-To: <5193FC08.5040002@gmail.com>
+	Wed, 15 May 2013 17:57:45 -0400
+Received: by mail-la0-f46.google.com with SMTP id fk20so2312755lab.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 May 2013 14:57:44 -0700 (PDT)
+In-Reply-To: <2019038.uIdiqCOAdU@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
 
-Am Mittwoch, 15. Mai 2013, 23:20:08 schrieb Sylwester Nawrocki:
-> On 05/15/2013 10:31 PM, Heiko St=FCbner wrote:
-> >>> +       BUG();
-> >>>=20
-> >> >  Isn't that a bit nasty. This macro should be used with care and=
- we
-> >> >  should recover if possible. dev_err()?
-> >=20
-> > runtime_config already denies any settings not in the 1,2 or 4bytes=
- range
-> > - the default-part should therefore never be reached. So if any oth=
-er
-> > value magically appears in the register and triggers the default-pa=
-rt,
-> > something is seriously wrong. So my guess is, the BUG might be
-> > appropriate.
-> >=20
-> > On the other hand the whole default+BUG part could also simply go a=
-way,
-> > for the same reasons.
->=20
-> IMHO BUG() is not needed at all. As Linus suggested dev_err() is such=
- case
-> or WARN_ON() would be more appropriate. This has been discussed in th=
-e past
-> extensively, not sure if you are aware of the other Linus' opinion on
-> BUG()/BUG_ON() proliferation: https://lkml.org/lkml/2012/9/27/461
+Tomasz,
 
-Very interesting read and I'll keep this in mind in the future. What ab=
-out the=20
-other option ... i.e. simply getting rid of the whole "error handling",=
- as the=20
-other code paths should already make sure that only valid values get wr=
-itten=20
-into the register.
+On Wed, May 15, 2013 at 2:36 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> One potential reason for leaving them is the hopes that it might cause
+>> a little less line glitching, especially in the case of outputs.
+>> There is some delay between the pinmux being configured at the start
+>> of device probe and the device actually claiming the GPIO.  Things
+>> might be worse in the case of deferred probe (?).  Can you think of
+>> any reason to remove (other than yet more lines of device tree to deal
+>> with)?
+>
+> Well, actually in case of interrupts the function should not be configured
+> manually, because it is likely to cause a false interrupt to be caught,
+> before appropriate interrupt trigger type is configured. The correct way
+> is to leave setting pin function to EINT to the pin control driver once
+> the trigger gets configured (the pin control driver configures pin
+> function from set_irq_type callback).
 
-Can the value change in the register somehow on its own without kernel=20
-intervention, or does this not happen?
+Ah, OK.  I'll set to input for these.
 
 
-Thanks
-Heiko
+>> I will probably leave them even for inputs.  They shouldn't matter but
+>> I like the idea of initting things to a known state...
+>
+> Well, the binding you proposed for interrupts doesn't initialize it. This
+> is why I pointed that it can be omitted using current way as well.
+
+Agreed.  ...though you could say that the actual code in that case
+would just be setting the drive strength to 0 (for consistency).  ;)
+
+-Doug
