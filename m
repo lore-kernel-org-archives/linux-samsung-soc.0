@@ -1,93 +1,62 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: Pulls and drive strengths in the pinctrl world
-Date: Wed, 15 May 2013 23:43:40 +0200
-Message-ID: <3605069.eT96cYVWIJ@flatron>
-References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com> <CAD=FV=V-1uO3XSg603zyJx907EhhkMC5UCOfzrhgyGWw_0TO0A@mail.gmail.com> <2118733.fzZiu9I5M5@flatron>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
+Date: Wed, 15 May 2013 23:48:31 +0200
+Message-ID: <201305152348.32171.heiko@sntech.de>
+References: <201305111330.05046.heiko@sntech.de> <201305152231.52423.heiko@sntech.de> <5193FC08.5040002@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f171.google.com ([209.85.215.171]:47910 "EHLO
-	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751414Ab3EOVnp (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:42129 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752486Ab3EOVso (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 17:43:45 -0400
-Received: by mail-ea0-f171.google.com with SMTP id b15so1323547eae.30
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 May 2013 14:43:43 -0700 (PDT)
-In-Reply-To: <2118733.fzZiu9I5M5@flatron>
+	Wed, 15 May 2013 17:48:44 -0400
+In-Reply-To: <5193FC08.5040002@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 
-On Wednesday 15 of May 2013 23:41:54 Tomasz Figa wrote:
-> On Wednesday 15 of May 2013 14:31:20 Doug Anderson wrote:
-> > Linus,
-> > 
-> > Thank you for your comments.  See below...
-> > 
-> > Stephen: sorry for missing you earlier!  :(
-> > 
-> > On Wed, May 15, 2013 at 11:29 AM, Linus Walleij
-> > 
-> > <linus.walleij@linaro.org> wrote:
-> > > But please use the preprocessor to provide symbolic names for
-> > > the configurations. See for example these two patches from
-> > > J-C:
-> > > http://www.mail-archive.com/devicetree-discuss@lists.ozlabs.org/msg3
-> > > 21
-> > > 64.html
-> > 
-> > Ah, that does look nice!  This probably needs to be addressed in a
-> > separate patch to cleanup all of the samsung pinctrl devicetrees.
-> > 
-> > > I don't think the idea with device tree is to write as compact trees
-> > > as possible, but as expressive and exact yet abstract trees as
-> > > possible for OS independence.
-> > 
-> > The compactness was one benefit, but also it was about trying to avoid
-> > excessive duplication of information.  I found it awkward that I
-> > needed to list that my interrupt was "gpx1-2" in two different ways.
-> > 
-> > I would find it just as good if I could express things like this (for
-> > 
-> > interrupts):
-> >   pinctrl@11400000 {
-> >   
-> >     cyapa_irq: cyapa-irq {
-> >     
-> >       samsung,pins = "gpx1-2";
-> >       samsung,pin-function = <0xf>;
-> >       samsung,pin-pud = <0>;
-> >       samsung,pin-drv = <0>;
-> >       
-> >       interrupt-controller;
-> >       #interrupt-cells = <1>;
-> >     
-> >     };
-> >   
-> >   };
-> >   
-> >   trackpad {
-> >   
-> >     reg = <0x67>;
-> >     compatible = "cypress,cyapa";
-> >     interrupt-parent = <&cyapa_irq>;
-> >     interrupts = <0>;
-> >     wakeup-source;
-> >   
-> >   };
-> > 
-> > In this case I'm not saying that my interrupt parent is "gpx1-2" in
-> > two separate places that could diverge.
-> 
-> This will be hard, since the phandle in interrupt-parent is represented
-> by an IRQ domain in kernel code. One-interrupt IRQ domains seem a bit
-> awkward to me.
+Am Mittwoch, 15. Mai 2013, 23:20:08 schrieb Sylwester Nawrocki:
+> On 05/15/2013 10:31 PM, Heiko St=FCbner wrote:
+> >>> +       BUG();
+> >>>=20
+> >> >  Isn't that a bit nasty. This macro should be used with care and=
+ we
+> >> >  should recover if possible. dev_err()?
+> >=20
+> > runtime_config already denies any settings not in the 1,2 or 4bytes=
+ range
+> > - the default-part should therefore never be reached. So if any oth=
+er
+> > value magically appears in the register and triggers the default-pa=
+rt,
+> > something is seriously wrong. So my guess is, the BUG might be
+> > appropriate.
+> >=20
+> > On the other hand the whole default+BUG part could also simply go a=
+way,
+> > for the same reasons.
+>=20
+> IMHO BUG() is not needed at all. As Linus suggested dev_err() is such=
+ case
+> or WARN_ON() would be more appropriate. This has been discussed in th=
+e past
+> extensively, not sure if you are aware of the other Linus' opinion on
+> BUG()/BUG_ON() proliferation: https://lkml.org/lkml/2012/9/27/461
 
-Ahh, not even saying that a single interrupt signal is not really an 
-interrupt controller, which would make device tree diverge from real 
-hardware description.
+Very interesting read and I'll keep this in mind in the future. What ab=
+out the=20
+other option ... i.e. simply getting rid of the whole "error handling",=
+ as the=20
+other code paths should already make sure that only valid values get wr=
+itten=20
+into the register.
 
-Best regards,
-Tomasz
+Can the value change in the register somehow on its own without kernel=20
+intervention, or does this not happen?
+
+
+Thanks
+Heiko
