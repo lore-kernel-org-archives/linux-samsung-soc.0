@@ -1,95 +1,195 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
-Date: Tue, 14 May 2013 16:21:36 +0200
-Message-ID: <3254712.MAHxRAdAN5@amdc1227>
-References: <201305111330.05046.heiko@sntech.de>
- <201305111331.25405.heiko@sntech.de>
- <CACRpkda-wQyo8aYxbW9RJNcR3Kwe2w5AhaAuUHfaxBksa_Pm2A@mail.gmail.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH V4 00/30] thermal: exynos: Add thermal driver for exynos5440
+Date: Wed, 15 May 2013 10:44:49 -0400
+Message-ID: <51939F61.5020904@ti.com>
+References: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="----enig2NROSVTKJFEOGHNFKVTTN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:30973 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755592Ab3ENOVx convert rfc822-to-8bit (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:48511 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759297Ab3EOOpO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 May 2013 10:21:53 -0400
-In-reply-to: <CACRpkda-wQyo8aYxbW9RJNcR3Kwe2w5AhaAuUHfaxBksa_Pm2A@mail.gmail.com>
+	Wed, 15 May 2013 10:45:14 -0400
+In-Reply-To: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
 
-Hi Linus, Heiko,
+------enig2NROSVTKJFEOGHNFKVTTN
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 14 of May 2013 14:47:19 Linus Walleij wrote:
-> On Sat, May 11, 2013 at 1:31 PM, Heiko St=FCbner <heiko@sntech.de> wr=
-ote:
-> > Conceptually the s3c24xx-dma feels like a distant relative of the p=
-l08x
-> > with numerous virtual channels being mapped to a lot less physical =
-ones.
-> > The driver therefore borrows a lot from the amba-pl08x driver in th=
+On 14-05-2013 05:58, Amit Daniel Kachhap wrote:
+> Changes in V4:
+>  Almost all the changes in this version is as per suggestion from Eduar=
+do.The
+>  major ones are listed below,
+> * Added kconfig symbol ARCH_HAS_TMU which needs to be enabled by platfo=
+rm. With
+>   this change existing symbol EXYNOS_TMU_DATA is not needed.
+
+I was more thinking if we could have a single flag that we could use in
+thermal drivers. Besides, my proposal for ARCH_HAS_BANDGAP is still not
+merged yet.
+
+> * Movement of freq_clip_table from exynos_tmu.h to exynos_thermal_commo=
+n.h is
+>   explained in the commit logs.
+> * Wrote all register description documentation.
+> * Split 5440 TMU support patch into controller change, configuration da=
+ta and
+>   feature addition patches.
+> * Remove all *LINUX_* in the header files.
+> * Still regulator enable is kept optional but a TODO: comment is added =
+to fix
+>   it later.
+>=20
+> Changes in V3:
+> * Added proper dependency of different exynos thermal Kconfig symbols. =
+Basically 3
+>  Kconfig can be enabled now and corresponds to tmu driver. exynos commo=
+n part
+>  and exynos configuration data. This issue was raised by Rui Zhang.
+>=20
+> Changes in V2:
+> * Separated SOC data from TMU driver. This is as per suggestion from Ed=
+uardo.
+> * Merged the new file created for exynos5440 TMU controller with the ex=
+isting
+>  TMU controller code.
+> * Removed the DT parsing code as now the SOC specific data are cleanly =
+put
+>  inside the data specific file.
+> * Even the register definations/bitfields are treated as data as there =
 is
-> > regard. Functionality-wise the driver gains a memcpy ability in add=
-ition
-> > to the slave_sg one.
-> >=20
-> > The driver currently only supports the "newer" SoCs which can use a=
-ny
-> > physical channel for any dma slave. Support for the older SoCs wher=
-e
-> > each channel only supports a subset of possible dma slaves will hav=
-e to
-> > be added later.
-> >=20
-> > Tested on a s3c2416-based board, memcpy using the dmatest module an=
+>  some variation across SOC's.
+>=20
+> This patchset adds TMU(Thermal management Unit) driver support for
+> exynos5440 platform. There are 3 instances of the TMU controllers so
+> necessary cleanup/re-structure is done to handle multiple thermal zone.=
+
+>=20
+> Patch (exynos4: Add documentation for Exynos SoC thermal bindings) from=
+
+> Lukasz Majewski is already posted to mainline. Adding it here for compl=
+eteness.
+> (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg17817=
+=2Ehtml)
+>=20
+> Patch (thermal: exynos: Support thermal tripping ) from Jonghwan Choi i=
+s
+> added here with some changes.
+> (https://patchwork.kernel.org/patch/1668371/)
+>=20
+> Patch (thermal: exynos: Support for TMU regulator defined at device tre=
+e)
+> is a repost of my earlier patch(https://patchwork-mail1.kernel.org/patc=
+h/2510771/)=20
+> and adds regulator support.
+>=20
+> Patch (ARM: dts: Add device tree node for exynos5440 TMU controller) an=
 d
-> > slave_sg partially using the spi-s3c64xx driver.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> patch (arm: exynos: enable ARCH_HAS_TMU) can be merged through exynos p=
+latform
+> maintainer as this can cause merge conflict.
 >=20
-> So have I understood correctly if I assume that *some* S3C
-> variants, i.e. this: arch/arm/mach-s3c64xx/dma.c
-> have a vanilla, unmodified, or just slightly modified
-> PL08x block, while this DMAC is something probably based on
-> the PL08x where some ASIC engineer has had a good time hacking
-> around in the VHDL code to meet some feature requirements.
-> Correct? Or plausible guess?
+> All these patches are based on thermal maintainers git tree,
+> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next.
 >=20
-> Exactly *how* far away from the pl08x hardware is it?
+> Amit Daniel Kachhap (29):
+>   thermal: exynos: Moving exynos thermal files into samsung directory
+>   thermal: exynos: Add ARCH_HAS_TMU config to know the supported soc's
+>   thermal: exynos: Remove CPU_THERMAL dependency for using TMU driver
+>   thermal: exynos: Bifurcate exynos thermal common and tmu controller
+>     code
+>   thermal: exynos: Rename exynos_thermal.c to exynos_tmu.c
+>   thermal: exynos: Move exynos_thermal.h from include/* to driver/*
+>     folder
+>   thermal: exynos: Bifurcate exynos tmu driver and configuration data
+>   thermal: exynos: Add missing definations and code cleanup
+>   thermal: exynos: Add extra entries in the tmu platform data
+>   thermal: exynos: Support thermal tripping
+>   thermal: exynos: Move register definitions from driver file to data
+>     file
+>   thermal: exynos: Fix to clear only the generated interrupts
+>   thermal: exynos: Add support for instance based register/unregister
+>   thermal: exynos: Modify private_data to appropriate name driver_data
+>   thermal: exynos: Return success even if no cooling data supplied
+>   thermal: exynos: Make the zone handling dependent on trip count
+>   thermal: exynos: Add support to handle many instances of TMU
+>   thermal: exynos: Add TMU features to check instead of using SOC type
+>   thermal: exynos: use device resource management infrastructure
+>   thermal: exynos: Add support to access common register for
+>     multistance
+>   thermal: exynos: Add support for exynos5440 TMU sensor.
+>   thermal: exynos: Fix to set the second point correction value
+>     properly
+>   thermal: exynos: Add thermal configuration data for exynos5440 TMU
+>     sensor
+>   thermal: exynos: Add a compensation logic on swapped e-fuse values
+>   thermal: exynos: Add hardware mode thermal calibration support
+>   Documentation: thermal: Explain the exynos thermal driver model
+>   thermal: exynos: Support for TMU regulator defined at device tree
+>   ARM: dts: Add device tree node for exynos5440 TMU controller
+>   arm: exynos: enable ARCH_HAS_TMU
+>=20
+> Lukasz Majewski (1):
+>   ARM: dts: thermal: exynos4: Add documentation for Exynos SoC thermal
+>     bindings
+>=20
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |   53 +
+>  Documentation/thermal/exynos_thermal               |   43 +-
+>  arch/arm/boot/dts/exynos5440.dtsi                  |   30 +
+>  arch/arm/mach-exynos/Kconfig                       |    5 +
+>  drivers/thermal/Kconfig                            |   13 +-
+>  drivers/thermal/Makefile                           |    2 +-
+>  drivers/thermal/exynos_thermal.c                   | 1066 ------------=
+--------
+>  drivers/thermal/samsung/Kconfig                    |   21 +
+>  drivers/thermal/samsung/Makefile                   |    7 +
+>  drivers/thermal/samsung/exynos_thermal_common.c    |  407 ++++++++
+>  drivers/thermal/samsung/exynos_thermal_common.h    |   98 ++
+>  drivers/thermal/samsung/exynos_tmu.c               |  741 ++++++++++++=
+++
+>  drivers/thermal/samsung/exynos_tmu.h               |  294 ++++++
+>  drivers/thermal/samsung/exynos_tmu_data.c          |  225 ++++
+>  drivers/thermal/samsung/exynos_tmu_data.h          |  155 +++
+>  include/linux/platform_data/exynos_thermal.h       |  119 ---
+>  16 files changed, 2076 insertions(+), 1203 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/thermal/exynos-th=
+ermal.txt
+>  delete mode 100644 drivers/thermal/exynos_thermal.c
+>  create mode 100644 drivers/thermal/samsung/Kconfig
+>  create mode 100644 drivers/thermal/samsung/Makefile
+>  create mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
+>  create mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
+>  create mode 100644 drivers/thermal/samsung/exynos_tmu.c
+>  create mode 100644 drivers/thermal/samsung/exynos_tmu.h
+>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
+>  delete mode 100644 include/linux/platform_data/exynos_thermal.h
+>=20
+>=20
+>=20
 
-AFAIK the DMAC of S3C24xx is completely different from PL08x. I think H=
-eiko=20
-just meant that it uses similar concepts, like virtual channels.
 
-> I guess you have already come to the conclusion that the
-> amba-pl08x.c driver cannot be augmented to handle this hardware
-> after some educated reading of that code?
->=20
-> But are really no parts reusable?
->=20
-> For example, if the LLIs have the same layout, could we split
-> out the LLI handling from amba-pl08x into a separate file and reuse
-> that?
->=20
-> The more you share with amba-pl08x the better for everyone,
-> I am positively sure. And please include Russell on the review
-> chain, he wrote the virtual channel abstraction.
->=20
-> If I was given the option amongst S3C work I would definatley
-> have augmented the amba-pl08x.c to handle the stuff in
-> arch/arm/mach-s3c64xx/dma.c *first* then started to work on
-> this driver, but I guess you might not be working on s3c64xx?
 
-Well, I still hope that someone will pick up the work on adapting PL08x=
- driver=20
-to support PL080s of S3C64xx as well, but most likely it will end up wi=
-th me=20
-doing it, as a part of DT support for S3C64xx.
+------enig2NROSVTKJFEOGHNFKVTTN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Best regards,
---=20
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Kernel and System Framework
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlGTn2EACgkQCXcVR3XQvP2SRAEAk7NN4DRaDkovkrWtYvOhLf27
+L4kpiONRagxavPVR/aQA/iL3T5H4n1SLMlRBkw8BZWPCvmWdcspWCPQpAmNFy9/b
+=Vo57
+-----END PGP SIGNATURE-----
+
+------enig2NROSVTKJFEOGHNFKVTTN--
