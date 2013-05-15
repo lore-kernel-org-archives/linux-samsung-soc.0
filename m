@@ -1,122 +1,130 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC PATCH 1/3] [media] s5p-jpeg: Add support for Exynos4x12
- and 5250
-Date: Thu, 16 May 2013 00:27:37 +0200
-Message-ID: <51940BD9.5040405@gmail.com>
-References: <1368532420-21555-1-git-send-email-george.jp@samsung.com> <1368532420-21555-2-git-send-email-george.jp@samsung.com>
+Subject: Re: [RFC PATCH 2/3] [media] s5p-jpeg: Add DT support to JPEG driver
+Date: Thu, 16 May 2013 00:32:36 +0200
+Message-ID: <51940D04.7050001@gmail.com>
+References: <1368532420-21555-1-git-send-email-george.jp@samsung.com> <1368532420-21555-3-git-send-email-george.jp@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f181.google.com ([209.85.215.181]:37067 "EHLO
-	mail-ea0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752141Ab3EOW1m (ORCPT
+Received: from mail-ea0-f179.google.com ([209.85.215.179]:52613 "EHLO
+	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752766Ab3EOWcm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 18:27:42 -0400
-In-Reply-To: <1368532420-21555-2-git-send-email-george.jp@samsung.com>
+	Wed, 15 May 2013 18:32:42 -0400
+In-Reply-To: <1368532420-21555-3-git-send-email-george.jp@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: George Joseph <george.jp@samsung.com>
 Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, ym.song@samsung.com, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-Hi George,
+On 05/14/2013 01:53 PM, George Joseph wrote:
+> From: George Joseph Palathingal<george.jp@samsung.com>
+>
+> Adding DT support to the driver. Driver supports Exynos 4210, 4412 and 5250.
+>
+> Signed-off-by: George Joseph Palathingal<george.jp@samsung.com>
+> Cc: devicetree-discuss@lists.ozlabs.org
+> ---
+>   drivers/media/platform/s5p-jpeg/jpeg-core.c |   36 +++++++++++++++++++++++++--
+>   1 file changed, 34 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> index f964566..b2bf412 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> @@ -970,6 +970,8 @@ const struct jpeg_vb2 jpeg_vb2_dma = {
+>   	.plane_addr	= vb2_dma_contig_plane_dma_addr,
+>   };
+>
+> +static void *jpeg_get_drv_data(struct platform_device *pdev);
 
-Thanks for the patches. Sorry, I can't review the $subject patch in detail
-as is, there is way too many things done in this single patch. It looks more
-like a driver replacement. It is even hard to edit due to its size in my
-e-mail client.
+How about putting definition of the jpeg_get_drv_data() function and
+the exynos_jpeg_match array above jpeg_probe() to avoid this forward
+declaration ?
 
-Hence, may I ask you to split it into several patches, each possibly 
-including
-single logical change, with an explanation what the patch does and why, 
-e.g.:
+>   static int jpeg_probe(struct platform_device *pdev)
+>   {
+>   	struct jpeg_dev *dev;
+> @@ -982,8 +984,7 @@ static int jpeg_probe(struct platform_device *pdev)
+>   		return -ENOMEM;
+>
+>   	dev->plat_dev = pdev;
+> -	dev->variant = (struct s5p_jpeg_variant *)
+> -				platform_get_device_id(pdev)->driver_data;
+> +	dev->variant = (struct s5p_jpeg_variant *)jpeg_get_drv_data(pdev);
 
-  - encoder/decoder code split into different files (I'm not 100% sure 
-it is
-    needed),
-  - multiplanar format support addition,
-  - software watchdog addition,
-  - the quantization/Huffman tables modification,
-  - device tree support addition,
-  - ...
+Casting is not needed here.
 
-The reason I'm asking for it is also there seems to be some unrelated
-or unnecessary changes, like, e.g. introducing several JPEG fourccs for
-different YCbCr subsampling or adding unused v4l2 control ioctls (
-jpeg_enc_vidioc_g/s_ctrl, jpeg_enc_vidioc_g/s_ctrl).
+>   	spin_lock_init(&dev->slock);
+>
+>   	/* setup jpeg control */
+> @@ -1232,6 +1233,36 @@ static struct platform_device_id jpeg_driver_ids[] = {
+>
+>   MODULE_DEVICE_TABLE(platform, jpeg_driver_ids);
+>
+> +static const struct of_device_id exynos_jpeg_match[] = {
+> +	{
+> +		.compatible = "samsung,s5pv210-jpeg",
+> +		.data =&jpeg_drvdata_v1,
+> +	}, {
+> +		.compatible = "samsung,exynos4212-jpeg",
+> +		.data =&jpeg_drvdata_v2,
+> +	},
+> +	{},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, exynos_jpeg_match);
+> +
+> +static void *jpeg_get_drv_data(struct platform_device *pdev)
+> +{
+> +	struct s5p_jpeg_variant *driver_data = NULL;
 
-It should be also be easier to test and bisect set of smaller changes when
-needed. I know it means more work for you, but maybe the exynos4210
-regression described in your cover letter could be avoided that way.
+Unnecessary NULL assignment.
 
-A general note, please don't remove "s5p_" prefix from functions that are
-not static. "jpeg_" sounds a bit to generic prefix for symbols in this
-single driver.
+> +	if (pdev->dev.of_node) {
+> +		const struct of_device_id *match;
+> +		match = of_match_node(of_match_ptr(exynos_jpeg_match),
+> +					 pdev->dev.of_node);
+> +		if (match)
+> +			driver_data = (struct s5p_jpeg_variant *)match->data;
+> +		} else {
 
-Also please make sure indentation is not broken, it looks like you are
-using TAB size different than 8 characters.
+Indentation is wrong here.
 
-It might be worth testing the driver as a loadable module, it doesn't
-appear it has been tested, looking at the Makefile modifications. And
-it doesn't even build currently:
+> +			driver_data = (struct s5p_jpeg_variant *)
+> +				platform_get_device_id(pdev)->driver_data;
+> +		}
+> +	return driver_data;
+> +}
 
-drivers/media/platform/s5p-jpeg/jpeg-core: struct platform_device_id is 
-24 bytes.  The last of 3 is:
-0x65 0x78 0x79 0x6e 0x6f 0x73 0x34 0x32 0x31 0x32 0x2d 0x6a 0x70 0x65 
-0x67 0x00 0x00 0x00 0x00 0x00 0x44 0x01 0x00 0x00
-FATAL: drivers/media/platform/s5p-jpeg/jpeg-core: struct 
-platform_device_id is not terminated with a NULL entry!
-make[1]: *** [__modpost] Error 1
+How about rewriting this function to something like:
 
-When I fix that there are errors due to your incorrect Makefile changes
-(separate module for each file ??):
+static const void *jpeg_get_drv_data(struct platform_device *pdev)
+{
+	struct device_node *node = pdev->dev.of_node;
+	const struct of_device_id *match;
 
-ERROR: "jpeg_get_frame_size" 
-[drivers/media/platform/s5p-jpeg/jpeg-dec.ko] undefined!
-ERROR: "jpeg_set_dec_bitstream_size" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_dec_out_fmt" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_dec_scaling" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_frame_buf_address" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_enc_dec_mode" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_encode_hoff_cnt" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_stream_buf_address" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_enc_in_fmt" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_enc_out_fmt" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_stream_size" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_encode_tbl_select" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_enc_tbl" [drivers/media/platform/s5p-jpeg/jpeg-core.ko] 
-undefined!
-ERROR: "jpeg_set_huf_table_enable" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_set_interrupt" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_sw_reset" [drivers/media/platform/s5p-jpeg/jpeg-core.ko] 
-undefined!
-ERROR: "jpeg_get_stream_size" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "jpeg_get_int_status" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "get_jpeg_dec_v4l2_ioctl_ops" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-ERROR: "get_jpeg_enc_v4l2_ioctl_ops" 
-[drivers/media/platform/s5p-jpeg/jpeg-core.ko] undefined!
-make[1]: *** [__modpost] Error 1
-make: *** [modules] Error 2
+	if (node) {
+		match = of_match_node(exynos_jpeg_match, node);
+		return match ? match->data : NULL;
+	}
 
-Could you please add Andrzej Pietrasiewicz to Cc next time ? He might be
-busy with other things, nevertheless I wouldn't like to miss any comments/
-remarks from his side.
+	return (void *)platform_get_device_id(pdev)->driver_data;
+}
+
+?
+>   static struct platform_driver jpeg_driver = {
+>   	.probe		= jpeg_probe,
+>   	.remove		= jpeg_remove,
+> @@ -1241,6 +1272,7 @@ static struct platform_driver jpeg_driver = {
+>   	.driver	= {
+>   		.owner			= THIS_MODULE,
+>   		.name			= JPEG_NAME,
+> +		.of_match_table		= exynos_jpeg_match,
+>   		.pm			= NULL,
+>   	},
+>   };
 
 Thanks,
 Sylwester
