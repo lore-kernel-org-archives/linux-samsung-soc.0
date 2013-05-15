@@ -1,133 +1,82 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
-Date: Thu, 16 May 2013 01:26:08 +0200
-Message-ID: <2010181.yFyln8lrI2@flatron>
-References: <201305111330.05046.heiko@sntech.de> <45625193.0y3McEvmiD@flatron> <201305160045.03934.heiko@sntech.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: Pulls and drive strengths in the pinctrl world
+Date: Wed, 15 May 2013 17:51:00 -0600
+Message-ID: <51941F64.9090104@wwwdotorg.org>
+References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com> <CACRpkdbgjqF3xhxUvfvNJn5Vt-3i0AFBzR_Q8gHdNq919dnNsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:47376 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753875Ab3EOX0N convert rfc822-to-8bit (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:40354 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751414Ab3EOXvG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 19:26:13 -0400
-In-Reply-To: <201305160045.03934.heiko@sntech.de>
+	Wed, 15 May 2013 19:51:06 -0400
+In-Reply-To: <CACRpkdbgjqF3xhxUvfvNJn5Vt-3i0AFBzR_Q8gHdNq919dnNsA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
 
-On Thursday 16 of May 2013 00:45:03 Heiko St=FCbner wrote:
-> Am Donnerstag, 16. Mai 2013, 00:02:40 schrieb Tomasz Figa:
-> > On Wednesday 15 of May 2013 23:48:31 Heiko St=FCbner wrote:
-> > > Am Mittwoch, 15. Mai 2013, 23:20:08 schrieb Sylwester Nawrocki:
-> > > > On 05/15/2013 10:31 PM, Heiko St=FCbner wrote:
-> > > > >>> +       BUG();
-> > > > >>>=20
-> > > > >> >  Isn't that a bit nasty. This macro should be used with ca=
-re
-> > > > >> >  and
-> > > > >> >  we
-> > > > >> >  should recover if possible. dev_err()?
-> > > > >=20
-> > > > > runtime_config already denies any settings not in the 1,2 or
-> > > > > 4bytes
-> > > > > range - the default-part should therefore never be reached. S=
-o
-> > > > > if
-> > > > > any other value magically appears in the register and trigger=
-s
-> > > > > the
-> > > > > default-part, something is seriously wrong. So my guess is, t=
-he
-> > > > > BUG
-> > > > > might be appropriate.
-> > > > >=20
-> > > > > On the other hand the whole default+BUG part could also simpl=
-y
-> > > > > go
-> > > > > away,
-> > > > > for the same reasons.
-> > > >=20
-> > > > IMHO BUG() is not needed at all. As Linus suggested dev_err() i=
-s
-> > > > such
-> > > > case or WARN_ON() would be more appropriate. This has been
-> > > > discussed
-> > > > in the past extensively, not sure if you are aware of the other
-> > > > Linus' opinion on BUG()/BUG_ON() proliferation:
-> > > > https://lkml.org/lkml/2012/9/27/461
-> > >=20
-> > > Very interesting read and I'll keep this in mind in the future. W=
-hat
-> > > about the other option ... i.e. simply getting rid of the whole
-> > > "error
-> > > handling", as the other code paths should already make sure that
-> > > only
-> > > valid values get written into the register.
-> > >=20
-> > > Can the value change in the register somehow on its own without
-> > > kernel
-> > > intervention, or does this not happen?
-> >=20
-> > Hmm, it depends on hardware, I guess. Not sure how it works on this
-> > particular IP.
-> >=20
-> > Still, the mentioned BUG() was about a value in a driver-filled
-> > struct,
-> > wasn't it?
-> >=20
-> > /* Quoting the the code for reference */
-> >=20
-> > > +static u32 s3c24xx_dma_getbytes_chan(struct s3c24xx_dma_chan
-> > > *s3cchan)
-> > > +{
-> > > +       struct s3c24xx_dma_phy *phy =3D s3cchan->phy;
-> > > +       struct s3c24xx_txd *txd =3D s3cchan->at;
-> > > +       u32 tc =3D readl(phy->base + DSTAT) & DSTAT_CURRTC_MASK;
-> > > +
-> > > +       switch (txd->dcon & DCON_DSZ_MASK) {
-> > > +       case DCON_DSZ_BYTE:
-> > > +               return tc;
-> > > +       case DCON_DSZ_HALFWORD:
-> > > +               return tc * 2;
-> > > +       case DCON_DSZ_WORD:
-> > > +               return tc * 4;
-> > > +       default:
-> > > +               break;
-> > > +       }
-> > > +
-> > > +       BUG();
-> >=20
-> > (Btw. I don't see anything setting the DCON_DSZ bits in this field.=
- Am
-> > I missing something?)
->=20
-> this is for calculating the remaining bytes of the transaction. which=
- is
-> used in s3c24xx_dma_tx_status.
->=20
-> And when looking at it again, I can't really fathom why I did it this
-> way with decoding the DSZ from the dcon value of the s3c24xx_txd agai=
-n
-> instead of simply using the width value of the same struct ....
->=20
-> So it can be much simpler as
-> 	(...)
->      u32 tc =3D readl(phy->base + DSTAT) & DSTAT_CURRTC_MASK;
-> 	return tc * txd->width;
->=20
-> getting rid of this stuff alltogether
->=20
->=20
-> still puzzled how I came up with this strangeness in the first place
+On 05/15/2013 12:29 PM, Linus Walleij wrote:
+> On Wed, May 15, 2013 at 6:44 PM, Doug Anderson <dianders@google.com> wrote:
+...
+>> Here's how I need to do things when I'm using "just an interrupt":
+>>
+>>   pinctrl@11400000 {
+>>     cyapa_irq: cyapa-irq {
+>>       samsung,pins = "gpx1-2";
+>>       samsung,pin-function = <0xf>;
+>>       samsung,pin-pud = <0>;
+>>       samsung,pin-drv = <0>;
+>>     };
+>>   };
+>>
+>>   trackpad {
+>>     reg = <0x67>;
+>>     compatible = "cypress,cyapa";
+>>     interrupts = <2 0>;
+>>     interrupt-parent = <&gpx1>;
+>>     pinctrl-names = "default";
+>>     pinctrl-0 = <&cyapa_irq>;
+>>     wakeup-source;
+>>   };
 
-Hehe, happens.
+I don't really see much disadvantage here; the interrupt bindings
+specify things related to interrupts and the pinctrl bindings specify
+thing related to pin configuration.
 
-I'm still yet to review the whole series, but I'm failing to find enoug=
-h=20
-time. Hopefully will get to do it soon.
+If you want to condense the DT, I'd suggest using a the pinctrl hogging
+feature, i.e. don't put pinctrl-* properties in the trackpad node, but
+rather define a system-wide "default" pinctrl state in the pin
+controller node itself. That configuration will be applied as soon as
+the pin controller driver is registered. That'd be the same as the
+above, with the following added:
 
-Best regards,
-Tomasz
+pinctrl@11400000 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&cyapa_irq>;
+};
+
+except that the pinctrl-0 property would probably end up configuring a
+whole bunch of basic pinctrl state rather than just that one interrupt pin.
+
+I prefer to put all the static pinctrl configuration in the pinctrl hog,
+and only the dynamic stuff in the individual device nodes.
+
+I know LinusW won't like this suggestion much though:-)
+
+>> I really wish I could add a 3rd number to the interrupt specifier for
+>> pud and skip the pinctrl bit:
+>>
+>>   trackpad {
+>>     reg = <0x67>;
+>>     compatible = "cypress,cyapa";
+>>     interrupts = <2 0 0>;
+>>     interrupt-parent = <&gpx1>;
+>>     wakeup-source;
+>>   };
+
+I don't like that myself, since it makes the interrupt binding (and I
+assume you'd want to go back to the similar misuse in the GPIO binding)
+also configure pinctrl-related stuff.
