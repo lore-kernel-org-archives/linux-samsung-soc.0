@@ -1,130 +1,119 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC PATCH 2/3] [media] s5p-jpeg: Add DT support to JPEG driver
-Date: Thu, 16 May 2013 00:32:36 +0200
-Message-ID: <51940D04.7050001@gmail.com>
-References: <1368532420-21555-1-git-send-email-george.jp@samsung.com> <1368532420-21555-3-git-send-email-george.jp@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
+Date: Thu, 16 May 2013 00:45:03 +0200
+Message-ID: <201305160045.03934.heiko@sntech.de>
+References: <201305111330.05046.heiko@sntech.de> <201305152348.32171.heiko@sntech.de> <45625193.0y3McEvmiD@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f179.google.com ([209.85.215.179]:52613 "EHLO
-	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752766Ab3EOWcm (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:42618 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752742Ab3EOWpO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 18:32:42 -0400
-In-Reply-To: <1368532420-21555-3-git-send-email-george.jp@samsung.com>
+	Wed, 15 May 2013 18:45:14 -0400
+In-Reply-To: <45625193.0y3McEvmiD@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: George Joseph <george.jp@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, ym.song@samsung.com, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 
-On 05/14/2013 01:53 PM, George Joseph wrote:
-> From: George Joseph Palathingal<george.jp@samsung.com>
->
-> Adding DT support to the driver. Driver supports Exynos 4210, 4412 and 5250.
->
-> Signed-off-by: George Joseph Palathingal<george.jp@samsung.com>
-> Cc: devicetree-discuss@lists.ozlabs.org
-> ---
->   drivers/media/platform/s5p-jpeg/jpeg-core.c |   36 +++++++++++++++++++++++++--
->   1 file changed, 34 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> index f964566..b2bf412 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> @@ -970,6 +970,8 @@ const struct jpeg_vb2 jpeg_vb2_dma = {
->   	.plane_addr	= vb2_dma_contig_plane_dma_addr,
->   };
->
-> +static void *jpeg_get_drv_data(struct platform_device *pdev);
+Am Donnerstag, 16. Mai 2013, 00:02:40 schrieb Tomasz Figa:
+> On Wednesday 15 of May 2013 23:48:31 Heiko St=FCbner wrote:
+> > Am Mittwoch, 15. Mai 2013, 23:20:08 schrieb Sylwester Nawrocki:
+> > > On 05/15/2013 10:31 PM, Heiko St=FCbner wrote:
+> > > >>> +       BUG();
+> > > >>>=20
+> > > >> >  Isn't that a bit nasty. This macro should be used with care=
+ and
+> > > >> >  we
+> > > >> >  should recover if possible. dev_err()?
+> > > >=20
+> > > > runtime_config already denies any settings not in the 1,2 or 4b=
+ytes
+> > > > range - the default-part should therefore never be reached. So =
+if
+> > > > any other value magically appears in the register and triggers =
+the
+> > > > default-part, something is seriously wrong. So my guess is, the=
+ BUG
+> > > > might be appropriate.
+> > > >=20
+> > > > On the other hand the whole default+BUG part could also simply =
+go
+> > > > away,
+> > > > for the same reasons.
+> > >=20
+> > > IMHO BUG() is not needed at all. As Linus suggested dev_err() is =
+such
+> > > case or WARN_ON() would be more appropriate. This has been discus=
+sed
+> > > in the past extensively, not sure if you are aware of the other
+> > > Linus' opinion on BUG()/BUG_ON() proliferation:
+> > > https://lkml.org/lkml/2012/9/27/461
+> >=20
+> > Very interesting read and I'll keep this in mind in the future. Wha=
+t
+> > about the other option ... i.e. simply getting rid of the whole "er=
+ror
+> > handling", as the other code paths should already make sure that on=
+ly
+> > valid values get written into the register.
+> >=20
+> > Can the value change in the register somehow on its own without ker=
+nel
+> > intervention, or does this not happen?
+>=20
+> Hmm, it depends on hardware, I guess. Not sure how it works on this
+> particular IP.
+>=20
+> Still, the mentioned BUG() was about a value in a driver-filled struc=
+t,
+> wasn't it?
+>=20
+> /* Quoting the the code for reference */
+>=20
+> > +static u32 s3c24xx_dma_getbytes_chan(struct s3c24xx_dma_chan *s3cc=
+han)
+> > +{
+> > +       struct s3c24xx_dma_phy *phy =3D s3cchan->phy;
+> > +       struct s3c24xx_txd *txd =3D s3cchan->at;
+> > +       u32 tc =3D readl(phy->base + DSTAT) & DSTAT_CURRTC_MASK;
+> > +
+> > +       switch (txd->dcon & DCON_DSZ_MASK) {
+> > +       case DCON_DSZ_BYTE:
+> > +               return tc;
+> > +       case DCON_DSZ_HALFWORD:
+> > +               return tc * 2;
+> > +       case DCON_DSZ_WORD:
+> > +               return tc * 4;
+> > +       default:
+> > +               break;
+> > +       }
+> > +
+> > +       BUG();
+>=20
+> (Btw. I don't see anything setting the DCON_DSZ bits in this field. A=
+m I
+> missing something?)
 
-How about putting definition of the jpeg_get_drv_data() function and
-the exynos_jpeg_match array above jpeg_probe() to avoid this forward
-declaration ?
+this is for calculating the remaining bytes of the transaction. which i=
+s used=20
+in s3c24xx_dma_tx_status.=20
 
->   static int jpeg_probe(struct platform_device *pdev)
->   {
->   	struct jpeg_dev *dev;
-> @@ -982,8 +984,7 @@ static int jpeg_probe(struct platform_device *pdev)
->   		return -ENOMEM;
->
->   	dev->plat_dev = pdev;
-> -	dev->variant = (struct s5p_jpeg_variant *)
-> -				platform_get_device_id(pdev)->driver_data;
-> +	dev->variant = (struct s5p_jpeg_variant *)jpeg_get_drv_data(pdev);
+And when looking at it again, I can't really fathom why I did it this w=
+ay with=20
+decoding the DSZ from the dcon value of the s3c24xx_txd again instead o=
+f=20
+simply using the width value of the same struct ....=20
 
-Casting is not needed here.
+So it can be much simpler as
+	(...)
+     u32 tc =3D readl(phy->base + DSTAT) & DSTAT_CURRTC_MASK;
+	return tc * txd->width;
 
->   	spin_lock_init(&dev->slock);
->
->   	/* setup jpeg control */
-> @@ -1232,6 +1233,36 @@ static struct platform_device_id jpeg_driver_ids[] = {
->
->   MODULE_DEVICE_TABLE(platform, jpeg_driver_ids);
->
-> +static const struct of_device_id exynos_jpeg_match[] = {
-> +	{
-> +		.compatible = "samsung,s5pv210-jpeg",
-> +		.data =&jpeg_drvdata_v1,
-> +	}, {
-> +		.compatible = "samsung,exynos4212-jpeg",
-> +		.data =&jpeg_drvdata_v2,
-> +	},
-> +	{},
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, exynos_jpeg_match);
-> +
-> +static void *jpeg_get_drv_data(struct platform_device *pdev)
-> +{
-> +	struct s5p_jpeg_variant *driver_data = NULL;
+getting rid of this stuff alltogether
 
-Unnecessary NULL assignment.
 
-> +	if (pdev->dev.of_node) {
-> +		const struct of_device_id *match;
-> +		match = of_match_node(of_match_ptr(exynos_jpeg_match),
-> +					 pdev->dev.of_node);
-> +		if (match)
-> +			driver_data = (struct s5p_jpeg_variant *)match->data;
-> +		} else {
-
-Indentation is wrong here.
-
-> +			driver_data = (struct s5p_jpeg_variant *)
-> +				platform_get_device_id(pdev)->driver_data;
-> +		}
-> +	return driver_data;
-> +}
-
-How about rewriting this function to something like:
-
-static const void *jpeg_get_drv_data(struct platform_device *pdev)
-{
-	struct device_node *node = pdev->dev.of_node;
-	const struct of_device_id *match;
-
-	if (node) {
-		match = of_match_node(exynos_jpeg_match, node);
-		return match ? match->data : NULL;
-	}
-
-	return (void *)platform_get_device_id(pdev)->driver_data;
-}
-
-?
->   static struct platform_driver jpeg_driver = {
->   	.probe		= jpeg_probe,
->   	.remove		= jpeg_remove,
-> @@ -1241,6 +1272,7 @@ static struct platform_driver jpeg_driver = {
->   	.driver	= {
->   		.owner			= THIS_MODULE,
->   		.name			= JPEG_NAME,
-> +		.of_match_table		= exynos_jpeg_match,
->   		.pm			= NULL,
->   	},
->   };
-
-Thanks,
-Sylwester
+still puzzled how I came up with this strangeness in the first place
+Heiko
