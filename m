@@ -1,76 +1,67 @@
-From: Doug Anderson <dianders@google.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: Pulls and drive strengths in the pinctrl world
-Date: Wed, 15 May 2013 14:31:20 -0700
-Message-ID: <CAD=FV=V-1uO3XSg603zyJx907EhhkMC5UCOfzrhgyGWw_0TO0A@mail.gmail.com>
-References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com>
-	<CACRpkdbgjqF3xhxUvfvNJn5Vt-3i0AFBzR_Q8gHdNq919dnNsA@mail.gmail.com>
+Date: Wed, 15 May 2013 23:36:31 +0200
+Message-ID: <2019038.uIdiqCOAdU@flatron>
+References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com> <2016052.zneaYHvtGE@flatron> <CAD=FV=VQ3X=xGhQapcDM6kMRSz0_06wWj7Oxn8hU-zPcajTZDg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:58777 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751103Ab3EOVbW (ORCPT
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:38543 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752251Ab3EOVgg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 17:31:22 -0400
-Received: by mail-la0-f54.google.com with SMTP id fd20so2242860lab.41
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 May 2013 14:31:21 -0700 (PDT)
-In-Reply-To: <CACRpkdbgjqF3xhxUvfvNJn5Vt-3i0AFBzR_Q8gHdNq919dnNsA@mail.gmail.com>
+	Wed, 15 May 2013 17:36:36 -0400
+Received: by mail-ea0-f174.google.com with SMTP id z7so1314026eaf.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 May 2013 14:36:34 -0700 (PDT)
+In-Reply-To: <CAD=FV=VQ3X=xGhQapcDM6kMRSz0_06wWj7Oxn8hU-zPcajTZDg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
+To: Doug Anderson <dianders@google.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
 
-Linus,
+On Wednesday 15 of May 2013 14:19:18 Doug Anderson wrote:
+> Tomasz,
+> 
+> Thanks for your comments.  I'm glad I'm not totally off-track.  I'll
+> respond to most things in reply to Linus' email, but a few here:
+> 
+> On Wed, May 15, 2013 at 10:26 AM, Tomasz Figa <tomasz.figa@gmail.com> 
+wrote:
+> >>   pinctrl@11400000 {
+> >>   
+> >>     cyapa_irq: cyapa-irq {
+> >>     
+> >>       samsung,pins = "gpx1-2";
+> >>       samsung,pin-function = <0xf>;
+> > 
+> > You can omit samsung,pin-function here.
+> 
+> One potential reason for leaving them is the hopes that it might cause
+> a little less line glitching, especially in the case of outputs.
+> There is some delay between the pinmux being configured at the start
+> of device probe and the device actually claiming the GPIO.  Things
+> might be worse in the case of deferred probe (?).  Can you think of
+> any reason to remove (other than yet more lines of device tree to deal
+> with)?
 
-Thank you for your comments.  See below...
+Well, actually in case of interrupts the function should not be configured 
+manually, because it is likely to cause a false interrupt to be caught, 
+before appropriate interrupt trigger type is configured. The correct way 
+is to leave setting pin function to EINT to the pin control driver once 
+the trigger gets configured (the pin control driver configures pin 
+function from set_irq_type callback).
 
-Stephen: sorry for missing you earlier!  :(
+> >>       samsung,pin-pud = <0>;
+> >>       samsung,pin-drv = <0>;
+> > 
+> > For inputs I guess you can omit samsung,pin-drv as well.
+> 
+> I will probably leave them even for inputs.  They shouldn't matter but
+> I like the idea of initting things to a known state...
 
-On Wed, May 15, 2013 at 11:29 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> But please use the preprocessor to provide symbolic names for
-> the configurations. See for example these two patches from
-> J-C:
-> http://www.mail-archive.com/devicetree-discuss@lists.ozlabs.org/msg32164.html
+Well, the binding you proposed for interrupts doesn't initialize it. This 
+is why I pointed that it can be omitted using current way as well.
 
-Ah, that does look nice!  This probably needs to be addressed in a
-separate patch to cleanup all of the samsung pinctrl devicetrees.
-
-> I don't think the idea with device tree is to write as compact trees
-> as possible, but as expressive and exact yet abstract trees as
-> possible for OS independence.
-
-The compactness was one benefit, but also it was about trying to avoid
-excessive duplication of information.  I found it awkward that I
-needed to list that my interrupt was "gpx1-2" in two different ways.
-
-I would find it just as good if I could express things like this (for
-interrupts):
-
-  pinctrl@11400000 {
-    cyapa_irq: cyapa-irq {
-      samsung,pins = "gpx1-2";
-      samsung,pin-function = <0xf>;
-      samsung,pin-pud = <0>;
-      samsung,pin-drv = <0>;
-
-      interrupt-controller;
-      #interrupt-cells = <1>;
-    };
-  };
-
-  trackpad {
-    reg = <0x67>;
-    compatible = "cypress,cyapa";
-    interrupt-parent = <&cyapa_irq>;
-    interrupts = <0>;
-    wakeup-source;
-  };
-
-In this case I'm not saying that my interrupt parent is "gpx1-2" in
-two separate places that could diverge.
-
-I could come up with a similar example for GPIOs.
-
-
--Doug
+Best regards,
+Tomasz
