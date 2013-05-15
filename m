@@ -1,195 +1,180 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V4 00/30] thermal: exynos: Add thermal driver for exynos5440
-Date: Wed, 15 May 2013 10:44:49 -0400
-Message-ID: <51939F61.5020904@ti.com>
-References: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2NROSVTKJFEOGHNFKVTTN"
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Fix support of Exynos4210 rev0 SoC
+Date: Wed, 15 May 2013 17:08:04 +0200
+Message-ID: <1368630484-29939-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:48511 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759297Ab3EOOpO (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:38670 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755811Ab3EOPIy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 10:45:14 -0400
-In-Reply-To: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
+	Wed, 15 May 2013 11:08:54 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MMU00EF3I24IS80@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 15 May 2013 16:08:28 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arnd@arndb.de, olof@lixom.net, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-------enig2NROSVTKJFEOGHNFKVTTN
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+This patch extends exynos_init_time() function to handle Exynos4210 rev0
+SoC, which differs in availability of system timers and needs different
+clocksource initialization.
 
-On 14-05-2013 05:58, Amit Daniel Kachhap wrote:
-> Changes in V4:
->  Almost all the changes in this version is as per suggestion from Eduar=
-do.The
->  major ones are listed below,
-> * Added kconfig symbol ARCH_HAS_TMU which needs to be enabled by platfo=
-rm. With
->   this change existing symbol EXYNOS_TMU_DATA is not needed.
+This makes it possible to use exynos_init_time() function as init_time
+callback for all Exynos-based boards, including Universal_C210, which
+originally had to use samsung_timer_init().
 
-I was more thinking if we could have a single flag that we could use in
-thermal drivers. Besides, my proposal for ARCH_HAS_BANDGAP is still not
-merged yet.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig               |  3 ++-
+ arch/arm/mach-exynos/common.c              | 30 +++++++++++++++++++++++++++++-
+ arch/arm/mach-exynos/common.h              |  2 ++
+ arch/arm/mach-exynos/mach-universal_c210.c |  5 ++---
+ 4 files changed, 35 insertions(+), 5 deletions(-)
 
-> * Movement of freq_clip_table from exynos_tmu.h to exynos_thermal_commo=
-n.h is
->   explained in the commit logs.
-> * Wrote all register description documentation.
-> * Split 5440 TMU support patch into controller change, configuration da=
-ta and
->   feature addition patches.
-> * Remove all *LINUX_* in the header files.
-> * Still regulator enable is kept optional but a TODO: comment is added =
-to fix
->   it later.
->=20
-> Changes in V3:
-> * Added proper dependency of different exynos thermal Kconfig symbols. =
-Basically 3
->  Kconfig can be enabled now and corresponds to tmu driver. exynos commo=
-n part
->  and exynos configuration data. This issue was raised by Rui Zhang.
->=20
-> Changes in V2:
-> * Separated SOC data from TMU driver. This is as per suggestion from Ed=
-uardo.
-> * Merged the new file created for exynos5440 TMU controller with the ex=
-isting
->  TMU controller code.
-> * Removed the DT parsing code as now the SOC specific data are cleanly =
-put
->  inside the data specific file.
-> * Even the register definations/bitfields are treated as data as there =
-is
->  some variation across SOC's.
->=20
-> This patchset adds TMU(Thermal management Unit) driver support for
-> exynos5440 platform. There are 3 instances of the TMU controllers so
-> necessary cleanup/re-structure is done to handle multiple thermal zone.=
-
->=20
-> Patch (exynos4: Add documentation for Exynos SoC thermal bindings) from=
-
-> Lukasz Majewski is already posted to mainline. Adding it here for compl=
-eteness.
-> (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg17817=
-=2Ehtml)
->=20
-> Patch (thermal: exynos: Support thermal tripping ) from Jonghwan Choi i=
-s
-> added here with some changes.
-> (https://patchwork.kernel.org/patch/1668371/)
->=20
-> Patch (thermal: exynos: Support for TMU regulator defined at device tre=
-e)
-> is a repost of my earlier patch(https://patchwork-mail1.kernel.org/patc=
-h/2510771/)=20
-> and adds regulator support.
->=20
-> Patch (ARM: dts: Add device tree node for exynos5440 TMU controller) an=
-d
-> patch (arm: exynos: enable ARCH_HAS_TMU) can be merged through exynos p=
-latform
-> maintainer as this can cause merge conflict.
->=20
-> All these patches are based on thermal maintainers git tree,
-> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next.
->=20
-> Amit Daniel Kachhap (29):
->   thermal: exynos: Moving exynos thermal files into samsung directory
->   thermal: exynos: Add ARCH_HAS_TMU config to know the supported soc's
->   thermal: exynos: Remove CPU_THERMAL dependency for using TMU driver
->   thermal: exynos: Bifurcate exynos thermal common and tmu controller
->     code
->   thermal: exynos: Rename exynos_thermal.c to exynos_tmu.c
->   thermal: exynos: Move exynos_thermal.h from include/* to driver/*
->     folder
->   thermal: exynos: Bifurcate exynos tmu driver and configuration data
->   thermal: exynos: Add missing definations and code cleanup
->   thermal: exynos: Add extra entries in the tmu platform data
->   thermal: exynos: Support thermal tripping
->   thermal: exynos: Move register definitions from driver file to data
->     file
->   thermal: exynos: Fix to clear only the generated interrupts
->   thermal: exynos: Add support for instance based register/unregister
->   thermal: exynos: Modify private_data to appropriate name driver_data
->   thermal: exynos: Return success even if no cooling data supplied
->   thermal: exynos: Make the zone handling dependent on trip count
->   thermal: exynos: Add support to handle many instances of TMU
->   thermal: exynos: Add TMU features to check instead of using SOC type
->   thermal: exynos: use device resource management infrastructure
->   thermal: exynos: Add support to access common register for
->     multistance
->   thermal: exynos: Add support for exynos5440 TMU sensor.
->   thermal: exynos: Fix to set the second point correction value
->     properly
->   thermal: exynos: Add thermal configuration data for exynos5440 TMU
->     sensor
->   thermal: exynos: Add a compensation logic on swapped e-fuse values
->   thermal: exynos: Add hardware mode thermal calibration support
->   Documentation: thermal: Explain the exynos thermal driver model
->   thermal: exynos: Support for TMU regulator defined at device tree
->   ARM: dts: Add device tree node for exynos5440 TMU controller
->   arm: exynos: enable ARCH_HAS_TMU
->=20
-> Lukasz Majewski (1):
->   ARM: dts: thermal: exynos4: Add documentation for Exynos SoC thermal
->     bindings
->=20
->  .../devicetree/bindings/thermal/exynos-thermal.txt |   53 +
->  Documentation/thermal/exynos_thermal               |   43 +-
->  arch/arm/boot/dts/exynos5440.dtsi                  |   30 +
->  arch/arm/mach-exynos/Kconfig                       |    5 +
->  drivers/thermal/Kconfig                            |   13 +-
->  drivers/thermal/Makefile                           |    2 +-
->  drivers/thermal/exynos_thermal.c                   | 1066 ------------=
---------
->  drivers/thermal/samsung/Kconfig                    |   21 +
->  drivers/thermal/samsung/Makefile                   |    7 +
->  drivers/thermal/samsung/exynos_thermal_common.c    |  407 ++++++++
->  drivers/thermal/samsung/exynos_thermal_common.h    |   98 ++
->  drivers/thermal/samsung/exynos_tmu.c               |  741 ++++++++++++=
-++
->  drivers/thermal/samsung/exynos_tmu.h               |  294 ++++++
->  drivers/thermal/samsung/exynos_tmu_data.c          |  225 ++++
->  drivers/thermal/samsung/exynos_tmu_data.h          |  155 +++
->  include/linux/platform_data/exynos_thermal.h       |  119 ---
->  16 files changed, 2076 insertions(+), 1203 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/thermal/exynos-th=
-ermal.txt
->  delete mode 100644 drivers/thermal/exynos_thermal.c
->  create mode 100644 drivers/thermal/samsung/Kconfig
->  create mode 100644 drivers/thermal/samsung/Makefile
->  create mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
->  create mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
->  create mode 100644 drivers/thermal/samsung/exynos_tmu.c
->  create mode 100644 drivers/thermal/samsung/exynos_tmu.h
->  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
->  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
->  delete mode 100644 include/linux/platform_data/exynos_thermal.h
->=20
->=20
->=20
-
-
-
-------enig2NROSVTKJFEOGHNFKVTTN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlGTn2EACgkQCXcVR3XQvP2SRAEAk7NN4DRaDkovkrWtYvOhLf27
-L4kpiONRagxavPVR/aQA/iL3T5H4n1SLMlRBkw8BZWPCvmWdcspWCPQpAmNFy9/b
-=Vo57
------END PGP SIGNATURE-----
-
-------enig2NROSVTKJFEOGHNFKVTTN--
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index d19edff..ff18fc2 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -250,6 +250,7 @@ config MACH_ARMLEX4210
+ config MACH_UNIVERSAL_C210
+ 	bool "Mobile UNIVERSAL_C210 Board"
+ 	select CLKSRC_MMIO
++	select CLKSRC_SAMSUNG_PWM
+ 	select CPU_EXYNOS4210
+ 	select EXYNOS4_SETUP_FIMC
+ 	select EXYNOS4_SETUP_FIMD0
+@@ -281,7 +282,6 @@ config MACH_UNIVERSAL_C210
+ 	select S5P_DEV_TV
+ 	select S5P_GPIO_INT
+ 	select S5P_SETUP_MIPIPHY
+-	select SAMSUNG_HRT
+ 	help
+ 	  Machine support for Samsung Mobile Universal S5PC210 Reference
+ 	  Board.
+@@ -410,6 +410,7 @@ config MACH_EXYNOS4_DT
+ 	depends on ARCH_EXYNOS4
+ 	select ARM_AMBA
+ 	select CLKSRC_OF
++	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
+ 	select CPU_EXYNOS4210
+ 	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
+ 	select PINCTRL
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 745e304..a2d2012 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -10,12 +10,14 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/bitops.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
+ #include <linux/io.h>
+ #include <linux/device.h>
+ #include <linux/gpio.h>
++#include <clocksource/samsung_pwm.h>
+ #include <linux/sched.h>
+ #include <linux/serial_core.h>
+ #include <linux/of.h>
+@@ -302,6 +304,13 @@ static struct map_desc exynos5440_iodesc0[] __initdata = {
+ 	},
+ };
+ 
++static struct samsung_pwm_variant exynos4_pwm_variant = {
++	.bits		= 32,
++	.div_base	= 0,
++	.has_tint_cstat	= true,
++	.tclk_mask	= 0,
++};
++
+ void exynos4_restart(char mode, const char *cmd)
+ {
+ 	__raw_writel(0x1, S5P_SWRESET);
+@@ -442,8 +451,20 @@ static void __init exynos5440_map_io(void)
+ 	iotable_init(exynos5440_iodesc0, ARRAY_SIZE(exynos5440_iodesc0));
+ }
+ 
++void __init exynos_set_timer_source(u8 channels)
++{
++	exynos4_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
++	exynos4_pwm_variant.output_mask &= ~channels;
++}
++
+ void __init exynos_init_time(void)
+ {
++	unsigned int timer_irqs[SAMSUNG_PWM_NUM] = {
++		EXYNOS4_IRQ_TIMER0_VIC, EXYNOS4_IRQ_TIMER1_VIC,
++		EXYNOS4_IRQ_TIMER2_VIC, EXYNOS4_IRQ_TIMER3_VIC,
++		EXYNOS4_IRQ_TIMER4_VIC,
++	};
++
+ 	if (of_have_populated_dt()) {
+ #ifdef CONFIG_OF
+ 		of_clk_init(NULL);
+@@ -455,7 +476,14 @@ void __init exynos_init_time(void)
+ 		exynos4_clk_init(NULL, !soc_is_exynos4210(), S5P_VA_CMU, readl(S5P_VA_CHIPID + 8) & 1);
+ 		exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
+ #endif
+-		mct_init(S5P_VA_SYSTIMER, EXYNOS4_IRQ_MCT_G0, EXYNOS4_IRQ_MCT_L0, EXYNOS4_IRQ_MCT_L1);
++#ifdef CONFIG_CLKSRC_SAMSUNG_PWM
++		if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_0)
++			samsung_pwm_clocksource_init(S3C_VA_TIMER,
++					timer_irqs, &exynos4_pwm_variant);
++		else
++#endif
++			mct_init(S5P_VA_SYSTIMER, EXYNOS4_IRQ_MCT_G0,
++					EXYNOS4_IRQ_MCT_L0, EXYNOS4_IRQ_MCT_L1);
+ 	}
+ }
+ 
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 60dd35c..11fc1e2 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -32,6 +32,8 @@ void exynos4_clk_register_fixed_ext(unsigned long, unsigned long);
+ 
+ void exynos_firmware_init(void);
+ 
++void exynos_set_timer_source(u8 channels);
++
+ #ifdef CONFIG_PM_GENERIC_DOMAINS
+ int exynos_pm_late_initcall(void);
+ #else
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 327d50d..74ddb2b 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -41,7 +41,6 @@
+ #include <plat/mfc.h>
+ #include <plat/sdhci.h>
+ #include <plat/fimc-core.h>
+-#include <plat/samsung-time.h>
+ #include <plat/camport.h>
+ 
+ #include <mach/map.h>
+@@ -1094,7 +1093,7 @@ static void __init universal_map_io(void)
+ {
+ 	exynos_init_io(NULL, 0);
+ 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
+-	samsung_set_timer_source(SAMSUNG_PWM2, SAMSUNG_PWM4);
++	exynos_set_timer_source(BIT(2) | BIT(4));
+ 	xxti_f = 0;
+ 	xusbxti_f = 24000000;
+ }
+@@ -1154,7 +1153,7 @@ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
+ 	.map_io		= universal_map_io,
+ 	.init_machine	= universal_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= samsung_timer_init,
++	.init_time	= exynos_init_time,
+ 	.reserve        = &universal_reserve,
+ 	.restart	= exynos4_restart,
+ MACHINE_END
+-- 
+1.8.2.1
