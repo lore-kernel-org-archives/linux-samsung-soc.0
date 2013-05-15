@@ -1,95 +1,46 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
-Date: Thu, 16 May 2013 00:02:40 +0200
-Message-ID: <45625193.0y3McEvmiD@flatron>
-References: <201305111330.05046.heiko@sntech.de> <5193FC08.5040002@gmail.com> <201305152348.32171.heiko@sntech.de>
+Subject: Re: Pulls and drive strengths in the pinctrl world
+Date: Thu, 16 May 2013 00:06:48 +0200
+Message-ID: <4040680.Aq1C9TECZX@flatron>
+References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com> <2118733.fzZiu9I5M5@flatron> <CAD=FV=XBHtVO6TzbNVXc_omW8ki7DAMx58hLmT0HsyEvUs3YMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f170.google.com ([209.85.215.170]:56764 "EHLO
-	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751677Ab3EOWCo convert rfc822-to-8bit (ORCPT
+Received: from mail-ea0-f175.google.com ([209.85.215.175]:51502 "EHLO
+	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752301Ab3EOWGw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 18:02:44 -0400
-In-Reply-To: <201305152348.32171.heiko@sntech.de>
+	Wed, 15 May 2013 18:06:52 -0400
+Received: by mail-ea0-f175.google.com with SMTP id h10so1203194eaj.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 May 2013 15:06:51 -0700 (PDT)
+In-Reply-To: <CAD=FV=XBHtVO6TzbNVXc_omW8ki7DAMx58hLmT0HsyEvUs3YMg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Doug Anderson <dianders@google.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
 
-On Wednesday 15 of May 2013 23:48:31 Heiko St=FCbner wrote:
-> Am Mittwoch, 15. Mai 2013, 23:20:08 schrieb Sylwester Nawrocki:
-> > On 05/15/2013 10:31 PM, Heiko St=FCbner wrote:
-> > >>> +       BUG();
-> > >>>=20
-> > >> >  Isn't that a bit nasty. This macro should be used with care a=
-nd
-> > >> >  we
-> > >> >  should recover if possible. dev_err()?
-> > >=20
-> > > runtime_config already denies any settings not in the 1,2 or 4byt=
-es
-> > > range - the default-part should therefore never be reached. So if
-> > > any other value magically appears in the register and triggers th=
-e
-> > > default-part, something is seriously wrong. So my guess is, the B=
-UG
-> > > might be appropriate.
-> > >=20
-> > > On the other hand the whole default+BUG part could also simply go
-> > > away,
-> > > for the same reasons.
-> >=20
-> > IMHO BUG() is not needed at all. As Linus suggested dev_err() is su=
-ch
-> > case or WARN_ON() would be more appropriate. This has been discusse=
-d
-> > in the past extensively, not sure if you are aware of the other
-> > Linus' opinion on BUG()/BUG_ON() proliferation:
-> > https://lkml.org/lkml/2012/9/27/461
-> Very interesting read and I'll keep this in mind in the future. What
-> about the other option ... i.e. simply getting rid of the whole "erro=
-r
-> handling", as the other code paths should already make sure that only
-> valid values get written into the register.
->=20
-> Can the value change in the register somehow on its own without kerne=
-l
-> intervention, or does this not happen?
+On Wednesday 15 of May 2013 15:01:23 Doug Anderson wrote:
+> Tomasz,
+> 
+> On Wed, May 15, 2013 at 2:41 PM, Tomasz Figa <tomasz.figa@gmail.com> 
+wrote:
+> > This will be hard, since the phandle in interrupt-parent is
+> > represented by an IRQ domain in kernel code. One-interrupt IRQ
+> > domains seem a bit awkward to me.
+> > 
+> > Since we are already going to modify the binding, let's think a bit
+> > more about this problem and try to figure out a solution that doesn't
+> > add any disadvantages (at least any significant) to avoid such
+> > situation in future again.
+> 
+> I'm definitely not super familiar with the implementation at that
+> level of detail, so don't take my proposed syntax as something I've
+> thought all the way through.  ...but hopefully you understand what I'm
+> getting at in terms of eliminating duplication?
 
-Hmm, it depends on hardware, I guess. Not sure how it works on this=20
-particular IP.
-
-Still, the mentioned BUG() was about a value in a driver-filled struct,=
-=20
-wasn't it?
-
-/* Quoting the the code for reference */
-
-> +static u32 s3c24xx_dma_getbytes_chan(struct s3c24xx_dma_chan *s3ccha=
-n)
-> +{
-> +       struct s3c24xx_dma_phy *phy =3D s3cchan->phy;
-> +       struct s3c24xx_txd *txd =3D s3cchan->at;
-> +       u32 tc =3D readl(phy->base + DSTAT) & DSTAT_CURRTC_MASK;
-> +
-> +       switch (txd->dcon & DCON_DSZ_MASK) {
-> +       case DCON_DSZ_BYTE:
-> +               return tc;
-> +       case DCON_DSZ_HALFWORD:
-> +               return tc * 2;
-> +       case DCON_DSZ_WORD:
-> +               return tc * 4;
-> +       default:
-> +               break;
-> +       }
-> +
-> +       BUG();
-
-(Btw. I don't see anything setting the DCON_DSZ bits in this field. Am =
-I=20
-missing something?)
+Yes. I don't like the current way too much either, duplication being one 
+of the reasons.
 
 Best regards,
 Tomasz
