@@ -1,86 +1,88 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 2/2] pinctrl: exynos: fix eint wakeup by using irq_set_wake()
-Date: Thu, 16 May 2013 15:25:15 -0700
-Message-ID: <CAD=FV=V=QWg8fYX7iZeG6RoQQFGtsQhd7ZLodyVVuYWYZ9fRFg@mail.gmail.com>
-References: <1368724352-10849-1-git-send-email-dianders@chromium.org>
-	<1368724352-10849-3-git-send-email-dianders@chromium.org>
-	<1483058.pKLP2TAAG6@flatron>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 1/2] pinctrl: samsung: fix suspend/resume functionality
+Date: Fri, 17 May 2013 00:30:38 +0200
+Message-ID: <201305170030.39266.heiko@sntech.de>
+References: <1368724352-10849-1-git-send-email-dianders@chromium.org> <CAD=FV=Uqhw4GXjfQrnxzJ4U95wudF1whBcRxK8y3LZMWHTurNw@mail.gmail.com> <2099430.Q29j0K3hPy@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:39168 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754946Ab3EPWZS (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:52564 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754575Ab3EPWa4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 May 2013 18:25:18 -0400
-Received: by mail-la0-f52.google.com with SMTP id fo13so3507485lab.25
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 May 2013 15:25:16 -0700 (PDT)
-In-Reply-To: <1483058.pKLP2TAAG6@flatron>
+	Thu, 16 May 2013 18:30:56 -0400
+In-Reply-To: <2099430.Q29j0K3hPy@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Tomasz,
+Am Freitag, 17. Mai 2013, 00:08:34 schrieb Tomasz Figa:
+> On Thursday 16 of May 2013 14:51:53 Doug Anderson wrote:
+> > Tomasz,
+> > 
+> > On Thu, May 16, 2013 at 2:27 PM, Tomasz Figa <tomasz.figa@gmail.com>
+> 
+> wrote:
+> > > OK. I will be fine to go with your patches, after addressing the
+> > > comments. In the end it's good that you posted them, as reviewing
+> > > them allowed me to find even better ways of doing some things than I
+> > > had in mine ;) .
+> > 
+> > Yes.  I often find that the best way to review code is to think about
+> > how I would implement it myself.  Certainly I think we've ended up
+> > with something better / less buggy this way.  ;)
+> > 
+> > > How all of this works is basically a good question. I couldn't find
+> > > any
+> > > mention about pins switching from power down to normal mode in the
+> > > documentation, but maybe there is a small side note somewhere, which I
+> > > could miss.
+> > > 
+> > > On S3C6410, for example, there are two modes. State is switched to
+> > > power down mode automatically, but can be switched out either
+> > > automatically on wake-up (exact timing is unknown to me) or by
+> > > clearing a special bit, depending on value of other special bit.
+> > > 
+> > > IMHO this is rather important, so we should find out how it work on
+> > > other SoCs and make the code account for it.
+> > 
+> > Agreed that it's important.  ...but it's also good not to have tons of
+> > complexity when it's not needed.  It sounds like S3C6410 could be
+> > handled OK by just using the special bits and waiting to take things
+> > out of power down mode.
+> > 
+> > ...thinking about it, all SoCs that have power down modes (which you
+> > _must_ have if your pinctrl state is lost across a low power) would be
+> > slightly broken if they didn't have a bit to switch out of power down
+> > mode.  Otherwise you're asking for at least some type of glitch
+> > because you'll end up in the default state of pins for a little while
+> > during resume.
+> > 
+> > That's not to say that there aren't broken SoCs out there and it's
+> > entirely possible that people even designed systems around them
+> > (knowing that the default state of each pin after wakeup is not
+> > harmful to whatever is connected to that pin).  If there are any cases
+> > like this then they would need the special code like my V1 patch had.
+> > Do you know of any SoCs like this that we need to support on kernel
+> > 3.10 and higher?
+> 
+> Hmm, I just checked documentation of S3C2440 and S3C2416 they seem to
+> retain GPIO settings completely in sleep mode. This would mean that they
+> don't require any suspend/resume support in pinctrl driver. Heiko, can you
+> confirm this?
 
-On Thu, May 16, 2013 at 12:26 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Thursday 16 of May 2013 10:12:32 Doug Anderson wrote:
->> From: Prathyush K <prathyush.k@samsung.com>
->>
->> Add the irq_set_wake function for exynos pinctrl to configure the
->> external interrupt wakeup mask register.
->>
->> [dianders: minor nit fixes; port to ToT]
->>
->> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> ---
->>  drivers/pinctrl/pinctrl-exynos.c  | 45
->> ++++++++++++++++++++++++++++-----------
->> drivers/pinctrl/pinctrl-exynos.h  |  3 ++-
->>  drivers/pinctrl/pinctrl-samsung.h |  2 ++
->>  3 files changed, 37 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-exynos.c
->> b/drivers/pinctrl/pinctrl-exynos.c index ac74281..3ebb2ff 100644
->> --- a/drivers/pinctrl/pinctrl-exynos.c
->> +++ b/drivers/pinctrl/pinctrl-exynos.c
->> @@ -30,6 +30,8 @@
->>  #include <linux/spinlock.h>
->>  #include <linux/err.h>
->>
->> +#include <plat/pm.h>
->> +
->
-> This is not going to work with CONFIG_MULTIPLATFORM.
+Hmm, my system does not have a working suspend right now, but looking at the 
+legacy code (mach-s3c24xx/pm.c, etc) tells me that the gpio banks were never 
+saved during suspend.
 
-Hmm, this sounds like it might be a bit of a long path, especially
-since I haven't been keeping up with what's been going on with
-MULTIPLATFORM and I'm currently midway through making 3.8 work (which
-has no MULTIPLATFORM).
+And as there were (and still are) systems with working suspend around, I'd 
+assume that you're correct that the pins retain their state.
 
-Perhaps for this patch it makes more sense for you to post your
-version and I can review it?  We may end up just keeping our version
-of this patch for 3.8 and pick up yours when we do our next rebase.
-Does that sound OK?
+Is the same true for the s3c64xx, as I didn't find any gpio suspend handling 
+for it either.
 
 
->> -#define EXYNOS_PIN_BANK_EINTW(pins, reg, id, offs)   \
->> +#define EXYNOS_PIN_BANK_EINTW(pins, reg, id, offs, base)\
->>       {                                               \
->>               .type           = &bank_type_alive,     \
->>               .pctl_offset    = reg,                  \
->>               .nr_pins        = pins,                 \
->>               .eint_type      = EINT_TYPE_WKUP,       \
->>               .eint_offset    = offs,                 \
->> +             .eint_base      = base,                 \
->
-> I can't look at my patch at the moment, but I think I have managed to get
-> EINT index without adding this extra field.
-
-It looks like this is always 2 * eint_offset in the code above.  Maybe
-you just multiplied?  The multiplication works fine although I think
-specifying eint_base like this might be more generic and handle future
-chips better?  Ya never know...
-
--Doug
+Heiko
