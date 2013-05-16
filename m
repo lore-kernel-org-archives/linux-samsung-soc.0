@@ -1,32 +1,363 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 00/33] devm improvement series, part 1, take 2
-Date: Thu, 16 May 2013 12:29:19 -0600
-Message-ID: <5195257F.3060309@wwwdotorg.org>
-References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: samsung: fix suspend/resume functionality
+Date: Thu, 16 May 2013 21:19:20 +0200
+Message-ID: <1944811.006SLH6aYj@flatron>
+References: <1368724352-10849-1-git-send-email-dianders@chromium.org> <1368724352-10849-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel/>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: devel-bounces@linuxdriverproject.org
-Sender: "devel" <devel-bounces@linuxdriverproject.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mips@linux-mips.org, alsa-devel@alsa-project.org, linux-usb@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Matt Mackall <mpm@selenic.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, Wan ZongShun <mcuos.com@gmail.com>, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, "Rafael J. Wysocki" <rjw@sisk.pl>, cpufreq@vger.kernel.org, Eduardo Valentin <eduardo.v>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f169.google.com ([209.85.215.169]:42247 "EHLO
+	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752699Ab3EPTTZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 May 2013 15:19:25 -0400
+In-Reply-To: <1368724352-10849-2-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/16/2013 05:15 AM, Wolfram Sang wrote:
-> Lately, I have been experimenting how to improve the devm interface to make
-> writing device drivers easier and less error prone while also getting rid of
-> its subtle issues. I think it has more potential but still needs work and
-> definately conistency, especiall in its usage.
-...
+Hi Doug,
 
-The Tegra parts in patches 4, 5, 8, 15, 16, 17, 29 all,
-Acked-by: Stephen Warren <swarren@nvidia.com>
+Thanks for the patch. See my comments inline.
+
+On Thursday 16 of May 2013 10:12:31 Doug Anderson wrote:
+> The GPIO states need to be restored after s2r and this is not currently
+> supported in the pinctrl driver. This patch saves the gpio states before
+> suspend and restores them after resume.
+> 
+> Logic and commenting for samsung_pinctrl_resume_noirq() is heavily
+> borrowed from the old samsung_gpio_pm_2bit_resume(), which seemed to
+> do this a reasonable way.
+> 
+> Patch originally from Prathyush K <prathyush.k@samsung.com> but
+> rewritten by Doug Anderson <dianders@chromium.org>.
+> 
+> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  drivers/pinctrl/pinctrl-samsung.c | 199
+> ++++++++++++++++++++++++++++++++++++++
+> drivers/pinctrl/pinctrl-samsung.h |  11 +++
+>  2 files changed, 210 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-samsung.c
+> b/drivers/pinctrl/pinctrl-samsung.c index 9763668..0891667 100644
+> --- a/drivers/pinctrl/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/pinctrl-samsung.c
+> @@ -964,6 +964,204 @@ static int samsung_pinctrl_probe(struct
+> platform_device *pdev) return 0;
+>  }
+> 
+> +#ifdef CONFIG_PM
+> +
+> +/**
+> + * samsung_pinctrl_resume_noirq - save pinctrl state for suspend
+> + *
+> + * Save data for all banks handled by this device.
+> + */
+> +static int samsung_pinctrl_suspend_noirq(struct device *dev)
+> +{
+> +	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
+> +	struct samsung_pin_ctrl *ctrl = drvdata->ctrl;
+> +	void __iomem * const virt_base = drvdata->virt_base;
+
+Nit: This const is ugly :) . Is it needed for anything?
+
+> +	int i;
+> +
+> +	for (i = 0; i < ctrl->nr_banks; i++) {
+> +		struct samsung_pin_bank *bank = &ctrl->pin_banks[i];
+> +		const struct samsung_pin_bank_type *type = bank->type;
+> +		void __iomem * const reg = virt_base + bank->pctl_offset;
+
+Nit: This one is not pretty either.
+
+> +		bank->pm_save.con = readl(reg +
+> +					  type-
+>reg_offset[PINCFG_TYPE_FUNC]);
+> +		if (type->fld_width[PINCFG_TYPE_FUNC] > 4)
+
+What is this condition supposed to check?
+
+> +			bank->pm_save.con |= (u64)readl(reg + 4 +
+> +				      type->reg_offset[PINCFG_TYPE_FUNC]) 
+<< 32;
+
+This looks ugly. Whatever is going on here, wouldn't it be better to use 
+separate field, like con2 or something?
+
+> +		bank->pm_save.dat = readl(reg +
+> +					  type-
+>reg_offset[PINCFG_TYPE_DAT]);
+> +		bank->pm_save.pud = readl(reg +
+> +					  type-
+>reg_offset[PINCFG_TYPE_PUD]);
+> +		bank->pm_save.drv = readl(reg +
+> +					  type-
+>reg_offset[PINCFG_TYPE_DRV]);
+> +
+> +		if (type->fld_width[PINCFG_TYPE_CON_PDN]) {
+> +			bank->pm_save.conpdn = readl(reg +
+> +				type->reg_offset[PINCFG_TYPE_CON_PDN]);
+> +			bank->pm_save.pudpdn = readl(reg +
+> +				type->reg_offset[PINCFG_TYPE_PUD_PDN]);
+> +		}
+
+I wonder if you couldn't do all the saving here in a single loop over all 
+pin control types, like:
+
+	unsigned int offsets = bank->type->reg_offsets;
+	unsigned int widths = bank->type->fld_width;
+
+	for (i = 0; i < PINCFG_TYPE_NUM; ++i)
+		if (widths[i])
+			bank->pm_save[i] = readl(reg + offsets[i]);
+
+The only thing not handled by this loop is second CON registers in banks 
+with two of them. I can't think of any better solution for this other than 
+just adding a special case after the loop.
+
+> +		dev_dbg(dev, "Save %s @ %p (con %#010llx)\n",
+> +			bank->name, reg, bank->pm_save.con);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * is_sfn - test whether a pin config represents special function.
+> + *
+> + * Test whether the given masked+shifted bits of an GPIO configuration
+> + * are one of the SFN (special function) modes.
+> + */
+> +static inline int is_sfn(u32 con)
+> +{
+> +	return con >= 2;
+> +}
+> +
+> +/**
+> + * is_in - test if the given masked+shifted GPIO configuration is an
+> input. + */
+> +static inline int is_in(u32 con)
+> +{
+> +	return con == 0;
+> +}
+> +
+> +/**
+> + * is_out - test if the given masked+shifted GPIO configuration is an
+> output. + */
+> +static inline int is_out(u32 con)
+> +{
+> +	return con == 1;
+> +}
+> +
+> +/**
+> + * samsung_pinctrl_resume_noirq - restore pinctrl state from suspend
+> + *
+> + * Restore one of the GPIO banks that was saved during suspend. This is
+> + * not as simple as once thought, due to the possibility of glitches +
+> * from the order that the CON and DAT registers are set in.
+> + *
+> + * The three states the pin can be are {IN,OUT,SFN} which gives us 9
+> + * combinations of changes to check. Three of these, if the pin stays
+> + * in the same configuration can be discounted. This leaves us with
+> + * the following:
+> + *
+> + * { IN => OUT }  Change DAT first
+> + * { IN => SFN }  Change CON first
+> + * { OUT => SFN } Change CON first, so new data will not glitch
+> + * { OUT => IN }  Change CON first, so new data will not glitch
+> + * { SFN => IN }  Change CON first
+> + * { SFN => OUT } Change DAT first, so new data will not glitch [1]
+> + *
+> + * We do not currently deal with the UP registers as these control
+> + * weak resistors, so a small delay in change should not need to bring
+> + * these into the calculations.
+> + *
+> + * [1] this assumes that writing to a pin DAT whilst in SFN will set
+> the + *     state for when it is next output.
+> + */
+> +static int samsung_pinctrl_resume_noirq(struct device *dev)
+> +{
+> +	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
+> +	struct samsung_pin_ctrl *ctrl = drvdata->ctrl;
+> +	void __iomem * const virt_base = drvdata->virt_base;
+> +	int i;
+> +
+> +	for (i = 0; i < ctrl->nr_banks; i++) {
+> +		const struct samsung_pin_bank *bank = &ctrl->pin_banks[i];
+> +		void __iomem * const reg = virt_base + bank->pctl_offset;
+> +		const struct samsung_pin_bank_type *type = bank->type;
+> +		const u8 func_offset = type->reg_offset[PINCFG_TYPE_FUNC];
+> +		const u32 func_width = type->fld_width[PINCFG_TYPE_FUNC];
+> +		const u32 func_mask = (1 << func_width) - 1;
+
+I'm constantly seeing so many consts in this patch. Is this constraint 
+relevant here in any way? Git grep doesn't show too many instances of this 
+construct used for local variables around the kernel.
+
+> +		const bool is64bit = type->fld_width[PINCFG_TYPE_FUNC] > 
+4;
+
+Again this check. Is it supposed to handle banks with two CON registers? 
+If yes, it is incorrect, as they have 4 bits per pin.
+
+> +		const u64 to_con = bank->pm_save.con;
+> +		u64 from_con = readl(reg + func_offset);
+> +		u64 change_mask = 0;
+> +		u64 to_write;
+> +		int pin;
+> +
+> +		if (is64bit)
+> +			from_con |= (u64)readl(reg + 4 + func_offset) << 
+32;
+
+Same comment as in save.
+
+> +
+> +		/* Easy--the PUD and DRV can go first */
+> +		writel(bank->pm_save.pud,
+> +		       reg + type->reg_offset[PINCFG_TYPE_PUD]);
+> +		writel(bank->pm_save.drv,
+> +		       reg + type->reg_offset[PINCFG_TYPE_DRV]);
+> +
+> +		/*
+> +		 * Create a change_mask of all the items that need to have
+> +		 * their CON value changed before their DAT value, so that
+> +		 * we minimise the work between the two settings.
+> +		 */
+> +		for (pin = 0; pin < bank->nr_pins; pin++) {
+
+This is a bit more tricky that in case of save, so CON register as a 
+special case is justified here.
+
+> +			u32 shift = pin * func_width;
+> +			u32 from_func = (from_con >> shift) & func_mask;
+> +			u32 to_func = (to_con >> shift) & func_mask;
+> +
+> +			/* If there is no change, then skip */
+> +			if (from_func == to_func)
+> +				continue;
+> +
+> +			/* If both are special function, then skip */
+> +			if (is_sfn(from_func) && is_sfn(to_func))
+> +				continue;
+> +
+> +			/* Change is IN => OUT, do not change now */
+> +			if (is_in(from_func) && is_out(to_func))
+> +				continue;
+> +
+> +			/* Change is SFN => OUT, do not change now */
+> +			if (is_sfn(from_func) && is_out(to_func))
+> +				continue;
+> +
+> +			/*
+> +			 * We should now be at the case of:
+> +			 *   IN=>SFN, OUT=>SFN, OUT=>IN, SFN=>IN.
+> +			 */
+> +			change_mask |= (func_mask << shift);
+> +		}
+> +
+> +		/* Write the new CON settings */
+> +		to_write = (from_con & ~change_mask) | (to_con & 
+change_mask);
+> +		writel((u32)to_write, reg + func_offset);
+> +		if (is64bit)
+> +			writel((u32)(to_write >> 32), reg + 4 + 
+func_offset);
+> +
+> +		/* Now change any items that require DAT,CON */
+> +		writel(bank->pm_save.dat,
+> +		       reg + type->reg_offset[PINCFG_TYPE_DAT]);
+> +		writel((u32)to_con, reg + func_offset);
+> +		if (is64bit)
+> +			writel((u32)(to_con >> 32), reg + 4 + to_con);
+> +
+> +		if (type->fld_width[PINCFG_TYPE_CON_PDN]) {
+> +			writel(bank->pm_save.conpdn,
+> +			       reg + type-
+>reg_offset[PINCFG_TYPE_CON_PDN]);
+> +			writel(bank->pm_save.pudpdn,
+> +			       reg + type-
+>reg_offset[PINCFG_TYPE_PUD_PDN]);
+> +		}
+
+Now as I think of it, do CON_PDN and PUD_PDN really need to be saved? I 
+couldn't find in the documentation if they are preserved or lost in sleep 
+mode. Do you have some information on this?
+
+My experiments on Exynos4210 and 4x12 showed that they are preserved, but 
+I don't know what about other SoCs.
+
+> +		dev_dbg(dev, "Restore %s@%p (%#010llx=>%#010llx ch 
+%#010llx)\n",
+> +			bank->name, reg, from_con, to_con, change_mask);
+> +	}
+> +
+> +	return 0;
+> +}
+
+I wonder if the whole restoration procedure couldn't be simplified. I 
+don't remember my version being so complicated, but I don't have my patch 
+on my screen at the moment, so I might be wrong on this.
+
+> +#else
+> +#define samsung_pinctrl_suspend_noirq	NULL
+> +#define samsung_pinctrl_resume_noirq	NULL
+> +#endif
+> +
+> +static const struct dev_pm_ops samsung_pinctrl_dev_pm_ops = {
+> +	.suspend_noirq = samsung_pinctrl_suspend_noirq,
+> +	.resume_noirq = samsung_pinctrl_resume_noirq,
+> +};
+
+I'm not sure if resume_noirq is really early enough. Some drivers might 
+already need correct pin configuration in their resume_noirq callback.
+
+In my patch I have used syscore_ops to register very late suspend and very 
+early resume callbacks for the whole pinctrl-samsung driver and a global 
+list of registered pin controllers, that is iterated over in suspend and 
+resume.
+
+>  static const struct of_device_id samsung_pinctrl_dt_match[] = {
+>  #ifdef CONFIG_PINCTRL_EXYNOS
+>  	{ .compatible = "samsung,exynos4210-pinctrl",
+> @@ -987,6 +1185,7 @@ static struct platform_driver
+> samsung_pinctrl_driver = { .name	= "samsung-pinctrl",
+>  		.owner	= THIS_MODULE,
+>  		.of_match_table = of_match_ptr(samsung_pinctrl_dt_match),
+> +		.pm = &samsung_pinctrl_dev_pm_ops,
+>  	},
+>  };
+> 
+> diff --git a/drivers/pinctrl/pinctrl-samsung.h
+> b/drivers/pinctrl/pinctrl-samsung.h index 7c7f9eb..c9a7b6e 100644
+> --- a/drivers/pinctrl/pinctrl-samsung.h
+> +++ b/drivers/pinctrl/pinctrl-samsung.h
+> @@ -127,6 +127,7 @@ struct samsung_pin_bank_type {
+>   * @gpio_chip: GPIO chip of the bank.
+>   * @grange: linux gpio pin range supported by this bank.
+>   * @slock: spinlock protecting bank registers
+> + * @pm_save: saved register values during suspend
+>   */
+>  struct samsung_pin_bank {
+>  	struct samsung_pin_bank_type *type;
+> @@ -144,6 +145,16 @@ struct samsung_pin_bank {
+>  	struct gpio_chip gpio_chip;
+>  	struct pinctrl_gpio_range grange;
+>  	spinlock_t slock;
+> +#ifdef CONFIG_PM
+> +	struct {
+> +		u64	con;
+> +		u32	dat;
+> +		u32	pud;
+> +		u32	drv;
+> +		u32	conpdn;
+> +		u32	pudpdn;
+
+This could be changed into an array.
+
+Best regards,
+Tomasz
