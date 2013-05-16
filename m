@@ -1,363 +1,161 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: samsung: fix suspend/resume functionality
-Date: Thu, 16 May 2013 21:19:20 +0200
-Message-ID: <1944811.006SLH6aYj@flatron>
-References: <1368724352-10849-1-git-send-email-dianders@chromium.org> <1368724352-10849-2-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH 2/2] pinctrl: exynos: fix eint wakeup by using irq_set_wake()
+Date: Thu, 16 May 2013 21:26:16 +0200
+Message-ID: <1483058.pKLP2TAAG6@flatron>
+References: <1368724352-10849-1-git-send-email-dianders@chromium.org> <1368724352-10849-3-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f169.google.com ([209.85.215.169]:42247 "EHLO
-	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752699Ab3EPTTZ (ORCPT
+Received: from mail-ee0-f51.google.com ([74.125.83.51]:63793 "EHLO
+	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752823Ab3EPT0U (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 May 2013 15:19:25 -0400
-In-Reply-To: <1368724352-10849-2-git-send-email-dianders@chromium.org>
+	Thu, 16 May 2013 15:26:20 -0400
+In-Reply-To: <1368724352-10849-3-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Doug,
-
-Thanks for the patch. See my comments inline.
-
-On Thursday 16 of May 2013 10:12:31 Doug Anderson wrote:
-> The GPIO states need to be restored after s2r and this is not currently
-> supported in the pinctrl driver. This patch saves the gpio states before
-> suspend and restores them after resume.
+On Thursday 16 of May 2013 10:12:32 Doug Anderson wrote:
+> From: Prathyush K <prathyush.k@samsung.com>
 > 
-> Logic and commenting for samsung_pinctrl_resume_noirq() is heavily
-> borrowed from the old samsung_gpio_pm_2bit_resume(), which seemed to
-> do this a reasonable way.
+> Add the irq_set_wake function for exynos pinctrl to configure the
+> external interrupt wakeup mask register.
 > 
-> Patch originally from Prathyush K <prathyush.k@samsung.com> but
-> rewritten by Doug Anderson <dianders@chromium.org>.
+> [dianders: minor nit fixes; port to ToT]
 > 
 > Signed-off-by: Prathyush K <prathyush.k@samsung.com>
 > Signed-off-by: Doug Anderson <dianders@chromium.org>
 > ---
->  drivers/pinctrl/pinctrl-samsung.c | 199
-> ++++++++++++++++++++++++++++++++++++++
-> drivers/pinctrl/pinctrl-samsung.h |  11 +++
->  2 files changed, 210 insertions(+)
+>  drivers/pinctrl/pinctrl-exynos.c  | 45
+> ++++++++++++++++++++++++++++-----------
+> drivers/pinctrl/pinctrl-exynos.h  |  3 ++-
+>  drivers/pinctrl/pinctrl-samsung.h |  2 ++
+>  3 files changed, 37 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/pinctrl-samsung.c
-> b/drivers/pinctrl/pinctrl-samsung.c index 9763668..0891667 100644
-> --- a/drivers/pinctrl/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/pinctrl-samsung.c
-> @@ -964,6 +964,204 @@ static int samsung_pinctrl_probe(struct
-> platform_device *pdev) return 0;
+> diff --git a/drivers/pinctrl/pinctrl-exynos.c
+> b/drivers/pinctrl/pinctrl-exynos.c index ac74281..3ebb2ff 100644
+> --- a/drivers/pinctrl/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/pinctrl-exynos.c
+> @@ -30,6 +30,8 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/err.h>
+> 
+> +#include <plat/pm.h>
+> +
+
+This is not going to work with CONFIG_MULTIPLATFORM.
+
+Now this raises a question what is the preferred way to pass some data 
+from generic driver to platform code.
+
+I would suggest adding a function called exynos_pinctrl_get_eintmask() (or 
+whatever) that would return the wake-up mask configured in the driver and 
+then modify platform code to use it.
+
+>  #include "pinctrl-samsung.h"
+>  #include "pinctrl-exynos.h"
+> 
+> @@ -326,6 +328,24 @@ static int exynos_wkup_irq_set_type(struct irq_data
+> *irqd, unsigned int type) return 0;
 >  }
 > 
-> +#ifdef CONFIG_PM
+> +static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int
+> state) +{
+> +	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+> +	const int eint_num = bank->eint_base + irqd->hwirq;
+> +	unsigned long bit = 1L << eint_num;
 > +
-> +/**
-> + * samsung_pinctrl_resume_noirq - save pinctrl state for suspend
-> + *
-> + * Save data for all banks handled by this device.
-> + */
-> +static int samsung_pinctrl_suspend_noirq(struct device *dev)
-> +{
-> +	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
-> +	struct samsung_pin_ctrl *ctrl = drvdata->ctrl;
-> +	void __iomem * const virt_base = drvdata->virt_base;
-
-Nit: This const is ugly :) . Is it needed for anything?
-
-> +	int i;
+> +	pr_info("wake %s for eint %d / %s[%ld]\n",
+> +		state ? "enabled" : "disabled",
+> +		eint_num, bank->name, irqd->hwirq);
 > +
-> +	for (i = 0; i < ctrl->nr_banks; i++) {
-> +		struct samsung_pin_bank *bank = &ctrl->pin_banks[i];
-> +		const struct samsung_pin_bank_type *type = bank->type;
-> +		void __iomem * const reg = virt_base + bank->pctl_offset;
-
-Nit: This one is not pretty either.
-
-> +		bank->pm_save.con = readl(reg +
-> +					  type-
->reg_offset[PINCFG_TYPE_FUNC]);
-> +		if (type->fld_width[PINCFG_TYPE_FUNC] > 4)
-
-What is this condition supposed to check?
-
-> +			bank->pm_save.con |= (u64)readl(reg + 4 +
-> +				      type->reg_offset[PINCFG_TYPE_FUNC]) 
-<< 32;
-
-This looks ugly. Whatever is going on here, wouldn't it be better to use 
-separate field, like con2 or something?
-
-> +		bank->pm_save.dat = readl(reg +
-> +					  type-
->reg_offset[PINCFG_TYPE_DAT]);
-> +		bank->pm_save.pud = readl(reg +
-> +					  type-
->reg_offset[PINCFG_TYPE_PUD]);
-> +		bank->pm_save.drv = readl(reg +
-> +					  type-
->reg_offset[PINCFG_TYPE_DRV]);
-> +
-> +		if (type->fld_width[PINCFG_TYPE_CON_PDN]) {
-> +			bank->pm_save.conpdn = readl(reg +
-> +				type->reg_offset[PINCFG_TYPE_CON_PDN]);
-> +			bank->pm_save.pudpdn = readl(reg +
-> +				type->reg_offset[PINCFG_TYPE_PUD_PDN]);
-> +		}
-
-I wonder if you couldn't do all the saving here in a single loop over all 
-pin control types, like:
-
-	unsigned int offsets = bank->type->reg_offsets;
-	unsigned int widths = bank->type->fld_width;
-
-	for (i = 0; i < PINCFG_TYPE_NUM; ++i)
-		if (widths[i])
-			bank->pm_save[i] = readl(reg + offsets[i]);
-
-The only thing not handled by this loop is second CON registers in banks 
-with two of them. I can't think of any better solution for this other than 
-just adding a special case after the loop.
-
-> +		dev_dbg(dev, "Save %s @ %p (con %#010llx)\n",
-> +			bank->name, reg, bank->pm_save.con);
-> +	}
+> +	if (!state)
+> +		s3c_irqwake_eintmask |= bit;
+> +	else
+> +		s3c_irqwake_eintmask &= ~bit;
 > +
 > +	return 0;
 > +}
 > +
-> +/**
-> + * is_sfn - test whether a pin config represents special function.
-> + *
-> + * Test whether the given masked+shifted bits of an GPIO configuration
-> + * are one of the SFN (special function) modes.
-> + */
-> +static inline int is_sfn(u32 con)
-> +{
-> +	return con >= 2;
-> +}
-> +
-> +/**
-> + * is_in - test if the given masked+shifted GPIO configuration is an
-> input. + */
-> +static inline int is_in(u32 con)
-> +{
-> +	return con == 0;
-> +}
-> +
-> +/**
-> + * is_out - test if the given masked+shifted GPIO configuration is an
-> output. + */
-> +static inline int is_out(u32 con)
-> +{
-> +	return con == 1;
-> +}
-> +
-> +/**
-> + * samsung_pinctrl_resume_noirq - restore pinctrl state from suspend
-> + *
-> + * Restore one of the GPIO banks that was saved during suspend. This is
-> + * not as simple as once thought, due to the possibility of glitches +
-> * from the order that the CON and DAT registers are set in.
-> + *
-> + * The three states the pin can be are {IN,OUT,SFN} which gives us 9
-> + * combinations of changes to check. Three of these, if the pin stays
-> + * in the same configuration can be discounted. This leaves us with
-> + * the following:
-> + *
-> + * { IN => OUT }  Change DAT first
-> + * { IN => SFN }  Change CON first
-> + * { OUT => SFN } Change CON first, so new data will not glitch
-> + * { OUT => IN }  Change CON first, so new data will not glitch
-> + * { SFN => IN }  Change CON first
-> + * { SFN => OUT } Change DAT first, so new data will not glitch [1]
-> + *
-> + * We do not currently deal with the UP registers as these control
-> + * weak resistors, so a small delay in change should not need to bring
-> + * these into the calculations.
-> + *
-> + * [1] this assumes that writing to a pin DAT whilst in SFN will set
-> the + *     state for when it is next output.
-> + */
-> +static int samsung_pinctrl_resume_noirq(struct device *dev)
-> +{
-> +	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
-> +	struct samsung_pin_ctrl *ctrl = drvdata->ctrl;
-> +	void __iomem * const virt_base = drvdata->virt_base;
-> +	int i;
-> +
-> +	for (i = 0; i < ctrl->nr_banks; i++) {
-> +		const struct samsung_pin_bank *bank = &ctrl->pin_banks[i];
-> +		void __iomem * const reg = virt_base + bank->pctl_offset;
-> +		const struct samsung_pin_bank_type *type = bank->type;
-> +		const u8 func_offset = type->reg_offset[PINCFG_TYPE_FUNC];
-> +		const u32 func_width = type->fld_width[PINCFG_TYPE_FUNC];
-> +		const u32 func_mask = (1 << func_width) - 1;
-
-I'm constantly seeing so many consts in this patch. Is this constraint 
-relevant here in any way? Git grep doesn't show too many instances of this 
-construct used for local variables around the kernel.
-
-> +		const bool is64bit = type->fld_width[PINCFG_TYPE_FUNC] > 
-4;
-
-Again this check. Is it supposed to handle banks with two CON registers? 
-If yes, it is incorrect, as they have 4 bits per pin.
-
-> +		const u64 to_con = bank->pm_save.con;
-> +		u64 from_con = readl(reg + func_offset);
-> +		u64 change_mask = 0;
-> +		u64 to_write;
-> +		int pin;
-> +
-> +		if (is64bit)
-> +			from_con |= (u64)readl(reg + 4 + func_offset) << 
-32;
-
-Same comment as in save.
-
-> +
-> +		/* Easy--the PUD and DRV can go first */
-> +		writel(bank->pm_save.pud,
-> +		       reg + type->reg_offset[PINCFG_TYPE_PUD]);
-> +		writel(bank->pm_save.drv,
-> +		       reg + type->reg_offset[PINCFG_TYPE_DRV]);
-> +
-> +		/*
-> +		 * Create a change_mask of all the items that need to have
-> +		 * their CON value changed before their DAT value, so that
-> +		 * we minimise the work between the two settings.
-> +		 */
-> +		for (pin = 0; pin < bank->nr_pins; pin++) {
-
-This is a bit more tricky that in case of save, so CON register as a 
-special case is justified here.
-
-> +			u32 shift = pin * func_width;
-> +			u32 from_func = (from_con >> shift) & func_mask;
-> +			u32 to_func = (to_con >> shift) & func_mask;
-> +
-> +			/* If there is no change, then skip */
-> +			if (from_func == to_func)
-> +				continue;
-> +
-> +			/* If both are special function, then skip */
-> +			if (is_sfn(from_func) && is_sfn(to_func))
-> +				continue;
-> +
-> +			/* Change is IN => OUT, do not change now */
-> +			if (is_in(from_func) && is_out(to_func))
-> +				continue;
-> +
-> +			/* Change is SFN => OUT, do not change now */
-> +			if (is_sfn(from_func) && is_out(to_func))
-> +				continue;
-> +
-> +			/*
-> +			 * We should now be at the case of:
-> +			 *   IN=>SFN, OUT=>SFN, OUT=>IN, SFN=>IN.
-> +			 */
-> +			change_mask |= (func_mask << shift);
-> +		}
-> +
-> +		/* Write the new CON settings */
-> +		to_write = (from_con & ~change_mask) | (to_con & 
-change_mask);
-> +		writel((u32)to_write, reg + func_offset);
-> +		if (is64bit)
-> +			writel((u32)(to_write >> 32), reg + 4 + 
-func_offset);
-> +
-> +		/* Now change any items that require DAT,CON */
-> +		writel(bank->pm_save.dat,
-> +		       reg + type->reg_offset[PINCFG_TYPE_DAT]);
-> +		writel((u32)to_con, reg + func_offset);
-> +		if (is64bit)
-> +			writel((u32)(to_con >> 32), reg + 4 + to_con);
-> +
-> +		if (type->fld_width[PINCFG_TYPE_CON_PDN]) {
-> +			writel(bank->pm_save.conpdn,
-> +			       reg + type-
->reg_offset[PINCFG_TYPE_CON_PDN]);
-> +			writel(bank->pm_save.pudpdn,
-> +			       reg + type-
->reg_offset[PINCFG_TYPE_PUD_PDN]);
-> +		}
-
-Now as I think of it, do CON_PDN and PUD_PDN really need to be saved? I 
-couldn't find in the documentation if they are preserved or lost in sleep 
-mode. Do you have some information on this?
-
-My experiments on Exynos4210 and 4x12 showed that they are preserved, but 
-I don't know what about other SoCs.
-
-> +		dev_dbg(dev, "Restore %s@%p (%#010llx=>%#010llx ch 
-%#010llx)\n",
-> +			bank->name, reg, from_con, to_con, change_mask);
-> +	}
-> +
-> +	return 0;
-> +}
-
-I wonder if the whole restoration procedure couldn't be simplified. I 
-don't remember my version being so complicated, but I don't have my patch 
-on my screen at the moment, so I might be wrong on this.
-
-> +#else
-> +#define samsung_pinctrl_suspend_noirq	NULL
-> +#define samsung_pinctrl_resume_noirq	NULL
-> +#endif
-> +
-> +static const struct dev_pm_ops samsung_pinctrl_dev_pm_ops = {
-> +	.suspend_noirq = samsung_pinctrl_suspend_noirq,
-> +	.resume_noirq = samsung_pinctrl_resume_noirq,
-> +};
-
-I'm not sure if resume_noirq is really early enough. Some drivers might 
-already need correct pin configuration in their resume_noirq callback.
-
-In my patch I have used syscore_ops to register very late suspend and very 
-early resume callbacks for the whole pinctrl-samsung driver and a global 
-list of registered pin controllers, that is iterated over in suspend and 
-resume.
-
->  static const struct of_device_id samsung_pinctrl_dt_match[] = {
->  #ifdef CONFIG_PINCTRL_EXYNOS
->  	{ .compatible = "samsung,exynos4210-pinctrl",
-> @@ -987,6 +1185,7 @@ static struct platform_driver
-> samsung_pinctrl_driver = { .name	= "samsung-pinctrl",
->  		.owner	= THIS_MODULE,
->  		.of_match_table = of_match_ptr(samsung_pinctrl_dt_match),
-> +		.pm = &samsung_pinctrl_dev_pm_ops,
->  	},
+>  /*
+>   * irq_chip for wakeup interrupts
+>   */
+> @@ -335,6 +355,7 @@ static struct irq_chip exynos_wkup_irq_chip = {
+>  	.irq_mask	= exynos_wkup_irq_mask,
+>  	.irq_ack	= exynos_wkup_irq_ack,
+>  	.irq_set_type	= exynos_wkup_irq_set_type,
+> +	.irq_set_wake	= exynos_wkup_irq_set_wake,
 >  };
 > 
-> diff --git a/drivers/pinctrl/pinctrl-samsung.h
-> b/drivers/pinctrl/pinctrl-samsung.h index 7c7f9eb..c9a7b6e 100644
-> --- a/drivers/pinctrl/pinctrl-samsung.h
-> +++ b/drivers/pinctrl/pinctrl-samsung.h
-> @@ -127,6 +127,7 @@ struct samsung_pin_bank_type {
->   * @gpio_chip: GPIO chip of the bank.
->   * @grange: linux gpio pin range supported by this bank.
->   * @slock: spinlock protecting bank registers
-> + * @pm_save: saved register values during suspend
->   */
->  struct samsung_pin_bank {
->  	struct samsung_pin_bank_type *type;
-> @@ -144,6 +145,16 @@ struct samsung_pin_bank {
->  	struct gpio_chip gpio_chip;
->  	struct pinctrl_gpio_range grange;
->  	spinlock_t slock;
-> +#ifdef CONFIG_PM
-> +	struct {
-> +		u64	con;
-> +		u32	dat;
-> +		u32	pud;
-> +		u32	drv;
-> +		u32	conpdn;
-> +		u32	pudpdn;
+>  /* interrupt handler for wakeup interrupts 0..15 */
+> @@ -543,10 +564,10 @@ static struct samsung_pin_bank
+> exynos4210_pin_banks1[] = { EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "gpy4"),
+>  	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "gpy5"),
+>  	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "gpy6"),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00, 0),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04, 8),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08, 16),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c, 24),
+>  };
+> 
+>  /* pin banks of exynos4210 pin-controller 2 */
+> @@ -629,10 +650,10 @@ static struct samsung_pin_bank
+> exynos4x12_pin_banks1[] = { EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "gpy4"),
+>  	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "gpy5"),
+>  	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "gpy6"),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00, 0),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04, 8),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08, 16),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c, 24),
+>  };
+> 
+>  /* pin banks of exynos4x12 pin-controller 2 */
+> @@ -724,10 +745,10 @@ static struct samsung_pin_bank
+> exynos5250_pin_banks0[] = { EXYNOS_PIN_BANK_EINTN(8, 0x220, "gpy4"),
+>  	EXYNOS_PIN_BANK_EINTN(8, 0x240, "gpy5"),
+>  	EXYNOS_PIN_BANK_EINTN(8, 0x260, "gpy6"),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
+> -	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00, 0),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04, 8),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08, 16),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c, 24),
+>  };
+> 
+>  /* pin banks of exynos5250 pin-controller 1 */
+> diff --git a/drivers/pinctrl/pinctrl-exynos.h
+> b/drivers/pinctrl/pinctrl-exynos.h index 9b1f77a..d98e9ff 100644
+> --- a/drivers/pinctrl/pinctrl-exynos.h
+> +++ b/drivers/pinctrl/pinctrl-exynos.h
+> @@ -65,13 +65,14 @@
+>  		.name		= id			\
+>  	}
+> 
+> -#define EXYNOS_PIN_BANK_EINTW(pins, reg, id, offs)	\
+> +#define EXYNOS_PIN_BANK_EINTW(pins, reg, id, offs, base)\
+>  	{						\
+>  		.type		= &bank_type_alive,	\
+>  		.pctl_offset	= reg,			\
+>  		.nr_pins	= pins,			\
+>  		.eint_type	= EINT_TYPE_WKUP,	\
+>  		.eint_offset	= offs,			\
+> +		.eint_base	= base,			\
 
-This could be changed into an array.
+I can't look at my patch at the moment, but I think I have managed to get 
+EINT index without adding this extra field.
 
 Best regards,
 Tomasz
