@@ -1,34 +1,60 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 00/33] devm improvement series, part 1, take 2
-Date: Thu, 16 May 2013 18:13:58 +0200
-Message-ID: <20130516161355.GA3032@katana>
-References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
- <1368705452.15764.217.camel@sauron.fi.intel.com>
- <CAKohpokUy7QfvKkzGH025Zs5VkUhr8zRLeo3caG3LAnLfptzww@mail.gmail.com>
- <1368709862.15764.224.camel@sauron.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <1368709862.15764.224.camel@sauron.fi.intel.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, alsa-devel@alsa-project.org, linux-usb@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Matt Mackall <mpm@selenic.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, Wan ZongShun <mcuos.com@gmail.com>, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Florian
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 0/2] Fix suspend/resume issues created by pinmux on exynos
+Date: Thu, 16 May 2013 10:12:30 -0700
+Message-ID: <1368724352-10849-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-gg0-f201.google.com ([209.85.161.201]:51935 "EHLO
+	mail-gg0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752585Ab3EPRMj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 May 2013 13:12:39 -0400
+Received: by mail-gg0-f201.google.com with SMTP id f4so159351ggn.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 May 2013 10:12:38 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org
 
 
-> I need a defconfig which would have this driver enabled. 
+This set of patches fixes some problems with suspend/resume that were
+introduced by the switch from the old gpio code to the new pinmux
+code.  Specifically:
+* It adds saving and restoring of pincontrol registers.
+* It fixes eint wakeups.
 
-My wish would be a minimal config. Right now, I try to build the driver
-with the current config and when that fails I grep through the
-(uncompressed) defconfigs for the symbol needed. Gives me 45/57 success
-rate on this series. Not perfect, but the best I could come up with
-without writing a .config-generator myself.
+This set of two patches was verified on a backport of the current
+pinmux code onto 3.8 on a Samsung ARM Chromebook.  Suspend/resume does
+not seem functional on the ARM Chromebook on current ToT Linux so I
+couldn't validate there.  This gets us one step closer, though!  Since
+patches applied cleanly I'm fairly certain that they will work on ToT
+as well as they do in our tree.
+
+These patches have only been tested on exynos5250.  I have made an
+effort to support other samsung boards (even those with two CONF
+registers), but that support is untested.
+
+Tomasz Figa has said that he has similar patches in development.  I'm
+posting what we have here but if Tomasz's patches end up being more
+suitable I have no objections to taking them over these (or of Tomasz
+wants to merge the two?).
+
+If you'd like to see the gerrit reviews of these in the Chrome OS tree,
+you can see:
+* https://gerrit.chromium.org/gerrit/#/c/51336/4
+* https://gerrit.chromium.org/gerrit/#/c/51342/3
+
+
+Doug Anderson (1):
+  pinctrl: samsung: fix suspend/resume functionality
+
+Prathyush K (1):
+  pinctrl: exynos: fix eint wakeup by using irq_set_wake()
+
+ drivers/pinctrl/pinctrl-exynos.c  |  45 ++++++---
+ drivers/pinctrl/pinctrl-exynos.h  |   3 +-
+ drivers/pinctrl/pinctrl-samsung.c | 199 ++++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.h |  13 +++
+ 4 files changed, 247 insertions(+), 13 deletions(-)
+
+-- 
+1.8.2.1
