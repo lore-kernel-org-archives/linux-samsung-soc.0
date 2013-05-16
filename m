@@ -1,44 +1,50 @@
 From: Doug Anderson <dianders@google.com>
 Subject: Re: Pulls and drive strengths in the pinctrl world
-Date: Wed, 15 May 2013 17:55:32 -0700
-Message-ID: <CAD=FV=VmHGj9wz5neR+mkcpt6yvxb4jiFEhyO=E4JZRPZNMFbA@mail.gmail.com>
+Date: Wed, 15 May 2013 17:58:23 -0700
+Message-ID: <CAD=FV=U7TK4s_GM6XNu3T_gfB+Ky9+dbsYQOVtKz_A_gcp3rmg@mail.gmail.com>
 References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com>
-	<4040680.Aq1C9TECZX@flatron>
-	<CAD=FV=VQ5XS8UWeYyFmUqY=_pLzQ-E=vKR53vwLVXWNonXG4Tg@mail.gmail.com>
-	<2396115.JIWghi6qt6@flatron>
+	<51941F64.9090104@wwwdotorg.org>
+	<CAD=FV=UWftrtEe+qUT92RTd-3BG8hpznu3CtztOfw4eMWOqHrw@mail.gmail.com>
+	<4404195.qJMM4PHBj7@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:43192 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754447Ab3EPAze (ORCPT
+Received: from mail-la0-f42.google.com ([209.85.215.42]:45577 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751435Ab3EPA6Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 20:55:34 -0400
-Received: by mail-la0-f47.google.com with SMTP id fq12so2434235lab.34
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 May 2013 17:55:33 -0700 (PDT)
-In-Reply-To: <2396115.JIWghi6qt6@flatron>
+	Wed, 15 May 2013 20:58:25 -0400
+Received: by mail-la0-f42.google.com with SMTP id fg20so183574lab.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 May 2013 17:58:24 -0700 (PDT)
+In-Reply-To: <4404195.qJMM4PHBj7@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
 
 Tomasz,
 
-On Wed, May 15, 2013 at 5:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> I don't have anything interesting at the moment. It's a bit late now here
-> (2 AM), so I'm going to get some sleep first.
+On Wed, May 15, 2013 at 5:19 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hmm, last thing before I fell asleep: We already have support for power
+> down configuration in pinctrl-samsung. See samsung,pin-conpdn and
+> samsung,pin-pudpdn.
 
-Sorry for keeping you up.  Sleep is good!
+Dang it! OK, we'll work on using those.
 
 
-> Also after reading Stephen's reply, I'm wondering if hogging wouldn't
-> solve the problem indeed. (It might have to be fixed on pinctrl-samsung
-> first, as last time I tried to use it, it caused some errors from pinctrl
-> core, but haven't time to track them down, as it wasn't anything important
-> at that time).
+> Also I already have patches for suspend/resume support of pinctrl-samsung
+> and pinctrl-exynos, as well as configuration of wake-up sources. I'm going
+> to post them soon.
 
-I will give it a shot tomorrow morning and see how it looks.  I'll
-also evaluate Stephen's suggestions then once I've see how it looks
-with the current bindings...
+Huh, I wonder if they look just like the one we've been working on:
+* https://gerrit.chromium.org/gerrit/#/c/51336/
+* https://gerrit.chromium.org/gerrit/#/c/51342/
+
+Those are about ready for upstream, too.  I was going to send them
+this morning when I found out that we were missing a bunch of pinctrl
+patches and had to rework then.  :(
+
+Anyway, we can compare our solutions and figure out which is better.
+;)  I'm happy with anything that works!
 
 -Doug
