@@ -1,48 +1,52 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
-Date: Thu, 16 May 2013 02:18:40 +0000 (GMT)
-Message-ID: <23026896.124001368670717989.JavaMail.weblogic@epml12>
+Subject: Re: [PATCH] ARM: SAMSUNG: devs: Add names to fimd0 IRQ resources
+Date: Thu, 16 May 2013 08:12:07 +0000 (GMT)
+Message-ID: <7583198.135661368691927231.JavaMail.weblogic@epml12>
 Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=euc-kr
 Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:52189 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753399Ab3EPIMK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 May 2013 04:12:10 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MMV00JFBTG8KK80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 16 May 2013 17:12:08 +0900 (KST)
 MIME-version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Heiko St?bner <heiko@sntech.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jingoo Han <jg1.han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 
-T24gVHVlc2RheSwgTWF5IDE0LCAyMDEzIDExOjIyIFBNIFRvbWFzeiBGaWdhIHdyb3RlOg0KPiAN
-Cj4gSGkgTGludXMsIEhlaWtvLA0KPiANCj4gT24gVHVlc2RheSAxNCBvZiBNYXkgMjAxMyAxNDo0
-NzoxOSBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiA+IE9uIFNhdCwgTWF5IDExLCAyMDEzIGF0IDE6
-MzEgUE0sIEhlaWtvIFN0P2JuZXIgPGhlaWtvQHNudGVjaC5kZT4gd3JvdGU6DQo+ID4gPiBDb25j
-ZXB0dWFsbHkgdGhlIHMzYzI0eHgtZG1hIGZlZWxzIGxpa2UgYSBkaXN0YW50IHJlbGF0aXZlIG9m
-IHRoZSBwbDA4eA0KPiA+ID4gd2l0aCBudW1lcm91cyB2aXJ0dWFsIGNoYW5uZWxzIGJlaW5nIG1h
-cHBlZCB0byBhIGxvdCBsZXNzIHBoeXNpY2FsIG9uZXMuDQo+ID4gPiBUaGUgZHJpdmVyIHRoZXJl
-Zm9yZSBib3Jyb3dzIGEgbG90IGZyb20gdGhlIGFtYmEtcGwwOHggZHJpdmVyIGluIHRoaXMNCj4g
-PiA+IHJlZ2FyZC4gRnVuY3Rpb25hbGl0eS13aXNlIHRoZSBkcml2ZXIgZ2FpbnMgYSBtZW1jcHkg
-YWJpbGl0eSBpbiBhZGRpdGlvbg0KPiA+ID4gdG8gdGhlIHNsYXZlX3NnIG9uZS4NCj4gPiA+DQo+
-ID4gPiBUaGUgZHJpdmVyIGN1cnJlbnRseSBvbmx5IHN1cHBvcnRzIHRoZSAibmV3ZXIiIFNvQ3Mg
-d2hpY2ggY2FuIHVzZSBhbnkNCj4gPiA+IHBoeXNpY2FsIGNoYW5uZWwgZm9yIGFueSBkbWEgc2xh
-dmUuIFN1cHBvcnQgZm9yIHRoZSBvbGRlciBTb0NzIHdoZXJlDQo+ID4gPiBlYWNoIGNoYW5uZWwg
-b25seSBzdXBwb3J0cyBhIHN1YnNldCBvZiBwb3NzaWJsZSBkbWEgc2xhdmVzIHdpbGwgaGF2ZSB0
-bw0KPiA+ID4gYmUgYWRkZWQgbGF0ZXIuDQo+ID4gPg0KPiA+ID4gVGVzdGVkIG9uIGEgczNjMjQx
-Ni1iYXNlZCBib2FyZCwgbWVtY3B5IHVzaW5nIHRoZSBkbWF0ZXN0IG1vZHVsZSBhbmQNCj4gPiA+
-IHNsYXZlX3NnIHBhcnRpYWxseSB1c2luZyB0aGUgc3BpLXMzYzY0eHggZHJpdmVyLg0KPiA+ID4N
-Cj4gPiA+IFNpZ25lZC1vZmYtYnk6IEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRlY2guZGU+DQo+
-ID4NCj4gPiBTbyBoYXZlIEkgdW5kZXJzdG9vZCBjb3JyZWN0bHkgaWYgSSBhc3N1bWUgdGhhdCAq
-c29tZSogUzNDDQo+ID4gdmFyaWFudHMsIGkuZS4gdGhpczogYXJjaC9hcm0vbWFjaC1zM2M2NHh4
-L2RtYS5jDQo+ID4gaGF2ZSBhIHZhbmlsbGEsIHVubW9kaWZpZWQsIG9yIGp1c3Qgc2xpZ2h0bHkg
-bW9kaWZpZWQNCj4gPiBQTDA4eCBibG9jaywgd2hpbGUgdGhpcyBETUFDIGlzIHNvbWV0aGluZyBw
-cm9iYWJseSBiYXNlZCBvbg0KPiA+IHRoZSBQTDA4eCB3aGVyZSBzb21lIEFTSUMgZW5naW5lZXIg
-aGFzIGhhZCBhIGdvb2QgdGltZSBoYWNraW5nDQo+ID4gYXJvdW5kIGluIHRoZSBWSERMIGNvZGUg
-dG8gbWVldCBzb21lIGZlYXR1cmUgcmVxdWlyZW1lbnRzLg0KPiA+IENvcnJlY3Q/IE9yIHBsYXVz
-aWJsZSBndWVzcz8NCj4gPg0KPiA+IEV4YWN0bHkgKmhvdyogZmFyIGF3YXkgZnJvbSB0aGUgcGww
-OHggaGFyZHdhcmUgaXMgaXQ/DQo+IA0KPiBBRkFJSyB0aGUgRE1BQyBvZiBTM0MyNHh4IGlzIGNv
-bXBsZXRlbHkgZGlmZmVyZW50IGZyb20gUEwwOHguIEkgdGhpbmsgSGVpa28NCj4ganVzdCBtZWFu
-dCB0aGF0IGl0IHVzZXMgc2ltaWxhciBjb25jZXB0cywgbGlrZSB2aXJ0dWFsIGNoYW5uZWxzLg0K
-DQpZZXMsIHJpZ2h0Lg0KdGhlIERNQUMgb2YgUzNDMjR4eCBpcyBjb21wbGV0ZWx5IGRpZmZlcmVu
-dCBmcm9tIFBMMDh4Lg0KQXMgSGVpa28gbWVudGlvbmVkLCB0aGUgRE1BQyBvZiBTM0MyNHh4IGlz
-ICdob21lIGdyb3duJyBhcyBvdGhlciBJUHMgb2YgUzNDMjR4eC4NCg0KQmVzdCByZWdhcmRzLA0K
-SmluZ29vIEhhbg==
+VGh1cnNkYXksIE1heSAxNiwgMjAxMyAxMjoxMCBBTSwgVG9tYXN6IEZpZ2Egd3JvdGU6DQo+IA0K
+PiBTaW5jZSBjb21taXQgMTk3N2U2ZDggKGRybS9leHlub3M6IGNoYW5nZSB0aGUgbWV0aG9kIGZv
+ciBnZXR0aW5nIHRoZQ0KPiBpbnRlcnJ1cHQpIHRoZSBFeHlub3MgRFJNIEZJTUQgZHJpdmVyIHJl
+cXVpcmVzIElSUSByZXNvdXJjZXMgdG8gYmUNCj4gbmFtZWQuIFRoaXMgcGF0Y2ggZml4ZXMgcHJv
+YmUgZmFpbHVyZSBpbiBub24tRFQgY2FzZXMgYnkgYWRkaW5nDQo+IGFwcHJvcHJpYXRlIHJlc291
+cmNlIG5hbWVzIHRvIGZpbWQwIHBsYXRmb3JtIGRldmljZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6
+IFRvbWFzeiBGaWdhIDx0LmZpZ2FAc2Ftc3VuZy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEt5dW5n
+bWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+DQoNCkl0IGxvb2tzIGdvb2QuDQpU
+aGFuayB5b3UgZm9yIHNlbmRpbmcgdGhlIHBhdGNoLg0KDQpBY2tlZC1ieTogSmluZ29vIEhhbiA8
+amcxLmhhbkBzYW1zdW5nLmNvbT4NCg0KDQpCZXN0IHJlZ2FyZHMsDQpKaW5nb28gSGFuDQoNCj4g
+LS0tDQo+ICBhcmNoL2FybS9wbGF0LXNhbXN1bmcvZGV2cy5jIHwgNiArKystLS0NCj4gIDEgZmls
+ZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0t
+Z2l0IGEvYXJjaC9hcm0vcGxhdC1zYW1zdW5nL2RldnMuYyBiL2FyY2gvYXJtL3BsYXQtc2Ftc3Vu
+Zy9kZXZzLmMNCj4gaW5kZXggMzBjMmZlMi4uMGY5YzNmNCAxMDA2NDQNCj4gLS0tIGEvYXJjaC9h
+cm0vcGxhdC1zYW1zdW5nL2RldnMuYw0KPiArKysgYi9hcmNoL2FybS9wbGF0LXNhbXN1bmcvZGV2
+cy5jDQo+IEBAIC0zMTEsOSArMzExLDkgQEAgc3RydWN0IHBsYXRmb3JtX2RldmljZSBzNXBfZGV2
+aWNlX2pwZWcgPSB7DQo+ICAjaWZkZWYgQ09ORklHX1M1UF9ERVZfRklNRDANCj4gIHN0YXRpYyBz
+dHJ1Y3QgcmVzb3VyY2UgczVwX2ZpbWQwX3Jlc291cmNlW10gPSB7DQo+ICAJWzBdID0gREVGSU5F
+X1JFU19NRU0oUzVQX1BBX0ZJTUQwLCBTWl8zMkspLA0KPiAtCVsxXSA9IERFRklORV9SRVNfSVJR
+KElSUV9GSU1EMF9WU1lOQyksDQo+IC0JWzJdID0gREVGSU5FX1JFU19JUlEoSVJRX0ZJTUQwX0ZJ
+Rk8pLA0KPiAtCVszXSA9IERFRklORV9SRVNfSVJRKElSUV9GSU1EMF9TWVNURU0pLA0KPiArCVsx
+XSA9IERFRklORV9SRVNfSVJRX05BTUVEKElSUV9GSU1EMF9WU1lOQywgInZzeW5jIiksDQo+ICsJ
+WzJdID0gREVGSU5FX1JFU19JUlFfTkFNRUQoSVJRX0ZJTUQwX0ZJRk8sICJmaWZvIiksDQo+ICsJ
+WzNdID0gREVGSU5FX1JFU19JUlFfTkFNRUQoSVJRX0ZJTUQwX1NZU1RFTSwgImxjZF9zeXMiKSwN
+Cj4gIH07DQo+IA0KPiAgc3RydWN0IHBsYXRmb3JtX2RldmljZSBzNXBfZGV2aWNlX2ZpbWQwID0g
+ew0KPiAtLQ0KPiAxLjguMi4xDQo+IA0KDQo=
