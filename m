@@ -1,160 +1,103 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 2/2] pinctrl: exynos: fix eint wakeup by using irq_set_wake()
-Date: Thu, 16 May 2013 10:12:32 -0700
-Message-ID: <1368724352-10849-3-git-send-email-dianders@chromium.org>
-References: <1368724352-10849-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1368724352-10849-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org
+From: Doug Anderson <dianders@google.com>
+Subject: Re: Pulls and drive strengths in the pinctrl world
+Date: Thu, 16 May 2013 11:00:12 -0700
+Message-ID: <CAD=FV=XHVMFM8CHXD4-9uTb1rjNs+2susvUMCf_QhSeCjFCQ9w@mail.gmail.com>
+References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com>
+	<4040680.Aq1C9TECZX@flatron>
+	<CAD=FV=VQ5XS8UWeYyFmUqY=_pLzQ-E=vKR53vwLVXWNonXG4Tg@mail.gmail.com>
+	<2396115.JIWghi6qt6@flatron>
+	<CAD=FV=VmHGj9wz5neR+mkcpt6yvxb4jiFEhyO=E4JZRPZNMFbA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f50.google.com ([209.85.215.50]:33157 "EHLO
+	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752144Ab3EPSAO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 May 2013 14:00:14 -0400
+Received: by mail-la0-f50.google.com with SMTP id ed20so3350841lab.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 May 2013 11:00:12 -0700 (PDT)
+In-Reply-To: <CAD=FV=VmHGj9wz5neR+mkcpt6yvxb4jiFEhyO=E4JZRPZNMFbA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
 
-From: Prathyush K <prathyush.k@samsung.com>
+Tomasz / Stephen,
 
-Add the irq_set_wake function for exynos pinctrl to configure the
-external interrupt wakeup mask register.
+On Wed, May 15, 2013 at 5:55 PM, Doug Anderson <dianders@google.com> wrote:
+>> Also after reading Stephen's reply, I'm wondering if hogging wouldn't
+>> solve the problem indeed. (It might have to be fixed on pinctrl-samsung
+>> first, as last time I tried to use it, it caused some errors from pinctrl
+>> core, but haven't time to track them down, as it wasn't anything important
+>> at that time).
+>
+> I will give it a shot tomorrow morning and see how it looks.  I'll
+> also evaluate Stephen's suggestions then once I've see how it looks
+> with the current bindings...
 
-[dianders: minor nit fixes; port to ToT]
+I wrote this out and it had some nice properties (it was a little more
+concise), but had the downside that there's no reference from the GPIO
+usage back to the pinmux.  I'd rather have the reference there in the
+hopes that it will help others get things right when they make changes
+to the dts file (they'll notice the reference and know that they need
+to change that too).
 
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
- drivers/pinctrl/pinctrl-exynos.c  | 45 ++++++++++++++++++++++++++++-----------
- drivers/pinctrl/pinctrl-exynos.h  |  3 ++-
- drivers/pinctrl/pinctrl-samsung.h |  2 ++
- 3 files changed, 37 insertions(+), 13 deletions(-)
+...so I think the summary is: I'm OK with keeping what we have.  It
+may be a little awkward in some ways but it's definitely worth it to
+get all of the benefits of the pinmux / GPIO separation.  :)
 
-diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
-index ac74281..3ebb2ff 100644
---- a/drivers/pinctrl/pinctrl-exynos.c
-+++ b/drivers/pinctrl/pinctrl-exynos.c
-@@ -30,6 +30,8 @@
- #include <linux/spinlock.h>
- #include <linux/err.h>
- 
-+#include <plat/pm.h>
-+
- #include "pinctrl-samsung.h"
- #include "pinctrl-exynos.h"
- 
-@@ -326,6 +328,24 @@ static int exynos_wkup_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	return 0;
- }
- 
-+static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int state)
-+{
-+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-+	const int eint_num = bank->eint_base + irqd->hwirq;
-+	unsigned long bit = 1L << eint_num;
-+
-+	pr_info("wake %s for eint %d / %s[%ld]\n",
-+		state ? "enabled" : "disabled",
-+		eint_num, bank->name, irqd->hwirq);
-+
-+	if (!state)
-+		s3c_irqwake_eintmask |= bit;
-+	else
-+		s3c_irqwake_eintmask &= ~bit;
-+
-+	return 0;
-+}
-+
- /*
-  * irq_chip for wakeup interrupts
-  */
-@@ -335,6 +355,7 @@ static struct irq_chip exynos_wkup_irq_chip = {
- 	.irq_mask	= exynos_wkup_irq_mask,
- 	.irq_ack	= exynos_wkup_irq_ack,
- 	.irq_set_type	= exynos_wkup_irq_set_type,
-+	.irq_set_wake	= exynos_wkup_irq_set_wake,
- };
- 
- /* interrupt handler for wakeup interrupts 0..15 */
-@@ -543,10 +564,10 @@ static struct samsung_pin_bank exynos4210_pin_banks1[] = {
- 	EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "gpy4"),
- 	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "gpy5"),
- 	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "gpy6"),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00, 0),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04, 8),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08, 16),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c, 24),
- };
- 
- /* pin banks of exynos4210 pin-controller 2 */
-@@ -629,10 +650,10 @@ static struct samsung_pin_bank exynos4x12_pin_banks1[] = {
- 	EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "gpy4"),
- 	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "gpy5"),
- 	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "gpy6"),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00, 0),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04, 8),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08, 16),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c, 24),
- };
- 
- /* pin banks of exynos4x12 pin-controller 2 */
-@@ -724,10 +745,10 @@ static struct samsung_pin_bank exynos5250_pin_banks0[] = {
- 	EXYNOS_PIN_BANK_EINTN(8, 0x220, "gpy4"),
- 	EXYNOS_PIN_BANK_EINTN(8, 0x240, "gpy5"),
- 	EXYNOS_PIN_BANK_EINTN(8, 0x260, "gpy6"),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
--	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00, 0),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04, 8),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08, 16),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c, 24),
- };
- 
- /* pin banks of exynos5250 pin-controller 1 */
-diff --git a/drivers/pinctrl/pinctrl-exynos.h b/drivers/pinctrl/pinctrl-exynos.h
-index 9b1f77a..d98e9ff 100644
---- a/drivers/pinctrl/pinctrl-exynos.h
-+++ b/drivers/pinctrl/pinctrl-exynos.h
-@@ -65,13 +65,14 @@
- 		.name		= id			\
- 	}
- 
--#define EXYNOS_PIN_BANK_EINTW(pins, reg, id, offs)	\
-+#define EXYNOS_PIN_BANK_EINTW(pins, reg, id, offs, base)\
- 	{						\
- 		.type		= &bank_type_alive,	\
- 		.pctl_offset	= reg,			\
- 		.nr_pins	= pins,			\
- 		.eint_type	= EINT_TYPE_WKUP,	\
- 		.eint_offset	= offs,			\
-+		.eint_base	= base,			\
- 		.name		= id			\
- 	}
- 
-diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-index c9a7b6e..1e033ae 100644
---- a/drivers/pinctrl/pinctrl-samsung.h
-+++ b/drivers/pinctrl/pinctrl-samsung.h
-@@ -120,6 +120,7 @@ struct samsung_pin_bank_type {
-  * @eint_func: function to set in CON register to configure pin as EINT.
-  * @eint_type: type of the external interrupt supported by the bank.
-  * @eint_mask: bit mask of pins which support EINT function.
-+ * @eint_base: number of external wakeup interrupts from start to this bank.
-  * @name: name to be prefixed for each pin in this pin bank.
-  * @of_node: OF node of the bank.
-  * @drvdata: link to controller driver data
-@@ -138,6 +139,7 @@ struct samsung_pin_bank {
- 	enum eint_type	eint_type;
- 	u32		eint_mask;
- 	u32		eint_offset;
-+	u32		eint_base;
- 	char		*name;
- 	struct device_node *of_node;
- 	struct samsung_pinctrl_drv_data *drvdata;
--- 
-1.8.2.1
+For the curious of what my prototype looked like (feel free to
+ignore--I'm not planning on keeping this and I didn't actually try
+testing it), I've included it below.  This is just the bit from
+"cros5250-common" (the common file shared among several similar
+boards), so I'd need something similar in "exynos5250-snow").
+
+pinctrl@11400000 {
+  /* Default states for hogs follow */
+  nopull_inputs_cros5250_a: nopull-inputs-cros5250-a {
+    samsung,pins =
+      "gpx1-2", /* trackpad */
+      "gpx1-3", /* gpio-keys - power */
+      "gpx3-2"; /* max77686 */
+    samsung,pin-function = <0>;
+    samsung,pin-pud = <0>;
+    samsung,pin-drv = <0>;
+  };
+
+  pulldown_inputs_cros5250-a: pulldown-inputs-cros5250_a {
+    samsung,pins = "gpx3-7"; /* hdmi */
+    samsung,pin-function = <0>;
+    samsung,pin-pud = <1>;
+    samsung,pin-drv = <0>;
+  };
+
+  simple_outputs_cros5250-a: simple-outputs-cros5250_a {
+    samsung,pins =
+      "gpx0-1", /* wifi-en */
+      "gpx0-2", /* wifi-rst */
+      "gpx1-7"; /* max98095-en */
+    samsung,pin-function = <1>;
+    samsung,pin-pud = <0>;
+    samsung,pin-drv = <0>;
+  }
+
+  pinctrl-names = "default";
+  pinctrl-0 = <&nopull_inputs_cros5250_a
+               &pulldown_inputs_cros5250_a
+               &simple_outputs_cros5250_a>;
+};
+
+pinctrl@13400000 {
+  simple_outputs_cros5250-b: simple-outputs-cros5250_b {
+    samsung,pins = "gpe1-0" /* hsic reset */;
+    samsung,pin-function = <1>;
+    samsung,pin-pud = <0>;
+    samsung,pin-drv = <0>;
+
+  };
+  pinctrl-names = "default";
+  pinctrl-0 = <&simple_outputs_cros5250_b>;
+};
+
+-Doug
