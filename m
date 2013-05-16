@@ -1,45 +1,45 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 0/6] Samsung USB PHY SoC support cleanup
-Date: Thu, 16 May 2013 11:57:05 +0200
-Message-ID: <1368698231-24268-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53090 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751990Ab3EPJ5a (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 May 2013 05:57:30 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 1/6] usb: phy: samsung: Select common driver part implicitly
+Date: Thu, 16 May 2013 11:57:06 +0200
+Message-ID: <1368698231-24268-2-git-send-email-t.figa@samsung.com>
+References: <1368698231-24268-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1368698231-24268-1-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, balbi@ti.com, Praveen Paneri <p.paneri@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, gregkh@linuxfoundation.org, kyungmin.park@samsung.com, Tomasz Figa <t.figa@samsung.com>
 
-This patch series intends to improve handling of SoC-specific differences
-in Samsung USB PHY drivers, by reducing the need to explicitly check
-SoC type using if and switch statements.
+Since phy-samsung-usb library can be used only by phy-samsung-usb2 and
+phy-samsung-usb3 drivers, there is no need to give explicit control over
+its Kconfig symbol.
 
-In addition, last patch adds support for Exynos 4x12, as this is simply
-a matter of adding appropriate driver data and additional case in two switches.
+This patch makes CONFIG_SAMSUNG_USBPHY symbol hidden and selected
+implicitly by CONFIG_SAMSUNG_USB2PHY and CONFIG_SAMSUNG_USB3PHY.
 
-Tested on Exynos4210-based Trats board and Exynos4412-based internal
-Samsung board.
+Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/usb/phy/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since v1:
- - rebased to latest usb-next
-
-Tomasz Figa (6):
-  usb: phy: samsung: Select common driver part implicitly
-  usb: phy: samsung: Use clk_get to get reference clock
-  usb: phy: samsung: Consolidate reference clock rate handling
-  usb: phy: samsung: Pass set_isolation callback through driver data
-  usb: phy: samsung: Pass enable/disable callbacks through driver data
-  usb: phy: samsung: Add support for USB 2.0 PHY on Exynos 4x12
-
- drivers/usb/phy/Kconfig            |   2 +-
- drivers/usb/phy/phy-samsung-usb.c  | 154 ++++++++++++++++++-------------------
- drivers/usb/phy/phy-samsung-usb.h  |  14 +++-
- drivers/usb/phy/phy-samsung-usb2.c |  53 +++++++++----
- drivers/usb/phy/phy-samsung-usb3.c |  23 ++++--
- 5 files changed, 146 insertions(+), 100 deletions(-)
-
+diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
+index 371d0e7..a2b9e18 100644
+--- a/drivers/usb/phy/Kconfig
++++ b/drivers/usb/phy/Kconfig
+@@ -86,7 +86,7 @@ config OMAP_USB3
+ 	  on/off the PHY.
+ 
+ config SAMSUNG_USBPHY
+-	tristate "Samsung USB PHY Driver"
++	tristate
+ 	help
+ 	  Enable this to support Samsung USB phy helper driver for Samsung SoCs.
+ 	  This driver provides common interface to interact, for Samsung USB 2.0 PHY
 -- 
 1.8.2.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
