@@ -1,51 +1,52 @@
 From: =?euc-kr?B?x9HB+LG4?= <jg1.han@samsung.com>
-Subject: Re: [PATCH] rtc: max8998: Check for pdata presence before dereferencing
-Date: Thu, 16 May 2013 01:54:08 +0000 (GMT)
-Message-ID: <17870889.122861368669248723.JavaMail.weblogic@epml12>
+Subject: Re: [PATCH 1/2] video: exynos_dp: Add parsing of gpios pins to
+ exynos-dp driver
+Date: Thu, 16 May 2013 02:03:59 +0000 (GMT)
+Message-ID: <26364319.123371368669839202.JavaMail.weblogic@epml12>
 Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=euc-kr
 Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60402 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752766Ab3EPByL (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:23108 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753781Ab3EPCEB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 May 2013 21:54:11 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 15 May 2013 22:04:01 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MMV00DH1BY27T80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 16 May 2013 10:54:08 +0900 (KST)
+ with ESMTP id <0MMV003UYCENO7D0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 16 May 2013 11:04:00 +0900 (KST)
 MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, akpm@linux-foundation.org
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "a.zummo@towertech.it" <a.zummo@towertech.it>, "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, =?euc-kr?Q?=BD=C9=C1=D8=BF=B5?= <jy0922.shim@samsung.com>, =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>, jg1.han@samsung.com, linux-kernel@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: =?euc-kr?Q?=C7=D1=C1=F8=B1=B8?= <jg1.han@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?euc-kr?Q?=B1=E8=B1=B9=C1=F8?= <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "patches@linaro.org" <patches@linaro.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "FlorianSchandinat@gmx.de" <FlorianSchandinat@gmx.de>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
 
-VGh1cnNkYXksIE1heSAxNiwgMjAxMyAxMjoxNiBBTSwgVG9tYXN6IEZpZ2Egd3JvdGU6DQo+IA0K
-PiBDdXJyZW50bHkgdGhlIGRyaXZlciBjYW4gY3Jhc2ggd2l0aCBhIE5VTEwgcG9pbnRlciBkZXJl
-ZmVyZW5jZSBpZiBubyBwZGF0YQ0KPiBpcyBwcm92aWRlZCwgZGVzcGl0ZSBvZiBzdWNjZXNzZnVs
-IHJlZ2lzdHJhdGlvbiBvZiBNRkQgcGFydC4gVGhpcyBwYXRjaA0KPiBmaXhlcyB0aGUgcHJvYmxl
-bSBieSBhZGRpbmcgYSBOVUxMIGNoZWNrIGJlZm9yZSBkZXJlZmVyZW5jaW5nIHRoZSBwZGF0YQ0K
-PiBwb2ludGVyLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVG9tYXN6IEZpZ2EgPHQuZmlnYUBzYW1z
-dW5nLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0Bz
-YW1zdW5nLmNvbT4NCg0KQ0MnZWQgQW5kcmV3IE1vcnRvbg0KDQpSZXZpZXdlZC1ieTogSmluZ29v
-IEhhbiA8amcxLmhhbkBzYW1zdW5nLmNvbT4NCg0KQmVzdCByZWdhcmRzLA0KSmluZ29vIEhhbg0K
-DQo+IC0tLQ0KPiAgZHJpdmVycy9ydGMvcnRjLW1heDg5OTguYyB8IDIgKy0NCj4gIDEgZmlsZSBj
-aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvcnRjL3J0Yy1tYXg4OTk4LmMgYi9kcml2ZXJzL3J0Yy9ydGMtbWF4ODk5OC5jDQo+
-IGluZGV4IDQ4YjY2MTIuLmQ1YWY3YmEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcnRjL3J0Yy1t
-YXg4OTk4LmMNCj4gKysrIGIvZHJpdmVycy9ydGMvcnRjLW1heDg5OTguYw0KPiBAQCAtMjg1LDcg
-KzI4NSw3IEBAIHN0YXRpYyBpbnQgbWF4ODk5OF9ydGNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikNCj4gIAkJCWluZm8tPmlycSwgcmV0KTsNCj4gDQo+ICAJZGV2X2luZm8oJnBk
-ZXYtPmRldiwgIlJUQyBDSElQIE5BTUU6ICVzXG4iLCBwZGV2LT5pZF9lbnRyeS0+bmFtZSk7DQo+
-IC0JaWYgKHBkYXRhLT5ydGNfZGVsYXkpIHsNCj4gKwlpZiAocGRhdGEgJiYgcGRhdGEtPnJ0Y19k
-ZWxheSkgew0KPiAgCQlpbmZvLT5scDM5NzRfYnVnX3dvcmthcm91bmQgPSB0cnVlOw0KPiAgCQlk
-ZXZfd2FybigmcGRldi0+ZGV2LCAiTFAzOTc0IHdpdGggUlRDIFJFR0VSUiBvcHRpb24uIg0KPiAg
-CQkJCSIgUlRDIHVwZGF0ZXMgd2lsbCBiZSBleHRyZW1lbHkgc2xvdy5cbiIpOw0KPiAtLQ0KPiAx
-LjguMi4xDQo+IA0KPiAtLQ0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0
-aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluDQo+IHRoZSBib2R5IG9m
-IGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+IE1vcmUgbWFqb3Jkb21v
-IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0K
+VHVlc2RheSwgTWF5IDE0LCAyMDEzIDExOjE3IFBNLCBWaWthcyBTYWpqYW4gd3JvdGU6DQo+IA0K
+PiBIaSBWaWthcywNCj4gDQo+IE9uIFR1ZXNkYXkgMTQgb2YgTWF5IDIwMTMgMTg6MjU6NTEgVmlr
+YXMgU2FqamFuIHdyb3RlOg0KPiA+ICBBZGRzIEdQSU8gcGFyc2luZyBmdW5jdGlvbmFsaXR5IGZv
+ciAiTENEIGJhY2tsaWdodCIgYW5kICJMQ0QgZW5hYmxlIg0KPiA+ICBHUElPIHBpbnMgb2YgZXh5
+bm9zIGRwIGNvbnRyb2xsZXIuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBWaWthcyBTYWpqYW4g
+PHZpa2FzLnNhamphbkBsaW5hcm8ub3JnPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL3ZpZGVvL2V4
+eW5vcy9leHlub3NfZHBfY29yZS5jIHwgICA0NQ0KPiA+ICsrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKyAxIGZpbGUgY2hhbmdlZCwgNDUgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+IA0KPiBJ
+IGRvbid0IHRoaW5rIHRoYXQgRXh5bm9zIERQIGRyaXZlciBpcyByaWdodCBwbGFjZSBmb3Igc3Vj
+aCBjb2RlLiBCYWNrbGlnaHQNCj4gYW5kIExDRCBkcml2ZXJzIGFyZSByZXNwb25zaWJsZSBmb3Ig
+YmFja2xpZ2h0IGFuZCBMQ0QgcG93ZXIgY29udHJvbCB1c2luZw0KPiBiYWNrbGlnaHQgYW5kIExD
+RCBzdWJzeXN0ZW1zLg0KPiANCj4gSU1ITyB0aGUgY29ycmVjdCBzb2x1dGlvbiB3b3VsZCBiZSB0
+byBlaXRoZXIgZXh0ZW5kIGV4aXN0aW5nIGJhY2tsaWdodC9sY2QNCj4gZHJpdmVycyBmb3VuZCBp
+biBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodCB0byBzdXBwb3J0IGRpcmVjdCBHUElPIGNvbnRyb2wg
+YW5kDQo+IHBhcnNlIEdQSU8gcGlucyBmcm9tIGRldmljZSB0cmVlIG9yIGNyZWF0ZSBuZXcgZ3Bp
+b19ibCBhbmQgZ3Bpb19sY2QgZHJpdmVycy4NCg0KSGkgVmlrYXMgU2FqaWFuLA0KDQpJIGFncmVl
+IHdpdGggVG9tYXN6IEZpZ2EncyBvcGluaW9uLg0KQmFja2xpZ2h0L0xDRCBmcmFtZXdvcmsgc2hv
+dWxkIGJlIHVzZWQuDQplRFAgcGFuZWwgYmFja2xpZ2h0IG9uIFNNREs1MjEwIGJvYXJkIGNhbiBi
+ZSBjb250cm9sbGVkIGJ5IFBXTTsNCnRodXMsIHB3bS1iYWNrbGlnaHQgZHJpdmVyIHNob3VsZCBi
+ZSB1c2VkLg0KQWxzbywgZURQIHBhbmVsIHJlc2V0IHBpbiBzaG91bGQgYmUgY29udHJvbGxlZCBi
+eSB1c2luZw0KcGxhdGZvcm0tbGNkIGRyaXZlci4NCg0KPiANCj4gQ0NpbmcgUmljaGFyZCwgRmxv
+cmlhbiBhbmQgbGludXgtZmJkZXYuDQoNCkFsc28sIEkgaGF2ZSBiZWVuIGRvaW5nIGJhY2tsaWdo
+dCByZXZpZXdzIGluc3RlYWQgb2YgUmljaGFyZCwNCnBsZWFzZSBkbyBDQydpbmcgbWUuDQoNCkJl
+c3QgcmVnYXJkcywNCkppbmdvbyBIYW4NCg0KPiANCj4gQmVzdCByZWdhcmRzLA0KPiBUb21hc3oN
+Cg==
