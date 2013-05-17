@@ -1,136 +1,109 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/6] ARM: EXYNOS: Fix EINT wake-up mask configuration when pinctrl is used
-Date: Fri, 17 May 2013 21:49:13 +0200
-Message-ID: <13970900.6bfa7bMWJL@flatron>
-References: <1368807872-2601-1-git-send-email-t.figa@samsung.com> <1368807872-2601-3-git-send-email-t.figa@samsung.com> <CAD=FV=UUzB=FwHfzTwRMDDGn3+FkuZPbXG9QL_h07qZgRMkZrw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] ARM: SAMSUNG: pm: Adjust for pinctrl- and DT-enabled platforms
+Date: Fri, 17 May 2013 22:23:07 +0200
+Message-ID: <4241187.TFCdy2kUT6@flatron>
+References: <1368807872-2601-1-git-send-email-t.figa@samsung.com> <1368807872-2601-4-git-send-email-t.figa@samsung.com> <CAD=FV=XJ=_o+hVbD=pPqXxXo=1PZdeRWyn-xyfS+Jf5LYfe2dg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f52.google.com ([74.125.83.52]:49173 "EHLO
-	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754852Ab3EQTtQ (ORCPT
+Received: from mail-ee0-f53.google.com ([74.125.83.53]:53036 "EHLO
+	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753749Ab3EQUXL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 May 2013 15:49:16 -0400
-Received: by mail-ee0-f52.google.com with SMTP id c13so2577805eek.25
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 May 2013 12:49:15 -0700 (PDT)
-In-Reply-To: <CAD=FV=UUzB=FwHfzTwRMDDGn3+FkuZPbXG9QL_h07qZgRMkZrw@mail.gmail.com>
+	Fri, 17 May 2013 16:23:11 -0400
+Received: by mail-ee0-f53.google.com with SMTP id c1so2508826eek.40
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 May 2013 13:23:09 -0700 (PDT)
+In-Reply-To: <CAD=FV=XJ=_o+hVbD=pPqXxXo=1PZdeRWyn-xyfS+Jf5LYfe2dg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, s.nawrocki@samsung.com
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Doug,
-
-On Friday 17 of May 2013 12:22:36 Doug Anderson wrote:
+On Friday 17 of May 2013 12:24:04 Doug Anderson wrote:
 > Tomasz,
 > 
 > On Fri, May 17, 2013 at 9:24 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > On DT-enabled systems pinctrl-exynos driver is responsible for
-> > handling
-> > of wake-up EINT interrupts. This patch adjusts wake-up mask
-> > configuration code to take wake-up mask value from pinctrl-exynos
-> > driver on DT-enabled systems.
+> > This patch makes legacy code on suspend/resume path being executed
+> > conditionally, on non-DT platforms only, to fix suspend/resume of
+> > DT-enabled systems, for which the code is inappropriate.
 > > 
 > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > > ---
 > > 
-> >  arch/arm/mach-exynos/include/mach/pm-core.h | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
+> >  arch/arm/plat-samsung/pm.c | 17 ++++++++++++-----
+> >  1 file changed, 12 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
+> > index 53210ec..8ac2b2d 100644
+> > --- a/arch/arm/plat-samsung/pm.c
+> > +++ b/arch/arm/plat-samsung/pm.c
+> > @@ -261,7 +261,8 @@ static int s3c_pm_enter(suspend_state_t state)
+> > 
+> >          * require a full power-cycle)
+> >         
+> >         */
+> > 
+> > -       if (!any_allowed(s3c_irqwake_intmask, s3c_irqwake_intallow) &&
+> > +       if (!of_have_populated_dt() &&
+> > +           !any_allowed(s3c_irqwake_intmask, s3c_irqwake_intallow) &&
 > 
-> A little ugly
+> I'd rather see you modify patch set #2 to provide some function to
+> retrieve just the eint mask and then use it here.  Your patch removes
+> this test and doesn't replace it with anything.  If you moved this
+> test to pinctrl directly you'd lose the test against intallow.
 
-Hehe. I thought exactly the same, but I don't see any better solution at 
-the moment, except persuading the whole suspend/resume support in plat-
-samsung to be a friend of multiplatform, which will have to be done 
-eventually, but at the moment I don't have time to work on it.
+Well, looking from the perspective of status before my patch, it just 
+bypasses a test that is incorrect on DT-enabled platforms.
 
-> because of the need to support old non-device tree
-> boards, but seems reasonable.  Means that if you have a device tree
-> you'd better be using pincontrol.  Assuming that's true now someone
-> needs to go through and remove all of the device tree support (and
-> bindings Documentation) for gpio-samsung.  Maybe someone has already
-> started?
+I agree that this test is rather reasonable to have, but it would require 
+defining a new interface and moving all platforms to it, which for now 
+would be a bit of overkill.
 
-If I remember correctly Sylwester Nawrocki had some patches to remove 
-that. He's on a leave right now, so he won't send them for a while, but I 
-guess it's nothing urgent.
+IMHO a separate series that sanitizes the whole PM handling in plat-
+samsung, including a rework of this check to make it cover all platforms 
+in a generic and multiplatform-friendly way. What do you think?
 
-> On exynos5250-snow (pinmux backported to 3.8):
+> ...or do you think this test is no longer useful for some reason?
 > 
-> Tested-by: Doug Anderson <dianders@chromium.org>
+> >             !any_allowed(s3c_irqwake_eintmask, s3c_irqwake_eintallow))
+> >             {
+> >             
+> >                 printk(KERN_ERR "%s: No wake-up sources!\n",
+> >                 __func__);
+> >                 printk(KERN_ERR "%s: Aborting sleep\n", __func__);
+> > 
+> > @@ -270,8 +271,11 @@ static int s3c_pm_enter(suspend_state_t state)
+> > 
+> >         /* save all necessary core registers not covered by the
+> >         drivers */
+> > 
+> > -       samsung_pm_save_gpios();
+> > -       samsung_pm_saved_gpios();
+> > +       if (!of_have_populated_dt()) {
+> > +               samsung_pm_save_gpios();
+> > +               samsung_pm_saved_gpios();
+> > +       }
+> > +
 > 
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Ah, the important part here is the "saved", not the "save"!  The
+> "save" should get a NULL chip for all GPIOs and effectively be a
+> no-op.
+> 
+> Skipping the "saved" is important of s3c64xx and s5p64x0 where the
+> "saved" seems to transition things over to powerdown mode.  Hopefully
+> a future patch of yours adds that back for those platforms in the
+> pinmux world.  ...same for restore.
+
+S3C64xx can be switched to power down pin configuration manually, but if 
+you don't do it, it will activate it automatically after entering sleep 
+mode.
+
+> Summary: I've tested this on exynos5250-snow and it's reasonable but
+> I'd love a response about the missing test before adding Reviewed-by.
 
 Thanks.
 
 Best regards,
 Tomasz
-
-> On Fri, May 17, 2013 at 9:24 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > On DT-enabled systems pinctrl-exynos driver is responsible for
-> > handling
-> > of wake-up EINT interrupts. This patch adjusts wake-up mask
-> > configuration code to take wake-up mask value from pinctrl-exynos
-> > driver on DT-enabled systems.
-> > 
-> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> > 
-> >  arch/arm/mach-exynos/include/mach/pm-core.h | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm/mach-exynos/include/mach/pm-core.h
-> > b/arch/arm/mach-exynos/include/mach/pm-core.h index 7dbbfec..296090e
-> > 100644
-> > --- a/arch/arm/mach-exynos/include/mach/pm-core.h
-> > +++ b/arch/arm/mach-exynos/include/mach/pm-core.h
-> > @@ -18,8 +18,15 @@
-> > 
-> >  #ifndef __ASM_ARCH_PM_CORE_H
-> >  #define __ASM_ARCH_PM_CORE_H __FILE__
-> > 
-> > +#include <linux/of.h>
-> > 
-> >  #include <mach/regs-pmu.h>
-> > 
-> > +#ifdef CONFIG_PINCTRL_EXYNOS
-> > +extern u32 exynos_get_eint_wake_mask(void);
-> > +#else
-> > +static inline u32 exynos_get_eint_wake_mask(void) { return
-> > 0xffffffff; } +#endif
-> > +
-> > 
-> >  static inline void s3c_pm_debug_init_uart(void)
-> >  {
-> >  
-> >         /* nothing here yet */
-> > 
-> > @@ -27,7 +34,12 @@ static inline void s3c_pm_debug_init_uart(void)
-> > 
-> >  static inline void s3c_pm_arch_prepare_irqs(void)
-> >  {
-> > 
-> > -       __raw_writel(s3c_irqwake_eintmask, S5P_EINT_WAKEUP_MASK);
-> > +       u32 eintmask = s3c_irqwake_eintmask;
-> > +
-> > +       if (of_have_populated_dt())
-> > +               eintmask = exynos_get_eint_wake_mask();
-> > +
-> > +       __raw_writel(eintmask, S5P_EINT_WAKEUP_MASK);
-> > 
-> >         __raw_writel(s3c_irqwake_intmask & ~(1 << 31),
-> >         S5P_WAKEUP_MASK);
-> >  
-> >  }
-> > 
-> > --
-> > 1.8.2.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to
-> majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
