@@ -1,25 +1,54 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 0/2] Clock changes for supporting CPUFreq on Exynos5250
-Date: Fri, 17 May 2013 11:25:51 +0530
-Message-ID: <1368770153-29041-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 1/2] clk: exynos5250: Update cpufreq related clocks for EXYNOS5250
+Date: Fri, 17 May 2013 11:25:52 +0530
+Message-ID: <1368770153-29041-2-git-send-email-tushar.behera@linaro.org>
+References: <1368770153-29041-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:60633 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754451Ab3EQGJZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 17 May 2013 02:09:25 -0400
+Received: by mail-pd0-f176.google.com with SMTP id x10so3024655pdj.35
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 May 2013 23:09:25 -0700 (PDT)
+In-Reply-To: <1368770153-29041-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, patches@linaro.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-With the use of common clock framework, CPUFreq driver on EXYNOS5250 now
-requires a few changes in clocks.
+cpufreq driver for EXYNOS5250 is not a platform driver, hence we cannot
+currently pass the clock names through a device tree node. Instead, we
+need to make them available through a global alias.
 
-Tested on Exynos5250 based Arndale board.
-The patches are based on v3.10-rc1.
+cpufreq driver for EXYNOS5250 requires four clocks - 'armclk',
+'mout_cpu', 'mout_mpll' and 'mout_apll'.
 
-Tushar Behera (2):
-  clk: exynos5250: Update cpufreq related clocks for EXYNOS5250
-  clk: exynos5250: Add sclk_mpll to the parent list of mout_cpu clock
+'armclk' has already been defined with an alias, 'mout_cpu', 'mout_mpll'
+and 'mout_apll' are now defined with an alias.
 
- drivers/clk/samsung/clk-exynos5250.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ drivers/clk/samsung/clk-exynos5250.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 5c97e75..05d099d 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -208,10 +208,10 @@ struct samsung_fixed_factor_clock exynos5250_fixed_factor_clks[] __initdata = {
+ };
+ 
+ struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+-	MUX(none, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
+-	MUX(none, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
++	MUX_A(none, "mout_apll", mout_apll_p, SRC_CPU, 0, 1, "mout_apll"),
++	MUX_A(none, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1, "mout_cpu"),
+ 	MUX(none, "mout_mpll_fout", mout_mpll_fout_p, PLL_DIV2_SEL, 4, 1),
+-	MUX(none, "sclk_mpll", mout_mpll_p, SRC_CORE1, 8, 1),
++	MUX_A(none, "sclk_mpll", mout_mpll_p, SRC_CORE1, 8, 1, "mout_mpll"),
+ 	MUX(none, "mout_bpll_fout", mout_bpll_fout_p, PLL_DIV2_SEL, 0, 1),
+ 	MUX(none, "sclk_bpll", mout_bpll_p, SRC_CDREX, 0, 1),
+ 	MUX(none, "mout_vpllsrc", mout_vpllsrc_p, SRC_TOP2, 0, 1),
 -- 
 1.7.9.5
