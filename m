@@ -1,117 +1,62 @@
-From: jonghwa3.lee@samsung.com
-Subject: Re: [PATCH V4 10/30] thermal: exynos: Support thermal tripping
-Date: Fri, 17 May 2013 20:56:57 +0900
-Message-ID: <51961B09.6030201@samsung.com>
-References: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
- <1368525540-15034-11-git-send-email-amit.daniel@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Pulls and drive strengths in the pinctrl world
+Date: Fri, 17 May 2013 13:59:54 +0200
+Message-ID: <CACRpkdZvN_0fd6N11NeSRtVZd5A1oE9TEhbOOz6Q27x6M39bcQ@mail.gmail.com>
+References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com>
+	<CAD=FV=UWftrtEe+qUT92RTd-3BG8hpznu3CtztOfw4eMWOqHrw@mail.gmail.com>
+	<CACRpkdZ+wrV9O6T0XQFtpLeOgvEhACXc4ycokiqof81K7GSLjg@mail.gmail.com>
+	<2465185.vYkbXUqoOT@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:31801 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755786Ab3EQL5C convert rfc822-to-8bit (ORCPT
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:52218 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752487Ab3EQL7y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 May 2013 07:57:02 -0400
-In-reply-to: <1368525540-15034-11-git-send-email-amit.daniel@samsung.com>
+	Fri, 17 May 2013 07:59:54 -0400
+Received: by mail-ie0-f181.google.com with SMTP id x12so8858606ief.40
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 May 2013 04:59:54 -0700 (PDT)
+In-Reply-To: <2465185.vYkbXUqoOT@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Doug Anderson <dianders@google.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@gmail.com>
 
-Hi, Amit
-On 2013=EB=85=84 05=EC=9B=94 14=EC=9D=BC 18:58, Amit Daniel Kachhap wro=
-te:
+On Fri, May 17, 2013 at 11:09 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-> TMU urgently sends active-high signal (thermal trip) to PMU, and ther=
-mal
-> tripping by hardware logic. Thermal tripping means that PMU cuts off =
-the
-> whole power of SoC by controlling external voltage regulator.
->=20
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c      |    8 +++++++-
->  drivers/thermal/samsung/exynos_tmu_data.c |    2 ++
->  2 files changed, 9 insertions(+), 1 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/s=
-amsung/exynos_tmu.c
-> index 5f8f189..479d61e 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -84,6 +84,7 @@
->  #define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
->  #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
->  #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
-> +#define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
-> =20
->  #define EXYNOS_TMU_INTEN_RISE0_SHIFT	0
->  #define EXYNOS_TMU_INTEN_RISE1_SHIFT	4
-> @@ -186,7 +187,7 @@ static int exynos_tmu_initialize(struct platform_=
-device *pdev)
->  {
->  	struct exynos_tmu_data *data =3D platform_get_drvdata(pdev);
->  	struct exynos_tmu_platform_data *pdata =3D data->pdata;
-> -	unsigned int status, trim_info;
-> +	unsigned int status, trim_info, con;
->  	unsigned int rising_threshold =3D 0, falling_threshold =3D 0;
->  	int ret =3D 0, threshold_code, i, trigger_levs =3D 0;
-> =20
-> @@ -251,6 +252,11 @@ static int exynos_tmu_initialize(struct platform=
-_device *pdev)
->  					falling_threshold |=3D
->  						threshold_code << 8 * i;
->  			}
-> +			if (pdata->trigger_type[i] !=3D HW_TRIP)
-> +				continue;
+>> Just add another state, pctldev->hog_shutdown to this, and
+>> add an operation pinctrl_force_poweroff() in the same spirit as
+>> pinctrl_force_sleep() that we already have.
+>>
+>> Add a new state to include/linux/pinctrl/pinctrl-state.h:
+>> #define PINCTRL_STATE_POWEROFF "poweroff"
+>>
+>> And define you pin table to hog these pins with the mentioned
+>> default and poweroff states.
+>>
+>> Result: pinctrl core keeps track of your offstate too.
+>
+> Power down mode settings on our pin controller are completely unrelated to
+> normal mode settings. You can set them once in appropriate registers and
+> pins are switched to them automatically when the SoC enters sleep mode.
 
+Aha so it's actually automatic sleep modes, not power down
+(as in, disconnect the power and then push the "on" button to
+get it back up).
 
-As you know, HW trip can be used when only the most last level of thres=
-hold
-temperature is set. (exynos4412 : 4th, exynos 5440 : 5th threshold leve=
-l). So it
-wouldn't work properly, even if we enable HW trip according to pre-defi=
-ned
-trigger type not to HW trip threshold temperature. To enable HW trip, w=
-e just
-need to check whether if HW trip threshold temperature level is defined=
-=2E
+Please remember to document it per above in the code and the
+device tree, so everybody understands what it is.
 
-if (trigger_level[HW_TRIP_LEVEL])
-	enable HW trip
+> So IMHO in our case power mode settings are just additional pin
+> configuration options, next to pull-up/-down and driver strength.
 
-Thanks,
-Jonghwa
+I see. Yes that is different.
 
-> +			con =3D readl(data->base + EXYNOS_TMU_REG_CONTROL);
-> +			con |=3D (1 << EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
-> +			writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
->  		}
-> =20
->  		writel(rising_threshold,
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/ther=
-mal/samsung/exynos_tmu_data.c
-> index ee6a3c9..6b937f5 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> @@ -64,6 +64,7 @@ struct exynos_tmu_platform_data const exynos5250_de=
-fault_tmu_data =3D {
->  	.trigger_levels[0] =3D 85,
->  	.trigger_levels[1] =3D 103,
->  	.trigger_levels[2] =3D 110,
-> +	.trigger_levels[3] =3D 120,
->  	.trigger_enable[0] =3D 1,
->  	.trigger_enable[1] =3D 1,
->  	.trigger_enable[2] =3D 1,
-> @@ -71,6 +72,7 @@ struct exynos_tmu_platform_data const exynos5250_de=
-fault_tmu_data =3D {
->  	.trigger_type[0] =3D 0,
->  	.trigger_type[1] =3D 0,
->  	.trigger_type[2] =3D 1,
-> +	.trigger_type[3] =3D 2,
->  	.gain =3D 8,
->  	.reference_voltage =3D 16,
->  	.noise_cancel_mode =3D 4,
+You might want to have a debugfs file in your driver for inspecting
+them though, that sounds like it could be helpful. I'd recommend
+augmenting your .pin_config_dbg_show() callback in the
+struct pinconf_ops to display this for each pin, in addition to the
+current configuration.
+
+Yours,
+Linus Walleij
