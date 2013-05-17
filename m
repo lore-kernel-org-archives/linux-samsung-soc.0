@@ -1,44 +1,88 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
-Date: Fri, 17 May 2013 14:20:49 +0200
-Message-ID: <CACRpkdaGBjUfhfT2zCEeNmMh3KhouOMjKSB7H6_cu_uDM6cm=w@mail.gmail.com>
-References: <201305111330.05046.heiko@sntech.de>
-	<201305111331.25405.heiko@sntech.de>
-	<CACRpkdaT195McX9NeccJYpmWbuYK-AZUTHr9AXKHnJdkf+Qzuw@mail.gmail.com>
-	<201305152231.52423.heiko@sntech.de>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/2] video: exynos_dp: Add parsing of gpios pins to
+ exynos-dp driver
+Date: Fri, 17 May 2013 14:29:35 +0200
+Message-ID: <6459883.FZan3akiXR@amdc1227>
+References: <26364319.123371368669839202.JavaMail.weblogic@epml12>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201305152231.52423.heiko@sntech.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:41201 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755838Ab3EQM3r convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 17 May 2013 08:29:47 -0400
+In-reply-to: <26364319.123371368669839202.JavaMail.weblogic@epml12>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: jg1.han@samsung.com
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?utf-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "patches@linaro.org" <patches@linaro.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "FlorianSchandinat@gmx.de" <FlorianSchandinat@gmx.de>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
 
-On Wed, May 15, 2013 at 10:31 PM, Heiko St=FCbner <heiko@sntech.de> wro=
-te:
+Hi Jingoo,
 
-> If I understand the writel semantics and the thread from you from 201=
-1 [0]
-> correctly, only the writel to DMASKTRIG mustn't be relaxed to make su=
-re the
-> settings registers are written to before, so like:
->
->        writel_relaxed(txd->src_addr, phy->base + DISRC);
->        writel_relaxed(txd->disrcc, phy->base + DISRCC);
->        writel_relaxed(txd->dst_addr, phy->base + DIDST);
->        writel_relaxed(txd->didstc, phy->base + DIDSTC);
->        writel_relaxed(dcon, phy->base + DCON);
->
->        val =3D readl_relaxed(phy->base + DMASKTRIG);
->        val &=3D ~DMASKTRIG_STOP;
->        val |=3D DMASKTRIG_ON;
->        writel(val, phy->base + DMASKTRIG);
+On Thursday 16 of May 2013 02:03:59 =ED=95=9C=EC=A7=84=EA=B5=AC wrote:
+> Tuesday, May 14, 2013 11:17 PM, Vikas Sajjan wrote:
+>=20
+> >=20
+> > Hi Vikas,
+> >=20
+> > On Tuesday 14 of May 2013 18:25:51 Vikas Sajjan wrote:
+> >=20
+> > >  Adds GPIO parsing functionality for "LCD backlight" and "LCD ena=
+ble"
+> > >  GPIO pins of exynos dp controller.
+> > >
+> > >
+> > >
+> > > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> > > ---
+> > >=20
+> > >  drivers/video/exynos/exynos_dp_core.c |   45
+> > >=20
+> > > +++++++++++++++++++++++++++++++++ 1 file changed, 45 insertions(+=
+)
+> > >
+> > >
+> >=20
+> >=20
+> > I don't think that Exynos DP driver is right place for such code.
+> > Backlight
+ and LCD drivers are responsible for backlight and LCD power
+> > control using backlight and LCD subsystems.
+> >=20
+> > IMHO the correct solution would be to either extend existing
+> > backlight/lcd
+> > drivers found in drivers/video/backlight to support direct GPIO con=
+trol
+> > and
+ parse GPIO pins from device tree or create new gpio_bl and gpio_lcd
+> > drivers.
+>=20
+> Hi Vikas Sajian,
+>=20
+> I agree with Tomasz Figa's opinion.
+> Backlight/LCD framework should be used.
+> eDP panel backlight on SMDK5210 board can be controlled by PWM;
+> thus, pwm-backlight driver should be used.
+> Also, eDP panel reset pin should be controlled by using
+> platform-lcd driver.
+>=20
+>=20
+> >=20
+> > CCing Richard, Florian and linux-fbdev.
+>=20
+>=20
+> Also, I have been doing backlight reviews instead of Richard,
+> please do CC'ing me.
 
-Yep. That will drain write buffers etc and make sure all outstanding wr=
-ites hit
-the hardware.
+OK. I used get_maintainers script, but it seems like the result was a b=
+it off=20
+in this case. Will remember for future.
 
-Yours,
-Linus Walleij
+Best regards,
+--=20
+Tomasz Figa
+Linux Kernel Developer
+Samsung R&D Institute Poland
+Samsung Electronics
