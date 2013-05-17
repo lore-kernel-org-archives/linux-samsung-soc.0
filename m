@@ -1,175 +1,44 @@
-From: jonghwa3.lee@samsung.com
-Subject: Re: [PATCH V4 16/30] thermal: exynos: Make the zone handling dependent
- on trip count
-Date: Fri, 17 May 2013 21:17:40 +0900
-Message-ID: <51961FE4.60105@samsung.com>
-References: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
- <1368525540-15034-17-git-send-email-amit.daniel@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC 2/4] dma: add dmaengine driver for Samsung s3c24xx SoCs
+Date: Fri, 17 May 2013 14:20:49 +0200
+Message-ID: <CACRpkdaGBjUfhfT2zCEeNmMh3KhouOMjKSB7H6_cu_uDM6cm=w@mail.gmail.com>
+References: <201305111330.05046.heiko@sntech.de>
+	<201305111331.25405.heiko@sntech.de>
+	<CACRpkdaT195McX9NeccJYpmWbuYK-AZUTHr9AXKHnJdkf+Qzuw@mail.gmail.com>
+	<201305152231.52423.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:40349 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753653Ab3EQMRp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 May 2013 08:17:45 -0400
-In-reply-to: <1368525540-15034-17-git-send-email-amit.daniel@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201305152231.52423.heiko@sntech.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
 
-On 2013=EB=85=84 05=EC=9B=94 14=EC=9D=BC 18:58, Amit Daniel Kachhap wro=
+On Wed, May 15, 2013 at 10:31 PM, Heiko St=FCbner <heiko@sntech.de> wro=
 te:
 
-> This code simplifies the zone handling to use the trip count passed
-> by the TMU driver. This also helps in adding more zone support.
->=20
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_thermal_common.c |   55 ++++++++++++-=
-----------
->  drivers/thermal/samsung/exynos_thermal_common.h |    2 -
->  2 files changed, 29 insertions(+), 28 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/driver=
-s/thermal/samsung/exynos_thermal_common.c
-> index 86d39aa..2369417 100644
-> --- a/drivers/thermal/samsung/exynos_thermal_common.c
-> +++ b/drivers/thermal/samsung/exynos_thermal_common.c
-> @@ -78,17 +78,16 @@ static int exynos_set_mode(struct thermal_zone_de=
-vice *thermal,
->  static int exynos_get_trip_type(struct thermal_zone_device *thermal,=
- int trip,
->  				 enum thermal_trip_type *type)
->  {
-> -	switch (GET_ZONE(trip)) {
-> -	case MONITOR_ZONE:
-> -	case WARN_ZONE:
-> -		*type =3D THERMAL_TRIP_ACTIVE;
-> -		break;
-> -	case PANIC_ZONE:
-> -		*type =3D THERMAL_TRIP_CRITICAL;
-> -		break;
-> -	default:
-> +	struct exynos_thermal_zone *th_zone =3D thermal->devdata;
-> +	int max_trip =3D th_zone->sensor_conf->trip_data.trip_count;
-> +
-> +	if (trip < 0 || trip >=3D max_trip)
->  		return -EINVAL;
-> -	}
-> +	else if (trip =3D=3D (max_trip - 1))
-> +		*type =3D THERMAL_TRIP_CRITICAL;
-> +	else
-> +		*type =3D THERMAL_TRIP_ACTIVE;
-> +
+> If I understand the writel semantics and the thread from you from 201=
+1 [0]
+> correctly, only the writel to DMASKTRIG mustn't be relaxed to make su=
+re the
+> settings registers are written to before, so like:
+>
+>        writel_relaxed(txd->src_addr, phy->base + DISRC);
+>        writel_relaxed(txd->disrcc, phy->base + DISRCC);
+>        writel_relaxed(txd->dst_addr, phy->base + DIDST);
+>        writel_relaxed(txd->didstc, phy->base + DIDSTC);
+>        writel_relaxed(dcon, phy->base + DCON);
+>
+>        val =3D readl_relaxed(phy->base + DMASKTRIG);
+>        val &=3D ~DMASKTRIG_STOP;
+>        val |=3D DMASKTRIG_ON;
+>        writel(val, phy->base + DMASKTRIG);
 
+Yep. That will drain write buffers etc and make sure all outstanding wr=
+ites hit
+the hardware.
 
- In current exynos_thermal driver, it is hard to set various trip type =
-for each
-trip, especially passive type. (not impossible, but complicated)
-
-What do you think we just keep trip information with trip temperature i=
-n private
-data? I mean if we just make trip level information to driver's private=
- data
-(like exynos_thermal_zone), it might be helpful to control trip type an=
-d trip
-temperature. Like this,
-
-struct exynos_thermal_trip_info {
-	int trip_temp;
-	enum thermal_trip_type type;
-};
-struct exynos_thermal_device {=09
-	.
-	struct exynos_thermal_trip_info *trips;
-	int num_trips;
-};
-
-Thanks,
-Jonghwa
-
->  	return 0;
->  }
-> =20
-> @@ -97,8 +96,9 @@ static int exynos_get_trip_temp(struct thermal_zone=
-_device *thermal, int trip,
->  				unsigned long *temp)
->  {
->  	struct exynos_thermal_zone *th_zone =3D thermal->devdata;
-> +	int max_trip =3D th_zone->sensor_conf->trip_data.trip_count;
-> =20
-> -	if (trip < GET_TRIP(MONITOR_ZONE) || trip > GET_TRIP(PANIC_ZONE))
-> +	if (trip < 0 || trip >=3D max_trip)
->  		return -EINVAL;
-> =20
->  	*temp =3D th_zone->sensor_conf->trip_data.trip_val[trip];
-> @@ -112,10 +112,10 @@ static int exynos_get_trip_temp(struct thermal_=
-zone_device *thermal, int trip,
->  static int exynos_get_crit_temp(struct thermal_zone_device *thermal,
->  				unsigned long *temp)
->  {
-> -	int ret;
-> -	/* Panic zone */
-> -	ret =3D exynos_get_trip_temp(thermal, GET_TRIP(PANIC_ZONE), temp);
-> -	return ret;
-> +	struct exynos_thermal_zone *th_zone =3D thermal->devdata;
-> +	int max_trip =3D th_zone->sensor_conf->trip_data.trip_count;
-> +	/* Get the temp of highest trip*/
-> +	return exynos_get_trip_temp(thermal, max_trip - 1, temp);
->  }
-> =20
->  /* Bind callback functions for thermal zone */
-> @@ -340,19 +340,22 @@ int exynos_register_thermal(struct thermal_sens=
-or_conf *sensor_conf)
->  		return -ENOMEM;
-> =20
->  	th_zone->sensor_conf =3D sensor_conf;
-> -	cpumask_set_cpu(0, &mask_val);
-> -	th_zone->cool_dev[0] =3D cpufreq_cooling_register(&mask_val);
-> -	if (IS_ERR(th_zone->cool_dev[0])) {
-> -		pr_err("Failed to register cpufreq cooling device\n");
-> -		ret =3D -EINVAL;
-> -		goto err_unregister;
-> +	if (sensor_conf->cooling_data.freq_clip_count > 0) {
-> +		cpumask_set_cpu(0, &mask_val);
-> +		th_zone->cool_dev[0] =3D cpufreq_cooling_register(&mask_val);
-> +		if (IS_ERR(th_zone->cool_dev[0])) {
-> +			pr_err("Failed to register cpufreq cooling device\n");
-> +			ret =3D -EINVAL;
-> +			goto err_unregister;
-> +		}
-> +		th_zone->cool_dev_size++;
->  	}
-> -	th_zone->cool_dev_size++;
-> =20
-> -	th_zone->therm_dev =3D thermal_zone_device_register(sensor_conf->na=
-me,
-> -			EXYNOS_ZONE_COUNT, 0, th_zone, &exynos_dev_ops, NULL, 0,
-> -			sensor_conf->trip_data.trigger_falling ?
-> -			0 : IDLE_INTERVAL);
-> +	th_zone->therm_dev =3D thermal_zone_device_register(
-> +			sensor_conf->name, sensor_conf->trip_data.trip_count,
-> +			0, th_zone, &exynos_dev_ops, NULL, 0,
-> +			sensor_conf->trip_data.trigger_falling ? 0 :
-> +			IDLE_INTERVAL);
-> =20
->  	if (IS_ERR(th_zone->therm_dev)) {
->  		pr_err("Failed to register thermal zone device\n");
-> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/driver=
-s/thermal/samsung/exynos_thermal_common.h
-> index 59138ae..7b938e1 100644
-> --- a/drivers/thermal/samsung/exynos_thermal_common.h
-> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
-> @@ -42,8 +42,6 @@
->  #define GET_ZONE(trip) (trip + 2)
->  #define GET_TRIP(zone) (zone - 2)
-> =20
-> -#define EXYNOS_ZONE_COUNT	3
-> -
->  /**
->   * struct freq_clip_table
->   * @freq_clip_max: maximum frequency allowed for this cooling state.
+Yours,
+Linus Walleij
