@@ -1,88 +1,173 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/2] video: exynos_dp: Add parsing of gpios pins to
- exynos-dp driver
-Date: Fri, 17 May 2013 14:29:35 +0200
-Message-ID: <6459883.FZan3akiXR@amdc1227>
-References: <26364319.123371368669839202.JavaMail.weblogic@epml12>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>
+Subject: Re: Pulls and drive strengths in the pinctrl world
+Date: Fri, 17 May 2013 14:26:25 +0200
+Message-ID: <20130517122625.GC1952@game.jcrosoft.org>
+References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com>
+ <4040680.Aq1C9TECZX@flatron>
+ <CAD=FV=VQ5XS8UWeYyFmUqY=_pLzQ-E=vKR53vwLVXWNonXG4Tg@mail.gmail.com>
+ <2396115.JIWghi6qt6@flatron> <519426A8.8090908@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41201 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755838Ab3EQM3r convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 May 2013 08:29:47 -0400
-In-reply-to: <26364319.123371368669839202.JavaMail.weblogic@epml12>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <519426A8.8090908-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jg1.han@samsung.com
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?utf-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "patches@linaro.org" <patches@linaro.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "rpurdie@rpsys.net" <rpurdie@rpsys.net>, "FlorianSchandinat@gmx.de" <FlorianSchandinat@gmx.de>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
 
-Hi Jingoo,
+On 18:22 Wed 15 May     , Stephen Warren wrote:
+> On 05/15/2013 06:13 PM, Tomasz Figa wrote:
+> > On Wednesday 15 of May 2013 16:55:37 Doug Anderson wrote:
+> >> Tomasz / Linus,
+> >>
+> >> On Wed, May 15, 2013 at 3:06 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> 
+> > wrote:
+> >>> Yes. I don't like the current way too much either, duplication being
+> >>> one of the reasons.
+> >>
+> >> Do you have any other ideas?  It sounds like Linus didn't like my
+> >> suggestion and makes some good points...
+> > 
+> > I don't have anything interesting at the moment. It's a bit late now here 
+> > (2 AM), so I'm going to get some sleep first.
+> > 
+> > Also after reading Stephen's reply, I'm wondering if hogging wouldn't 
+> > solve the problem indeed. (It might have to be fixed on pinctrl-samsung 
+> > first, as last time I tried to use it, it caused some errors from pinctrl 
+> > core, but haven't time to track them down, as it wasn't anything important 
+> > at that time).
+> 
+> One issue I noticed with the DT fragments earlier in this thread. It
+> looks like hogs in the Samsung pinctrl bingings end up looking like:
+> 
+> pinctrl {
+>     pina {
+>         samsung,pins = <PIN_A PIN_B PIN_C>;
+>         samsung,pin-function = <0xf>;
+>         samsung,pin-pud = <0>;
+>         ...
 
-On Thursday 16 of May 2013 02:03:59 =ED=95=9C=EC=A7=84=EA=B5=AC wrote:
-> Tuesday, May 14, 2013 11:17 PM, Vikas Sajjan wrote:
->=20
-> >=20
-> > Hi Vikas,
-> >=20
-> > On Tuesday 14 of May 2013 18:25:51 Vikas Sajjan wrote:
-> >=20
-> > >  Adds GPIO parsing functionality for "LCD backlight" and "LCD ena=
-ble"
-> > >  GPIO pins of exynos dp controller.
-> > >
-> > >
-> > >
-> > > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> > > ---
-> > >=20
-> > >  drivers/video/exynos/exynos_dp_core.c |   45
-> > >=20
-> > > +++++++++++++++++++++++++++++++++ 1 file changed, 45 insertions(+=
-)
-> > >
-> > >
-> >=20
-> >=20
-> > I don't think that Exynos DP driver is right place for such code.
-> > Backlight
- and LCD drivers are responsible for backlight and LCD power
-> > control using backlight and LCD subsystems.
-> >=20
-> > IMHO the correct solution would be to either extend existing
-> > backlight/lcd
-> > drivers found in drivers/video/backlight to support direct GPIO con=
-trol
-> > and
- parse GPIO pins from device tree or create new gpio_bl and gpio_lcd
-> > drivers.
->=20
-> Hi Vikas Sajian,
->=20
-> I agree with Tomasz Figa's opinion.
-> Backlight/LCD framework should be used.
-> eDP panel backlight on SMDK5210 board can be controlled by PWM;
-> thus, pwm-backlight driver should be used.
-> Also, eDP panel reset pin should be controlled by using
-> platform-lcd driver.
->=20
->=20
-> >=20
-> > CCing Richard, Florian and linux-fbdev.
->=20
->=20
-> Also, I have been doing backlight reviews instead of Richard,
-> please do CC'ing me.
+I have a huge issue here that we had on at91 too
 
-OK. I used get_maintainers script, but it seems like the result was a b=
-it off=20
-in this case. Will remember for future.
+we are going to have a huge numbet of node
 
-Best regards,
---=20
-Tomasz Figa
-Linux Kernel Developer
-Samsung R&D Institute Poland
-Samsung Electronics
+and on at91 we handle the pin the same way as samsung
+and ST have also a similiar IP
+
+so I'll prefer to reuse the AT91 DT bindings
+
+as said by Linus I just push a cleanup of the magic by using Macro
+which make it really readable now
+
+some extract of the sama5 pinctrl
+
+	mmc0 {
+		pinctrl_mmc0_clk_cmd_dat0: mmc0_clk_cmd_dat0 {
+			atmel,pins =
+				<AT91_PIOD 9 AT91_PERIPH_A AT91_PINCTRL_NONE	/* PD9 periph A MCI0_CK */
+				 AT91_PIOD 0 AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PD0 periph A MCI0_CDA with pullup */
+				 AT91_PIOD 1 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;	/* PD1 periph A MCI0_DA0 with pullup */
+		};
+		pinctrl_mmc0_dat1_3: mmc0_dat1_3 {
+			atmel,pins =
+				<AT91_PIOD 2 AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PD2 periph A MCI0_DA1 with pullup */
+				 AT91_PIOD 3 AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PD3 periph A MCI0_DA2 with pullup */
+				 AT91_PIOD 4 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;	/* PD4 periph A MCI0_DA3 with pullup */
+		};
+		pinctrl_mmc0_dat4_7: mmc0_dat4_7 {
+			atmel,pins =
+				<AT91_PIOD 5 AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PD5 periph A MCI0_DA4 with pullup, conflicts with TIOA0, PWMH2 */
+				 AT91_PIOD 6 AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PD6 periph A MCI0_DA5 with pullup, conflicts with TIOB0, PWML2 */
+				 AT91_PIOD 7 AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PD7 periph A MCI0_DA6 with pullup, conlicts with TCLK0, PWMH3 */
+				 AT91_PIOD 8 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;	/* PD8 periph A MCI0_DA7 with pullup, conflicts with PWML3 */
+		};
+	};
+
+of sam9g45
+
+	i2c_gpio2 {
+		pinctrl_i2c_gpio2: i2c_gpio2-0 {
+			atmel,pins =
+				<AT91_PIOB 4 AT91_PERIPH_GPIO AT91_PINCTRL_MULTI_DRIVE	/* PB4 gpio multidrive I2C2 data */
+				 AT91_PIOB 5 AT91_PERIPH_GPIO AT91_PINCTRL_MULTI_DRIVE>;	/* PB5 gpio multidrive I2C2 clock */
+		};
+	};
+
+so we could share the c code too
+
+Best Regards,
+J,
+>     };
+>     pinp {
+>         samsung,pins = <PIN_P PIN_Q>;
+>         samsung,pin-function = <0xe>;
+>         samsung,pin-pud = <1>;
+>         ...
+>     };
+>     pinx {
+>         samsung,pins = <PIN_X PIN_Y PIN_Z>;
+>         samsung,pin-function = <0xd>;
+>         samsung,pin-pud = <2>;
+>         ...
+>     };
+> 
+>     pinctrl-names = "default";
+>     pinctrl-0 = <&pina &pinp &pinx>;
+> };
+> 
+> That pinctrl-0 property could get rather large (hard to write/maintain,
+> unwieldy) if it needs to set up lots of different configurations. That's
+> why I made the equivalent Tegra bindings be:
+> 
+> pinctrl {
+>     pins_default {
+>         pina {
+>             samsung,pins = <PIN_A PIN_B PIN_C>;
+>             samsung,pin-function = <0xf>;
+>             samsung,pin-pud = <0>;
+>             ...
+>         };
+>         pinp {
+>             samsung,pins = <PIN_P PIN_Q>;
+>             samsung,pin-function = <0xe>;
+>             samsung,pin-pud = <1>;
+>             ...
+>         };
+>         pinx {
+>             samsung,pins = <PIN_X PIN_Y PIN_Z>;
+>             samsung,pin-function = <0xd>;
+>             samsung,pin-pud = <2>;
+>             ...
+>         };
+>     };
+> 
+>     pinctrl-names = "default";
+>     pinctrl-0 = <&pins_default>;
+> };
+> 
+> The extra level within the "pinctrl configuration node" ("pins_default"
+> here) makes the pinctrl-0 property a lot easier to write, and the
+> advantage happens at every use-site that needs to configure different
+> subsets of the relevant pins in different ways.
+> 
+> If you're changing all the bindings anyway, introducing this extra level
+> might be something to think about.
+> 
+> I did try to explain my philosophy here when we all got together to
+> design the pinctrl bindings, but I obviously didn't explain it well
+> enough, or people didn't like it anyway.
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
