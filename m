@@ -1,225 +1,73 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: Pulls and drive strengths in the pinctrl world
-Date: Fri, 17 May 2013 14:17:00 -0700 (PDT)
-Message-ID: <1426243.rhL8pXoalu@flatron>
-References: <CAD=FV=V9h3RUfvAxj8k2EbYXYPO4FfoNwh=f=dno5ZBUFYeG0w@mail.gmail.com> <519426A8.8090908@wwwdotorg.org> <20130517122625.GC1952@game.jcrosoft.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 6/6] pinctrl: exynos: Handle suspend/resume of GPIO EINT registers
+Date: Fri, 17 May 2013 14:18:39 -0700
+Message-ID: <CAD=FV=XiWET3Xptfk2CVWMw=xVCE4zUJhJtgXHbhiND12rJGnQ@mail.gmail.com>
+References: <1368807872-2601-1-git-send-email-t.figa@samsung.com>
+	<1368807872-2601-7-git-send-email-t.figa@samsung.com>
+	<CAD=FV=WKCeW=3BFnmnyXB70VCjXHGrzarXbj8cBfq4-ENA-Y2w@mail.gmail.com>
+	<18754346.1REWN52J0K@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:65219 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755998Ab3EQVRD (ORCPT
+Received: from mail-la0-f54.google.com ([209.85.215.54]:34069 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756612Ab3EQVSm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 May 2013 17:17:03 -0400
-Received: by mail-ea0-f174.google.com with SMTP id z7so2827070eaf.33
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 May 2013 14:17:01 -0700 (PDT)
-In-Reply-To: <20130517122625.GC1952@game.jcrosoft.org>
+	Fri, 17 May 2013 17:18:42 -0400
+Received: by mail-la0-f54.google.com with SMTP id eg20so2139033lab.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 May 2013 14:18:40 -0700 (PDT)
+In-Reply-To: <18754346.1REWN52J0K@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Doug Anderson <dianders@google.com>, Kukjin Kim <kgene.kim@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Jean-Christophe,
+Tomasz,
 
-On Friday 17 of May 2013 14:26:25 Jean-Christophe PLAGNIOL-VILLARD wrote:
-> On 18:22 Wed 15 May     , Stephen Warren wrote:
-> > On 05/15/2013 06:13 PM, Tomasz Figa wrote:
-> > > On Wednesday 15 of May 2013 16:55:37 Doug Anderson wrote:
-> > >> Tomasz / Linus,
-> > >> 
-> > >> On Wed, May 15, 2013 at 3:06 PM, Tomasz Figa
-> > >> <tomasz.figa@gmail.com>
-> > > 
-> > > wrote:
-> > >>> Yes. I don't like the current way too much either, duplication
-> > >>> being
-> > >>> one of the reasons.
-> > >> 
-> > >> Do you have any other ideas?  It sounds like Linus didn't like my
-> > >> suggestion and makes some good points...
-> > > 
-> > > I don't have anything interesting at the moment. It's a bit late now
-> > > here (2 AM), so I'm going to get some sleep first.
-> > > 
-> > > Also after reading Stephen's reply, I'm wondering if hogging
-> > > wouldn't
-> > > solve the problem indeed. (It might have to be fixed on
-> > > pinctrl-samsung
-> > > first, as last time I tried to use it, it caused some errors from
-> > > pinctrl core, but haven't time to track them down, as it wasn't
-> > > anything important at that time).
-> > 
-> > One issue I noticed with the DT fragments earlier in this thread. It
-> > looks like hogs in the Samsung pinctrl bingings end up looking like:
-> > 
-> > pinctrl {
-> > 
-> >     pina {
-> >     
-> >         samsung,pins = <PIN_A PIN_B PIN_C>;
-> >         samsung,pin-function = <0xf>;
-> >         samsung,pin-pud = <0>;
-> >         ...
-> 
-> I have a huge issue here that we had on at91 too
-> 
-> we are going to have a huge numbet of node
-> 
-> and on at91 we handle the pin the same way as samsung
-> and ST have also a similiar IP
-> 
-> so I'll prefer to reuse the AT91 DT bindings
-> 
-> as said by Linus I just push a cleanup of the magic by using Macro
-> which make it really readable now
-> 
-> some extract of the sama5 pinctrl
-> 
-> 	mmc0 {
-> 		pinctrl_mmc0_clk_cmd_dat0: mmc0_clk_cmd_dat0 {
-> 			atmel,pins =
-> 				<AT91_PIOD 9 AT91_PERIPH_A 
-AT91_PINCTRL_NONE	/* PD9 periph A MCI0_CK
-> */ AT91_PIOD 0 AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PD0 periph A
-> MCI0_CDA with pullup */ AT91_PIOD 1 AT91_PERIPH_A
-> AT91_PINCTRL_PULL_UP>;	/* PD1 periph A MCI0_DA0 with pullup */ };
-> 		pinctrl_mmc0_dat1_3: mmc0_dat1_3 {
-> 			atmel,pins =
-> 				<AT91_PIOD 2 AT91_PERIPH_A 
-AT91_PINCTRL_PULL_UP	/* PD2 periph A
-> MCI0_DA1 with pullup */ AT91_PIOD 3 AT91_PERIPH_A
-> AT91_PINCTRL_PULL_UP	/* PD3 periph A MCI0_DA2 with pullup */ AT91_PIOD
-> 4 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;	/* PD4 periph A MCI0_DA3 
-with
-> pullup */ };
-> 		pinctrl_mmc0_dat4_7: mmc0_dat4_7 {
-> 			atmel,pins =
-> 				<AT91_PIOD 5 AT91_PERIPH_A 
-AT91_PINCTRL_PULL_UP	/* PD5 periph A
-> MCI0_DA4 with pullup, conflicts with TIOA0, PWMH2 */ AT91_PIOD 6
-> AT91_PERIPH_A AT91_PINCTRL_PULL_UP	/* PD6 periph A MCI0_DA5 with
-> pullup, conflicts with TIOB0, PWML2 */ AT91_PIOD 7 AT91_PERIPH_A
-> AT91_PINCTRL_PULL_UP	/* PD7 periph A MCI0_DA6 with pullup, conlicts
-> with TCLK0, PWMH3 */ AT91_PIOD 8 AT91_PERIPH_A
-> AT91_PINCTRL_PULL_UP>;	/* PD8 periph A MCI0_DA7 with pullup, 
-conflicts
-> with PWML3 */ };
-> 	};
-> 
-> of sam9g45
-> 
-> 	i2c_gpio2 {
-> 		pinctrl_i2c_gpio2: i2c_gpio2-0 {
-> 			atmel,pins =
-> 				<AT91_PIOB 4 AT91_PERIPH_GPIO 
-AT91_PINCTRL_MULTI_DRIVE	/* PB4 gpio
-> multidrive I2C2 data */ AT91_PIOB 5 AT91_PERIPH_GPIO
-> AT91_PINCTRL_MULTI_DRIVE>;	/* PB5 gpio multidrive I2C2 clock */ };
-> 	};
-> 
-> so we could share the c code too
+On Fri, May 17, 2013 at 1:34 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Slight nit to add this before the call to irq_domain_add_linear().
+>> demv() will handle freeing your memory but nothing will handle undoing
+>> the irq_domain_add_linear() if you return an error.
+>
+> I'm a bit sceptical when it is about error handling in such cases.
+> Basically if interrupt initialization fails, something is seriously wrong,
+> either with your kernel config or with some code.
+>
+> Since such case has been already unhandled in the driver (with nr_banks >
+> 1 = always), so I didn't bother to add any undoing here.
 
-I'd have a question with regard to AT91 bindings.
+Yeah, not all drivers handle it well.  I'm always surprised by the
+number of drivers that seem have it right, though.  Certainly it seems
+awfully unlikely that allocating a small number of bytes in a probe
+function would fail.
 
-Using Samsung bindings we don't need to specify all configuration options 
-for a pin, only those that are relevant for the platform. Do your bindings 
-allow this?
+...but changing the order doesn't hurt anything and would make it more
+correct, even if it's not fully correct.
 
-Apparently AT91 has less configurable things and those available are 
-usually always configured together so it's not a problem. But on our SoCs 
-we have a bit more of them:
-- function (input, output, special functions)
-- pull-down/-up
-- driver strength
-- power down mode function (input, output low, output high, retention)
-- power down mode pull-down/-up
-- one could argue that default output value could be set this way as well, 
-by adding samsung,pin-value property.
 
-Best regards,
-Tomasz
+>> Optional: debug statements:
+>>
+>> pr_debug("%s:     con %#010x => %#010x\n", bank->name,
+>>   readl(regs + EXYNOS_GPIO_ECON_OFFSET + bank->eint_offset),
+>>   save->eint_con);
+>> pr_debug("%s: fltcon0 %#010x => %#010x\n", bank->name,
+>>   readl(regs + EXYNOS_GPIO_EFLTCON_OFFSET + 2 * bank->eint_offset),
+>>   save->eint_fltcon0);
+>> pr_debug("%s: fltcon1 %#010x => %#010x\n", bank->name,
+>>   readl(regs + EXYNOS_GPIO_EFLTCON_OFFSET + 2 * bank->eint_offset + 4),
+>>   save->eint_fltcon1);
+>
+> OK. I wonder if this could be added in a separate patch or I should rather
+> send v2 on Monday?
 
-> Best Regards,
-> J,
-> 
-> >     };
-> >     pinp {
-> >     
-> >         samsung,pins = <PIN_P PIN_Q>;
-> >         samsung,pin-function = <0xe>;
-> >         samsung,pin-pud = <1>;
-> >         ...
-> >     
-> >     };
-> >     pinx {
-> >     
-> >         samsung,pins = <PIN_X PIN_Y PIN_Z>;
-> >         samsung,pin-function = <0xd>;
-> >         samsung,pin-pud = <2>;
-> >         ...
-> >     
-> >     };
-> >     
-> >     pinctrl-names = "default";
-> >     pinctrl-0 = <&pina &pinp &pinx>;
-> > 
-> > };
-> > 
-> > That pinctrl-0 property could get rather large (hard to
-> > write/maintain,
-> > unwieldy) if it needs to set up lots of different configurations.
-> > That's why I made the equivalent Tegra bindings be:
-> > 
-> > pinctrl {
-> > 
-> >     pins_default {
-> >     
-> >         pina {
-> >         
-> >             samsung,pins = <PIN_A PIN_B PIN_C>;
-> >             samsung,pin-function = <0xf>;
-> >             samsung,pin-pud = <0>;
-> >             ...
-> >         
-> >         };
-> >         pinp {
-> >         
-> >             samsung,pins = <PIN_P PIN_Q>;
-> >             samsung,pin-function = <0xe>;
-> >             samsung,pin-pud = <1>;
-> >             ...
-> >         
-> >         };
-> >         pinx {
-> >         
-> >             samsung,pins = <PIN_X PIN_Y PIN_Z>;
-> >             samsung,pin-function = <0xd>;
-> >             samsung,pin-pud = <2>;
-> >             ...
-> >         
-> >         };
-> >     
-> >     };
-> >     
-> >     pinctrl-names = "default";
-> >     pinctrl-0 = <&pins_default>;
-> > 
-> > };
-> > 
-> > The extra level within the "pinctrl configuration node"
-> > ("pins_default"
-> > here) makes the pinctrl-0 property a lot easier to write, and the
-> > advantage happens at every use-site that needs to configure different
-> > subsets of the relevant pins in different ways.
-> > 
-> > If you're changing all the bindings anyway, introducing this extra
-> > level might be something to think about.
-> > 
-> > I did try to explain my philosophy here when we all got together to
-> > design the pinctrl bindings, but I obviously didn't explain it well
-> > enough, or people didn't like it anyway.
-> > _______________________________________________
-> > devicetree-discuss mailing list
-> > devicetree-discuss@lists.ozlabs.org
-> > https://lists.ozlabs.org/listinfo/devicetree-discuss
+Definitely optional to add these, so up to you whether to spin the
+patch, ignore my suggestion, or do a separate patch.  :)
+
+
+Thanks for sending all of these up, by the way!  If things look good
+next week I'll probably revert my local version of this (the V2 of my
+original series) and pull in your series to keep us on the same page.
+:)
+
+
+-Doug
