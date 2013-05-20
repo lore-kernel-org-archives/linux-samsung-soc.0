@@ -1,67 +1,62 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 0/6] Fix suspend/resume issues created by pinmux on exynos,
- part 2
-Date: Mon, 20 May 2013 15:05:37 +0530
-Message-ID: <5199EE69.7090605@linaro.org>
-References: <1368807872-2601-1-git-send-email-t.figa@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] pinctrl: samsung: fix suspend/resume functionality
+Date: Mon, 20 May 2013 13:47:14 +0200
+Message-ID: <CACRpkdZ1zBrp+jpgw8o_PVd_bcQMpkFXvRAwfJH6KCztT4jx+w@mail.gmail.com>
+References: <1368746388-20194-1-git-send-email-dianders@chromium.org>
+	<1368765198-25550-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:49097 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752097Ab3ETJfo (ORCPT
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:55008 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754412Ab3ETLrO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 May 2013 05:35:44 -0400
-Received: by mail-pd0-f176.google.com with SMTP id r11so1915668pdi.35
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 02:35:43 -0700 (PDT)
-In-Reply-To: <1368807872-2601-1-git-send-email-t.figa@samsung.com>
+	Mon, 20 May 2013 07:47:14 -0400
+Received: by mail-ie0-f177.google.com with SMTP id 9so13548182iec.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 04:47:14 -0700 (PDT)
+In-Reply-To: <1368765198-25550-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arnd@arndb.de, olof@lixom.net, Doug Anderson <dianders@chromium.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 05/17/2013 09:54 PM, Tomasz Figa wrote:
-> This series aims at fixing problems with suspend/resume on Exynos SoCs
-> introduced by migration of GPIO and EINT support to pin control driver
-> on DT-enabled platforms.
-> 
-> The patches fix following issues:
->  - missing support for IRQ wake of pinctrl-exynos driver
->  - legacy GPIO and EINT save/restore handling in platform PM code
->    inappropriate on pinctrl-enabled platforms
->  - several EINT-related registers must be saved as well
->  
-> The series is based on a patch by Doug Anderson that adds suspend/restore
-> of pinctrl registers to pinctrl-samsung driver:
-> [PATCH v3] pinctrl: samsung: fix suspend/resume functionality
-> http://www.spinics.net/lists/kernel/msg1534119.html
-> 
-> On Exynos4210-based Trats board:
-> Tested-by: Tomasz Figa <t.figa@samsung.com>
-> 
+On Fri, May 17, 2013 at 6:33 AM, Doug Anderson <dianders@chromium.org> wrote:
 
-On Exynos5250-based Arndale board:
-Tested-by: Tushar Behera <tushar.behera@linaro.org>
+> The GPIO states need to be restored after s2r and this is not currently
+> supported in the pinctrl driver. This patch saves the gpio states before
+> suspend and restores them after resume.
+>
+> Saving and restoring is done very early using syscore_ops and must
+> happen before pins are released from their powerdown state.
+>
+> Patch originally from Prathyush K <prathyush.k@samsung.com> but
+> rewritten by Doug Anderson <dianders@chromium.org>.
+>
+> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v3:
+> - Skip save and restore for banks with no powerdown config.
+>
+> Changes in v2:
+> - Now uses sycore_ops to make sure we're early enough.
+> - Try to handle two CON registers better.
+> - Should handle s3c24xx better as per Heiko.
+> - Simpler code; no longer tries to avoid glitching lines since
+>   we _think_ all current SoCs should have pins in power down state
+>   when the restore is called.
+> - Dropped eint patch for now; Tomasz will post his version.
 
-> Tomasz Figa (6):
->   pinctrl: exynos: Add support for set_irq_wake of wake-up EINTs
->   ARM: EXYNOS: Fix EINT wake-up mask configuration when pinctrl is used
->   ARM: SAMSUNG: pm: Adjust for pinctrl- and DT-enabled platforms
->   pinctrl: samsung: Add support for SoC-specific suspend/resume
->     callbacks
->   pinctrl: samsung: Allow per-bank SoC-specific private data
->   pinctrl: exynos: Handle suspend/resume of GPIO EINT registers
-> 
->  arch/arm/mach-exynos/include/mach/pm-core.h |  14 +++-
->  arch/arm/plat-samsung/pm.c                  |  17 +++--
->  drivers/pinctrl/pinctrl-exynos.c            | 106 ++++++++++++++++++++++++++++
->  drivers/pinctrl/pinctrl-exynos.h            |   1 +
->  drivers/pinctrl/pinctrl-samsung.c           |   6 ++
->  drivers/pinctrl/pinctrl-samsung.h           |   4 ++
->  6 files changed, 142 insertions(+), 6 deletions(-)
-> 
+Looks good to me.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+How are you going to merge this?
 
--- 
-Tushar Behera
+Samsung tree?
+
+My pinctrl development tree?
+
+Or my fixes tree, if it's a regression for v3.10?
+
+Yours,
+Linus Walleij
