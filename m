@@ -1,62 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] pinctrl: samsung: fix suspend/resume functionality
-Date: Mon, 20 May 2013 13:47:14 +0200
-Message-ID: <CACRpkdZ1zBrp+jpgw8o_PVd_bcQMpkFXvRAwfJH6KCztT4jx+w@mail.gmail.com>
-References: <1368746388-20194-1-git-send-email-dianders@chromium.org>
-	<1368765198-25550-1-git-send-email-dianders@chromium.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
+Date: Mon, 20 May 2013 22:47:59 +0900
+Message-ID: <519A298F.2040605@samsung.com>
+References: <cover.1365079581.git.viresh.kumar@linaro.org>	<CAKohponkFB7ND38jv5oGnQLx8cq0b=uHTCmL3EERe6P54ijYhw@mail.gmail.com>	<093901ce509f$afe92f40$0fbb8dc0$%kim@samsung.com>	<2001452.Fn2HjLbNED@vostro.rjw.lan> <CAKohpon97dbLDF0xU7vhf5V+UVeJv7WdeMuZ1jXLUTey2+gD2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:55008 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754412Ab3ETLrO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 May 2013 07:47:14 -0400
-Received: by mail-ie0-f177.google.com with SMTP id 9so13548182iec.22
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 04:47:14 -0700 (PDT)
-In-Reply-To: <1368765198-25550-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAKohpon97dbLDF0xU7vhf5V+UVeJv7WdeMuZ1jXLUTey2+gD2A@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Robin Randhawa <robin.randhawa@arm.com>, Ben Dooks <ben-linux@fluff.org>, linux-pm@vger.kernel.org, patches@linaro.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, charles.garcia-tobin@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, May 17, 2013 at 6:33 AM, Doug Anderson <dianders@chromium.org> wrote:
+On 05/20/13 14:29, Viresh Kumar wrote:
 
-> The GPIO states need to be restored after s2r and this is not currently
-> supported in the pinctrl driver. This patch saves the gpio states before
-> suspend and restores them after resume.
+[...]
+
+>>> Rafael, if you don't mind, let me take this into Samsung tree for v3.11.
+>>
+>> Sure, please go ahead.
 >
-> Saving and restoring is done very early using syscore_ops and must
-> happen before pins are released from their powerdown state.
+> Kukjin,
 >
-> Patch originally from Prathyush K <prathyush.k@samsung.com> but
-> rewritten by Doug Anderson <dianders@chromium.org>.
->
-> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes in v3:
-> - Skip save and restore for banks with no powerdown config.
->
-> Changes in v2:
-> - Now uses sycore_ops to make sure we're early enough.
-> - Try to handle two CON registers better.
-> - Should handle s3c24xx better as per Heiko.
-> - Simpler code; no longer tries to avoid glitching lines since
->   we _think_ all current SoCs should have pins in power down state
->   when the restore is called.
-> - Dropped eint patch for now; Tomasz will post his version.
+> I hope you have already applied this for linux-next?
 
-Looks good to me.
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Yeah, already done in my local and you can see it in my public tree in a 
+couple of hours :-)
 
-How are you going to merge this?
+Thanks.
 
-Samsung tree?
-
-My pinctrl development tree?
-
-Or my fixes tree, if it's a regression for v3.10?
-
-Yours,
-Linus Walleij
+- Kukjin
