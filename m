@@ -1,42 +1,55 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: add max8997 device node for exynos4210-origen
- board
-Date: Tue, 21 May 2013 01:19:49 +0900
-Message-ID: <519A4D25.9090001@samsung.com>
-References: <1353664412-17678-1-git-send-email-thomas.abraham@linaro.org> <50EA598D.6090604@linaro.org> <518C9807.80906@linaro.org>
+Subject: Re: [PATCH 30/33] arch/arm/plat-samsung: don't check resource with
+ devm_ioremap_resource
+Date: Tue, 21 May 2013 01:38:23 +0900
+Message-ID: <519A517F.5020003@samsung.com>
+References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de> <1368702961-4325-31-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:36678 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754133Ab3ETQTw (ORCPT
+Received: from mail-da0-f42.google.com ([209.85.210.42]:63270 "EHLO
+	mail-da0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755663Ab3ETQi1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 May 2013 12:19:52 -0400
-Received: by mail-pa0-f50.google.com with SMTP id fb10so5794184pad.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 09:19:52 -0700 (PDT)
-In-Reply-To: <518C9807.80906@linaro.org>
+	Mon, 20 May 2013 12:38:27 -0400
+In-Reply-To: <1368702961-4325-31-git-send-email-wsa@the-dreams.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 05/10/13 15:47, Tushar Behera wrote:
-> On 01/07/2013 10:43 AM, Tushar Behera wrote:
->> On 11/23/2012 03:23 PM, Thomas Abraham wrote:
->>> Add max8997 regulator device node for exynos4210-origen board and list
->>> all the supported regulators.
->>>
->>> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
->>
->> Tested-by: Tushar Behera<tushar.behera@linaro.org>
->>
-> Kukjin,
+On 05/16/13 20:15, Wolfram Sang wrote:
+> devm_ioremap_resource does sanity checks on the given resource. No need to
+> duplicate this in the driver.
 >
-> This patch got missed for 3.10 merge window. This patch still applies on
-> the latest mainline kernel and is essential for Origen board. Would you
-> please take this patch?
->
-Applied, thanks.
+> Signed-off-by: Wolfram Sang<wsa@the-dreams.de>
+
+Looks good to me, applied into Samsung tree.
+
+Wolfram, if you want to take this into your tree, let me know.
+
+Thanks.
 
 - Kukjin
+
+> ---
+>   arch/arm/plat-samsung/adc.c |    5 -----
+>   1 file changed, 5 deletions(-)
+>
+> diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+> index ca07cb1..79690f2 100644
+> --- a/arch/arm/plat-samsung/adc.c
+> +++ b/arch/arm/plat-samsung/adc.c
+> @@ -381,11 +381,6 @@ static int s3c_adc_probe(struct platform_device *pdev)
+>   	}
+>
+>   	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!regs) {
+> -		dev_err(dev, "failed to find registers\n");
+> -		return -ENXIO;
+> -	}
+> -
+>   	adc->regs = devm_ioremap_resource(dev, regs);
+>   	if (IS_ERR(adc->regs))
+>   		return PTR_ERR(adc->regs);
