@@ -1,40 +1,55 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3] pinctrl: samsung: fix suspend/resume functionality
-Date: Mon, 20 May 2013 07:59:27 -0700
-Message-ID: <CAD=FV=XOiVdkEhYu+u-aGkD0DpxWn369uD_r4Pmw=7gHKLjOuQ@mail.gmail.com>
-References: <1368746388-20194-1-git-send-email-dianders@chromium.org>
-	<1368765198-25550-1-git-send-email-dianders@chromium.org>
-	<CACRpkdZ1zBrp+jpgw8o_PVd_bcQMpkFXvRAwfJH6KCztT4jx+w@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2] ARM: S3C24XX: add devicetree support for smdk2416
+Date: Tue, 21 May 2013 01:07:35 +0900
+Message-ID: <519A4A47.1010300@samsung.com>
+References: <201304131606.48278.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ1zBrp+jpgw8o_PVd_bcQMpkFXvRAwfJH6KCztT4jx+w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f48.google.com ([209.85.210.48]:51092 "EHLO
+	mail-da0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756950Ab3ETQHj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 May 2013 12:07:39 -0400
+Received: by mail-da0-f48.google.com with SMTP id h32so3986814dak.35
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 09:07:38 -0700 (PDT)
+In-Reply-To: <201304131606.48278.heiko@sntech.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-Linus,
-
-On Mon, May 20, 2013 at 4:47 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> Looks good to me.
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On 04/13/13 23:06, Heiko St=C3=BCbner wrote:
+> Definitions in s3c24xx.dtsi are usable for all s3c24xx SoCs, but some
+> need to be extended with proper compatible properties, as can be seen
+> in s3c2416.dtsi .
 >
-> How are you going to merge this?
+> Signed-off-by: Heiko Stuebner<heiko@sntech.de>
+> Reviewed-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+
+Looks good to me, applied, thanks.
+
+- Kukjin
+
+> ---
+> changes since v1:
+>    fix compatible property of default irq controller
+>    (the correct one is samsung,s3c2410-irq)
 >
-> Samsung tree?
->
-> My pinctrl development tree?
->
-> Or my fixes tree, if it's a regression for v3.10?
-
-It is a regression for v3.10 so it would be nice to get it in there
-(Tomasz's patches, too).
-
-It looks like the majority of recent commits to this file went through
-your tree and that seems fine to me unless anyone else on this thread
-has objections.
-
-Thanks!
-
--Doug
+>   arch/arm/boot/dts/Makefile              |    1 +
+>   arch/arm/boot/dts/s3c2416-pinctrl.dtsi  |  173 ++++++++++++++++++++=
++++++++++++
+>   arch/arm/boot/dts/s3c2416-smdk2416.dts  |   72 +++++++++++++
+>   arch/arm/boot/dts/s3c2416.dtsi          |   79 ++++++++++++++
+>   arch/arm/boot/dts/s3c24xx.dtsi          |   92 ++++++++++++++++
+>   arch/arm/mach-s3c24xx/Kconfig           |   12 ++
+>   arch/arm/mach-s3c24xx/Makefile          |    1 +
+>   arch/arm/mach-s3c24xx/mach-s3c2416-dt.c |   91 ++++++++++++++++
+>   8 files changed, 521 insertions(+), 0 deletions(-)
+>   create mode 100644 arch/arm/boot/dts/s3c2416-pinctrl.dtsi
+>   create mode 100644 arch/arm/boot/dts/s3c2416-smdk2416.dts
+>   create mode 100644 arch/arm/boot/dts/s3c2416.dtsi
+>   create mode 100644 arch/arm/boot/dts/s3c24xx.dtsi
+>   create mode 100644 arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
