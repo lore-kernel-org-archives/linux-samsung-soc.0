@@ -1,59 +1,52 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: devs: Add names to fimd0 IRQ resources
-Date: Mon, 20 May 2013 22:01:27 +0200
-Message-ID: <2346119.JROXYaUvrv@flatron>
-References: <1368630584-30147-1-git-send-email-t.figa@samsung.com>
+From: Saravana Kannan <skannan@codeaurora.org>
+Subject: Re: [RFC 2/2] clk: samsung: add exynos5250 composite clock for hdmi
+Date: Mon, 20 May 2013 13:02:57 -0700
+Message-ID: <519A8171.3040003@codeaurora.org>
+References: <1369059428-26820-1-git-send-email-rahul.sharma@samsung.com> <1369059428-26820-3-git-send-email-rahul.sharma@samsung.com> <5956307.B4Gm3xbmhh@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f174.google.com ([209.85.215.174]:33926 "EHLO
-	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756835Ab3ETUBb (ORCPT
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:11107 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756835Ab3ETUC6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 May 2013 16:01:31 -0400
-Received: by mail-ea0-f174.google.com with SMTP id z7so4020322eaf.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 13:01:30 -0700 (PDT)
-In-Reply-To: <1368630584-30147-1-git-send-email-t.figa@samsung.com>
+	Mon, 20 May 2013 16:02:58 -0400
+In-Reply-To: <5956307.B4Gm3xbmhh@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, olof@lixom.net, Kyungmin Park <kyungmin.park@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, r.sh.open@gmail.com
 
-Hi Kukjin,
+On 05/20/2013 11:57 AM, Tomasz Figa wrote:
+> Hi Rahul,
+>
+> On Monday 20 of May 2013 19:47:08 Rahul Sharma wrote:
+>> HDMI driver needs to change the parent of sclk_hdmi clock to
+>> sclk_pixel or to sclk_hdmiphy, depends on the status of hdmiphy.
+>> sclk_hdmi which is gate clock doesn't support the set_parent
+>> operation.
+>
+> Wouldn't it be better to simply allow calling clk_set_parent() on gate
+> clocks and propagate parent change to nearest mux, just like it is done
+> with clk_set_rate()?
+>
+> It wouldn't require any SoC-specific composite clocks and keep the nice
+> property of the clock tree, which is built from basic, generic clock
+> blocks that nicely correspond to blocks shown in the documentation.
+>
+> We had discussed this already at SRPOL and got to the conclusion that it's
+> a step backwards, making the clock driver more complex, because each
+> composite block would have to be described using a structure with many
+> fields. In addition there are many special cases, for which the composite
+> scheme wouldn't work anyway and they would end up with simple clocks
+> attached after the composite block, defeating the purpose of your patch.
+>
 
-On Wednesday 15 of May 2013 17:09:44 Tomasz Figa wrote:
-> Since commit 1977e6d8 (drm/exynos: change the method for getting the
-> interrupt) the Exynos DRM FIMD driver requires IRQ resources to be
-> named. This patch fixes probe failure in non-DT cases by adding
-> appropriate resource names to fimd0 platform device.
-> 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-samsung/devs.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 30c2fe2..0f9c3f4 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -311,9 +311,9 @@ struct platform_device s5p_device_jpeg = {
->  #ifdef CONFIG_S5P_DEV_FIMD0
->  static struct resource s5p_fimd0_resource[] = {
->  	[0] = DEFINE_RES_MEM(S5P_PA_FIMD0, SZ_32K),
-> -	[1] = DEFINE_RES_IRQ(IRQ_FIMD0_VSYNC),
-> -	[2] = DEFINE_RES_IRQ(IRQ_FIMD0_FIFO),
-> -	[3] = DEFINE_RES_IRQ(IRQ_FIMD0_SYSTEM),
-> +	[1] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_VSYNC, "vsync"),
-> +	[2] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_FIFO, "fifo"),
-> +	[3] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_SYSTEM, "lcd_sys"),
->  };
-> 
->  struct platform_device s5p_device_fimd0 = {
++1 to all these comments.
 
-This is a fix of a regression introduced to 3.10-rc1. Could you apply this 
-patch to your fixes branch, please?
+-Saravana
 
-Best regards,
-Tomasz
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
