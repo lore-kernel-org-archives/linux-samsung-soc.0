@@ -1,40 +1,52 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
-Date: Mon, 20 May 2013 10:59:42 +0530
-Message-ID: <CAKohpon97dbLDF0xU7vhf5V+UVeJv7WdeMuZ1jXLUTey2+gD2A@mail.gmail.com>
-References: <cover.1365079581.git.viresh.kumar@linaro.org>
-	<CAKohponkFB7ND38jv5oGnQLx8cq0b=uHTCmL3EERe6P54ijYhw@mail.gmail.com>
-	<093901ce509f$afe92f40$0fbb8dc0$%kim@samsung.com>
-	<2001452.Fn2HjLbNED@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <2001452.Fn2HjLbNED@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Robin Randhawa <robin.randhawa@arm.com>, Ben Dooks <ben-linux@fluff.org>, linux-pm@vger.kernel.org, patches@linaro.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, charles.garcia-tobin@arm.com
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] iio: exynos_adc: fix wrong structure extration in suspend and
+ resume
+Date: Mon, 20 May 2013 12:04:49 +0530
+Message-ID: <1369031689-23189-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-iio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 14 May 2013 18:30, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> On Tuesday, May 14, 2013 09:36:42 PM Kukjin Kim wrote:
->> Viresh Kumar wrote:
->> >
->> > On 13 May 2013 16:21, Rafael J. Wysocki <rjw@sisk.pl> wrote:
->> > > That doesn't matter I suppose.  I can take it, but please rebase it on
->> > top
->> > > of current linux-next.
->> >
->> > I have already done that (attached). But i wasn't sure what Kukjin wants
->> > as
->> > he may report conflicts again and i will ask the same question for 3.12 :)
->> >
->> Since this missed last time, this would be sent to upstream via samsung tree
->> again. It means the conflicts should be handled by myself.
->>
->> Rafael, if you don't mind, let me take this into Samsung tree for v3.11.
->
-> Sure, please go ahead.
+The exynos_adc device structure was wrongly extracted from the dev*
+correcting the same.
 
-Kukjin,
+Using the regular conversion of
+struct device* -> struct platform_device* -> struct exynos_adc* seems wrong.
+Instead we should be doing
+struct device* -> struct iio_dev* -> struct exynos_adc*
 
-I hope you have already applied this for linux-next?
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+ drivers/iio/adc/exynos_adc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index a6c4df5..2347df5 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -403,8 +403,8 @@ static int exynos_adc_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int exynos_adc_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct exynos_adc *info = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct exynos_adc *info = iio_priv(indio_dev);
+ 	u32 con;
+ 
+ 	if (info->version == ADC_V2) {
+@@ -426,8 +426,8 @@ static int exynos_adc_suspend(struct device *dev)
+ 
+ static int exynos_adc_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct exynos_adc *info = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct exynos_adc *info = iio_priv(indio_dev);
+ 	int ret;
+ 
+ 	ret = regulator_enable(info->vdd);
+-- 
+1.7.12.4
