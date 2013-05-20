@@ -1,33 +1,45 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 07/18] cpufreq: s3c24xx: move cpufreq driver to drivers/cpufreq
-Date: Mon, 20 May 2013 22:47:59 +0900
-Message-ID: <519A298F.2040605@samsung.com>
-References: <cover.1365079581.git.viresh.kumar@linaro.org>	<CAKohponkFB7ND38jv5oGnQLx8cq0b=uHTCmL3EERe6P54ijYhw@mail.gmail.com>	<093901ce509f$afe92f40$0fbb8dc0$%kim@samsung.com>	<2001452.Fn2HjLbNED@vostro.rjw.lan> <CAKohpon97dbLDF0xU7vhf5V+UVeJv7WdeMuZ1jXLUTey2+gD2A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAKohpon97dbLDF0xU7vhf5V+UVeJv7WdeMuZ1jXLUTey2+gD2A@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Robin Randhawa <robin.randhawa@arm.com>, Ben Dooks <ben-linux@fluff.org>, linux-pm@vger.kernel.org, patches@linaro.org, Liviu.Dudau@arm.com, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Steve.Bannister@arm.com, arvind.chauhan@arm.com, linaro-kernel@lists.linaro.org, charles.garcia-tobin@arm.com
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [RFC 0/2] clk: samsung: add composite clocks
+Date: Mon, 20 May 2013 19:47:06 +0530
+Message-ID: <1369059428-26820-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:60617 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756270Ab3ETNxK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 May 2013 09:53:10 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MN3008RCNWKENI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 May 2013 22:53:08 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 05/20/13 14:29, Viresh Kumar wrote:
+This patch adds support for composite clocks for samsung SoCs.
+Many drivers need access to a common clock which support gating
+and/or muxing and/or rate control operations. For example hdmi
+which needs to switch between parents and call enable/disable for
+"sclk_hdmi".
 
-[...]
+This patch set also adds composite clock for exyno5250 hdmi. Based
+on the review comment, I will extended this to other exynos SoCs
+clocks files.
 
->>> Rafael, if you don't mind, let me take this into Samsung tree for v3.11.
->>
->> Sure, please go ahead.
->
-> Kukjin,
->
-> I hope you have already applied this for linux-next?
+This patch series is based on for-next branch of tree:
+git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git
 
-Yeah, already done in my local and you can see it in my public tree in a 
-couple of hours :-)
+Rahul Sharma (2):
+  clk: samsung: add support for composite clocks
+  clk: samsung: add exynos5250 composite clock for hdmi
 
-Thanks.
+ drivers/clk/samsung/clk-exynos5250.c |   20 ++++-
+ drivers/clk/samsung/clk.c            |  149 ++++++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk.h            |   49 +++++++++++
+ 3 files changed, 215 insertions(+), 3 deletions(-)
 
-- Kukjin
+-- 
+1.7.10.4
