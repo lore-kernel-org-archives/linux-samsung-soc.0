@@ -1,52 +1,45 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] iio: exynos_adc: fix wrong structure extration in suspend and
- resume
-Date: Mon, 20 May 2013 12:04:49 +0530
-Message-ID: <1369031689-23189-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de
+From: Chen Gang <gang.chen@asianux.com>
+Subject: [PATCH] ARM: S5PV210: dependency issue, S5P_SLEEP is depend on ARM_CPU_SUSPEND
+Date: Mon, 20 May 2013 16:54:07 +0800
+Message-ID: <5199E4AF.7040607@asianux.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from intranet.asianux.com ([58.214.24.6]:50087 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751056Ab3ETIy5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 May 2013 04:54:57 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ben-linux@fluff.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org >> \"linux-kernel@vger.kernel.org\"" <linux-kernel@vger.kernel.org>
 
-The exynos_adc device structure was wrongly extracted from the dev*
-correcting the same.
 
-Using the regular conversion of
-struct device* -> struct platform_device* -> struct exynos_adc* seems wrong.
-Instead we should be doing
-struct device* -> struct iio_dev* -> struct exynos_adc*
+When randconfig with MMU for arm s5pv210 (and select all cpu type),
+need let S5P_SLEEP depend on ARM_CPU_SUSPEND, or will cause issue below:
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+  arch/arm/plat-samsung/built-in.o: In function `s3c_cpu_resume':
+  arch/arm/plat-samsung/s5p-sleep.S:83: undefined reference to `cpu_resume'
+
+
+Signed-off-by: Chen Gang <gang.chen@asianux.com>
 ---
- drivers/iio/adc/exynos_adc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/plat-samsung/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index a6c4df5..2347df5 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -403,8 +403,8 @@ static int exynos_adc_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int exynos_adc_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos_adc *info = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct exynos_adc *info = iio_priv(indio_dev);
- 	u32 con;
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index f8ed2de..1d38541 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -483,6 +483,7 @@ config S5P_PM
  
- 	if (info->version == ADC_V2) {
-@@ -426,8 +426,8 @@ static int exynos_adc_suspend(struct device *dev)
- 
- static int exynos_adc_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct exynos_adc *info = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct exynos_adc *info = iio_priv(indio_dev);
- 	int ret;
- 
- 	ret = regulator_enable(info->vdd);
+ config S5P_SLEEP
+ 	bool
++	select ARM_CPU_SUSPEND
+ 	help
+ 	  Internal config node to apply common S5P sleep management code.
+ 	  Can be selected by S5P and newer SoCs with similar sleep procedure.
 -- 
-1.7.12.4
+1.7.7.6
