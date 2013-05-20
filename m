@@ -1,46 +1,36 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [RFC 0/2] clk: samsung: add composite clocks
-Date: Mon, 20 May 2013 16:14:30 +0200
-Message-ID: <201305201614.31103.heiko@sntech.de>
-References: <1369059428-26820-1-git-send-email-rahul.sharma@samsung.com>
+From: =?koi8-r?B?zMnQwQ==?= <admin@somedudesfrysauce.com>
+Subject: =?koi8-r?B?08vP0s8gz8LSwdTJ1NggzsHExdbE1SDXINfF3cXT1NfF?=
+	=?koi8-r?B?zs7P09TY?=
+Date: Mon, 20 May 2013 16:21:06 +0200
+Message-ID: <D0DC6C635FD2404494F26E2008E0D4B5@migrt>
+Reply-To: =?koi8-r?B?zMnQwQ==?= <9130185293@spinartusa.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="koi8-r";
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:39271 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756270Ab3ETOOf (ORCPT
+Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:39561 "HELO
+	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756073Ab3ETOVO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 May 2013 10:14:35 -0400
-In-Reply-To: <1369059428-26820-1-git-send-email-rahul.sharma@samsung.com>
+	Mon, 20 May 2013 10:21:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com
+To: ater@ivc.nnov.ru, setenergotrans@gmail.com, lniaaduit@mail.ru, belousow@rambler.ru, linux-samsung-soc@vger.kernel.org
 
-Am Montag, 20. Mai 2013, 16:17:06 schrieb Rahul Sharma:
-> This patch adds support for composite clocks for samsung SoCs.
-> Many drivers need access to a common clock which support gating
-> and/or muxing and/or rate control operations. For example hdmi
-> which needs to switch between parents and call enable/disable for
-> "sclk_hdmi".
-> 
-> This patch set also adds composite clock for exyno5250 hdmi. Based
-> on the review comment, I will extended this to other exynos SoCs
-> clocks files.
-
-I think I remember reading somewhere that the target of the common clock 
-framework was to prevent every SoC from introducing their own special clock 
-types and instead  create these structures from separate clocks (mux clk + 
-gate clk) and not to have every SoC create their own custom clock types.
-
-The Samsung clock drivers at the moment follow this paradigm of combining the 
-existing "simple" clocks and only introduce new clock types for the pll 
-clocks, that really need special handling.
-
-So it would probably good to keep it this way and define your clocks from 
-their individual components, as all the other Samsung clocks currently do.
-
-
-Heiko
++sHIz8TJ1MUg0M8g09PZzMvFOiBodHRwOi8vZ29vLmdsLzROQVdxPy9rdGpleGV6VG8g7dkg0NLF
+xMzBx8HFzSDXwdvFzdUg0M/e1MXOycAgzs/Xxc7Yy9XAIMLJ2s7F0y3Q0s/H0sHNzdUgzMDE0c0s
+IMvPySDCxcfV1CDLINPXz8nNIMPFzNHNISDt2SDQ0sXE18nEyc0gy8HLINDPxNPPwsnU2CD3wc0g
+xM/CydTY09Eg1dPQxcjBISDJIM7FINPV3cXT1NfFzs7PLCDLwcvP19XAIMPFzNgg99kg0MXSxcQg
+08/Cz8Ag0M/Nxd3BxdTFIC0g2sHNxc7J1Ngg0NLPxsXT08nALCDP1MvS2dTYIMTFzM8gyczYIMnT
+yNXEwdTYIM7BIHxPIMvJzM/H0sHNzS4g98HNIMvPx8TBIC0gzsnC1cTYIMTP18/EyczP09ggwtnX
+wdTYINcg1MHLz8og08nU1cHDycksIMvPx8TBIPfZIOzJw8Xa0snMySAsINLP187PIMvByyDP09TB
+zNjO2cUg2sEg3NTPINfSxc3RINDP28zJIMTBzMXLzyDX0MXSxcTJIMkg0sHaxNLB1sHMydPYIM7B
+INPFwtEgydogLSDawSDEwc7Oz8fPLiDQ0sXE18nExczJLCDC1cTUzyDOwcTPIPzUzyDX08XOxdDS
+xc3Fzs7PIM/T1d3F09TXydTYLCDOzyDVzcnSwczBIM3P1MnXwcPJ0S4gzsHeyc7BzMkgxMXK09TX
+z9fB1NgsIMEg087P18Eg09TP0M/SyczJ09gsIM7B3snOwczJIM7FINLF28HU2NPRIMHMySAtINTF
+0tHMySDJztTF0sXTLiDTz9fF0tvJzMkg0sXbxc7JxSDQz9PU1dDB1NgsIM7PIM7FINrOwczJINMg
+3sXHzy3OycLVxNgg0M/ewdTYLiDOxSDazsHXwczJIMvByyDX2czF2tTJIMnaINPMz9bOxcrbxcog
+08nU1cHDycksIMvByyDQxdLF08nMydTYINDSxdDR1NPU18nFLiD30s/ExSDC2czPIPfTxSDJ2tfF
+09TOzywgySDawc3Z08XMINDSydPV1NPU18/XwcwsIM7PINMgzcXT1MEg1NLPztXU2NPRIM7FINPQ
+z9LJzM/T2C4NCg==
