@@ -1,83 +1,112 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [RFC 0/2] clk: samsung: add composite clocks
-Date: Mon, 20 May 2013 20:54:48 +0200
-Message-ID: <201305202054.48926.heiko@sntech.de>
-References: <1369059428-26820-1-git-send-email-rahul.sharma@samsung.com> <201305201614.31103.heiko@sntech.de> <CAPdUM4Nz8LL5xvvEOVBdd7NDSyQ2+FesnYRnBuQVeGK4gRE_yQ@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFC 2/2] clk: samsung: add exynos5250 composite clock for hdmi
+Date: Mon, 20 May 2013 11:57:03 -0700 (PDT)
+Message-ID: <5956307.B4Gm3xbmhh@flatron>
+References: <1369059428-26820-1-git-send-email-rahul.sharma@samsung.com> <1369059428-26820-3-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:42729 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756068Ab3ETSyy (ORCPT
+Received: from mail-ee0-f49.google.com ([74.125.83.49]:57144 "EHLO
+	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755850Ab3ETS5H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 May 2013 14:54:54 -0400
-In-Reply-To: <CAPdUM4Nz8LL5xvvEOVBdd7NDSyQ2+FesnYRnBuQVeGK4gRE_yQ@mail.gmail.com>
+	Mon, 20 May 2013 14:57:07 -0400
+Received: by mail-ee0-f49.google.com with SMTP id d17so4117733eek.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 11:57:04 -0700 (PDT)
+In-Reply-To: <1369059428-26820-3-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com
 
-Am Montag, 20. Mai 2013, 20:19:29 schrieb Rahul Sharma:
-> On Mon, May 20, 2013 at 7:44 PM, Heiko St=FCbner <heiko@sntech.de> wr=
-ote:
-> > Am Montag, 20. Mai 2013, 16:17:06 schrieb Rahul Sharma:
-> >> This patch adds support for composite clocks for samsung SoCs.
-> >> Many drivers need access to a common clock which support gating
-> >> and/or muxing and/or rate control operations. For example hdmi
-> >> which needs to switch between parents and call enable/disable for
-> >> "sclk_hdmi".
-> >>=20
-> >> This patch set also adds composite clock for exyno5250 hdmi. Based
-> >> on the review comment, I will extended this to other exynos SoCs
-> >> clocks files.
-> >=20
-> > I think I remember reading somewhere that the target of the common =
-clock
-> > framework was to prevent every SoC from introducing their own speci=
-al
-> > clock types and instead  create these structures from separate cloc=
-ks
-> > (mux clk + gate clk) and not to have every SoC create their own cus=
-tom
-> > clock types.
-> >=20
-> > The Samsung clock drivers at the moment follow this paradigm of com=
-bining
-> > the existing "simple" clocks and only introduce new clock types for=
- the
-> > pll clocks, that really need special handling.
-> >=20
-> > So it would probably good to keep it this way and define your clock=
-s from
-> > their individual components, as all the other Samsung clocks curren=
-tly
-> > do.
->=20
-> Thanks Heiko, I agree, but I am not trying to introduce a new type he=
-re,
-> instead using the existing generic support for composite clocks for
-> exynos as well.
->=20
-> These have not been added for Samsung SoCs so far but I do not see an=
-y
-> harm in using them also. With them, drivers do not need to get and
-> configure each clock component separately. This ensures less and more
-> reasonable changes in the drivers during migration to CCF.
->=20
-> Please help me understand about the loss when using composite clocks.
+Hi Rahul,
 
-hehe ... it seems I remembered something outdated ...
+On Monday 20 of May 2013 19:47:08 Rahul Sharma wrote:
+> HDMI driver needs to change the parent of sclk_hdmi clock to
+> sclk_pixel or to sclk_hdmiphy, depends on the status of hdmiphy.
+> sclk_hdmi which is gate clock doesn't support the set_parent
+> operation.
 
-The last time (before march 12th) I looked at the ccf, it was "use simp=
-le=20
-clocktypes". But it seems in the meantime the separate composite-clock =
-you use=20
-was introduced. And I didn't read your patch careful enough to see that=
- you're=20
-using the (now) existing composite clock.
+Wouldn't it be better to simply allow calling clk_set_parent() on gate 
+clocks and propagate parent change to nearest mux, just like it is done 
+with clk_set_rate()?
 
-So, sorry for the noise :-)
+It wouldn't require any SoC-specific composite clocks and keep the nice 
+property of the clock tree, which is built from basic, generic clock 
+blocks that nicely correspond to blocks shown in the documentation.
 
+We had discussed this already at SRPOL and got to the conclusion that it's 
+a step backwards, making the clock driver more complex, because each 
+composite block would have to be described using a structure with many 
+fields. In addition there are many special cases, for which the composite 
+scheme wouldn't work anyway and they would end up with simple clocks 
+attached after the composite block, defeating the purpose of your patch.
 
-Heiko
+Best regards,
+Tomasz
+
+> This patch adds sclk_hdmi as a composite clock which is a
+> combination of mux clock and gate clock. Being a composite
+> clock, above clock supports both set_parent and enable/disable
+> functionality. Therefore hdmi driver need not be modified
+> different S0Cs. This will handled inside CCF.
+> 
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5250.c |   20 +++++++++++++++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c
+> b/drivers/clk/samsung/clk-exynos5250.c index 5c97e75..0c9e37a 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -231,7 +231,6 @@ struct samsung_mux_clock exynos5250_mux_clks[]
+> __initdata = { MUX(none, "mout_fimd1", mout_group1_p, SRC_DISP1_0, 0,
+> 4),
+>  	MUX(none, "mout_mipi1", mout_group1_p, SRC_DISP1_0, 12, 4),
+>  	MUX(none, "mout_dp", mout_group1_p, SRC_DISP1_0, 16, 4),
+> -	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_DISP1_0, 20, 1),
+>  	MUX(none, "mout_audio0", mout_audio0_p, SRC_MAU, 0, 4),
+>  	MUX(none, "mout_mmc0", mout_group1_p, SRC_FSYS, 0, 4),
+>  	MUX(none, "mout_mmc1", mout_group1_p, SRC_FSYS, 4, 4),
+> @@ -416,8 +415,6 @@ struct samsung_gate_clock exynos5250_gate_clks[]
+> __initdata = { SRC_MASK_DISP1_0, 12, CLK_SET_RATE_PARENT, 0),
+>  	GATE(sclk_dp, "sclk_dp", "div_dp",
+>  			SRC_MASK_DISP1_0, 16, CLK_SET_RATE_PARENT, 0),
+> -	GATE(sclk_hdmi, "sclk_hdmi", "mout_hdmi",
+> -			SRC_MASK_DISP1_0, 20, 0, 0),
+>  	GATE(sclk_audio0, "sclk_audio0", "div_audio0",
+>  			SRC_MASK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+>  	GATE(sclk_mmc0, "sclk_mmc0", "div_mmc_pre0",
+> @@ -464,6 +461,21 @@ struct samsung_gate_clock exynos5250_gate_clks[]
+> __initdata = { GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
+>  };
+> 
+> +struct samsung_composite_clock exynos5250_composite_clks[] __initdata =
+> { +	{
+> +		.id = sclk_hdmi,
+> +		.name = "sclk_hdmi",
+> +		.parent_names = mout_hdmi_p,
+> +		.num_parents = ARRAY_SIZE(mout_hdmi_p),
+> +		.mux_clk = MUX(none, NULL, mout_hdmi_p, SRC_DISP1_0, 20,
+> +				1),
+> +		.gate_clk = GATE(none, NULL, NULL, SRC_MASK_DISP1_0, 20,
+> +				0, 0),
+> +		.composition_flags = SAMSUNG_CLK_TYPE_GATE |
+> +			SAMSUNG_CLK_TYPE_MUX,
+> +	},
+> +};
+> +
+>  static __initdata struct of_device_id ext_clk_match[] = {
+>  	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
+>  	{ },
+> @@ -515,6 +527,8 @@ void __init exynos5250_clk_init(struct device_node
+> *np) ARRAY_SIZE(exynos5250_div_clks));
+>  	samsung_clk_register_gate(exynos5250_gate_clks,
+>  			ARRAY_SIZE(exynos5250_gate_clks));
+> +	samsung_clk_register_composite(exynos5250_composite_clks,
+> +			ARRAY_SIZE(exynos5250_composite_clks));
+> 
+>  	pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
+>  			_get_rate("armclk"));
