@@ -1,27 +1,44 @@
-From: =?windows-1251?B?7Oj14Ok=?= <ugm@karyasalemba4.org>
-Subject: =?windows-1251?B?x+3g9+jy5ev87fvpIOzo4w==?=
-Date: Mon, 20 May 2013 03:24:09 +0300
-Message-ID: <F35446477F6442C981866F1E36E9286A@tgig>
-Reply-To: =?windows-1251?B?7Oj14Ok=?= <dissyllabify_75@mobilradio.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: dts: add max8997 device node for exynos4210-origen
+ board
+Date: Mon, 20 May 2013 09:23:19 +0530
+Message-ID: <51999E2F.9030703@linaro.org>
+References: <1353664412-17678-1-git-send-email-thomas.abraham@linaro.org> <50EA598D.6090604@linaro.org> <518C9807.80906@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="windows-1251";
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ip-164-235.saranadata.com ([202.43.164.235]:41728 "EHLO
-	jakarta.karyasalemba4.org" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1754928Ab3ETBSx (ORCPT
+Received: from mail-da0-f43.google.com ([209.85.210.43]:57781 "EHLO
+	mail-da0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755331Ab3ETDxY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 19 May 2013 21:18:53 -0400
+	Sun, 19 May 2013 23:53:24 -0400
+Received: by mail-da0-f43.google.com with SMTP id u7so3656399dae.16
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 19 May 2013 20:53:24 -0700 (PDT)
+In-Reply-To: <518C9807.80906@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: single_lady88@mail.ru, linux-samsung-soc@vger.kernel.org, belousow@rambler.ru, lniaaduit@mail.ru, setenergotrans@gmail.com
+To: kgene.kim@samsung.com
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-ICDH4PXu5Ojy5SDqIO3g7DogaHR0cDovL2dvby5nbC9Wb0l4RiAuIM7y6+j37eXp+OD/IPHy8PPq
-8vPw4CDu8eLg6OLg5ezu4+4g8/fl4e3u4+4g7ODy5fDo4OvgIC0g8fLw5ezr5e3o5SDt4CDw5efz
-6/zy4PIuIM7x8/nl8fLi6PL8IOvo9+3z/iDv8ODq8ujq8yDv7uLx5e7h8ODn7eXlLCDv7uTn4O3/
-8vzx/yDv8Oji6+Xq4PLl6/zt++wg5OXr7uwuINfz4vHy4u7i4PL8IPHl4f8g4eXx7/Dl7//y8fLi
-5e3t7iDiIOrg5uTu6SDx8vDg7eUg8eLl8uAuIMrz8PEg5Ov/IOTl4f7y4O3y7uIg4CDy4Oog5uUg
-8+Pr8+HruO3t+/UuIPPx4u7o8vwg4fDo8uDt8ero6SD/5/vqIO377fflIOv+4e7s8yDt5fHr7ubt
-7iAuIN3q8e/w5fHxIO7h8/fl7ejlLiDP8Ojs5e3//vLx/yDx4uXw9fHl6vDl8u375SD96vHv8OXx
-8S3s5fLu5PsuIA0KIA0K
+On 05/10/2013 12:17 PM, Tushar Behera wrote:
+> On 01/07/2013 10:43 AM, Tushar Behera wrote:
+>> On 11/23/2012 03:23 PM, Thomas Abraham wrote:
+>>> Add max8997 regulator device node for exynos4210-origen board and list
+>>> all the supported regulators.
+>>>
+>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>>
+>> Tested-by: Tushar Behera <tushar.behera@linaro.org>
+>>
+> Kukjin,
+> 
+> This patch got missed for 3.10 merge window. This patch still applies on
+> the latest mainline kernel and is essential for Origen board. Would you
+> please take this patch?
+> 
+
+Ping !!!
+
+-- 
+Tushar Behera
