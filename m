@@ -1,51 +1,42 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3] pinctrl: samsung: fix suspend/resume functionality
-Date: Mon, 20 May 2013 23:26:52 -0700
-Message-ID: <20130521062652.GE19627@quad.lixom.net>
-References: <1368746388-20194-1-git-send-email-dianders@chromium.org>
- <1368765198-25550-1-git-send-email-dianders@chromium.org>
- <CACRpkdZ1zBrp+jpgw8o_PVd_bcQMpkFXvRAwfJH6KCztT4jx+w@mail.gmail.com>
- <CAD=FV=XOiVdkEhYu+u-aGkD0DpxWn369uD_r4Pmw=7gHKLjOuQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Samsung fixes-2 for v3.10
+Date: Mon, 20 May 2013 23:40:34 -0700
+Message-ID: <20130521064034.GE20453@quad.lixom.net>
+References: <519A5933.3040005@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:42391 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754323Ab3EUG05 (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:51040 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753979Ab3EUGki (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 May 2013 02:26:57 -0400
-Received: by mail-pd0-f180.google.com with SMTP id 10so281485pdc.25
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 23:26:56 -0700 (PDT)
+	Tue, 21 May 2013 02:40:38 -0400
+Received: by mail-pa0-f45.google.com with SMTP id lj1so381455pab.18
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 May 2013 23:40:37 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=XOiVdkEhYu+u-aGkD0DpxWn369uD_r4Pmw=7gHKLjOuQ@mail.gmail.com>
+In-Reply-To: <519A5933.3040005@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Prathyush K <prathyush.k@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Mon, May 20, 2013 at 07:59:27AM -0700, Doug Anderson wrote:
-> Linus,
+On Tue, May 21, 2013 at 02:11:15AM +0900, Kukjin Kim wrote:
+> The following changes since commit f722406faae2d073cc1d01063d1123c35425939e:
 > 
-> On Mon, May 20, 2013 at 4:47 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > Looks good to me.
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > How are you going to merge this?
-> >
-> > Samsung tree?
-> >
-> > My pinctrl development tree?
-> >
-> > Or my fixes tree, if it's a regression for v3.10?
+>   Linux 3.10-rc1 (2013-05-11 17:14:08 -0700)
 > 
-> It is a regression for v3.10 so it would be nice to get it in there
-> (Tomasz's patches, too).
+> are available in the git repository at:
 > 
-> It looks like the majority of recent commits to this file went through
-> your tree and that seems fine to me unless anyone else on this thread
-> has objections.
 
-Sounds good to me.
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-fixes-2
+
+What happened to the 4210 rev0 regression fixes from Tomasz? I would
+have expected them in this batch?
+
+Might as well hold off this one until that is reviewed and ready, since
+it's silly to keep pulling one-patch branches. At least if that's happening
+this week.
 
 
 -Olof
