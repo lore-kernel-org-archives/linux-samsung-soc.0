@@ -1,141 +1,201 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] clk: Exynos5250: Add clocks for G3D
-Date: Wed, 22 May 2013 00:50:40 +0200
-Message-ID: <59532716.tUOcOF6tE1@flatron>
-References: <1369139801-1889-1-git-send-email-arun.kk@samsung.com>
+Subject: Re: [RFC 2/2] clk: samsung: add exynos5250 composite clock for hdmi
+Date: Wed, 22 May 2013 01:15:15 +0200
+Message-ID: <2867686.KHvbSmhQNs@flatron>
+References: <1369059428-26820-1-git-send-email-rahul.sharma@samsung.com> <5956307.B4Gm3xbmhh@flatron> <CAPdUM4NKA8DfvqiB1OawAwQRn3_qM3joOwtwLFaQbwMzHdK5Lg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f43.google.com ([74.125.83.43]:39985 "EHLO
-	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752522Ab3EUWuo (ORCPT
+Received: from mail-ea0-f169.google.com ([209.85.215.169]:57274 "EHLO
+	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750850Ab3EUXPU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 May 2013 18:50:44 -0400
-Received: by mail-ee0-f43.google.com with SMTP id d41so769621eek.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 May 2013 15:50:43 -0700 (PDT)
-In-Reply-To: <1369139801-1889-1-git-send-email-arun.kk@samsung.com>
+	Tue, 21 May 2013 19:15:20 -0400
+Received: by mail-ea0-f169.google.com with SMTP id m14so767372eaj.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 May 2013 16:15:19 -0700 (PDT)
+In-Reply-To: <CAPdUM4NKA8DfvqiB1OawAwQRn3_qM3joOwtwLFaQbwMzHdK5Lg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, arunkk.samsung@gmail.com
+To: Rahul Sharma <r.sh.open@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, Mike Turquette <mturquette@linaro.org>
 
-Hi Arun,
+Hi,
 
-Please see my comments inline.
+Cc'ing Mike, clock subsystem maintainer.
 
-On Tuesday 21 of May 2013 18:06:41 Arun Kumar K wrote:
-> This patch adds the required clocks for ARM Mali IP
-> in Exynos5250.
+On Tuesday 21 of May 2013 09:42:25 Rahul Sharma wrote:
+> On Tue, May 21, 2013 at 12:27 AM, Tomasz Figa <tomasz.figa@gmail.com> 
+wrote:
+> > Hi Rahul,
+> > 
+> > On Monday 20 of May 2013 19:47:08 Rahul Sharma wrote:
+> >> HDMI driver needs to change the parent of sclk_hdmi clock to
+> >> sclk_pixel or to sclk_hdmiphy, depends on the status of hdmiphy.
+> >> sclk_hdmi which is gate clock doesn't support the set_parent
+> >> operation.
+> > 
+> > Wouldn't it be better to simply allow calling clk_set_parent() on gate
+> > clocks and propagate parent change to nearest mux, just like it is
+> > done
+> > with clk_set_rate()?
 > 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  .../devicetree/bindings/clock/exynos5250-clock.txt         |    2 ++
->  drivers/clk/samsung/clk-exynos5250.c                       |   12
-> +++++++++++- 2 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt index
-> 1a05761..5b93637 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> @@ -155,6 +155,8 @@ clock which they consume.
->    dp			342
->    mixer			343
->    hdmi			344
-> +  g3d			345
-> +  aclk_400_g3d		346
-> 
->  Example 1: An example of a clock controller node is listed below.
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5250.c
-> b/drivers/clk/samsung/clk-exynos5250.c index 5c97e75..7d87500 100644
-> --- a/drivers/clk/samsung/clk-exynos5250.c
-> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -23,6 +23,7 @@
->  #define DIV_CPU0		0x500
->  #define SRC_CORE1		0x4204
->  #define SRC_TOP0		0x10210
-> +#define SRC_TOP1		0x10214
->  #define SRC_TOP2		0x10218
->  #define SRC_GSCL		0x10220
->  #define SRC_DISP1_0		0x1022c
-> @@ -55,6 +56,7 @@
->  #define DIV_PERIC5		0x1056c
->  #define GATE_IP_GSCL		0x10920
->  #define GATE_IP_MFC		0x1092c
-> +#define GATE_IP_G3D		0x10930
->  #define GATE_IP_GEN		0x10934
->  #define GATE_IP_FSYS		0x10944
->  #define GATE_IP_PERIC		0x10950
-> @@ -98,7 +100,7 @@ enum exynos5250_clks {
->  	spi2, i2s1, i2s2, pcm1, pcm2, pwm, spdif, ac97, hsi2c0, hsi2c1,
-> hsi2c2, hsi2c3, chipid, sysreg, pmu, cmu_top, cmu_core, cmu_mem, tzpc0,
-> tzpc1, tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9,
-> hdmi_cec, mct, -	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, 
-hdmi,
-> +	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g3d, 
-aclk_400_g3d,
-> 
->  	nr_clks,
->  };
-> @@ -112,6 +114,7 @@ static __initdata unsigned long
-> exynos5250_clk_regs[] = { DIV_CPU0,
->  	SRC_CORE1,
->  	SRC_TOP0,
-> +	SRC_TOP1,
->  	SRC_TOP2,
->  	SRC_GSCL,
->  	SRC_DISP1_0,
-> @@ -164,10 +167,12 @@ PNAME(mout_vpllsrc_p)	= { "fin_pll",
-> "sclk_hdmi27m" }; PNAME(mout_vpll_p)	= { "mout_vpllsrc", "fout_vpll" };
->  PNAME(mout_cpll_p)	= { "fin_pll", "fout_cpll" };
->  PNAME(mout_epll_p)	= { "fin_pll", "fout_epll" };
-> +PNAME(mout_gpll_p)	= { "fin_pll", "fout_gpll" };
->  PNAME(mout_mpll_user_p)	= { "fin_pll", "sclk_mpll" };
->  PNAME(mout_bpll_user_p)	= { "fin_pll", "sclk_bpll" };
->  PNAME(mout_aclk166_p)	= { "sclk_cpll", "sclk_mpll_user" };
->  PNAME(mout_aclk200_p)	= { "sclk_mpll_user", "sclk_bpll_user" };
-> +PNAME(mout_aclk400_p)	= { "aclk_400_g3d_mid", "sclk_gpll" };
->  PNAME(mout_hdmi_p)	= { "div_hdmi_pixel", "sclk_hdmiphy" };
->  PNAME(mout_usb3_p)	= { "sclk_mpll_user", "sclk_cpll" };
->  PNAME(mout_group1_p)	= { "fin_pll", "fin_pll", "sclk_hdmi27m",
-> @@ -223,6 +228,9 @@ struct samsung_mux_clock exynos5250_mux_clks[]
-> __initdata = { MUX(none, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8,
-> 1),
->  	MUX(none, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
->  	MUX(none, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
-> +	MUX(none, "aclk_400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
-> +	MUX(none, "sclk_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
-> +	MUX(none, "mout_aclk400", mout_aclk400_p, SRC_TOP1, 28, 1),
->  	MUX(none, "mout_cam_bayer", mout_group1_p, SRC_GSCL, 12, 4),
->  	MUX(none, "mout_cam0", mout_group1_p, SRC_GSCL, 16, 4),
->  	MUX(none, "mout_cam1", mout_group1_p, SRC_GSCL, 20, 4),
-> @@ -262,6 +270,7 @@ struct samsung_div_clock exynos5250_div_clks[]
-> __initdata = { DIV(none, "aclk166", "mout_aclk166", DIV_TOP0, 8, 3),
->  	DIV(none, "aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
->  	DIV(none, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
-> +	DIV(aclk_400_g3d, "aclk_400_g3d", "mout_aclk400", DIV_TOP0, 24, 
-3),
+> Sorry, I din't get you completly here. Allowing clk_set_parent() on gate
+> clocks is like changing the inherent property of the gate clock. I dont
+> see it possible without overiding the default gate_ops (clk_gate_ops).
+> Please cite me the code/patch doing the same for clk_set_rate.
 
-Do you need to export this div clock? If it's a parent of a gate clock, 
-then you can simply add CLK_SET_RATE_PARENT flag to the gate clock and 
-calling set_rate on it will reconfigure the divider.
+Such functionality is not available at the moment, but it shouldn't be a 
+problem to extend the core to handle that and in addition I believe it 
+would be useful for other platforms as well.
 
->  	DIV(none, "div_cam_bayer", "mout_cam_bayer", DIV_GSCL, 12, 4),
->  	DIV(none, "div_cam0", "mout_cam0", DIV_GSCL, 16, 4),
->  	DIV(none, "div_cam1", "mout_cam1", DIV_GSCL, 20, 4),
-> @@ -462,6 +471,7 @@ struct samsung_gate_clock exynos5250_gate_clks[]
-> __initdata = { GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
->  	GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
->  	GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
-> +	GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0, 0, 0),
+> What I did here is rather simple and utilising the exisiting composite
+> clock framework for exynos (as well). I register comp. clock with
+> default gate/mux/rate operations. No customised clk type /ops in this
+> patch.
+> > It wouldn't require any SoC-specific composite clocks and keep the
+> > nice
+> > property of the clock tree, which is built from basic, generic clock
+> > blocks that nicely correspond to blocks shown in the documentation.
+> > 
+> > We had discussed this already at SRPOL and got to the conclusion that
+> > it's a step backwards, making the clock driver more complex, because
+> > each composite block would have to be described using a structure
+> > with many
+> I respectfully disagree with above. If we adhere to generic composite
+> clocks (in drivers/clk/clk-composite.c) we donot need to add different
+> struct for different blocks. I have further restricted the ops
+> overriding in drivers/clk/samsung/clk.c. Please refer the previous
+> patch.
+> 
+> > fields. In addition there are many special cases, for which the
+> > composite scheme wouldn't work anyway and they would end up with
+> > simple clocks attached after the composite block, defeating the
+> > purpose of your patch.
+> Purpose of the patch is to avoid spilling complextiy of clk path/block
+> to all over the drivers. Just for instance hdmi/fimd needs 2 extra mux
+> clocks and 1 divider clock for set_parent and set_rate operations
 
-This would be then:
+No.
 
-	GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0, 
-					CLK_SET_RATE_PARENT, 0),
+You can call clk_set_rate() on gate clocks, if they have 
+CLK_SET_RATE_PARENT flag set.
+
+I think similar feature could be added for clk_set_parent(). Mike, what do 
+you think?
+
+> (other than gating operation) which was not required before CCF and
+> still avoidable. I am sure, there will be many more similar cases. This
+> list of exposed clock IDs will keep explanding when all drivers migrate
+> to CCF.
+> 
+> We have to take a call on this.
+
+I don't think this is a problem at all.
+
+Actually many drivers actually don't need any mux reconfiguration at all, 
+just one time initialization of parents, that should be rather done in 
+clock driver based on some SoC-/board-specific data. We're already working 
+on a solution for this problem.
+
+Anyway, I think it is already way too late for such deep reorganization. 
+Clock device tree bindings have been already defined, so all the clock 
+numbers that are currently defined must be left supported, because device 
+tree bindings are considered ABI.
 
 Best regards,
 Tomasz
+
+> regards,
+> Rahul Sharma.
+> 
+> > Best regards,
+> > Tomasz
+> > 
+> >> This patch adds sclk_hdmi as a composite clock which is a
+> >> combination of mux clock and gate clock. Being a composite
+> >> clock, above clock supports both set_parent and enable/disable
+> >> functionality. Therefore hdmi driver need not be modified
+> >> different S0Cs. This will handled inside CCF.
+> >> 
+> >> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> >> ---
+> >> 
+> >>  drivers/clk/samsung/clk-exynos5250.c |   20 +++++++++++++++++---
+> >>  1 file changed, 17 insertions(+), 3 deletions(-)
+> >> 
+> >> diff --git a/drivers/clk/samsung/clk-exynos5250.c
+> >> b/drivers/clk/samsung/clk-exynos5250.c index 5c97e75..0c9e37a 100644
+> >> --- a/drivers/clk/samsung/clk-exynos5250.c
+> >> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> >> @@ -231,7 +231,6 @@ struct samsung_mux_clock exynos5250_mux_clks[]
+> >> __initdata = { MUX(none, "mout_fimd1", mout_group1_p, SRC_DISP1_0, 0,
+> >> 4),
+> >> 
+> >>       MUX(none, "mout_mipi1", mout_group1_p, SRC_DISP1_0, 12, 4),
+> >>       MUX(none, "mout_dp", mout_group1_p, SRC_DISP1_0, 16, 4),
+> >> 
+> >> -     MUX(none, "mout_hdmi", mout_hdmi_p, SRC_DISP1_0, 20, 1),
+> >> 
+> >>       MUX(none, "mout_audio0", mout_audio0_p, SRC_MAU, 0, 4),
+> >>       MUX(none, "mout_mmc0", mout_group1_p, SRC_FSYS, 0, 4),
+> >>       MUX(none, "mout_mmc1", mout_group1_p, SRC_FSYS, 4, 4),
+> >> 
+> >> @@ -416,8 +415,6 @@ struct samsung_gate_clock exynos5250_gate_clks[]
+> >> __initdata = { SRC_MASK_DISP1_0, 12, CLK_SET_RATE_PARENT, 0),
+> >> 
+> >>       GATE(sclk_dp, "sclk_dp", "div_dp",
+> >>       
+> >>                       SRC_MASK_DISP1_0, 16, CLK_SET_RATE_PARENT, 0),
+> >> 
+> >> -     GATE(sclk_hdmi, "sclk_hdmi", "mout_hdmi",
+> >> -                     SRC_MASK_DISP1_0, 20, 0, 0),
+> >> 
+> >>       GATE(sclk_audio0, "sclk_audio0", "div_audio0",
+> >>       
+> >>                       SRC_MASK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+> >>       
+> >>       GATE(sclk_mmc0, "sclk_mmc0", "div_mmc_pre0",
+> >> 
+> >> @@ -464,6 +461,21 @@ struct samsung_gate_clock exynos5250_gate_clks[]
+> >> __initdata = { GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
+> >> 
+> >>  };
+> >> 
+> >> +struct samsung_composite_clock exynos5250_composite_clks[]
+> >> __initdata = { +   {
+> >> +             .id = sclk_hdmi,
+> >> +             .name = "sclk_hdmi",
+> >> +             .parent_names = mout_hdmi_p,
+> >> +             .num_parents = ARRAY_SIZE(mout_hdmi_p),
+> >> +             .mux_clk = MUX(none, NULL, mout_hdmi_p, SRC_DISP1_0,
+> >> 20,
+> >> +                             1),
+> >> +             .gate_clk = GATE(none, NULL, NULL, SRC_MASK_DISP1_0,
+> >> 20,
+> >> +                             0, 0),
+> >> +             .composition_flags = SAMSUNG_CLK_TYPE_GATE |
+> >> +                     SAMSUNG_CLK_TYPE_MUX,
+> >> +     },
+> >> +};
+> >> +
+> >> 
+> >>  static __initdata struct of_device_id ext_clk_match[] = {
+> >>  
+> >>       { .compatible = "samsung,clock-xxti", .data = (void *)0, },
+> >>       { },
+> >> 
+> >> @@ -515,6 +527,8 @@ void __init exynos5250_clk_init(struct
+> >> device_node
+> >> *np) ARRAY_SIZE(exynos5250_div_clks));
+> >> 
+> >>       samsung_clk_register_gate(exynos5250_gate_clks,
+> >>       
+> >>                       ARRAY_SIZE(exynos5250_gate_clks));
+> >> 
+> >> +     samsung_clk_register_composite(exynos5250_composite_clks,
+> >> +                     ARRAY_SIZE(exynos5250_composite_clks));
+> >> 
+> >>       pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
+> >>       
+> >>                       _get_rate("armclk"));
