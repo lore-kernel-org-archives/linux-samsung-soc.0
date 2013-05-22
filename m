@@ -1,51 +1,57 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: add __cpuinit annotation to write_pen_release()
-Date: Wed, 22 May 2013 16:20:24 +0900
-Message-ID: <000201ce56bc$d399b770$7acd2650$@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v2 6/6] pinctrl: exynos: Handle suspend/resume of GPIO EINT
+ registers
+Date: Wed, 22 May 2013 15:32:36 +0200
+Message-ID: <4391865.a7p9jbyZ7B@amdc1227>
+References: <1368807872-2601-1-git-send-email-t.figa@samsung.com>
+ <4536937.hnhaYZLnaG@amdc1227>
+ <CAD=FV=VYhBP+V6SQt5SkFZszdVxSJ6AZk-C-zx1Di-RZBYhGvw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58708 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752429Ab3EVHU0 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29922 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753042Ab3EVNco (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 May 2013 03:20:26 -0400
-Content-language: ko
+	Wed, 22 May 2013 09:32:44 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MN700CCGC937K10@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 22 May 2013 14:32:41 +0100 (BST)
+In-reply-to: <CAD=FV=VYhBP+V6SQt5SkFZszdVxSJ6AZk-C-zx1Di-RZBYhGvw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Prathyush K <prathyush.k@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-The variable __cpuinitdata pen_release is referenced by write_pen_release().
-Also, write_pen_release() is called by exynos_secondary_init() which is
-annotated with __cpuinit. Thus, __cpuinit should be added write_pen_release()
-to fix section mismatch warning.
+On Tuesday 21 of May 2013 21:46:35 Doug Anderson wrote:
+> Tomasz,
+> 
+> On Tue, May 21, 2013 at 10:05 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+> >         return 0;
+> > 
+> > +
+> > +err_domains:
+> > +       bank = d->ctrl->pin_banks;
+> > +       for (undo = 0; undo < i; ++undo) {
+> 
+> ++bank is missing, I think.  This will free the same bank many times.
 
-Fixed section mismatch warning as below:
+Shit, this is what happens when you post patches so late and in a hurry. Will 
+send something sane in a while.
 
-  WARNING: vmlinux.o(.text.unlikely+0x1f4): Section mismatch in reference from the function write_pen_release() to the variable
-.cpuinit.data:pen_release
-  The function write_pen_release() references the variable __cpuinitdata pen_release.
-  This is often because write_pen_release lacks a __cpuinitdata annotation or the annotation of pen_release is wrong.
+> optional: could also avoid extra 'undo' variable and remove in reverse
+> order by changing i to signed and counting down to 0.
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- arch/arm/mach-exynos/platsmp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sure.
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index a0e8ff7..9676af2 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -58,7 +58,7 @@ static inline void __iomem *cpu_boot_reg(int cpu)
-  * observers, irrespective of whether they're taking part in coherency
-  * or not.  This is necessary for the hotplug code to work reliably.
-  */
--static void write_pen_release(int val)
-+static void __cpuinit write_pen_release(int val)
- {
- 	pen_release = val;
- 	smp_wmb();
--- 
-1.7.10.4
+Best regards,
+Tomasz
+
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
