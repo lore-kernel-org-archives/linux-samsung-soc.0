@@ -1,74 +1,60 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Fix support of Exynos4210 rev0 SoC
-Date: Thu, 23 May 2013 10:11:17 +0900
-Message-ID: <120501ce5752$6daef380$490cda80$%kim@samsung.com>
-References: <1368630484-29939-1-git-send-email-t.figa@samsung.com>
- <1623377.nVo7nUcid2@flatron>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH] iio: exynos_adc: fix wrong structure extration in suspend
+ and resume
+Date: Thu, 23 May 2013 10:55:39 +0530
+Message-ID: <CAHfPSqD0zpR3dRDaH4c3uxHS81vYn6mPyNjCmJ6c-TC1wpZeig@mail.gmail.com>
+References: <1369031689-23189-1-git-send-email-ch.naveen@samsung.com>
+ <CAD=FV=Xppyb+Y0atygnwA8oBHmGHDx7Bit2fN12GX5Tt-Y9H1A@mail.gmail.com> <519D3594.4070305@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:41169 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756084Ab3EWBLT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 May 2013 21:11:19 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MN800H988MS1Q80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 May 2013 10:11:18 +0900 (KST)
-In-reply-to: 
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <519D3594.4070305@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lars-Peter Clausen <lars@metafoo.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, 'Kyungmin Park' <kyungmin.park@samsung.com>, olof@lixom.net
 
-Kukjin Kim wrote:
-> 
-> Tomasz Figa wrote:
-> >
-> > Hi Kukjin,
-> >
-> Hi,
-> 
-> > On Wednesday 15 of May 2013 17:08:04 Tomasz Figa wrote:
-> > > This patch extends exynos_init_time() function to handle Exynos4210
-> rev0
-> > > SoC, which differs in availability of system timers and needs
-> different
-> > > clocksource initialization.
-> > >
-> > > This makes it possible to use exynos_init_time() function as init_time
-> > > callback for all Exynos-based boards, including Universal_C210, which
-> > > originally had to use samsung_timer_init().
-> > >
-> > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > ---
-> > >  arch/arm/mach-exynos/Kconfig               |  3 ++-
-> > >  arch/arm/mach-exynos/common.c              | 30
-> > > +++++++++++++++++++++++++++++- arch/arm/mach-exynos/common.h
-> > >   |  2 ++
-> > >  arch/arm/mach-exynos/mach-universal_c210.c |  5 ++---
-> > >  4 files changed, 35 insertions(+), 5 deletions(-)
-> >
-> > Could you pick this patch to your fixes branch?
-> >
-> Yeah, I will after looking at.
-> 
-> > This is a fix of a regression in handling Exynos4210 rev0 SoC (e.g.
-> > Universal C210 board) introduced by patches merged to 3.10.
-> >
-> OK, I see but I didn't review yet and I  will within a couple of days ;-)
-> 
-OK, looks fine, this will be sent to upstream during -rc for v3.10.
+On 23 May 2013 02:46, Jonathan Cameron <jic23@kernel.org> wrote:
+> On 05/20/2013 06:09 PM, Doug Anderson wrote:
+>> Naveen,
+>>
+>> On Sun, May 19, 2013 at 11:34 PM, Naveen Krishna Chatradhi
+>> <ch.naveen@samsung.com> wrote:
+>>> The exynos_adc device structure was wrongly extracted from the dev*
+>>> correcting the same.
+>>>
+>>> Using the regular conversion of
+>>> struct device* -> struct platform_device* -> struct exynos_adc* seems wrong.
+>>> Instead we should be doing
+>>> struct device* -> struct iio_dev* -> struct exynos_adc*
+>>>
+>>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>>> ---
+>>>  drivers/iio/adc/exynos_adc.c | 8 ++++----
+>>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Applied to the fixes-togreg branch of iio.git
+> I'll hopefully send these on to Greg before the weekend.
+Jonathan,
 
-But, Tomasz, as you know, non-DT supporting files will be gone away in
-v3.11, just note.
+I would like to know any comments on
 
-Thanks.
+https://patchwork.kernel.org/patch/2513361/
 
-- Kukjin
+Its been pending for a while now.
+
+Thanks,
+Naveen
+
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+
+
+
+--
+Shine bright,
+(: Nav :)
