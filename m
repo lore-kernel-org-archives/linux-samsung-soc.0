@@ -1,58 +1,49 @@
 From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH] clk: Exynos5250: Add clocks for G3D
-Date: Fri, 24 May 2013 10:04:29 +0530
-Message-ID: <CALt3h7_WMe00Pq+CQCMfFeymFG8CgBW6gfyk8CxdCe4wWtvD6Q@mail.gmail.com>
+Subject: Re: clk: Exynos5250: Add clocks for G3D
+Date: Fri, 24 May 2013 10:05:21 +0530
+Message-ID: <CALt3h7_-igWP25WnM4gHqi5PAB4LPFaQHQ8dix32EAnpo5uvmg@mail.gmail.com>
 References: <1369139801-1889-1-git-send-email-arun.kk@samsung.com>
-	<59532716.tUOcOF6tE1@flatron>
+	<CAD=FV=XCzcY4-dN=2OYkrkTU9HYxykSUPnm++RVQ6a6g4t-XUA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:63842 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752168Ab3EXEea (ORCPT
+Received: from mail-vc0-f176.google.com ([209.85.220.176]:48033 "EHLO
+	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752280Ab3EXEfW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 May 2013 00:34:30 -0400
-Received: by mail-vc0-f171.google.com with SMTP id m17so2854287vca.30
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 May 2013 21:34:29 -0700 (PDT)
-In-Reply-To: <59532716.tUOcOF6tE1@flatron>
+	Fri, 24 May 2013 00:35:22 -0400
+Received: by mail-vc0-f176.google.com with SMTP id ha11so2806571vcb.35
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 May 2013 21:35:21 -0700 (PDT)
+In-Reply-To: <CAD=FV=XCzcY4-dN=2OYkrkTU9HYxykSUPnm++RVQ6a6g4t-XUA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
 
-Hi Tomasz,
+Hi Doug,
 
-Thanks for your review.
+Thanks for the review.
+But as per Tomasz Figa's comment, I will remove the exporting of aclk_400_g3d
+to the driver.
 
->> +     DIV(aclk_400_g3d, "aclk_400_g3d", "mout_aclk400", DIV_TOP0, 24,
-> 3),
->
-> Do you need to export this div clock? If it's a parent of a gate clock,
-> then you can simply add CLK_SET_RATE_PARENT flag to the gate clock and
-> calling set_rate on it will reconfigure the divider.
->
-
-Yes this clock doesnt need to exported. But the current driver gets this clock
-and will fail if its not exported. So that will need some changes from the
-driver side also.
-
-
->>       DIV(none, "div_cam_bayer", "mout_cam_bayer", DIV_GSCL, 12, 4),
->>       DIV(none, "div_cam0", "mout_cam0", DIV_GSCL, 16, 4),
->>       DIV(none, "div_cam1", "mout_cam1", DIV_GSCL, 20, 4),
->> @@ -462,6 +471,7 @@ struct samsung_gate_clock exynos5250_gate_clks[]
->> __initdata = { GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
->>       GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
->>       GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
->> +     GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0, 0, 0),
->
-> This would be then:
->
->         GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0,
->                                         CLK_SET_RATE_PARENT, 0),
->
-
-Yes this would work. I will change it accordingly.
-
-Thanks
+Regards
 Arun
+
+On Wed, May 22, 2013 at 4:13 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Arun,
+>
+> On Tue, May 21, 2013 at 5:36 AM, Arun Kumar K <arun.kk@samsung.com> wrote:
+>> @@ -262,6 +270,7 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+>>         DIV(none, "aclk166", "mout_aclk166", DIV_TOP0, 8, 3),
+>>         DIV(none, "aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+>>         DIV(none, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+>> +       DIV(aclk_400_g3d, "aclk_400_g3d", "mout_aclk400", DIV_TOP0, 24, 3),
+>
+> Doh!  I looked at this more and it looks like I missed something.
+> You've added this clock to the range assigned for "[Peripheral Clock
+> Gates]".  This is not a gate clock but is a div clock.
+>
+> Perhaps it should be in a different range?  Could make IDs that start
+> at 512 or something?
+>
+> -Doug
