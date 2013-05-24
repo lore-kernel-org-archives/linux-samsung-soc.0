@@ -1,51 +1,171 @@
 From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH 0/5] Add generic set_rate clk_ops for PLL35XX and PLL36XX for samsung SoCs
-Date: Fri, 24 May 2013 10:22:52 +0530
-Message-ID: <1369371177-5413-1-git-send-email-vikas.sajjan@linaro.org>
+Subject: [PATCH 3/5] clk: samsung: Add set_rate() clk_ops for PLL35XX
+Date: Fri, 24 May 2013 10:22:55 +0530
+Message-ID: <1369371177-5413-4-git-send-email-vikas.sajjan@linaro.org>
+References: <1369371177-5413-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:62470 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750947Ab3EXExH (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:41556 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750950Ab3EXExV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 May 2013 00:53:07 -0400
-Received: by mail-pd0-f181.google.com with SMTP id bv13so1849623pdb.40
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 May 2013 21:53:06 -0700 (PDT)
+	Fri, 24 May 2013 00:53:21 -0400
+Received: by mail-pa0-f41.google.com with SMTP id rl6so3863035pac.28
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 May 2013 21:53:20 -0700 (PDT)
+In-Reply-To: <1369371177-5413-1-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: yadi.brar01@gmail.com, linux-samsung-soc@vger.kernel.org
 Cc: dianders@chromium.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-This patch series does the following: 
+From: Yadwinder Singh Brar <yadi.brar@samsung.com>
 
- 1) Factors out possible common code, unifies the clk strutures used
-    for PLL35XX & PLL36XX and usues clk->base instead of clk->con0
+Adds set_rate() and round_rate() clk_ops for PLL35XX
 
- 2) Defines a common rate_table which will contain recommended p, m, s and k
-    values for supported rates that needs to be changed for changing
-    corresponding PLL's rate
+The round_rate() implemenation as of now is dummy, it returns the same rate
+which is passed as input.
 
- 3) Adds set_rate() and round_rate() clk_ops for PLL35XX and PLL36XXX
+Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+---
+ drivers/clk/samsung/clk-pll.c |   95 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 94 insertions(+), 1 deletion(-)
 
-Is rebased on branch kgene's "for-next"
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
-
-And tested these patch on chromebook for EPLL settings for Audio on our chrome tree.
-
-Vikas Sajjan (2):
-  clk: samsung: Add set_rate() clk_ops for PLL36XX
-  clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
-
-Yadwinder Singh Brar (3):
-  clk: samsung: Use clk->base instead of directly using clk->con0 for
-    PLL3XXX
-  clk: samsung: Add support to register rate_table for PLL3XXX
-  clk: samsung: Add set_rate() clk_ops for PLL35XX
-
- drivers/clk/samsung/clk-exynos4.c    |   10 +-
- drivers/clk/samsung/clk-exynos5250.c |   29 +++-
- drivers/clk/samsung/clk-pll.c        |  243 ++++++++++++++++++++++++++++++----
- drivers/clk/samsung/clk-pll.h        |   27 +++-
- 4 files changed, 272 insertions(+), 37 deletions(-)
-
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index b8c0260..291cc9e 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/errno.h>
+ #include <linux/sort.h>
++#include <linux/bsearch.h>
+ #include "clk.h"
+ #include "clk-pll.h"
+ 
+@@ -36,6 +37,21 @@ static int samsung_compare_rate(const void *_a, const void *_b)
+ 	return a->rate - b->rate;
+ }
+ 
++static struct samsung_pll_rate_table *samsung_get_pll_settings(
++				struct samsung_clk_pll *pll, unsigned long rate)
++{
++	struct samsung_pll_rate_table req_rate, *tmp;
++
++	req_rate.rate = rate;
++	tmp = bsearch(&req_rate, pll->rate_table, pll->rate_count,
++			sizeof(struct samsung_pll_rate_table),
++			samsung_compare_rate);
++	if (tmp)
++		return tmp;
++
++	return NULL;
++}
++
+ /*
+  * PLL35xx Clock Type
+  */
+@@ -46,9 +62,15 @@ static int samsung_compare_rate(const void *_a, const void *_b)
+ #define PLL35XX_MDIV_MASK       (0x3FF)
+ #define PLL35XX_PDIV_MASK       (0x3F)
+ #define PLL35XX_SDIV_MASK       (0x7)
++#define PLL35XX_LOCK_STAT_MASK  (0x1)
+ #define PLL35XX_MDIV_SHIFT      (16)
+ #define PLL35XX_PDIV_SHIFT      (8)
+ #define PLL35XX_SDIV_SHIFT      (0)
++#define PLL35XX_LOCK_STAT_SHIFT (29)
++
++#define PLL35XX_MDIV(_tmp) ((_tmp) & (PLL35XX_MDIV_MASK << PLL35XX_MDIV_SHIFT))
++#define PLL35XX_PDIV(_tmp) ((_tmp) & (PLL35XX_PDIV_MASK << PLL35XX_PDIV_SHIFT))
++#define PLL35XX_SDIV(_tmp) ((_tmp) & (PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT))
+ 
+ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+@@ -68,8 +90,76 @@ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 	return (unsigned long)fvco;
+ }
+ 
+-static const struct clk_ops samsung_pll35xx_clk_ops = {
++static inline bool samsung_pll35xx_mp_change(u32 mdiv, u32 pdiv, u32 pll_con)
++{
++	if ((mdiv != PLL35XX_MDIV(pll_con)) || (pdiv != PLL35XX_PDIV(pll_con)))
++		return 1;
++	else
++		return 0;
++}
++
++static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
++					unsigned long prate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	struct samsung_pll_rate_table *rate;
++
++	u32 tmp, mdiv, pdiv, sdiv;
++
++	/* Get required rate settings from table */
++	rate = samsung_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++			drate, __clk_get_name(hw->clk));
++		return -EINVAL;
++	}
++
++	mdiv = PLL35XX_MDIV(rate->pll_con0);
++	pdiv = PLL35XX_PDIV(rate->pll_con0);
++	sdiv = PLL35XX_SDIV(rate->pll_con0);
++
++	tmp = pll_readl(pll, PLL35XX_CON0_OFFSET);
++
++	if (!(samsung_pll35xx_mp_change(mdiv, pdiv, tmp))) {
++		/* If only s change, change just s value only*/
++		tmp &= ~(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT);
++		tmp |= sdiv;
++		pll_writel(pll, tmp, PLL35XX_CON0_OFFSET);
++	} else {
++		/* Set PLL lock time.
++		   Maximum lock time can be 270 * PDIV cycles */
++		pll_writel(pll, (pdiv >> PLL35XX_PDIV_SHIFT) * 270,
++				PLL35XX_LOCK_OFFSET);
++
++		/* Change PLL PMS values */
++		tmp &= ~((PLL35XX_MDIV_MASK << PLL35XX_MDIV_SHIFT) |
++				(PLL35XX_PDIV_MASK << PLL35XX_PDIV_SHIFT) |
++				(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT));
++		tmp |= mdiv | pdiv | sdiv;
++		pll_writel(pll, tmp, PLL35XX_CON0_OFFSET);
++
++		/* wait_lock_time */
++		do {
++			cpu_relax();
++			tmp = pll_readl(pll, PLL35XX_CON0_OFFSET);
++		} while (!(tmp & (PLL35XX_LOCK_STAT_MASK
++				<< PLL35XX_LOCK_STAT_SHIFT)));
++	}
++
++	return 0;
++}
++
++static long samsung_pll35xx_round_rate(struct clk_hw *hw,
++			unsigned long drate, unsigned long *prate)
++{
++	/* Clock framework cries without this, so implemented dummy */
++	return drate;
++}
++
++static struct clk_ops samsung_pll35xx_clk_ops = {
+ 	.recalc_rate = samsung_pll35xx_recalc_rate,
++	.round_rate = samsung_pll35xx_round_rate,
++	.set_rate = samsung_pll35xx_set_rate,
+ };
+ 
+ struct clk * __init samsung_clk_register_pll35xx(const char *name,
+@@ -102,6 +192,9 @@ struct clk * __init samsung_clk_register_pll35xx(const char *name,
+ 		sort(pll->rate_table, pll->rate_count,
+ 			sizeof(struct samsung_pll_rate_table),
+ 			samsung_compare_rate, NULL);
++	} else {
++		samsung_pll35xx_clk_ops.round_rate = NULL;
++		samsung_pll35xx_clk_ops.set_rate = NULL;
+ 	}
+ 
+ 	clk = clk_register(NULL, &pll->hw);
 -- 
 1.7.9.5
