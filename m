@@ -1,49 +1,51 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: clk: Exynos5250: Add clocks for G3D
-Date: Fri, 24 May 2013 10:05:21 +0530
-Message-ID: <CALt3h7_-igWP25WnM4gHqi5PAB4LPFaQHQ8dix32EAnpo5uvmg@mail.gmail.com>
-References: <1369139801-1889-1-git-send-email-arun.kk@samsung.com>
-	<CAD=FV=XCzcY4-dN=2OYkrkTU9HYxykSUPnm++RVQ6a6g4t-XUA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH 0/5] Add generic set_rate clk_ops for PLL35XX and PLL36XX for samsung SoCs
+Date: Fri, 24 May 2013 10:22:52 +0530
+Message-ID: <1369371177-5413-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:48033 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752280Ab3EXEfW (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:62470 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750947Ab3EXExH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 May 2013 00:35:22 -0400
-Received: by mail-vc0-f176.google.com with SMTP id ha11so2806571vcb.35
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 May 2013 21:35:21 -0700 (PDT)
-In-Reply-To: <CAD=FV=XCzcY4-dN=2OYkrkTU9HYxykSUPnm++RVQ6a6g4t-XUA@mail.gmail.com>
+	Fri, 24 May 2013 00:53:07 -0400
+Received: by mail-pd0-f181.google.com with SMTP id bv13so1849623pdb.40
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 May 2013 21:53:06 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+To: yadi.brar01@gmail.com, linux-samsung-soc@vger.kernel.org
+Cc: dianders@chromium.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Hi Doug,
+This patch series does the following: 
 
-Thanks for the review.
-But as per Tomasz Figa's comment, I will remove the exporting of aclk_400_g3d
-to the driver.
+ 1) Factors out possible common code, unifies the clk strutures used
+    for PLL35XX & PLL36XX and usues clk->base instead of clk->con0
 
-Regards
-Arun
+ 2) Defines a common rate_table which will contain recommended p, m, s and k
+    values for supported rates that needs to be changed for changing
+    corresponding PLL's rate
 
-On Wed, May 22, 2013 at 4:13 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Arun,
->
-> On Tue, May 21, 2013 at 5:36 AM, Arun Kumar K <arun.kk@samsung.com> wrote:
->> @@ -262,6 +270,7 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->>         DIV(none, "aclk166", "mout_aclk166", DIV_TOP0, 8, 3),
->>         DIV(none, "aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
->>         DIV(none, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
->> +       DIV(aclk_400_g3d, "aclk_400_g3d", "mout_aclk400", DIV_TOP0, 24, 3),
->
-> Doh!  I looked at this more and it looks like I missed something.
-> You've added this clock to the range assigned for "[Peripheral Clock
-> Gates]".  This is not a gate clock but is a div clock.
->
-> Perhaps it should be in a different range?  Could make IDs that start
-> at 512 or something?
->
-> -Doug
+ 3) Adds set_rate() and round_rate() clk_ops for PLL35XX and PLL36XXX
+
+Is rebased on branch kgene's "for-next"
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+
+And tested these patch on chromebook for EPLL settings for Audio on our chrome tree.
+
+Vikas Sajjan (2):
+  clk: samsung: Add set_rate() clk_ops for PLL36XX
+  clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
+
+Yadwinder Singh Brar (3):
+  clk: samsung: Use clk->base instead of directly using clk->con0 for
+    PLL3XXX
+  clk: samsung: Add support to register rate_table for PLL3XXX
+  clk: samsung: Add set_rate() clk_ops for PLL35XX
+
+ drivers/clk/samsung/clk-exynos4.c    |   10 +-
+ drivers/clk/samsung/clk-exynos5250.c |   29 +++-
+ drivers/clk/samsung/clk-pll.c        |  243 ++++++++++++++++++++++++++++++----
+ drivers/clk/samsung/clk-pll.h        |   27 +++-
+ 4 files changed, 272 insertions(+), 37 deletions(-)
+
+-- 
+1.7.9.5
