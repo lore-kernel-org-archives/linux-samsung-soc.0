@@ -1,48 +1,58 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [rtc-linux] [PATCH] rtc: max8998: Check for pdata presence
- before dereferencing
-Date: Thu, 23 May 2013 16:55:04 -0700
-Message-ID: <20130523165504.364bebf5f999e4a12d51e176@linux-foundation.org>
-References: <1368630968-30460-1-git-send-email-t.figa@samsung.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH] clk: Exynos5250: Add clocks for G3D
+Date: Fri, 24 May 2013 10:04:29 +0530
+Message-ID: <CALt3h7_WMe00Pq+CQCMfFeymFG8CgBW6gfyk8CxdCe4wWtvD6Q@mail.gmail.com>
+References: <1369139801-1889-1-git-send-email-arun.kk@samsung.com>
+	<59532716.tUOcOF6tE1@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51063 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756891Ab3EWXzK (ORCPT
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:63842 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752168Ab3EXEea (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 May 2013 19:55:10 -0400
-In-Reply-To: <1368630968-30460-1-git-send-email-t.figa@samsung.com>
+	Fri, 24 May 2013 00:34:30 -0400
+Received: by mail-vc0-f171.google.com with SMTP id m17so2854287vca.30
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 May 2013 21:34:29 -0700 (PDT)
+In-Reply-To: <59532716.tUOcOF6tE1@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, a.zummo@towertech.it, jy0922.shim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>
 
-On Wed, 15 May 2013 17:16:08 +0200 Tomasz Figa <t.figa@samsung.com> wrote:
+Hi Tomasz,
 
-> Currently the driver can crash with a NULL pointer dereference if no pdata
-> is provided, despite of successful registration of MFD part. This patch
-> fixes the problem by adding a NULL check before dereferencing the pdata
-> pointer.
-> 
-> ...
+Thanks for your review.
+
+>> +     DIV(aclk_400_g3d, "aclk_400_g3d", "mout_aclk400", DIV_TOP0, 24,
+> 3),
 >
-> --- a/drivers/rtc/rtc-max8998.c
-> +++ b/drivers/rtc/rtc-max8998.c
-> @@ -285,7 +285,7 @@ static int max8998_rtc_probe(struct platform_device *pdev)
->  			info->irq, ret);
->  
->  	dev_info(&pdev->dev, "RTC CHIP NAME: %s\n", pdev->id_entry->name);
-> -	if (pdata->rtc_delay) {
-> +	if (pdata && pdata->rtc_delay) {
->  		info->lp3974_bug_workaround = true;
->  		dev_warn(&pdev->dev, "LP3974 with RTC REGERR option."
->  				" RTC updates will be extremely slow.\n");
+> Do you need to export this div clock? If it's a parent of a gate clock,
+> then you can simply add CLK_SET_RATE_PARENT flag to the gate clock and
+> calling set_rate on it will reconfigure the divider.
+>
 
-Looking at your description I'm unable to determine which kernel
-versions we should fix.  This is because the changelog didn't describe
-the circumstances under which the bug triggers.
+Yes this clock doesnt need to exported. But the current driver gets this clock
+and will fail if its not exported. So that will need some changes from the
+driver side also.
 
-It's pretty simple: when fixing a bug, include a full description of
-the bug!  As if you were sending a bug report, not a patch.
+
+>>       DIV(none, "div_cam_bayer", "mout_cam_bayer", DIV_GSCL, 12, 4),
+>>       DIV(none, "div_cam0", "mout_cam0", DIV_GSCL, 16, 4),
+>>       DIV(none, "div_cam1", "mout_cam1", DIV_GSCL, 20, 4),
+>> @@ -462,6 +471,7 @@ struct samsung_gate_clock exynos5250_gate_clks[]
+>> __initdata = { GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
+>>       GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
+>>       GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
+>> +     GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0, 0, 0),
+>
+> This would be then:
+>
+>         GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0,
+>                                         CLK_SET_RATE_PARENT, 0),
+>
+
+Yes this would work. I will change it accordingly.
+
+Thanks
+Arun
