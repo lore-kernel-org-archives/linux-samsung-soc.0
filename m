@@ -1,66 +1,65 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [RESEND PATCH 5/5] clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
-Date: Fri, 24 May 2013 16:01:18 +0530
-Message-ID: <1369391478-7665-6-git-send-email-vikas.sajjan@linaro.org>
-References: <1369391478-7665-1-git-send-email-vikas.sajjan@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: fix software reset logic for EXYNOS5440
+ SOC
+Date: Sat, 25 May 2013 06:42:28 +0900
+Message-ID: <519FDEC4.60909@samsung.com>
+References: <003001ce57af$435c0340$ca1409c0$%lee@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:33019 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760337Ab3EXKb7 (ORCPT
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:43963 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755520Ab3EXVmc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 May 2013 06:31:59 -0400
-Received: by mail-pa0-f53.google.com with SMTP id kq12so4107669pab.40
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 May 2013 03:31:59 -0700 (PDT)
-In-Reply-To: <1369391478-7665-1-git-send-email-vikas.sajjan@linaro.org>
+	Fri, 24 May 2013 17:42:32 -0400
+Received: by mail-pd0-f174.google.com with SMTP id 3so2788860pdj.33
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 May 2013 14:42:31 -0700 (PDT)
+In-Reply-To: <003001ce57af$435c0340$ca1409c0$%lee@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: yadi.brar01@gmail.com, linux-samsung-soc@vger.kernel.org
-Cc: dianders@chromium.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org
+To: =?EUC-KR?B?wMzBpLyu?= <jays.lee@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-Adds the EPLL and VPLL freq table for exynos5250 SoC.
+On 05/23/13 21:15, =C0=CC=C1=A4=BC=AE wrote:
+>=20
+> This patch fixes software reset logic. Software reset applies only to
+> powered-on domains in SOC because software reset to all domains cause=
+s
+> reboot failure.
+>=20
+> Signed-off-by: Jungseok Lee<jays.lee@samsung.com>
+> ---
+>   arch/arm/mach-exynos/common.c |    6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/com=
+mon.c
+> index 7f431dd..a22615d 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -317,9 +317,13 @@ void exynos5_restart(char mode, const char *cmd)
+>   		val =3D 0x1;
+>   		addr =3D EXYNOS_SWRESET;
+>   	} else if (of_machine_is_compatible("samsung,exynos5440")) {
+> +		u32 status;
+>   		np =3D of_find_compatible_node(NULL, NULL,
+> "samsung,exynos5440-clock");
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
----
- drivers/clk/samsung/clk-exynos5250.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+line wrapped?
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index ddf10ca..00d1fa6 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -469,6 +469,21 @@ static __initdata struct of_device_id ext_clk_match[] = {
- 	{ },
- };
- 
-+static struct samsung_pll_rate_table vpll_tbl[] = {
-+	PLL_36XX_RATE(70500000, 2, 94, 4, 0),
-+};
-+
-+static struct samsung_pll_rate_table epll_tbl[] = {
-+	PLL_36XX_RATE(192000000, 48, 3, 1, 0),
-+	PLL_36XX_RATE(180000000, 45, 3, 1, 0),
-+	PLL_36XX_RATE(73728000, 73, 3, 3, 47710),
-+	PLL_36XX_RATE(67737600, 90, 4, 3, 20762),
-+	PLL_36XX_RATE(49152000, 49, 3, 3, 9962),
-+	PLL_36XX_RATE(45158400, 45, 3, 3, 10381),
-+	PLL_36XX_RATE(180633600, 45, 3, 1, 10381),
-+	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-+};
-+
- /* register exynox5250 clocks */
- void __init exynos5250_clk_init(struct device_node *np)
- {
-@@ -501,9 +516,9 @@ void __init exynos5250_clk_init(struct device_node *np)
- 	cpll = samsung_clk_register_pll35xx("fout_cpll", "fin_pll",
- 			reg_base + 0x10020, NULL, 0);
- 	epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
--			reg_base + 0x10030, NULL, 0);
-+			reg_base + 0x10030, epll_tbl, ARRAY_SIZE(epll_tbl));
- 	vpll = samsung_clk_register_pll36xx("fout_vpll", "mout_vpllsrc",
--			reg_base + 0x10040, NULL, 0);
-+			reg_base + 0x10040, vpll_tbl, ARRAY_SIZE(vpll_tbl));
- 
- 	samsung_clk_register_fixed_rate(exynos5250_fixed_rate_clks,
- 			ARRAY_SIZE(exynos5250_fixed_rate_clks));
--- 
-1.7.9.5
+> +		addr =3D of_iomap(np, 0) + 0xbc;
+> +		status =3D __raw_readl(addr);
+>   		addr =3D of_iomap(np, 0) + 0xcc;
+> -		val =3D (0xfff<<  20) | (0x1<<  16);
+> +		val =3D __raw_readl(addr);
+> +		val =3D (val&  0xffff0000) | (status&  0xffff);
+>   	} else {
+>   		pr_err("%s: cannot support non-DT\n", __func__);
+>   		return;
+
+Looks good to me, applied after fixing line wrapped.
+
+Thanks.
+
+- Kukjin
