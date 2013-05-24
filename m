@@ -1,56 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: devs: Add names to fimd0 IRQ resources
-Date: Sat, 25 May 2013 06:46:46 +0900
-Message-ID: <519FDFC6.9010802@samsung.com>
-References: <1368630584-30147-1-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RESEND PATCH 1/5] clk: samsung: Use clk->base instead of directly using clk->con0 for PLL3xxx
+Date: Fri, 24 May 2013 23:55:03 +0200
+Message-ID: <4808417.0aThqqOIhP@flatron>
+References: <1369391478-7665-1-git-send-email-vikas.sajjan@linaro.org> <1369391478-7665-2-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:54925 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753642Ab3EXVqv (ORCPT
+Received: from mail-bk0-f53.google.com ([209.85.214.53]:54037 "EHLO
+	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755459Ab3EXVzJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 May 2013 17:46:51 -0400
-Received: by mail-pa0-f52.google.com with SMTP id bg2so4741218pad.25
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 May 2013 14:46:51 -0700 (PDT)
-In-Reply-To: <1368630584-30147-1-git-send-email-t.figa@samsung.com>
+	Fri, 24 May 2013 17:55:09 -0400
+Received: by mail-bk0-f53.google.com with SMTP id mx1so2805614bkb.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 May 2013 14:55:08 -0700 (PDT)
+In-Reply-To: <1369391478-7665-2-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arnd@arndb.de, olof@lixom.net, Kyungmin Park <kyungmin.park@samsung.com>
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: yadi.brar01@gmail.com, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org
 
-On 05/16/13 00:09, Tomasz Figa wrote:
-> Since commit 1977e6d8 (drm/exynos: change the method for getting the
-> interrupt) the Exynos DRM FIMD driver requires IRQ resources to be
-> named. This patch fixes probe failure in non-DT cases by adding
-> appropriate resource names to fimd0 platform device.
->
-> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+Hi,
+
+On Friday 24 of May 2013 16:01:14 Vikas Sajjan wrote:
+> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> 
+> To factor out possible common code, this patch unifies the clk strutures
+> used for PLL35xx & PLL36xx and usues clk->base instead of clk->con0.
+> 
+> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
 > ---
->   arch/arm/plat-samsung/devs.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 30c2fe2..0f9c3f4 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -311,9 +311,9 @@ struct platform_device s5p_device_jpeg = {
->   #ifdef CONFIG_S5P_DEV_FIMD0
->   static struct resource s5p_fimd0_resource[] = {
->   	[0] = DEFINE_RES_MEM(S5P_PA_FIMD0, SZ_32K),
-> -	[1] = DEFINE_RES_IRQ(IRQ_FIMD0_VSYNC),
-> -	[2] = DEFINE_RES_IRQ(IRQ_FIMD0_FIFO),
-> -	[3] = DEFINE_RES_IRQ(IRQ_FIMD0_SYSTEM),
-> +	[1] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_VSYNC, "vsync"),
-> +	[2] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_FIFO, "fifo"),
-> +	[3] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_SYSTEM, "lcd_sys"),
->   };
->
->   struct platform_device s5p_device_fimd0 = {
+>  drivers/clk/samsung/clk-exynos4.c    |   10 ++++---
+>  drivers/clk/samsung/clk-exynos5250.c |   14 ++++-----
+>  drivers/clk/samsung/clk-pll.c        |   54
+> ++++++++++++++++++---------------- drivers/clk/samsung/clk-pll.h       
+> |    4 +--
+>  4 files changed, 44 insertions(+), 38 deletions(-)
+> 
 
-Applied into fixes.
+Whether this patch really allows to factor out any significant amount of 
+common code is rather discussible, but generally looks fine.
 
-Thanks.
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-- Kukjin
+Best regards,
+Tomasz
