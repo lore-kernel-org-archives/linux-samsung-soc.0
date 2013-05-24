@@ -1,64 +1,55 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: fix software reset logic for EXYNOS5440
- SOC
-Date: Sat, 25 May 2013 06:42:28 +0900
-Message-ID: <519FDEC4.60909@samsung.com>
-References: <003001ce57af$435c0340$ca1409c0$%lee@samsung.com>
+From: Kukjin Kim <kgene.kim@gmail.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: devs: Add names to fimd0 IRQ resources
+Date: Sat, 25 May 2013 06:46:28 +0900
+Message-ID: <519FDFB4.50402@gmail.com>
+References: <1368630584-30147-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:43963 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755520Ab3EXVmc (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:36376 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753642Ab3EXVqb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 May 2013 17:42:32 -0400
-Received: by mail-pd0-f174.google.com with SMTP id 3so2788860pdj.33
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 May 2013 14:42:31 -0700 (PDT)
-In-Reply-To: <003001ce57af$435c0340$ca1409c0$%lee@samsung.com>
+	Fri, 24 May 2013 17:46:31 -0400
+Received: by mail-pa0-f44.google.com with SMTP id wp1so2177650pac.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 May 2013 14:46:31 -0700 (PDT)
+In-Reply-To: <1368630584-30147-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?EUC-KR?B?wMzBpLyu?= <jays.lee@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, arnd@arndb.de, olof@lixom.net, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 05/23/13 21:15, =C0=CC=C1=A4=BC=AE wrote:
->=20
-> This patch fixes software reset logic. Software reset applies only to
-> powered-on domains in SOC because software reset to all domains cause=
-s
-> reboot failure.
->=20
-> Signed-off-by: Jungseok Lee<jays.lee@samsung.com>
+On 05/16/13 00:09, Tomasz Figa wrote:
+> Since commit 1977e6d8 (drm/exynos: change the method for getting the
+> interrupt) the Exynos DRM FIMD driver requires IRQ resources to be
+> named. This patch fixes probe failure in non-DT cases by adding
+> appropriate resource names to fimd0 platform device.
+>
+> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
 > ---
->   arch/arm/mach-exynos/common.c |    6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/com=
-mon.c
-> index 7f431dd..a22615d 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -317,9 +317,13 @@ void exynos5_restart(char mode, const char *cmd)
->   		val =3D 0x1;
->   		addr =3D EXYNOS_SWRESET;
->   	} else if (of_machine_is_compatible("samsung,exynos5440")) {
-> +		u32 status;
->   		np =3D of_find_compatible_node(NULL, NULL,
-> "samsung,exynos5440-clock");
+>   arch/arm/plat-samsung/devs.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index 30c2fe2..0f9c3f4 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -311,9 +311,9 @@ struct platform_device s5p_device_jpeg = {
+>   #ifdef CONFIG_S5P_DEV_FIMD0
+>   static struct resource s5p_fimd0_resource[] = {
+>   	[0] = DEFINE_RES_MEM(S5P_PA_FIMD0, SZ_32K),
+> -	[1] = DEFINE_RES_IRQ(IRQ_FIMD0_VSYNC),
+> -	[2] = DEFINE_RES_IRQ(IRQ_FIMD0_FIFO),
+> -	[3] = DEFINE_RES_IRQ(IRQ_FIMD0_SYSTEM),
+> +	[1] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_VSYNC, "vsync"),
+> +	[2] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_FIFO, "fifo"),
+> +	[3] = DEFINE_RES_IRQ_NAMED(IRQ_FIMD0_SYSTEM, "lcd_sys"),
+>   };
+>
+>   struct platform_device s5p_device_fimd0 = {
 
-line wrapped?
-
-> +		addr =3D of_iomap(np, 0) + 0xbc;
-> +		status =3D __raw_readl(addr);
->   		addr =3D of_iomap(np, 0) + 0xcc;
-> -		val =3D (0xfff<<  20) | (0x1<<  16);
-> +		val =3D __raw_readl(addr);
-> +		val =3D (val&  0xffff0000) | (status&  0xffff);
->   	} else {
->   		pr_err("%s: cannot support non-DT\n", __func__);
->   		return;
-
-Looks good to me, applied after fixing line wrapped.
+Applied into fixes.
 
 Thanks.
 
