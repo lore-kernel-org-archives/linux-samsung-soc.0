@@ -1,19 +1,19 @@
-From: Kukjin Kim <kgene.kim@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
 Subject: Re: [PATCH] ARM: SAMSUNG: devs: Add names to fimd0 IRQ resources
-Date: Sat, 25 May 2013 06:46:28 +0900
-Message-ID: <519FDFB4.50402@gmail.com>
+Date: Sat, 25 May 2013 06:46:46 +0900
+Message-ID: <519FDFC6.9010802@samsung.com>
 References: <1368630584-30147-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:36376 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753642Ab3EXVqb (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:54925 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753642Ab3EXVqv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 May 2013 17:46:31 -0400
-Received: by mail-pa0-f44.google.com with SMTP id wp1so2177650pac.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 May 2013 14:46:31 -0700 (PDT)
+	Fri, 24 May 2013 17:46:51 -0400
+Received: by mail-pa0-f52.google.com with SMTP id bg2so4741218pad.25
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 May 2013 14:46:51 -0700 (PDT)
 In-Reply-To: <1368630584-30147-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
