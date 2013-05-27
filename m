@@ -1,70 +1,56 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH] ASoC: bells: Hookup DMICs for Bells
-Date: Mon, 27 May 2013 09:46:53 +0100
-Message-ID: <1369644413-25597-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55562 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751463Ab3E0I6J (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 May 2013 04:58:09 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: [PATCH] ARM: S5PV210: dependency issue, S5P_SLEEP is depend on
+ ARM_CPU_SUSPEND
+Date: Mon, 27 May 2013 18:05:08 +0800
+Message-ID: <51A32FD4.4000001@asianux.com>
+References: <5199E4AF.7040607@asianux.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <5199E4AF.7040607@asianux.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: ben-linux@fluff.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org >> \"linux-kernel@vger.kernel.org\"" <linux-kernel@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org, kgene.kim@samsung.com
-Cc: ben-linux@fluff.org, lgirdwood@gmail.com, tiwai@suse.de, perex@perex.cz, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
- sound/soc/samsung/bells.c |   14 ++++++++++++++
- 1 files changed, 14 insertions(+), 0 deletions(-)
+Hello Maintainers:
 
-diff --git a/sound/soc/samsung/bells.c b/sound/soc/samsung/bells.c
-index ceed466..29e2468 100644
---- a/sound/soc/samsung/bells.c
-+++ b/sound/soc/samsung/bells.c
-@@ -350,8 +350,16 @@ static struct snd_soc_codec_conf bells_codec_conf[] = {
- 	},
- };
- 
-+static struct snd_soc_dapm_widget bells_widgets[] = {
-+	SND_SOC_DAPM_MIC("DMIC", NULL),
-+};
-+
- static struct snd_soc_dapm_route bells_routes[] = {
- 	{ "Sub CLK_SYS", NULL, "OPCLK" },
-+
-+	{ "DMIC", NULL, "MICBIAS2" },
-+	{ "IN2L", NULL, "DMIC" },
-+	{ "IN2R", NULL, "DMIC" },
- };
- 
- static struct snd_soc_card bells_cards[] = {
-@@ -365,6 +373,8 @@ static struct snd_soc_card bells_cards[] = {
- 
- 		.late_probe = bells_late_probe,
- 
-+		.dapm_widgets = bells_widgets,
-+		.num_dapm_widgets = ARRAY_SIZE(bells_widgets),
- 		.dapm_routes = bells_routes,
- 		.num_dapm_routes = ARRAY_SIZE(bells_routes),
- 
-@@ -383,6 +393,8 @@ static struct snd_soc_card bells_cards[] = {
- 
- 		.late_probe = bells_late_probe,
- 
-+		.dapm_widgets = bells_widgets,
-+		.num_dapm_widgets = ARRAY_SIZE(bells_widgets),
- 		.dapm_routes = bells_routes,
- 		.num_dapm_routes = ARRAY_SIZE(bells_routes),
- 
-@@ -401,6 +413,8 @@ static struct snd_soc_card bells_cards[] = {
- 
- 		.late_probe = bells_late_probe,
- 
-+		.dapm_widgets = bells_widgets,
-+		.num_dapm_widgets = ARRAY_SIZE(bells_widgets),
- 		.dapm_routes = bells_routes,
- 		.num_dapm_routes = ARRAY_SIZE(bells_routes),
- 
+Please help check this patch whether OK, when you have time.
+
+
+Thanks.
+
+On 05/20/2013 04:54 PM, Chen Gang wrote:
+> 
+> When randconfig with MMU for arm s5pv210 (and select all cpu type),
+> need let S5P_SLEEP depend on ARM_CPU_SUSPEND, or will cause issue below:
+> 
+>   arch/arm/plat-samsung/built-in.o: In function `s3c_cpu_resume':
+>   arch/arm/plat-samsung/s5p-sleep.S:83: undefined reference to `cpu_resume'
+> 
+> 
+> Signed-off-by: Chen Gang <gang.chen@asianux.com>
+> ---
+>  arch/arm/plat-samsung/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index f8ed2de..1d38541 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -483,6 +483,7 @@ config S5P_PM
+>  
+>  config S5P_SLEEP
+>  	bool
+> +	select ARM_CPU_SUSPEND
+>  	help
+>  	  Internal config node to apply common S5P sleep management code.
+>  	  Can be selected by S5P and newer SoCs with similar sleep procedure.
+> 
+
+
 -- 
-1.7.2.5
+Chen Gang
+
+Asianux Corporation
