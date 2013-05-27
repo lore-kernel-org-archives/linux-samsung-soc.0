@@ -1,70 +1,82 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: bells: Hookup DMICs for Bells
-Date: Mon, 27 May 2013 08:13:17 -0400
-Message-ID: <20130527121317.GA2250@sirena.org.uk>
-References: <1369644413-25597-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Add CLK_IGNORE_UNUSED flag for the sysreg
+ clocks
+Date: Mon, 27 May 2013 14:22:33 +0200
+Message-ID: <51A35009.3040301@samsung.com>
+References: <1368203889-12547-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5096969873415501701=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1369644413-25597-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, tiwai@suse.de, patches@opensource.wolfsonmicro.com, lgirdwood@gmail.com, kgene.kim@samsung.com, ben-linux@fluff.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============5096969873415501701==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
-Content-Disposition: inline
-
-
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, May 27, 2013 at 09:46:53AM +0100, Charles Keepax wrote:
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-
-Applied, thanks.
-
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRo03RAAoJELSic+t+oim9PqAQAJza+VxgnoNsLk3E+ZUq0syN
-pnLcW3sN+pCme8avirQnEAWyjNZZWifjeytjeRksxRWTFWv9Y9Blj6uvEOCJlekX
-49bbDUouznEBbgVrcHoY4bZYZiohfd5PXAEWChInzboTBCMf/hwGE+nIADC6IsQ4
-7wxyFJyuO0N1nSYhAXyf4Ug7+uWcjHQb+1xdXOOzBWoJL382zhIsJsBUbiyO5U3J
-28SmE30Z6e8jw1NMele6JvgdDXrP0yEdJq/iB/qGvAcf90dwVcVGd/fQMrpRq+do
-DsRXWBZTwJAqH7b/KmK7C4soUwrBAhQNA34bCQmLRIA+F/bmRRBMkV2+n6yCxbRC
-ZNcryQKUrKzjmzcIhsr5be32+mhSZxjzh+Q9o5QDyDAQ+yrlnxIyXvOkYk+vlugo
-Xl4WCs2AJgNgOgzZhL5eLU1sPRGr34WFL5X3ZDtUBJfx2pNFEk4QRM4xRedpLVlb
-LS9Ox8aMUkqn6EY1xK5m2fBDLw5JCExAasjHYRw57W34CwtvYamWN0jqkBHJeZZH
-tByArflmMMZOpJLeoyyadZe/ulGZ8wWOKbCLdr+k8/NrR+d43keSgttPrKV9U8gx
-84EWXzUD8uMixH3uArpQ8d9V77CQ+AjlQh9OHLu2SKG1285wwW3q7F++HxXISZcE
-rGjbhNX8Y3BMzu4sHKii
-=JUid
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
-
---===============5096969873415501701==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39158 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932110Ab3E0MWh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 May 2013 08:22:37 -0400
+In-reply-to: <1368203889-12547-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: mturquette@linaro.org
+Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On 05/10/2013 06:38 PM, Sylwester Nawrocki wrote:
+> Currently no driver *) handles the sysreg clock, with an assumption
+> that this clock is always left in its default state (enabled).
+> 
+> Before commit 6e6aac7590f902d14d90bace3fd499
+> ARM: EXYNOS: Migrate clock support to common clock framework
+> 
+> the sysreg clock was not even defined and hence wasn't handled
+> explicitly in the kernel.
+> 
+> To restore the previous behaviour disable masking the sysreg clock
+> off in the clock core by default.
+> 
+> *) Except the Exynos4x12 FIMC-IS driver, which will be modified
+>    to not touch the sysreg clock.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
---===============5096969873415501701==--
+Mike,
+
+would you consider applying it as a bug fix for v3.10-rc ?
+
+I'd like to queue patch [1] for 3.10 through the media tree,
+once $subject patch is in Linus' tree.
+
+Thanks,
+Sylwester
+
+[1] https://patchwork.linuxtv.org/patch/18374
+
+> ---
+>  drivers/clk/samsung/clk-exynos4.c |    6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 070bbeb..0f2f5e5 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -797,7 +797,8 @@ struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
+>  	GATE(smmu_pcie, "smmu_pcie", "aclk133", GATE_IP_FSYS, 18, 0, 0),
+>  	GATE(modemif, "modemif", "aclk100", GATE_IP_PERIL, 28, 0, 0),
+>  	GATE(chipid, "chipid", "aclk100", E4210_GATE_IP_PERIR, 0, 0, 0),
+> -	GATE(sysreg, "sysreg", "aclk100", E4210_GATE_IP_PERIR, 0, 0, 0),
+> +	GATE(sysreg, "sysreg", "aclk100", E4210_GATE_IP_PERIR, 0,
+> +			CLK_IGNORE_UNUSED, 0),
+>  	GATE(hdmi_cec, "hdmi_cec", "aclk100", E4210_GATE_IP_PERIR, 11, 0, 0),
+>  	GATE(smmu_rotator, "smmu_rotator", "aclk200",
+>  			E4210_GATE_IP_IMAGE, 4, 0, 0),
+> @@ -826,7 +827,8 @@ struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>  	GATE(smmu_mdma, "smmu_mdma", "aclk200", E4X12_GATE_IP_IMAGE, 5, 0, 0),
+>  	GATE(mipi_hsi, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+>  	GATE(chipid, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
+> -	GATE(sysreg, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1, 0, 0),
+> +	GATE(sysreg, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
+> +			CLK_IGNORE_UNUSED, 0),
+>  	GATE(hdmi_cec, "hdmi_cec", "aclk100", E4X12_GATE_IP_PERIR, 11, 0, 0),
+>  	GATE(sclk_mdnie0, "sclk_mdnie0", "div_mdnie0",
+>  			SRC_MASK_LCD0, 4, CLK_SET_RATE_PARENT, 0),
+> --
+> 1.7.9.5
