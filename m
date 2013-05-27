@@ -1,64 +1,70 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Remove combiner IRQ node from exynos4x12.dtsi
-Date: Mon, 27 May 2013 17:32:51 +0530
-Message-ID: <CAK9yfHxHa=HD6GvZrK2HqW6VsMJUBoUPcbez5XkNU8bEzoMFXg@mail.gmail.com>
-References: <1366710888-11059-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: bells: Hookup DMICs for Bells
+Date: Mon, 27 May 2013 08:13:17 -0400
+Message-ID: <20130527121317.GA2250@sirena.org.uk>
+References: <1369644413-25597-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:40463 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932065Ab3E0MCv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 May 2013 08:02:51 -0400
-Received: by mail-oa0-f53.google.com with SMTP id g12so8743866oah.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 May 2013 05:02:51 -0700 (PDT)
-In-Reply-To: <1366710888-11059-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============5096969873415501701=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1369644413-25597-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, tiwai@suse.de, patches@opensource.wolfsonmicro.com, lgirdwood@gmail.com, kgene.kim@samsung.com, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com
-
-Ping Kukjin...
-
-On 23 April 2013 15:24, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> These nodes have separately been added to 4212 and 4412 dtsi
-> files by commit 30269ddff1 ("ARM: exynos: add missing properties
-> for combiner IRQs"). The existing node also contained a few
-> incorrect entries.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
-> Patch based on linux-next tree (20130423)
-> ---
->  arch/arm/boot/dts/exynos4x12.dtsi |    8 --------
->  1 file changed, 8 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-> index ede3f9b..675c221 100644
-> --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> @@ -28,14 +28,6 @@
->                 pinctrl3 = &pinctrl_3;
->         };
->
-> -       combiner:interrupt-controller@10440000 {
-> -               interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-> -                            <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-> -                            <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-> -                            <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-> -                            <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>;
-> -       };
-> -
->         clock: clock-controller@0x10030000 {
->                 compatible = "samsung,exynos4412-clock";
->                 reg = <0x10030000 0x20000>;
-> --
-> 1.7.9.5
->
 
 
+--===============5096969873415501701==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+Content-Disposition: inline
 
--- 
-With warm regards,
-Sachin
+
+--ew6BAiZeqk4r7MaW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, May 27, 2013 at 09:46:53AM +0100, Charles Keepax wrote:
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+
+Applied, thanks.
+
+--ew6BAiZeqk4r7MaW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRo03RAAoJELSic+t+oim9PqAQAJza+VxgnoNsLk3E+ZUq0syN
+pnLcW3sN+pCme8avirQnEAWyjNZZWifjeytjeRksxRWTFWv9Y9Blj6uvEOCJlekX
+49bbDUouznEBbgVrcHoY4bZYZiohfd5PXAEWChInzboTBCMf/hwGE+nIADC6IsQ4
+7wxyFJyuO0N1nSYhAXyf4Ug7+uWcjHQb+1xdXOOzBWoJL382zhIsJsBUbiyO5U3J
+28SmE30Z6e8jw1NMele6JvgdDXrP0yEdJq/iB/qGvAcf90dwVcVGd/fQMrpRq+do
+DsRXWBZTwJAqH7b/KmK7C4soUwrBAhQNA34bCQmLRIA+F/bmRRBMkV2+n6yCxbRC
+ZNcryQKUrKzjmzcIhsr5be32+mhSZxjzh+Q9o5QDyDAQ+yrlnxIyXvOkYk+vlugo
+Xl4WCs2AJgNgOgzZhL5eLU1sPRGr34WFL5X3ZDtUBJfx2pNFEk4QRM4xRedpLVlb
+LS9Ox8aMUkqn6EY1xK5m2fBDLw5JCExAasjHYRw57W34CwtvYamWN0jqkBHJeZZH
+tByArflmMMZOpJLeoyyadZe/ulGZ8wWOKbCLdr+k8/NrR+d43keSgttPrKV9U8gx
+84EWXzUD8uMixH3uArpQ8d9V77CQ+AjlQh9OHLu2SKG1285wwW3q7F++HxXISZcE
+rGjbhNX8Y3BMzu4sHKii
+=JUid
+-----END PGP SIGNATURE-----
+
+--ew6BAiZeqk4r7MaW--
+
+--===============5096969873415501701==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============5096969873415501701==--
