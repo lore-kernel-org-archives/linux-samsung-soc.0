@@ -1,144 +1,58 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/3] clk: exynos4: Staticize local symbols
-Date: Mon, 27 May 2013 17:32:11 +0530
-Message-ID: <CAK9yfHzzybH2urVJocbtUsCM1dXTpz762AHRgrniirnyyPiW7Q@mail.gmail.com>
-References: <1366106719-26342-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: dts: Remove combiner IRQ node from exynos4x12.dtsi
+Date: Mon, 27 May 2013 17:32:51 +0530
+Message-ID: <CAK9yfHxHa=HD6GvZrK2HqW6VsMJUBoUPcbez5XkNU8bEzoMFXg@mail.gmail.com>
+References: <1366710888-11059-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:40612 "EHLO
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:40463 "EHLO
 	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932078Ab3E0MCM (ORCPT
+	with ESMTP id S932065Ab3E0MCv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 May 2013 08:02:12 -0400
-Received: by mail-oa0-f53.google.com with SMTP id g12so8618177oah.26
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 May 2013 05:02:11 -0700 (PDT)
-In-Reply-To: <1366106719-26342-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 27 May 2013 08:02:51 -0400
+Received: by mail-oa0-f53.google.com with SMTP id g12so8743866oah.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 May 2013 05:02:51 -0700 (PDT)
+In-Reply-To: <1366710888-11059-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-Hi Kukjin,
+Ping Kukjin...
 
-Can you please apply this series pending since a long time?
-
-
-On 16 April 2013 15:35, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> These symbols are used only in this file and hence should be
-> static.
+On 23 April 2013 15:24, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> These nodes have separately been added to 4212 and 4412 dtsi
+> files by commit 30269ddff1 ("ARM: exynos: add missing properties
+> for combiner IRQs"). The existing node also contained a few
+> incorrect entries.
 >
 > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
->  drivers/clk/samsung/clk-exynos4.c |   26 ++++++++++++++------------
->  1 file changed, 14 insertions(+), 12 deletions(-)
+> Patch based on linux-next tree (20130423)
+> ---
+>  arch/arm/boot/dts/exynos4x12.dtsi |    8 --------
+>  1 file changed, 8 deletions(-)
 >
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 7104669..26f2a85 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -339,24 +339,26 @@ PNAME(mout_user_aclk200_p4x12) = {"fin_pll", "div_aclk200", };
->  PNAME(mout_user_aclk266_gps_p4x12) = {"fin_pll", "div_aclk266_gps", };
+> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> index ede3f9b..675c221 100644
+> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> @@ -28,14 +28,6 @@
+>                 pinctrl3 = &pinctrl_3;
+>         };
 >
->  /* fixed rate clocks generated outside the soc */
-> -struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
-> +static struct
-> +samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
->         FRATE(xxti, "xxti", NULL, CLK_IS_ROOT, 0),
->         FRATE(xusbxti, "xusbxti", NULL, CLK_IS_ROOT, 0),
->  };
->
->  /* fixed rate clocks generated inside the soc */
-> -struct samsung_fixed_rate_clock exynos4_fixed_rate_clks[] __initdata = {
-> +static struct samsung_fixed_rate_clock exynos4_fixed_rate_clks[] __initdata = {
->         FRATE(none, "sclk_hdmi24m", NULL, CLK_IS_ROOT, 24000000),
->         FRATE(none, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
->         FRATE(none, "sclk_usbphy0", NULL, CLK_IS_ROOT, 48000000),
->  };
->
-> -struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata = {
-> +static struct
-> +samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata = {
->         FRATE(none, "sclk_usbphy1", NULL, CLK_IS_ROOT, 48000000),
->  };
->
->  /* list of mux clocks supported in all exynos4 soc's */
-> -struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
-> +static struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
->         MUX_F(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
->                         CLK_SET_RATE_PARENT, 0),
->         MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
-> @@ -373,7 +375,7 @@ struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
->  };
->
->  /* list of mux clocks supported in exynos4210 soc */
-> -struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
-> +static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
->         MUX(none, "mout_aclk200", sclk_ampll_p4210, SRC_TOP0, 12, 1),
->         MUX(none, "mout_aclk100", sclk_ampll_p4210, SRC_TOP0, 16, 1),
->         MUX(none, "mout_aclk160", sclk_ampll_p4210, SRC_TOP0, 20, 1),
-> @@ -424,7 +426,7 @@ struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
->  };
->
->  /* list of mux clocks supported in exynos4x12 soc */
-> -struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
-> +static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
->         MUX(mout_mpll_user_c, "mout_mpll_user_c", mout_mpll_user_p4x12,
->                         SRC_CPU, 24, 1),
->         MUX(none, "mout_aclk266_gps", aclk_p4412, SRC_TOP1, 4, 1),
-> @@ -488,7 +490,7 @@ struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
->  };
->
->  /* list of divider clocks supported in all exynos4 soc's */
-> -struct samsung_div_clock exynos4_div_clks[] __initdata = {
-> +static struct samsung_div_clock exynos4_div_clks[] __initdata = {
->         DIV(none, "div_core", "mout_core", DIV_CPU0, 0, 3),
->         DIV(none, "div_core2", "div_core", DIV_CPU0, 28, 3),
->         DIV(none, "div_fimc0", "mout_fimc0", DIV_CAM, 0, 4),
-> @@ -551,7 +553,7 @@ struct samsung_div_clock exynos4_div_clks[] __initdata = {
->  };
->
->  /* list of divider clocks supported in exynos4210 soc */
-> -struct samsung_div_clock exynos4210_div_clks[] __initdata = {
-> +static struct samsung_div_clock exynos4210_div_clks[] __initdata = {
->         DIV(aclk200, "aclk200", "mout_aclk200", DIV_TOP, 0, 3),
->         DIV(none, "div_g2d", "mout_g2d", DIV_IMAGE, 0, 4),
->         DIV(none, "div_fimd1", "mout_fimd1", E4210_DIV_LCD1, 0, 4),
-> @@ -562,7 +564,7 @@ struct samsung_div_clock exynos4210_div_clks[] __initdata = {
->  };
->
->  /* list of divider clocks supported in exynos4x12 soc */
-> -struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
-> +static struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
->         DIV(none, "div_mdnie0", "mout_mdnie0", DIV_LCD0, 4, 4),
->         DIV(none, "div_mdnie_pwm0", "mout_mdnie_pwm0", DIV_LCD0, 8, 4),
->         DIV(none, "div_mdnie_pwm_pre0", "div_mdnie_pwm0", DIV_LCD0, 12, 4),
-> @@ -586,7 +588,7 @@ struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
->  };
->
->  /* list of gate clocks supported in all exynos4 soc's */
-> -struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
-> +static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
->         /*
->          * After all Exynos4 based platforms are migrated to use device tree,
->          * the device name and clock alias names specified below for some
-> @@ -778,7 +780,7 @@ struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
->  };
->
->  /* list of gate clocks supported in exynos4210 soc */
-> -struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
-> +static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
->         GATE(tvenc, "tvenc", "aclk160", GATE_IP_TV, 2, 0, 0),
->         GATE(g2d, "g2d", "aclk200", E4210_GATE_IP_IMAGE, 0, 0, 0),
->         GATE(rotator, "rotator", "aclk200", E4210_GATE_IP_IMAGE, 1, 0, 0),
-> @@ -812,7 +814,7 @@ struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
->  };
->
->  /* list of gate clocks supported in exynos4x12 soc */
-> -struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
-> +static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->         GATE(audss, "audss", "sclk_epll", E4X12_GATE_IP_MAUDIO, 0, 0, 0),
->         GATE(mdnie0, "mdnie0", "aclk160", GATE_IP_LCD0, 2, 0, 0),
->         GATE(rotator, "rotator", "aclk200", E4X12_GATE_IP_IMAGE, 1, 0, 0),
+> -       combiner:interrupt-controller@10440000 {
+> -               interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+> -                            <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+> -                            <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+> -                            <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+> -                            <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>;
+> -       };
+> -
+>         clock: clock-controller@0x10030000 {
+>                 compatible = "samsung,exynos4412-clock";
+>                 reg = <0x10030000 0x20000>;
 > --
 > 1.7.9.5
 >
