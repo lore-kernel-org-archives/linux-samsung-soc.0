@@ -1,251 +1,124 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [RESEND PATCH 3/5] clk: samsung: Add set_rate() clk_ops for PLL35xx
-Date: Mon, 27 May 2013 12:06:14 +0530
-Message-ID: <CAKew6eWNE3ZTckWprxu=arRsVaq5ShmEHwDftNmHDy0u8w1i7A@mail.gmail.com>
-References: <1369391478-7665-1-git-send-email-vikas.sajjan@linaro.org>
-	<1369391478-7665-4-git-send-email-vikas.sajjan@linaro.org>
-	<2621811.AH1nnyyD7h@flatron>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v2] clk: Exynos5250: Add clocks for G3D
+Date: Mon, 27 May 2013 12:50:12 +0530
+Message-ID: <1369639213-23515-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:34151 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753616Ab3E0GgO (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:16670 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756499Ab3E0Gz4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 May 2013 02:36:14 -0400
-Received: by mail-ie0-f173.google.com with SMTP id k5so17683747iea.18
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 May 2013 23:36:14 -0700 (PDT)
-In-Reply-To: <2621811.AH1nnyyD7h@flatron>
+	Mon, 27 May 2013 02:55:56 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MNG000BK3888040@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 May 2013 15:55:54 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Mike Turquette <mturquette@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, tomasz.figa@gmail.com, dianders@chromium.org, arunkk.samsung@gmail.com
 
-On Sat, May 25, 2013 at 3:49 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi,
->
-> On Friday 24 of May 2013 16:01:16 Vikas Sajjan wrote:
->> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
->>
->> Adds set_rate() and round_rate() clk_ops for PLL35xx
->>
->> The round_rate() implemenation as of now is dummy, it returns the same
->> rate which is passed as input.
->>
->> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-pll.c |   95
->> ++++++++++++++++++++++++++++++++++++++++- 1 file changed, 94
->> insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/samsung/clk-pll.c
->> b/drivers/clk/samsung/clk-pll.c index b8c0260..291cc9e 100644
->> --- a/drivers/clk/samsung/clk-pll.c
->> +++ b/drivers/clk/samsung/clk-pll.c
->> @@ -11,6 +11,7 @@
->>
->>  #include <linux/errno.h>
->>  #include <linux/sort.h>
->> +#include <linux/bsearch.h>
->>  #include "clk.h"
->>  #include "clk-pll.h"
->>
->> @@ -36,6 +37,21 @@ static int samsung_compare_rate(const void *_a, const
->> void *_b) return a->rate - b->rate;
->>  }
->>
->> +static struct samsung_pll_rate_table *samsung_get_pll_settings(
->> +                             struct samsung_clk_pll *pll, unsigned long
-> rate)
->> +{
->> +     struct samsung_pll_rate_table req_rate, *tmp;
->> +
->> +     req_rate.rate = rate;
->> +     tmp = bsearch(&req_rate, pll->rate_table, pll->rate_count,
->> +                     sizeof(struct samsung_pll_rate_table),
->> +                     samsung_compare_rate);
->
-> Binary search over < 10 entries? Isn't it a bit of overkill?
->
+This patch adds the required clocks for ARM Mali IP
+in Exynos5250.
 
-Sorry, i couldn't see any over kill?  And it may NOT be always < 10.
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+Changes from v1
+- Removed exporting of parent DIV clock for g3d
+  as per Tomsz Figa's comment.
+---
+ .../devicetree/bindings/clock/exynos5250-clock.txt         |    1 +
+ drivers/clk/samsung/clk-exynos5250.c                       |   12 +++++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
->> +     if (tmp)
->> +             return tmp;
->> +
->> +     return NULL;
->> +}
->> +
->>  /*
->>   * PLL35xx Clock Type
->>   */
->> @@ -46,9 +62,15 @@ static int samsung_compare_rate(const void *_a, const
->> void *_b) #define PLL35XX_MDIV_MASK       (0x3FF)
->>  #define PLL35XX_PDIV_MASK       (0x3F)
->>  #define PLL35XX_SDIV_MASK       (0x7)
->> +#define PLL35XX_LOCK_STAT_MASK  (0x1)
->>  #define PLL35XX_MDIV_SHIFT      (16)
->>  #define PLL35XX_PDIV_SHIFT      (8)
->>  #define PLL35XX_SDIV_SHIFT      (0)
->> +#define PLL35XX_LOCK_STAT_SHIFT (29)
->> +
->> +#define PLL35XX_MDIV(_tmp) ((_tmp) & (PLL35XX_MDIV_MASK <<
->> PLL35XX_MDIV_SHIFT)) +#define PLL35XX_PDIV(_tmp) ((_tmp) &
->> (PLL35XX_PDIV_MASK << PLL35XX_PDIV_SHIFT)) +#define PLL35XX_SDIV(_tmp)
->> ((_tmp) & (PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT))
->>
->>  static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
->>                               unsigned long parent_rate)
->> @@ -68,8 +90,76 @@ static unsigned long
->> samsung_pll35xx_recalc_rate(struct clk_hw *hw, return (unsigned
->> long)fvco;
->>  }
->>
->> -static const struct clk_ops samsung_pll35xx_clk_ops = {
->> +static inline bool samsung_pll35xx_mp_change(u32 mdiv, u32 pdiv, u32
->> pll_con) +{
->> +     if ((mdiv != PLL35XX_MDIV(pll_con)) || (pdiv !=
->> PLL35XX_PDIV(pll_con))) +             return 1;
->> +     else
->> +             return 0;
->> +}
->> +
->> +static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long
->> drate, +                                      unsigned long prate)
->> +{
->> +     struct samsung_clk_pll *pll = to_clk_pll(hw);
->> +     struct samsung_pll_rate_table *rate;
->> +
->> +     u32 tmp, mdiv, pdiv, sdiv;
->> +
->> +     /* Get required rate settings from table */
->> +     rate = samsung_get_pll_settings(pll, drate);
->> +     if (!rate) {
->> +             pr_err("%s: Invalid rate : %lu for pll clk %s\n",
-> __func__,
->> +                     drate, __clk_get_name(hw->clk));
->> +             return -EINVAL;
->> +     }
->> +
->> +     mdiv = PLL35XX_MDIV(rate->pll_con0);
->> +     pdiv = PLL35XX_PDIV(rate->pll_con0);
->> +     sdiv = PLL35XX_SDIV(rate->pll_con0);
->
-> You wouldn't need to use those macros if all coefficients were stored as
-> separate fields in the struct.
->
-
-Agree, I will use that.
-
->> +
->> +     tmp = pll_readl(pll, PLL35XX_CON0_OFFSET);
->> +
->> +     if (!(samsung_pll35xx_mp_change(mdiv, pdiv, tmp))) {
->> +             /* If only s change, change just s value only*/
->> +             tmp &= ~(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT);
->> +             tmp |= sdiv;
->
-> This line is correct, but it looks like it wasn't, because:
-> a) the name suggests that it contains the raw value of S coefficient
-> b) it's real value is hidden between a macro, name of which suggests the
-> same as in a) as well.
->
-> This makes the code hard to read.
->
-
-We can rename sdiv to sdiv_regval ?? , to improve readability.
-
->> +             pll_writel(pll, tmp, PLL35XX_CON0_OFFSET);
->> +     } else {
->> +             /* Set PLL lock time.
->> +                Maximum lock time can be 270 * PDIV cycles */
->> +             pll_writel(pll, (pdiv >> PLL35XX_PDIV_SHIFT) * 270,
->> +                             PLL35XX_LOCK_OFFSET);
->
-> Hmm, magic constant in the code? Shouldn't it be defined as a macro?
->
-
-Ya, I will define it.
-
->> +
->> +             /* Change PLL PMS values */
->> +             tmp &= ~((PLL35XX_MDIV_MASK << PLL35XX_MDIV_SHIFT) |
->> +                             (PLL35XX_PDIV_MASK << PLL35XX_PDIV_SHIFT)
-> |
->> +                             (PLL35XX_SDIV_MASK <<
-> PLL35XX_SDIV_SHIFT));
->> +             tmp |= mdiv | pdiv | sdiv;
->
-> This looks strange as well, even if it's correct.
->
->> +             pll_writel(pll, tmp, PLL35XX_CON0_OFFSET);
->> +
->> +             /* wait_lock_time */
->> +             do {
->> +                     cpu_relax();
->> +                     tmp = pll_readl(pll, PLL35XX_CON0_OFFSET);
->> +             } while (!(tmp & (PLL35XX_LOCK_STAT_MASK
->> +                             << PLL35XX_LOCK_STAT_SHIFT)));
->> +     }
->> +
->> +     return 0;
->> +}
->> +
->> +static long samsung_pll35xx_round_rate(struct clk_hw *hw,
->> +                     unsigned long drate, unsigned long *prate)
->> +{
->> +     /* Clock framework cries without this, so implemented dummy */
->
-> This is completely wrong. Have you tested this code or read how Common
-> Clock Framework works?
->
-
-As its mentioned in commit message, its just a dummy function to
-make set_rate() work. We will implement it later in different patch.
-In existing scenario users are requesting  valid rates provided
-in table so it works fine with this dummy function.
-
-> clk_set_rate() first calls ->round_rate() to get a rate supported by the
-> clock that is nearest and not higher than requested rate and only then it
-> calls ->set_rate() with the rate returned by ->round_rate().
->
-> So the round_rate() callback must return the highest supported rate with
-> parent clock at prate and not higher than drate.
->
->> +     return drate;
->> +}
->> +
->> +static struct clk_ops samsung_pll35xx_clk_ops = {
->>       .recalc_rate = samsung_pll35xx_recalc_rate,
->> +     .round_rate = samsung_pll35xx_round_rate,
->> +     .set_rate = samsung_pll35xx_set_rate,
->>  };
->>
->>  struct clk * __init samsung_clk_register_pll35xx(const char *name,
->> @@ -102,6 +192,9 @@ struct clk * __init
->> samsung_clk_register_pll35xx(const char *name, sort(pll->rate_table,
->> pll->rate_count,
->>                       sizeof(struct samsung_pll_rate_table),
->>                       samsung_compare_rate, NULL);
->> +     } else {
->> +             samsung_pll35xx_clk_ops.round_rate = NULL;
->> +             samsung_pll35xx_clk_ops.set_rate = NULL;
->
-> This is completely wrong. You are changing a static structure that is used
-> for all instances of PLL35xx, not only the one being registered at the
-> moment.
->
-
-Yes,  will rectify it.
-
-> Best regards,
-> Tomasz
->
->>       }
->>
->>       clk = clk_register(NULL, &pll->hw);
-
-Thanks for review.
-
-Regards,
-Yadwinder
+diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+index 1a05761..b3700cf 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+@@ -155,6 +155,7 @@ clock which they consume.
+   dp			342
+   mixer			343
+   hdmi			344
++  g3d			345
+ 
+ Example 1: An example of a clock controller node is listed below.
+ 
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 5c97e75..0d52c19 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -23,6 +23,7 @@
+ #define DIV_CPU0		0x500
+ #define SRC_CORE1		0x4204
+ #define SRC_TOP0		0x10210
++#define SRC_TOP1		0x10214
+ #define SRC_TOP2		0x10218
+ #define SRC_GSCL		0x10220
+ #define SRC_DISP1_0		0x1022c
+@@ -55,6 +56,7 @@
+ #define DIV_PERIC5		0x1056c
+ #define GATE_IP_GSCL		0x10920
+ #define GATE_IP_MFC		0x1092c
++#define GATE_IP_G3D		0x10930
+ #define GATE_IP_GEN		0x10934
+ #define GATE_IP_FSYS		0x10944
+ #define GATE_IP_PERIC		0x10950
+@@ -98,7 +100,7 @@ enum exynos5250_clks {
+ 	spi2, i2s1, i2s2, pcm1, pcm2, pwm, spdif, ac97, hsi2c0, hsi2c1, hsi2c2,
+ 	hsi2c3, chipid, sysreg, pmu, cmu_top, cmu_core, cmu_mem, tzpc0, tzpc1,
+ 	tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec, mct,
+-	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi,
++	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g3d,
+ 
+ 	nr_clks,
+ };
+@@ -112,6 +114,7 @@ static __initdata unsigned long exynos5250_clk_regs[] = {
+ 	DIV_CPU0,
+ 	SRC_CORE1,
+ 	SRC_TOP0,
++	SRC_TOP1,
+ 	SRC_TOP2,
+ 	SRC_GSCL,
+ 	SRC_DISP1_0,
+@@ -164,10 +167,12 @@ PNAME(mout_vpllsrc_p)	= { "fin_pll", "sclk_hdmi27m" };
+ PNAME(mout_vpll_p)	= { "mout_vpllsrc", "fout_vpll" };
+ PNAME(mout_cpll_p)	= { "fin_pll", "fout_cpll" };
+ PNAME(mout_epll_p)	= { "fin_pll", "fout_epll" };
++PNAME(mout_gpll_p)	= { "fin_pll", "fout_gpll" };
+ PNAME(mout_mpll_user_p)	= { "fin_pll", "sclk_mpll" };
+ PNAME(mout_bpll_user_p)	= { "fin_pll", "sclk_bpll" };
+ PNAME(mout_aclk166_p)	= { "sclk_cpll", "sclk_mpll_user" };
+ PNAME(mout_aclk200_p)	= { "sclk_mpll_user", "sclk_bpll_user" };
++PNAME(mout_aclk400_p)	= { "aclk_400_g3d_mid", "sclk_gpll" };
+ PNAME(mout_hdmi_p)	= { "div_hdmi_pixel", "sclk_hdmiphy" };
+ PNAME(mout_usb3_p)	= { "sclk_mpll_user", "sclk_cpll" };
+ PNAME(mout_group1_p)	= { "fin_pll", "fin_pll", "sclk_hdmi27m",
+@@ -223,6 +228,9 @@ struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+ 	MUX(none, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+ 	MUX(none, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
+ 	MUX(none, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
++	MUX(none, "aclk_400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
++	MUX(none, "sclk_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
++	MUX(none, "mout_aclk400", mout_aclk400_p, SRC_TOP1, 28, 1),
+ 	MUX(none, "mout_cam_bayer", mout_group1_p, SRC_GSCL, 12, 4),
+ 	MUX(none, "mout_cam0", mout_group1_p, SRC_GSCL, 16, 4),
+ 	MUX(none, "mout_cam1", mout_group1_p, SRC_GSCL, 20, 4),
+@@ -262,6 +270,7 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+ 	DIV(none, "aclk166", "mout_aclk166", DIV_TOP0, 8, 3),
+ 	DIV(none, "aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+ 	DIV(none, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
++	DIV(none, "aclk_400_g3d", "mout_aclk400", DIV_TOP0, 24, 3),
+ 	DIV(none, "div_cam_bayer", "mout_cam_bayer", DIV_GSCL, 12, 4),
+ 	DIV(none, "div_cam0", "mout_cam0", DIV_GSCL, 16, 4),
+ 	DIV(none, "div_cam1", "mout_cam1", DIV_GSCL, 20, 4),
+@@ -462,6 +471,7 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 	GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
+ 	GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
+ 	GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
++	GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0, 0, 0),
+ };
+ 
+ static __initdata struct of_device_id ext_clk_match[] = {
+-- 
+1.7.10.4
