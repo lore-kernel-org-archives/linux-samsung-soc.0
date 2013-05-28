@@ -1,102 +1,59 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH] ARM: dts: wm8994: Add wm8994 regulator support on smdk5250.
-Date: Tue, 28 May 2013 16:05:22 +0530
-Message-ID: <1369737322-10907-1-git-send-email-padma.v@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [PATCH] serial: samsung: enable clock before clearing pending interrupts during init
+Date: Tue, 28 May 2013 18:32:07 +0530
+Message-ID: <1369746127-13129-1-git-send-email-chander.kashyap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59745 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932208Ab3E1KcQ (ORCPT
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:65528 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933919Ab3E1NCX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 May 2013 06:32:16 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MNI00J6M7WXYL01@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 May 2013 19:32:14 +0900 (KST)
+	Tue, 28 May 2013 09:02:23 -0400
+Received: by mail-pb0-f51.google.com with SMTP id jt11so7835795pbb.38
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 May 2013 06:02:22 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
+To: linux-serial@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Chander Kashyap <chander.kashyap@linaro.org>
 
-This patch adds the required regulator supplies and properties
-for wm8994 codec on smdk5250 board.
+Ensure that the uart controller clock is enabled prior to writing to the
+interrupt mask and pending registers in the s3c24xx_serial_init_port
+function.
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
 ---
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   53 +++++++++++++++++++++++++++-
- 1 files changed, 51 insertions(+), 2 deletions(-)
+ drivers/tty/serial/samsung.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index f2a025e..42fc79e 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -37,6 +37,46 @@
- 		};
- 	};
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 2c873c4..d1972b9 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1166,6 +1166,18 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+ 		ourport->tx_irq = ret;
  
-+	avdd2:fixed-regulator@0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "avdd2-supply";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
+ 	ourport->clk	= clk_get(&platdev->dev, "uart");
++	if (IS_ERR(ourport->clk)) {
++		pr_err("%s: Controller clock not found\n",
++				dev_name(&platdev->dev));
++		return PTR_ERR(ourport->clk);
++	}
 +
-+	cpvdd:fixed-regulator@1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "cpvdd-supply";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	dbvdd:fixed-regulator@2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dbvdd-supply";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	spkvdd1:fixed-regulator@3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "spkvdd1-supply";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
-+	spkvdd2:fixed-regulator@4 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "spkvdd2-supply";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
- 	i2c@12C70000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <20000>;
-@@ -47,8 +87,17 @@
- 		};
++	ret = clk_prepare_enable(ourport->clk);
++	if (ret) {
++		pr_err("uart: clock failed to prepare+enable: %d\n", ret);
++		clk_put(ourport->clk);
++		return ret;
++	}
  
- 		wm8994: wm8994@1a {
--			 compatible = "wlf,wm8994";
--			 reg = <0x1a>;
-+			compatible = "wlf,wm8994";
-+			reg = <0x1a>;
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			AVDD2-supply = <&avdd2>;
-+			CPVDD-supply = <&cpvdd>;
-+			DBVDD-supply = <&dbvdd>;
-+			SPKVDD1-supply = <&spkvdd1>;
-+			SPKVDD2-supply = <&spkvdd2>;
- 		};
- 	};
+ 	/* Keep all interrupts masked and cleared */
+ 	if (s3c24xx_serial_has_interrupt_mask(port)) {
+@@ -1180,6 +1192,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+ 
+ 	/* reset the fifos (and setup the uart) */
+ 	s3c24xx_serial_resetport(port, cfg);
++	clk_disable_unprepare(ourport->clk);
+ 	return 0;
+ }
  
 -- 
-1.7.4.4
+1.7.9.5
