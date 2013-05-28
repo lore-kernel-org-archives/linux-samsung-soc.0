@@ -1,48 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] spi: s3c64xx: Fix pm_runtime_get_sync() return value check
-Date: Mon, 27 May 2013 16:56:00 +0200
-Message-ID: <1369666560-12436-1-git-send-email-s.nawrocki@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Samsung fixes-3 for v3.10
+Date: Mon, 27 May 2013 19:52:57 -0700
+Message-ID: <CAOesGMjEESQ1a6V3AC2RqGQTwk++Zq2FwZVQT0C=ToP1gTwR3w@mail.gmail.com>
+References: <519FF6DB.5040002@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21325 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932643Ab3E0O4X (ORCPT
+Received: from mail-we0-f175.google.com ([74.125.82.175]:55631 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758611Ab3E1Cw6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 May 2013 10:56:23 -0400
+	Mon, 27 May 2013 22:52:58 -0400
+Received: by mail-we0-f175.google.com with SMTP id p60so4941119wes.20
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 May 2013 19:52:57 -0700 (PDT)
+In-Reply-To: <519FF6DB.5040002@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@opensource.wolfsonmicro.com
-Cc: grant.likely@linaro.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-If the device is already in a runtime PM enabled state
-pm_runtime_get_sync() will return 1, so a test for negative
-value should be used to check for errors.
+On Fri, May 24, 2013 at 4:25 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> The following changes since commit f722406faae2d073cc1d01063d1123c35425939e:
+>
+>   Linux 3.10-rc1 (2013-05-11 17:14:08 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-fixes-3
+>
+> for you to fetch changes up to 15f504f0c2038b9a0f1569c9ce34def61f0c65be:
+>
+>   ARM: SAMSUNG: Add names to fimd0 IRQ resources (2013-05-25 06:49:43 +0900)
+>
+> ----------------------------------------------------------------
+> Fixes following for v3.10
+> - to get usb2 working on the Chromebook with adding the
+>   usb phy node for usb2 on exynos5250
+> - supporting exynos4210 rev0 SoC
+> - exynos5440 restart applying only to powered-on domains
+> - drm-exynos probe failure with adding resource names to
+>   fimd0 platform device
 
-Without this patch there are seen errors like:
+Pulled, thanks.
 
-[    8.540000] s3c64xx-spi 13930000.spi: Failed to enable device: 1
-[    8.545000] spi_master spi1: failed to prepare transfer hardware
-
-Likely because the driver uses synchronous API to runtime enable
-the device and asychronous one to disable it.
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/spi/spi-s3c64xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 5000586..71cc3e6 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -444,7 +444,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 	}
- 
- 	ret = pm_runtime_get_sync(&sdd->pdev->dev);
--	if (ret != 0) {
-+	if (ret < 0) {
- 		dev_err(dev, "Failed to enable device: %d\n", ret);
- 		goto out_tx;
- 	}
--- 
-1.7.9.5
+-Olof
