@@ -1,65 +1,82 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V2] ARM: dts: Correct the base address of pinctrl_3 on
- Exynos5250
-Date: Tue, 28 May 2013 15:24:01 +0530
-Message-ID: <1369734841-9900-1-git-send-email-padma.v@samsung.com>
+Subject: [PATCH V3 0/4] clk: Samsung: audss: Register audio subsytem clocks
+ using common clk framework
+Date: Tue, 28 May 2013 15:32:54 +0530
+Message-ID: <1369735378-10003-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55286 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751017Ab3E1Jyy (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:53377 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751823Ab3E1J7q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 May 2013 05:54:54 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Tue, 28 May 2013 05:59:46 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MNI00J4666WFD60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 May 2013 18:54:32 +0900 (KST)
+ with ESMTP id <0MNI008BH6FLS3C0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 May 2013 18:59:45 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.v@samsung.com, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, mturquette@linaro.org
 
-This patch corrects the base address of pinctrl_3 on Exynos5250
-platform.
+Samsung S5PV210 and Exynos SoC has a separate subsystem for audio. This subsystem
+has a internal clock controller which controls i2s0 and pcm0 clocks. This patch
+series adds the Samsung audio subsytem clock to the common clock framework and
+provides the I2S controllers clock information in the dtsi file.
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
+This patch series is made based on Kukjin Kim for-next branch
+
+Changes since V2:
+	- Removed s5pv210 compatible name from driver as it is
+	  not yet supported which is different from Exynos series
+	  audio subsystem clock conroller.
+	- Removed clkdev lookup support and added alias names in
+	  the i2s0 controller node.
 Changes since V1:
-	- Added platform name in the subject line.
+        - Reworked on all review comments by Sylwester Nawrocki
+        - Added a header file for all clock indexes as requested by Sylwester
+        - Added different compatible names for s5pv210, exynos4 and exynos5
+        - Registered the pcm clocks with common clock framework
 
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    2 +-
- arch/arm/boot/dts/exynos5250.dtsi         |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Padmavathi Venna (4):
+  ARM: samsung: use #include for all device trees
+  clk: samsung: register audio subsystem clocks using common clock
+    framework
+  ARM: dts: add Exynos audio subsystem clock controller node
+  ARM: dts: add clock provider information for i2s controllers in
+    Exynos5250
 
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index d1650fb..ded558b 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -763,7 +763,7 @@
- 		};
- 	};
- 
--	pinctrl@03680000 {
-+	pinctrl@03860000 {
- 		gpz: gpz {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 7154e3d..e9bfd13 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -169,9 +169,9 @@
- 		interrupts = <0 50 0>;
- 	};
- 
--	pinctrl_3: pinctrl@03680000 {
-+	pinctrl_3: pinctrl@03860000 {
- 		compatible = "samsung,exynos5250-pinctrl";
--		reg = <0x0368000 0x1000>;
-+		reg = <0x03860000 0x1000>;
- 		interrupts = <0 47 0>;
- 	};
- 
+ .../bindings/clock/clk-samsung-audss.txt           |   64 ++++++++++
+ arch/arm/boot/dts/exynos4.dtsi                     |    2 +-
+ arch/arm/boot/dts/exynos4210-origen.dts            |    2 +-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |    2 +-
+ arch/arm/boot/dts/exynos4210-trats.dts             |    2 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |    2 +-
+ arch/arm/boot/dts/exynos4210.dtsi                  |    4 +-
+ arch/arm/boot/dts/exynos4212.dtsi                  |    2 +-
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |    2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts            |    2 +-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |    2 +-
+ arch/arm/boot/dts/exynos4412.dtsi                  |    2 +-
+ arch/arm/boot/dts/exynos4x12.dtsi                  |    4 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |    2 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 +-
+ arch/arm/boot/dts/exynos5250-snow.dts              |    4 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |   23 +++-
+ arch/arm/boot/dts/exynos5440-sd5v1.dts             |    2 +-
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts          |    2 +-
+ arch/arm/boot/dts/exynos5440.dtsi                  |    2 +-
+ arch/arm/boot/dts/s3c2416-smdk2416.dts             |    2 +-
+ arch/arm/boot/dts/s3c2416.dtsi                     |    4 +-
+ arch/arm/boot/dts/s3c24xx.dtsi                     |    2 +-
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-samsung-audss.c            |  133 ++++++++++++++++++++
+ include/dt-bindings/clk/samsung-audss-clk.h        |   25 ++++
+ 26 files changed, 269 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/clk-samsung-audss.txt
+ create mode 100644 drivers/clk/samsung/clk-samsung-audss.c
+ create mode 100644 include/dt-bindings/clk/samsung-audss-clk.h
+
 -- 
 1.7.4.4
