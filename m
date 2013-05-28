@@ -1,61 +1,61 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] usb: phy: samsung: Add support for EXYNOS4210
-Date: Tue, 28 May 2013 20:33:45 +0300
-Message-ID: <20130528173345.GC15794@arwen.pp.htv.fi>
-References: <000301ce5b82$4fa829e0$eef87da0$@samsung.com>
-Reply-To: <balbi@ti.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen
+ board
+Date: Tue, 28 May 2013 16:17:40 -0700
+Message-ID: <20130528231740.GA28879@quad.lixom.net>
+References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
+ <87sj1qzaov.fsf@linaro.org>
+ <5191AA89.6010901@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kVXhAStRUZ/+rrGn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <000301ce5b82$4fa829e0$eef87da0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Felipe Balbi' <balbi@ti.com>, linux-usb@vger.kernel.org, 'Greg KH' <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Praveen Paneri' <p.paneri@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---kVXhAStRUZ/+rrGn
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:35551 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758468Ab3E1XRl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 May 2013 19:17:41 -0400
+Received: by mail-pb0-f47.google.com with SMTP id rr4so8467681pbb.20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 May 2013 16:17:41 -0700 (PDT)
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5191AA89.6010901@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: Kevin Hilman <khilman@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, patches@linaro.org
 
-On Tue, May 28, 2013 at 06:04:07PM +0900, Jingoo Han wrote:
-> @@ -165,6 +174,18 @@ static void samsung_usb2phy_enable(struct samsung_us=
-bphy *sphy)
->  	u32 phyclk;
->  	u32 rstcon;
-> =20
-> +	switch (sphy->drv_data->cpu_type) {
-> +	case TYPE_EXYNOS4210:
-> +		atomic_inc(&sphy->phy_usage);
+On Tue, May 14, 2013 at 08:37:53AM +0530, Tushar Behera wrote:
+> On 05/14/2013 05:36 AM, Kevin Hilman wrote:
+> > Tushar Behera <tushar.behera@linaro.org> writes:
+> > 
+> >> It updates following drivers for EXYNOS based DT platform.
+> >>
+> >> * S5M8767 driver
+> >> * MAX8997 driver
+> >> * MMC SDHCI driver
+> >>
+> >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> > 
+> > I tested this using v3.10-rc1 on Arndale, but still don't get any
+> > support for the wired network.  Do you know if this is a Kconfig issue,
+> > or a missing driver?
+> > 
+> > I suspect it may be related to the various "unable to find transceiver
+> > of type USB2 PHY" messages I'm seeing?
+> > 
+> 
+> Yes, right. The missing USB-PHY components are one of the issues (they
+> were there in linux-next when I last tested).
+> 
+> Also, on Arndale board, we need to reset the USB hub during EHCI
+> initialization (a couple of those patches are required, which I am not
+> sure if we would be able to upstream).
+> 
+> I am collecting a minimal set of patches that would enable USB and wired
+> network on Arndale with 3.10-rc1 kernel. Once done, I will let you know.
 
-please switch over to the generic reference counting which I have
-pending in my testing branch. It'll be available for v3.11 merge window.
+Hi Tushar,
 
---=20
-balbi
+Got an update on what these patches are yet?
 
---kVXhAStRUZ/+rrGn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRpOp5AAoJEIaOsuA1yqRE8VcP/Aha+/Nm90RGNGMB5v9nJiwI
-LtpFIOUBlIfVJIEk6BkHY6NWypJu359ATLRytEvxW4vFf3cuNikm7cGOnAfmF5Bp
-K7CQ8HTik04mB3R7IW7V4vIL7xAqUDYuXH4P/9QL0mbsSxAYUSATjXMZP4m8/a8Z
-K/XHpqyshbOzmqdnNuB4flJ1CEZFsLMgisE4z20f7L/E1WANLjJrCEwQ+JTrdJu5
-KqIJTbChO+bGKyDdB63NWjn0Atrta2iXN+xbTbNm02Q+T4kyiXJXI8FRqhiDa8rI
-9zN6Zbeax24Rtz9e9CzCfTDPBBFK5uIPg/bSCJor0lEMTbKT4MHWq9uqLmpGKYsD
-qzdKE0eVzyhmEVwdlMGw16C2cZ0qsEhZbFV0oCNPUYreUUt0UtwyaXwzqVdFzZYc
-fXA+Xz/94LYedrscWuhWYwbfb/ZPTTW15Ti2+WCLLfdVBMDEOuwAYzBSKGbR15/A
-wyZm2xdSJEntuBZvk0YapxKWjCSpNH6n1fSNtSTqY2N4ou2exfQanTT5kyYzBBz/
-fLgYcSPZHUYMn1scYFwDM5O2mxJ6YsJKxrExJlHzACPaqBEPnEbjiBH3Zb+BJl+N
-++i6Ogntjr3dgMm7w4LHbQZLYwCJBLBkRvKR0s4sRLQ/ZuDQcC6vjRpd92QZsgbM
-v4IfBw/8TAImYdhzDdSd
-=JTfI
------END PGP SIGNATURE-----
-
---kVXhAStRUZ/+rrGn--
+-Olof
