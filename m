@@ -1,48 +1,31 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen board
-Date: Wed, 29 May 2013 09:07:09 +0900
-Message-ID: <17ec01ce5c00$76384e40$62a8eac0$%kim@samsung.com>
-References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
- <CAOesGMjirb0h4kZ1hB9=1JnDV+azTEG=_6RR9v000xbMsvuv2Q@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Booting mainline kernels on Samsung ARM-based Chromebooks
+Date: Tue, 28 May 2013 17:34:30 -0700
+Message-ID: <CAOesGMgrT8fCRcnJYP=tcr4Szp5B6NtQxsQeb6pEv24edHLYFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:10651 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932080Ab3E2AHL (ORCPT
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:46986 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757444Ab3E2Aec (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 May 2013 20:07:11 -0400
-In-reply-to: <CAOesGMjirb0h4kZ1hB9=1JnDV+azTEG=_6RR9v000xbMsvuv2Q@mail.gmail.com>
-Content-language: ko
+	Tue, 28 May 2013 20:34:32 -0400
+Received: by mail-wg0-f49.google.com with SMTP id y10so6207217wgg.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 May 2013 17:34:30 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Doug Anderson' <dianders@chromium.org>, 'Patch Tracking' <patches@linaro.org>
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Olof Johansson wrote:
-> 
-> Hi,
-> 
-> On Thu, May 9, 2013 at 11:49 PM, Tushar Behera <tushar.behera@linaro.org>
-> wrote:
-> > It updates following drivers for EXYNOS based DT platform.
-> >
-> > * S5M8767 driver
-> > * MAX8997 driver
-> > * MMC SDHCI driver
-> >
-> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> 
-> I didn't see any movement from Kukjin on this, so I have (tentatively)
-> applied this together with my base defconfig update to the fixes
-> branch of arm-soc. I'll take it out in case he protests, but it's very
-> useful since the simplefb driver has landed in 3.10-rc3.
-> 
-I'm fine on this, so please go ahead with my ack if you want,
+Just a quick note that as of v3.10-rc4 (or -rc3 + arm-soc fixes
+branch) there should be enough pieces in mainline to boot a Chromebook
+to a useful state without out-of-tree patches.
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+For more info, see:
 
-Thanks for your gentle reminder :-)
+https://plus.google.com/u/0/109993695638569781190/posts/bQpzEGG15G8
 
-- Kukjin
+There's plenty of stuff not working yet, but it'll come up with
+simplefb, keyboard, trackpad and USB 2.0 for now.
+
+
+-Olof
