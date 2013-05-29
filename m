@@ -1,80 +1,122 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix support of Exynos4210 rev0 SoC
-Date: Wed, 29 May 2013 11:16:14 +0200
-Message-ID: <51A5C75E.7090006@samsung.com>
-References: <1368630484-29939-1-git-send-email-t.figa@samsung.com>
- <1623377.nVo7nUcid2@flatron> <120501ce5752$6daef380$490cda80$%kim@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen board
+Date: Wed, 29 May 2013 18:33:01 +0900
+Message-ID: <000001ce5c4f$839f4cb0$8adde610$@samsung.com>
+References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
+ <87sj1qzaov.fsf@linaro.org> <5191AA89.6010901@linaro.org>
+ <20130528231740.GA28879@quad.lixom.net> <51A57D39.8030506@linaro.org>
+ <CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com>
+ <51A5C16D.20408@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:25955 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965201Ab3E2JQ1 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:9637 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965381Ab3E2JdE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 May 2013 05:16:27 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MNJ009YNYUGJP00@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 May 2013 10:16:25 +0100 (BST)
-In-reply-to: <120501ce5752$6daef380$490cda80$%kim@samsung.com>
+	Wed, 29 May 2013 05:33:04 -0400
+In-reply-to: <51A5C16D.20408@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, 'Kyungmin Park' <kyungmin.park@samsung.com>, olof@lixom.net
+To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Olof Johansson' <olof@lixom.net>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Doug Anderson' <dianders@chromium.org>, 'Patch Tracking' <patches@linaro.org>, Jingoo Han <jg1.han@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Vivek Gautam' <gautam.vivek@samsung.com>
 
-Hello,
+On Wednesday, May 29, 2013 5:51 PM, Tushar Behera:
+> On 05/29/2013 11:01 AM, Olof Johansson wrote:
+> > On Tue, May 28, 2013 at 8:59 PM, Tushar Behera <tushar.behera@linaro.org> wrote:
+> >
+> >> The patches are at [1].
+> >
+> > FWIW, a cgit/gitweb link is easier to follow when you're reading an
+> > email. Anyway, found the patches.
+> >
+> >> There are a total of 6 patches on top of
+> >> v3.10-rc3. 3 of them (a, b, d) are queued for 3.10-rc4 and another patch
+> >> (c) is just a defconfig hack to get Arndale booting. Remaining 2 patches
+> >> (e, f) are required to reset the hub during EHCI initialization.
+> >
+> > Huh, I thought you said that (c) wasn't needed when I posted the
+> > defconfig update. It'd be nice to see the code fixed to handle this
+> > case instead of Linaro carrying a patch like this though. I.e. make it
+> > able to deselect the uart, or make it tied to DEBUG_LL like on other
+> > platforms instead of having a separate config for this.
+> >
+> 
+> It would be good to free up the dependency on the correct UART port for
+> the board to boot. Without that, there would always be boards that don't
+> boot with default mainline defconfig file even though all other
+> components are in place.
+> 
+> >> a. ARM: exynos: defconfig update
+> >> b. ARM: EXYNOS: Update defconfig for Arndale and Origen board
+> >> c. [TEMP] ARM: EXYNOS: Set low-level UART port to 2
+> >> d. ARM: dts: Enabling samsung-usb2phy driver for exynos5250
+> >> e. usb: ehci-s5p: add the HSIC port initialization
+> >> f. ARM: dts: Add USB gpio entries for Arndale board
+> >>
+> >> I am not sure whether such kind of board-specific patches (e, f) are
+> >> appreciated in the drivers. But that is all we need to get USB and
+> >> Ethernet to work on v3.10-rc3 kernel.
+> >
+> > I've come across a similar situation with wifi reset sequence on the
+> > chromebook. On the product kernel we added some code to the board file
+> > to deal with it, but if we keep doing that things will grow out of
+> > hand.
+> >
+> > I don't know if it'll be unpopular, but I think it's time to start a
+> > drivers/platform/arm for these kind of things, and have those drivers
+> > probe on the system compatible value, similar to how x86 does it (with
+> > DMI tables). At least that's my plan for approaching the wifi
+> > reset/power-on sequence on the Chromebook. I hope to have patches in
+> > not all that long...
+> >
+> > Likewise, the hub reset/enable code doesn't have to go with the USB
+> > driver, right? I.e. if you cycle reset/enable on the hub after the
+> > host and phy is configured, you'll still have a working setup?
+> >
+> 
+> Right, hub reset/enable code need not be tied up with USB driver. As per
+> your suggestion regarding drivers/platform/arm, I implemented an Arndale
+> specific driver [2] in drivers/platform/arm and verified USB and
+> ethernet to be working.
 
-On 5/23/2013 3:11 AM, Kukjin Kim wrote:
-> Kukjin Kim wrote:
-> >
-> > Tomasz Figa wrote:
-> > >
-> > > Hi Kukjin,
-> > >
-> > Hi,
-> >
-> > > On Wednesday 15 of May 2013 17:08:04 Tomasz Figa wrote:
-> > > > This patch extends exynos_init_time() function to handle Exynos4210
-> > rev0
-> > > > SoC, which differs in availability of system timers and needs
-> > different
-> > > > clocksource initialization.
-> > > >
-> > > > This makes it possible to use exynos_init_time() function as init_time
-> > > > callback for all Exynos-based boards, including Universal_C210, which
-> > > > originally had to use samsung_timer_init().
-> > > >
-> > > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > > ---
-> > > >  arch/arm/mach-exynos/Kconfig               |  3 ++-
-> > > >  arch/arm/mach-exynos/common.c              | 30
-> > > > +++++++++++++++++++++++++++++- arch/arm/mach-exynos/common.h
-> > > >   |  2 ++
-> > > >  arch/arm/mach-exynos/mach-universal_c210.c |  5 ++---
-> > > >  4 files changed, 35 insertions(+), 5 deletions(-)
-> > >
-> > > Could you pick this patch to your fixes branch?
-> > >
-> > Yeah, I will after looking at.
-> >
-> > > This is a fix of a regression in handling Exynos4210 rev0 SoC (e.g.
-> > > Universal C210 board) introduced by patches merged to 3.10.
-> > >
-> > OK, I see but I didn't review yet and I  will within a couple of days ;-)
-> >
-> OK, looks fine, this will be sent to upstream during -rc for v3.10.
->
-> But, Tomasz, as you know, non-DT supporting files will be gone away in
-> v3.11, just note.
+CC'ed Thomas Abraham, Vivek Gautam
 
-This patch is needed to get REV0 4210 based board working both in DT and 
-non-DT
-modes.
+I think so.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung R&D Institute Poland
+I looked at Arndale board Schematics.
+'Hub chip' on Arndale board needs hub reset/enable code.
+'HUB_RESET' and 'HUB_CONNECT' pins are used to reset 'Hub chip'
+on Arndale board, not Exynos EHCI controller. So, Exynos EHCI driver
+does not need to consider this hub reset/enable code.
+
+If there is a driver for this 'Hub chip', 'Hub chip' driver maybe
+consider this.
+
+However, Olof Johansson mentioned, 'drivers/platform/arm/board_arndale.c'
+would be a good alternative.
+
+> 
+> [2]
+> https://git.linaro.org/gitweb?p=landing-
+> teams/working/samsung/kernel.git;a=shortlog;h=refs/heads/upstream/arndale-usb-2
+
+It looks good.
+
+Best regards,
+Jingoo Han
+
+> 
+> >
+> > -Olof
+> >
+> 
+> 
+> --
+> Tushar Behera
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
