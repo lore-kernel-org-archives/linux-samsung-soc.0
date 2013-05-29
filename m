@@ -1,49 +1,75 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 0/2] Clock changes for supporting CPUFreq on Exynos5250
-Date: Wed, 29 May 2013 15:42:03 -0700
-Message-ID: <20130529224203.6058.75266@quantum>
-References: <1368770153-29041-1-git-send-email-tushar.behera@linaro.org>
- <51A442E4.90307@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 2/5] clk: samsung: Add support to register rate_table
+ for PLL3xxx
+Date: Wed, 29 May 2013 16:44:18 -0700
+Message-ID: <CAD=FV=VDi+SfebiFnPNp8qR__9L=o9TJ+WSPRfRQLX+p+TMmJw@mail.gmail.com>
+References: <1369834677-20312-1-git-send-email-vikas.sajjan@linaro.org>
+	<1369834677-20312-3-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:39353 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966519Ab3E2WmI convert rfc822-to-8bit (ORCPT
+Received: from mail-la0-f52.google.com ([209.85.215.52]:47599 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935040Ab3E2XoT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 May 2013 18:42:08 -0400
-Received: by mail-pb0-f49.google.com with SMTP id rp8so9787622pbb.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 May 2013 15:42:08 -0700 (PDT)
-In-Reply-To: <51A442E4.90307@linaro.org>
+	Wed, 29 May 2013 19:44:19 -0400
+Received: by mail-la0-f52.google.com with SMTP id fo13so9225668lab.39
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 May 2013 16:44:18 -0700 (PDT)
+In-Reply-To: <1369834677-20312-3-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, patches@linaro.org
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, yadi.brar01@gmail.com, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-Quoting Tushar Behera (2013-05-27 22:38:44)
-> On 05/17/2013 11:25 AM, Tushar Behera wrote:
-> > With the use of common clock framework, CPUFreq driver on EXYNOS5250 now
-> > requires a few changes in clocks.
-> > 
-> > Tested on Exynos5250 based Arndale board.
-> > The patches are based on v3.10-rc1.
-> > 
-> > Tushar Behera (2):
-> >   clk: exynos5250: Update cpufreq related clocks for EXYNOS5250
-> >   clk: exynos5250: Add sclk_mpll to the parent list of mout_cpu clock
-> > 
-> >  drivers/clk/samsung/clk-exynos5250.c |    8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> 
-> Any comments on this series?
-> 
+Vikas / Yadwinder,
 
-I've taken both patches into clk-next.
+On Wed, May 29, 2013 at 6:37 AM, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+>
+> This patch defines a common rate_table which will contain recommended p, m, s,
+> k values for supported rates that needs to be changed for changing
+> corresponding PLL's rate.
+>
+> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c    |    8 ++++----
+>  drivers/clk/samsung/clk-exynos5250.c |   14 +++++++-------
+>  drivers/clk/samsung/clk-pll.c        |   14 ++++++++++++--
+>  drivers/clk/samsung/clk-pll.h        |   33 +++++++++++++++++++++++++++++++--
+>  4 files changed, 54 insertions(+), 15 deletions(-)
 
-Regards,
-Mike
+I also reviewed this in our gerrit
+<https://gerrit.chromium.org/gerrit/#/c/56742/>, but I'll summarize
+here for the list...
 
-> -- 
-> Tushar Behera
+>  struct clk * __init samsung_clk_register_pll35xx(const char *name,
+> -                       const char *pname, const void __iomem *base)
+> +                       const char *pname, const void __iomem *base,
+> +                       const struct samsung_pll_rate_table *rate_table,
+> +                       const unsigned int rate_count)
+
+Feels like you should document here that rate_table needs to be sorted
+and the sort order.
+
+> +struct samsung_pll_rate_table {
+> +       unsigned  int rate;
+
+nit: extra space before "int" should be removed.
+
+Also: you can include rate here if you need a convenient place to
+store it (which sadly means that this structure can't be const).
+...but I do like Tomasz's idea of actually calculating it.  You can't
+know it at compile time since the parent rate comes from the device
+tree.
+
+compatible = "samsung,clock-xxti";
+clock-frequency = <24000000>;
+
+> +       unsigned int pdiv;
+> +       unsigned int mdiv;
+> +       unsigned int sdiv;
+> +       unsigned int kdiv;
+
+I think kdiv is signed.
+
+-Doug
