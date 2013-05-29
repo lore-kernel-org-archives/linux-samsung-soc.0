@@ -1,83 +1,72 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen
- board
-Date: Wed, 29 May 2013 09:29:53 +0530
-Message-ID: <51A57D39.8030506@linaro.org>
-References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org> <87sj1qzaov.fsf@linaro.org> <5191AA89.6010901@linaro.org> <20130528231740.GA28879@quad.lixom.net>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen board
+Date: Tue, 28 May 2013 22:31:41 -0700
+Message-ID: <CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com>
+References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
+	<87sj1qzaov.fsf@linaro.org>
+	<5191AA89.6010901@linaro.org>
+	<20130528231740.GA28879@quad.lixom.net>
+	<51A57D39.8030506@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:48662 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759306Ab3E2EAC (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:48690 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752840Ab3E2Fbm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 May 2013 00:00:02 -0400
-Received: by mail-pb0-f52.google.com with SMTP id um15so8617272pbc.25
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 May 2013 21:00:01 -0700 (PDT)
-In-Reply-To: <20130528231740.GA28879@quad.lixom.net>
+	Wed, 29 May 2013 01:31:42 -0400
+Received: by mail-wg0-f46.google.com with SMTP id l18so5923822wgh.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 May 2013 22:31:41 -0700 (PDT)
+In-Reply-To: <51A57D39.8030506@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kevin Hilman <khilman@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, patches@linaro.org
+To: Tushar Behera <tushar.behera@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Kevin Hilman <khilman@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Patch Tracking <patches@linaro.org>
 
-On 05/29/2013 04:47 AM, Olof Johansson wrote:
-> On Tue, May 14, 2013 at 08:37:53AM +0530, Tushar Behera wrote:
->> On 05/14/2013 05:36 AM, Kevin Hilman wrote:
->>> Tushar Behera <tushar.behera@linaro.org> writes:
->>>
->>>> It updates following drivers for EXYNOS based DT platform.
->>>>
->>>> * S5M8767 driver
->>>> * MAX8997 driver
->>>> * MMC SDHCI driver
->>>>
->>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->>>
->>> I tested this using v3.10-rc1 on Arndale, but still don't get any
->>> support for the wired network.  Do you know if this is a Kconfig issue,
->>> or a missing driver?
->>>
->>> I suspect it may be related to the various "unable to find transceiver
->>> of type USB2 PHY" messages I'm seeing?
->>>
->>
->> Yes, right. The missing USB-PHY components are one of the issues (they
->> were there in linux-next when I last tested).
->>
->> Also, on Arndale board, we need to reset the USB hub during EHCI
->> initialization (a couple of those patches are required, which I am not
->> sure if we would be able to upstream).
->>
->> I am collecting a minimal set of patches that would enable USB and wired
->> network on Arndale with 3.10-rc1 kernel. Once done, I will let you know.
-> 
-> Hi Tushar,
-> 
-> Got an update on what these patches are yet?
-> 
-> 
-> -Olof
-> 
+On Tue, May 28, 2013 at 8:59 PM, Tushar Behera <tushar.behera@linaro.org> wrote:
 
-The patches are at [1]. There are a total of 6 patches on top of
-v3.10-rc3. 3 of them (a, b, d) are queued for 3.10-rc4 and another patch
-(c) is just a defconfig hack to get Arndale booting. Remaining 2 patches
-(e, f) are required to reset the hub during EHCI initialization.
+> The patches are at [1].
 
-a. ARM: exynos: defconfig update
-b. ARM: EXYNOS: Update defconfig for Arndale and Origen board
-c. [TEMP] ARM: EXYNOS: Set low-level UART port to 2
-d. ARM: dts: Enabling samsung-usb2phy driver for exynos5250
-e. usb: ehci-s5p: add the HSIC port initialization
-f. ARM: dts: Add USB gpio entries for Arndale board
+FWIW, a cgit/gitweb link is easier to follow when you're reading an
+email. Anyway, found the patches.
 
-I am not sure whether such kind of board-specific patches (e, f) are
-appreciated in the drivers. But that is all we need to get USB and
-Ethernet to work on v3.10-rc3 kernel.
+> There are a total of 6 patches on top of
+> v3.10-rc3. 3 of them (a, b, d) are queued for 3.10-rc4 and another patch
+> (c) is just a defconfig hack to get Arndale booting. Remaining 2 patches
+> (e, f) are required to reset the hub during EHCI initialization.
 
-[1] git://git.linaro.org/landing-teams/working/samsung/kernel.git
-(upstream/arndale-usb)
+Huh, I thought you said that (c) wasn't needed when I posted the
+defconfig update. It'd be nice to see the code fixed to handle this
+case instead of Linaro carrying a patch like this though. I.e. make it
+able to deselect the uart, or make it tied to DEBUG_LL like on other
+platforms instead of having a separate config for this.
 
--- 
-Tushar Behera
+> a. ARM: exynos: defconfig update
+> b. ARM: EXYNOS: Update defconfig for Arndale and Origen board
+> c. [TEMP] ARM: EXYNOS: Set low-level UART port to 2
+> d. ARM: dts: Enabling samsung-usb2phy driver for exynos5250
+> e. usb: ehci-s5p: add the HSIC port initialization
+> f. ARM: dts: Add USB gpio entries for Arndale board
+>
+> I am not sure whether such kind of board-specific patches (e, f) are
+> appreciated in the drivers. But that is all we need to get USB and
+> Ethernet to work on v3.10-rc3 kernel.
+
+I've come across a similar situation with wifi reset sequence on the
+chromebook. On the product kernel we added some code to the board file
+to deal with it, but if we keep doing that things will grow out of
+hand.
+
+I don't know if it'll be unpopular, but I think it's time to start a
+drivers/platform/arm for these kind of things, and have those drivers
+probe on the system compatible value, similar to how x86 does it (with
+DMI tables). At least that's my plan for approaching the wifi
+reset/power-on sequence on the Chromebook. I hope to have patches in
+not all that long...
+
+Likewise, the hub reset/enable code doesn't have to go with the USB
+driver, right? I.e. if you cycle reset/enable on the hub after the
+host and phy is configured, you'll still have a working setup?
+
+
+-Olof
