@@ -1,51 +1,109 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen
- board
-Date: Thu, 30 May 2013 09:07:30 +0530
-Message-ID: <51A6C97A.6030306@linaro.org>
-References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org> <87sj1qzaov.fsf@linaro.org> <5191AA89.6010901@linaro.org> <20130528231740.GA28879@quad.lixom.net> <51A57D39.8030506@linaro.org> <CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com> <51A5C16D.20408@linaro.org> <000001ce5c4f$839f4cb0$8adde610$@samsung.com> <CAOesGMiYs6GfaWGWYB8cw_cJ6_RmmZTb4oPfXo1PYJT8-jdHzw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: EXYNOS: Consolidate multiple low-level UART port definitions
+Date: Thu, 30 May 2013 10:10:27 +0530
+Message-ID: <1369888827-9427-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:55004 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S967409Ab3E3Dhh (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:47016 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863Ab3E3Eyb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 May 2013 23:37:37 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rq2so10244837pbb.33
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 May 2013 20:37:37 -0700 (PDT)
-In-Reply-To: <CAOesGMiYs6GfaWGWYB8cw_cJ6_RmmZTb4oPfXo1PYJT8-jdHzw@mail.gmail.com>
+	Thu, 30 May 2013 00:54:31 -0400
+Received: by mail-pd0-f182.google.com with SMTP id g10so9971935pdj.27
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 May 2013 21:54:30 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Jingoo Han <jg1.han@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Patch Tracking <patches@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Vivek Gautam <gautam.vivek@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: arnd@arndb.de, patches@linaro.org, kgene.kim@samsung.com, olof@lixom.net
 
-On 05/30/2013 12:16 AM, Olof Johansson wrote:
-> On Wed, May 29, 2013 at 2:33 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> 
->> However, Olof Johansson mentioned, 'drivers/platform/arm/board_arndale.c'
->> would be a good alternative.
-> 
-> 
-> Whoa. I didn't quite realize what I proposed, or rather, how what I
-> proposed could be perceived. I take it back. :)
-> 
-> We must _not_ introduce something that will be abused as a new home
-> for board file junk. If we do introduce a platform glue directory it
-> would need to be very limited in scope. Compare to what's in
-> drivers/platform/x86 today.
-> 
-> 
-> -Olof
-> 
+There are two definitions for low-level UART ports for Exynos platform.
+CONFIG_S3C_LOWLEVEL_UART_PORT is used for printing "Uncompressing
+Linux... done, booting the kernel." and CONFIG_S3C_UART for other
+low-level messages.
 
-This was my proof-of-concept for moving USB hub reset code out of USB
-driver. Verified that it works.
+The assumption for both the uart ports is that they are pre-configured
+in the bootloader. Since they are essentially the same always, it
+would be good to consolidate them to use only one macro, in this case
+'DEBUG_S3C_UART' would be a better option.
 
-I would wait for your patches for wifi-reset sequence and then will add
-hub-reset code for Arndale.
+'DEBUG_S3C_UART' is defined only if DEBUG_LL is enabled. We can safely
+disable this option when DEBUG_LL is not defined and we can boot various
+boards with different UART port settings. Only drawback of this
+approach is that when DEBUG_LL is not defined, we would be missing the
+print "Uncompressing Linux... done, booting the kernel."
 
+Since CONFIG_S3C_LOWLEVEL_UART_PORT is still used by other Samsung
+boards, the consolidation applies only for ARCH_EXYNOS.
 
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/mach-exynos/include/mach/uncompress.h  |   11 ++++++++---
+ arch/arm/plat-samsung/include/plat/uncompress.h |   16 ++++++++++++++--
+ 2 files changed, 22 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/include/mach/uncompress.h b/arch/arm/mach-exynos/include/mach/uncompress.h
+index 2979995..45b5c2a 100644
+--- a/arch/arm/mach-exynos/include/mach/uncompress.h
++++ b/arch/arm/mach-exynos/include/mach/uncompress.h
+@@ -37,11 +37,16 @@ static void arch_detect_cpu(void)
+ 	chip_id >>= 20;
+ 	chip_id &= 0xf;
+ 
++#ifdef CONFIG_DEBUG_LL
+ 	if (chip_id == 0x5)
+-		uart_base = (volatile u8 *)EXYNOS5_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
++		uart_base = (volatile u8 *)EXYNOS5_PA_UART +
++			(S3C_UART_OFFSET * CONFIG_DEBUG_S3C_UART);
+ 	else
+-		uart_base = (volatile u8 *)EXYNOS4_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
+-
++		uart_base = (volatile u8 *)EXYNOS4_PA_UART +
++			(S3C_UART_OFFSET * CONFIG_DEBUG_S3C_UART);
++#else
++	uart_base = 0;
++#endif
+ 	/*
+ 	 * For preventing FIFO overrun or infinite loop of UART console,
+ 	 * fifo_max should be the minimum fifo size of all of the UART channels
+diff --git a/arch/arm/plat-samsung/include/plat/uncompress.h b/arch/arm/plat-samsung/include/plat/uncompress.h
+index 438b248..028c2a8 100644
+--- a/arch/arm/plat-samsung/include/plat/uncompress.h
++++ b/arch/arm/plat-samsung/include/plat/uncompress.h
+@@ -38,7 +38,11 @@ static void arch_detect_cpu(void);
+ #define FIFO_MAX	 (14)
+ 
+ #ifdef S3C_PA_UART
+-#define uart_base S3C_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT)
++#ifdef CONFIG_DEBUG_LL
++#define uart_base (S3C_PA_UART + (S3C_UART_OFFSET * CONFIG_DEBUG_S3C_UART))
++#else
++#define uart_base 0
++#endif
+ #endif
+ 
+ static __inline__ void
+@@ -66,6 +70,9 @@ uart_rd(unsigned int reg)
+ 
+ static void putc(int ch)
+ {
++	if (!uart_base)
++		return;
++
+ 	if (uart_rd(S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE) {
+ 		int level;
+ 
+@@ -118,7 +125,12 @@ static void arch_decomp_error(const char *x)
+ #ifdef CONFIG_S3C_BOOT_UART_FORCE_FIFO
+ static inline void arch_enable_uart_fifo(void)
+ {
+-	u32 fifocon = uart_rd(S3C2410_UFCON);
++	u32 fifocon;
++
++	if (!uart_base)
++		return;
++
++	fifocon = uart_rd(S3C2410_UFCON);
+ 
+ 	if (!(fifocon & S3C2410_UFCON_FIFOMODE)) {
+ 		fifocon |= S3C2410_UFCON_RESETBOTH;
 -- 
-Tushar Behera
+1.7.9.5
