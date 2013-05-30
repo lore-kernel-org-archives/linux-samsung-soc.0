@@ -1,75 +1,51 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 2/5] clk: samsung: Add support to register rate_table
- for PLL3xxx
-Date: Wed, 29 May 2013 16:44:18 -0700
-Message-ID: <CAD=FV=VDi+SfebiFnPNp8qR__9L=o9TJ+WSPRfRQLX+p+TMmJw@mail.gmail.com>
-References: <1369834677-20312-1-git-send-email-vikas.sajjan@linaro.org>
-	<1369834677-20312-3-git-send-email-vikas.sajjan@linaro.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen
+ board
+Date: Thu, 30 May 2013 09:07:30 +0530
+Message-ID: <51A6C97A.6030306@linaro.org>
+References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org> <87sj1qzaov.fsf@linaro.org> <5191AA89.6010901@linaro.org> <20130528231740.GA28879@quad.lixom.net> <51A57D39.8030506@linaro.org> <CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com> <51A5C16D.20408@linaro.org> <000001ce5c4f$839f4cb0$8adde610$@samsung.com> <CAOesGMiYs6GfaWGWYB8cw_cJ6_RmmZTb4oPfXo1PYJT8-jdHzw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:47599 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935040Ab3E2XoT (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:55004 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S967409Ab3E3Dhh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 May 2013 19:44:19 -0400
-Received: by mail-la0-f52.google.com with SMTP id fo13so9225668lab.39
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 May 2013 16:44:18 -0700 (PDT)
-In-Reply-To: <1369834677-20312-3-git-send-email-vikas.sajjan@linaro.org>
+	Wed, 29 May 2013 23:37:37 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rq2so10244837pbb.33
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 May 2013 20:37:37 -0700 (PDT)
+In-Reply-To: <CAOesGMiYs6GfaWGWYB8cw_cJ6_RmmZTb4oPfXo1PYJT8-jdHzw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, yadi.brar01@gmail.com, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Jingoo Han <jg1.han@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Patch Tracking <patches@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Vikas / Yadwinder,
+On 05/30/2013 12:16 AM, Olof Johansson wrote:
+> On Wed, May 29, 2013 at 2:33 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> 
+>> However, Olof Johansson mentioned, 'drivers/platform/arm/board_arndale.c'
+>> would be a good alternative.
+> 
+> 
+> Whoa. I didn't quite realize what I proposed, or rather, how what I
+> proposed could be perceived. I take it back. :)
+> 
+> We must _not_ introduce something that will be abused as a new home
+> for board file junk. If we do introduce a platform glue directory it
+> would need to be very limited in scope. Compare to what's in
+> drivers/platform/x86 today.
+> 
+> 
+> -Olof
+> 
 
-On Wed, May 29, 2013 at 6:37 AM, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
-> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
->
-> This patch defines a common rate_table which will contain recommended p, m, s,
-> k values for supported rates that needs to be changed for changing
-> corresponding PLL's rate.
->
-> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c    |    8 ++++----
->  drivers/clk/samsung/clk-exynos5250.c |   14 +++++++-------
->  drivers/clk/samsung/clk-pll.c        |   14 ++++++++++++--
->  drivers/clk/samsung/clk-pll.h        |   33 +++++++++++++++++++++++++++++++--
->  4 files changed, 54 insertions(+), 15 deletions(-)
+This was my proof-of-concept for moving USB hub reset code out of USB
+driver. Verified that it works.
 
-I also reviewed this in our gerrit
-<https://gerrit.chromium.org/gerrit/#/c/56742/>, but I'll summarize
-here for the list...
+I would wait for your patches for wifi-reset sequence and then will add
+hub-reset code for Arndale.
 
->  struct clk * __init samsung_clk_register_pll35xx(const char *name,
-> -                       const char *pname, const void __iomem *base)
-> +                       const char *pname, const void __iomem *base,
-> +                       const struct samsung_pll_rate_table *rate_table,
-> +                       const unsigned int rate_count)
 
-Feels like you should document here that rate_table needs to be sorted
-and the sort order.
-
-> +struct samsung_pll_rate_table {
-> +       unsigned  int rate;
-
-nit: extra space before "int" should be removed.
-
-Also: you can include rate here if you need a convenient place to
-store it (which sadly means that this structure can't be const).
-...but I do like Tomasz's idea of actually calculating it.  You can't
-know it at compile time since the parent rate comes from the device
-tree.
-
-compatible = "samsung,clock-xxti";
-clock-frequency = <24000000>;
-
-> +       unsigned int pdiv;
-> +       unsigned int mdiv;
-> +       unsigned int sdiv;
-> +       unsigned int kdiv;
-
-I think kdiv is signed.
-
--Doug
+-- 
+Tushar Behera
