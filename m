@@ -1,49 +1,137 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen board
-Date: Thu, 30 May 2013 20:58:39 +0530
-Message-ID: <CAHbNUh35vdhX4F7=QeXD9RMNKq42Vu-1yjx3LSKnbd_TH_+vrw@mail.gmail.com>
-References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
-	<87sj1qzaov.fsf@linaro.org>
-	<5191AA89.6010901@linaro.org>
-	<20130528231740.GA28879@quad.lixom.net>
-	<51A57D39.8030506@linaro.org>
-	<CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com>
-	<51A5C16D.20408@linaro.org>
-	<000001ce5c4f$839f4cb0$8adde610$@samsung.com>
-	<3D99F44C56954EC59167436E26BE91F6@sisodomain.com>
-	<CAHbNUh0kWxqDMvLwE-_PKQVassDJvbgiCiDDNSHn9AW3md=A5A@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 2/5] clk: samsung: Add support to register rate_table
+ for PLL3xxx
+Date: Thu, 30 May 2013 08:55:10 -0700
+Message-ID: <CAD=FV=VEUTimNVqQvVZAkU7Qa9yy4R99E+WHA-aOzn61JBH_fw@mail.gmail.com>
+References: <1369834677-20312-1-git-send-email-vikas.sajjan@linaro.org>
+	<1369834677-20312-3-git-send-email-vikas.sajjan@linaro.org>
+	<CAD=FV=VDi+SfebiFnPNp8qR__9L=o9TJ+WSPRfRQLX+p+TMmJw@mail.gmail.com>
+	<CAKew6eVGnHNN7Fk=sqzE1iV+SFtJ1z4k1freeWdbGaYPXqpUvQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:40234 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933196Ab3E3P2k (ORCPT
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:34210 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756361Ab3E3PzN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 May 2013 11:28:40 -0400
-Received: by mail-ob0-f170.google.com with SMTP id ef5so864867obb.29
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 May 2013 08:28:39 -0700 (PDT)
-In-Reply-To: <CAHbNUh0kWxqDMvLwE-_PKQVassDJvbgiCiDDNSHn9AW3md=A5A@mail.gmail.com>
+	Thu, 30 May 2013 11:55:13 -0400
+Received: by mail-lb0-f180.google.com with SMTP id r10so716949lbi.25
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 May 2013 08:55:10 -0700 (PDT)
+In-Reply-To: <CAKew6eVGnHNN7Fk=sqzE1iV+SFtJ1z4k1freeWdbGaYPXqpUvQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, lkml <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Patch Tracking <patches@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Julius Werner <jwerner@chromium.org>
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-Resending in plain-text mode.
+Yadwinder and Vikas,
 
-On 30 May 2013 20:56, Tushar Behera <tushar.behera@linaro.org> wrote:
->>>
->> We do have a driver for USB3503 in upstream now, which has enough
->> infrastructure for us to use.
->> We just want to handle states of HUB_CONNECT line or RESET_N line, which
->> should just be fine with this driver.
+On Wed, May 29, 2013 at 11:55 PM, Yadwinder Singh Brar
+<yadi.brar01@gmail.com> wrote:
+>> Also: you can include rate here if you need a convenient place to
+>> store it (which sadly means that this structure can't be const).
+>> ...but I do like Tomasz's idea of actually calculating it.  You can't
+>> know it at compile time since the parent rate comes from the device
+>> tree.
 >>
->> Am I missing something ?
+>> compatible = "samsung,clock-xxti";
+>> clock-frequency = <24000000>;
 >>
+>
+> Actually this table should contain the recommended values
+> and if we see the user manual, the input(parent) rate is also a part
+> of recommended
+> table of different output rate for a particular PLL for that SoC.
 
-The USB3503 driver is an I2C client driver. In case of Arndale, the SDA and
-SCL lines for SMSC3503 chip are sorted, hence there are no I2C channels that
-the driver can register to. So effectively we can't use that driver for
-Arndale.
+That's a reasonable point.  It's not clear to me whether the
+recommended PMSK values would be the same or different if the input
+wasn't 24MHz.  You're assuming that they would be different and that
+seems fair given my (limited) understanding of the electrical
+characteristics of PLLs.
 
--- 
-Tushar Behera
+...so if a given SoC needed to support multiple different parent clock
+frequencies the presumably it would have multiple tables and pick the
+right one to pass in.
+
+
+> So as Tomasz said input(parent) rate may change with board,
+> then, do those corresponding recommended p, m, s, k will be valid?
+>
+> In case, input(parent) rate changes then we may need different set of p, m ,s, k
+> values recommended for new input rate to get required(recommended to
+> use) output rate.
+>
+> So, we think its better that the p, m, s and k along with the parent
+> is known at the compile time ( or DT ?),
+> as these p, m, s, k values are very much coupled with the parent rate
+> to achieve the
+>  required(recommended to use) output rate.
+
+Having the rate in the table definitely makes it easier to understand,
+too.  We just have to hope someone doesn't mess up in their
+calculation.  Worst case we could put some error checking somewhere.
+
+
+> Also, since the sorted table is required (sorted based on "rate"),
+> its better to have the rate in a const rate table.
+
+You _could_ still sort the table based on eventually rate even if the
+actual rate wasn't in the table.  ...but I agree that it's harder to
+look at and figure out.
+
+
+> And the whole set of recommended values should come from same place(DT
+> or static table),
+> to keep the things simple and consistent.
+
+Agree that it's a little weird now that some bits of the clock code is
+in the device tree and some bits are just static tables in code.
+...but I think that's OK for now.
+
+Perhaps a reasonable compromise is to include "24mhz" in the name of
+the tables (in later patches) and then give a WARN_ON if the xxti
+clock isn't 24MHz.  Then you've effectively documented the plan of
+action should someone eventually need a different xxti clock.
+
+
+> Moreover, practically for a particular SoC , we use the recommended
+> input(parent) rate only for a PLL.
+> So we should keep the things simple here presently.
+
+>From what I've seen so far I could totally believe Samsung releasing a
+new user manual in the future that provides instructions for using a
+non-24MHz xxti clock.  ...but with all of the above I think we've got
+a reasonable story so I think we're good.
+
+
+>>> +       unsigned int pdiv;
+>>> +       unsigned int mdiv;
+>>> +       unsigned int sdiv;
+>>> +       unsigned int kdiv;
+>>
+>> I think kdiv is signed.
+>>
+>
+> No, as these values should be the recommended values to be written in
+> corresponding  register bits. So it should remain unsigned.
+>
+> K value should be considered as negative only while recalculating rate.
+>
+> As per exynos5250 user manual's section 7.3.2 :
+> " K value description "Postive value (Negative value)":
+> Postive values is that you should write EPLLCON/VPLLCON register.
+> Negative value is that you can calculate PLL output frequency with it."
+
+OK, fair point.  We can keep it unsigned in this table.
+
+
+To summarize where I think we are in this series, I'm hoping for one
+more version that:
+* Adds a comment about the rate table being sorted (and which direction)
+* Adds "24mhz" to the variable name for the PLL tables in future patch series
+* Adds a WARN_ON if the xxti clock isn't 24MHz
+
+
+Does that sound like a plan?  Tomasz: any thoughts on the above?
+
+
+-Doug
