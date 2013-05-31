@@ -1,61 +1,60 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Consolidate multiple low-level UART port
- definitions
-Date: Fri, 31 May 2013 08:28:16 +0530
-Message-ID: <51A811C8.9090509@linaro.org>
-References: <1369888827-9427-1-git-send-email-tushar.behera@linaro.org> <CAOesGMgt=zvPM7WoHn4VcUkw28j7+HDUvU2n3hNojx7Nr5PqJQ@mail.gmail.com>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: Re: [PATCH v2 0/3] Add DP related DT and Display-timing Node to
+ exynos5250 based Arndale Board
+Date: Fri, 31 May 2013 08:36:53 +0530
+Message-ID: <CAD025yQ_WKdJzDTpWCdFK1BVqGLw3AQFgL6b-pKq_CcV69zD7g@mail.gmail.com>
+References: <1368540766-9818-1-git-send-email-vikas.sajjan@linaro.org> <019801ce5d97$7cdac500$76904f00$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:51531 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751741Ab3EaC6W (ORCPT
+Received: from mail-la0-f45.google.com ([209.85.215.45]:50115 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751741Ab3EaDHT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 May 2013 22:58:22 -0400
-Received: by mail-pb0-f53.google.com with SMTP id un4so1444886pbc.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 May 2013 19:58:21 -0700 (PDT)
-In-Reply-To: <CAOesGMgt=zvPM7WoHn4VcUkw28j7+HDUvU2n3hNojx7Nr5PqJQ@mail.gmail.com>
+	Thu, 30 May 2013 23:07:19 -0400
+Received: by mail-la0-f45.google.com with SMTP id fr10so949160lab.32
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 May 2013 20:07:14 -0700 (PDT)
+In-Reply-To: <019801ce5d97$7cdac500$76904f00$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Patch Tracking <patches@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, jg1.han@samsung.com, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-On 05/31/2013 02:41 AM, Olof Johansson wrote:
-> Hi,
-> 
-> On Wed, May 29, 2013 at 9:40 PM, Tushar Behera <tushar.behera@linaro.org> wrote:
->> There are two definitions for low-level UART ports for Exynos platform.
->> CONFIG_S3C_LOWLEVEL_UART_PORT is used for printing "Uncompressing
->> Linux... done, booting the kernel." and CONFIG_S3C_UART for other
->> low-level messages.
->>
->> The assumption for both the uart ports is that they are pre-configured
->> in the bootloader. Since they are essentially the same always, it
->> would be good to consolidate them to use only one macro, in this case
->> 'DEBUG_S3C_UART' would be a better option.
->>
->> 'DEBUG_S3C_UART' is defined only if DEBUG_LL is enabled. We can safely
->> disable this option when DEBUG_LL is not defined and we can boot various
->> boards with different UART port settings. Only drawback of this
->> approach is that when DEBUG_LL is not defined, we would be missing the
->> print "Uncompressing Linux... done, booting the kernel."
->>
->> Since CONFIG_S3C_LOWLEVEL_UART_PORT is still used by other Samsung
->> boards, the consolidation applies only for ARCH_EXYNOS.
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> 
-> This looks reasonable, but you have to convert the other samsung
-> platforms too -- it's not ok to ignore them.
-> 
+Thanks Mr. Kim
 
-Sure thing. I will update those platforms in a subsequent patchset.
+On 31 May 2013 06:10, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Vikas Sajjan wrote:
+>>
+>> This patch series adds support for DP on Exynos5250 based Arndale Board
+>>
+>> changes since v1:
+>>       - moved display-timimg node inside fimd DT node as suggested by
+>>       Steffen Trumtrar s.trumtrar@pengutronix.de
+>>
+>> Is based on branch "for-next"
+>> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>>
+>>
+>> Vikas Sajjan (3):
+>>   ARM: dts: Add DT node for DP controller for Arndale Board
+>>   ARM: dts: Add clock provider information for DP controller in
+>>     Exynos5250 SoC
+>>   ARM: dts: Add display timing node to exynos5250-arndale.dts
+>>
+>>  arch/arm/boot/dts/exynos5250-arndale.dts |   28
+>> ++++++++++++++++++++++++++++
+>>  arch/arm/boot/dts/exynos5250.dtsi        |    2 ++
+>>  2 files changed, 30 insertions(+)
+>>
+> Looks good to me, applied.
+>
+> Thanks.
+>
+> - Kukjin
+>
 
-> 
-> -Olof
-> 
 
 
 -- 
-Tushar Behera
+Thanks and Regards
+ Vikas Sajjan
