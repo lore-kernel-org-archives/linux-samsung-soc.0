@@ -1,213 +1,68 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 3/3] ARM: S5P64X0: Remove duplicate uncompress code
-Date: Fri, 31 May 2013 17:19:04 +0530
-Message-ID: <1370000944-19786-4-git-send-email-tushar.behera@linaro.org>
-References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v3 0/6] Add generic set_rate clk_ops for PLL35xx and PLL36xx for samsung SoCs
+Date: Fri, 31 May 2013 18:01:30 +0530
+Message-ID: <1370003496-19288-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:50499 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756104Ab3EaMDU (ORCPT
+Received: from mail-pb0-f53.google.com ([209.85.160.53]:47823 "EHLO
+	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754952Ab3EaMbv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 May 2013 08:03:20 -0400
-Received: by mail-pb0-f47.google.com with SMTP id rr4so2101142pbb.20
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 05:03:19 -0700 (PDT)
-In-Reply-To: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
+	Fri, 31 May 2013 08:31:51 -0400
+Received: by mail-pb0-f53.google.com with SMTP id un4so2111947pbc.40
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 05:31:50 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, yadi.brar01@gmail.com, dianders@chromium.org, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, thomas.abraham@linaro.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-The uncompress code in S5P64X0 is almost same as the uncompress code
-defined in plat-samsung. Better to reuse that code.
+This patch series does the following: 
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/mach-s5p64x0/include/mach/uncompress.h |  163 ++---------------------
- 1 file changed, 8 insertions(+), 155 deletions(-)
+ 1) Factors out possible common code, unifies the clk strutures used
+    for PLL35xx & PLL36xx and usues clk->base instead of clk->con0
 
-diff --git a/arch/arm/mach-s5p64x0/include/mach/uncompress.h b/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-index 19e0d64..b28a551 100644
---- a/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-@@ -14,171 +14,24 @@
- #define __ASM_ARCH_UNCOMPRESS_H
- 
- #include <mach/map.h>
-+#include <plat/uncompress.h>
- 
--/*
-- * cannot use commonly <plat/uncompress.h>
-- * because uart base of S5P6440 and S5P6450 is different
-- */
--
--typedef unsigned int upf_t;	/* cannot include linux/serial_core.h */
--
--/* uart setup */
--
--unsigned int fifo_mask;
--unsigned int fifo_max;
--
--/* forward declerations */
--
--static void arch_detect_cpu(void);
--
--/* defines for UART registers */
--
--#include <plat/regs-serial.h>
--#include <plat/regs-watchdog.h>
--
--/* working in physical space... */
--#undef S3C2410_WDOGREG
--#define S3C2410_WDOGREG(x) ((S3C24XX_PA_WATCHDOG + (x)))
--
--/* how many bytes we allow into the FIFO at a time in FIFO mode */
--#define FIFO_MAX	 (14)
--
--unsigned long uart_base;
--
--static __inline__ void get_uart_base(void)
-+static void arch_detect_cpu(void)
- {
- 	unsigned int chipid;
- 
- 	chipid = *(const volatile unsigned int __force *) 0xE0100118;
- 
--	uart_base = S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT;
--
-+#ifdef DEBUG_LL
- 	if ((chipid & 0xff000) == 0x50000)
--		uart_base += 0xEC800000;
-+		uart_base = S5P6450_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
- 	else
--		uart_base += 0xEC000000;
--}
--
--static __inline__ void uart_wr(unsigned int reg, unsigned int val)
--{
--	volatile unsigned int *ptr;
--
--	get_uart_base();
--	ptr = (volatile unsigned int *)(reg + uart_base);
--	*ptr = val;
--}
--
--static __inline__ unsigned int uart_rd(unsigned int reg)
--{
--	volatile unsigned int *ptr;
--
--	get_uart_base();
--	ptr = (volatile unsigned int *)(reg + uart_base);
--	return *ptr;
--}
--
--/*
-- * we can deal with the case the UARTs are being run
-- * in FIFO mode, so that we don't hold up our execution
-- * waiting for tx to happen...
-- */
--
--static void putc(int ch)
--{
--	if (uart_rd(S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE) {
--		int level;
--
--		while (1) {
--			level = uart_rd(S3C2410_UFSTAT);
--			level &= fifo_mask;
--
--			if (level < fifo_max)
--				break;
--		}
--
--	} else {
--		/* not using fifos */
--
--		while ((uart_rd(S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXE) != S3C2410_UTRSTAT_TXE)
--			barrier();
--	}
--
--	/* write byte to transmission register */
--	uart_wr(S3C2410_UTXH, ch);
--}
--
--static inline void flush(void)
--{
--}
--
--#define __raw_writel(d, ad)			\
--	do {							\
--		*((volatile unsigned int __force *)(ad)) = (d); \
--	} while (0)
--
--
--#ifdef CONFIG_S3C_BOOT_ERROR_RESET
--
--static void arch_decomp_error(const char *x)
--{
--	putstr("\n\n");
--	putstr(x);
--	putstr("\n\n -- System resetting\n");
--
--	__raw_writel(0x4000, S3C2410_WTDAT);
--	__raw_writel(0x4000, S3C2410_WTCNT);
--	__raw_writel(S3C2410_WTCON_ENABLE | S3C2410_WTCON_DIV128 | S3C2410_WTCON_RSTEN | S3C2410_WTCON_PRESCALE(0x40), S3C2410_WTCON);
--
--	while(1);
--}
--
--#define arch_error arch_decomp_error
--#endif
--
--#ifdef CONFIG_S3C_BOOT_UART_FORCE_FIFO
--static inline void arch_enable_uart_fifo(void)
--{
--	u32 fifocon = uart_rd(S3C2410_UFCON);
--
--	if (!(fifocon & S3C2410_UFCON_FIFOMODE)) {
--		fifocon |= S3C2410_UFCON_RESETBOTH;
--		uart_wr(S3C2410_UFCON, fifocon);
--
--		/* wait for fifo reset to complete */
--		while (1) {
--			fifocon = uart_rd(S3C2410_UFCON);
--			if (!(fifocon & S3C2410_UFCON_RESETBOTH))
--				break;
--		}
--	}
--}
-+		uart_base = S5P6440_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
- #else
--#define arch_enable_uart_fifo() do { } while(0)
-+	uart_base = NULL;
- #endif
- 
--static void arch_decomp_setup(void)
--{
--	/*
--	 * we may need to setup the uart(s) here if we are not running
--	 * on an BAST... the BAST will have left the uarts configured
--	 * after calling linux.
--	 */
--
--	arch_detect_cpu();
--
--	/*
--	 * Enable the UART FIFOs if they where not enabled and our
--	 * configuration says we should turn them on.
--	 */
--
--	arch_enable_uart_fifo();
-+	fifo_mask = S3C2440_UFSTAT_TXMASK;
-+	fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
- }
--
--
--
--static void arch_detect_cpu(void)
--{
--	/* we do not need to do any cpu detection here at the moment. */
--}
--
- #endif /* __ASM_ARCH_UNCOMPRESS_H */
+ 2) Defines a common rate_table which will contain recommended p, m, s and k
+    values for supported rates that needs to be changed for changing
+    corresponding PLL's rate
+
+ 3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
+
+changes since v2:
+	- Added new patch to reorder the MUX registration for mout_vpllsrc MUX
+	before the PLL registrations. And to add the alias for the mout_vpllsrc MUX.
+        - Added a check to confirm parent rate while registrating the PLL
+	rate tables.
+
+changes since v1:
+	- removed sorting and bsearch
+	- modified the definition of struct "samsung_pll_rate_table"
+	- added generic round_rate()
+	- rectified the ops assignment for "rate table passed as NULL"
+	  during PLL registration
+
+Is rebased on branch kgene's "for-next"
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+
+And tested these patch on chromebook for EPLL settings for Audio on our chrome tree.
+
+
+Vikas Sajjan (3):
+  clk: samsung: Add set_rate() clk_ops for PLL36xx
+  clk: samsung: Add alias for mout_vpllsrc and reorder MUX registration
+    for it
+  clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
+
+Yadwinder Singh Brar (3):
+  clk: samsung: Use clk->base instead of directly using clk->con0 for
+    PLL3xxx
+  clk: samsung: Add support to register rate_table for PLL3xxx
+  clk: samsung: Add set_rate() clk_ops for PLL35xx
+
+ drivers/clk/samsung/clk-exynos4.c    |   10 +-
+ drivers/clk/samsung/clk-exynos5250.c |   69 +++++++++--
+ drivers/clk/samsung/clk-pll.c        |  226 ++++++++++++++++++++++++++++++----
+ drivers/clk/samsung/clk-pll.h        |   35 +++++-
+ drivers/clk/samsung/clk.h            |    2 +
+ 5 files changed, 300 insertions(+), 42 deletions(-)
+
 -- 
 1.7.9.5
