@@ -1,121 +1,28 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v3 6/6] clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
-Date: Fri, 31 May 2013 18:01:36 +0530
-Message-ID: <1370003496-19288-7-git-send-email-vikas.sajjan@linaro.org>
-References: <1370003496-19288-1-git-send-email-vikas.sajjan@linaro.org>
+From: "yyyyyyy55@libero.it" <yyyyyyy55@libero.it>
+Subject: Hello dear! please write me back with this my private email;
+  (loveth_loveth4life@yahoo.in) thanks.
+Date: Fri, 31 May 2013 15:54:04 +0200 (CEST)
+Message-ID: <91900236.3318401370008444505.JavaMail.actor@webmail23>
+Reply-To: "yyyyyyy55@libero.it" <yyyyyyy55@libero.it>
+Mime-Version: 1.0
+Content-Type: text/plain;charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:51303 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754438Ab3EaMc3 (ORCPT
+Received: from outrelay01.libero.it ([212.52.84.101]:53550 "EHLO
+	outrelay01.libero.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753886Ab3EaNzH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 May 2013 08:32:29 -0400
-Received: by mail-pd0-f175.google.com with SMTP id 4so129635pdd.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 05:32:29 -0700 (PDT)
-In-Reply-To: <1370003496-19288-1-git-send-email-vikas.sajjan@linaro.org>
+	Fri, 31 May 2013 09:55:07 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, yadi.brar01@gmail.com, dianders@chromium.org, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, thomas.abraham@linaro.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Adds the EPLL and VPLL freq table for exynos5250 SoC.
+Hello dear!!
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
----
- drivers/clk/samsung/clk-exynos5250.c |   48 +++++++++++++++++++++++++++++++---
- drivers/clk/samsung/clk.h            |    2 ++
- 2 files changed, 47 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index b0e6680..0566421 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -473,11 +473,32 @@ static __initdata struct of_device_id ext_clk_match[] = {
- 	{ },
- };
- 
-+static const struct samsung_pll_rate_table vpll_24mhz_tbl[] = {
-+	/* sorted in descending order */
-+	/* PLL_36XX_RATE(rate, m, p, s, k) */
-+	PLL_36XX_RATE(266000000, 266, 3, 3, 0),
-+	PLL_36XX_RATE(70500000, 94, 2, 4, 0),
-+};
-+
-+static const struct samsung_pll_rate_table epll_24mhz_tbl[] = {
-+	/* sorted in descending order */
-+	/* PLL_36XX_RATE(rate, m, p, s, k) */
-+	PLL_36XX_RATE(192000000, 48, 3, 1, 0),
-+	PLL_36XX_RATE(180633600, 45, 3, 1, 10381),
-+	PLL_36XX_RATE(180000000, 45, 3, 1, 0),
-+	PLL_36XX_RATE(73728000, 73, 3, 3, 47710),
-+	PLL_36XX_RATE(67737600, 90, 4, 3, 20762),
-+	PLL_36XX_RATE(49152000, 49, 3, 3, 9962),
-+	PLL_36XX_RATE(45158400, 45, 3, 3, 10381),
-+	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-+};
-+
- /* register exynox5250 clocks */
- void __init exynos5250_clk_init(struct device_node *np)
- {
- 	void __iomem *reg_base;
- 	struct clk *apll, *mpll, *epll, *vpll, *bpll, *gpll, *cpll;
-+	unsigned long fin_pll_rate, mout_vpllsrc_rate;
- 
- 	if (np) {
- 		reg_base = of_iomap(np, 0);
-@@ -497,6 +518,9 @@ void __init exynos5250_clk_init(struct device_node *np)
- 	samsung_clk_register_mux(exynos5250_pll_pmux_clks,
- 			ARRAY_SIZE(exynos5250_pll_pmux_clks));
- 
-+	fin_pll_rate = _get_rate("fin_pll");
-+	mout_vpllsrc_rate = _get_rate("mout_vpllsrc");
-+
- 	apll = samsung_clk_register_pll35xx("fout_apll", "fin_pll",
- 			reg_base, NULL, 0);
- 	mpll = samsung_clk_register_pll35xx("fout_mpll", "fin_pll",
-@@ -507,10 +531,28 @@ void __init exynos5250_clk_init(struct device_node *np)
- 			reg_base + 0x10050, NULL, 0);
- 	cpll = samsung_clk_register_pll35xx("fout_cpll", "fin_pll",
- 			reg_base + 0x10020, NULL, 0);
--	epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
--			reg_base + 0x10030, NULL, 0);
--	vpll = samsung_clk_register_pll36xx("fout_vpll", "mout_vpllsrc",
-+
-+	if (fin_pll_rate == (24 * MHZ)) {
-+		epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
-+				reg_base + 0x10030, epll_24mhz_tbl,
-+				ARRAY_SIZE(epll_24mhz_tbl));
-+	} else {
-+		pr_warn("Exynos5250: valid epll rate_table missing for\n"
-+			"parent fin_pll:%lu hz\n", fin_pll_rate);
-+		epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
-+				reg_base + 0x10030, NULL, 0);
-+	}
-+
-+	if (mout_vpllsrc_rate == (24 * MHZ)) {
-+		vpll = samsung_clk_register_pll36xx("fout_vpll", "mout_vpllsrc"
-+			, reg_base + 0x10040, vpll_24mhz_tbl,
-+			ARRAY_SIZE(vpll_24mhz_tbl));
-+	} else {
-+		pr_warn("Exynos5250: valid vpll rate_table missing for\n"
-+			"parent mout_vpllsrc_rate:%lu hz\n", mout_vpllsrc_rate);
-+		samsung_clk_register_pll36xx("fout_vpll", "mout_vpllsrc",
- 			reg_base + 0x10040, NULL, 0);
-+	}
- 
- 	samsung_clk_register_fixed_rate(exynos5250_fixed_rate_clks,
- 			ARRAY_SIZE(exynos5250_fixed_rate_clks));
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index e4ad6ea..c997649 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -20,6 +20,8 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
-+#define MHZ (1000*1000)
-+
- /**
-  * struct samsung_clock_alias: information about mux clock
-  * @id: platform specific id of the clock.
--- 
-1.7.9.5
+how are you doing over there? i'm sorry if i may disturb with message.
+I hope all is with you over there,
+my name is Loveth 25yrs i saw your email through Google searching, i really 
+have some very vital Issue to discuss with you if you don't mind it's something 
+very very vital please reply me with this; (loveth_loveth4life@yahoo.in) it's 
+own private email box please don't forget (loveth_loveth4life@yahoo.in) i 
+waiting for your reply. have a wonderful day yours
+miss loveth.
