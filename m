@@ -1,89 +1,54 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V4 03/30] thermal: exynos: Remove CPU_THERMAL dependency
- for using TMU driver
-Date: Fri, 31 May 2013 11:13:10 -0400
-Message-ID: <51A8BE06.70009@ti.com>
-References: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com> <1368525540-15034-4-git-send-email-amit.daniel@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: EXYNOS: call scu_enable() only in case of cortex-A9 processor
+Date: Fri, 31 May 2013 08:14:22 -0700
+Message-ID: <CAD=FV=WvRydOHZTciwOEbQ6--+sd4qYSdiypUDwm2hWGDHZSKw@mail.gmail.com>
+References: <1369993395-6185-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2NXLPVKHLHSUDKEPTIENI"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:45427 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753111Ab3EaPN1 (ORCPT
+Received: from mail-la0-f45.google.com ([209.85.215.45]:37635 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753409Ab3EaPOY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 May 2013 11:13:27 -0400
-In-Reply-To: <1368525540-15034-4-git-send-email-amit.daniel@samsung.com>
+	Fri, 31 May 2013 11:14:24 -0400
+Received: by mail-la0-f45.google.com with SMTP id fr10so1475606lab.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 08:14:23 -0700 (PDT)
+In-Reply-To: <1369993395-6185-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>
 
-------enig2NXLPVKHLHSUDKEPTIENI
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Leela,
 
-On 14-05-2013 05:58, Amit Daniel Kachhap wrote:
-> This patch removes the dependency on CPU_THERMAL for compiling TMU driv=
-er.
-> This is useful for cases when only TMU controller needs to be initialis=
-ed
-> without cpu cooling action.
-
-
-Agreed with your intention. I just do not know if it makes sense to make
-this change at this point. Maybe after you have split the code?
-
-The above concern is simply from a non-functional perspective. If you do
-this at this point of your series, your driver may have compilation
-issues at this specific commit, in case your config does not have
-CONFIG_CPU_THERMAL.
-
-I recommend you moving this patch further in your series, to a place
-where you have isolated the code that depends on CPU_THERMAL.
-
->=20
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+On Fri, May 31, 2013 at 2:43 AM, Leela Krishna Amudala
+<l.krishna@samsung.com> wrote:
+> This patch reads the cpuid part number and if it matches with
+> cortex-A9, calls scu_enable()
+>
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 > ---
->  drivers/thermal/samsung/Kconfig |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/=
-Kconfig
-> index 145a55d..b5ab971 100644
-> --- a/drivers/thermal/samsung/Kconfig
-> +++ b/drivers/thermal/samsung/Kconfig
-> @@ -4,7 +4,6 @@ config ARCH_HAS_TMU
->  config EXYNOS_THERMAL
->  	tristate "Temperature sensor on Samsung EXYNOS"
->  	depends on ARCH_HAS_TMU
-> -	depends on CPU_THERMAL
->  	help
->  	  If you say yes here you get support for TMU (Thermal Management
->  	  Unit) on SAMSUNG EXYNOS series of SoC. This helps in registering
->=20
+>  arch/arm/mach-exynos/platsmp.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index a0e8ff7..d9c6d0a 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -200,7 +200,7 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>  {
+>         int i;
+>
+> -       if (!(soc_is_exynos5250() || soc_is_exynos5440()))
+> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>                 scu_enable(scu_base_addr());
+>
+>         /*
 
+Thanks for sending upstream.  For reference, our local version is here
+<https://gerrit.chromium.org/gerrit/#/c/56804/>.
 
---=20
-You have got to be excited about what you are doing. (L. Lamport)
+This is much better than listing every single non-A9 exynos in a big
+"if" test.  ;)
 
-Eduardo Valentin
-
-
-------enig2NXLPVKHLHSUDKEPTIENI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlGovgYACgkQCXcVR3XQvP2y3AEApjG7CdQf1WO7FgGuqyKOIjT0
-2PfZr6UuS5LMAxzo6uYBALx1GGC+eKxSTR2we62Fe3rPXKUtPnIYpVs6XUAB7TeL
-=msjL
------END PGP SIGNATURE-----
-
-------enig2NXLPVKHLHSUDKEPTIENI--
+Reviewed-by: Doug Anderson <dianders@chromium.org>
