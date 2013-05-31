@@ -1,21 +1,20 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 2/6] clk: samsung: Add support to register rate_table
- for PLL3xxx
-Date: Fri, 31 May 2013 10:08:39 -0700
-Message-ID: <CAD=FV=XnzS8TuvtGRrZ+jN=8AUYr-imL1bRsdWY3BDQVwm615g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] clk: samsung: Add set_rate() clk_ops for PLL35xx
+Date: Fri, 31 May 2013 10:10:58 -0700
+Message-ID: <CAD=FV=UuEYCjaiTHn0B2iBUyKqA+KcbGWMu4iTNhSDFPz3311w@mail.gmail.com>
 References: <1370003496-19288-1-git-send-email-vikas.sajjan@linaro.org>
-	<1370003496-19288-3-git-send-email-vikas.sajjan@linaro.org>
+	<1370003496-19288-4-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f50.google.com ([209.85.215.50]:63095 "EHLO
+Received: from mail-la0-f50.google.com ([209.85.215.50]:43261 "EHLO
 	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751311Ab3EaRIk (ORCPT
+	with ESMTP id S1756196Ab3EaRLB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 May 2013 13:08:40 -0400
-Received: by mail-la0-f50.google.com with SMTP id ed20so1575370lab.23
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 10:08:39 -0700 (PDT)
-In-Reply-To: <1370003496-19288-3-git-send-email-vikas.sajjan@linaro.org>
+	Fri, 31 May 2013 13:11:01 -0400
+Received: by mail-la0-f50.google.com with SMTP id ed20so1617416lab.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 10:10:58 -0700 (PDT)
+In-Reply-To: <1370003496-19288-4-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Vikas Sajjan <vikas.sajjan@linaro.org>
@@ -24,23 +23,28 @@ Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim
 Vikas and Yadwinder,
 
 On Fri, May 31, 2013 at 5:31 AM, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
-> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
->
-> This patch defines a common rate_table which will contain recommended p, m, s,
-> k values for supported rates that needs to be changed for changing
-> corresponding PLL's rate.
->
-> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c    |    8 ++++----
->  drivers/clk/samsung/clk-exynos5250.c |   14 +++++++-------
->  drivers/clk/samsung/clk-pll.c        |   14 ++++++++++++--
->  drivers/clk/samsung/clk-pll.h        |   35 ++++++++++++++++++++++++++++++++--
->  4 files changed, 56 insertions(+), 15 deletions(-)
+> +static long samsung_pll_round_rate(struct clk_hw *hw,
+> +                       unsigned long drate, unsigned long *prate)
+> +{
+> +       struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +       const struct samsung_pll_rate_table *rate_table = pll->rate_table;
+> +       int i;
+> +
+> +       /* Assumming rate_table is in descending order */
+> +       for (i = 0; i < pll->rate_count; i++) {
+> +               if (drate >= rate_table[i].rate)
+> +                       return rate_table[i].rate;
+> +       }
+> +
+> +       /* return minimum supported value */
+> +       return rate_table[i - 1].rate;
+> +}
+>  /*
+>   * PLL35xx Clock Type
+>   */
 
-This looks good to me.  Hopefully Tomasz agrees.  Tomasz: if you
-haven't been following this thread, see
-<https://patchwork.kernel.org/patch/2643351/> for how we resolved the
-constant vs. calculated input clock.
+You seem to have lost a carriage return between v2 and v3.  I will add
+it locally before applying.  This still looks good though and already
+has my Reviewed-by.
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+-Doug
