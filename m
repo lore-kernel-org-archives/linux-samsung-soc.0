@@ -1,220 +1,222 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC v2] exynos4-is: Add support for Exynos5250 MIPI-CSIS
-Date: Fri, 31 May 2013 17:23:21 +0200
-Message-ID: <1370013801-19143-1-git-send-email-s.nawrocki@samsung.com>
-References: <1370013035-18492-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:19228 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756079Ab3EaPXj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 May 2013 11:23:39 -0400
-In-reply-to: <1370013035-18492-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH V4 22/30] thermal: exynos: Add support for exynos5440
+ TMU sensor.
+Date: Fri, 31 May 2013 11:28:54 -0400
+Message-ID: <51A8C1B6.5080105@ti.com>
+References: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com> <1368525540-15034-23-git-send-email-amit.daniel@samsung.com> <51971046.3080201@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="----enig2DFNDCSAVEDWVRSFUUCTS"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51971046.3080201@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: jonghwa3.lee@samsung.com
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, arun.kk@samsung.com, shaik.ameer@samsung.com
-Cc: hj210.choi@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Add compatible property for the Exynos5250 and enable the frame start
-and frame end interrupts. These interrupts are needed for the Exynos5
-FIMC-IS firmware. The driver enables those interrupt only where available,
-depending on the 'compatible' property. This can be optimized further,
-by exposing some API at the subdev driver, so the host driver can enable
-extra interrupts only for the image processing chains involving FIMC-IS.
+------enig2DFNDCSAVEDWVRSFUUCTS
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
+Amit and Jonghwa,
 
-I've forgotten to squash a chunk swapping bits in the definitions of
-the FRAME_START/FRAME_END bits in S5PCSIS_INTMSK and S5PCSIS_INTSRC
-registers. Sorry about that.
+On 18-05-2013 01:23, jonghwa3.lee@samsung.com wrote:
+> On 2013=EB=85=84 05=EC=9B=94 14=EC=9D=BC 18:58, Amit Daniel Kachhap wro=
+te:
+>=20
+>> This patch modifies TMU controller to add changes needed to work with
+>> exynos5440 platform. This sensor registers 3 instance of the tmu contr=
+oller
+>> with the thermal zone and hence reports 3 temperature output. This con=
+troller
+>> supports upto five trip points. For critical threshold the driver uses=
+ the
+>> core driver thermal framework for shutdown.
+>>
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  .../devicetree/bindings/thermal/exynos-thermal.txt |   28 +++++++++++=
++-
+>>  drivers/thermal/samsung/exynos_tmu.c               |   43 +++++++++++=
+++++++--
+>>  drivers/thermal/samsung/exynos_tmu.h               |    6 +++
+>>  drivers/thermal/samsung/exynos_tmu_data.h          |    2 +
+>>  4 files changed, 72 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.=
+txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> index 535fd0e..970eeba 100644
 
-Thanks,
-Sylwester
----
- .../bindings/media/samsung-mipi-csis.txt           |    4 +-
- drivers/media/platform/exynos4-is/mipi-csis.c      |   67 ++++++++++++++++----
- 2 files changed, 58 insertions(+), 13 deletions(-)
+<cut>
 
-diff --git a/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt b/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
-index 5f8e28e..be45f0b 100644
---- a/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
-+++ b/Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
-@@ -5,8 +5,8 @@ Required properties:
+>> +			goto out;
+>=20
+>=20
+> I have a question about your implementation for supporting EXYNOS5440.
+> I don't know exactly how EXYNO5440's tmu is working, but just guess it =
+would be
+> similar with other EXYNOS series's without number of thermal sensors. (=
+exclusive
+> register map and threshold level). Due to the multiple number of therma=
+l sensor
+> in EXYNOS5440, it have multiple thermal zone devices and that's why it =
+just
+> leave interrupt pin in pending if interrupt is not its, right?
+>=20
+> So, my curious is, why we make all platform devices for each of thermal=
+ zone
+> devices? Why don't you just handle all thermal zone devices with one pl=
+atform
+> device?
+>=20
+> Yes, It's probably right to make multiple devices node to support them,=
+ because
+> it has different physical hardware(sensors). But we have one TMU , don'=
+t we?
+> (Maybe my assumption is wrong, I assume that it has one TMU because it =
+looks
+> like it has only one irq line.). If I'm right, I think it is better to =
+manage
+> all thermal zone devices with one platform device. Then, we don't need =
+to leave
+> irq handler with leaving it pendded like above and also we may not need=
+ other
+> your patches like adding base_common iomem variable.
+>=20
+> I'd like to listen your opinion about this.
+>=20
 
- - compatible	  : "samsung,s5pv210-csis" for S5PV210 (S5PC110),
- 		    "samsung,exynos4210-csis" for Exynos4210 (S5PC210),
--		    "samsung,exynos4212-csis" for Exynos4212/Exynos4412
--		    SoC series;
-+		    "samsung,exynos4212-csis" for Exynos4212/Exynos4412,
-+		    "samsung,exynos5250-csis" for Exynos5250;
- - reg		  : offset and length of the register set for the device;
- - interrupts      : should contain MIPI CSIS interrupt; the format of the
- 		    interrupt specifier depends on the interrupt controller;
-diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index ae99803..0fe80e3 100644
---- a/drivers/media/platform/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-@@ -1,8 +1,8 @@
- /*
-- * Samsung S5P/EXYNOS4 SoC series MIPI-CSI receiver driver
-+ * Samsung S5P/EXYNOS SoC series MIPI-CSI receiver driver
-  *
-- * Copyright (C) 2011 - 2012 Samsung Electronics Co., Ltd.
-- * Sylwester Nawrocki <s.nawrocki@samsung.com>
-+ * Copyright (C) 2011 - 2013 Samsung Electronics Co., Ltd.
-+ * Author: Sylwester Nawrocki <s.nawrocki@samsung.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -66,11 +66,12 @@ MODULE_PARM_DESC(debug, "Debug level (0-2)");
 
- /* Interrupt mask */
- #define S5PCSIS_INTMSK			0x10
--#define S5PCSIS_INTMSK_EN_ALL		0xf000103f
- #define S5PCSIS_INTMSK_EVEN_BEFORE	(1 << 31)
- #define S5PCSIS_INTMSK_EVEN_AFTER	(1 << 30)
- #define S5PCSIS_INTMSK_ODD_BEFORE	(1 << 29)
- #define S5PCSIS_INTMSK_ODD_AFTER	(1 << 28)
-+#define S5PCSIS_INTMSK_FRAME_START	(1 << 27)
-+#define S5PCSIS_INTMSK_FRAME_END	(1 << 26)
- #define S5PCSIS_INTMSK_ERR_SOT_HS	(1 << 12)
- #define S5PCSIS_INTMSK_ERR_LOST_FS	(1 << 5)
- #define S5PCSIS_INTMSK_ERR_LOST_FE	(1 << 4)
-@@ -78,6 +79,8 @@ MODULE_PARM_DESC(debug, "Debug level (0-2)");
- #define S5PCSIS_INTMSK_ERR_ECC		(1 << 2)
- #define S5PCSIS_INTMSK_ERR_CRC		(1 << 1)
- #define S5PCSIS_INTMSK_ERR_UNKNOWN	(1 << 0)
-+#define S5PCSIS_INTMSK_EXYNOS4_EN_ALL	0xf000103f
-+#define S5PCSIS_INTMSK_EXYNOS5_EN_ALL	0xfc00103f
+I understand the concern risen by Jonghwa. In fact, this is a bit
+confusing. The way I have decided to design the driver for TI
+(drivers/thermal/ti-soc-thermal under thermal tree next branch) is to
+have one platform device for the bandgap IP (that would be probably
+equivalent of  your TMU).
 
- /* Interrupt source */
- #define S5PCSIS_INTSRC			0x14
-@@ -88,6 +91,8 @@ MODULE_PARM_DESC(debug, "Debug level (0-2)");
- #define S5PCSIS_INTSRC_ODD_AFTER	(1 << 28)
- #define S5PCSIS_INTSRC_ODD		(0x3 << 28)
- #define S5PCSIS_INTSRC_NON_IMAGE_DATA	(0xff << 28)
-+#define S5PCSIS_INTSRC_FRAME_START	(1 << 27)
-+#define S5PCSIS_INTSRC_FRAME_END	(1 << 26)
- #define S5PCSIS_INTSRC_ERR_SOT_HS	(0xf << 12)
- #define S5PCSIS_INTSRC_ERR_LOST_FS	(1 << 5)
- #define S5PCSIS_INTSRC_ERR_LOST_FE	(1 << 4)
-@@ -155,6 +160,9 @@ static const struct s5pcsis_event s5pcsis_events[] = {
- 	{ S5PCSIS_INTSRC_EVEN_AFTER,	"Non-image data after even frame" },
- 	{ S5PCSIS_INTSRC_ODD_BEFORE,	"Non-image data before odd frame" },
- 	{ S5PCSIS_INTSRC_ODD_AFTER,	"Non-image data after odd frame" },
-+	/* Frame start/end */
-+	{ S5PCSIS_INTSRC_FRAME_START,	"Frame Start" },
-+	{ S5PCSIS_INTSRC_FRAME_END,	"Frame End" },
- };
- #define S5PCSIS_NUM_EVENTS ARRAY_SIZE(s5pcsis_events)
+Reasoning is to have a exact match between platform device and real HW
+device interface. Thus its device resources are belonging to one single
+device node. In TIs case, the resources, regarding IRQs, IO map area,
+registers, etc, are belonging to the bandgap IP not to sensors. That
+alone convinced me to use one single device node, instead of several,
+per sensor. In fact, for OMAP devices it is a bit more complicated as
+the bandgap is actually behind the control module, which holds the
+interface. But that is another story.
 
-@@ -163,6 +171,11 @@ struct csis_pktbuf {
- 	unsigned int len;
- };
+So, in this case I decided to have 1 single platform device representing
+the bandgap IP, which exposes and handles several thermal zones (one per
+sensor). And of course, owns and manages all related resources (IRQ,
+gpio and IO mem area).
 
-+struct csis_drvdata {
-+	/* Mask of all used interrupts in S5PCSIS_INTMSK register */
-+	u32 interrupt_mask;
-+};
-+
- /**
-  * struct csis_state - the driver's internal state data structure
-  * @lock: mutex serializing the subdev and power management operations,
-@@ -175,6 +188,7 @@ struct csis_pktbuf {
-  * @supplies: CSIS regulator supplies
-  * @clock: CSIS clocks
-  * @irq: requested s5p-mipi-csis irq number
-+ * @interrupt_mask: interrupt mask of the all used interrupts
-  * @flags: the state variable for power and streaming control
-  * @clock_frequency: device bus clock frequency
-  * @hs_settle: HS-RX settle time
-@@ -197,6 +211,7 @@ struct csis_state {
- 	struct regulator_bulk_data supplies[CSIS_NUM_SUPPLIES];
- 	struct clk *clock[NUM_CSIS_CLOCKS];
- 	int irq;
-+	u32 interrupt_mask;
- 	u32 flags;
+To what I have understood of your case, I believe it is the very same
+case, so I would recommend reusing the proposed design.
 
- 	u32 clk_frequency;
-@@ -278,9 +293,10 @@ static const struct csis_pix_format *find_csis_format(
- static void s5pcsis_enable_interrupts(struct csis_state *state, bool on)
- {
- 	u32 val = s5pcsis_read(state, S5PCSIS_INTMSK);
--
--	val = on ? val | S5PCSIS_INTMSK_EN_ALL :
--		   val & ~S5PCSIS_INTMSK_EN_ALL;
-+	if (on)
-+		val |= state->interrupt_mask;
-+	else
-+		val &= ~state->interrupt_mask;
- 	s5pcsis_write(state, S5PCSIS_INTMSK, val);
- }
+Keep in mind that this obviously does not stop you of having different
+policies or trip setups per sensor. The framework is flexible in this sen=
+se.
 
-@@ -803,8 +819,12 @@ static int s5pcsis_parse_dt(struct platform_device *pdev,
- #define s5pcsis_parse_dt(pdev, state) (-ENOSYS)
- #endif
+I hope this helps.
 
-+static const struct of_device_id s5pcsis_of_match[];
-+
- static int s5pcsis_probe(struct platform_device *pdev)
- {
-+	const struct of_device_id *of_id;
-+	const struct csis_drvdata *drv_data;
- 	struct device *dev = &pdev->dev;
- 	struct resource *mem_res;
- 	struct csis_state *state;
-@@ -819,10 +839,19 @@ static int s5pcsis_probe(struct platform_device *pdev)
- 	spin_lock_init(&state->slock);
- 	state->pdev = pdev;
+> Thanks,
+> Jonghwa
+>=20
+>> +	}
+>> =20
+>>  	exynos_report_trigger(data->reg_conf);
+>>  	mutex_lock(&data->lock);
+>> @@ -358,7 +390,7 @@ static void exynos_tmu_work(struct work_struct *wo=
+rk)
+>> =20
+>>  	clk_disable(data->clk);
+>>  	mutex_unlock(&data->lock);
+>> -
+>> +out:
+>>  	enable_irq(data->irq);
+>>  }
+>> =20
+>> @@ -520,7 +552,8 @@ static int exynos_tmu_probe(struct platform_device=
+ *pdev)
+>>  		return ret;
+>> =20
+>>  	if (pdata->type =3D=3D SOC_ARCH_EXYNOS ||
+>> -				pdata->type =3D=3D SOC_ARCH_EXYNOS4210)
+>> +		pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
+>> +				pdata->type =3D=3D SOC_ARCH_EXYNOS5440)
+>>  		data->soc =3D pdata->type;
+>>  	else {
+>>  		ret =3D -EINVAL;
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sa=
+msung/exynos_tmu.h
+>> index 65443d7..9151a30 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>> @@ -44,6 +44,7 @@ enum trigger_type {
+>>  enum soc_type {
+>>  	SOC_ARCH_EXYNOS4210 =3D 1,
+>>  	SOC_ARCH_EXYNOS,
+>> +	SOC_ARCH_EXYNOS5440,
+>>  };
+>> =20
+>>  /**
+>> @@ -132,6 +133,8 @@ enum soc_type {
+>>   * @emul_temp_shift: shift bits of emulation temperature.
+>>   * @emul_time_shift: shift bits of emulation time.
+>>   * @emul_time_mask: mask bits of emulation time.
+>> + * @tmu_irqstatus: register to find which TMU generated interrupts.
+>> + * @tmu_pmin: register to get/set the Pmin value.
+>>   */
+>>  struct exynos_tmu_registers {
+>>  	u32	triminfo_data;
+>> @@ -199,6 +202,9 @@ struct exynos_tmu_registers {
+>>  	u32	emul_temp_shift;
+>>  	u32	emul_time_shift;
+>>  	u32	emul_time_mask;
+>> +
+>> +	u32	tmu_irqstatus;
+>> +	u32	tmu_pmin;
+>>  };
+>> =20
+>>  /**
+>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therm=
+al/samsung/exynos_tmu_data.h
+>> index 0e2244f..4acf070 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+>> @@ -91,6 +91,8 @@
+>>  #define EXYNOS_EMUL_DATA_MASK	0xFF
+>>  #define EXYNOS_EMUL_ENABLE	0x1
+>> =20
+>> +#define EXYNOS_MAX_TRIGGER_PER_REG	4
+>> +
+>>  #if defined(CONFIG_CPU_EXYNOS4210)
+>>  extern struct exynos_tmu_platform_data const exynos4210_default_tmu_d=
+ata;
+>>  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
+>=20
+>=20
+>=20
+>=20
 
--	if (dev->of_node)
-+	if (dev->of_node) {
-+		of_id = of_match_node(s5pcsis_of_match, dev->of_node);
-+		if (WARN_ON(of_id == NULL))
-+			return -EINVAL;
-+
-+		drv_data = of_id->data;
-+		state->interrupt_mask = drv_data->interrupt_mask;
-+
- 		ret = s5pcsis_parse_dt(pdev, state);
--	else
-+	} else {
- 		ret = s5pcsis_get_platform_data(pdev, state);
-+	}
-+
- 	if (ret < 0)
- 		return ret;
 
-@@ -1018,9 +1047,25 @@ static const struct dev_pm_ops s5pcsis_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(s5pcsis_suspend, s5pcsis_resume)
- };
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
 
-+static const struct csis_drvdata exynos4_csis_drvdata = {
-+	.interrupt_mask = S5PCSIS_INTMSK_EXYNOS4_EN_ALL,
-+};
-+
-+static const struct csis_drvdata exynos5_csis_drvdata = {
-+	.interrupt_mask = S5PCSIS_INTMSK_EXYNOS5_EN_ALL,
-+};
-+
- static const struct of_device_id s5pcsis_of_match[] = {
--	{ .compatible = "samsung,s5pv210-csis" },
--	{ .compatible = "samsung,exynos4210-csis" },
-+	{
-+		.compatible = "samsung,s5pv210-csis",
-+		.data = &exynos4_csis_drvdata,
-+	}, {
-+		.compatible = "samsung,exynos4210-csis",
-+		.data = &exynos4_csis_drvdata,
-+	}, {
-+		.compatible = "samsung,exynos5250-csis",
-+		.data = &exynos5_csis_drvdata,
-+	},
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, s5pcsis_of_match);
---
-1.7.9.5
+Eduardo Valentin
+
+
+------enig2DFNDCSAVEDWVRSFUUCTS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlGowbYACgkQCXcVR3XQvP18ewEA6b9ZjnckaGlWNKqB3LQ8SKqc
+TtMquyg+DVWw6Ibrm9kBALa6Gjk8/r93fy8qBm5NXTYFUOnACKduT3Ae8BvDIcWE
+=ysO8
+-----END PGP SIGNATURE-----
+
+------enig2DFNDCSAVEDWVRSFUUCTS--
