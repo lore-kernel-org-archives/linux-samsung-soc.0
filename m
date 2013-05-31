@@ -1,45 +1,95 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: call scu_enable() only in case of cortex-A9
- processor
-Date: Fri, 31 May 2013 15:13:15 +0530
-Message-ID: <1369993395-6185-1-git-send-email-l.krishna@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH 1/3] ARM: EXYNOS: uncompress - print debug messages if DEBUG_LL is defined
+Date: Fri, 31 May 2013 17:19:02 +0530
+Message-ID: <1370000944-19786-2-git-send-email-tushar.behera@linaro.org>
+References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:40958 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754477Ab3EaJTI (ORCPT
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:57302 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753687Ab3EaMDN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 May 2013 05:19:08 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MNN004KLOJ9I5I0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 31 May 2013 18:19:06 +0900 (KST)
+	Fri, 31 May 2013 08:03:13 -0400
+Received: by mail-pd0-f178.google.com with SMTP id w11so2078291pde.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 05:03:12 -0700 (PDT)
+In-Reply-To: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, dianders@chromium.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org
 
-This patch reads the cpuid part number and if it matches with
-cortex-A9, calls scu_enable()
+Printing low-level debug messages make an assumption that the specified
+UART port has been preconfigured by the bootloader. Incorrectly
+specified UART port results in system getting stalled while printing the
+message "Uncompressing Linux... done, booting the kernel"
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+This UART port number is specified through S3C_LOWLEVEL_UART_PORT. Since
+the UART port might different for different board, it is not possible to
+specify it correctly for every board that use a common defconfig file.
+
+Calling this print subroutine only when DEBUG_LL fixes the problem. By
+disabling DEBUG_LL in default config file, we would be able to boot
+multiple boards with different default UART ports.
+
+With this current approach, we miss the print "Uncompressing Linux...
+done, booting the kernel." when DEBUG_LL is not defined.
+
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- arch/arm/mach-exynos/platsmp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-exynos/include/mach/uncompress.h  |   11 ++++++++---
+ arch/arm/plat-samsung/include/plat/uncompress.h |   10 +++++++++-
+ 2 files changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index a0e8ff7..d9c6d0a 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -200,7 +200,7 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
- {
- 	int i;
+diff --git a/arch/arm/mach-exynos/include/mach/uncompress.h b/arch/arm/mach-exynos/include/mach/uncompress.h
+index 2979995..730f69f 100644
+--- a/arch/arm/mach-exynos/include/mach/uncompress.h
++++ b/arch/arm/mach-exynos/include/mach/uncompress.h
+@@ -37,11 +37,16 @@ static void arch_detect_cpu(void)
+ 	chip_id >>= 20;
+ 	chip_id &= 0xf;
  
--	if (!(soc_is_exynos5250() || soc_is_exynos5440()))
-+	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
- 		scu_enable(scu_base_addr());
- 
++#ifdef CONFIG_DEBUG_LL
+ 	if (chip_id == 0x5)
+-		uart_base = (volatile u8 *)EXYNOS5_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
++		uart_base = (volatile u8 *)EXYNOS5_PA_UART +
++			(S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
+ 	else
+-		uart_base = (volatile u8 *)EXYNOS4_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
+-
++		uart_base = (volatile u8 *)EXYNOS4_PA_UART +
++			(S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
++#else
++	uart_base = NULL;
++#endif
  	/*
+ 	 * For preventing FIFO overrun or infinite loop of UART console,
+ 	 * fifo_max should be the minimum fifo size of all of the UART channels
+diff --git a/arch/arm/plat-samsung/include/plat/uncompress.h b/arch/arm/plat-samsung/include/plat/uncompress.h
+index 438b248..350032b 100644
+--- a/arch/arm/plat-samsung/include/plat/uncompress.h
++++ b/arch/arm/plat-samsung/include/plat/uncompress.h
+@@ -66,6 +66,9 @@ uart_rd(unsigned int reg)
+ 
+ static void putc(int ch)
+ {
++	if (!uart_base)
++		return;
++
+ 	if (uart_rd(S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE) {
+ 		int level;
+ 
+@@ -118,7 +121,12 @@ static void arch_decomp_error(const char *x)
+ #ifdef CONFIG_S3C_BOOT_UART_FORCE_FIFO
+ static inline void arch_enable_uart_fifo(void)
+ {
+-	u32 fifocon = uart_rd(S3C2410_UFCON);
++	u32 fifocon;
++
++	if (!uart_base)
++		return;
++
++	fifocon = uart_rd(S3C2410_UFCON);
+ 
+ 	if (!(fifocon & S3C2410_UFCON_FIFOMODE)) {
+ 		fifocon |= S3C2410_UFCON_RESETBOTH;
 -- 
-1.7.10.4
+1.7.9.5
