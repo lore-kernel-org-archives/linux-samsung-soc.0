@@ -1,89 +1,71 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH] clk: samsung: Fix pll36xx_recalc_rate to handle kdiv properly
-Date: Sat, 1 Jun 2013 08:45:36 +0530
-Message-ID: <CAD025yQMn=kby1agOcV06OzFfNYFDfdok58b1EDtRb=cvB-hEg@mail.gmail.com>
-References: <1370026725-22910-1-git-send-email-dianders@chromium.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 1/3] ARM: EXYNOS: uncompress - print debug messages if
+ DEBUG_LL is defined
+Date: Fri, 31 May 2013 20:59:29 -0700
+Message-ID: <20130601035929.GA3868@quad.lixom.net>
+References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
+ <1370000944-19786-2-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:34526 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750856Ab3FADP6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 May 2013 23:15:58 -0400
-Received: by mail-la0-f43.google.com with SMTP id fe20so490048lab.16
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 20:15:56 -0700 (PDT)
-In-Reply-To: <1370026725-22910-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1370000944-19786-2-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org
 
-Hi Doug,
-
-Looks good to me.
-
-On 1 June 2013 00:28, Doug Anderson <dianders@chromium.org> wrote:
-> The KDIV value is often listed as unsigned but it needs to be treated
-> as a 16-bit signed value when using it in calculations.  Fix our rate
-> recalculation to do this correctly.
->
-> Before doing this, I tried setting EPLL on exynos5250 to:
->   rate, m, p, s, k = 80000000, 107, 2, 4, 43691
->
-> This rate is exactly from the table in the exynos5250 user manual.
->
-> I read this back as 80750003 with:
->   cat /sys/kernel/debug/clk/fin_pll/fout_epll/clk_rate
->
-> After this patch, it reads back as 80000003
->
->   mw 0x10020130 a06b0204
->   mw 0x10020134 0000aaab
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-
-
-Reviewed-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-
-
+On Fri, May 31, 2013 at 05:19:02PM +0530, Tushar Behera wrote:
+> Printing low-level debug messages make an assumption that the specified
+> UART port has been preconfigured by the bootloader. Incorrectly
+> specified UART port results in system getting stalled while printing the
+> message "Uncompressing Linux... done, booting the kernel"
+> 
+> This UART port number is specified through S3C_LOWLEVEL_UART_PORT. Since
+> the UART port might different for different board, it is not possible to
+> specify it correctly for every board that use a common defconfig file.
+> 
+> Calling this print subroutine only when DEBUG_LL fixes the problem. By
+> disabling DEBUG_LL in default config file, we would be able to boot
+> multiple boards with different default UART ports.
+> 
+> With this current approach, we miss the print "Uncompressing Linux...
+> done, booting the kernel." when DEBUG_LL is not defined.
+> 
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > ---
-> This patch is based upon another in-flight patch to avoid conflicts:
->   clk: samsung: Use clk->base instead of directly using clk->con0 for PLL3xxx
->   https://patchwork.kernel.org/patch/2629751/
->
->  drivers/clk/samsung/clk-pll.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 01f17cf..26416bb 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -115,7 +115,8 @@ static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
->                                 unsigned long parent_rate)
->  {
->         struct samsung_clk_pll *pll = to_clk_pll(hw);
-> -       u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
-> +       u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
-> +       s16 kdiv;
->         u64 fvco = parent_rate;
->
->         pll_con0 = pll_readl(pll, PLL36XX_CON0_OFFSET);
-> @@ -123,7 +124,7 @@ static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
->         mdiv = (pll_con0 >> PLL36XX_MDIV_SHIFT) & PLL36XX_MDIV_MASK;
->         pdiv = (pll_con0 >> PLL36XX_PDIV_SHIFT) & PLL36XX_PDIV_MASK;
->         sdiv = (pll_con0 >> PLL36XX_SDIV_SHIFT) & PLL36XX_SDIV_MASK;
-> -       kdiv = pll_con1 & PLL36XX_KDIV_MASK;
-> +       kdiv = (s16)(pll_con1 & PLL36XX_KDIV_MASK);
->
->         fvco *= (mdiv << 16) + kdiv;
->         do_div(fvco, (pdiv << sdiv));
-> --
-> 1.8.2.1
->
+>  arch/arm/mach-exynos/include/mach/uncompress.h  |   11 ++++++++---
+>  arch/arm/plat-samsung/include/plat/uncompress.h |   10 +++++++++-
+>  2 files changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/include/mach/uncompress.h b/arch/arm/mach-exynos/include/mach/uncompress.h
+> index 2979995..730f69f 100644
+> --- a/arch/arm/mach-exynos/include/mach/uncompress.h
+> +++ b/arch/arm/mach-exynos/include/mach/uncompress.h
+> @@ -37,11 +37,16 @@ static void arch_detect_cpu(void)
+>  	chip_id >>= 20;
+>  	chip_id &= 0xf;
+>  
+> +#ifdef CONFIG_DEBUG_LL
+>  	if (chip_id == 0x5)
+> -		uart_base = (volatile u8 *)EXYNOS5_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
+> +		uart_base = (volatile u8 *)EXYNOS5_PA_UART +
+> +			(S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
+>  	else
+> -		uart_base = (volatile u8 *)EXYNOS4_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
+> -
+> +		uart_base = (volatile u8 *)EXYNOS4_PA_UART +
+> +			(S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
+> +#else
+> +	uart_base = NULL;
+> +#endif
+
+You can do:
+
+	if (!config_enabled(CONFIG_DEBUG_LL))
+		return;
+
+Since uart_base will be set to 0 by being in BSS anyway.
 
 
-
---
-Thanks and Regards
- Vikas Sajjan
+-Olof
