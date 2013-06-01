@@ -1,70 +1,96 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 0/6] Samsung watchdog support clean-up
-Date: Sat, 01 Jun 2013 10:16:52 +0200
-Message-ID: <51A9ADF4.8010102@gmail.com>
-References: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
+Subject: Re: [PATCH V3 0/4] clk: Samsung: audss: Register audio subsytem clocks
+ using common clk framework
+Date: Sat, 01 Jun 2013 10:29:05 +0200
+Message-ID: <51A9B0D1.2090408@gmail.com>
+References: <1369735378-10003-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f48.google.com ([209.85.214.48]:50972 "EHLO
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:47530 "EHLO
 	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751191Ab3FAIQ5 (ORCPT
+	with ESMTP id S1751566Ab3FAI3K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Jun 2013 04:16:57 -0400
-In-Reply-To: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
+	Sat, 1 Jun 2013 04:29:10 -0400
+Received: by mail-bk0-f48.google.com with SMTP id jf20so1119931bkc.35
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Jun 2013 01:29:09 -0700 (PDT)
+In-Reply-To: <1369735378-10003-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, jhbird.choi@samsung.com
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, mturquette@linaro.org
 
-Hi Tomasz,
+Padmavathi,
 
-On 05/19/2013 12:37 AM, Tomasz Figa wrote:
-> This series is aiming at cleaning up a bit watchdog support on Samsung
-> SoCs. The patches tweak a bit all the watchdog handling code here and
-> there, with the goal of making it DT- and multiplatform-friendly.
+On 05/28/2013 12:02 PM, Padmavathi Venna wrote:
+> Samsung S5PV210 and Exynos SoC has a separate subsystem for audio. This subsystem
+> has a internal clock controller which controls i2s0 and pcm0 clocks. This patch
+> series adds the Samsung audio subsytem clock to the common clock framework and
+> provides the I2S controllers clock information in the dtsi file.
 >
-> See particular patches for more detailed descriptions.
+> This patch series is made based on Kukjin Kim for-next branch
 >
-> On S3C6410-based Tiny6410 board (Mini6410-compatible):
->
-> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
+> Changes since V2:
+> 	- Removed s5pv210 compatible name from driver as it is
+> 	  not yet supported which is different from Exynos series
+> 	  audio subsystem clock conroller.
+> 	- Removed clkdev lookup support and added alias names in
+> 	  the i2s0 controller node.
+> Changes since V1:
+>          - Reworked on all review comments by Sylwester Nawrocki
+>          - Added a header file for all clock indexes as requested by Sylwester
+>          - Added different compatible names for s5pv210, exynos4 and exynos5
+>          - Registered the pcm clocks with common clock framework
 
-I've tested this series on a s3c2440 based board. The system restart
-works fine.
+Overall it looks good to me. I'm only a bit uncomfortable with using 
+SAMSUNG_
+prefix for the clock index definitions. Ideally it should be something more
+specific to the SoC family. But I can't think of anything better at the 
+moment.
+This covers the Exynos and S5P SoCs, hence EXYNOS_ would not be appropriate.
 
-Tested-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+The patch series:
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-> Depends on:
->   - [PATCH] ARM: s5p64x0: Use common uncompress.h part for plat-samsung
->
-> Tomasz Figa (6):
->    watchdog: s3c2410_wdt: Use local register definitions
->    ARM: SAMSUNG: uncompress: Use local definitions of watchdog registers
->    ARM: SAMSUNG: Add watchdog reset driver
->    ARM: SAMSUNG: Let platforms use the new watchdog reset driver
->    ARM: SAMSUNG: Remove legacy watchdog reset code
->    ARM: SAMSUNG: Remove unused plat/regs-watchdog.h header
->
->   arch/arm/Kconfig                                   |  3 +
->   arch/arm/mach-s3c24xx/Kconfig                      |  2 +
->   arch/arm/mach-s3c24xx/s3c2410.c                    |  3 +-
->   arch/arm/mach-s3c24xx/s3c244x.c                    |  3 +-
->   arch/arm/mach-s3c64xx/common.c                     |  8 +-
->   arch/arm/mach-s5p64x0/common.c                     |  4 +-
->   arch/arm/mach-s5pc100/common.c                     |  3 +-
->   arch/arm/plat-samsung/Kconfig                      |  6 ++
->   arch/arm/plat-samsung/Makefile                     |  1 +
->   arch/arm/plat-samsung/include/plat/regs-watchdog.h | 41 ---------
->   arch/arm/plat-samsung/include/plat/uncompress.h    | 15 +++-
->   .../arm/plat-samsung/include/plat/watchdog-reset.h | 38 ++-------
->   arch/arm/plat-samsung/watchdog-reset.c             | 97 ++++++++++++++++++++++
->   drivers/watchdog/s3c2410_wdt.c                     | 17 +++-
->   14 files changed, 156 insertions(+), 85 deletions(-)
->   delete mode 100644 arch/arm/plat-samsung/include/plat/regs-watchdog.h
->   create mode 100644 arch/arm/plat-samsung/watchdog-reset.c>
-
---
-Regards,
+Thanks,
 Sylwester
+
+> Padmavathi Venna (4):
+>    ARM: samsung: use #include for all device trees
+>    clk: samsung: register audio subsystem clocks using common clock
+>      framework
+>    ARM: dts: add Exynos audio subsystem clock controller node
+>    ARM: dts: add clock provider information for i2s controllers in
+>      Exynos5250
+>
+>   .../bindings/clock/clk-samsung-audss.txt           |   64 ++++++++++
+>   arch/arm/boot/dts/exynos4.dtsi                     |    2 +-
+>   arch/arm/boot/dts/exynos4210-origen.dts            |    2 +-
+>   arch/arm/boot/dts/exynos4210-smdkv310.dts          |    2 +-
+>   arch/arm/boot/dts/exynos4210-trats.dts             |    2 +-
+>   arch/arm/boot/dts/exynos4210-universal_c210.dts    |    2 +-
+>   arch/arm/boot/dts/exynos4210.dtsi                  |    4 +-
+>   arch/arm/boot/dts/exynos4212.dtsi                  |    2 +-
+>   arch/arm/boot/dts/exynos4412-odroidx.dts           |    2 +-
+>   arch/arm/boot/dts/exynos4412-origen.dts            |    2 +-
+>   arch/arm/boot/dts/exynos4412-smdk4412.dts          |    2 +-
+>   arch/arm/boot/dts/exynos4412.dtsi                  |    2 +-
+>   arch/arm/boot/dts/exynos4x12.dtsi                  |    4 +-
+>   arch/arm/boot/dts/exynos5250-arndale.dts           |    2 +-
+>   arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 +-
+>   arch/arm/boot/dts/exynos5250-snow.dts              |    4 +-
+>   arch/arm/boot/dts/exynos5250.dtsi                  |   23 +++-
+>   arch/arm/boot/dts/exynos5440-sd5v1.dts             |    2 +-
+>   arch/arm/boot/dts/exynos5440-ssdk5440.dts          |    2 +-
+>   arch/arm/boot/dts/exynos5440.dtsi                  |    2 +-
+>   arch/arm/boot/dts/s3c2416-smdk2416.dts             |    2 +-
+>   arch/arm/boot/dts/s3c2416.dtsi                     |    4 +-
+>   arch/arm/boot/dts/s3c24xx.dtsi                     |    2 +-
+>   drivers/clk/samsung/Makefile                       |    1 +
+>   drivers/clk/samsung/clk-samsung-audss.c            |  133 ++++++++++++++++++++
+>   include/dt-bindings/clk/samsung-audss-clk.h        |   25 ++++
+>   26 files changed, 269 insertions(+), 27 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/clock/clk-samsung-audss.txt
+>   create mode 100644 drivers/clk/samsung/clk-samsung-audss.c
+>   create mode 100644 include/dt-bindings/clk/samsung-audss-clk.h
