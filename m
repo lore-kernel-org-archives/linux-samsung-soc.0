@@ -1,39 +1,70 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/3] ARM: SAMSUNG: Consolidate uncompress subroutine
-Date: Fri, 31 May 2013 21:00:46 -0700
-Message-ID: <20130601040046.GB3868@quad.lixom.net>
-References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
- <1370000944-19786-3-git-send-email-tushar.behera@linaro.org>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 0/6] Samsung watchdog support clean-up
+Date: Sat, 01 Jun 2013 10:16:52 +0200
+Message-ID: <51A9ADF4.8010102@gmail.com>
+References: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:64452 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750759Ab3FAEAp (ORCPT
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:50972 "EHLO
+	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751191Ab3FAIQ5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Jun 2013 00:00:45 -0400
-Received: by mail-pb0-f43.google.com with SMTP id ma3so3199898pbc.16
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 21:00:44 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1370000944-19786-3-git-send-email-tushar.behera@linaro.org>
+	Sat, 1 Jun 2013 04:16:57 -0400
+In-Reply-To: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, patches@linaro.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, jhbird.choi@samsung.com
 
-On Fri, May 31, 2013 at 05:19:03PM +0530, Tushar Behera wrote:
-> For mach-exynos, uart_base is a pointer and the value is calculated
-> in the machine folder. For other machines, uart_base is defined as
-> a macro in platform directory. For symmetry, the uart_base macro
-> definition is removed and the uart_base calculation is moved to
-> specific machine folders.
-> 
-> This would help us consolidating uncompress subroutine for s5p64x0.
+Hi Tomasz,
 
-Sorry, reading these in order and didn't go through all of them.
+On 05/19/2013 12:37 AM, Tomasz Figa wrote:
+> This series is aiming at cleaning up a bit watchdog support on Samsung
+> SoCs. The patches tweak a bit all the watchdog handling code here and
+> there, with the goal of making it DT- and multiplatform-friendly.
+>
+> See particular patches for more detailed descriptions.
+>
+> On S3C6410-based Tiny6410 board (Mini6410-compatible):
+>
+> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
 
-Same comment here, you can use config_enabled() and return early instead of
-adding ifdefs.
+I've tested this series on a s3c2440 based board. The system restart
+works fine.
 
+Tested-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
--Olof
+> Depends on:
+>   - [PATCH] ARM: s5p64x0: Use common uncompress.h part for plat-samsung
+>
+> Tomasz Figa (6):
+>    watchdog: s3c2410_wdt: Use local register definitions
+>    ARM: SAMSUNG: uncompress: Use local definitions of watchdog registers
+>    ARM: SAMSUNG: Add watchdog reset driver
+>    ARM: SAMSUNG: Let platforms use the new watchdog reset driver
+>    ARM: SAMSUNG: Remove legacy watchdog reset code
+>    ARM: SAMSUNG: Remove unused plat/regs-watchdog.h header
+>
+>   arch/arm/Kconfig                                   |  3 +
+>   arch/arm/mach-s3c24xx/Kconfig                      |  2 +
+>   arch/arm/mach-s3c24xx/s3c2410.c                    |  3 +-
+>   arch/arm/mach-s3c24xx/s3c244x.c                    |  3 +-
+>   arch/arm/mach-s3c64xx/common.c                     |  8 +-
+>   arch/arm/mach-s5p64x0/common.c                     |  4 +-
+>   arch/arm/mach-s5pc100/common.c                     |  3 +-
+>   arch/arm/plat-samsung/Kconfig                      |  6 ++
+>   arch/arm/plat-samsung/Makefile                     |  1 +
+>   arch/arm/plat-samsung/include/plat/regs-watchdog.h | 41 ---------
+>   arch/arm/plat-samsung/include/plat/uncompress.h    | 15 +++-
+>   .../arm/plat-samsung/include/plat/watchdog-reset.h | 38 ++-------
+>   arch/arm/plat-samsung/watchdog-reset.c             | 97 ++++++++++++++++++++++
+>   drivers/watchdog/s3c2410_wdt.c                     | 17 +++-
+>   14 files changed, 156 insertions(+), 85 deletions(-)
+>   delete mode 100644 arch/arm/plat-samsung/include/plat/regs-watchdog.h
+>   create mode 100644 arch/arm/plat-samsung/watchdog-reset.c>
+
+--
+Regards,
+Sylwester
