@@ -1,96 +1,37 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH V3 0/4] clk: Samsung: audss: Register audio subsytem clocks
- using common clk framework
-Date: Sat, 01 Jun 2013 10:29:05 +0200
-Message-ID: <51A9B0D1.2090408@gmail.com>
-References: <1369735378-10003-1-git-send-email-padma.v@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: S5P64X0: Remove duplicate uncompress code
+Date: Sat, 01 Jun 2013 10:41:32 +0200
+Message-ID: <51A9B3BC.9000405@gmail.com>
+References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org> <1370000944-19786-4-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f48.google.com ([209.85.214.48]:47530 "EHLO
-	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751566Ab3FAI3K (ORCPT
+Received: from mail-bk0-f41.google.com ([209.85.214.41]:36636 "EHLO
+	mail-bk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752632Ab3FAIli (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Jun 2013 04:29:10 -0400
-Received: by mail-bk0-f48.google.com with SMTP id jf20so1119931bkc.35
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Jun 2013 01:29:09 -0700 (PDT)
-In-Reply-To: <1369735378-10003-1-git-send-email-padma.v@samsung.com>
+	Sat, 1 Jun 2013 04:41:38 -0400
+In-Reply-To: <1370000944-19786-4-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, mturquette@linaro.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org, t.figa@gmail.com
 
-Padmavathi,
+Hi,
 
-On 05/28/2013 12:02 PM, Padmavathi Venna wrote:
-> Samsung S5PV210 and Exynos SoC has a separate subsystem for audio. This subsystem
-> has a internal clock controller which controls i2s0 and pcm0 clocks. This patch
-> series adds the Samsung audio subsytem clock to the common clock framework and
-> provides the I2S controllers clock information in the dtsi file.
+On 05/31/2013 01:49 PM, Tushar Behera wrote:
+> The uncompress code in S5P64X0 is almost same as the uncompress code
+> defined in plat-samsung. Better to reuse that code.
 >
-> This patch series is made based on Kukjin Kim for-next branch
->
-> Changes since V2:
-> 	- Removed s5pv210 compatible name from driver as it is
-> 	  not yet supported which is different from Exynos series
-> 	  audio subsystem clock conroller.
-> 	- Removed clkdev lookup support and added alias names in
-> 	  the i2s0 controller node.
-> Changes since V1:
->          - Reworked on all review comments by Sylwester Nawrocki
->          - Added a header file for all clock indexes as requested by Sylwester
->          - Added different compatible names for s5pv210, exynos4 and exynos5
->          - Registered the pcm clocks with common clock framework
+> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+> ---
+>   arch/arm/mach-s5p64x0/include/mach/uncompress.h |  163 ++---------------------
+>   1 file changed, 8 insertions(+), 155 deletions(-)
 
-Overall it looks good to me. I'm only a bit uncomfortable with using 
-SAMSUNG_
-prefix for the clock index definitions. Ideally it should be something more
-specific to the SoC family. But I can't think of anything better at the 
-moment.
-This covers the Exynos and S5P SoCs, hence EXYNOS_ would not be appropriate.
+Not sure if you are aware of it, Tomasz has already posted a patch that
+removes this duplicated code: https://patchwork.kernel.org/patch/2589331
+I think that patch is not yet merged though.
 
-The patch series:
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-Thanks,
+Regards,
 Sylwester
-
-> Padmavathi Venna (4):
->    ARM: samsung: use #include for all device trees
->    clk: samsung: register audio subsystem clocks using common clock
->      framework
->    ARM: dts: add Exynos audio subsystem clock controller node
->    ARM: dts: add clock provider information for i2s controllers in
->      Exynos5250
->
->   .../bindings/clock/clk-samsung-audss.txt           |   64 ++++++++++
->   arch/arm/boot/dts/exynos4.dtsi                     |    2 +-
->   arch/arm/boot/dts/exynos4210-origen.dts            |    2 +-
->   arch/arm/boot/dts/exynos4210-smdkv310.dts          |    2 +-
->   arch/arm/boot/dts/exynos4210-trats.dts             |    2 +-
->   arch/arm/boot/dts/exynos4210-universal_c210.dts    |    2 +-
->   arch/arm/boot/dts/exynos4210.dtsi                  |    4 +-
->   arch/arm/boot/dts/exynos4212.dtsi                  |    2 +-
->   arch/arm/boot/dts/exynos4412-odroidx.dts           |    2 +-
->   arch/arm/boot/dts/exynos4412-origen.dts            |    2 +-
->   arch/arm/boot/dts/exynos4412-smdk4412.dts          |    2 +-
->   arch/arm/boot/dts/exynos4412.dtsi                  |    2 +-
->   arch/arm/boot/dts/exynos4x12.dtsi                  |    4 +-
->   arch/arm/boot/dts/exynos5250-arndale.dts           |    2 +-
->   arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 +-
->   arch/arm/boot/dts/exynos5250-snow.dts              |    4 +-
->   arch/arm/boot/dts/exynos5250.dtsi                  |   23 +++-
->   arch/arm/boot/dts/exynos5440-sd5v1.dts             |    2 +-
->   arch/arm/boot/dts/exynos5440-ssdk5440.dts          |    2 +-
->   arch/arm/boot/dts/exynos5440.dtsi                  |    2 +-
->   arch/arm/boot/dts/s3c2416-smdk2416.dts             |    2 +-
->   arch/arm/boot/dts/s3c2416.dtsi                     |    4 +-
->   arch/arm/boot/dts/s3c24xx.dtsi                     |    2 +-
->   drivers/clk/samsung/Makefile                       |    1 +
->   drivers/clk/samsung/clk-samsung-audss.c            |  133 ++++++++++++++++++++
->   include/dt-bindings/clk/samsung-audss-clk.h        |   25 ++++
->   26 files changed, 269 insertions(+), 27 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/clk-samsung-audss.txt
->   create mode 100644 drivers/clk/samsung/clk-samsung-audss.c
->   create mode 100644 include/dt-bindings/clk/samsung-audss-clk.h
