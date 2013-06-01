@@ -1,71 +1,39 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 1/3] ARM: EXYNOS: uncompress - print debug messages if
- DEBUG_LL is defined
-Date: Fri, 31 May 2013 20:59:29 -0700
-Message-ID: <20130601035929.GA3868@quad.lixom.net>
+Subject: Re: [PATCH 2/3] ARM: SAMSUNG: Consolidate uncompress subroutine
+Date: Fri, 31 May 2013 21:00:46 -0700
+Message-ID: <20130601040046.GB3868@quad.lixom.net>
 References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
- <1370000944-19786-2-git-send-email-tushar.behera@linaro.org>
+ <1370000944-19786-3-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:64452 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750759Ab3FAEAp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 1 Jun 2013 00:00:45 -0400
+Received: by mail-pb0-f43.google.com with SMTP id ma3so3199898pbc.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 May 2013 21:00:44 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1370000944-19786-2-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1370000944-19786-3-git-send-email-tushar.behera@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Tushar Behera <tushar.behera@linaro.org>
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, patches@linaro.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, May 31, 2013 at 05:19:02PM +0530, Tushar Behera wrote:
-> Printing low-level debug messages make an assumption that the specified
-> UART port has been preconfigured by the bootloader. Incorrectly
-> specified UART port results in system getting stalled while printing the
-> message "Uncompressing Linux... done, booting the kernel"
+On Fri, May 31, 2013 at 05:19:03PM +0530, Tushar Behera wrote:
+> For mach-exynos, uart_base is a pointer and the value is calculated
+> in the machine folder. For other machines, uart_base is defined as
+> a macro in platform directory. For symmetry, the uart_base macro
+> definition is removed and the uart_base calculation is moved to
+> specific machine folders.
 > 
-> This UART port number is specified through S3C_LOWLEVEL_UART_PORT. Since
-> the UART port might different for different board, it is not possible to
-> specify it correctly for every board that use a common defconfig file.
-> 
-> Calling this print subroutine only when DEBUG_LL fixes the problem. By
-> disabling DEBUG_LL in default config file, we would be able to boot
-> multiple boards with different default UART ports.
-> 
-> With this current approach, we miss the print "Uncompressing Linux...
-> done, booting the kernel." when DEBUG_LL is not defined.
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
->  arch/arm/mach-exynos/include/mach/uncompress.h  |   11 ++++++++---
->  arch/arm/plat-samsung/include/plat/uncompress.h |   10 +++++++++-
->  2 files changed, 17 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/include/mach/uncompress.h b/arch/arm/mach-exynos/include/mach/uncompress.h
-> index 2979995..730f69f 100644
-> --- a/arch/arm/mach-exynos/include/mach/uncompress.h
-> +++ b/arch/arm/mach-exynos/include/mach/uncompress.h
-> @@ -37,11 +37,16 @@ static void arch_detect_cpu(void)
->  	chip_id >>= 20;
->  	chip_id &= 0xf;
->  
-> +#ifdef CONFIG_DEBUG_LL
->  	if (chip_id == 0x5)
-> -		uart_base = (volatile u8 *)EXYNOS5_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
-> +		uart_base = (volatile u8 *)EXYNOS5_PA_UART +
-> +			(S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
->  	else
-> -		uart_base = (volatile u8 *)EXYNOS4_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
-> -
-> +		uart_base = (volatile u8 *)EXYNOS4_PA_UART +
-> +			(S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
-> +#else
-> +	uart_base = NULL;
-> +#endif
+> This would help us consolidating uncompress subroutine for s5p64x0.
 
-You can do:
+Sorry, reading these in order and didn't go through all of them.
 
-	if (!config_enabled(CONFIG_DEBUG_LL))
-		return;
-
-Since uart_base will be set to 0 by being in BSS anyway.
+Same comment here, you can use config_enabled() and return early instead of
+adding ifdefs.
 
 
 -Olof
