@@ -1,50 +1,103 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 0/6] Samsung watchdog support clean-up
-Date: Mon, 03 Jun 2013 14:49:28 +0200
-Message-ID: <1850418.EOBZxN7PB0@amdc1227>
-References: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
- <51A9ADF4.8010102@gmail.com>
+Subject: Re: [PATCH v2 2/5] clk: samsung: Add support to register rate_table
+ for PLL3xxx
+Date: Mon, 03 Jun 2013 17:25:10 +0200
+Message-ID: <1710144.fZn06WrzIc@amdc1227>
+References: <1369834677-20312-1-git-send-email-vikas.sajjan@linaro.org>
+ <CAD=FV=VDi+SfebiFnPNp8qR__9L=o9TJ+WSPRfRQLX+p+TMmJw@mail.gmail.com>
+ <CAKew6eVGnHNN7Fk=sqzE1iV+SFtJ1z4k1freeWdbGaYPXqpUvQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:42978 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753958Ab3FCMtb (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:30422 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756694Ab3FCPZT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Jun 2013 08:49:31 -0400
-In-reply-to: <51A9ADF4.8010102@gmail.com>
+	Mon, 3 Jun 2013 11:25:19 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MNT00GMRPFEZPB0@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 03 Jun 2013 16:25:16 +0100 (BST)
+In-reply-to: <CAKew6eVGnHNN7Fk=sqzE1iV+SFtJ1z4k1freeWdbGaYPXqpUvQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, jhbird.choi@samsung.com
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Doug Anderson <dianders@chromium.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-Hi Sylwester, Kukjin,
+Hi Yadwinder,
 
-On Saturday 01 of June 2013 10:16:52 Sylwester Nawrocki wrote:
-> Hi Tomasz,
+On Thursday 30 of May 2013 12:25:40 Yadwinder Singh Brar wrote:
+> Hi Doug,
 > 
-> On 05/19/2013 12:37 AM, Tomasz Figa wrote:
-> > This series is aiming at cleaning up a bit watchdog support on Samsung
-> > SoCs. The patches tweak a bit all the watchdog handling code here and
-> > there, with the goal of making it DT- and multiplatform-friendly.
+> On Thu, May 30, 2013 at 5:14 AM, Doug Anderson <dianders@chromium.org> 
+wrote:
+> > Vikas / Yadwinder,
 > > 
-> > See particular patches for more detailed descriptions.
+> > On Wed, May 29, 2013 at 6:37 AM, Vikas Sajjan <vikas.sajjan@linaro.org> 
+wrote:
+> >> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> >> 
+> >> This patch defines a common rate_table which will contain recommended p,
+> >> m, s, k values for supported rates that needs to be changed for changing
+> >> corresponding PLL's rate.
+> >> 
+> >> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> >> ---
+> >> 
+> >>  drivers/clk/samsung/clk-exynos4.c    |    8 ++++----
+> >>  drivers/clk/samsung/clk-exynos5250.c |   14 +++++++-------
+> >>  drivers/clk/samsung/clk-pll.c        |   14 ++++++++++++--
+> >>  drivers/clk/samsung/clk-pll.h        |   33
+> >>  +++++++++++++++++++++++++++++++-- 4 files changed, 54 insertions(+), 15
+> >>  deletions(-)
 > > 
-> > On S3C6410-based Tiny6410 board (Mini6410-compatible):
+> > I also reviewed this in our gerrit
+> > <https://gerrit.chromium.org/gerrit/#/c/56742/>, but I'll summarize
+> > here for the list...
 > > 
-> > Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
+> >>  struct clk * __init samsung_clk_register_pll35xx(const char *name,
+> >> 
+> >> -                       const char *pname, const void __iomem *base)
+> >> +                       const char *pname, const void __iomem *base,
+> >> +                       const struct samsung_pll_rate_table *rate_table,
+> >> +                       const unsigned int rate_count)
+> > 
+> > Feels like you should document here that rate_table needs to be sorted
+> > and the sort order.
 > 
-> I've tested this series on a s3c2440 based board. The system restart
-> works fine.
+> sure,  we will add comment  to sort the table in descending order.
 > 
-> Tested-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+> >> +struct samsung_pll_rate_table {
+> >> +       unsigned  int rate;
+> > 
+> > nit: extra space before "int" should be removed.
+> 
+> ok
+> 
+> > Also: you can include rate here if you need a convenient place to
+> > store it (which sadly means that this structure can't be const).
+> > ...but I do like Tomasz's idea of actually calculating it.  You can't
+> > know it at compile time since the parent rate comes from the device
+> > tree.
+> > 
+> > compatible = "samsung,clock-xxti";
+> > clock-frequency = <24000000>;
+> 
+> Actually this table should contain the recommended values
+> and if we see the user manual, the input(parent) rate is also a part
+> of recommended
+> table of different output rate for a particular PLL for that SoC.
 
-Thank you Sylwester for testing this series.
+>From what I understood in the documentation is that there is a set of 
+recommended P, M, S (, K) tuples for each PLL and they are not dependent on 
+input frequency - f_in and f_out are provided in the table just for reference 
+to see the relation between output frequency and input frequency.
 
-Kukjin, since it has been already tested on s3c24xx and s3c64xx and nobody 
-seems to care about s5p64x0 and s5pc100 (although I don't see a reason why 
-these patches should break them), could we have this series applied?
+I think we should ask some H/W engineer about that to make sure and choose the 
+proper implementation, which will work properly for future cases, instead of 
+ending with something that works just with current cases.
 
 Best regards,
 -- 
@@ -53,39 +106,51 @@ Linux Kernel Developer
 Samsung R&D Institute Poland
 Samsung Electronics
 
-> > Depends on:
-> >   - [PATCH] ARM: s5p64x0: Use common uncompress.h part for plat-samsung
-> > 
-> > Tomasz Figa (6):
-> >    watchdog: s3c2410_wdt: Use local register definitions
-> >    ARM: SAMSUNG: uncompress: Use local definitions of watchdog registers
-> >    ARM: SAMSUNG: Add watchdog reset driver
-> >    ARM: SAMSUNG: Let platforms use the new watchdog reset driver
-> >    ARM: SAMSUNG: Remove legacy watchdog reset code
-> >    ARM: SAMSUNG: Remove unused plat/regs-watchdog.h header
-> >   
-> >   arch/arm/Kconfig                                   |  3 +
-> >   arch/arm/mach-s3c24xx/Kconfig                      |  2 +
-> >   arch/arm/mach-s3c24xx/s3c2410.c                    |  3 +-
-> >   arch/arm/mach-s3c24xx/s3c244x.c                    |  3 +-
-> >   arch/arm/mach-s3c64xx/common.c                     |  8 +-
-> >   arch/arm/mach-s5p64x0/common.c                     |  4 +-
-> >   arch/arm/mach-s5pc100/common.c                     |  3 +-
-> >   arch/arm/plat-samsung/Kconfig                      |  6 ++
-> >   arch/arm/plat-samsung/Makefile                     |  1 +
-> >   arch/arm/plat-samsung/include/plat/regs-watchdog.h | 41 ---------
-> >   arch/arm/plat-samsung/include/plat/uncompress.h    | 15 +++-
-> >   .../arm/plat-samsung/include/plat/watchdog-reset.h | 38 ++-------
-> >   arch/arm/plat-samsung/watchdog-reset.c             | 97
-> >   ++++++++++++++++++++++ drivers/watchdog/s3c2410_wdt.c                  
-> >     | 17 +++-
-> >   14 files changed, 156 insertions(+), 85 deletions(-)
-> >   delete mode 100644 arch/arm/plat-samsung/include/plat/regs-watchdog.h
-> >   create mode 100644 arch/arm/plat-samsung/watchdog-reset.c>
+> So as Tomasz said input(parent) rate may change with board,
+> then, do those corresponding recommended p, m, s, k will be valid?
 > 
-> --
+> In case, input(parent) rate changes then we may need different set of p, m
+> ,s, k values recommended for new input rate to get required(recommended to
+> use) output rate.
+>
+> So, we think its better that the p, m, s and k along with the parent
+> is known at the compile time ( or DT ?),
+> as these p, m, s, k values are very much coupled with the parent rate
+> to achieve the
+>  required(recommended to use) output rate.
+> 
+> Also, since the sorted table is required (sorted based on "rate"),
+> its better to have the rate in a const rate table.
+> 
+> And the whole set of recommended values should come from same place(DT
+> or static table),
+> to keep the things simple and consistent.
+> 
+> Moreover, practically for a particular SoC , we use the recommended
+> input(parent) rate only for a PLL.
+> So we should keep the things simple here presently.
+> 
+> >> +       unsigned int pdiv;
+> >> +       unsigned int mdiv;
+> >> +       unsigned int sdiv;
+> >> +       unsigned int kdiv;
+> > 
+> > I think kdiv is signed.
+> 
+> No, as these values should be the recommended values to be written in
+> corresponding  register bits. So it should remain unsigned.
+> 
+> K value should be considered as negative only while recalculating rate.
+> 
+> As per exynos5250 user manual's section 7.3.2 :
+> " K value description "Postive value (Negative value)":
+> Postive values is that you should write EPLLCON/VPLLCON register.
+> Negative value is that you can calculate PLL output frequency with it."
+> 
+> > -Doug
+> 
 > Regards,
-> Sylwester
+> Yadwinder & Vikas.
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
 > in the body of a message to majordomo@vger.kernel.org
