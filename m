@@ -1,54 +1,92 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 3/3] ARM: S5P64X0: Remove duplicate uncompress code
-Date: Mon, 03 Jun 2013 17:25:56 +0530
-Message-ID: <51AC844C.1050500@linaro.org>
-References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org> <51A9B3BC.9000405@gmail.com> <51AC18FF.9010108@linaro.org> <13570629.4jzYey0dyq@amdc1227>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 0/6] Samsung watchdog support clean-up
+Date: Mon, 03 Jun 2013 14:49:28 +0200
+Message-ID: <1850418.EOBZxN7PB0@amdc1227>
+References: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
+ <51A9ADF4.8010102@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:59787 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754150Ab3FCL4D (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:42978 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753958Ab3FCMtb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Jun 2013 07:56:03 -0400
-Received: by mail-pb0-f53.google.com with SMTP id un4so5538721pbc.26
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jun 2013 04:56:02 -0700 (PDT)
-In-Reply-To: <13570629.4jzYey0dyq@amdc1227>
+	Mon, 3 Jun 2013 08:49:31 -0400
+In-reply-to: <51A9ADF4.8010102@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, jhbird.choi@samsung.com
 
->>
->> Tomasz,
->>
->> I had somehow missed that mail.
->>
->> The patch that I have additionally makes calculation of uart_base
->> conditional on DEBUG_LL in line with the rest of the patches.
->>
->> Would you mind re-spining your patch with those changes?
->>
->> Alternately, I can take your patch and do above modifications in them.
-> 
-> Unfortunately I'm unlikely to find time to do it myself in nearest future, so 
-> feel free to do it. Thanks.
-> 
-> Keep in mind, however, that this patch was a dependency of
-> 
-> [PATCH 0/6] Samsung watchdog support clean-up
-> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/18736/focus=18951
-> 
-> so I would like to keep this series applicable.
-> 
+Hi Sylwester, Kukjin,
 
-Sure. I will ensure that there is minimal change to the original patch
-that you submitted.
-
-> Best regards,
+On Saturday 01 of June 2013 10:16:52 Sylwester Nawrocki wrote:
+> Hi Tomasz,
 > 
+> On 05/19/2013 12:37 AM, Tomasz Figa wrote:
+> > This series is aiming at cleaning up a bit watchdog support on Samsung
+> > SoCs. The patches tweak a bit all the watchdog handling code here and
+> > there, with the goal of making it DT- and multiplatform-friendly.
+> > 
+> > See particular patches for more detailed descriptions.
+> > 
+> > On S3C6410-based Tiny6410 board (Mini6410-compatible):
+> > 
+> > Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
+> 
+> I've tested this series on a s3c2440 based board. The system restart
+> works fine.
+> 
+> Tested-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
+Thank you Sylwester for testing this series.
 
+Kukjin, since it has been already tested on s3c24xx and s3c64xx and nobody 
+seems to care about s5p64x0 and s5pc100 (although I don't see a reason why 
+these patches should break them), could we have this series applied?
+
+Best regards,
 -- 
-Tushar Behera
+Tomasz Figa
+Linux Kernel Developer
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> > Depends on:
+> >   - [PATCH] ARM: s5p64x0: Use common uncompress.h part for plat-samsung
+> > 
+> > Tomasz Figa (6):
+> >    watchdog: s3c2410_wdt: Use local register definitions
+> >    ARM: SAMSUNG: uncompress: Use local definitions of watchdog registers
+> >    ARM: SAMSUNG: Add watchdog reset driver
+> >    ARM: SAMSUNG: Let platforms use the new watchdog reset driver
+> >    ARM: SAMSUNG: Remove legacy watchdog reset code
+> >    ARM: SAMSUNG: Remove unused plat/regs-watchdog.h header
+> >   
+> >   arch/arm/Kconfig                                   |  3 +
+> >   arch/arm/mach-s3c24xx/Kconfig                      |  2 +
+> >   arch/arm/mach-s3c24xx/s3c2410.c                    |  3 +-
+> >   arch/arm/mach-s3c24xx/s3c244x.c                    |  3 +-
+> >   arch/arm/mach-s3c64xx/common.c                     |  8 +-
+> >   arch/arm/mach-s5p64x0/common.c                     |  4 +-
+> >   arch/arm/mach-s5pc100/common.c                     |  3 +-
+> >   arch/arm/plat-samsung/Kconfig                      |  6 ++
+> >   arch/arm/plat-samsung/Makefile                     |  1 +
+> >   arch/arm/plat-samsung/include/plat/regs-watchdog.h | 41 ---------
+> >   arch/arm/plat-samsung/include/plat/uncompress.h    | 15 +++-
+> >   .../arm/plat-samsung/include/plat/watchdog-reset.h | 38 ++-------
+> >   arch/arm/plat-samsung/watchdog-reset.c             | 97
+> >   ++++++++++++++++++++++ drivers/watchdog/s3c2410_wdt.c                  
+> >     | 17 +++-
+> >   14 files changed, 156 insertions(+), 85 deletions(-)
+> >   delete mode 100644 arch/arm/plat-samsung/include/plat/regs-watchdog.h
+> >   create mode 100644 arch/arm/plat-samsung/watchdog-reset.c>
+> 
+> --
+> Regards,
+> Sylwester
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
