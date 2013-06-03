@@ -1,90 +1,89 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V2] ARM: dts: wm8994: Add wm8994 regulator support on smdk5250.
-Date: Mon, 03 Jun 2013 10:52:34 +0530
-Message-ID: <1370236954-16863-1-git-send-email-padma.v@samsung.com>
+From: Chen Gang <gang.chen@asianux.com>
+Subject: Re: [PATCH v2] arch: arm: plat-samsung: dependency, S5P_SLEEP depends
+ on ARM_CPU_SUSPEND
+Date: Mon, 03 Jun 2013 18:19:37 +0800
+Message-ID: <51AC6DB9.1080407@asianux.com>
+References: <5199E4AF.7040607@asianux.com> <51A32FD4.4000001@asianux.com> <158201ce5ac2$a7843de0$f68cb9a0$%kim@samsung.com> <51A33A53.1050502@asianux.com> <51A33C1F.3000804@asianux.com> <51A9E8A0.3050906@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35510 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751042Ab3FCFT6 (ORCPT
+Received: from intranet.asianux.com ([58.214.24.6]:11366 "EHLO
+	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757229Ab3FCKU2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Jun 2013 01:19:58 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MNS00CMRXGU47D0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Jun 2013 14:19:43 +0900 (KST)
+	Mon, 3 Jun 2013 06:20:28 -0400
+In-Reply-To: <51A9E8A0.3050906@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This patch adds the required regulator supplies and properties
-for wm8994 codec on smdk5250 board.
+On 06/01/2013 08:27 PM, Sylwester Nawrocki wrote:
+> On 05/27/2013 12:57 PM, Chen Gang wrote:
+>>
+>> When randconfig with MMU for arm s5pv210 (and select all cpu type),
+>> need let S5P_SLEEP depend on ARM_CPU_SUSPEND, or will cause issue below:
+>>
+>>    arch/arm/plat-samsung/built-in.o: In function `s3c_cpu_resume':
+>>    arch/arm/plat-samsung/s5p-sleep.S:83: undefined reference to
+>> `cpu_resume'
+>>
+>>
+>> Signed-off-by: Chen Gang<gang.chen@asianux.com>
+>> ---
+>>   arch/arm/plat-samsung/Kconfig |    1 +
+>>   1 files changed, 1 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/plat-samsung/Kconfig
+>> b/arch/arm/plat-samsung/Kconfig
+>> index f8ed2de..b388d93 100644
+>> --- a/arch/arm/plat-samsung/Kconfig
+>> +++ b/arch/arm/plat-samsung/Kconfig
+>> @@ -483,6 +483,7 @@ config S5P_PM
+>>
+>>   config S5P_SLEEP
+>>       bool
+>> +    select ARM_CPU_SUSPEND if PM
+>>       help
+>>         Internal config node to apply common S5P sleep management code.
+>>         Can be selected by S5P and newer SoCs with similar sleep
+>> procedure.
+> 
+> We have discussed this about two months ago [1] and the conclusion was
+> to also
+> remove "select ARM_CPU_SUSPEND if PM" line from
+> arch/arm/mach-exynos/Kconfig.
+> It is still unresolved then, I'm getting similar linker errors with
+> s3c2410_defconfig...
+> 
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
+I do not think they are the same.
 
-Changes since V1:
-	- Clubbed the same supply regulators as suggested by Mark.
+This patch says: S5P_SLEEP need ARM_CPU_SUSPEND, or can not pass
+compiling (S5P_SLEEP need some functions in ARM_CPU_SUSPEND).
 
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   37 +++++++++++++++++++++++++++-
- 1 files changed, 35 insertions(+), 2 deletions(-)
+Your patch means PLAT_SAMSUNG need ARM_CPU_SUSPEND, but in fact,
+PLAT_SAMSUNG may not need ARM_CPU_SUSPEND.
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index f2a025e..dc2ec25 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -37,6 +37,30 @@
- 		};
- 	};
- 
-+	vdd:fixed-regulator@0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd-supply";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	dbvdd:fixed-regulator@1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dbvdd-supply";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	spkvdd:fixed-regulator@2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "spkvdd-supply";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
- 	i2c@12C70000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <20000>;
-@@ -47,8 +71,17 @@
- 		};
- 
- 		wm8994: wm8994@1a {
--			 compatible = "wlf,wm8994";
--			 reg = <0x1a>;
-+			compatible = "wlf,wm8994";
-+			reg = <0x1a>;
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			AVDD2-supply = <&vdd>;
-+			CPVDD-supply = <&vdd>;
-+			DBVDD-supply = <&dbvdd>;
-+			SPKVDD1-supply = <&spkvdd>;
-+			SPKVDD2-supply = <&spkvdd>;
- 		};
- 	};
- 
+
+>   LD      init/built-in.o
+> arch/arm/mach-s3c24xx/built-in.o: In function `s3c_cpu_resume':
+> /home/snawrocki/linux/media_tree/arch/arm/mach-s3c24xx/sleep.S:83:
+> undefined reference to `cpu_resume'
+> arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
+> /home/snawrocki/linux/media_tree/arch/arm/plat-samsung/pm.c:305:
+> undefined reference to `cpu_suspend'
+> make: *** [vmlinux] Error 1
+> 
+> 
+
+I guess, this error output means S5P_SLEEP and PM need ARM_CPU_SUSPEND
+(which has the implementation of 'cpu_resume' and 'cpu_suspend')
+
+
+Thanks.
 -- 
-1.7.4.4
+Chen Gang
+
+Asianux Corporation
