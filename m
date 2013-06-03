@@ -1,69 +1,54 @@
-From: Tomasz Figa <t.figa@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
 Subject: Re: [PATCH 3/3] ARM: S5P64X0: Remove duplicate uncompress code
-Date: Mon, 03 Jun 2013 13:40:49 +0200
-Message-ID: <13570629.4jzYey0dyq@amdc1227>
-References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
- <51A9B3BC.9000405@gmail.com> <51AC18FF.9010108@linaro.org>
+Date: Mon, 03 Jun 2013 17:25:56 +0530
+Message-ID: <51AC844C.1050500@linaro.org>
+References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org> <51A9B3BC.9000405@gmail.com> <51AC18FF.9010108@linaro.org> <13570629.4jzYey0dyq@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <51AC18FF.9010108@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: t.figa@gmail.com, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f53.google.com ([209.85.160.53]:59787 "EHLO
+	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754150Ab3FCL4D (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 3 Jun 2013 07:56:03 -0400
+Received: by mail-pb0-f53.google.com with SMTP id un4so5538721pbc.26
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jun 2013 04:56:02 -0700 (PDT)
+In-Reply-To: <13570629.4jzYey0dyq@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org
 
-Hi Tushar,
-
-On Monday 03 of June 2013 09:48:07 Tushar Behera wrote:
-> On 06/01/2013 02:11 PM, Sylwester Nawrocki wrote:
-> > Hi,
-> > 
-> > On 05/31/2013 01:49 PM, Tushar Behera wrote:
-> >> The uncompress code in S5P64X0 is almost same as the uncompress code
-> >> defined in plat-samsung. Better to reuse that code.
-> >> 
-> >> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
-> >> ---
-> >> 
-> >>   arch/arm/mach-s5p64x0/include/mach/uncompress.h |  163
-> >> 
-> >> ++---------------------
-> >> 
-> >>   1 file changed, 8 insertions(+), 155 deletions(-)
-> > 
-> > Not sure if you are aware of it, Tomasz has already posted a patch that
-> > removes this duplicated code: https://patchwork.kernel.org/patch/2589331
-> > I think that patch is not yet merged though.
-> > 
-> > Regards,
-> > Sylwester
+>>
+>> Tomasz,
+>>
+>> I had somehow missed that mail.
+>>
+>> The patch that I have additionally makes calculation of uart_base
+>> conditional on DEBUG_LL in line with the rest of the patches.
+>>
+>> Would you mind re-spining your patch with those changes?
+>>
+>> Alternately, I can take your patch and do above modifications in them.
 > 
-> Tomasz,
+> Unfortunately I'm unlikely to find time to do it myself in nearest future, so 
+> feel free to do it. Thanks.
 > 
-> I had somehow missed that mail.
+> Keep in mind, however, that this patch was a dependency of
 > 
-> The patch that I have additionally makes calculation of uart_base
-> conditional on DEBUG_LL in line with the rest of the patches.
+> [PATCH 0/6] Samsung watchdog support clean-up
+> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/18736/focus=18951
 > 
-> Would you mind re-spining your patch with those changes?
+> so I would like to keep this series applicable.
 > 
-> Alternately, I can take your patch and do above modifications in them.
 
-Unfortunately I'm unlikely to find time to do it myself in nearest future, so 
-feel free to do it. Thanks.
+Sure. I will ensure that there is minimal change to the original patch
+that you submitted.
 
-Keep in mind, however, that this patch was a dependency of
+> Best regards,
+> 
 
-[PATCH 0/6] Samsung watchdog support clean-up
-http://thread.gmane.org/gmane.linux.kernel.samsung-soc/18736/focus=18951
 
-so I would like to keep this series applicable.
-
-Best regards,
 -- 
-Tomasz Figa
-Linux Kernel Developer
-Samsung R&D Institute Poland
-Samsung Electronics
+Tushar Behera
