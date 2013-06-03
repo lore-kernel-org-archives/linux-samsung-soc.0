@@ -1,89 +1,69 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH v2] arch: arm: plat-samsung: dependency, S5P_SLEEP depends
- on ARM_CPU_SUSPEND
-Date: Mon, 03 Jun 2013 18:19:37 +0800
-Message-ID: <51AC6DB9.1080407@asianux.com>
-References: <5199E4AF.7040607@asianux.com> <51A32FD4.4000001@asianux.com> <158201ce5ac2$a7843de0$f68cb9a0$%kim@samsung.com> <51A33A53.1050502@asianux.com> <51A33C1F.3000804@asianux.com> <51A9E8A0.3050906@gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: S5P64X0: Remove duplicate uncompress code
+Date: Mon, 03 Jun 2013 13:40:49 +0200
+Message-ID: <13570629.4jzYey0dyq@amdc1227>
+References: <1370000944-19786-1-git-send-email-tushar.behera@linaro.org>
+ <51A9B3BC.9000405@gmail.com> <51AC18FF.9010108@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from intranet.asianux.com ([58.214.24.6]:11366 "EHLO
-	intranet.asianux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757229Ab3FCKU2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Jun 2013 06:20:28 -0400
-In-Reply-To: <51A9E8A0.3050906@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <51AC18FF.9010108@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: t.figa@gmail.com, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 06/01/2013 08:27 PM, Sylwester Nawrocki wrote:
-> On 05/27/2013 12:57 PM, Chen Gang wrote:
->>
->> When randconfig with MMU for arm s5pv210 (and select all cpu type),
->> need let S5P_SLEEP depend on ARM_CPU_SUSPEND, or will cause issue below:
->>
->>    arch/arm/plat-samsung/built-in.o: In function `s3c_cpu_resume':
->>    arch/arm/plat-samsung/s5p-sleep.S:83: undefined reference to
->> `cpu_resume'
->>
->>
->> Signed-off-by: Chen Gang<gang.chen@asianux.com>
->> ---
->>   arch/arm/plat-samsung/Kconfig |    1 +
->>   1 files changed, 1 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/plat-samsung/Kconfig
->> b/arch/arm/plat-samsung/Kconfig
->> index f8ed2de..b388d93 100644
->> --- a/arch/arm/plat-samsung/Kconfig
->> +++ b/arch/arm/plat-samsung/Kconfig
->> @@ -483,6 +483,7 @@ config S5P_PM
->>
->>   config S5P_SLEEP
->>       bool
->> +    select ARM_CPU_SUSPEND if PM
->>       help
->>         Internal config node to apply common S5P sleep management code.
->>         Can be selected by S5P and newer SoCs with similar sleep
->> procedure.
+Hi Tushar,
+
+On Monday 03 of June 2013 09:48:07 Tushar Behera wrote:
+> On 06/01/2013 02:11 PM, Sylwester Nawrocki wrote:
+> > Hi,
+> > 
+> > On 05/31/2013 01:49 PM, Tushar Behera wrote:
+> >> The uncompress code in S5P64X0 is almost same as the uncompress code
+> >> defined in plat-samsung. Better to reuse that code.
+> >> 
+> >> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+> >> ---
+> >> 
+> >>   arch/arm/mach-s5p64x0/include/mach/uncompress.h |  163
+> >> 
+> >> ++---------------------
+> >> 
+> >>   1 file changed, 8 insertions(+), 155 deletions(-)
+> > 
+> > Not sure if you are aware of it, Tomasz has already posted a patch that
+> > removes this duplicated code: https://patchwork.kernel.org/patch/2589331
+> > I think that patch is not yet merged though.
+> > 
+> > Regards,
+> > Sylwester
 > 
-> We have discussed this about two months ago [1] and the conclusion was
-> to also
-> remove "select ARM_CPU_SUSPEND if PM" line from
-> arch/arm/mach-exynos/Kconfig.
-> It is still unresolved then, I'm getting similar linker errors with
-> s3c2410_defconfig...
+> Tomasz,
 > 
-
-I do not think they are the same.
-
-This patch says: S5P_SLEEP need ARM_CPU_SUSPEND, or can not pass
-compiling (S5P_SLEEP need some functions in ARM_CPU_SUSPEND).
-
-Your patch means PLAT_SAMSUNG need ARM_CPU_SUSPEND, but in fact,
-PLAT_SAMSUNG may not need ARM_CPU_SUSPEND.
-
-
->   LD      init/built-in.o
-> arch/arm/mach-s3c24xx/built-in.o: In function `s3c_cpu_resume':
-> /home/snawrocki/linux/media_tree/arch/arm/mach-s3c24xx/sleep.S:83:
-> undefined reference to `cpu_resume'
-> arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
-> /home/snawrocki/linux/media_tree/arch/arm/plat-samsung/pm.c:305:
-> undefined reference to `cpu_suspend'
-> make: *** [vmlinux] Error 1
+> I had somehow missed that mail.
 > 
+> The patch that I have additionally makes calculation of uart_base
+> conditional on DEBUG_LL in line with the rest of the patches.
 > 
+> Would you mind re-spining your patch with those changes?
+> 
+> Alternately, I can take your patch and do above modifications in them.
 
-I guess, this error output means S5P_SLEEP and PM need ARM_CPU_SUSPEND
-(which has the implementation of 'cpu_resume' and 'cpu_suspend')
+Unfortunately I'm unlikely to find time to do it myself in nearest future, so 
+feel free to do it. Thanks.
 
+Keep in mind, however, that this patch was a dependency of
 
-Thanks.
+[PATCH 0/6] Samsung watchdog support clean-up
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/18736/focus=18951
+
+so I would like to keep this series applicable.
+
+Best regards,
 -- 
-Chen Gang
-
-Asianux Corporation
+Tomasz Figa
+Linux Kernel Developer
+Samsung R&D Institute Poland
+Samsung Electronics
