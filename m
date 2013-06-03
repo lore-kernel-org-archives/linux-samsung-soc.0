@@ -1,49 +1,76 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 6/6] ARM: dts: Add pcie controller node for Samsung EXYNOS5440 SoC
-Date: Wed, 12 Jun 2013 17:10:58 +0200
-Message-ID: <201306121710.58601.arnd@arndb.de>
-References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com> <201306101722.10146.arnd@arndb.de> <002e01ce6668$f785dc20$e6919460$@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Subject: [PATCH v4 0/6] Add generic set_rate clk_ops for PLL35xx and PLL36xx
+ for samsung SoCs
+Date: Mon, 03 Jun 2013 20:39:50 +0530
+Message-ID: <1370272196-4346-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:49579 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753310Ab3FLPLK (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:39727 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751476Ab3FLPSk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 11:11:10 -0400
-In-Reply-To: <002e01ce6668$f785dc20$e6919460$@samsung.com>
+	Wed, 12 Jun 2013 11:18:40 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOA00GA3D72XVF0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 00:18:39 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-arm-kernel@lists.infradead.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, dianders@chromium.org, t.figa@samsung.com, vikas.sajjan@linaro.org, patches@linaro.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-On Tuesday 11 June 2013, Jingoo Han wrote:
-> > > +           ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00200000   /* configuration space */
-> > > +                     0x81000000 0 0          0x40200000 0 0x00004000   /* downstream I/O */
-> > > +                     0x82000000 0 0          0x40204000 0 0x10000000>; /* non-prefetchable memory */
-> > > +   };
-> > 
-> ...
-> > Also, shouldn't your memory space end on a 256MB boundary, rather than
-> > extend up to 0x50203fff?
-> 
-> According to the manual of Exynos PCIe, each memory space for Exynos PCIe
-> can support 512MB, including I/O, CFG regions.
-> 
-> Is there any problem when over 256MB boundary is used?
-> Please let me know. :)
+This patch series does the following:
 
-No, that's not a problem, but I think you should have the window span
-the entire space that is provided in hardware. If there are 512 MB total, why
-not use them?
+ 1) Unifies the clk strutures used for PLL35xx & PLL36xx and usues clk->base
+    instead of clk->con0, to factor out possible common code.
 
-You could use 
+ 2) Defines a common rate_table which will contain recommended p, m, s and k
+    values for supported rates that needs to be changed for changing
+    corresponding PLL's rate
 
-	ranges = <0x82000000 0 0          0x40204000 0 0x1fdfc000>;
+ 3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
 
-to pass a range for the memory space that extends all the way until
-0x5fffffff.
+changes since v3:
+	- Used __clk_lookup() instead of adding alias for mout_vpllsrc
+	- Added check for changing only M value in samsung_pll36xx_set_rate()
+	- Modified samsung_pll35xx_mp_change() & samsung_pll35xx_set_rate()
+	to improve readabilty.
+	- Made the input rate_table as __init_data which is to be provided while
+	registering PLL and made a copy of that table while registering, so
+	that if multiple tables are their, they can be freed after getting the
+	P, M, S, K setting values from required one.
 
-	Arnd
+changes since v2:
+	- Added new patch to reorder the MUX registration for mout_vpllsrc MUX
+	before the PLL registrations. And to add the alias for the mout_vpllsrc MUX.
+        - Added a check to confirm parent rate while registrating the PLL
+	rate tables.
+
+changes since v1:
+	- removed sorting and bsearch
+	- modified the definition of struct "samsung_pll_rate_table"
+	- added generic round_rate()
+	- rectified the ops assignment for "rate table passed as NULL"
+	  during PLL registration
+
+Is rebased on branch kgene's "for-next"
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+
+Vikas Sajjan (3):
+  clk: samsung: Add set_rate() clk_ops for PLL36xx
+  clk: samsung: Reorder MUX registration for mout_vpllsrc
+  clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
+
+Yadwinder Singh Brar (3):
+  clk: samsung: Use clk->base instead of directly using clk->con0 for
+    PLL3xxx
+  clk: samsung: Add support to register rate_table for PLL3xxx
+  clk: samsung: Add set_rate() clk_ops for PLL35xx
+
+ drivers/clk/samsung/clk-exynos4.c    |   10 +-
+ drivers/clk/samsung/clk-exynos5250.c |   73 +++++++++--
+ drivers/clk/samsung/clk-pll.c        |  255 ++++++++++++++++++++++++++++++----
+ drivers/clk/samsung/clk-pll.h        |   35 +++++-
+ drivers/clk/samsung/clk.h            |    2 +
+ 5 files changed, 332 insertions(+), 43 deletions(-)
