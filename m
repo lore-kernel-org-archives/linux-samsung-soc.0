@@ -1,57 +1,52 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V4 4/4] ARM: dts: add clock provider information for i2s
- controllers in Exynos5250
-Date: Tue, 4 Jun 2013 09:58:30 +0530
-Message-ID: <CAAgF-Bd01JU_aess33d10ah7me=DR-tGF4vy20D6CPFiDYUg6g@mail.gmail.com>
-References: <1370236744-16802-1-git-send-email-padma.v@samsung.com>
-	<1370236744-16802-5-git-send-email-padma.v@samsung.com>
-	<CAD=FV=X_XVmQ-jyorxATqBad5hhdFe5dodg_AzjsRQ-S+1=NeA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH v2 0/3] Consolidate uncompress code for Samsung platform
+Date: Tue,  4 Jun 2013 09:49:09 +0530
+Message-ID: <1370319552-17694-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:52206 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750828Ab3FDE2b (ORCPT
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:61556 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750907Ab3FDEd1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Jun 2013 00:28:31 -0400
-Received: by mail-oa0-f54.google.com with SMTP id o17so1522518oag.27
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jun 2013 21:28:31 -0700 (PDT)
-In-Reply-To: <CAD=FV=X_XVmQ-jyorxATqBad5hhdFe5dodg_AzjsRQ-S+1=NeA@mail.gmail.com>
+	Tue, 4 Jun 2013 00:33:27 -0400
+Received: by mail-pd0-f172.google.com with SMTP id t10so3114770pdi.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jun 2013 21:33:26 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, sbkim73@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, broonie@kernel.org, Mike Turquette <mturquette@linaro.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org
 
-Hi Doug,
+The patches are based on v3.10-rc4.
 
-On Tue, Jun 4, 2013 at 1:48 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Padmavathi,
->
-> On Sun, Jun 2, 2013 at 10:19 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
->> +               clocks = <&clock_audss EXYNOS_I2S_BUS>,
->> +                       <&clock_audss EXYNOS_I2S_BUS>,
->> +                       <&clock_audss EXYNOS_SCLK_I2S>,
->> +                       <&clock_audss EXYNOS_MOUT_AUDSS>,
->> +                       <&clock_audss EXYNOS_MOUT_I2S>;
->> +               clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
->> +                               "mout_audss", "mout_i2s";
->
-> Are there bindings for these clocks? Would be nice to see a
-> description for what they are supposed to be.
+They are build tested for s3c2410_defconfig, s3c6400_defconfig,
+s5p64x0_defconfig, s5pc100_defconfig, s5pv210_defconfig,
+exynos4_defconfig and exynos_defconfig.
 
-Yes. They have bindings. I will add the description.
+Since they affect all the Samsung boards, testing them on different
+machines would be essential. Unfortunately I can only test on Exynos here.
 
->
-> I looked up i2s_opclk0 / i2s_opclk1 and they look reasonable at a
-> quick glance. ...and it does seem right that iis and i2s_opclk0 are
-> the same. ...but I don't see any place that uses the last two. Is
-> there an in-flight patch?
+Tested on Exynos5250 based Arndale board.
 
-I don't have any patch for these right now. These are used internally.
-But as these are i2s0 base clocks I added here.
+Changes for v2:
+* Instead of checking for uart_base, we are now checking whether
+DEBUG_LL is enabled. This removes the ifdefs used in mach/uncompress.h
+* 3rd patch has been updated by Tomasz Figa's patch that almost does
+the same thing.
 
->
-> -Doug
+Tomasz Figa (1):
+  ARM: s5p64x0: Use common uncompress.h part for plat-samsung
 
-Thanks
-Padma
+Tushar Behera (2):
+  ARM: EXYNOS: uncompress - print debug messages if DEBUG_LL is defined
+  ARM: SAMSUNG: Consolidate uncompress subroutine
+
+ arch/arm/mach-exynos/include/mach/uncompress.h  |    3 -
+ arch/arm/mach-s3c24xx/include/mach/uncompress.h |    3 +
+ arch/arm/mach-s3c64xx/include/mach/uncompress.h |    3 +
+ arch/arm/mach-s5p64x0/include/mach/uncompress.h |  162 +----------------------
+ arch/arm/mach-s5pc100/include/mach/uncompress.h |    2 +
+ arch/arm/mach-s5pv210/include/mach/uncompress.h |    2 +
+ arch/arm/plat-samsung/include/plat/uncompress.h |   16 ++-
+ 7 files changed, 27 insertions(+), 164 deletions(-)
+
+-- 
+1.7.9.5
