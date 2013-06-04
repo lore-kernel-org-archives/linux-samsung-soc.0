@@ -1,85 +1,95 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen
- board
-Date: Tue, 4 Jun 2013 13:13:17 +0100
-Message-ID: <20130604121317.GB31367@sirena.org.uk>
-References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
- <87sj1qzaov.fsf@linaro.org>
- <5191AA89.6010901@linaro.org>
- <20130528231740.GA28879@quad.lixom.net>
- <51A57D39.8030506@linaro.org>
- <CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oAjj1ZwgLg4oRN9q"
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH V5 0/5]  clk: Samsung: audss: Register audio subsytem clocks
+ using common clk framework
+Date: Tue, 04 Jun 2013 17:58:05 +0530
+Message-ID: <1370348890-6645-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:36012 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751314Ab3FDMNq (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50075 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753388Ab3FDM0T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Jun 2013 08:13:46 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com>
+	Tue, 4 Jun 2013 08:26:19 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MNV00ESZBUUI400@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 04 Jun 2013 21:26:17 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Tushar Behera <tushar.behera@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, grant.likely@linaro.org, Kevin Hilman <khilman@linaro.org>, Patch Tracking <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.v@samsung.com, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, mturquette@linaro.org
 
+Samsung S5PV210 and Exynos SoC has a separate subsystem for audio. This subsystem
+has a internal clock controller which controls i2s0 and pcm0 clocks. This patch
+series adds the Samsung audio subsytem clock to the common clock framework and
+provides the I2S controllers clock information in the dtsi file.
 
---oAjj1ZwgLg4oRN9q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch series is made based on Kukjin Kim for-next branch
 
-On Tue, May 28, 2013 at 10:31:41PM -0700, Olof Johansson wrote:
-> On Tue, May 28, 2013 at 8:59 PM, Tushar Behera <tushar.behera@linaro.org> wrote:
+Changes since V4:
+        - Reworked on the nits given by Doug.
+        - Removed mout_audss and mout_i2s from i2s nodes as we are not
+          getting these clocks in the i2s driver.
+        - Modified the I2S binding documentation for clocks and pinmux.
 
-> > e. usb: ehci-s5p: add the HSIC port initialization
-> > f. ARM: dts: Add USB gpio entries for Arndale board
+Changes since V3:
+        - Replaced samsung with exynos in the macro prefixes and function names
+          as this driver supports mainly exynos and s5p family.
+        - Added Reviewed-by:Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-> > I am not sure whether such kind of board-specific patches (e, f) are
-> > appreciated in the drivers. But that is all we need to get USB and
-> > Ethernet to work on v3.10-rc3 kernel.
+Changes since V2:
+        - Removed s5pv210 compatible name from driver as it is
+          not yet supported which is different from Exynos series
+          audio subsystem clock conroller.
+        - Removed clkdev lookup support and added alias names in
+          the i2s0 controller node.
+Changes since V1:
+        - Reworked on all review comments by Sylwester Nawrocki
+        - Added a header file for all clock indexes as requested by Sylwester
+        - Added different compatible names for s5pv210, exynos4 and exynos5
+        - Registered the pcm clocks with common clock framework
 
-> I've come across a similar situation with wifi reset sequence on the
-> chromebook. On the product kernel we added some code to the board file
-> to deal with it, but if we keep doing that things will grow out of
-> hand.
+Padmavathi Venna (5):
+  ARM: samsung: use #include for all device trees
+  clk: samsung: register audio subsystem clocks using common clock
+    framework
+  ARM: dts: add Exynos audio subsystem clock controller node
+  ARM: dts: add clock provider information for i2s controllers in
+    Exynos5250
+  ARM: dts: Update Samsung I2S documentation
 
-> I don't know if it'll be unpopular, but I think it's time to start a
-> drivers/platform/arm for these kind of things, and have those drivers
-> probe on the system compatible value, similar to how x86 does it (with
-> DMI tables). At least that's my plan for approaching the wifi
-> reset/power-on sequence on the Chromebook. I hope to have patches in
-> not all that long...
+ .../devicetree/bindings/clock/clk-exynos-audss.txt |   64 ++++++++++
+ .../devicetree/bindings/sound/samsung-i2s.txt      |   40 ++----
+ arch/arm/boot/dts/exynos4.dtsi                     |    2 +-
+ arch/arm/boot/dts/exynos4210-origen.dts            |    2 +-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |    2 +-
+ arch/arm/boot/dts/exynos4210-trats.dts             |    2 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |    2 +-
+ arch/arm/boot/dts/exynos4210.dtsi                  |    4 +-
+ arch/arm/boot/dts/exynos4212.dtsi                  |    2 +-
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |    2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts            |    2 +-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |    2 +-
+ arch/arm/boot/dts/exynos4412.dtsi                  |    2 +-
+ arch/arm/boot/dts/exynos4x12.dtsi                  |    4 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |    2 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 +-
+ arch/arm/boot/dts/exynos5250-snow.dts              |    4 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |   20 +++-
+ arch/arm/boot/dts/exynos5440-sd5v1.dts             |    2 +-
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts          |    2 +-
+ arch/arm/boot/dts/exynos5440.dtsi                  |    2 +-
+ arch/arm/boot/dts/s3c2416-smdk2416.dts             |    2 +-
+ arch/arm/boot/dts/s3c2416.dtsi                     |    4 +-
+ arch/arm/boot/dts/s3c24xx.dtsi                     |    2 +-
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos-audss.c             |  133 ++++++++++++++++++++
+ include/dt-bindings/clk/exynos-audss-clk.h         |   25 ++++
+ 27 files changed, 279 insertions(+), 54 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+ create mode 100644 drivers/clk/samsung/clk-exynos-audss.c
+ create mode 100644 include/dt-bindings/clk/exynos-audss-clk.h
 
-This does seem to be a fairly general problem for embedded systems with
-devices on enumerable buses - it's even worse for things like Slimbus
-where the expectation is that many devices will spend almost all of
-their time powered down.  We probably need to come up with
-infrastructure to enable the drivers for the individual devices to
-handle this, or at least roll out such infrastructure more widely, IIRC
-there's some DT stuff for PCI.
-
---oAjj1ZwgLg4oRN9q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRrdnZAAoJELSic+t+oim92g8P/iYtr5vpvwfVw/2NlFdmUuZ+
-caoQRHBnOzjZBTKX/U30IxtFLUAUy4izXOo6IIRVMpR/JoCjQnY2ZJMXreQvml1R
-0WXH9HtM7IJSLDFq0WMyHjuFBbvtpy9EVVutN5OGffVjAAaENJgDK+aMAovX+HFF
-FqB5CLx7KEA56tN1fUe81WFsvk+7PWUF6apYuDcfubVWzFEq0dxVH+rm+w5iE1il
-lhwB31KpMNstb8jVVMksZxwhx9T1M5pWHMDszEOt6JnXReY2mUf3WajMACjL5Ze7
-r4jMI49TZLA3cWGv3UJKdwn2Kom09/YQpR/tnJ69o7jU02CYZgJYdhyQImA/zXUe
-JEh4c6rHJ5UV5GfZN6Ohj94y3fLiXU+Y8hDlDbvss0vzmXD6iyNUlmbdRB3OIU5E
-g07fToiOyBQiyYXezSY/nECj++e5jh/lrbU8/d0sXdzAQf6CDhB7+CLYZ/9OmkCh
-DWZd0DeLsWcDQz+s3BzLzAo3KBOn1qry8AW8eBYtVKz4ibJ4V/xpDT19qVsi84zn
-oG6otSLS+uB4OmwhRJZvxfhW6g1HCJw6gIWpAcIHzK9CNP1ThrX87pNNeSBO03n3
-c1UQ6Cr+td0ZuCQVzWZ8KV5s38FUPjbxyQGY4WRejmhf2QB2HKHc3Ug9nYtsseDc
-8YS9D3TNJeeLC6/ycEN+
-=ReLp
------END PGP SIGNATURE-----
-
---oAjj1ZwgLg4oRN9q--
+-- 
+1.7.4.4
