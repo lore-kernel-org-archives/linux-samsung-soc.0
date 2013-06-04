@@ -1,58 +1,31 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH V5 5/5] ARM: dts: Update Samsung I2S documentation
-Date: Tue, 4 Jun 2013 10:25:26 -0700
-Message-ID: <CAD=FV=U9Fc=TTcbLCjTSvbk7pV5OdnBUwyxAss1_DX1dfKUQxA@mail.gmail.com>
-References: <1370348890-6645-1-git-send-email-padma.v@samsung.com>
-	<1370348890-6645-6-git-send-email-padma.v@samsung.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [RFC 09/42] drivers/i2c/busses: don't check resource with devm_ioremap_resource
+Date: Tue, 04 Jun 2013 11:34:15 -0700
+Message-ID: <87txldzpw8.fsf@linaro.org>
+References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
+	<1368173847-5661-10-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:51350 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751461Ab3FDRZ2 (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:61408 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750883Ab3FDSeT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Jun 2013 13:25:28 -0400
-Received: by mail-lb0-f172.google.com with SMTP id p10so960269lbi.17
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Jun 2013 10:25:26 -0700 (PDT)
-In-Reply-To: <1370348890-6645-6-git-send-email-padma.v@samsung.com>
+	Tue, 4 Jun 2013 14:34:19 -0400
+Received: by mail-pd0-f181.google.com with SMTP id bv13so627600pdb.26
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Jun 2013 11:34:18 -0700 (PDT)
+In-Reply-To: <1368173847-5661-10-git-send-email-wsa@the-dreams.de> (Wolfram
+	Sang's message of "Fri, 10 May 2013 10:16:54 +0200")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Padma Venkat <padma.kvr@gmail.com>, sbkim73@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, "broonie@kernel.org" <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-kernel@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Barry Song <baohua.song@csr.com>, Stephen Warren <swarren@wwwdotorg.org>, davinci-linux-open-source@linux.davincidsp.com, linux-i2c@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 
-Padmavathi,
+Wolfram Sang <wsa@the-dreams.de> writes:
 
-On Tue, Jun 4, 2013 at 5:28 AM, Padmavathi Venna <padma.v@samsung.com> wrote:
-> This patch updates the samsung i2s documentation for pinmux and
-> clock entries.
+> devm_ioremap_resource does sanity checks on the given resource. No need to
+> duplicate this in the driver.
 >
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
->  .../devicetree/bindings/sound/samsung-i2s.txt      |   40 ++++++-------------
->  1 files changed, 13 insertions(+), 27 deletions(-)
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
-Whoops, just asked for this and now saw it.  Thanks for posting!
-
-One note: don't use the "dts" tag for this commit.  That should be
-only for things that are touching dts / dtsi files, not for updating
-docs.
-
-
-> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> index 3070046..6f9d29f 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> @@ -8,6 +8,10 @@ Required SoC Specific Properties:
->  - dmas: list of DMA controller phandle and DMA request line ordered pairs.
->  - dma-names: identifier string for each DMA request line in the dmas property.
->    These strings correspond 1:1 with the ordered pairs in dmas.
-> +- clocks: from common clock binding. Handle to iis clock and RCLK src clk.
-> +- clock-names: from common clock binding: Should be "iis","i2s_opclk0" and
-> +  "i2s_opclk1". "iis" is the i2s bus clock and i2s_opclk selects the src of
-> +  RCLK which is a mux inside i2s controller.
-
->From your other patch apparently opclk0 and/or opclk1 are not
-required.  Two of your i2c nodes don't have either, though I suspect
-that you at least need opclk0.  See my comments there.
-
--Doug
+Acked-by: Kevin Hilman <khilman@linaro.org>  # for i2c-omap.c
