@@ -1,180 +1,85 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH v2 2/5] clk: samsung: Add support to register rate_table
- for PLL3xxx
-Date: Tue, 4 Jun 2013 17:02:48 +0530
-Message-ID: <CAKew6eXTepPS2Z+Rws-GWpWfb7=WFtiMn9uZonQYcCcdMYaLpw@mail.gmail.com>
-References: <1369834677-20312-1-git-send-email-vikas.sajjan@linaro.org>
-	<CAD=FV=VDi+SfebiFnPNp8qR__9L=o9TJ+WSPRfRQLX+p+TMmJw@mail.gmail.com>
-	<CAKew6eVGnHNN7Fk=sqzE1iV+SFtJ1z4k1freeWdbGaYPXqpUvQ@mail.gmail.com>
-	<1710144.fZn06WrzIc@amdc1227>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Update defconfig for Arndale and Origen
+ board
+Date: Tue, 4 Jun 2013 13:13:17 +0100
+Message-ID: <20130604121317.GB31367@sirena.org.uk>
+References: <1368168599-28507-1-git-send-email-tushar.behera@linaro.org>
+ <87sj1qzaov.fsf@linaro.org>
+ <5191AA89.6010901@linaro.org>
+ <20130528231740.GA28879@quad.lixom.net>
+ <51A57D39.8030506@linaro.org>
+ <CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oAjj1ZwgLg4oRN9q"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:54417 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752770Ab3FDLct (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:36012 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751314Ab3FDMNq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Jun 2013 07:32:49 -0400
-Received: by mail-ie0-f181.google.com with SMTP id x14so199007ief.26
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Jun 2013 04:32:49 -0700 (PDT)
-In-Reply-To: <1710144.fZn06WrzIc@amdc1227>
+	Tue, 4 Jun 2013 08:13:46 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOesGMh50Dzr_jczHZC5_txfW=6a+7EgFKvgZgj9MhUcVUTJ1Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, grant.likely@linaro.org, Kevin Hilman <khilman@linaro.org>, Patch Tracking <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Tomasz,
 
-On Mon, Jun 3, 2013 at 8:55 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Yadwinder,
->
-> On Thursday 30 of May 2013 12:25:40 Yadwinder Singh Brar wrote:
->> Hi Doug,
->>
->> On Thu, May 30, 2013 at 5:14 AM, Doug Anderson <dianders@chromium.org>
-> wrote:
->> > Vikas / Yadwinder,
->> >
->> > On Wed, May 29, 2013 at 6:37 AM, Vikas Sajjan <vikas.sajjan@linaro.org>
-> wrote:
->> >> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
->> >>
->> >> This patch defines a common rate_table which will contain recommended p,
->> >> m, s, k values for supported rates that needs to be changed for changing
->> >> corresponding PLL's rate.
->> >>
->> >> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
->> >> ---
->> >>
->> >>  drivers/clk/samsung/clk-exynos4.c    |    8 ++++----
->> >>  drivers/clk/samsung/clk-exynos5250.c |   14 +++++++-------
->> >>  drivers/clk/samsung/clk-pll.c        |   14 ++++++++++++--
->> >>  drivers/clk/samsung/clk-pll.h        |   33
->> >>  +++++++++++++++++++++++++++++++-- 4 files changed, 54 insertions(+), 15
->> >>  deletions(-)
->> >
->> > I also reviewed this in our gerrit
->> > <https://gerrit.chromium.org/gerrit/#/c/56742/>, but I'll summarize
->> > here for the list...
->> >
->> >>  struct clk * __init samsung_clk_register_pll35xx(const char *name,
->> >>
->> >> -                       const char *pname, const void __iomem *base)
->> >> +                       const char *pname, const void __iomem *base,
->> >> +                       const struct samsung_pll_rate_table *rate_table,
->> >> +                       const unsigned int rate_count)
->> >
->> > Feels like you should document here that rate_table needs to be sorted
->> > and the sort order.
->>
->> sure,  we will add comment  to sort the table in descending order.
->>
->> >> +struct samsung_pll_rate_table {
->> >> +       unsigned  int rate;
->> >
->> > nit: extra space before "int" should be removed.
->>
->> ok
->>
->> > Also: you can include rate here if you need a convenient place to
->> > store it (which sadly means that this structure can't be const).
->> > ...but I do like Tomasz's idea of actually calculating it.  You can't
->> > know it at compile time since the parent rate comes from the device
->> > tree.
->> >
->> > compatible = "samsung,clock-xxti";
->> > clock-frequency = <24000000>;
->>
->> Actually this table should contain the recommended values
->> and if we see the user manual, the input(parent) rate is also a part
->> of recommended
->> table of different output rate for a particular PLL for that SoC.
->
-> From what I understood in the documentation is that there is a set of
-> recommended P, M, S (, K) tuples for each PLL and they are not dependent on
-> input frequency - f_in and f_out are provided in the table just for reference
-> to see the relation between output frequency and input frequency.
->
+--oAjj1ZwgLg4oRN9q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If input rate(f_in) gets changed for PLL, then the corresponding
-output rates(f_out)
-will change by using same(common) set of  recommended P, M, S (, K),
-and the new set of  output rates(f_out) may not be the _required_ set
-of target rates.
-So we need different set of P, M, S (,K) values for different f_in.
+On Tue, May 28, 2013 at 10:31:41PM -0700, Olof Johansson wrote:
+> On Tue, May 28, 2013 at 8:59 PM, Tushar Behera <tushar.behera@linaro.org> wrote:
 
-Table should contain set of P, M, S (,K) values for the _required_
-target(f_out) rates
-for a particular input(f_in) rate.
+> > e. usb: ehci-s5p: add the HSIC port initialization
+> > f. ARM: dts: Add USB gpio entries for Arndale board
 
-> I think we should ask some H/W engineer about that to make sure and choose the
-> proper implementation, which will work properly for future cases, instead of
-> ending with something that works just with current cases.
->
+> > I am not sure whether such kind of board-specific patches (e, f) are
+> > appreciated in the drivers. But that is all we need to get USB and
+> > Ethernet to work on v3.10-rc3 kernel.
 
-We already asked hardware engineer about PMS values for PLL,
-and we got a table containing recommended  P, M ,S values for a given
-f_in(24 MHz)
-and required f_out rates.
+> I've come across a similar situation with wifi reset sequence on the
+> chromebook. On the product kernel we added some code to the board file
+> to deal with it, but if we keep doing that things will grow out of
+> hand.
 
-Please let me know, why you think we are specific to current cases only ?
+> I don't know if it'll be unpopular, but I think it's time to start a
+> drivers/platform/arm for these kind of things, and have those drivers
+> probe on the system compatible value, similar to how x86 does it (with
+> DMI tables). At least that's my plan for approaching the wifi
+> reset/power-on sequence on the Chromebook. I hope to have patches in
+> not all that long...
 
-Regards,
-Yadwinder
+This does seem to be a fairly general problem for embedded systems with
+devices on enumerable buses - it's even worse for things like Slimbus
+where the expectation is that many devices will spend almost all of
+their time powered down.  We probably need to come up with
+infrastructure to enable the drivers for the individual devices to
+handle this, or at least roll out such infrastructure more widely, IIRC
+there's some DT stuff for PCI.
 
-> Best regards,
-> --
-> Tomasz Figa
-> Linux Kernel Developer
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->> So as Tomasz said input(parent) rate may change with board,
->> then, do those corresponding recommended p, m, s, k will be valid?
->>
->> In case, input(parent) rate changes then we may need different set of p, m
->> ,s, k values recommended for new input rate to get required(recommended to
->> use) output rate.
->>
->> So, we think its better that the p, m, s and k along with the parent
->> is known at the compile time ( or DT ?),
->> as these p, m, s, k values are very much coupled with the parent rate
->> to achieve the
->>  required(recommended to use) output rate.
->>
->> Also, since the sorted table is required (sorted based on "rate"),
->> its better to have the rate in a const rate table.
->>
->> And the whole set of recommended values should come from same place(DT
->> or static table),
->> to keep the things simple and consistent.
->>
->> Moreover, practically for a particular SoC , we use the recommended
->> input(parent) rate only for a PLL.
->> So we should keep the things simple here presently.
->>
->> >> +       unsigned int pdiv;
->> >> +       unsigned int mdiv;
->> >> +       unsigned int sdiv;
->> >> +       unsigned int kdiv;
->> >
->> > I think kdiv is signed.
->>
->> No, as these values should be the recommended values to be written in
->> corresponding  register bits. So it should remain unsigned.
->>
->> K value should be considered as negative only while recalculating rate.
->>
->> As per exynos5250 user manual's section 7.3.2 :
->> " K value description "Postive value (Negative value)":
->> Postive values is that you should write EPLLCON/VPLLCON register.
->> Negative value is that you can calculate PLL output frequency with it."
->>
->> > -Doug
->>
->> Regards,
->> Yadwinder & Vikas.
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
->> in the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--oAjj1ZwgLg4oRN9q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRrdnZAAoJELSic+t+oim92g8P/iYtr5vpvwfVw/2NlFdmUuZ+
+caoQRHBnOzjZBTKX/U30IxtFLUAUy4izXOo6IIRVMpR/JoCjQnY2ZJMXreQvml1R
+0WXH9HtM7IJSLDFq0WMyHjuFBbvtpy9EVVutN5OGffVjAAaENJgDK+aMAovX+HFF
+FqB5CLx7KEA56tN1fUe81WFsvk+7PWUF6apYuDcfubVWzFEq0dxVH+rm+w5iE1il
+lhwB31KpMNstb8jVVMksZxwhx9T1M5pWHMDszEOt6JnXReY2mUf3WajMACjL5Ze7
+r4jMI49TZLA3cWGv3UJKdwn2Kom09/YQpR/tnJ69o7jU02CYZgJYdhyQImA/zXUe
+JEh4c6rHJ5UV5GfZN6Ohj94y3fLiXU+Y8hDlDbvss0vzmXD6iyNUlmbdRB3OIU5E
+g07fToiOyBQiyYXezSY/nECj++e5jh/lrbU8/d0sXdzAQf6CDhB7+CLYZ/9OmkCh
+DWZd0DeLsWcDQz+s3BzLzAo3KBOn1qry8AW8eBYtVKz4ibJ4V/xpDT19qVsi84zn
+oG6otSLS+uB4OmwhRJZvxfhW6g1HCJw6gIWpAcIHzK9CNP1ThrX87pNNeSBO03n3
+c1UQ6Cr+td0ZuCQVzWZ8KV5s38FUPjbxyQGY4WRejmhf2QB2HKHc3Ug9nYtsseDc
+8YS9D3TNJeeLC6/ycEN+
+=ReLp
+-----END PGP SIGNATURE-----
+
+--oAjj1ZwgLg4oRN9q--
