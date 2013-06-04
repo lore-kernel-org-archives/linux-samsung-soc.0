@@ -1,227 +1,310 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH v2 3/3] ARM: s5p64x0: Use common uncompress.h part for plat-samsung
-Date: Tue,  4 Jun 2013 09:49:12 +0530
-Message-ID: <1370319552-17694-4-git-send-email-tushar.behera@linaro.org>
-References: <1370319552-17694-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:40424 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754181Ab3FDEdl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Jun 2013 00:33:41 -0400
-Received: by mail-pd0-f178.google.com with SMTP id w16so1848511pde.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jun 2013 21:33:41 -0700 (PDT)
-In-Reply-To: <1370319552-17694-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V4 22/30] thermal: exynos: Add support for exynos5440 TMU sensor.
+Date: Tue, 4 Jun 2013 10:14:35 +0530
+Message-ID: <CADGdYn5WEhoAEyt6p6HsiE2Mz3O7StFBbq_0CKXZ0Fn9qcv=uw@mail.gmail.com>
+References: <1368525540-15034-1-git-send-email-amit.daniel@samsung.com>
+	<1368525540-15034-23-git-send-email-amit.daniel@samsung.com>
+	<51971046.3080201@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51971046.3080201@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: jonghwa3.lee@samsung.com
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: arnd@arndb.de, kgene.kim@samsung.com, olof@lixom.net, patches@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-From: Tomasz Figa <tomasz.figa@gmail.com>
+Hi Jonghwa,
 
-Since uart_base can be set dynamically in arch_detect_cpu(), there is no
-need to have a copy of all code locally, just to override UART base
-address.
+Sorry for the late reply as I was on leave.
 
-This patch removes any duplicate code in uncompress.h variant of s5p64x0
-and implements proper arch_detect_cpu() function to initialize UART with
-SoC-specific parameters.
+On Sat, May 18, 2013 at 10:53 AM,  <jonghwa3.lee@samsung.com> wrote:
+> On 2013=EB=85=84 05=EC=9B=94 14=EC=9D=BC 18:58, Amit Daniel Kachhap w=
+rote:
+>
+>> This patch modifies TMU controller to add changes needed to work wit=
+h
+>> exynos5440 platform. This sensor registers 3 instance of the tmu con=
+troller
+>> with the thermal zone and hence reports 3 temperature output. This c=
+ontroller
+>> supports upto five trip points. For critical threshold the driver us=
+es the
+>> core driver thermal framework for shutdown.
+>>
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  .../devicetree/bindings/thermal/exynos-thermal.txt |   28 +++++++++=
++++-
+>>  drivers/thermal/samsung/exynos_tmu.c               |   43 +++++++++=
+++++++++--
+>>  drivers/thermal/samsung/exynos_tmu.h               |    6 +++
+>>  drivers/thermal/samsung/exynos_tmu_data.h          |    2 +
+>>  4 files changed, 72 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/thermal/exynos-therma=
+l.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> index 535fd0e..970eeba 100644
+>> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> @@ -6,13 +6,16 @@
+>>              "samsung,exynos4412-tmu"
+>>              "samsung,exynos4210-tmu"
+>>              "samsung,exynos5250-tmu"
+>> +            "samsung,exynos5440-tmu"
+>>  - interrupt-parent : The phandle for the interrupt controller
+>> -- reg : Address range of the thermal registers
+>> +- reg : Address range of the thermal registers. For exynos5440-tmu =
+which has 3
+>> +     instances of TMU, 2 set of register has to supplied. First set=
+ belongs
+>> +     to each instance of TMU and second set belongs to common TMU r=
+egisters.
+>>  - interrupts : Should contain interrupt for thermal system
+>>  - clocks : The main clock for TMU device
+>>  - clock-names : Thermal system clock name
+>>
+>> -Example:
+>> +Example 1):
+>>
+>>       tmu@100C0000 {
+>>               compatible =3D "samsung,exynos4412-tmu";
+>> @@ -23,3 +26,24 @@ Example:
+>>               clock-names =3D "tmu_apbif";
+>>               status =3D "disabled";
+>>       };
+>> +
+>> +Example 2):
+>> +
+>> +     tmuctrl_0: tmuctrl@160118 {
+>> +             compatible =3D "samsung,exynos5440-tmu";
+>> +             reg =3D <0x160118 0x230>, <0x160368 0x10>;
+>> +             interrupts =3D <0 58 0>;
+>> +             clocks =3D <&clock 21>;
+>> +             clock-names =3D "tmu_apbif";
+>> +     };
+>> +
+>> +Note: For multi-instance tmu each instance should have an alias cor=
+rectly
+>> +numbered in "aliases" node.
+>> +
+>> +Example:
+>> +
+>> +aliases {
+>> +     tmuctrl0 =3D &tmuctrl_0;
+>> +     tmuctrl1 =3D &tmuctrl_1;
+>> +     tmuctrl2 =3D &tmuctrl_2;
+>> +};
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/=
+samsung/exynos_tmu.c
+>> index 7f7b1cf..7ca9c4d 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -185,9 +185,11 @@ static int exynos_tmu_initialize(struct platfor=
+m_device *pdev)
+>>                       reg->threshold_th0 + i * sizeof(reg->threshold=
+_th0));
+>>
+>>               writel(reg->inten_rise_mask, data->base + reg->tmu_int=
+clear);
+>> -     } else if (data->soc =3D=3D SOC_ARCH_EXYNOS) {
+>> +     } else if (data->soc =3D=3D SOC_ARCH_EXYNOS ||
+>> +                     data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
+>>               /* Write temperature code for rising and falling thres=
+hold */
+>> -             for (i =3D 0; i < trigger_levs; i++) {
+>> +             for (i =3D 0;
+>> +             i < trigger_levs && i < EXYNOS_MAX_TRIGGER_PER_REG; i+=
++) {
+>>                       threshold_code =3D temp_to_code(data,
+>>                                               pdata->trigger_levels[=
+i]);
+>>                       if (threshold_code < 0) {
+>> @@ -218,7 +220,30 @@ static int exynos_tmu_initialize(struct platfor=
+m_device *pdev)
+>>               writel((reg->inten_rise_mask << reg->inten_rise_shift)=
+ |
+>>                       (reg->inten_fall_mask << reg->inten_fall_shift=
+),
+>>                               data->base + reg->tmu_intclear);
+>> +
+>> +             /* if 5th threshold limit is also present, use TH2 reg=
+ister */
+>> +             i =3D EXYNOS_MAX_TRIGGER_PER_REG;
+>> +             if (pdata->trigger_levels[i]) {
+>> +                     threshold_code =3D temp_to_code(data,
+>> +                                             pdata->trigger_levels[=
+i]);
+>> +                     if (threshold_code < 0) {
+>> +                             ret =3D threshold_code;
+>> +                             goto out;
+>> +                     }
+>> +                     rising_threshold =3D
+>> +                             threshold_code << reg->threshold_th3_l=
+0_shift;
+>> +                     writel(rising_threshold,
+>> +                             data->base + reg->threshold_th2);
+>> +                     if (pdata->trigger_type[i] =3D=3D HW_TRIP) {
+>> +                             con =3D readl(data->base + reg->tmu_ct=
+rl);
+>> +                             con |=3D (1 << reg->therm_trip_en_shif=
+t);
+>> +                             writel(con, data->base + reg->tmu_ctrl=
+);
+>> +                     }
+>> +             }
+>>       }
+>> +     /*Clear the PMIN in the common TMU register*/
+>> +     if (reg->tmu_pmin && !data->id)
+>> +             writel(0, data->base_common + reg->tmu_pmin);
+>>  out:
+>>       clk_disable(data->clk);
+>>       mutex_unlock(&data->lock);
+>> @@ -345,7 +370,14 @@ static void exynos_tmu_work(struct work_struct =
+*work)
+>>                       struct exynos_tmu_data, irq_work);
+>>       struct exynos_tmu_platform_data *pdata =3D data->pdata;
+>>       const struct exynos_tmu_registers *reg =3D pdata->registers;
+>> -     unsigned int val_irq;
+>> +     unsigned int val_irq, val_type;
+>> +
+>> +     /* Find which sensor generated this interrupt */
+>> +     if (reg->tmu_irqstatus) {
+>> +             val_type =3D readl(data->base_common + reg->tmu_irqsta=
+tus);
+>> +             if (!((val_type >> data->id) & 0x1))
+>> +                     goto out;
+>
+>
+> I have a question about your implementation for supporting EXYNOS5440=
+=2E
+> I don't know exactly how EXYNO5440's tmu is working, but just guess i=
+t would be
+> similar with other EXYNOS series's without number of thermal sensors.=
+ (exclusive
+> register map and threshold level). Due to the multiple number of ther=
+mal sensor
+> in EXYNOS5440, it have multiple thermal zone devices and that's why i=
+t just
+> leave interrupt pin in pending if interrupt is not its, right?
+Yes in 5440 the interrupt line is shared so pending bit is left unclear=
+ed.
+>
+> So, my curious is, why we make all platform devices for each of therm=
+al zone
+> devices? Why don't you just handle all thermal zone devices with one =
+platform
+> device?
+Your doubt is genuine. Let me justify my design decision.
+Initially I also thought of making a single platform device but since
+there are 3 different TMU controllers and register maps for 4 more so
+I followed this design as the driver looks clean and can be scalable
+easily. Also I agree that some resources like IRQ line is shared but
+it is due to h/w limitation.
+Also it is easy to cleanly control each TMU instance with the device
+tree data similar to I2C/SPI/MMC instance based device driver. Say I
+do not want to use 2nd sensor then just pass device tree data for 1st
+and 3rd sensor.
+>
+> Yes, It's probably right to make multiple devices node to support the=
+m, because
+> it has different physical hardware(sensors). But we have one TMU , do=
+n't we?
+> (Maybe my assumption is wrong, I assume that it has one TMU because i=
+t looks
+> like it has only one irq line.). If I'm right, I think it is better t=
+o manage
+> all thermal zone devices with one platform device. Then, we don't nee=
+d to leave
+> irq handler with leaving it pendded like above and also we may not ne=
+ed other
+> your patches like adding base_common iomem variable.
+Agreed that base_common variables is extra and present to handle the
+common part. I will further analyse your suggestion.
 
-While at it, replace hard-coded register address with macro.
-
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
-(This patch replaces the original patch in this patchset as it was an
-earlier-posted near-identical patch.)
-
-Changes for v2:
-* Remove the declaration of uart_base (taken care in plat/uncompress.h)
-
- arch/arm/mach-s5p64x0/include/mach/uncompress.h |  162 +----------------------
- 1 file changed, 6 insertions(+), 156 deletions(-)
-
-diff --git a/arch/arm/mach-s5p64x0/include/mach/uncompress.h b/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-index 19e0d64..bc04bd5 100644
---- a/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/uncompress.h
-@@ -14,171 +14,21 @@
- #define __ASM_ARCH_UNCOMPRESS_H
- 
- #include <mach/map.h>
-+#include <plat/uncompress.h>
- 
--/*
-- * cannot use commonly <plat/uncompress.h>
-- * because uart base of S5P6440 and S5P6450 is different
-- */
--
--typedef unsigned int upf_t;	/* cannot include linux/serial_core.h */
--
--/* uart setup */
--
--unsigned int fifo_mask;
--unsigned int fifo_max;
--
--/* forward declerations */
--
--static void arch_detect_cpu(void);
--
--/* defines for UART registers */
--
--#include <plat/regs-serial.h>
--#include <plat/regs-watchdog.h>
--
--/* working in physical space... */
--#undef S3C2410_WDOGREG
--#define S3C2410_WDOGREG(x) ((S3C24XX_PA_WATCHDOG + (x)))
--
--/* how many bytes we allow into the FIFO at a time in FIFO mode */
--#define FIFO_MAX	 (14)
--
--unsigned long uart_base;
--
--static __inline__ void get_uart_base(void)
-+static void arch_detect_cpu(void)
- {
- 	unsigned int chipid;
- 
- 	chipid = *(const volatile unsigned int __force *) 0xE0100118;
- 
--	uart_base = S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT;
--
- 	if ((chipid & 0xff000) == 0x50000)
--		uart_base += 0xEC800000;
-+		uart_base = S5P6450_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
- 	else
--		uart_base += 0xEC000000;
--}
--
--static __inline__ void uart_wr(unsigned int reg, unsigned int val)
--{
--	volatile unsigned int *ptr;
--
--	get_uart_base();
--	ptr = (volatile unsigned int *)(reg + uart_base);
--	*ptr = val;
--}
--
--static __inline__ unsigned int uart_rd(unsigned int reg)
--{
--	volatile unsigned int *ptr;
--
--	get_uart_base();
--	ptr = (volatile unsigned int *)(reg + uart_base);
--	return *ptr;
--}
--
--/*
-- * we can deal with the case the UARTs are being run
-- * in FIFO mode, so that we don't hold up our execution
-- * waiting for tx to happen...
-- */
--
--static void putc(int ch)
--{
--	if (uart_rd(S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE) {
--		int level;
--
--		while (1) {
--			level = uart_rd(S3C2410_UFSTAT);
--			level &= fifo_mask;
--
--			if (level < fifo_max)
--				break;
--		}
--
--	} else {
--		/* not using fifos */
--
--		while ((uart_rd(S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXE) != S3C2410_UTRSTAT_TXE)
--			barrier();
--	}
-+		uart_base = S5P6440_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
- 
--	/* write byte to transmission register */
--	uart_wr(S3C2410_UTXH, ch);
--}
--
--static inline void flush(void)
--{
--}
--
--#define __raw_writel(d, ad)			\
--	do {							\
--		*((volatile unsigned int __force *)(ad)) = (d); \
--	} while (0)
--
--
--#ifdef CONFIG_S3C_BOOT_ERROR_RESET
--
--static void arch_decomp_error(const char *x)
--{
--	putstr("\n\n");
--	putstr(x);
--	putstr("\n\n -- System resetting\n");
--
--	__raw_writel(0x4000, S3C2410_WTDAT);
--	__raw_writel(0x4000, S3C2410_WTCNT);
--	__raw_writel(S3C2410_WTCON_ENABLE | S3C2410_WTCON_DIV128 | S3C2410_WTCON_RSTEN | S3C2410_WTCON_PRESCALE(0x40), S3C2410_WTCON);
--
--	while(1);
--}
--
--#define arch_error arch_decomp_error
--#endif
--
--#ifdef CONFIG_S3C_BOOT_UART_FORCE_FIFO
--static inline void arch_enable_uart_fifo(void)
--{
--	u32 fifocon = uart_rd(S3C2410_UFCON);
--
--	if (!(fifocon & S3C2410_UFCON_FIFOMODE)) {
--		fifocon |= S3C2410_UFCON_RESETBOTH;
--		uart_wr(S3C2410_UFCON, fifocon);
--
--		/* wait for fifo reset to complete */
--		while (1) {
--			fifocon = uart_rd(S3C2410_UFCON);
--			if (!(fifocon & S3C2410_UFCON_RESETBOTH))
--				break;
--		}
--	}
--}
--#else
--#define arch_enable_uart_fifo() do { } while(0)
--#endif
--
--static void arch_decomp_setup(void)
--{
--	/*
--	 * we may need to setup the uart(s) here if we are not running
--	 * on an BAST... the BAST will have left the uarts configured
--	 * after calling linux.
--	 */
--
--	arch_detect_cpu();
--
--	/*
--	 * Enable the UART FIFOs if they where not enabled and our
--	 * configuration says we should turn them on.
--	 */
--
--	arch_enable_uart_fifo();
--}
--
--
--
--static void arch_detect_cpu(void)
--{
--	/* we do not need to do any cpu detection here at the moment. */
-+	fifo_mask = S3C2440_UFSTAT_TXMASK;
-+	fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
- }
- 
- #endif /* __ASM_ARCH_UNCOMPRESS_H */
--- 
-1.7.9.5
+Thanks,
+Amit Daniel
+>
+> I'd like to listen your opinion about this.
+>
+> Thanks,
+> Jonghwa
+>
+>> +     }
+>>
+>>       exynos_report_trigger(data->reg_conf);
+>>       mutex_lock(&data->lock);
+>> @@ -358,7 +390,7 @@ static void exynos_tmu_work(struct work_struct *=
+work)
+>>
+>>       clk_disable(data->clk);
+>>       mutex_unlock(&data->lock);
+>> -
+>> +out:
+>>       enable_irq(data->irq);
+>>  }
+>>
+>> @@ -520,7 +552,8 @@ static int exynos_tmu_probe(struct platform_devi=
+ce *pdev)
+>>               return ret;
+>>
+>>       if (pdata->type =3D=3D SOC_ARCH_EXYNOS ||
+>> -                             pdata->type =3D=3D SOC_ARCH_EXYNOS4210=
+)
+>> +             pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
+>> +                             pdata->type =3D=3D SOC_ARCH_EXYNOS5440=
+)
+>>               data->soc =3D pdata->type;
+>>       else {
+>>               ret =3D -EINVAL;
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/=
+samsung/exynos_tmu.h
+>> index 65443d7..9151a30 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>> @@ -44,6 +44,7 @@ enum trigger_type {
+>>  enum soc_type {
+>>       SOC_ARCH_EXYNOS4210 =3D 1,
+>>       SOC_ARCH_EXYNOS,
+>> +     SOC_ARCH_EXYNOS5440,
+>>  };
+>>
+>>  /**
+>> @@ -132,6 +133,8 @@ enum soc_type {
+>>   * @emul_temp_shift: shift bits of emulation temperature.
+>>   * @emul_time_shift: shift bits of emulation time.
+>>   * @emul_time_mask: mask bits of emulation time.
+>> + * @tmu_irqstatus: register to find which TMU generated interrupts.
+>> + * @tmu_pmin: register to get/set the Pmin value.
+>>   */
+>>  struct exynos_tmu_registers {
+>>       u32     triminfo_data;
+>> @@ -199,6 +202,9 @@ struct exynos_tmu_registers {
+>>       u32     emul_temp_shift;
+>>       u32     emul_time_shift;
+>>       u32     emul_time_mask;
+>> +
+>> +     u32     tmu_irqstatus;
+>> +     u32     tmu_pmin;
+>>  };
+>>
+>>  /**
+>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/the=
+rmal/samsung/exynos_tmu_data.h
+>> index 0e2244f..4acf070 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+>> @@ -91,6 +91,8 @@
+>>  #define EXYNOS_EMUL_DATA_MASK        0xFF
+>>  #define EXYNOS_EMUL_ENABLE   0x1
+>>
+>> +#define EXYNOS_MAX_TRIGGER_PER_REG   4
+>> +
+>>  #if defined(CONFIG_CPU_EXYNOS4210)
+>>  extern struct exynos_tmu_platform_data const exynos4210_default_tmu=
+_data;
+>>  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
+>
+>
