@@ -1,62 +1,61 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/6] Samsung watchdog support clean-up
-Date: Tue, 04 Jun 2013 18:37:54 +0900
-Message-ID: <06d601ce6107$304078c0$90c16a40$%kim@samsung.com>
-References: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
- <51A9ADF4.8010102@gmail.com> <1850418.EOBZxN7PB0@amdc1227>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Consolidate multiple low-level UART port
+ definitions
+Date: Tue, 04 Jun 2013 15:13:05 +0530
+Message-ID: <51ADB6A9.8030006@linaro.org>
+References: <1369888827-9427-1-git-send-email-tushar.behera@linaro.org> <871u8n105e.fsf@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:17871 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752231Ab3FDJh4 (ORCPT
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:43815 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751279Ab3FDJnM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Jun 2013 05:37:56 -0400
-In-reply-to: <1850418.EOBZxN7PB0@amdc1227>
-Content-language: ko
+	Tue, 4 Jun 2013 05:43:12 -0400
+Received: by mail-pd0-f179.google.com with SMTP id q11so6950069pdj.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Jun 2013 02:43:12 -0700 (PDT)
+In-Reply-To: <871u8n105e.fsf@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Wim Van Sebroeck' <wim@iguana.be>, linux-watchdog@vger.kernel.org, jhbird.choi@samsung.com
+To: Kevin Hilman <khilman@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, patches@linaro.org, kgene.kim@samsung.com, olof@lixom.net
 
-Tomasz Figa wrote:
+On 05/31/2013 11:50 PM, Kevin Hilman wrote:
+> Tushar Behera <tushar.behera@linaro.org> writes:
 > 
-> Hi Sylwester, Kukjin,
+>> There are two definitions for low-level UART ports for Exynos platform.
+>> CONFIG_S3C_LOWLEVEL_UART_PORT is used for printing "Uncompressing
+>> Linux... done, booting the kernel." and CONFIG_S3C_UART for other
+>> low-level messages.
+>>
+>> The assumption for both the uart ports is that they are pre-configured
+>> in the bootloader. Since they are essentially the same always, it
+>> would be good to consolidate them to use only one macro, in this case
+>> 'DEBUG_S3C_UART' would be a better option.
+>>
+>> 'DEBUG_S3C_UART' is defined only if DEBUG_LL is enabled. We can safely
+>> disable this option when DEBUG_LL is not defined and we can boot various
+>> boards with different UART port settings. Only drawback of this
+>> approach is that when DEBUG_LL is not defined, we would be missing the
+>> print "Uncompressing Linux... done, booting the kernel."
 > 
-Hi,
-
-> On Saturday 01 of June 2013 10:16:52 Sylwester Nawrocki wrote:
-> > Hi Tomasz,
-> >
-> > On 05/19/2013 12:37 AM, Tomasz Figa wrote:
-> > > This series is aiming at cleaning up a bit watchdog support on Samsung
-> > > SoCs. The patches tweak a bit all the watchdog handling code here and
-> > > there, with the goal of making it DT- and multiplatform-friendly.
-> > >
-> > > See particular patches for more detailed descriptions.
-> > >
-> > > On S3C6410-based Tiny6410 board (Mini6410-compatible):
-> > >
-> > > Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
-> >
-> > I've tested this series on a s3c2440 based board. The system restart
-> > works fine.
-> >
-> > Tested-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+> Perfectly acceptable to me (and already the case on OMAP.)
 > 
-> Thank you Sylwester for testing this series.
+>> Since CONFIG_S3C_LOWLEVEL_UART_PORT is still used by other Samsung
+>> boards, the consolidation applies only for ARCH_EXYNOS.
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > 
-Thanks again :-)
-
-> Kukjin, since it has been already tested on s3c24xx and s3c64xx and nobody
-> seems to care about s5p64x0 and s5pc100 (although I don't see a reason why
-> these patches should break them), could we have this series applied?
+> Acked-by: Kevin Hilman <khilman@linaro.org>
 > 
-OK, let me test this series on the smdk64x0 then, will apply.
 
-If any problems, let you know.
+Thanks Kevin.
 
-Thanks for your gentle reminder.
+I have an updated version of this patch updated for all of Samsung
+platforms.[1]
 
-- Kukjin
+[1] http://www.gossamer-threads.com/lists/linux/kernel/1723429
+
+-- 
+Tushar Behera
