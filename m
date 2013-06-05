@@ -1,89 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] clk: samsung: Fix pll36xx_recalc_rate to handle kdiv
- properly
-Date: Wed, 05 Jun 2013 20:51:29 +0900
-Message-ID: <08e301ce61e3$045828c0$0d087a40$%kim@samsung.com>
-References: <1370026725-22910-1-git-send-email-dianders@chromium.org>
+Subject: RE: [PATCH] ARM: dts: Fix gpio number for UART3 in exynos5250
+Date: Wed, 05 Jun 2013 20:56:03 +0900
+Message-ID: <08e401ce61e3$a7b0dee0$f7129ca0$%kim@samsung.com>
+References: <1366371573-19310-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30815 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752384Ab3FELvb (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:63271 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753570Ab3FEL4F (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Jun 2013 07:51:31 -0400
-In-reply-to: <1370026725-22910-1-git-send-email-dianders@chromium.org>
+	Wed, 5 Jun 2013 07:56:05 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MNX0088O55AXJX0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Jun 2013 20:56:04 +0900 (KST)
+In-reply-to: <1366371573-19310-1-git-send-email-tushar.behera@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Vikas Sajjan' <vikas.sajjan@linaro.org>, 'Yadwinder Singh Brar' <yadi.brar01@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Mike Turquette' <mturquette@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, linux-kernel@vger.kernel.org
+To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
-Doug Anderson wrote:
+Tushar Behera wrote:
 > 
-> The KDIV value is often listed as unsigned but it needs to be treated
-> as a 16-bit signed value when using it in calculations.  Fix our rate
-> recalculation to do this correctly.
+> UART3 uses GPA1-4 and GPA1-5 instead.
 > 
-> Before doing this, I tried setting EPLL on exynos5250 to:
->   rate, m, p, s, k = 80000000, 107, 2, 4, 43691
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This rate is exactly from the table in the exynos5250 user manual.
+> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> index d1650fb..299d786 100644
+> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> @@ -256,7 +256,7 @@
+>  		};
 > 
-> I read this back as 80750003 with:
->   cat /sys/kernel/debug/clk/fin_pll/fout_epll/clk_rate
-> 
-> After this patch, it reads back as 80000003
-> 
->   mw 0x10020130 a06b0204
->   mw 0x10020134 0000aaab
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>  		uart3_data: uart3-data {
+> -			samsung,pins = "gpa1-4", "gpa1-4";
+> +			samsung,pins = "gpa1-4", "gpa1-5";
+>  			samsung,pin-function = <2>;
+>  			samsung,pin-pud = <0>;
+>  			samsung,pin-drv = <0>;
+> --
+> 1.7.9.5
 
-Yeah,
-
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Mike, please apply in your fixes.
-
-Thanks.
+Applied, thanks.
 
 - Kukjin
-
-> ---
-> This patch is based upon another in-flight patch to avoid conflicts:
->   clk: samsung: Use clk->base instead of directly using clk->con0 for
-> PLL3xxx
->   https://patchwork.kernel.org/patch/2629751/
-> 
->  drivers/clk/samsung/clk-pll.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 01f17cf..26416bb 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -115,7 +115,8 @@ static unsigned long
-> samsung_pll36xx_recalc_rate(struct clk_hw *hw,
->  				unsigned long parent_rate)
->  {
->  	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> -	u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
-> +	u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
-> +	s16 kdiv;
->  	u64 fvco = parent_rate;
-> 
->  	pll_con0 = pll_readl(pll, PLL36XX_CON0_OFFSET);
-> @@ -123,7 +124,7 @@ static unsigned long
-> samsung_pll36xx_recalc_rate(struct clk_hw *hw,
->  	mdiv = (pll_con0 >> PLL36XX_MDIV_SHIFT) & PLL36XX_MDIV_MASK;
->  	pdiv = (pll_con0 >> PLL36XX_PDIV_SHIFT) & PLL36XX_PDIV_MASK;
->  	sdiv = (pll_con0 >> PLL36XX_SDIV_SHIFT) & PLL36XX_SDIV_MASK;
-> -	kdiv = pll_con1 & PLL36XX_KDIV_MASK;
-> +	kdiv = (s16)(pll_con1 & PLL36XX_KDIV_MASK);
-> 
->  	fvco *= (mdiv << 16) + kdiv;
->  	do_div(fvco, (pdiv << sdiv));
-> --
-> 1.8.2.1
