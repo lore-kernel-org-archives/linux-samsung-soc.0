@@ -1,47 +1,96 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 07/15] pwm: samsung: Rename to pwm-samsung-legacy
-Date: Wed,  5 Jun 2013 23:18:12 +0200
-Message-ID: <1370467100-10820-8-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 05/15] ARM: SAMSUNG: Remove old samsung-time driver
+Date: Wed,  5 Jun 2013 23:18:10 +0200
+Message-ID: <1370467100-10820-6-git-send-email-tomasz.figa@gmail.com>
 References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f54.google.com ([209.85.214.54]:53029 "EHLO
+Received: from mail-bk0-f54.google.com ([209.85.214.54]:55980 "EHLO
 	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932584Ab3FEVSv (ORCPT
+	with ESMTP id S932585Ab3FEVSq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Jun 2013 17:18:51 -0400
+	Wed, 5 Jun 2013 17:18:46 -0400
 In-Reply-To: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, thierry.reding@gmail.com, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-This patch renames the old pwm-samsung driver to pwm-samsung-legacy to
-create place for the new, rewritten, DT-aware pwm-samsung driver using
-Samsung PWM/timer master driver.
-
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/pwm/Makefile                                | 2 +-
- drivers/pwm/{pwm-samsung.c => pwm-samsung-legacy.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/pwm/{pwm-samsung.c => pwm-samsung-legacy.c} (100%)
+ arch/arm/plat-samsung/Kconfig                     |   8 -
+ arch/arm/plat-samsung/Makefile                    |   1 -
+ arch/arm/plat-samsung/include/plat/samsung-time.h |  23 --
+ arch/arm/plat-samsung/samsung-time.c              | 394 ----------------------
+ 4 files changed, 426 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/samsung-time.c
 
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index 94ba21e..229a599 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -8,7 +8,7 @@ obj-$(CONFIG_PWM_LPC32XX)	+= pwm-lpc32xx.o
- obj-$(CONFIG_PWM_MXS)		+= pwm-mxs.o
- obj-$(CONFIG_PWM_PUV3)		+= pwm-puv3.o
- obj-$(CONFIG_PWM_PXA)		+= pwm-pxa.o
--obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
-+obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung-legacy.o
- obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
- obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
- obj-$(CONFIG_PWM_TIECAP)	+= pwm-tiecap.o
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung-legacy.c
-similarity index 100%
-rename from drivers/pwm/pwm-samsung.c
-rename to drivers/pwm/pwm-samsung-legacy.c
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index f8ed2de..e88adc0 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -60,14 +60,6 @@ config S3C_LOWLEVEL_UART_PORT
+ 	  this configuration should be between zero and two. The port
+ 	  must have been initialised by the boot-loader before use.
+ 
+-# timer options
+-
+-config SAMSUNG_HRT
+-	bool
+-	select SAMSUNG_DEV_PWM
+-	help
+-	  Use the High Resolution timer support
+-
+ # clock options
+ 
+ config SAMSUNG_CLOCK
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index a23c460..87494e1 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -12,7 +12,6 @@ obj-				:=
+ # Objects we always build independent of SoC choice
+ 
+ obj-y				+= init.o cpu.o
+-obj-$(CONFIG_SAMSUNG_HRT) 	+= samsung-time.o
+ 
+ obj-$(CONFIG_SAMSUNG_CLOCK)	+= clock.o
+ obj-$(CONFIG_SAMSUNG_CLOCK)	+= pwm-clock.o
+diff --git a/arch/arm/plat-samsung/include/plat/samsung-time.h b/arch/arm/plat-samsung/include/plat/samsung-time.h
+index 4cc99bb..209464a 100644
+--- a/arch/arm/plat-samsung/include/plat/samsung-time.h
++++ b/arch/arm/plat-samsung/include/plat/samsung-time.h
+@@ -22,29 +22,6 @@ enum samsung_timer_mode {
+ 	SAMSUNG_PWM4,
+ };
+ 
+-struct samsung_timer_source {
+-	unsigned int event_id;
+-	unsigned int source_id;
+-};
+-
+-/* Be able to sleep for atleast 4 seconds (usually more) */
+-#define SAMSUNG_TIMER_MIN_RANGE	4
+-
+-#if defined(CONFIG_ARCH_S3C24XX) || defined(CONFIG_ARCH_S5PC100)
+-#define TCNT_MAX		0xffff
+-#define TSCALER_DIV		25
+-#define TDIV			50
+-#define TSIZE			16
+-#else
+-#define TCNT_MAX		0xffffffff
+-#define TSCALER_DIV		2
+-#define TDIV			2
+-#define TSIZE			32
+-#endif
+-
+-#define NON_PERIODIC		0
+-#define PERIODIC		1
+-
+ extern void __init samsung_set_timer_source(enum samsung_timer_mode event,
+ 					enum samsung_timer_mode source);
+ 
+diff --git a/arch/arm/plat-samsung/samsung-time.c b/arch/arm/plat-samsung/samsung-time.c
+deleted file mode 100644
+index f899cbc..0000000
 -- 
 1.8.2.1
