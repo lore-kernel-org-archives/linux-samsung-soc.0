@@ -1,64 +1,80 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Remove combiner IRQ node from exynos4x12.dtsi
-Date: Wed, 5 Jun 2013 17:33:53 +0530
-Message-ID: <CAK9yfHxX2CdA52QVTVBzr6rEZQLfwiOVeDPHDNDdXg5wxFK=6A@mail.gmail.com>
-References: <1366710888-11059-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/3] clk: exynos4: Staticize local symbols
+Date: Wed, 05 Jun 2013 21:14:09 +0900
+Message-ID: <08f401ce61e6$2ecc33f0$8c649bd0$%kim@samsung.com>
+References: <1366106719-26342-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:45019 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752389Ab3FEMDx (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:65461 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753685Ab3FEMOL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Jun 2013 08:03:53 -0400
-Received: by mail-oa0-f45.google.com with SMTP id j6so1041285oag.18
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jun 2013 05:03:53 -0700 (PDT)
-In-Reply-To: <1366710888-11059-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 5 Jun 2013 08:14:11 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MNX00BHK5ZGCVW0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Jun 2013 21:14:09 +0900 (KST)
+In-reply-to: <1366106719-26342-1-git-send-email-sachin.kamat@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: mturquette@linaro.org, thomas.abraham@linaro.org, patches@linaro.org
 
-Ping..
-
-On 23 April 2013 15:24, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> These nodes have separately been added to 4212 and 4412 dtsi
-> files by commit 30269ddff1 ("ARM: exynos: add missing properties
-> for combiner IRQs"). The existing node also contained a few
-> incorrect entries.
->
+Sachin Kamat wrote:
+> 
+> These symbols are used only in this file and hence should be
+> static.
+> 
 > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
-> Patch based on linux-next tree (20130423)
-> ---
->  arch/arm/boot/dts/exynos4x12.dtsi |    8 --------
->  1 file changed, 8 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-> index ede3f9b..675c221 100644
-> --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> @@ -28,14 +28,6 @@
->                 pinctrl3 = &pinctrl_3;
->         };
->
-> -       combiner:interrupt-controller@10440000 {
-> -               interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-> -                            <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-> -                            <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-> -                            <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
-> -                            <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>;
-> -       };
-> -
->         clock: clock-controller@0x10030000 {
->                 compatible = "samsung,exynos4412-clock";
->                 reg = <0x10030000 0x20000>;
-> --
-> 1.7.9.5
->
+>  drivers/clk/samsung/clk-exynos4.c |   26 ++++++++++++++------------
+>  1 file changed, 14 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-
+> exynos4.c
+> index 7104669..26f2a85 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -339,24 +339,26 @@ PNAME(mout_user_aclk200_p4x12) = {"fin_pll",
+> "div_aclk200", };
+>  PNAME(mout_user_aclk266_gps_p4x12) = {"fin_pll", "div_aclk266_gps", };
+> 
+>  /* fixed rate clocks generated outside the soc */
+> -struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata
+> = {
+> +static struct
+> +samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
 
+Any reason to use double lines?
 
+>  	FRATE(xxti, "xxti", NULL, CLK_IS_ROOT, 0),
+>  	FRATE(xusbxti, "xusbxti", NULL, CLK_IS_ROOT, 0),
+>  };
 
--- 
-With warm regards,
-Sachin
+[...]
+
+> -struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata =
+> {
+> +static struct
+> +samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata = {
+
+Same as above.
+
+>  	FRATE(none, "sclk_usbphy1", NULL, CLK_IS_ROOT, 48000000),
+>  };
+> 
+[...]
+
+Others look good to me,
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Mike, please pick this into the clk tree if you're ok.
+
+Thanks.
+
+- Kukjin
