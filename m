@@ -1,27 +1,27 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/3] ARM: dts: Add clock provider information for DP
- controller in Exynos5250 SoC
-Date: Wed, 05 Jun 2013 20:25:43 +0900
-Message-ID: <08db01ce61df$6acf12c0$406d3840$%kim@samsung.com>
+Subject: RE: [PATCH 1/3] ARM: dts: Add DT node for DP controller for Arndale
+ Board
+Date: Wed, 05 Jun 2013 20:26:47 +0900
+Message-ID: <08dc01ce61df$909cf5d0$b1d6e170$%kim@samsung.com>
 References: <1367992894-20198-1-git-send-email-vikas.sajjan@linaro.org>
- <1367992894-20198-3-git-send-email-vikas.sajjan@linaro.org>
- <000801ce4f78$442ef140$cc8cd3c0$@samsung.com>
+ <1367992894-20198-2-git-send-email-vikas.sajjan@linaro.org>
+ <000701ce4f78$04bf9fa0$0e3edee0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15302 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754495Ab3FELZo (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:60093 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441Ab3FEL0u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Jun 2013 07:25:44 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 5 Jun 2013 07:26:50 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MNX00MBS3QBT3L0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Jun 2013 20:25:43 +0900 (KST)
-In-reply-to: <000801ce4f78$442ef140$cc8cd3c0$@samsung.com>
+ with ESMTP id <0MNX0072O3SOKBF0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Jun 2013 20:26:48 +0900 (KST)
+In-reply-to: <000701ce4f78$04bf9fa0$0e3edee0$@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -32,41 +32,45 @@ Jingoo Han wrote:
 > 
 > On Wednesday, May 08, 2013 3:02 PM, Vikas Sajjan wrote:
 > >
-> > Adds clock provider information for DP controller required by CCF.
+> > Add DT node for DP controller to exynos5250 based Arndale Board
 > >
 > > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 > 
 > Hi Vikas Sajjan,
 > 
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
+> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 > 
 Applied, thanks.
 
 - Kukjin
 
-
 > Best regards,
 > Jingoo Han
 > 
 > > ---
-> >  arch/arm/boot/dts/exynos5250.dtsi |    2 ++
-> >  1 file changed, 2 insertions(+)
+> >  arch/arm/boot/dts/exynos5250-arndale.dts |   10 ++++++++++
+> >  1 file changed, 10 insertions(+)
 > >
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> > index 4bd9e9c..2773d22 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -651,6 +651,8 @@
-> >  		reg = <0x145b0000 0x1000>;
-> >  		interrupts = <10 3>;
-> >  		interrupt-parent = <&combiner>;
-> > +		clocks = <&clock 342>;
-> > +		clock-names = "dp";
-> >  		#address-cells = <1>;
-> >  		#size-cells = <0>;
-> >
+> > diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
+> b/arch/arm/boot/dts/exynos5250-arndale.dts
+> > index 02cfc76..f68b820 100644
+> > --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> > +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> > @@ -449,4 +449,14 @@
+> >  			clock-frequency = <24000000>;
+> >  		};
+> >  	};
+> > +
+> > +	dp-controller {
+> > +		samsung,color-space = <0>;
+> > +		samsung,dynamic-range = <0>;
+> > +		samsung,ycbcr-coeff = <0>;
+> > +		samsung,color-depth = <1>;
+> > +		samsung,link-rate = <0x0a>;
+> > +		samsung,lane-count = <4>;
+> > +	};
+> > +
+> >  };
 > > --
 > > 1.7.9.5
 > >
