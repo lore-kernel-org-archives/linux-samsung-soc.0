@@ -1,232 +1,92 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 2/5] clk: samsung: Add support to register rate_table
- for PLL3xxx
-Date: Wed, 05 Jun 2013 15:40:51 +0200
-Message-ID: <1722774.fIsI8ciPDi@amdc1227>
-References: <1369834677-20312-1-git-send-email-vikas.sajjan@linaro.org>
- <1710144.fZn06WrzIc@amdc1227>
- <CAKew6eXTepPS2Z+Rws-GWpWfb7=WFtiMn9uZonQYcCcdMYaLpw@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] drm/exynos: fimd: Get signal polarities from device tree
+Date: Wed, 05 Jun 2013 20:13:47 +0200
+Message-ID: <3526289.sQom3X8AJe@flatron>
+References: <1367435169-15025-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:10934 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753684Ab3FENky (ORCPT
+Received: from mail-bk0-f50.google.com ([209.85.214.50]:48419 "EHLO
+	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756426Ab3FESNw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Jun 2013 09:40:54 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MNX00GCZ9T8J820@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Jun 2013 14:40:52 +0100 (BST)
-In-reply-to: <CAKew6eXTepPS2Z+Rws-GWpWfb7=WFtiMn9uZonQYcCcdMYaLpw@mail.gmail.com>
+	Wed, 5 Jun 2013 14:13:52 -0400
+Received: by mail-bk0-f50.google.com with SMTP id ik5so1099058bkc.37
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jun 2013 11:13:51 -0700 (PDT)
+In-Reply-To: <1367435169-15025-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
+To: dri-devel@lists.freedesktop.org, inki.dae@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, t.figa@samsung.com
 
-Hi Yadwinder,
-
-On Tuesday 04 of June 2013 17:02:48 Yadwinder Singh Brar wrote:
-> Hi Tomasz,
+On Wednesday 01 of May 2013 21:06:09 Tomasz Figa wrote:
+> This patch modifies the driver to perform two stage parsing of video
+> timings from device tree, to get timing information as struct videomode,
+> which contains more data than struct fb_videomode.
 > 
-> On Mon, Jun 3, 2013 at 8:55 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Yadwinder,
-> > 
-> > On Thursday 30 of May 2013 12:25:40 Yadwinder Singh Brar wrote:
-> >> Hi Doug,
-> >> 
-> >> On Thu, May 30, 2013 at 5:14 AM, Doug Anderson <dianders@chromium.org>
-> > 
-> > wrote:
-> >> > Vikas / Yadwinder,
-> >> > 
-> >> > On Wed, May 29, 2013 at 6:37 AM, Vikas Sajjan <vikas.sajjan@linaro.org>
-> > 
-> > wrote:
-> >> >> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> >> >> 
-> >> >> This patch defines a common rate_table which will contain recommended
-> >> >> p,
-> >> >> m, s, k values for supported rates that needs to be changed for
-> >> >> changing
-> >> >> corresponding PLL's rate.
-> >> >> 
-> >> >> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> >> >> ---
-> >> >> 
-> >> >>  drivers/clk/samsung/clk-exynos4.c    |    8 ++++----
-> >> >>  drivers/clk/samsung/clk-exynos5250.c |   14 +++++++-------
-> >> >>  drivers/clk/samsung/clk-pll.c        |   14 ++++++++++++--
-> >> >>  drivers/clk/samsung/clk-pll.h        |   33
-> >> >>  +++++++++++++++++++++++++++++++-- 4 files changed, 54 insertions(+),
-> >> >>  15
-> >> >>  deletions(-)
-> >> > 
-> >> > I also reviewed this in our gerrit
-> >> > <https://gerrit.chromium.org/gerrit/#/c/56742/>, but I'll summarize
-> >> > here for the list...
-> >> > 
-> >> >>  struct clk * __init samsung_clk_register_pll35xx(const char *name,
-> >> >> 
-> >> >> -                       const char *pname, const void __iomem *base)
-> >> >> +                       const char *pname, const void __iomem *base,
-> >> >> +                       const struct samsung_pll_rate_table
-> >> >> *rate_table,
-> >> >> +                       const unsigned int rate_count)
-> >> > 
-> >> > Feels like you should document here that rate_table needs to be sorted
-> >> > and the sort order.
-> >> 
-> >> sure,  we will add comment  to sort the table in descending order.
-> >> 
-> >> >> +struct samsung_pll_rate_table {
-> >> >> +       unsigned  int rate;
-> >> > 
-> >> > nit: extra space before "int" should be removed.
-> >> 
-> >> ok
-> >> 
-> >> > Also: you can include rate here if you need a convenient place to
-> >> > store it (which sadly means that this structure can't be const).
-> >> > ...but I do like Tomasz's idea of actually calculating it.  You can't
-> >> > know it at compile time since the parent rate comes from the device
-> >> > tree.
-> >> > 
-> >> > compatible = "samsung,clock-xxti";
-> >> > clock-frequency = <24000000>;
-> >> 
-> >> Actually this table should contain the recommended values
-> >> and if we see the user manual, the input(parent) rate is also a part
-> >> of recommended
-> >> table of different output rate for a particular PLL for that SoC.
-> > 
-> > From what I understood in the documentation is that there is a set of
-> > recommended P, M, S (, K) tuples for each PLL and they are not dependent
-> > on
-> > input frequency - f_in and f_out are provided in the table just for
-> > reference to see the relation between output frequency and input
-> > frequency.
+> Thanks to this change, information about polarity of control signals
+> (VSYNC, HSYNC, VDEN, VCLK) can be retrieved, in addition to standard
+> video timings.
 > 
-> If input rate(f_in) gets changed for PLL, then the corresponding
-> output rates(f_out)
-> will change by using same(common) set of  recommended P, M, S (, K),
-> and the new set of  output rates(f_out) may not be the _required_ set
-> of target rates.
-> So we need different set of P, M, S (,K) values for different f_in.
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
 > 
-> Table should contain set of P, M, S (,K) values for the _required_
-> target(f_out) rates
-> for a particular input(f_in) rate.
-
-I'm not sure what required rates you are talking about. For most PLLs the list 
-of available frequencies seems to be defined by the set of supported PMS values 
-and those are the frequencies that can be set by consumers, not the other way 
-around.
-
-There are some cases when some particular frequency must be generated, like 
-PLLs used for audio or video clock sources, but this just means that there 
-must be an entry in PMS table that gives PLL configuration which produces such 
-frequency with used PLL input clock.
-
-> > I think we should ask some H/W engineer about that to make sure and choose
-> > the proper implementation, which will work properly for future cases,
-> > instead of ending with something that works just with current cases.
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c index a1669d4..9023efa
+> 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -21,7 +21,9 @@
+>  #include <linux/pm_runtime.h>
 > 
-> We already asked hardware engineer about PMS values for PLL,
-> and we got a table containing recommended  P, M ,S values for a given
-> f_in(24 MHz)
-> and required f_out rates.
+>  #include <video/of_display_timing.h>
+> +#include <video/of_videomode.h>
+>  #include <video/samsung_fimd.h>
+> +#include <video/videomode.h>
+>  #include <drm/exynos_drm.h>
+> 
+>  #include "exynos_drm_drv.h"
+> @@ -928,18 +930,30 @@ static int fimd_probe(struct platform_device
+> *pdev) DRM_DEBUG_KMS("%s\n", __FILE__);
+> 
+>  	if (pdev->dev.of_node) {
+> +		struct videomode vm;
+> +
+>  		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+>  		if (!pdata) {
+>  			DRM_ERROR("memory allocation for pdata failed\n");
+>  			return -ENOMEM;
+>  		}
+> 
+> -		ret = of_get_fb_videomode(dev->of_node, &pdata-
+>panel.timing,
+> -					OF_USE_NATIVE_MODE);
+> +		ret = of_get_videomode(dev->of_node, &vm, 
+OF_USE_NATIVE_MODE);
+>  		if (ret) {
+>  			DRM_ERROR("failed: of_get_fb_videomode() : %d\n", 
+ret);
+>  			return ret;
+>  		}
+> +
+> +		fb_videomode_from_videomode(&vm, &pdata->panel.timing);
+> +
+> +		if (vm.flags & DISPLAY_FLAGS_VSYNC_LOW)
+> +			pdata->vidcon1 |= VIDCON1_INV_VSYNC;
+> +		if (vm.flags & DISPLAY_FLAGS_HSYNC_LOW)
+> +			pdata->vidcon1 |= VIDCON1_INV_HSYNC;
+> +		if (vm.flags & DISPLAY_FLAGS_DE_LOW)
+> +			pdata->vidcon1 |= VIDCON1_INV_VDEN;
+> +		if (vm.flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
+> +			pdata->vidcon1 |= VIDCON1_INV_VCLK;
+>  	} else {
+>  		pdata = pdev->dev.platform_data;
+>  		if (!pdata) {
 
-This doesn't answer the question about using those PMS values with different 
-input rate.
-
-Kukjin, maybe you can give some information on this or point to a person who 
-could?
-
-> Please let me know, why you think we are specific to current cases only ?
-
-I don't like the idea of having separate tables for each input rate. Just 
-imagine how much data would have to be added if boards with several different 
-input rates showed up.
-
-Sure, if each input rate requires different set of PMS values by hardware 
-design, it can't be helped, but if the same PMS values can be reused (even 
-giving different output rates, but this is usually not important), one table 
-can be used for all cases.
+Ping.
 
 Best regards,
--- 
-Tomasz Figa
-Linux Kernel Developer
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> Regards,
-> Yadwinder
-> 
-> > Best regards,
-> > --
-> > Tomasz Figa
-> > Linux Kernel Developer
-> > Samsung R&D Institute Poland
-> > Samsung Electronics
-> > 
-> >> So as Tomasz said input(parent) rate may change with board,
-> >> then, do those corresponding recommended p, m, s, k will be valid?
-> >> 
-> >> In case, input(parent) rate changes then we may need different set of p,
-> >> m
-> >> ,s, k values recommended for new input rate to get required(recommended
-> >> to
-> >> use) output rate.
-> >> 
-> >> So, we think its better that the p, m, s and k along with the parent
-> >> is known at the compile time ( or DT ?),
-> >> as these p, m, s, k values are very much coupled with the parent rate
-> >> to achieve the
-> >> 
-> >>  required(recommended to use) output rate.
-> >> 
-> >> Also, since the sorted table is required (sorted based on "rate"),
-> >> its better to have the rate in a const rate table.
-> >> 
-> >> And the whole set of recommended values should come from same place(DT
-> >> or static table),
-> >> to keep the things simple and consistent.
-> >> 
-> >> Moreover, practically for a particular SoC , we use the recommended
-> >> input(parent) rate only for a PLL.
-> >> So we should keep the things simple here presently.
-> >> 
-> >> >> +       unsigned int pdiv;
-> >> >> +       unsigned int mdiv;
-> >> >> +       unsigned int sdiv;
-> >> >> +       unsigned int kdiv;
-> >> > 
-> >> > I think kdiv is signed.
-> >> 
-> >> No, as these values should be the recommended values to be written in
-> >> corresponding  register bits. So it should remain unsigned.
-> >> 
-> >> K value should be considered as negative only while recalculating rate.
-> >> 
-> >> As per exynos5250 user manual's section 7.3.2 :
-> >> " K value description "Postive value (Negative value)":
-> >> Postive values is that you should write EPLLCON/VPLLCON register.
-> >> Negative value is that you can calculate PLL output frequency with it."
-> >> 
-> >> > -Doug
-> >> 
-> >> Regards,
-> >> Yadwinder & Vikas.
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe
-> >> linux-samsung-soc" in the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Tomasz
