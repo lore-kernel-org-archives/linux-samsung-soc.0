@@ -1,57 +1,42 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 03/13] ARM: dts: fork out common Exynos5 nodes
-Date: Thu, 6 Jun 2013 16:44:46 +0530
-Message-ID: <CAK9yfHxv7EG_1rtgpOwo3HDN7TdfjnK3wH4bAG=RKQJDeW+hHw@mail.gmail.com>
-References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
-	<1370516488-25860-3-git-send-email-chander.kashyap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <1370516488-25860-3-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: dts: Update vdd_arm regulator
+Date: Thu,  6 Jun 2013 16:32:52 +0530
+Message-ID: <1370516572-313-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:52166 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754200Ab3FFLRL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Jun 2013 07:17:11 -0400
+Received: by mail-pd0-f170.google.com with SMTP id x10so3209151pdj.29
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Jun 2013 04:17:11 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, patches@linaro.org
 
-On 6 June 2013 16:31, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> In preparation of adding support for Exynos5420, which has many peripherals
-> similar to Exynos5250, a new common Exynos5 device tree source file is
-> created out of the existing Exynos5250 device tree source file. Only the
-> common nodes required for basic boot up on Exynos5420 based boards are moved
-> into this new file and the rest of the common nodes would be moved subsequently.
->
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5.dtsi    |  121 +++++++++++++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5250.dtsi |   74 +----------------------
->  2 files changed, 122 insertions(+), 73 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos5.dtsi
->
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-> new file mode 100644
-> index 0000000..ab56608
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -0,0 +1,121 @@
-> +/*
-> + * Samsung's Exynos5 SoC series common device tree source
-> + *
-> + * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * Samsung's Exynos5 SoC series device nodes are listed in this file. Particular
-> + * SoCs from Exynos5 series can include this file and provide values for SoCs
-> + * specfic bindings.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +/include/ "skeleton.dtsi"
+Cpufreq driver for EXYNOS4210 is not a platform driver, hence it is not
+possible to provide the regulator supply name through DT bindings.
+Since the cpufreq driver requires the regulator to be named as
+'vdd_arm', the related regulator name should be kept same.
 
-Perhaps you could use #include here and rest of the places in this patch?
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/boot/dts/exynos4210-origen.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index bcf8079..bd5f589 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -192,7 +192,7 @@
+ 				};
+ 
+ 				buck1_reg: BUCK1 {
+-					regulator-name = "VDD_ARM_1.2V";
++					regulator-name = "vdd_arm";
+ 					regulator-min-microvolt = <950000>;
+ 					regulator-max-microvolt	= <1350000>;
+ 					regulator-always-on;
 -- 
-With warm regards,
-Sachin
+1.7.9.5
