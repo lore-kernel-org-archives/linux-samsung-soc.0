@@ -1,62 +1,79 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
-Date: Thu,  6 Jun 2013 16:52:28 +0530
-Message-ID: <1370517749-29892-3-git-send-email-tushar.behera@linaro.org>
-References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org
+Subject: Re: [PATCH 13/13] ARM: Exynos: extend soft-reset support for Exynos5420
+Date: Thu, 06 Jun 2013 17:14:49 +0530
+Message-ID: <51B07631.2010802@linaro.org>
+References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org> <1370516488-25860-13-git-send-email-chander.kashyap@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:62282 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754761Ab3FFLo4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Jun 2013 07:44:56 -0400
+Received: by mail-pa0-f46.google.com with SMTP id fa11so1684323pad.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Jun 2013 04:44:55 -0700 (PDT)
+In-Reply-To: <1370516488-25860-13-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com
 
-cpufreq driver for EXYNOS4 based SoCs are not platform drivers, hence
-we cannot currently pass the clock names through a device tree node.
-Instead, we need to make them available through a global alias.
+On 06/06/2013 04:31 PM, Chander Kashyap wrote:
+> Extend the soft reset support for Exynos5420 SoC.
+> 
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> ---
+>  arch/arm/mach-exynos/common.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index fbe1aa7..dc7c134 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -321,7 +321,8 @@ void exynos5_restart(char mode, const char *cmd)
+>  	u32 val;
+>  	void __iomem *addr;
+>  
+> -	if (of_machine_is_compatible("samsung,exynos5250")) {
+> +	if (of_machine_is_compatible("samsung,exynos5250") ||
+> +		(of_machine_is_compatible("samsung,exynos5420"))) {
+>  		val = 0x1;
+>  		addr = EXYNOS_SWRESET;
+>  	} else if (of_machine_is_compatible("samsung,exynos5440")) {
+> 
 
-'armclk', 'moutcore', 'mout_mpll' and 'mout_apll' clock aliases are
-defined.
+How about making 0x1 and EXYNOS_SWRESET as default values of val and
+addr. That way we can remove this check for exynos5250 and exynos5420.
+Also we can remove the trailing else statement as there are no non-DT
+boards for EXYNOS5.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- drivers/clk/samsung/clk-exynos4.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ void exynos5_restart(char mode, const char *cmd)
+ {
+        struct device_node *np;
+-       u32 val;
+-       void __iomem *addr;
++       u32 val = 0x1;
++       void __iomem *addr = EXYNOS_SWRESET;
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 3c1f888..1e4258a 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -356,8 +356,8 @@ struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata = {
- 
- /* list of mux clocks supported in all exynos4 soc's */
- struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
--	MUX_F(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
--			CLK_SET_RATE_PARENT, 0),
-+	MUX_FA(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-+			CLK_SET_RATE_PARENT, 0, "mout_apll"),
- 	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
- 	MUX(none, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
- 	MUX(none, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
-@@ -385,9 +385,9 @@ struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
- 	MUX(none, "mout_g2d", mout_g2d_p, E4210_SRC_IMAGE, 8, 1),
- 	MUX(none, "mout_fimd1", group1_p4210, E4210_SRC_LCD1, 0, 4),
- 	MUX(none, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
--	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1, "sclk_mpll"),
-+	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1, "mout_mpll"),
- 	MUX_A(mout_core, "mout_core", mout_core_p4210,
--			SRC_CPU, 16, 1, "mout_core"),
-+			SRC_CPU, 16, 1, "moutcore"),
- 	MUX_A(sclk_vpll, "sclk_vpll", sclk_vpll_p4210,
- 			SRC_TOP0, 8, 1, "sclk_vpll"),
- 	MUX(mout_fimc0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
-@@ -534,7 +534,7 @@ struct samsung_div_clock exynos4_div_clks[] __initdata = {
- 	DIV(none, "div_spi_pre2", "div_spi2", DIV_PERIL2, 8, 8),
- 	DIV(none, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
- 	DIV(none, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
--	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, "arm_clk"),
-+	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, "armclk"),
- 	DIV_A(sclk_apll, "sclk_apll", "mout_apll",
- 			DIV_CPU0, 24, 3, "sclk_apll"),
- 	DIV_F(none, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
+-       if (of_machine_is_compatible("samsung,exynos5250")) {
+-               val = 0x1;
+-               addr = EXYNOS_SWRESET;
+-       } else if (of_machine_is_compatible("samsung,exynos5440")) {
++       if (of_machine_is_compatible("samsung,exynos5440")) {
+                u32 status;
+                np = of_find_compatible_node(NULL, NULL,
+"samsung,exynos5440-clock");
+
+@@ -336,9 +333,6 @@ void exynos5_restart(char mode, const char *cmd)
+                val = __raw_readl(addr);
+
+                val = (val & 0xffff0000) | (status & 0xffff);
+-       } else {
+-               pr_err("%s: cannot support non-DT\n", __func__);
+-               return;
+        }
+
 -- 
-1.7.9.5
+Tushar Behera
