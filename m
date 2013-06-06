@@ -1,47 +1,67 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V2] ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
-Date: Thu, 6 Jun 2013 18:12:17 +0200
-Message-ID: <201306061812.18138.arnd@arndb.de>
-References: <0a1201ce6268$d5a51610$80ef4230$%kim@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 10/13] ARM: dts: Add initial device tree support for
+ Exynos5420
+Date: Thu, 6 Jun 2013 17:34:11 +0100
+Message-ID: <20130606163411.GA23311@e106331-lin.cambridge.arm.com>
+References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
+ <1370516488-25860-10-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <0a1201ce6268$d5a51610$80ef4230$%kim@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:36464 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751340Ab3FFQes (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Jun 2013 12:34:48 -0400
+Content-Disposition: inline
+In-Reply-To: <1370516488-25860-10-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
 
-On Thursday 06 June 2013, Kukjin Kim wrote:
-> As we discussed in mailing list, non-DT for EXYNOS SoCs will not be
-> supported from v3.11. This patch removes regarding files for non-DT
-> including board files and defconfig.
-> 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Olof Johansson <olof@lixom.net>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> 
-> It's time to remove non-DT stuff for EXYNOS SoCs.
-> If no objection on this, this will be sent to arm-soc in a couple of days.
+Hi,
 
-Please do. I think there are no excuses left this time ;-)
+> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> new file mode 100644
+> index 0000000..b14e775
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> @@ -0,0 +1,40 @@
+> +/*
+> + * SAMSUNG SMDK5420 board device tree source
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +/dts-v1/;
+> +/include/ "exynos5420.dtsi"
+> +
+> +/ {
+> +	model = "Samsung SMDK5420 board based on EXYNOS5420";
+> +	compatible = "samsung,smdk5420", "samsung,exynos5420";
+> +
+> +	memory {
+> +		reg =	<0x20000000 0x10000000
+> +			 0x30000000 0x10000000
+> +			 0x40000000 0x10000000
+> +			 0x50000000 0x10000000
+> +			 0x60000000 0x10000000
+> +			 0x70000000 0x10000000
+> +			 0x80000000 0x10000000
+> +			 0x90000000 0x10000000>;
+> +	};
 
-However, I wonder if more code in arch/arm/plat-samsung can be made to
-depend on the presence of ATAGS. I suspect there a lot of files that
-we no longer need to build for an Exynos kernel now.
+This looks a little odd. As these are continguous, you can describe them as one
+bank:
 
-	Arnd
+	memory {
+		reg = <0x20000000 0x80000000>;
+	};
+
+Mark.
