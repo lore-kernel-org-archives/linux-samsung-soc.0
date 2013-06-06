@@ -1,50 +1,98 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 4/7] ARM: s3c64xx: dma: Use clk_prepare_enable/clk_disable_unprepare
-Date: Thu,  6 Jun 2013 01:57:28 +0200
-Message-ID: <1370476651-6743-5-git-send-email-tomasz.figa@gmail.com>
-References: <1370476651-6743-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370476651-6743-1-git-send-email-tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] pinctrl: exynos5440: fix issues reported by prevent tool
+Date: Thu, 06 Jun 2013 10:22:03 +0900
+Message-ID: <09d101ce6254$40813eb0$c183bc10$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:46811 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755377Ab3FFBWG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Jun 2013 21:22:06 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MNY00F306GSXC90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Jun 2013 10:22:04 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Linus Walleij' <linus.walleij@linaro.org>, 'Thomas Abraham' <thomas.ab@samsung.com>
 
-This patch modifies s3c64xx DMA driver to prepare and unprepare clocks
-in addition to enableind and disabling, since it is required by common
-clock framework.
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-Signed-off-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+This patch fixes issues reported by prevent tool.
+
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c64xx/dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-exynos5440.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
-index 759846c..c511dfa 100644
---- a/arch/arm/mach-s3c64xx/dma.c
-+++ b/arch/arm/mach-s3c64xx/dma.c
-@@ -677,7 +677,7 @@ static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
- 		goto err_map;
+diff --git a/drivers/pinctrl/pinctrl-exynos5440.c b/drivers/pinctrl/pinctrl-exynos5440.c
+index 6436a02..063be17 100644
+--- a/drivers/pinctrl/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/pinctrl-exynos5440.c
+@@ -220,7 +220,7 @@ static int exynos5440_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		dev_err(dev, "failed to alloc memory for group name\n");
+ 		goto free_map;
+ 	}
+-	sprintf(gname, "%s%s", np->name, GROUP_SUFFIX);
++	snprintf(gname, strlen(np->name) + 4, "%s%s", np->name, GROUP_SUFFIX);
+ 
+ 	/*
+ 	 * don't have config options? then skip over to creating function
+@@ -259,7 +259,8 @@ skip_cfgs:
+ 			dev_err(dev, "failed to alloc memory for func name\n");
+ 			goto free_cfg;
+ 		}
+-		sprintf(fname, "%s%s", np->name, FUNCTION_SUFFIX);
++		snprintf(fname, strlen(np->name) + 4, "%s%s", np->name,
++			 FUNCTION_SUFFIX);
+ 
+ 		map[*nmaps].data.mux.group = gname;
+ 		map[*nmaps].data.mux.function = fname;
+@@ -713,7 +714,8 @@ static int exynos5440_pinctrl_parse_dt(struct platform_device *pdev,
+ 			dev_err(dev, "failed to alloc memory for group name\n");
+ 			return -ENOMEM;
+ 		}
+-		sprintf(gname, "%s%s", cfg_np->name, GROUP_SUFFIX);
++		snprintf(gname, strlen(cfg_np->name) + 4, "%s%s", cfg_np->name,
++			 GROUP_SUFFIX);
+ 
+ 		grp->name = gname;
+ 		grp->pins = pin_list;
+@@ -733,7 +735,8 @@ skip_to_pin_function:
+ 			dev_err(dev, "failed to alloc memory for func name\n");
+ 			return -ENOMEM;
+ 		}
+-		sprintf(fname, "%s%s", cfg_np->name, FUNCTION_SUFFIX);
++		snprintf(fname, strlen(cfg_np->name) + 4, "%s%s", cfg_np->name,
++			 FUNCTION_SUFFIX);
+ 
+ 		func->name = fname;
+ 		func->groups = devm_kzalloc(dev, sizeof(char *), GFP_KERNEL);
+@@ -806,7 +809,7 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
+ 
+ 	/* for each pin, set the name of the pin */
+ 	for (pin = 0; pin < ctrldesc->npins; pin++) {
+-		sprintf(pin_names, "gpio%02d", pin);
++		snprintf(pin_names, 6, "gpio%02d", pin);
+ 		pdesc = pindesc + pin;
+ 		pdesc->name = pin_names;
+ 		pin_names += PIN_NAME_LENGTH;
+@@ -993,7 +996,7 @@ static int exynos5440_pinctrl_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  	}
  
--	clk_enable(dmac->clk);
-+	clk_prepare_enable(dmac->clk);
- 
- 	dmac->regs = regs;
- 	dmac->chanbase = chbase;
-@@ -711,7 +711,7 @@ static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
- 	return 0;
- 
- err_clk:
--	clk_disable(dmac->clk);
-+	clk_disable_unprepare(dmac->clk);
- 	clk_put(dmac->clk);
- err_map:
- 	iounmap(regs);
+-	priv = devm_kzalloc(dev, sizeof(priv), GFP_KERNEL);
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv) {
+ 		dev_err(dev, "could not allocate memory for private data\n");
+ 		return -ENOMEM;
 -- 
-1.8.2.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.10.4
