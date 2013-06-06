@@ -1,42 +1,57 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: dts: Update vdd_arm regulator
-Date: Thu,  6 Jun 2013 16:32:52 +0530
-Message-ID: <1370516572-313-1-git-send-email-tushar.behera@linaro.org>
+From: Girish KS <girishks2000@gmail.com>
+Subject: Re: [PATCH 06/13] serial: samsung: add support for Exynos5420
+Date: Thu, 6 Jun 2013 17:05:49 +0530
+Message-ID: <CAKrE-Ke1J+Xr0XeaxO4Trf=AqRm_N1arjtpYwXwupsE7m56u8w@mail.gmail.com>
+References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
+	<1370516488-25860-6-git-send-email-chander.kashyap@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:52166 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754200Ab3FFLRL (ORCPT
+Received: from mail-la0-f50.google.com ([209.85.215.50]:41988 "EHLO
+	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932381Ab3FFLfv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Jun 2013 07:17:11 -0400
-Received: by mail-pd0-f170.google.com with SMTP id x10so3209151pdj.29
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Jun 2013 04:17:11 -0700 (PDT)
+	Thu, 6 Jun 2013 07:35:51 -0400
+In-Reply-To: <1370516488-25860-6-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux-serial@vger.kernel.org, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, s.nawrocki@samsung.com
 
-Cpufreq driver for EXYNOS4210 is not a platform driver, hence it is not
-possible to provide the regulator supply name through DT bindings.
-Since the cpufreq driver requires the regulator to be named as
-'vdd_arm', the related regulator name should be kept same.
+On Thu, Jun 6, 2013 at 4:31 PM, Chander Kashyap
+<chander.kashyap@linaro.org> wrote:
+> The serial port used in Exynos5420 is similar to the serial ports used
+> in the other Exynos SoC. Hence, extend the serial driver support for
+> Exynos5420.
+>
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> ---
+>  drivers/tty/serial/samsung.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index 3cda4ed..841221c 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -1716,7 +1716,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
+>
+>  #if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212) || \
+>         defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250) || \
+> -       defined(CONFIG_SOC_EXYNOS5440)
+> +       defined(CONFIG_SOC_EXYNOS5420) || defined(CONFIG_SOC_EXYNOS5440)
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/boot/dts/exynos4210-origen.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Instead of comparing all CONFIGS of the SOC of exynos series, it can
+be optimized with #if defined(CONFIG_ARCH_EXYNOS)
+Make sure to test on all the boards for functionality.
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index bcf8079..bd5f589 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -192,7 +192,7 @@
- 				};
- 
- 				buck1_reg: BUCK1 {
--					regulator-name = "VDD_ARM_1.2V";
-+					regulator-name = "vdd_arm";
- 					regulator-min-microvolt = <950000>;
- 					regulator-max-microvolt	= <1350000>;
- 					regulator-always-on;
--- 
-1.7.9.5
+>  static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
+>         .info = &(struct s3c24xx_uart_info) {
+>                 .name           = "Samsung Exynos4 UART",
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
