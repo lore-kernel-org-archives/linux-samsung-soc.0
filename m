@@ -1,57 +1,41 @@
-From: Girish KS <girishks2000@gmail.com>
-Subject: Re: [PATCH 06/13] serial: samsung: add support for Exynos5420
-Date: Thu, 6 Jun 2013 17:05:49 +0530
-Message-ID: <CAKrE-Ke1J+Xr0XeaxO4Trf=AqRm_N1arjtpYwXwupsE7m56u8w@mail.gmail.com>
-References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
-	<1370516488-25860-6-git-send-email-chander.kashyap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f50.google.com ([209.85.215.50]:41988 "EHLO
-	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932381Ab3FFLfv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Jun 2013 07:35:51 -0400
-In-Reply-To: <1370516488-25860-6-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH 1/2] clk: samsung: Add MUX_FA macro to pass flag and alias
+Date: Thu,  6 Jun 2013 16:52:27 +0530
+Message-ID: <1370517749-29892-2-git-send-email-tushar.behera@linaro.org>
+References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux-serial@vger.kernel.org, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, s.nawrocki@samsung.com
 
-On Thu, Jun 6, 2013 at 4:31 PM, Chander Kashyap
-<chander.kashyap@linaro.org> wrote:
-> The serial port used in Exynos5420 is similar to the serial ports used
-> in the other Exynos SoC. Hence, extend the serial driver support for
-> Exynos5420.
->
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> ---
->  drivers/tty/serial/samsung.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-> index 3cda4ed..841221c 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -1716,7 +1716,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
->
->  #if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212) || \
->         defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250) || \
-> -       defined(CONFIG_SOC_EXYNOS5440)
-> +       defined(CONFIG_SOC_EXYNOS5420) || defined(CONFIG_SOC_EXYNOS5440)
+Cpufreq driver for some Samsung platforms have not yet been designed as
+a platform driver, thereby they can only access clocks with an alias
+name.
 
-Instead of comparing all CONFIGS of the SOC of exynos series, it can
-be optimized with #if defined(CONFIG_ARCH_EXYNOS)
-Make sure to test on all the boards for functionality.
+For EXYNOS4210, one such clock also requires a flag to be set, hence
+there is a need to create another macro that can handle both flag and
+alias.
 
->  static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
->         .info = &(struct s3c24xx_uart_info) {
->                 .name           = "Samsung Exynos4 UART",
-> --
-> 1.7.9.5
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ drivers/clk/samsung/clk.h |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index e4ad6ea..2f7dba2 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -144,6 +144,9 @@ struct samsung_mux_clock {
+ #define MUX_F(_id, cname, pnames, o, s, w, f, mf)		\
+ 	__MUX(_id, NULL, cname, pnames, o, s, w, f, mf, NULL)
+ 
++#define MUX_FA(_id, cname, pnames, o, s, w, f, mf, a)		\
++	__MUX(_id, NULL, cname, pnames, o, s, w, f, mf, a)
++
+ /**
+  * @id: platform specific id of the clock.
+  * struct samsung_div_clock: information about div clock
+-- 
+1.7.9.5
