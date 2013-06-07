@@ -1,42 +1,41 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 3/3] ARM: dts: Set BUCK7 as always on for Origen board
-Date: Fri,  7 Jun 2013 16:37:15 +0530
-Message-ID: <1370603235-11193-4-git-send-email-tushar.behera@linaro.org>
-References: <1370603235-11193-1-git-send-email-tushar.behera@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: exynos5440: fix issues reported by prevent tool
+Date: Fri, 7 Jun 2013 13:21:56 +0200
+Message-ID: <CACRpkdY=6YQK9BY=T_OoA3H6awyNUaqEMd0kx6paSJ-dr6WKzw@mail.gmail.com>
+References: <09d101ce6254$40813eb0$c183bc10$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:40205 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755851Ab3FGLVr (ORCPT
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:42623 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755924Ab3FGLV7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Jun 2013 07:21:47 -0400
-Received: by mail-pd0-f172.google.com with SMTP id z10so1116614pdj.31
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jun 2013 04:21:47 -0700 (PDT)
-In-Reply-To: <1370603235-11193-1-git-send-email-tushar.behera@linaro.org>
+	Fri, 7 Jun 2013 07:21:59 -0400
+Received: by mail-ob0-f176.google.com with SMTP id v19so6343595obq.21
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jun 2013 04:21:56 -0700 (PDT)
+In-Reply-To: <09d101ce6254$40813eb0$c183bc10$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, Wei Yongjun <weiyj.lk@gmail.com>
 
-The LDO for LCD driver is currently not handled by any of the drivers.
-This disables the LDO during booting time. To fix this, the LDO
-is forced to enabled always.
+On Thu, Jun 6, 2013 at 3:22 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/boot/dts/exynos4210-origen.dts |    1 +
- 1 file changed, 1 insertion(+)
+> From: Thomas Abraham <thomas.ab@samsung.com>
+>
+> This patch fixes issues reported by prevent tool.
+>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 4c6c3cd..08609b8 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -225,6 +225,7 @@
- 					regulator-min-microvolt = <3300000>;
- 					regulator-max-microvolt = <3300000>;
- 					regulator-boot-on;
-+					regulator-always-on;
- 				};
- 			};
- 		};
--- 
-1.7.9.5
+Patch applied except for this hunk:
+
+> -       priv = devm_kzalloc(dev, sizeof(priv), GFP_KERNEL);
+> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+
+That was already fixed by the patch
+"pinctrl: exynos5440: fix invalid use of sizeof in exynos5440_pinctrl_probe()"
+by Wei Yongjun.
+
+Yours,
+Linus Walleij
