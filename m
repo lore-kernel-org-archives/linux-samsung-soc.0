@@ -1,41 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: exynos5440: fix issues reported by prevent tool
-Date: Fri, 7 Jun 2013 13:21:56 +0200
-Message-ID: <CACRpkdY=6YQK9BY=T_OoA3H6awyNUaqEMd0kx6paSJ-dr6WKzw@mail.gmail.com>
-References: <09d101ce6254$40813eb0$c183bc10$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:42623 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755924Ab3FGLV7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Jun 2013 07:21:59 -0400
-Received: by mail-ob0-f176.google.com with SMTP id v19so6343595obq.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jun 2013 04:21:56 -0700 (PDT)
-In-Reply-To: <09d101ce6254$40813eb0$c183bc10$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH 2/3] ARM: dts: Add FIMD node to Origen4210 board
+Date: Fri,  7 Jun 2013 16:37:14 +0530
+Message-ID: <1370603235-11193-3-git-send-email-tushar.behera@linaro.org>
+References: <1370603235-11193-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1370603235-11193-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, patches@linaro.org, Sachin Kamat <sachin.kamat@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.ab@samsung.com>, Wei Yongjun <weiyj.lk@gmail.com>
 
-On Thu, Jun 6, 2013 at 3:22 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+From: Sachin Kamat <sachin.kamat@linaro.org>
 
-> From: Thomas Abraham <thomas.ab@samsung.com>
->
-> This patch fixes issues reported by prevent tool.
->
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Added FIMD and display timing node to Origen4210 board.
 
-Patch applied except for this hunk:
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/boot/dts/exynos4210-origen.dts |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-> -       priv = devm_kzalloc(dev, sizeof(priv), GFP_KERNEL);
-> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-
-That was already fixed by the patch
-"pinctrl: exynos5440: fix invalid use of sizeof in exynos5440_pinctrl_probe()"
-by Wei Yongjun.
-
-Yours,
-Linus Walleij
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index bcf8079..4c6c3cd 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -290,4 +290,25 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
++
++	fimd@11c00000 {
++		pinctrl-0 = <&lcd_en &lcd_clk &lcd_data24 &pwm0_out>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++
++	display-timings {
++		native-mode = <&timing0>;
++		timing0: timing {
++			clock-frequency = <50000>;
++			hactive = <1024>;
++			vactive = <600>;
++			hfront-porch = <64>;
++			hback-porch = <16>;
++			hsync-len = <48>;
++			vback-porch = <64>;
++			vfront-porch = <16>;
++			vsync-len = <3>;
++		};
++	};
+ };
+-- 
+1.7.9.5
