@@ -1,59 +1,82 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 04/13] ARM: dts: list the CPU nodes for Exynos5250
-Date: Thu, 6 Jun 2013 17:54:39 +0100
-Message-ID: <20130606165439.GC23311@e106331-lin.cambridge.arm.com>
-References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
- <1370516488-25860-4-git-send-email-chander.kashyap@linaro.org>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fimd: Get signal polarities from device tree
+Date: Fri, 07 Jun 2013 09:27:06 +0900
+Message-ID: <51B128DA.9030306@samsung.com>
+References: <1367435169-15025-1-git-send-email-tomasz.figa@gmail.com>
+ <2077448.BOZFWf0KVq@flatron> <51B01079.6060701@samsung.com>
+ <7834763.hzyJ5Gt3Ez@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:36775 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752337Ab3FFQzG (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:18282 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751848Ab3FGA1N (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Jun 2013 12:55:06 -0400
-Content-Disposition: inline
-In-Reply-To: <1370516488-25860-4-git-send-email-chander.kashyap@linaro.org>
+	Thu, 6 Jun 2013 20:27:13 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MNZ00AVWYLBEW20@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Jun 2013 09:27:11 +0900 (KST)
+In-reply-to: <7834763.hzyJ5Gt3Ez@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, =?UTF-8?B?IifrjIDsnbjquLAvTW9iaWxlIFMvVw==?= =?UTF-8?B?IFBsYXRmb3JtIExhYi4o7Ya17Iug7JewKS9FMyjsgqzsm5ApL+yCvOyEseyghOyekA==?= =?UTF-8?B?JyI=?= <inki.dae@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-On Thu, Jun 06, 2013 at 12:01:18PM +0100, Chander Kashyap wrote:
-> Instead of having to specify the number for CPUs in Exynos5250 in platsmp.c
-> file, let the number of CPUs be determined by having this information listed
-> in Exynos5250 device tree file.
-> 
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |   14 ++++++++++++++
->  arch/arm/mach-exynos/platsmp.c    |   10 +++++++---
->  2 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index e571d3b..7f6b1c7 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -50,6 +50,20 @@
->  		pinctrl3 = &pinctrl_3;
->  	};
->  
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu@0 {
-> +			compatible = "arm,cortex-a15";
-> +			reg = <0>;
-> +		};
-> +		cpu@1 {
-> +			compatible = "arm,cortex-a15";
-> +			reg = <1>;
-> +		};
-> +	};
-> +
+On 06/06/2013 06:47 PM, Tomasz Figa wrote:
+> Hi Joonyoung,
+>
+> On Thursday 06 of June 2013 13:30:49 Joonyoung Shim wrote:
+>> On 05/19/2013 08:32 PM, Tomasz Figa wrote:
+>>> Hi,
+>>>
+>>> On Wednesday 01 of May 2013 22:00:25 Daniel Vetter wrote:
+>>>> On Wed, May 01, 2013 at 09:06:09PM +0200, Tomasz Figa wrote:
+>>>>> This patch modifies the driver to perform two stage parsing of video
+>>>>> timings from device tree, to get timing information as struct
+>>>>> videomode, which contains more data than struct fb_videomode.
+>>>>>
+>>>>> Thanks to this change, information about polarity of control signals
+>>>>> (VSYNC, HSYNC, VDEN, VCLK) can be retrieved, in addition to standard
+>>>>> video timings.
+>>>>>
+>>>>> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+>>>> Since the drm mode struct also contains flags for sync polarity ...
+>>>> why
+>>>> is there no direct of -> drm_mode function? Going through an fb
+>>>> videomode in a kms drm driver looks _really_ backwards to me.
+>>>>
+>>>> Cc'in Dave for the fun of it ;-)
+>>> Struct fb_videomode is what exynos_drm_fimd driver uses internally.
+>>> Sure it should use drm_mode, but this is not really related to this
+>>> patch, because the code added in this patch only fills in the pdata
+>>> struct, which for compatibility reasons (the same structure is used
+>>> for both fbdev and drm drivers) contains struct fb_videomode.
+>>>
+>>> OK, now after having a bit of fun, could we merge this patch to at
+>>> least have usable support of parallel displays using this driver?
+>> I think it's better to use struct display_timings instead of struct
+>> fb_videomode in exynos_drm.
+> I agree that fb_videomode struct is a bit unfortunate here, but it seems
+> to be widely used in the exynos_drm_fimd driver.
+>
+> Actually, if I understood it properly, the correct struct to use in DRM
+> drivers is drm_display_mode, but there is no conversion function from
+> struct display_timing to it.
 
-It would be nice to have device_type = "cpu" on each of the cpu nodes.
+It's easy to convert from struct display_timing to videomode and there
+is conversion function from struct videomode to drm_display_mode.
 
-Thanks,
-Mark.
+Already it uses at drivers/gpu/drm/tilcdc/tilcdc_panel.c
+
+>
+> IMHO a separate patch introducing such conversion and then another one
+> which modifies the driver to use drm_display_mode everywhere would be the
+> best solution.
+
+OK, but the struct drm_display_mode doesn't include only timing
+information so we need also to use struct videomode or struct drm_timing
+properly.
