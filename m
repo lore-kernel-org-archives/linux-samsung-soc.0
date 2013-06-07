@@ -1,40 +1,115 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 0/2] Clock changes for supporting CPUFreq on Exynos5250
-Date: Fri, 07 Jun 2013 09:27:13 +0530
-Message-ID: <51B15A19.2020403@linaro.org>
-References: <1368770153-29041-1-git-send-email-tushar.behera@linaro.org> <51A442E4.90307@linaro.org> <20130529224203.6058.75266@quantum> <51B0501A.8070004@linaro.org> <20130606195156.10233.37021@quantum>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 6/6] ARM: dts: Add pcie controller node for Samsung
+ EXYNOS5440 SoC
+Date: Fri, 07 Jun 2013 18:19:40 +0900
+Message-ID: <000c01ce6360$237a7040$6a6f50c0$@samsung.com>
+References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com>
+ <00c501ce277c$30e49dc0$92add940$%han@samsung.com>
+ <000001ce3438$b136e1e0$13a4a5a0$%han@samsung.com>
+ <20130408165626.GA30824@obsidianresearch.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:45835 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752312Ab3FGD5W (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Jun 2013 23:57:22 -0400
-Received: by mail-pa0-f42.google.com with SMTP id rl6so2244385pac.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Jun 2013 20:57:22 -0700 (PDT)
-In-Reply-To: <20130606195156.10233.37021@quantum>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <20130408165626.GA30824@obsidianresearch.com>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, patches@linaro.org
 
->> Would it be possible for you to queue them for 3.10-rc? These two
->> patches are sufficient for cpufreq to work on Arndale board. It would be
->> nice to have cpufreq working on 3.10 kernel.
->>
+On Tuesday, April 09, 2013 1:56 AM, Jason Gunthorpe wrote:
+> On Mon, Apr 08, 2013 at 06:08:53PM +0900, Jingoo Han wrote:
 > 
-> I only want to take bug fixes into the -rc's.  Did cpufreq work on
-> Arndale in v3.10?  If it did then this is a regression and can be fixed.
-> If this is a new feature however I'll keep the patches in clk-next.
+> > I have a question.  Now, I am reviewing the Tegra PCIe, Marvell PCIe
+> > patchset.  However, in the case of Exynos PCIe, 'downstream I/O' and
+> > 'non-prefetchable memory' are different between PCIe0 and PCIe1.
+> > These regions are not shared.
+> >
+> > PCIe0:
+> > 	ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00200000   /* configuration space */
+> > 		  0x81000000 0 0	  0x40200000 0 0x00004000   /* downstream I/O */
+> > 		  0x82000000 0 0	  0x40204000 0 0x10000000>; /* non-prefetchable memory */
+> >
+> > PCIe1:
+> > 	ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00200000   /* configuration space */
+> > 		  0x81000000 0 0	  0x40200000 0 0x00004000   /* downstream I/O */
+> > 		  0x82000000 0 0	  0x40204000 0 0x10000000>; /* non-prefetchable memory */
+> >
+> > PCIe0 uses 0x40000000~0x5fffffff, PCI1 uses 0x60000000~0x7fffffff.
+> >
+> > How can I handle this? :)
 > 
+> You need to dig into where this range restriction comes from, and how
+> it interacts with the PCI-E root bridge's window registers. Is there
+> another set of registers that control this? Is it hardwired into the
+> silicon? Do the root port window registers control this?
+> 
+> I'm looking at functions like exynos_pcie_prog_viewport_mem_outbound
+> and wondering if the driver already controls this window.. But it
+> looks like there may be some restrictions.
+> 
+> Marvell also has unshared regions, but the driver arranges for those
+> ranges to be setup dynamically based on writes to the bridge's window
+> registers from the Linux PCI core, so the region is always in sync
+> with what the Linux PCI core is trying to do.
+> 
+> The desired perfect outcome is to have a single logical 'shared'
+> region for memory and I/O - give that region to the PCI core via
+> struct resources, then the PCI core tells the driver and HW what
+> portion of that region belongs to each root port via a write to the
+> root port bridge's window registers. The net result is still
+> non-overlapping regions, but the allocation of space between port 0
+> and port 1 is performed at run time.
+> 
+> I don't really know enough about your hardware to give you better
+> advice, sorry. The general guidance to try and follow the PCI-E spec
+> for a root complex is good, but if the HW can't do it, or it would
+> make the driver too complex, then one PCI domain per port will always
+> work (this is similar to your original driver, but with domains).
+> 
+> The main advantage to following the PCI-E specs and allowing for
+> dynamic allocation of address space is that it lets you reserve less
+> address space for PCI-E, and this in turn gives you more low mem
+> address space to use for DRAM.
 
-This fixes a regression as cpufreq was working for EXYNOS5250 based
-systems before migration to CCF.
+Hi Jason Gunthorpe,
 
-Though Arndale support was added during 3.10, this holds good for other
-EXYNOS5250 based systems.
+I implemented 'Single domain' with Exynos PCIe for last two months;
+however, it cannot work properly due to the hardware restriction.
+Each MEM region is hard-wired.
 
--- 
-Tushar Behera
+Thus, I will send Exynos PCIe V3 patch as 'Separate domains'.
+
+Best regards,
+Jingoo Han
+
+> 
+> > The following is right?
+> 
+> > +       pcie-controller {
+> > 		.....
+> > +               ranges = <0x82000000 0 0x40000000 0x40000000 0 0x00200000   /* port 0 registers */
+> > +                         0x82000000 0 0x60000000 0x60000000 0 0x00200000   /* port 1 registers */
+> > +                         0x81000000 0 0          0x40200000 0 0x00004000   /* port 0 downstream I/O */
+> > +                         0x81000000 0 0          0x60200000 0 0x00004000   /* port 1 downstream I/O */
+> > +                         0x82000000 0 0x40204000 0x40204000 0 0x10000000>; /* port 0 non-prefetchable
+> memory */
+> > +                         0x82000000 0 0x40204000 0x60204000 0 0x10000000>; /* port 1 non-prefetchable
+> memory */
+> 
+> 
+> > +
+> > +               pci@1,0 {
+> > +                       device_type = "pci";
+> > +                       assigned-addresses = <0x82000800 0 0x40000000 0 0x00200000
+> > +                                                 0x81000800 0 0x40200000 0 0x00004000
+> > +                                                 0x81000800 0 0x40204000 0 0x10000000>;
+> 
+> Would be:
+> 
+>                        ranges = <0x81000800 0 0x40200000  0x81000800 0 0x40200000  0 0x00004000
+>                                  0x81000800 0 0x40204000  0x81000800 0 0x40204000  0 0x10000000>;
+>                        assigned-addresses = <0x82000800 0 0x40000000  0 0x00200000>;
+> 
+> Jason
