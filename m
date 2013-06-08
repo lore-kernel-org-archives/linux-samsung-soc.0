@@ -1,55 +1,60 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v2 1/3] ARM: EXYNOS: uncompress - print debug messages if
- DEBUG_LL is defined
-Date: Fri, 7 Jun 2013 18:09:48 -0700
-Message-ID: <20130608010948.GA27436@quad.lixom.net>
-References: <1370319552-17694-1-git-send-email-tushar.behera@linaro.org>
- <1370319552-17694-2-git-send-email-tushar.behera@linaro.org>
- <51B05135.3020006@linaro.org>
+Subject: Re: [PATCH v2] ARM: exynos: add debug_ll_io_init() call in
+ exynos_init_io()
+Date: Fri, 7 Jun 2013 18:12:22 -0700
+Message-ID: <20130608011222.GC27436@quad.lixom.net>
+References: <1370397539-21653-1-git-send-email-dianders@chromium.org>
+ <1370465793-7997-1-git-send-email-dianders@chromium.org>
+ <CAOesGMhQX9ip=nb9AQa5fcDFRNpZZSxUO0N0GTX051dakWZD9Q@mail.gmail.com>
+ <09ca01ce6244$e2f0e7a0$a8d2b6e0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:60492 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752746Ab3FHBMU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Jun 2013 21:12:20 -0400
+Received: by mail-pb0-f41.google.com with SMTP id rp16so1782260pbb.14
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jun 2013 18:12:19 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <51B05135.3020006@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, kgene.kim@samsung.com, patches@linaro.org
+In-Reply-To: <09ca01ce6244$e2f0e7a0$a8d2b6e0$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Doug Anderson' <dianders@chromium.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Simon Glass' <sjg@chromium.org>, linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2013 at 02:37:01PM +0530, Tushar Behera wrote:
-> On 06/04/2013 09:49 AM, Tushar Behera wrote:
-> > Printing low-level debug messages make an assumption that the specified
-> > UART port has been preconfigured by the bootloader. Incorrectly
-> > specified UART port results in system getting stalled while printing the
-> > message "Uncompressing Linux... done, booting the kernel"
-> > This UART port number is specified through S3C_LOWLEVEL_UART_PORT. Since
-> > the UART port might different for different board, it is not possible to
-> > specify it correctly for every board that use a common defconfig file.
+On Thu, Jun 06, 2013 at 08:32:04AM +0900, Kukjin Kim wrote:
+> Olof Johansson wrote:
 > > 
-> > Calling this print subroutine only when DEBUG_LL fixes the problem. By
-> > disabling DEBUG_LL in default config file, we would be able to boot
-> > multiple boards with different default UART ports.
+> > On Wed, Jun 5, 2013 at 1:56 PM, Doug Anderson <dianders@chromium.org>
+> > wrote:
+> > > If the early MMU mapping of the UART happens to get booted out of the
+> > > TLB between the start of paging_init() and when we finally re-add the
+> > > UART at the very end of s3c_init_cpu(), we'll get a hang at bootup if
+> > > we've got early_printk enabled.  Avoid this hang by calling
+> > > debug_ll_io_init() early.
+> > >
+> > > Without this patch, you can reliably reproduce a hang when early
+> > > printk is enabled by adding flush_tlb_all() at the start of
+> > > exynos_init_io().  After this patch the hang goes away.
+> > >
+> > > Signed-off-by: Doug Anderson <dianders@chromium.org>
 > > 
-> > With this current approach, we miss the print "Uncompressing Linux...
-> > done, booting the kernel." when DEBUG_LL is not defined.
-> > 
-> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> > ---
-> > Change for v2:
-> > * Instead of checking value of uart_base, now check if DEBUG_LL
-> > is enabled. This removes the ifdef's from mach/uncompress.h
+> > Acked-by: Olof Johansson <olof@lixom.net>
 > > 
 > > 
-> >  arch/arm/plat-samsung/include/plat/uncompress.h |   10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > Kukjin, this seems appropriate for 3.10. Do you have other fixes
+> > queued or should I apply this directly?
 > > 
+> If I remember correctly, nothing in my tree for 3.10.
 > 
-> If there are no concerns, would it be possible to queue this patch [1/3]
-> for 3.10?
+> So please go ahead with my ack if you want,
 > 
-> The other two patches can wait for 3.11.
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
 
-Sure, I've applied it to fixes for 3.10.
+Applied for 3.10 (together with the uncompress.h fix from Tushar)
 
 
 -Olof
