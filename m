@@ -1,53 +1,84 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 0/2] Enable config options to enable S2R wakeup
-Date: Mon, 17 Jun 2013 10:25:06 -0700
-Message-ID: <20130617172506.GD28497@quad.lixom.net>
-References: <1371442686-24999-1-git-send-email-tushar.behera@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Subject: [PATCH v5 0/7] Add generic set_rate clk_ops for PLL35xx and PLL36xx
+ for samsung SoCs
+Date: Sat, 08 Jun 2013 23:04:15 +0530
+Message-ID: <1370712862-10501-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:40440 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752376Ab3FQRZA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:48182 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754695Ab3FQRma (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 13:25:00 -0400
-Received: by mail-pa0-f44.google.com with SMTP id lj1so3076742pab.31
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 10:25:00 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1371442686-24999-1-git-send-email-tushar.behera@linaro.org>
+	Mon, 17 Jun 2013 13:42:30 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOJ00MIWT6S1550@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 02:42:28 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, dianders@chromium.org, t.figa@samsung.com, vikas.sajjan@linaro.org, abrestic@chromium.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-On Mon, Jun 17, 2013 at 09:48:04AM +0530, Tushar Behera wrote:
-> RTC source is very useful in testing S2R wakeup. Also enable
-> gpio-keys driver in case someone wants wakeup the board using
-> the buttons.
-> 
-> S2R wakeup feature on Arndale depends on following two additional
-> patches.
-> 
-> 1. [PATCH 1/8] ARM: EXYNOS: use generic cpu idle function for wfi
->  http://permalink.gmane.org/gmane.linux.linaro.devel/15871
-> 
-> 2. [PATCH V2] ARM: dts: Enable RTC node for Arndale
-> (Posted a couple of minutes back, link not available yet)
-> 
-> S2R wakeup tested on Arndale board with an initramfs through
-> both RTC wakeup alarm and GPIO button interrupt.
-> 
-> Tushar Behera (2):
->   ARM: exynos_defconfig: Enable GPIO buttons driver
->   ARM: exynos_defconfig: Enable RTC driver
-> 
->  arch/arm/configs/exynos_defconfig |    3 +++
->  1 file changed, 3 insertions(+)
+This patch series does the following:
 
-Acked-by: Olof Johansson <olof@lixom.net>
+ 1) Unifies the clk strutures  and registration function used for PLL35xx &
+    PLL36xx, to factor out possible common code.
 
-..  but I don't see a need to keep them as two separate commit, just squash
-them when applying, Kukjin.
+ 2) Defines a common rate_table which will contain recommended p, m, s and k
+    values for supported rates that needs to be changed for changing
+    corresponding PLL's rate
 
+ 3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
 
--Olof
+changes since v4:
+	- Defined common samsung samsung_clk_register_pll() to register a list
+	of PLL and used a struct samsung_pll_clock for passing intialisation
+	data instead of passing as arguments. Now passing LOCK as well as CON0
+	offset as intialisation data.
+	- Calculated length of rate table while registering PLL instead of
+	getting it as intialisation data.
+
+changes since v3:
+	- Used __clk_lookup() instead of adding alias for mout_vpllsrc
+	- Added check for changing only M value in samsung_pll36xx_set_rate()
+	- Modified samsung_pll35xx_mp_change() & samsung_pll35xx_set_rate()
+	to improve readabilty.
+	- Made the input rate_table as __init_data which is to be provided while
+	registering PLL and made a copy of that table while registering, so
+	that if multiple tables are their, they can be freed after getting the
+	P, M, S, K setting values from required one.
+
+changes since v2:
+	- Added new patch to reorder the MUX registration for mout_vpllsrc MUX
+	before the PLL registrations. And to add the alias for the mout_vpllsrc MUX.
+        - Added a check to confirm parent rate while registrating the PLL
+	rate tables.
+
+changes since v1:
+	- removed sorting and bsearch
+	- modified the definition of struct "samsung_pll_rate_table"
+	- added generic round_rate()
+	- rectified the ops assignment for "rate table passed as NULL"
+	  during PLL registration
+
+Is rebased on branch kgene's "for-next"
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+
+Vikas Sajjan (2):
+  clk: samsung: Add set_rate() clk_ops for PLL36xx
+  clk: samsung: Reorder MUX registration for mout_vpllsrc
+
+Yadwinder Singh Brar (5):
+  clk: samsung: Introduce a common samsung_clk_pll struct.
+  clk: samsung: Define a common samsung_clk_register_pll().
+  clk: samsung: Add support to register rate_table for PLL3xxx
+  clk: samsung: Add set_rate() clk_ops for PLL35xx
+  clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
+
+ drivers/clk/samsung/clk-exynos4.c    |   40 +++--
+ drivers/clk/samsung/clk-exynos5250.c |  101 +++++++++--
+ drivers/clk/samsung/clk-pll.c        |  330 ++++++++++++++++++++++++++--------
+ drivers/clk/samsung/clk-pll.h        |   36 ++++-
+ drivers/clk/samsung/clk.h            |   54 ++++++
+ 5 files changed, 449 insertions(+), 112 deletions(-)
