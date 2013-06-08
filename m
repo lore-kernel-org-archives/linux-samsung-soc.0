@@ -1,137 +1,92 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 11/13] clocksource: exynos_mct: extend local timer support for four cores
-Date: Sat, 08 Jun 2013 13:39:40 +0200
-Message-ID: <3210496.YAXEacJ0dm@flatron>
-References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org> <1370516488-25860-11-git-send-email-chander.kashyap@linaro.org> <20130606165040.GB23311@e106331-lin.cambridge.arm.com>
+Subject: Re: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
+Date: Sat, 08 Jun 2013 13:50:52 +0200
+Message-ID: <2070978.AjQD2isvSl@flatron>
+References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org> <1370517749-29892-3-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f54.google.com ([209.85.214.54]:46696 "EHLO
-	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751868Ab3FHLjq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Jun 2013 07:39:46 -0400
-In-Reply-To: <20130606165040.GB23311@e106331-lin.cambridge.arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1370517749-29892-3-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, broonie@kernel.org, l.majewski@samsung.com, s.nawrocki@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
 
-On Thursday 06 of June 2013 17:50:40 Mark Rutland wrote:
-> Hi,
+On Thursday 06 of June 2013 16:52:28 Tushar Behera wrote:
+> cpufreq driver for EXYNOS4 based SoCs are not platform drivers, hence
+> we cannot currently pass the clock names through a device tree node.
+> Instead, we need to make them available through a global alias.
 > 
-> I have a few comments.
+> 'armclk', 'moutcore', 'mout_mpll' and 'mout_apll' clock aliases are
+> defined.
 > 
-> On Thu, Jun 06, 2013 at 12:01:25PM +0100, Chander Kashyap wrote:
-> > Extend the local timer interrupt support for handling four local
-> > timers.
-> Is this the maximum number of CPUs the MCT could theoretically support?
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c |   10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> > Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> > ---
-> > 
-> >  drivers/clocksource/exynos_mct.c |   33
-> >  ++++++++++++++++++++++++++++++--- 1 file changed, 30 insertions(+),
-> >  3 deletions(-)
-> > 
-> > diff --git a/drivers/clocksource/exynos_mct.c
-> > b/drivers/clocksource/exynos_mct.c index 662fcc0..6af17d4 100644
-> > --- a/drivers/clocksource/exynos_mct.c
-> > +++ b/drivers/clocksource/exynos_mct.c
-> > @@ -412,6 +412,18 @@ static struct irqaction mct_tick1_event_irq = {
-> > 
-> >  	.handler	= exynos4_mct_tick_isr,
-> >  
-> >  };
-> > 
-> > +static struct irqaction mct_tick2_event_irq = {
-> > +	.name		= "mct_tick2_irq",
-> > +	.flags		= IRQF_TIMER | IRQF_NOBALANCING,
-> > +	.handler	= exynos4_mct_tick_isr,
-> > +};
-> > +
-> > +static struct irqaction mct_tick3_event_irq = {
-> > +	.name		= "mct_tick3_irq",
-> > +	.flags		= IRQF_TIMER | IRQF_NOBALANCING,
-> > +	.handler	= exynos4_mct_tick_isr,
-> > +};
-> > +
+> diff --git a/drivers/clk/samsung/clk-exynos4.c
+> b/drivers/clk/samsung/clk-exynos4.c index 3c1f888..1e4258a 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -356,8 +356,8 @@ struct samsung_fixed_rate_clock
+> exynos4210_fixed_rate_clks[] __initdata = {
 > 
-> Is there any reason you can't use {request,free}_irq?
-> 
-> >  static int __cpuinit exynos4_local_timer_setup(struct
-> >  clock_event_device *evt) {
-> >  
-> >  	struct mct_clock_event_device *mevt;
-> > 
-> > @@ -439,11 +451,21 @@ static int __cpuinit
-> > exynos4_local_timer_setup(struct clock_event_device *evt)> 
-> >  			mct_tick0_event_irq.dev_id = mevt;
-> >  			evt->irq = mct_irqs[MCT_L0_IRQ];
-> >  			setup_irq(evt->irq, &mct_tick0_event_irq);
-> > 
-> > -		} else {
-> > +		} else if (cpu == 1) {
-> > 
-> >  			mct_tick1_event_irq.dev_id = mevt;
-> >  			evt->irq = mct_irqs[MCT_L1_IRQ];
-> >  			setup_irq(evt->irq, &mct_tick1_event_irq);
-> >  			irq_set_affinity(evt->irq, cpumask_of(1));
-> > 
-> > +		} else if (cpu == 2) {
-> > +			mct_tick2_event_irq.dev_id = mevt;
-> > +			evt->irq = mct_irqs[MCT_L2_IRQ];
-> > +			setup_irq(evt->irq, &mct_tick2_event_irq);
-> > +			irq_set_affinity(evt->irq, cpumask_of(2));
-> > +		} else if (cpu == 3) {
-> > +			mct_tick3_event_irq.dev_id = mevt;
-> > +			evt->irq = mct_irqs[MCT_L3_IRQ];
-> > +			setup_irq(evt->irq, &mct_tick3_event_irq);
-> > +			irq_set_affinity(evt->irq, cpumask_of(3));
-> 
-> This doesn't seem good to me. You're duplicating the logic for each CPU.
-> Can you not figure out which values you need based on the
-> smp_processor_id (or even better, the *evt) without requiring a
-> separate branch for each CPU?
-> >  		}
-> >  	
-> >  	} else {
-> >  	
-> >  		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
-> > 
-> > @@ -456,11 +478,16 @@ static void exynos4_local_timer_stop(struct
-> > clock_event_device *evt)> 
-> >  {
-> >  
-> >  	unsigned int cpu = smp_processor_id();
-> >  	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-> > 
-> > -	if (mct_int_type == MCT_INT_SPI)
-> > +	if (mct_int_type == MCT_INT_SPI) {
-> > 
-> >  		if (cpu == 0)
-> >  		
-> >  			remove_irq(evt->irq, &mct_tick0_event_irq);
-> > 
-> > -		else
-> > +		else if (cpu == 1)
-> > 
-> >  			remove_irq(evt->irq, &mct_tick1_event_irq);
-> > 
-> > +		else if (cpu == 2)
-> > +			remove_irq(evt->irq, &mct_tick2_event_irq);
-> > +		else if (cpu == 3)
-> > +			remove_irq(evt->irq, &mct_tick3_event_irq);
-> > +	}
-> 
-> Again, I don't think each CPU should be special-cased. If you used
-> {request,free}_irq this would be simpler.
-> 
-> Thanks,
-> Mark.
+>  /* list of mux clocks supported in all exynos4 soc's */
+>  struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
+> -	MUX_F(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> -			CLK_SET_RATE_PARENT, 0),
+> +	MUX_FA(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> +			CLK_SET_RATE_PARENT, 0, "mout_apll"),
+>  	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
+>  	MUX(none, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
+>  	MUX(none, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
+> @@ -385,9 +385,9 @@ struct samsung_mux_clock exynos4210_mux_clks[]
+> __initdata = { MUX(none, "mout_g2d", mout_g2d_p, E4210_SRC_IMAGE, 8,
+> 1),
+>  	MUX(none, "mout_fimd1", group1_p4210, E4210_SRC_LCD1, 0, 4),
+>  	MUX(none, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
+> -	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1, 
+"sclk_mpll"),
+> +	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1, 
+"mout_mpll"),
 
-+1 to all Mark's comments.
+This is not fully compliant with patch description. I'm not sure if there 
+weren't any users of the sclk_mpll alias.
+
+>  	MUX_A(mout_core, "mout_core", mout_core_p4210,
+> -			SRC_CPU, 16, 1, "mout_core"),
+> +			SRC_CPU, 16, 1, "moutcore"),
+
+IMHO those typo corrections are not part of this patch.
+
+>  	MUX_A(sclk_vpll, "sclk_vpll", sclk_vpll_p4210,
+>  			SRC_TOP0, 8, 1, "sclk_vpll"),
+>  	MUX(mout_fimc0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
+> @@ -534,7 +534,7 @@ struct samsung_div_clock exynos4_div_clks[]
+> __initdata = { DIV(none, "div_spi_pre2", "div_spi2", DIV_PERIL2, 8, 8),
+>  	DIV(none, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
+>  	DIV(none, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
+> -	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, 
+"arm_clk"),
+> +	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, "armclk"),
+
+Same here.
+
+>  	DIV_A(sclk_apll, "sclk_apll", "mout_apll",
+>  			DIV_CPU0, 24, 3, "sclk_apll"),
+>  	DIV_F(none, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
+
+Basically I don't like the idea of those global aliases, which IMHO should 
+be completely dropped. Someone might not like it, but I'd go with the 
+conversion of our cpufreq drivers to platform drivers instead, which could 
+receive things like clocks and regulators using DT-based lookups.
+
+This is especially important in case of regulators, which currently have 
+to be hacked by using vdd_arm as regulator name in device tree.
+
+CCing people that might be interested in this topic.
 
 Best regards,
 Tomasz
