@@ -1,57 +1,286 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Update vdd_arm regulator
-Date: Sat, 08 Jun 2013 13:52:04 +0200
-Message-ID: <1975506.ECnduUFuut@flatron>
-References: <1370516572-313-1-git-send-email-tushar.behera@linaro.org>
+Subject: Re: [PATCH v2 2/5] clk: samsung: Add support to register rate_table for PLL3xxx
+Date: Sat, 08 Jun 2013 13:58:36 +0200
+Message-ID: <3188103.d6yJsauydT@flatron>
+References: <1369834677-20312-1-git-send-email-vikas.sajjan@linaro.org> <1722774.fIsI8ciPDi@amdc1227> <CAKew6eXc3eWj2nyj4ah-rPU_S-0bXh5nHtmCME4Dg28pshi5Yg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f54.google.com ([209.85.214.54]:47552 "EHLO
-	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752367Ab3FHLwJ (ORCPT
+Received: from mail-bk0-f47.google.com ([209.85.214.47]:49205 "EHLO
+	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751373Ab3FHL6m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Jun 2013 07:52:09 -0400
-Received: by mail-bk0-f54.google.com with SMTP id it16so658073bkc.27
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Jun 2013 04:52:08 -0700 (PDT)
-In-Reply-To: <1370516572-313-1-git-send-email-tushar.behera@linaro.org>
+	Sat, 8 Jun 2013 07:58:42 -0400
+Received: by mail-bk0-f47.google.com with SMTP id jg1so2414851bkc.6
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Jun 2013 04:58:40 -0700 (PDT)
+In-Reply-To: <CAKew6eXc3eWj2nyj4ah-rPU_S-0bXh5nHtmCME4Dg28pshi5Yg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, broonie@kernel.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, l.majewski@samsung.com, s.nawrocki@samsung.com, devicetree-discuss@lists.ozlabs.org
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-Hi Tushar,
+On Thursday 06 of June 2013 14:31:56 Yadwinder Singh Brar wrote:
+> On Wed, Jun 5, 2013 at 7:10 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> > Hi Yadwinder,
+> > 
+> > On Tuesday 04 of June 2013 17:02:48 Yadwinder Singh Brar wrote:
+> >> Hi Tomasz,
+> >> 
+> >> On Mon, Jun 3, 2013 at 8:55 PM, Tomasz Figa <t.figa@samsung.com> 
+wrote:
+> >> > Hi Yadwinder,
+> >> > 
+> >> > On Thursday 30 of May 2013 12:25:40 Yadwinder Singh Brar wrote:
+> >> >> Hi Doug,
+> >> >> 
+> >> >> On Thu, May 30, 2013 at 5:14 AM, Doug Anderson
+> >> >> <dianders@chromium.org>
+> >> > 
+> >> > wrote:
+> >> >> > Vikas / Yadwinder,
+> >> >> > 
+> >> >> > On Wed, May 29, 2013 at 6:37 AM, Vikas Sajjan
+> >> >> > <vikas.sajjan@linaro.org>
+> >> > 
+> >> > wrote:
+> >> >> >> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> >> >> >> 
+> >> >> >> This patch defines a common rate_table which will contain
+> >> >> >> recommended
+> >> >> >> p,
+> >> >> >> m, s, k values for supported rates that needs to be changed for
+> >> >> >> changing
+> >> >> >> corresponding PLL's rate.
+> >> >> >> 
+> >> >> >> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> >> >> >> ---
+> >> >> >> 
+> >> >> >>  drivers/clk/samsung/clk-exynos4.c    |    8 ++++----
+> >> >> >>  drivers/clk/samsung/clk-exynos5250.c |   14 +++++++-------
+> >> >> >>  drivers/clk/samsung/clk-pll.c        |   14 ++++++++++++--
+> >> >> >>  drivers/clk/samsung/clk-pll.h        |   33
+> >> >> >>  +++++++++++++++++++++++++++++++-- 4 files changed, 54
+> >> >> >>  insertions(+),
+> >> >> >>  15
+> >> >> >>  deletions(-)
+> >> >> > 
+> >> >> > I also reviewed this in our gerrit
+> >> >> > <https://gerrit.chromium.org/gerrit/#/c/56742/>, but I'll
+> >> >> > summarize
+> >> >> > here for the list...
+> >> >> > 
+> >> >> >>  struct clk * __init samsung_clk_register_pll35xx(const char
+> >> >> >>  *name,
+> >> >> >> 
+> >> >> >> -                       const char *pname, const void __iomem
+> >> >> >> *base)
+> >> >> >> +                       const char *pname, const void __iomem
+> >> >> >> *base,
+> >> >> >> +                       const struct samsung_pll_rate_table
+> >> >> >> *rate_table,
+> >> >> >> +                       const unsigned int rate_count)
+> >> >> > 
+> >> >> > Feels like you should document here that rate_table needs to be
+> >> >> > sorted
+> >> >> > and the sort order.
+> >> >> 
+> >> >> sure,  we will add comment  to sort the table in descending order.
+> >> >> 
+> >> >> >> +struct samsung_pll_rate_table {
+> >> >> >> +       unsigned  int rate;
+> >> >> > 
+> >> >> > nit: extra space before "int" should be removed.
+> >> >> 
+> >> >> ok
+> >> >> 
+> >> >> > Also: you can include rate here if you need a convenient place
+> >> >> > to
+> >> >> > store it (which sadly means that this structure can't be const).
+> >> >> > ...but I do like Tomasz's idea of actually calculating it.  You
+> >> >> > can't
+> >> >> > know it at compile time since the parent rate comes from the
+> >> >> > device
+> >> >> > tree.
+> >> >> > 
+> >> >> > compatible = "samsung,clock-xxti";
+> >> >> > clock-frequency = <24000000>;
+> >> >> 
+> >> >> Actually this table should contain the recommended values
+> >> >> and if we see the user manual, the input(parent) rate is also a
+> >> >> part
+> >> >> of recommended
+> >> >> table of different output rate for a particular PLL for that SoC.
+> >> > 
+> >> > From what I understood in the documentation is that there is a set
+> >> > of
+> >> > recommended P, M, S (, K) tuples for each PLL and they are not
+> >> > dependent on
+> >> > input frequency - f_in and f_out are provided in the table just for
+> >> > reference to see the relation between output frequency and input
+> >> > frequency.
+> >> 
+> >> If input rate(f_in) gets changed for PLL, then the corresponding
+> >> output rates(f_out)
+> >> will change by using same(common) set of  recommended P, M, S (, K),
+> >> and the new set of  output rates(f_out) may not be the _required_ set
+> >> of target rates.
+> >> So we need different set of P, M, S (,K) values for different f_in.
+> >> 
+> >> Table should contain set of P, M, S (,K) values for the _required_
+> >> target(f_out) rates
+> >> for a particular input(f_in) rate.
+> > 
+> > I'm not sure what required rates you are talking about. For most PLLs
+> > the list of available frequencies seems to be defined by the set of
+> > supported PMS values and those are the frequencies that can be set by
+> > consumers, not the other way around.
+> > 
+> > There are some cases when some particular frequency must be generated,
+> > like PLLs used for audio or video clock sources, but this just means
+> > that there must be an entry in PMS table that gives PLL configuration
+> > which produces such frequency with used PLL input clock.
+> 
+> Yes, I was talking about same cases. Perhaps,I think it holds true in
+> general for PLLs, whose set_rate can be called.
 
-On Thursday 06 of June 2013 16:32:52 Tushar Behera wrote:
-> Cpufreq driver for EXYNOS4210 is not a platform driver, hence it is not
-> possible to provide the regulator supply name through DT bindings.
-> Since the cpufreq driver requires the regulator to be named as
-> 'vdd_arm', the related regulator name should be kept same.
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos4210-origen.dts |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
-> b/arch/arm/boot/dts/exynos4210-origen.dts index bcf8079..bd5f589 100644
-> --- a/arch/arm/boot/dts/exynos4210-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> @@ -192,7 +192,7 @@
->  				};
-> 
->  				buck1_reg: BUCK1 {
-> -					regulator-name = "VDD_ARM_1.2V";
-> +					regulator-name = "vdd_arm";
+Not really. For PLLs used for general purpose clocking, like for CPU or 
+GPU, there is usually no need to achieve certain frequency. Actually you 
+might want to have as many as possible intermediate steps to improve 
+frequency scaling efficiency.
 
-Yes, this is the hack I mentioned in my review of
-[PATCH 0/2] Clock update for EXYNOS4210-CPUFREQ driver
+> >> > I think we should ask some H/W engineer about that to make sure and
+> >> > choose the proper implementation, which will work properly for
+> >> > future cases, instead of ending with something that works just
+> >> > with current cases.>> 
+> >> We already asked hardware engineer about PMS values for PLL,
+> >> and we got a table containing recommended  P, M ,S values for a given
+> >> f_in(24 MHz)
+> >> and required f_out rates.
+> > 
+> > This doesn't answer the question about using those PMS values with
+> > different input rate.
+> > 
+> > Kukjin, maybe you can give some information on this or point to a
+> > person who could?
+> > 
+> >> Please let me know, why you think we are specific to current cases
+> >> only ?> 
+> > I don't like the idea of having separate tables for each input rate.
+> > Just imagine how much data would have to be added if boards with
+> > several different input rates showed up.
+> 
+> I think by declaring all these different table as __init,
+> and creating a copy to be used while registering, we can
+> save a little memory as well as the unnecessary cost which
+> we have to bear while doing set_rate() and round_rate()
+> by using single big table(for some time critical cases).
+
+Well, this is not really about memory, but rather the amount of code in 
+the driver. The amount of memory needed for such setting table is rather 
+insignificant.
+
+> > Sure, if each input rate requires different set of PMS values by
+> > hardware design, it can't be helped, but if the same PMS values can
+> > be reused (even giving different output rates, but this is usually
+> > not important), one table can be used for all cases.
+> 
+> Its good to know whether same PMS values can be reused, from hardware
+> guys.
+
+Another thing worth knowing would be whether a different frequency of 
+input clock is really allowed or the SoC supports only 24 MHz. If the 
+latter is the case, then there is no need to bother supporting other 
+frequencies.
+
+I'm waiting for some opinion from hardware engineers then.
 
 Best regards,
 Tomasz
 
->  					regulator-min-microvolt = 
-<950000>;
->  					regulator-max-microvolt	= 
-<1350000>;
->  					regulator-always-on;
+> Using different tables we can always blindly stick to recommended values
+> without bothering much every time, whether existing PMS can be reused
+> or not while adding new cases.
+> 
+> >> Regards,
+> >> Yadwinder
+> >> 
+> >> > Best regards,
+> >> > --
+> >> > Tomasz Figa
+> >> > Linux Kernel Developer
+> >> > Samsung R&D Institute Poland
+> >> > Samsung Electronics
+> >> > 
+> >> >> So as Tomasz said input(parent) rate may change with board,
+> >> >> then, do those corresponding recommended p, m, s, k will be valid?
+> >> >> 
+> >> >> In case, input(parent) rate changes then we may need different set
+> >> >> of p, m
+> >> >> ,s, k values recommended for new input rate to get
+> >> >> required(recommended
+> >> >> to
+> >> >> use) output rate.
+> >> >> 
+> >> >> So, we think its better that the p, m, s and k along with the
+> >> >> parent
+> >> >> is known at the compile time ( or DT ?),
+> >> >> as these p, m, s, k values are very much coupled with the parent
+> >> >> rate
+> >> >> to achieve the
+> >> >> 
+> >> >>  required(recommended to use) output rate.
+> >> >> 
+> >> >> Also, since the sorted table is required (sorted based on "rate"),
+> >> >> its better to have the rate in a const rate table.
+> >> >> 
+> >> >> And the whole set of recommended values should come from same
+> >> >> place(DT
+> >> >> or static table),
+> >> >> to keep the things simple and consistent.
+> >> >> 
+> >> >> Moreover, practically for a particular SoC , we use the
+> >> >> recommended
+> >> >> input(parent) rate only for a PLL.
+> >> >> So we should keep the things simple here presently.
+> >> >> 
+> >> >> >> +       unsigned int pdiv;
+> >> >> >> +       unsigned int mdiv;
+> >> >> >> +       unsigned int sdiv;
+> >> >> >> +       unsigned int kdiv;
+> >> >> > 
+> >> >> > I think kdiv is signed.
+> >> >> 
+> >> >> No, as these values should be the recommended values to be written
+> >> >> in
+> >> >> corresponding  register bits. So it should remain unsigned.
+> >> >> 
+> >> >> K value should be considered as negative only while recalculating
+> >> >> rate.
+> >> >> 
+> >> >> As per exynos5250 user manual's section 7.3.2 :
+> >> >> " K value description "Postive value (Negative value)":
+> >> >> Postive values is that you should write EPLLCON/VPLLCON register.
+> >> >> Negative value is that you can calculate PLL output frequency with
+> >> >> it."
+> >> >> 
+> >> >> > -Doug
+> >> >> 
+> >> >> Regards,
+> >> >> Yadwinder & Vikas.
+> >> >> --
+> >> >> To unsubscribe from this list: send the line "unsubscribe
+> >> >> linux-samsung-soc" in the body of a message to
+> >> >> majordomo@vger.kernel.org More majordomo info at 
+> >> >> http://vger.kernel.org/majordomo-info.html>> 
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe
+> >> linux-samsung-soc" in the body of a message to
+> >> majordomo@vger.kernel.org
+> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+> linux-samsung-soc" in the body of a message to
+> majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
