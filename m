@@ -1,125 +1,67 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
-Date: Mon, 10 Jun 2013 09:13:11 +0530
-Message-ID: <51B54B4F.3000503@linaro.org>
-References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org> <1370517749-29892-3-git-send-email-tushar.behera@linaro.org> <2070978.AjQD2isvSl@flatron>
+Subject: Re: [PATCH] ARM: dts: Update vdd_arm regulator
+Date: Mon, 10 Jun 2013 09:14:40 +0530
+Message-ID: <51B54BA8.9020104@linaro.org>
+References: <1370516572-313-1-git-send-email-tushar.behera@linaro.org> <1975506.ECnduUFuut@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:44232 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751886Ab3FJDnS (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:42346 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751459Ab3FJDoq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Jun 2013 23:43:18 -0400
-Received: by mail-pb0-f41.google.com with SMTP id rp16so3267834pbb.28
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Jun 2013 20:43:17 -0700 (PDT)
-In-Reply-To: <2070978.AjQD2isvSl@flatron>
+	Sun, 9 Jun 2013 23:44:46 -0400
+Received: by mail-pa0-f42.google.com with SMTP id rl6so4036734pac.29
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Jun 2013 20:44:45 -0700 (PDT)
+In-Reply-To: <1975506.ECnduUFuut@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, broonie@kernel.org, l.majewski@samsung.com, s.nawrocki@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, broonie@kernel.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, l.majewski@samsung.com, s.nawrocki@samsung.com, devicetree-discuss@lists.ozlabs.org
 
-On 06/08/2013 05:20 PM, Tomasz Figa wrote:
-> On Thursday 06 of June 2013 16:52:28 Tushar Behera wrote:
->> cpufreq driver for EXYNOS4 based SoCs are not platform drivers, hence
->> we cannot currently pass the clock names through a device tree node.
->> Instead, we need to make them available through a global alias.
->>
->> 'armclk', 'moutcore', 'mout_mpll' and 'mout_apll' clock aliases are
->> defined.
+On 06/08/2013 05:22 PM, Tomasz Figa wrote:
+> Hi Tushar,
+> 
+> On Thursday 06 of June 2013 16:32:52 Tushar Behera wrote:
+>> Cpufreq driver for EXYNOS4210 is not a platform driver, hence it is not
+>> possible to provide the regulator supply name through DT bindings.
+>> Since the cpufreq driver requires the regulator to be named as
+>> 'vdd_arm', the related regulator name should be kept same.
 >>
 >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 >> ---
->>  drivers/clk/samsung/clk-exynos4.c |   10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>  arch/arm/boot/dts/exynos4210-origen.dts |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/drivers/clk/samsung/clk-exynos4.c
->> b/drivers/clk/samsung/clk-exynos4.c index 3c1f888..1e4258a 100644
->> --- a/drivers/clk/samsung/clk-exynos4.c
->> +++ b/drivers/clk/samsung/clk-exynos4.c
->> @@ -356,8 +356,8 @@ struct samsung_fixed_rate_clock
->> exynos4210_fixed_rate_clks[] __initdata = {
+>> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
+>> b/arch/arm/boot/dts/exynos4210-origen.dts index bcf8079..bd5f589 100644
+>> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+>> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+>> @@ -192,7 +192,7 @@
+>>  				};
 >>
->>  /* list of mux clocks supported in all exynos4 soc's */
->>  struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
->> -	MUX_F(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
->> -			CLK_SET_RATE_PARENT, 0),
->> +	MUX_FA(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
->> +			CLK_SET_RATE_PARENT, 0, "mout_apll"),
->>  	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
->>  	MUX(none, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
->>  	MUX(none, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
->> @@ -385,9 +385,9 @@ struct samsung_mux_clock exynos4210_mux_clks[]
->> __initdata = { MUX(none, "mout_g2d", mout_g2d_p, E4210_SRC_IMAGE, 8,
->> 1),
->>  	MUX(none, "mout_fimd1", group1_p4210, E4210_SRC_LCD1, 0, 4),
->>  	MUX(none, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
->> -	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1, 
-> "sclk_mpll"),
->> +	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1, 
-> "mout_mpll"),
+>>  				buck1_reg: BUCK1 {
+>> -					regulator-name = "VDD_ARM_1.2V";
+>> +					regulator-name = "vdd_arm";
 > 
-> This is not fully compliant with patch description. I'm not sure if there 
-> weren't any users of the sclk_mpll alias.
+> Yes, this is the hack I mentioned in my review of
+> [PATCH 0/2] Clock update for EXYNOS4210-CPUFREQ driver
 > 
 
-As of now, there are no other users of sclk_mpll other than a debug
-print within the same file.
+We can hold this patch till we get to a conclusion for the above
+mentioned patch set.
 
->>  	MUX_A(mout_core, "mout_core", mout_core_p4210,
->> -			SRC_CPU, 16, 1, "mout_core"),
->> +			SRC_CPU, 16, 1, "moutcore"),
-> 
-> IMHO those typo corrections are not part of this patch.
-> 
 
-But the older drivers (before migration to CCF) were using the clock
-"moutcore" (not "mout_core").
-
->>  	MUX_A(sclk_vpll, "sclk_vpll", sclk_vpll_p4210,
->>  			SRC_TOP0, 8, 1, "sclk_vpll"),
->>  	MUX(mout_fimc0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
->> @@ -534,7 +534,7 @@ struct samsung_div_clock exynos4_div_clks[]
->> __initdata = { DIV(none, "div_spi_pre2", "div_spi2", DIV_PERIL2, 8, 8),
->>  	DIV(none, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
->>  	DIV(none, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
->> -	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, 
-> "arm_clk"),
->> +	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, "armclk"),
-> 
-> Same here.
-> 
-
-Same as above, "armclk" is used elsewhere, not "arm_clk".
-
->>  	DIV_A(sclk_apll, "sclk_apll", "mout_apll",
->>  			DIV_CPU0, 24, 3, "sclk_apll"),
->>  	DIV_F(none, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
-> 
-> Basically I don't like the idea of those global aliases, which IMHO should 
-> be completely dropped. Someone might not like it, but I'd go with the 
-> conversion of our cpufreq drivers to platform drivers instead, which could 
-> receive things like clocks and regulators using DT-based lookups.
-> 
-
-I agree. Migration of exynos-cpufreq driver as a platform driver is the
-best solution. But unless someone picks up that work, cpufreq support
-for EXYNOS4 based systems is broken because of the incorrect clock aliases.
-
-> This is especially important in case of regulators, which currently have 
-> to be hacked by using vdd_arm as regulator name in device tree.
-> 
-
-Agree.
-
-> CCing people that might be interested in this topic.
-> 
 > Best regards,
 > Tomasz
 > 
+>>  					regulator-min-microvolt = 
+> <950000>;
+>>  					regulator-max-microvolt	= 
+> <1350000>;
+>>  					regulator-always-on;
 
-Thanks.
 
 -- 
 Tushar Behera
