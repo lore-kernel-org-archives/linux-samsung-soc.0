@@ -1,137 +1,76 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V2] ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
-Date: Mon, 10 Jun 2013 20:24:39 +0200
-Message-ID: <2548564.xyELcExWsa@flatron>
-References: <0a1201ce6268$d5a51610$80ef4230$%kim@samsung.com> <4648637.k6B8xKB55c@amdc1227> <51B5C2C0.1000205@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos4210: Add LCD related pinctrl entries
+Date: Mon, 10 Jun 2013 20:30:50 +0200
+Message-ID: <3046864.Enssr3rlNj@flatron>
+References: <1370603235-11193-1-git-send-email-tushar.behera@linaro.org> <4895761.sVtM2qZnU3@flatron> <51B551C3.8000003@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f51.google.com ([209.85.214.51]:57076 "EHLO
-	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751411Ab3FJSYp (ORCPT
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:41179 "EHLO
+	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752025Ab3FJSa4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Jun 2013 14:24:45 -0400
-Received: by mail-bk0-f51.google.com with SMTP id ji1so2769814bkc.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 11:24:44 -0700 (PDT)
-In-Reply-To: <51B5C2C0.1000205@samsung.com>
+	Mon, 10 Jun 2013 14:30:56 -0400
+In-Reply-To: <51B551C3.8000003@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, Sachin Kamat <sachin.kamat@linaro.org>
 
-Hi Kukjin,
-
-On Monday 10 of June 2013 21:12:48 Kukjin Kim wrote:
-> On 06/10/13 21:00, Tomasz Figa wrote:
-> > Hi Kukjin,
+On Monday 10 of June 2013 09:40:43 Tushar Behera wrote:
+> On 06/08/2013 04:16 PM, Tomasz Figa wrote:
+> > Hi Tushar, Sachin,
 > > 
-> > On Thursday 06 of June 2013 12:49:23 Kukjin Kim wrote:
-> >> As we discussed in mailing list, non-DT for EXYNOS SoCs will not be
-> >> supported from v3.11. This patch removes regarding files for non-DT
-> >> including board files and defconfig.
+> > On Friday 07 of June 2013 16:37:13 Tushar Behera wrote:
+> >> From: Sachin Kamat <sachin.kamat@linaro.org>
 > >> 
-> >> Cc: Sylwester Nawrocki<s.nawrocki@samsung.com>
-> >> Cc: Tomasz Figa<t.figa@samsung.com>
-> >> Cc: Thomas Abraham<thomas.ab@samsung.com>
-> >> Cc: Kyungmin Park<kyungmin.park@samsung.com>
-> >> Cc: Arnd Bergmann<arnd@arndb.de>
-> >> Cc: Olof Johansson<olof@lixom.net>
-> >> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> >> Adds pinctrl entries required by FIMD.
+> >> 
+> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > >> ---
 > >> 
-> >> It's time to remove non-DT stuff for EXYNOS SoCs.
-> >> If no objection on this, this will be sent to arm-soc in a couple of
-> >> days.
+> >>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |   75
 > >> 
-> >> - Kukjin
+> >> +++++++++++++++++++++++++++++ 1 file changed, 75 insertions(+)
 > >> 
-> >>   arch/arm/configs/exynos4_defconfig         |   68 --
-> >>   arch/arm/mach-exynos/Kconfig               |  320 +------
-> >>   arch/arm/mach-exynos/Makefile              |   26 -
-> >>   arch/arm/mach-exynos/common.c              |   10 -
-> >>   arch/arm/mach-exynos/dev-ahci.c            |  255 -----
-> >>   arch/arm/mach-exynos/dev-ohci.c            |   52 --
-> >>   arch/arm/mach-exynos/dma.c                 |  322 -------
-> >>   arch/arm/mach-exynos/mach-armlex4210.c     |  207 -----
-> >>   arch/arm/mach-exynos/mach-nuri.c           | 1388
+> >> diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+> >> b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi index 55a2efb..d241726
+> >> 100644
+> >> --- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+> >> @@ -330,6 +330,81 @@
 > >> 
-> >> ---------------------------- arch/arm/mach-exynos/mach-origen.c      
-> >>   | 823 ----------------- arch/arm/mach-exynos/mach-smdk4x12.c      
-> >> |  396 --------
+> >>  			samsung,pin-pud = <3>;
+> >>  			samsung,pin-drv = <0>;
+> >>  		
+> >>  		};
 > >> 
-> >>   arch/arm/mach-exynos/mach-smdkv310.c       |  444 ---------
-> >>   arch/arm/mach-exynos/mach-universal_c210.c | 1159
-> >>   ----------------------- arch/arm/mach-exynos/pm_domains.c         
-> >>   |    7 -
-> >>   arch/arm/mach-exynos/setup-fimc.c          |   44 -
-> >>   arch/arm/mach-exynos/setup-fimd0.c         |   43 -
-> >>   arch/arm/mach-exynos/setup-i2c1.c          |   23 -
-> >>   arch/arm/mach-exynos/setup-i2c2.c          |   23 -
-> >>   arch/arm/mach-exynos/setup-i2c3.c          |   23 -
-> >>   arch/arm/mach-exynos/setup-i2c4.c          |   23 -
-> >>   arch/arm/mach-exynos/setup-i2c5.c          |   23 -
-> >>   arch/arm/mach-exynos/setup-i2c6.c          |   23 -
-> >>   arch/arm/mach-exynos/setup-i2c7.c          |   23 -
-> >>   arch/arm/mach-exynos/setup-keypad.c        |   36 -
-> >>   arch/arm/mach-exynos/setup-sdhci-gpio.c    |  152 ---
-> >>   arch/arm/mach-exynos/setup-spi.c           |   45 -
-> >>   arch/arm/mach-exynos/setup-usb-phy.c       |  223 -----
-> >>   27 files changed, 1 insertion(+), 6180 deletions(-)
-> >>   delete mode 100644 arch/arm/configs/exynos4_defconfig
-> >>   delete mode 100644 arch/arm/mach-exynos/dev-ahci.c
-> >>   delete mode 100644 arch/arm/mach-exynos/dev-ohci.c
-> >>   delete mode 100644 arch/arm/mach-exynos/dma.c
-> >>   delete mode 100644 arch/arm/mach-exynos/mach-armlex4210.c
-> >>   delete mode 100644 arch/arm/mach-exynos/mach-nuri.c
-> >>   delete mode 100644 arch/arm/mach-exynos/mach-origen.c
-> >>   delete mode 100644 arch/arm/mach-exynos/mach-smdk4x12.c
-> >>   delete mode 100644 arch/arm/mach-exynos/mach-smdkv310.c
-> >>   delete mode 100644 arch/arm/mach-exynos/mach-universal_c210.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-fimc.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-fimd0.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c1.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c2.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c3.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c4.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c5.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c6.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c7.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-keypad.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-sdhci-gpio.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-spi.c
-> >>   delete mode 100644 arch/arm/mach-exynos/setup-usb-phy.c
+> >> +
+> >> +		pwm0_out: pwm0-out {
+> >> +			samsung,pins = "gpd0-0";
+> >> +			samsung,pin-function = <2>;
+> >> +			samsung,pin-pud = <0>;
+> >> +			samsung,pin-drv = <0>;
+> >> +		};
+> >> +
+> >> +		pwm1_out: pwm1-out {
+> >> +			samsung,pins = "gpd0-1";
+> >> +			samsung,pin-function = <2>;
+> >> +			samsung,pin-pud = <0>;
+> >> +			samsung,pin-drv = <0>;
+> >> +		};
 > > 
-> > Something is either wrong with the patch or my git/patch skills,
-> > because I can't apply this patch in any way, getting:
-> > 
-> > $ git am -3 \[PATCH\ V2\]\ ARM_EXYNOS_no\ more\ support\ non-DT\ for\
-> > EXYNOS\ SoCs.mbox
+> > Hmm, these two seem to be unrelated. Rebase error? :)
 > 
-> [...]
-> 
-> > Did you hand edit your patch?
-> > It does not apply to blobs recorded in its index.
-> > Cannot fall back to three-way merge.
-> > Patch failed at 0001 ARM: EXYNOS: no more support non-DT for EXYNOS
-> > SoCs> 
-> > The copy of the patch that failed is found in:
-> >     /home/t.figa/linux-patches/.git/rebase-apply/patch
-> > 
-> > When you have resolved this problem, run "git am --resolved".
-> > If you prefer to skip this patch, run "git am --skip" instead.
-> > To restore the original branch and stop patching, run "git am
-> > --abort".
-> > 
-> > I will try to apply it manually, but it would be nice to know what I
-> > am doing wrong.
-> 
-> Tomasz, you may use my branch, for-next or
-> v3.11-next/remove-non-DT-exynos in samsung tree for test on your board.
+> Not a rebase error. pwm0_out needs to configured to get display on LCD.
 
-OK, thank you. Have my
+Please split this into two separate patches than, one adding LCD pin 
+configuration nodes and one adding PWM pin configuration nodes.
 
-Tested-by: Tomasz Figa <t.figa@samsung.com>
+Also I think it would be better to just define all available PWM outputs 
+not only first two. if you are already at adding PWM pin configurations.
 
-Best regards,
+Thanks,
 Tomasz
