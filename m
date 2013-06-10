@@ -1,60 +1,36 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 1/5] clk/exynos5250: Fix HDMI clock number in documentation
-Date: Mon, 10 Jun 2013 16:17:34 +0530
-Message-ID: <CAPdUM4M2MbpgeXNL66dnP6gzKzv0C2N_otc40KecbpT1jP2Rmg@mail.gmail.com>
-References: <1370862062-16680-1-git-send-email-rahul.sharma@samsung.com>
-	<1370862062-16680-2-git-send-email-rahul.sharma@samsung.com>
+From: sunil joshi <sjoshi.open@gmail.com>
+Subject: Re: [PATCH 09/13] clk: exynos5420: register clocks using common clock framework
+Date: Mon, 10 Jun 2013 16:42:08 +0530
+Message-ID: <CANruHrT_AVaQ0KAVkt6U0oS2_sz=2vmZn7KitNbQk96u7F4CSw@mail.gmail.com>
+References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
+	<1370516488-25860-9-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f171.google.com ([74.125.82.171]:37783 "EHLO
-	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752893Ab3FJKrg (ORCPT
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:52525 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753394Ab3FJLMJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Jun 2013 06:47:36 -0400
-Received: by mail-we0-f171.google.com with SMTP id m46so4715501wev.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 03:47:35 -0700 (PDT)
-In-Reply-To: <1370862062-16680-2-git-send-email-rahul.sharma@samsung.com>
+	Mon, 10 Jun 2013 07:12:09 -0400
+In-Reply-To: <1370516488-25860-9-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, arun.kk@samsung.com
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>, dianders@chromium.org
 
-This patch is already posted at
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg18331.html
-and
+Hi Chander,
 
-Reviewed-by: Doug Anderson <diand...@chromium.org>
+[snip]
 
-On Mon, Jun 10, 2013 at 4:30 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> From: Arun Kumar K <arun.kk@samsung.com>
->
-> This patch corrects the HDMI clock number given wrongly
-> in the documentation.
->
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> ---
->  Documentation/devicetree/bindings/clock/exynos5250-clock.txt |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> index 781a627..1a05761 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> @@ -154,7 +154,7 @@ clock which they consume.
->    dsim0                        341
->    dp                   342
->    mixer                        343
-> -  hdmi                 345
-> +  hdmi                 344
->
->  Example 1: An example of a clock controller node is listed below.
->
-> --
-> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +  sclk_uart3           131
+> +  sclk_mmc0            132
+> +  sclk_mmc1            132
+> +  sclk_mmc2            133
+
+above 2 numbers got repeated. Doug had found this in chromium tree and
+fixed it. [ https://gerrit.chromium.org/gerrit/#/c/56626/]
+
+Pls fix the typo in next version.
+
+Regards
+Sunil
