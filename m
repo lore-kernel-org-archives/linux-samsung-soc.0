@@ -1,89 +1,47 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/6] ARM: SAMSUNG: pm: Adjust for pinctrl- and DT-enabled
- platforms
-Date: Mon, 10 Jun 2013 16:45:49 +0200
-Message-ID: <62314159.5vrvK4k2Mm@amdc1227>
-References: <1368807872-2601-1-git-send-email-t.figa@samsung.com>
- <1368807872-2601-4-git-send-email-t.figa@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 6/6] ARM: dts: Add pcie controller node for Samsung EXYNOS5440 SoC
+Date: Mon, 10 Jun 2013 17:22:09 +0200
+Message-ID: <201306101722.10146.arnd@arndb.de>
+References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com> <201306071943.18407.arnd@arndb.de> <000001ce65b5$e45477f0$acfd67d0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:25654 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751203Ab3FJOpz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Jun 2013 10:45:55 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MO6003FKM906XB0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Jun 2013 15:45:53 +0100 (BST)
-In-reply-to: <1368807872-2601-4-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <000001ce65b5$e45477f0$acfd67d0$@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-arm-kernel@lists.infradead.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, arnd@arndb.de, olof@lixom.net, Doug Anderson <dianders@chromium.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Prathyush K <prathyush.k@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi,
+On Monday 10 June 2013, Jingoo Han wrote:
+> On Saturday, June 08, 2013 2:43 AM, Arnd Bergmann wrote:
+> For multiple domains, how can I fix the DT properties?
 
-On Friday 17 of May 2013 18:24:29 Tomasz Figa wrote:
-> This patch makes legacy code on suspend/resume path being executed
-> conditionally, on non-DT platforms only, to fix suspend/resume of
-> DT-enabled systems, for which the code is inappropriate.
+Domains are a Linux concept, you have to pick a new domain number for each
+struct hw_pci you register.
+ 
+> Current DT properties are as below:
 > 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-samsung/pm.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
+> +	pcie0@40000000 {
+> +		compatible = "samsung,exynos5440-pcie";
+> +		reg = <0x40000000 0x4000
+> +			0x290000 0x1000
+> +			0x270000 0x1000
+> +			0x271000 0x40>;
+> +		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +		device_type = "pci";
+> +		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00200000   /* configuration space */
+> +			  0x81000000 0 0	  0x40200000 0 0x00004000   /* downstream I/O */
+> +			  0x82000000 0 0	  0x40204000 0 0x10000000>; /* non-prefetchable memory */
+> +	};
 
-It seems like this patch did not make it into 3.10-rc5, while rest of patches 
-did, which ended up with suspend/resume still being broken.
+An unrelated comment: your first "reg" field seems to overlap with part
+of your configuration space. Is that intentional?
 
-What should we do in this case? 
+Also, shouldn't your memory space end on a 256MB boundary, rather than
+extend up to 0x50203fff?
 
-Best regards,
-Tomasz
-
-> diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-> index 53210ec..8ac2b2d 100644
-> --- a/arch/arm/plat-samsung/pm.c
-> +++ b/arch/arm/plat-samsung/pm.c
-> @@ -261,7 +261,8 @@ static int s3c_pm_enter(suspend_state_t state)
->  	 * require a full power-cycle)
->  	*/
-> 
-> -	if (!any_allowed(s3c_irqwake_intmask, s3c_irqwake_intallow) &&
-> +	if (!of_have_populated_dt() &&
-> +	    !any_allowed(s3c_irqwake_intmask, s3c_irqwake_intallow) &&
->  	    !any_allowed(s3c_irqwake_eintmask, s3c_irqwake_eintallow)) {
->  		printk(KERN_ERR "%s: No wake-up sources!\n", __func__);
->  		printk(KERN_ERR "%s: Aborting sleep\n", __func__);
-> @@ -270,8 +271,11 @@ static int s3c_pm_enter(suspend_state_t state)
-> 
->  	/* save all necessary core registers not covered by the drivers */
-> 
-> -	samsung_pm_save_gpios();
-> -	samsung_pm_saved_gpios();
-> +	if (!of_have_populated_dt()) {
-> +		samsung_pm_save_gpios();
-> +		samsung_pm_saved_gpios();
-> +	}
-> +
->  	s3c_pm_save_uarts();
->  	s3c_pm_save_core();
-> 
-> @@ -310,8 +314,11 @@ static int s3c_pm_enter(suspend_state_t state)
-> 
->  	s3c_pm_restore_core();
->  	s3c_pm_restore_uarts();
-> -	samsung_pm_restore_gpios();
-> -	s3c_pm_restored_gpios();
-> +
-> +	if (!of_have_populated_dt()) {
-> +		samsung_pm_restore_gpios();
-> +		s3c_pm_restored_gpios();
-> +	}
-> 
->  	s3c_pm_debug_init();
+	Arnd
