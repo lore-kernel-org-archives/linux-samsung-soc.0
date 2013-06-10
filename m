@@ -1,77 +1,44 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: add pin state information for DP HPD support to
- Exynos5250
-Date: Mon, 10 Jun 2013 17:35:08 +0900
-Message-ID: <0ea201ce65b5$6a78ca30$3f6a5e90$%kim@samsung.com>
-References: <000001ce4e1e$d1cc5de0$756519a0$@samsung.com>
- <CAD=FV=V9oBR1ZAEsMs5-x7NaD1fiHJO=9dn1mPAMg0MX6tnxYA@mail.gmail.com>
+Subject: RE: [PATCH 2/2] ARM: dts: Document DP clock in samsung,exynos5-dp
+ binding
+Date: Mon, 10 Jun 2013 17:38:00 +0900
+Message-ID: <0ea301ce65b5$d0c265d0$72473170$%kim@samsung.com>
+References: <003101ce4e1b$4acc0050$e06400f0$@samsung.com>
+ <CAD=FV=UjohPBxChbE2R4b8JWCbxZRXVx_9WuMYPgHTehMP6vvg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAD=FV=V9oBR1ZAEsMs5-x7NaD1fiHJO=9dn1mPAMg0MX6tnxYA@mail.gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:47209 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751971Ab3FJIiD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 10 Jun 2013 04:38:03 -0400
+In-reply-to: <CAD=FV=UjohPBxChbE2R4b8JWCbxZRXVx_9WuMYPgHTehMP6vvg@mail.gmail.com>
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, 'Jingoo Han' <jg1.han@samsung.com>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Sean Paul' <seanpaul@chromium.org>, =?ISO-8859-1?Q?'St=E9phane_Marchesin'?= <marcheu@chromium.org>, 'Andrew Bresticker' <abrestic@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Doug Anderson' <dianders@chromium.org>, 'Jingoo Han' <jg1.han@samsung.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Sean Paul' <seanpaul@chromium.org>, =?ISO-8859-1?Q?'St=E9phane_Marchesin'?= <marcheu@chromium.org>
 
 Doug Anderson wrote:
 > 
 > Jingoo,
 > 
-> On Sat, May 11, 2013 at 1:09 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> > Add pin state information for DP HPD support that requires
-> > pin configuration support using pinctrl interface.
+> On Sat, May 11, 2013 at 12:43 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> > The exynos5-dp node needs a clock specified using the common clock
+> > framework.
 > >
 > > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 > > ---
 > > Tested on Exynos5250
 > >
-> >  arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    7 +++++++
-> >  arch/arm/boot/dts/exynos5250-smdk5250.dts |    3 +++
-> >  2 files changed, 10 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> > index d1650fb..e9cdee3 100644
-> > --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> > @@ -553,6 +553,13 @@
-> >                         samsung,pin-pud = <0>;
-> >                         samaung,pin-drv = <0>;
-> >                 };
-> > +
-> > +               dp_hpd: dp_hpd {
-> > +                       samsung,pins = "gpx0-7";
-> > +                       samsung,pin-function = <3>;
-> > +                       samsung,pin-pud = <0>;
-> > +                       samaung,pin-drv = <0>;
-> > +               };
-> >         };
-> >
-> >         pinctrl@13400000 {
-> > diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > index 3e0c792..d53ea34 100644
-> > --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > @@ -224,6 +224,9 @@
-> >                 samsung,color-depth = <1>;
-> >                 samsung,link-rate = <0x0a>;
-> >                 samsung,lane-count = <4>;
-> > +
-> > +               pinctrl-names = "default";
-> > +               pinctrl-0 = <&dp_hpd>;
+> >  .../devicetree/bindings/video/exynos_dp.txt        |    6 ++++++
+> >  1 files changed, 6 insertions(+), 0 deletions(-)
 > 
-> I was going to suggest moving this to exynos5250.dtsi but then
-> realized that I saw a board recently that used a non-standard HPD pin
-> recently!  ...so keeping it in the board file (like you've done) is
-> good.
-> 
-> ...so looks good to me.
+> Thanks for updating the bindings.  This looks good.
 > 
 > Reviewed-by: Doug Anderson <dianders@chromium.org>
-
-Yeah, I agreed with Doug's comment :-)
 
 Applied, thanks.
 
