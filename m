@@ -1,102 +1,81 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2] clk: exynos4: Add clock entries for TMU
-Date: Mon, 10 Jun 2013 14:21:09 +0530
-Message-ID: <CAK9yfHzAHx-5vznBi2K2cY7kYmGmrojwLriNGaXw1tesNoZ2-A@mail.gmail.com>
-References: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
-	<20130429170052.8923.66455@quantum>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 13/13] ARM: Exynos: extend soft-reset support for Exynos5420
+Date: Mon, 10 Jun 2013 17:54:59 +0900
+Message-ID: <0ea501ce65b8$3046d7a0$90d486e0$%kim@samsung.com>
+References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
+ <1370516488-25860-13-git-send-email-chander.kashyap@linaro.org>
+ <51B07631.2010802@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:62335 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752585Ab3FJIvK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Jun 2013 04:51:10 -0400
-Received: by mail-oa0-f41.google.com with SMTP id n9so5699812oag.14
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 01:51:09 -0700 (PDT)
-In-Reply-To: <20130429170052.8923.66455@quantum>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-reply-to: <51B07631.2010802@linaro.org>
+Content-language: ko
+Sender: linux-serial-owner@vger.kernel.org
+To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Chander Kashyap' <chander.kashyap@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, t.figa@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>
 
-Hi Kukjin,
+Tushar Behera wrote:
+> 
+> On 06/06/2013 04:31 PM, Chander Kashyap wrote:
+> > Extend the soft reset support for Exynos5420 SoC.
+> >
+> > Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> > ---
+> >  arch/arm/mach-exynos/common.c |    3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> > index fbe1aa7..dc7c134 100644
+> > --- a/arch/arm/mach-exynos/common.c
+> > +++ b/arch/arm/mach-exynos/common.c
+> > @@ -321,7 +321,8 @@ void exynos5_restart(char mode, const char *cmd)
+> >  	u32 val;
+> >  	void __iomem *addr;
+> >
+> > -	if (of_machine_is_compatible("samsung,exynos5250")) {
+> > +	if (of_machine_is_compatible("samsung,exynos5250") ||
+> > +		(of_machine_is_compatible("samsung,exynos5420"))) {
+> >  		val = 0x1;
+> >  		addr = EXYNOS_SWRESET;
+> >  	} else if (of_machine_is_compatible("samsung,exynos5440")) {
+> >
+> 
+> How about making 0x1 and EXYNOS_SWRESET as default values of val and
+> addr. That way we can remove this check for exynos5250 and exynos5420.
+> Also we can remove the trailing else statement as there are no non-DT
+> boards for EXYNOS5.
+> 
+>  void exynos5_restart(char mode, const char *cmd)
+>  {
+>         struct device_node *np;
+> -       u32 val;
+> -       void __iomem *addr;
+> +       u32 val = 0x1;
+> +       void __iomem *addr = EXYNOS_SWRESET;
+> 
+> -       if (of_machine_is_compatible("samsung,exynos5250")) {
+> -               val = 0x1;
+> -               addr = EXYNOS_SWRESET;
+> -       } else if (of_machine_is_compatible("samsung,exynos5440")) {
+> +       if (of_machine_is_compatible("samsung,exynos5440")) {
+>                 u32 status;
+>                 np = of_find_compatible_node(NULL, NULL,
+> "samsung,exynos5440-clock");
+> 
+> @@ -336,9 +333,6 @@ void exynos5_restart(char mode, const char *cmd)
+>                 val = __raw_readl(addr);
+> 
+>                 val = (val & 0xffff0000) | (status & 0xffff);
+> -       } else {
+> -               pr_err("%s: cannot support non-DT\n", __func__);
+> -               return;
+>         }
+> 
+> --
 
-On 29 April 2013 22:30, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Sachin Kamat (2013-04-21 20:55:46)
->> Added clock entries for thermal management unit (TMU) for
->> Exynos4 SoCs.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> Cc: Thomas Abraham <thomas.abraham@linaro.org>
->> Cc: Mike Turquette <mturquette@linaro.org>
->
-> This has my Ack if you plan to take it through the Samsung tree.
-> If you want it to go through the clk tree then I can take it in after
-> 3.10-rc1.
+Yeah, looks better.
 
-Can you apply this one too to Samsung tree?
-Thanks.
+- Kukjin
 
->
->> ---
->> Should be applied on top of the below patches:
->> https://patchwork.kernel.org/patch/2448711/
->> https://patchwork.kernel.org/patch/2459831/
->>
->> Changes since v1:
->> Changed clock name 'tmu' to 'tmu_apbif' as per the SoC user manual.
->> ---
->>  .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
->>  drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
->>  2 files changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
->> index 14d5c2a..8fc1151 100644
->> --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
->> +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
->> @@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
->>    spi0_isp_sclk       380     Exynos4x12
->>    spi1_isp_sclk       381     Exynos4x12
->>    uart_isp_sclk       382     Exynos4x12
->> +  tmu_apbif          383
->>
->>                 [Mux Clocks]
->>
->> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->> index 09cf161..0be7d05 100644
->> --- a/drivers/clk/samsung/clk-exynos4.c
->> +++ b/drivers/clk/samsung/clk-exynos4.c
->> @@ -170,7 +170,7 @@ enum exynos4_clks {
->>         gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1, mcuctl_isp,
->>         mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp, uart_isp,
->>         asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk, spi0_isp_sclk,
->> -       spi1_isp_sclk, uart_isp_sclk,
->> +       spi1_isp_sclk, uart_isp_sclk, tmu_apbif,
->>
->>         /* mux clocks */
->>         mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
->> @@ -815,6 +815,7 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
->>         GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0, "keypad"),
->>         GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
->>                         E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
->> +       GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0, 0),
->>  };
->>
->>  /* list of gate clocks supported in exynos4x12 soc */
->> @@ -915,6 +916,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->>         GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
->>                         CLK_IGNORE_UNUSED, 0),
->>         GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
->> +       GATE(tmu_apbif, "tmu_apbif", "aclk100", E4X12_GATE_IP_PERIR, 17, 0, 0),
->>  };
->>
->>  #ifdef CONFIG_OF
->> --
->> 1.7.9.5
-
-
-
--- 
-With warm regards,
-Sachin
