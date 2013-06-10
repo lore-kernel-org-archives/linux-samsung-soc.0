@@ -1,146 +1,101 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
-Date: Mon, 10 Jun 2013 20:53:09 +0200
-Message-ID: <3226068.I7g6oVyl1p@flatron>
-References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org> <2070978.AjQD2isvSl@flatron> <51B54B4F.3000503@linaro.org>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: RE: [PATCH] clk: samsung: Fix pll36xx_recalc_rate to handle kdiv properly
+Date: Mon, 10 Jun 2013 15:16:05 -0700
+Message-ID: <20130610221605.8816.20262@quantum>
+References: <1370026725-22910-1-git-send-email-dianders@chromium.org>
+ <08e301ce61e3$045828c0$0d087a40$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:48033 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752616Ab3FJSxP (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:65315 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751124Ab3FJWQJ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Jun 2013 14:53:15 -0400
-In-Reply-To: <51B54B4F.3000503@linaro.org>
+	Mon, 10 Jun 2013 18:16:09 -0400
+Received: by mail-pd0-f170.google.com with SMTP id x11so2143550pdj.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 15:16:09 -0700 (PDT)
+In-Reply-To: <08e301ce61e3$045828c0$0d087a40$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, broonie@kernel.org, l.majewski@samsung.com, s.nawrocki@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Doug Anderson' <dianders@chromium.org>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Vikas Sajjan' <vikas.sajjan@linaro.org>, 'Yadwinder Singh Brar' <yadi.brar01@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <t.figa@samsung.com>, linux-kernel@vger.kernel.org
 
-On Monday 10 of June 2013 09:13:11 Tushar Behera wrote:
-> On 06/08/2013 05:20 PM, Tomasz Figa wrote:
-> > On Thursday 06 of June 2013 16:52:28 Tushar Behera wrote:
-> >> cpufreq driver for EXYNOS4 based SoCs are not platform drivers, hence
-> >> we cannot currently pass the clock names through a device tree node.
-> >> Instead, we need to make them available through a global alias.
-> >> 
-> >> 'armclk', 'moutcore', 'mout_mpll' and 'mout_apll' clock aliases are
-> >> defined.
-> >> 
-> >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> >> ---
-> >> 
-> >>  drivers/clk/samsung/clk-exynos4.c |   10 +++++-----
-> >>  1 file changed, 5 insertions(+), 5 deletions(-)
-> >> 
-> >> diff --git a/drivers/clk/samsung/clk-exynos4.c
-> >> b/drivers/clk/samsung/clk-exynos4.c index 3c1f888..1e4258a 100644
-> >> --- a/drivers/clk/samsung/clk-exynos4.c
-> >> +++ b/drivers/clk/samsung/clk-exynos4.c
-> >> @@ -356,8 +356,8 @@ struct samsung_fixed_rate_clock
-> >> exynos4210_fixed_rate_clks[] __initdata = {
-> >> 
-> >>  /* list of mux clocks supported in all exynos4 soc's */
-> >>  struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
-> >> 
-> >> -	MUX_F(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-> >> -			CLK_SET_RATE_PARENT, 0),
-> >> +	MUX_FA(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-> >> +			CLK_SET_RATE_PARENT, 0, "mout_apll"),
-> >> 
-> >>  	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
-> >>  	MUX(none, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
-> >>  	MUX(none, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
-> >> 
-> >> @@ -385,9 +385,9 @@ struct samsung_mux_clock exynos4210_mux_clks[]
-> >> __initdata = { MUX(none, "mout_g2d", mout_g2d_p, E4210_SRC_IMAGE, 8,
-> >> 1),
-> >> 
-> >>  	MUX(none, "mout_fimd1", group1_p4210, E4210_SRC_LCD1, 0, 4),
-> >>  	MUX(none, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
-> >> 
-> >> -	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1,
+Quoting Kukjin Kim (2013-06-05 04:51:29)
+> Doug Anderson wrote:
 > > 
-> > "sclk_mpll"),
+> > The KDIV value is often listed as unsigned but it needs to be treated
+> > as a 16-bit signed value when using it in calculations.  Fix our rate
+> > recalculation to do this correctly.
 > > 
-> >> +	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1,
+> > Before doing this, I tried setting EPLL on exynos5250 to:
+> >   rate, m, p, s, k = 80000000, 107, 2, 4, 43691
 > > 
-> > "mout_mpll"),
+> > This rate is exactly from the table in the exynos5250 user manual.
 > > 
-> > This is not fully compliant with patch description. I'm not sure if
-> > there weren't any users of the sclk_mpll alias.
+> > I read this back as 80750003 with:
+> >   cat /sys/kernel/debug/clk/fin_pll/fout_epll/clk_rate
+> > 
+> > After this patch, it reads back as 80000003
+> > 
+> >   mw 0x10020130 a06b0204
+> >   mw 0x10020134 0000aaab
+> > 
+> > Signed-off-by: Doug Anderson <dianders@chromium.org>
 > 
-> As of now, there are no other users of sclk_mpll other than a debug
-> print within the same file.
-
-OK.
-
-> >>  	MUX_A(mout_core, "mout_core", mout_core_p4210,
-> >> 
-> >> -			SRC_CPU, 16, 1, "mout_core"),
-> >> +			SRC_CPU, 16, 1, "moutcore"),
-> > 
-> > IMHO those typo corrections are not part of this patch.
+> Yeah,
 > 
-> But the older drivers (before migration to CCF) were using the clock
-> "moutcore" (not "mout_core").
-
-I mean, this should be placed in a separate patch, as this change is not 
-"adding alias for cpufreq related clocks", but rather fixing a typo.
-
-> >>  	MUX_A(sclk_vpll, "sclk_vpll", sclk_vpll_p4210,
-> >>  	
-> >>  			SRC_TOP0, 8, 1, "sclk_vpll"),
-> >>  	
-> >>  	MUX(mout_fimc0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
-> >> 
-> >> @@ -534,7 +534,7 @@ struct samsung_div_clock exynos4_div_clks[]
-> >> __initdata = { DIV(none, "div_spi_pre2", "div_spi2", DIV_PERIL2, 8,
-> >> 8),
-> >> 
-> >>  	DIV(none, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
-> >>  	DIV(none, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
-> >> 
-> >> -	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3,
-> > 
-> > "arm_clk"),
-> > 
-> >> +	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, "armclk"),
-> > 
-> > Same here.
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 > 
-> Same as above, "armclk" is used elsewhere, not "arm_clk".
-> 
-> >>  	DIV_A(sclk_apll, "sclk_apll", "mout_apll",
-> >>  	
-> >>  			DIV_CPU0, 24, 3, "sclk_apll"),
-> >>  	
-> >>  	DIV_F(none, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
-> > 
-> > Basically I don't like the idea of those global aliases, which IMHO
-> > should be completely dropped. Someone might not like it, but I'd go
-> > with the conversion of our cpufreq drivers to platform drivers
-> > instead, which could receive things like clocks and regulators using
-> > DT-based lookups.
-> I agree. Migration of exynos-cpufreq driver as a platform driver is the
-> best solution. But unless someone picks up that work, cpufreq support
-> for EXYNOS4 based systems is broken because of the incorrect clock
-> aliases.
-
-We have patches for this in our internal tree. I will clean them up a bit 
-and submit soon.
-
-Thanks,
-Tomasz
-
-> > This is especially important in case of regulators, which currently
-> > have to be hacked by using vdd_arm as regulator name in device tree.
-> Agree.
-> 
-> > CCing people that might be interested in this topic.
-> > 
-> > Best regards,
-> > Tomasz
+> Mike, please apply in your fixes.
 > 
 > Thanks.
+> 
+> - Kukjin
+> 
+> > ---
+> > This patch is based upon another in-flight patch to avoid conflicts:
+> >   clk: samsung: Use clk->base instead of directly using clk->con0 for
+> > PLL3xxx
+> >   https://patchwork.kernel.org/patch/2629751/
+
+The dependency series is not destined for clk-fixes but Kukjin has
+requested this patch as a fix.  If you want this patch as a fix can you
+rebase it against:
+
+git://git.linaro.org/people/mturquette/linux.git clk-fixes
+
+Thanks,
+Mike
+
+> > 
+> >  drivers/clk/samsung/clk-pll.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> > index 01f17cf..26416bb 100644
+> > --- a/drivers/clk/samsung/clk-pll.c
+> > +++ b/drivers/clk/samsung/clk-pll.c
+> > @@ -115,7 +115,8 @@ static unsigned long
+> > samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+> >                               unsigned long parent_rate)
+> >  {
+> >       struct samsung_clk_pll *pll = to_clk_pll(hw);
+> > -     u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
+> > +     u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
+> > +     s16 kdiv;
+> >       u64 fvco = parent_rate;
+> > 
+> >       pll_con0 = pll_readl(pll, PLL36XX_CON0_OFFSET);
+> > @@ -123,7 +124,7 @@ static unsigned long
+> > samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+> >       mdiv = (pll_con0 >> PLL36XX_MDIV_SHIFT) & PLL36XX_MDIV_MASK;
+> >       pdiv = (pll_con0 >> PLL36XX_PDIV_SHIFT) & PLL36XX_PDIV_MASK;
+> >       sdiv = (pll_con0 >> PLL36XX_SDIV_SHIFT) & PLL36XX_SDIV_MASK;
+> > -     kdiv = pll_con1 & PLL36XX_KDIV_MASK;
+> > +     kdiv = (s16)(pll_con1 & PLL36XX_KDIV_MASK);
+> > 
+> >       fvco *= (mdiv << 16) + kdiv;
+> >       do_div(fvco, (pdiv << sdiv));
+> > --
+> > 1.8.2.1
