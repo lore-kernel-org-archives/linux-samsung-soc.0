@@ -1,57 +1,137 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RESEND] spi: s3c64xx: Fix pm_runtime_get_sync() return
- value check
-Date: Mon, 10 Jun 2013 18:04:18 +0100
-Message-ID: <20130610170418.GN1403@sirena.org.uk>
-References: <1370881346-28000-1-git-send-email-s.nawrocki@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH V2] ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
+Date: Mon, 10 Jun 2013 20:24:39 +0200
+Message-ID: <2548564.xyELcExWsa@flatron>
+References: <0a1201ce6268$d5a51610$80ef4230$%kim@samsung.com> <4648637.k6B8xKB55c@amdc1227> <51B5C2C0.1000205@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UExESr5xZTMxdOWv"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:52879 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752095Ab3FJREh (ORCPT
+Received: from mail-bk0-f51.google.com ([209.85.214.51]:57076 "EHLO
+	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751411Ab3FJSYp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Jun 2013 13:04:37 -0400
-Content-Disposition: inline
-In-Reply-To: <1370881346-28000-1-git-send-email-s.nawrocki@samsung.com>
+	Mon, 10 Jun 2013 14:24:45 -0400
+Received: by mail-bk0-f51.google.com with SMTP id ji1so2769814bkc.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 11:24:44 -0700 (PDT)
+In-Reply-To: <51B5C2C0.1000205@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, spi-devel-general@lists.sourceforge.net
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
 
+Hi Kukjin,
 
---UExESr5xZTMxdOWv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Monday 10 of June 2013 21:12:48 Kukjin Kim wrote:
+> On 06/10/13 21:00, Tomasz Figa wrote:
+> > Hi Kukjin,
+> > 
+> > On Thursday 06 of June 2013 12:49:23 Kukjin Kim wrote:
+> >> As we discussed in mailing list, non-DT for EXYNOS SoCs will not be
+> >> supported from v3.11. This patch removes regarding files for non-DT
+> >> including board files and defconfig.
+> >> 
+> >> Cc: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> >> Cc: Tomasz Figa<t.figa@samsung.com>
+> >> Cc: Thomas Abraham<thomas.ab@samsung.com>
+> >> Cc: Kyungmin Park<kyungmin.park@samsung.com>
+> >> Cc: Arnd Bergmann<arnd@arndb.de>
+> >> Cc: Olof Johansson<olof@lixom.net>
+> >> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> >> ---
+> >> 
+> >> It's time to remove non-DT stuff for EXYNOS SoCs.
+> >> If no objection on this, this will be sent to arm-soc in a couple of
+> >> days.
+> >> 
+> >> - Kukjin
+> >> 
+> >>   arch/arm/configs/exynos4_defconfig         |   68 --
+> >>   arch/arm/mach-exynos/Kconfig               |  320 +------
+> >>   arch/arm/mach-exynos/Makefile              |   26 -
+> >>   arch/arm/mach-exynos/common.c              |   10 -
+> >>   arch/arm/mach-exynos/dev-ahci.c            |  255 -----
+> >>   arch/arm/mach-exynos/dev-ohci.c            |   52 --
+> >>   arch/arm/mach-exynos/dma.c                 |  322 -------
+> >>   arch/arm/mach-exynos/mach-armlex4210.c     |  207 -----
+> >>   arch/arm/mach-exynos/mach-nuri.c           | 1388
+> >> 
+> >> ---------------------------- arch/arm/mach-exynos/mach-origen.c      
+> >>   | 823 ----------------- arch/arm/mach-exynos/mach-smdk4x12.c      
+> >> |  396 --------
+> >> 
+> >>   arch/arm/mach-exynos/mach-smdkv310.c       |  444 ---------
+> >>   arch/arm/mach-exynos/mach-universal_c210.c | 1159
+> >>   ----------------------- arch/arm/mach-exynos/pm_domains.c         
+> >>   |    7 -
+> >>   arch/arm/mach-exynos/setup-fimc.c          |   44 -
+> >>   arch/arm/mach-exynos/setup-fimd0.c         |   43 -
+> >>   arch/arm/mach-exynos/setup-i2c1.c          |   23 -
+> >>   arch/arm/mach-exynos/setup-i2c2.c          |   23 -
+> >>   arch/arm/mach-exynos/setup-i2c3.c          |   23 -
+> >>   arch/arm/mach-exynos/setup-i2c4.c          |   23 -
+> >>   arch/arm/mach-exynos/setup-i2c5.c          |   23 -
+> >>   arch/arm/mach-exynos/setup-i2c6.c          |   23 -
+> >>   arch/arm/mach-exynos/setup-i2c7.c          |   23 -
+> >>   arch/arm/mach-exynos/setup-keypad.c        |   36 -
+> >>   arch/arm/mach-exynos/setup-sdhci-gpio.c    |  152 ---
+> >>   arch/arm/mach-exynos/setup-spi.c           |   45 -
+> >>   arch/arm/mach-exynos/setup-usb-phy.c       |  223 -----
+> >>   27 files changed, 1 insertion(+), 6180 deletions(-)
+> >>   delete mode 100644 arch/arm/configs/exynos4_defconfig
+> >>   delete mode 100644 arch/arm/mach-exynos/dev-ahci.c
+> >>   delete mode 100644 arch/arm/mach-exynos/dev-ohci.c
+> >>   delete mode 100644 arch/arm/mach-exynos/dma.c
+> >>   delete mode 100644 arch/arm/mach-exynos/mach-armlex4210.c
+> >>   delete mode 100644 arch/arm/mach-exynos/mach-nuri.c
+> >>   delete mode 100644 arch/arm/mach-exynos/mach-origen.c
+> >>   delete mode 100644 arch/arm/mach-exynos/mach-smdk4x12.c
+> >>   delete mode 100644 arch/arm/mach-exynos/mach-smdkv310.c
+> >>   delete mode 100644 arch/arm/mach-exynos/mach-universal_c210.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-fimc.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-fimd0.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c1.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c2.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c3.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c4.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c5.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c6.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-i2c7.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-keypad.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-sdhci-gpio.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-spi.c
+> >>   delete mode 100644 arch/arm/mach-exynos/setup-usb-phy.c
+> > 
+> > Something is either wrong with the patch or my git/patch skills,
+> > because I can't apply this patch in any way, getting:
+> > 
+> > $ git am -3 \[PATCH\ V2\]\ ARM_EXYNOS_no\ more\ support\ non-DT\ for\
+> > EXYNOS\ SoCs.mbox
+> 
+> [...]
+> 
+> > Did you hand edit your patch?
+> > It does not apply to blobs recorded in its index.
+> > Cannot fall back to three-way merge.
+> > Patch failed at 0001 ARM: EXYNOS: no more support non-DT for EXYNOS
+> > SoCs> 
+> > The copy of the patch that failed is found in:
+> >     /home/t.figa/linux-patches/.git/rebase-apply/patch
+> > 
+> > When you have resolved this problem, run "git am --resolved".
+> > If you prefer to skip this patch, run "git am --skip" instead.
+> > To restore the original branch and stop patching, run "git am
+> > --abort".
+> > 
+> > I will try to apply it manually, but it would be nice to know what I
+> > am doing wrong.
+> 
+> Tomasz, you may use my branch, for-next or
+> v3.11-next/remove-non-DT-exynos in samsung tree for test on your board.
 
-On Mon, Jun 10, 2013 at 06:22:26PM +0200, Sylwester Nawrocki wrote:
-> If the device is already in a runtime PM enabled state
-> pm_runtime_get_sync() will return 1, so a test for negative
-> value should be used to check for errors.
+OK, thank you. Have my
 
-Applied, thanks.
+Tested-by: Tomasz Figa <t.figa@samsung.com>
 
---UExESr5xZTMxdOWv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRtgcPAAoJELSic+t+oim9paoP/jkM2dFIJg/QPdlwbgxU4Rsi
-5kgbSYlQUCPi1F7CNHc/ZZfeGY8WDslFzMRyTId0EbvdcvUKk0bYPx+qC107vawS
-SQAZBB2e4YxGdCFlYkrE5dShXwq5kxoHIhdM4CqznU5Ktlf6gm1YRZ3D/UZUU5XN
-FdIoG2AM+ZkBcH+5NKGhnLGuMe243LRd2rQ/KnpD1aDnzSYcKnnxkmzxODmpzgCR
-7erigKIz49MeLUWO/STUbUoZfko5cBIiqrf/e3YET2/ThufJkOuI6is3d5uP8QtA
-Ne3R9EOLNiIubtY1EdvCLbA6UflWEqoGIwgQsHktsh3J4rPq2EA8m16TmnlsrVbo
-9GzLBPV4iNF4UCb7+NRKfmJdN+89r838OSpUjosdS4ab39ltQhZIRa7QdOwUJh4d
-oOz4YcORuasqdnlA+e/dBVpuchTJCsT1GJJXGNGAOYtXJbgzI3+SDPcnP3ZjVluk
-j+9HbJh1wUCKYS17E2+ffXrcOB3+fEP3RPNi0f9H+FccT/e/tZprFU5/iOHv3JoS
-CCBMumhyAszMn+kkmujKlLn+oxEXy1H9Bx85+1bUsqRq5AFdWDxhyCMnoNQ476zr
-9/pKiME/lmUKKT1mWTYhhkLF1/GgPqWNTSN+4Mlh2CekafqkFdiNHnyiQY438kLp
-9R0im3GVhwLP/EyO63tf
-=y3wE
------END PGP SIGNATURE-----
-
---UExESr5xZTMxdOWv--
+Best regards,
+Tomasz
