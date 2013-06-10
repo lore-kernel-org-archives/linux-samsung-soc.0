@@ -1,90 +1,73 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH 04/13] ARM: dts: list the CPU nodes for Exynos5250
-Date: Mon, 10 Jun 2013 14:48:40 +0530
-Message-ID: <CANuQgHEZEuE_vh9z1sbwpcrEO91BADaqGzos-nEFzeqh_CkGZA@mail.gmail.com>
-References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
-	<1370516488-25860-4-git-send-email-chander.kashyap@linaro.org>
-	<16514785.Efj3frXj0r@flatron>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/6] Samsung watchdog support clean-up
+Date: Mon, 10 Jun 2013 19:00:57 +0900
+Message-ID: <0ee601ce65c1$673f2c90$35bd85b0$%kim@samsung.com>
+References: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
+ <1850418.EOBZxN7PB0@amdc1227>
+ <06d601ce6107$304078c0$90c16a40$%kim@samsung.com> <1449207.t4YSBOKy4W@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <16514785.Efj3frXj0r@flatron>
-Sender: linux-serial-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:22334 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751257Ab3FJKA7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 10 Jun 2013 06:00:59 -0400
+In-reply-to: <1449207.t4YSBOKy4W@amdc1227>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>
+Cc: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Wim Van Sebroeck' <wim@iguana.be>, linux-watchdog@vger.kernel.org, jhbird.choi@samsung.com
 
-On 8 June 2013 16:46, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Thursday 06 of June 2013 16:31:18 Chander Kashyap wrote:
->> Instead of having to specify the number for CPUs in Exynos5250 in
->> platsmp.c file, let the number of CPUs be determined by having this
->> information listed in Exynos5250 device tree file.
->>
->> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->> ---
->>  arch/arm/boot/dts/exynos5250.dtsi |   14 ++++++++++++++
->>  arch/arm/mach-exynos/platsmp.c    |   10 +++++++---
->>  2 files changed, 21 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->> b/arch/arm/boot/dts/exynos5250.dtsi index e571d3b..7f6b1c7 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -50,6 +50,20 @@
->>               pinctrl3 = &pinctrl_3;
->>       };
->>
->> +     cpus {
->> +             #address-cells = <1>;
->> +             #size-cells = <0>;
->> +
->> +             cpu@0 {
->> +                     compatible = "arm,cortex-a15";
->> +                     reg = <0>;
->> +             };
->> +             cpu@1 {
->> +                     compatible = "arm,cortex-a15";
->> +                     reg = <1>;
->> +             };
->> +     };
->> +
->>       pd_gsc: gsc-power-domain@0x10044000 {
->>               compatible = "samsung,exynos4210-pd";
->>               reg = <0x10044000 0x20>;
->> diff --git a/arch/arm/mach-exynos/platsmp.c
->> b/arch/arm/mach-exynos/platsmp.c index 1a4e4e5..85ea4ca 100644
->> --- a/arch/arm/mach-exynos/platsmp.c
->> +++ b/arch/arm/mach-exynos/platsmp.c
->> @@ -180,10 +180,14 @@ static void __init exynos_smp_init_cpus(void)
->>       void __iomem *scu_base = scu_base_addr();
->>       unsigned int i, ncores;
->>
->> -     if (soc_is_exynos5250())
->> -             ncores = 2;
->> -     else
->> +     if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->>               ncores = scu_base ? scu_get_core_count(scu_base) : 1;
->> +     else
->> +             /*
->> +              * CPU Nodes are passed thru DT and set_cpu_possible
->> +              * is set by "arm_dt_init_cpu_maps".
->> +              */
->> +             return;
->>
->>       /* sanity check */
->>       if (ncores > nr_cpu_ids) {
->
-> Looks good. Same thing should be done for remaining Exynos SoCs as well.
-Thanks for reviewing.
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
-> Best regards,
-> Tomasz
->
+Tomasz Figa wrote:
+> 
+> Hi Kukjin,
+> 
+> On Tuesday 04 of June 2013 18:37:54 Kukjin Kim wrote:
+> > Tomasz Figa wrote:
+> > > Hi Sylwester, Kukjin,
+> >
+> > Hi,
+> >
+> > > On Saturday 01 of June 2013 10:16:52 Sylwester Nawrocki wrote:
+> > > > Hi Tomasz,
+> > > >
+> > > > On 05/19/2013 12:37 AM, Tomasz Figa wrote:
+> > > > > This series is aiming at cleaning up a bit watchdog support on Samsung
+> > > > > SoCs. The patches tweak a bit all the watchdog handling code here and
+> > > > > there, with the goal of making it DT- and multiplatform-friendly.
+> > > > >
+> > > > > See particular patches for more detailed descriptions.
+> > > > >
+> > > > > On S3C6410-based Tiny6410 board (Mini6410-compatible):
+> > > > >
+> > > > > Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
+> > > >
+> > > > I've tested this series on a s3c2440 based board. The system restart
+> > > > works fine.
+> > > >
+> > > > Tested-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+> > >
+> > > Thank you Sylwester for testing this series.
+> >
+> > Thanks again :-)
+> >
+> > > Kukjin, since it has been already tested on s3c24xx and s3c64xx and nobody
+> > > seems to care about s5p64x0 and s5pc100 (although I don't see a reason why
+> > > these patches should break them), could we have this series applied?
+> >
+> > OK, let me test this series on the smdk64x0 then, will apply.
+> >
+> > If any problems, let you know.
+> >
+> > Thanks for your gentle reminder.
+> 
+> Thank you for handling this. I have a lot of patches for S3C64xx depending on
+> this series queued in my private tree and it would be really nice if I could
+> finally get them merged for 3.11.
+> 
+Applied, thanks.
 
-
-
---
-with warm regards,
-Chander Kashyap
+- Kukjin
