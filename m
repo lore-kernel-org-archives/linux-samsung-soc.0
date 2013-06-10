@@ -1,140 +1,125 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 4/6] clk: samsung: Add set_rate() clk_ops for PLL36xx
-Date: Sat, 08 Jun 2013 14:17:30 +0200
-Message-ID: <22845343.Is6jxxntJZ@flatron>
-References: <1370003496-19288-1-git-send-email-vikas.sajjan@linaro.org> <1370003496-19288-5-git-send-email-vikas.sajjan@linaro.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
+Date: Mon, 10 Jun 2013 09:13:11 +0530
+Message-ID: <51B54B4F.3000503@linaro.org>
+References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org> <1370517749-29892-3-git-send-email-tushar.behera@linaro.org> <2070978.AjQD2isvSl@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f41.google.com ([209.85.214.41]:35676 "EHLO
-	mail-bk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751941Ab3FHMRg (ORCPT
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:44232 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751886Ab3FJDnS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Jun 2013 08:17:36 -0400
-Received: by mail-bk0-f41.google.com with SMTP id jc3so2660666bkc.14
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Jun 2013 05:17:34 -0700 (PDT)
-In-Reply-To: <1370003496-19288-5-git-send-email-vikas.sajjan@linaro.org>
+	Sun, 9 Jun 2013 23:43:18 -0400
+Received: by mail-pb0-f41.google.com with SMTP id rp16so3267834pbb.28
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Jun 2013 20:43:17 -0700 (PDT)
+In-Reply-To: <2070978.AjQD2isvSl@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, yadi.brar01@gmail.com, dianders@chromium.org, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, thomas.abraham@linaro.org, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, broonie@kernel.org, l.majewski@samsung.com, s.nawrocki@samsung.com
 
-On Friday 31 of May 2013 18:01:34 Vikas Sajjan wrote:
-> This patch adds set_rate and round_rate clk_ops for PLL36xx
+On 06/08/2013 05:20 PM, Tomasz Figa wrote:
+> On Thursday 06 of June 2013 16:52:28 Tushar Behera wrote:
+>> cpufreq driver for EXYNOS4 based SoCs are not platform drivers, hence
+>> we cannot currently pass the clock names through a device tree node.
+>> Instead, we need to make them available through a global alias.
+>>
+>> 'armclk', 'moutcore', 'mout_mpll' and 'mout_apll' clock aliases are
+>> defined.
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> ---
+>>  drivers/clk/samsung/clk-exynos4.c |   10 +++++-----
+>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos4.c
+>> b/drivers/clk/samsung/clk-exynos4.c index 3c1f888..1e4258a 100644
+>> --- a/drivers/clk/samsung/clk-exynos4.c
+>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>> @@ -356,8 +356,8 @@ struct samsung_fixed_rate_clock
+>> exynos4210_fixed_rate_clks[] __initdata = {
+>>
+>>  /* list of mux clocks supported in all exynos4 soc's */
+>>  struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
+>> -	MUX_F(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+>> -			CLK_SET_RATE_PARENT, 0),
+>> +	MUX_FA(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+>> +			CLK_SET_RATE_PARENT, 0, "mout_apll"),
+>>  	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
+>>  	MUX(none, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
+>>  	MUX(none, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
+>> @@ -385,9 +385,9 @@ struct samsung_mux_clock exynos4210_mux_clks[]
+>> __initdata = { MUX(none, "mout_g2d", mout_g2d_p, E4210_SRC_IMAGE, 8,
+>> 1),
+>>  	MUX(none, "mout_fimd1", group1_p4210, E4210_SRC_LCD1, 0, 4),
+>>  	MUX(none, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
+>> -	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1, 
+> "sclk_mpll"),
+>> +	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1, 
+> "mout_mpll"),
 > 
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> ---
->  drivers/clk/samsung/clk-pll.c |   59
-> +++++++++++++++++++++++++++++++++++++++++ 1 file changed, 59
-> insertions(+)
+> This is not fully compliant with patch description. I'm not sure if there 
+> weren't any users of the sclk_mpll alias.
 > 
-> diff --git a/drivers/clk/samsung/clk-pll.c
-> b/drivers/clk/samsung/clk-pll.c index 9591560..7143ed89 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -210,6 +210,9 @@ struct clk * __init
-> samsung_clk_register_pll35xx(const char *name, #define
-> PLL36XX_CON0_OFFSET	(0x100)
->  #define PLL36XX_CON1_OFFSET	(0x104)
-> 
-> +/* Maximum lock time can be 3000 * PDIV cycles */
-> +#define PLL36XX_LOCK_FACTOR	(3000)
-> +
->  #define PLL36XX_KDIV_MASK	(0xFFFF)
->  #define PLL36XX_MDIV_MASK	(0x1FF)
->  #define PLL36XX_PDIV_MASK	(0x3F)
-> @@ -217,6 +220,8 @@ struct clk * __init
-> samsung_clk_register_pll35xx(const char *name, #define
-> PLL36XX_MDIV_SHIFT	(16)
->  #define PLL36XX_PDIV_SHIFT	(8)
->  #define PLL36XX_SDIV_SHIFT	(0)
-> +#define PLL36XX_KDIV_SHIFT	(0)
-> +#define PLL36XX_LOCK_STAT_SHIFT	(29)
-> 
->  static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
->  				unsigned long parent_rate)
-> @@ -239,8 +244,57 @@ static unsigned long
-> samsung_pll36xx_recalc_rate(struct clk_hw *hw, return (unsigned
-> long)fvco;
->  }
-> 
-> +static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long
-> drate, +					unsigned long parent_rate)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u32 tmp, pll_con0, pll_con1;
-> +	const struct samsung_pll_rate_table *rate;
-> +
-> +	rate = samsung_get_pll_settings(pll, drate);
-> +	if (!rate) {
-> +		pr_err("%s: Invalid rate : %lu for pll clk %s\n", 
-__func__,
-> +			drate, __clk_get_name(hw->clk));
-> +		return -EINVAL;
-> +	}
-> +
-> +	pll_con0 = pll_readl(pll, PLL36XX_CON0_OFFSET);
-> +	pll_con1 = pll_readl(pll, PLL36XX_CON1_OFFSET);
 
-Hmm, PLL35xx has a fast path when only the S divisor changes. I'm not sure 
-about any technical differences between these two PLLs (other than having 
-the extra K factor and some more tunnables), but maybe it is possible for 
-this one as well?
+As of now, there are no other users of sclk_mpll other than a debug
+print within the same file.
 
-Otherwise looks fine.
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
-> +
-> +	/* Set PLL lock time. */
-> +	pll_writel(pll, (rate->pdiv * PLL36XX_LOCK_FACTOR),
-> +			PLL36XX_LOCK_OFFSET);
-> +
-> +	 /* Change PLL PMS values */
-> +	pll_con0 &= ~((PLL36XX_MDIV_MASK << PLL36XX_MDIV_SHIFT) |
-> +			(PLL36XX_PDIV_MASK << PLL36XX_PDIV_SHIFT) |
-> +			(PLL36XX_SDIV_MASK << PLL36XX_SDIV_SHIFT));
-> +	pll_con0 |= (rate->mdiv << PLL36XX_MDIV_SHIFT) |
-> +			(rate->pdiv << PLL36XX_PDIV_SHIFT) |
-> +			(rate->sdiv << PLL36XX_SDIV_SHIFT);
-> +	pll_writel(pll, pll_con0, PLL36XX_CON0_OFFSET);
-> +
-> +	pll_con1 &= ~(PLL36XX_KDIV_MASK << PLL36XX_KDIV_SHIFT);
-> +	pll_con1 |= rate->kdiv << PLL36XX_KDIV_SHIFT;
-> +	pll_writel(pll, pll_con1, PLL36XX_CON1_OFFSET);
-> +
-> +	/* wait_lock_time */
-> +	do {
-> +		cpu_relax();
-> +		tmp = pll_readl(pll, PLL36XX_CON0_OFFSET);
-> +	} while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
-> +
-> +	return 0;
-> +}
-> +
->  static const struct clk_ops samsung_pll36xx_clk_ops = {
->  	.recalc_rate = samsung_pll36xx_recalc_rate,
-> +	.set_rate = samsung_pll36xx_set_rate,
-> +	.round_rate = samsung_pll_round_rate,
-> +};
-> +
-> +static const struct clk_ops samsung_pll36xx_clk_min_ops = {
-> +	.recalc_rate = samsung_pll36xx_recalc_rate,
->  };
+>>  	MUX_A(mout_core, "mout_core", mout_core_p4210,
+>> -			SRC_CPU, 16, 1, "mout_core"),
+>> +			SRC_CPU, 16, 1, "moutcore"),
 > 
->  struct clk * __init samsung_clk_register_pll36xx(const char *name,
-> @@ -264,6 +318,11 @@ struct clk * __init
-> samsung_clk_register_pll36xx(const char *name, init.parent_names =
-> &pname;
->  	init.num_parents = 1;
+> IMHO those typo corrections are not part of this patch.
 > 
-> +	if (rate_table && rate_count)
-> +		init.ops = &samsung_pll36xx_clk_ops;
-> +	else
-> +		init.ops = &samsung_pll36xx_clk_min_ops;
-> +
->  	pll->hw.init = &init;
->  	pll->base = base;
->  	pll->rate_table = rate_table;
+
+But the older drivers (before migration to CCF) were using the clock
+"moutcore" (not "mout_core").
+
+>>  	MUX_A(sclk_vpll, "sclk_vpll", sclk_vpll_p4210,
+>>  			SRC_TOP0, 8, 1, "sclk_vpll"),
+>>  	MUX(mout_fimc0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
+>> @@ -534,7 +534,7 @@ struct samsung_div_clock exynos4_div_clks[]
+>> __initdata = { DIV(none, "div_spi_pre2", "div_spi2", DIV_PERIL2, 8, 8),
+>>  	DIV(none, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
+>>  	DIV(none, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
+>> -	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, 
+> "arm_clk"),
+>> +	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, "armclk"),
+> 
+> Same here.
+> 
+
+Same as above, "armclk" is used elsewhere, not "arm_clk".
+
+>>  	DIV_A(sclk_apll, "sclk_apll", "mout_apll",
+>>  			DIV_CPU0, 24, 3, "sclk_apll"),
+>>  	DIV_F(none, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
+> 
+> Basically I don't like the idea of those global aliases, which IMHO should 
+> be completely dropped. Someone might not like it, but I'd go with the 
+> conversion of our cpufreq drivers to platform drivers instead, which could 
+> receive things like clocks and regulators using DT-based lookups.
+> 
+
+I agree. Migration of exynos-cpufreq driver as a platform driver is the
+best solution. But unless someone picks up that work, cpufreq support
+for EXYNOS4 based systems is broken because of the incorrect clock aliases.
+
+> This is especially important in case of regulators, which currently have 
+> to be hacked by using vdd_arm as regulator name in device tree.
+> 
+
+Agree.
+
+> CCing people that might be interested in this topic.
+> 
+> Best regards,
+> Tomasz
+> 
+
+Thanks.
+
+-- 
+Tushar Behera
