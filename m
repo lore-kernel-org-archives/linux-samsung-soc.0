@@ -1,140 +1,93 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix incorrect usage of S5P_ARM_CORE1_* registers
-Date: Wed, 19 Jun 2013 19:01:02 +0530
-Message-ID: <CANuQgHHV+1Pp6StaLvK-hnOvR=DvJ3g-V8LiJTMf4_4KqCPk5A@mail.gmail.com>
-References: <1371569191-2364-1-git-send-email-t.figa@samsung.com>
-	<51C0A01E.5020206@samsung.com>
-	<CANuQgHEd3L=F20Nrp3zWh2+uXvRU9P_KVN=1xr3RXnoGBsaHLw@mail.gmail.com>
-	<8974257.1Thh8U4Een@amdc1227>
-	<20130619132417.GB5276@e102568-lin.cambridge.arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20130619132417.GB5276@e102568-lin.cambridge.arm.com>
-Sender: stable-owner@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Nicolas Pitre <nico@linaro.org>, Will Deacon <Will.Deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>
+From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Subject: [PATCH v6 0/7] Add generic set_rate clk_ops for PLL35xx and PLL36xx
+ for samsung SoCs
+Date: Mon, 10 Jun 2013 18:54:12 +0530
+Message-ID: <1370870659-10929-1-git-send-email-yadi.brar@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:65530 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756566Ab3FSNcZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Jun 2013 09:32:25 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MON002C76XZLCK0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Jun 2013 22:32:24 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, dianders@chromium.org, t.figa@samsung.com, vikas.sajjan@linaro.org, abrestic@chromium.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-On 19 June 2013 18:54, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
-> On Wed, Jun 19, 2013 at 01:50:57PM +0100, Tomasz Figa wrote:
->> On Wednesday 19 of June 2013 17:39:21 Chander Kashyap wrote:
->> > On 18 June 2013 23:29, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> > > On 06/19/13 02:45, Tomasz Figa wrote:
->> > >> Ccing Arnd and Olof, because I forgot to add them to git send-email...
->> > >>
->> > >> Sorry for the noise.
->> > >>
->> > >> On Tuesday 18 of June 2013 17:26:31 Tomasz Figa wrote:
->> > >>> S5P_ARM_CORE1_* registers affect only core 1. To control further
->> > >>> cores
->> > >>> properly another registers must be used.
->> > >>>
->> > >>> This patch replaces S5P_ARM_CORE1_* register definitions with
->> > >>> S5P_ARM_CORE_*(x) macro which return addresses of registers for
->> > >>> specified core.
->> > >>>
->> > >>> This fixes CPU hotplug on quad core Exynos SoCs on which currently
->> > >>> offlining CPUs 2 or 3 caused CPU 1 to be turned off.
->> > >>
->> > >> Obviously this doesn't happen currently because of the if (cpu == 1),
->> > >> but>
->> > > Yes, not happened...and just note exynos5440 doesn't support hotplug :)
->> > > so this is available on exynos4412 and added 5420.
->> > >
->> > >> if logical cpu1 turned out not to be physical cpu1, then it would
->> > >> crash.
->> > >>
->> > >> Best regards,
->> > >> Tomasz
->> > >>
->> > >>> In addition,
->> > >>> bring-up of CPU 2 and 3 is fixed on boards where bootloader powers
->> > >>> off
->> > >>> secondary cores by default.
->> > >
->> > > I need to test on board about above...
->> > >
->> > >>> Cc: stable@vger.kernel.org
->> > >>> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
->> > >>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->> > >>> ---
->> > >>>
->> > >>>   arch/arm/mach-exynos/hotplug.c               |  9 +++++----
->> > >>>   arch/arm/mach-exynos/include/mach/regs-pmu.h | 10 +++++++---
->> > >>>   arch/arm/mach-exynos/platsmp.c               |  9 +++++----
->> > >>>   3 files changed, 17 insertions(+), 11 deletions(-)
->> > >>>
->> > >>> diff --git a/arch/arm/mach-exynos/hotplug.c
->> > >>> b/arch/arm/mach-exynos/hotplug.c index af90cfa..c089943 100644
->> > >>> --- a/arch/arm/mach-exynos/hotplug.c
->> > >>> +++ b/arch/arm/mach-exynos/hotplug.c
->> > >>> @@ -93,10 +93,11 @@ static inline void cpu_leave_lowpower(void)
->> > >>>
->> > >>>   static inline void platform_do_lowpower(unsigned int cpu, int
->> > >>>
->> > >>> *spurious) {
->> > >>>
->> > >>>         for (;;) {
->> > >>>
->> > >>> +               void __iomem *reg_base;
->> > >>> +               unsigned int phys_cpu = cpu_logical_map(cpu);
->> > >>>
->> > >>> -               /* make cpu1 to be turned off at next WFI command */
->> > >>> -               if (cpu == 1)
->> > >>> -                       __raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
->> > >>> +               reg_base = S5P_ARM_CORE_CONFIGURATION(phys_cpu);
->> >
->> > Tomasz,
->> > This will break for non-zero, MPIDR value.  Say if MPIDR is 1 then for
->> > cpu0 phys_cpu value will be 0x100,
->> > and address calculation will be   (S5P_ARM_CORE0_CONFIGURATION +
->> > ((0x101) * 0x80)), which is wrong.
->
-> Honestly, I did not understand the reasoning above, please clarify.
-Sorry not non-zero MPIDR but non-zero ClusterID.
-All the power register addresses are at offset 0x80.
->
->>
->> Hmm, according to the code initializing __cpu_logical_map[] array this is
->> not true.
->>
->> Here's the code:
->>
->> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/arch/arm/kernel/setup.c?id=refs/tags/next-20130619#n468
->>
->> and for used macros and bitmasks:
->>
->> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/arch/arm/include/asm/cputype.h?id=refs/tags/next-20130619#n45
->>
->> Now the structure of the MPIDR register:
->>
->> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0388e/CIHEBGFG.html
->>
->> As you can see, the value read from the register in
->> smp_setup_processor_id() is only the physical CPU ID, so I don't see any
->> problem here.
->
-> Define "physical CPU ID" :-)
->
-> There is a problem here: the MPIDR is not an index, and the cpu_logical_map is
-> populated in arm_dt_init_cpu_maps in:
->
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch/arm/kernel/devtree.c?id=refs/tags/v3.10-rc6
->
-> with all affinity levels.
->
-> You need to perform a mapping between logical cpus and registers offset,
-> you can't use the cpu_logical_map directly for that.
->
-> Next accident waiting to happen is GIC code (CONFIG_GIC_NON_BANKED), where
-> cpu_logical_map is used erroneously as an index.
->
-> Lorenzo
->
+This patch series does the following:
 
+ 1) Unifies the clk strutures  and registration function used for PLL35xx &
+    PLL36xx, to factor out possible common code.
 
+ 2) Defines a common rate_table which will contain recommended p, m, s and k
+    values for supported rates that needs to be changed for changing
+    corresponding PLL's rate
 
---
-with warm regards,
-Chander Kashyap
+ 3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
+
+changes since v5:
+	- Corrected to use rate table as specified in UM for exynos5250 epll.
+	- Took care of exynos5420 as well, as new exynos5420 clk driver came in
+	while rebasing on latest Kgene's for-next.
+
+	Since we spilted 1st patch into 2 different patches,
+	can we expect "reviewed-by" again for the same? 
+
+changes since v4:
+	- Defined common samsung samsung_clk_register_pll() to register a list
+	of PLL and used a struct samsung_pll_clock for passing intialisation
+	data instead of passing as arguments. Now passing LOCK as well as CON0
+	offset as intialisation data.
+	- Calculated length of rate table while registering PLL instead of
+	getting it as intialisation data.
+
+changes since v3:
+	- Used __clk_lookup() instead of adding alias for mout_vpllsrc
+	- Added check for changing only M value in samsung_pll36xx_set_rate()
+	- Modified samsung_pll35xx_mp_change() & samsung_pll35xx_set_rate()
+	to improve readabilty.
+	- Made the input rate_table as __init_data which is to be provided while
+	registering PLL and made a copy of that table while registering, so
+	that if multiple tables are their, they can be freed after getting the
+	P, M, S, K setting values from required one.
+
+changes since v2:
+	- Added new patch to reorder the MUX registration for mout_vpllsrc MUX
+	before the PLL registrations. And to add the alias for the mout_vpllsrc MUX.
+        - Added a check to confirm parent rate while registrating the PLL
+	rate tables.
+
+changes since v1:
+	- removed sorting and bsearch
+	- modified the definition of struct "samsung_pll_rate_table"
+	- added generic round_rate()
+	- rectified the ops assignment for "rate table passed as NULL"
+	  during PLL registration
+
+Is rebased on branch kgene's "for-next"
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+
+Vikas Sajjan (2):
+  clk: samsung: Add set_rate() clk_ops for PLL36xx
+  clk: samsung: Reorder MUX registration for mout_vpllsrc
+
+Yadwinder Singh Brar (5):
+  clk: samsung: Introduce a common samsung_clk_pll struct
+  clk: samsung: Define a common samsung_clk_register_pll()
+  clk: samsung: Add support to register rate_table for samsung plls
+  clk: samsung: Add set_rate() clk_ops for PLL35xx
+  clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
+
+ drivers/clk/samsung/clk-exynos4.c    |   40 +++--
+ drivers/clk/samsung/clk-exynos5250.c |  101 +++++++++--
+ drivers/clk/samsung/clk-exynos5420.c |   86 ++++++---
+ drivers/clk/samsung/clk-pll.c        |  332 ++++++++++++++++++++++++++--------
+ drivers/clk/samsung/clk-pll.h        |   38 ++++-
+ drivers/clk/samsung/clk.h            |   54 ++++++
+ 6 files changed, 513 insertions(+), 138 deletions(-)
