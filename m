@@ -1,106 +1,146 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/3] ARM: dts: Add FIMD node to Origen4210 board
-Date: Mon, 10 Jun 2013 20:34:44 +0200
-Message-ID: <4092650.9kTauzjmyN@flatron>
-References: <1370603235-11193-1-git-send-email-tushar.behera@linaro.org> <5527415.fcM1OgADxD@flatron> <51B55296.5030006@linaro.org>
+Subject: Re: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
+Date: Mon, 10 Jun 2013 20:53:09 +0200
+Message-ID: <3226068.I7g6oVyl1p@flatron>
+References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org> <2070978.AjQD2isvSl@flatron> <51B54B4F.3000503@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f53.google.com ([209.85.214.53]:41128 "EHLO
-	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753747Ab3FJSeu (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:48033 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752616Ab3FJSxP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Jun 2013 14:34:50 -0400
-In-Reply-To: <51B55296.5030006@linaro.org>
+	Mon, 10 Jun 2013 14:53:15 -0400
+In-Reply-To: <51B54B4F.3000503@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, broonie@kernel.org, l.majewski@samsung.com, s.nawrocki@samsung.com
 
-On Monday 10 of June 2013 09:44:14 Tushar Behera wrote:
-> On 06/08/2013 04:19 PM, Tomasz Figa wrote:
-> > On Friday 07 of June 2013 16:37:14 Tushar Behera wrote:
-> >> From: Sachin Kamat <sachin.kamat@linaro.org>
+On Monday 10 of June 2013 09:13:11 Tushar Behera wrote:
+> On 06/08/2013 05:20 PM, Tomasz Figa wrote:
+> > On Thursday 06 of June 2013 16:52:28 Tushar Behera wrote:
+> >> cpufreq driver for EXYNOS4 based SoCs are not platform drivers, hence
+> >> we cannot currently pass the clock names through a device tree node.
+> >> Instead, we need to make them available through a global alias.
 > >> 
-> >> Added FIMD and display timing node to Origen4210 board.
+> >> 'armclk', 'moutcore', 'mout_mpll' and 'mout_apll' clock aliases are
+> >> defined.
 > >> 
-> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > >> ---
 > >> 
-> >>  arch/arm/boot/dts/exynos4210-origen.dts |   21 +++++++++++++++++++++
-> >>  1 file changed, 21 insertions(+)
+> >>  drivers/clk/samsung/clk-exynos4.c |   10 +++++-----
+> >>  1 file changed, 5 insertions(+), 5 deletions(-)
 > >> 
-> >> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
-> >> b/arch/arm/boot/dts/exynos4210-origen.dts index bcf8079..4c6c3cd
-> >> 100644
-> >> --- a/arch/arm/boot/dts/exynos4210-origen.dts
-> >> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> >> @@ -290,4 +290,25 @@
+> >> diff --git a/drivers/clk/samsung/clk-exynos4.c
+> >> b/drivers/clk/samsung/clk-exynos4.c index 3c1f888..1e4258a 100644
+> >> --- a/drivers/clk/samsung/clk-exynos4.c
+> >> +++ b/drivers/clk/samsung/clk-exynos4.c
+> >> @@ -356,8 +356,8 @@ struct samsung_fixed_rate_clock
+> >> exynos4210_fixed_rate_clks[] __initdata = {
 > >> 
-> >>  			clock-frequency = <24000000>;
-> >>  		
-> >>  		};
+> >>  /* list of mux clocks supported in all exynos4 soc's */
+> >>  struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
+> >> 
+> >> -	MUX_F(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> >> -			CLK_SET_RATE_PARENT, 0),
+> >> +	MUX_FA(mout_apll, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+> >> +			CLK_SET_RATE_PARENT, 0, "mout_apll"),
+> >> 
+> >>  	MUX(none, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
+> >>  	MUX(none, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
+> >>  	MUX(none, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
+> >> 
+> >> @@ -385,9 +385,9 @@ struct samsung_mux_clock exynos4210_mux_clks[]
+> >> __initdata = { MUX(none, "mout_g2d", mout_g2d_p, E4210_SRC_IMAGE, 8,
+> >> 1),
+> >> 
+> >>  	MUX(none, "mout_fimd1", group1_p4210, E4210_SRC_LCD1, 0, 4),
+> >>  	MUX(none, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
+> >> 
+> >> -	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1,
+> > 
+> > "sclk_mpll"),
+> > 
+> >> +	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1,
+> > 
+> > "mout_mpll"),
+> > 
+> > This is not fully compliant with patch description. I'm not sure if
+> > there weren't any users of the sclk_mpll alias.
+> 
+> As of now, there are no other users of sclk_mpll other than a debug
+> print within the same file.
+
+OK.
+
+> >>  	MUX_A(mout_core, "mout_core", mout_core_p4210,
+> >> 
+> >> -			SRC_CPU, 16, 1, "mout_core"),
+> >> +			SRC_CPU, 16, 1, "moutcore"),
+> > 
+> > IMHO those typo corrections are not part of this patch.
+> 
+> But the older drivers (before migration to CCF) were using the clock
+> "moutcore" (not "mout_core").
+
+I mean, this should be placed in a separate patch, as this change is not 
+"adding alias for cpufreq related clocks", but rather fixing a typo.
+
+> >>  	MUX_A(sclk_vpll, "sclk_vpll", sclk_vpll_p4210,
 > >>  	
-> >>  	};
+> >>  			SRC_TOP0, 8, 1, "sclk_vpll"),
+> >>  	
+> >>  	MUX(mout_fimc0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
 > >> 
-> >> +
-> >> +	fimd@11c00000 {
-> >> +		pinctrl-0 = <&lcd_en &lcd_clk &lcd_data24 &pwm0_out>;
+> >> @@ -534,7 +534,7 @@ struct samsung_div_clock exynos4_div_clks[]
+> >> __initdata = { DIV(none, "div_spi_pre2", "div_spi2", DIV_PERIL2, 8,
+> >> 8),
+> >> 
+> >>  	DIV(none, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
+> >>  	DIV(none, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
+> >> 
+> >> -	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3,
 > > 
-> > Ahh, this would explain the two pwm pin groups from previous patch.
+> > "arm_clk"),
 > > 
-> > This seems somehow incorrect, though. AFAIK PWM outputs are not
-> > managed by FIMD in any way.
-> 
-> I couldn't find any better place to put the pwm0_out pin configurations.
-> Without configuring pwm0_out pins, display doesn't come up on the LCD.
-> Any suggestions?
-
-Isn't there a PWM backlight driver? With my [PATCH 00/15] Final Samsung 
-PWM support cleanup patches, a DT-compatible PWM driver is being added, so 
-it should be possible to use it in your case.
-
-
-> >> +		pinctrl-names = "default";
-> >> +		status = "okay";
-> >> +	};
-> >> +
-> >> +	display-timings {
-> >> +		native-mode = <&timing0>;
-> >> +		timing0: timing {
-> >> +			clock-frequency = <50000>;
+> >> +	DIV_A(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3, "armclk"),
 > > 
-> > Hmm, 50 KHz for pixel clock? Isn't it a bit too low? Or am I missing
-> > something?
+> > Same here.
 > 
-> Actually clock-frequency value is not used by DRM-FIMD, but instead
-> required by the framework.
+> Same as above, "armclk" is used elsewhere, not "arm_clk".
 > 
-> Still it would be better to provide the actual pixel clock value here.
-> So I would update this with 40MHz which is actual pixel clock used on my
-> board.
+> >>  	DIV_A(sclk_apll, "sclk_apll", "mout_apll",
+> >>  	
+> >>  			DIV_CPU0, 24, 3, "sclk_apll"),
+> >>  	
+> >>  	DIV_F(none, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
+> > 
+> > Basically I don't like the idea of those global aliases, which IMHO
+> > should be completely dropped. Someone might not like it, but I'd go
+> > with the conversion of our cpufreq drivers to platform drivers
+> > instead, which could receive things like clocks and regulators using
+> > DT-based lookups.
+> I agree. Migration of exynos-cpufreq driver as a platform driver is the
+> best solution. But unless someone picks up that work, cpufreq support
+> for EXYNOS4 based systems is broken because of the incorrect clock
+> aliases.
 
-Yes, I think this is a much better idea.
+We have patches for this in our internal tree. I will clean them up a bit 
+and submit soon.
 
 Thanks,
 Tomasz
 
+> > This is especially important in case of regulators, which currently
+> > have to be hacked by using vdd_arm as regulator name in device tree.
+> Agree.
+> 
+> > CCing people that might be interested in this topic.
+> > 
 > > Best regards,
 > > Tomasz
-> > 
-> >> +			hactive = <1024>;
-> >> +			vactive = <600>;
-> >> +			hfront-porch = <64>;
-> >> +			hback-porch = <16>;
-> >> +			hsync-len = <48>;
-> >> +			vback-porch = <64>;
-> >> +			vfront-porch = <16>;
-> >> +			vsync-len = <3>;
-> >> +		};
-> >> +	};
-> >> 
-> >>  };
 > 
-> Thanks for your review.
+> Thanks.
