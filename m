@@ -1,175 +1,139 @@
 From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [PATCH v7 05/11] clk: samsung: Migrate exynos5420 to use common
- samsung_clk_register_pll()
-Date: Tue, 11 Jun 2013 15:01:10 +0530
-Message-ID: <1370943076-13461-6-git-send-email-yadi.brar@samsung.com>
+Subject: [PATCH v7 06/11] clk: samsung: Remove unused pll registeration code
+ for pll35xx and pll36xx
+Date: Tue, 11 Jun 2013 15:01:11 +0530
+Message-ID: <1370943076-13461-7-git-send-email-yadi.brar@samsung.com>
 References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38210 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756231Ab3FTJjj (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:34165 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756231Ab3FTJjl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 05:39:39 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 20 Jun 2013 05:39:41 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOO001UIQSQZBG0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 18:39:38 +0900 (KST)
+ with ESMTP id <0MOO00HFMQSWTRO0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 18:39:40 +0900 (KST)
 In-reply-to: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, dianders@chromium.org, t.figa@samsung.com, vikas.sajjan@linaro.org, abrestic@chromium.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-This patch migrates exynos5420 pll registeration to use common
-samsung_clk_register_pll() by intialising table of PLLs and adding PLLs to
-unique id list of clocks.
+This patch removes samsung_clk_register_pll35xx() and
+samsung_clk_register_pll36xx() registaration functions as users migrated to
+new samsung_clk_register_pll().
 
 Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c |   86 +++++++++++++++++++++++-----------
- 1 files changed, 58 insertions(+), 28 deletions(-)
+ drivers/clk/samsung/clk-pll.c |   70 -----------------------------------------
+ drivers/clk/samsung/clk-pll.h |    4 --
+ 2 files changed, 0 insertions(+), 74 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 68a96cb..3ea6b4f 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -17,13 +17,30 @@
- #include <linux/of_address.h>
- 
- #include "clk.h"
--#include "clk-pll.h"
- 
-+#define APLL_LOCK		0x0
-+#define APLL_CON0		0x100
- #define SRC_CPU			0x200
- #define DIV_CPU0		0x500
- #define DIV_CPU1		0x504
- #define GATE_BUS_CPU		0x700
- #define GATE_SCLK_CPU		0x800
-+#define CPLL_LOCK		0x10020
-+#define DPLL_LOCK		0x10030
-+#define EPLL_LOCK		0x10040
-+#define RPLL_LOCK		0x10050
-+#define IPLL_LOCK		0x10060
-+#define SPLL_LOCK		0x10070
-+#define VPLL_LOCK		0x10070
-+#define MPLL_LOCK		0x10090
-+#define CPLL_CON0		0x10120
-+#define DPLL_CON0		0x10128
-+#define EPLL_CON0		0x10130
-+#define RPLL_CON0		0x10140
-+#define IPLL_CON0		0x10150
-+#define SPLL_CON0		0x10160
-+#define VPLL_CON0		0x10170
-+#define MPLL_CON0		0x10180
- #define SRC_TOP0		0x10200
- #define SRC_TOP1		0x10204
- #define SRC_TOP2		0x10208
-@@ -75,15 +92,27 @@
- #define GATE_TOP_SCLK_MAU	0x1083c
- #define GATE_TOP_SCLK_FSYS	0x10840
- #define GATE_TOP_SCLK_PERIC	0x10850
-+#define BPLL_LOCK		0x20010
-+#define BPLL_CON0		0x20110
- #define SRC_CDREX		0x20200
-+#define KPLL_LOCK		0x28000
-+#define KPLL_CON0		0x28100
- #define SRC_KFC			0x28200
- #define DIV_KFC0		0x28500
- 
-+/* list of PLLs */
-+enum exynos5420_plls {
-+	apll, cpll, dpll, epll, rpll, ipll, spll, vpll, mpll,
-+	bpll, kpll,
-+	nr_plls			/* number of PLLs */
-+};
-+
- enum exynos5420_clks {
- 	none,
- 
- 	/* core clocks */
--	fin_pll,
-+	fin_pll,  fout_apll, fout_cpll, fout_dpll, fout_epll, fout_rpll,
-+	fout_ipll, fout_spll, fout_vpll, fout_mpll, fout_bpll, fout_kpll,
- 
- 	/* gate for special clocks (sclk) */
- 	sclk_uart0 = 128, sclk_uart1, sclk_uart2, sclk_uart3, sclk_mmc0,
-@@ -698,6 +727,31 @@ struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
- 	GATE(smmu_mscl2, "smmu_mscl2", "aclk400_mscl", GATE_IP_MSCL, 10, 0, 0),
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index f20af69..7d5bea8 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -55,41 +55,6 @@ static const struct clk_ops samsung_pll35xx_clk_ops = {
+ 	.recalc_rate = samsung_pll35xx_recalc_rate,
  };
  
-+struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
-+	[apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
-+		APLL_CON0),
-+	[cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
-+		MPLL_CON0),
-+	[dpll] = PLL(pll_2550, fout_dpll, "fout_dpll", "fin_pll", DPLL_LOCK,
-+		DPLL_CON0),
-+	[epll] = PLL(pll_2650, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
-+		EPLL_CON0),
-+	[rpll] = PLL(pll_2650, fout_rpll, "fout_rpll", "fin_pll", RPLL_LOCK,
-+		RPLL_CON0),
-+	[ipll] = PLL(pll_2550, fout_ipll, "fout_ipll", "fin_pll", IPLL_LOCK,
-+		IPLL_CON0),
-+	[spll] = PLL(pll_2550, fout_spll, "fout_spll", "fin_pll", SPLL_LOCK,
-+		SPLL_CON0),
-+	[vpll] = PLL(pll_2550, fout_vpll, "fout_vpll", "fin_pll", VPLL_LOCK,
-+		VPLL_CON0),
-+	[mpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
-+		MPLL_CON0),
-+	[bpll] = PLL(pll_2550, fout_bpll, "fout_bpll", "fin_pll", BPLL_LOCK,
-+		BPLL_CON0),
-+	[kpll] = PLL(pll_2550, fout_kpll, "fout_kpll", "fin_pll", KPLL_LOCK,
-+		KPLL_CON0),
-+};
-+
- static __initdata struct of_device_id ext_clk_match[] = {
- 	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
- 	{ },
-@@ -707,8 +761,6 @@ static __initdata struct of_device_id ext_clk_match[] = {
- void __init exynos5420_clk_init(struct device_node *np)
- {
- 	void __iomem *reg_base;
--	struct clk *apll, *bpll, *cpll, *dpll, *epll, *ipll, *kpll, *mpll;
--	struct clk *rpll, *spll, *vpll;
+-struct clk * __init samsung_clk_register_pll35xx(const char *name,
+-			const char *pname, const void __iomem *con_reg)
+-{
+-	struct samsung_clk_pll *pll;
+-	struct clk *clk;
+-	struct clk_init_data init;
+-
+-	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+-	if (!pll) {
+-		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
+-		return NULL;
+-	}
+-
+-	init.name = name;
+-	init.ops = &samsung_pll35xx_clk_ops;
+-	init.flags = CLK_GET_RATE_NOCACHE;
+-	init.parent_names = &pname;
+-	init.num_parents = 1;
+-
+-	pll->hw.init = &init;
+-	pll->con_reg = con_reg;
+-
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
+-		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+-
+-	return clk;
+-}
+-
+ /*
+  * PLL36xx Clock Type
+  */
+@@ -127,41 +92,6 @@ static const struct clk_ops samsung_pll36xx_clk_ops = {
+ 	.recalc_rate = samsung_pll36xx_recalc_rate,
+ };
  
- 	if (np) {
- 		reg_base = of_iomap(np, 0);
-@@ -724,30 +776,8 @@ void __init exynos5420_clk_init(struct device_node *np)
- 	samsung_clk_of_register_fixed_ext(exynos5420_fixed_rate_ext_clks,
- 			ARRAY_SIZE(exynos5420_fixed_rate_ext_clks),
- 			ext_clk_match);
+-struct clk * __init samsung_clk_register_pll36xx(const char *name,
+-			const char *pname, const void __iomem *con_reg)
+-{
+-	struct samsung_clk_pll *pll;
+-	struct clk *clk;
+-	struct clk_init_data init;
 -
--	apll = samsung_clk_register_pll35xx("fout_apll", "fin_pll",
--			reg_base + 0x100);
--	bpll = samsung_clk_register_pll35xx("fout_bpll", "fin_pll",
--			reg_base + 0x20110);
--	cpll = samsung_clk_register_pll35xx("fout_cpll", "fin_pll",
--			reg_base + 0x10120);
--	dpll = samsung_clk_register_pll35xx("fout_dpll", "fin_pll",
--			reg_base + 0x10128);
--	epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
--			reg_base + 0x10130);
--	ipll = samsung_clk_register_pll35xx("fout_ipll", "fin_pll",
--			reg_base + 0x10150);
--	kpll = samsung_clk_register_pll35xx("fout_kpll", "fin_pll",
--			reg_base + 0x28100);
--	mpll = samsung_clk_register_pll35xx("fout_mpll", "fin_pll",
--			reg_base + 0x10180);
--	rpll = samsung_clk_register_pll36xx("fout_rpll", "fin_pll",
--			reg_base + 0x10140);
--	spll = samsung_clk_register_pll35xx("fout_spll", "fin_pll",
--			reg_base + 0x10160);
--	vpll = samsung_clk_register_pll35xx("fout_vpll", "fin_pll",
--			reg_base + 0x10170);
+-	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+-	if (!pll) {
+-		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
+-		return NULL;
+-	}
 -
-+	samsung_clk_register_pll(exynos5420_plls, ARRAY_SIZE(exynos5420_plls),
-+					reg_base);
- 	samsung_clk_register_fixed_rate(exynos5420_fixed_rate_clks,
- 			ARRAY_SIZE(exynos5420_fixed_rate_clks));
- 	samsung_clk_register_fixed_factor(exynos5420_fixed_factor_clks,
+-	init.name = name;
+-	init.ops = &samsung_pll36xx_clk_ops;
+-	init.flags = CLK_GET_RATE_NOCACHE;
+-	init.parent_names = &pname;
+-	init.num_parents = 1;
+-
+-	pll->hw.init = &init;
+-	pll->con_reg = con_reg;
+-
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
+-		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+-
+-	return clk;
+-}
+-
+ /*
+  * PLL45xx Clock Type
+  */
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index 0d86bf0..1536f27 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -31,10 +31,6 @@ enum pll46xx_type {
+ 	pll_4650c,
+ };
+ 
+-extern struct clk * __init samsung_clk_register_pll35xx(const char *name,
+-			const char *pname, const void __iomem *con_reg);
+-extern struct clk * __init samsung_clk_register_pll36xx(const char *name,
+-			const char *pname, const void __iomem *con_reg);
+ extern struct clk * __init samsung_clk_register_pll45xx(const char *name,
+ 			const char *pname, const void __iomem *con_reg,
+ 			enum pll45xx_type type);
 -- 
 1.7.0.4
