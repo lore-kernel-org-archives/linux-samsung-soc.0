@@ -1,78 +1,150 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: About LPAE supporting on EXYNOS5440
-Date: Tue, 11 Jun 2013 14:43:36 +0200
-Message-ID: <15605927.1Yi6Xe5hWs@wuerfel>
-References: <109e01ce667e$5becc880$13c65980$%kim@samsung.com> <6690814.Wx0lSuVAQ5@wuerfel> <10b001ce668b$2fdddec0$8f999c40$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH V5 00/30] thermal: exynos: Add thermal driver for exynos5440
+Date: Tue, 11 Jun 2013 18:23:10 +0530
+Message-ID: <1370955220-2949-1-git-send-email-amit.daniel@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:60874 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751128Ab3FKMnY (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:40145 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751226Ab3FKMx5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 08:43:24 -0400
-In-Reply-To: <10b001ce668b$2fdddec0$8f999c40$%kim@samsung.com>
+	Tue, 11 Jun 2013 08:53:57 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Olof Johansson' <olof@lixom.net>
+To: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 
-On Tuesday 11 June 2013 19:05:22 Kukjin Kim wrote:
-> Arnd Bergmann wrote:
-> > 
-> > On Tuesday 11 June 2013 17:33:33 Kukjin Kim wrote:
-> > > Hi all,
-> > >
-> > > The exynos5440 can support LPAE and referece boards, SSDK5440 and SD5v1
-> > have
-> > > over 8GiB memory.
-> > >
-> > > Current exynos_defconfig selects every EXYNOS SoCs including exynos5440
-> > it
-> > > means supporting LPAE will be selected for other EXYNOS SoCs.
-> > >
-> > > I'm wondering if seleting LPAE causes some problem for multiplatform.
-> > Can we
-> > > support LPAE enabled and disabled platform together with single zImage?
-> > 
-> > No, that isn't possible.
-> 
-> Yeah, I know that.
-> 
-> > I think we should enable all exynos support in
-> > the
-> > regular multi_v7_defconfig and leave LPAE turned off for that,
-> 
-> But if so, problem will happen in the memory parsing without LPAE
-> enabling...so I'm wondering I should deselect exynos5440 in the defconfig
-> for other exynos SoCs...
+Most of the changes in this version is as per suggestion from Jonghwa Lee. I
+have retained one to one mapping of platform data with TMU instances as the
+TMU's are different devices. In exynos5440 soc there is some register
+sharing across multiple TMU's but in exynos5420 there is no register between
+multiple TMU's, so the current implementation is useful to support both of the
+above.
 
-I think there is a bug in the memory parsing code and already two people
-have submitted independent fixes for that. It really should just work
-even if you have more memory that ends up getting ignored.
+This patch uses localized ARCH_HAS_TMU Kconfig option and is a temporary solution
+until a more generic macro ARCH_HAS_BANDGAP is introduced as per discussion in
+the link https://patchwork.kernel.org/patch/2659001/.
 
-> > but create
-> > another multi_lpae_defconfig that has all LPAE capable machines turned on.
-> > This is also what I expect the distros to do.
-> > 
-> Yeah, it could be a solution for multiplatform at this moment. And if so,
-> probably I should deselect exynos5440 in the exynos_defconfig and need to
-> add another defconfig for exynos lpae stuff.
+Changes in V5:
+* trip type is passed as platform data.
+* HW trip is allowed only for maximum level.
+* Platform data structure is now abstracted inside 1 more structure to support
+  strong multiple sensor TMU data. 
 
-I would definitely leave on exynos5440 support in defconfig. It's not a
-lot of extra code, and if you have a system with less than 4GB memory,
-you really don't want to enable LPAE because of the overhead.
- 
-> BTW, do you know what SoCs can support LPAE now?
+Changes in V4:
+ Almost all the changes in this version is as per suggestion from Eduardo.The
+ major ones are listed below,
+* Added kconfig symbol ARCH_HAS_TMU which needs to be enabled by platform. With
+  this change existing symbol EXYNOS_TMU_DATA is not needed.
+* Movement of freq_clip_table from exynos_tmu.h to exynos_thermal_common.h is
+  explained in the commit logs.
+* Wrote all register description documentation.
+* Split 5440 TMU support patch into controller change, configuration data and
+  feature addition patches.
+* Remove all *LINUX_* in the header files.
+* Still regulator enable is kept optional but a TODO: comment is added to fix
+  it later.
 
-Upstream I think we support exynos, vexpress (using A15, A7 and A12
-core tiles), omap5 (partially), mvebu (Armada XP), highbank (Midway)
-and some of the shmobile parts we added in 3.10.
+Changes in V3:
+* Added proper dependency of different exynos thermal Kconfig symbols. Basically 3
+ Kconfig can be enabled now and corresponds to tmu driver. exynos common part
+ and exynos configuration data. This issue was raised by Rui Zhang.
 
-In mach-sunxi, there will soon be support for Allwinner-A20 and -A31,
-which are both Cortex-A7 based. MSM also has support for Cortex-A7
-but not upstream. A couple of new platforms are under discussion
-already that will also have LPAE, mostly server parts.
+Changes in V2:
+* Separated SOC data from TMU driver. This is as per suggestion from Eduardo.
+* Merged the new file created for exynos5440 TMU controller with the existing
+ TMU controller code.
+* Removed the DT parsing code as now the SOC specific data are cleanly put
+ inside the data specific file.
+* Even the register definations/bitfields are treated as data as there is
+ some variation across SOC's.
 
-	Arnd
+This patchset adds TMU(Thermal management Unit) driver support for
+exynos5440 platform. There are 3 instances of the TMU controllers so
+necessary cleanup/re-structure is done to handle multiple thermal zone.
+
+Patch (exynos4: Add documentation for Exynos SoC thermal bindings) from
+Lukasz Majewski is already posted to mainline. Adding it here for completeness.
+(http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg17817.html)
+
+Patch (thermal: exynos: Support thermal tripping ) from Jonghwan Choi is
+added here with some changes.
+(https://patchwork.kernel.org/patch/1668371/)
+
+Patch (thermal: exynos: Support for TMU regulator defined at device tree)
+is a repost of my earlier patch(https://patchwork-mail1.kernel.org/patch/2510771/) 
+and adds regulator support.
+
+Patch (ARM: dts: Add device tree node for exynos5440 TMU controller) and
+patch (arm: exynos: enable ARCH_HAS_TMU) can be merged through exynos platform
+maintainer as this can cause merge conflict.
+
+All these patches are based on thermal maintainers git tree,
+git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next.
+
+Amit Daniel Kachhap (29):
+  thermal: exynos: Moving exynos thermal files into samsung directory
+  thermal: exynos: Add ARCH_HAS_TMU config to know the supported soc's
+  thermal: exynos: Remove CPU_THERMAL dependency for using TMU driver
+  thermal: exynos: Bifurcate exynos thermal common and tmu controller
+    code
+  thermal: exynos: Rename exynos_thermal.c to exynos_tmu.c
+  thermal: exynos: Move exynos_thermal.h from include/* to driver/*
+    folder
+  thermal: exynos: Bifurcate exynos tmu driver and configuration data
+  thermal: exynos: Add missing definations and code cleanup
+  thermal: exynos: Add extra entries in the tmu platform data
+  thermal: exynos: Move register definitions from driver to data file
+  thermal: exynos: Support thermal tripping
+  thermal: exynos: Fix to clear only the generated interrupts
+  thermal: exynos: Add support for instance based register/unregister
+  thermal: exynos: Modify private_data to appropriate name driver_data
+  thermal: exynos: Return success even if no cooling data supplied
+  thermal: exynos: Make the zone handling use trip information
+  thermal: exynos: Remove non DT based support
+  thermal: exynos: Add support to handle many instances of TMU
+  thermal: exynos: Add TMU features to check instead of using SOC type
+  thermal: exynos: use device resource management infrastructure
+  thermal: exynos: Add support to access common register for
+    multistance
+  thermal: exynos: Add driver support for exynos5440 TMU sensor
+  thermal: exynos: Add thermal configuration data for exynos5440 TMU
+    sensor
+  thermal: exynos: Fix to set the second point correction value
+  thermal: exynos: Add hardware mode thermal calibration support
+  Documentation: thermal: Explain the exynos thermal driver model
+  thermal: exynos: Support for TMU regulator defined at device tree
+  ARM: dts: Add device tree node for exynos5440 TMU controller
+  arm: exynos: enable ARCH_HAS_TMU
+
+Lukasz Majewski (1):
+  ARM: dts: thermal: exynos4: Add documentation for Exynos SoC thermal
+    bindings
+
+ .../devicetree/bindings/thermal/exynos-thermal.txt |   55 +
+ Documentation/thermal/exynos_thermal               |   43 +-
+ arch/arm/boot/dts/exynos5440.dtsi                  |   30 +
+ arch/arm/mach-exynos/Kconfig                       |    5 +
+ drivers/thermal/Kconfig                            |   14 +-
+ drivers/thermal/Makefile                           |    2 +-
+ drivers/thermal/exynos_thermal.c                   | 1058 --------------------
+ drivers/thermal/samsung/Kconfig                    |   21 +
+ drivers/thermal/samsung/Makefile                   |    7 +
+ drivers/thermal/samsung/exynos_thermal_common.c    |  413 ++++++++
+ drivers/thermal/samsung/exynos_thermal_common.h    |  106 ++
+ drivers/thermal/samsung/exynos_tmu.c               |  750 ++++++++++++++
+ drivers/thermal/samsung/exynos_tmu.h               |  307 ++++++
+ drivers/thermal/samsung/exynos_tmu_data.c          |  250 +++++
+ drivers/thermal/samsung/exynos_tmu_data.h          |  155 +++
+ include/linux/platform_data/exynos_thermal.h       |  119 ---
+ 16 files changed, 2140 insertions(+), 1195 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+ delete mode 100644 drivers/thermal/exynos_thermal.c
+ create mode 100644 drivers/thermal/samsung/Kconfig
+ create mode 100644 drivers/thermal/samsung/Makefile
+ create mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
+ create mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
+ create mode 100644 drivers/thermal/samsung/exynos_tmu.c
+ create mode 100644 drivers/thermal/samsung/exynos_tmu.h
+ create mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+ create mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
+ delete mode 100644 include/linux/platform_data/exynos_thermal.h
