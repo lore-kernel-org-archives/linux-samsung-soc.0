@@ -1,86 +1,80 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/3] clk: exynos4: Staticize local symbols
-Date: Tue, 11 Jun 2013 09:46:56 +0530
-Message-ID: <CAK9yfHzMFfpLbHj0HwayPGSHWYfa5QSG-SADCvhoXJoiUE=JYQ@mail.gmail.com>
-References: <1366106719-26342-1-git-send-email-sachin.kamat@linaro.org>
-	<08f401ce61e6$2ecc33f0$8c649bd0$%kim@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 6/6] ARM: dts: Add pcie controller node for Samsung
+ EXYNOS5440 SoC
+Date: Tue, 11 Jun 2013 15:00:25 +0900
+Message-ID: <002e01ce6668$f785dc20$e6919460$@samsung.com>
+References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com>
+ <201306071943.18407.arnd@arndb.de>
+ <000001ce65b5$e45477f0$acfd67d0$@samsung.com>
+ <201306101722.10146.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:40441 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750950Ab3FKEQ6 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:18532 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751638Ab3FKGA1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 00:16:58 -0400
-Received: by mail-oa0-f42.google.com with SMTP id n12so1761238oag.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 21:16:57 -0700 (PDT)
-In-Reply-To: <08f401ce61e6$2ecc33f0$8c649bd0$%kim@samsung.com>
+	Tue, 11 Jun 2013 02:00:27 -0400
+In-reply-to: <201306101722.10146.arnd@arndb.de>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-arm-kernel@lists.infradead.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, Jingoo Han <jg1.han@samsung.com>
 
-On 5 June 2013 17:44, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Sachin Kamat wrote:
->>
->> These symbols are used only in this file and hence should be
->> static.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> ---
->>  drivers/clk/samsung/clk-exynos4.c |   26 ++++++++++++++------------
->>  1 file changed, 14 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-
->> exynos4.c
->> index 7104669..26f2a85 100644
->> --- a/drivers/clk/samsung/clk-exynos4.c
->> +++ b/drivers/clk/samsung/clk-exynos4.c
->> @@ -339,24 +339,26 @@ PNAME(mout_user_aclk200_p4x12) = {"fin_pll",
->> "div_aclk200", };
->>  PNAME(mout_user_aclk266_gps_p4x12) = {"fin_pll", "div_aclk266_gps", };
->>
->>  /* fixed rate clocks generated outside the soc */
->> -struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata
->> = {
->> +static struct
->> +samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
->
-> Any reason to use double lines?
+On Tuesday, June 11, 2013 12:22 AM, Arnd Bergmann wrote:
+> On Monday 10 June 2013, Jingoo Han wrote:
+> > On Saturday, June 08, 2013 2:43 AM, Arnd Bergmann wrote:
+> > For multiple domains, how can I fix the DT properties?
+> 
+> Domains are a Linux concept, you have to pick a new domain number for each
+> struct hw_pci you register.
 
-This is one of the ways to avoid exceeding 80 column limit.
+Hi Arnd,
 
->
->>       FRATE(xxti, "xxti", NULL, CLK_IS_ROOT, 0),
->>       FRATE(xusbxti, "xusbxti", NULL, CLK_IS_ROOT, 0),
->>  };
->
-> [...]
->
->> -struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata =
->> {
->> +static struct
->> +samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata = {
->
-> Same as above.
->
->>       FRATE(none, "sclk_usbphy1", NULL, CLK_IS_ROOT, 48000000),
->>  };
->>
-> [...]
->
-> Others look good to me,
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->
-> Mike, please pick this into the clk tree if you're ok.
->
+Thank you for your reply.
+It is very helpful. :)
 
-Mike,
-If you are taking this through your tree, please also take the below
-patch [1] as it is dependent on this series.
-[1] https://patchwork.kernel.org/patch/2469891/
+I will set domain numbers for each struct hw_pci.
+
+> 
+> > Current DT properties are as below:
+> >
+> > +	pcie0@40000000 {
+> > +		compatible = "samsung,exynos5440-pcie";
+> > +		reg = <0x40000000 0x4000
+> > +			0x290000 0x1000
+> > +			0x270000 0x1000
+> > +			0x271000 0x40>;
+> > +		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
+> > +		#address-cells = <3>;
+> > +		#size-cells = <2>;
+> > +		device_type = "pci";
+> > +		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00200000   /* configuration space */
+> > +			  0x81000000 0 0	  0x40200000 0 0x00004000   /* downstream I/O */
+> > +			  0x82000000 0 0	  0x40204000 0 0x10000000>; /* non-prefetchable memory */
+> > +	};
+> 
+> An unrelated comment: your first "reg" field seems to overlap with part
+> of your configuration space. Is that intentional?
+
+Yes, intentional.
+But, I will try to remove it.
+
+> 
+> Also, shouldn't your memory space end on a 256MB boundary, rather than
+> extend up to 0x50203fff?
+
+According to the manual of Exynos PCIe, each memory space for Exynos PCIe
+can support 512MB, including I/O, CFG regions.
+
+Is there any problem when over 256MB boundary is used?
+Please let me know. :)
 
 
--- 
-With warm regards,
-Sachin
+Best regards,
+Jingoo Han
+
+> 
+> 	Arnd
