@@ -1,300 +1,72 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH V5 2/5] clk: samsung: register audio subsystem clocks using
- common clock framework
-Date: Tue, 11 Jun 2013 15:13:02 -0700
-Message-ID: <20130611221302.8816.73360@quantum>
-References: <1370348890-6645-1-git-send-email-padma.v@samsung.com>
- <1370348890-6645-3-git-send-email-padma.v@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 01/13] ARM: Exynos: initialize l2x0 cache controller only
+ for cortex-a9 based SoCs
+Date: Tue, 11 Jun 2013 16:58:06 -0700
+Message-ID: <20130611235806.GI23774@quad.lixom.net>
+References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
+ <5595095.zmTGjttZIk@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:44851 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754946Ab3FKWNG convert rfc822-to-8bit (ORCPT
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:57485 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754025Ab3FKX6D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 18:13:06 -0400
-Received: by mail-pd0-f179.google.com with SMTP id q10so3231390pdj.38
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 15:13:05 -0700 (PDT)
-In-Reply-To: <1370348890-6645-3-git-send-email-padma.v@samsung.com>
+	Tue, 11 Jun 2013 19:58:03 -0400
+Received: by mail-pb0-f43.google.com with SMTP id md12so8049422pbc.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 16:58:02 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <5595095.zmTGjttZIk@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.orgpadma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, swarren@wwwdotorg.org, arnd@arndb.de
 
-Quoting Padmavathi Venna (2013-06-04 05:28:07)
-> Audio subsystem is introduced in s5pv210 and exynos platforms.
-> This has seperate clock controller which can control i2s0 and
-> pcm0 clocks. This patch registers the audio subsystem clocks
-> with the common clock framework on Exynos family.
+On Sat, Jun 08, 2013 at 12:57:41PM +0200, Tomasz Figa wrote:
+> Hi Chander,
 > 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-This looks good to me.  You have my Ack, or I can take this patch
-through clk-next.  Let me know what works for you.
-
-Regards,
-Mike
-
-> ---
->  .../devicetree/bindings/clock/clk-exynos-audss.txt |   64 ++++++++++
->  drivers/clk/samsung/Makefile                       |    1 +
->  drivers/clk/samsung/clk-exynos-audss.c             |  133 ++++++++++++++++++++
->  include/dt-bindings/clk/exynos-audss-clk.h         |   25 ++++
->  4 files changed, 223 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
->  create mode 100644 drivers/clk/samsung/clk-exynos-audss.c
->  create mode 100644 include/dt-bindings/clk/exynos-audss-clk.h
+> On Thursday 06 of June 2013 16:31:15 Chander Kashyap wrote:
+> > Only cortex-a9 based Exynos SoCs have l2x0 cache controller. Hence
+> > instead of checking for every SoC with soc_is_xxx, just check for cpu
+> > part number and initialize the cache controller for cortex-a9 based
+> > SoCs.
+> > 
+> > Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> > ---
+> >  arch/arm/mach-exynos/common.c |    3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm/mach-exynos/common.c
+> > b/arch/arm/mach-exynos/common.c index 8ce2db4..bad000e 100644
+> > --- a/arch/arm/mach-exynos/common.c
+> > +++ b/arch/arm/mach-exynos/common.c
+> > @@ -35,6 +35,7 @@
+> >  #include <asm/mach/map.h>
+> >  #include <asm/mach/irq.h>
+> >  #include <asm/cacheflush.h>
+> > +#include <asm/cputype.h>
+> > 
+> >  #include <mach/regs-irq.h>
+> >  #include <mach/regs-pmu.h>
+> > @@ -520,7 +521,7 @@ static int __init exynos4_l2x0_cache_init(void)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-> new file mode 100644
-> index 0000000..a120180
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-> @@ -0,0 +1,64 @@
-> +* Samsung Audio Subsystem Clock Controller
-> +
-> +The Samsung Audio Subsystem clock controller generates and supplies clocks
-> +to Audio Subsystem block available in the S5PV210 and Exynos SoCs. The clock
-> +binding described here is applicable to all SoC's in Exynos family.
-> +
-> +Required Properties:
-> +
-> +- compatible: should be one of the following:
-> +  - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
-> +  - "samsung,exynos5250-audss-clock" - controller compatible with all Exynos5 SoCs.
-> +
-> +- reg: physical base address and length of the controller's register set.
-> +
-> +- #clock-cells: should be 1.
-> +
-> +The following is the list of clocks generated by the controller. Each clock is
-> +assigned an identifier and client nodes use this identifier to specify the
-> +clock which they consume. Some of the clocks are available only on a particular
-> +Exynos4 SoC and this is specified where applicable.
-> +
-> +Provided clocks:
-> +
-> +Clock           ID      SoC (if specific)
-> +-----------------------------------------------
-> +
-> +mout_audss      0
-> +mout_i2s        1
-> +dout_srp        2
-> +dout_aud_bus    3
-> +dout_i2s        4
-> +srp_clk         5
-> +i2s_bus         6
-> +sclk_i2s        7
-> +pcm_bus         8
-> +sclk_pcm        9
-> +
-> +Example 1: An example of a clock controller node is listed below.
-> +
-> +clock_audss: audss-clock-controller@3810000 {
-> +       compatible = "samsung,exynos5250-audss-clock";
-> +       reg = <0x03810000 0x0C>;
-> +       #clock-cells = <1>;
-> +};
-> +
-> +Example 2: I2S controller node that consumes the clock generated by the clock
-> +           controller. Refer to the standard clock bindings for information
-> +           about 'clocks' and 'clock-names' property.
-> +
-> +i2s0: i2s@03830000 {
-> +       compatible = "samsung,i2s-v5";
-> +       reg = <0x03830000 0x100>;
-> +       dmas = <&pdma0 10
-> +               &pdma0 9
-> +               &pdma0 8>;
-> +       dma-names = "tx", "rx", "tx-sec";
-> +       clocks = <&clock_audss EXYNOS_I2S_BUS>,
-> +               <&clock_audss EXYNOS_I2S_BUS>,
-> +               <&clock_audss EXYNOS_SCLK_I2S>,
-> +               <&clock_audss EXYNOS_MOUT_AUDSS>,
-> +               <&clock_audss EXYNOS_MOUT_I2S>;
-> +       clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
-> +       "mout_audss", "mout_i2s";
-> +};
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index b7c232e..1876810 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -6,3 +6,4 @@ obj-$(CONFIG_COMMON_CLK)        += clk.o clk-pll.o
->  obj-$(CONFIG_ARCH_EXYNOS4)     += clk-exynos4.o
->  obj-$(CONFIG_SOC_EXYNOS5250)   += clk-exynos5250.o
->  obj-$(CONFIG_SOC_EXYNOS5440)   += clk-exynos5440.o
-> +obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-audss.o
-> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-> new file mode 100644
-> index 0000000..9b1bbd5
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-exynos-audss.c
-> @@ -0,0 +1,133 @@
-> +/*
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + * Author: Padmavathi Venna <padma.v@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * Common Clock Framework support for Audio Subsystem Clock Controller.
-> +*/
-> +
-> +#include <linux/clkdev.h>
-> +#include <linux/io.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/syscore_ops.h>
-> +
-> +#include <dt-bindings/clk/exynos-audss-clk.h>
-> +
-> +static DEFINE_SPINLOCK(lock);
-> +static struct clk **clk_table;
-> +static void __iomem *reg_base;
-> +static struct clk_onecell_data clk_data;
-> +
-> +#define ASS_CLK_SRC 0x0
-> +#define ASS_CLK_DIV 0x4
-> +#define ASS_CLK_GATE 0x8
-> +
-> +static unsigned long reg_save[][2] = {
-> +       {ASS_CLK_SRC,  0},
-> +       {ASS_CLK_DIV,  0},
-> +       {ASS_CLK_GATE, 0},
-> +};
-> +
-> +/* list of all parent clock list */
-> +static const char *mout_audss_p[] = { "fin_pll", "fout_epll" };
-> +static const char *mout_i2s_p[] = { "mout_audss", "cdclk0", "sclk_audio0" };
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int exynos_audss_clk_suspend(void)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(reg_save); i++)
-> +               reg_save[i][1] = readl(reg_base + reg_save[i][0]);
-> +
-> +       return 0;
-> +}
-> +
-> +static void exynos_audss_clk_resume(void)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(reg_save); i++)
-> +               writel(reg_save[i][1], reg_base + reg_save[i][0]);
-> +}
-> +
-> +static struct syscore_ops exynos_audss_clk_syscore_ops = {
-> +       .suspend        = exynos_audss_clk_suspend,
-> +       .resume         = exynos_audss_clk_resume,
-> +};
-> +#endif /* CONFIG_PM_SLEEP */
-> +
-> +/* register exynos_audss clocks */
-> +void __init exynos_audss_clk_init(struct device_node *np)
-> +{
-> +       reg_base = of_iomap(np, 0);
-> +       if (!reg_base) {
-> +               pr_err("%s: failed to map audss registers\n", __func__);
-> +               return;
-> +       }
-> +
-> +       clk_table = kzalloc(sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
-> +                               GFP_KERNEL);
-> +       if (!clk_table) {
-> +               pr_err("%s: could not allocate clk lookup table\n", __func__);
-> +               return;
-> +       }
-> +
-> +       clk_data.clks = clk_table;
-> +       clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
-> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +
-> +       clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
-> +                               mout_audss_p, ARRAY_SIZE(mout_audss_p), 0,
-> +                               reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
-> +
-> +       clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
-> +                               mout_i2s_p, ARRAY_SIZE(mout_i2s_p), 0,
-> +                               reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
-> +
-> +       clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
-> +                               "mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
-> +                               0, &lock);
-> +
-> +       clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
-> +                               "dout_aud_bus", "dout_srp", 0,
-> +                               reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
-> +
-> +       clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
-> +                               "mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
-> +                               &lock);
-> +
-> +       clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
-> +                               "dout_srp", CLK_SET_RATE_PARENT,
-> +                               reg_base + ASS_CLK_GATE, 0, 0, &lock);
-> +
-> +       clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
-> +                               "dout_aud_bus", CLK_SET_RATE_PARENT,
-> +                               reg_base + ASS_CLK_GATE, 2, 0, &lock);
-> +
-> +       clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
-> +                               "dout_i2s", CLK_SET_RATE_PARENT,
-> +                               reg_base + ASS_CLK_GATE, 3, 0, &lock);
-> +
-> +       clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
-> +                                "sclk_pcm", CLK_SET_RATE_PARENT,
-> +                               reg_base + ASS_CLK_GATE, 4, 0, &lock);
-> +
-> +       clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
-> +                               "div_pcm0", CLK_SET_RATE_PARENT,
-> +                               reg_base + ASS_CLK_GATE, 5, 0, &lock);
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +       register_syscore_ops(&exynos_audss_clk_syscore_ops);
-> +#endif
-> +
-> +       pr_info("Exynos: Audss: clock setup completed\n");
-> +}
-> +CLK_OF_DECLARE(exynos4210_audss_clk, "samsung,exynos4210-audss-clock",
-> +               exynos_audss_clk_init);
-> +CLK_OF_DECLARE(exynos5250_audss_clk, "samsung,exynos5250-audss-clock",
-> +               exynos_audss_clk_init);
-> diff --git a/include/dt-bindings/clk/exynos-audss-clk.h b/include/dt-bindings/clk/exynos-audss-clk.h
-> new file mode 100644
-> index 0000000..8279f42
-> --- /dev/null
-> +++ b/include/dt-bindings/clk/exynos-audss-clk.h
-> @@ -0,0 +1,25 @@
-> +/*
-> + * This header provides constants for Samsung audio subsystem
-> + * clock controller.
-> + *
-> + * The constants defined in this header are being used in dts
-> + * and exynos audss driver.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_EXYNOS_AUDSS_H
-> +#define _DT_BINDINGS_CLK_EXYNOS_AUDSS_H
-> +
-> +#define EXYNOS_MOUT_AUDSS      0
-> +#define EXYNOS_MOUT_I2S        1
-> +#define EXYNOS_DOUT_SRP        2
-> +#define EXYNOS_DOUT_AUD_BUS    3
-> +#define EXYNOS_DOUT_I2S        4
-> +#define EXYNOS_SRP_CLK         5
-> +#define EXYNOS_I2S_BUS         6
-> +#define EXYNOS_SCLK_I2S        7
-> +#define EXYNOS_PCM_BUS         8
-> +#define EXYNOS_SCLK_PCM        9
-> +
-> +#define EXYNOS_AUDSS_MAX_CLKS  10
-> +
-> +#endif
-> -- 
-> 1.7.4.4
+> I wonder if it shouldn't be done the other way around, i.e. this function 
+> being called only when running on SoCs for which it's appropriate, instead 
+> of checking for supported SoC in this function.
+> 
+> Keep in mind that we are going towards multiplatform support, so you would 
+> end up running this code on any non-Exynos SoC with Cortex A9 as well. 
+> IMHO we should drop most (if not all) of the initcalls around mach-
+> exynos/.
+> 
+> CCing people that might have some opinion on this topic as well.
+
+Looks like all other platforms instantiate the pl310 device node in the
+device tree. Since Exynos is going DT-only, there's no need to support
+non-DT boot any more, and that would be a much cleaner way forward.
+
+That also moves the l2 init to be driven by device-tree data, this removing the
+need for the exynos-specific init alltogether. Code removal FTW!
+
+
+-Olof
