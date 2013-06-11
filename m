@@ -1,167 +1,84 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 5/9] drm/exynos: add support for exynos5420 mixer
-Date: Tue, 11 Jun 2013 19:41:27 +0530
-Message-ID: <1370959891-8923-6-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH 6/9] drm/exynos: fix interlace resolutions for exynos5420
+Date: Tue, 11 Jun 2013 19:41:28 +0530
+Message-ID: <1370959891-8923-7-git-send-email-rahul.sharma@samsung.com>
 References: <1370959891-8923-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35639 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751764Ab3FKNv0 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:52902 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464Ab3FKNvu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 09:51:26 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Tue, 11 Jun 2013 09:51:50 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MO8001RBEHKIM50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Jun 2013 22:51:25 +0900 (KST)
+ with ESMTP id <0MO8000O3EI6O540@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Jun 2013 22:51:49 +0900 (KST)
 In-reply-to: <1370959891-8923-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org
 Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Add support for exynos5420 mixer IP in the drm mixer driver.
+Modified code for calculating hdmi IP register values from drm timing
+values. The modification is based on the inputs from hw team and specifically
+proposed for 1440x576i and 1440x480i. But same changes holds good for other
+interlaced resolutions also.
 
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c |   49 +++++++++++++++++++++++++--------
- drivers/gpu/drm/exynos/regs-mixer.h   |    7 +++++
- 2 files changed, 44 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 58dfd3f..101d5bb 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -78,6 +78,7 @@ struct mixer_resources {
- enum mixer_version_id {
- 	MXR_VER_0_0_0_16,
- 	MXR_VER_16_0_33_0,
-+	MXR_VER_128_0_0_184,
- };
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 423bdc6..1eb5ffb 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1767,8 +1767,7 @@ static void hdmi_4212_mode_set(struct hdmi_context *hdata,
+ 			(m->vsync_start - m->vdisplay) / 2);
+ 		hdmi_set_reg(core->v2_blank, 2, m->vtotal / 2);
+ 		hdmi_set_reg(core->v1_blank, 2, (m->vtotal - m->vdisplay) / 2);
+-		hdmi_set_reg(core->v_blank_f0, 2, (m->vtotal +
+-			((m->vsync_end - m->vsync_start) * 4) + 5) / 2);
++		hdmi_set_reg(core->v_blank_f0, 2, m->vtotal - m->vdisplay / 2);
+ 		hdmi_set_reg(core->v_blank_f1, 2, m->vtotal);
+ 		hdmi_set_reg(core->v_sync_line_aft_2, 2, (m->vtotal / 2) + 7);
+ 		hdmi_set_reg(core->v_sync_line_aft_1, 2, (m->vtotal / 2) + 2);
+@@ -1778,7 +1777,10 @@ static void hdmi_4212_mode_set(struct hdmi_context *hdata,
+ 			(m->htotal / 2) + (m->hsync_start - m->hdisplay));
+ 		hdmi_set_reg(tg->vact_st, 2, (m->vtotal - m->vdisplay) / 2);
+ 		hdmi_set_reg(tg->vact_sz, 2, m->vdisplay / 2);
+-		hdmi_set_reg(tg->vact_st2, 2, 0x249);/* Reset value + 1*/
++		hdmi_set_reg(tg->vact_st2, 2, m->vtotal - m->vdisplay / 2);
++		hdmi_set_reg(tg->vsync2, 2, (m->vtotal / 2) + 1);
++		hdmi_set_reg(tg->vsync_bot_hdmi, 2, (m->vtotal / 2) + 1);
++		hdmi_set_reg(tg->field_bot_hdmi, 2, (m->vtotal / 2) + 1);
+ 		hdmi_set_reg(tg->vact_st3, 2, 0x0);
+ 		hdmi_set_reg(tg->vact_st4, 2, 0x0);
+ 	} else {
+@@ -1800,6 +1802,9 @@ static void hdmi_4212_mode_set(struct hdmi_context *hdata,
+ 		hdmi_set_reg(tg->vact_st2, 2, 0x248); /* Reset value */
+ 		hdmi_set_reg(tg->vact_st3, 2, 0x47b); /* Reset value */
+ 		hdmi_set_reg(tg->vact_st4, 2, 0x6ae); /* Reset value */
++		hdmi_set_reg(tg->vsync2, 2, 0x233); /* Reset value */
++		hdmi_set_reg(tg->vsync_bot_hdmi, 2, 0x233); /* Reset value */
++		hdmi_set_reg(tg->field_bot_hdmi, 2, 0x233); /* Reset value */
+ 	}
  
- struct mixer_context {
-@@ -283,17 +284,19 @@ static void mixer_cfg_scan(struct mixer_context *ctx, unsigned int height)
- 	val = (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
- 				MXR_CFG_SCAN_PROGRASSIVE);
- 
--	/* choosing between porper HD and SD mode */
--	if (height <= 480)
--		val |= MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD;
--	else if (height <= 576)
--		val |= MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD;
--	else if (height <= 720)
--		val |= MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
--	else if (height <= 1080)
--		val |= MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD;
--	else
--		val |= MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
-+	if (ctx->mxr_ver != MXR_VER_128_0_0_184) {
-+		/* choosing between proper HD and SD mode */
-+		if (height <= 480)
-+			val |= MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD;
-+		else if (height <= 576)
-+			val |= MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD;
-+		else if (height <= 720)
-+			val |= MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
-+		else if (height <= 1080)
-+			val |= MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD;
-+		else
-+			val |= MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
-+	}
- 
- 	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_SCAN_MASK);
- }
-@@ -557,6 +560,14 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 	/* setup geometry */
- 	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win), win_data->fb_width);
- 
-+	/* setup display size */
-+	if (ctx->mxr_ver == MXR_VER_128_0_0_184 &&
-+		win == MIXER_DEFAULT_WIN) {
-+		val  = MXR_MXR_RES_HEIGHT(win_data->fb_height);
-+		val |= MXR_MXR_RES_WIDTH(win_data->fb_width);
-+		mixer_reg_write(res, MXR_RESOLUTION, val);
-+	}
-+
- 	val  = MXR_GRP_WH_WIDTH(win_data->crtc_width);
- 	val |= MXR_GRP_WH_HEIGHT(win_data->crtc_height);
- 	val |= MXR_GRP_WH_H_SCALE(x_ratio);
-@@ -581,7 +592,8 @@ static void mixer_graph_buffer(struct mixer_context *ctx, int win)
- 	mixer_cfg_layer(ctx, win, true);
- 
- 	/* layer update mandatory for mixer 16.0.33.0 */
--	if (ctx->mxr_ver == MXR_VER_16_0_33_0)
-+	if (ctx->mxr_ver == MXR_VER_16_0_33_0 ||
-+		ctx->mxr_ver == MXR_VER_128_0_0_184)
- 		mixer_layer_update(ctx);
- 
- 	mixer_run(ctx);
-@@ -822,6 +834,7 @@ static void mixer_win_disable(void *ctx, int win)
- 
- static int mixer_check_mode(void *ctx, struct drm_display_mode *mode)
- {
-+	struct mixer_context *mixer_ctx = ctx;
- 	u32 w, h;
- 
- 	w = mode->hdisplay;
-@@ -831,6 +844,10 @@ static int mixer_check_mode(void *ctx, struct drm_display_mode *mode)
- 		mode->hdisplay, mode->vdisplay, mode->vrefresh,
- 		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? 1 : 0);
- 
-+	if (mixer_ctx->mxr_ver == MXR_VER_0_0_0_16 ||
-+		mixer_ctx->mxr_ver == MXR_VER_128_0_0_184)
-+		return 0;
-+
- 	if ((w >= 464 && w <= 720 && h >= 261 && h <= 576) ||
- 		(w >= 1024 && w <= 1280 && h >= 576 && h <= 720) ||
- 		(w >= 1664 && w <= 1920 && h >= 936 && h <= 1080))
-@@ -1127,6 +1144,11 @@ static int vp_resources_init(struct exynos_drm_hdmi_context *ctx,
- 	return 0;
+ 	/* Following values & calculations are same irrespective of mode type */
+@@ -1831,12 +1836,9 @@ static void hdmi_4212_mode_set(struct hdmi_context *hdata,
+ 	hdmi_set_reg(tg->hact_sz, 2, m->hdisplay);
+ 	hdmi_set_reg(tg->v_fsz, 2, m->vtotal);
+ 	hdmi_set_reg(tg->vsync, 2, 0x1);
+-	hdmi_set_reg(tg->vsync2, 2, 0x233); /* Reset value */
+ 	hdmi_set_reg(tg->field_chg, 2, 0x233); /* Reset value */
+ 	hdmi_set_reg(tg->vsync_top_hdmi, 2, 0x1); /* Reset value */
+-	hdmi_set_reg(tg->vsync_bot_hdmi, 2, 0x233); /* Reset value */
+ 	hdmi_set_reg(tg->field_top_hdmi, 2, 0x1); /* Reset value */
+-	hdmi_set_reg(tg->field_bot_hdmi, 2, 0x233); /* Reset value */
+ 	hdmi_set_reg(tg->tg_3d, 1, 0x0);
  }
  
-+static struct mixer_drv_data exynos5420_mxr_drv_data = {
-+	.version = MXR_VER_128_0_0_184,
-+	.is_vp_enabled = 0,
-+};
-+
- static struct mixer_drv_data exynos5250_mxr_drv_data = {
- 	.version = MXR_VER_16_0_33_0,
- 	.is_vp_enabled = 0,
-@@ -1151,6 +1173,9 @@ static struct platform_device_id mixer_driver_types[] = {
- 
- static struct of_device_id mixer_match_types[] = {
- 	{
-+		.compatible = "samsung,exynos5420-mixer",
-+		.data	= &exynos5420_mxr_drv_data,
-+	}, {
- 		.compatible = "samsung,exynos5250-mixer",
- 		.data	= &exynos5250_mxr_drv_data,
- 	}, {
-diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
-index 5d8dbc0..4537026 100644
---- a/drivers/gpu/drm/exynos/regs-mixer.h
-+++ b/drivers/gpu/drm/exynos/regs-mixer.h
-@@ -44,6 +44,9 @@
- #define MXR_CM_COEFF_Y			0x0080
- #define MXR_CM_COEFF_CB			0x0084
- #define MXR_CM_COEFF_CR			0x0088
-+#define MXR_MO				0x0304
-+#define MXR_RESOLUTION			0x0310
-+
- #define MXR_GRAPHIC0_BASE_S		0x2024
- #define MXR_GRAPHIC1_BASE_S		0x2044
- 
-@@ -119,6 +122,10 @@
- #define MXR_GRP_WH_WIDTH(x)		MXR_MASK_VAL(x, 26, 16)
- #define MXR_GRP_WH_HEIGHT(x)		MXR_MASK_VAL(x, 10, 0)
- 
-+/* bits for MXR_RESOLUTION */
-+#define MXR_MXR_RES_HEIGHT(x)		MXR_MASK_VAL(x, 26, 16)
-+#define MXR_MXR_RES_WIDTH(x)		MXR_MASK_VAL(x, 10, 0)
-+
- /* bits for MXR_GRAPHICn_SXY */
- #define MXR_GRP_SXY_SX(x)		MXR_MASK_VAL(x, 26, 16)
- #define MXR_GRP_SXY_SY(x)		MXR_MASK_VAL(x, 10, 0)
 -- 
 1.7.10.4
