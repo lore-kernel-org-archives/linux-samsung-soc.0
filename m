@@ -1,213 +1,150 @@
 From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [PATCH v7 02/11] clk: samsung: Define a common
+Subject: [PATCH v7 03/11] clk: samsung: Migrate exynos5250 to use common
  samsung_clk_register_pll()
-Date: Tue, 11 Jun 2013 15:01:07 +0530
-Message-ID: <1370943076-13461-3-git-send-email-yadi.brar@samsung.com>
+Date: Tue, 11 Jun 2013 15:01:08 +0530
+Message-ID: <1370943076-13461-4-git-send-email-yadi.brar@samsung.com>
 References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:53275 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756231Ab3FTJjb (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:34145 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756231Ab3FTJje (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 05:39:31 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 20 Jun 2013 05:39:34 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOO00CMKQTS9JY0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 18:39:30 +0900 (KST)
+ with ESMTP id <0MOO000GZQT9K830@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 18:39:33 +0900 (KST)
 In-reply-to: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, dianders@chromium.org, t.figa@samsung.com, vikas.sajjan@linaro.org, abrestic@chromium.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-This patch defines a common samsung_clk_register_pll()
-Since pll2550 & pll35xx and pll2650 & pll36xx have exactly same clk ops
-implementation, added pll2550 and pll2650 also.
+This patch migrates exynos5250 pll registeration to use common
+samsung_clk_register_pll() by intialising table of PLLs and adding PLLs to
+unique id list of clocks.
 
 Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
 ---
- drivers/clk/samsung/clk-pll.c |   70 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/samsung/clk-pll.h |    7 ++++
- drivers/clk/samsung/clk.h     |   48 ++++++++++++++++++++++++++++
- 3 files changed, 125 insertions(+), 0 deletions(-)
+ drivers/clk/samsung/clk-exynos5250.c |   60 +++++++++++++++++++++++-----------
+ 1 files changed, 41 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 8224bde..f20af69 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -17,6 +17,7 @@ struct samsung_clk_pll {
- 	struct clk_hw		hw;
- 	void __iomem		*lock_reg;
- 	void __iomem		*con_reg;
-+	enum samsung_pll_type	type;
- };
- 
- #define to_clk_pll(_hw) container_of(_hw, struct samsung_clk_pll, hw)
-@@ -411,3 +412,72 @@ struct clk * __init samsung_clk_register_pll2550x(const char *name,
- 
- 	return clk;
- }
-+
-+static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
-+						void __iomem *base)
-+{
-+	struct samsung_clk_pll *pll;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll) {
-+		pr_err("%s: could not allocate pll clk %s\n",
-+			__func__, pll_clk->name);
-+		return;
-+	}
-+
-+	init.name = pll_clk->name;
-+	init.flags = pll_clk->flags;
-+	init.parent_names = &pll_clk->parent_name;
-+	init.num_parents = 1;
-+
-+	switch (pll_clk->type) {
-+	/* clk_ops for 35xx and 2550 are similar */
-+	case pll_35xx:
-+	case pll_2550:
-+		init.ops = &samsung_pll35xx_clk_ops;
-+		break;
-+	/* clk_ops for 36xx and 2650 are similar */
-+	case pll_36xx:
-+	case pll_2650:
-+		init.ops = &samsung_pll36xx_clk_ops;
-+		break;
-+	default:
-+		pr_warn("%s: Unknown pll type for pll clk %s\n",
-+			__func__, pll_clk->name);
-+	}
-+
-+	pll->hw.init = &init;
-+	pll->type = pll_clk->type;
-+	pll->lock_reg = base + pll_clk->lock_offset;
-+	pll->con_reg = base + pll_clk->con_offset;
-+
-+	clk = clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register pll clock %s : %ld\n",
-+			__func__, pll_clk->name, PTR_ERR(clk));
-+		kfree(pll);
-+		return;
-+	}
-+
-+	samsung_clk_add_lookup(clk, pll_clk->id);
-+
-+	if (!pll_clk->alias)
-+		return;
-+
-+	ret = clk_register_clkdev(clk, pll_clk->alias, pll_clk->dev_name);
-+	if (ret)
-+		pr_err("%s: failed to register lookup for %s : %d",
-+			__func__, pll_clk->name, ret);
-+}
-+
-+void __init samsung_clk_register_pll(struct samsung_pll_clock *pll_list,
-+				unsigned int nr_pll, void __iomem *base)
-+{
-+	int cnt;
-+
-+	for (cnt = 0; cnt < nr_pll; cnt++)
-+		_samsung_clk_register_pll(&pll_list[cnt], base);
-+}
-diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index f33786e..0d86bf0 100644
---- a/drivers/clk/samsung/clk-pll.h
-+++ b/drivers/clk/samsung/clk-pll.h
-@@ -12,6 +12,13 @@
- #ifndef __SAMSUNG_CLK_PLL_H
- #define __SAMSUNG_CLK_PLL_H
- 
-+enum samsung_pll_type {
-+	pll_35xx,
-+	pll_36xx,
-+	pll_2550,
-+	pll_2650,
-+};
-+
- enum pll45xx_type {
- 	pll_4500,
- 	pll_4502,
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index e4ad6ea..d834395 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -19,6 +19,7 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index f6e3031..4027c69 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -17,11 +17,22 @@
  #include <linux/of_address.h>
-+#include "clk-pll.h"
  
- /**
-  * struct samsung_clock_alias: information about mux clock
-@@ -258,6 +259,51 @@ struct samsung_clk_reg_dump {
- 	u32	value;
- };
+ #include "clk.h"
+-#include "clk-pll.h"
  
-+/**
-+ * struct samsung_pll_clock: information about pll clock
-+ * @id: platform specific id of the clock.
-+ * @dev_name: name of the device to which this clock belongs.
-+ * @name: name of this pll clock.
-+ * @parent_name: name of the parent clock.
-+ * @flags: optional flags for basic clock.
-+ * @con_offset: offset of the register for configuring the PLL.
-+ * @lock_offset: offset of the register for locking the PLL.
-+ * @type: Type of PLL to be registered.
-+ * @alias: optional clock alias name to be assigned to this clock.
-+ */
-+struct samsung_pll_clock {
-+	unsigned int		id;
-+	const char		*dev_name;
-+	const char		*name;
-+	const char		*parent_name;
-+	unsigned long		flags;
-+	int			con_offset;
-+	int			lock_offset;
-+	enum samsung_pll_type	type;
-+	const char              *alias;
++#define APLL_LOCK		0x0
++#define APLL_CON0		0x100
+ #define SRC_CPU			0x200
+ #define DIV_CPU0		0x500
++#define MPLL_LOCK		0x4000
++#define MPLL_CON0		0x4100
+ #define SRC_CORE1		0x4204
++#define CPLL_LOCK		0x10020
++#define EPLL_LOCK		0x10030
++#define VPLL_LOCK		0x10040
++#define GPLL_LOCK		0x10050
++#define CPLL_CON0		0x10120
++#define EPLL_CON0		0x10130
++#define VPLL_CON0		0x10140
++#define GPLL_CON0		0x10150
+ #define SRC_TOP0		0x10210
+ #define SRC_TOP1		0x10214
+ #define SRC_TOP2		0x10218
+@@ -61,10 +72,18 @@
+ #define GATE_IP_FSYS		0x10944
+ #define GATE_IP_PERIC		0x10950
+ #define GATE_IP_PERIS		0x10960
++#define BPLL_LOCK		0x20010
++#define BPLL_CON0		0x20110
+ #define SRC_CDREX		0x20200
+ #define PLL_DIV2_SEL		0x20a24
+ #define GATE_IP_DISP1		0x10928
+ 
++/* list of PLLs to be registered */
++enum exynos5250_plls {
++	apll, mpll, cpll, epll, vpll, gpll, bpll,
++	nr_plls			/* number of PLLs */
 +};
 +
-+#define __PLL(_typ, _id, _dname, _name, _pname, _flags, _lock, _con, _alias) \
-+	{								\
-+		.id		= _id,					\
-+		.type		= _typ,					\
-+		.dev_name	= _dname,				\
-+		.name		= _name,				\
-+		.parent_name	= _pname,				\
-+		.flags		= CLK_GET_RATE_NOCACHE,			\
-+		.con_offset	= _con,					\
-+		.lock_offset	= _lock,				\
-+		.alias		= _alias,				\
-+	}
-+
-+#define PLL(_typ, _id, _name, _pname, _lock, _con)			\
-+	__PLL(_typ, _id, NULL, _name, _pname, CLK_GET_RATE_NOCACHE,	\
-+		_lock, _con, NULL)
-+
-+#define PLL_A(_typ, _id, _name, _pname, _lock, _con, _alias)		\
-+	__PLL(_typ, _id, NULL, _name, _pname, CLK_GET_RATE_NOCACHE,	\
-+		_lock, _con, _alias)
-+
- extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
- 		unsigned long nr_clks, unsigned long *rdump,
- 		unsigned long nr_rdump, unsigned long *soc_rdump,
-@@ -281,6 +327,8 @@ extern void __init samsung_clk_register_div(struct samsung_div_clock *clk_list,
- 		unsigned int nr_clk);
- extern void __init samsung_clk_register_gate(
- 		struct samsung_gate_clock *clk_list, unsigned int nr_clk);
-+extern void __init samsung_clk_register_pll(struct samsung_pll_clock *pll_list,
-+		unsigned int nr_clk, void __iomem *base);
+ /*
+  * Let each supported clock get a unique id. This id is used to lookup the clock
+  * for device tree based platforms. The clocks are categorized into three
+@@ -81,7 +100,8 @@ enum exynos5250_clks {
+ 	none,
  
- extern unsigned long _get_rate(const char *clk_name);
+ 	/* core clocks */
+-	fin_pll,
++	fin_pll, fout_apll, fout_mpll, fout_bpll, fout_gpll, fout_cpll,
++	fout_epll, fout_vpll,
  
+ 	/* gate for special clocks (sclk) */
+ 	sclk_cam_bayer = 128, sclk_cam0, sclk_cam1, sclk_gscl_wa, sclk_gscl_wb,
+@@ -475,6 +495,23 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 	GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0, 0, 0),
+ };
+ 
++struct __initdata samsung_pll_clock exynos5250_plls[nr_plls] = {
++	[apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
++		APLL_CON0, "fout_apll"),
++	[mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
++		MPLL_CON0, "fout_mpll"),
++	[bpll] = PLL(pll_35xx, fout_bpll, "fout_bpll", "fin_pll", BPLL_LOCK,
++		BPLL_CON0),
++	[gpll] = PLL(pll_35xx, fout_gpll, "fout_gpll", "fin_pll", GPLL_LOCK,
++		GPLL_CON0),
++	[cpll] = PLL(pll_35xx, fout_cpll, "fout_cpll", "fin_pll", CPLL_LOCK,
++		CPLL_CON0),
++	[epll] = PLL(pll_36xx, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
++		EPLL_CON0),
++	[vpll] = PLL(pll_36xx, fout_vpll, "fout_vpll", "mout_vpllsrc",
++		VPLL_LOCK, VPLL_CON0),
++};
++
+ static __initdata struct of_device_id ext_clk_match[] = {
+ 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
+ 	{ },
+@@ -484,7 +521,6 @@ static __initdata struct of_device_id ext_clk_match[] = {
+ static void __init exynos5250_clk_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+-	struct clk *apll, *mpll, *epll, *vpll, *bpll, *gpll, *cpll;
+ 
+ 	if (np) {
+ 		reg_base = of_iomap(np, 0);
+@@ -500,22 +536,8 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 	samsung_clk_of_register_fixed_ext(exynos5250_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_rate_ext_clks),
+ 			ext_clk_match);
+-
+-	apll = samsung_clk_register_pll35xx("fout_apll", "fin_pll",
+-			reg_base + 0x100);
+-	mpll = samsung_clk_register_pll35xx("fout_mpll", "fin_pll",
+-			reg_base + 0x4100);
+-	bpll = samsung_clk_register_pll35xx("fout_bpll", "fin_pll",
+-			reg_base + 0x20110);
+-	gpll = samsung_clk_register_pll35xx("fout_gpll", "fin_pll",
+-			reg_base + 0x10150);
+-	cpll = samsung_clk_register_pll35xx("fout_cpll", "fin_pll",
+-			reg_base + 0x10120);
+-	epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
+-			reg_base + 0x10130);
+-	vpll = samsung_clk_register_pll36xx("fout_vpll", "mout_vpllsrc",
+-			reg_base + 0x10140);
+-
++	samsung_clk_register_pll(exynos5250_plls, ARRAY_SIZE(exynos5250_plls),
++					reg_base);
+ 	samsung_clk_register_fixed_rate(exynos5250_fixed_rate_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_rate_clks));
+ 	samsung_clk_register_fixed_factor(exynos5250_fixed_factor_clks,
 -- 
 1.7.0.4
