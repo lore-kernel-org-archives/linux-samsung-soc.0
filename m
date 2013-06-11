@@ -1,84 +1,55 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 6/9] drm/exynos: fix interlace resolutions for exynos5420
-Date: Tue, 11 Jun 2013 19:41:28 +0530
-Message-ID: <1370959891-8923-7-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH 7/9] drm/exynos: use of_get_named_gpio to get hdmi hpd gpio
+Date: Tue, 11 Jun 2013 19:41:29 +0530
+Message-ID: <1370959891-8923-8-git-send-email-rahul.sharma@samsung.com>
 References: <1370959891-8923-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:52902 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751464Ab3FKNvu (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:64536 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464Ab3FKNwa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 09:51:50 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Tue, 11 Jun 2013 09:52:30 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MO8000O3EI6O540@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Jun 2013 22:51:49 +0900 (KST)
+ with ESMTP id <0MO800AWOEJHBJE0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Jun 2013 22:52:29 +0900 (KST)
 In-reply-to: <1370959891-8923-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org
 Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Modified code for calculating hdmi IP register values from drm timing
-values. The modification is based on the inputs from hw team and specifically
-proposed for 1440x576i and 1440x480i. But same changes holds good for other
-interlaced resolutions also.
+Cleanup by removing flags variable from drm_hdmi_dt_parse_pdata
+which is not used anywhere. Swtiching to of_get_named_gpio instead
+of of_get_named_gpio_flags solved this.
 
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 423bdc6..1eb5ffb 100644
+index 1eb5ffb..fc6a9b0 100644
 --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1767,8 +1767,7 @@ static void hdmi_4212_mode_set(struct hdmi_context *hdata,
- 			(m->vsync_start - m->vdisplay) / 2);
- 		hdmi_set_reg(core->v2_blank, 2, m->vtotal / 2);
- 		hdmi_set_reg(core->v1_blank, 2, (m->vtotal - m->vdisplay) / 2);
--		hdmi_set_reg(core->v_blank_f0, 2, (m->vtotal +
--			((m->vsync_end - m->vsync_start) * 4) + 5) / 2);
-+		hdmi_set_reg(core->v_blank_f0, 2, m->vtotal - m->vdisplay / 2);
- 		hdmi_set_reg(core->v_blank_f1, 2, m->vtotal);
- 		hdmi_set_reg(core->v_sync_line_aft_2, 2, (m->vtotal / 2) + 7);
- 		hdmi_set_reg(core->v_sync_line_aft_1, 2, (m->vtotal / 2) + 2);
-@@ -1778,7 +1777,10 @@ static void hdmi_4212_mode_set(struct hdmi_context *hdata,
- 			(m->htotal / 2) + (m->hsync_start - m->hdisplay));
- 		hdmi_set_reg(tg->vact_st, 2, (m->vtotal - m->vdisplay) / 2);
- 		hdmi_set_reg(tg->vact_sz, 2, m->vdisplay / 2);
--		hdmi_set_reg(tg->vact_st2, 2, 0x249);/* Reset value + 1*/
-+		hdmi_set_reg(tg->vact_st2, 2, m->vtotal - m->vdisplay / 2);
-+		hdmi_set_reg(tg->vsync2, 2, (m->vtotal / 2) + 1);
-+		hdmi_set_reg(tg->vsync_bot_hdmi, 2, (m->vtotal / 2) + 1);
-+		hdmi_set_reg(tg->field_bot_hdmi, 2, (m->vtotal / 2) + 1);
- 		hdmi_set_reg(tg->vact_st3, 2, 0x0);
- 		hdmi_set_reg(tg->vact_st4, 2, 0x0);
- 	} else {
-@@ -1800,6 +1802,9 @@ static void hdmi_4212_mode_set(struct hdmi_context *hdata,
- 		hdmi_set_reg(tg->vact_st2, 2, 0x248); /* Reset value */
- 		hdmi_set_reg(tg->vact_st3, 2, 0x47b); /* Reset value */
- 		hdmi_set_reg(tg->vact_st4, 2, 0x6ae); /* Reset value */
-+		hdmi_set_reg(tg->vsync2, 2, 0x233); /* Reset value */
-+		hdmi_set_reg(tg->vsync_bot_hdmi, 2, 0x233); /* Reset value */
-+		hdmi_set_reg(tg->field_bot_hdmi, 2, 0x233); /* Reset value */
+@@ -2081,7 +2081,6 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
+ {
+ 	struct device_node *np = dev->of_node;
+ 	struct s5p_hdmi_platform_data *pd;
+-	enum of_gpio_flags flags;
+ 	u32 value;
+ 
+ 	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+@@ -2095,7 +2094,7 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
+ 		goto err_data;
  	}
  
- 	/* Following values & calculations are same irrespective of mode type */
-@@ -1831,12 +1836,9 @@ static void hdmi_4212_mode_set(struct hdmi_context *hdata,
- 	hdmi_set_reg(tg->hact_sz, 2, m->hdisplay);
- 	hdmi_set_reg(tg->v_fsz, 2, m->vtotal);
- 	hdmi_set_reg(tg->vsync, 2, 0x1);
--	hdmi_set_reg(tg->vsync2, 2, 0x233); /* Reset value */
- 	hdmi_set_reg(tg->field_chg, 2, 0x233); /* Reset value */
- 	hdmi_set_reg(tg->vsync_top_hdmi, 2, 0x1); /* Reset value */
--	hdmi_set_reg(tg->vsync_bot_hdmi, 2, 0x233); /* Reset value */
- 	hdmi_set_reg(tg->field_top_hdmi, 2, 0x1); /* Reset value */
--	hdmi_set_reg(tg->field_bot_hdmi, 2, 0x233); /* Reset value */
- 	hdmi_set_reg(tg->tg_3d, 1, 0x0);
- }
+-	pd->hpd_gpio = of_get_named_gpio_flags(np, "hpd-gpio", 0, &flags);
++	pd->hpd_gpio = of_get_named_gpio(np, "hpd-gpio", 0);
+ 
+ 	return pd;
  
 -- 
 1.7.10.4
