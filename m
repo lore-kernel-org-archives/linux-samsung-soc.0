@@ -1,48 +1,88 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 3/4] ARM: dts: Add mixer clocks to mixer node
-Date: Tue, 11 Jun 2013 12:24:04 +0530
-Message-ID: <1370933645-18344-4-git-send-email-rahul.sharma@samsung.com>
-References: <1370933645-18344-1-git-send-email-rahul.sharma@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos4210: Add LCD related pinctrl entries
+Date: Tue, 11 Jun 2013 12:02:53 +0530
+Message-ID: <51B6C495.3040001@linaro.org>
+References: <1370603235-11193-1-git-send-email-tushar.behera@linaro.org> <4895761.sVtM2qZnU3@flatron> <51B551C3.8000003@linaro.org> <3046864.Enssr3rlNj@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:24468 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752915Ab3FKGaZ (ORCPT
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:35250 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751388Ab3FKGdE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 02:30:25 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MO700436U2KUVP0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Jun 2013 15:30:21 +0900 (KST)
-In-reply-to: <1370933645-18344-1-git-send-email-rahul.sharma@samsung.com>
+	Tue, 11 Jun 2013 02:33:04 -0400
+Received: by mail-pd0-f180.google.com with SMTP id 10so8263994pdi.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 23:33:02 -0700 (PDT)
+In-Reply-To: <3046864.Enssr3rlNj@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, Sachin Kamat <sachin.kamat@linaro.org>
 
-From: Sean Paul <seanpaul@chromium.org>
+On 06/11/2013 12:00 AM, Tomasz Figa wrote:
+> On Monday 10 of June 2013 09:40:43 Tushar Behera wrote:
+>> On 06/08/2013 04:16 PM, Tomasz Figa wrote:
+>>> Hi Tushar, Sachin,
+>>>
+>>> On Friday 07 of June 2013 16:37:13 Tushar Behera wrote:
+>>>> From: Sachin Kamat <sachin.kamat@linaro.org>
+>>>>
+>>>> Adds pinctrl entries required by FIMD.
+>>>>
+>>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>>>> ---
+>>>>
+>>>>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |   75
+>>>>
+>>>> +++++++++++++++++++++++++++++ 1 file changed, 75 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+>>>> b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi index 55a2efb..d241726
+>>>> 100644
+>>>> --- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+>>>> @@ -330,6 +330,81 @@
+>>>>
+>>>>  			samsung,pin-pud = <3>;
+>>>>  			samsung,pin-drv = <0>;
+>>>>  		
+>>>>  		};
+>>>>
+>>>> +
+>>>> +		pwm0_out: pwm0-out {
+>>>> +			samsung,pins = "gpd0-0";
+>>>> +			samsung,pin-function = <2>;
+>>>> +			samsung,pin-pud = <0>;
+>>>> +			samsung,pin-drv = <0>;
+>>>> +		};
+>>>> +
+>>>> +		pwm1_out: pwm1-out {
+>>>> +			samsung,pins = "gpd0-1";
+>>>> +			samsung,pin-function = <2>;
+>>>> +			samsung,pin-pud = <0>;
+>>>> +			samsung,pin-drv = <0>;
+>>>> +		};
+>>>
+>>> Hmm, these two seem to be unrelated. Rebase error? :)
+>>
+>> Not a rebase error. pwm0_out needs to configured to get display on LCD.
+> 
+> Please split this into two separate patches than, one adding LCD pin 
+> configuration nodes and one adding PWM pin configuration nodes.
+> 
+> Also I think it would be better to just define all available PWM outputs 
+> not only first two. if you are already at adding PWM pin configurations.
+> 
 
-This patch adds the mixer clocks to the mixer node in the dts file.
+Sure.
 
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |    2 ++
- 1 file changed, 2 insertions(+)
+> Thanks,
+> Tomasz
+> 
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 0673524..9d9496a 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -614,6 +614,8 @@
- 		compatible = "samsung,exynos5-mixer";
- 		reg = <0x14450000 0x10000>;
- 		interrupts = <0 94 0>;
-+		clocks = <&clock 343>, <&clock 136>;
-+		clock-names = "mixer", "sclk_hdmi";
- 	};
- 
- 	dp-controller {
+Thanks.
+
 -- 
-1.7.10.4
+Tushar Behera
