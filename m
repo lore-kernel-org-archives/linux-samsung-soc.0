@@ -1,123 +1,175 @@
 From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [PATCH v7 04/11] clk: samsung: Migrate exynos4 to use common
+Subject: [PATCH v7 05/11] clk: samsung: Migrate exynos5420 to use common
  samsung_clk_register_pll()
-Date: Tue, 11 Jun 2013 15:01:09 +0530
-Message-ID: <1370943076-13461-5-git-send-email-yadi.brar@samsung.com>
+Date: Tue, 11 Jun 2013 15:01:10 +0530
+Message-ID: <1370943076-13461-6-git-send-email-yadi.brar@samsung.com>
 References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34153 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756231Ab3FTJjg (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:38210 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756231Ab3FTJjj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 05:39:36 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 20 Jun 2013 05:39:39 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOO00HFMQSWTRO0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 18:39:35 +0900 (KST)
+ with ESMTP id <0MOO001UIQSQZBG0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 18:39:38 +0900 (KST)
 In-reply-to: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, dianders@chromium.org, t.figa@samsung.com, vikas.sajjan@linaro.org, abrestic@chromium.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-This patch migrates exynos4 pll registeration to use common
-samsung_clk_register_pll() by intialising table of PLLs.
+This patch migrates exynos5420 pll registeration to use common
+samsung_clk_register_pll() by intialising table of PLLs and adding PLLs to
+unique id list of clocks.
 
 Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
 Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos4.c |   40 ++++++++++++++++++++++++-------------
- 1 files changed, 26 insertions(+), 14 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c |   86 +++++++++++++++++++++++-----------
+ 1 files changed, 58 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 50af410..f2c2156 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -17,7 +17,6 @@
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 68a96cb..3ea6b4f 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -17,13 +17,30 @@
  #include <linux/of_address.h>
  
  #include "clk.h"
 -#include "clk-pll.h"
  
- /* Exynos4 clock controller register offsets */
- #define SRC_LEFTBUS		0x4200
-@@ -97,12 +96,14 @@
- #define GATE_IP_PERIL		0xc950
- #define E4210_GATE_IP_PERIR	0xc960
- #define GATE_BLOCK		0xc970
-+#define E4X12_MPLL_LOCK		0x10008
- #define E4X12_MPLL_CON0		0x10108
- #define SRC_DMC			0x10200
- #define SRC_MASK_DMC		0x10300
- #define DIV_DMC0		0x10500
- #define DIV_DMC1		0x10504
- #define GATE_IP_DMC		0x10900
-+#define APLL_LOCK		0x14000
- #define APLL_CON0		0x14100
- #define E4210_MPLL_CON0		0x14108
- #define SRC_CPU			0x14200
-@@ -121,6 +122,12 @@ enum exynos4_soc {
- 	EXYNOS4X12,
- };
++#define APLL_LOCK		0x0
++#define APLL_CON0		0x100
+ #define SRC_CPU			0x200
+ #define DIV_CPU0		0x500
+ #define DIV_CPU1		0x504
+ #define GATE_BUS_CPU		0x700
+ #define GATE_SCLK_CPU		0x800
++#define CPLL_LOCK		0x10020
++#define DPLL_LOCK		0x10030
++#define EPLL_LOCK		0x10040
++#define RPLL_LOCK		0x10050
++#define IPLL_LOCK		0x10060
++#define SPLL_LOCK		0x10070
++#define VPLL_LOCK		0x10070
++#define MPLL_LOCK		0x10090
++#define CPLL_CON0		0x10120
++#define DPLL_CON0		0x10128
++#define EPLL_CON0		0x10130
++#define RPLL_CON0		0x10140
++#define IPLL_CON0		0x10150
++#define SPLL_CON0		0x10160
++#define VPLL_CON0		0x10170
++#define MPLL_CON0		0x10180
+ #define SRC_TOP0		0x10200
+ #define SRC_TOP1		0x10204
+ #define SRC_TOP2		0x10208
+@@ -75,15 +92,27 @@
+ #define GATE_TOP_SCLK_MAU	0x1083c
+ #define GATE_TOP_SCLK_FSYS	0x10840
+ #define GATE_TOP_SCLK_PERIC	0x10850
++#define BPLL_LOCK		0x20010
++#define BPLL_CON0		0x20110
+ #define SRC_CDREX		0x20200
++#define KPLL_LOCK		0x28000
++#define KPLL_CON0		0x28100
+ #define SRC_KFC			0x28200
+ #define DIV_KFC0		0x28500
  
-+/* list of PLLs to be registered */
-+enum exynos4_plls {
-+	apll, mpll, epll, vpll,
++/* list of PLLs */
++enum exynos5420_plls {
++	apll, cpll, dpll, epll, rpll, ipll, spll, vpll, mpll,
++	bpll, kpll,
 +	nr_plls			/* number of PLLs */
 +};
 +
- /*
-  * Let each supported clock get a unique id. This id is used to lookup the clock
-  * for device tree based platforms. The clocks are categorized into three
-@@ -990,6 +997,17 @@ static __initdata struct of_device_id ext_clk_match[] = {
- 	{},
+ enum exynos5420_clks {
+ 	none,
+ 
+ 	/* core clocks */
+-	fin_pll,
++	fin_pll,  fout_apll, fout_cpll, fout_dpll, fout_epll, fout_rpll,
++	fout_ipll, fout_spll, fout_vpll, fout_mpll, fout_bpll, fout_kpll,
+ 
+ 	/* gate for special clocks (sclk) */
+ 	sclk_uart0 = 128, sclk_uart1, sclk_uart2, sclk_uart3, sclk_mmc0,
+@@ -698,6 +727,31 @@ struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+ 	GATE(smmu_mscl2, "smmu_mscl2", "aclk400_mscl", GATE_IP_MSCL, 10, 0, 0),
  };
  
-+struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
-+	[apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
-+		APLL_CON0, "fout_apll"),
-+	[mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll",
-+		E4X12_MPLL_LOCK, E4X12_MPLL_CON0, "fout_mpll"),
-+	[epll] = PLL_A(pll_36xx, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
-+		EPLL_CON0, "fout_epll"),
-+	[vpll] = PLL_A(pll_36xx, fout_vpll, "fout_vpll", "fin_pll", VPLL_LOCK,
-+		VPLL_CON0, "fout_vpll"),
++struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
++	[apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
++		APLL_CON0),
++	[cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
++		MPLL_CON0),
++	[dpll] = PLL(pll_2550, fout_dpll, "fout_dpll", "fin_pll", DPLL_LOCK,
++		DPLL_CON0),
++	[epll] = PLL(pll_2650, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
++		EPLL_CON0),
++	[rpll] = PLL(pll_2650, fout_rpll, "fout_rpll", "fin_pll", RPLL_LOCK,
++		RPLL_CON0),
++	[ipll] = PLL(pll_2550, fout_ipll, "fout_ipll", "fin_pll", IPLL_LOCK,
++		IPLL_CON0),
++	[spll] = PLL(pll_2550, fout_spll, "fout_spll", "fin_pll", SPLL_LOCK,
++		SPLL_CON0),
++	[vpll] = PLL(pll_2550, fout_vpll, "fout_vpll", "fin_pll", VPLL_LOCK,
++		VPLL_CON0),
++	[mpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
++		MPLL_CON0),
++	[bpll] = PLL(pll_2550, fout_bpll, "fout_bpll", "fin_pll", BPLL_LOCK,
++		BPLL_CON0),
++	[kpll] = PLL(pll_2550, fout_kpll, "fout_kpll", "fin_pll", KPLL_LOCK,
++		KPLL_CON0),
 +};
 +
- /* register exynos4 clocks */
- void __init exynos4_clk_init(struct device_node *np, enum exynos4_soc exynos4_soc, void __iomem *reg_base, unsigned long xom)
+ static __initdata struct of_device_id ext_clk_match[] = {
+ 	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
+ 	{ },
+@@ -707,8 +761,6 @@ static __initdata struct of_device_id ext_clk_match[] = {
+ void __init exynos5420_clk_init(struct device_node *np)
  {
-@@ -1026,22 +1044,16 @@ void __init exynos4_clk_init(struct device_node *np, enum exynos4_soc exynos4_so
- 					reg_base + EPLL_CON0, pll_4600);
- 		vpll = samsung_clk_register_pll46xx("fout_vpll", "mout_vpllsrc",
- 					reg_base + VPLL_CON0, pll_4650c);
-+
-+		samsung_clk_add_lookup(apll, fout_apll);
-+		samsung_clk_add_lookup(mpll, fout_mpll);
-+		samsung_clk_add_lookup(epll, fout_epll);
-+		samsung_clk_add_lookup(vpll, fout_vpll);
- 	} else {
--		apll = samsung_clk_register_pll35xx("fout_apll", "fin_pll",
--					reg_base + APLL_CON0);
--		mpll = samsung_clk_register_pll35xx("fout_mpll", "fin_pll",
--					reg_base + E4X12_MPLL_CON0);
--		epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
--					reg_base + EPLL_CON0);
--		vpll = samsung_clk_register_pll36xx("fout_vpll", "fin_pll",
--					reg_base + VPLL_CON0);
-+		samsung_clk_register_pll(exynos4_plls,
-+					ARRAY_SIZE(exynos4_plls), reg_base);
- 	}
+ 	void __iomem *reg_base;
+-	struct clk *apll, *bpll, *cpll, *dpll, *epll, *ipll, *kpll, *mpll;
+-	struct clk *rpll, *spll, *vpll;
  
--	samsung_clk_add_lookup(apll, fout_apll);
--	samsung_clk_add_lookup(mpll, fout_mpll);
--	samsung_clk_add_lookup(epll, fout_epll);
--	samsung_clk_add_lookup(vpll, fout_vpll);
+ 	if (np) {
+ 		reg_base = of_iomap(np, 0);
+@@ -724,30 +776,8 @@ void __init exynos5420_clk_init(struct device_node *np)
+ 	samsung_clk_of_register_fixed_ext(exynos5420_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5420_fixed_rate_ext_clks),
+ 			ext_clk_match);
 -
- 	samsung_clk_register_fixed_rate(exynos4_fixed_rate_clks,
- 			ARRAY_SIZE(exynos4_fixed_rate_clks));
- 	samsung_clk_register_mux(exynos4_mux_clks,
+-	apll = samsung_clk_register_pll35xx("fout_apll", "fin_pll",
+-			reg_base + 0x100);
+-	bpll = samsung_clk_register_pll35xx("fout_bpll", "fin_pll",
+-			reg_base + 0x20110);
+-	cpll = samsung_clk_register_pll35xx("fout_cpll", "fin_pll",
+-			reg_base + 0x10120);
+-	dpll = samsung_clk_register_pll35xx("fout_dpll", "fin_pll",
+-			reg_base + 0x10128);
+-	epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
+-			reg_base + 0x10130);
+-	ipll = samsung_clk_register_pll35xx("fout_ipll", "fin_pll",
+-			reg_base + 0x10150);
+-	kpll = samsung_clk_register_pll35xx("fout_kpll", "fin_pll",
+-			reg_base + 0x28100);
+-	mpll = samsung_clk_register_pll35xx("fout_mpll", "fin_pll",
+-			reg_base + 0x10180);
+-	rpll = samsung_clk_register_pll36xx("fout_rpll", "fin_pll",
+-			reg_base + 0x10140);
+-	spll = samsung_clk_register_pll35xx("fout_spll", "fin_pll",
+-			reg_base + 0x10160);
+-	vpll = samsung_clk_register_pll35xx("fout_vpll", "fin_pll",
+-			reg_base + 0x10170);
+-
++	samsung_clk_register_pll(exynos5420_plls, ARRAY_SIZE(exynos5420_plls),
++					reg_base);
+ 	samsung_clk_register_fixed_rate(exynos5420_fixed_rate_clks,
+ 			ARRAY_SIZE(exynos5420_fixed_rate_clks));
+ 	samsung_clk_register_fixed_factor(exynos5420_fixed_factor_clks,
 -- 
 1.7.0.4
