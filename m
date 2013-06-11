@@ -1,105 +1,110 @@
 From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and PLL36xx
- for samsung SoCs
-Date: Tue, 11 Jun 2013 15:01:05 +0530
-Message-ID: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
+Subject: [PATCH v7 01/11] clk: samsung: Introduce a common samsung_clk_pll
+ struct
+Date: Tue, 11 Jun 2013 15:01:06 +0530
+Message-ID: <1370943076-13461-2-git-send-email-yadi.brar@samsung.com>
+References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38165 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756231Ab3FTJjY (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:53264 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756231Ab3FTJj3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 05:39:24 -0400
+	Thu, 20 Jun 2013 05:39:29 -0400
 Received: from epcpsbgr5.samsung.com
  (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOO006K0QSQ2TC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 18:39:22 +0900 (KST)
+ with ESMTP id <0MOO00CMKQTS9JY0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 18:39:28 +0900 (KST)
+In-reply-to: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, dianders@chromium.org, t.figa@samsung.com, vikas.sajjan@linaro.org, abrestic@chromium.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-This patch series does the following:
+This patch unifies clk strutures used for PLL35xx & PLL36xx and
+adding an extra member lock_reg, so that common code can be factored out.
 
- 1) Unifies the clk strutures  and registration function used for PLL35xx &
-    PLL36xx, to factor out possible common code.
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+---
+ drivers/clk/samsung/clk-pll.c |   30 ++++++++++++------------------
+ 1 files changed, 12 insertions(+), 18 deletions(-)
 
- 2) Defines a common rate_table which will contain recommended p, m, s and k
-    values for supported rates that needs to be changed for changing
-    corresponding PLL's rate
-
- 3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
-
-changes since v6:
-	- Splited the patch adding samsung_clk_register_pll() into definition
-	addition, SoC specific migration and cleanup patches.
-	- Addressed some NIT comments.
-
-changes since v5:
-	- Corrected to use rate table as specified in UM for exynos5250 epll.
-	- Took care of exynos5420 as well, as new exynos5420 clk driver came in
-	while rebasing on latest Kgene's for-next.
-
-	Since we spilted 1st patch into 2 different patches,
-	can we expect "reviewed-by" again for the same? 
-
-changes since v4:
-	- Defined common samsung samsung_clk_register_pll() to register a list
-	of PLL and used a struct samsung_pll_clock for passing intialisation
-	data instead of passing as arguments. Now passing LOCK as well as CON0
-	offset as intialisation data.
-	- Calculated length of rate table while registering PLL instead of
-	getting it as intialisation data.
-
-changes since v3:
-	- Used __clk_lookup() instead of adding alias for mout_vpllsrc
-	- Added check for changing only M value in samsung_pll36xx_set_rate()
-	- Modified samsung_pll35xx_mp_change() & samsung_pll35xx_set_rate()
-	to improve readabilty.
-	- Made the input rate_table as __init_data which is to be provided while
-	registering PLL and made a copy of that table while registering, so
-	that if multiple tables are their, they can be freed after getting the
-	P, M, S, K setting values from required one.
-
-changes since v2:
-	- Added new patch to reorder the MUX registration for mout_vpllsrc MUX
-	before the PLL registrations. And to add the alias for the mout_vpllsrc MUX.
-        - Added a check to confirm parent rate while registrating the PLL
-	rate tables.
-
-changes since v1:
-	- removed sorting and bsearch
-	- modified the definition of struct "samsung_pll_rate_table"
-	- added generic round_rate()
-	- rectified the ops assignment for "rate table passed as NULL
-
-Is rebased on branch kgene's "for-next"
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
-
-Vikas Sajjan (3):
-  clk: samsung: Add set_rate() clk_ops for PLL36xx
-  clk: samsung: Reorder MUX registration for mout_vpllsrc
-  clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
-
-Yadwinder Singh Brar (8):
-  clk: samsung: Introduce a common samsung_clk_pll struct
-  clk: samsung: Define a common samsung_clk_register_pll()
-  clk: samsung: Migrate exynos5250 to use common
-    samsung_clk_register_pll()
-  clk: samsung: Migrate exynos4 to use common
-    samsung_clk_register_pll()
-  clk: samsung: Migrate exynos5420 to use common
-    samsung_clk_register_pll()
-  clk: samsung: Remove unused pll registeration code for pll35xx and
-    pll36xx
-  clk: samsung: Add support to register rate_table for samsung plls
-  clk: samsung: Add set_rate() clk_ops for PLL35xx
-
- drivers/clk/samsung/clk-exynos4.c    |   40 +++--
- drivers/clk/samsung/clk-exynos5250.c |  101 +++++++++--
- drivers/clk/samsung/clk-exynos5420.c |   86 ++++++---
- drivers/clk/samsung/clk-pll.c        |  339 ++++++++++++++++++++++++++--------
- drivers/clk/samsung/clk-pll.h        |   38 ++++-
- drivers/clk/samsung/clk.h            |   53 ++++++
- 6 files changed, 519 insertions(+), 138 deletions(-)
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 89135f6..8224bde 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -13,6 +13,14 @@
+ #include "clk.h"
+ #include "clk-pll.h"
+ 
++struct samsung_clk_pll {
++	struct clk_hw		hw;
++	void __iomem		*lock_reg;
++	void __iomem		*con_reg;
++};
++
++#define to_clk_pll(_hw) container_of(_hw, struct samsung_clk_pll, hw)
++
+ /*
+  * PLL35xx Clock Type
+  */
+@@ -24,17 +32,10 @@
+ #define PLL35XX_PDIV_SHIFT      (8)
+ #define PLL35XX_SDIV_SHIFT      (0)
+ 
+-struct samsung_clk_pll35xx {
+-	struct clk_hw		hw;
+-	const void __iomem	*con_reg;
+-};
+-
+-#define to_clk_pll35xx(_hw) container_of(_hw, struct samsung_clk_pll35xx, hw)
+-
+ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+ {
+-	struct samsung_clk_pll35xx *pll = to_clk_pll35xx(hw);
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
+ 	u32 mdiv, pdiv, sdiv, pll_con;
+ 	u64 fvco = parent_rate;
+ 
+@@ -56,7 +57,7 @@ static const struct clk_ops samsung_pll35xx_clk_ops = {
+ struct clk * __init samsung_clk_register_pll35xx(const char *name,
+ 			const char *pname, const void __iomem *con_reg)
+ {
+-	struct samsung_clk_pll35xx *pll;
++	struct samsung_clk_pll *pll;
+ 	struct clk *clk;
+ 	struct clk_init_data init;
+ 
+@@ -100,17 +101,10 @@ struct clk * __init samsung_clk_register_pll35xx(const char *name,
+ #define PLL36XX_PDIV_SHIFT	(8)
+ #define PLL36XX_SDIV_SHIFT	(0)
+ 
+-struct samsung_clk_pll36xx {
+-	struct clk_hw		hw;
+-	const void __iomem	*con_reg;
+-};
+-
+-#define to_clk_pll36xx(_hw) container_of(_hw, struct samsung_clk_pll36xx, hw)
+-
+ static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+ {
+-	struct samsung_clk_pll36xx *pll = to_clk_pll36xx(hw);
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
+ 	u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
+ 	u64 fvco = parent_rate;
+ 
+@@ -135,7 +129,7 @@ static const struct clk_ops samsung_pll36xx_clk_ops = {
+ struct clk * __init samsung_clk_register_pll36xx(const char *name,
+ 			const char *pname, const void __iomem *con_reg)
+ {
+-	struct samsung_clk_pll36xx *pll;
++	struct samsung_clk_pll *pll;
+ 	struct clk *clk;
+ 	struct clk_init_data init;
+ 
+-- 
+1.7.0.4
