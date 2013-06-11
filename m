@@ -1,101 +1,86 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: RE: [PATCH] clk: samsung: Fix pll36xx_recalc_rate to handle kdiv properly
-Date: Mon, 10 Jun 2013 15:16:05 -0700
-Message-ID: <20130610221605.8816.20262@quantum>
-References: <1370026725-22910-1-git-send-email-dianders@chromium.org>
- <08e301ce61e3$045828c0$0d087a40$%kim@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/3] clk: exynos4: Staticize local symbols
+Date: Tue, 11 Jun 2013 09:46:56 +0530
+Message-ID: <CAK9yfHzMFfpLbHj0HwayPGSHWYfa5QSG-SADCvhoXJoiUE=JYQ@mail.gmail.com>
+References: <1366106719-26342-1-git-send-email-sachin.kamat@linaro.org>
+	<08f401ce61e6$2ecc33f0$8c649bd0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:65315 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751124Ab3FJWQJ convert rfc822-to-8bit (ORCPT
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:40441 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750950Ab3FKEQ6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Jun 2013 18:16:09 -0400
-Received: by mail-pd0-f170.google.com with SMTP id x11so2143550pdj.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 15:16:09 -0700 (PDT)
-In-Reply-To: <08e301ce61e3$045828c0$0d087a40$%kim@samsung.com>
+	Tue, 11 Jun 2013 00:16:58 -0400
+Received: by mail-oa0-f42.google.com with SMTP id n12so1761238oag.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2013 21:16:57 -0700 (PDT)
+In-Reply-To: <08f401ce61e6$2ecc33f0$8c649bd0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Doug Anderson' <dianders@chromium.org>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Vikas Sajjan' <vikas.sajjan@linaro.org>, 'Yadwinder Singh Brar' <yadi.brar01@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <t.figa@samsung.com>, linux-kernel@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Quoting Kukjin Kim (2013-06-05 04:51:29)
-> Doug Anderson wrote:
-> > 
-> > The KDIV value is often listed as unsigned but it needs to be treated
-> > as a 16-bit signed value when using it in calculations.  Fix our rate
-> > recalculation to do this correctly.
-> > 
-> > Before doing this, I tried setting EPLL on exynos5250 to:
-> >   rate, m, p, s, k = 80000000, 107, 2, 4, 43691
-> > 
-> > This rate is exactly from the table in the exynos5250 user manual.
-> > 
-> > I read this back as 80750003 with:
-> >   cat /sys/kernel/debug/clk/fin_pll/fout_epll/clk_rate
-> > 
-> > After this patch, it reads back as 80000003
-> > 
-> >   mw 0x10020130 a06b0204
-> >   mw 0x10020134 0000aaab
-> > 
-> > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> 
-> Yeah,
-> 
+On 5 June 2013 17:44, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Sachin Kamat wrote:
+>>
+>> These symbols are used only in this file and hence should be
+>> static.
+>>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> ---
+>>  drivers/clk/samsung/clk-exynos4.c |   26 ++++++++++++++------------
+>>  1 file changed, 14 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-
+>> exynos4.c
+>> index 7104669..26f2a85 100644
+>> --- a/drivers/clk/samsung/clk-exynos4.c
+>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>> @@ -339,24 +339,26 @@ PNAME(mout_user_aclk200_p4x12) = {"fin_pll",
+>> "div_aclk200", };
+>>  PNAME(mout_user_aclk266_gps_p4x12) = {"fin_pll", "div_aclk266_gps", };
+>>
+>>  /* fixed rate clocks generated outside the soc */
+>> -struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata
+>> = {
+>> +static struct
+>> +samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
+>
+> Any reason to use double lines?
+
+This is one of the ways to avoid exceeding 80 column limit.
+
+>
+>>       FRATE(xxti, "xxti", NULL, CLK_IS_ROOT, 0),
+>>       FRATE(xusbxti, "xusbxti", NULL, CLK_IS_ROOT, 0),
+>>  };
+>
+> [...]
+>
+>> -struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata =
+>> {
+>> +static struct
+>> +samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata = {
+>
+> Same as above.
+>
+>>       FRATE(none, "sclk_usbphy1", NULL, CLK_IS_ROOT, 48000000),
+>>  };
+>>
+> [...]
+>
+> Others look good to me,
 > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> Mike, please apply in your fixes.
-> 
-> Thanks.
-> 
-> - Kukjin
-> 
-> > ---
-> > This patch is based upon another in-flight patch to avoid conflicts:
-> >   clk: samsung: Use clk->base instead of directly using clk->con0 for
-> > PLL3xxx
-> >   https://patchwork.kernel.org/patch/2629751/
+>
+> Mike, please pick this into the clk tree if you're ok.
+>
 
-The dependency series is not destined for clk-fixes but Kukjin has
-requested this patch as a fix.  If you want this patch as a fix can you
-rebase it against:
+Mike,
+If you are taking this through your tree, please also take the below
+patch [1] as it is dependent on this series.
+[1] https://patchwork.kernel.org/patch/2469891/
 
-git://git.linaro.org/people/mturquette/linux.git clk-fixes
 
-Thanks,
-Mike
-
-> > 
-> >  drivers/clk/samsung/clk-pll.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> > index 01f17cf..26416bb 100644
-> > --- a/drivers/clk/samsung/clk-pll.c
-> > +++ b/drivers/clk/samsung/clk-pll.c
-> > @@ -115,7 +115,8 @@ static unsigned long
-> > samsung_pll36xx_recalc_rate(struct clk_hw *hw,
-> >                               unsigned long parent_rate)
-> >  {
-> >       struct samsung_clk_pll *pll = to_clk_pll(hw);
-> > -     u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
-> > +     u32 mdiv, pdiv, sdiv, pll_con0, pll_con1;
-> > +     s16 kdiv;
-> >       u64 fvco = parent_rate;
-> > 
-> >       pll_con0 = pll_readl(pll, PLL36XX_CON0_OFFSET);
-> > @@ -123,7 +124,7 @@ static unsigned long
-> > samsung_pll36xx_recalc_rate(struct clk_hw *hw,
-> >       mdiv = (pll_con0 >> PLL36XX_MDIV_SHIFT) & PLL36XX_MDIV_MASK;
-> >       pdiv = (pll_con0 >> PLL36XX_PDIV_SHIFT) & PLL36XX_PDIV_MASK;
-> >       sdiv = (pll_con0 >> PLL36XX_SDIV_SHIFT) & PLL36XX_SDIV_MASK;
-> > -     kdiv = pll_con1 & PLL36XX_KDIV_MASK;
-> > +     kdiv = (s16)(pll_con1 & PLL36XX_KDIV_MASK);
-> > 
-> >       fvco *= (mdiv << 16) + kdiv;
-> >       do_div(fvco, (pdiv << sdiv));
-> > --
-> > 1.8.2.1
+-- 
+With warm regards,
+Sachin
