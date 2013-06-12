@@ -1,61 +1,49 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V3 1/3] Add PCIe driver for Samsung Exynos
-Date: Wed, 12 Jun 2013 16:57:26 +0200
-Message-ID: <201306121657.26441.arnd@arndb.de>
-References: <000d01ce6360$9504e7e0$bf0eb7a0$@samsung.com> <36071399.7aY6jgGn2d@wuerfel> <002401ce6718$d6bbc8f0$84335ad0$@samsung.com>
+Subject: Re: [PATCH 6/6] ARM: dts: Add pcie controller node for Samsung EXYNOS5440 SoC
+Date: Wed, 12 Jun 2013 17:10:58 +0200
+Message-ID: <201306121710.58601.arnd@arndb.de>
+References: <00c001ce277b$92b26ab0$b8174010$%han@samsung.com> <201306101722.10146.arnd@arndb.de> <002e01ce6668$f785dc20$e6919460$@samsung.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <002401ce6718$d6bbc8f0$84335ad0$@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: devicetree-discuss@lists.ozlabs.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, linux-pci@vger.kernel.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.186]:49579 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753310Ab3FLPLK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Jun 2013 11:11:10 -0400
+In-Reply-To: <002e01ce6668$f785dc20$e6919460$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-arm-kernel@lists.infradead.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>
 
-On Wednesday 12 June 2013, Jingoo Han wrote:
-> On Friday, June 07, 2013 7:53 PM, Arnd Bergmann wrote:
-> > On Friday 07 June 2013 18:22:50 Jingoo Han wrote:
+On Tuesday 11 June 2013, Jingoo Han wrote:
+> > > +           ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00200000   /* configuration space */
+> > > +                     0x81000000 0 0          0x40200000 0 0x00004000   /* downstream I/O */
+> > > +                     0x82000000 0 0          0x40204000 0 0x10000000>; /* non-prefetchable memory */
+> > > +   };
 > > 
-> > > +- ranges: ranges for the PCI memory and I/O regions
-> > > +- reset-gpio: gpio pin number of power good signal
-> > 
-> > The 'reset-gpio' property seems incorrect. I think this should either
-> > use the gpio binding or the reset-controller binding. Specifying
-> > bare numbers to use as gpio pins does not work, since the number
-> > space for Linux internal gpio numbers is not necessarily the same
-> > as used by the hardware.
+> ...
+> > Also, shouldn't your memory space end on a 256MB boundary, rather than
+> > extend up to 0x50203fff?
 > 
-> As you mentioned, other Exynos SoCs such as Exynos5250 set
-> GPIO properties in DT, as below:
-> (./arch/arm/boot/dts/exynos5250-smdk5250.dts)
-> 	hdmi {
-> 		hpd-gpio = <&gpx3 7 0>;
-> 	};
-> 	usb@12110000 {
-> 		samsung,vbus-gpio = <&gpx2 6 0>;
-> 	};
+> According to the manual of Exynos PCIe, each memory space for Exynos PCIe
+> can support 512MB, including I/O, CFG regions.
 > 
-> However, the situation of Exynos5440 GPIO is different.
-> The following bare numbers of GPIO work properly on Exynos5440.
-> (./arch/arm/boot/dts/exynos5440-ssdk5440.dts)
-> 	pcie0@40000000 {
-> 		reset-gpio = <5>;
-> 	}
-> 	pcie0@40000000 {
-> 		reset-gpio = <22>;
-> 	}
-> 
-> Thomas Abraham is the author of pinctrl driver for EXYNOS5440.
-> (./drivers/pinctrl/pinctrl-exynos5440.c)
-> 
-> Thomas Abraham or Kukjin Kim, can you confirm this?
-> If I am wrong, please let me know kindly. :)
+> Is there any problem when over 256MB boundary is used?
+> Please let me know. :)
 
-This is not about the code working at the moment, it is about
-it being correct. The current method you are using would stop
-working if something changes in the pinctrl code, and would
-not be portable to other SoCs.
+No, that's not a problem, but I think you should have the window span
+the entire space that is provided in hardware. If there are 512 MB total, why
+not use them?
+
+You could use 
+
+	ranges = <0x82000000 0 0          0x40204000 0 0x1fdfc000>;
+
+to pass a range for the memory space that extends all the way until
+0x5fffffff.
 
 	Arnd
