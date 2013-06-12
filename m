@@ -1,64 +1,93 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH RESEND V2] ARM: dts: Correct the base address of pinctrl_3 on
- Exynos5250
-Date: Wed, 12 Jun 2013 13:53:44 +0530
-Message-ID: <1371025425-480-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:23425 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754094Ab3FLIUD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 04:20:03 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MO900IF7TTD6T10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Jun 2013 17:20:01 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH RESEND V2] ARM: dts: wm8994: Add wm8994 regulator support on
+ smdk5250.
+Date: Wed, 12 Jun 2013 13:53:45 +0530
+Message-ID: <1371025425-480-2-git-send-email-padma.v@samsung.com>
+References: <1371025425-480-1-git-send-email-padma.v@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <1371025425-480-1-git-send-email-padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
 
-This patch corrects the base address of pinctrl_3 on Exynos5250
-platform.
+This patch adds the required regulator supplies and properties
+for wm8994 codec on smdk5250 board.
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
+
 Changes since V1:
-	- Added platform name in the subject line.
+	- Clubbed the same supply regulators as suggested by Mark.
 
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    2 +-
- arch/arm/boot/dts/exynos5250.dtsi         |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   37 +++++++++++++++++++++++++++-
+ 1 files changed, 35 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index d1650fb..ded558b 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -763,7 +763,7 @@
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index f2a025e..dc2ec25 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -37,6 +37,30 @@
  		};
  	};
  
--	pinctrl@03680000 {
-+	pinctrl@03860000 {
- 		gpz: gpz {
- 			gpio-controller;
- 			#gpio-cells = <2>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 7154e3d..e9bfd13 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -169,9 +169,9 @@
- 		interrupts = <0 50 0>;
- 	};
++	vdd:fixed-regulator@0 {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd-supply";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
++	dbvdd:fixed-regulator@1 {
++		compatible = "regulator-fixed";
++		regulator-name = "dbvdd-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++	};
++
++	spkvdd:fixed-regulator@2 {
++		compatible = "regulator-fixed";
++		regulator-name = "spkvdd-supply";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
+ 	i2c@12C70000 {
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <20000>;
+@@ -47,8 +71,17 @@
+ 		};
  
--	pinctrl_3: pinctrl@03680000 {
-+	pinctrl_3: pinctrl@03860000 {
- 		compatible = "samsung,exynos5250-pinctrl";
--		reg = <0x0368000 0x1000>;
-+		reg = <0x03860000 0x1000>;
- 		interrupts = <0 47 0>;
+ 		wm8994: wm8994@1a {
+-			 compatible = "wlf,wm8994";
+-			 reg = <0x1a>;
++			compatible = "wlf,wm8994";
++			reg = <0x1a>;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			AVDD2-supply = <&vdd>;
++			CPVDD-supply = <&vdd>;
++			DBVDD-supply = <&dbvdd>;
++			SPKVDD1-supply = <&spkvdd>;
++			SPKVDD2-supply = <&spkvdd>;
+ 		};
  	};
  
 -- 
