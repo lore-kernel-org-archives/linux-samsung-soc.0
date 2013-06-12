@@ -1,131 +1,65 @@
-From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [PATCH v4 6/6] clk: samsung: Add EPLL and VPLL freq table for
- exynos5250 SoC
-Date: Mon, 03 Jun 2013 20:39:56 +0530
-Message-ID: <1370272196-4346-7-git-send-email-yadi.brar@samsung.com>
-References: <1370272196-4346-1-git-send-email-yadi.brar@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH V6 6/6] clk: exynos5250: Add enum entries for divider clock of
+ i2s1 and i2s2
+Date: Wed, 12 Jun 2013 09:45:53 -0700
+Message-ID: <20130612164553.26381.41398@quantum>
+References: <1371024463-303-1-git-send-email-padma.v@samsung.com>
+ <1371024463-303-7-git-send-email-padma.v@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:58163 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751720Ab3FLPXD (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:53829 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751560Ab3FLQp6 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 11:23:03 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOA009NXDEEMT00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 00:23:02 +0900 (KST)
-In-reply-to: <1370272196-4346-1-git-send-email-yadi.brar@samsung.com>
+	Wed, 12 Jun 2013 12:45:58 -0400
+Received: by mail-pa0-f44.google.com with SMTP id lj1so3820448pab.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 09:45:57 -0700 (PDT)
+In-Reply-To: <1371024463-303-7-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, mturquette@linaro.org, thomas.abraham@linaro.org, dianders@chromium.org, t.figa@samsung.com, vikas.sajjan@linaro.org, patches@linaro.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.orgpadma.v@samsung.com, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
 
-Adds the EPLL and VPLL freq table for exynos5250 SoC.
+Quoting Padmavathi Venna (2013-06-12 01:07:43)
+> This patch adds enum entries for div_i2s1 and div_i2s2 which are
+> required for i2s1 and i2s2 controllers.
+> 
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
----
- drivers/clk/samsung/clk-exynos5250.c |   53 ++++++++++++++++++++++++++++++++--
- drivers/clk/samsung/clk.h            |    2 +
- 2 files changed, 52 insertions(+), 3 deletions(-)
+Looks good.  Did you want me to take the clk patches or just gathering
+Acks?
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 70cc6cf..f98c19d 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -472,11 +472,34 @@ static __initdata struct of_device_id ext_clk_match[] = {
- 	{ },
- };
- 
-+static __initdata struct samsung_pll_rate_table vpll_24mhz_tbl[] = {
-+	/* sorted in descending order */
-+	/* PLL_36XX_RATE(rate, m, p, s, k) */
-+	PLL_36XX_RATE(266000000, 266, 3, 3, 0),
-+	/* Not in UM, but need for eDP on snow */
-+	PLL_36XX_RATE(70500000, 94, 2, 4, 0),
-+};
-+
-+static __initdata struct samsung_pll_rate_table epll_24mhz_tbl[] = {
-+	/* sorted in descending order */
-+	/* PLL_36XX_RATE(rate, m, p, s, k) */
-+	PLL_36XX_RATE(192000000, 48, 3, 1, 0),
-+	PLL_36XX_RATE(180633600, 45, 3, 1, 10381),
-+	PLL_36XX_RATE(180000000, 45, 3, 1, 0),
-+	PLL_36XX_RATE(73728000, 73, 3, 3, 47710),
-+	PLL_36XX_RATE(67737600, 90, 4, 3, 20762),
-+	PLL_36XX_RATE(49152000, 49, 3, 3, 9962),
-+	PLL_36XX_RATE(45158400, 45, 3, 3, 10381),
-+	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-+};
-+
- /* register exynox5250 clocks */
- void __init exynos5250_clk_init(struct device_node *np)
- {
- 	void __iomem *reg_base;
- 	struct clk *apll, *mpll, *epll, *vpll, *bpll, *gpll, *cpll;
-+	struct clk *vpllsrc;
-+	unsigned long fin_pll_rate, mout_vpllsrc_rate = 0;
- 
- 	if (np) {
- 		reg_base = of_iomap(np, 0);
-@@ -496,6 +519,11 @@ void __init exynos5250_clk_init(struct device_node *np)
- 	samsung_clk_register_mux(exynos5250_pll_pmux_clks,
- 			ARRAY_SIZE(exynos5250_pll_pmux_clks));
- 
-+	fin_pll_rate = _get_rate("fin_pll");
-+	vpllsrc = __clk_lookup("mout_vpllsrc");
-+	if (vpllsrc)
-+		mout_vpllsrc_rate = clk_get_rate(vpllsrc);
-+
- 	apll = samsung_clk_register_pll35xx("fout_apll", "fin_pll",
- 			reg_base, NULL, 0);
- 	mpll = samsung_clk_register_pll35xx("fout_mpll", "fin_pll",
-@@ -506,10 +534,29 @@ void __init exynos5250_clk_init(struct device_node *np)
- 			reg_base + 0x10050, NULL, 0);
- 	cpll = samsung_clk_register_pll35xx("fout_cpll", "fin_pll",
- 			reg_base + 0x10020, NULL, 0);
--	epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
--			reg_base + 0x10030, NULL, 0);
--	vpll = samsung_clk_register_pll36xx("fout_vpll", "mout_vpllsrc",
-+
-+	if (fin_pll_rate == (24 * MHZ)) {
-+		epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
-+				reg_base + 0x10030, epll_24mhz_tbl,
-+				ARRAY_SIZE(epll_24mhz_tbl));
-+	} else {
-+		pr_warn("%s: valid epll rate_table missing for\n"
-+			"parent fin_pll:%lu hz\n", __func__, fin_pll_rate);
-+		epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
-+				reg_base + 0x10030, NULL, 0);
-+	}
-+
-+	if (mout_vpllsrc_rate == (24 * MHZ)) {
-+		vpll = samsung_clk_register_pll36xx("fout_vpll", "mout_vpllsrc"
-+			, reg_base + 0x10040, vpll_24mhz_tbl,
-+			ARRAY_SIZE(vpll_24mhz_tbl));
-+	} else {
-+		pr_warn("%s: valid vpll rate_table missing for\n"
-+			"parent mout_vpllsrc_rate:%lu hz\n", __func__,
-+			mout_vpllsrc_rate);
-+		samsung_clk_register_pll36xx("fout_vpll", "mout_vpllsrc",
- 			reg_base + 0x10040, NULL, 0);
-+	}
- 
- 	samsung_clk_register_fixed_rate(exynos5250_fixed_rate_clks,
- 			ARRAY_SIZE(exynos5250_fixed_rate_clks));
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index e4ad6ea..c997649 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -20,6 +20,8 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
-+#define MHZ (1000*1000)
-+
- /**
-  * struct samsung_clock_alias: information about mux clock
-  * @id: platform specific id of the clock.
--- 
-1.7.0.4
+Regards,
+Mike
+
+> ---
+>  drivers/clk/samsung/clk-exynos5250.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index 5c97e75..7c68850 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -87,6 +87,7 @@ enum exynos5250_clks {
+>         sclk_mmc0, sclk_mmc1, sclk_mmc2, sclk_mmc3, sclk_sata, sclk_usb3,
+>         sclk_jpeg, sclk_uart0, sclk_uart1, sclk_uart2, sclk_uart3, sclk_pwm,
+>         sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
+> +       div_i2s1, div_i2s2,
+>  
+>         /* gate clocks */
+>         gscl0 = 256, gscl1, gscl2, gscl3, gscl_wa, gscl_wb, smmu_gscl0,
+> @@ -291,8 +292,8 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+>         DIV(none, "div_pcm1", "sclk_audio1", DIV_PERIC4, 4, 8),
+>         DIV(none, "div_audio2", "mout_audio2", DIV_PERIC4, 16, 4),
+>         DIV(none, "div_pcm2", "sclk_audio2", DIV_PERIC4, 20, 8),
+> -       DIV(none, "div_i2s1", "sclk_audio1", DIV_PERIC5, 0, 6),
+> -       DIV(none, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
+> +       DIV(div_i2s1, "div_i2s1", "sclk_audio1", DIV_PERIC5, 0, 6),
+> +       DIV(div_i2s2, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
+>         DIV(sclk_pixel, "div_hdmi_pixel", "sclk_vpll", DIV_DISP1_0, 28, 4),
+>         DIV_A(none, "armclk", "div_arm", DIV_CPU0, 28, 3, "armclk"),
+>         DIV_F(none, "div_mipi1_pre", "div_mipi1",
+> -- 
+> 1.7.4.4
