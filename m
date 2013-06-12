@@ -1,86 +1,244 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] ARM: dts: add pinctrl support to Exynos5420
-Date: Wed, 12 Jun 2013 14:20:39 -0700
-Message-ID: <CAD=FV=VhmCVzy-ahhhE-5ZF-cvXktchnAuaiRAG8A-KUj+azbw@mail.gmail.com>
-References: <1371048688-9089-1-git-send-email-l.krishna@samsung.com>
-	<1371048688-9089-2-git-send-email-l.krishna@samsung.com>
-	<1531737.EaJZJjF9GR@flatron>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 2/6] clk: samsung: Add support to register rate_table for PLL3xxx
+Date: Wed, 12 Jun 2013 23:25:57 +0200
+Message-ID: <6784068.guqVYM7QvW@flatron>
+References: <1370272196-4346-1-git-send-email-yadi.brar@samsung.com> <1370272196-4346-3-git-send-email-yadi.brar@samsung.com> <CAD=FV=VamHixgMTn=yxH3C0jfsAG3R5Dfr7UquH_+bfNFMqAKw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:42149 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757607Ab3FLVUl (ORCPT
+Received: from mail-ea0-f177.google.com ([209.85.215.177]:49821 "EHLO
+	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756370Ab3FLV0A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 17:20:41 -0400
-Received: by mail-lb0-f170.google.com with SMTP id t13so4126749lbd.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 14:20:39 -0700 (PDT)
-In-Reply-To: <1531737.EaJZJjF9GR@flatron>
+	Wed, 12 Jun 2013 17:26:00 -0400
+Received: by mail-ea0-f177.google.com with SMTP id j14so7195876eak.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 14:25:59 -0700 (PDT)
+In-Reply-To: <CAD=FV=VamHixgMTn=yxH3C0jfsAG3R5Dfr7UquH_+bfNFMqAKw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Simon Glass <sjg@chromium.org>, Thomas P Abraham <thomas.ab@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, s.nawrocki@samsung.com
+To: Doug Anderson <dianders@chromium.org>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, Patch Tracking <patches@linaro.org>
 
-Tomasz,
+Hi Doug,
 
-On Wed, Jun 12, 2013 at 1:58 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> +     pinctrl@13400000 {
->> +             gpy7: gpy7 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->
-> According to patch 2/3, this bank doesn't support interrupts, as it's
-> defined using EINTN macro. Which variant is correct?
+On Wednesday 12 of June 2013 13:43:37 Doug Anderson wrote:
+> Yadwinder,
+> 
+> On Mon, Jun 3, 2013 at 8:09 AM, Yadwinder Singh Brar
+> 
+> <yadi.brar@samsung.com> wrote:
+> > This patch defines a common rate_table which will contain recommended
+> > p, m, s, k values for supported rates that needs to be changed for
+> > changing corresponding PLL's rate.
+> > 
+> > Reviewed-by: Doug Anderson <dianders@chromium.org>
+> > Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> > ---
+> > 
+> >  drivers/clk/samsung/clk-exynos4.c    |    8 +++---
+> >  drivers/clk/samsung/clk-exynos5250.c |   14 ++++++------
+> >  drivers/clk/samsung/clk-pll.c        |   22 +++++++++++++++++++-
+> >  drivers/clk/samsung/clk-pll.h        |   35
+> >  ++++++++++++++++++++++++++++++++- 4 files changed, 64 insertions(+),
+> >  15 deletions(-)
+> 
+> Using something like patman
+> <http://git.denx.de/?p=u-boot.git;a=blob;f=tools/patman/README;hb=refs/h
+> eads/master> would really help here so you could get some version
+> history.  I see it in 0/6 but that's a bit of a pain...
+> 
+> Did you and Tomasz ever come to an agreement about whether the fin
+> freq needs to be specified with the PMSK values?
 
-As far as I know the GPY registers don't support interrupts, so this
-should be removed.  Nice catch!
+No, not really.
 
->> +             sd0_bus1: sd0-bus-width1 {
->> +                     samsung,pins = "gpc0-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd0_bus4: sd0-bus-width4 {
->> +                     samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5",
-> "gpc0-6";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd0_bus8: sd0-bus-width8 {
->> +                     samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2",
-> "gpc3-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->
->
-> It seems like there is some inconsequence here, because sd0_bus4 setting
-> includes pins of sd0_bus1, while sd0_bus8 doesn't include pins of
-> sd0_bus4.
->
-> I think it should be defined either first or second way, not mixed, but I
-> don't have any strong preference over any of them.
->
-> CCing some people to hopefully get some more opinion on this.
+But since
+a) there seems to be no input from hardware guys,
+b) we want to have this series merged,
+c) otherwise this patch looks good
+I think for now we can keep support for single input rate.
 
-Yeah, I brought this up on 5250, but somehow it looks like it landed
-without getting changed.  I agree it should be one way or the other.
+However, I think it would be resonable to recalculate all the output rates 
+from PLL equation at registration stage anyway just to eliminate any typos 
+or other errors in setting table, otherwise you might end up with having 
+different rate set in the PLL and different assumed by the driver.
 
+Best regards,
+Tomasz
 
-Feel free to add my Reviewed-by.  The differences between the code you
-sent up and our ToT are:
-* You properly set the i2c4 drive strength to 0 to match all others.
-* You don't yet have the HDMI hot plug detect IRQ defined.  ...but
-that looks slightly wrong in our tree anyway and can be added later.
-
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-
--Doug
+> > diff --git a/drivers/clk/samsung/clk-exynos4.c
+> > b/drivers/clk/samsung/clk-exynos4.c index ba33bc6..e02a342 100644
+> > --- a/drivers/clk/samsung/clk-exynos4.c
+> > +++ b/drivers/clk/samsung/clk-exynos4.c
+> > @@ -1028,13 +1028,13 @@ void __init exynos4_clk_init(struct
+> > device_node *np, enum exynos4_soc exynos4_so> 
+> >                                         reg_base + VPLL_CON0,
+> >                                         pll_4650c);
+> >         
+> >         } else {
+> >         
+> >                 apll = samsung_clk_register_pll35xx("fout_apll",
+> >                 "fin_pll",
+> > 
+> > -                                       reg_base + APLL_LOCK);
+> > +                                       reg_base + APLL_LOCK, NULL,
+> > 0);
+> > 
+> >                 mpll = samsung_clk_register_pll35xx("fout_mpll",
+> >                 "fin_pll",
+> > 
+> > -                                       reg_base + E4X12_MPLL_LOCK);
+> > +                                       reg_base + E4X12_MPLL_LOCK,
+> > NULL, 0);> 
+> >                 epll = samsung_clk_register_pll36xx("fout_epll",
+> >                 "fin_pll",
+> > 
+> > -                                       reg_base + EPLL_LOCK);
+> > +                                       reg_base + EPLL_LOCK, NULL,
+> > 0);
+> > 
+> >                 vpll = samsung_clk_register_pll36xx("fout_vpll",
+> >                 "fin_pll",
+> > 
+> > -                                       reg_base + VPLL_LOCK);
+> > +                                       reg_base + VPLL_LOCK, NULL,
+> > 0);
+> > 
+> >         }
+> >         
+> >         samsung_clk_add_lookup(apll, fout_apll);
+> > 
+> > diff --git a/drivers/clk/samsung/clk-exynos5250.c
+> > b/drivers/clk/samsung/clk-exynos5250.c index 687b580..ddf10ca 100644
+> > --- a/drivers/clk/samsung/clk-exynos5250.c
+> > +++ b/drivers/clk/samsung/clk-exynos5250.c
+> > @@ -491,19 +491,19 @@ void __init exynos5250_clk_init(struct
+> > device_node *np)> 
+> >                         ext_clk_match);
+> >         
+> >         apll = samsung_clk_register_pll35xx("fout_apll", "fin_pll",
+> > 
+> > -                       reg_base);
+> > +                       reg_base, NULL, 0);
+> > 
+> >         mpll = samsung_clk_register_pll35xx("fout_mpll", "fin_pll",
+> > 
+> > -                       reg_base + 0x4000);
+> > +                       reg_base + 0x4000, NULL, 0);
+> > 
+> >         bpll = samsung_clk_register_pll35xx("fout_bpll", "fin_pll",
+> > 
+> > -                       reg_base + 0x20010);
+> > +                       reg_base + 0x20010, NULL, 0);
+> > 
+> >         gpll = samsung_clk_register_pll35xx("fout_gpll", "fin_pll",
+> > 
+> > -                       reg_base + 0x10050);
+> > +                       reg_base + 0x10050, NULL, 0);
+> > 
+> >         cpll = samsung_clk_register_pll35xx("fout_cpll", "fin_pll",
+> > 
+> > -                       reg_base + 0x10020);
+> > +                       reg_base + 0x10020, NULL, 0);
+> > 
+> >         epll = samsung_clk_register_pll36xx("fout_epll", "fin_pll",
+> > 
+> > -                       reg_base + 0x10030);
+> > +                       reg_base + 0x10030, NULL, 0);
+> > 
+> >         vpll = samsung_clk_register_pll36xx("fout_vpll",
+> >         "mout_vpllsrc",
+> > 
+> > -                       reg_base + 0x10040);
+> > +                       reg_base + 0x10040, NULL, 0);
+> > 
+> >         samsung_clk_register_fixed_rate(exynos5250_fixed_rate_clks,
+> >         
+> >                         ARRAY_SIZE(exynos5250_fixed_rate_clks));
+> > 
+> > diff --git a/drivers/clk/samsung/clk-pll.c
+> > b/drivers/clk/samsung/clk-pll.c index a7d8ad9..cba73a4 100644
+> > --- a/drivers/clk/samsung/clk-pll.c
+> > +++ b/drivers/clk/samsung/clk-pll.c
+> > @@ -16,6 +16,8 @@
+> > 
+> >  struct samsung_clk_pll {
+> >  
+> >         struct clk_hw           hw;
+> >         const void __iomem      *base;
+> > 
+> > +       const struct samsung_pll_rate_table *rate_table;
+> > +       unsigned int rate_count;
+> > 
+> >  };
+> >  
+> >  #define to_clk_pll(_hw) container_of(_hw, struct samsung_clk_pll, hw)
+> > 
+> > @@ -62,7 +64,9 @@ static const struct clk_ops samsung_pll35xx_clk_ops
+> > = {> 
+> >  };
+> >  
+> >  struct clk * __init samsung_clk_register_pll35xx(const char *name,
+> > 
+> > -                       const char *pname, const void __iomem *base)
+> > +                       const char *pname, const void __iomem *base,
+> > +                       const struct samsung_pll_rate_table
+> > *rate_table, +                       const unsigned int rate_count)
+> > 
+> >  {
+> >  
+> >         struct samsung_clk_pll *pll;
+> >         struct clk *clk;
+> > 
+> > @@ -80,6 +84,12 @@ struct clk * __init
+> > samsung_clk_register_pll35xx(const char *name,> 
+> >         init.parent_names = &pname;
+> >         init.num_parents = 1;
+> > 
+> > +       if (rate_table && rate_count) {
+> > +               pll->rate_count = rate_count;
+> > +               pll->rate_table = kmemdup(rate_table, rate_count *
+> > +                       sizeof(struct samsung_pll_rate_table),
+> > GFP_KERNEL); +       }
+> > +
+> > 
+> >         pll->hw.init = &init;
+> >         pll->base = base;
+> > 
+> > @@ -137,7 +147,9 @@ static const struct clk_ops
+> > samsung_pll36xx_clk_ops = {> 
+> >  };
+> >  
+> >  struct clk * __init samsung_clk_register_pll36xx(const char *name,
+> > 
+> > -                       const char *pname, const void __iomem *base)
+> > +                       const char *pname, const void __iomem *base,
+> > +                       const struct samsung_pll_rate_table
+> > *rate_table, +                       const unsigned int rate_count)
+> > 
+> >  {
+> >  
+> >         struct samsung_clk_pll *pll;
+> >         struct clk *clk;
+> > 
+> > @@ -155,6 +167,12 @@ struct clk * __init
+> > samsung_clk_register_pll36xx(const char *name,> 
+> >         init.parent_names = &pname;
+> >         init.num_parents = 1;
+> > 
+> > +       if (rate_table && rate_count) {
+> > +               pll->rate_count = rate_count;
+> > +               pll->rate_table = kmemdup(rate_table, rate_count *
+> > +                       sizeof(struct samsung_pll_rate_table),
+> > GFP_KERNEL);
+> To me I'd rather see the tables left as "init", not "init_data" and
+> avoid the strdup().  The small amount of waste from multiple tables
+> doesn't seem worth the extra allocation.
+> 
+> ...but I don't really care much either way.
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+> linux-samsung-soc" in the body of a message to
+> majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
