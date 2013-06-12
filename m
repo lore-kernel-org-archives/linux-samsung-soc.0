@@ -1,311 +1,159 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V5 2/5] clk: samsung: register audio subsystem clocks
- using common clock framework
-Date: Wed, 12 Jun 2013 11:05:53 +0530
-Message-ID: <CAAgF-BcP6U1zHnUCsS-ZYEyR8KSvMo20tX80PiVb-pzq8=JqaA@mail.gmail.com>
-References: <1370348890-6645-1-git-send-email-padma.v@samsung.com>
-	<1370348890-6645-3-git-send-email-padma.v@samsung.com>
-	<20130611221302.8816.73360@quantum>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH v3 4/6] clk: samsung: Add set_rate() clk_ops for PLL36xx
+Date: Wed, 12 Jun 2013 11:39:30 +0530
+Message-ID: <CAGm_ybi2V5ECxqjukQ=edVZ62Biaw6wH=EV6UQy9CF+dyL-PjQ@mail.gmail.com>
+References: <1370003496-19288-1-git-send-email-vikas.sajjan@linaro.org>
+	<1370003496-19288-5-git-send-email-vikas.sajjan@linaro.org>
+	<22845343.Is6jxxntJZ@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:45333 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754653Ab3FLFfx (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:35836 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752763Ab3FLGJc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 01:35:53 -0400
-Received: by mail-ob0-f178.google.com with SMTP id fb19so12819698obc.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 22:35:53 -0700 (PDT)
-In-Reply-To: <20130611221302.8816.73360@quantum>
+	Wed, 12 Jun 2013 02:09:32 -0400
+Received: by mail-wi0-f172.google.com with SMTP id c10so117098wiw.17
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 23:09:30 -0700 (PDT)
+In-Reply-To: <22845343.Is6jxxntJZ@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, yadi.brar01@gmail.com, Doug Anderson <dianders@chromium.org>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Hi Mike,
+Hi Tomasz,
 
-On Wed, Jun 12, 2013 at 3:43 AM, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Padmavathi Venna (2013-06-04 05:28:07)
->> Audio subsystem is introduced in s5pv210 and exynos platforms.
->> This has seperate clock controller which can control i2s0 and
->> pcm0 clocks. This patch registers the audio subsystem clocks
->> with the common clock framework on Exynos family.
+On Sat, Jun 8, 2013 at 5:47 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Friday 31 of May 2013 18:01:34 Vikas Sajjan wrote:
+>> This patch adds set_rate and round_rate clk_ops for PLL36xx
 >>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
-> This looks good to me.  You have my Ack, or I can take this patch
-> through clk-next.  Let me know what works for you.
-
-I have to rework for one small change in one of the patch in the set.
-So I will do that and put your ack and will repost the patches. After
-that you can take the patches through clk-next.
-
-Thanks
-Padma
-
->
-> Regards,
-> Mike
->
+>> Reviewed-by: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
 >> ---
->>  .../devicetree/bindings/clock/clk-exynos-audss.txt |   64 ++++++++++
->>  drivers/clk/samsung/Makefile                       |    1 +
->>  drivers/clk/samsung/clk-exynos-audss.c             |  133 ++++++++++++++++++++
->>  include/dt-bindings/clk/exynos-audss-clk.h         |   25 ++++
->>  4 files changed, 223 insertions(+), 0 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
->>  create mode 100644 drivers/clk/samsung/clk-exynos-audss.c
->>  create mode 100644 include/dt-bindings/clk/exynos-audss-clk.h
+>>  drivers/clk/samsung/clk-pll.c |   59
+>> +++++++++++++++++++++++++++++++++++++++++ 1 file changed, 59
+>> insertions(+)
 >>
->> diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
->> new file mode 100644
->> index 0000000..a120180
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
->> @@ -0,0 +1,64 @@
->> +* Samsung Audio Subsystem Clock Controller
+>> diff --git a/drivers/clk/samsung/clk-pll.c
+>> b/drivers/clk/samsung/clk-pll.c index 9591560..7143ed89 100644
+>> --- a/drivers/clk/samsung/clk-pll.c
+>> +++ b/drivers/clk/samsung/clk-pll.c
+>> @@ -210,6 +210,9 @@ struct clk * __init
+>> samsung_clk_register_pll35xx(const char *name, #define
+>> PLL36XX_CON0_OFFSET   (0x100)
+>>  #define PLL36XX_CON1_OFFSET  (0x104)
+>>
+>> +/* Maximum lock time can be 3000 * PDIV cycles */
+>> +#define PLL36XX_LOCK_FACTOR  (3000)
 >> +
->> +The Samsung Audio Subsystem clock controller generates and supplies clocks
->> +to Audio Subsystem block available in the S5PV210 and Exynos SoCs. The clock
->> +binding described here is applicable to all SoC's in Exynos family.
->> +
->> +Required Properties:
->> +
->> +- compatible: should be one of the following:
->> +  - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
->> +  - "samsung,exynos5250-audss-clock" - controller compatible with all Exynos5 SoCs.
->> +
->> +- reg: physical base address and length of the controller's register set.
->> +
->> +- #clock-cells: should be 1.
->> +
->> +The following is the list of clocks generated by the controller. Each clock is
->> +assigned an identifier and client nodes use this identifier to specify the
->> +clock which they consume. Some of the clocks are available only on a particular
->> +Exynos4 SoC and this is specified where applicable.
->> +
->> +Provided clocks:
->> +
->> +Clock           ID      SoC (if specific)
->> +-----------------------------------------------
->> +
->> +mout_audss      0
->> +mout_i2s        1
->> +dout_srp        2
->> +dout_aud_bus    3
->> +dout_i2s        4
->> +srp_clk         5
->> +i2s_bus         6
->> +sclk_i2s        7
->> +pcm_bus         8
->> +sclk_pcm        9
->> +
->> +Example 1: An example of a clock controller node is listed below.
->> +
->> +clock_audss: audss-clock-controller@3810000 {
->> +       compatible = "samsung,exynos5250-audss-clock";
->> +       reg = <0x03810000 0x0C>;
->> +       #clock-cells = <1>;
->> +};
->> +
->> +Example 2: I2S controller node that consumes the clock generated by the clock
->> +           controller. Refer to the standard clock bindings for information
->> +           about 'clocks' and 'clock-names' property.
->> +
->> +i2s0: i2s@03830000 {
->> +       compatible = "samsung,i2s-v5";
->> +       reg = <0x03830000 0x100>;
->> +       dmas = <&pdma0 10
->> +               &pdma0 9
->> +               &pdma0 8>;
->> +       dma-names = "tx", "rx", "tx-sec";
->> +       clocks = <&clock_audss EXYNOS_I2S_BUS>,
->> +               <&clock_audss EXYNOS_I2S_BUS>,
->> +               <&clock_audss EXYNOS_SCLK_I2S>,
->> +               <&clock_audss EXYNOS_MOUT_AUDSS>,
->> +               <&clock_audss EXYNOS_MOUT_I2S>;
->> +       clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
->> +       "mout_audss", "mout_i2s";
->> +};
->> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
->> index b7c232e..1876810 100644
->> --- a/drivers/clk/samsung/Makefile
->> +++ b/drivers/clk/samsung/Makefile
->> @@ -6,3 +6,4 @@ obj-$(CONFIG_COMMON_CLK)        += clk.o clk-pll.o
->>  obj-$(CONFIG_ARCH_EXYNOS4)     += clk-exynos4.o
->>  obj-$(CONFIG_SOC_EXYNOS5250)   += clk-exynos5250.o
->>  obj-$(CONFIG_SOC_EXYNOS5440)   += clk-exynos5440.o
->> +obj-$(CONFIG_ARCH_EXYNOS)      += clk-exynos-audss.o
->> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
->> new file mode 100644
->> index 0000000..9b1bbd5
->> --- /dev/null
->> +++ b/drivers/clk/samsung/clk-exynos-audss.c
->> @@ -0,0 +1,133 @@
->> +/*
->> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->> + * Author: Padmavathi Venna <padma.v@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + * Common Clock Framework support for Audio Subsystem Clock Controller.
->> +*/
->> +
->> +#include <linux/clkdev.h>
->> +#include <linux/io.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/of_address.h>
->> +#include <linux/syscore_ops.h>
->> +
->> +#include <dt-bindings/clk/exynos-audss-clk.h>
->> +
->> +static DEFINE_SPINLOCK(lock);
->> +static struct clk **clk_table;
->> +static void __iomem *reg_base;
->> +static struct clk_onecell_data clk_data;
->> +
->> +#define ASS_CLK_SRC 0x0
->> +#define ASS_CLK_DIV 0x4
->> +#define ASS_CLK_GATE 0x8
->> +
->> +static unsigned long reg_save[][2] = {
->> +       {ASS_CLK_SRC,  0},
->> +       {ASS_CLK_DIV,  0},
->> +       {ASS_CLK_GATE, 0},
->> +};
->> +
->> +/* list of all parent clock list */
->> +static const char *mout_audss_p[] = { "fin_pll", "fout_epll" };
->> +static const char *mout_i2s_p[] = { "mout_audss", "cdclk0", "sclk_audio0" };
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +static int exynos_audss_clk_suspend(void)
+>>  #define PLL36XX_KDIV_MASK    (0xFFFF)
+>>  #define PLL36XX_MDIV_MASK    (0x1FF)
+>>  #define PLL36XX_PDIV_MASK    (0x3F)
+>> @@ -217,6 +220,8 @@ struct clk * __init
+>> samsung_clk_register_pll35xx(const char *name, #define
+>> PLL36XX_MDIV_SHIFT    (16)
+>>  #define PLL36XX_PDIV_SHIFT   (8)
+>>  #define PLL36XX_SDIV_SHIFT   (0)
+>> +#define PLL36XX_KDIV_SHIFT   (0)
+>> +#define PLL36XX_LOCK_STAT_SHIFT      (29)
+>>
+>>  static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+>>                               unsigned long parent_rate)
+>> @@ -239,8 +244,57 @@ static unsigned long
+>> samsung_pll36xx_recalc_rate(struct clk_hw *hw, return (unsigned
+>> long)fvco;
+>>  }
+>>
+>> +static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long
+>> drate, +                                      unsigned long parent_rate)
 >> +{
->> +       int i;
+>> +     struct samsung_clk_pll *pll = to_clk_pll(hw);
+>> +     u32 tmp, pll_con0, pll_con1;
+>> +     const struct samsung_pll_rate_table *rate;
 >> +
->> +       for (i = 0; i < ARRAY_SIZE(reg_save); i++)
->> +               reg_save[i][1] = readl(reg_base + reg_save[i][0]);
+>> +     rate = samsung_get_pll_settings(pll, drate);
+>> +     if (!rate) {
+>> +             pr_err("%s: Invalid rate : %lu for pll clk %s\n",
+> __func__,
+>> +                     drate, __clk_get_name(hw->clk));
+>> +             return -EINVAL;
+>> +     }
 >> +
->> +       return 0;
+>> +     pll_con0 = pll_readl(pll, PLL36XX_CON0_OFFSET);
+>> +     pll_con1 = pll_readl(pll, PLL36XX_CON1_OFFSET);
+>
+> Hmm, PLL35xx has a fast path when only the S divisor changes. I'm not sure
+> about any technical differences between these two PLLs (other than having
+> the extra K factor and some more tunnables), but maybe it is possible for
+> this one as well?
+
+
+Sure, will check and respin once tested.
+Yadwinder will respin the next version of this patch series , as i am
+off this week.
+
+
+>
+> Otherwise looks fine.
+>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
+Thanks.
+
+
+>
+>> +
+>> +     /* Set PLL lock time. */
+>> +     pll_writel(pll, (rate->pdiv * PLL36XX_LOCK_FACTOR),
+>> +                     PLL36XX_LOCK_OFFSET);
+>> +
+>> +      /* Change PLL PMS values */
+>> +     pll_con0 &= ~((PLL36XX_MDIV_MASK << PLL36XX_MDIV_SHIFT) |
+>> +                     (PLL36XX_PDIV_MASK << PLL36XX_PDIV_SHIFT) |
+>> +                     (PLL36XX_SDIV_MASK << PLL36XX_SDIV_SHIFT));
+>> +     pll_con0 |= (rate->mdiv << PLL36XX_MDIV_SHIFT) |
+>> +                     (rate->pdiv << PLL36XX_PDIV_SHIFT) |
+>> +                     (rate->sdiv << PLL36XX_SDIV_SHIFT);
+>> +     pll_writel(pll, pll_con0, PLL36XX_CON0_OFFSET);
+>> +
+>> +     pll_con1 &= ~(PLL36XX_KDIV_MASK << PLL36XX_KDIV_SHIFT);
+>> +     pll_con1 |= rate->kdiv << PLL36XX_KDIV_SHIFT;
+>> +     pll_writel(pll, pll_con1, PLL36XX_CON1_OFFSET);
+>> +
+>> +     /* wait_lock_time */
+>> +     do {
+>> +             cpu_relax();
+>> +             tmp = pll_readl(pll, PLL36XX_CON0_OFFSET);
+>> +     } while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
+>> +
+>> +     return 0;
 >> +}
 >> +
->> +static void exynos_audss_clk_resume(void)
->> +{
->> +       int i;
->> +
->> +       for (i = 0; i < ARRAY_SIZE(reg_save); i++)
->> +               writel(reg_save[i][1], reg_base + reg_save[i][0]);
->> +}
->> +
->> +static struct syscore_ops exynos_audss_clk_syscore_ops = {
->> +       .suspend        = exynos_audss_clk_suspend,
->> +       .resume         = exynos_audss_clk_resume,
+>>  static const struct clk_ops samsung_pll36xx_clk_ops = {
+>>       .recalc_rate = samsung_pll36xx_recalc_rate,
+>> +     .set_rate = samsung_pll36xx_set_rate,
+>> +     .round_rate = samsung_pll_round_rate,
 >> +};
->> +#endif /* CONFIG_PM_SLEEP */
 >> +
->> +/* register exynos_audss clocks */
->> +void __init exynos_audss_clk_init(struct device_node *np)
->> +{
->> +       reg_base = of_iomap(np, 0);
->> +       if (!reg_base) {
->> +               pr_err("%s: failed to map audss registers\n", __func__);
->> +               return;
->> +       }
+>> +static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+>> +     .recalc_rate = samsung_pll36xx_recalc_rate,
+>>  };
+>>
+>>  struct clk * __init samsung_clk_register_pll36xx(const char *name,
+>> @@ -264,6 +318,11 @@ struct clk * __init
+>> samsung_clk_register_pll36xx(const char *name, init.parent_names =
+>> &pname;
+>>       init.num_parents = 1;
+>>
+>> +     if (rate_table && rate_count)
+>> +             init.ops = &samsung_pll36xx_clk_ops;
+>> +     else
+>> +             init.ops = &samsung_pll36xx_clk_min_ops;
 >> +
->> +       clk_table = kzalloc(sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
->> +                               GFP_KERNEL);
->> +       if (!clk_table) {
->> +               pr_err("%s: could not allocate clk lookup table\n", __func__);
->> +               return;
->> +       }
->> +
->> +       clk_data.clks = clk_table;
->> +       clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
->> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
->> +
->> +       clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
->> +                               mout_audss_p, ARRAY_SIZE(mout_audss_p), 0,
->> +                               reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
->> +
->> +       clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
->> +                               mout_i2s_p, ARRAY_SIZE(mout_i2s_p), 0,
->> +                               reg_base + ASS_CLK_SRC, 2, 2, 0, &lock);
->> +
->> +       clk_table[EXYNOS_DOUT_SRP] = clk_register_divider(NULL, "dout_srp",
->> +                               "mout_audss", 0, reg_base + ASS_CLK_DIV, 0, 4,
->> +                               0, &lock);
->> +
->> +       clk_table[EXYNOS_DOUT_AUD_BUS] = clk_register_divider(NULL,
->> +                               "dout_aud_bus", "dout_srp", 0,
->> +                               reg_base + ASS_CLK_DIV, 4, 4, 0, &lock);
->> +
->> +       clk_table[EXYNOS_DOUT_I2S] = clk_register_divider(NULL, "dout_i2s",
->> +                               "mout_i2s", 0, reg_base + ASS_CLK_DIV, 8, 4, 0,
->> +                               &lock);
->> +
->> +       clk_table[EXYNOS_SRP_CLK] = clk_register_gate(NULL, "srp_clk",
->> +                               "dout_srp", CLK_SET_RATE_PARENT,
->> +                               reg_base + ASS_CLK_GATE, 0, 0, &lock);
->> +
->> +       clk_table[EXYNOS_I2S_BUS] = clk_register_gate(NULL, "i2s_bus",
->> +                               "dout_aud_bus", CLK_SET_RATE_PARENT,
->> +                               reg_base + ASS_CLK_GATE, 2, 0, &lock);
->> +
->> +       clk_table[EXYNOS_SCLK_I2S] = clk_register_gate(NULL, "sclk_i2s",
->> +                               "dout_i2s", CLK_SET_RATE_PARENT,
->> +                               reg_base + ASS_CLK_GATE, 3, 0, &lock);
->> +
->> +       clk_table[EXYNOS_PCM_BUS] = clk_register_gate(NULL, "pcm_bus",
->> +                                "sclk_pcm", CLK_SET_RATE_PARENT,
->> +                               reg_base + ASS_CLK_GATE, 4, 0, &lock);
->> +
->> +       clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
->> +                               "div_pcm0", CLK_SET_RATE_PARENT,
->> +                               reg_base + ASS_CLK_GATE, 5, 0, &lock);
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +       register_syscore_ops(&exynos_audss_clk_syscore_ops);
->> +#endif
->> +
->> +       pr_info("Exynos: Audss: clock setup completed\n");
->> +}
->> +CLK_OF_DECLARE(exynos4210_audss_clk, "samsung,exynos4210-audss-clock",
->> +               exynos_audss_clk_init);
->> +CLK_OF_DECLARE(exynos5250_audss_clk, "samsung,exynos5250-audss-clock",
->> +               exynos_audss_clk_init);
->> diff --git a/include/dt-bindings/clk/exynos-audss-clk.h b/include/dt-bindings/clk/exynos-audss-clk.h
->> new file mode 100644
->> index 0000000..8279f42
->> --- /dev/null
->> +++ b/include/dt-bindings/clk/exynos-audss-clk.h
->> @@ -0,0 +1,25 @@
->> +/*
->> + * This header provides constants for Samsung audio subsystem
->> + * clock controller.
->> + *
->> + * The constants defined in this header are being used in dts
->> + * and exynos audss driver.
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_EXYNOS_AUDSS_H
->> +#define _DT_BINDINGS_CLK_EXYNOS_AUDSS_H
->> +
->> +#define EXYNOS_MOUT_AUDSS      0
->> +#define EXYNOS_MOUT_I2S        1
->> +#define EXYNOS_DOUT_SRP        2
->> +#define EXYNOS_DOUT_AUD_BUS    3
->> +#define EXYNOS_DOUT_I2S        4
->> +#define EXYNOS_SRP_CLK         5
->> +#define EXYNOS_I2S_BUS         6
->> +#define EXYNOS_SCLK_I2S        7
->> +#define EXYNOS_PCM_BUS         8
->> +#define EXYNOS_SCLK_PCM        9
->> +
->> +#define EXYNOS_AUDSS_MAX_CLKS  10
->> +
->> +#endif
->> --
->> 1.7.4.4
+>>       pll->hw.init = &init;
+>>       pll->base = base;
+>>       pll->rate_table = rate_table;
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
