@@ -1,58 +1,185 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: exynos5250: Add CLK_IGNORE_UNUSED flag for pmu clock
-Date: Tue, 11 Jun 2013 20:06:33 -0700
-Message-ID: <20130612030633.8816.19714@quantum>
-References: <1370507298-9230-1-git-send-email-tushar.behera@linaro.org>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [RESEND PATCH 1/3] ARM: EXYNOS: Move arm core power down clock to
+ exynos5250 common clock
+Date: Wed, 12 Jun 2013 08:48:08 +0530
+Message-ID: <CADGdYn5owUyCMzJSJQgzR6N0inLpm5Te09BvX0rvBZ1bx=bv=Q@mail.gmail.com>
+References: <1363240979-1939-2-git-send-email-amit.daniel@samsung.com>
+	<1370501833-9196-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:60846 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754649Ab3FLDGi convert rfc822-to-8bit (ORCPT
+Received: from mail-ie0-f178.google.com ([209.85.223.178]:43296 "EHLO
+	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754771Ab3FLDSJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 23:06:38 -0400
-Received: by mail-pb0-f47.google.com with SMTP id rr13so6545950pbb.20
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 20:06:38 -0700 (PDT)
-In-Reply-To: <1370507298-9230-1-git-send-email-tushar.behera@linaro.org>
+	Tue, 11 Jun 2013 23:18:09 -0400
+Received: by mail-ie0-f178.google.com with SMTP id at1so17964037iec.37
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 20:18:08 -0700 (PDT)
+In-Reply-To: <1370501833-9196-1-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Quoting Tushar Behera (2013-06-06 01:28:18)
-> Currently 'pmu' clock is not handled by any of the drivers.
-> Also before the introduction of CCF, this clock was not defined,
-> hence was left enabled always.
-> 
-> When this clock is disabled, software reset register becomes
-> inaccessible and system reboot doesn't work.
-> 
-> Upon restoring the default behaviour, system reboot starts working.
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+Hi Mike,
 
-Taken into clk-fixes.
+If possible please ack this patch or merge this via your tree.
 
 Thanks,
-Mike
+Amit Daniel
 
+On Thu, Jun 6, 2013 at 12:27 PM, Amit Daniel Kachhap
+<amit.daniel@samsung.com> wrote:
+> Now with common clock support added for exynos5250 it is necessary to move
+> this code to exynos5250 common clock driver as clock registers should be
+> handled there. This change is tested in exynos5250 based arndale platform.
+>
+> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos5250.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+> Re-based against linux for-next branch.
+>
+>  arch/arm/mach-exynos/cpuidle.c       |   35 ----------------------------
+>  drivers/clk/samsung/clk-exynos5250.c |   42 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 42 insertions(+), 35 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+> index 17a18ff..4667907 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -159,46 +159,11 @@ static int exynos4_enter_lowpower(struct cpuidle_device *dev,
+>                 return exynos4_enter_core0_aftr(dev, drv, new_index);
+>  }
+>
+> -static void __init exynos5_core_down_clk(void)
+> -{
+> -       unsigned int tmp;
+> -
+> -       /*
+> -        * Enable arm clock down (in idle) and set arm divider
+> -        * ratios in WFI/WFE state.
+> -        */
+> -       tmp = PWR_CTRL1_CORE2_DOWN_RATIO | \
+> -             PWR_CTRL1_CORE1_DOWN_RATIO | \
+> -             PWR_CTRL1_DIV2_DOWN_EN     | \
+> -             PWR_CTRL1_DIV1_DOWN_EN     | \
+> -             PWR_CTRL1_USE_CORE1_WFE    | \
+> -             PWR_CTRL1_USE_CORE0_WFE    | \
+> -             PWR_CTRL1_USE_CORE1_WFI    | \
+> -             PWR_CTRL1_USE_CORE0_WFI;
+> -       __raw_writel(tmp, EXYNOS5_PWR_CTRL1);
+> -
+> -       /*
+> -        * Enable arm clock up (on exiting idle). Set arm divider
+> -        * ratios when not in idle along with the standby duration
+> -        * ratios.
+> -        */
+> -       tmp = PWR_CTRL2_DIV2_UP_EN       | \
+> -             PWR_CTRL2_DIV1_UP_EN       | \
+> -             PWR_CTRL2_DUR_STANDBY2_VAL | \
+> -             PWR_CTRL2_DUR_STANDBY1_VAL | \
+> -             PWR_CTRL2_CORE2_UP_RATIO   | \
+> -             PWR_CTRL2_CORE1_UP_RATIO;
+> -       __raw_writel(tmp, EXYNOS5_PWR_CTRL2);
+> -}
+> -
+>  static int __init exynos4_init_cpuidle(void)
+>  {
+>         int cpu_id, ret;
+>         struct cpuidle_device *device;
+>
+> -       if (soc_is_exynos5250())
+> -               exynos5_core_down_clk();
+> -
+>         ret = cpuidle_register_driver(&exynos4_idle_driver);
+>         if (ret) {
+>                 printk(KERN_ERR "CPUidle failed to register driver\n");
 > diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-> index 5c97e75..3853da9 100644
+> index 5c97e75..89f51e9 100644
 > --- a/drivers/clk/samsung/clk-exynos5250.c
 > +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -378,7 +378,7 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
->         GATE(hsi2c3, "hsi2c3", "aclk66", GATE_IP_PERIC, 31, 0, 0),
->         GATE(chipid, "chipid", "aclk66", GATE_IP_PERIS, 0, 0, 0),
->         GATE(sysreg, "sysreg", "aclk66", GATE_IP_PERIS, 1, 0, 0),
-> -       GATE(pmu, "pmu", "aclk66", GATE_IP_PERIS, 2, 0, 0),
-> +       GATE(pmu, "pmu", "aclk66", GATE_IP_PERIS, 2, CLK_IGNORE_UNUSED, 0),
->         GATE(tzpc0, "tzpc0", "aclk66", GATE_IP_PERIS, 6, 0, 0),
->         GATE(tzpc1, "tzpc1", "aclk66", GATE_IP_PERIS, 7, 0, 0),
->         GATE(tzpc2, "tzpc2", "aclk66", GATE_IP_PERIS, 8, 0, 0),
-> -- 
-> 1.7.9.5
+> @@ -21,6 +21,8 @@
+>
+>  #define SRC_CPU                        0x200
+>  #define DIV_CPU0               0x500
+> +#define PWR_CTRL1              0x1020
+> +#define PWR_CTRL2              0x1024
+>  #define SRC_CORE1              0x4204
+>  #define SRC_TOP0               0x10210
+>  #define SRC_TOP2               0x10218
+> @@ -63,6 +65,23 @@
+>  #define PLL_DIV2_SEL           0x20a24
+>  #define GATE_IP_DISP1          0x10928
+>
+> +/*Below definitions are used for PWR_CTRL settings*/
+> +#define PWR_CTRL1_CORE2_DOWN_RATIO             (7 << 28)
+> +#define PWR_CTRL1_CORE1_DOWN_RATIO             (7 << 16)
+> +#define PWR_CTRL1_DIV2_DOWN_EN                 (1 << 9)
+> +#define PWR_CTRL1_DIV1_DOWN_EN                 (1 << 8)
+> +#define PWR_CTRL1_USE_CORE1_WFE                        (1 << 5)
+> +#define PWR_CTRL1_USE_CORE0_WFE                        (1 << 4)
+> +#define PWR_CTRL1_USE_CORE1_WFI                        (1 << 1)
+> +#define PWR_CTRL1_USE_CORE0_WFI                        (1 << 0)
+> +
+> +#define PWR_CTRL2_DIV2_UP_EN                   (1 << 25)
+> +#define PWR_CTRL2_DIV1_UP_EN                   (1 << 24)
+> +#define PWR_CTRL2_DUR_STANDBY2_VAL             (1 << 16)
+> +#define PWR_CTRL2_DUR_STANDBY1_VAL             (1 << 8)
+> +#define PWR_CTRL2_CORE2_UP_RATIO               (1 << 4)
+> +#define PWR_CTRL2_CORE1_UP_RATIO               (1 << 0)
+> +
+>  /*
+>   * Let each supported clock get a unique id. This id is used to lookup the clock
+>   * for device tree based platforms. The clocks are categorized into three
+> @@ -110,6 +129,8 @@ enum exynos5250_clks {
+>  static __initdata unsigned long exynos5250_clk_regs[] = {
+>         SRC_CPU,
+>         DIV_CPU0,
+> +       PWR_CTRL1,
+> +       PWR_CTRL2,
+>         SRC_CORE1,
+>         SRC_TOP0,
+>         SRC_TOP2,
+> @@ -474,6 +495,7 @@ void __init exynos5250_clk_init(struct device_node *np)
+>  {
+>         void __iomem *reg_base;
+>         struct clk *apll, *mpll, *epll, *vpll, *bpll, *gpll, *cpll;
+> +       unsigned int tmp;
+>
+>         if (np) {
+>                 reg_base = of_iomap(np, 0);
+> @@ -516,6 +538,26 @@ void __init exynos5250_clk_init(struct device_node *np)
+>         samsung_clk_register_gate(exynos5250_gate_clks,
+>                         ARRAY_SIZE(exynos5250_gate_clks));
+>
+> +       /*
+> +        * Enable arm clock down (in idle) and set arm divider
+> +        * ratios in WFI/WFE state.
+> +        */
+> +       tmp = (PWR_CTRL1_CORE2_DOWN_RATIO | PWR_CTRL1_CORE1_DOWN_RATIO |
+> +               PWR_CTRL1_DIV2_DOWN_EN | PWR_CTRL1_DIV1_DOWN_EN |
+> +               PWR_CTRL1_USE_CORE1_WFE | PWR_CTRL1_USE_CORE0_WFE |
+> +               PWR_CTRL1_USE_CORE1_WFI | PWR_CTRL1_USE_CORE0_WFI);
+> +       __raw_writel(tmp, reg_base + PWR_CTRL1);
+> +
+> +       /*
+> +        * Enable arm clock up (on exiting idle). Set arm divider
+> +        * ratios when not in idle along with the standby duration
+> +        * ratios.
+> +        */
+> +       tmp = (PWR_CTRL2_DIV2_UP_EN | PWR_CTRL2_DIV1_UP_EN |
+> +               PWR_CTRL2_DUR_STANDBY2_VAL | PWR_CTRL2_DUR_STANDBY1_VAL |
+> +               PWR_CTRL2_CORE2_UP_RATIO | PWR_CTRL2_CORE1_UP_RATIO);
+> +       __raw_writel(tmp, reg_base + PWR_CTRL2);
+> +
+>         pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
+>                         _get_rate("armclk"));
+>  }
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
