@@ -1,96 +1,86 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 1/6] clk: samsung: Use clk->base instead of directly using clk->con0 for PLL3xxx
-Date: Wed, 12 Jun 2013 23:19:42 +0200
-Message-ID: <1501124.EVQA8KO0ic@flatron>
-References: <1370272196-4346-1-git-send-email-yadi.brar@samsung.com> <1370272196-4346-2-git-send-email-yadi.brar@samsung.com> <CAD=FV=VTLkH9oDqr263Kyv=wCEbuQ40VL7mtC73SCMt20NPwgQ@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/3] ARM: dts: add pinctrl support to Exynos5420
+Date: Wed, 12 Jun 2013 14:20:39 -0700
+Message-ID: <CAD=FV=VhmCVzy-ahhhE-5ZF-cvXktchnAuaiRAG8A-KUj+azbw@mail.gmail.com>
+References: <1371048688-9089-1-git-send-email-l.krishna@samsung.com>
+	<1371048688-9089-2-git-send-email-l.krishna@samsung.com>
+	<1531737.EaJZJjF9GR@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f180.google.com ([209.85.215.180]:44460 "EHLO
-	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756711Ab3FLVTp (ORCPT
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:42149 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757607Ab3FLVUl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 17:19:45 -0400
-Received: by mail-ea0-f180.google.com with SMTP id k10so7381635eaj.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 14:19:44 -0700 (PDT)
-In-Reply-To: <CAD=FV=VTLkH9oDqr263Kyv=wCEbuQ40VL7mtC73SCMt20NPwgQ@mail.gmail.com>
+	Wed, 12 Jun 2013 17:20:41 -0400
+Received: by mail-lb0-f170.google.com with SMTP id t13so4126749lbd.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 14:20:39 -0700 (PDT)
+In-Reply-To: <1531737.EaJZJjF9GR@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, Patch Tracking <patches@linaro.org>, Andrew Bresticker <abrestic@chromium.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Simon Glass <sjg@chromium.org>, Thomas P Abraham <thomas.ab@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, s.nawrocki@samsung.com
 
-Hi,
+Tomasz,
 
-On Wednesday 12 of June 2013 13:33:50 Doug Anderson wrote:
-> Yadwinder,
-> 
-> On Mon, Jun 3, 2013 at 8:09 AM, Yadwinder Singh Brar
-> 
-> <yadi.brar@samsung.com> wrote:
-> > This patch unifies clk strutures used for PLL35xx & PLL36xx and uses
-> > clk->base instead of directly using clk->con0, so that possible
-> > common code can be factored out.
-> > It also introdues common pll_[readl/writel] macros for the users of
-> > common samsung_clk_pll struct.
-> > 
-> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> > Reviewed-by: Doug Anderson <dianders@chromium.org>
-> > Tested-by: Doug Anderson <dianders@chromium.org>
-> > Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> > ---
-> > 
-> >  drivers/clk/samsung/clk-exynos4.c    |   10 ++++--
-> >  drivers/clk/samsung/clk-exynos5250.c |   14 ++++----
-> >  drivers/clk/samsung/clk-pll.c        |   54
-> >  ++++++++++++++++++--------------- drivers/clk/samsung/clk-pll.h     
-> >    |    4 +-
-> >  4 files changed, 44 insertions(+), 38 deletions(-)
-> 
-> So.  We just found that this type of solution doesn't work on
-> exynos5420, since the LOCK and CON registers aren't always 0x100 away
-> from each other.
+On Wed, Jun 12, 2013 at 1:58 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> +     pinctrl@13400000 {
+>> +             gpy7: gpy7 {
+>> +                     gpio-controller;
+>> +                     #gpio-cells = <2>;
+>> +
+>> +                     interrupt-controller;
+>> +                     #interrupt-cells = <2>;
+>
+> According to patch 2/3, this bank doesn't support interrupts, as it's
+> defined using EINTN macro. Which variant is correct?
 
-Oops, this is what I've been afraid of, ever since we assumed this first 
-time in our internal patches.
+As far as I know the GPY registers don't support interrupts, so this
+should be removed.  Nice catch!
 
-> Perhaps you can adjust to use a solution like Andrew
-> proposed in <https://gerrit.chromium.org/gerrit/#/c/58411/>?  That way
-> we can avoid some churn of changing this code twice.
-> 
-> The number of parameters to the register PLL function is starting to
-> get unwieldy.  At some point we'll probably want to pass in a
-> structure.  I wonder if now would be the time?  Certainly it would be
-> easier to handle changes to the code without touching all of the
-> exynos variants...
+>> +             sd0_bus1: sd0-bus-width1 {
+>> +                     samsung,pins = "gpc0-3";
+>> +                     samsung,pin-function = <2>;
+>> +                     samsung,pin-pud = <3>;
+>> +                     samsung,pin-drv = <3>;
+>> +             };
+>> +
+>> +             sd0_bus4: sd0-bus-width4 {
+>> +                     samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5",
+> "gpc0-6";
+>> +                     samsung,pin-function = <2>;
+>> +                     samsung,pin-pud = <3>;
+>> +                     samsung,pin-drv = <3>;
+>> +             };
+>> +
+>> +             sd0_bus8: sd0-bus-width8 {
+>> +                     samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2",
+> "gpc3-3";
+>> +                     samsung,pin-function = <2>;
+>> +                     samsung,pin-pud = <3>;
+>> +                     samsung,pin-drv = <3>;
+>> +             };
+>
+>
+> It seems like there is some inconsequence here, because sd0_bus4 setting
+> includes pins of sd0_bus1, while sd0_bus8 doesn't include pins of
+> sd0_bus4.
+>
+> I think it should be defined either first or second way, not mixed, but I
+> don't have any strong preference over any of them.
+>
+> CCing some people to hopefully get some more opinion on this.
 
-Hmm, if done properly, it could simplify PLL registration in SoC clock 
-initialization code a lot.
+Yeah, I brought this up on 5250, but somehow it looks like it landed
+without getting changed.  I agree it should be one way or the other.
 
-I'm not sure if this is really the best solution (feel free to suggest 
-anything better), but we could put PLLs in an array, like other clocks, 
-e.g.
 
-	... exynos4210_pll_clks[] = {
-		CLK_PLL45XX(...),
-		CLK_PLL45XX(...),
-		CLK_PLL46XX(...),
-		CLK_PLL46XX(...),
-	};
+Feel free to add my Reviewed-by.  The differences between the code you
+sent up and our ToT are:
+* You properly set the i2c4 drive strength to 0 to match all others.
+* You don't yet have the HDMI hot plug detect IRQ defined.  ...but
+that looks slightly wrong in our tree anyway and can be added later.
 
-and then just call a helper like
+Reviewed-by: Doug Anderson <dianders@chromium.org>
 
-	samsung_clk_register_pll(exynos4210_pll_clks,
-			ARRAY_SIZE(exynos4210_pll_clks));
-
-Best regards,
-Tomasz
-
-> Thanks!
-> 
-> -Doug
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to
-> majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Doug
