@@ -1,94 +1,44 @@
-From: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH RESEND V2] ARM: dts: wm8994: Add wm8994 regulator support on
- smdk5250.
-Date: Wed, 12 Jun 2013 13:53:45 +0530
-Message-ID: <1371025425-480-2-git-send-email-padma.v@samsung.com>
-References: <1371025425-480-1-git-send-email-padma.v@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: About LPAE supporting on EXYNOS5440
+Date: Wed, 12 Jun 2013 11:58:20 +0200
+Message-ID: <201306121158.20676.arnd@arndb.de>
+References: <109e01ce667e$5becc880$13c65980$%kim@samsung.com> <15605927.1Yi6Xe5hWs@wuerfel> <51B7FD2E.9030306@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1371025425-480-1-git-send-email-padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.187]:59560 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751454Ab3FLJ7B (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Jun 2013 05:59:01 -0400
+In-Reply-To: <51B7FD2E.9030306@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Subash Patel <subashrp@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch adds the required regulator supplies and properties
-for wm8994 codec on smdk5250 board.
+On Wednesday 12 June 2013, Subash Patel wrote:
+> > I would definitely leave on exynos5440 support in defconfig. It's not a
+> > lot of extra code, and if you have a system with less than 4GB memory,
+> > you really don't want to enable LPAE because of the overhead.
+> 
+> Even if we have <= 4GB memory, and the system designers have placed the 
+> memory banks in addresses > 2^32 bytes, then we need LPAE support. I 
+> think we may have such systems in future. So memory capacity is not the 
+> only parameter to judge if we need to enable LPAE or not.
 
-Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
+Yes, but that wasn't the point. You can always build systems with
+exynos5440 that don't need LPAE, so we should not assume that it is
+not a reasonable configuration.
 
-Changes since V1:
-	- Clubbed the same supply regulators as suggested by Mark.
+I would certainly advise system designers to put all the RAM and I/O
+into normally addressable locations if possible to avoid the need
+for LPAE, but of course that isn't always possible.
 
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   37 +++++++++++++++++++++++++++-
- 1 files changed, 35 insertions(+), 2 deletions(-)
+We should probably have someone measure the performance impact
+of LPAE as well. If it's less than a few percent, we might not
+care all that much.
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index f2a025e..dc2ec25 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -37,6 +37,30 @@
- 		};
- 	};
- 
-+	vdd:fixed-regulator@0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd-supply";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	dbvdd:fixed-regulator@1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dbvdd-supply";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	spkvdd:fixed-regulator@2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "spkvdd-supply";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
- 	i2c@12C70000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <20000>;
-@@ -47,8 +71,17 @@
- 		};
- 
- 		wm8994: wm8994@1a {
--			 compatible = "wlf,wm8994";
--			 reg = <0x1a>;
-+			compatible = "wlf,wm8994";
-+			reg = <0x1a>;
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			AVDD2-supply = <&vdd>;
-+			CPVDD-supply = <&vdd>;
-+			DBVDD-supply = <&dbvdd>;
-+			SPKVDD1-supply = <&spkvdd>;
-+			SPKVDD2-supply = <&spkvdd>;
- 		};
- 	};
- 
--- 
-1.7.4.4
+	Arnd
