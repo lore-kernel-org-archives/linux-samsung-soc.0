@@ -1,55 +1,50 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH 09/13] clk: exynos5420: register clocks using common clock framework
-Date: Wed, 12 Jun 2013 14:32:52 -0700
-Message-ID: <CAL1qeaE91S-sTLXBb7d3tbDP9M68py4PsLdHxxp2JqisGsP=ww@mail.gmail.com>
-References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
-	<1370516488-25860-9-git-send-email-chander.kashyap@linaro.org>
-	<1479353.W3tSzhFHaA@flatron>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/3] ARM: dts: add pinctrl support to Exynos5420
+Date: Wed, 12 Jun 2013 14:35:30 -0700
+Message-ID: <CAD=FV=Un9=cm_Drhvgba9jnhGgh4ss2YBb+CFDTNMfUmaoVjFA@mail.gmail.com>
+References: <1371048688-9089-1-git-send-email-l.krishna@samsung.com>
+	<1371048688-9089-2-git-send-email-l.krishna@samsung.com>
+	<1531737.EaJZJjF9GR@flatron>
+	<CAD=FV=VhmCVzy-ahhhE-5ZF-cvXktchnAuaiRAG8A-KUj+azbw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f45.google.com ([209.85.214.45]:37569 "EHLO
-	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756370Ab3FLVcy (ORCPT
+Received: from mail-la0-f41.google.com ([209.85.215.41]:64349 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751890Ab3FLVfc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 17:32:54 -0400
-Received: by mail-bk0-f45.google.com with SMTP id je9so3317747bkc.18
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 14:32:53 -0700 (PDT)
-In-Reply-To: <1479353.W3tSzhFHaA@flatron>
+	Wed, 12 Jun 2013 17:35:32 -0400
+Received: by mail-la0-f41.google.com with SMTP id fn20so8406909lab.14
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 14:35:30 -0700 (PDT)
+In-Reply-To: <CAD=FV=VhmCVzy-ahhhE-5ZF-cvXktchnAuaiRAG8A-KUj+azbw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-serial@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, t.figa@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Simon Glass <sjg@chromium.org>, Thomas P Abraham <thomas.ab@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, s.nawrocki@samsung.com
 
 Tomasz,
 
->> +     apll = samsung_clk_register_pll35xx("fout_apll", "oscclk",
->> +                     reg_base + 0x100);
->> +     bpll = samsung_clk_register_pll35xx("fout_bpll", "oscclk",
->> +                     reg_base + 0x20110);
->> +     cpll = samsung_clk_register_pll35xx("fout_cpll", "oscclk",
->> +                     reg_base + 0x10120);
->> +     dpll = samsung_clk_register_pll35xx("fout_dpll", "oscclk",
->> +                     reg_base + 0x10128);
->> +     epll = samsung_clk_register_pll35xx("fout_epll", "oscclk",
->> +                     reg_base + 0x10130);
->> +     ipll = samsung_clk_register_pll35xx("fout_ipll", "oscclk",
->> +                     reg_base + 0x10150);
->> +     kpll = samsung_clk_register_pll35xx("fout_kpll", "oscclk",
->> +                     reg_base + 0x28100);
->> +     mpll = samsung_clk_register_pll35xx("fout_mpll", "oscclk",
->> +                     reg_base + 0x10180);
->> +     rpll = samsung_clk_register_pll35xx("fout_rpll", "oscclk",
->> +                     reg_base + 0x10140);
->> +     spll = samsung_clk_register_pll35xx("fout_spll", "oscclk",
->> +                     reg_base + 0x10160);
->> +     vpll = samsung_clk_register_pll35xx("fout_vpll", "oscclk",
->> +                     reg_base + 0x10170);
+On Wed, Jun 12, 2013 at 2:20 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Tomasz,
 >
-> Are all those PLLs really PLL35xx? At least for VPLL and EPLL a PLL
-> without the K factor looks a bit awkward.
+> On Wed, Jun 12, 2013 at 1:58 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>> +     pinctrl@13400000 {
+>>> +             gpy7: gpy7 {
+>>> +                     gpio-controller;
+>>> +                     #gpio-cells = <2>;
+>>> +
+>>> +                     interrupt-controller;
+>>> +                     #interrupt-cells = <2>;
+>>
+>> According to patch 2/3, this bank doesn't support interrupts, as it's
+>> defined using EINTN macro. Which variant is correct?
+>
+> As far as I know the GPY registers don't support interrupts, so this
+> should be removed.  Nice catch!
 
-No they are not...  EPLL and RPLL should be pll36xx, but the rest are pll35xx.
+Argh.  I'm not sure what I was just searching before (I probably
+messed up and searched for gpy6 or something), but I just searched
+again and am now seeing that GPY7 actually does support interrupts,
+unlike all of the other gpy banks.
 
-Thanks,
-Andrew
+-Doug
