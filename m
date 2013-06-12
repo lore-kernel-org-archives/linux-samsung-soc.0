@@ -1,185 +1,201 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [RESEND PATCH 1/3] ARM: EXYNOS: Move arm core power down clock to
- exynos5250 common clock
-Date: Wed, 12 Jun 2013 08:48:08 +0530
-Message-ID: <CADGdYn5owUyCMzJSJQgzR6N0inLpm5Te09BvX0rvBZ1bx=bv=Q@mail.gmail.com>
-References: <1363240979-1939-2-git-send-email-amit.daniel@samsung.com>
-	<1370501833-9196-1-git-send-email-amit.daniel@samsung.com>
+From: jonghwa3.lee@samsung.com
+Subject: Re: [PATCH V5 00/30] thermal: exynos: Add thermal driver for exynos5440
+Date: Wed, 12 Jun 2013 13:09:05 +0900
+Message-ID: <51B7F461.5040405@samsung.com>
+References: <1370955220-2949-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:43296 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754771Ab3FLDSJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 23:18:09 -0400
-Received: by mail-ie0-f178.google.com with SMTP id at1so17964037iec.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 20:18:08 -0700 (PDT)
-In-Reply-To: <1370501833-9196-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1370955220-2949-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Mike,
+On 2013=EB=85=84 06=EC=9B=94 11=EC=9D=BC 21:53, Amit Daniel Kachhap wro=
+te:
 
-If possible please ack this patch or merge this via your tree.
+> Most of the changes in this version is as per suggestion from Jonghwa=
+ Lee. I
+> have retained one to one mapping of platform data with TMU instances =
+as the
+> TMU's are different devices. In exynos5440 soc there is some register
+> sharing across multiple TMU's but in exynos5420 there is no register =
+between
+> multiple TMU's, so the current implementation is useful to support bo=
+th of the
+> above.
+>=20
+> This patch uses localized ARCH_HAS_TMU Kconfig option and is a tempor=
+ary solution
+> until a more generic macro ARCH_HAS_BANDGAP is introduced as per disc=
+ussion in
+> the link https://patchwork.kernel.org/patch/2659001/.
+>=20
+> Changes in V5:
+> * trip type is passed as platform data.
+> * HW trip is allowed only for maximum level.
+> * Platform data structure is now abstracted inside 1 more structure t=
+o support
+>   strong multiple sensor TMU data.=20
+>=20
+> Changes in V4:
+>  Almost all the changes in this version is as per suggestion from Edu=
+ardo.The
+>  major ones are listed below,
+> * Added kconfig symbol ARCH_HAS_TMU which needs to be enabled by plat=
+form. With
+>   this change existing symbol EXYNOS_TMU_DATA is not needed.
+> * Movement of freq_clip_table from exynos_tmu.h to exynos_thermal_com=
+mon.h is
+>   explained in the commit logs.
+> * Wrote all register description documentation.
+> * Split 5440 TMU support patch into controller change, configuration =
+data and
+>   feature addition patches.
+> * Remove all *LINUX_* in the header files.
+> * Still regulator enable is kept optional but a TODO: comment is adde=
+d to fix
+>   it later.
+>=20
+> Changes in V3:
+> * Added proper dependency of different exynos thermal Kconfig symbols=
+=2E Basically 3
+>  Kconfig can be enabled now and corresponds to tmu driver. exynos com=
+mon part
+>  and exynos configuration data. This issue was raised by Rui Zhang.
+>=20
+> Changes in V2:
+> * Separated SOC data from TMU driver. This is as per suggestion from =
+Eduardo.
+> * Merged the new file created for exynos5440 TMU controller with the =
+existing
+>  TMU controller code.
+> * Removed the DT parsing code as now the SOC specific data are cleanl=
+y put
+>  inside the data specific file.
+> * Even the register definations/bitfields are treated as data as ther=
+e is
+>  some variation across SOC's.
+>=20
+> This patchset adds TMU(Thermal management Unit) driver support for
+> exynos5440 platform. There are 3 instances of the TMU controllers so
+> necessary cleanup/re-structure is done to handle multiple thermal zon=
+e.
+>=20
+> Patch (exynos4: Add documentation for Exynos SoC thermal bindings) fr=
+om
+> Lukasz Majewski is already posted to mainline. Adding it here for com=
+pleteness.
+> (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg178=
+17.html)
+>=20
+> Patch (thermal: exynos: Support thermal tripping ) from Jonghwan Choi=
+ is
+> added here with some changes.
+> (https://patchwork.kernel.org/patch/1668371/)
+>=20
+> Patch (thermal: exynos: Support for TMU regulator defined at device t=
+ree)
+> is a repost of my earlier patch(https://patchwork-mail1.kernel.org/pa=
+tch/2510771/)=20
+> and adds regulator support.
+>=20
+> Patch (ARM: dts: Add device tree node for exynos5440 TMU controller) =
+and
+> patch (arm: exynos: enable ARCH_HAS_TMU) can be merged through exynos=
+ platform
+> maintainer as this can cause merge conflict.
+>=20
+> All these patches are based on thermal maintainers git tree,
+> git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next.
+>=20
+> Amit Daniel Kachhap (29):
+>   thermal: exynos: Moving exynos thermal files into samsung directory
+>   thermal: exynos: Add ARCH_HAS_TMU config to know the supported soc'=
+s
+>   thermal: exynos: Remove CPU_THERMAL dependency for using TMU driver
+>   thermal: exynos: Bifurcate exynos thermal common and tmu controller
+>     code
+>   thermal: exynos: Rename exynos_thermal.c to exynos_tmu.c
+>   thermal: exynos: Move exynos_thermal.h from include/* to driver/*
+>     folder
+>   thermal: exynos: Bifurcate exynos tmu driver and configuration data
+>   thermal: exynos: Add missing definations and code cleanup
+>   thermal: exynos: Add extra entries in the tmu platform data
+>   thermal: exynos: Move register definitions from driver to data file
+>   thermal: exynos: Support thermal tripping
+>   thermal: exynos: Fix to clear only the generated interrupts
+>   thermal: exynos: Add support for instance based register/unregister
+>   thermal: exynos: Modify private_data to appropriate name driver_dat=
+a
+>   thermal: exynos: Return success even if no cooling data supplied
+>   thermal: exynos: Make the zone handling use trip information
+>   thermal: exynos: Remove non DT based support
+>   thermal: exynos: Add support to handle many instances of TMU
+>   thermal: exynos: Add TMU features to check instead of using SOC typ=
+e
+>   thermal: exynos: use device resource management infrastructure
+>   thermal: exynos: Add support to access common register for
+>     multistance
+>   thermal: exynos: Add driver support for exynos5440 TMU sensor
+>   thermal: exynos: Add thermal configuration data for exynos5440 TMU
+>     sensor
+>   thermal: exynos: Fix to set the second point correction value
+>   thermal: exynos: Add hardware mode thermal calibration support
+>   Documentation: thermal: Explain the exynos thermal driver model
+>   thermal: exynos: Support for TMU regulator defined at device tree
+>   ARM: dts: Add device tree node for exynos5440 TMU controller
+>   arm: exynos: enable ARCH_HAS_TMU
+>=20
+> Lukasz Majewski (1):
+>   ARM: dts: thermal: exynos4: Add documentation for Exynos SoC therma=
+l
+>     bindings
+>=20
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |   55 +
+>  Documentation/thermal/exynos_thermal               |   43 +-
+>  arch/arm/boot/dts/exynos5440.dtsi                  |   30 +
+>  arch/arm/mach-exynos/Kconfig                       |    5 +
+>  drivers/thermal/Kconfig                            |   14 +-
+>  drivers/thermal/Makefile                           |    2 +-
+>  drivers/thermal/exynos_thermal.c                   | 1058 ----------=
+----------
+>  drivers/thermal/samsung/Kconfig                    |   21 +
+>  drivers/thermal/samsung/Makefile                   |    7 +
+>  drivers/thermal/samsung/exynos_thermal_common.c    |  413 ++++++++
+>  drivers/thermal/samsung/exynos_thermal_common.h    |  106 ++
+>  drivers/thermal/samsung/exynos_tmu.c               |  750 ++++++++++=
+++++
+>  drivers/thermal/samsung/exynos_tmu.h               |  307 ++++++
+>  drivers/thermal/samsung/exynos_tmu_data.c          |  250 +++++
+>  drivers/thermal/samsung/exynos_tmu_data.h          |  155 +++
+>  include/linux/platform_data/exynos_thermal.h       |  119 ---
+>  16 files changed, 2140 insertions(+), 1195 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/thermal/exynos-=
+thermal.txt
+>  delete mode 100644 drivers/thermal/exynos_thermal.c
+>  create mode 100644 drivers/thermal/samsung/Kconfig
+>  create mode 100644 drivers/thermal/samsung/Makefile
+>  create mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
+>  create mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
+>  create mode 100644 drivers/thermal/samsung/exynos_tmu.c
+>  create mode 100644 drivers/thermal/samsung/exynos_tmu.h
+>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
+>  delete mode 100644 include/linux/platform_data/exynos_thermal.h
+>=20
 
-Thanks,
-Amit Daniel
 
-On Thu, Jun 6, 2013 at 12:27 PM, Amit Daniel Kachhap
-<amit.daniel@samsung.com> wrote:
-> Now with common clock support added for exynos5250 it is necessary to move
-> this code to exynos5250 common clock driver as clock registers should be
-> handled there. This change is tested in exynos5250 based arndale platform.
->
-> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
-> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
-> Re-based against linux for-next branch.
->
->  arch/arm/mach-exynos/cpuidle.c       |   35 ----------------------------
->  drivers/clk/samsung/clk-exynos5250.c |   42 ++++++++++++++++++++++++++++++++++
->  2 files changed, 42 insertions(+), 35 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-> index 17a18ff..4667907 100644
-> --- a/arch/arm/mach-exynos/cpuidle.c
-> +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -159,46 +159,11 @@ static int exynos4_enter_lowpower(struct cpuidle_device *dev,
->                 return exynos4_enter_core0_aftr(dev, drv, new_index);
->  }
->
-> -static void __init exynos5_core_down_clk(void)
-> -{
-> -       unsigned int tmp;
-> -
-> -       /*
-> -        * Enable arm clock down (in idle) and set arm divider
-> -        * ratios in WFI/WFE state.
-> -        */
-> -       tmp = PWR_CTRL1_CORE2_DOWN_RATIO | \
-> -             PWR_CTRL1_CORE1_DOWN_RATIO | \
-> -             PWR_CTRL1_DIV2_DOWN_EN     | \
-> -             PWR_CTRL1_DIV1_DOWN_EN     | \
-> -             PWR_CTRL1_USE_CORE1_WFE    | \
-> -             PWR_CTRL1_USE_CORE0_WFE    | \
-> -             PWR_CTRL1_USE_CORE1_WFI    | \
-> -             PWR_CTRL1_USE_CORE0_WFI;
-> -       __raw_writel(tmp, EXYNOS5_PWR_CTRL1);
-> -
-> -       /*
-> -        * Enable arm clock up (on exiting idle). Set arm divider
-> -        * ratios when not in idle along with the standby duration
-> -        * ratios.
-> -        */
-> -       tmp = PWR_CTRL2_DIV2_UP_EN       | \
-> -             PWR_CTRL2_DIV1_UP_EN       | \
-> -             PWR_CTRL2_DUR_STANDBY2_VAL | \
-> -             PWR_CTRL2_DUR_STANDBY1_VAL | \
-> -             PWR_CTRL2_CORE2_UP_RATIO   | \
-> -             PWR_CTRL2_CORE1_UP_RATIO;
-> -       __raw_writel(tmp, EXYNOS5_PWR_CTRL2);
-> -}
-> -
->  static int __init exynos4_init_cpuidle(void)
->  {
->         int cpu_id, ret;
->         struct cpuidle_device *device;
->
-> -       if (soc_is_exynos5250())
-> -               exynos5_core_down_clk();
-> -
->         ret = cpuidle_register_driver(&exynos4_idle_driver);
->         if (ret) {
->                 printk(KERN_ERR "CPUidle failed to register driver\n");
-> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-> index 5c97e75..89f51e9 100644
-> --- a/drivers/clk/samsung/clk-exynos5250.c
-> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -21,6 +21,8 @@
->
->  #define SRC_CPU                        0x200
->  #define DIV_CPU0               0x500
-> +#define PWR_CTRL1              0x1020
-> +#define PWR_CTRL2              0x1024
->  #define SRC_CORE1              0x4204
->  #define SRC_TOP0               0x10210
->  #define SRC_TOP2               0x10218
-> @@ -63,6 +65,23 @@
->  #define PLL_DIV2_SEL           0x20a24
->  #define GATE_IP_DISP1          0x10928
->
-> +/*Below definitions are used for PWR_CTRL settings*/
-> +#define PWR_CTRL1_CORE2_DOWN_RATIO             (7 << 28)
-> +#define PWR_CTRL1_CORE1_DOWN_RATIO             (7 << 16)
-> +#define PWR_CTRL1_DIV2_DOWN_EN                 (1 << 9)
-> +#define PWR_CTRL1_DIV1_DOWN_EN                 (1 << 8)
-> +#define PWR_CTRL1_USE_CORE1_WFE                        (1 << 5)
-> +#define PWR_CTRL1_USE_CORE0_WFE                        (1 << 4)
-> +#define PWR_CTRL1_USE_CORE1_WFI                        (1 << 1)
-> +#define PWR_CTRL1_USE_CORE0_WFI                        (1 << 0)
-> +
-> +#define PWR_CTRL2_DIV2_UP_EN                   (1 << 25)
-> +#define PWR_CTRL2_DIV1_UP_EN                   (1 << 24)
-> +#define PWR_CTRL2_DUR_STANDBY2_VAL             (1 << 16)
-> +#define PWR_CTRL2_DUR_STANDBY1_VAL             (1 << 8)
-> +#define PWR_CTRL2_CORE2_UP_RATIO               (1 << 4)
-> +#define PWR_CTRL2_CORE1_UP_RATIO               (1 << 0)
-> +
->  /*
->   * Let each supported clock get a unique id. This id is used to lookup the clock
->   * for device tree based platforms. The clocks are categorized into three
-> @@ -110,6 +129,8 @@ enum exynos5250_clks {
->  static __initdata unsigned long exynos5250_clk_regs[] = {
->         SRC_CPU,
->         DIV_CPU0,
-> +       PWR_CTRL1,
-> +       PWR_CTRL2,
->         SRC_CORE1,
->         SRC_TOP0,
->         SRC_TOP2,
-> @@ -474,6 +495,7 @@ void __init exynos5250_clk_init(struct device_node *np)
->  {
->         void __iomem *reg_base;
->         struct clk *apll, *mpll, *epll, *vpll, *bpll, *gpll, *cpll;
-> +       unsigned int tmp;
->
->         if (np) {
->                 reg_base = of_iomap(np, 0);
-> @@ -516,6 +538,26 @@ void __init exynos5250_clk_init(struct device_node *np)
->         samsung_clk_register_gate(exynos5250_gate_clks,
->                         ARRAY_SIZE(exynos5250_gate_clks));
->
-> +       /*
-> +        * Enable arm clock down (in idle) and set arm divider
-> +        * ratios in WFI/WFE state.
-> +        */
-> +       tmp = (PWR_CTRL1_CORE2_DOWN_RATIO | PWR_CTRL1_CORE1_DOWN_RATIO |
-> +               PWR_CTRL1_DIV2_DOWN_EN | PWR_CTRL1_DIV1_DOWN_EN |
-> +               PWR_CTRL1_USE_CORE1_WFE | PWR_CTRL1_USE_CORE0_WFE |
-> +               PWR_CTRL1_USE_CORE1_WFI | PWR_CTRL1_USE_CORE0_WFI);
-> +       __raw_writel(tmp, reg_base + PWR_CTRL1);
-> +
-> +       /*
-> +        * Enable arm clock up (on exiting idle). Set arm divider
-> +        * ratios when not in idle along with the standby duration
-> +        * ratios.
-> +        */
-> +       tmp = (PWR_CTRL2_DIV2_UP_EN | PWR_CTRL2_DIV1_UP_EN |
-> +               PWR_CTRL2_DUR_STANDBY2_VAL | PWR_CTRL2_DUR_STANDBY1_VAL |
-> +               PWR_CTRL2_CORE2_UP_RATIO | PWR_CTRL2_CORE1_UP_RATIO);
-> +       __raw_writel(tmp, reg_base + PWR_CTRL2);
-> +
->         pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
->                         _get_rate("armclk"));
->  }
+Looks good to me.
+
+Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+
 > --
-> 1.7.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+>=20
