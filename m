@@ -1,72 +1,49 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 01/13] ARM: Exynos: initialize l2x0 cache controller only
- for cortex-a9 based SoCs
-Date: Tue, 11 Jun 2013 16:58:06 -0700
-Message-ID: <20130611235806.GI23774@quad.lixom.net>
-References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org>
- <5595095.zmTGjttZIk@flatron>
+Subject: Re: About LPAE supporting on EXYNOS5440
+Date: Tue, 11 Jun 2013 17:11:12 -0700
+Message-ID: <20130612001112.GK23774@quad.lixom.net>
+References: <109e01ce667e$5becc880$13c65980$%kim@samsung.com>
+ <6690814.Wx0lSuVAQ5@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:57485 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754025Ab3FKX6D (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:54135 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752354Ab3FLALI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Jun 2013 19:58:03 -0400
-Received: by mail-pb0-f43.google.com with SMTP id md12so8049422pbc.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 16:58:02 -0700 (PDT)
+	Tue, 11 Jun 2013 20:11:08 -0400
+Received: by mail-pa0-f41.google.com with SMTP id bj3so4864335pad.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 17:11:07 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <5595095.zmTGjttZIk@flatron>
+In-Reply-To: <6690814.Wx0lSuVAQ5@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, swarren@wwwdotorg.org, arnd@arndb.de
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Sat, Jun 08, 2013 at 12:57:41PM +0200, Tomasz Figa wrote:
-> Hi Chander,
-> 
-> On Thursday 06 of June 2013 16:31:15 Chander Kashyap wrote:
-> > Only cortex-a9 based Exynos SoCs have l2x0 cache controller. Hence
-> > instead of checking for every SoC with soc_is_xxx, just check for cpu
-> > part number and initialize the cache controller for cortex-a9 based
-> > SoCs.
+On Tue, Jun 11, 2013 at 11:53:36AM +0200, Arnd Bergmann wrote:
+> On Tuesday 11 June 2013 17:33:33 Kukjin Kim wrote:
+> > Hi all,
 > > 
-> > Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> > ---
-> >  arch/arm/mach-exynos/common.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > The exynos5440 can support LPAE and referece boards, SSDK5440 and SD5v1 have
+> > over 8GiB memory.
 > > 
-> > diff --git a/arch/arm/mach-exynos/common.c
-> > b/arch/arm/mach-exynos/common.c index 8ce2db4..bad000e 100644
-> > --- a/arch/arm/mach-exynos/common.c
-> > +++ b/arch/arm/mach-exynos/common.c
-> > @@ -35,6 +35,7 @@
-> >  #include <asm/mach/map.h>
-> >  #include <asm/mach/irq.h>
-> >  #include <asm/cacheflush.h>
-> > +#include <asm/cputype.h>
+> > Current exynos_defconfig selects every EXYNOS SoCs including exynos5440 it
+> > means supporting LPAE will be selected for other EXYNOS SoCs.
 > > 
-> >  #include <mach/regs-irq.h>
-> >  #include <mach/regs-pmu.h>
-> > @@ -520,7 +521,7 @@ static int __init exynos4_l2x0_cache_init(void)
+> > I'm wondering if seleting LPAE causes some problem for multiplatform. Can we
+> > support LPAE enabled and disabled platform together with single zImage?
 > 
-> I wonder if it shouldn't be done the other way around, i.e. this function 
-> being called only when running on SoCs for which it's appropriate, instead 
-> of checking for supported SoC in this function.
-> 
-> Keep in mind that we are going towards multiplatform support, so you would 
-> end up running this code on any non-Exynos SoC with Cortex A9 as well. 
-> IMHO we should drop most (if not all) of the initcalls around mach-
-> exynos/.
-> 
-> CCing people that might have some opinion on this topic as well.
+> No, that isn't possible. I think we should enable all exynos support in the
+> regular multi_v7_defconfig and leave LPAE turned off for that, but create
+> another multi_lpae_defconfig that has all LPAE capable machines turned on.
+> This is also what I expect the distros to do.
 
-Looks like all other platforms instantiate the pl310 device node in the
-device tree. Since Exynos is going DT-only, there's no need to support
-non-DT boot any more, and that would be a much cleaner way forward.
+I think it would be unfortunate to split the defconfig just for LPAE,
+since all the other parts should be identical (drivers, etc).
 
-That also moves the l2 init to be driven by device-tree data, this removing the
-need for the exynos-specific init alltogether. Code removal FTW!
+I wonder if it makes more sense to just include a config fragment to
+turn on LPAE together with the existing multi_v7_defconfig.
 
 
 -Olof
