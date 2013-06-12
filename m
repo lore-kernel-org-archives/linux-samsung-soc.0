@@ -1,98 +1,98 @@
 From: Subash Patel <subashrp@gmail.com>
-Subject: Re: About LPAE supporting on EXYNOS5440
-Date: Wed, 12 Jun 2013 10:16:38 +0530
-Message-ID: <51B7FD2E.9030306@gmail.com>
-References: <109e01ce667e$5becc880$13c65980$%kim@samsung.com> <6690814.Wx0lSuVAQ5@wuerfel> <10b001ce668b$2fdddec0$8f999c40$%kim@samsung.com> <15605927.1Yi6Xe5hWs@wuerfel>
+Subject: Re: [PATCH 10/13] ARM: dts: Add initial device tree support for Exynos5420
+Date: Wed, 12 Jun 2013 11:05:02 +0530
+Message-ID: <51B80886.9010004@gmail.com>
+References: <1370516488-25860-1-git-send-email-chander.kashyap@linaro.org> <1370516488-25860-10-git-send-email-chander.kashyap@linaro.org> <20130606163411.GA23311@e106331-lin.cambridge.arm.com> <CANuQgHFndqWH5KYskuiqxWuVXEp+_=R=Tnfo5y_syreBFcGPbQ@mail.gmail.com> <20130611141121.GC22334@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:52825 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750968Ab3FLEqn (ORCPT
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:60464 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754980Ab3FLFfK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 00:46:43 -0400
-Received: by mail-pb0-f43.google.com with SMTP id md12so8211248pbc.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2013 21:46:42 -0700 (PDT)
-In-Reply-To: <15605927.1Yi6Xe5hWs@wuerfel>
+	Wed, 12 Jun 2013 01:35:10 -0400
+In-Reply-To: <20130611141121.GC22334@e106331-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
 
+Hi Mark,
 
-
-On 06/11/2013 06:13 PM, Arnd Bergmann wrote:
-> On Tuesday 11 June 2013 19:05:22 Kukjin Kim wrote:
->> Arnd Bergmann wrote:
+On 06/11/2013 07:41 PM, Mark Rutland wrote:
+> On Tue, Jun 11, 2013 at 02:35:38PM +0100, Chander Kashyap wrote:
+>> On 6 June 2013 22:04, Mark Rutland <mark.rutland@arm.com> wrote:
+>>> Hi,
 >>>
->>> On Tuesday 11 June 2013 17:33:33 Kukjin Kim wrote:
->>>> Hi all,
->>>>
->>>> The exynos5440 can support LPAE and referece boards, SSDK5440 and SD5v1
->>> have
->>>> over 8GiB memory.
->>>>
->>>> Current exynos_defconfig selects every EXYNOS SoCs including exynos5440
->>> it
->>>> means supporting LPAE will be selected for other EXYNOS SoCs.
->>>>
->>>> I'm wondering if seleting LPAE causes some problem for multiplatform.
->>> Can we
->>>> support LPAE enabled and disabled platform together with single zImage?
+>>>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>>>> new file mode 100644
+>>>> index 0000000..b14e775
+>>>> --- /dev/null
+>>>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>>>> @@ -0,0 +1,40 @@
+>>>> +/*
+>>>> + * SAMSUNG SMDK5420 board device tree source
+>>>> + *
+>>>> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+>>>> + *           http://www.samsung.com
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or modify
+>>>> + * it under the terms of the GNU General Public License version 2 as
+>>>> + * published by the Free Software Foundation.
+>>>> +*/
+>>>> +
+>>>> +/dts-v1/;
+>>>> +/include/ "exynos5420.dtsi"
+>>>> +
+>>>> +/ {
+>>>> +     model = "Samsung SMDK5420 board based on EXYNOS5420";
+>>>> +     compatible = "samsung,smdk5420", "samsung,exynos5420";
+>>>> +
+>>>> +     memory {
+>>>> +             reg =   <0x20000000 0x10000000
+>>>> +                      0x30000000 0x10000000
+>>>> +                      0x40000000 0x10000000
+>>>> +                      0x50000000 0x10000000
+>>>> +                      0x60000000 0x10000000
+>>>> +                      0x70000000 0x10000000
+>>>> +                      0x80000000 0x10000000
+>>>> +                      0x90000000 0x10000000>;
+>>>> +     };
 >>>
->>> No, that isn't possible.
->>
->> Yeah, I know that.
->>
->>> I think we should enable all exynos support in
->>> the
->>> regular multi_v7_defconfig and leave LPAE turned off for that,
->>
->> But if so, problem will happen in the memory parsing without LPAE
->> enabling...so I'm wondering I should deselect exynos5440 in the defconfig
->> for other exynos SoCs...
+>> As there are only 28 bits for memory bank size in memory.h.
+>> Hence each bank is split into 256MB.
 >
-> I think there is a bug in the memory parsing code and already two people
-> have submitted independent fixes for that. It really should just work
-> even if you have more memory that ends up getting ignored.
+> I don't think a kernel implementation choice should affect the dts.
 >
->>> but create
->>> another multi_lpae_defconfig that has all LPAE capable machines turned on.
->>> This is also what I expect the distros to do.
->>>
->> Yeah, it could be a solution for multiplatform at this moment. And if so,
->> probably I should deselect exynos5440 in the exynos_defconfig and need to
->> add another defconfig for exynos lpae stuff.
->
-> I would definitely leave on exynos5440 support in defconfig. It's not a
-> lot of extra code, and if you have a system with less than 4GB memory,
-> you really don't want to enable LPAE because of the overhead.
+> If the kernel needs to carve up the memory, it should do it itself - it knows
+> what it needs. Splitting the banks manually as above is papering over the
+> problem.
 
-Even if we have <= 4GB memory, and the system designers have placed the 
-memory banks in addresses > 2^32 bytes, then we need LPAE support. I 
-think we may have such systems in future. So memory capacity is not the 
-only parameter to judge if we need to enable LPAE or not.
+I agree this looks a bit odd to split the memory regions into 256MiB 
+banks. But we have had legacy systems which had a hole in the memory 
+range, and we used sparse mem in the past for the same. If we modify 
+this bank size now, we will break the functionality of those systems.
+
+Also, with LPAE systems I changed this bank size to 2GiB in another 
+patch. I think someone was working on cleaning up sparse mem for 
+exynos(I was quite busy internally and didn't follow up much on mailing 
+list). So I would like to keep this bank size as 256MiB for non-LPAE 
+systems at the moment, until such a cleanup gets merged.
+
+Copy: kgene - exynos maintainer
+
+Mr. Kim, let us know your opinion on this.
 
 Regards,
 Subash
 
+
 >
->> BTW, do you know what SoCs can support LPAE now?
->
-> Upstream I think we support exynos, vexpress (using A15, A7 and A12
-> core tiles), omap5 (partially), mvebu (Armada XP), highbank (Midway)
-> and some of the shmobile parts we added in 3.10.
->
-> In mach-sunxi, there will soon be support for Allwinner-A20 and -A31,
-> which are both Cortex-A7 based. MSM also has support for Cortex-A7
-> but not upstream. A couple of new platforms are under discussion
-> already that will also have LPAE, mostly server parts.
->
-> 	Arnd
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Thanks,
+> Mark.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
