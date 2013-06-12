@@ -1,87 +1,44 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 00/15] Final Samsung PWM support cleanup
-Date: Thu, 13 Jun 2013 01:52:05 +0200
-Message-ID: <51B909A5.2020409@gmail.com>
-References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com> <20130612230023.GA9016@quad.lixom.net> <1604160.oAKkaEhla1@flatron> <201306130138.05692.heiko@sntech.de>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 0/6] Samsung stuff for v3.11
+Date: Wed, 12 Jun 2013 16:54:55 -0700
+Message-ID: <20130612235455.GD9067@quad.lixom.net>
+References: <51B791C3.7050702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f177.google.com ([209.85.215.177]:45437 "EHLO
-	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756907Ab3FLXwL (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:35538 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756927Ab3FLXyu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 19:52:11 -0400
-In-Reply-To: <201306130138.05692.heiko@sntech.de>
+	Wed, 12 Jun 2013 19:54:50 -0400
+Received: by mail-pa0-f49.google.com with SMTP id ld11so4487688pab.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 16:54:50 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <51B791C3.7050702@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, thierry.reding@gmail.com, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 06/13/2013 01:38 AM, Heiko St=FCbner wrote:
-> Am Donnerstag, 13. Juni 2013, 01:13:47 schrieb Tomasz Figa:
->> Hi Olof,
->>
->> On Wednesday 12 of June 2013 16:00:23 Olof Johansson wrote:
->>> On Wed, Jun 12, 2013 at 11:48:56PM +0200, Tomasz Figa wrote:
->>>>> Needs testing on other platforms as I could only compile test for
->>>>> them.
->>>
->>> How/who can help here? WHo has and still cares for other affected
->>> platforms?
->>>
->>>>> 66 files changed, 627 insertions(+), 1580 deletions(-)
->>
->> I will try to test this on Exynos 4 at work, if I somehow manage to =
-find
->> any way to use PWM on our boards (other than already-tested PWM
->> clocksource).
->>
->> Unfortunately, except S3C6410, I don't have access to other platform=
-s, or
->> at least I won't in any reasonable time.
->>
->> If I remember correctly, in case of my watchdog support cleanup, Kuk=
-jin
->> has been able to test it on S5P64x0.
->>
->> Heiko and Sylwester used to have some s3c24xx-based boards, not sure=
- if
->> they still do and are interested in their support in mainline.
->>
->> So all left is S5PC100 (for which I couldn't find anyone who cares) =
-and
->> Exynos5.
->>
->>> Nice cleanup.
->>
->> Thanks.
->>
->>>> Any comments for this series?
->>>
->>> Yes, above. :) In general looks good -- testing coverage is a bit o=
-f a
->>> concern.
->>
->> Yeah. Unfortunately all I could do was testing on Tiny6410 and compi=
-le
->> testing on others. I hope we find some really helpful people over he=
-re who
->> could waste a bit of their precious time for this museum. ;)
->
-> I'll try to give it a testrun tomorrow. And my s3c2416 will always be=
- the
-> first-love-architecture for me ;-)
+On Wed, Jun 12, 2013 at 06:08:19AM +0900, Kukjin Kim wrote:
+> Hi Arnd, Olof
+> 
+> Please pull Samsung stuff for v3.11.
+> 
+> If any problems, please kindly let me know.
 
-I'll likely test it tomorrow on a Mini2440 board, I was going to do it=20
-earlier
-but got distracted by plenty other things that needed attention too. At=
-=20
-least
-that's one of the reasons I got the board - testing the cross-platform=20
-cleanups
-and ensuring they are not breaking the older platforms.
+Hi,
 
-Regards,
-Sylwester
+I've pulled 1, 2, 4 and 6. Please fix the comments on 3 and 5 and send fresh
+requests.
+
+Also, I see you've based a bunch of branches on -rc5. While this is
+fine, it is more convenient for us to review your branch submission if it
+doesn't also pull in a newer upstream -rc.
+
+Main reason to use the most-recent -rc would be if new code conflicts
+with fixes in the previous -rc version, but if they don't then feel free
+to start your branches on an older version instead.
+
+
+-Olof
