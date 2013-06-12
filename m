@@ -1,224 +1,61 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH v3 3/6] clk: samsung: Add set_rate() clk_ops for PLL35xx
-Date: Wed, 12 Jun 2013 20:21:27 +0530
-Message-ID: <CAKew6eX3m-wL8jZHajuqdLJGFZbUaNNWZNqMno6SEbV7Kb4KTw@mail.gmail.com>
-References: <1370003496-19288-1-git-send-email-vikas.sajjan@linaro.org>
-	<1370003496-19288-4-git-send-email-vikas.sajjan@linaro.org>
-	<1616829.TWUbCl0XIK@flatron>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V3 1/3] Add PCIe driver for Samsung Exynos
+Date: Wed, 12 Jun 2013 16:57:26 +0200
+Message-ID: <201306121657.26441.arnd@arndb.de>
+References: <000d01ce6360$9504e7e0$bf0eb7a0$@samsung.com> <36071399.7aY6jgGn2d@wuerfel> <002401ce6718$d6bbc8f0$84335ad0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f170.google.com ([209.85.223.170]:63118 "EHLO
-	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754094Ab3FLOv1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 10:51:27 -0400
-Received: by mail-ie0-f170.google.com with SMTP id e11so7663229iej.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 07:51:27 -0700 (PDT)
-In-Reply-To: <1616829.TWUbCl0XIK@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <002401ce6718$d6bbc8f0$84335ad0$@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, linux-pci@vger.kernel.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-On Sat, Jun 8, 2013 at 5:42 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Friday 31 of May 2013 18:01:33 Vikas Sajjan wrote:
->> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
->>
->> This patch add set_rate() and round_rate() for PLL35xx
->>
->> Reviewed-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-pll.c |  103
->> ++++++++++++++++++++++++++++++++++++++++- 1 file changed, 102
->> insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/samsung/clk-pll.c
->> b/drivers/clk/samsung/clk-pll.c index 8226528..9591560 100644
->> --- a/drivers/clk/samsung/clk-pll.c
->> +++ b/drivers/clk/samsung/clk-pll.c
->> @@ -27,6 +27,36 @@ struct samsung_clk_pll {
->>  #define pll_writel(pll, val, offset)                                 \
->>               __raw_writel(val, (void __iomem *)(pll->base + (offset)));
->>
->> +static const struct samsung_pll_rate_table *samsung_get_pll_settings(
->> +                             struct samsung_clk_pll *pll, unsigned long
-> rate)
->> +{
->> +     const struct samsung_pll_rate_table  *rate_table = pll-
->>rate_table;
->> +     int i;
->> +
->> +     for (i = 0; i < pll->rate_count; i++) {
->> +             if (rate == rate_table[i].rate)
->> +                     return &rate_table[i];
->> +     }
->> +
->> +     return NULL;
->> +}
->> +
->> +static long samsung_pll_round_rate(struct clk_hw *hw,
->> +                     unsigned long drate, unsigned long *prate)
->> +{
->> +     struct samsung_clk_pll *pll = to_clk_pll(hw);
->> +     const struct samsung_pll_rate_table *rate_table = pll->rate_table;
->> +     int i;
->> +
->> +     /* Assumming rate_table is in descending order */
->> +     for (i = 0; i < pll->rate_count; i++) {
->> +             if (drate >= rate_table[i].rate)
->> +                     return rate_table[i].rate;
->> +     }
->> +
->> +     /* return minimum supported value */
->> +     return rate_table[i - 1].rate;
->> +}
->>  /*
->>   * PLL35xx Clock Type
->>   */
->> @@ -34,12 +64,17 @@ struct samsung_clk_pll {
->>  #define PLL35XX_CON0_OFFSET  (0x100)
->>  #define PLL35XX_CON1_OFFSET  (0x104)
->>
->> +/* Maximum lock time can be 270 * PDIV cycles */
->> +#define PLL35XX_LOCK_FACTOR  (270)
->> +
->>  #define PLL35XX_MDIV_MASK       (0x3FF)
->>  #define PLL35XX_PDIV_MASK       (0x3F)
->>  #define PLL35XX_SDIV_MASK       (0x7)
->> +#define PLL35XX_LOCK_STAT_MASK  (0x1)
->>  #define PLL35XX_MDIV_SHIFT      (16)
->>  #define PLL35XX_PDIV_SHIFT      (8)
->>  #define PLL35XX_SDIV_SHIFT      (0)
->> +#define PLL35XX_LOCK_STAT_SHIFT      (29)
->>
->>  static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
->>                               unsigned long parent_rate)
->> @@ -59,8 +94,70 @@ static unsigned long
->> samsung_pll35xx_recalc_rate(struct clk_hw *hw, return (unsigned
->> long)fvco;
->>  }
->>
->> +static inline bool samsung_pll35xx_mp_change(u32 mdiv, u32 pdiv, u32
->> pll_con) +{
->> +     if ((mdiv != ((pll_con >> PLL35XX_MDIV_SHIFT) &
-> PLL35XX_MDIV_MASK)) ||
->> +             (pdiv != ((pll_con >> PLL35XX_PDIV_SHIFT) &
-> PLL35XX_PDIV_MASK)))
->> +             return 1;
->> +     else
->> +             return 0;
->
-> Readability of this function could be improved by moving some code out of
-> the if clause, like:
->
-> static inline bool samsung_pll35xx_mp_change(u32 mdiv,
->                                                 u32 pdiv, u32 pll_con)
-> {
->         u32 old_mdiv, old_pdiv;
->
->         old_mdiv = (pll_con >> PLL35XX_MDIV_SHIFT) & PLL35XX_MDIV_MASK;
->         old_pdiv = (pll_con >> PLL35XX_PDIV_SHIFT) & PLL35XX_PDIV_MASK;
->
->         return (mdiv != old_mdiv || pdiv != old_pdiv);
-> }
->
+On Wednesday 12 June 2013, Jingoo Han wrote:
+> On Friday, June 07, 2013 7:53 PM, Arnd Bergmann wrote:
+> > On Friday 07 June 2013 18:22:50 Jingoo Han wrote:
+> > 
+> > > +- ranges: ranges for the PCI memory and I/O regions
+> > > +- reset-gpio: gpio pin number of power good signal
+> > 
+> > The 'reset-gpio' property seems incorrect. I think this should either
+> > use the gpio binding or the reset-controller binding. Specifying
+> > bare numbers to use as gpio pins does not work, since the number
+> > space for Linux internal gpio numbers is not necessarily the same
+> > as used by the hardware.
+> 
+> As you mentioned, other Exynos SoCs such as Exynos5250 set
+> GPIO properties in DT, as below:
+> (./arch/arm/boot/dts/exynos5250-smdk5250.dts)
+> 	hdmi {
+> 		hpd-gpio = <&gpx3 7 0>;
+> 	};
+> 	usb@12110000 {
+> 		samsung,vbus-gpio = <&gpx2 6 0>;
+> 	};
+> 
+> However, the situation of Exynos5440 GPIO is different.
+> The following bare numbers of GPIO work properly on Exynos5440.
+> (./arch/arm/boot/dts/exynos5440-ssdk5440.dts)
+> 	pcie0@40000000 {
+> 		reset-gpio = <5>;
+> 	}
+> 	pcie0@40000000 {
+> 		reset-gpio = <22>;
+> 	}
+> 
+> Thomas Abraham is the author of pinctrl driver for EXYNOS5440.
+> (./drivers/pinctrl/pinctrl-exynos5440.c)
+> 
+> Thomas Abraham or Kukjin Kim, can you confirm this?
+> If I am wrong, please let me know kindly. :)
 
-Yes, it looks neater, I have modified it V4.
+This is not about the code working at the moment, it is about
+it being correct. The current method you are using would stop
+working if something changes in the pinctrl code, and would
+not be portable to other SoCs.
 
->> +}
->> +
->> +static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long
->> drate, +                                      unsigned long prate)
->> +{
->> +     struct samsung_clk_pll *pll = to_clk_pll(hw);
->> +     const struct samsung_pll_rate_table *rate;
->> +     u32 tmp;
->> +
->> +     /* Get required rate settings from table */
->> +     rate = samsung_get_pll_settings(pll, drate);
->> +     if (!rate) {
->> +             pr_err("%s: Invalid rate : %lu for pll clk %s\n",
-> __func__,
->> +                     drate, __clk_get_name(hw->clk));
->> +             return -EINVAL;
->> +     }
->> +
->> +     tmp = pll_readl(pll, PLL35XX_CON0_OFFSET);
->> +
->> +     if (!(samsung_pll35xx_mp_change(rate->mdiv, rate->pdiv, tmp))) {
->> +             /* If only s change, change just s value only*/
->> +             tmp &= ~(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT);
->> +             tmp |= rate->sdiv << PLL35XX_SDIV_SHIFT;
->> +             pll_writel(pll, tmp, PLL35XX_CON0_OFFSET);
->
-> To improve readability of this code, return 0 could be added here and
-> following code could be moved out of the else clause.
->
-
-Hmm... I can't see much difference but I have taken this also.
-
-Thanks,
-Yadwinder
-
-> Best regards,
-> Tomasz
->
->> +     } else {
->> +             /* Set PLL lock time. */
->> +             pll_writel(pll, rate->pdiv * PLL35XX_LOCK_FACTOR,
->> +                             PLL35XX_LOCK_OFFSET);
->> +
->> +             /* Change PLL PMS values */
->> +             tmp &= ~((PLL35XX_MDIV_MASK << PLL35XX_MDIV_SHIFT) |
->> +                             (PLL35XX_PDIV_MASK << PLL35XX_PDIV_SHIFT)
-> |
->> +                             (PLL35XX_SDIV_MASK <<
-> PLL35XX_SDIV_SHIFT));
->> +             tmp |= (rate->mdiv << PLL35XX_MDIV_SHIFT) |
->> +                             (rate->pdiv << PLL35XX_PDIV_SHIFT) |
->> +                             (rate->sdiv << PLL35XX_SDIV_SHIFT);
->> +             pll_writel(pll, tmp, PLL35XX_CON0_OFFSET);
->> +
->> +             /* wait_lock_time */
->> +             do {
->> +                     cpu_relax();
->> +                     tmp = pll_readl(pll, PLL35XX_CON0_OFFSET);
->> +             } while (!(tmp & (PLL35XX_LOCK_STAT_MASK
->> +                             << PLL35XX_LOCK_STAT_SHIFT)));
->> +     }
->> +
->> +     return 0;
->> +}
->> +
->>  static const struct clk_ops samsung_pll35xx_clk_ops = {
->>       .recalc_rate = samsung_pll35xx_recalc_rate,
->> +     .round_rate = samsung_pll_round_rate,
->> +     .set_rate = samsung_pll35xx_set_rate,
->> +};
->> +
->> +static const struct clk_ops samsung_pll35xx_clk_min_ops = {
->> +     .recalc_rate = samsung_pll35xx_recalc_rate,
->>  };
->>
->>  struct clk * __init samsung_clk_register_pll35xx(const char *name,
->> @@ -79,11 +176,15 @@ struct clk * __init
->> samsung_clk_register_pll35xx(const char *name, }
->>
->>       init.name = name;
->> -     init.ops = &samsung_pll35xx_clk_ops;
->>       init.flags = CLK_GET_RATE_NOCACHE;
->>       init.parent_names = &pname;
->>       init.num_parents = 1;
->>
->> +     if (rate_table && rate_count)
->> +             init.ops = &samsung_pll35xx_clk_ops;
->> +     else
->> +             init.ops = &samsung_pll35xx_clk_min_ops;
->> +
->>       pll->hw.init = &init;
->>       pll->base = base;
->>       pll->rate_table = rate_table;
->
->
+	Arnd
