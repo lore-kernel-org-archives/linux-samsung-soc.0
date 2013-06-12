@@ -1,45 +1,44 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH V2 2/2] ARM: EXYNOS: cpuidle: Allow C1 state only in supported SOC's.
-Date: Wed, 12 Jun 2013 16:58:46 +0530
-Message-ID: <1371036526-16589-3-git-send-email-amit.daniel@samsung.com>
-References: <1371036526-16589-1-git-send-email-amit.daniel@samsung.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 0/3] Add pinctrl support to Exynos5420
+Date: Wed, 12 Jun 2013 20:21:25 +0530
+Message-ID: <1371048688-9089-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:63824 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751217Ab3FLL3T (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:9980 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753106Ab3FLO2Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 07:29:19 -0400
-Received: by mail-pd0-f169.google.com with SMTP id y10so9814977pdj.28
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 04:29:19 -0700 (PDT)
-In-Reply-To: <1371036526-16589-1-git-send-email-amit.daniel@samsung.com>
+	Wed, 12 Jun 2013 10:28:24 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOA006R9AV81760@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Jun 2013 23:28:22 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, sjg@chromium.org, thomas.ab@samsung.com, t.figa@samsung.com
 
-This patch registers the basic C0 state for all exynos SOC's but
-limits the C1(AFTR -Arm off top running) state in only the supported
-SOC's(ie. EXYNOS 4210, 4212, 4412 and 5250).
+This patchset adds the pinctrl support to Exynos5420.
+This series is rebased and tested on master branch of 
+linux-next tree over Chander Kashyap patchset.
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg18623.html
 
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
- arch/arm/mach-exynos/cpuidle.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+Leela Krishna Amudala (3):
+  ARM: dts: add pinctrl support to Exynos5420
+  pinctrl: exynos: add exynos5420 SoC specific data
+  gpio: samsung: skip gpiolib registration if pinctrl support is
+    enabled for exynos5420
 
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 2d071c6..ccb2b48 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -176,7 +176,9 @@ static int __init exynos4_init_cpuidle(void)
- 		device->cpu = cpu_id;
- 
- 		/* Support IDLE only */
--		if (cpu_id != 0)
-+		if (!(soc_is_exynos4210() || soc_is_exynos4212() ||
-+			soc_is_exynos4412() || soc_is_exynos5250()) ||
-+			cpu_id != 0)
- 			device->state_count = 1;
- 
- 		ret = cpuidle_register_device(device);
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  680 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   45 ++
+ drivers/gpio/gpio-samsung.c                        |    1 +
+ drivers/pinctrl/pinctrl-exynos.c                   |  115 ++++
+ drivers/pinctrl/pinctrl-samsung.c                  |    2 +
+ drivers/pinctrl/pinctrl-samsung.h                  |    1 +
+ 7 files changed, 845 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+
 -- 
-1.7.1
+1.7.10.4
