@@ -1,119 +1,64 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2 1/2] ARM: SAMSUNG: Add SAMSUNG_PM config option to
- select pm
-Date: Thu, 13 Jun 2013 21:42:18 +0900
-Message-ID: <151101ce6833$70efaf20$52cf0d60$%kim@samsung.com>
-References: <1371036526-16589-1-git-send-email-amit.daniel@samsung.com>
- <1371036526-16589-2-git-send-email-amit.daniel@samsung.com>
+Subject: RE: About LPAE supporting on EXYNOS5440
+Date: Thu, 13 Jun 2013 21:53:29 +0900
+Message-ID: <151501ce6835$0109d4e0$031d7ea0$%kim@samsung.com>
+References: <109e01ce667e$5becc880$13c65980$%kim@samsung.com>
+ <15605927.1Yi6Xe5hWs@wuerfel> <51B7FD2E.9030306@gmail.com>
+ <201306121158.20676.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21102 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752864Ab3FMMmU (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:62542 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752864Ab3FMMxb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 08:42:20 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 13 Jun 2013 08:53:31 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOC003N80MGKHA0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 21:42:19 +0900 (KST)
-In-reply-to: <1371036526-16589-2-git-send-email-amit.daniel@samsung.com>
+ with ESMTP id <0MOC009I014YXNR0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 21:53:30 +0900 (KST)
+In-reply-to: <201306121158.20676.arnd@arndb.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Subash Patel' <subashrp@gmail.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Amit Daniel wrote:
+Arnd Bergmann wrote:
 > 
-> This patch enables the selection of samsung pm related stuffs
-> when SAMSUNG_PM config is enabled and not just when generic PM
-> config is enabled. Power management for s3c64XX and s3c24XX
-> is enabled by default and for other platform depends on S5P_PM.
-> This patch also fixes the following compilation error's when compiling
-> a platform like exynos5440 which does not select pm stuffs.
+> On Wednesday 12 June 2013, Subash Patel wrote:
+> > > I would definitely leave on exynos5440 support in defconfig. It's not
+> a
+> > > lot of extra code, and if you have a system with less than 4GB memory,
+> > > you really don't want to enable LPAE because of the overhead.
+> >
+> > Even if we have <= 4GB memory, and the system designers have placed the
+> > memory banks in addresses > 2^32 bytes, then we need LPAE support. I
+> > think we may have such systems in future. So memory capacity is not the
+> > only parameter to judge if we need to enable LPAE or not.
 > 
-> arch/arm/mach-exynos/built-in.o: In function `__virt_to_phys':
-> linux/arch/arm/include/asm/memory.h:175: undefined reference to
-> `s3c_cpu_resume'
-> linux/arch/arm/include/asm/memory.h:175: undefined reference to
-> `s3c_cpu_resume'
-> linux/arch/arm/include/asm/memory.h:175: undefined reference to
-> `s3c_cpu_resume'
-> linux/arch/arm/include/asm/memory.h:175: undefined reference to
-> `s3c_cpu_resume'
-> arch/arm/mach-exynos/built-in.o: In function `exynos5_init_irq':
-> linux/arch/arm/mach-exynos/common.c:492: undefined reference to
-> `s3c_irq_wake'
-> linux/arch/arm/mach-exynos/common.c:492: undefined reference to
-> `s3c_irq_wake'
-> arch/arm/mach-exynos/built-in.o: In function `exynos4_init_irq':
-> linux/arch/arm/mach-exynos/common.c:476: undefined reference to
-> `s3c_irq_wake'
-> linux/arch/arm/mach-exynos/common.c:476: undefined reference to
-> `s3c_irq_wake'
-> arch/arm/plat-samsung/built-in.o: In function `s3c_irqext_wake':
-> linux/arch/arm/plat-samsung/pm.c:144: undefined reference to
-> `s3c_irqwake_eintallow'
-> linux/arch/arm/plat-samsung/pm.c:144: undefined reference to
-> `s3c_irqwake_eintallow'
-> arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
-> linux/arch/arm/plat-samsung/pm.c:263: undefined reference to
-> `s3c_irqwake_intallow'
-> linux/arch/arm/plat-samsung/pm.c:263: undefined reference to
-> `s3c_irqwake_intallow'
-> linux/arch/arm/plat-samsung/pm.c:264: undefined reference to
-> `s3c_irqwake_eintallow'
-> linux/arch/arm/plat-samsung/pm.c:264: undefined reference to
-> `s3c_irqwake_eintallow'
-> linux/arch/arm/plat-samsung/pm.c:275: undefined reference to
-> `s3c_pm_save_core'
-> linux/arch/arm/plat-samsung/pm.c:279: undefined reference to
-> `s3c_pm_configure_extint'
-> linux/arch/arm/plat-samsung/pm.c:310: undefined reference to
-> `s3c_pm_restore_core'
-> make: *** [vmlinux] Error 1
+> Yes, but that wasn't the point. You can always build systems with
+> exynos5440 that don't need LPAE, so we should not assume that it is
+> not a reasonable configuration.
 > 
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  arch/arm/mach-exynos/Makefile           |    2 +-
->  arch/arm/mach-exynos/common.c           |    2 +-
->  arch/arm/mach-exynos/common.h           |    1 -
->  arch/arm/mach-exynos/cpuidle.c          |    1 +
->  arch/arm/plat-samsung/Kconfig           |    7 +++++++
->  arch/arm/plat-samsung/Makefile          |    3 +--
->  arch/arm/plat-samsung/include/plat/pm.h |    8 ++++----
->  7 files changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-> index 9811f87..3fa277a 100644
-> --- a/arch/arm/mach-exynos/Makefile
-> +++ b/arch/arm/mach-exynos/Makefile
-> @@ -14,7 +14,7 @@ obj-				:=
-> 
->  obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
-> 
-> -obj-$(CONFIG_PM)		+= pm.o
-> +obj-$(CONFIG_S5P_PM)		+= pm.o
->  obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
->  obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
-> 
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 9834357..d2b4f54 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -799,7 +799,7 @@ static struct irq_chip exynos_irq_eint = {
->  	.irq_mask_ack	= exynos_irq_eint_maskack,
->  	.irq_ack	= exynos_irq_eint_ack,
->  	.irq_set_type	= exynos_irq_eint_set_type,
-> -#ifdef CONFIG_PM
-> +#ifdef CONFIG_S5P_PM
+Agreed.
 
-The 'S5P_PM' is used for plat-samsung/s5p-pm.c and s5p-irq-pm.c for s5pv210.
+> I would certainly advise system designers to put all the RAM and I/O
+> into normally addressable locations if possible to avoid the need
+> for LPAE, but of course that isn't always possible.
+> 
+Yes, same here. Actually, some IPs sometimes can request to alloc/use
+something like dma buffer over 32 bit area after LPAE enabling, but will not
+be happened without LPAE.
 
-So there is no problem to use same name for exynos and s5pv210?...
+> We should probably have someone measure the performance impact
+> of LPAE as well. If it's less than a few percent, we might not
+> care all that much.
+> 
+Yes, after testing on exynos5440 board, LPAE doesn't cause any performance
+degradation with lmbench tool.
 
 - Kukjin
