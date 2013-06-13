@@ -1,106 +1,189 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V5 3/3] ARM: dts: Add pcie controller node for Samsung
- EXYNOS5440 SoC
-Date: Thu, 13 Jun 2013 22:23:27 +0900
-Message-ID: <000d01ce6839$3047a7b0$90d6f710$@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
+Date: Thu, 13 Jun 2013 16:13:59 +0200
+Message-ID: <13685067.uPzcc2y1CU@wuerfel>
+References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:59065 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752960Ab3FMNX2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 09:23:28 -0400
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
 
-Exynos5440 has two PCIe controllers which can be used as root complex
-for PCIe interface.
+On Thursday 13 June 2013 22:22:31 Jingoo Han wrote:
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-Tested on Exynos5440.
+> +struct pcie_port_info {
+> +	u32		cfg0_size;
+> +	u32		cfg1_size;
+> +	u32		io_size;
+> +	u32		mem_size;
+> +	phys_addr_t	io_bus_addr;
+> +	phys_addr_t	mem_bus_addr;
+> +};
+> +
+> +struct pcie_port {
+> +	struct device		*dev;
+> +	u8			controller;
+> +	u8			root_bus_nr;
+> +	void __iomem		*dbi_base;
+> +	void __iomem		*elbi_base;
+> +	void __iomem		*phy_base;
+> +	void __iomem		*purple_base;
+> +	phys_addr_t		cfg0_base;
+> +	void __iomem		*va_cfg0_base;
+> +	phys_addr_t		cfg1_base;
+> +	void __iomem		*va_cfg1_base;
+> +	phys_addr_t		io_base;
+> +	phys_addr_t		mem_base;
+> +	spinlock_t		conf_lock;
+> +	struct resource		cfg;
+> +	struct resource		io;
+> +	struct resource		mem;
+> +	struct pcie_port_info	config;
+> +	struct clk		*clk;
+> +	struct clk		*bus_clk;
+> +	int			irq;
+> +	int			reset_gpio;
+> +};
 
- arch/arm/boot/dts/exynos5440-ssdk5440.dts |    8 ++++++
- arch/arm/boot/dts/exynos5440.dtsi         |   40 ++++++++++++++++++++++++++++-
- 2 files changed, 47 insertions(+), 1 deletion(-)
+You mentioned that you'd use u64 for the resources here but did not.
 
-diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-index d55042b..198b3c1 100644
---- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-+++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-@@ -30,4 +30,12 @@
- 			clock-frequency = <50000000>;
- 		};
- 	};
-+
-+	pcie0@290000 {
-+		reset-gpio = <&pin_ctrl 5 0>;
-+	};
-+
-+	pcie1@2a0000 {
-+		reset-gpio = <&pin_ctrl 22 0>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index f6b1c89..9d40e0e 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -113,7 +113,7 @@
- 		clock-names = "spi", "spi_busclk0";
- 	};
- 
--	pinctrl {
-+	pin_ctrl: pinctrl {
- 		compatible = "samsung,exynos5440-pinctrl";
- 		reg = <0xE0000 0x1000>;
- 		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>,
-@@ -216,4 +216,42 @@
- 		clock-names = "rtc";
- 		status = "disabled";
- 	};
-+
-+	pcie0@290000 {
-+		compatible = "samsung,exynos5440-pcie";
-+		reg = <0x290000 0x1000
-+			0x270000 0x1000
-+			0x271000 0x40>;
-+		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
-+		clocks = <&clock 28>, <&clock 27>;
-+		clock-names = "pcie", "pcie_bus";
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
-+			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0x0 0 &gic 53>;
-+	};
-+
-+	pcie1@2a0000 {
-+		compatible = "samsung,exynos5440-pcie";
-+		reg = <0x2a0000 0x1000
-+			0x272000 0x1000
-+			0x271040 0x40>;
-+		interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
-+		clocks = <&clock 29>, <&clock 27>;
-+		clock-names = "pcie", "pcie_bus";
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
-+			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0x0 0 &gic 56>;
-+	};
- };
--- 
-1.7.10.4
+> +
+> +static void exynos_pcie_prog_viewport_cfg0(struct pcie_port *pp, u32 busdev)
+> +{
+> +	u32 val;
+> +	void __iomem *dbi_base = pp->dbi_base;
+> +
+> +	/* Program viewport 0 : OUTBOUND : CFG0 */
+> +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX0;
+> +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> +	writel_rc(pp, (u64)pp->cfg0_base, dbi_base + PCIE_ATU_LOWER_BASE);
+> +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> +	writel_rc(pp, (u64)pp->cfg0_base + pp->config.cfg0_size - 1,
+> +			dbi_base + PCIE_ATU_LIMIT);
+> +	writel_rc(pp, busdev, dbi_base + PCIE_ATU_LOWER_TARGET);
+> +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> +	writel_rc(pp, PCIE_ATU_TYPE_CFG0, dbi_base + PCIE_ATU_CR1);
+> +	val = PCIE_ATU_ENABLE;
+> +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> +}
+> +
+> +static void exynos_pcie_prog_viewport_cfg1(struct pcie_port *pp, u32 busdev)
+> +{
+> +	u32 val;
+> +	void __iomem *dbi_base = pp->dbi_base;
+> +
+> +	/* Program viewport 1 : OUTBOUND : CFG1 */
+> +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX1;
+> +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> +	writel_rc(pp, PCIE_ATU_TYPE_CFG1, dbi_base + PCIE_ATU_CR1);
+> +	val = PCIE_ATU_ENABLE;
+> +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> +	writel_rc(pp, (u64)pp->cfg1_base, dbi_base + PCIE_ATU_LOWER_BASE);
+> +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> +	writel_rc(pp, (u64)pp->cfg1_base + pp->config.cfg1_size - 1,
+> +			dbi_base + PCIE_ATU_LIMIT);
+> +	writel_rc(pp, busdev, dbi_base + PCIE_ATU_LOWER_TARGET);
+> +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> +}
+
+And you still don't set up the UPPER halves, which was really the point
+of my comment. Same thing for all the other ones.
+
+> +static void exynos_pcie_prog_viewport_mem_inbound(struct pcie_port *pp)
+> +{
+> +	u32 val;
+> +	void __iomem *dbi_base = pp->dbi_base;
+> +
+> +	/* Program viewport 0 : INBOUND : MEM */
+> +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX0;
+> +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> +	writel_rc(pp, PCIE_ATU_TYPE_MEM, dbi_base + PCIE_ATU_CR1);
+> +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
+> +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> +	writel_rc(pp, (u64)pp->config.mem_bus_addr,
+> +			dbi_base + PCIE_ATU_LOWER_BASE);
+> +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> +	writel_rc(pp, (u64)pp->config.mem_bus_addr + pp->config.mem_size - 1,
+> +			dbi_base + PCIE_ATU_LIMIT);
+> +	writel_rc(pp, (u64)pp->mem_base, dbi_base + PCIE_ATU_LOWER_TARGET);
+> +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> +}
+
+This makes even less sense than before, it seems like now you only
+allow DMA between PCI devices but not to main memory.
+
+> +static void exynos_pcie_prog_viewport_io_inbound(struct pcie_port *pp)
+> +{
+> +	u32 val;
+> +	void __iomem *dbi_base = pp->dbi_base;
+> +
+> +	/* Program viewport 1 : INBOUND : IO */
+> +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX1;
+> +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> +	writel_rc(pp, PCIE_ATU_TYPE_IO, dbi_base + PCIE_ATU_CR1);
+> +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
+> +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> +	writel_rc(pp, (u64)pp->config.io_bus_addr,
+> +			dbi_base + PCIE_ATU_LOWER_BASE);
+> +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> +	writel_rc(pp, (u64)pp->config.io_bus_addr + pp->config.io_size - 1,
+> +			dbi_base + PCIE_ATU_LIMIT);
+> +	writel_rc(pp, (u64)pp->io_base, dbi_base + PCIE_ATU_LOWER_TARGET);
+> +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> +}
+
+Can you please explain what the inbound window is as I asked you?
+I still don't see why you would need to set it up like this.
+
+> +static int exynos_pcie_setup(int nr, struct pci_sys_data *sys)
+> +{
+> +	struct pcie_port *pp;
+> +
+> +	pp = sys_to_pcie(sys);
+> +
+> +	if (!pp)
+> +		return 0;
+> +
+> +	pci_add_resource(&sys->resources, &pp->io);
+> +	pci_add_resource(&sys->resources, &pp->mem);
+
+Now you are missing the offsets. You have to at least pass an offset for one
+of the I/O spaces, since they are using the same bus address. The offset must
+match the value you pass to pci_ioremap_io.
+
+For the memory space, you should pass the difference between the physical
+base address and the bus address. That address happens to be zero with
+you DT setup, but I would advise to also try out some other values in DT,
+just to ensure it still works.
+
+> +	pp->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
+
+Ok.
+
+> +
+> +static int __exit exynos_pcie_remove(struct platform_device *pdev)
+> +{
+> +	struct pcie_port *pp = platform_get_drvdata(pdev);
+> +
+> +	clk_disable_unprepare(pp->bus_clk);
+> +	clk_disable_unprepare(pp->clk);
+> +
+> +	return 0;
+> +}
+
+You also don't remove the PCI devices here, as mentioned in an earlier
+review.
+
+	Arnd
