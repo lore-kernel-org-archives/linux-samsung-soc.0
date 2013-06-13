@@ -1,243 +1,278 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V4 1/3] pci: Add PCIe driver for Samsung Exynos
-Date: Thu, 13 Jun 2013 22:18:50 +0900
-Message-ID: <000901ce6838$8b514720$a1f3d560$@samsung.com>
-References: <003601ce6756$444e8cd0$cceba670$@samsung.com>
- <2061566.hRLrhtBK6z@wuerfel>
+Subject: [PATCH V5 0/3] PCIe support for Samsung Exynos5440 SoC
+Date: Thu, 13 Jun 2013 22:21:48 +0900
+Message-ID: <000a01ce6838$f55838e0$e008aaa0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <2061566.hRLrhtBK6z@wuerfel>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:24577 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752531Ab3FMNVu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Jun 2013 09:21:50 -0400
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Wednesday, June 12, 2013 8:23 PM, Arnd Bergmann wrote:
-> On Wednesday 12 June 2013 19:19:05 Jingoo Han wrote:
-> 
-> > +
-> > +struct pcie_port {
-> > +	struct device		*dev;
-> > +	u8			controller;
-> > +	u8			root_bus_nr;
-> > +	void __iomem		*dbi_base;
-> > +	void __iomem		*elbi_base;
-> > +	void __iomem		*phy_base;
-> > +	void __iomem		*purple_base;
-> > +	phys_addr_t		cfg0_base;
-> > +	void __iomem		*va_cfg0_base;
-> > +	phys_addr_t		cfg1_base;
-> > +	void __iomem		*va_cfg1_base;
-> > +	phys_addr_t		io_base;
-> > +	phys_addr_t		mem_base;
-> > +	spinlock_t		conf_lock;
-> > +	struct resource		cfg;
-> > +	struct resource		io;
-> > +	struct resource		mem;
-> > +	struct pcie_port_info	config;
-> > +	struct clk		*clk;
-> > +	struct clk		*bus_clk;
-> > +	int			irq;
-> > +	int			reset_gpio;
-> > +};
-> 
-> This looks much better now.
-> 
-> > +
-> > +/* synopsis specific PCIE configuration registers*/
-> > +#define PCIE_PORT_LINK_CONTROL		0x710
-> > +#define PORT_LINK_MODE_MASK		(0x3f << 16)
-> > +#define PORT_LINK_MODE_4_LANES		(0x7 << 16)
-> 
-> Do you mean this is a "Synopsys" designware part? In that case it
-> should really not be called "exynos-pcie" but "designware-pcie"
-> and you should make sure that the driver makes no assumptions about
-> the platform. A lot of other platforms also use designware
-> parts and should be able to reuse this driver.
+Hi,
 
-Sorry, I don't think so.
-Only core block is a "Synopsys" designware part IP block,
-other parts are Exynos-specific.
-So, it is hard to share with other PCIe IPs using synopsis core.
+This series of patches introduces PCIe support for Samsung Exynos5440,
+and is based on the latest 'linux-next' tree (20130607).
+These patches was tested with Intel e1000e LAN card on Exynos5440.
 
-> 
-> > +static void exynos_pcie_prog_viewport_cfg0(struct pcie_port *pp, u32 busdev)
-> > +{
-> > +	u32 val;
-> > +	void __iomem *dbi_base = pp->dbi_base;
-> > +
-> > +	/* Program viewport 0 : OUTBOUND : CFG0 */
-> > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX0;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-> > +	writel_rc(pp, (u32)pp->cfg0_base, dbi_base + PCIE_ATU_LOWER_BASE);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-> > +	writel_rc(pp, (u32)pp->cfg0_base + pp->config.cfg0_size - 1,
-> > +			dbi_base + PCIE_ATU_LIMIT);
-> > +	writel_rc(pp, busdev, dbi_base + PCIE_ATU_LOWER_TARGET);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-> > +	writel_rc(pp, PCIE_ATU_TYPE_CFG0, dbi_base + PCIE_ATU_CR1);
-> > +	val = PCIE_ATU_ENABLE;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
-> > +}
-> 
-> I think you should not assume that the physical base address is a 32
-> bit value. The hardware clearly supports "lower" and "upper" halves
-> for the address window, so when resource_size_t is 64 bit, you should
-> set the upper half accordingly. Since the hardware is always 64 bit,
-> you can use a "u64" type rather than resource_size_t to simplify the
-> code here.
+This PATCH v5 follows:
+ * PATCH v4, sent on June, 12nd 2013
+ * PATCH v3, sent on June, 6th 2013
+ * PATCH v2, sent on March, 23rd 2013
+ * PATCH v1, sent on March, 4th 2013
 
-OK, I will replace "u32" with "u64".
+Changes between v4 and v5:
+  * Used gpio binding in DT
+  * Increased the size of MEM region to 512 MB including CFG and IO regions in DT
+  * Reduced the size of CFG region to 4096 byte in DT
+  * Used the size of MEM region instead of hard-coded in_mem_size
+  * Fixed exynos_pcie_prog_viewport_{mem/io}_{outbound/inbound} functions
+    to use both translated addresses and untranslated addresses
+  * Replaced pci_add_resource_offset() with pci_add_resource()
+  * Added values from the DT individually to io_base, mem_base
 
-> 
-> > +static void exynos_pcie_prog_viewport_mem_outbound(struct pcie_port *pp)
-> > +{
-> > +	u32 val;
-> > +	void __iomem *dbi_base = pp->dbi_base;
-> > +
-> > +	/* Program viewport 0 : OUTBOUND : MEM */
-> > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX0;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-> > +	writel_rc(pp, PCIE_ATU_TYPE_MEM, dbi_base + PCIE_ATU_CR1);
-> > +	val = PCIE_ATU_ENABLE;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
-> > +	writel_rc(pp, (u32)pp->mem_base, dbi_base + PCIE_ATU_LOWER_BASE);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-> > +	writel_rc(pp, (u32)(pp->mem_base + pp->config.mem_size - 1),
-> > +			dbi_base + PCIE_ATU_LIMIT);
-> > +	writel_rc(pp, (u32)pp->mem_base, dbi_base + PCIE_ATU_LOWER_TARGET);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-> > +}
-> 
-> You probably should not assume that there is a 1:1 mapping between
-> bus addresses and host physical addresses, but rather read both
-> values from the DT individually. With the ranges defined as
-> 
->        0x82000000 0 0x40210000 0x40210000 0 0x10000000>; /* non-prefetchable memory */
-> 
-> the second and third cell should go into
-> PCIE_ATU_UPPER_TARGET/PCIE_ATU_LOWER_TARGET, while the translated address
-> (from the third cell) should go into PCIE_ATU_LOWER_BASE/PCIE_ATU_UPPER_BASE
-> 
-> The PCIE_ATU_LIMIT seems to correctly get translated from the last
-> cell.
+Changes between v3 and v4:
+  * Added support for multi domains as reviewed by Jason Gunthorpe,
+    and Arnd Bergmann.
+  * Fixed both MEM space and I/O space in DT.
+  * Removed redundant physical addresses from struct pcie_port,
+    added devm_ioremap_resource() to make add_pcie_port() simpler.
+  * Added clock names and clock enable/disable.
+	
+Changes between v2 and v3:
+  * Rebased on the top of 3.10-rc4
+  * Updated names of PCIe PHY registers
+ 
+Changes between v1 and v2:
+  * Moved Exynos PCIe driver from arch/arm to drivers/pci/host.
+  * Added DT properties of PCI DT standard.
 
-OK, I will change it.
+Here is the lspci -vv output.
 
-> 
-> > +static void exynos_pcie_prog_viewport_io_outbound(struct pcie_port *pp)
-> > +{
-> > +	u32 val;
-> > +	void __iomem *dbi_base = pp->dbi_base;
-> > +
-> > +	/* Program viewport 1 : OUTBOUND : IO */
-> > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX1;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-> > +	writel_rc(pp, PCIE_ATU_TYPE_IO, dbi_base + PCIE_ATU_CR1);
-> > +	val = PCIE_ATU_ENABLE;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
-> > +	writel_rc(pp, (u32)pp->io_base, dbi_base + PCIE_ATU_LOWER_BASE);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-> > +	writel_rc(pp, (u32)(pp->io_base + pp->config.io_size - 1),
-> > +			dbi_base + PCIE_ATU_LIMIT);
-> > +	writel_rc(pp, (u32)pp->io_base, dbi_base + PCIE_ATU_LOWER_TARGET);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-> > +}
-> 
-> You don't actually map the I/O space anywhere into virtual memory.
-> I think you need to call pci_ioremap_io with the pp->io_base at
-> boot time.
+0000:00:00.0 PCI bridge: Samsung Electronics Co Ltd Device a549 (rev 01) (prog-if 00 [Normal decode])
+        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr+ Stepping- SERR+ FastB2B- DisINTx-
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0, Cache Line Size: 64 bytes
+        Bus: primary=00, secondary=01, subordinate=01, sec-latency=0
+        I/O behind bridge: 00001000-00001fff
+        Memory behind bridge: 40100000-401fffff
+        Prefetchable memory behind bridge: 40200000-402fffff
+        Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- <SERR- <PERR-
+        BridgeCtl: Parity+ SERR- NoISA- VGA- MAbort- >Reset- FastB2B-
+                PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
+        Capabilities: [40] Power Management version 3
+                Flags: PMEClk- DSI- D1+ D2- AuxCurrent=375mA PME(D0+,D1+,D2-,D3hot+,D3cold-)
+                Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=0 PME-
+        Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit+
+                Address: 0000000000000000  Data: 0000
+        Capabilities: [70] Express (v2) Root Port (Slot-), MSI 00
+                DevCap: MaxPayload 512 bytes, PhantFunc 0, Latency L0s <64ns, L1 <1us
+                        ExtTag+ RBE+ FLReset-
+                DevCtl: Report errors: Correctable- Non-Fatal- Fatal- Unsupported-
+                        RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop-
+                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+                DevSta: CorrErr- UncorrErr- FatalErr- UnsuppReq- AuxPwr- TransPend-
+                LnkCap: Port #0, Speed 5GT/s, Width x4, ASPM L0s L1, Latency L0 <64ns, L1 <2us
+                        ClockPM- Surprise- LLActRep+ BwNot+
+                LnkCtl: ASPM Disabled; RCB 64 bytes Disabled- Retrain- CommClk-
+                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+                LnkSta: Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk- DLActive+ BWMgmt+ ABWMgmt-
+                RootCtl: ErrCorrectable- ErrNon-Fatal- ErrFatal- PMEIntEna- CRSVisible-
+                RootCap: CRSVisible-
+                RootSta: PME ReqID 0000, PMEStatus- PMEPending-
+                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+ ARIFwd-
+                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis- ARIFwd-
+                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-, Selectable De-emphasis: -6dB
+                         Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+                         Compliance De-emphasis: -6dB
+                LnkSta2: Current De-emphasis Level: -3.5dB, EqualizationComplete-, EqualizationPhase1-
+                         EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
+        Capabilities: [100 v2] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
+                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+                AERCap: First Error Pointer: 00, GenCap+ CGenEn- ChkCap+ ChkEn-
+        Capabilities: [148 v1] Virtual Channel
+                Caps:   LPEVC=0 RefClk=100ns PATEntryBits=1
+                Arb:    Fixed- WRR32- WRR64- WRR128-
+                Ctrl:   ArbSelect=Fixed
+                Status: InProgress-
+                VC0:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+                        Status: NegoPending- InProgress-
+        Kernel driver in use: pcieport
 
-Sorry, when pci_ioremap_io() is used, Exynos5440 hangs.
-I don't know how to deal this.
+0000:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit Network Connection
+        Subsystem: Intel Corporation Gigabit CT Desktop Adapter
+        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr+ Stepping- SERR+ FastB2B- DisINTx-
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0, Cache Line Size: 64 bytes
+        Interrupt: pin A routed to IRQ 53
+        Region 0: Memory at 40180000 (32-bit, non-prefetchable) [size=128K]
+        Region 1: Memory at 40100000 (32-bit, non-prefetchable) [size=512K]
+        Region 2: I/O ports at 40001000 [size=32]
+        Region 3: Memory at 401a0000 (32-bit, non-prefetchable) [size=16K]
+        [virtual] Expansion ROM at 40200000 [disabled] [size=256K]
+        Capabilities: [c8] Power Management version 2
+                Flags: PMEClk- DSI+ D1- D2- AuxCurrent=0mA PME(D0+,D1-,D2-,D3hot+,D3cold+)
+                Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=1 PME-
+        Capabilities: [d0] MSI: Enable- Count=1/1 Maskable- 64bit+
+                Address: 0000000000000000  Data: 0000
+        Capabilities: [e0] Express (v1) Endpoint, MSI 00
+                DevCap: MaxPayload 256 bytes, PhantFunc 0, Latency L0s <512ns, L1 <64us
+                        ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset-
+                DevCtl: Report errors: Correctable+ Non-Fatal+ Fatal+ Unsupported+
+                        RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+
+                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+                DevSta: CorrErr- UncorrErr- FatalErr- UnsuppReq- AuxPwr+ TransPend-
+                LnkCap: Port #4, Speed 2.5GT/s, Width x1, ASPM L0s L1, Latency L0 <128ns, L1 <64us
+                        ClockPM- Surprise- LLActRep- BwNot-
+                LnkCtl: ASPM Disabled; RCB 64 bytes Disabled- Retrain- CommClk-
+                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+                LnkSta: Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+        Capabilities: [a0] MSI-X: Enable- Count=5 Masked-
+                Vector table: BAR=3 offset=00000000
+                PBA: BAR=3 offset=00002000
+        Capabilities: [100 v1] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UESvrt: DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+                CESta:  RxErr+ BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
+                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+                AERCap: First Error Pointer: 00, GenCap- CGenEn- ChkCap- ChkEn-
+        Capabilities: [140 v1] Device Serial Number 68-05-ca-ff-ff-11-5e-75
+        Kernel driver in use: e1000e
 
-> 
-> I think you mixed up the PCIE_ATU_LOWER_TARGET, it should really be 0,
-> since all I/O port numbers have to be smaller than IO_SPACE_LIMIT.
->
-> The first argument to pci_ioremap_io needs to be unique for each
-> domain and you need to use it to calculate the io_offset you
-> set in pci_sys_data->io_offset.
-> 
-> > +static void exynos_pcie_prog_viewport_mem_inbound(struct pcie_port *pp)
-> > +{
-> > +	u32 val;
-> > +	void __iomem *dbi_base = pp->dbi_base;
-> > +	struct pcie_port_info *config = &pp->config;
-> > +
-> > +	/* Program viewport 0 : INBOUND : MEMORY */
-> > +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX0;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-> > +	writel_rc(pp, PCIE_ATU_TYPE_MEM, dbi_base + PCIE_ATU_CR1);
-> > +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_BASE);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-> > +	writel_rc(pp, config->in_mem_size - 1, dbi_base + PCIE_ATU_LIMIT);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_TARGET);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-> > +}
-> 
-> You hardcode the in_mem_size to 256 MB. Does that mean you only allow
-> PCI bus master DMA on the first part of RAM? Shouldn't it get
-> computed from the actual location and size of RAM?
+0001:00:00.0 PCI bridge: Samsung Electronics Co Ltd Device a549 (rev 01) (prog-if 00 [Normal decode])
+        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr+ Stepping- SERR+ FastB2B- DisINTx-
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0, Cache Line Size: 64 bytes
+        Bus: primary=00, secondary=01, subordinate=01, sec-latency=0
+        I/O behind bridge: 00001000-00001fff
+        Memory behind bridge: 60100000-601fffff
+        Prefetchable memory behind bridge: 60200000-602fffff
+        Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- <SERR- <PERR-
+        BridgeCtl: Parity+ SERR- NoISA- VGA- MAbort- >Reset- FastB2B-
+                PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
+        Capabilities: [40] Power Management version 3
+                Flags: PMEClk- DSI- D1+ D2- AuxCurrent=375mA PME(D0+,D1+,D2-,D3hot+,D3cold-)
+                Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=0 PME-
+        Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit+
+                Address: 0000000000000000  Data: 0000
+        Capabilities: [70] Express (v2) Root Port (Slot-), MSI 00
+                DevCap: MaxPayload 512 bytes, PhantFunc 0, Latency L0s <64ns, L1 <1us
+                        ExtTag+ RBE+ FLReset-
+                DevCtl: Report errors: Correctable- Non-Fatal- Fatal- Unsupported-
+                        RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop-
+                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+                DevSta: CorrErr- UncorrErr- FatalErr- UnsuppReq- AuxPwr- TransPend-
+                LnkCap: Port #0, Speed 5GT/s, Width x4, ASPM L0s L1, Latency L0 <64ns, L1 <2us
+                        ClockPM- Surprise- LLActRep+ BwNot+
+                LnkCtl: ASPM Disabled; RCB 64 bytes Disabled- Retrain- CommClk-
+                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+                LnkSta: Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk- DLActive+ BWMgmt+ ABWMgmt-
+                RootCtl: ErrCorrectable- ErrNon-Fatal- ErrFatal- PMEIntEna- CRSVisible-
+                RootCap: CRSVisible-
+                RootSta: PME ReqID 0000, PMEStatus- PMEPending-
+                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+ ARIFwd-
+                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis- ARIFwd-
+                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-, Selectable De-emphasis: -6dB
+                         Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+                         Compliance De-emphasis: -6dB
+                LnkSta2: Current De-emphasis Level: -3.5dB, EqualizationComplete-, EqualizationPhase1-
+                         EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
+        Capabilities: [100 v2] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
+                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+                AERCap: First Error Pointer: 00, GenCap+ CGenEn- ChkCap+ ChkEn-
+        Capabilities: [148 v1] Virtual Channel
+                Caps:   LPEVC=0 RefClk=100ns PATEntryBits=1
+                Arb:    Fixed- WRR32- WRR64- WRR128-
+                Ctrl:   ArbSelect=Fixed
+                Status: InProgress-
+                VC0:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+                        Status: NegoPending- InProgress-
+        Kernel driver in use: pcieport
 
-I will remove the hard-coded in_mem_size, instead use the size of MEM region.
+0001:01:00.0 Ethernet controller: Intel Corporation 82574L Gigabit Network Connection
+        Subsystem: Intel Corporation Gigabit CT Desktop Adapter
+        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr+ Stepping- SERR+ FastB2B- DisINTx-
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0, Cache Line Size: 64 bytes
+        Interrupt: pin A routed to IRQ 56
+        Region 0: Memory at 60180000 (32-bit, non-prefetchable) [size=128K]
+        Region 1: Memory at 60100000 (32-bit, non-prefetchable) [size=512K]
+        Region 2: I/O ports at 60001000 [size=32]
+        Region 3: Memory at 601a0000 (32-bit, non-prefetchable) [size=16K]
+        [virtual] Expansion ROM at 60200000 [disabled] [size=256K]
+        Capabilities: [c8] Power Management version 2
+                Flags: PMEClk- DSI+ D1- D2- AuxCurrent=0mA PME(D0+,D1-,D2-,D3hot+,D3cold+)
+                Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=1 PME-
+        Capabilities: [d0] MSI: Enable- Count=1/1 Maskable- 64bit+
+                Address: 0000000000000000  Data: 0000
+        Capabilities: [e0] Express (v1) Endpoint, MSI 00
+                DevCap: MaxPayload 256 bytes, PhantFunc 0, Latency L0s <512ns, L1 <64us
+                        ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset-
+                DevCtl: Report errors: Correctable+ Non-Fatal+ Fatal+ Unsupported+
+                        RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+
+                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+                DevSta: CorrErr- UncorrErr- FatalErr- UnsuppReq- AuxPwr+ TransPend-
+                LnkCap: Port #4, Speed 2.5GT/s, Width x1, ASPM L0s L1, Latency L0 <128ns, L1 <64us
+                        ClockPM- Surprise- LLActRep- BwNot-
+                LnkCtl: ASPM Disabled; RCB 64 bytes Disabled- Retrain- CommClk-
+                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+                LnkSta: Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+        Capabilities: [a0] MSI-X: Enable- Count=5 Masked-
+                Vector table: BAR=3 offset=00000000
+                PBA: BAR=3 offset=00002000
+        Capabilities: [100 v1] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UESvrt: DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+                CESta:  RxErr+ BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
+                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+                AERCap: First Error Pointer: 00, GenCap- CGenEn- ChkCap- ChkEn-
+        Capabilities: [140 v1] Device Serial Number 68-05-ca-ff-ff-18-44-c5
+        Kernel driver in use: e1000e
 
-> 
-> > +static void exynos_pcie_prog_viewport_io_inbound(struct pcie_port *pp)
-> > +{
-> > +	u32 val;
-> > +	void __iomem *dbi_base = pp->dbi_base;
-> > +	struct pcie_port_info *config = &pp->config;
-> > +
-> > +	/* Program viewport 1 : INBOUND : IO */
-> > +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX1;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-> > +	writel_rc(pp, PCIE_ATU_TYPE_IO, dbi_base + PCIE_ATU_CR1);
-> > +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
-> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_BASE);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-> > +	writel_rc(pp, config->in_mem_size - 1, dbi_base + PCIE_ATU_LIMIT);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_TARGET);
-> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-> > +}
-> 
-> I don't understand what in inbound I/O access actually means. What
-> does this do, is it for PCI target emulation?
-
-I reviewed the manual, and I will fix it.
-I will add bus addresses and host physical addresses to
-PCIE_ATU_LOWER_BASE/ PCIE_ATU_LOWER_TARGET.
-
-> 
-> > +
-> > +static int exynos_pcie_setup(int nr, struct pci_sys_data *sys)
-> > +{
-> > +	struct pcie_port *pp;
-> > +
-> > +	pp = sys_to_pcie(sys);
-> > +
-> > +	if (!pp)
-> > +		return 0;
-> > +
-> > +	pci_add_resource_offset(&sys->resources, &pp->io, sys->io_offset);
-> > +	pci_add_resource_offset(&sys->resources, &pp->mem, sys->mem_offset);
-> > +
-> > +	return 1;
-> > +}
-> 
-> You don't actually set up io_offset and mem_offset, right?
-
-OK, I will replace pci_add_resource_offset() with pci_add_resource().
-
+		
+Thank you.
 
 Best regards,
 Jingoo Han
 
-> 
-> 	Arnd
+
+Jingoo Han (3):
+  pci: Add PCIe driver for Samsung Exynos
+  ARM: EXYNOS: Enable PCIe support for Exynos5440
+  ARM: dts: Add pcie controller node for Samsung EXYNOS5440 SoC
+ 
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts          |    8 ++++++
+ arch/arm/boot/dts/exynos5440.dtsi                  |   40 ++++++++++++++++++++++++++++-
+ arch/arm/Kconfig                                   |    1 +
+ arch/arm/mach-exynos/Kconfig                       |    2 ++ 
+ .../devicetree/bindings/pci/exynos-pcie.txt        |   71 ++
+ drivers/pci/host/Kconfig                           |    5 +
+ drivers/pci/host/Makefile                          |    1 +
+ drivers/pci/host/pci-exynos.c                      | 1078 ++++++++++++++++++++
+ 4 files changed, 1205 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/exynos-pcie.txt
+ create mode 100644 drivers/pci/host/pci-exynos.c
+-- 
+1.7.10.4
