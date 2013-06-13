@@ -1,95 +1,243 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu
- reg control
-Date: Thu, 13 Jun 2013 18:24:05 +0530
-Message-ID: <51B9C0ED.2040605@ti.com>
-References: <1370935073-7475-1-git-send-email-rahul.sharma@samsung.com>
- <CAAQKjZMuSQhbYtOyni-RdHhXu0fv3U2Dm_2iqRLe0smSt_jjjQ@mail.gmail.com>
- <CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com>
- <CAPdUM4Nis0uwyZf1hNDOMmdqFm0K7beVPoyAWRjMBwq0jcwwCQ@mail.gmail.com>
- <51B98908.8050403@samsung.com>
- <02c101ce6828$29ab0f20$7d012d60$%dae@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V4 1/3] pci: Add PCIe driver for Samsung Exynos
+Date: Thu, 13 Jun 2013 22:18:50 +0900
+Message-ID: <000901ce6838$8b514720$a1f3d560$@samsung.com>
+References: <003601ce6756$444e8cd0$cceba670$@samsung.com>
+ <2061566.hRLrhtBK6z@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <02c101ce6828$29ab0f20$7d012d60$%dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Seung-Woo Kim' <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'sunil joshi' <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'DRI mailing list' <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, 'Rahul Sharma' <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <2061566.hRLrhtBK6z@wuerfel>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Wednesday, June 12, 2013 8:23 PM, Arnd Bergmann wrote:
+> On Wednesday 12 June 2013 19:19:05 Jingoo Han wrote:
+> 
+> > +
+> > +struct pcie_port {
+> > +	struct device		*dev;
+> > +	u8			controller;
+> > +	u8			root_bus_nr;
+> > +	void __iomem		*dbi_base;
+> > +	void __iomem		*elbi_base;
+> > +	void __iomem		*phy_base;
+> > +	void __iomem		*purple_base;
+> > +	phys_addr_t		cfg0_base;
+> > +	void __iomem		*va_cfg0_base;
+> > +	phys_addr_t		cfg1_base;
+> > +	void __iomem		*va_cfg1_base;
+> > +	phys_addr_t		io_base;
+> > +	phys_addr_t		mem_base;
+> > +	spinlock_t		conf_lock;
+> > +	struct resource		cfg;
+> > +	struct resource		io;
+> > +	struct resource		mem;
+> > +	struct pcie_port_info	config;
+> > +	struct clk		*clk;
+> > +	struct clk		*bus_clk;
+> > +	int			irq;
+> > +	int			reset_gpio;
+> > +};
+> 
+> This looks much better now.
+> 
+> > +
+> > +/* synopsis specific PCIE configuration registers*/
+> > +#define PCIE_PORT_LINK_CONTROL		0x710
+> > +#define PORT_LINK_MODE_MASK		(0x3f << 16)
+> > +#define PORT_LINK_MODE_4_LANES		(0x7 << 16)
+> 
+> Do you mean this is a "Synopsys" designware part? In that case it
+> should really not be called "exynos-pcie" but "designware-pcie"
+> and you should make sure that the driver makes no assumptions about
+> the platform. A lot of other platforms also use designware
+> parts and should be able to reuse this driver.
 
-On Thursday 13 June 2013 04:51 PM, Inki Dae wrote:
+Sorry, I don't think so.
+Only core block is a "Synopsys" designware part IP block,
+other parts are Exynos-specific.
+So, it is hard to share with other PCIe IPs using synopsis core.
+
+> 
+> > +static void exynos_pcie_prog_viewport_cfg0(struct pcie_port *pp, u32 busdev)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +
+> > +	/* Program viewport 0 : OUTBOUND : CFG0 */
+> > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX0;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, (u32)pp->cfg0_base, dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, (u32)pp->cfg0_base + pp->config.cfg0_size - 1,
+> > +			dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, busdev, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_CFG0, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +}
+> 
+> I think you should not assume that the physical base address is a 32
+> bit value. The hardware clearly supports "lower" and "upper" halves
+> for the address window, so when resource_size_t is 64 bit, you should
+> set the upper half accordingly. Since the hardware is always 64 bit,
+> you can use a "u64" type rather than resource_size_t to simplify the
+> code here.
+
+OK, I will replace "u32" with "u64".
+
+> 
+> > +static void exynos_pcie_prog_viewport_mem_outbound(struct pcie_port *pp)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +
+> > +	/* Program viewport 0 : OUTBOUND : MEM */
+> > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX0;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_MEM, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +	writel_rc(pp, (u32)pp->mem_base, dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, (u32)(pp->mem_base + pp->config.mem_size - 1),
+> > +			dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, (u32)pp->mem_base, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +}
+> 
+> You probably should not assume that there is a 1:1 mapping between
+> bus addresses and host physical addresses, but rather read both
+> values from the DT individually. With the ranges defined as
+> 
+>        0x82000000 0 0x40210000 0x40210000 0 0x10000000>; /* non-prefetchable memory */
+> 
+> the second and third cell should go into
+> PCIE_ATU_UPPER_TARGET/PCIE_ATU_LOWER_TARGET, while the translated address
+> (from the third cell) should go into PCIE_ATU_LOWER_BASE/PCIE_ATU_UPPER_BASE
+> 
+> The PCIE_ATU_LIMIT seems to correctly get translated from the last
+> cell.
+
+OK, I will change it.
+
+> 
+> > +static void exynos_pcie_prog_viewport_io_outbound(struct pcie_port *pp)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +
+> > +	/* Program viewport 1 : OUTBOUND : IO */
+> > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX1;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_IO, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +	writel_rc(pp, (u32)pp->io_base, dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, (u32)(pp->io_base + pp->config.io_size - 1),
+> > +			dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, (u32)pp->io_base, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +}
+> 
+> You don't actually map the I/O space anywhere into virtual memory.
+> I think you need to call pci_ioremap_io with the pp->io_base at
+> boot time.
+
+Sorry, when pci_ioremap_io() is used, Exynos5440 hangs.
+I don't know how to deal this.
+
+> 
+> I think you mixed up the PCIE_ATU_LOWER_TARGET, it should really be 0,
+> since all I/O port numbers have to be smaller than IO_SPACE_LIMIT.
 >
->
->> -----Original Message-----
->> From: Sylwester Nawrocki [mailto:s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
->> Sent: Thursday, June 13, 2013 5:56 PM
->> To: Rahul Sharma
->> Cc: Rahul Sharma; Inki Dae; linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-
->> discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org; DRI mailing list; Kukjin Kim; Seung-Woo Kim;
->> Sean Paul; sunil joshi; Kishon Vijay Abraham I; Stephen Warren;
->> grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
->> Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with
->> pmu reg control
->>
->> Hi,
->>
->> On 06/13/2013 06:26 AM, Rahul Sharma wrote:
->>> Mr. Dae,
->>>
->>> Thanks for your valuable inputs.
->>>
->>> I posted it as RFC because, I also have received comments to register
->>> hdmiphy as a clock controller. As we always configure it for specific
->>> frequency, hdmi-phy looks similar to a PLL. But it really doesn't
->>> belong to that class. Secondly prior to exynos5420, it was a i2c
->>> device. I am not sure we can register a I2C device as a clock
->>> controller. I wanted to discuss and explore this option here.
->>
->> Have you considered using the generic PHY framework for those HDMI
->> PHY devices [1] ? I guess we could add a dedicated group of ops for
->> video PHYs, similarly as is is done with struct v4l2_subdev_ops. For
->> configuring things like the carrier/pixel clock frequency or anything
->> what's common across the video PHYs.
->>
->> Perhaps you could have a look and see if this framework would be
->> useful for HDMI and possibly point out anything what might be missing ?
->>
->> I'm not sure it it really solves the issues specific to the Exynos
->> HDMI but at least with a generic PHY driver the PHY module would be
->> separate from the PHY controller, as often same HDMI DPHY can be used
->> with various types of a HDMI controller. So this would allow to not
->> duplicate the HDMI PHY drivers in the long-term perspective.
->
-> Yeah, at least, it seems that we could use PHY module to control PMU
-> register, HDMI_PHY_CONTROL. However, PHY module provides only init/on/off
-> callbacks. As you may know, HDMIPHY needs i2c interfaces to control HDMIPHY
-> clock. So with PHY module, HDMIPHY driver could enable PMU more generically,
-> but also has to use existing i2c stuff to control HDMIPHY clock. I had a
-> quick review to Generic PHY Framework[v6] but I didn't see that the PHY
-> module could generically support more features such as i2c stuff.
+> The first argument to pci_ioremap_io needs to be unique for each
+> domain and you need to use it to calculate the io_offset you
+> set in pci_sys_data->io_offset.
+> 
+> > +static void exynos_pcie_prog_viewport_mem_inbound(struct pcie_port *pp)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +	struct pcie_port_info *config = &pp->config;
+> > +
+> > +	/* Program viewport 0 : INBOUND : MEMORY */
+> > +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX0;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_MEM, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, config->in_mem_size - 1, dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +}
+> 
+> You hardcode the in_mem_size to 256 MB. Does that mean you only allow
+> PCI bus master DMA on the first part of RAM? Shouldn't it get
+> computed from the actual location and size of RAM?
 
-I don't think PHY framework needs to provide i2c interfaces to program 
-certain configurations. Instead in one of the callbacks (init/on/off) 
-PHY driver can program whatever it wants using any of the interfaces it 
-needs. IMO PHY framework should work independent of the interfaces.
+I will remove the hard-coded in_mem_size, instead use the size of MEM region.
 
-For example, twl4030 phy driver actually uses i2c to program its 
-registers but still it uses the PHY framework [1].
+> 
+> > +static void exynos_pcie_prog_viewport_io_inbound(struct pcie_port *pp)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +	struct pcie_port_info *config = &pp->config;
+> > +
+> > +	/* Program viewport 1 : INBOUND : IO */
+> > +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX1;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_IO, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, config->in_mem_size - 1, dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +}
+> 
+> I don't understand what in inbound I/O access actually means. What
+> does this do, is it for PCI target emulation?
 
-[1] --> http://www.gossamer-threads.com/lists/linux/kernel/1729414
+I reviewed the manual, and I will fix it.
+I will add bus addresses and host physical addresses to
+PCIE_ATU_LOWER_BASE/ PCIE_ATU_LOWER_TARGET.
 
-Thanks
-Kishon
+> 
+> > +
+> > +static int exynos_pcie_setup(int nr, struct pci_sys_data *sys)
+> > +{
+> > +	struct pcie_port *pp;
+> > +
+> > +	pp = sys_to_pcie(sys);
+> > +
+> > +	if (!pp)
+> > +		return 0;
+> > +
+> > +	pci_add_resource_offset(&sys->resources, &pp->io, sys->io_offset);
+> > +	pci_add_resource_offset(&sys->resources, &pp->mem, sys->mem_offset);
+> > +
+> > +	return 1;
+> > +}
+> 
+> You don't actually set up io_offset and mem_offset, right?
+
+OK, I will replace pci_add_resource_offset() with pci_add_resource().
+
+
+Best regards,
+Jingoo Han
+
+> 
+> 	Arnd
