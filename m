@@ -1,57 +1,42 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 3/3] ARM: S3C24XX: update uart addresses in s3c2416-dt auxdata
-Date: Fri, 14 Jun 2013 00:46:25 +0200
-Message-ID: <201306140046.25954.heiko@sntech.de>
-References: <201306140044.15568.heiko@sntech.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] MAINTAINERS: Add Samsung pinctrl entries
+Date: Fri, 14 Jun 2013 07:47:15 +0900
+Message-ID: <15dd01ce6887$f3d6d720$db848560$%kim@samsung.com>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
+ <9948950.GZ51yJYkxQ@flatron>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:54488 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756038Ab3FMWqc (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:40680 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756038Ab3FMWrS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 18:46:32 -0400
-In-Reply-To: <201306140044.15568.heiko@sntech.de>
+	Thu, 13 Jun 2013 18:47:18 -0400
+In-reply-to: <9948950.GZ51yJYkxQ@flatron>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, linus.walleij@linaro.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Doug Anderson' <dianders@chromium.org>
+Cc: 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-samsung-soc@vger.kernel.org, 'Linus Walleij' <linus.walleij@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Mauro Carvalho Chehab' <mchehab@redhat.com>, 'Andrew Morton' <akpm@linux-foundation.org>, 'Cesar Eduardo Barros' <cesarb@cesarb.net>, "'David S. Miller'" <davem@davemloft.net>, 'Hans Verkuil' <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org, thomas.abraham@linaro.org
 
-Commit 9ee51f01eee8 (tty: serial/samsung: make register definitions global)
-removed the S3C2410_PA_UARTX defines that the newly merged s3c2416 dt
-support still expected.
+Tomasz Figa wrote:
+> 
+> On Thursday 13 of June 2013 10:05:44 Doug Anderson wrote:
+> > It's convenient if get_maintainer suggests sending samsung/exynos
+> > pinctrl changes to linux-samsung-soc and to Kukjin.  Add an entry for
+> > that.
+> 
+> Well, if we are already at it, we could list the actual maintainers of the
+> driver.
+> 
+> The original maintainer was Thomas Abraham <thomas.abraham@linaro.org>
 
-So update mach-s3c2416-dt.c to use the S3C24XX_PA_UART constant
-until we have support for the common clock framework the the s3c2416-dt.
+Should be original author?! I think, original maintainer was/is Linus
+Walleij.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/mach-s3c2416-dt.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Let's see, probably original author should have some knowledge for it but
+the meaning of the maintainer is different. Of course, would be helpful if
+original author could review and maintain...
 
-diff --git a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
-index f5c9072..f50454a 100644
---- a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
-+++ b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
-@@ -43,13 +43,13 @@
-  * data from the device tree.
-  */
- static const struct of_dev_auxdata s3c2416_auxdata_lookup[] __initconst = {
--	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART0,
-+	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C24XX_PA_UART,
- 				"s3c2440-uart.0", NULL),
--	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART1,
-+	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C24XX_PA_UART + 0x4000,
- 				"s3c2440-uart.1", NULL),
--	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2410_PA_UART2,
-+	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C24XX_PA_UART + 0x8000,
- 				"s3c2440-uart.2", NULL),
--	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C2443_PA_UART3,
-+	OF_DEV_AUXDATA("samsung,s3c2440-uart", S3C24XX_PA_UART + 0xC000,
- 				"s3c2440-uart.3", NULL),
- 	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", S3C_PA_HSMMC0,
- 				"s3c-sdhci.0", NULL),
--- 
-1.7.10.4
+- Kukjin
