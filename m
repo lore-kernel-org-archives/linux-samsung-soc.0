@@ -1,42 +1,58 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] MAINTAINERS: Add Samsung pinctrl entries
-Date: Fri, 14 Jun 2013 08:02:50 +0900
-Message-ID: <15e301ce688a$20acbc90$620635b0$%kim@samsung.com>
-References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
- <1552010.DOo3aEBKyJ@flatron> <15cf01ce6884$8c073f20$a415bd60$%kim@samsung.com>
- <26381641.c4KnMQ8aS6@flatron>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add Samsung pinctrl entries
+Date: Fri, 14 Jun 2013 01:03:03 +0200
+Message-ID: <2614957.8jBPZazWeB@flatron>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org> <9948950.GZ51yJYkxQ@flatron> <15dd01ce6887$f3d6d720$db848560$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42727 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754451Ab3FMXCv (ORCPT
+Received: from mail-ee0-f51.google.com ([74.125.83.51]:34718 "EHLO
+	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756785Ab3FMXDG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 19:02:51 -0400
-In-reply-to: 
-Content-language: ko
+	Thu, 13 Jun 2013 19:03:06 -0400
+In-Reply-To: <15dd01ce6887$f3d6d720$db848560$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: 'Doug Anderson' <dianders@chromium.org>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Mauro Carvalho Chehab' <mchehab@redhat.com>, 'Andrew Morton' <akpm@linux-foundation.org>, 'Cesar Eduardo Barros' <cesarb@cesarb.net>, "'David S. Miller'" <davem@davemloft.net>, 'Hans Verkuil' <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Doug Anderson' <dianders@chromium.org>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-samsung-soc@vger.kernel.org, 'Linus Walleij' <linus.walleij@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Mauro Carvalho Chehab' <mchehab@redhat.com>, 'Andrew Morton' <akpm@linux-foundation.org>, 'Cesar Eduardo Barros' <cesarb@cesarb.net>, "'David S. Miller'" <davem@davemloft.net>, 'Hans Verkuil' <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org, thomas.abraham@linaro.org
 
-Kukjin Kim wrote:
-> 
+On Friday 14 of June 2013 07:47:15 Kukjin Kim wrote:
 > Tomasz Figa wrote:
+> > On Thursday 13 of June 2013 10:05:44 Doug Anderson wrote:
+> > > It's convenient if get_maintainer suggests sending samsung/exynos
+> > > pinctrl changes to linux-samsung-soc and to Kukjin.  Add an entry
+> > > for
+> > > that.
+> > 
+> > Well, if we are already at it, we could list the actual maintainers of
+> > the driver.
+> > 
+> > The original maintainer was Thomas Abraham <thomas.abraham@linaro.org>
 > 
-> [...]
-> 
-> > > And I'm asking above all guys _really_ do review and maintaining the
-> > > file or directories? I don't think so.
-> >
-> > I'm not really sure what makes you think they don't. I can see all of
-> them
-> > involved in works on mentioned drivers.
-> >
-> What's the role of maintainer? I mean, as you said, above guys are really
-> do it...
-> 
-One more, I don't blame and I'm not saying it was wrong :)
+> Should be original author?! I think, original maintainer was/is Linus
+> Walleij.
 
-- Kukjin
+Linus is the maintainer of the pin control subsystem. In addition drivers 
+can have their own maintainers, but of course they are lower in the 
+hierarchy than subsystem maintainers.
+
+> Let's see, probably original author should have some knowledge for it
+> but the meaning of the maintainer is different. Of course, would be
+> helpful if original author could review and maintain...
+
+Maintainer is the person who takes care of the code, including testing, 
+fixes, review of patches, but also development as well to keep the driver 
+up to date with core code, improve things, add support for new hardware, 
+etc.
+
+Originally Thomas Abraham was the person doing it for this driver. At 
+least I remember, he was the person who reviewed and acked my patches when 
+I started my work on improving this driver.
+
+Later on I took over most of those tasks and I've been doing so ever since 
+that time.
+
+Best regards,
+Tomasz
