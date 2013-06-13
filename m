@@ -1,25 +1,25 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 5/6] remove non-DT for exynos
-Date: Thu, 13 Jun 2013 09:33:24 +0900
-Message-ID: <143a01ce67cd$9d30a2d0$d791e870$%kim@samsung.com>
-References: <51B791EF.9070904@samsung.com>
- <20130612233136.GB9067@quad.lixom.net>
+Subject: RE: [GIT PULL 3/6] exynos arch
+Date: Thu, 13 Jun 2013 09:37:05 +0900
+Message-ID: <143b01ce67ce$20d5f5e0$6281e1a0$%kim@samsung.com>
+References: <51B791E0.5040104@samsung.com>
+ <20130612232526.GA9067@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42138 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755889Ab3FMAdZ (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:32217 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755889Ab3FMAhH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 20:33:25 -0400
+	Wed, 12 Jun 2013 20:37:07 -0400
 Received: from epcpsbgr1.samsung.com
  (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOB00M0S2UF7L00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 09:33:24 +0900 (KST)
-In-reply-to: <20130612233136.GB9067@quad.lixom.net>
+ with ESMTP id <0MOB00BV631TIJ00@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 09:37:05 +0900 (KST)
+In-reply-to: <20130612232526.GA9067@quad.lixom.net>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -28,7 +28,7 @@ Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux
 
 Olof Johansson wrote:
 > 
-> On Wed, Jun 12, 2013 at 06:09:03AM +0900, Kukjin Kim wrote:
+> On Wed, Jun 12, 2013 at 06:08:48AM +0900, Kukjin Kim wrote:
 > > The following changes since commit
 > 317ddd256b9c24b0d78fa8018f80f1e495481a10:
 > >
@@ -38,62 +38,46 @@ Olof Johansson wrote:
 > >
 > 
 > > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > tags/remove-nondt-exynos
+> > tags/exynos-arch-1
 > >
-> > for you to fetch changes up to 8661bc149b95b5d4298b4ffd55c298972c4820d1:
+> > for you to fetch changes up to d75666024bbb7d1b4fa6f0b00ecd8d834033259a:
 > >
-> >   ARM: exynos4_defconfig: remove non-DT configuration (2013-06-10
-> > 18:37:01 +0900)
-> >
-> > ----------------------------------------------------------------
-> > remove non DT support for exynos
+> >   ARM: EXYNOS: call scu_enable() only in case of cortex-A9 processor
+> > (2013-06-10 18:28:04 +0900)
 > >
 > > ----------------------------------------------------------------
-> > Kukjin Kim (2):
+> > update exynos arch part
+> 
+> Kukjin, please, write proper tag messages. This adds no value. Give a
+> brief
+> overview of what's in the branch instead.
+> 
+YES, I will.
+
+> > ----------------------------------------------------------------
+> > Doug Anderson (1):
+> >       ARM: EXYNOS: Select PINCTRL_EXYNOS for exynos4/5 at chip level
+> >
+> > Girish K S (1):
+> >       ARM: EXYNOS: force MAC ip to 32bit DMA
+> >
+> > Kukjin Kim (1):
 > >       ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
-> >       ARM: exynos4_defconfig: remove non-DT configuration
 > >
-> >  arch/arm/configs/exynos4_defconfig |  68 --------
-> >  arch/arm/mach-exynos/Kconfig       | 320
-> > +-----------------------------------
-> >  arch/arm/mach-exynos/Makefile      |  26 ---
-> >  arch/arm/mach-exynos/common.c      |  10 --
-> >  arch/arm/mach-exynos/dev-ahci.c    | 255 -----------------------------
-> >  arch/arm/mach-exynos/dev-ohci.c    |  52 ------
-> >  arch/arm/mach-exynos/dma.c         | 322
-> > -------------------------------------
-> >  arch/arm/mach-exynos/pm_domains.c  |   7 -
-> >  8 files changed, 1 insertion(+), 1059 deletions(-)
-> >  delete mode 100644 arch/arm/configs/exynos4_defconfig
-> >  delete mode 100644 arch/arm/mach-exynos/dev-ahci.c
-> >  delete mode 100644 arch/arm/mach-exynos/dev-ohci.c
-> >  delete mode 100644 arch/arm/mach-exynos/dma.c
+> > Leela Krishna Amudala (1):
+> >       ARM: EXYNOS: call scu_enable() only in case of cortex-A9 processor
+> >
+> > Thomas Abraham (1):
+> >       ARM: EXYNOS: Add a platform bus notifier to set dma masks for
+> > Exynos5440
 > 
-> Kukjin,
+> This one has outstanding comments from Russell that were not addressed?
 > 
-Hi Olof,
+Oops, I missed the comment from Russell and looked at just now. Thanks.
 
-> What about the legacy board files? I don't see them removed (nor converted
-> to
-> DT) here, so this is not a full removal.
 > 
-Oops, why are there still the board files :( Probably, there was a
-mistake...
-
-Thanks.
-
-> Also, the argument to keep exynos4_defconfig was that it needed to enable
-> non-DT boards. I think we might as well just remove the defconfig and make
-> sure
-> all the needed options are enabled in exynos_defconfig -- they should
-> coexist
-> just fine.
+> Not pulled.
 > 
-OK agreed.
-
-> I'll hold off pulling until the defconfig situation has been resolved, but
-> please follow up on the board file piece too.
-> 
-Sure, thanks.
+OK.
 
 - Kukjin
