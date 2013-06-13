@@ -1,74 +1,110 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V6 6/6] clk: exynos5250: Add enum entries for divider
- clock of i2s1 and i2s2
-Date: Thu, 13 Jun 2013 08:32:23 +0530
-Message-ID: <CAAgF-BfEvBcrm186t6U9Tp4r64wB3sEsy6hoXMQi=dHJgncvfw@mail.gmail.com>
-References: <1371024463-303-1-git-send-email-padma.v@samsung.com>
-	<1371024463-303-7-git-send-email-padma.v@samsung.com>
-	<20130612164553.26381.41398@quantum>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu
+ reg control
+Date: Thu, 13 Jun 2013 09:56:42 +0530
+Message-ID: <CAPdUM4Nis0uwyZf1hNDOMmdqFm0K7beVPoyAWRjMBwq0jcwwCQ@mail.gmail.com>
+References: <1370935073-7475-1-git-send-email-rahul.sharma@samsung.com>
+	<CAAQKjZMuSQhbYtOyni-RdHhXu0fv3U2Dm_2iqRLe0smSt_jjjQ@mail.gmail.com>
+	<CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:44188 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757019Ab3FMDCY (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:64754 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750762Ab3FME0n (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 23:02:24 -0400
-Received: by mail-oa0-f49.google.com with SMTP id n9so1812365oag.36
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 20:02:23 -0700 (PDT)
-In-Reply-To: <20130612164553.26381.41398@quantum>
+	Thu, 13 Jun 2013 00:26:43 -0400
+Received: by mail-wg0-f44.google.com with SMTP id m15so6545098wgh.35
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 21:26:42 -0700 (PDT)
+In-Reply-To: <CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sean Paul <seanpaul@chromium.org>, sunil joshi <joshi@samsung.com>
 
-Hi Mike,
+Mr. Dae,
 
-On Wed, Jun 12, 2013 at 10:15 PM, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Padmavathi Venna (2013-06-12 01:07:43)
->> This patch adds enum entries for div_i2s1 and div_i2s2 which are
->> required for i2s1 and i2s2 controllers.
->>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Thanks for your valuable inputs.
+
+I posted it as RFC because, I also have received comments to register
+hdmiphy as a clock controller. As we always configure it for specific
+frequency, hdmi-phy looks similar to a PLL. But it really doesn't
+belong to that class. Secondly prior to exynos5420, it was a i2c
+device. I am not sure we can register a I2C device as a clock
+controller. I wanted to discuss and explore this option here.
+
+As you said, in parallel, I will align these changes and along with
+"drm/exynos: hdmi: move hdmiphy related code to hdmiphy driver"
+series and post them.
+
+I hope we should be able to close on one of the above approaches for
+hdmiphy.
+
+regards,
+Rahul Sharma.
+
+On Wed, Jun 12, 2013 at 9:57 AM, Inki Dae <inki.dae@samsung.com> wrote:
 >
-> Looks good.  Did you want me to take the clk patches or just gathering
-> Acks?
-
-Please take the patches :).
-
-Thanks
-Padma
-
 >
-> Regards,
-> Mike
 >
->> ---
->>  drivers/clk/samsung/clk-exynos5250.c |    5 +++--
->>  1 files changed, 3 insertions(+), 2 deletions(-)
+> 2013/6/12 Inki Dae <inki.dae@samsung.com>
 >>
->> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
->> index 5c97e75..7c68850 100644
->> --- a/drivers/clk/samsung/clk-exynos5250.c
->> +++ b/drivers/clk/samsung/clk-exynos5250.c
->> @@ -87,6 +87,7 @@ enum exynos5250_clks {
->>         sclk_mmc0, sclk_mmc1, sclk_mmc2, sclk_mmc3, sclk_sata, sclk_usb3,
->>         sclk_jpeg, sclk_uart0, sclk_uart1, sclk_uart2, sclk_uart3, sclk_pwm,
->>         sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
->> +       div_i2s1, div_i2s2,
+>> Hi Rahul,
 >>
->>         /* gate clocks */
->>         gscl0 = 256, gscl1, gscl2, gscl3, gscl_wa, gscl_wb, smmu_gscl0,
->> @@ -291,8 +292,8 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->>         DIV(none, "div_pcm1", "sclk_audio1", DIV_PERIC4, 4, 8),
->>         DIV(none, "div_audio2", "mout_audio2", DIV_PERIC4, 16, 4),
->>         DIV(none, "div_pcm2", "sclk_audio2", DIV_PERIC4, 20, 8),
->> -       DIV(none, "div_i2s1", "sclk_audio1", DIV_PERIC5, 0, 6),
->> -       DIV(none, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
->> +       DIV(div_i2s1, "div_i2s1", "sclk_audio1", DIV_PERIC5, 0, 6),
->> +       DIV(div_i2s2, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
->>         DIV(sclk_pixel, "div_hdmi_pixel", "sclk_vpll", DIV_DISP1_0, 28, 4),
->>         DIV_A(none, "armclk", "div_arm", DIV_CPU0, 28, 3, "armclk"),
->>         DIV_F(none, "div_mipi1_pre", "div_mipi1",
->> --
->> 1.7.4.4
+>> This patch is important to us. Actually, previous hdmi driver had
+>> controlled hdmiphy HDMI_PHY_CONTROL as if that were a clock but now that
+>> doesn't exist anymore. So we need to discuss how hdmiphy should be handled.
+>> I konw that you had already posted hdmiphy relevant patch set, [PATCH 0/4]
+>> drm/exynos: hdmi: move hdmiphy related code to hdmiphy driver.
+>>
+>> I think we can couple pmu register controlling codes with that patch set
+>> without RFC. Could you update and post them again? like below,
+>> [PATCH 0/4] drm/exynos: hdmi: move hdmiphy related code to hdmiphy driver
+>> + [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu reg
+>> control
+>>
+>> And then let's start review :)
+>
+>
+> And I think It would be better to move the pmu register controlling codes
+> into hdmiphy driver like drivers/usb/phy/phy-samsung-usb2.c driver does.
+>
+>>
+>>
+>> Thanks,
+>> Inki Dae
+>>
+>>
+>>
+>> 2013/6/11 Rahul Sharma <rahul.sharma@samsung.com>
+>>>
+>>> Previously, hdmiphy is added as a dummy clock in clock file for
+>>> exynos SoCs. Enable/Disable to this clock, actually toggles the power
+>>> control bit in PMU, instead of controlling the clock gate.
+>>>
+>>> This RFC adds the support to parse hdmiphy control node which is a child
+>>> node to hdmi, and map the pmu register to toggle the power control bit.
+>>>
+>>> This is based on drm-next branch in Inki Dae's tree.
+>>>
+>>> Rahul Sharma (2):
+>>>   drm/exynos: replace dummy hdmiphy clock with pmu register control
+>>>   ARM/dts: add hdmiphy power control pmu register to hdmi dt node
+>>>
+>>>  arch/arm/boot/dts/exynos5250.dtsi    |    6 +++
+>>>  drivers/gpu/drm/exynos/exynos_hdmi.c |   69
+>>> ++++++++++++++++++++++++++++++----
+>>>  drivers/gpu/drm/exynos/regs-hdmi.h   |    4 ++
+>>>  3 files changed, 71 insertions(+), 8 deletions(-)
+>>>
+>>> --
+>>> 1.7.10.4
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe
+>>> linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>
