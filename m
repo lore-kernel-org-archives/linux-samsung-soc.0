@@ -1,161 +1,163 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu
-	reg control
-Date: Thu, 13 Jun 2013 20:21:23 +0900
-Message-ID: <02c101ce6828$29ab0f20$7d012d60$%dae@samsung.com>
-References: <1370935073-7475-1-git-send-email-rahul.sharma@samsung.com>
-	<CAAQKjZMuSQhbYtOyni-RdHhXu0fv3U2Dm_2iqRLe0smSt_jjjQ@mail.gmail.com>
-	<CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com>
-	<CAPdUM4Nis0uwyZf1hNDOMmdqFm0K7beVPoyAWRjMBwq0jcwwCQ@mail.gmail.com>
-	<51B98908.8050403@samsung.com>
+Subject: RE: [PATCH 1/4] drm/exynos: Prepare/Unprepare HDMI subsystem clocks
+Date: Thu, 13 Jun 2013 20:46:08 +0900
+Message-ID: <02c301ce682b$986a0350$c93e09f0$%dae@samsung.com>
+References: <1370933645-18344-1-git-send-email-rahul.sharma@samsung.com>
+ <1370933645-18344-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-reply-to: <51B98908.8050403@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:49780 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752088Ab3FMLqL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Jun 2013 07:46:11 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOB00IVMY0OU210@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 20:46:09 +0900 (KST)
+In-reply-to: <1370933645-18344-2-git-send-email-rahul.sharma@samsung.com>
 Content-language: ko
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Stephen Warren' <swarren@wwwdotorg.org>, devicetree-discuss@lists.ozlabs.org, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'sunil joshi' <joshi@samsung.com>, 'DRI mailing list' <dri-devel@lists.freedesktop.org>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, grant.likely@linaro.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Rahul Sharma' <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org
+Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, seanpaul@chromium.org, joshi@samsung.com, r.sh.open@gmail.com
 
-
-
-> -----Original Message-----
-> From: Sylwester Nawrocki [mailto:s.nawrocki@samsung.com]
-> Sent: Thursday, June 13, 2013 5:56 PM
-> To: Rahul Sharma
-> Cc: Rahul Sharma; Inki Dae; linux-samsung-soc@vger.kernel.org; devicetree-
-> discuss@lists.ozlabs.org; DRI mailing list; Kukjin Kim; Seung-Woo Kim;
-> Sean Paul; sunil joshi; Kishon Vijay Abraham I; Stephen Warren;
-> grant.likely@linaro.org
-> Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with
-> pmu reg control
-> 
-> Hi,
-> 
-> On 06/13/2013 06:26 AM, Rahul Sharma wrote:
-> > Mr. Dae,
-> >
-> > Thanks for your valuable inputs.
-> >
-> > I posted it as RFC because, I also have received comments to register
-> > hdmiphy as a clock controller. As we always configure it for specific
-> > frequency, hdmi-phy looks similar to a PLL. But it really doesn't
-> > belong to that class. Secondly prior to exynos5420, it was a i2c
-> > device. I am not sure we can register a I2C device as a clock
-> > controller. I wanted to discuss and explore this option here.
-> 
-> Have you considered using the generic PHY framework for those HDMI
-> PHY devices [1] ? I guess we could add a dedicated group of ops for
-> video PHYs, similarly as is is done with struct v4l2_subdev_ops. For
-> configuring things like the carrier/pixel clock frequency or anything
-> what's common across the video PHYs.
-> 
-> Perhaps you could have a look and see if this framework would be
-> useful for HDMI and possibly point out anything what might be missing ?
-> 
-> I'm not sure it it really solves the issues specific to the Exynos
-> HDMI but at least with a generic PHY driver the PHY module would be
-> separate from the PHY controller, as often same HDMI DPHY can be used
-> with various types of a HDMI controller. So this would allow to not
-> duplicate the HDMI PHY drivers in the long-term perspective.
-
-Yeah, at least, it seems that we could use PHY module to control PMU
-register, HDMI_PHY_CONTROL. However, PHY module provides only init/on/off
-callbacks. As you may know, HDMIPHY needs i2c interfaces to control HDMIPHY
-clock. So with PHY module, HDMIPHY driver could enable PMU more generically,
-but also has to use existing i2c stuff to control HDMIPHY clock. I had a
-quick review to Generic PHY Framework[v6] but I didn't see that the PHY
-module could generically support more features such as i2c stuff.
+Applied.
 
 Thanks,
 Inki Dae
 
+> -----Original Message-----
+> From: Rahul Sharma [mailto:rahul.sharma@samsung.com]
+> Sent: Tuesday, June 11, 2013 3:54 PM
+> To: linux-samsung-soc@vger.kernel.org;
+devicetree-discuss@lists.ozlabs.org;
+> dri-devel@lists.freedesktop.org
+> Cc: kgene.kim@samsung.com; sw0312.kim@samsung.com; inki.dae@samsung.com;
+> seanpaul@chromium.org; joshi@samsung.com; r.sh.open@gmail.com; Rahul
+> Sharma
+> Subject: [PATCH 1/4] drm/exynos: Prepare/Unprepare HDMI subsystem clocks
 > 
-> [1] https://lkml.org/lkml/2013/4/29/95
+> From: Sean Paul <seanpaul@chromium.org>
 > 
-> Thanks,
-> Sylwester
+> Change the clk_enable/clk_disable calls in mixer and hdmi drivers into
+> clk_prepare_enable/clk_disable_unprepare, respectively.
 > 
-> > As you said, in parallel, I will align these changes and along with
-> > "drm/exynos: hdmi: move hdmiphy related code to hdmiphy driver"
-> > series and post them.
-> >
-> > I hope we should be able to close on one of the above approaches for
-> > hdmiphy.
-> >
-> > regards,
-> > Rahul Sharma.
-> >
-> > On Wed, Jun 12, 2013 at 9:57 AM, Inki Dae <inki.dae@samsung.com> wrote:
-> >>
-> >> 2013/6/12 Inki Dae <inki.dae@samsung.com>
-> >>>
-> >>> Hi Rahul,
-> >>>
-> >>> This patch is important to us. Actually, previous hdmi driver had
-> >>> controlled hdmiphy HDMI_PHY_CONTROL as if that were a clock but now
-> that
-> >>> doesn't exist anymore. So we need to discuss how hdmiphy should be
-> handled.
-> >>> I konw that you had already posted hdmiphy relevant patch set, [PATCH
-> 0/4]
-> >>> drm/exynos: hdmi: move hdmiphy related code to hdmiphy driver.
-> >>>
-> >>> I think we can couple pmu register controlling codes with that patch
-> set
-> >>> without RFC. Could you update and post them again? like below,
-> >>> [PATCH 0/4] drm/exynos: hdmi: move hdmiphy related code to hdmiphy
-> driver
-> >>> + [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu reg
-> >>> control
-> >>>
-> >>> And then let's start review :)
-> >>
-> >> And I think It would be better to move the pmu register controlling
-> codes
-> >> into hdmiphy driver like drivers/usb/phy/phy-samsung-usb2.c driver
-does.
-> >>>
-> >>> Thanks,
-> >>> Inki Dae
-> >>>
-> >>> 2013/6/11 Rahul Sharma <rahul.sharma@samsung.com>
-> >>>>
-> >>>> Previously, hdmiphy is added as a dummy clock in clock file for
-> >>>> exynos SoCs. Enable/Disable to this clock, actually toggles the power
-> >>>> control bit in PMU, instead of controlling the clock gate.
-> >>>>
-> >>>> This RFC adds the support to parse hdmiphy control node which is a
-> child
-> >>>> node to hdmi, and map the pmu register to toggle the power control
-> bit.
-> >>>>
-> >>>> This is based on drm-next branch in Inki Dae's tree.
-> >>>>
-> >>>> Rahul Sharma (2):
-> >>>>   drm/exynos: replace dummy hdmiphy clock with pmu register control
-> >>>>   ARM/dts: add hdmiphy power control pmu register to hdmi dt node
-> >>>>
-> >>>>  arch/arm/boot/dts/exynos5250.dtsi    |    6 +++
-> >>>>  drivers/gpu/drm/exynos/exynos_hdmi.c |   69
-> >>>> ++++++++++++++++++++++++++++++----
-> >>>>  drivers/gpu/drm/exynos/regs-hdmi.h   |    4 ++
-> >>>>  3 files changed, 71 insertions(+), 8 deletions(-)
-> >>>>
-> >>>> --
-> >>>> 1.7.10.4
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c  |   24 ++++++++++++------------
+>  drivers/gpu/drm/exynos/exynos_mixer.c |   12 ++++++------
+>  2 files changed, 18 insertions(+), 18 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 04255fe..5a98194 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -1117,9 +1117,9 @@ static void hdmi_v13_mode_apply(struct hdmi_context
+> *hdata)
+>  		hdmi_regs_dump(hdata, "timing apply");
+>  	}
+> 
+> -	clk_disable(hdata->res.sclk_hdmi);
+> +	clk_disable_unprepare(hdata->res.sclk_hdmi);
+>  	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_hdmiphy);
+> -	clk_enable(hdata->res.sclk_hdmi);
+> +	clk_prepare_enable(hdata->res.sclk_hdmi);
+> 
+>  	/* enable HDMI and timing generator */
+>  	hdmi_reg_writemask(hdata, HDMI_CON_0, ~0, HDMI_EN);
+> @@ -1284,9 +1284,9 @@ static void hdmi_v14_mode_apply(struct hdmi_context
+> *hdata)
+>  		hdmi_regs_dump(hdata, "timing apply");
+>  	}
+> 
+> -	clk_disable(hdata->res.sclk_hdmi);
+> +	clk_disable_unprepare(hdata->res.sclk_hdmi);
+>  	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_hdmiphy);
+> -	clk_enable(hdata->res.sclk_hdmi);
+> +	clk_prepare_enable(hdata->res.sclk_hdmi);
+> 
+>  	/* enable HDMI and timing generator */
+>  	hdmi_reg_writemask(hdata, HDMI_CON_0, ~0, HDMI_EN);
+> @@ -1310,9 +1310,9 @@ static void hdmiphy_conf_reset(struct hdmi_context
+> *hdata)
+>  	u8 buffer[2];
+>  	u32 reg;
+> 
+> -	clk_disable(hdata->res.sclk_hdmi);
+> +	clk_disable_unprepare(hdata->res.sclk_hdmi);
+>  	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_pixel);
+> -	clk_enable(hdata->res.sclk_hdmi);
+> +	clk_prepare_enable(hdata->res.sclk_hdmi);
+> 
+>  	/* operation mode */
+>  	buffer[0] = 0x1f;
+> @@ -1701,9 +1701,9 @@ static void hdmi_poweron(struct hdmi_context *hdata)
+>  	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
+>  		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
+> 
+> -	clk_enable(res->hdmiphy);
+> -	clk_enable(res->hdmi);
+> -	clk_enable(res->sclk_hdmi);
+> +	clk_prepare_enable(res->hdmiphy);
+> +	clk_prepare_enable(res->hdmi);
+> +	clk_prepare_enable(res->sclk_hdmi);
+> 
+>  	hdmiphy_poweron(hdata);
+>  }
+> @@ -1726,9 +1726,9 @@ static void hdmi_poweroff(struct hdmi_context
+*hdata)
+>  	hdmiphy_conf_reset(hdata);
+>  	hdmiphy_poweroff(hdata);
+> 
+> -	clk_disable(res->sclk_hdmi);
+> -	clk_disable(res->hdmi);
+> -	clk_disable(res->hdmiphy);
+> +	clk_disable_unprepare(res->sclk_hdmi);
+> +	clk_disable_unprepare(res->hdmi);
+> +	clk_disable_unprepare(res->hdmiphy);
+>  	regulator_bulk_disable(res->regul_count, res->regul_bulk);
+> 
+>  	mutex_lock(&hdata->hdmi_mutex);
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c
+> b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index b0882b3..978894e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -900,10 +900,10 @@ static void mixer_poweron(struct mixer_context *ctx)
+>  	ctx->powered = true;
+>  	mutex_unlock(&ctx->mixer_mutex);
+> 
+> -	clk_enable(res->mixer);
+> +	clk_prepare_enable(res->mixer);
+>  	if (ctx->vp_enabled) {
+> -		clk_enable(res->vp);
+> -		clk_enable(res->sclk_mixer);
+> +		clk_prepare_enable(res->vp);
+> +		clk_prepare_enable(res->sclk_mixer);
+>  	}
+> 
+>  	mixer_reg_write(res, MXR_INT_EN, ctx->int_en);
+> @@ -927,10 +927,10 @@ static void mixer_poweroff(struct mixer_context
+*ctx)
+> 
+>  	ctx->int_en = mixer_reg_read(res, MXR_INT_EN);
+> 
+> -	clk_disable(res->mixer);
+> +	clk_disable_unprepare(res->mixer);
+>  	if (ctx->vp_enabled) {
+> -		clk_disable(res->vp);
+> -		clk_disable(res->sclk_mixer);
+> +		clk_disable_unprepare(res->vp);
+> +		clk_disable_unprepare(res->sclk_mixer);
+>  	}
+> 
+>  	mutex_lock(&ctx->mixer_mutex);
 > --
-> Sylwester Nawrocki
-> Samsung R&D Institute Poland
-> Samsung Electronics
+> 1.7.10.4
