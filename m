@@ -1,65 +1,55 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/3] pinctrl: exynos: ack level-triggered interrupts before
- unmasking
-Date: Fri, 14 Jun 2013 08:13:05 +0900
-Message-ID: <15e401ce688b$8fadadb0$af090910$%kim@samsung.com>
-References: <1371058399-31933-1-git-send-email-dianders@chromium.org>
- <150901ce682e$1c3fca50$54bf5ef0$%kim@samsung.com>
- <CAD=FV=U9V-rgjcCusCvgw-SeUH-kDbozr_T-i1DcaXNXv48vxw@mail.gmail.com>
- <4661065.SXhmWQNl5M@flatron>
- <CAD=FV=Ukdpt4vMCZNySvKpHz6yGCP5X-LLAc1XdOAEAM8rr1fw@mail.gmail.com>
+Subject: RE: [PATCH 0/6] Samsung watchdog support clean-up
+Date: Fri, 14 Jun 2013 08:22:30 +0900
+Message-ID: <15e501ce688c$e01fbe90$a05f3bb0$%kim@samsung.com>
+References: <1368916627-23139-1-git-send-email-tomasz.figa@gmail.com>
+ <1449207.t4YSBOKy4W@amdc1227>
+ <0ee601ce65c1$673f2c90$35bd85b0$%kim@samsung.com> <2600203.AqDGG2pvxF@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44647 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750994Ab3FMXNI convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:29700 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754414Ab3FMXWc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 19:13:08 -0400
-In-reply-to: <CAD=FV=Ukdpt4vMCZNySvKpHz6yGCP5X-LLAc1XdOAEAM8rr1fw@mail.gmail.com>
+	Thu, 13 Jun 2013 19:22:32 -0400
+In-reply-to: <2600203.AqDGG2pvxF@flatron>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: 'Linus Walleij' <linus.walleij@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Simon Glass' <sjg@chromium.org>, 'Luigi Semenzato' <semenzato@chromium.org>, 'Ilho Lee' <ilho215.lee@samsung.com>, =?UTF-8?B?J+q5gOydgOq4sCc=?= <eunki_kim@samsung.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Wim Van Sebroeck' <wim@iguana.be>, linux-watchdog@vger.kernel.org, jhbird.choi@samsung.com
 
-Doug Anderson wrote:
->=20
-> Tomasz,
->=20
-> On Thu, Jun 13, 2013 at 9:42 AM, Tomasz Figa <tomasz.figa@gmail.com> =
-wrote:
-> >> > BTW, probably we need a similar fixing in the mach-exynos/common=
-=2Ec
-> >> > file
-> >> > before pinct=EA=B8=B0 for distro...
-> >>
-> >> Is anyone using the functions in mach-exynos/common.c file anymore=
-?  I
-> >> thought that non-dt exynos support was going away and then we coul=
-d
-> >> just delete a whole lot of code from that file.
+Tomasz Figa wrote:
+> 
+> Hi Kukjin,
+> 
+Hi,
+
+> > > > > Kukjin, since it has been already tested on s3c24xx and s3c64xx
+> > > > > and nobody seems to care about s5p64x0 and s5pc100 (although I
+> > > > > don't see a reason why these patches should break them), could we
+> > > > > have this series applied?> >
+> > > > OK, let me test this series on the smdk64x0 then, will apply.
+> > > >
+> > > > If any problems, let you know.
+> > > >
+> > > > Thanks for your gentle reminder.
+> > >
+> > > Thank you for handling this. I have a lot of patches for S3C64xx
+> > > depending on this series queued in my private tree and it would be
+> > > really nice if I could finally get them merged for 3.11.
 > >
-> > I think Kukjin meant stable kernels that support Exynos boards usin=
-g
-> board
-> > files and without pinctrl. Would make sense to have them fixed as w=
-ell,
-> I
-> > guess.
->
-Yes, correct. Thanks, Tomasz.
+> > Applied, thanks.
+> 
+> Seems like this series got lost in action, as I don't see it in your tree.
+> Is there any problem with it?
+> 
+This series should be in my local and I didn't finish test something yet. So
+I didn't push yet but it should be done in this weekend. Anyway, sorry for
+late. If you have any further series based on this, please go ahead.
 
-> Ah, makes sense.  Kukjin: do you know of someone who needs this
-> (someone who is picking up linux-stable updates for exynos)?  I don't
-> think it's important for ChromeOS for this particular patch.  If
-> there's someone who needs this to officially land on linux-stable I'd
-> be happy to review their backport of this patch.
->=20
-As you know, developing something like Android, Tizen use the stable ke=
-rnel (long-term? I'm not sure) and there was a problem about this issue=
-=2E So I mean, would be fixed for the stable kernel.
+Thanks.
 
-Thanks,
 - Kukjin
