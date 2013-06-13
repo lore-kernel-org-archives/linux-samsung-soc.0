@@ -1,150 +1,91 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V4 1/3] pci: Add PCIe driver for Samsung Exynos
-Date: Thu, 13 Jun 2013 16:18:47 +0200
-Message-ID: <28355406.ThqqvnG0Yj@wuerfel>
-References: <003601ce6756$444e8cd0$cceba670$@samsung.com> <2061566.hRLrhtBK6z@wuerfel> <000901ce6838$8b514720$a1f3d560$@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/3] clk: exynos4: Staticize local symbols
+Date: Thu, 13 Jun 2013 21:06:02 +0530
+Message-ID: <CAK9yfHzRzUfiDj3ooC9OAhiH45-0ZGrC_G1odNK7e=mjLL1vag@mail.gmail.com>
+References: <1366106719-26342-1-git-send-email-sachin.kamat@linaro.org>
+	<08f401ce61e6$2ecc33f0$8c649bd0$%kim@samsung.com>
+	<CAK9yfHzMFfpLbHj0HwayPGSHWYfa5QSG-SADCvhoXJoiUE=JYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:57133 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752642Ab3FMOS4 (ORCPT
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:47035 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756873Ab3FMPgD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 10:18:56 -0400
-In-Reply-To: <000901ce6838$8b514720$a1f3d560$@samsung.com>
+	Thu, 13 Jun 2013 11:36:03 -0400
+Received: by mail-oa0-f44.google.com with SMTP id l10so5514685oag.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jun 2013 08:36:02 -0700 (PDT)
+In-Reply-To: <CAK9yfHzMFfpLbHj0HwayPGSHWYfa5QSG-SADCvhoXJoiUE=JYQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-On Thursday 13 June 2013 22:18:50 Jingoo Han wrote:
-> On Wednesday, June 12, 2013 8:23 PM, Arnd Bergmann wrote:
-> > On Wednesday 12 June 2013 19:19:05 Jingoo Han wrote:
+On 11 June 2013 09:46, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 5 June 2013 17:44, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> Sachin Kamat wrote:
+>>>
+>>> These symbols are used only in this file and hence should be
+>>> static.
+>>>
+>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>>> ---
+>>>  drivers/clk/samsung/clk-exynos4.c |   26 ++++++++++++++------------
+>>>  1 file changed, 14 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-
+>>> exynos4.c
+>>> index 7104669..26f2a85 100644
+>>> --- a/drivers/clk/samsung/clk-exynos4.c
+>>> +++ b/drivers/clk/samsung/clk-exynos4.c
+>>> @@ -339,24 +339,26 @@ PNAME(mout_user_aclk200_p4x12) = {"fin_pll",
+>>> "div_aclk200", };
+>>>  PNAME(mout_user_aclk266_gps_p4x12) = {"fin_pll", "div_aclk266_gps", };
+>>>
+>>>  /* fixed rate clocks generated outside the soc */
+>>> -struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata
+>>> = {
+>>> +static struct
+>>> +samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
+>>
+>> Any reason to use double lines?
+>
+> This is one of the ways to avoid exceeding 80 column limit.
+>
+>>
+>>>       FRATE(xxti, "xxti", NULL, CLK_IS_ROOT, 0),
+>>>       FRATE(xusbxti, "xusbxti", NULL, CLK_IS_ROOT, 0),
+>>>  };
+>>
+>> [...]
+>>
+>>> -struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata =
+>>> {
+>>> +static struct
+>>> +samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata = {
+>>
+>> Same as above.
+>>
+>>>       FRATE(none, "sclk_usbphy1", NULL, CLK_IS_ROOT, 48000000),
+>>>  };
+>>>
+>> [...]
+>>
+>> Others look good to me,
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>>
+>> Mike, please pick this into the clk tree if you're ok.
+>>
+>
+> Mike,
+> If you are taking this through your tree, please also take the below
+> patch [1] as it is dependent on this series.
+> [1] https://patchwork.kernel.org/patch/2469891/
 
-> > > +
-> > > +/* synopsis specific PCIE configuration registers*/
-> > > +#define PCIE_PORT_LINK_CONTROL		0x710
-> > > +#define PORT_LINK_MODE_MASK		(0x3f << 16)
-> > > +#define PORT_LINK_MODE_4_LANES		(0x7 << 16)
-> > 
-> > Do you mean this is a "Synopsys" designware part? In that case it
-> > should really not be called "exynos-pcie" but "designware-pcie"
-> > and you should make sure that the driver makes no assumptions about
-> > the platform. A lot of other platforms also use designware
-> > parts and should be able to reuse this driver.
-> 
-> Sorry, I don't think so.
-> Only core block is a "Synopsys" designware part IP block,
-> other parts are Exynos-specific.
-> So, it is hard to share with other PCIe IPs using synopsis core.
 
-Just call it synopsys anyway and put a comment in to explain this.
-That should be enough for the next person with a synopsys PCI core
-to reuse your code and split out the exynos specific parts into a
-separate file.
+Ping Mike..
 
-> > I think you should not assume that the physical base address is a 32
-> > bit value. The hardware clearly supports "lower" and "upper" halves
-> > for the address window, so when resource_size_t is 64 bit, you should
-> > set the upper half accordingly. Since the hardware is always 64 bit,
-> > you can use a "u64" type rather than resource_size_t to simplify the
-> > code here.
-> 
-> OK, I will replace "u32" with "u64".
 
-Not what I meant, please read it again.
-
-> > > +static void exynos_pcie_prog_viewport_io_outbound(struct pcie_port *pp)
-> > > +{
-> > > +	u32 val;
-> > > +	void __iomem *dbi_base = pp->dbi_base;
-> > > +
-> > > +	/* Program viewport 1 : OUTBOUND : IO */
-> > > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX1;
-> > > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-> > > +	writel_rc(pp, PCIE_ATU_TYPE_IO, dbi_base + PCIE_ATU_CR1);
-> > > +	val = PCIE_ATU_ENABLE;
-> > > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
-> > > +	writel_rc(pp, (u32)pp->io_base, dbi_base + PCIE_ATU_LOWER_BASE);
-> > > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-> > > +	writel_rc(pp, (u32)(pp->io_base + pp->config.io_size - 1),
-> > > +			dbi_base + PCIE_ATU_LIMIT);
-> > > +	writel_rc(pp, (u32)pp->io_base, dbi_base + PCIE_ATU_LOWER_TARGET);
-> > > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-> > > +}
-> > 
-> > You don't actually map the I/O space anywhere into virtual memory.
-> > I think you need to call pci_ioremap_io with the pp->io_base at
-> > boot time.
-> 
-> Sorry, when pci_ioremap_io() is used, Exynos5440 hangs.
-> I don't know how to deal this.
-
-You have to call it, there is no way around that. You will have to debug
-this yourself, I'm sure there is an easy solution.
-
-> > 
-> > You hardcode the in_mem_size to 256 MB. Does that mean you only allow
-> > PCI bus master DMA on the first part of RAM? Shouldn't it get
-> > computed from the actual location and size of RAM?
-> 
-> I will remove the hard-coded in_mem_size, instead use the size of MEM region.
-
-This should be system RAM, not the PCI memory space. What good would
-it be to have an inbound window that only redirects back to the bus?
-
-> > > +static void exynos_pcie_prog_viewport_io_inbound(struct pcie_port *pp)
-> > > +{
-> > > +	u32 val;
-> > > +	void __iomem *dbi_base = pp->dbi_base;
-> > > +	struct pcie_port_info *config = &pp->config;
-> > > +
-> > > +	/* Program viewport 1 : INBOUND : IO */
-> > > +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX1;
-> > > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-> > > +	writel_rc(pp, PCIE_ATU_TYPE_IO, dbi_base + PCIE_ATU_CR1);
-> > > +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
-> > > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
-> > > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_BASE);
-> > > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-> > > +	writel_rc(pp, config->in_mem_size - 1, dbi_base + PCIE_ATU_LIMIT);
-> > > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_LOWER_TARGET);
-> > > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-> > > +}
-> > 
-> > I don't understand what in inbound I/O access actually means. What
-> > does this do, is it for PCI target emulation?
-> 
-> I reviewed the manual, and I will fix it.
-> I will add bus addresses and host physical addresses to
-> PCIE_ATU_LOWER_BASE/ PCIE_ATU_LOWER_TARGET.
- 
-You have not answered my question.
-
-> > > +static int exynos_pcie_setup(int nr, struct pci_sys_data *sys)
-> > > +{
-> > > +	struct pcie_port *pp;
-> > > +
-> > > +	pp = sys_to_pcie(sys);
-> > > +
-> > > +	if (!pp)
-> > > +		return 0;
-> > > +
-> > > +	pci_add_resource_offset(&sys->resources, &pp->io, sys->io_offset);
-> > > +	pci_add_resource_offset(&sys->resources, &pp->mem, sys->mem_offset);
-> > > +
-> > > +	return 1;
-> > > +}
-> > 
-> > You don't actually set up io_offset and mem_offset, right?
-> 
-> OK, I will replace pci_add_resource_offset() with pci_add_resource().
-
-No, you have to set up the offsets.
-
-Please don't post another version until you actually understand what
-you need to do. If you don't understand the comments, ask back rather
-than picking a random interpretation.
-
-	Arnd
+-- 
+With warm regards,
+Sachin
